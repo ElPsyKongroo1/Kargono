@@ -46,6 +46,26 @@ namespace Kargono::Scenes
 	{
 		m_HoveredEntity = new ECS::Entity();
 		m_SelectedEntity = new ECS::Entity();
+
+		// Example of storing a project component
+		using namespace entt::literals;
+
+		//ECS::ProjectComponentStorage newStorage;
+		//auto& value = m_EntityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 8>>("health"_hs);
+
+		//namespace Kargono::Utility
+		//{
+		//	/*void* GetComponentStorageBuffer(entt::registry& registry, size_t componentSize, const char* componentName)
+		//	{
+		//		//KG_ASSERT((componentSize & 3) == 0, "Expected component size to be a multiple of 4. Invalid value provided.")
+		//	}*/
+		//}
+
+		/*using namespace entt::literals;
+		std::string abacadabra = "23";
+		int abaca = 23;
+		m_Registry.storage<std::string>(23);
+		auto& position_storage = m_Registry.storage<char[abaca]>(entt::hashed_string::value(abacadabra.c_str()));*/
 		
 	}
 	Scene::~Scene()
@@ -185,7 +205,6 @@ namespace Kargono::Scenes
 		}
 
 		// Return empty entity
-		KG_WARN("Could not find entity using an entt ID");
 		return {};
 	}
 

@@ -26,16 +26,17 @@ namespace Kargono::Assets
 	enum class AssetType
 	{
 		None = 0,
-		Texture = 1,
-		Shader = 2,
-		Audio = 3,
-		Font = 4,
-		Scene = 5,
-		UserInterface = 6,
-		InputMode = 7,
-		Script = 8,
-		GameState = 9,
-		EntityClass = 10
+		Texture,
+		Shader,
+		Audio,
+		Font,
+		Scene,
+		UserInterface,
+		InputMode,
+		Script,
+		GameState,
+		EntityClass,
+		ProjectComponent
 	};
 
 	//==============================
@@ -186,6 +187,11 @@ namespace Kargono::Assets
 		WrappedFuncType FunctionType{};
 	};
 
+	struct ProjectComponentMetaData
+	{
+		std::string Name{};
+	};
+
 	//==============================
 	// Asset Struct
 	//==============================
@@ -220,6 +226,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::Script: return "Script";
 		case Assets::AssetType::GameState: return "GameState";
 		case Assets::AssetType::EntityClass: return "EntityClass";
+		case Assets::AssetType::ProjectComponent: return "ProjectComponent";
 		case Assets::AssetType::None: return "None";
 		}
 		KG_ERROR("Unknown Type of AssetType.");
@@ -238,6 +245,7 @@ namespace Kargono::Utility
 		if (type == "Script") { return Assets::AssetType::Script; }
 		if (type == "GameState") { return Assets::AssetType::GameState; }
 		if (type == "EntityClass") { return Assets::AssetType::EntityClass; }
+		if (type == "ProjectComponent") { return Assets::AssetType::ProjectComponent; }
 		if (type == "None") { return Assets::AssetType::None; }
 
 		KG_ERROR("Unknown Type of AssetType String.");

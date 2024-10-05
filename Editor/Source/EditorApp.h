@@ -6,6 +6,7 @@
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/LogPanel.h"
 #include "Panels/ProjectPanel.h"
+#include "Panels/ProjectComponentPanel.h"
 #include "Panels/StatisticsPanel.h"
 #include "Panels/UIEditorPanel.h"
 #include "Panels/ViewportPanel.h"
@@ -177,6 +178,7 @@ namespace Kargono
 		bool m_ShowStats = false;
 		bool m_ShowViewport = true;
 		bool m_ShowProject = false;
+		bool m_ShowProjectComponent = false;
 		bool m_ShowDemoWindow = false;
 		bool m_ShowTesting = false;
 		bool m_ShowUserInterfaceEditor = false;
@@ -218,6 +220,7 @@ namespace Kargono
 		Scope<Panels::LogPanel>  m_LogPanel;
 		Scope<Panels::StatisticsPanel>  m_StatisticsPanel;
 		Scope<Panels::ProjectPanel>  m_ProjectPanel;
+		Scope<Panels::ProjectComponentPanel>  m_ProjectComponentPanel;
 		Scope<Panels::UIEditorPanel>  m_UIEditorPanel;
 		Scope<Panels::ViewportPanel>  m_ViewportPanel;
 		Scope<Panels::ScriptEditorPanel>  m_ScriptEditorPanel;
@@ -234,6 +237,7 @@ namespace Kargono
 		friend Panels::LogPanel;
 		friend Panels::StatisticsPanel;
 		friend Panels::ProjectPanel;
+		friend Panels::ProjectComponentPanel;
 		friend Panels::UIEditorPanel;
 		friend Panels::ScriptEditorPanel;
 		friend Panels::EntityClassEditor;

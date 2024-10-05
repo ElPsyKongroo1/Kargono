@@ -180,7 +180,6 @@ namespace Kargono::Panels
 	}
 	void AssetViewerPanel::InitializeAssetPopup()
 	{
-		
 		m_ViewAssetPopup.Label = "View Asset";
 		m_ViewAssetPopup.PopupContents = [&]() 
 		{

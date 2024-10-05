@@ -7,6 +7,7 @@
 #include "Kargono/Assets/FontManager.h"
 #include "Kargono/Assets/GameStateManager.h"
 #include "Kargono/Assets/InputModeManager.h"
+#include "Kargono/Assets/ProjectComponentManager.h"
 #include "Kargono/Assets/SceneManager.h"
 #include "Kargono/Assets/ScriptManager.h"
 #include "Kargono/Assets/ShaderManager.h"
@@ -85,6 +86,7 @@ namespace Kargono::Assets
 		FontManager m_FontManager;
 		GameStateManager m_GameStateManager;
 		InputModeManager m_InputModeManager;
+		ProjectComponentManager m_ProjectComponentManager;
 		SceneManager m_SceneManager;
 		ScriptManager m_ScriptManager;
 		ShaderManager m_ShaderManager;
@@ -101,6 +103,7 @@ namespace Kargono::Assets
 		DEFINE_MANAGER(RuntimeUI, Font)
 		DEFINE_MANAGER(Scenes, GameState)
 		DEFINE_MANAGER(Input, InputMode)
+		DEFINE_MANAGER(ECS, ProjectComponent)
 		DEFINE_MANAGER(Scenes, Scene)
 		DEFINE_MANAGER(Scripting, Script)
 		DEFINE_MANAGER(Rendering, Shader)
@@ -165,11 +168,12 @@ namespace Kargono::Assets
 			DeserializeTexture2DRegistry();
 			DeserializeAudioBufferRegistry();
 			DeserializeFontRegistry();
-			DeserializeUserInterfaceRegistry();
-			DeserializeInputModeRegistry();
 			DeserializeScriptRegistry();
+			DeserializeProjectComponentRegistry();
+			DeserializeInputModeRegistry();
 			DeserializeGameStateRegistry();
 			DeserializeEntityClassRegistry();
+			DeserializeUserInterfaceRegistry();
 			DeserializeSceneRegistry();
 		}
 
@@ -180,11 +184,12 @@ namespace Kargono::Assets
 			SerializeTexture2DRegistry();
 			SerializeAudioBufferRegistry();
 			SerializeFontRegistry();
-			SerializeUserInterfaceRegistry();
-			SerializeInputModeRegistry();
 			SerializeScriptRegistry();
+			SerializeProjectComponentRegistry();
+			SerializeInputModeRegistry();
 			SerializeGameStateRegistry();
 			SerializeEntityClassRegistry();
+			SerializeUserInterfaceRegistry();
 			SerializeSceneRegistry();
 		}
 
@@ -195,11 +200,12 @@ namespace Kargono::Assets
 			ClearShaderRegistry();
 			ClearAudioBufferRegistry();
 			ClearFontRegistry();
-			ClearUserInterfaceRegistry();
-			ClearInputModeRegistry();
 			ClearScriptRegistry();
+			ClearProjectComponentRegistry();
+			ClearInputModeRegistry();
 			ClearGameStateRegistry();
 			ClearEntityClassRegistry();
+			ClearUserInterfaceRegistry();
 			ClearSceneRegistry();
 		}
 

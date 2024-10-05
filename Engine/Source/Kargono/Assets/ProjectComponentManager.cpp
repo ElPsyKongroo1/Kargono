@@ -1,1 +1,136 @@
 #include "kgpch.h"
+
+#include "Kargono/Assets/AssetService.h"
+#include "Kargono/Assets/ProjectComponentManager.h"
+
+#include "Kargono/ECS/ProjectComponent.h"
+
+namespace Kargono::Assets
+{
+	void ProjectComponentManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	{
+		// Create Temporary ProjectComponent
+		Ref<ECS::ProjectComponent> temporaryProjectComponent = CreateRef<ECS::ProjectComponent>();
+
+		// Save into File
+		SerializeAsset(temporaryProjectComponent, assetPath);
+
+		// Load data into In-Memory Metadata object
+		Ref<Assets::ProjectComponentMetaData> metadata = CreateRef<Assets::ProjectComponentMetaData>();
+		metadata->Name = name;
+		asset.Data.SpecificFileData = metadata;
+	}
+	void ProjectComponentManager::SerializeAsset(Ref<ECS::ProjectComponent> assetReference, const std::filesystem::path& assetPath)
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+		// Save name
+		out << YAML::Key << "Name" << YAML::Value << assetReference->m_Name;
+
+		// Save size information
+		out << YAML::Key << "ComponentSize" << YAML::Value << assetReference->m_ComponentSize;
+		out << YAML::Key << "BufferSize" << YAML::Value << assetReference->m_BufferSize;
+		out << YAML::Key << "BufferSlot" << YAML::Value << assetReference->m_BufferSlot;
+
+		// Save data types
+		out << YAML::Key << "DataTypes" << YAML::Value;
+		out << YAML::BeginSeq; // Start of Data Type Sequence
+		for (WrappedVarType type : assetReference->m_DataTypes)
+		{
+			out << YAML::Value << Utility::WrappedVarTypeToString(type);
+		}
+		out << YAML::EndSeq; // End of Data Type Sequence
+
+		// Save data locations
+		out << YAML::Key << "DataLocations" << YAML::Value;
+		out << YAML::BeginSeq; // Start of Data Locations Sequence
+		for (uint32_t location : assetReference->m_DataLocations)
+		{
+			out << YAML::Value << location;
+		}
+		out << YAML::EndSeq; // End of Data Locations Sequence
+
+		// Save data names
+		out << YAML::Key << "DataNames" << YAML::Value;
+		out << YAML::BeginSeq; // Start of Data Names Sequence
+		for (std::string& name : assetReference->m_DataNames)
+		{
+			out << YAML::Value << name;
+		}
+		out << YAML::EndSeq; // End of Data Names Sequence
+
+		out << YAML::EndMap; // Start of File Map
+
+		std::ofstream fout(assetPath);
+		fout << out.c_str();
+	}
+	Ref<ECS::ProjectComponent> ProjectComponentManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	{
+		Ref<ECS::ProjectComponent> newProjectComponent = CreateRef<ECS::ProjectComponent>();
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(assetPath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_WARN("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
+			return nullptr;
+		}
+
+		// Get name
+		newProjectComponent->m_Name = data["Name"].as<std::string>();
+
+		// Get component size information
+		newProjectComponent->m_ComponentSize = data["ComponentSize"].as<uint32_t>();
+		newProjectComponent->m_BufferSize = data["BufferSize"].as<uint32_t>();
+		newProjectComponent->m_BufferSlot = data["BufferSlot"].as<uint32_t>();
+
+		// Get Data Types
+		YAML::Node dataTypesNode = data["DataTypes"];
+		if (dataTypesNode)
+		{
+			std::vector<WrappedVarType>& newTypesList = newProjectComponent->m_DataTypes;
+			for (auto dataTypeNode : dataTypesNode)
+			{
+				newTypesList.push_back(Utility::StringToWrappedVarType(dataTypeNode.as<std::string>()));
+			}
+		}
+
+		// Get data locations
+		YAML::Node dataLocationsNode = data["DataLocations"];
+		if (dataLocationsNode)
+		{
+			std::vector<uint32_t>& newLocationsList = newProjectComponent->m_DataLocations;
+			for (auto dataLocationNode : dataLocationsNode)
+			{
+				newLocationsList.push_back(dataLocationNode.as<uint32_t>());
+			}
+		}
+
+		// Get data names
+		YAML::Node dataNamesNode = data["DataNames"];
+		if (dataNamesNode)
+		{
+			std::vector<std::string>& newNamesList = newProjectComponent->m_DataNames;
+			for (auto dataNameNode : dataNamesNode)
+			{
+				newNamesList.push_back(dataNameNode.as<std::string>());
+			}
+		}
+		
+		return newProjectComponent;
+	}
+
+	void ProjectComponentManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	{
+		Assets::ProjectComponentMetaData* metadata = currentAsset.Data.GetSpecificMetaData<ProjectComponentMetaData>();
+		serializer << YAML::Key << "Name" << YAML::Value << metadata->Name;
+	}
+	void ProjectComponentManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	{
+		Ref<Assets::ProjectComponentMetaData> metadata = CreateRef<Assets::ProjectComponentMetaData>();
+		metadata->Name = metadataNode["Name"].as<std::string>();
+		currentAsset.Data.SpecificFileData = metadata;
+	}
+}

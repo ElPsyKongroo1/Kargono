@@ -29,6 +29,7 @@
 //-----------------ECS-----------------//
 #include "Kargono/ECS/Entity.h"
 #include "Kargono/ECS/EngineComponents.h"
+#include "Kargono/ECS/ProjectComponent.h"
 
 //-----------------Events-----------------//
 #include "Kargono/Events/KeyEvent.h"

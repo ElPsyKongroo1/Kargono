@@ -9,9 +9,17 @@
 
 namespace Kargono::ECS
 {
+
+	struct ProjectComponentStorage
+	{
+		void* m_EnTTStorageReference{ nullptr };
+		// Bunch of function pointers for various functionality
+	};
+
 	struct EntityRegistry
 	{
 		entt::registry m_EnTTRegistry;
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
+		std::vector<ProjectComponentStorage> m_ProjectStorage;
 	};
 }

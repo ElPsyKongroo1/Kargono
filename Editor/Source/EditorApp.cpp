@@ -62,6 +62,7 @@ namespace Kargono
 		m_LogPanel = CreateScope<Panels::LogPanel>();
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();
 		m_ProjectPanel = CreateScope<Panels::ProjectPanel>();
+		m_ProjectComponentPanel = CreateScope<Panels::ProjectComponentPanel>();
 		m_UIEditorPanel = CreateScope<Panels::UIEditorPanel>();
 		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
@@ -226,6 +227,7 @@ namespace Kargono
 				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
 				ImGui::MenuItem("Class Editor", NULL, &m_ShowClassEditor);
 				ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
+				ImGui::MenuItem("Component Editor", NULL, &m_ShowProjectComponent);
 				ImGui::Separator();
 				ImGui::MenuItem("Project Settings", NULL, &m_ShowProject);
 				ImGui::EndMenu();
@@ -289,6 +291,7 @@ namespace Kargono
 		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
 		if (m_ShowUserInterfaceEditor) { m_UIEditorPanel->OnEditorUIRender(); }
 		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
+		if (m_ShowProjectComponent) { m_ProjectComponentPanel->OnEditorUIRender(); }
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
 		if (m_ShowClassEditor) { m_EntityClassEditor->OnEditorUIRender(); }
 		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
