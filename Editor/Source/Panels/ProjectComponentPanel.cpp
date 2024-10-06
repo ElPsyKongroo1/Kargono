@@ -13,6 +13,7 @@ namespace Kargono::Panels
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
 			KG_BIND_CLASS_FN(ProjectComponentPanel::OnKeyPressedEditor));
 		InitializeOpeningPanel();
+		InitializeComponentFieldsSection();
 	}
 	void ProjectComponentPanel::OnEditorUIRender()
 	{
@@ -33,35 +34,21 @@ namespace Kargono::Panels
 		}
 		else
 		{
-			/*EditorUI::EditorUIService::PanelHeader(m_TagHeader);
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-			EditorUI::EditorUIService::GenericPopup(s_DeleteEntityClassWarning);
-			EditorUI::EditorUIService::GenericPopup(s_CloseEntityClassWarning);
-			EditorUI::EditorUIService::Table(s_FieldsTable);
+			// Header
+			EditorUI::EditorUIService::PanelHeader(m_TagHeader);
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
-			EditorUI::EditorUIService::CollapsingHeader(s_StaticFunctionHeaderSpec);
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-			if (s_StaticFunctionHeaderSpec.Expanded)
-			{
-				EditorUI::EditorUIService::SelectOption(s_SelectOnPhysicsCollisionStartSpec);
-				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			// Header Popups
+			EditorUI::EditorUIService::GenericPopup(m_DeleteComponentWarning);
+			EditorUI::EditorUIService::GenericPopup(m_CloseComponentWarning);
 
-				EditorUI::EditorUIService::SelectOption(s_SelectOnPhysicsCollisionEndSpec);
-				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			// Table
+			EditorUI::EditorUIService::Table(m_FieldsTable);
 
-				EditorUI::EditorUIService::SelectOption(s_SelectOnCreateSpec);
-				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			// Table Popups
+			EditorUI::EditorUIService::SelectOption(m_AddFieldPopup);
+			EditorUI::EditorUIService::GenericPopup(m_EditFieldPopup);
 
-				EditorUI::EditorUIService::SelectOption(s_SelectOnUpdateSpec);
-				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-			}
-
-			EditorUI::EditorUIService::Table(s_AllScriptsTableSpec);
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-			EditorUI::EditorUIService::SelectOption(s_AddFieldPopup);
-			EditorUI::EditorUIService::GenericPopup(s_EditFieldPopup);*/
 		}
 
 
@@ -136,6 +123,168 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::EditText(m_SelectComponentName);
 		};
 	}
+	void ProjectComponentPanel::InitializeComponentFieldsSection()
+	{
+		// Header (Component Name and Options)
+		m_DeleteComponentWarning.Label = "Delete Component";
+		m_DeleteComponentWarning.ConfirmAction = [&]()
+		{
+			Assets::AssetService::DeleteProjectComponent(m_EditorProjectComponentHandle);
+			// TODO: Refresh scene data and whatnot
+			m_EditorProjectComponentHandle = 0;
+			m_EditorProjectComponent = nullptr;
+		};
+		m_DeleteComponentWarning.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::Text("Are you sure you want to delete this component object?");
+		};
+
+		m_CloseComponentWarning.Label = "Close Component";
+		m_CloseComponentWarning.ConfirmAction = [&]()
+		{
+			m_EditorProjectComponentHandle = 0;
+			m_EditorProjectComponent = nullptr;
+		};
+		m_CloseComponentWarning.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::Text("Are you sure you want to close this component object without saving?");
+		};
+
+		m_TagHeader.AddToSelectionList("Save", [&]()
+		{
+			Assets::AssetService::SaveProjectComponent(m_EditorProjectComponentHandle, m_EditorProjectComponent);
+			// TODO: Refresh scene data and whatnot
+			m_TagHeader.EditColorActive = false;
+		});
+		m_TagHeader.AddToSelectionList("Close", [&]()
+		{
+			if (m_TagHeader.EditColorActive)
+			{
+				m_CloseComponentWarning.PopupActive = true;
+			}
+			else
+			{
+				m_EditorProjectComponentHandle = 0;
+				m_EditorProjectComponent = nullptr;
+			}
+		});
+		m_TagHeader.AddToSelectionList("Delete", [&]()
+		{
+			m_DeleteComponentWarning.PopupActive = true;
+		});
+
+		// Fields Table
+		m_FieldsTable.Label = "Fields";
+		m_FieldsTable.Expanded = true;
+		m_FieldsTable.OnRefresh = [&]()
+		{
+			m_FieldsTable.ClearTable();
+			if (m_EditorProjectComponent)
+			{
+				for (size_t iteration{0}; iteration < m_EditorProjectComponent->m_DataNames.size(); iteration++)
+				{
+					m_FieldsTable.InsertTableEntry(m_EditorProjectComponent->m_DataNames.at(iteration),
+						Utility::WrappedVarTypeToString(m_EditorProjectComponent->m_DataTypes.at(iteration)),
+						[&](EditorUI::TableEntry& entry)
+						{
+							m_EditFieldPopup.PopupActive = true;
+							m_ActiveField = entry.Handle;
+						}, iteration);
+				}
+			}
+		};
+		m_FieldsTable.Column1Title = "Field Name";
+		m_FieldsTable.Column2Title = "Field Type";
+		m_FieldsTable.AddToSelectionList("Add New Field", [&]()
+		{
+			m_AddFieldPopup.PopupActive = true;
+		});
+
+		m_AddFieldPopup.Label = "Add New Field";
+		m_AddFieldPopup.Flags |= EditorUI::SelectOption_PopupOnly;
+		m_AddFieldPopup.CurrentOption = { "None", Assets::EmptyHandle };
+		m_AddFieldPopup.LineCount = 2;
+		m_AddFieldPopup.PopupAction = [&]()
+		{
+			m_AddFieldPopup.ClearOptions();
+			m_AddFieldPopup.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& type : Kargono::s_AllWrappedVarTypes)
+			{
+				m_AddFieldPopup.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+			}
+		};
+		m_AddFieldPopup.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
+		{
+			if (selection.Label == "None")
+			{
+				return;
+			}
+
+			ECS::ProjectComponentService::AddFieldToProjectComponent(m_EditorProjectComponent, Utility::StringToWrappedVarType(selection.Label));
+			Assets::AssetService::SaveProjectComponent(m_EditorProjectComponentHandle, m_EditorProjectComponent);
+			m_TagHeader.EditColorActive = true;
+			RefreshData();
+		};
+
+		m_EditFieldName.Label = "Field Name";
+		m_EditFieldName.CurrentOption = "Empty";
+
+		m_EditFieldType.Label = "Field Type";
+		m_EditFieldType.CurrentOption = { "None", Assets::EmptyHandle };
+		m_EditFieldType.LineCount = 2;
+		m_EditFieldType.PopupAction = [&]()
+		{
+			m_EditFieldType.ClearOptions();
+			for (auto& type : Kargono::s_AllWrappedVarTypes)
+			{
+				m_EditFieldType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+			}
+		};
+		m_EditFieldType.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
+		{
+			m_FieldsTable.OnRefresh();
+		};
+
+		m_EditFieldPopup.Label = "Edit Field";
+		m_EditFieldPopup.DeleteAction = [&]()
+		{
+			// TODO: Delete Field
+			/*if (!m_EditorProjectComponent->DeleteField(m_CurrentField))
+			{
+				KG_ERROR("Unable to delete field inside Component!");
+				return;
+			}*/
+			m_TagHeader.EditColorActive = true;
+			RefreshData();
+		};
+		m_EditFieldPopup.PopupWidth = 420.0f;
+		m_EditFieldPopup.PopupAction = [&]()
+		{
+			KG_ASSERT(m_ActiveField < m_EditorProjectComponent->m_DataNames.size(),
+				"Unable to retreive field from current component object. Active field index is out of bounds.");
+			m_EditFieldName.CurrentOption = m_EditorProjectComponent->m_DataNames.at(m_ActiveField);
+			m_EditFieldType.CurrentOption.Label = Utility::WrappedVarTypeToString(m_EditorProjectComponent->m_DataTypes.at(m_ActiveField));
+		};
+		m_EditFieldPopup.ConfirmAction = [&]()
+		{
+			// TODO: Edit the Field yah?
+			/*if (!m_EditorProjectComponent->ContainsField(m_CurrentField))
+			{
+				KG_ERROR("Could not find reference to original Component in field map");
+				return;
+			}
+			m_EditorProjectComponent->DeleteField(m_CurrentField);
+			m_EditorProjectComponent->AddField(m_EditFieldName.CurrentOption,
+				Utility::StringToWrappedVarType(m_EditFieldType.CurrentOption.Label));*/
+			m_TagHeader.EditColorActive = true;
+			m_FieldsTable.OnRefresh();
+		};
+		m_EditFieldPopup.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::EditText(m_EditFieldName);
+			EditorUI::EditorUIService::SelectOption(m_EditFieldType);
+		};
+	}
 	bool ProjectComponentPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		return false;
@@ -150,6 +299,7 @@ namespace Kargono::Panels
 	}
 	void ProjectComponentPanel::RefreshData()
 	{
+		m_FieldsTable.OnRefresh();
 	}
 }
 			

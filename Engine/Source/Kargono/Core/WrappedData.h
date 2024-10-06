@@ -504,6 +504,28 @@ namespace Kargono
 			return "";
 		}
 
+		inline size_t WrappedVarTypeToDataSizeBytes(WrappedVarType type)
+		{
+			switch (type)
+			{
+			case WrappedVarType::Integer32: return sizeof(int32_t);
+			case WrappedVarType::UInteger16: return sizeof(uint16_t);
+			case WrappedVarType::UInteger32: return sizeof(uint32_t);
+			case WrappedVarType::UInteger64: return sizeof(uint64_t);
+			case WrappedVarType::Vector3: return sizeof(Math::vec3);
+			case WrappedVarType::String: return sizeof(std::string);
+			case WrappedVarType::Bool: return sizeof(bool);
+			case WrappedVarType::Float: return sizeof(float);
+			case WrappedVarType::Void:
+			case WrappedVarType::None:
+			default:
+				KG_ERROR("Invalid wrapped variable type presented when trying to get it's data size in bytes");
+				return std::numeric_limits<size_t>::max();
+			}
+			KG_ERROR("Invalid wrapped variable type presented when trying to get it's data size in bytes");
+			return std::numeric_limits<size_t>::max();
+		}
+
 		inline std::string WrappedVarTypeToKGScript(WrappedVarType type)
 		{
 			switch (type)

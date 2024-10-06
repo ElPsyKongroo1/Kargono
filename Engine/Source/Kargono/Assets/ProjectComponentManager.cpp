@@ -44,7 +44,7 @@ namespace Kargono::Assets
 		// Save data locations
 		out << YAML::Key << "DataLocations" << YAML::Value;
 		out << YAML::BeginSeq; // Start of Data Locations Sequence
-		for (uint32_t location : assetReference->m_DataLocations)
+		for (uint64_t location : assetReference->m_DataLocations)
 		{
 			out << YAML::Value << location;
 		}
@@ -82,9 +82,9 @@ namespace Kargono::Assets
 		newProjectComponent->m_Name = data["Name"].as<std::string>();
 
 		// Get component size information
-		newProjectComponent->m_ComponentSize = data["ComponentSize"].as<uint32_t>();
-		newProjectComponent->m_BufferSize = data["BufferSize"].as<uint32_t>();
-		newProjectComponent->m_BufferSlot = data["BufferSlot"].as<uint32_t>();
+		newProjectComponent->m_ComponentSize = data["ComponentSize"].as<uint64_t>();
+		newProjectComponent->m_BufferSize = data["BufferSize"].as<uint64_t>();
+		newProjectComponent->m_BufferSlot = (uint16_t)data["BufferSlot"].as<uint32_t>();
 
 		// Get Data Types
 		YAML::Node dataTypesNode = data["DataTypes"];
@@ -101,10 +101,10 @@ namespace Kargono::Assets
 		YAML::Node dataLocationsNode = data["DataLocations"];
 		if (dataLocationsNode)
 		{
-			std::vector<uint32_t>& newLocationsList = newProjectComponent->m_DataLocations;
+			std::vector<uint64_t>& newLocationsList = newProjectComponent->m_DataLocations;
 			for (auto dataLocationNode : dataLocationsNode)
 			{
-				newLocationsList.push_back(dataLocationNode.as<uint32_t>());
+				newLocationsList.push_back(dataLocationNode.as<uint64_t>());
 			}
 		}
 
