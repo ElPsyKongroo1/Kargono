@@ -10,10 +10,11 @@ namespace Kargono::Assets
 	void ProjectComponentManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary ProjectComponent
-		Ref<ECS::ProjectComponent> temporaryProjectComponent = CreateRef<ECS::ProjectComponent>();
+		Ref<ECS::ProjectComponent> newProjectComponent = CreateRef<ECS::ProjectComponent>();
+		newProjectComponent->m_Name = name;
 
 		// Save into File
-		SerializeAsset(temporaryProjectComponent, assetPath);
+		SerializeAsset(newProjectComponent, assetPath);
 
 		// Load data into In-Memory Metadata object
 		Ref<Assets::ProjectComponentMetaData> metadata = CreateRef<Assets::ProjectComponentMetaData>();

@@ -46,7 +46,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Table(m_FieldsTable);
 
 			// Table Popups
-			EditorUI::EditorUIService::SelectOption(m_AddFieldPopup);
+			EditorUI::EditorUIService::GenericPopup(m_AddFieldPopup);
 			EditorUI::EditorUIService::GenericPopup(m_EditFieldPopup);
 
 		}
@@ -200,30 +200,49 @@ namespace Kargono::Panels
 			m_AddFieldPopup.PopupActive = true;
 		});
 
-		m_AddFieldPopup.Label = "Add New Field";
-		m_AddFieldPopup.Flags |= EditorUI::SelectOption_PopupOnly;
-		m_AddFieldPopup.CurrentOption = { "None", Assets::EmptyHandle };
-		m_AddFieldPopup.LineCount = 2;
-		m_AddFieldPopup.PopupAction = [&]()
+		m_AddFieldName.Label = "Field Name";
+		m_AddFieldName.CurrentOption = "Empty";
+
+		m_AddFieldType.Label = "Field Type";
+		m_AddFieldType.CurrentOption = { "None", Assets::EmptyHandle };
+		m_AddFieldType.LineCount = 2;
+		m_AddFieldType.PopupAction = [&]()
 		{
-			m_AddFieldPopup.ClearOptions();
-			m_AddFieldPopup.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			m_AddFieldType.ClearOptions();
 			for (auto& type : Kargono::s_AllWrappedVarTypes)
 			{
-				m_AddFieldPopup.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+				m_AddFieldType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
 			}
 		};
-		m_AddFieldPopup.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
+		m_AddFieldType.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.Label == "None")
+			RefreshData();
+		};
+
+		m_AddFieldPopup.Label = "Add Field";
+		m_AddFieldPopup.PopupWidth = 420.0f;
+		m_AddFieldPopup.PopupAction = [&]()
+		{
+			m_AddFieldName.CurrentOption = "New Field";
+			m_AddFieldType.CurrentOption.Label = Utility::WrappedVarTypeToString(WrappedVarType::None);
+		};
+		m_AddFieldPopup.ConfirmAction = [&]()
+		{
+			bool success = ECS::ProjectComponentService::AddFieldToProjectComponent(m_EditorProjectComponent, 
+				Utility::StringToWrappedVarType(m_AddFieldType.CurrentOption.Label),
+				m_AddFieldName.CurrentOption);
+			if (!success)
 			{
+				KG_WARN("Add field failed. Returning to previous window.");
 				return;
 			}
-
-			ECS::ProjectComponentService::AddFieldToProjectComponent(m_EditorProjectComponent, Utility::StringToWrappedVarType(selection.Label));
-			Assets::AssetService::SaveProjectComponent(m_EditorProjectComponentHandle, m_EditorProjectComponent);
 			m_TagHeader.EditColorActive = true;
-			RefreshData();
+			m_FieldsTable.OnRefresh();
+		};
+		m_AddFieldPopup.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::EditText(m_AddFieldName);
+			EditorUI::EditorUIService::SelectOption(m_AddFieldType);
 		};
 
 		m_EditFieldName.Label = "Field Name";
@@ -242,18 +261,13 @@ namespace Kargono::Panels
 		};
 		m_EditFieldType.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			m_FieldsTable.OnRefresh();
+			RefreshData();
 		};
 
 		m_EditFieldPopup.Label = "Edit Field";
 		m_EditFieldPopup.DeleteAction = [&]()
 		{
-			// TODO: Delete Field
-			/*if (!m_EditorProjectComponent->DeleteField(m_CurrentField))
-			{
-				KG_ERROR("Unable to delete field inside Component!");
-				return;
-			}*/
+			ECS::ProjectComponentService::DeleteFieldFromProjectComponent(m_EditorProjectComponent, m_ActiveField);
 			m_TagHeader.EditColorActive = true;
 			RefreshData();
 		};
@@ -267,15 +281,14 @@ namespace Kargono::Panels
 		};
 		m_EditFieldPopup.ConfirmAction = [&]()
 		{
-			// TODO: Edit the Field yah?
-			/*if (!m_EditorProjectComponent->ContainsField(m_CurrentField))
+
+			bool success = ECS::ProjectComponentService::EditFieldInProjectComponent(m_EditorProjectComponent, m_ActiveField,
+				m_EditFieldName.CurrentOption, Utility::StringToWrappedVarType(m_EditFieldType.CurrentOption.Label));
+			if (!success)
 			{
-				KG_ERROR("Could not find reference to original Component in field map");
+				KG_WARN("Edit field failed. Returning to previous window.");
 				return;
 			}
-			m_EditorProjectComponent->DeleteField(m_CurrentField);
-			m_EditorProjectComponent->AddField(m_EditFieldName.CurrentOption,
-				Utility::StringToWrappedVarType(m_EditFieldType.CurrentOption.Label));*/
 			m_TagHeader.EditColorActive = true;
 			m_FieldsTable.OnRefresh();
 		};

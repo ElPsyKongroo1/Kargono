@@ -37,7 +37,9 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_CloseComponentWarning {};
 		// Fields Table
 		EditorUI::TableSpec m_FieldsTable {};
-		EditorUI::SelectOptionSpec m_AddFieldPopup {};
+		EditorUI::GenericPopupSpec m_AddFieldPopup {};
+		EditorUI::EditTextSpec m_AddFieldName {};
+		EditorUI::SelectOptionSpec m_AddFieldType {};
 		EditorUI::GenericPopupSpec m_EditFieldPopup {};
 		EditorUI::EditTextSpec m_EditFieldName {};
 		EditorUI::SelectOptionSpec m_EditFieldType {};
