@@ -7,54 +7,25 @@ static Kargono::EditorApp* s_EditorApp { nullptr };
 
 namespace Kargono::Panels
 {
-	static GameStatePanel* s_GameStatePanel { nullptr };
-	static std::string s_CurrentField {};
-	// Null State
-	static std::function<void()> s_OnOpenGameState { nullptr };
-	static std::function<void()> s_OnCreateGameState { nullptr };
-	static EditorUI::GenericPopupSpec s_CreateGameStatePopupSpec {};
-	static EditorUI::SelectOptionSpec s_OpenGameStatePopupSpec {};
-	// Header
-	static EditorUI::EditTextSpec s_SelectGameStateNameSpec {};
-	static EditorUI::PanelHeaderSpec s_TagHeader {};
-	static EditorUI::GenericPopupSpec s_DeleteGameStateWarning {};
-	static EditorUI::GenericPopupSpec s_CloseGameStateWarning {};
-	// Main Panel
-	static EditorUI::TableSpec s_FieldsTable {};
-	static EditorUI::SelectOptionSpec s_AddFieldPopup {};
-	static EditorUI::GenericPopupSpec s_EditFieldPopup {};
-	static EditorUI::EditTextSpec s_EditFieldName {};
-	static EditorUI::SelectOptionSpec s_EditFieldType {};
-	static EditorUI::EditVariableSpec s_EditFieldValue {};
-
-	static void InitializeOpeningScreen()
+	void GameStatePanel::InitializeOpeningScreen()
 	{
-		s_OnOpenGameState = [&]()
+		
+		m_OpenGameStatePopupSpec.Label = "Open Game State";
+		m_OpenGameStatePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenGameStatePopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
+		m_OpenGameStatePopupSpec.PopupAction = [&]()
 		{
-			s_OpenGameStatePopupSpec.PopupActive = true;
-		};
+			m_OpenGameStatePopupSpec.GetAllOptions().clear();
+			m_OpenGameStatePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 
-		s_OnCreateGameState = [&]()
-		{
-			s_CreateGameStatePopupSpec.PopupActive = true;
-		};
-
-		s_OpenGameStatePopupSpec.Label = "Open Game State";
-		s_OpenGameStatePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		s_OpenGameStatePopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
-		s_OpenGameStatePopupSpec.PopupAction = [&]()
-		{
-			s_OpenGameStatePopupSpec.GetAllOptions().clear();
-			s_OpenGameStatePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
-
-			s_OpenGameStatePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			m_OpenGameStatePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetGameStateRegistry())
 			{
-				s_OpenGameStatePopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
+				m_OpenGameStatePopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
 		};
 
-		s_OpenGameStatePopupSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
+		m_OpenGameStatePopupSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
 			if (selection.Handle == Assets::EmptyHandle)
 			{
@@ -67,115 +38,115 @@ namespace Kargono::Panels
 				return;
 			}
 
-			s_GameStatePanel->m_EditorGameState = Assets::AssetService::GetGameState(selection.Handle);
-			s_GameStatePanel->m_EditorGameStateHandle = selection.Handle;
-			s_TagHeader.EditColorActive = false;
-			s_TagHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
-				s_GameStatePanel->m_EditorGameStateHandle).Data.FileLocation.string();
-			s_FieldsTable.OnRefresh();
+			m_EditorGameState = Assets::AssetService::GetGameState(selection.Handle);
+			m_EditorGameStateHandle = selection.Handle;
+			m_TagHeader.EditColorActive = false;
+			m_TagHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
+				m_EditorGameStateHandle).Data.FileLocation.string();
+			m_FieldsTable.OnRefresh();
 		};
 
-		s_SelectGameStateNameSpec.Label = "New Name";
-		s_SelectGameStateNameSpec.CurrentOption = "Empty";
+		m_SelectGameStateNameSpec.Label = "New Name";
+		m_SelectGameStateNameSpec.CurrentOption = "Empty";
 
-		s_CreateGameStatePopupSpec.Label = "Create Game State";
-		s_CreateGameStatePopupSpec.PopupWidth = 420.0f;
-		s_CreateGameStatePopupSpec.ConfirmAction = [&]()
+		m_CreateGameStatePopupSpec.Label = "Create Game State";
+		m_CreateGameStatePopupSpec.PopupWidth = 420.0f;
+		m_CreateGameStatePopupSpec.ConfirmAction = [&]()
 		{
-			if (s_SelectGameStateNameSpec.CurrentOption == "")
+			if (m_SelectGameStateNameSpec.CurrentOption == "")
 			{
 				return;
 			}
 
 			for (auto& [id, asset] : Assets::AssetService::GetGameStateRegistry())
 			{
-				if (asset.Data.GetSpecificMetaData<Assets::GameStateMetaData>()->Name == s_SelectGameStateNameSpec.CurrentOption)
+				if (asset.Data.GetSpecificMetaData<Assets::GameStateMetaData>()->Name == m_SelectGameStateNameSpec.CurrentOption)
 				{
 					return;
 				}
 			}
-			s_GameStatePanel->m_EditorGameStateHandle = Assets::AssetService::CreateGameState(s_SelectGameStateNameSpec.CurrentOption);
-			s_GameStatePanel->m_EditorGameState = Assets::AssetService::GetGameState(s_GameStatePanel->m_EditorGameStateHandle);
-			s_TagHeader.EditColorActive = false;
-			s_TagHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
-				s_GameStatePanel->m_EditorGameStateHandle).Data.FileLocation.string();
-			s_FieldsTable.OnRefresh();
+			m_EditorGameStateHandle = Assets::AssetService::CreateGameState(m_SelectGameStateNameSpec.CurrentOption);
+			m_EditorGameState = Assets::AssetService::GetGameState(m_EditorGameStateHandle);
+			m_TagHeader.EditColorActive = false;
+			m_TagHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
+				m_EditorGameStateHandle).Data.FileLocation.string();
+			m_FieldsTable.OnRefresh();
 		};
-		s_CreateGameStatePopupSpec.PopupContents = [&]()
+		m_CreateGameStatePopupSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(s_SelectGameStateNameSpec);
+			EditorUI::EditorUIService::EditText(m_SelectGameStateNameSpec);
 		};
 	}
 
-	static void InitializeDisplayGameStateScreen()
+	void GameStatePanel::InitializeDisplayGameStateScreen()
 	{
 		// Header (Game State Name and Options)
-		s_DeleteGameStateWarning.Label = "Delete Game State";
-		s_DeleteGameStateWarning.ConfirmAction = [&]()
+		m_DeleteGameStateWarning.Label = "Delete Game State";
+		m_DeleteGameStateWarning.ConfirmAction = [&]()
 		{
-			Assets::AssetService::DeleteGameState(s_GameStatePanel->m_EditorGameStateHandle);
-			s_GameStatePanel->m_EditorGameStateHandle = 0;
-			s_GameStatePanel->m_EditorGameState = nullptr;
+			Assets::AssetService::DeleteGameState(m_EditorGameStateHandle);
+			m_EditorGameStateHandle = 0;
+			m_EditorGameState = nullptr;
 		};
-		s_DeleteGameStateWarning.PopupContents = [&]()
+		m_DeleteGameStateWarning.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::Text("Are you sure you want to delete this game state object?");
 		};
 
-		s_CloseGameStateWarning.Label = "Close Game State";
-		s_CloseGameStateWarning.ConfirmAction = [&]()
+		m_CloseGameStateWarning.Label = "Close Game State";
+		m_CloseGameStateWarning.ConfirmAction = [&]()
 		{
-			s_GameStatePanel->m_EditorGameStateHandle = 0;
-			s_GameStatePanel->m_EditorGameState = nullptr;
+			m_EditorGameStateHandle = 0;
+			m_EditorGameState = nullptr;
 		};
-		s_CloseGameStateWarning.PopupContents = [&]()
+		m_CloseGameStateWarning.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::Text("Are you sure you want to close this game state object without saving?");
 		};
 
-		s_TagHeader.AddToSelectionList("Save", [&]()
+		m_TagHeader.AddToSelectionList("Save", [&]()
 			{
-				Assets::AssetService::SaveGameState(s_GameStatePanel->m_EditorGameStateHandle, s_GameStatePanel->m_EditorGameState);
-				s_TagHeader.EditColorActive = false;
+				Assets::AssetService::SaveGameState(m_EditorGameStateHandle, m_EditorGameState);
+				m_TagHeader.EditColorActive = false;
 			});
-		s_TagHeader.AddToSelectionList("Close", [&]()
+		m_TagHeader.AddToSelectionList("Close", [&]()
 			{
-				if (s_TagHeader.EditColorActive)
+				if (m_TagHeader.EditColorActive)
 				{
-					s_CloseGameStateWarning.PopupActive = true;
+					m_CloseGameStateWarning.PopupActive = true;
 				}
 				else
 				{
-					s_GameStatePanel->m_EditorGameStateHandle = 0;
-					s_GameStatePanel->m_EditorGameState = nullptr;
+					m_EditorGameStateHandle = 0;
+					m_EditorGameState = nullptr;
 				}
 			});
-		s_TagHeader.AddToSelectionList("Delete", [&]()
+		m_TagHeader.AddToSelectionList("Delete", [&]()
 			{
-				s_DeleteGameStateWarning.PopupActive = true;
+				m_DeleteGameStateWarning.PopupActive = true;
 			});
 
 
 		// Fields Table
-		s_FieldsTable.Label = "Fields";
-		s_FieldsTable.Expanded = true;
-		s_FieldsTable.OnRefresh = [&]()
+		m_FieldsTable.Label = "Fields";
+		m_FieldsTable.Expanded = true;
+		m_FieldsTable.OnRefresh = [&]()
 		{
-			s_FieldsTable.ClearTable();
-			if (s_GameStatePanel->m_EditorGameState)
+			m_FieldsTable.ClearTable();
+			if (m_EditorGameState)
 			{
-				for (auto& [name, field] : s_GameStatePanel->m_EditorGameState->GetAllFields())
+				for (auto& [name, field] : m_EditorGameState->GetAllFields())
 				{
 					switch (field->Type())
 					{
 					case WrappedVarType::UInteger16:
 					{
-						s_FieldsTable.InsertTableEntry(name,
+						m_FieldsTable.InsertTableEntry(name,
 							std::to_string(field->GetWrappedValue<uint16_t>()),
 							[&](EditorUI::TableEntry& entry)
 							{
-								s_EditFieldPopup.PopupActive = true;
-								s_CurrentField = name;
+								m_EditFieldPopup.PopupActive = true;
+								m_CurrentField = name;
 							});
 						break;
 					}
@@ -188,24 +159,24 @@ namespace Kargono::Panels
 				}
 			}
 		};
-		s_FieldsTable.Column1Title = "Field Name";
-		s_FieldsTable.Column2Title = "Field Value";
-		s_FieldsTable.AddToSelectionList("Add New Field", [&]()
+		m_FieldsTable.Column1Title = "Field Name";
+		m_FieldsTable.Column2Title = "Field Value";
+		m_FieldsTable.AddToSelectionList("Add New Field", [&]()
 			{
-				s_AddFieldPopup.PopupActive = true;
+				m_AddFieldPopup.PopupActive = true;
 			});
 
-		s_AddFieldPopup.Label = "Add New Field";
-		s_AddFieldPopup.Flags |= EditorUI::SelectOption_PopupOnly;
-		s_AddFieldPopup.CurrentOption = { "None", Assets::EmptyHandle };
-		s_AddFieldPopup.LineCount = 2;
-		s_AddFieldPopup.PopupAction = [&]()
+		m_AddFieldPopup.Label = "Add New Field";
+		m_AddFieldPopup.Flags |= EditorUI::SelectOption_PopupOnly;
+		m_AddFieldPopup.CurrentOption = { "None", Assets::EmptyHandle };
+		m_AddFieldPopup.LineCount = 2;
+		m_AddFieldPopup.PopupAction = [&]()
 		{
-			s_AddFieldPopup.ClearOptions();
-			s_AddFieldPopup.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			s_AddFieldPopup.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
+			m_AddFieldPopup.ClearOptions();
+			m_AddFieldPopup.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			m_AddFieldPopup.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
 		};
-		s_AddFieldPopup.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
+		m_AddFieldPopup.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
 			if (selection.Label == "None")
 			{
@@ -215,84 +186,84 @@ namespace Kargono::Panels
 			if (selection.Label == "UInteger16")
 			{
 				uint32_t iteration{ 1 };
-				while (!s_GameStatePanel->m_EditorGameState->AddField("New Field " + std::to_string(iteration), WrappedVarType::UInteger16))
+				while (!m_EditorGameState->AddField("New Field " + std::to_string(iteration), WrappedVarType::UInteger16))
 				{
 					iteration++;
 				}
-				s_TagHeader.EditColorActive = true;
+				m_TagHeader.EditColorActive = true;
 			}
-			s_FieldsTable.OnRefresh();
+			m_FieldsTable.OnRefresh();
 		};
 
-		s_EditFieldName.Label = "Field Name";
-		s_EditFieldName.CurrentOption = "Empty";
+		m_EditFieldName.Label = "Field Name";
+		m_EditFieldName.CurrentOption = "Empty";
 
-		s_EditFieldType.Label = "Field Type";
-		s_EditFieldType.Flags |= EditorUI::SelectOption_PopupOnly;
-		s_EditFieldType.CurrentOption = { "None", Assets::EmptyHandle };
-		s_EditFieldType.LineCount = 2;
-		s_EditFieldType.PopupAction = [&]()
+		m_EditFieldType.Label = "Field Type";
+		m_EditFieldType.Flags |= EditorUI::SelectOption_PopupOnly;
+		m_EditFieldType.CurrentOption = { "None", Assets::EmptyHandle };
+		m_EditFieldType.LineCount = 2;
+		m_EditFieldType.PopupAction = [&]()
 		{
-			s_EditFieldType.ClearOptions();
-			s_EditFieldType.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
+			m_EditFieldType.ClearOptions();
+			m_EditFieldType.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
 		};
-		s_EditFieldType.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
+		m_EditFieldType.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			s_FieldsTable.OnRefresh();
+			m_FieldsTable.OnRefresh();
 		};
-		s_EditFieldValue.Label = "Field Value";
-		s_EditFieldValue.AllocateBuffer();
+		m_EditFieldValue.Label = "Field Value";
+		m_EditFieldValue.AllocateBuffer();
 
-		s_EditFieldPopup.Label = "Edit Field";
-		s_EditFieldPopup.DeleteAction = [&]()
+		m_EditFieldPopup.Label = "Edit Field";
+		m_EditFieldPopup.DeleteAction = [&]()
 		{
-			if (!s_GameStatePanel->m_EditorGameState->DeleteField(s_CurrentField))
+			if (!m_EditorGameState->DeleteField(m_CurrentField))
 			{
 				KG_ERROR("Unable to delete field inside game state!");
 				return;
 			}
-			s_TagHeader.EditColorActive = true;
-			s_FieldsTable.OnRefresh();
+			m_TagHeader.EditColorActive = true;
+			m_FieldsTable.OnRefresh();
 		};
-		s_EditFieldPopup.PopupWidth = 420.0f;
-		s_EditFieldPopup.PopupAction = [&]()
+		m_EditFieldPopup.PopupWidth = 420.0f;
+		m_EditFieldPopup.PopupAction = [&]()
 		{
-			Ref<WrappedVariable> field = s_GameStatePanel->m_EditorGameState->GetField(s_CurrentField);
+			Ref<WrappedVariable> field = m_EditorGameState->GetField(m_CurrentField);
 
 			if (!field)
 			{
 				KG_ERROR("Unable to retreive field from current game state object");
 				return;
 			}
-			s_EditFieldName.CurrentOption = s_CurrentField;
-			s_EditFieldType.CurrentOption.Label = Utility::WrappedVarTypeToString(field->Type());
+			m_EditFieldName.CurrentOption = m_CurrentField;
+			m_EditFieldType.CurrentOption.Label = Utility::WrappedVarTypeToString(field->Type());
 			std::string convertCache { std::to_string(field->GetWrappedValue<uint16_t>()) };
-			s_EditFieldValue.FieldBuffer.SetDataToByte(0);
-			memcpy(s_EditFieldValue.FieldBuffer.Data, convertCache.data(), convertCache.size());
+			m_EditFieldValue.FieldBuffer.SetDataToByte(0);
+			memcpy(m_EditFieldValue.FieldBuffer.Data, convertCache.data(), convertCache.size());
 		};
-		s_EditFieldPopup.ConfirmAction = [&]()
+		m_EditFieldPopup.ConfirmAction = [&]()
 		{
-			auto& fieldMap = s_GameStatePanel->m_EditorGameState->GetAllFields();
-			Ref<WrappedVariable> oldField = fieldMap.at(s_CurrentField);
+			auto& fieldMap = m_EditorGameState->GetAllFields();
+			Ref<WrappedVariable> oldField = fieldMap.at(m_CurrentField);
 			Ref<WrappedVariable> newField { nullptr };
-			if (s_CurrentField != s_EditFieldName.CurrentOption)
+			if (m_CurrentField != m_EditFieldName.CurrentOption)
 			{
 				if (!oldField)
 				{
 					KG_ERROR("Could not obtain field pointer from game state field map");
 					return;
 				}
-				fieldMap.erase(s_CurrentField);
-				s_FieldsTable.OnRefresh();
+				fieldMap.erase(m_CurrentField);
+				m_FieldsTable.OnRefresh();
 			}
 
-			switch (Utility::StringToWrappedVarType(s_EditFieldType.CurrentOption.Label))
+			switch (Utility::StringToWrappedVarType(m_EditFieldType.CurrentOption.Label))
 			{
 				case WrappedVarType::UInteger16:
 				{
 					newField = CreateRef<WrappedUInteger16>();
 
-					bool success = Utility::Conversions::CharBufferToVariable<uint16_t>(s_EditFieldValue.FieldBuffer,
+					bool success = Utility::Conversions::CharBufferToVariable<uint16_t>(m_EditFieldValue.FieldBuffer,
 						((WrappedUInteger16*)newField.get())->m_Value);
 
 					if (!success && oldField->Type() == WrappedVarType::UInteger16)
@@ -309,15 +280,15 @@ namespace Kargono::Panels
 				}
 			}
 
-			fieldMap.insert_or_assign(s_EditFieldName.CurrentOption, newField);
-			s_TagHeader.EditColorActive = true;
-			s_FieldsTable.OnRefresh();
+			fieldMap.insert_or_assign(m_EditFieldName.CurrentOption, newField);
+			m_TagHeader.EditColorActive = true;
+			m_FieldsTable.OnRefresh();
 		};
-		s_EditFieldPopup.PopupContents = [&]()
+		m_EditFieldPopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(s_EditFieldName);
-			EditorUI::EditorUIService::SelectOption(s_EditFieldType);
-			EditorUI::EditorUIService::EditVariable(s_EditFieldValue);
+			EditorUI::EditorUIService::EditText(m_EditFieldName);
+			EditorUI::EditorUIService::SelectOption(m_EditFieldType);
+			EditorUI::EditorUIService::EditVariable(m_EditFieldValue);
 		};
 		
 	}
@@ -327,10 +298,8 @@ namespace Kargono::Panels
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
 			KG_BIND_CLASS_FN(GameStatePanel::OnKeyPressedEditor));
-		s_GameStatePanel = this;
 
 		InitializeOpeningScreen();
-
 		InitializeDisplayGameStateScreen();
 
 	}
@@ -347,18 +316,19 @@ namespace Kargono::Panels
 
 		if (!m_EditorGameState)
 		{
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Game State", s_OnOpenGameState, "Create New Game State", s_OnCreateGameState);
-			EditorUI::EditorUIService::GenericPopup(s_CreateGameStatePopupSpec);
-			EditorUI::EditorUIService::SelectOption(s_OpenGameStatePopupSpec);
+			
+			EditorUI::EditorUIService::NewItemScreen("Open Existing Game State", KG_BIND_CLASS_FN(OpenGameState), "Create New Game State", KG_BIND_CLASS_FN(CreateGameState));
+			EditorUI::EditorUIService::GenericPopup(m_CreateGameStatePopupSpec);
+			EditorUI::EditorUIService::SelectOption(m_OpenGameStatePopupSpec);
 		}
 		else
 		{
-			EditorUI::EditorUIService::PanelHeader(s_TagHeader);
-			EditorUI::EditorUIService::GenericPopup(s_DeleteGameStateWarning);
-			EditorUI::EditorUIService::GenericPopup(s_CloseGameStateWarning);
-			EditorUI::EditorUIService::Table(s_FieldsTable);
-			EditorUI::EditorUIService::SelectOption(s_AddFieldPopup);
-			EditorUI::EditorUIService::GenericPopup(s_EditFieldPopup);
+			EditorUI::EditorUIService::PanelHeader(m_TagHeader);
+			EditorUI::EditorUIService::GenericPopup(m_DeleteGameStateWarning);
+			EditorUI::EditorUIService::GenericPopup(m_CloseGameStateWarning);
+			EditorUI::EditorUIService::Table(m_FieldsTable);
+			EditorUI::EditorUIService::SelectOption(m_AddFieldPopup);
+			EditorUI::EditorUIService::GenericPopup(m_EditFieldPopup);
 		}
 
 		EditorUI::EditorUIService::EndWindow();
@@ -371,5 +341,13 @@ namespace Kargono::Panels
 	{
 		m_EditorGameState = nullptr;
 		m_EditorGameStateHandle = Assets::EmptyHandle;
+	}
+	void GameStatePanel::OpenGameState()
+	{
+		m_OpenGameStatePopupSpec.PopupActive = true;
+	}
+	void GameStatePanel::CreateGameState()
+	{
+		m_CreateGameStatePopupSpec.PopupActive = true;
 	}
 }
