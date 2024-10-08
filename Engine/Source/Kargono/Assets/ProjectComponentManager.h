@@ -29,5 +29,6 @@ namespace Kargono::Assets
 		virtual Ref<ECS::ProjectComponent> DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset) override;
 		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) override;
+		virtual void DeleteAssetValidation(AssetHandle assetHandle) override;
 	};
 }

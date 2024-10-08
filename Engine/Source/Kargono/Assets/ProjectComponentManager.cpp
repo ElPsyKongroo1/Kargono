@@ -9,9 +9,30 @@ namespace Kargono::Assets
 {
 	void ProjectComponentManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
 	{
-		// Create Temporary ProjectComponent
+		// Create new project component
 		Ref<ECS::ProjectComponent> newProjectComponent = CreateRef<ECS::ProjectComponent>();
 		newProjectComponent->m_Name = name;
+
+		// Get the buffer slots for all other project components
+		std::set<uint16_t> allBufferSlots{};
+		for (auto& [handle, asset] : GetAssetRegistry())
+		{
+			Ref<ECS::ProjectComponent> component = GetAsset(handle);
+			KG_ASSERT(component);
+			allBufferSlots.insert(component->m_BufferSlot);
+		}
+
+		// Create and save new buffer slot
+		uint16_t newBufferSlot{ 0 };
+		while (true)
+		{
+			if (!allBufferSlots.contains(newBufferSlot))
+			{
+				newProjectComponent->m_BufferSlot = newBufferSlot;
+				break;
+			}
+			newBufferSlot++;
+		}
 
 		// Save into File
 		SerializeAsset(newProjectComponent, assetPath);
@@ -133,5 +154,23 @@ namespace Kargono::Assets
 		Ref<Assets::ProjectComponentMetaData> metadata = CreateRef<Assets::ProjectComponentMetaData>();
 		metadata->Name = metadataNode["Name"].as<std::string>();
 		currentAsset.Data.SpecificFileData = metadata;
+	}
+	void ProjectComponentManager::DeleteAssetValidation(AssetHandle assetHandle)
+	{
+		Ref<ECS::ProjectComponent> deleteComponentRef = GetAsset(assetHandle);
+		KG_ASSERT(deleteComponentRef);
+
+		// Decriment the buffer slot for all other project components that have a higher index
+		for (auto& [handle, asset] : GetAssetRegistry())
+		{
+			Ref<ECS::ProjectComponent> componentRef = GetAsset(handle);
+			KG_ASSERT(componentRef);
+			if (componentRef->m_BufferSlot > deleteComponentRef->m_BufferSlot)
+			{
+				componentRef->m_BufferSlot--;
+			}
+			SaveAsset(handle, componentRef);
+		}
+
 	}
 }

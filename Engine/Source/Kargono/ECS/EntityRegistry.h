@@ -22,4 +22,10 @@ namespace Kargono::ECS
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 		std::vector<ProjectComponentStorage> m_ProjectStorage;
 	};
+
+	class EntityRegistryService
+	{
+	public:
+		static void* GenerateEnTTStorageReference(EntityRegistry& entityRegistry, size_t bufferSize, const std::string& componentName);
+	};
 }

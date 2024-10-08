@@ -2,6 +2,7 @@
 
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/ECS/EngineComponents.h"
+#include "Kargono/ECS/ProjectComponent.h"
 #include "Kargono/ECS/Entity.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Rendering/RenderingService.h"
@@ -50,22 +51,22 @@ namespace Kargono::Scenes
 		// Example of storing a project component
 		using namespace entt::literals;
 
-		//ECS::ProjectComponentStorage newStorage;
-		//auto& value = m_EntityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 8>>("health"_hs);
+		m_EntityRegistry.m_ProjectStorage.resize(Assets::AssetService::GetProjectComponentRegistry().size());
 
-		//namespace Kargono::Utility
-		//{
-		//	/*void* GetComponentStorageBuffer(entt::registry& registry, size_t componentSize, const char* componentName)
-		//	{
-		//		//KG_ASSERT((componentSize & 3) == 0, "Expected component size to be a multiple of 4. Invalid value provided.")
-		//	}*/
-		//}
+		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+		{
+			Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(handle);
+			KG_ASSERT(component);
 
-		/*using namespace entt::literals;
-		std::string abacadabra = "23";
-		int abaca = 23;
-		m_Registry.storage<std::string>(23);
-		auto& position_storage = m_Registry.storage<char[abaca]>(entt::hashed_string::value(abacadabra.c_str()));*/
+			if (component->m_BufferSize == 0)
+			{
+				continue;
+			}
+			ECS::ProjectComponentStorage& newStorage = m_EntityRegistry.m_ProjectStorage.at(component->m_BufferSlot);
+
+			// Create new storage value
+			newStorage.m_EnTTStorageReference = ECS::EntityRegistryService::GenerateEnTTStorageReference(m_EntityRegistry, component->m_BufferSize, component->m_Name);
+		}
 		
 	}
 	Scene::~Scene()
