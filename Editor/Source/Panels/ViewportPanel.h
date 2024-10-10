@@ -9,16 +9,24 @@ namespace Kargono::Panels
 	class ViewportPanel
 	{
 	public:
+		//=========================
+		// Constructor/Destructor
+		//=========================
 		ViewportPanel();
 
+		//=========================
+		// On Event Functions
+		//=========================
 		void OnUpdate(Timestep ts);
-
 		void OnEditorUIRender();
 		void OnInputEvent(Events::Event* e);
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 
-		void InitializeFrameBuffer();
 
+		//=========================
+		// External API
+		//=========================
+		void InitializeFrameBuffer();
 		void ProcessMousePicking();
 		// This function runs the overlay code that displays visualization for physics colliders,
 		//		entity selection, Text/UI, and Camera Frustrums. This private function is called
@@ -27,7 +35,6 @@ namespace Kargono::Panels
 		// This function holds the underlying logic to draw Camera Frustrum visualizations.
 		//		This function is called in OnOverlayRender().
 		void DrawFrustrum(ECS::Entity& entity);
-
 		void DrawWorldAxis();
 
 		// These three functions selectively call the scene functions on m_ActiveScene to render the scene,
@@ -45,6 +52,9 @@ namespace Kargono::Panels
 		//		function below. This function is called in Init().
 		void InitializeOverlayData();
 	public:
+		//=========================
+		// Core Panel Data
+		//=========================
 		Rendering::EditorCamera m_EditorCamera;
 	private:
 		std::string m_PanelName{ "Viewport" };

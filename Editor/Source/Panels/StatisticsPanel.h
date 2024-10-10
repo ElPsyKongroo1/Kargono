@@ -8,11 +8,20 @@ namespace Kargono::Panels
 	class StatisticsPanel
 	{
 	public:
+		//=========================
+		// Constructor/Destructor
+		//=========================
 		StatisticsPanel();
 
+		//=========================
+		// On Event Functions
+		//=========================
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	private:
+		//=========================
+		// Core Panel Data
+		//=========================
 		std::string m_PanelName{ "Statistics" };
 	};
 }
