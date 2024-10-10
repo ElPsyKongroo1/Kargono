@@ -58,16 +58,16 @@ namespace Kargono::Panels
 
 		// Default Full Screen
 		s_DefaultFullscreenSpec.Label = "Default Fullscreen";
-		s_DefaultFullscreenSpec.ConfirmAction = [](bool value)
+		s_DefaultFullscreenSpec.ConfirmAction = [](EditorUI::CheckboxSpec& spec)
 		{
-			Projects::ProjectService::SetActiveIsFullscreen(value);
+			Projects::ProjectService::SetActiveIsFullscreen(spec.CurrentBoolean);
 		};
 
 		// Set Networking Specification
 		s_ToggleNetworkSpec.Label = "Networking";
-		s_ToggleNetworkSpec.ConfirmAction = [](bool value)
+		s_ToggleNetworkSpec.ConfirmAction = [](EditorUI::CheckboxSpec& spec)
 		{
-			Projects::ProjectService::SetActiveAppIsNetworked(value);
+			Projects::ProjectService::SetActiveAppIsNetworked(spec.CurrentBoolean);
 		};
 
 		// Resolution Specification
@@ -526,12 +526,12 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Default Fullscreen
-		s_DefaultFullscreenSpec.ToggleBoolean = Projects::ProjectService::GetActiveIsFullscreen();
+		s_DefaultFullscreenSpec.CurrentBoolean = Projects::ProjectService::GetActiveIsFullscreen();
 		EditorUI::EditorUIService::Checkbox(s_DefaultFullscreenSpec);
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Networking Checkbox
-		s_ToggleNetworkSpec.ToggleBoolean = Projects::ProjectService::GetActiveAppIsNetworked();
+		s_ToggleNetworkSpec.CurrentBoolean = Projects::ProjectService::GetActiveAppIsNetworked();
 		EditorUI::EditorUIService::Checkbox(s_ToggleNetworkSpec);
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 

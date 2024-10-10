@@ -51,7 +51,7 @@ namespace Kargono::Scenes
 		// Example of storing a project component
 		using namespace entt::literals;
 
-		m_EntityRegistry.m_ProjectStorage.resize(Assets::AssetService::GetProjectComponentRegistry().size());
+		m_EntityRegistry.m_ProjectComponentStorage.resize(Assets::AssetService::GetProjectComponentRegistry().size());
 
 		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 		{
@@ -62,10 +62,10 @@ namespace Kargono::Scenes
 			{
 				continue;
 			}
-			ECS::ProjectComponentStorage& newStorage = m_EntityRegistry.m_ProjectStorage.at(component->m_BufferSlot);
+			ECS::ProjectComponentStorage& newStorage = m_EntityRegistry.m_ProjectComponentStorage.at(component->m_BufferSlot);
 
 			// Create new storage value
-			newStorage.m_EnTTStorageReference = ECS::EntityRegistryService::GenerateEnTTStorageReference(m_EntityRegistry, component->m_BufferSize, component->m_Name);
+			ECS::EntityRegistryService::RegisterProjectComponentWithEnTTRegistry(newStorage , m_EntityRegistry, component->m_BufferSize, component->m_Name);
 		}
 		
 	}
@@ -83,7 +83,7 @@ namespace Kargono::Scenes
 
 	ECS::Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
-		ECS::Entity entity = { m_EntityRegistry.m_EnTTRegistry.create(), &m_EntityRegistry.m_EnTTRegistry };
+		ECS::Entity entity = { m_EntityRegistry.m_EnTTRegistry.create(), &m_EntityRegistry };
 		entity.AddComponent<ECS::IDComponent>(uuid);
 		entity.AddComponent<ECS::TransformComponent>();
 		auto& tag = entity.AddComponent<ECS::TagComponent>();
@@ -130,7 +130,7 @@ namespace Kargono::Scenes
 		auto classInstanceView = GetAllEntitiesWith<ECS::ClassInstanceComponent>();
 		for (auto e : classInstanceView)
 		{
-			ECS::Entity entity = { e, &m_EntityRegistry.m_EnTTRegistry };
+			ECS::Entity entity = { e, &m_EntityRegistry };
 			ECS::ClassInstanceComponent& classInstanceComp = entity.GetComponent<ECS::ClassInstanceComponent>();
 			Ref<EntityClass> entityClass = Assets::AssetService::GetEntityClass(classInstanceComp.ClassHandle);
 			KG_ASSERT(entityClass);
@@ -145,7 +145,7 @@ namespace Kargono::Scenes
 		auto view = GetAllEntitiesWith<ECS::ClassInstanceComponent>();
 		for (auto enttID : view)
 		{
-			ECS::Entity entity = { enttID, &m_EntityRegistry.m_EnTTRegistry };
+			ECS::Entity entity = { enttID, &m_EntityRegistry };
 			const auto& classInstanceComp = entity.GetComponent<ECS::ClassInstanceComponent>();
 			KG_ASSERT(classInstanceComp.ClassReference);
 			if (!m_ScriptClassToEntityList.contains(classInstanceComp.ClassReference->GetName()))
@@ -180,7 +180,7 @@ namespace Kargono::Scenes
 		for (auto entity : view)
 		{
 			const ECS::TagComponent& tc = view.get<ECS::TagComponent>(entity);
-			if (tc.Tag == name) { return ECS::Entity{ entity, & m_EntityRegistry.m_EnTTRegistry }; }
+			if (tc.Tag == name) { return ECS::Entity{ entity, & m_EntityRegistry }; }
 		}
 		return {};
 	}
@@ -194,7 +194,7 @@ namespace Kargono::Scenes
 			return {};
 		}
 
-		return { m_EntityRegistry.m_EntityMap.at(uuid), &m_EntityRegistry.m_EnTTRegistry };
+		return { m_EntityRegistry.m_EntityMap.at(uuid), &m_EntityRegistry };
 	}
 
 	ECS::Entity Scene::GetEntityByEnttID(entt::entity enttID)
@@ -202,7 +202,7 @@ namespace Kargono::Scenes
 		// Ensure enttID is valid for this scene's registry
 		if (m_EntityRegistry.m_EnTTRegistry.valid(enttID))
 		{
-			return { enttID, &m_EntityRegistry.m_EnTTRegistry };
+			return { enttID, &m_EntityRegistry };
 		}
 
 		// Return empty entity
@@ -235,7 +235,7 @@ namespace Kargono::Scenes
 			const auto& camera = view.get<ECS::CameraComponent>(entity);
 			if (camera.Primary)
 			{
-				return ECS::Entity{ entity, & m_EntityRegistry.m_EnTTRegistry };
+				return ECS::Entity{ entity, & m_EntityRegistry };
 			}
 		}
 		return {};
@@ -278,7 +278,7 @@ namespace Kargono::Scenes
 		auto classInstanceView = GetAllEntitiesWith<ECS::ClassInstanceComponent>();
 		for (auto e : classInstanceView)
 		{
-			ECS::Entity entity = { e, &m_EntityRegistry.m_EnTTRegistry };
+			ECS::Entity entity = { e, &m_EntityRegistry };
 			ECS::ClassInstanceComponent& classInstanceComp = entity.GetComponent<ECS::ClassInstanceComponent>();
 			Ref<EntityClass> entityClass = classInstanceComp.ClassReference;
 			KG_ASSERT(entityClass);
@@ -393,7 +393,7 @@ namespace Kargono::Scenes
 	{
 		for (auto& [handle, enttID] : s_ActiveScene->m_EntityRegistry.m_EntityMap)
 		{
-			ECS::Entity entity{ enttID, &s_ActiveScene->m_EntityRegistry.m_EnTTRegistry };
+			ECS::Entity entity{ enttID, &s_ActiveScene->m_EntityRegistry };
 			if (entity.HasComponent<ECS::TagComponent>())
 			{
 				ECS::TagComponent& tagComponent = entity.GetComponent<ECS::TagComponent>();

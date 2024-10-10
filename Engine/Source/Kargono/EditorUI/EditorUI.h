@@ -33,6 +33,7 @@ namespace Kargono::EditorUI
 	struct TableSpec;
 	struct TreeSpec;
 	struct InlineButtonSpec;
+	struct EditIntegerSpec;
 	struct EditFloatSpec;
 	struct EditVec2Spec;
 	struct EditVec3Spec;
@@ -125,6 +126,7 @@ namespace Kargono::EditorUI
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
 		static void Checkbox(CheckboxSpec& spec);
 
+		static void EditInteger(EditIntegerSpec& spec);
 		static void EditFloat(EditFloatSpec& spec);
 		static void EditVec2(EditVec2Spec& spec);
 		static void EditVec3(EditVec3Spec& spec);
@@ -339,13 +341,40 @@ namespace Kargono::EditorUI
 	public:
 		std::string Label;
 		WidgetFlags Flags{ Checkbox_LeftLean };
-		bool ToggleBoolean{ false };
-		std::function<void(bool)> ConfirmAction;
+		bool CurrentBoolean{ false };
+		std::function<void(CheckboxSpec&)> ConfirmAction;
+		Ref<void> ProvidedData { nullptr };
 	private:
 		bool Editing{ false };
 		WidgetID WidgetID;
 	private:
 		friend void EditorUIService::Checkbox(CheckboxSpec& spec);
+	};
+
+	enum EditIntegerFlags
+	{
+		EditInteger_None = 0,
+		EditInteger_Indented = BIT(0)
+	};
+
+	struct EditIntegerSpec
+	{
+	public:
+		EditIntegerSpec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label{};
+		WidgetFlags Flags{ EditInteger_None };
+		int32_t CurrentInteger{};
+		std::function<void(EditIntegerSpec&)> ConfirmAction{ nullptr };
+		Ref<void> ProvidedData { nullptr };
+	private:
+		bool Editing{ false };
+		WidgetID WidgetID;
+	private:
+		friend void EditorUIService::EditInteger(EditIntegerSpec& spec);
 	};
 
 	enum EditFloatFlags
@@ -365,7 +394,8 @@ namespace Kargono::EditorUI
 		std::string Label{};
 		WidgetFlags Flags{ EditFloat_None };
 		float CurrentFloat{};
-		std::function<void()> ConfirmAction{ nullptr };
+		std::function<void(EditFloatSpec&)> ConfirmAction{ nullptr };
+		Ref<void> ProvidedData { nullptr };
 	private:
 		bool Editing{ false };
 		WidgetID WidgetID;
@@ -390,7 +420,8 @@ namespace Kargono::EditorUI
 		std::string Label{};
 		WidgetFlags Flags{ EditVec2_None };
 		Math::vec2 CurrentVec2{};
-		std::function<void()> ConfirmAction{ nullptr };
+		std::function<void(EditVec2Spec&)> ConfirmAction{ nullptr };
+		Ref<void> ProvidedData { nullptr };
 	private:
 		bool Editing{ false };
 		WidgetID WidgetID;
@@ -415,7 +446,8 @@ namespace Kargono::EditorUI
 		std::string Label{};
 		WidgetFlags Flags{ EditVec3_None };
 		Math::vec3 CurrentVec3{};
-		std::function<void()> ConfirmAction{ nullptr };
+		std::function<void(EditVec3Spec&)> ConfirmAction{ nullptr };
+		Ref<void> ProvidedData { nullptr };
 	private:
 		bool Editing{ false };
 		WidgetID WidgetID;
@@ -441,7 +473,8 @@ namespace Kargono::EditorUI
 		std::string Label{};
 		WidgetFlags Flags{ EditVec4_None };
 		Math::vec4 CurrentVec4{};
-		std::function<void()> ConfirmAction{ nullptr };
+		std::function<void(EditVec4Spec&)> ConfirmAction{ nullptr };
+		Ref<void> ProvidedData { nullptr };
 	private:
 		bool Editing{ false };
 		WidgetID WidgetID;
@@ -496,8 +529,9 @@ namespace Kargono::EditorUI
 		std::string Label;
 		WidgetFlags Flags{ EditText_None };
 		std::string CurrentOption{};
-		std::function<void()> ConfirmAction;
+		std::function<void(EditTextSpec&)> ConfirmAction;
 		bool StartPopup{ false };
+		Ref<void> ProvidedData { nullptr };
 	private:
 		WidgetID WidgetID;
 	private:

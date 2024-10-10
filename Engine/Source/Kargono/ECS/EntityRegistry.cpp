@@ -1,47 +1,296 @@
 #include "kgpch.h"
 #include "EntityRegistry.h"
 
+namespace Kargono::Utility
+{
+// Generate accessor function definitions for different std::array<> buffer sizes
+#define DataSizeSpecificRegistryAccessorFunctions(bufferSize) \
+static bool CheckEntityExists##bufferSize(void* registryStorage, entt::entity entity) \
+{ \
+	return ((entt::storage<std::array<uint8_t, bufferSize>>*)registryStorage)->contains(entity); \
+} \
+static void* GetProjectComponent##bufferSize(void* registryStorage, entt::entity entity) \
+{ \
+	 return (void*)&((entt::storage<std::array<uint8_t, bufferSize>>*)registryStorage)->get(entity); \
+} \
+static void AddProjectComponent##bufferSize(void* registryStorage, entt::entity entity) \
+{ \
+	 ((entt::storage<std::array<uint8_t, bufferSize>>*)registryStorage)->emplace(entity); \
+} \
+static void RemoveProjectComponent##bufferSize(void* registryStorage, entt::entity entity) \
+{ \
+	 ((entt::storage<std::array<uint8_t, bufferSize>>*)registryStorage)->remove(entity); \
+} 
+
+}
+
 namespace Kargono::ECS
 {
-	void* EntityRegistryService::GenerateEnTTStorageReference(EntityRegistry& entityRegistry, size_t bufferSize, const std::string& componentName)
+	DataSizeSpecificRegistryAccessorFunctions(4)
+	DataSizeSpecificRegistryAccessorFunctions(8)
+	DataSizeSpecificRegistryAccessorFunctions(12)
+	DataSizeSpecificRegistryAccessorFunctions(16)
+	DataSizeSpecificRegistryAccessorFunctions(20)
+	DataSizeSpecificRegistryAccessorFunctions(24)
+	DataSizeSpecificRegistryAccessorFunctions(28)
+	DataSizeSpecificRegistryAccessorFunctions(32)
+	DataSizeSpecificRegistryAccessorFunctions(40)
+	DataSizeSpecificRegistryAccessorFunctions(48)
+	DataSizeSpecificRegistryAccessorFunctions(56)
+	DataSizeSpecificRegistryAccessorFunctions(64)
+	DataSizeSpecificRegistryAccessorFunctions(72)
+	DataSizeSpecificRegistryAccessorFunctions(80)
+	DataSizeSpecificRegistryAccessorFunctions(88)
+	DataSizeSpecificRegistryAccessorFunctions(96)
+	DataSizeSpecificRegistryAccessorFunctions(112)
+	DataSizeSpecificRegistryAccessorFunctions(128)
+	DataSizeSpecificRegistryAccessorFunctions(144)
+	DataSizeSpecificRegistryAccessorFunctions(160)
+	DataSizeSpecificRegistryAccessorFunctions(176)
+	DataSizeSpecificRegistryAccessorFunctions(192)
+	DataSizeSpecificRegistryAccessorFunctions(208)
+	DataSizeSpecificRegistryAccessorFunctions(224)
+	DataSizeSpecificRegistryAccessorFunctions(256)
+	DataSizeSpecificRegistryAccessorFunctions(288)
+	DataSizeSpecificRegistryAccessorFunctions(320)
+	DataSizeSpecificRegistryAccessorFunctions(352)
+	DataSizeSpecificRegistryAccessorFunctions(384)
+	DataSizeSpecificRegistryAccessorFunctions(416)
+	DataSizeSpecificRegistryAccessorFunctions(448)
+	DataSizeSpecificRegistryAccessorFunctions(480)
+	
+
+	void EntityRegistryService::RegisterProjectComponentWithEnTTRegistry(ECS::ProjectComponentStorage& newStorage, EntityRegistry& entityRegistry, size_t bufferSize, const std::string& componentName)
 	{
 		switch (bufferSize)
 		{
-		case 4: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 4>>(entt::hashed_string(componentName.c_str())));
-		case 8: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 8>>(entt::hashed_string(componentName.c_str())));
-		case 12: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 12>>(entt::hashed_string(componentName.c_str())));
-		case 16: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 16>>(entt::hashed_string(componentName.c_str())));
-		case 20: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 20>>(entt::hashed_string(componentName.c_str())));
-		case 24: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 24>>(entt::hashed_string(componentName.c_str())));
-		case 28: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 28>>(entt::hashed_string(componentName.c_str())));
-		case 32: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 32>>(entt::hashed_string(componentName.c_str())));
-		case 40: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 40>>(entt::hashed_string(componentName.c_str())));
-		case 48: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 48>>(entt::hashed_string(componentName.c_str())));
-		case 56: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 56>>(entt::hashed_string(componentName.c_str())));
-		case 64: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 64>>(entt::hashed_string(componentName.c_str())));
-		case 72: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 72>>(entt::hashed_string(componentName.c_str())));
-		case 80: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 80>>(entt::hashed_string(componentName.c_str())));
-		case 88: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 88>>(entt::hashed_string(componentName.c_str())));
-		case 96: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 96>>(entt::hashed_string(componentName.c_str())));
-		case 112: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 112>>(entt::hashed_string(componentName.c_str())));
-		case 128: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 128>>(entt::hashed_string(componentName.c_str())));
-		case 144: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 144>>(entt::hashed_string(componentName.c_str())));
-		case 160: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 160>>(entt::hashed_string(componentName.c_str())));
-		case 176: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 176>>(entt::hashed_string(componentName.c_str())));
-		case 192: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 192>>(entt::hashed_string(componentName.c_str())));
-		case 208: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 208>>(entt::hashed_string(componentName.c_str())));
-		case 224: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 224>>(entt::hashed_string(componentName.c_str())));
-		case 256: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 256>>(entt::hashed_string(componentName.c_str())));
-		case 288: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 288>>(entt::hashed_string(componentName.c_str())));
-		case 320: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 320>>(entt::hashed_string(componentName.c_str())));
-		case 352: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 352>>(entt::hashed_string(componentName.c_str())));
-		case 384: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 384>>(entt::hashed_string(componentName.c_str())));
-		case 416: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 416>>(entt::hashed_string(componentName.c_str())));
-		case 448: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 448>>(entt::hashed_string(componentName.c_str())));
-		case 480: return (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 480>>(entt::hashed_string(componentName.c_str())));
+		case 4: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 4>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists4;
+			newStorage.m_GetProjectComponent = GetProjectComponent4;
+			newStorage.m_AddProjectComponent = AddProjectComponent4;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent4;
+			return;
+		case 8: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 8>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists8;
+			newStorage.m_GetProjectComponent = GetProjectComponent8;
+			newStorage.m_AddProjectComponent = AddProjectComponent8;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent8;
+			return;
+		case 12: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 12>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists12;
+			newStorage.m_GetProjectComponent = GetProjectComponent12;
+			newStorage.m_AddProjectComponent = AddProjectComponent12;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent12;
+			return;
+		case 16: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 16>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists16;
+			newStorage.m_GetProjectComponent = GetProjectComponent16;
+			newStorage.m_AddProjectComponent = AddProjectComponent16;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent16;
+			return;
+		case 20: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 20>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists20;
+			newStorage.m_GetProjectComponent = GetProjectComponent20;
+			newStorage.m_AddProjectComponent = AddProjectComponent20;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent20;
+			return;
+		case 24: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 24>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists24;
+			newStorage.m_GetProjectComponent = GetProjectComponent24;
+			newStorage.m_AddProjectComponent = AddProjectComponent24;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent24;
+			return;
+		case 28: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 28>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists28;
+			newStorage.m_GetProjectComponent = GetProjectComponent28;
+			newStorage.m_AddProjectComponent = AddProjectComponent28;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent28;
+			return;
+		case 32: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 32>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists32;
+			newStorage.m_GetProjectComponent = GetProjectComponent32;
+			newStorage.m_AddProjectComponent = AddProjectComponent32;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent32;
+			return;
+		case 40: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 40>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists40;
+			newStorage.m_GetProjectComponent = GetProjectComponent40;
+			newStorage.m_AddProjectComponent = AddProjectComponent40;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent40;
+			return;
+		case 48: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 48>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists48;
+			newStorage.m_GetProjectComponent = GetProjectComponent48;
+			newStorage.m_AddProjectComponent = AddProjectComponent48;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent48;
+			return;
+		case 56: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 56>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists56;
+			newStorage.m_GetProjectComponent = GetProjectComponent56;
+			newStorage.m_AddProjectComponent = AddProjectComponent56;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent56;
+			return;
+		case 64: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 64>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists64;
+			newStorage.m_GetProjectComponent = GetProjectComponent64;
+			newStorage.m_AddProjectComponent = AddProjectComponent64;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent64;
+			return;
+		case 72: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 72>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists72;
+			newStorage.m_GetProjectComponent = GetProjectComponent72;
+			newStorage.m_AddProjectComponent = AddProjectComponent72;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent72;
+			return;
+		case 80: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 80>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists80;
+			newStorage.m_GetProjectComponent = GetProjectComponent80;
+			newStorage.m_AddProjectComponent = AddProjectComponent80;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent80;
+			return;
+		case 88: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 88>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists88;
+			newStorage.m_GetProjectComponent = GetProjectComponent88;
+			newStorage.m_AddProjectComponent = AddProjectComponent88;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent88;
+			return;
+		case 96: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 96>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists96;
+			newStorage.m_GetProjectComponent = GetProjectComponent96;
+			newStorage.m_AddProjectComponent = AddProjectComponent96;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent96;
+			return;
+		case 112: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 112>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists112;
+			newStorage.m_GetProjectComponent = GetProjectComponent112;
+			newStorage.m_AddProjectComponent = AddProjectComponent112;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent112;
+			return;
+		case 128: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 128>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists128;
+			newStorage.m_GetProjectComponent = GetProjectComponent128;
+			newStorage.m_AddProjectComponent = AddProjectComponent128;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent128;
+			return;
+		case 144: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 144>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists144;
+			newStorage.m_GetProjectComponent = GetProjectComponent144;
+			newStorage.m_AddProjectComponent = AddProjectComponent144;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent144;
+			return;
+		case 160: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 160>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists160;
+			newStorage.m_GetProjectComponent = GetProjectComponent160;
+			newStorage.m_AddProjectComponent = AddProjectComponent160;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent160;
+			return;
+		case 176: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 176>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists176;
+			newStorage.m_GetProjectComponent = GetProjectComponent176;
+			newStorage.m_AddProjectComponent = AddProjectComponent176;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent176;
+			return;
+		case 192: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 192>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists192;
+			newStorage.m_GetProjectComponent = GetProjectComponent192;
+			newStorage.m_AddProjectComponent = AddProjectComponent192;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent192;
+			return;
+		case 208: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 208>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists208;
+			newStorage.m_GetProjectComponent = GetProjectComponent208;
+			newStorage.m_AddProjectComponent = AddProjectComponent208;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent208;
+			return;
+		case 224: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 224>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists224;
+			newStorage.m_GetProjectComponent = GetProjectComponent224;
+			newStorage.m_AddProjectComponent = AddProjectComponent224;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent224;
+			return;
+		case 256: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 256>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists256;
+			newStorage.m_GetProjectComponent = GetProjectComponent256;
+			newStorage.m_AddProjectComponent = AddProjectComponent256;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent256;
+			return;
+		case 288: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 288>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists288;
+			newStorage.m_GetProjectComponent = GetProjectComponent288;
+			newStorage.m_AddProjectComponent = AddProjectComponent288;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent288;
+			return;
+		case 320: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 320>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists320;
+			newStorage.m_GetProjectComponent = GetProjectComponent320;
+			newStorage.m_AddProjectComponent = AddProjectComponent320;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent320;
+			return;
+		case 352: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 352>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists352;
+			newStorage.m_GetProjectComponent = GetProjectComponent352;
+			newStorage.m_AddProjectComponent = AddProjectComponent352;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent352;
+			return;
+		case 384: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 384>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists384;
+			newStorage.m_GetProjectComponent = GetProjectComponent384;
+			newStorage.m_AddProjectComponent = AddProjectComponent384;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent384;
+			return;
+		case 416: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 416>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists416;
+			newStorage.m_GetProjectComponent = GetProjectComponent416;
+			newStorage.m_AddProjectComponent = AddProjectComponent416;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent416;
+			return;
+		case 448: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 448>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists448;
+			newStorage.m_GetProjectComponent = GetProjectComponent448;
+			newStorage.m_AddProjectComponent = AddProjectComponent448;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent448;
+			return;
+		case 480: 
+			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 480>>(entt::hashed_string(componentName.c_str())));
+			newStorage.m_CheckEntityExists = CheckEntityExists480;
+			newStorage.m_GetProjectComponent = GetProjectComponent480;
+			newStorage.m_AddProjectComponent = AddProjectComponent480;
+			newStorage.m_RemoveProjectComponent = RemoveProjectComponent480;
+			return;
 		default:
 			KG_ERROR("Unsupported buffer size provided when attempting to generate a new EnTT storage reference");
-			return nullptr;
+			return;
 		}
 	}
 }

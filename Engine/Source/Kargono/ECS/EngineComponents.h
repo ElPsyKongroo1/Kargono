@@ -245,7 +245,8 @@ namespace Kargono::ECS
 		ClassInstance,
 		Shape,
 		Network,
-		AIState
+		AIState,
+		ProjectComponent
 	};
 
 	template<typename... Components>

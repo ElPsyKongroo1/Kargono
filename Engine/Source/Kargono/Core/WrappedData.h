@@ -562,6 +562,70 @@ namespace Kargono
 			return WrappedVarType::None;
 		}
 
+		inline void InitializeDataForWrappedVarBuffer(WrappedVarType type, void* buffer)
+		{
+			switch (type)
+			{
+			case WrappedVarType::Integer32:
+			case WrappedVarType::UInteger16:
+			case WrappedVarType::UInteger32:
+			case WrappedVarType::UInteger64:
+				*(int32_t*)buffer = 0;
+				return;
+			case WrappedVarType::Vector3:
+				*(Math::vec3*)buffer = { 0.0f, 0.0f, 0.0f };
+				return;
+			case WrappedVarType::String:
+				*(std::string*)buffer = std::string();
+				return;
+			case WrappedVarType::Bool:
+				*(bool*)buffer = false;
+				return;
+			case WrappedVarType::Float:
+				*(float*)buffer = 0.0f;
+				return;
+			case WrappedVarType::Void:
+			case WrappedVarType::None:
+				KG_ERROR("Invalid type provided when setting data of wrapped variable type");
+			}
+			KG_ERROR("Unknown Type of WrappedVariableType.");
+		}
+
+		inline void SetDataForWrappedVarBuffer(WrappedVarType type, void* source, void* destination)
+		{
+			switch (type)
+			{
+			case WrappedVarType::Integer32: 
+				*(int32_t*)destination = *(int32_t*)source;
+				return;
+			case WrappedVarType::UInteger16:
+				*(uint16_t*)destination = *(uint16_t*)source;
+				return;
+			case WrappedVarType::UInteger32: 
+				*(uint32_t*)destination = *(uint32_t*)source;
+				return;
+			case WrappedVarType::UInteger64:
+				*(uint64_t*)destination = *(uint64_t*)source;
+				return;
+			case WrappedVarType::Vector3:
+				*(Math::vec3*)destination = *(Math::vec3*)source;
+				return;
+			case WrappedVarType::String:
+				*(std::string*)destination = *(std::string*)source;
+				return;
+			case WrappedVarType::Bool:
+				*(bool*)destination = *(bool*)source;
+				return;
+			case WrappedVarType::Float:
+				*(float*)destination = *(float*)source;
+				return;
+			case WrappedVarType::Void:
+			case WrappedVarType::None:
+				KG_ERROR("Invalid type provided when setting data of wrapped variable type");
+			}
+			KG_ERROR("Unknown Type of WrappedVariableType.");
+		}
+
 		inline bool FillBufferWithWrappedVarString(Ref<WrappedVariable> variable, Buffer buffer)
 		{
 			buffer.SetDataToByte(0);

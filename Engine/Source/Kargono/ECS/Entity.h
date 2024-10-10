@@ -2,6 +2,7 @@
 
 #include "Kargono/Core/UUID.h"
 #include "Kargono/ECS/EngineComponents.h"
+#include "Kargono/ECS/EntityRegistry.h"
 
 #include "API/EntityComponentSystem/enttAPI.h"
 
@@ -11,21 +12,23 @@ namespace Kargono::ECS
 	{
 	public:
 		Entity() = default;
-		Entity(entt::entity handle, entt::registry* registry);
+		Entity(entt::entity handle, EntityRegistry* registry);
 		Entity(const Entity& other) = default;
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
 			KG_ASSERT(!HasComponent<T>(), "Entity already has component!");
-			T& component = m_Registry->emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			T& component = m_Registry->m_EnTTRegistry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 			return component;
 		}
+
+		void AddProjectComponent(Assets::AssetHandle projectComponentHandle);
 
 		template<typename T, typename... Args>
 		T& AddOrReplaceComponent(Args&&... args)
 		{
-			T& component = m_Registry->emplace_or_replace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			T& component = m_Registry->m_EnTTRegistry.emplace_or_replace<T>(m_EntityHandle, std::forward<Args>(args)...);
 			return component;
 		}
 
@@ -34,21 +37,27 @@ namespace Kargono::ECS
 		{
 			KG_ASSERT(HasComponent<T>(), "Entity does not have the component!")
 
-			return m_Registry->get<T>(m_EntityHandle);
+			return m_Registry->m_EnTTRegistry.get<T>(m_EntityHandle);
 		}
+
+		void* GetProjectComponent(Assets::AssetHandle projectComponentHandle);
 
 		template<typename T>
 		bool HasComponent()
 		{
-			return m_Registry->all_of<T>(m_EntityHandle);
+			return m_Registry->m_EnTTRegistry.all_of<T>(m_EntityHandle);
 		}
+
+		bool HasProjectComponent(Assets::AssetHandle projectComponentHandle);
 
 		template<typename T>
 		void RemoveComponent()
 		{
 			KG_ASSERT(HasComponent<T>(), "Entity does not have the component!");
-			m_Registry->remove<T>(m_EntityHandle);
+			m_Registry->m_EnTTRegistry.remove<T>(m_EntityHandle);
 		}
+
+		void RemoveProjectComponent(Assets::AssetHandle projectComponentHandle);
 
 		operator bool() const { return m_EntityHandle != entt::null; }
 		operator entt::entity() const { return m_EntityHandle; }
@@ -69,7 +78,7 @@ namespace Kargono::ECS
 		}
 	private:
 		entt::entity m_EntityHandle {entt::null};
-		entt::registry* m_Registry { nullptr };
+		EntityRegistry* m_Registry { nullptr };
 	};
 }
 

@@ -21,14 +21,14 @@ namespace Kargono
 		};
 		s_ExportProjectSpec.ConfirmAction = [&]()
 		{
-			Projects::ProjectService::ExportProject(s_ExportProjectLocation.CurrentOption, s_ExportProjectServer.ToggleBoolean);
+			Projects::ProjectService::ExportProject(s_ExportProjectLocation.CurrentOption, s_ExportProjectServer.CurrentBoolean);
 		};
 
 		s_ExportProjectLocation.Label = "Export Location";
 		s_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
 
 		s_ExportProjectServer.Label = "Export Server";
-		s_ExportProjectServer.ToggleBoolean = true;
+		s_ExportProjectServer.CurrentBoolean = true;
 	}
 
 	EditorApp* EditorApp::s_EditorApp = nullptr;
@@ -48,7 +48,6 @@ namespace Kargono
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
 
-		m_SceneEditorPanel = CreateScope<Panels::SceneEditorPanel>();
 
 		m_EditorScene = CreateRef<Scenes::Scene>();
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
@@ -58,6 +57,7 @@ namespace Kargono
 
 		EditorUI::EditorUIService::Init();
 
+		m_SceneEditorPanel = CreateScope<Panels::SceneEditorPanel>();
 		m_AssetViewerPanel = CreateScope<Panels::AssetViewerPanel>();
 		m_LogPanel = CreateScope<Panels::LogPanel>();
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();

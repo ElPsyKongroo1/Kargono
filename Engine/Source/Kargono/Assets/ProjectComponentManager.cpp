@@ -160,6 +160,8 @@ namespace Kargono::Assets
 		Ref<ECS::ProjectComponent> deleteComponentRef = GetAsset(assetHandle);
 		KG_ASSERT(deleteComponentRef);
 
+		// Remove component from all scenes
+
 		// Decriment the buffer slot for all other project components that have a higher index
 		for (auto& [handle, asset] : GetAssetRegistry())
 		{

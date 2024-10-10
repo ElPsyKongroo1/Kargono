@@ -3,11 +3,87 @@
 #include "Kargono/Assets/AssetService.h"
 #include "Kargono/Assets/SceneManager.h"
 
+#include "Kargono/ECS/ProjectComponent.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/ECS/Entity.h"
 
 namespace Kargono::Utility
 {
+
+	static void SerializeWrappedVarType(YAML::Emitter& out, WrappedVarType type, const std::string& name, void* dataSource)
+	{
+		switch (type)
+		{
+		case WrappedVarType::Integer32: 
+			out << YAML::Key << name << YAML::Value << *(int32_t*)dataSource;
+			return;
+		case WrappedVarType::UInteger16:
+			out << YAML::Key << name << YAML::Value << *(uint16_t*)dataSource;
+			return;
+		case WrappedVarType::UInteger32:
+			out << YAML::Key << name << YAML::Value << *(uint32_t*)dataSource;
+			return;
+		case WrappedVarType::UInteger64:
+			out << YAML::Key << name << YAML::Value << *(uint64_t*)dataSource;
+			return;
+		case WrappedVarType::Vector3:
+			out << YAML::Key << name << YAML::Value << *(Math::vec3*)dataSource;
+			return;
+		case WrappedVarType::String:
+			out << YAML::Key << name << YAML::Value << *(std::string*)dataSource;
+			return;
+		case WrappedVarType::Bool:
+			out << YAML::Key << name << YAML::Value << *(bool*)dataSource;
+			return;
+		case WrappedVarType::Float:
+			out << YAML::Key << name << YAML::Value << *(float*)dataSource;
+			return;
+		case WrappedVarType::None:
+		case WrappedVarType::Void:
+			KG_ERROR("Invalid type provided while serializing data");
+			return;
+		}
+		KG_ERROR("Unknown Type of WrappedVariableType.");
+		return;
+	}
+
+	static void DeserializeWrappedVarType(YAML::Node& componentNode, WrappedVarType type, const std::string& name, void* destination)
+	{
+		switch (type)
+		{
+		case WrappedVarType::Integer32:
+			*(int32_t*)destination = componentNode[name].as<int32_t>();
+			return;
+		case WrappedVarType::UInteger16:
+			*(uint16_t*)destination = (uint16_t)componentNode[name].as<uint32_t>();
+			return;
+		case WrappedVarType::UInteger32:
+			*(uint32_t*)destination = componentNode[name].as<uint32_t>();
+			return;
+		case WrappedVarType::UInteger64:
+			*(uint64_t*)destination = componentNode[name].as<uint64_t>();
+			return;
+		case WrappedVarType::Vector3:
+			*(Math::vec3*)destination = componentNode[name].as<Math::vec3>();
+			return;
+		case WrappedVarType::String:
+			*(std::string*)destination = componentNode[name].as<std::string>();
+			return;
+		case WrappedVarType::Bool:
+			*(bool*)destination = componentNode[name].as<bool>();
+			return;
+		case WrappedVarType::Float:
+			*(float*)destination = componentNode[name].as<float>();
+			return;
+		case WrappedVarType::None:
+		case WrappedVarType::Void:
+			KG_ERROR("Invalid type provided while serializing data");
+			return;
+		}
+		KG_ERROR("Unknown Type of WrappedVariableType.");
+		return;
+	}
+
 	static bool SerializeEntity(YAML::Emitter& out, ECS::Entity entity)
 	{
 		KG_ASSERT(entity.HasComponent<ECS::IDComponent>(), "Entity does not have a component");
@@ -186,6 +262,28 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
+		// Handle all project components
+		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+		{
+			if (!entity.HasProjectComponent(handle))
+			{
+				continue;
+			}
+			Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(handle);
+			uint8_t* componentRef = (uint8_t*)entity.GetProjectComponent(handle);
+
+			out << YAML::Key << projectComponent->m_Name + "Component";
+			out << YAML::BeginMap; // Component Map
+			for (size_t iteration{ 0 }; iteration < projectComponent->m_DataLocations.size(); iteration++)
+			{
+				SerializeWrappedVarType(out, 
+					projectComponent->m_DataTypes.at(iteration), 
+					projectComponent->m_DataNames.at(iteration), 
+					componentRef + projectComponent->m_DataLocations.at(iteration));
+			}
+			out << YAML::EndMap; // Component Map
+		}
+
 
 		out << YAML::EndMap; // Entity
 		return true;
@@ -220,7 +318,7 @@ namespace Kargono::Assets
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 		assetReference->m_EntityRegistry.m_EnTTRegistry.each([&](auto entityID)
 		{
-			ECS::Entity entity = { entityID, &assetReference->m_EntityRegistry.m_EnTTRegistry };
+			ECS::Entity entity = { entityID, &assetReference->m_EntityRegistry };
 			if (!entity) { return; }
 
 			bool success = Utility::SerializeEntity(out, entity);
@@ -427,6 +525,34 @@ namespace Kargono::Assets
 					cc2d.Friction = circleCollider2DComponent["Friction"].as<float>();
 					cc2d.Restitution = circleCollider2DComponent["Restitution"].as<float>();
 					cc2d.RestitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
+				}
+
+				// Handle all project components
+				for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+				{
+					Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(handle);
+					KG_ASSERT(projectComponent);
+
+					YAML::Node projectComponentNode = entity[projectComponent->m_Name + "Component"];
+					if (!projectComponentNode)
+					{
+						continue;
+					}
+					// Create and get project component
+					if (!deserializedEntity.HasProjectComponent(handle))
+					{
+						deserializedEntity.AddProjectComponent(handle);
+					}
+					uint8_t* componentRef = (uint8_t*)deserializedEntity.GetProjectComponent(handle);
+
+					// Load in component data from disk
+					for (size_t iteration{ 0 }; iteration < projectComponent->m_DataLocations.size(); iteration++)
+					{
+						Utility::DeserializeWrappedVarType(projectComponentNode,
+							projectComponent->m_DataTypes.at(iteration),
+							projectComponent->m_DataNames.at(iteration),
+							componentRef + projectComponent->m_DataLocations.at(iteration));
+					}
 				}
 			}
 		}

@@ -2314,6 +2314,19 @@ namespace Kargono::Scripting
 				PrimitiveType tokenPrimitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(queryToken.Value);
 				if (queryPrimitiveType.AcceptableLiteral == tokenPrimitiveType.AcceptableLiteral)
 				{
+					// Ensure types match if both do not accept a literal
+					if (queryPrimitiveType.AcceptableLiteral == ScriptTokenType::None)
+					{
+						if (queryPrimitiveType.Name == tokenPrimitiveType.Name)
+						{
+							return true;
+						}
+						else
+						{
+							return false;
+						}
+					}
+					// Otherwise, just return as valid
 					return true;
 				}
 			}

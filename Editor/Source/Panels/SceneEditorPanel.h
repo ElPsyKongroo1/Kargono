@@ -2,8 +2,25 @@
 
 #include "Kargono.h"
 
+#include <unordered_map>
+#include <variant>
+
 namespace Kargono::Panels
 {
+	struct ProjectComponentWidgetData
+	{
+		EditorUI::CollapsingHeaderSpec m_Header;
+		std::vector<std::variant<EditorUI::EditFloatSpec, EditorUI::EditVec4Spec,
+			EditorUI::EditVec2Spec, EditorUI::EditVec3Spec, EditorUI::EditTextSpec,
+			EditorUI::CheckboxSpec, EditorUI::EditIntegerSpec>> m_Fields;
+	};
+
+	struct SceneEditorTreeEntryData
+	{
+		ECS::ComponentType m_ComponentType{ ECS::ComponentType::None };
+		Assets::AssetHandle m_ProjectComponentHandle{ Assets::EmptyHandle };
+	};
+
 	class SceneEditorPanel
 	{
 	public:
@@ -24,7 +41,7 @@ namespace Kargono::Panels
 		void InitializeCircleCollider2DComponent();
 		void InitializeCameraComponent();
 		void InitializeShapeComponent();
-		void CreateSceneEntityInTree(ECS::Entity entity);
+		void InitializeProjectComponents();
 	public:
 		//=========================
 		// On Event Functions
@@ -43,6 +60,18 @@ namespace Kargono::Panels
 		{
 			m_DisplayedComponent = type;
 		}
+		void SetDisplayedProjectComponent(Assets::AssetHandle handle)
+		{
+			m_DisplayedProjectComponentHandle = handle;
+		}
+		ECS::ComponentType GetDisplayedComponent()
+		{
+			return m_DisplayedComponent;
+		}
+		Assets::AssetHandle GetDisplayedProjectComponent()
+		{
+			return m_DisplayedProjectComponentHandle;
+		}
 	private:
 		//=========================
 		// Internal Draw Functions
@@ -57,21 +86,30 @@ namespace Kargono::Panels
 		void DrawCircleCollider2DComponent(ECS::Entity entity);
 		void DrawCameraComponent(ECS::Entity entity);
 		void DrawShapeComponent(ECS::Entity entity);
+		void DrawProjectComponent(ECS::Entity entity, Assets::AssetHandle handle);
+
 		//=========================
-		// Other Supporting Functions
+		// Shape Component Supporting Functions
 		//=========================
-		void UpdateComponent();
-		void AddColorSection();
-		void AddTextureSection();
-		void AddCircleShapeSection();
-		void AddProjectionMatrixSection();
-		void AddEntityIDSection();
+		void UpdateShapeComponent();
+		void DrawShapeComponentColor();
+		void DrawShapeComponentTexture();
+		void DrawShapeComponentCircle();
+		void DrawShapeComponentProjection();
+		void DrawShapeComponentEntityID();
+
+		//=========================
+		// Scene Hierarchy Supporting Functions
+		//=========================
+		void CreateSceneEntityInTree(ECS::Entity entity);
 	private:
 		//=========================
 		// Core Panel Data
 		//=========================
 		std::string m_PanelName{"Scene Editor"};
 		ECS::ComponentType m_DisplayedComponent{ECS::ComponentType::None };
+		Assets::AssetHandle m_DisplayedProjectComponentHandle {Assets::EmptyHandle};
+		std::unordered_map<Assets::AssetHandle, ProjectComponentWidgetData> m_AllProjectComponents{};
 
 	private:
 		//=========================

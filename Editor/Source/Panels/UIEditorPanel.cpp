@@ -134,7 +134,7 @@ namespace Kargono::Panels
 			};
 			EditorUI::EditorUIService::SelectOption(s_WindowDefaultWidget);
 
-			s_WindowDisplay.ToggleBoolean = m_ActiveWindow->GetWindowDisplayed();
+			s_WindowDisplay.CurrentBoolean = m_ActiveWindow->GetWindowDisplayed();
 			EditorUI::EditorUIService::Checkbox(s_WindowDisplay);
 
 			s_WindowLocation.CurrentVec3 = m_ActiveWindow->ScreenPosition;
@@ -186,7 +186,7 @@ namespace Kargono::Panels
 				s_WidgetTextColor.CurrentVec4 = activeTextWidget.TextColor;
 				EditorUI::EditorUIService::EditVec4(s_WidgetTextColor);
 
-				s_WidgetCentered.ToggleBoolean = activeTextWidget.TextCentered;
+				s_WidgetCentered.CurrentBoolean = activeTextWidget.TextCentered;
 				EditorUI::EditorUIService::Checkbox(s_WidgetCentered);
 			}
 			
@@ -412,7 +412,7 @@ namespace Kargono::Panels
 
 		s_WindowTag.Label = "Tag";
 		s_WindowTag.Flags |= EditorUI::EditText_Indented;
-		s_WindowTag.ConfirmAction = [&]()
+		s_WindowTag.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
@@ -482,20 +482,20 @@ namespace Kargono::Panels
 
 		s_WindowDisplay.Label = "Display Window";
 		s_WindowDisplay.Flags |= EditorUI::Checkbox_Indented;
-		s_WindowDisplay.ConfirmAction = [&](bool value) 
+		s_WindowDisplay.ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
 				KG_WARN("No valid window active when trying to update window display option");
 				return;
 			}
-			value ? m_ActiveWindow->DisplayWindow() : m_ActiveWindow->HideWindow();
+			spec.CurrentBoolean ? m_ActiveWindow->DisplayWindow() : m_ActiveWindow->HideWindow();
 			s_MainHeader.EditColorActive = true;
 		};
 
 		s_WindowLocation.Label = "Screen Location";
 		s_WindowLocation.Flags |= EditorUI::EditVec3_Indented;
-		s_WindowLocation.ConfirmAction = [&]()
+		s_WindowLocation.ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
@@ -508,7 +508,7 @@ namespace Kargono::Panels
 
 		s_WindowSize.Label = "Screen Size";
 		s_WindowSize.Flags |= EditorUI::EditVec2_Indented;
-		s_WindowSize.ConfirmAction = [&]()
+		s_WindowSize.ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
@@ -521,7 +521,7 @@ namespace Kargono::Panels
 
 		s_WindowBackgroundColor.Label = "Background Color";
 		s_WindowBackgroundColor.Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
-		s_WindowBackgroundColor.ConfirmAction = [&]()
+		s_WindowBackgroundColor.ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
@@ -540,7 +540,7 @@ namespace Kargono::Panels
 
 		s_WidgetTag.Label = "Tag";
 		s_WidgetTag.Flags |= EditorUI::EditText_Indented;
-		s_WidgetTag.ConfirmAction = [&]()
+		s_WidgetTag.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			if (!m_ActiveWidget)
 			{
@@ -568,7 +568,7 @@ namespace Kargono::Panels
 
 		s_WidgetLocation.Label = "Window Location";
 		s_WidgetLocation.Flags |= EditorUI::EditVec2_Indented;
-		s_WidgetLocation.ConfirmAction = [&]()
+		s_WidgetLocation.ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
@@ -582,7 +582,7 @@ namespace Kargono::Panels
 
 		s_WidgetSize.Label = "Size";
 		s_WidgetSize.Flags |= EditorUI::EditVec2_Indented;
-		s_WidgetSize.ConfirmAction = [&]()
+		s_WidgetSize.ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
@@ -596,7 +596,7 @@ namespace Kargono::Panels
 
 		s_WidgetBackgroundColor.Label = "Background Color";
 		s_WidgetBackgroundColor.Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
-		s_WidgetBackgroundColor.ConfirmAction = [&]()
+		s_WidgetBackgroundColor.ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
@@ -657,7 +657,7 @@ namespace Kargono::Panels
 
 		s_WidgetText.Label = "Text";
 		s_WidgetText.Flags |= EditorUI::EditText_Indented;
-		s_WidgetText.ConfirmAction = [&]()
+		s_WidgetText.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			if (m_ActiveWidget->WidgetType != RuntimeUI::WidgetTypes::TextWidget)
 			{
@@ -678,7 +678,7 @@ namespace Kargono::Panels
 
 		s_WidgetTextSize.Label = "Text Size";
 		s_WidgetTextSize.Flags |= EditorUI::EditFloat_Indented;
-		s_WidgetTextSize.ConfirmAction = [&]()
+		s_WidgetTextSize.ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
 			if (m_ActiveWidget->WidgetType != RuntimeUI::WidgetTypes::TextWidget)
 			{
@@ -699,7 +699,7 @@ namespace Kargono::Panels
 
 		s_WidgetTextColor.Label = "Text Color";
 		s_WidgetTextColor.Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
-		s_WidgetTextColor.ConfirmAction = [&]()
+		s_WidgetTextColor.ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
 		{
 			if (m_ActiveWidget->WidgetType != RuntimeUI::WidgetTypes::TextWidget)
 			{
@@ -720,7 +720,7 @@ namespace Kargono::Panels
 
 		s_WidgetCentered.Label = "Centered";
 		s_WidgetCentered.Flags |= EditorUI::Checkbox_Indented;
-		s_WidgetCentered.ConfirmAction = [&](bool value)
+		s_WidgetCentered.ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
 		{
 			if (m_ActiveWidget->WidgetType != RuntimeUI::WidgetTypes::TextWidget)
 			{
@@ -735,7 +735,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			textWidget.TextCentered = value;
+			textWidget.TextCentered = spec.CurrentBoolean;
 			s_MainHeader.EditColorActive = true;
 		};
 	}

@@ -1198,25 +1198,25 @@ namespace Kargono::EditorUI
 			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
 
-				if (spec.ToggleBoolean)
+				if (spec.CurrentBoolean)
 				{
-					spec.ToggleBoolean = false;
+					spec.CurrentBoolean = false;
 					if (!spec.ConfirmAction)
 					{
 						return;
 					}
-					spec.ConfirmAction(spec.ToggleBoolean);
+					spec.ConfirmAction(spec);
 				}
 				else
 				{
-					spec.ToggleBoolean = true;
+					spec.CurrentBoolean = true;
 					if (!spec.ConfirmAction)
 					{
 						return;
 					}
-					spec.ConfirmAction(spec.ToggleBoolean);
+					spec.ConfirmAction(spec);
 				}
-			}, s_SmallCheckboxButton, spec.ToggleBoolean, s_HighlightColor1);
+			}, s_SmallCheckboxButton, spec.CurrentBoolean, s_HighlightColor1);
 			ImGui::PopStyleColor(2);
 		}
 		else
@@ -1226,7 +1226,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
 			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), nullptr,
 			s_SmallCheckboxDisabledButton,
-			spec.ToggleBoolean, s_SecondaryTextColor);
+			spec.CurrentBoolean, s_SecondaryTextColor);
 			ImGui::PopStyleColor(3);
 		}
 
@@ -1237,6 +1237,80 @@ namespace Kargono::EditorUI
 		},
 		EditorUIService::s_SmallEditButton,
 		spec.Editing, spec.Editing ? s_PrimaryTextColor : s_DisabledColor);
+	}
+
+	void EditorUIService::EditInteger(EditIntegerSpec& spec)
+	{
+		// Local Variables
+		std::string id = "##" + std::to_string(spec.WidgetID);
+		uint32_t widgetCount{ 0 };
+
+		// Draw background
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+
+
+		// Display Item
+		if (spec.Flags & EditInteger_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
+
+
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(),
+			spec.Flags & EditInteger_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
+		TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
+
+		ImGui::SameLine(s_SecondaryTextPosOne);
+
+		if (spec.Editing)
+		{
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			// x value
+			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor1);
+			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(spec.WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.CurrentInteger), 1.0f,
+				0, 0,
+				"%d"))
+			{
+				if (spec.ConfirmAction)
+				{
+					spec.ConfirmAction(spec);
+				}
+			}
+			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(s_HighlightColor1, "X-Value");
+				ImGui::EndTooltip();
+			}
+			ImGui::PopStyleVar();
+
+		}
+		else
+		{
+			float yPosition = ImGui::GetCursorPosY();
+			ImGui::SetCursorPos({ s_SecondaryTextPosOne, yPosition });
+			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
+			int32_t integerPosition = ImGui::FindPositionAfterLength(std::to_string(spec.CurrentInteger).c_str(), s_SecondaryTextSmallWidth);
+			TruncateText(std::to_string(spec.CurrentInteger),
+				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
+			ImGui::PopStyleColor();
+		}
+
+		ImGui::SameLine();
+		CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				Utility::Operations::ToggleBoolean(spec.Editing);
+			},
+			EditorUIService::s_SmallEditButton,
+			spec.Editing, spec.Editing ? s_PrimaryTextColor : s_DisabledColor);
 	}
 
 	void EditorUIService::EditFloat(EditFloatSpec& spec)
@@ -1280,7 +1354,7 @@ namespace Kargono::EditorUI
 			{
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction();
+					spec.ConfirmAction(spec);
 				}
 			}
 			ImGui::PopStyleColor();
@@ -1356,7 +1430,7 @@ namespace Kargono::EditorUI
 			{
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction();
+					spec.ConfirmAction(spec);
 				}
 			}
 			ImGui::PopStyleColor();
@@ -1377,7 +1451,7 @@ namespace Kargono::EditorUI
 			{
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction();
+					spec.ConfirmAction(spec);
 				}
 			}
 			ImGui::PopStyleColor();
@@ -1461,7 +1535,7 @@ namespace Kargono::EditorUI
 			{
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction();
+					spec.ConfirmAction(spec);
 				}
 			}
 			ImGui::PopStyleColor();
@@ -1482,7 +1556,7 @@ namespace Kargono::EditorUI
 			{
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction();
+					spec.ConfirmAction(spec);
 				}
 			}
 			ImGui::PopStyleColor();
@@ -1503,7 +1577,7 @@ namespace Kargono::EditorUI
 			{
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction();
+					spec.ConfirmAction(spec);
 				}
 			}
 			ImGui::PopStyleColor();
@@ -1595,7 +1669,7 @@ namespace Kargono::EditorUI
 			{
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction();
+					spec.ConfirmAction(spec);
 				}
 			}
 			ImGui::PopStyleColor();
@@ -1617,7 +1691,7 @@ namespace Kargono::EditorUI
 			{
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction();
+					spec.ConfirmAction(spec);
 				}
 			}
 			ImGui::PopStyleColor();
@@ -1639,7 +1713,7 @@ namespace Kargono::EditorUI
 			{
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction();
+					spec.ConfirmAction(spec);
 				}
 			}
 			ImGui::PopStyleColor();
@@ -1661,7 +1735,7 @@ namespace Kargono::EditorUI
 			{
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction();
+					spec.ConfirmAction(spec);
 				}
 			}
 			ImGui::PopStyleColor();
@@ -2247,7 +2321,7 @@ namespace Kargono::EditorUI
 				spec.CurrentOption = std::string(stringBuffer);
 				if (spec.ConfirmAction)
 				{
-					spec.ConfirmAction();
+					spec.ConfirmAction(spec);
 				}
 				memset(stringBuffer, 0, sizeof(stringBuffer));
 				ImGui::CloseCurrentPopup();

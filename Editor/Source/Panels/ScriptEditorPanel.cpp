@@ -489,7 +489,7 @@ namespace Kargono::Panels
 
 		s_CreateGroupLabelPopup.Label = "Create New Group Label";
 		s_CreateGroupLabelPopup.Flags |= EditorUI::EditText_PopupOnly;
-		s_CreateGroupLabelPopup.ConfirmAction = [&]()
+		s_CreateGroupLabelPopup.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			// Create new group label
 			bool success = Assets::AssetService::AddScriptSectionLabel(s_CreateGroupLabelPopup.CurrentOption);

@@ -12,6 +12,7 @@ namespace Kargono::Panels
 
 	static EditorUI::EditTextSpec s_TestText {};
 	static EditorUI::EditFloatSpec s_TimerTime{};
+	static EditorUI::EditIntegerSpec s_RandomTestInteger{};
 
 	TestingPanel::TestingPanel()
 	{
@@ -24,6 +25,9 @@ namespace Kargono::Panels
 
 		s_TimerTime.Label = "Timer Time";
 		s_TimerTime.CurrentFloat = 3.0f;
+
+		s_RandomTestInteger.Label = "Intenger Time";
+		s_RandomTestInteger.CurrentInteger = 5;
 	}
 	void TestingPanel::OnEditorUIRender()
 	{
@@ -51,7 +55,7 @@ namespace Kargono::Panels
 		}
 
 		EditorUI::EditorUIService::EditFloat(s_TimerTime);
-
+		EditorUI::EditorUIService::EditInteger(s_RandomTestInteger);
 
 		if (ImGui::Button("Start Timer"))
 		{
