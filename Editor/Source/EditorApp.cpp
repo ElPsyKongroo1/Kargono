@@ -436,7 +436,150 @@ namespace Kargono
 
 	bool EditorApp::OnAssetEvent(Events::Event* event)
 	{
-		return m_AssetViewerPanel->OnAssetEvent(event);
+		if (event->GetEventType() == Events::EventType::ManageAsset)
+		{
+			Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
+
+			// Handle adding a project component to the active editor scene
+			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
+				manageAsset->GetAction() == Events::ManageAssetAction::Create)
+			{
+				// Create project component inside scene registry
+				if (m_EditorScene)
+				{
+					m_EditorScene->AddProjectComponentRegistry(manageAsset->GetAssetID());
+				}
+			}
+			// Handle editing a project component by modifying entity component data inside the Assets::AssetService::SceneRegistry and the active editor scene
+			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
+				manageAsset->GetAction() == Events::ManageAssetAction::Update)
+			{
+				OnUpdateProjectComponent(*manageAsset);
+			}
+			// Handle deleting a project component by removing entity data from all scenes
+			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
+				manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			{
+				for (auto& [sceneHandle, sceneAsset] : Assets::AssetService::GetSceneRegistry())
+				{
+					// Get scene
+					Ref<Scenes::Scene> currentScene = Assets::AssetService::GetScene(sceneHandle);
+					KG_ASSERT(currentScene);
+
+					// Clear component registry
+					currentScene->ClearProjectComponentRegistry(manageAsset->GetAssetID());
+
+					// Save scene asset on-disk 
+					Assets::AssetService::SaveScene(sceneHandle, currentScene);
+				}
+			}
+		}
+
+		m_SceneEditorPanel->OnAssetEvent(event);
+		m_AssetViewerPanel->OnAssetEvent(event);
+
+		return false;
+	}
+
+	static void TransferSceneData(Events::ManageAsset& event, Ref<Scenes::Scene> currentScene)
+	{
+		// Get reallocation instructions
+		KG_ASSERT(event.GetProvidedData());
+		Assets::FieldReallocationInstructions& reallocationInstructions = *(Assets::FieldReallocationInstructions*)event.GetProvidedData().get();
+
+		// Check if original data source is already empty. If it is empty, all there is to do is create a new registry
+		if (reallocationInstructions.m_OldDataLocations.size() == 0)
+		{
+			// Create/Overwrite scene registry using the new archetype of field data
+			currentScene->AddProjectComponentRegistry(event.GetAssetID());
+			return;
+		}
+
+		// Check if new data layout is empty. Simply remove the current registry.
+		if (reallocationInstructions.m_NewDataLocations.size() == 0)
+		{
+			// Create/Overwrite scene registry using the new archetype of field data
+			currentScene->ClearProjectComponentRegistry(event.GetAssetID());
+			return;
+		}
+
+		// Generate and store new entity component data
+		std::unordered_map<UUID, std::vector<uint8_t>> entityToNewDataMap{};
+		for (auto& [entityID, enttID] : currentScene->m_EntityRegistry.m_EntityMap)
+		{
+			ECS::Entity entity = currentScene->GetEntityByEnttID(enttID);
+			if (entity.HasProjectComponentData(event.GetAssetID()))
+			{
+				// Get old data buffer reference and generate new data buffer
+				uint8_t* oldComponentData = (uint8_t*)entity.GetProjectComponentData(event.GetAssetID());
+				std::vector<uint8_t> newComponentData;
+				newComponentData.resize(reallocationInstructions.m_NewDataSize);
+
+				// Transfer old data into new buffer and initialize indicated data
+				for (size_t iteration{ 0 }; iteration < reallocationInstructions.m_FieldTransferDirections.size(); iteration++)
+				{
+					if (reallocationInstructions.m_FieldTransferDirections.at(iteration) == Assets::k_NewAllocationIndex)
+					{
+						// Initialize data
+						Utility::InitializeDataForWrappedVarBuffer(reallocationInstructions.m_NewDataTypes.at(iteration), newComponentData.data() + reallocationInstructions.m_NewDataLocations.at(iteration));
+					}
+					else
+					{
+						// Transfer data
+						Utility::TransferDataForWrappedVarBuffer(reallocationInstructions.m_NewDataTypes.at(iteration),
+							oldComponentData + reallocationInstructions.m_OldDataLocations.at(reallocationInstructions.m_FieldTransferDirections.at(iteration)),
+							newComponentData.data() + reallocationInstructions.m_NewDataLocations.at(iteration));
+					}
+				}
+
+				// Store new data into buffer map
+				entityToNewDataMap.insert_or_assign(entityID, newComponentData);
+			}
+		}
+
+		// Clear old scene registry data for this project component type
+		currentScene->ClearProjectComponentRegistry(event.GetAssetID());
+
+		// Create/Overwrite scene registry using the new archetype of field data
+		currentScene->AddProjectComponentRegistry(event.GetAssetID());
+
+		// Write stored entity component data into new registry
+		for (auto& [entityID, dataBuffer] : entityToNewDataMap)
+		{
+			ECS::Entity currentEntity = currentScene->GetEntityByUUID(entityID);
+			if (!currentEntity.HasProjectComponentData(event.GetAssetID()))
+			{
+				currentEntity.AddProjectComponentData(event.GetAssetID());
+			}
+			uint8_t* currentData = (uint8_t*)currentEntity.GetProjectComponentData(event.GetAssetID());
+			memcpy(currentData, dataBuffer.data(), dataBuffer.size()); // Note that the data buffer is a vector of bytes, which means size == byte size
+		}
+	}
+
+	bool EditorApp::OnUpdateProjectComponent(Events::ManageAsset& event)
+	{
+		// Modify entity component data for all scenes in the scene asset registry and save changes to disk
+		Assets::FieldReallocationInstructions& reallocationInstructions = *(Assets::FieldReallocationInstructions*)event.GetProvidedData().get();
+		for (size_t iteration{0}; iteration < reallocationInstructions.m_OldSceneHandles.size(); iteration++)
+		{
+			TransferSceneData(event, reallocationInstructions.m_OldScenes.at(iteration));
+			// Save scene asset on-disk 
+			Assets::AssetService::SaveScene(reallocationInstructions.m_OldSceneHandles.at(iteration), reallocationInstructions.m_OldScenes.at(iteration));
+		}
+
+		// Reset scenes
+		for (Ref<Scenes::Scene> scene : reallocationInstructions.m_OldScenes)
+		{
+			scene.reset();
+		}
+		
+		// Modify entity component data for editor scene
+		if (m_EditorScene)
+		{
+			TransferSceneData(event, m_EditorScene);
+		}
+
+		return false;
 	}
 
 	bool EditorApp::OnKeyPressedEditor(Events::KeyPressedEvent event)

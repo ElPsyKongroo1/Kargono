@@ -2222,7 +2222,7 @@ namespace Kargono::EditorUI
 				{
 					if (ImGui::Selectable((label + id).c_str()))
 					{
-						func();
+						func(spec);
 					}
 				}
 				ImGui::EndPopup();
@@ -2591,6 +2591,85 @@ namespace Kargono::EditorUI
 			}
 		}
 		return {};
+	}
+
+	void TreeSpec::SearchDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth,
+		std::function<bool(TreeEntry& entry)> searchFunction, std::vector<TreePath>& allPaths)
+	{
+		if (currentDepth >= terminalDepth)
+		{
+			for (TreeEntry& subEntry : currentEntry.SubEntries)
+			{
+				if (searchFunction(subEntry))
+				{
+					allPaths.push_back(GetPathFromEntryReference(&subEntry));
+				}
+			}
+			return;
+		}
+
+		for (auto& subEntry : currentEntry.SubEntries)
+		{
+			SearchDepthRecursive(subEntry, currentDepth + 1, terminalDepth, searchFunction, allPaths);
+		}
+
+	}
+
+	std::vector<TreePath> TreeSpec::SearchDepth(std::function<bool(TreeEntry& entry)> searchFunction, size_t terminalDepth)
+	{
+		std::vector<TreePath> allPaths {};
+		if (terminalDepth == 0)
+		{
+			for (TreeEntry& entry : TreeEntries)
+			{
+				if (searchFunction(entry))
+				{
+					allPaths.push_back(GetPathFromEntryReference(&entry));
+				}
+			}
+			return allPaths;
+		}
+
+		for (TreeEntry& entry : TreeEntries)
+		{
+			SearchDepthRecursive(entry, 1, terminalDepth, searchFunction, allPaths);
+		}
+		return allPaths;
+	}
+
+	void TreeSpec::EditDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, std::function<void(TreeEntry& entry)> editFunction)
+	{
+		if (currentDepth >= terminalDepth)
+		{
+			for (TreeEntry& subEntry : currentEntry.SubEntries)
+			{
+				editFunction(subEntry);
+			}
+			return;
+		}
+
+		for (auto& subEntry : currentEntry.SubEntries)
+		{
+			EditDepthRecursive(subEntry, currentDepth + 1, terminalDepth, editFunction);
+		}
+	}
+
+	void TreeSpec::EditDepth(std::function<void(TreeEntry& entry)> editFunction, size_t terminalDepth)
+	{
+		std::vector<TreePath> allPaths {};
+		if (terminalDepth == 0)
+		{
+			for (TreeEntry& entry : TreeEntries)
+			{
+				editFunction(entry);
+			}
+			return;
+		}
+
+		for (TreeEntry& entry : TreeEntries)
+		{
+			EditDepthRecursive(entry, 1, terminalDepth, editFunction);
+		}
 	}
 
 	void TreeSpec::RemoveEntry(TreePath& path)

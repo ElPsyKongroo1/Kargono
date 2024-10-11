@@ -48,9 +48,23 @@ namespace Kargono::Scenes
 		m_HoveredEntity = new ECS::Entity();
 		m_SelectedEntity = new ECS::Entity();
 
-		// Example of storing a project component
-		using namespace entt::literals;
+		RegisterAllProjectComponents();
+		
+	}
+	Scene::~Scene()
+	{
+		delete m_HoveredEntity;
+		delete m_SelectedEntity;
+	}
 
+
+	ECS::Entity Scene::CreateEntity(const std::string& name)
+	{
+		return CreateEntityWithUUID(UUID(), name);
+	}
+
+	void Scene::RegisterAllProjectComponents()
+	{
 		m_EntityRegistry.m_ProjectComponentStorage.resize(Assets::AssetService::GetProjectComponentRegistry().size());
 
 		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
@@ -65,20 +79,47 @@ namespace Kargono::Scenes
 			ECS::ProjectComponentStorage& newStorage = m_EntityRegistry.m_ProjectComponentStorage.at(component->m_BufferSlot);
 
 			// Create new storage value
-			ECS::EntityRegistryService::RegisterProjectComponentWithEnTTRegistry(newStorage , m_EntityRegistry, component->m_BufferSize, component->m_Name);
+			ECS::EntityRegistryService::RegisterProjectComponentWithEnTTRegistry(newStorage, m_EntityRegistry, component->m_BufferSize, component->m_Name);
 		}
+	}
+
+	void Scene::AddProjectComponentRegistry(Assets::AssetHandle projectComponentHandle)
+	{
+		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
+		KG_ASSERT(component);
+
+		if (component->m_BufferSize == 0)
+		{
+			return;
+		}
+
+		if (component->m_BufferSlot >= m_EntityRegistry.m_ProjectComponentStorage.size())
+		{
+			m_EntityRegistry.m_ProjectComponentStorage.resize(component->m_BufferSlot + 1);
+		}
+
+		ECS::ProjectComponentStorage& newStorage = m_EntityRegistry.m_ProjectComponentStorage.at(component->m_BufferSlot);
+
+		// Create new storage value
+		ECS::EntityRegistryService::RegisterProjectComponentWithEnTTRegistry(newStorage, m_EntityRegistry, component->m_BufferSize, component->m_Name);
 		
 	}
-	Scene::~Scene()
-	{
-		delete m_HoveredEntity;
-		delete m_SelectedEntity;
-	}
 
-
-	ECS::Entity Scene::CreateEntity(const std::string& name)
+	void Scene::ClearProjectComponentRegistry(Assets::AssetHandle projectComponentHandle)
 	{
-		return CreateEntityWithUUID(UUID(), name);
+		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
+		KG_ASSERT(component);
+
+		if (component->m_BufferSize == 0)
+		{
+			return;
+		}
+
+		KG_ASSERT(component->m_BufferSlot < m_EntityRegistry.m_ProjectComponentStorage.size());
+
+		// Get storage and clear registry
+		ECS::ProjectComponentStorage& currentStorage = m_EntityRegistry.m_ProjectComponentStorage.at(component->m_BufferSlot);
+		currentStorage.m_ClearProjectComponentRegistry(currentStorage.m_EnTTStorageReference, m_EntityRegistry.m_EnTTRegistry, component->m_Name);
 	}
 
 	ECS::Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)

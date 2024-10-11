@@ -183,6 +183,9 @@ namespace Kargono::Assets
 				return;
 			}
 
+			// Provide asset specific validation
+			Ref<void> providedData = SaveAssetValidation(assetReference , assetHandle);
+
 			// Find location of asset's data
 			Assets::Asset& asset = m_AssetRegistry[assetHandle];
 			std::filesystem::path dataLocation {};
@@ -208,7 +211,7 @@ namespace Kargono::Assets
 			// Save asset data on-disk
 			SerializeAsset(assetReference, dataLocation);
 
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::Update);
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::Update, providedData);
 			EngineService::SubmitToEventQueue(event);
 		}
 
@@ -237,8 +240,10 @@ namespace Kargono::Assets
 				return false;
 			}
 
+			// Process delete event and validation
 			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::Delete);
 			DeleteAssetValidation(assetHandle);
+			EngineService::OnEvent(event.get());
 
 			// Delete the asset's data on-disk
 			Utility::FileSystem::DeleteSelectedFile(dataLocation);
@@ -255,7 +260,6 @@ namespace Kargono::Assets
 			// Save the modified registry to disk
 			SerializeAssetRegistry();
 
-			EngineService::SubmitToEventQueue(event);
 			return true;
 		}
 
@@ -542,6 +546,7 @@ namespace Kargono::Assets
 			KG_ERROR("Attempt to create an asset from a name that does not override the base class's implmentation of CreateAssetFileFromName()");
 		}
 
+		virtual Ref<void> SaveAssetValidation(Ref<AssetValue> newAsset, AssetHandle assetHandle) { return nullptr; };
 		virtual void DeleteAssetValidation(AssetHandle assetHandle) {};
 		virtual Ref<AssetValue> DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath) = 0;
 		virtual void SerializeRegistrySpecificData(YAML::Emitter& serializer) {};

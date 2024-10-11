@@ -18,6 +18,7 @@ namespace Kargono::ECS
 		void* (*m_GetProjectComponent)(void*, entt::entity) = nullptr;
 		void (*m_AddProjectComponent)(void*, entt::entity) = nullptr;
 		void (*m_RemoveProjectComponent)(void*, entt::entity) = nullptr;
+		void (*m_ClearProjectComponentRegistry)(void*, entt::registry&, const std::string&) = nullptr;
 	};
 
 	struct EntityRegistry

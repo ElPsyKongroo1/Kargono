@@ -43,8 +43,8 @@ namespace Kargono::EditorUI
 	// Type Defines
 	//==============================
 	using WidgetID = uint32_t;
-	using SelectionList = std::unordered_map<std::string, std::function<void()>>;
 	using WidgetFlags = uint8_t;
+	using SelectionList = std::unordered_map<std::string, std::function<void()>>;
 	enum class SpacingAmount
 	{
 		None = 0,
@@ -562,8 +562,10 @@ namespace Kargono::EditorUI
 		CollapsingHeader_UnderlineTitle = BIT(0), // Underlines the title text
 	};
 
+
 	struct CollapsingHeaderSpec
 	{
+	using CollapsingHeaderSelectionList = std::unordered_map<std::string, std::function<void(EditorUI::CollapsingHeaderSpec& spec)>>;
 	public:
 		CollapsingHeaderSpec()
 		{
@@ -574,12 +576,13 @@ namespace Kargono::EditorUI
 		WidgetFlags Flags{ CollapsingHeader_None };
 		bool Expanded{ false };
 		std::function<void()> OnExpand{ nullptr };
+		Ref<void> ProvidedData { nullptr };
 	public:
 		void ClearSelectionList()
 		{
 			SelectionList.clear();
 		}
-		void AddToSelectionList(const std::string& label, std::function<void()> function)
+		void AddToSelectionList(const std::string& label, std::function<void(CollapsingHeaderSpec&)> function)
 		{
 			if (!SelectionList.contains(label))
 			{
@@ -587,19 +590,21 @@ namespace Kargono::EditorUI
 				return;
 			}
 		}
-		SelectionList& GetSelectionList()
+		CollapsingHeaderSelectionList& GetSelectionList()
 		{
 			return SelectionList;
 		}
 	private:
 		WidgetID WidgetID;
-		SelectionList SelectionList{};
+		CollapsingHeaderSelectionList SelectionList{};
 	private:
 		friend void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec);
 	};
 
+
 	struct PanelHeaderSpec
 	{
+	using PanelHeaderSelectionList = std::unordered_map<std::string, std::function<void(EditorUI::PanelHeaderSpec& spec)>>;
 	public:
 		PanelHeaderSpec()
 		{
@@ -778,6 +783,8 @@ namespace Kargono::EditorUI
 
 		void SelectFirstEntry();
 		TreeEntry* SearchFirstLayer(UUID handle);
+		std::vector<TreePath> SearchDepth(std::function<bool(TreeEntry& entry)> searchFunction, size_t depth = 0);
+		void EditDepth(std::function<void(TreeEntry& entry)> editFunction, size_t depth = 0);
 
 		void InsertEntry(const TreeEntry& entry)
 		{
@@ -807,6 +814,9 @@ namespace Kargono::EditorUI
 
 		TreeEntry* GetEntryFromPath(TreePath& path);
 		TreePath GetPathFromEntryReference(TreeEntry* entryQuery);
+	private:
+		void SearchDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, std::function<bool(TreeEntry& entry)> searchFunction, std::vector<TreePath>& allPaths);
+		void EditDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, std::function<void(TreeEntry& entry)> editFunction);
 	private:
 		WidgetID WidgetID;
 		std::vector<TreeEntry> TreeEntries{};

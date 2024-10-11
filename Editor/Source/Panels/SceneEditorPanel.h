@@ -42,12 +42,14 @@ namespace Kargono::Panels
 		void InitializeCameraComponent();
 		void InitializeShapeComponent();
 		void InitializeProjectComponents();
+		void InitializeProjectComponent(Assets::AssetHandle projectComponentHandle);
 	public:
 		//=========================
 		// On Event Functions
 		//=========================
 		void OnEditorUIRender();
 		bool OnSceneEvent(Events::Event* event);
+		bool OnAssetEvent(Events::Event* event);
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	public:
 		//=========================

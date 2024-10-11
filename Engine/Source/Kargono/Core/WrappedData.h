@@ -591,7 +591,7 @@ namespace Kargono
 			KG_ERROR("Unknown Type of WrappedVariableType.");
 		}
 
-		inline void SetDataForWrappedVarBuffer(WrappedVarType type, void* source, void* destination)
+		inline void TransferDataForWrappedVarBuffer(WrappedVarType type, void* source, void* destination)
 		{
 			switch (type)
 			{

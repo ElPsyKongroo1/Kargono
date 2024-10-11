@@ -34942,6 +34942,12 @@ public:
         return assure<Type>(id);
     }
 
+	template<typename Type>
+	void remove_storage(const id_type id = type_hash<Type>::value())
+	{
+		pools.erase(id);
+	}
+
     /**
      * @brief Returns the number of entities created so far.
      * @return Number of entities created so far.

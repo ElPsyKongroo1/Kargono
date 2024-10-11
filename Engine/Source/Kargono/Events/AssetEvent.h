@@ -25,8 +25,11 @@ namespace Kargono::Events
 		//==============================
 		// Constructors and Destructors
 		//==============================
-		ManageAsset(UUID AssetID, Assets::AssetType type, ManageAssetAction action)
-			: m_AssetID(AssetID), m_AssetType(type), m_Action(action) {}
+		ManageAsset(UUID AssetID, Assets::AssetType type, ManageAssetAction action, Ref<void> providedData = nullptr)
+			: m_AssetID(AssetID), m_AssetType(type), m_Action(action), m_ProvidedData(providedData) 
+		{
+		
+		}
 
 		//==============================
 		// Getters/Setters
@@ -35,6 +38,7 @@ namespace Kargono::Events
 		UUID GetAssetID() const { return m_AssetID; }
 		Assets::AssetType GetAssetType() const { return m_AssetType; }
 		ManageAssetAction GetAction() const { return m_Action; }
+		Ref<void> GetProvidedData() const { return m_ProvidedData; }
 
 		virtual EventType GetEventType() const override { return EventType::ManageAsset; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Asset; }
@@ -42,6 +46,7 @@ namespace Kargono::Events
 		UUID m_AssetID;
 		Assets::AssetType m_AssetType {Assets::AssetType::None};
 		ManageAssetAction m_Action;
+		Ref<void> m_ProvidedData{ nullptr };
 	};
 
 }

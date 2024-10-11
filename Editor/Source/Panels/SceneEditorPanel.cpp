@@ -170,7 +170,7 @@ namespace Kargono::Panels
 		// Handle adding project components
 		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 		{
-			if (!entity.HasProjectComponent(handle))
+			if (!entity.HasProjectComponentData(handle))
 			{
 				continue;
 			}
@@ -257,7 +257,9 @@ namespace Kargono::Panels
 
 			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 			{
-				if (!entity.HasProjectComponent(handle))
+				Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(handle);
+				KG_ASSERT(projectComponentRef);
+				if (!entity.HasProjectComponentData(handle) && projectComponentRef->m_BufferSize != 0)
 				{
 					m_AddComponent.AddToOptions("Project Component", asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name, handle);
 				}
@@ -292,7 +294,7 @@ namespace Kargono::Panels
 				// Add component to entity & update tree
 				Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(option.Handle);
 				KG_ASSERT(component);
-				entity.AddProjectComponent(option.Handle);
+				entity.AddProjectComponentData(option.Handle);
 				componentEntry.Label = component->m_Name;
 				componentEntry.ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::ProjectComponent, option.Handle);
 				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
@@ -427,6 +429,16 @@ namespace Kargono::Panels
 			{
 				auto& component = entity.GetComponent<ECS::TagComponent>();
 				component.Tag = m_TagEdit.CurrentOption;
+
+				m_SceneHierarchyTree.EditDepth([](EditorUI::TreeEntry& entry) 
+				{
+					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID((entt::entity)(int32_t)entry.Handle);
+					KG_ASSERT(entity);
+					if (entity.GetUUID() == Scenes::SceneService::GetActiveScene()->GetSelectedEntity()->GetUUID())
+					{
+						entry.Label = entity.GetComponent<ECS::TagComponent>().Tag;
+					}
+				}, 0);
 			}
 		};
 	}
@@ -436,7 +448,7 @@ namespace Kargono::Panels
 		m_ClassInstanceHeader.Label = "Class Instance";
 		m_ClassInstanceHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 		m_ClassInstanceHeader.Expanded = true;
-		m_ClassInstanceHeader.AddToSelectionList("Remove Component", [&]()
+		m_ClassInstanceHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			EngineService::SubmitToMainThread([&]()
 			{
@@ -652,7 +664,7 @@ namespace Kargono::Panels
 		m_Rigidbody2DHeader.Label = "Rigid Body 2D";
 		m_Rigidbody2DHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 		m_Rigidbody2DHeader.Expanded = true;
-		m_Rigidbody2DHeader.AddToSelectionList("Remove Component", [&]()
+		m_Rigidbody2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			EngineService::SubmitToMainThread([&]()
 			{
@@ -740,7 +752,7 @@ namespace Kargono::Panels
 		m_BoxCollider2DHeader.Label = "Box Collider 2D";
 		m_BoxCollider2DHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 		m_BoxCollider2DHeader.Expanded = true;
-		m_BoxCollider2DHeader.AddToSelectionList("Remove Component", [&]()
+		m_BoxCollider2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			EngineService::SubmitToMainThread([&]()
 			{
@@ -867,7 +879,7 @@ namespace Kargono::Panels
 		m_CircleCollider2DHeader.Label = "Circle Collider 2D";
 		m_CircleCollider2DHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 		m_CircleCollider2DHeader.Expanded = true;
-		m_CircleCollider2DHeader.AddToSelectionList("Remove Component", [&]()
+		m_CircleCollider2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			EngineService::SubmitToMainThread([&]()
 			{
@@ -995,7 +1007,7 @@ namespace Kargono::Panels
 		m_CameraHeader.Label = "Camera";
 		m_CameraHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 		m_CameraHeader.Expanded = true;
-		m_CameraHeader.AddToSelectionList("Remove Component", [&]()
+		m_CameraHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			EngineService::SubmitToMainThread([&]()
 			{
@@ -1165,7 +1177,7 @@ namespace Kargono::Panels
 		m_ShapeHeader.Label = "Shape";
 		m_ShapeHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 		m_ShapeHeader.Expanded = true;
-		m_ShapeHeader.AddToSelectionList("Remove Component", [&]()
+		m_ShapeHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			EngineService::SubmitToMainThread([&]()
 			{
@@ -1488,245 +1500,250 @@ namespace Kargono::Panels
 	{
 		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 		{
-			Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(handle);
-			KG_ASSERT(component, "Invalid component provided when initializing SceneEditorPanel");
-
-			// Initialize Collapsing Header
-			ProjectComponentWidgetData newWidgetData;
-			newWidgetData.m_Header.Label = component->m_Name;
-			newWidgetData.m_Header.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
-			newWidgetData.m_Header.Expanded = true;
-			newWidgetData.m_Header.AddToSelectionList("Remove Component", [&]()
-			{
-				m_DisplayedProjectComponentHandle = handle;
-				EngineService::SubmitToMainThread([&]()
-				{
-					ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-					Assets::AssetHandle projectComponentHandle = s_EditorApp->m_SceneEditorPanel->GetDisplayedProjectComponent();
-					if (entity.HasProjectComponent(projectComponentHandle))
-					{
-						for (auto& entry : m_SceneHierarchyTree.GetTreeEntries())
-						{
-							if ((uint32_t)entry.Handle == (uint32_t)entity)
-							{
-								EditorUI::TreePath newPath {};
-								for (auto& subEntry : entry.SubEntries)
-								{
-									SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.ProvidedData.get();
-									if (entryData.m_ComponentType == ECS::ComponentType::ProjectComponent && 
-										entryData.m_ProjectComponentHandle == projectComponentHandle)
-									{
-										newPath = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
-										break;
-									}
-								}
-								if (!newPath)
-								{
-									KG_WARN("Could not locate component inside Tree");
-									return;
-								}
-
-								m_SceneHierarchyTree.RemoveEntry(newPath);
-
-								break;
-							}
-						}
-						entity.RemoveProjectComponent(projectComponentHandle);
-					}
-				});
-			});
-			
-			for (size_t iteration{0}; iteration < component->m_DataNames.size(); iteration++)
-			{
-				static EditorUI::EditFloatSpec newFloatSpec;
-				static EditorUI::EditVec3Spec newVector3Spec;
-				static EditorUI::EditTextSpec newStringSpec;
-				static EditorUI::CheckboxSpec newBoolSpec;
-				static EditorUI::EditIntegerSpec newIntegerSpec;
-
-				WrappedVarType currentType = component->m_DataTypes.at(iteration);
-				const std::string& currentName = component->m_DataNames.at(iteration);
-
-				switch (currentType)
-				{
-				case WrappedVarType::Float:
-					newFloatSpec = {};
-					newFloatSpec.Label = currentName;
-					newFloatSpec.Flags |= EditorUI::EditFloat_Indented;
-					newFloatSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(handle, iteration);
-					newFloatSpec.ConfirmAction = [](EditorUI::EditFloatSpec& spec)
-					{
-						// Get component data pointer
-						ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
-						Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-						ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-						uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-
-						// Get field data pointer
-						uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
-
-						// Set the data
-						*(float*)fieldDataRef = spec.CurrentFloat;
-					};
-					newWidgetData.m_Fields.push_back(newFloatSpec);
-					break;
-				case WrappedVarType::String:
-					newStringSpec = {};
-					newStringSpec.Label = currentName;
-					newStringSpec.Flags |= EditorUI::EditText_Indented;
-					newStringSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(handle, iteration);
-					newStringSpec.ConfirmAction = [](EditorUI::EditTextSpec& spec)
-					{
-						// Get component data pointer
-						ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
-						Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-						ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-						uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-
-						// Get field data pointer
-						uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
-
-						// Set the data
-						*(std::string*)fieldDataRef = spec.CurrentOption;
-					};
-					newWidgetData.m_Fields.push_back(newStringSpec);
-					break;
-				case WrappedVarType::Bool:
-					newBoolSpec = {};
-					newBoolSpec.Label = currentName;
-					newBoolSpec.Flags |= EditorUI::Checkbox_Indented;
-					newBoolSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(handle, iteration);
-					newBoolSpec.ConfirmAction = [](EditorUI::CheckboxSpec& spec) 
-					{
-						// Get component data pointer
-						ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
-						Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-						ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-						uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-
-						// Get field data pointer
-						uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
-
-						// Set the data
-						*(bool*)fieldDataRef = spec.CurrentBoolean;
-					};
-					newWidgetData.m_Fields.push_back(newBoolSpec);
-					break;
-				case WrappedVarType::Vector3:
-					newVector3Spec = {};
-					newVector3Spec.Label = currentName;
-					newVector3Spec.Flags |= EditorUI::EditVec3_Indented;
-					newVector3Spec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(handle, iteration);
-					newVector3Spec.ConfirmAction = [](EditorUI::EditVec3Spec& spec) 
-					{
-						// Get component data pointer
-						ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
-						Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-						ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-						uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-
-						// Get field data pointer
-						uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
-
-						// Set the data
-						*(Math::vec3*)fieldDataRef = spec.CurrentVec3;
-					};
-					newWidgetData.m_Fields.push_back(newVector3Spec);
-					break;
-				case WrappedVarType::Integer32:
-					newIntegerSpec = {};
-					newIntegerSpec.Label = currentName;
-					newIntegerSpec.Flags |= EditorUI::EditInteger_Indented;
-					newIntegerSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(handle, iteration);
-					newIntegerSpec.ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
-					{
-						// Get component data pointer
-						ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
-						Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-						ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-						uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-
-						// Get field data pointer
-						uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
-
-						// Set the data
-						*(int32_t*)fieldDataRef = (int32_t)spec.CurrentInteger;
-					};
-					newWidgetData.m_Fields.push_back(newIntegerSpec);
-					break;
-				case WrappedVarType::UInteger16:
-					newIntegerSpec = {};
-					newIntegerSpec.Label = currentName;
-					newIntegerSpec.Flags |= EditorUI::EditInteger_Indented;
-					newIntegerSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(handle, iteration);
-					newIntegerSpec.ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
-					{
-						// Get component data pointer
-						ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
-						Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-						ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-						uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-
-						// Get field data pointer
-						uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
-
-						// Set the data
-						*(uint16_t*)fieldDataRef = (uint16_t)spec.CurrentInteger;
-					};
-					newWidgetData.m_Fields.push_back(newIntegerSpec);
-					break;
-				case WrappedVarType::UInteger32:
-					newIntegerSpec = {};
-					newIntegerSpec.Label = currentName;
-					newIntegerSpec.Flags |= EditorUI::EditInteger_Indented;
-					newIntegerSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(handle, iteration);
-					newIntegerSpec.ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
-					{
-						// Get component data pointer
-						ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
-						Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-						ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-						uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-
-						// Get field data pointer
-						uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
-
-						// Set the data
-						*(uint32_t*)fieldDataRef = (uint32_t)spec.CurrentInteger;
-					};
-					newWidgetData.m_Fields.push_back(newIntegerSpec);
-					break;
-				case WrappedVarType::UInteger64:
-					newIntegerSpec = {};
-					newIntegerSpec.Label = currentName;
-					newIntegerSpec.Flags |= EditorUI::EditInteger_Indented;
-					newIntegerSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(handle, iteration);
-					newIntegerSpec.ConfirmAction = [](EditorUI::EditIntegerSpec& spec) 
-					{
-						// Get component data pointer
-						ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
-						Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-						ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-						uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
-
-						// Get field data pointer
-						uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
-
-						// Set the data
-						*(uint64_t*)fieldDataRef = (uint64_t)spec.CurrentInteger;
-					};
-					newWidgetData.m_Fields.push_back(newIntegerSpec);
-					break;
-				case WrappedVarType::Void:
-				case WrappedVarType::None:
-					KG_ERROR("Invalid wrapped variable type provided when initializing project component editor ui");
-					break;
-				}
-			}
-
-			m_AllProjectComponents.insert_or_assign(handle, newWidgetData);
+			InitializeProjectComponent(handle);
 		}
 		
+	}
+
+	void SceneEditorPanel::InitializeProjectComponent(Assets::AssetHandle projectComponentHandle)
+	{
+		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
+		KG_ASSERT(component, "Invalid component provided when initializing SceneEditorPanel");
+
+		// Initialize Collapsing Header
+		ProjectComponentWidgetData newWidgetData;
+		newWidgetData.m_Header.Label = component->m_Name;
+		newWidgetData.m_Header.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		newWidgetData.m_Header.Expanded = true;
+		newWidgetData.m_Header.ProvidedData = CreateRef<Assets::AssetHandle>(projectComponentHandle);
+		newWidgetData.m_Header.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
+		{
+			EngineService::SubmitToMainThread([&]()
+			{
+				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+				Assets::AssetHandle projectComponentHandle = *(Assets::AssetHandle*)spec.ProvidedData.get();
+				if (entity.HasProjectComponentData(projectComponentHandle))
+				{
+					for (auto& entry : m_SceneHierarchyTree.GetTreeEntries())
+					{
+						if ((uint32_t)entry.Handle == (uint32_t)entity)
+						{
+							EditorUI::TreePath newPath {};
+							for (auto& subEntry : entry.SubEntries)
+							{
+								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.ProvidedData.get();
+								if (entryData.m_ComponentType == ECS::ComponentType::ProjectComponent &&
+									entryData.m_ProjectComponentHandle == projectComponentHandle)
+								{
+									newPath = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
+									break;
+								}
+							}
+							if (!newPath)
+							{
+								KG_WARN("Could not locate component inside Tree");
+								return;
+							}
+
+							m_SceneHierarchyTree.RemoveEntry(newPath);
+
+							break;
+						}
+					}
+					entity.RemoveProjectComponentData(projectComponentHandle);
+				}
+			});
+		});
+
+		for (size_t iteration{ 0 }; iteration < component->m_DataNames.size(); iteration++)
+		{
+			static EditorUI::EditFloatSpec newFloatSpec;
+			static EditorUI::EditVec3Spec newVector3Spec;
+			static EditorUI::EditTextSpec newStringSpec;
+			static EditorUI::CheckboxSpec newBoolSpec;
+			static EditorUI::EditIntegerSpec newIntegerSpec;
+
+			WrappedVarType currentType = component->m_DataTypes.at(iteration);
+			const std::string& currentName = component->m_DataNames.at(iteration);
+
+			switch (currentType)
+			{
+			case WrappedVarType::Float:
+				newFloatSpec = {};
+				newFloatSpec.Label = currentName;
+				newFloatSpec.Flags |= EditorUI::EditFloat_Indented;
+				newFloatSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newFloatSpec.ConfirmAction = [](EditorUI::EditFloatSpec& spec)
+				{
+					// Get component data pointer
+					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
+					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+
+					// Get field data pointer
+					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
+
+					// Set the data
+					*(float*)fieldDataRef = spec.CurrentFloat;
+				};
+				newWidgetData.m_Fields.push_back(newFloatSpec);
+				break;
+			case WrappedVarType::String:
+				newStringSpec = {};
+				newStringSpec.Label = currentName;
+				newStringSpec.Flags |= EditorUI::EditText_Indented;
+				newStringSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newStringSpec.ConfirmAction = [](EditorUI::EditTextSpec& spec)
+				{
+					// Get component data pointer
+					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
+					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+
+					// Get field data pointer
+					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
+
+					// Set the data
+					*(std::string*)fieldDataRef = spec.CurrentOption;
+				};
+				newWidgetData.m_Fields.push_back(newStringSpec);
+				break;
+			case WrappedVarType::Bool:
+				newBoolSpec = {};
+				newBoolSpec.Label = currentName;
+				newBoolSpec.Flags |= EditorUI::Checkbox_Indented;
+				newBoolSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newBoolSpec.ConfirmAction = [](EditorUI::CheckboxSpec& spec)
+				{
+					// Get component data pointer
+					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
+					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+
+					// Get field data pointer
+					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
+
+					// Set the data
+					*(bool*)fieldDataRef = spec.CurrentBoolean;
+				};
+				newWidgetData.m_Fields.push_back(newBoolSpec);
+				break;
+			case WrappedVarType::Vector3:
+				newVector3Spec = {};
+				newVector3Spec.Label = currentName;
+				newVector3Spec.Flags |= EditorUI::EditVec3_Indented;
+				newVector3Spec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newVector3Spec.ConfirmAction = [](EditorUI::EditVec3Spec& spec)
+				{
+					// Get component data pointer
+					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
+					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+
+					// Get field data pointer
+					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
+
+					// Set the data
+					*(Math::vec3*)fieldDataRef = spec.CurrentVec3;
+				};
+				newWidgetData.m_Fields.push_back(newVector3Spec);
+				break;
+			case WrappedVarType::Integer32:
+				newIntegerSpec = {};
+				newIntegerSpec.Label = currentName;
+				newIntegerSpec.Flags |= EditorUI::EditInteger_Indented;
+				newIntegerSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newIntegerSpec.ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+				{
+					// Get component data pointer
+					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
+					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+
+					// Get field data pointer
+					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
+
+					// Set the data
+					*(int32_t*)fieldDataRef = (int32_t)spec.CurrentInteger;
+				};
+				newWidgetData.m_Fields.push_back(newIntegerSpec);
+				break;
+			case WrappedVarType::UInteger16:
+				newIntegerSpec = {};
+				newIntegerSpec.Label = currentName;
+				newIntegerSpec.Flags |= EditorUI::EditInteger_Indented;
+				newIntegerSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newIntegerSpec.ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+				{
+					// Get component data pointer
+					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
+					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+
+					// Get field data pointer
+					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
+
+					// Set the data
+					*(uint16_t*)fieldDataRef = (uint16_t)spec.CurrentInteger;
+				};
+				newWidgetData.m_Fields.push_back(newIntegerSpec);
+				break;
+			case WrappedVarType::UInteger32:
+				newIntegerSpec = {};
+				newIntegerSpec.Label = currentName;
+				newIntegerSpec.Flags |= EditorUI::EditInteger_Indented;
+				newIntegerSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newIntegerSpec.ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+				{
+					// Get component data pointer
+					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
+					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+
+					// Get field data pointer
+					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
+
+					// Set the data
+					*(uint32_t*)fieldDataRef = (uint32_t)spec.CurrentInteger;
+				};
+				newWidgetData.m_Fields.push_back(newIntegerSpec);
+				break;
+			case WrappedVarType::UInteger64:
+				newIntegerSpec = {};
+				newIntegerSpec.Label = currentName;
+				newIntegerSpec.Flags |= EditorUI::EditInteger_Indented;
+				newIntegerSpec.ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newIntegerSpec.ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+				{
+					// Get component data pointer
+					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
+					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+
+					// Get field data pointer
+					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
+
+					// Set the data
+					*(uint64_t*)fieldDataRef = (uint64_t)spec.CurrentInteger;
+				};
+				newWidgetData.m_Fields.push_back(newIntegerSpec);
+				break;
+			case WrappedVarType::Void:
+			case WrappedVarType::None:
+				KG_ERROR("Invalid wrapped variable type provided when initializing project component editor ui");
+				break;
+			}
+		}
+
+		m_AllProjectComponents.insert_or_assign(projectComponentHandle, newWidgetData);
 	}
 
 	SceneEditorPanel::SceneEditorPanel()
@@ -1833,6 +1850,84 @@ namespace Kargono::Panels
 				CreateSceneEntityInTree(entityToCreate);
 			}
 			
+		}
+		return false;
+	}
+	bool SceneEditorPanel::OnAssetEvent(Events::Event* event)
+	{
+		if (event->GetEventType() == Events::EventType::ManageAsset)
+		{
+			Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
+			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent && 
+				manageAsset->GetAction() == Events::ManageAssetAction::Create)
+			{
+				InitializeProjectComponent(manageAsset->GetAssetID());
+				SetSelectedEntity({});
+			}
+
+			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
+				manageAsset->GetAction() == Events::ManageAssetAction::Update)
+			{
+				Ref<ECS::ProjectComponent> currentComponent = Assets::AssetService::GetProjectComponent(manageAsset->GetAssetID());
+
+				if (currentComponent->m_DataLocations.size() > 0)
+				{
+					m_AllProjectComponents.erase(manageAsset->GetAssetID());
+					InitializeProjectComponent(manageAsset->GetAssetID());
+				}
+				else
+				{
+					m_AllProjectComponents.erase(manageAsset->GetAssetID());
+
+					// Get all tree nodes that contain the provided project component
+					std::vector<EditorUI::TreePath> entriesToRemove = m_SceneHierarchyTree.SearchDepth([&](EditorUI::TreeEntry& entry)
+					{
+						SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)entry.ProvidedData.get();
+						if (entryData.m_ComponentType == ECS::ComponentType::ProjectComponent &&
+							entryData.m_ProjectComponentHandle == manageAsset->GetAssetID())
+						{
+							return true;
+						}
+						return false;
+					},
+					1);
+
+					// Remove all of those tree entries
+					for (auto& entryPath : entriesToRemove)
+					{
+						m_SceneHierarchyTree.RemoveEntry(entryPath);
+					}
+				}
+				m_SceneHierarchyTree.SelectFirstEntry();
+				SetSelectedEntity({});
+			}
+
+			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
+				manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			{
+				m_AllProjectComponents.erase(manageAsset->GetAssetID());
+
+				// Get all tree nodes that contain the provided project component
+				std::vector<EditorUI::TreePath> entriesToRemove = m_SceneHierarchyTree.SearchDepth([&](EditorUI::TreeEntry& entry) 
+				{
+					SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)entry.ProvidedData.get();
+					if (entryData.m_ComponentType == ECS::ComponentType::ProjectComponent &&
+						entryData.m_ProjectComponentHandle == manageAsset->GetAssetID())
+					{
+						return true;
+					}
+					return false;
+				}, 
+				1);
+
+				// Remove all of those tree entries
+				for (auto& entryPath : entriesToRemove)
+				{
+					m_SceneHierarchyTree.RemoveEntry(entryPath);
+				}
+				m_SceneHierarchyTree.SelectFirstEntry();
+				SetSelectedEntity({});
+			}
 		}
 		return false;
 	}
@@ -2189,7 +2284,7 @@ namespace Kargono::Panels
 			ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
 			Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
 			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
 
 			// Get field data pointer
 			uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
@@ -2206,7 +2301,7 @@ namespace Kargono::Panels
 			ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
 			Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
 			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
 
 			// Get field data pointer
 			uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
@@ -2223,7 +2318,7 @@ namespace Kargono::Panels
 			ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
 			Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
 			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
 
 			// Get field data pointer
 			uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
@@ -2259,7 +2354,7 @@ namespace Kargono::Panels
 			ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
 			Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
 			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
 
 			// Get field data pointer
 			uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
@@ -2281,7 +2376,7 @@ namespace Kargono::Panels
 			ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.ProvidedData.get();
 			Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
 			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
 
 			// Get field data pointer
 			uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
@@ -2301,7 +2396,7 @@ namespace Kargono::Panels
 
 	void SceneEditorPanel::DrawProjectComponent(ECS::Entity entity, Assets::AssetHandle componentHandle)
 	{
-		if (!entity.HasProjectComponent(componentHandle))
+		if (!entity.HasProjectComponentData(componentHandle))
 		{
 			return;
 		}

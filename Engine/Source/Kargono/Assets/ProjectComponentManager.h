@@ -1,10 +1,28 @@
 #pragma once
 #include "Kargono/Assets/AssetManager.h"
 
+#include <vector>
+#include <limits>
+
 namespace Kargono::ECS { struct ProjectComponent; }
+namespace Kargono::Scenes { class Scene; }
 
 namespace Kargono::Assets
 {
+	constexpr size_t k_NewAllocationIndex{ std::numeric_limits<size_t>().max() };
+
+	struct FieldReallocationInstructions
+	{
+		std::vector<size_t> m_FieldTransferDirections;
+		std::vector<WrappedVarType> m_OldDataTypes;
+		std::vector<WrappedVarType> m_NewDataTypes;
+		std::vector<uint64_t> m_OldDataLocations;
+		std::vector<uint64_t> m_NewDataLocations;
+		size_t m_NewDataSize;
+		std::vector<Ref<Scenes::Scene>> m_OldScenes;
+		std::vector<Assets::AssetHandle> m_OldSceneHandles;
+	};
+
 	class ProjectComponentManager : public AssetManager<ECS::ProjectComponent>
 	{
 	public:
@@ -24,6 +42,7 @@ namespace Kargono::Assets
 		virtual ~ProjectComponentManager() = default;
 	public:
 		// Class specific functions
+		virtual Ref<void> SaveAssetValidation(Ref<ECS::ProjectComponent> newAsset, AssetHandle assetHandle) override;
 		virtual void CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAsset(Ref<ECS::ProjectComponent> assetReference, const std::filesystem::path& assetPath) override;
 		virtual Ref<ECS::ProjectComponent> DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath) override;

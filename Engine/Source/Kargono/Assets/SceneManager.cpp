@@ -265,12 +265,12 @@ namespace Kargono::Utility
 		// Handle all project components
 		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 		{
-			if (!entity.HasProjectComponent(handle))
+			if (!entity.HasProjectComponentData(handle))
 			{
 				continue;
 			}
 			Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(handle);
-			uint8_t* componentRef = (uint8_t*)entity.GetProjectComponent(handle);
+			uint8_t* componentRef = (uint8_t*)entity.GetProjectComponentData(handle);
 
 			out << YAML::Key << projectComponent->m_Name + "Component";
 			out << YAML::BeginMap; // Component Map
@@ -539,11 +539,11 @@ namespace Kargono::Assets
 						continue;
 					}
 					// Create and get project component
-					if (!deserializedEntity.HasProjectComponent(handle))
+					if (!deserializedEntity.HasProjectComponentData(handle))
 					{
-						deserializedEntity.AddProjectComponent(handle);
+						deserializedEntity.AddProjectComponentData(handle);
 					}
-					uint8_t* componentRef = (uint8_t*)deserializedEntity.GetProjectComponent(handle);
+					uint8_t* componentRef = (uint8_t*)deserializedEntity.GetProjectComponentData(handle);
 
 					// Load in component data from disk
 					for (size_t iteration{ 0 }; iteration < projectComponent->m_DataLocations.size(); iteration++)

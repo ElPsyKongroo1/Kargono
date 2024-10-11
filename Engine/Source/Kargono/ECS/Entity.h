@@ -23,7 +23,7 @@ namespace Kargono::ECS
 			return component;
 		}
 
-		void AddProjectComponent(Assets::AssetHandle projectComponentHandle);
+		void AddProjectComponentData(Assets::AssetHandle projectComponentHandle);
 
 		template<typename T, typename... Args>
 		T& AddOrReplaceComponent(Args&&... args)
@@ -40,7 +40,7 @@ namespace Kargono::ECS
 			return m_Registry->m_EnTTRegistry.get<T>(m_EntityHandle);
 		}
 
-		void* GetProjectComponent(Assets::AssetHandle projectComponentHandle);
+		void* GetProjectComponentData(Assets::AssetHandle projectComponentHandle);
 
 		template<typename T>
 		bool HasComponent()
@@ -48,7 +48,7 @@ namespace Kargono::ECS
 			return m_Registry->m_EnTTRegistry.all_of<T>(m_EntityHandle);
 		}
 
-		bool HasProjectComponent(Assets::AssetHandle projectComponentHandle);
+		bool HasProjectComponentData(Assets::AssetHandle projectComponentHandle);
 
 		template<typename T>
 		void RemoveComponent()
@@ -57,7 +57,7 @@ namespace Kargono::ECS
 			m_Registry->m_EnTTRegistry.remove<T>(m_EntityHandle);
 		}
 
-		void RemoveProjectComponent(Assets::AssetHandle projectComponentHandle);
+		void RemoveProjectComponentData(Assets::AssetHandle projectComponentHandle);
 
 		operator bool() const { return m_EntityHandle != entt::null; }
 		operator entt::entity() const { return m_EntityHandle; }

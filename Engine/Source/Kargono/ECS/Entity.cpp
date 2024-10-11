@@ -17,11 +17,14 @@ namespace Kargono::ECS
 		m_EntityHandle = handle;
 		m_Registry = registry;
 	}
-	void Entity::AddProjectComponent(Assets::AssetHandle projectComponentHandle)
+	void Entity::AddProjectComponentData(Assets::AssetHandle projectComponentHandle)
 	{
 		Ref<ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(projectComponent);
-
+		if (projectComponent->m_BufferSize == 0)
+		{
+			return;
+		}
 		// Create new project component
 		ProjectComponentStorage& storage = m_Registry->m_ProjectComponentStorage.at(projectComponent->m_BufferSlot);
 		storage.m_AddProjectComponent(storage.m_EnTTStorageReference, m_EntityHandle);
@@ -36,24 +39,36 @@ namespace Kargono::ECS
 		}
 
 	}
-	void* Entity::GetProjectComponent(Assets::AssetHandle projectComponentHandle)
+	void* Entity::GetProjectComponentData(Assets::AssetHandle projectComponentHandle)
 	{
 		Ref<ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(projectComponent);
+		if (projectComponent->m_BufferSize == 0)
+		{
+			return nullptr;
+		}
 		ProjectComponentStorage& storage = m_Registry->m_ProjectComponentStorage.at(projectComponent->m_BufferSlot);
 		return storage.m_GetProjectComponent(storage.m_EnTTStorageReference, m_EntityHandle);
 	}
-	bool Entity::HasProjectComponent(Assets::AssetHandle projectComponentHandle)
+	bool Entity::HasProjectComponentData(Assets::AssetHandle projectComponentHandle)
 	{
 		Ref<ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(projectComponent);
+		if (projectComponent->m_BufferSize == 0)
+		{
+			return false;
+		}
 		ProjectComponentStorage& storage = m_Registry->m_ProjectComponentStorage.at(projectComponent->m_BufferSlot);
 		return storage.m_CheckEntityExists(storage.m_EnTTStorageReference, m_EntityHandle);
 	}
-	void Entity::RemoveProjectComponent(Assets::AssetHandle projectComponentHandle)
+	void Entity::RemoveProjectComponentData(Assets::AssetHandle projectComponentHandle)
 	{
 		Ref<ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(projectComponent);
+		if (projectComponent->m_BufferSize == 0)
+		{
+			return;
+		}
 		ProjectComponentStorage& storage = m_Registry->m_ProjectComponentStorage.at(projectComponent->m_BufferSlot);
 		storage.m_RemoveProjectComponent(storage.m_EnTTStorageReference, m_EntityHandle);
 	}

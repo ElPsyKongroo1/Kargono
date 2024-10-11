@@ -2,11 +2,66 @@
 
 #include "Kargono/Assets/AssetService.h"
 #include "Kargono/Assets/ProjectComponentManager.h"
+#include "Kargono/Scenes/Scene.h"
 
 #include "Kargono/ECS/ProjectComponent.h"
 
 namespace Kargono::Assets
 {
+	Ref<void> ProjectComponentManager::SaveAssetValidation(Ref<ECS::ProjectComponent> newAssetRef, AssetHandle assetHandle)
+	{
+
+		// Get old asset reference
+		Asset asset = GetAssetRegistry().at(assetHandle);
+		std::filesystem::path assetPath =
+			(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
+				Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation :
+				Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
+		Ref<ECS::ProjectComponent> oldAssetRef = DeserializeAsset(asset, assetPath);
+
+		// Create reallocation instructions which stores information for transferring data from old entity components to new entity components
+		Ref<FieldReallocationInstructions> newReallocationInstructions = CreateRef<FieldReallocationInstructions>();
+
+		// Store old types/locations and new types/locations
+		newReallocationInstructions->m_OldDataTypes = oldAssetRef->m_DataTypes;
+		newReallocationInstructions->m_OldDataLocations = oldAssetRef->m_DataLocations;
+
+		newReallocationInstructions->m_NewDataTypes = newAssetRef->m_DataTypes;
+		newReallocationInstructions->m_NewDataLocations = newAssetRef->m_DataLocations;
+
+		newReallocationInstructions->m_NewDataSize = newAssetRef->m_BufferSize;
+		for (auto& [sceneHandle, asset] : Assets::AssetService::GetSceneRegistry())
+		{
+			newReallocationInstructions->m_OldScenes.push_back(Assets::AssetService::GetScene(sceneHandle));
+			newReallocationInstructions->m_OldSceneHandles.push_back(sceneHandle);
+		}
+
+		// Fill field transfer directions, which maps field data from the old component layout to the new component layout
+		for (size_t OuterIteration{ 0 }; OuterIteration < newAssetRef->m_DataNames.size(); OuterIteration++)
+		{
+			// Check if identical field name exists inside old buffer and ensure similar type. If true, store the location of data in the old buffer
+			bool oldBufferContainsField = false;
+			for (size_t InnerIteration{ 0 }; InnerIteration < oldAssetRef->m_DataNames.size(); InnerIteration++)
+			{
+				if (newAssetRef->m_DataNames.at(OuterIteration) == oldAssetRef->m_DataNames.at(InnerIteration) &&
+					newAssetRef->m_DataTypes.at(OuterIteration) == oldAssetRef->m_DataTypes.at(InnerIteration))
+				{
+					oldBufferContainsField = true;
+					newReallocationInstructions->m_FieldTransferDirections.push_back(InnerIteration);
+					break;
+				}
+			}
+
+			// If no suitable option is found to get data from, initialize new data (use new allocation index)
+			if (!oldBufferContainsField)
+			{
+				newReallocationInstructions->m_FieldTransferDirections.push_back(k_NewAllocationIndex);
+			}
+
+		}
+
+		return newReallocationInstructions;
+	}
 	void ProjectComponentManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
 	{
 		// Create new project component
@@ -160,11 +215,15 @@ namespace Kargono::Assets
 		Ref<ECS::ProjectComponent> deleteComponentRef = GetAsset(assetHandle);
 		KG_ASSERT(deleteComponentRef);
 
-		// Remove component from all scenes
+
 
 		// Decriment the buffer slot for all other project components that have a higher index
 		for (auto& [handle, asset] : GetAssetRegistry())
 		{
+			if (handle == assetHandle)
+			{
+				continue;
+			}
 			Ref<ECS::ProjectComponent> componentRef = GetAsset(handle);
 			KG_ASSERT(componentRef);
 			if (componentRef->m_BufferSlot > deleteComponentRef->m_BufferSlot)

@@ -67,6 +67,9 @@ namespace Kargono::Scenes
 		//		values. Step allows one iteration to occur
 		bool IsRunning() const { return m_IsRunning; }
 	public:
+		void RegisterAllProjectComponents();
+		void AddProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
+		void ClearProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
 		//====================
 		// Create/Destroy Scene Entities
 		//====================
