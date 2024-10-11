@@ -367,6 +367,7 @@ namespace Kargono::Assets
 		{
 			serializer << YAML::Value << section; // Section Name
 		}
+		serializer << YAML::EndSeq; // Start SectionLabels
 	}
 	void ScriptManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
 	{

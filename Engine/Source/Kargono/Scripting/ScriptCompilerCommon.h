@@ -11,6 +11,7 @@
 #include <sstream>
 
 #include "Kargono/Core/Base.h"
+#include "Kargono/Core/BitField.h"
 #include "Kargono/Core/WrappedData.h"
 
 namespace Kargono::Rendering
@@ -483,15 +484,24 @@ namespace Kargono::Scripting
 
 	inline std::string ContextProbe {"CONTEXT_PROBE_INTERNAL"};
 
+	enum class CursorFlags : uint8_t
+	{
+		None = 0,
+		IsFunctionParameter,
+		AfterNamespaceResolution,
+		AllowAllVariableTypes
+	};
+
 	struct CursorContext
 	{
 		std::vector<ScriptToken> AllReturnTypes{};
 		std::vector<std::vector<StackVariable>> StackVariables {};
-		bool IsFunctionParameter{ false };
+		ScriptToken CurrentNamespace{};
+		BitField<uint8_t> m_Flags {};
 
 		operator bool() const
 		{
-			return AllReturnTypes.size() > 0 || StackVariables.size() > 0;
+			return AllReturnTypes.size() > 0 || StackVariables.size() > 0 || CurrentNamespace || m_Flags;
 		}
 	};
 

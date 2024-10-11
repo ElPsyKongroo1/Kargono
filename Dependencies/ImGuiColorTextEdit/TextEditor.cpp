@@ -731,11 +731,11 @@ void TextEditor::RefreshSuggestionsContent()
 	}
 	m_OpenTextSuggestions = true;
 	m_SuggestionTree.ClearTree();
-	bool allowAllVariableTypes = context.AllReturnTypes.size() == 0 || context.AllReturnTypes.at(0).Value == "None";
-	std::vector<Kargono::EditorUI::TreeEntry> failRegexBuffer {};
 		
 	// Handle Data Types
-	if (allowAllVariableTypes || context.IsFunctionParameter)
+	if (!context.m_Flags.IsFlagSet((uint8_t)Kargono::Scripting::CursorFlags::AfterNamespaceResolution) && 
+		(context.m_Flags.IsFlagSet((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes) ||
+		context.m_Flags.IsFlagSet((uint8_t)Kargono::Scripting::CursorFlags::IsFunctionParameter)))
 	{
 		for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
 		{
@@ -762,7 +762,8 @@ void TextEditor::RefreshSuggestionsContent()
 	}
 
 	// Handle Variable Identifiers
-	if (!context.IsFunctionParameter)
+	if (!context.m_Flags.IsFlagSet((uint8_t)Kargono::Scripting::CursorFlags::IsFunctionParameter) && 
+		!context.m_Flags.IsFlagSet((uint8_t)Kargono::Scripting::CursorFlags::AfterNamespaceResolution))
 	{
 		for (auto& stackFrame : context.StackVariables)
 		{
@@ -778,7 +779,7 @@ void TextEditor::RefreshSuggestionsContent()
 					}
 				}
 
-				if (allowAllVariableTypes || returnTypesMatch)
+				if (context.m_Flags.IsFlagSet((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
 				{
 					Kargono::EditorUI::TreeEntry entry;
 					entry.Label = variable.Identifier.Value;
@@ -806,10 +807,11 @@ void TextEditor::RefreshSuggestionsContent()
 	}
 
 	// Handle Functions Identifiers
-	if (!context.IsFunctionParameter)
+	if (!context.m_Flags.IsFlagSet((uint8_t)Kargono::Scripting::CursorFlags::IsFunctionParameter))
 	{
 		for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
 		{
+			// Determine if the return types indeed match
 			bool returnTypesMatch = false;
 			for (auto& type : context.AllReturnTypes)
 			{
@@ -820,11 +822,28 @@ void TextEditor::RefreshSuggestionsContent()
 				}
 			}
 
-			if (allowAllVariableTypes || returnTypesMatch)
+			// Namespace must match if namespace resolution is occuring
+			if (context.m_Flags.IsFlagSet((uint8_t)Kargono::Scripting::CursorFlags::AfterNamespaceResolution))
+			{
+				if (context.CurrentNamespace.Value != funcNode.Namespace.Value)
+				{
+					continue;
+				}
+			}
+
+			if (context.m_Flags.IsFlagSet((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
 			{
 				Kargono::EditorUI::TreeEntry entry;
 				entry.Label = funcNode.Namespace ? funcNode.Namespace.Value + "::" + funcNode.Name.Value : funcNode.Name.Value;
-				entry.ProvidedData = Kargono::CreateRef<std::string>(funcNode.Namespace ? funcNode.Namespace.Value + "::" + funcNode.Name.Value + "()" : funcNode.Name.Value + "()");
+
+				if (context.m_Flags.IsFlagSet((uint8_t)Kargono::Scripting::CursorFlags::AfterNamespaceResolution))
+				{
+					entry.ProvidedData = Kargono::CreateRef<std::string>(funcNode.Name.Value + "()");
+				}
+				else
+				{
+					entry.ProvidedData = Kargono::CreateRef<std::string>(funcNode.Namespace ? funcNode.Namespace.Value + "::" + funcNode.Name.Value + "()" : funcNode.Name.Value + "()");
+				}
 				entry.IconHandle = Kargono::EditorUI::EditorUIService::s_IconFunction;
 				entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
 				{

@@ -432,11 +432,8 @@ namespace Kargono::Scripting
 		if (IsContextProbe(tokenBuffer))
 		{
 			CursorContext newContext;
-			ScriptToken newReturnType;
-			newReturnType.Type = ScriptTokenType::PrimitiveType;
-			newReturnType.Value = "None";
-			newContext.AllReturnTypes.push_back(newReturnType);
-			newContext.IsFunctionParameter = true;
+			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
+			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::IsFunctionParameter);
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in parameter identifier location", tokenBuffer);
 			return { false, {} };
@@ -468,11 +465,8 @@ namespace Kargono::Scripting
 				if (IsContextProbe(GetCurrentToken(1)))
 				{
 					CursorContext newContext;
-					ScriptToken newReturnType;
-					newReturnType.Type = ScriptTokenType::PrimitiveType;
-					newReturnType.Value = "None";
-					newContext.AllReturnTypes.push_back(newReturnType);
-					newContext.IsFunctionParameter = true;
+					newContext.m_Flags.SetFlag((uint8_t)CursorFlags::IsFunctionParameter);
+					newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in parameter identifier location", GetCurrentToken(1));
 					return { false, {} };
@@ -615,6 +609,10 @@ namespace Kargono::Scripting
 			{
 				CursorContext newContext;
 				newContext.AllReturnTypes.push_back(GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()));
+				if (newContext.AllReturnTypes.size() == 0)
+				{
+					newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
+				}
 				newContext.StackVariables = m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of addition/subtraction operation", newBinaryOperation.Operator);
@@ -625,6 +623,10 @@ namespace Kargono::Scripting
 			{
 				CursorContext newContext;
 				newContext.AllReturnTypes.push_back(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()));
+				if (newContext.AllReturnTypes.size() == 0)
+				{
+					newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
+				}
 				newContext.StackVariables = m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of addition/subtraction operation", newBinaryOperation.Operator);
@@ -826,6 +828,10 @@ namespace Kargono::Scripting
 				{
 					CursorContext newContext;
 					newContext.AllReturnTypes.push_back(GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()));
+					if (newContext.AllReturnTypes.size() == 0)
+					{
+						newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+					}
 					newContext.StackVariables = m_StackVariables;
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of multiplication/division/comparison operation", newBinaryOperation.Operator);
@@ -836,6 +842,10 @@ namespace Kargono::Scripting
 				{
 					CursorContext newContext;
 					newContext.AllReturnTypes.push_back(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()));
+					if (newContext.AllReturnTypes.size() == 0)
+					{
+						newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+					}
 					newContext.StackVariables = m_StackVariables;
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of multiplication/division/comparison operation", newBinaryOperation.Operator);
@@ -971,6 +981,25 @@ namespace Kargono::Scripting
 			newFunctionCallNode.Identifier = tokenBuffer;
 			initialAdvance = 2;
 		}
+		else if (tokenBuffer.Type == ScriptTokenType::Identifier &&
+			GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::NamespaceResolver &&
+			IsContextProbe(GetCurrentToken(parentExpressionSize + 2)))
+		{
+			// Ensure namespace identifier exists
+			if (!ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(tokenBuffer.Value))
+			{
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, namespace node is invalid", tokenBuffer);
+				return { false, {} };
+			}
+			// Store context probe for argument
+			CursorContext newContext;
+			newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AfterNamespaceResolution);
+			newContext.CurrentNamespace = tokenBuffer;
+			m_CursorContext = newContext;
+			StoreParseError(ParseErrorType::ContextProbe, "Found context probe for function namespace", tokenBuffer);
+			return { false, {} };
+		}
 		else
 		{
 			return { false, {} };
@@ -1006,6 +1035,10 @@ namespace Kargono::Scripting
 						// Store context probe for argument
 						CursorContext newContext;
 						newContext.AllReturnTypes = functionNode.Parameters.at(newFunctionCallNode.Arguments.size() - 1).AllTypes;
+						if (newContext.AllReturnTypes.size() == 0)
+						{
+							newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+						}
 						newContext.StackVariables = m_StackVariables;
 						m_CursorContext = newContext;
 						StoreParseError(ParseErrorType::ContextProbe, "Found context probe inside function argument", newFunctionCallNode.Identifier);
@@ -1164,11 +1197,8 @@ namespace Kargono::Scripting
 					{
 						// Store context probe for argument
 						CursorContext newContext;
-						ScriptToken newReturnType;
-						newReturnType.Type = ScriptTokenType::PrimitiveType;
-						newReturnType.Value = "None";
-						newContext.AllReturnTypes.push_back(newReturnType);
 						newContext.StackVariables = m_StackVariables;
+						newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
 						m_CursorContext = newContext;
 						StoreParseError(ParseErrorType::ContextProbe, "Found context probe inside initialization list argument", GetCurrentToken(currentArgumentLocation));
 						return { false, {} };
@@ -1586,10 +1616,7 @@ namespace Kargono::Scripting
 		if (IsContextProbe(newExpression))
 		{
 			CursorContext newContext;
-			ScriptToken newReturnType;
-			newReturnType.Type = ScriptTokenType::PrimitiveType;
-			newReturnType.Value = "None";
-			newContext.AllReturnTypes.push_back(newReturnType);
+			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
 			newContext.StackVariables = m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement expression", tokenBuffer);
@@ -1697,6 +1724,10 @@ namespace Kargono::Scripting
 				ScriptToken returnType = GetPrimitiveTypeFromToken(newStatementAssignment.Name->GetReturnType());
 				CursorContext newContext;
 				newContext.AllReturnTypes.push_back(returnType);
+				if (returnType.Value == "None")
+				{
+					newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
+				}
 				newContext.StackVariables = m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement assignment", GetCurrentToken(currentLocation));
@@ -1784,6 +1815,10 @@ namespace Kargono::Scripting
 		{
 			CursorContext newContext;
 			newContext.AllReturnTypes.push_back(tokenBuffer);
+			if (tokenBuffer.Value == "None")
+			{
+				newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
+			}
 			newContext.StackVariables = m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement declaration/assignment", tokenBuffer);
@@ -2058,17 +2093,15 @@ namespace Kargono::Scripting
 		{
 			CursorContext newContext;
 			ScriptToken newReturnType;
-			if (m_CurrentReturnType.Type == ScriptTokenType::PrimitiveType)
+			if (m_CurrentReturnType.Type == ScriptTokenType::PrimitiveType && m_CurrentReturnType.Value != "None")
 			{
 				newReturnType = m_CurrentReturnType;
+				newContext.AllReturnTypes.push_back(newReturnType);
 			}
 			else
 			{
-				newReturnType.Type = ScriptTokenType::PrimitiveType;
-				newReturnType.Value = "None";
+				newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
 			}
-			
-			newContext.AllReturnTypes.push_back(newReturnType);
 			newContext.StackVariables = m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement return", GetCurrentToken());
