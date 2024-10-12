@@ -419,12 +419,12 @@ namespace Kargono::Assets
 			YAML::Emitter serializer;
 			serializer << YAML::BeginMap;
 			serializer << YAML::Key << "Registry" << YAML::Value << m_AssetName;
-			serializer << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
 
 			// Serialize other registry specific data
 			SerializeRegistrySpecificData(serializer);
 
 			// Asset
+			serializer << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
 			for (auto& [handle, asset] : m_AssetRegistry)
 			{
 				serializer << YAML::BeginMap; // Asset Map
