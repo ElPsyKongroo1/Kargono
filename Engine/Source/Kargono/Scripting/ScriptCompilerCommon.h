@@ -108,6 +108,7 @@ namespace Kargono::Scripting
 
 namespace Kargono::Utility
 {
+
 	inline std::string ScriptTokenTypeToString(Scripting::ScriptTokenType type)
 	{
 		switch (type)
