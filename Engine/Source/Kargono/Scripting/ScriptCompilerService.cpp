@@ -3,6 +3,7 @@
 #include "Kargono/Scripting/ScriptCompilerService.h"
 
 #include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Utility/Regex.h"
 #include "Kargono/EditorUI/EditorUI.h"
 #include "Kargono/Scripting/ScriptTokenizer.h"
 #include "Kargono/Scripting/ScriptTokenParser.h"
@@ -164,6 +165,200 @@ namespace Kargono::Scripting
 		}
 
 		return {};
+	}
+
+	std::vector<SuggestionSpec> Scripting::ScriptCompilerService::GetSuggestions(const std::string& scriptText, const std::string& queryText)
+	{
+		// Lazy loading KGScript language def
+		if (!s_ActiveLanguageDefinition)
+		{
+			CreateKGScriptLanguageDefinition();
+		}
+
+		// Get tokens from text
+		ScriptTokenizer scriptTokenizer{};
+		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(scriptText);
+
+		// Parse tokens and check for generated cursor context
+		ScriptTokenParser tokenParser{};
+		tokenParser.ParseTokens(std::move(tokens));
+		auto [success, context] = tokenParser.GetCursorContext();
+
+		// Exit gracefully if no context was found
+		if (!success)
+		{
+			return {};
+		}
+
+		// Generate suggestions using based on context flags
+		std::vector<SuggestionSpec> allSuggestions;
+		if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AfterNamespaceResolution))
+		{
+			GetSuggestionsForAfterNamespace(allSuggestions, context, queryText);
+		}
+		else if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::IsDataMember))
+		{
+			GetSuggestionsForIsDataMember(allSuggestions, context, queryText);
+		}
+		else if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::IsFunctionParameter))
+		{
+			GetSuggestionsForIsParameter(allSuggestions, context, queryText);
+		}
+		else
+		{
+			GetSuggestionsDefault(allSuggestions, context, queryText);
+		}
+		
+
+		return allSuggestions;
+	}
+
+	void Scripting::ScriptCompilerService::GetSuggestionsForAfterNamespace(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
+	{
+		// Generate suggestions for function identifiers
+		for (auto& [funcName, funcNode] : ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
+		{
+			// Ensure namespaces match
+			if (context.CurrentNamespace.Value != funcNode.Namespace.Value)
+			{
+				continue;
+			}
+
+			// Decide whether to insert function
+			std::string label = funcNode.Namespace ? funcNode.Namespace.Value + "::" + funcNode.Name.Value : funcNode.Name.Value;
+			if (Utility::Regex::GetMatchSuccess(label, queryText, false))
+			{
+				SuggestionSpec newSuggestion;
+				newSuggestion.m_Label = label;
+				newSuggestion.m_ReplacementText = funcNode.Name.Value + "()";
+				newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
+				allSuggestions.push_back(newSuggestion);
+			}
+		}
+	}
+
+	void Scripting::ScriptCompilerService::GetSuggestionsForIsParameter(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
+	{
+		// Generate suggestions for primitive types
+		for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+		{
+			if (Utility::Regex::GetMatchSuccess(primitiveType.Name, queryText, false))
+			{
+				SuggestionSpec newSuggestion;
+				newSuggestion.m_Label = primitiveType.Name;
+				newSuggestion.m_ReplacementText = primitiveType.Name;
+				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
+				allSuggestions.push_back(newSuggestion);
+			}
+		}
+	}
+
+	void Scripting::ScriptCompilerService::GetSuggestionsForIsDataMember(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
+	{
+		// Generate suggestions for all member fields
+		for (auto& [name, member] : context.DataMembers)
+		{
+			if (DataMember* dataMember = std::get_if<DataMember>(&member->Value))
+			{
+				if (Utility::Regex::GetMatchSuccess(dataMember->Name, queryText, false))
+				{
+					SuggestionSpec newSuggestion;
+					newSuggestion.m_Label = dataMember->Name;
+					newSuggestion.m_ReplacementText = dataMember->Name;
+					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
+					allSuggestions.push_back(newSuggestion);
+				}	
+			}
+			else if (FunctionNode* funcNode = std::get_if<FunctionNode>(&member->Value))
+			{
+				if (Utility::Regex::GetMatchSuccess(funcNode->Name.Value, queryText, false))
+				{
+					SuggestionSpec newSuggestion;
+					newSuggestion.m_Label = funcNode->Name.Value;
+					newSuggestion.m_ReplacementText = funcNode->Name.Value + "()";
+					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconFunction;
+					allSuggestions.push_back(newSuggestion);
+				}
+			}
+		}
+	}
+
+	void Scripting::ScriptCompilerService::GetSuggestionsDefault(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
+	{
+		// Generate suggestions for primitive types
+		if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes))
+		{
+			for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+			{
+				if (Utility::Regex::GetMatchSuccess(primitiveType.Name, queryText, false))
+				{
+					SuggestionSpec newSuggestion;
+					newSuggestion.m_Label = primitiveType.Name;
+					newSuggestion.m_ReplacementText = primitiveType.Name;
+					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
+					allSuggestions.push_back(newSuggestion);
+				}
+			}
+		}
+
+		// Generate suggestions for stack variables
+		for (auto& stackFrame : context.StackVariables)
+		{
+			for (auto& variable : stackFrame)
+			{
+				bool returnTypesMatch = false;
+				for (auto& type : context.AllReturnTypes)
+				{
+					if (variable.Type.Value == type.Value)
+					{
+						returnTypesMatch = true;
+						break;
+					}
+				}
+
+				if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
+				{
+					if (Utility::Regex::GetMatchSuccess(variable.Identifier.Value, queryText, false))
+					{
+						SuggestionSpec newSuggestion;
+						newSuggestion.m_Label = variable.Identifier.Value;
+						newSuggestion.m_ReplacementText = variable.Identifier.Value;
+						newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
+						allSuggestions.push_back(newSuggestion);
+					}
+				}
+			}
+		}
+		
+		// Handle Functions Identifiers
+		for (auto& [funcName, funcNode] : ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
+		{
+			// Determine if the return types indeed match
+			bool returnTypesMatch = false;
+			for (auto& type : context.AllReturnTypes)
+			{
+				if (funcNode.ReturnType.Value == type.Value)
+				{
+					returnTypesMatch = true;
+					break;
+				}
+			}
+
+			if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
+			{
+				// Decide whether to insert function
+				std::string label = funcNode.Namespace ? funcNode.Namespace.Value + "::" + funcNode.Name.Value : funcNode.Name.Value;
+				if (Utility::Regex::GetMatchSuccess(label, queryText, false))
+				{
+					SuggestionSpec newSuggestion;
+					newSuggestion.m_Label = label;
+					newSuggestion.m_ReplacementText = funcNode.Namespace ? funcNode.Namespace.Value + "::" + funcNode.Name.Value + "()" : funcNode.Name.Value + "()";
+					newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
+					allSuggestions.push_back(newSuggestion);
+				}
+			}
+		}
+		
 	}
 
 

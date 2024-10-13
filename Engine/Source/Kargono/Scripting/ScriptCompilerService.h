@@ -1,8 +1,18 @@
 #pragma once
 #include "Kargono/Scripting/ScriptCompilerCommon.h"
 
+namespace Kargono::Rendering { class Texture2D; }
+
 namespace Kargono::Scripting 
 {
+
+	struct SuggestionSpec
+	{
+		Ref<Rendering::Texture2D> m_Icon { nullptr };
+		std::string m_Label {};
+		std::string m_ReplacementText {};
+	};
+
 	//==============================
 	// Script Compiler Service Class
 	//==============================
@@ -15,6 +25,13 @@ namespace Kargono::Scripting
 		static std::string CompileScriptFile(const std::filesystem::path& scriptLocation);
 		static std::vector<ParserError> CheckForErrors(const std::string& text);
 		static CursorContext FindCursorContext(const std::string& text);
+		static std::vector<SuggestionSpec> GetSuggestions(const std::string& scriptText, const std::string& queryText);
+
+	private:
+		static void GetSuggestionsForAfterNamespace(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText);
+		static void GetSuggestionsForIsParameter(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText);
+		static void GetSuggestionsForIsDataMember(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText);
+		static void GetSuggestionsDefault(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText);
 	public:
 		static void CreateKGScriptLanguageDefinition();
 	private:

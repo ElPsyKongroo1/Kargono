@@ -1185,7 +1185,7 @@ namespace Kargono::Scripting
 		uint32_t currentArgumentLocation = parentExpressionSize + 1;
 		{
 			bool continueLoop;
-			do
+			do 
 			{
 				continueLoop = false;
 				// Parse Expression Node and store expression
@@ -1395,6 +1395,17 @@ namespace Kargono::Scripting
 		// Store initial variable identifier
 		returnMemberNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(initialVariable, {ScriptTokenType::PrimitiveType, currentPrimitiveType.Name}));
 
+		// Check for first context probe
+		if (IsContextProbe(memberList.at(0)))
+		{
+			CursorContext newContext;
+			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::IsDataMember);
+			newContext.DataMembers = currentPrimitiveType.Members;
+			m_CursorContext = newContext;
+			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement expression", GetCurrentToken(currentLocation));
+			return { false, nullptr };
+		}
+
 		// Get first member type from primitive type and ensure it is valid
 		Ref<MemberType> currentMemberType;
 		if (!currentPrimitiveType.Members.contains(memberList.at(0).Value))
@@ -1407,6 +1418,7 @@ namespace Kargono::Scripting
 		}
 		currentMemberType = currentPrimitiveType.Members.at(memberList.at(0).Value);
 		
+		// Process remaining members in list
 		Ref<MemberNode> finalParentNode;
 		ScriptToken finalToken{};
 		if (memberList.size() > 1)
@@ -1420,12 +1432,26 @@ namespace Kargono::Scripting
 				return { false, nullptr };
 			}
 
+			// Store first member of memberList
 			Ref<MemberNode> childNode = CreateRef<MemberNode>();
 			childNode->ChildMemberNode = nullptr;
 			childNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(memberList.at(0), currentDataMember->PrimitiveType));
 			returnMemberNode->ChildMemberNode = childNode;
+
+			// Iterate through all remaining members of memberList
 			for (std::size_t iteration {1}; iteration < memberList.size() - 1; iteration++)
 			{
+				// Check for context probe
+				if (IsContextProbe(memberList.at(iteration)))
+				{
+					CursorContext newContext;
+					newContext.m_Flags.SetFlag((uint8_t)CursorFlags::IsDataMember);
+					newContext.DataMembers = currentDataMember->Members;
+					m_CursorContext = newContext;
+					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement expression", GetCurrentToken(memberList.at(iteration)));
+					return { false, nullptr };
+				}
+
 				if (!currentDataMember->Members.contains(memberList.at(iteration).Value))
 				{
 					StoreParseError(ParseErrorType::Expression, "Could not locate MemberType from identifier", memberList.at(iteration));
@@ -1445,6 +1471,16 @@ namespace Kargono::Scripting
 				newNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(memberList.at(iteration), currentDataMember->PrimitiveType));
 				childNode->ChildMemberNode = newNode;
 				childNode = newNode;
+			}
+			// Check for final context probe
+			if (IsContextProbe(memberList.at(memberList.size() - 1)))
+			{
+				CursorContext newContext;
+				newContext.m_Flags.SetFlag((uint8_t)CursorFlags::IsDataMember);
+				newContext.DataMembers = currentDataMember->Members;
+				m_CursorContext = newContext;
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement expression", GetCurrentToken(memberList.at(memberList.size() - 1)));
+				return { false, nullptr };
 			}
 			if (!currentDataMember->Members.contains(memberList.at(memberList.size() - 1).Value))
 			{

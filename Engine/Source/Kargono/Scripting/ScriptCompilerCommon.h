@@ -422,7 +422,7 @@ namespace Kargono::Scripting
 		std::vector<FunctionParameter> Parameters{};
 		std::vector<Ref<Statement>> Statements{};
 		std::function<void(FunctionCallNode&)> OnGenerateFunction{ nullptr };
-		std::function<void(ScriptOutputGenerator& generator, MemberNode&)> OnGenerateMemberFunction { nullptr };
+		std::function<void(ScriptOutputGenerator&, MemberNode&)> OnGenerateMemberFunction { nullptr };
 		std::string Description { "Built-in Function"};
 
 		operator bool() const
@@ -488,6 +488,7 @@ namespace Kargono::Scripting
 	{
 		None = 0,
 		IsFunctionParameter,
+		IsDataMember,
 		AfterNamespaceResolution,
 		AllowAllVariableTypes
 	};
@@ -497,11 +498,12 @@ namespace Kargono::Scripting
 		std::vector<ScriptToken> AllReturnTypes{};
 		std::vector<std::vector<StackVariable>> StackVariables {};
 		ScriptToken CurrentNamespace{};
+		std::unordered_map<std::string, Ref<MemberType>> DataMembers{};
 		BitField<uint8_t> m_Flags {};
 
 		operator bool() const
 		{
-			return AllReturnTypes.size() > 0 || StackVariables.size() > 0 || CurrentNamespace || m_Flags;
+			return AllReturnTypes.size() > 0 || StackVariables.size() > 0 || CurrentNamespace || m_Flags || DataMembers.size() > 0;
 		}
 	};
 
@@ -516,9 +518,10 @@ namespace Kargono::Scripting
 	struct DataMember
 	{
 		ScriptToken PrimitiveType{};
-		std::string Name{};
+		std::string Name{};   
 		std::string Description{};
 		std::unordered_map<std::string, Ref<MemberType>> Members{};
+		std::function<void(ScriptOutputGenerator&, MemberNode&)> OnGenerateMemberFunction { nullptr };
 	};
 
 	struct MemberType
