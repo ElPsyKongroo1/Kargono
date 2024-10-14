@@ -1,9 +1,9 @@
 var InputBuffer_8h =
 [
-    [ "InputBufferElement", "structKargono_1_1Rendering_1_1InputBufferElement.html", "structKargono_1_1Rendering_1_1InputBufferElement" ],
-    [ "InputBufferLayout", "classKargono_1_1Rendering_1_1InputBufferLayout.html", "classKargono_1_1Rendering_1_1InputBufferLayout" ],
-    [ "VertexBuffer", "classKargono_1_1Rendering_1_1VertexBuffer.html", "classKargono_1_1Rendering_1_1VertexBuffer" ],
-    [ "IndexBuffer", "classKargono_1_1Rendering_1_1IndexBuffer.html", "classKargono_1_1Rendering_1_1IndexBuffer" ],
+    [ "Kargono::Rendering::InputBufferElement", "structKargono_1_1Rendering_1_1InputBufferElement.html", "structKargono_1_1Rendering_1_1InputBufferElement" ],
+    [ "Kargono::Rendering::InputBufferLayout", "classKargono_1_1Rendering_1_1InputBufferLayout.html", "classKargono_1_1Rendering_1_1InputBufferLayout" ],
+    [ "Kargono::Rendering::VertexBuffer", "classKargono_1_1Rendering_1_1VertexBuffer.html", "classKargono_1_1Rendering_1_1VertexBuffer" ],
+    [ "Kargono::Rendering::IndexBuffer", "classKargono_1_1Rendering_1_1IndexBuffer.html", "classKargono_1_1Rendering_1_1IndexBuffer" ],
     [ "InputDataType", "InputBuffer_8h.html#a5a184eff7b1827246821dafeb4f7373f", [
       [ "None", "InputBuffer_8h.html#a5a184eff7b1827246821dafeb4f7373fa6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "Float", "InputBuffer_8h.html#a5a184eff7b1827246821dafeb4f7373fa22ae0e2b89e5e3d477f988cc36d3272b", null ],

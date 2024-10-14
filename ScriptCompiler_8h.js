@@ -1,18 +1,18 @@
 var ScriptCompiler_8h =
 [
-    [ "ScriptToken", "structKargono_1_1Scripting_1_1ScriptToken.html", "structKargono_1_1Scripting_1_1ScriptToken" ],
-    [ "ScriptTokenizer", "classKargono_1_1Scripting_1_1ScriptTokenizer.html", "classKargono_1_1Scripting_1_1ScriptTokenizer" ],
-    [ "StatementEmpty", "structKargono_1_1Scripting_1_1StatementEmpty.html", null ],
-    [ "StatementLiteral", "structKargono_1_1Scripting_1_1StatementLiteral.html", "structKargono_1_1Scripting_1_1StatementLiteral" ],
-    [ "StatementDeclaration", "structKargono_1_1Scripting_1_1StatementDeclaration.html", "structKargono_1_1Scripting_1_1StatementDeclaration" ],
-    [ "StatementAssignment", "structKargono_1_1Scripting_1_1StatementAssignment.html", "structKargono_1_1Scripting_1_1StatementAssignment" ],
-    [ "FunctionParameter", "structKargono_1_1Scripting_1_1FunctionParameter.html", "structKargono_1_1Scripting_1_1FunctionParameter" ],
-    [ "FunctionNode", "structKargono_1_1Scripting_1_1FunctionNode.html", "structKargono_1_1Scripting_1_1FunctionNode" ],
-    [ "ProgramNode", "structKargono_1_1Scripting_1_1ProgramNode.html", "structKargono_1_1Scripting_1_1ProgramNode" ],
-    [ "ScriptAST", "structKargono_1_1Scripting_1_1ScriptAST.html", "structKargono_1_1Scripting_1_1ScriptAST" ],
-    [ "ParserError", "structKargono_1_1Scripting_1_1ParserError.html", "structKargono_1_1Scripting_1_1ParserError" ],
-    [ "TokenParser", "classKargono_1_1Scripting_1_1TokenParser.html", "classKargono_1_1Scripting_1_1TokenParser" ],
-    [ "ScriptCompiler", "classKargono_1_1Scripting_1_1ScriptCompiler.html", null ],
+    [ "Kargono::Scripting::ScriptToken", "structKargono_1_1Scripting_1_1ScriptToken.html", "structKargono_1_1Scripting_1_1ScriptToken" ],
+    [ "Kargono::Scripting::ScriptTokenizer", "classKargono_1_1Scripting_1_1ScriptTokenizer.html", "classKargono_1_1Scripting_1_1ScriptTokenizer" ],
+    [ "Kargono::Scripting::StatementEmpty", "structKargono_1_1Scripting_1_1StatementEmpty.html", null ],
+    [ "Kargono::Scripting::StatementLiteral", "structKargono_1_1Scripting_1_1StatementLiteral.html", "structKargono_1_1Scripting_1_1StatementLiteral" ],
+    [ "Kargono::Scripting::StatementDeclaration", "structKargono_1_1Scripting_1_1StatementDeclaration.html", "structKargono_1_1Scripting_1_1StatementDeclaration" ],
+    [ "Kargono::Scripting::StatementAssignment", "structKargono_1_1Scripting_1_1StatementAssignment.html", "structKargono_1_1Scripting_1_1StatementAssignment" ],
+    [ "Kargono::Scripting::FunctionParameter", "structKargono_1_1Scripting_1_1FunctionParameter.html", "structKargono_1_1Scripting_1_1FunctionParameter" ],
+    [ "Kargono::Scripting::FunctionNode", "structKargono_1_1Scripting_1_1FunctionNode.html", "structKargono_1_1Scripting_1_1FunctionNode" ],
+    [ "Kargono::Scripting::ProgramNode", "structKargono_1_1Scripting_1_1ProgramNode.html", "structKargono_1_1Scripting_1_1ProgramNode" ],
+    [ "Kargono::Scripting::ScriptAST", "structKargono_1_1Scripting_1_1ScriptAST.html", "structKargono_1_1Scripting_1_1ScriptAST" ],
+    [ "Kargono::Scripting::ParserError", "structKargono_1_1Scripting_1_1ParserError.html", "structKargono_1_1Scripting_1_1ParserError" ],
+    [ "Kargono::Scripting::TokenParser", "classKargono_1_1Scripting_1_1TokenParser.html", "classKargono_1_1Scripting_1_1TokenParser" ],
+    [ "Kargono::Scripting::ScriptCompiler", "classKargono_1_1Scripting_1_1ScriptCompiler.html", null ],
     [ "Statement", "ScriptCompiler_8h.html#abad98259f396a2747d1e560e1ef27968", null ],
     [ "ScriptTokenType", "ScriptCompiler_8h.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6", [
       [ "None", "ScriptCompiler_8h.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6a6adf97f83acf6453d4a6a4b1070f3754", null ],
@@ -43,6 +43,6 @@ var ScriptCompiler_8h =
       [ "ProgEnd", "ScriptCompiler_8h.html#a07987ddae06682e6b95eb195d94d7ec5ac1d5e9d542b5af76505a15f235ea6826", null ]
     ] ],
     [ "ScriptTokenTypeToString", "ScriptCompiler_8h.html#a6fc13609e168cbd2f5013125d96eea95", null ],
-    [ "PrimitiveTypeAcceptableInput", "ScriptCompiler_8h.html#afb113f45ca48fff5baf3e84ebf2453cc", null ],
+    [ "PrimitiveTypeAcceptableInput", "ScriptCompiler_8h.html#ac34a216f6bf38be720773059816f3933", null ],
     [ "ParseErrorTypeToString", "ScriptCompiler_8h.html#a04ce4efa31aaa738ec1933247f2ad8e1", null ]
 ];

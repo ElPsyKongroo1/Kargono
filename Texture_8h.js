@@ -1,8 +1,8 @@
 var Texture_8h =
 [
-    [ "TextureSpecification", "structKargono_1_1Rendering_1_1TextureSpecification.html", "structKargono_1_1Rendering_1_1TextureSpecification" ],
-    [ "Texture", "classKargono_1_1Rendering_1_1Texture.html", "classKargono_1_1Rendering_1_1Texture" ],
-    [ "Texture2D", "classKargono_1_1Rendering_1_1Texture2D.html", null ],
+    [ "Kargono::Rendering::TextureSpecification", "structKargono_1_1Rendering_1_1TextureSpecification.html", "structKargono_1_1Rendering_1_1TextureSpecification" ],
+    [ "Kargono::Rendering::Texture", "classKargono_1_1Rendering_1_1Texture.html", "classKargono_1_1Rendering_1_1Texture" ],
+    [ "Kargono::Rendering::Texture2D", "classKargono_1_1Rendering_1_1Texture2D.html", null ],
     [ "ImageFormat", "Texture_8h.html#a9ac98824abb0b92724f910bafef2952e", [
       [ "None", "Texture_8h.html#a9ac98824abb0b92724f910bafef2952ea6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "R8", "Texture_8h.html#a9ac98824abb0b92724f910bafef2952eacfff813d86d447fa2a9c858650ebbb90", null ],

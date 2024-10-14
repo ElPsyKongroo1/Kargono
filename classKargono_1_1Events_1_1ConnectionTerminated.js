@@ -2,6 +2,6 @@ var classKargono_1_1Events_1_1ConnectionTerminated =
 [
     [ "ConnectionTerminated", "classKargono_1_1Events_1_1ConnectionTerminated.html#a8079cf6099b49781ff3d13c6825a2a85", null ],
     [ "GetEventType", "classKargono_1_1Events_1_1ConnectionTerminated.html#af5583bf7c6b09d322879ecae9095b10e", null ],
-    [ "GetName", "classKargono_1_1Events_1_1ConnectionTerminated.html#a2bc949bc778e81803e4c584253d16d42", null ],
+    [ "GetName", "classKargono_1_1Events_1_1ConnectionTerminated.html#af2c159096b6612b1d98ba6e95e3b84e0", null ],
     [ "GetCategoryFlags", "classKargono_1_1Events_1_1ConnectionTerminated.html#a1f6c47c0518f1beab2b99ef3e5425e22", null ]
 ];

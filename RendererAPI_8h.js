@@ -1,6 +1,6 @@
 var RendererAPI_8h =
 [
-    [ "RendererAPI", "classKargono_1_1Rendering_1_1RendererAPI.html", null ],
+    [ "Kargono::Rendering::RendererAPI", "classKargono_1_1Rendering_1_1RendererAPI.html", null ],
     [ "StencilComparisonType", "RendererAPI_8h.html#a45a43b3e52c5279900d3edf586a9cb1a", [
       [ "None", "RendererAPI_8h.html#a45a43b3e52c5279900d3edf586a9cb1aa6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "NEVER", "RendererAPI_8h.html#a45a43b3e52c5279900d3edf586a9cb1aa443475558f0168dff92ecde26b98ae5a", null ],

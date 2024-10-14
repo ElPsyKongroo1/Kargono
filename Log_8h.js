@@ -1,6 +1,6 @@
 var Log_8h =
 [
-    [ "Log", "classKargono_1_1Log.html", null ],
+    [ "Kargono::Log", "classKargono_1_1Log.html", null ],
     [ "KG_STRINGIFY", "Log_8h.html#abff906b1cbb717518091a93936461b52", null ],
     [ "KG_EXPAND_AND_STRINGIFY", "Log_8h.html#ae9b7d886e8acbd0ed222cf23a3442ba4", null ],
     [ "KG_INFO", "Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862", null ],

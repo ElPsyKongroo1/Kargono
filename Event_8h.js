@@ -1,10 +1,10 @@
 var Event_8h =
 [
-    [ "Event", "classKargono_1_1Events_1_1Event.html", "classKargono_1_1Events_1_1Event" ],
-    [ "EventDispatcher", "classKargono_1_1Events_1_1EventDispatcher.html", "classKargono_1_1Events_1_1EventDispatcher" ],
+    [ "Kargono::Events::Event", "classKargono_1_1Events_1_1Event.html", "classKargono_1_1Events_1_1Event" ],
+    [ "Kargono::Events::EventDispatcher", "classKargono_1_1Events_1_1EventDispatcher.html", "classKargono_1_1Events_1_1EventDispatcher" ],
     [ "EventCallbackFn", "Event_8h.html#abec2579a8a2c2e2eef75ad7293a5f9b4", null ],
     [ "EventType", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4", [
-      [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
+      [ "None", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "WindowClose", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4ac984201d37197ab297a14d19efee4b07", null ],
       [ "WindowResize", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a9f8f27bff2915738c4fe1b970e12f89c", null ],
       [ "WindowFocus", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a1c68d5453b28d52622bf5486a5fd95ca", null ],
@@ -51,7 +51,6 @@ var Event_8h =
     ] ],
     [ "EventCategory", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522", [
       [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a661adecac578ef49aefda5401d7c5a8a", null ],
-      [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "Application", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84", null ],
       [ "Input", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a796f2a9de3d08f65af121153131cf6da", null ],
       [ "Keyboard", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a4a6736b1bac2268ca1b2dd2407f6c086", null ],
@@ -59,5 +58,5 @@ var Event_8h =
       [ "MouseButton", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a46c090fbe7fd7b12158804cf42c658fe", null ],
       [ "Networking", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a8e8bc7f9f2b5973c60c0bd385ac527bd", null ]
     ] ],
-    [ "operator<<", "Event_8h.html#a20d620b71a05e9009c2fd6d472026e87", null ]
+    [ "operator<<", "Event_8h.html#a6be56e3c47038c73d87f44a7e772afd7", null ]
 ];

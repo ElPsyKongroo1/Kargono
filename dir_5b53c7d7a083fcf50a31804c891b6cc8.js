@@ -1,10 +1,7 @@
 var dir_5b53c7d7a083fcf50a31804c891b6cc8 =
 [
     [ "Asset.h", "Asset_8h.html", "Asset_8h" ],
-    [ "AssetManager.h", "AssetManager_8h.html", [
-      [ "AssetManager", "classKargono_1_1Assets_1_1AssetManager.html", "classKargono_1_1Assets_1_1AssetManager" ],
-      [ "ScriptSpec", "structKargono_1_1Assets_1_1AssetManager_1_1ScriptSpec.html", "structKargono_1_1Assets_1_1AssetManager_1_1ScriptSpec" ]
-    ] ],
+    [ "AssetManager.h", "AssetManager_8h.html", "AssetManager_8h" ],
     [ "AudioManager.cpp", "AudioManager_8cpp.html", null ],
     [ "EntityClassManager.cpp", "EntityClassManager_8cpp.html", null ],
     [ "FontManager.cpp", "FontManager_8cpp.html", "FontManager_8cpp" ],

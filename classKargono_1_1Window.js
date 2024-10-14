@@ -13,7 +13,7 @@ var classKargono_1_1Window =
     [ "GetMonitorDimensions", "classKargono_1_1Window.html#a52e0c42bbb3dba50fe4ecc27f50762b6", null ],
     [ "ResizeWindow", "classKargono_1_1Window.html#a6e156c207a4a09cb516735ebde9417d0", null ],
     [ "SetEventCallback", "classKargono_1_1Window.html#aab565451020a6d3c90f144dff22bba2e", null ],
-    [ "GetEventCallback", "classKargono_1_1Window.html#a0169291a0c0e688d5c233709ea95ccce", null ],
+    [ "GetEventCallback", "classKargono_1_1Window.html#a690702f497d39ccf09b6c1527eaff6f5", null ],
     [ "SetVSync", "classKargono_1_1Window.html#adbb13b0e0db5a9dd68b918657fa9d8a5", null ],
     [ "IsVSync", "classKargono_1_1Window.html#af1e612778c7af1f430811d8a485e9c63", null ],
     [ "SetFullscreen", "classKargono_1_1Window.html#a7f96a7375dff1946af52d0a21bbd1125", null ],
@@ -22,5 +22,5 @@ var classKargono_1_1Window =
     [ "SetMouseCursorVisible", "classKargono_1_1Window.html#ab4da1d5f1935d65e428f7a742c439a1c", null ],
     [ "CenterWindow", "classKargono_1_1Window.html#a8d3a78da66c429633b4466a4caa87054", null ],
     [ "ToggleMaximized", "classKargono_1_1Window.html#a296122a13295d95dcbe308f965dd7e5f", null ],
-    [ "GetNativeWindow", "classKargono_1_1Window.html#a5f1c439aaf7de9427af4c86a2cf882fb", null ]
+    [ "GetNativeWindow", "classKargono_1_1Window.html#a8a121261ab4a48b50ac94931dea2cf7d", null ]
 ];

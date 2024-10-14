@@ -1,8 +1,8 @@
 var UniformBuffer_8h =
 [
-    [ "UniformElement", "structKargono_1_1Rendering_1_1UniformElement.html", "structKargono_1_1Rendering_1_1UniformElement" ],
-    [ "UniformBufferList", "classKargono_1_1Rendering_1_1UniformBufferList.html", "classKargono_1_1Rendering_1_1UniformBufferList" ],
-    [ "UniformBuffer", "classKargono_1_1Rendering_1_1UniformBuffer.html", "classKargono_1_1Rendering_1_1UniformBuffer" ],
+    [ "Kargono::Rendering::UniformElement", "structKargono_1_1Rendering_1_1UniformElement.html", "structKargono_1_1Rendering_1_1UniformElement" ],
+    [ "Kargono::Rendering::UniformBufferList", "classKargono_1_1Rendering_1_1UniformBufferList.html", "classKargono_1_1Rendering_1_1UniformBufferList" ],
+    [ "Kargono::Rendering::UniformBuffer", "classKargono_1_1Rendering_1_1UniformBuffer.html", "classKargono_1_1Rendering_1_1UniformBuffer" ],
     [ "UniformDataType", "UniformBuffer_8h.html#a951fcfb2d5c1feaa8df52a73327bd2f8", [
       [ "None", "UniformBuffer_8h.html#a951fcfb2d5c1feaa8df52a73327bd2f8a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "Float", "UniformBuffer_8h.html#a951fcfb2d5c1feaa8df52a73327bd2f8a22ae0e2b89e5e3d477f988cc36d3272b", null ],

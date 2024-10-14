@@ -1,6 +1,6 @@
 var ContentBrowserPanel_8h =
 [
-    [ "ContentBrowserPanel", "classKargono_1_1Panels_1_1ContentBrowserPanel.html", "classKargono_1_1Panels_1_1ContentBrowserPanel" ],
+    [ "Kargono::Panels::ContentBrowserPanel", "classKargono_1_1Panels_1_1ContentBrowserPanel.html", "classKargono_1_1Panels_1_1ContentBrowserPanel" ],
     [ "BrowserFileType", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723b", [
       [ "None", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723ba6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "Directory", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723bae73cda510e8bb947f7e61089e5581494", null ],
