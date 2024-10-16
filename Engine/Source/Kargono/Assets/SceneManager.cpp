@@ -99,6 +99,24 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
+		if (entity.HasComponent<ECS::OnUpdateComponent>())
+		{
+			out << YAML::Key << "OnUpdateComponent";
+			out << YAML::BeginMap; // Component Map
+			ECS::OnUpdateComponent& component = entity.GetComponent<ECS::OnUpdateComponent>();
+			out << YAML::Key << "OnUpdateHandle" << YAML::Value << static_cast<uint64_t>(component.OnUpdateScriptHandle);
+			out << YAML::EndMap; // Component Map
+		}
+
+		if (entity.HasComponent<ECS::OnCreateComponent>())
+		{
+			out << YAML::Key << "OnCreateComponent";
+			out << YAML::BeginMap; // Component Map
+			ECS::OnCreateComponent& component = entity.GetComponent<ECS::OnCreateComponent>();
+			out << YAML::Key << "OnCreateHandle" << YAML::Value << static_cast<uint64_t>(component.OnCreateScriptHandle);
+			out << YAML::EndMap; // Component Map
+		}
+
 		if (entity.HasComponent<ECS::ClassInstanceComponent>())
 		{
 			out << YAML::Key << "ClassInstanceComponent";
@@ -231,6 +249,17 @@ namespace Kargono::Utility
 			auto& rb2dComponent = entity.GetComponent<ECS::Rigidbody2DComponent>();
 			out << YAML::Key << "BodyType" << YAML::Value << Utility::RigidBody2DBodyTypeToString(rb2dComponent.Type);
 			out << YAML::Key << "FixedRotation" << YAML::Value << rb2dComponent.FixedRotation;
+			out << YAML::Key << "OnCollisionStartHandle" << YAML::Value << static_cast<uint64_t>(rb2dComponent.OnCollisionStartScriptHandle);
+			out << YAML::Key << "OnCollisionEndHandle" << YAML::Value << static_cast<uint64_t>(rb2dComponent.OnCollisionEndScriptHandle);
+			out << YAML::EndMap; // Component Map
+		}
+
+		if (entity.HasComponent<ECS::OnCreateComponent>())
+		{
+			out << YAML::Key << "OnCreateComponent";
+			out << YAML::BeginMap; // Component Map
+			ECS::OnCreateComponent& component = entity.GetComponent<ECS::OnCreateComponent>();
+			out << YAML::Key << "OnCreateHandle" << YAML::Value << static_cast<uint64_t>(component.OnCreateScriptHandle);
 			out << YAML::EndMap; // Component Map
 		}
 
@@ -373,13 +402,37 @@ namespace Kargono::Assets
 
 				ECS::Entity deserializedEntity = newScene->CreateEntityWithUUID(uuid, name);
 
-				auto transformComponent = entity["TransformComponent"];
+				YAML::Node transformComponent = entity["TransformComponent"];
 				if (transformComponent)
 				{
 					auto& tc = deserializedEntity.GetComponent<ECS::TransformComponent>();
 					tc.Translation = transformComponent["Translation"].as<Math::vec3>();
 					tc.Rotation = transformComponent["Rotation"].as<Math::vec3>();
 					tc.Scale = transformComponent["Scale"].as<Math::vec3>();
+				}
+
+				YAML::Node onUpdateNode = entity["OnUpdateComponent"];
+				if (onUpdateNode)
+				{
+					ECS::OnUpdateComponent& component = deserializedEntity.GetComponent<ECS::OnUpdateComponent>();
+					component.OnUpdateScriptHandle = onUpdateNode["OnUpdateHandle"].as<uint64_t>();
+					component.OnUpdateScript = Assets::AssetService::GetScript(component.OnUpdateScriptHandle);
+					if (!component.OnUpdateScript)
+					{
+						KG_WARN("Invalid script reference retreived when deserializing on create component");
+					}
+				}
+
+				YAML::Node onCreateNode = entity["OnCreateComponent"];
+				if (onCreateNode)
+				{
+					ECS::OnCreateComponent& component = deserializedEntity.GetComponent<ECS::OnCreateComponent>();
+					component.OnCreateScriptHandle = onCreateNode["OnCreateHandle"].as<uint64_t>();
+					component.OnCreateScript = Assets::AssetService::GetScript(component.OnCreateScriptHandle);
+					if (!component.OnCreateScript)
+					{
+						KG_WARN("Invalid script reference retreived when deserializing on create component");
+					}
 				}
 
 				auto classInstanceComponent = entity["ClassInstanceComponent"];
@@ -501,6 +554,20 @@ namespace Kargono::Assets
 					auto& rb2d = deserializedEntity.AddComponent<ECS::Rigidbody2DComponent>();
 					rb2d.Type = Utility::StringToRigidBody2DBodyType(rigidbody2DComponent["BodyType"].as<std::string>());
 					rb2d.FixedRotation = rigidbody2DComponent["FixedRotation"].as<bool>();
+
+					// Deserialize on collision scripts
+					rb2d.OnCollisionStartScriptHandle = rigidbody2DComponent["OnCollisionStartHandle"].as<uint64_t>();
+					rb2d.OnCollisionStartScript = Assets::AssetService::GetScript(rb2d.OnCollisionStartScriptHandle);
+					if (!rb2d.OnCollisionStartScript)
+					{
+						KG_WARN("Invalid script reference retreived when deserializing on collision start script");
+					}
+					rb2d.OnCollisionEndScriptHandle = rigidbody2DComponent["OnCollisionEndHandle"].as<uint64_t>();
+					rb2d.OnCollisionEndScript = Assets::AssetService::GetScript(rb2d.OnCollisionEndScriptHandle);
+					if (!rb2d.OnCollisionEndScript)
+					{
+						KG_WARN("Invalid script reference retreived when deserializing on collision end script");
+					}
 				}
 
 				auto boxCollider2DComponent = entity["BoxCollider2DComponent"];

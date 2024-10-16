@@ -9,6 +9,8 @@
 #include "Kargono/Scripting/ScriptTokenParser.h"
 #include "Kargono/Scripting/ScriptOutputGenerator.h"
 #include "Kargono/Assets/AssetService.h"
+#include "Kargono/ECS/ProjectComponent.h"
+
 
 namespace Kargono::Utility
 {
@@ -522,7 +524,7 @@ namespace Kargono::Scripting
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "componentName" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
 			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
 
@@ -543,7 +545,7 @@ namespace Kargono::Scripting
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
 			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
 
@@ -564,7 +566,7 @@ namespace Kargono::Scripting
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
 			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
 
@@ -585,7 +587,7 @@ namespace Kargono::Scripting
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
 			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
 
@@ -612,7 +614,7 @@ namespace Kargono::Scripting
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newValue" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newMemberParameter = {};
-		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
 			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
 
@@ -640,7 +642,7 @@ namespace Kargono::Scripting
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newValue" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newMemberParameter = {};
-		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
 			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
 
@@ -656,7 +658,144 @@ namespace Kargono::Scripting
 		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
 
-		
+		// Provide all project components as member data for the entity type
+		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+		{
+			Ref<ECS::ProjectComponent> projectComp = Assets::AssetService::GetProjectComponent(handle);
+			KG_ASSERT(projectComp);
+
+			// Initialize project component data
+			DataMember projectComponentMember{};
+			projectComponentMember.Name = projectComp->m_Name;
+			projectComponentMember.Description = "This is a custom project component. This component provides fields specific to this component.";
+			projectComponentMember.PrimitiveType.Type = ScriptTokenType::None;
+			projectComponentMember.PrimitiveType.Value = "None";
+
+			// Load each field from project component into projectComponentMember's member list
+			for (size_t iteration{0}; iteration < projectComp->m_DataNames.size(); iteration++)
+			{
+				DataMember projectComponentFieldMember{};
+				projectComponentFieldMember.Name = projectComp->m_DataNames.at(iteration);
+				projectComponentFieldMember.Description = "This is a custom project component. This component provides fields specific to this component.";
+				projectComponentFieldMember.PrimitiveType = Utility::WrappedVarTypeToPrimitiveType(projectComp->m_DataTypes.at(iteration));
+				projectComponentFieldMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+				{
+					
+					generator.m_OutputText << "*(";
+					generator.m_OutputText << Utility::WrappedVarTypeToCPPString(Utility::KGScriptToWrappedVarType(member.ReturnType.Value));
+					generator.m_OutputText << "*)";
+					generator.m_OutputText << "Scenes_GetProjectComponentField(";
+
+					// Output entity ID
+					generator.GenerateExpression(member.CurrentNodeExpression);
+					generator.m_OutputText << ", ";
+
+					// Output project component ID
+					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
+					KG_ASSERT(projectComponentExpression);
+					Ref<ECS::ProjectComponent> component = nullptr;
+					for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+					{
+						if (asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name == projectComponentExpression->Value.Value)
+						{
+							component = Assets::AssetService::GetProjectComponent(handle);
+							generator.m_OutputText << std::to_string(handle);
+							break;
+						}
+					}
+					KG_ASSERT(component);
+					generator.m_OutputText << ", ";
+
+					// Output component field ID
+					TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+					KG_ASSERT(fieldNameExpression);
+					size_t iteration{ 0 };
+					for (const std::string& fieldName : component->m_DataNames)
+					{
+						if (fieldName == fieldNameExpression->Value.Value)
+						{
+							generator.m_OutputText << std::to_string(iteration);
+							break;
+						}
+						iteration++;
+					}
+
+					generator.m_OutputText << ")";
+				};
+
+				projectComponentFieldMember.OnGenerateSetter = [](ScriptOutputGenerator& generator, StatementAssignment& assignmentStatement)
+				{
+					MemberNode* memberNode = std::get_if<MemberNode>(&assignmentStatement.Name->Value);
+					KG_ASSERT(memberNode);
+
+					generator.m_OutputText << "Scenes_SetProjectComponentField(";
+
+					// Generate entityID
+					generator.GenerateExpression(memberNode->CurrentNodeExpression);
+					generator.m_OutputText << ", ";
+
+					// Output project component ID
+					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->CurrentNodeExpression->Value);
+					KG_ASSERT(projectComponentExpression);
+					Ref<ECS::ProjectComponent> component = nullptr;
+					for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+					{
+						if (asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name == projectComponentExpression->Value.Value)
+						{
+							component = Assets::AssetService::GetProjectComponent(handle);
+							generator.m_OutputText << std::to_string(handle);
+							break;
+						}
+					}
+					KG_ASSERT(component);
+					generator.m_OutputText << ", ";
+
+					// Output component field ID
+					TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+					KG_ASSERT(fieldNameExpression);
+					size_t iteration{ 0 };
+					for (const std::string& fieldName : component->m_DataNames)
+					{
+						if (fieldName == fieldNameExpression->Value.Value)
+						{
+							generator.m_OutputText << std::to_string(iteration);
+							break;
+						}
+						iteration++;
+					}
+					generator.m_OutputText << ", ";
+
+					// Output expression
+					if (TokenExpressionNode* tokenExpression = std::get_if<TokenExpressionNode>(&assignmentStatement.Value->Value))
+					{
+						if (tokenExpression->Value.Type == ScriptTokenType::Identifier)
+						{
+							generator.m_OutputText << "&" << tokenExpression->Value.Value;
+						}
+						else if (IsLiteral(tokenExpression->Value))
+						{
+							generator.m_OutputText << "(void*)&RValueToLValue(" << tokenExpression->Value.Value << ")";
+						}
+						else
+						{
+							KG_WARN("Invalid argument type provided to GameState::SetField");
+							return;
+						}
+					}
+					else
+					{
+						assignmentStatement.Value->GenerationAffixes = CreateRef<ExpressionGenerationAffixes>("(void*)&RValueToLValue(", ")");
+						generator.GenerateExpression(assignmentStatement.Value);
+					}
+
+					generator.m_OutputText << ")";
+				};
+				projectComponentMember.Members.insert_or_assign(projectComponentFieldMember.Name, CreateRef<MemberType>(projectComponentFieldMember));
+			}
+
+			// Insert project component into the entity type's member list
+			newPrimitiveType.Members.insert_or_assign(projectComponentMember.Name, CreateRef<MemberType>(projectComponentMember));
+		}
 
 		newDataMember.Name = "Transform";
 		newDataMember.Description = "This entity member is a transform component. This component stores the location, size, and rotation of the provided entity.";
@@ -670,7 +809,7 @@ namespace Kargono::Scripting
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newPosition" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
 			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 			
@@ -688,7 +827,7 @@ namespace Kargono::Scripting
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "vector3" };
 		newFunctionMember.Description = "This function gets the position for the selected entity. This function takes no parameters and returns a vector3.";
-		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
 			generator.m_OutputText << "TransformComponent_GetTranslation(";
 			generator.GenerateExpression(member.CurrentNodeExpression);
@@ -712,7 +851,7 @@ namespace Kargono::Scripting
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector2" });
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newVelocity" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
 			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 
@@ -730,7 +869,7 @@ namespace Kargono::Scripting
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "vector2" };
 		newFunctionMember.Description = "This function gets the current linear velocity of the 2D physics object associated with this entity.";
-		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
 			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 
@@ -752,7 +891,7 @@ namespace Kargono::Scripting
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "string" };
 		newFunctionMember.Description = "This functions gets the current tag of the entity as a string.";
-		newFunctionMember.OnGenerateMemberFunction = [](ScriptOutputGenerator& generator, MemberNode& member)
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
 			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 
@@ -876,6 +1015,23 @@ namespace Kargono::Scripting
 		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
 		{
 			node.Identifier.Value = "std::to_string";
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "log" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "logText" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Debug logger function. This function prints the provided text to the engine's console output.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Identifier.Value = "Log";
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);

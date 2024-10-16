@@ -387,6 +387,46 @@ namespace Kargono::Scenes
 		const b2Vec2& linearVelocity = body->GetLinearVelocity();
 		return Math::vec2(linearVelocity.x, linearVelocity.y);
 	}
+	void SceneService::SetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value)
+	{
+		// Get the indicated entity
+		ECS::Entity currentEntity = s_ActiveScene->GetEntityByUUID(entityID);
+		KG_ASSERT(currentEntity);
+
+		// Get the indicated project component
+		Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentID);
+		KG_ASSERT(projectComponent);
+		KG_ASSERT(fieldLocation < projectComponent->m_DataLocations.size());
+
+		// Set indicated field value
+		uint8_t* componentDataRef = (uint8_t*)currentEntity.GetProjectComponentData(projectComponentID);
+
+		// Get field data pointer
+		uint8_t* fieldDataRef = componentDataRef + projectComponent->m_DataLocations.at(fieldLocation);
+
+		// Set the data
+		Utility::TransferDataForWrappedVarBuffer(projectComponent->m_DataTypes.at(fieldLocation), value, fieldDataRef);
+	}
+	void* SceneService::GetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation)
+	{
+		// Get the indicated entity
+		ECS::Entity currentEntity = s_ActiveScene->GetEntityByUUID(entityID);
+		KG_ASSERT(currentEntity);
+
+		// Get the indicated project component
+		Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentID);
+		KG_ASSERT(projectComponent);
+		KG_ASSERT(fieldLocation < projectComponent->m_DataLocations.size());
+
+		// Set indicated field value
+		uint8_t* componentDataRef = (uint8_t*)currentEntity.GetProjectComponentData(projectComponentID);
+
+		// Get field data pointer
+		uint8_t* fieldDataRef = componentDataRef + projectComponent->m_DataLocations.at(fieldLocation);
+
+		// Get the data
+		return fieldDataRef;
+	}
 	void SceneService::SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue)
 	{
 		ECS::Entity entity = s_ActiveScene->GetEntityByUUID(entityID);

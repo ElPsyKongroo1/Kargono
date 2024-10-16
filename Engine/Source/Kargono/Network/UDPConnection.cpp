@@ -30,7 +30,6 @@ namespace Kargono::Network
 
 	void UDPConnection::SendUDPMessage(const LabeledMessage& msg)
 	{
-		
 		asio::post(m_NetworkContextPtr->AsioContext, [this, msg]()
 		{
 			bool bWritingMessage = !m_OutgoingMessagesQueue.IsEmpty();

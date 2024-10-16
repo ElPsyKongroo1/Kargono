@@ -21,7 +21,7 @@ namespace Kargono::Panels
 			KG_BIND_CLASS_FN(TestingPanel::OnKeyPressedEditor));
 
 		s_TestText.Label = "File to Compile";
-		s_TestText.CurrentOption = "NewScripting/test.kgscript";
+		s_TestText.CurrentOption = "test.kgscript";
 
 		s_TimerTime.Label = "Timer Time";
 		s_TimerTime.CurrentFloat = 3.0f;
@@ -29,6 +29,8 @@ namespace Kargono::Panels
 		s_RandomTestInteger.Label = "Intenger Time";
 		s_RandomTestInteger.CurrentInteger = 5;
 	}
+
+
 	void TestingPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();

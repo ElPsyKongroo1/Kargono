@@ -1436,6 +1436,7 @@ namespace Kargono::Scripting
 			Ref<MemberNode> childNode = CreateRef<MemberNode>();
 			childNode->ChildMemberNode = nullptr;
 			childNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(memberList.at(0), currentDataMember->PrimitiveType));
+			childNode->MemberType = currentMemberType.get();
 			returnMemberNode->ChildMemberNode = childNode;
 
 			// Iterate through all remaining members of memberList
@@ -1470,6 +1471,7 @@ namespace Kargono::Scripting
 				newNode->ChildMemberNode = nullptr;
 				newNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(memberList.at(iteration), currentDataMember->PrimitiveType));
 				childNode->ChildMemberNode = newNode;
+				childNode->MemberType = currentMemberType.get();
 				childNode = newNode;
 			}
 			// Check for final context probe
@@ -1497,6 +1499,7 @@ namespace Kargono::Scripting
 			finalToken = memberList.at(0);
 		}
 		
+		// Process final member node
 		if (DataMember* dataMemberPtr = std::get_if<DataMember>(&currentMemberType->Value))
 		{
 			// Fill member node's data
@@ -1505,6 +1508,7 @@ namespace Kargono::Scripting
 			Ref<MemberNode> childNode = CreateRef<MemberNode>();
 			childNode->ChildMemberNode = nullptr;
 			childNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(finalToken, currentDataMember.PrimitiveType));
+			childNode->MemberType = currentMemberType.get();
 			finalParentNode->ChildMemberNode = childNode;
 		}
 		else if (FunctionNode* functionMemberPtr = std::get_if<FunctionNode>(&currentMemberType->Value))

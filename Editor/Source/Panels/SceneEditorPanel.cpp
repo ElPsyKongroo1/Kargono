@@ -1555,6 +1555,7 @@ namespace Kargono::Panels
 			});
 		});
 
+		// Initialize project component fields into scene editor UI
 		for (size_t iteration{ 0 }; iteration < component->m_DataNames.size(); iteration++)
 		{
 			static EditorUI::EditFloatSpec newFloatSpec;

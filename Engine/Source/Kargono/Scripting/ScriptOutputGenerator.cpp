@@ -77,6 +77,32 @@ namespace Kargono::Scripting
 		}
 		else if (StatementAssignment* assignmentStatement = std::get_if<StatementAssignment>(&statement->Value))
 		{
+			// Check if an OnGenerateSetter override is appropriate
+			if (MemberNode* memberNode = std::get_if<MemberNode>(&assignmentStatement->Name->Value))
+			{
+				// Get terminal node of MemberNode list
+				Ref<MemberNode> terminalNode = memberNode->ChildMemberNode;
+				{
+					while (terminalNode->ChildMemberNode)
+					{
+						terminalNode = terminalNode->ChildMemberNode;
+					}
+				}
+
+				// Check if terminal node uses an OnGenerateSetter override
+				if (DataMember* currentDataMember = std::get_if<DataMember>(&terminalNode->MemberType->Value))
+				{
+					if (currentDataMember->OnGenerateSetter)
+					{
+						AddIndentation();
+						currentDataMember->OnGenerateSetter(*this, *assignmentStatement);
+						m_OutputText << ";\n";
+						return;
+					}
+				}
+			}
+
+			// If not, simply output the assignment statement normally
 			AddIndentation();
 			GenerateExpression(assignmentStatement->Name);
 			m_OutputText << " = ";
@@ -234,22 +260,33 @@ namespace Kargono::Scripting
 				{
 					currentNode = currentNode->ChildMemberNode;
 				}
-
 			}
+
+			// Check if member node uses an OnGenerateGetter function
 			bool useOnGenerate = false;
-			FunctionCallNode* funcCallNode;
-			if (funcCallNode = std::get_if<FunctionCallNode>(&currentNode->CurrentNodeExpression->Value))
+			if (FunctionCallNode* funcCallNode = std::get_if<FunctionCallNode>(&currentNode->CurrentNodeExpression->Value))
 			{
-				if (funcCallNode->FunctionNode && funcCallNode->FunctionNode->OnGenerateMemberFunction)
+				if (funcCallNode->FunctionNode && funcCallNode->FunctionNode->OnGenerateGetter)
 				{
+					funcCallNode->FunctionNode->OnGenerateGetter(*this, *memberNode);
 					useOnGenerate = true;
 				}
 			}
-			if (useOnGenerate)
+			else if (TokenExpressionNode* tokenNode = std::get_if<TokenExpressionNode>(&currentNode->CurrentNodeExpression->Value))
 			{
-				funcCallNode->FunctionNode->OnGenerateMemberFunction(*this, *memberNode);
+				std::variant<FunctionNode, DataMember> Value {};
+				DataMember* currentDataMember = std::get_if<DataMember>(&currentNode->MemberType->Value);
+				KG_ASSERT(currentDataMember);
+
+				if (tokenNode &&  currentDataMember->OnGenerateGetter)
+				{
+					currentDataMember->OnGenerateGetter(*this, *memberNode);
+					useOnGenerate = true;
+				}
 			}
-			else
+
+			// If on generate is not available, then generate the output as it appears (Ex: entity.Transform.GetTranslation())
+			if (!useOnGenerate)
 			{
 				// Generate text for member node
 				GenerateExpression(memberNode->CurrentNodeExpression);

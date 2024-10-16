@@ -213,11 +213,14 @@ namespace Kargono::Scripting
 
 	struct Expression;
 
+	struct MemberType;
+
 	struct MemberNode
 	{
 		Ref<MemberNode> ChildMemberNode{};
 		Ref<Expression> CurrentNodeExpression{};
 		ScriptToken ReturnType{};
+		MemberType* MemberType{};
 	};
 
 	struct FunctionNode;
@@ -423,7 +426,7 @@ namespace Kargono::Scripting
 		std::vector<FunctionParameter> Parameters{};
 		std::vector<Ref<Statement>> Statements{};
 		std::function<void(FunctionCallNode&)> OnGenerateFunction{ nullptr };
-		std::function<void(ScriptOutputGenerator&, MemberNode&)> OnGenerateMemberFunction { nullptr };
+		std::function<void(ScriptOutputGenerator&, MemberNode&)> OnGenerateGetter { nullptr };
 		std::string Description { "Built-in Function"};
 
 		operator bool() const
@@ -522,7 +525,8 @@ namespace Kargono::Scripting
 		std::string Name{};   
 		std::string Description{};
 		std::unordered_map<std::string, Ref<MemberType>> Members{};
-		std::function<void(ScriptOutputGenerator&, MemberNode&)> OnGenerateMemberFunction { nullptr };
+		std::function<void(ScriptOutputGenerator&, MemberNode&)> OnGenerateGetter { nullptr };
+		std::function<void(ScriptOutputGenerator&, StatementAssignment&)> OnGenerateSetter { nullptr };
 	};
 
 	struct MemberType

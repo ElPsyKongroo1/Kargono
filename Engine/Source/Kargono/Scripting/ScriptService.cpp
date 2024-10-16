@@ -243,12 +243,17 @@ namespace Kargono::Scripting
 
 	void ScriptService::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
 	{
+		KG_ASSERT(script);
 		if (!s_ScriptingData)
 		{
 			KG_CRITICAL("Attempt to load a scripting function, however, ScriptEngine is not valid");
 			return;
 		}
 		if (!s_ScriptingData->DLLInstance || *s_ScriptingData->DLLInstance == NULL)
+		{
+			return;
+		}
+		if (script->m_ScriptType == ScriptType::Engine)
 		{
 			return;
 		}
@@ -401,6 +406,18 @@ namespace Kargono::Utility
 	outputStream << #name "Ptr(a, b, c);\n"; \
 	outputStream << "}\n";
 
+#define AddEngineFunctionToCPPFileFourParameters(name, returnType, parameter1, parameter2, parameter3, parameter4)\
+	outputStream << "static std::function<" #returnType "(" #parameter1 " a, " #parameter2 " b, " #parameter3 " c,  " #parameter4 " d)> " #name "Ptr {};\n"; \
+	outputStream << #returnType " " #name "(" #parameter1 " a, " #parameter2 " b, " #parameter3 " c, " #parameter4 " d)\n"; \
+	outputStream << "{\n"; \
+	outputStream << "\t"; \
+	if (!std::is_same<returnType, void>::value) \
+	{\
+	outputStream << "return "; \
+	}\
+	outputStream << #name "Ptr(a, b, c, d);\n"; \
+	outputStream << "}\n";
+
 #define AddEngineFunctionToCPPFileEnd(name) \
 	outputStream << "if (funcName == \"" #name "\") { " #name "Ptr = funcPtr; return; }\n";
 
@@ -419,6 +436,8 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidStringString, void, const std::string&, const std::string&)
 	DefineInsertFunction(VoidStringStringBool, void, const std::string&, const std::string&, bool)
 	DefineInsertFunction(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
+	DefineInsertFunction(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
+	DefineInsertFunction(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
 	DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
 	DefineInsertFunction(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
 	DefineInsertFunction(VoidPtrString, void*, const std::string&)
@@ -486,11 +505,18 @@ namespace Kargono::Scripting
 
 		KG_INFO("Opening New Scripting Module...");
 		ScriptService::LoadActiveScriptModule();
+
+		// Revalidate in-memory script cache
 		Assets::AssetService::DeserializeScriptRegistry();
+		for (auto& [handle, scriptRef] : Assets::AssetService::GetScriptCache())
+		{
+			ScriptService::LoadScriptFunction(scriptRef, scriptRef->m_FuncType);
+		}
 		KG_INFO("Successfully build and loaded new script module");
 	}
 	void ScriptModuleBuilder::CreateModuleHeaderFile()
 	{
+
 		// Write out return value and function name
 		std::stringstream outputStream {};
 		outputStream << "#pragma once\n";
@@ -530,6 +556,8 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) 
 		AddImportFunctionToHeaderFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4) 
 		AddImportFunctionToHeaderFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
+		AddImportFunctionToHeaderFile(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
+		AddImportFunctionToHeaderFile(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
 		AddImportFunctionToHeaderFile(VoidPtrString, void*, const std::string&) 
 		AddImportFunctionToHeaderFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
@@ -546,8 +574,9 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
 		AddImportFunctionToHeaderFile(StringUInt64, const std::string&, uint64_t)
 		// Add Script Function Declarations
-		for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
+		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 		{
+			Ref<Script> script = Assets::AssetService::GetScript(handle);
 			WrappedVarType returnValue = Utility::WrappedFuncTypeToReturnType(script->m_FuncType);
 			std::vector<WrappedVarType> parameters = Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType);
 
@@ -621,8 +650,10 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetBackgroundColor, void, const std::string&, const std::string&, Math::vec4)
+		AddEngineFunctionToCPPFileThreeParameters(Scenes_GetProjectComponentField, void*, uint64_t, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileThreeParameters(SetEntityFieldByName, void, uint64_t, const std::string&, void*)
 		AddEngineFunctionToCPPFileThreeParameters(SendAllEntityPhysics, void, uint64_t, Math::vec3, Math::vec2)
+		AddEngineFunctionToCPPFileFourParameters(Scenes_SetProjectComponentField, void, uint64_t, uint64_t, uint64_t, void*)
 
 		// Insert FuncPointer Importing for DLL processing
 		AddImportFunctionToCPPFile(VoidNone, void)
@@ -735,6 +766,14 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(TagComponent_GetTag)
 		outputStream << "}\n";	
+		AddImportFunctionToCPPFile(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(Scenes_GetProjectComponentField)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(Scenes_SetProjectComponentField)
+		outputStream << "}\n";
 
 		// Write scripts into a single cpp file
 		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
@@ -858,6 +897,8 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidStringStringString) 
 		ImportInsertFunction(VoidStringStringVec4) 
 		ImportInsertFunction(VoidUInt64StringVoidPtr)
+		ImportInsertFunction(VoidPtrUInt64UInt64UInt64)
+		ImportInsertFunction(VoidUInt64UInt64UInt64VoidPtr)
 		ImportInsertFunction(VoidPtrUInt64String)
 		ImportInsertFunction(VoidUInt64Vec3)
 		ImportInsertFunction(VoidUInt64Vec2)
@@ -905,6 +946,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
 		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_SetLinearVelocity, VoidUInt64Vec2)
 		AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_GetLinearVelocity, Vec2UInt64)
+		AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, Scenes::SceneService::GetProjectComponentField, VoidPtrUInt64UInt64UInt64)
+		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, Scenes::SceneService::SetProjectComponentField, VoidUInt64UInt64UInt64VoidPtr)
 		AddEngineFunctionPointerToDll(TagComponent_GetTag, Scenes::SceneService::TagComponentGetTag, StringUInt64)
 		AddEngineFunctionPointerToDll(GenerateRandomNumber, Utility::RandomService::GenerateRandomNumber, Int32Int32Int32)
 	}

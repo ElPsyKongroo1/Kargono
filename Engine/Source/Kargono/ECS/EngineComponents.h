@@ -106,6 +106,18 @@ namespace Kargono::ECS
 		NetworkType PhysicsType = NetworkType::None;
 	};
 
+	struct OnCreateComponent
+	{
+		Assets::AssetHandle OnCreateScriptHandle{ Assets::EmptyHandle };
+		Ref<Scripting::Script> OnCreateScript{ nullptr };
+	};
+
+	struct OnUpdateComponent
+	{
+		Assets::AssetHandle OnUpdateScriptHandle{ Assets::EmptyHandle };
+		Ref<Scripting::Script> OnUpdateScript{ nullptr };
+	};
+
 	// Physics
 	struct Rigidbody2DComponent 
 	{
@@ -121,6 +133,13 @@ namespace Kargono::ECS
 
 		// Storage for runtime
 		void* RuntimeBody = nullptr;
+
+		// Collision callback function pointers
+		Assets::AssetHandle OnCollisionStartScriptHandle{ Assets::EmptyHandle };
+		Ref<Scripting::Script> OnCollisionStartScript{ nullptr };
+
+		Assets::AssetHandle OnCollisionEndScriptHandle{ Assets::EmptyHandle };
+		Ref<Scripting::Script> OnCollisionEndScript{ nullptr };
 
 		Rigidbody2DComponent() = default;
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
@@ -243,6 +262,8 @@ namespace Kargono::ECS
 		BoxCollider2D,
 		CircleCollider2D,
 		ClassInstance,
+		OnUpdate,
+		OnCreate,
 		Shape,
 		Network,
 		AIState,
@@ -256,5 +277,5 @@ namespace Kargono::ECS
 
 	using AllComponents = ComponentGroup<TransformComponent, CameraComponent, AIStateComponent,
 	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ClassInstanceComponent, ShapeComponent,
-	TagComponent, NetworkComponent>;
+	TagComponent, OnUpdateComponent, OnCreateComponent, NetworkComponent>;
 }

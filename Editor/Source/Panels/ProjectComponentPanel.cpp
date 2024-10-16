@@ -1,4 +1,5 @@
 #include "Panels/ProjectComponentPanel.h"
+#include "Kargono/Scripting/ScriptCompilerService.h"
 
 #include "EditorApp.h"
 #include "Kargono.h"
@@ -117,6 +118,7 @@ namespace Kargono::Panels
 			m_TagHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
 				m_EditorProjectComponentHandle).Data.FileLocation.string();
 			RefreshData();
+			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
 		};
 		m_CreateComponentPopup.PopupContents = [&]()
 		{
@@ -130,7 +132,7 @@ namespace Kargono::Panels
 		m_DeleteComponentWarning.ConfirmAction = [&]()
 		{
 			Assets::AssetService::DeleteProjectComponent(m_EditorProjectComponentHandle);
-			// TODO: Refresh scene data and whatnot
+			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
 			m_EditorProjectComponentHandle = 0;
 			m_EditorProjectComponent = nullptr;
 		};
@@ -153,7 +155,7 @@ namespace Kargono::Panels
 		m_TagHeader.AddToSelectionList("Save", [&]()
 		{
 			Assets::AssetService::SaveProjectComponent(m_EditorProjectComponentHandle, m_EditorProjectComponent);
-			// TODO: Refresh scene data and whatnot
+			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
 			m_TagHeader.EditColorActive = false;
 		});
 		m_TagHeader.AddToSelectionList("Close", [&]()
