@@ -45,11 +45,14 @@ namespace Kargono::ECS
 	struct TagComponent
 	{
 		std::string Tag;
+		std::string Group;
 
 		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string tag)
 			: Tag(tag) {}
+		TagComponent(const std::string tag, const std::string& group)
+			: Tag(tag), Group(group) {}
 	};
 
 	struct TransformComponent

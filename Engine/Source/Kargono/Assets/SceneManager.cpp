@@ -94,8 +94,9 @@ namespace Kargono::Utility
 		{
 			out << YAML::Key << "TagComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& tag = entity.GetComponent<ECS::TagComponent>().Tag;
-			out << YAML::Key << "Tag" << YAML::Value << tag;
+			ECS::TagComponent& tag = entity.GetComponent<ECS::TagComponent>();
+			out << YAML::Key << "Tag" << YAML::Value << tag.Tag;
+			out << YAML::Key << "Group" << YAML::Value << tag.Group;
 			out << YAML::EndMap; // Component Map
 		}
 
@@ -254,15 +255,6 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<ECS::OnCreateComponent>())
-		{
-			out << YAML::Key << "OnCreateComponent";
-			out << YAML::BeginMap; // Component Map
-			ECS::OnCreateComponent& component = entity.GetComponent<ECS::OnCreateComponent>();
-			out << YAML::Key << "OnCreateHandle" << YAML::Value << static_cast<uint64_t>(component.OnCreateScriptHandle);
-			out << YAML::EndMap; // Component Map
-		}
-
 		if (entity.HasComponent<ECS::BoxCollider2DComponent>())
 		{
 			out << YAML::Key << "BoxCollider2DComponent";
@@ -394,13 +386,16 @@ namespace Kargono::Assets
 				uint64_t uuid = entity["Entity"].as<uint64_t>();
 
 				std::string name;
-				auto tagComponent = entity["TagComponent"];
-				if (tagComponent) 
+				YAML::Node tagNode = entity["TagComponent"];
+				if (tagNode) 
 				{ 
-					name = tagComponent["Tag"].as<std::string>(); 
+					name = tagNode["Tag"].as<std::string>(); 
 				}
 
 				ECS::Entity deserializedEntity = newScene->CreateEntityWithUUID(uuid, name);
+
+				ECS::TagComponent& tagComp = deserializedEntity.GetComponent<ECS::TagComponent>();
+				tagComp.Group = tagNode["Group"].as<std::string>();
 
 				YAML::Node transformComponent = entity["TransformComponent"];
 				if (transformComponent)
@@ -414,25 +409,17 @@ namespace Kargono::Assets
 				YAML::Node onUpdateNode = entity["OnUpdateComponent"];
 				if (onUpdateNode)
 				{
-					ECS::OnUpdateComponent& component = deserializedEntity.GetComponent<ECS::OnUpdateComponent>();
+					ECS::OnUpdateComponent& component = deserializedEntity.AddComponent<ECS::OnUpdateComponent>();
 					component.OnUpdateScriptHandle = onUpdateNode["OnUpdateHandle"].as<uint64_t>();
 					component.OnUpdateScript = Assets::AssetService::GetScript(component.OnUpdateScriptHandle);
-					if (!component.OnUpdateScript)
-					{
-						KG_WARN("Invalid script reference retreived when deserializing on create component");
-					}
 				}
 
 				YAML::Node onCreateNode = entity["OnCreateComponent"];
 				if (onCreateNode)
 				{
-					ECS::OnCreateComponent& component = deserializedEntity.GetComponent<ECS::OnCreateComponent>();
+					ECS::OnCreateComponent& component = deserializedEntity.AddComponent<ECS::OnCreateComponent>();
 					component.OnCreateScriptHandle = onCreateNode["OnCreateHandle"].as<uint64_t>();
 					component.OnCreateScript = Assets::AssetService::GetScript(component.OnCreateScriptHandle);
-					if (!component.OnCreateScript)
-					{
-						KG_WARN("Invalid script reference retreived when deserializing on create component");
-					}
 				}
 
 				auto classInstanceComponent = entity["ClassInstanceComponent"];
@@ -558,16 +545,8 @@ namespace Kargono::Assets
 					// Deserialize on collision scripts
 					rb2d.OnCollisionStartScriptHandle = rigidbody2DComponent["OnCollisionStartHandle"].as<uint64_t>();
 					rb2d.OnCollisionStartScript = Assets::AssetService::GetScript(rb2d.OnCollisionStartScriptHandle);
-					if (!rb2d.OnCollisionStartScript)
-					{
-						KG_WARN("Invalid script reference retreived when deserializing on collision start script");
-					}
 					rb2d.OnCollisionEndScriptHandle = rigidbody2DComponent["OnCollisionEndHandle"].as<uint64_t>();
 					rb2d.OnCollisionEndScript = Assets::AssetService::GetScript(rb2d.OnCollisionEndScriptHandle);
-					if (!rb2d.OnCollisionEndScript)
-					{
-						KG_WARN("Invalid script reference retreived when deserializing on collision end script");
-					}
 				}
 
 				auto boxCollider2DComponent = entity["BoxCollider2DComponent"];

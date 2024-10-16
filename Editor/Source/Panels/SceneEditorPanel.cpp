@@ -167,6 +167,34 @@ namespace Kargono::Panels
 			newEntry.SubEntries.push_back(componentEntry);
 		}
 
+		if (entity.HasComponent<ECS::OnCreateComponent>())
+		{
+			componentEntry.Label = "On Create";
+			componentEntry.ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::OnCreate, Assets::EmptyHandle);
+			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconFunction;
+			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			{
+				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.Handle));
+				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::OnCreate);
+			};
+			newEntry.SubEntries.push_back(componentEntry);
+		}
+
+		if (entity.HasComponent<ECS::OnUpdateComponent>())
+		{
+			componentEntry.Label = "On Update";
+			componentEntry.ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::OnUpdate, Assets::EmptyHandle);
+			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconFunction;
+			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			{
+				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.Handle));
+				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::OnUpdate);
+			};
+			newEntry.SubEntries.push_back(componentEntry);
+		}
+
 		// Handle adding project components
 		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 		{
@@ -253,6 +281,14 @@ namespace Kargono::Panels
 			if (!entity.HasComponent<ECS::CircleCollider2DComponent>())
 			{
 				m_AddComponent.AddToOptions("Engine Component", "Circle Collider 2D", Assets::EmptyHandle);
+			}
+			if (!entity.HasComponent<ECS::OnCreateComponent>())
+			{
+				m_AddComponent.AddToOptions("Engine Component", "On Create", Assets::EmptyHandle);
+			}
+			if (!entity.HasComponent<ECS::OnUpdateComponent>())
+			{
+				m_AddComponent.AddToOptions("Engine Component", "On Update", Assets::EmptyHandle);
 			}
 
 			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
@@ -409,6 +445,38 @@ namespace Kargono::Panels
 				return;
 			}
 
+			if (option.Label == "On Update")
+			{
+				entity.AddComponent<ECS::OnUpdateComponent>();
+				componentEntry.Label = "On Update";
+				componentEntry.ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::OnUpdate, Assets::EmptyHandle);
+				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconFunction;
+				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				{
+					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.Handle));
+					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::OnUpdate);
+				};
+				currentEntry->SubEntries.push_back(componentEntry);
+				return;
+			}
+
+			if (option.Label == "On Create")
+			{
+				entity.AddComponent<ECS::OnCreateComponent>();
+				componentEntry.Label = "On Create";
+				componentEntry.ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::OnCreate, Assets::EmptyHandle);
+				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconFunction;
+				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				{
+					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.Handle));
+					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::OnCreate);
+				};
+				currentEntry->SubEntries.push_back(componentEntry);
+				return;
+			}
+
 			KG_ERROR("Invalid option selected to add as component!");
 
 		};
@@ -439,6 +507,18 @@ namespace Kargono::Panels
 						entry.Label = entity.GetComponent<ECS::TagComponent>().Tag;
 					}
 				}, 0);
+			}
+		};
+
+		m_TagGroupEdit.Label = "Tag Group";
+		m_TagGroupEdit.Flags |= EditorUI::EditText_Indented;
+		m_TagGroupEdit.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
+		{
+			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (entity && entity.HasComponent<ECS::TagComponent>())
+			{
+				ECS::TagComponent& component = entity.GetComponent<ECS::TagComponent>();
+				component.Group = m_TagGroupEdit.CurrentOption;
 			}
 		};
 	}
@@ -745,6 +825,91 @@ namespace Kargono::Panels
 			auto& component = entity.GetComponent<ECS::Rigidbody2DComponent>();
 			component.FixedRotation = spec.CurrentBoolean;
 		};
+
+		m_SelectRigidBody2DCollisionStartScript.Label = "On Physics Collision Start";
+		m_SelectRigidBody2DCollisionStartScript.Flags |= EditorUI::SelectOption_Indented;
+		m_SelectRigidBody2DCollisionStartScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectRigidBody2DCollisionStartScript.PopupAction = [&]()
+		{
+			m_SelectRigidBody2DCollisionStartScript.ClearOptions();
+			m_SelectRigidBody2DCollisionStartScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			{
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				KG_ASSERT(script);
+
+				if (script->m_FuncType != WrappedFuncType::Bool_UInt64UInt64)
+				{
+					continue;
+				}
+				m_SelectRigidBody2DCollisionStartScript.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
+					"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+			}
+		};
+
+		m_SelectRigidBody2DCollisionStartScript.ConfirmAction = [](const EditorUI::OptionEntry& entry)
+		{
+			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<ECS::Rigidbody2DComponent>())
+			{
+				KG_ERROR("Attempt to edit entity CollisionStart component when none exists!");
+				return;
+			}
+			ECS::Rigidbody2DComponent& component = entity.GetComponent<ECS::Rigidbody2DComponent>();
+
+			// Check for empty entry
+			if (entry.Handle == Assets::EmptyHandle)
+			{
+				component.OnCollisionStartScriptHandle = Assets::EmptyHandle;
+				component.OnCollisionStartScript = nullptr;
+			}
+			// Check for a valid entry, and Update if applicable
+			component.OnCollisionStartScriptHandle = entry.Handle;
+			component.OnCollisionStartScript = Assets::AssetService::GetScript(entry.Handle);
+		};
+
+		m_SelectRigidBody2DCollisionEndScript.Label = "On Physics Collision End";
+		m_SelectRigidBody2DCollisionEndScript.Flags |= EditorUI::SelectOption_Indented;
+		m_SelectRigidBody2DCollisionEndScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectRigidBody2DCollisionEndScript.PopupAction = [&]()
+		{
+			m_SelectRigidBody2DCollisionEndScript.ClearOptions();
+			m_SelectRigidBody2DCollisionEndScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			{
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				KG_ASSERT(script);
+
+				if (script->m_FuncType != WrappedFuncType::Bool_UInt64UInt64)
+				{
+					continue;
+				}
+				m_SelectRigidBody2DCollisionEndScript.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
+					"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+			}
+		};
+
+		m_SelectRigidBody2DCollisionEndScript.ConfirmAction = [](const EditorUI::OptionEntry& entry)
+		{
+			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<ECS::Rigidbody2DComponent>())
+			{
+				KG_ERROR("Attempt to edit entity CollisionEnd component when none exists!");
+				return;
+			}
+			ECS::Rigidbody2DComponent& component = entity.GetComponent<ECS::Rigidbody2DComponent>();
+
+			// Check for empty entry
+			if (entry.Handle == Assets::EmptyHandle)
+			{
+				component.OnCollisionEndScriptHandle = Assets::EmptyHandle;
+				component.OnCollisionEndScript = nullptr;
+			}
+			// Check for a valid entry, and Update if applicable
+			component.OnCollisionEndScriptHandle = entry.Handle;
+			component.OnCollisionEndScript = Assets::AssetService::GetScript(entry.Handle);
+		};
+
 	}
 
 	void SceneEditorPanel::InitializeBoxCollider2DComponent()
@@ -1169,6 +1334,176 @@ namespace Kargono::Panels
 			}
 			auto& component = entity.GetComponent<ECS::CameraComponent>();
 			component.Camera.SetPerspectiveFarClip(m_CameraPerspectiveFarPlane.CurrentFloat);
+		};
+	}
+
+	void SceneEditorPanel::InitializeOnUpdateComponent()
+	{
+		m_OnUpdateHeader.Label = "On Update";
+		m_OnUpdateHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		m_OnUpdateHeader.Expanded = true;
+		m_OnUpdateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
+		{
+			EngineService::SubmitToMainThread([&]()
+			{
+				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+				EditorUI::TreePath pathToDelete;
+				if (entity.HasComponent<ECS::OnUpdateComponent>())
+				{
+					m_SceneHierarchyTree.EditDepth([&](EditorUI::TreeEntry& entry) 
+					{
+						if ((uint32_t)entry.Handle == (uint32_t)entity)
+						{
+							for (auto& subEntry : entry.SubEntries)
+							{
+								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.ProvidedData.get();
+								if (entryData.m_ComponentType == ECS::ComponentType::OnUpdate)
+								{
+									pathToDelete = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
+									break;
+								}
+							}
+							if (!pathToDelete)
+							{
+								KG_WARN("Could not locate component inside of specified entry in tree");
+								return;
+							}
+
+						}
+					}, 0);
+
+					KG_ASSERT(pathToDelete);
+					m_SceneHierarchyTree.RemoveEntry(pathToDelete);
+					entity.RemoveComponent<ECS::OnUpdateComponent>();
+				}
+			});
+		});
+
+		m_SelectOnUpdateScript.Label = "On Update Script";
+		m_SelectOnUpdateScript.Flags |= EditorUI::SelectOption_Indented;
+		m_SelectOnUpdateScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectOnUpdateScript.PopupAction = [&]()
+		{
+			m_SelectOnUpdateScript.ClearOptions();
+			m_SelectOnUpdateScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			{
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				KG_ASSERT(script);
+
+				if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
+				{
+					continue;
+				}
+				m_SelectOnUpdateScript.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
+					"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+			}
+		};
+
+		m_SelectOnUpdateScript.ConfirmAction = [](const EditorUI::OptionEntry& entry)
+		{
+			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<ECS::OnUpdateComponent>())
+			{
+				KG_ERROR("Attempt to edit entity OnUpdate component when none exists!");
+				return;
+			}
+			ECS::OnUpdateComponent& component = entity.GetComponent<ECS::OnUpdateComponent>();
+
+			// Check for empty entry
+			if (entry.Handle == Assets::EmptyHandle)
+			{
+				component.OnUpdateScriptHandle = Assets::EmptyHandle;
+				component.OnUpdateScript = nullptr;
+			}
+			// Check for a valid entry, and Update if applicable
+			component.OnUpdateScriptHandle = entry.Handle;
+			component.OnUpdateScript = Assets::AssetService::GetScript(entry.Handle);
+		};
+	}
+
+	void SceneEditorPanel::InitializeOnCreateComponent()
+	{
+		m_OnCreateHeader.Label = "On Create";
+		m_OnCreateHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		m_OnCreateHeader.Expanded = true;
+		m_OnCreateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
+		{
+			EngineService::SubmitToMainThread([&]()
+			{
+				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+				EditorUI::TreePath pathToDelete;
+				if (entity.HasComponent<ECS::OnCreateComponent>())
+				{
+					m_SceneHierarchyTree.EditDepth([&](EditorUI::TreeEntry& entry)
+					{
+						if ((uint32_t)entry.Handle == (uint32_t)entity)
+						{
+							for (auto& subEntry : entry.SubEntries)
+							{
+								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.ProvidedData.get();
+								if (entryData.m_ComponentType == ECS::ComponentType::OnCreate)
+								{
+									pathToDelete = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
+									break;
+								}
+							}
+							if (!pathToDelete)
+							{
+								KG_WARN("Could not locate component inside of specified entry in tree");
+								return;
+							}
+
+						}
+					}, 0);
+
+					KG_ASSERT(pathToDelete);
+					m_SceneHierarchyTree.RemoveEntry(pathToDelete);
+					entity.RemoveComponent<ECS::OnCreateComponent>();
+				}
+			});
+		});
+
+		m_SelectOnCreateScript.Label = "On Create Script";
+		m_SelectOnCreateScript.Flags |= EditorUI::SelectOption_Indented;
+		m_SelectOnCreateScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectOnCreateScript.PopupAction = [&]()
+		{
+			m_SelectOnCreateScript.ClearOptions();
+			m_SelectOnCreateScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			{
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				KG_ASSERT(script);
+
+				if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
+				{
+					continue;
+				}
+				m_SelectOnCreateScript.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
+					"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+			}
+		};
+
+		m_SelectOnCreateScript.ConfirmAction = [](const EditorUI::OptionEntry& entry) 
+		{
+			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<ECS::OnCreateComponent>())
+			{
+				KG_ERROR("Attempt to edit entity OnCreate component when none exists!");
+				return;
+			}
+			ECS::OnCreateComponent& component = entity.GetComponent<ECS::OnCreateComponent>();
+
+			// Check for empty entry
+			if (entry.Handle == Assets::EmptyHandle)
+			{
+				component.OnCreateScriptHandle = Assets::EmptyHandle;
+				component.OnCreateScript = nullptr;
+			}
+			// Check for a valid entry, and Create if applicable
+			component.OnCreateScriptHandle = entry.Handle;
+			component.OnCreateScript = Assets::AssetService::GetScript(entry.Handle);
 		};
 	}
 
@@ -1757,6 +2092,8 @@ namespace Kargono::Panels
 		InitializeClassInstanceComponent();
 		InitializeTransformComponent();
 		InitializeRigidbody2DComponent();
+		InitializeOnUpdateComponent();
+		InitializeOnCreateComponent();
 		InitializeBoxCollider2DComponent();
 		InitializeCircleCollider2DComponent();
 		InitializeCameraComponent();
@@ -2069,6 +2406,12 @@ namespace Kargono::Panels
 		case ECS::ComponentType::Camera:
 			DrawCameraComponent(entity);
 			return;
+		case ECS::ComponentType::OnUpdate:
+			DrawOnUpdateComponent(entity);
+			return;
+		case ECS::ComponentType::OnCreate:
+			DrawOnCreateComponent(entity);
+			return;
 		case ECS::ComponentType::Shape:
 			DrawShapeComponent(entity);
 			return;
@@ -2098,6 +2441,8 @@ namespace Kargono::Panels
 		{
 			m_TagEdit.CurrentOption = component.Tag;
 			EditorUI::EditorUIService::EditText(m_TagEdit);
+			m_TagGroupEdit.CurrentOption = component.Group;
+			EditorUI::EditorUIService::EditText(m_TagGroupEdit);
 		}
 	}
 	void SceneEditorPanel::DrawTransformComponent(ECS::Entity entity)
@@ -2151,6 +2496,19 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::RadioSelector(m_Rigidbody2DType);
 			m_RigidBody2DFixedRotation.CurrentBoolean = component.FixedRotation;
 			EditorUI::EditorUIService::Checkbox(m_RigidBody2DFixedRotation);
+
+			// Display collision script functions
+			Ref<Scripting::Script> collisionStartScript = Assets::AssetService::GetScript(component.OnCollisionStartScriptHandle);
+			m_SelectRigidBody2DCollisionStartScript.CurrentOption = component.OnCollisionStartScriptHandle == Assets::EmptyHandle ?
+				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
+				EditorUI::OptionEntry(Utility::ScriptToString(collisionStartScript), component.OnCollisionStartScriptHandle);
+			EditorUI::EditorUIService::SelectOption(m_SelectRigidBody2DCollisionStartScript);
+
+			Ref<Scripting::Script> collisionEndScript = Assets::AssetService::GetScript(component.OnCollisionEndScriptHandle);
+			m_SelectRigidBody2DCollisionEndScript.CurrentOption = component.OnCollisionEndScriptHandle == Assets::EmptyHandle ?
+				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
+				EditorUI::OptionEntry(Utility::ScriptToString(collisionEndScript), component.OnCollisionEndScriptHandle);
+			EditorUI::EditorUIService::SelectOption(m_SelectRigidBody2DCollisionEndScript);
 		}
 	}
 	void SceneEditorPanel::DrawBoxCollider2DComponent(ECS::Entity entity)
@@ -2239,6 +2597,40 @@ namespace Kargono::Panels
 			}
 		}
 		
+	}
+	void SceneEditorPanel::DrawOnUpdateComponent(ECS::Entity entity)
+	{
+		if (!entity.HasComponent<ECS::OnUpdateComponent>())
+		{
+			return;
+		}
+		ECS::OnUpdateComponent& component = entity.GetComponent<ECS::OnUpdateComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(m_OnUpdateHeader);
+		if (m_OnUpdateHeader.Expanded)
+		{
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(component.OnUpdateScriptHandle);
+			m_SelectOnUpdateScript.CurrentOption = component.OnUpdateScriptHandle == Assets::EmptyHandle ? 
+				EditorUI::OptionEntry( "None", Assets::EmptyHandle ) :
+				EditorUI::OptionEntry(Utility::ScriptToString(script), component.OnUpdateScriptHandle);
+			EditorUI::EditorUIService::SelectOption(m_SelectOnUpdateScript);
+		}
+	}
+	void SceneEditorPanel::DrawOnCreateComponent(ECS::Entity entity)
+	{
+		if (!entity.HasComponent<ECS::OnCreateComponent>())
+		{
+			return;
+		}
+		ECS::OnCreateComponent& component = entity.GetComponent<ECS::OnCreateComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(m_OnCreateHeader);
+		if (m_OnCreateHeader.Expanded)
+		{
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(component.OnCreateScriptHandle);
+			m_SelectOnCreateScript.CurrentOption = component.OnCreateScriptHandle == Assets::EmptyHandle ?
+				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
+				EditorUI::OptionEntry(Utility::ScriptToString(script), component.OnCreateScriptHandle);
+			EditorUI::EditorUIService::SelectOption(m_SelectOnCreateScript);
+		}
 	}
 	void SceneEditorPanel::DrawShapeComponent(ECS::Entity entity)
 	{

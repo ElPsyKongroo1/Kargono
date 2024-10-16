@@ -40,6 +40,8 @@ namespace Kargono::Panels
 		void InitializeBoxCollider2DComponent();
 		void InitializeCircleCollider2DComponent();
 		void InitializeCameraComponent();
+		void InitializeOnUpdateComponent();
+		void InitializeOnCreateComponent();
 		void InitializeShapeComponent();
 		void InitializeProjectComponents();
 		void InitializeProjectComponent(Assets::AssetHandle projectComponentHandle);
@@ -87,6 +89,8 @@ namespace Kargono::Panels
 		void DrawBoxCollider2DComponent(ECS::Entity entity);
 		void DrawCircleCollider2DComponent(ECS::Entity entity);
 		void DrawCameraComponent(ECS::Entity entity);
+		void DrawOnUpdateComponent(ECS::Entity entity);
+		void DrawOnCreateComponent(ECS::Entity entity);
 		void DrawShapeComponent(ECS::Entity entity);
 		void DrawProjectComponent(ECS::Entity entity, Assets::AssetHandle handle);
 
@@ -126,6 +130,7 @@ namespace Kargono::Panels
 		// Tag Component
 		EditorUI::CollapsingHeaderSpec m_TagHeader{};
 		EditorUI::EditTextSpec m_TagEdit{};
+		EditorUI::EditTextSpec m_TagGroupEdit{};
 
 		// Transform Component
 		EditorUI::CollapsingHeaderSpec m_TransformHeader{};
@@ -146,6 +151,9 @@ namespace Kargono::Panels
 		EditorUI::CollapsingHeaderSpec m_Rigidbody2DHeader{};
 		EditorUI::RadioSelectorSpec m_Rigidbody2DType {};
 		EditorUI::CheckboxSpec m_RigidBody2DFixedRotation {};
+		EditorUI::SelectOptionSpec m_SelectRigidBody2DCollisionStartScript{};
+		EditorUI::SelectOptionSpec m_SelectRigidBody2DCollisionEndScript{};
+		
 
 		// Box Collider 2D Component
 		EditorUI::CollapsingHeaderSpec m_BoxCollider2DHeader{};
@@ -164,6 +172,14 @@ namespace Kargono::Panels
 		EditorUI::EditFloatSpec m_CircleColliderFriction{};
 		EditorUI::EditFloatSpec m_CircleColliderRestitution{};
 		EditorUI::EditFloatSpec m_CircleColliderRestitutionThreshold{};
+
+		// OnUpdate Component
+		EditorUI::CollapsingHeaderSpec m_OnUpdateHeader{};
+		EditorUI::SelectOptionSpec m_SelectOnUpdateScript{};
+
+		// OnCreate Component
+		EditorUI::CollapsingHeaderSpec m_OnCreateHeader{};
+		EditorUI::SelectOptionSpec m_SelectOnCreateScript{};
 
 		// Camera Component
 		EditorUI::CollapsingHeaderSpec m_CameraHeader{};

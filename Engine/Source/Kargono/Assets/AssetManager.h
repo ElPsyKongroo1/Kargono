@@ -84,7 +84,8 @@ namespace Kargono::Assets
 				return newAsset;
 			}
 
-			KG_WARN("No {} asset is associated with {} handle. Returning an empty asset reference", m_AssetName, handle);
+			//TODO: Maybe put back
+			//KG_WARN("No {} asset is associated with {} handle. Returning an empty asset reference", m_AssetName, handle);
 			return nullptr;
 		}
 
