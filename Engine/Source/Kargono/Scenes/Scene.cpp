@@ -181,18 +181,17 @@ namespace Kargono::Scenes
 		}
 
 		// Insert entities with ClassInstanceComponents into m_ScriptClassToEntityList map
-		auto view = GetAllEntitiesWith<ECS::ClassInstanceComponent>();
+		auto view = GetAllEntitiesWith<ECS::TagComponent>();
 		for (auto enttID : view)
 		{
 			ECS::Entity entity = { enttID, &m_EntityRegistry };
-			const auto& classInstanceComp = entity.GetComponent<ECS::ClassInstanceComponent>();
-			KG_ASSERT(classInstanceComp.ClassReference);
-			if (!m_ScriptClassToEntityList.contains(classInstanceComp.ClassReference->GetName()))
+			ECS::TagComponent& component = entity.GetComponent<ECS::TagComponent>();
+			if (!m_GroupToEntityList.contains(component.Group))
 			{
-				m_ScriptClassToEntityList.insert({ classInstanceComp.ClassReference->GetName(), {}});
+				m_GroupToEntityList.insert({ component.Group, {}});
 			}
 
-			m_ScriptClassToEntityList.at(classInstanceComp.ClassReference->GetName()).push_back(entity.GetUUID());
+			m_GroupToEntityList.at(component.Group).push_back(entity.GetUUID());
 		}
 	}
 
@@ -201,7 +200,7 @@ namespace Kargono::Scenes
 		m_IsRunning = false;
 
 		// Script
-		m_ScriptClassToEntityList.clear();
+		m_GroupToEntityList.clear();
 	}
 
 	ECS::Entity Scene::DuplicateEntity(ECS::Entity entity)
@@ -421,49 +420,7 @@ namespace Kargono::Scenes
 		// Get the data
 		return fieldDataRef;
 	}
-	void SceneService::SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue)
-	{
-		ECS::Entity entity = s_ActiveScene->GetEntityByUUID(entityID);
-		KG_ASSERT(s_ActiveScene);
-		KG_ASSERT(entity);
-		if (!entity.HasComponent<ECS::ClassInstanceComponent>())
-		{
-			KG_ERROR("No valid ClassInstanceComponent associated with entity");
-			return;
-		}
 
-		ECS::ClassInstanceComponent& comp = entity.GetComponent<ECS::ClassInstanceComponent>();
-		KG_ASSERT(comp.ClassHandle != Assets::EmptyHandle);
-		Ref<EntityClass> entityClass = comp.ClassReference;
-		KG_ASSERT(entityClass);
-		int32_t fieldLocation = entityClass->GetFieldLocation(fieldName);
-		KG_ASSERT(fieldLocation != -1);
-		comp.Fields.at(fieldLocation)->SetValue(fieldValue);
-		return;
-		
-	}
-
-	void* SceneService::GetEntityFieldByName(UUID entityID, const std::string& fieldName)
-	{
-		KG_ASSERT(s_ActiveScene);
-		ECS::Entity entity = s_ActiveScene->GetEntityByUUID(entityID);
-		KG_ASSERT(entity);
-		if (!entity.HasComponent<ECS::ClassInstanceComponent>())
-		{
-			KG_ERROR("No valid ClassInstanceComponent associated with entity");
-			return nullptr;
-		}
-
-		ECS::ClassInstanceComponent& comp = entity.GetComponent<ECS::ClassInstanceComponent>();
-		KG_ASSERT(comp.ClassHandle != Assets::EmptyHandle);
-		Ref<EntityClass> entityClass = comp.ClassReference;
-		KG_ASSERT(entityClass);
-		int32_t fieldLocation = entityClass->GetFieldLocation(fieldName);
-		KG_ASSERT(fieldLocation != -1);
-		return comp.Fields.at(fieldLocation)->GetValue();
-		
-
-	}
 	Assets::AssetHandle SceneService::FindEntityHandleByName(const std::string& name)
 	{
 		for (auto& [handle, enttID] : s_ActiveScene->m_EntityRegistry.m_EntityMap)

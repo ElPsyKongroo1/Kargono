@@ -66,7 +66,6 @@ namespace Kargono
 		m_UIEditorPanel = CreateScope<Panels::UIEditorPanel>();
 		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
-		m_EntityClassEditor = CreateScope<Panels::EntityClassEditor>();
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
 		m_GameStatePanel = CreateScope<Panels::GameStatePanel>();
 		m_InputModePanel = CreateScope<Panels::InputModePanel>();
@@ -225,7 +224,6 @@ namespace Kargono
 				ImGui::MenuItem("Input Mode Editor", NULL, &m_ShowInputModeEditor);
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
 				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
-				ImGui::MenuItem("Class Editor", NULL, &m_ShowClassEditor);
 				ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
 				ImGui::MenuItem("Component Editor", NULL, &m_ShowProjectComponent);
 				ImGui::Separator();
@@ -293,7 +291,6 @@ namespace Kargono
 		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
 		if (m_ShowProjectComponent) { m_ProjectComponentPanel->OnEditorUIRender(); }
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
-		if (m_ShowClassEditor) { m_EntityClassEditor->OnEditorUIRender(); }
 		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
 		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
 		if (m_ShowInputModeEditor) { m_InputModePanel->OnEditorUIRender(); }
@@ -882,7 +879,6 @@ namespace Kargono
 		m_TextEditorPanel->ResetPanelResources();
 		m_InputModePanel->ResetPanelResources();
 		m_GameStatePanel->ResetPanelResources();
-		m_EntityClassEditor->ResetPanelResources();
 		m_ScriptEditorPanel->ResetPanelResources();
 		m_ProjectPanel->ResetPanelResources();
 		Scenes::GameStateService::ClearActiveGameState();

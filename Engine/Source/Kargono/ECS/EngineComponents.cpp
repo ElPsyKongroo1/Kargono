@@ -5,23 +5,6 @@
 
 namespace Kargono::ECS
 {
-	bool ClassInstanceComponent::ChangeClass(Assets::AssetHandle classHandle)
-	{
-		Ref<Scenes::EntityClass> entityClassRef = Assets::AssetService::GetEntityClass(classHandle);
-		if (!entityClassRef)
-		{
-			KG_WARN("Could not retrieve entity class reference in Components.h");
-			return false;
-		}
-		ClassHandle = classHandle;
-		ClassReference = entityClassRef;
-		Fields.clear();
-		for (auto& [name, type] : entityClassRef->GetFields())
-		{
-			Fields.push_back(Utility::WrappedVarTypeToWrappedVariable(type));
-		}
-		return true;
-	}
 	ShapeComponent::ShapeComponent()
 	{
 		auto [handle, shader] = Assets::AssetService::GetShader(ShaderSpecification);

@@ -118,49 +118,6 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<ECS::ClassInstanceComponent>())
-		{
-			out << YAML::Key << "ClassInstanceComponent";
-			ECS::ClassInstanceComponent& comp = entity.GetComponent<ECS::ClassInstanceComponent>();
-			out << YAML::BeginMap; // Component Map
-			out << YAML::Key << "ClassHandle" << YAML::Value << static_cast<uint64_t>(comp.ClassHandle);
-			if (comp.ClassHandle != Assets::EmptyHandle)
-			{ 
-				Ref<Scenes::EntityClass> entityClass = Assets::AssetService::GetEntityClass(comp.ClassHandle);
-				if (!entityClass)
-				{
-					KG_ERROR("Attempt to serialize ClassInstanceComponent without valid entityClass");
-					return false;
-				}
-				if (entityClass->GetFields().size() != comp.Fields.size())
-				{
-					KG_ERROR("Attempt to serialize ClassInstanceComponent where class and instance fields are unaligned");
-					return false;
-				}
-
-				out << YAML::Key << "InstanceFields" << YAML::Value << YAML::BeginSeq; // Begin Fields
-				uint32_t iteration{ 0 };
-				for (auto& fieldValue : comp.Fields)
-				{
-					const Scenes::ClassField& fieldType = entityClass->GetFields().at(iteration);
-					if (fieldType.Type != fieldValue->Type())
-					{
-						KG_ERROR("Attempt to serialize ClassInstanceComponent with incorrect types");
-						return false;
-					}
-					out << YAML::BeginMap; // Begin Field Map
-					out << YAML::Key << "Name" << YAML::Value << fieldType.Name;
-					out << YAML::Key << "Type" << YAML::Value << Utility::WrappedVarTypeToString(fieldType.Type);
-					SerializeWrappedVariableData(fieldValue, out);
-					out << YAML::EndMap; // End Field Map
-					iteration++;
-				}
-				out << YAML::EndSeq; // End Fields
-			}
-
-			out << YAML::EndMap; // Component Map
-		}
-
 		if (entity.HasComponent<ECS::TransformComponent>())
 		{
 			out << YAML::Key << "TransformComponent";
@@ -420,33 +377,6 @@ namespace Kargono::Assets
 					ECS::OnCreateComponent& component = deserializedEntity.AddComponent<ECS::OnCreateComponent>();
 					component.OnCreateScriptHandle = onCreateNode["OnCreateHandle"].as<uint64_t>();
 					component.OnCreateScript = Assets::AssetService::GetScript(component.OnCreateScriptHandle);
-				}
-
-				auto classInstanceComponent = entity["ClassInstanceComponent"];
-				if (classInstanceComponent)
-				{
-					auto& cInstComp = deserializedEntity.AddComponent<ECS::ClassInstanceComponent>();
-					cInstComp.ClassHandle = classInstanceComponent["ClassHandle"].as<uint64_t>();
-					if (cInstComp.ClassHandle != Assets::EmptyHandle)
-					{
-						if (!AssetService::HasEntityClass(cInstComp.ClassHandle))
-						{
-							KG_WARN("Could not find entity class for class instance component");
-							return nullptr;
-						}
-						cInstComp.ClassReference = AssetService::GetEntityClass(cInstComp.ClassHandle);
-
-						auto instanceFields = classInstanceComponent["InstanceFields"];
-						if (instanceFields)
-						{
-							for (auto field : instanceFields)
-							{
-								WrappedVarType type = Utility::StringToWrappedVarType(field["Type"].as<std::string>());
-								Ref<WrappedVariable> newField = Utility::DeserializeWrappedVariableData(type, field);
-								cInstComp.Fields.push_back(newField);
-							}
-						}
-					}
 				}
 
 				auto cameraComponent = entity["CameraComponent"];

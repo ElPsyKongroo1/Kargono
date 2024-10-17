@@ -584,24 +584,12 @@ namespace Kargono::Panels
 
 			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class)
+				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
-					if (script->m_FuncType != WrappedFuncType::Void_UInt64)
-					{
-						continue;
-					}
-					m_WidgetOnPress.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) + 
-						"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+					continue;
 				}
-				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
-				{
-					if (script->m_FuncType != WrappedFuncType::Void_None)
-					{
-						continue;
-					}
-					m_WidgetOnPress.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
-						"::" + script->m_SectionLabel, script->m_ScriptName, handle);
-				}
+				m_WidgetOnPress.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
+					"::" + script->m_SectionLabel, script->m_ScriptName, handle);
 			}
 		};
 

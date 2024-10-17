@@ -59,19 +59,6 @@ namespace Kargono::Panels
 				};
 				m_AllAssetsTable.InsertTableEntry(newEntry);
 			}
-
-			for (auto& [handle, asset] : Assets::AssetService::GetEntityClassRegistry())
-			{
-				EditorUI::TableEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
-						nullptr
-				};
-				m_AllAssetsTable.InsertTableEntry(newEntry);
-			}
 			for (auto& [handle, asset] : Assets::AssetService::GetFontRegistry())
 			{
 				EditorUI::TableEntry newEntry

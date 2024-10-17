@@ -332,23 +332,12 @@ namespace Kargono::Panels
 			m_KeyboardOnUpdateAddFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class)
+				if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
 				{
-					if (script->m_FuncType != WrappedFuncType::Void_UInt64 && script->m_FuncType != WrappedFuncType::Void_UInt64Float)
-					{
-						continue;
-					}
-					m_KeyboardOnUpdateAddFunction.AddToOptions( Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					continue;
 				}
-				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
-				{
-					if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
-					{
-						continue;
-					}
-					m_KeyboardOnUpdateAddFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) + 
-						"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
-				}
+				m_KeyboardOnUpdateAddFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) + 
+					"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 			}
 		};
 
@@ -421,24 +410,12 @@ namespace Kargono::Panels
 			m_KeyboardOnUpdateEditFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class)
+				if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
 				{
-					if (script->m_FuncType != WrappedFuncType::Void_UInt64 && script->m_FuncType != WrappedFuncType::Void_UInt64Float)
-					{
-						continue;
-					}
-					m_KeyboardOnUpdateEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
-						"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					continue;
 				}
-				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
-				{
-					if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
-					{
-						continue;
-					}
-					m_KeyboardOnUpdateEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
-						"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
-				}
+				m_KeyboardOnUpdateEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
+					"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 			}
 		};
 
@@ -552,24 +529,13 @@ namespace Kargono::Panels
 			m_KeyboardOnKeyPressedAddFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class)
+				
+				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
-					if (script->m_FuncType != WrappedFuncType::Void_UInt64)
-					{
-						continue;
-					}
-					m_KeyboardOnKeyPressedAddFunction.AddToOptions( Utility::ScriptTypeToString(script->m_ScriptType) 
-						+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					continue;
 				}
-				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
-				{
-					if (script->m_FuncType != WrappedFuncType::Void_None)
-					{
-						continue;
-					}
-					m_KeyboardOnKeyPressedAddFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-						+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
-				}
+				m_KeyboardOnKeyPressedAddFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
+					+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 			}
 		};
 
@@ -642,24 +608,12 @@ namespace Kargono::Panels
 			m_KeyboardOnKeyPressedEditFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class)
+				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
-					if (script->m_FuncType != WrappedFuncType::Void_UInt64)
-					{
-						continue;
-					}
-					m_KeyboardOnKeyPressedEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-						+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+					continue;
 				}
-				if (script->m_ScriptType == Scripting::ScriptType::Global || script->m_ScriptType == Scripting::ScriptType::Engine)
-				{
-					if (script->m_FuncType != WrappedFuncType::Void_None)
-					{
-						continue;
-					}
-					m_KeyboardOnKeyPressedEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-						+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
-				}
+				m_KeyboardOnKeyPressedEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
+					+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
 			}
 		};
 

@@ -3,7 +3,6 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Assets/AudioManager.h"
-#include "Kargono/Assets/EntityClassManager.h"
 #include "Kargono/Assets/FontManager.h"
 #include "Kargono/Assets/GameStateManager.h"
 #include "Kargono/Assets/InputModeManager.h"
@@ -82,7 +81,6 @@ namespace Kargono::Assets
 	struct AssetsContext
 	{
 		AudioBufferManager m_AudioBufferManager;
-		EntityClassManager m_EntityClassManager;
 		FontManager m_FontManager;
 		GameStateManager m_GameStateManager;
 		InputModeManager m_InputModeManager;
@@ -99,7 +97,6 @@ namespace Kargono::Assets
 	public:
 		// Define common functionality of each asset manager type
 		DEFINE_MANAGER(Audio, AudioBuffer)
-		DEFINE_MANAGER(Scenes, EntityClass)
 		DEFINE_MANAGER(RuntimeUI, Font)
 		DEFINE_MANAGER(Scenes, GameState)
 		DEFINE_MANAGER(Input, InputMode)
@@ -112,14 +109,6 @@ namespace Kargono::Assets
 
 		// Expose unique functionality of each class
 	public:
-		static void SaveEntityClass(AssetHandle entityClassHandle, Ref<Scenes::EntityClass> entityClass, Ref<Scenes::Scene> editorScene)
-		{
-			s_AssetsContext.m_EntityClassManager.SaveEntityClass(entityClassHandle, entityClass, editorScene);
-		}
-		static void DeleteEntityClass(AssetHandle handle, Ref<Scenes::Scene> editorScene)
-		{
-			s_AssetsContext.m_EntityClassManager.DeleteEntityClass(handle, editorScene);
-		}
 
 		static std::tuple<AssetHandle, bool> CreateNewScript(ScriptSpec& spec)
 		{
@@ -172,7 +161,6 @@ namespace Kargono::Assets
 			DeserializeProjectComponentRegistry();
 			DeserializeInputModeRegistry();
 			DeserializeGameStateRegistry();
-			DeserializeEntityClassRegistry();
 			DeserializeUserInterfaceRegistry();
 			DeserializeSceneRegistry();
 		}
@@ -188,7 +176,6 @@ namespace Kargono::Assets
 			SerializeProjectComponentRegistry();
 			SerializeInputModeRegistry();
 			SerializeGameStateRegistry();
-			SerializeEntityClassRegistry();
 			SerializeUserInterfaceRegistry();
 			SerializeSceneRegistry();
 		}
@@ -204,7 +191,6 @@ namespace Kargono::Assets
 			ClearProjectComponentRegistry();
 			ClearInputModeRegistry();
 			ClearGameStateRegistry();
-			ClearEntityClassRegistry();
 			ClearUserInterfaceRegistry();
 			ClearSceneRegistry();
 		}
@@ -214,7 +200,6 @@ namespace Kargono::Assets
 			switch (type)
 			{
 			case AssetType::Audio: return GetAudioBufferRegistry().at(handle);
-			case AssetType::EntityClass: return GetEntityClassRegistry().at(handle);
 			case AssetType::Font: return GetFontRegistry().at(handle);
 			case AssetType::GameState: return GetGameStateRegistry().at(handle);
 			case AssetType::InputMode: return GetInputModeRegistry().at(handle);

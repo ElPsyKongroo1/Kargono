@@ -63,7 +63,6 @@
 
 //-----------------Scene-----------------//
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Scenes/EntityClass.h"
 #include "Kargono/Scenes/GameState.h"
 
 //-----------------Scripting-----------------//

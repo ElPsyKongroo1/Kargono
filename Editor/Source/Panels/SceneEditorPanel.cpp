@@ -83,19 +83,6 @@ namespace Kargono::Panels
 			};
 			newEntry.SubEntries.push_back(componentEntry);
 		}
-		if (entity.HasComponent<ECS::ClassInstanceComponent>())
-		{
-			componentEntry.Label = "Class Instance";
-			componentEntry.ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::ClassInstance, Assets::EmptyHandle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconClassInstance;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
-			{
-				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.Handle));
-				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
-				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::ClassInstance);
-			};
-			newEntry.SubEntries.push_back(componentEntry);
-		}
 
 		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
 		{
@@ -258,10 +245,6 @@ namespace Kargono::Panels
 			}
 			m_AddComponent.ClearOptions();
 			m_AddComponent.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			if (!entity.HasComponent<ECS::ClassInstanceComponent>())
-			{
-				m_AddComponent.AddToOptions("Engine Component", "Class Instance", Assets::EmptyHandle);
-			}
 			if (!entity.HasComponent<ECS::CameraComponent>())
 			{
 				m_AddComponent.AddToOptions("Engine Component", "Camera", Assets::EmptyHandle);
@@ -354,21 +337,6 @@ namespace Kargono::Panels
 
 
 			// Check for engine components 
-			if (option.Label == "Class Instance")
-			{
-				entity.AddComponent<ECS::ClassInstanceComponent>();
-				componentEntry.Label = "Class Instance";
-				componentEntry.ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::ClassInstance, Assets::EmptyHandle);
-				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconClassInstance;
-				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
-				{
-					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.Handle));
-					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
-					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::ClassInstance);
-				};
-				currentEntry->SubEntries.push_back(componentEntry);
-				return;
-			}
 			if (option.Label == "Camera")
 			{
 				entity.AddComponent<ECS::CameraComponent>();
@@ -521,173 +489,6 @@ namespace Kargono::Panels
 				component.Group = m_TagGroupEdit.CurrentOption;
 			}
 		};
-	}
-
-	void SceneEditorPanel::InitializeClassInstanceComponent()
-	{
-		m_ClassInstanceHeader.Label = "Class Instance";
-		m_ClassInstanceHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
-		m_ClassInstanceHeader.Expanded = true;
-		m_ClassInstanceHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
-		{
-			EngineService::SubmitToMainThread([&]()
-			{
-				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-				if (entity.HasComponent<ECS::ClassInstanceComponent>())
-				{
-					for (auto& entry : m_SceneHierarchyTree.GetTreeEntries())
-					{
-						if ((uint32_t)entry.Handle == (uint32_t)entity)
-						{
-							EditorUI::TreePath newPath {};
-							for (auto& subEntry : entry.SubEntries)
-							{
-								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.ProvidedData.get();
-								if (entryData.m_ComponentType == ECS::ComponentType::ClassInstance)
-								{
-									newPath = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
-									break;
-								}
-							}
-							if (!newPath)
-							{
-								KG_WARN("Could not locate component inside Tree");
-								return;
-							}
-
-							m_SceneHierarchyTree.RemoveEntry(newPath);
-
-							break;
-						}
-					}
-
-					entity.RemoveComponent<ECS::ClassInstanceComponent>();
-				}
-			});
-		});
-
-		m_SelectClassOption.Label = "Class";
-		m_SelectClassOption.Flags |= EditorUI::SelectOption_Indented;
-		m_SelectClassOption.CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectClassOption.PopupAction = [&]()
-		{
-			m_SelectClassOption.ClearOptions();
-			m_SelectClassOption.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetEntityClassRegistry())
-			{
-				m_SelectClassOption.AddToOptions("All Options",
-					asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name, handle);
-			}
-		};
-		m_SelectClassOption.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
-		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			auto& component = entity.GetComponent<ECS::ClassInstanceComponent>();
-
-			if (entry.Handle == Assets::EmptyHandle)
-			{
-				component.ClassHandle = Assets::EmptyHandle;
-				component.Fields.clear();
-				component.ClassReference = nullptr;
-				return;
-			}
-
-			if (component.ClassHandle == entry.Handle)
-			{
-				return;
-			}
-			bool success = component.ChangeClass(entry.Handle);
-			if (success)
-			{
-				m_InstanceFieldsTable.OnRefresh();
-			}
-		};
-
-		m_InstanceFieldsTable.Label = "Instance Fields";
-		m_InstanceFieldsTable.Flags |= EditorUI::Table_Indented;
-		m_InstanceFieldsTable.Column1Title = "Field Name";
-		m_InstanceFieldsTable.Column2Title = "Field Value";
-		m_InstanceFieldsTable.Expanded = true;
-		m_InstanceFieldsTable.OnRefresh = [&]()
-		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-
-			if (!entity || !entity.HasComponent<ECS::ClassInstanceComponent>())
-			{
-				return;
-			}
-
-			auto& component = entity.GetComponent<ECS::ClassInstanceComponent>();
-			uint32_t iteration{ 0 };
-			m_InstanceFieldsTable.ClearTable();
-			for(auto& wrappedVar : component.Fields)
-			{
-				m_InstanceFieldsTable.InsertTableEntry(
-				{
-					component.ClassReference->GetFields().at(iteration).Name,
-					wrappedVar->GetValueAsString(),
-					Assets::EmptyHandle,
-					[&](EditorUI::TableEntry& optionEntry)
-					{
-						m_CurrentClassField = optionEntry.Label;
-						ECS::Entity currentEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-						auto& comp = currentEntity.GetComponent<ECS::ClassInstanceComponent>();
-						m_CurrentClassFieldLocation = comp.ClassReference->GetFieldLocation(m_CurrentClassField);
-						if (m_CurrentClassFieldLocation == -1)
-						{
-							KG_WARN("Could not locate field in class definition");
-							return;
-						}
-						m_EditClassFieldPopup.PopupActive = true;
-					},
-					nullptr
-				});
-				iteration++;
-			}
-		};
-
-		m_EditClassFieldPopup.Label = "Edit Field";
-		m_EditClassFieldPopup.PopupWidth = 420.0f;
-		m_EditClassFieldPopup.PopupAction = [&]()
-		{
-			ECS::Entity currentEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			auto& comp = currentEntity.GetComponent<ECS::ClassInstanceComponent>();
-			const Ref<WrappedVariable> field = comp.Fields.at(m_CurrentClassFieldLocation);
-
-			if (!field)
-			{
-				KG_ERROR("Unable to retreive field from current game state object");
-				return;
-			}
-
-			bool success = Utility::FillBufferWithWrappedVarString(field, m_EditFieldValue.FieldBuffer);
-			m_EditFieldValue.VariableType = field->Type();
-			if (!success)
-			{
-				KG_WARN("Unable to complete Popup Action");
-				return;
-			}
-		};
-		m_EditClassFieldPopup.PopupContents = [&]()
-		{
-			EditorUI::EditorUIService::EditVariable(m_EditFieldValue);
-		};
-		m_EditClassFieldPopup.ConfirmAction = [&]()
-		{
-			ECS::Entity currentEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			auto& comp = currentEntity.GetComponent<ECS::ClassInstanceComponent>();
-			const Ref<WrappedVariable> field = comp.Fields.at(m_CurrentClassFieldLocation);
-			bool success = Utility::FillWrappedVarWithStringBuffer(field, m_EditFieldValue.FieldBuffer);
-			if (!success)
-			{
-				KG_WARN("Issue completing m_EditClassFieldPopup Confirm Action");
-				return;
-			}
-			m_InstanceFieldsTable.OnRefresh();
-		};
-		m_EditFieldValue.Label = "Edit Value";
-		m_EditFieldValue.AllocateBuffer();
-
 	}
 
 	void SceneEditorPanel::InitializeTransformComponent()
@@ -2089,7 +1890,6 @@ namespace Kargono::Panels
 			KG_BIND_CLASS_FN(SceneEditorPanel::OnKeyPressedEditor));
 		InitializeSceneHierarchy();
 		InitializeTagComponent();
-		InitializeClassInstanceComponent();
 		InitializeTransformComponent();
 		InitializeRigidbody2DComponent();
 		InitializeOnUpdateComponent();
@@ -2293,20 +2093,6 @@ namespace Kargono::Panels
 		}
 		if (entity)
 		{
-			if (entity.HasComponent<ECS::ClassInstanceComponent>())
-			{
-				ECS::ClassInstanceComponent& instanceComp = entity.GetComponent<ECS::ClassInstanceComponent>();
-				if (instanceComp.ClassHandle == Assets::EmptyHandle)
-				{
-					m_SelectClassOption.CurrentOption = { "None", Assets::EmptyHandle };
-				}
-				else
-				{
-					m_SelectClassOption.CurrentOption = { instanceComp.ClassReference->GetName(),instanceComp.ClassHandle };
-				}
-				m_InstanceFieldsTable.OnRefresh();
-			}
-
 			EditorUI::TreePath path;
 			for (auto& entry : m_SceneHierarchyTree.GetTreeEntries())
 			{
@@ -2333,26 +2119,6 @@ namespace Kargono::Panels
 		s_EditorApp->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 		
 	}
-	void SceneEditorPanel::RefreshClassInstanceComponent()
-	{
-		ECS::Entity currentEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-		if (!currentEntity)
-		{
-			return;
-		}
-		if (currentEntity.HasComponent<ECS::ClassInstanceComponent>())
-		{
-			auto& comp = currentEntity.GetComponent<ECS::ClassInstanceComponent>();
-			if (!Assets::AssetService::GetEntityClass(comp.ClassHandle))
-			{
-				comp.ClassHandle = Assets::EmptyHandle;
-				comp.Fields.clear();
-				comp.ClassReference = nullptr;
-				m_SelectClassOption.CurrentOption = {"None", Assets::EmptyHandle};
-			}
-			m_InstanceFieldsTable.OnRefresh();
-		}
-	}
 	void SceneEditorPanel::RefreshTransformComponent()
 	{
 		ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -2373,9 +2139,10 @@ namespace Kargono::Panels
 	{
 		DrawTagComponent(entity);
 		DrawTransformComponent(entity);
-		DrawClassInstanceComponent(entity);
 		DrawRigidbody2DComponent(entity);
 		DrawBoxCollider2DComponent(entity);
+		DrawOnUpdateComponent(entity);
+		DrawOnCreateComponent(entity);
 		DrawCircleCollider2DComponent(entity);
 		DrawCameraComponent(entity);
 		DrawShapeComponent(entity);
@@ -2414,9 +2181,6 @@ namespace Kargono::Panels
 			return;
 		case ECS::ComponentType::Shape:
 			DrawShapeComponent(entity);
-			return;
-		case ECS::ComponentType::ClassInstance:
-			DrawClassInstanceComponent(entity);
 			return;
 		case ECS::ComponentType::ProjectComponent:
 			DrawProjectComponent(entity, m_DisplayedProjectComponentHandle);
@@ -2461,24 +2225,6 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::EditVec3(m_TransformEditScale);
 			m_TransformEditRotation.CurrentVec3 = component.Rotation;
 			EditorUI::EditorUIService::EditVec3(m_TransformEditRotation);
-		}
-	}
-	void SceneEditorPanel::DrawClassInstanceComponent(ECS::Entity entity)
-	{
-		if (!entity.HasComponent<ECS::ClassInstanceComponent>())
-		{
-			return;
-		}
-		ECS::ClassInstanceComponent& component = entity.GetComponent<ECS::ClassInstanceComponent>();
-		EditorUI::EditorUIService::CollapsingHeader(m_ClassInstanceHeader);
-		if (m_ClassInstanceHeader.Expanded)
-		{
-			EditorUI::EditorUIService::SelectOption(m_SelectClassOption);
-			if (component.ClassHandle != Assets::EmptyHandle)
-			{
-				EditorUI::EditorUIService::Table(m_InstanceFieldsTable);
-				EditorUI::EditorUIService::GenericPopup(m_EditClassFieldPopup);
-			}
 		}
 	}
 	void SceneEditorPanel::DrawRigidbody2DComponent(ECS::Entity entity)

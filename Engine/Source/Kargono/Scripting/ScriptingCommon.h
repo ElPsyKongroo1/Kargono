@@ -8,9 +8,8 @@ namespace Kargono::Scripting
 	enum class ScriptType
 	{
 		None = 0,
-		Global = 1,
-		Class = 2,
-		Engine = 3
+		Project = 1,
+		Engine = 2
 	};
 }
 
@@ -24,8 +23,7 @@ namespace Kargono::Utility
 	{
 		switch (type)
 		{
-		case Scripting::ScriptType::Global: return "Global";
-		case Scripting::ScriptType::Class: return "Class";
+		case Scripting::ScriptType::Project: return "Project";
 		case Scripting::ScriptType::Engine: return "Engine";
 		case Scripting::ScriptType::None: return "None";
 		}
@@ -35,8 +33,7 @@ namespace Kargono::Utility
 
 	inline Scripting::ScriptType StringToScriptType(std::string type)
 	{
-		if (type == "Global") { return Scripting::ScriptType::Global; }
-		if (type == "Class") { return Scripting::ScriptType::Class; }
+		if (type == "Project") { return Scripting::ScriptType::Project; }
 		if (type == "Engine") { return Scripting::ScriptType::Engine; }
 		if (type == "None") { return Scripting::ScriptType::None; }
 

@@ -38,7 +38,6 @@ namespace Kargono::Assets
 		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset) override;
 		virtual void DeserializeRegistrySpecificData(YAML::Node& registryNode) override;
 		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) override;
-		virtual void DeleteAssetValidation(AssetHandle assetHandle) override;
 
 		std::tuple<AssetHandle, bool> CreateNewScript(ScriptSpec& spec);
 		bool SaveScript(AssetHandle scriptHandle, ScriptSpec& spec);

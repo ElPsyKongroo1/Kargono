@@ -141,7 +141,7 @@ namespace Kargono::Panels
 			m_SelectRuntimeStartSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class || script->m_FuncType != WrappedFuncType::Void_None)
+				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
 				}
@@ -176,7 +176,7 @@ namespace Kargono::Panels
 			m_SelectUpdateUserCountSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class || script->m_FuncType != WrappedFuncType::Void_UInt32)
+				if (script->m_FuncType != WrappedFuncType::Void_UInt32)
 				{
 					continue;
 				}
@@ -211,7 +211,7 @@ namespace Kargono::Panels
 			m_SelectApproveJoinSessionSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class || script->m_FuncType != WrappedFuncType::Void_UInt16)
+				if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 				{
 					continue;
 				}
@@ -246,7 +246,7 @@ namespace Kargono::Panels
 			m_SelectUserLeftSessionSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class || script->m_FuncType != WrappedFuncType::Void_UInt16)
+				if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 				{
 					continue;
 				}
@@ -281,7 +281,7 @@ namespace Kargono::Panels
 			m_SelectSessionInitSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class || script->m_FuncType != WrappedFuncType::Void_None)
+				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
 				}
@@ -316,7 +316,7 @@ namespace Kargono::Panels
 			m_SelectConnectionTerminatedSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class || script->m_FuncType != WrappedFuncType::Void_None)
+				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
 				}
@@ -351,7 +351,7 @@ namespace Kargono::Panels
 			m_SelectUpdateSessionSlotSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class || script->m_FuncType != WrappedFuncType::Void_UInt16)
+				if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 				{
 					continue;
 				}
@@ -386,7 +386,7 @@ namespace Kargono::Panels
 			m_SelectStartSessionSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class || script->m_FuncType != WrappedFuncType::Void_None)
+				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
 				}
@@ -421,7 +421,7 @@ namespace Kargono::Panels
 			m_SelectSessionReadyCheckSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class || script->m_FuncType != WrappedFuncType::Void_None)
+				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
 				}
@@ -456,7 +456,7 @@ namespace Kargono::Panels
 			m_SelectReceiveSignalSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_ScriptType == Scripting::ScriptType::Class || script->m_FuncType != WrappedFuncType::Void_UInt16)
+				if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 				{
 					continue;
 				}

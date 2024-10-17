@@ -645,13 +645,11 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
-		AddEngineFunctionToCPPFileTwoParameters(GetEntityFieldByName, void*, uint64_t, const std::string&)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetBackgroundColor, void, const std::string&, const std::string&, Math::vec4)
 		AddEngineFunctionToCPPFileThreeParameters(Scenes_GetProjectComponentField, void*, uint64_t, uint64_t, uint64_t)
-		AddEngineFunctionToCPPFileThreeParameters(SetEntityFieldByName, void, uint64_t, const std::string&, void*)
 		AddEngineFunctionToCPPFileThreeParameters(SendAllEntityPhysics, void, uint64_t, Math::vec3, Math::vec2)
 		AddEngineFunctionToCPPFileFourParameters(Scenes_SetProjectComponentField, void, uint64_t, uint64_t, uint64_t, void*)
 
@@ -736,7 +734,7 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(SetEntityFieldByName)
+
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
 		outputStream << "{\n";
@@ -744,7 +742,7 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(GetEntityFieldByName)
+		
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrString, void*, const std::string&)
 		outputStream << "{\n";
@@ -938,8 +936,6 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectable,VoidStringStringBool) 
 		AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, RuntimeUI::RuntimeUIService::IsWidgetSelected,BoolStringString)
 		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)
-		AddEngineFunctionPointerToDll(SetEntityFieldByName, Scenes::SceneService::SetEntityFieldByName, VoidUInt64StringVoidPtr)
-		AddEngineFunctionPointerToDll(GetEntityFieldByName, Scenes::SceneService::GetEntityFieldByName, VoidPtrUInt64String)
 		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::SceneService::FindEntityHandleByName, UInt64String)
 		AddEngineFunctionPointerToDll(Scenes_IsSceneActive, Scenes::SceneService::IsSceneActive, BoolString)
 		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)

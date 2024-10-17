@@ -10,7 +10,6 @@
 #include "Panels/StatisticsPanel.h"
 #include "Panels/UIEditorPanel.h"
 #include "Panels/ViewportPanel.h"
-#include "Panels/EntityClassEditor.h"
 #include "Panels/ScriptEditorPanel.h"
 #include "Panels/GameStatePanel.h"
 #include "Panels/TextEditorPanel.h"
@@ -184,7 +183,6 @@ namespace Kargono
 		bool m_ShowTesting = false;
 		bool m_ShowUserInterfaceEditor = false;
 		bool m_ShowScriptEditor = false;
-		bool m_ShowClassEditor = false;
 		bool m_ShowTextEditor = false;
 		bool m_ShowGameStateEditor = false;
 		bool m_ShowInputModeEditor = false;
@@ -225,7 +223,6 @@ namespace Kargono
 		Scope<Panels::UIEditorPanel>  m_UIEditorPanel;
 		Scope<Panels::ViewportPanel>  m_ViewportPanel;
 		Scope<Panels::ScriptEditorPanel>  m_ScriptEditorPanel;
-		Scope<Panels::EntityClassEditor>  m_EntityClassEditor;
 		Scope<Panels::TextEditorPanel>  m_TextEditorPanel;
 		Scope<Panels::GameStatePanel>  m_GameStatePanel;
 		Scope<Panels::InputModePanel>  m_InputModePanel;
@@ -241,7 +238,6 @@ namespace Kargono
 		friend Panels::ProjectComponentPanel;
 		friend Panels::UIEditorPanel;
 		friend Panels::ScriptEditorPanel;
-		friend Panels::EntityClassEditor;
 		friend Panels::TextEditorPanel;
 		friend Panels::GameStatePanel;
 		friend Panels::InputModePanel;

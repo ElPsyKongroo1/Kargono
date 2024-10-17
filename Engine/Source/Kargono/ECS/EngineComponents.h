@@ -6,7 +6,6 @@
 #include "Kargono/Rendering/Shape.h"
 #include "Kargono/Audio/Audio.h"
 #include "Kargono/Math/Math.h"
-#include "Kargono/Scenes/EntityClass.h"
 #include "Kargono/AI/AIService.h"
 
 #include <string>
@@ -166,17 +165,6 @@ namespace Kargono::ECS
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
 
-	struct ClassInstanceComponent
-	{
-	public:
-		Assets::AssetHandle ClassHandle{ Assets::EmptyHandle };
-		Ref<Scenes::EntityClass> ClassReference{ nullptr };
-		std::vector<Ref<WrappedVariable>> Fields{};
-
-		bool ChangeClass(Assets::AssetHandle classHandle);
-		ClassInstanceComponent() = default;
-		ClassInstanceComponent(const ClassInstanceComponent&) = default;
-	};
 
 	struct CircleCollider2DComponent
 	{
@@ -264,7 +252,6 @@ namespace Kargono::ECS
 		Rigidbody2D,
 		BoxCollider2D,
 		CircleCollider2D,
-		ClassInstance,
 		OnUpdate,
 		OnCreate,
 		Shape,
@@ -279,6 +266,6 @@ namespace Kargono::ECS
 	};
 
 	using AllComponents = ComponentGroup<TransformComponent, CameraComponent, AIStateComponent,
-	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ClassInstanceComponent, ShapeComponent,
+	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ShapeComponent,
 	TagComponent, OnUpdateComponent, OnCreateComponent, NetworkComponent>;
 }

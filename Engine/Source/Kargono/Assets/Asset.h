@@ -35,7 +35,6 @@ namespace Kargono::Assets
 		InputMode,
 		Script,
 		GameState,
-		EntityClass,
 		ProjectComponent
 	};
 
@@ -174,11 +173,6 @@ namespace Kargono::Assets
 		std::string Name{};
 	};
 
-	struct EntityClassMetaData
-	{
-		std::string Name{};
-	};
-
 	struct ScriptMetaData
 	{
 		std::string Name{};
@@ -225,7 +219,6 @@ namespace Kargono::Utility
 		case Assets::AssetType::InputMode: return "InputMode";
 		case Assets::AssetType::Script: return "Script";
 		case Assets::AssetType::GameState: return "GameState";
-		case Assets::AssetType::EntityClass: return "EntityClass";
 		case Assets::AssetType::ProjectComponent: return "ProjectComponent";
 		case Assets::AssetType::None: return "None";
 		}
@@ -244,7 +237,6 @@ namespace Kargono::Utility
 		if (type == "InputMode") { return Assets::AssetType::InputMode; }
 		if (type == "Script") { return Assets::AssetType::Script; }
 		if (type == "GameState") { return Assets::AssetType::GameState; }
-		if (type == "EntityClass") { return Assets::AssetType::EntityClass; }
 		if (type == "ProjectComponent") { return Assets::AssetType::ProjectComponent; }
 		if (type == "None") { return Assets::AssetType::None; }
 

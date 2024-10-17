@@ -20,25 +20,13 @@ namespace Kargono::Panels
 		std::string originalLabel = script->m_SectionLabel;
 		Assets::ScriptSpec spec {};
 		spec.Name = m_EditScriptName.CurrentOption;
-		spec.Type = m_EditScriptType.SelectedOption == 0 ? Scripting::ScriptType::Class : Scripting::ScriptType::Global;
+		spec.Type = Scripting::ScriptType::Project;
 		spec.SectionLabel = m_EditScriptSectionLabel.CurrentOption.Label;
 		spec.FunctionType = (WrappedFuncType)(uint64_t)m_EditScriptFuncType.CurrentOption.Handle;
 		auto successful = Assets::AssetService::SaveScript(m_ActiveScriptHandle, spec);
 		if (!successful)
 		{
 			KG_ERROR("Unsuccessful at creating new script");
-		}
-		if (spec.Type == Scripting::ScriptType::Class || originalType == Scripting::ScriptType::Class)
-		{
-			for (auto& [handle, asset] : Assets::AssetService::GetEntityClassRegistry())
-			{
-				if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel
-					|| asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == originalLabel)
-				{
-					s_EditorApp->m_EntityClassEditor->RefreshEntityScripts(handle);
-					break;
-				}
-			}
 		}
 
 		m_AllScriptsTable.OnRefresh();
@@ -63,7 +51,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				std::string scriptType = script->m_ScriptType == Scripting::ScriptType::Class ? "Class" : "Global";
+				std::string scriptType = "Project";
 				std::string label = scriptType + std::string("::") + script->m_SectionLabel;
 				auto onEdit = [&](EditorUI::TableEntry& entry)
 				{
@@ -101,39 +89,25 @@ namespace Kargono::Panels
 		{
 			m_CreateScriptName.CurrentOption = "Empty";
 			m_CreateScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
-			m_CreateScriptType.SelectedOption = 1;
 			m_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 		};
 		m_CreateScriptPopup.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::EditText(m_CreateScriptName);
 			EditorUI::EditorUIService::SelectOption(m_CreateScriptFuncType);
-			EditorUI::EditorUIService::RadioSelector(m_CreateScriptType);
 			EditorUI::EditorUIService::SelectOption(m_CreateScriptSectionLabel);
 		};
 		m_CreateScriptPopup.ConfirmAction = [&]()
 		{
 			Assets::ScriptSpec spec {};
 			spec.Name = m_CreateScriptName.CurrentOption;
-			spec.Type = m_CreateScriptType.SelectedOption == 0 ? Scripting::ScriptType::Class : Scripting::ScriptType::Global;
+			spec.Type = Scripting::ScriptType::Project;
 			spec.SectionLabel = m_CreateScriptSectionLabel.CurrentOption.Label;
 			spec.FunctionType = (WrappedFuncType)(uint64_t)m_CreateScriptFuncType.CurrentOption.Handle;
 			auto [handle, successful] = Assets::AssetService::CreateNewScript(spec);
 			if (!successful)
 			{
 				KG_ERROR("Unsuccessful at creating new script");
-			}
-
-			if (spec.Type == Scripting::ScriptType::Class)
-			{
-				for (auto& [handle, asset] : Assets::AssetService::GetEntityClassRegistry())
-				{
-					if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
-					{
-						s_EditorApp->m_EntityClassEditor->RefreshEntityScripts(handle);
-						break;
-					}
-				}
 			}
 
 			m_AllScriptsTable.OnRefresh();
@@ -146,92 +120,26 @@ namespace Kargono::Panels
 		m_CreateScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
 		m_CreateScriptFuncType.PopupAction = [&]()
 		{
-			if (m_CreateScriptType.SelectedOption == 0)
+			
+			m_CreateScriptFuncType.ClearOptions();
+			for (auto func : s_AllWrappedFuncs)
 			{
-				m_CreateScriptFuncType.ClearOptions();
-				for (auto func : s_AllWrappedFuncs)
-				{
-					// Check if function's first parameter is a UInt64
-					bool match = Utility::Regex::GetMatchSuccess(Utility::WrappedFuncTypeToString(func), "_UInt64");
-
-					if (match)
-					{
-						// Display the function without the first parameter, since it is used as the entity number in the func
-						// Replace with _None, if only one parameter is present
-						std::string funcDisplayName;
-						if (Utility::WrappedFuncTypeToParameterTypes(func).size() == 1)
-						{
-							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
-								"_UInt64", "_None");
-						}
-						else
-						{
-							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
-								"_UInt64", "_");
-						}
-
-						m_CreateScriptFuncType.AddToOptions("All Options", funcDisplayName, (uint64_t)func);
-					}
-
-				}
+				m_CreateScriptFuncType.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
 			}
-			else
-			{
-				m_CreateScriptFuncType.ClearOptions();
-				for (auto func : s_AllWrappedFuncs)
-				{
-					m_CreateScriptFuncType.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
-				}
-			}
+			
 		};
 
-		m_CreateScriptType.Label = "Script Type";
-		m_CreateScriptType.Editing = true;
-		m_CreateScriptType.FirstOptionLabel = "Class";
-		m_CreateScriptType.SecondOptionLabel = "Global";
-		m_CreateScriptType.SelectAction = [&]()
-		{
-			// If we set the option to 'Class', try to get the first entity class option
-			if (m_CreateScriptType.SelectedOption == 0)
-			{
-				if (!Assets::AssetService::GetEntityClassRegistry().empty())
-				{
-					m_CreateScriptSectionLabel.CurrentOption.Label = Assets::AssetService::GetEntityClassRegistry().begin()->second.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name;
-					m_CreateScriptSectionLabel.CurrentOption.Handle = Assets::AssetService::GetEntityClassRegistry().begin()->first;
-				}
-			}
-			else
-			{
-				m_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
-			}
-			m_CreateScriptSectionLabel.PopupAction();
-
-			// Reset Func Type to prevent incorrect types
-			m_CreateScriptFuncType.CurrentOption = { "None", Assets::EmptyHandle };
-		};
+	
 
 		m_CreateScriptSectionLabel.Label = "Group";
 		m_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 		m_CreateScriptSectionLabel.PopupAction = [&]()
 		{
-			if (m_CreateScriptType.SelectedOption == 0)
+			m_CreateScriptSectionLabel.ClearOptions();
+			m_CreateScriptSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& label : Assets::AssetService::GetScriptSectionLabels())
 			{
-				m_CreateScriptSectionLabel.ClearOptions();
-				//spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& [handle, entityClass] : Assets::AssetService::GetEntityClassRegistry())
-				{
-					m_CreateScriptSectionLabel.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
-						handle);
-				}
-			}
-			else
-			{
-				m_CreateScriptSectionLabel.ClearOptions();
-				m_CreateScriptSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& label : Assets::AssetService::GetScriptSectionLabels())
-				{
-					m_CreateScriptSectionLabel.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
-				}
+				m_CreateScriptSectionLabel.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
 			}
 		};
 
@@ -240,41 +148,17 @@ namespace Kargono::Panels
 		m_EditScriptPopup.PopupAction = [&]()
 		{
 			m_EditScriptName.CurrentOption = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_ScriptName;
-			m_EditScriptType.SelectedOption = Assets::AssetService::GetScript(
-				m_ActiveScriptHandle)->m_ScriptType == Scripting::ScriptType::Class ? 0 : 1;
 			m_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_SectionLabel;
-
-			if (m_EditScriptType.SelectedOption == 0)
-			{
-				WrappedFuncType currentFuncType = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_FuncType;
-				std::string funcDisplayName;
-
-				if (Utility::WrappedFuncTypeToParameterTypes(currentFuncType).size() == 1)
-				{
-					funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(currentFuncType),
-						"_UInt64", "_None");
-				}
-				else
-				{
-					funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(currentFuncType),
-						"_UInt64", "_");
-				}
-				m_EditScriptFuncType.CurrentOption = { funcDisplayName,
-					(uint64_t)currentFuncType };
-			}
-			else
-			{
-				WrappedFuncType currentFuncType = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_FuncType;
-				m_EditScriptFuncType.CurrentOption = { Utility::WrappedFuncTypeToString(currentFuncType),
-					(uint64_t)currentFuncType };
-			}
+			WrappedFuncType currentFuncType = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_FuncType;
+			m_EditScriptFuncType.CurrentOption = { Utility::WrappedFuncTypeToString(currentFuncType),
+				(uint64_t)currentFuncType };
+			
 		};
 		m_EditScriptPopup.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::LabeledText("Script Name", Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_ScriptName);
 			//EditorUI::Editor::EditText(m_EditScriptName);
 			EditorUI::EditorUIService::SelectOption(m_EditScriptFuncType);
-			EditorUI::EditorUIService::RadioSelector(m_EditScriptType);
 			EditorUI::EditorUIService::SelectOption(m_EditScriptSectionLabel);
 		};
 		m_EditScriptPopup.DeleteAction = [&]()
@@ -312,18 +196,6 @@ namespace Kargono::Panels
 				return;
 			}
 
-			if (type == Scripting::ScriptType::Class)
-			{
-				for (auto& [handle, asset] : Assets::AssetService::GetEntityClassRegistry())
-				{
-					if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == sectionLabel)
-					{
-						s_EditorApp->m_EntityClassEditor->RefreshEntityScripts(handle);
-						break;
-					}
-				}
-			}
-
 			m_AllScriptsTable.OnRefresh();
 		};
 
@@ -346,92 +218,25 @@ namespace Kargono::Panels
 		m_EditScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
 		m_EditScriptFuncType.PopupAction = [&]()
 		{
-			if (m_EditScriptType.SelectedOption == 0)
+			m_EditScriptFuncType.ClearOptions();
+			for (auto func : s_AllWrappedFuncs)
 			{
-				m_EditScriptFuncType.ClearOptions();
-				for (auto func : s_AllWrappedFuncs)
-				{
-					// Check if function's first parameter is a UInt64
-					bool match = Utility::Regex::GetMatchSuccess(Utility::WrappedFuncTypeToString(func), "_UInt64");
-
-					if (match)
-					{
-						// Display the function without the first parameter, since it is used as the entity number in the func
-						// Replace with _None, if only one parameter is present
-						std::string funcDisplayName;
-						if (Utility::WrappedFuncTypeToParameterTypes(func).size() == 1)
-						{
-							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
-								"_UInt64", "_None");
-						}
-						else
-						{
-							funcDisplayName = Utility::Regex::ReplaceMatches(Utility::WrappedFuncTypeToString(func),
-								"_UInt64", "_");
-						}
-
-						m_EditScriptFuncType.AddToOptions("All Options", funcDisplayName, (uint64_t)func);
-					}
-
-				}
+				m_EditScriptFuncType.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
 			}
-			else
-			{
-				m_EditScriptFuncType.ClearOptions();
-				for (auto func : s_AllWrappedFuncs)
-				{
-					m_EditScriptFuncType.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
-				}
-			}
-		};
-
-		m_EditScriptType.Label = "Script Type";
-		m_EditScriptType.Editing = true;
-		m_EditScriptType.FirstOptionLabel = "Class";
-		m_EditScriptType.SecondOptionLabel = "Global";
-		m_EditScriptType.SelectAction = [&]()
-		{
-			if (m_EditScriptType.SelectedOption == 0)
-			{
-				if (Assets::AssetService::GetEntityClassRegistry().size() > 0)
-				{
-					m_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetService::GetEntityClassRegistry().begin()->second.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name;
-					m_EditScriptSectionLabel.CurrentOption.Handle = Assets::AssetService::GetEntityClassRegistry().begin()->first;
-				}
-			}
-			else
-			{
-				m_EditScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
-			}
-			m_EditScriptSectionLabel.PopupAction();
-			// Reset Func Type to prevent issues with cache
-			m_EditScriptFuncType.CurrentOption = { "None", Assets::EmptyHandle };
+			
 		};
 
 		m_EditScriptSectionLabel.Label = "Group";
 		m_EditScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 		m_EditScriptSectionLabel.PopupAction = [&]()
 		{
-			if (m_EditScriptType.SelectedOption == 0)
+			m_EditScriptSectionLabel.ClearOptions();
+			m_EditScriptSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& label : Assets::AssetService::GetScriptSectionLabels())
 			{
-				m_EditScriptSectionLabel.ClearOptions();
-				//spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& [handle, entityClass] : Assets::AssetService::GetEntityClassRegistry())
-				{
-					m_EditScriptSectionLabel.AddToOptions("All Classes", reinterpret_cast<Assets::EntityClassMetaData*>(entityClass.Data.SpecificFileData.get())->Name,
-						handle);
-				}
+				m_EditScriptSectionLabel.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
 			}
-			else
-			{
-				m_EditScriptSectionLabel.ClearOptions();
-				m_EditScriptSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& label : Assets::AssetService::GetScriptSectionLabels())
-				{
-					m_EditScriptSectionLabel.AddToOptions("All Global Groups", label, Assets::EmptyHandle);
-				}
-
-			}
+			
 		};
 
 		// Group Labels

@@ -56,7 +56,6 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_CreateScriptPopup {};
 		EditorUI::EditTextSpec m_CreateScriptName{};
 		EditorUI::SelectOptionSpec m_CreateScriptFuncType{};
-		EditorUI::RadioSelectorSpec m_CreateScriptType{};
 		EditorUI::SelectOptionSpec m_CreateScriptSectionLabel{};
 		// Script Table (Edit)
 		EditorUI::GenericPopupSpec m_EditScriptPopup {};
@@ -64,7 +63,6 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_EditScriptFuncTypeWarning {};
 		EditorUI::EditTextSpec m_EditScriptName{};
 		EditorUI::SelectOptionSpec m_EditScriptFuncType{};
-		EditorUI::RadioSelectorSpec m_EditScriptType{};
 		EditorUI::SelectOptionSpec m_EditScriptSectionLabel{};
 
 		// Group Label Table

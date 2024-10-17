@@ -28,33 +28,6 @@ namespace Kargono::Assets
 			return std::make_tuple(0, false);
 		}
 
-		// If script is associated with a class, ensure class exists
-		Assets::AssetHandle classHandle {0};
-		if (spec.Type == Scripting::ScriptType::Class)
-		{
-			if (spec.SectionLabel == "None")
-			{
-				KG_WARN("Unable to create new script. Empty Section label in spec.");
-				return std::make_tuple(0, false);
-			}
-
-			bool isValid = false;
-			for (auto& [handle, asset] : AssetService::GetEntityClassRegistry())
-			{
-				if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
-				{
-					isValid = true;
-					classHandle = handle;
-					break;
-				}
-			}
-			if (!isValid)
-			{
-				KG_WARN("Unable to create new script. No Valid Entity Class Selected!");
-				return std::make_tuple(0, false);
-			}
-		}
-
 		// Create Checksum
 		const std::string currentCheckSum {};
 
@@ -65,20 +38,6 @@ namespace Kargono::Assets
 		newAsset.Data.FileLocation = m_AssetName + "/" + spec.Name + m_FileExtension;
 		newAsset.Data.CheckSum = currentCheckSum;
 		newAsset.Handle = newHandle;
-
-		// If script is associated with a class, add script to class's scripts
-		if (spec.Type == Scripting::ScriptType::Class)
-		{
-			Ref<Scenes::EntityClass> entityClass = AssetService::GetEntityClass(classHandle);
-			if (!entityClass)
-			{
-				KG_WARN("Unable to create new script. Could not obtain valid entity class pointer!");
-				return std::make_tuple(0, false);
-			}
-
-			entityClass->m_Scripts.AllClassScripts.insert(newHandle);
-			AssetService::SaveEntityClass(classHandle, entityClass);
-		}
 
 		// Create Script File
 		FillScriptMetadata(spec, newAsset);
@@ -106,28 +65,6 @@ namespace Kargono::Assets
 		{
 			KG_WARN("Unable to update script. Does not exist in registry.");
 			return false;
-		}
-
-		// Check if an original entity class needs to be updated
-		AssetHandle classHandle{ 0 };
-		Ref<Scenes::EntityClass> entityClass {nullptr};
-		if (spec.Type == Scripting::ScriptType::Class)
-		{
-			for (auto& [handle, asset] : AssetService::GetEntityClassRegistry())
-			{
-				if (asset.Data.GetSpecificMetaData<Assets::EntityClassMetaData>()->Name == spec.SectionLabel)
-				{
-					classHandle = handle;
-					break;
-				}
-			}
-			// Cancel if entity class pointer cannot be reached
-			entityClass = AssetService::GetEntityClass(classHandle);
-			if (!entityClass)
-			{
-				KG_WARN("Unable to create new script. Could not obtain valid entity class pointer!");
-				return false;
-			}
 		}
 
 		// Check if function type needs to be updated
@@ -171,32 +108,6 @@ namespace Kargono::Assets
 				KG_WARN("Too many matches for function signature when replacing function type in script manager");
 				return false;
 			}
-		}
-
-		// Update AllScripts inside original Entity Class if needed
-		if (metadata->ScriptType == Scripting::ScriptType::Class)
-		{
-			// Erase Script inside original entity class
-			for (auto& [classHandle, asset] : AssetService::GetEntityClassRegistry())
-			{
-				Ref<Scenes::EntityClass> entityClass = AssetService::GetEntityClass(classHandle);
-				if (!entityClass)
-				{
-					continue;
-				}
-				if (entityClass->GetScripts().AllClassScripts.contains(scriptHandle))
-				{
-					entityClass->GetScripts().AllClassScripts.erase(scriptHandle);
-					AssetService::SaveEntityClass(classHandle, entityClass);
-				}
-			}
-		}
-
-		// Add script to new class if needed
-		if (spec.Type == Scripting::ScriptType::Class)
-		{
-			entityClass->m_Scripts.AllClassScripts.insert(scriptHandle);
-			AssetService::SaveEntityClass(classHandle, entityClass);
 		}
 
 		// Update Function Signature if needed
@@ -433,22 +344,5 @@ namespace Kargono::Assets
 		ScriptMetaData->ScriptType = Utility::StringToScriptType(metadataNode["ScriptType"].as<std::string>());
 		ScriptMetaData->FunctionType = Utility::StringToWrappedFuncType(metadataNode["FunctionType"].as<std::string>());
 		currentAsset.Data.SpecificFileData = ScriptMetaData;
-	}
-	void ScriptManager::DeleteAssetValidation(AssetHandle scriptHandle)
-	{
-		// Delete Handle inside associated class
-		for (auto& [classHandle, asset] : AssetService::GetEntityClassRegistry())
-		{
-			Ref<Scenes::EntityClass> entityClass = AssetService::GetEntityClass(classHandle);
-			if (!entityClass)
-			{
-				continue;
-			}
-			if (entityClass->GetScripts().AllClassScripts.contains(scriptHandle))
-			{
-				entityClass->GetScripts().AllClassScripts.erase(scriptHandle);
-				AssetService::SaveEntityClass(classHandle, entityClass);
-			}
-		}
 	}
 }

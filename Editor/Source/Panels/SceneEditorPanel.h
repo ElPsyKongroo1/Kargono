@@ -34,7 +34,6 @@ namespace Kargono::Panels
 		//=========================
 		void InitializeSceneHierarchy();
 		void InitializeTagComponent();
-		void InitializeClassInstanceComponent();
 		void InitializeTransformComponent();
 		void InitializeRigidbody2DComponent();
 		void InitializeBoxCollider2DComponent();
@@ -58,7 +57,6 @@ namespace Kargono::Panels
 		// External API Functions
 		//=========================
 		void SetSelectedEntity(ECS::Entity entity);
-		void RefreshClassInstanceComponent();
 		void RefreshTransformComponent();
 		void SetDisplayedComponent(ECS::ComponentType type)
 		{
@@ -84,7 +82,6 @@ namespace Kargono::Panels
 		void DrawSingleComponent(ECS::Entity entity);
 		void DrawTagComponent(ECS::Entity entity);
 		void DrawTransformComponent(ECS::Entity entity);
-		void DrawClassInstanceComponent(ECS::Entity entity);
 		void DrawRigidbody2DComponent(ECS::Entity entity);
 		void DrawBoxCollider2DComponent(ECS::Entity entity);
 		void DrawCircleCollider2DComponent(ECS::Entity entity);

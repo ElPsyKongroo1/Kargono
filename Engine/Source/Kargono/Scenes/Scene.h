@@ -125,11 +125,11 @@ namespace Kargono::Scenes
 		}
 	public:
 		ECS::EntityRegistry m_EntityRegistry;
-		// This map holds lists of entitys (UUID) using the key of a script class.
+		// This map holds lists of entitys (UUID) using the key of a group.
 		//		This map is only filled at runtime while the scripting engine
 		//		is working. It is used to easily find all of the entities of a
 		//		particular script class.
-		std::unordered_map<std::string, std::vector<UUID>> m_ScriptClassToEntityList {};
+		std::unordered_map<std::string, std::vector<UUID>> m_GroupToEntityList {};
 
 		// Physics Spec
 		Physics::PhysicsSpecification m_PhysicsSpecification{};
@@ -170,8 +170,6 @@ namespace Kargono::Scenes
 		//====================
 		// Manage Active Scene Entities
 		//====================
-		static void SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue);
-		static void* GetEntityFieldByName(UUID entityID, const std::string& fieldName);
 		static Assets::AssetHandle FindEntityHandleByName(const std::string& name);
 
 		//====================
