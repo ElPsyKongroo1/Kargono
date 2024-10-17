@@ -49,7 +49,7 @@ namespace Kargono
 		// This function closes the runtime application
 		bool OnApplicationClose(Events::ApplicationCloseEvent event);
 		// This function responds to application collision events. Currently it plays a sound(Very Temporary).
-		bool OnPhysicsCollision(Events::PhysicsCollisionStart event);
+		bool OnPhysicsCollisionStart(Events::PhysicsCollisionStart event);
 
 		bool OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event);
 

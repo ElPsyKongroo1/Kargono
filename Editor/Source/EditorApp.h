@@ -116,7 +116,7 @@ namespace Kargono
 		bool OnKeyPressedRuntime(Events::KeyPressedEvent event);
 		bool OnMouseButtonPressed(Events::MouseButtonPressedEvent event);
 		// This function responds to application collision events.
-		bool OnPhysicsCollision(Events::PhysicsCollisionStart event);
+		bool OnPhysicsCollisionStart(Events::PhysicsCollisionStart event);
 		bool OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event);
 		bool OnUpdateUserCount(Events::UpdateOnlineUsers event);
 		bool OnApproveJoinSession(Events::ApproveJoinSession event);

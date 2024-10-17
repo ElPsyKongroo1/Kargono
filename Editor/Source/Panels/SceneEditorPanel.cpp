@@ -1391,7 +1391,7 @@ namespace Kargono::Panels
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				KG_ASSERT(script);
 
-				if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
+				if (script->m_FuncType != WrappedFuncType::Void_UInt64Float)
 				{
 					continue;
 				}
@@ -1476,7 +1476,7 @@ namespace Kargono::Panels
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				KG_ASSERT(script);
 
-				if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
+				if (script->m_FuncType != WrappedFuncType::Void_UInt64)
 				{
 					continue;
 				}

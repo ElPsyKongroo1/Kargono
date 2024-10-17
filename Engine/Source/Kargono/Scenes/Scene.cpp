@@ -168,17 +168,15 @@ namespace Kargono::Scenes
 		m_IsRunning = true;
 
 		// Invoke OnCreate
-		auto classInstanceView = GetAllEntitiesWith<ECS::ClassInstanceComponent>();
-		for (auto e : classInstanceView)
+		auto classInstanceView = GetAllEntitiesWith<ECS::OnCreateComponent>();
+		for (auto enttEntityID : classInstanceView)
 		{
-			ECS::Entity entity = { e, &m_EntityRegistry };
-			ECS::ClassInstanceComponent& classInstanceComp = entity.GetComponent<ECS::ClassInstanceComponent>();
-			Ref<EntityClass> entityClass = Assets::AssetService::GetEntityClass(classInstanceComp.ClassHandle);
-			KG_ASSERT(entityClass);
-			Assets::AssetHandle scriptHandle = classInstanceComp.ClassReference->GetScripts().OnCreateHandle;
+			ECS::Entity entity = { enttEntityID, &m_EntityRegistry };
+			ECS::OnCreateComponent& component = entity.GetComponent<ECS::OnCreateComponent>();
+			Assets::AssetHandle scriptHandle = component.OnCreateScriptHandle;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				Utility::CallWrappedVoidUInt64(entityClass->GetScripts().OnCreate->m_Function, entity.GetUUID());
+				Utility::CallWrappedVoidUInt64(component.OnCreateScript->m_Function, entity.GetUUID());
 			}
 		}
 
@@ -313,20 +311,16 @@ namespace Kargono::Scenes
 	}
 	void Scene::OnUpdateEntities(Timestep ts)
 	{
-		auto view = GetAllEntitiesWith<ECS::ClassInstanceComponent>();
-
 		// Invoke OnUpdate
-		auto classInstanceView = GetAllEntitiesWith<ECS::ClassInstanceComponent>();
-		for (auto e : classInstanceView)
+		auto classInstanceView = GetAllEntitiesWith<ECS::OnUpdateComponent>();
+		for (entt::entity enttEntityID : classInstanceView)
 		{
-			ECS::Entity entity = { e, &m_EntityRegistry };
-			ECS::ClassInstanceComponent& classInstanceComp = entity.GetComponent<ECS::ClassInstanceComponent>();
-			Ref<EntityClass> entityClass = classInstanceComp.ClassReference;
-			KG_ASSERT(entityClass);
-			Assets::AssetHandle scriptHandle = classInstanceComp.ClassReference->GetScripts().OnUpdateHandle;
+			ECS::Entity entity = { enttEntityID, &m_EntityRegistry };
+			ECS::OnUpdateComponent& component = entity.GetComponent<ECS::OnUpdateComponent>();
+			Assets::AssetHandle scriptHandle = component.OnUpdateScriptHandle;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				Utility::CallWrappedVoidUInt64Float(entityClass->GetScripts().OnUpdate->m_Function, entity.GetUUID(), ts);
+				Utility::CallWrappedVoidUInt64Float(component.OnUpdateScript->m_Function, entity.GetUUID(), ts);
 			}
 		}
 	}
