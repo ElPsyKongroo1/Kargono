@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <vector>
 #include <map>
+#include <unordered_set>
 
 namespace Kargono::AI
 {
@@ -49,7 +50,7 @@ namespace Kargono::AI
 	struct AIContext
 	{
 		std::map<float, AIMessage> AllMessages {};
-		std::vector<std::string> AllMessageTypes{};
+		std::unordered_set<uint64_t> AllMessageTypes {};
 	};
 
 

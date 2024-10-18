@@ -47,6 +47,18 @@ namespace Kargono::Panels
 		m_AllAssetsTable.OnRefresh = [&]()
 		{
 			m_AllAssetsTable.ClearTable();
+			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+			{
+				EditorUI::TableEntry newEntry
+				{
+					Utility::AssetTypeToString(asset.Data.Type),
+						asset.Data.FileLocation.string(),
+						handle,
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
+						nullptr
+				};
+				m_AllAssetsTable.InsertTableEntry(newEntry);
+			}
 			for (auto& [handle, asset] : Assets::AssetService::GetAudioBufferRegistry())
 			{
 				EditorUI::TableEntry newEntry

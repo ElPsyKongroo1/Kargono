@@ -15,6 +15,7 @@
 #include "Panels/TextEditorPanel.h"
 #include "Panels/InputModePanel.h"
 #include "Panels/PropertiesPanel.h"
+#include "Panels/AIStateEditorPanel.h"
 #include "Panels/TestingPanel.h"
 
 #include <filesystem>
@@ -186,6 +187,7 @@ namespace Kargono
 		bool m_ShowTextEditor = false;
 		bool m_ShowGameStateEditor = false;
 		bool m_ShowInputModeEditor = false;
+		bool m_ShowAIStateEditor = false;
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;
@@ -226,6 +228,7 @@ namespace Kargono
 		Scope<Panels::TextEditorPanel>  m_TextEditorPanel;
 		Scope<Panels::GameStatePanel>  m_GameStatePanel;
 		Scope<Panels::InputModePanel>  m_InputModePanel;
+		Scope<Panels::AIStateEditorPanel>  m_AIStatePanel;
 		Scope<Panels::TestingPanel>  m_TestingPanel;
 	private:
 		friend Panels::AssetViewerPanel;
@@ -243,6 +246,7 @@ namespace Kargono
 		friend Panels::InputModePanel;
 		friend Panels::PropertiesPanel;
 		friend Panels::TestingPanel;
+		friend Panels::AIStateEditorPanel;
 
 	};
 

@@ -3,6 +3,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Assets/AudioManager.h"
+#include "Kargono/Assets/AIStateManager.h"
 #include "Kargono/Assets/FontManager.h"
 #include "Kargono/Assets/GameStateManager.h"
 #include "Kargono/Assets/InputModeManager.h"
@@ -80,6 +81,7 @@ namespace Kargono::Assets
 {
 	struct AssetsContext
 	{
+		AIStateManager m_AIStateManager;
 		AudioBufferManager m_AudioBufferManager;
 		FontManager m_FontManager;
 		GameStateManager m_GameStateManager;
@@ -96,6 +98,7 @@ namespace Kargono::Assets
 	{
 	public:
 		// Define common functionality of each asset manager type
+		DEFINE_MANAGER(AI, AIState)
 		DEFINE_MANAGER(Audio, AudioBuffer)
 		DEFINE_MANAGER(RuntimeUI, Font)
 		DEFINE_MANAGER(Scenes, GameState)
@@ -162,6 +165,7 @@ namespace Kargono::Assets
 			DeserializeInputModeRegistry();
 			DeserializeGameStateRegistry();
 			DeserializeUserInterfaceRegistry();
+			DeserializeAIStateRegistry();
 			DeserializeSceneRegistry();
 		}
 
@@ -177,6 +181,7 @@ namespace Kargono::Assets
 			SerializeInputModeRegistry();
 			SerializeGameStateRegistry();
 			SerializeUserInterfaceRegistry();
+			SerializeAIStateRegistry();
 			SerializeSceneRegistry();
 		}
 
@@ -192,6 +197,7 @@ namespace Kargono::Assets
 			ClearInputModeRegistry();
 			ClearGameStateRegistry();
 			ClearUserInterfaceRegistry();
+			ClearAIStateRegistry();
 			ClearSceneRegistry();
 		}
 
@@ -199,6 +205,7 @@ namespace Kargono::Assets
 		{
 			switch (type)
 			{
+			case AssetType::AIState: return GetAIStateRegistry().at(handle);
 			case AssetType::Audio: return GetAudioBufferRegistry().at(handle);
 			case AssetType::Font: return GetFontRegistry().at(handle);
 			case AssetType::GameState: return GetGameStateRegistry().at(handle);

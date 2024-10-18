@@ -10,14 +10,14 @@ namespace Kargono::AI
 	{
 		// Initialize AIContext
 
-		// Load in Message Types 
+		// Load in Message Types (vector<string> -> unordered_set<uint64_t>)
 
 		// Verify init is successful
 	}
 	void AIService::Terminate()
 	{
 		// Clear AIContext
-
+		
 		// Verify terminate is successful
 	}
 	void AIService::OnUpdate(Timestep timeStep)
@@ -27,7 +27,7 @@ namespace Kargono::AI
 		KG_ASSERT(activeScene, "Invalid scene reference when calling AIService's OnUpdate()");
 
 		// Run on update for all active AI with AIComponents including the global, then the current state
-		for (auto enttID : Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<ECS::AIStateComponent>())
+		for (entt::entity enttID : Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<ECS::AIStateComponent>())
 		{
 			ECS::Entity entity = activeScene->GetEntityByEnttID(enttID);
 			KG_ASSERT(entity, "Invalid entity obtained. Could not run OnUpdate on provided entity.");
@@ -36,13 +36,13 @@ namespace Kargono::AI
 			// Call Global State OnUpdate
 			if (aiComponent.GlobalStateReference && aiComponent.GlobalStateReference->OnUpdate)
 			{
-				Utility::CallWrappedVoidUInt64(aiComponent.GlobalStateReference->OnUpdate->m_Function, entity.GetUUID());
+				Utility::CallWrappedVoidUInt64Float(aiComponent.GlobalStateReference->OnUpdate->m_Function, entity.GetUUID(), timeStep);
 			}
 
 			// Call Current State OnUpdate
 			if (aiComponent.CurrentStateReference)
 			{
-				Utility::CallWrappedVoidUInt64(aiComponent.CurrentStateReference->OnUpdate->m_Function, entity.GetUUID());
+				Utility::CallWrappedVoidUInt64Float(aiComponent.CurrentStateReference->OnUpdate->m_Function, entity.GetUUID(), timeStep);
 			}
 		}
 
@@ -58,7 +58,7 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained. Could not update global state.");
 
 		// Ensure new AIState is valid
-		//Ref<AIState> newState = Assets::AssetManager::GetAIState();
+		//Ref<AIState> newState = Assets::AssetService::GetAIState();
 		//KG_ASSERT(newState, "Invalid new AI state provided. Could not update global state.");
 
 		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
@@ -87,7 +87,15 @@ namespace Kargono::AI
 	}
 	void AIService::RevertToPreviousState(UUID entityID)
 	{
+		// Call OnExitState() for current AIState
+
 		// Call ChangeState() into entityID's previous state if it exists
+
+		// Call OnEnter for new current state
+
+		// Clear previous state
+		
+		
 	}
 	void AIService::SendAIMessage(uint64_t messageType, UUID senderEntity, UUID receiverEntity, float messageDelay)
 	{

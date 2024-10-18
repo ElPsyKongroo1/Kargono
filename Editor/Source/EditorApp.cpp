@@ -71,6 +71,7 @@ namespace Kargono
 		m_InputModePanel = CreateScope<Panels::InputModePanel>();
 		m_ContentBrowserPanel = CreateScope<Panels::ContentBrowserPanel>();
 		m_PropertiesPanel = CreateScope<Panels::PropertiesPanel>();
+		m_AIStatePanel = CreateScope<Panels::AIStateEditorPanel>();
 		m_TestingPanel = CreateScope<Panels::TestingPanel>();
 
 		m_ViewportPanel->InitializeFrameBuffer();
@@ -226,6 +227,7 @@ namespace Kargono
 				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
 				ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
 				ImGui::MenuItem("Component Editor", NULL, &m_ShowProjectComponent);
+				ImGui::MenuItem("AI State Editor", NULL, &m_ShowAIStateEditor);
 				ImGui::Separator();
 				ImGui::MenuItem("Project Settings", NULL, &m_ShowProject);
 				ImGui::EndMenu();
@@ -297,6 +299,7 @@ namespace Kargono
 		if (m_ShowProperties) { m_PropertiesPanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
 		if (m_ShowTesting) { m_TestingPanel->OnEditorUIRender(); }
+		if (m_ShowAIStateEditor) { m_AIStatePanel->OnEditorUIRender(); }
 
 		EditorUI::EditorUIService::GenericPopup(s_ExportProjectSpec);
 
