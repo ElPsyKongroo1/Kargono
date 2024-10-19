@@ -422,10 +422,11 @@ namespace Kargono::Projects
 				out << YAML::Key << "OnReceiveSignal" << YAML::Value << (uint64_t)project->OnReceiveSignal;
 				out << YAML::Key << "AppIsNetworked" << YAML::Value << project->AppIsNetworked;
 
+				// TODO: Remove App Tick Generators
+				// Serialize App Tick Generators
 				if (project->AppTickGenerators.size() > 0)
 				{
 					out << YAML::Key << "AppTickGenerators" << YAML::BeginSeq;
-					// Serialize App Tick Generators
 					for (auto generatorValue : project->AppTickGenerators)
 					{
 						out << YAML::Value << generatorValue;
@@ -433,7 +434,15 @@ namespace Kargono::Projects
 					out << YAML::EndSeq;
 				}
 
-				out << YAML::EndMap; // Project
+				// Serialize AI Message Types
+				out << YAML::Key << "AllAIMessageTypes" << YAML::BeginSeq;
+				for (std::string& aiTypeName : project->AllAIMessageTypes)
+				{
+					out << YAML::Value << aiTypeName;
+				}
+				out << YAML::EndSeq;
+
+				out << YAML::EndMap; // Close Project
 			}
 
 			out << YAML::EndMap; // Root
@@ -482,7 +491,7 @@ namespace Kargono::Projects
 		project->OnReceiveSignal = static_cast<Assets::AssetHandle>(projectNode["OnReceiveSignal"].as<uint64_t>());
 		project->AppIsNetworked = static_cast<Assets::AssetHandle>(projectNode["AppIsNetworked"].as<bool>());
 
-		auto tickGenerators = projectNode["AppTickGenerators"];
+		YAML::Node tickGenerators = projectNode["AppTickGenerators"];
 
 		if (tickGenerators)
 		{
@@ -493,6 +502,13 @@ namespace Kargono::Projects
 			}
 		}
 
+		YAML::Node aiMessageTypeNode = projectNode["AllAIMessageTypes"];
+		std::vector<std::string>& allMessageTypesRef = project->AllAIMessageTypes;
+		for (auto aiMessage : aiMessageTypeNode)
+		{
+			allMessageTypesRef.push_back(aiMessage.as<std::string>());
+		}
+		
 		DeserializeServerVariables(project, filepath);
 
 		return true;

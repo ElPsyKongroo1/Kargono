@@ -94,6 +94,8 @@ namespace Kargono::Projects
 
 		std::unordered_set<uint64_t> AppTickGenerators{};
 
+		std::vector<std::string> AllAIMessageTypes {};
+
 		bool AppIsNetworked { false };
 
 		// Networking Variables
@@ -504,6 +506,87 @@ namespace Kargono::Projects
 		static Ref<Project> GetActive()
 		{
 			return s_ActiveProject;
+		}
+
+		static bool AddAIMessageType(const std::string& newMessageType)
+		{
+			// Check if message already exists
+			for (std::string& aiMessage : s_ActiveProject->AllAIMessageTypes)
+			{
+				// Return false if message already exists
+				if (aiMessage == newMessageType)
+				{
+					return false;
+				}
+			}
+
+			// Add AIMessageType to project if none is found
+			s_ActiveProject->AllAIMessageTypes.push_back(newMessageType);
+			return true;
+		}
+
+		static bool EditAIMessageType(const std::string& oldMessageType, const std::string& newMessageType)
+		{
+			constexpr size_t k_InvalidPosition{ std::numeric_limits<size_t>().max() };
+
+			// Find the indicated message
+			size_t iteration{ 0 };
+			size_t foundMessagePosition{ std::numeric_limits<size_t>().max() };
+			for (std::string& aiMessage : s_ActiveProject->AllAIMessageTypes)
+			{
+				// If we find the message type, note its location 
+				if (aiMessage == oldMessageType)
+				{
+					foundMessagePosition = iteration;
+				}
+				iteration++;
+			}
+
+			// Could not find ai message to replace
+			if (foundMessagePosition == k_InvalidPosition)
+			{
+				KG_WARN("Could not find ai message type to replace when editing type");
+				return false;
+			}
+
+			// Replace text at specified position
+			s_ActiveProject->AllAIMessageTypes.at(foundMessagePosition) = newMessageType;
+			return true;
+		}
+
+		static bool DeleteAIMessageType(const std::string& aiMessageType)
+		{
+			constexpr size_t k_InvalidPosition{ std::numeric_limits<size_t>().max() };
+
+			// Find the indicated message
+			size_t iteration{ 0 };
+			size_t foundMessagePosition{ std::numeric_limits<size_t>().max() };
+			for (std::string& aiMessage : s_ActiveProject->AllAIMessageTypes)
+			{
+				// If we find the message type, note its location 
+				if (aiMessage == aiMessageType)
+				{
+					foundMessagePosition = iteration;
+				}
+				iteration++;
+			}
+
+			// Could not find ai message to replace
+			if (foundMessagePosition == k_InvalidPosition)
+			{
+				KG_WARN("Could not find ai message type to replace when editing type");
+				return false;
+			}
+
+			// Erase text at position
+			s_ActiveProject->AllAIMessageTypes.erase(s_ActiveProject->AllAIMessageTypes.begin() + foundMessagePosition);
+			return true;
+		}
+
+		static std::vector<std::string>& GetAllAIMessageTypes()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->AllAIMessageTypes;
 		}
 
 	private:

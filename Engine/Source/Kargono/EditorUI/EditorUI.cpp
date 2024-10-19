@@ -1975,7 +1975,10 @@ namespace Kargono::EditorUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5.2f);
 				TruncateText(tableEntry.Label, 16);
 				ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-				WriteMultilineText(tableEntry.Value, s_SecondaryTextLargeWidth, s_SecondaryTextPosOne, -5.2f);
+				if (!tableEntry.Value.empty())
+				{
+					WriteMultilineText(tableEntry.Value, s_SecondaryTextLargeWidth, s_SecondaryTextPosOne, -5.2f);
+				}
 				ImGui::PopStyleColor();
 				
 				if (tableEntry.OnLink)

@@ -480,12 +480,93 @@ namespace Kargono::Panels
 
 	}
 
+	void ProjectPanel::InitializeAIMessageTypeResources()
+	{
+
+		// Manage AI Message Types
+		m_AIMessageTypeTable.Label = "All AI Message Types";
+		m_AIMessageTypeTable.Column1Title = "Message Type";
+		m_AIMessageTypeTable.Column2Title = "";
+		m_AIMessageTypeTable.Expanded = false;
+		m_AIMessageTypeTable.AddToSelectionList("Create New AI Message Type", [&]()
+		{
+			m_CreateAIMessageTypePopup.StartPopup = true;
+		});
+		m_AIMessageTypeTable.OnRefresh = [&]()
+		{
+			m_AIMessageTypeTable.ClearTable();
+			for (std::string& label : Projects::ProjectService::GetAllAIMessageTypes())
+			{
+				m_AIMessageTypeTable.InsertTableEntry(label, "", [&](EditorUI::TableEntry& entry)
+				{
+					m_ActiveAIMessageType = entry.Label;
+					m_EditAIMessageTypePopup.PopupActive = true;
+				});
+			}
+		};
+		m_AIMessageTypeTable.OnRefresh();
+
+		m_CreateAIMessageTypePopup.Label = "Create New AI Message Type";
+		m_CreateAIMessageTypePopup.Flags |= EditorUI::EditText_PopupOnly;
+		m_CreateAIMessageTypePopup.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
+		{
+			// Create new AI message
+			bool success = Projects::ProjectService::AddAIMessageType(m_CreateAIMessageTypePopup.CurrentOption);
+			if (!success)
+			{
+				KG_WARN("Failed to create AI message type");
+				return;
+			}
+			m_AIMessageTypeTable.OnRefresh();
+		};
+
+		m_EditAIMessageTypePopup.Label = "Edit AI Message Type";
+		m_EditAIMessageTypePopup.PopupWidth = 420.0f;
+		m_EditAIMessageTypePopup.PopupAction = [&]()
+		{
+			m_EditAIMessageTypeText.CurrentOption = m_ActiveAIMessageType;
+		};
+		m_EditAIMessageTypePopup.ConfirmAction = [&]()
+		{
+			bool success = Projects::ProjectService::EditAIMessageType(m_ActiveAIMessageType, 
+				m_EditAIMessageTypeText.CurrentOption);
+
+			// Create new AI message type
+			if (!success)
+			{
+				KG_WARN("Failed to edit AI message type");
+				return;
+			}
+			OnRefresh();
+		};
+		m_EditAIMessageTypePopup.DeleteAction = [&]()
+		{
+			bool success = Projects::ProjectService::DeleteAIMessageType(m_ActiveAIMessageType);
+			if (!success)
+			{
+				KG_WARN("Failed to delete section label");
+				return;
+			}
+
+			OnRefresh();
+		};
+		m_EditAIMessageTypePopup.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::EditText(m_EditAIMessageTypeText);
+		};
+
+		m_EditAIMessageTypeText.Label = "AI Message Type";
+		m_EditAIMessageTypeText.CurrentOption = "Empty";
+
+	}
+
 	ProjectPanel::ProjectPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
 			KG_BIND_CLASS_FN(ProjectPanel::OnKeyPressedEditor));
 		InitializeStaticResources();
+		InitializeAIMessageTypeResources();
 	}
 	void ProjectPanel::OnEditorUIRender()
 	{
@@ -699,6 +780,11 @@ namespace Kargono::Panels
 			}
 		}
 
+
+		EditorUI::EditorUIService::Table(m_AIMessageTypeTable);
+		EditorUI::EditorUIService::EditText(m_CreateAIMessageTypePopup);
+		EditorUI::EditorUIService::GenericPopup(m_EditAIMessageTypePopup);
+
 		EditorUI::EditorUIService::EndWindow();
 	}
 	bool ProjectPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
@@ -708,5 +794,9 @@ namespace Kargono::Panels
 	void ProjectPanel::ResetPanelResources()
 	{
 		InitializeStaticResources();
+	}
+	void ProjectPanel::OnRefresh()
+	{
+		m_AIMessageTypeTable.OnRefresh();
 	}
 }
