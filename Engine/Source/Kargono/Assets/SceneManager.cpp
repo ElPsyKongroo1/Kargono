@@ -126,9 +126,21 @@ namespace Kargono::Utility
 			out << YAML::Key << "Translation" << YAML::Value << tc.Translation;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.Rotation;
 			out << YAML::Key << "Scale" << YAML::Value << tc.Scale;
-
 			out << YAML::EndMap; // Component Map
 		}
+
+		if (entity.HasComponent<ECS::AIStateComponent>())
+		{
+			out << YAML::Key << "AIStateComponent";
+			out << YAML::BeginMap; // Component Map
+			ECS::AIStateComponent& aiStateComp = entity.GetComponent<ECS::AIStateComponent>();
+			out << YAML::Key << "CurrentState" << YAML::Value << static_cast<uint64_t>(aiStateComp.CurrentStateHandle);
+			out << YAML::Key << "PreviousState" << YAML::Value << static_cast<uint64_t>(aiStateComp.PreviousStateHandle);
+			out << YAML::Key << "GlobalState" << YAML::Value << static_cast<uint64_t>(aiStateComp.GlobalStateHandle);
+			out << YAML::EndMap; // Component Map
+		}
+
+
 		if (entity.HasComponent<ECS::CameraComponent>())
 		{
 			out << YAML::Key << "CameraComponent";
@@ -369,6 +381,36 @@ namespace Kargono::Assets
 					ECS::OnUpdateComponent& component = deserializedEntity.AddComponent<ECS::OnUpdateComponent>();
 					component.OnUpdateScriptHandle = onUpdateNode["OnUpdateHandle"].as<uint64_t>();
 					component.OnUpdateScript = Assets::AssetService::GetScript(component.OnUpdateScriptHandle);
+				}
+
+				YAML::Node aiStateNode = entity["AIStateComponent"];
+				if (aiStateNode)
+				{
+					ECS::AIStateComponent& component = deserializedEntity.AddComponent<ECS::AIStateComponent>();
+
+					// Deserialize current state
+					component.CurrentStateHandle = aiStateNode["CurrentState"].as<uint64_t>();
+					component.CurrentStateReference = Assets::AssetService::GetAIState(component.CurrentStateHandle);
+					if (component.CurrentStateHandle != Assets::EmptyHandle && !component.CurrentStateReference)
+					{
+						KG_WARN("Valid handle was found, however, could not retrieve a valid reference to current AI state");
+					}
+
+					// Deserialize previous state
+					component.PreviousStateHandle = aiStateNode["PreviousState"].as<uint64_t>();
+					component.PreviousStateReference = Assets::AssetService::GetAIState(component.PreviousStateHandle);
+					if (component.PreviousStateHandle != Assets::EmptyHandle && !component.PreviousStateReference)
+					{
+						KG_WARN("Valid handle was found, however, could not retrieve a valid reference for previous AI state");
+					}
+
+					// Deserialize global state
+					component.GlobalStateHandle = aiStateNode["GlobalState"].as<uint64_t>();
+					component.GlobalStateReference = Assets::AssetService::GetAIState(component.GlobalStateHandle);
+					if (component.GlobalStateHandle != Assets::EmptyHandle && !component.GlobalStateReference)
+					{
+						KG_WARN("Valid handle was found, however, could not retrieve a valid reference to global AI State");
+					}
 				}
 
 				YAML::Node onCreateNode = entity["OnCreateComponent"];

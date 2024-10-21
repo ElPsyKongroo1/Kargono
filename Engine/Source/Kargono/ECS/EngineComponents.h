@@ -17,7 +17,6 @@ namespace Kargono::ECS
 {
 	struct AIStateComponent
 	{
-		std::string Name;
 		// Main state that undergoes state transitions
 		Assets::AssetHandle CurrentStateHandle{ Assets::EmptyHandle };
 		Ref<AI::AIState> CurrentStateReference{ nullptr };

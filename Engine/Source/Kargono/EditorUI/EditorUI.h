@@ -176,22 +176,29 @@ namespace Kargono::EditorUI
 		//==============================
 		// UI Images/Textures
 		//==============================
+
+		// General Icons
 		static Ref<Rendering::Texture2D> s_IconCamera,
 			s_IconSettings, s_IconDelete, s_IconEdit, s_IconCancel, s_IconCancel2,
 			s_IconConfirm, s_IconSearch,
 			s_IconCheckbox_Disabled, s_IconCheckbox_Enabled,
 			s_IconOptions, s_IconDown, s_IconRight, s_IconDash;
 
+		// Scene graph icons
 		static Ref<Rendering::Texture2D> s_IconBoxCollider, s_IconCircleCollider, s_IconEntity,
-			s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform;
+			s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform, s_IconAI;
 
+		// Viewport icons
 		static Ref<Rendering::Texture2D> s_IconDisplay, s_IconSimulate, s_IconStep, s_IconPlay,
 			s_IconPause, s_IconStop, s_IconGrid;
 
+		// Runtime UI icons
 		static Ref<Rendering::Texture2D> s_IconWindow, s_IconTextWidget;
 
+		// Scripting icons
 		static Ref<Rendering::Texture2D> s_IconNumber, s_IconVariable, s_IconFunction, s_IconBoolean, s_IconDecimal;
 
+		// Content browser icons
 		static Ref<Rendering::Texture2D> s_IconDirectory, s_IconGenericFile,
 			s_IconBack, s_IconForward,
 			s_IconAudio, s_IconImage, s_IconBinary,

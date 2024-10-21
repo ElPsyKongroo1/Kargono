@@ -41,6 +41,7 @@ namespace Kargono::Panels
 		void InitializeCameraComponent();
 		void InitializeOnUpdateComponent();
 		void InitializeOnCreateComponent();
+		void InitializeAIComponent();
 		void InitializeShapeComponent();
 		void InitializeProjectComponents();
 		void InitializeProjectComponent(Assets::AssetHandle projectComponentHandle);
@@ -87,6 +88,7 @@ namespace Kargono::Panels
 		void DrawCircleCollider2DComponent(ECS::Entity entity);
 		void DrawCameraComponent(ECS::Entity entity);
 		void DrawOnUpdateComponent(ECS::Entity entity);
+		void DrawAIStateComponent(ECS::Entity entity);
 		void DrawOnCreateComponent(ECS::Entity entity);
 		void DrawShapeComponent(ECS::Entity entity);
 		void DrawProjectComponent(ECS::Entity entity, Assets::AssetHandle handle);
@@ -151,7 +153,6 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_SelectRigidBody2DCollisionStartScript{};
 		EditorUI::SelectOptionSpec m_SelectRigidBody2DCollisionEndScript{};
 		
-
 		// Box Collider 2D Component
 		EditorUI::CollapsingHeaderSpec m_BoxCollider2DHeader{};
 		EditorUI::EditVec2Spec m_BoxColliderOffset{};
@@ -173,6 +174,12 @@ namespace Kargono::Panels
 		// OnUpdate Component
 		EditorUI::CollapsingHeaderSpec m_OnUpdateHeader{};
 		EditorUI::SelectOptionSpec m_SelectOnUpdateScript{};
+
+		// AI State Component
+		EditorUI::CollapsingHeaderSpec m_AIStateHeader{};
+		EditorUI::SelectOptionSpec m_SelectCurrentState{};
+		EditorUI::SelectOptionSpec m_SelectPreviousState{};
+		EditorUI::SelectOptionSpec m_SelectGlobalState{};
 
 		// OnCreate Component
 		EditorUI::CollapsingHeaderSpec m_OnCreateHeader{};

@@ -182,6 +182,20 @@ namespace Kargono::Panels
 			newEntry.SubEntries.push_back(componentEntry);
 		}
 
+		if (entity.HasComponent<ECS::AIStateComponent>())
+		{
+			componentEntry.Label = "AI State";
+			componentEntry.ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::AIState, Assets::EmptyHandle);
+			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconAI;
+			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			{
+				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.Handle));
+				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::AIState);
+			};
+			newEntry.SubEntries.push_back(componentEntry);
+		}
+
 		// Handle adding project components
 		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 		{
@@ -272,6 +286,11 @@ namespace Kargono::Panels
 			if (!entity.HasComponent<ECS::OnUpdateComponent>())
 			{
 				m_AddComponent.AddToOptions("Engine Component", "On Update", Assets::EmptyHandle);
+			}
+
+			if (!entity.HasComponent<ECS::AIStateComponent>())
+			{
+				m_AddComponent.AddToOptions("Engine Component", "AI State", Assets::EmptyHandle);
 			}
 
 			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
@@ -424,6 +443,22 @@ namespace Kargono::Panels
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.Handle));
 					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::OnUpdate);
+				};
+				currentEntry->SubEntries.push_back(componentEntry);
+				return;
+			}
+
+			if (option.Label == "AI State")
+			{
+				entity.AddComponent<ECS::AIStateComponent>();
+				componentEntry.Label = "AI State";
+				componentEntry.ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::AIState, Assets::EmptyHandle);
+				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconAI;
+				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				{
+					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.Handle));
+					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
+					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::AIState);
 				};
 				currentEntry->SubEntries.push_back(componentEntry);
 				return;
@@ -1308,6 +1343,165 @@ namespace Kargono::Panels
 		};
 	}
 
+	void SceneEditorPanel::InitializeAIComponent()
+	{
+		// Set up AI state header
+		m_AIStateHeader.Label = "AI State";
+		m_AIStateHeader.Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		m_AIStateHeader.Expanded = true;
+		m_AIStateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
+			{
+				EngineService::SubmitToMainThread([&]()
+					{
+						ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+						EditorUI::TreePath pathToDelete;
+						if (entity.HasComponent<ECS::AIStateComponent>())
+						{
+							m_SceneHierarchyTree.EditDepth([&](EditorUI::TreeEntry& entry)
+								{
+									if ((uint32_t)entry.Handle == (uint32_t)entity)
+									{
+										for (auto& subEntry : entry.SubEntries)
+										{
+											SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.ProvidedData.get();
+											if (entryData.m_ComponentType == ECS::ComponentType::AIState)
+											{
+												pathToDelete = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
+												break;
+											}
+										}
+										if (!pathToDelete)
+										{
+											KG_WARN("Could not locate component inside of specified entry in tree");
+											return;
+										}
+
+									}
+								}, 0);
+
+							KG_ASSERT(pathToDelete);
+							m_SceneHierarchyTree.RemoveEntry(pathToDelete);
+							entity.RemoveComponent<ECS::AIStateComponent>();
+						}
+					});
+			});
+
+		// Set up global state select options widget
+		m_SelectGlobalState.Label = "Global State";
+		m_SelectGlobalState.Flags |= EditorUI::SelectOption_Indented;
+		m_SelectGlobalState.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectGlobalState.PopupAction = [&]()
+		{
+			m_SelectGlobalState.ClearOptions();
+			m_SelectGlobalState.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+			{
+				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
+				KG_ASSERT(aiStateRef);
+
+				m_SelectGlobalState.AddToOptions("All States", asset.Data.FileLocation.string(), handle);
+			}
+		};
+
+		m_SelectGlobalState.ConfirmAction = [](const EditorUI::OptionEntry& entry)
+		{
+			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<ECS::AIStateComponent>())
+			{
+				KG_ERROR("Attempt to edit entity AIState component when none exists!");
+				return;
+			}
+			ECS::AIStateComponent& component = entity.GetComponent<ECS::AIStateComponent>();
+
+			// Check for empty entry
+			if (entry.Handle == Assets::EmptyHandle)
+			{
+				component.GlobalStateHandle = Assets::EmptyHandle;
+				component.GlobalStateReference = nullptr;
+			}
+			// Check for a valid entry, and Update if applicable
+			component.GlobalStateHandle = entry.Handle;
+			component.GlobalStateReference = Assets::AssetService::GetAIState(entry.Handle);
+		};
+
+		// Set up current state select options widget
+		m_SelectCurrentState.Label = "Current State";
+		m_SelectCurrentState.Flags |= EditorUI::SelectOption_Indented;
+		m_SelectCurrentState.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectCurrentState.PopupAction = [&]()
+		{
+			m_SelectCurrentState.ClearOptions();
+			m_SelectCurrentState.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+			{
+				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
+				KG_ASSERT(aiStateRef);
+
+				m_SelectCurrentState.AddToOptions("All States", asset.Data.FileLocation.string(), handle);
+			}
+		};
+
+		m_SelectCurrentState.ConfirmAction = [](const EditorUI::OptionEntry& entry)
+		{
+			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<ECS::AIStateComponent>())
+			{
+				KG_ERROR("Attempt to edit entity AIState component when none exists!");
+				return;
+			}
+			ECS::AIStateComponent& component = entity.GetComponent<ECS::AIStateComponent>();
+
+			// Check for empty entry
+			if (entry.Handle == Assets::EmptyHandle)
+			{
+				component.CurrentStateHandle = Assets::EmptyHandle;
+				component.CurrentStateReference = nullptr;
+			}
+			// Check for a valid entry, and Update if applicable
+			component.CurrentStateHandle = entry.Handle;
+			component.CurrentStateReference = Assets::AssetService::GetAIState(entry.Handle);
+		};
+
+		// Set up previous state select options widget
+		m_SelectPreviousState.Label = "Previous State";
+		m_SelectPreviousState.Flags |= EditorUI::SelectOption_Indented;
+		m_SelectPreviousState.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectPreviousState.PopupAction = [&]()
+		{
+			m_SelectPreviousState.ClearOptions();
+			m_SelectPreviousState.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+			{
+				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
+				KG_ASSERT(aiStateRef);
+
+				m_SelectPreviousState.AddToOptions("All States", asset.Data.FileLocation.string(), handle);
+			}
+		};
+
+		m_SelectPreviousState.ConfirmAction = [](const EditorUI::OptionEntry& entry)
+		{
+			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<ECS::AIStateComponent>())
+			{
+				KG_ERROR("Attempt to edit entity AIState component when none exists!");
+				return;
+			}
+			ECS::AIStateComponent& component = entity.GetComponent<ECS::AIStateComponent>();
+
+			// Check for empty entry
+			if (entry.Handle == Assets::EmptyHandle)
+			{
+				component.PreviousStateHandle = Assets::EmptyHandle;
+				component.PreviousStateReference = nullptr;
+			}
+			// Check for a valid entry, and Update if applicable
+			component.PreviousStateHandle = entry.Handle;
+			component.PreviousStateReference = Assets::AssetService::GetAIState(entry.Handle);
+		};
+
+	}
+
 	void SceneEditorPanel::InitializeShapeComponent()
 	{
 		m_ShapeHeader.Label = "Shape";
@@ -1896,6 +2090,7 @@ namespace Kargono::Panels
 		InitializeOnCreateComponent();
 		InitializeBoxCollider2DComponent();
 		InitializeCircleCollider2DComponent();
+		InitializeAIComponent();
 		InitializeCameraComponent();
 		InitializeShapeComponent();
 		InitializeProjectComponents();
@@ -2143,6 +2338,7 @@ namespace Kargono::Panels
 		DrawBoxCollider2DComponent(entity);
 		DrawOnUpdateComponent(entity);
 		DrawOnCreateComponent(entity);
+		DrawAIStateComponent(entity);
 		DrawCircleCollider2DComponent(entity);
 		DrawCameraComponent(entity);
 		DrawShapeComponent(entity);
@@ -2178,6 +2374,9 @@ namespace Kargono::Panels
 			return;
 		case ECS::ComponentType::OnCreate:
 			DrawOnCreateComponent(entity);
+			return;
+		case ECS::ComponentType::AIState:
+			DrawAIStateComponent(entity);
 			return;
 		case ECS::ComponentType::Shape:
 			DrawShapeComponent(entity);
@@ -2359,6 +2558,56 @@ namespace Kargono::Panels
 				EditorUI::OptionEntry( "None", Assets::EmptyHandle ) :
 				EditorUI::OptionEntry(Utility::ScriptToString(script), component.OnUpdateScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectOnUpdateScript);
+		}
+	}
+	void SceneEditorPanel::DrawAIStateComponent(ECS::Entity entity)
+	{
+		if (!entity.HasComponent<ECS::AIStateComponent>())
+		{
+			return;
+		}
+		ECS::AIStateComponent& component = entity.GetComponent<ECS::AIStateComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(m_AIStateHeader);
+		if (m_AIStateHeader.Expanded)
+		{
+			// Select global state
+			bool optionValid = component.GlobalStateHandle != Assets::EmptyHandle;
+			if (optionValid)
+			{
+				Assets::Asset& globalAsset = Assets::AssetService::GetAIStateRegistry().at(component.GlobalStateHandle);
+				m_SelectGlobalState.CurrentOption = { globalAsset.Data.FileLocation.string(), component.GlobalStateHandle };
+			}
+			else
+			{
+				m_SelectGlobalState.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			EditorUI::EditorUIService::SelectOption(m_SelectGlobalState);
+
+			// Select current state
+			optionValid = component.CurrentStateHandle != Assets::EmptyHandle;
+			if (optionValid)
+			{
+				Assets::Asset& currentAsset = Assets::AssetService::GetAIStateRegistry().at(component.CurrentStateHandle);
+				m_SelectCurrentState.CurrentOption = { currentAsset.Data.FileLocation.string(), component.CurrentStateHandle };
+			}
+			else
+			{
+				m_SelectCurrentState.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			EditorUI::EditorUIService::SelectOption(m_SelectCurrentState);
+
+			// Select previous state
+			optionValid = component.PreviousStateHandle != Assets::EmptyHandle;
+			if (optionValid)
+			{
+				Assets::Asset& previousAsset = Assets::AssetService::GetAIStateRegistry().at(component.PreviousStateHandle);
+				m_SelectPreviousState.CurrentOption = { previousAsset.Data.FileLocation.string(), component.PreviousStateHandle };
+			}
+			else
+			{
+				m_SelectPreviousState.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			EditorUI::EditorUIService::SelectOption(m_SelectPreviousState);
 		}
 	}
 	void SceneEditorPanel::DrawOnCreateComponent(ECS::Entity entity)
