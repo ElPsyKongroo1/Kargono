@@ -8,6 +8,7 @@
 #include <sstream>
 #include <variant>
 #include <unordered_map>
+#include <unordered_set>
 #include <sstream>
 
 #include "Kargono/Core/Base.h"
@@ -31,6 +32,7 @@ namespace Kargono::Scripting
 		BooleanLiteral,
 		FloatLiteral,
 		InputKeyLiteral,
+		AIMessageTypeLiteral,
 
 		// Keywords
 		Keyword,
@@ -118,6 +120,7 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::StringLiteral: return "String Literal";
 		case Scripting::ScriptTokenType::FloatLiteral: return "Float Literal";
 		case Scripting::ScriptTokenType::InputKeyLiteral: return "Input Key Literal";
+		case Scripting::ScriptTokenType::AIMessageTypeLiteral: return "AI Message Type Literal";
 
 		case Scripting::ScriptTokenType::Keyword: return "Keyword";
 		case Scripting::ScriptTokenType::PrimitiveType: return "Primitive Type";
@@ -542,6 +545,8 @@ namespace Kargono::Scripting
 		std::unordered_map<std::string, std::string> NamespaceDescriptions {};
 		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
 		std::vector<InitializationListType> InitListTypes {};
+
+		std::unordered_set<std::string> AllAIMessageTypes{};
 	public:
 		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)
 		{

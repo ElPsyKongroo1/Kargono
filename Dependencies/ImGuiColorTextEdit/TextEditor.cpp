@@ -2462,6 +2462,9 @@ void TextEditor::ColorizeRange(int aFromLine, int aToLine)
 				case Kargono::Scripting::ScriptTokenType::FloatLiteral:
 					tokenColor = PaletteIndex::Number;
 					break;
+				case Kargono::Scripting::ScriptTokenType::AIMessageTypeLiteral:
+					tokenColor = PaletteIndex::Number;
+					break;
 				case Kargono::Scripting::ScriptTokenType::InputKeyLiteral:
 					tokenColor = PaletteIndex::Number;
 					break;

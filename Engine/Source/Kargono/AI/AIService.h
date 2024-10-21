@@ -15,7 +15,7 @@ namespace Kargono::AI
 	//=========================
 	struct AIMessage
 	{
-		uint64_t MessageType{};
+		uint32_t MessageType{};
 		UUID SenderEntity{ Assets::EmptyHandle };
 		UUID ReceiverEntity{ Assets::EmptyHandle };
 		float Delay{ 0.0f };
@@ -50,7 +50,7 @@ namespace Kargono::AI
 	struct AIContext
 	{
 		std::map<float, AIMessage> AllMessages {};
-		std::unordered_set<uint64_t> AllMessageTypes {};
+		std::unordered_set<uint32_t> AllMessageTypes {};
 	};
 
 
@@ -81,7 +81,7 @@ namespace Kargono::AI
 		//=========================
 		// Send AIMessages
 		//=========================
-		static void SendAIMessage(uint64_t messageType, UUID senderEntity, UUID receiverEntity, float messageDelay);
+		static void SendAIMessage(uint32_t messageType, UUID senderEntity, UUID receiverEntity, float messageDelay);
 	private:
 		//=========================
 		// Internal Functionality

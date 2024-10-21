@@ -97,7 +97,7 @@ namespace Kargono::AI
 		
 		
 	}
-	void AIService::SendAIMessage(uint64_t messageType, UUID senderEntity, UUID receiverEntity, float messageDelay)
+	void AIService::SendAIMessage(uint32_t messageType, UUID senderEntity, UUID receiverEntity, float messageDelay)
 	{
 		// Route message to either the HandleAIMessage() function or the HandleDelayedMessages() function
 		//		based on the messageDelay

@@ -254,6 +254,12 @@ namespace Kargono::Utility
 		return crc.CalculateHash(bufferPointer, bufferSize);
 	}
 
+	uint32_t FileSystem::CRCFromString(const std::string& inputString)
+	{
+		CRC32 crc;
+		return crc.CalculateHash(inputString.data(), inputString.size()); // Note that string.size() works here assuming ascii character sizes
+	}
+
 	void FileSystem::CreateNewDirectory(const std::filesystem::path& filepath)
 	{
 		if (filepath == "")

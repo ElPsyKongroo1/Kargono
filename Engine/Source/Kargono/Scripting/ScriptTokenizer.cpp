@@ -73,6 +73,31 @@ namespace Kargono::Scripting
 					}
 				}
 
+				// Check for key literals
+				if (m_TextBuffer == "AIMessageType")
+				{
+					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
+					{
+						Advance(2);
+						ClearBuffer();
+						// Fill remainder of buffer
+						while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
+						{
+							AddCurrentCharToBuffer();
+							Advance();
+						}
+						// Ensure the provided value is valid
+;						if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllAIMessageTypes.contains(m_TextBuffer))
+						{
+							ClearBuffer();
+							continue;
+						}
+						
+						AddTokenAndClearBuffer(ScriptTokenType::AIMessageTypeLiteral, { m_TextBuffer });
+						continue;
+					}
+				}
+
 				// Check for primitive types
 				if (ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(m_TextBuffer))
 				{

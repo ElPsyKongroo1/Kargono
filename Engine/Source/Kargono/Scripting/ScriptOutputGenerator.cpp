@@ -3,6 +3,8 @@
 #include "Kargono/Scripting/ScriptOutputGenerator.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 
+#include "Kargono/Utility/FileSystem.h"
+
 namespace Kargono::Scripting
 {
 	std::tuple<bool, std::string> ScriptOutputGenerator::GenerateOutput(ScriptAST&& ast)
@@ -180,6 +182,10 @@ namespace Kargono::Scripting
 			if (token->Value.Type == ScriptTokenType::InputKeyLiteral)
 			{
 				m_OutputText << "Key::" + token->Value.Value;
+			}
+			else if (token->Value.Type == ScriptTokenType::AIMessageTypeLiteral)
+			{
+				m_OutputText << Utility::FileSystem::CRCFromString(token->Value.Value);
 			}
 			else
 			{

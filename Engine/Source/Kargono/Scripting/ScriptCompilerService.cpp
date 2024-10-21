@@ -369,6 +369,13 @@ namespace Kargono::Scripting
 	{
 		s_ActiveLanguageDefinition = {};
 
+		// Load in AI Message Types from current project
+		KG_ASSERT(Projects::ProjectService::GetActive());
+		for (const std::string& messageType : Projects::ProjectService::GetAllAIMessageTypes())
+		{
+			s_ActiveLanguageDefinition.AllAIMessageTypes.insert(messageType);
+		}
+
 		CreateKGScriptKeywords();
 
 		CreateKGScriptInitializationPrototypes();
@@ -383,7 +390,6 @@ namespace Kargono::Scripting
 
 	void ScriptCompilerService::CreateKGScriptKeywords()
 	{
-		s_ActiveLanguageDefinition = {};
 		s_ActiveLanguageDefinition.Keywords =
 		{
 			"return",
@@ -462,6 +468,14 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "KeyCode";
 		newPrimitiveType.EmittedParameter = "KeyCode";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType.Name = "aimessagetype";
+		newPrimitiveType.Description = "A type that enumerates the different messages that can be sent between entities directly";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AIMessageTypeLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint32_t";
+		newPrimitiveType.EmittedParameter = "uint32_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconRight;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -1656,7 +1670,8 @@ namespace Kargono::Scripting
 			token.Type == ScriptTokenType::StringLiteral ||
 			token.Type == ScriptTokenType::BooleanLiteral ||
 			token.Type == ScriptTokenType::FloatLiteral ||
-			token.Type == ScriptTokenType::InputKeyLiteral)
+			token.Type == ScriptTokenType::InputKeyLiteral ||
+			token.Type == ScriptTokenType::AIMessageTypeLiteral)
 		{
 			return true;
 		}

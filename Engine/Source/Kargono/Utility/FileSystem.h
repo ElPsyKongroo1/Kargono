@@ -59,6 +59,7 @@ namespace Kargono::Utility
 		static std::string ChecksumFromString(const std::string& inputString);
 		static std::string ChecksumFromBuffer(Buffer buffer);
 		static uint32_t CRCFromBuffer(void* bufferPointer, uint64_t bufferSize);
+		static uint32_t CRCFromString(const std::string& inputString);
 
 	};
 }
