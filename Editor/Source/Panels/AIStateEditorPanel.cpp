@@ -31,8 +31,8 @@ namespace Kargono::Panels
 			Ref<Scripting::Script> onExitStateScript = Assets::AssetService::GetScript(m_EditorAIState->OnExitStateHandle);
 			m_SelectOnExitStateScript.CurrentOption = onExitStateScript ? EditorUI::OptionEntry(onExitStateScript->m_ScriptName, m_EditorAIState->OnExitStateHandle) : EditorUI::OptionEntry("None", Assets::EmptyHandle);
 
-			Ref<Scripting::Script> onAIMessageScript = Assets::AssetService::GetScript(m_EditorAIState->OnAIMessageHandle);
-			m_SelectOnAIMessageScript.CurrentOption = onAIMessageScript ? EditorUI::OptionEntry(onAIMessageScript->m_ScriptName, m_EditorAIState->OnAIMessageHandle) : EditorUI::OptionEntry("None", Assets::EmptyHandle);
+			Ref<Scripting::Script> onAIMessageScript = Assets::AssetService::GetScript(m_EditorAIState->OnMessageHandle);
+			m_SelectOnAIMessageScript.CurrentOption = onAIMessageScript ? EditorUI::OptionEntry(onAIMessageScript->m_ScriptName, m_EditorAIState->OnMessageHandle) : EditorUI::OptionEntry("None", Assets::EmptyHandle);
 		}
 	}
 
@@ -333,7 +333,7 @@ namespace Kargono::Panels
 			m_MainHeader.EditColorActive = true;
 		};
 
-		// On AI Message Script
+		// On Message Script
 		m_SelectOnAIMessageScript.Label = "On AI Message Script";
 		m_SelectOnAIMessageScript.LineCount = 3;
 		m_SelectOnAIMessageScript.CurrentOption = { "None", Assets::EmptyHandle };
@@ -345,7 +345,7 @@ namespace Kargono::Panels
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
-				if (script->m_FuncType != WrappedFuncType::Void_UInt64Float)
+				if (script->m_FuncType != WrappedFuncType::Void_UInt32UInt64UInt64Float)
 				{
 					continue;
 				}
@@ -358,8 +358,8 @@ namespace Kargono::Panels
 			// If empty option is selected, clear script
 			if (selection.Handle == Assets::EmptyHandle)
 			{
-				m_EditorAIState->OnAIMessageHandle = Assets::EmptyHandle;
-				m_EditorAIState->OnAIMessage = nullptr;
+				m_EditorAIState->OnMessageHandle = Assets::EmptyHandle;
+				m_EditorAIState->OnMessage = nullptr;
 				m_MainHeader.EditColorActive = true;
 				return;
 			}
@@ -369,8 +369,8 @@ namespace Kargono::Panels
 			KG_ASSERT(selectedScript);
 
 			// Update ai state's script
-			m_EditorAIState->OnAIMessageHandle = selection.Handle;
-			m_EditorAIState->OnAIMessage = selectedScript;
+			m_EditorAIState->OnMessageHandle = selection.Handle;
+			m_EditorAIState->OnMessage = selectedScript;
 			m_MainHeader.EditColorActive = true;
 		};
 

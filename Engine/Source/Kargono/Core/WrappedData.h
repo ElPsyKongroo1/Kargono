@@ -279,6 +279,7 @@ namespace Kargono
 		Void_UInt32,
 		Void_UInt64,
 		Void_UInt64Float,
+		Void_UInt32UInt64UInt64Float,
 		Bool_None,
 		Bool_UInt64,
 		Bool_UInt64UInt16UInt64,
@@ -307,6 +308,7 @@ namespace Kargono
 	typedef void (*void_uint32)(uint32_t);
 	typedef void (*void_uint64)(uint64_t);
 	typedef void (*void_uint64float)(uint64_t, float);
+	typedef void (*void_uint32uint64uint64float)(uint32_t, uint64_t, uint64_t, float);
 	typedef bool (*bool_none)();
 	typedef bool (*bool_uint64)(uint64_t);
 	typedef bool (*bool_uint64uint64)(uint64_t, uint64_t);
@@ -395,6 +397,17 @@ namespace Kargono
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_UInt64Float; }
 	public:
 		std::function<void(uint64_t, float)> m_Value{};
+	};
+
+	class WrappedVoidUInt32UInt64UInt64Float : public WrappedFunction
+	{
+	public:
+		WrappedVoidUInt32UInt64UInt64Float() = default;
+		WrappedVoidUInt32UInt64UInt64Float(std::function<void(uint32_t, uint64_t, uint64_t, float)> value) : m_Value(value) {}
+	public:
+		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_UInt32UInt64UInt64Float; }
+	public:
+		std::function<void(uint32_t, uint64_t, uint64_t, float)> m_Value{};
 	};
 
 	class WrappedBoolNone : public WrappedFunction
@@ -734,6 +747,7 @@ namespace Kargono
 			case WrappedFuncType::Void_UInt32: return "Void_UInt32";
 			case WrappedFuncType::Void_UInt64: return "Void_UInt64";
 			case WrappedFuncType::Void_UInt64Float: return "Void_UInt64Float";
+			case WrappedFuncType::Void_UInt32UInt64UInt64Float: return "Void_UInt32UInt64UInt64Float";
 			case WrappedFuncType::Bool_None: return "Bool_None";
 			case WrappedFuncType::Bool_UInt64: return "Bool_UInt64";
 			case WrappedFuncType::Bool_UInt64UInt64: return "Bool_UInt64UInt64";
@@ -753,6 +767,7 @@ namespace Kargono
 			if (type == "Void_UInt32") { return WrappedFuncType::Void_UInt32; }
 			if (type == "Void_UInt64") { return WrappedFuncType::Void_UInt64; }
 			if (type == "Void_UInt64Float") { return WrappedFuncType::Void_UInt64Float; }
+			if (type == "Void_UInt32UInt64UInt64Float") { return WrappedFuncType::Void_UInt32UInt64UInt64Float; }
 			if (type == "Bool_None") { return WrappedFuncType::Bool_None; }
 			if (type == "Bool_UInt64") { return WrappedFuncType::Bool_UInt64; }
 			if (type == "Bool_UInt64UInt64") { return WrappedFuncType::Bool_UInt64UInt64; }
@@ -805,6 +820,12 @@ namespace Kargono
 			((WrappedVoidUInt64Float*)wrappedFunction.get())->m_Value(argumentOne, argumentTwo);
 		}
 
+		inline void CallWrappedVoidUInt32UInt64UInt64Float(Ref<WrappedFunction> wrappedFunction, uint32_t argumentOne, uint64_t argumentTwo, uint64_t argumentThree, float argumentFour)
+		{
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Void_UInt32UInt64UInt64Float, "Invalid wrapped function type provided");
+			((WrappedVoidUInt32UInt64UInt64Float*)wrappedFunction.get())->m_Value(argumentOne, argumentTwo, argumentThree, argumentFour);
+		}
+
 		inline bool CallWrappedBoolNone(Ref<WrappedFunction> wrappedFunction)
 		{
 			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Bool_None, "Invalid wrapped function type provided");
@@ -840,6 +861,7 @@ namespace Kargono
 			case WrappedFuncType::Void_UInt32:
 			case WrappedFuncType::Void_UInt64:
 			case WrappedFuncType::Void_UInt64Float:
+			case WrappedFuncType::Void_UInt32UInt64UInt64Float:
 				return WrappedVarType::Void;
 			case WrappedFuncType::Bool_None:
 			case WrappedFuncType::Bool_UInt64:
@@ -874,6 +896,8 @@ namespace Kargono
 				return { WrappedVarType::UInteger32 };
 			case WrappedFuncType::Void_UInt64Float:
 				return { WrappedVarType::UInteger64, WrappedVarType::Float };
+			case WrappedFuncType::Void_UInt32UInt64UInt64Float:
+				return { WrappedVarType::UInteger32, WrappedVarType::UInteger64, WrappedVarType::UInteger64, WrappedVarType::Float };
 			case WrappedFuncType::Void_UInt64:
 			case WrappedFuncType::Bool_UInt64:
 				return { WrappedVarType::UInteger64 };

@@ -48,7 +48,6 @@ namespace Kargono
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
 
-
 		m_EditorScene = CreateRef<Scenes::Scene>();
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_SceneState = SceneState::Edit;
@@ -56,6 +55,7 @@ namespace Kargono
 		OpenProject(m_InitProjectPath);
 
 		EditorUI::EditorUIService::Init();
+		AI::AIService::Init();
 
 		m_SceneEditorPanel = CreateScope<Panels::SceneEditorPanel>();
 		m_AssetViewerPanel = CreateScope<Panels::AssetViewerPanel>();
@@ -98,6 +98,7 @@ namespace Kargono
 		EditorUI::EditorUIService::Terminate();
 		Audio::AudioService::Terminate();
 		Scripting::ScriptService::Terminate();
+		AI::AIService::Terminate();
 	}
 
 	void EditorApp::OnUpdate(Timestep ts)

@@ -28,7 +28,7 @@ namespace Kargono::Assets
 		out << YAML::Key << "OnUpdateScript" << YAML::Value << static_cast<uint64_t>(assetReference->OnUpdateHandle);
 		out << YAML::Key << "OnEnterStateScript" << YAML::Value << static_cast<uint64_t>(assetReference->OnEnterStateHandle);
 		out << YAML::Key << "OnExitStateScript" << YAML::Value << static_cast<uint64_t>(assetReference->OnExitStateHandle);
-		out << YAML::Key << "OnAIMessageScript" << YAML::Value << static_cast<uint64_t>(assetReference->OnAIMessageHandle);
+		out << YAML::Key << "OnAIMessageScript" << YAML::Value << static_cast<uint64_t>(assetReference->OnMessageHandle);
 
 		out << YAML::EndMap; // End of File Map
 
@@ -96,15 +96,15 @@ namespace Kargono::Assets
 		}
 
 		// Deserialize OnAIMessageScript
-		newAIState->OnAIMessageHandle = data["OnAIMessageScript"].as<uint64_t>();
-		if (newAIState->OnAIMessageHandle == Assets::EmptyHandle)
+		newAIState->OnMessageHandle = data["OnAIMessageScript"].as<uint64_t>();
+		if (newAIState->OnMessageHandle == Assets::EmptyHandle)
 		{
-			newAIState->OnAIMessage = nullptr;
+			newAIState->OnMessage = nullptr;
 		}
 		else
 		{
-			newAIState->OnAIMessage = Assets::AssetService::GetScript(newAIState->OnAIMessageHandle);
-			if (!newAIState->OnAIMessage)
+			newAIState->OnMessage = Assets::AssetService::GetScript(newAIState->OnMessageHandle);
+			if (!newAIState->OnMessage)
 			{
 				KG_WARN("Invalid AIMessage script returned using a valid handle in deserialize AI state function");
 			}

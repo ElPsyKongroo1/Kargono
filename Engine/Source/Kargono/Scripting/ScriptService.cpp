@@ -307,6 +307,13 @@ namespace Kargono::Scripting
 			((WrappedVoidUInt64Float*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
+
+		case WrappedFuncType::Void_UInt32UInt64UInt64Float:
+		{
+			script->m_Function = CreateRef<WrappedVoidUInt32UInt64UInt64Float>();
+			((WrappedVoidUInt32UInt64UInt64Float*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint64uint64float>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			break;
+		}
 		case WrappedFuncType::Bool_None:
 		{
 			script->m_Function = CreateRef<WrappedBoolNone>();

@@ -40,8 +40,8 @@ namespace Kargono::AI
 		Ref<Scripting::Script> OnExitState { nullptr };
 
 		// Called when a message is received
-		Assets::AssetHandle OnAIMessageHandle { Assets::EmptyHandle };
-		Ref<Scripting::Script> OnAIMessage { nullptr };
+		Assets::AssetHandle OnMessageHandle { Assets::EmptyHandle };
+		Ref<Scripting::Script> OnMessage { nullptr };
 	};
 
 	//=========================
@@ -49,7 +49,7 @@ namespace Kargono::AI
 	//=========================
 	struct AIContext
 	{
-		std::map<float, AIMessage> AllMessages {};
+		std::map<float, AIMessage> MessageQueue {};
 		std::unordered_set<uint32_t> AllMessageTypes {};
 	};
 
@@ -74,9 +74,9 @@ namespace Kargono::AI
 		//=========================
 		// Manage Entity's AIState
 		//=========================
-		static void ChangeCurrentState(UUID entityID, Assets::AssetHandle newAIState);
+		static void ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle);
+		static void ChangeCurrentState(UUID entityID, Assets::AssetHandle newAIStateHandle);
 		static void RevertToPreviousState(UUID entityID);
-		static void ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIState);
 
 		//=========================
 		// Send AIMessages
@@ -86,7 +86,7 @@ namespace Kargono::AI
 		//=========================
 		// Internal Functionality
 		//=========================
-		static void HandleAIMessage(AIMessage& messageToHandle);
+		static void HandleAIMessage(AIMessage&& messageToHandle);
 		static void HandleDelayedMessages(Timestep timeStep);
 		
 	private:

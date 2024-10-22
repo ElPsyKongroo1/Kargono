@@ -61,6 +61,7 @@ namespace Kargono
 		currentWindow.SetResizable(false);
 #endif
 
+		AI::AIService::Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(4.0f);
 		RuntimeUI::FontService::Init();
@@ -75,6 +76,7 @@ namespace Kargono
 		OnStop();
 
 		Audio::AudioService::Terminate();
+		AI::AIService::Terminate();
 
 	}
 
