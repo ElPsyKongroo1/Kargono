@@ -435,8 +435,8 @@ namespace Kargono::Projects
 				}
 
 				// Serialize AI Message Types
-				out << YAML::Key << "AllAIMessageTypes" << YAML::BeginSeq;
-				for (std::string& aiTypeName : project->AllAIMessageTypes)
+				out << YAML::Key << "AllMessageTypes" << YAML::BeginSeq;
+				for (std::string& aiTypeName : project->AllMessageTypes)
 				{
 					out << YAML::Value << aiTypeName;
 				}
@@ -502,8 +502,8 @@ namespace Kargono::Projects
 			}
 		}
 
-		YAML::Node aiMessageTypeNode = projectNode["AllAIMessageTypes"];
-		std::vector<std::string>& allMessageTypesRef = project->AllAIMessageTypes;
+		YAML::Node aiMessageTypeNode = projectNode["AllMessageTypes"];
+		std::vector<std::string>& allMessageTypesRef = project->AllMessageTypes;
 		for (auto aiMessage : aiMessageTypeNode)
 		{
 			allMessageTypesRef.push_back(aiMessage.as<std::string>());

@@ -32,7 +32,7 @@ namespace Kargono::Scripting
 		BooleanLiteral,
 		FloatLiteral,
 		InputKeyLiteral,
-		AIMessageTypeLiteral,
+		MessageTypeLiteral,
 
 		// Keywords
 		Keyword,
@@ -120,7 +120,7 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::StringLiteral: return "String Literal";
 		case Scripting::ScriptTokenType::FloatLiteral: return "Float Literal";
 		case Scripting::ScriptTokenType::InputKeyLiteral: return "Input Key Literal";
-		case Scripting::ScriptTokenType::AIMessageTypeLiteral: return "AI Message Type Literal";
+		case Scripting::ScriptTokenType::MessageTypeLiteral: return "Message Type Literal";
 
 		case Scripting::ScriptTokenType::Keyword: return "Keyword";
 		case Scripting::ScriptTokenType::PrimitiveType: return "Primitive Type";
@@ -546,7 +546,7 @@ namespace Kargono::Scripting
 		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
 		std::vector<InitializationListType> InitListTypes {};
 
-		std::unordered_set<std::string> AllAIMessageTypes{};
+		std::unordered_set<std::string> AllMessageTypes{};
 	public:
 		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)
 		{

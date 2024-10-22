@@ -94,7 +94,7 @@ namespace Kargono::Projects
 
 		std::unordered_set<uint64_t> AppTickGenerators{};
 
-		std::vector<std::string> AllAIMessageTypes {};
+		std::vector<std::string> AllMessageTypes {};
 
 		bool AppIsNetworked { false };
 
@@ -511,7 +511,7 @@ namespace Kargono::Projects
 		static bool AddAIMessageType(const std::string& newMessageType)
 		{
 			// Check if message already exists
-			for (std::string& aiMessage : s_ActiveProject->AllAIMessageTypes)
+			for (std::string& aiMessage : s_ActiveProject->AllMessageTypes)
 			{
 				// Return false if message already exists
 				if (aiMessage == newMessageType)
@@ -521,7 +521,7 @@ namespace Kargono::Projects
 			}
 
 			// Add AIMessageType to project if none is found
-			s_ActiveProject->AllAIMessageTypes.push_back(newMessageType);
+			s_ActiveProject->AllMessageTypes.push_back(newMessageType);
 			return true;
 		}
 
@@ -532,7 +532,7 @@ namespace Kargono::Projects
 			// Find the indicated message
 			size_t iteration{ 0 };
 			size_t foundMessagePosition{ std::numeric_limits<size_t>().max() };
-			for (std::string& aiMessage : s_ActiveProject->AllAIMessageTypes)
+			for (std::string& aiMessage : s_ActiveProject->AllMessageTypes)
 			{
 				// If we find the message type, note its location 
 				if (aiMessage == oldMessageType)
@@ -550,7 +550,7 @@ namespace Kargono::Projects
 			}
 
 			// Replace text at specified position
-			s_ActiveProject->AllAIMessageTypes.at(foundMessagePosition) = newMessageType;
+			s_ActiveProject->AllMessageTypes.at(foundMessagePosition) = newMessageType;
 			return true;
 		}
 
@@ -561,7 +561,7 @@ namespace Kargono::Projects
 			// Find the indicated message
 			size_t iteration{ 0 };
 			size_t foundMessagePosition{ std::numeric_limits<size_t>().max() };
-			for (std::string& aiMessage : s_ActiveProject->AllAIMessageTypes)
+			for (std::string& aiMessage : s_ActiveProject->AllMessageTypes)
 			{
 				// If we find the message type, note its location 
 				if (aiMessage == aiMessageType)
@@ -579,14 +579,14 @@ namespace Kargono::Projects
 			}
 
 			// Erase text at position
-			s_ActiveProject->AllAIMessageTypes.erase(s_ActiveProject->AllAIMessageTypes.begin() + foundMessagePosition);
+			s_ActiveProject->AllMessageTypes.erase(s_ActiveProject->AllMessageTypes.begin() + foundMessagePosition);
 			return true;
 		}
 
-		static std::vector<std::string>& GetAllAIMessageTypes()
+		static std::vector<std::string>& GetAllMessageTypes()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->AllAIMessageTypes;
+			return s_ActiveProject->AllMessageTypes;
 		}
 
 	private:

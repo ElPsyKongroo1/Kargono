@@ -480,66 +480,65 @@ namespace Kargono::Panels
 
 	}
 
-	void ProjectPanel::InitializeAIMessageTypeResources()
+	void ProjectPanel::InitializeMessageTypeResources()
 	{
-
 		// Manage AI Message Types
-		m_AIMessageTypeTable.Label = "All AI Message Types";
-		m_AIMessageTypeTable.Column1Title = "Message Type";
-		m_AIMessageTypeTable.Column2Title = "";
-		m_AIMessageTypeTable.Expanded = false;
-		m_AIMessageTypeTable.AddToSelectionList("Create New AI Message Type", [&]()
+		m_MessageTypeTable.Label = "All Message Types";
+		m_MessageTypeTable.Column1Title = "Message Type";
+		m_MessageTypeTable.Column2Title = "";
+		m_MessageTypeTable.Expanded = false;
+		m_MessageTypeTable.AddToSelectionList("Create New Message Type", [&]()
 		{
-			m_CreateAIMessageTypePopup.StartPopup = true;
+			m_CreateMessageTypePopup.StartPopup = true;
 		});
-		m_AIMessageTypeTable.OnRefresh = [&]()
+		m_MessageTypeTable.OnRefresh = [&]()
 		{
-			m_AIMessageTypeTable.ClearTable();
-			for (std::string& label : Projects::ProjectService::GetAllAIMessageTypes())
+			m_MessageTypeTable.ClearTable();
+			for (std::string& label : Projects::ProjectService::GetAllMessageTypes())
 			{
-				m_AIMessageTypeTable.InsertTableEntry(label, "", [&](EditorUI::TableEntry& entry)
+				m_MessageTypeTable.InsertTableEntry(label, "", [&](EditorUI::TableEntry& entry)
 				{
 					m_ActiveAIMessageType = entry.Label;
-					m_EditAIMessageTypePopup.PopupActive = true;
+					m_EditMessageTypePopup.PopupActive = true;
 				});
 			}
 		};
-		m_AIMessageTypeTable.OnRefresh();
+		m_MessageTypeTable.OnRefresh();
 
-		m_CreateAIMessageTypePopup.Label = "Create New AI Message Type";
-		m_CreateAIMessageTypePopup.Flags |= EditorUI::EditText_PopupOnly;
-		m_CreateAIMessageTypePopup.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
+		m_CreateMessageTypePopup.Label = "Create New Message Type";
+		m_CreateMessageTypePopup.Flags |= EditorUI::EditText_PopupOnly;
+		m_CreateMessageTypePopup.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			// Create new AI message
-			bool success = Projects::ProjectService::AddAIMessageType(m_CreateAIMessageTypePopup.CurrentOption);
+			bool success = Projects::ProjectService::AddAIMessageType(m_CreateMessageTypePopup.CurrentOption);
 			if (!success)
 			{
-				KG_WARN("Failed to create AI message type");
+				KG_WARN("Failed to create message type");
 				return;
 			}
-			m_AIMessageTypeTable.OnRefresh();
+			m_MessageTypeTable.OnRefresh();
 		};
 
-		m_EditAIMessageTypePopup.Label = "Edit AI Message Type";
-		m_EditAIMessageTypePopup.PopupWidth = 420.0f;
-		m_EditAIMessageTypePopup.PopupAction = [&]()
+		m_EditMessageTypePopup.Label = "Edit Message Type";
+		m_EditMessageTypePopup.PopupWidth = 420.0f;
+		m_EditMessageTypePopup.PopupAction = [&]()
 		{
-			m_EditAIMessageTypeText.CurrentOption = m_ActiveAIMessageType;
+			m_EditMessageTypeText.CurrentOption = m_ActiveAIMessageType;
 		};
-		m_EditAIMessageTypePopup.ConfirmAction = [&]()
+		m_EditMessageTypePopup.ConfirmAction = [&]()
 		{
 			bool success = Projects::ProjectService::EditAIMessageType(m_ActiveAIMessageType, 
-				m_EditAIMessageTypeText.CurrentOption);
+				m_EditMessageTypeText.CurrentOption);
 
 			// Create new AI message type
 			if (!success)
 			{
-				KG_WARN("Failed to edit AI message type");
+				KG_WARN("Failed to edit message type");
 				return;
 			}
 			OnRefresh();
 		};
-		m_EditAIMessageTypePopup.DeleteAction = [&]()
+		m_EditMessageTypePopup.DeleteAction = [&]()
 		{
 			bool success = Projects::ProjectService::DeleteAIMessageType(m_ActiveAIMessageType);
 			if (!success)
@@ -550,13 +549,13 @@ namespace Kargono::Panels
 
 			OnRefresh();
 		};
-		m_EditAIMessageTypePopup.PopupContents = [&]()
+		m_EditMessageTypePopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_EditAIMessageTypeText);
+			EditorUI::EditorUIService::EditText(m_EditMessageTypeText);
 		};
 
-		m_EditAIMessageTypeText.Label = "AI Message Type";
-		m_EditAIMessageTypeText.CurrentOption = "Empty";
+		m_EditMessageTypeText.Label = "Message Type";
+		m_EditMessageTypeText.CurrentOption = "Empty";
 
 	}
 
@@ -566,7 +565,7 @@ namespace Kargono::Panels
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
 			KG_BIND_CLASS_FN(ProjectPanel::OnKeyPressedEditor));
 		InitializeStaticResources();
-		InitializeAIMessageTypeResources();
+		InitializeMessageTypeResources();
 	}
 	void ProjectPanel::OnEditorUIRender()
 	{
@@ -781,9 +780,9 @@ namespace Kargono::Panels
 		}
 
 
-		EditorUI::EditorUIService::Table(m_AIMessageTypeTable);
-		EditorUI::EditorUIService::EditText(m_CreateAIMessageTypePopup);
-		EditorUI::EditorUIService::GenericPopup(m_EditAIMessageTypePopup);
+		EditorUI::EditorUIService::Table(m_MessageTypeTable);
+		EditorUI::EditorUIService::EditText(m_CreateMessageTypePopup);
+		EditorUI::EditorUIService::GenericPopup(m_EditMessageTypePopup);
 
 		EditorUI::EditorUIService::EndWindow();
 	}
@@ -797,6 +796,6 @@ namespace Kargono::Panels
 	}
 	void ProjectPanel::OnRefresh()
 	{
-		m_AIMessageTypeTable.OnRefresh();
+		m_MessageTypeTable.OnRefresh();
 	}
 }

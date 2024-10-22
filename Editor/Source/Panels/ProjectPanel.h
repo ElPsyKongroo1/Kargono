@@ -19,7 +19,7 @@ namespace Kargono::Panels
 		// Internal Initialization Functions
 		//=========================
 		void InitializeStaticResources();
-		void InitializeAIMessageTypeResources();
+		void InitializeMessageTypeResources();
 
 	public:
 		//=========================
@@ -66,9 +66,9 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_SelectReceiveSignalSpec {};
 
 		// Editor AI Message Types
-		EditorUI::TableSpec m_AIMessageTypeTable {};
-		EditorUI::EditTextSpec m_CreateAIMessageTypePopup {};
-		EditorUI::GenericPopupSpec m_EditAIMessageTypePopup {};
-		EditorUI::EditTextSpec m_EditAIMessageTypeText {};
+		EditorUI::TableSpec m_MessageTypeTable {};
+		EditorUI::EditTextSpec m_CreateMessageTypePopup {};
+		EditorUI::GenericPopupSpec m_EditMessageTypePopup {};
+		EditorUI::EditTextSpec m_EditMessageTypeText {};
 	};
 }

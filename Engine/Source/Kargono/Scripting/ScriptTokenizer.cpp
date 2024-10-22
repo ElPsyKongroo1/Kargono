@@ -74,7 +74,7 @@ namespace Kargono::Scripting
 				}
 
 				// Check for key literals
-				if (m_TextBuffer == "AIMessageType")
+				if (m_TextBuffer == "MessageType")
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 					{
@@ -87,13 +87,13 @@ namespace Kargono::Scripting
 							Advance();
 						}
 						// Ensure the provided value is valid
-;						if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllAIMessageTypes.contains(m_TextBuffer))
+;						if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllMessageTypes.contains(m_TextBuffer))
 						{
 							ClearBuffer();
 							continue;
 						}
 						
-						AddTokenAndClearBuffer(ScriptTokenType::AIMessageTypeLiteral, { m_TextBuffer });
+						AddTokenAndClearBuffer(ScriptTokenType::MessageTypeLiteral, { m_TextBuffer });
 						continue;
 					}
 				}
