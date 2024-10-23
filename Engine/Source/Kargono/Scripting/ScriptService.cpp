@@ -16,6 +16,7 @@
 #include "Kargono/Scenes/GameState.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Utility/Random.h"
+#include "Kargono/AI/AIService.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 
 #ifdef KG_PLATFORM_WINDOWS
@@ -438,6 +439,8 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidNone, void)
 	DefineInsertFunction(VoidString, void, const std::string&)
 	DefineInsertFunction(VoidUInt16, void, uint16_t)
+	DefineInsertFunction(VoidUInt64, void, uint64_t)
+	DefineInsertFunction(VoidUInt64UInt64, void, uint64_t, uint64_t)
 	DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
 	DefineInsertFunction(VoidStringVoidPtr, void, const std::string&, void*)
 	DefineInsertFunction(VoidStringString, void, const std::string&, const std::string&)
@@ -445,6 +448,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
 	DefineInsertFunction(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
 	DefineInsertFunction(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
+	DefineInsertFunction(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
 	DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
 	DefineInsertFunction(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
 	DefineInsertFunction(VoidPtrString, void*, const std::string&)
@@ -556,6 +560,8 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidNone, void) 
 		AddImportFunctionToHeaderFile(VoidString, void, const std::string&) 
 		AddImportFunctionToHeaderFile(VoidUInt16, void, uint16_t) 
+		AddImportFunctionToHeaderFile(VoidUInt64, void, uint64_t) 
+		AddImportFunctionToHeaderFile(VoidUInt64UInt64, void, uint64_t, uint64_t) 
 		AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool) 
 		AddImportFunctionToHeaderFile(VoidStringVoidPtr, void, const std::string&, void*) 
 		AddImportFunctionToHeaderFile(VoidStringString, void, const std::string&, const std::string&) 
@@ -565,6 +571,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
 		AddImportFunctionToHeaderFile(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
 		AddImportFunctionToHeaderFile(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
+		AddImportFunctionToHeaderFile(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
 		AddImportFunctionToHeaderFile(VoidPtrString, void*, const std::string&) 
 		AddImportFunctionToHeaderFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
@@ -635,6 +642,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileOneParameters(IsKeyPressed, bool, uint16_t)
 		AddEngineFunctionToCPPFileOneParameters(Scenes_IsSceneActive, bool, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(SignalAll, void, uint16_t)
+		AddEngineFunctionToCPPFileOneParameters(AI_RevertPreviousState, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(GetGameStateField, void*, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(LoadInputModeByName, void, const std::string&)
@@ -650,6 +658,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
 		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
+		AddEngineFunctionToCPPFileTwoParameters(AI_ChangeGlobalState, void, uint64_t, uint64_t)
+		AddEngineFunctionToCPPFileTwoParameters(AI_ChangeCurrentState, void, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)
@@ -659,6 +669,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileThreeParameters(Scenes_GetProjectComponentField, void*, uint64_t, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileThreeParameters(SendAllEntityPhysics, void, uint64_t, Math::vec3, Math::vec2)
 		AddEngineFunctionToCPPFileFourParameters(Scenes_SetProjectComponentField, void, uint64_t, uint64_t, uint64_t, void*)
+		AddEngineFunctionToCPPFileFourParameters(AI_SendMessage, void, uint32_t, uint64_t, uint64_t, float)
 
 		// Insert FuncPointer Importing for DLL processing
 		AddImportFunctionToCPPFile(VoidNone, void)
@@ -680,6 +691,15 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileEnd(LoadInputModeByName)
 		AddEngineFunctionToCPPFileEnd(TransitionSceneFromName)
 		AddEngineFunctionToCPPFileEnd(LoadUserInterfaceFromName)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt64, void, uint64_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(AI_RevertPreviousState)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt64UInt64, void, uint64_t, uint64_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(AI_ChangeGlobalState)
+		AddEngineFunctionToCPPFileEnd(AI_ChangeCurrentState)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringBool, void, const std::string&, bool)
 		outputStream << "{\n";
@@ -741,7 +761,6 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
 		outputStream << "{\n";
-
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
 		outputStream << "{\n";
@@ -749,7 +768,6 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
 		outputStream << "{\n";
-		
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrString, void*, const std::string&)
 		outputStream << "{\n";
@@ -778,6 +796,10 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Scenes_SetProjectComponentField)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(AI_SendMessage)
 		outputStream << "}\n";
 
 		// Write scripts into a single cpp file
@@ -893,6 +915,7 @@ namespace Kargono::Scripting
 	{
 		ImportInsertFunction(VoidNone)
 		ImportInsertFunction(VoidUInt16) 
+		ImportInsertFunction(VoidUInt64) 
 		ImportInsertFunction(VoidString) 
 		ImportInsertFunction(VoidPtrString) 
 		ImportInsertFunction(VoidStringBool) 
@@ -904,9 +927,11 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidUInt64StringVoidPtr)
 		ImportInsertFunction(VoidPtrUInt64UInt64UInt64)
 		ImportInsertFunction(VoidUInt64UInt64UInt64VoidPtr)
+		ImportInsertFunction(VoidUInt32UInt64UInt64Float)
 		ImportInsertFunction(VoidPtrUInt64String)
 		ImportInsertFunction(VoidUInt64Vec3)
 		ImportInsertFunction(VoidUInt64Vec2)
+		ImportInsertFunction(VoidUInt64UInt64)
 		ImportInsertFunction(VoidUInt64Vec3Vec2)
 		ImportInsertFunction(BoolStringString)
 		ImportInsertFunction(BoolUInt64String)
@@ -953,5 +978,9 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, Scenes::SceneService::SetProjectComponentField, VoidUInt64UInt64UInt64VoidPtr)
 		AddEngineFunctionPointerToDll(TagComponent_GetTag, Scenes::SceneService::TagComponentGetTag, StringUInt64)
 		AddEngineFunctionPointerToDll(GenerateRandomNumber, Utility::RandomService::GenerateRandomNumber, Int32Int32Int32)
+		AddEngineFunctionPointerToDll(AI_ChangeGlobalState, AI::AIService::ChangeGlobalState, VoidUInt64UInt64)
+		AddEngineFunctionPointerToDll(AI_ChangeCurrentState, AI::AIService::ChangeCurrentState, VoidUInt64UInt64)
+		AddEngineFunctionPointerToDll(AI_RevertPreviousState, AI::AIService::RevertPreviousState, VoidUInt64)
+		AddEngineFunctionPointerToDll(AI_SendMessage, AI::AIService::SendAIMessage, VoidUInt32UInt64UInt64Float)
 	}
 }

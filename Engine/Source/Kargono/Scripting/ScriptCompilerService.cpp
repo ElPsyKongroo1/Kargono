@@ -10,6 +10,7 @@
 #include "Kargono/Scripting/ScriptOutputGenerator.h"
 #include "Kargono/Assets/AssetService.h"
 #include "Kargono/ECS/ProjectComponent.h"
+#include "Kargono/Utility/Operations.h"
 
 
 namespace Kargono::Utility
@@ -552,126 +553,6 @@ namespace Kargono::Scripting
 		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
 
-		newFunctionMember.Name = { ScriptTokenType::Identifier, "GetFieldFloat" };
-		newFunctionMember.Namespace = {};
-		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "float" };
-		newFunctionMember.Description = "This member function gets the field denoted by its name and returns it. This function only returns floats. The argument is the name of the field.";
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
-		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
-
-			generator.m_OutputText << "*(float*)GetEntityFieldByName(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ", ";
-			generator.GenerateExpression(funcCall->Arguments.at(0));
-			generator.m_OutputText << ")";
-		};
-		newMemberParameter = {};
-		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
-		newFunctionMember = {};
-
-		newFunctionMember.Name = { ScriptTokenType::Identifier, "GetFieldVector3" };
-		newFunctionMember.Namespace = {};
-		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "vector3" };
-		newFunctionMember.Description = "This member function gets the field denoted by its name and returns it. This function only returns vector3 fields. The argument is the name of the field.";
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
-		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
-
-			generator.m_OutputText << "*(Math::vec3*)GetEntityFieldByName(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ", ";
-			generator.GenerateExpression(funcCall->Arguments.at(0));
-			generator.m_OutputText << ")";
-		};
-		newMemberParameter = {};
-		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
-		newFunctionMember = {};
-
-		newFunctionMember.Name = { ScriptTokenType::Identifier, "GetFieldUInt32" };
-		newFunctionMember.Namespace = {};
-		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "uint32" };
-		newFunctionMember.Description = "This member function gets the field denoted by its name and returns it. This function only returns uint32 fields. The argument is the name of the field.";
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
-		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
-
-			generator.m_OutputText << "*(uint32_t*)GetEntityFieldByName(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ", ";
-			generator.GenerateExpression(funcCall->Arguments.at(0));
-			generator.m_OutputText << ")";
-		};
-		newMemberParameter = {};
-		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
-		newFunctionMember = {};
-
-
-		newFunctionMember.Name = { ScriptTokenType::Identifier, "SetFieldUInt32" };
-		newFunctionMember.Namespace = {};
-		newFunctionMember.ReturnType = {};
-		newFunctionMember.Description = "This member function sets the field denoted by its name to the value provided. This function takes any available primitive type.";
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
-		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newMemberParameter = {};
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "uint32" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newValue" };
-		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newMemberParameter = {};
-		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
-
-			generator.m_OutputText << "SetEntityFieldByName(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ", ";
-			generator.GenerateExpression(funcCall->Arguments.at(0));
-			generator.m_OutputText << ", ";
-			generator.m_OutputText << "(void*)&RValueToLValue(";
-			generator.GenerateExpression(funcCall->Arguments.at(1));
-			generator.m_OutputText << "))";
-		};
-		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
-		newFunctionMember = {};
-
-		newFunctionMember.Name = { ScriptTokenType::Identifier, "SetFieldVector3" };
-		newFunctionMember.Namespace = {};
-		newFunctionMember.ReturnType = {};
-		newFunctionMember.Description = "This member function sets the field denoted by its name to the value provided. This function takes a vector3 as the newValue.";
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "fieldName" };
-		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newMemberParameter = {};
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newValue" };
-		newFunctionMember.Parameters.push_back(newMemberParameter);
-		newMemberParameter = {};
-		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
-
-			generator.m_OutputText << "SetEntityFieldByName(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ", ";
-			generator.GenerateExpression(funcCall->Arguments.at(0));
-			generator.m_OutputText << ", ";
-			generator.m_OutputText << "(void*)&RValueToLValue(";
-			generator.GenerateExpression(funcCall->Arguments.at(1));
-			generator.m_OutputText << "))";
-		};
-		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
-		newFunctionMember = {};
-
 		// Provide all project components as member data for the entity type
 		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 		{
@@ -853,6 +734,113 @@ namespace Kargono::Scripting
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 
+
+
+
+		newDataMember.Name = "AIState";
+		newDataMember.Description = "This entity member is a AI state component. This component stores the AI's current global, current, and previous states and uses them to provide a managed state machine in the engine.";
+		newDataMember.PrimitiveType.Type = ScriptTokenType::None;
+		newDataMember.PrimitiveType.Value = "None";
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "ChangeGlobalState" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionMember.Description = "This function changes this entities's global state to the indicated state. This function takes in the location of an AI state component in the current project as a parameter.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newStateLocation" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "AI_ChangeGlobalState(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ", ";
+
+			// Output UUID of AIState if it exists
+			TokenExpressionNode* aiStateExpression = std::get_if<TokenExpressionNode>(&funcCall->Arguments.at(0)->Value);
+			KG_ASSERT(aiStateExpression);
+
+			// Check if UUID is valid
+			bool foundAIStateAsset = false;
+			std::string queryFileLocation = aiStateExpression->Value.Value;
+			Utility::Operations::RemoveCharacterFromString(queryFileLocation, '\"');
+			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+			{
+				// Check for identical file location
+				if (asset.Data.FileLocation == queryFileLocation)
+				{
+					generator.m_OutputText << std::to_string(handle);
+					foundAIStateAsset = true;
+					break;
+				}
+			}
+			KG_ASSERT(foundAIStateAsset, "Could not locate ai state asset from provided file location");
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "ChangeCurrentState" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionMember.Description = "This function changes this entities's current state to the indicated state. This function takes in the location of an AI state component in the current project as a parameter.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newStateLocation" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "AI_ChangeCurrentState(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ", ";
+
+			// Output UUID of AIState if it exists
+			TokenExpressionNode* aiStateExpression = std::get_if<TokenExpressionNode>(&funcCall->Arguments.at(0)->Value);
+			KG_ASSERT(aiStateExpression);
+
+			// Check if UUID is valid
+			bool foundAIStateAsset = false;
+			std::string queryFileLocation = aiStateExpression->Value.Value;
+			Utility::Operations::RemoveCharacterFromString(queryFileLocation, '\"');
+			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+			{
+				// Check for identical file location
+				if (asset.Data.FileLocation == queryFileLocation)
+				{
+					generator.m_OutputText << std::to_string(handle);
+					foundAIStateAsset = true;
+					break;
+				}
+			}
+			KG_ASSERT(foundAIStateAsset, "Could not locate ai state asset from provided file location");
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "RevertPreviousState" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionMember.Description = "This function changes this entities's current state its previous state if it exists. This function takes no parameters";
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "AI_RevertPreviousState(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+
 		newDataMember.Name = "RigidBody";
 		newDataMember.Description = "This entity member is a rigid body component. This component provides an interface to interact with the 2D physics body associated with this entity.";
 		newDataMember.PrimitiveType.Type = ScriptTokenType::None;
@@ -1009,8 +997,9 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Input", "This namespace provides functions allow access to the current input state and manage the current input mode/mapping");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Audio", "This namespace provides functions that can manage audio files and play audio");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Math", "This namespace provides various math functions to be used.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Network", "This namespace provides function that interact with the active network connection between the current client and the server.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Network", "This namespace provides functions that interact with the active network connection between the current client and the server.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Scripts", "This namespace provides access to all available scripts in the current project.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AI", "This namespace provides functions that interact with the AI system in the engine.");
 	}
 
 	void ScriptCompilerService::CreateKGScriptFunctionDefinitions()
@@ -1049,7 +1038,37 @@ namespace Kargono::Scripting
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
 
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AI" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "SendMessage" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "message_type" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "messageType" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "entity" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "senderEntity" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "entity" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "receiverEntity" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "float" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "delayTime" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Send a message from the indicated sender entity to the indicated receiver entity. The first parameter is the message type, second parameter is the sender entity, third parameter is the receiver entity, and the final parameter is the delay as a float.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "AI_SendMessage";
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -1073,9 +1092,7 @@ namespace Kargono::Scripting
 		{
 			node.Namespace = {};
 		};
-
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
-
 		newFunctionNode = {};
 		newParameter = {};
 

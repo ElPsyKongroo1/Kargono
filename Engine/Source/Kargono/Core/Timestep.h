@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 namespace Kargono
 {
@@ -25,6 +26,10 @@ namespace Kargono
 		float GetMilliseconds() const 
 		{ 
 			return m_Time * 1000.0f;
+		}
+		int32_t GetMillisecondsInt() const
+		{
+			return (int32_t)(m_Time * 1000.0f);
 		}
 	private:
 		//==============================

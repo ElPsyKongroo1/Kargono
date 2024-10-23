@@ -22,6 +22,15 @@ namespace Kargono::Utility
 		{
 			std::erase(string, character);
 		}
+
+		static void RemoveWhitespaceFromString(std::string& string) 
+		{
+			std::erase_if(string, [](unsigned char character)
+			{
+				return std::isspace(character); 
+			});
+		}
+
 		template <typename T>
 		static T RoundDown(T valueToRound, T multipleOf)
 		{

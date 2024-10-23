@@ -509,6 +509,8 @@ namespace Kargono::Panels
 		m_CreateMessageTypePopup.Flags |= EditorUI::EditText_PopupOnly;
 		m_CreateMessageTypePopup.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
+			// Ensure input string does not use whitespace
+			Utility::Operations::RemoveWhitespaceFromString(m_CreateMessageTypePopup.CurrentOption);
 			// Create new AI message
 			bool success = Projects::ProjectService::AddAIMessageType(m_CreateMessageTypePopup.CurrentOption);
 			if (!success)
@@ -517,6 +519,7 @@ namespace Kargono::Panels
 				return;
 			}
 			m_MessageTypeTable.OnRefresh();
+			s_EditorApp->m_TextEditorPanel->RefreshKGScriptEditor();
 		};
 
 		m_EditMessageTypePopup.Label = "Edit Message Type";
@@ -527,6 +530,9 @@ namespace Kargono::Panels
 		};
 		m_EditMessageTypePopup.ConfirmAction = [&]()
 		{
+			// Ensure input string does not use whitespace
+			Utility::Operations::RemoveWhitespaceFromString(m_CreateMessageTypePopup.CurrentOption);
+
 			bool success = Projects::ProjectService::EditAIMessageType(m_ActiveAIMessageType, 
 				m_EditMessageTypeText.CurrentOption);
 
@@ -537,6 +543,7 @@ namespace Kargono::Panels
 				return;
 			}
 			OnRefresh();
+			s_EditorApp->m_TextEditorPanel->RefreshKGScriptEditor();
 		};
 		m_EditMessageTypePopup.DeleteAction = [&]()
 		{
@@ -548,6 +555,7 @@ namespace Kargono::Panels
 			}
 
 			OnRefresh();
+			s_EditorApp->m_TextEditorPanel->RefreshKGScriptEditor();
 		};
 		m_EditMessageTypePopup.PopupContents = [&]()
 		{

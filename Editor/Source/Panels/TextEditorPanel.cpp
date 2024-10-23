@@ -188,6 +188,8 @@ namespace Kargono::Panels
 	void TextEditorPanel::RefreshKGScriptEditor()
 	{
 		Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+		CheckForErrors();
+
 	}
 
 	bool TextEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)

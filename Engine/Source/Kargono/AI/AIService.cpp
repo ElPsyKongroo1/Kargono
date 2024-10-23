@@ -6,6 +6,7 @@
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Assets/AssetService.h"
+#include "Kargono/Utility/Time.h"
 
 
 namespace Kargono::AI
@@ -65,7 +66,7 @@ namespace Kargono::AI
 		}
 
 		// Check/Handle AIContext's delayed messages queue
-		HandleDelayedMessages(timeStep);
+		HandleDelayedMessages();
 	}
 	void AIService::ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle)
 	{
@@ -134,7 +135,7 @@ namespace Kargono::AI
 			Utility::CallWrappedVoidUInt64(aiComponent.CurrentStateReference->OnEnterState->m_Function, entityID);
 		}
 	}
-	void AIService::RevertToPreviousState(UUID entityID)
+	void AIService::RevertPreviousState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -174,24 +175,18 @@ namespace Kargono::AI
 		aiComponent.PreviousStateReference = nullptr;
 		
 	}
-	void AIService::SendAIMessage(uint32_t messageType, UUID senderEntity, UUID receiverEntity, float messageDelay)
+	void AIService::SendAIMessage(uint32_t messageType, UUID senderEntity, UUID receiverEntity, float delayTime)
 	{
 		// Initialize message
-		static constexpr float k_IncrementMessageTime { 0.00025f };
 		KG_ASSERT(s_AIContext);
-		AIMessage newMessage{ messageType, senderEntity, receiverEntity, messageDelay };
+
+		AIMessage newMessage{ messageType, senderEntity, receiverEntity, Utility::Time::GetTime() + delayTime };
 
 		// Check if message should be handled immediately or placed into delay queue
-		if (messageDelay > 0.0f)
+		if (delayTime > 0.001f)
 		{
 			// Insert message into delay queue. If unsuccessful, increment delay time and retry until successful
-			bool insertionSuccess = false;
-			while (!insertionSuccess)
-			{
-				auto [iterator, success] = s_AIContext->MessageQueue.insert({messageDelay, newMessage});
-				insertionSuccess = success;
-				messageDelay += k_IncrementMessageTime;
-			}
+			s_AIContext->MessageQueue.push({std::move(newMessage)});
 		}
 		else
 		{
@@ -199,7 +194,7 @@ namespace Kargono::AI
 			HandleAIMessage(std::move(newMessage));
 		}
 	}
-	void AIService::HandleAIMessage(AIMessage&& messageToHandle)
+	void AIService::HandleAIMessage(const AIMessage& messageToHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -214,29 +209,42 @@ namespace Kargono::AI
 		// Call OnMessage for recipient's global state
 		if (receiverAIComponent.GlobalStateReference && receiverAIComponent.GlobalStateReference->OnMessage)
 		{
-			Utility::CallWrappedVoidUInt32UInt64UInt64Float(receiverAIComponent.GlobalStateReference->OnMessage->m_Function, messageToHandle.MessageType, messageToHandle.SenderEntity, messageToHandle.ReceiverEntity, messageToHandle.Delay);
+			Utility::CallWrappedVoidUInt32UInt64UInt64Float(receiverAIComponent.GlobalStateReference->OnMessage->m_Function, messageToHandle.MessageType, messageToHandle.SenderEntity, messageToHandle.ReceiverEntity, messageToHandle.DispatchTime);
 		}
 
 		// Call OnMessage for recipient's current state
 		if (receiverAIComponent.CurrentStateReference && receiverAIComponent.CurrentStateReference->OnMessage)
 		{
-			Utility::CallWrappedVoidUInt32UInt64UInt64Float(receiverAIComponent.CurrentStateReference->OnMessage->m_Function, messageToHandle.MessageType, messageToHandle.SenderEntity, messageToHandle.ReceiverEntity, messageToHandle.Delay);
+			Utility::CallWrappedVoidUInt32UInt64UInt64Float(receiverAIComponent.CurrentStateReference->OnMessage->m_Function, messageToHandle.MessageType, messageToHandle.SenderEntity, messageToHandle.ReceiverEntity, messageToHandle.DispatchTime);
 		}
 	}
-	void AIService::HandleDelayedMessages(Timestep timeStep)
+	void AIService::HandleDelayedMessages()
 	{
-		// Check all delayed messages in current AIContext
-		for (auto& [delayTime, message] : s_AIContext->MessageQueue)
+		float currentTime = Utility::Time::GetTime();
+		auto& messageQueue = s_AIContext->MessageQueue;
+
+		// Loop through messageQueue and process messages if they are due for dispatch
+		while (!messageQueue.empty())
 		{
-			// Decriment each message's delay using the timestep
+			// Get the current top message
+			const AIMessage& currentMessage = messageQueue.top();
 
-			// Check if each message should be handled
+			// Check if current message is due for dispatch
+			if (currentMessage.DispatchTime <= currentTime)
+			{
+				// Handle message
+				HandleAIMessage(std::move(currentMessage));
+
+				// Remove message from queue
+				messageQueue.pop();
+			}
+
+			// Exit if current message (and remainder of queue) is still waiting...
+			else
+			{
+				break;
+			}
 		}
-
-		// Call HandleAIMessage() for delay's <= 0.0f
-
-		// Remove all handled messages
-
 	}
 }
 

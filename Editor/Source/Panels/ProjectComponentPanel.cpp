@@ -100,6 +100,9 @@ namespace Kargono::Panels
 		m_CreateComponentPopup.PopupWidth = 420.0f;
 		m_CreateComponentPopup.ConfirmAction = [&]()
 		{
+			// Ensure input string does not use whitespace
+			Utility::Operations::RemoveWhitespaceFromString(m_SelectComponentName.CurrentOption);
+
 			if (m_SelectComponentName.CurrentOption == "")
 			{
 				return;
@@ -230,6 +233,8 @@ namespace Kargono::Panels
 		};
 		m_AddFieldPopup.ConfirmAction = [&]()
 		{
+			// Ensure input string does not use whitespace
+			Utility::Operations::RemoveWhitespaceFromString(m_AddFieldName.CurrentOption);
 			bool success = ECS::ProjectComponentService::AddFieldToProjectComponent(m_EditorProjectComponent, 
 				Utility::StringToWrappedVarType(m_AddFieldType.CurrentOption.Label),
 				m_AddFieldName.CurrentOption);
@@ -283,7 +288,8 @@ namespace Kargono::Panels
 		};
 		m_EditFieldPopup.ConfirmAction = [&]()
 		{
-
+			// Ensure input string does not use whitespace
+			Utility::Operations::RemoveWhitespaceFromString(m_EditFieldName.CurrentOption);
 			bool success = ECS::ProjectComponentService::EditFieldInProjectComponent(m_EditorProjectComponent, m_ActiveField,
 				m_EditFieldName.CurrentOption, Utility::StringToWrappedVarType(m_EditFieldType.CurrentOption.Label));
 			if (!success)

@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <unordered_set>
+#include <queue>
 
 namespace Kargono::AI
 {
@@ -18,7 +19,7 @@ namespace Kargono::AI
 		uint32_t MessageType{};
 		UUID SenderEntity{ Assets::EmptyHandle };
 		UUID ReceiverEntity{ Assets::EmptyHandle };
-		float Delay{ 0.0f };
+		float DispatchTime{ 0.0f };
 	};
 
 
@@ -47,9 +48,16 @@ namespace Kargono::AI
 	//=========================
 	// AI Context Class
 	//=========================
+
+	// Comparison functor for sorting AIMessages inside AIContext's MessageQueue
+	inline auto k_MessageQueueComparisonFunctor = [](const AIMessage& aiMessageOne, const AIMessage& aiMessageTwo) 
+	{
+		return aiMessageOne.DispatchTime < aiMessageTwo.DispatchTime;
+	};
+
 	struct AIContext
 	{
-		std::map<float, AIMessage> MessageQueue {};
+		std::priority_queue<AIMessage, std::vector<AIMessage>, decltype(k_MessageQueueComparisonFunctor)> MessageQueue {};
 		std::unordered_set<uint32_t> AllMessageTypes {};
 	};
 
@@ -76,18 +84,18 @@ namespace Kargono::AI
 		//=========================
 		static void ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle);
 		static void ChangeCurrentState(UUID entityID, Assets::AssetHandle newAIStateHandle);
-		static void RevertToPreviousState(UUID entityID);
+		static void RevertPreviousState(UUID entityID);
 
 		//=========================
 		// Send AIMessages
 		//=========================
-		static void SendAIMessage(uint32_t messageType, UUID senderEntity, UUID receiverEntity, float messageDelay);
+		static void SendAIMessage(uint32_t messageType, UUID senderEntity, UUID receiverEntity, float delayTime);
 	private:
 		//=========================
 		// Internal Functionality
 		//=========================
-		static void HandleAIMessage(AIMessage&& messageToHandle);
-		static void HandleDelayedMessages(Timestep timeStep);
+		static void HandleAIMessage(const AIMessage& messageToHandle);
+		static void HandleDelayedMessages();
 		
 	private:
 		static inline Ref<AIContext> s_AIContext{ nullptr };

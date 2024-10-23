@@ -65,8 +65,8 @@ namespace Kargono
 		m_ProjectComponentPanel = CreateScope<Panels::ProjectComponentPanel>();
 		m_UIEditorPanel = CreateScope<Panels::UIEditorPanel>();
 		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
-		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
+		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
 		m_GameStatePanel = CreateScope<Panels::GameStatePanel>();
 		m_InputModePanel = CreateScope<Panels::InputModePanel>();
 		m_ContentBrowserPanel = CreateScope<Panels::ContentBrowserPanel>();
