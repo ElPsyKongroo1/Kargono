@@ -87,6 +87,7 @@ namespace Kargono::Panels
 			ImGui::EndPopup();
 		}
 
+
 		EditorUI::EditorUIService::EndWindow();
 	}
 	bool TestingPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)

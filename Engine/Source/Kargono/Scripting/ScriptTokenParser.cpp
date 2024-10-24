@@ -2115,11 +2115,14 @@ namespace Kargono::Scripting
 		{
 			auto [success, expression] = ParseExpressionNode(currentLocation);
 
-			if (!success)
+			if (success)
 			{
-				return { false, nullptr };
+				newStatementReturn.ReturnValue = expression;
 			}
-			newStatementReturn.ReturnValue = expression;
+			else
+			{
+				newStatementReturn.ReturnValue = nullptr;
+			}
 		}
 
 		if (CheckForErrors())
@@ -2156,7 +2159,7 @@ namespace Kargono::Scripting
 		currentLocation++;
 
 		// Ensure return type of the function is equivalent to the returnExpression type
-		if (m_CurrentReturnType.Value != GetPrimitiveTypeFromToken(newStatementReturn.ReturnValue->GetReturnType()).Value)
+		if (newStatementReturn.ReturnValue && m_CurrentReturnType.Value != GetPrimitiveTypeFromToken(newStatementReturn.ReturnValue->GetReturnType()).Value)
 		{
 			StoreParseError(ParseErrorType::Statement, "Return statement expression type does not match function return type", GetCurrentToken());
 			return { false, nullptr };

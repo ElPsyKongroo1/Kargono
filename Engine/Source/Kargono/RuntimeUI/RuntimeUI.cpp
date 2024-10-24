@@ -84,8 +84,9 @@ namespace Kargono::RuntimeUI
 					}
 				}
 			}
-
 		}
+
+		CalculateDirections();
 	}
 
 	void RuntimeUIService::SetActiveUIFromName(const std::string& uiName)

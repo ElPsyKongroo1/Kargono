@@ -643,6 +643,10 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileOneParameters(Scenes_IsSceneActive, bool, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(SignalAll, void, uint16_t)
 		AddEngineFunctionToCPPFileOneParameters(AI_RevertPreviousState, void, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(AI_ClearGlobalState, void, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(AI_ClearCurrentState, void, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(AI_ClearPreviousState, void, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(AI_ClearAllStates, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(GetGameStateField, void*, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(LoadInputModeByName, void, const std::string&)
@@ -695,6 +699,10 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(VoidUInt64, void, uint64_t)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(AI_RevertPreviousState)
+		AddEngineFunctionToCPPFileEnd(AI_ClearGlobalState)
+		AddEngineFunctionToCPPFileEnd(AI_ClearCurrentState)
+		AddEngineFunctionToCPPFileEnd(AI_ClearPreviousState)
+		AddEngineFunctionToCPPFileEnd(AI_ClearAllStates)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64UInt64, void, uint64_t, uint64_t)
 		outputStream << "{\n";
@@ -982,5 +990,9 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AI_ChangeCurrentState, AI::AIService::ChangeCurrentState, VoidUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_RevertPreviousState, AI::AIService::RevertPreviousState, VoidUInt64)
 		AddEngineFunctionPointerToDll(AI_SendMessage, AI::AIService::SendAIMessage, VoidUInt32UInt64UInt64Float)
+		AddEngineFunctionPointerToDll(AI_ClearGlobalState, AI::AIService::ClearGlobalState, VoidUInt64)
+		AddEngineFunctionPointerToDll(AI_ClearCurrentState, AI::AIService::ClearCurrentState, VoidUInt64)
+		AddEngineFunctionPointerToDll(AI_ClearPreviousState, AI::AIService::ClearPreviousState, VoidUInt64)
+		AddEngineFunctionPointerToDll(AI_ClearAllStates, AI::AIService::ClearAllStates, VoidUInt64)
 	}
 }

@@ -62,9 +62,19 @@ namespace Kargono::Scripting
 		else if (StatementReturn* returnStatement = std::get_if<StatementReturn>(&statement->Value))
 		{
 			AddIndentation();
-			m_OutputText << "return ";
-			GenerateExpression(returnStatement->ReturnValue);
-			m_OutputText << ";\n";
+
+			if (returnStatement->ReturnValue)
+			{
+				m_OutputText << "return ";
+				GenerateExpression(returnStatement->ReturnValue);
+				m_OutputText << ";\n";
+			}
+			else
+			{
+				
+				m_OutputText << "return;\n";
+			}
+			
 		}
 		else if (StatementDeclaration* declarationStatement = std::get_if<StatementDeclaration>(&statement->Value))
 		{

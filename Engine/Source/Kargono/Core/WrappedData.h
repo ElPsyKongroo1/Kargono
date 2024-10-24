@@ -282,8 +282,8 @@ namespace Kargono
 		Void_UInt32UInt64UInt64Float,
 		Bool_None,
 		Bool_UInt64,
-		Bool_UInt64UInt16UInt64,
 		Bool_UInt64UInt64,
+		Bool_UInt64UInt16UInt64,
 	};
 
 	inline WrappedFuncType s_AllWrappedFuncs[] = 
@@ -295,6 +295,7 @@ namespace Kargono
 		WrappedFuncType::Void_UInt32,
 		WrappedFuncType::Void_UInt64,
 		WrappedFuncType::Void_UInt64Float,
+		WrappedFuncType::Void_UInt32UInt64UInt64Float,
 		WrappedFuncType::Bool_None,
 		WrappedFuncType::Bool_UInt64,
 		WrappedFuncType::Bool_UInt64UInt64,

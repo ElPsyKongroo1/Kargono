@@ -173,8 +173,78 @@ namespace Kargono::AI
 		// Clear previous state
 		aiComponent.PreviousStateHandle = Assets::EmptyHandle;
 		aiComponent.PreviousStateReference = nullptr;
-		
 	}
+
+	void AIService::ClearGlobalState(UUID entityID)
+	{
+		// Ensure a valid scene is active and a valid entity is provided
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
+		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
+
+		// Get ai component to be modified
+		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+
+		// Clear global state
+		aiComponent.GlobalStateHandle = Assets::EmptyHandle;
+		aiComponent.GlobalStateReference = nullptr;
+	}
+	void AIService::ClearCurrentState(UUID entityID)
+	{
+		// Ensure a valid scene is active and a valid entity is provided
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
+		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
+
+		// Get ai component to be modified
+		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+
+		// Clear current state
+		aiComponent.CurrentStateHandle = Assets::EmptyHandle;
+		aiComponent.CurrentStateReference = nullptr;
+	}
+	void AIService::ClearPreviousState(UUID entityID)
+	{
+		// Ensure a valid scene is active and a valid entity is provided
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
+		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
+
+		// Get ai component to be modified
+		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+
+		// Clear previous state
+		aiComponent.PreviousStateHandle = Assets::EmptyHandle;
+		aiComponent.PreviousStateReference = nullptr;
+	}
+	void AIService::ClearAllStates(UUID entityID)
+	{
+		// Ensure a valid scene is active and a valid entity is provided
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
+		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
+
+		// Get ai component to be modified
+		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+
+		// Clear global state
+		aiComponent.GlobalStateHandle = Assets::EmptyHandle;
+		aiComponent.GlobalStateReference = nullptr;
+
+		// Clear current state
+		aiComponent.CurrentStateHandle = Assets::EmptyHandle;
+		aiComponent.CurrentStateReference = nullptr;
+
+		// Clear previous state
+		aiComponent.PreviousStateHandle = Assets::EmptyHandle;
+		aiComponent.PreviousStateReference = nullptr;
+	}
+
+
 	void AIService::SendAIMessage(uint32_t messageType, UUID senderEntity, UUID receiverEntity, float delayTime)
 	{
 		// Initialize message

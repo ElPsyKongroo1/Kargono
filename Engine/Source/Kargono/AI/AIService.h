@@ -85,6 +85,10 @@ namespace Kargono::AI
 		static void ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle);
 		static void ChangeCurrentState(UUID entityID, Assets::AssetHandle newAIStateHandle);
 		static void RevertPreviousState(UUID entityID);
+		static void ClearGlobalState(UUID entityID);
+		static void ClearCurrentState(UUID entityID);
+		static void ClearPreviousState(UUID entityID);
+		static void ClearAllStates(UUID entityID);
 
 		//=========================
 		// Send AIMessages

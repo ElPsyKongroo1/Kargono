@@ -838,6 +838,76 @@ namespace Kargono::Scripting
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
 
+
+
+
+
+
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "ClearGlobalState" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionMember.Description = "This function clears the current global state of the entity's AIStateComponent. This function takes no parameters";
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "AI_ClearGlobalState(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "ClearCurrentState" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionMember.Description = "This function clears the current current state of the entity's AIStateComponent. This function takes no parameters";
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "AI_ClearCurrentState(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "ClearPreviousState" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionMember.Description = "This function clears the current previous state of the entity's AIStateComponent. This function takes no parameters";
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "AI_ClearPreviousState(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "ClearAllStates" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionMember.Description = "This function clears all AI State references inside an entity's AIStateComponent. This function takes no parameters";
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+			generator.m_OutputText << "AI_ClearAllStates(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ")";
+		};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 
