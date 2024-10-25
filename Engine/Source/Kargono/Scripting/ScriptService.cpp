@@ -167,7 +167,7 @@ namespace Kargono::Scripting
 #else
 		std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script\\ExportBody.dll" };
 #endif
-		
+
 		// Rebuild shared library if no library exists
 		static bool attemptedToRebuild = false;
 		if (!std::filesystem::exists(dllLocation))
@@ -437,38 +437,38 @@ namespace Kargono::Scripting
 {
 	// Initial definitions and static members for insertion functions (functions that insert engine pointers into the scripting dll)
 	DefineInsertFunction(VoidNone, void)
-	DefineInsertFunction(VoidString, void, const std::string&)
-	DefineInsertFunction(VoidUInt16, void, uint16_t)
-	DefineInsertFunction(VoidUInt64, void, uint64_t)
-	DefineInsertFunction(VoidUInt64UInt64, void, uint64_t, uint64_t)
-	DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
-	DefineInsertFunction(VoidStringVoidPtr, void, const std::string&, void*)
-	DefineInsertFunction(VoidStringString, void, const std::string&, const std::string&)
-	DefineInsertFunction(VoidStringStringBool, void, const std::string&, const std::string&, bool)
-	DefineInsertFunction(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
-	DefineInsertFunction(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
-	DefineInsertFunction(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
-	DefineInsertFunction(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
-	DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
-	DefineInsertFunction(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
-	DefineInsertFunction(VoidPtrString, void*, const std::string&)
-	DefineInsertFunction(VoidPtrUInt64String, void*, uint64_t, const std::string&)
-	DefineInsertFunction(VoidUInt64Vec2, void, uint64_t, Math::vec2)
-	DefineInsertFunction(VoidUInt64Vec3, void, uint64_t, Math::vec3)
-	DefineInsertFunction(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
-	DefineInsertFunction(BoolStringString, bool, const std::string&, const std::string&)
-	DefineInsertFunction(BoolUInt64String, bool, uint64_t, const std::string&)
-	DefineInsertFunction(BoolUInt16, bool, uint16_t)
-	DefineInsertFunction(BoolString, bool, const std::string&)
-	DefineInsertFunction(UInt16None, uint16_t)
-	DefineInsertFunction(Int32Int32Int32, int32_t, int32_t, int32_t)
-	DefineInsertFunction(UInt64String, uint64_t, const std::string&)
-	DefineInsertFunction(Vec2UInt64, Math::vec2, uint64_t)
-	DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
-	DefineInsertFunction(StringUInt64, const std::string&, uint64_t)
+		DefineInsertFunction(VoidString, void, const std::string&)
+		DefineInsertFunction(VoidUInt16, void, uint16_t)
+		DefineInsertFunction(VoidUInt64, void, uint64_t)
+		DefineInsertFunction(VoidUInt64UInt64, void, uint64_t, uint64_t)
+		DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
+		DefineInsertFunction(VoidStringVoidPtr, void, const std::string&, void*)
+		DefineInsertFunction(VoidStringString, void, const std::string&, const std::string&)
+		DefineInsertFunction(VoidStringStringBool, void, const std::string&, const std::string&, bool)
+		DefineInsertFunction(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
+		DefineInsertFunction(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
+		DefineInsertFunction(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
+		DefineInsertFunction(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
+		DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
+		DefineInsertFunction(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
+		DefineInsertFunction(VoidPtrString, void*, const std::string&)
+		DefineInsertFunction(VoidPtrUInt64String, void*, uint64_t, const std::string&)
+		DefineInsertFunction(VoidUInt64Vec2, void, uint64_t, Math::vec2)
+		DefineInsertFunction(VoidUInt64Vec3, void, uint64_t, Math::vec3)
+		DefineInsertFunction(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
+		DefineInsertFunction(BoolStringString, bool, const std::string&, const std::string&)
+		DefineInsertFunction(BoolUInt64String, bool, uint64_t, const std::string&)
+		DefineInsertFunction(BoolUInt16, bool, uint16_t)
+		DefineInsertFunction(BoolString, bool, const std::string&)
+		DefineInsertFunction(UInt16None, uint16_t)
+		DefineInsertFunction(Int32Int32Int32, int32_t, int32_t, int32_t)
+		DefineInsertFunction(UInt64String, uint64_t, const std::string&)
+		DefineInsertFunction(Vec2UInt64, Math::vec2, uint64_t)
+		DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
+		DefineInsertFunction(StringUInt64, const std::string&, uint64_t)
 
-	// Engine Functions that need to be defined only in this file
-	static void Log(const std::string& info)
+		// Engine Functions that need to be defined only in this file
+		static void Log(const std::string& info)
 	{
 		KG_WARN(info);
 	}
@@ -484,6 +484,20 @@ namespace Kargono::Scripting
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
 			Assets::AssetService::DeserializeScriptRegistry();
+		}
+
+		// Load in project components if not already loaded
+		if (Assets::AssetService::GetProjectComponentRegistry().size() == 0)
+		{
+			KG_WARN("Loading script registry from disk since in-memory registry is empty");
+			Assets::AssetService::DeserializeProjectComponentRegistry();
+		}
+
+		// Load in ai states if not already loaded
+		if (Assets::AssetService::GetAIStateRegistry().size() == 0)
+		{
+			KG_WARN("Loading script registry from disk since in-memory registry is empty");
+			Assets::AssetService::DeserializeAIStateRegistry();
 		}
 
 		bool buildSuccessful = true;
@@ -557,60 +571,60 @@ namespace Kargono::Scripting
 		outputStream << "extern \"C\"" << "\n";
 		outputStream << "\t{" << "\n";
 
-		AddImportFunctionToHeaderFile(VoidNone, void) 
-		AddImportFunctionToHeaderFile(VoidString, void, const std::string&) 
-		AddImportFunctionToHeaderFile(VoidUInt16, void, uint16_t) 
-		AddImportFunctionToHeaderFile(VoidUInt64, void, uint64_t) 
-		AddImportFunctionToHeaderFile(VoidUInt64UInt64, void, uint64_t, uint64_t) 
-		AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool) 
-		AddImportFunctionToHeaderFile(VoidStringVoidPtr, void, const std::string&, void*) 
-		AddImportFunctionToHeaderFile(VoidStringString, void, const std::string&, const std::string&) 
-		AddImportFunctionToHeaderFile(VoidStringStringBool, void, const std::string&, const std::string&, bool) 
-		AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&) 
-		AddImportFunctionToHeaderFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4) 
-		AddImportFunctionToHeaderFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
-		AddImportFunctionToHeaderFile(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
-		AddImportFunctionToHeaderFile(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
-		AddImportFunctionToHeaderFile(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
-		AddImportFunctionToHeaderFile(VoidPtrString, void*, const std::string&) 
-		AddImportFunctionToHeaderFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
-		AddImportFunctionToHeaderFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
-		AddImportFunctionToHeaderFile(VoidUInt64Vec2, void, uint64_t, Math::vec2)
-		AddImportFunctionToHeaderFile(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
-		AddImportFunctionToHeaderFile(BoolStringString, bool, const std::string&, const std::string&) 
-		AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, const std::string&) 
-		AddImportFunctionToHeaderFile(BoolUInt16, bool, uint16_t) 
-		AddImportFunctionToHeaderFile(BoolString, bool, const std::string&) 
-		AddImportFunctionToHeaderFile(UInt16None, uint16_t) 
-		AddImportFunctionToHeaderFile(UInt64String, uint64_t, const std::string&)
-		AddImportFunctionToHeaderFile(Int32Int32Int32, int32_t, int32_t, int32_t)
-		AddImportFunctionToHeaderFile(Vec2UInt64, Math::vec2, uint64_t)
-		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
-		AddImportFunctionToHeaderFile(StringUInt64, const std::string&, uint64_t)
-		// Add Script Function Declarations
-		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
-		{
-			Ref<Script> script = Assets::AssetService::GetScript(handle);
-			WrappedVarType returnValue = Utility::WrappedFuncTypeToReturnType(script->m_FuncType);
-			std::vector<WrappedVarType> parameters = Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType);
-
-			outputStream << "\t\tKARGONO_API ";
-			outputStream << Utility::WrappedVarTypeToCPPString(returnValue) << " " << script->m_ScriptName << "(";
-
-			// Write out parameters into function signature
-			char letterIteration{ 'a' };
-			for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < parameters.size(); iteration++)
+		AddImportFunctionToHeaderFile(VoidNone, void)
+			AddImportFunctionToHeaderFile(VoidString, void, const std::string&)
+			AddImportFunctionToHeaderFile(VoidUInt16, void, uint16_t)
+			AddImportFunctionToHeaderFile(VoidUInt64, void, uint64_t)
+			AddImportFunctionToHeaderFile(VoidUInt64UInt64, void, uint64_t, uint64_t)
+			AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool)
+			AddImportFunctionToHeaderFile(VoidStringVoidPtr, void, const std::string&, void*)
+			AddImportFunctionToHeaderFile(VoidStringString, void, const std::string&, const std::string&)
+			AddImportFunctionToHeaderFile(VoidStringStringBool, void, const std::string&, const std::string&, bool)
+			AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
+			AddImportFunctionToHeaderFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
+			AddImportFunctionToHeaderFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
+			AddImportFunctionToHeaderFile(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
+			AddImportFunctionToHeaderFile(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
+			AddImportFunctionToHeaderFile(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
+			AddImportFunctionToHeaderFile(VoidPtrString, void*, const std::string&)
+			AddImportFunctionToHeaderFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
+			AddImportFunctionToHeaderFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
+			AddImportFunctionToHeaderFile(VoidUInt64Vec2, void, uint64_t, Math::vec2)
+			AddImportFunctionToHeaderFile(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
+			AddImportFunctionToHeaderFile(BoolStringString, bool, const std::string&, const std::string&)
+			AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, const std::string&)
+			AddImportFunctionToHeaderFile(BoolUInt16, bool, uint16_t)
+			AddImportFunctionToHeaderFile(BoolString, bool, const std::string&)
+			AddImportFunctionToHeaderFile(UInt16None, uint16_t)
+			AddImportFunctionToHeaderFile(UInt64String, uint64_t, const std::string&)
+			AddImportFunctionToHeaderFile(Int32Int32Int32, int32_t, int32_t, int32_t)
+			AddImportFunctionToHeaderFile(Vec2UInt64, Math::vec2, uint64_t)
+			AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
+			AddImportFunctionToHeaderFile(StringUInt64, const std::string&, uint64_t)
+			// Add Script Function Declarations
+			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
-				outputStream << Utility::WrappedVarTypeToCPPString(parameters.at(iteration)) << " " << letterIteration;
-				if (iteration != parameters.size() - 1)
-				{
-					outputStream << ',';
-				}
-				letterIteration++;
-			}
+				Ref<Script> script = Assets::AssetService::GetScript(handle);
+				WrappedVarType returnValue = Utility::WrappedFuncTypeToReturnType(script->m_FuncType);
+				std::vector<WrappedVarType> parameters = Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType);
 
-			outputStream << ");" << "\n";
-		}
+				outputStream << "\t\tKARGONO_API ";
+				outputStream << Utility::WrappedVarTypeToCPPString(returnValue) << " " << script->m_ScriptName << "(";
+
+				// Write out parameters into function signature
+				char letterIteration{ 'a' };
+				for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < parameters.size(); iteration++)
+				{
+					outputStream << Utility::WrappedVarTypeToCPPString(parameters.at(iteration)) << " " << letterIteration;
+					if (iteration != parameters.size() - 1)
+					{
+						outputStream << ',';
+					}
+					letterIteration++;
+				}
+
+				outputStream << ");" << "\n";
+			}
 
 		outputStream << "\t}" << "\n";
 		outputStream << "}" << "\n";
@@ -632,183 +646,183 @@ namespace Kargono::Scripting
 
 		// Insert Callable Function Definitions into CPP file
 		AddEngineFunctionToCPPFileNoParameters(EnableReadyCheck, void)
-		AddEngineFunctionToCPPFileNoParameters(RequestUserCount, void)
-		AddEngineFunctionToCPPFileNoParameters(RequestJoinSession, void)
-		AddEngineFunctionToCPPFileNoParameters(LeaveCurrentSession, void)
-		AddEngineFunctionToCPPFileNoParameters(GetActiveSessionSlot, uint16_t)
-		AddEngineFunctionToCPPFileOneParameters(Log, void, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, const std::string&, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(PlaySoundFromName, void, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(IsKeyPressed, bool, uint16_t)
-		AddEngineFunctionToCPPFileOneParameters(Scenes_IsSceneActive, bool, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(SignalAll, void, uint16_t)
-		AddEngineFunctionToCPPFileOneParameters(AI_RevertPreviousState, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(AI_ClearGlobalState, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(AI_ClearCurrentState, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(AI_ClearPreviousState, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(AI_ClearAllStates, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(GetGameStateField, void*, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromName, void, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(LoadInputModeByName, void, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(LoadUserInterfaceFromName, void, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromName, void, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(TransformComponent_GetTranslation, Math::vec3, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(Rigidbody2DComponent_GetLinearVelocity, Math::vec2, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(FindEntityHandleByName, uint64_t, const std::string&)
-		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, const std::string&)
-		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_IsWidgetSelected, bool, const std::string&, const std::string&)
-		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomNumber, int32_t, int32_t, int32_t)
-		AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)
-		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
-		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
-		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
-		AddEngineFunctionToCPPFileTwoParameters(AI_ChangeGlobalState, void, uint64_t, uint64_t)
-		AddEngineFunctionToCPPFileTwoParameters(AI_ChangeCurrentState, void, uint64_t, uint64_t)
-		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
-		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
-		AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)
-		AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)
-		AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
-		AddEngineFunctionToCPPFileThreeParameters(SetWidgetBackgroundColor, void, const std::string&, const std::string&, Math::vec4)
-		AddEngineFunctionToCPPFileThreeParameters(Scenes_GetProjectComponentField, void*, uint64_t, uint64_t, uint64_t)
-		AddEngineFunctionToCPPFileThreeParameters(SendAllEntityPhysics, void, uint64_t, Math::vec3, Math::vec2)
-		AddEngineFunctionToCPPFileFourParameters(Scenes_SetProjectComponentField, void, uint64_t, uint64_t, uint64_t, void*)
-		AddEngineFunctionToCPPFileFourParameters(AI_SendMessage, void, uint32_t, uint64_t, uint64_t, float)
+			AddEngineFunctionToCPPFileNoParameters(RequestUserCount, void)
+			AddEngineFunctionToCPPFileNoParameters(RequestJoinSession, void)
+			AddEngineFunctionToCPPFileNoParameters(LeaveCurrentSession, void)
+			AddEngineFunctionToCPPFileNoParameters(GetActiveSessionSlot, uint16_t)
+			AddEngineFunctionToCPPFileOneParameters(Log, void, const std::string&)
+			AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, const std::string&, uint64_t)
+			AddEngineFunctionToCPPFileOneParameters(PlaySoundFromName, void, const std::string&)
+			AddEngineFunctionToCPPFileOneParameters(IsKeyPressed, bool, uint16_t)
+			AddEngineFunctionToCPPFileOneParameters(Scenes_IsSceneActive, bool, const std::string&)
+			AddEngineFunctionToCPPFileOneParameters(SignalAll, void, uint16_t)
+			AddEngineFunctionToCPPFileOneParameters(AI_RevertPreviousState, void, uint64_t)
+			AddEngineFunctionToCPPFileOneParameters(AI_ClearGlobalState, void, uint64_t)
+			AddEngineFunctionToCPPFileOneParameters(AI_ClearCurrentState, void, uint64_t)
+			AddEngineFunctionToCPPFileOneParameters(AI_ClearPreviousState, void, uint64_t)
+			AddEngineFunctionToCPPFileOneParameters(AI_ClearAllStates, void, uint64_t)
+			AddEngineFunctionToCPPFileOneParameters(GetGameStateField, void*, const std::string&)
+			AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromName, void, const std::string&)
+			AddEngineFunctionToCPPFileOneParameters(LoadInputModeByName, void, const std::string&)
+			AddEngineFunctionToCPPFileOneParameters(LoadUserInterfaceFromName, void, const std::string&)
+			AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromName, void, const std::string&)
+			AddEngineFunctionToCPPFileOneParameters(TransformComponent_GetTranslation, Math::vec3, uint64_t)
+			AddEngineFunctionToCPPFileOneParameters(Rigidbody2DComponent_GetLinearVelocity, Math::vec2, uint64_t)
+			AddEngineFunctionToCPPFileOneParameters(FindEntityHandleByName, uint64_t, const std::string&)
+			AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, const std::string&)
+			AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_IsWidgetSelected, bool, const std::string&, const std::string&)
+			AddEngineFunctionToCPPFileTwoParameters(GenerateRandomNumber, int32_t, int32_t, int32_t)
+			AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)
+			AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
+			AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
+			AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
+			AddEngineFunctionToCPPFileTwoParameters(AI_ChangeGlobalState, void, uint64_t, uint64_t)
+			AddEngineFunctionToCPPFileTwoParameters(AI_ChangeCurrentState, void, uint64_t, uint64_t)
+			AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
+			AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
+			AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)
+			AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)
+			AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
+			AddEngineFunctionToCPPFileThreeParameters(SetWidgetBackgroundColor, void, const std::string&, const std::string&, Math::vec4)
+			AddEngineFunctionToCPPFileThreeParameters(Scenes_GetProjectComponentField, void*, uint64_t, uint64_t, uint64_t)
+			AddEngineFunctionToCPPFileThreeParameters(SendAllEntityPhysics, void, uint64_t, Math::vec3, Math::vec2)
+			AddEngineFunctionToCPPFileFourParameters(Scenes_SetProjectComponentField, void, uint64_t, uint64_t, uint64_t, void*)
+			AddEngineFunctionToCPPFileFourParameters(AI_SendMessage, void, uint32_t, uint64_t, uint64_t, float)
 
-		// Insert FuncPointer Importing for DLL processing
-		AddImportFunctionToCPPFile(VoidNone, void)
-		outputStream << "{\n";
+			// Insert FuncPointer Importing for DLL processing
+			AddImportFunctionToCPPFile(VoidNone, void)
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(EnableReadyCheck)
-		AddEngineFunctionToCPPFileEnd(RequestUserCount)
-		AddEngineFunctionToCPPFileEnd(RequestJoinSession)
-		AddEngineFunctionToCPPFileEnd(LeaveCurrentSession)
-		outputStream << "}\n";
+			AddEngineFunctionToCPPFileEnd(RequestUserCount)
+			AddEngineFunctionToCPPFileEnd(RequestJoinSession)
+			AddEngineFunctionToCPPFileEnd(LeaveCurrentSession)
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt16, void, uint16_t)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SignalAll)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidString, void, const std::string&)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Log)
-		AddEngineFunctionToCPPFileEnd(PlaySoundFromName)
-		AddEngineFunctionToCPPFileEnd(PlayStereoSoundFromName)
-		AddEngineFunctionToCPPFileEnd(LoadInputModeByName)
-		AddEngineFunctionToCPPFileEnd(TransitionSceneFromName)
-		AddEngineFunctionToCPPFileEnd(LoadUserInterfaceFromName)
-		outputStream << "}\n";
+			AddEngineFunctionToCPPFileEnd(PlaySoundFromName)
+			AddEngineFunctionToCPPFileEnd(PlayStereoSoundFromName)
+			AddEngineFunctionToCPPFileEnd(LoadInputModeByName)
+			AddEngineFunctionToCPPFileEnd(TransitionSceneFromName)
+			AddEngineFunctionToCPPFileEnd(LoadUserInterfaceFromName)
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64, void, uint64_t)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(AI_RevertPreviousState)
-		AddEngineFunctionToCPPFileEnd(AI_ClearGlobalState)
-		AddEngineFunctionToCPPFileEnd(AI_ClearCurrentState)
-		AddEngineFunctionToCPPFileEnd(AI_ClearPreviousState)
-		AddEngineFunctionToCPPFileEnd(AI_ClearAllStates)
-		outputStream << "}\n";
+			AddEngineFunctionToCPPFileEnd(AI_ClearGlobalState)
+			AddEngineFunctionToCPPFileEnd(AI_ClearCurrentState)
+			AddEngineFunctionToCPPFileEnd(AI_ClearPreviousState)
+			AddEngineFunctionToCPPFileEnd(AI_ClearAllStates)
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64UInt64, void, uint64_t, uint64_t)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(AI_ChangeGlobalState)
-		AddEngineFunctionToCPPFileEnd(AI_ChangeCurrentState)
-		outputStream << "}\n";
+			AddEngineFunctionToCPPFileEnd(AI_ChangeCurrentState)
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringBool, void, const std::string&, bool)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SetDisplayWindow)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringVoidPtr, void, const std::string&, void*)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SetGameStateField)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringString, void, const std::string&, const std::string&)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SetSelectedWidget)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringStringBool, void, const std::string&, const std::string&, bool)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SetWidgetSelectable)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SetWidgetText)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SetWidgetTextColor)
-		AddEngineFunctionToCPPFileEnd(SetWidgetBackgroundColor)
-		outputStream << "}\n";
+			AddEngineFunctionToCPPFileEnd(SetWidgetBackgroundColor)
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SendAllEntityLocation)
-		AddEngineFunctionToCPPFileEnd(TransformComponent_SetTranslation)
-		outputStream << "}\n";
+			AddEngineFunctionToCPPFileEnd(TransformComponent_SetTranslation)
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64Vec2, void, uint64_t, Math::vec2)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Rigidbody2DComponent_SetLinearVelocity)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolUInt64String, bool, uint64_t, const std::string&)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(CheckHasComponent)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolStringString, bool, const std::string&, const std::string&)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_IsWidgetSelected)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(UInt16None, uint16_t)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(GetActiveSessionSlot)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(Vec3UInt64, Math::vec3, uint64_t)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(TransformComponent_GetTranslation)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(Vec2UInt64, Math::vec2, uint64_t)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Rigidbody2DComponent_GetLinearVelocity)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(UInt64String, uint64_t, const std::string&)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(FindEntityHandleByName)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SendAllEntityPhysics)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrString, void*, const std::string&)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(GetGameStateField)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(Int32Int32Int32, int32_t, int32_t, int32_t)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(GenerateRandomNumber)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolUInt16, bool, uint16_t)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(IsKeyPressed)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolString, bool, const std::string&)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Scenes_IsSceneActive)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(StringUInt64, const std::string&, uint64_t)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(TagComponent_GetTag)
-		outputStream << "}\n";	
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Scenes_GetProjectComponentField)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Scenes_SetProjectComponentField)
-		outputStream << "}\n";
+			outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
-		outputStream << "{\n";
+			outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(AI_SendMessage)
-		outputStream << "}\n";
+			outputStream << "}\n";
 
 		// Write scripts into a single cpp file
 		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
@@ -817,7 +831,7 @@ namespace Kargono::Scripting
 			{
 				continue;
 			}
-			
+
 			outputStream << ScriptCompilerService::CompileScriptFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
 			outputStream << '\n';
 		}
@@ -899,8 +913,8 @@ namespace Kargono::Scripting
 			outputStream << "/DEBUG "; // Specifies output as debug files
 			outputStream << "/PDB:" << "\"" << debugSymbolsPath.string() << "\"" << " "; // Specify .pdb file location/name
 		}
-		outputStream << "/OUT:" << "\"" << binaryFile.string() << "\"" <<" "; // Specify output directory
-		outputStream << "\"" <<objectPath.string() << "\""; // Object File to Link
+		outputStream << "/OUT:" << "\"" << binaryFile.string() << "\"" << " "; // Specify output directory
+		outputStream << "\"" << objectPath.string() << "\""; // Object File to Link
 
 		outputStream << ")"; // Parentheses to group all function calls together
 
@@ -911,7 +925,7 @@ namespace Kargono::Scripting
 		}
 		else
 		{
-			outputStream << " >> Log\\BuildScriptLibrary.log 2>&1 "; 
+			outputStream << " >> Log\\BuildScriptLibrary.log 2>&1 ";
 		}
 
 		// Call Command
@@ -922,77 +936,77 @@ namespace Kargono::Scripting
 	void ScriptModuleBuilder::AttachEngineFunctionsToModule()
 	{
 		ImportInsertFunction(VoidNone)
-		ImportInsertFunction(VoidUInt16) 
-		ImportInsertFunction(VoidUInt64) 
-		ImportInsertFunction(VoidString) 
-		ImportInsertFunction(VoidPtrString) 
-		ImportInsertFunction(VoidStringBool) 
-		ImportInsertFunction(VoidStringVoidPtr) 
-		ImportInsertFunction(VoidStringString) 
-		ImportInsertFunction(VoidStringStringBool) 
-		ImportInsertFunction(VoidStringStringString) 
-		ImportInsertFunction(VoidStringStringVec4) 
-		ImportInsertFunction(VoidUInt64StringVoidPtr)
-		ImportInsertFunction(VoidPtrUInt64UInt64UInt64)
-		ImportInsertFunction(VoidUInt64UInt64UInt64VoidPtr)
-		ImportInsertFunction(VoidUInt32UInt64UInt64Float)
-		ImportInsertFunction(VoidPtrUInt64String)
-		ImportInsertFunction(VoidUInt64Vec3)
-		ImportInsertFunction(VoidUInt64Vec2)
-		ImportInsertFunction(VoidUInt64UInt64)
-		ImportInsertFunction(VoidUInt64Vec3Vec2)
-		ImportInsertFunction(BoolStringString)
-		ImportInsertFunction(BoolUInt64String)
-		ImportInsertFunction(BoolUInt16)
-		ImportInsertFunction(BoolString)
-		ImportInsertFunction(UInt16None)
-		ImportInsertFunction(UInt64String)
-		ImportInsertFunction(Int32Int32Int32)
-		ImportInsertFunction(Vec2UInt64)
-		ImportInsertFunction(Vec3UInt64)
-		ImportInsertFunction(StringUInt64)
-		AddEngineFunctionPointerToDll(LeaveCurrentSession, Network::ClientService::LeaveCurrentSession,VoidNone) 
-		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::ClientService::EnableReadyCheck,VoidNone) 
-		AddEngineFunctionPointerToDll(RequestJoinSession, Network::ClientService::RequestJoinSession,VoidNone) 
-		AddEngineFunctionPointerToDll(SendAllEntityPhysics, Network::ClientService::SendAllEntityPhysics,VoidUInt64Vec3Vec2)
-		AddEngineFunctionPointerToDll(RequestUserCount, Network::ClientService::RequestUserCount,VoidNone)
-		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::ClientService::GetActiveSessionSlot, UInt16None)
-		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::ClientService::SendAllEntityLocation, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(SignalAll, Network::ClientService::SignalAll, VoidUInt16)
-		AddEngineFunctionPointerToDll(Log, Scripting::Log,VoidString) 
-		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioService::PlaySoundFromName,VoidString) 
-		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioService::PlayStereoSoundFromName,VoidString) 
-		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputModeService::SetActiveInputModeByName,VoidString) 
-		AddEngineFunctionPointerToDll(IsKeyPressed, Input::InputService::IsKeyPressed,BoolUInt16) 
-		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::RuntimeUIService::SetActiveUIFromName,VoidString) 
-		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::SceneService::TransitionSceneFromName,VoidString) 
-		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindow,VoidStringBool) 
-		AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameStateService::SetActiveGameStateField, VoidStringVoidPtr) 
-		AddEngineFunctionPointerToDll(GetGameStateField, Scenes::GameStateService::GetActiveGameStateField, VoidPtrString) 
-		AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::RuntimeUIService::SetActiveWidgetText,VoidStringStringString) 
-		AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::RuntimeUIService::SetSelectedWidget,VoidStringString) 
-		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::RuntimeUIService::SetWidgetTextColor,VoidStringStringVec4) 
-		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColor,VoidStringStringVec4) 
-		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectable,VoidStringStringBool) 
-		AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, RuntimeUI::RuntimeUIService::IsWidgetSelected,BoolStringString)
-		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)
-		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::SceneService::FindEntityHandleByName, UInt64String)
-		AddEngineFunctionPointerToDll(Scenes_IsSceneActive, Scenes::SceneService::IsSceneActive, BoolString)
-		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)
-		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_SetLinearVelocity, VoidUInt64Vec2)
-		AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_GetLinearVelocity, Vec2UInt64)
-		AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, Scenes::SceneService::GetProjectComponentField, VoidPtrUInt64UInt64UInt64)
-		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, Scenes::SceneService::SetProjectComponentField, VoidUInt64UInt64UInt64VoidPtr)
-		AddEngineFunctionPointerToDll(TagComponent_GetTag, Scenes::SceneService::TagComponentGetTag, StringUInt64)
-		AddEngineFunctionPointerToDll(GenerateRandomNumber, Utility::RandomService::GenerateRandomNumber, Int32Int32Int32)
-		AddEngineFunctionPointerToDll(AI_ChangeGlobalState, AI::AIService::ChangeGlobalState, VoidUInt64UInt64)
-		AddEngineFunctionPointerToDll(AI_ChangeCurrentState, AI::AIService::ChangeCurrentState, VoidUInt64UInt64)
-		AddEngineFunctionPointerToDll(AI_RevertPreviousState, AI::AIService::RevertPreviousState, VoidUInt64)
-		AddEngineFunctionPointerToDll(AI_SendMessage, AI::AIService::SendAIMessage, VoidUInt32UInt64UInt64Float)
-		AddEngineFunctionPointerToDll(AI_ClearGlobalState, AI::AIService::ClearGlobalState, VoidUInt64)
-		AddEngineFunctionPointerToDll(AI_ClearCurrentState, AI::AIService::ClearCurrentState, VoidUInt64)
-		AddEngineFunctionPointerToDll(AI_ClearPreviousState, AI::AIService::ClearPreviousState, VoidUInt64)
-		AddEngineFunctionPointerToDll(AI_ClearAllStates, AI::AIService::ClearAllStates, VoidUInt64)
+			ImportInsertFunction(VoidUInt16)
+			ImportInsertFunction(VoidUInt64)
+			ImportInsertFunction(VoidString)
+			ImportInsertFunction(VoidPtrString)
+			ImportInsertFunction(VoidStringBool)
+			ImportInsertFunction(VoidStringVoidPtr)
+			ImportInsertFunction(VoidStringString)
+			ImportInsertFunction(VoidStringStringBool)
+			ImportInsertFunction(VoidStringStringString)
+			ImportInsertFunction(VoidStringStringVec4)
+			ImportInsertFunction(VoidUInt64StringVoidPtr)
+			ImportInsertFunction(VoidPtrUInt64UInt64UInt64)
+			ImportInsertFunction(VoidUInt64UInt64UInt64VoidPtr)
+			ImportInsertFunction(VoidUInt32UInt64UInt64Float)
+			ImportInsertFunction(VoidPtrUInt64String)
+			ImportInsertFunction(VoidUInt64Vec3)
+			ImportInsertFunction(VoidUInt64Vec2)
+			ImportInsertFunction(VoidUInt64UInt64)
+			ImportInsertFunction(VoidUInt64Vec3Vec2)
+			ImportInsertFunction(BoolStringString)
+			ImportInsertFunction(BoolUInt64String)
+			ImportInsertFunction(BoolUInt16)
+			ImportInsertFunction(BoolString)
+			ImportInsertFunction(UInt16None)
+			ImportInsertFunction(UInt64String)
+			ImportInsertFunction(Int32Int32Int32)
+			ImportInsertFunction(Vec2UInt64)
+			ImportInsertFunction(Vec3UInt64)
+			ImportInsertFunction(StringUInt64)
+			AddEngineFunctionPointerToDll(LeaveCurrentSession, Network::ClientService::LeaveCurrentSession, VoidNone)
+			AddEngineFunctionPointerToDll(EnableReadyCheck, Network::ClientService::EnableReadyCheck, VoidNone)
+			AddEngineFunctionPointerToDll(RequestJoinSession, Network::ClientService::RequestJoinSession, VoidNone)
+			AddEngineFunctionPointerToDll(SendAllEntityPhysics, Network::ClientService::SendAllEntityPhysics, VoidUInt64Vec3Vec2)
+			AddEngineFunctionPointerToDll(RequestUserCount, Network::ClientService::RequestUserCount, VoidNone)
+			AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::ClientService::GetActiveSessionSlot, UInt16None)
+			AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::ClientService::SendAllEntityLocation, VoidUInt64Vec3)
+			AddEngineFunctionPointerToDll(SignalAll, Network::ClientService::SignalAll, VoidUInt16)
+			AddEngineFunctionPointerToDll(Log, Scripting::Log, VoidString)
+			AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioService::PlaySoundFromName, VoidString)
+			AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioService::PlayStereoSoundFromName, VoidString)
+			AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputModeService::SetActiveInputModeByName, VoidString)
+			AddEngineFunctionPointerToDll(IsKeyPressed, Input::InputService::IsKeyPressed, BoolUInt16)
+			AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::RuntimeUIService::SetActiveUIFromName, VoidString)
+			AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::SceneService::TransitionSceneFromName, VoidString)
+			AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindow, VoidStringBool)
+			AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameStateService::SetActiveGameStateField, VoidStringVoidPtr)
+			AddEngineFunctionPointerToDll(GetGameStateField, Scenes::GameStateService::GetActiveGameStateField, VoidPtrString)
+			AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::RuntimeUIService::SetActiveWidgetText, VoidStringStringString)
+			AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::RuntimeUIService::SetSelectedWidget, VoidStringString)
+			AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::RuntimeUIService::SetWidgetTextColor, VoidStringStringVec4)
+			AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColor, VoidStringStringVec4)
+			AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectable, VoidStringStringBool)
+			AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, RuntimeUI::RuntimeUIService::IsWidgetSelected, BoolStringString)
+			AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)
+			AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::SceneService::FindEntityHandleByName, UInt64String)
+			AddEngineFunctionPointerToDll(Scenes_IsSceneActive, Scenes::SceneService::IsSceneActive, BoolString)
+			AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)
+			AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
+			AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_SetLinearVelocity, VoidUInt64Vec2)
+			AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_GetLinearVelocity, Vec2UInt64)
+			AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, Scenes::SceneService::GetProjectComponentField, VoidPtrUInt64UInt64UInt64)
+			AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, Scenes::SceneService::SetProjectComponentField, VoidUInt64UInt64UInt64VoidPtr)
+			AddEngineFunctionPointerToDll(TagComponent_GetTag, Scenes::SceneService::TagComponentGetTag, StringUInt64)
+			AddEngineFunctionPointerToDll(GenerateRandomNumber, Utility::RandomService::GenerateRandomNumber, Int32Int32Int32)
+			AddEngineFunctionPointerToDll(AI_ChangeGlobalState, AI::AIService::ChangeGlobalState, VoidUInt64UInt64)
+			AddEngineFunctionPointerToDll(AI_ChangeCurrentState, AI::AIService::ChangeCurrentState, VoidUInt64UInt64)
+			AddEngineFunctionPointerToDll(AI_RevertPreviousState, AI::AIService::RevertPreviousState, VoidUInt64)
+			AddEngineFunctionPointerToDll(AI_SendMessage, AI::AIService::SendAIMessage, VoidUInt32UInt64UInt64Float)
+			AddEngineFunctionPointerToDll(AI_ClearGlobalState, AI::AIService::ClearGlobalState, VoidUInt64)
+			AddEngineFunctionPointerToDll(AI_ClearCurrentState, AI::AIService::ClearCurrentState, VoidUInt64)
+			AddEngineFunctionPointerToDll(AI_ClearPreviousState, AI::AIService::ClearPreviousState, VoidUInt64)
+			AddEngineFunctionPointerToDll(AI_ClearAllStates, AI::AIService::ClearAllStates, VoidUInt64)
 	}
 }
