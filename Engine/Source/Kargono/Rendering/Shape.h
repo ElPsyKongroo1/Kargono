@@ -9,7 +9,7 @@ namespace Kargono::Rendering
 {
 	enum class RenderingType
 	{
-		None = 0, DrawIndex, DrawTriangle, DrawLine
+		None = 0, DrawIndex, DrawTriangle, DrawLine, DrawPoint
 	};
 
 	enum class ShapeTypes
@@ -93,6 +93,7 @@ namespace Kargono::Utility
 		case Rendering::RenderingType::None: return "None";
 		case Rendering::RenderingType::DrawIndex: return "DrawIndex";
 		case Rendering::RenderingType::DrawTriangle: return "DrawTriangle";
+		case Rendering::RenderingType::DrawPoint: return "DrawPoint";
 		case Rendering::RenderingType::DrawLine: return "DrawLine";
 		}
 		KG_ERROR("Unknown Data Type sent to RenderingTypeToString Function");
@@ -105,6 +106,7 @@ namespace Kargono::Utility
 		if (string == "DrawIndex") { return Rendering::RenderingType::DrawIndex; }
 		if (string == "DrawTriangle") { return Rendering::RenderingType::DrawTriangle; }
 		if (string == "DrawLine") { return Rendering::RenderingType::DrawLine; }
+		if (string == "DrawPoint") { return Rendering::RenderingType::DrawPoint; }
 
 		KG_ERROR("Unknown Data Type sent to StringToRenderingType Function");
 		return Rendering::RenderingType::None;

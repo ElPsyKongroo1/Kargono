@@ -40,8 +40,13 @@ namespace Kargono::Rendering
 		{
 			m_DrawFunctions.push_back(RenderingService::DrawBufferLine);
 		}
+		if (m_ShaderSpecification.RenderType == RenderingType::DrawPoint)
+		{
+			m_DrawFunctions.push_back(RenderingService::DrawBufferPoints);
+		}
 
 		if (m_ShaderSpecification.RenderType == RenderingType::DrawLine ||
+			m_ShaderSpecification.RenderType == RenderingType::DrawPoint ||
 			m_ShaderSpecification.TextureInput == TextureInputType::TextTexture)
 		{
 			m_FillDataPerVertex.push_back(RenderingService::FillWorldPositionNoTransform);

@@ -245,6 +245,13 @@ namespace Kargono::Rendering
 		s_Data.Stats.DrawCalls++;
 	}
 
+	void RenderingService::DrawBufferPoints(Ref<DrawCallBuffer> buffer)
+	{
+		RendererAPI::SetLineWidth(s_Data.LineWidth);
+		RendererAPI::DrawPoints(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
+		s_Data.Stats.DrawCalls++;
+	}
+
 	void RenderingService::DrawBufferLine(Ref<DrawCallBuffer> buffer)
 	{
 		RendererAPI::SetLineWidth(s_Data.LineWidth);
