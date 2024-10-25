@@ -35,5 +35,6 @@ namespace Kargono::Rendering
 		static void DrawPoints(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
 		static void DrawTriangles(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
 		static void SetLineWidth(float width);
+		static void SetPointWidth(float size);
 	};
 }

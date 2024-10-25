@@ -120,6 +120,7 @@ namespace Kargono::Utility
 		{
 			return;
 		}
+
 		if (Scripting::StatementEmpty* emptyStatement = std::get_if<Scripting::StatementEmpty>(&statement->Value))
 		{
 			KG_INFO("{}Single Semicolon Statement", GetIndentation(indentation));
@@ -179,6 +180,25 @@ namespace Kargono::Utility
 			{
 				PrintStatement(chainedStatement, indentation + 2);
 			}
+		}
+		else if (Scripting::StatementWhileLoop* whileLoopStatement = std::get_if<Scripting::StatementWhileLoop>(&statement->Value))
+		{
+			KG_INFO("{}While Loop Statement", GetIndentation(indentation));
+			KG_INFO("{}Condition Expression", GetIndentation(indentation + 1));
+			PrintExpression(whileLoopStatement->ConditionExpression, indentation + 2);
+			KG_INFO("{}Body Statements", GetIndentation(indentation + 1));
+			for (auto bodyStatement : whileLoopStatement->BodyStatements)
+			{
+				PrintStatement(bodyStatement, indentation + 2);
+			}
+		}
+		else if (Scripting::StatementBreak* breakStatement = std::get_if<Scripting::StatementBreak>(&statement->Value))
+		{
+			KG_INFO("{}Break Statement", GetIndentation(indentation));
+		}
+		else if (Scripting::StatementContinue* continueStatement = std::get_if<Scripting::StatementContinue>(&statement->Value))
+		{
+			KG_INFO("{}Continue Statement", GetIndentation(indentation));
 		}
 	}
 
@@ -305,6 +325,36 @@ namespace Kargono::Scripting
 			return { false, {} };
 		}
 
+		// Parse Statement Break
+		{
+			auto [success, statement] = ParseStatementBreak();
+			if (success)
+			{
+				return { success, statement };
+			}
+		}
+
+		if (CheckForErrors())
+		{
+			StoreParseError(ParseErrorType::Statement, "Invalid break statement", tokenBuffer);
+			return { false, {} };
+		}
+
+		// Parse Statement Continue
+		{
+			auto [success, statement] = ParseStatementContinue();
+			if (success)
+			{
+				return { success, statement };
+			}
+		}
+
+		if (CheckForErrors())
+		{
+			StoreParseError(ParseErrorType::Statement, "Invalid continue statement", tokenBuffer);
+			return { false, {} };
+		}
+
 		// Parse Conditional Statement
 		{
 			auto [success, statement] = ParseStatementConditional(false);
@@ -317,6 +367,21 @@ namespace Kargono::Scripting
 		if (CheckForErrors())
 		{
 			StoreParseError(ParseErrorType::Statement, "Invalid if/else/else-if statement", tokenBuffer);
+			return { false, {} };
+		}
+
+		// Parse While Loop Statement
+		{
+			auto [success, statement] = ParseStatementWhileLoop();
+			if (success)
+			{
+				return { success, statement };
+			}
+		}
+
+		if (CheckForErrors())
+		{
+			StoreParseError(ParseErrorType::Statement, "Invalid while loop statement", tokenBuffer);
 			return { false, {} };
 		}
 
@@ -2093,6 +2158,200 @@ namespace Kargono::Scripting
 
 		return { true, newStatement };
 	}
+	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementWhileLoop()
+	{
+		StatementWhileLoop newStatementWhileLoop{};
+		ScriptToken tokenBuffer = GetCurrentToken();
+		uint32_t initialKeywordLocation = m_TokenLocation;
+
+		if (tokenBuffer.Type != ScriptTokenType::Keyword || tokenBuffer.Value != "while")
+		{
+			// Exit peacefully, statement is not a while loop
+			return { false, nullptr };
+		}
+		Advance();
+
+		// Check for opening parentheses
+		tokenBuffer = GetCurrentToken();
+		if (tokenBuffer.Type != ScriptTokenType::OpenParentheses)
+		{
+			StoreParseError(ParseErrorType::Statement, "Expecting an open parentheses for if/else-if statement", GetToken(initialKeywordLocation));
+			return { false, nullptr };
+		}
+		Advance();
+
+		// Parse Condition Expression
+		tokenBuffer = GetCurrentToken();
+		uint32_t conditionExpressionSize{ 0 };
+		{
+			// Attempt to parse expression
+			auto [success, expression] = ParseExpressionNode(conditionExpressionSize);
+
+			// Error checking for general errors/invalid return type for condition expression
+			if (!success || CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Statement, "Could not parse condition for while statement", GetToken(initialKeywordLocation));
+				return { false, nullptr };
+			}
+
+			// Check for context probe (for in-editor suggestions)
+			if (IsContextProbe(expression))
+			{
+				CursorContext newContext;
+				ScriptToken newReturnType;
+				newReturnType.Type = ScriptTokenType::PrimitiveType;
+				newReturnType.Value = "bool";
+				newContext.AllReturnTypes.push_back(newReturnType);
+				newContext.StackVariables = m_StackVariables;
+				m_CursorContext = newContext;
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in while condition", tokenBuffer);
+				return { false, nullptr };
+			}
+
+			// Ensure expression return type is a boolean
+			if (GetPrimitiveTypeFromToken(expression->GetReturnType()).Value != "bool")
+			{
+				StoreParseError(ParseErrorType::Statement, "Condition does not return a true/false value in while statement", GetToken(initialKeywordLocation));
+				return { false, nullptr };
+			}
+			// Store expression if successful
+			newStatementWhileLoop.ConditionExpression = expression;
+		}
+		Advance(conditionExpressionSize);
+
+		// Check for closing parentheses
+		tokenBuffer = GetCurrentToken();
+		if (tokenBuffer.Type != ScriptTokenType::CloseParentheses)
+		{
+			StoreParseError(ParseErrorType::Statement, "Expecting an closing parentheses for if/else-if statement", GetToken(initialKeywordLocation));
+			return { false, nullptr };
+		}
+		Advance();
+		
+
+		// Check for opening curly brace
+		tokenBuffer = GetCurrentToken();
+		if (tokenBuffer.Type != ScriptTokenType::OpenCurlyBrace)
+		{
+			StoreParseError(ParseErrorType::Statement, "Expecting an opening curly for if/else/else-if statement", GetToken(initialKeywordLocation));
+			return { false, nullptr };
+		}
+		Advance();
+
+		// Parse conditional statement's body statements
+		{
+			AddStackFrame();
+			IncrementLoopDepth();
+			bool success = false;
+			tokenBuffer = GetCurrentToken();
+
+			// Loop through statements inside while loop body
+			Ref<Statement> statement {nullptr};
+			do
+			{
+				std::tie(success, statement) = ParseStatementNode();
+				if (success)
+				{
+					newStatementWhileLoop.BodyStatements.push_back(statement);
+				}
+			} while (success);
+
+			if (CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Statement, "Could not parse body statements for while statement", GetToken(initialKeywordLocation));
+				return { false, nullptr };
+			}
+
+			// Check for close curly braces
+			tokenBuffer = GetCurrentToken();
+			if (tokenBuffer.Type != ScriptTokenType::CloseCurlyBrace)
+			{
+				if (tokenBuffer.Type == ScriptTokenType::None && tokenBuffer.Value == "End of File")
+				{
+					StoreParseError(ParseErrorType::Statement, "Expecting an closing curly brace for while statement, however, the file ended abruptly\n Did you forget a closing curly brace somewhere?", GetToken(initialKeywordLocation));
+				}
+				else
+				{
+					StoreParseError(ParseErrorType::Statement, "Expecting an closing curly brace for while statement\n Did you forget a semicolon?", tokenBuffer);
+				}
+				return { false, nullptr };
+			}
+
+			// Remove current stack variables
+			PopStackFrame();
+			DecrimentLoopDepth();
+			Advance();
+		}
+
+		Ref<Statement> newStatement = CreateRef<Statement>();
+		newStatement->Value = newStatementWhileLoop;
+
+		return { true, newStatement };
+	}
+	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementBreak()
+	{
+		StatementBreak newStatementBreak{};
+		uint32_t currentLocation{ 0 };
+
+		// Check for a break keyword
+		if (GetCurrentToken(currentLocation).Type != ScriptTokenType::Keyword || GetCurrentToken(currentLocation).Value != "break")
+		{
+			return { false, nullptr };
+		}
+		currentLocation++;
+
+		// Ensure that current loop depth is greater than 0 (i.e. we are inside of a loop body)
+		if (m_LoopDepth == 0)
+		{
+			StoreParseError(ParseErrorType::Statement, "Attempt to add break statement when not inside of a loop", GetCurrentToken());
+			return { false, nullptr };
+		}
+
+		// Check for a terminating semicolon
+		if (GetCurrentToken(currentLocation).Type != ScriptTokenType::Semicolon)
+		{
+			StoreParseError(ParseErrorType::Statement, "Expecting a semicolon to complete break statement", GetCurrentToken());
+			return { false, nullptr };
+		}
+		currentLocation++;
+
+		Ref<Statement> newStatement = CreateRef<Statement>();
+		newStatement->Value = newStatementBreak;
+		Advance(currentLocation);
+		return { true, newStatement };
+	}
+	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementContinue()
+	{
+		StatementContinue newStatementContinue{};
+		uint32_t currentLocation{ 0 };
+
+		// Check for a continue keyword
+		if (GetCurrentToken(currentLocation).Type != ScriptTokenType::Keyword || GetCurrentToken(currentLocation).Value != "continue")
+		{
+			return { false, nullptr };
+		}
+		currentLocation++;
+
+		// Ensure that current loop depth is greater than 0 (i.e. we are inside of a loop body)
+		if (m_LoopDepth == 0)
+		{
+			StoreParseError(ParseErrorType::Statement, "Attempt to add continue statement when not inside of a loop", GetCurrentToken());
+			return { false, nullptr };
+		}
+
+		// Check for a terminating semicolon
+		if (GetCurrentToken(currentLocation).Type != ScriptTokenType::Semicolon)
+		{
+			StoreParseError(ParseErrorType::Statement, "Expecting a semicolon to complete continue statement", GetCurrentToken());
+			return { false, nullptr };
+		}
+		currentLocation++;
+
+		Ref<Statement> newStatement = CreateRef<Statement>();
+		newStatement->Value = newStatementContinue;
+		Advance(currentLocation);
+		return { true, newStatement };
+	}
 	std::tuple<bool, Ref<Statement>> ScriptTokenParser::ParseStatementReturn()
 	{
 		StatementReturn newStatementReturn{};
@@ -2250,6 +2509,17 @@ namespace Kargono::Scripting
 	void ScriptTokenParser::PopStackFrame()
 	{
 		m_StackVariables.pop_back();
+	}
+
+	void ScriptTokenParser::IncrementLoopDepth()
+	{
+		m_LoopDepth++;
+	}
+
+	void ScriptTokenParser::DecrimentLoopDepth()
+	{
+		KG_ASSERT(m_LoopDepth > 0);
+		m_LoopDepth--;
 	}
 
 	bool ScriptTokenParser::CheckStackForIdentifier(ScriptToken identifier)

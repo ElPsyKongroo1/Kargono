@@ -771,6 +771,7 @@ namespace Kargono::Panels
 	}
 
 	static Rendering::RendererInputSpec s_CircleInputSpec{};
+	static Rendering::RendererInputSpec s_PointInputSpec{};
 	static Rendering::RendererInputSpec s_LineInputSpec{};
 	static Math::vec4 s_RectangleVertexPositions[4]
 	{
@@ -878,6 +879,23 @@ namespace Kargono::Panels
 			s_CircleInputSpec.Shader = localShader;
 			s_CircleInputSpec.Buffer = localBuffer;
 			s_CircleInputSpec.ShapeComponent = shapeComp;
+		}
+
+		// Set up Point Input Specifications for Overlay Calls
+		{
+			Rendering::ShaderSpecification pointShaderSpec{Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawPoint, false };
+			auto [uuid, localShader] = Assets::AssetService::GetShader(pointShaderSpec);
+			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
+
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
+
+			ECS::ShapeComponent* pointShapeComponent = new ECS::ShapeComponent();
+			pointShapeComponent->CurrentShape = Rendering::ShapeTypes::None;
+			pointShapeComponent->Vertices = nullptr;
+
+			s_PointInputSpec.Shader = localShader;
+			s_PointInputSpec.Buffer = localBuffer;
+			s_PointInputSpec.ShapeComponent = pointShapeComponent;
 		}
 
 		// TODO: Shape Components and Buffers are memory leaks!
@@ -998,6 +1016,8 @@ namespace Kargono::Panels
 			DrawWorldAxis(); 
 		}
 
+		DrawDebugOverlay();
+
 
 		Rendering::RenderingService::EndScene();
 	}
@@ -1005,7 +1025,7 @@ namespace Kargono::Panels
 	void ViewportPanel::DrawFrustrum(ECS::Entity& entity)
 	{
 		Math::vec3 lineVertices[9];
-		static Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };
+		Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };
 
 		// Get entity transform and entity camera
 		auto& transform = entity.GetComponent<ECS::TransformComponent>();
@@ -1356,6 +1376,33 @@ namespace Kargono::Panels
 			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
+	}
+
+	void ViewportPanel::DrawDebugOverlay()
+	{
+		// Draw debug line
+		for (DebugLine& line : m_DebugLines)
+		{
+			s_OutputVector->clear();
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red),
+				"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+			s_OutputVector->push_back(line.m_StartPoint);
+			s_OutputVector->push_back(line.m_EndPoint);
+			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		}
+
+		// Draw debug points
+		for (DebugPoint& point : m_DebugPoints)
+		{
+			s_OutputVector->clear();
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red),
+				"a_Color", s_PointInputSpec.Buffer, s_PointInputSpec.Shader);
+			s_OutputVector->push_back(point.m_Point);
+			s_PointInputSpec.ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_PointInputSpec);
+		}
+		
 	}
 
 }

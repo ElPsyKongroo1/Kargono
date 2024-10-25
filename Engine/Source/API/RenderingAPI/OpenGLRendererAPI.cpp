@@ -201,6 +201,10 @@ namespace Kargono::Rendering
 	{
 		glLineWidth(width);
 	}
+	void RendererAPI::SetPointWidth(float size)
+	{
+		glPointSize(size);
+	}
 }
 
 #endif

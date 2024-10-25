@@ -377,6 +377,22 @@ namespace Kargono::Scripting
 		std::vector<Ref<Statement>> ChainedConditionals{};
 	};
 
+	struct StatementWhileLoop
+	{
+		Ref<Expression> ConditionExpression{ nullptr };
+		std::vector<Ref<Statement>> BodyStatements{};
+	};
+
+	struct StatementBreak
+	{
+
+	};
+
+	struct StatementContinue
+	{
+
+	};
+
 }
 
 namespace Kargono::Utility
@@ -410,7 +426,8 @@ namespace Kargono::Scripting
 		std::variant<StatementEmpty, StatementExpression, 
 			StatementDeclaration, StatementAssignment, 
 			StatementDeclarationAssignment, StatementConditional,
-			StatementReturn> Value;
+			StatementReturn, StatementWhileLoop,
+			StatementBreak, StatementContinue> Value;
 	};
 
 	struct FunctionParameter

@@ -35,6 +35,9 @@ namespace Kargono::Scripting
 		std::tuple<bool, Ref<Statement>> ParseStatementAssignment();
 		std::tuple<bool, Ref<Statement>> ParseStatementDeclarationAssignment();
 		std::tuple<bool, Ref<Statement>> ParseStatementConditional(bool chainConditions);
+		std::tuple<bool, Ref<Statement>> ParseStatementWhileLoop();
+		std::tuple<bool, Ref<Statement>> ParseStatementBreak();
+		std::tuple<bool, Ref<Statement>> ParseStatementContinue();
 		std::tuple<bool, Ref<Statement>> ParseStatementReturn();
 	private:
 		ScriptToken GetToken(int32_t location);
@@ -44,6 +47,8 @@ namespace Kargono::Scripting
 		void StoreStackVariable(ScriptToken type, ScriptToken identifier);
 		void AddStackFrame();
 		void PopStackFrame();
+		void IncrementLoopDepth();
+		void DecrimentLoopDepth();
 		bool CheckStackForIdentifier(ScriptToken identifier);
 		bool CheckCurrentStackFrameForIdentifier(ScriptToken identifier);
 		StackVariable GetStackVariable(ScriptToken identifier);
@@ -58,6 +63,7 @@ namespace Kargono::Scripting
 		std::vector<ScriptToken> m_Tokens{};
 		std::vector<ParserError> m_Errors {};
 		std::vector<std::vector<StackVariable>> m_StackVariables{};
+		uint32_t m_LoopDepth{ 0 };
 		ScriptAST m_AST{};
 		uint32_t m_TokenLocation{ 0 };
 		ScriptToken m_CurrentReturnType{};

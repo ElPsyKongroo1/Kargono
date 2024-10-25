@@ -396,7 +396,10 @@ namespace Kargono::Scripting
 			"return",
 			"void",
 			"if",
-			"else"
+			"else",
+			"while",
+			"break",
+			"continue"
 		};
 	}
 

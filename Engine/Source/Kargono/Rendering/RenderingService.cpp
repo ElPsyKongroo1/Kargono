@@ -16,7 +16,8 @@ namespace Kargono::Rendering
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
 
-		float LineWidth = 2.0f;
+		float LineWidth = 4.0f;
+		float PointWidth = 8.0f;
 
 		RenderingService::Statistics Stats;
 
@@ -247,7 +248,7 @@ namespace Kargono::Rendering
 
 	void RenderingService::DrawBufferPoints(Ref<DrawCallBuffer> buffer)
 	{
-		RendererAPI::SetLineWidth(s_Data.LineWidth);
+		RendererAPI::SetPointWidth(s_Data.PointWidth);
 		RendererAPI::DrawPoints(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}

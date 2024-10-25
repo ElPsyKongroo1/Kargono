@@ -178,6 +178,40 @@ namespace Kargono::Scripting
 			}
 
 		}
+
+		else if (StatementWhileLoop* whileLoopStatement = std::get_if<StatementWhileLoop>(&statement->Value))
+		{
+			AddIndentation();
+
+			m_OutputText << "while (";
+			GenerateExpression(whileLoopStatement->ConditionExpression);
+			m_OutputText << ")\n";
+			
+			AddIndentation();
+			m_OutputText << "{\n";
+
+			m_IndentLevel++;
+			for (auto& statement : whileLoopStatement->BodyStatements)
+			{
+				GenerateStatement(statement);
+			}
+			m_IndentLevel--;
+			AddIndentation();
+			m_OutputText << "}\n";
+		}
+
+		else if (StatementBreak* breakStatement = std::get_if<StatementBreak>(&statement->Value))
+		{
+			AddIndentation();
+			m_OutputText << "break;";
+		}
+
+		else if (StatementContinue* continueStatement = std::get_if<StatementContinue>(&statement->Value))
+		{
+			AddIndentation();
+			m_OutputText << "continue;";
+		}
+
 	}
 
 	void ScriptOutputGenerator::GenerateExpression(Ref<Expression> expression)
