@@ -106,6 +106,7 @@ namespace Kargono
 		virtual bool OnPhysicsEvent(Events::Event* event) override;
 		virtual bool OnSceneEvent(Events::Event* event) override;
 		virtual bool OnAssetEvent(Events::Event* event) override;
+		virtual bool OnEditorEvent(Events::Event* event) override;
 	private:
 		bool OnUpdateProjectComponent(Events::ManageAsset& event);
 		// These private functions are called by the above OnEvent(e) function to handle application events.

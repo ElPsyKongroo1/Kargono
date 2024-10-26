@@ -1114,6 +1114,60 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "AddDebugLine" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "startPoint" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "endPoint" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Debug function that draws a line in the editor. This function takes the start point 3D coordinates and end the point point 3D coordinates of the line as parameters.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "AddDebugPoint" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "pointLocation" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Debug function that draws a point in the editor. This function takes a vector3 that represents the 3D coordinate of the point.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "ClearDebugLines" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionNode.Description = "Debug function clears all debug lines from the editor. This function takes no arguments.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "ClearDebugPoints" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionNode.Description = "Debug function clears all debug points from the editor. This function takes no arguments.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
 
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AI" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SendMessage" };

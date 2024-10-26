@@ -36,6 +36,7 @@
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Events/SceneEvent.h"
 #include "Kargono/Events/PhysicsEvent.h"
+#include "Kargono/Events/EditorEvent.h"
 
 //-----------------Input-----------------//
 #include "Kargono/Input/InputService.h"

@@ -109,6 +109,22 @@ namespace Kargono::Panels
 
 		m_ViewportFramebuffer->Unbind();
 	}
+	void ViewportPanel::AddDebugLine(Math::vec3 startPoint, Math::vec3 endPoint)
+	{
+		m_DebugLines.push_back({startPoint, endPoint});
+	}
+	void ViewportPanel::AddDebugPoint(Math::vec3 startPoint)
+	{
+		m_DebugPoints.push_back({ startPoint });
+	}
+	void ViewportPanel::ClearDebugLines()
+	{
+		m_DebugLines.clear();
+	}
+	void ViewportPanel::ClearDebugPoints()
+	{
+		m_DebugPoints.clear();
+	}
 	void ViewportPanel::InitializeFrameBuffer()
 	{
 		Rendering::FramebufferSpecification fbSpec;
@@ -659,6 +675,37 @@ namespace Kargono::Panels
 		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
 		{
 			m_EditorCamera.OnInputEvent(event);
+		}
+	}
+	void ViewportPanel::OnEditorEvent(Events::Event* event)
+	{
+		if (event->GetEventType() == Events::EventType::ManageEditor)
+		{
+			Events::ManageEditor* manageEditor = (Events::ManageEditor*)event;
+			static Events::DebugLineData lineData;
+			static Events::DebugPointData pointData;
+
+			// Handle editor events
+			switch (manageEditor->GetAction())
+			{
+			case Events::ManageEditorAction::AddDebugLine:
+				lineData = manageEditor->GetDebugLineData();
+				AddDebugLine(lineData.m_StartPoint, lineData.m_EndPoint);
+				break;
+			case Events::ManageEditorAction::AddDebugPoint:
+				pointData = manageEditor->GetDebugPointData();
+				AddDebugPoint(pointData.m_Point);
+				break;
+			case Events::ManageEditorAction::ClearDebugLines:
+				ClearDebugLines();
+				break;
+			case Events::ManageEditorAction::ClearDebugPoints:
+				ClearDebugPoints();
+				break;
+			default:
+				KG_ERROR("Invalid editor event type provided to viewport panel!");
+				break;
+			}
 		}
 	}
 	bool ViewportPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)

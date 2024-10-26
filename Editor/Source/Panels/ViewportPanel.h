@@ -33,13 +33,15 @@ namespace Kargono::Panels
 		//=========================
 		void OnUpdate(Timestep ts);
 		void OnEditorUIRender();
-		void OnInputEvent(Events::Event* e);
+		void OnInputEvent(Events::Event* event);
+		void OnEditorEvent(Events::Event* event);
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 
 
 		//=========================
 		// External API
 		//=========================
+	public:
 		void InitializeFrameBuffer();
 		void ProcessMousePicking();
 		// This function runs the overlay code that displays visualization for physics colliders,
@@ -66,6 +68,17 @@ namespace Kargono::Panels
 		// This function initializes the static data used by the OnOverlayRender()
 		//		function below. This function is called in Init().
 		void InitializeOverlayData();
+
+
+	private:
+		//=========================
+		// Internal Functionality
+		//=========================
+		void AddDebugLine(Math::vec3 startPoint, Math::vec3 endPoint);
+		void AddDebugPoint(Math::vec3 startPoint);
+		void ClearDebugLines();
+		void ClearDebugPoints();
+
 	public:
 		//=========================
 		// Core Panel Data
@@ -91,15 +104,8 @@ namespace Kargono::Panels
 		bool m_DisplayYZMinorGrid = false;
 
 		// Draw debug lines data
-		std::vector<DebugLine> m_DebugLines
-		{
-			{{0.0f, 0.0f, 0.0f}, { 5.0f, 5.0f, 5.0f }},
-			{ {0.0f, 0.0f, 0.0f}, { -5.0f, -5.0f, -5.0f }}
-		};
-		std::vector<DebugPoint> m_DebugPoints
-		{
-			DebugPoint({0.0f, 0.0f, 0.0f}), DebugPoint({ 2.0f, 2.0f, 2.0f }), DebugPoint({ 4.0f, 4.0f, 4.0f })
-		};
+		std::vector<DebugLine> m_DebugLines;
+		std::vector<DebugPoint> m_DebugPoints;
 
 		friend Kargono::EditorApp;
 	};

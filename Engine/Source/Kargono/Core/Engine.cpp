@@ -224,6 +224,15 @@ namespace Kargono
 			return;
 		}
 
+		if (e->IsInCategory(Events::Editor))
+		{
+			if (s_ActiveEngine->m_CurrentApp)
+			{
+				s_ActiveEngine->m_CurrentApp->OnEditorEvent(e);
+			}
+			return;
+		}
+
 	}
 
 	bool EngineService::OnWindowClose(Events::WindowCloseEvent& e)

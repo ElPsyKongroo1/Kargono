@@ -52,7 +52,9 @@ namespace Kargono::Events
 		UpdateSessionUserSlot, EnableReadyCheck, SendReadyCheck, SendReadyCheckConfirm, SendAllEntityLocation,
 		UpdateEntityLocation, SendAllEntityPhysics, UpdateEntityPhysics, SignalAll, ReceiveSignal,
 		// Scene
-		ManageEntity, ManageScene
+		ManageEntity, ManageScene,
+		// Editor
+		ManageEditor
 	};
 
 	//==============================
@@ -74,7 +76,8 @@ namespace Kargono::Events
 		Mouse				= BIT(5),
 		MouseButton			= BIT(6),
 		Physics				= BIT(7),
-		Asset				= BIT(8)
+		Asset				= BIT(8),
+		Editor				= BIT(9),
 	};
 
 	//============================================================

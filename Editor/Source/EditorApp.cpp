@@ -482,6 +482,12 @@ namespace Kargono
 		return false;
 	}
 
+	bool EditorApp::OnEditorEvent(Events::Event* event)
+	{
+		m_ViewportPanel->OnEditorEvent(event);
+		return false;
+	}
+
 	static void TransferSceneData(Events::ManageAsset& event, Ref<Scenes::Scene> currentScene)
 	{
 		// Get reallocation instructions
