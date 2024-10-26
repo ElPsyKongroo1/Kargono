@@ -4,7 +4,7 @@
 #include "Kargono/Events/PhysicsEvent.h"
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/Base.h"
-#include "Kargono/Math/Math.h"
+#include "Kargono/Physics/Physics2DCommon.h"
 
 #include "API/Physics/Box2DAPI.h"
 
@@ -65,6 +65,26 @@ namespace Kargono::Physics
 		Math::vec2 Gravity = { 0.0f, 0.0f };
 	};
 
+	// This class captures the closest hit shape
+	class RayCastCallback : public b2RayCastCallback
+	{
+	public:
+		virtual float ReportFixture(b2Fixture* fixture, const b2Vec2& point,
+			const b2Vec2& normal, float fraction) override
+		{
+			m_Fixture = fixture;
+			m_ContactPoint = point;
+			m_NormalVector = normal;
+			m_Fraction = fraction;
+			return fraction;
+		}
+
+		b2Fixture* m_Fixture { nullptr };
+		b2Vec2 m_ContactPoint;
+		b2Vec2 m_NormalVector;
+		float m_Fraction;
+	};
+
 	//============================================================
 	// Physics 2D World Class
 	//============================================================
@@ -112,6 +132,11 @@ namespace Kargono::Physics
 		// On Event Functionality
 		//=========================
 		static void OnUpdate(Timestep ts);
+
+		//=========================
+		// Interact with Physics2DWorld
+		//=========================
+		static RaycastResult Raycast(Math::vec2 startPoint, Math::vec2 endPoint);
 
 		//=========================
 		// Manage Active Physics2DWorld

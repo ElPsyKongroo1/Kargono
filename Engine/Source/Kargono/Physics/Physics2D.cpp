@@ -142,6 +142,23 @@ namespace Kargono::Physics
 		}
 	}
 
+	RaycastResult Physics2DService::Raycast(Math::vec2 startPoint, Math::vec2 endPoint)
+	{
+		RayCastCallback newCallback;
+		s_ActivePhysicsWorld->m_PhysicsWorld->RayCast(&newCallback, b2Vec2(startPoint.x, startPoint.y), b2Vec2(endPoint.x, endPoint.y));
+		if (newCallback.m_Fixture)
+		{
+			return RaycastResult(true,
+				newCallback.m_Fixture->GetBody()->GetUserData().UUID,
+				{ newCallback.m_NormalVector.x, newCallback.m_NormalVector.y },
+				{ newCallback.m_ContactPoint.x, newCallback.m_ContactPoint.y });
+		}
+		else
+		{
+			return RaycastResult(false, Assets::EmptyHandle);
+		}
+	}
+
 	void Physics2DService::SetActiveGravity(const Math::vec2& gravity)
 	{
 		s_ActivePhysicsWorld->m_PhysicsWorld->SetGravity(b2Vec2(gravity.x, gravity.y));

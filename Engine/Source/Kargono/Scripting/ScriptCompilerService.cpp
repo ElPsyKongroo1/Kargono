@@ -841,12 +841,6 @@ namespace Kargono::Scripting
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
 
-
-
-
-
-
-
 		newFunctionMember.Name = { ScriptTokenType::Identifier, "ClearGlobalState" };
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
@@ -1059,6 +1053,68 @@ namespace Kargono::Scripting
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
 		newPrimitiveType.AcceptableArithmetic.insert("float");
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "raycast_result";
+		newPrimitiveType.Description = "The results of a raycast that has occured in the active physics world. This result includes: a boolean called collisionSuccess, which indicates success, an entity called collisionEntity, which references the entity that was collided with, a vector2 called collisionPoint which indicates the location of the collision in 2D space, and a vector2 called collisionNormal, which indicates the physics normal of the edge where the collision occurred.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
+		newPrimitiveType.EmittedDeclaration = "Physics::RaycastResult";
+		newPrimitiveType.EmittedParameter = "Physics::RaycastResult";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconRigidBody;
+		newDataMember.Name = "collisionSuccess";
+		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
+		dataMemberPrimitiveType.Value = "bool";
+		newDataMember.PrimitiveType = dataMemberPrimitiveType;
+		newDataMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			// Output identifier for raycast_result and underlying type
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ".m_Success";
+		};
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+		dataMemberPrimitiveType = {};
+		newDataMember.Name = "collisionEntity";
+		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
+		dataMemberPrimitiveType.Value = "entity";
+		newDataMember.PrimitiveType = dataMemberPrimitiveType;
+		newDataMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			// Output identifier for raycast_result and underlying type
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ".m_Entity";
+		};
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+		dataMemberPrimitiveType = {};
+		newDataMember.Name = "collisionPoint";
+		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
+		dataMemberPrimitiveType.Value = "vector2";
+		newDataMember.PrimitiveType = dataMemberPrimitiveType;
+		newDataMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			// Output identifier for raycast_result and underlying type
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ".m_Location";
+		};
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+		dataMemberPrimitiveType = {};
+		newDataMember.Name = "collisionNormal";
+		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
+		dataMemberPrimitiveType.Value = "vector2";
+		newDataMember.PrimitiveType = dataMemberPrimitiveType;
+		newDataMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+		{
+			// Output identifier for raycast_result and underlying type
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ".m_Normal";
+		};
+		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
+		newDataMember = {};
+		dataMemberPrimitiveType = {};
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 	}
 
 	void ScriptCompilerService::CreateKGScriptNamespaces()
@@ -1073,6 +1129,7 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Network", "This namespace provides functions that interact with the active network connection between the current client and the server.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Scripts", "This namespace provides access to all available scripts in the current project.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AI", "This namespace provides functions that interact with the AI system in the engine.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Physics", "This namespace provides functions that interact with the physics system in the engine.");
 	}
 
 	void ScriptCompilerService::CreateKGScriptFunctionDefinitions()
@@ -1755,6 +1812,28 @@ namespace Kargono::Scripting
 		{
 			node.Namespace = {};
 			node.Identifier.Value = "EnableReadyCheck";
+
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Physics" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "Raycast" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "raycast_result" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector2" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "startPoint" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector2" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "endPoint" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "This function conducts a raycast starting from the first indicated 2D point and ends at the second indicated point. This function returns the first entity that a collision occurs with. This function takes a starting vector2 and an ending vector2 as arguments.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "Physics_Raycast";
 
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);

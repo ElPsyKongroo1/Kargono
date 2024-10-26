@@ -19,6 +19,7 @@
 #include "Kargono/AI/AIService.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Events/EditorEvent.h"
+#include "Kargono/Physics/Physics2DCommon.h"
 
 #ifdef KG_PLATFORM_WINDOWS
 #include "API/Platform/WindowsBackendAPI.h"
@@ -469,6 +470,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(Vec2UInt64, Math::vec2, uint64_t)
 	DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
 	DefineInsertFunction(StringUInt64, const std::string&, uint64_t)
+	DefineInsertFunction(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 
 	// Engine Functions that need to be defined only in this file
 	static void Log(const std::string& info)
@@ -583,6 +585,7 @@ namespace Kargono::Scripting
 		outputStream << "#include \"" << "Kargono/Math/MathAliases.h" << "\"\n"; // Include Math Library
 		outputStream << "#include \"" << "Kargono/Core/KeyCodes.h" << "\"\n"; // Include KeyCodes
 		outputStream << "#include \"" << "Kargono/Core/MouseCodes.h" << "\"\n"; // Include MouseCodes
+		outputStream << "#include \"" << "Kargono/Physics/Physics2DCommon.h" << "\"\n"; // Include Physics Common
 
 		// Conversion Function from RValueToLValue
 		outputStream << "template<typename T>\n";
@@ -628,6 +631,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(Vec2UInt64, Math::vec2, uint64_t)
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
 		AddImportFunctionToHeaderFile(StringUInt64, const std::string&, uint64_t)
+		AddImportFunctionToHeaderFile(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 		// Add Script Function Declarations
 		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 		{
@@ -711,6 +715,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(AI_ChangeCurrentState, void, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
+		AddEngineFunctionToCPPFileTwoParameters(Physics_Raycast, Physics::RaycastResult, Math::vec2, Math::vec2)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
@@ -864,6 +869,10 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(AI_SendMessage)
 		outputStream << "}\n";
+		AddImportFunctionToCPPFile(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(Physics_Raycast)
+		outputStream << "}\n";
 
 		// Write scripts into a single cpp file
 		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
@@ -1008,6 +1017,7 @@ namespace Kargono::Scripting
 		ImportInsertFunction(Vec2UInt64)
 		ImportInsertFunction(Vec3UInt64)
 		ImportInsertFunction(StringUInt64)
+		ImportInsertFunction(RaycastResultVec2Vec2)
 		AddEngineFunctionPointerToDll(LeaveCurrentSession, Network::ClientService::LeaveCurrentSession, VoidNone)
 		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::ClientService::EnableReadyCheck, VoidNone)
 		AddEngineFunctionPointerToDll(RequestJoinSession, Network::ClientService::RequestJoinSession, VoidNone)
@@ -1055,5 +1065,6 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AI_ClearCurrentState, AI::AIService::ClearCurrentState, VoidUInt64)
 		AddEngineFunctionPointerToDll(AI_ClearPreviousState, AI::AIService::ClearPreviousState, VoidUInt64)
 		AddEngineFunctionPointerToDll(AI_ClearAllStates, AI::AIService::ClearAllStates, VoidUInt64)
+		AddEngineFunctionPointerToDll(Physics_Raycast, Physics::Physics2DService::Raycast, RaycastResultVec2Vec2)
 	}
 }
