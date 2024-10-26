@@ -64,24 +64,25 @@ namespace Kargono::Physics
 
 			if (entity.HasComponent<ECS::BoxCollider2DComponent>())
 			{
-				auto& bc2d = entity.GetComponent<ECS::BoxCollider2DComponent>();
-				b2Vec2 offsets{ bc2d.Offset.y, -bc2d.Offset.x };
+				ECS::BoxCollider2DComponent& boxColliderComp = entity.GetComponent<ECS::BoxCollider2DComponent>();
+				b2Vec2 offsets{ boxColliderComp.Offset.y, -boxColliderComp.Offset.x };
 				b2PolygonShape boxShape;
-				boxShape.SetAsBox(bc2d.Size.x * transform.Scale.x, bc2d.Size.y * transform.Scale.y,
+				boxShape.SetAsBox(boxColliderComp.Size.x * transform.Scale.x, boxColliderComp.Size.y * transform.Scale.y,
 									offsets, 0);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
-				fixtureDef.density = bc2d.Density;
-				fixtureDef.friction = bc2d.Friction;
-				fixtureDef.restitution = bc2d.Restitution;
-				fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
+				fixtureDef.density = boxColliderComp.Density;
+				fixtureDef.friction = boxColliderComp.Friction;
+				fixtureDef.restitution = boxColliderComp.Restitution;
+				fixtureDef.restitutionThreshold = boxColliderComp.RestitutionThreshold;
+				fixtureDef.isSensor = boxColliderComp.IsSensor;
 				body->CreateFixture(&fixtureDef);
 			}
 
 			if (entity.HasComponent<ECS::CircleCollider2DComponent>())
 			{
-				auto& circleColliderComponent = entity.GetComponent<ECS::CircleCollider2DComponent>();
+				ECS::CircleCollider2DComponent& circleColliderComponent = entity.GetComponent<ECS::CircleCollider2DComponent>();
 
 				b2CircleShape circleShape;
 				circleShape.m_p.Set(circleColliderComponent.Offset.x, circleColliderComponent.Offset.y);
@@ -93,6 +94,7 @@ namespace Kargono::Physics
 				fixtureDef.friction = circleColliderComponent.Friction;
 				fixtureDef.restitution = circleColliderComponent.Restitution;
 				fixtureDef.restitutionThreshold = circleColliderComponent.RestitutionThreshold;
+				fixtureDef.isSensor = circleColliderComponent.IsSensor;
 				body->CreateFixture(&fixtureDef);
 			}
 		}
@@ -164,4 +166,18 @@ namespace Kargono::Physics
 		s_ActivePhysicsWorld->m_PhysicsWorld->SetGravity(b2Vec2(gravity.x, gravity.y));
 	}
 
+	float RayCastCallback::ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction)
+	{
+		// Skip all sensors for raycasts
+		if (fixture->IsSensor())
+		{
+			return -1.0f;
+		}
+
+		m_Fixture = fixture;
+		m_ContactPoint = point;
+		m_NormalVector = normal;
+		m_Fraction = fraction;
+		return fraction;
+	}
 }

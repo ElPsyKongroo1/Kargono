@@ -157,6 +157,7 @@ namespace Kargono::ECS
 		float Friction = 0.5f;
 		float Restitution = 0.0f;
 		float RestitutionThreshold = 0.5f;
+		bool IsSensor = false;
 
 		// Storage for runtime
 		void* RuntimeFixture = nullptr;
@@ -176,6 +177,7 @@ namespace Kargono::ECS
 		float Friction = 0.5f;
 		float Restitution = 0.0f;
 		float RestitutionThreshold = 0.5f;
+		bool IsSensor = false;
 
 		// Storage for runtime
 		void* RuntimeFixture = nullptr;

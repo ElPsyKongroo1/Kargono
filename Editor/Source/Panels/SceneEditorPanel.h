@@ -161,6 +161,7 @@ namespace Kargono::Panels
 		EditorUI::EditFloatSpec m_BoxColliderFriction{};
 		EditorUI::EditFloatSpec m_BoxColliderRestitution{};
 		EditorUI::EditFloatSpec m_BoxColliderRestitutionThreshold{};
+		EditorUI::CheckboxSpec m_BoxColliderIsSensor{};
 
 		// Circle Collider 2D Component
 		EditorUI::CollapsingHeaderSpec m_CircleCollider2DHeader{};
@@ -170,6 +171,7 @@ namespace Kargono::Panels
 		EditorUI::EditFloatSpec m_CircleColliderFriction{};
 		EditorUI::EditFloatSpec m_CircleColliderRestitution{};
 		EditorUI::EditFloatSpec m_CircleColliderRestitutionThreshold{};
+		EditorUI::CheckboxSpec m_CircleColliderIsSensor{};
 
 		// OnUpdate Component
 		EditorUI::CollapsingHeaderSpec m_OnUpdateHeader{};

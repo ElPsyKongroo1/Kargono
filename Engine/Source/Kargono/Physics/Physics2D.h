@@ -70,14 +70,7 @@ namespace Kargono::Physics
 	{
 	public:
 		virtual float ReportFixture(b2Fixture* fixture, const b2Vec2& point,
-			const b2Vec2& normal, float fraction) override
-		{
-			m_Fixture = fixture;
-			m_ContactPoint = point;
-			m_NormalVector = normal;
-			m_Fraction = fraction;
-			return fraction;
-		}
+			const b2Vec2& normal, float fraction) override;
 
 		b2Fixture* m_Fixture { nullptr };
 		b2Vec2 m_ContactPoint;

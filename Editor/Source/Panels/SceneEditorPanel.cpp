@@ -874,6 +874,21 @@ namespace Kargono::Panels
 			auto& component = entity.GetComponent<ECS::BoxCollider2DComponent>();
 			component.RestitutionThreshold = m_BoxColliderRestitutionThreshold.CurrentFloat;
 		};
+
+		// Set whether box collider is treated as a sensor
+		m_BoxColliderIsSensor.Label = "Is Sensor";
+		m_BoxColliderIsSensor.Flags |= EditorUI::Checkbox_Indented;
+		m_BoxColliderIsSensor.ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		{
+			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<ECS::BoxCollider2DComponent>())
+			{
+				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<ECS::BoxCollider2DComponent>();
+			component.IsSensor = spec.CurrentBoolean;
+		};
 	}
 	void SceneEditorPanel::InitializeCircleCollider2DComponent()
 	{
@@ -1000,6 +1015,21 @@ namespace Kargono::Panels
 			}
 			auto& component = entity.GetComponent<ECS::CircleCollider2DComponent>();
 			component.RestitutionThreshold = m_CircleColliderRestitutionThreshold.CurrentFloat;
+		};
+
+		// Set whether circle collider is treated as a sensor
+		m_CircleColliderIsSensor.Label = "Is Sensor";
+		m_CircleColliderIsSensor.Flags |= EditorUI::Checkbox_Indented;
+		m_CircleColliderIsSensor.ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		{
+			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<ECS::CircleCollider2DComponent>())
+			{
+				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
+				return;
+			}
+			auto& component = entity.GetComponent<ECS::CircleCollider2DComponent>();
+			component.IsSensor = spec.CurrentBoolean;
 		};
 	}
 
@@ -2478,6 +2508,9 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::EditFloat(m_BoxColliderRestitution);
 			m_BoxColliderRestitutionThreshold.CurrentFloat = component.RestitutionThreshold;
 			EditorUI::EditorUIService::EditFloat(m_BoxColliderRestitutionThreshold);
+			m_BoxColliderIsSensor.CurrentBoolean = component.IsSensor;
+			EditorUI::EditorUIService::Checkbox(m_BoxColliderIsSensor);
+
 		}
 		
 	}
@@ -2503,6 +2536,8 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::EditFloat(m_CircleColliderRestitution);
 			m_CircleColliderRestitutionThreshold.CurrentFloat = component.RestitutionThreshold;
 			EditorUI::EditorUIService::EditFloat(m_CircleColliderRestitutionThreshold);
+			m_CircleColliderIsSensor.CurrentBoolean = component.IsSensor;
+			EditorUI::EditorUIService::Checkbox(m_CircleColliderIsSensor);
 		}
 		
 	}
