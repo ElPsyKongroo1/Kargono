@@ -59,7 +59,7 @@ namespace Kargono::AI
 			}
 
 			// Call Current State OnUpdate
-			if (aiComponent.CurrentStateReference)
+			if (aiComponent.CurrentStateReference && aiComponent.CurrentStateReference->OnUpdate)
 			{
 				Utility::CallWrappedVoidUInt64Float(aiComponent.CurrentStateReference->OnUpdate->m_Function, entity.GetUUID(), timeStep);
 			}

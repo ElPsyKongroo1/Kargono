@@ -1665,7 +1665,48 @@ namespace Kargono::Scripting
 		{
 			node.Namespace = {};
 			node.Identifier.Value = "glm::normalize";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
 
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Math" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "DistanceVector2" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "float" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector2" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "firstVector" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector2" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "secondVector" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Find the distance between two vectors. This function takes in two vector2 parameters to find the distance between.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "glm::distance";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Math" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "DistanceVector3" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "float" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "firstVector" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "secondVector" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Find the distance between two vectors. This function takes in two vector3 parameters to find the distance between.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "glm::distance";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
