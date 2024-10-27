@@ -462,6 +462,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
 	DefineInsertFunction(BoolStringString, bool, const std::string&, const std::string&)
 	DefineInsertFunction(BoolUInt64String, bool, uint64_t, const std::string&)
+	DefineInsertFunction(BoolUInt64UInt64, bool, uint64_t, uint64_t)
 	DefineInsertFunction(BoolUInt16, bool, uint16_t)
 	DefineInsertFunction(BoolString, bool, const std::string&)
 	DefineInsertFunction(UInt16None, uint16_t)
@@ -623,6 +624,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
 		AddImportFunctionToHeaderFile(BoolStringString, bool, const std::string&, const std::string&)
 		AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, const std::string&)
+		AddImportFunctionToHeaderFile(BoolUInt64UInt64, bool, uint64_t, uint64_t)
 		AddImportFunctionToHeaderFile(BoolUInt16, bool, uint16_t)
 		AddImportFunctionToHeaderFile(BoolString, bool, const std::string&)
 		AddImportFunctionToHeaderFile(UInt16None, uint16_t)
@@ -713,6 +715,9 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(AI_ChangeGlobalState, void, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(AI_ChangeCurrentState, void, uint64_t, uint64_t)
+		AddEngineFunctionToCPPFileTwoParameters(AI_IsGlobalState, bool, uint64_t, uint64_t)
+		AddEngineFunctionToCPPFileTwoParameters(AI_IsCurrentState, bool, uint64_t, uint64_t)
+		AddEngineFunctionToCPPFileTwoParameters(AI_IsPreviousState, bool, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(Physics_Raycast, Physics::RaycastResult, Math::vec2, Math::vec2)
@@ -840,6 +845,12 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(VoidPtrString, void*, const std::string&)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(GetGameStateField)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(BoolUInt64UInt64, bool, uint64_t, uint64_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(AI_IsGlobalState)
+		AddEngineFunctionToCPPFileEnd(AI_IsCurrentState)
+		AddEngineFunctionToCPPFileEnd(AI_IsPreviousState)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(Int32Int32Int32, int32_t, int32_t, int32_t)
 		outputStream << "{\n";
@@ -1009,6 +1020,7 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidUInt64Vec3Vec2)
 		ImportInsertFunction(BoolStringString)
 		ImportInsertFunction(BoolUInt64String)
+		ImportInsertFunction(BoolUInt64UInt64)
 		ImportInsertFunction(BoolUInt16)
 		ImportInsertFunction(BoolString)
 		ImportInsertFunction(UInt16None)
@@ -1065,6 +1077,9 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AI_ClearCurrentState, AI::AIService::ClearCurrentState, VoidUInt64)
 		AddEngineFunctionPointerToDll(AI_ClearPreviousState, AI::AIService::ClearPreviousState, VoidUInt64)
 		AddEngineFunctionPointerToDll(AI_ClearAllStates, AI::AIService::ClearAllStates, VoidUInt64)
+		AddEngineFunctionPointerToDll(AI_IsGlobalState, AI::AIService::IsGlobalState, BoolUInt64UInt64)
+		AddEngineFunctionPointerToDll(AI_IsCurrentState, AI::AIService::IsCurrentState, BoolUInt64UInt64)
+		AddEngineFunctionPointerToDll(AI_IsPreviousState, AI::AIService::IsPreviousState, BoolUInt64UInt64)
 		AddEngineFunctionPointerToDll(Physics_Raycast, Physics::Physics2DService::Raycast, RaycastResultVec2Vec2)
 	}
 }

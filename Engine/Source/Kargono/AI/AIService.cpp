@@ -68,6 +68,48 @@ namespace Kargono::AI
 		// Check/Handle AIContext's delayed messages queue
 		HandleDelayedMessages();
 	}
+	bool AIService::IsGlobalState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	{
+		// Ensure a valid scene is active and a valid entity is provided
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
+		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
+
+		// Get ai component to be queried
+		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+
+		// Return whether the component aiState is the same as query aiState
+		return aiComponent.GlobalStateHandle == queryAIStateHandle;
+	}
+	bool AIService::IsCurrentState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	{
+		// Ensure a valid scene is active and a valid entity is provided
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
+		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
+
+		// Get ai component to be queried
+		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+
+		// Return whether the component aiState is the same as query aiState
+		return aiComponent.CurrentStateHandle == queryAIStateHandle;
+	}
+	bool AIService::IsPreviousState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	{
+		// Ensure a valid scene is active and a valid entity is provided
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
+		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
+
+		// Get ai component to be queried
+		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+
+		// Return whether the component aiState is the same as query aiState
+		return aiComponent.PreviousStateHandle == queryAIStateHandle;
+	}
 	void AIService::ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided

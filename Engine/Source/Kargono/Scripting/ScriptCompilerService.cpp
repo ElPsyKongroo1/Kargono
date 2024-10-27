@@ -737,9 +737,6 @@ namespace Kargono::Scripting
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 
-
-
-
 		newDataMember.Name = "AIState";
 		newDataMember.Description = "This entity member is a AI state component. This component stores the AI's current global, current, and previous states and uses them to provide a managed state machine in the engine.";
 		newDataMember.PrimitiveType.Type = ScriptTokenType::None;
@@ -821,6 +818,126 @@ namespace Kargono::Scripting
 			KG_ASSERT(foundAIStateAsset, "Could not locate ai state asset from provided file location");
 			generator.m_OutputText << ")";
 		};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "IsGlobalState" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
+		newFunctionMember.Description = "This function check whether the global state of this entity is identical to the indicated aistate. This function takes in the location of an AI state component in the current project as a parameter.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "queryStateLocation" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+			{
+				FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+				generator.m_OutputText << "AI_IsGlobalState(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ", ";
+
+				// Output UUID of AIState if it exists
+				TokenExpressionNode* aiStateExpression = std::get_if<TokenExpressionNode>(&funcCall->Arguments.at(0)->Value);
+				KG_ASSERT(aiStateExpression);
+
+				// Check if UUID is valid
+				bool foundAIStateAsset = false;
+				std::string queryFileLocation = aiStateExpression->Value.Value;
+				Utility::Operations::RemoveCharacterFromString(queryFileLocation, '\"');
+				for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+				{
+					// Check for identical file location
+					if (asset.Data.FileLocation == queryFileLocation)
+					{
+						generator.m_OutputText << std::to_string(handle);
+						foundAIStateAsset = true;
+						break;
+					}
+				}
+				KG_ASSERT(foundAIStateAsset, "Could not locate ai state asset from provided file location");
+				generator.m_OutputText << ")";
+			};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "IsCurrentState" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
+		newFunctionMember.Description = "This function check whether the current state of this entity is identical to the indicated aistate. This function takes in the location of an AI state component in the current project as a parameter.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "queryStateLocation" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+			{
+				FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+				generator.m_OutputText << "AI_IsCurrentState(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ", ";
+
+				// Output UUID of AIState if it exists
+				TokenExpressionNode* aiStateExpression = std::get_if<TokenExpressionNode>(&funcCall->Arguments.at(0)->Value);
+				KG_ASSERT(aiStateExpression);
+
+				// Check if UUID is valid
+				bool foundAIStateAsset = false;
+				std::string queryFileLocation = aiStateExpression->Value.Value;
+				Utility::Operations::RemoveCharacterFromString(queryFileLocation, '\"');
+				for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+				{
+					// Check for identical file location
+					if (asset.Data.FileLocation == queryFileLocation)
+					{
+						generator.m_OutputText << std::to_string(handle);
+						foundAIStateAsset = true;
+						break;
+					}
+				}
+				KG_ASSERT(foundAIStateAsset, "Could not locate ai state asset from provided file location");
+				generator.m_OutputText << ")";
+			};
+		newMemberParameter = {};
+		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
+		newFunctionMember = {};
+
+		newFunctionMember.Name = { ScriptTokenType::Identifier, "IsPreviousState" };
+		newFunctionMember.Namespace = {};
+		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
+		newFunctionMember.Description = "This function check whether the previous state of this entity is identical to the indicated aistate. This function takes in the location of an AI state component in the current project as a parameter.";
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "queryStateLocation" };
+		newFunctionMember.Parameters.push_back(newMemberParameter);
+		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
+			{
+				FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+				generator.m_OutputText << "AI_IsPreviousState(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ", ";
+
+				// Output UUID of AIState if it exists
+				TokenExpressionNode* aiStateExpression = std::get_if<TokenExpressionNode>(&funcCall->Arguments.at(0)->Value);
+				KG_ASSERT(aiStateExpression);
+
+				// Check if UUID is valid
+				bool foundAIStateAsset = false;
+				std::string queryFileLocation = aiStateExpression->Value.Value;
+				Utility::Operations::RemoveCharacterFromString(queryFileLocation, '\"');
+				for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+				{
+					// Check for identical file location
+					if (asset.Data.FileLocation == queryFileLocation)
+					{
+						generator.m_OutputText << std::to_string(handle);
+						foundAIStateAsset = true;
+						break;
+					}
+				}
+				KG_ASSERT(foundAIStateAsset, "Could not locate ai state asset from provided file location");
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};

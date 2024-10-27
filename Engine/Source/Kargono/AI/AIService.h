@@ -80,6 +80,13 @@ namespace Kargono::AI
 		static void OnUpdate(Timestep timeStep);
 
 		//=========================
+		// Query Entity's AIState
+		//=========================
+		static bool IsGlobalState(UUID entityID, Assets::AssetHandle queryAIStateHandle);
+		static bool IsCurrentState(UUID entityID, Assets::AssetHandle queryAIStateHandle);
+		static bool IsPreviousState(UUID entityID, Assets::AssetHandle queryAIStateHandle);
+
+		//=========================
 		// Manage Entity's AIState
 		//=========================
 		static void ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle);
