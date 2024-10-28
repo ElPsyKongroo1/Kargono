@@ -1684,7 +1684,7 @@ namespace Kargono::Scripting
 		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "LoadInputModeByName";
+			node.Identifier.Value = "InputMode_LoadInputModeByName";
 
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -1702,7 +1702,24 @@ namespace Kargono::Scripting
 		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "IsKeyPressed";
+			node.Identifier.Value = "Input_IsKeyPressed";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Input" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsPollingSlotPressed" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
+		newParameter.AllTypes = s_AllIntegerTypes;
+		newParameter.Identifier = { ScriptTokenType::Identifier, "querySlot" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Check if the provided slot from the input mode is current pressed on the keyboard. This function takes an integer as a parameter.";
+		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "InputMode_IsPollingSlotPressed";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};

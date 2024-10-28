@@ -665,7 +665,7 @@ namespace Kargono::Panels
 
 		m_KeyboardPollingAddSlot.ConfirmAction = [&]()
 		{
-			auto& keyboardPolling = m_EditorInputMode->GetKeyboardPolling();
+			std::vector<KeyCode>& keyboardPolling = m_EditorInputMode->GetKeyboardPolling();
 			KeyCode code = (KeyCode)m_KeyboardPollingAddKeyCode.CurrentOption.Handle;
 			keyboardPolling.push_back(code);
 			OnRefreshData();
@@ -677,9 +677,17 @@ namespace Kargono::Panels
 		m_KeyboardPollingAddKeyCode.PopupAction = [&]()
 		{
 			m_KeyboardPollingAddKeyCode.ClearOptions();
-			for (auto key : Key::s_AllKeyCodes)
+			for (uint16_t key : Key::s_AllKeyCodes)
 			{
-				m_KeyboardPollingAddKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
+				if (key == 0)
+				{
+					m_KeyboardPollingAddKeyCode.AddToOptions("Clear", Utility::KeyCodeToString(key), key);
+				}
+				else
+				{
+					m_KeyboardPollingAddKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
+				}
+				
 			}
 		};
 
@@ -718,9 +726,17 @@ namespace Kargono::Panels
 		m_KeyboardPollingEditKeyCode.PopupAction = [&]()
 		{
 			m_KeyboardPollingEditKeyCode.ClearOptions();
-			for (auto key : Key::s_AllKeyCodes)
+			for (uint16_t key : Key::s_AllKeyCodes)
 			{
-				m_KeyboardPollingEditKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
+				if (key == 0)
+				{
+					m_KeyboardPollingEditKeyCode.AddToOptions("Clear", Utility::KeyCodeToString(key), key);
+				}
+				else
+				{
+					m_KeyboardPollingEditKeyCode.AddToOptions("All KeyCodes", Utility::KeyCodeToString(key), key);
+				}
+
 			}
 		};
 	}

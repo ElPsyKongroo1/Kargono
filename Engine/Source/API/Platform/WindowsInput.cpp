@@ -12,6 +12,10 @@ namespace Kargono::Input
 {
 	bool InputService::IsKeyPressed(const KeyCode key)
 	{
+		if (key == 0) 
+		{
+			return false;
+		}
 		auto* window = static_cast<GLFWwindow*>(EngineService::GetActiveWindow().GetNativeWindow());
 		auto state = glfwGetKey(window, static_cast<int32_t>(key));
 		return state == GLFW_PRESS;

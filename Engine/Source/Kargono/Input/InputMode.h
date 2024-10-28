@@ -119,7 +119,7 @@ namespace Kargono::Input
 		//=========================
 		// Active Input Mode API
 		//=========================
-		static bool IsActiveKeyboardSlotPressed(uint16_t slot);
+		static bool IsPollingSlotPressed(uint16_t slot);
 		static std::vector<Ref<InputActionBinding>>& GetActiveOnUpdate();
 		static std::vector<Ref<InputActionBinding>>& GetActiveOnKeyPressed();
 

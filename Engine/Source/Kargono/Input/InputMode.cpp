@@ -84,11 +84,19 @@ namespace Kargono::Input
 		return false;
 	}
 
-	bool InputModeService::IsActiveKeyboardSlotPressed(uint16_t slot)
+	bool InputModeService::IsPollingSlotPressed(uint16_t slot)
 	{
-		KG_ASSERT(s_ActiveInputMode);
-		auto& keyboardPolling = s_ActiveInputMode->GetKeyboardPolling();
-		KG_ASSERT(slot < (uint16_t)keyboardPolling.size(), "Invalid range provided to function");
+		if (!s_ActiveInputMode)
+		{
+			KG_WARN("Attempt to query keyboard slot from active input mode, however, no active input mode exists");
+			return false;
+		}
+		std::vector<KeyCode>& keyboardPolling = s_ActiveInputMode->GetKeyboardPolling();
+		if (slot >= (uint16_t)keyboardPolling.size())
+		{
+			return false;
+		}
+
 		return InputService::IsKeyPressed(keyboardPolling.at(slot));
 	}
 	std::vector<Ref<InputActionBinding>>& InputModeService::GetActiveOnUpdate()

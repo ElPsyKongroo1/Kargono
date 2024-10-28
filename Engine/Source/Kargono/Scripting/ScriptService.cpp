@@ -688,7 +688,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileOneParameters(Log, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, const std::string&, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(PlaySoundFromName, void, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(IsKeyPressed, bool, uint16_t)
+		AddEngineFunctionToCPPFileOneParameters(Input_IsKeyPressed, bool, uint16_t)
 		AddEngineFunctionToCPPFileOneParameters(Scenes_IsSceneActive, bool, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(SignalAll, void, uint16_t)
 		AddEngineFunctionToCPPFileOneParameters(AI_RevertPreviousState, void, uint64_t)
@@ -698,7 +698,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileOneParameters(AI_ClearAllStates, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(GetGameStateField, void*, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromName, void, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(LoadInputModeByName, void, const std::string&)
+		AddEngineFunctionToCPPFileOneParameters(InputMode_LoadInputModeByName, void, const std::string&)
+		AddEngineFunctionToCPPFileOneParameters(InputMode_IsPollingSlotPressed, bool, uint16_t)
 		AddEngineFunctionToCPPFileOneParameters(LoadUserInterfaceFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(TransformComponent_GetTranslation, Math::vec3, uint64_t)
@@ -757,7 +758,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileEnd(Log)
 		AddEngineFunctionToCPPFileEnd(PlaySoundFromName)
 		AddEngineFunctionToCPPFileEnd(PlayStereoSoundFromName)
-		AddEngineFunctionToCPPFileEnd(LoadInputModeByName)
+		AddEngineFunctionToCPPFileEnd(InputMode_LoadInputModeByName)
 		AddEngineFunctionToCPPFileEnd(TransitionSceneFromName)
 		AddEngineFunctionToCPPFileEnd(LoadUserInterfaceFromName)
 		outputStream << "}\n";
@@ -858,7 +859,8 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolUInt16, bool, uint16_t)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(IsKeyPressed)
+		AddEngineFunctionToCPPFileEnd(Input_IsKeyPressed)
+		AddEngineFunctionToCPPFileEnd(InputMode_IsPollingSlotPressed)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolString, bool, const std::string&)
 		outputStream << "{\n";
@@ -1045,8 +1047,9 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AddDebugLine, Scripting::AddDebugLine, VoidVec3Vec3)
 		AddEngineFunctionPointerToDll(PlaySoundFromName, Audio::AudioService::PlaySoundFromName, VoidString)
 		AddEngineFunctionPointerToDll(PlayStereoSoundFromName, Audio::AudioService::PlayStereoSoundFromName, VoidString)
-		AddEngineFunctionPointerToDll(LoadInputModeByName, Input::InputModeService::SetActiveInputModeByName, VoidString)
-		AddEngineFunctionPointerToDll(IsKeyPressed, Input::InputService::IsKeyPressed, BoolUInt16)
+		AddEngineFunctionPointerToDll(Input_IsKeyPressed, Input::InputService::IsKeyPressed, BoolUInt16)
+		AddEngineFunctionPointerToDll(InputMode_LoadInputModeByName, Input::InputModeService::SetActiveInputModeByName, VoidString)
+		AddEngineFunctionPointerToDll(InputMode_IsPollingSlotPressed, Input::InputModeService::IsPollingSlotPressed, BoolUInt16)
 		AddEngineFunctionPointerToDll(LoadUserInterfaceFromName, RuntimeUI::RuntimeUIService::SetActiveUIFromName, VoidString)
 		AddEngineFunctionPointerToDll(TransitionSceneFromName, Scenes::SceneService::TransitionSceneFromName, VoidString)
 		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindow, VoidStringBool)

@@ -141,9 +141,9 @@ namespace Kargono::Key
 	//==============================
 	// Array for Listing KeyCodes
 	//==============================
-	inline std::array<uint16_t, 120> s_AllKeyCodes
+	inline std::array<uint16_t, 121> s_AllKeyCodes
 	{
-		32, 39, 44, 45, 46, 47, 48,
+			0, 32, 39, 44, 45, 46, 47, 48,
 			49, 50, 51, 52, 53, 54, 55,
 			56, 57, 59, 61, 65, 66, 67,
 			68, 69, 70, 71, 72, 73, 74, 75,
@@ -292,13 +292,13 @@ namespace Kargono::Utility
 				case Key::RightAlt:				{return "RightAlt"; }
 				case Key::RightSuper:			{return "RightSuper"; }
 				case Key::Menu:					{return "Menu";}
+				case Key::None:					{ return "None"; };
 				default:						{return ""; }
 		}
 	}
 
 	inline KeyCode StringToKeyCode(const std::string& codeString)
 	{
-		
 		if (codeString == "Space")				{ return Key::Space; }
 		if (codeString == "Apostrophe")			{ return Key::Apostrophe; }
 		if (codeString == "Comma")				{ return Key::Comma; }
@@ -419,6 +419,7 @@ namespace Kargono::Utility
 		if (codeString == "RightAlt")			{ return Key::RightAlt; }
 		if (codeString == "RightSuper")			{ return Key::RightSuper; }
 		if (codeString == "Menu")				{ return Key::Menu;}
+		if (codeString == "None")				{ return Key::None; }
 		return { Key::None };
 	}
 	
