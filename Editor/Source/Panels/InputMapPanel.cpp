@@ -1,4 +1,4 @@
-#include "Panels/InputModePanel.h"
+#include "Panels/InputMapPanel.h"
 #include "EditorApp.h"
 
 namespace Kargono
@@ -8,35 +8,35 @@ namespace Kargono
 
 namespace Kargono::Panels
 {
-	void InputModePanel::OnOpenInputMode()
+	void InputMapPanel::OnOpenInputMap()
 	{
-		m_OpenInputModePopupSpec.PopupActive = true;
+		m_OpenInputMapPopupSpec.PopupActive = true;
 	}
-	void InputModePanel::OnCreateInputMode()
+	void InputMapPanel::OnCreateInputMap()
 	{
-		m_CreateInputModePopupSpec.PopupActive = true;
+		m_CreateInputMapPopupSpec.PopupActive = true;
 	}
 
-	void InputModePanel::OnRefreshData()
+	void InputMapPanel::OnRefreshData()
 	{
 		m_KeyboardOnUpdateTable.OnRefresh();
 		m_KeyboardOnKeyPressedTable.OnRefresh();
 		m_KeyboardPollingTable.OnRefresh();
 	}
 
-	InputModePanel::InputModePanel()
+	InputMapPanel::InputMapPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
-			KG_BIND_CLASS_FN(InputModePanel::OnKeyPressedEditor));
+			KG_BIND_CLASS_FN(InputMapPanel::OnKeyPressedEditor));
 		InitializeOpeningScreen();
-		InitializeInputModeHeader();
+		InitializeInputMapHeader();
 		InitializeKeyboardScreen();
 	}
-	void InputModePanel::OnEditorUIRender()
+	void InputMapPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION()
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowInputModeEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowInputMapEditor);
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
@@ -44,22 +44,22 @@ namespace Kargono::Panels
 			return;
 		}
 
-		if (!m_EditorInputMode)
+		if (!m_EditorInputMap)
 		{
 			// Opening/Null State Screen
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Input Mode", KG_BIND_CLASS_FN(OnOpenInputMode), "Create New InputMode", KG_BIND_CLASS_FN(OnCreateInputMode));
-			EditorUI::EditorUIService::GenericPopup(m_CreateInputModePopupSpec);
-			EditorUI::EditorUIService::SelectOption(m_OpenInputModePopupSpec);
+			EditorUI::EditorUIService::NewItemScreen("Open Existing Input Map", KG_BIND_CLASS_FN(OnOpenInputMap), "Create New Input Map", KG_BIND_CLASS_FN(OnCreateInputMap));
+			EditorUI::EditorUIService::GenericPopup(m_CreateInputMapPopupSpec);
+			EditorUI::EditorUIService::SelectOption(m_OpenInputMapPopupSpec);
 		}
 		else
 		{
 			// Header
 			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteInputModeWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseInputModeWarning);
+			EditorUI::EditorUIService::GenericPopup(m_DeleteInputMapWarning);
+			EditorUI::EditorUIService::GenericPopup(m_CloseInputMapWarning);
 
 			// Main Content
-			EditorUI::EditorUIService::BeginTabBar("InputModePanelTabBar");
+			EditorUI::EditorUIService::BeginTabBar("InputMapPanelTabBar");
 			// Keyboard Panel
 			if (EditorUI::EditorUIService::BeginTabItem("Keyboard"))
 			{
@@ -92,136 +92,136 @@ namespace Kargono::Panels
 
 		EditorUI::EditorUIService::EndWindow();
 	}
-	bool InputModePanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	bool InputMapPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		return false;
 	}
 
-	void InputModePanel::ResetPanelResources()
+	void InputMapPanel::ResetPanelResources()
 	{
-		m_EditorInputMode = nullptr;
-		m_EditorInputModeHandle = Assets::EmptyHandle;
+		m_EditorInputMap = nullptr;
+		m_EditorInputMapHandle = Assets::EmptyHandle;
 	}
 
-	void InputModePanel::InitializeOpeningScreen()
+	void InputMapPanel::InitializeOpeningScreen()
 	{
-		m_OpenInputModePopupSpec.Label = "Open Input Mode";
-		m_OpenInputModePopupSpec.LineCount = 2;
-		m_OpenInputModePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		m_OpenInputModePopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenInputModePopupSpec.PopupAction = [&]()
+		m_OpenInputMapPopupSpec.Label = "Open Input Map";
+		m_OpenInputMapPopupSpec.LineCount = 2;
+		m_OpenInputMapPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenInputMapPopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
+		m_OpenInputMapPopupSpec.PopupAction = [&]()
 		{
-			m_OpenInputModePopupSpec.GetAllOptions().clear();
-			m_OpenInputModePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			m_OpenInputMapPopupSpec.GetAllOptions().clear();
+			m_OpenInputMapPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 
-			m_OpenInputModePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetInputModeRegistry())
+			m_OpenInputMapPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [handle, asset] : Assets::AssetService::GetInputMapRegistry())
 			{
-				m_OpenInputModePopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
+				m_OpenInputMapPopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
 		};
 
-		m_OpenInputModePopupSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
+		m_OpenInputMapPopupSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
 			if (selection.Handle == Assets::EmptyHandle)
 			{
-				KG_WARN("No Input Mode Selected");
+				KG_WARN("No Input Map Selected");
 				return;
 			}
-			if (!Assets::AssetService::GetInputModeRegistry().contains(selection.Handle))
+			if (!Assets::AssetService::GetInputMapRegistry().contains(selection.Handle))
 			{
-				KG_WARN("Could not find the input mode specified");
+				KG_WARN("Could not find the input map specified");
 				return;
 			}
 
-			m_EditorInputMode = Assets::AssetService::GetInputMode(selection.Handle);
-			m_EditorInputModeHandle = selection.Handle;
+			m_EditorInputMap = Assets::AssetService::GetInputMap(selection.Handle);
+			m_EditorInputMapHandle = selection.Handle;
 			m_MainHeader.EditColorActive = false;
-			m_MainHeader.Label = Assets::AssetService::GetInputModeRegistry().at(
-				m_EditorInputModeHandle).Data.FileLocation.string();
+			m_MainHeader.Label = Assets::AssetService::GetInputMapRegistry().at(
+				m_EditorInputMapHandle).Data.FileLocation.string();
 			OnRefreshData();
 		};
 
-		m_SelectInputModeNameSpec.Label = "New Name";
-		m_SelectInputModeNameSpec.CurrentOption = "Empty";
+		m_SelectInputMapNameSpec.Label = "New Name";
+		m_SelectInputMapNameSpec.CurrentOption = "Empty";
 
-		m_CreateInputModePopupSpec.Label = "Create Input Mode";
-		m_CreateInputModePopupSpec.PopupWidth = 420.0f;
-		m_CreateInputModePopupSpec.ConfirmAction = [&]()
+		m_CreateInputMapPopupSpec.Label = "Create Input Map";
+		m_CreateInputMapPopupSpec.PopupWidth = 420.0f;
+		m_CreateInputMapPopupSpec.ConfirmAction = [&]()
 		{
-			if (m_SelectInputModeNameSpec.CurrentOption == "")
+			if (m_SelectInputMapNameSpec.CurrentOption == "")
 			{
 				return;
 			}
 
-			m_EditorInputModeHandle = Assets::AssetService::CreateInputMode(m_SelectInputModeNameSpec.CurrentOption);
-			if (m_EditorInputModeHandle == Assets::EmptyHandle)
+			m_EditorInputMapHandle = Assets::AssetService::CreateInputMap(m_SelectInputMapNameSpec.CurrentOption);
+			if (m_EditorInputMapHandle == Assets::EmptyHandle)
 			{
-				KG_WARN("Input Mode was not created");
+				KG_WARN("Input Map was not created");
 				return;
 			}
-			m_EditorInputMode = Assets::AssetService::GetInputMode(m_EditorInputModeHandle);
+			m_EditorInputMap = Assets::AssetService::GetInputMap(m_EditorInputMapHandle);
 			m_MainHeader.EditColorActive = false;
-			m_MainHeader.Label = Assets::AssetService::GetInputModeRegistry().at(
-				m_EditorInputModeHandle).Data.FileLocation.string();
+			m_MainHeader.Label = Assets::AssetService::GetInputMapRegistry().at(
+				m_EditorInputMapHandle).Data.FileLocation.string();
 			OnRefreshData();
 		};
-		m_CreateInputModePopupSpec.PopupContents = [&]()
+		m_CreateInputMapPopupSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_SelectInputModeNameSpec);
+			EditorUI::EditorUIService::EditText(m_SelectInputMapNameSpec);
 		};
 	}
 
-	void InputModePanel::InitializeInputModeHeader()
+	void InputMapPanel::InitializeInputMapHeader()
 	{
 		// Header (Game State Name and Options)
-		m_DeleteInputModeWarning.Label = "Delete Input Mode";
-		m_DeleteInputModeWarning.ConfirmAction = [&]()
+		m_DeleteInputMapWarning.Label = "Delete Input Map";
+		m_DeleteInputMapWarning.ConfirmAction = [&]()
 		{
-			Assets::AssetService::DeleteInputMode(m_EditorInputModeHandle);
-			m_EditorInputModeHandle = 0;
-			m_EditorInputMode = nullptr;
+			Assets::AssetService::DeleteInputMap(m_EditorInputMapHandle);
+			m_EditorInputMapHandle = 0;
+			m_EditorInputMap = nullptr;
 		};
-		m_DeleteInputModeWarning.PopupContents = [&]()
+		m_DeleteInputMapWarning.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this input mode object?");
+			EditorUI::EditorUIService::Text("Are you sure you want to delete this input map object?");
 		};
 
-		m_CloseInputModeWarning.Label = "Close Input Mode";
-		m_CloseInputModeWarning.ConfirmAction = [&]()
+		m_CloseInputMapWarning.Label = "Close Input Map";
+		m_CloseInputMapWarning.ConfirmAction = [&]()
 		{
-			m_EditorInputModeHandle = 0;
-			m_EditorInputMode = nullptr;
+			m_EditorInputMapHandle = 0;
+			m_EditorInputMap = nullptr;
 		};
-		m_CloseInputModeWarning.PopupContents = [&]()
+		m_CloseInputMapWarning.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to close this input mode object without saving?");
+			EditorUI::EditorUIService::Text("Are you sure you want to close this input map object without saving?");
 		};
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
 		{
-			Assets::AssetService::SaveInputMode(m_EditorInputModeHandle, m_EditorInputMode);
+			Assets::AssetService::SaveInputMap(m_EditorInputMapHandle, m_EditorInputMap);
 			m_MainHeader.EditColorActive = false;
 		});
 		m_MainHeader.AddToSelectionList("Close", [&]()
 		{
 			if (m_MainHeader.EditColorActive)
 			{
-				m_CloseInputModeWarning.PopupActive = true;
+				m_CloseInputMapWarning.PopupActive = true;
 			}
 			else
 			{
-				m_EditorInputModeHandle = 0;
-				m_EditorInputMode = nullptr;
+				m_EditorInputMapHandle = 0;
+				m_EditorInputMap = nullptr;
 			}
 		});
 		m_MainHeader.AddToSelectionList("Delete", [&]()
 		{
-			m_DeleteInputModeWarning.PopupActive = true;
+			m_DeleteInputMapWarning.PopupActive = true;
 		});
 	}
 
-	void InputModePanel::InitializeKeyboardScreen()
+	void InputMapPanel::InitializeKeyboardScreen()
 	{
 		// On Update Table
 		m_KeyboardOnUpdateTable.Label = "On Update";
@@ -230,7 +230,7 @@ namespace Kargono::Panels
 		{
 			m_KeyboardOnUpdateTable.ClearTable();
 			uint32_t iteration{ 0 };
-			for (auto& inputBinding : m_EditorInputMode->GetOnUpdateBindings())
+			for (auto& inputBinding : m_EditorInputMap->GetOnUpdateBindings())
 			{
 
 				if (inputBinding->GetActionType() != Input::KeyboardAction)
@@ -295,7 +295,7 @@ namespace Kargono::Panels
 
 		m_KeyboardOnUpdateAddSlot.ConfirmAction = [&]()
 		{
-			auto& keyboardBindings = m_EditorInputMode->GetOnUpdateBindings();
+			auto& keyboardBindings = m_EditorInputMap->GetOnUpdateBindings();
 			Ref<Input::KeyboardActionBinding> newBinding = CreateRef<Input::KeyboardActionBinding>();
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnUpdateAddKeyCode.CurrentOption.Handle);
 			Ref<Scripting::Script> script;
@@ -345,7 +345,7 @@ namespace Kargono::Panels
 		m_KeyboardOnUpdateEditSlot.PopupWidth = 420.0f;
 		m_KeyboardOnUpdateEditSlot.PopupAction = [&]()
 		{
-			Input::KeyboardActionBinding* activeBinding = (Input::KeyboardActionBinding*)m_EditorInputMode->GetOnUpdateBindings().at(m_KeyboardOnUpdateActiveSlot).get();
+			Input::KeyboardActionBinding* activeBinding = (Input::KeyboardActionBinding*)m_EditorInputMap->GetOnUpdateBindings().at(m_KeyboardOnUpdateActiveSlot).get();
 			KG_ASSERT(activeBinding);
 
 			m_KeyboardOnUpdateEditKeyCode.CurrentOption = { Utility::KeyCodeToString(activeBinding->GetKeyBinding()), activeBinding->GetKeyBinding() };
@@ -366,7 +366,7 @@ namespace Kargono::Panels
 		};
 		m_KeyboardOnUpdateEditSlot.DeleteAction = [&]()
 		{
-			std::vector<Ref<Input::InputActionBinding>>& bindings = m_EditorInputMode->GetOnUpdateBindings();
+			std::vector<Ref<Input::InputActionBinding>>& bindings = m_EditorInputMap->GetOnUpdateBindings();
 			bindings.erase(bindings.begin() + m_KeyboardOnUpdateActiveSlot);
 			OnRefreshData();
 			m_MainHeader.EditColorActive = true;
@@ -374,7 +374,7 @@ namespace Kargono::Panels
 
 		m_KeyboardOnUpdateEditSlot.ConfirmAction = [&]()
 		{
-			Input::KeyboardActionBinding* newBinding = (Input::KeyboardActionBinding*)m_EditorInputMode->GetOnUpdateBindings().at(m_KeyboardOnUpdateActiveSlot).get();
+			Input::KeyboardActionBinding* newBinding = (Input::KeyboardActionBinding*)m_EditorInputMap->GetOnUpdateBindings().at(m_KeyboardOnUpdateActiveSlot).get();
 			KG_ASSERT(newBinding);
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnUpdateEditKeyCode.CurrentOption.Handle);
 			Ref<Scripting::Script> script;
@@ -427,7 +427,7 @@ namespace Kargono::Panels
 		{
 			m_KeyboardOnKeyPressedTable.ClearTable();
 			uint32_t iteration{ 0 };
-			for (auto& inputBinding : m_EditorInputMode->GetOnKeyPressedBindings())
+			for (auto& inputBinding : m_EditorInputMap->GetOnKeyPressedBindings())
 			{
 
 				if (inputBinding->GetActionType() != Input::KeyboardAction)
@@ -492,7 +492,7 @@ namespace Kargono::Panels
 
 		m_KeyboardOnKeyPressedAddSlot.ConfirmAction = [&]()
 		{
-			auto& keyboardBindings = m_EditorInputMode->GetOnKeyPressedBindings();
+			auto& keyboardBindings = m_EditorInputMap->GetOnKeyPressedBindings();
 			Ref<Input::KeyboardActionBinding> newBinding = CreateRef<Input::KeyboardActionBinding>();
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnKeyPressedAddKeyCode.CurrentOption.Handle);
 			Ref<Scripting::Script> script;
@@ -543,7 +543,7 @@ namespace Kargono::Panels
 		m_KeyboardOnKeyPressedEditSlot.PopupWidth = 420.0f;
 		m_KeyboardOnKeyPressedEditSlot.PopupAction = [&]()
 		{
-			Input::KeyboardActionBinding* activeBinding = (Input::KeyboardActionBinding*)m_EditorInputMode->GetOnKeyPressedBindings().at(m_KeyboardOnKeyPressedActiveSlot).get();
+			Input::KeyboardActionBinding* activeBinding = (Input::KeyboardActionBinding*)m_EditorInputMap->GetOnKeyPressedBindings().at(m_KeyboardOnKeyPressedActiveSlot).get();
 			KG_ASSERT(activeBinding);
 
 			m_KeyboardOnKeyPressedEditKeyCode.CurrentOption = { Utility::KeyCodeToString(activeBinding->GetKeyBinding()), activeBinding->GetKeyBinding() };
@@ -564,7 +564,7 @@ namespace Kargono::Panels
 		};
 		m_KeyboardOnKeyPressedEditSlot.DeleteAction = [&]()
 		{
-			std::vector<Ref<Input::InputActionBinding>>& bindings = m_EditorInputMode->GetOnKeyPressedBindings();
+			std::vector<Ref<Input::InputActionBinding>>& bindings = m_EditorInputMap->GetOnKeyPressedBindings();
 			bindings.erase(bindings.begin() + m_KeyboardOnKeyPressedActiveSlot);
 			OnRefreshData();
 			m_MainHeader.EditColorActive = true;
@@ -572,7 +572,7 @@ namespace Kargono::Panels
 
 		m_KeyboardOnKeyPressedEditSlot.ConfirmAction = [&]()
 		{
-			Input::KeyboardActionBinding* newBinding = (Input::KeyboardActionBinding*)m_EditorInputMode->GetOnKeyPressedBindings().at(m_KeyboardOnKeyPressedActiveSlot).get();
+			Input::KeyboardActionBinding* newBinding = (Input::KeyboardActionBinding*)m_EditorInputMap->GetOnKeyPressedBindings().at(m_KeyboardOnKeyPressedActiveSlot).get();
 			KG_ASSERT(newBinding);
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnKeyPressedEditKeyCode.CurrentOption.Handle);
 			Ref<Scripting::Script> script;
@@ -624,7 +624,7 @@ namespace Kargono::Panels
 		{
 			m_KeyboardPollingTable.ClearTable();
 			uint32_t iteration{ 0 };
-			for (auto code: m_EditorInputMode->GetKeyboardPolling())
+			for (auto code: m_EditorInputMap->GetKeyboardPolling())
 			{
 
 				static std::function<void(EditorUI::TableEntry&)> m_EditKeyboardSlot = [&](EditorUI::TableEntry& entry)
@@ -665,7 +665,7 @@ namespace Kargono::Panels
 
 		m_KeyboardPollingAddSlot.ConfirmAction = [&]()
 		{
-			std::vector<KeyCode>& keyboardPolling = m_EditorInputMode->GetKeyboardPolling();
+			std::vector<KeyCode>& keyboardPolling = m_EditorInputMap->GetKeyboardPolling();
 			KeyCode code = (KeyCode)m_KeyboardPollingAddKeyCode.CurrentOption.Handle;
 			keyboardPolling.push_back(code);
 			OnRefreshData();
@@ -695,7 +695,7 @@ namespace Kargono::Panels
 		m_KeyboardPollingEditSlot.PopupWidth = 420.0f;
 		m_KeyboardPollingEditSlot.PopupAction = [&]()
 		{
-			KeyCode activeCode = m_EditorInputMode->GetKeyboardPolling().at(m_KeyboardPollingActiveSlot);
+			KeyCode activeCode = m_EditorInputMap->GetKeyboardPolling().at(m_KeyboardPollingActiveSlot);
 
 			m_KeyboardPollingEditKeyCode.CurrentOption = { Utility::KeyCodeToString(activeCode), activeCode };
 		};
@@ -706,7 +706,7 @@ namespace Kargono::Panels
 
 		m_KeyboardPollingEditSlot.DeleteAction = [&]()
 		{
-			std::vector<KeyCode>& codes = m_EditorInputMode->GetKeyboardPolling();
+			std::vector<KeyCode>& codes = m_EditorInputMap->GetKeyboardPolling();
 			codes.erase(codes.begin() + m_KeyboardPollingActiveSlot);
 			OnRefreshData();
 			m_MainHeader.EditColorActive = true;
@@ -714,7 +714,7 @@ namespace Kargono::Panels
 
 		m_KeyboardPollingEditSlot.ConfirmAction = [&]()
 		{
-			auto& keyboardPolling = m_EditorInputMode->GetKeyboardPolling();
+			auto& keyboardPolling = m_EditorInputMap->GetKeyboardPolling();
 			KeyCode code = (KeyCode)m_KeyboardPollingEditKeyCode.CurrentOption.Handle;
 			keyboardPolling[m_KeyboardPollingActiveSlot] = code;
 			OnRefreshData();

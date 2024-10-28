@@ -8,7 +8,7 @@
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Input/InputService.h"
-#include "Kargono/Input/InputMode.h"
+#include "Kargono/Input/InputMap.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Events/SceneEvent.h"
 #include "Kargono/Projects/Project.h"

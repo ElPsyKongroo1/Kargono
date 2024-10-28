@@ -1,25 +1,25 @@
 #include "kgpch.h"
 
 #include "Kargono/Assets/AssetService.h"
-#include "Kargono/Assets/InputModeManager.h"
+#include "Kargono/Assets/InputMapManager.h"
 
-#include "Kargono/Input/InputMode.h"
+#include "Kargono/Input/InputMap.h"
 
 namespace Kargono::Assets
 {
-	void InputModeManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	void InputMapManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
 	{
-		// Create Temporary InputMode
-		Ref<Input::InputMode> temporaryInputMode = CreateRef<Input::InputMode>();
+		// Create Temporary InputMap
+		Ref<Input::InputMap> temporaryInputMap = CreateRef<Input::InputMap>();
 
 		// Save Binary into File
-		SerializeAsset(temporaryInputMode, assetPath);
+		SerializeAsset(temporaryInputMap, assetPath);
 
 		// Load data into In-Memory Metadata object
-		Ref<Assets::InputModeMetaData> metadata = CreateRef<Assets::InputModeMetaData>();
+		Ref<Assets::InputMapMetaData> metadata = CreateRef<Assets::InputMapMetaData>();
 		asset.Data.SpecificFileData = metadata;
 	}
-	void InputModeManager::SerializeAsset(Ref<Input::InputMode> assetReference, const std::filesystem::path& assetPath)
+	void InputMapManager::SerializeAsset(Ref<Input::InputMap> assetReference, const std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -65,7 +65,7 @@ namespace Kargono::Assets
 				case Input::InputActionTypes::None:
 				default:
 				{
-					KG_ERROR("Invalid InputMode provided to InputMode serialization");
+					KG_ERROR("Invalid InputMap provided to InputMap serialization");
 					break;
 				}
 				}
@@ -98,7 +98,7 @@ namespace Kargono::Assets
 				case Input::InputActionTypes::None:
 				default:
 				{
-					KG_ASSERT("Invalid InputMode provided to InputMode serialization");
+					KG_ASSERT("Invalid InputMap provided to InputMap serialization");
 					break;
 				}
 				}
@@ -112,11 +112,11 @@ namespace Kargono::Assets
 
 		std::ofstream fout(assetPath);
 		fout << out.c_str();
-		KG_INFO("Successfully Serialized InputMode at {}", assetPath.string());
+		KG_INFO("Successfully Serialized InputMap at {}", assetPath.string());
 	}
-	Ref<Input::InputMode> InputModeManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Input::InputMap> InputMapManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
 	{
-		Ref<Input::InputMode> newInputMode = CreateRef<Input::InputMode>();
+		Ref<Input::InputMap> newInputMap = CreateRef<Input::InputMap>();
 		YAML::Node data;
 		try
 		{
@@ -133,7 +133,7 @@ namespace Kargono::Assets
 			auto keyboardPolling = data["KeyboardPolling"];
 			if (keyboardPolling)
 			{
-				auto& keyboardPollingNew = newInputMode->m_KeyboardPolling;
+				auto& keyboardPollingNew = newInputMap->m_KeyboardPolling;
 				for (auto binding : keyboardPolling)
 				{
 					uint16_t slot = (uint16_t)binding["Slot"].as<uint32_t>();
@@ -148,7 +148,7 @@ namespace Kargono::Assets
 			auto onUpdate = data["OnUpdate"];
 			if (onUpdate)
 			{
-				auto& onUpdateNew = newInputMode->m_OnUpdateBindings;
+				auto& onUpdateNew = newInputMap->m_OnUpdateBindings;
 				for (auto binding : onUpdate)
 				{
 					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
@@ -164,7 +164,7 @@ namespace Kargono::Assets
 					case Input::InputActionTypes::None:
 					default:
 					{
-						KG_ERROR("Invalid bindingType while deserializing InputMode");
+						KG_ERROR("Invalid bindingType while deserializing InputMap");
 						break;
 					}
 					}
@@ -188,7 +188,7 @@ namespace Kargono::Assets
 			auto onKeyPressed = data["OnKeyPressed"];
 			if (onKeyPressed)
 			{
-				auto& onKeyPressedNew = newInputMode->m_OnKeyPressedBindings;
+				auto& onKeyPressedNew = newInputMap->m_OnKeyPressedBindings;
 				for (auto binding : onKeyPressed)
 				{
 					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
@@ -204,7 +204,7 @@ namespace Kargono::Assets
 					case Input::InputActionTypes::None:
 					default:
 					{
-						KG_ERROR("Invalid bindingType while deserializing InputMode");
+						KG_ERROR("Invalid bindingType while deserializing InputMap");
 						break;
 					}
 					}
@@ -215,6 +215,6 @@ namespace Kargono::Assets
 			}
 		}
 
-		return newInputMode;
+		return newInputMap;
 	}
 }

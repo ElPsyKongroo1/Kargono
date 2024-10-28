@@ -6,7 +6,7 @@
 #include "Kargono/Assets/AIStateManager.h"
 #include "Kargono/Assets/FontManager.h"
 #include "Kargono/Assets/GameStateManager.h"
-#include "Kargono/Assets/InputModeManager.h"
+#include "Kargono/Assets/InputMapManager.h"
 #include "Kargono/Assets/ProjectComponentManager.h"
 #include "Kargono/Assets/SceneManager.h"
 #include "Kargono/Assets/ScriptManager.h"
@@ -85,7 +85,7 @@ namespace Kargono::Assets
 		AudioBufferManager m_AudioBufferManager;
 		FontManager m_FontManager;
 		GameStateManager m_GameStateManager;
-		InputModeManager m_InputModeManager;
+		InputMapManager m_InputMapManager;
 		ProjectComponentManager m_ProjectComponentManager;
 		SceneManager m_SceneManager;
 		ScriptManager m_ScriptManager;
@@ -102,7 +102,7 @@ namespace Kargono::Assets
 		DEFINE_MANAGER(Audio, AudioBuffer)
 		DEFINE_MANAGER(RuntimeUI, Font)
 		DEFINE_MANAGER(Scenes, GameState)
-		DEFINE_MANAGER(Input, InputMode)
+		DEFINE_MANAGER(Input, InputMap)
 		DEFINE_MANAGER(ECS, ProjectComponent)
 		DEFINE_MANAGER(Scenes, Scene)
 		DEFINE_MANAGER(Scripting, Script)
@@ -162,7 +162,7 @@ namespace Kargono::Assets
 			DeserializeFontRegistry();
 			DeserializeScriptRegistry();
 			DeserializeProjectComponentRegistry();
-			DeserializeInputModeRegistry();
+			DeserializeInputMapRegistry();
 			DeserializeGameStateRegistry();
 			DeserializeUserInterfaceRegistry();
 			DeserializeAIStateRegistry();
@@ -178,7 +178,7 @@ namespace Kargono::Assets
 			SerializeFontRegistry();
 			SerializeScriptRegistry();
 			SerializeProjectComponentRegistry();
-			SerializeInputModeRegistry();
+			SerializeInputMapRegistry();
 			SerializeGameStateRegistry();
 			SerializeUserInterfaceRegistry();
 			SerializeAIStateRegistry();
@@ -194,7 +194,7 @@ namespace Kargono::Assets
 			ClearFontRegistry();
 			ClearScriptRegistry();
 			ClearProjectComponentRegistry();
-			ClearInputModeRegistry();
+			ClearInputMapRegistry();
 			ClearGameStateRegistry();
 			ClearUserInterfaceRegistry();
 			ClearAIStateRegistry();
@@ -209,7 +209,7 @@ namespace Kargono::Assets
 			case AssetType::Audio: return GetAudioBufferRegistry().at(handle);
 			case AssetType::Font: return GetFontRegistry().at(handle);
 			case AssetType::GameState: return GetGameStateRegistry().at(handle);
-			case AssetType::InputMode: return GetInputModeRegistry().at(handle);
+			case AssetType::InputMap: return GetInputMapRegistry().at(handle);
 			case AssetType::Scene: return GetSceneRegistry().at(handle);
 			case AssetType::Script: return GetScriptRegistry().at(handle);
 			case AssetType::Shader: return GetShaderRegistry().at(handle);

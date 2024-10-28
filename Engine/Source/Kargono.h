@@ -40,7 +40,7 @@
 
 //-----------------Input-----------------//
 #include "Kargono/Input/InputService.h"
-#include "Kargono/Input/InputMode.h"
+#include "Kargono/Input/InputMap.h"
 
 //-----------------Math-----------------//
 #include "Kargono/Math/Math.h"

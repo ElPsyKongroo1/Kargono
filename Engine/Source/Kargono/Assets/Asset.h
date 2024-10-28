@@ -32,7 +32,7 @@ namespace Kargono::Assets
 		Font,
 		Scene,
 		UserInterface,
-		InputMode,
+		InputMap,
 		Script,
 		GameState,
 		ProjectComponent,
@@ -164,7 +164,7 @@ namespace Kargono::Assets
 	//==============================
 	// This metadata struct is currently empty but keeps a consistent API when working with assets.
 	//		There may be later additions to this struct.
-	struct InputModeMetaData
+	struct InputMapMetaData
 	{
 
 	};
@@ -222,7 +222,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::Font: return "Font";
 		case Assets::AssetType::Scene: return "Scene";
 		case Assets::AssetType::UserInterface: return "UserInterface";
-		case Assets::AssetType::InputMode: return "InputMode";
+		case Assets::AssetType::InputMap: return "InputMap";
 		case Assets::AssetType::Script: return "Script";
 		case Assets::AssetType::GameState: return "GameState";
 		case Assets::AssetType::ProjectComponent: return "ProjectComponent";
@@ -241,7 +241,7 @@ namespace Kargono::Utility
 		if (type == "Font") { return Assets::AssetType::Font; }
 		if (type == "Scene") { return Assets::AssetType::Scene; }
 		if (type == "UserInterface") { return Assets::AssetType::UserInterface; }
-		if (type == "InputMode") { return Assets::AssetType::InputMode; }
+		if (type == "InputMap") { return Assets::AssetType::InputMap; }
 		if (type == "Script") { return Assets::AssetType::Script; }
 		if (type == "GameState") { return Assets::AssetType::GameState; }
 		if (type == "ProjectComponent") { return Assets::AssetType::ProjectComponent; }

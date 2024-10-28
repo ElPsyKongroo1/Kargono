@@ -73,9 +73,9 @@ namespace Kargono::Input
 		KeyCode m_KeyBinding{ Key::D0 };
 	};
 	//=========================
-	// Input Mode Class
+	// Input Map Class
 	//=========================
-	class InputMode
+	class InputMap
 	{
 	public:
 		//=========================
@@ -107,7 +107,7 @@ namespace Kargono::Input
 		std::vector<Ref<InputActionBinding>> m_OnKeyPressedBindings{};
 	};
 
-	class InputModeService
+	class InputMapService
 	{
 	public:
 		//=========================
@@ -117,7 +117,7 @@ namespace Kargono::Input
 		static bool OnKeyPressed(Events::KeyPressedEvent event);
 
 		//=========================
-		// Active Input Mode API
+		// Active Input Map API
 		//=========================
 		static bool IsPollingSlotPressed(uint16_t slot);
 		static std::vector<Ref<InputActionBinding>>& GetActiveOnUpdate();
@@ -126,23 +126,23 @@ namespace Kargono::Input
 		//=========================
 		// Getter/Setter
 		//=========================
-		static void ClearActiveInputMode();
-		static void SetActiveInputMode(Ref<InputMode> newInput, Assets::AssetHandle newHandle);
-		static void SetActiveInputModeByName(const std::string& inputMode);
-		static Ref<InputMode> GetActiveInputMode()
+		static void ClearActiveInputMap();
+		static void SetActiveInputMap(Ref<InputMap> newInput, Assets::AssetHandle newHandle);
+		static void SetActiveInputMapByName(const std::string& inputMap);
+		static Ref<InputMap> GetActiveInputMap()
 		{
-			return s_ActiveInputMode;
+			return s_ActiveInputMap;
 		}
-		static Assets::AssetHandle GetActiveInputModeHandle()
+		static Assets::AssetHandle GetActiveInputMapHandle()
 		{
-			return s_ActiveInputModeHandle;
+			return s_ActiveInputMapHandle;
 		}
 	private:
 		//=========================
 		// Current Input Mode
 		//=========================
-		static Ref<InputMode> s_ActiveInputMode;
-		static Assets::AssetHandle s_ActiveInputModeHandle;
+		static Ref<InputMap> s_ActiveInputMap;
+		static Assets::AssetHandle s_ActiveInputMapHandle;
 	};
 }
 
@@ -150,7 +150,7 @@ namespace Kargono::Input
 namespace Kargono::Utility
 {
 	//==============================
-	// InputMode::InputActionTypes <-> String Conversions
+	// InputMap::InputActionTypes <-> String Conversions
 	//==============================
 	inline std::string InputActionTypeToString(Input::InputActionTypes type)
 	{
@@ -159,7 +159,7 @@ namespace Kargono::Utility
 		case Input::InputActionTypes::KeyboardAction: return "KeyboardAction";
 		case Input::InputActionTypes::None: return "None";
 		}
-		KG_ERROR("Unknown Type of InputMode::InputActionTypes.");
+		KG_ERROR("Unknown Type of InputMap::InputActionTypes.");
 		return "";
 	}
 
@@ -168,7 +168,7 @@ namespace Kargono::Utility
 		if (type == "KeyboardAction") { return Input::InputActionTypes::KeyboardAction; }
 		if (type == "None") { return Input::InputActionTypes::None; }
 
-		KG_ERROR("Unknown Type of InputMode::InputActionTypes String.");
+		KG_ERROR("Unknown Type of InputMap::InputActionTypes String.");
 		return Input::InputActionTypes::None;
 	}
 }

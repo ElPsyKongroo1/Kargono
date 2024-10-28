@@ -13,7 +13,7 @@
 #include "Panels/ScriptEditorPanel.h"
 #include "Panels/GameStatePanel.h"
 #include "Panels/TextEditorPanel.h"
-#include "Panels/InputModePanel.h"
+#include "Panels/InputMapPanel.h"
 #include "Panels/PropertiesPanel.h"
 #include "Panels/AIStateEditorPanel.h"
 #include "Panels/TestingPanel.h"
@@ -187,7 +187,7 @@ namespace Kargono
 		bool m_ShowScriptEditor = false;
 		bool m_ShowTextEditor = false;
 		bool m_ShowGameStateEditor = false;
-		bool m_ShowInputModeEditor = false;
+		bool m_ShowInputMapEditor = false;
 		bool m_ShowAIStateEditor = false;
 
 		// Settings UI Booleans
@@ -201,8 +201,8 @@ namespace Kargono
 		SceneState m_SceneState = SceneState::Edit;
 
 		// Cached Scene Data
-		Ref<Input::InputMode> m_EditorInputMode {nullptr};
-		Assets::AssetHandle m_EditorInputModeHandle{Assets::EmptyHandle};
+		Ref<Input::InputMap> m_EditorInputMap {nullptr};
+		Assets::AssetHandle m_EditorInputMapHandle{Assets::EmptyHandle};
 
 		// Stepping Fields
 		bool m_IsPaused = false;
@@ -228,7 +228,7 @@ namespace Kargono
 		Scope<Panels::ScriptEditorPanel>  m_ScriptEditorPanel;
 		Scope<Panels::TextEditorPanel>  m_TextEditorPanel;
 		Scope<Panels::GameStatePanel>  m_GameStatePanel;
-		Scope<Panels::InputModePanel>  m_InputModePanel;
+		Scope<Panels::InputMapPanel>  m_InputMapPanel;
 		Scope<Panels::AIStateEditorPanel>  m_AIStatePanel;
 		Scope<Panels::TestingPanel>  m_TestingPanel;
 	private:
@@ -244,7 +244,7 @@ namespace Kargono
 		friend Panels::ScriptEditorPanel;
 		friend Panels::TextEditorPanel;
 		friend Panels::GameStatePanel;
-		friend Panels::InputModePanel;
+		friend Panels::InputMapPanel;
 		friend Panels::PropertiesPanel;
 		friend Panels::TestingPanel;
 		friend Panels::AIStateEditorPanel;

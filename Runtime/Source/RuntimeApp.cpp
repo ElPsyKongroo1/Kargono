@@ -273,7 +273,7 @@ namespace Kargono
 
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
-		Input::InputModeService::OnKeyPressed(event);
+		Input::InputMapService::OnKeyPressed(event);
 		return false;
 	}
 
@@ -283,7 +283,7 @@ namespace Kargono
 		AI::AIService::OnUpdate(ts);
 
 		// Update
-		Input::InputModeService::OnUpdate(ts);
+		Input::InputMapService::OnUpdate(ts);
 		Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
 		Physics::Physics2DService::OnUpdate(ts);
 

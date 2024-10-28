@@ -68,7 +68,7 @@ namespace Kargono
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
 		m_GameStatePanel = CreateScope<Panels::GameStatePanel>();
-		m_InputModePanel = CreateScope<Panels::InputModePanel>();
+		m_InputMapPanel = CreateScope<Panels::InputMapPanel>();
 		m_ContentBrowserPanel = CreateScope<Panels::ContentBrowserPanel>();
 		m_PropertiesPanel = CreateScope<Panels::PropertiesPanel>();
 		m_AIStatePanel = CreateScope<Panels::AIStateEditorPanel>();
@@ -223,7 +223,7 @@ namespace Kargono
 				ImGui::MenuItem("Properties", NULL, &m_ShowProperties);
 				ImGui::Separator();
 				ImGui::MenuItem("User Interface Editor", NULL, &m_ShowUserInterfaceEditor);
-				ImGui::MenuItem("Input Mode Editor", NULL, &m_ShowInputModeEditor);
+				ImGui::MenuItem("Input Map Editor", NULL, &m_ShowInputMapEditor);
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
 				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
 				ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
@@ -296,7 +296,7 @@ namespace Kargono
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
 		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
 		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
-		if (m_ShowInputModeEditor) { m_InputModePanel->OnEditorUIRender(); }
+		if (m_ShowInputMapEditor) { m_InputMapPanel->OnEditorUIRender(); }
 		if (m_ShowProperties) { m_PropertiesPanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
 		if (m_ShowTesting) { m_TestingPanel->OnEditorUIRender(); }
@@ -320,7 +320,7 @@ namespace Kargono
 	bool EditorApp::OnKeyPressedRuntime(Events::KeyPressedEvent event)
 	{
 		KG_PROFILE_FUNCTION()
-		return Input::InputModeService::OnKeyPressed(event);
+		return Input::InputMapService::OnKeyPressed(event);
 	}
 
 	bool EditorApp::OnApplicationEvent(Events::Event* event)
@@ -887,12 +887,12 @@ namespace Kargono
 		// Reset all resources
 		m_ContentBrowserPanel->ResetPanelResources();
 		m_TextEditorPanel->ResetPanelResources();
-		m_InputModePanel->ResetPanelResources();
+		m_InputMapPanel->ResetPanelResources();
 		m_GameStatePanel->ResetPanelResources();
 		m_ScriptEditorPanel->ResetPanelResources();
 		m_ProjectPanel->ResetPanelResources();
 		Scenes::GameStateService::ClearActiveGameState();
-		Input::InputModeService::ClearActiveInputMode();
+		Input::InputMapService::ClearActiveInputMap();
 
 		return true;
 	}
@@ -1026,15 +1026,15 @@ namespace Kargono
 	void EditorApp::OnPlay()
 	{
 		RuntimeUI::RuntimeUIService::ClearActiveUI();
-		// Cache Current InputMode in editor
-		if (!Input::InputModeService::GetActiveInputMode())
+		// Cache Current InputMap in editor
+		if (!Input::InputMapService::GetActiveInputMap())
 		{ 
-			m_EditorInputMode = nullptr; 
+			m_EditorInputMap = nullptr; 
 		}
 		else
 		{
-			m_EditorInputMode = Input::InputModeService::GetActiveInputMode();
-			m_EditorInputModeHandle = Input::InputModeService::GetActiveInputModeHandle();
+			m_EditorInputMap = Input::InputMapService::GetActiveInputMap();
+			m_EditorInputMapHandle = Input::InputMapService::GetActiveInputMapHandle();
 		}
 
 		// Load Default Game State
@@ -1110,14 +1110,14 @@ namespace Kargono
 			RuntimeUI::RuntimeUIService::ClearActiveUI();
 		}
 
-		// Clear InputModes during runtime.
-		if (m_EditorInputMode)
+		// Clear InputMaps during runtime.
+		if (m_EditorInputMap)
 		{
-			Input::InputModeService::SetActiveInputMode(m_EditorInputMode, m_EditorInputModeHandle);
+			Input::InputMapService::SetActiveInputMap(m_EditorInputMap, m_EditorInputMapHandle);
 		}
 		else
 		{
-			Input::InputModeService::SetActiveInputMode(nullptr, Assets::EmptyHandle);
+			Input::InputMapService::SetActiveInputMap(nullptr, Assets::EmptyHandle);
 		}
 
 		Scenes::GameStateService::ClearActiveGameState();

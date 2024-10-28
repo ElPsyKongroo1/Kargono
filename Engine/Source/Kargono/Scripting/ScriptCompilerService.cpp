@@ -1240,7 +1240,7 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("UI", "This namespace provides functions that can manage and interact with the active user interface.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("GameState", "This namespace provides functions that can manage and interact with the active game state");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Scenes", "This namespace provides functions that can manage the active scene.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Input", "This namespace provides functions allow access to the current input state and manage the current input mode/mapping");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Input", "This namespace provides functions allow access to the current input state and manage the current input map/mapping");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Audio", "This namespace provides functions that can manage audio files and play audio");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Math", "This namespace provides various math functions to be used.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Network", "This namespace provides functions that interact with the active network connection between the current client and the server.");
@@ -1674,17 +1674,17 @@ namespace Kargono::Scripting
 		newParameter = {};
 
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Input" };
-		newFunctionNode.Name = { ScriptTokenType::Identifier, "LoadInputMode" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "LoadInputMap" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "inputModeName" };
+		newParameter.Identifier = { ScriptTokenType::Identifier, "inputMapName" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
-		newFunctionNode.Description = "Change the active input mapping/mode. The input mode maps user input to functionality/scripts. This function takes the name of the new input mode as an argument.";
+		newFunctionNode.Description = "Change the active input mapping/map. The input map maps user input to functionality/scripts. This function takes the name of the new input map as an argument.";
 		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "InputMode_LoadInputModeByName";
+			node.Identifier.Value = "InputMap_LoadInputMapByName";
 
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -1715,11 +1715,11 @@ namespace Kargono::Scripting
 		newParameter.Identifier = { ScriptTokenType::Identifier, "querySlot" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
-		newFunctionNode.Description = "Check if the provided slot from the input mode is current pressed on the keyboard. This function takes an integer as a parameter.";
+		newFunctionNode.Description = "Check if the provided slot from the input map is current pressed on the keyboard. This function takes an integer as a parameter.";
 		newFunctionNode.OnGenerateFunction = [](FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "InputMode_IsPollingSlotPressed";
+			node.Identifier.Value = "InputMap_IsPollingSlotPressed";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};

@@ -1,7 +1,7 @@
 #pragma once
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Events/KeyEvent.h"
-#include "Kargono/Input/InputMode.h"
+#include "Kargono/Input/InputMap.h"
 #include "Kargono/EditorUI/EditorUI.h"
 
 #include <string>
@@ -9,16 +9,16 @@
 
 namespace Kargono::Panels
 {
-	class InputModePanel
+	class InputMapPanel
 	{
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
-		InputModePanel();
+		InputMapPanel();
 	private:
 		void InitializeOpeningScreen();
-		void InitializeInputModeHeader();
+		void InitializeInputMapHeader();
 		void InitializeKeyboardScreen();
 
 	public:
@@ -37,17 +37,17 @@ namespace Kargono::Panels
 		//=========================
 		// Internal Functionality
 		//=========================
-		void OnOpenInputMode();
-		void OnCreateInputMode();
+		void OnOpenInputMap();
+		void OnCreateInputMap();
 		void OnRefreshData();
 	public:
 		//=========================
 		// Core Panel Data
 		//=========================
-		Ref<Input::InputMode> m_EditorInputMode{ nullptr };
-		Assets::AssetHandle m_EditorInputModeHandle { Assets::EmptyHandle };
+		Ref<Input::InputMap> m_EditorInputMap{ nullptr };
+		Assets::AssetHandle m_EditorInputMapHandle { Assets::EmptyHandle };
 	private:
-		std::string m_PanelName{ "Input Mode Editor" };
+		std::string m_PanelName{ "Input Map Editor" };
 		uint32_t m_KeyboardOnUpdateActiveSlot {};
 		uint32_t m_KeyboardOnKeyPressedActiveSlot {};
 		uint32_t m_KeyboardPollingActiveSlot {};
@@ -56,14 +56,14 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		// Opening Panel w/ Popups
-		EditorUI::SelectOptionSpec m_OpenInputModePopupSpec {};
-		EditorUI::GenericPopupSpec m_CreateInputModePopupSpec {};
-		EditorUI::EditTextSpec m_SelectInputModeNameSpec {};
+		EditorUI::SelectOptionSpec m_OpenInputMapPopupSpec {};
+		EditorUI::GenericPopupSpec m_CreateInputMapPopupSpec {};
+		EditorUI::EditTextSpec m_SelectInputMapNameSpec {};
 
-		// Input Mode Header
+		// Input Map Header
 		EditorUI::PanelHeaderSpec m_MainHeader {};
-		EditorUI::GenericPopupSpec m_DeleteInputModeWarning {};
-		EditorUI::GenericPopupSpec m_CloseInputModeWarning {};
+		EditorUI::GenericPopupSpec m_DeleteInputMapWarning {};
+		EditorUI::GenericPopupSpec m_CloseInputMapWarning {};
 
 		// Keyboard Panel
 		//	OnUpdate

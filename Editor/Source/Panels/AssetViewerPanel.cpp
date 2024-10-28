@@ -97,7 +97,7 @@ namespace Kargono::Panels
 				m_AllAssetsTable.InsertTableEntry(newEntry);
 			}
 
-			for (auto& [handle, asset] : Assets::AssetService::GetInputModeRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::GetInputMapRegistry())
 			{
 				EditorUI::TableEntry newEntry
 				{
