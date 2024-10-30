@@ -26,8 +26,10 @@ namespace Kargono::EditorUI
 	struct CollapsingHeaderSpec;
 	struct EditTextSpec;
 	struct PanelHeaderSpec;
+	struct NavigationHeaderSpec;
 	struct CheckboxSpec;
 	struct GenericPopupSpec;
+	struct GridSpec;
 	struct SelectOptionSpec;
 	struct EditVariableSpec;
 	struct TableSpec;
@@ -42,6 +44,14 @@ namespace Kargono::EditorUI
 	//==============================
 	// Type Defines
 	//==============================
+
+	struct DragDropPayload
+	{
+		FixedString32 m_Label;
+		void* m_DataPointer;
+		std::size_t m_DataSize;
+	};
+
 	using WidgetID = uint32_t;
 	using WidgetFlags = uint8_t;
 	using SelectionList = std::unordered_map<std::string, std::function<void()>>;
@@ -136,6 +146,8 @@ namespace Kargono::EditorUI
 		static void Table(TableSpec& spec);
 		static void Tree(TreeSpec& spec);
 		static void PanelHeader(PanelHeaderSpec& spec);
+		static void NavigationHeader(NavigationHeaderSpec& spec);
+		static void Grid(GridSpec& spec);
 		static void CollapsingHeader(CollapsingHeaderSpec& spec);
 		static void LabeledText(const std::string& Label, const std::string& Text);
 		static void Text(const std::string& Text);
@@ -165,12 +177,23 @@ namespace Kargono::EditorUI
 		
 	public:
 		//==============================
+		// Payload Types
+		//==============================
+		inline static std::array<FixedString32, 6> s_AllPayloadTypes
+		{
+			"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_AUDIO", "CONTENT_BROWSER_FONT",
+				"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_USERINTERFACE"
+		};
+
+
+	public:
+		//==============================
 		// UI Fonts
 		//==============================
-		static ImFont* s_FontAntaLarge;
-		static ImFont* s_FontAntaRegular;
-		static ImFont* s_FontPlexBold;
-		static ImFont* s_FontRobotoMono;
+		inline static ImFont* s_FontAntaLarge{nullptr};
+		inline static ImFont* s_FontAntaRegular {nullptr};
+		inline static ImFont* s_FontPlexBold {nullptr};
+		inline static ImFont* s_FontRobotoMono {nullptr};
 
 	public:
 		//==============================
@@ -178,28 +201,28 @@ namespace Kargono::EditorUI
 		//==============================
 
 		// General Icons
-		static Ref<Rendering::Texture2D> s_IconCamera,
+		inline static Ref<Rendering::Texture2D> s_IconCamera,
 			s_IconSettings, s_IconDelete, s_IconEdit, s_IconCancel, s_IconCancel2,
 			s_IconConfirm, s_IconSearch,
 			s_IconCheckbox_Disabled, s_IconCheckbox_Enabled,
 			s_IconOptions, s_IconDown, s_IconRight, s_IconDash;
 
 		// Scene graph icons
-		static Ref<Rendering::Texture2D> s_IconBoxCollider, s_IconCircleCollider, s_IconEntity,
+		inline static Ref<Rendering::Texture2D> s_IconBoxCollider, s_IconCircleCollider, s_IconEntity,
 			s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform, s_IconAI;
 
 		// Viewport icons
-		static Ref<Rendering::Texture2D> s_IconDisplay, s_IconSimulate, s_IconStep, s_IconPlay,
+		inline static Ref<Rendering::Texture2D> s_IconDisplay, s_IconSimulate, s_IconStep, s_IconPlay,
 			s_IconPause, s_IconStop, s_IconGrid;
 
 		// Runtime UI icons
-		static Ref<Rendering::Texture2D> s_IconWindow, s_IconTextWidget;
+		inline static Ref<Rendering::Texture2D> s_IconWindow, s_IconTextWidget;
 
 		// Scripting icons
-		static Ref<Rendering::Texture2D> s_IconNumber, s_IconVariable, s_IconFunction, s_IconBoolean, s_IconDecimal;
+		inline static Ref<Rendering::Texture2D> s_IconNumber, s_IconVariable, s_IconFunction, s_IconBoolean, s_IconDecimal;
 
 		// Content browser icons
-		static Ref<Rendering::Texture2D> s_IconDirectory, s_IconGenericFile,
+		inline static Ref<Rendering::Texture2D> s_IconDirectory, s_IconGenericFile,
 			s_IconBack, s_IconForward,
 			s_IconAudio, s_IconImage, s_IconBinary,
 			s_IconScene, s_IconRegistry, s_IconScriptProject,
@@ -642,6 +665,110 @@ namespace Kargono::EditorUI
 		WidgetID WidgetID;
 	private:
 		friend void EditorUIService::PanelHeader(PanelHeaderSpec& spec);
+	};
+
+	enum NavigationHeaderFlags
+	{
+		NavigationHeader_None = 0,
+		NavigationHeader_AllowDragDrop = BIT(0) 
+	};
+
+	struct NavigationHeaderSpec
+	{
+	public:
+		NavigationHeaderSpec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label;
+		std::function<void()> OnNavigateBack{};
+		std::function<void()> OnNavigateForward{};
+		std::function<void(const char*, void*, std::size_t)> OnReceivePayloadBack{};
+		std::function<void(const char*, void*, std::size_t)> OnReceivePayloadForward{};
+		WidgetFlags Flags{ 0 };
+		bool IsBackActive{ false };
+		bool IsForwardActive{ false };
+	private:
+		WidgetID WidgetID;
+		
+	private:
+		friend void EditorUIService::NavigationHeader(NavigationHeaderSpec& spec);
+	};
+
+	enum GridFlags
+	{
+		Grid_None = 0,
+		Grid_AllowDragDrop = BIT(0)
+	};
+
+	struct GridEntry
+	{
+		FixedString64 m_Label;
+		uint32_t m_ArchetypeID;
+	};
+
+	struct GridEntryArchetype
+	{
+		Ref<Rendering::Texture2D> m_Icon;
+
+		// Handle key input
+		std::function<void(GridEntry& currentEntry)> m_OnDoubleLeftClick;
+		std::function<void(GridEntry& currentEntry)> m_OnLeftClick;
+		std::function<void(GridEntry& currentEntry)> m_OnRightClick;
+
+		// Handle create/receive payload
+		std::function<void(DragDropPayload& newPayload)> OnCreatePayload;
+		std::function<void(const char*, void*, std::size_t)> OnReceivePayload;
+	};
+
+
+	struct GridSpec
+	{
+	public:
+		GridSpec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		FixedString64 Label;
+		float Padding{ 25.0f };
+		float ThumbnailSize { 140.0f };
+		WidgetFlags Flags{ 0 };
+
+	public:
+		void AddEntry(const GridEntry& newEntry) 
+		{
+			Entries.push_back(newEntry);
+		}
+		void AddEntry(GridEntry&& newEntry)
+		{
+			Entries.push_back(std::move(newEntry));
+		}
+
+		void ClearEntries()
+		{
+			Entries.clear();
+		}
+
+		bool AddEntryArchetype(uint32_t key, const GridEntryArchetype& newArchetype)
+		{
+			auto [iterator, success] = EntryArchetypes.insert({key, newArchetype});
+			return success;
+		}
+
+		bool AddEntryArchetype(uint32_t key, GridEntryArchetype&& newArchetype)
+		{
+			auto [iterator, success] = EntryArchetypes.insert({ key, std::move(newArchetype) });
+			return success;
+		}
+
+	private:
+		WidgetID WidgetID;
+		std::vector<GridEntry> Entries{};
+		std::unordered_map<uint32_t, GridEntryArchetype> EntryArchetypes;
+	private:
+		friend void EditorUIService::Grid(GridSpec& spec);
 	};
 
 	class TreePath

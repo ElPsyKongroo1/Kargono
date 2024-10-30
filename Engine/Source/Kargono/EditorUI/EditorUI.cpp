@@ -16,67 +16,6 @@
 
 namespace Kargono::EditorUI
 {
-	ImFont* EditorUIService::s_FontAntaLarge{ nullptr };
-	ImFont* EditorUIService::s_FontAntaRegular{ nullptr };
-	ImFont* EditorUIService::s_FontPlexBold{ nullptr };
-	ImFont* EditorUIService::s_FontRobotoMono{ nullptr };
-
-	Ref<Rendering::Texture2D> EditorUIService::s_IconCamera{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconSettings{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconDelete{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconEdit{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconCancel{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconCancel2{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconConfirm{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconSearch{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconCheckbox_Disabled{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconCheckbox_Enabled{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconOptions{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconDown{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconRight{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconDash{};
-
-	Ref<Rendering::Texture2D> EditorUIService::s_IconPlay{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconPause{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconStop{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconGrid{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconStep{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconSimulate{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconDisplay{};
-
-	Ref<Rendering::Texture2D> EditorUIService::s_IconEntity{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconBoxCollider{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconCircleCollider{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconClassInstance{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconRigidBody{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconTag{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconTransform{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconAI{};
-
-	Ref<Rendering::Texture2D> EditorUIService::s_IconWindow{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconTextWidget{};
-
-	Ref<Rendering::Texture2D> EditorUIService::s_IconNumber{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconVariable{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconFunction{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconBoolean{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconDecimal{};
-
-	Ref<Rendering::Texture2D> EditorUIService::s_IconDirectory{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconGenericFile{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconBack{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconForward{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconAudio{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconImage{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconBinary{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconScene{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconRegistry{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconScriptProject{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconUserInterface{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconFont{};
-	Ref<Rendering::Texture2D> EditorUIService::s_IconInput{};
-
-
 	void EditorUIService::SetColorDefaults()
 	{
 		auto& colors = ImGui::GetStyle().Colors;
@@ -2203,6 +2142,158 @@ namespace Kargono::EditorUI
 		}
 		ImGui::Separator(1.0f, s_HighlightColor1_Thin);
 		Spacing(0.2f);
+	}
+
+	void EditorUIService::NavigationHeader(NavigationHeaderSpec& spec)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		if (!spec.IsBackActive)
+		{
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+		}
+
+		// Draw icon for moving a directory back
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconBack->GetRendererID(),
+			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
+			-1, ImVec4(0, 0, 0, 0),
+			spec.IsBackActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
+		{
+			if (spec.IsBackActive && spec.OnNavigateBack)
+			{
+				spec.OnNavigateBack();
+			}
+		}
+
+		if (!spec.IsBackActive)
+		{
+			ImGui::PopStyleColor(2);
+		}
+		// Handle back navigation's payload
+		if (spec.Flags & NavigationHeaderFlags::NavigationHeader_AllowDragDrop && 
+			spec.IsBackActive && 
+			ImGui::BeginDragDropTarget())
+		{
+			for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
+				{
+					spec.OnReceivePayloadBack(payloadName , payload->Data, payload->DataSize);
+					break;
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		// Draw forward navigation icon
+		ImGui::SameLine();
+		if (!spec.IsForwardActive)
+		{
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+		}
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconForward->GetRendererID(),
+			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
+			-1, ImVec4(0, 0, 0, 0),
+			spec.IsForwardActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
+		{
+			if (spec.IsForwardActive && spec.OnNavigateForward)
+			{
+				spec.OnNavigateForward();
+			}
+		}
+		if (!spec.IsForwardActive)
+		{
+			ImGui::PopStyleColor(2);
+		}
+		if (spec.Flags & NavigationHeaderFlags::NavigationHeader_AllowDragDrop &&
+			spec.IsForwardActive &&
+			ImGui::BeginDragDropTarget())
+		{
+			for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
+				{
+					spec.OnReceivePayloadForward(payloadName, payload->Data, payload->DataSize);
+					break;
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+		ImGui::PopStyleColor();
+
+		ImGui::PushFont(EditorUI::EditorUIService::s_FontPlexBold);
+		ImGui::SameLine();
+		ImGui::Text(spec.Label.c_str());
+		ImGui::PopFont();
+
+		ImGui::Separator();
+		Spacing(0.2f);
+	}
+
+	void EditorUIService::Grid(GridSpec& spec)
+	{
+		uint32_t widgetCount{ 0 };
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
+
+		float cellSize = spec.ThumbnailSize + spec.Padding;
+		float panelWidth = ImGui::GetContentRegionAvail().x;
+		int32_t columnCount = (int32_t)(panelWidth / cellSize);
+		columnCount = columnCount > 0 ? columnCount : 1;
+		ImGui::Columns(columnCount, id.CString(), false);
+		for (GridEntry& entry : spec.Entries)
+		{
+			// Get entry archetype and grid element ID
+			FixedString<16> entryID{ id };
+			GridEntryArchetype* entryArchetype = &(spec.EntryArchetypes.at(entry.m_ArchetypeID));
+			KG_ASSERT(entryArchetype);
+
+			entryID.AppendInteger(WidgetIterator(widgetCount));
+			ImGui::PushID(entryID.CString());
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+			ImGui::ImageButton((ImTextureID)(uint64_t)entryArchetype->m_Icon->GetRendererID(), { spec.ThumbnailSize, spec.ThumbnailSize },
+				{ 0, 1 }, { 1, 0 },
+				-1, ImVec4(0, 0, 0, 0), EditorUI::EditorUIService::s_DisabledColor);
+			ImGui::PopStyleColor();
+
+			// Handle payloads
+			if (entryArchetype->OnCreatePayload && ImGui::BeginDragDropSource())
+			{
+				DragDropPayload newPayload;
+				entryArchetype->OnCreatePayload(newPayload);
+				ImGui::SetDragDropPayload(newPayload.m_Label, newPayload.m_DataPointer, newPayload.m_DataSize, ImGuiCond_Once);
+				ImGui::EndDragDropSource();
+			}
+
+
+			/*if (entryArchetype->OnReceivePayload && ImGui::BeginDragDropTarget())
+			{
+				for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
+					{
+						spec.OnReceivePayload(payloadName, payload->Data, payload->DataSize);
+						break;
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			if (entryArchetype->OnReceivePayload && ImGui::BeginDragDropSource())
+			{
+				DragDropPayload newPayload;
+				entryArchetype->OnCreatePayload(newPayload);
+				ImGui::SetDragDropPayload(newPayload.m_Label, newPayload.m_DataPointer, newPayload.m_DataSize, ImGuiCond_Once);
+				ImGui::EndDragDropSource();
+			}*/
+
+
+			ImGui::TextWrapped(entry.m_Label.CString());
+			ImGui::NextColumn();
+			ImGui::PopID();
+		}
+		ImGui::Columns(1);
 	}
 
 	void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec)

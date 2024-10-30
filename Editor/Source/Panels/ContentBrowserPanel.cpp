@@ -118,15 +118,7 @@ namespace Kargono::Panels
 			return;
 		}
 
-		static float padding = 25.0f;
-		static float thumbnailSize = 140;
-		float cellSize = thumbnailSize + padding;
-		float panelWidth = ImGui::GetContentRegionAvail().x;
-		int columnCount = (int)(panelWidth / cellSize);
-		columnCount = columnCount > 0 ? columnCount : 1;
-
 		bool backActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
-
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 		if (!backActive)
 		{
@@ -134,7 +126,7 @@ namespace Kargono::Panels
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 		}
 
-
+		// Draw icon for moving a directory back
 		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconBack->GetRendererID(),
 			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
 			-1, ImVec4(0, 0, 0, 0), 
@@ -151,15 +143,9 @@ namespace Kargono::Panels
 		}
 		if (backActive && ImGui::BeginDragDropTarget())
 		{
-			static std::array<std::string, 6> acceptablePayloads
+			for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
 			{
-				"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_AUDIO", "CONTENT_BROWSER_FONT",
-					"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_USERINTERFACE"
-			};
-
-			for (auto& payloadName : acceptablePayloads)
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
 				{
 					const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
 					std::filesystem::path payloadPath(payloadPathPointer);
@@ -170,8 +156,8 @@ namespace Kargono::Panels
 			ImGui::EndDragDropTarget();
 		}
 
+		// Draw icon for moving a directory forward
 		bool forwardActive = m_CurrentDirectory != m_LongestRecentPath && !m_LongestRecentPath.empty();
-
 		ImGui::SameLine();
 		if (!forwardActive)
 		{
@@ -201,15 +187,9 @@ namespace Kargono::Panels
 		}
 		if (forwardActive && ImGui::BeginDragDropTarget())
 		{
-			static std::array<std::string, 6> acceptablePayloads
+			for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
 			{
-				"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_AUDIO", "CONTENT_BROWSER_FONT",
-					"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_USERINTERFACE"
-			};
-
-			for (auto& payloadName : acceptablePayloads)
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
 				{
 					const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
 					std::filesystem::path payloadPath(payloadPathPointer);
@@ -228,6 +208,7 @@ namespace Kargono::Panels
 		}
 		ImGui::PopStyleColor();
 
+		// Current directory title
 		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveProjectDirectory(), m_CurrentDirectory);
 
 		std::vector<std::string> tokenizedDirectoryPath{};
@@ -251,11 +232,17 @@ namespace Kargono::Panels
 			}
 		}
 		ImGui::PopFont();
-
 		ImGui::Separator();
 
+		// Start file browser
+		static float padding = 25.0f;
+		static float thumbnailSize = 140;
+		float cellSize = thumbnailSize + padding;
+		float panelWidth = ImGui::GetContentRegionAvail().x;
+		int columnCount = (int)(panelWidth / cellSize);
+		columnCount = columnCount > 0 ? columnCount : 1;
 		ImGui::Columns(columnCount, 0, false);
-		for (auto& directoryEntry: m_CachedDirectoryEntries)
+		for (const std::filesystem::path& directoryEntry: m_CachedDirectoryEntries)
 		{
 			std::string filenameString = directoryEntry.filename().string();
 			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
@@ -280,15 +267,9 @@ namespace Kargono::Panels
 			{
 				if (ImGui::BeginDragDropTarget())
 				{
-					static std::array<std::string, 6> acceptablePayloads
+					for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
 					{
-						"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_AUDIO", "CONTENT_BROWSER_FONT",
-							"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_USERINTERFACE"
-					};
-
-					for (auto& payloadName : acceptablePayloads)
-					{
-						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
+						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
 						{
 							const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
 							std::filesystem::path payloadPath(payloadPathPointer);
@@ -394,7 +375,7 @@ namespace Kargono::Panels
 			if (openDeleteModal) { ImGui::OpenPopup("Delete File"); }
 			if (openDeleteDirectory) { ImGui::OpenPopup("Delete Directory"); }
 				
-
+			//TODO: Use this for your other windows
 			// Always center this window when appearing
 			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 			ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
@@ -454,6 +435,7 @@ namespace Kargono::Panels
 			ImGui::PopID();
 			
 		}
+
 		static char buffer[256];
 		bool openNewDirectoryPopup = false;
 
