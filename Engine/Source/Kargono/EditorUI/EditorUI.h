@@ -13,6 +13,8 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <variant>
+
 
 namespace Kargono::Rendering { class Texture2D; }
 
@@ -32,6 +34,7 @@ namespace Kargono::EditorUI
 	struct GridSpec;
 	struct SelectOptionSpec;
 	struct EditVariableSpec;
+	struct TooltipSpec;
 	struct TableSpec;
 	struct TreeSpec;
 	struct InlineButtonSpec;
@@ -153,10 +156,12 @@ namespace Kargono::EditorUI
 		static void Text(const std::string& Text);
 		static void EditText(EditTextSpec& spec);
 		static void ChooseDirectory(ChooseDirectorySpec& spec);
+		static void Tooltip(TooltipSpec& spec);
 		static void BeginTabBar(const std::string& title);
 		static void EndTabBar();
 		static bool BeginTabItem(const std::string& title);
 		static void EndTabItem();
+		
 
 	public:
 		//==============================
@@ -702,14 +707,18 @@ namespace Kargono::EditorUI
 		Grid_AllowDragDrop = BIT(0)
 	};
 
+	static inline uint32_t k_InvalidArchetypeID{ 0 };
+
 	struct GridEntry
 	{
 		FixedString64 m_Label;
-		uint32_t m_ArchetypeID;
+		uint32_t m_ArchetypeID { k_InvalidArchetypeID };
+		UUID m_EntryID;
 	};
 
 	struct GridEntryArchetype
 	{
+		// Display metadata
 		Ref<Rendering::Texture2D> m_Icon;
 
 		// Handle key input
@@ -718,8 +727,9 @@ namespace Kargono::EditorUI
 		std::function<void(GridEntry& currentEntry)> m_OnRightClick;
 
 		// Handle create/receive payload
-		std::function<void(DragDropPayload& newPayload)> OnCreatePayload;
-		std::function<void(const char*, void*, std::size_t)> OnReceivePayload;
+		std::function<void(DragDropPayload& newPayload)> m_OnCreatePayload;
+		std::function<void(const char*, void*, std::size_t)> m_OnReceivePayload;
+		std::vector<FixedString32> m_AcceptableOnReceivePayloads;
 	};
 
 
@@ -737,18 +747,47 @@ namespace Kargono::EditorUI
 		WidgetFlags Flags{ 0 };
 
 	public:
-		void AddEntry(const GridEntry& newEntry) 
+		bool AddEntry(GridEntry& newEntry) 
 		{
+			// Ensure a valid archetype id is provided
+			if (newEntry.m_ArchetypeID == k_InvalidArchetypeID)
+			{
+				return false;
+			}
+
+			// Ensure UUID is unique inside entry
+			while (!ValidateEntryID(newEntry.m_EntryID))
+			{
+				newEntry.m_EntryID = {};
+			}
+
+			// Insert new entry
 			Entries.push_back(newEntry);
+			return true;
 		}
-		void AddEntry(GridEntry&& newEntry)
+		bool AddEntry(GridEntry&& newEntry)
 		{
+			// Ensure a valid archetype id is provided
+			if (newEntry.m_ArchetypeID == k_InvalidArchetypeID)
+			{
+				return false;
+			}
+
+			// Ensure UUID is unique inside entry
+			while (!ValidateEntryID(newEntry.m_EntryID))
+			{
+				newEntry.m_EntryID = {};
+			}
+
+			// Insert new entry
 			Entries.push_back(std::move(newEntry));
+			return true;
 		}
 
 		void ClearEntries()
 		{
 			Entries.clear();
+			SelectedEntry = k_EmptyUUID;
 		}
 
 		bool AddEntryArchetype(uint32_t key, const GridEntryArchetype& newArchetype)
@@ -764,7 +803,30 @@ namespace Kargono::EditorUI
 		}
 
 	private:
+		bool ValidateEntryID(UUID queryID)
+		{
+			// Ensure empty id is not provided
+			if (queryID == k_EmptyUUID)
+			{
+				return false;
+			}
+
+			// Ensure that no match id is found in internal entries list
+			for (GridEntry& entry : Entries)
+			{
+				if (entry.m_EntryID == queryID)
+				{
+					return false;
+				}
+			}
+
+			// Return true if no duplicate is found
+			return true;
+		}
+
+	private:
 		WidgetID WidgetID;
+		UUID SelectedEntry { k_EmptyUUID };
 		std::vector<GridEntry> Entries{};
 		std::unordered_map<uint32_t, GridEntryArchetype> EntryArchetypes;
 	private:
@@ -960,6 +1022,72 @@ namespace Kargono::EditorUI
 	private:
 		friend void EditorUIService::Tree(TreeSpec& spec);
 		friend void DrawEntries(TreeSpec& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath , ImVec2 rootPosition);
+	};
+
+
+
+	struct TooltipEntry
+	{
+	public:
+		TooltipEntry(const char* itemLabel, std::function<void(TooltipEntry&)> onClick) : m_Label(itemLabel), m_EntryData(onClick)
+		{
+		}
+		TooltipEntry(const char* itemLabel, const std::vector<TooltipEntry>& subEntryList) : m_Label(itemLabel), m_EntryData(subEntryList)
+		{
+		}
+		TooltipEntry(const char* itemLabel, std::vector<TooltipEntry>&& subEntryList) : m_Label(itemLabel), m_EntryData(std::move(subEntryList))
+		{
+		}
+
+	public:
+		FixedString32 m_Label;
+	private:
+		std::variant<std::vector<TooltipEntry>, std::function<void(TooltipEntry&)>> m_EntryData;
+		friend void ProcessTooltipEntries(TooltipSpec& spec, std::vector<TooltipEntry>& entryList);
+	};
+
+	struct TooltipSpec
+	{
+	public:
+		TooltipSpec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string m_Label;
+		bool TooltipActive{ false };
+
+	public:
+		bool AddMenuItem(const TooltipEntry& newEntry)
+		{
+			// Ensure valid label is provided
+			if (newEntry.m_Label.IsEmpty())
+			{
+				return false;
+			}
+
+			// Add new entry if valid
+			m_Entries.push_back(newEntry);
+			return true;
+		}
+		bool AddMenuItem(TooltipEntry&& newEntry)
+		{
+			// Ensure valid label is provided
+			if (newEntry.m_Label.IsEmpty())
+			{
+				return false;
+			}
+
+			// Add new entry if valid
+			m_Entries.push_back(std::move(newEntry));
+			return true;
+		}
+	private:
+		WidgetID m_WidgetID;
+		std::vector<TooltipEntry> m_Entries{};
+	private:
+		friend void EditorUIService::Tooltip(TooltipSpec& spec);
+		friend void ProcessTooltipEntries(TooltipSpec& spec, std::vector<TooltipEntry>& entryList);
 	};
 
 

@@ -160,6 +160,11 @@ namespace Kargono
 			return m_StringLength;
 		}
 
+		bool IsEmpty() const
+		{
+			return m_StringLength == 0;
+		}
+
 	private:
 		//==============================
 		// Internal Functionality
@@ -189,6 +194,7 @@ namespace Kargono
 		std::size_t m_StringLength{0};
 	};
 
+	using FixedString16 = FixedString<16>; // Generally for small status codes, short labels, etc...
 	using FixedString32 = FixedString<32>; // Generally for status codes, small integers, etc...
 	using FixedString64 = FixedString<64>; // Generally for usernames, uuid's, small formatted strings... 
 	using FixedString256 = FixedString<256>; // Generally for usernames, short log messages, etc... 

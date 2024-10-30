@@ -19,6 +19,7 @@ namespace Kargono::Panels
 
 	static FixedString256 newString;
 	static EditorUI::GridSpec testGrid{};
+	static EditorUI::TooltipSpec testTooltip{};
 
 	enum class TestTypes : uint32_t
 	{
@@ -45,11 +46,14 @@ namespace Kargono::Panels
 		m_TestHeader.Label = "directory/directory/file.txt";
 		newString = "Hahahaha";
 
-		testGrid.Label = "Testing Grid go burrrrrrr";
-
 		// Add archetypes
+		testGrid.Label = "Testing Grid go burrrrrrr";
 		EditorUI::GridEntryArchetype newArchetype;
 		newArchetype.m_Icon = EditorUI::EditorUIService::s_IconDisplay;
+		newArchetype.m_OnLeftClick = [](EditorUI::GridEntry& currentEntry)
+		{
+			testTooltip.TooltipActive = true;
+		};
 		testGrid.AddEntryArchetype((uint32_t)TestTypes::Display, std::move(newArchetype));
 		for (std::size_t iteration{ 1 }; iteration < 10; iteration++)
 		{
@@ -58,6 +62,17 @@ namespace Kargono::Panels
 			newEntry.m_ArchetypeID = (uint32_t)TestTypes::Display;
 			testGrid.AddEntry(std::move(newEntry));
 		}
+
+		// Test tooltip api
+		testTooltip.m_Label = "Test Tooltip";
+		// Create menu items
+		EditorUI::TooltipEntry newEntry{ "First Test Entry", [](EditorUI::TooltipEntry& entry) 
+		{
+			KG_WARN("Meow");
+		} };
+
+		testTooltip.AddMenuItem(std::move(newEntry));
+
 	}
 
 
@@ -237,6 +252,8 @@ namespace Kargono::Panels
 #endif
 		EditorUI::EditorUIService::NavigationHeader(m_TestHeader);
 		EditorUI::EditorUIService::Grid(testGrid);
+
+		EditorUI::EditorUIService::Tooltip(testTooltip);
 
 		EditorUI::EditorUIService::EndWindow();
 	}

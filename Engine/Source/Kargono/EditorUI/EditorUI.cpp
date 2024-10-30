@@ -2237,62 +2237,95 @@ namespace Kargono::EditorUI
 		FixedString<16> id{ "##" };
 		id.AppendInteger(spec.WidgetID);
 
+		// Calculate grid cell count using provided spec sizes
 		float cellSize = spec.ThumbnailSize + spec.Padding;
 		float panelWidth = ImGui::GetContentRegionAvail().x;
 		int32_t columnCount = (int32_t)(panelWidth / cellSize);
 		columnCount = columnCount > 0 ? columnCount : 1;
+
+		// Start drawing columns
 		ImGui::Columns(columnCount, id.CString(), false);
-		for (GridEntry& entry : spec.Entries)
+		ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
+		for (GridEntry& currentEntry : spec.Entries)
 		{
+			// Check if entry is selected
+			bool entryIsSelected = currentEntry.m_EntryID == spec.SelectedEntry;
+
 			// Get entry archetype and grid element ID
 			FixedString<16> entryID{ id };
-			GridEntryArchetype* entryArchetype = &(spec.EntryArchetypes.at(entry.m_ArchetypeID));
+			GridEntryArchetype* entryArchetype = &(spec.EntryArchetypes.at(currentEntry.m_ArchetypeID));
+			entryID.AppendInteger(WidgetIterator(widgetCount));
 			KG_ASSERT(entryArchetype);
 
-			entryID.AppendInteger(WidgetIterator(widgetCount));
+			// Display grid icon
 			ImGui::PushID(entryID.CString());
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			ImGui::ImageButton((ImTextureID)(uint64_t)entryArchetype->m_Icon->GetRendererID(), { spec.ThumbnailSize, spec.ThumbnailSize },
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)entryArchetype->m_Icon->GetRendererID(), { spec.ThumbnailSize, spec.ThumbnailSize },
 				{ 0, 1 }, { 1, 0 },
-				-1, ImVec4(0, 0, 0, 0), EditorUI::EditorUIService::s_DisabledColor);
-			ImGui::PopStyleColor();
+				-1, entryIsSelected ? s_ActiveColor : s_PureEmpty,
+				s_DisabledColor))
+			{
+				// Handle on left-click
+				if (entryArchetype->m_OnLeftClick)
+				{
+					entryArchetype->m_OnLeftClick(currentEntry);
+				}
+				spec.SelectedEntry = currentEntry.m_EntryID;
+			}
+
+			// Handle double left clicks
+			if (entryArchetype->m_OnDoubleLeftClick && 
+				ImGui::IsItemHovered() &&
+				ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+				entryArchetype->m_OnDoubleLeftClick(currentEntry);
+			}
+
+			// Handle right clicks
+			if (entryArchetype->m_OnRightClick && 
+				ImGui::IsItemHovered() && 
+				ImGui::IsMouseClicked(ImGuiMouseButton_Right)
+				)
+			{
+				entryArchetype->m_OnRightClick(currentEntry);
+			}
 
 			// Handle payloads
-			if (entryArchetype->OnCreatePayload && ImGui::BeginDragDropSource())
+			if (spec.Flags & GridFlags::Grid_AllowDragDrop)
 			{
-				DragDropPayload newPayload;
-				entryArchetype->OnCreatePayload(newPayload);
-				ImGui::SetDragDropPayload(newPayload.m_Label, newPayload.m_DataPointer, newPayload.m_DataSize, ImGuiCond_Once);
-				ImGui::EndDragDropSource();
-			}
-
-
-			/*if (entryArchetype->OnReceivePayload && ImGui::BeginDragDropTarget())
-			{
-				for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
+				// Handle create payload
+				if (entryArchetype->m_OnCreatePayload && ImGui::BeginDragDropSource())
 				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
-					{
-						spec.OnReceivePayload(payloadName, payload->Data, payload->DataSize);
-						break;
-					}
+					DragDropPayload newPayload;
+					entryArchetype->m_OnCreatePayload(newPayload);
+					ImGui::SetDragDropPayload(newPayload.m_Label, newPayload.m_DataPointer, newPayload.m_DataSize, ImGuiCond_Once);
+					ImGui::EndDragDropSource();
 				}
-				ImGui::EndDragDropTarget();
+
+				// Handle receive payload
+				if (entryArchetype->m_OnReceivePayload && ImGui::BeginDragDropTarget())
+				{
+					for (const char* payloadName : entryArchetype->m_AcceptableOnReceivePayloads)
+					{
+						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
+						{
+							entryArchetype->m_OnReceivePayload(payloadName, payload->Data, payload->DataSize);
+							break;
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
 			}
 
-			if (entryArchetype->OnReceivePayload && ImGui::BeginDragDropSource())
-			{
-				DragDropPayload newPayload;
-				entryArchetype->OnCreatePayload(newPayload);
-				ImGui::SetDragDropPayload(newPayload.m_Label, newPayload.m_DataPointer, newPayload.m_DataSize, ImGuiCond_Once);
-				ImGui::EndDragDropSource();
-			}*/
+			// Draw label for each cell
+			ImGui::TextWrapped(currentEntry.m_Label.CString());
 
-
-			ImGui::TextWrapped(entry.m_Label.CString());
+			// Reset cell data for next call
 			ImGui::NextColumn();
 			ImGui::PopID();
 		}
+
+		// End drawing columns
+		ImGui::PopStyleColor();
 		ImGui::Columns(1);
 	}
 
@@ -2467,6 +2500,72 @@ namespace Kargono::EditorUI
 		},
 		EditorUIService::s_SmallEditButton, false, s_DisabledColor);
 
+	}
+
+
+	void ProcessTooltipEntries(TooltipSpec& spec, std::vector<TooltipEntry>& entryList)
+	{
+		// Process each entry in current list
+		for (TooltipEntry& currentEntry : entryList)
+		{
+			// Handle case where current entry acts as a menu
+			if (std::vector<TooltipEntry>* subEntryList = std::get_if<std::vector<TooltipEntry>>(&currentEntry.m_EntryData))
+			{
+				// Create menu option
+				if (ImGui::BeginMenu(currentEntry.m_Label))
+				{
+					// Handle sub entries using recursive call
+					ProcessTooltipEntries(spec, *subEntryList);
+
+					ImGui::EndMenu();
+				}
+
+
+			}
+			// Handle case where current entry is a terminal node
+			else if (std::function<void(TooltipEntry&)>* terminalNode = std::get_if<std::function<void(TooltipEntry&)>>(&currentEntry.m_EntryData))
+			{
+				// Display current node
+				if (ImGui::MenuItem(currentEntry.m_Label))
+				{
+					// Call function pointer if valid
+					std::function<void(TooltipEntry&)>& functionPointerRef = *terminalNode;
+					if (functionPointerRef)
+					{
+						functionPointerRef(currentEntry);
+					}
+				}
+			}
+			else
+			{
+				KG_ERROR("Invalid variant type of entry data provided for tooltip entry");
+			}
+
+		}
+	}
+
+
+
+	void EditorUIService::Tooltip(TooltipSpec& spec)
+	{
+		uint32_t widgetCount{ 0 };
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.m_WidgetID);
+
+		// Handle turning on the tooltip
+		if (spec.TooltipActive)
+		{
+			ImGui::OpenPopup(id);
+			spec.TooltipActive = false;
+		}
+
+		// Draw tooltip if active
+		if (ImGui::BeginPopup(id))
+		{
+			// Recursively handle tooltip items and sub-menus
+			ProcessTooltipEntries(spec, spec.m_Entries);
+			ImGui::EndPopup();
+		}
 	}
 	void EditorUIService::BeginTabBar(const std::string& title)
 	{

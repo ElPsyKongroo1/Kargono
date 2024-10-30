@@ -33,6 +33,9 @@ namespace Kargono
 		//==============================
 		uint64_t m_UUID;
 	};
+
+	// Provide empty handle definition
+	static inline UUID k_EmptyUUID{ 0 };
 }
 
 namespace std
