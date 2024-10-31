@@ -179,17 +179,6 @@ namespace Kargono::EditorUI
 		static void BlockMouseEvents(bool block);
 		static void SetColorDefaults();
 		static void SetButtonDefaults();
-		
-	public:
-		//==============================
-		// Payload Types
-		//==============================
-		inline static std::array<FixedString32, 6> s_AllPayloadTypes
-		{
-			"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_AUDIO", "CONTENT_BROWSER_FONT",
-				"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_USERINTERFACE"
-		};
-
 
 	public:
 		//==============================
@@ -686,17 +675,17 @@ namespace Kargono::EditorUI
 			WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
-		std::function<void()> OnNavigateBack{};
-		std::function<void()> OnNavigateForward{};
-		std::function<void(const char*, void*, std::size_t)> OnReceivePayloadBack{};
-		std::function<void(const char*, void*, std::size_t)> OnReceivePayloadForward{};
-		WidgetFlags Flags{ 0 };
-		bool IsBackActive{ false };
-		bool IsForwardActive{ false };
+		FixedString64 m_Label;
+		std::function<void()> m_OnNavigateBack{};
+		std::function<void()> m_OnNavigateForward{};
+		std::function<void(const char*, void*, std::size_t)> m_OnReceivePayloadBack{};
+		std::function<void(const char*, void*, std::size_t)> m_OnReceivePayloadForward{};
+		std::vector<FixedString32> m_AcceptableOnReceivePayloads;
+		WidgetFlags m_Flags{ 0 };
+		bool m_IsBackActive{ false };
+		bool m_IsForwardActive{ false };
 	private:
 		WidgetID WidgetID;
-		
 	private:
 		friend void EditorUIService::NavigationHeader(NavigationHeaderSpec& spec);
 	};
@@ -741,10 +730,10 @@ namespace Kargono::EditorUI
 			WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		FixedString64 Label;
-		float Padding{ 25.0f };
-		float ThumbnailSize { 140.0f };
-		WidgetFlags Flags{ 0 };
+		FixedString16 m_Label;
+		float m_CellPadding{ 25.0f };
+		float m_CellIconSize { 140.0f };
+		WidgetFlags m_Flags{ 0 };
 
 	public:
 		bool AddEntry(GridEntry& newEntry) 

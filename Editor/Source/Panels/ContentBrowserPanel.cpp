@@ -2,10 +2,7 @@
 
 #include "Panels/ContentBrowserPanel.h"
 
-#include "Kargono.h"
 #include "EditorApp.h"
-#include "API/FileWatch/FileWatchAPI.h"
-
 
 namespace Kargono::Utility
 {
@@ -75,7 +72,7 @@ static Kargono::EditorApp* s_EditorApp{ nullptr };
 namespace Kargono::Panels
 {
 
-	void OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)
+	void ContentBrowserPanel::OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)
 	{
 		EngineService::SubmitToMainThread([&]()
 		{
@@ -89,11 +86,53 @@ namespace Kargono::Panels
 		currentPath = newPath;
 		EngineService::SubmitToMainThread([&]()
 		{
+				
 			API::FileWatch::EndWatch(m_CurrentDirectory);
 			m_CurrentDirectory = currentPath;
-			API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
+			API::FileWatch::StartWatch(m_CurrentDirectory, KG_BIND_CLASS_FN(OnFileWatchUpdate));
 			RefreshCachedDirectoryEntries();
 		});
+	}
+
+	void ContentBrowserPanel::NavigateDirectoryBack()
+	{
+		UpdateCurrentDirectory(m_CurrentDirectory.parent_path());
+	}
+
+	void ContentBrowserPanel::NavigateDirectoryForward()
+	{
+		if (Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, m_LongestRecentPath))
+		{
+			std::filesystem::path currentIterationPath{ m_LongestRecentPath };
+			std::filesystem::path recentIterationPath{ m_LongestRecentPath };
+			while (currentIterationPath != m_CurrentDirectory)
+			{
+				recentIterationPath = currentIterationPath;
+				currentIterationPath = currentIterationPath.parent_path();
+			}
+			UpdateCurrentDirectory(recentIterationPath);
+		}
+	}
+
+	void ContentBrowserPanel::OnNavHeaderBackReceivePayload(const char* payloadName, void* dataPointer, std::size_t dataSize)
+	{
+		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
+		std::filesystem::path payloadPath(payloadPathPointer);
+		Utility::FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
+	}
+
+	void ContentBrowserPanel::OnNavHeaderForwardReceivePayload(const char* payloadName, void* dataPointer, std::size_t dataSize)
+	{
+		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
+		std::filesystem::path payloadPath(payloadPathPointer);
+		std::filesystem::path currentIterationPath{ m_LongestRecentPath };
+		std::filesystem::path recentIterationPath{ m_LongestRecentPath };
+		while (currentIterationPath != m_CurrentDirectory)
+		{
+			recentIterationPath = currentIterationPath;
+			currentIterationPath = currentIterationPath.parent_path();
+		}
+		Utility::FileSystem::MoveFileToDirectory(payloadPath, recentIterationPath);
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel()
@@ -103,8 +142,34 @@ namespace Kargono::Panels
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
 			KG_BIND_CLASS_FN(ContentBrowserPanel::OnKeyPressedEditor));
 
-		API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
+		// Initialize widget resources
+		InitializeNavigationHeader();
+		InitializeFileFolderViewer();
+
+		API::FileWatch::StartWatch(m_CurrentDirectory, KG_BIND_CLASS_FN(OnFileWatchUpdate));
 		RefreshCachedDirectoryEntries();
+	}
+
+	void ContentBrowserPanel::InitializeNavigationHeader()
+	{
+		m_NavigateAssetsHeader.m_Label = "Assets";
+		m_NavigateAssetsHeader.m_Flags = EditorUI::NavigationHeaderFlags::NavigationHeader_AllowDragDrop;
+
+		// Copy over s_ContentBrowserPayloads into m_NavigateAssetHeader!!!!!
+		std::vector<FixedString32>& navPayloadList = m_NavigateAssetsHeader.m_AcceptableOnReceivePayloads;
+		navPayloadList.insert(navPayloadList.end(), &s_ContentBrowserPayloads[0], &s_ContentBrowserPayloads[s_ContentBrowserPayloads.size() - 1]);
+
+		m_NavigateAssetsHeader.m_OnNavigateBack = KG_BIND_CLASS_FN(NavigateDirectoryBack);
+		m_NavigateAssetsHeader.m_OnReceivePayloadBack = KG_BIND_CLASS_FN(OnNavHeaderBackReceivePayload);
+		m_NavigateAssetsHeader.m_OnNavigateForward = KG_BIND_CLASS_FN(NavigateDirectoryForward);
+		m_NavigateAssetsHeader.m_OnReceivePayloadForward = KG_BIND_CLASS_FN(OnNavHeaderForwardReceivePayload);
+
+	}
+
+	void ContentBrowserPanel::InitializeFileFolderViewer()
+	{
+		m_FileFolderViewer.m_Label = "Assets File Viewer";
+		EditorUI::GridEntryArchetype newArchetype;
 	}
 
 	void ContentBrowserPanel::OnEditorUIRender()
@@ -118,101 +183,10 @@ namespace Kargono::Panels
 			return;
 		}
 
-		bool backActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (!backActive)
-		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
-		}
 
-		// Draw icon for moving a directory back
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconBack->GetRendererID(),
-			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
-			-1, ImVec4(0, 0, 0, 0), 
-			backActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
-		{
-			if (backActive)
-			{
-				UpdateCurrentDirectory(m_CurrentDirectory.parent_path());
-			}
-		}
-		if (!backActive)
-		{
-			ImGui::PopStyleColor(2);
-		}
-		if (backActive && ImGui::BeginDragDropTarget())
-		{
-			for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
-				{
-					const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
-					std::filesystem::path payloadPath(payloadPathPointer);
-					Utility::FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
-					break;
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
-
-		// Draw icon for moving a directory forward
-		bool forwardActive = m_CurrentDirectory != m_LongestRecentPath && !m_LongestRecentPath.empty();
-		ImGui::SameLine();
-		if (!forwardActive)
-		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
-		}
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconForward->GetRendererID(), 
-			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
-			-1, ImVec4(0, 0, 0, 0), 
-			forwardActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
-		{
-			if (forwardActive && Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, m_LongestRecentPath))
-			{
-				std::filesystem::path currentIterationPath{m_LongestRecentPath};
-				std::filesystem::path recentIterationPath{m_LongestRecentPath};
-				while (currentIterationPath != m_CurrentDirectory)
-				{
-					recentIterationPath = currentIterationPath;
-					currentIterationPath = currentIterationPath.parent_path();
-				}
-				UpdateCurrentDirectory(recentIterationPath);
-			}
-		}
-		if (!forwardActive)
-		{
-			ImGui::PopStyleColor(2);
-		}
-		if (forwardActive && ImGui::BeginDragDropTarget())
-		{
-			for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
-				{
-					const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
-					std::filesystem::path payloadPath(payloadPathPointer);
-					std::filesystem::path currentIterationPath{m_LongestRecentPath};
-					std::filesystem::path recentIterationPath{m_LongestRecentPath};
-					while (currentIterationPath != m_CurrentDirectory)
-					{
-						recentIterationPath = currentIterationPath;
-						currentIterationPath = currentIterationPath.parent_path();
-					}
-					Utility::FileSystem::MoveFileToDirectory(payloadPath, recentIterationPath);
-					break;
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
-		ImGui::PopStyleColor();
-
-		// Current directory title
+		// Generate current title for navigation header
 		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveProjectDirectory(), m_CurrentDirectory);
-
 		std::vector<std::string> tokenizedDirectoryPath{};
-
 		while (activeDirectory.filename() != "Assets")
 		{
 			tokenizedDirectoryPath.push_back(activeDirectory.filename().string());
@@ -220,28 +194,27 @@ namespace Kargono::Panels
 		}
 		tokenizedDirectoryPath.push_back("Assets");
 
-		ImGui::PushFont(EditorUI::EditorUIService::s_FontPlexBold);
+		FixedString64 newTitle;
 		for (int32_t i = (int32_t)(tokenizedDirectoryPath.size()) - 1; i >= 0; --i)
 		{
-			ImGui::SameLine();
-			ImGui::Text(tokenizedDirectoryPath.at(i).c_str());
+			newTitle.Append(tokenizedDirectoryPath.at(i).c_str());
 			if (i != 0)
 			{
-				ImGui::SameLine();
-				ImGui::Text("/");
+				newTitle.Append("/");
 			}
 		}
-		ImGui::PopFont();
-		ImGui::Separator();
+
+		// Fill data for navigation header and draw header
+		m_NavigateAssetsHeader.m_Label = newTitle;
+		m_NavigateAssetsHeader.m_IsBackActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
+		m_NavigateAssetsHeader.m_IsForwardActive = m_CurrentDirectory != m_LongestRecentPath && !m_LongestRecentPath.empty();
+		EditorUI::EditorUIService::NavigationHeader(m_NavigateAssetsHeader);
+
+		// Draw 
+		EditorUI::EditorUIService::Grid(m_FileFolderViewer);
 
 		// Start file browser
-		static float padding = 25.0f;
-		static float thumbnailSize = 140;
-		float cellSize = thumbnailSize + padding;
-		float panelWidth = ImGui::GetContentRegionAvail().x;
-		int columnCount = (int)(panelWidth / cellSize);
-		columnCount = columnCount > 0 ? columnCount : 1;
-		ImGui::Columns(columnCount, 0, false);
+		float thumbnailSize = 50.0f;
 		for (const std::filesystem::path& directoryEntry: m_CachedDirectoryEntries)
 		{
 			std::string filenameString = directoryEntry.filename().string();
@@ -267,7 +240,7 @@ namespace Kargono::Panels
 			{
 				if (ImGui::BeginDragDropTarget())
 				{
-					for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
+					for (const char* payloadName : s_ContentBrowserPayloads)
 					{
 						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
 						{
@@ -496,7 +469,7 @@ namespace Kargono::Panels
 		m_CurrentDirectory = m_BaseDirectory;
 		m_LongestRecentPath.clear();
 		m_CachedDirectoryEntries.clear();
-		API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
+		API::FileWatch::StartWatch(m_CurrentDirectory, KG_BIND_CLASS_FN(OnFileWatchUpdate));
 		RefreshCachedDirectoryEntries();
 	}
 }

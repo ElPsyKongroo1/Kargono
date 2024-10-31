@@ -43,11 +43,11 @@ namespace Kargono::Panels
 		s_RandomTestInteger.Label = "Intenger Time";
 		s_RandomTestInteger.CurrentInteger = 5;
 #endif
-		m_TestHeader.Label = "directory/directory/file.txt";
+		m_TestHeader.m_Label = "directory/directory/file.txt";
 		newString = "Hahahaha";
 
 		// Add archetypes
-		testGrid.Label = "Testing Grid go burrrrrrr";
+		testGrid.m_Label = "Testing Grid go burrrrrrr";
 		EditorUI::GridEntryArchetype newArchetype;
 		newArchetype.m_Icon = EditorUI::EditorUIService::s_IconDisplay;
 		newArchetype.m_OnLeftClick = [](EditorUI::GridEntry& currentEntry)

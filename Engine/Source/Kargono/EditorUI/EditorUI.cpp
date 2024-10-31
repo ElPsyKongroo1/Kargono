@@ -2147,7 +2147,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::NavigationHeader(NavigationHeaderSpec& spec)
 	{
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (!spec.IsBackActive)
+		if (!spec.m_IsBackActive)
 		{
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
@@ -2157,28 +2157,29 @@ namespace Kargono::EditorUI
 		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconBack->GetRendererID(),
 			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
 			-1, ImVec4(0, 0, 0, 0),
-			spec.IsBackActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
+			spec.m_IsBackActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
 		{
-			if (spec.IsBackActive && spec.OnNavigateBack)
+			if (spec.m_IsBackActive && spec.m_OnNavigateBack)
 			{
-				spec.OnNavigateBack();
+				spec.m_OnNavigateBack();
 			}
 		}
 
-		if (!spec.IsBackActive)
+		if (!spec.m_IsBackActive)
 		{
 			ImGui::PopStyleColor(2);
 		}
 		// Handle back navigation's payload
-		if (spec.Flags & NavigationHeaderFlags::NavigationHeader_AllowDragDrop && 
-			spec.IsBackActive && 
+		if (spec.m_Flags & NavigationHeaderFlags::NavigationHeader_AllowDragDrop && 
+			spec.m_IsBackActive && 
+			spec.m_OnReceivePayloadBack &&
 			ImGui::BeginDragDropTarget())
 		{
-			for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
+			for (const char* payloadName : spec.m_AcceptableOnReceivePayloads)
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
 				{
-					spec.OnReceivePayloadBack(payloadName , payload->Data, payload->DataSize);
+					spec.m_OnReceivePayloadBack(payloadName , payload->Data, payload->DataSize);
 					break;
 				}
 			}
@@ -2187,7 +2188,7 @@ namespace Kargono::EditorUI
 
 		// Draw forward navigation icon
 		ImGui::SameLine();
-		if (!spec.IsForwardActive)
+		if (!spec.m_IsForwardActive)
 		{
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
@@ -2195,26 +2196,27 @@ namespace Kargono::EditorUI
 		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconForward->GetRendererID(),
 			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
 			-1, ImVec4(0, 0, 0, 0),
-			spec.IsForwardActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
+			spec.m_IsForwardActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
 		{
-			if (spec.IsForwardActive && spec.OnNavigateForward)
+			if (spec.m_IsForwardActive && spec.m_OnNavigateForward)
 			{
-				spec.OnNavigateForward();
+				spec.m_OnNavigateForward();
 			}
 		}
-		if (!spec.IsForwardActive)
+		if (!spec.m_IsForwardActive)
 		{
 			ImGui::PopStyleColor(2);
 		}
-		if (spec.Flags & NavigationHeaderFlags::NavigationHeader_AllowDragDrop &&
-			spec.IsForwardActive &&
+		if (spec.m_Flags & NavigationHeaderFlags::NavigationHeader_AllowDragDrop &&
+			spec.m_IsForwardActive &&
+			spec.m_OnReceivePayloadForward &&
 			ImGui::BeginDragDropTarget())
 		{
-			for (const char* payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
+			for (const char* payloadName : spec.m_AcceptableOnReceivePayloads)
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
 				{
-					spec.OnReceivePayloadForward(payloadName, payload->Data, payload->DataSize);
+					spec.m_OnReceivePayloadForward(payloadName, payload->Data, payload->DataSize);
 					break;
 				}
 			}
@@ -2224,7 +2226,7 @@ namespace Kargono::EditorUI
 
 		ImGui::PushFont(EditorUI::EditorUIService::s_FontPlexBold);
 		ImGui::SameLine();
-		ImGui::Text(spec.Label.c_str());
+		ImGui::Text(spec.m_Label);
 		ImGui::PopFont();
 
 		ImGui::Separator();
@@ -2238,7 +2240,7 @@ namespace Kargono::EditorUI
 		id.AppendInteger(spec.WidgetID);
 
 		// Calculate grid cell count using provided spec sizes
-		float cellSize = spec.ThumbnailSize + spec.Padding;
+		float cellSize = spec.m_CellIconSize + spec.m_CellPadding;
 		float panelWidth = ImGui::GetContentRegionAvail().x;
 		int32_t columnCount = (int32_t)(panelWidth / cellSize);
 		columnCount = columnCount > 0 ? columnCount : 1;
@@ -2259,7 +2261,7 @@ namespace Kargono::EditorUI
 
 			// Display grid icon
 			ImGui::PushID(entryID.CString());
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)entryArchetype->m_Icon->GetRendererID(), { spec.ThumbnailSize, spec.ThumbnailSize },
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)entryArchetype->m_Icon->GetRendererID(), { spec.m_CellIconSize, spec.m_CellIconSize },
 				{ 0, 1 }, { 1, 0 },
 				-1, entryIsSelected ? s_ActiveColor : s_PureEmpty,
 				s_DisabledColor))
@@ -2290,7 +2292,7 @@ namespace Kargono::EditorUI
 			}
 
 			// Handle payloads
-			if (spec.Flags & GridFlags::Grid_AllowDragDrop)
+			if (spec.m_Flags & GridFlags::Grid_AllowDragDrop)
 			{
 				// Handle create payload
 				if (entryArchetype->m_OnCreatePayload && ImGui::BeginDragDropSource())

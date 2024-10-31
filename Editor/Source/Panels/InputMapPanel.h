@@ -17,6 +17,9 @@ namespace Kargono::Panels
 		//=========================
 		InputMapPanel();
 	private:
+		//=========================
+		// Internal Initialization Functions
+		//=========================
 		void InitializeOpeningScreen();
 		void InitializeInputMapHeader();
 		void InitializeKeyboardScreen();
