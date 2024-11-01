@@ -153,7 +153,7 @@ namespace Kargono::EditorUI
 		static void Grid(GridSpec& spec);
 		static void CollapsingHeader(CollapsingHeaderSpec& spec);
 		static void LabeledText(const std::string& Label, const std::string& Text);
-		static void Text(const std::string& Text);
+		static void Text(const char* text);
 		static void EditText(EditTextSpec& spec);
 		static void ChooseDirectory(ChooseDirectorySpec& spec);
 		static void Tooltip(TooltipSpec& spec);
@@ -716,8 +716,8 @@ namespace Kargono::EditorUI
 		std::function<void(GridEntry& currentEntry)> m_OnRightClick;
 
 		// Handle create/receive payload
-		std::function<void(DragDropPayload& newPayload)> m_OnCreatePayload;
-		std::function<void(const char*, void*, std::size_t)> m_OnReceivePayload;
+		std::function<void(GridEntry& currentEntry, DragDropPayload& newPayload)> m_OnCreatePayload;
+		std::function<void(GridEntry& currentEntry, const char*, void*, std::size_t)> m_OnReceivePayload;
 		std::vector<FixedString32> m_AcceptableOnReceivePayloads;
 	};
 
@@ -1013,8 +1013,6 @@ namespace Kargono::EditorUI
 		friend void DrawEntries(TreeSpec& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath , ImVec2 rootPosition);
 	};
 
-
-
 	struct TooltipEntry
 	{
 	public:
@@ -1030,9 +1028,12 @@ namespace Kargono::EditorUI
 
 	public:
 		FixedString32 m_Label;
+		UUID m_EntryID;
+		bool m_IsVisible{ true };
 	private:
 		std::variant<std::vector<TooltipEntry>, std::function<void(TooltipEntry&)>> m_EntryData;
 		friend void ProcessTooltipEntries(TooltipSpec& spec, std::vector<TooltipEntry>& entryList);
+		friend struct TooltipSpec;
 	};
 
 	struct TooltipSpec
@@ -1047,30 +1048,56 @@ namespace Kargono::EditorUI
 		bool TooltipActive{ false };
 
 	public:
-		bool AddMenuItem(const TooltipEntry& newEntry)
+		UUID AddMenuItem(TooltipEntry& newEntry)
 		{
 			// Ensure valid label is provided
 			if (newEntry.m_Label.IsEmpty())
 			{
-				return false;
+				return k_EmptyUUID;
+			}
+
+			// Ensure UUID is unique inside entry
+			while (!ValidateEntryID(newEntry.m_EntryID))
+			{
+				newEntry.m_EntryID = {};
 			}
 
 			// Add new entry if valid
 			m_Entries.push_back(newEntry);
-			return true;
+			return newEntry.m_EntryID;
 		}
-		bool AddMenuItem(TooltipEntry&& newEntry)
+		UUID AddMenuItem(TooltipEntry&& newEntry)
 		{
 			// Ensure valid label is provided
 			if (newEntry.m_Label.IsEmpty())
 			{
-				return false;
+				return k_EmptyUUID;
+			}
+
+			// Ensure UUID is unique inside entry
+			while (!ValidateEntryID(newEntry.m_EntryID))
+			{
+				newEntry.m_EntryID = {};
 			}
 
 			// Add new entry if valid
+			UUID cacheID = newEntry.m_EntryID;
 			m_Entries.push_back(std::move(newEntry));
-			return true;
+			return cacheID;
 		}
+
+		bool SetIsVisible(UUID entry, bool isVisible);
+		bool SetAllChildrenIsVisible(UUID entry, bool isVisible);
+		void ClearEntries()
+		{
+			m_Entries.clear();
+		}
+
+	private:
+		bool ValidateEntryID(UUID queryID);
+		bool ValidateEntryIDRecursive(std::vector<TooltipEntry>& entries, UUID queryID);
+		bool SetIsVisibleRecursive(std::vector<TooltipEntry>& entries, UUID queryID, bool isVisible);
+		bool SetAllChildrenIsVisibleRecursive(std::vector<TooltipEntry>& entries, UUID queryID, bool isVisible);
 	private:
 		WidgetID m_WidgetID;
 		std::vector<TooltipEntry> m_Entries{};

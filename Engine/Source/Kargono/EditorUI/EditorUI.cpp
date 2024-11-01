@@ -2298,7 +2298,7 @@ namespace Kargono::EditorUI
 				if (entryArchetype->m_OnCreatePayload && ImGui::BeginDragDropSource())
 				{
 					DragDropPayload newPayload;
-					entryArchetype->m_OnCreatePayload(newPayload);
+					entryArchetype->m_OnCreatePayload(currentEntry, newPayload);
 					ImGui::SetDragDropPayload(newPayload.m_Label, newPayload.m_DataPointer, newPayload.m_DataSize, ImGuiCond_Once);
 					ImGui::EndDragDropSource();
 				}
@@ -2310,7 +2310,7 @@ namespace Kargono::EditorUI
 					{
 						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
 						{
-							entryArchetype->m_OnReceivePayload(payloadName, payload->Data, payload->DataSize);
+							entryArchetype->m_OnReceivePayload(currentEntry, payloadName, payload->Data, payload->DataSize);
 							break;
 						}
 					}
@@ -2388,10 +2388,11 @@ namespace Kargono::EditorUI
 		WriteMultilineText(text, s_SecondaryTextLargeWidth, s_SecondaryTextPosOne);
 		ImGui::PopStyleColor();
 	}
-	void EditorUIService::Text(const std::string& Text)
+	void EditorUIService::Text(const char* text)
 	{
-		ImGui::Text(Text.c_str());
+		ImGui::Text(text);
 	}
+
 	void EditorUIService::EditText(EditTextSpec& spec)
 	{
 		// Local Variables
@@ -2510,6 +2511,12 @@ namespace Kargono::EditorUI
 		// Process each entry in current list
 		for (TooltipEntry& currentEntry : entryList)
 		{
+			// Ignore entries that are not visible
+			if (!currentEntry.m_IsVisible)
+			{
+				continue;
+			}
+
 			// Handle case where current entry acts as a menu
 			if (std::vector<TooltipEntry>* subEntryList = std::get_if<std::vector<TooltipEntry>>(&currentEntry.m_EntryData))
 			{
@@ -2960,5 +2967,135 @@ namespace Kargono::EditorUI
 		{
 			ExpandedNodes.insert(nodePath);
 		}
+	}
+
+	bool TooltipSpec::ValidateEntryID(UUID newEntryID)
+	{
+		// Ensure empty id is not provided
+		if (newEntryID == k_EmptyUUID)
+		{
+			return false;
+		}
+
+		return ValidateEntryIDRecursive(m_Entries, newEntryID);
+	}
+
+	bool TooltipSpec::ValidateEntryIDRecursive(std::vector<TooltipEntry>& entries, UUID queryID)
+	{
+		// Ensure that no match id is found in internal entries list
+		for (TooltipEntry& currentEntry : entries)
+		{
+			// Check each entry
+			if (currentEntry.m_EntryID == queryID)
+			{
+				return false;
+			}
+
+			// Check for recursive entries inside menu
+			if (std::vector<TooltipEntry>* subEntriesListRef = std::get_if<std::vector<TooltipEntry>>(&currentEntry.m_EntryData))
+			{
+				std::vector<TooltipEntry>& subEntriesList = *subEntriesListRef;
+				bool success = ValidateEntryIDRecursive(subEntriesList, queryID);
+				if (!success)
+				{
+					return false;
+				}
+			}
+		}
+		
+		// Return true, if no duplicates are found
+		return true;
+	}
+
+	bool TooltipSpec::SetIsVisible(UUID entry, bool isVisible)
+	{
+		// Ensure empty id is not provided
+		if (entry == k_EmptyUUID)
+		{
+			return false;
+		}
+
+		return SetIsVisibleRecursive(m_Entries, entry, isVisible);
+	}
+
+	bool TooltipSpec::SetIsVisibleRecursive(std::vector<TooltipEntry>& entries, UUID queryID, bool isVisible)
+	{
+		// Ensure that no match id is found in internal entries list
+		for (TooltipEntry& currentEntry : entries)
+		{
+			// Check each entry
+			if (currentEntry.m_EntryID == queryID)
+			{
+				// Handle setting visibility
+				currentEntry.m_IsVisible = isVisible;
+				return true;
+			}
+
+			// Check for recursive entries inside menu
+			if (std::vector<TooltipEntry>* subEntriesListRef = std::get_if<std::vector<TooltipEntry>>(&currentEntry.m_EntryData))
+			{
+				std::vector<TooltipEntry>& subEntriesList = *subEntriesListRef;
+				bool success = SetIsVisibleRecursive(subEntriesList, queryID, isVisible);
+				if (success)
+				{
+					return true;
+				}
+			}
+		}
+
+		// Return true, if no duplicates are found
+		return false;
+	}
+
+	bool TooltipSpec::SetAllChildrenIsVisible(UUID entry, bool isVisible)
+	{
+		// Ensure empty id is not provided
+		if (entry == k_EmptyUUID)
+		{
+			return false;
+		}
+
+		return SetAllChildrenIsVisibleRecursive(m_Entries, entry, isVisible);
+	}
+
+	bool TooltipSpec::SetAllChildrenIsVisibleRecursive(std::vector<TooltipEntry>& entries, UUID queryID, bool isVisible)
+	{
+		// Ensure that no match id is found in internal entries list
+		for (TooltipEntry& currentEntry : entries)
+		{
+			// Check each entry
+			if (currentEntry.m_EntryID == queryID)
+			{
+				// Handle setting visibility
+				if (std::vector<TooltipEntry>* subEntriesListRef = std::get_if<std::vector<TooltipEntry>>(&currentEntry.m_EntryData))
+				{
+					std::vector<TooltipEntry>& subEntriesList = *subEntriesListRef;
+					for (TooltipEntry& subEntry : subEntriesList)
+					{
+						subEntry.m_IsVisible = isVisible;
+					}
+					return true;
+				}
+				// Found entry, however, entry is not a menu.
+				else
+				{
+					return false;
+				}
+			}
+
+			// Check for recursive entries inside menu
+			if (std::vector<TooltipEntry>* subEntriesListRef = std::get_if<std::vector<TooltipEntry>>(&currentEntry.m_EntryData))
+			{
+				std::vector<TooltipEntry>& subEntriesList = *subEntriesListRef;
+				bool success = SetAllChildrenIsVisibleRecursive(subEntriesList, queryID, isVisible);
+				if (success)
+				{
+					return true;
+				}
+			}
+		}
+
+		// Return true, if no duplicates are found
+		return false;
 	}
 }

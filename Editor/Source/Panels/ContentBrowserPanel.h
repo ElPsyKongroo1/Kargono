@@ -13,9 +13,16 @@ namespace Kargono::Panels
 {
 	enum class BrowserFileType
 	{
-		None = 0, Directory = 1, Image = 2, Audio = 3,
-		Binary = 4, Registry = 5, Scene = 6, ScriptProject = 7,
-		Font = 8, UserInterface = 9, Input = 10
+		None = 0,
+		Directory,
+		Image,
+		Audio,
+		Binary,
+		Registry,
+		Scene,
+		Font,
+		UserInterface,
+		Input
 	};
 
 
@@ -68,21 +75,50 @@ namespace Kargono::Panels
 		void OnNavHeaderBackReceivePayload(const char* payloadName, void* dataPointer, std::size_t dataSize);
 		void OnNavHeaderForwardReceivePayload(const char* payloadName, void* dataPointer, std::size_t dataSize);
 
+		//=========================
+		// Manage Directory Grid Functionality
+		//=========================
+		void OnGridCreatePayload(EditorUI::GridEntry& currentEntry, EditorUI::DragDropPayload& payload);
+		void OnGridReceivePayload(EditorUI::GridEntry& currentEntry, 
+			const char* payloadName, 
+			void* dataPointer, 
+			std::size_t dataSize);
+		void OnGridDirectoryDoubleClick(EditorUI::GridEntry& currentEntry);
+		void OnGridHandleRightClick(EditorUI::GridEntry& currentEntry);
+
 	private:
 		//=========================
 		// Core Panel Data
 		//=========================
+		// Panel Name
 		std::string m_PanelName{ "Content Browser" };
+
+		// Manage content browser directory
 		std::filesystem::path m_BaseDirectory {};
 		std::filesystem::path m_CurrentDirectory {};
 		std::filesystem::path m_LongestRecentPath {};
-		std::vector<std::filesystem::path> m_CachedDirectoryEntries {};
+		std::filesystem::path m_FileToModifyCache{};
+
+		// Tooltip handles
+		UUID m_OpenFileInTextEditorEntry;
 
 		//=========================
 		// Widgets
 		//=========================
+
 		EditorUI::NavigationHeaderSpec m_NavigateAssetsHeader{};
+
+		// Grid widgets
 		EditorUI::GridSpec m_FileFolderViewer{};
+
+		// Tooltip widgets
+		EditorUI::TooltipSpec m_RightClickTooltip{};
+
+		// Popup widgets
+		EditorUI::GenericPopupSpec m_DeleteFilePopup{};
+		EditorUI::GenericPopupSpec m_DeleteDirectoryPopup{};
+		EditorUI::GenericPopupSpec m_RenameFilePopup{};
+		EditorUI::EditTextSpec m_RenameFileEditName{};
 		
 	};
 }

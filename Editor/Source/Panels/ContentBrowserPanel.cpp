@@ -18,7 +18,6 @@ namespace Kargono::Utility
 		case Panels::BrowserFileType::Binary: { return EditorUI::EditorUIService::s_IconBinary; }
 		case Panels::BrowserFileType::Registry: { return EditorUI::EditorUIService::s_IconRegistry; }
 		case Panels::BrowserFileType::Scene: { return EditorUI::EditorUIService::s_IconScene; }
-		case Panels::BrowserFileType::ScriptProject: { return EditorUI::EditorUIService::s_IconScriptProject; }
 		case Panels::BrowserFileType::Input: { return EditorUI::EditorUIService::s_IconInput; }
 		case Panels::BrowserFileType::None: { return EditorUI::EditorUIService::s_IconGenericFile; }
 		}
@@ -37,7 +36,6 @@ namespace Kargono::Utility
 		if (extension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
 		if (extension == ".ttf") { return Panels::BrowserFileType::Font; }
 		if (extension == ".kgscene") { return Panels::BrowserFileType::Scene; }
-		if (extension == ".csproj") { return Panels::BrowserFileType::ScriptProject; }
 		if (extension == ".kginput") { return Panels::BrowserFileType::Input; }
 		if (extension == ".kgaudio" || extension == ".kgtexture" || extension == ".kgfont" ||
 			extension == ".kgshadervert" || extension == ".kgshaderfrag") {
@@ -58,7 +56,6 @@ namespace Kargono::Utility
 		case Panels::BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Registry: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Scene: { return "CONTENT_BROWSER_SCENE"; }
-		case Panels::BrowserFileType::ScriptProject: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Input: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::None: { return "CONTENT_BROWSER_ITEM"; }
 		}
@@ -82,6 +79,8 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::UpdateCurrentDirectory(const std::filesystem::path& newPath)
 	{
+
+		// Create function to 
 		static std::filesystem::path currentPath;
 		currentPath = newPath;
 		EngineService::SubmitToMainThread([&]()
@@ -135,6 +134,106 @@ namespace Kargono::Panels
 		Utility::FileSystem::MoveFileToDirectory(payloadPath, recentIterationPath);
 	}
 
+	void ContentBrowserPanel::OnGridCreatePayload(EditorUI::GridEntry& currentEntry, EditorUI::DragDropPayload& payload)
+	{
+		// Append the file name to current content browser directory
+		static std::filesystem::path relativePath;
+		relativePath = m_CurrentDirectory / currentEntry.m_Label.CString();
+		const wchar_t* itemPath = relativePath.c_str();
+
+		// Load up payload
+		payload.m_Label = Utility::BrowserFileTypeToPayloadString((BrowserFileType)currentEntry.m_ArchetypeID).c_str();
+		payload.m_DataPointer = (void*)itemPath;
+		payload.m_DataSize = (wcslen(itemPath) + 1) * sizeof(wchar_t);
+	}
+
+	void ContentBrowserPanel::OnGridReceivePayload(EditorUI::GridEntry& currentEntry, const char* payloadName, void* dataPointer, std::size_t dataSize)
+	{
+		std::filesystem::path currentEntryPath{ m_CurrentDirectory / currentEntry.m_Label.CString() };
+
+		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
+		std::filesystem::path payloadPath(payloadPathPointer);
+		Utility::FileSystem::MoveFileToDirectory(payloadPath, currentEntryPath);
+		
+	}
+
+	void ContentBrowserPanel::OnGridDirectoryDoubleClick(EditorUI::GridEntry& currentEntry)
+	{
+		UpdateCurrentDirectory(m_CurrentDirectory / currentEntry.m_Label.CString());
+		if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory / currentEntry.m_Label.CString(), m_LongestRecentPath))
+		{
+			m_LongestRecentPath = m_CurrentDirectory / currentEntry.m_Label.CString();
+		}
+	}
+
+	void ContentBrowserPanel::OnGridHandleRightClick(EditorUI::GridEntry& currentEntry)
+	{
+		// Store current file to modify in later function
+		m_FileToModifyCache = m_CurrentDirectory / currentEntry.m_Label.CString();
+
+		// Enable tooltip menu
+		m_RightClickTooltip.TooltipActive = true;
+		BrowserFileType fileType = (BrowserFileType)currentEntry.m_ArchetypeID;
+
+		m_RightClickTooltip.ClearEntries();
+		if (fileType != BrowserFileType::Directory)
+		{
+			// m_OpenFileInTextEditorEntry
+		}
+#if 0
+		if (fileType == BrowserFileType::Scene)
+		{
+			if (ImGui::Selectable("Open Scene"))
+			{
+				EditorApp::GetCurrentApp()->OpenScene(directoryEntry);
+			}
+		}
+
+		if (fileType == BrowserFileType::Font)
+		{
+			if (ImGui::Selectable("Use Font In Current User Interface"))
+			{
+				Assets::AssetHandle currentHandle = Assets::AssetService::ImportFontFromFile(directoryEntry);
+				Ref<RuntimeUI::Font> font = Assets::AssetService::GetFont(currentHandle);
+				if (font)
+				{
+					RuntimeUI::RuntimeUIService::SetActiveFont(font, currentHandle);
+				}
+
+				else { KG_WARN("Could not load font {0}", directoryEntry.filename().string()); }
+			}
+		}
+
+		if (fileType != BrowserFileType::Binary &&
+			fileType != BrowserFileType::Directory &&
+			fileType != BrowserFileType::Registry &&
+			fileType != BrowserFileType::Scene)
+		{
+			if (ImGui::Selectable("Rename File"))
+			{
+				openRenamePopup = true;
+			}
+		}
+
+		if (fileType != BrowserFileType::Registry && fileType != BrowserFileType::Directory)
+		{
+			if (ImGui::Selectable("Delete File"))
+			{
+				openDeleteModal = true;
+			}
+		}
+
+		if (fileType == BrowserFileType::Directory)
+		{
+			if (ImGui::Selectable("Delete Directory"))
+			{
+				openDeleteDirectory = true;
+			}
+		}
+#endif
+
+	}
+
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_BaseDirectory(Projects::ProjectService::GetActiveAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
@@ -168,8 +267,130 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::InitializeFileFolderViewer()
 	{
+		// Initialize file viewer grid
 		m_FileFolderViewer.m_Label = "Assets File Viewer";
-		EditorUI::GridEntryArchetype newArchetype;
+
+		// Initialize grid archetypes
+		EditorUI::GridEntryArchetype directoryArch;
+		directoryArch.m_Icon = EditorUI::EditorUIService::s_IconDirectory;
+		directoryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		directoryArch.m_OnDoubleLeftClick = KG_BIND_CLASS_FN(OnGridDirectoryDoubleClick);
+		directoryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		// Copy over s_ContentBrowserPayloads into directoryArch
+		std::vector<FixedString32>& navPayloadList = directoryArch.m_AcceptableOnReceivePayloads;
+		navPayloadList.insert(navPayloadList.end(), &s_ContentBrowserPayloads[0], &s_ContentBrowserPayloads[s_ContentBrowserPayloads.size() - 1]);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Directory, directoryArch);
+
+		EditorUI::GridEntryArchetype imageArch;
+		imageArch.m_Icon = EditorUI::EditorUIService::s_IconImage;
+		imageArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		imageArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Image, imageArch);
+
+		EditorUI::GridEntryArchetype audioArch;
+		audioArch.m_Icon = EditorUI::EditorUIService::s_IconAudio;
+		audioArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		audioArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Audio, audioArch);
+
+		EditorUI::GridEntryArchetype fontArch;
+		fontArch.m_Icon = EditorUI::EditorUIService::s_IconFont;
+		fontArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		fontArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Font, fontArch);
+
+		EditorUI::GridEntryArchetype userInterfaceArch;
+		userInterfaceArch.m_Icon = EditorUI::EditorUIService::s_IconUserInterface;
+		userInterfaceArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		userInterfaceArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::UserInterface, userInterfaceArch);
+
+		EditorUI::GridEntryArchetype binaryArch;
+		binaryArch.m_Icon = EditorUI::EditorUIService::s_IconBinary;
+		binaryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		binaryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Binary, binaryArch);
+
+		EditorUI::GridEntryArchetype registryArch;
+		registryArch.m_Icon = EditorUI::EditorUIService::s_IconRegistry;
+		registryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		registryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Registry, registryArch);
+
+		EditorUI::GridEntryArchetype sceneArch;
+		sceneArch.m_Icon = EditorUI::EditorUIService::s_IconScene;
+		sceneArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		sceneArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Scene, sceneArch);
+
+		EditorUI::GridEntryArchetype inputArch;
+		inputArch.m_Icon = EditorUI::EditorUIService::s_IconInput;
+		inputArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		inputArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Input, inputArch);
+
+		EditorUI::GridEntryArchetype genericFileArch;
+		genericFileArch.m_Icon = EditorUI::EditorUIService::s_IconGenericFile;
+		genericFileArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		genericFileArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::None, genericFileArch);
+
+		
+		// Initialize Tooltip
+		m_RightClickTooltip.m_Label = "Content browser tooltip";
+		// Create open file in text editor entry inside tooltip menu
+		EditorUI::TooltipEntry openFileEntry("Open File In Text Editor", [&](EditorUI::TooltipEntry& entry) 
+		{
+			s_EditorApp->m_TextEditorPanel->OpenFile(m_FileToModifyCache);
+		});
+		m_OpenFileInTextEditorEntry = m_RightClickTooltip.AddMenuItem(openFileEntry);
+
+
+		// Initialize delete directory popup
+		m_DeleteDirectoryPopup.Label = "Delete Directory";
+		m_DeleteDirectoryPopup.PopupWidth = 420.0f;
+		m_DeleteDirectoryPopup.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::Text(m_FileToModifyCache.string().c_str());
+		};
+		m_DeleteDirectoryPopup.ConfirmAction = [&]()
+		{
+			Utility::FileSystem::DeleteSelectedDirectory(m_FileToModifyCache);
+		};
+
+		// Initialize delete file popup
+		m_DeleteFilePopup.Label = "Delete File";
+		m_DeleteFilePopup.PopupWidth = 420.0f;
+		m_DeleteFilePopup.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::Text(m_FileToModifyCache.string().c_str());
+		};
+		m_DeleteFilePopup.ConfirmAction = [&]()
+		{
+			Utility::FileSystem::DeleteSelectedFile(m_FileToModifyCache);
+		};
+
+		// Initialize rename file popup
+		m_RenameFilePopup.Label = "Rename File";
+		m_RenameFilePopup.PopupWidth = 420.0f;
+		m_RenameFilePopup.PopupAction = [&]() 
+		{
+			m_RenameFileEditName.CurrentOption = m_FileToModifyCache.filename().string();
+		};
+		m_RenameFilePopup.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::EditText(m_RenameFileEditName);
+		};
+		m_RenameFilePopup.ConfirmAction = [&]()
+		{
+			Utility::FileSystem::RenameFile(m_FileToModifyCache, m_RenameFileEditName.CurrentOption);
+		};
+
+		m_RenameFileEditName.Label = "File Name";
+
+#if 0
+#endif
+
 	}
 
 	void ContentBrowserPanel::OnEditorUIRender()
@@ -183,231 +404,11 @@ namespace Kargono::Panels
 			return;
 		}
 
-
-		// Generate current title for navigation header
-		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveProjectDirectory(), m_CurrentDirectory);
-		std::vector<std::string> tokenizedDirectoryPath{};
-		while (activeDirectory.filename() != "Assets")
-		{
-			tokenizedDirectoryPath.push_back(activeDirectory.filename().string());
-			activeDirectory = activeDirectory.parent_path();
-		}
-		tokenizedDirectoryPath.push_back("Assets");
-
-		FixedString64 newTitle;
-		for (int32_t i = (int32_t)(tokenizedDirectoryPath.size()) - 1; i >= 0; --i)
-		{
-			newTitle.Append(tokenizedDirectoryPath.at(i).c_str());
-			if (i != 0)
-			{
-				newTitle.Append("/");
-			}
-		}
-
-		// Fill data for navigation header and draw header
-		m_NavigateAssetsHeader.m_Label = newTitle;
-		m_NavigateAssetsHeader.m_IsBackActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
-		m_NavigateAssetsHeader.m_IsForwardActive = m_CurrentDirectory != m_LongestRecentPath && !m_LongestRecentPath.empty();
+		// Draw navigation header draw header
 		EditorUI::EditorUIService::NavigationHeader(m_NavigateAssetsHeader);
 
-		// Draw 
+		// Draw content browser file grid
 		EditorUI::EditorUIService::Grid(m_FileFolderViewer);
-
-		// Start file browser
-		float thumbnailSize = 50.0f;
-		for (const std::filesystem::path& directoryEntry: m_CachedDirectoryEntries)
-		{
-			std::string filenameString = directoryEntry.filename().string();
-			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
-			ImGui::PushID(filenameString.c_str());
-			Ref<Rendering::Texture2D> icon = Utility::BrowserFileTypeToIcon(fileType);
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), {thumbnailSize, thumbnailSize},
-				{0, 1}, {1, 0},
-				-1, ImVec4(0,0,0,0), EditorUI::EditorUIService::s_DisabledColor);
-			if (ImGui::BeginDragDropSource())
-			{
-				std::filesystem::path relativePath(directoryEntry);
-				const wchar_t* itemPath = relativePath.c_str();
-				ImGui::SetDragDropPayload(Utility::BrowserFileTypeToPayloadString(fileType).c_str(),
-					itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
-				ImGui::EndDragDropSource();
-			}
-
-			ImGui::PopStyleColor();
-
-			if (fileType == BrowserFileType::Directory)
-			{
-				if (ImGui::BeginDragDropTarget())
-				{
-					for (const char* payloadName : s_ContentBrowserPayloads)
-					{
-						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName))
-						{
-							const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
-							std::filesystem::path payloadPath(payloadPathPointer);
-							Utility::FileSystem::MoveFileToDirectory(payloadPath, directoryEntry);
-							break;
-						}
-					}
-					ImGui::EndDragDropTarget();
-				}
-			}
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
-				if ( std::filesystem::is_directory(directoryEntry))
-				{
-					UpdateCurrentDirectory(m_CurrentDirectory / directoryEntry.filename());
-					if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory / directoryEntry.filename(), m_LongestRecentPath))
-					{
-						m_LongestRecentPath = m_CurrentDirectory / directoryEntry.filename();
-					}
-				}
-			}
-
-			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
-			{
-				ImGui::OpenPopup("RightClickItemOptions");
-			}
-
-			bool openRenamePopup = false;
-			bool openDeleteModal = false;
-			bool openDeleteDirectory = false;
-			static char buffer[256];
-
-			if (ImGui::BeginPopup("RightClickItemOptions"))
-			{
-				if (fileType != BrowserFileType::Directory)
-				{
-					if (ImGui::Selectable("Open File In Text Editor"))
-					{
-						s_EditorApp->m_TextEditorPanel->OpenFile(directoryEntry);
-					}
-				}
-
-				if (fileType == BrowserFileType::ScriptProject)
-				{
-					if (ImGui::Selectable("Open Scripting Project"))
-					{
-						Utility::OSCommands::OpenScriptProject(directoryEntry);
-					}
-				}
-
-				if (fileType == BrowserFileType::Scene)
-				{
-					if (ImGui::Selectable("Open Scene"))
-					{
-						EditorApp::GetCurrentApp()->OpenScene(directoryEntry);
-					}
-				}
-
-				if (fileType == BrowserFileType::Font)
-				{
-					if (ImGui::Selectable("Use Font In Current User Interface"))
-					{
-						Assets::AssetHandle currentHandle = Assets::AssetService::ImportFontFromFile(directoryEntry);
-						Ref<RuntimeUI::Font> font = Assets::AssetService::GetFont(currentHandle);
-						if (font)
-						{
-							RuntimeUI::RuntimeUIService::SetActiveFont(font, currentHandle);
-						}
-
-						else { KG_WARN("Could not load font {0}", directoryEntry.filename().string()); }
-					}
-				}
-
-				if (fileType != BrowserFileType::ScriptProject && fileType != BrowserFileType::Binary &&
-					fileType != BrowserFileType::Directory && fileType != BrowserFileType::Registry &&
-					fileType != BrowserFileType::Scene)
-				{
-					if (ImGui::Selectable("Rename File"))
-					{
-						openRenamePopup = true;
-					}
-				}
-
-				if (fileType != BrowserFileType::Registry && fileType != BrowserFileType::Directory)
-				{
-					if (ImGui::Selectable("Delete File"))
-					{
-						openDeleteModal = true;
-					}
-				}
-
-				if (fileType == BrowserFileType::Directory)
-				{
-					if (ImGui::Selectable("Delete Directory"))
-					{
-						openDeleteDirectory = true;
-					}
-				}
-
-				ImGui::EndPopup();
-			}
-
-			if (openDeleteModal) { ImGui::OpenPopup("Delete File"); }
-			if (openDeleteDirectory) { ImGui::OpenPopup("Delete Directory"); }
-				
-			//TODO: Use this for your other windows
-			// Always center this window when appearing
-			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-			ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-			if (ImGui::BeginPopupModal("Delete File", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-			{
-				ImGui::Text("Are you sure you want to delete this file?\n");
-				ImGui::Text("%s", directoryEntry.string().c_str());
-				ImGui::Separator();
-
-				if (ImGui::Button("OK", ImVec2(120, 0)))
-				{
-					Utility::FileSystem::DeleteSelectedFile(directoryEntry);
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::SetItemDefaultFocus();
-				ImGui::SameLine();
-				if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
-				ImGui::EndPopup();
-			}
-
-			if (ImGui::BeginPopupModal("Delete Directory", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-			{
-				ImGui::Text("Are you sure you want to delete this directory?\n");
-				ImGui::Text("%s", directoryEntry.string().c_str());
-				ImGui::Separator();
-
-				if (ImGui::Button("OK", ImVec2(120, 0)))
-				{
-					Utility::FileSystem::DeleteSelectedDirectory(directoryEntry);
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::SetItemDefaultFocus();
-				ImGui::SameLine();
-				if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
-				ImGui::EndPopup();
-			}
-
-
-			if (openRenamePopup) { ImGui::OpenPopup("NewFileName"); }
-			if (ImGui::BeginPopup("NewFileName"))
-			{
-				strcpy_s(buffer, directoryEntry.filename().string().c_str());
-				ImGui::InputText("New File Name", buffer, sizeof(buffer));
-				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
-				{
-					Utility::FileSystem::RenameFile(directoryEntry, std::string(buffer));
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::EndPopup();
-			}
-
-			ImGui::TextWrapped(filenameString.c_str());
-
-			ImGui::NextColumn();
-
-			ImGui::PopID();
-			
-		}
 
 		static char buffer[256];
 		bool openNewDirectoryPopup = false;
@@ -444,8 +445,6 @@ namespace Kargono::Panels
 			}
 			ImGui::EndPopup();
 		}
-		ImGui::Columns(1);
-		
 
 		EditorUI::EditorUIService::EndWindow();
 
@@ -456,11 +455,42 @@ namespace Kargono::Panels
 	}
 	void ContentBrowserPanel::RefreshCachedDirectoryEntries()
 	{
-		m_CachedDirectoryEntries.clear();
+		// Re-validate filesystem directory
+		m_FileFolderViewer.ClearEntries();
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
-			m_CachedDirectoryEntries.push_back(directoryEntry.path());
+			// Create entry and associate appropriate archetype
+			EditorUI::GridEntry newEntry;
+			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
+			newEntry.m_Label = directoryEntry.path().filename().string().c_str();
+			newEntry.m_ArchetypeID = (uint32_t)fileType;
+			m_FileFolderViewer.AddEntry(newEntry);
 		}
+
+		// Generate current title for navigation header
+		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveProjectDirectory(), m_CurrentDirectory);
+		std::vector<std::string> tokenizedDirectoryPath{};
+		while (activeDirectory.filename() != "Assets")
+		{
+			tokenizedDirectoryPath.push_back(activeDirectory.filename().string());
+			activeDirectory = activeDirectory.parent_path();
+		}
+		tokenizedDirectoryPath.push_back("Assets");
+
+		FixedString64 newTitle;
+		for (int32_t i = (int32_t)(tokenizedDirectoryPath.size()) - 1; i >= 0; --i)
+		{
+			newTitle.Append(tokenizedDirectoryPath.at(i).c_str());
+			if (i != 0)
+			{
+				newTitle.Append(" / ");
+			}
+		}
+		m_NavigateAssetsHeader.m_Label = newTitle;
+
+		// Revalidate whether the header's direction buttons should be active
+		m_NavigateAssetsHeader.m_IsBackActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
+		m_NavigateAssetsHeader.m_IsForwardActive = m_CurrentDirectory != m_LongestRecentPath && !m_LongestRecentPath.empty();
 	}
 	void ContentBrowserPanel::ResetPanelResources()
 	{
@@ -468,7 +498,8 @@ namespace Kargono::Panels
 		m_BaseDirectory = Projects::ProjectService::GetActiveAssetDirectory();
 		m_CurrentDirectory = m_BaseDirectory;
 		m_LongestRecentPath.clear();
-		m_CachedDirectoryEntries.clear();
+		m_NavigateAssetsHeader.m_Label = "Assets";
+		m_FileFolderViewer.ClearEntries();
 		API::FileWatch::StartWatch(m_CurrentDirectory, KG_BIND_CLASS_FN(OnFileWatchUpdate));
 		RefreshCachedDirectoryEntries();
 	}
