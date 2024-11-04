@@ -4,66 +4,6 @@
 
 #include "EditorApp.h"
 
-namespace Kargono::Utility
-{
-	static Ref<Rendering::Texture2D> BrowserFileTypeToIcon(Panels::BrowserFileType type)
-	{
-		switch (type)
-		{
-		case Panels::BrowserFileType::Directory: { return EditorUI::EditorUIService::s_IconDirectory; }
-		case Panels::BrowserFileType::Image: { return EditorUI::EditorUIService::s_IconImage; }
-		case Panels::BrowserFileType::Audio: { return EditorUI::EditorUIService::s_IconAudio; }
-		case Panels::BrowserFileType::Font: { return EditorUI::EditorUIService::s_IconFont; }
-		case Panels::BrowserFileType::UserInterface: { return EditorUI::EditorUIService::s_IconUserInterface; }
-		case Panels::BrowserFileType::Binary: { return EditorUI::EditorUIService::s_IconBinary; }
-		case Panels::BrowserFileType::Registry: { return EditorUI::EditorUIService::s_IconRegistry; }
-		case Panels::BrowserFileType::Scene: { return EditorUI::EditorUIService::s_IconScene; }
-		case Panels::BrowserFileType::Input: { return EditorUI::EditorUIService::s_IconInput; }
-		case Panels::BrowserFileType::None: { return EditorUI::EditorUIService::s_IconGenericFile; }
-		}
-		KG_ERROR("Invalid BrowserFileType provided");
-		return EditorUI::EditorUIService::s_IconGenericFile;
-	}
-
-	static Panels::BrowserFileType DetermineFileType(const std::filesystem::path& entry)
-	{
-		if (std::filesystem::is_directory(entry)) { return Panels::BrowserFileType::Directory; }
-		if (!entry.has_extension()) { return Panels::BrowserFileType::None; }
-		auto extension = entry.extension();
-		if (extension == ".jpg" || extension == ".png") { return Panels::BrowserFileType::Image; }
-		if (extension == ".wav" || extension == ".mp3") { return Panels::BrowserFileType::Audio; }
-		if (extension == ".kgreg") { return Panels::BrowserFileType::Registry; }
-		if (extension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
-		if (extension == ".ttf") { return Panels::BrowserFileType::Font; }
-		if (extension == ".kgscene") { return Panels::BrowserFileType::Scene; }
-		if (extension == ".kginput") { return Panels::BrowserFileType::Input; }
-		if (extension == ".kgaudio" || extension == ".kgtexture" || extension == ".kgfont" ||
-			extension == ".kgshadervert" || extension == ".kgshaderfrag") {
-			return Panels::BrowserFileType::Binary;
-		}
-		return Panels::BrowserFileType::None;
-	}
-
-	static std::string BrowserFileTypeToPayloadString(Panels::BrowserFileType type)
-	{
-		switch (type)
-		{
-		case Panels::BrowserFileType::Directory: { return "CONTENT_BROWSER_DIRECTORY"; }
-		case Panels::BrowserFileType::Image: { return "CONTENT_BROWSER_IMAGE"; }
-		case Panels::BrowserFileType::Audio: { return "CONTENT_BROWSER_AUDIO"; }
-		case Panels::BrowserFileType::UserInterface: { return "CONTENT_BROWSER_USERINTERFACE"; }
-		case Panels::BrowserFileType::Font: { return "CONTENT_BROWSER_FONT"; }
-		case Panels::BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
-		case Panels::BrowserFileType::Registry: { return "CONTENT_BROWSER_ITEM"; }
-		case Panels::BrowserFileType::Scene: { return "CONTENT_BROWSER_SCENE"; }
-		case Panels::BrowserFileType::Input: { return "CONTENT_BROWSER_ITEM"; }
-		case Panels::BrowserFileType::None: { return "CONTENT_BROWSER_ITEM"; }
-		}
-		KG_ERROR("Invalid BrowserFileType provided");
-		return "CONTENT_BROWSER_ITEM";
-	}
-}
-
 static Kargono::EditorApp* s_EditorApp{ nullptr };
 
 namespace Kargono::Panels
@@ -175,62 +115,73 @@ namespace Kargono::Panels
 		m_RightClickTooltip.TooltipActive = true;
 		BrowserFileType fileType = (BrowserFileType)currentEntry.m_ArchetypeID;
 
+		// Manage custom file type tooltips
 		m_RightClickTooltip.ClearEntries();
-		if (fileType != BrowserFileType::Directory)
-		{
-			// m_OpenFileInTextEditorEntry
-		}
-#if 0
 		if (fileType == BrowserFileType::Scene)
 		{
-			if (ImGui::Selectable("Open Scene"))
+			EditorUI::TooltipEntry openSceneTooltipEntry{ "Open Scene", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				EditorApp::GetCurrentApp()->OpenScene(directoryEntry);
-			}
+				EditorApp::GetCurrentApp()->OpenScene(m_FileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openSceneTooltipEntry);
 		}
-
 		if (fileType == BrowserFileType::Font)
 		{
-			if (ImGui::Selectable("Use Font In Current User Interface"))
+			EditorUI::TooltipEntry useFontTooltipEntry{ "Use Font In Current User Interface", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				Assets::AssetHandle currentHandle = Assets::AssetService::ImportFontFromFile(directoryEntry);
+				Assets::AssetHandle currentHandle = Assets::AssetService::ImportFontFromFile(m_FileToModifyCache);
 				Ref<RuntimeUI::Font> font = Assets::AssetService::GetFont(currentHandle);
 				if (font)
 				{
 					RuntimeUI::RuntimeUIService::SetActiveFont(font, currentHandle);
 				}
-
-				else { KG_WARN("Could not load font {0}", directoryEntry.filename().string()); }
-			}
+				else 
+				{ 
+					KG_WARN("Could not load font {0}", m_FileToModifyCache.filename().string()); 
+				}
+			} };
+			m_RightClickTooltip.AddTooltipEntry(useFontTooltipEntry);
 		}
 
+		// Manage files tooltip options
+		if (fileType != BrowserFileType::Directory)
+		{
+			EditorUI::TooltipEntry openFileTooltipEntry{ "Open File in Text Editor", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+					// Open the file in the text editor
+					s_EditorApp->m_TextEditorPanel->OpenFile(m_FileToModifyCache);
+				} };
+			m_RightClickTooltip.AddTooltipEntry(openFileTooltipEntry);
+		}
 		if (fileType != BrowserFileType::Binary &&
 			fileType != BrowserFileType::Directory &&
 			fileType != BrowserFileType::Registry &&
 			fileType != BrowserFileType::Scene)
 		{
-			if (ImGui::Selectable("Rename File"))
+			EditorUI::TooltipEntry renameFileTooltipEntry{ "Rename File", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				openRenamePopup = true;
-			}
+				m_RenameFilePopup.PopupActive = true;
+			} };
+			m_RightClickTooltip.AddTooltipEntry(renameFileTooltipEntry);
 		}
-
 		if (fileType != BrowserFileType::Registry && fileType != BrowserFileType::Directory)
 		{
-			if (ImGui::Selectable("Delete File"))
+			EditorUI::TooltipEntry deleteFileTooltipEntry{ "Delete File", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				openDeleteModal = true;
-			}
+				m_DeleteFilePopup.PopupActive = true;
+			} };
+			m_RightClickTooltip.AddTooltipEntry(deleteFileTooltipEntry);
 		}
 
+		// Manage directories tooltip options
 		if (fileType == BrowserFileType::Directory)
 		{
-			if (ImGui::Selectable("Delete Directory"))
+			EditorUI::TooltipEntry deleteDirectoryTooltipEntry{ "Delete Directory", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				openDeleteDirectory = true;
-			}
+				m_DeleteDirectoryPopup.PopupActive = true;
+			} };
+			m_RightClickTooltip.AddTooltipEntry(deleteDirectoryTooltipEntry);
 		}
-#endif
 
 	}
 
@@ -240,6 +191,8 @@ namespace Kargono::Panels
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
 			KG_BIND_CLASS_FN(ContentBrowserPanel::OnKeyPressedEditor));
+		s_EditorApp->m_PanelToMousePressedInput.insert_or_assign(m_PanelName,
+			KG_BIND_CLASS_FN(ContentBrowserPanel::OnMouseButton));
 
 		// Initialize widget resources
 		InitializeNavigationHeader();
@@ -269,6 +222,7 @@ namespace Kargono::Panels
 	{
 		// Initialize file viewer grid
 		m_FileFolderViewer.m_Label = "Assets File Viewer";
+		m_FileFolderViewer.m_Flags = EditorUI::GridFlags::Grid_AllowDragDrop;
 
 		// Initialize grid archetypes
 		EditorUI::GridEntryArchetype directoryArch;
@@ -276,6 +230,7 @@ namespace Kargono::Panels
 		directoryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		directoryArch.m_OnDoubleLeftClick = KG_BIND_CLASS_FN(OnGridDirectoryDoubleClick);
 		directoryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		directoryArch.m_OnReceivePayload = KG_BIND_CLASS_FN(OnGridReceivePayload);
 		// Copy over s_ContentBrowserPayloads into directoryArch
 		std::vector<FixedString32>& navPayloadList = directoryArch.m_AcceptableOnReceivePayloads;
 		navPayloadList.insert(navPayloadList.end(), &s_ContentBrowserPayloads[0], &s_ContentBrowserPayloads[s_ContentBrowserPayloads.size() - 1]);
@@ -333,7 +288,7 @@ namespace Kargono::Panels
 		genericFileArch.m_Icon = EditorUI::EditorUIService::s_IconGenericFile;
 		genericFileArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		genericFileArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::None, genericFileArch);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GenericFile, genericFileArch);
 
 		
 		// Initialize Tooltip
@@ -343,15 +298,13 @@ namespace Kargono::Panels
 		{
 			s_EditorApp->m_TextEditorPanel->OpenFile(m_FileToModifyCache);
 		});
-		m_OpenFileInTextEditorEntry = m_RightClickTooltip.AddMenuItem(openFileEntry);
-
 
 		// Initialize delete directory popup
 		m_DeleteDirectoryPopup.Label = "Delete Directory";
 		m_DeleteDirectoryPopup.PopupWidth = 420.0f;
 		m_DeleteDirectoryPopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text(m_FileToModifyCache.string().c_str());
+			EditorUI::EditorUIService::LabeledText("Directory Name:", m_FileToModifyCache.string().c_str());
 		};
 		m_DeleteDirectoryPopup.ConfirmAction = [&]()
 		{
@@ -363,7 +316,7 @@ namespace Kargono::Panels
 		m_DeleteFilePopup.PopupWidth = 420.0f;
 		m_DeleteFilePopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text(m_FileToModifyCache.string().c_str());
+			EditorUI::EditorUIService::LabeledText("File Name:", m_FileToModifyCache.string().c_str());
 		};
 		m_DeleteFilePopup.ConfirmAction = [&]()
 		{
@@ -388,8 +341,24 @@ namespace Kargono::Panels
 
 		m_RenameFileEditName.Label = "File Name";
 
-#if 0
-#endif
+		// Initialize create directory popup
+		m_CreateDirectoryPopup.Label = "Create Directory";
+		m_CreateDirectoryPopup.PopupWidth = 420.0f;
+		m_CreateDirectoryPopup.PopupAction = [&]()
+		{
+			m_CreateDirectoryEditName.CurrentOption = "NewDirectory";
+		};
+		m_CreateDirectoryPopup.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::EditText(m_CreateDirectoryEditName);
+		};
+		m_CreateDirectoryPopup.ConfirmAction = [&]()
+		{
+			std::filesystem::path newPath = m_CurrentDirectory / m_CreateDirectoryEditName.CurrentOption;
+			Utility::FileSystem::CreateNewDirectory(newPath);
+		};
+
+		m_CreateDirectoryEditName.Label = "File Name";
 
 	}
 
@@ -397,6 +366,7 @@ namespace Kargono::Panels
 	{
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowContentBrowser);
+
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
@@ -410,47 +380,45 @@ namespace Kargono::Panels
 		// Draw content browser file grid
 		EditorUI::EditorUIService::Grid(m_FileFolderViewer);
 
-		static char buffer[256];
-		bool openNewDirectoryPopup = false;
+		// Handle tooltip
+		EditorUI::EditorUIService::Tooltip(m_RightClickTooltip);
 
-		if (!ImGui::IsAnyItemHovered() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-		{
-			ImGui::OpenPopup("RightClickWindowOptions");
-		}
-
-		if (ImGui::BeginPopup("RightClickWindowOptions"))
-		{
-			if (ImGui::Selectable("Open In File Explorer"))
-			{
-				Utility::OSCommands::OpenFileExplorer(m_CurrentDirectory);
-			}
-			if (ImGui::Selectable("Create New Directory"))
-			{
-				openNewDirectoryPopup = true;
-			}
-			ImGui::EndPopup();
-		}
-
-		if (openNewDirectoryPopup) { ImGui::OpenPopup("New Directory"); }
-
-		if (ImGui::BeginPopup("New Directory"))
-		{
-			memset(buffer, 0, 256);
-			ImGui::InputText("New Directory Name", buffer, sizeof(buffer));
-			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
-			{
-				std::filesystem::path newPath = m_CurrentDirectory / std::string(buffer);
-				Utility::FileSystem::CreateNewDirectory(newPath);
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
+		// Handle popups
+		EditorUI::EditorUIService::GenericPopup(m_DeleteDirectoryPopup);
+		EditorUI::EditorUIService::GenericPopup(m_DeleteFilePopup);
+		EditorUI::EditorUIService::GenericPopup(m_RenameFilePopup);
+		EditorUI::EditorUIService::GenericPopup(m_CreateDirectoryPopup);
 
 		EditorUI::EditorUIService::EndWindow();
 
 	}
 	bool ContentBrowserPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
+		return false;
+	}
+	bool ContentBrowserPanel::OnMouseButton(Events::MouseButtonPressedEvent event)
+	{
+		// Ensure right click is applicable
+		if (!EditorUI::EditorUIService::IsAnyItemHovered() && event.GetMouseButton() == Mouse::ButtonRight)
+		{
+			m_RightClickTooltip.ClearEntries();
+			// Add open current directory in file explorer
+			EditorUI::TooltipEntry openCurrentDirectoryTooltipEntry{ "Open In File Explorer", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				Utility::OSCommands::OpenFileExplorer(m_CurrentDirectory);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openCurrentDirectoryTooltipEntry);
+
+			// Add open current directory in file explorer
+			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "Create New Directory", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				m_CreateDirectoryPopup.PopupActive = true;
+			} };
+			m_RightClickTooltip.AddTooltipEntry(createDirectoryTooltipEntry);
+			m_RightClickTooltip.TooltipActive = true;
+			return true;
+		}
+
 		return false;
 	}
 	void ContentBrowserPanel::RefreshCachedDirectoryEntries()

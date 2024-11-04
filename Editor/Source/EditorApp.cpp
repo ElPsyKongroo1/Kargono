@@ -393,6 +393,11 @@ namespace Kargono
 
 		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
 		{
+			if (event->GetEventType() == Events::EventType::MouseButtonPressed)
+			{
+				handled = OnMouseButtonPressed(*(Events::MouseButtonPressedEvent*)event);
+			}
+
 			if (event->GetEventType() == Events::EventType::KeyPressed)
 			{
 				handled = OnKeyPressedEditor(*(Events::KeyPressedEvent*)event);
@@ -406,6 +411,11 @@ namespace Kargono
 
 		if (m_SceneState == SceneState::Play)
 		{
+			if (event->GetEventType() == Events::EventType::MouseButtonPressed)
+			{
+				handled = OnMouseButtonPressed(*(Events::MouseButtonPressedEvent*)event);
+			}
+
 			if (event->GetEventType() == Events::EventType::KeyPressed)
 			{
 				handled = OnKeyPressedRuntime(*(Events::KeyPressedEvent*)event);
@@ -593,6 +603,7 @@ namespace Kargono
 	{
 		if (event.IsRepeat()) { return false; }
 
+		// Handle panel specific key pressed events
 		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
 		if (m_PanelToKeyboardInput.contains(focusedWindow))
 		{
@@ -602,6 +613,7 @@ namespace Kargono
 			}
 		}
 
+		// Handle general keyboard input chords
 		bool control = Input::InputService::IsKeyPressed(Key::LeftControl) || Input::InputService::IsKeyPressed(Key::RightControl);
 		bool shift = Input::InputService::IsKeyPressed(Key::LeftShift) || Input::InputService::IsKeyPressed(Key::RightShift);
 		bool alt = Input::InputService::IsKeyPressed(Key::LeftAlt) || Input::InputService::IsKeyPressed(Key::RightAlt);
@@ -672,6 +684,17 @@ namespace Kargono
 
 	bool EditorApp::OnMouseButtonPressed(Events::MouseButtonPressedEvent event)
 	{
+		// Handle panel specific mouse pressed events
+		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		if (m_PanelToMousePressedInput.contains(focusedWindow))
+		{
+			if (m_PanelToMousePressedInput.at(focusedWindow)(event))
+			{
+				return true;
+			}
+		}
+
+		// Handle selecting entities inside of the viewport panel
 		if (event.GetMouseButton() == Mouse::ButtonLeft)
 		{
 			if (m_ViewportPanel->m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
@@ -680,6 +703,7 @@ namespace Kargono
 				{
 					m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
 					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
+
 					// Algorithm to enable double clicking for an entity!
 					static float previousTime{ 0.0f };
 					static ECS::Entity previousEntity{};
@@ -694,8 +718,6 @@ namespace Kargono
 					previousTime = currentTime;
 					previousEntity = *Scenes::SceneService::GetActiveScene()->GetHoveredEntity();
 				}
-				
-
 			}
 		}
 		return false;

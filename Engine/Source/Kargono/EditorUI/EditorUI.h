@@ -176,6 +176,7 @@ namespace Kargono::EditorUI
 		static bool IsCurrentWindowVisible();
 		static void HighlightFocusedWindow();
 		static void SetDisableLeftClick(bool option);
+		static bool IsAnyItemHovered();
 		static void BlockMouseEvents(bool block);
 		static void SetColorDefaults();
 		static void SetButtonDefaults();
@@ -1048,7 +1049,7 @@ namespace Kargono::EditorUI
 		bool TooltipActive{ false };
 
 	public:
-		UUID AddMenuItem(TooltipEntry& newEntry)
+		UUID AddTooltipEntry(TooltipEntry& newEntry)
 		{
 			// Ensure valid label is provided
 			if (newEntry.m_Label.IsEmpty())
@@ -1066,7 +1067,7 @@ namespace Kargono::EditorUI
 			m_Entries.push_back(newEntry);
 			return newEntry.m_EntryID;
 		}
-		UUID AddMenuItem(TooltipEntry&& newEntry)
+		UUID AddTooltipEntry(TooltipEntry&& newEntry)
 		{
 			// Ensure valid label is provided
 			if (newEntry.m_Label.IsEmpty())

@@ -210,6 +210,7 @@ namespace Kargono
 
 		// Input Maps
 		std::unordered_map<std::string, std::function<bool(Events::KeyPressedEvent)>> m_PanelToKeyboardInput {};
+		std::unordered_map<std::string, std::function<bool(Events::MouseButtonPressedEvent)>> m_PanelToMousePressedInput {};
 
 		// Initialization Fields
 		std::filesystem::path m_InitProjectPath {};

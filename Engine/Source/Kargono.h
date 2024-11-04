@@ -33,6 +33,7 @@
 
 //-----------------Events-----------------//
 #include "Kargono/Events/KeyEvent.h"
+#include "Kargono/Events/MouseEvent.h"
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Events/SceneEvent.h"
 #include "Kargono/Events/PhysicsEvent.h"

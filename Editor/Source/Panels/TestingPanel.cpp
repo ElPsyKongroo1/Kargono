@@ -71,7 +71,7 @@ namespace Kargono::Panels
 			KG_WARN("Meow");
 		} };
 
-		testTooltip.AddMenuItem(std::move(newEntry));
+		testTooltip.AddTooltipEntry(std::move(newEntry));
 
 	}
 

@@ -257,7 +257,7 @@ namespace Kargono::Panels
 	{
 		static int32_t countOfTimers{0};
 		countOfTimers++;
-		m_TextEditor.SetErrorMarkers({});
+		m_TextEditor.ClearErrorMarkers();
 		Utility::PassiveTimer::CreateTimer(1.2f, [&]()
 		{
 			countOfTimers--;

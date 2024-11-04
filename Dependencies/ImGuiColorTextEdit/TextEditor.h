@@ -214,6 +214,7 @@ public:
 	void SetPalette(const Palette& aValue);
 
 	void SetErrorMarkers(const ErrorMarkers& aMarkers) { mErrorMarkers = aMarkers; }
+	void ClearErrorMarkers() { mErrorMarkers.clear(); }
 	void SetBreakpoints(const Breakpoints& aMarkers) { mBreakpoints = aMarkers; }
 
 	void Render(const char* aTitle, const ImVec2& aSize = ImVec2(), bool aBorder = false);

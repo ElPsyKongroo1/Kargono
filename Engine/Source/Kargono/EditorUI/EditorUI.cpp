@@ -505,6 +505,11 @@ namespace Kargono::EditorUI
 		}
 	}
 
+	bool EditorUIService::IsAnyItemHovered()
+	{
+		return ImGui::IsAnyItemHovered();
+	}
+
 	void EditorUIService::SetDisableLeftClick(bool option)
 	{
 		s_DisableLeftClick = option;
@@ -2564,7 +2569,11 @@ namespace Kargono::EditorUI
 		// Handle turning on the tooltip
 		if (spec.TooltipActive)
 		{
-			ImGui::OpenPopup(id);
+			// Only open tooltip if menu items are present
+			if (spec.m_Entries.size() != 0)
+			{
+				ImGui::OpenPopup(id);
+			}
 			spec.TooltipActive = false;
 		}
 
