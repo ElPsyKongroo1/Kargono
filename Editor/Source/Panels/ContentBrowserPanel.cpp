@@ -301,7 +301,6 @@ namespace Kargono::Panels
 
 		// Initialize delete directory popup
 		m_DeleteDirectoryPopup.Label = "Delete Directory";
-		m_DeleteDirectoryPopup.PopupWidth = 420.0f;
 		m_DeleteDirectoryPopup.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::LabeledText("Directory Name:", m_FileToModifyCache.string().c_str());
@@ -313,7 +312,6 @@ namespace Kargono::Panels
 
 		// Initialize delete file popup
 		m_DeleteFilePopup.Label = "Delete File";
-		m_DeleteFilePopup.PopupWidth = 420.0f;
 		m_DeleteFilePopup.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::LabeledText("File Name:", m_FileToModifyCache.string().c_str());
@@ -325,7 +323,6 @@ namespace Kargono::Panels
 
 		// Initialize rename file popup
 		m_RenameFilePopup.Label = "Rename File";
-		m_RenameFilePopup.PopupWidth = 420.0f;
 		m_RenameFilePopup.PopupAction = [&]() 
 		{
 			m_RenameFileEditName.CurrentOption = m_FileToModifyCache.filename().string();
@@ -343,7 +340,6 @@ namespace Kargono::Panels
 
 		// Initialize create directory popup
 		m_CreateDirectoryPopup.Label = "Create Directory";
-		m_CreateDirectoryPopup.PopupWidth = 420.0f;
 		m_CreateDirectoryPopup.PopupAction = [&]()
 		{
 			m_CreateDirectoryEditName.CurrentOption = "NewName";
@@ -408,58 +404,64 @@ namespace Kargono::Panels
 			createFileOptions.reserve(8);
 
 			// Add create directory option
-			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "New Directory", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "Directory", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				m_CreateDirectoryPopup.PopupActive = true;
 			} };
 			createFileOptions.push_back(createDirectoryTooltipEntry);
 
 			// Add create ai state
-			EditorUI::TooltipEntry createAIStateTooltipEntry{ "New AI State", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry createAIStateTooltipEntry{ "AI State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				// Open create ai state dialog
-				s_EditorApp->m_AIStatePanel->OpenCreateAIWindow(m_CurrentDirectory);
+				s_EditorApp->m_AIStatePanel->OpenCreateDialog(m_CurrentDirectory);
 			} };
 			createFileOptions.push_back(createAIStateTooltipEntry);
 			// Add create game state
-			EditorUI::TooltipEntry createGameStateTooltipEntry{ "New Game State", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry createGameStateTooltipEntry{ "Game State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				// TODO: Add code to add Game State
+				s_EditorApp->m_GameStatePanel->OpenCreateDialog(m_CurrentDirectory);
 			} };
 			createFileOptions.push_back(createGameStateTooltipEntry);
 
 			// Add create Input Map
-			EditorUI::TooltipEntry createInputMapTooltipEntry{ "New Input Map", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry createInputMapTooltipEntry{ "Input Map", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-					// TODO: Add code to add Input Map
+				// TODO: Add code to add Input Map
+				s_EditorApp->m_InputMapPanel->OpenCreateDialog(m_CurrentDirectory);
 			}};
 			createFileOptions.push_back(createInputMapTooltipEntry);
 
 			// Add create Project Component
-			EditorUI::TooltipEntry createProjectComponentTooltipEntry{ "New Project Component", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry createProjectComponentTooltipEntry{ "Project Component", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-					// TODO: Add code to add Project Component
+				// TODO: Add code to add Project Component
+				s_EditorApp->m_ProjectComponentPanel->OpenCreateDialog(m_CurrentDirectory);
 			} };
 			createFileOptions.push_back(createProjectComponentTooltipEntry);
 
 			// Add create Scene
-			EditorUI::TooltipEntry createSceneTooltipEntry{ "New Scene", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry createSceneTooltipEntry{ "Scene", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				// TODO: Add code to add Scene
+					s_EditorApp->NewScene();
 			} };
 			createFileOptions.push_back(createSceneTooltipEntry);
 
 			// Add create text file
-			EditorUI::TooltipEntry creatTextFileTooltipEntry{ "New Text File", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry creatTextFileTooltipEntry{ "Text File", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				// TODO: Add code to add Text File
+					s_EditorApp->m_TextEditorPanel->OpenCreateDialog(m_CurrentDirectory);
 			} };
 			createFileOptions.push_back(creatTextFileTooltipEntry);
 
 			// Add create User Interface
-			EditorUI::TooltipEntry createUserInterfaceTooltipEntry{ "New User Interface", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry createUserInterfaceTooltipEntry{ "User Interface", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				// TODO: Add code to add User Interface
+				s_EditorApp->m_UIEditorPanel->OpenCreateDialog(m_CurrentDirectory);
 			} };
 			createFileOptions.push_back(createUserInterfaceTooltipEntry);
 

@@ -81,7 +81,7 @@ namespace Kargono::Panels
 
 		OnOverlayRender();
 
-		if (s_EditorApp->m_ShowUserInterface)
+		if (s_EditorApp->m_ShowActiveUserInterface)
 		{
 			auto& currentApplication = EngineService::GetActiveWindow();
 			if (s_EditorApp->m_SceneState == SceneState::Play)
@@ -543,9 +543,9 @@ namespace Kargono::Panels
 				{
 					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowCameraFrustums);
 				}
-				if (ImGui::MenuItem("Display Runtime UI", 0, s_EditorApp->m_ShowUserInterface))
+				if (ImGui::MenuItem("Display Runtime UI", 0, s_EditorApp->m_ShowActiveUserInterface))
 				{
-					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowUserInterface);
+					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowActiveUserInterface);
 				}
 				if (ImGui::MenuItem("Fullscreen While Running", 0, s_EditorApp->m_RuntimeFullscreen))
 				{

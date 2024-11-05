@@ -84,7 +84,6 @@ namespace Kargono::Panels
 		m_AllScriptsTable.OnRefresh();
 
 		m_CreateScriptPopup.Label = "Create New Script";
-		m_CreateScriptPopup.PopupWidth = 420.0f;
 		m_CreateScriptPopup.PopupAction = [&]()
 		{
 			m_CreateScriptName.CurrentOption = "Empty";
@@ -144,7 +143,6 @@ namespace Kargono::Panels
 		};
 
 		m_EditScriptPopup.Label = "Edit New Script";
-		m_EditScriptPopup.PopupWidth = 420.0f;
 		m_EditScriptPopup.PopupAction = [&]()
 		{
 			m_EditScriptName.CurrentOption = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_ScriptName;
@@ -277,7 +275,6 @@ namespace Kargono::Panels
 		};
 
 		m_EditGroupLabelPopup.Label = "Edit Group Label";
-		m_EditGroupLabelPopup.PopupWidth = 420.0f;
 		m_EditGroupLabelPopup.PopupAction = [&]()
 		{
 			m_EditGroupLabelText.CurrentOption = m_ActiveLabel;

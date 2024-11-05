@@ -14,6 +14,8 @@ namespace Kargono::Panels
 	}
 	void InputMapPanel::OnCreateInputMap()
 	{
+		KG_ASSERT(Projects::ProjectService::GetActive());
+		m_SelectInputMapLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 		m_CreateInputMapPopupSpec.PopupActive = true;
 	}
 
@@ -103,6 +105,26 @@ namespace Kargono::Panels
 		m_EditorInputMapHandle = Assets::EmptyHandle;
 	}
 
+	void InputMapPanel::OpenCreateDialog(std::filesystem::path& createLocation)
+	{
+		// Open input map Window
+		s_EditorApp->m_ShowInputMapEditor = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+
+		if (!m_EditorInputMap)
+		{
+			// Open dialog to create editor input map
+			OnCreateInputMap();
+			m_SelectInputMapLocationSpec.CurrentOption = createLocation;
+		}
+		else
+		{
+			// Add warning to close active input map before creating a new input map
+			s_EditorApp->OpenWarningMessage("A input map is already active inside the editor. Please close the current input map before creating a new one.");
+		}
+	}
+
 	void InputMapPanel::InitializeOpeningScreen()
 	{
 		m_OpenInputMapPopupSpec.Label = "Open Input Map";
@@ -145,8 +167,18 @@ namespace Kargono::Panels
 		m_SelectInputMapNameSpec.Label = "New Name";
 		m_SelectInputMapNameSpec.CurrentOption = "Empty";
 
+		m_SelectInputMapLocationSpec.Label = "Location";
+		m_SelectInputMapLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectInputMapLocationSpec.ConfirmAction = [&](const std::string& path)
+		{
+			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			{
+				KG_WARN("Cannot create an asset outside of the project's asset directory.");
+				m_SelectInputMapLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+			}
+		};
+
 		m_CreateInputMapPopupSpec.Label = "Create Input Map";
-		m_CreateInputMapPopupSpec.PopupWidth = 420.0f;
 		m_CreateInputMapPopupSpec.ConfirmAction = [&]()
 		{
 			if (m_SelectInputMapNameSpec.CurrentOption == "")
@@ -154,7 +186,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorInputMapHandle = Assets::AssetService::CreateInputMap(m_SelectInputMapNameSpec.CurrentOption.c_str());
+			m_EditorInputMapHandle = Assets::AssetService::CreateInputMap(m_SelectInputMapNameSpec.CurrentOption.c_str(), m_SelectInputMapLocationSpec.CurrentOption);
 			if (m_EditorInputMapHandle == Assets::EmptyHandle)
 			{
 				KG_WARN("Input Map was not created");
@@ -169,6 +201,7 @@ namespace Kargono::Panels
 		m_CreateInputMapPopupSpec.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::EditText(m_SelectInputMapNameSpec);
+			EditorUI::EditorUIService::ChooseDirectory(m_SelectInputMapLocationSpec);
 		};
 	}
 
@@ -281,7 +314,6 @@ namespace Kargono::Panels
 		});
 
 		m_KeyboardOnUpdateAddSlot.Label = "Add New Slot";
-		m_KeyboardOnUpdateAddSlot.PopupWidth = 420.0f;
 		m_KeyboardOnUpdateAddSlot.PopupAction = [&]()
 		{
 			m_KeyboardOnUpdateAddKeyCode.CurrentOption = {Utility::KeyCodeToString(Key::A), Key::A};
@@ -342,7 +374,6 @@ namespace Kargono::Panels
 		};
 
 		m_KeyboardOnUpdateEditSlot.Label = "Edit Slot";
-		m_KeyboardOnUpdateEditSlot.PopupWidth = 420.0f;
 		m_KeyboardOnUpdateEditSlot.PopupAction = [&]()
 		{
 			Input::KeyboardActionBinding* activeBinding = (Input::KeyboardActionBinding*)m_EditorInputMap->GetOnUpdateBindings().at(m_KeyboardOnUpdateActiveSlot).get();
@@ -478,7 +509,6 @@ namespace Kargono::Panels
 			});
 
 		m_KeyboardOnKeyPressedAddSlot.Label = "Add New Slot";
-		m_KeyboardOnKeyPressedAddSlot.PopupWidth = 420.0f;
 		m_KeyboardOnKeyPressedAddSlot.PopupAction = [&]()
 		{
 			m_KeyboardOnKeyPressedAddKeyCode.CurrentOption = { Utility::KeyCodeToString(Key::A), Key::A };
@@ -540,7 +570,6 @@ namespace Kargono::Panels
 		};
 
 		m_KeyboardOnKeyPressedEditSlot.Label = "Edit Slot";
-		m_KeyboardOnKeyPressedEditSlot.PopupWidth = 420.0f;
 		m_KeyboardOnKeyPressedEditSlot.PopupAction = [&]()
 		{
 			Input::KeyboardActionBinding* activeBinding = (Input::KeyboardActionBinding*)m_EditorInputMap->GetOnKeyPressedBindings().at(m_KeyboardOnKeyPressedActiveSlot).get();
@@ -653,7 +682,6 @@ namespace Kargono::Panels
 		});
 
 		m_KeyboardPollingAddSlot.Label = "Add New Slot";
-		m_KeyboardPollingAddSlot.PopupWidth = 420.0f;
 		m_KeyboardPollingAddSlot.PopupAction = [&]()
 		{
 			m_KeyboardPollingAddKeyCode.CurrentOption = { Utility::KeyCodeToString(Key::A), Key::A };
@@ -692,7 +720,6 @@ namespace Kargono::Panels
 		};
 
 		m_KeyboardPollingEditSlot.Label = "Edit Slot";
-		m_KeyboardPollingEditSlot.PopupWidth = 420.0f;
 		m_KeyboardPollingEditSlot.PopupAction = [&]()
 		{
 			KeyCode activeCode = m_EditorInputMap->GetKeyboardPolling().at(m_KeyboardPollingActiveSlot);

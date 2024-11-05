@@ -523,7 +523,6 @@ namespace Kargono::Panels
 		};
 
 		m_EditMessageTypePopup.Label = "Edit Message Type";
-		m_EditMessageTypePopup.PopupWidth = 420.0f;
 		m_EditMessageTypePopup.PopupAction = [&]()
 		{
 			m_EditMessageTypeText.CurrentOption = m_ActiveAIMessageType;

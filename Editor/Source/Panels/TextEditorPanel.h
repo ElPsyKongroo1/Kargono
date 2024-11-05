@@ -38,6 +38,7 @@ namespace Kargono::Panels
 		void OpenFile(const std::filesystem::path& path);
 		void ResetPanelResources();
 		void CheckForErrors();
+		void OpenCreateDialog(const std::filesystem::path& path);
 
 	private:
 		//=========================
@@ -45,6 +46,7 @@ namespace Kargono::Panels
 		//=========================
 		void OnOpenFile();
 		void OnCreateFile();
+		void OnCreateFile(const std::filesystem::path& initialDirectory);
 		void OnSaveFile();
 		void OnDeleteFile();
 		void OnCloseFile();

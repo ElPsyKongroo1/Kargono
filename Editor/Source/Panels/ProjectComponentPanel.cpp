@@ -96,8 +96,18 @@ namespace Kargono::Panels
 		m_SelectComponentName.Label = "New Name";
 		m_SelectComponentName.CurrentOption = "Empty";
 
+		m_SelectProjectComponentLocationSpec.Label = "Location";
+		m_SelectProjectComponentLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectProjectComponentLocationSpec.ConfirmAction = [&](const std::string& path)
+		{
+			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			{
+				KG_WARN("Cannot create an asset outside of the project's asset directory.");
+				m_SelectProjectComponentLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+			}
+		};
+
 		m_CreateComponentPopup.Label = "Create  Component";
-		m_CreateComponentPopup.PopupWidth = 420.0f;
 		m_CreateComponentPopup.ConfirmAction = [&]()
 		{
 			// Ensure input string does not use whitespace
@@ -115,7 +125,7 @@ namespace Kargono::Panels
 					return;
 				}
 			}
-			m_EditorProjectComponentHandle = Assets::AssetService::CreateProjectComponent(m_SelectComponentName.CurrentOption.c_str());
+			m_EditorProjectComponentHandle = Assets::AssetService::CreateProjectComponent(m_SelectComponentName.CurrentOption.c_str(), m_SelectProjectComponentLocationSpec.CurrentOption);
 			m_EditorProjectComponent = Assets::AssetService::GetProjectComponent(m_EditorProjectComponentHandle);
 			m_TagHeader.EditColorActive = false;
 			m_TagHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
@@ -126,6 +136,7 @@ namespace Kargono::Panels
 		m_CreateComponentPopup.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::EditText(m_SelectComponentName);
+			EditorUI::EditorUIService::ChooseDirectory(m_SelectProjectComponentLocationSpec);
 		};
 	}
 	void ProjectComponentPanel::InitializeComponentFieldsSection()
@@ -225,7 +236,6 @@ namespace Kargono::Panels
 		};
 
 		m_AddFieldPopup.Label = "Add Field";
-		m_AddFieldPopup.PopupWidth = 420.0f;
 		m_AddFieldPopup.PopupAction = [&]()
 		{
 			m_AddFieldName.CurrentOption = "New Field";
@@ -278,7 +288,6 @@ namespace Kargono::Panels
 			m_TagHeader.EditColorActive = true;
 			RefreshData();
 		};
-		m_EditFieldPopup.PopupWidth = 420.0f;
 		m_EditFieldPopup.PopupAction = [&]()
 		{
 			KG_ASSERT(m_ActiveField < m_EditorProjectComponent->m_DataNames.size(),
@@ -310,12 +319,33 @@ namespace Kargono::Panels
 	{
 		return false;
 	}
+	void ProjectComponentPanel::OpenCreateDialog(std::filesystem::path& createLocation)
+	{
+		// Open project component Window
+		s_EditorApp->m_ShowProjectComponent = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+
+		if (!m_EditorProjectComponent)
+		{
+			// Open dialog to create editor project component
+			CreateComponent();
+			m_SelectProjectComponentLocationSpec.CurrentOption = createLocation;
+		}
+		else
+		{
+			// Add warning to close active project component before creating a new project component
+			s_EditorApp->OpenWarningMessage("A project component is already active inside the editor. Please close the current project component before creating a new one.");
+		}
+	}
 	void ProjectComponentPanel::OpenComponent()
 	{
 		m_OpenComponentPopup.PopupActive = true;
 	}
 	void ProjectComponentPanel::CreateComponent()
 	{
+		KG_ASSERT(Projects::ProjectService::GetActive());
+		m_SelectProjectComponentLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 		m_CreateComponentPopup.PopupActive = true;
 	}
 	void ProjectComponentPanel::RefreshData()

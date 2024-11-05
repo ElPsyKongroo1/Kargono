@@ -92,7 +92,7 @@ namespace Kargono::Panels
 		m_EditorAIStateHandle = Assets::EmptyHandle;
 	}
 
-	void AIStateEditorPanel::OpenCreateAIWindow(std::filesystem::path& createLocation)
+	void AIStateEditorPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// Open AI State Window
 		s_EditorApp->m_ShowAIStateEditor = true;
@@ -167,7 +167,6 @@ namespace Kargono::Panels
 		};
 
 		m_CreateAIStatePopupSpec.Label = "Create AI State";
-		m_CreateAIStatePopupSpec.PopupWidth = 420.0f;
 		m_CreateAIStatePopupSpec.ConfirmAction = [&]()
 		{
 			if (m_SelectAIStateNameSpec.CurrentOption == "")

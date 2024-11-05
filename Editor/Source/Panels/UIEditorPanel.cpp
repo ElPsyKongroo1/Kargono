@@ -8,6 +8,25 @@ static Kargono::EditorApp* s_EditorApp { nullptr };
 
 namespace Kargono::Panels
 {
+	void UIEditorPanel::OpenCreateDialog(std::filesystem::path& createLocation)
+	{
+		// Open user interface Window
+		s_EditorApp->m_ShowUserInterfaceEditor = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+
+		if (!m_EditorUI)
+		{
+			// Open dialog to create editor user interface
+			OnCreateUI();
+			m_SelectUILocationSpec.CurrentOption = createLocation;
+		}
+		else
+		{
+			// Add warning to close active user interface before creating a new user interface
+			s_EditorApp->OpenWarningMessage("A user interface is already active inside the editor. Please close the current user interface before creating a new one.");
+		}
+	}
 	// Reusable Functions
 	void UIEditorPanel::OnOpenUI()
 	{
@@ -15,6 +34,8 @@ namespace Kargono::Panels
 	}
 	void UIEditorPanel::OnCreateUI()
 	{
+		KG_ASSERT(Projects::ProjectService::GetActive());
+		m_SelectUILocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 		m_CreateUIPopupSpec.PopupActive = true;
 	}
 	void UIEditorPanel::OnRefreshData()
@@ -202,8 +223,18 @@ namespace Kargono::Panels
 		m_SelectUINameSpec.Label = "New Name";
 		m_SelectUINameSpec.CurrentOption = "Empty";
 
+		m_SelectUILocationSpec.Label = "Location";
+		m_SelectUILocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectUILocationSpec.ConfirmAction = [&](const std::string& path)
+		{
+			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			{
+				KG_WARN("Cannot create an asset outside of the project's asset directory.");
+				m_SelectUILocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+			}
+		};
+
 		m_CreateUIPopupSpec.Label = "Create User Interface";
-		m_CreateUIPopupSpec.PopupWidth = 420.0f;
 		m_CreateUIPopupSpec.ConfirmAction = [&]()
 		{
 			if (m_SelectUINameSpec.CurrentOption == "")
@@ -211,7 +242,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorUIHandle = Assets::AssetService::CreateUserInterface(m_SelectUINameSpec.CurrentOption.c_str());
+			m_EditorUIHandle = Assets::AssetService::CreateUserInterface(m_SelectUINameSpec.CurrentOption.c_str(), m_SelectUILocationSpec.CurrentOption);
 			if (m_EditorUIHandle == Assets::EmptyHandle)
 			{
 				KG_WARN("User Interface was not created");
@@ -227,6 +258,7 @@ namespace Kargono::Panels
 		m_CreateUIPopupSpec.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::EditText(m_SelectUINameSpec);
+			EditorUI::EditorUIService::ChooseDirectory(m_SelectUILocationSpec);
 		};
 	}
 

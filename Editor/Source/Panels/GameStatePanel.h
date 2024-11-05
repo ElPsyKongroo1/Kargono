@@ -32,6 +32,7 @@ namespace Kargono::Panels
 		// External API
 		//=========================
 		void ResetPanelResources();
+		void OpenCreateDialog(std::filesystem::path& createLocation);
 	private:
 		//=========================
 		// Internal Functionality
@@ -54,6 +55,7 @@ namespace Kargono::Panels
 		// Opening menu
 		EditorUI::GenericPopupSpec m_CreateGameStatePopupSpec {};
 		EditorUI::SelectOptionSpec m_OpenGameStatePopupSpec {};
+		EditorUI::ChooseDirectorySpec m_SelectGameStateLocationSpec{};
 		// Header
 		EditorUI::EditTextSpec m_SelectGameStateNameSpec {};
 		EditorUI::PanelHeaderSpec m_TagHeader {};

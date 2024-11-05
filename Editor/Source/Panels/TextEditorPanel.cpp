@@ -306,6 +306,14 @@ namespace Kargono::Panels
 			m_TextEditor.SetErrorMarkers(markers);
 		});
 	}
+	void TextEditorPanel::OpenCreateDialog(const std::filesystem::path& path)
+	{
+		// Open project component Window
+		s_EditorApp->m_ShowTextEditor = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		OnCreateFile(path);
+	}
 	void TextEditorPanel::OnOpenFile()
 	{
 		const std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
@@ -314,7 +322,10 @@ namespace Kargono::Panels
 	}
 	void TextEditorPanel::OnCreateFile()
 	{
-		const std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		OnCreateFile(Projects::ProjectService::GetActiveAssetDirectory());
+	}
+	void TextEditorPanel::OnCreateFile(const std::filesystem::path& initialDirectory)
+	{
 		const std::filesystem::path filepath = Utility::FileDialogs::SaveFile("All Files\0*.*\0", initialDirectory.string().c_str());
 		if (!filepath.empty())
 		{

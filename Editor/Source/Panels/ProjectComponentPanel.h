@@ -25,6 +25,12 @@ namespace Kargono::Panels
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 
+	public:
+		//=========================
+		// External Functionality
+		//=========================
+		void OpenCreateDialog(std::filesystem::path& createLocation);
+
 	private:
 		//=========================
 		// Internal Functionality
@@ -50,6 +56,7 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_CreateComponentPopup {};
 		EditorUI::SelectOptionSpec m_OpenComponentPopup {};
 		EditorUI::EditTextSpec m_SelectComponentName {};
+		EditorUI::ChooseDirectorySpec m_SelectProjectComponentLocationSpec{};
 		// Header
 		EditorUI::PanelHeaderSpec m_TagHeader {};
 		EditorUI::GenericPopupSpec m_DeleteComponentWarning {};

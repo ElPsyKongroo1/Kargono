@@ -35,6 +35,7 @@ namespace Kargono::Panels
 		// External API
 		//=========================
 		void ResetPanelResources();
+		void OpenCreateDialog(std::filesystem::path& createLocation);
 
 	private:
 		//=========================
@@ -62,6 +63,7 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_OpenInputMapPopupSpec {};
 		EditorUI::GenericPopupSpec m_CreateInputMapPopupSpec {};
 		EditorUI::EditTextSpec m_SelectInputMapNameSpec {};
+		EditorUI::ChooseDirectorySpec m_SelectInputMapLocationSpec{};
 
 		// Input Map Header
 		EditorUI::PanelHeaderSpec m_MainHeader {};

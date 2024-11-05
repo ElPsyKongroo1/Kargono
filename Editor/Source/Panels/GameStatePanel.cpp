@@ -9,7 +9,6 @@ namespace Kargono::Panels
 {
 	void GameStatePanel::InitializeOpeningScreen()
 	{
-		
 		m_OpenGameStatePopupSpec.Label = "Open Game State";
 		m_OpenGameStatePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenGameStatePopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
@@ -49,8 +48,18 @@ namespace Kargono::Panels
 		m_SelectGameStateNameSpec.Label = "New Name";
 		m_SelectGameStateNameSpec.CurrentOption = "Empty";
 
+		m_SelectGameStateLocationSpec.Label = "Location";
+		m_SelectGameStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectGameStateLocationSpec.ConfirmAction = [&](const std::string& path)
+		{
+			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			{
+				KG_WARN("Cannot create an asset outside of the project's asset directory.");
+				m_SelectGameStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+			}
+		};
+
 		m_CreateGameStatePopupSpec.Label = "Create Game State";
-		m_CreateGameStatePopupSpec.PopupWidth = 420.0f;
 		m_CreateGameStatePopupSpec.ConfirmAction = [&]()
 		{
 			if (m_SelectGameStateNameSpec.CurrentOption == "")
@@ -65,7 +74,7 @@ namespace Kargono::Panels
 					return;
 				}
 			}
-			m_EditorGameStateHandle = Assets::AssetService::CreateGameState(m_SelectGameStateNameSpec.CurrentOption.c_str());
+			m_EditorGameStateHandle = Assets::AssetService::CreateGameState(m_SelectGameStateNameSpec.CurrentOption.c_str(), m_SelectGameStateLocationSpec.CurrentOption);
 			m_EditorGameState = Assets::AssetService::GetGameState(m_EditorGameStateHandle);
 			m_TagHeader.EditColorActive = false;
 			m_TagHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
@@ -75,6 +84,7 @@ namespace Kargono::Panels
 		m_CreateGameStatePopupSpec.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::EditText(m_SelectGameStateNameSpec);
+			EditorUI::EditorUIService::ChooseDirectory(m_SelectGameStateLocationSpec);
 		};
 	}
 
@@ -342,12 +352,34 @@ namespace Kargono::Panels
 		m_EditorGameState = nullptr;
 		m_EditorGameStateHandle = Assets::EmptyHandle;
 	}
+	void GameStatePanel::OpenCreateDialog(std::filesystem::path& createLocation)
+	{
+		
+		// Open game state Window
+		s_EditorApp->m_ShowGameStateEditor = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+
+		if (!m_EditorGameState)
+		{
+			// Open dialog to create editor game state
+			CreateGameState();
+			m_SelectGameStateLocationSpec.CurrentOption = createLocation;
+		}
+		else
+		{
+			// Add warning to close active game state before creating a new game state
+			s_EditorApp->OpenWarningMessage("A game state is already active inside the editor. Please close the current game state before creating a new one.");
+		}
+	}
 	void GameStatePanel::OpenGameState()
 	{
 		m_OpenGameStatePopupSpec.PopupActive = true;
 	}
 	void GameStatePanel::CreateGameState()
 	{
+		KG_ASSERT(Projects::ProjectService::GetActive());
+		m_SelectGameStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 		m_CreateGameStatePopupSpec.PopupActive = true;
 	}
 }

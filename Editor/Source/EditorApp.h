@@ -153,7 +153,7 @@ namespace Kargono
 		// These functions allow transitioning between scenes in the editor and saving
 		//		the current scene.
 		void NewScene();
-		void NewScene(const std::string& sceneName);
+		void NewScene(const std::filesystem::path& initialDirectory);
 		void OpenScene();
 	public:
 		void OpenScene(const std::filesystem::path& path);
@@ -201,7 +201,8 @@ namespace Kargono
 		bool m_ShowPhysicsColliders = false;
 		bool m_ShowCameraFrustums = true;
 		bool m_RuntimeFullscreen = false;
-		bool m_ShowUserInterface = true;
+		bool m_ShowActiveUserInterface = true;
+
 		// Editor Scenes
 		Ref<Scenes::Scene> m_EditorScene;
 		Assets::AssetHandle m_EditorSceneHandle;

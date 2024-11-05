@@ -2566,6 +2566,10 @@ namespace Kargono::EditorUI
 				return;
 			}
 			spec.CurrentOption = outputDirectory;
+			if (spec.ConfirmAction)
+			{
+				spec.ConfirmAction(outputDirectory.string());
+			}
 		},
 		EditorUIService::s_SmallEditButton, false, s_DisabledColor);
 

@@ -32,7 +32,7 @@ namespace Kargono::Panels
 		// External API
 		//=========================
 		void ResetPanelResources();
-		void OpenCreateAIWindow(std::filesystem::path& createLocation);
+		void OpenCreateDialog(std::filesystem::path& createLocation);
 
 	private:
 		//=========================
