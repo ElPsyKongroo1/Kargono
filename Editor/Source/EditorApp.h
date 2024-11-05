@@ -128,6 +128,13 @@ namespace Kargono
 		bool OnStartSession(Events::StartSession event);
 		bool OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event);
 		bool OnReceiveSignal(Events::ReceiveSignal event);
+
+	public:
+		//=========================
+		// External Functionality
+		//=========================
+		void OpenWarningMessage(const char* message);
+
 	public:
 		//=========================
 		// Getters/Setters
@@ -232,6 +239,11 @@ namespace Kargono
 		Scope<Panels::InputMapPanel>  m_InputMapPanel;
 		Scope<Panels::AIStateEditorPanel>  m_AIStatePanel;
 		Scope<Panels::TestingPanel>  m_TestingPanel;
+
+	public:
+		// Widgets
+		EditorUI::WarningPopupSpec m_GeneralWarningSpec{};
+		FixedString256 m_GeneralWarningMessage{};
 	private:
 		friend Panels::AssetViewerPanel;
 		friend Panels::ViewportPanel;

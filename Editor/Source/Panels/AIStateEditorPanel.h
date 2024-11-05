@@ -32,6 +32,7 @@ namespace Kargono::Panels
 		// External API
 		//=========================
 		void ResetPanelResources();
+		void OpenCreateAIWindow(std::filesystem::path& createLocation);
 
 	private:
 		//=========================
@@ -46,9 +47,8 @@ namespace Kargono::Panels
 		//=========================
 		Ref<AI::AIState> m_EditorAIState{ nullptr };
 		Assets::AssetHandle m_EditorAIStateHandle { Assets::EmptyHandle };
+		FixedString32 m_PanelName{ "AI State Editor" };
 	private:
-		std::string m_PanelName{ "AI State Editor" };
-
 		//=========================
 		// Widgets
 		//=========================
@@ -56,6 +56,7 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_OpenAIStatePopupSpec {};
 		EditorUI::GenericPopupSpec m_CreateAIStatePopupSpec {};
 		EditorUI::EditTextSpec m_SelectAIStateNameSpec {};
+		EditorUI::ChooseDirectorySpec m_SelectAIStateLocationSpec {};
 
 		// Input Mode Header
 		EditorUI::PanelHeaderSpec m_MainHeader {};

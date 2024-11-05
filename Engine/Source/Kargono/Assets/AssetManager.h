@@ -273,9 +273,35 @@ namespace Kargono::Assets
 			m_AssetRegistry.clear();
 		}
 
-		AssetHandle CreateAsset(const std::string& assetName)
+		AssetHandle CreateAsset(const char* assetName, const std::filesystem::path& creationPath)
 		{
 			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasAssetCreationFromName), "Attempt to save an asset who's type does not support data creation");
+			
+			bool usingBaseAssetDir{true};
+			if (creationPath == Projects::ProjectService::GetActiveAssetDirectory())
+			{
+				usingBaseAssetDir = true;
+			}
+			else
+			{
+				usingBaseAssetDir = false;
+				// Ensure provided path is within the assets directory
+				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), creationPath))
+				{
+					KG_WARN("Provided path for new asset creation is not within asset directory");
+					return Assets::EmptyHandle;
+				}
+
+				// Ensure provided path is not indicating a file
+				if (Utility::FileSystem::HasFileExtension(creationPath))
+				{
+					KG_WARN("File provided as path to asset. Creation paths should only indicate a directory");
+					return Assets::EmptyHandle;
+				}
+
+				// Create path if it does not already exist
+				Utility::FileSystem::CreateNewDirectory(creationPath);
+			}
 
 			// Create Checksum
 			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(assetName);
@@ -303,7 +329,14 @@ namespace Kargono::Assets
 			newAsset.Handle = newHandle;
 			newAsset.Data.Type = m_AssetType;
 			newAsset.Data.CheckSum = currentCheckSum;
-			newAsset.Data.FileLocation = assetName + m_FileExtension;
+			if (usingBaseAssetDir)
+			{
+				newAsset.Data.FileLocation = assetName + m_FileExtension;
+			}
+			else
+			{
+				newAsset.Data.FileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), creationPath) / (assetName + m_FileExtension);
+			}
 
 			// TODO: Fixme, this is temporary since a code path that uses an intermediate location is not yet necessary
 			KG_ASSERT(!m_Flags.test(AssetManagerOptions::HasIntermediateLocation), "Code path for intermediates is not yet supported");
@@ -324,6 +357,11 @@ namespace Kargono::Assets
 			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, newAsset.Data.Type, Events::ManageAssetAction::Create);
 			EngineService::SubmitToEventQueue(event);
 			return newHandle;
+		}
+
+		AssetHandle CreateAsset(const char* assetName)
+		{
+			return CreateAsset(assetName, Projects::ProjectService::GetActiveAssetDirectory());
 		}
 
 		AssetHandle ImportAssetFromFile(const std::filesystem::path& filePath)

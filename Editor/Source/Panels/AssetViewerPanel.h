@@ -24,7 +24,7 @@ namespace Kargono::Panels
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	private:
-		std::string m_PanelName{ "Asset Viewer" };
+		FixedString32 m_PanelName{ "Asset Viewer" };
 		EditorUI::TableSpec m_AllAssetsTable {};
 
 		EditorUI::GenericPopupSpec m_ViewAssetPopup {};

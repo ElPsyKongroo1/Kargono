@@ -38,6 +38,7 @@ namespace Kargono::Utility
 		//==============================
 		// Manage Files/Directories
 		//==============================
+		static bool HasFileExtension(const std::filesystem::path& path);
 		static void RenameFile(const std::filesystem::path& oldPath, std::string newName);
 		static bool CopySingleFile(const std::filesystem::path& sourceFile, const std::filesystem::path& destinationFile);
 		static bool DeleteSelectedFile(const std::filesystem::path& filepath);

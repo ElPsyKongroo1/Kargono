@@ -43,7 +43,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		std::string m_PanelName{ "Scripts" };
+		FixedString32 m_PanelName{ "Scripts" };
 		Assets::AssetHandle m_ActiveScriptHandle {Assets::EmptyHandle};
 		std::string m_ActiveLabel {};
 

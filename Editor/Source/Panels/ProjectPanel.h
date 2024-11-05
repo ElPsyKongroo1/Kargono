@@ -42,7 +42,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		std::string m_PanelName{ "Project" };
+		FixedString32 m_PanelName{ "Project" };
 		std::string m_ActiveAIMessageType{};
 
 	private:

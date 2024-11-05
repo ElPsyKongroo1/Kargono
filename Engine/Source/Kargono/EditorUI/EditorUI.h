@@ -31,6 +31,7 @@ namespace Kargono::EditorUI
 	struct NavigationHeaderSpec;
 	struct CheckboxSpec;
 	struct GenericPopupSpec;
+	struct WarningPopupSpec;
 	struct GridSpec;
 	struct SelectOptionSpec;
 	struct EditVariableSpec;
@@ -114,7 +115,7 @@ namespace Kargono::EditorUI
 		static void StartRendering();
 		static void EndRendering();
 
-		static void StartWindow(const std::string& label, bool* closeWindow = nullptr, int32_t flags = 0);
+		static void StartWindow(const char* label, bool* closeWindow = nullptr, int32_t flags = 0);
 		static void EndWindow();
 	public:
 		//==============================
@@ -134,6 +135,7 @@ namespace Kargono::EditorUI
 		//==============================
 		static void TitleText(const std::string& text);
 		static void GenericPopup(GenericPopupSpec& spec);
+		static void WarningPopup(WarningPopupSpec& spec);
 		static void SelectOption(SelectOptionSpec& spec);
 		static void EditVariable(EditVariableSpec& spec);
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
@@ -168,9 +170,9 @@ namespace Kargono::EditorUI
 		// Interact With UI State Functions
 		//==============================
 		static uint32_t GetActiveWidgetID();
-		static std::string GetFocusedWindowName();
-		static void SetFocusedWindow(const std::string& windowName);
-		static void BringWindowToFront(const std::string& windowName);
+		static const char* GetFocusedWindowName();
+		static void SetFocusedWindow(const char* windowName);
+		static void BringWindowToFront(const char* windowName);
 		static void BringCurrentWindowToFront();
 		static void ClearWindowFocus();
 		static bool IsCurrentWindowVisible();
@@ -180,6 +182,7 @@ namespace Kargono::EditorUI
 		static void BlockMouseEvents(bool block);
 		static void SetColorDefaults();
 		static void SetButtonDefaults();
+		static const char* GetHoveredWindowName();
 
 	public:
 		//==============================
@@ -327,6 +330,26 @@ namespace Kargono::EditorUI
 	//==============================
 	// Widget Specifications
 	//==============================
+
+	struct WarningPopupSpec
+	{
+	public:
+		WarningPopupSpec()
+		{
+			WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string Label;
+		float PopupWidth{ 700.0f };
+		std::function<void()> PopupContents{ nullptr };
+		bool PopupActive{ false };
+	private:
+		WidgetID WidgetID;
+	private:
+		friend void EditorUIService::WarningPopup(WarningPopupSpec& spec);
+	};
+
+
 	struct GenericPopupSpec
 	{
 	public:
@@ -572,7 +595,6 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string Label;
-		WidgetFlags Flags{ EditText_None };
 		std::filesystem::path CurrentOption{};
 		std::function<void(const std::string&)> ConfirmAction{ nullptr };
 	private:

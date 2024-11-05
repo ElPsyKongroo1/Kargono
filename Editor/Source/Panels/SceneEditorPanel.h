@@ -111,7 +111,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		std::string m_PanelName{"Scene Editor"};
+		FixedString32 m_PanelName{"Scene Editor"};
 		ECS::ComponentType m_DisplayedComponent{ECS::ComponentType::None };
 		Assets::AssetHandle m_DisplayedProjectComponentHandle {Assets::EmptyHandle};
 		std::unordered_map<Assets::AssetHandle, ProjectComponentWidgetData> m_AllProjectComponents{};

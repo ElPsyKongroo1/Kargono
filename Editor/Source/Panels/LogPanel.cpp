@@ -107,7 +107,7 @@ namespace Kargono::Panels
 		: m_Log({})
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(LogPanel::OnKeyPressedEditor));
 		LoadBuffer();
 	}

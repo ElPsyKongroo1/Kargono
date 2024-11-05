@@ -50,7 +50,7 @@ namespace Kargono::Panels
 		Ref<Input::InputMap> m_EditorInputMap{ nullptr };
 		Assets::AssetHandle m_EditorInputMapHandle { Assets::EmptyHandle };
 	private:
-		std::string m_PanelName{ "Input Map Editor" };
+		FixedString32 m_PanelName{ "Input Map Editor" };
 		uint32_t m_KeyboardOnUpdateActiveSlot {};
 		uint32_t m_KeyboardOnKeyPressedActiveSlot {};
 		uint32_t m_KeyboardPollingActiveSlot {};

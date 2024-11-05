@@ -85,7 +85,7 @@ namespace Kargono::Panels
 		//=========================
 		Rendering::EditorCamera m_EditorCamera;
 	private:
-		std::string m_PanelName{ "Viewport" };
+		FixedString32 m_PanelName{ "Viewport" };
 		// Viewport resources
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;
 		bool m_ViewportFocused = false;

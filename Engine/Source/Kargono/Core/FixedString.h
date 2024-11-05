@@ -2,6 +2,7 @@
 #include <array>
 #include <cstring>
 #include <cstdio>
+#include <charconv>
 
 namespace Kargono
 {
@@ -21,6 +22,12 @@ namespace Kargono
 
 		FixedString(const char* newString)
 		{
+			if (!newString)
+			{
+				ClearString();
+				return;
+			}
+
 			ReplaceBuffer(newString);
 		}
 
@@ -146,6 +153,17 @@ namespace Kargono
 			return m_DataBuffer.data(); 
 		}
 
+		template <std::size_t OtherBufferSize>
+		bool operator==(const FixedString<OtherBufferSize>& other) const {
+			// Check if lengths are different
+			if (m_StringLength != other.m_StringLength)
+			{
+				return false;
+			}
+			// Compare content up to m_Length
+			return std::memcmp(m_DataBuffer.data(), other.m_DataBuffer.data(), m_StringLength) == 0;
+		}
+
 	public:
 		//==============================
 		// Getters/Setters
@@ -177,6 +195,7 @@ namespace Kargono
 			// Early out if new size of string exceeds buffer length
 			if (newStringLength + 1 > BufferSize)
 			{
+				//TODO: Just fill the buffer to capacity
 				return false;
 			}
 
@@ -201,7 +220,6 @@ namespace Kargono
 	using FixedString1024 = FixedString<1024>; // Generally for long file paths, full log messages, etc...
 	using FixedString8192 = FixedString<8192>; // Generally for http headers, small socket payloads, etc...
 	using FixedString64KB = FixedString<64000>; // Generally for large large data streams or file io...
-
 }
 
 namespace std

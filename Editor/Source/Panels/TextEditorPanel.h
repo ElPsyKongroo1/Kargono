@@ -54,8 +54,8 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		std::string m_PanelName{ "Text Editor" };
-		std::string m_EditorWindowName { "TextEditorChild" };
+		FixedString32 m_PanelName{ "Text Editor" };
+		FixedString32 m_EditorWindowName { "TextEditorChild" };
 		uint32_t m_ActiveDocument = 0;
 		std::vector<Document> m_AllDocuments {};
 

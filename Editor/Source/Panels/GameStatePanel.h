@@ -45,7 +45,7 @@ namespace Kargono::Panels
 		Ref<Scenes::GameState> m_EditorGameState {nullptr};
 		Assets::AssetHandle m_EditorGameStateHandle {0};
 	private:
-		std::string m_PanelName{ "Game State Editor" };
+		FixedString32 m_PanelName{ "Game State Editor" };
 		std::string m_CurrentField {};
 
 		//=========================

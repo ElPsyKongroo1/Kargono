@@ -25,7 +25,7 @@ namespace Kargono::Panels
 	UIEditorPanel::UIEditorPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(UIEditorPanel::OnKeyPressedEditor));
 
 		InitializeOpeningScreen();
@@ -211,7 +211,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorUIHandle = Assets::AssetService::CreateUserInterface(m_SelectUINameSpec.CurrentOption);
+			m_EditorUIHandle = Assets::AssetService::CreateUserInterface(m_SelectUINameSpec.CurrentOption.c_str());
 			if (m_EditorUIHandle == Assets::EmptyHandle)
 			{
 				KG_WARN("User Interface was not created");

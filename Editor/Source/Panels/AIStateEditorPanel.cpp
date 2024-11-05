@@ -14,6 +14,8 @@ namespace Kargono::Panels
 	}
 	void AIStateEditorPanel::OnCreateAIState()
 	{
+		KG_ASSERT(Projects::ProjectService::GetActive());
+		m_SelectAIStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 		m_CreateAIStatePopupSpec.PopupActive = true;
 	}
 
@@ -39,7 +41,7 @@ namespace Kargono::Panels
 	AIStateEditorPanel::AIStateEditorPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(AIStateEditorPanel::OnKeyPressedEditor));
 		InitializeOpeningScreen();
 		InitializeAIStateHeader();
@@ -90,6 +92,27 @@ namespace Kargono::Panels
 		m_EditorAIStateHandle = Assets::EmptyHandle;
 	}
 
+	void AIStateEditorPanel::OpenCreateAIWindow(std::filesystem::path& createLocation)
+	{
+		// Open AI State Window
+		s_EditorApp->m_ShowAIStateEditor = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+
+		if (!m_EditorAIState)
+		{
+			// Open dialog to create editor AI State
+			OnCreateAIState();
+			m_SelectAIStateLocationSpec.CurrentOption = createLocation;
+		}
+		else
+		{
+			// Add warning to close active AI state before creating a new AIState
+			s_EditorApp->OpenWarningMessage("An AI State is already active inside the editor. Please close the current AI State before opening a new one.");
+		}
+
+	}
+
 	void AIStateEditorPanel::InitializeOpeningScreen()
 	{
 		m_OpenAIStatePopupSpec.Label = "Open AI State";
@@ -132,6 +155,17 @@ namespace Kargono::Panels
 		m_SelectAIStateNameSpec.Label = "New Name";
 		m_SelectAIStateNameSpec.CurrentOption = "Empty";
 
+		m_SelectAIStateLocationSpec.Label = "Location";
+		m_SelectAIStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectAIStateLocationSpec.ConfirmAction = [&](const std::string& path) 
+		{
+			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			{
+				KG_WARN("Cannot create an asset outside of the project's asset directory.");
+				m_SelectAIStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+			}
+		};
+
 		m_CreateAIStatePopupSpec.Label = "Create AI State";
 		m_CreateAIStatePopupSpec.PopupWidth = 420.0f;
 		m_CreateAIStatePopupSpec.ConfirmAction = [&]()
@@ -141,7 +175,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorAIStateHandle = Assets::AssetService::CreateAIState(m_SelectAIStateNameSpec.CurrentOption);
+			m_EditorAIStateHandle = Assets::AssetService::CreateAIState(m_SelectAIStateNameSpec.CurrentOption.c_str(), m_SelectAIStateLocationSpec.CurrentOption);
 			if (m_EditorAIStateHandle == Assets::EmptyHandle)
 			{
 				KG_WARN("AI state was not created");
@@ -156,6 +190,7 @@ namespace Kargono::Panels
 		m_CreateAIStatePopupSpec.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::EditText(m_SelectAIStateNameSpec);
+			EditorUI::EditorUIService::ChooseDirectory(m_SelectAIStateLocationSpec);
 		};
 	}
 

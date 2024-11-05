@@ -93,7 +93,7 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		// Panel Name
-		std::string m_PanelName{ "Content Browser" };
+		FixedString32 m_PanelName{ "Content Browser" };
 
 		// Manage content browser directory
 		std::filesystem::path m_BaseDirectory{};

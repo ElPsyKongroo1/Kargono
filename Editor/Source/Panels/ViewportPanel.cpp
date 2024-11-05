@@ -13,7 +13,7 @@ namespace Kargono::Panels
 	ViewportPanel::ViewportPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ViewportPanel::OnKeyPressedEditor));
 	}
 	void ViewportPanel::OnUpdate(Timestep ts)
@@ -37,7 +37,7 @@ namespace Kargono::Panels
 
 		// Clear our entity ID attachment to -1
 		m_ViewportFramebuffer->ClearAttachment(1, -1);
-		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
 		// Update Scene
 		switch (s_EditorApp->m_SceneState)
 		{
@@ -142,7 +142,7 @@ namespace Kargono::Panels
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGuiWindowFlags window_flags = 0;
 		//window_flags |= ImGuiWindowFlags_NoDecoration;
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowViewport, window_flags);
+		EditorUI::EditorUIService::StartWindow(m_PanelName.CString(), &s_EditorApp->m_ShowViewport, window_flags);
 		ImGui::PopStyleVar();
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
@@ -186,7 +186,30 @@ namespace Kargono::Panels
 		{
 			if (ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left) && ImGui::GetIO().WantCaptureMouse)
 			{
-				s_EditorApp->OnMouseButtonPressed({ Mouse::ButtonLeft });
+				// Handle selecting entities inside of the viewport panel
+				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
+				{
+					if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
+					{
+						s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
+						s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
+
+						// Algorithm to enable double clicking for an entity!
+						static float previousTime{ 0.0f };
+						static ECS::Entity previousEntity{};
+						float currentTime = Utility::Time::GetTime();
+						if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::SceneService::GetActiveScene()->GetHoveredEntity() == previousEntity)
+						{
+							auto& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TransformComponent>();
+							m_EditorCamera.SetFocalPoint(transformComponent.Translation);
+							m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
+							m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
+						}
+						previousTime = currentTime;
+						previousEntity = *Scenes::SceneService::GetActiveScene()->GetHoveredEntity();
+					}
+				}
+				
 			}
 		}
 

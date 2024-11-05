@@ -133,6 +133,19 @@ namespace Kargono::Utility
 		system(outputString.c_str());
 	}
 
+	void OSCommands::OpenTerminal(const std::filesystem::path& path)
+	{
+		KG_ASSERT(std::filesystem::is_directory(path), "Invalid path provided, needs to be a directory!");
+
+		std::string command;
+
+		// Open Command Prompt at the specified directory
+		command = "start cmd /K \"cd /d " + path.string() + "\"";
+
+		// Execute the command to open the terminal
+		system(command.c_str());
+	}
+
 	void OSCommands::OpenScriptProject(const std::filesystem::path& path)
 	{
 		// TODO: Add More Input Validation for system call.

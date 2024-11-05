@@ -91,6 +91,12 @@ namespace Kargono
 		m_ViewportPanel->InitializeOverlayData();
 
 		EngineService::GetActiveWindow().SetVisible(true);
+
+		m_GeneralWarningSpec.Label = "Warning";
+		m_GeneralWarningSpec.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::LabeledText("Warning Message:", m_GeneralWarningMessage.CString());
+		};
 	}
 
 	void EditorApp::Terminate()
@@ -303,6 +309,7 @@ namespace Kargono
 		if (m_ShowAIStateEditor) { m_AIStatePanel->OnEditorUIRender(); }
 
 		EditorUI::EditorUIService::GenericPopup(s_ExportProjectSpec);
+		EditorUI::EditorUIService::WarningPopup(m_GeneralWarningSpec);
 
 		EditorUI::EditorUIService::EndWindow();
 
@@ -385,7 +392,7 @@ namespace Kargono
 		{
 			return true;
 		}
-		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
 		if (focusedWindow == m_ViewportPanel->m_PanelName)
 		{
 			m_ViewportPanel->OnInputEvent(event);
@@ -604,10 +611,10 @@ namespace Kargono
 		if (event.IsRepeat()) { return false; }
 
 		// Handle panel specific key pressed events
-		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
-		if (m_PanelToKeyboardInput.contains(focusedWindow))
+		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		if (m_PanelToKeyboardInput.contains(focusedWindow.CString()))
 		{
-			if (m_PanelToKeyboardInput.at(focusedWindow)(event))
+			if (m_PanelToKeyboardInput.at(focusedWindow.CString())(event))
 			{
 				return true;
 			}
@@ -684,40 +691,23 @@ namespace Kargono
 
 	bool EditorApp::OnMouseButtonPressed(Events::MouseButtonPressedEvent event)
 	{
-		// Handle panel specific mouse pressed events
-		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
-		if (m_PanelToMousePressedInput.contains(focusedWindow))
+		// Refocus window if right click is used
+		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		if (event.GetMouseButton() == Mouse::ButtonRight)
 		{
-			if (m_PanelToMousePressedInput.at(focusedWindow)(event))
+			if (const char* hoveredName = EditorUI::EditorUIService::GetHoveredWindowName())
 			{
-				return true;
+				EditorUI::EditorUIService::SetFocusedWindow(hoveredName);
+				focusedWindow = hoveredName;
 			}
 		}
-
-		// Handle selecting entities inside of the viewport panel
-		if (event.GetMouseButton() == Mouse::ButtonLeft)
+		
+		// Handle panel specific mouse pressed events
+		if (m_PanelToMousePressedInput.contains(focusedWindow.CString()))
 		{
-			if (m_ViewportPanel->m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
+			if (m_PanelToMousePressedInput.at(focusedWindow.CString())(event))
 			{
-				if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
-				{
-					m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
-					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
-
-					// Algorithm to enable double clicking for an entity!
-					static float previousTime{ 0.0f };
-					static ECS::Entity previousEntity{};
-					float currentTime = Utility::Time::GetTime();
-					if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::SceneService::GetActiveScene()->GetHoveredEntity() == previousEntity)
-					{
-						auto& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TransformComponent>();
-						m_ViewportPanel->m_EditorCamera.SetFocalPoint(transformComponent.Translation);
-						m_ViewportPanel->m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
-						m_ViewportPanel->m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
-					}
-					previousTime = currentTime;
-					previousEntity = *Scenes::SceneService::GetActiveScene()->GetHoveredEntity();
-				}
+				return true;
 			}
 		}
 		return false;
@@ -889,6 +879,13 @@ namespace Kargono
 		return false;
 	}
 
+	void EditorApp::OpenWarningMessage(const char* message)
+	{
+		// Open generic message
+		m_GeneralWarningMessage = message;
+		m_GeneralWarningSpec.PopupActive = true;
+	}
+
 
 	bool EditorApp::OpenProject()
 	{
@@ -966,7 +963,7 @@ namespace Kargono
 			KG_WARN("Attempt to create scene with duplicate name!");
 			return;
 		}
-		m_EditorSceneHandle = Assets::AssetService::CreateScene(filepath.stem().string());
+		m_EditorSceneHandle = Assets::AssetService::CreateScene(filepath.stem().string().c_str());
 
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
@@ -981,7 +978,7 @@ namespace Kargono
 			KG_WARN("Attempt to create scene with duplicate name!");
 			return;
 		}
-		m_EditorSceneHandle = Assets::AssetService::CreateScene(filepath.stem().string());
+		m_EditorSceneHandle = Assets::AssetService::CreateScene(filepath.stem().string().c_str());
 
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);

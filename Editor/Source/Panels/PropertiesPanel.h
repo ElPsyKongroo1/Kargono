@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kargono/Core/FixedString.h"
+
 #include <string>
 
 namespace Kargono::Panels
@@ -21,8 +23,8 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		std::string m_ActiveParent{};
-		std::string m_PanelName{ "Properties" };
+		FixedString32 m_ActiveParent;
+		FixedString32 m_PanelName{ "Properties" };
 	private:
 		friend class SceneEditorPanel;
 		friend class UIEditorPanel;

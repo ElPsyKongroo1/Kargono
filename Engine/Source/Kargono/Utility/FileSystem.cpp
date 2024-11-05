@@ -8,6 +8,10 @@
 
 namespace Kargono::Utility
 {
+	bool FileSystem::HasFileExtension(const std::filesystem::path& path)
+	{
+		return !path.extension().empty();
+	}
 	void FileSystem::RenameFile(const std::filesystem::path& oldPath, std::string newName)
 	{
 		std::filesystem::path newPath = oldPath.parent_path() / newName;

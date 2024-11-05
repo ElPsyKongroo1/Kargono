@@ -14,7 +14,7 @@ namespace Kargono::Panels
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	private:
-		std::string m_PanelName{ "Testing" };
+		FixedString32 m_PanelName{ "Testing" };
 
 		//==================================
 		// Content browser widget test

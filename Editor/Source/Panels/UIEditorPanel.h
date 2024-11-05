@@ -63,7 +63,7 @@ namespace Kargono::Panels
 		Ref<RuntimeUI::UserInterface> m_EditorUI{ nullptr };
 		Assets::AssetHandle m_EditorUIHandle { Assets::EmptyHandle };
 	private:
-		std::string m_PanelName{ "User Interface Editor" };
+		FixedString32 m_PanelName{ "User Interface Editor" };
 		UIPropertiesDisplay m_CurrentDisplay{ UIPropertiesDisplay::None };
 		RuntimeUI::Widget* m_ActiveWidget {nullptr};
 		RuntimeUI::Window* m_ActiveWindow {nullptr};

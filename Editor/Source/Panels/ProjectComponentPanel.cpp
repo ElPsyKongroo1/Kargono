@@ -11,7 +11,7 @@ namespace Kargono::Panels
 	ProjectComponentPanel::ProjectComponentPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ProjectComponentPanel::OnKeyPressedEditor));
 		InitializeOpeningPanel();
 		InitializeComponentFieldsSection();
@@ -115,7 +115,7 @@ namespace Kargono::Panels
 					return;
 				}
 			}
-			m_EditorProjectComponentHandle = Assets::AssetService::CreateProjectComponent(m_SelectComponentName.CurrentOption);
+			m_EditorProjectComponentHandle = Assets::AssetService::CreateProjectComponent(m_SelectComponentName.CurrentOption.c_str());
 			m_EditorProjectComponent = Assets::AssetService::GetProjectComponent(m_EditorProjectComponentHandle);
 			m_TagHeader.EditColorActive = false;
 			m_TagHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(

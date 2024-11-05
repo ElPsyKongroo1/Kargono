@@ -37,7 +37,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		std::string m_PanelName{ "Project Component" };
+		FixedString32 m_PanelName{ "Project Component" };
 		Ref<ECS::ProjectComponent> m_EditorProjectComponent { nullptr };
 		Assets::AssetHandle m_EditorProjectComponentHandle { Assets::EmptyHandle };
 		size_t m_ActiveField{ 0 };

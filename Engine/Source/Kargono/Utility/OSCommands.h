@@ -24,6 +24,7 @@ namespace Kargono::Utility
 		// This function opens a file explorer window at the provided absolute
 		//		path. This is operating system dependent and only works on windows.
 		static void OpenFileExplorer(const std::filesystem::path& path);
+		static void OpenTerminal(const std::filesystem::path& path);
 		// This function opens the scripting engine that the provided path describes.
 		//		This scripting engine is a .csproj file that opens the Visual Studio
 		//		project.

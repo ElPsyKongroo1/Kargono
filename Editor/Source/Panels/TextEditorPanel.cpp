@@ -13,7 +13,7 @@ namespace Kargono::Panels
 	TextEditorPanel::TextEditorPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(TextEditorPanel::OnKeyPressedEditor));
 
 		m_TextEditor = {};
@@ -94,8 +94,7 @@ namespace Kargono::Panels
 			
 			if (m_TextEditor.IsTextChanged())
 			{
-				std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
-				std::string comparedWindow = m_EditorWindowName;
+				FixedString32 comparedWindow = m_EditorWindowName;
 				Document& activeDocument = m_AllDocuments.at(m_ActiveDocument);
 				activeDocument.TextBuffer = m_TextEditor.GetText();
 				activeDocument.Edited = true;
@@ -141,7 +140,7 @@ namespace Kargono::Panels
 				if (ImGui::BeginTabItem((document.FilePath.filename().string() + "##" + std::to_string(iteration)).c_str(),
 					&document.Opened, tabItemFlags))
 				{
-					m_TextEditor.Render(m_EditorWindowName.c_str());
+					m_TextEditor.Render(m_EditorWindowName);
 					checkTab = false;
 					ImGui::EndTabItem();
 				}

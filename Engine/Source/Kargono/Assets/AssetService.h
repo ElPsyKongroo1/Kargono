@@ -39,9 +39,13 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.HasAsset(assetName); \
 		}\
-		static AssetHandle Create##typeName(const std::string& assetName) \
+		static AssetHandle Create##typeName(const char* assetName) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.CreateAsset(assetName); \
+		}\
+		static AssetHandle Create##typeName(const char* assetName, std::filesystem::path& assetPath) \
+		{\
+			return s_AssetsContext.m_##typeName##Manager.CreateAsset(assetName, assetPath); \
 		}\
 		static void Serialize##typeName##Registry() \
 		{\

@@ -27,7 +27,7 @@ namespace Kargono::Panels
 	InputMapPanel::InputMapPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(InputMapPanel::OnKeyPressedEditor));
 		InitializeOpeningScreen();
 		InitializeInputMapHeader();
@@ -154,7 +154,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorInputMapHandle = Assets::AssetService::CreateInputMap(m_SelectInputMapNameSpec.CurrentOption);
+			m_EditorInputMapHandle = Assets::AssetService::CreateInputMap(m_SelectInputMapNameSpec.CurrentOption.c_str());
 			if (m_EditorInputMapHandle == Assets::EmptyHandle)
 			{
 				KG_WARN("Input Map was not created");

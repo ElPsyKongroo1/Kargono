@@ -65,7 +65,7 @@ namespace Kargono::Panels
 					return;
 				}
 			}
-			m_EditorGameStateHandle = Assets::AssetService::CreateGameState(m_SelectGameStateNameSpec.CurrentOption);
+			m_EditorGameStateHandle = Assets::AssetService::CreateGameState(m_SelectGameStateNameSpec.CurrentOption.c_str());
 			m_EditorGameState = Assets::AssetService::GetGameState(m_EditorGameStateHandle);
 			m_TagHeader.EditColorActive = false;
 			m_TagHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
@@ -296,7 +296,7 @@ namespace Kargono::Panels
 	GameStatePanel::GameStatePanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(GameStatePanel::OnKeyPressedEditor));
 
 		InitializeOpeningScreen();

@@ -205,6 +205,25 @@ namespace Kargono::EditorUI
 		
 	}
 
+	const char* EditorUIService::GetHoveredWindowName()
+	{
+		ImGuiContext* context = ImGui::GetCurrentContext();
+		if (context != nullptr)
+		{
+			// Get window pointer and ensure it is valid
+			ImGuiWindow* hoveredWindow = context->HoveredWindow;
+			if (hoveredWindow != nullptr) 
+			{
+				// Get the pointer to the hovered window
+				ImGuiWindow* windowPtr = hoveredWindow;
+
+				// Get the name of the hovered window
+				return hoveredWindow->Name;
+			}
+		}
+		return nullptr;
+	}
+
 	void EditorUIService::Init()
 	{
 		// Setup Dear ImGui context
@@ -441,10 +460,10 @@ namespace Kargono::EditorUI
 		EditorUIService::s_SecondaryTextPosMiddle = ImGui::GetContentRegionMax().x * EditorUIService::s_SecondaryTextMiddlePercentage;
 	}
 
-	void EditorUIService::StartWindow(const std::string& label, bool* closeWindow, int32_t flags)
+	void EditorUIService::StartWindow(const char* label, bool* closeWindow, int32_t flags)
 	{
 		// Start Window
-		ImGui::Begin(label.c_str(), closeWindow, flags);
+		ImGui::Begin(label, closeWindow, flags);
 		RecalculateWindowDimensions();
 	}
 
@@ -458,23 +477,23 @@ namespace Kargono::EditorUI
 		return GImGui->ActiveId;
 	}
 
-	std::string EditorUIService::GetFocusedWindowName()
+	const char* EditorUIService::GetFocusedWindowName()
 	{
 		if (GImGui->NavWindow)
 		{
 			return GImGui->NavWindow->Name;
 		}
-		return {};
+		return nullptr;
 	}
 
-	void EditorUIService::SetFocusedWindow(const std::string& windowName)
+	void EditorUIService::SetFocusedWindow(const char* windowName)
 	{
-		ImGui::SetWindowFocus(windowName.c_str());
+		ImGui::SetWindowFocus(windowName);
 	}
 
-	void EditorUIService::BringWindowToFront(const std::string& windowName)
+	void EditorUIService::BringWindowToFront(const char* windowName)
 	{
-		ImGui::BringWindowToFront(windowName.c_str());
+		ImGui::BringWindowToFront(windowName);
 	}
 
 	void EditorUIService::BringCurrentWindowToFront()
@@ -781,6 +800,48 @@ namespace Kargono::EditorUI
 				{
 					spec.ConfirmAction();
 				}
+				ImGui::CloseCurrentPopup();
+			}, s_LargeConfirmButton, false, s_PrimaryTextColor);
+
+			ImGui::Separator();
+
+			if (spec.PopupContents)
+			{
+				spec.PopupContents();
+			}
+
+			ImGui::PopFont();
+			ImGui::EndPopup();
+			RecalculateWindowDimensions();
+		}
+	}
+
+	void EditorUIService::WarningPopup(WarningPopupSpec& spec)
+	{
+		// Local Variables
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
+		uint32_t widgetCount{ 0 };
+
+		if (spec.PopupActive)
+		{
+			ImGui::OpenPopup(id);
+			spec.PopupActive = false;
+		}
+
+		// Display Popup
+		ImGui::SetNextWindowSize(ImVec2(spec.PopupWidth, 0.0f));
+		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar))
+		{
+			RecalculateWindowDimensions();
+			EditorUI::EditorUIService::TitleText(spec.Label);
+
+			ImGui::PushFont(EditorUI::EditorUIService::s_FontAntaRegular);
+
+			// Confirm Tool Bar Button
+			ImGui::SameLine();
+			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
+			{
 				ImGui::CloseCurrentPopup();
 			}, s_LargeConfirmButton, false, s_PrimaryTextColor);
 

@@ -189,9 +189,9 @@ namespace Kargono::Panels
 		: m_BaseDirectory(Projects::ProjectService::GetActiveAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ContentBrowserPanel::OnKeyPressedEditor));
-		s_EditorApp->m_PanelToMousePressedInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToMousePressedInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ContentBrowserPanel::OnMouseButton));
 
 		// Initialize widget resources
@@ -346,7 +346,7 @@ namespace Kargono::Panels
 		m_CreateDirectoryPopup.PopupWidth = 420.0f;
 		m_CreateDirectoryPopup.PopupAction = [&]()
 		{
-			m_CreateDirectoryEditName.CurrentOption = "NewDirectory";
+			m_CreateDirectoryEditName.CurrentOption = "NewName";
 		};
 		m_CreateDirectoryPopup.PopupContents = [&]()
 		{
@@ -402,19 +402,86 @@ namespace Kargono::Panels
 		if (!EditorUI::EditorUIService::IsAnyItemHovered() && event.GetMouseButton() == Mouse::ButtonRight)
 		{
 			m_RightClickTooltip.ClearEntries();
+
+			// Initialize list of create file options
+			std::vector<EditorUI::TooltipEntry> createFileOptions;
+			createFileOptions.reserve(8);
+
+			// Add create directory option
+			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "New Directory", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				m_CreateDirectoryPopup.PopupActive = true;
+			} };
+			createFileOptions.push_back(createDirectoryTooltipEntry);
+
+			// Add create ai state
+			EditorUI::TooltipEntry createAIStateTooltipEntry{ "New AI State", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// Open create ai state dialog
+				s_EditorApp->m_AIStatePanel->OpenCreateAIWindow(m_CurrentDirectory);
+			} };
+			createFileOptions.push_back(createAIStateTooltipEntry);
+			// Add create game state
+			EditorUI::TooltipEntry createGameStateTooltipEntry{ "New Game State", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// TODO: Add code to add Game State
+			} };
+			createFileOptions.push_back(createGameStateTooltipEntry);
+
+			// Add create Input Map
+			EditorUI::TooltipEntry createInputMapTooltipEntry{ "New Input Map", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+					// TODO: Add code to add Input Map
+			}};
+			createFileOptions.push_back(createInputMapTooltipEntry);
+
+			// Add create Project Component
+			EditorUI::TooltipEntry createProjectComponentTooltipEntry{ "New Project Component", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+					// TODO: Add code to add Project Component
+			} };
+			createFileOptions.push_back(createProjectComponentTooltipEntry);
+
+			// Add create Scene
+			EditorUI::TooltipEntry createSceneTooltipEntry{ "New Scene", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// TODO: Add code to add Scene
+			} };
+			createFileOptions.push_back(createSceneTooltipEntry);
+
+			// Add create text file
+			EditorUI::TooltipEntry creatTextFileTooltipEntry{ "New Text File", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// TODO: Add code to add Text File
+			} };
+			createFileOptions.push_back(creatTextFileTooltipEntry);
+
+			// Add create User Interface
+			EditorUI::TooltipEntry createUserInterfaceTooltipEntry{ "New User Interface", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// TODO: Add code to add User Interface
+			} };
+			createFileOptions.push_back(createUserInterfaceTooltipEntry);
+
+			// Create Menu
+			EditorUI::TooltipEntry createFileTooltipMenu{ "Create", createFileOptions };
+			m_RightClickTooltip.AddTooltipEntry(createFileTooltipMenu);
+
 			// Add open current directory in file explorer
-			EditorUI::TooltipEntry openCurrentDirectoryTooltipEntry{ "Open In File Explorer", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry openCurrentDirectoryTooltipEntry{ "Open File Explorer", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				Utility::OSCommands::OpenFileExplorer(m_CurrentDirectory);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openCurrentDirectoryTooltipEntry);
 
 			// Add open current directory in file explorer
-			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "Create New Directory", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry openTerminalTooltipEntry{ "Open Terminal", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				m_CreateDirectoryPopup.PopupActive = true;
+				Utility::OSCommands::OpenTerminal(m_CurrentDirectory);
 			} };
-			m_RightClickTooltip.AddTooltipEntry(createDirectoryTooltipEntry);
+			m_RightClickTooltip.AddTooltipEntry(openTerminalTooltipEntry);
+
+			// Active tooltip
 			m_RightClickTooltip.TooltipActive = true;
 			return true;
 		}
