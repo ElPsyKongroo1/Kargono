@@ -241,7 +241,7 @@ namespace Kargono
 
 				if (ImGui::MenuItem("New Scene"))
 				{
-					NewScene();
+					NewSceneDialog();
 				}
 
 				ImGui::Separator();
@@ -677,7 +677,7 @@ namespace Kargono
 
 			case Key::N:
 			{
-				if (control) { NewScene(); }
+				if (control) { NewSceneDialog(); }
 				break;
 			}
 			case Key::O:
@@ -1026,12 +1026,27 @@ namespace Kargono
 		Projects::ProjectService::SaveActiveProject((Projects::ProjectService::GetActiveProjectDirectory() / Projects::ProjectService::GetActiveProjectName()).replace_extension(".kproj"));
 	}
 
-	void EditorApp::NewScene()
+	void EditorApp::NewSceneDialog()
 	{
-		NewScene(Projects::ProjectService::GetActiveAssetDirectory());
+		NewSceneDialog(Projects::ProjectService::GetActiveAssetDirectory());
 	}
 
-	void EditorApp::NewScene(const std::filesystem::path& initialDirectory)
+	void EditorApp::NewScene(const std::string& sceneName)
+	{
+		std::filesystem::path filepath = Projects::ProjectService::GetActiveAssetDirectory() / ("Scenes/" + sceneName + ".kgscene");
+		if (Assets::AssetService::HasScene(filepath.stem().string()))
+		{
+			KG_WARN("Attempt to create scene with duplicate name!");
+			return;
+		}
+		m_EditorSceneHandle = Assets::AssetService::CreateScene(filepath.stem().string().c_str());
+
+		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+	}
+
+	void EditorApp::NewSceneDialog(const std::filesystem::path& initialDirectory)
 	{
 		// Provide file dialog to select location and name of scene
 		std::filesystem::path filepath = Utility::FileDialogs::SaveFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());

@@ -160,8 +160,9 @@ namespace Kargono
 		void SaveProject();
 		// These functions allow transitioning between scenes in the editor and saving
 		//		the current scene.
-		void NewScene();
-		void NewScene(const std::filesystem::path& initialDirectory);
+		void NewSceneDialog();
+		void NewScene(const std::string& sceneName);
+		void NewSceneDialog(const std::filesystem::path& initialDirectory);
 		void OpenScene();
 	public:
 		void OpenScene(const std::filesystem::path& path);

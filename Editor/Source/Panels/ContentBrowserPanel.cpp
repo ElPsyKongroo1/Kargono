@@ -491,7 +491,7 @@ namespace Kargono::Panels
 			EditorUI::TooltipEntry createSceneTooltipEntry{ "Scene", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				// TODO: Add code to add Scene
-					s_EditorApp->NewScene();
+					s_EditorApp->NewSceneDialog();
 			} };
 			createFileOptions.push_back(createSceneTooltipEntry);
 
