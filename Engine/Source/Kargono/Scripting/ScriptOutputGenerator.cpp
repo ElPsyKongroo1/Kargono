@@ -243,12 +243,12 @@ namespace Kargono::Scripting
 				KG_WARN("Invalid function definition name provided when generating function call C++ code");
 				return;
 			}
-			std::function<void(FunctionCallNode&)> onGenerateFunc =
+			std::function<void(ScriptOutputGenerator& generator, FunctionCallNode&)> onGenerateFunc =
 				ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions.at(funcNode->Identifier.Value).OnGenerateFunction;
 
 			if (onGenerateFunc)
 			{
-				onGenerateFunc(*funcNode);
+				onGenerateFunc(*this, *funcNode);
 			}
 
 			if (funcNode->Namespace)

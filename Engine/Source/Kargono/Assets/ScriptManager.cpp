@@ -35,7 +35,7 @@ namespace Kargono::Assets
 		AssetHandle newHandle{};
 		Assets::Asset newAsset{};
 		newAsset.Data.Type = AssetType::Script;
-		newAsset.Data.FileLocation = m_AssetName + "/" + spec.Name + m_FileExtension;
+		newAsset.Data.FileLocation = m_AssetName + "/" + spec.Name + m_FileExtension.CString();
 		newAsset.Data.CheckSum = currentCheckSum;
 		newAsset.Handle = newHandle;
 

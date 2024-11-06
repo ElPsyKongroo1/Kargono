@@ -15,12 +15,12 @@ namespace Kargono::Panels
 	{
 		None = 0,
 		Directory,
-		Image,
-		Audio,
+		RawImage,
+		RawAudio,
 		Binary,
 		Registry,
 		Scene,
-		Font,
+		RawFont,
 		UserInterface,
 		Input,
 		GenericFile
@@ -29,8 +29,8 @@ namespace Kargono::Panels
 
 	inline static std::array<FixedString32, 6> s_ContentBrowserPayloads
 	{
-		"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_AUDIO", "CONTENT_BROWSER_FONT",
-			"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_USERINTERFACE"
+		"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_RAWAUDIO", "CONTENT_BROWSER_RAWFONT",
+			"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_RAWUSERINTERFACE"
 	};
 
 	class ContentBrowserPanel
@@ -99,7 +99,8 @@ namespace Kargono::Panels
 		std::filesystem::path m_BaseDirectory{};
 		std::filesystem::path m_CurrentDirectory{};
 		std::filesystem::path m_LongestRecentPath{};
-		std::filesystem::path m_FileToModifyCache{};
+		std::filesystem::path m_CurrentFileToModifyCache{};
+		BrowserFileType m_CurrentFileTypeCache{};
 
 		//=========================
 		// Widgets
@@ -131,9 +132,9 @@ namespace Kargono::Utility
 		switch (type)
 		{
 		case Panels::BrowserFileType::Directory: { return EditorUI::EditorUIService::s_IconDirectory; }
-		case Panels::BrowserFileType::Image: { return EditorUI::EditorUIService::s_IconImage; }
-		case Panels::BrowserFileType::Audio: { return EditorUI::EditorUIService::s_IconAudio; }
-		case Panels::BrowserFileType::Font: { return EditorUI::EditorUIService::s_IconFont; }
+		case Panels::BrowserFileType::RawImage: { return EditorUI::EditorUIService::s_IconImage; }
+		case Panels::BrowserFileType::RawAudio: { return EditorUI::EditorUIService::s_IconAudio; }
+		case Panels::BrowserFileType::RawFont: { return EditorUI::EditorUIService::s_IconFont; }
 		case Panels::BrowserFileType::UserInterface: { return EditorUI::EditorUIService::s_IconUserInterface; }
 		case Panels::BrowserFileType::Binary: { return EditorUI::EditorUIService::s_IconBinary; }
 		case Panels::BrowserFileType::Registry: { return EditorUI::EditorUIService::s_IconRegistry; }
@@ -150,16 +151,39 @@ namespace Kargono::Utility
 	{
 		if (std::filesystem::is_directory(entry)) { return Panels::BrowserFileType::Directory; }
 		if (!entry.has_extension()) { return Panels::BrowserFileType::None; }
-		auto extension = entry.extension();
-		if (extension == ".jpg" || extension == ".png") { return Panels::BrowserFileType::Image; }
-		if (extension == ".wav" || extension == ".mp3") { return Panels::BrowserFileType::Audio; }
-		if (extension == ".kgreg") { return Panels::BrowserFileType::Registry; }
-		if (extension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
-		if (extension == ".ttf") { return Panels::BrowserFileType::Font; }
-		if (extension == ".kgscene") { return Panels::BrowserFileType::Scene; }
-		if (extension == ".kginput") { return Panels::BrowserFileType::Input; }
-		if (extension == ".kgaudio" || extension == ".kgtexture" || extension == ".kgfont" ||
-			extension == ".kgshadervert" || extension == ".kgshaderfrag") {
+		std::filesystem::path currentFileExtension = entry.extension();
+
+		// Check for raw texture extension
+		for (const std::string& textureExtension : Assets::AssetService::GetTexture2DValidImportExtensions())
+		{
+			if (textureExtension == currentFileExtension)
+			{
+				return Panels::BrowserFileType::RawImage;
+			}
+		}
+
+		// Check for raw audio extension
+		for (const std::string& audioExtension : Assets::AssetService::GetAudioBufferValidImportExtensions())
+		{
+			if (audioExtension == currentFileExtension)
+			{
+				return Panels::BrowserFileType::RawAudio;
+			}
+		}
+		// Check for raw font extension
+		for (const std::string& fontExtension : Assets::AssetService::GetFontValidImportExtensions())
+		{
+			if (fontExtension == currentFileExtension)
+			{
+				return Panels::BrowserFileType::RawFont;
+			}
+		}
+		if (currentFileExtension == ".kgreg") { return Panels::BrowserFileType::Registry; }
+		if (currentFileExtension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
+		if (currentFileExtension == ".kgscene") { return Panels::BrowserFileType::Scene; }
+		if (currentFileExtension == ".kginput") { return Panels::BrowserFileType::Input; }
+		if (currentFileExtension == ".kgaudio" || currentFileExtension == ".kgtexture" || currentFileExtension == ".kgfont" ||
+			currentFileExtension == ".kgshadervert" || currentFileExtension == ".kgshaderfrag") {
 			return Panels::BrowserFileType::Binary;
 		}
 		return Panels::BrowserFileType::GenericFile;
@@ -170,10 +194,10 @@ namespace Kargono::Utility
 		switch (type)
 		{
 		case Panels::BrowserFileType::Directory: { return "CONTENT_BROWSER_DIRECTORY"; }
-		case Panels::BrowserFileType::Image: { return "CONTENT_BROWSER_IMAGE"; }
-		case Panels::BrowserFileType::Audio: { return "CONTENT_BROWSER_AUDIO"; }
+		case Panels::BrowserFileType::RawImage: { return "CONTENT_BROWSER_RAWIMAGE"; }
+		case Panels::BrowserFileType::RawAudio: { return "CONTENT_BROWSER_RAWAUDIO"; }
 		case Panels::BrowserFileType::UserInterface: { return "CONTENT_BROWSER_USERINTERFACE"; }
-		case Panels::BrowserFileType::Font: { return "CONTENT_BROWSER_FONT"; }
+		case Panels::BrowserFileType::RawFont: { return "CONTENT_BROWSER_RAWFONT"; }
 		case Panels::BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Registry: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Scene: { return "CONTENT_BROWSER_SCENE"; }

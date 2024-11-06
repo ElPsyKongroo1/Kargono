@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstdio>
 #include <charconv>
+#include <string>
 
 namespace Kargono
 {
@@ -164,6 +165,19 @@ namespace Kargono
 			return std::memcmp(m_DataBuffer.data(), other.m_DataBuffer.data(), m_StringLength) == 0;
 		}
 
+		std::string operator+(const char* otherCString)
+		{
+			std::string returnString{};
+			returnString.reserve(m_StringLength + std::strlen(otherCString));
+			// Add contents of m_DataBuffer up to m_StringLength
+			returnString.append(m_DataBuffer.data(), m_StringLength);
+
+			// Append the const char* string
+			returnString.append(otherCString);
+
+			return returnString;
+		}
+
 	public:
 		//==============================
 		// Getters/Setters
@@ -212,6 +226,21 @@ namespace Kargono
 		std::array<char, BufferSize> m_DataBuffer;
 		std::size_t m_StringLength{0};
 	};
+
+	template <size_t N>
+	std::string operator+(const char* leftCString, const FixedString<N>& rightFixedString)
+	{
+		std::string returnString;
+		returnString.reserve(std::strlen(leftCString) + rightFixedString.StringLength());
+
+		// Append the const char* string
+		returnString.append(leftCString);
+
+		// Append the contents of rightFixedString up to its length
+		returnString.append(rightFixedString.CString(), rightFixedString.StringLength());
+
+		return returnString;
+	}
 
 	using FixedString16 = FixedString<16>; // Generally for small status codes, short labels, etc...
 	using FixedString32 = FixedString<32>; // Generally for status codes, small integers, etc...

@@ -29,6 +29,18 @@ namespace Kargono::Assets
 		serializer << YAML::Key << "TotalSize" << YAML::Value << metadata->TotalSize;
 	}
 
+	void AudioBufferManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+		out << YAML::Key << "Name" << YAML::Value << name; // Output audio name
+		out << YAML::EndMap; // End of File Map
+
+		std::ofstream fout(assetPath);
+		fout << out.c_str();
+		KG_INFO("Successfully created audio inside asset directory at {}", assetPath);
+	}
+
 	void AudioBufferManager::CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation)
 	{
 		// Create Buffers

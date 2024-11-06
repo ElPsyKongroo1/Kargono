@@ -12,8 +12,8 @@ namespace Kargono::Scripting
 		void AddIndentation();
 	public:
 		std::stringstream m_OutputText{};
-	private:
 		ScriptAST m_AST{};
+	private:
 		uint32_t m_IndentLevel{ 1 };
 	};
 }

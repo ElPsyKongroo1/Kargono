@@ -31,6 +31,10 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetIntermediateLocation(handle); \
 		}\
+		static AssetHandle Get##typeName##HandleFromFileLocation(const std::filesystem::path& queryFileLocation) \
+		{\
+			return s_AssetsContext.m_##typeName##Manager.GetAssetHandleFromFileLocation(queryFileLocation); \
+		}\
 		static bool Has##typeName(const AssetHandle& handle) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.HasAsset(handle); \
@@ -67,6 +71,10 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetCache(); \
 		}\
+		static const std::vector<std::string>& Get##typeName##ValidImportExtensions()\
+		{\
+			return s_AssetsContext.m_##typeName##Manager.GetAssetValidImportExtensions(); \
+		}\
 		static void Save##typeName(AssetHandle assetHandle, Ref<typeNamespace##::##typeName> assetReference) \
 		{\
 			s_AssetsContext.m_##typeName##Manager.SaveAsset(assetHandle, assetReference); \
@@ -78,6 +86,10 @@
 		static AssetHandle Import##typeName##FromFile(const std::filesystem::path& filePath) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.ImportAssetFromFile(filePath); \
+		}\
+		static AssetHandle Import##typeName##FromFile(const std::filesystem::path& sourcePath, const char* newFileName, const std::filesystem::path& destinationPath) \
+		{\
+			return s_AssetsContext.m_##typeName##Manager.ImportAssetFromFile(sourcePath, newFileName, destinationPath); \
 		}
 
 

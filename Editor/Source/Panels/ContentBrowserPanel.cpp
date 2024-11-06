@@ -109,11 +109,12 @@ namespace Kargono::Panels
 	void ContentBrowserPanel::OnGridHandleRightClick(EditorUI::GridEntry& currentEntry)
 	{
 		// Store current file to modify in later function
-		m_FileToModifyCache = m_CurrentDirectory / currentEntry.m_Label.CString();
+		m_CurrentFileToModifyCache = m_CurrentDirectory / currentEntry.m_Label.CString();
 
 		// Enable tooltip menu
 		m_RightClickTooltip.TooltipActive = true;
 		BrowserFileType fileType = (BrowserFileType)currentEntry.m_ArchetypeID;
+		m_CurrentFileTypeCache = fileType;
 
 		// Manage custom file type tooltips
 		m_RightClickTooltip.ClearEntries();
@@ -121,15 +122,43 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry openSceneTooltipEntry{ "Open Scene", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				EditorApp::GetCurrentApp()->OpenScene(m_FileToModifyCache);
+				EditorApp::GetCurrentApp()->OpenScene(m_CurrentFileToModifyCache);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openSceneTooltipEntry);
 		}
-		if (fileType == BrowserFileType::Font)
+
+		if (fileType == BrowserFileType::RawAudio)
 		{
+			EditorUI::TooltipEntry importAudioTooltipEntry{ "Import Audio", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// Open import font dialog
+				s_EditorApp->OpenImportFileDialog(m_CurrentFileToModifyCache, Assets::AssetType::Audio);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(importAudioTooltipEntry);
+		}
+
+		if (fileType == BrowserFileType::RawImage)
+		{
+			EditorUI::TooltipEntry importTextureTooltipEntry{ "Import Texture", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// Open import font dialog
+				s_EditorApp->OpenImportFileDialog(m_CurrentFileToModifyCache, Assets::AssetType::Texture);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(importTextureTooltipEntry);
+		}
+
+		if (fileType == BrowserFileType::RawFont)
+		{
+			EditorUI::TooltipEntry importFontTooltipEntry{ "Import Font", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// Open import font dialog
+				s_EditorApp->OpenImportFileDialog(m_CurrentFileToModifyCache, Assets::AssetType::Font);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(importFontTooltipEntry);
+
 			EditorUI::TooltipEntry useFontTooltipEntry{ "Use Font In Current User Interface", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				Assets::AssetHandle currentHandle = Assets::AssetService::ImportFontFromFile(m_FileToModifyCache);
+				Assets::AssetHandle currentHandle = Assets::AssetService::ImportFontFromFile(m_CurrentFileToModifyCache);
 				Ref<RuntimeUI::Font> font = Assets::AssetService::GetFont(currentHandle);
 				if (font)
 				{
@@ -137,7 +166,7 @@ namespace Kargono::Panels
 				}
 				else 
 				{ 
-					KG_WARN("Could not load font {0}", m_FileToModifyCache.filename().string()); 
+					KG_WARN("Could not load font {0}", m_CurrentFileToModifyCache.filename().string()); 
 				}
 			} };
 			m_RightClickTooltip.AddTooltipEntry(useFontTooltipEntry);
@@ -149,7 +178,7 @@ namespace Kargono::Panels
 			EditorUI::TooltipEntry openFileTooltipEntry{ "Open File in Text Editor", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 					// Open the file in the text editor
-					s_EditorApp->m_TextEditorPanel->OpenFile(m_FileToModifyCache);
+					s_EditorApp->m_TextEditorPanel->OpenFile(m_CurrentFileToModifyCache);
 				} };
 			m_RightClickTooltip.AddTooltipEntry(openFileTooltipEntry);
 		}
@@ -240,19 +269,19 @@ namespace Kargono::Panels
 		imageArch.m_Icon = EditorUI::EditorUIService::s_IconImage;
 		imageArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		imageArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Image, imageArch);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawImage, imageArch);
 
 		EditorUI::GridEntryArchetype audioArch;
 		audioArch.m_Icon = EditorUI::EditorUIService::s_IconAudio;
 		audioArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		audioArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Audio, audioArch);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawAudio, audioArch);
 
 		EditorUI::GridEntryArchetype fontArch;
 		fontArch.m_Icon = EditorUI::EditorUIService::s_IconFont;
 		fontArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		fontArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Font, fontArch);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawFont, fontArch);
 
 		EditorUI::GridEntryArchetype userInterfaceArch;
 		userInterfaceArch.m_Icon = EditorUI::EditorUIService::s_IconUserInterface;
@@ -296,36 +325,60 @@ namespace Kargono::Panels
 		// Create open file in text editor entry inside tooltip menu
 		EditorUI::TooltipEntry openFileEntry("Open File In Text Editor", [&](EditorUI::TooltipEntry& entry) 
 		{
-			s_EditorApp->m_TextEditorPanel->OpenFile(m_FileToModifyCache);
+			s_EditorApp->m_TextEditorPanel->OpenFile(m_CurrentFileToModifyCache);
 		});
 
 		// Initialize delete directory popup
 		m_DeleteDirectoryPopup.Label = "Delete Directory";
 		m_DeleteDirectoryPopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::LabeledText("Directory Name:", m_FileToModifyCache.string().c_str());
+			EditorUI::EditorUIService::LabeledText("Directory Name:", m_CurrentFileToModifyCache.string().c_str());
 		};
 		m_DeleteDirectoryPopup.ConfirmAction = [&]()
 		{
-			Utility::FileSystem::DeleteSelectedDirectory(m_FileToModifyCache);
+			Utility::FileSystem::DeleteSelectedDirectory(m_CurrentFileToModifyCache);
 		};
 
 		// Initialize delete file popup
 		m_DeleteFilePopup.Label = "Delete File";
 		m_DeleteFilePopup.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::LabeledText("File Name:", m_FileToModifyCache.string().c_str());
+			EditorUI::EditorUIService::LabeledText("File Name:", m_CurrentFileToModifyCache.string().c_str());
 		};
 		m_DeleteFilePopup.ConfirmAction = [&]()
 		{
-			Utility::FileSystem::DeleteSelectedFile(m_FileToModifyCache);
+			// TODO: Fix this implementation. Probably should use a switch
+			std::filesystem::path currentExtension = m_CurrentFileToModifyCache.extension();
+			std::filesystem::path filePathWithoutAssets{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), m_CurrentFileToModifyCache) };
+			if (currentExtension == ".kgstate")
+			{
+				// Search registry for asset with identical file location
+				Assets::AssetHandle resultHandle = Assets::AssetService::GetGameStateHandleFromFileLocation(filePathWithoutAssets);
+				// If game state in registry is not found, simply delete the file
+				if (resultHandle == Assets::EmptyHandle)
+				{
+					KG_WARN("File extension recognized as a game state, however, no game state could be found in registry. Deleting the file provided.");
+					Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+					return;
+				}
+
+				Assets::AssetService::DeleteGameState(resultHandle);
+			}
+			else
+			{
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+			}
+
+
+
+				
 		};
 
 		// Initialize rename file popup
 		m_RenameFilePopup.Label = "Rename File";
 		m_RenameFilePopup.PopupAction = [&]() 
 		{
-			m_RenameFileEditName.CurrentOption = m_FileToModifyCache.filename().string();
+			m_RenameFileEditName.CurrentOption = m_CurrentFileToModifyCache.filename().string();
 		};
 		m_RenameFilePopup.PopupContents = [&]()
 		{
@@ -333,7 +386,7 @@ namespace Kargono::Panels
 		};
 		m_RenameFilePopup.ConfirmAction = [&]()
 		{
-			Utility::FileSystem::RenameFile(m_FileToModifyCache, m_RenameFileEditName.CurrentOption);
+			Utility::FileSystem::RenameFile(m_CurrentFileToModifyCache, m_RenameFileEditName.CurrentOption);
 		};
 
 		m_RenameFileEditName.Label = "File Name";
@@ -401,14 +454,7 @@ namespace Kargono::Panels
 
 			// Initialize list of create file options
 			std::vector<EditorUI::TooltipEntry> createFileOptions;
-			createFileOptions.reserve(8);
-
-			// Add create directory option
-			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "Directory", [&](EditorUI::TooltipEntry& currentEntry)
-			{
-				m_CreateDirectoryPopup.PopupActive = true;
-			} };
-			createFileOptions.push_back(createDirectoryTooltipEntry);
+			createFileOptions.reserve(7);
 
 			// Add create ai state
 			EditorUI::TooltipEntry createAIStateTooltipEntry{ "AI State", [&](EditorUI::TooltipEntry& currentEntry)
@@ -465,8 +511,15 @@ namespace Kargono::Panels
 			} };
 			createFileOptions.push_back(createUserInterfaceTooltipEntry);
 
+			// Add create directory option
+			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "Create Directory", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				m_CreateDirectoryPopup.PopupActive = true;
+			} };
+			m_RightClickTooltip.AddTooltipEntry(createDirectoryTooltipEntry);
+
 			// Create Menu
-			EditorUI::TooltipEntry createFileTooltipMenu{ "Create", createFileOptions };
+			EditorUI::TooltipEntry createFileTooltipMenu{ "Create Asset", createFileOptions };
 			m_RightClickTooltip.AddTooltipEntry(createFileTooltipMenu);
 
 			// Add open current directory in file explorer

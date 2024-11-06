@@ -10,11 +10,11 @@ static Kargono::EditorApp* s_EditorApp { nullptr };
 
 namespace Kargono::Panels
 {
-#if 0
+
 	static EditorUI::EditTextSpec s_TestText {};
 	static EditorUI::EditFloatSpec s_TimerTime{};
 	static EditorUI::EditIntegerSpec s_RandomTestInteger{};
-#endif
+
 
 
 	static FixedString256 newString;
@@ -33,7 +33,7 @@ namespace Kargono::Panels
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(TestingPanel::OnKeyPressedEditor));
-#if 0
+
 		s_TestText.Label = "File to Compile";
 		s_TestText.CurrentOption = "test.kgscript";
 
@@ -42,7 +42,7 @@ namespace Kargono::Panels
 
 		s_RandomTestInteger.Label = "Intenger Time";
 		s_RandomTestInteger.CurrentInteger = 5;
-#endif
+
 		m_TestHeader.m_Label = "directory/directory/file.txt";
 		newString = "Hahahaha";
 
@@ -88,7 +88,6 @@ namespace Kargono::Panels
 		}
 
 		
-#if 0
 		EditorUI::EditorUIService::EditText(s_TestText);
 
 		if (ImGui::Button("Compile File"))
@@ -99,8 +98,6 @@ namespace Kargono::Panels
 		if (ImGui::Button("Test Popup"))
 		{
 			ImGui::OpenPopup("The Test Popup");
-			/*ImGui::SetNextWindowPos(ImGui::GetWindowPos(), ImGuiCond_Once);
-			ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_Once);*/
 		}
 
 		EditorUI::EditorUIService::EditFloat(s_TimerTime);
@@ -133,7 +130,6 @@ namespace Kargono::Panels
 			}
 			ImGui::EndPopup();
 		}
-#endif
 		
 #if 0
 		bool backActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
@@ -251,10 +247,13 @@ namespace Kargono::Panels
 		ImGui::PopFont();
 		ImGui::Separator();
 #endif
+
+#if 0
 		EditorUI::EditorUIService::NavigationHeader(m_TestHeader);
 		EditorUI::EditorUIService::Grid(testGrid);
 
 		EditorUI::EditorUIService::Tooltip(testTooltip);
+#endif
 
 		EditorUI::EditorUIService::EndWindow();
 	}

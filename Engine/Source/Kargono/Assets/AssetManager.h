@@ -226,20 +226,8 @@ namespace Kargono::Assets
 
 			// Find location of asset's data
 			Assets::Asset& asset = m_AssetRegistry[assetHandle];
-			std::filesystem::path dataLocation {};
-			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
-			{
-				dataLocation = Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation;
-			}
-			else if (m_Flags.test(AssetManagerOptions::HasFileLocation))
-			{
-				dataLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation;
-			}
-			else
-			{
-				KG_ASSERT(false, "Attempt to save an asset that does not have a specified file nor intermediate location");
-				return false;
-			}
+			
+			
 
 			// Process delete event and validation
 			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::Delete);
@@ -247,8 +235,17 @@ namespace Kargono::Assets
 			EngineService::OnEvent(event.get());
 
 			// Delete the asset's data on-disk
-			Utility::FileSystem::DeleteSelectedFile(dataLocation);
-
+			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
+			{
+				std::filesystem::path intermediateLocation = Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation;
+				Utility::FileSystem::DeleteSelectedFile(intermediateLocation);
+			}
+			if (m_Flags.test(AssetManagerOptions::HasFileLocation))
+			{
+				std::filesystem::path fileLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation;
+				Utility::FileSystem::DeleteSelectedFile(fileLocation);
+			}
+			
 			// Delete the asset inside the registry
 			m_AssetRegistry.erase(assetHandle);
 
@@ -364,41 +361,46 @@ namespace Kargono::Assets
 			return CreateAsset(assetName, Projects::ProjectService::GetActiveAssetDirectory());
 		}
 
-		AssetHandle ImportAssetFromFile(const std::filesystem::path& filePath)
+		AssetHandle ImportAssetFromFile(const std::filesystem::path& sourcePath)
 		{
-			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileImporting), "Attempt to import an asset for a file type that does not support importing");
-
-			// Create Checksum
-			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(filePath);
-
-			// Ensure checksum is valid
-			if (currentCheckSum.empty())
+			if (!Utility::FileSystem::HasFileExtension(sourcePath))
 			{
-				KG_WARN("Generated empty checksum from file at {}", filePath.string());
+				KG_WARN("Cannot import provided file path. Path does not contain a file extension. (i.e. it is not a file)");
 				return Assets::EmptyHandle;
 			}
 
-			// Ensure duplicate asset is not found in registry.
-			for (const auto& [handle, asset] : m_AssetRegistry)
+			return ImportAssetFromFile(sourcePath, sourcePath.stem().string().c_str(), sourcePath.parent_path());
+		}
+
+		AssetHandle ImportAssetFromFile(const std::filesystem::path& sourcePath, const char* newFileName, const std::filesystem::path& destinationPath)
+		{
+			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileImporting), "Attempt to import an asset for a file type that does not support importing");
+
+			// Ensure provided name is valid
+			if (!newFileName || newFileName[0] == '\0')
 			{
-				if (asset.Data.CheckSum == currentCheckSum)
-				{
-					KG_WARN("Attempt to instantiate duplicate {} asset. Returning existing asset.", m_AssetName);
-					return handle;
-				}
+				KG_WARN("Empty/invalid name provided to import asset from file function");
+				return Assets::EmptyHandle;
 			}
 
-			// Check if file extension is appropriate for this file type
+			// Ensure source path is valid
+			if (!Utility::FileSystem::HasFileExtension(sourcePath))
+			{
+				KG_WARN("Cannot import provided file path. Path does not contain a file extension. (i.e. it is not a file)");
+				return Assets::EmptyHandle;
+			}
+
+			// Check if source path file extension is appropriate for this file type
 			bool foundValidExtension{ false };
 			for (auto& extension : m_ValidImportFileExtensions)
 			{
-				if (filePath.extension().string() == extension)
+				if (sourcePath.extension().string() == extension)
 				{
 					foundValidExtension = true;
 					break;
 				}
 			}
-			
+
 			// Exit if extension is invalid
 			if (!foundValidExtension)
 			{
@@ -410,28 +412,91 @@ namespace Kargono::Assets
 				return Assets::EmptyHandle;
 			}
 
+			// Validate provided paths
+			bool exportingToBaseAssetDir{ true };
+			if (destinationPath == Projects::ProjectService::GetActiveAssetDirectory())
+			{
+				exportingToBaseAssetDir = true;
+			}
+			else
+			{
+				exportingToBaseAssetDir = false;
+				// Ensure provided path is within the assets directory
+				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), destinationPath))
+				{
+					KG_WARN("Provided path for new asset importation is not within asset directory");
+					return Assets::EmptyHandle;
+				}
+
+				// Ensure provided path is not indicating a file
+				if (Utility::FileSystem::HasFileExtension(destinationPath))
+				{
+					KG_WARN("File provided as path to asset. Destination paths should only indicate a directory");
+					return Assets::EmptyHandle;
+				}
+
+				// Create path if it does not already exist
+				Utility::FileSystem::CreateNewDirectory(destinationPath);
+			}
+
+
+			// Create Checksum
+			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(sourcePath);
+
+			// Ensure checksum is valid
+			if (currentCheckSum.empty())
+			{
+				KG_WARN("Generated empty checksum from file at {}", sourcePath.string());
+				return Assets::EmptyHandle;
+			}
+
+			// Ensure duplicate asset is not found in registry.
+			for (const auto& [handle, asset] : m_AssetRegistry)
+			{
+				// Ensure checksum does not match
+				if (asset.Data.CheckSum == currentCheckSum)
+				{
+					KG_WARN("Attempt to instantiate duplicate {} asset. Returning existing asset.", m_AssetName);
+					return handle;
+				}
+
+				// Ensure names do not match inside asset registry
+				if (asset.Data.FileLocation.stem().string() == newFileName)
+				{
+					KG_WARN("Attempt to instantiate and {} asset whose name ({}) is already taken in the registry", m_AssetName, newFileName);
+					return Assets::EmptyHandle;
+				}
+			}
+
 			// Create New Asset/Handle
-			AssetHandle newHandle { Assets::EmptyHandle };
+			AssetHandle newHandle{};
 			Assets::Asset newAsset{};
 			newAsset.Handle = newHandle;
 			newAsset.Data.Type = m_AssetType;
-			
+
+			// Create asset file inside asset manager
+			if (m_Flags.test(AssetManagerOptions::HasFileLocation))
+			{
+				newAsset.Data.FileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), destinationPath / (newFileName + m_FileExtension));
+				CreateAssetFileFromName(newFileName, newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation);
+			}
+
 			// Check if intermediates are used. If so, generate the intermediate.
 			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
 			{
-				newAsset.Data.FileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filePath);
-				newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_FileExtension);
-				CreateAssetIntermediateFromFile(newAsset, filePath, Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation);
+				newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_IntermediateExtension.CString());
+				CreateAssetIntermediateFromFile(newAsset, sourcePath, Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation);
 				newAsset.Data.CheckSum = currentCheckSum;
 			}
 			else
 			{
 				KG_ERROR("Attempt to import a file that does not generate an intermediate. I have not decided what happens in this case.");
 			}
+
 			// TODO: Make sure to modify the code below if fixing the asset above
-			std::filesystem::path assetPath = 
-				(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ? 
-					Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation : 
+			std::filesystem::path assetPath =
+				(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
+					Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation :
 					Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation);
 
 			// Add new asset into asset registry
@@ -575,6 +640,28 @@ namespace Kargono::Assets
 			return m_AssetCache;
 		}
 
+		AssetHandle GetAssetHandleFromFileLocation(const std::filesystem::path& queryFileLocation)
+		{
+			// Search for game state inside registry
+			for (auto& [handle, asset] : m_AssetRegistry)
+			{
+				if (asset.Data.FileLocation == queryFileLocation)
+				{
+					return handle;
+				}
+			}
+
+			// If could not find asset, return null
+			return Assets::EmptyHandle;
+		}
+
+		
+
+		const std::vector<std::string>& GetAssetValidImportExtensions()
+		{
+			return m_ValidImportFileExtensions;
+		}
+
 		virtual void SerializeAsset(Ref<AssetValue> assetReference, const std::filesystem::path& assetPath) 
 		{ 
 			KG_ERROR("Attempt to serialize an asset that does not override the base class's implentation of SerializeAsset()");
@@ -593,10 +680,11 @@ namespace Kargono::Assets
 		virtual void DeserializeRegistrySpecificData(YAML::Node& registryNode) {};
 		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) {};
 		virtual void CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) {};
-
+		
 	protected:
 		std::string m_AssetName{ "Uninitialized Asset Name" };
-		std::string m_FileExtension { ".kgfile" };
+		FixedString16 m_FileExtension { ".kgfile" };
+		FixedString16 m_IntermediateExtension{ ".kgbinary" };
 		AssetType m_AssetType{ AssetType::None };
 		std::filesystem::path m_RegistryLocation{""};
 		std::vector<std::string> m_ValidImportFileExtensions{};

@@ -113,6 +113,17 @@ namespace Kargono::Assets
 		}
 		serializer << YAML::EndSeq;
 	}
+	void FontManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+		out << YAML::Key << "Name" << YAML::Value << name; // Output font name
+		out << YAML::EndMap; // End of File Map
+
+		std::ofstream fout(assetPath);
+		fout << out.c_str();
+		KG_INFO("Successfully created font inside asset directory at {}", assetPath);
+	}
 	void Assets::FontManager::CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation)
 	{
 		// Create Buffers

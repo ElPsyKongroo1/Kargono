@@ -474,9 +474,9 @@ namespace Kargono::Scripting
 	DefineInsertFunction(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 
 	// Engine Functions that need to be defined only in this file
-	static void Log(const std::string& info)
+	static void Log(const std::string& scriptName, const std::string& scriptLine, const std::string& info)
 	{
-		KG_WARN(info);
+		KG_WARN("[{}:{}]: {}", scriptName, scriptLine, info);
 	}
 	static void AddDebugLine(Math::vec3 startPoint, Math::vec3 endPoint)
 	{
@@ -685,7 +685,6 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileNoParameters(GetActiveSessionSlot, uint16_t)
 		AddEngineFunctionToCPPFileNoParameters(ClearDebugLines, void)
 		AddEngineFunctionToCPPFileNoParameters(ClearDebugPoints, void)
-		AddEngineFunctionToCPPFileOneParameters(Log, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, const std::string&, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(PlaySoundFromName, void, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(Input_IsKeyPressed, bool, uint16_t)
@@ -722,6 +721,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(Physics_Raycast, Physics::RaycastResult, Math::vec2, Math::vec2)
+		AddEngineFunctionToCPPFileThreeParameters(Log, void, const std::string&, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
@@ -755,7 +755,6 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidString, void, const std::string&)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(Log)
 		AddEngineFunctionToCPPFileEnd(PlaySoundFromName)
 		AddEngineFunctionToCPPFileEnd(PlayStereoSoundFromName)
 		AddEngineFunctionToCPPFileEnd(InputMap_LoadInputMapByName)
@@ -794,6 +793,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SetWidgetText)
+		AddEngineFunctionToCPPFileEnd(Log)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
 		outputStream << "{\n";
@@ -1040,7 +1040,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::ClientService::GetActiveSessionSlot, UInt16None)
 		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::ClientService::SendAllEntityLocation, VoidUInt64Vec3)
 		AddEngineFunctionPointerToDll(SignalAll, Network::ClientService::SignalAll, VoidUInt16)
-		AddEngineFunctionPointerToDll(Log, Scripting::Log, VoidString)
+		AddEngineFunctionPointerToDll(Log, Scripting::Log, VoidStringStringString)
 		AddEngineFunctionPointerToDll(ClearDebugLines, Scripting::ClearDebugLines, VoidNone)
 		AddEngineFunctionPointerToDll(ClearDebugPoints, Scripting::ClearDebugPoints, VoidNone)
 		AddEngineFunctionPointerToDll(AddDebugPoint, Scripting::AddDebugPoint, VoidVec3)

@@ -75,6 +75,13 @@ namespace Kargono
 		//		4. Draw overlay code such as physics colliders, entity selection visualization,
 		//		text/ui, etc...
 		virtual void OnUpdate(Timestep ts) override;
+
+	private:
+		//=========================
+		// Internal Initialization Functions
+		//=========================
+		void InitializeExportProjectWidgets();
+		void InitializeImportAssetWidgets();
 	private:
 		// Increments step
 		void Step(int frames = 1);
@@ -134,6 +141,7 @@ namespace Kargono
 		// External Functionality
 		//=========================
 		void OpenWarningMessage(const char* message);
+		void OpenImportFileDialog(const std::filesystem::path& importFileLocation, Assets::AssetType assetType);
 
 	public:
 		//=========================
@@ -242,9 +250,23 @@ namespace Kargono
 		Scope<Panels::TestingPanel>  m_TestingPanel;
 
 	public:
-		// Widgets
+		// Warning widget
 		EditorUI::WarningPopupSpec m_GeneralWarningSpec{};
 		FixedString256 m_GeneralWarningMessage{};
+
+		// Project export popup widgets
+		EditorUI::GenericPopupSpec m_ExportProjectSpec{};
+		EditorUI::ChooseDirectorySpec m_ExportProjectLocation{};
+		EditorUI::CheckboxSpec m_ExportProjectServer{};
+
+		// Import asset widgets
+		EditorUI::GenericPopupSpec m_ImportAssetPopup{};
+		EditorUI::EditTextSpec m_ImportNewAssetName{};
+		std::filesystem::path m_ImportSourceFilePath{};
+		Assets::AssetType m_ImportAssetType{ Assets::AssetType::None };
+		EditorUI::ChooseDirectorySpec m_ImportNewFileLocation{};
+
+
 	private:
 		friend Panels::AssetViewerPanel;
 		friend Panels::ViewportPanel;

@@ -445,7 +445,7 @@ namespace Kargono::Scripting
 		ScriptToken Namespace{};
 		std::vector<FunctionParameter> Parameters{};
 		std::vector<Ref<Statement>> Statements{};
-		std::function<void(FunctionCallNode&)> OnGenerateFunction{ nullptr };
+		std::function<void(ScriptOutputGenerator&, FunctionCallNode&)> OnGenerateFunction{ nullptr };
 		std::function<void(ScriptOutputGenerator&, MemberNode&)> OnGenerateGetter { nullptr };
 		std::string Description { "Built-in Function"};
 

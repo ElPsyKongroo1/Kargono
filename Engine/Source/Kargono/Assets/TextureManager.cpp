@@ -26,7 +26,7 @@ namespace Kargono::Assets
 		{
 			if (asset.Data.CheckSum == currentCheckSum)
 			{
-				KG_WARN("Attempt to instantiate duplicate {} asset. Returning existing asset.", m_AssetName);
+				//KG_WARN("Attempt to instantiate duplicate {} asset. Returning existing asset.", m_AssetName);
 				return handle;
 			}
 		}
@@ -38,7 +38,7 @@ namespace Kargono::Assets
 		newAsset.Data.Type = m_AssetType;
 		newAsset.Data.CheckSum = currentCheckSum;
 		newAsset.Data.FileLocation = "";
-		newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_FileExtension);
+		newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_FileExtension.CString());
 
 		// Create Intermediate
 		CreateTextureIntermediateFromBuffer(buffer, width, height, channels, newAsset);
@@ -89,6 +89,18 @@ namespace Kargono::Assets
 		serializer << YAML::Key << "TextureHeight" << YAML::Value << metadata->Height;
 		serializer << YAML::Key << "TextureWidth" << YAML::Value << metadata->Width;
 		serializer << YAML::Key << "TextureChannels" << YAML::Value << metadata->Channels;
+	}
+
+	void Texture2DManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+		out << YAML::Key << "Name" << YAML::Value << name; // Output texture name
+		out << YAML::EndMap; // End of File Map
+
+		std::ofstream fout(assetPath);
+		fout << out.c_str();
+		KG_INFO("Successfully created texture inside asset directory at {}", assetPath);
 	}
 
 	void Texture2DManager::CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation)
