@@ -310,16 +310,6 @@ namespace Kargono::Assets
 				return Assets::EmptyHandle;
 			}
 
-			// Ensure duplicate asset is not found in registry.
-			for (const auto& [handle, asset] : m_AssetRegistry)
-			{
-				if (asset.Data.CheckSum == currentCheckSum)
-				{
-					KG_WARN("Attempt to instantiate duplicate {} asset. Returning existing asset.", m_AssetName);
-					return handle;
-				}
-			}
-
 			// Create New Asset/Handle
 			AssetHandle newHandle{};
 			Assets::Asset newAsset{};
@@ -453,12 +443,6 @@ namespace Kargono::Assets
 			// Ensure duplicate asset is not found in registry.
 			for (const auto& [handle, asset] : m_AssetRegistry)
 			{
-				// Ensure checksum does not match
-				if (asset.Data.CheckSum == currentCheckSum)
-				{
-					KG_WARN("Attempt to instantiate duplicate {} asset. Returning existing asset.", m_AssetName);
-					return handle;
-				}
 
 				// Ensure names do not match inside asset registry
 				if (asset.Data.FileLocation.stem().string() == newFileName)

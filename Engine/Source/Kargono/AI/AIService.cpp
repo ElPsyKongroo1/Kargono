@@ -344,11 +344,12 @@ namespace Kargono::AI
 			// Check if current message is due for dispatch
 			if (currentMessage.DispatchTime <= currentTime)
 			{
+				// Remove message from queue
+				messageQueue.pop();
+
 				// Handle message
 				HandleAIMessage(std::move(currentMessage));
 
-				// Remove message from queue
-				messageQueue.pop();
 			}
 
 			// Exit if current message (and remainder of queue) is still waiting...

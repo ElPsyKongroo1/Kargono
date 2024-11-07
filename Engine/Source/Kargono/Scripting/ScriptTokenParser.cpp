@@ -916,8 +916,20 @@ namespace Kargono::Scripting
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of multiplication/division/comparison operation", newBinaryOperation.Operator);
 					return { false, {} };
 				}
-				PrimitiveType leftOperandType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value);
-				PrimitiveType rightOperandType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value);
+
+				// Get return types of each operand
+				ScriptToken leftOperandReturnToken = GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType());
+				ScriptToken rightOperandReturnToken = GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType());
+
+				// Ensure no none types are provided
+				if (leftOperandReturnToken.Type == ScriptTokenType::None || rightOperandReturnToken.Type == ScriptTokenType::None)
+				{
+					StoreParseError(ParseErrorType::ContextProbe, "None type found while parsing binary expression", newBinaryOperation.Operator);
+					return { false, {} };
+				}
+
+				PrimitiveType leftOperandType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(leftOperandReturnToken.Value);
+				PrimitiveType rightOperandType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(rightOperandReturnToken.Value);
 
 				// Ensure the return type of both operands is identical
 				if (PrimitiveTypeAcceptableToken(leftOperandType.Name, GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType())))

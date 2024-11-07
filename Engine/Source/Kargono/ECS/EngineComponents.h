@@ -195,9 +195,9 @@ namespace Kargono::ECS
 		Ref<std::vector<Math::vec4>> VertexColors {};
 		Ref<Rendering::Shader> Shader;
 		Rendering::ShaderSpecification ShaderSpecification {Rendering::ColorInputType::None, Rendering::TextureInputType::None, false, true, true, Rendering::RenderingType::DrawIndex, false};
-		Assets::AssetHandle ShaderHandle;
+		Assets::AssetHandle ShaderHandle{ Assets::EmptyHandle };
 		Ref<Rendering::Texture2D> Texture;
-		Assets::AssetHandle TextureHandle;
+		Assets::AssetHandle TextureHandle{ Assets::EmptyHandle };
 		Buffer ShaderData;
 
 		ShapeComponent();

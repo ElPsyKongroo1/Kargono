@@ -39,6 +39,33 @@ namespace Kargono::Scenes
 		// Copy components (except IDComponent and TagComponent)
 		Utility::CopyComponent(ECS::AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
 
+		// TODO: There is probably a faster way to get all the entities inside the scene without iterating through all entities
+		// TODO: I am just not aware of a view function using raw storage references in entt
+		// Transfer custom components into new scene
+		// Handle all project components
+		for (auto& [entityHandle, enttID] : other->m_EntityRegistry.m_EntityMap)
+		{
+			// Copy over data
+			ECS::Entity existingEntity{ other->GetEntityByUUID(entityHandle) };
+			ECS::Entity newEntity{ newScene->GetEntityByUUID(entityHandle) };
+			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+			{
+				Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(handle);
+				KG_ASSERT(projectComponent);
+
+				if (existingEntity.HasProjectComponentData(handle))
+				{
+					// Add project component into registry
+					newEntity.AddProjectComponentData(handle);
+
+					// Get source and destination data buffers
+					uint8_t* sourceDataPtr = (uint8_t*)existingEntity.GetProjectComponentData(handle);
+					uint8_t* destinationDataPtr = (uint8_t*)newEntity.GetProjectComponentData(handle);
+					std::memcpy(destinationDataPtr, sourceDataPtr, projectComponent->m_BufferSize);
+				}
+			}
+		}
+
 		return newScene;
 		
 	}

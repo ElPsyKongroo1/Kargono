@@ -749,12 +749,13 @@ namespace Kargono::EditorUI
 	void EditorUIService::GenericPopup(GenericPopupSpec& spec)
 	{
 		// Local Variables
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
 		if (spec.PopupActive)
 		{
-			ImGui::OpenPopup(id.c_str());
+			ImGui::OpenPopup(id);
 			spec.PopupActive = false;
 
 			if (spec.PopupAction)
@@ -765,7 +766,7 @@ namespace Kargono::EditorUI
 
 		// Display Popup
 		ImGui::SetNextWindowSize(ImVec2(spec.PopupWidth, 0.0f));
-		if (ImGui::BeginPopupModal(id.c_str(), NULL, ImGuiWindowFlags_NoTitleBar))
+		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar))
 		{
 			RecalculateWindowDimensions();
 			EditorUI::EditorUIService::TitleText(spec.Label);
@@ -908,14 +909,15 @@ namespace Kargono::EditorUI
 	void EditorUIService::SelectOption(SelectOptionSpec& spec)
 	{
 		// Local Variables
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
 		if (spec.Flags & SelectOption_PopupOnly)
 		{
 			if (spec.PopupActive)
 			{
-				ImGui::OpenPopup(id.c_str());
+				ImGui::OpenPopup(id);
 				spec.PopupActive = false;
 				if (spec.PopupAction)
 				{
@@ -950,7 +952,7 @@ namespace Kargono::EditorUI
 			ImGui::SameLine();
 			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
-				ImGui::OpenPopup(id.c_str());
+				ImGui::OpenPopup(id);
 				if (spec.PopupAction)
 				{
 					spec.PopupAction();
@@ -963,7 +965,7 @@ namespace Kargono::EditorUI
 		
 		// Display Popup
 		ImGui::SetNextWindowSize(ImVec2(700.0f, 0.0f));
-		if (ImGui::BeginPopupModal(id.c_str(), NULL, ImGuiWindowFlags_NoTitleBar))
+		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar))
 		{
 			static char searchBuffer[256];
 
@@ -1051,7 +1053,7 @@ namespace Kargono::EditorUI
 						ImGui::PushStyleColor(ImGuiCol_Button, s_SelectedColor);
 					}
 
-					if (ImGui::Button((option.Label + id + std::string(option.Handle)).c_str()))
+					if (ImGui::Button((option.Label.c_str() + id + std::string(option.Handle)).c_str()))
 					{
 						spec.CachedSelection = option;
 					}
@@ -1079,7 +1081,8 @@ namespace Kargono::EditorUI
 	{
 		// Local Variables
 		uint32_t widgetCount{ 0 };
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		static ImGuiInputTextFlags inputFlags {};
 
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
@@ -1174,7 +1177,8 @@ namespace Kargono::EditorUI
 	void EditorUIService::Checkbox(CheckboxSpec& spec)
 	{
 		// Local Variables
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
 		// Draw background
@@ -1255,7 +1259,8 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditInteger(EditIntegerSpec& spec)
 	{
 		// Local Variables
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
 		// Draw background
@@ -1329,7 +1334,8 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditFloat(EditFloatSpec& spec)
 	{
 		// Local Variables
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
 		// Draw background
@@ -1403,7 +1409,8 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditVec2(EditVec2Spec& spec)
 	{
 		// Local Variables
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
 		// Draw backgrounds
@@ -1506,7 +1513,8 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditVec3(EditVec3Spec& spec)
 	{
 		// Local Variables
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
 		// Draw backgrounds
@@ -1637,7 +1645,8 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditVec4(EditVec4Spec& spec)
 	{
 		// Local Variables
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
 		// Draw backgrounds
@@ -1802,7 +1811,8 @@ namespace Kargono::EditorUI
 	void EditorUIService::RadioSelector(RadioSelectorSpec& spec)
 	{
 		// Local Variables
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
 		// Draw backgrounds
@@ -1903,7 +1913,8 @@ namespace Kargono::EditorUI
 
 	void EditorUIService::Table(TableSpec& spec)
 	{
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 		uint32_t smallButtonCount{ 0 };
 
@@ -1946,7 +1957,7 @@ namespace Kargono::EditorUI
 			{
 				for (auto& [label, func] : spec.EditTableSelectionList)
 				{
-					if (ImGui::Selectable((label + id).c_str()))
+					if (ImGui::Selectable((label.c_str() + id).c_str()))
 					{
 						func();
 					}
@@ -2161,7 +2172,6 @@ namespace Kargono::EditorUI
 
 	void EditorUIService::Tree(TreeSpec& spec)
 	{
-		std::string id = "##" + std::to_string(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 		TreePath treePath{};
 		DrawEntries(spec, spec.TreeEntries, widgetCount, treePath, {});
@@ -2184,7 +2194,8 @@ namespace Kargono::EditorUI
 
 	void EditorUIService::PanelHeader(PanelHeaderSpec& spec)
 	{
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		ImGui::PushFont(EditorUIService::s_FontAntaLarge);
 		ImGui::TextColored(spec.EditColorActive ? EditorUIService::s_HighlightColor2 : EditorUIService::s_PrimaryTextColor , spec.Label.c_str());
 		ImGui::PopFont();
@@ -2192,14 +2203,14 @@ namespace Kargono::EditorUI
 		ImGui::SameLine();
 		CreateButton(spec.WidgetID, [&]()
 		{
-			ImGui::OpenPopup(id.c_str());
+			ImGui::OpenPopup(id);
 		}, s_MediumOptionsButton, false, s_DisabledColor);
 		
-		if (ImGui::BeginPopup(id.c_str()))
+		if (ImGui::BeginPopup(id))
 		{
 			for (auto& [label, func] : spec.GetSelectionList())
 			{
-				if (ImGui::Selectable((label + id).c_str()))
+				if (ImGui::Selectable((label.c_str() + id).c_str()))
 				{
 					func();
 				}
@@ -2400,7 +2411,8 @@ namespace Kargono::EditorUI
 	void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec)
 	{
 		uint32_t widgetCount{ 0 };
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		ImGui::PushFont(EditorUIService::s_FontAntaLarge);
 		ImGui::TextColored(s_PrimaryTextColor , spec.Label.c_str());
 		ImGui::PopFont();
@@ -2423,7 +2435,7 @@ namespace Kargono::EditorUI
 			{
 				for (auto& [label, func] : spec.SelectionList)
 				{
-					if (ImGui::Selectable((label + id).c_str()))
+					if (ImGui::Selectable((label.c_str() + id).c_str()))
 					{
 						func(spec);
 					}
@@ -2464,14 +2476,15 @@ namespace Kargono::EditorUI
 		// Local Variables
 		static char stringBuffer[256];
 		uint32_t widgetCount{ 0 };
-		std::string id = "##" + std::to_string(spec.WidgetID);
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.WidgetID);
 		std::string popUpLabel = spec.Label;
 
 		if (spec.Flags & EditText_PopupOnly)
 		{
 			if (spec.StartPopup)
 			{
-				ImGui::OpenPopup(id.c_str());
+				ImGui::OpenPopup(id);
 				spec.StartPopup = false;
 				memset(stringBuffer, 0, sizeof(stringBuffer));
 				memcpy_s(stringBuffer, sizeof(stringBuffer), spec.CurrentOption.data(), spec.CurrentOption.size());
@@ -2496,7 +2509,7 @@ namespace Kargono::EditorUI
 			ImGui::SameLine();
 			CreateButton(spec.WidgetID + WidgetIterator(widgetCount),[&]()
 			{
-				ImGui::OpenPopup(id.c_str());
+				ImGui::OpenPopup(id);
 				memset(stringBuffer, 0, sizeof(stringBuffer));
 				memcpy_s(stringBuffer, sizeof(stringBuffer), spec.CurrentOption.data(), spec.CurrentOption.size());
 			},
@@ -2504,7 +2517,7 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SetNextWindowSize(ImVec2(600.0f, 0.0f));
-		if (ImGui::BeginPopupModal(id.c_str(), NULL, ImGuiWindowFlags_NoTitleBar))
+		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar))
 		{
 			EditorUI::EditorUIService::TitleText(popUpLabel);
 
@@ -2543,7 +2556,6 @@ namespace Kargono::EditorUI
 	{
 		// Local Variables
 		uint32_t widgetCount{ 0 };
-		std::string id = "##" + std::to_string(spec.WidgetID);
 		std::string popUpLabel = spec.Label;
 
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
