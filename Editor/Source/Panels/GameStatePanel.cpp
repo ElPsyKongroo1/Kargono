@@ -39,8 +39,8 @@ namespace Kargono::Panels
 
 			m_EditorGameState = Assets::AssetService::GetGameState(selection.Handle);
 			m_EditorGameStateHandle = selection.Handle;
-			m_TagHeader.EditColorActive = false;
-			m_TagHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
+			m_MainHeader.EditColorActive = false;
+			m_MainHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
 				m_EditorGameStateHandle).Data.FileLocation.string();
 			m_FieldsTable.OnRefresh();
 		};
@@ -76,8 +76,8 @@ namespace Kargono::Panels
 			}
 			m_EditorGameStateHandle = Assets::AssetService::CreateGameState(m_SelectGameStateNameSpec.CurrentOption.c_str(), m_SelectGameStateLocationSpec.CurrentOption);
 			m_EditorGameState = Assets::AssetService::GetGameState(m_EditorGameStateHandle);
-			m_TagHeader.EditColorActive = false;
-			m_TagHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
+			m_MainHeader.EditColorActive = false;
+			m_MainHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
 				m_EditorGameStateHandle).Data.FileLocation.string();
 			m_FieldsTable.OnRefresh();
 		};
@@ -114,14 +114,14 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Text("Are you sure you want to close this game state object without saving?");
 		};
 
-		m_TagHeader.AddToSelectionList("Save", [&]()
+		m_MainHeader.AddToSelectionList("Save", [&]()
 			{
 				Assets::AssetService::SaveGameState(m_EditorGameStateHandle, m_EditorGameState);
-				m_TagHeader.EditColorActive = false;
+				m_MainHeader.EditColorActive = false;
 			});
-		m_TagHeader.AddToSelectionList("Close", [&]()
+		m_MainHeader.AddToSelectionList("Close", [&]()
 			{
-				if (m_TagHeader.EditColorActive)
+				if (m_MainHeader.EditColorActive)
 				{
 					m_CloseGameStateWarning.PopupActive = true;
 				}
@@ -131,7 +131,7 @@ namespace Kargono::Panels
 					m_EditorGameState = nullptr;
 				}
 			});
-		m_TagHeader.AddToSelectionList("Delete", [&]()
+		m_MainHeader.AddToSelectionList("Delete", [&]()
 			{
 				m_DeleteGameStateWarning.PopupActive = true;
 			});
@@ -200,7 +200,7 @@ namespace Kargono::Panels
 				{
 					iteration++;
 				}
-				m_TagHeader.EditColorActive = true;
+				m_MainHeader.EditColorActive = true;
 			}
 			m_FieldsTable.OnRefresh();
 		};
@@ -232,7 +232,7 @@ namespace Kargono::Panels
 				KG_ERROR("Unable to delete field inside game state!");
 				return;
 			}
-			m_TagHeader.EditColorActive = true;
+			m_MainHeader.EditColorActive = true;
 			m_FieldsTable.OnRefresh();
 		};
 		m_EditFieldPopup.PopupWidth = 420.0f;
@@ -291,7 +291,7 @@ namespace Kargono::Panels
 			}
 
 			fieldMap.insert_or_assign(m_EditFieldName.CurrentOption, newField);
-			m_TagHeader.EditColorActive = true;
+			m_MainHeader.EditColorActive = true;
 			m_FieldsTable.OnRefresh();
 		};
 		m_EditFieldPopup.PopupContents = [&]()
@@ -333,7 +333,7 @@ namespace Kargono::Panels
 		}
 		else
 		{
-			EditorUI::EditorUIService::PanelHeader(m_TagHeader);
+			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
 			EditorUI::EditorUIService::GenericPopup(m_DeleteGameStateWarning);
 			EditorUI::EditorUIService::GenericPopup(m_CloseGameStateWarning);
 			EditorUI::EditorUIService::Table(m_FieldsTable);
@@ -360,11 +360,24 @@ namespace Kargono::Panels
 			return false;
 		}
 
-		// Handle deletion of asset
-		if (manageAsset->GetAssetID() == m_EditorGameStateHandle && manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		if (manageAsset->GetAssetID() != m_EditorGameStateHandle)
 		{
-			m_EditorGameState = nullptr;
-			m_EditorGameStateHandle = Assets::EmptyHandle;
+			return false;
+		}
+
+		// Handle deletion of asset
+		if (manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			ResetPanelResources();
+			return true;
+		}
+
+		// Handle updating of asset
+		if (manageAsset->GetAction() == Events::ManageAssetAction::Update)
+		{
+			// Update game state header if necessary
+			m_MainHeader.Label = Assets::AssetService::GetGameStateFileLocation(manageAsset->GetAssetID()).string();
+			
 			return true;
 		}
 		return false;

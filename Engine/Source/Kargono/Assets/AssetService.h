@@ -31,6 +31,10 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetIntermediateLocation(handle); \
 		}\
+		static bool Set##typeName##FileLocation(const AssetHandle& handle, const std::filesystem::path& newFileLocation) \
+		{\
+			return s_AssetsContext.m_##typeName##Manager.SetAssetFileLocation(handle, newFileLocation); \
+		}\
 		static AssetHandle Get##typeName##HandleFromFileLocation(const std::filesystem::path& queryFileLocation) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetHandleFromFileLocation(queryFileLocation); \

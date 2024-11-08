@@ -541,19 +541,22 @@ namespace Kargono
 		m_AssetViewerPanel->OnAssetEvent(event);
 
 		if (manageAsset.GetAssetType() == Assets::AssetType::Scene && 
-			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
 			manageAsset.GetAssetID() == m_EditorSceneHandle)
 		{
-			// Create new scene w/ unique name
-			uint32_t iteration{ 1 };
-			bool success{ false };
-			while (!success)
+			if (manageAsset.GetAction() == Events::ManageAssetAction::Delete)
 			{
-				FixedString16 sceneName{ "NewScene" };
-				sceneName.AppendInteger(iteration);
-				success = NewScene(sceneName.CString());
-				iteration++;
+				// Create new scene w/ unique name
+				uint32_t iteration{ 1 };
+				bool success{ false };
+				while (!success)
+				{
+					FixedString16 sceneName{ "NewScene" };
+					sceneName.AppendInteger(iteration);
+					success = NewScene(sceneName.CString());
+					iteration++;
+				}
 			}
+			
 		}
 
 		switch (manageAsset.GetAssetType())
@@ -1145,8 +1148,8 @@ namespace Kargono
 		auto [sceneHandle, newScene] = Assets::AssetService::GetScene(path);
 
 		m_EditorScene = newScene;
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_EditorSceneHandle = sceneHandle;
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 
 	}
 

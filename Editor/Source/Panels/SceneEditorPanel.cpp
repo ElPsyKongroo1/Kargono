@@ -2218,60 +2218,31 @@ namespace Kargono::Panels
 	}
 	bool SceneEditorPanel::OnAssetEvent(Events::Event* event)
 	{
-		if (event->GetEventType() == Events::EventType::ManageAsset)
+		
+		Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
+		if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent && 
+			manageAsset->GetAction() == Events::ManageAssetAction::Create)
 		{
-			Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
-			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent && 
-				manageAsset->GetAction() == Events::ManageAssetAction::Create)
+			InitializeProjectComponent(manageAsset->GetAssetID());
+			SetSelectedEntity({});
+		}
+
+		if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
+			manageAsset->GetAction() == Events::ManageAssetAction::Update)
+		{
+			Ref<ECS::ProjectComponent> currentComponent = Assets::AssetService::GetProjectComponent(manageAsset->GetAssetID());
+
+			if (currentComponent->m_DataLocations.size() > 0)
 			{
+				m_AllProjectComponents.erase(manageAsset->GetAssetID());
 				InitializeProjectComponent(manageAsset->GetAssetID());
-				SetSelectedEntity({});
 			}
-
-			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
-				manageAsset->GetAction() == Events::ManageAssetAction::Update)
-			{
-				Ref<ECS::ProjectComponent> currentComponent = Assets::AssetService::GetProjectComponent(manageAsset->GetAssetID());
-
-				if (currentComponent->m_DataLocations.size() > 0)
-				{
-					m_AllProjectComponents.erase(manageAsset->GetAssetID());
-					InitializeProjectComponent(manageAsset->GetAssetID());
-				}
-				else
-				{
-					m_AllProjectComponents.erase(manageAsset->GetAssetID());
-
-					// Get all tree nodes that contain the provided project component
-					std::vector<EditorUI::TreePath> entriesToRemove = m_SceneHierarchyTree.SearchDepth([&](EditorUI::TreeEntry& entry)
-					{
-						SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)entry.ProvidedData.get();
-						if (entryData.m_ComponentType == ECS::ComponentType::ProjectComponent &&
-							entryData.m_ProjectComponentHandle == manageAsset->GetAssetID())
-						{
-							return true;
-						}
-						return false;
-					},
-					1);
-
-					// Remove all of those tree entries
-					for (auto& entryPath : entriesToRemove)
-					{
-						m_SceneHierarchyTree.RemoveEntry(entryPath);
-					}
-				}
-				m_SceneHierarchyTree.SelectFirstEntry();
-				SetSelectedEntity({});
-			}
-
-			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
-				manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			else
 			{
 				m_AllProjectComponents.erase(manageAsset->GetAssetID());
 
 				// Get all tree nodes that contain the provided project component
-				std::vector<EditorUI::TreePath> entriesToRemove = m_SceneHierarchyTree.SearchDepth([&](EditorUI::TreeEntry& entry) 
+				std::vector<EditorUI::TreePath> entriesToRemove = m_SceneHierarchyTree.SearchDepth([&](EditorUI::TreeEntry& entry)
 				{
 					SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)entry.ProvidedData.get();
 					if (entryData.m_ComponentType == ECS::ComponentType::ProjectComponent &&
@@ -2280,7 +2251,7 @@ namespace Kargono::Panels
 						return true;
 					}
 					return false;
-				}, 
+				},
 				1);
 
 				// Remove all of those tree entries
@@ -2288,10 +2259,38 @@ namespace Kargono::Panels
 				{
 					m_SceneHierarchyTree.RemoveEntry(entryPath);
 				}
-				m_SceneHierarchyTree.SelectFirstEntry();
-				SetSelectedEntity({});
 			}
+			m_SceneHierarchyTree.SelectFirstEntry();
+			SetSelectedEntity({});
 		}
+
+		if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
+			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			m_AllProjectComponents.erase(manageAsset->GetAssetID());
+
+			// Get all tree nodes that contain the provided project component
+			std::vector<EditorUI::TreePath> entriesToRemove = m_SceneHierarchyTree.SearchDepth([&](EditorUI::TreeEntry& entry) 
+			{
+				SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)entry.ProvidedData.get();
+				if (entryData.m_ComponentType == ECS::ComponentType::ProjectComponent &&
+					entryData.m_ProjectComponentHandle == manageAsset->GetAssetID())
+				{
+					return true;
+				}
+				return false;
+			}, 
+			1);
+
+			// Remove all of those tree entries
+			for (auto& entryPath : entriesToRemove)
+			{
+				m_SceneHierarchyTree.RemoveEntry(entryPath);
+			}
+			m_SceneHierarchyTree.SelectFirstEntry();
+			SetSelectedEntity({});
+		}
+		
 		return false;
 	}
 	bool SceneEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)

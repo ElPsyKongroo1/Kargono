@@ -612,6 +612,64 @@ namespace Kargono::Assets
 			}
 		}
 
+
+		bool SetAssetFileLocation(AssetHandle handle, const std::filesystem::path& newFileLocation)
+		{
+			// Validate asset exists
+			if (!m_AssetRegistry.contains(handle))
+			{
+				KG_WARN("Could not locate provided asset when attempting to its update file location");
+				return false;
+			}
+
+			// Ensure file path is not absolute
+			if (newFileLocation.is_absolute())
+			{
+				KG_WARN("Attempt to update an asset's file location with a path that is absolute. The filepath should be relative.");
+				return false;
+			}
+
+			// Ensure path provided is a file
+			if (!Utility::FileSystem::HasFileExtension(newFileLocation))
+			{
+				KG_WARN("Attempt to update an asset's file location with a path that does not seem to be a file");
+				return false;
+			}
+
+			// Get asset
+			Assets::Asset& currentAsset = m_AssetRegistry.at(handle);
+
+			std::filesystem::path existingAssetExtension = currentAsset.Data.FileLocation.extension();
+			std::filesystem::path existingAssetName = currentAsset.Data.FileLocation.stem();
+			std::filesystem::path newFileLocationExtension = newFileLocation.extension();
+			std::filesystem::path newFileLocationName = newFileLocation.stem();
+
+			// Ensure extension does not change
+			if (newFileLocationExtension != existingAssetExtension)
+			{
+				KG_WARN("Attempt to update an asset's file location with a path whose extension does not match the asset type");
+				return false;
+			}
+
+			// Ensure file name does not change
+			if (newFileLocationName != existingAssetName)
+			{
+				KG_WARN("Attempt to update an asset's file location with a path whose name does not match the original");
+				return false;
+			}
+
+			// Update file location
+			currentAsset.Data.FileLocation = newFileLocation;
+
+			// Save changes to disk
+			SerializeAssetRegistry();
+
+			// Throw update asset event
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(handle, currentAsset.Data.Type, Events::ManageAssetAction::Update);
+			EngineService::SubmitToEventQueue(event);
+			return true;
+		}
+
 		std::unordered_map<AssetHandle, Asset>& GetAssetRegistry()
 		{
 			return m_AssetRegistry;

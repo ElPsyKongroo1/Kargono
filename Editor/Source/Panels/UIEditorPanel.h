@@ -48,6 +48,7 @@ namespace Kargono::Panels
 		// External Functionality
 		//=========================
 		void OpenCreateDialog(std::filesystem::path& createLocation);
+		void ResetPanelResources();
 	private:
 		//=========================
 		// Internal Functionality

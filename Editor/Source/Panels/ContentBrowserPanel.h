@@ -68,6 +68,7 @@ namespace Kargono::Panels
 		//=========================
 		void OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type);
 		void UpdateCurrentDirectory(const std::filesystem::path& newPath);
+		void OnHandleMoveAssetLocation(const std::filesystem::path& originalFilePath, const std::filesystem::path& newDirectory);
 
 		//=========================
 		// Manage Navigation Header Functionality
@@ -87,6 +88,8 @@ namespace Kargono::Panels
 			std::size_t dataSize);
 		void OnGridDirectoryDoubleClick(EditorUI::GridEntry& currentEntry);
 		void OnGridHandleRightClick(EditorUI::GridEntry& currentEntry);
+		// Popup functionality
+		void OnHandleDeleteFile();
 
 	private:
 		//=========================

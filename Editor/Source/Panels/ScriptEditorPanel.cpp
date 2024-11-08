@@ -354,8 +354,6 @@ namespace Kargono::Panels
 		return false;
 	}
 
-
-
 	bool ScriptEditorPanel::OnAssetEvent(Events::Event* event)
 	{
 		Events::ManageAsset& manageEvent = *(Events::ManageAsset*)event;

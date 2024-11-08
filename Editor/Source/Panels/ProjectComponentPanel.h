@@ -30,6 +30,7 @@ namespace Kargono::Panels
 		//=========================
 		// External Functionality
 		//=========================
+		void ResetPanelResources();
 		void OpenCreateDialog(std::filesystem::path& createLocation);
 
 	private:
@@ -59,7 +60,7 @@ namespace Kargono::Panels
 		EditorUI::EditTextSpec m_SelectComponentName {};
 		EditorUI::ChooseDirectorySpec m_SelectProjectComponentLocationSpec{};
 		// Header
-		EditorUI::PanelHeaderSpec m_TagHeader {};
+		EditorUI::PanelHeaderSpec m_MainHeader {};
 		EditorUI::GenericPopupSpec m_DeleteComponentWarning {};
 		EditorUI::GenericPopupSpec m_CloseComponentWarning {};
 		// Fields Table

@@ -27,6 +27,11 @@ namespace Kargono::Panels
 			s_EditorApp->OpenWarningMessage("A user interface is already active inside the editor. Please close the current user interface before creating a new one.");
 		}
 	}
+	void UIEditorPanel::ResetPanelResources()
+	{
+		m_EditorUI = nullptr;
+		m_EditorUIHandle = Assets::EmptyHandle;
+	}
 	// Reusable Functions
 	void UIEditorPanel::OnOpenUI()
 	{
@@ -116,11 +121,24 @@ namespace Kargono::Panels
 			return false;
 		}
 
-		// Handle deletion of asset
-		if (manageAsset->GetAssetID() == m_EditorUIHandle && manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		// Check if editor needs modification
+		if (manageAsset->GetAssetID() != m_EditorUIHandle)
 		{
-			m_EditorUI = nullptr;
-			m_EditorUIHandle = Assets::EmptyHandle;
+			return false;
+		}
+
+		// Handle deletion of asset
+		if (manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			ResetPanelResources();
+			return true;
+		}
+
+		// Handle updating of asset
+		if (manageAsset->GetAction() == Events::ManageAssetAction::Update)
+		{
+			// Update header
+			m_MainHeader.Label = Assets::AssetService::GetUserInterfaceFileLocation(manageAsset->GetAssetID()).string();
 			return true;
 		}
 		return false;

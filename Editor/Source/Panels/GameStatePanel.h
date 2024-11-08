@@ -59,7 +59,7 @@ namespace Kargono::Panels
 		EditorUI::ChooseDirectorySpec m_SelectGameStateLocationSpec{};
 		// Header
 		EditorUI::EditTextSpec m_SelectGameStateNameSpec {};
-		EditorUI::PanelHeaderSpec m_TagHeader {};
+		EditorUI::PanelHeaderSpec m_MainHeader {};
 		EditorUI::GenericPopupSpec m_DeleteGameStateWarning {};
 		EditorUI::GenericPopupSpec m_CloseGameStateWarning {};
 		// Fields Panel

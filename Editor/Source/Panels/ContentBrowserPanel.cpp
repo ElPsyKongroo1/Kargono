@@ -55,8 +55,14 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::OnNavHeaderBackReceivePayload(const char* payloadName, void* dataPointer, std::size_t dataSize)
 	{
+		// Get original file path from payload
 		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
 		std::filesystem::path payloadPath(payloadPathPointer);
+
+		// Handle updating internal registry for assets if necessary
+		OnHandleMoveAssetLocation(payloadPath, m_CurrentDirectory.parent_path());
+
+		// Move file to new directory
 		Utility::FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
 	}
 
@@ -89,12 +95,18 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::OnGridReceivePayload(EditorUI::GridEntry& currentEntry, const char* payloadName, void* dataPointer, std::size_t dataSize)
 	{
-		std::filesystem::path currentEntryPath{ m_CurrentDirectory / currentEntry.m_Label.CString() };
+		// Get absolute path of the in-grid directory
+		std::filesystem::path newDirectoryPath{ m_CurrentDirectory / currentEntry.m_Label.CString() };
 
+		// Handle receiving payload (Get directory of file...)
 		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
 		std::filesystem::path payloadPath(payloadPathPointer);
-		Utility::FileSystem::MoveFileToDirectory(payloadPath, currentEntryPath);
-		
+
+		// Handle updating internal registry for assets if necessary
+		OnHandleMoveAssetLocation(payloadPath, newDirectoryPath);
+
+		// Move the file
+		Utility::FileSystem::MoveFileToDirectory(payloadPath, newDirectoryPath);
 	}
 
 	void ContentBrowserPanel::OnGridDirectoryDoubleClick(EditorUI::GridEntry& currentEntry)
@@ -198,6 +210,17 @@ namespace Kargono::Panels
 			EditorUI::TooltipEntry deleteFileTooltipEntry{ "Delete File", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				m_DeleteFilePopup.PopupActive = true;
+#if 0
+				switch (fileType)
+				{
+					case BrowserFileType::
+				case BrowserFileType::RawAudio:
+				case BrowserFileType::RawFont:
+				case BrowserFileType::RawImage:
+					m_DeleteFilePopup.Label = "Delete File";
+
+				}
+#endif
 			} };
 			m_RightClickTooltip.AddTooltipEntry(deleteFileTooltipEntry);
 		}
@@ -212,6 +235,401 @@ namespace Kargono::Panels
 			m_RightClickTooltip.AddTooltipEntry(deleteDirectoryTooltipEntry);
 		}
 
+	}
+
+	void ContentBrowserPanel::OnHandleMoveAssetLocation(const std::filesystem::path& originalFilePath, const std::filesystem::path& newDirectory)
+	{
+		// Get file extension and relative path for payload file
+		std::filesystem::path fileExtension = originalFilePath.extension();
+		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), originalFilePath) };
+		std::filesystem::path newRelativePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), newDirectory / originalFilePath.filename()) };
+		if (fileExtension == ".kgstate")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetGameStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If game state in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a game state, however, no game state could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetGameStateFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of game state asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update game state location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgaistate")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If AI state in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a AI state, however, no AI state could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetAIStateFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of AI state asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update AI state location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgaudio")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetAudioBufferHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If audio buffer in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a audio buffer, however, no audio buffer could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetAudioBufferFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of audio buffer asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update audio buffer location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgfont")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetFontHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If font in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a font, however, no font could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetFontFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of font asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update font location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kginput")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetInputMapHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If input map in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a input map, however, no input map could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetInputMapFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of input map asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update input map location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgcomponent")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If project component in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a project component, however, no project component could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetProjectComponentFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of project component asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update project component location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgscene")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetSceneHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If scene in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a scene, however, no scene could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetSceneFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of scene asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update scene location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgscript")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetScriptHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If script in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a script, however, no script could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetScriptFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of script asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update script location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgtexture")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetTexture2DHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If texture in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a texture, however, no texture could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetTexture2DFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of texture asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update texture location in registry");
+				}
+			}
+		}
+
+		else if (fileExtension == ".kgui")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetUserInterfaceHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If user interface in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a user interface, however, no user interface could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetUserInterfaceFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of user interface asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update user interface location in registry");
+				}
+			}
+		}
+	}
+
+	void ContentBrowserPanel::OnHandleDeleteFile()
+	{
+		// TODO: Fix this implementation. Probably should use a switch
+		std::filesystem::path currentExtension = m_CurrentFileToModifyCache.extension();
+		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), m_CurrentFileToModifyCache) };
+		if (currentExtension == ".kgstate")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetGameStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If game state in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a game state, however, no game state could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+
+			Assets::AssetService::DeleteGameState(resultHandle);
+		}
+
+		else if (currentExtension == ".kgaistate")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If game state in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as an ai state, however, no ai state could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+
+			Assets::AssetService::DeleteAIState(resultHandle);
+		}
+		else if (currentExtension == ".kgaudio")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetAudioBufferHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If audio in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as an audio asset, however, no audio asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+
+			Assets::AssetService::DeleteAudioBuffer(resultHandle);
+		}
+		else if (currentExtension == ".kgfont")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetFontHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If font in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a font asset, however, no font asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+
+			Assets::AssetService::DeleteFont(resultHandle);
+		}
+		else if (currentExtension == ".kginput")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetInputMapHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If input map in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a input map asset, however, no input map asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteInputMap(resultHandle);
+		}
+		else if (currentExtension == ".kgcomponent")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If project component in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a project component asset, however, no project component asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteProjectComponent(resultHandle);
+		}
+		else if (currentExtension == ".kgscene")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetSceneHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If scene in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a scene asset, however, no scene asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteScene(resultHandle);
+		}
+		else if (currentExtension == ".kgscript")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetScriptHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If script in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a script asset, however, no script asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteScript(resultHandle);
+		}
+		else if (currentExtension == ".kgtexture")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetTexture2DHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If texture in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a texture asset, however, no texture asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteTexture2D(resultHandle);
+		}
+		else if (currentExtension == ".kgui")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetUserInterfaceHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If user interface in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a user interface asset, however, no user interface asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteUserInterface(resultHandle);
+		}
+		else
+		{
+			Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+		}
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel()
@@ -345,151 +763,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::EditorUIService::LabeledText("File Name:", m_CurrentFileToModifyCache.string().c_str());
 		};
-		m_DeleteFilePopup.ConfirmAction = [&]()
-		{
-			// TODO: Fix this implementation. Probably should use a switch
-			std::filesystem::path currentExtension = m_CurrentFileToModifyCache.extension();
-			std::filesystem::path filePathWithoutAssets{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), m_CurrentFileToModifyCache) };
-			if (currentExtension == ".kgstate")
-			{
-				// Search registry for asset with identical file location
-				Assets::AssetHandle resultHandle = Assets::AssetService::GetGameStateHandleFromFileLocation(filePathWithoutAssets);
-				// If game state in registry is not found, simply delete the file
-				if (resultHandle == Assets::EmptyHandle)
-				{
-					KG_WARN("File extension recognized as a game state, however, no game state could be found in registry. Deleting the file provided.");
-					Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
-					return;
-				}
-
-				Assets::AssetService::DeleteGameState(resultHandle);
-			}
-
-			else if (currentExtension == ".kgaistate")
-			{
-				// Search registry for asset with identical file location
-				Assets::AssetHandle resultHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(filePathWithoutAssets);
-				// If game state in registry is not found, simply delete the file
-				if (resultHandle == Assets::EmptyHandle)
-				{
-					KG_WARN("File extension recognized as an ai state, however, no ai state could be found in registry. Deleting the file provided.");
-					Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
-					return;
-				}
-
-				Assets::AssetService::DeleteAIState(resultHandle);
-			}
-			else if (currentExtension == ".kgaudio")
-			{
-				// Search registry for asset with identical file location
-				Assets::AssetHandle resultHandle = Assets::AssetService::GetAudioBufferHandleFromFileLocation(filePathWithoutAssets);
-				// If audio in registry is not found, simply delete the file
-				if (resultHandle == Assets::EmptyHandle)
-				{
-					KG_WARN("File extension recognized as an audio asset, however, no audio asset could be found in registry. Deleting the file provided.");
-					Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
-					return;
-				}
-
-				Assets::AssetService::DeleteAudioBuffer(resultHandle);
-			}
-			else if (currentExtension == ".kgfont")
-			{
-				// Search registry for asset with identical file location
-				Assets::AssetHandle resultHandle = Assets::AssetService::GetFontHandleFromFileLocation(filePathWithoutAssets);
-				// If font in registry is not found, simply delete the file
-				if (resultHandle == Assets::EmptyHandle)
-				{
-					KG_WARN("File extension recognized as a font asset, however, no font asset could be found in registry. Deleting the file provided.");
-					Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
-					return;
-				}
-
-				Assets::AssetService::DeleteFont(resultHandle);
-			}
-			else if (currentExtension == ".kginput")
-			{
-				// Search registry for asset with identical file location
-				Assets::AssetHandle resultHandle = Assets::AssetService::GetInputMapHandleFromFileLocation(filePathWithoutAssets);
-				// If input map in registry is not found, simply delete the file
-				if (resultHandle == Assets::EmptyHandle)
-				{
-					KG_WARN("File extension recognized as a input map asset, however, no input map asset could be found in registry. Deleting the file provided.");
-					Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
-					return;
-				}
-				Assets::AssetService::DeleteInputMap(resultHandle);
-			}
-			else if (currentExtension == ".kgcomponent")
-			{
-				// Search registry for asset with identical file location
-				Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectComponentHandleFromFileLocation(filePathWithoutAssets);
-				// If project component in registry is not found, simply delete the file
-				if (resultHandle == Assets::EmptyHandle)
-				{
-					KG_WARN("File extension recognized as a project component asset, however, no project component asset could be found in registry. Deleting the file provided.");
-					Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
-					return;
-				}
-				Assets::AssetService::DeleteProjectComponent(resultHandle);
-			}
-			else if (currentExtension == ".kgscene")
-			{
-				// Search registry for asset with identical file location
-				Assets::AssetHandle resultHandle = Assets::AssetService::GetSceneHandleFromFileLocation(filePathWithoutAssets);
-				// If scene in registry is not found, simply delete the file
-				if (resultHandle == Assets::EmptyHandle)
-				{
-					KG_WARN("File extension recognized as a scene asset, however, no scene asset could be found in registry. Deleting the file provided.");
-					Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
-					return;
-				}
-				Assets::AssetService::DeleteScene(resultHandle);
-			}
-			else if (currentExtension == ".kgscript")
-			{
-				// Search registry for asset with identical file location
-				Assets::AssetHandle resultHandle = Assets::AssetService::GetScriptHandleFromFileLocation(filePathWithoutAssets);
-				// If script in registry is not found, simply delete the file
-				if (resultHandle == Assets::EmptyHandle)
-				{
-					KG_WARN("File extension recognized as a script asset, however, no script asset could be found in registry. Deleting the file provided.");
-					Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
-					return;
-				}
-				Assets::AssetService::DeleteScript(resultHandle);
-			}
-			else if (currentExtension == ".kgtexture")
-			{
-				// Search registry for asset with identical file location
-				Assets::AssetHandle resultHandle = Assets::AssetService::GetTexture2DHandleFromFileLocation(filePathWithoutAssets);
-				// If texture in registry is not found, simply delete the file
-				if (resultHandle == Assets::EmptyHandle)
-				{
-					KG_WARN("File extension recognized as a texture asset, however, no texture asset could be found in registry. Deleting the file provided.");
-					Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
-					return;
-				}
-				Assets::AssetService::DeleteTexture2D(resultHandle);
-			}
-			else if (currentExtension == ".kgui")
-			{
-				// Search registry for asset with identical file location
-				Assets::AssetHandle resultHandle = Assets::AssetService::GetUserInterfaceHandleFromFileLocation(filePathWithoutAssets);
-				// If user interface in registry is not found, simply delete the file
-				if (resultHandle == Assets::EmptyHandle)
-				{
-					KG_WARN("File extension recognized as a user interface asset, however, no user interface asset could be found in registry. Deleting the file provided.");
-					Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
-					return;
-				}
-				Assets::AssetService::DeleteUserInterface(resultHandle);
-				}
-			else
-			{
-				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
-			}
-		};
+		m_DeleteFilePopup.ConfirmAction = KG_BIND_CLASS_FN(OnHandleDeleteFile);
 
 		// Initialize rename file popup
 		m_RenameFilePopup.Label = "Rename File";

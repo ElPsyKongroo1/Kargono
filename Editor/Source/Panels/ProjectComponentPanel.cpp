@@ -36,7 +36,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Header
-			EditorUI::EditorUIService::PanelHeader(m_TagHeader);
+			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Header Popups
@@ -87,9 +87,9 @@ namespace Kargono::Panels
 
 			m_EditorProjectComponent = Assets::AssetService::GetProjectComponent(selection.Handle);
 			m_EditorProjectComponentHandle = selection.Handle;
-			m_TagHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
+			m_MainHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
 				selection.Handle).Data.FileLocation.string();
-			m_TagHeader.EditColorActive = false;
+			m_MainHeader.EditColorActive = false;
 			RefreshData();
 		};
 
@@ -127,8 +127,8 @@ namespace Kargono::Panels
 			}
 			m_EditorProjectComponentHandle = Assets::AssetService::CreateProjectComponent(m_SelectComponentName.CurrentOption.c_str(), m_SelectProjectComponentLocationSpec.CurrentOption);
 			m_EditorProjectComponent = Assets::AssetService::GetProjectComponent(m_EditorProjectComponentHandle);
-			m_TagHeader.EditColorActive = false;
-			m_TagHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
+			m_MainHeader.EditColorActive = false;
+			m_MainHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
 				m_EditorProjectComponentHandle).Data.FileLocation.string();
 			RefreshData();
 			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
@@ -166,15 +166,15 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Text("Are you sure you want to close this component object without saving?");
 		};
 
-		m_TagHeader.AddToSelectionList("Save", [&]()
+		m_MainHeader.AddToSelectionList("Save", [&]()
 		{
 			Assets::AssetService::SaveProjectComponent(m_EditorProjectComponentHandle, m_EditorProjectComponent);
 			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
-			m_TagHeader.EditColorActive = false;
+			m_MainHeader.EditColorActive = false;
 		});
-		m_TagHeader.AddToSelectionList("Close", [&]()
+		m_MainHeader.AddToSelectionList("Close", [&]()
 		{
-			if (m_TagHeader.EditColorActive)
+			if (m_MainHeader.EditColorActive)
 			{
 				m_CloseComponentWarning.PopupActive = true;
 			}
@@ -184,7 +184,7 @@ namespace Kargono::Panels
 				m_EditorProjectComponent = nullptr;
 			}
 		});
-		m_TagHeader.AddToSelectionList("Delete", [&]()
+		m_MainHeader.AddToSelectionList("Delete", [&]()
 		{
 			m_DeleteComponentWarning.PopupActive = true;
 		});
@@ -253,7 +253,7 @@ namespace Kargono::Panels
 				KG_WARN("Add field failed. Returning to previous window.");
 				return;
 			}
-			m_TagHeader.EditColorActive = true;
+			m_MainHeader.EditColorActive = true;
 			m_FieldsTable.OnRefresh();
 		};
 		m_AddFieldPopup.PopupContents = [&]()
@@ -285,7 +285,7 @@ namespace Kargono::Panels
 		m_EditFieldPopup.DeleteAction = [&]()
 		{
 			ECS::ProjectComponentService::DeleteFieldFromProjectComponent(m_EditorProjectComponent, m_ActiveField);
-			m_TagHeader.EditColorActive = true;
+			m_MainHeader.EditColorActive = true;
 			RefreshData();
 		};
 		m_EditFieldPopup.PopupAction = [&]()
@@ -306,7 +306,7 @@ namespace Kargono::Panels
 				KG_WARN("Edit field failed. Returning to previous window.");
 				return;
 			}
-			m_TagHeader.EditColorActive = true;
+			m_MainHeader.EditColorActive = true;
 			m_FieldsTable.OnRefresh();
 		};
 		m_EditFieldPopup.PopupContents = [&]()
@@ -333,13 +333,31 @@ namespace Kargono::Panels
 		}
 
 		// Handle deletion of asset
-		if (manageAsset->GetAssetID() == m_EditorProjectComponentHandle && manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		if (manageAsset->GetAssetID() != m_EditorProjectComponentHandle)
 		{
-			m_EditorProjectComponent = nullptr;
-			m_EditorProjectComponentHandle = Assets::EmptyHandle;
+			return false;
+		}
+
+		// Handle deletion of asset
+		if (manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			ResetPanelResources();
+			return true;
+		}
+
+		// Handle updating of asset
+		if (manageAsset->GetAction() == Events::ManageAssetAction::Update)
+		{
+			// Update header
+			m_MainHeader.Label = Assets::AssetService::GetProjectComponentFileLocation(manageAsset->GetAssetID()).string();
 			return true;
 		}
 		return false;
+	}
+	void ProjectComponentPanel::ResetPanelResources()
+	{
+		m_EditorProjectComponent = nullptr;
+		m_EditorProjectComponentHandle = Assets::EmptyHandle;
 	}
 	void ProjectComponentPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{

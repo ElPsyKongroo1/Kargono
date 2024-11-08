@@ -99,11 +99,23 @@ namespace Kargono::Panels
 			return false;
 		}
 
-		// Handle deletion of asset
-		if (manageAsset->GetAssetID() == m_EditorAIStateHandle && manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		if (manageAsset->GetAssetID() != m_EditorAIStateHandle)
 		{
-			m_EditorAIState = nullptr;
-			m_EditorAIStateHandle = Assets::EmptyHandle;
+			return false;
+		}
+
+		// Handle deletion of asset
+		if (manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			ResetPanelResources();
+			return true;
+		}
+
+		// Handle updating of asset
+		if (manageAsset->GetAction() == Events::ManageAssetAction::Update)
+		{
+			// Update header
+			m_MainHeader.Label = Assets::AssetService::GetAIStateFileLocation(manageAsset->GetAssetID()).string();
 			return true;
 		}
 		return false;
