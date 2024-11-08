@@ -353,6 +353,52 @@ namespace Kargono::Panels
 	{
 		return false;
 	}
+
+
+
+	bool ScriptEditorPanel::OnAssetEvent(Events::Event* event)
+	{
+		Events::ManageAsset& manageEvent = *(Events::ManageAsset*)event;
+
+		// Validate asset is a script
+		if (manageEvent.GetAssetType() != Assets::AssetType::Script)
+		{
+			return false;
+		}
+
+		// Handle deletion event
+		if (manageEvent.GetAction() == Events::ManageAssetAction::Delete)
+		{
+			// Search table for deleted asset
+			std::size_t assetLocation = m_AllScriptsTable.SearchEntries([&](const EditorUI::TableEntry& currentEntry)
+			{
+				// Check if handle matches
+				if (currentEntry.Handle != manageEvent.GetAssetID())
+				{
+					return false;
+				}
+
+				// Index has been found
+				return true;
+
+			});
+
+			// Validate that table search was successful
+			KG_ASSERT(assetLocation != EditorUI::k_TableSearchIndex, "Asset being deleted was not found in asset table");
+
+			// Delete entry and validate deletion
+			bool deletionSuccess = m_AllScriptsTable.RemoveEntry(assetLocation);
+			KG_ASSERT(deletionSuccess, "Unable to delete asset inside script editor panel");
+		}
+
+		// Handle all othe event types
+		else
+		{
+			ResetPanelResources();
+		}
+
+		return true;
+	}
 	void ScriptEditorPanel::ResetPanelResources()
 	{
 		m_AllScriptsTable.OnRefresh();

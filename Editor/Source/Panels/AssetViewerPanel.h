@@ -26,7 +26,6 @@ namespace Kargono::Panels
 	private:
 		FixedString32 m_PanelName{ "Asset Viewer" };
 		EditorUI::TableSpec m_AllAssetsTable {};
-
 		EditorUI::GenericPopupSpec m_ViewAssetPopup {};
 
 		Assets::AssetHandle m_ActiveAsset {Assets::EmptyHandle};

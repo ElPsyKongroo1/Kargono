@@ -227,8 +227,6 @@ namespace Kargono::Assets
 			// Find location of asset's data
 			Assets::Asset& asset = m_AssetRegistry[assetHandle];
 			
-			
-
 			// Process delete event and validation
 			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::Delete);
 			DeleteAssetValidation(assetHandle);

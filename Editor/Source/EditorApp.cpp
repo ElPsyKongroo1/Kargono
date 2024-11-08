@@ -500,48 +500,87 @@ namespace Kargono
 
 	bool EditorApp::OnAssetEvent(Events::Event* event)
 	{
-		if (event->GetEventType() == Events::EventType::ManageAsset)
+		Events::ManageAsset& manageAsset = *(Events::ManageAsset*)event;
+
+		// Handle adding a project component to the active editor scene
+		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
+			manageAsset.GetAction() == Events::ManageAssetAction::Create)
 		{
-			Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
-
-			// Handle adding a project component to the active editor scene
-			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
-				manageAsset->GetAction() == Events::ManageAssetAction::Create)
+			// Create project component inside scene registry
+			if (m_EditorScene)
 			{
-				// Create project component inside scene registry
-				if (m_EditorScene)
-				{
-					m_EditorScene->AddProjectComponentRegistry(manageAsset->GetAssetID());
-				}
+				m_EditorScene->AddProjectComponentRegistry(manageAsset.GetAssetID());
 			}
-			// Handle editing a project component by modifying entity component data inside the Assets::AssetService::SceneRegistry and the active editor scene
-			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
-				manageAsset->GetAction() == Events::ManageAssetAction::Update)
+		}
+		// Handle editing a project component by modifying entity component data inside the Assets::AssetService::SceneRegistry and the active editor scene
+		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
+			manageAsset.GetAction() == Events::ManageAssetAction::Update)
+		{
+			OnUpdateProjectComponent(manageAsset);
+		}
+		// Handle deleting a project component by removing entity data from all scenes
+		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
+			manageAsset.GetAction() == Events::ManageAssetAction::Delete)
+		{
+			for (auto& [sceneHandle, sceneAsset] : Assets::AssetService::GetSceneRegistry())
 			{
-				OnUpdateProjectComponent(*manageAsset);
-			}
-			// Handle deleting a project component by removing entity data from all scenes
-			if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
-				manageAsset->GetAction() == Events::ManageAssetAction::Delete)
-			{
-				for (auto& [sceneHandle, sceneAsset] : Assets::AssetService::GetSceneRegistry())
-				{
-					// Get scene
-					Ref<Scenes::Scene> currentScene = Assets::AssetService::GetScene(sceneHandle);
-					KG_ASSERT(currentScene);
+				// Get scene
+				Ref<Scenes::Scene> currentScene = Assets::AssetService::GetScene(sceneHandle);
+				KG_ASSERT(currentScene);
 
-					// Clear component registry
-					currentScene->ClearProjectComponentRegistry(manageAsset->GetAssetID());
+				// Clear component registry
+				currentScene->ClearProjectComponentRegistry(manageAsset.GetAssetID());
 
-					// Save scene asset on-disk 
-					Assets::AssetService::SaveScene(sceneHandle, currentScene);
-				}
+				// Save scene asset on-disk 
+				Assets::AssetService::SaveScene(sceneHandle, currentScene);
 			}
 		}
 
+
 		m_SceneEditorPanel->OnAssetEvent(event);
 		m_AssetViewerPanel->OnAssetEvent(event);
-		m_GameStatePanel->OnAssetEvent(event);
+
+		if (manageAsset.GetAssetType() == Assets::AssetType::Scene && 
+			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			manageAsset.GetAssetID() == m_EditorSceneHandle)
+		{
+			// Create new scene w/ unique name
+			uint32_t iteration{ 1 };
+			bool success{ false };
+			while (!success)
+			{
+				FixedString16 sceneName{ "NewScene" };
+				sceneName.AppendInteger(iteration);
+				success = NewScene(sceneName.CString());
+				iteration++;
+			}
+		}
+
+		switch (manageAsset.GetAssetType())
+		{
+		case Assets::AssetType::GameState:
+			m_GameStatePanel->OnAssetEvent(event);
+			break;
+		case Assets::AssetType::AIState:
+			m_AIStatePanel->OnAssetEvent(event);
+			break;
+		case Assets::AssetType::InputMap:
+			m_InputMapPanel->OnAssetEvent(event);
+			break;
+		case Assets::AssetType::ProjectComponent:
+			m_ProjectComponentPanel->OnAssetEvent(event);
+			break;
+		case Assets::AssetType::Script:
+			m_ScriptEditorPanel->OnAssetEvent(event);
+			break;
+		case Assets::AssetType::UserInterface:
+			m_UIEditorPanel->OnAssetEvent(event);
+			break;
+		default:
+			break;
+		}
+		//NewScene("NewScene");
+		
 
 		return false;
 	}
@@ -1031,19 +1070,30 @@ namespace Kargono
 		NewSceneDialog(Projects::ProjectService::GetActiveAssetDirectory());
 	}
 
-	void EditorApp::NewScene(const std::string& sceneName)
+	bool EditorApp::NewScene(const std::string& sceneName)
 	{
+		// Ensure scene does not already exist
 		std::filesystem::path filepath = Projects::ProjectService::GetActiveAssetDirectory() / ("Scenes/" + sceneName + ".kgscene");
 		if (Assets::AssetService::HasScene(filepath.stem().string()))
 		{
 			KG_WARN("Attempt to create scene with duplicate name!");
-			return;
+			return false;
 		}
+
+		// Create new scene
 		m_EditorSceneHandle = Assets::AssetService::CreateScene(filepath.stem().string().c_str());
 
+		// Validate scene creation
+		if (m_EditorSceneHandle == Assets::EmptyHandle)
+		{
+			return false;
+		}
+
+		// Reset editor data
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		return true;
 	}
 
 	void EditorApp::NewSceneDialog(const std::filesystem::path& initialDirectory)
@@ -1066,6 +1116,7 @@ namespace Kargono
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		
 	}
 
 	void EditorApp::OpenScene()

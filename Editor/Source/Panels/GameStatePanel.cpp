@@ -349,6 +349,7 @@ namespace Kargono::Panels
 	}
 	bool GameStatePanel::OnAssetEvent(Events::Event* event)
 	{
+		// Validate event type and asset type
 		if (event->GetEventType() != Events::EventType::ManageAsset)
 		{
 			return false;
@@ -359,12 +360,14 @@ namespace Kargono::Panels
 			return false;
 		}
 
+		// Handle deletion of asset
 		if (manageAsset->GetAssetID() == m_EditorGameStateHandle && manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
 			m_EditorGameState = nullptr;
 			m_EditorGameStateHandle = Assets::EmptyHandle;
+			return true;
 		}
-		return true;
+		return false;
 	}
 	void GameStatePanel::ResetPanelResources()
 	{

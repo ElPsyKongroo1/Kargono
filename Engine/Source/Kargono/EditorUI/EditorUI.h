@@ -1146,6 +1146,8 @@ namespace Kargono::EditorUI
 		std::function<void(TableEntry& entry)> OnLink { nullptr };
 	};
 
+	static inline std::size_t k_TableSearchIndex{ std::numeric_limits<std::size_t>::max() };
+
 	struct TableSpec
 	{
 	public:
@@ -1172,6 +1174,34 @@ namespace Kargono::EditorUI
 		{
 			TableValues.push_back(entry);
 		}
+
+		bool RemoveEntry(std::size_t entryIndex)
+		{
+			if (entryIndex >= TableValues.size()) 
+			{
+				return false;
+			}
+			TableValues.erase(TableValues.begin() + entryIndex);
+			return true;
+		}
+
+		std::size_t SearchEntries(std::function<bool(const TableEntry& currentEntry)> searchFunction)
+		{
+			// Run search function on entry
+			std::size_t iteration{ 0 };
+			for (const TableEntry& currentEntry : TableValues)
+			{
+				if (searchFunction(currentEntry))
+				{
+					return iteration;
+				}
+				iteration++;
+			}
+			
+			// Return invalid index if none is found
+			return k_TableSearchIndex;
+		}
+
 		void ClearTable()
 		{
 			TableValues.clear();

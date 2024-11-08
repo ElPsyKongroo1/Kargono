@@ -319,6 +319,28 @@ namespace Kargono::Panels
 	{
 		return false;
 	}
+	bool ProjectComponentPanel::OnAssetEvent(Events::Event* event)
+	{
+		// Validate event type and asset type
+		if (event->GetEventType() != Events::EventType::ManageAsset)
+		{
+			return false;
+		}
+		Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
+		if (manageAsset->GetAssetType() != Assets::AssetType::ProjectComponent)
+		{
+			return false;
+		}
+
+		// Handle deletion of asset
+		if (manageAsset->GetAssetID() == m_EditorProjectComponentHandle && manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			m_EditorProjectComponent = nullptr;
+			m_EditorProjectComponentHandle = Assets::EmptyHandle;
+			return true;
+		}
+		return false;
+	}
 	void ProjectComponentPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// Open project component Window

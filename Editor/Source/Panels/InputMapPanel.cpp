@@ -99,6 +99,29 @@ namespace Kargono::Panels
 		return false;
 	}
 
+	bool InputMapPanel::OnAssetEvent(Events::Event* event)
+	{
+		// Validate event type and asset type
+		if (event->GetEventType() != Events::EventType::ManageAsset)
+		{
+			return false;
+		}
+		Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
+		if (manageAsset->GetAssetType() != Assets::AssetType::InputMap)
+		{
+			return false;
+		}
+
+		// Handle deletion of asset
+		if (manageAsset->GetAssetID() == m_EditorInputMapHandle && manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			m_EditorInputMap = nullptr;
+			m_EditorInputMapHandle = Assets::EmptyHandle;
+			return true;
+		}
+		return false;
+	}
+
 	void InputMapPanel::ResetPanelResources()
 	{
 		m_EditorInputMap = nullptr;

@@ -30,6 +30,7 @@ namespace Kargono::Panels
 		//=========================
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
+		bool OnAssetEvent(Events::Event* event);
 
 		//=========================
 		// External API

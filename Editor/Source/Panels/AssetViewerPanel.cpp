@@ -30,12 +30,46 @@ namespace Kargono::Panels
 
 	bool AssetViewerPanel::OnAssetEvent(Events::Event* event)
 	{
-		if (event->GetEventType() == Events::EventType::ManageAsset)
+		Events::ManageAsset& manageEvent = *(Events::ManageAsset*)event;
+
+		// Handle deletion event
+		if (manageEvent.GetAction() == Events::ManageAssetAction::Delete)
+		{
+			// Search table for deleted asset
+			std::size_t assetLocation = m_AllAssetsTable.SearchEntries([&](const EditorUI::TableEntry& currentEntry) 
+			{
+				// Check if type inside tree is the same
+				if (Utility::StringToAssetType(currentEntry.Label) != manageEvent.GetAssetType())
+				{
+					return false;
+				}
+
+				// Check if handle matches
+				if (currentEntry.Handle != manageEvent.GetAssetID())
+				{
+					return false;
+				}
+
+				// Index has been found
+				return true;
+
+			});
+
+			// Validate that table search was successful
+			KG_ASSERT(assetLocation != EditorUI::k_TableSearchIndex, "Asset being deleted was not found in asset table");
+
+			// Delete entry and validate deletion
+			bool deletionSuccess = m_AllAssetsTable.RemoveEntry(assetLocation);
+			KG_ASSERT(deletionSuccess, "Unable to delete asset inside AssetViewer");
+		}
+
+		// Handle all othe event types
+		else
 		{
 			RefreshPanelData();
-			return true;
 		}
-		return false;
+
+		return true;
 	}
 
 	void AssetViewerPanel::InitializeAssetsTable()

@@ -103,6 +103,29 @@ namespace Kargono::Panels
 		}
 	}
 
+	bool UIEditorPanel::OnAssetEvent(Events::Event* event)
+	{
+		// Validate event type and asset type
+		if (event->GetEventType() != Events::EventType::ManageAsset)
+		{
+			return false;
+		}
+		Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
+		if (manageAsset->GetAssetType() != Assets::AssetType::UserInterface)
+		{
+			return false;
+		}
+
+		// Handle deletion of asset
+		if (manageAsset->GetAssetID() == m_EditorUIHandle && manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			m_EditorUI = nullptr;
+			m_EditorUIHandle = Assets::EmptyHandle;
+			return true;
+		}
+		return false;
+	}
+
 	void UIEditorPanel::DrawWindowOptions()
 	{
 
