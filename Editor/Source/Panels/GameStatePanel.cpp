@@ -37,12 +37,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorGameState = Assets::AssetService::GetGameState(selection.Handle);
-			m_EditorGameStateHandle = selection.Handle;
-			m_MainHeader.EditColorActive = false;
-			m_MainHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
-				m_EditorGameStateHandle).Data.FileLocation.string();
-			m_FieldsTable.OnRefresh();
+			OnOpenGameState(selection.Handle);
 		};
 
 		m_SelectGameStateNameSpec.Label = "New Name";
@@ -87,6 +82,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::ChooseDirectory(m_SelectGameStateLocationSpec);
 		};
 	}
+
 
 	void GameStatePanel::InitializeDisplayGameStateScreen()
 	{
@@ -327,7 +323,7 @@ namespace Kargono::Panels
 		if (!m_EditorGameState)
 		{
 			
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Game State", KG_BIND_CLASS_FN(OpenGameState), "Create New Game State", KG_BIND_CLASS_FN(CreateGameState));
+			EditorUI::EditorUIService::NewItemScreen("Open Existing Game State", KG_BIND_CLASS_FN(OnOpenGameStateDialog), "Create New Game State", KG_BIND_CLASS_FN(OnCreateGameStateDialog));
 			EditorUI::EditorUIService::GenericPopup(m_CreateGameStatePopupSpec);
 			EditorUI::EditorUIService::SelectOption(m_OpenGameStatePopupSpec);
 		}
@@ -373,7 +369,7 @@ namespace Kargono::Panels
 		}
 
 		// Handle updating of asset
-		if (manageAsset->GetAction() == Events::ManageAssetAction::Update)
+		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
 			// Update game state header if necessary
 			m_MainHeader.Label = Assets::AssetService::GetGameStateFileLocation(manageAsset->GetAssetID()).string();
@@ -398,7 +394,7 @@ namespace Kargono::Panels
 		if (!m_EditorGameState)
 		{
 			// Open dialog to create editor game state
-			CreateGameState();
+			OnCreateGameStateDialog();
 			m_SelectGameStateLocationSpec.CurrentOption = createLocation;
 		}
 		else
@@ -407,14 +403,72 @@ namespace Kargono::Panels
 			s_EditorApp->OpenWarningMessage("A game state is already active inside the editor. Please close the current game state before creating a new one.");
 		}
 	}
-	void GameStatePanel::OpenGameState()
+
+	void GameStatePanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
+	{
+		// Ensure provided path is within the active asset directory
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
+		{
+			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
+			return;
+		}
+
+		// Look for asset in registry using the file location
+		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
+		Assets::AssetHandle assetHandle = Assets::AssetService::GetGameStateHandleFromFileLocation(relativePath);
+
+		// Validate resulting handle
+		if (!assetHandle)
+		{
+			KG_WARN("Could not open asset in editor. Provided path does not result in an asset inside the registry.");
+			return;
+		}
+
+		// Open the editor panel to be visible
+		s_EditorApp->m_ShowGameStateEditor = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+
+		// Early out if asset is already open
+		if (m_EditorGameStateHandle == assetHandle)
+		{
+			return;
+		}
+
+		// Check if panel is already occupied by an asset
+		if (!m_EditorGameState)
+		{
+			OnOpenGameState(assetHandle);
+		}
+		else
+		{
+			// Add warning to close active AI state before opening a new AIState
+			s_EditorApp->OpenWarningMessage("An game state is already active inside the editor. Please close the current game state before opening a new one.");
+		}
+	}
+
+	void GameStatePanel::OnOpenGameStateDialog()
 	{
 		m_OpenGameStatePopupSpec.PopupActive = true;
 	}
-	void GameStatePanel::CreateGameState()
+	void GameStatePanel::OnCreateGameStateDialog()
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive());
 		m_SelectGameStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 		m_CreateGameStatePopupSpec.PopupActive = true;
+	}
+	void GameStatePanel::OnRefreshData()
+	{
+		m_FieldsTable.OnRefresh();
+	}
+	void GameStatePanel::OnOpenGameState(Assets::AssetHandle newHandle)
+	{
+		m_EditorGameState = Assets::AssetService::GetGameState(newHandle);
+		m_EditorGameStateHandle = newHandle;
+		m_MainHeader.EditColorActive = false;
+		m_MainHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
+			m_EditorGameStateHandle).Data.FileLocation.string();
+		OnRefreshData();
 	}
 }

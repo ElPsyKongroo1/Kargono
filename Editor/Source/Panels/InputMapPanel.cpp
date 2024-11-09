@@ -8,15 +8,26 @@ namespace Kargono
 
 namespace Kargono::Panels
 {
-	void InputMapPanel::OnOpenInputMap()
+	void InputMapPanel::OnOpenInputMapDialog()
 	{
 		m_OpenInputMapPopupSpec.PopupActive = true;
 	}
-	void InputMapPanel::OnCreateInputMap()
+	void InputMapPanel::OnCreateInputMapDialog()
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive());
 		m_SelectInputMapLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 		m_CreateInputMapPopupSpec.PopupActive = true;
+	}
+
+	void InputMapPanel::OnOpenInputMap(Assets::AssetHandle newHandle)
+	{
+		// Open dialog to create editor input map
+		m_EditorInputMap = Assets::AssetService::GetInputMap(newHandle);
+		m_EditorInputMapHandle = newHandle;
+		m_MainHeader.EditColorActive = false;
+		m_MainHeader.Label = Assets::AssetService::GetInputMapRegistry().at(
+			m_EditorInputMapHandle).Data.FileLocation.string();
+		OnRefreshData();
 	}
 
 	void InputMapPanel::OnRefreshData()
@@ -49,7 +60,7 @@ namespace Kargono::Panels
 		if (!m_EditorInputMap)
 		{
 			// Opening/Null State Screen
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Input Map", KG_BIND_CLASS_FN(OnOpenInputMap), "Create New Input Map", KG_BIND_CLASS_FN(OnCreateInputMap));
+			EditorUI::EditorUIService::NewItemScreen("Open Existing Input Map", KG_BIND_CLASS_FN(OnOpenInputMapDialog), "Create New Input Map", KG_BIND_CLASS_FN(OnCreateInputMapDialog));
 			EditorUI::EditorUIService::GenericPopup(m_CreateInputMapPopupSpec);
 			EditorUI::EditorUIService::SelectOption(m_OpenInputMapPopupSpec);
 		}
@@ -126,7 +137,7 @@ namespace Kargono::Panels
 		}
 
 		// Handle updating of asset
-		if (manageAsset->GetAction() == Events::ManageAssetAction::Update)
+		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
 			// Update header
 			m_MainHeader.Label = Assets::AssetService::GetInputMapFileLocation(manageAsset->GetAssetID()).string();
@@ -151,13 +162,57 @@ namespace Kargono::Panels
 		if (!m_EditorInputMap)
 		{
 			// Open dialog to create editor input map
-			OnCreateInputMap();
+			OnCreateInputMapDialog();
 			m_SelectInputMapLocationSpec.CurrentOption = createLocation;
 		}
 		else
 		{
 			// Add warning to close active input map before creating a new input map
 			s_EditorApp->OpenWarningMessage("A input map is already active inside the editor. Please close the current input map before creating a new one.");
+		}
+	}
+
+	void InputMapPanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
+	{
+		// Ensure provided path is within the active asset directory
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
+		{
+			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
+			return;
+		}
+
+		// Look for asset in registry using the file location
+		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
+		Assets::AssetHandle assetHandle = Assets::AssetService::GetInputMapHandleFromFileLocation(relativePath);
+
+		// Validate resulting handle
+		if (!assetHandle)
+		{
+			KG_WARN("Could not open asset in editor. Provided path does not result in an asset inside the registry.");
+			return;
+		}
+
+		// Open the editor panel to be visible
+		s_EditorApp->m_ShowInputMapEditor = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+
+		// Early out if asset is already open
+		if (m_EditorInputMapHandle == assetHandle)
+		{
+			return;
+		}
+
+		// Check if panel is already occupied by an asset
+		if (!m_EditorInputMap)
+		{
+			OnOpenInputMap(assetHandle);
+		}
+		else
+		{
+			// Add warning to close active AI state before opening a new AIState
+			s_EditorApp->OpenWarningMessage("An input map is already active inside the editor. Please close the current input map before opening a new one.");
 		}
 	}
 
@@ -192,12 +247,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorInputMap = Assets::AssetService::GetInputMap(selection.Handle);
-			m_EditorInputMapHandle = selection.Handle;
-			m_MainHeader.EditColorActive = false;
-			m_MainHeader.Label = Assets::AssetService::GetInputMapRegistry().at(
-				m_EditorInputMapHandle).Data.FileLocation.string();
-			OnRefreshData();
+			OnOpenInputMap(selection.Handle);
 		};
 
 		m_SelectInputMapNameSpec.Label = "New Name";

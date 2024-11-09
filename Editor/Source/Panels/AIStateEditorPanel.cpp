@@ -8,11 +8,11 @@ namespace Kargono
 
 namespace Kargono::Panels
 {
-	void AIStateEditorPanel::OnOpenAIState()
+	void AIStateEditorPanel::OnOpenAIStateDialog()
 	{
 		m_OpenAIStatePopupSpec.PopupActive = true;
 	}
-	void AIStateEditorPanel::OnCreateAIState()
+	void AIStateEditorPanel::OnCreateAIStateDialog()
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive());
 		m_SelectAIStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
@@ -38,6 +38,16 @@ namespace Kargono::Panels
 		}
 	}
 
+	void AIStateEditorPanel::OnOpenAIState(Assets::AssetHandle newHandle)
+	{
+		m_EditorAIState = Assets::AssetService::GetAIState(newHandle);
+		m_EditorAIStateHandle = newHandle;
+		m_MainHeader.EditColorActive = false;
+		m_MainHeader.Label = Assets::AssetService::GetAIStateRegistry().at(
+			m_EditorAIStateHandle).Data.FileLocation.string();
+		OnRefreshData();
+	}
+
 	AIStateEditorPanel::AIStateEditorPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
@@ -61,7 +71,7 @@ namespace Kargono::Panels
 		if (!m_EditorAIState)
 		{
 			// Opening/Null State Screen
-			EditorUI::EditorUIService::NewItemScreen("Open Existing AI State", KG_BIND_CLASS_FN(OnOpenAIState), "Create New AI State", KG_BIND_CLASS_FN(OnCreateAIState));
+			EditorUI::EditorUIService::NewItemScreen("Open Existing AI State", KG_BIND_CLASS_FN(OnOpenAIStateDialog), "Create New AI State", KG_BIND_CLASS_FN(OnCreateAIStateDialog));
 			EditorUI::EditorUIService::GenericPopup(m_CreateAIStatePopupSpec);
 			EditorUI::EditorUIService::SelectOption(m_OpenAIStatePopupSpec);
 		}
@@ -112,7 +122,7 @@ namespace Kargono::Panels
 		}
 
 		// Handle updating of asset
-		if (manageAsset->GetAction() == Events::ManageAssetAction::Update)
+		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
 			// Update header
 			m_MainHeader.Label = Assets::AssetService::GetAIStateFileLocation(manageAsset->GetAssetID()).string();
@@ -137,15 +147,60 @@ namespace Kargono::Panels
 		if (!m_EditorAIState)
 		{
 			// Open dialog to create editor AI State
-			OnCreateAIState();
+			OnCreateAIStateDialog();
 			m_SelectAIStateLocationSpec.CurrentOption = createLocation;
 		}
 		else
 		{
 			// Add warning to close active AI state before creating a new AIState
-			s_EditorApp->OpenWarningMessage("An AI State is already active inside the editor. Please close the current AI State before opening a new one.");
+			s_EditorApp->OpenWarningMessage("An AI State is already active inside the editor. Please close the current AI State before creating a new one.");
 		}
 
+	}
+
+	void AIStateEditorPanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
+	{
+		// Ensure provided path is within the active asset directory
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
+		{
+			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
+			return;
+		}
+
+		// Look for asset in registry using the file location
+		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
+		Assets::AssetHandle assetHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(relativePath);
+
+		// Validate resulting handle
+		if (!assetHandle)
+		{
+			KG_WARN("Could not open asset in editor. Provided path does not result in an asset inside the registry.");
+			return;
+		}
+		
+		// Open the editor panel to be visible
+		s_EditorApp->m_ShowAIStateEditor = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+
+		// Early out if asset is already open
+		if (m_EditorAIStateHandle == assetHandle)
+		{
+			return;
+		}
+
+		// Check if panel is already occupied by an asset
+		if (!m_EditorAIState)
+		{
+			// Open dialog to create editor AI State
+			OnOpenAIState(assetHandle);
+		}
+		else
+		{
+			// Add warning to close active AI state before opening a new AIState
+			s_EditorApp->OpenWarningMessage("An AI State is already active inside the editor. Please close the current AI State before opening a new one.");
+		}
 	}
 
 	void AIStateEditorPanel::InitializeOpeningScreen()
@@ -179,12 +234,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorAIState = Assets::AssetService::GetAIState(selection.Handle);
-			m_EditorAIStateHandle = selection.Handle;
-			m_MainHeader.EditColorActive = false;
-			m_MainHeader.Label = Assets::AssetService::GetAIStateRegistry().at(
-				m_EditorAIStateHandle).Data.FileLocation.string();
-			OnRefreshData();
+			OnOpenAIState(selection.Handle);
 		};
 
 		m_SelectAIStateNameSpec.Label = "New Name";

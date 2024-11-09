@@ -203,11 +203,11 @@ namespace Kargono::EditorUI
 			s_IconSettings, s_IconDelete, s_IconEdit, s_IconCancel, s_IconCancel2,
 			s_IconConfirm, s_IconSearch,
 			s_IconCheckbox_Disabled, s_IconCheckbox_Enabled,
-			s_IconOptions, s_IconDown, s_IconRight, s_IconDash;
+			s_IconOptions, s_IconDown, s_IconRight, s_IconDash, s_IconAI;
 
 		// Scene graph icons
 		inline static Ref<Rendering::Texture2D> s_IconBoxCollider, s_IconCircleCollider, s_IconEntity,
-			s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform, s_IconAI;
+			s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform;
 
 		// Viewport icons
 		inline static Ref<Rendering::Texture2D> s_IconDisplay, s_IconSimulate, s_IconStep, s_IconPlay,
@@ -222,9 +222,11 @@ namespace Kargono::EditorUI
 		// Content browser icons
 		inline static Ref<Rendering::Texture2D> s_IconDirectory, s_IconGenericFile,
 			s_IconBack, s_IconForward,
-			s_IconAudio, s_IconImage, s_IconBinary,
-			s_IconScene, s_IconRegistry, s_IconScriptProject,
-			s_IconUserInterface, s_IconFont, s_IconInput;
+			s_IconAudio, s_IconTexture, s_IconBinary,
+			s_IconScene, s_IconRegistry,
+			s_IconUserInterface, s_IconFont, s_IconInput, s_IconAI_KG,
+			s_IconAudio_KG, s_IconFont_KG, s_IconGameState, s_IconProjectComponent,
+			s_IconScript, s_IconTexture_KG;
 
 	public:
 		//==============================
@@ -732,6 +734,7 @@ namespace Kargono::EditorUI
 	{
 		// Display metadata
 		Ref<Rendering::Texture2D> m_Icon;
+		ImVec4 m_IconColor{ EditorUI::EditorUIService::s_DisabledColor };
 
 		// Handle key input
 		std::function<void(GridEntry& currentEntry)> m_OnDoubleLeftClick;
@@ -799,6 +802,11 @@ namespace Kargono::EditorUI
 		void ClearEntries()
 		{
 			Entries.clear();
+			ClearSelectedEntry();
+		}
+
+		void ClearSelectedEntry()
+		{
 			SelectedEntry = k_EmptyUUID;
 		}
 
@@ -1036,6 +1044,11 @@ namespace Kargono::EditorUI
 		friend void DrawEntries(TreeSpec& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath , ImVec2 rootPosition);
 	};
 
+	struct TooltipSeperatorData
+	{
+		ImVec4 m_SeperatorColor{ EditorUI::EditorUIService::s_DisabledColor };
+	};
+
 	struct TooltipEntry
 	{
 	public:
@@ -1048,13 +1061,15 @@ namespace Kargono::EditorUI
 		TooltipEntry(const char* itemLabel, std::vector<TooltipEntry>&& subEntryList) : m_Label(itemLabel), m_EntryData(std::move(subEntryList))
 		{
 		}
+	private:
+		TooltipEntry() {};
 
 	public:
 		FixedString32 m_Label;
 		UUID m_EntryID;
 		bool m_IsVisible{ true };
 	private:
-		std::variant<std::vector<TooltipEntry>, std::function<void(TooltipEntry&)>> m_EntryData;
+		std::variant<std::vector<TooltipEntry>, std::function<void(TooltipEntry&)>, TooltipSeperatorData> m_EntryData;
 		friend void ProcessTooltipEntries(TooltipSpec& spec, std::vector<TooltipEntry>& entryList);
 		friend struct TooltipSpec;
 	};
@@ -1071,6 +1086,22 @@ namespace Kargono::EditorUI
 		bool TooltipActive{ false };
 
 	public:
+		void AddSeperator(ImVec4 seperatorColor)
+		{
+			TooltipSeperatorData seperatorData{ seperatorColor };
+			TooltipEntry newSeperatorEntry;
+			newSeperatorEntry.m_EntryData = seperatorData;
+
+			// Ensure UUID is unique inside entry
+			while (!ValidateEntryID(newSeperatorEntry.m_EntryID))
+			{
+				newSeperatorEntry.m_EntryID = {};
+			}
+
+			// Add new entry if valid
+			m_Entries.push_back(newSeperatorEntry);
+		}
+
 		UUID AddTooltipEntry(TooltipEntry& newEntry)
 		{
 			// Ensure valid label is provided

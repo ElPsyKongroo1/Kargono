@@ -239,13 +239,6 @@ namespace Kargono
 
 				ImGui::Separator();
 
-				if (ImGui::MenuItem("New Scene"))
-				{
-					NewSceneDialog();
-				}
-
-				ImGui::Separator();
-
 				if (ImGui::MenuItem("Reload Script Module"))
 				{
 					Scripting::ScriptService::LoadActiveScriptModule();
@@ -284,6 +277,14 @@ namespace Kargono
 				ImGui::MenuItem("Project Settings", NULL, &m_ShowProject);
 				ImGui::EndMenu();
 			}
+			// TODO: Fullscreen for select panels
+#if 0
+			if (ImGui::BeginMenu("View"))
+			{
+				ImGui::MenuItem("Display Content Browser Fullscreen", NULL, &m_ContentBrowserFullscreen);
+				ImGui::EndMenu();
+			}
+#endif
 
 			if (ImGui::BeginMenu("Debug"))
 			{
@@ -333,6 +334,16 @@ namespace Kargono
 			EditorUI::EditorUIService::EndRendering();
 			return;
 		}
+		
+#if 0
+		/*if (m_ContentBrowserFullscreen)
+		{
+			m_ContentBrowserPanel->OnEditorUIRender();
+			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIService::EndRendering();
+			return;
+		}*/
+#endif
 
 		// Display other panels
 		if (m_ShowAssetViewer) { m_AssetViewerPanel->OnEditorUIRender(); }
@@ -514,7 +525,7 @@ namespace Kargono
 		}
 		// Handle editing a project component by modifying entity component data inside the Assets::AssetService::SceneRegistry and the active editor scene
 		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
-			manageAsset.GetAction() == Events::ManageAssetAction::Update)
+			manageAsset.GetAction() == Events::ManageAssetAction::UpdateAsset)
 		{
 			OnUpdateProjectComponent(manageAsset);
 		}
@@ -1122,7 +1133,7 @@ namespace Kargono
 		
 	}
 
-	void EditorApp::OpenScene()
+	void EditorApp::OpenSceneDialog()
 	{
 		std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
 		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());

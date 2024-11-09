@@ -35,11 +35,21 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::NavigateDirectoryBack()
 	{
+		if (!m_NavigateAssetsHeader.m_IsBackActive)
+		{
+			return;
+		}
+		
 		UpdateCurrentDirectory(m_CurrentDirectory.parent_path());
 	}
 
 	void ContentBrowserPanel::NavigateDirectoryForward()
 	{
+		if (!m_NavigateAssetsHeader.m_IsForwardActive)
+		{
+			return;
+		}
+
 		if (Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, m_LongestRecentPath))
 		{
 			std::filesystem::path currentIterationPath{ m_LongestRecentPath };
@@ -130,7 +140,49 @@ namespace Kargono::Panels
 
 		// Manage custom file type tooltips
 		m_RightClickTooltip.ClearEntries();
-		if (fileType == BrowserFileType::Scene)
+		if (fileType == BrowserFileType::AIState)
+		{
+			EditorUI::TooltipEntry openAIStateTooltipEntry{ "Open AI State", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				s_EditorApp->m_AIStatePanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openAIStateTooltipEntry);
+		}
+		else if (fileType == BrowserFileType::GameState)
+		{
+			EditorUI::TooltipEntry openGameStateTooltipEntry{ "Open Game State", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				s_EditorApp->m_GameStatePanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openGameStateTooltipEntry);
+		}
+		else if (fileType == BrowserFileType::InputMap)
+		{
+			EditorUI::TooltipEntry openInputMapTooltipEntry{ "Open Input Map", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				s_EditorApp->m_InputMapPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openInputMapTooltipEntry);
+		}
+		else if (fileType == BrowserFileType::ProjectComponent)
+		{
+			EditorUI::TooltipEntry openProjectComponentTooltipEntry{ "Open Project Component", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				s_EditorApp->m_ProjectComponentPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openProjectComponentTooltipEntry);
+		}
+		else if (fileType == BrowserFileType::Script)
+		{
+			EditorUI::TooltipEntry openScriptTooltipEntry{ "Open Script", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// Open the file in the text editor
+				s_EditorApp->m_TextEditorPanel->OpenFile(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openScriptTooltipEntry);
+		}
+
+		else if (fileType == BrowserFileType::Scene)
 		{
 			EditorUI::TooltipEntry openSceneTooltipEntry{ "Open Scene", [&](EditorUI::TooltipEntry& currentEntry)
 			{
@@ -139,7 +191,16 @@ namespace Kargono::Panels
 			m_RightClickTooltip.AddTooltipEntry(openSceneTooltipEntry);
 		}
 
-		if (fileType == BrowserFileType::RawAudio)
+		else if (fileType == BrowserFileType::UserInterface)
+		{
+			EditorUI::TooltipEntry openUserInterfaceTooltipEntry{ "Open User Interface", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				s_EditorApp->m_UIEditorPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openUserInterfaceTooltipEntry);
+		}
+
+		else if (fileType == BrowserFileType::RawAudio)
 		{
 			EditorUI::TooltipEntry importAudioTooltipEntry{ "Import Audio", [&](EditorUI::TooltipEntry& currentEntry)
 			{
@@ -149,7 +210,7 @@ namespace Kargono::Panels
 			m_RightClickTooltip.AddTooltipEntry(importAudioTooltipEntry);
 		}
 
-		if (fileType == BrowserFileType::RawImage)
+		else if (fileType == BrowserFileType::RawTexture)
 		{
 			EditorUI::TooltipEntry importTextureTooltipEntry{ "Import Texture", [&](EditorUI::TooltipEntry& currentEntry)
 			{
@@ -159,7 +220,7 @@ namespace Kargono::Panels
 			m_RightClickTooltip.AddTooltipEntry(importTextureTooltipEntry);
 		}
 
-		if (fileType == BrowserFileType::RawFont)
+		else if (fileType == BrowserFileType::RawFont)
 		{
 			EditorUI::TooltipEntry importFontTooltipEntry{ "Import Font", [&](EditorUI::TooltipEntry& currentEntry)
 			{
@@ -185,25 +246,17 @@ namespace Kargono::Panels
 		}
 
 		// Manage files tooltip options
-		if (fileType != BrowserFileType::Directory)
+		if (fileType != BrowserFileType::Directory && fileType != BrowserFileType::Script && 
+			fileType != BrowserFileType::RawTexture &&
+			fileType != BrowserFileType::RawAudio &&
+			fileType != BrowserFileType::RawFont)
 		{
 			EditorUI::TooltipEntry openFileTooltipEntry{ "Open File in Text Editor", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-					// Open the file in the text editor
-					s_EditorApp->m_TextEditorPanel->OpenFile(m_CurrentFileToModifyCache);
-				} };
-			m_RightClickTooltip.AddTooltipEntry(openFileTooltipEntry);
-		}
-		if (fileType != BrowserFileType::Binary &&
-			fileType != BrowserFileType::Directory &&
-			fileType != BrowserFileType::Registry &&
-			fileType != BrowserFileType::Scene)
-		{
-			EditorUI::TooltipEntry renameFileTooltipEntry{ "Rename File", [&](EditorUI::TooltipEntry& currentEntry)
-			{
-				m_RenameFilePopup.PopupActive = true;
+				// Open the file in the text editor
+				s_EditorApp->m_TextEditorPanel->OpenFile(m_CurrentFileToModifyCache);
 			} };
-			m_RightClickTooltip.AddTooltipEntry(renameFileTooltipEntry);
+			m_RightClickTooltip.AddTooltipEntry(openFileTooltipEntry);
 		}
 		if (fileType != BrowserFileType::Registry && fileType != BrowserFileType::Directory)
 		{
@@ -216,7 +269,7 @@ namespace Kargono::Panels
 					case BrowserFileType::
 				case BrowserFileType::RawAudio:
 				case BrowserFileType::RawFont:
-				case BrowserFileType::RawImage:
+				case BrowserFileType::RawTexture:
 					m_DeleteFilePopup.Label = "Delete File";
 
 				}
@@ -251,7 +304,6 @@ namespace Kargono::Panels
 			if (resultHandle == Assets::EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a game state, however, no game state could be found in registry. Moving the indicated file without updating registry.");
-
 			}
 			else
 			{
@@ -683,53 +735,107 @@ namespace Kargono::Panels
 		navPayloadList.insert(navPayloadList.end(), &s_ContentBrowserPayloads[0], &s_ContentBrowserPayloads[s_ContentBrowserPayloads.size() - 1]);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Directory, directoryArch);
 
-		EditorUI::GridEntryArchetype imageArch;
-		imageArch.m_Icon = EditorUI::EditorUIService::s_IconImage;
-		imageArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
-		imageArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawImage, imageArch);
+		EditorUI::GridEntryArchetype rawTextureArch;
+		rawTextureArch.m_Icon = EditorUI::EditorUIService::s_IconTexture;
+		rawTextureArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		rawTextureArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawTexture, rawTextureArch);
+
+		EditorUI::GridEntryArchetype rawAudioArch;
+		rawAudioArch.m_Icon = EditorUI::EditorUIService::s_IconAudio;
+		rawAudioArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		rawAudioArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawAudio, rawAudioArch);
+
+		EditorUI::GridEntryArchetype rawFontArch;
+		rawFontArch.m_Icon = EditorUI::EditorUIService::s_IconFont;
+		rawFontArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		rawFontArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawFont, rawFontArch);
+
+		EditorUI::GridEntryArchetype aiStateArch;
+		aiStateArch.m_Icon = EditorUI::EditorUIService::s_IconAI_KG;
+		aiStateArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		aiStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		aiStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::AIState, aiStateArch);
 
 		EditorUI::GridEntryArchetype audioArch;
-		audioArch.m_Icon = EditorUI::EditorUIService::s_IconAudio;
+		audioArch.m_Icon = EditorUI::EditorUIService::s_IconAudio_KG;
+		audioArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
 		audioArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		audioArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawAudio, audioArch);
-
-		EditorUI::GridEntryArchetype fontArch;
-		fontArch.m_Icon = EditorUI::EditorUIService::s_IconFont;
-		fontArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
-		fontArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawFont, fontArch);
-
-		EditorUI::GridEntryArchetype userInterfaceArch;
-		userInterfaceArch.m_Icon = EditorUI::EditorUIService::s_IconUserInterface;
-		userInterfaceArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
-		userInterfaceArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::UserInterface, userInterfaceArch);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Audio, audioArch);
 
 		EditorUI::GridEntryArchetype binaryArch;
 		binaryArch.m_Icon = EditorUI::EditorUIService::s_IconBinary;
+		binaryArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor3_Thin;
 		binaryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		binaryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Binary, binaryArch);
 
+		EditorUI::GridEntryArchetype fontArch;
+		fontArch.m_Icon = EditorUI::EditorUIService::s_IconFont_KG;
+		fontArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		fontArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		fontArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Font, fontArch);
+
+		EditorUI::GridEntryArchetype gameStateArch;
+		gameStateArch.m_Icon = EditorUI::EditorUIService::s_IconGameState;
+		gameStateArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		gameStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		gameStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GameState, gameStateArch);
+
+		EditorUI::GridEntryArchetype inputMapArch;
+		inputMapArch.m_Icon = EditorUI::EditorUIService::s_IconInput;
+		inputMapArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		inputMapArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		inputMapArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::InputMap, inputMapArch);
+
+		EditorUI::GridEntryArchetype projectComponentArch;
+		projectComponentArch.m_Icon = EditorUI::EditorUIService::s_IconProjectComponent;
+		projectComponentArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		projectComponentArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		projectComponentArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::ProjectComponent, projectComponentArch);
+		
 		EditorUI::GridEntryArchetype registryArch;
 		registryArch.m_Icon = EditorUI::EditorUIService::s_IconRegistry;
+		registryArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor3_Thin;
 		registryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		registryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Registry, registryArch);
 
 		EditorUI::GridEntryArchetype sceneArch;
 		sceneArch.m_Icon = EditorUI::EditorUIService::s_IconScene;
+		sceneArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
 		sceneArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		sceneArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Scene, sceneArch);
 
-		EditorUI::GridEntryArchetype inputArch;
-		inputArch.m_Icon = EditorUI::EditorUIService::s_IconInput;
-		inputArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
-		inputArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Input, inputArch);
+		EditorUI::GridEntryArchetype scriptArch;
+		scriptArch.m_Icon = EditorUI::EditorUIService::s_IconScript;
+		scriptArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		scriptArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		scriptArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Script, scriptArch);
+
+		EditorUI::GridEntryArchetype textureArch;
+		textureArch.m_Icon = EditorUI::EditorUIService::s_IconTexture_KG;
+		textureArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		textureArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		textureArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Texture, textureArch);
+
+		EditorUI::GridEntryArchetype userInterfaceArch;
+		userInterfaceArch.m_Icon = EditorUI::EditorUIService::s_IconUserInterface;
+		userInterfaceArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		userInterfaceArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		userInterfaceArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::UserInterface, userInterfaceArch);
 
 		EditorUI::GridEntryArchetype genericFileArch;
 		genericFileArch.m_Icon = EditorUI::EditorUIService::s_IconGenericFile;
@@ -765,23 +871,6 @@ namespace Kargono::Panels
 		};
 		m_DeleteFilePopup.ConfirmAction = KG_BIND_CLASS_FN(OnHandleDeleteFile);
 
-		// Initialize rename file popup
-		m_RenameFilePopup.Label = "Rename File";
-		m_RenameFilePopup.PopupAction = [&]() 
-		{
-			m_RenameFileEditName.CurrentOption = m_CurrentFileToModifyCache.filename().string();
-		};
-		m_RenameFilePopup.PopupContents = [&]()
-		{
-			EditorUI::EditorUIService::EditText(m_RenameFileEditName);
-		};
-		m_RenameFilePopup.ConfirmAction = [&]()
-		{
-			Utility::FileSystem::RenameFile(m_CurrentFileToModifyCache, m_RenameFileEditName.CurrentOption);
-		};
-
-		m_RenameFileEditName.Label = "File Name";
-
 		// Initialize create directory popup
 		m_CreateDirectoryPopup.Label = "Create Directory";
 		m_CreateDirectoryPopup.PopupAction = [&]()
@@ -807,7 +896,7 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowContentBrowser);
 
-
+		// Early out of window if not visible
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
 			EditorUI::EditorUIService::EndWindow();
@@ -826,7 +915,6 @@ namespace Kargono::Panels
 		// Handle popups
 		EditorUI::EditorUIService::GenericPopup(m_DeleteDirectoryPopup);
 		EditorUI::EditorUIService::GenericPopup(m_DeleteFilePopup);
-		EditorUI::EditorUIService::GenericPopup(m_RenameFilePopup);
 		EditorUI::EditorUIService::GenericPopup(m_CreateDirectoryPopup);
 
 		EditorUI::EditorUIService::EndWindow();
@@ -834,6 +922,11 @@ namespace Kargono::Panels
 	}
 	bool ContentBrowserPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
+		if (event.GetKeyCode() == Key::Escape)
+		{
+			m_FileFolderViewer.ClearSelectedEntry();
+		}
+
 		return false;
 	}
 	bool ContentBrowserPanel::OnMouseButton(Events::MouseButtonPressedEvent event)
@@ -902,6 +995,10 @@ namespace Kargono::Panels
 			} };
 			createFileOptions.push_back(createUserInterfaceTooltipEntry);
 
+			// Add asset creation menu
+			EditorUI::TooltipEntry createFileTooltipMenu{ "Create Asset", createFileOptions };
+			m_RightClickTooltip.AddTooltipEntry(createFileTooltipMenu);
+
 			// Add create directory option
 			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "Create Directory", [&](EditorUI::TooltipEntry& currentEntry)
 			{
@@ -909,9 +1006,8 @@ namespace Kargono::Panels
 			} };
 			m_RightClickTooltip.AddTooltipEntry(createDirectoryTooltipEntry);
 
-			// Create Menu
-			EditorUI::TooltipEntry createFileTooltipMenu{ "Create Asset", createFileOptions };
-			m_RightClickTooltip.AddTooltipEntry(createFileTooltipMenu);
+			// Add seperator
+			m_RightClickTooltip.AddSeperator(EditorUI::EditorUIService::s_HighlightColor1_Thin);
 
 			// Add open current directory in file explorer
 			EditorUI::TooltipEntry openCurrentDirectoryTooltipEntry{ "Open File Explorer", [&](EditorUI::TooltipEntry& currentEntry)
@@ -930,6 +1026,16 @@ namespace Kargono::Panels
 			// Active tooltip
 			m_RightClickTooltip.TooltipActive = true;
 			return true;
+		}
+
+		// Handle navigating forward and back directories with mouse
+		if (event.GetMouseButton() == Mouse::ButtonBack)
+		{
+			NavigateDirectoryBack();
+		}
+		else if (event.GetMouseButton() == Mouse::ButtonForward)
+		{
+			NavigateDirectoryForward();
 		}
 
 		return false;

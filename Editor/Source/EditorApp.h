@@ -163,7 +163,7 @@ namespace Kargono
 		void NewSceneDialog();
 		bool NewScene(const std::string& sceneName);
 		void NewSceneDialog(const std::filesystem::path& initialDirectory);
-		void OpenScene();
+		void OpenSceneDialog();
 	public:
 		void OpenScene(const std::filesystem::path& path);
 	private:
@@ -210,6 +210,7 @@ namespace Kargono
 		bool m_ShowPhysicsColliders = false;
 		bool m_ShowCameraFrustums = true;
 		bool m_RuntimeFullscreen = false;
+		//bool m_ContentBrowserFullscreen = false;
 		bool m_ShowActiveUserInterface = true;
 
 		// Editor Scenes

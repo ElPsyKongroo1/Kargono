@@ -18,7 +18,7 @@ namespace Kargono::Panels
 		if (!m_EditorUI)
 		{
 			// Open dialog to create editor user interface
-			OnCreateUI();
+			OnCreateUIDialog();
 			m_SelectUILocationSpec.CurrentOption = createLocation;
 		}
 		else
@@ -33,15 +33,25 @@ namespace Kargono::Panels
 		m_EditorUIHandle = Assets::EmptyHandle;
 	}
 	// Reusable Functions
-	void UIEditorPanel::OnOpenUI()
+	void UIEditorPanel::OnOpenUIDialog()
 	{
 		m_OpenUIPopupSpec.PopupActive = true;
 	}
-	void UIEditorPanel::OnCreateUI()
+	void UIEditorPanel::OnCreateUIDialog()
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive());
 		m_SelectUILocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 		m_CreateUIPopupSpec.PopupActive = true;
+	}
+	void UIEditorPanel::OnOpenUI(Assets::AssetHandle newHandle)
+	{
+		m_EditorUI = Assets::AssetService::GetUserInterface(newHandle);
+		m_EditorUIHandle = newHandle;
+		m_MainHeader.EditColorActive = false;
+		m_MainHeader.Label = Assets::AssetService::GetUserInterfaceRegistry().at(
+			m_EditorUIHandle).Data.FileLocation.string();
+		OnRefreshData();
+		RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUI, m_EditorUIHandle);
 	}
 	void UIEditorPanel::OnRefreshData()
 	{
@@ -76,7 +86,7 @@ namespace Kargono::Panels
 		if (!m_EditorUI)
 		{
 			// Opening/Null State Screen
-			EditorUI::EditorUIService::NewItemScreen("Open Existing User Interface", KG_BIND_CLASS_FN(OnOpenUI), "Create New User Interface", KG_BIND_CLASS_FN(OnCreateUI));
+			EditorUI::EditorUIService::NewItemScreen("Open Existing User Interface", KG_BIND_CLASS_FN(OnOpenUIDialog), "Create New User Interface", KG_BIND_CLASS_FN(OnCreateUIDialog));
 			EditorUI::EditorUIService::GenericPopup(m_CreateUIPopupSpec);
 			EditorUI::EditorUIService::SelectOption(m_OpenUIPopupSpec);
 		}
@@ -135,13 +145,57 @@ namespace Kargono::Panels
 		}
 
 		// Handle updating of asset
-		if (manageAsset->GetAction() == Events::ManageAssetAction::Update)
+		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
 			// Update header
 			m_MainHeader.Label = Assets::AssetService::GetUserInterfaceFileLocation(manageAsset->GetAssetID()).string();
 			return true;
 		}
 		return false;
+	}
+
+	void UIEditorPanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
+	{
+		// Ensure provided path is within the active asset directory
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
+		{
+			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
+			return;
+		}
+
+		// Look for asset in registry using the file location
+		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
+		Assets::AssetHandle assetHandle = Assets::AssetService::GetUserInterfaceHandleFromFileLocation(relativePath);
+
+		// Validate resulting handle
+		if (!assetHandle)
+		{
+			KG_WARN("Could not open asset in editor. Provided path does not result in an asset inside the registry.");
+			return;
+		}
+
+		// Open the editor panel to be visible
+		s_EditorApp->m_ShowUserInterfaceEditor = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+
+		// Early out if asset is already open
+		if (m_EditorUIHandle == assetHandle)
+		{
+			return;
+		}
+
+		// Check if panel is already occupied by an asset
+		if (!m_EditorUI)
+		{
+			OnOpenUI(assetHandle);
+		}
+		else
+		{
+			// Add warning to close active AI state before opening a new AIState
+			s_EditorApp->OpenWarningMessage("An user interface is already active inside the editor. Please close the current user interface before opening a new one.");
+		}
 	}
 
 	void UIEditorPanel::DrawWindowOptions()
@@ -252,13 +306,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorUI = Assets::AssetService::GetUserInterface(selection.Handle);
-			m_EditorUIHandle = selection.Handle;
-			m_MainHeader.EditColorActive = false;
-			m_MainHeader.Label = Assets::AssetService::GetUserInterfaceRegistry().at(
-				m_EditorUIHandle).Data.FileLocation.string();
-			OnRefreshData();
-			RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUI, m_EditorUIHandle);
+			OnOpenUI(selection.Handle);
 		};
 
 		m_SelectUINameSpec.Label = "New Name";

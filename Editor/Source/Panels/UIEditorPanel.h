@@ -42,6 +42,7 @@ namespace Kargono::Panels
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 		bool OnAssetEvent(Events::Event* event);
+		void OpenAssetInEditor(std::filesystem::path& assetLocation);
 
 	public:
 		//=========================
@@ -53,8 +54,9 @@ namespace Kargono::Panels
 		//=========================
 		// Internal Functionality
 		//=========================
-		void OnOpenUI();
-		void OnCreateUI();
+		void OnOpenUIDialog();
+		void OnCreateUIDialog();
+		void OnOpenUI(Assets::AssetHandle newHandle);
 		void OnRefreshData();
 		void RecalculateTreeIterators();
 		void DrawWindowOptions();

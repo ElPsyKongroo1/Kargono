@@ -34,14 +34,17 @@ namespace Kargono::Panels
 		//=========================
 		void ResetPanelResources();
 		void OpenCreateDialog(std::filesystem::path& createLocation);
+		void OpenAssetInEditor(std::filesystem::path& assetLocation);
 
 	private:
 		//=========================
 		// Internal Functionality
 		//=========================
-		void OnOpenAIState();
-		void OnCreateAIState();
+		void OnOpenAIStateDialog();
+		void OnCreateAIStateDialog();
 		void OnRefreshData();
+
+		void OnOpenAIState(Assets::AssetHandle newHandle);
 	public:
 		//=========================
 		// Core Panel Data

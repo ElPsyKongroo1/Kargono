@@ -23,6 +23,8 @@ namespace Kargono::Mouse
 		ButtonLast = Button7,
 		ButtonLeft = Button0,
 		ButtonRight = Button1,
-		ButtonMiddle = Button2
+		ButtonMiddle = Button2,
+		ButtonForward = Button4,
+		ButtonBack = Button3
 	};
 }

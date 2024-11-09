@@ -212,7 +212,7 @@ namespace Kargono::Assets
 			// Save asset data on-disk
 			SerializeAsset(assetReference, dataLocation);
 
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::Update, providedData);
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::UpdateAsset, providedData);
 			EngineService::SubmitToEventQueue(event);
 		}
 
@@ -665,7 +665,7 @@ namespace Kargono::Assets
 			SerializeAssetRegistry();
 
 			// Throw update asset event
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(handle, currentAsset.Data.Type, Events::ManageAssetAction::Update);
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(handle, currentAsset.Data.Type, Events::ManageAssetAction::UpdateAssetInfo);
 			EngineService::SubmitToEventQueue(event);
 			return true;
 		}

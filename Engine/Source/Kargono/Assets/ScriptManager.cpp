@@ -140,7 +140,7 @@ namespace Kargono::Assets
 			script->m_Function = nullptr;
 		}
 
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(scriptHandle, asset.Data.Type, Events::ManageAssetAction::Update);
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(scriptHandle, asset.Data.Type, Events::ManageAssetAction::UpdateAsset);
 		EngineService::SubmitToEventQueue(event);
 		return true;
 	}
@@ -200,7 +200,7 @@ namespace Kargono::Assets
 
 		SerializeAssetRegistry();
 
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(Assets::EmptyHandle, AssetType::Script, Events::ManageAssetAction::Update);
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(Assets::EmptyHandle, AssetType::Script, Events::ManageAssetAction::UpdateAsset);
 		EngineService::SubmitToEventQueue(event);
 		return true;
 	}
@@ -234,7 +234,7 @@ namespace Kargono::Assets
 
 		SerializeAssetRegistry();
 
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(Assets::EmptyHandle, AssetType::Script, Events::ManageAssetAction::Update);
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(Assets::EmptyHandle, AssetType::Script, Events::ManageAssetAction::UpdateAsset);
 		EngineService::SubmitToEventQueue(event); 
 		return true;
 	}

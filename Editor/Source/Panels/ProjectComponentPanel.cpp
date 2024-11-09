@@ -29,7 +29,7 @@ namespace Kargono::Panels
 
 		if (!m_EditorProjectComponent)
 		{
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Component", KG_BIND_CLASS_FN(OpenComponent), "Create New Component", KG_BIND_CLASS_FN(CreateComponent));
+			EditorUI::EditorUIService::NewItemScreen("Open Existing Component", KG_BIND_CLASS_FN(OpenComponentDialog), "Create New Component", KG_BIND_CLASS_FN(CreateComponentDialog));
 			EditorUI::EditorUIService::GenericPopup(m_CreateComponentPopup);
 			EditorUI::EditorUIService::SelectOption(m_OpenComponentPopup);
 		}
@@ -85,12 +85,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_EditorProjectComponent = Assets::AssetService::GetProjectComponent(selection.Handle);
-			m_EditorProjectComponentHandle = selection.Handle;
-			m_MainHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
-				selection.Handle).Data.FileLocation.string();
-			m_MainHeader.EditColorActive = false;
-			RefreshData();
+			OnOpenComponent(selection.Handle);
 		};
 
 		m_SelectComponentName.Label = "New Name";
@@ -346,7 +341,7 @@ namespace Kargono::Panels
 		}
 
 		// Handle updating of asset
-		if (manageAsset->GetAction() == Events::ManageAssetAction::Update)
+		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
 			// Update header
 			m_MainHeader.Label = Assets::AssetService::GetProjectComponentFileLocation(manageAsset->GetAssetID()).string();
@@ -369,7 +364,7 @@ namespace Kargono::Panels
 		if (!m_EditorProjectComponent)
 		{
 			// Open dialog to create editor project component
-			CreateComponent();
+			CreateComponentDialog();
 			m_SelectProjectComponentLocationSpec.CurrentOption = createLocation;
 		}
 		else
@@ -378,11 +373,54 @@ namespace Kargono::Panels
 			s_EditorApp->OpenWarningMessage("A project component is already active inside the editor. Please close the current project component before creating a new one.");
 		}
 	}
-	void ProjectComponentPanel::OpenComponent()
+	void ProjectComponentPanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
+	{
+		// Ensure provided path is within the active asset directory
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
+		{
+			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
+			return;
+		}
+
+		// Look for asset in registry using the file location
+		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
+		Assets::AssetHandle assetHandle = Assets::AssetService::GetProjectComponentHandleFromFileLocation(relativePath);
+
+		// Validate resulting handle
+		if (!assetHandle)
+		{
+			KG_WARN("Could not open asset in editor. Provided path does not result in an asset inside the registry.");
+			return;
+		}
+
+		// Open the editor panel to be visible
+		s_EditorApp->m_ShowProjectComponent = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+
+		// Early out if asset is already open
+		if (m_EditorProjectComponentHandle == assetHandle)
+		{
+			return;
+		}
+
+		// Check if panel is already occupied by an asset
+		if (!m_EditorProjectComponent)
+		{
+			OnOpenComponent(assetHandle);
+		}
+		else
+		{
+			// Add warning to close active AI state before opening a new AIState
+			s_EditorApp->OpenWarningMessage("An project component is already active inside the editor. Please close the current project component before opening a new one.");
+		}
+	}
+	void ProjectComponentPanel::OpenComponentDialog()
 	{
 		m_OpenComponentPopup.PopupActive = true;
 	}
-	void ProjectComponentPanel::CreateComponent()
+	void ProjectComponentPanel::CreateComponentDialog()
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive());
 		m_SelectProjectComponentLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
@@ -391,6 +429,15 @@ namespace Kargono::Panels
 	void ProjectComponentPanel::RefreshData()
 	{
 		m_FieldsTable.OnRefresh();
+	}
+	void ProjectComponentPanel::OnOpenComponent(Assets::AssetHandle newHandle)
+	{
+		m_EditorProjectComponent = Assets::AssetService::GetProjectComponent(newHandle);
+		m_EditorProjectComponentHandle = newHandle;
+		m_MainHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
+			newHandle).Data.FileLocation.string();
+		m_MainHeader.EditColorActive = false;
+		RefreshData();
 	}
 }
 			

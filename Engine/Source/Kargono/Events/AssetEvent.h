@@ -14,7 +14,8 @@ namespace Kargono::Events
 		None = 0,
 		Delete,
 		Create,
-		Update
+		UpdateAsset,
+		UpdateAssetInfo
 	};
 	//============================================================
 	// Manage Asset Class

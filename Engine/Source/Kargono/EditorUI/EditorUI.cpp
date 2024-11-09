@@ -279,6 +279,7 @@ namespace Kargono::EditorUI
 		s_IconCheckbox_Enabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/CheckboxEnabled.png").string());
 		s_IconCheckbox_Disabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/CheckboxDisabled.png").string());
 		s_IconDash = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Dash.png").string());
+		s_IconAI = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/AI.png").string());
 
 		// Viewport icons
 		s_IconGrid = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Viewport/Grid.png").string());
@@ -297,7 +298,6 @@ namespace Kargono::EditorUI
 		s_IconClassInstance = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/ClassInstance.png").string());
 		s_IconRigidBody = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Rigidbody.png").string());
 		s_IconTransform = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Transform.png").string());
-		s_IconAI = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/AI.png").string());
 
 		// Runtime UI icons
 		s_IconWindow = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/Window.png").string());
@@ -316,14 +316,20 @@ namespace Kargono::EditorUI
 		s_IconBack = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Back.png");
 		s_IconForward = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Forward.png");
 		s_IconAudio = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Audio.png");
-		s_IconImage = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Image.png");
+		s_IconTexture = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Texture.png");
 		s_IconBinary = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Binary.png");
 		s_IconScene = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Scene.png");
 		s_IconRegistry = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Registry.png");
-		s_IconScriptProject = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/ScriptProject.png");
 		s_IconFont = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Font.png");
 		s_IconUserInterface = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/UserInterface.png");
 		s_IconInput = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Input.png");
+		s_IconAI_KG = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/AI_KG.png");
+		s_IconAudio_KG = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Audio_KG.png");
+		s_IconFont_KG = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Font_KG.png");
+		s_IconGameState = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/GameState.png");
+		s_IconProjectComponent = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/ProjectComponent.png");
+		s_IconScript = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Script.png");
+		s_IconTexture_KG = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Texture_KG.png");
 
 		SetButtonDefaults();
 
@@ -363,6 +369,7 @@ namespace Kargono::EditorUI
 		s_IconDown.reset();
 		s_IconRight.reset();
 		s_IconDash.reset();
+		s_IconAI.reset();
 
 		s_IconWindow.reset();
 		s_IconTextWidget.reset();
@@ -378,11 +385,10 @@ namespace Kargono::EditorUI
 		s_IconBack.reset();
 		s_IconForward.reset();
 		s_IconAudio.reset();
-		s_IconImage.reset();
+		s_IconTexture.reset();
 		s_IconBinary.reset();
 		s_IconScene.reset();
 		s_IconRegistry.reset();
-		s_IconScriptProject.reset();
 		s_IconUserInterface.reset();
 		s_IconFont.reset();
 		s_IconInput.reset();
@@ -393,7 +399,13 @@ namespace Kargono::EditorUI
 		s_IconRigidBody.reset();
 		s_IconTag.reset();
 		s_IconTransform.reset();
-		s_IconAI.reset();
+		s_IconAI_KG.reset();
+		s_IconAudio_KG.reset();
+		s_IconFont_KG.reset();
+		s_IconGameState.reset();
+		s_IconProjectComponent.reset();
+		s_IconScript.reset();
+		s_IconTexture_KG.reset();
 
 		s_SmallEditButton = {};
 		s_SmallExpandButton = {};
@@ -2341,7 +2353,7 @@ namespace Kargono::EditorUI
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)entryArchetype->m_Icon->GetRendererID(), { spec.m_CellIconSize, spec.m_CellIconSize },
 				{ 0, 1 }, { 1, 0 },
 				-1, entryIsSelected ? s_ActiveColor : s_PureEmpty,
-				s_DisabledColor))
+				entryArchetype->m_IconColor))
 			{
 				// Handle on left-click
 				if (entryArchetype->m_OnLeftClick)
@@ -2626,6 +2638,10 @@ namespace Kargono::EditorUI
 						functionPointerRef(currentEntry);
 					}
 				}
+			}
+			else if (TooltipSeperatorData* tooltipSeperatorData = std::get_if<TooltipSeperatorData>(&currentEntry.m_EntryData))
+			{
+				ImGui::Separator(1.0f, tooltipSeperatorData->m_SeperatorColor);
 			}
 			else
 			{

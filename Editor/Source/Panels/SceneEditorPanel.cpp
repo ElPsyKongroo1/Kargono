@@ -227,10 +227,19 @@ namespace Kargono::Panels
 	{
 		m_MainSceneHeader.Label = "No Scene Name";
 		m_MainSceneHeader.EditColorActive = false;
+		m_MainSceneHeader.AddToSelectionList("Create New Scene", []()
+		{
+			s_EditorApp->NewSceneDialog();
+		});
+		m_MainSceneHeader.AddToSelectionList("Open Scene", []()
+		{
+			s_EditorApp->OpenSceneDialog();
+		});
 		m_MainSceneHeader.AddToSelectionList("Create Entity", []()
 		{
 			Scenes::SceneService::GetActiveScene()->CreateEntity("Empty Entity");
 		});
+		
 
 		m_SceneHierarchyTree.Label = "Scene Hierarchy";
 		m_SceneHierarchyTree.OnRefresh = [&]()
@@ -2228,7 +2237,7 @@ namespace Kargono::Panels
 		}
 
 		if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Update)
+			manageAsset->GetAction() == Events::ManageAssetAction::UpdateAsset)
 		{
 			Ref<ECS::ProjectComponent> currentComponent = Assets::AssetService::GetProjectComponent(manageAsset->GetAssetID());
 

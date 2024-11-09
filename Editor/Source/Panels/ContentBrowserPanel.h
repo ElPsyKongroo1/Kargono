@@ -14,23 +14,44 @@ namespace Kargono::Panels
 	enum class BrowserFileType
 	{
 		None = 0,
+
+		// Directory
 		Directory,
-		RawImage,
-		RawAudio,
+
+		// Kargono managed files
+		AIState,
+		Audio,
 		Binary,
+		Font,
+		GameState,
+		ProjectComponent,
+		InputMap,
 		Registry,
 		Scene,
-		RawFont,
+		Script,
+		Texture,
 		UserInterface,
-		Input,
+
+		// Raw data files that can be imported
+		RawTexture,
+		RawAudio,
+		RawFont,
+
+		// All other files
 		GenericFile
 	};
 
 
 	inline static std::array<FixedString32, 6> s_ContentBrowserPayloads
 	{
-		"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_RAWAUDIO", "CONTENT_BROWSER_RAWFONT",
-			"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_RAWUSERINTERFACE"
+		"CONTENT_BROWSER_RAWIMAGE", 
+		"CONTENT_BROWSER_RAWAUDIO", 
+		"CONTENT_BROWSER_RAWFONT",
+
+		"CONTENT_BROWSER_ITEM", 
+
+		"CONTENT_BROWSER_SCENE", 
+		"CONTENT_BROWSER_USERINTERFACE"
 	};
 
 	class ContentBrowserPanel
@@ -120,8 +141,6 @@ namespace Kargono::Panels
 		// Popup widgets
 		EditorUI::GenericPopupSpec m_DeleteFilePopup{};
 		EditorUI::GenericPopupSpec m_DeleteDirectoryPopup{};
-		EditorUI::GenericPopupSpec m_RenameFilePopup{};
-		EditorUI::EditTextSpec m_RenameFileEditName{};
 		EditorUI::GenericPopupSpec m_CreateDirectoryPopup{};
 		EditorUI::EditTextSpec m_CreateDirectoryEditName{};
 
@@ -130,25 +149,6 @@ namespace Kargono::Panels
 
 namespace Kargono::Utility
 {
-	inline Ref<Rendering::Texture2D> BrowserFileTypeToIcon(Panels::BrowserFileType type)
-	{
-		switch (type)
-		{
-		case Panels::BrowserFileType::Directory: { return EditorUI::EditorUIService::s_IconDirectory; }
-		case Panels::BrowserFileType::RawImage: { return EditorUI::EditorUIService::s_IconImage; }
-		case Panels::BrowserFileType::RawAudio: { return EditorUI::EditorUIService::s_IconAudio; }
-		case Panels::BrowserFileType::RawFont: { return EditorUI::EditorUIService::s_IconFont; }
-		case Panels::BrowserFileType::UserInterface: { return EditorUI::EditorUIService::s_IconUserInterface; }
-		case Panels::BrowserFileType::Binary: { return EditorUI::EditorUIService::s_IconBinary; }
-		case Panels::BrowserFileType::Registry: { return EditorUI::EditorUIService::s_IconRegistry; }
-		case Panels::BrowserFileType::Scene: { return EditorUI::EditorUIService::s_IconScene; }
-		case Panels::BrowserFileType::Input: { return EditorUI::EditorUIService::s_IconInput; }
-		case Panels::BrowserFileType::GenericFile: { return EditorUI::EditorUIService::s_IconGenericFile; }
-		case Panels::BrowserFileType::None: { return EditorUI::EditorUIService::s_IconCancel; }
-		}
-		KG_ERROR("Invalid BrowserFileType provided");
-		return EditorUI::EditorUIService::s_IconGenericFile;
-	}
 
 	inline Panels::BrowserFileType DetermineFileType(const std::filesystem::path& entry)
 	{
@@ -161,7 +161,7 @@ namespace Kargono::Utility
 		{
 			if (textureExtension == currentFileExtension)
 			{
-				return Panels::BrowserFileType::RawImage;
+				return Panels::BrowserFileType::RawTexture;
 			}
 		}
 
@@ -181,12 +181,20 @@ namespace Kargono::Utility
 				return Panels::BrowserFileType::RawFont;
 			}
 		}
+		if (currentFileExtension == ".kgaistate") { return Panels::BrowserFileType::AIState; }
+		if (currentFileExtension == ".kgaudio") { return Panels::BrowserFileType::Audio; }
+		if (currentFileExtension == ".kgfont") { return Panels::BrowserFileType::Font; }
+		if (currentFileExtension == ".kgcomponent") { return Panels::BrowserFileType::ProjectComponent; }
 		if (currentFileExtension == ".kgreg") { return Panels::BrowserFileType::Registry; }
 		if (currentFileExtension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
+		if (currentFileExtension == ".kgscript") { return Panels::BrowserFileType::Script; }
+		if (currentFileExtension == ".kgstate") { return Panels::BrowserFileType::GameState; }
 		if (currentFileExtension == ".kgscene") { return Panels::BrowserFileType::Scene; }
-		if (currentFileExtension == ".kginput") { return Panels::BrowserFileType::Input; }
-		if (currentFileExtension == ".kgaudio" || currentFileExtension == ".kgtexture" || currentFileExtension == ".kgfont" ||
-			currentFileExtension == ".kgshadervert" || currentFileExtension == ".kgshaderfrag") {
+		if (currentFileExtension == ".kgtexture") { return Panels::BrowserFileType::Texture; }
+		if (currentFileExtension == ".kginput") { return Panels::BrowserFileType::InputMap; }
+		if (currentFileExtension == ".kgbinary" || currentFileExtension == ".kgshadervert" || 
+			currentFileExtension == ".kgshaderfrag") 
+		{
 			return Panels::BrowserFileType::Binary;
 		}
 		return Panels::BrowserFileType::GenericFile;
@@ -197,15 +205,26 @@ namespace Kargono::Utility
 		switch (type)
 		{
 		case Panels::BrowserFileType::Directory: { return "CONTENT_BROWSER_DIRECTORY"; }
-		case Panels::BrowserFileType::RawImage: { return "CONTENT_BROWSER_RAWIMAGE"; }
+
+		case Panels::BrowserFileType::RawTexture: { return "CONTENT_BROWSER_RAWIMAGE"; }
 		case Panels::BrowserFileType::RawAudio: { return "CONTENT_BROWSER_RAWAUDIO"; }
-		case Panels::BrowserFileType::UserInterface: { return "CONTENT_BROWSER_USERINTERFACE"; }
 		case Panels::BrowserFileType::RawFont: { return "CONTENT_BROWSER_RAWFONT"; }
+
+		case Panels::BrowserFileType::GenericFile: { return "CONTENT_BROWSER_ITEM"; }
+
+		case Panels::BrowserFileType::AIState: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Audio: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Font: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::GameState: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::ProjectComponent: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::InputMap: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Registry: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Scene: { return "CONTENT_BROWSER_SCENE"; }
-		case Panels::BrowserFileType::Input: { return "CONTENT_BROWSER_ITEM"; }
-		case Panels::BrowserFileType::GenericFile: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Script: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::Texture: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::UserInterface: { return "CONTENT_BROWSER_USERINTERFACE"; }
+
 		case Panels::BrowserFileType::None: { return "CONTENT_BROWSER_ITEM"; }
 		}
 		KG_ERROR("Invalid BrowserFileType provided");
