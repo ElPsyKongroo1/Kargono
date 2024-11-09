@@ -339,4 +339,20 @@ namespace Kargono::Utility
 		return {};
 	}
 
+	std::filesystem::path FileSystem::ConvertToUnixStylePath(const std::filesystem::path& path)
+	{
+		std::string result;
+		for (const std::filesystem::path& pathSegment : path) 
+		{
+			if (!result.empty()) 
+			{
+				result += '/';
+			}
+			result += pathSegment.string();
+		}
+
+		// Return modified path
+		return result;
+	}
+
 }

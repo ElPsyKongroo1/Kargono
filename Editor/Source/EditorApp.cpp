@@ -311,6 +311,15 @@ namespace Kargono
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Help"))
+			{
+				if (ImGui::MenuItem("Engine Docs"))
+				{
+					Utility::OSCommands::OpenWebURL("https://elpsykongroo1.github.io/Kargono/");
+				}
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
 		}
 

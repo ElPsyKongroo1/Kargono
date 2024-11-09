@@ -42,7 +42,7 @@ namespace Kargono::Panels
 	};
 
 
-	inline static std::array<FixedString32, 6> s_ContentBrowserPayloads
+	inline static std::vector<FixedString32> s_ContentBrowserPayloads
 	{
 		"CONTENT_BROWSER_RAWIMAGE", 
 		"CONTENT_BROWSER_RAWAUDIO", 

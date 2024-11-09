@@ -86,7 +86,7 @@ namespace Kargono::Panels
 				EditorUI::TableEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.string(),
+						asset.Data.FileLocation.filename().string(),
 						handle,
 						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
 						nullptr
@@ -98,7 +98,7 @@ namespace Kargono::Panels
 				EditorUI::TableEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.string(),
+						asset.Data.FileLocation.filename().string(),
 						handle,
 						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
 						nullptr
@@ -110,7 +110,7 @@ namespace Kargono::Panels
 				EditorUI::TableEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.string(),
+						asset.Data.FileLocation.filename().string(),
 						handle,
 						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
 						nullptr
@@ -123,7 +123,7 @@ namespace Kargono::Panels
 				EditorUI::TableEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.string(),
+						asset.Data.FileLocation.filename().string(),
 						handle,
 						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
 						nullptr
@@ -136,7 +136,7 @@ namespace Kargono::Panels
 				EditorUI::TableEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.string(),
+						asset.Data.FileLocation.filename().string(),
 						handle,
 						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
 						nullptr
@@ -149,7 +149,7 @@ namespace Kargono::Panels
 				EditorUI::TableEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.string(),
+						asset.Data.FileLocation.filename().string(),
 						handle,
 						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
 						nullptr
@@ -162,7 +162,7 @@ namespace Kargono::Panels
 				EditorUI::TableEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.string(),
+						asset.Data.FileLocation.filename().string(),
 						handle,
 						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
 						nullptr
@@ -187,7 +187,7 @@ namespace Kargono::Panels
 				EditorUI::TableEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.string(),
+						asset.Data.FileLocation.filename().string(),
 						handle,
 						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
 						nullptr
@@ -200,7 +200,7 @@ namespace Kargono::Panels
 				EditorUI::TableEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.string(),
+						asset.Data.FileLocation.filename().string(),
 						handle,
 						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
 						nullptr
@@ -213,7 +213,7 @@ namespace Kargono::Panels
 				EditorUI::TableEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.string(),
+						asset.Data.FileLocation.filename().string(),
 						handle,
 						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
 						nullptr
@@ -233,11 +233,11 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::LabeledText("Asset Type", Utility::AssetTypeToString(asset.Data.Type));
 			if (!asset.Data.FileLocation.empty())
 			{
-				EditorUI::EditorUIService::LabeledText("File Location", (Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation).string());
+				EditorUI::EditorUIService::LabeledText("File Location", asset.Data.FileLocation.string());
 			}
 			if (!asset.Data.IntermediateLocation.empty())
 			{
-				EditorUI::EditorUIService::LabeledText("Intermediate Location", (Projects::ProjectService::GetActiveIntermediateDirectory() /asset.Data.IntermediateLocation).string());
+				EditorUI::EditorUIService::LabeledText("Intermediate Location", asset.Data.IntermediateLocation.string());
 			}
 			
 			EditorUI::EditorUIService::LabeledText("Checksum", asset.Data.CheckSum);

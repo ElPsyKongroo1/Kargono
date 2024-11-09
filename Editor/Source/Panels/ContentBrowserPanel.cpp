@@ -708,13 +708,12 @@ namespace Kargono::Panels
 
 		// Copy over s_ContentBrowserPayloads into m_NavigateAssetHeader!!!!!
 		std::vector<FixedString32>& navPayloadList = m_NavigateAssetsHeader.m_AcceptableOnReceivePayloads;
-		navPayloadList.insert(navPayloadList.end(), &s_ContentBrowserPayloads[0], &s_ContentBrowserPayloads[s_ContentBrowserPayloads.size() - 1]);
+		navPayloadList = s_ContentBrowserPayloads;
 
 		m_NavigateAssetsHeader.m_OnNavigateBack = KG_BIND_CLASS_FN(NavigateDirectoryBack);
 		m_NavigateAssetsHeader.m_OnReceivePayloadBack = KG_BIND_CLASS_FN(OnNavHeaderBackReceivePayload);
 		m_NavigateAssetsHeader.m_OnNavigateForward = KG_BIND_CLASS_FN(NavigateDirectoryForward);
 		m_NavigateAssetsHeader.m_OnReceivePayloadForward = KG_BIND_CLASS_FN(OnNavHeaderForwardReceivePayload);
-
 	}
 
 	void ContentBrowserPanel::InitializeFileFolderViewer()
@@ -732,7 +731,7 @@ namespace Kargono::Panels
 		directoryArch.m_OnReceivePayload = KG_BIND_CLASS_FN(OnGridReceivePayload);
 		// Copy over s_ContentBrowserPayloads into directoryArch
 		std::vector<FixedString32>& navPayloadList = directoryArch.m_AcceptableOnReceivePayloads;
-		navPayloadList.insert(navPayloadList.end(), &s_ContentBrowserPayloads[0], &s_ContentBrowserPayloads[s_ContentBrowserPayloads.size() - 1]);
+		navPayloadList = s_ContentBrowserPayloads;
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Directory, directoryArch);
 
 		EditorUI::GridEntryArchetype rawTextureArch;
@@ -769,7 +768,7 @@ namespace Kargono::Panels
 
 		EditorUI::GridEntryArchetype binaryArch;
 		binaryArch.m_Icon = EditorUI::EditorUIService::s_IconBinary;
-		binaryArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor3_Thin;
+		binaryArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor4_Thin;
 		binaryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		binaryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Binary, binaryArch);
@@ -804,21 +803,21 @@ namespace Kargono::Panels
 		
 		EditorUI::GridEntryArchetype registryArch;
 		registryArch.m_Icon = EditorUI::EditorUIService::s_IconRegistry;
-		registryArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor3_Thin;
+		registryArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor4_Thin;
 		registryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		registryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Registry, registryArch);
 
 		EditorUI::GridEntryArchetype sceneArch;
 		sceneArch.m_Icon = EditorUI::EditorUIService::s_IconScene;
-		sceneArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		sceneArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor3_Thin;
 		sceneArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		sceneArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Scene, sceneArch);
 
 		EditorUI::GridEntryArchetype scriptArch;
 		scriptArch.m_Icon = EditorUI::EditorUIService::s_IconScript;
-		scriptArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		scriptArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor2_Thin;
 		scriptArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		scriptArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Script, scriptArch);

@@ -148,23 +148,12 @@ namespace Kargono::Assets
 		{
 			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileLocation), 
 				"Attempt to query the state of an asset using an asset name when asset type does not support using a file location.");
-			
-			// Calculate checksum
-			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(assetName);
 
-			// Ensure checksum is generated correctly
-			if (currentCheckSum.empty())
-			{
-				KG_WARN("Failed to generate checksum from asset name!");
-				return false;
-			}
-
-			// Check for a matching checksum
+			// Check for a matching name
 			for (const auto& [handle, asset] : m_AssetRegistry)
 			{
-				if (asset.Data.CheckSum == currentCheckSum)
+				if (asset.Data.FileLocation.stem() == assetName)
 				{
-					KG_WARN("Attempt to instantiate duplicate asset");
 					return true;
 				}
 			}
@@ -211,6 +200,16 @@ namespace Kargono::Assets
 
 			// Save asset data on-disk
 			SerializeAsset(assetReference, dataLocation);
+
+			// Get and update checksum
+			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(dataLocation);
+
+			// Ensure checksum is valid
+			if (currentCheckSum.empty())
+			{
+				KG_WARN("Generated empty checksum while saving an asset");
+			}
+			asset.Data.CheckSum = currentCheckSum;
 
 			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::UpdateAsset, providedData);
 			EngineService::SubmitToEventQueue(event);
@@ -298,29 +297,18 @@ namespace Kargono::Assets
 				Utility::FileSystem::CreateNewDirectory(creationPath);
 			}
 
-			// Create Checksum
-			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(assetName);
-
-			// Ensure checksum is valid
-			if (currentCheckSum.empty())
-			{
-				KG_WARN("Generated empty checksum from the string {}", assetName);
-				return Assets::EmptyHandle;
-			}
-
 			// Create New Asset/Handle
 			AssetHandle newHandle{};
 			Assets::Asset newAsset{};
 			newAsset.Handle = newHandle;
 			newAsset.Data.Type = m_AssetType;
-			newAsset.Data.CheckSum = currentCheckSum;
 			if (usingBaseAssetDir)
 			{
-				newAsset.Data.FileLocation = assetName + m_FileExtension;
+				newAsset.Data.FileLocation = Utility::FileSystem::ConvertToUnixStylePath(assetName + m_FileExtension);
 			}
 			else
 			{
-				newAsset.Data.FileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), creationPath) / (assetName + m_FileExtension);
+				newAsset.Data.FileLocation = Utility::FileSystem::ConvertToUnixStylePath(Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), creationPath) / (assetName + m_FileExtension));
 			}
 
 			// TODO: Fixme, this is temporary since a code path that uses an intermediate location is not yet necessary
@@ -328,6 +316,17 @@ namespace Kargono::Assets
 
 			// Create File
 			CreateAssetFileFromName(assetName, newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation);
+
+			// Create Checksum
+			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation);
+
+			// Ensure checksum is valid
+			if (currentCheckSum.empty())
+			{
+				KG_WARN("Generated empty checksum from the string {}", assetName);
+				return Assets::EmptyHandle;
+			}
+			newAsset.Data.CheckSum = currentCheckSum;
 
 			// Register New Asset and return handle.
 			m_AssetRegistry.insert({ newHandle, newAsset });
@@ -441,7 +440,6 @@ namespace Kargono::Assets
 			// Ensure duplicate asset is not found in registry.
 			for (const auto& [handle, asset] : m_AssetRegistry)
 			{
-
 				// Ensure names do not match inside asset registry
 				if (asset.Data.FileLocation.stem().string() == newFileName)
 				{
@@ -459,14 +457,14 @@ namespace Kargono::Assets
 			// Create asset file inside asset manager
 			if (m_Flags.test(AssetManagerOptions::HasFileLocation))
 			{
-				newAsset.Data.FileLocation = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), destinationPath / (newFileName + m_FileExtension));
+				newAsset.Data.FileLocation = Utility::FileSystem::ConvertToUnixStylePath(Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), destinationPath / (newFileName + m_FileExtension)));
 				CreateAssetFileFromName(newFileName, newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation);
 			}
 
 			// Check if intermediates are used. If so, generate the intermediate.
 			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
 			{
-				newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_IntermediateExtension.CString());
+				newAsset.Data.IntermediateLocation = Utility::FileSystem::ConvertToUnixStylePath(m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_IntermediateExtension.CString()));
 				CreateAssetIntermediateFromFile(newAsset, sourcePath, Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation);
 				newAsset.Data.CheckSum = currentCheckSum;
 			}
@@ -659,7 +657,7 @@ namespace Kargono::Assets
 			}
 
 			// Update file location
-			currentAsset.Data.FileLocation = newFileLocation;
+			currentAsset.Data.FileLocation = Utility::FileSystem::ConvertToUnixStylePath(newFileLocation);
 
 			// Save changes to disk
 			SerializeAssetRegistry();

@@ -47,6 +47,7 @@ namespace Kargono::Utility
 		static void CreateNewDirectory(const std::filesystem::path& filepath);
 		static bool CopyDirectory(const std::filesystem::path& sourceDirectory, const std::filesystem::path& destinationDirectory);
 		static std::filesystem::path FindFileWithExtension(const std::filesystem::path& directory, const std::string& extension);
+		static std::filesystem::path ConvertToUnixStylePath(const std::filesystem::path& path);
 		//==============================
 		// Management Functions for std::filesystem::path
 		//==============================
