@@ -44,7 +44,7 @@ namespace Kargono::Panels
 		m_EditorAIStateHandle = newHandle;
 		m_MainHeader.EditColorActive = false;
 		m_MainHeader.Label = Assets::AssetService::GetAIStateRegistry().at(
-			m_EditorAIStateHandle).Data.FileLocation.string();
+			m_EditorAIStateHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}
 
@@ -125,7 +125,7 @@ namespace Kargono::Panels
 		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
 			// Update header
-			m_MainHeader.Label = Assets::AssetService::GetAIStateFileLocation(manageAsset->GetAssetID()).string();
+			m_MainHeader.Label = Assets::AssetService::GetAIStateFileLocation(manageAsset->GetAssetID()).filename().string();
 			return true;
 		}
 		return false;
@@ -268,7 +268,7 @@ namespace Kargono::Panels
 			m_EditorAIState = Assets::AssetService::GetAIState(m_EditorAIStateHandle);
 			m_MainHeader.EditColorActive = false;
 			m_MainHeader.Label = Assets::AssetService::GetAIStateRegistry().at(
-				m_EditorAIStateHandle).Data.FileLocation.string();
+				m_EditorAIStateHandle).Data.FileLocation.filename().string();
 			OnRefreshData();
 		};
 		m_CreateAIStatePopupSpec.PopupContents = [&]()

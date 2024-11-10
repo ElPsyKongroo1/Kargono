@@ -32,13 +32,15 @@ namespace Kargono::Panels
 		// External API
 		//=========================
 		void ResetPanelResources();
+		void OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm);
 
 	private:
 		//=========================
 		// Internal Functionality
 		//=========================
 		void UpdateScript();
-
+		void OnOpenScriptDialog(EditorUI::TableEntry& entry);
+		void OnCreateScriptDialog();
 
 	private:
 		//=========================
@@ -47,6 +49,8 @@ namespace Kargono::Panels
 		FixedString32 m_PanelName{ "Scripts" };
 		Assets::AssetHandle m_ActiveScriptHandle {Assets::EmptyHandle};
 		std::string m_ActiveLabel {};
+		std::function<void(Assets::AssetHandle)> m_OnCreateScriptConfirm{ nullptr };
+		WrappedFuncType m_OnCreateFunctionType{ WrappedFuncType::None };
 
 		//=========================
 		// Widgets

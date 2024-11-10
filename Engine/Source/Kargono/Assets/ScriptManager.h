@@ -33,18 +33,18 @@ namespace Kargono::Assets
 		virtual ~ScriptManager() = default;
 	public:
 		// Class specific functions
-		virtual Ref<Scripting::Script> DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
+		virtual Ref<Scripting::Script> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeRegistrySpecificData(YAML::Emitter& serializer) override;
-		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset) override;
+		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset) override;
 		virtual void DeserializeRegistrySpecificData(YAML::Node& registryNode) override;
-		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) override;
+		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset) override;
 
 		std::tuple<AssetHandle, bool> CreateNewScript(ScriptSpec& spec);
 		bool SaveScript(AssetHandle scriptHandle, ScriptSpec& spec);
 		bool AddScriptSectionLabel(const std::string& newLabel);
 		bool EditScriptSectionLabel(const std::string& oldLabel, const std::string& newLabel);
 		bool DeleteScriptSectionLabel(const std::string& label);
-		void FillScriptMetadata(ScriptSpec& spec, Assets::Asset& newAsset);
+		void FillScriptMetadata(ScriptSpec& spec, Assets::AssetInfo& newAsset);
 	public:
 		std::unordered_set<std::string> m_ScriptSectionLabels{};
 	};

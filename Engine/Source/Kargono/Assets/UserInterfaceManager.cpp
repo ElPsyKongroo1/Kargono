@@ -7,7 +7,7 @@
 
 namespace Kargono::Assets
 {
-	void UserInterfaceManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	void UserInterfaceManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary UserInterface
 		Ref<RuntimeUI::UserInterface> temporaryUserInterface = CreateRef<RuntimeUI::UserInterface>();
@@ -98,7 +98,7 @@ namespace Kargono::Assets
 		std::ofstream fout(assetPath);
 		fout << out.c_str();
 	}
-	Ref<RuntimeUI::UserInterface> UserInterfaceManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<RuntimeUI::UserInterface> UserInterfaceManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<RuntimeUI::UserInterface> newUserInterface = CreateRef<RuntimeUI::UserInterface>();
 		YAML::Node data;

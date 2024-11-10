@@ -30,7 +30,17 @@ namespace Kargono::Panels
 		}
 
 		m_AllScriptsTable.OnRefresh();
-	};
+	}
+	void ScriptEditorPanel::OnOpenScriptDialog(EditorUI::TableEntry& entry)
+	{
+		m_ActiveScriptHandle = entry.Handle;
+		m_EditScriptPopup.PopupActive = true;
+	}
+	void ScriptEditorPanel::OnCreateScriptDialog()
+	{
+		m_OnCreateScriptConfirm = nullptr;
+		m_CreateScriptPopup.PopupActive = true;
+	}
 
 	void ScriptEditorPanel::InitializeScriptPanel()
 	{
@@ -38,10 +48,7 @@ namespace Kargono::Panels
 		m_AllScriptsTable.Column1Title = "Group";
 		m_AllScriptsTable.Column2Title = "Name";
 		m_AllScriptsTable.Expanded = true;
-		m_AllScriptsTable.AddToSelectionList("Create New Script", [&]()
-			{
-				m_CreateScriptPopup.PopupActive = true;
-			});
+		m_AllScriptsTable.AddToSelectionList("Create New Script", KG_BIND_CLASS_FN(OnCreateScriptDialog));
 		m_AllScriptsTable.OnRefresh = [&]()
 		{
 			m_AllScriptsTable.ClearTable();
@@ -53,11 +60,7 @@ namespace Kargono::Panels
 				}
 				std::string scriptType = "Project";
 				std::string label = scriptType + std::string("::") + script->m_SectionLabel;
-				auto onEdit = [&](EditorUI::TableEntry& entry)
-				{
-					m_ActiveScriptHandle = entry.Handle;
-					m_EditScriptPopup.PopupActive = true;
-				};
+				auto onEdit = KG_BIND_CLASS_FN(OnOpenScriptDialog);
 				auto onLink = [&](EditorUI::TableEntry& entry)
 				{
 					if (!Assets::AssetService::GetScriptRegistry().contains(entry.Handle))
@@ -65,7 +68,7 @@ namespace Kargono::Panels
 						KG_WARN("Unable to open script in text editor. Script does not exist in registry");
 						return;
 					}
-					Assets::Asset& asset = Assets::AssetService::GetScriptRegistry().at(entry.Handle);
+					Assets::AssetInfo& asset = Assets::AssetService::GetScriptRegistry().at(entry.Handle);
 					s_EditorApp->m_TextEditorPanel->OpenFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
 				};
 				EditorUI::TableEntry newEntry
@@ -87,7 +90,15 @@ namespace Kargono::Panels
 		m_CreateScriptPopup.PopupAction = [&]()
 		{
 			m_CreateScriptName.CurrentOption = "Empty";
-			m_CreateScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
+			
+			if (m_OnCreateScriptConfirm)
+			{
+				m_CreateScriptFuncType.CurrentOption = { Utility::WrappedFuncTypeToString(m_OnCreateFunctionType), (uint64_t)m_OnCreateFunctionType };
+			}
+			else
+			{
+				m_CreateScriptFuncType.CurrentOption = { Utility::WrappedFuncTypeToString(WrappedFuncType::None), (uint64_t)WrappedFuncType::None };
+			}
 			m_CreateScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 		};
 		m_CreateScriptPopup.PopupContents = [&]()
@@ -96,6 +107,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::SelectOption(m_CreateScriptFuncType);
 			EditorUI::EditorUIService::SelectOption(m_CreateScriptSectionLabel);
 		};
+
 		m_CreateScriptPopup.ConfirmAction = [&]()
 		{
 			Assets::ScriptSpec spec {};
@@ -107,7 +119,14 @@ namespace Kargono::Panels
 			if (!successful)
 			{
 				KG_ERROR("Unsuccessful at creating new script");
+				m_OnCreateScriptConfirm = nullptr;
 			}
+
+			if (m_OnCreateScriptConfirm)
+			{
+				m_OnCreateScriptConfirm(handle);
+			}
+			m_OnCreateScriptConfirm = nullptr;
 
 			m_AllScriptsTable.OnRefresh();
 		};
@@ -401,5 +420,19 @@ namespace Kargono::Panels
 	{
 		m_AllScriptsTable.OnRefresh();
 		m_GroupLabelsTable.OnRefresh();
+	}
+	void ScriptEditorPanel::OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm)
+	{
+		// Open the editor panel to be visible
+		s_EditorApp->m_ShowScriptEditor = true;
+		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+
+		// Open the create dialog
+		OnCreateScriptDialog();
+
+		// Store onConfirm and indication that onConfirm should be used
+		m_OnCreateScriptConfirm = onConfirm;
+		m_OnCreateFunctionType = scriptType;
 	}
 }

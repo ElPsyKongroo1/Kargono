@@ -71,6 +71,11 @@ namespace Kargono::Utility
 		return Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel + "::" + script->m_ScriptName;
 	}
 
+	inline std::string ScriptToEditorUIGroup(Ref<Scripting::Script> script)
+	{
+		return Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel;
+	}
+
 	//==============================
 	// Utility for Creating Function Definition/Signatures
 	//==============================

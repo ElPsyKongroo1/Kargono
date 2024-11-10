@@ -802,6 +802,10 @@ namespace Kargono::EditorUI
 			ImGui::SameLine();
 			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
+				if (spec.CancelAction)
+				{
+					spec.CancelAction();
+				}
 				ImGui::CloseCurrentPopup();
 			}, s_LargeCancelButton, false, s_PrimaryTextColor);
 
@@ -925,7 +929,7 @@ namespace Kargono::EditorUI
 		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
-		if (spec.Flags & SelectOption_PopupOnly)
+		if (spec.Flags & (SelectOption_PopupOnly | SelectOption_HandleEditButtonExternally))
 		{
 			if (spec.PopupActive)
 			{
@@ -938,7 +942,8 @@ namespace Kargono::EditorUI
 				spec.CachedSelection = spec.CurrentOption;
 			}
 		}
-		else
+		
+		if ((spec.Flags & SelectOption_PopupOnly) == 0)
 		{
 			ImDrawList* draw_list = ImGui::GetWindowDrawList();
 			ImVec2 screenPosition = ImGui::GetCursorScreenPos();
@@ -964,15 +969,26 @@ namespace Kargono::EditorUI
 			ImGui::SameLine();
 			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 			{
-				ImGui::OpenPopup(id);
-				if (spec.PopupAction)
+				// Handle custom edit functionality
+				if (spec.Flags & SelectOption_HandleEditButtonExternally)
 				{
-					spec.PopupAction();
+					if (spec.OnEdit)
+					{
+						spec.OnEdit();
+					}
 				}
-				spec.CachedSelection = spec.CurrentOption;
+				// Open the button normally
+				else
+				{
+					ImGui::OpenPopup(id);
+					if (spec.PopupAction)
+					{
+						spec.PopupAction();
+					}
+					spec.CachedSelection = spec.CurrentOption;
+				}
 			},
 			EditorUIService::s_SmallEditButton, false, s_DisabledColor);
-
 		}
 		
 		// Display Popup

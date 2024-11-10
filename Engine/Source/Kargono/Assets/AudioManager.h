@@ -25,10 +25,10 @@ namespace Kargono::Assets
 		virtual ~AudioBufferManager() = default;
 	public:
 		// Functions specific to this manager type
-		virtual Ref<Audio::AudioBuffer> DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
-		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset) override;
-		virtual void CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath) override;
-		virtual void CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) override;
-		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) override;
+		virtual Ref<Audio::AudioBuffer> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
+		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset) override;
+		virtual void CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
+		virtual void CreateAssetIntermediateFromFile(AssetInfo& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) override;
+		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset) override;
 	};
 }

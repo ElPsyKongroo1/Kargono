@@ -2147,8 +2147,9 @@ namespace Kargono::Panels
 
 		if (Scenes::SceneService::GetActiveScene())
 		{
+			//TODO: Why, fix this plzzz
 			m_MainSceneHeader.Label = Assets::AssetService::GetSceneRegistry().at(
-				Scenes::SceneService::GetActiveSceneHandle()).Data.FileLocation.string();
+				Scenes::SceneService::GetActiveSceneHandle()).Data.FileLocation.filename().string();
 			
 			EditorUI::EditorUIService::PanelHeader(m_MainSceneHeader);
 
@@ -2617,7 +2618,7 @@ namespace Kargono::Panels
 			bool optionValid = component.GlobalStateHandle != Assets::EmptyHandle;
 			if (optionValid)
 			{
-				Assets::Asset& globalAsset = Assets::AssetService::GetAIStateRegistry().at(component.GlobalStateHandle);
+				Assets::AssetInfo& globalAsset = Assets::AssetService::GetAIStateRegistry().at(component.GlobalStateHandle);
 				m_SelectGlobalState.CurrentOption = { globalAsset.Data.FileLocation.string(), component.GlobalStateHandle };
 			}
 			else
@@ -2630,7 +2631,7 @@ namespace Kargono::Panels
 			optionValid = component.CurrentStateHandle != Assets::EmptyHandle;
 			if (optionValid)
 			{
-				Assets::Asset& currentAsset = Assets::AssetService::GetAIStateRegistry().at(component.CurrentStateHandle);
+				Assets::AssetInfo& currentAsset = Assets::AssetService::GetAIStateRegistry().at(component.CurrentStateHandle);
 				m_SelectCurrentState.CurrentOption = { currentAsset.Data.FileLocation.string(), component.CurrentStateHandle };
 			}
 			else
@@ -2643,7 +2644,7 @@ namespace Kargono::Panels
 			optionValid = component.PreviousStateHandle != Assets::EmptyHandle;
 			if (optionValid)
 			{
-				Assets::Asset& previousAsset = Assets::AssetService::GetAIStateRegistry().at(component.PreviousStateHandle);
+				Assets::AssetInfo& previousAsset = Assets::AssetService::GetAIStateRegistry().at(component.PreviousStateHandle);
 				m_SelectPreviousState.CurrentOption = { previousAsset.Data.FileLocation.string(), component.PreviousStateHandle };
 			}
 			else

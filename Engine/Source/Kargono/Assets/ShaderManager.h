@@ -24,12 +24,12 @@ namespace Kargono::Assets
 		virtual ~ShaderManager() = default;
 	public:
 		// Class specific functions
-		virtual Ref<Rendering::Shader> DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
-		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset) override;
-		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset) override;
+		virtual Ref<Rendering::Shader> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
+		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset) override;
+		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset) override;
 
 		AssetHandle CreateNewShader(const Rendering::ShaderSpecification& shaderSpec);
 		std::tuple<AssetHandle, Ref<Kargono::Rendering::Shader>> GetShader(const Rendering::ShaderSpecification& shaderSpec);
-		void CreateShaderIntermediate(const Rendering::ShaderSource& shaderSource, Assets::Asset& newAsset, const Rendering::ShaderSpecification& shaderSpec, const Rendering::InputBufferLayout& inputLayout, const Rendering::UniformBufferList& uniformLayout);
+		void CreateShaderIntermediate(const Rendering::ShaderSource& shaderSource, Assets::AssetInfo& newAsset, const Rendering::ShaderSpecification& shaderSpec, const Rendering::InputBufferLayout& inputLayout, const Rendering::UniformBufferList& uniformLayout);
 	};
 }

@@ -12,7 +12,7 @@ namespace Kargono::Assets
 	{
 
 		// Get old asset reference
-		Asset asset = GetAssetRegistry().at(assetHandle);
+		AssetInfo asset = GetAssetRegistry().at(assetHandle);
 		std::filesystem::path assetPath =
 			(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
 				Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation :
@@ -62,7 +62,7 @@ namespace Kargono::Assets
 
 		return newReallocationInstructions;
 	}
-	void ProjectComponentManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	void ProjectComponentManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		// Create new project component
 		Ref<ECS::ProjectComponent> newProjectComponent = CreateRef<ECS::ProjectComponent>();
@@ -141,7 +141,7 @@ namespace Kargono::Assets
 		std::ofstream fout(assetPath);
 		fout << out.c_str();
 	}
-	Ref<ECS::ProjectComponent> ProjectComponentManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<ECS::ProjectComponent> ProjectComponentManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<ECS::ProjectComponent> newProjectComponent = CreateRef<ECS::ProjectComponent>();
 		YAML::Node data;
@@ -199,12 +199,12 @@ namespace Kargono::Assets
 		return newProjectComponent;
 	}
 
-	void ProjectComponentManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	void ProjectComponentManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset)
 	{
 		Assets::ProjectComponentMetaData* metadata = currentAsset.Data.GetSpecificMetaData<ProjectComponentMetaData>();
 		serializer << YAML::Key << "Name" << YAML::Value << metadata->Name;
 	}
-	void ProjectComponentManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	void ProjectComponentManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset)
 	{
 		Ref<Assets::ProjectComponentMetaData> metadata = CreateRef<Assets::ProjectComponentMetaData>();
 		metadata->Name = metadataNode["Name"].as<std::string>();

@@ -7,7 +7,7 @@
 
 namespace Kargono::Assets
 {
-	void AIStateManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	void AIStateManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary AIState
 		Ref<AI::AIState> temporaryAIState = CreateRef<AI::AIState>();
@@ -36,7 +36,7 @@ namespace Kargono::Assets
 		fout << out.c_str();
 		KG_INFO("Successfully Serialized AIState at {}", assetPath.string());
 	}
-	Ref<AI::AIState> AIStateManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<AI::AIState> AIStateManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<AI::AIState> newAIState = CreateRef<AI::AIState>();
 		YAML::Node data;

@@ -63,7 +63,7 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
-	Ref<RuntimeUI::Font> Assets::FontManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<RuntimeUI::Font> Assets::FontManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<RuntimeUI::Font> newFont = CreateRef<RuntimeUI::Font>();
 		Assets::FontMetaData metadata = *asset.Data.GetSpecificMetaData<FontMetaData>();
@@ -90,7 +90,7 @@ namespace Kargono::Assets
 		currentResource.Release();
 		return newFont;
 	}
-	void Assets::FontManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	void Assets::FontManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset)
 	{
 		Assets::FontMetaData* metadata = currentAsset.Data.GetSpecificMetaData<FontMetaData>();
 
@@ -113,7 +113,7 @@ namespace Kargono::Assets
 		}
 		serializer << YAML::EndSeq;
 	}
-	void FontManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	void FontManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -124,7 +124,7 @@ namespace Kargono::Assets
 		fout << out.c_str();
 		KG_INFO("Successfully created font inside asset directory at {}", assetPath);
 	}
-	void Assets::FontManager::CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation)
+	void Assets::FontManager::CreateAssetIntermediateFromFile(AssetInfo& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation)
 	{
 		// Create Buffers
 		std::vector<msdf_atlas::GlyphGeometry> glyphs;
@@ -252,7 +252,7 @@ namespace Kargono::Assets
 		newAsset.Data.SpecificFileData = metadata;
 		buffer.Release();
 	}
-	void Assets::FontManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	void Assets::FontManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset)
 	{
 		Ref<Assets::FontMetaData> fontMetaData = CreateRef<Assets::FontMetaData>();
 

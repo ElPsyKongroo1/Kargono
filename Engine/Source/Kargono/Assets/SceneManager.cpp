@@ -284,7 +284,7 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
-	void Assets::SceneManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	void Assets::SceneManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary Scene
 		Ref<Scenes::Scene> temporaryScene = CreateRef<Scenes::Scene>();
@@ -332,7 +332,7 @@ namespace Kargono::Assets
 			KG_WARN("Failed to Serialize Scene");
 		}
 	}
-	Ref<Scenes::Scene> SceneManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Scenes::Scene> SceneManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
 		YAML::Node data;

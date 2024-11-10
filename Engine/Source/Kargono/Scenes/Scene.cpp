@@ -487,7 +487,7 @@ namespace Kargono::Scenes
 			return false;
 		}
 
-		Assets::Asset sceneAsset = Assets::AssetService::GetSceneRegistry().at(s_ActiveSceneHandle);
+		Assets::AssetInfo sceneAsset = Assets::AssetService::GetSceneRegistry().at(s_ActiveSceneHandle);
 		if (sceneAsset.Data.FileLocation == sceneName)
 		{
 			return true;

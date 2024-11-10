@@ -229,7 +229,7 @@ namespace Kargono::Panels
 		m_ViewAssetPopup.Label = "View Asset";
 		m_ViewAssetPopup.PopupContents = [&]() 
 		{
-			Assets::Asset asset = Assets::AssetService::GetAssetFromAllRegistries(m_ActiveAsset, m_ActiveAssetType);
+			Assets::AssetInfo asset = Assets::AssetService::GetAssetFromAllRegistries(m_ActiveAsset, m_ActiveAssetType);
 			EditorUI::EditorUIService::LabeledText("Asset Type", Utility::AssetTypeToString(asset.Data.Type));
 			if (!asset.Data.FileLocation.empty())
 			{

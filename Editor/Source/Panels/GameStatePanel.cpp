@@ -73,7 +73,7 @@ namespace Kargono::Panels
 			m_EditorGameState = Assets::AssetService::GetGameState(m_EditorGameStateHandle);
 			m_MainHeader.EditColorActive = false;
 			m_MainHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
-				m_EditorGameStateHandle).Data.FileLocation.string();
+				m_EditorGameStateHandle).Data.FileLocation.filename().string();
 			m_FieldsTable.OnRefresh();
 		};
 		m_CreateGameStatePopupSpec.PopupContents = [&]()
@@ -372,7 +372,7 @@ namespace Kargono::Panels
 		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
 			// Update game state header if necessary
-			m_MainHeader.Label = Assets::AssetService::GetGameStateFileLocation(manageAsset->GetAssetID()).string();
+			m_MainHeader.Label = Assets::AssetService::GetGameStateFileLocation(manageAsset->GetAssetID()).filename().string();
 			
 			return true;
 		}
@@ -468,7 +468,7 @@ namespace Kargono::Panels
 		m_EditorGameStateHandle = newHandle;
 		m_MainHeader.EditColorActive = false;
 		m_MainHeader.Label = Assets::AssetService::GetGameStateRegistry().at(
-			m_EditorGameStateHandle).Data.FileLocation.string();
+			m_EditorGameStateHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}
 }

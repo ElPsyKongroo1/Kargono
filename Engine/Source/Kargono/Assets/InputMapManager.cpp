@@ -7,7 +7,7 @@
 
 namespace Kargono::Assets
 {
-	void InputMapManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	void InputMapManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary InputMap
 		Ref<Input::InputMap> temporaryInputMap = CreateRef<Input::InputMap>();
@@ -114,7 +114,7 @@ namespace Kargono::Assets
 		fout << out.c_str();
 		KG_INFO("Successfully Serialized InputMap at {}", assetPath.string());
 	}
-	Ref<Input::InputMap> InputMapManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Input::InputMap> InputMapManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<Input::InputMap> newInputMap = CreateRef<Input::InputMap>();
 		YAML::Node data;

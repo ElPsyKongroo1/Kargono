@@ -33,7 +33,7 @@ namespace Kargono::Assets
 
 		// Create New Asset/Handle
 		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
+		Assets::AssetInfo newAsset{};
 		newAsset.Handle = newHandle;
 		newAsset.Data.Type = m_AssetType;
 		newAsset.Data.CheckSum = currentCheckSum;
@@ -61,7 +61,7 @@ namespace Kargono::Assets
 
 	}
 
-	void Texture2DManager::CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, int32_t height, int32_t channels, Assets::Asset& newAsset)
+	void Texture2DManager::CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, int32_t height, int32_t channels, Assets::AssetInfo& newAsset)
 	{
 		// Save Binary Intermediate into File
 		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation;
@@ -75,7 +75,7 @@ namespace Kargono::Assets
 		newAsset.Data.SpecificFileData = metadata;
 	}
 
-	Ref<Rendering::Texture2D> Texture2DManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Rendering::Texture2D> Texture2DManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		Assets::TextureMetaData metadata = *asset.Data.GetSpecificMetaData<TextureMetaData>();
 		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
@@ -83,7 +83,7 @@ namespace Kargono::Assets
 		currentResource.Release();
 		return newTexture;
 	}
-	void Texture2DManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	void Texture2DManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset)
 	{
 		Assets::TextureMetaData* metadata = static_cast<Assets::TextureMetaData*>(currentAsset.Data.SpecificFileData.get());
 		serializer << YAML::Key << "TextureHeight" << YAML::Value << metadata->Height;
@@ -91,7 +91,7 @@ namespace Kargono::Assets
 		serializer << YAML::Key << "TextureChannels" << YAML::Value << metadata->Channels;
 	}
 
-	void Texture2DManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	void Texture2DManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -103,7 +103,7 @@ namespace Kargono::Assets
 		KG_INFO("Successfully created texture inside asset directory at {}", assetPath);
 	}
 
-	void Texture2DManager::CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation)
+	void Texture2DManager::CreateAssetIntermediateFromFile(AssetInfo& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation)
 	{
 		// Create Texture Binary Intermediate
 		int32_t width, height, channels;
@@ -137,7 +137,7 @@ namespace Kargono::Assets
 		buffer.Release();
 	}
 
-	void Texture2DManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	void Texture2DManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset)
 	{
 		Ref<Assets::TextureMetaData> texMetaData = CreateRef<Assets::TextureMetaData>();
 

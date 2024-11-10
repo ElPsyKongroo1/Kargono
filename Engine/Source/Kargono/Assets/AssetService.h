@@ -15,7 +15,11 @@
 #include "Kargono/Assets/UserInterfaceManager.h"
 
 #define DEFINE_MANAGER(typeNamespace, typeName) \
-		static Ref<typeNamespace##::##typeName> Get##typeName(const AssetHandle& handle) \
+		static AssetInfo Get##typeName##Info(AssetHandle handle) \
+		{\
+			return s_AssetsContext.m_##typeName##Manager.GetAssetInfo(handle); \
+		}\
+		static Ref<typeNamespace##::##typeName> Get##typeName(AssetHandle handle) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAsset(handle); \
 		}\
@@ -23,15 +27,15 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAsset(fileLocation); \
 		}\
-		static std::filesystem::path Get##typeName##FileLocation(const AssetHandle& handle) \
+		static std::filesystem::path Get##typeName##FileLocation(AssetHandle handle) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetFileLocation(handle); \
 		}\
-		static std::filesystem::path Get##typeName##IntermediateLocation(const AssetHandle& handle) \
+		static std::filesystem::path Get##typeName##IntermediateLocation(AssetHandle handle) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetIntermediateLocation(handle); \
 		}\
-		static bool Set##typeName##FileLocation(const AssetHandle& handle, const std::filesystem::path& newFileLocation) \
+		static bool Set##typeName##FileLocation(AssetHandle handle, const std::filesystem::path& newFileLocation) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.SetAssetFileLocation(handle, newFileLocation); \
 		}\
@@ -39,7 +43,7 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetHandleFromFileLocation(queryFileLocation); \
 		}\
-		static bool Has##typeName(const AssetHandle& handle) \
+		static bool Has##typeName(AssetHandle handle) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.HasAsset(handle); \
 		}\
@@ -67,7 +71,7 @@
 		{\
 			s_AssetsContext.m_##typeName##Manager.ClearAssetRegistry(); \
 		}\
-		static std::unordered_map<AssetHandle, Asset>& Get##typeName##Registry() \
+		static std::unordered_map<AssetHandle, AssetInfo>& Get##typeName##Registry() \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetRegistry(); \
 		}\
@@ -221,7 +225,7 @@ namespace Kargono::Assets
 			ClearSceneRegistry();
 		}
 
-		static Asset GetAssetFromAllRegistries(AssetHandle handle, AssetType type)
+		static AssetInfo GetAssetFromAllRegistries(AssetHandle handle, AssetType type)
 		{
 			switch (type)
 			{

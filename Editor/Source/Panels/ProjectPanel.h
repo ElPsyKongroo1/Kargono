@@ -64,6 +64,7 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_SelectStartSessionSpec {};
 		EditorUI::SelectOptionSpec m_SelectSessionReadyCheckSpec {};
 		EditorUI::SelectOptionSpec m_SelectReceiveSignalSpec {};
+		EditorUI::TooltipSpec m_SelectScriptTooltip{};
 
 		// Editor AI Message Types
 		EditorUI::TableSpec m_MessageTypeTable {};

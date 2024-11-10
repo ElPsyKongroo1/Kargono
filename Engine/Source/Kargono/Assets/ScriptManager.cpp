@@ -33,7 +33,7 @@ namespace Kargono::Assets
 
 		// Create New Asset/Handle
 		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
+		Assets::AssetInfo newAsset{};
 		newAsset.Data.Type = AssetType::Script;
 		newAsset.Data.FileLocation = spec.Name + m_FileExtension.CString();
 		newAsset.Data.CheckSum = currentCheckSum;
@@ -57,7 +57,7 @@ namespace Kargono::Assets
 	bool ScriptManager::SaveScript(AssetHandle scriptHandle, ScriptSpec& spec)
 	{
 		// Get original asset/metadata
-		Asset asset = m_AssetRegistry.at(scriptHandle);
+		AssetInfo asset = m_AssetRegistry.at(scriptHandle);
 		ScriptMetaData* metadata = asset.Data.GetSpecificMetaData<ScriptMetaData>();
 
 		// Check if script exists in registry
@@ -239,7 +239,7 @@ namespace Kargono::Assets
 		return true;
 	}
 
-	void ScriptManager::FillScriptMetadata(ScriptSpec& spec, Assets::Asset& newAsset)
+	void ScriptManager::FillScriptMetadata(ScriptSpec& spec, Assets::AssetInfo& newAsset)
 	{
 		// Create script file
 		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation;
@@ -254,7 +254,7 @@ namespace Kargono::Assets
 		metadata->FunctionType = spec.FunctionType;
 		newAsset.Data.SpecificFileData = metadata;
 	}
-	Ref<Scripting::Script> ScriptManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Scripting::Script> ScriptManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<Scripting::Script> newScript = CreateRef<Scripting::Script>();
 		Assets::ScriptMetaData metadata = *asset.Data.GetSpecificMetaData<ScriptMetaData>();
@@ -280,7 +280,7 @@ namespace Kargono::Assets
 		}
 		serializer << YAML::EndSeq; // Start SectionLabels
 	}
-	void ScriptManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	void ScriptManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset)
 	{
 		Assets::ScriptMetaData* metadata = static_cast<Assets::ScriptMetaData*>(currentAsset.Data.SpecificFileData.get());
 
@@ -294,7 +294,7 @@ namespace Kargono::Assets
 		// Load in Engine Scripts
 		for (auto script : Scripting::ScriptService::GetAllEngineScripts())
 		{
-			Assets::Asset newAsset{};
+			Assets::AssetInfo newAsset{};
 			newAsset.Handle = script->m_ID;
 
 			newAsset.Data.CheckSum = "";
@@ -331,7 +331,7 @@ namespace Kargono::Assets
 			}
 		}
 	}
-	void ScriptManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	void ScriptManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset)
 	{
 		Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
 

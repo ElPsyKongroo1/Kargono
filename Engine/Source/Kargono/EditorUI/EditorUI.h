@@ -367,6 +367,7 @@ namespace Kargono::EditorUI
 		std::function<void()> ConfirmAction{ nullptr };
 		std::function<void()> DeleteAction{ nullptr };
 		std::function<void()> PopupAction{ nullptr };
+		std::function<void()> CancelAction{ nullptr };
 		bool PopupActive{ false };
 	private:
 		WidgetID WidgetID;
@@ -1282,7 +1283,8 @@ namespace Kargono::EditorUI
 	{
 		SelectOption_None = 0,
 		SelectOption_Indented = BIT(0), // Indents the text (used in collapsing headers usually)
-		SelectOption_PopupOnly = BIT(1) // Determines if line of text is generated for options
+		SelectOption_PopupOnly = BIT(1), // Determines if line of text is generated for options
+		SelectOption_HandleEditButtonExternally = BIT(2) // Allows calling a custom function for edit button
 	};
 
 	using OptionList = std::unordered_map<std::string, std::vector<OptionEntry>>;
@@ -1298,6 +1300,7 @@ namespace Kargono::EditorUI
 		std::string Label{};
 		OptionEntry CurrentOption{};
 		uint32_t LineCount{ 3 };
+		std::function<void()> OnEdit{ nullptr };
 		std::function<void(const OptionEntry&)> ConfirmAction {nullptr};
 		std::function<void()> PopupAction {nullptr};
 		// Only used if PopupOnly is true

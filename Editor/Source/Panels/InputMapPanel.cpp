@@ -26,7 +26,7 @@ namespace Kargono::Panels
 		m_EditorInputMapHandle = newHandle;
 		m_MainHeader.EditColorActive = false;
 		m_MainHeader.Label = Assets::AssetService::GetInputMapRegistry().at(
-			m_EditorInputMapHandle).Data.FileLocation.string();
+			m_EditorInputMapHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}
 
@@ -140,7 +140,7 @@ namespace Kargono::Panels
 		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
 			// Update header
-			m_MainHeader.Label = Assets::AssetService::GetInputMapFileLocation(manageAsset->GetAssetID()).string();
+			m_MainHeader.Label = Assets::AssetService::GetInputMapFileLocation(manageAsset->GetAssetID()).filename().string();
 			return true;
 		}
 		return false;
@@ -281,7 +281,7 @@ namespace Kargono::Panels
 			m_EditorInputMap = Assets::AssetService::GetInputMap(m_EditorInputMapHandle);
 			m_MainHeader.EditColorActive = false;
 			m_MainHeader.Label = Assets::AssetService::GetInputMapRegistry().at(
-				m_EditorInputMapHandle).Data.FileLocation.string();
+				m_EditorInputMapHandle).Data.FileLocation.filename().string();
 			OnRefreshData();
 		};
 		m_CreateInputMapPopupSpec.PopupContents = [&]()

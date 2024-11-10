@@ -124,7 +124,7 @@ namespace Kargono::Panels
 			m_EditorProjectComponent = Assets::AssetService::GetProjectComponent(m_EditorProjectComponentHandle);
 			m_MainHeader.EditColorActive = false;
 			m_MainHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
-				m_EditorProjectComponentHandle).Data.FileLocation.string();
+				m_EditorProjectComponentHandle).Data.FileLocation.filename().string();
 			RefreshData();
 			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
 		};
@@ -344,7 +344,7 @@ namespace Kargono::Panels
 		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
 			// Update header
-			m_MainHeader.Label = Assets::AssetService::GetProjectComponentFileLocation(manageAsset->GetAssetID()).string();
+			m_MainHeader.Label = Assets::AssetService::GetProjectComponentFileLocation(manageAsset->GetAssetID()).filename().string();
 			return true;
 		}
 		return false;
@@ -435,7 +435,7 @@ namespace Kargono::Panels
 		m_EditorProjectComponent = Assets::AssetService::GetProjectComponent(newHandle);
 		m_EditorProjectComponentHandle = newHandle;
 		m_MainHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
-			newHandle).Data.FileLocation.string();
+			newHandle).Data.FileLocation.filename().string();
 		m_MainHeader.EditColorActive = false;
 		RefreshData();
 	}

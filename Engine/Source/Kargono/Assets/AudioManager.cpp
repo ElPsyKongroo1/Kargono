@@ -9,7 +9,7 @@
 
 namespace Kargono::Assets
 {
-	Ref<Audio::AudioBuffer> AudioBufferManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Audio::AudioBuffer> AudioBufferManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		Assets::AudioMetaData metadata = *asset.Data.GetSpecificMetaData<Assets::AudioMetaData>();
 		Buffer currentResource{};
@@ -20,7 +20,7 @@ namespace Kargono::Assets
 		return newAudio;
 	}
 
-	void AudioBufferManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	void AudioBufferManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset)
 	{
 		Assets::AudioMetaData* metadata = currentAsset.Data.GetSpecificMetaData<AudioMetaData>();
 		serializer << YAML::Key << "Channels" << YAML::Value << metadata->Channels;
@@ -29,7 +29,7 @@ namespace Kargono::Assets
 		serializer << YAML::Key << "TotalSize" << YAML::Value << metadata->TotalSize;
 	}
 
-	void AudioBufferManager::CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath)
+	void AudioBufferManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -41,7 +41,7 @@ namespace Kargono::Assets
 		KG_INFO("Successfully created audio inside asset directory at {}", assetPath);
 	}
 
-	void AudioBufferManager::CreateAssetIntermediateFromFile(Asset& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation)
+	void AudioBufferManager::CreateAssetIntermediateFromFile(AssetInfo& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation)
 	{
 		// Create Buffers
 		uint32_t channels = 0;
@@ -87,7 +87,7 @@ namespace Kargono::Assets
 		pcmData.Release();
 	}
 
-	void AudioBufferManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	void AudioBufferManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset)
 	{
 		Ref<Assets::AudioMetaData> audioMetaData = CreateRef<Assets::AudioMetaData>();
 		audioMetaData->Channels = metadataNode["Channels"].as<uint32_t>();

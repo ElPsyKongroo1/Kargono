@@ -193,15 +193,15 @@ namespace Kargono::Assets
 	};
 
 	//==============================
-	// Asset Struct
+	// Asset Info Struct
 	//==============================
 	// This struct represents an asset managed by the AssetManager class. This asset
 	//		has an AssetHandle which uniquely identifies this asset and a metadata
 	//		object which holds ancillary information about the asset such as the
 	//		asset type, asset location, a checksum, and asset type specific metadata.
-	struct Asset
+	struct AssetInfo
 	{
-		AssetHandle Handle;
+		AssetHandle Handle { Assets::EmptyHandle };
 		Metadata Data;
 	};
 	

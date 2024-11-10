@@ -164,7 +164,7 @@ namespace Kargono::Assets
 
 		// Create New Asset/Handle
 		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
+		Assets::AssetInfo newAsset{};
 		newAsset.Handle = newHandle;
 		newAsset.Data.Type = m_AssetType;
 		newAsset.Data.CheckSum = currentCheckSum;
@@ -215,7 +215,7 @@ namespace Kargono::Assets
 
 	}
 
-	void ShaderManager::CreateShaderIntermediate(const Rendering::ShaderSource& shaderSource, Assets::Asset& newAsset, const Rendering::ShaderSpecification& shaderSpec,
+	void ShaderManager::CreateShaderIntermediate(const Rendering::ShaderSource& shaderSource, Assets::AssetInfo& newAsset, const Rendering::ShaderSpecification& shaderSpec,
 		const Rendering::InputBufferLayout& inputLayout, const Rendering::UniformBufferList& uniformLayout)
 	{
 #if defined(KG_EXPORT_SERVER) || defined(KG_EXPORT_RUNTIME)
@@ -262,7 +262,7 @@ namespace Kargono::Assets
 	}
 
 
-	Ref<Rendering::Shader> Assets::ShaderManager::DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath)
+	Ref<Rendering::Shader> Assets::ShaderManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		Assets::ShaderMetaData metadata = *asset.Data.GetSpecificMetaData<ShaderMetaData>();
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
@@ -294,7 +294,7 @@ namespace Kargono::Assets
 		openGLSPIRV.clear();
 		return newShader;
 	}
-	void Assets::ShaderManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::Asset& currentAsset)
+	void Assets::ShaderManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset)
 	{
 		// ShaderSpecification Section
 		Assets::ShaderMetaData* metadata = static_cast<Assets::ShaderMetaData*>(currentAsset.Data.SpecificFileData.get());
@@ -332,7 +332,7 @@ namespace Kargono::Assets
 		serializer << YAML::EndSeq;
 		serializer << YAML::EndMap; // Uniform Buffer Layout Map
 	}
-	void Assets::ShaderManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::Asset& currentAsset)
+	void Assets::ShaderManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset)
 	{
 		Ref<Assets::ShaderMetaData> shaderMetaData = CreateRef<Assets::ShaderMetaData>();
 

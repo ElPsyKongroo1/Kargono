@@ -24,8 +24,8 @@ namespace Kargono::Assets
 		virtual ~UserInterfaceManager() = default;
 	public:
 		// Class specific functions
-		virtual void CreateAssetFileFromName(const std::string& name, Asset& asset, const std::filesystem::path& assetPath) override;
+		virtual void CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAsset(Ref<RuntimeUI::UserInterface> assetReference, const std::filesystem::path& assetPath) override;
-		virtual Ref<RuntimeUI::UserInterface> DeserializeAsset(Assets::Asset& asset, const std::filesystem::path& assetPath) override;
+		virtual Ref<RuntimeUI::UserInterface> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
 	};
 }

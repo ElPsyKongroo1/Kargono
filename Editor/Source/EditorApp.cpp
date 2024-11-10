@@ -897,7 +897,7 @@ namespace Kargono
 
 	bool EditorApp::OnUpdateUserCount(Events::UpdateOnlineUsers event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCount();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCountHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt32(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserCount());
@@ -908,7 +908,7 @@ namespace Kargono
 
 	bool EditorApp::OnApproveJoinSession(Events::ApproveJoinSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnApproveJoinSession();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnApproveJoinSessionHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
@@ -919,7 +919,7 @@ namespace Kargono
 
 	bool EditorApp::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateSessionUserSlot();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
@@ -930,7 +930,7 @@ namespace Kargono
 
 	bool EditorApp::OnUserLeftSession(Events::UserLeftSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUserLeftSession();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUserLeftSessionHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
@@ -940,7 +940,7 @@ namespace Kargono
 
 	bool EditorApp::OnCurrentSessionInit(Events::CurrentSessionInit event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnCurrentSessionInit();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnCurrentSessionInitHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -950,7 +950,7 @@ namespace Kargono
 
 	bool EditorApp::OnConnectionTerminated(Events::ConnectionTerminated event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnConnectionTerminated();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnConnectionTerminatedHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -960,7 +960,7 @@ namespace Kargono
 
 	bool EditorApp::OnStartSession(Events::StartSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnStartSession();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnStartSessionHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -970,7 +970,7 @@ namespace Kargono
 
 	bool EditorApp::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnSessionReadyCheckConfirm();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -980,7 +980,7 @@ namespace Kargono
 
 	bool EditorApp::OnReceiveSignal(Events::ReceiveSignal event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnReceiveSignal();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnReceiveSignalHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetSignal());
@@ -1073,7 +1073,7 @@ namespace Kargono
 			if (startSceneHandle == Assets::EmptyHandle)
 			{
 				NewScene("NewScene");
-				Projects::ProjectService::SetActiveStartingScene(m_EditorSceneHandle);
+				Projects::ProjectService::SetActiveStartingSceneHandle(m_EditorSceneHandle);
 				SaveProject();
 			}
 			else
@@ -1214,15 +1214,15 @@ namespace Kargono
 		}
 
 		// Load Default Game State
-		if (Projects::ProjectService::GetActiveStartGameState() == 0)
+		if (Projects::ProjectService::GetActiveStartGameStateHandle() == 0)
 		{
 			Scenes::GameStateService::ClearActiveGameState();
 		}
 		else
 		{
 			Scenes::GameStateService::SetActiveGameState(
-				Assets::AssetService::GetGameState(Projects::ProjectService::GetActiveStartGameState()),
-				Projects::ProjectService::GetActiveStartGameState());
+				Assets::AssetService::GetGameState(Projects::ProjectService::GetActiveStartGameStateHandle()),
+				Projects::ProjectService::GetActiveStartGameStateHandle());
 		}
 
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
@@ -1232,7 +1232,7 @@ namespace Kargono
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
 		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStart();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
 		if (scriptHandle != 0)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);

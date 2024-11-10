@@ -240,7 +240,7 @@ namespace Kargono::Projects
 			s_ActiveProject->TargetResolution = option;
 		}
 		// This function sets the starting scene of the current project in s_ActiveProject.
-		static void SetActiveStartingScene(Assets::AssetHandle handle)
+		static void SetActiveStartingSceneHandle(Assets::AssetHandle handle)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->StartSceneHandle = handle;
@@ -281,134 +281,134 @@ namespace Kargono::Projects
 			s_ActiveProject->AppIsNetworked = isNetworked;
 		}
 
-		static Assets::AssetHandle GetActiveStartGameState()
+		static Assets::AssetHandle GetActiveStartGameStateHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->StartGameState;
 		}
 
-		static void SetActiveStartGameState(Assets::AssetHandle id)
+		static void SetActiveStartGameStateHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->StartGameState = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnRuntimeStart()
+		static Assets::AssetHandle GetActiveOnRuntimeStartHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnRuntimeStart;
 		}
 
-		static void SetActiveOnRuntimeStart(Assets::AssetHandle id)
+		static void SetActiveOnRuntimeStartHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnRuntimeStart = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnUpdateUserCount()
+		static Assets::AssetHandle GetActiveOnUpdateUserCountHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnUpdateUserCount;
 		}
 
-		static void SetActiveOnUpdateUserCount(Assets::AssetHandle id)
+		static void SetActiveOnUpdateUserCountHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnUpdateUserCount = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnApproveJoinSession()
+		static Assets::AssetHandle GetActiveOnApproveJoinSessionHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnApproveJoinSession;
 		}
 
-		static void SetActiveOnApproveJoinSession(Assets::AssetHandle id)
+		static void SetActiveOnApproveJoinSessionHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnApproveJoinSession = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnUserLeftSession()
+		static Assets::AssetHandle GetActiveOnUserLeftSessionHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnUserLeftSession;
 		}
 
-		static void SetActiveOnUserLeftSession(Assets::AssetHandle id)
+		static void SetActiveOnUserLeftSessionHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnUserLeftSession = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnCurrentSessionInit()
+		static Assets::AssetHandle GetActiveOnCurrentSessionInitHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnCurrentSessionInit;
 		}
 
-		static void SetActiveOnCurrentSessionInit(Assets::AssetHandle id)
+		static void SetActiveOnCurrentSessionInitHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnCurrentSessionInit = id;
 		}
 		
 
-		static Assets::AssetHandle GetActiveOnConnectionTerminated()
+		static Assets::AssetHandle GetActiveOnConnectionTerminatedHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnConnectionTerminated;
 		}
 
-		static void SetActiveOnConnectionTerminated(Assets::AssetHandle id)
+		static void SetActiveOnConnectionTerminatedHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnConnectionTerminated = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnUpdateSessionUserSlot()
+		static Assets::AssetHandle GetActiveOnUpdateSessionUserSlotHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnUpdateSessionUserSlot;
 		}
 
-		static void SetActiveOnUpdateSessionUserSlot(Assets::AssetHandle id)
+		static void SetActiveOnUpdateSessionUserSlotHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnUpdateSessionUserSlot = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnStartSession()
+		static Assets::AssetHandle GetActiveOnStartSessionHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnStartSession;
 		}
 
-		static void SetActiveOnStartSession(Assets::AssetHandle id)
+		static void SetActiveOnStartSessionHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnStartSession = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnSessionReadyCheckConfirm()
+		static Assets::AssetHandle GetActiveOnSessionReadyCheckConfirmHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnSessionReadyCheckConfirm;
 		}
 
-		static void SetActiveOnSessionReadyCheckConfirm(Assets::AssetHandle id)
+		static void SetActiveOnSessionReadyCheckConfirmHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnSessionReadyCheckConfirm = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnReceiveSignal()
+		static Assets::AssetHandle GetActiveOnReceiveSignalHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnReceiveSignal;
 		}
 
-		static void SetActiveOnReceiveSignal(Assets::AssetHandle id)
+		static void SetActiveOnReceiveSignalHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnReceiveSignal = id;

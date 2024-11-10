@@ -49,7 +49,7 @@ namespace Kargono::Panels
 		m_EditorUIHandle = newHandle;
 		m_MainHeader.EditColorActive = false;
 		m_MainHeader.Label = Assets::AssetService::GetUserInterfaceRegistry().at(
-			m_EditorUIHandle).Data.FileLocation.string();
+			m_EditorUIHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 		RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUI, m_EditorUIHandle);
 	}
@@ -148,7 +148,7 @@ namespace Kargono::Panels
 		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
 			// Update header
-			m_MainHeader.Label = Assets::AssetService::GetUserInterfaceFileLocation(manageAsset->GetAssetID()).string();
+			m_MainHeader.Label = Assets::AssetService::GetUserInterfaceFileLocation(manageAsset->GetAssetID()).filename().string();
 			return true;
 		}
 		return false;
@@ -340,7 +340,7 @@ namespace Kargono::Panels
 			m_EditorUI = Assets::AssetService::GetUserInterface(m_EditorUIHandle);
 			m_MainHeader.EditColorActive = false;
 			m_MainHeader.Label = Assets::AssetService::GetUserInterfaceRegistry().at(
-				m_EditorUIHandle).Data.FileLocation.string();
+				m_EditorUIHandle).Data.FileLocation.filename().string();
 			OnRefreshData();
 			RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUI, m_EditorUIHandle);
 		};
