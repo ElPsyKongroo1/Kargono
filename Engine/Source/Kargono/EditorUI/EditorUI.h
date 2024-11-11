@@ -345,7 +345,7 @@ namespace Kargono::EditorUI
 		std::string Label;
 		float PopupWidth{ 700.0f };
 		std::function<void()> PopupContents{ nullptr };
-		bool PopupActive{ false };
+		bool OpenPopup{ false };
 	private:
 		WidgetID WidgetID;
 	private:
@@ -368,9 +368,15 @@ namespace Kargono::EditorUI
 		std::function<void()> DeleteAction{ nullptr };
 		std::function<void()> PopupAction{ nullptr };
 		std::function<void()> CancelAction{ nullptr };
-		bool PopupActive{ false };
+		bool OpenPopup{ false };
+	public:
+		void CloseActivePopup()
+		{
+			m_CloseActivePopup = true;
+		}
 	private:
 		WidgetID WidgetID;
+		bool m_CloseActivePopup{ false };
 	private:
 		friend void EditorUIService::GenericPopup(GenericPopupSpec& spec);
 	};
@@ -1304,7 +1310,7 @@ namespace Kargono::EditorUI
 		std::function<void(const OptionEntry&)> ConfirmAction {nullptr};
 		std::function<void()> PopupAction {nullptr};
 		// Only used if PopupOnly is true
-		bool PopupActive{ false };
+		bool OpenPopup{ false };
 		WidgetFlags Flags{ SelectOption_None };
 		void ClearOptions()
 		{

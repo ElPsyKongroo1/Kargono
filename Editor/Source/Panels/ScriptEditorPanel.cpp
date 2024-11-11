@@ -34,12 +34,12 @@ namespace Kargono::Panels
 	void ScriptEditorPanel::OnOpenScriptDialog(EditorUI::TableEntry& entry)
 	{
 		m_ActiveScriptHandle = entry.Handle;
-		m_EditScriptPopup.PopupActive = true;
+		m_EditScriptPopup.OpenPopup = true;
 	}
 	void ScriptEditorPanel::OnCreateScriptDialog()
 	{
 		m_OnCreateScriptConfirm = nullptr;
-		m_CreateScriptPopup.PopupActive = true;
+		m_CreateScriptPopup.OpenPopup = true;
 	}
 
 	void ScriptEditorPanel::InitializeScriptPanel()
@@ -180,14 +180,14 @@ namespace Kargono::Panels
 		};
 		m_EditScriptPopup.DeleteAction = [&]()
 		{
-			m_DeleteScriptWarning.PopupActive = true;
+			m_DeleteScriptWarning.OpenPopup = true;
 		};
 		m_EditScriptPopup.ConfirmAction = [&]()
 		{
 			if (Utility::StringToWrappedFuncType(m_EditScriptFuncType.CurrentOption.Label) !=
 				Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_FuncType)
 			{
-				m_EditScriptFuncTypeWarning.PopupActive = true;
+				m_EditScriptFuncTypeWarning.OpenPopup = true;
 			}
 			else
 			{
@@ -273,7 +273,7 @@ namespace Kargono::Panels
 				m_GroupLabelsTable.InsertTableEntry(label, "", [&](EditorUI::TableEntry& entry)
 					{
 						m_ActiveLabel = entry.Label;
-						m_EditGroupLabelPopup.PopupActive = true;
+						m_EditGroupLabelPopup.OpenPopup = true;
 					});
 			}
 		};
@@ -421,18 +421,25 @@ namespace Kargono::Panels
 		m_AllScriptsTable.OnRefresh();
 		m_GroupLabelsTable.OnRefresh();
 	}
-	void ScriptEditorPanel::OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm)
+	void ScriptEditorPanel::OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm, bool openScriptEditor)
 	{
-		// Open the editor panel to be visible
-		s_EditorApp->m_ShowScriptEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
-
+		if (openScriptEditor)
+		{
+			// Open the editor panel to be visible
+			s_EditorApp->m_ShowScriptEditor = true;
+			EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
+			EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		}
+		
 		// Open the create dialog
 		OnCreateScriptDialog();
 
 		// Store onConfirm and indication that onConfirm should be used
 		m_OnCreateScriptConfirm = onConfirm;
 		m_OnCreateFunctionType = scriptType;
+	}
+	void ScriptEditorPanel::DrawOnCreatePopup()
+	{
+		EditorUI::EditorUIService::GenericPopup(m_CreateScriptPopup);
 	}
 }

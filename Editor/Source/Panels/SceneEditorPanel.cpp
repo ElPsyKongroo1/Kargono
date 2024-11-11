@@ -34,7 +34,7 @@ namespace Kargono::Panels
 
 		newEntry.OnRightClickSelection.push_back({ "Add Component", [&](EditorUI::TreeEntry& entry)
 		{
-			m_AddComponent.PopupActive = true;
+			m_AddComponent.OpenPopup = true;
 			m_AddComponentEntity = (int32_t)entry.Handle;
 		} });
 
@@ -671,8 +671,8 @@ namespace Kargono::Panels
 			component.FixedRotation = spec.CurrentBoolean;
 		};
 
-		m_SelectRigidBody2DCollisionStartScript.Label = "On Physics Collision Start";
-		m_SelectRigidBody2DCollisionStartScript.Flags |= EditorUI::SelectOption_Indented;
+		m_SelectRigidBody2DCollisionStartScript.Label = "On Collision Start";
+		m_SelectRigidBody2DCollisionStartScript.Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectRigidBody2DCollisionStartScript.CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectRigidBody2DCollisionStartScript.PopupAction = [&]()
 		{
@@ -687,8 +687,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectRigidBody2DCollisionStartScript.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
-					"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+				m_SelectRigidBody2DCollisionStartScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 
@@ -713,8 +712,60 @@ namespace Kargono::Panels
 			component.OnCollisionStartScript = Assets::AssetService::GetScript(entry.Handle);
 		};
 
-		m_SelectRigidBody2DCollisionEndScript.Label = "On Physics Collision End";
-		m_SelectRigidBody2DCollisionEndScript.Flags |= EditorUI::SelectOption_Indented;
+		m_SelectRigidBody2DCollisionStartScript.OnEdit = [&]()
+			{
+				// Initialize tooltip with options
+				m_SelectScriptTooltip.ClearEntries();
+				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_SelectRigidBody2DCollisionStartScript.OpenPopup = true;
+				} };
+				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+				{
+						// Open create script dialog in script editor
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Bool_UInt64UInt64, [&](Assets::AssetHandle scriptHandle)
+						{
+								// Ensure handle provides a script in the registry
+								if (!Assets::AssetService::HasScript(scriptHandle))
+								{
+									KG_WARN("Could not find script");
+									return;
+								}
+
+								// Ensure function type matches definition
+								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+								if (script->m_FuncType != WrappedFuncType::Bool_UInt64UInt64)
+								{
+									KG_WARN("Incorrect function type returned when linking script to usage point");
+									return;
+								}
+
+								ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+								if (!entity.HasComponent<ECS::Rigidbody2DComponent>())
+								{
+									KG_ERROR("Attempt to edit entity CollisionStart component when none exists!");
+									return;
+								}
+								ECS::Rigidbody2DComponent& component = entity.GetComponent<ECS::Rigidbody2DComponent>();
+
+								// Check for a valid entry, and Update if applicable
+								component.OnCollisionStartScriptHandle = scriptHandle;
+								component.OnCollisionStartScript = script;
+								m_SelectRigidBody2DCollisionStartScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+							});
+
+						} };
+				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+				// Open tooltip
+				m_SelectScriptTooltip.TooltipActive = true;
+
+			};
+
+		m_SelectRigidBody2DCollisionEndScript.Label = "On Collision End";
+		m_SelectRigidBody2DCollisionEndScript.Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectRigidBody2DCollisionEndScript.CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectRigidBody2DCollisionEndScript.PopupAction = [&]()
 		{
@@ -729,8 +780,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectRigidBody2DCollisionEndScript.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
-					"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+				m_SelectRigidBody2DCollisionEndScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 
@@ -754,6 +804,58 @@ namespace Kargono::Panels
 			component.OnCollisionEndScriptHandle = entry.Handle;
 			component.OnCollisionEndScript = Assets::AssetService::GetScript(entry.Handle);
 		};
+
+		m_SelectRigidBody2DCollisionEndScript.OnEdit = [&]()
+			{
+				// Initialize tooltip with options
+				m_SelectScriptTooltip.ClearEntries();
+				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_SelectRigidBody2DCollisionEndScript.OpenPopup = true;
+				} };
+				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+				{
+					// Open create script dialog in script editor
+					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Bool_UInt64UInt64, [&](Assets::AssetHandle scriptHandle)
+					{
+						// Ensure handle provides a script in the registry
+						if (!Assets::AssetService::HasScript(scriptHandle))
+						{
+							KG_WARN("Could not find script");
+							return;
+						}
+
+						// Ensure function type matches definition
+						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+						if (script->m_FuncType != WrappedFuncType::Bool_UInt64UInt64)
+						{
+							KG_WARN("Incorrect function type returned when linking script to usage point");
+							return;
+						}
+
+						ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+						if (!entity.HasComponent<ECS::Rigidbody2DComponent>())
+						{
+							KG_ERROR("Attempt to edit entity CollisionEnd component when none exists!");
+							return;
+						}
+						ECS::Rigidbody2DComponent& component = entity.GetComponent<ECS::Rigidbody2DComponent>();
+
+						// Check for a valid entry, and Update if applicable
+						component.OnCollisionEndScriptHandle = scriptHandle;
+						component.OnCollisionEndScript = script;
+						m_SelectRigidBody2DCollisionEndScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+					});
+
+			}		};
+				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+				// Open tooltip
+				m_SelectScriptTooltip.TooltipActive = true;
+
+			};
 
 	}
 
@@ -1255,7 +1357,7 @@ namespace Kargono::Panels
 		});
 
 		m_SelectOnUpdateScript.Label = "On Update Script";
-		m_SelectOnUpdateScript.Flags |= EditorUI::SelectOption_Indented;
+		m_SelectOnUpdateScript.Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnUpdateScript.CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectOnUpdateScript.PopupAction = [&]()
 		{
@@ -1270,8 +1372,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectOnUpdateScript.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
-					"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+				m_SelectOnUpdateScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 
@@ -1294,6 +1395,58 @@ namespace Kargono::Panels
 			// Check for a valid entry, and Update if applicable
 			component.OnUpdateScriptHandle = entry.Handle;
 			component.OnUpdateScript = Assets::AssetService::GetScript(entry.Handle);
+		};
+
+		m_SelectOnUpdateScript.OnEdit = [&]()
+		{
+			// Initialize tooltip with options
+			m_SelectScriptTooltip.ClearEntries();
+			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+			{
+				m_SelectOnUpdateScript.OpenPopup = true;
+			}};
+			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+			{
+					// Open create script dialog in script editor
+					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt64Float, [&](Assets::AssetHandle scriptHandle)
+					{
+							// Ensure handle provides a script in the registry
+							if (!Assets::AssetService::HasScript(scriptHandle))
+							{
+								KG_WARN("Could not find runtime start function in Project Panel");
+								return;
+							}
+
+							// Ensure function type matches definition
+							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							if (script->m_FuncType != WrappedFuncType::Void_UInt64Float)
+							{
+								KG_WARN("Incorrect function type returned when linking script to usage point");
+								return;
+							}
+
+							ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+							if (!entity.HasComponent<ECS::OnUpdateComponent>())
+							{
+								KG_ERROR("Attempt to edit entity OnUpdate component when none exists!");
+								return;
+							}
+							ECS::OnUpdateComponent& component = entity.GetComponent<ECS::OnUpdateComponent>();
+
+							// Update component's data
+							component.OnUpdateScriptHandle = scriptHandle;
+							component.OnUpdateScript = script;
+							m_SelectOnUpdateScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+						});
+
+					} };
+			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+			// Open tooltip
+			m_SelectScriptTooltip.TooltipActive = true;
+
 		};
 	}
 
@@ -1340,7 +1493,7 @@ namespace Kargono::Panels
 		});
 
 		m_SelectOnCreateScript.Label = "On Create Script";
-		m_SelectOnCreateScript.Flags |= EditorUI::SelectOption_Indented;
+		m_SelectOnCreateScript.Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnCreateScript.CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectOnCreateScript.PopupAction = [&]()
 		{
@@ -1355,8 +1508,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectOnCreateScript.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
-					"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+				m_SelectOnCreateScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 
@@ -1379,6 +1531,58 @@ namespace Kargono::Panels
 			// Check for a valid entry, and Create if applicable
 			component.OnCreateScriptHandle = entry.Handle;
 			component.OnCreateScript = Assets::AssetService::GetScript(entry.Handle);
+		};
+
+		m_SelectOnCreateScript.OnEdit = [&]()
+		{
+			// Initialize tooltip with options
+			m_SelectScriptTooltip.ClearEntries();
+			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+			{
+				m_SelectOnCreateScript.OpenPopup = true;
+			} };
+			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+			{
+					// Open create script dialog in script editor
+					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt64, [&](Assets::AssetHandle scriptHandle)
+					{
+							// Ensure handle provides a script in the registry
+							if (!Assets::AssetService::HasScript(scriptHandle))
+							{
+								KG_WARN("Could not find script");
+								return;
+							}
+
+							// Ensure function type matches definition
+							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							if (script->m_FuncType != WrappedFuncType::Void_UInt64)
+							{
+								KG_WARN("Incorrect function type returned when linking script to usage point");
+								return;
+							}
+
+							ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+							if (!entity.HasComponent<ECS::OnCreateComponent>())
+							{
+								KG_ERROR("Attempt to edit entity OnCreate component when none exists!");
+								return;
+							}
+							ECS::OnCreateComponent& component = entity.GetComponent<ECS::OnCreateComponent>();
+
+							// Update component's data
+							component.OnCreateScriptHandle = scriptHandle;
+							component.OnCreateScript = script;
+							m_SelectOnCreateScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+						});
+
+					}};
+			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+			// Open tooltip
+			m_SelectScriptTooltip.TooltipActive = true;
+
 		};
 	}
 
@@ -2156,6 +2360,8 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Tree(m_SceneHierarchyTree);
 
 			EditorUI::EditorUIService::SelectOption(m_AddComponent);
+
+			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
 		}
 		EditorUI::EditorUIService::EndWindow();
 	}
@@ -2236,6 +2442,33 @@ namespace Kargono::Panels
 			InitializeProjectComponent(manageAsset->GetAssetID());
 			SetSelectedEntity({});
 		}
+
+		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
+			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			if (m_SelectOnUpdateScript.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectOnUpdateScript.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+
+			if (m_SelectOnCreateScript.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectOnCreateScript.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+
+			if (m_SelectRigidBody2DCollisionStartScript.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectRigidBody2DCollisionStartScript.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+
+			if (m_SelectRigidBody2DCollisionEndScript.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectRigidBody2DCollisionEndScript.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+		}
+
+
+
 
 		if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
 			manageAsset->GetAction() == Events::ManageAssetAction::UpdateAsset)

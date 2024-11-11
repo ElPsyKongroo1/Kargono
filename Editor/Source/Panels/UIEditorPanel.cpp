@@ -35,13 +35,13 @@ namespace Kargono::Panels
 	// Reusable Functions
 	void UIEditorPanel::OnOpenUIDialog()
 	{
-		m_OpenUIPopupSpec.PopupActive = true;
+		m_OpenUIPopupSpec.OpenPopup = true;
 	}
 	void UIEditorPanel::OnCreateUIDialog()
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive());
 		m_SelectUILocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
-		m_CreateUIPopupSpec.PopupActive = true;
+		m_CreateUIPopupSpec.OpenPopup = true;
 	}
 	void UIEditorPanel::OnOpenUI(Assets::AssetHandle newHandle)
 	{
@@ -96,6 +96,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
 			EditorUI::EditorUIService::GenericPopup(m_DeleteUIWarning);
 			EditorUI::EditorUIService::GenericPopup(m_CloseUIWarning);
+			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
 
 			// Main Content
 			EditorUI::EditorUIService::Tree(m_UITree);
@@ -120,37 +121,69 @@ namespace Kargono::Panels
 
 	bool UIEditorPanel::OnAssetEvent(Events::Event* event)
 	{
-		// Validate event type and asset type
-		if (event->GetEventType() != Events::EventType::ManageAsset)
-		{
-			return false;
-		}
 		Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
-		if (manageAsset->GetAssetType() != Assets::AssetType::UserInterface)
+
+		// Manage script deletion event
+		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
+			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
-			return false;
+			if (m_WidgetOnPress.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_WidgetOnPress.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+
+			if (m_EditorUI)
+			{
+				// Handle UI level function pointers
+				if (m_EditorUI->m_FunctionPointers.OnMoveHandle == manageAsset->GetAssetID())
+				{
+					m_EditorUI->m_FunctionPointers.OnMoveHandle = Assets::EmptyHandle;
+					m_EditorUI->m_FunctionPointers.OnMove = nullptr;
+				}
+
+				// Handle all widgets
+				for (RuntimeUI::Window& currentWindow : m_EditorUI->m_Windows)
+				{
+					for (Ref<RuntimeUI::Widget> widgetRef : currentWindow.Widgets)
+					{
+						if (widgetRef->FunctionPointers.OnPressHandle == manageAsset->GetAssetID())
+						{
+							widgetRef->FunctionPointers.OnPressHandle = Assets::EmptyHandle;
+							widgetRef->FunctionPointers.OnPress = nullptr;
+						}
+					}
+				}
+			}
 		}
 
-		// Check if editor needs modification
-		if (manageAsset->GetAssetID() != m_EditorUIHandle)
+		if (manageAsset->GetAssetType() == Assets::AssetType::UserInterface &&
+			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
-			return false;
-		}
+			// Check if editor needs modification
+			if (manageAsset->GetAssetID() != m_EditorUIHandle)
+			{
+				return false;
+			}
 
-		// Handle deletion of asset
-		if (manageAsset->GetAction() == Events::ManageAssetAction::Delete)
-		{
+			// Handle deletion of asset
 			ResetPanelResources();
 			return true;
 		}
 
-		// Handle updating of asset
-		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
+		if (manageAsset->GetAssetType() == Assets::AssetType::UserInterface &&
+			manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
+			// Check if editor needs modification
+			if (manageAsset->GetAssetID() != m_EditorUIHandle)
+			{
+				return false;
+			}
+
 			// Update header
 			m_MainHeader.Label = Assets::AssetService::GetUserInterfaceFileLocation(manageAsset->GetAssetID()).filename().string();
 			return true;
 		}
+
 		return false;
 	}
 
@@ -254,7 +287,7 @@ namespace Kargono::Panels
 				Assets::AssetHandle onPressHandle = activeTextWidget.FunctionPointers.OnPressHandle;
 				m_WidgetOnPress.CurrentOption =
 				{
-					onPressHandle == Assets::EmptyHandle ? "None" : Utility::ScriptToString(Assets::AssetService::GetScript(onPressHandle)),
+					onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName,
 					onPressHandle
 				};
 				EditorUI::EditorUIService::SelectOption(m_WidgetOnPress);
@@ -289,7 +322,7 @@ namespace Kargono::Panels
 			m_OpenUIPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetUserInterfaceRegistry())
 			{
-				m_OpenUIPopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
+				m_OpenUIPopupSpec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -415,7 +448,7 @@ namespace Kargono::Panels
 		{
 			if (m_MainHeader.EditColorActive)
 			{
-				m_CloseUIWarning.PopupActive = true;
+				m_CloseUIWarning.OpenPopup = true;
 			}
 			else
 			{
@@ -429,7 +462,7 @@ namespace Kargono::Panels
 		});
 		m_MainHeader.AddToSelectionList("Delete", [&]()
 		{
-			m_DeleteUIWarning.PopupActive = true;
+			m_DeleteUIWarning.OpenPopup = true;
 		});
 	}
 
@@ -697,20 +730,20 @@ namespace Kargono::Panels
 		};
 
 		m_WidgetOnPress.Label = "On Press";
-		m_WidgetOnPress.Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetOnPress.Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
 		m_WidgetOnPress.PopupAction = [&]()
 		{
 			m_WidgetOnPress.ClearOptions();
 			m_WidgetOnPress.AddToOptions("Clear", "None", Assets::EmptyHandle);
 
-			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
+			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
 			{
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
 				}
-				m_WidgetOnPress.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
-					"::" + script->m_SectionLabel, script->m_ScriptName, handle);
+				m_WidgetOnPress.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 
@@ -726,9 +759,51 @@ namespace Kargono::Panels
 
 			m_ActiveWidget->FunctionPointers.OnPressHandle = entry.Handle;
 			m_ActiveWidget->FunctionPointers.OnPress = Assets::AssetService::GetScript(entry.Handle);
-			
 			m_MainHeader.EditColorActive = true;
 		};
+
+		m_WidgetOnPress.OnEdit = [&]()
+			{
+				// Initialize tooltip with options
+				m_SelectScriptTooltip.ClearEntries();
+				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_WidgetOnPress.OpenPopup = true;
+				} };
+				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+				{
+						// Open create script dialog in script editor
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+						{
+								// Ensure handle provides a script in the registry
+								if (!Assets::AssetService::HasScript(scriptHandle))
+								{
+									KG_WARN("Could not find script");
+									return;
+								}
+
+								// Ensure function type matches definition
+								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+								if (script->m_FuncType != WrappedFuncType::Void_None)
+								{
+									KG_WARN("Incorrect function type returned when linking script to usage point");
+									return;
+								}
+
+								// Fill the new script handle
+								m_ActiveWidget->FunctionPointers.OnPressHandle = scriptHandle;
+								m_ActiveWidget->FunctionPointers.OnPress = script;
+								m_MainHeader.EditColorActive = true;
+								m_WidgetOnPress.CurrentOption = { script->m_ScriptName, scriptHandle };
+							});
+						}};
+				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+				// Open tooltip
+				m_SelectScriptTooltip.TooltipActive = true;
+			};
 
 		m_WidgetText.Label = "Text";
 		m_WidgetText.Flags |= EditorUI::EditText_Indented;

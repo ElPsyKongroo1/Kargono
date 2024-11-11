@@ -93,7 +93,7 @@ namespace Kargono
 		}, 
 		"Create New Project", [&]()
 		{
-			s_CreateProjectSpec.PopupActive = true;
+			s_CreateProjectSpec.OpenPopup = true;
 		});
 
 		EditorUI::EditorUIService::GenericPopup(s_CreateProjectSpec);

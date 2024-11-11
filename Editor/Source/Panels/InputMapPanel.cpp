@@ -10,13 +10,13 @@ namespace Kargono::Panels
 {
 	void InputMapPanel::OnOpenInputMapDialog()
 	{
-		m_OpenInputMapPopupSpec.PopupActive = true;
+		m_OpenInputMapPopupSpec.OpenPopup = true;
 	}
 	void InputMapPanel::OnCreateInputMapDialog()
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive());
 		m_SelectInputMapLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
-		m_CreateInputMapPopupSpec.PopupActive = true;
+		m_CreateInputMapPopupSpec.OpenPopup = true;
 	}
 
 	void InputMapPanel::OnOpenInputMap(Assets::AssetHandle newHandle)
@@ -78,13 +78,13 @@ namespace Kargono::Panels
 			{
 				// On Update
 				EditorUI::EditorUIService::Table(m_KeyboardOnUpdateTable);
-				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnUpdateAddSlot);
-				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnUpdateEditSlot);
+				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnUpdateAddPopup);
+				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnUpdateEditPopup);
 
 				// On Key Pressed
 				EditorUI::EditorUIService::Table(m_KeyboardOnKeyPressedTable);
-				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnKeyPressedAddSlot);
-				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnKeyPressedEditSlot);
+				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnKeyPressedAddPopup);
+				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnKeyPressedEditPopup);
 
 				// Keyboard Polling
 				EditorUI::EditorUIService::Table(m_KeyboardPollingTable);
@@ -112,33 +112,77 @@ namespace Kargono::Panels
 
 	bool InputMapPanel::OnAssetEvent(Events::Event* event)
 	{
-		// Validate event type and asset type
-		if (event->GetEventType() != Events::EventType::ManageAsset)
-		{
-			return false;
-		}
 		Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
-		if (manageAsset->GetAssetType() != Assets::AssetType::InputMap)
+
+		// Manage script deletion event
+		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
+			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
-			return false;
+			if (m_KeyboardOnUpdateAddFunction.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_KeyboardOnUpdateAddFunction.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+
+			if (m_KeyboardOnUpdateEditFunction.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_KeyboardOnUpdateEditFunction.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+
+			if (m_KeyboardOnKeyPressedAddFunction.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_KeyboardOnKeyPressedAddFunction.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+
+			if (m_KeyboardOnKeyPressedEditFunction.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_KeyboardOnKeyPressedEditFunction.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+
+			// Check input maps assets
+			if (m_EditorInputMap)
+			{
+				for (Ref<Input::InputActionBinding> binding : m_EditorInputMap->GetOnUpdateBindings())
+				{
+					if (binding->GetScriptHandle() == manageAsset->GetAssetID())
+					{
+						binding->SetScript(nullptr, Assets::EmptyHandle);
+					}
+				}
+
+				for (Ref<Input::InputActionBinding> binding : m_EditorInputMap->GetOnKeyPressedBindings())
+				{
+					if (binding->GetScriptHandle() == manageAsset->GetAssetID())
+					{
+						binding->SetScript(nullptr, Assets::EmptyHandle);
+					}
+				}
+				OnRefreshData();
+			}
+			
 		}
 
-		// Handle deletion of asset
-		if (manageAsset->GetAssetID() != m_EditorInputMapHandle)
+		if (manageAsset->GetAssetType() == Assets::AssetType::InputMap &&
+			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
-			return false;
-		}
+			// Handle deletion of asset
+			if (manageAsset->GetAssetID() != m_EditorInputMapHandle)
+			{
+				return false;
+			}
 
-		// Handle deletion of asset
-		if (manageAsset->GetAction() == Events::ManageAssetAction::Delete)
-		{
 			ResetPanelResources();
 			return true;
 		}
 
-		// Handle updating of asset
-		if (manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
+		if (manageAsset->GetAssetType() == Assets::AssetType::InputMap &&
+			manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
+			// Handle deletion of asset
+			if (manageAsset->GetAssetID() != m_EditorInputMapHandle)
+			{
+				return false;
+			}
+
 			// Update header
 			m_MainHeader.Label = Assets::AssetService::GetInputMapFileLocation(manageAsset->GetAssetID()).filename().string();
 			return true;
@@ -230,7 +274,7 @@ namespace Kargono::Panels
 			m_OpenInputMapPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetInputMapRegistry())
 			{
-				m_OpenInputMapPopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
+				m_OpenInputMapPopupSpec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -326,7 +370,7 @@ namespace Kargono::Panels
 		{
 			if (m_MainHeader.EditColorActive)
 			{
-				m_CloseInputMapWarning.PopupActive = true;
+				m_CloseInputMapWarning.OpenPopup = true;
 			}
 			else
 			{
@@ -336,7 +380,7 @@ namespace Kargono::Panels
 		});
 		m_MainHeader.AddToSelectionList("Delete", [&]()
 		{
-			m_DeleteInputMapWarning.PopupActive = true;
+			m_DeleteInputMapWarning.OpenPopup = true;
 		});
 	}
 
@@ -361,7 +405,7 @@ namespace Kargono::Panels
 				static std::function<void(EditorUI::TableEntry&)> m_EditKeyboardSlot = [&](EditorUI::TableEntry& entry)
 				{
 					m_KeyboardOnUpdateActiveSlot = (uint32_t)entry.Handle;
-					m_KeyboardOnUpdateEditSlot.PopupActive = true;
+					m_KeyboardOnUpdateEditPopup.OpenPopup = true;
 				};
 
 				EditorUI::TableEntry newEntry;
@@ -381,7 +425,7 @@ namespace Kargono::Panels
 					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
 					newEntry = {
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
-						Utility::ScriptToString(script),
+						script->m_ScriptName,
 						iteration,
 						m_EditKeyboardSlot,
 						nullptr
@@ -396,22 +440,24 @@ namespace Kargono::Panels
 		m_KeyboardOnUpdateTable.Column2Title = "Function";
 		m_KeyboardOnUpdateTable.AddToSelectionList("Add New Slot", [&]()
 		{
-			m_KeyboardOnUpdateAddSlot.PopupActive = true;
+			m_KeyboardOnUpdateAddPopup.OpenPopup = true;
 		});
 
-		m_KeyboardOnUpdateAddSlot.Label = "Add New Slot";
-		m_KeyboardOnUpdateAddSlot.PopupAction = [&]()
+		m_KeyboardOnUpdateAddPopup.Label = "Add New Slot";
+		m_KeyboardOnUpdateAddPopup.PopupAction = [&]()
 		{
 			m_KeyboardOnUpdateAddKeyCode.CurrentOption = {Utility::KeyCodeToString(Key::A), Key::A};
 			m_KeyboardOnUpdateAddFunction.CurrentOption = {"None", Assets::EmptyHandle};
 		};
-		m_KeyboardOnUpdateAddSlot.PopupContents = [&]()
+		m_KeyboardOnUpdateAddPopup.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnUpdateAddKeyCode);
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnUpdateAddFunction);
+			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
+			s_EditorApp->m_ScriptEditorPanel->DrawOnCreatePopup();
 		};
 
-		m_KeyboardOnUpdateAddSlot.ConfirmAction = [&]()
+		m_KeyboardOnUpdateAddPopup.ConfirmAction = [&]()
 		{
 			auto& keyboardBindings = m_EditorInputMap->GetOnUpdateBindings();
 			Ref<Input::KeyboardActionBinding> newBinding = CreateRef<Input::KeyboardActionBinding>();
@@ -444,23 +490,63 @@ namespace Kargono::Panels
 		};
 
 		m_KeyboardOnUpdateAddFunction.Label = "Select Function";
+		m_KeyboardOnUpdateAddFunction.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_KeyboardOnUpdateAddFunction.PopupAction = [&]()
 		{
 			m_KeyboardOnUpdateAddFunction.ClearOptions();
 			m_KeyboardOnUpdateAddFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
+			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
 			{
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
 				{
 					continue;
 				}
-				m_KeyboardOnUpdateAddFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) + 
-					"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+				m_KeyboardOnUpdateAddFunction.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
+		m_KeyboardOnUpdateAddFunction.OnEdit = [&]()
+			{
+				// Initialize tooltip with options
+				m_SelectScriptTooltip.ClearEntries();
+				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_KeyboardOnUpdateAddFunction.OpenPopup = true;
+				} };
+				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-		m_KeyboardOnUpdateEditSlot.Label = "Edit Slot";
-		m_KeyboardOnUpdateEditSlot.PopupAction = [&]()
+				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+				{
+						// Open create script dialog in script editor
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+						{
+								// Ensure handle provides a script in the registry
+								if (!Assets::AssetService::HasScript(scriptHandle))
+								{
+									KG_WARN("Could not find script");
+									return;
+								}
+
+								// Ensure function type matches definition
+								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+								if (script->m_FuncType != WrappedFuncType::Void_None)
+								{
+									KG_WARN("Incorrect function type returned when linking script to usage point");
+									return;
+								}
+
+								// Fill the new script handle
+								m_KeyboardOnUpdateAddFunction.CurrentOption = { script->m_ScriptName, scriptHandle };
+						}, false);
+					}};
+				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+				// Open tooltip
+				m_SelectScriptTooltip.TooltipActive = true;
+			};
+
+		m_KeyboardOnUpdateEditPopup.Label = "Edit Slot";
+		m_KeyboardOnUpdateEditPopup.PopupAction = [&]()
 		{
 			Input::KeyboardActionBinding* activeBinding = (Input::KeyboardActionBinding*)m_EditorInputMap->GetOnUpdateBindings().at(m_KeyboardOnUpdateActiveSlot).get();
 			KG_ASSERT(activeBinding);
@@ -476,12 +562,14 @@ namespace Kargono::Panels
 				m_KeyboardOnUpdateEditFunction.CurrentOption = { activeBinding->GetScript()->m_ScriptName, activeBinding->GetScriptHandle()};
 			}
 		};
-		m_KeyboardOnUpdateEditSlot.PopupContents = [&]()
+		m_KeyboardOnUpdateEditPopup.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnUpdateEditKeyCode);
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnUpdateEditFunction);
+			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
+			s_EditorApp->m_ScriptEditorPanel->DrawOnCreatePopup();
 		};
-		m_KeyboardOnUpdateEditSlot.DeleteAction = [&]()
+		m_KeyboardOnUpdateEditPopup.DeleteAction = [&]()
 		{
 			std::vector<Ref<Input::InputActionBinding>>& bindings = m_EditorInputMap->GetOnUpdateBindings();
 			bindings.erase(bindings.begin() + m_KeyboardOnUpdateActiveSlot);
@@ -489,7 +577,7 @@ namespace Kargono::Panels
 			m_MainHeader.EditColorActive = true;
 		};
 
-		m_KeyboardOnUpdateEditSlot.ConfirmAction = [&]()
+		m_KeyboardOnUpdateEditPopup.ConfirmAction = [&]()
 		{
 			Input::KeyboardActionBinding* newBinding = (Input::KeyboardActionBinding*)m_EditorInputMap->GetOnUpdateBindings().at(m_KeyboardOnUpdateActiveSlot).get();
 			KG_ASSERT(newBinding);
@@ -521,19 +609,60 @@ namespace Kargono::Panels
 		};
 
 		m_KeyboardOnUpdateEditFunction.Label = "Select Function";
+		m_KeyboardOnUpdateEditFunction.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_KeyboardOnUpdateEditFunction.PopupAction = [&]()
 		{
 			m_KeyboardOnUpdateEditFunction.ClearOptions();
 			m_KeyboardOnUpdateEditFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
+			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
 			{
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
 				{
 					continue;
 				}
-				m_KeyboardOnUpdateEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType) +
-					"::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+				m_KeyboardOnUpdateEditFunction.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
+		};
+
+		m_KeyboardOnUpdateEditFunction.OnEdit = [&]()
+		{
+			// Initialize tooltip with options
+			m_SelectScriptTooltip.ClearEntries();
+			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+			{
+				m_KeyboardOnUpdateEditFunction.OpenPopup = true;
+			} };
+			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+			{
+					// Open create script dialog in script editor
+					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+					{
+							// Ensure handle provides a script in the registry
+							if (!Assets::AssetService::HasScript(scriptHandle))
+							{
+								KG_WARN("Could not find script");
+								return;
+							}
+
+							// Ensure function type matches definition
+							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							if (script->m_FuncType != WrappedFuncType::Void_None)
+							{
+								KG_WARN("Incorrect function type returned when linking script to usage point");
+								return;
+							}
+
+							// Fill the new script handle
+							m_KeyboardOnUpdateEditFunction.CurrentOption = { script->m_ScriptName, scriptHandle };
+					}, false);
+				} };
+			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+			// Open tooltip
+			m_SelectScriptTooltip.TooltipActive = true;
 		};
 
 
@@ -556,7 +685,7 @@ namespace Kargono::Panels
 				static std::function<void(EditorUI::TableEntry&)> m_EditKeyboardSlot = [&](EditorUI::TableEntry& entry)
 				{
 					m_KeyboardOnKeyPressedActiveSlot = (uint32_t)entry.Handle;
-					m_KeyboardOnKeyPressedEditSlot.PopupActive = true;
+					m_KeyboardOnKeyPressedEditPopup.OpenPopup = true;
 				};
 
 				EditorUI::TableEntry newEntry;
@@ -576,7 +705,7 @@ namespace Kargono::Panels
 					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
 					newEntry = {
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
-						Utility::ScriptToString(script),
+						script->m_ScriptName,
 						iteration,
 						m_EditKeyboardSlot,
 						nullptr
@@ -591,22 +720,24 @@ namespace Kargono::Panels
 		m_KeyboardOnKeyPressedTable.Column2Title = "Function";
 		m_KeyboardOnKeyPressedTable.AddToSelectionList("Add New Slot", [&]()
 			{
-				m_KeyboardOnKeyPressedAddSlot.PopupActive = true;
+				m_KeyboardOnKeyPressedAddPopup.OpenPopup = true;
 			});
 
-		m_KeyboardOnKeyPressedAddSlot.Label = "Add New Slot";
-		m_KeyboardOnKeyPressedAddSlot.PopupAction = [&]()
+		m_KeyboardOnKeyPressedAddPopup.Label = "Add New Slot";
+		m_KeyboardOnKeyPressedAddPopup.PopupAction = [&]()
 		{
 			m_KeyboardOnKeyPressedAddKeyCode.CurrentOption = { Utility::KeyCodeToString(Key::A), Key::A };
 			m_KeyboardOnKeyPressedAddFunction.CurrentOption = { "None", Assets::EmptyHandle };
 		};
-		m_KeyboardOnKeyPressedAddSlot.PopupContents = [&]()
+		m_KeyboardOnKeyPressedAddPopup.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnKeyPressedAddKeyCode);
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnKeyPressedAddFunction);
+			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
+			s_EditorApp->m_ScriptEditorPanel->DrawOnCreatePopup();
 		};
 
-		m_KeyboardOnKeyPressedAddSlot.ConfirmAction = [&]()
+		m_KeyboardOnKeyPressedAddPopup.ConfirmAction = [&]()
 		{
 			auto& keyboardBindings = m_EditorInputMap->GetOnKeyPressedBindings();
 			Ref<Input::KeyboardActionBinding> newBinding = CreateRef<Input::KeyboardActionBinding>();
@@ -639,24 +770,63 @@ namespace Kargono::Panels
 		};
 
 		m_KeyboardOnKeyPressedAddFunction.Label = "Select Function";
+		m_KeyboardOnKeyPressedAddFunction.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_KeyboardOnKeyPressedAddFunction.PopupAction = [&]()
 		{
 			m_KeyboardOnKeyPressedAddFunction.ClearOptions();
 			m_KeyboardOnKeyPressedAddFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
+			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
 			{
-				
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
 				}
-				m_KeyboardOnKeyPressedAddFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-					+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+				m_KeyboardOnKeyPressedAddFunction.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
+		m_KeyboardOnKeyPressedAddFunction.OnEdit = [&]()
+			{
+				// Initialize tooltip with options
+				m_SelectScriptTooltip.ClearEntries();
+				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_KeyboardOnKeyPressedAddFunction.OpenPopup = true;
+				} };
+				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-		m_KeyboardOnKeyPressedEditSlot.Label = "Edit Slot";
-		m_KeyboardOnKeyPressedEditSlot.PopupAction = [&]()
+				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+				{
+						// Open create script dialog in script editor
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+						{
+								// Ensure handle provides a script in the registry
+								if (!Assets::AssetService::HasScript(scriptHandle))
+								{
+									KG_WARN("Could not find script");
+									return;
+								}
+
+								// Ensure function type matches definition
+								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+								if (script->m_FuncType != WrappedFuncType::Void_None)
+								{
+									KG_WARN("Incorrect function type returned when linking script to usage point");
+									return;
+								}
+
+								// Fill the new script handle
+								m_KeyboardOnKeyPressedAddFunction.CurrentOption = { script->m_ScriptName, scriptHandle };
+							}, false);
+						} };
+				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+				// Open tooltip
+				m_SelectScriptTooltip.TooltipActive = true;
+			};
+
+		m_KeyboardOnKeyPressedEditPopup.Label = "Edit Slot";
+		m_KeyboardOnKeyPressedEditPopup.PopupAction = [&]()
 		{
 			Input::KeyboardActionBinding* activeBinding = (Input::KeyboardActionBinding*)m_EditorInputMap->GetOnKeyPressedBindings().at(m_KeyboardOnKeyPressedActiveSlot).get();
 			KG_ASSERT(activeBinding);
@@ -672,12 +842,14 @@ namespace Kargono::Panels
 				m_KeyboardOnKeyPressedEditFunction.CurrentOption = { activeBinding->GetScript()->m_ScriptName, activeBinding->GetScriptHandle() };
 			}
 		};
-		m_KeyboardOnKeyPressedEditSlot.PopupContents = [&]()
+		m_KeyboardOnKeyPressedEditPopup.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnKeyPressedEditKeyCode);
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnKeyPressedEditFunction);
+			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
+			s_EditorApp->m_ScriptEditorPanel->DrawOnCreatePopup();
 		};
-		m_KeyboardOnKeyPressedEditSlot.DeleteAction = [&]()
+		m_KeyboardOnKeyPressedEditPopup.DeleteAction = [&]()
 		{
 			std::vector<Ref<Input::InputActionBinding>>& bindings = m_EditorInputMap->GetOnKeyPressedBindings();
 			bindings.erase(bindings.begin() + m_KeyboardOnKeyPressedActiveSlot);
@@ -685,7 +857,7 @@ namespace Kargono::Panels
 			m_MainHeader.EditColorActive = true;
 		};
 
-		m_KeyboardOnKeyPressedEditSlot.ConfirmAction = [&]()
+		m_KeyboardOnKeyPressedEditPopup.ConfirmAction = [&]()
 		{
 			Input::KeyboardActionBinding* newBinding = (Input::KeyboardActionBinding*)m_EditorInputMap->GetOnKeyPressedBindings().at(m_KeyboardOnKeyPressedActiveSlot).get();
 			KG_ASSERT(newBinding);
@@ -717,19 +889,59 @@ namespace Kargono::Panels
 		};
 
 		m_KeyboardOnKeyPressedEditFunction.Label = "Select Function";
+		m_KeyboardOnKeyPressedEditFunction.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_KeyboardOnKeyPressedEditFunction.PopupAction = [&]()
 		{
 			m_KeyboardOnKeyPressedEditFunction.ClearOptions();
 			m_KeyboardOnKeyPressedEditFunction.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [uuid, script] : Assets::AssetService::GetScriptCache())
+			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
 			{
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
 				}
-				m_KeyboardOnKeyPressedEditFunction.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-					+ "::" + script->m_SectionLabel, script->m_ScriptName, uuid);
+				m_KeyboardOnKeyPressedEditFunction.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
+		};
+		m_KeyboardOnKeyPressedEditFunction.OnEdit = [&]()
+		{
+			// Initialize tooltip with options
+			m_SelectScriptTooltip.ClearEntries();
+			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+			{
+				m_KeyboardOnKeyPressedEditFunction.OpenPopup = true;
+			} };
+			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+			{
+					// Open create script dialog in script editor
+					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+					{
+							// Ensure handle provides a script in the registry
+							if (!Assets::AssetService::HasScript(scriptHandle))
+							{
+								KG_WARN("Could not find script");
+								return;
+							}
+
+							// Ensure function type matches definition
+							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							if (script->m_FuncType != WrappedFuncType::Void_None)
+							{
+								KG_WARN("Incorrect function type returned when linking script to usage point");
+								return;
+							}
+
+							// Fill the new script handle
+							m_KeyboardOnKeyPressedEditFunction.CurrentOption = { script->m_ScriptName, scriptHandle };
+						}, false);
+					} };
+			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+			// Open tooltip
+			m_SelectScriptTooltip.TooltipActive = true;
 		};
 
 		// Polling Table
@@ -745,7 +957,7 @@ namespace Kargono::Panels
 				static std::function<void(EditorUI::TableEntry&)> m_EditKeyboardSlot = [&](EditorUI::TableEntry& entry)
 				{
 					m_KeyboardPollingActiveSlot = (uint32_t)entry.Handle;
-					m_KeyboardPollingEditSlot.PopupActive = true;
+					m_KeyboardPollingEditSlot.OpenPopup = true;
 				};
 
 				EditorUI::TableEntry newEntry = {
@@ -764,7 +976,7 @@ namespace Kargono::Panels
 		m_KeyboardPollingTable.Column2Title = "KeyCode";
 		m_KeyboardPollingTable.AddToSelectionList("Add New Slot", [&]()
 		{
-			m_KeyboardPollingAddSlot.PopupActive = true;
+			m_KeyboardPollingAddSlot.OpenPopup = true;
 		});
 
 		m_KeyboardPollingAddSlot.Label = "Add New Slot";

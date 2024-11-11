@@ -20,7 +20,7 @@ namespace Kargono::Panels
 			m_OpenGameStatePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetGameStateRegistry())
 			{
-				m_OpenGameStatePopupSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
+				m_OpenGameStatePopupSpec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -119,7 +119,7 @@ namespace Kargono::Panels
 			{
 				if (m_MainHeader.EditColorActive)
 				{
-					m_CloseGameStateWarning.PopupActive = true;
+					m_CloseGameStateWarning.OpenPopup = true;
 				}
 				else
 				{
@@ -129,7 +129,7 @@ namespace Kargono::Panels
 			});
 		m_MainHeader.AddToSelectionList("Delete", [&]()
 			{
-				m_DeleteGameStateWarning.PopupActive = true;
+				m_DeleteGameStateWarning.OpenPopup = true;
 			});
 
 
@@ -151,7 +151,7 @@ namespace Kargono::Panels
 							std::to_string(field->GetWrappedValue<uint16_t>()),
 							[&](EditorUI::TableEntry& entry)
 							{
-								m_EditFieldPopup.PopupActive = true;
+								m_EditFieldPopup.OpenPopup = true;
 								m_CurrentField = name;
 							});
 						break;
@@ -169,7 +169,7 @@ namespace Kargono::Panels
 		m_FieldsTable.Column2Title = "Field Value";
 		m_FieldsTable.AddToSelectionList("Add New Field", [&]()
 			{
-				m_AddFieldPopup.PopupActive = true;
+				m_AddFieldPopup.OpenPopup = true;
 			});
 
 		m_AddFieldPopup.Label = "Add New Field";
@@ -450,13 +450,13 @@ namespace Kargono::Panels
 
 	void GameStatePanel::OnOpenGameStateDialog()
 	{
-		m_OpenGameStatePopupSpec.PopupActive = true;
+		m_OpenGameStatePopupSpec.OpenPopup = true;
 	}
 	void GameStatePanel::OnCreateGameStateDialog()
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive());
 		m_SelectGameStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
-		m_CreateGameStatePopupSpec.PopupActive = true;
+		m_CreateGameStatePopupSpec.OpenPopup = true;
 	}
 	void GameStatePanel::OnRefreshData()
 	{

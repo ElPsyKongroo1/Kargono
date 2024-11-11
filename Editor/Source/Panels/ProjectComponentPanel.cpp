@@ -68,7 +68,7 @@ namespace Kargono::Panels
 			m_OpenComponentPopup.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 			{
-				m_OpenComponentPopup.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
+				m_OpenComponentPopup.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -171,7 +171,7 @@ namespace Kargono::Panels
 		{
 			if (m_MainHeader.EditColorActive)
 			{
-				m_CloseComponentWarning.PopupActive = true;
+				m_CloseComponentWarning.OpenPopup = true;
 			}
 			else
 			{
@@ -181,7 +181,7 @@ namespace Kargono::Panels
 		});
 		m_MainHeader.AddToSelectionList("Delete", [&]()
 		{
-			m_DeleteComponentWarning.PopupActive = true;
+			m_DeleteComponentWarning.OpenPopup = true;
 		});
 
 		// Fields Table
@@ -198,7 +198,7 @@ namespace Kargono::Panels
 						Utility::WrappedVarTypeToString(m_EditorProjectComponent->m_DataTypes.at(iteration)),
 						[&](EditorUI::TableEntry& entry)
 						{
-							m_EditFieldPopup.PopupActive = true;
+							m_EditFieldPopup.OpenPopup = true;
 							m_ActiveField = entry.Handle;
 						}, iteration);
 				}
@@ -208,7 +208,7 @@ namespace Kargono::Panels
 		m_FieldsTable.Column2Title = "Field Type";
 		m_FieldsTable.AddToSelectionList("Add New Field", [&]()
 		{
-			m_AddFieldPopup.PopupActive = true;
+			m_AddFieldPopup.OpenPopup = true;
 		});
 
 		m_AddFieldName.Label = "Field Name";
@@ -418,13 +418,13 @@ namespace Kargono::Panels
 	}
 	void ProjectComponentPanel::OpenComponentDialog()
 	{
-		m_OpenComponentPopup.PopupActive = true;
+		m_OpenComponentPopup.OpenPopup = true;
 	}
 	void ProjectComponentPanel::CreateComponentDialog()
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive());
 		m_SelectProjectComponentLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
-		m_CreateComponentPopup.PopupActive = true;
+		m_CreateComponentPopup.OpenPopup = true;
 	}
 	void ProjectComponentPanel::RefreshData()
 	{

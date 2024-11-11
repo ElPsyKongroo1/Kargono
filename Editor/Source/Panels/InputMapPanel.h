@@ -76,19 +76,20 @@ namespace Kargono::Panels
 		// Keyboard Panel
 		//	OnUpdate
 		EditorUI::TableSpec m_KeyboardOnUpdateTable {};
-		EditorUI::GenericPopupSpec m_KeyboardOnUpdateAddSlot {};
+		EditorUI::TooltipSpec m_SelectScriptTooltip{};
+		EditorUI::GenericPopupSpec m_KeyboardOnUpdateAddPopup {};
 		EditorUI::SelectOptionSpec m_KeyboardOnUpdateAddKeyCode {};
 		EditorUI::SelectOptionSpec m_KeyboardOnUpdateAddFunction {};
-		EditorUI::GenericPopupSpec m_KeyboardOnUpdateEditSlot {};
+		EditorUI::GenericPopupSpec m_KeyboardOnUpdateEditPopup {};
 		EditorUI::SelectOptionSpec m_KeyboardOnUpdateEditKeyCode {};
 		EditorUI::SelectOptionSpec m_KeyboardOnUpdateEditFunction {};
 
 		//	OnKeyPressed
 		EditorUI::TableSpec m_KeyboardOnKeyPressedTable {};
-		EditorUI::GenericPopupSpec m_KeyboardOnKeyPressedAddSlot {};
+		EditorUI::GenericPopupSpec m_KeyboardOnKeyPressedAddPopup {};
 		EditorUI::SelectOptionSpec m_KeyboardOnKeyPressedAddKeyCode {};
 		EditorUI::SelectOptionSpec m_KeyboardOnKeyPressedAddFunction {};
-		EditorUI::GenericPopupSpec m_KeyboardOnKeyPressedEditSlot {};
+		EditorUI::GenericPopupSpec m_KeyboardOnKeyPressedEditPopup {};
 		EditorUI::SelectOptionSpec m_KeyboardOnKeyPressedEditKeyCode {};
 		EditorUI::SelectOptionSpec m_KeyboardOnKeyPressedEditFunction {};
 

@@ -234,7 +234,7 @@ namespace Kargono
 
 				if (ImGui::MenuItem("Export Project"))
 				{
-					m_ExportProjectSpec.PopupActive = true;
+					m_ExportProjectSpec.OpenPopup = true;
 				}
 
 				ImGui::Separator();
@@ -556,9 +556,57 @@ namespace Kargono
 			}
 		}
 
+		// Handle removing scripts from editor scene
+		if (manageAsset.GetAssetType() == Assets::AssetType::Script &&
+			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			m_EditorScene)
+		{
+			// OnUpdate
+			auto onUpdateView = m_EditorScene->GetAllEntitiesWith<ECS::OnUpdateComponent>();
+			for (entt::entity enttEntity : onUpdateView)
+			{
+				ECS::Entity currentEntity{ m_EditorScene->GetEntityByEnttID(enttEntity) };
+				ECS::OnUpdateComponent& component = currentEntity.GetComponent<ECS::OnUpdateComponent>();
+				if (component.OnUpdateScriptHandle == manageAsset.GetAssetID())
+				{
+					component.OnUpdateScriptHandle = Assets::EmptyHandle;
+					component.OnUpdateScript = nullptr;
+				}
+			}
 
-		m_SceneEditorPanel->OnAssetEvent(event);
-		m_AssetViewerPanel->OnAssetEvent(event);
+			// OnCreate
+			auto onCreateView = m_EditorScene->GetAllEntitiesWith<ECS::OnCreateComponent>();
+			for (entt::entity enttEntity : onCreateView)
+			{
+				ECS::Entity currentEntity{ m_EditorScene->GetEntityByEnttID(enttEntity) };
+				ECS::OnCreateComponent& component = currentEntity.GetComponent<ECS::OnCreateComponent>();
+				if (component.OnCreateScriptHandle == manageAsset.GetAssetID())
+				{
+					component.OnCreateScriptHandle = Assets::EmptyHandle;
+					component.OnCreateScript = nullptr;
+				}
+			}
+
+			// Rigidbody
+			auto rigidBodyView = m_EditorScene->GetAllEntitiesWith<ECS::Rigidbody2DComponent>();
+			for (entt::entity enttEntity : rigidBodyView)
+			{
+				ECS::Entity currentEntity{ m_EditorScene->GetEntityByEnttID(enttEntity) };
+				ECS::Rigidbody2DComponent& component = currentEntity.GetComponent<ECS::Rigidbody2DComponent>();
+
+				if (component.OnCollisionStartScriptHandle == manageAsset.GetAssetID())
+				{
+					component.OnCollisionStartScriptHandle = Assets::EmptyHandle;
+					component.OnCollisionStartScript = nullptr;
+				}
+
+				if (component.OnCollisionEndScriptHandle == manageAsset.GetAssetID())
+				{
+					component.OnCollisionEndScriptHandle = Assets::EmptyHandle;
+					component.OnCollisionEndScript = nullptr;
+				}
+			}
+		}
 
 		if (manageAsset.GetAssetType() == Assets::AssetType::Scene && 
 			manageAsset.GetAssetID() == m_EditorSceneHandle)
@@ -579,16 +627,17 @@ namespace Kargono
 			
 		}
 
+		m_SceneEditorPanel->OnAssetEvent(event);
+		m_AssetViewerPanel->OnAssetEvent(event);
+		m_UIEditorPanel->OnAssetEvent(event);
+		m_AIStatePanel->OnAssetEvent(event);
+		m_InputMapPanel->OnAssetEvent(event);
+		m_ProjectPanel->OnAssetEvent(event);
+
 		switch (manageAsset.GetAssetType())
 		{
 		case Assets::AssetType::GameState:
 			m_GameStatePanel->OnAssetEvent(event);
-			break;
-		case Assets::AssetType::AIState:
-			m_AIStatePanel->OnAssetEvent(event);
-			break;
-		case Assets::AssetType::InputMap:
-			m_InputMapPanel->OnAssetEvent(event);
 			break;
 		case Assets::AssetType::ProjectComponent:
 			m_ProjectComponentPanel->OnAssetEvent(event);
@@ -596,15 +645,11 @@ namespace Kargono
 		case Assets::AssetType::Script:
 			m_ScriptEditorPanel->OnAssetEvent(event);
 			break;
-		case Assets::AssetType::UserInterface:
-			m_UIEditorPanel->OnAssetEvent(event);
-			break;
 		default:
 			break;
 		}
 		//NewScene("NewScene");
 		
-
 		return false;
 	}
 
@@ -992,7 +1037,7 @@ namespace Kargono
 	{
 		// Open generic message
 		m_GeneralWarningMessage = message;
-		m_GeneralWarningSpec.PopupActive = true;
+		m_GeneralWarningSpec.OpenPopup = true;
 	}
 
 	void EditorApp::OpenImportFileDialog(const std::filesystem::path& importFileLocation, Assets::AssetType assetType)
@@ -1017,7 +1062,7 @@ namespace Kargono
 		m_ImportAssetType = assetType;
 
 		// Open Popup and change title
-		m_ImportAssetPopup.PopupActive = true;
+		m_ImportAssetPopup.OpenPopup = true;
 		m_ImportAssetPopup.Label = "Import " + Utility::AssetTypeToString(assetType);
 	}
 

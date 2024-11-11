@@ -32,7 +32,9 @@ namespace Kargono::Panels
 		// External API
 		//=========================
 		void ResetPanelResources();
-		void OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm);
+		void OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm, bool openScriptEditor = true);
+		void DrawOnCreatePopup();
+		
 
 	private:
 		//=========================

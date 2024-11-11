@@ -71,7 +71,8 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_SelectOnUpdateScript {};
 		EditorUI::SelectOptionSpec m_SelectOnEnterStateScript {};
 		EditorUI::SelectOptionSpec m_SelectOnExitStateScript {};
-		EditorUI::SelectOptionSpec m_SelectOnAIMessageScript {};
+		EditorUI::SelectOptionSpec m_SelectOnAIMessageScript{};
+		EditorUI::TooltipSpec m_SelectScriptTooltip{};
 
 	};
 }

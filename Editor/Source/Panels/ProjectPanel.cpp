@@ -171,7 +171,7 @@ namespace Kargono::Panels
 			m_SelectScriptTooltip.ClearEntries();
 			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&] (EditorUI::TooltipEntry& entry) 
 			{
-				m_SelectRuntimeStartSpec.PopupActive = true;
+				m_SelectRuntimeStartSpec.OpenPopup = true;
 			} };
 			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
@@ -208,25 +208,29 @@ namespace Kargono::Panels
 
 		};
 
+
 		// Update User Count Spec
 		m_SelectUpdateUserCountSpec.Label = "Update User Count";
+		m_SelectUpdateUserCountSpec.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectUpdateUserCountSpec.LineCount = 3;
 		m_SelectUpdateUserCountSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateUserCountHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnUpdateUserCountHandle())->m_ScriptName : "None",
-		Projects::ProjectService::GetActiveOnUpdateUserCountHandle()};
+			Projects::ProjectService::GetActiveOnUpdateUserCountHandle() };
 		m_SelectUpdateUserCountSpec.PopupAction = [&]()
 		{
-			m_SelectUpdateUserCountSpec.GetAllOptions().clear();
+			m_SelectUpdateUserCountSpec.ClearOptions();
 
 			m_SelectUpdateUserCountSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
+			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
+				KG_ASSERT(handle != Assets::EmptyHandle);
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_UInt32)
 				{
 					continue;
 				}
-				m_SelectUpdateUserCountSpec.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
+
+				m_SelectUpdateUserCountSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 
 			m_SelectUpdateUserCountSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateUserCountHandle() ?
@@ -237,31 +241,77 @@ namespace Kargono::Panels
 		{
 			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
 			{
-				KG_WARN("Could not find on update user count function in Project Panel");
+				KG_WARN("Could not find Update User Count function in Project Panel");
 				return;
 			}
 			Projects::ProjectService::SetActiveOnUpdateUserCountHandle(selection.Handle);
 		};
+		m_SelectUpdateUserCountSpec.OnEdit = [&]()
+		{
+			// Initialize tooltip with options
+			m_SelectScriptTooltip.ClearEntries();
+			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+			{
+				m_SelectUpdateUserCountSpec.OpenPopup = true;
+			} };
+			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-		// Update Approve Join Session
+			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+			{
+					// Open create script dialog in script editor
+					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt32, [&](Assets::AssetHandle scriptHandle)
+					{
+							// Ensure handle provides a script in the registry
+							if (!Assets::AssetService::HasScript(scriptHandle))
+							{
+								KG_WARN("Could not find update user count function in Project Panel");
+								return;
+							}
+
+							// Ensure function type matches definition
+							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							if (script->m_FuncType != WrappedFuncType::Void_UInt32)
+							{
+								KG_WARN("Incorrect function type returned when linking script to usage point");
+								return;
+							}
+
+							// Fill the new script handle
+							Projects::ProjectService::SetActiveOnUpdateUserCountHandle(scriptHandle);
+							m_SelectUpdateUserCountSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+						});
+
+					} };
+			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+			// Open tooltip
+			m_SelectScriptTooltip.TooltipActive = true;
+
+		};
+
+
+		// Approve Join Session Spec
 		m_SelectApproveJoinSessionSpec.Label = "Approve Join Session";
+		m_SelectApproveJoinSessionSpec.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectApproveJoinSessionSpec.LineCount = 3;
 		m_SelectApproveJoinSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnApproveJoinSessionHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() };
 		m_SelectApproveJoinSessionSpec.PopupAction = [&]()
 		{
-			m_SelectApproveJoinSessionSpec.GetAllOptions().clear();
+			m_SelectApproveJoinSessionSpec.ClearOptions();
 
 			m_SelectApproveJoinSessionSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
+			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
+				KG_ASSERT(handle != Assets::EmptyHandle);
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 				{
 					continue;
 				}
-				m_SelectApproveJoinSessionSpec.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
+
+				m_SelectApproveJoinSessionSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 
 			m_SelectApproveJoinSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() ?
@@ -272,136 +322,319 @@ namespace Kargono::Panels
 		{
 			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
 			{
-				KG_WARN("Could not find on approve join session function in Project Panel");
+				KG_WARN("Could not find Approve Join Session function in Project Panel");
 				return;
 			}
 			Projects::ProjectService::SetActiveOnApproveJoinSessionHandle(selection.Handle);
 		};
+		m_SelectApproveJoinSessionSpec.OnEdit = [&]()
+		{
+			// Initialize tooltip with options
+			m_SelectScriptTooltip.ClearEntries();
+			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+			{
+				m_SelectApproveJoinSessionSpec.OpenPopup = true;
+			} };
+			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-		// Update User Left Session
+			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+			{
+					// Open create script dialog in script editor
+					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
+					{
+							// Ensure handle provides a script in the registry
+							if (!Assets::AssetService::HasScript(scriptHandle))
+							{
+								KG_WARN("Could not find Approve Join Session function in Project Panel");
+								return;
+							}
+
+							// Ensure function type matches definition
+							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							if (script->m_FuncType != WrappedFuncType::Void_UInt16)
+							{
+								KG_WARN("Incorrect function type returned when linking script to usage point");
+								return;
+							}
+
+							// Fill the new script handle
+							Projects::ProjectService::SetActiveOnApproveJoinSessionHandle(scriptHandle);
+							m_SelectApproveJoinSessionSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+						});
+
+					} };
+			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+			// Open tooltip
+			m_SelectScriptTooltip.TooltipActive = true;
+
+		};
+
+		// User Left Session Spec
 		m_SelectUserLeftSessionSpec.Label = "User Left Session";
+		m_SelectUserLeftSessionSpec.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectUserLeftSessionSpec.LineCount = 3;
 		m_SelectUserLeftSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUserLeftSessionHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnUserLeftSessionHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnUserLeftSessionHandle() };
 		m_SelectUserLeftSessionSpec.PopupAction = [&]()
-		{
-			m_SelectUserLeftSessionSpec.GetAllOptions().clear();
-
-			m_SelectUserLeftSessionSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_FuncType != WrappedFuncType::Void_UInt16)
+				m_SelectUserLeftSessionSpec.ClearOptions();
+
+				m_SelectUserLeftSessionSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 				{
-					continue;
+					KG_ASSERT(handle != Assets::EmptyHandle);
+					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+					if (script->m_FuncType != WrappedFuncType::Void_UInt16)
+					{
+						continue;
+					}
+
+					m_SelectUserLeftSessionSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 				}
-				m_SelectUserLeftSessionSpec.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
-			}
 
-			m_SelectUserLeftSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUserLeftSessionHandle() ?
-				Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnUserLeftSessionHandle())->m_ScriptName : "None",
-				Projects::ProjectService::GetActiveOnUserLeftSessionHandle() };
-		};
+				m_SelectUserLeftSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUserLeftSessionHandle() ?
+					Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnUserLeftSessionHandle())->m_ScriptName : "None",
+					Projects::ProjectService::GetActiveOnUserLeftSessionHandle() };
+			};
 		m_SelectUserLeftSessionSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
-		{
-			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
 			{
-				KG_WARN("Could not find on user left session function in Project Panel");
-				return;
-			}
-			Projects::ProjectService::SetActiveOnUserLeftSessionHandle(selection.Handle);
-		};
+				if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
+				{
+					KG_WARN("Could not find User Left Session function in Project Panel");
+					return;
+				}
+				Projects::ProjectService::SetActiveOnUserLeftSessionHandle(selection.Handle);
+			};
+		m_SelectUserLeftSessionSpec.OnEdit = [&]()
+			{
+				// Initialize tooltip with options
+				m_SelectScriptTooltip.ClearEntries();
+				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_SelectUserLeftSessionSpec.OpenPopup = true;
+				} };
+				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-		// Update Start Session
+				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+				{
+						// Open create script dialog in script editor
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
+						{
+								// Ensure handle provides a script in the registry
+								if (!Assets::AssetService::HasScript(scriptHandle))
+								{
+									KG_WARN("Could not find User Left Session function in Project Panel");
+									return;
+								}
+
+								// Ensure function type matches definition
+								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+								if (script->m_FuncType != WrappedFuncType::Void_UInt16)
+								{
+									KG_WARN("Incorrect function type returned when linking script to usage point");
+									return;
+								}
+
+								// Fill the new script handle
+								Projects::ProjectService::SetActiveOnUserLeftSessionHandle(scriptHandle);
+								m_SelectUserLeftSessionSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+							});
+
+						} };
+				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+				// Open tooltip
+				m_SelectScriptTooltip.TooltipActive = true;
+
+			};
+
+
+
+
+		// Session Initialization Spec
 		m_SelectSessionInitSpec.Label = "Session Initialization";
+		m_SelectSessionInitSpec.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectSessionInitSpec.LineCount = 3;
 		m_SelectSessionInitSpec.CurrentOption = { Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnCurrentSessionInitHandle())->m_ScriptName : "None",
-			Projects::ProjectService::GetActiveOnCurrentSessionInitHandle()};
+			Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() };
 		m_SelectSessionInitSpec.PopupAction = [&]()
-		{
-			m_SelectSessionInitSpec.GetAllOptions().clear();
-
-			m_SelectSessionInitSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_FuncType != WrappedFuncType::Void_None)
+				m_SelectSessionInitSpec.ClearOptions();
+
+				m_SelectSessionInitSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 				{
-					continue;
+					KG_ASSERT(handle != Assets::EmptyHandle);
+					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+					if (script->m_FuncType != WrappedFuncType::Void_None)
+					{
+						continue;
+					}
+
+					m_SelectSessionInitSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 				}
-				m_SelectSessionInitSpec.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
-			}
 
-			m_SelectSessionInitSpec.CurrentOption = { Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() ?
-				Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnCurrentSessionInitHandle())->m_ScriptName : "None",
-				Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() };
-		};
+				m_SelectSessionInitSpec.CurrentOption = { Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() ?
+					Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnCurrentSessionInitHandle())->m_ScriptName : "None",
+					Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() };
+			};
 		m_SelectSessionInitSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
-		{
-			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
 			{
-				KG_WARN("Could not find current session function in Project Panel");
-				return;
-			}
-			Projects::ProjectService::SetActiveOnCurrentSessionInitHandle(selection.Handle);
-		};
+				if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
+				{
+					KG_WARN("Could not find Session Initialization function in Project Panel");
+					return;
+				}
+				Projects::ProjectService::SetActiveOnCurrentSessionInitHandle(selection.Handle);
+			};
+		m_SelectSessionInitSpec.OnEdit = [&]()
+			{
+				// Initialize tooltip with options
+				m_SelectScriptTooltip.ClearEntries();
+				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_SelectSessionInitSpec.OpenPopup = true;
+				} };
+				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-		// Update Connection Terminated
+				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+				{
+						// Open create script dialog in script editor
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+						{
+								// Ensure handle provides a script in the registry
+								if (!Assets::AssetService::HasScript(scriptHandle))
+								{
+									KG_WARN("Could not find Session Initialization function in Project Panel");
+									return;
+								}
+
+								// Ensure function type matches definition
+								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+								if (script->m_FuncType != WrappedFuncType::Void_None)
+								{
+									KG_WARN("Incorrect function type returned when linking script to usage point");
+									return;
+								}
+
+								// Fill the new script handle
+								Projects::ProjectService::SetActiveOnCurrentSessionInitHandle(scriptHandle);
+								m_SelectSessionInitSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+							});
+
+						} };
+				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+				// Open tooltip
+				m_SelectScriptTooltip.TooltipActive = true;
+
+			};
+
+
+		// Connection Terminated Spec
 		m_SelectConnectionTerminatedSpec.Label = "Connection Terminated";
+		m_SelectConnectionTerminatedSpec.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectConnectionTerminatedSpec.LineCount = 3;
 		m_SelectConnectionTerminatedSpec.CurrentOption = { Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnConnectionTerminatedHandle())->m_ScriptName : "None",
-			Projects::ProjectService::GetActiveOnConnectionTerminatedHandle()};
+			Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() };
 		m_SelectConnectionTerminatedSpec.PopupAction = [&]()
 		{
-			m_SelectConnectionTerminatedSpec.GetAllOptions().clear();
+			m_SelectConnectionTerminatedSpec.ClearOptions();
 
 			m_SelectConnectionTerminatedSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
+			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
+				KG_ASSERT(handle != Assets::EmptyHandle);
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
 				}
-				m_SelectConnectionTerminatedSpec.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
+
+				m_SelectConnectionTerminatedSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 
 			m_SelectConnectionTerminatedSpec.CurrentOption = { Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() ?
 				Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnConnectionTerminatedHandle())->m_ScriptName : "None",
-			Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() };
+				Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() };
 		};
 		m_SelectConnectionTerminatedSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
 			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
 			{
-				KG_WARN("Could not find connection terminated function in Project Panel");
+				KG_WARN("Could not find Connection Terminated function in Project Panel");
 				return;
 			}
 			Projects::ProjectService::SetActiveOnConnectionTerminatedHandle(selection.Handle);
 		};
+		m_SelectConnectionTerminatedSpec.OnEdit = [&]()
+		{
+			// Initialize tooltip with options
+			m_SelectScriptTooltip.ClearEntries();
+			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+			{
+				m_SelectConnectionTerminatedSpec.OpenPopup = true;
+			} };
+			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-		// Update Session User Slot
+			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+			{
+					// Open create script dialog in script editor
+					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+					{
+							// Ensure handle provides a script in the registry
+							if (!Assets::AssetService::HasScript(scriptHandle))
+							{
+								KG_WARN("Could not find Connection Terminated function in Project Panel");
+								return;
+							}
+
+							// Ensure function type matches definition
+							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							if (script->m_FuncType != WrappedFuncType::Void_None)
+							{
+								KG_WARN("Incorrect function type returned when linking script to usage point");
+								return;
+							}
+
+							// Fill the new script handle
+							Projects::ProjectService::SetActiveOnConnectionTerminatedHandle(scriptHandle);
+							m_SelectConnectionTerminatedSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+						});
+
+					} };
+			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+			// Open tooltip
+			m_SelectScriptTooltip.TooltipActive = true;
+		};
+
+		// Update Session User Slot Spec
 		m_SelectUpdateSessionSlotSpec.Label = "Update Session User Slot";
+		m_SelectUpdateSessionSlotSpec.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectUpdateSessionSlotSpec.LineCount = 3;
 		m_SelectUpdateSessionSlotSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle())->m_ScriptName : "None",
-			Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle()};
+			Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() };
 		m_SelectUpdateSessionSlotSpec.PopupAction = [&]()
 		{
-			m_SelectUpdateSessionSlotSpec.GetAllOptions().clear();
+			m_SelectUpdateSessionSlotSpec.ClearOptions();
 
 			m_SelectUpdateSessionSlotSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
+			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
+				KG_ASSERT(handle != Assets::EmptyHandle);
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 				{
 					continue;
 				}
-				m_SelectUpdateSessionSlotSpec.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
+
+				m_SelectUpdateSessionSlotSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 
 			m_SelectUpdateSessionSlotSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() ?
@@ -412,116 +645,292 @@ namespace Kargono::Panels
 		{
 			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
 			{
-				KG_WARN("Could not find on update session user slot function in Project Panel");
+				KG_WARN("Could not find Update Session User Slot function in Project Panel");
 				return;
 			}
 			Projects::ProjectService::SetActiveOnUpdateSessionUserSlotHandle(selection.Handle);
 		};
+		m_SelectUpdateSessionSlotSpec.OnEdit = [&]()
+		{
+			// Initialize tooltip with options
+			m_SelectScriptTooltip.ClearEntries();
+			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+			{
+				m_SelectUpdateSessionSlotSpec.OpenPopup = true;
+			} };
+			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-		// Update On Start Session
+			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+			{
+					// Open create script dialog in script editor
+					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
+					{
+							// Ensure handle provides a script in the registry
+							if (!Assets::AssetService::HasScript(scriptHandle))
+							{
+								KG_WARN("Could not find Update Session User Slot function in Project Panel");
+								return;
+							}
+
+							// Ensure function type matches definition
+							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							if (script->m_FuncType != WrappedFuncType::Void_UInt16)
+							{
+								KG_WARN("Incorrect function type returned when linking script to usage point");
+								return;
+							}
+
+							// Fill the new script handle
+							Projects::ProjectService::SetActiveOnUpdateSessionUserSlotHandle(scriptHandle);
+							m_SelectUpdateSessionSlotSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+						});
+
+					} };
+			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+			// Open tooltip
+			m_SelectScriptTooltip.TooltipActive = true;
+		};
+
+
+		// Start Session Spec
 		m_SelectStartSessionSpec.Label = "Start Session";
+		m_SelectStartSessionSpec.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectStartSessionSpec.LineCount = 3;
 		m_SelectStartSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnStartSessionHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnStartSessionHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnStartSessionHandle() };
 		m_SelectStartSessionSpec.PopupAction = [&]()
-		{
-			m_SelectStartSessionSpec.GetAllOptions().clear();
-
-			m_SelectStartSessionSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_FuncType != WrappedFuncType::Void_None)
+				m_SelectStartSessionSpec.ClearOptions();
+
+				m_SelectStartSessionSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 				{
-					continue;
+					KG_ASSERT(handle != Assets::EmptyHandle);
+					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+					if (script->m_FuncType != WrappedFuncType::Void_None)
+					{
+						continue;
+					}
+
+					m_SelectStartSessionSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 				}
-				m_SelectStartSessionSpec.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
-			}
 
-			m_SelectStartSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnStartSessionHandle() ?
-				Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnStartSessionHandle())->m_ScriptName : "None",
-				Projects::ProjectService::GetActiveOnStartSessionHandle() };
-		};
+				m_SelectStartSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnStartSessionHandle() ?
+					Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnStartSessionHandle())->m_ScriptName : "None",
+					Projects::ProjectService::GetActiveOnStartSessionHandle() };
+			};
 		m_SelectStartSessionSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
-		{
-			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
 			{
-				KG_WARN("Could not find start session function in Project Panel");
-				return;
-			}
-			Projects::ProjectService::SetActiveOnStartSessionHandle(selection.Handle);
-		};
+				if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
+				{
+					KG_WARN("Could not find Start Session function in Project Panel");
+					return;
+				}
+				Projects::ProjectService::SetActiveOnStartSessionHandle(selection.Handle);
+			};
+		m_SelectStartSessionSpec.OnEdit = [&]()
+			{
+				// Initialize tooltip with options
+				m_SelectScriptTooltip.ClearEntries();
+				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_SelectStartSessionSpec.OpenPopup = true;
+				} };
+				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-		// Update On Session Ready Check Confirm
-		m_SelectSessionReadyCheckSpec.Label = "Session Ready Check Confirm";
+				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+				{
+						// Open create script dialog in script editor
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+						{
+								// Ensure handle provides a script in the registry
+								if (!Assets::AssetService::HasScript(scriptHandle))
+								{
+									KG_WARN("Could not find Start Session function in Project Panel");
+									return;
+								}
+
+								// Ensure function type matches definition
+								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+								if (script->m_FuncType != WrappedFuncType::Void_None)
+								{
+									KG_WARN("Incorrect function type returned when linking script to usage point");
+									return;
+								}
+
+								// Fill the new script handle
+								Projects::ProjectService::SetActiveOnStartSessionHandle(scriptHandle);
+								m_SelectStartSessionSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+							});
+
+						} };
+				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+				// Open tooltip
+				m_SelectScriptTooltip.TooltipActive = true;
+			};
+
+
+		// Session Ready Check Spec
+		m_SelectSessionReadyCheckSpec.Label = "Session Ready Check";
+		m_SelectSessionReadyCheckSpec.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectSessionReadyCheckSpec.LineCount = 3;
 		m_SelectSessionReadyCheckSpec.CurrentOption = { Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() };
 		m_SelectSessionReadyCheckSpec.PopupAction = [&]()
-		{
-			m_SelectSessionReadyCheckSpec.GetAllOptions().clear();
-
-			m_SelectSessionReadyCheckSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_FuncType != WrappedFuncType::Void_None)
+				m_SelectSessionReadyCheckSpec.ClearOptions();
+
+				m_SelectSessionReadyCheckSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 				{
-					continue;
+					KG_ASSERT(handle != Assets::EmptyHandle);
+					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+					if (script->m_FuncType != WrappedFuncType::Void_None)
+					{
+						continue;
+					}
+
+					m_SelectSessionReadyCheckSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 				}
-				m_SelectSessionReadyCheckSpec.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
-			}
 
-			m_SelectSessionReadyCheckSpec.CurrentOption = { Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() ?
-				Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle())->m_ScriptName : "None",
-				Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() };
-		};
+				m_SelectSessionReadyCheckSpec.CurrentOption = { Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() ?
+					Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle())->m_ScriptName : "None",
+					Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() };
+			};
 		m_SelectSessionReadyCheckSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
-		{
-			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
 			{
-				KG_WARN("Could not find session ready check function in Project Panel");
-				return;
-			}
-			Projects::ProjectService::SetActiveOnSessionReadyCheckConfirmHandle(selection.Handle);
-		};
+				if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
+				{
+					KG_WARN("Could not find Session Ready Check function in Project Panel");
+					return;
+				}
+				Projects::ProjectService::SetActiveOnSessionReadyCheckConfirmHandle(selection.Handle);
+			};
+		m_SelectSessionReadyCheckSpec.OnEdit = [&]()
+			{
+				// Initialize tooltip with options
+				m_SelectScriptTooltip.ClearEntries();
+				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_SelectSessionReadyCheckSpec.OpenPopup = true;
+				} };
+				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-		// Update On Receive Signal
+				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+				{
+						// Open create script dialog in script editor
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+						{
+								// Ensure handle provides a script in the registry
+								if (!Assets::AssetService::HasScript(scriptHandle))
+								{
+									KG_WARN("Could not find Session Ready Check function in Project Panel");
+									return;
+								}
+
+								// Ensure function type matches definition
+								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+								if (script->m_FuncType != WrappedFuncType::Void_None)
+								{
+									KG_WARN("Incorrect function type returned when linking script to usage point");
+									return;
+								}
+
+								// Fill the new script handle
+								Projects::ProjectService::SetActiveOnSessionReadyCheckConfirmHandle(scriptHandle);
+								m_SelectSessionReadyCheckSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+							});
+
+						} };
+				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+				// Open tooltip
+				m_SelectScriptTooltip.TooltipActive = true;
+			};
+
+
+		// On Receive Signal Spec
 		m_SelectReceiveSignalSpec.Label = "On Receive Signal";
+		m_SelectReceiveSignalSpec.Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectReceiveSignalSpec.LineCount = 3;
 		m_SelectReceiveSignalSpec.CurrentOption = { Projects::ProjectService::GetActiveOnReceiveSignalHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnReceiveSignalHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnReceiveSignalHandle() };
 		m_SelectReceiveSignalSpec.PopupAction = [&]()
-		{
-			m_SelectReceiveSignalSpec.GetAllOptions().clear();
-
-			m_SelectReceiveSignalSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
 			{
-				if (script->m_FuncType != WrappedFuncType::Void_UInt16)
+				m_SelectReceiveSignalSpec.ClearOptions();
+
+				m_SelectReceiveSignalSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 				{
-					continue;
-				}
-				m_SelectReceiveSignalSpec.AddToOptions(Utility::ScriptTypeToString(script->m_ScriptType)
-					+ "::" + script->m_SectionLabel, script->m_ScriptName, handle);
-			}
+					KG_ASSERT(handle != Assets::EmptyHandle);
+					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+					if (script->m_FuncType != WrappedFuncType::Void_UInt16)
+					{
+						continue;
+					}
 
-			m_SelectReceiveSignalSpec.CurrentOption = { Projects::ProjectService::GetActiveOnReceiveSignalHandle() ?
-				Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnReceiveSignalHandle())->m_ScriptName : "None",
-				Projects::ProjectService::GetActiveOnReceiveSignalHandle() };
-		};
+					m_SelectReceiveSignalSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+				}
+
+				m_SelectReceiveSignalSpec.CurrentOption = { Projects::ProjectService::GetActiveOnReceiveSignalHandle() ?
+					Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnReceiveSignalHandle())->m_ScriptName : "None",
+					Projects::ProjectService::GetActiveOnReceiveSignalHandle() };
+			};
 		m_SelectReceiveSignalSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
-		{
-			if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
 			{
-				KG_WARN("Could not find on receive signal function in Project Panel");
-				return;
-			}
-			Projects::ProjectService::SetActiveOnReceiveSignalHandle(selection.Handle);
-		};
+				if (!Assets::AssetService::GetScriptRegistry().contains(selection.Handle) && selection.Handle != Assets::EmptyHandle)
+				{
+					KG_WARN("Could not find On Receive Signal function in Project Panel");
+					return;
+				}
+				Projects::ProjectService::SetActiveOnReceiveSignalHandle(selection.Handle);
+			};
+		m_SelectReceiveSignalSpec.OnEdit = [&]()
+			{
+				// Initialize tooltip with options
+				m_SelectScriptTooltip.ClearEntries();
+				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_SelectReceiveSignalSpec.OpenPopup = true;
+				} };
+				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+				{
+						// Open create script dialog in script editor
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
+						{
+								// Ensure handle provides a script in the registry
+								if (!Assets::AssetService::HasScript(scriptHandle))
+								{
+									KG_WARN("Could not find On Receive Signal function in Project Panel");
+									return;
+								}
+
+								// Ensure function type matches definition
+								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+								if (script->m_FuncType != WrappedFuncType::Void_UInt16)
+								{
+									KG_WARN("Incorrect function type returned when linking script to usage point");
+									return;
+								}
+
+								// Fill the new script handle
+								Projects::ProjectService::SetActiveOnReceiveSignalHandle(scriptHandle);
+								m_SelectReceiveSignalSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+							});
+
+						} };
+				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+				// Open tooltip
+				m_SelectScriptTooltip.TooltipActive = true;
+			};
 
 		m_SelectScriptTooltip.m_Label = "Script Tooltip";
 
@@ -546,7 +955,7 @@ namespace Kargono::Panels
 				m_MessageTypeTable.InsertTableEntry(label, "", [&](EditorUI::TableEntry& entry)
 				{
 					m_ActiveAIMessageType = entry.Label;
-					m_EditMessageTypePopup.PopupActive = true;
+					m_EditMessageTypePopup.OpenPopup = true;
 				});
 			}
 		};
@@ -844,6 +1253,57 @@ namespace Kargono::Panels
 	}
 	bool ProjectPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
+		return false;
+	}
+	bool ProjectPanel::OnAssetEvent(Events::Event* event)
+	{
+		Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
+
+		// Manage script deletion event
+		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
+			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			if (m_SelectRuntimeStartSpec.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectRuntimeStartSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			if (m_SelectUpdateUserCountSpec.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectUpdateUserCountSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			if (m_SelectApproveJoinSessionSpec.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectApproveJoinSessionSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			if (m_SelectUserLeftSessionSpec.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectUserLeftSessionSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			if (m_SelectSessionInitSpec.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectSessionInitSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			if (m_SelectConnectionTerminatedSpec.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectConnectionTerminatedSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			if (m_SelectUpdateSessionSlotSpec.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectUpdateSessionSlotSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			if (m_SelectStartSessionSpec.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectStartSessionSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			if (m_SelectSessionReadyCheckSpec.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectSessionReadyCheckSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+			if (m_SelectReceiveSignalSpec.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectReceiveSignalSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+		}
 		return false;
 	}
 	void ProjectPanel::ResetPanelResources()

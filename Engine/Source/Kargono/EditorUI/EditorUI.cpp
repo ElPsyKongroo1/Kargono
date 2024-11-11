@@ -765,10 +765,11 @@ namespace Kargono::EditorUI
 		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
-		if (spec.PopupActive)
+		if (spec.OpenPopup)
 		{
 			ImGui::OpenPopup(id);
-			spec.PopupActive = false;
+			spec.OpenPopup = false;
+			spec.m_CloseActivePopup = false;
 
 			if (spec.PopupAction)
 			{
@@ -780,6 +781,12 @@ namespace Kargono::EditorUI
 		ImGui::SetNextWindowSize(ImVec2(spec.PopupWidth, 0.0f));
 		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar))
 		{
+			// Close popup externally
+			if (spec.m_CloseActivePopup)
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
 			RecalculateWindowDimensions();
 			EditorUI::EditorUIService::TitleText(spec.Label);
 
@@ -840,10 +847,10 @@ namespace Kargono::EditorUI
 		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 
-		if (spec.PopupActive)
+		if (spec.OpenPopup)
 		{
 			ImGui::OpenPopup(id);
-			spec.PopupActive = false;
+			spec.OpenPopup = false;
 		}
 
 		// Display Popup
@@ -931,10 +938,10 @@ namespace Kargono::EditorUI
 
 		if (spec.Flags & (SelectOption_PopupOnly | SelectOption_HandleEditButtonExternally))
 		{
-			if (spec.PopupActive)
+			if (spec.OpenPopup)
 			{
 				ImGui::OpenPopup(id);
-				spec.PopupActive = false;
+				spec.OpenPopup = false;
 				if (spec.PopupAction)
 				{
 					spec.PopupAction();

@@ -80,7 +80,7 @@ namespace Kargono::Panels
 					}
 					if (ImGui::MenuItem("Delete File"))
 					{
-						m_DeleteWarningSpec.PopupActive = true;
+						m_DeleteWarningSpec.OpenPopup = true;
 					}
 					ImGui::EndMenu();
 				}
@@ -170,7 +170,7 @@ namespace Kargono::Panels
 					if (activeDocument.Edited)
 					{
 						activeDocument.Opened = true;
-						m_DiscardChangesWarningSpec.PopupActive = true;
+						m_DiscardChangesWarningSpec.OpenPopup = true;
 					}
 					else
 					{

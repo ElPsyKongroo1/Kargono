@@ -22,7 +22,5 @@ namespace Kargono::Panels
 	public:
 
 		EditorUI::NavigationHeaderSpec m_TestHeader{};
-
-
 	};
 }

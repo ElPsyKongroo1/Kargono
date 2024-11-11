@@ -4,7 +4,12 @@
 #include "Kargono/Assets/ScriptManager.h"
 #include "Kargono/Utility/Regex.h"
 #include "Kargono/Scripting/ScriptService.h"
-
+#include "Kargono/AI/AIService.h"
+#include "Kargono/Input/InputMap.h"
+#include "Kargono/RuntimeUI/RuntimeUI.h"
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/ECS/Entity.h"
+#include "Kargono/Projects/Project.h"
 
 namespace Kargono::Assets
 {
@@ -344,5 +349,191 @@ namespace Kargono::Assets
 		ScriptMetaData->ScriptType = Utility::StringToScriptType(metadataNode["ScriptType"].as<std::string>());
 		ScriptMetaData->FunctionType = Utility::StringToWrappedFuncType(metadataNode["FunctionType"].as<std::string>());
 		currentAsset.Data.SpecificFileData = ScriptMetaData;
+	}
+
+	void ScriptManager::DeleteAssetValidation(AssetHandle scriptHandle)
+	{
+		// Ensure all other assets do not contain this script
+		// If they do, remove the reference
+
+		// Check AI State assets
+		for (auto& [aiHandle, assetInfo] : Assets::AssetService::GetAIStateRegistry())
+		{
+			Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(aiHandle);
+			if (aiStateRef->OnEnterStateHandle == scriptHandle)
+			{
+				aiStateRef->OnEnterStateHandle = Assets::EmptyHandle;
+				aiStateRef->OnEnterState = nullptr;
+			}
+
+			if (aiStateRef->OnExitStateHandle == scriptHandle)
+			{
+				aiStateRef->OnExitStateHandle = Assets::EmptyHandle;
+				aiStateRef->OnExitState = nullptr;
+			}
+
+			if (aiStateRef->OnUpdateHandle == scriptHandle)
+			{
+				aiStateRef->OnUpdateHandle = Assets::EmptyHandle;
+				aiStateRef->OnUpdate = nullptr;
+			}
+
+			if (aiStateRef->OnMessageHandle == scriptHandle)
+			{
+				aiStateRef->OnMessageHandle = Assets::EmptyHandle;
+				aiStateRef->OnMessage = nullptr;
+			}
+
+			Assets::AssetService::SaveAIState(aiHandle, aiStateRef);
+		}
+
+		// Check input maps assets
+		for (auto& [inputHandle, assetInfo] : Assets::AssetService::GetInputMapRegistry())
+		{
+			Ref<Input::InputMap> inputMapRef = Assets::AssetService::GetInputMap(inputHandle);
+			
+			for (Ref<Input::InputActionBinding> binding : inputMapRef->GetOnUpdateBindings())
+			{
+				if (binding->GetScriptHandle() == scriptHandle)
+				{
+					binding->SetScript(nullptr, Assets::EmptyHandle);
+				}
+			}
+
+			for (Ref<Input::InputActionBinding> binding : inputMapRef->GetOnKeyPressedBindings())
+			{
+				if (binding->GetScriptHandle() == scriptHandle)
+				{
+					binding->SetScript(nullptr, Assets::EmptyHandle);
+				}
+			}
+
+			Assets::AssetService::SaveInputMap(inputHandle, inputMapRef);
+		}
+
+		// Check user interface assets
+		for (auto& [uiHandle, assetInfo] : Assets::AssetService::GetUserInterfaceRegistry())
+		{
+			// Handle UI level function pointers
+			Ref<RuntimeUI::UserInterface> userInterfaceRef = Assets::AssetService::GetUserInterface(uiHandle);
+			if (userInterfaceRef->m_FunctionPointers.OnMoveHandle == scriptHandle)
+			{
+				userInterfaceRef->m_FunctionPointers.OnMoveHandle = Assets::EmptyHandle;
+				userInterfaceRef->m_FunctionPointers.OnMove = nullptr;
+			}
+
+			// Handle all widgets
+			for (RuntimeUI::Window& currentWindow : userInterfaceRef->m_Windows)
+			{
+				for (Ref<RuntimeUI::Widget> widgetRef : currentWindow.Widgets)
+				{
+					if (widgetRef->FunctionPointers.OnPressHandle == scriptHandle)
+					{
+						widgetRef->FunctionPointers.OnPressHandle = Assets::EmptyHandle;
+						widgetRef->FunctionPointers.OnPress = nullptr;
+					}
+				}
+			}
+
+			Assets::AssetService::SaveUserInterface(uiHandle, userInterfaceRef);
+		}
+
+		// Check scene assets
+		for (auto& [uiHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())
+		{
+			// Handle UI level function pointers
+			Ref<Scenes::Scene> sceneRef = Assets::AssetService::GetScene(uiHandle);
+
+			// OnUpdate
+			auto onUpdateView = sceneRef->GetAllEntitiesWith<ECS::OnUpdateComponent>();
+			for (entt::entity enttEntity : onUpdateView)
+			{
+				ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+				ECS::OnUpdateComponent& component = currentEntity.GetComponent<ECS::OnUpdateComponent>();
+				if (component.OnUpdateScriptHandle == scriptHandle)
+				{
+					component.OnUpdateScriptHandle = Assets::EmptyHandle;
+					component.OnUpdateScript = nullptr;
+				}
+			}
+
+			// OnCreate
+			auto onCreateView = sceneRef->GetAllEntitiesWith<ECS::OnCreateComponent>();
+			for (entt::entity enttEntity : onCreateView)
+			{
+				ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+				ECS::OnCreateComponent& component = currentEntity.GetComponent<ECS::OnCreateComponent>();
+				if (component.OnCreateScriptHandle == scriptHandle)
+				{
+					component.OnCreateScriptHandle = Assets::EmptyHandle;
+					component.OnCreateScript = nullptr;
+				}
+			}
+
+			// Rigidbody
+			auto rigidBodyView = sceneRef->GetAllEntitiesWith<ECS::Rigidbody2DComponent>();
+			for (entt::entity enttEntity : rigidBodyView)
+			{
+				ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+				ECS::Rigidbody2DComponent& component = currentEntity.GetComponent<ECS::Rigidbody2DComponent>();
+
+				if (component.OnCollisionStartScriptHandle == scriptHandle)
+				{
+					component.OnCollisionStartScriptHandle = Assets::EmptyHandle;
+					component.OnCollisionStartScript = nullptr;
+				}
+
+				if (component.OnCollisionEndScriptHandle == scriptHandle)
+				{
+					component.OnCollisionEndScriptHandle = Assets::EmptyHandle;
+					component.OnCollisionEndScript = nullptr;
+				}
+			}
+
+			// Save scene
+			Assets::AssetService::SaveScene(uiHandle, sceneRef);
+		}
+
+		// Check active project for scripts
+		if (Projects::ProjectService::GetActiveOnRuntimeStartHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnRuntimeStartHandle(Assets::EmptyHandle);
+		}
+		if (Projects::ProjectService::GetActiveOnUpdateUserCountHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnUpdateUserCountHandle(Assets::EmptyHandle);
+		}
+		if (Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnApproveJoinSessionHandle(Assets::EmptyHandle);
+		}
+		if (Projects::ProjectService::GetActiveOnUserLeftSessionHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnUserLeftSessionHandle(Assets::EmptyHandle);
+		}
+		if (Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnCurrentSessionInitHandle(Assets::EmptyHandle);
+		}
+		if (Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnConnectionTerminatedHandle(Assets::EmptyHandle);
+		}
+		if (Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnUpdateSessionUserSlotHandle(Assets::EmptyHandle);
+		}
+		if (Projects::ProjectService::GetActiveOnStartSessionHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnStartSessionHandle(Assets::EmptyHandle);
+		}
+		if (Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnSessionReadyCheckConfirmHandle(Assets::EmptyHandle);
+		}
+		if (Projects::ProjectService::GetActiveOnReceiveSignalHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnReceiveSignalHandle(Assets::EmptyHandle);
+		}
 	}
 }

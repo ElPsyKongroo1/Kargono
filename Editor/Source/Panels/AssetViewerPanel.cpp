@@ -20,7 +20,7 @@ namespace Kargono::Panels
 	{
 		m_ActiveAsset = entry.Handle;
 		m_ActiveAssetType = Utility::StringToAssetType(entry.Label);
-		m_ViewAssetPopup.PopupActive = true;
+		m_ViewAssetPopup.OpenPopup = true;
 	}
 
 	void AssetViewerPanel::RefreshPanelData()

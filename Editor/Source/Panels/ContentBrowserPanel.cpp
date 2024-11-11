@@ -262,7 +262,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry deleteFileTooltipEntry{ "Delete File", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				m_DeleteFilePopup.PopupActive = true;
+				m_DeleteFilePopup.OpenPopup = true;
 #if 0
 				switch (fileType)
 				{
@@ -283,7 +283,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry deleteDirectoryTooltipEntry{ "Delete Directory", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				m_DeleteDirectoryPopup.PopupActive = true;
+				m_DeleteDirectoryPopup.OpenPopup = true;
 			} };
 			m_RightClickTooltip.AddTooltipEntry(deleteDirectoryTooltipEntry);
 		}
@@ -1001,7 +1001,7 @@ namespace Kargono::Panels
 			// Add create directory option
 			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "Create Directory", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				m_CreateDirectoryPopup.PopupActive = true;
+				m_CreateDirectoryPopup.OpenPopup = true;
 			} };
 			m_RightClickTooltip.AddTooltipEntry(createDirectoryTooltipEntry);
 
