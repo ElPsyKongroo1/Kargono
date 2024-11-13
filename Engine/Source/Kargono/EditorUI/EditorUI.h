@@ -1262,6 +1262,18 @@ namespace Kargono::EditorUI
 		{
 			return EditListSelectionList;
 		}
+
+		std::size_t GetEntriesListSize()
+		{
+			return ListEntries.size();
+		}
+
+		ListEntry& GetEntry(std::size_t index)
+		{
+			KG_ASSERT(index < ListEntries.size());
+			return ListEntries.at(index);
+		}
+
 	private:
 		WidgetID WidgetID;
 		std::vector<ListEntry> ListEntries{};

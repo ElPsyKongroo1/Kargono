@@ -113,6 +113,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::List(m_CreateWidgets.m_ParameterList);
 			EditorUI::EditorUIService::SelectOption(m_CreateWidgets.m_SelectSectionLabel);
 			EditorUI::EditorUIService::GenericPopup(m_CreateWidgets.m_CreateParameterPopup);
+			EditorUI::EditorUIService::GenericPopup(m_CreateWidgets.m_EditParameterPopup);
 			EditorUI::EditorUIService::Tooltip(m_ScriptTooltip);
 		};
 
@@ -203,9 +204,22 @@ namespace Kargono::Panels
 
 				// Initialize tooltip entries
 				m_ScriptTooltip.ClearEntries();
-				EditorUI::TooltipEntry editTooltipEntry{"Edit", nullptr};
+				EditorUI::TooltipEntry editTooltipEntry{"Edit", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_CreateWidgets.m_EditParameterPopup.OpenPopup = true;
+				}};
 				m_ScriptTooltip.AddTooltipEntry(editTooltipEntry);
-				EditorUI::TooltipEntry deleteTooltipEntry{"Delete", nullptr};
+
+
+				EditorUI::TooltipEntry deleteTooltipEntry{ "Delete", [&](EditorUI::TooltipEntry& entry)
+				{
+					// Delete current selected entry
+					EngineService::SubmitToMainThread([&]() 
+					{
+						m_CreateWidgets.m_ParameterList.RemoveEntry(m_ActiveParameterLocation);
+					});
+
+				} };
 				m_ScriptTooltip.AddTooltipEntry(deleteTooltipEntry);
 
 				// Store parameter location inside list
@@ -237,10 +251,77 @@ namespace Kargono::Panels
 
 		};
 
+		m_CreateWidgets.m_EditParameterPopup.Label = "Edit Parameter";
+		m_CreateWidgets.m_EditParameterPopup.PopupAction = [&]()
+		{
+			KG_ASSERT(m_ActiveParameterLocation < m_CreateWidgets.m_ParameterList.GetEntriesListSize());
+			EditorUI::ListEntry& entry = m_CreateWidgets.m_ParameterList.GetEntry(m_ActiveParameterLocation);
 
-		/*EditorUI::GenericPopupSpec m_CreateScriptParameterPopup{};
-		EditorUI::EditTextSpec m_CreateScriptParameterName{};
-		EditorUI::SelectOptionSpec m_CreateScriptParameterType{};*/
+			m_CreateWidgets.m_EditParameterName.CurrentOption = entry.Label;
+			m_CreateWidgets.m_EditParameterType.CurrentOption = { Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)entry.Handle), (uint64_t)entry.Handle };
+		};
+
+		m_CreateWidgets.m_EditParameterPopup.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::EditText(m_CreateWidgets.m_EditParameterName);
+			EditorUI::EditorUIService::SelectOption(m_CreateWidgets.m_EditParameterType);
+		};
+		m_CreateWidgets.m_EditParameterPopup.ConfirmAction = [&]()
+		{
+			// Fill new parameter entry with appropriate data from popup dialog
+			KG_ASSERT(m_ActiveParameterLocation < m_CreateWidgets.m_ParameterList.GetEntriesListSize());
+			EditorUI::ListEntry& currentEntry = m_CreateWidgets.m_ParameterList.GetEntry(m_ActiveParameterLocation);
+			currentEntry.Label = m_CreateWidgets.m_EditParameterName.CurrentOption;
+			currentEntry.Value = Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)m_CreateWidgets.m_EditParameterType.CurrentOption.Handle);
+			currentEntry.Handle = m_CreateWidgets.m_EditParameterType.CurrentOption.Handle;
+			currentEntry.OnEdit = [&](EditorUI::ListEntry& entry, std::size_t iteration)
+			{
+				// Open tooltip
+				m_ScriptTooltip.TooltipActive = true;
+
+				// Initialize tooltip entries
+				m_ScriptTooltip.ClearEntries();
+				EditorUI::TooltipEntry editTooltipEntry{ "Edit", [&](EditorUI::TooltipEntry& entry)
+				{
+					m_CreateWidgets.m_EditParameterPopup.OpenPopup = true;
+				} };
+				m_ScriptTooltip.AddTooltipEntry(editTooltipEntry);
+				EditorUI::TooltipEntry deleteTooltipEntry{ "Delete", [&](EditorUI::TooltipEntry& entry)
+				{
+						// Delete current selected entry
+						EngineService::SubmitToMainThread([&]()
+						{
+							m_CreateWidgets.m_ParameterList.RemoveEntry(m_ActiveParameterLocation);
+						});
+
+					} };
+				m_ScriptTooltip.AddTooltipEntry(deleteTooltipEntry);
+
+				// Store parameter location inside list
+				m_ActiveParameterLocation = iteration;
+			};
+		};
+
+		m_CreateWidgets.m_EditParameterName.Label = "Name";
+		m_CreateWidgets.m_EditParameterType.Label = "Type";
+		m_CreateWidgets.m_EditParameterType.PopupAction = [&]()
+		{
+			m_CreateWidgets.m_EditParameterType.ClearOptions();
+
+			// Add all possible return types
+			for (WrappedVarType type : s_AllWrappedVarTypes)
+			{
+				// Void makes no sense as a parameter
+				if (type == WrappedVarType::Void)
+				{
+					continue;
+				}
+
+				// Fill options list
+				m_CreateWidgets.m_EditParameterType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), (uint64_t)type);
+			}
+
+		};
 
 		m_CreateWidgets.m_SelectSectionLabel.Label = "Group";
 		m_CreateWidgets.m_SelectSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };

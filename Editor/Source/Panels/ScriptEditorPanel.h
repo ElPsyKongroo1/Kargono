@@ -17,6 +17,9 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_CreateParameterPopup{};
 		EditorUI::EditTextSpec m_CreateParameterName{};
 		EditorUI::SelectOptionSpec m_CreateParameterType{};
+		EditorUI::GenericPopupSpec m_EditParameterPopup{};
+		EditorUI::EditTextSpec m_EditParameterName{};
+		EditorUI::SelectOptionSpec m_EditParameterType{};
 	};
 
 	class ScriptEditorPanel

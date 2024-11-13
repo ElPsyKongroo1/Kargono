@@ -1971,7 +1971,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PopFont();
 		}
-		s_ListExpandButton.IconSize = (spec.Flags & (List_Indented | List_RegularSizeTitle)) ? 12.0f : 14.0f;
+		s_ListExpandButton.IconSize = 14.0f;
 		s_ListExpandButton.YPosition = spec.Flags & List_Indented ? 0.0f : 3.0f;
 		ImGui::SameLine();
 		CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
@@ -2011,8 +2011,12 @@ namespace Kargono::EditorUI
 			if (!spec.ListEntries.empty())
 			{
 				// Column Titles
-				ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+				ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor1);
 				ImGui::SetCursorPosX(spec.Flags & List_Indented ? 61.0f: s_TextLeftIndentOffset);
+				if (spec.Flags & (List_Indented | List_RegularSizeTitle))
+				{
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 7.0f);
+				}
 				labelPosition = ImGui::FindPositionAfterLength(spec.Column1Title.c_str(), s_SecondaryTextLargeWidth);
 				TruncateText(spec.Column1Title, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 				ImGui::SameLine();
@@ -2020,13 +2024,20 @@ namespace Kargono::EditorUI
 				labelPosition = ImGui::FindPositionAfterLength(spec.Column2Title.c_str(), s_SecondaryTextLargeWidth);
 				TruncateText(spec.Column2Title, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 				ImGui::PopStyleColor();
-				Spacing(SpacingAmount::Small);
+				if (!(spec.Flags & (List_Indented | List_RegularSizeTitle)))
+				{
+					Spacing(SpacingAmount::Small);
+				}
+				
 			}
 			std::size_t iteration{ 0 };
 			for (ListEntry& listEntry : spec.ListEntries)
 			{
 				smallButtonCount = 0;
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
+				if (!(spec.Flags & (List_Indented | List_RegularSizeTitle)))
+				{
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
+				}
 				ImGui::SetCursorPosX(spec.Flags & List_Indented ? 42.5f : 12.0f);
 				CreateImage(s_IconDash, 8, s_DisabledColor);
 				ImGui::SameLine();
