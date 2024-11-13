@@ -68,7 +68,7 @@ namespace Kargono::Panels
 		EditorUI::TooltipSpec m_SelectScriptTooltip{};
 
 		// Editor AI Message Types
-		EditorUI::TableSpec m_MessageTypeTable {};
+		EditorUI::ListSpec m_MessageTypeTable {};
 		EditorUI::EditTextSpec m_CreateMessageTypePopup {};
 		EditorUI::GenericPopupSpec m_EditMessageTypePopup {};
 		EditorUI::EditTextSpec m_EditMessageTypeText {};

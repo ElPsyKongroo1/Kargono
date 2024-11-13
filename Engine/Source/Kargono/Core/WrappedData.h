@@ -27,7 +27,8 @@ namespace Kargono
 		UInteger32,
 		UInteger64,
 		Vector3,
-		String
+		String,
+		Entity
 	};
 
 	inline WrappedVarType s_AllWrappedVarTypes[] =
@@ -40,7 +41,8 @@ namespace Kargono
 		WrappedVarType::String,
 		WrappedVarType::Void,
 		WrappedVarType::Bool,
-		WrappedVarType::Float
+		WrappedVarType::Float,
+		WrappedVarType::Entity
 	};
 
 	class WrappedVariable
@@ -266,6 +268,31 @@ namespace Kargono
 		}
 		float m_Value{};
 	};
+
+	class WrappedEntity : public WrappedVariable
+	{
+	public:
+		WrappedEntity() = default;
+		WrappedEntity(uint64_t value) : m_Value{ value } {}
+	public:
+		virtual WrappedVarType Type() override { return WrappedVarType::Entity; }
+	public:
+		void* GetValue() override
+		{
+			return (void*)&m_Value;
+		}
+
+		const std::string GetValueAsString() override
+		{
+			return std::to_string(m_Value);
+		}
+
+		virtual void SetValue(void* value) override
+		{
+			m_Value = *(uint64_t*)value;
+		}
+		uint64_t m_Value{};
+	};
 	//==============================
 	// Wrapped Functions
 	//==============================
@@ -473,6 +500,7 @@ namespace Kargono
 			case WrappedVarType::Void: return "Void";
 			case WrappedVarType::Bool: return "Bool";
 			case WrappedVarType::Float: return "Float";
+			case WrappedVarType::Entity: return "Entity";
 			case WrappedVarType::None: return "None";
 			}
 			KG_ERROR("Unknown Type of WrappedVariableType.");
@@ -491,6 +519,7 @@ namespace Kargono
 			case WrappedVarType::String: return CreateRef<WrappedString>();
 			case WrappedVarType::Bool: return CreateRef<WrappedBool>();
 			case WrappedVarType::Float: return CreateRef<WrappedFloat>();
+			case WrappedVarType::Entity: return CreateRef<WrappedEntity>();
 			case WrappedVarType::Void:
 			case WrappedVarType::None:
 				return nullptr;
@@ -512,6 +541,7 @@ namespace Kargono
 			case WrappedVarType::Void: return "void";
 			case WrappedVarType::Bool: return "bool";
 			case WrappedVarType::Float: return "float";
+			case WrappedVarType::Entity: return "uint64_t";
 			case WrappedVarType::None: return "None";
 			}
 			KG_ERROR("Unknown Type of WrappedVariableType.");
@@ -530,6 +560,7 @@ namespace Kargono
 			case WrappedVarType::String: return sizeof(std::string);
 			case WrappedVarType::Bool: return sizeof(bool);
 			case WrappedVarType::Float: return sizeof(float);
+			case WrappedVarType::Entity: return sizeof(uint64_t);
 			case WrappedVarType::Void:
 			case WrappedVarType::None:
 			default:
@@ -553,6 +584,7 @@ namespace Kargono
 			case WrappedVarType::Void: return "void";
 			case WrappedVarType::Bool: return "bool";
 			case WrappedVarType::Float: return "float";
+			case WrappedVarType::Entity: return "uint64_t";
 			case WrappedVarType::None: return "None";
 			}
 			KG_ERROR("Unknown Type of WrappedVariableType.");
@@ -570,6 +602,7 @@ namespace Kargono
 			if (scriptType == "string") { return WrappedVarType::String; }
 			if (scriptType == "float") { return WrappedVarType::Float; }
 			if (scriptType == "bool") { return WrappedVarType::Bool; }
+			if (scriptType == "entity") { return WrappedVarType::Entity; }
 			if (scriptType == "void") { return WrappedVarType::Void; }
 
 			KG_ERROR("Unknown Type of WrappedVariableType String.");
@@ -587,6 +620,7 @@ namespace Kargono
 			if (type == "Void") { return WrappedVarType::Void; }
 			if (type == "Bool") { return WrappedVarType::Bool; }
 			if (type == "Float") { return WrappedVarType::Float; }
+			if (type == "Entity") { return WrappedVarType::Entity; }
 			if (type == "None") { return WrappedVarType::None; }
 
 			KG_ERROR("Unknown Type of WrappedVariableType String.");
@@ -601,6 +635,7 @@ namespace Kargono
 			case WrappedVarType::UInteger16:
 			case WrappedVarType::UInteger32:
 			case WrappedVarType::UInteger64:
+			case WrappedVarType::Entity:
 				*(int32_t*)buffer = 0;
 				return;
 			case WrappedVarType::Vector3:
@@ -636,6 +671,9 @@ namespace Kargono
 				*(uint32_t*)destination = *(uint32_t*)source;
 				return;
 			case WrappedVarType::UInteger64:
+				*(uint64_t*)destination = *(uint64_t*)source;
+				return;
+			case WrappedVarType::Entity:
 				*(uint64_t*)destination = *(uint64_t*)source;
 				return;
 			case WrappedVarType::Vector3:
@@ -692,6 +730,12 @@ namespace Kargono
 					break;
 				}
 				case WrappedVarType::UInteger64:
+				{
+					success = Conversions::CharBufferToVariable(buffer,
+						variable->GetWrappedValue<uint64_t>());
+					break;
+				}
+				case WrappedVarType::Entity:
 				{
 					success = Conversions::CharBufferToVariable(buffer,
 						variable->GetWrappedValue<uint64_t>());

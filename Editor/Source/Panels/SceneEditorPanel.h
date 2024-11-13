@@ -141,7 +141,7 @@ namespace Kargono::Panels
 		// Class Instance Component
 		EditorUI::CollapsingHeaderSpec m_ClassInstanceHeader{};
 		EditorUI::SelectOptionSpec m_SelectClassOption{};
-		EditorUI::TableSpec m_InstanceFieldsTable{};
+		EditorUI::ListSpec m_InstanceFieldsTable{};
 		std::string m_CurrentClassField {};
 		int32_t m_CurrentClassFieldLocation {};
 		EditorUI::GenericPopupSpec m_EditClassFieldPopup{};

@@ -16,7 +16,7 @@ namespace Kargono::Panels
 		InitializeAssetPopup();
 	}
 
-	void AssetViewerPanel::ViewAssetInformation(EditorUI::TableEntry& entry)
+	void AssetViewerPanel::ViewAssetInformation(EditorUI::ListEntry& entry, std::size_t iteration)
 	{
 		m_ActiveAsset = entry.Handle;
 		m_ActiveAssetType = Utility::StringToAssetType(entry.Label);
@@ -36,7 +36,7 @@ namespace Kargono::Panels
 		if (manageEvent.GetAction() == Events::ManageAssetAction::Delete)
 		{
 			// Search table for deleted asset
-			std::size_t assetLocation = m_AllAssetsTable.SearchEntries([&](const EditorUI::TableEntry& currentEntry) 
+			std::size_t assetLocation = m_AllAssetsTable.SearchEntries([&](const EditorUI::ListEntry& currentEntry) 
 			{
 				// Check if type inside tree is the same
 				if (Utility::StringToAssetType(currentEntry.Label) != manageEvent.GetAssetType())
@@ -56,7 +56,7 @@ namespace Kargono::Panels
 			});
 
 			// Validate that table search was successful
-			KG_ASSERT(assetLocation != EditorUI::k_TableSearchIndex, "Asset being deleted was not found in asset table");
+			KG_ASSERT(assetLocation != EditorUI::k_ListSearchIndex, "Asset being deleted was not found in asset table");
 
 			// Delete entry and validate deletion
 			bool deletionSuccess = m_AllAssetsTable.RemoveEntry(assetLocation);
@@ -80,94 +80,87 @@ namespace Kargono::Panels
 		m_AllAssetsTable.Expanded = true;
 		m_AllAssetsTable.OnRefresh = [&]()
 		{
-			m_AllAssetsTable.ClearTable();
+			m_AllAssetsTable.ClearList();
 			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
 			{
-				EditorUI::TableEntry newEntry
+				EditorUI::ListEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
 						asset.Data.FileLocation.filename().string(),
 						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
-						nullptr
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
 				};
-				m_AllAssetsTable.InsertTableEntry(newEntry);
+				m_AllAssetsTable.InsertListEntry(newEntry);
 			}
 			for (auto& [handle, asset] : Assets::AssetService::GetAudioBufferRegistry())
 			{
-				EditorUI::TableEntry newEntry
+				EditorUI::ListEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
 						asset.Data.FileLocation.filename().string(),
 						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
-						nullptr
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
 				};
-				m_AllAssetsTable.InsertTableEntry(newEntry);
+				m_AllAssetsTable.InsertListEntry(newEntry);
 			}
 			for (auto& [handle, asset] : Assets::AssetService::GetFontRegistry())
 			{
-				EditorUI::TableEntry newEntry
+				EditorUI::ListEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
 						asset.Data.FileLocation.filename().string(),
 						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
-						nullptr
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
 				};
-				m_AllAssetsTable.InsertTableEntry(newEntry);
+				m_AllAssetsTable.InsertListEntry(newEntry);
 			}
 
 			for (auto& [handle, asset] : Assets::AssetService::GetGameStateRegistry())
 			{
-				EditorUI::TableEntry newEntry
+				EditorUI::ListEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
 						asset.Data.FileLocation.filename().string(),
 						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
-						nullptr
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
 				};
-				m_AllAssetsTable.InsertTableEntry(newEntry);
+				m_AllAssetsTable.InsertListEntry(newEntry);
 			}
 
 			for (auto& [handle, asset] : Assets::AssetService::GetInputMapRegistry())
 			{
-				EditorUI::TableEntry newEntry
+				EditorUI::ListEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
 						asset.Data.FileLocation.filename().string(),
 						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
-						nullptr
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
 				};
-				m_AllAssetsTable.InsertTableEntry(newEntry);
+				m_AllAssetsTable.InsertListEntry(newEntry);
 			}
 
 			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 			{
-				EditorUI::TableEntry newEntry
+				EditorUI::ListEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
 						asset.Data.FileLocation.filename().string(),
 						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
-						nullptr
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
 				};
-				m_AllAssetsTable.InsertTableEntry(newEntry);
+				m_AllAssetsTable.InsertListEntry(newEntry);
 			}
 
 			for (auto& [handle, asset] : Assets::AssetService::GetSceneRegistry())
 			{
-				EditorUI::TableEntry newEntry
+				EditorUI::ListEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
 						asset.Data.FileLocation.filename().string(),
 						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
-						nullptr
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
 				};
-				m_AllAssetsTable.InsertTableEntry(newEntry);
+				m_AllAssetsTable.InsertListEntry(newEntry);
 			}
 
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
@@ -184,41 +177,38 @@ namespace Kargono::Panels
 					continue;
 				}
 
-				EditorUI::TableEntry newEntry
+				EditorUI::ListEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
 						asset.Data.FileLocation.filename().string(),
 						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
-						nullptr
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
 				};
-				m_AllAssetsTable.InsertTableEntry(newEntry);
+				m_AllAssetsTable.InsertListEntry(newEntry);
 			}
 
 			for (auto& [handle, asset] : Assets::AssetService::GetTexture2DRegistry())
 			{
-				EditorUI::TableEntry newEntry
+				EditorUI::ListEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
 						asset.Data.FileLocation.filename().string(),
 						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
-						nullptr
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
 				};
-				m_AllAssetsTable.InsertTableEntry(newEntry);
+				m_AllAssetsTable.InsertListEntry(newEntry);
 			}
 
 			for (auto& [handle, asset] : Assets::AssetService::GetUserInterfaceRegistry())
 			{
-				EditorUI::TableEntry newEntry
+				EditorUI::ListEntry newEntry
 				{
 					Utility::AssetTypeToString(asset.Data.Type),
 						asset.Data.FileLocation.filename().string(),
 						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation),
-						nullptr
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
 				};
-				m_AllAssetsTable.InsertTableEntry(newEntry);
+				m_AllAssetsTable.InsertListEntry(newEntry);
 			}
 
 		};
@@ -254,7 +244,7 @@ namespace Kargono::Panels
 			return;
 		}
 
-		EditorUI::EditorUIService::Table(m_AllAssetsTable);
+		EditorUI::EditorUIService::List(m_AllAssetsTable);
 		EditorUI::EditorUIService::GenericPopup(m_ViewAssetPopup);
 
 

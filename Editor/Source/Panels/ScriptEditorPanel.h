@@ -6,6 +6,19 @@
 
 namespace Kargono::Panels
 {
+	struct ScriptWidgets
+	{
+		EditorUI::GenericPopupSpec m_MainPopup{};
+		EditorUI::EditTextSpec m_EditName{};
+		EditorUI::SelectOptionSpec m_SelectFuncType{};
+		EditorUI::SelectOptionSpec m_SelectSectionLabel{};
+		EditorUI::SelectOptionSpec m_SelectReturnType{};
+		EditorUI::ListSpec m_ParameterList{};
+		EditorUI::GenericPopupSpec m_CreateParameterPopup{};
+		EditorUI::EditTextSpec m_CreateParameterName{};
+		EditorUI::SelectOptionSpec m_CreateParameterType{};
+	};
+
 	class ScriptEditorPanel
 	{
 	public:
@@ -41,7 +54,7 @@ namespace Kargono::Panels
 		// Internal Functionality
 		//=========================
 		void UpdateScript();
-		void OnOpenScriptDialog(EditorUI::TableEntry& entry);
+		void OnOpenScriptDialog(EditorUI::ListEntry& entry, std::size_t iteration);
 		void OnCreateScriptDialog();
 
 	private:
@@ -51,20 +64,20 @@ namespace Kargono::Panels
 		FixedString32 m_PanelName{ "Scripts" };
 		Assets::AssetHandle m_ActiveScriptHandle {Assets::EmptyHandle};
 		std::string m_ActiveLabel {};
+		std::size_t m_ActiveParameterLocation{ EditorUI::k_ListIndex };
 		std::function<void(Assets::AssetHandle)> m_OnCreateScriptConfirm{ nullptr };
 		WrappedFuncType m_OnCreateFunctionType{ WrappedFuncType::None };
 
 		//=========================
 		// Widgets
 		//=========================
-		// Script Table
-		EditorUI::TableSpec m_AllScriptsTable {};
-		// Script Table (Create)
-		EditorUI::GenericPopupSpec m_CreateScriptPopup {};
-		EditorUI::EditTextSpec m_CreateScriptName{};
-		EditorUI::SelectOptionSpec m_CreateScriptFuncType{};
-		EditorUI::SelectOptionSpec m_CreateScriptSectionLabel{};
-		// Script Table (Edit)
+		// Script List
+		EditorUI::ListSpec m_AllScriptsList {};
+		EditorUI::TooltipSpec m_ScriptTooltip{};
+		// Script List (Create)
+		ScriptWidgets m_CreateWidgets{};
+
+		// Script List (Edit)
 		EditorUI::GenericPopupSpec m_EditScriptPopup {};
 		EditorUI::GenericPopupSpec m_DeleteScriptWarning {};
 		EditorUI::GenericPopupSpec m_EditScriptFuncTypeWarning {};
@@ -72,8 +85,8 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_EditScriptFuncType{};
 		EditorUI::SelectOptionSpec m_EditScriptSectionLabel{};
 
-		// Group Label Table
-		EditorUI::TableSpec m_GroupLabelsTable {};
+		// Group Label List
+		EditorUI::ListSpec m_GroupLabelsTable {};
 		EditorUI::EditTextSpec m_CreateGroupLabelPopup {};
 		EditorUI::GenericPopupSpec m_EditGroupLabelPopup {};
 		EditorUI::EditTextSpec m_EditGroupLabelText {};

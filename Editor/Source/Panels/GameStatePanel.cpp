@@ -133,12 +133,12 @@ namespace Kargono::Panels
 			});
 
 
-		// Fields Table
+		// Fields List
 		m_FieldsTable.Label = "Fields";
 		m_FieldsTable.Expanded = true;
 		m_FieldsTable.OnRefresh = [&]()
 		{
-			m_FieldsTable.ClearTable();
+			m_FieldsTable.ClearList();
 			if (m_EditorGameState)
 			{
 				for (auto& [name, field] : m_EditorGameState->GetAllFields())
@@ -147,9 +147,9 @@ namespace Kargono::Panels
 					{
 					case WrappedVarType::UInteger16:
 					{
-						m_FieldsTable.InsertTableEntry(name,
+						m_FieldsTable.InsertListEntry(name,
 							std::to_string(field->GetWrappedValue<uint16_t>()),
-							[&](EditorUI::TableEntry& entry)
+							[&](EditorUI::ListEntry& entry, std::size_t iteration)
 							{
 								m_EditFieldPopup.OpenPopup = true;
 								m_CurrentField = name;
@@ -332,7 +332,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
 			EditorUI::EditorUIService::GenericPopup(m_DeleteGameStateWarning);
 			EditorUI::EditorUIService::GenericPopup(m_CloseGameStateWarning);
-			EditorUI::EditorUIService::Table(m_FieldsTable);
+			EditorUI::EditorUIService::List(m_FieldsTable);
 			EditorUI::EditorUIService::SelectOption(m_AddFieldPopup);
 			EditorUI::EditorUIService::GenericPopup(m_EditFieldPopup);
 		}

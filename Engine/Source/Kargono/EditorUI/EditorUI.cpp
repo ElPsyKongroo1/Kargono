@@ -76,7 +76,7 @@ namespace Kargono::EditorUI
 
 	static InlineButtonSpec s_TableEditButton {};
 	static InlineButtonSpec s_TableLinkButton {};
-	static InlineButtonSpec s_TableExpandButton {};
+	static InlineButtonSpec s_ListExpandButton {};
 
 	void EditorUIService::SetButtonDefaults()
 	{
@@ -200,7 +200,7 @@ namespace Kargono::EditorUI
 		s_TableLinkButton = EditorUIService::s_SmallLinkButton;
 		s_TableLinkButton.YPosition = -5.5f;
 
-		s_TableExpandButton = EditorUIService::s_SmallExpandButton;
+		s_ListExpandButton = EditorUIService::s_SmallExpandButton;
 
 		
 	}
@@ -420,7 +420,7 @@ namespace Kargono::EditorUI
 
 		s_TableEditButton = {};
 		s_TableLinkButton = {};
-		s_TableExpandButton = {};
+		s_ListExpandButton = {};
 
 		KG_VERIFY(!s_Running && !ImGui::GetCurrentContext(), "Editor UI Terminated")
 	}
@@ -1946,41 +1946,41 @@ namespace Kargono::EditorUI
 		spec.Editing, spec.Editing ? s_PrimaryTextColor : s_DisabledColor);
 	}
 
-	void EditorUIService::Table(TableSpec& spec)
+	void EditorUIService::List(ListSpec& spec)
 	{
 		FixedString<16> id{ "##" };
 		id.AppendInteger(spec.WidgetID);
 		uint32_t widgetCount{ 0 };
 		uint32_t smallButtonCount{ 0 };
 
-		if (spec.Flags & Table_Indented)
+		if (spec.Flags & List_Indented)
 		{
 			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
 		}
-		else
+		if (!(spec.Flags & (List_RegularSizeTitle | List_Indented)))
 		{
 			ImGui::PushFont(EditorUIService::s_FontAntaLarge);
 		}
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.Label.c_str(), 
-			spec.Flags & Table_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
+			spec.Flags & List_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
 		TruncateText(spec.Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
-		if (!(spec.Flags & Table_Indented))
+		if (!(spec.Flags & (List_RegularSizeTitle | List_Indented)))
 		{
 			ImGui::PopFont();
 		}
-		s_TableExpandButton.IconSize = (spec.Flags & Table_Indented) ? 12.0f : 14.0f;
-		s_TableExpandButton.YPosition = spec.Flags & Table_Indented ? -0.0f : 4.5f;
+		s_ListExpandButton.IconSize = (spec.Flags & (List_Indented | List_RegularSizeTitle)) ? 12.0f : 14.0f;
+		s_ListExpandButton.YPosition = spec.Flags & List_Indented ? 0.0f : 3.0f;
 		ImGui::SameLine();
 		CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 		{
 			Utility::Operations::ToggleBoolean(spec.Expanded);
 		}, 
-		s_TableExpandButton ,spec.Expanded, spec.Expanded ? s_HighlightColor1 : s_DisabledColor);
+		s_ListExpandButton ,spec.Expanded, spec.Expanded ? s_HighlightColor1 : s_DisabledColor);
 
-		if (spec.Expanded && !spec.EditTableSelectionList.empty())
+		if (spec.Expanded && !spec.EditListSelectionList.empty())
 		{
 			ImGui::SameLine();
 			CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
@@ -1990,7 +1990,7 @@ namespace Kargono::EditorUI
 
 			if (ImGui::BeginPopupEx(spec.WidgetID - 1, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
 			{
-				for (auto& [label, func] : spec.EditTableSelectionList)
+				for (auto& [label, func] : spec.EditListSelectionList)
 				{
 					if (ImGui::Selectable((label.c_str() + id).c_str()))
 					{
@@ -2001,18 +2001,18 @@ namespace Kargono::EditorUI
 			}
 		}
 
-		if (spec.Flags & Table_UnderlineTitle)
+		if (spec.Flags & List_UnderlineTitle)
 		{
 			ImGui::Separator();
 		}
 		
 		if (spec.Expanded)
 		{
-			if (!spec.TableValues.empty())
+			if (!spec.ListEntries.empty())
 			{
 				// Column Titles
 				ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
-				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f: s_TextLeftIndentOffset);
+				ImGui::SetCursorPosX(spec.Flags & List_Indented ? 61.0f: s_TextLeftIndentOffset);
 				labelPosition = ImGui::FindPositionAfterLength(spec.Column1Title.c_str(), s_SecondaryTextLargeWidth);
 				TruncateText(spec.Column1Title, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 				ImGui::SameLine();
@@ -2022,50 +2022,37 @@ namespace Kargono::EditorUI
 				ImGui::PopStyleColor();
 				Spacing(SpacingAmount::Small);
 			}
-
-			for (auto& tableEntry : spec.TableValues)
+			std::size_t iteration{ 0 };
+			for (ListEntry& listEntry : spec.ListEntries)
 			{
 				smallButtonCount = 0;
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
-				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 42.5f : 12.0f);
+				ImGui::SetCursorPosX(spec.Flags & List_Indented ? 42.5f : 12.0f);
 				CreateImage(s_IconDash, 8, s_DisabledColor);
 				ImGui::SameLine();
-				ImGui::SetCursorPosX(spec.Flags & Table_Indented ? 61.0f : s_TextLeftIndentOffset);
+				ImGui::SetCursorPosX(spec.Flags & List_Indented  ? 61.0f : s_TextLeftIndentOffset);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5.2f);
-				TruncateText(tableEntry.Label, 16);
+				TruncateText(listEntry.Label, 16);
 				ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-				if (!tableEntry.Value.empty())
+				if (!listEntry.Value.empty())
 				{
-					WriteMultilineText(tableEntry.Value, s_SecondaryTextLargeWidth, s_SecondaryTextPosOne, -5.2f);
+					WriteMultilineText(listEntry.Value, s_SecondaryTextLargeWidth, s_SecondaryTextPosOne, -5.2f);
 				}
 				ImGui::PopStyleColor();
-				
-				if (tableEntry.OnLink)
-				{
-					s_TableLinkButton.XPosition = SmallButtonRelativeLocation(smallButtonCount++);
-					ImGui::SameLine();
-					CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
-					{
-						if (tableEntry.OnLink)
-						{
-							tableEntry.OnLink(tableEntry);
-						}
-					}, s_TableLinkButton, false, s_DisabledColor);
-				}
 
-				if (tableEntry.OnEdit)
+				if (listEntry.OnEdit)
 				{
 					s_TableEditButton.XPosition = SmallButtonRelativeLocation(smallButtonCount++);
 					ImGui::SameLine();
 					CreateButton(spec.WidgetID + WidgetIterator(widgetCount), [&]()
 					{
-						if (tableEntry.OnEdit)
+						if (listEntry.OnEdit)
 						{
-							tableEntry.OnEdit(tableEntry);
+							listEntry.OnEdit(listEntry, iteration);
 						}
 					}, s_TableEditButton, false, s_DisabledColor);
 				}
-				
+				iteration++;
 			}
 		}
 	}

@@ -67,7 +67,7 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_DeleteGameStateWarning {};
 		EditorUI::GenericPopupSpec m_CloseGameStateWarning {};
 		// Fields Panel
-		EditorUI::TableSpec m_FieldsTable {};
+		EditorUI::ListSpec m_FieldsTable {};
 		EditorUI::SelectOptionSpec m_AddFieldPopup {};
 		EditorUI::GenericPopupSpec m_EditFieldPopup {};
 		EditorUI::EditTextSpec m_EditFieldName {};

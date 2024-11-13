@@ -77,17 +77,17 @@ namespace Kargono::Panels
 			if (EditorUI::EditorUIService::BeginTabItem("Keyboard"))
 			{
 				// On Update
-				EditorUI::EditorUIService::Table(m_KeyboardOnUpdateTable);
+				EditorUI::EditorUIService::List(m_KeyboardOnUpdateTable);
 				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnUpdateAddPopup);
 				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnUpdateEditPopup);
 
 				// On Key Pressed
-				EditorUI::EditorUIService::Table(m_KeyboardOnKeyPressedTable);
+				EditorUI::EditorUIService::List(m_KeyboardOnKeyPressedTable);
 				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnKeyPressedAddPopup);
 				EditorUI::EditorUIService::GenericPopup(m_KeyboardOnKeyPressedEditPopup);
 
 				// Keyboard Polling
-				EditorUI::EditorUIService::Table(m_KeyboardPollingTable);
+				EditorUI::EditorUIService::List(m_KeyboardPollingTable);
 				EditorUI::EditorUIService::GenericPopup(m_KeyboardPollingAddSlot);
 				EditorUI::EditorUIService::GenericPopup(m_KeyboardPollingEditSlot);
 
@@ -386,12 +386,12 @@ namespace Kargono::Panels
 
 	void InputMapPanel::InitializeKeyboardScreen()
 	{
-		// On Update Table
+		// On Update List
 		m_KeyboardOnUpdateTable.Label = "On Update";
 		m_KeyboardOnUpdateTable.Expanded = true;
 		m_KeyboardOnUpdateTable.OnRefresh = [&]()
 		{
-			m_KeyboardOnUpdateTable.ClearTable();
+			m_KeyboardOnUpdateTable.ClearList();
 			uint32_t iteration{ 0 };
 			for (auto& inputBinding : m_EditorInputMap->GetOnUpdateBindings())
 			{
@@ -402,13 +402,13 @@ namespace Kargono::Panels
 				}
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 
-				static std::function<void(EditorUI::TableEntry&)> m_EditKeyboardSlot = [&](EditorUI::TableEntry& entry)
+				static std::function<void(EditorUI::ListEntry&, std::size_t iteration)> m_EditKeyboardSlot = [&](EditorUI::ListEntry& entry, std::size_t iteration)
 				{
 					m_KeyboardOnUpdateActiveSlot = (uint32_t)entry.Handle;
 					m_KeyboardOnUpdateEditPopup.OpenPopup = true;
 				};
 
-				EditorUI::TableEntry newEntry;
+				EditorUI::ListEntry newEntry;
 				Assets::AssetHandle scriptHandle = keyboardBinding->GetScriptHandle();
 				if (scriptHandle == Assets::EmptyHandle)
 				{
@@ -416,8 +416,7 @@ namespace Kargono::Panels
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						"None",
 						iteration,
-						m_EditKeyboardSlot,
-						nullptr
+						m_EditKeyboardSlot
 					};
 				}
 				else
@@ -427,12 +426,11 @@ namespace Kargono::Panels
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						script->m_ScriptName,
 						iteration,
-						m_EditKeyboardSlot,
-						nullptr
+						m_EditKeyboardSlot
 					};
 				}
 
-				m_KeyboardOnUpdateTable.InsertTableEntry(newEntry);
+				m_KeyboardOnUpdateTable.InsertListEntry(newEntry);
 				iteration++;
 			}
 		};
@@ -666,12 +664,12 @@ namespace Kargono::Panels
 		};
 
 
-		// On Key Pressed Table
+		// On Key Pressed List
 		m_KeyboardOnKeyPressedTable.Label = "On Key Pressed";
 		m_KeyboardOnKeyPressedTable.Expanded = true;
 		m_KeyboardOnKeyPressedTable.OnRefresh = [&]()
 		{
-			m_KeyboardOnKeyPressedTable.ClearTable();
+			m_KeyboardOnKeyPressedTable.ClearList();
 			uint32_t iteration{ 0 };
 			for (auto& inputBinding : m_EditorInputMap->GetOnKeyPressedBindings())
 			{
@@ -682,13 +680,13 @@ namespace Kargono::Panels
 				}
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 
-				static std::function<void(EditorUI::TableEntry&)> m_EditKeyboardSlot = [&](EditorUI::TableEntry& entry)
+				static std::function<void(EditorUI::ListEntry&, std::size_t)> m_EditKeyboardSlot = [&](EditorUI::ListEntry& entry, std::size_t iteration)
 				{
 					m_KeyboardOnKeyPressedActiveSlot = (uint32_t)entry.Handle;
 					m_KeyboardOnKeyPressedEditPopup.OpenPopup = true;
 				};
 
-				EditorUI::TableEntry newEntry;
+				EditorUI::ListEntry newEntry;
 				Assets::AssetHandle scriptHandle = keyboardBinding->GetScriptHandle();
 				if (scriptHandle == Assets::EmptyHandle)
 				{
@@ -696,8 +694,7 @@ namespace Kargono::Panels
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						"None",
 						iteration,
-						m_EditKeyboardSlot,
-						nullptr
+						m_EditKeyboardSlot
 					};
 				}
 				else
@@ -707,12 +704,11 @@ namespace Kargono::Panels
 						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						script->m_ScriptName,
 						iteration,
-						m_EditKeyboardSlot,
-						nullptr
+						m_EditKeyboardSlot
 					};
 				}
 
-				m_KeyboardOnKeyPressedTable.InsertTableEntry(newEntry);
+				m_KeyboardOnKeyPressedTable.InsertListEntry(newEntry);
 				iteration++;
 			}
 		};
@@ -944,31 +940,30 @@ namespace Kargono::Panels
 			m_SelectScriptTooltip.TooltipActive = true;
 		};
 
-		// Polling Table
+		// Polling List
 		m_KeyboardPollingTable.Label = "Polling";
 		m_KeyboardPollingTable.Expanded = true;
 		m_KeyboardPollingTable.OnRefresh = [&]()
 		{
-			m_KeyboardPollingTable.ClearTable();
+			m_KeyboardPollingTable.ClearList();
 			uint32_t iteration{ 0 };
 			for (auto code: m_EditorInputMap->GetKeyboardPolling())
 			{
 
-				static std::function<void(EditorUI::TableEntry&)> m_EditKeyboardSlot = [&](EditorUI::TableEntry& entry)
+				static std::function<void(EditorUI::ListEntry&, std::size_t)> m_EditKeyboardSlot = [&](EditorUI::ListEntry& entry, std::size_t iteration)
 				{
 					m_KeyboardPollingActiveSlot = (uint32_t)entry.Handle;
 					m_KeyboardPollingEditSlot.OpenPopup = true;
 				};
 
-				EditorUI::TableEntry newEntry = {
+				EditorUI::ListEntry newEntry = {
 					"Slot::" + std::to_string(iteration),
 					"Key::" + Utility::KeyCodeToString(code),
 					iteration,
-					m_EditKeyboardSlot,
-					nullptr
+					m_EditKeyboardSlot
 				};
 
-				m_KeyboardPollingTable.InsertTableEntry(newEntry);
+				m_KeyboardPollingTable.InsertListEntry(newEntry);
 				iteration++;
 			}
 		};

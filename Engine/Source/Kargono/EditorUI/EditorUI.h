@@ -36,7 +36,7 @@ namespace Kargono::EditorUI
 	struct SelectOptionSpec;
 	struct EditVariableSpec;
 	struct TooltipSpec;
-	struct TableSpec;
+	struct ListSpec;
 	struct TreeSpec;
 	struct InlineButtonSpec;
 	struct EditIntegerSpec;
@@ -148,7 +148,7 @@ namespace Kargono::EditorUI
 		static void EditVec4(EditVec4Spec& spec);
 
 		static void RadioSelector(RadioSelectorSpec& spec);
-		static void Table(TableSpec& spec);
+		static void List(ListSpec& spec);
 		static void Tree(TreeSpec& spec);
 		static void PanelHeader(PanelHeaderSpec& spec);
 		static void NavigationHeader(NavigationHeaderSpec& spec);
@@ -1169,66 +1169,67 @@ namespace Kargono::EditorUI
 	};
 
 
-	enum TableFlags
+	enum ListFlags
 	{
-		Table_None = 0,
-		Table_Indented = BIT(0), // Indents the table over once
-		Table_UnderlineTitle = BIT(1) // Adds an underline to the title
+		List_None = 0,
+		List_UnderlineTitle = BIT(0), // Adds an underline to the title
+		List_RegularSizeTitle = BIT(1), // Ensures title uses normally sized font
+		List_Indented = BIT(2) // Indents the list over once
 	};
 
-	struct TableEntry
+	struct ListEntry
 	{
 		std::string Label;
 		std::string Value;
 		UUID Handle;
-		std::function<void(TableEntry& entry)> OnEdit { nullptr };
-		std::function<void(TableEntry& entry)> OnLink { nullptr };
+		std::function<void(ListEntry& entry, std::size_t iteration)> OnEdit { nullptr };
 	};
 
-	static inline std::size_t k_TableSearchIndex{ std::numeric_limits<std::size_t>::max() };
+	static inline std::size_t k_ListSearchIndex{ std::numeric_limits<std::size_t>::max() };
+	static inline std::size_t k_ListIndex{ std::numeric_limits<std::size_t>::max() };
 
-	struct TableSpec
+	struct ListSpec
 	{
 	public:
-		TableSpec()
+		ListSpec()
 		{
 			WidgetID = IncrementWidgetCounter();
 		}
 	public:
 		std::string Label;
-		WidgetFlags Flags{ Table_None };
+		WidgetFlags Flags{ List_None };
 		std::string Column1Title {};
 		std::string Column2Title {};
 		bool Expanded{ false };
 		std::function<void()> OnRefresh { nullptr };
 	public:
-		void InsertTableEntry(const std::string& label, const std::string& value, 
-			std::function<void(TableEntry& entry)> onEdit, Assets::AssetHandle handle = 0)
+		void InsertListEntry(const std::string& label, const std::string& value, 
+			std::function<void(ListEntry& entry, std::size_t iteration)> onEdit, Assets::AssetHandle handle = 0)
 		{
-			TableEntry newEntry{label, value, handle, onEdit, nullptr };
-			TableValues.push_back(newEntry);
+			ListEntry newEntry{label, value, handle, onEdit};
+			ListEntries.push_back(newEntry);
 		}
 
-		void InsertTableEntry(const TableEntry& entry)
+		void InsertListEntry(const ListEntry& entry)
 		{
-			TableValues.push_back(entry);
+			ListEntries.push_back(entry);
 		}
 
 		bool RemoveEntry(std::size_t entryIndex)
 		{
-			if (entryIndex >= TableValues.size()) 
+			if (entryIndex >= ListEntries.size()) 
 			{
 				return false;
 			}
-			TableValues.erase(TableValues.begin() + entryIndex);
+			ListEntries.erase(ListEntries.begin() + entryIndex);
 			return true;
 		}
 
-		std::size_t SearchEntries(std::function<bool(const TableEntry& currentEntry)> searchFunction)
+		std::size_t SearchEntries(std::function<bool(const ListEntry& currentEntry)> searchFunction)
 		{
 			// Run search function on entry
 			std::size_t iteration{ 0 };
-			for (const TableEntry& currentEntry : TableValues)
+			for (const ListEntry& currentEntry : ListEntries)
 			{
 				if (searchFunction(currentEntry))
 				{
@@ -1238,35 +1239,35 @@ namespace Kargono::EditorUI
 			}
 			
 			// Return invalid index if none is found
-			return k_TableSearchIndex;
+			return k_ListSearchIndex;
 		}
 
-		void ClearTable()
+		void ClearList()
 		{
-			TableValues.clear();
+			ListEntries.clear();
 		}
-		void ClearEditTableSelectionList()
+		void ClearEditListSelectionList()
 		{
-			EditTableSelectionList.clear();
+			EditListSelectionList.clear();
 		}
 		void AddToSelectionList(const std::string& label, std::function<void()> function)
 		{
-			if (!EditTableSelectionList.contains(label))
+			if (!EditListSelectionList.contains(label))
 			{
-				EditTableSelectionList.insert_or_assign(label, function);
+				EditListSelectionList.insert_or_assign(label, function);
 				return;
 			}
 		}
-		SelectionList& GetEditTableSelectionList()
+		SelectionList& GetEditSelectionList()
 		{
-			return EditTableSelectionList;
+			return EditListSelectionList;
 		}
 	private:
 		WidgetID WidgetID;
-		std::vector<TableEntry> TableValues{};
-		SelectionList EditTableSelectionList{};
+		std::vector<ListEntry> ListEntries{};
+		SelectionList EditListSelectionList{};
 	private:
-		friend void EditorUIService::Table(TableSpec& spec);
+		friend void EditorUIService::List(ListSpec& spec);
 	};
 
 	struct OptionEntry

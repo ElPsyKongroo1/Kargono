@@ -949,10 +949,10 @@ namespace Kargono::Panels
 		});
 		m_MessageTypeTable.OnRefresh = [&]()
 		{
-			m_MessageTypeTable.ClearTable();
+			m_MessageTypeTable.ClearList();
 			for (std::string& label : Projects::ProjectService::GetAllMessageTypes())
 			{
-				m_MessageTypeTable.InsertTableEntry(label, "", [&](EditorUI::TableEntry& entry)
+				m_MessageTypeTable.InsertListEntry(label, "", [&](EditorUI::ListEntry& entry)
 				{
 					m_ActiveAIMessageType = entry.Label;
 					m_EditMessageTypePopup.OpenPopup = true;
@@ -1243,7 +1243,7 @@ namespace Kargono::Panels
 		}
 
 
-		EditorUI::EditorUIService::Table(m_MessageTypeTable);
+		EditorUI::EditorUIService::List(m_MessageTypeTable);
 		EditorUI::EditorUIService::EditText(m_CreateMessageTypePopup);
 		EditorUI::EditorUIService::GenericPopup(m_EditMessageTypePopup);
 		EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);

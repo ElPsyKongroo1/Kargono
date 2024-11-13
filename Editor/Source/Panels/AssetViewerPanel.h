@@ -17,7 +17,7 @@ namespace Kargono::Panels
 		void InitializeAssetsTable();
 		void InitializeAssetPopup();
 	public:
-		void ViewAssetInformation(EditorUI::TableEntry& entry);
+		void ViewAssetInformation(EditorUI::ListEntry& entry, std::size_t iteration);
 		void RefreshPanelData();
 	public:
 
@@ -25,7 +25,7 @@ namespace Kargono::Panels
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	private:
 		FixedString32 m_PanelName{ "Asset Viewer" };
-		EditorUI::TableSpec m_AllAssetsTable {};
+		EditorUI::ListSpec m_AllAssetsTable {};
 		EditorUI::GenericPopupSpec m_ViewAssetPopup {};
 
 		Assets::AssetHandle m_ActiveAsset {Assets::EmptyHandle};

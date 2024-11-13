@@ -43,10 +43,10 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::GenericPopup(m_DeleteComponentWarning);
 			EditorUI::EditorUIService::GenericPopup(m_CloseComponentWarning);
 
-			// Table
-			EditorUI::EditorUIService::Table(m_FieldsTable);
+			// List
+			EditorUI::EditorUIService::List(m_FieldsTable);
 
-			// Table Popups
+			// List Popups
 			EditorUI::EditorUIService::GenericPopup(m_AddFieldPopup);
 			EditorUI::EditorUIService::GenericPopup(m_EditFieldPopup);
 
@@ -184,19 +184,19 @@ namespace Kargono::Panels
 			m_DeleteComponentWarning.OpenPopup = true;
 		});
 
-		// Fields Table
+		// Fields List
 		m_FieldsTable.Label = "Fields";
 		m_FieldsTable.Expanded = true;
 		m_FieldsTable.OnRefresh = [&]()
 		{
-			m_FieldsTable.ClearTable();
+			m_FieldsTable.ClearList();
 			if (m_EditorProjectComponent)
 			{
 				for (size_t iteration{0}; iteration < m_EditorProjectComponent->m_DataNames.size(); iteration++)
 				{
-					m_FieldsTable.InsertTableEntry(m_EditorProjectComponent->m_DataNames.at(iteration),
+					m_FieldsTable.InsertListEntry(m_EditorProjectComponent->m_DataNames.at(iteration),
 						Utility::WrappedVarTypeToString(m_EditorProjectComponent->m_DataTypes.at(iteration)),
-						[&](EditorUI::TableEntry& entry)
+						[&](EditorUI::ListEntry& entry)
 						{
 							m_EditFieldPopup.OpenPopup = true;
 							m_ActiveField = entry.Handle;
