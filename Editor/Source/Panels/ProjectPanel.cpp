@@ -952,7 +952,7 @@ namespace Kargono::Panels
 			m_MessageTypeTable.ClearList();
 			for (std::string& label : Projects::ProjectService::GetAllMessageTypes())
 			{
-				m_MessageTypeTable.InsertListEntry(label, "", [&](EditorUI::ListEntry& entry)
+				m_MessageTypeTable.InsertListEntry(label, "", [&](EditorUI::ListEntry& entry, std::size_t iteration)
 				{
 					m_ActiveAIMessageType = entry.Label;
 					m_EditMessageTypePopup.OpenPopup = true;
