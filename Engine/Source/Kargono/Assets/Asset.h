@@ -181,10 +181,11 @@ namespace Kargono::Assets
 
 	struct ScriptMetaData
 	{
-		std::string Name{};
-		Scripting::ScriptType ScriptType {Scripting::ScriptType::None };
-		std::string SectionLabel{};
-		WrappedFuncType FunctionType{};
+		std::string m_Name{};
+		Scripting::ScriptType m_ScriptType {Scripting::ScriptType::None };
+		std::string m_SectionLabel{};
+		WrappedFuncType m_FunctionType{};
+		Scripting::ExplicitFuncType m_ExplicitFuncType{};
 	};
 
 	struct ProjectComponentMetaData

@@ -19,7 +19,7 @@ namespace Kargono::Assets
 		for (auto& [handle, asset] : m_AssetRegistry)
 		{
 			Assets::ScriptMetaData metadata = *static_cast<Assets::ScriptMetaData*>(asset.Data.SpecificFileData.get());
-			if (metadata.Name == spec.Name)
+			if (metadata.m_Name == spec.Name)
 			{
 				KG_WARN("Unable to create new script. Script Name already exists in asset manager");
 				return std::make_tuple(0, false);
@@ -27,7 +27,7 @@ namespace Kargono::Assets
 		}
 
 		// Check if function type is valid
-		if (spec.FunctionType == WrappedFuncType::None)
+		if (spec.m_FunctionType == WrappedFuncType::None)
 		{
 			KG_WARN("Unable to create new script. Invalid Function Type Provided!");
 			return std::make_tuple(0, false);
@@ -75,7 +75,7 @@ namespace Kargono::Assets
 		// Check if function type needs to be updated
 		std::string scriptFile {};
 		std::string matchingExpression {};
-		if (metadata->FunctionType != spec.FunctionType)
+		if (metadata->m_FunctionType != spec.m_FunctionType)
 		{
 			// Load file into scriptFile
 			scriptFile = Utility::FileSystem::ReadFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
@@ -86,10 +86,10 @@ namespace Kargono::Assets
 			}
 
 			// Build Regular Expression
-			std::string returnType {Utility::WrappedVarTypeToCPPString(Utility::WrappedFuncTypeToReturnType(metadata->FunctionType))};
-			std::string functionName { metadata->Name };
+			std::string returnType {Utility::WrappedVarTypeToCPPString(Utility::WrappedFuncTypeToReturnType(metadata->m_FunctionType))};
+			std::string functionName { metadata->m_Name };
 			std::stringstream parameters {};
-			for (auto parameter : Utility::WrappedFuncTypeToParameterTypes(metadata->FunctionType))
+			for (auto parameter : Utility::WrappedFuncTypeToParameterTypes(metadata->m_FunctionType))
 			{
 				std::string parameterString { Utility::WrappedVarTypeToCPPString(parameter) };
 				std::string parameterRegex { std::string("\\s*") + parameterString + std::string("\\s+") +
@@ -116,21 +116,21 @@ namespace Kargono::Assets
 		}
 
 		// Update Function Signature if needed
-		if (metadata->FunctionType != spec.FunctionType)
+		if (metadata->m_FunctionType != spec.m_FunctionType)
 		{
 			// Replace with new signature
 			std::string output = Utility::Regex::ReplaceMatches(scriptFile, matchingExpression,
-				Utility::GenerateFunctionSignature(spec.FunctionType, spec.Name));
+				Utility::GenerateFunctionSignature(spec.m_FunctionType, spec.Name));
 
 			// Write back out to file
 			Utility::FileSystem::WriteFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation, output);
 		}
 
 		// Update registry metadata
-		metadata->Name = spec.Name;
-		metadata->ScriptType = spec.Type;
-		metadata->SectionLabel = spec.SectionLabel;
-		metadata->FunctionType = spec.FunctionType;
+		metadata->m_Name = spec.Name;
+		metadata->m_ScriptType = spec.Type;
+		metadata->m_SectionLabel = spec.m_SectionLabel;
+		metadata->m_FunctionType = spec.m_FunctionType;
 
 		SerializeAssetRegistry();
 
@@ -139,9 +139,9 @@ namespace Kargono::Assets
 		{
 			Ref<Scripting::Script> script = m_AssetCache.at(scriptHandle);
 			script->m_ScriptName = spec.Name;
-			script->m_FuncType = spec.FunctionType;
+			script->m_FuncType = spec.m_FunctionType;
 			script->m_ScriptType = spec.Type;
-			script->m_SectionLabel = spec.SectionLabel;
+			script->m_SectionLabel = spec.m_SectionLabel;
 			script->m_Function = nullptr;
 		}
 
@@ -197,9 +197,9 @@ namespace Kargono::Assets
 
 		for (auto& [handle, asset] : m_AssetRegistry)
 		{
-			if (asset.Data.GetSpecificMetaData<ScriptMetaData>()->SectionLabel == oldLabel)
+			if (asset.Data.GetSpecificMetaData<ScriptMetaData>()->m_SectionLabel == oldLabel)
 			{
-				asset.Data.GetSpecificMetaData<ScriptMetaData>()->SectionLabel = newLabel;
+				asset.Data.GetSpecificMetaData<ScriptMetaData>()->m_SectionLabel = newLabel;
 			}
 		}
 
@@ -231,9 +231,9 @@ namespace Kargono::Assets
 
 		for (auto& [handle, asset] : m_AssetRegistry)
 		{
-			if (asset.Data.GetSpecificMetaData<ScriptMetaData>()->SectionLabel == label)
+			if (asset.Data.GetSpecificMetaData<ScriptMetaData>()->m_SectionLabel == label)
 			{
-				asset.Data.GetSpecificMetaData<ScriptMetaData>()->SectionLabel = "None";
+				asset.Data.GetSpecificMetaData<ScriptMetaData>()->m_SectionLabel = "None";
 			}
 		}
 
@@ -249,14 +249,16 @@ namespace Kargono::Assets
 		// Create script file
 		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation;
 
-		Utility::FileSystem::WriteFileString(fullPath, Utility::GenerateFunctionStub(spec.FunctionType, spec.Name));
+		Utility::FileSystem::WriteFileString(fullPath, Utility::GenerateFunctionStub(spec.m_FunctionType, spec.Name));
 
 		// Load data into In-Memory Metadata object
 		Ref<Assets::ScriptMetaData> metadata = CreateRef<Assets::ScriptMetaData>();
-		metadata->Name = spec.Name;
-		metadata->ScriptType = spec.Type;
-		metadata->SectionLabel = spec.SectionLabel;
-		metadata->FunctionType = spec.FunctionType;
+		metadata->m_Name = spec.Name;
+		metadata->m_ScriptType = spec.Type;
+		metadata->m_SectionLabel = spec.m_SectionLabel;
+		metadata->m_FunctionType = spec.m_FunctionType;
+		metadata->m_ExplicitFuncType = spec.m_ExplicitFuncType;
+		
 		newAsset.Data.SpecificFileData = metadata;
 	}
 	Ref<Scripting::Script> ScriptManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
@@ -265,11 +267,12 @@ namespace Kargono::Assets
 		Assets::ScriptMetaData metadata = *asset.Data.GetSpecificMetaData<ScriptMetaData>();
 
 		newScript->m_ID = asset.Handle;
-		newScript->m_ScriptName = metadata.Name;
-		newScript->m_FuncType = metadata.FunctionType;
-		newScript->m_ScriptType = metadata.ScriptType;
-		newScript->m_SectionLabel = metadata.SectionLabel;
-		Scripting::ScriptService::LoadScriptFunction(newScript, metadata.FunctionType);
+		newScript->m_ScriptName = metadata.m_Name;
+		newScript->m_FuncType = metadata.m_FunctionType;
+		newScript->m_ScriptType = metadata.m_ScriptType;
+		newScript->m_SectionLabel = metadata.m_SectionLabel;
+		newScript->m_ExplicitFuncType = metadata.m_ExplicitFuncType;
+		Scripting::ScriptService::LoadScriptFunction(newScript, metadata.m_FunctionType);
 
 		return newScript;
 	}
@@ -279,7 +282,7 @@ namespace Kargono::Assets
 		serializer << YAML::Key << "SectionLabels" << YAML::Value;
 		serializer << YAML::BeginSeq; // Start SectionLabels
 
-		for (auto& section : m_ScriptSectionLabels)
+		for (const std::string& section : m_ScriptSectionLabels)
 		{
 			serializer << YAML::Value << section; // Section Name
 		}
@@ -289,10 +292,41 @@ namespace Kargono::Assets
 	{
 		Assets::ScriptMetaData* metadata = static_cast<Assets::ScriptMetaData*>(currentAsset.Data.SpecificFileData.get());
 
-		serializer << YAML::Key << "Name" << YAML::Value << metadata->Name;
-		serializer << YAML::Key << "SectionLabel" << YAML::Value << metadata->SectionLabel;
-		serializer << YAML::Key << "ScriptType" << YAML::Value << Utility::ScriptTypeToString(metadata->ScriptType);
-		serializer << YAML::Key << "FunctionType" << YAML::Value << Utility::WrappedFuncTypeToString(metadata->FunctionType);
+		serializer << YAML::Key << "Name" << YAML::Value << metadata->m_Name;
+		serializer << YAML::Key << "SectionLabel" << YAML::Value << metadata->m_SectionLabel;
+		serializer << YAML::Key << "ScriptType" << YAML::Value << Utility::ScriptTypeToString(metadata->m_ScriptType);
+		serializer << YAML::Key << "FunctionType" << YAML::Value << Utility::WrappedFuncTypeToString(metadata->m_FunctionType);
+
+
+		Scripting::ExplicitFuncType& explicitFuncType = metadata->m_ExplicitFuncType;
+		if (metadata->m_FunctionType == WrappedFuncType::ArbitraryFunction)
+		{
+			// Serialize explicit func definition
+			serializer << YAML::Key << "ExplicitFuncType" << YAML::BeginMap; // Explicit func type map
+
+			// Serialize return type
+			serializer << YAML::Key << "ReturnType" << YAML::Value << Utility::WrappedVarTypeToString(explicitFuncType.m_ReturnType);
+
+			// Serialize parameter types
+			serializer << YAML::Key << "ParameterTypes" << YAML::Value;
+			serializer << YAML::BeginSeq; // Start parameter types list
+			for (WrappedVarType type : explicitFuncType.m_ParameterTypes)
+			{
+				serializer << YAML::Value << Utility::WrappedVarTypeToString(type);
+			}
+			serializer << YAML::EndSeq; // End parameter types list
+
+			// Serialize parameter names
+			serializer << YAML::Key << "ParameterNames" << YAML::Value;
+			serializer << YAML::BeginSeq; // Start parameter types list
+			for (FixedString32& name : explicitFuncType.m_ParameterNames)
+			{
+				serializer << YAML::Value << name.CString();
+			}
+			serializer << YAML::EndSeq; // End parameter types list
+
+			serializer << YAML::EndMap; // Explicit func type map
+		}
 	}
 	void ScriptManager::DeserializeRegistrySpecificData(YAML::Node& registryNode)
 	{
@@ -306,17 +340,19 @@ namespace Kargono::Assets
 			newAsset.Data.FileLocation = "";
 			newAsset.Data.Type = AssetType::Script;
 
-			// Insert ScriptMetaData
-			Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
+			// Insert scriptMetaData
+			Ref<Assets::ScriptMetaData> scriptMetaData = CreateRef<Assets::ScriptMetaData>();
 
 			std::string Name{};
 			std::vector<WrappedVarType> Parameters{};
 
-			ScriptMetaData->Name = script->m_ScriptName;
-			ScriptMetaData->SectionLabel = script->m_SectionLabel;
-			ScriptMetaData->ScriptType = script->m_ScriptType;
-			ScriptMetaData->FunctionType = script->m_FuncType;
-			newAsset.Data.SpecificFileData = ScriptMetaData;
+			scriptMetaData->m_Name = script->m_ScriptName;
+			scriptMetaData->m_SectionLabel = script->m_SectionLabel;
+			scriptMetaData->m_ScriptType = script->m_ScriptType;
+			scriptMetaData->m_FunctionType = script->m_FuncType;
+			scriptMetaData->m_ExplicitFuncType = script->m_ExplicitFuncType;
+			
+			newAsset.Data.SpecificFileData = scriptMetaData;
 
 			// Insert Engine Script into registry/in-memory
 			m_AssetRegistry.insert({ newAsset.Handle, newAsset });
@@ -338,17 +374,44 @@ namespace Kargono::Assets
 	}
 	void ScriptManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset)
 	{
-		Ref<Assets::ScriptMetaData> ScriptMetaData = CreateRef<Assets::ScriptMetaData>();
+		Ref<Assets::ScriptMetaData> scriptMetaData = CreateRef<Assets::ScriptMetaData>();
 
 		std::string Name{};
 		std::vector<WrappedVarType> Parameters{};
 
-		ScriptMetaData->Name = metadataNode["Name"].as<std::string>();
+		scriptMetaData->m_Name = metadataNode["Name"].as<std::string>();
 
-		ScriptMetaData->SectionLabel = metadataNode["SectionLabel"].as<std::string>();
-		ScriptMetaData->ScriptType = Utility::StringToScriptType(metadataNode["ScriptType"].as<std::string>());
-		ScriptMetaData->FunctionType = Utility::StringToWrappedFuncType(metadataNode["FunctionType"].as<std::string>());
-		currentAsset.Data.SpecificFileData = ScriptMetaData;
+		scriptMetaData->m_SectionLabel = metadataNode["SectionLabel"].as<std::string>();
+		scriptMetaData->m_ScriptType = Utility::StringToScriptType(metadataNode["ScriptType"].as<std::string>());
+		scriptMetaData->m_FunctionType = Utility::StringToWrappedFuncType(metadataNode["FunctionType"].as<std::string>());
+		if (scriptMetaData->m_FunctionType == WrappedFuncType::ArbitraryFunction)
+		{
+			// Deserialize explicit func type
+			Scripting::ExplicitFuncType& explicitFuncType = scriptMetaData->m_ExplicitFuncType;
+			explicitFuncType = {};
+			YAML::Node explicitNode = metadataNode["ExplicitFuncType"];
+			KG_ASSERT(explicitNode);
+
+			// Deserialize return type
+			explicitFuncType.m_ReturnType = Utility::StringToWrappedVarType(explicitNode["ReturnType"].as<std::string>());
+
+			// Deserialize parameter types
+			YAML::Node parameterTypes = explicitNode["ParameterTypes"];
+			KG_ASSERT(parameterTypes);
+			for (YAML::detail::iterator_value parameterType : parameterTypes)
+			{
+				explicitFuncType.m_ParameterTypes.push_back(Utility::StringToWrappedVarType(parameterType.as<std::string>()));
+			}
+
+			// Deserialize parameter names
+			YAML::Node parameterNames = explicitNode["ParameterNames"];
+			KG_ASSERT(parameterNames);
+			for (YAML::detail::iterator_value parameterName : parameterNames)
+			{
+				explicitFuncType.m_ParameterNames.push_back(parameterName.as<std::string>().c_str());
+			}
+		}
+		currentAsset.Data.SpecificFileData = scriptMetaData;
 	}
 
 	void ScriptManager::DeleteAssetValidation(AssetHandle scriptHandle)

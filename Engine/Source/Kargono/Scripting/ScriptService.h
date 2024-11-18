@@ -49,6 +49,7 @@ namespace Kargono::Scripting
 	private:
 		static std::vector<Ref<Script>> s_AllEngineScripts;
 	};
+
 	//==============================
 	// Script Class
 	//==============================
@@ -61,6 +62,7 @@ namespace Kargono::Scripting
 		WrappedFuncType m_FuncType{ WrappedFuncType::None };
 		UUID m_ID{};
 		Ref<WrappedFunction> m_Function {nullptr};
+		ExplicitFuncType m_ExplicitFuncType{};
 	};
 }
 

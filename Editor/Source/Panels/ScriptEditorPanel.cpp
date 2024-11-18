@@ -21,8 +21,8 @@ namespace Kargono::Panels
 		Assets::ScriptSpec spec {};
 		spec.Name = m_EditScriptName.CurrentOption;
 		spec.Type = Scripting::ScriptType::Project;
-		spec.SectionLabel = m_EditScriptSectionLabel.CurrentOption.Label;
-		spec.FunctionType = (WrappedFuncType)(uint64_t)m_EditScriptFuncType.CurrentOption.Handle;
+		spec.m_SectionLabel = m_EditScriptSectionLabel.CurrentOption.Label;
+		spec.m_FunctionType = (WrappedFuncType)(uint64_t)m_EditScriptFuncType.CurrentOption.Handle;
 		auto successful = Assets::AssetService::SaveScript(m_ActiveScriptHandle, spec);
 		if (!successful)
 		{
@@ -122,8 +122,8 @@ namespace Kargono::Panels
 			Assets::ScriptSpec spec {};
 			spec.Name = m_CreateWidgets.m_EditName.CurrentOption;
 			spec.Type = Scripting::ScriptType::Project;
-			spec.SectionLabel = m_CreateWidgets.m_SelectSectionLabel.CurrentOption.Label;
-			spec.FunctionType = (WrappedFuncType)(uint64_t)m_CreateWidgets.m_SelectFuncType.CurrentOption.Handle;
+			spec.m_SectionLabel = m_CreateWidgets.m_SelectSectionLabel.CurrentOption.Label;
+			spec.m_FunctionType = (WrappedFuncType)(uint64_t)m_CreateWidgets.m_SelectFuncType.CurrentOption.Handle;
 			auto [handle, successful] = Assets::AssetService::CreateNewScript(spec);
 			if (!successful)
 			{

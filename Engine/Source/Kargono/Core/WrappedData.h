@@ -311,6 +311,8 @@ namespace Kargono
 		Bool_UInt64,
 		Bool_UInt64UInt64,
 		Bool_UInt64UInt16UInt64,
+
+		ArbitraryFunction
 	};
 
 	inline WrappedFuncType s_AllWrappedFuncs[] = 
@@ -797,6 +799,7 @@ namespace Kargono
 			case WrappedFuncType::Bool_UInt64: return "Bool_UInt64";
 			case WrappedFuncType::Bool_UInt64UInt64: return "Bool_UInt64UInt64";
 			case WrappedFuncType::Bool_UInt64UInt16UInt64: return "Bool_UInt64UInt16UInt64";
+			case WrappedFuncType::ArbitraryFunction: return "ArbitraryFunction";
 			case WrappedFuncType::None: return "None";
 			}
 			KG_ERROR("Unknown Type of WrappedType.");
@@ -817,6 +820,7 @@ namespace Kargono
 			if (type == "Bool_UInt64") { return WrappedFuncType::Bool_UInt64; }
 			if (type == "Bool_UInt64UInt64") { return WrappedFuncType::Bool_UInt64UInt64; }
 			if (type == "Bool_UInt64UInt16UInt64") { return WrappedFuncType::Bool_UInt64UInt16UInt64; }
+			if (type == "ArbitraryFunction") { return WrappedFuncType::ArbitraryFunction; }
 			if (type == "None") { return WrappedFuncType::None; }
 
 			KG_ERROR("Unknown Type of WrappedFuncType String.");
@@ -913,6 +917,8 @@ namespace Kargono
 			case WrappedFuncType::Bool_UInt64UInt64:
 			case WrappedFuncType::Bool_UInt64UInt16UInt64:
 				return WrappedVarType::Bool;
+			case WrappedFuncType::ArbitraryFunction:
+				return WrappedVarType::None;
 			case WrappedFuncType::None:
 			{
 				KG_ERROR("None type provided to return type utility function");
@@ -950,6 +956,8 @@ namespace Kargono
 				return { WrappedVarType::UInteger64, WrappedVarType::UInteger64 };
 			case WrappedFuncType::Bool_UInt64UInt16UInt64:
 				return { WrappedVarType::UInteger64, WrappedVarType::UInteger16, WrappedVarType::UInteger64 };
+			case WrappedFuncType::ArbitraryFunction:
+				return {};
 			case WrappedFuncType::None:
 			{
 				KG_ERROR("None type provided to parameter list utility function");

@@ -1,4 +1,8 @@
 #pragma once
+#include "Kargono/Core/WrappedData.h"
+#include "Kargono/Core/FixedString.h"
+
+#include <vector>
 
 namespace Kargono::Scripting
 {
@@ -10,6 +14,13 @@ namespace Kargono::Scripting
 		None = 0,
 		Project = 1,
 		Engine = 2
+	};
+
+	struct ExplicitFuncType
+	{
+		WrappedVarType m_ReturnType{ WrappedVarType::None };
+		std::vector<WrappedVarType> m_ParameterTypes{};
+		std::vector<FixedString32> m_ParameterNames{};
 	};
 }
 

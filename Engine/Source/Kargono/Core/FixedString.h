@@ -206,11 +206,12 @@ namespace Kargono
 			// Get size of new string
 			std::size_t newStringLength = std::strlen(newString);
 
-			// Early out if new size of string exceeds buffer length
+			// Truncate provided string based on buffer size
 			if (newStringLength + 1 > BufferSize)
 			{
-				//TODO: Just fill the buffer to capacity
-				return false;
+				// Set a new string length to fill buffer as much as possible
+				// * Note, leaving space for null terminator
+				newStringLength = BufferSize - 1;
 			}
 
 			// Fill data (Overwrite current null terminator)

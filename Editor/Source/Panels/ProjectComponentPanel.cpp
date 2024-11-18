@@ -196,7 +196,7 @@ namespace Kargono::Panels
 				{
 					m_FieldsTable.InsertListEntry(m_EditorProjectComponent->m_DataNames.at(iteration),
 						Utility::WrappedVarTypeToString(m_EditorProjectComponent->m_DataTypes.at(iteration)),
-						[&](EditorUI::ListEntry& entry)
+						[&](EditorUI::ListEntry& entry, std::size_t iteration)
 						{
 							m_EditFieldPopup.OpenPopup = true;
 							m_ActiveField = entry.Handle;

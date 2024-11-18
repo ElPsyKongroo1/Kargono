@@ -261,6 +261,12 @@ namespace Kargono::Scripting
 			return;
 		}
 
+		if (funcType == WrappedFuncType::ArbitraryFunction)
+		{
+			script->m_Function = nullptr;
+			return;
+		}
+
 		switch (funcType)
 		{
 		case WrappedFuncType::Void_None:
@@ -890,7 +896,7 @@ namespace Kargono::Scripting
 		// Write scripts into a single cpp file
 		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 		{
-			if (asset.Data.GetSpecificMetaData<Assets::ScriptMetaData>()->ScriptType == ScriptType::Engine)
+			if (asset.Data.GetSpecificMetaData<Assets::ScriptMetaData>()->m_ScriptType == ScriptType::Engine)
 			{
 				continue;
 			}
