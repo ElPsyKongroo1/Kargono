@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Kargono/Core/Buffer.h"
+#include "Kargono/Core/FixedString.h"
 
 #include <filesystem>
 #include <vector>
 #include <string>
+
 
 namespace Kargono::Utility
 {
@@ -58,10 +60,11 @@ namespace Kargono::Utility
 		// Create Checksum
 		//==============================
 		static std::string ChecksumFromFile(const std::filesystem::path& filepath);
-		static std::string ChecksumFromString(const std::string& inputString);
+		static std::string ChecksumFromString(const char* inputString);
+
 		static std::string ChecksumFromBuffer(Buffer buffer);
 		static uint32_t CRCFromBuffer(void* bufferPointer, uint64_t bufferSize);
-		static uint32_t CRCFromString(const std::string& inputString);
+		static uint32_t CRCFromString(const char* inputString);
 
 	};
 }

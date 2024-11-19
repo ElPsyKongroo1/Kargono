@@ -763,47 +763,47 @@ namespace Kargono::Panels
 		};
 
 		m_WidgetOnPress.OnEdit = [&]()
+		{
+			// Initialize tooltip with options
+			m_SelectScriptTooltip.ClearEntries();
+			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
-				// Initialize tooltip with options
-				m_SelectScriptTooltip.ClearEntries();
-				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
-				{
-					m_WidgetOnPress.OpenPopup = true;
-				} };
-				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+				m_WidgetOnPress.OpenPopup = true;
+			} };
+			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
-				{
-						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
-						{
-								// Ensure handle provides a script in the registry
-								if (!Assets::AssetService::HasScript(scriptHandle))
-								{
-									KG_WARN("Could not find script");
-									return;
-								}
+			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+			{
+					// Open create script dialog in script editor
+					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+					{
+							// Ensure handle provides a script in the registry
+							if (!Assets::AssetService::HasScript(scriptHandle))
+							{
+								KG_WARN("Could not find script");
+								return;
+							}
 
-								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-								if (script->m_FuncType != WrappedFuncType::Void_None)
-								{
-									KG_WARN("Incorrect function type returned when linking script to usage point");
-									return;
-								}
+							// Ensure function type matches definition
+							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							if (script->m_FuncType != WrappedFuncType::Void_None)
+							{
+								KG_WARN("Incorrect function type returned when linking script to usage point");
+								return;
+							}
 
-								// Fill the new script handle
-								m_ActiveWidget->FunctionPointers.OnPressHandle = scriptHandle;
-								m_ActiveWidget->FunctionPointers.OnPress = script;
-								m_MainHeader.EditColorActive = true;
-								m_WidgetOnPress.CurrentOption = { script->m_ScriptName, scriptHandle };
-							});
-						}};
-				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+							// Fill the new script handle
+							m_ActiveWidget->FunctionPointers.OnPressHandle = scriptHandle;
+							m_ActiveWidget->FunctionPointers.OnPress = script;
+							m_MainHeader.EditColorActive = true;
+							m_WidgetOnPress.CurrentOption = { script->m_ScriptName, scriptHandle };
+						}, {});
+					}};
+			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
-				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
-			};
+			// Open tooltip
+			m_SelectScriptTooltip.TooltipActive = true;
+		};
 
 		m_WidgetText.Label = "Text";
 		m_WidgetText.Flags |= EditorUI::EditText_Indented;

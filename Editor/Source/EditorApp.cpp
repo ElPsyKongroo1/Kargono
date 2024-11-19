@@ -887,7 +887,7 @@ namespace Kargono
 			Scripting::Script* script = component.OnCollisionStartScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = Utility::CallWrappedBoolUInt64UInt64(script->m_Function, entityOneID, entityTwoID);
+				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
@@ -898,7 +898,7 @@ namespace Kargono
 			Scripting::Script* script = component.OnCollisionStartScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = Utility::CallWrappedBoolUInt64UInt64(script->m_Function, entityTwoID, entityOneID);
+				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -923,7 +923,7 @@ namespace Kargono
 			Scripting::Script* script = component.OnCollisionEndScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				Utility::CallWrappedBoolUInt64UInt64(script->m_Function, entityOneID, entityTwoID);
+				Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
@@ -934,7 +934,7 @@ namespace Kargono
 			Scripting::Script* script = component.OnCollisionEndScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-			 	collisionHandled = Utility::CallWrappedBoolUInt64UInt64(script->m_Function, entityTwoID, entityOneID);
+			 	collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;

@@ -22,7 +22,7 @@ namespace Kargono::AI
 			KG_ASSERT(Projects::ProjectService::GetActive());
 			for (const std::string& messageName : Projects::ProjectService::GetAllMessageTypes())
 			{
-				auto [iterator, success] = s_AIContext->AllMessageTypes.insert(Utility::FileSystem::CRCFromString(messageName));
+				auto [iterator, success] = s_AIContext->AllMessageTypes.insert(Utility::FileSystem::CRCFromString(messageName.c_str()));
 				KG_ASSERT(success);
 			}
 		}

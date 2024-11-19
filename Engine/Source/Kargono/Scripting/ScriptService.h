@@ -81,36 +81,78 @@ namespace Kargono::Utility
 	//==============================
 	// Utility for Creating Function Definition/Signatures
 	//==============================
-	inline std::string GenerateFunctionSignature(WrappedFuncType funcType, const std::string& name)
+	inline std::string GenerateFunctionSignature(WrappedFuncType funcType, const std::string& name, const Scripting::ExplicitFuncType& explicitType)
 	{
-		WrappedVarType returnType = Utility::WrappedFuncTypeToReturnType(funcType);
-		std::vector<WrappedVarType> parameterTypes = Utility::WrappedFuncTypeToParameterTypes(funcType);
+		// Initialize return type and parameter list depending on provided types
+		WrappedVarType returnType;
+		std::vector<WrappedVarType> parameterTypes;
+		std::vector<FixedString32> parameterNames;
+		if (funcType == WrappedFuncType::ArbitraryFunction)
+		{
+			returnType = explicitType.m_ReturnType;
+			parameterTypes = explicitType.m_ParameterTypes;
+			parameterNames = explicitType.m_ParameterNames;
+		}
+		else
+		{
+			returnType = Utility::WrappedFuncTypeToReturnType(funcType);
+			parameterTypes = Utility::WrappedFuncTypeToParameterTypes(funcType);
+
+			// Check if a list of parameter names is available and is the correct size
+			if (explicitType.m_ParameterNames.size() == parameterTypes.size())
+			{
+				// Simply use the existing names if available
+				parameterNames = explicitType.m_ParameterNames;
+			}
+			else
+			{
+				// Fill parameterNames with default names
+				char letterIteration{ 'a' };
+				for (WrappedVarType type : parameterTypes)
+				{
+					parameterNames.emplace_back(letterIteration);
+					letterIteration++;
+				}
+			}
+		}
+
 		// Write out return value and function name
 		std::stringstream outputStream {};
 		outputStream << Utility::WrappedVarTypeToKGScript(returnType) << " " << name<< "(";
 
 		// Write out parameters into function signature
-		char letterIteration{ 'a' };
-		for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < parameterTypes.size(); iteration++)
+		for (std::size_t iteration{ 0 }; static_cast<size_t>(iteration) < parameterTypes.size(); iteration++)
 		{
-			outputStream << Utility::WrappedVarTypeToKGScript(parameterTypes.at(iteration)) << " " << letterIteration;
+			outputStream << Utility::WrappedVarTypeToKGScript(parameterTypes.at(iteration)) << " " << parameterNames.at(iteration);
 			if (iteration != parameterTypes.size() - 1)
 			{
 				outputStream << ',';
 			}
-			letterIteration++;
 		}
 		outputStream << ")";
 		return outputStream.str();
 	}
+	
 
-	inline std::string GenerateFunctionStub(WrappedFuncType funcType, const std::string& name)
+	inline std::string GenerateFunctionStub(WrappedFuncType funcType, const std::string& name, const Scripting::ExplicitFuncType& explicitType)
 	{
 		std::stringstream outputStream {};
-		outputStream << GenerateFunctionSignature(funcType, name);
+		outputStream << GenerateFunctionSignature(funcType, name, explicitType);
 		outputStream << '\n';
 		outputStream << "{" << "\n";
-		WrappedVarType returnType = Utility::WrappedFuncTypeToReturnType(funcType);
+
+		// Get current return type
+		WrappedVarType returnType;
+		if (funcType == WrappedFuncType::ArbitraryFunction)
+		{
+			returnType = explicitType.m_ReturnType;
+		}
+		else
+		{
+			returnType = Utility::WrappedFuncTypeToReturnType(funcType);
+		}
+
+		// Write return statement if necessary
 		if (returnType != WrappedVarType::Void)
 		{
 			outputStream << "\treturn ";
@@ -118,26 +160,36 @@ namespace Kargono::Utility
 			{
 				case WrappedVarType::Bool:
 				{
-					outputStream << "false\n";
+					outputStream << "false;\n";
 					break;
 				}
 				case WrappedVarType::String:
 				{
-					outputStream << "\"\"\n";
+					outputStream << "\"\";\n";
 					break;
 				}
 				case WrappedVarType::Vector3:
 				{
-					outputStream << "Math::vec3(0.0f, 0.0f, 0.0f)\n";
+					outputStream << "Math::vec3(0.0f, 0.0f, 0.0f);\n";
 					break;
 				}
 				case WrappedVarType::Float:
+				{
+					outputStream << "0.0f;\n";
+					break;
+				}
 				case WrappedVarType::UInteger16:
 				case WrappedVarType::UInteger32:
 				case WrappedVarType::Integer32:
 				case WrappedVarType::UInteger64:
 				{
-					outputStream << "0\n";
+					outputStream << "0;\n";
+					break;
+				}
+
+				case WrappedVarType::Entity:
+				{
+					outputStream << "0;\n";
 					break;
 				}
 				case WrappedVarType::Void:

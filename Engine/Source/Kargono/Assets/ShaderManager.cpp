@@ -143,7 +143,7 @@ namespace Kargono::Assets
 	{
 		// Create Checksum
 		auto [shaderSource, bufferLayout, uniformList] = Rendering::ShaderBuilder::BuildShader(shaderSpec);
-		std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(shaderSource);
+		std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(shaderSource.c_str());
 
 		// Ensure checksum is valid
 		if (currentCheckSum.empty())

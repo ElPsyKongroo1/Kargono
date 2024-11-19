@@ -229,7 +229,7 @@ namespace Kargono::Scripting
 			}
 			else if (token->Value.Type == ScriptTokenType::MessageTypeLiteral)
 			{
-				m_OutputText << Utility::FileSystem::CRCFromString(token->Value.Value);
+				m_OutputText << Utility::FileSystem::CRCFromString(token->Value.Value.c_str());
 			}
 			else
 			{

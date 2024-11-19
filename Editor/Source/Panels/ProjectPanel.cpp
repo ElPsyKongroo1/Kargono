@@ -198,7 +198,7 @@ namespace Kargono::Panels
 					// Fill the new script handle
 					Projects::ProjectService::SetActiveOnRuntimeStartHandle(scriptHandle);
 					m_SelectRuntimeStartSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
-				});
+				}, {});
 
 			} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -279,7 +279,7 @@ namespace Kargono::Panels
 							// Fill the new script handle
 							Projects::ProjectService::SetActiveOnUpdateUserCountHandle(scriptHandle);
 							m_SelectUpdateUserCountSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
-						});
+						}, {"userCount"});
 
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -360,7 +360,7 @@ namespace Kargono::Panels
 							// Fill the new script handle
 							Projects::ProjectService::SetActiveOnApproveJoinSessionHandle(scriptHandle);
 							m_SelectApproveJoinSessionSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
-						});
+						}, {"sessionSlot"});
 
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -440,7 +440,7 @@ namespace Kargono::Panels
 								// Fill the new script handle
 								Projects::ProjectService::SetActiveOnUserLeftSessionHandle(scriptHandle);
 								m_SelectUserLeftSessionSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
-							});
+							}, {"sessionSlot"});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -523,7 +523,7 @@ namespace Kargono::Panels
 								// Fill the new script handle
 								Projects::ProjectService::SetActiveOnCurrentSessionInitHandle(scriptHandle);
 								m_SelectSessionInitSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
-							});
+							}, {});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -604,7 +604,7 @@ namespace Kargono::Panels
 							// Fill the new script handle
 							Projects::ProjectService::SetActiveOnConnectionTerminatedHandle(scriptHandle);
 							m_SelectConnectionTerminatedSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
-						});
+						}, {});
 
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -683,7 +683,7 @@ namespace Kargono::Panels
 							// Fill the new script handle
 							Projects::ProjectService::SetActiveOnUpdateSessionUserSlotHandle(scriptHandle);
 							m_SelectUpdateSessionSlotSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
-						});
+						}, {"sessionSlot"});
 
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -763,7 +763,7 @@ namespace Kargono::Panels
 								// Fill the new script handle
 								Projects::ProjectService::SetActiveOnStartSessionHandle(scriptHandle);
 								m_SelectStartSessionSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
-							});
+							}, {});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -843,7 +843,7 @@ namespace Kargono::Panels
 								// Fill the new script handle
 								Projects::ProjectService::SetActiveOnSessionReadyCheckConfirmHandle(scriptHandle);
 								m_SelectSessionReadyCheckSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
-							});
+							}, {});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -923,7 +923,7 @@ namespace Kargono::Panels
 								// Fill the new script handle
 								Projects::ProjectService::SetActiveOnReceiveSignalHandle(scriptHandle);
 								m_SelectReceiveSignalSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
-							});
+							}, {"signal"});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);

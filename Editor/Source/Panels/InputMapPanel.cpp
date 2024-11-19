@@ -535,7 +535,7 @@ namespace Kargono::Panels
 
 								// Fill the new script handle
 								m_KeyboardOnUpdateAddFunction.CurrentOption = { script->m_ScriptName, scriptHandle };
-						}, false);
+						},{}, false);
 					}};
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
@@ -655,7 +655,7 @@ namespace Kargono::Panels
 
 							// Fill the new script handle
 							m_KeyboardOnUpdateEditFunction.CurrentOption = { script->m_ScriptName, scriptHandle };
-					}, false);
+					},{}, false);
 				} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
@@ -813,7 +813,7 @@ namespace Kargono::Panels
 
 								// Fill the new script handle
 								m_KeyboardOnKeyPressedAddFunction.CurrentOption = { script->m_ScriptName, scriptHandle };
-							}, false);
+							},{},  false);
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
@@ -932,7 +932,7 @@ namespace Kargono::Panels
 
 							// Fill the new script handle
 							m_KeyboardOnKeyPressedEditFunction.CurrentOption = { script->m_ScriptName, scriptHandle };
-						}, false);
+						},{}, false);
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 

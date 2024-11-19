@@ -683,7 +683,7 @@ namespace Kargono::Panels
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				KG_ASSERT(script);
 
-				if (script->m_FuncType != WrappedFuncType::Bool_UInt64UInt64)
+				if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
 				{
 					continue;
 				}
@@ -725,7 +725,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Bool_UInt64UInt64, [&](Assets::AssetHandle scriptHandle)
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Bool_EntityEntity, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -736,7 +736,7 @@ namespace Kargono::Panels
 
 								// Ensure function type matches definition
 								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-								if (script->m_FuncType != WrappedFuncType::Bool_UInt64UInt64)
+								if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
 									return;
@@ -754,7 +754,7 @@ namespace Kargono::Panels
 								component.OnCollisionStartScriptHandle = scriptHandle;
 								component.OnCollisionStartScript = script;
 								m_SelectRigidBody2DCollisionStartScript.CurrentOption = { script->m_ScriptName, scriptHandle };
-							});
+							}, {"activeEntity", "collidedEntity"});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -776,7 +776,7 @@ namespace Kargono::Panels
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 				KG_ASSERT(script);
 
-				if (script->m_FuncType != WrappedFuncType::Bool_UInt64UInt64)
+				if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
 				{
 					continue;
 				}
@@ -818,7 +818,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 					// Open create script dialog in script editor
-					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Bool_UInt64UInt64, [&](Assets::AssetHandle scriptHandle)
+					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Bool_EntityEntity, [&](Assets::AssetHandle scriptHandle)
 					{
 						// Ensure handle provides a script in the registry
 						if (!Assets::AssetService::HasScript(scriptHandle))
@@ -829,7 +829,7 @@ namespace Kargono::Panels
 
 						// Ensure function type matches definition
 						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-						if (script->m_FuncType != WrappedFuncType::Bool_UInt64UInt64)
+						if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
 						{
 							KG_WARN("Incorrect function type returned when linking script to usage point");
 							return;
@@ -847,7 +847,7 @@ namespace Kargono::Panels
 						component.OnCollisionEndScriptHandle = scriptHandle;
 						component.OnCollisionEndScript = script;
 						m_SelectRigidBody2DCollisionEndScript.CurrentOption = { script->m_ScriptName, scriptHandle };
-					});
+					}, {"activeEntity", "collidedEntity"});
 
 			}		};
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -1439,7 +1439,7 @@ namespace Kargono::Panels
 							component.OnUpdateScriptHandle = scriptHandle;
 							component.OnUpdateScript = script;
 							m_SelectOnUpdateScript.CurrentOption = { script->m_ScriptName, scriptHandle };
-						});
+						}, {"activeEntity", "deltaTime"});
 
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -1575,7 +1575,7 @@ namespace Kargono::Panels
 							component.OnCreateScriptHandle = scriptHandle;
 							component.OnCreateScript = script;
 							m_SelectOnCreateScript.CurrentOption = { script->m_ScriptName, scriptHandle };
-						});
+						}, {"activeEntity"});
 
 					}};
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);

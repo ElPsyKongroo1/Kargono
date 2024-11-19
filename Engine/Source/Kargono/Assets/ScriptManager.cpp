@@ -120,7 +120,7 @@ namespace Kargono::Assets
 		{
 			// Replace with new signature
 			std::string output = Utility::Regex::ReplaceMatches(scriptFile, matchingExpression,
-				Utility::GenerateFunctionSignature(spec.m_FunctionType, spec.Name));
+				Utility::GenerateFunctionSignature(spec.m_FunctionType, spec.Name, spec.m_ExplicitFuncType));
 
 			// Write back out to file
 			Utility::FileSystem::WriteFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation, output);
@@ -249,7 +249,7 @@ namespace Kargono::Assets
 		// Create script file
 		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation;
 
-		Utility::FileSystem::WriteFileString(fullPath, Utility::GenerateFunctionStub(spec.m_FunctionType, spec.Name));
+		Utility::FileSystem::WriteFileString(fullPath, Utility::GenerateFunctionStub(spec.m_FunctionType, spec.Name, spec.m_ExplicitFuncType));
 
 		// Load data into In-Memory Metadata object
 		Ref<Assets::ScriptMetaData> metadata = CreateRef<Assets::ScriptMetaData>();

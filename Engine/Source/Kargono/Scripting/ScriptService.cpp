@@ -336,10 +336,10 @@ namespace Kargono::Scripting
 			((WrappedBoolUInt64*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
-		case WrappedFuncType::Bool_UInt64UInt64:
+		case WrappedFuncType::Bool_EntityEntity:
 		{
-			script->m_Function = CreateRef<WrappedBoolUInt64UInt64>();
-			((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			script->m_Function = CreateRef<WrappedBoolEntityEntity>();
+			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 		case WrappedFuncType::Bool_UInt64UInt16UInt64:

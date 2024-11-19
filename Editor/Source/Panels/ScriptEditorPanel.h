@@ -10,7 +10,6 @@ namespace Kargono::Panels
 	{
 		EditorUI::GenericPopupSpec m_MainPopup{};
 		EditorUI::EditTextSpec m_EditName{};
-		EditorUI::SelectOptionSpec m_SelectFuncType{};
 		EditorUI::SelectOptionSpec m_SelectSectionLabel{};
 		EditorUI::SelectOptionSpec m_SelectReturnType{};
 		EditorUI::ListSpec m_ParameterList{};
@@ -34,7 +33,10 @@ namespace Kargono::Panels
 		//=========================
 		// Internal Initialization Functions
 		//=========================
-		void InitializeScriptPanel();
+		void InitializeAllScriptsList();
+		void InitializeCreateScriptPopup();
+		void InitializeEditScriptPopup();
+		void InitializeGroupList();
 
 	public:
 		//=========================
@@ -48,7 +50,7 @@ namespace Kargono::Panels
 		// External API
 		//=========================
 		void ResetPanelResources();
-		void OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm, bool openScriptEditor = true);
+		void OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm, const std::vector<FixedString32>& parameterNames, bool openScriptEditor = true);
 		void DrawOnCreatePopup();
 		
 
@@ -60,6 +62,8 @@ namespace Kargono::Panels
 		void OnOpenScriptDialog(EditorUI::ListEntry& entry, std::size_t iteration);
 		void OnCreateScriptDialog();
 
+		void OnCreateScriptEditParameter(EditorUI::ListEntry& entry, std::size_t iteration);
+
 	private:
 		//=========================
 		// Core Panel Data
@@ -70,6 +74,7 @@ namespace Kargono::Panels
 		std::size_t m_ActiveParameterLocation{ EditorUI::k_ListIndex };
 		std::function<void(Assets::AssetHandle)> m_OnCreateScriptConfirm{ nullptr };
 		WrappedFuncType m_OnCreateFunctionType{ WrappedFuncType::None };
+		std::vector<FixedString32> m_OnCreateParameterNames;
 
 		//=========================
 		// Widgets

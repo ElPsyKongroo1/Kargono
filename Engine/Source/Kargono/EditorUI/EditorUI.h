@@ -1242,6 +1242,18 @@ namespace Kargono::EditorUI
 			return k_ListSearchIndex;
 		}
 
+		void EditEntries(std::function<void(ListEntry& currentEntry)> editFunction)
+		{
+			// Run edit function on every entry
+			for (ListEntry& currentEntry : ListEntries)
+			{
+				if (editFunction)
+				{
+					editFunction(currentEntry);
+				}
+			}
+		}
+
 		void ClearList()
 		{
 			ListEntries.clear();

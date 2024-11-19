@@ -27,6 +27,7 @@ namespace Kargono::Utility
 		case WrappedVarType::String: return { Scripting::ScriptTokenType::PrimitiveType, "string" };
 		case WrappedVarType::Bool: return { Scripting::ScriptTokenType::PrimitiveType, "bool" };
 		case WrappedVarType::Float: return { Scripting::ScriptTokenType::PrimitiveType, "float" };
+		case WrappedVarType::Entity: return { Scripting::ScriptTokenType::PrimitiveType, "entity" };
 		case WrappedVarType::Void: return { Scripting::ScriptTokenType::None, "" };
 		case WrappedVarType::None: return { Scripting::ScriptTokenType::None, "" };
 		}

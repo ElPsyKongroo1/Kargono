@@ -309,11 +309,12 @@ namespace Kargono
 		Void_UInt32UInt64UInt64Float,
 		Bool_None,
 		Bool_UInt64,
-		Bool_UInt64UInt64,
+		Bool_EntityEntity,
 		Bool_UInt64UInt16UInt64,
 
 		ArbitraryFunction
 	};
+
 
 	inline WrappedFuncType s_AllWrappedFuncs[] = 
 	{
@@ -327,7 +328,7 @@ namespace Kargono
 		WrappedFuncType::Void_UInt32UInt64UInt64Float,
 		WrappedFuncType::Bool_None,
 		WrappedFuncType::Bool_UInt64,
-		WrappedFuncType::Bool_UInt64UInt64,
+		WrappedFuncType::Bool_EntityEntity,
 		WrappedFuncType::Bool_UInt64UInt16UInt64
 	};
 
@@ -462,13 +463,13 @@ namespace Kargono
 		std::function<bool(uint64_t)> m_Value{};
 	};
 
-	class WrappedBoolUInt64UInt64 : public WrappedFunction
+	class WrappedBoolEntityEntity : public WrappedFunction
 	{
 	public:
-		WrappedBoolUInt64UInt64() = default;
-		WrappedBoolUInt64UInt64(std::function<bool(uint64_t, uint64_t)> value) : m_Value(value) {}
+		WrappedBoolEntityEntity() = default;
+		WrappedBoolEntityEntity(std::function<bool(uint64_t, uint64_t)> value) : m_Value(value) {}
 	public:
-		virtual WrappedFuncType Type() override { return WrappedFuncType::Bool_UInt64UInt64; }
+		virtual WrappedFuncType Type() override { return WrappedFuncType::Bool_EntityEntity; }
 	public:
 		std::function<bool(uint64_t, uint64_t)> m_Value{};
 	};
@@ -586,7 +587,7 @@ namespace Kargono
 			case WrappedVarType::Void: return "void";
 			case WrappedVarType::Bool: return "bool";
 			case WrappedVarType::Float: return "float";
-			case WrappedVarType::Entity: return "uint64_t";
+			case WrappedVarType::Entity: return "entity";
 			case WrappedVarType::None: return "None";
 			}
 			KG_ERROR("Unknown Type of WrappedVariableType.");
@@ -797,7 +798,7 @@ namespace Kargono
 			case WrappedFuncType::Void_UInt32UInt64UInt64Float: return "Void_UInt32UInt64UInt64Float";
 			case WrappedFuncType::Bool_None: return "Bool_None";
 			case WrappedFuncType::Bool_UInt64: return "Bool_UInt64";
-			case WrappedFuncType::Bool_UInt64UInt64: return "Bool_UInt64UInt64";
+			case WrappedFuncType::Bool_EntityEntity: return "Bool_UInt64UInt64";
 			case WrappedFuncType::Bool_UInt64UInt16UInt64: return "Bool_UInt64UInt16UInt64";
 			case WrappedFuncType::ArbitraryFunction: return "ArbitraryFunction";
 			case WrappedFuncType::None: return "None";
@@ -818,7 +819,7 @@ namespace Kargono
 			if (type == "Void_UInt32UInt64UInt64Float") { return WrappedFuncType::Void_UInt32UInt64UInt64Float; }
 			if (type == "Bool_None") { return WrappedFuncType::Bool_None; }
 			if (type == "Bool_UInt64") { return WrappedFuncType::Bool_UInt64; }
-			if (type == "Bool_UInt64UInt64") { return WrappedFuncType::Bool_UInt64UInt64; }
+			if (type == "Bool_EntityEntity") { return WrappedFuncType::Bool_EntityEntity; }
 			if (type == "Bool_UInt64UInt16UInt64") { return WrappedFuncType::Bool_UInt64UInt16UInt64; }
 			if (type == "ArbitraryFunction") { return WrappedFuncType::ArbitraryFunction; }
 			if (type == "None") { return WrappedFuncType::None; }
@@ -887,10 +888,10 @@ namespace Kargono
 			return ((WrappedBoolUInt64*)wrappedFunction.get())->m_Value(argumentOne);
 		}
 
-		inline bool CallWrappedBoolUInt64UInt64(Ref<WrappedFunction> wrappedFunction, uint64_t argumentOne, uint64_t argumentTwo)
+		inline bool CallWrappedBoolEntityEntity(Ref<WrappedFunction> wrappedFunction, uint64_t argumentOne, uint64_t argumentTwo)
 		{
-			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Bool_UInt64UInt64, "Invalid wrapped function type provided");
-			return ((WrappedBoolUInt64UInt64*)wrappedFunction.get())->m_Value(argumentOne, argumentTwo);
+			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Bool_EntityEntity, "Invalid wrapped function type provided");
+			return ((WrappedBoolEntityEntity*)wrappedFunction.get())->m_Value(argumentOne, argumentTwo);
 		}
 
 		inline bool CallWrappedBoolUInt64UInt16UInt64(Ref<WrappedFunction> wrappedFunction, uint64_t argumentOne, uint16_t argumentTwo, uint64_t argumentThree)
@@ -898,6 +899,7 @@ namespace Kargono
 			KG_ASSERT(wrappedFunction->Type() == WrappedFuncType::Bool_UInt64UInt16UInt64, "Invalid wrapped function type provided");
 			return ((WrappedBoolUInt64UInt16UInt64*)wrappedFunction.get())->m_Value(argumentOne,argumentTwo, argumentThree);
 		}
+
 
 		inline WrappedVarType WrappedFuncTypeToReturnType(WrappedFuncType type)
 		{
@@ -914,7 +916,7 @@ namespace Kargono
 				return WrappedVarType::Void;
 			case WrappedFuncType::Bool_None:
 			case WrappedFuncType::Bool_UInt64:
-			case WrappedFuncType::Bool_UInt64UInt64:
+			case WrappedFuncType::Bool_EntityEntity:
 			case WrappedFuncType::Bool_UInt64UInt16UInt64:
 				return WrappedVarType::Bool;
 			case WrappedFuncType::ArbitraryFunction:
@@ -952,8 +954,8 @@ namespace Kargono
 			case WrappedFuncType::Void_UInt64:
 			case WrappedFuncType::Bool_UInt64:
 				return { WrappedVarType::UInteger64 };
-			case WrappedFuncType::Bool_UInt64UInt64:
-				return { WrappedVarType::UInteger64, WrappedVarType::UInteger64 };
+			case WrappedFuncType::Bool_EntityEntity:
+				return { WrappedVarType::Entity, WrappedVarType::Entity };
 			case WrappedFuncType::Bool_UInt64UInt16UInt64:
 				return { WrappedVarType::UInteger64, WrappedVarType::UInteger16, WrappedVarType::UInteger64 };
 			case WrappedFuncType::ArbitraryFunction:
@@ -967,6 +969,34 @@ namespace Kargono
 				KG_ERROR("Unknown Type of WrappedFuncType.")
 				return {};
 			}
+		}
+
+		inline WrappedFuncType ExplicitSignatureToWrappedFuncType(WrappedVarType queryReturnType, const std::vector<WrappedVarType>& queryParameterList)
+		{
+			// Check every predefined func type
+			bool foundFuncType{ false };
+			for (WrappedFuncType funcType : s_AllWrappedFuncs)
+			{
+				// Check return type
+				if (queryReturnType != WrappedFuncTypeToReturnType(funcType))
+				{
+					continue;
+				}
+
+				// Check parameter list 
+				std::vector<WrappedVarType> funcParameterList = WrappedFuncTypeToParameterTypes(funcType);
+				if (queryParameterList != funcParameterList)
+				{
+					continue;
+				}
+
+				// Return indicated return type is successful
+				return funcType;
+
+			}
+
+			// If no wrapped func type is found, return null type
+			return WrappedFuncType::None;
 		}
 	}
 	

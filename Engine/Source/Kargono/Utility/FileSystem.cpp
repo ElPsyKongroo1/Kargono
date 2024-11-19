@@ -232,12 +232,12 @@ namespace Kargono::Utility
 		return sha256stream.getHash();
 	}
 
-	std::string FileSystem::ChecksumFromString(const std::string& inputString)
+	std::string FileSystem::ChecksumFromString(const char* inputString)
 	{
 		SHA256 sha256stream;
 
 		// Add the input string to the SHA256 context
-		sha256stream.add(inputString.c_str(), inputString.size());
+		sha256stream.add(inputString, std::strlen(inputString));
 
 		return sha256stream.getHash();
 	}
@@ -258,10 +258,10 @@ namespace Kargono::Utility
 		return crc.CalculateHash(bufferPointer, bufferSize);
 	}
 
-	uint32_t FileSystem::CRCFromString(const std::string& inputString)
+	uint32_t FileSystem::CRCFromString(const char* inputString)
 	{
 		CRC32 crc;
-		return crc.CalculateHash(inputString.data(), inputString.size()); // Note that string.size() works here assuming ascii character sizes
+		return crc.CalculateHash(inputString, std::strlen(inputString)); // Note that std::strlen works here assuming ascii character sizes
 	}
 
 	void FileSystem::CreateNewDirectory(const std::filesystem::path& filepath)

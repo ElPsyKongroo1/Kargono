@@ -32,6 +32,17 @@ namespace Kargono
 			ReplaceBuffer(newString);
 		}
 
+		FixedString(char newChar)
+		{
+			// TODO: I realize that a buffer of size one would cause an issue, but like really thooooooo
+
+			// Add char
+			m_DataBuffer[0] = newChar;
+
+			// Add null terminator
+			m_DataBuffer[1] = '\0';
+		}
+
 	public:
 		//==============================
 		// Modify String
