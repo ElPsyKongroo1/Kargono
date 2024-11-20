@@ -106,7 +106,7 @@ namespace Kargono::Scripting
 			tokenParser.PrintErrors();
 			tokenParser.PrintTokens();
 			tokenParser.PrintAST();
-			return "Token parsing failed";
+			return {};
 		}
 
 		//tokenParser.PrintAST();
@@ -118,7 +118,7 @@ namespace Kargono::Scripting
 		if (!outputSuccess)
 		{
 			KG_WARN("Output text generation failed");
-			return "Failed to generate output text";
+			return {};
 		}
 		
 		//KG_WARN(outputText);

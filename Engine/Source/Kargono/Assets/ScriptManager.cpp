@@ -72,65 +72,10 @@ namespace Kargono::Assets
 			return false;
 		}
 
-		// Check if function type needs to be updated
-		std::string scriptFile {};
-		std::string matchingExpression {};
-		if (metadata->m_FunctionType != spec.m_FunctionType)
-		{
-			// Load file into scriptFile
-			scriptFile = Utility::FileSystem::ReadFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
-			if (scriptFile.empty())
-			{
-				KG_WARN("Attempt to open script file failed");
-				return false;
-			}
-
-			// Build Regular Expression
-			std::string returnType {Utility::WrappedVarTypeToCPPString(Utility::WrappedFuncTypeToReturnType(metadata->m_FunctionType))};
-			std::string functionName { metadata->m_Name };
-			std::stringstream parameters {};
-			for (auto parameter : Utility::WrappedFuncTypeToParameterTypes(metadata->m_FunctionType))
-			{
-				std::string parameterString { Utility::WrappedVarTypeToCPPString(parameter) };
-				std::string parameterRegex { std::string("\\s*") + parameterString + std::string("\\s+") +
-					std::string("\\w+") + std::string("\\s*") + std::string(",?") };
-				parameters << parameterRegex;
-			}
-			matchingExpression = "^" + std::string("\\s*") + returnType +
-				std::string("\\s+") + functionName +
-				std::string("\\s*") + "\\(" + parameters.str() +
-				"\\)";
-
-			// Check if correct number of signatures were found
-			uint64_t count = Utility::Regex::GetMatchCount(scriptFile, matchingExpression);
-			if (count == 0)
-			{
-				KG_WARN("Unable to locate function signature when replacing function type in script manager");
-				return false;
-			}
-			if (count > 1)
-			{
-				KG_WARN("Too many matches for function signature when replacing function type in script manager");
-				return false;
-			}
-		}
-
-		// Update Function Signature if needed
-		if (metadata->m_FunctionType != spec.m_FunctionType)
-		{
-			// Replace with new signature
-			std::string output = Utility::Regex::ReplaceMatches(scriptFile, matchingExpression,
-				Utility::GenerateFunctionSignature(spec.m_FunctionType, spec.Name, spec.m_ExplicitFuncType));
-
-			// Write back out to file
-			Utility::FileSystem::WriteFileString(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation, output);
-		}
-
 		// Update registry metadata
 		metadata->m_Name = spec.Name;
 		metadata->m_ScriptType = spec.Type;
 		metadata->m_SectionLabel = spec.m_SectionLabel;
-		metadata->m_FunctionType = spec.m_FunctionType;
 
 		SerializeAssetRegistry();
 
@@ -139,7 +84,6 @@ namespace Kargono::Assets
 		{
 			Ref<Scripting::Script> script = m_AssetCache.at(scriptHandle);
 			script->m_ScriptName = spec.Name;
-			script->m_FuncType = spec.m_FunctionType;
 			script->m_ScriptType = spec.Type;
 			script->m_SectionLabel = spec.m_SectionLabel;
 			script->m_Function = nullptr;

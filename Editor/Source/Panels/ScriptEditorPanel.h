@@ -6,7 +6,7 @@
 
 namespace Kargono::Panels
 {
-	struct ScriptWidgets
+	struct CreateWidgets
 	{
 		EditorUI::GenericPopupSpec m_MainPopup{};
 		EditorUI::EditTextSpec m_EditName{};
@@ -19,6 +19,15 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_EditParameterPopup{};
 		EditorUI::EditTextSpec m_EditParameterName{};
 		EditorUI::SelectOptionSpec m_EditParameterType{};
+	};
+
+	struct EditWidgets
+	{
+		EditorUI::GenericPopupSpec m_MainPopup{};
+		EditorUI::EditTextSpec m_EditName{};
+		EditorUI::SelectOptionSpec m_SelectSectionLabel{};
+		EditorUI::GenericPopupSpec m_DeleteWarning{};
+		EditorUI::GenericPopupSpec m_EditWarning{};
 	};
 
 	class ScriptEditorPanel
@@ -83,10 +92,10 @@ namespace Kargono::Panels
 		EditorUI::ListSpec m_AllScriptsList {};
 		EditorUI::TooltipSpec m_ScriptTooltip{};
 		// Script List (Create)
-		ScriptWidgets m_CreateWidgets{};
+		CreateWidgets m_CreateWidgets{};
 
 		// Script List (Edit)
-		ScriptWidgets m_EditWidgets{};
+		EditWidgets m_EditWidgets{};
 
 		// Group Label List
 		EditorUI::ListSpec m_GroupLabelsTable {};

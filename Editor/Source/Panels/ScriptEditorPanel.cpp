@@ -22,14 +22,14 @@ namespace Kargono::Panels
 		std::string originalLabel = script->m_SectionLabel;
 		// TODO: Ensure works with new system
 		Assets::ScriptSpec spec {};
-		//spec.Name = m_EditScriptName.CurrentOption;
+		spec.Name = m_EditWidgets.m_EditName.CurrentOption;
 		spec.Type = Scripting::ScriptType::Project;
 		spec.m_SectionLabel = m_EditWidgets.m_SelectSectionLabel.CurrentOption.Label;
-		//spec.m_FunctionType = (WrappedFuncType)(uint64_t)m_EditScriptFuncType.CurrentOption.Handle;
+
 		auto successful = Assets::AssetService::SaveScript(m_ActiveScriptHandle, spec);
 		if (!successful)
 		{
-			KG_ERROR("Unsuccessful at creating new script");
+			KG_ERROR("Unsuccessful at updating script");
 		}
 
 		m_AllScriptsList.OnRefresh();
@@ -37,7 +37,7 @@ namespace Kargono::Panels
 	void ScriptEditorPanel::OnOpenScriptDialog(EditorUI::ListEntry& entry, std::size_t iteration)
 	{
 		m_ActiveScriptHandle = entry.Handle;
-		//m_EditScriptPopup.OpenPopup = true;
+		m_EditWidgets.m_MainPopup.OpenPopup = true;
 	}
 	void ScriptEditorPanel::OnCreateScriptDialog()
 	{
@@ -93,18 +93,6 @@ namespace Kargono::Panels
 					std::string scriptType = "Project";
 					std::string label = scriptType + std::string("::") + script->m_SectionLabel;
 					auto onEdit = KG_BIND_CLASS_FN(OnOpenScriptDialog);
-#if 0
-					auto onLink = [&](EditorUI::ListEntry& entry)
-						{
-							if (!Assets::AssetService::GetScriptRegistry().contains(entry.Handle))
-							{
-								KG_WARN("Unable to open script in text editor. Script does not exist in registry");
-								return;
-							}
-							Assets::AssetInfo& asset = Assets::AssetService::GetScriptRegistry().at(entry.Handle);
-							s_EditorApp->m_TextEditorPanel->OpenFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
-						};
-#endif
 					EditorUI::ListEntry newEntry
 					{
 						label,
@@ -155,7 +143,7 @@ namespace Kargono::Panels
 			else
 			{
 				// Clear current return type and parameter list in widgets
-				m_CreateWidgets.m_SelectReturnType.CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::None), (uint64_t)WrappedVarType::None };
+				m_CreateWidgets.m_SelectReturnType.CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::Void), (uint64_t)WrappedVarType::Void };
 				m_CreateWidgets.m_ParameterList.ClearList();
 			}
 			m_CreateWidgets.m_SelectSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
@@ -164,9 +152,9 @@ namespace Kargono::Panels
 		m_CreateWidgets.m_MainPopup.PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::EditText(m_CreateWidgets.m_EditName);
+			EditorUI::EditorUIService::SelectOption(m_CreateWidgets.m_SelectSectionLabel);
 			EditorUI::EditorUIService::SelectOption(m_CreateWidgets.m_SelectReturnType);
 			EditorUI::EditorUIService::List(m_CreateWidgets.m_ParameterList);
-			EditorUI::EditorUIService::SelectOption(m_CreateWidgets.m_SelectSectionLabel);
 			EditorUI::EditorUIService::GenericPopup(m_CreateWidgets.m_CreateParameterPopup);
 			EditorUI::EditorUIService::GenericPopup(m_CreateWidgets.m_EditParameterPopup);
 			EditorUI::EditorUIService::Tooltip(m_ScriptTooltip);
@@ -400,404 +388,71 @@ namespace Kargono::Panels
 	{
 		m_EditWidgets.m_MainPopup.Label = "Edit Script";
 		m_EditWidgets.m_MainPopup.PopupAction = [&]()
-			{
-				Ref<Scripting::Script> currentScript = Assets::AssetService::GetScript(m_ActiveScriptHandle);
-				KG_ASSERT(currentScript);
-
-				// Load in name of script
-				m_EditWidgets.m_EditName.CurrentOption = currentScript->m_ScriptName;
-
-				// Clear current return type and parameter list in widgets TODO: Fill plzzzzzzz
-				if (currentScript->m_FuncType == WrappedFuncType::ArbitraryFunction)
-				{
-					// Load in return type and parameters using explicit definition
-
-				}
-				else
-				{
-					// Load in return type
-					WrappedVarType returnType = Utility::WrappedFuncTypeToReturnType(currentScript->m_FuncType);
-					m_EditWidgets.m_SelectReturnType.CurrentOption = { Utility::WrappedVarTypeToString(returnType), (uint64_t)returnType };
-					// Load in parameters
-					std::vector<WrappedVarType> parameterTypes = Utility::WrappedFuncTypeToParameterTypes(currentScript->m_FuncType);
-					m_EditWidgets.m_ParameterList.ClearList();
-
-					// Get parameter names list
-					std::vector<FixedString32> parameterNames;
-					if (parameterTypes.size() == currentScript->m_ExplicitFuncType.m_ParameterNames.size())
-					{
-						parameterNames = currentScript->m_ExplicitFuncType.m_ParameterNames;
-					}
-					else
-					{
-						char letterIteration{ '1' };
-						for (WrappedVarType type : parameterTypes)
-						{
-							letterIteration++;
-						}
-					}
-
-					for (WrappedVarType type : parameterTypes)
-					{
-						// Fill new parameter entry with appropriate data from popup dialog
-						EditorUI::ListEntry newEntry{};
-						//newEntry.Label = ;
-						newEntry.Value = Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)type);
-						newEntry.Handle = m_EditWidgets.m_CreateParameterType.CurrentOption.Handle;
-						newEntry.OnEdit = KG_BIND_CLASS_FN(OnCreateScriptEditParameter);
-
-						// Add parameter to parameter list
-						m_EditWidgets.m_ParameterList.InsertListEntry(newEntry);
-					}
-				}
-				
-				
-				// Load in group name
-				m_EditWidgets.m_SelectSectionLabel.CurrentOption = { Utility::WrappedFuncTypeToString(currentScript->m_FuncType),
-					(uint64_t)currentScript->m_FuncType };
-				m_EditWidgets.m_ParameterList.Expanded = true;
-			};
+		{
+			m_EditWidgets.m_EditName.CurrentOption = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_ScriptName;
+			m_EditWidgets.m_SelectSectionLabel.CurrentOption.Label = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_SectionLabel;
+		};
 		m_EditWidgets.m_MainPopup.PopupContents = [&]()
-			{
-				EditorUI::EditorUIService::EditText(m_EditWidgets.m_EditName);
-				EditorUI::EditorUIService::SelectOption(m_EditWidgets.m_SelectReturnType);
-				EditorUI::EditorUIService::List(m_EditWidgets.m_ParameterList);
-				EditorUI::EditorUIService::SelectOption(m_EditWidgets.m_SelectSectionLabel);
-				EditorUI::EditorUIService::GenericPopup(m_EditWidgets.m_CreateParameterPopup);
-				EditorUI::EditorUIService::GenericPopup(m_EditWidgets.m_EditParameterPopup);
-				EditorUI::EditorUIService::Tooltip(m_ScriptTooltip);
-			};
-
+		{
+			EditorUI::EditorUIService::EditText(m_EditWidgets.m_EditName);
+			EditorUI::EditorUIService::SelectOption(m_EditWidgets.m_SelectSectionLabel);
+		};
+		m_EditWidgets.m_MainPopup.DeleteAction = [&]()
+		{
+			m_EditWidgets.m_DeleteWarning.OpenPopup = true;
+		};
 		m_EditWidgets.m_MainPopup.ConfirmAction = [&]()
+		{
+			m_EditWidgets.m_EditWarning.OpenPopup = true;
+		};
+
+		m_EditWidgets.m_DeleteWarning.Label = "Delete Script";
+		m_EditWidgets.m_DeleteWarning.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::Text("Are you sure you want to delete this script?");
+		};
+		m_EditWidgets.m_DeleteWarning.ConfirmAction = [&]()
+		{
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(m_ActiveScriptHandle);
+			Scripting::ScriptType type = script->m_ScriptType;
+			std::string sectionLabel = script->m_SectionLabel;
+
+			bool success = Assets::AssetService::DeleteScript(m_ActiveScriptHandle);
+			if (!success)
 			{
-				Assets::ScriptSpec spec{};
-				spec.Name = m_EditWidgets.m_EditName.CurrentOption;
-				spec.Type = Scripting::ScriptType::Project;
-				spec.m_SectionLabel = m_EditWidgets.m_SelectSectionLabel.CurrentOption.Label;
+				KG_WARN("Unable to delete script!");
+				return;
+			}
 
-				// Get return type from select widget
-				WrappedVarType returnType = (WrappedVarType)(uint64_t)m_EditWidgets.m_SelectReturnType.CurrentOption.Handle;
+			m_AllScriptsList.OnRefresh();
+		};
 
-				// Get vector of parameters from list widget
-				std::vector<WrappedVarType> parameterTypeList;
-				std::vector<FixedString32> parameterNameList;
-				m_EditWidgets.m_ParameterList.EditEntries([&](const EditorUI::ListEntry& currentEntry)
-					{
-						parameterTypeList.emplace_back((WrappedVarType)(uint64_t)currentEntry.Handle);
-						parameterNameList.emplace_back(currentEntry.Label.c_str());
-					});
-
-				// Validate that there are no duplicate names
-				std::unordered_set<uint32_t> nameValidationSet;
-				for (FixedString32& name : parameterNameList)
-				{
-					auto [iter, success] = nameValidationSet.insert(Utility::FileSystem::CRCFromString(name));
-					if (!success)
-					{
-						KG_WARN("Could not create new script. Duplicate parameter names found.");
-						return;
-					}
-				}
-
-				// Check if provided signature matches a predefined type
-				WrappedFuncType matchingFuncType = Utility::ExplicitSignatureToWrappedFuncType(returnType, parameterTypeList);
-				if (matchingFuncType == WrappedFuncType::None)
-				{
-					// Push an arbitrary type with the custom signature
-					spec.m_FunctionType = WrappedFuncType::ArbitraryFunction;
-					spec.m_ExplicitFuncType.m_ReturnType = returnType;
-					spec.m_ExplicitFuncType.m_ParameterNames = parameterNameList;
-					spec.m_ExplicitFuncType.m_ParameterTypes = std::move(parameterTypeList);
-				}
-				else
-				{
-					// Push indicated function type
-					spec.m_FunctionType = matchingFuncType;
-					spec.m_ExplicitFuncType.m_ParameterNames = parameterNameList;
-				}
-
-
-
-				auto [handle, successful] = Assets::AssetService::CreateNewScript(spec);
-				if (!successful)
-				{
-					KG_ERROR("Unsuccessful at creating new script");
-					m_OnCreateScriptConfirm = nullptr;
-				}
-
-				if (m_OnCreateScriptConfirm)
-				{
-					m_OnCreateScriptConfirm(handle);
-				}
-				m_OnCreateScriptConfirm = nullptr;
-
-				m_AllScriptsList.OnRefresh();
-			};
+		m_EditWidgets.m_EditWarning.Label = "Edit Script";
+		m_EditWidgets.m_EditWarning.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::Text("Modifying the function's information can cause compilation issues in your project. Are you sure you want to modify the function?");
+		};
+		m_EditWidgets.m_EditWarning.ConfirmAction = [&]()
+		{
+			UpdateScript();
+		};
 
 		m_EditWidgets.m_EditName.Label = "Name";
 		m_EditWidgets.m_EditName.CurrentOption = "Empty";
 
-		m_EditWidgets.m_SelectReturnType.Label = "Return Type";
-		m_EditWidgets.m_SelectReturnType.CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::None), Assets::EmptyHandle };
-		m_EditWidgets.m_SelectReturnType.PopupAction = [&]()
-			{
-				m_EditWidgets.m_SelectReturnType.ClearOptions();
-
-				// Add all possible return types
-				for (WrappedVarType type : s_AllWrappedVarTypes)
-				{
-					m_EditWidgets.m_SelectReturnType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), (uint64_t)type);
-				}
-
-			};
-
-		m_EditWidgets.m_ParameterList.Label = "Parameters";
-		m_EditWidgets.m_ParameterList.Flags |= EditorUI::List_RegularSizeTitle;
-		m_EditWidgets.m_ParameterList.Column1Title = "Name";
-		m_EditWidgets.m_ParameterList.Column2Title = "Type";
-		m_EditWidgets.m_ParameterList.AddToSelectionList("Add Parameter", [&]()
-			{
-				m_EditWidgets.m_CreateParameterPopup.OpenPopup = true;
-			});
-
-		m_EditWidgets.m_CreateParameterPopup.Label = "Create Parameter";
-		m_EditWidgets.m_CreateParameterPopup.PopupAction = [&]()
-			{
-				m_EditWidgets.m_CreateParameterName.CurrentOption = "NewParameter";
-				m_EditWidgets.m_CreateParameterType.CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::Float), (uint64_t)WrappedVarType::Float };
-			};
-
-		m_EditWidgets.m_CreateParameterPopup.PopupContents = [&]()
-			{
-				EditorUI::EditorUIService::EditText(m_EditWidgets.m_CreateParameterName);
-				EditorUI::EditorUIService::SelectOption(m_EditWidgets.m_CreateParameterType);
-			};
-		m_EditWidgets.m_CreateParameterPopup.ConfirmAction = [&]()
-			{
-				// Fill new parameter entry with appropriate data from popup dialog
-				EditorUI::ListEntry newEntry{};
-				newEntry.Label = m_EditWidgets.m_CreateParameterName.CurrentOption;
-				newEntry.Value = Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)m_EditWidgets.m_CreateParameterType.CurrentOption.Handle);
-				newEntry.Handle = m_EditWidgets.m_CreateParameterType.CurrentOption.Handle;
-				newEntry.OnEdit = KG_BIND_CLASS_FN(OnCreateScriptEditParameter);
-
-				// Add parameter to parameter list
-				m_EditWidgets.m_ParameterList.InsertListEntry(newEntry);
-			};
-
-		m_EditWidgets.m_CreateParameterName.Label = "Name";
-
-		m_EditWidgets.m_CreateParameterType.Label = "Type";
-		m_EditWidgets.m_CreateParameterType.PopupAction = [&]()
-			{
-				m_EditWidgets.m_CreateParameterType.ClearOptions();
-
-				// Add all possible return types
-				for (WrappedVarType type : s_AllWrappedVarTypes)
-				{
-					// Void makes no sense as a parameter
-					if (type == WrappedVarType::Void)
-					{
-						continue;
-					}
-
-					// Fill options list
-					m_EditWidgets.m_CreateParameterType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), (uint64_t)type);
-				}
-
-			};
-
-		m_EditWidgets.m_EditParameterPopup.Label = "Edit Parameter";
-		m_EditWidgets.m_EditParameterPopup.PopupAction = [&]()
-			{
-				KG_ASSERT(m_ActiveParameterLocation < m_EditWidgets.m_ParameterList.GetEntriesListSize());
-				EditorUI::ListEntry& entry = m_EditWidgets.m_ParameterList.GetEntry(m_ActiveParameterLocation);
-
-				m_EditWidgets.m_EditParameterName.CurrentOption = entry.Label;
-				m_EditWidgets.m_EditParameterType.CurrentOption = { Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)entry.Handle), (uint64_t)entry.Handle };
-			};
-
-		m_EditWidgets.m_EditParameterPopup.PopupContents = [&]()
-			{
-				EditorUI::EditorUIService::EditText(m_EditWidgets.m_EditParameterName);
-				EditorUI::EditorUIService::SelectOption(m_EditWidgets.m_EditParameterType);
-			};
-		m_EditWidgets.m_EditParameterPopup.ConfirmAction = [&]()
-			{
-				// Fill new parameter entry with appropriate data from popup dialog
-				KG_ASSERT(m_ActiveParameterLocation < m_EditWidgets.m_ParameterList.GetEntriesListSize());
-				EditorUI::ListEntry& currentEntry = m_EditWidgets.m_ParameterList.GetEntry(m_ActiveParameterLocation);
-				currentEntry.Label = m_EditWidgets.m_EditParameterName.CurrentOption;
-				currentEntry.Value = Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)m_EditWidgets.m_EditParameterType.CurrentOption.Handle);
-				currentEntry.Handle = m_EditWidgets.m_EditParameterType.CurrentOption.Handle;
-				currentEntry.OnEdit = [&](EditorUI::ListEntry& entry, std::size_t iteration)
-					{
-						// Open tooltip
-						m_ScriptTooltip.TooltipActive = true;
-
-						// Initialize tooltip entries
-						m_ScriptTooltip.ClearEntries();
-						EditorUI::TooltipEntry editTooltipEntry{ "Edit", [&](EditorUI::TooltipEntry& entry)
-						{
-							m_EditWidgets.m_EditParameterPopup.OpenPopup = true;
-						} };
-						m_ScriptTooltip.AddTooltipEntry(editTooltipEntry);
-						EditorUI::TooltipEntry deleteTooltipEntry{ "Delete", [&](EditorUI::TooltipEntry& entry)
-						{
-								// Delete current selected entry
-								EngineService::SubmitToMainThread([&]()
-								{
-									m_EditWidgets.m_ParameterList.RemoveEntry(m_ActiveParameterLocation);
-								});
-
-							} };
-						m_ScriptTooltip.AddTooltipEntry(deleteTooltipEntry);
-
-						// Store parameter location inside list
-						m_ActiveParameterLocation = iteration;
-					};
-			};
-
-		m_EditWidgets.m_EditParameterName.Label = "Name";
-		m_EditWidgets.m_EditParameterType.Label = "Type";
-		m_EditWidgets.m_EditParameterType.PopupAction = [&]()
-			{
-				m_EditWidgets.m_EditParameterType.ClearOptions();
-
-				// Add all possible return types
-				for (WrappedVarType type : s_AllWrappedVarTypes)
-				{
-					// Void makes no sense as a parameter
-					if (type == WrappedVarType::Void)
-					{
-						continue;
-					}
-
-					// Fill options list
-					m_EditWidgets.m_EditParameterType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), (uint64_t)type);
-				}
-
-			};
-
 		m_EditWidgets.m_SelectSectionLabel.Label = "Group";
 		m_EditWidgets.m_SelectSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
 		m_EditWidgets.m_SelectSectionLabel.PopupAction = [&]()
+		{
+			m_EditWidgets.m_SelectSectionLabel.ClearOptions();
+			m_EditWidgets.m_SelectSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& label : Assets::AssetService::GetScriptSectionLabels())
 			{
-				m_EditWidgets.m_SelectSectionLabel.ClearOptions();
-				m_EditWidgets.m_SelectSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& label : Assets::AssetService::GetScriptSectionLabels())
-				{
-					m_EditWidgets.m_SelectSectionLabel.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
-				}
-			};
+				m_EditWidgets.m_SelectSectionLabel.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
+			}
 
+		};
 
-
-
-
-
-
-
-
-
-
-#if 0
-
-		m_EditScriptPopup.Label = "Edit New Script";
-		m_EditScriptPopup.PopupAction = [&]()
-			{
-				m_EditScriptName.CurrentOption = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_ScriptName;
-				m_EditScriptSectionLabel.CurrentOption.Label = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_SectionLabel;
-				WrappedFuncType currentFuncType = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_FuncType;
-				m_EditScriptFuncType.CurrentOption = { Utility::WrappedFuncTypeToString(currentFuncType),
-					(uint64_t)currentFuncType };
-
-			};
-		m_EditScriptPopup.PopupContents = [&]()
-			{
-				EditorUI::EditorUIService::LabeledText("Script Name", Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_ScriptName);
-				//EditorUI::Editor::EditText(m_EditScriptName);
-				EditorUI::EditorUIService::SelectOption(m_EditScriptFuncType);
-				EditorUI::EditorUIService::SelectOption(m_EditScriptSectionLabel);
-			};
-		m_EditScriptPopup.DeleteAction = [&]()
-			{
-				m_DeleteScriptWarning.OpenPopup = true;
-			};
-		m_EditScriptPopup.ConfirmAction = [&]()
-			{
-				if (Utility::StringToWrappedFuncType(m_EditScriptFuncType.CurrentOption.Label) !=
-					Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_FuncType)
-				{
-					m_EditScriptFuncTypeWarning.OpenPopup = true;
-				}
-				else
-				{
-					UpdateScript();
-				}
-			};
-
-		m_DeleteScriptWarning.Label = "Delete Script";
-		m_DeleteScriptWarning.PopupContents = [&]()
-			{
-				EditorUI::EditorUIService::Text("Are you sure you want to delete this script?");
-			};
-		m_DeleteScriptWarning.ConfirmAction = [&]()
-			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(m_ActiveScriptHandle);
-				Scripting::ScriptType type = script->m_ScriptType;
-				std::string sectionLabel = script->m_SectionLabel;
-
-				bool success = Assets::AssetService::DeleteScript(m_ActiveScriptHandle);
-				if (!success)
-				{
-					KG_WARN("Unable to delete script!");
-					return;
-				}
-
-				m_AllScriptsList.OnRefresh();
-			};
-
-		m_EditScriptFuncTypeWarning.Label = "Edit Script";
-		m_EditScriptFuncTypeWarning.PopupContents = [&]()
-			{
-				EditorUI::EditorUIService::Text("Changing the function type can cause the existing function code to not compile.");
-				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-				EditorUI::EditorUIService::Text("Are you sure you want to modify the function type?");
-			};
-		m_EditScriptFuncTypeWarning.ConfirmAction = [&]()
-			{
-				UpdateScript();
-			};
-
-		m_EditScriptName.Label = "Name";
-		m_EditScriptName.CurrentOption = "Empty";
-
-		m_EditScriptFuncType.Label = "Function Type";
-		m_EditScriptFuncType.CurrentOption.Label = Utility::WrappedFuncTypeToString(WrappedFuncType::None);
-		m_EditScriptFuncType.PopupAction = [&]()
-			{
-				m_EditScriptFuncType.ClearOptions();
-				for (auto func : s_AllWrappedFuncs)
-				{
-					m_EditScriptFuncType.AddToOptions("All Options", Utility::WrappedFuncTypeToString(func), (uint64_t)func);
-				}
-
-			};
-
-		m_EditScriptSectionLabel.Label = "Group";
-		m_EditScriptSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
-		m_EditScriptSectionLabel.PopupAction = [&]()
-			{
-				m_EditScriptSectionLabel.ClearOptions();
-				m_EditScriptSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& label : Assets::AssetService::GetScriptSectionLabels())
-				{
-					m_EditScriptSectionLabel.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
-				}
-
-			};
-#endif
 	}
 
 	void ScriptEditorPanel::InitializeGroupList()
@@ -912,6 +567,8 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::GenericPopup(m_EditWidgets.m_MainPopup);
 		EditorUI::EditorUIService::EditText(m_CreateGroupLabelPopup);
 		EditorUI::EditorUIService::GenericPopup(m_EditGroupLabelPopup);
+		EditorUI::EditorUIService::GenericPopup(m_EditWidgets.m_DeleteWarning);
+		EditorUI::EditorUIService::GenericPopup(m_EditWidgets.m_EditWarning);
 
 		EditorUI::EditorUIService::EndWindow();
 	}

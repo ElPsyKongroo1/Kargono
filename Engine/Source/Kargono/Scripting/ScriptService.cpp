@@ -528,18 +528,25 @@ namespace Kargono::Scripting
 			Assets::AssetService::DeserializeAIStateRegistry();
 		}
 
-		bool buildSuccessful = true;
-
 		KG_INFO("Creating Script Module CPP Files...");
 		CreateModuleHeaderFile();
-		CreateModuleCPPFile();
+		bool generateCPPSuccess = CreateModuleCPPFile();
+		if (!generateCPPSuccess)
+		{
+			KG_WARN("Failure to generate C++ scripts from kgscripts");
+			ScriptService::LoadActiveScriptModule();
+			Assets::AssetService::DeserializeScriptRegistry();
+			return;
+		}
+		
 		KG_INFO("Clearing previous compilation logs...");
 		Utility::FileSystem::DeleteSelectedFile("Log/BuildScriptLibraryDebug.log");
 		KG_INFO("Compiling debug script module...");
-		buildSuccessful = CompileModuleCode(true);
+
+		bool buildSuccessful = CompileModuleCode(true);
 		if (!buildSuccessful)
 		{
-			KG_WARN("Failed to compile debug script module");
+			KG_WARN("Failure to compile script module");
 			ScriptService::LoadActiveScriptModule();
 			Assets::AssetService::DeserializeScriptRegistry();
 			return;
@@ -656,7 +663,7 @@ namespace Kargono::Scripting
 
 				// Provide default names for parameterTypes
 				char letterIteration{ '1' };
-				for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < parameterTypes.size(); iteration++)
+				for (size_t iteration{ 0 }; iteration < parameterTypes.size(); iteration++)
 				{
 					parameterNames.emplace_back((std::string("parameter") + letterIteration).c_str());
 					letterIteration++;
@@ -667,9 +674,9 @@ namespace Kargono::Scripting
 			outputStream << Utility::WrappedVarTypeToCPPString(returnValue) << " " << script->m_ScriptName << "(";
 
 			// Write out parameterTypes into function signature
-			for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < parameterTypes.size(); iteration++)
+			for (size_t iteration{ 0 }; iteration < parameterTypes.size(); iteration++)
 			{
-				outputStream << Utility::WrappedVarTypeToCPPString(parameterTypes.at(iteration)) << " " << parameterNames.at(iteration);
+				outputStream << Utility::WrappedVarTypeToCPPParameter(parameterTypes.at(iteration)) << " " << parameterNames.at(iteration);
 				if (iteration != parameterTypes.size() - 1)
 				{
 					outputStream << ',';
@@ -690,7 +697,7 @@ namespace Kargono::Scripting
 		Utility::FileSystem::WriteFileString(headerFile, outputString);
 	}
 
-	void ScriptModuleBuilder::CreateModuleCPPFile()
+	bool ScriptModuleBuilder::CreateModuleCPPFile()
 	{
 		std::stringstream outputStream {};
 		outputStream << "#include \"ExportHeader.h\"\n";
@@ -908,17 +915,28 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 
 		// Write scripts into a single cpp file
+		bool compilationSuccess{ true };
 		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 		{
 			if (asset.Data.GetSpecificMetaData<Assets::ScriptMetaData>()->m_ScriptType == ScriptType::Engine)
 			{
 				continue;
 			}
-
-			outputStream << ScriptCompilerService::CompileScriptFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
+			std::string compiledScript = ScriptCompilerService::CompileScriptFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
+			if (compiledScript.empty())
+			{
+				KG_WARN("Failed to compile the script at: {}", asset.Data.FileLocation.string());
+				compilationSuccess = false;
+			}
+			outputStream << compiledScript;
 			outputStream << '\n';
 		}
 		outputStream << "}\n";
+
+		if (!compilationSuccess)
+		{
+			return false;
+		}
 
 		std::filesystem::path file = { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportBody.cpp" };
 
@@ -926,6 +944,7 @@ namespace Kargono::Scripting
 		Utility::Operations::RemoveCharacterFromString(outputString, '\r');
 
 		Utility::FileSystem::WriteFileString(file, outputString);
+		return true;
 	}
 
 	bool ScriptModuleBuilder::CompileModuleCode(bool createDebug)

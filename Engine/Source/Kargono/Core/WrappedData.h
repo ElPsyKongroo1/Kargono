@@ -538,6 +538,26 @@ namespace Kargono
 			return "";
 		}
 
+		inline std::string WrappedVarTypeToCPPParameter(WrappedVarType type)
+		{
+			switch (type)
+			{
+			case WrappedVarType::Integer32: return "int32_t";
+			case WrappedVarType::UInteger16: return "uint16_t";
+			case WrappedVarType::UInteger32: return "uint32_t";
+			case WrappedVarType::UInteger64: return "uint64_t";
+			case WrappedVarType::Vector3: return "Math::vec3";
+			case WrappedVarType::String: return "const std::string&";
+			case WrappedVarType::Void: return "void";
+			case WrappedVarType::Bool: return "bool";
+			case WrappedVarType::Float: return "float";
+			case WrappedVarType::Entity: return "uint64_t";
+			case WrappedVarType::None: return "None";
+			}
+			KG_ERROR("Unknown Type of WrappedVariableType.");
+			return "";
+		}
+
 		inline size_t WrappedVarTypeToDataSizeBytes(WrappedVarType type)
 		{
 			switch (type)
