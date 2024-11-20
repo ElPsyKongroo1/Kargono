@@ -394,7 +394,7 @@ namespace Kargono::Panels
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
-				if (script->m_FuncType != WrappedFuncType::Void_UInt64Float)
+				if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
 				{
 					continue;
 				}
@@ -434,7 +434,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt64Float, [&](Assets::AssetHandle scriptHandle)
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_EntityFloat, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -445,7 +445,7 @@ namespace Kargono::Panels
 
 								// Ensure function type matches definition
 								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-								if (script->m_FuncType != WrappedFuncType::Void_UInt64Float)
+								if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
 									return;
@@ -478,7 +478,7 @@ namespace Kargono::Panels
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
-				if (script->m_FuncType != WrappedFuncType::Void_UInt64)
+				if (script->m_FuncType != WrappedFuncType::Void_Entity)
 				{
 					continue;
 				}
@@ -518,7 +518,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt64, [&](Assets::AssetHandle scriptHandle)
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Entity, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -529,7 +529,7 @@ namespace Kargono::Panels
 
 								// Ensure function type matches definition
 								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-								if (script->m_FuncType != WrappedFuncType::Void_UInt64)
+								if (script->m_FuncType != WrappedFuncType::Void_Entity)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
 									return;
@@ -562,7 +562,7 @@ namespace Kargono::Panels
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
-				if (script->m_FuncType != WrappedFuncType::Void_UInt64)
+				if (script->m_FuncType != WrappedFuncType::Void_Entity)
 				{
 					continue;
 				}
@@ -602,7 +602,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt64, [&](Assets::AssetHandle scriptHandle)
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Entity, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -613,7 +613,7 @@ namespace Kargono::Panels
 
 								// Ensure function type matches definition
 								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-								if (script->m_FuncType != WrappedFuncType::Void_UInt64)
+								if (script->m_FuncType != WrappedFuncType::Void_Entity)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
 									return;
@@ -646,7 +646,7 @@ namespace Kargono::Panels
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
-				if (script->m_FuncType != WrappedFuncType::Void_UInt32UInt64UInt64Float)
+				if (script->m_FuncType != WrappedFuncType::Void_UInt32EntityEntityFloat)
 				{
 					continue;
 				}
@@ -686,7 +686,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt32UInt64UInt64Float, [&](Assets::AssetHandle scriptHandle)
+						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt32EntityEntityFloat, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -697,7 +697,7 @@ namespace Kargono::Panels
 
 								// Ensure function type matches definition
 								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-								if (script->m_FuncType != WrappedFuncType::Void_UInt32UInt64UInt64Float)
+								if (script->m_FuncType != WrappedFuncType::Void_UInt32EntityEntityFloat)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
 									return;
@@ -708,9 +708,9 @@ namespace Kargono::Panels
 								m_EditorAIState->OnEnterState = script;
 								m_MainHeader.EditColorActive = true;
 								m_SelectOnAIMessageScript.CurrentOption = { script->m_ScriptName, scriptHandle };
-							}, {"messageType", "senderEntity", "receiverEntity", "delayTimeSeconds"});
+							}, {"messageType", "senderEntity", "receiverEntity", "delayTime"});
 
-						} };
+				} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip

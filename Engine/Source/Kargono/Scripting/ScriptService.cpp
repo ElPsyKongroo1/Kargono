@@ -303,24 +303,24 @@ namespace Kargono::Scripting
 			break;
 		}
 
-		case WrappedFuncType::Void_UInt64:
+		case WrappedFuncType::Void_Entity:
 		{
-			script->m_Function = CreateRef<WrappedVoidUInt64>();
-			((WrappedVoidUInt64*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			script->m_Function = CreateRef<WrappedVoidEntity>();
+			((WrappedVoidEntity*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 
-		case WrappedFuncType::Void_UInt64Float:
+		case WrappedFuncType::Void_EntityFloat:
 		{
-			script->m_Function = CreateRef<WrappedVoidUInt64Float>();
-			((WrappedVoidUInt64Float*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			script->m_Function = CreateRef<WrappedVoidEntityFloat>();
+			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 
-		case WrappedFuncType::Void_UInt32UInt64UInt64Float:
+		case WrappedFuncType::Void_UInt32EntityEntityFloat:
 		{
-			script->m_Function = CreateRef<WrappedVoidUInt32UInt64UInt64Float>();
-			((WrappedVoidUInt32UInt64UInt64Float*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint64uint64float>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			script->m_Function = CreateRef<WrappedVoidUInt32EntityEntityFloat>();
+			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint64uint64float>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 		case WrappedFuncType::Bool_None:
@@ -330,22 +330,16 @@ namespace Kargono::Scripting
 			break;
 		}
 
-		case WrappedFuncType::Bool_UInt64:
+		case WrappedFuncType::Bool_Entity:
 		{
-			script->m_Function = CreateRef<WrappedBoolUInt64>();
-			((WrappedBoolUInt64*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			script->m_Function = CreateRef<WrappedBoolEntity>();
+			((WrappedBoolEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 		case WrappedFuncType::Bool_EntityEntity:
 		{
 			script->m_Function = CreateRef<WrappedBoolEntityEntity>();
 			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
-			break;
-		}
-		case WrappedFuncType::Bool_UInt64UInt16UInt64:
-		{
-			script->m_Function = CreateRef<WrappedBoolUInt64UInt16UInt64>();
-			((WrappedBoolUInt64UInt16UInt64*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint16uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 			break;
 		}
 		default:
@@ -644,22 +638,42 @@ namespace Kargono::Scripting
 		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 		{
 			Ref<Script> script = Assets::AssetService::GetScript(handle);
-			WrappedVarType returnValue = Utility::WrappedFuncTypeToReturnType(script->m_FuncType);
-			std::vector<WrappedVarType> parameters = Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType);
+			WrappedVarType returnValue;
+			std::vector<WrappedVarType> parameterTypes;
+			std::vector<FixedString32> parameterNames;
+
+			// Load return value and parameterTypes differently if using an arbitrary function
+			if (script->m_FuncType == WrappedFuncType::ArbitraryFunction)
+			{
+				returnValue = script->m_ExplicitFuncType.m_ReturnType;
+				parameterTypes = script->m_ExplicitFuncType.m_ParameterTypes;
+				parameterNames = script->m_ExplicitFuncType.m_ParameterNames;
+			}
+			else
+			{
+				returnValue = Utility::WrappedFuncTypeToReturnType(script->m_FuncType);
+				parameterTypes = Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType);
+
+				// Provide default names for parameterTypes
+				char letterIteration{ '1' };
+				for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < parameterTypes.size(); iteration++)
+				{
+					parameterNames.emplace_back((std::string("parameter") + letterIteration).c_str());
+					letterIteration++;
+				}
+			}
 
 			outputStream << "\t\tKARGONO_API ";
 			outputStream << Utility::WrappedVarTypeToCPPString(returnValue) << " " << script->m_ScriptName << "(";
 
-			// Write out parameters into function signature
-			char letterIteration{ 'a' };
-			for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < parameters.size(); iteration++)
+			// Write out parameterTypes into function signature
+			for (uint32_t iteration{ 0 }; static_cast<size_t>(iteration) < parameterTypes.size(); iteration++)
 			{
-				outputStream << Utility::WrappedVarTypeToCPPString(parameters.at(iteration)) << " " << letterIteration;
-				if (iteration != parameters.size() - 1)
+				outputStream << Utility::WrappedVarTypeToCPPString(parameterTypes.at(iteration)) << " " << parameterNames.at(iteration);
+				if (iteration != parameterTypes.size() - 1)
 				{
 					outputStream << ',';
 				}
-				letterIteration++;
 			}
 
 			outputStream << ");" << "\n";

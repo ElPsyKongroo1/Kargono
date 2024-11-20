@@ -86,12 +86,7 @@ namespace Kargono::Panels
 		ScriptWidgets m_CreateWidgets{};
 
 		// Script List (Edit)
-		EditorUI::GenericPopupSpec m_EditScriptPopup {};
-		EditorUI::GenericPopupSpec m_DeleteScriptWarning {};
-		EditorUI::GenericPopupSpec m_EditScriptFuncTypeWarning {};
-		EditorUI::EditTextSpec m_EditScriptName{};
-		EditorUI::SelectOptionSpec m_EditScriptFuncType{};
-		EditorUI::SelectOptionSpec m_EditScriptSectionLabel{};
+		ScriptWidgets m_EditWidgets{};
 
 		// Group Label List
 		EditorUI::ListSpec m_GroupLabelsTable {};

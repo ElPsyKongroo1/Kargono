@@ -203,7 +203,7 @@ namespace Kargono::Scenes
 			Assets::AssetHandle scriptHandle = component.OnCreateScriptHandle;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				Utility::CallWrappedVoidUInt64(component.OnCreateScript->m_Function, entity.GetUUID());
+				Utility::CallWrappedVoidEntity(component.OnCreateScript->m_Function, entity.GetUUID());
 			}
 		}
 
@@ -346,7 +346,7 @@ namespace Kargono::Scenes
 			Assets::AssetHandle scriptHandle = component.OnUpdateScriptHandle;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				Utility::CallWrappedVoidUInt64Float(component.OnUpdateScript->m_Function, entity.GetUUID(), ts);
+				Utility::CallWrappedVoidEntityFloat(component.OnUpdateScript->m_Function, entity.GetUUID(), ts);
 			}
 		}
 	}

@@ -2042,25 +2042,45 @@ namespace Kargono::Scripting
 			}
 			newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Scripts" };
 			newFunctionNode.Name = { ScriptTokenType::Identifier, script->m_ScriptName };
-			newFunctionNode.ReturnType = Utility::WrappedVarTypeToPrimitiveType(Utility::WrappedFuncTypeToReturnType(script->m_FuncType));
 
-			for (auto parameter : Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType))
+			// Load in return type and parameters differently if using an arbitrary function
+			if (script->m_FuncType == WrappedFuncType::ArbitraryFunction)
 			{
-				ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(parameter);
-				if (currentToken.Value == "uint64")
-				{
-					newParameter.AllTypes.push_back(currentToken);
-					newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "entity" });
-				}
-				else
-				{
-					newParameter.AllTypes.push_back(currentToken);
-				}
-				newParameter.Identifier = { ScriptTokenType::Identifier, "emptyName" };
-				newFunctionNode.Parameters.push_back(newParameter);
-				newParameter = {};
-			}
+				ExplicitFuncType& explicitFuncType = script->m_ExplicitFuncType;
+				
+				// Load in return type
+				newFunctionNode.ReturnType = Utility::WrappedVarTypeToPrimitiveType(explicitFuncType.m_ReturnType);
 
+				// Load in parameters
+				std::size_t iteration{ 0 };
+				bool useCustomParamNames{ explicitFuncType.m_ParameterNames.size() == explicitFuncType.m_ParameterTypes.size() };
+				for (WrappedVarType paramType : explicitFuncType.m_ParameterTypes)
+				{
+					ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(paramType);
+					newParameter.AllTypes.push_back(currentToken);
+					FixedString32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : "emptyName";
+					newParameter.Identifier = { ScriptTokenType::Identifier, identifier.CString()};
+					newFunctionNode.Parameters.push_back(newParameter);
+					newParameter = {};
+					iteration++;
+				}
+			}
+			else
+			{
+				// Load in return type from function type
+				newFunctionNode.ReturnType = Utility::WrappedVarTypeToPrimitiveType(Utility::WrappedFuncTypeToReturnType(script->m_FuncType));
+
+				// Load in parameter types from function type
+				for (auto parameter : Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType))
+				{
+					ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(parameter);
+					newParameter.AllTypes.push_back(currentToken);
+					newParameter.Identifier = { ScriptTokenType::Identifier, "emptyName" };
+					newFunctionNode.Parameters.push_back(newParameter);
+					newParameter = {};
+				}
+			}
+			
 			newFunctionNode.Description = "";
 			newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 			{
