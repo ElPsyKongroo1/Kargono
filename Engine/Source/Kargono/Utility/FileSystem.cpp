@@ -468,12 +468,12 @@ namespace Kargono::Utility
 			// Create directory or file
 			if (std::filesystem::is_directory(path, ec)) 
 			{
-				std::filesystem::create_directories(destination_path);
+				std::filesystem::create_directories(destination_path, ec);
 			}
 			// Copy the file to the destination path
 			else if (std::filesystem::is_regular_file(path, ec)) 
 			{
-				std::filesystem::copy_file(path, destination_path, std::filesystem::copy_options::overwrite_existing);
+				std::filesystem::copy_file(path, destination_path, std::filesystem::copy_options::overwrite_existing, ec);
 			}
 			else 
 			{

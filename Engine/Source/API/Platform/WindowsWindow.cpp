@@ -113,65 +113,65 @@ namespace API::Platform
 			});
 
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
-			{
-				KG_PROFILE_FUNCTION("GLFW Keyboard Event");
+		{
+			KG_PROFILE_FUNCTION("GLFW Keyboard Event");
 
-				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
-				switch (action)
+			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+			switch (action)
+			{
+				case GLFW_PRESS:
 				{
-					case GLFW_PRESS:
-					{
-						Kargono::Events::KeyPressedEvent event(key, false);
-						data.EventCallback(&event);
-					}
-						break;
-					case GLFW_RELEASE:
-					{
-						Kargono::Events::KeyReleasedEvent event(key);
-						data.EventCallback(&event);
-					}
-						break;
-					case GLFW_REPEAT:
-					{
-						Kargono::Events::KeyPressedEvent event(key, true);
-						data.EventCallback(&event);
-					}
-						break;
-					}
-			});
+					Kargono::Events::KeyPressedEvent event(key, false);
+					data.EventCallback(&event);
+				}
+					break;
+				case GLFW_RELEASE:
+				{
+					Kargono::Events::KeyReleasedEvent event(key);
+					data.EventCallback(&event);
+				}
+					break;
+				case GLFW_REPEAT:
+				{
+					Kargono::Events::KeyPressedEvent event(key, true);
+					data.EventCallback(&event);
+				}
+					break;
+				}
+		});
 
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
-			{
-				KG_PROFILE_FUNCTION("GLFW Typing Event");
+		{
+			KG_PROFILE_FUNCTION("GLFW Typing Event");
 
-				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
-				Kargono::Events::KeyTypedEvent event(keycode);
-				data.EventCallback(&event);
+			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+			Kargono::Events::KeyTypedEvent event(keycode);
+			data.EventCallback(&event);
 
-			});
+		});
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
+		{
+			KG_PROFILE_FUNCTION("GLFW Mouse Button Event");
+
+			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+
+			switch (action)
 			{
-				KG_PROFILE_FUNCTION("GLFW Mouse Button Event");
-
-				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
-
-				switch (action)
-					{
-					case GLFW_PRESS:
-					{
-						Kargono::Events::MouseButtonPressedEvent event(button);
-						data.EventCallback(&event);
-					}
-						break;
-					case GLFW_RELEASE:
-					{
-						Kargono::Events::MouseButtonReleasedEvent event(button);
-						data.EventCallback(&event);
-					}
-						break;
-					}
-			});
+			case GLFW_PRESS:
+			{
+				Kargono::Events::MouseButtonPressedEvent event(button);
+				data.EventCallback(&event);
+				break;
+			}
+			case GLFW_RELEASE:
+			{
+				Kargono::Events::MouseButtonReleasedEvent event(button);
+				data.EventCallback(&event);
+				break;
+			}
+			}
+		});
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) 
 			{
