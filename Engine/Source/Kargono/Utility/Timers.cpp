@@ -36,7 +36,7 @@ namespace Kargono::Utility
 		s_AllBusyTimers.erase(iterator, s_AllBusyTimers.end());
 	}
 
-	void AsyncBusyTimer::CloseAllTimers()
+	bool AsyncBusyTimer::CloseAllTimers()
 	{
 		std::scoped_lock lock(s_BusyTimerMutex);
 
@@ -53,7 +53,12 @@ namespace Kargono::Utility
 			}
 		}
 		s_AllBusyTimers.clear();
-		KG_VERIFY(s_AllBusyTimers.size() == 0, "All async timers closed successfully!")
+		if (s_AllBusyTimers.size() != 0)
+		{
+			KG_WARN("Busy timers not closed successfully");
+			return false;
+		}
+		return true;
 	}
 
 	AsyncBusyTimer::AsyncBusyTimer(float waitTime, std::function<void()> function)

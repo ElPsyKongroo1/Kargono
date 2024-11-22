@@ -10,12 +10,15 @@ namespace Kargono
 	{
 	}
 
+	ServerApp::ServerApp(std::filesystem::path projectPath) : Application("ServerLayer"), m_ProjectPath(projectPath)
+	{
+
+	}
+
 	void ServerApp::Init()
 	{
 		Scenes::SceneService::Init();
-#ifdef KG_TESTING
-	OpenProject("../Projects/TestProject/TestProject.kproj");
-#elif defined(KG_EXPORT_RUNTIME) || defined (KG_EXPORT_SERVER)
+#if defined(KG_EXPORT_RUNTIME) || defined (KG_EXPORT_SERVER)
 		std::filesystem::path pathToProject = Utility::FileSystem::FindFileWithExtension(
 			std::filesystem::current_path(),
 			".kproj");
@@ -33,11 +36,18 @@ namespace Kargono
 			return;
 		}
 #else
-		if (!OpenProject())
+
+		if (m_ProjectPath.empty())
 		{
-			KG_CRITICAL("Failed to select/open a project");
-			EngineService::EndRun();
-			return;
+			if (!OpenProject())
+			{
+				EngineService::EndRun();
+				return;
+			}
+		}
+		else
+		{
+			OpenProject(m_ProjectPath);
 		}
 #endif
 		if (!Network::ServerService::Init())
@@ -45,11 +55,6 @@ namespace Kargono
 			EngineService::EndRun();
 			return;
 		}
-
-#ifndef KG_TESTING
-		Network::ServerService::Run();
-#endif
-		Network::ServerService::Terminate();
 	}
 
 	bool ServerApp::OpenProject()
@@ -74,11 +79,12 @@ namespace Kargono
 
 	void ServerApp::Terminate()
 	{
+		Network::ServerService::Terminate();
 	}
 
 	void ServerApp::OnUpdate(Timestep ts)
 	{
-		
+		Network::ServerService::Run();
 	}
 
 }

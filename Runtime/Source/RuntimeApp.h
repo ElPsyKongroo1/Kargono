@@ -22,6 +22,7 @@ namespace Kargono
 		//==========================
 		// Does nothing other than calling parent constructor
 		RuntimeApp();
+		RuntimeApp(std::filesystem::path projectPath, bool headless = false);
 		virtual ~RuntimeApp() = default;
 
 		//==========================
@@ -94,6 +95,10 @@ namespace Kargono
 		void OnPlay();
 		void OnStop();
 
+
+	private:
+		bool m_Headless{ false };
+		std::filesystem::path m_ProjectPath;
 	};
 
 }

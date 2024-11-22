@@ -27,7 +27,7 @@ project "RuntimeTesting"
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",
-        "%{wks.location}/Editor/Source",
+        "%{wks.location}/Runtime/Source",
         "%{IncludeDir.optick}",
         "%{IncludeDir.asio}",
         "%{IncludeDir.doctest}",

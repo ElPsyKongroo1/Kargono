@@ -13,22 +13,28 @@ namespace Kargono
 	{
 	}
 
+	RuntimeApp::RuntimeApp(std::filesystem::path projectPath, bool headless) : Application("RuntimeLayer"), m_Headless(headless), m_ProjectPath(projectPath)
+	{
+	}
+
 	void RuntimeApp::Init()
 	{
 		Scripting::ScriptService::Init();
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
 
-#ifdef KG_TESTING
-		Audio::AudioService::SetMute(true);
-#endif
+		if (m_Headless)
+		{
+			Audio::AudioService::SetMute(true);
+		}
+
 		auto& currentWindow = EngineService::GetActiveWindow();
 
 		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
 
-#ifdef KG_TESTING
-		OpenProject("../Projects/TestProject/TestProject.kproj");
-#elif defined(KG_EXPORT_RUNTIME) || defined(KG_EXPORT_SERVER)
+
+		
+#if defined(KG_EXPORT_RUNTIME) || defined(KG_EXPORT_SERVER)
 		std::filesystem::path pathToProject = Utility::FileSystem::FindFileWithExtension(
 			std::filesystem::current_path(),
 			".kproj");
@@ -46,20 +52,27 @@ namespace Kargono
 			return;
 		}
 #else
-		if (!OpenProject())
+		if (m_ProjectPath.empty())
 		{
-			EngineService::EndRun();
-			return;
+			if (!OpenProject())
+			{
+				EngineService::EndRun();
+				return;
+			}
+		}
+		else
+		{
+			OpenProject(m_ProjectPath);
 		}
 #endif
 
 		
-		
-#ifndef KG_TESTING
-		Projects::ProjectService::GetActiveIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
-		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveTargetResolution()));
-		currentWindow.SetResizable(false);
-#endif
+		if (!m_Headless)
+		{
+			Projects::ProjectService::GetActiveIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
+			currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveTargetResolution()));
+			currentWindow.SetResizable(false);
+		}
 
 		AI::AIService::Init();
 		Rendering::RenderingService::Init();

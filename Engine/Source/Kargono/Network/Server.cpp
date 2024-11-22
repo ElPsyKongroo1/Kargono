@@ -653,6 +653,11 @@ namespace Kargono::Network
 
 	void ServerService::Terminate()
 	{
+		if (!s_Server)
+		{
+			KG_WARN("Attempt to terminate the active server context when none exists");
+			return;
+		}
 		s_Server->StopServer();
 		s_Server.reset();
 		s_Server = nullptr;

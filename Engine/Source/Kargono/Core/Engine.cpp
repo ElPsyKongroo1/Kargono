@@ -35,25 +35,31 @@ namespace Kargono
 	{
 		// Ensure Engine is a Singleton
 		KG_ASSERT(!s_ActiveEngine, "Application already exists!")
+
+		// Initialize engine
 		s_ActiveEngine = new Engine();
+		KG_VERIFY(s_ActiveEngine, "Engine Initialized");
 		s_ActiveEngine->m_Specification = specification;
 		s_ActiveEngine->m_CurrentApp = app;
+
+		// Initialize main window
 		s_ActiveEngine->m_Window = Window::Create(WindowProps(s_ActiveEngine->m_Specification.Name, 
 			s_ActiveEngine->m_Specification.DefaultWindowWidth, 
 			s_ActiveEngine->m_Specification.DefaultWindowHeight));
 		KG_VERIFY(s_ActiveEngine->m_Window, "Create Window");
 		RegisterWindowOnEventCallback();
 		RegisterAppTickOnEventCallback();
+
+		// Initialize current app (editor, runtime, server, etc...)
 		app->Init();
-		KG_VERIFY(s_ActiveEngine, "Engine Initialized");
 	}
 
-	void EngineService::Terminate()
+	bool EngineService::Terminate()
 	{
 		if (!s_ActiveEngine)
 		{
 			KG_WARN("Attempt to terminate engine service when s_ActiveEngine is already closed");
-			return;
+			return true;
 		}
 
 		if (s_ActiveEngine->m_CurrentApp)
@@ -67,6 +73,7 @@ namespace Kargono
 		delete s_ActiveEngine;
 		s_ActiveEngine = nullptr;
 		KG_VERIFY(!s_ActiveEngine, "Active Engine Terminated");
+		return true;
 		
 	}
 

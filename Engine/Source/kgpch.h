@@ -21,6 +21,7 @@
 #include <regex>
 #include <charconv>
 #include <system_error> 
+#include <cerrno>
 #include <random>
 
 #include <string>

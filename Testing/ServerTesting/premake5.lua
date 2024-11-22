@@ -27,7 +27,7 @@ project "ServerTesting"
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",
-        "%{wks.location}/Editor/Source",
+        "%{wks.location}/Server/Source",
         "%{IncludeDir.optick}",
         "%{IncludeDir.asio}",
         "%{IncludeDir.doctest}",

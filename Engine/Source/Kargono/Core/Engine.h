@@ -103,7 +103,7 @@ namespace Kargono
 		// Lifecycle Functions
 		//==============================
 		static void Init(const EngineSpec& specification, Application* app);
-		static void Terminate();
+		static bool Terminate();
 
 		static void Run();
 		static void EndRun();

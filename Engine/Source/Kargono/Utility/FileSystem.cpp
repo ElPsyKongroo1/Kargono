@@ -8,6 +8,21 @@
 
 namespace Kargono::Utility
 {
+	bool FileSystem::PathExists(const std::filesystem::path& path)
+	{
+		std::error_code ec;
+		bool exists = std::filesystem::exists(path, ec);
+
+		// Check for an error code
+		if (ec)
+		{
+			KG_WARN("Error occured while checking the existence of a path: {}", ec.message());
+			return false;
+		}
+
+		// Return result
+		return exists;
+	}
 	bool FileSystem::HasFileExtension(const std::filesystem::path& path)
 	{
 		return !path.extension().empty();
@@ -16,11 +31,32 @@ namespace Kargono::Utility
 	{
 		std::filesystem::path newPath = oldPath.parent_path() / newName;
 		
-		std::filesystem::rename(oldPath, newPath);
+		std::error_code ec;
+		std::filesystem::rename(oldPath, newPath, ec);
+
+		// Check for an error code
+		if (ec)
+		{
+			KG_WARN("Error occured while renaming a file: {}", ec.message());
+		}
 	}
-	bool FileSystem::CopySingleFile(const std::filesystem::path& sourceFile, const std::filesystem::path& destinationFile)
+	bool FileSystem::CopySingleFile(const std::filesystem::path& sourceFile, const std::filesystem::path& destinationFile) noexcept
 	{
 		// Check if the sourceFile path exists and is a regular file
+
+		std::error_code ec;
+		if (!std::filesystem::exists(sourceFile, ec))
+		{
+			KG_WARN("Failed to copy file. Source file does not exist!");
+			return false;
+		}
+
+		if (ec)
+		{
+			KG_WARN("Error occured while copying a file: {}", ec.message());
+			return false;
+		}
+
 		if (!std::filesystem::exists(sourceFile) || !std::filesystem::is_regular_file(sourceFile)) 
 		{
 			KG_WARN("Failed to copy file. Either could not locate file or file is unfamiliar format!");
@@ -38,7 +74,7 @@ namespace Kargono::Utility
 
 		return true;
 	}
-	Buffer FileSystem::ReadFileBinary(const std::filesystem::path& filepath)
+	Buffer FileSystem::ReadFileBinary(const std::filesystem::path& filepath) noexcept
 	{
 		std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
 
@@ -75,13 +111,13 @@ namespace Kargono::Utility
 		std::filesystem::remove_all(filepath);
 	}
 
-	bool FileSystem::WriteFileBinary(const std::filesystem::path& filepath, Buffer buffer)
+	bool FileSystem::WriteFileBinary(const std::filesystem::path& filepath, Buffer buffer) noexcept
 	{
 		CreateNewDirectory(filepath.parent_path());
 		std::ofstream output_file(filepath, std::ios::binary);
 		if (!output_file)
 		{
-			KG_ERROR("Failed to write binary data to file");
+			KG_ERROR("Failed to write binary data to file. Could not initialize output stream!");
 			return false;
 		}
 
@@ -89,7 +125,7 @@ namespace Kargono::Utility
 		return true;
 	}
 
-	bool FileSystem::WriteFileBinary(const std::filesystem::path& filepath, std::vector<Buffer>& buffers)
+	bool FileSystem::WriteFileBinary(const std::filesystem::path& filepath, std::vector<Buffer>& buffers) noexcept
 	{
 		CreateNewDirectory(filepath.parent_path());
 		std::ofstream output_file(filepath, std::ios::binary);
@@ -105,7 +141,7 @@ namespace Kargono::Utility
 		return true;
 	}
 
-	bool FileSystem::WriteFileString(const std::filesystem::path& filepath, const std::string& string)
+	bool FileSystem::WriteFileString(const std::filesystem::path& filepath, const std::string& string) noexcept
 	{
 		CreateNewDirectory(filepath.parent_path());
 		std::ofstream output_file(filepath);
@@ -134,7 +170,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	bool FileSystem::WriteFileImage(const std::filesystem::path& filepath, uint8_t* buffer, uint32_t width, uint32_t height, FileTypes fileType)
+	bool FileSystem::WriteFileImage(const std::filesystem::path& filepath, uint8_t* buffer, uint32_t width, uint32_t height, FileTypes fileType) noexcept
 	{
 		uint32_t channels{ 0 };
 		std::filesystem::path outputPath = filepath;
@@ -161,7 +197,7 @@ namespace Kargono::Utility
 	}
 
 
-	std::string FileSystem::ReadFileString(const std::filesystem::path& filepath)
+	std::string FileSystem::ReadFileString(const std::filesystem::path& filepath) noexcept
 	{
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
@@ -326,9 +362,9 @@ namespace Kargono::Utility
 			return {};
 		}
 
+		// Search directory for file w/ matching extension
 		for (const auto& entry : std::filesystem::directory_iterator(directory)) 
 		{
-			// Check if the current entry is a regular file and has the specified extension
 			if (entry.is_regular_file() && entry.path().extension() == extension) 
 			{
 				return entry.path();

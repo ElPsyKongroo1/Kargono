@@ -3,7 +3,8 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv) 
+{
 	doctest::Context context;
 	// Enable testing boolean
 	Kargono::s_TestingActive = true;

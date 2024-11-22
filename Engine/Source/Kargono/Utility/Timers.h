@@ -56,7 +56,7 @@ namespace Kargono::Utility
 
 		static void CleanUpClosedTimers();
 
-		static void CloseAllTimers();
+		static bool CloseAllTimers();
 
 	public:
 		AsyncBusyTimer(float waitTime, std::function<void()> function);

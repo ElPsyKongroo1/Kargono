@@ -8,13 +8,11 @@
 
 namespace Kargono
 {
+
 	void InitEngineAndCreateApp(CommandLineArguments args)
 	{
 		std::filesystem::path projectPath {};
-#ifdef KG_TESTING
-		Projects::ProjectService::CreateNewProject("TestProject", "./../Projects");
-		projectPath = "../Projects/TestProject/TestProject.kproj";
-#else
+
 		EngineSpec launcherSpec;
 		launcherSpec.Name = "Editor Launcher";
 		launcherSpec.CommandLineArgs = args;
@@ -31,7 +29,6 @@ namespace Kargono
 		{
 			return;
 		}
-#endif
 		
 		EngineSpec editorSpec;
 		editorSpec.Name = "Kargono Editor";
