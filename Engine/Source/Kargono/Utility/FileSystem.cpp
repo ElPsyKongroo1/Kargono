@@ -408,8 +408,7 @@ namespace Kargono::Utility
 		std::error_code ec;
 		if (std::filesystem::exists(filepath, ec))
 		{
-			KG_WARN("Failed to create new directory. Directory already exists");
-			return false;
+			return true;
 		}
 
 		if (ec)

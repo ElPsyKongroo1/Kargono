@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace Kargono
 {
 	using MouseCode = uint16_t;
@@ -46,7 +45,6 @@ namespace Kargono::Utility
 		case Mouse::Button7: return "Button7";
 		}
 
-		KG_ERROR("Invalid mouse code provided");
 		return "";
 	}
 }

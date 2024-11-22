@@ -32,12 +32,12 @@ namespace Kargono::Assets
 			m_AssetType = AssetType::ProjectComponent;
 			m_FileExtension = ".kgcomponent";
 			m_RegistryLocation = "ProjectComponent/ProjectComponentRegistry.kgreg";
-			m_Flags.set(AssetManagerOptions::HasAssetCache, false);
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
 			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
 			m_Flags.set(AssetManagerOptions::HasAssetSaving, true);
 			m_Flags.set(AssetManagerOptions::HasAssetCreationFromName, true);
+			m_Flags.set(AssetManagerOptions::HasAssetCache, true);
 		}
 		virtual ~ProjectComponentManager() = default;
 	public:
