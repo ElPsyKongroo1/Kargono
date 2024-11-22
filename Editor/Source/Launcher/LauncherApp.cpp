@@ -151,7 +151,7 @@ namespace Kargono
 	void LauncherApp::SelectProject()
 	{
 		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
-		if (!std::filesystem::exists(initialDirectory))
+		if (!Utility::FileSystem::PathExists(initialDirectory))
 		{
 			initialDirectory = "";
 		}

@@ -410,7 +410,7 @@ namespace Kargono
 	bool RuntimeApp::OpenProject()
 	{
 		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
-		if (!std::filesystem::exists(initialDirectory))
+		if (!Utility::FileSystem::PathExists(initialDirectory))
 		{
 			initialDirectory = "";
 		}
@@ -434,7 +434,7 @@ namespace Kargono
 					static_cast<uint32_t>(screenSize.x),
 					static_cast<uint32_t>(screenSize.y)
 				};
-				if (std::filesystem::exists(logoPath))
+				if (Utility::FileSystem::PathExists(logoPath))
 				{
 					EngineService::GetActiveWindow().Init(projectProps, logoPath);
 				}

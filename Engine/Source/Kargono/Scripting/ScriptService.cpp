@@ -172,7 +172,7 @@ namespace Kargono::Scripting
 
 		// Rebuild shared library if no library exists
 		static bool attemptedToRebuild = false;
-		if (!std::filesystem::exists(dllLocation))
+		if (!Utility::FileSystem::PathExists(dllLocation))
 		{
 			if (attemptedToRebuild)
 			{

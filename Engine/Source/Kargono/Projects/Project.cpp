@@ -194,7 +194,7 @@ namespace Kargono::Projects
 		std::filesystem::path intermediatesPath { exportDirectory / "Temp/" };
 
 		// Check if the sourceFile path exists and is a regular file
-		if (!std::filesystem::exists(solutionPath) || !std::filesystem::is_regular_file(solutionPath))
+		if (!Utility::FileSystem::PathExists(solutionPath) || !Utility::FileSystem::IsRegularFile(solutionPath))
 		{
 			KG_WARN("Failed to build executable. Could not locate/invalid Kargono.sln file");
 			return false;
@@ -295,7 +295,7 @@ namespace Kargono::Projects
 	{
 		std::filesystem::path filepath = (projectPath.parent_path() / "server_variables.env");
 
-		if (!std::filesystem::exists(filepath))
+		if (!Utility::FileSystem::PathExists(filepath))
 		{
 			KG_WARN("No server_variables.env file found. Default settings applied.");
 			return false;

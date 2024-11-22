@@ -77,7 +77,7 @@ namespace Kargono::Scripting
 		}
 
 		// Check for invalid input
-		if (!std::filesystem::exists(scriptLocation))
+		if (!Utility::FileSystem::PathExists(scriptLocation))
 		{
 			KG_WARN("Failed to compile .kgscript. File does not exist at specified location!");
 			return {};

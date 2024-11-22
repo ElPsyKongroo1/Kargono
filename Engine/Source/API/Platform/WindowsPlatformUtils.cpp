@@ -149,7 +149,7 @@ namespace Kargono::Utility
 	void OSCommands::OpenScriptProject(const std::filesystem::path& path)
 	{
 		// TODO: Add More Input Validation for system call.
-		if (!std::filesystem::exists(path))
+		if (!Utility::FileSystem::PathExists(path))
 		{
 			KG_ERROR("Invalid path provided to OpenScriptProject");
 			return;

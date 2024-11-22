@@ -38,23 +38,25 @@ namespace Kargono::Utility
 		//==============================
 		// Query Files/Directories
 		//==============================
-		static bool HasFileExtension(const std::filesystem::path& path);
-		static bool PathExists(const std::filesystem::path& path);
-		static bool DoesPathContainSubPath(const std::filesystem::path& base, const std::filesystem::path& full);
+		static bool HasFileExtension(const std::filesystem::path& path) noexcept;
+		static bool PathExists(const std::filesystem::path& path) noexcept;
+		static bool IsRegularFile(const std::filesystem::path& path) noexcept;
+		static std::filesystem::path GetAbsolutePath(const std::filesystem::path& path) noexcept;
+		static bool DoesPathContainSubPath(const std::filesystem::path& base, const std::filesystem::path& full) noexcept;
 
 		//==============================
 		// Manage Files/Directories
 		//==============================
-		static void RenameFile(const std::filesystem::path& oldPath, std::string newName);
+		static bool RenameFile(const std::filesystem::path& oldPath, std::string newName) noexcept;
 		static bool CopySingleFile(const std::filesystem::path& sourceFile, const std::filesystem::path& destinationFile) noexcept;
-		static bool DeleteSelectedFile(const std::filesystem::path& filepath);
-		static void DeleteSelectedDirectory(const std::filesystem::path& filepath);
-		static void MoveFileToDirectory(const std::filesystem::path& filepath, const std::filesystem::path& newDirectory);
-		static void CreateNewDirectory(const std::filesystem::path& filepath);
-		static bool CopyDirectory(const std::filesystem::path& sourceDirectory, const std::filesystem::path& destinationDirectory);
-		static std::filesystem::path FindFileWithExtension(const std::filesystem::path& directory, const std::string& extension);
-		static std::filesystem::path ConvertToUnixStylePath(const std::filesystem::path& path);
-		static std::filesystem::path GetRelativePath(const std::filesystem::path& base, const std::filesystem::path& full);
+		static bool DeleteSelectedFile(const std::filesystem::path& filepath) noexcept;
+		static bool DeleteSelectedDirectory(const std::filesystem::path& filepath) noexcept;
+		static bool MoveFileToDirectory(const std::filesystem::path& filepath, const std::filesystem::path& newDirectory) noexcept;
+		static bool CreateNewDirectory(const std::filesystem::path& filepath) noexcept;
+		static bool CopyDirectory(const std::filesystem::path& sourceDirectory, const std::filesystem::path& destinationDirectory) noexcept;
+		static std::filesystem::path FindFileWithExtension(const std::filesystem::path& directory, const std::string& extension) noexcept;
+		static std::filesystem::path ConvertToUnixStylePath(const std::filesystem::path& path) noexcept;
+		static std::filesystem::path GetRelativePath(const std::filesystem::path& base, const std::filesystem::path& full) noexcept;
 
 		//==============================
 		// Hashing API

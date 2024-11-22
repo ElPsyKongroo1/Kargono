@@ -5,6 +5,7 @@
 #include "Kargono/Events/MouseEvent.h"
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Projects/Project.h"
+#include "Kargono/Utility/FileSystem.h"
 
 #include "API/Platform/WindowsWindow.h"
 #include "API/ImageProcessing/stbAPI.h"
@@ -192,7 +193,7 @@ namespace API::Platform
 			});
 
 		// Add App Logo
-		if (!std::filesystem::exists(logoPath)) { KG_ERROR("Path to Application Logo is invalid!"); return; }
+		if (!Kargono::Utility::FileSystem::PathExists(logoPath)) { KG_ERROR("Path to Application Logo is invalid!"); return; }
 		GLFWimage images[1];
 		images[0].pixels = stbi_load(logoPath.string().c_str(), &images[0].width, &images[0].height, 0, 4); //rgba channels 
 		glfwSetWindowIcon(m_Window, 1, images);

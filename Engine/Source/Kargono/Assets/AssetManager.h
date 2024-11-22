@@ -561,7 +561,7 @@ namespace Kargono::Assets
 			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project when attempting to serialize an asset");
 			const std::filesystem::path registryPath = Projects::ProjectService::GetActiveIntermediateDirectory() / m_RegistryLocation;
 
-			if (!std::filesystem::exists(registryPath))
+			if (!Utility::FileSystem::PathExists(registryPath))
 			{
 				KG_WARN("No .kgreg file found at provided registry path {}", registryPath.string());
 				return;
