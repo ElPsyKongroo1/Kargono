@@ -17,8 +17,8 @@ namespace Kargono::Panels
 			KG_BIND_CLASS_FN(TextEditorPanel::OnKeyPressedEditor));
 
 		m_TextEditor = {};
-		m_TextEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::C());
-		m_TextEditor.SetPalette(TextEditor::GetCurrentColorPalette());
+		m_TextEditor.SetLanguageDefinition(API::EditorUI::TextEditorService::GenerateC());
+		m_TextEditor.SetPalette(API::EditorUI::TextEditorService::GetCurrentColorPalette());
 	
 		m_TextEditor.SetSaveCallback(KG_BIND_CLASS_FN(OnSaveFile));
 
@@ -140,7 +140,7 @@ namespace Kargono::Panels
 				if (ImGui::BeginTabItem((document.FilePath.filename().string() + "##" + std::to_string(iteration)).c_str(),
 					&document.Opened, tabItemFlags))
 				{
-					m_TextEditor.Render(m_EditorWindowName);
+					m_TextEditor.OnEditorUIRender(m_EditorWindowName);
 					checkTab = false;
 					ImGui::EndTabItem();
 				}
@@ -282,25 +282,25 @@ namespace Kargono::Panels
 				return;
 			}
 
-			TextEditor::ErrorMarkers markers{};
+			API::EditorUI::ErrorMarkers markers{};
 			for (Scripting::ParserError& error : errors)
 			{
 				if (markers.contains(error.CurrentToken.Line))
 				{
-					TextEditor::ErrorMarker& existingMarker = markers.at(error.CurrentToken.Line);
-					existingMarker.Description = existingMarker.Description + error.ToString();
-					TextEditor::ErrorLocation newLocation;
-					newLocation.Column = error.CurrentToken.Column;
-					newLocation.Length = (uint32_t)error.CurrentToken.Value.size();
-					existingMarker.Locations.push_back(newLocation);
+					API::EditorUI::ErrorMarker& existingMarker = markers.at(error.CurrentToken.Line);
+					existingMarker.m_Description = existingMarker.m_Description + error.ToString();
+					API::EditorUI::ErrorLocation newLocation;
+					newLocation.m_Column = error.CurrentToken.Column;
+					newLocation.m_Length = (uint32_t)error.CurrentToken.Value.size();
+					existingMarker.m_Locations.push_back(newLocation);
 					continue;
 				}
-				TextEditor::ErrorMarker marker;
-				marker.Description = error.ToString();
-				TextEditor::ErrorLocation newLocation;
-				newLocation.Column = error.CurrentToken.Column;
-				newLocation.Length = (uint32_t)error.CurrentToken.Value.size();
-				marker.Locations.push_back(newLocation);
+				API::EditorUI::ErrorMarker marker;
+				marker.m_Description = error.ToString();
+				API::EditorUI::ErrorLocation newLocation;
+				newLocation.m_Column = error.CurrentToken.Column;
+				newLocation.m_Length = (uint32_t)error.CurrentToken.Value.size();
+				marker.m_Locations.push_back(newLocation);
 				markers.insert_or_assign(error.CurrentToken.Line, marker);
 			}
 			m_TextEditor.SetErrorMarkers(markers);

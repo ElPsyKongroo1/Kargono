@@ -65,7 +65,7 @@ namespace Kargono::Panels
 		//=========================
 		// Widgets
 		//=========================
-		TextEditor m_TextEditor;
+		API::EditorUI::TextEditorSpec m_TextEditor;
 		EditorUI::GenericPopupSpec m_DeleteWarningSpec {};
 		EditorUI::GenericPopupSpec m_DiscardChangesWarningSpec {};
 	};
