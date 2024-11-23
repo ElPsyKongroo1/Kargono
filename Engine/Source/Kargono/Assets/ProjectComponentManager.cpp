@@ -11,7 +11,7 @@ namespace Kargono::Assets
 	Ref<void> ProjectComponentManager::SaveAssetValidation(Ref<ECS::ProjectComponent> newAssetRef, AssetHandle assetHandle)
 	{
 
-		// Get old asset reference
+		// Get old assetInfo reference
 		AssetInfo asset = GetAssetRegistry().at(assetHandle);
 		std::filesystem::path assetPath =
 			(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
@@ -215,23 +215,40 @@ namespace Kargono::Assets
 		Ref<ECS::ProjectComponent> deleteComponentRef = GetAsset(assetHandle);
 		KG_ASSERT(deleteComponentRef);
 
-
-
 		// Decriment the buffer slot for all other project components that have a higher index
-		for (auto& [handle, asset] : GetAssetRegistry())
+		for (auto& [componentHandle, assetInfo] : GetAssetRegistry())
 		{
-			if (handle == assetHandle)
+			if (componentHandle == assetHandle)
 			{
 				continue;
 			}
-			Ref<ECS::ProjectComponent> componentRef = GetAsset(handle);
+			Ref<ECS::ProjectComponent> componentRef = GetAsset(componentHandle);
 			KG_ASSERT(componentRef);
 			if (componentRef->m_BufferSlot > deleteComponentRef->m_BufferSlot)
 			{
 				componentRef->m_BufferSlot--;
 			}
-			SaveAsset(handle, componentRef);
+			SaveAsset(componentHandle, componentRef);
 		}
+
+		
+		// Handle deleting the project component by removing entity data from all scenes
+		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())
+		{
+			// Get scene
+			Ref<Scenes::Scene> currentScene = Assets::AssetService::GetScene(sceneHandle);
+
+			bool sceneModified = Assets::AssetService::RemoveProjectComponentFromScene(currentScene, assetHandle);
+
+			if (sceneModified)
+			{
+				// Save scene asset on-disk 
+				Assets::AssetService::SaveScene(sceneHandle, currentScene);
+			}
+
+		}
+		
+		
 
 	}
 }

@@ -524,13 +524,11 @@ namespace Kargono
 
 		// Handle adding a project component to the active editor scene
 		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
-			manageAsset.GetAction() == Events::ManageAssetAction::Create)
+			manageAsset.GetAction() == Events::ManageAssetAction::Create &&
+			m_EditorScene)
 		{
 			// Create project component inside scene registry
-			if (m_EditorScene)
-			{
-				m_EditorScene->AddProjectComponentRegistry(manageAsset.GetAssetID());
-			}
+			m_EditorScene->AddProjectComponentRegistry(manageAsset.GetAssetID());
 		}
 		// Handle editing a project component by modifying entity component data inside the Assets::AssetService::SceneRegistry and the active editor scene
 		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
@@ -540,20 +538,11 @@ namespace Kargono
 		}
 		// Handle deleting a project component by removing entity data from all scenes
 		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
-			manageAsset.GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			m_EditorScene)
 		{
-			for (auto& [sceneHandle, sceneAsset] : Assets::AssetService::GetSceneRegistry())
-			{
-				// Get scene
-				Ref<Scenes::Scene> currentScene = Assets::AssetService::GetScene(sceneHandle);
-				KG_ASSERT(currentScene);
-
-				// Clear component registry
-				currentScene->ClearProjectComponentRegistry(manageAsset.GetAssetID());
-
-				// Save scene asset on-disk 
-				Assets::AssetService::SaveScene(sceneHandle, currentScene);
-			}
+			// Remove project component from editor scene
+			Assets::AssetService::RemoveProjectComponentFromScene(m_EditorScene, manageAsset.GetAssetID());
 		}
 
 		// Handle removing scripts from editor scene
@@ -561,51 +550,15 @@ namespace Kargono
 			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
 			m_EditorScene)
 		{
-			// OnUpdate
-			auto onUpdateView = m_EditorScene->GetAllEntitiesWith<ECS::OnUpdateComponent>();
-			for (entt::entity enttEntity : onUpdateView)
-			{
-				ECS::Entity currentEntity{ m_EditorScene->GetEntityByEnttID(enttEntity) };
-				ECS::OnUpdateComponent& component = currentEntity.GetComponent<ECS::OnUpdateComponent>();
-				if (component.OnUpdateScriptHandle == manageAsset.GetAssetID())
-				{
-					component.OnUpdateScriptHandle = Assets::EmptyHandle;
-					component.OnUpdateScript = nullptr;
-				}
-			}
+			Assets::AssetService::RemoveScriptFromScene(m_EditorScene, manageAsset.GetAssetID());
+		}
 
-			// OnCreate
-			auto onCreateView = m_EditorScene->GetAllEntitiesWith<ECS::OnCreateComponent>();
-			for (entt::entity enttEntity : onCreateView)
-			{
-				ECS::Entity currentEntity{ m_EditorScene->GetEntityByEnttID(enttEntity) };
-				ECS::OnCreateComponent& component = currentEntity.GetComponent<ECS::OnCreateComponent>();
-				if (component.OnCreateScriptHandle == manageAsset.GetAssetID())
-				{
-					component.OnCreateScriptHandle = Assets::EmptyHandle;
-					component.OnCreateScript = nullptr;
-				}
-			}
-
-			// Rigidbody
-			auto rigidBodyView = m_EditorScene->GetAllEntitiesWith<ECS::Rigidbody2DComponent>();
-			for (entt::entity enttEntity : rigidBodyView)
-			{
-				ECS::Entity currentEntity{ m_EditorScene->GetEntityByEnttID(enttEntity) };
-				ECS::Rigidbody2DComponent& component = currentEntity.GetComponent<ECS::Rigidbody2DComponent>();
-
-				if (component.OnCollisionStartScriptHandle == manageAsset.GetAssetID())
-				{
-					component.OnCollisionStartScriptHandle = Assets::EmptyHandle;
-					component.OnCollisionStartScript = nullptr;
-				}
-
-				if (component.OnCollisionEndScriptHandle == manageAsset.GetAssetID())
-				{
-					component.OnCollisionEndScriptHandle = Assets::EmptyHandle;
-					component.OnCollisionEndScript = nullptr;
-				}
-			}
+		// Handle removing ai state from editor scene
+		if (manageAsset.GetAssetType() == Assets::AssetType::AIState &&
+			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			m_EditorScene)
+		{
+			Assets::AssetService::RemoveAIStateFromScene(m_EditorScene, manageAsset.GetAssetID());
 		}
 
 		if (manageAsset.GetAssetType() == Assets::AssetType::Scene && 
@@ -1130,7 +1083,7 @@ namespace Kargono
 
 	void EditorApp::SaveProject()
 	{
-		Projects::ProjectService::SaveActiveProject((Projects::ProjectService::GetActiveProjectDirectory() / Projects::ProjectService::GetActiveProjectName()).replace_extension(".kproj"));
+		Projects::ProjectService::SaveActiveProject();
 	}
 
 	void EditorApp::NewSceneDialog()

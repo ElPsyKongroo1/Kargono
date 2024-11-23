@@ -127,29 +127,7 @@ namespace Kargono::Panels
 
 			if (m_EditorAIState)
 			{
-				if (m_EditorAIState->OnEnterStateHandle == manageAsset->GetAssetID())
-				{
-					m_EditorAIState->OnEnterStateHandle = Assets::EmptyHandle;
-					m_EditorAIState->OnEnterState = nullptr;
-				}
-
-				if (m_EditorAIState->OnExitStateHandle == manageAsset->GetAssetID())
-				{
-					m_EditorAIState->OnExitStateHandle = Assets::EmptyHandle;
-					m_EditorAIState->OnExitState = nullptr;
-				}
-
-				if (m_EditorAIState->OnUpdateHandle == manageAsset->GetAssetID())
-				{
-					m_EditorAIState->OnUpdateHandle = Assets::EmptyHandle;
-					m_EditorAIState->OnUpdate = nullptr;
-				}
-
-				if (m_EditorAIState->OnMessageHandle == manageAsset->GetAssetID())
-				{
-					m_EditorAIState->OnMessageHandle = Assets::EmptyHandle;
-					m_EditorAIState->OnMessage = nullptr;
-				}
+				Assets::AssetService::RemoveScriptFromAIState(m_EditorAIState, manageAsset->GetAssetID());
 			}
 		}
 

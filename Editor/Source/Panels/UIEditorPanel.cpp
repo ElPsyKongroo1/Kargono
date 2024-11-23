@@ -134,25 +134,7 @@ namespace Kargono::Panels
 
 			if (m_EditorUI)
 			{
-				// Handle UI level function pointers
-				if (m_EditorUI->m_FunctionPointers.OnMoveHandle == manageAsset->GetAssetID())
-				{
-					m_EditorUI->m_FunctionPointers.OnMoveHandle = Assets::EmptyHandle;
-					m_EditorUI->m_FunctionPointers.OnMove = nullptr;
-				}
-
-				// Handle all widgets
-				for (RuntimeUI::Window& currentWindow : m_EditorUI->m_Windows)
-				{
-					for (Ref<RuntimeUI::Widget> widgetRef : currentWindow.Widgets)
-					{
-						if (widgetRef->FunctionPointers.OnPressHandle == manageAsset->GetAssetID())
-						{
-							widgetRef->FunctionPointers.OnPressHandle = Assets::EmptyHandle;
-							widgetRef->FunctionPointers.OnPress = nullptr;
-						}
-					}
-				}
+				Assets::AssetService::RemoveScriptFromUserInterface(m_EditorUI, manageAsset->GetAssetID());
 			}
 		}
 

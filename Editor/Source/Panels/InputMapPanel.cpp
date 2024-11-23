@@ -141,21 +141,7 @@ namespace Kargono::Panels
 			// Check input maps assets
 			if (m_EditorInputMap)
 			{
-				for (Ref<Input::InputActionBinding> binding : m_EditorInputMap->GetOnUpdateBindings())
-				{
-					if (binding->GetScriptHandle() == manageAsset->GetAssetID())
-					{
-						binding->SetScript(nullptr, Assets::EmptyHandle);
-					}
-				}
-
-				for (Ref<Input::InputActionBinding> binding : m_EditorInputMap->GetOnKeyPressedBindings())
-				{
-					if (binding->GetScriptHandle() == manageAsset->GetAssetID())
-					{
-						binding->SetScript(nullptr, Assets::EmptyHandle);
-					}
-				}
+				Assets::AssetService::RemoveScriptFromInputMap(m_EditorInputMap, manageAsset->GetAssetID());
 				OnRefreshData();
 			}
 			

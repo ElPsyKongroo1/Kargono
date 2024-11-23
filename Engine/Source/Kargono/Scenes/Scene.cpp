@@ -149,6 +149,17 @@ namespace Kargono::Scenes
 		currentStorage.m_ClearProjectComponentRegistry(currentStorage.m_EnTTStorageReference, m_EntityRegistry.m_EnTTRegistry, component->m_Name);
 	}
 
+	std::size_t Scene::GetProjectComponentCount(Assets::AssetHandle projectComponentHandle)
+	{
+		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
+		KG_ASSERT(component);
+		KG_ASSERT(component->m_BufferSlot < m_EntityRegistry.m_ProjectComponentStorage.size());
+
+		// Get storage and clear registry
+		ECS::ProjectComponentStorage& currentStorage = m_EntityRegistry.m_ProjectComponentStorage.at(component->m_BufferSlot);
+		return currentStorage.m_GetProjectComponentCount(currentStorage.m_EnTTStorageReference);
+	}
+
 	ECS::Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
 		ECS::Entity entity = { m_EntityRegistry.m_EnTTRegistry.create(), &m_EntityRegistry };

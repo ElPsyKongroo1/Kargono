@@ -217,4 +217,27 @@ namespace Kargono::Assets
 
 		return newInputMap;
 	}
+	bool InputMapManager::RemoveScript(Ref<Input::InputMap> inputMapRef, Assets::AssetHandle scriptHandle)
+	{
+		bool inputModified{ false };
+		for (Ref<Input::InputActionBinding> binding : inputMapRef->GetOnUpdateBindings())
+		{
+			if (binding->GetScriptHandle() == scriptHandle)
+			{
+				binding->SetScript(nullptr, Assets::EmptyHandle);
+				inputModified = true;
+			}
+		}
+
+		for (Ref<Input::InputActionBinding> binding : inputMapRef->GetOnKeyPressedBindings())
+		{
+			if (binding->GetScriptHandle() == scriptHandle)
+			{
+				binding->SetScript(nullptr, Assets::EmptyHandle);
+				inputModified = true;
+			}
+		}
+		
+		return inputModified;
+	}
 }

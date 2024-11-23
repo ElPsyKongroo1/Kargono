@@ -25,7 +25,11 @@ static void ClearProjectComponentRegistry##bufferSize(void* registryStorage, ent
 { \
 	((entt::storage<std::array<uint8_t, bufferSize>>*)registryStorage)->clear(); \
 	enttRegistry.remove_storage<std::array<uint8_t, bufferSize>>(entt::hashed_string(componentName.c_str())); \
-} 
+} \
+static std::size_t GetProjectComponentCount##bufferSize(void* registryStorage) \
+{ \
+	return ((entt::storage<std::array<uint8_t, bufferSize>>*)registryStorage)->size(); \
+}
 
 }
 
@@ -76,6 +80,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent4;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent4;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry4;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount4;
 			return;
 		case 8: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 8>>(entt::hashed_string(componentName.c_str())));
@@ -84,6 +89,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent8;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent8;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry8;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount8;
 			return;
 		case 12: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 12>>(entt::hashed_string(componentName.c_str())));
@@ -92,6 +98,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent12;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent12;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry12;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount12;
 			return;
 		case 16: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 16>>(entt::hashed_string(componentName.c_str())));
@@ -100,6 +107,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent16;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent16;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry16;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount16;
 			return;
 		case 20: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 20>>(entt::hashed_string(componentName.c_str())));
@@ -108,6 +116,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent20;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent20;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry20;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount20;
 			return;
 		case 24: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 24>>(entt::hashed_string(componentName.c_str())));
@@ -116,6 +125,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent24;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent24;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry24;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount24;
 			return;
 		case 28: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 28>>(entt::hashed_string(componentName.c_str())));
@@ -124,6 +134,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent28;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent28;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry28;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount28;
 			return;
 		case 32: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 32>>(entt::hashed_string(componentName.c_str())));
@@ -132,6 +143,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent32;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent32;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry32;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount32;
 			return;
 		case 40: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 40>>(entt::hashed_string(componentName.c_str())));
@@ -140,6 +152,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent40;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent40;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry40;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount40;
 			return;
 		case 48: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 48>>(entt::hashed_string(componentName.c_str())));
@@ -148,6 +161,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent48;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent48;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry48;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount48;
 			return;
 		case 56: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 56>>(entt::hashed_string(componentName.c_str())));
@@ -156,6 +170,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent56;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent56;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry56;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount56;
 			return;
 		case 64: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 64>>(entt::hashed_string(componentName.c_str())));
@@ -164,6 +179,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent64;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent64;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry64;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount64;
 			return;
 		case 72: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 72>>(entt::hashed_string(componentName.c_str())));
@@ -172,6 +188,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent72;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent72;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry72;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount72;
 			return;
 		case 80: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 80>>(entt::hashed_string(componentName.c_str())));
@@ -180,6 +197,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent80;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent80;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry80;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount80;
 			return;
 		case 88: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 88>>(entt::hashed_string(componentName.c_str())));
@@ -188,6 +206,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent88;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent88;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry88;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount88;
 			return;
 		case 96: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 96>>(entt::hashed_string(componentName.c_str())));
@@ -196,6 +215,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent96;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent96;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry96;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount96;
 			return;
 		case 112: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 112>>(entt::hashed_string(componentName.c_str())));
@@ -204,6 +224,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent112;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent112;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry112;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount112;
 			return;
 		case 128: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 128>>(entt::hashed_string(componentName.c_str())));
@@ -212,6 +233,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent128;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent128;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry128;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount128;
 			return;
 		case 144: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 144>>(entt::hashed_string(componentName.c_str())));
@@ -220,6 +242,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent144;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent144;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry144;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount144;
 			return;
 		case 160: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 160>>(entt::hashed_string(componentName.c_str())));
@@ -228,6 +251,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent160;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent160;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry160;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount160;
 			return;
 		case 176: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 176>>(entt::hashed_string(componentName.c_str())));
@@ -236,6 +260,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent176;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent176;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry176;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount176;
 			return;
 		case 192: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 192>>(entt::hashed_string(componentName.c_str())));
@@ -244,6 +269,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent192;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent192;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry192;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount192;
 			return;
 		case 208: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 208>>(entt::hashed_string(componentName.c_str())));
@@ -252,6 +278,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent208;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent208;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry208;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount208;
 			return;
 		case 224: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 224>>(entt::hashed_string(componentName.c_str())));
@@ -260,6 +287,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent224;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent224;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry224;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount224;
 			return;
 		case 256: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 256>>(entt::hashed_string(componentName.c_str())));
@@ -268,6 +296,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent256;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent256;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry256;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount256;
 			return;
 		case 288: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 288>>(entt::hashed_string(componentName.c_str())));
@@ -276,6 +305,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent288;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent288;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry288;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount288;
 			return;
 		case 320: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 320>>(entt::hashed_string(componentName.c_str())));
@@ -284,6 +314,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent320;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent320;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry320;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount320;
 			return;
 		case 352: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 352>>(entt::hashed_string(componentName.c_str())));
@@ -292,6 +323,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent352;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent352;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry352;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount352;
 			return;
 		case 384: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 384>>(entt::hashed_string(componentName.c_str())));
@@ -300,6 +332,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent384;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent384;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry384;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount384;
 			return;
 		case 416: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 416>>(entt::hashed_string(componentName.c_str())));
@@ -308,6 +341,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent416;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent416;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry416;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount416;
 			return;
 		case 448: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 448>>(entt::hashed_string(componentName.c_str())));
@@ -316,6 +350,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent448;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent448;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry448;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount448;
 			return;
 		case 480: 
 			newStorage.m_EnTTStorageReference = (void*)&(entityRegistry.m_EnTTRegistry.storage<std::array<uint8_t, 480>>(entt::hashed_string(componentName.c_str())));
@@ -324,6 +359,7 @@ namespace Kargono::ECS
 			newStorage.m_AddProjectComponent = AddProjectComponent480;
 			newStorage.m_RemoveProjectComponent = RemoveProjectComponent480;
 			newStorage.m_ClearProjectComponentRegistry = ClearProjectComponentRegistry480;
+			newStorage.m_GetProjectComponentCount = GetProjectComponentCount480;
 			return;
 		default:
 			KG_ERROR("Unsupported buffer size provided when attempting to generate a new EnTT storage reference");

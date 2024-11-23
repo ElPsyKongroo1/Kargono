@@ -130,12 +130,14 @@ namespace Kargono::Projects
 		//==============================
 		// Modify Active Project
 		//==============================
-
 		static std::filesystem::path CreateNewProject(const std::string& projectName, const std::filesystem::path& projectLocation);
 		static Ref<Projects::Project> OpenProject(const std::filesystem::path& path);
+		static bool SaveActiveProject();
 		static bool SaveActiveProject(const std::filesystem::path& path);
 		static bool SerializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath);
 		static bool DeserializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath);
+
+		static bool RemoveScriptFromActiveProject(Assets::AssetHandle scriptHandle);
 
 	private:
 		static bool DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& filepath);

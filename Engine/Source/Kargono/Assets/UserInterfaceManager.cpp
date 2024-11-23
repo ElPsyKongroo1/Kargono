@@ -223,4 +223,31 @@ namespace Kargono::Assets
 		}
 		return newUserInterface;
 	}
+	bool UserInterfaceManager::RemoveScript(Ref<RuntimeUI::UserInterface> userInterfaceRef, Assets::AssetHandle scriptHandle)
+	{
+		// Handle UI level function pointers
+		bool uiModified{ false };
+		if (userInterfaceRef->m_FunctionPointers.OnMoveHandle == scriptHandle)
+		{
+			userInterfaceRef->m_FunctionPointers.OnMoveHandle = Assets::EmptyHandle;
+			userInterfaceRef->m_FunctionPointers.OnMove = nullptr;
+			uiModified = true;
+		}
+
+		// Handle all widgets
+		for (RuntimeUI::Window& currentWindow : userInterfaceRef->m_Windows)
+		{
+			for (Ref<RuntimeUI::Widget> widgetRef : currentWindow.Widgets)
+			{
+				if (widgetRef->FunctionPointers.OnPressHandle == scriptHandle)
+				{
+					widgetRef->FunctionPointers.OnPressHandle = Assets::EmptyHandle;
+					widgetRef->FunctionPointers.OnPress = nullptr;
+					uiModified = true;
+				}
+			}
+		}
+
+		return uiModified;
+	}
 }

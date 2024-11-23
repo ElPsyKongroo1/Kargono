@@ -2467,7 +2467,24 @@ namespace Kargono::Panels
 			}
 		}
 
+		if (manageAsset->GetAssetType() == Assets::AssetType::AIState &&
+			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			if (m_SelectCurrentState.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectCurrentState.CurrentOption = { "None", Assets::EmptyHandle };
+			}
 
+			if (m_SelectGlobalState.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectGlobalState.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+
+			if (m_SelectPreviousState.CurrentOption.Handle == manageAsset->GetAssetID())
+			{
+				m_SelectPreviousState.CurrentOption = { "None", Assets::EmptyHandle };
+			}
+		}
 
 
 		if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&

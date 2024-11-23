@@ -581,4 +581,103 @@ namespace Kargono::Assets
 
 		return newScene;
 	}
+	bool SceneManager::RemoveScript(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle scriptHandle)
+	{
+		bool sceneModified{ false };
+		// Handle UI level function pointers
+		// OnUpdate
+		auto onUpdateView = sceneRef->GetAllEntitiesWith<ECS::OnUpdateComponent>();
+		for (entt::entity enttEntity : onUpdateView)
+		{
+			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::OnUpdateComponent& component = currentEntity.GetComponent<ECS::OnUpdateComponent>();
+			if (component.OnUpdateScriptHandle == scriptHandle)
+			{
+				component.OnUpdateScriptHandle = Assets::EmptyHandle;
+				component.OnUpdateScript = nullptr;
+				sceneModified = true;
+			}
+		}
+
+		// OnCreate
+		auto onCreateView = sceneRef->GetAllEntitiesWith<ECS::OnCreateComponent>();
+		for (entt::entity enttEntity : onCreateView)
+		{
+			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::OnCreateComponent& component = currentEntity.GetComponent<ECS::OnCreateComponent>();
+			if (component.OnCreateScriptHandle == scriptHandle)
+			{
+				component.OnCreateScriptHandle = Assets::EmptyHandle;
+				component.OnCreateScript = nullptr;
+				sceneModified = true;
+			}
+		}
+
+		// Rigidbody
+		auto rigidBodyView = sceneRef->GetAllEntitiesWith<ECS::Rigidbody2DComponent>();
+		for (entt::entity enttEntity : rigidBodyView)
+		{
+			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::Rigidbody2DComponent& component = currentEntity.GetComponent<ECS::Rigidbody2DComponent>();
+
+			if (component.OnCollisionStartScriptHandle == scriptHandle)
+			{
+				component.OnCollisionStartScriptHandle = Assets::EmptyHandle;
+				component.OnCollisionStartScript = nullptr;
+				sceneModified = true;
+			}
+
+			if (component.OnCollisionEndScriptHandle == scriptHandle)
+			{
+				component.OnCollisionEndScriptHandle = Assets::EmptyHandle;
+				component.OnCollisionEndScript = nullptr;
+				sceneModified = true;
+			}
+		}
+		return sceneModified;
+	}
+	bool SceneManager::RemoveAIState(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle aiStateHandle)
+	{
+		bool aiStateModified{ false };
+
+		// Check for AIState
+		auto aiStateView = sceneRef->GetAllEntitiesWith<ECS::AIStateComponent>();
+		for (entt::entity enttEntity : aiStateView)
+		{
+			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::AIStateComponent& component = currentEntity.GetComponent<ECS::AIStateComponent>();
+			
+			if (component.CurrentStateHandle == aiStateHandle)
+			{
+				component.CurrentStateHandle = Assets::EmptyHandle;
+				component.CurrentStateReference = nullptr;
+				aiStateModified = true;
+			}
+			if (component.GlobalStateHandle == aiStateHandle)
+			{
+				component.GlobalStateHandle = Assets::EmptyHandle;
+				component.GlobalStateReference = nullptr;
+				aiStateModified = true;
+			}
+			if (component.PreviousStateHandle == aiStateHandle)
+			{
+				component.PreviousStateHandle = Assets::EmptyHandle;
+				component.PreviousStateReference = nullptr;
+				aiStateModified = true;
+			}
+		}
+		return aiStateModified;
+	}
+	bool SceneManager::RemoveProjectComponent(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle projectCompHandle)
+	{
+		KG_ASSERT(sceneRef);
+
+		// Check if any components are being removed
+		std::size_t componentCount = sceneRef->GetProjectComponentCount(projectCompHandle);
+
+		// Clear component registry
+		sceneRef->ClearProjectComponentRegistry(projectCompHandle);
+
+		return componentCount > 0;
+	}
 }

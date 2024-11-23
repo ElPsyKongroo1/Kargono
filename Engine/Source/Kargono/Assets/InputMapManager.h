@@ -28,5 +28,7 @@ namespace Kargono::Assets
 		virtual void CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAsset(Ref<Input::InputMap> assetReference, const std::filesystem::path& assetPath) override;
 		virtual Ref<Input::InputMap> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
+
+		bool RemoveScript(Ref<Input::InputMap> inputMapRef, Assets::AssetHandle scriptHandle);
 	};
 }

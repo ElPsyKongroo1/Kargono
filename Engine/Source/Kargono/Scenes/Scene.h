@@ -70,6 +70,7 @@ namespace Kargono::Scenes
 		void RegisterAllProjectComponents();
 		void AddProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
 		void ClearProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
+		std::size_t GetProjectComponentCount(Assets::AssetHandle projectComponentHandle);
 		//====================
 		// Create/Destroy Scene Entities
 		//====================

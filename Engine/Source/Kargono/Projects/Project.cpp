@@ -382,6 +382,12 @@ namespace Kargono::Projects
 		return nullptr;
 
 	}
+
+	bool ProjectService::SaveActiveProject()
+	{
+		return Projects::ProjectService::SaveActiveProject((Projects::ProjectService::GetActiveProjectDirectory() / Projects::ProjectService::GetActiveProjectName()).replace_extension(".kproj"));
+	}
+
 	bool ProjectService::SaveActiveProject(const std::filesystem::path& path)
 	{
 		if (SerializeProject(s_ActiveProject, path))
@@ -512,6 +518,64 @@ namespace Kargono::Projects
 		DeserializeServerVariables(project, filepath);
 
 		return true;
+	}
+
+	bool ProjectService::RemoveScriptFromActiveProject(Assets::AssetHandle scriptHandle)
+	{
+		bool projectModified{ false };
+		// Check active project for scripts
+		if (Projects::ProjectService::GetActiveOnRuntimeStartHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnRuntimeStartHandle(Assets::EmptyHandle);
+			projectModified = true;
+		}
+		if (Projects::ProjectService::GetActiveOnUpdateUserCountHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnUpdateUserCountHandle(Assets::EmptyHandle);
+			projectModified = true;
+		}
+		if (Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnApproveJoinSessionHandle(Assets::EmptyHandle);
+			projectModified = true;
+		}
+		if (Projects::ProjectService::GetActiveOnUserLeftSessionHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnUserLeftSessionHandle(Assets::EmptyHandle);
+			projectModified = true;
+		}
+		if (Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnCurrentSessionInitHandle(Assets::EmptyHandle);
+			projectModified = true;
+		}
+		if (Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnConnectionTerminatedHandle(Assets::EmptyHandle);
+			projectModified = true;
+		}
+		if (Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnUpdateSessionUserSlotHandle(Assets::EmptyHandle);
+			projectModified = true;
+		}
+		if (Projects::ProjectService::GetActiveOnStartSessionHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnStartSessionHandle(Assets::EmptyHandle);
+			projectModified = true;
+		}
+		if (Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnSessionReadyCheckConfirmHandle(Assets::EmptyHandle);
+			projectModified = true;
+		}
+		if (Projects::ProjectService::GetActiveOnReceiveSignalHandle() == scriptHandle)
+		{
+			Projects::ProjectService::SetActiveOnReceiveSignalHandle(Assets::EmptyHandle);
+			projectModified = true;
+		}
+
+		return projectModified;
 	}
 
 	

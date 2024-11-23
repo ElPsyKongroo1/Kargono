@@ -112,4 +112,56 @@ namespace Kargono::Assets
 
 		return newAIState;
 	}
+	void AIStateManager::DeleteAssetValidation(AssetHandle assetHandle)
+	{
+		// Handle deleting the AI state by removing entity data from all scenes
+		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())
+		{
+			// Get scene
+			Ref<Scenes::Scene> currentScene = Assets::AssetService::GetScene(sceneHandle);
+
+			bool sceneModified = Assets::AssetService::RemoveAIStateFromScene(currentScene, assetHandle);
+
+			if (sceneModified)
+			{
+				// Save scene asset on-disk 
+				Assets::AssetService::SaveScene(sceneHandle, currentScene);
+			}
+
+		}
+	}
+	bool AIStateManager::RemoveScript(Ref<AI::AIState> aiStateRef, Assets::AssetHandle scriptHandle)
+	{
+		bool aiStateModified{ false };
+		// Check AI State assets
+		if (aiStateRef->OnEnterStateHandle == scriptHandle)
+		{
+			aiStateRef->OnEnterStateHandle = Assets::EmptyHandle;
+			aiStateRef->OnEnterState = nullptr;
+			aiStateModified = true;
+		}
+
+		if (aiStateRef->OnExitStateHandle == scriptHandle)
+		{
+			aiStateRef->OnExitStateHandle = Assets::EmptyHandle;
+			aiStateRef->OnExitState = nullptr;
+			aiStateModified = true;
+		}
+
+		if (aiStateRef->OnUpdateHandle == scriptHandle)
+		{
+			aiStateRef->OnUpdateHandle = Assets::EmptyHandle;
+			aiStateRef->OnUpdate = nullptr;
+			aiStateModified = true;
+		}
+
+		if (aiStateRef->OnMessageHandle == scriptHandle)
+		{
+			aiStateRef->OnMessageHandle = Assets::EmptyHandle;
+			aiStateRef->OnMessage = nullptr;
+			aiStateModified = true;
+		}
+		
+		return aiStateModified;
+	}
 }

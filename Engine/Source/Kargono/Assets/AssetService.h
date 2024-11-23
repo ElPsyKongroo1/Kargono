@@ -177,6 +177,35 @@ namespace Kargono::Assets
 			return s_AssetsContext.m_Texture2DManager.ImportNewTextureFromData(buffer, width, height, channels);
 		}
 
+		static AssetHandle RemoveScriptFromAIState(Ref<AI::AIState> aiStateRef, Assets::AssetHandle scriptHandle)
+		{
+			return s_AssetsContext.m_AIStateManager.RemoveScript(aiStateRef, scriptHandle);
+		}
+
+		static AssetHandle RemoveScriptFromInputMap(Ref<Input::InputMap> inputMapRef, Assets::AssetHandle scriptHandle)
+		{
+			return s_AssetsContext.m_InputMapManager.RemoveScript(inputMapRef, scriptHandle);
+		}
+
+		static AssetHandle RemoveScriptFromUserInterface(Ref<RuntimeUI::UserInterface> userInterfaceRef, Assets::AssetHandle scriptHandle)
+		{
+			return s_AssetsContext.m_UserInterfaceManager.RemoveScript(userInterfaceRef, scriptHandle);
+		}
+
+		static AssetHandle RemoveScriptFromScene(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle scriptHandle)
+		{
+			return s_AssetsContext.m_SceneManager.RemoveScript(sceneRef, scriptHandle);
+		}
+
+		static AssetHandle RemoveProjectComponentFromScene(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle projectComponentHandle)
+		{
+			return s_AssetsContext.m_SceneManager.RemoveProjectComponent(sceneRef, projectComponentHandle);
+		}
+		static AssetHandle RemoveAIStateFromScene(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle aiStateHandle)
+		{
+			return s_AssetsContext.m_SceneManager.RemoveAIState(sceneRef, aiStateHandle);
+		}
+
 		// Deserializes all registries into memory
 		static void DeserializeAll()
 		{
