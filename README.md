@@ -1,8 +1,19 @@
 # About Project
+![Alt text](Images/editor_screenshot.png)
+*(View of main editor)*
 
 This project is a simple game editor for 2D projects (3D in the future). The project includes: a game editor (Editor), an exporting project (Runtime), a multiplayer server (Server), and a core engine library (Engine). The Editor, Server, and Runtime are all stand alone executables that depend on the Engine library. 
 
+![Alt text](Images/pong_runtime.png)
+*(View of pong runtime)*
+
+![Alt text](Images/server_running.png)
+*(View of server running in terminal)*
+
 Feel free to try creating a game using the Editor or use an existing project (Currently only Pong is available). Game Projects are stored in the Projects directory. New projects can be created in the editor launcher and Pong can be downloaded from the editor launcher.
+
+![Alt text](Images/download_pong_launcher.gif)
+*(How to download Pong sample project)*
 
 The Editor only supports Windows. I do not have plans for supporting Linux or Mac for the Editor. The Runtime and Server executables are intended to be multi-platform, however, it only supports Windows currently. 
 
@@ -16,22 +27,29 @@ The latest version of this project is always accessible in the Development-Branc
 - [Git](https://git-scm.com/downloads) for Windows.
 - [Vulkan](https://vulkan.lunarg.com/) SDK with Debug Binaries. Version should be 3.0 or above.
 ## Instructions
+- Ensure the above requirements are met.
 - Clone the latest version of the Stable-Branch (latest stable version):
 
 		git clone https://github.com/ElPsyKongroo1/Kargono.git
 - Clone the latest version of the Development-Branch (experimental features):
 
 		git clone -b Development-Branch https://github.com/ElPsyKongroo1/Kargono.git
+	![Alt text](Images/download_kargono.gif)
+	*(Cloning Stable-Branch)*
 - Run BuildScripts/VS_GenProjects.bat to build Visual Studio Solution/Project files.
+	![Alt text](Images/run_build_file.gif)
+	*(Building visual studio project files)*
 - Open Kargono.sln in central directory.
 - Inside the Applications virtual directory, set either the Editor, Runtime, or Server as the default startup project.
+	![Alt text](Images/show_set_editor_default.gif)
+	*(Set editor application to be built)*
 - Build and Run!
 
 # [Documentation](https://elpsykongroo1.github.io/Kargono/)
-Documentation for getting started using the engine and internal descriptions of engine features. Documentation is not fully ready yet, but take a look if you want...
+This documentation for the engine is fairly minimal at this point. I intend to add better engine/editor documentation with the first release version of the editor. Feel free to take a look if you like...
 # Games
 ## Games in Progress
-- Pong Clone
+- Pong Clone ([Current Repo](https://github.com/ElPsyKongroo1/Pong))
 ## Game Projects Ideas
 - Snake Clone
 - Breakout Clone
