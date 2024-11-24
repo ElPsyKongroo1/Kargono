@@ -320,6 +320,7 @@ namespace API::EditorUI
 		void Undo(int aSteps = 1);
 		void Redo(int aSteps = 1);
 		void Save();
+		void DuplicateLine();
 		void InsertText(const std::string& aValue);
 		void InsertText(const char* aValue);
 		void SetText(const std::string& aText);
@@ -383,25 +384,39 @@ namespace API::EditorUI
 
 	private:
 		//=========================
-		// Internal Functionality
+		// Manage Rich Text Color
 		//=========================
-		void OnEditorUIRenderInternal();
-		void ProcessInputs();
 		void Colorize(int aFromLine = 0, int aCount = -1);
 		void ColorizeRange(int aFromLine = 0, int aToLine = 0);
 		void ColorizeInternal();
+		ImU32 GetGlyphColor(const Glyph& aGlyph) const;
+
+		//=========================
+		// Process Rendering
+		//=========================
+		void OnEditorUIRenderInternal();
+
+		//=========================
+		// Process Inputs
+		//=========================
+		void ProcessInputs();
+		void HandleKeyboardInputs();
+		void HandleMouseInputs();
+		void Backspace();
+		void BackspaceInternal();
+
+		//=========================
+		// Query Coordinates/Text
+		//=========================
+		std::string GetText(const Coordinates& aStart, const Coordinates& aEnd) const;
 		float TextDistanceToLineStart(const Coordinates& aFrom) const;
 		float TextDistanceToLineStartWithTab(const Coordinates& aFrom) const;
-		void EnsureCursorVisible();
-		int GetPageSize() const;
-		std::string GetText(const Coordinates& aStart, const Coordinates& aEnd) const;
+		std::string GetWordUnderCursor() const;
+		std::string GetWordAt(const Coordinates& aCoords) const;
 		Coordinates GetActualCursorCoordinates() const;
-		Coordinates SanitizeCoordinates(const Coordinates& aValue) const;
-		void Advance(Coordinates& aCoordinates) const;
-		void DeleteRange(const Coordinates& aStart, const Coordinates& aEnd);
-		int InsertTextAt(Coordinates& aWhere, const char* aValue);
-		void AddUndo(UndoRecord& aValue);
 		Coordinates ScreenPosToCoordinates(const ImVec2& aPosition) const;
+		bool IsOnWordBoundary(const Coordinates& aAt) const;
+		int GetPageSize() const;
 		Coordinates FindWordStart(const Coordinates& aFrom) const;
 		Coordinates FindWordEnd(const Coordinates& aFrom) const;
 		Coordinates FindNextWord(const Coordinates& aFrom) const;
@@ -409,28 +424,47 @@ namespace API::EditorUI
 		int GetCharacterColumn(int aLine, int aIndex) const;
 		int GetLineCharacterCount(int aLine) const;
 		int GetLineMaxColumn(int aLine) const;
-		bool IsOnWordBoundary(const Coordinates& aAt) const;
-		void RemoveLine(int aStart, int aEnd);
-		void RemoveLine(int aIndex);
-		Line& InsertLine(int aIndex);
-		void SetSuggestionsWindowEnabled(bool isEnabled);
-		void RefreshSuggestionsContent();
+
+
+		//=========================
+		// Manage Cursor
+		//=========================
+		void EnsureCursorVisible();
+		void Advance(Coordinates& aCoordinates) const;
+		Coordinates SanitizeCoordinates(const Coordinates& aValue) const;
+
+		//=========================
+		// Manage Text
+		//=========================
+		int InsertTextAt(Coordinates& aWhere, const char* aValue);
 		void EnterCharacter(ImWchar aChar, bool aShift);
 		void EnterCharacterInternal(ImWchar aChar, bool aShift);
-		void Backspace();
-		void BackspaceInternal();
 		void DeleteSelection();
-		std::string GetWordUnderCursor() const;
-		std::string GetWordAt(const Coordinates& aCoords) const;
-		ImU32 GetGlyphColor(const Glyph& aGlyph) const;
+		void DeleteRange(const Coordinates& aStart, const Coordinates& aEnd);
 
-		void HandleKeyboardInputs();
-		void HandleMouseInputs();
+		//=========================
+		// Manage Lines
+		//=========================
+		void RemoveLine(int aStart, int aEnd);
+		void RemoveLine(int aIndex);
+		Line& InsertEmptyLine(int aIndex);
+		Line& InsertLine(const Line& lineToInsert, int index);
 
+		//=========================
+		// Manage Suggestion Window
+		//=========================
+		void SetSuggestionsWindowEnabled(bool isEnabled);
+		void RefreshSuggestionsContent();
+
+		//=========================
+		// Conduct Undo
+		//=========================
+		void AddUndo(UndoRecord& aValue);
+		
+	private:
 		//=========================
 		// Internal Data Fields
 		//=========================
-	private:
 		// Text Data
 		Lines m_Lines;
 

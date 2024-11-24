@@ -146,10 +146,14 @@ namespace API::EditorUI
 
 	Coordinates TextEditorSpec::SanitizeCoordinates(const Coordinates & aValue) const
 	{
+		// Ensure coordinates are within the bounds of the text
 		int line = aValue.m_Line;
 		int column = aValue.m_Column;
+
+		// Check if current line is in an invalid state
 		if (line >= (int)m_Lines.size())
 		{
+			// Clear the line differently depending on the size of the m_Lines buffer
 			if (m_Lines.empty())
 			{
 				line = 0;
@@ -164,6 +168,7 @@ namespace API::EditorUI
 		}
 		else
 		{
+			// Line location is ok, ensure column is valid
 			column = m_Lines.empty() ? 0 : std::min(column, GetLineMaxColumn(line));
 			return Coordinates(line, column);
 		}
@@ -304,14 +309,14 @@ namespace API::EditorUI
 			{
 				if (cindex < (int)m_Lines[aWhere.m_Line].size())
 				{
-					Line& newLine = InsertLine(aWhere.m_Line + 1);
+					Line& newLine = InsertEmptyLine(aWhere.m_Line + 1);
 					Line& line = m_Lines[aWhere.m_Line];
 					newLine.insert(newLine.begin(), line.begin() + cindex, line.end());
 					line.erase(line.begin() + cindex, line.end());
 				}
 				else
 				{
-					InsertLine(aWhere.m_Line + 1);
+					InsertEmptyLine(aWhere.m_Line + 1);
 				}
 				++aWhere.m_Line;
 				aWhere.m_Column = 0;
@@ -343,12 +348,6 @@ namespace API::EditorUI
 	void TextEditorSpec::AddUndo(UndoRecord& aValue)
 	{
 		assert(!m_ReadOnly);
-		//printf("AddUndo: (@%d.%d) +\'%s' [%d.%d .. %d.%d], -\'%s', [%d.%d .. %d.%d] (@%d.%d)\n",
-		//	aValue.m_Before.m_CursorPosition.m_Line, aValue.m_Before.m_CursorPosition.m_Column,
-		//	aValue.m_Added.c_str(), aValue.m_AddedStart.m_Line, aValue.m_AddedStart.m_Column, aValue.m_AddedEnd.m_Line, aValue.m_AddedEnd.m_Column,
-		//	aValue.m_Removed.c_str(), aValue.m_RemovedStart.m_Line, aValue.m_RemovedStart.m_Column, aValue.m_RemovedEnd.m_Line, aValue.m_RemovedEnd.m_Column,
-		//	aValue.m_After.m_CursorPosition.m_Line, aValue.m_After.m_CursorPosition.m_Column
-		//	);
 
 		m_UndoBuffer.resize((size_t)(m_UndoIndex + 1));
 		m_UndoBuffer.back() = aValue;
@@ -675,7 +674,7 @@ namespace API::EditorUI
 		m_TextChanged = true;
 	}
 
-	Line& TextEditorSpec::InsertLine(int aIndex)
+	Line& TextEditorSpec::InsertEmptyLine(int aIndex)
 	{
 		assert(!m_ReadOnly);
 
@@ -692,6 +691,29 @@ namespace API::EditorUI
 		for (int location : m_Breakpoints)
 		{
 			btmp.insert(location >= aIndex ? location + 1 : location);
+		}
+		m_Breakpoints = std::move(btmp);
+
+		return result;
+	}
+
+	Line& EditorUI::TextEditorSpec::InsertLine(const Line& lineToInsert, int index)
+	{
+		assert(!m_ReadOnly);
+
+		Line& result = *m_Lines.insert(m_Lines.begin() + index, lineToInsert);
+
+		ErrorMarkers etmp;
+		for (auto& [location, marker] : m_ErrorMarkers)
+		{
+			etmp.insert(ErrorMarkers::value_type(location >= index ? location + 1 : location, marker));
+		}
+		m_ErrorMarkers = std::move(etmp);
+
+		Breakpoints btmp;
+		for (int location : m_Breakpoints)
+		{
+			btmp.insert(location >= index ? location + 1 : location);
 		}
 		m_Breakpoints = std::move(btmp);
 
@@ -914,6 +936,8 @@ namespace API::EditorUI
 				Copy();
 			else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_C)))
 				Copy();
+			else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_D)))
+				DuplicateLine();
 			else if (!IsReadOnly() && !ctrl && shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Insert)))
 				Paste();
 			else if (!IsReadOnly() && ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_V)))
@@ -1005,6 +1029,7 @@ namespace API::EditorUI
 						m_CloseTextSuggestions = true;
 					}
 					m_State.m_CursorPosition = m_InteractiveStart = m_InteractiveEnd = ScreenPosToCoordinates(ImGui::GetMousePos());
+					
 					if (ctrl)
 						m_SelectionMode = SelectionMode::Word;
 					else
@@ -1019,6 +1044,50 @@ namespace API::EditorUI
 					io.WantCaptureMouse = true;
 					m_State.m_CursorPosition = m_InteractiveEnd = ScreenPosToCoordinates(ImGui::GetMousePos());
 					SetSelection(m_InteractiveStart, m_InteractiveEnd, m_SelectionMode);
+				}
+			}
+			else if (shift)
+			{
+				bool click = ImGui::IsMouseClicked(0);
+				if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
+				{
+					m_CloseTextSuggestions = true;
+				}
+				if (click)
+				{
+					if (HasSelection())
+					{
+						if (m_State.m_SelectionStart == m_State.m_CursorPosition)
+						{
+							io.WantCaptureMouse = true;
+							m_State.m_CursorPosition = ScreenPosToCoordinates(ImGui::GetMousePos());
+							SetSelection(m_State.m_SelectionEnd, m_State.m_CursorPosition, m_SelectionMode);
+						}
+						else if (m_State.m_SelectionEnd == m_State.m_CursorPosition)
+						{
+							io.WantCaptureMouse = true;
+							m_State.m_CursorPosition = ScreenPosToCoordinates(ImGui::GetMousePos());
+							SetSelection(m_State.m_SelectionStart, m_State.m_CursorPosition, m_SelectionMode);
+						}
+						else
+						{
+							m_State.m_CursorPosition = m_InteractiveStart = m_InteractiveEnd = ScreenPosToCoordinates(ImGui::GetMousePos());
+							if (ctrl)
+								m_SelectionMode = SelectionMode::Word;
+							else
+								m_SelectionMode = SelectionMode::Normal;
+							SetSelection(m_InteractiveStart, m_InteractiveEnd, m_SelectionMode);
+						}
+					}
+					else
+					{
+						io.WantCaptureMouse = true;
+						Coordinates oldCursorPosition{ GetCursorPosition() };
+						m_State.m_CursorPosition = ScreenPosToCoordinates(ImGui::GetMousePos());
+						SetSelection(oldCursorPosition, m_State.m_CursorPosition, m_SelectionMode);
+					}
+
+					
 				}
 			}
 		}
@@ -1543,7 +1612,7 @@ namespace API::EditorUI
 		if (aChar == '\n')
 		{
 			// Insert new line in text editor
-			InsertLine(coord.m_Line + 1);
+			InsertEmptyLine(coord.m_Line + 1);
 			Line& line = m_Lines[coord.m_Line];
 			Line& newLine = m_Lines[coord.m_Line + 1];
 
@@ -1869,23 +1938,23 @@ namespace API::EditorUI
 		}
 		else
 			m_InteractiveStart = m_InteractiveEnd = m_State.m_CursorPosition;
-		SetSelection(m_InteractiveStart, m_InteractiveEnd, aSelect && aWordMode ? SelectionMode::Word : SelectionMode::Normal);
-
+		SetSelection(m_InteractiveStart, m_InteractiveEnd, SelectionMode::Normal);
 		EnsureCursorVisible();
 	}
 
 	void TextEditorSpec::MoveRight(int aAmount, bool aSelect, bool aWordMode)
 	{
+		// Reset suggestion window
 		if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
 		{
 			m_CloseTextSuggestions = true;
 		}
-
-		Coordinates oldPos = m_State.m_CursorPosition;
-
-		if (m_Lines.empty() || oldPos.m_Line >= m_Lines.size())
+		// Exit early if text is empty or cursor position is invalid
+		Coordinates oldCursorPosition = m_State.m_CursorPosition;
+		if (m_Lines.empty() || oldCursorPosition.m_Line >= m_Lines.size())
 			return;
 
+		// Update cursor position
 		int cindex = GetCharacterIndex(m_State.m_CursorPosition);
 		while (aAmount-- > 0)
 		{
@@ -1894,38 +1963,74 @@ namespace API::EditorUI
 
 			if (cindex >= line.size())
 			{
+				// Handle moving lines
 				if (m_State.m_CursorPosition.m_Line < m_Lines.size() - 1)
 				{
+					// Transition to next line
 					m_State.m_CursorPosition.m_Line = std::max(0, std::min((int)m_Lines.size() - 1, m_State.m_CursorPosition.m_Line + 1));
 					m_State.m_CursorPosition.m_Column = 0;
 				}
 				else
+				{
+					// Handle being at end of document
 					return;
+				}
 			}
 			else
 			{
+				// Handle moving within the line
 				cindex += UTF8CharLength(line[cindex].m_Char);
 				m_State.m_CursorPosition = Coordinates(lindex, GetCharacterColumn(lindex, cindex));
 				if (aWordMode)
-					m_State.m_CursorPosition = FindNextWord(m_State.m_CursorPosition);
+				{
+					Coordinates nextWord = FindWordEnd(m_State.m_CursorPosition);
+					if (nextWord.m_Line > oldCursorPosition.m_Line)
+					{
+						if (oldCursorPosition.m_Column == GetLineMaxColumn(oldCursorPosition.m_Line))
+						{
+							// Handle moving position normally
+							m_State.m_CursorPosition = nextWord;
+						}
+						else
+						{
+							// Handle end of line
+							m_State.m_CursorPosition.m_Column = GetLineMaxColumn(oldCursorPosition.m_Line);
+						}
+					}
+					else
+					{
+						// Handle moving position normally
+						m_State.m_CursorPosition = nextWord;
+					}
+				}
 			}
 		}
 
+		// Handle selection of text
 		if (aSelect)
 		{
-			if (oldPos == m_InteractiveEnd)
+			if (oldCursorPosition == m_InteractiveEnd)
+			{
 				m_InteractiveEnd = SanitizeCoordinates(m_State.m_CursorPosition);
-			else if (oldPos == m_InteractiveStart)
+				SetCursorPosition(m_InteractiveEnd);
+			}
+			else if (oldCursorPosition == m_InteractiveStart)
+			{
 				m_InteractiveStart = m_State.m_CursorPosition;
+			}
 			else
 			{
-				m_InteractiveStart = oldPos;
+				m_InteractiveStart = oldCursorPosition;
 				m_InteractiveEnd = m_State.m_CursorPosition;
 			}
 		}
 		else
+		{
+			// Reset selection
 			m_InteractiveStart = m_InteractiveEnd = m_State.m_CursorPosition;
-		SetSelection(m_InteractiveStart, m_InteractiveEnd, aSelect && aWordMode ? SelectionMode::Word : SelectionMode::Normal);
+		}
+
+		SetSelection(m_InteractiveStart, m_InteractiveEnd, SelectionMode::Normal);
 
 		EnsureCursorVisible();
 	}
@@ -2292,6 +2397,45 @@ namespace API::EditorUI
 		{
 			m_SaveCallback();
 		}
+	}
+
+	void EditorUI::TextEditorSpec::DuplicateLine()
+	{
+		// Get the index of the line that should be duplicated
+		Coordinates currentCursorCoord = GetCursorPosition();
+		int currentLineIndex = currentCursorCoord.m_Line;
+
+		// Check for invalid index
+		if (currentLineIndex == k_InvalidIndex)
+		{
+			KG_WARN("Failed to duplicate line in text editor. Invalid index found!");
+			return;
+		}
+
+		// Ensure no out of bounds errors occur
+		if (currentLineIndex >= m_Lines.size())
+		{
+			KG_WARN("Failed to duplicate line in text editor. Line index is greater than the line buffer's size!");
+			return;
+		}
+
+		// Get the line that should be duplicated
+		UndoRecord u;
+		u.m_Before = m_State;
+		Line& currentLine = m_Lines[currentLineIndex];
+		// Insert a line after the current cursor's line
+		InsertLine(currentLine, currentLineIndex);
+
+		// Move cursor down one line
+		currentCursorCoord.m_Line++;
+		SetCursorPosition(currentCursorCoord);
+
+		u.m_Added = GetCurrentLineText();
+		u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
+		u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));
+
+		u.m_After = m_State;
+		AddUndo(u);
 	}
 
 	Palette& TextEditorService::GetDefaultColorPalette()
