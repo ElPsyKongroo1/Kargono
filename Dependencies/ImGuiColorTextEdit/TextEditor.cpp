@@ -781,13 +781,22 @@ namespace API::EditorUI
 			entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
 			{
 				// Remove Buffer Text and add text
+				UndoRecord u;
+				u.m_Before = m_State;
+
 				Coordinates cursorPosition = GetCursorPosition();
 				DeleteRange({ cursorPosition.m_Line, cursorPosition.m_Column - (int)m_SuggestionTextBuffer.size() }, cursorPosition);
 				SetCursorPosition({ cursorPosition.m_Line,cursorPosition.m_Column - (int)m_SuggestionTextBuffer.size() });
 				cursorPosition = GetCursorPosition();
-				InsertTextAt(cursorPosition, (*(std::string*)(entry.ProvidedData.get())).c_str());
+				u.m_AddedStart = cursorPosition;
+				u.m_Added = (*(std::string*)(entry.ProvidedData.get())).c_str();
+				InsertTextAt(cursorPosition, u.m_Added.c_str());
 				SetCursorPosition(cursorPosition);
 				m_CloseTextSuggestions = true;
+
+				u.m_AddedEnd = cursorPosition;
+				u.m_After = m_State;
+				AddUndo(u);
 			};
 
 			m_SuggestionTree.InsertEntry(entry);
@@ -1049,12 +1058,12 @@ namespace API::EditorUI
 			else if (shift)
 			{
 				bool click = ImGui::IsMouseClicked(0);
-				if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
-				{
-					m_CloseTextSuggestions = true;
-				}
 				if (click)
 				{
+					if (m_SuggestionsWindowEnabled && ImGui::IsPopupOpen("TextEditorSuggestions"))
+					{
+						m_CloseTextSuggestions = true;
+					}
 					if (HasSelection())
 					{
 						if (m_State.m_SelectionStart == m_State.m_CursorPosition)
@@ -2547,10 +2556,6 @@ namespace API::EditorUI
 		return GetText(
 			Coordinates(m_State.m_CursorPosition.m_Line, 0),
 			Coordinates(m_State.m_CursorPosition.m_Line, lineLength));
-	}
-
-	void TextEditorSpec::ProcessInputs()
-	{
 	}
 
 	void TextEditorSpec::Colorize(int aFromLine, int aLines)

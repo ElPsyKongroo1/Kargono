@@ -399,7 +399,6 @@ namespace API::EditorUI
 		//=========================
 		// Process Inputs
 		//=========================
-		void ProcessInputs();
 		void HandleKeyboardInputs();
 		void HandleMouseInputs();
 		void Backspace();
