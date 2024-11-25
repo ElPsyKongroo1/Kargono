@@ -109,6 +109,9 @@ This documentation for the engine is fairly minimal at this point. I intend to a
 ## ImGuizmo ([Docs](https://github.com/CedricGuillemet/ImGuizmo))
 - Used in editor to display and interact with gizmos.
 - Tool produces a Gizmo that is usable for modifying transforms and other applications.
+## ImGuiNotify ([Docs](https://github.com/TyomaVader/ImGuiNotify)) ([Commit](https://github.com/TyomaVader/ImGuiNotify/commit/c29457070e7b3092df538823e406a19672e9abd7))
+- Used in editor to display toast notifications of warnings/errors.
+- Tool that produces notification toasts inside of ImGui.
 ## MSDF-Gen ([Docs](https://github.com/Chlumsky/msdfgen))
 - Generate msdf fonts for use in RuntimeUI.
 - A tool for generating multi-channel signed distance fields (MSDFs) for crisp text and shape rendering.

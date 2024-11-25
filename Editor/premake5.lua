@@ -22,6 +22,7 @@ project "Editor"
         "%{IncludeDir.filewatch}",
         "%{IncludeDir.imGui}",
         "%{IncludeDir.ImGuizmo}",
+        "%{IncludeDir.ImGuiNotify}",
         "%{IncludeDir.Box2D}",
         "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.dr_wav}",

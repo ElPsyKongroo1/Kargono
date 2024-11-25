@@ -5,6 +5,7 @@
 #include "Kargono/Utility/Timers.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Utility/Random.h"
+#include "API/EditorUI/ImGuiNotifyAPI.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 
@@ -87,7 +88,12 @@ namespace Kargono::Panels
 			return;
 		}
 
+		if (ImGui::Button("Notification"))
+		{
+			Log::GenerateWarningEvent("hello {} {}");
+		}
 		
+
 		EditorUI::EditorUIService::EditText(s_TestText);
 
 		if (ImGui::Button("Compile File"))

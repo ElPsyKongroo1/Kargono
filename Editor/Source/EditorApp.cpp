@@ -3,6 +3,7 @@
 #include "EditorApp.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
+#include "API/EditorUI/ImGuiNotifyAPI.h"
 
 namespace Kargono
 {
@@ -381,6 +382,8 @@ namespace Kargono
 
 		EditorUI::EditorUIService::HighlightFocusedWindow();
 
+		EditorUI::RenderImGuiNotify();
+
 		EditorUI::EditorUIService::EndRendering();
 	}
 
@@ -609,6 +612,13 @@ namespace Kargono
 	bool EditorApp::OnEditorEvent(Events::Event* event)
 	{
 		m_ViewportPanel->OnEditorEvent(event);
+		return false;
+	}
+
+	bool EditorApp::OnLogEvent(Events::Event* event)
+	{
+		Events::LogEvent* logEvent = (Events::LogEvent*)event;
+		ImGui::InsertNotification({ ImGuiToastType::Success, 3000, logEvent->GetEventText().c_str()});
 		return false;
 	}
 

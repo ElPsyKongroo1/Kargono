@@ -138,6 +138,7 @@ namespace Kargono
 		// Getters/Setters
 		//==============================
 		static Engine& GetActiveEngine() { return *s_ActiveEngine; }
+		static bool IsEngineActive() { return (bool)s_ActiveEngine; }
 		static Window& GetActiveWindow() { return s_ActiveEngine->GetWindow(); }
 	private:
 		//==============================

@@ -12,6 +12,7 @@
 #include "API/EditorUI/ImGuiBackendAPI.h"
 #include "API/Platform/GlfwAPI.h"
 #include "API/Platform/gladAPI.h"
+#include "API/EditorUI/ImGuiNotifyAPI.h"
 
 
 namespace Kargono::EditorUI
@@ -263,6 +264,18 @@ namespace Kargono::EditorUI
 		KG_ASSERT(window, "No window active when initializing EditorUI");
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
+
+		io.Fonts->AddFontDefault();
+
+		float baseFontSize = 16.0f;
+		float iconFontSize = baseFontSize * 2.0f / 3.0f; // FontAwesome fonts need to have their sizes reduced by 2.0f/3.0f in order to align correctly
+
+		static constexpr ImWchar iconsRanges[] = { ICON_MIN_FA, ICON_MAX_16_FA, 0 };
+		ImFontConfig iconsConfig;
+		iconsConfig.MergeMode = true;
+		iconsConfig.PixelSnapH = true;
+		iconsConfig.GlyphMinAdvanceX = iconFontSize;
+		io.Fonts->AddFontFromMemoryCompressedTTF(fa_solid_900_compressed_data, fa_solid_900_compressed_size, iconFontSize, &iconsConfig, iconsRanges);
 
 		// Set Up Editor Resources
 		s_IconCamera = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Camera.png").string());

@@ -4,6 +4,7 @@
 #include "Kargono/Core/UUID.h"
 
 #include <sstream>
+#include <string>
 
 namespace Kargono::Events
 {
@@ -223,7 +224,29 @@ namespace Kargono::Events
 		uint32_t m_Count;
 	};
 
+	//============================================================
+	// Log Event Class
+	//============================================================
+	class LogEvent : public Event
+	{
+	public:
+		//==============================
+		// Constructors and Destructors
+		//==============================
+		LogEvent(const char* eventText)
+			: m_EventText(eventText) {}
 
+		//==============================
+		// Getters/Setters
+		//==============================
+
+		std::string GetEventText() const { return m_EventText; }
+
+		virtual EventType GetEventType() const override { return EventType::LogEvent; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
+	private:
+		std::string m_EventText;
+	};
 
 
 }

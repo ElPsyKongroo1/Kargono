@@ -1,6 +1,8 @@
 #include "kgpch.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
+#include "Kargono/Events/ApplicationEvent.h"
+#include "Kargono/Core/Engine.h"
 
 #include "API/Logger/SpdlogBackend.h"
 
@@ -33,5 +35,22 @@ namespace Kargono
 		spdlog::set_default_logger(s_CoreLogger);
 
 		KG_VERIFY(s_CoreLogger, "Logging System");
+	}
+	void Log::GenerateWarningEvent(const char* text)
+	{
+		if (EngineService::IsEngineActive())
+		{
+			Events::LogEvent logEvent{ text };
+			EngineService::OnEvent(&logEvent);
+		}
+	}
+	void Log::GenerateWarningEvent(const char* format, fmt::format_args args)
+	{
+		if (EngineService::IsEngineActive())
+		{
+			Events::LogEvent logEvent{ fmt::vformat(format, args).c_str()};
+			EngineService::OnEvent(&logEvent);
+		}
+
 	}
 }

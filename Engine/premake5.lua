@@ -66,6 +66,7 @@
         "%{IncludeDir.yaml_cpp}",
         --"%{IncludeDir.free_type}",
         "%{IncludeDir.ImGuizmo}",
+        "%{IncludeDir.ImGuiNotify}",
         "%{IncludeDir.VulkanSDK}",
         "%{IncludeDir.OpenALSoft}",
         "%{IncludeDir.dr_wav}",

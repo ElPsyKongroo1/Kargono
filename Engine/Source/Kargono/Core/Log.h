@@ -10,6 +10,13 @@ namespace Kargono
 	{
 	public:
 		static void Init();
+		static void GenerateWarningEvent(const char* format);
+		static void GenerateWarningEvent(const char* format, fmt::format_args args);
+		template <typename... Args>
+		static void GenerateWarningEvent(const char* format, Args&&... args) 
+		{
+			return GenerateWarningEvent(format, fmt::make_format_args(std::forward<Args>(args)...));
+		}
 
 		static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
 

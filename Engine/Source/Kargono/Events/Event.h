@@ -36,7 +36,7 @@ namespace Kargono::Events
 		// Application
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		CleanUpTimers,
-		SkipUpdate, AddExtraUpdate,
+		SkipUpdate, AddExtraUpdate, LogEvent,
 		AppTick, AppUpdate, AppRender, AppClose, AddTickGeneratorUsage, RemoveTickGeneratorUsage,
 		// Assets
 		ManageAsset,
