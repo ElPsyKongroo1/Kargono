@@ -716,7 +716,7 @@ namespace API::EditorUI
 			btmp.insert(location >= index ? location + 1 : location);
 		}
 		m_Breakpoints = std::move(btmp);
-
+		m_TextChanged = true;
 		return result;
 	}
 
@@ -945,6 +945,11 @@ namespace API::EditorUI
 				Copy();
 			else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_C)))
 				Copy();
+			// TODO: Need to finish adding undo properly
+			//else if (alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_UpArrow)))
+			//	ShiftTextUp();
+			//else if (alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_DownArrow)))
+			//	ShiftTextDown();
 			else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_D)))
 				DuplicateLine();
 			else if (!IsReadOnly() && !ctrl && shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Insert)))
@@ -2292,6 +2297,11 @@ namespace API::EditorUI
 		}
 	}
 
+	void EditorUI::TextEditorSpec::ClearUndoBuffer()
+	{
+		m_UndoBuffer.clear();
+	}
+
 	void TextEditorSpec::Copy()
 	{
 		if (HasSelection())
@@ -2445,6 +2455,110 @@ namespace API::EditorUI
 
 		u.m_After = m_State;
 		AddUndo(u);
+	}
+
+	void EditorUI::TextEditorSpec::ShiftTextUp()
+	{
+		// Get the index of the line that should be duplicated
+		Coordinates currentCursorCoord = GetCursorPosition();
+		int currentLineIndex = currentCursorCoord.m_Line;
+
+		// Check for invalid index
+		if (currentLineIndex == k_InvalidIndex)
+		{
+			KG_WARN("Failed to duplicate line in text editor. Invalid index found!");
+			return;
+		}
+
+		// Ensure no out of bounds errors occur
+		if (currentLineIndex >= m_Lines.size())
+		{
+			KG_WARN("Failed to duplicate line in text editor. Line index is greater than the line buffer's size!");
+			return;
+		}
+
+		// Ensure no out of bounds errors occur
+		if (currentLineIndex == 0)
+		{
+			return;
+		}
+
+		// Get the line that should be duplicated
+		UndoRecord u;
+		u.m_Before = m_State;
+		Line& currentLine = m_Lines[currentLineIndex];
+		// Insert line above current location
+		InsertLine(currentLine, currentLineIndex - 1);
+		// Insert a line after the current cursor's line
+		RemoveLine(currentLineIndex + 1);
+
+
+		// Move cursor up one line
+		currentCursorCoord.m_Line--;
+		SetCursorPosition(currentCursorCoord);
+
+		/*u.m_Removed = GetCurrentLineText();
+		u.m_RemovedStart = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));
+		u.m_RemovedEnd = Coordinates(currentCursorCoord.m_Line + 1, GetLineMaxColumn(currentCursorCoord.m_Line + 1));
+
+		u.m_Added = GetCurrentLineText();
+		u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
+		u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));*/
+
+		u.m_After = m_State;
+		//AddUndo(u);
+	}
+
+	void EditorUI::TextEditorSpec::ShiftTextDown()
+	{
+		// Get the index of the line that should be duplicated
+		Coordinates currentCursorCoord = GetCursorPosition();
+		int currentLineIndex = currentCursorCoord.m_Line;
+
+		// Check for invalid index
+		if (currentLineIndex == k_InvalidIndex)
+		{
+			KG_WARN("Failed to duplicate line in text editor. Invalid index found!");
+			return;
+		}
+
+		// Ensure no out of bounds errors occur
+		if (currentLineIndex >= m_Lines.size())
+		{
+			KG_WARN("Failed to duplicate line in text editor. Line index is greater than the line buffer's size!");
+			return;
+		}
+
+		// Ensure no out of bounds errors occur
+		if (currentLineIndex + 1 == m_Lines.size())
+		{
+			return;
+		}
+
+		// Get the line that should be duplicated
+		UndoRecord u;
+		u.m_Before = m_State;
+		Line& currentLine = m_Lines[currentLineIndex];
+		// Insert line above current location
+		InsertLine(currentLine, currentLineIndex + 2);
+		// Insert a line after the current cursor's line
+		RemoveLine(currentLineIndex);
+
+
+		// Move cursor up one line
+		currentCursorCoord.m_Line++;
+		SetCursorPosition(currentCursorCoord);
+
+		/*u.m_Removed = GetCurrentLineText();
+		u.m_RemovedStart = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
+		u.m_RemovedEnd = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));
+
+		u.m_Added = GetCurrentLineText();
+		u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 2, GetLineMaxColumn(currentCursorCoord.m_Line - 2));
+		u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));*/
+
+		u.m_After = m_State;
+		//AddUndo(u);
 	}
 
 	Palette& TextEditorService::GetDefaultColorPalette()

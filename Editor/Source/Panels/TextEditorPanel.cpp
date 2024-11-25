@@ -123,6 +123,7 @@ namespace Kargono::Panels
 					tabItemFlags |= ImGuiTabItemFlags_SetSelected;
 					m_ActiveDocument = iteration;
 					Document& activeDocument = m_AllDocuments.at(m_ActiveDocument);
+					m_TextEditor.ClearUndoBuffer();
 					m_TextEditor.SetText(activeDocument.TextBuffer);
 					m_TextEditor.SetLanguageDefinitionByExtension(activeDocument.FilePath.extension().string());
 					document.SetActive = false;

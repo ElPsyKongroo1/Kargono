@@ -321,6 +321,8 @@ namespace API::EditorUI
 		void Redo(int aSteps = 1);
 		void Save();
 		void DuplicateLine();
+		void ShiftTextUp();
+		void ShiftTextDown();
 		void InsertText(const std::string& aValue);
 		void InsertText(const char* aValue);
 		void SetText(const std::string& aText);
@@ -343,6 +345,7 @@ namespace API::EditorUI
 		void SetTabSize(int aValue);
 		void SetSaveCallback(std::function<void()> saveCallback);
 		void CloseSuggestions();
+		void ClearUndoBuffer();
 
 		//=========================
 		// Query Text Editor Internal State

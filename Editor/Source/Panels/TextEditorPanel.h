@@ -11,6 +11,7 @@ namespace Kargono::Panels
 	struct Document
 	{
 		std::string TextBuffer {};
+		API::EditorUI::UndoBuffer UndoBuffer{};
 		std::filesystem::path FilePath { "" };
 		bool Edited{ false };
 		bool Opened{ false };
