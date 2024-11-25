@@ -40,6 +40,6 @@ namespace Kargono::Panels
 		ImGuiLog m_Log;
 		std::filesystem::path m_LogPathRelative = "log/Kargono.log";
 		Buffer m_Buffer;
-		std::string m_PanelName{ "Log" };
+		FixedString32 m_PanelName{ "Log" };
 	};
 }

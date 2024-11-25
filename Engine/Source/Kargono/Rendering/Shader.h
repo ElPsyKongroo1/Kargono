@@ -15,7 +15,7 @@
 #include <functional>
 #include <tuple>
 
-namespace Kargono::Scenes
+namespace Kargono::ECS
 {
 	struct ShapeComponent;
 	struct TransformComponent;
@@ -42,7 +42,7 @@ namespace Kargono::Rendering
 	{
 		Ref<Shader> Shader;
 		Ref<Texture2D> Texture;
-		Scenes::ShapeComponent* ShapeComponent;
+		ECS::ShapeComponent* ShapeComponent;
 		Ref<DrawCallBuffer> CurrentDrawBuffer;
 		Buffer Buffer;
 		uint32_t Entity;
@@ -144,8 +144,9 @@ namespace Kargono::Rendering
 		const std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>>& GetPreDrawBuffer() const { return m_PreDrawBuffer; }
 		const std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>>& GetPostDrawBuffer() const { return m_PostDrawBuffer; }
 
-		Ref<DrawCallBuffer>& GetCurrentDrawCallBuffer() { return m_CurrentDrawCall; }
-		void SetCurrentDrawCallBufferNull() { m_CurrentDrawCall = nullptr; }
+		Ref<DrawCallBuffer> GetCurrentDrawCallBuffer() { return m_CurrentDrawCall; }
+		void SetCurrentDrawCallBuffer(Ref<DrawCallBuffer> buffer) { m_CurrentDrawCall = buffer; }
+		void ClearCurrentDrawCallBuffer() { m_CurrentDrawCall = nullptr; }
 
 		void SetSpecification(const ShaderSpecification& shaderSpec);
 		void SetInputLayout(const InputBufferLayout& shaderInputLayout);

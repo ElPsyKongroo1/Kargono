@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Kargono/Scenes/Components.h"
-#include "Kargono/Events/ApplicationEvent.h"
+#include "Kargono/ECS/EngineComponents.h"
+#include "Kargono/Events/PhysicsEvent.h"
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/Base.h"
-#include "Kargono/Math/Math.h"
+#include "Kargono/Physics/Physics2DCommon.h"
 
 #include "API/Physics/Box2DAPI.h"
 
@@ -65,6 +65,19 @@ namespace Kargono::Physics
 		Math::vec2 Gravity = { 0.0f, 0.0f };
 	};
 
+	// This class captures the closest hit shape
+	class RayCastCallback : public b2RayCastCallback
+	{
+	public:
+		virtual float ReportFixture(b2Fixture* fixture, const b2Vec2& point,
+			const b2Vec2& normal, float fraction) override;
+
+		b2Fixture* m_Fixture { nullptr };
+		b2Vec2 m_ContactPoint;
+		b2Vec2 m_NormalVector;
+		float m_Fraction;
+	};
+
 	//============================================================
 	// Physics 2D World Class
 	//============================================================
@@ -86,18 +99,6 @@ namespace Kargono::Physics
 		//		underlying physics world in m_PhysicsWorld
 		~Physics2DWorld();
 
-		//=========================
-		// LifeCycle Functions
-		//=========================
-		// This function iterates the position and velocity of current physics
-		//		world objects through the Step function and updates the transforms
-		//		of all entities in the scene that involve physics.
-		void OnUpdate(Timestep ts);
-		//=========================
-		// Update Underlying Physics World
-		//=========================
-		// This function simply sets the gravity settings of the active physics world.
-		void SetGravity(const Math::vec2& gravity);
 	private:
 		// Underlying physics world implementation
 		Scope<b2World> m_PhysicsWorld = nullptr;
@@ -107,5 +108,42 @@ namespace Kargono::Physics
 		// This contact listener moves physics collision events into the event pipeline
 		//		for further processing.
 		Scope<ContactListener> m_ContactListener = nullptr;
+	private:
+		friend class Physics2DService;
+	};
+
+	class Physics2DService
+	{
+	public:
+		//=========================
+		// Lifecycle Functions
+		//=========================
+		static void Init(Scenes::Scene* scene, PhysicsSpecification& physicsSpec);
+		static void Terminate();
+
+		//=========================
+		// On Event Functionality
+		//=========================
+		static void OnUpdate(Timestep ts);
+
+		//=========================
+		// Interact with Physics2DWorld
+		//=========================
+		static RaycastResult Raycast(Math::vec2 startPoint, Math::vec2 endPoint);
+
+		//=========================
+		// Manage Active Physics2DWorld
+		//=========================
+		static void SetActiveGravity(const Math::vec2& gravity);
+
+		//=========================
+		// Getters/Setters
+		//=========================
+		static Ref<Physics2DWorld> GetActivePhysics2DWorld()
+		{
+			return s_ActivePhysicsWorld;
+		}
+	private:
+		static inline Ref<Physics2DWorld> s_ActivePhysicsWorld { nullptr };
 	};
 }

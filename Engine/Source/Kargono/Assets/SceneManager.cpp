@@ -1,89 +1,152 @@
 #include "kgpch.h"
 
-#include "Kargono/Assets/AssetManager.h"
-#include "Kargono/Projects/Project.h"
-#include "Kargono/Utility/FileSystem.h"
-#include "Kargono/Scenes/Entity.h"
+#include "Kargono/Assets/AssetService.h"
+#include "Kargono/Assets/SceneManager.h"
 
-#include "API/Serialization/yamlcppAPI.h"
+#include "Kargono/ECS/ProjectComponent.h"
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/ECS/Entity.h"
 
 namespace Kargono::Utility
 {
-	static bool SerializeEntity(YAML::Emitter& out, Scenes::Entity entity)
+
+	static void SerializeWrappedVarType(YAML::Emitter& out, WrappedVarType type, const std::string& name, void* dataSource)
 	{
-		KG_ASSERT(entity.HasComponent<Scenes::IDComponent>(), "Entity does not have a component");
+		switch (type)
+		{
+		case WrappedVarType::Integer32: 
+			out << YAML::Key << name << YAML::Value << *(int32_t*)dataSource;
+			return;
+		case WrappedVarType::UInteger16:
+			out << YAML::Key << name << YAML::Value << *(uint16_t*)dataSource;
+			return;
+		case WrappedVarType::UInteger32:
+			out << YAML::Key << name << YAML::Value << *(uint32_t*)dataSource;
+			return;
+		case WrappedVarType::UInteger64:
+			out << YAML::Key << name << YAML::Value << *(uint64_t*)dataSource;
+			return;
+		case WrappedVarType::Vector3:
+			out << YAML::Key << name << YAML::Value << *(Math::vec3*)dataSource;
+			return;
+		case WrappedVarType::String:
+			out << YAML::Key << name << YAML::Value << *(std::string*)dataSource;
+			return;
+		case WrappedVarType::Bool:
+			out << YAML::Key << name << YAML::Value << *(bool*)dataSource;
+			return;
+		case WrappedVarType::Float:
+			out << YAML::Key << name << YAML::Value << *(float*)dataSource;
+			return;
+		case WrappedVarType::None:
+		case WrappedVarType::Void:
+			KG_ERROR("Invalid type provided while serializing data");
+			return;
+		}
+		KG_ERROR("Unknown Type of WrappedVariableType.");
+		return;
+	}
+
+	static void DeserializeWrappedVarType(YAML::Node& componentNode, WrappedVarType type, const std::string& name, void* destination)
+	{
+		switch (type)
+		{
+		case WrappedVarType::Integer32:
+			*(int32_t*)destination = componentNode[name].as<int32_t>();
+			return;
+		case WrappedVarType::UInteger16:
+			*(uint16_t*)destination = (uint16_t)componentNode[name].as<uint32_t>();
+			return;
+		case WrappedVarType::UInteger32:
+			*(uint32_t*)destination = componentNode[name].as<uint32_t>();
+			return;
+		case WrappedVarType::UInteger64:
+			*(uint64_t*)destination = componentNode[name].as<uint64_t>();
+			return;
+		case WrappedVarType::Vector3:
+			*(Math::vec3*)destination = componentNode[name].as<Math::vec3>();
+			return;
+		case WrappedVarType::String:
+			*(std::string*)destination = componentNode[name].as<std::string>();
+			return;
+		case WrappedVarType::Bool:
+			*(bool*)destination = componentNode[name].as<bool>();
+			return;
+		case WrappedVarType::Float:
+			*(float*)destination = componentNode[name].as<float>();
+			return;
+		case WrappedVarType::None:
+		case WrappedVarType::Void:
+			KG_ERROR("Invalid type provided while serializing data");
+			return;
+		}
+		KG_ERROR("Unknown Type of WrappedVariableType.");
+		return;
+	}
+
+	static bool SerializeEntity(YAML::Emitter& out, ECS::Entity entity)
+	{
+		KG_ASSERT(entity.HasComponent<ECS::IDComponent>(), "Entity does not have a component");
 		out << YAML::BeginMap; // Entity Map
 		out << YAML::Key << "Entity" << YAML::Value << static_cast<uint64_t>(entity.GetUUID());
 
-		if (entity.HasComponent<Scenes::TagComponent>())
+		if (entity.HasComponent<ECS::TagComponent>())
 		{
 			out << YAML::Key << "TagComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& tag = entity.GetComponent<Scenes::TagComponent>().Tag;
-			out << YAML::Key << "Tag" << YAML::Value << tag;
+			ECS::TagComponent& tag = entity.GetComponent<ECS::TagComponent>();
+			out << YAML::Key << "Tag" << YAML::Value << tag.Tag;
+			out << YAML::Key << "Group" << YAML::Value << tag.Group;
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::ClassInstanceComponent>())
+		if (entity.HasComponent<ECS::OnUpdateComponent>())
 		{
-			out << YAML::Key << "ClassInstanceComponent";
-			Scenes::ClassInstanceComponent& comp = entity.GetComponent<Scenes::ClassInstanceComponent>();
+			out << YAML::Key << "OnUpdateComponent";
 			out << YAML::BeginMap; // Component Map
-			out << YAML::Key << "ClassHandle" << YAML::Value << static_cast<uint64_t>(comp.ClassHandle);
-			if (comp.ClassHandle != Assets::EmptyHandle)
-			{
-				Ref<Scenes::EntityClass> entityClass = Assets::AssetManager::GetEntityClass(comp.ClassHandle);
-				if (!entityClass)
-				{
-					KG_ERROR("Attempt to serialize ClassInstanceComponent without valid entityClass");
-					return false;
-				}
-				if (entityClass->GetFields().size() != comp.Fields.size())
-				{
-					KG_ERROR("Attempt to serialize ClassInstanceComponent where class and instance fields are unaligned");
-					return false;
-				}
-
-				out << YAML::Key << "InstanceFields" << YAML::Value << YAML::BeginSeq; // Begin Fields
-				uint32_t iteration{ 0 };
-				for (auto& fieldValue : comp.Fields)
-				{
-					const Scenes::ClassField& fieldType = entityClass->GetFields().at(iteration);
-					if (fieldType.Type != fieldValue->Type())
-					{
-						KG_ERROR("Attempt to serialize ClassInstanceComponent with incorrect types");
-						return false;
-					}
-					out << YAML::BeginMap; // Begin Field Map
-					out << YAML::Key << "Name" << YAML::Value << fieldType.Name;
-					out << YAML::Key << "Type" << YAML::Value << Utility::WrappedVarTypeToString(fieldType.Type);
-					SerializeWrappedVariableData(fieldValue, out);
-					out << YAML::EndMap; // End Field Map
-					iteration++;
-				}
-				out << YAML::EndSeq; // End Fields
-			}
-			
+			ECS::OnUpdateComponent& component = entity.GetComponent<ECS::OnUpdateComponent>();
+			out << YAML::Key << "OnUpdateHandle" << YAML::Value << static_cast<uint64_t>(component.OnUpdateScriptHandle);
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::TransformComponent>())
+		if (entity.HasComponent<ECS::OnCreateComponent>())
+		{
+			out << YAML::Key << "OnCreateComponent";
+			out << YAML::BeginMap; // Component Map
+			ECS::OnCreateComponent& component = entity.GetComponent<ECS::OnCreateComponent>();
+			out << YAML::Key << "OnCreateHandle" << YAML::Value << static_cast<uint64_t>(component.OnCreateScriptHandle);
+			out << YAML::EndMap; // Component Map
+		}
+
+		if (entity.HasComponent<ECS::TransformComponent>())
 		{
 			out << YAML::Key << "TransformComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& tc = entity.GetComponent<Scenes::TransformComponent>();
+			auto& tc = entity.GetComponent<ECS::TransformComponent>();
 			out << YAML::Key << "Translation" << YAML::Value << tc.Translation;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.Rotation;
 			out << YAML::Key << "Scale" << YAML::Value << tc.Scale;
-
 			out << YAML::EndMap; // Component Map
 		}
-		if (entity.HasComponent<Scenes::CameraComponent>())
+
+		if (entity.HasComponent<ECS::AIStateComponent>())
+		{
+			out << YAML::Key << "AIStateComponent";
+			out << YAML::BeginMap; // Component Map
+			ECS::AIStateComponent& aiStateComp = entity.GetComponent<ECS::AIStateComponent>();
+			out << YAML::Key << "CurrentState" << YAML::Value << static_cast<uint64_t>(aiStateComp.CurrentStateHandle);
+			out << YAML::Key << "PreviousState" << YAML::Value << static_cast<uint64_t>(aiStateComp.PreviousStateHandle);
+			out << YAML::Key << "GlobalState" << YAML::Value << static_cast<uint64_t>(aiStateComp.GlobalStateHandle);
+			out << YAML::EndMap; // Component Map
+		}
+
+
+		if (entity.HasComponent<ECS::CameraComponent>())
 		{
 			out << YAML::Key << "CameraComponent";
 			out << YAML::BeginMap; // Component Map
 
-			auto& cameraComponent = entity.GetComponent<Scenes::CameraComponent>();
+			auto& cameraComponent = entity.GetComponent<ECS::CameraComponent>();
 			auto& camera = cameraComponent.Camera;
 
 			out << YAML::Key << "Camera" << YAML::Value;
@@ -104,11 +167,11 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::ShapeComponent>())
+		if (entity.HasComponent<ECS::ShapeComponent>())
 		{
 			out << YAML::Key << "ShapeComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& shapeComponent = entity.GetComponent<Scenes::ShapeComponent>();
+			auto& shapeComponent = entity.GetComponent<ECS::ShapeComponent>();
 			out << YAML::Key << "CurrentShape" << YAML::Value << Utility::ShapeTypeToString(shapeComponent.CurrentShape);
 			if (shapeComponent.VertexColors)
 			{
@@ -149,41 +212,67 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::Rigidbody2DComponent>())
+		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
 		{
 			out << YAML::Key << "Rigidbody2DComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& rb2dComponent = entity.GetComponent<Scenes::Rigidbody2DComponent>();
+			auto& rb2dComponent = entity.GetComponent<ECS::Rigidbody2DComponent>();
 			out << YAML::Key << "BodyType" << YAML::Value << Utility::RigidBody2DBodyTypeToString(rb2dComponent.Type);
 			out << YAML::Key << "FixedRotation" << YAML::Value << rb2dComponent.FixedRotation;
+			out << YAML::Key << "OnCollisionStartHandle" << YAML::Value << static_cast<uint64_t>(rb2dComponent.OnCollisionStartScriptHandle);
+			out << YAML::Key << "OnCollisionEndHandle" << YAML::Value << static_cast<uint64_t>(rb2dComponent.OnCollisionEndScriptHandle);
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::BoxCollider2DComponent>())
+		if (entity.HasComponent<ECS::BoxCollider2DComponent>())
 		{
 			out << YAML::Key << "BoxCollider2DComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& bc2dComponent = entity.GetComponent<Scenes::BoxCollider2DComponent>();
+			auto& bc2dComponent = entity.GetComponent<ECS::BoxCollider2DComponent>();
 			out << YAML::Key << "Offset" << YAML::Value << bc2dComponent.Offset;
 			out << YAML::Key << "Size" << YAML::Value << bc2dComponent.Size;
 			out << YAML::Key << "Density" << YAML::Value << bc2dComponent.Density;
 			out << YAML::Key << "Friction" << YAML::Value << bc2dComponent.Friction;
 			out << YAML::Key << "Restitution" << YAML::Value << bc2dComponent.Restitution;
 			out << YAML::Key << "RestitutionThreshold" << YAML::Value << bc2dComponent.RestitutionThreshold;
+			out << YAML::Key << "IsSensor" << YAML::Value << bc2dComponent.IsSensor;
 			out << YAML::EndMap; // Component Map
 		}
 
-		if (entity.HasComponent<Scenes::CircleCollider2DComponent>())
+		if (entity.HasComponent<ECS::CircleCollider2DComponent>())
 		{
 			out << YAML::Key << "CircleCollider2DComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& cc2dComponent = entity.GetComponent<Scenes::CircleCollider2DComponent>();
+			auto& cc2dComponent = entity.GetComponent<ECS::CircleCollider2DComponent>();
 			out << YAML::Key << "Offset" << YAML::Value << cc2dComponent.Offset;
 			out << YAML::Key << "Radius" << YAML::Value << cc2dComponent.Radius;
 			out << YAML::Key << "Density" << YAML::Value << cc2dComponent.Density;
 			out << YAML::Key << "Friction" << YAML::Value << cc2dComponent.Friction;
 			out << YAML::Key << "Restitution" << YAML::Value << cc2dComponent.Restitution;
 			out << YAML::Key << "RestitutionThreshold" << YAML::Value << cc2dComponent.RestitutionThreshold;
+			out << YAML::Key << "IsSensor" << YAML::Value << cc2dComponent.IsSensor;
+			out << YAML::EndMap; // Component Map
+		}
+
+		// Handle all project components
+		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+		{
+			if (!entity.HasProjectComponentData(handle))
+			{
+				continue;
+			}
+			Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(handle);
+			uint8_t* componentRef = (uint8_t*)entity.GetProjectComponentData(handle);
+
+			out << YAML::Key << projectComponent->m_Name + "Component";
+			out << YAML::BeginMap; // Component Map
+			for (size_t iteration{ 0 }; iteration < projectComponent->m_DataLocations.size(); iteration++)
+			{
+				SerializeWrappedVarType(out, 
+					projectComponent->m_DataTypes.at(iteration), 
+					projectComponent->m_DataNames.at(iteration), 
+					componentRef + projectComponent->m_DataLocations.at(iteration));
+			}
 			out << YAML::EndMap; // Component Map
 		}
 
@@ -195,113 +284,33 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
-	std::unordered_map<AssetHandle, Assets::Asset> AssetManager::s_SceneRegistry {};
-
-	void AssetManager::DeserializeSceneRegistry()
+	void Assets::SceneManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
-		// Clear current registry and open registry in current project 
-		s_SceneRegistry.clear();
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize from!");
-		const auto& sceneRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scenes/SceneRegistry.kgreg";
+		// Create Temporary Scene
+		Ref<Scenes::Scene> temporaryScene = CreateRef<Scenes::Scene>();
 
-		if (!std::filesystem::exists(sceneRegistryLocation))
-		{
-			KG_WARN("No .kgregistry file exists in project path!");
-			return;
-		}
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(sceneRegistryLocation.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", sceneRegistryLocation.string(), e.what());
-			return;
-		}
+		// Save Binary into File
+		SerializeAsset(temporaryScene, assetPath);
 
-		// Opening registry node 
-		if (!data["Registry"]) { return; }
-
-		std::string registryName = data["Registry"].as<std::string>();
-		KG_INFO("Deserializing Scene Registry");
-
-		// Opening all assets 
-		auto assets = data["Assets"];
-		if (assets)
-		{
-			for (auto asset : assets)
-			{
-				Assets::Asset newAsset{};
-				newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
-
-				// Retrieving metadata for asset 
-				auto metadata = asset["MetaData"];
-				newAsset.Data.CheckSum = metadata["CheckSum"].as<std::string>();
-				newAsset.Data.IntermediateLocation = metadata["IntermediateLocation"].as<std::string>();
-				newAsset.Data.Type = Utility::StringToAssetType(metadata["AssetType"].as<std::string>());
-
-				// Retrieving shader specific metadata 
-				if (newAsset.Data.Type == Assets::Scene)
-				{
-					Ref<Assets::SceneMetaData> sceneMetaData = CreateRef<Assets::SceneMetaData>();
-					newAsset.Data.SpecificFileData = sceneMetaData;
-				}
-
-				// Add asset to in memory registry 
-				s_SceneRegistry.insert({ newAsset.Handle, newAsset });
-			}
-		}
+		// Load data into In-Memory Metadata object
+		Ref<Assets::SceneMetaData> metadata = CreateRef<Assets::SceneMetaData>();
+		asset.Data.SpecificFileData = metadata;
 	}
-
-	void AssetManager::SerializeSceneRegistry()
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project to serialize to!");
-		const auto& sceneRegistryLocation = Projects::ProjectService::GetActiveAssetDirectory() / "Scenes/SceneRegistry.kgreg";
-		YAML::Emitter out;
-
-		out << YAML::BeginMap;
-		out << YAML::Key << "Registry" << YAML::Value << "Scene";
-		out << YAML::Key << "Assets" << YAML::Value << YAML::BeginSeq;
-
-		// Asset
-		for (auto& [handle, asset] : s_SceneRegistry)
-		{
-			out << YAML::BeginMap; // Asset Map
-			out << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
-			out << YAML::Key << "MetaData" << YAML::Value;
-			out << YAML::BeginMap; // MetaData Map
-			out << YAML::Key << "CheckSum" << YAML::Value << asset.Data.CheckSum;
-			out << YAML::Key << "IntermediateLocation" << YAML::Value << asset.Data.IntermediateLocation.string();
-			out << YAML::Key << "AssetType" << YAML::Value << Utility::AssetTypeToString(asset.Data.Type);
-
-			out << YAML::EndMap; // MetaData Map
-			out << YAML::EndMap; // Asset Map
-		}
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
-		Utility::FileSystem::CreateNewDirectory(sceneRegistryLocation.parent_path());
-
-		std::ofstream fout(sceneRegistryLocation);
-		fout << out.c_str();
-	}
-
-	void AssetManager::SerializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath)
+	void SceneManager::SerializeAsset(Ref<Scenes::Scene> assetReference, const std::filesystem::path& assetPath)
 	{
 		bool submitScene = true;
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
 		{ // Physics
 			out << YAML::Key << "Physics" << YAML::BeginMap; // Physics Map
-			out << YAML::Key << "Gravity" << YAML::Value << scene->m_PhysicsSpecification.Gravity;
+			out << YAML::Key << "Gravity" << YAML::Value << assetReference->m_PhysicsSpecification.Gravity;
 			out << YAML::EndMap; // Physics Maps
 		}
 
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-		scene->m_Registry.each([&](auto entityID)
+		assetReference->m_EntityRegistry.m_EnTTRegistry.each([&](auto entityID)
 		{
-			Scenes::Entity entity = { entityID, scene.get() };
+			ECS::Entity entity = { entityID, &assetReference->m_EntityRegistry };
 			if (!entity) { return; }
 
 			bool success = Utility::SerializeEntity(out, entity);
@@ -314,57 +323,31 @@ namespace Kargono::Assets
 		out << YAML::EndMap; // Start of File Map
 		if (submitScene)
 		{
-			std::ofstream fout(filepath);
+			std::ofstream fout(assetPath);
 			fout << out.c_str();
-			KG_INFO("Successfully Serialized Scene at {}", filepath);
+			KG_INFO("Successfully Serialized Scene at {}", assetPath.string());
 		}
 		else
 		{
 			KG_WARN("Failed to Serialize Scene");
 		}
-		
 	}
-
-	bool AssetManager::CheckSceneExists(const std::string& sceneName)
+	Ref<Scenes::Scene> SceneManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(sceneName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		for (const auto& [handle, asset] : s_SceneRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	bool AssetManager::DeserializeScene(Ref<Scenes::Scene> scene, const std::filesystem::path& filepath)
-	{
+		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
 		YAML::Node data;
 		try
 		{
-			data = YAML::LoadFile(filepath.string());
+			data = YAML::LoadFile(assetPath.string());
 		}
 		catch (YAML::ParserException e)
 		{
-			KG_ERROR("Failed to load .kgscene file '{0}'\n     {1}", filepath, e.what());
-			return false;
+			KG_WARN("Failed to load .kgscene file '{0}'\n     {1}", assetPath, e.what());
+			return nullptr;
 		}
 
-		KG_INFO("Deserializing scene");
-
 		auto physics = data["Physics"];
-		scene->GetPhysicsSpecification().Gravity = physics["Gravity"].as<Math::vec2>();
+		newScene->GetPhysicsSpecification().Gravity = physics["Gravity"].as<Math::vec2>();
 
 		auto entities = data["Entities"];
 		if (entities)
@@ -374,52 +357,76 @@ namespace Kargono::Assets
 				uint64_t uuid = entity["Entity"].as<uint64_t>();
 
 				std::string name;
-				auto tagComponent = entity["TagComponent"];
-				if (tagComponent) { name = tagComponent["Tag"].as<std::string>(); }
-				//KG_CORE_TRACE("Deserialize entity with ID = {0}, name = {1}", uuid, name);
+				YAML::Node tagNode = entity["TagComponent"];
+				if (tagNode) 
+				{ 
+					name = tagNode["Tag"].as<std::string>(); 
+				}
 
-				Scenes::Entity deserializedEntity = scene->CreateEntityWithUUID(uuid, name);
+				ECS::Entity deserializedEntity = newScene->CreateEntityWithUUID(uuid, name);
 
-				auto transformComponent = entity["TransformComponent"];
+				ECS::TagComponent& tagComp = deserializedEntity.GetComponent<ECS::TagComponent>();
+				tagComp.Group = tagNode["Group"].as<std::string>();
+
+				YAML::Node transformComponent = entity["TransformComponent"];
 				if (transformComponent)
 				{
-					auto& tc = deserializedEntity.GetComponent<Scenes::TransformComponent>();
+					auto& tc = deserializedEntity.GetComponent<ECS::TransformComponent>();
 					tc.Translation = transformComponent["Translation"].as<Math::vec3>();
 					tc.Rotation = transformComponent["Rotation"].as<Math::vec3>();
 					tc.Scale = transformComponent["Scale"].as<Math::vec3>();
 				}
 
-				auto classInstanceComponent = entity["ClassInstanceComponent"];
-				if (classInstanceComponent)
+				YAML::Node onUpdateNode = entity["OnUpdateComponent"];
+				if (onUpdateNode)
 				{
-					auto& cInstComp = deserializedEntity.AddComponent<Scenes::ClassInstanceComponent>();
-					cInstComp.ClassHandle = classInstanceComponent["ClassHandle"].as<uint64_t>();
-					if (cInstComp.ClassHandle != Assets::EmptyHandle)
-					{
-						if (!s_EntityClassRegistry.contains(cInstComp.ClassHandle))
-						{
-							KG_ERROR("Could not find entity class for class instance component");
-							return false;
-						}
-						cInstComp.ClassReference = GetEntityClass(cInstComp.ClassHandle);
+					ECS::OnUpdateComponent& component = deserializedEntity.AddComponent<ECS::OnUpdateComponent>();
+					component.OnUpdateScriptHandle = onUpdateNode["OnUpdateHandle"].as<uint64_t>();
+					component.OnUpdateScript = Assets::AssetService::GetScript(component.OnUpdateScriptHandle);
+				}
 
-						auto instanceFields = classInstanceComponent["InstanceFields"];
-						if (instanceFields)
-						{
-							for (auto field : instanceFields)
-							{
-								WrappedVarType type = Utility::StringToWrappedVarType(field["Type"].as<std::string>());
-								Ref<WrappedVariable> newField = Utility::DeserializeWrappedVariableData(type, field);
-								cInstComp.Fields.push_back(newField);
-							}
-						}
+				YAML::Node aiStateNode = entity["AIStateComponent"];
+				if (aiStateNode)
+				{
+					ECS::AIStateComponent& component = deserializedEntity.AddComponent<ECS::AIStateComponent>();
+
+					// Deserialize current state
+					component.CurrentStateHandle = aiStateNode["CurrentState"].as<uint64_t>();
+					component.CurrentStateReference = Assets::AssetService::GetAIState(component.CurrentStateHandle);
+					if (component.CurrentStateHandle != Assets::EmptyHandle && !component.CurrentStateReference)
+					{
+						KG_WARN("Valid handle was found, however, could not retrieve a valid reference to current AI state");
 					}
+
+					// Deserialize previous state
+					component.PreviousStateHandle = aiStateNode["PreviousState"].as<uint64_t>();
+					component.PreviousStateReference = Assets::AssetService::GetAIState(component.PreviousStateHandle);
+					if (component.PreviousStateHandle != Assets::EmptyHandle && !component.PreviousStateReference)
+					{
+						KG_WARN("Valid handle was found, however, could not retrieve a valid reference for previous AI state");
+					}
+
+					// Deserialize global state
+					component.GlobalStateHandle = aiStateNode["GlobalState"].as<uint64_t>();
+					component.GlobalStateReference = Assets::AssetService::GetAIState(component.GlobalStateHandle);
+					if (component.GlobalStateHandle != Assets::EmptyHandle && !component.GlobalStateReference)
+					{
+						KG_WARN("Valid handle was found, however, could not retrieve a valid reference to global AI State");
+					}
+				}
+
+				YAML::Node onCreateNode = entity["OnCreateComponent"];
+				if (onCreateNode)
+				{
+					ECS::OnCreateComponent& component = deserializedEntity.AddComponent<ECS::OnCreateComponent>();
+					component.OnCreateScriptHandle = onCreateNode["OnCreateHandle"].as<uint64_t>();
+					component.OnCreateScript = Assets::AssetService::GetScript(component.OnCreateScriptHandle);
 				}
 
 				auto cameraComponent = entity["CameraComponent"];
 				if (cameraComponent)
 				{
-					auto& cc = deserializedEntity.AddComponent<Scenes::CameraComponent>();
+					auto& cc = deserializedEntity.AddComponent<ECS::CameraComponent>();
 
 					const auto& cameraProps = cameraComponent["Camera"];
 
@@ -438,7 +445,7 @@ namespace Kargono::Assets
 				auto shapeComponent = entity["ShapeComponent"];
 				if (shapeComponent)
 				{
-					auto& sc = deserializedEntity.AddComponent<Scenes::ShapeComponent>();
+					auto& sc = deserializedEntity.AddComponent<ECS::ShapeComponent>();
 					sc.CurrentShape = Utility::StringToShapeType(shapeComponent["CurrentShape"].as<std::string>());
 
 					if (shapeComponent["VertexColors"])
@@ -454,14 +461,14 @@ namespace Kargono::Assets
 					if (shapeComponent["TextureHandle"])
 					{
 						AssetHandle textureHandle = shapeComponent["TextureHandle"].as<uint64_t>();
-						sc.Texture = AssetManager::GetTexture(textureHandle);
+						sc.Texture = AssetService::GetTexture2D(textureHandle);
 						sc.TextureHandle = textureHandle;
 					}
 
 					if (shapeComponent["ShaderHandle"])
 					{
 						AssetHandle shaderHandle = shapeComponent["ShaderHandle"].as<uint64_t>();
-						sc.Shader = AssetManager::GetShader(shaderHandle);
+						sc.Shader = AssetService::GetShader(shaderHandle);
 						if (!sc.Shader)
 						{
 							auto shaderSpecificationNode = shapeComponent["ShaderSpecification"];
@@ -474,7 +481,7 @@ namespace Kargono::Assets
 							shaderSpec.TextureInput = Utility::StringToTextureInputType(shaderSpecificationNode["TextureInput"].as<std::string>());
 							shaderSpec.DrawOutline = shaderSpecificationNode["DrawOutline"].as<bool>();
 							shaderSpec.RenderType = Utility::StringToRenderingType(shaderSpecificationNode["RenderType"].as<std::string>());
-							auto [newHandle, newShader] = AssetManager::GetShader(shaderSpec);
+							auto [newHandle, newShader] = AssetService::GetShader(shaderSpec);
 							shaderHandle = newHandle;
 							sc.Shader = newShader;
 						}
@@ -505,156 +512,172 @@ namespace Kargono::Assets
 				auto rigidbody2DComponent = entity["Rigidbody2DComponent"];
 				if (rigidbody2DComponent)
 				{
-					auto& rb2d = deserializedEntity.AddComponent<Scenes::Rigidbody2DComponent>();
+					auto& rb2d = deserializedEntity.AddComponent<ECS::Rigidbody2DComponent>();
 					rb2d.Type = Utility::StringToRigidBody2DBodyType(rigidbody2DComponent["BodyType"].as<std::string>());
 					rb2d.FixedRotation = rigidbody2DComponent["FixedRotation"].as<bool>();
+
+					// Deserialize on collision scripts
+					rb2d.OnCollisionStartScriptHandle = rigidbody2DComponent["OnCollisionStartHandle"].as<uint64_t>();
+					rb2d.OnCollisionStartScript = Assets::AssetService::GetScript(rb2d.OnCollisionStartScriptHandle);
+					rb2d.OnCollisionEndScriptHandle = rigidbody2DComponent["OnCollisionEndHandle"].as<uint64_t>();
+					rb2d.OnCollisionEndScript = Assets::AssetService::GetScript(rb2d.OnCollisionEndScriptHandle);
 				}
 
 				auto boxCollider2DComponent = entity["BoxCollider2DComponent"];
 				if (boxCollider2DComponent)
 				{
-					auto& bc2d = deserializedEntity.AddComponent<Scenes::BoxCollider2DComponent>();
+					auto& bc2d = deserializedEntity.AddComponent<ECS::BoxCollider2DComponent>();
 					bc2d.Offset = boxCollider2DComponent["Offset"].as<Math::vec2>();
 					bc2d.Size = boxCollider2DComponent["Size"].as<Math::vec2>();
 					bc2d.Density = boxCollider2DComponent["Density"].as<float>();
 					bc2d.Friction = boxCollider2DComponent["Friction"].as<float>();
 					bc2d.Restitution = boxCollider2DComponent["Restitution"].as<float>();
 					bc2d.RestitutionThreshold = boxCollider2DComponent["RestitutionThreshold"].as<float>();
+					bc2d.IsSensor = boxCollider2DComponent["IsSensor"].as<bool>();
 				}
 
 				auto circleCollider2DComponent = entity["CircleCollider2DComponent"];
 				if (circleCollider2DComponent)
 				{
-					auto& cc2d = deserializedEntity.AddComponent<Scenes::CircleCollider2DComponent>();
+					auto& cc2d = deserializedEntity.AddComponent<ECS::CircleCollider2DComponent>();
 					cc2d.Offset = circleCollider2DComponent["Offset"].as<Math::vec2>();
 					cc2d.Radius = circleCollider2DComponent["Radius"].as<float>();
 					cc2d.Density = circleCollider2DComponent["Density"].as<float>();
 					cc2d.Friction = circleCollider2DComponent["Friction"].as<float>();
 					cc2d.Restitution = circleCollider2DComponent["Restitution"].as<float>();
 					cc2d.RestitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
+					cc2d.IsSensor = circleCollider2DComponent["IsSensor"].as<bool>();
+				}
+
+				// Handle all project components
+				for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+				{
+					Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(handle);
+					KG_ASSERT(projectComponent);
+
+					YAML::Node projectComponentNode = entity[projectComponent->m_Name + "Component"];
+					if (!projectComponentNode)
+					{
+						continue;
+					}
+					// Create and get project component
+					if (!deserializedEntity.HasProjectComponentData(handle))
+					{
+						deserializedEntity.AddProjectComponentData(handle);
+					}
+					uint8_t* componentRef = (uint8_t*)deserializedEntity.GetProjectComponentData(handle);
+
+					// Load in component data from disk
+					for (size_t iteration{ 0 }; iteration < projectComponent->m_DataLocations.size(); iteration++)
+					{
+						Utility::DeserializeWrappedVarType(projectComponentNode,
+							projectComponent->m_DataTypes.at(iteration),
+							projectComponent->m_DataNames.at(iteration),
+							componentRef + projectComponent->m_DataLocations.at(iteration));
+					}
 				}
 			}
 		}
-		return true;
 
-	}
-
-	AssetHandle AssetManager::CreateNewScene(const std::string& sceneName)
-	{
-		// Create Checksum
-		const std::string currentCheckSum = Utility::FileSystem::ChecksumFromString(sceneName);
-
-		if (currentCheckSum.empty())
-		{
-			KG_ERROR("Failed to generate checksum from file!");
-			return {};
-		}
-
-		// Compare currentChecksum to registered assets
-		for (const auto& [handle, asset] : s_SceneRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				KG_INFO("Attempt to instantiate duplicate font asset");
-				return handle;
-			}
-		}
-
-		// Create New Asset/Handle
-		AssetHandle newHandle{};
-		Assets::Asset newAsset{};
-		newAsset.Handle = newHandle;
-
-		// Create File
-		CreateSceneFile(sceneName, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Scene
-		s_SceneRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
-		SerializeSceneRegistry(); // Update Registry File on Disk
-
-		return newHandle;
-	}
-
-	void AssetManager::SaveScene(AssetHandle sceneHandle, Ref<Scenes::Scene> scene)
-	{
-		if (!s_SceneRegistry.contains(sceneHandle))
-		{
-			KG_ERROR("Attempt to save scene that does not exist in registry");
-			return;
-		}
-		Assets::Asset sceneAsset = s_SceneRegistry[sceneHandle];
-		SerializeScene(scene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.IntermediateLocation).string());
-	}
-
-	Ref<Scenes::Scene> AssetManager::GetScene(const AssetHandle& handle)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retreiving scene!");
-
-		if (s_SceneRegistry.contains(handle))
-		{
-			auto asset = s_SceneRegistry[handle];
-			return InstantiateScene(asset);
-		}
-
-		KG_ERROR("No scene is associated with provided handle!");
-		return nullptr;
-	}
-	std::tuple<AssetHandle, Ref<Scenes::Scene>> AssetManager::GetScene(const std::filesystem::path& filepath)
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
-
-		std::filesystem::path scenePath {};
-
-		if (Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), filepath))
-		{
-			scenePath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), filepath);
-		}
-		else
-		{
-			scenePath = filepath;
-		}
-
-		for (auto& [assetHandle, asset] : s_SceneRegistry)
-		{
-			if (asset.Data.IntermediateLocation.compare(scenePath) == 0)
-			{
-				return std::make_tuple(assetHandle, InstantiateScene(asset));
-			}
-		}
-		// Return empty scene if scene does not exist
-		KG_WARN("No Scene Associated with provided handle. Returned new empty scene");
-		AssetHandle newHandle = CreateNewScene(filepath.stem().string());
-		return std::make_tuple(newHandle, GetScene(newHandle));
-	}
-
-	Ref<Scenes::Scene> AssetManager::InstantiateScene(const Assets::Asset& sceneAsset)
-	{
-		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
-		DeserializeScene(newScene, (Projects::ProjectService::GetActiveAssetDirectory() / sceneAsset.Data.IntermediateLocation).string());
 		return newScene;
 	}
-
-
-	void AssetManager::ClearSceneRegistry()
+	bool SceneManager::RemoveScript(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle scriptHandle)
 	{
-		s_SceneRegistry.clear();
+		bool sceneModified{ false };
+		// Handle UI level function pointers
+		// OnUpdate
+		auto onUpdateView = sceneRef->GetAllEntitiesWith<ECS::OnUpdateComponent>();
+		for (entt::entity enttEntity : onUpdateView)
+		{
+			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::OnUpdateComponent& component = currentEntity.GetComponent<ECS::OnUpdateComponent>();
+			if (component.OnUpdateScriptHandle == scriptHandle)
+			{
+				component.OnUpdateScriptHandle = Assets::EmptyHandle;
+				component.OnUpdateScript = nullptr;
+				sceneModified = true;
+			}
+		}
+
+		// OnCreate
+		auto onCreateView = sceneRef->GetAllEntitiesWith<ECS::OnCreateComponent>();
+		for (entt::entity enttEntity : onCreateView)
+		{
+			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::OnCreateComponent& component = currentEntity.GetComponent<ECS::OnCreateComponent>();
+			if (component.OnCreateScriptHandle == scriptHandle)
+			{
+				component.OnCreateScriptHandle = Assets::EmptyHandle;
+				component.OnCreateScript = nullptr;
+				sceneModified = true;
+			}
+		}
+
+		// Rigidbody
+		auto rigidBodyView = sceneRef->GetAllEntitiesWith<ECS::Rigidbody2DComponent>();
+		for (entt::entity enttEntity : rigidBodyView)
+		{
+			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::Rigidbody2DComponent& component = currentEntity.GetComponent<ECS::Rigidbody2DComponent>();
+
+			if (component.OnCollisionStartScriptHandle == scriptHandle)
+			{
+				component.OnCollisionStartScriptHandle = Assets::EmptyHandle;
+				component.OnCollisionStartScript = nullptr;
+				sceneModified = true;
+			}
+
+			if (component.OnCollisionEndScriptHandle == scriptHandle)
+			{
+				component.OnCollisionEndScriptHandle = Assets::EmptyHandle;
+				component.OnCollisionEndScript = nullptr;
+				sceneModified = true;
+			}
+		}
+		return sceneModified;
 	}
-
-	void AssetManager::CreateSceneFile(const std::string& sceneName, Assets::Asset& newAsset)
+	bool SceneManager::RemoveAIState(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle aiStateHandle)
 	{
-		// Create Temporary Scene
-		Ref<Scenes::Scene> temporaryScene = CreateRef<Scenes::Scene>();
+		bool aiStateModified{ false };
 
-		// Save Binary Intermediate into File
-		std::string scenePath = "Scenes/" + sceneName + ".kgscene";
-		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveAssetDirectory() / scenePath;
-		SerializeScene(temporaryScene, intermediateFullPath.string());
+		// Check for AIState
+		auto aiStateView = sceneRef->GetAllEntitiesWith<ECS::AIStateComponent>();
+		for (entt::entity enttEntity : aiStateView)
+		{
+			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::AIStateComponent& component = currentEntity.GetComponent<ECS::AIStateComponent>();
+			
+			if (component.CurrentStateHandle == aiStateHandle)
+			{
+				component.CurrentStateHandle = Assets::EmptyHandle;
+				component.CurrentStateReference = nullptr;
+				aiStateModified = true;
+			}
+			if (component.GlobalStateHandle == aiStateHandle)
+			{
+				component.GlobalStateHandle = Assets::EmptyHandle;
+				component.GlobalStateReference = nullptr;
+				aiStateModified = true;
+			}
+			if (component.PreviousStateHandle == aiStateHandle)
+			{
+				component.PreviousStateHandle = Assets::EmptyHandle;
+				component.PreviousStateReference = nullptr;
+				aiStateModified = true;
+			}
+		}
+		return aiStateModified;
+	}
+	bool SceneManager::RemoveProjectComponent(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle projectCompHandle)
+	{
+		KG_ASSERT(sceneRef);
 
-		// Load data into In-Memory Metadata object
-		newAsset.Data.Type = Assets::AssetType::Scene;
-		newAsset.Data.IntermediateLocation = scenePath;
-		Ref<Assets::SceneMetaData> metadata = CreateRef<Assets::SceneMetaData>();
-		newAsset.Data.SpecificFileData = metadata;
+		// Check if any components are being removed
+		std::size_t componentCount = sceneRef->GetProjectComponentCount(projectCompHandle);
+
+		// Clear component registry
+		sceneRef->ClearProjectComponentRegistry(projectCompHandle);
+
+		return componentCount > 0;
 	}
 }

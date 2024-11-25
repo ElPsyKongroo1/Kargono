@@ -10,12 +10,15 @@ namespace Kargono
 	{
 	}
 
+	ServerApp::ServerApp(std::filesystem::path projectPath) : Application("ServerLayer"), m_ProjectPath(projectPath)
+	{
+
+	}
+
 	void ServerApp::Init()
 	{
 		Scenes::SceneService::Init();
-#ifdef KG_TESTING
-	OpenProject("../Projects/Pong/Pong.kproj");
-#elif defined KG_EXPORT
+#if defined(KG_EXPORT_RUNTIME) || defined (KG_EXPORT_SERVER)
 		std::filesystem::path pathToProject = Utility::FileSystem::FindFileWithExtension(
 			std::filesystem::current_path(),
 			".kproj");
@@ -33,40 +36,31 @@ namespace Kargono
 			return;
 		}
 #else
-		if (!OpenProject())
+
+		if (m_ProjectPath.empty())
 		{
-			KG_CRITICAL("Failed to select/open a project");
+			if (!OpenProject())
+			{
+				EngineService::EndRun();
+				return;
+			}
+		}
+		else
+		{
+			OpenProject(m_ProjectPath);
+		}
+#endif
+		if (!Network::ServerService::Init())
+		{
 			EngineService::EndRun();
 			return;
 		}
-#endif
-
-
-		bool isLocal = Projects::ProjectService::GetActiveServerLocation() == "LocalMachine";
-
-		Network::ServerService::SetActiveServer(CreateRef<Network::Server>(Projects::ProjectService::GetActiveServerPort(), isLocal));
-
-		if (!Network::ServerService::GetActiveServer()->StartServer())
-		{
-			KG_CRITICAL("Failed to start server");
-			Network::ServerService::GetActiveServer()->StopServer();
-			Network::ServerService::GetActiveServer().reset();
-			EngineService::EndRun();
-			return;
-		}
-
-#ifndef KG_TESTING
-		Network::ServerService::GetActiveServer()->RunServer();
-#endif
-		Network::ServerService::GetActiveServer()->StopServer();
-		Network::ServerService::GetActiveServer().reset();
-		Network::ServerService::GetActiveServer() = nullptr;
 	}
 
 	bool ServerApp::OpenProject()
 	{
 		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
-		if (!std::filesystem::exists(initialDirectory))
+		if (!Utility::FileSystem::PathExists(initialDirectory))
 		{
 			initialDirectory = "";
 		}
@@ -79,17 +73,18 @@ namespace Kargono
 
 	void ServerApp::OpenProject(const std::filesystem::path& path)
 	{
-		if (Assets::AssetManager::OpenProject(path)) {}
+		if (Projects::ProjectService::OpenProject(path)) {}
 	}
 
 
 	void ServerApp::Terminate()
 	{
+		Network::ServerService::Terminate();
 	}
 
 	void ServerApp::OnUpdate(Timestep ts)
 	{
-		
+		Network::ServerService::Run();
 	}
 
 }

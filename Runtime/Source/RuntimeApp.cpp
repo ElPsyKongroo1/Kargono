@@ -13,22 +13,28 @@ namespace Kargono
 	{
 	}
 
+	RuntimeApp::RuntimeApp(std::filesystem::path projectPath, bool headless) : Application("RuntimeLayer"), m_Headless(headless), m_ProjectPath(projectPath)
+	{
+	}
+
 	void RuntimeApp::Init()
 	{
 		Scripting::ScriptService::Init();
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
 
-#ifdef KG_TESTING
-		Audio::AudioService::SetMute(true);
-#endif
+		if (m_Headless)
+		{
+			Audio::AudioService::SetMute(true);
+		}
+
 		auto& currentWindow = EngineService::GetActiveWindow();
 
 		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
 
-#ifdef KG_TESTING
-		OpenProject("../Projects/Pong/Pong.kproj");
-#elif defined KG_EXPORT
+
+		
+#if defined(KG_EXPORT_RUNTIME) || defined(KG_EXPORT_SERVER)
 		std::filesystem::path pathToProject = Utility::FileSystem::FindFileWithExtension(
 			std::filesystem::current_path(),
 			".kproj");
@@ -46,21 +52,29 @@ namespace Kargono
 			return;
 		}
 #else
-		if (!OpenProject())
+		if (m_ProjectPath.empty())
 		{
-			EngineService::EndRun();
-			return;
+			if (!OpenProject())
+			{
+				EngineService::EndRun();
+				return;
+			}
+		}
+		else
+		{
+			OpenProject(m_ProjectPath);
 		}
 #endif
 
 		
-		
-#ifndef KG_TESTING
-		Projects::ProjectService::GetActiveIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
-		currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveTargetResolution()));
-		currentWindow.SetResizable(false);
-#endif
+		if (!m_Headless)
+		{
+			Projects::ProjectService::GetActiveIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
+			currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveTargetResolution()));
+			currentWindow.SetResizable(false);
+		}
 
+		AI::AIService::Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(4.0f);
 		RuntimeUI::FontService::Init();
@@ -75,25 +89,29 @@ namespace Kargono
 		OnStop();
 
 		Audio::AudioService::Terminate();
+		AI::AIService::Terminate();
 
 	}
 
 	void RuntimeApp::OnUpdate(Timestep ts)
 	{
-		
+
 		// Render
 		Rendering::RenderingService::ResetStats();
 		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Rendering::RendererAPI::Clear();
 
-		OnUpdateRuntime(ts);
-		Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+		// Draw all scene entities
+ 		OnUpdateRuntime(ts);
+
+		// Draw runtimeUI, if applicable
+		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
 			return;
 		}
-		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
@@ -102,30 +120,87 @@ namespace Kargono
 		}
 	}
 
-	void RuntimeApp::OnEvent(Events::Event& event)
+	bool RuntimeApp::OnApplicationEvent(Events::Event* event)
 	{
-		Events::EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnKeyPressed));
-		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnPhysicsCollision));
-		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_CLASS_FN(RuntimeApp::OnPhysicsCollisionEnd));
-		dispatcher.Dispatch<Events::WindowResizeEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnWindowResize));
-		dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_CLASS_FN(RuntimeApp::OnApplicationClose));
-		dispatcher.Dispatch<Events::UpdateOnlineUsers>(KG_BIND_CLASS_FN(RuntimeApp::OnUpdateUserCount));
-		dispatcher.Dispatch<Events::ApproveJoinSession>(KG_BIND_CLASS_FN(RuntimeApp::OnApproveJoinSession));
-		dispatcher.Dispatch<Events::UserLeftSession>(KG_BIND_CLASS_FN(RuntimeApp::OnUserLeftSession));
-		dispatcher.Dispatch<Events::CurrentSessionInit>(KG_BIND_CLASS_FN(RuntimeApp::OnCurrentSessionInit));
-		dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_CLASS_FN(RuntimeApp::OnConnectionTerminated));
-		dispatcher.Dispatch<Events::UpdateSessionUserSlot>(KG_BIND_CLASS_FN(RuntimeApp::OnUpdateSessionUserSlot));
-		dispatcher.Dispatch<Events::StartSession>(KG_BIND_CLASS_FN(RuntimeApp::OnStartSession));
-		dispatcher.Dispatch<Events::SessionReadyCheckConfirm>(KG_BIND_CLASS_FN(RuntimeApp::OnSessionReadyCheckConfirm));
-		dispatcher.Dispatch<Events::ReceiveSignal>(KG_BIND_CLASS_FN(RuntimeApp::OnReceiveSignal));
+		bool handled = false;
+		switch (event->GetEventType())
+		{
+		case Events::EventType::WindowResize:
+			handled = OnWindowResize(*(Events::WindowResizeEvent*)event);
+			break;
+		case Events::EventType::AppClose:
+			handled = OnApplicationClose(*(Events::ApplicationCloseEvent*)event);
+			break;
+		}
+		return handled;
+	}
+
+	bool RuntimeApp::OnNetworkEvent(Events::Event* event)
+	{
+		bool handled = false;
+		switch (event->GetEventType())
+		{
+		case Events::EventType::UpdateOnlineUsers:
+			handled = OnUpdateUserCount(*(Events::UpdateOnlineUsers*)event);
+			break;
+		case Events::EventType::ApproveJoinSession:
+			handled = OnApproveJoinSession(*(Events::ApproveJoinSession*)event);
+			break;
+		case Events::EventType::UserLeftSession:
+			handled = OnUserLeftSession(*(Events::UserLeftSession*)event);
+			break;
+		case Events::EventType::CurrentSessionInit:
+			handled = OnCurrentSessionInit(*(Events::CurrentSessionInit*)event);
+			break;
+		case Events::EventType::ConnectionTerminated:
+			handled = OnConnectionTerminated(*(Events::ConnectionTerminated*)event);
+			break;
+		case Events::EventType::UpdateSessionUserSlot:
+			handled = OnUpdateSessionUserSlot(*(Events::UpdateSessionUserSlot*)event);
+			break;
+		case Events::EventType::StartSession:
+			handled = OnStartSession(*(Events::StartSession*)event);
+			break;
+		case Events::EventType::SendReadyCheckConfirm:
+			handled = OnSessionReadyCheckConfirm(*(Events::SessionReadyCheckConfirm*)event);
+			break;
+		case Events::EventType::ReceiveSignal:
+			handled = OnReceiveSignal(*(Events::ReceiveSignal*)event);
+			break;
+		}
+		return handled;
+	}
+
+	bool RuntimeApp::OnInputEvent(Events::Event* event)
+	{
+		bool handled = false;
+		if (event->GetEventType() == Events::EventType::KeyPressed)
+		{
+			handled = OnKeyPressed(*(Events::KeyPressedEvent*)event);
+		}
+		return handled;
+	}
+
+	bool RuntimeApp::OnPhysicsEvent(Events::Event* event)
+	{
+		bool handled = false;
+		switch (event->GetEventType())
+		{
+		case Events::EventType::PhysicsCollisionStart:
+			handled = OnPhysicsCollisionStart(*(Events::PhysicsCollisionStart*)event);
+			break;
+		case Events::EventType::PhysicsCollisionEnd:
+			handled = OnPhysicsCollisionEnd(*(Events::PhysicsCollisionEnd*)event);
+			break;
+		}
+		return handled;
 	}
 
 	bool RuntimeApp::OnApplicationClose(Events::ApplicationCloseEvent event)
 	{
 		Events::WindowCloseEvent windowEvent {};
 		Events::EventCallbackFn eventCallback = EngineService::GetActiveWindow().GetEventCallback();
-		eventCallback(windowEvent);
+		eventCallback(&windowEvent);
 		return false;
 	}
 
@@ -137,37 +212,37 @@ namespace Kargono
 		return false;
 	}
 
-	bool RuntimeApp::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
+	bool RuntimeApp::OnPhysicsCollisionStart(Events::PhysicsCollisionStart event)
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (entityOne.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
-			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
-			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
+			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
+			Scripting::Script* script = component.OnCollisionStartScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOneID, entityTwoID);
+				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
-		if (!collisionHandled && entityTwo.HasComponent<Scenes::ClassInstanceComponent>())
+		if (!collisionHandled && entityTwo.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
-			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
-			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
+			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
+			Scripting::Script* script = component.OnCollisionStartScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwoID, entityOneID);
+				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -177,33 +252,33 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (entityOne.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
-			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
-			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
+			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
+			Scripting::Script* script = component.OnCollisionEndScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOneID, entityTwoID);
+				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
-		if (!collisionHandled && entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (!collisionHandled && entityOne.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
-			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
-			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
+			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
+			Scripting::Script* script = component.OnCollisionEndScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwoID, entityOneID);
+				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -211,25 +286,28 @@ namespace Kargono
 
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
-		Scenes::SceneService::GetActiveScene()->OnKeyPressed(event);
+		Input::InputMapService::OnKeyPressed(event);
 		return false;
 	}
 
 	void RuntimeApp::OnUpdateRuntime(Timestep ts)
 	{
+		// Process AI
+		AI::AIService::OnUpdate(ts);
+
 		// Update
-		Scenes::SceneService::GetActiveScene()->OnUpdateInputMode(ts);
+		Input::InputMapService::OnUpdate(ts);
 		Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
-		Scenes::SceneService::GetActiveScene()->OnUpdatePhysics(ts);
+		Physics::Physics2DService::OnUpdate(ts);
 
 		// Render 2D
-		Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
 			return;
 		}
-		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
@@ -240,90 +318,90 @@ namespace Kargono
 
 	bool RuntimeApp::OnUpdateUserCount(Events::UpdateOnlineUsers event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCount();
-		if (scriptHandle != 0)
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCountHandle();
+		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt32*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserCount());
+			Utility::CallWrappedVoidUInt32(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserCount());
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnApproveJoinSession(Events::ApproveJoinSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnApproveJoinSession();
-		if (scriptHandle != 0)
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnApproveJoinSessionHandle();
+		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateSessionUserSlot();
-		if (scriptHandle != 0)
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle();
+		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnUserLeftSession(Events::UserLeftSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUserLeftSession();
-		if (scriptHandle != 0)
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUserLeftSessionHandle();
+		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnCurrentSessionInit(Events::CurrentSessionInit event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnCurrentSessionInit();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnCurrentSessionInitHandle();
 		if (scriptHandle != 0)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnConnectionTerminated(Events::ConnectionTerminated event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnConnectionTerminated();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnConnectionTerminatedHandle();
 		if (scriptHandle != 0)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnStartSession(Events::StartSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnStartSession();
-		if (scriptHandle != 0)
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnStartSessionHandle();
+		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnSessionReadyCheckConfirm();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnReceiveSignal(Events::ReceiveSignal event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnReceiveSignal();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnReceiveSignalHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetSignal());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetSignal());
 		}
 		return false;
 	}
@@ -332,7 +410,7 @@ namespace Kargono
 	bool RuntimeApp::OpenProject()
 	{
 		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
-		if (!std::filesystem::exists(initialDirectory))
+		if (!Utility::FileSystem::PathExists(initialDirectory))
 		{
 			initialDirectory = "";
 		}
@@ -345,7 +423,7 @@ namespace Kargono
 
 	void RuntimeApp::OpenProject(const std::filesystem::path& path)
 	{
-		if (Assets::AssetManager::OpenProject(path))
+		if (Projects::ProjectService::OpenProject(path))
 		{
 			if (!EngineService::GetActiveWindow().GetNativeWindow())
 			{
@@ -356,7 +434,7 @@ namespace Kargono
 					static_cast<uint32_t>(screenSize.x),
 					static_cast<uint32_t>(screenSize.y)
 				};
-				if (std::filesystem::exists(logoPath))
+				if (Utility::FileSystem::PathExists(logoPath))
 				{
 					EngineService::GetActiveWindow().Init(projectProps, logoPath);
 				}
@@ -374,8 +452,8 @@ namespace Kargono
 			{
 				Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
 			}
-			Assets::AssetManager::ClearAll();
-			Assets::AssetManager::DeserializeAll();
+			Assets::AssetService::ClearAll();
+			Assets::AssetService::DeserializeAll();
 			OpenScene(startSceneHandle);
 
 		}
@@ -384,7 +462,7 @@ namespace Kargono
 
 	void RuntimeApp::OpenScene(Assets::AssetHandle sceneHandle)
 	{
-		Ref<Scenes::Scene> newScene = Assets::AssetManager::GetScene(sceneHandle);
+		Ref<Scenes::Scene> newScene = Assets::AssetService::GetScene(sceneHandle);
 		if (!newScene) { newScene = CreateRef<Scenes::Scene>(); }
 		Scenes::SceneService::SetActiveScene(newScene, sceneHandle);
 	}
@@ -392,42 +470,40 @@ namespace Kargono
 
 	void RuntimeApp::OnPlay()
 	{
+		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStart();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
 		if (scriptHandle != 0)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 
 		// Load Default Game State
-		if (Projects::ProjectService::GetActiveStartGameState() == 0)
+		if (Projects::ProjectService::GetActiveStartGameStateHandle() == 0)
 		{
 			Scenes::GameStateService::ClearActiveGameState();
 		}
 		else
 		{
-			Scenes::GameStateService::SetActiveGameState(Assets::AssetManager::GetGameState(
-				Projects::ProjectService::GetActiveStartGameState()), 
-				Projects::ProjectService::GetActiveStartGameState());
+			Scenes::GameStateService::SetActiveGameState(Assets::AssetService::GetGameState(
+				Projects::ProjectService::GetActiveStartGameStateHandle()), 
+				Projects::ProjectService::GetActiveStartGameStateHandle());
 		}
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked())
 		{
-			Network::ClientService::SetActiveClient(CreateRef<Network::Client>());
-			Network::ClientService::SetActiveNetworkThread(CreateRef<std::thread>(&Network::Client::RunClient, Network::ClientService::GetActiveClient().get()));
+			Network::ClientService::Init();
 		}
 	}
 
 	void RuntimeApp::OnStop()
 	{
+		Physics::Physics2DService::Terminate();
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
 		if (Projects::ProjectService::GetActiveAppIsNetworked())
 		{
-			Network::ClientService::GetActiveClient()->StopClient();
-			Network::ClientService::GetActiveNetworkThread()->join();
-			Network::ClientService::GetActiveNetworkThread().reset();
-			Network::ClientService::GetActiveClient().reset();
+			Network::ClientService::Terminate();
 		}
 	}
 

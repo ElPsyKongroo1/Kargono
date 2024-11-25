@@ -5,6 +5,7 @@
 #include "Kargono/Events/MouseEvent.h"
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Projects/Project.h"
+#include "Kargono/Utility/FileSystem.h"
 
 #include "API/Platform/WindowsWindow.h"
 #include "API/ImageProcessing/stbAPI.h"
@@ -99,7 +100,7 @@ namespace API::Platform
 				data.Width = width;
 				data.Height = height;
 				Kargono::Events::WindowResizeEvent event(width, height);
-				data.EventCallback(event);
+				data.EventCallback(&event);
 			
 			});
 
@@ -108,69 +109,69 @@ namespace API::Platform
 				KG_PROFILE_FUNCTION("GLFW Close Event");
 				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 				Kargono::Events::WindowCloseEvent event;
-				data.EventCallback(event);
+				data.EventCallback(&event);
 			});
 
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
-			{
-				KG_PROFILE_FUNCTION("GLFW Keyboard Event");
+		{
+			KG_PROFILE_FUNCTION("GLFW Keyboard Event");
 
-				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
-				switch (action)
+			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+			switch (action)
+			{
+				case GLFW_PRESS:
 				{
-					case GLFW_PRESS:
-					{
-						Kargono::Events::KeyPressedEvent event(key, false);
-						data.EventCallback(event);
-					}
-						break;
-					case GLFW_RELEASE:
-					{
-						Kargono::Events::KeyReleasedEvent event(key);
-						data.EventCallback(event);
-					}
-						break;
-					case GLFW_REPEAT:
-					{
-						Kargono::Events::KeyPressedEvent event(key, true);
-						data.EventCallback(event);
-					}
-						break;
-					}
-			});
+					Kargono::Events::KeyPressedEvent event(key, false);
+					data.EventCallback(&event);
+				}
+					break;
+				case GLFW_RELEASE:
+				{
+					Kargono::Events::KeyReleasedEvent event(key);
+					data.EventCallback(&event);
+				}
+					break;
+				case GLFW_REPEAT:
+				{
+					Kargono::Events::KeyPressedEvent event(key, true);
+					data.EventCallback(&event);
+				}
+					break;
+				}
+		});
 
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
-			{
-				KG_PROFILE_FUNCTION("GLFW Typing Event");
+		{
+			KG_PROFILE_FUNCTION("GLFW Typing Event");
 
-				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
-				Kargono::Events::KeyTypedEvent event(keycode);
-				data.EventCallback(event);
+			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+			Kargono::Events::KeyTypedEvent event(keycode);
+			data.EventCallback(&event);
 
-			});
+		});
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
+		{
+			KG_PROFILE_FUNCTION("GLFW Mouse Button Event");
+
+			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+
+			switch (action)
 			{
-				KG_PROFILE_FUNCTION("GLFW Mouse Button Event");
-
-				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
-
-				switch (action)
-					{
-					case GLFW_PRESS:
-					{
-						Kargono::Events::MouseButtonPressedEvent event(button);
-						data.EventCallback(event);
-					}
-						break;
-					case GLFW_RELEASE:
-					{
-						Kargono::Events::MouseButtonReleasedEvent event(button);
-						data.EventCallback(event);
-					}
-						break;
-					}
-			});
+			case GLFW_PRESS:
+			{
+				Kargono::Events::MouseButtonPressedEvent event(button);
+				data.EventCallback(&event);
+				break;
+			}
+			case GLFW_RELEASE:
+			{
+				Kargono::Events::MouseButtonReleasedEvent event(button);
+				data.EventCallback(&event);
+				break;
+			}
+			}
+		});
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) 
 			{
@@ -179,7 +180,7 @@ namespace API::Platform
 				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 
 				Kargono::Events::MouseScrolledEvent event((float)xOffset, (float)yOffset);
-				data.EventCallback(event);
+				data.EventCallback(&event);
 			});
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos) 
 			{
@@ -188,11 +189,11 @@ namespace API::Platform
 				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 
 				Kargono::Events::MouseMovedEvent event((float)xPos, (float)yPos);
-				data.EventCallback(event);
+				data.EventCallback(&event);
 			});
 
 		// Add App Logo
-		if (!std::filesystem::exists(logoPath)) { KG_ERROR("Path to Application Logo is invalid!"); return; }
+		if (!Kargono::Utility::FileSystem::PathExists(logoPath)) { KG_ERROR("Path to Application Logo is invalid!"); return; }
 		GLFWimage images[1];
 		images[0].pixels = stbi_load(logoPath.string().c_str(), &images[0].width, &images[0].height, 0, 4); //rgba channels 
 		glfwSetWindowIcon(m_Window, 1, images);
@@ -293,7 +294,7 @@ namespace API::Platform
 
 		// Event thrown to ensure resize updates viewport
 		Kargono::Events::WindowResizeEvent event(static_cast<uint32_t>(newWindowSize.x), static_cast<uint32_t>(newWindowSize.y));
-		m_Data.EventCallback(event);
+		m_Data.EventCallback(&event);
 
 	}
 	void WindowsWindow::ToggleMaximized()

@@ -32,7 +32,9 @@ namespace Kargono::Rendering
 		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0);
 		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t* indexPointer, uint32_t indexCount);
 		static void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
+		static void DrawPoints(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
 		static void DrawTriangles(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
 		static void SetLineWidth(float width);
+		static void SetPointWidth(float size);
 	};
 }

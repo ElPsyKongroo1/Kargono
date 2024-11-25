@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace Kargono
 {
 	using MouseCode = uint16_t;
@@ -23,6 +22,29 @@ namespace Kargono::Mouse
 		ButtonLast = Button7,
 		ButtonLeft = Button0,
 		ButtonRight = Button1,
-		ButtonMiddle = Button2
+		ButtonMiddle = Button2,
+		ButtonForward = Button4,
+		ButtonBack = Button3
 	};
+
+}
+
+namespace Kargono::Utility
+{
+	inline std::string MouseCodeToString(MouseCode mouseCode)
+	{
+		switch (mouseCode)
+		{
+		case Mouse::Button0: return "Button0";
+		case Mouse::Button1: return "Button1";
+		case Mouse::Button2: return "Button2";
+		case Mouse::Button3: return "Button3";
+		case Mouse::Button4: return "Button4";
+		case Mouse::Button5: return "Button5";
+		case Mouse::Button6: return "Button6";
+		case Mouse::Button7: return "Button7";
+		}
+
+		return "";
+	}
 }

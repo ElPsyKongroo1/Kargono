@@ -51,7 +51,7 @@ namespace Kargono
 	//==============================
 	class Engine
 	{
-	private: // (Singleton)
+	private:
 		//==============================
 		// Constructor/Destructor
 		//==============================
@@ -103,14 +103,14 @@ namespace Kargono
 		// Lifecycle Functions
 		//==============================
 		static void Init(const EngineSpec& specification, Application* app);
-		static void Terminate();
+		static bool Terminate();
 
 		static void Run();
 		static void EndRun();
 		//==============================
 		// OnEvent Functions
 		//==============================
-		static void OnEvent(Events::Event& e);
+		static void OnEvent(Events::Event* e);
 		static bool OnWindowClose(Events::WindowCloseEvent& e);
 		static bool OnWindowResize(Events::WindowResizeEvent& e);
 		static bool OnUpdateEntityLocation(Events::UpdateEntityLocation& e);
@@ -143,7 +143,7 @@ namespace Kargono
 		//==============================
 		// Internal Functionality
 		//==============================
-		static void ExecuteMainThreadQueue();
+		static void ProcessFunctionQueue();
 		static void ProcessEventQueue();
 	private:
 		//==============================

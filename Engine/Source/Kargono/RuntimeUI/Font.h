@@ -5,7 +5,6 @@
 #include <string>
 #include <filesystem>
 
-namespace Kargono::Assets { class AssetManager; }
 namespace Kargono::Rendering { class Texture2D; }
 
 //============================================================
@@ -77,16 +76,13 @@ namespace Kargono::RuntimeUI
 		float GetLineHeight() const { return m_LineHeight; }
 		void SetLineHeight(float height) { m_LineHeight = height; }
 
-	private:
+	public:
 		//==============================
 		// Internal Fields
 		//==============================
 		Ref<Rendering::Texture2D> m_AtlasTexture = nullptr;
 		float m_LineHeight {0};
 		std::unordered_map<unsigned char, Character> m_Characters{};
-	private:
-		friend class Assets::AssetManager;
-		friend class FontService;
 	};
 
 

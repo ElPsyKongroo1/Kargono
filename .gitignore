@@ -32,6 +32,7 @@ bin-int/**
 
 # Specific Directories from Root
 /Binary/**
+/Projects/**
 /Intermediates/**
 /Editor/Resources/Scripts/**
 /Runtime/Resources/Scripts/**
@@ -46,14 +47,5 @@ bin-int/**
 **/Assets/Scripting/Binary/**
 
 # Temporary
-/Projects/Pong/Assets/Scripts/Intermediates/Debug/Pong.csproj.AssemblyReference.cache
-/Projects/Pong/Assets/Scripts/Intermediates/Debug/Pong.csproj.CoreCompileInputs.cache
-/Projects/Pong/Assets/Scripts/Intermediates/Debug/Pong.dll
-/Projects/Pong/Assets/Scripts/Intermediates/Debug/Pong.pdb
-/Projects/Pong/Assets/Scripting/Binary/ExportBody.dll
-/Projects/Pong/Assets/Scripting/Binary/ExportBody.exp
-/Projects/Pong/Assets/Scripting/Binary/ExportBody.ilk
-/Projects/Pong/Assets/Scripting/Binary/ExportBody.lib
-/Projects/Pong/Assets/Scripting/Binary/ExportBody.obj
 Dependencies/msdf_atlas_gen/Makefile
 Dependencies/msdf_atlas_gen/msdfgen/freetype/Makefile

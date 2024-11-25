@@ -13,11 +13,12 @@ namespace Kargono::Panels
 	ViewportPanel::ViewportPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ViewportPanel::OnKeyPressedEditor));
 	}
 	void ViewportPanel::OnUpdate(Timestep ts)
 	{
+		KG_PROFILE_FUNCTION();
 		// Adjust Framebuffer Size Based on Viewport
 		auto& currentWindow = EngineService::GetActiveWindow();
 		if (Rendering::FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
@@ -36,7 +37,7 @@ namespace Kargono::Panels
 
 		// Clear our entity ID attachment to -1
 		m_ViewportFramebuffer->ClearAttachment(1, -1);
-		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
 		// Update Scene
 		switch (s_EditorApp->m_SceneState)
 		{
@@ -62,10 +63,14 @@ namespace Kargono::Panels
 		{
 			if (!s_EditorApp->m_IsPaused || s_EditorApp->m_StepFrames-- > 0)
 			{
-				// Update Scripts
-				Scenes::SceneService::GetActiveScene()->OnUpdateInputMode(ts);
+				// Process AI
+				AI::AIService::OnUpdate(ts);
+				// Process Input Mode
+				Input::InputMapService::OnUpdate(ts);
+				// Process entity OnUpdate
 				Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
-				Scenes::SceneService::GetActiveScene()->OnUpdatePhysics(ts);
+				// Process physics
+				Physics::Physics2DService::OnUpdate(ts);
 			}
 			OnUpdateRuntime(ts);
 			break;
@@ -76,16 +81,16 @@ namespace Kargono::Panels
 
 		OnOverlayRender();
 
-		if (s_EditorApp->m_ShowUserInterface)
+		if (s_EditorApp->m_ShowActiveUserInterface)
 		{
 			auto& currentApplication = EngineService::GetActiveWindow();
 			if (s_EditorApp->m_SceneState == SceneState::Play)
 			{
-				Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+				ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 				if (cameraEntity)
 				{
-					Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
-					Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
+					Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
+					Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
 
 					if (mainCamera)
 					{
@@ -104,6 +109,22 @@ namespace Kargono::Panels
 
 		m_ViewportFramebuffer->Unbind();
 	}
+	void ViewportPanel::AddDebugLine(Math::vec3 startPoint, Math::vec3 endPoint)
+	{
+		m_DebugLines.push_back({startPoint, endPoint});
+	}
+	void ViewportPanel::AddDebugPoint(Math::vec3 startPoint)
+	{
+		m_DebugPoints.push_back({ startPoint });
+	}
+	void ViewportPanel::ClearDebugLines()
+	{
+		m_DebugLines.clear();
+	}
+	void ViewportPanel::ClearDebugPoints()
+	{
+		m_DebugPoints.clear();
+	}
 	void ViewportPanel::InitializeFrameBuffer()
 	{
 		Rendering::FramebufferSpecification fbSpec;
@@ -121,8 +142,14 @@ namespace Kargono::Panels
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGuiWindowFlags window_flags = 0;
 		//window_flags |= ImGuiWindowFlags_NoDecoration;
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowViewport, window_flags);
+		EditorUI::EditorUIService::StartWindow(m_PanelName.CString(), &s_EditorApp->m_ShowViewport, window_flags);
 		ImGui::PopStyleVar();
+
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
 
 		// Get current cursor position and GLFW viewport size
 		auto windowScreenOffset = ImGui::GetWindowPos();
@@ -159,7 +186,30 @@ namespace Kargono::Panels
 		{
 			if (ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left) && ImGui::GetIO().WantCaptureMouse)
 			{
-				s_EditorApp->OnMouseButtonPressed({ Mouse::ButtonLeft });
+				// Handle selecting entities inside of the viewport panel
+				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
+				{
+					if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
+					{
+						s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
+						s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
+
+						// Algorithm to enable double clicking for an entity!
+						static float previousTime{ 0.0f };
+						static ECS::Entity previousEntity{};
+						float currentTime = Utility::Time::GetTime();
+						if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::SceneService::GetActiveScene()->GetHoveredEntity() == previousEntity)
+						{
+							auto& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TransformComponent>();
+							m_EditorCamera.SetFocalPoint(transformComponent.Translation);
+							m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
+							m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
+						}
+						previousTime = currentTime;
+						previousEntity = *Scenes::SceneService::GetActiveScene()->GetHoveredEntity();
+					}
+				}
+				
 			}
 		}
 
@@ -181,7 +231,7 @@ namespace Kargono::Panels
 		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
 		{
 			// Gizmos
-			Scenes::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (selectedEntity && m_GizmoType != -1)
 			{
 				ImGuizmo::SetOrthographic(false);
@@ -195,7 +245,7 @@ namespace Kargono::Panels
 				Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 				// Entity Transform
-				auto& tc = selectedEntity.GetComponent<Scenes::TransformComponent>();
+				auto& tc = selectedEntity.GetComponent<ECS::TransformComponent>();
 				Math::mat4 transform = tc.GetTransform();
 
 				// Snapping
@@ -223,43 +273,40 @@ namespace Kargono::Panels
 
 		static bool toolbarEnabled{ true };
 		constexpr float iconSize{ 36.0f };
-		constexpr ImVec4 topBarBackgroundColor{0.0f, 0.0f, 0.0f, 0.93f};
 
 		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
-		// {0.2f, 0.2f, 0.2f, 0.63f} // OLD BACKGROUND COLOR
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();
 		ImVec2 initialCursorPos = ImGui::GetCursorStartPos();
 		
 		windowSize = ImGui::GetWindowSize();
 		Ref<Rendering::Texture2D> icon {nullptr};
-
 		if (toolbarEnabled)
 		{
 			// Draw Play/Simulate/Step Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + (windowSize.x / 2) - 90.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x / 2) + 90.0f, initialScreenCursorPos.y + 43.0f),
-				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Display Options Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 80.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 48.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Grid Options Background
-			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 219.0f, initialScreenCursorPos.y),
+			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 257.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 187.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Camera Options Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 170.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 100.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Toggle Top Bar Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 30.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x), initialScreenCursorPos.y + 30.0f),
-				ImColor(topBarBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
 
 			bool hasPlayButton = s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate;
 			bool hasSimulateButton = s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Play;
@@ -273,8 +320,11 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) - 77.0f, initialCursorPos.y + 4));
-			icon = hasPlayButton ? EditorUI::EditorUIService::s_IconPlayActive : EditorUI::EditorUIService::s_IconStopActive;
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasSimulateButton ? icon : EditorUI::EditorUIService::s_IconPlay)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+			icon = hasPlayButton ? EditorUI::EditorUIService::s_IconPlay : EditorUI::EditorUIService::s_IconStop;
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasSimulateButton ? icon : EditorUI::EditorUIService::s_IconPlay)->GetRendererID(),
+				ImVec2(iconSize, iconSize), ImVec2(0, 0),
+				ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+				EditorUI::EditorUIService::s_HighlightColor1)
 				&& toolbarEnabled)
 			{
 				if (hasSimulateButton)
@@ -296,7 +346,7 @@ namespace Kargono::Panels
 				if (hasSimulateButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, hasPlayButton ?
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, hasPlayButton ?
 						"Run Application" : "Stop Application");
 					ImGui::EndTooltip();
 				}
@@ -312,9 +362,12 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
-			icon = hasSimulateButton ? EditorUI::EditorUIService::s_IconSimulateActive : EditorUI::EditorUIService::s_IconStopActive;
+			icon = hasSimulateButton ? EditorUI::EditorUIService::s_IconSimulate : EditorUI::EditorUIService::s_IconStop;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) - 37.0f, initialCursorPos.y + 4));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasPlayButton ? icon : EditorUI::EditorUIService::s_IconSimulate)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasPlayButton ? icon : EditorUI::EditorUIService::s_IconSimulate)->GetRendererID(),
+				ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+				EditorUI::EditorUIService::s_HighlightColor1)
 				&& toolbarEnabled)
 			{
 				if (hasPlayButton)
@@ -335,7 +388,7 @@ namespace Kargono::Panels
 				if (hasPlayButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, hasSimulateButton ?
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, hasSimulateButton ?
 						"Simulate Physics" : "Stop Physics Simulation");
 					ImGui::EndTooltip();
 				}
@@ -351,9 +404,12 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
-			icon = hasPauseButton ? EditorUI::EditorUIService::s_IconPauseActive: EditorUI::EditorUIService::s_IconPause;
+			icon = EditorUI::EditorUIService::s_IconPause;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) + 3.0f, initialCursorPos.y + 4));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(iconSize, iconSize),
+				ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+				hasPauseButton ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor)
 				&& toolbarEnabled)
 			{
 				if (hasPauseButton)
@@ -367,7 +423,7 @@ namespace Kargono::Panels
 				if (hasPauseButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, s_EditorApp->m_IsPaused ? "Resume Application" : "Pause Application");
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, s_EditorApp->m_IsPaused ? "Resume Application" : "Pause Application");
 					ImGui::EndTooltip();
 				}
 			}
@@ -381,9 +437,13 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
 			}
-			icon = hasStepButton ? EditorUI::EditorUIService::s_IconStepActive : EditorUI::EditorUIService::s_IconStep;
+			icon = EditorUI::EditorUIService::s_IconStep;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) + 43.0f, initialCursorPos.y + 4));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f))
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), 
+				ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, 
+				ImVec2{ 1, 0 }, 0, 
+				ImVec4(0.0f, 0.0f, 0.0f, 0.0f), 
+				hasStepButton ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor)
 				&& toolbarEnabled)
 			{
 				if (hasStepButton)
@@ -397,7 +457,7 @@ namespace Kargono::Panels
 				if (hasStepButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Step Application");
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Step Application");
 					ImGui::EndTooltip();
 				}
 			}
@@ -407,13 +467,13 @@ namespace Kargono::Panels
 			}
 
 			// Camera Options Button
-			icon = EditorUI::EditorUIService::s_IconCameraActive;
+			icon = EditorUI::EditorUIService::s_IconCamera;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 163, initialCursorPos.y + 5));
 			if (ImGui::ImageButton("Camera Options",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_PureWhite))
+				EditorUI::EditorUIService::s_HighlightColor1))
 			{
 				ImGui::OpenPopup("Toggle Viewport Camera Options");
 			}
@@ -421,7 +481,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Camera Movement Types");
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Movement Types");
 				ImGui::EndTooltip();
 			}
 
@@ -450,18 +510,18 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Camera Speed");
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Speed");
 				ImGui::EndTooltip();
 			}
 
 			// Viewport Display Options Button
-			icon = EditorUI::EditorUIService::s_IconDisplayActive;
+			icon = EditorUI::EditorUIService::s_IconDisplay;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 75, initialCursorPos.y + 4));
 			if (ImGui::ImageButton("Display Toggle",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_PureWhite))
+				EditorUI::EditorUIService::s_HighlightColor1))
 			{
 				ImGui::OpenPopup("Toggle Display Options");
 			}
@@ -469,7 +529,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Display Options");
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Display Options");
 				ImGui::EndTooltip();
 			}
 
@@ -483,9 +543,9 @@ namespace Kargono::Panels
 				{
 					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowCameraFrustums);
 				}
-				if (ImGui::MenuItem("Display Runtime UI", 0, s_EditorApp->m_ShowUserInterface))
+				if (ImGui::MenuItem("Display Runtime UI", 0, s_EditorApp->m_ShowActiveUserInterface))
 				{
-					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowUserInterface);
+					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowActiveUserInterface);
 				}
 				if (ImGui::MenuItem("Fullscreen While Running", 0, s_EditorApp->m_RuntimeFullscreen))
 				{
@@ -496,12 +556,12 @@ namespace Kargono::Panels
 
 			// Grid Options Button
 			icon = EditorUI::EditorUIService::s_IconGrid;
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 214, initialCursorPos.y + 4));
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 252, initialCursorPos.y + 4));
 			if (ImGui::ImageButton("Grid Toggle",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_PureWhite))
+				EditorUI::EditorUIService::s_HighlightColor1))
 			{
 				ImGui::OpenPopup("Grid Options");
 			}
@@ -509,37 +569,104 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, "Grid Options");
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Grid Options");
 				ImGui::EndTooltip();
 			}
 
 			if (ImGui::BeginPopup("Grid Options"))
 			{
-				if (ImGui::MenuItem("Display X-Y Grid", 0, m_DisplayXYGrid))
+				if (ImGui::BeginMenu("X-Y Grid"))
 				{
-					Utility::Operations::ToggleBoolean(m_DisplayXYGrid);
+					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXYMajorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayXYMajorGrid);
+
+						if (!m_DisplayXYMajorGrid && m_DisplayXYMinorGrid)
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayXYMinorGrid);
+						}
+					}
+					if (m_DisplayXYMajorGrid)
+					{
+						if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXYMinorGrid))
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayXYMinorGrid);
+						}
+					}
+					
+					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Display X-Z Grid", 0, m_DisplayXZGrid))
+
+				if (ImGui::BeginMenu("X-Z Grid"))
 				{
-					Utility::Operations::ToggleBoolean(m_DisplayXZGrid);
+					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXZMajorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayXZMajorGrid);
+
+						if (!m_DisplayXZMajorGrid && m_DisplayXZMinorGrid)
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayXZMinorGrid);
+						}
+					}
+
+					if (m_DisplayXZMajorGrid)
+					{
+						if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXZMinorGrid))
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayXZMinorGrid);
+						}
+					}
+					
+					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("Display Y-Z Grid", 0, m_DisplayYZGrid))
+
+				if (ImGui::BeginMenu("Y-Z Grid"))
 				{
-					Utility::Operations::ToggleBoolean(m_DisplayYZGrid);
+					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayYZMajorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayYZMajorGrid);
+						if (!m_DisplayYZMajorGrid && m_DisplayYZMinorGrid)
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayYZMinorGrid);
+						}
+					}
+					if (m_DisplayYZMajorGrid)
+					{
+						if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayYZMinorGrid))
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayYZMinorGrid);
+						}
+					}
+					
+					ImGui::EndMenu();
 				}
 				ImGui::EndPopup();
+			}
+
+			// Grid Spacing
+			ImGui::SetNextItemWidth(30.0f);
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 227, initialCursorPos.y + 6));
+			ImGui::DragFloat("##GridSpacing", &m_FineGridSpacing, 1.0f,
+				1.0f, 50.0f,
+				"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Local Grid Spacing");
+				ImGui::EndTooltip();
 			}
 		}
 
 		// Toggle Top Bar Button
-		icon = toolbarEnabled ? EditorUI::EditorUIService::s_IconCheckbox_Check_Enabled :
-		EditorUI::EditorUIService::s_IconCheckbox_Empty_Disabled;
+		icon = toolbarEnabled ? EditorUI::EditorUIService::s_IconCheckbox_Enabled :
+		EditorUI::EditorUIService::s_IconCheckbox_Disabled;
 		ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 25, initialCursorPos.y + 4));
 		if (ImGui::ImageButton("Toggle Top Bar",
 			(ImTextureID)(uint64_t)icon->GetRendererID(),
 			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 			EditorUI::EditorUIService::s_PureEmpty,
-			EditorUI::EditorUIService::s_PureWhite))
+			toolbarEnabled ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor))
 		{
 			Utility::Operations::ToggleBoolean(toolbarEnabled);
 		}
@@ -547,7 +674,7 @@ namespace Kargono::Panels
 		{
 			ImGui::SetNextFrameWantCaptureMouse(false);
 			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::EditorUIService::s_PearlBlue, toolbarEnabled ? "Close Toolbar" : "Open Toolbar");
+			ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, toolbarEnabled ? "Close Toolbar" : "Open Toolbar");
 			ImGui::EndTooltip();
 		}
 
@@ -555,7 +682,7 @@ namespace Kargono::Panels
 
 		if (Scenes::SceneService::GetActiveScene()->IsRunning() && !Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity())
 		{
-			ImGui::PushFont(EditorUI::EditorUIService::s_AntaLarge);
+			ImGui::PushFont(EditorUI::EditorUIService::s_FontAntaLarge);
 			ImVec2 cursorStart = ImGui::GetCursorStartPos();
 			windowSize = ImGui::GetContentRegionAvail();
 			ImVec2 textSize = ImGui::CalcTextSize("No Primary Camera Set");
@@ -566,11 +693,42 @@ namespace Kargono::Panels
 
 		EditorUI::EditorUIService::EndWindow();
 	}
-	void ViewportPanel::OnEvent(Events::Event& event)
+	void ViewportPanel::OnInputEvent(Events::Event* event)
 	{
 		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
 		{
-			m_EditorCamera.OnEvent(event);
+			m_EditorCamera.OnInputEvent(event);
+		}
+	}
+	void ViewportPanel::OnEditorEvent(Events::Event* event)
+	{
+		if (event->GetEventType() == Events::EventType::ManageEditor)
+		{
+			Events::ManageEditor* manageEditor = (Events::ManageEditor*)event;
+			static Events::DebugLineData lineData;
+			static Events::DebugPointData pointData;
+
+			// Handle editor events
+			switch (manageEditor->GetAction())
+			{
+			case Events::ManageEditorAction::AddDebugLine:
+				lineData = manageEditor->GetDebugLineData();
+				AddDebugLine(lineData.m_StartPoint, lineData.m_EndPoint);
+				break;
+			case Events::ManageEditorAction::AddDebugPoint:
+				pointData = manageEditor->GetDebugPointData();
+				AddDebugPoint(pointData.m_Point);
+				break;
+			case Events::ManageEditorAction::ClearDebugLines:
+				ClearDebugLines();
+				break;
+			case Events::ManageEditorAction::ClearDebugPoints:
+				ClearDebugPoints();
+				break;
+			default:
+				KG_ERROR("Invalid editor event type provided to viewport panel!");
+				break;
+			}
 		}
 	}
 	bool ViewportPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
@@ -583,7 +741,8 @@ namespace Kargono::Panels
 		{
 			case Key::Escape:
 			{
-				s_EditorApp->m_SceneHierarchyPanel->SetSelectedEntity({});
+				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity({});
+				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
 				return true;
 			}
 			case Key::Tab:
@@ -640,9 +799,7 @@ namespace Kargono::Panels
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_ViewportFramebuffer->ReadPixel(1, mouseX, mouseY);
-			*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() =
-				Scenes::SceneService::GetActiveScene()->CheckEntityExists((entt::entity)pixelData) ?
-				Scenes::Entity((entt::entity)pixelData, Scenes::SceneService::GetActiveScene().get()) : Scenes::Entity();
+			*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID((entt::entity)pixelData);
 		}
 	}
 
@@ -653,15 +810,14 @@ namespace Kargono::Panels
 
 	void ViewportPanel::OnUpdateRuntime(Timestep ts)
 	{
-
 		// Render 
-		Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
 			return;
 		}
-		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Scenes::CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
@@ -677,7 +833,7 @@ namespace Kargono::Panels
 
 		if (!editorLayer->m_IsPaused || editorLayer->m_StepFrames-- > 0)
 		{
-			Scenes::SceneService::GetActiveScene()->OnUpdatePhysics(ts);
+			Physics::Physics2DService::OnUpdate(ts); 
 		}
 
 		// Render
@@ -685,6 +841,7 @@ namespace Kargono::Panels
 	}
 
 	static Rendering::RendererInputSpec s_CircleInputSpec{};
+	static Rendering::RendererInputSpec s_PointInputSpec{};
 	static Rendering::RendererInputSpec s_LineInputSpec{};
 	static Math::vec4 s_RectangleVertexPositions[4]
 	{
@@ -761,12 +918,12 @@ namespace Kargono::Panels
 		// Set up Line Input Specifications for Overlay Calls
 		{
 			Rendering::ShaderSpecification lineShaderSpec{Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawLine, false };
-			auto [uuid, localShader] = Assets::AssetManager::GetShader(lineShaderSpec);
+			auto [uuid, localShader] = Assets::AssetService::GetShader(lineShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
-			Scenes::ShapeComponent* lineShapeComponent = new Scenes::ShapeComponent();
+			ECS::ShapeComponent* lineShapeComponent = new ECS::ShapeComponent();
 			lineShapeComponent->CurrentShape = Rendering::ShapeTypes::None;
 			lineShapeComponent->Vertices = nullptr;
 
@@ -777,14 +934,14 @@ namespace Kargono::Panels
 		// Set up Circle Input Specification for Overlay Calls
 		{
 			Rendering::ShaderSpecification shaderSpec{Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, true, true, false, Rendering::RenderingType::DrawIndex, false };
-			auto [uuid, localShader] = Assets::AssetManager::GetShader(shaderSpec);
+			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
 			Rendering::Shader::SetDataAtInputLocation<float>(0.05f, "a_Thickness", localBuffer, localShader);
 			Rendering::Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", localBuffer, localShader);
 
-			Scenes::ShapeComponent* shapeComp = new Scenes::ShapeComponent();
+			ECS::ShapeComponent* shapeComp = new ECS::ShapeComponent();
 			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
 			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
 			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
@@ -794,6 +951,23 @@ namespace Kargono::Panels
 			s_CircleInputSpec.ShapeComponent = shapeComp;
 		}
 
+		// Set up Point Input Specifications for Overlay Calls
+		{
+			Rendering::ShaderSpecification pointShaderSpec{Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawPoint, false };
+			auto [uuid, localShader] = Assets::AssetService::GetShader(pointShaderSpec);
+			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
+
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
+
+			ECS::ShapeComponent* pointShapeComponent = new ECS::ShapeComponent();
+			pointShapeComponent->CurrentShape = Rendering::ShapeTypes::None;
+			pointShapeComponent->Vertices = nullptr;
+
+			s_PointInputSpec.Shader = localShader;
+			s_PointInputSpec.Buffer = localBuffer;
+			s_PointInputSpec.ShapeComponent = pointShapeComponent;
+		}
+
 		// TODO: Shape Components and Buffers are memory leaks!
 	}
 
@@ -801,12 +975,12 @@ namespace Kargono::Panels
 	{
 		if (s_EditorApp->m_SceneState == SceneState::Play)
 		{
-			Scenes::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+			ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 			if (!cameraEntity)
 			{
 				return;
 			}
-			Rendering::RenderingService::BeginScene(cameraEntity.GetComponent<Scenes::CameraComponent>().Camera, glm::inverse(cameraEntity.GetComponent<Scenes::TransformComponent>().GetTransform()));
+			Rendering::RenderingService::BeginScene(cameraEntity.GetComponent<ECS::CameraComponent>().Camera, glm::inverse(cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform()));
 		}
 		else
 		{
@@ -817,10 +991,10 @@ namespace Kargono::Panels
 		{
 			// Circle Colliders
 			{
-				auto view = Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<Scenes::TransformComponent, Scenes::CircleCollider2DComponent>();
+				auto view = Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<ECS::TransformComponent, ECS::CircleCollider2DComponent>();
 				for (auto entity : view)
 				{
-					auto [tc, cc2d] = view.get<Scenes::TransformComponent, Scenes::CircleCollider2DComponent>(entity);
+					auto [tc, cc2d] = view.get<ECS::TransformComponent, ECS::CircleCollider2DComponent>(entity);
 
 					Math::vec3 translation = tc.Translation + Math::vec3(cc2d.Offset.x, cc2d.Offset.y, 0.001f);
 
@@ -835,10 +1009,10 @@ namespace Kargono::Panels
 			}
 			// Box Colliders
 			{
-				auto view = Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<Scenes::TransformComponent, Scenes::BoxCollider2DComponent>();
+				auto view = Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<ECS::TransformComponent, ECS::BoxCollider2DComponent>();
 				for (auto entity : view)
 				{
-					auto [tc, bc2d] = view.get<Scenes::TransformComponent, Scenes::BoxCollider2DComponent>(entity);
+					auto [tc, bc2d] = view.get<ECS::TransformComponent, ECS::BoxCollider2DComponent>(entity);
 
 					Math::vec3 translation = tc.Translation + Math::vec3(bc2d.Offset.x, bc2d.Offset.y, 0.001f);
 					Math::vec3 scale = tc.Scale * Math::vec3(bc2d.Size * 2.0f, 1.0f);
@@ -882,8 +1056,8 @@ namespace Kargono::Panels
 		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate || (s_EditorApp->m_SceneState == SceneState::Play && s_EditorApp->m_IsPaused))
 		{
 			// Draw selected entity outline 
-			if (Scenes::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity()) {
-				Scenes::TransformComponent transform = selectedEntity.GetComponent<Scenes::TransformComponent>();
+			if (ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity()) {
+				ECS::TransformComponent transform = selectedEntity.GetComponent<ECS::TransformComponent>();
 				static Math::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};
 				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 
@@ -904,26 +1078,28 @@ namespace Kargono::Panels
 					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				}
 
-				if (selectedEntity.HasComponent<Scenes::CameraComponent>() && s_EditorApp->m_ShowCameraFrustums)
+				if (selectedEntity.HasComponent<ECS::CameraComponent>() && s_EditorApp->m_ShowCameraFrustums)
 				{
 					DrawFrustrum(selectedEntity);
 				}
 			}
+			DrawWorldAxis(); 
 		}
 
-		DrawWorldAxis(); 
+		DrawDebugOverlay();
+
 
 		Rendering::RenderingService::EndScene();
 	}
 
-	void ViewportPanel::DrawFrustrum(Scenes::Entity& entity)
+	void ViewportPanel::DrawFrustrum(ECS::Entity& entity)
 	{
 		Math::vec3 lineVertices[9];
-		static Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };
+		Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };
 
 		// Get entity transform and entity camera
-		auto& transform = entity.GetComponent<Scenes::TransformComponent>();
-		auto& camera = entity.GetComponent<Scenes::CameraComponent>();
+		auto& transform = entity.GetComponent<ECS::TransformComponent>();
+		auto& camera = entity.GetComponent<ECS::CameraComponent>();
 		// Submit frustrum cube color to renderer input
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 
@@ -957,47 +1133,19 @@ namespace Kargono::Panels
 
 	}
 
-	/*void ViewportPanel::DrawWorldAxis()
-	{
-		static Math::vec3 lineVertices[6]
-		{
-			{ -1000.0f, 0.0f, 0.0f },
-			{ 1000.0f, 0.0f, 0.0f },
-			{ 0.0f, -1000.0f, 0.0f },
-			{ 0.0f, 1000.0f, 0.0f },
-			{ 0.0f, 0.0f, -1000.0f },
-			{ 0.0f, 0.0f, 1000.0f }
-		};
-		static Math::uvec2 lineIndices[3]
-		{
-			{ 0, 1 },
-			{ 2, 3 },
-			{ 4, 5 }
-		};
-
-		static Math::vec4 colorIndices[3]
-		{
-			Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_PearlBlue),
-			Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightPurple),
-			Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGreen)
-		};
-
-		uint32_t iteration = 0;
-		for (auto& index : lineIndices)
-		{
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(colorIndices[iteration],
-			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
-			s_OutputVector->clear();
-			s_OutputVector->push_back(lineVertices[index.x]);
-			s_OutputVector->push_back(lineVertices[index.y]);
-			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
-			iteration++;
-		}
-	}*/
-
 	void ViewportPanel::DrawWorldAxis()
 	{
+		Math::vec3 cameraPosition = m_EditorCamera.GetPosition();
+		Math::vec3 fineGridStart =
+		{
+			/*Utility::Operations::RoundDown((int32_t)(cameraPosition.x - (m_LargeGridSpacing / 2)), (int32_t)m_FineGridSpacing),
+			Utility::Operations::RoundDown((int32_t)(cameraPosition.y - (m_LargeGridSpacing / 2)), (int32_t)m_FineGridSpacing),
+			Utility::Operations::RoundDown((int32_t)(cameraPosition.z - (m_LargeGridSpacing / 2)), (int32_t)m_FineGridSpacing),*/
+			Utility::Operations::RoundDown((int32_t)cameraPosition.x, (int32_t)m_LargeGridSpacing),
+			Utility::Operations::RoundDown((int32_t)cameraPosition.y, (int32_t)m_LargeGridSpacing),
+			Utility::Operations::RoundDown((int32_t)cameraPosition.z, (int32_t)m_LargeGridSpacing)
+		};
+
 		// Set cameraFrustrumVertices 0 - 7 with vertices from camera frustum
 		Math::vec3 currentVertex;
 		Math::vec3 minimumValues {std::numeric_limits<float>().max()};
@@ -1034,114 +1182,244 @@ namespace Kargono::Panels
 		}
 
 		// Start Grids
-		int32_t step = 100;
 		int32_t currentLine;
 		s_OutputVector->clear();
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGray),
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_GridMajor),
 			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 		// X-Y Grid
-		if (m_DisplayXYGrid)
+		if (m_DisplayXYMajorGrid)
 		{
 			// Create Y Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, step);
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.x)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ currentLine, minimumValues.y, 0.0f });
 				s_OutputVector->push_back({ currentLine, maximumValues.y, 0.0f });
-				currentLine += step;
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_LargeGridSpacing;
 			}
+
 			// Create X Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, step);
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.y)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ minimumValues.x, currentLine, 0.0f });
 				s_OutputVector->push_back({ maximumValues.x, currentLine, 0.0f });
-				currentLine += step;
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_LargeGridSpacing;
 			}
 		}
+
 		// Y-Z Grid
-		if (m_DisplayYZGrid)
+		if (m_DisplayYZMajorGrid)
 		{ 
 			// Create Y Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, step);
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.y, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.y)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ 0.0f, currentLine, minimumValues.z });
 				s_OutputVector->push_back({ 0.0f, currentLine, maximumValues.z });
-				currentLine += step;
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_LargeGridSpacing;
 			}
+
 			// Create Z Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.z, step);
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.z, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.z)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ 0.0f, minimumValues.y, currentLine});
 				s_OutputVector->push_back({ 0.0f, maximumValues.y, currentLine });
-				currentLine += step;
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_LargeGridSpacing;
 			}
 		}
 
 		// X-Z Grid
-		if (m_DisplayXZGrid)
+		if (m_DisplayXZMajorGrid)
 		{ 
-			// Create X Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, step);
+			// Create Large X Lines
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.x, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.x)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ currentLine, 0.0f, minimumValues.z });
 				s_OutputVector->push_back({ currentLine, 0.0f, maximumValues.z });
-				currentLine += step;
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_LargeGridSpacing;
 			}
-			// Create Z Lines
-			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.z, step);
+
+			// Create Large Z Lines
+			currentLine = Utility::Operations::RoundDown((int32_t)minimumValues.z, (int32_t)m_LargeGridSpacing);
 			while ((float)currentLine < maximumValues.z)
 			{
 				if (currentLine == 0)
 				{
-					currentLine += step;
+					currentLine += (int32_t)m_LargeGridSpacing;
 					continue;
 				}
+				s_OutputVector->clear();
 				s_OutputVector->push_back({ minimumValues.x, 0.0f, currentLine });
 				s_OutputVector->push_back({ maximumValues.x, 0.0f, currentLine });
-				currentLine += step;
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_LargeGridSpacing;
 			}
 		}
 
-		// Submit all grid lines
-		if (s_OutputVector->size() > 0)
+		// Set Color for minor grid lines
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_GridMinor),
+			"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+
+		if (m_DisplayXYMinorGrid)
 		{
-			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
-			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+			// Create X Minor Grid lines
+			currentLine = (int32_t)(fineGridStart.x - m_LargeGridSpacing);
+			while ((float)currentLine < (fineGridStart.x + 2 * m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back({ currentLine,   fineGridStart.y - m_LargeGridSpacing, 0.0f });
+				s_OutputVector->push_back({ currentLine,fineGridStart.y + 2 * m_LargeGridSpacing , 0.0f });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
+
+			// Create Y Minor Grid lines
+			currentLine = (int32_t)(fineGridStart.y - m_LargeGridSpacing);
+			while ((float)currentLine < (fineGridStart.y + 2 * m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back({ fineGridStart.x - m_LargeGridSpacing, currentLine, 0.0f });
+				s_OutputVector->push_back({ fineGridStart.x + 2 * m_LargeGridSpacing , currentLine, 0.0f });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
 		}
-		if (m_DisplayXZGrid || m_DisplayXYGrid || m_DisplayYZGrid)
+
+		if (m_DisplayXZMinorGrid)
+		{
+			// Create X Minor Grid lines
+			currentLine = (int32_t)(fineGridStart.x - m_LargeGridSpacing);
+			while ((float)currentLine < (fineGridStart.x + 2 * m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z - m_LargeGridSpacing });
+				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z + 2 * m_LargeGridSpacing });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
+
+			// Create Z Minor Grid lines
+			currentLine = (int32_t)(fineGridStart.z - m_LargeGridSpacing);
+			while ((float)currentLine < (fineGridStart.z + 2 * m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back({ fineGridStart.x - m_LargeGridSpacing, 0.0f, currentLine });
+				s_OutputVector->push_back({ fineGridStart.x + 2 * m_LargeGridSpacing, 0.0f, currentLine });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
+		}
+
+		if (m_DisplayYZMinorGrid)
+		{
+			// Create Y Minor Grid lines
+			currentLine = (int32_t)(fineGridStart.y - m_LargeGridSpacing);
+			while ((float)currentLine < (fineGridStart.y + 2 * m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back({ 0.0f, currentLine,  fineGridStart.z - m_LargeGridSpacing });
+				s_OutputVector->push_back({ 0.0f , currentLine,  fineGridStart.z + (2 * m_LargeGridSpacing) });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
+
+			// Create Z Minor Grid lines
+			currentLine = (int32_t)(fineGridStart.z - m_LargeGridSpacing);
+			while ((float)currentLine < (fineGridStart.z + 2 * m_LargeGridSpacing))
+			{
+				if (currentLine % (int32_t)m_LargeGridSpacing == 0)
+				{
+					currentLine += (int32_t)m_FineGridSpacing;
+					continue;
+				}
+				s_OutputVector->clear();
+				s_OutputVector->push_back({ 0.0f, fineGridStart.y - m_LargeGridSpacing, currentLine });
+				s_OutputVector->push_back({ 0.0f , fineGridStart.y + 2 * m_LargeGridSpacing, currentLine });
+				s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+				currentLine += (int32_t)m_FineGridSpacing;
+			}
+		}
+
+		if (m_DisplayXZMajorGrid || m_DisplayXYMajorGrid || m_DisplayYZMajorGrid)
 		{
 			// X Axis
 			s_OutputVector->clear();
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_PearlBlue),
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1),
 				"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 			s_OutputVector->push_back({ minimumValues.x, 0.0f, 0.0f });
 			s_OutputVector->push_back({ maximumValues.x, 0.0f, 0.0f });
@@ -1151,7 +1429,7 @@ namespace Kargono::Panels
 
 			// Y Axis
 			s_OutputVector->clear();
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightPurple),
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2),
 				"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 			s_OutputVector->push_back({ 0.0f, minimumValues.y, 0.0f });
 			s_OutputVector->push_back({ 0.0f, maximumValues.y, 0.0f });
@@ -1161,13 +1439,40 @@ namespace Kargono::Panels
 
 			// Z Axis
 			s_OutputVector->clear();
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_LightGreen),
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor3),
 				"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
 			s_OutputVector->push_back({ 0.0f, 0.0f, minimumValues.z });
 			s_OutputVector->push_back({ 0.0f, 0.0f, maximumValues.z });
 			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
+	}
+
+	void ViewportPanel::DrawDebugOverlay()
+	{
+		// Draw debug line
+		for (DebugLine& line : m_DebugLines)
+		{
+			s_OutputVector->clear();
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red),
+				"a_Color", s_LineInputSpec.Buffer, s_LineInputSpec.Shader);
+			s_OutputVector->push_back(line.m_StartPoint);
+			s_OutputVector->push_back(line.m_EndPoint);
+			s_LineInputSpec.ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		}
+
+		// Draw debug points
+		for (DebugPoint& point : m_DebugPoints)
+		{
+			s_OutputVector->clear();
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red),
+				"a_Color", s_PointInputSpec.Buffer, s_PointInputSpec.Shader);
+			s_OutputVector->push_back(point.m_Point);
+			s_PointInputSpec.ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_PointInputSpec);
+		}
+		
 	}
 
 }

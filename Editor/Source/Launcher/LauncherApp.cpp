@@ -9,7 +9,7 @@ namespace Kargono
 
 	// Create Project Panel
 	static EditorUI::GenericPopupSpec s_CreateProjectSpec {};
-	static EditorUI::TextInputSpec s_CreateProjectName {};
+	static EditorUI::EditTextSpec s_CreateProjectName {};
 	static EditorUI::ChooseDirectorySpec s_CreateProjectLocation {};
 
 	static void InitializeStaticResources()
@@ -18,12 +18,12 @@ namespace Kargono
 		s_CreateProjectSpec.PopupWidth = 420.0f;
 		s_CreateProjectSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::TextInputPopup(s_CreateProjectName);
+			EditorUI::EditorUIService::EditText(s_CreateProjectName);
 			EditorUI::EditorUIService::ChooseDirectory(s_CreateProjectLocation);
 		};
 		s_CreateProjectSpec.ConfirmAction = [&]()
 		{
-			s_LauncherApp->SetSelectedProject(Assets::AssetManager::CreateNewProject(s_CreateProjectName.CurrentOption, s_CreateProjectLocation.CurrentOption));
+			s_LauncherApp->SetSelectedProject(Projects::ProjectService::CreateNewProject(s_CreateProjectName.CurrentOption, s_CreateProjectLocation.CurrentOption));
 			if (!s_LauncherApp->GetSelectedProject().empty())
 			{
 				EngineService::EndRun();
@@ -93,10 +93,56 @@ namespace Kargono
 		}, 
 		"Create New Project", [&]()
 		{
-			s_CreateProjectSpec.PopupActive = true;
+			s_CreateProjectSpec.OpenPopup = true;
 		});
 
 		EditorUI::EditorUIService::GenericPopup(s_CreateProjectSpec);
+
+
+
+		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();
+		ImVec2 initialCursorPos = ImGui::GetCursorStartPos();
+
+		
+		// Draw Background
+		ImVec2 windowSize = ImGui::GetWindowSize();
+		Ref<Rendering::Texture2D> icon {nullptr};
+		draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 30.0f, initialScreenCursorPos.y),
+			ImVec2(initialScreenCursorPos.x + (windowSize.x), initialScreenCursorPos.y + 30.0f),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
+
+		// Generate Download Image
+		icon = EditorUI::EditorUIService::s_IconDown;
+		ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 25, initialCursorPos.y + 4));
+		if (ImGui::ImageButton("Download Samples Button",
+			(ImTextureID)(uint64_t)icon->GetRendererID(),
+			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+			EditorUI::EditorUIService::s_PureEmpty,
+			EditorUI::EditorUIService::s_HighlightColor1))
+		{
+			ImGui::OpenPopup("Download Samples Popup");
+		}
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Get Sample Projects");
+			ImGui::EndTooltip();
+		}
+
+		
+		if (ImGui::BeginPopup("Download Samples Popup"))
+		{
+			if (ImGui::MenuItem("Get Pong"))
+			{
+				Utility::FileSystem::CreateNewDirectory("../Projects/");
+				Utility::OSCommands::DownloadGitProject("../Projects/Pong", "https://github.com/ElPsyKongroo1/Pong.git");
+			}
+			ImGui::EndPopup();
+		}
+
+		ImGui::PopStyleColor();
 
 		EditorUI::EditorUIService::EndWindow();
 
@@ -105,7 +151,7 @@ namespace Kargono
 	void LauncherApp::SelectProject()
 	{
 		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
-		if (!std::filesystem::exists(initialDirectory))
+		if (!Utility::FileSystem::PathExists(initialDirectory))
 		{
 			initialDirectory = "";
 		}

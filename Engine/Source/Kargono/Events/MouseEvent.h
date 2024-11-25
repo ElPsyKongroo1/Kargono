@@ -28,17 +28,8 @@ namespace Kargono::Events
 		float GetX() const { return m_MouseX; }
 		float GetY() const { return m_MouseY; }
 
-		static EventType GetStaticType() { return EventType::MouseMoved; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "MouseMovedEvent"; }
+		virtual EventType GetEventType() const override { return EventType::MouseMoved; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Mouse | EventCategory::Input; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "MouseMovedEvent: " << m_MouseX << ", " << m_MouseY;
-			return ss.str();
-		}
 
 	private:
 		// These variables represent the new mouse location on the window.
@@ -67,17 +58,8 @@ namespace Kargono::Events
 		float GetXOffset() const { return m_XOffset; }
 		float GetYOffset() const { return m_YOffset; }
 
-		static EventType GetStaticType() { return EventType::MouseScrolled; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "MouseScrolledEvent"; }
+		virtual EventType GetEventType() const override { return EventType::MouseScrolled; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Mouse | EventCategory::Input; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "MouseScrolledEvent: " << m_XOffset << ", " << m_YOffset;
-			return ss.str();
-		}
 
 	private:
 		// These two variables represent the relative amount of scrolling done
@@ -87,60 +69,30 @@ namespace Kargono::Events
 		float m_XOffset, m_YOffset;
 	};
 	//============================================================
-	// Mouse Button Event Class
-	//============================================================
-	// This is an abstract class that serves to provide the common variable
-	//		of m_Button to subclasses such as MouseButtonPressed and Mouse
-	//		ButtonReleased events. The button represents a mouse button on
-	//		the mouse.
-	class MouseButtonEvent : public Event
-	{
-	protected:
-		//==============================
-		// Constructors and Destructors
-		//==============================
-		MouseButtonEvent(const MouseCode button)
-			: m_Button(button) {}
-	public:
-		//==============================
-		// Getters/Setters
-		//==============================
-		MouseCode GetMouseButton() const { return m_Button; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Mouse | EventCategory::Input | EventCategory::MouseButton; }
-
-	protected:
-		// m_Button represents a mousebutton on the mouse through a button code.
-		MouseCode m_Button;
-	};
-	//============================================================
 	// Mouse Button Pressed Event Class
 	//============================================================
 	// This event represents the moment when a mouse button is pressed
 	//		and detected by the current windowing system. The button
 	//		is available in the parent class.
-	class MouseButtonPressedEvent : public MouseButtonEvent
+	class MouseButtonPressedEvent : public Event
 	{
 	public:
 		//==============================
 		// Constructors and Destructors
 		//==============================
 		MouseButtonPressedEvent(const MouseCode button)
-			: MouseButtonEvent(button) {}
+			: m_Button(button) {}
 
 		//==============================
 		// Getters/Setters
 		//==============================
+		MouseCode GetMouseButton() const { return m_Button; }
 
-		static EventType GetStaticType() { return EventType::MouseButtonPressed; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "MouseButtonPressedEvent"; }
+		virtual EventType GetEventType() const override { return EventType::MouseButtonPressed; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Mouse | EventCategory::Input | EventCategory::MouseButton; }
 
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "MouseButtonPressedEvent: " << m_Button;
-			return ss.str();
-		}
+	private:
+		MouseCode m_Button;
 
 	};
 	//============================================================
@@ -149,29 +101,25 @@ namespace Kargono::Events
 	// This event represents the moment when a mouse button is released
 	//		and detected by the current windowing system. The button
 	//		is available in the parent class.
-	class MouseButtonReleasedEvent : public MouseButtonEvent
+	class MouseButtonReleasedEvent : public Event
 	{
 	public:
 		//==============================
 		// Constructors and Destructors
 		//==============================
 		MouseButtonReleasedEvent(const MouseCode button)
-			: MouseButtonEvent(button) {}
+			: m_Button(button) {}
 
 		//==============================
 		// Getters/Setters
 		//==============================
+		MouseCode GetMouseButton() const { return m_Button; }
 
-		static EventType GetStaticType() { return EventType::MouseButtonReleased; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "MouseButtonReleasedEvent"; }
+		virtual EventType GetEventType() const override { return EventType::MouseButtonReleased; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Mouse | EventCategory::Input | EventCategory::MouseButton; }
 
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "MouseButtonReleasedEvent: " << m_Button;
-			return ss.str();
-		}
+	private:
+		MouseCode m_Button;
 
 	};
 	

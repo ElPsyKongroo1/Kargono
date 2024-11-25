@@ -4,9 +4,12 @@
 //		(Editor and Runtime) as an easy single include to provide all of
 //		the core engine functionality.
 
+//-----------------AI-----------------//
+#include "Kargono/AI/AIService.h"
+
 //-----------------Assets-----------------//
 #include "Kargono/Assets/Asset.h"
-#include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Assets/AssetService.h"
 
 //-----------------Audio-----------------//
 #include "Kargono/Audio/Audio.h"
@@ -23,19 +26,27 @@
 #include "Kargono/Core/Profiler.h"
 #include "Kargono/Core/AppTick.h"
 
+//-----------------ECS-----------------//
+#include "Kargono/ECS/Entity.h"
+#include "Kargono/ECS/EngineComponents.h"
+#include "Kargono/ECS/ProjectComponent.h"
+
 //-----------------Events-----------------//
 #include "Kargono/Events/KeyEvent.h"
+#include "Kargono/Events/MouseEvent.h"
 #include "Kargono/Events/NetworkingEvent.h"
+#include "Kargono/Events/SceneEvent.h"
+#include "Kargono/Events/PhysicsEvent.h"
+#include "Kargono/Events/EditorEvent.h"
 
 //-----------------Input-----------------//
 #include "Kargono/Input/InputService.h"
-#include "Kargono/Input/InputMode.h"
+#include "Kargono/Input/InputMap.h"
 
 //-----------------Math-----------------//
 #include "Kargono/Math/Math.h"
 
 //-----------------Network-----------------//
-#include "Kargono/Network/Message.h"
 #include "Kargono/Network/Client.h"
 #include "Kargono/Network/Server.h"
 
@@ -54,13 +65,10 @@
 
 //-----------------Scene-----------------//
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Scenes/Components.h"
-#include "Kargono/Scenes/Entity.h"
-#include "Kargono/Scenes/EntityClass.h"
 #include "Kargono/Scenes/GameState.h"
 
 //-----------------Scripting-----------------//
-#include "Kargono/Scripting/Scripting.h"
+#include "Kargono/Scripting/ScriptService.h"
 #include "Kargono/Scripting/ScriptModuleBuilder.h"
 
 //-----------------Runtime-UserInterface-----------------//

@@ -4,7 +4,7 @@
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/RuntimeUI/Font.h"
 #include "Kargono/Core/WrappedData.h"
-#include "Kargono/Scripting/ScriptingResources.h"
+#include "Kargono/Scripting/ScriptingCommon.h"
 
 #include <filesystem>
 #include <vector>
@@ -23,19 +23,20 @@ namespace Kargono::Assets
 
 	// This enum provides a method to distinguish between different specific
 	//		asset types in an Asset. The metadata struct will hold an AssetType.
-	enum AssetType
+	enum class AssetType
 	{
 		None = 0,
-		Texture = 1,
-		Shader = 2,
-		Audio = 3,
-		Font = 4,
-		Scene = 5,
-		UserInterface = 6,
-		InputMode = 7,
-		Script = 8,
-		GameState = 9,
-		EntityClass = 10
+		Texture,
+		Shader,
+		Audio,
+		Font,
+		Scene,
+		UserInterface,
+		InputMap,
+		Script,
+		GameState,
+		ProjectComponent,
+		AIState
 	};
 
 	//==============================
@@ -57,13 +58,14 @@ namespace Kargono::Assets
 	struct Metadata
 	{
 	public:
+		std::filesystem::path FileLocation;
 		std::filesystem::path IntermediateLocation;
 		std::string CheckSum;
 		Assets::AssetType Type = Assets::AssetType::None;
-		Ref<void> SpecificFileData = nullptr;
+		Ref<void> SpecificFileData { nullptr };
 	public:
 		template <typename T>
-		T* GetSpecificFileData()
+		T* GetSpecificMetaData()
 		{
 			return static_cast<T*>(SpecificFileData.get());
 		}
@@ -86,7 +88,6 @@ namespace Kargono::Assets
 	struct TextureMetaData
 	{
 		int32_t Width, Height, Channels;
-		std::filesystem::path InitialFileLocation;
 	};
 
 	//==============================
@@ -99,7 +100,6 @@ namespace Kargono::Assets
 	{
 		uint32_t Channels, SampleRate;
 		uint64_t TotalPcmFrameCount, TotalSize;
-		std::filesystem::path InitialFileLocation;
 	};
 
 	//==============================
@@ -137,7 +137,6 @@ namespace Kargono::Assets
 		float AtlasHeight;
 		float LineHeight{};
 		std::vector<std::pair<unsigned char, RuntimeUI::Character>> Characters{};
-		std::filesystem::path InitialFileLocation;
 	};
 
 	//==============================
@@ -165,7 +164,12 @@ namespace Kargono::Assets
 	//==============================
 	// This metadata struct is currently empty but keeps a consistent API when working with assets.
 	//		There may be later additions to this struct.
-	struct InputModeMetaData
+	struct InputMapMetaData
+	{
+
+	};
+
+	struct AIStateMetaData
 	{
 
 	};
@@ -175,29 +179,30 @@ namespace Kargono::Assets
 		std::string Name{};
 	};
 
-	struct EntityClassMetaData
-	{
-		std::string Name{};
-	};
-
 	struct ScriptMetaData
 	{
+		std::string m_Name{};
+		Scripting::ScriptType m_ScriptType {Scripting::ScriptType::None };
+		std::string m_SectionLabel{};
+		WrappedFuncType m_FunctionType{};
+		Scripting::ExplicitFuncType m_ExplicitFuncType{};
+	};
+
+	struct ProjectComponentMetaData
+	{
 		std::string Name{};
-		Scripting::ScriptType ScriptType {Scripting::ScriptType::None };
-		std::string SectionLabel{};
-		WrappedFuncType FunctionType{};
 	};
 
 	//==============================
-	// Asset Struct
+	// Asset Info Struct
 	//==============================
 	// This struct represents an asset managed by the AssetManager class. This asset
 	//		has an AssetHandle which uniquely identifies this asset and a metadata
 	//		object which holds ancillary information about the asset such as the
 	//		asset type, asset location, a checksum, and asset type specific metadata.
-	struct Asset
+	struct AssetInfo
 	{
-		AssetHandle Handle;
+		AssetHandle Handle { Assets::EmptyHandle };
 		Metadata Data;
 	};
 	
@@ -218,10 +223,11 @@ namespace Kargono::Utility
 		case Assets::AssetType::Font: return "Font";
 		case Assets::AssetType::Scene: return "Scene";
 		case Assets::AssetType::UserInterface: return "UserInterface";
-		case Assets::AssetType::InputMode: return "InputMode";
+		case Assets::AssetType::InputMap: return "InputMap";
 		case Assets::AssetType::Script: return "Script";
 		case Assets::AssetType::GameState: return "GameState";
-		case Assets::AssetType::EntityClass: return "EntityClass";
+		case Assets::AssetType::ProjectComponent: return "ProjectComponent";
+		case Assets::AssetType::AIState: return "AIState";
 		case Assets::AssetType::None: return "None";
 		}
 		KG_ERROR("Unknown Type of AssetType.");
@@ -236,10 +242,11 @@ namespace Kargono::Utility
 		if (type == "Font") { return Assets::AssetType::Font; }
 		if (type == "Scene") { return Assets::AssetType::Scene; }
 		if (type == "UserInterface") { return Assets::AssetType::UserInterface; }
-		if (type == "InputMode") { return Assets::AssetType::InputMode; }
+		if (type == "InputMap") { return Assets::AssetType::InputMap; }
 		if (type == "Script") { return Assets::AssetType::Script; }
 		if (type == "GameState") { return Assets::AssetType::GameState; }
-		if (type == "EntityClass") { return Assets::AssetType::EntityClass; }
+		if (type == "ProjectComponent") { return Assets::AssetType::ProjectComponent; }
+		if (type == "AIState") { return Assets::AssetType::AIState; }
 		if (type == "None") { return Assets::AssetType::None; }
 
 		KG_ERROR("Unknown Type of AssetType String.");

@@ -3548,6 +3548,56 @@ ImVec2 ImFont::CalcTextSizeA(float size, float max_width, float wrap_width, cons
     return text_size;
 }
 
+int ImFont::FindPositionAfterLengthA(float size, const char* text_begin, const char* text_end, float checkLength) const
+{
+    if (!text_end)
+        text_end = text_begin + strlen(text_begin); // FIXME-OPT: Need to avoid this.
+
+    const float scale = size / FontSize;
+
+    float textWidth = 0.0f;
+    float line_width = 0.0f;
+
+    const char* s = text_begin;
+    int iteration{ 0 };
+    while (s < text_end)
+    {
+        // Decode and advance source
+        const char* prev_s = s;
+        unsigned int c = (unsigned int)*s;
+        if (c < 0x80)
+            s += 1;
+        else
+            s += ImTextCharFromUtf8(&c, s, text_end);
+
+        if (c < 32)
+        {
+            if (c == '\n')
+            {
+                textWidth = ImMax(textWidth, line_width);
+                line_width = 0.0f;
+                continue;
+            }
+            if (c == '\r')
+                continue;
+        }
+
+        const float char_width = ((int)c < IndexAdvanceX.Size ? IndexAdvanceX.Data[c] : FallbackAdvanceX) * scale;
+
+        line_width += char_width;
+
+        // Check if line_width exceeds provided length
+        if (line_width > checkLength)
+        {
+            return iteration;
+        }
+        iteration++;
+    }
+
+    // Failed to locate position
+    return -1;
+}
+
 // Note: as with every ImDrawList drawing function, this expects that the font atlas texture is bound.
 void ImFont::RenderChar(ImDrawList* draw_list, float size, const ImVec2& pos, ImU32 col, ImWchar c) const
 {

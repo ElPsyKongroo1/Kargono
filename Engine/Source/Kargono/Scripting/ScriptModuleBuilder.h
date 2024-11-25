@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Scripting/ScriptCompiler.h"
+#include "Kargono/Scripting/ScriptService.h"
 
 namespace Kargono::Scripting
 {
@@ -20,7 +20,7 @@ namespace Kargono::Scripting
 		// Internal Functionality to Support Creation
 		//==============================
 		static void CreateModuleHeaderFile();
-		static void CreateModuleCPPFile();
+		static bool CreateModuleCPPFile();
 		static bool CompileModuleCode(bool createDebug);
 		static void AttachEngineFunctionsToModule();
 	public:

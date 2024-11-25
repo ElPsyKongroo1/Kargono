@@ -124,7 +124,7 @@ namespace Kargono::Utility
 
 
 
-#ifndef KG_EXPORT
+#if !defined(KG_EXPORT_SERVER) && !defined(KG_EXPORT_RUNTIME)
 	void OSCommands::OpenFileExplorer(const std::filesystem::path& path)
 	{
 		KG_ASSERT(std::filesystem::is_directory(path), "Invalid path provided, needs to be a directory!");
@@ -133,10 +133,23 @@ namespace Kargono::Utility
 		system(outputString.c_str());
 	}
 
+	void OSCommands::OpenTerminal(const std::filesystem::path& path)
+	{
+		KG_ASSERT(std::filesystem::is_directory(path), "Invalid path provided, needs to be a directory!");
+
+		std::string command;
+
+		// Open Command Prompt at the specified directory
+		command = "start cmd /K \"cd /d " + path.string() + "\"";
+
+		// Execute the command to open the terminal
+		system(command.c_str());
+	}
+
 	void OSCommands::OpenScriptProject(const std::filesystem::path& path)
 	{
 		// TODO: Add More Input Validation for system call.
-		if (!std::filesystem::exists(path))
+		if (!Utility::FileSystem::PathExists(path))
 		{
 			KG_ERROR("Invalid path provided to OpenScriptProject");
 			return;
@@ -151,7 +164,17 @@ namespace Kargono::Utility
 		system(outputString.c_str());
 	}
 
+	void OSCommands::DownloadGitProject(const std::filesystem::path& downloadPath, const std::string& projectURI)
+	{
+		std::string outputString = "git clone " + projectURI + " " + downloadPath.string();
+		system(outputString.c_str());
+	}
 
+	void OSCommands::OpenWebURL(const std::string& webURL)
+	{
+		std::string op = std::string("start ").append(webURL);
+		system(op.c_str());
+	}
 
 #endif
 

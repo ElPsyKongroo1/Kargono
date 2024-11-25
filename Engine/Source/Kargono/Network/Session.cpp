@@ -16,7 +16,7 @@ namespace Kargono::Network
 		newMessage.Header.ID = static_cast<uint32_t>(MessageType::CurrentSessionInit);
 		for (auto& [clientID, connection] : m_ConnectedClients)
 		{
-			connection->Send(newMessage);
+			connection->SendTCPMessage(newMessage);
 		}
 
 		// Clear/Ready Cache used to hold temporary initialization data
@@ -31,7 +31,7 @@ namespace Kargono::Network
 			m_InitCache.LatencyCache.insert({ clientID, {} });
 			m_InitCache.LatencyCacheFilled.insert({ clientID, false });
 			m_InitCache.RecentTimePoints.insert_or_assign(clientID, std::chrono::high_resolution_clock::now());
-			connection->Send(newMessage);
+			connection->SendTCPMessage(newMessage);
 		}
 	}
 
@@ -52,7 +52,7 @@ namespace Kargono::Network
 		m_InitCache.LatencyCache.at(clientID).push_back(singleDirectionLatency);
 
 		// Check if latency cache for current client is full
-		if (m_InitCache.LatencyCache.at(clientID).size() >= m_InitCache.MaxSyncPings)
+		if (m_InitCache.LatencyCache.at(clientID).size() >= k_MaxSyncPings)
 		{
 			m_InitCache.LatencyCacheFilled.insert_or_assign(clientID, true);
 
@@ -71,7 +71,7 @@ namespace Kargono::Network
 		Kargono::Network::Message newMessage;
 		newMessage.Header.ID = static_cast<uint32_t>(MessageType::InitSyncPing);
 		m_InitCache.RecentTimePoints.insert_or_assign(clientID, std::chrono::high_resolution_clock::now());
-		m_ConnectedClients.at(clientID)->Send(newMessage);
+		m_ConnectedClients.at(clientID)->SendTCPMessage(newMessage);
 	}
 
 	void Session::CompleteSessionInit()
@@ -150,14 +150,14 @@ namespace Kargono::Network
 
 			// Send Message
 			newMessage << waitTime;
-			m_ConnectedClients.at(clientID)->Send(newMessage);
+			m_ConnectedClients.at(clientID)->SendTCPMessage(newMessage);
 		}
 
 		// TODO: Start Server Thread
 		Utility::AsyncBusyTimer::CreateTimer(longestLatency, [&]()
 		{
 			// Start Thread
-			ServerService::GetActiveServer()->SubmitToEventQueue(CreateRef<Events::StartSession>());
+			ServerService::SubmitToEventQueue(CreateRef<Events::StartSession>());
 		});
 
 	}
@@ -165,9 +165,12 @@ namespace Kargono::Network
 	void Session::EndSession()
 	{
 	}
-	void Session::ReadyCheck(uint32_t clientID)
+	void Session::StoreClientReadyCheck(uint32_t clientID)
 	{
-		if (m_ReadyCheck.contains(clientID) || !m_UseReadyCheck){ return; }
+		if (m_ReadyCheck.contains(clientID) || !m_UseReadyCheck)
+		{ 
+			return; 
+		}
 		m_ReadyCheck.insert(clientID);
 
 		if (m_ReadyCheck.size() >= m_ConnectedClients.size())
@@ -195,7 +198,7 @@ namespace Kargono::Network
 
 				// Send Message
 				newMessage << waitTime;
-				m_ConnectedClients.at(clientID)->Send(newMessage);
+				m_ConnectedClients.at(clientID)->SendTCPMessage(newMessage);
 			}
 
 			// Reset Ready Check
@@ -203,7 +206,7 @@ namespace Kargono::Network
 			m_ReadyCheck.clear();
 		}
 	}
-	uint16_t Session::AddClient(Ref<TCPServerConnection> newClient)
+	uint16_t Session::AddClient(ServerTCPConnection* newClient)
 	{
 		// Session already contains client, this is an error
 		if (m_ConnectedClients.contains(newClient->GetID()))

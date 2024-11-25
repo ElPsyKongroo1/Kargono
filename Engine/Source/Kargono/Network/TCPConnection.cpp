@@ -11,128 +11,130 @@ namespace Kargono::Network
 	constexpr uint64_t k_MaxBufferSize{ sizeof(uint8_t) * 1024 * 1024 * 10 }; // 5MB
 
 
-	TCPConnection::TCPConnection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket, TSQueue<owned_message>& qIn, std::condition_variable& newCV, std::mutex& newMutex)
-		: m_asioContext(asioContext), m_TCPSocket(std::move(socket)), m_qMessagesIn(qIn), m_BlockThreadCV(newCV), m_BlockThreadMx(newMutex)
+	TCPConnection::TCPConnection(NetworkContext* networkContext, asio::ip::tcp::socket&& socket)
+		: m_NetworkContextPtr(networkContext), m_TCPSocket(std::move(socket))
 	{
 	}
-	void TCPConnection::WakeUpNetworkThread()
+	void TCPConnection::NetworkThreadWakeUp()
 	{
-		std::unique_lock<std::mutex> lock(m_BlockThreadMx);
-		m_BlockThreadCV.notify_one();
+		std::unique_lock<std::mutex> lock(m_NetworkContextPtr->BlockThreadMutex);
+		m_NetworkContextPtr->BlockThreadCondVar.notify_one();
 	}
-	void TCPConnection::Send(const Message& msg)
+	void TCPConnection::NetworkThreadSleep()
 	{
-		asio::post(m_asioContext, [this, msg]()
+		std::unique_lock<std::mutex> lock(m_NetworkContextPtr->BlockThreadMutex);
+		m_NetworkContextPtr->BlockThreadCondVar.wait(lock);
+	}
+	void TCPConnection::SendTCPMessage(const Message& msg)
+	{
+		asio::post(m_NetworkContextPtr->AsioContext, [this, msg]()
+		{
+			bool bWritingMessage = !m_OutgoingMessageQueue.IsEmpty();
+			m_OutgoingMessageQueue.PushBack(msg);
+			if (!bWritingMessage)
 			{
-				bool bWritingMessage = !m_qMessagesOut.IsEmpty();
-				m_qMessagesOut.PushBack(msg);
-				if (!bWritingMessage)
-				{
-					WriteHeader();
-				}
-			});
+				WriteMessageHeaderAsync();
+			}
+		});
 	}
-	void TCPConnection::ReadHeader()
+	void TCPConnection::ReadMessageHeaderAsync()
 	{
-		asio::async_read(m_TCPSocket, asio::buffer(&m_msgTemporaryIn.Header, sizeof(MessageHeader)),
+		asio::async_read(m_TCPSocket, asio::buffer(&m_MessageCache.Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
 			{
 				if (ec)
 				{
-					KG_WARN("Failure to read Header!");
+					KG_WARN("Error occurred while attempting to read TCP Header. Error Code: [{}] Message: {}", ec.value(), ec.message());
 					Disconnect();
 					return;
 				}
 
-				if (m_msgTemporaryIn.Header.PayloadSize > 0)
+				if (m_MessageCache.Header.PayloadSize > 0)
 				{
-					if (m_msgTemporaryIn.Header.PayloadSize > k_MaxBufferSize)
+					if (m_MessageCache.Header.PayloadSize > k_MaxBufferSize)
 					{
 						KG_WARN("Payload sent that is too large. Malformed message!");
 						Disconnect();
 						return;
 					}
-					m_msgTemporaryIn.Body.resize(m_msgTemporaryIn.Header.PayloadSize);
-					ReadBody();
+					m_MessageCache.Payload.resize(m_MessageCache.Header.PayloadSize);
+					ReadMessagePayloadAsync();
 				}
 				else
 				{
-					AddToIncomingMessageQueue();
+					AddMessageToIncomingMessageQueue();
 				}
 			});
 	}
-	void TCPConnection::ReadBody()
+	void TCPConnection::ReadMessagePayloadAsync()
 	{
-		asio::async_read(m_TCPSocket, asio::buffer(m_msgTemporaryIn.Body.data(), m_msgTemporaryIn.Body.size()),
+		asio::async_read(m_TCPSocket, asio::buffer(m_MessageCache.Payload.data(), m_MessageCache.Payload.size()),
 			[this](std::error_code ec, std::size_t length)
 			{
 				if (ec)
 				{
-					KG_WARN("Failure to read body!");
+					KG_WARN("Error occurred while attempting to read TCP Payload. Error Code: [{}] Message: {}", ec.value(), ec.message());
 					Disconnect();
 					return;
 				}
 
-				AddToIncomingMessageQueue();
+				AddMessageToIncomingMessageQueue();
 			});
 	}
-	void TCPConnection::WriteHeader()
+	void TCPConnection::WriteMessageHeaderAsync()
 	{
-		asio::async_write(m_TCPSocket, asio::buffer(&m_qMessagesOut.GetFront().Header, sizeof(MessageHeader)),
+		asio::async_write(m_TCPSocket, asio::buffer(&m_OutgoingMessageQueue.GetFront().Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
 			{
-				if (!ec)
+				if (ec)
 				{
-					if (m_qMessagesOut.GetFront().Body.size() > 0)
-					{
-						if (m_qMessagesOut.GetFront().Body.size() > k_MaxBufferSize)
-						{
-							KG_ERROR("Attempt to send message that is larger than maximum buffer size!");
-							Disconnect();
-							return;
-						}
+					KG_WARN("Error occurred while attempting to write a TCP Header. Error Code: [{}] Message: {}", ec.value(), ec.message());
+					Disconnect();
+					return;
+				}
 
-						WriteBody();
-					}
-					else
+				if (m_OutgoingMessageQueue.GetFront().Payload.size() > 0)
+				{
+					if (m_OutgoingMessageQueue.GetFront().Payload.size() > k_MaxBufferSize)
 					{
-						m_qMessagesOut.PopFront();
-
-						if (!m_qMessagesOut.IsEmpty())
-						{
-							WriteHeader();
-						}
+						KG_WARN("Attempt to send message that is larger than maximum buffer size!");
+						Disconnect();
+						return;
 					}
+
+					WriteMessagePayloadAsync();
 				}
 				else
 				{
-					KG_ERROR("Failure to write Header!");
-					Disconnect();
-				}
-			});
-	}
-	void TCPConnection::WriteBody()
-	{
-		asio::async_write(m_TCPSocket, asio::buffer(m_qMessagesOut.GetFront().Body.data(), m_qMessagesOut.GetFront().Body.size()),
-			[this](std::error_code ec, std::size_t length)
-			{
-				if (!ec)
-				{
-					m_qMessagesOut.PopFront();
+					m_OutgoingMessageQueue.PopFront();
 
-					if (!m_qMessagesOut.IsEmpty())
+					if (!m_OutgoingMessageQueue.IsEmpty())
 					{
-						WriteHeader();
+						WriteMessageHeaderAsync();
 					}
 				}
-				else
+			});
+	}
+	void TCPConnection::WriteMessagePayloadAsync()
+	{
+		asio::async_write(m_TCPSocket, asio::buffer(m_OutgoingMessageQueue.GetFront().Payload.data(), m_OutgoingMessageQueue.GetFront().Payload.size()),
+			[this](std::error_code ec, std::size_t length)
+			{
+				if (ec)
 				{
-					KG_WARN("Failure to write Body!");
+					KG_WARN("Error occurred while attempting to write a TCP Payload. Error Code: [{}] Message: {}", ec.value(), ec.message());
 					Disconnect();
+					return;
+				}
+
+				m_OutgoingMessageQueue.PopFront();
+				if (!m_OutgoingMessageQueue.IsEmpty())
+				{
+					WriteMessageHeaderAsync();
 				}
 			});
 	}
-	uint64_t TCPConnection::Scramble(uint64_t nInput)
+	uint64_t TCPConnection::GenerateValidationToken(uint64_t nInput)
 	{
 		uint64_t out = nInput ^ Projects::ProjectService::GetActiveSecretOne();
 		out = (out & Projects::ProjectService::GetActiveSecretTwo()) >> 4 | (out & Projects::ProjectService::GetActiveSecretThree()) << 4;

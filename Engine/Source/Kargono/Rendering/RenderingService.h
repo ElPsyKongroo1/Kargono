@@ -83,6 +83,7 @@ namespace Kargono::Rendering
 		//============================================================
 		// Draw Call Functions
 		//============================================================
+		static void DrawBufferPoints(Ref<DrawCallBuffer> buffer);
 		static void DrawBufferLine(Ref<DrawCallBuffer> buffer);
 		static void DrawBufferIndices(Ref<DrawCallBuffer> buffer);
 		static void DrawBufferTriangles(Ref<DrawCallBuffer> buffer);

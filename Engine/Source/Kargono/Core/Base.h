@@ -10,22 +10,13 @@ namespace Kargono
 	// Testing Types/Data
 	//==============================
 	inline bool s_TestingActive = false;
-	// Exception Class used for doctest unit testing
-	class TestingException : public std::runtime_error {
-	public:
-		explicit TestingException(const std::string& message)
-			: std::runtime_error(message) {}
-	};
 }
-
 
 #if defined(KG_PLATFORM_WINDOWS)
 #define KG_DEBUGBREAK() \
-	if (Kargono::s_TestingActive) { throw Kargono::TestingException("Default Break"); }\
-	else { __debugbreak(); }
+	if (!Kargono::s_TestingActive) { __debugbreak(); }
 #define KG_DEBUGBREAK_MSG(msg) \
-	if (Kargono::s_TestingActive) { throw Kargono::TestingException(msg); }\
-	else { __debugbreak(); }
+	if (!Kargono::s_TestingActive) { __debugbreak(); }
 #elif defined(KG_PLATFORM_LINUX)
 #include <signal.h>
 #define KG_DEBUGBREAK() raise(SIGTRAP)
@@ -44,6 +35,8 @@ namespace Kargono
 #define BIT(x) (1 << x)
 
 #define KG_BIND_CLASS_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+
+
 
 namespace Kargono
 {
@@ -104,4 +97,5 @@ namespace Kargono
 #include "Kargono/Core/Log.h"
 #include "Kargono/Core/Assert.h"
 #include "Kargono/Core/Profiler.h"
+#include "Kargono/Core/FixedString.h"
 

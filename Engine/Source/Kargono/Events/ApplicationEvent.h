@@ -31,17 +31,8 @@ namespace Kargono::Events
 		unsigned int GetWidth() const { return m_Width; }
 		unsigned int GetHeight() const { return m_Height; }
 
-		static EventType GetStaticType() { return EventType::WindowResize; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "WindowResizeEvent"; }
+		virtual EventType GetEventType() const override { return EventType::WindowResize; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
-			return ss.str();
-		}
 	private:
 		// m_Width and m_Height represent the new width and height of the window
 		//		after the resize has occurred on the Window.
@@ -66,9 +57,7 @@ namespace Kargono::Events
 		//==============================
 		// Getters/Setters
 		//==============================
-		static EventType GetStaticType() { return EventType::WindowClose; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "WindowCloseEvent"; }
+		virtual EventType GetEventType() const override { return EventType::WindowClose; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
 	};
 
@@ -91,9 +80,7 @@ namespace Kargono::Events
 		//==============================
 		// Getters/Setters
 		//==============================
-		static EventType GetStaticType() { return EventType::AppClose; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "ApplicationCloseEvent"; }
+		virtual EventType GetEventType() const override { return EventType::AppClose; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
 	};
 
@@ -112,76 +99,8 @@ namespace Kargono::Events
 		//==============================
 		// Getters/Setters
 		//==============================
-		static EventType GetStaticType() { return EventType::CleanUpTimers; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "CleanUpTimersEvent"; }
+		virtual EventType GetEventType() const override { return EventType::CleanUpTimers; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
-	};
-
-	//============================================================
-	// Physics Collision Event Class
-	//============================================================
-	// This event represents a collision that occurs inside the Physics system.
-	//		A collision occurs between two entities and the UUID of each entity
-	//		is recorded. This information is used later in the event pipeline
-	//		to handle concepts such as audio effects.
-	class PhysicsCollisionEvent : public Event
-	{
-	public:
-		//==============================
-		// Constructors and Destructors
-		//==============================
-		// This event is initialized with the UUID of both entities involved
-		//		in the collision.
-		PhysicsCollisionEvent(UUID entityOne, UUID entityTwo)
-			: m_EntityOne(entityOne), m_EntityTwo(entityTwo){}
-
-		//==============================
-		// Getters/Setters
-		//==============================
-
-		UUID GetEntityOne() const { return m_EntityOne; }
-		UUID GetEntityTwo() const { return m_EntityTwo; }
-
-		static EventType GetStaticType() { return EventType::PhysicsCollision; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "PhysicsCollisionEvent"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
-	private:
-		// These are the UUID's of both entities involved in the collision event.
-		UUID m_EntityOne;
-		UUID m_EntityTwo;
-	};
-
-	//============================================================
-	// Physics Collision End Class
-	//============================================================
-	class PhysicsCollisionEnd : public Event
-	{
-	public:
-		//==============================
-		// Constructors and Destructors
-		//==============================
-		// This event is initialized with the UUID of both entities involved
-		//		in the collision.
-		PhysicsCollisionEnd(UUID entityOne, UUID entityTwo)
-			: m_EntityOne(entityOne), m_EntityTwo(entityTwo) {}
-
-		//==============================
-		// Getters/Setters
-		//==============================
-
-		UUID GetEntityOne() const { return m_EntityOne; }
-		UUID GetEntityTwo() const { return m_EntityTwo; }
-
-		static EventType GetStaticType() { return EventType::PhysicsCollisionEnd; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "PhysicsCollisionEnd"; }
-		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
-	private:
-		// These are the UUID's of both entities involved in the collision event.
-		UUID m_EntityOne;
-		UUID m_EntityTwo;
 	};
 
 	//============================================================
@@ -202,9 +121,7 @@ namespace Kargono::Events
 
 		uint64_t GetDelayMilliseconds() const { return m_DelayMilliseconds; }
 
-		static EventType GetStaticType() { return EventType::AppTick; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "AppTickEvent"; }
+		virtual EventType GetEventType() const override { return EventType::AppTick; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
 	private:
 		uint64_t m_DelayMilliseconds;
@@ -228,9 +145,7 @@ namespace Kargono::Events
 
 		uint64_t GetDelayMilliseconds() const { return m_DelayMilliseconds; }
 
-		static EventType GetStaticType() { return EventType::AddTickGeneratorUsage; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "AddTickGeneratorUsage"; }
+		virtual EventType GetEventType() const override { return EventType::AddTickGeneratorUsage; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
 	private:
 		uint64_t m_DelayMilliseconds;
@@ -254,9 +169,7 @@ namespace Kargono::Events
 
 		uint64_t GetDelayMilliseconds() const { return m_DelayMilliseconds; }
 
-		static EventType GetStaticType() { return EventType::RemoveTickGeneratorUsage; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "RemoveTickGeneratorUsage"; }
+		virtual EventType GetEventType() const override { return EventType::RemoveTickGeneratorUsage; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
 	private:
 		uint64_t m_DelayMilliseconds;
@@ -280,9 +193,7 @@ namespace Kargono::Events
 
 		uint64_t GetSkipCount() const { return m_Count; }
 
-		static EventType GetStaticType() { return EventType::SkipUpdate; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "SkipUpdateEvent"; }
+		virtual EventType GetEventType() const override { return EventType::SkipUpdate; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
 	private:
 		uint32_t m_Count;
@@ -306,9 +217,7 @@ namespace Kargono::Events
 
 		uint64_t GetExtraUpdateCount() const { return m_Count; }
 
-		static EventType GetStaticType() { return EventType::AddExtraUpdate; }
-		virtual EventType GetEventType() const override { return GetStaticType(); }
-		virtual const char* GetName() const override { return "AddExtraUpdateEvent"; }
+		virtual EventType GetEventType() const override { return EventType::AddExtraUpdate; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
 	private:
 		uint32_t m_Count;

@@ -2,80 +2,14 @@
 
 #include "Panels/ContentBrowserPanel.h"
 
-#include "Kargono.h"
 #include "EditorApp.h"
-#include "API/FileWatch/FileWatchAPI.h"
-
-
-namespace Kargono::Utility
-{
-	static Ref<Rendering::Texture2D> BrowserFileTypeToIcon(Panels::BrowserFileType type)
-	{
-		switch (type)
-		{
-		case Panels::BrowserFileType::Directory: { return EditorUI::EditorUIService::s_DirectoryIcon; }
-		case Panels::BrowserFileType::Image: { return EditorUI::EditorUIService::s_ImageIcon; }
-		case Panels::BrowserFileType::Audio: { return EditorUI::EditorUIService::s_AudioIcon; }
-		case Panels::BrowserFileType::Font: { return EditorUI::EditorUIService::s_FontIcon; }
-		case Panels::BrowserFileType::UserInterface: { return EditorUI::EditorUIService::s_UserInterfaceIcon; }
-		case Panels::BrowserFileType::Binary: { return EditorUI::EditorUIService::s_BinaryIcon; }
-		case Panels::BrowserFileType::Registry: { return EditorUI::EditorUIService::s_RegistryIcon; }
-		case Panels::BrowserFileType::Scene: { return EditorUI::EditorUIService::s_SceneIcon; }
-		case Panels::BrowserFileType::ScriptProject: { return EditorUI::EditorUIService::s_ScriptProjectIcon; }
-		case Panels::BrowserFileType::Input: { return EditorUI::EditorUIService::s_InputIcon; }
-		case Panels::BrowserFileType::None: { return EditorUI::EditorUIService::s_GenericFileIcon; }
-		}
-		KG_ERROR("Invalid BrowserFileType provided");
-		return EditorUI::EditorUIService::s_GenericFileIcon;
-	}
-
-	static Panels::BrowserFileType DetermineFileType(const std::filesystem::path& entry)
-	{
-		if (std::filesystem::is_directory(entry)) { return Panels::BrowserFileType::Directory; }
-		if (!entry.has_extension()) { return Panels::BrowserFileType::None; }
-		auto extension = entry.extension();
-		if (extension == ".jpg" || extension == ".png") { return Panels::BrowserFileType::Image; }
-		if (extension == ".wav" || extension == ".mp3") { return Panels::BrowserFileType::Audio; }
-		if (extension == ".kgreg") { return Panels::BrowserFileType::Registry; }
-		if (extension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
-		if (extension == ".ttf") { return Panels::BrowserFileType::Font; }
-		if (extension == ".kgscene") { return Panels::BrowserFileType::Scene; }
-		if (extension == ".csproj") { return Panels::BrowserFileType::ScriptProject; }
-		if (extension == ".kginput") { return Panels::BrowserFileType::Input; }
-		if (extension == ".kgaudio" || extension == ".kgtexture" || extension == ".kgfont" ||
-			extension == ".kgshadervert" || extension == ".kgshaderfrag") {
-			return Panels::BrowserFileType::Binary;
-		}
-		return Panels::BrowserFileType::None;
-	}
-
-	static std::string BrowserFileTypeToPayloadString(Panels::BrowserFileType type)
-	{
-		switch (type)
-		{
-		case Panels::BrowserFileType::Directory: { return "CONTENT_BROWSER_DIRECTORY"; }
-		case Panels::BrowserFileType::Image: { return "CONTENT_BROWSER_IMAGE"; }
-		case Panels::BrowserFileType::Audio: { return "CONTENT_BROWSER_AUDIO"; }
-		case Panels::BrowserFileType::UserInterface: { return "CONTENT_BROWSER_USERINTERFACE"; }
-		case Panels::BrowserFileType::Font: { return "CONTENT_BROWSER_FONT"; }
-		case Panels::BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
-		case Panels::BrowserFileType::Registry: { return "CONTENT_BROWSER_ITEM"; }
-		case Panels::BrowserFileType::Scene: { return "CONTENT_BROWSER_SCENE"; }
-		case Panels::BrowserFileType::ScriptProject: { return "CONTENT_BROWSER_ITEM"; }
-		case Panels::BrowserFileType::Input: { return "CONTENT_BROWSER_ITEM"; }
-		case Panels::BrowserFileType::None: { return "CONTENT_BROWSER_ITEM"; }
-		}
-		KG_ERROR("Invalid BrowserFileType provided");
-		return "CONTENT_BROWSER_ITEM";
-	}
-}
 
 static Kargono::EditorApp* s_EditorApp{ nullptr };
 
 namespace Kargono::Panels
 {
 
-	void OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)
+	void ContentBrowserPanel::OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)
 	{
 		EngineService::SubmitToMainThread([&]()
 		{
@@ -85,26 +19,875 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::UpdateCurrentDirectory(const std::filesystem::path& newPath)
 	{
+
+		// Create function to 
 		static std::filesystem::path currentPath;
 		currentPath = newPath;
 		EngineService::SubmitToMainThread([&]()
 		{
+				
 			API::FileWatch::EndWatch(m_CurrentDirectory);
 			m_CurrentDirectory = currentPath;
-			API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
+			API::FileWatch::StartWatch(m_CurrentDirectory, KG_BIND_CLASS_FN(OnFileWatchUpdate));
 			RefreshCachedDirectoryEntries();
 		});
+	}
+
+	void ContentBrowserPanel::NavigateDirectoryBack()
+	{
+		if (!m_NavigateAssetsHeader.m_IsBackActive)
+		{
+			return;
+		}
+		
+		UpdateCurrentDirectory(m_CurrentDirectory.parent_path());
+	}
+
+	void ContentBrowserPanel::NavigateDirectoryForward()
+	{
+		if (!m_NavigateAssetsHeader.m_IsForwardActive)
+		{
+			return;
+		}
+
+		if (Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, m_LongestRecentPath))
+		{
+			std::filesystem::path currentIterationPath{ m_LongestRecentPath };
+			std::filesystem::path recentIterationPath{ m_LongestRecentPath };
+			while (currentIterationPath != m_CurrentDirectory)
+			{
+				recentIterationPath = currentIterationPath;
+				currentIterationPath = currentIterationPath.parent_path();
+			}
+			UpdateCurrentDirectory(recentIterationPath);
+		}
+	}
+
+	void ContentBrowserPanel::OnNavHeaderBackReceivePayload(const char* payloadName, void* dataPointer, std::size_t dataSize)
+	{
+		// Get original file path from payload
+		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
+		std::filesystem::path payloadPath(payloadPathPointer);
+
+		// Handle updating internal registry for assets if necessary
+		OnHandleMoveAssetLocation(payloadPath, m_CurrentDirectory.parent_path());
+
+		// Move file to new directory
+		Utility::FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
+	}
+
+	void ContentBrowserPanel::OnNavHeaderForwardReceivePayload(const char* payloadName, void* dataPointer, std::size_t dataSize)
+	{
+		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
+		std::filesystem::path payloadPath(payloadPathPointer);
+		std::filesystem::path currentIterationPath{ m_LongestRecentPath };
+		std::filesystem::path recentIterationPath{ m_LongestRecentPath };
+		while (currentIterationPath != m_CurrentDirectory)
+		{
+			recentIterationPath = currentIterationPath;
+			currentIterationPath = currentIterationPath.parent_path();
+		}
+		Utility::FileSystem::MoveFileToDirectory(payloadPath, recentIterationPath);
+	}
+
+	void ContentBrowserPanel::OnGridCreatePayload(EditorUI::GridEntry& currentEntry, EditorUI::DragDropPayload& payload)
+	{
+		// Append the file name to current content browser directory
+		static std::filesystem::path relativePath;
+		relativePath = m_CurrentDirectory / currentEntry.m_Label.CString();
+		const wchar_t* itemPath = relativePath.c_str();
+
+		// Load up payload
+		payload.m_Label = Utility::BrowserFileTypeToPayloadString((BrowserFileType)currentEntry.m_ArchetypeID).c_str();
+		payload.m_DataPointer = (void*)itemPath;
+		payload.m_DataSize = (wcslen(itemPath) + 1) * sizeof(wchar_t);
+	}
+
+	void ContentBrowserPanel::OnGridReceivePayload(EditorUI::GridEntry& currentEntry, const char* payloadName, void* dataPointer, std::size_t dataSize)
+	{
+		// Get absolute path of the in-grid directory
+		std::filesystem::path newDirectoryPath{ m_CurrentDirectory / currentEntry.m_Label.CString() };
+
+		// Handle receiving payload (Get directory of file...)
+		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
+		std::filesystem::path payloadPath(payloadPathPointer);
+
+		// Handle updating internal registry for assets if necessary
+		OnHandleMoveAssetLocation(payloadPath, newDirectoryPath);
+
+		// Move the file
+		Utility::FileSystem::MoveFileToDirectory(payloadPath, newDirectoryPath);
+	}
+
+	void ContentBrowserPanel::OnGridDirectoryDoubleClick(EditorUI::GridEntry& currentEntry)
+	{
+		UpdateCurrentDirectory(m_CurrentDirectory / currentEntry.m_Label.CString());
+		if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory / currentEntry.m_Label.CString(), m_LongestRecentPath))
+		{
+			m_LongestRecentPath = m_CurrentDirectory / currentEntry.m_Label.CString();
+		}
+	}
+
+	void ContentBrowserPanel::OnGridHandleRightClick(EditorUI::GridEntry& currentEntry)
+	{
+		// Store current file to modify in later function
+		m_CurrentFileToModifyCache = m_CurrentDirectory / currentEntry.m_Label.CString();
+
+		// Enable tooltip menu
+		m_RightClickTooltip.TooltipActive = true;
+		BrowserFileType fileType = (BrowserFileType)currentEntry.m_ArchetypeID;
+		m_CurrentFileTypeCache = fileType;
+
+		// Manage custom file type tooltips
+		m_RightClickTooltip.ClearEntries();
+		if (fileType == BrowserFileType::AIState)
+		{
+			EditorUI::TooltipEntry openAIStateTooltipEntry{ "Open AI State", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				s_EditorApp->m_AIStatePanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openAIStateTooltipEntry);
+		}
+		else if (fileType == BrowserFileType::GameState)
+		{
+			EditorUI::TooltipEntry openGameStateTooltipEntry{ "Open Game State", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				s_EditorApp->m_GameStatePanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openGameStateTooltipEntry);
+		}
+		else if (fileType == BrowserFileType::InputMap)
+		{
+			EditorUI::TooltipEntry openInputMapTooltipEntry{ "Open Input Map", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				s_EditorApp->m_InputMapPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openInputMapTooltipEntry);
+		}
+		else if (fileType == BrowserFileType::ProjectComponent)
+		{
+			EditorUI::TooltipEntry openProjectComponentTooltipEntry{ "Open Project Component", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				s_EditorApp->m_ProjectComponentPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openProjectComponentTooltipEntry);
+		}
+		else if (fileType == BrowserFileType::Script)
+		{
+			EditorUI::TooltipEntry openScriptTooltipEntry{ "Open Script", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// Open the file in the text editor
+				s_EditorApp->m_TextEditorPanel->OpenFile(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openScriptTooltipEntry);
+		}
+
+		else if (fileType == BrowserFileType::Scene)
+		{
+			EditorUI::TooltipEntry openSceneTooltipEntry{ "Open Scene", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				EditorApp::GetCurrentApp()->OpenScene(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openSceneTooltipEntry);
+		}
+
+		else if (fileType == BrowserFileType::UserInterface)
+		{
+			EditorUI::TooltipEntry openUserInterfaceTooltipEntry{ "Open User Interface", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				s_EditorApp->m_UIEditorPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openUserInterfaceTooltipEntry);
+		}
+
+		else if (fileType == BrowserFileType::RawAudio)
+		{
+			EditorUI::TooltipEntry importAudioTooltipEntry{ "Import Audio", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// Open import font dialog
+				s_EditorApp->OpenImportFileDialog(m_CurrentFileToModifyCache, Assets::AssetType::Audio);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(importAudioTooltipEntry);
+		}
+
+		else if (fileType == BrowserFileType::RawTexture)
+		{
+			EditorUI::TooltipEntry importTextureTooltipEntry{ "Import Texture", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// Open import font dialog
+				s_EditorApp->OpenImportFileDialog(m_CurrentFileToModifyCache, Assets::AssetType::Texture);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(importTextureTooltipEntry);
+		}
+
+		else if (fileType == BrowserFileType::RawFont)
+		{
+			EditorUI::TooltipEntry importFontTooltipEntry{ "Import Font", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// Open import font dialog
+				s_EditorApp->OpenImportFileDialog(m_CurrentFileToModifyCache, Assets::AssetType::Font);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(importFontTooltipEntry);
+
+			EditorUI::TooltipEntry useFontTooltipEntry{ "Use Font In Current User Interface", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				Assets::AssetHandle currentHandle = Assets::AssetService::ImportFontFromFile(m_CurrentFileToModifyCache);
+				Ref<RuntimeUI::Font> font = Assets::AssetService::GetFont(currentHandle);
+				if (font)
+				{
+					RuntimeUI::RuntimeUIService::SetActiveFont(font, currentHandle);
+				}
+				else 
+				{ 
+					KG_WARN("Could not load font {0}", m_CurrentFileToModifyCache.filename().string()); 
+				}
+			} };
+			m_RightClickTooltip.AddTooltipEntry(useFontTooltipEntry);
+		}
+
+		// Manage files tooltip options
+		if (fileType != BrowserFileType::Directory && fileType != BrowserFileType::Script && 
+			fileType != BrowserFileType::RawTexture &&
+			fileType != BrowserFileType::RawAudio &&
+			fileType != BrowserFileType::RawFont)
+		{
+			EditorUI::TooltipEntry openFileTooltipEntry{ "Open File in Text Editor", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// Open the file in the text editor
+				s_EditorApp->m_TextEditorPanel->OpenFile(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openFileTooltipEntry);
+		}
+		if (fileType != BrowserFileType::Registry && fileType != BrowserFileType::Directory)
+		{
+			EditorUI::TooltipEntry deleteFileTooltipEntry{ "Delete File", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				m_DeleteFilePopup.OpenPopup = true;
+#if 0
+				switch (fileType)
+				{
+					case BrowserFileType::
+				case BrowserFileType::RawAudio:
+				case BrowserFileType::RawFont:
+				case BrowserFileType::RawTexture:
+					m_DeleteFilePopup.Label = "Delete File";
+
+				}
+#endif
+			} };
+			m_RightClickTooltip.AddTooltipEntry(deleteFileTooltipEntry);
+		}
+
+		// Manage directories tooltip options
+		if (fileType == BrowserFileType::Directory)
+		{
+			EditorUI::TooltipEntry deleteDirectoryTooltipEntry{ "Delete Directory", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				m_DeleteDirectoryPopup.OpenPopup = true;
+			} };
+			m_RightClickTooltip.AddTooltipEntry(deleteDirectoryTooltipEntry);
+		}
+
+	}
+
+	void ContentBrowserPanel::OnHandleMoveAssetLocation(const std::filesystem::path& originalFilePath, const std::filesystem::path& newDirectory)
+	{
+		// Get file extension and relative path for payload file
+		std::filesystem::path fileExtension = originalFilePath.extension();
+		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), originalFilePath) };
+		std::filesystem::path newRelativePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), newDirectory / originalFilePath.filename()) };
+		if (fileExtension == ".kgstate")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetGameStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If game state in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a game state, however, no game state could be found in registry. Moving the indicated file without updating registry.");
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetGameStateFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of game state asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update game state location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgaistate")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If AI state in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a AI state, however, no AI state could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetAIStateFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of AI state asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update AI state location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgaudio")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetAudioBufferHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If audio buffer in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a audio buffer, however, no audio buffer could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetAudioBufferFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of audio buffer asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update audio buffer location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgfont")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetFontHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If font in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a font, however, no font could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetFontFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of font asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update font location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kginput")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetInputMapHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If input map in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a input map, however, no input map could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetInputMapFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of input map asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update input map location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgcomponent")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If project component in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a project component, however, no project component could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetProjectComponentFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of project component asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update project component location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgscene")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetSceneHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If scene in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a scene, however, no scene could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetSceneFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of scene asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update scene location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgscript")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetScriptHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If script in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a script, however, no script could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetScriptFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of script asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update script location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kgtexture")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetTexture2DHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If texture in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a texture, however, no texture could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetTexture2DFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of texture asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update texture location in registry");
+				}
+			}
+		}
+
+		else if (fileExtension == ".kgui")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetUserInterfaceHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If user interface in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a user interface, however, no user interface could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetUserInterfaceFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of user interface asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update user interface location in registry");
+				}
+			}
+		}
+	}
+
+	void ContentBrowserPanel::OnHandleDeleteFile()
+	{
+		// TODO: Fix this implementation. Probably should use a switch
+		std::filesystem::path currentExtension = m_CurrentFileToModifyCache.extension();
+		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), m_CurrentFileToModifyCache) };
+		if (currentExtension == ".kgstate")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetGameStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If game state in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a game state, however, no game state could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+
+			Assets::AssetService::DeleteGameState(resultHandle);
+		}
+
+		else if (currentExtension == ".kgaistate")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If game state in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as an ai state, however, no ai state could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+
+			Assets::AssetService::DeleteAIState(resultHandle);
+		}
+		else if (currentExtension == ".kgaudio")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetAudioBufferHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If audio in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as an audio asset, however, no audio asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+
+			Assets::AssetService::DeleteAudioBuffer(resultHandle);
+		}
+		else if (currentExtension == ".kgfont")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetFontHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If font in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a font asset, however, no font asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+
+			Assets::AssetService::DeleteFont(resultHandle);
+		}
+		else if (currentExtension == ".kginput")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetInputMapHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If input map in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a input map asset, however, no input map asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteInputMap(resultHandle);
+		}
+		else if (currentExtension == ".kgcomponent")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If project component in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a project component asset, however, no project component asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteProjectComponent(resultHandle);
+		}
+		else if (currentExtension == ".kgscene")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetSceneHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If scene in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a scene asset, however, no scene asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteScene(resultHandle);
+		}
+		else if (currentExtension == ".kgscript")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetScriptHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If script in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a script asset, however, no script asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteScript(resultHandle);
+		}
+		else if (currentExtension == ".kgtexture")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetTexture2DHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If texture in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a texture asset, however, no texture asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteTexture2D(resultHandle);
+		}
+		else if (currentExtension == ".kgui")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetUserInterfaceHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If user interface in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a user interface asset, however, no user interface asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+			Assets::AssetService::DeleteUserInterface(resultHandle);
+		}
+		else
+		{
+			Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+		}
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel()
 		: m_BaseDirectory(Projects::ProjectService::GetActiveAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ContentBrowserPanel::OnKeyPressedEditor));
+		s_EditorApp->m_PanelToMousePressedInput.insert_or_assign(m_PanelName.CString(),
+			KG_BIND_CLASS_FN(ContentBrowserPanel::OnMouseButton));
 
-		API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
+		// Initialize widget resources
+		InitializeNavigationHeader();
+		InitializeFileFolderViewer();
+
+		API::FileWatch::StartWatch(m_CurrentDirectory, KG_BIND_CLASS_FN(OnFileWatchUpdate));
 		RefreshCachedDirectoryEntries();
+	}
+
+	void ContentBrowserPanel::InitializeNavigationHeader()
+	{
+		m_NavigateAssetsHeader.m_Label = "Assets";
+		m_NavigateAssetsHeader.m_Flags = EditorUI::NavigationHeaderFlags::NavigationHeader_AllowDragDrop;
+
+		// Copy over s_ContentBrowserPayloads into m_NavigateAssetHeader!!!!!
+		std::vector<FixedString32>& navPayloadList = m_NavigateAssetsHeader.m_AcceptableOnReceivePayloads;
+		navPayloadList = s_ContentBrowserPayloads;
+
+		m_NavigateAssetsHeader.m_OnNavigateBack = KG_BIND_CLASS_FN(NavigateDirectoryBack);
+		m_NavigateAssetsHeader.m_OnReceivePayloadBack = KG_BIND_CLASS_FN(OnNavHeaderBackReceivePayload);
+		m_NavigateAssetsHeader.m_OnNavigateForward = KG_BIND_CLASS_FN(NavigateDirectoryForward);
+		m_NavigateAssetsHeader.m_OnReceivePayloadForward = KG_BIND_CLASS_FN(OnNavHeaderForwardReceivePayload);
+	}
+
+	void ContentBrowserPanel::InitializeFileFolderViewer()
+	{
+		// Initialize file viewer grid
+		m_FileFolderViewer.m_Label = "Assets File Viewer";
+		m_FileFolderViewer.m_Flags = EditorUI::GridFlags::Grid_AllowDragDrop;
+
+		// Initialize grid archetypes
+		EditorUI::GridEntryArchetype directoryArch;
+		directoryArch.m_Icon = EditorUI::EditorUIService::s_IconDirectory;
+		directoryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		directoryArch.m_OnDoubleLeftClick = KG_BIND_CLASS_FN(OnGridDirectoryDoubleClick);
+		directoryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		directoryArch.m_OnReceivePayload = KG_BIND_CLASS_FN(OnGridReceivePayload);
+		// Copy over s_ContentBrowserPayloads into directoryArch
+		std::vector<FixedString32>& navPayloadList = directoryArch.m_AcceptableOnReceivePayloads;
+		navPayloadList = s_ContentBrowserPayloads;
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Directory, directoryArch);
+
+		EditorUI::GridEntryArchetype rawTextureArch;
+		rawTextureArch.m_Icon = EditorUI::EditorUIService::s_IconTexture;
+		rawTextureArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		rawTextureArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawTexture, rawTextureArch);
+
+		EditorUI::GridEntryArchetype rawAudioArch;
+		rawAudioArch.m_Icon = EditorUI::EditorUIService::s_IconAudio;
+		rawAudioArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		rawAudioArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawAudio, rawAudioArch);
+
+		EditorUI::GridEntryArchetype rawFontArch;
+		rawFontArch.m_Icon = EditorUI::EditorUIService::s_IconFont;
+		rawFontArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		rawFontArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawFont, rawFontArch);
+
+		EditorUI::GridEntryArchetype aiStateArch;
+		aiStateArch.m_Icon = EditorUI::EditorUIService::s_IconAI_KG;
+		aiStateArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		aiStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		aiStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::AIState, aiStateArch);
+
+		EditorUI::GridEntryArchetype audioArch;
+		audioArch.m_Icon = EditorUI::EditorUIService::s_IconAudio_KG;
+		audioArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		audioArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		audioArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Audio, audioArch);
+
+		EditorUI::GridEntryArchetype binaryArch;
+		binaryArch.m_Icon = EditorUI::EditorUIService::s_IconBinary;
+		binaryArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor4_Thin;
+		binaryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		binaryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Binary, binaryArch);
+
+		EditorUI::GridEntryArchetype fontArch;
+		fontArch.m_Icon = EditorUI::EditorUIService::s_IconFont_KG;
+		fontArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		fontArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		fontArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Font, fontArch);
+
+		EditorUI::GridEntryArchetype gameStateArch;
+		gameStateArch.m_Icon = EditorUI::EditorUIService::s_IconGameState;
+		gameStateArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		gameStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		gameStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GameState, gameStateArch);
+
+		EditorUI::GridEntryArchetype inputMapArch;
+		inputMapArch.m_Icon = EditorUI::EditorUIService::s_IconInput;
+		inputMapArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		inputMapArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		inputMapArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::InputMap, inputMapArch);
+
+		EditorUI::GridEntryArchetype projectComponentArch;
+		projectComponentArch.m_Icon = EditorUI::EditorUIService::s_IconProjectComponent;
+		projectComponentArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		projectComponentArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		projectComponentArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::ProjectComponent, projectComponentArch);
+		
+		EditorUI::GridEntryArchetype registryArch;
+		registryArch.m_Icon = EditorUI::EditorUIService::s_IconRegistry;
+		registryArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor4_Thin;
+		registryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		registryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Registry, registryArch);
+
+		EditorUI::GridEntryArchetype sceneArch;
+		sceneArch.m_Icon = EditorUI::EditorUIService::s_IconScene;
+		sceneArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor3_Thin;
+		sceneArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		sceneArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Scene, sceneArch);
+
+		EditorUI::GridEntryArchetype scriptArch;
+		scriptArch.m_Icon = EditorUI::EditorUIService::s_IconScript;
+		scriptArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor2_Thin;
+		scriptArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		scriptArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Script, scriptArch);
+
+		EditorUI::GridEntryArchetype textureArch;
+		textureArch.m_Icon = EditorUI::EditorUIService::s_IconTexture_KG;
+		textureArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		textureArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		textureArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Texture, textureArch);
+
+		EditorUI::GridEntryArchetype userInterfaceArch;
+		userInterfaceArch.m_Icon = EditorUI::EditorUIService::s_IconUserInterface;
+		userInterfaceArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		userInterfaceArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		userInterfaceArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::UserInterface, userInterfaceArch);
+
+		EditorUI::GridEntryArchetype genericFileArch;
+		genericFileArch.m_Icon = EditorUI::EditorUIService::s_IconGenericFile;
+		genericFileArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		genericFileArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GenericFile, genericFileArch);
+
+		
+		// Initialize Tooltip
+		m_RightClickTooltip.m_Label = "Content browser tooltip";
+		// Create open file in text editor entry inside tooltip menu
+		EditorUI::TooltipEntry openFileEntry("Open File In Text Editor", [&](EditorUI::TooltipEntry& entry) 
+		{
+			s_EditorApp->m_TextEditorPanel->OpenFile(m_CurrentFileToModifyCache);
+		});
+
+		// Initialize delete directory popup
+		m_DeleteDirectoryPopup.Label = "Delete Directory";
+		m_DeleteDirectoryPopup.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::LabeledText("Directory Name:", m_CurrentFileToModifyCache.string().c_str());
+		};
+		m_DeleteDirectoryPopup.ConfirmAction = [&]()
+		{
+			Utility::FileSystem::DeleteSelectedDirectory(m_CurrentFileToModifyCache);
+		};
+
+		// Initialize delete file popup
+		m_DeleteFilePopup.Label = "Delete File";
+		m_DeleteFilePopup.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::LabeledText("File Name:", m_CurrentFileToModifyCache.string().c_str());
+		};
+		m_DeleteFilePopup.ConfirmAction = KG_BIND_CLASS_FN(OnHandleDeleteFile);
+
+		// Initialize create directory popup
+		m_CreateDirectoryPopup.Label = "Create Directory";
+		m_CreateDirectoryPopup.PopupAction = [&]()
+		{
+			m_CreateDirectoryEditName.CurrentOption = "NewName";
+		};
+		m_CreateDirectoryPopup.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::EditText(m_CreateDirectoryEditName);
+		};
+		m_CreateDirectoryPopup.ConfirmAction = [&]()
+		{
+			std::filesystem::path newPath = m_CurrentDirectory / m_CreateDirectoryEditName.CurrentOption;
+			Utility::FileSystem::CreateNewDirectory(newPath);
+		};
+
+		m_CreateDirectoryEditName.Label = "File Name";
+
 	}
 
 	void ContentBrowserPanel::OnEditorUIRender()
@@ -112,90 +895,167 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowContentBrowser);
 
-		static float padding = 25.0f;
-		static float thumbnailSize = 140;
-		float cellSize = thumbnailSize + padding;
-		float panelWidth = ImGui::GetContentRegionAvail().x;
-		int columnCount = (int)(panelWidth / cellSize);
-		columnCount = columnCount > 0 ? columnCount : 1;
-
-		bool backActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (!backActive)
+		// Early out of window if not visible
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+			EditorUI::EditorUIService::EndWindow();
+			return;
 		}
 
+		// Draw navigation header draw header
+		EditorUI::EditorUIService::NavigationHeader(m_NavigateAssetsHeader);
 
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)(backActive ? EditorUI::EditorUIService::s_BackIcon : EditorUI::EditorUIService::s_BackInactiveIcon)->GetRendererID(),
-			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
+		// Draw content browser file grid
+		EditorUI::EditorUIService::Grid(m_FileFolderViewer);
+
+		// Handle tooltip
+		EditorUI::EditorUIService::Tooltip(m_RightClickTooltip);
+
+		// Handle popups
+		EditorUI::EditorUIService::GenericPopup(m_DeleteDirectoryPopup);
+		EditorUI::EditorUIService::GenericPopup(m_DeleteFilePopup);
+		EditorUI::EditorUIService::GenericPopup(m_CreateDirectoryPopup);
+
+		EditorUI::EditorUIService::EndWindow();
+
+	}
+	bool ContentBrowserPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		if (event.GetKeyCode() == Key::Escape)
 		{
-			if (backActive)
+			m_FileFolderViewer.ClearSelectedEntry();
+		}
+
+		return false;
+	}
+	bool ContentBrowserPanel::OnMouseButton(Events::MouseButtonPressedEvent event)
+	{
+		// Ensure right click is applicable
+		if (!EditorUI::EditorUIService::IsAnyItemHovered() && event.GetMouseButton() == Mouse::ButtonRight)
+		{
+			m_RightClickTooltip.ClearEntries();
+
+			// Initialize list of create file options
+			std::vector<EditorUI::TooltipEntry> createFileOptions;
+			createFileOptions.reserve(7);
+
+			// Add create ai state
+			EditorUI::TooltipEntry createAIStateTooltipEntry{ "AI State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				UpdateCurrentDirectory(m_CurrentDirectory.parent_path());
-			}
-		}
-		if (!backActive)
-		{
-			ImGui::PopStyleColor(2);
-		}
-		bool forwardActive = m_CurrentDirectory != m_LongestRecentPath && !m_LongestRecentPath.empty();
-
-		ImGui::SameLine();
-		if (!forwardActive)
-		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
-		}
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)(forwardActive ? EditorUI::EditorUIService::s_ForwardIcon : EditorUI::EditorUIService::s_ForwardInactiveIcon)->GetRendererID(), { 24.0f, 24.0f }, { 0, 1 }, { 1, 0 }))
-		{
-			if (forwardActive && Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, m_LongestRecentPath))
+				// Open create ai state dialog
+				s_EditorApp->m_AIStatePanel->OpenCreateDialog(m_CurrentDirectory);
+			} };
+			createFileOptions.push_back(createAIStateTooltipEntry);
+			// Add create game state
+			EditorUI::TooltipEntry createGameStateTooltipEntry{ "Game State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				std::filesystem::path currentIterationPath{m_LongestRecentPath};
-				std::filesystem::path recentIterationPath{m_LongestRecentPath};
-				while (currentIterationPath != m_CurrentDirectory)
-				{
-					recentIterationPath = currentIterationPath;
-					currentIterationPath = currentIterationPath.parent_path();
-				}
-				UpdateCurrentDirectory(recentIterationPath);
-			}
-		}
-		if (!forwardActive)
-		{
-			ImGui::PopStyleColor(2);
-		}
-		ImGui::PopStyleColor();
-		if (ImGui::BeginDragDropTarget())
-		{
-			static std::array<std::string, 6> acceptablePayloads
-			{
-				"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_AUDIO", "CONTENT_BROWSER_FONT",
-					"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_USERINTERFACE"
-			};
+				// TODO: Add code to add Game State
+				s_EditorApp->m_GameStatePanel->OpenCreateDialog(m_CurrentDirectory);
+			} };
+			createFileOptions.push_back(createGameStateTooltipEntry);
 
-			for (auto& payloadName : acceptablePayloads)
+			// Add create Input Map
+			EditorUI::TooltipEntry createInputMapTooltipEntry{ "Input Map", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
-				{
-					const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
-					std::filesystem::path payloadPath(payloadPathPointer);
-					KG_CRITICAL(payloadPath.string());
-					KG_CRITICAL(m_CurrentDirectory.parent_path());
-					Utility::FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
-					KG_CRITICAL("-----------------");
-					break;
-				}
-			}
-			ImGui::EndDragDropTarget();
+				// TODO: Add code to add Input Map
+				s_EditorApp->m_InputMapPanel->OpenCreateDialog(m_CurrentDirectory);
+			}};
+			createFileOptions.push_back(createInputMapTooltipEntry);
+
+			// Add create Project Component
+			EditorUI::TooltipEntry createProjectComponentTooltipEntry{ "Project Component", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// TODO: Add code to add Project Component
+				s_EditorApp->m_ProjectComponentPanel->OpenCreateDialog(m_CurrentDirectory);
+			} };
+			createFileOptions.push_back(createProjectComponentTooltipEntry);
+
+			// Add create Scene
+			EditorUI::TooltipEntry createSceneTooltipEntry{ "Scene", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// TODO: Add code to add Scene
+					s_EditorApp->NewSceneDialog();
+			} };
+			createFileOptions.push_back(createSceneTooltipEntry);
+
+			// Add create text file
+			EditorUI::TooltipEntry creatTextFileTooltipEntry{ "Text File", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// TODO: Add code to add Text File
+					s_EditorApp->m_TextEditorPanel->OpenCreateDialog(m_CurrentDirectory);
+			} };
+			createFileOptions.push_back(creatTextFileTooltipEntry);
+
+			// Add create User Interface
+			EditorUI::TooltipEntry createUserInterfaceTooltipEntry{ "User Interface", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				// TODO: Add code to add User Interface
+				s_EditorApp->m_UIEditorPanel->OpenCreateDialog(m_CurrentDirectory);
+			} };
+			createFileOptions.push_back(createUserInterfaceTooltipEntry);
+
+			// Add asset creation menu
+			EditorUI::TooltipEntry createFileTooltipMenu{ "Create Asset", createFileOptions };
+			m_RightClickTooltip.AddTooltipEntry(createFileTooltipMenu);
+
+			// Add create directory option
+			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "Create Directory", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				m_CreateDirectoryPopup.OpenPopup = true;
+			} };
+			m_RightClickTooltip.AddTooltipEntry(createDirectoryTooltipEntry);
+
+			// Add seperator
+			m_RightClickTooltip.AddSeperator(EditorUI::EditorUIService::s_HighlightColor1_Thin);
+
+			// Add open current directory in file explorer
+			EditorUI::TooltipEntry openCurrentDirectoryTooltipEntry{ "Open File Explorer", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				Utility::OSCommands::OpenFileExplorer(m_CurrentDirectory);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openCurrentDirectoryTooltipEntry);
+
+			// Add open current directory in file explorer
+			EditorUI::TooltipEntry openTerminalTooltipEntry{ "Open Terminal", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				Utility::OSCommands::OpenTerminal(m_CurrentDirectory);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openTerminalTooltipEntry);
+
+			// Active tooltip
+			m_RightClickTooltip.TooltipActive = true;
+			return true;
 		}
 
+		// Handle navigating forward and back directories with mouse
+		if (event.GetMouseButton() == Mouse::ButtonBack)
+		{
+			NavigateDirectoryBack();
+		}
+		else if (event.GetMouseButton() == Mouse::ButtonForward)
+		{
+			NavigateDirectoryForward();
+		}
+
+		return false;
+	}
+	void ContentBrowserPanel::RefreshCachedDirectoryEntries()
+	{
+		// Re-validate filesystem directory
+		m_FileFolderViewer.ClearEntries();
+		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
+		{
+			// Create entry and associate appropriate archetype
+			EditorUI::GridEntry newEntry;
+			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
+			newEntry.m_Label = directoryEntry.path().filename().string().c_str();
+			newEntry.m_ArchetypeID = (uint32_t)fileType;
+			m_FileFolderViewer.AddEntry(newEntry);
+		}
+
+		// Generate current title for navigation header
 		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveProjectDirectory(), m_CurrentDirectory);
-
 		std::vector<std::string> tokenizedDirectoryPath{};
-
 		while (activeDirectory.filename() != "Assets")
 		{
 			tokenizedDirectoryPath.push_back(activeDirectory.filename().string());
@@ -203,271 +1063,20 @@ namespace Kargono::Panels
 		}
 		tokenizedDirectoryPath.push_back("Assets");
 
-		ImGui::PushFont(EditorUI::EditorUIService::s_PlexBold);
+		FixedString64 newTitle;
 		for (int32_t i = (int32_t)(tokenizedDirectoryPath.size()) - 1; i >= 0; --i)
 		{
-			ImGui::SameLine();
-			ImGui::Text(tokenizedDirectoryPath.at(i).c_str());
+			newTitle.Append(tokenizedDirectoryPath.at(i).c_str());
 			if (i != 0)
 			{
-				ImGui::SameLine();
-				ImGui::Text("/");
+				newTitle.Append(" / ");
 			}
 		}
-		ImGui::PopFont();
+		m_NavigateAssetsHeader.m_Label = newTitle;
 
-		ImGui::Separator();
-
-		ImGui::Columns(columnCount, 0, false);
-		for (auto& directoryEntry: m_CachedDirectoryEntries)
-		{
-			std::string filenameString = directoryEntry.filename().string();
-			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
-			ImGui::PushID(filenameString.c_str());
-			Ref<Rendering::Texture2D> icon = Utility::BrowserFileTypeToIcon(fileType);
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
-			if (ImGui::BeginDragDropSource())
-			{
-				std::filesystem::path relativePath(directoryEntry);
-				const wchar_t* itemPath = relativePath.c_str();
-				ImGui::SetDragDropPayload(Utility::BrowserFileTypeToPayloadString(fileType).c_str(),
-					itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
-				ImGui::EndDragDropSource();
-			}
-
-			ImGui::PopStyleColor();
-
-			if (fileType == BrowserFileType::Directory)
-			{
-				if (ImGui::BeginDragDropTarget())
-				{
-					static std::array<std::string, 6> acceptablePayloads
-					{
-						"CONTENT_BROWSER_IMAGE", "CONTENT_BROWSER_AUDIO", "CONTENT_BROWSER_FONT",
-							"CONTENT_BROWSER_ITEM", "CONTENT_BROWSER_SCENE", "CONTENT_BROWSER_USERINTERFACE"
-					};
-
-					for (auto& payloadName : acceptablePayloads)
-					{
-						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
-						{
-							const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
-							std::filesystem::path payloadPath(payloadPathPointer);
-							Utility::FileSystem::MoveFileToDirectory(payloadPath, directoryEntry);
-							break;
-						}
-					}
-					ImGui::EndDragDropTarget();
-				}
-			}
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
-				if ( std::filesystem::is_directory(directoryEntry))
-				{
-					UpdateCurrentDirectory(m_CurrentDirectory / directoryEntry.filename());
-					if (!Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory / directoryEntry.filename(), m_LongestRecentPath))
-					{
-						m_LongestRecentPath = m_CurrentDirectory / directoryEntry.filename();
-					}
-				}
-			}
-
-			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
-			{
-				ImGui::OpenPopup("RightClickItemOptions");
-			}
-
-			bool openRenamePopup = false;
-			bool openDeleteModal = false;
-			bool openDeleteDirectory = false;
-			static char buffer[256];
-
-			if (ImGui::BeginPopup("RightClickItemOptions"))
-			{
-				if (fileType != BrowserFileType::Directory)
-				{
-					if (ImGui::Selectable("Open File In Text Editor"))
-					{
-						s_EditorApp->m_TextEditorPanel->OpenFile(directoryEntry);
-					}
-				}
-
-				if (fileType == BrowserFileType::ScriptProject)
-				{
-					if (ImGui::Selectable("Open Scripting Project"))
-					{
-						Utility::OSCommands::OpenScriptProject(directoryEntry);
-					}
-				}
-
-				if (fileType == BrowserFileType::Scene)
-				{
-					if (ImGui::Selectable("Open Scene"))
-					{
-						EditorApp::GetCurrentApp()->OpenScene(directoryEntry);
-					}
-				}
-
-				if (fileType == BrowserFileType::Font)
-				{
-					if (ImGui::Selectable("Use Font In Current User Interface"))
-					{
-						Assets::AssetHandle currentHandle = Assets::AssetManager::ImportNewFontFromFile(directoryEntry);
-						Ref<RuntimeUI::Font> font = Assets::AssetManager::GetFont(currentHandle);
-						if (font)
-						{
-							RuntimeUI::RuntimeUIService::SetActiveFont(font, currentHandle);
-						}
-
-						else { KG_WARN("Could not load font {0}", directoryEntry.filename().string()); }
-					}
-				}
-
-				if (fileType != BrowserFileType::ScriptProject && fileType != BrowserFileType::Binary &&
-					fileType != BrowserFileType::Directory && fileType != BrowserFileType::Registry &&
-					fileType != BrowserFileType::Scene)
-				{
-					if (ImGui::Selectable("Rename File"))
-					{
-						openRenamePopup = true;
-					}
-				}
-
-				if (fileType != BrowserFileType::Registry && fileType != BrowserFileType::Directory)
-				{
-					if (ImGui::Selectable("Delete File"))
-					{
-						openDeleteModal = true;
-					}
-				}
-
-				if (fileType == BrowserFileType::Directory)
-				{
-					if (ImGui::Selectable("Delete Directory"))
-					{
-						openDeleteDirectory = true;
-					}
-				}
-
-				ImGui::EndPopup();
-			}
-
-			if (openDeleteModal) { ImGui::OpenPopup("Delete File"); }
-			if (openDeleteDirectory) { ImGui::OpenPopup("Delete Directory"); }
-				
-
-			// Always center this window when appearing
-			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-			ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-			if (ImGui::BeginPopupModal("Delete File", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-			{
-				ImGui::Text("Are you sure you want to delete this file?\n");
-				ImGui::Text("%s", directoryEntry.string().c_str());
-				ImGui::Separator();
-
-				if (ImGui::Button("OK", ImVec2(120, 0)))
-				{
-					Utility::FileSystem::DeleteSelectedFile(directoryEntry);
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::SetItemDefaultFocus();
-				ImGui::SameLine();
-				if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
-				ImGui::EndPopup();
-			}
-
-			if (ImGui::BeginPopupModal("Delete Directory", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-			{
-				ImGui::Text("Are you sure you want to delete this directory?\n");
-				ImGui::Text("%s", directoryEntry.string().c_str());
-				ImGui::Separator();
-
-				if (ImGui::Button("OK", ImVec2(120, 0)))
-				{
-					Utility::FileSystem::DeleteSelectedDirectory(directoryEntry);
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::SetItemDefaultFocus();
-				ImGui::SameLine();
-				if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
-				ImGui::EndPopup();
-			}
-
-
-			if (openRenamePopup) { ImGui::OpenPopup("NewFileName"); }
-			if (ImGui::BeginPopup("NewFileName"))
-			{
-				strcpy_s(buffer, directoryEntry.filename().string().c_str());
-				ImGui::InputText("New File Name", buffer, sizeof(buffer));
-				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
-				{
-					Utility::FileSystem::RenameFile(directoryEntry, std::string(buffer));
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::EndPopup();
-			}
-
-			ImGui::TextWrapped(filenameString.c_str());
-
-			ImGui::NextColumn();
-
-			ImGui::PopID();
-			
-		}
-		static char buffer[256];
-		bool openNewDirectoryPopup = false;
-
-		if (!ImGui::IsAnyItemHovered() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-		{
-			ImGui::OpenPopup("RightClickWindowOptions");
-		}
-
-		if (ImGui::BeginPopup("RightClickWindowOptions"))
-		{
-			if (ImGui::Selectable("Open In File Explorer"))
-			{
-				Utility::OSCommands::OpenFileExplorer(m_CurrentDirectory);
-			}
-			if (ImGui::Selectable("Create New Directory"))
-			{
-				openNewDirectoryPopup = true;
-			}
-			ImGui::EndPopup();
-		}
-
-		if (openNewDirectoryPopup) { ImGui::OpenPopup("New Directory"); }
-
-		if (ImGui::BeginPopup("New Directory"))
-		{
-			memset(buffer, 0, 256);
-			ImGui::InputText("New Directory Name", buffer, sizeof(buffer));
-			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Enter))
-			{
-				std::filesystem::path newPath = m_CurrentDirectory / std::string(buffer);
-				Utility::FileSystem::CreateNewDirectory(newPath);
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
-		ImGui::Columns(1);
-		
-
-		EditorUI::EditorUIService::EndWindow();
-
-	}
-	bool ContentBrowserPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
-	{
-		return false;
-	}
-	void ContentBrowserPanel::RefreshCachedDirectoryEntries()
-	{
-		m_CachedDirectoryEntries.clear();
-		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
-		{
-			m_CachedDirectoryEntries.push_back(directoryEntry.path());
-		}
+		// Revalidate whether the header's direction buttons should be active
+		m_NavigateAssetsHeader.m_IsBackActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
+		m_NavigateAssetsHeader.m_IsForwardActive = m_CurrentDirectory != m_LongestRecentPath && !m_LongestRecentPath.empty();
 	}
 	void ContentBrowserPanel::ResetPanelResources()
 	{
@@ -475,8 +1084,9 @@ namespace Kargono::Panels
 		m_BaseDirectory = Projects::ProjectService::GetActiveAssetDirectory();
 		m_CurrentDirectory = m_BaseDirectory;
 		m_LongestRecentPath.clear();
-		m_CachedDirectoryEntries.clear();
-		API::FileWatch::StartWatch(m_CurrentDirectory, OnFileWatchUpdate);
+		m_NavigateAssetsHeader.m_Label = "Assets";
+		m_FileFolderViewer.ClearEntries();
+		API::FileWatch::StartWatch(m_CurrentDirectory, KG_BIND_CLASS_FN(OnFileWatchUpdate));
 		RefreshCachedDirectoryEntries();
 	}
 }

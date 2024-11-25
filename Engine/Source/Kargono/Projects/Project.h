@@ -8,8 +8,6 @@
 #include <filesystem>
 #include <unordered_set>
 
-namespace Kargono::Assets { class AssetManager; }
-
 //============================================================
 // Projects Namespace
 //============================================================
@@ -56,6 +54,8 @@ namespace Kargono::Projects
 		// AssetDirectory holds a relative path from the project directory to its
 		//		asset directory which is displayed by default in the content browser.
 		std::filesystem::path AssetDirectory {};
+
+		std::filesystem::path IntermediateDirectory {};
 		// ScriptModulePath describes the path from the asset directory to the script
 		//		.dll that holds the scripts for the project.
 		std::filesystem::path ScriptModulePath {};
@@ -94,6 +94,8 @@ namespace Kargono::Projects
 
 		std::unordered_set<uint64_t> AppTickGenerators{};
 
+		std::vector<std::string> AllMessageTypes {};
+
 		bool AppIsNetworked { false };
 
 		// Networking Variables
@@ -109,7 +111,6 @@ namespace Kargono::Projects
 
 	private:
 		friend class ProjectService;
-		friend class Assets::AssetManager;
 	};
 
 	//============================================================
@@ -125,14 +126,28 @@ namespace Kargono::Projects
 	class ProjectService
 	{
 	public:
+
+		//==============================
+		// Modify Active Project
+		//==============================
+		static std::filesystem::path CreateNewProject(const std::string& projectName, const std::filesystem::path& projectLocation);
+		static Ref<Projects::Project> OpenProject(const std::filesystem::path& path);
+		static bool SaveActiveProject();
+		static bool SaveActiveProject(const std::filesystem::path& path);
+		static bool SerializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath);
+		static bool DeserializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath);
+
+		static bool RemoveScriptFromActiveProject(Assets::AssetHandle scriptHandle);
+
+	private:
+		static bool DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& filepath);
+
 		//=========================
-		// External API
+		// Exporting API
 		//=========================
+	public:
 		static void ExportProject(const std::filesystem::path& exportLocation, bool createServer);
 	private:
-		//=========================
-		// Internal Functionality
-		//=========================
 		static bool BuildRuntimeExecutable(const std::filesystem::path& projectDirectory, bool createServer);
 	public:
 		//=========================
@@ -155,6 +170,12 @@ namespace Kargono::Projects
 			return GetActiveProjectDirectory() / s_ActiveProject->AssetDirectory;
 		}
 
+		static std::filesystem::path GetActiveIntermediateDirectory()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return GetActiveProjectDirectory() / s_ActiveProject->IntermediateDirectory;
+		}
+
 		// This function returns the current ScriptModulePath associated with the active
 		//		project in s_ActiveProject.
 		static std::filesystem::path GetActiveScriptModulePath(bool isAbsolute = true)
@@ -163,7 +184,7 @@ namespace Kargono::Projects
 			if (isAbsolute)
 			{
 				// Return Absolute Path
-				return GetActiveAssetDirectory() / s_ActiveProject->ScriptModulePath;
+				return GetActiveIntermediateDirectory() / s_ActiveProject->ScriptModulePath;
 			}
 			// Return Relative Path
 			return s_ActiveProject->ScriptModulePath;
@@ -175,7 +196,7 @@ namespace Kargono::Projects
 			if (absolute)
 			{
 				// Return Absolute Path
-				return GetActiveAssetDirectory() / s_ActiveProject->ScriptDLLPath;
+				return GetActiveIntermediateDirectory() / s_ActiveProject->ScriptDLLPath;
 			}
 			// Return Relative Path
 			return s_ActiveProject->ScriptDLLPath;
@@ -221,7 +242,7 @@ namespace Kargono::Projects
 			s_ActiveProject->TargetResolution = option;
 		}
 		// This function sets the starting scene of the current project in s_ActiveProject.
-		static void SetActiveStartingScene(Assets::AssetHandle handle)
+		static void SetActiveStartingSceneHandle(Assets::AssetHandle handle)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->StartSceneHandle = handle;
@@ -262,134 +283,134 @@ namespace Kargono::Projects
 			s_ActiveProject->AppIsNetworked = isNetworked;
 		}
 
-		static Assets::AssetHandle GetActiveStartGameState()
+		static Assets::AssetHandle GetActiveStartGameStateHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->StartGameState;
 		}
 
-		static void SetActiveStartGameState(Assets::AssetHandle id)
+		static void SetActiveStartGameStateHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->StartGameState = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnRuntimeStart()
+		static Assets::AssetHandle GetActiveOnRuntimeStartHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnRuntimeStart;
 		}
 
-		static void SetActiveOnRuntimeStart(Assets::AssetHandle id)
+		static void SetActiveOnRuntimeStartHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnRuntimeStart = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnUpdateUserCount()
+		static Assets::AssetHandle GetActiveOnUpdateUserCountHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnUpdateUserCount;
 		}
 
-		static void SetActiveOnUpdateUserCount(Assets::AssetHandle id)
+		static void SetActiveOnUpdateUserCountHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnUpdateUserCount = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnApproveJoinSession()
+		static Assets::AssetHandle GetActiveOnApproveJoinSessionHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnApproveJoinSession;
 		}
 
-		static void SetActiveOnApproveJoinSession(Assets::AssetHandle id)
+		static void SetActiveOnApproveJoinSessionHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnApproveJoinSession = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnUserLeftSession()
+		static Assets::AssetHandle GetActiveOnUserLeftSessionHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnUserLeftSession;
 		}
 
-		static void SetActiveOnUserLeftSession(Assets::AssetHandle id)
+		static void SetActiveOnUserLeftSessionHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnUserLeftSession = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnCurrentSessionInit()
+		static Assets::AssetHandle GetActiveOnCurrentSessionInitHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnCurrentSessionInit;
 		}
 
-		static void SetActiveOnCurrentSessionInit(Assets::AssetHandle id)
+		static void SetActiveOnCurrentSessionInitHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnCurrentSessionInit = id;
 		}
 		
 
-		static Assets::AssetHandle GetActiveOnConnectionTerminated()
+		static Assets::AssetHandle GetActiveOnConnectionTerminatedHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnConnectionTerminated;
 		}
 
-		static void SetActiveOnConnectionTerminated(Assets::AssetHandle id)
+		static void SetActiveOnConnectionTerminatedHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnConnectionTerminated = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnUpdateSessionUserSlot()
+		static Assets::AssetHandle GetActiveOnUpdateSessionUserSlotHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnUpdateSessionUserSlot;
 		}
 
-		static void SetActiveOnUpdateSessionUserSlot(Assets::AssetHandle id)
+		static void SetActiveOnUpdateSessionUserSlotHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnUpdateSessionUserSlot = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnStartSession()
+		static Assets::AssetHandle GetActiveOnStartSessionHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnStartSession;
 		}
 
-		static void SetActiveOnStartSession(Assets::AssetHandle id)
+		static void SetActiveOnStartSessionHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnStartSession = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnSessionReadyCheckConfirm()
+		static Assets::AssetHandle GetActiveOnSessionReadyCheckConfirmHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnSessionReadyCheckConfirm;
 		}
 
-		static void SetActiveOnSessionReadyCheckConfirm(Assets::AssetHandle id)
+		static void SetActiveOnSessionReadyCheckConfirmHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnSessionReadyCheckConfirm = id;
 		}
 
-		static Assets::AssetHandle GetActiveOnReceiveSignal()
+		static Assets::AssetHandle GetActiveOnReceiveSignalHandle()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->OnReceiveSignal;
 		}
 
-		static void SetActiveOnReceiveSignal(Assets::AssetHandle id)
+		static void SetActiveOnReceiveSignalHandle(Assets::AssetHandle id)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->OnReceiveSignal = id;
@@ -489,6 +510,87 @@ namespace Kargono::Projects
 			return s_ActiveProject;
 		}
 
+		static bool AddAIMessageType(const std::string& newMessageType)
+		{
+			// Check if message already exists
+			for (std::string& aiMessage : s_ActiveProject->AllMessageTypes)
+			{
+				// Return false if message already exists
+				if (aiMessage == newMessageType)
+				{
+					return false;
+				}
+			}
+
+			// Add AIMessageType to project if none is found
+			s_ActiveProject->AllMessageTypes.push_back(newMessageType);
+			return true;
+		}
+
+		static bool EditAIMessageType(const std::string& oldMessageType, const std::string& newMessageType)
+		{
+			constexpr size_t k_InvalidPosition{ std::numeric_limits<size_t>().max() };
+
+			// Find the indicated message
+			size_t iteration{ 0 };
+			size_t foundMessagePosition{ std::numeric_limits<size_t>().max() };
+			for (std::string& aiMessage : s_ActiveProject->AllMessageTypes)
+			{
+				// If we find the message type, note its location 
+				if (aiMessage == oldMessageType)
+				{
+					foundMessagePosition = iteration;
+				}
+				iteration++;
+			}
+
+			// Could not find ai message to replace
+			if (foundMessagePosition == k_InvalidPosition)
+			{
+				KG_WARN("Could not find ai message type to replace when editing type");
+				return false;
+			}
+
+			// Replace text at specified position
+			s_ActiveProject->AllMessageTypes.at(foundMessagePosition) = newMessageType;
+			return true;
+		}
+
+		static bool DeleteAIMessageType(const std::string& aiMessageType)
+		{
+			constexpr size_t k_InvalidPosition{ std::numeric_limits<size_t>().max() };
+
+			// Find the indicated message
+			size_t iteration{ 0 };
+			size_t foundMessagePosition{ std::numeric_limits<size_t>().max() };
+			for (std::string& aiMessage : s_ActiveProject->AllMessageTypes)
+			{
+				// If we find the message type, note its location 
+				if (aiMessage == aiMessageType)
+				{
+					foundMessagePosition = iteration;
+				}
+				iteration++;
+			}
+
+			// Could not find ai message to replace
+			if (foundMessagePosition == k_InvalidPosition)
+			{
+				KG_WARN("Could not find ai message type to replace when editing type");
+				return false;
+			}
+
+			// Erase text at position
+			s_ActiveProject->AllMessageTypes.erase(s_ActiveProject->AllMessageTypes.begin() + foundMessagePosition);
+			return true;
+		}
+
+		static std::vector<std::string>& GetAllMessageTypes()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->AllMessageTypes;
+		}
+
 	private:
 		//=========================
 		// Internal Fields
@@ -496,8 +598,6 @@ namespace Kargono::Projects
 		// m_ActiveProject holds a static reference to the currently active project. Only one project can be
 		//		active at a time and that project is held in this variable.
 		static Ref<Project> s_ActiveProject;
-	public:
-		friend class Assets::AssetManager;
 	};
 }
 

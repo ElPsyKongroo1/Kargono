@@ -21,6 +21,7 @@ project "Server"
         "%{IncludeDir.imGui}",
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.Box2D}",
+        "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",
@@ -39,12 +40,12 @@ project "Server"
 
     links 
     { 
-        "Engine"  
+        "Engine"
     }
 
     defines 
     {
-        "KG_RUNTIME",
+        "KG_SERVER",
 		"_CRT_SECURE_NO_WARNINGS"
     }
 

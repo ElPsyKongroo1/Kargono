@@ -10,7 +10,7 @@ namespace Kargono::Panels
 	StatisticsPanel::StatisticsPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName,
+		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(StatisticsPanel::OnKeyPressedEditor));
 	}
 	void StatisticsPanel::OnEditorUIRender()
@@ -18,12 +18,18 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowStats);
 
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
 		ImGui::Text("Scene");
 		ImGui::Separator();
 		std::string name = "None";
 		if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
 		{
-			name = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<Scenes::TagComponent>().Tag;
+			name = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TagComponent>().Tag;
 		}
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 		ImGui::NewLine();

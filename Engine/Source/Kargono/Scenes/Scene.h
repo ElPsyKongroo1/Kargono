@@ -6,6 +6,7 @@
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Assets/Asset.h"
+#include "Kargono/ECS/EntityRegistry.h"
 
 #include "API/EntityComponentSystem/enttAPI.h"
 
@@ -16,11 +17,11 @@
 // Forward Declarations
 class Shader;
 struct Buffer;
+namespace Kargono::ECS { class Entity; }
 
 namespace Kargono::Scenes
 {
 	// Forward Declarations
-	class Entity;
 	struct ShaderSpecification;
 
 	//============================================================
@@ -55,44 +56,34 @@ namespace Kargono::Scenes
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		// These functions are run when the simulation option is started in the editor.
-		//		These functions only start and stop the physics system currently.
-		void OnSimulationStart();
-		void OnSimulationStop();
-
 		// Submits render data to the renderer.
 		void RenderScene(Rendering::Camera& camera, const Math::mat4& transform);
-		// Updates Physics
-		void OnUpdatePhysics(Timestep ts);
+		// Updates Entities
 		void OnUpdateEntities(Timestep ts);
-		void OnUpdateInputMode(Timestep ts);
-		void OnKeyPressed(Events::KeyPressedEvent event);
 
 		// Other LifeCycle Functions
 		// These Getter/Setter Functions query the current state of the scene.
 		//		IsRunning and IsPaused allow certain functionality to be stopped based on their
 		//		values. Step allows one iteration to occur
 		bool IsRunning() const { return m_IsRunning; }
-
-	private:
-		// This function template optionally runs code that involves
-		//		the current scene and the newly instantiated component.
-		template <typename T>
-		void OnComponentAdded(Entity entity, T& component);
 	public:
+		void RegisterAllProjectComponents();
+		void AddProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
+		void ClearProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
+		std::size_t GetProjectComponentCount(Assets::AssetHandle projectComponentHandle);
 		//====================
 		// Create/Destroy Scene Entities
 		//====================
 		// This function creates a new entity inside the underlying m_Registry. This function
 		//		creates the new entity in the ECS, adds new Tag/Transform/ID components, and
 		//		registers the entity into the m_EntityMap.
-		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
+		ECS::Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		// This function calls the above function, but also pre-generates a UUID for the new entity
-		Entity CreateEntity(const std::string& name = std::string());
+		ECS::Entity CreateEntity(const std::string& name = std::string());
 		// This function creates a deep copy of another entity (calls CreateEntity()).
-		Entity DuplicateEntity(Entity entity);
+		ECS::Entity DuplicateEntity(ECS::Entity entity);
 		// This function removes an entity from the underlying ECS m_Registry and m_EntityMap.
-		void DestroyEntity(Entity entity);
+		void DestroyEntity(ECS::Entity entity);
 		// This function removes all entities from the underlying ECS m_Registry and clears the m_EntityMap
 		void DestroyAllEntities();
 
@@ -100,11 +91,12 @@ namespace Kargono::Scenes
 		// Query Entity Functions
 		//====================
 		// These functions query the current map of entities
-		Entity FindEntityByName(const std::string& name);
-		Entity GetEntityByUUID(UUID uuid);
-		Entity GetPrimaryCameraEntity();
+		ECS::Entity FindEntityByName(const std::string& name);
+		ECS::Entity GetEntityByUUID(UUID uuid);
+		ECS::Entity GetEntityByEnttID(entt::entity enttID);
+		ECS::Entity GetPrimaryCameraEntity();
 		bool CheckEntityExists(entt::entity entity);
-		bool IsEntityValid(entt::entity entity) { return m_Registry.valid(entity); }
+		bool IsEntityValid(entt::entity entity) { return m_EntityRegistry.m_EnTTRegistry.valid(entity); }
 
 		// Update Scene Viewport Size (Not too important) and resize all camera in scene
 		//		if they require a fixed ratio (more important).
@@ -116,48 +108,41 @@ namespace Kargono::Scenes
 		template<typename... Components>
 		auto GetAllEntitiesWith()
 		{
-			return m_Registry.view<Components...>();
+			return m_EntityRegistry.m_EnTTRegistry.view<Components...>();
 		}
 
 		//====================
 		// Getters/Setters
 		//====================
 		Physics::PhysicsSpecification& GetPhysicsSpecification() { return m_PhysicsSpecification; }
-		Physics::Physics2DWorld* GetPhysicsWorld() { return m_PhysicsWorld.get(); }
 
-		Entity* GetHoveredEntity()
+		ECS::Entity* GetHoveredEntity()
 		{
 			return m_HoveredEntity;
 		}
-		Entity* GetSelectedEntity()
+		ECS::Entity* GetSelectedEntity()
 		{
 			return m_SelectedEntity;
 		}
-		// Underlying ECS registry that holds actual entities and their components
-		entt::registry m_Registry;
-	private:
-		// Entity Map that holds easy to access reference to all entities in the scene.
-		std::unordered_map<UUID, entt::entity> m_EntityMap;
-		// This map holds lists of entitys (UUID) using the key of a script class.
+	public:
+		ECS::EntityRegistry m_EntityRegistry;
+		// This map holds lists of entitys (UUID) using the key of a group.
 		//		This map is only filled at runtime while the scripting engine
 		//		is working. It is used to easily find all of the entities of a
 		//		particular script class.
-		std::unordered_map<std::string, std::vector<UUID>> m_ScriptClassToEntityList {};
+		std::unordered_map<std::string, std::vector<UUID>> m_GroupToEntityList {};
 
-		// Physics World
-		Scope<Physics::Physics2DWorld> m_PhysicsWorld = nullptr;
+		// Physics Spec
 		Physics::PhysicsSpecification m_PhysicsSpecification{};
 
 		// Scene State Fields
 		bool m_IsRunning = false;
-		Entity* m_HoveredEntity = nullptr;
-		Entity* m_SelectedEntity = nullptr;
+		ECS::Entity* m_HoveredEntity = nullptr;
+		ECS::Entity* m_SelectedEntity = nullptr;
 
 	private:
 		// Friend Declarations
-		friend class Entity;
-		friend class SceneSerializer;
-		friend class Assets::AssetManager;
+		friend class ECS::Entity;
 		friend class SceneService;
 	};
 
@@ -179,17 +164,19 @@ namespace Kargono::Scenes
 		static const std::string& TagComponentGetTag(UUID entityID);
 		static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
 		static Math::vec2 Rigidbody2DComponent_GetLinearVelocity(UUID entityID);
+		static void SetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value);
+		static void* GetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation);
+		
 
 		//====================
-		// Manage Entities
+		// Manage Active Scene Entities
 		//====================
-		static void SetEntityFieldByName(UUID entityID, const std::string& fieldName, void* fieldValue);
-		static void* GetEntityFieldByName(UUID entityID, const std::string& fieldName);
 		static Assets::AssetHandle FindEntityHandleByName(const std::string& name);
 
 		//====================
-		// Manage Scene
+		// Manage Active Scene
 		//====================
+		static bool IsSceneActive(const std::string& sceneName);
 		static void TransitionScene(Assets::AssetHandle newSceneHandle);
 		static void TransitionScene(Ref<Scene> newScene);
 		static void TransitionSceneFromName(const std::string& sceneName);
@@ -207,16 +194,12 @@ namespace Kargono::Scenes
 		{
 			return s_ActiveSceneHandle;
 		}
-		static void SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle)
-		{
-			s_ActiveScene = newScene;
-			s_ActiveSceneHandle = newHandle;
-		}
+		static void SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle);
 	private:
 		//====================
 		// Internal Fields
 		//====================
-		static Ref<Scene> s_ActiveScene;
-		static Assets::AssetHandle s_ActiveSceneHandle;
+		static inline Ref<Scene> s_ActiveScene { nullptr };
+		static inline Assets::AssetHandle s_ActiveSceneHandle { Assets::EmptyHandle };
 	};
 }

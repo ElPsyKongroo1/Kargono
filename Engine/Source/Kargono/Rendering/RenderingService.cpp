@@ -2,6 +2,7 @@
 
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Rendering/Shader.h"
+#include "Kargono/Rendering/Texture.h"
 #include "Kargono/Rendering/VertexArray.h"
 #include "Kargono/Rendering/UniformBuffer.h"
 #include "Kargono/Projects/Project.h"
@@ -15,7 +16,8 @@ namespace Kargono::Rendering
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
 
-		float LineWidth = 2.0f;
+		float LineWidth = 4.0f;
+		float PointWidth = 8.0f;
 
 		RenderingService::Statistics Stats;
 
@@ -159,7 +161,7 @@ namespace Kargono::Rendering
 	void RenderingService::FillIndicesData(RendererInputSpec& inputSpec)
 	{
 		// Upload Indices
-		auto& drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
+		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
 		std::size_t currentBufferSize = (drawCallBuffer->VertexBufferIterator - drawCallBuffer->VertexBuffer.Data) / inputSpec.Shader->GetInputLayout().GetStride();
 		for (auto& index : *(inputSpec.ShapeComponent->Indices))
 		{
@@ -176,8 +178,9 @@ namespace Kargono::Rendering
 	{
 		if (!inputSpec.ShapeComponent->Vertices || inputSpec.Shader->GetSpecification().RenderType == RenderingType::None) { return; }
 
-		// Manage current DrawCallBuffer
-		auto& drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
+		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
+
+		// Create new DrawCallBuffer if one is not associated with active shader
 		if (!drawCallBuffer)
 		{
 			drawCallBuffer = CreateRef<DrawCallBuffer>();
@@ -190,10 +193,12 @@ namespace Kargono::Rendering
 			drawCallBuffer->Textures.reserve(s_Data.MaxTextureSlots);
 			drawCallBuffer->Shader = inputSpec.Shader.get();
 			s_Data.DrawCalls.emplace_back(drawCallBuffer);
+			inputSpec.Shader->SetCurrentDrawCallBuffer(drawCallBuffer);
 		}
 
 		std::size_t currentBufferSize = drawCallBuffer->VertexBufferIterator - drawCallBuffer->VertexBuffer.Data;
 		std::size_t sizeOfNewDrawCallBuffer = inputSpec.Buffer.Size * inputSpec.ShapeComponent->Vertices->size() + currentBufferSize;
+		// Create new DrawCallBuffer if current buffer overflows
 		if (sizeOfNewDrawCallBuffer >= s_MaxVertexBufferSize)
 		{
 			drawCallBuffer = CreateRef<DrawCallBuffer>();
@@ -206,6 +211,7 @@ namespace Kargono::Rendering
 			drawCallBuffer->Textures.reserve(s_Data.MaxTextureSlots);
 			drawCallBuffer->Shader = inputSpec.Shader.get();
 			s_Data.DrawCalls.emplace_back(drawCallBuffer);
+			inputSpec.Shader->SetCurrentDrawCallBuffer(drawCallBuffer);
 		}
 
 		inputSpec.CurrentDrawBuffer = drawCallBuffer;
@@ -237,6 +243,13 @@ namespace Kargono::Rendering
 	void RenderingService::DrawBufferIndices(Ref<DrawCallBuffer> buffer)
 	{
 		RendererAPI::DrawIndexed(buffer->Shader->GetVertexArray(), buffer->IndexBuffer.data(), static_cast<uint32_t>(buffer->IndexBuffer.size()));
+		s_Data.Stats.DrawCalls++;
+	}
+
+	void RenderingService::DrawBufferPoints(Ref<DrawCallBuffer> buffer)
+	{
+		RendererAPI::SetPointWidth(s_Data.PointWidth);
+		RendererAPI::DrawPoints(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 
@@ -293,7 +306,7 @@ namespace Kargono::Rendering
 		{
 			if (buffer->Shader->GetCurrentDrawCallBuffer())
 			{
-				buffer->Shader->SetCurrentDrawCallBufferNull();
+				buffer->Shader->ClearCurrentDrawCallBuffer();
 			}
 		}
 

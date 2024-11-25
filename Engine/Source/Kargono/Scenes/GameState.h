@@ -7,8 +7,6 @@
 #include <unordered_map>
 #include <string>
 
-namespace Kargono::Assets { class AssetManager; }
-
 namespace Kargono::Scenes
 {
 	class GameState
@@ -98,10 +96,9 @@ namespace Kargono::Scenes
 		{
 			m_Name = name;
 		}
-	private:
+	public:
 		std::string m_Name{};
 		std::unordered_map<std::string, Ref<WrappedVariable>> m_Fields {};
-		friend class Assets::AssetManager;
 	};
 
 	class GameStateService

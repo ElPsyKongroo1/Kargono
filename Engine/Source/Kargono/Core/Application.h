@@ -29,7 +29,13 @@ namespace Kargono
 		//==============================
 		virtual void OnUpdate(Timestep ts) {}
 		virtual void OnEditorUIRender() {}
-		virtual void OnEvent(Events::Event& event) {}
+		virtual bool OnInputEvent(Events::Event* event) { return false; }
+		virtual bool OnPhysicsEvent(Events::Event* event) { return false; }
+		virtual bool OnApplicationEvent(Events::Event* event) { return false; }
+		virtual bool OnNetworkEvent(Events::Event* event) { return false; }
+		virtual bool OnSceneEvent(Events::Event* event) { return false; }
+		virtual bool OnAssetEvent(Events::Event* event) { return false; }
+		virtual bool OnEditorEvent(Events::Event* event) { return false; }
 
 		//==============================
 		// Getter/Setter

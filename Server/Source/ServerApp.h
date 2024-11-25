@@ -19,6 +19,7 @@ namespace Kargono
 		//==========================
 
 		ServerApp();
+		ServerApp(std::filesystem::path projectPath);
 		virtual ~ServerApp() = default;
 		//==========================
 		// LifeCycle Functions
@@ -37,5 +38,7 @@ namespace Kargono
 		bool OpenProject();
 
 		void OpenProject(const std::filesystem::path& path);
+	private:
+		std::filesystem::path m_ProjectPath;
 	};
 }

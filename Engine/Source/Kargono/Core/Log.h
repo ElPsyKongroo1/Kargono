@@ -19,7 +19,7 @@ namespace Kargono
 }
 
 // General Logging
-#ifdef KG_DEBUG
+#if defined(KG_DEBUG) || defined(KG_EXPORT_SERVER)
 	// Core Log Macros
 	#define KG_INFO(...)		SPDLOG_LOGGER_INFO(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
 	#define KG_WARN(...)		SPDLOG_LOGGER_WARN(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)

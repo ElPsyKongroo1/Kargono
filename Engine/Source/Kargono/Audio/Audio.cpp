@@ -2,7 +2,7 @@
 
 #include "Kargono/Audio/Audio.h"
 #include "Kargono/Core/Buffer.h"
-#include "Kargono/Assets/AssetManager.h"
+#include "Kargono/Assets/AssetService.h"
 
 #include "API/Audio/OpenALAPI.h"
 
@@ -74,7 +74,7 @@ namespace Kargono::Audio
 	}
 	void AudioService::PlayStereoSoundFromName(const std::string& audioName)
 	{
-		auto [handle, audioBuffer] = Assets::AssetManager::GetAudio(audioName);
+		auto [handle, audioBuffer] = Assets::AssetService::GetAudioBuffer(audioName);
 		if (audioBuffer)
 		{
 			PlayStereoSound(audioBuffer);
@@ -122,7 +122,7 @@ namespace Kargono::Audio
 
 	void AudioService::PlaySoundFromName(const std::string& audioName)
 	{
-		auto [handle, audioBuffer] = Assets::AssetManager::GetAudio(audioName);
+		auto [handle, audioBuffer] = Assets::AssetService::GetAudioBuffer(audioName);
 		if (audioBuffer)
 		{
 			Audio::AudioService::PlaySound(audioBuffer);
@@ -196,7 +196,7 @@ namespace Kargono::Audio
 			s_AudioContext->AudioSourceQueue.front().reset();
 			s_AudioContext->AudioSourceQueue.pop();
 		}
-		Assets::AssetManager::ClearAudioRegistry();
+		Assets::AssetService::ClearAudioBufferRegistry();
 
 		// Close OpenAL Context
 		alcDestroyContext(s_AudioContext->ContextID);

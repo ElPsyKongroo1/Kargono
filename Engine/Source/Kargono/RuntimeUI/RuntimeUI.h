@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Rendering/EditorCamera.h"
-#include "Kargono/Scripting/Scripting.h"
+#include "Kargono/Scripting/ScriptService.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/RuntimeUI/Font.h"
 #include "Kargono/Assets/Asset.h"
@@ -91,7 +91,7 @@ namespace Kargono::RuntimeUI
 	public:
 		void SetText(const std::string& newText);
 
-		std::string Text{ "New Text" };
+		std::string Text{ "New Text Widget" };
 		float TextSize{ 0.12f };
 		Math::vec2 TextAbsoluteDimensions {};
 		Math::vec4 TextColor{0.5f};
@@ -153,25 +153,12 @@ namespace Kargono::RuntimeUI
 
 	struct Window
 	{
-		struct WidgetCounts
-		{
-			uint16_t TextWidgetCount{ 0 };
-			uint16_t TextWidgetLocation{};
-			uint16_t ButtonWidgetCount{ 0 };
-			uint16_t ButtonWidgetLocation{};
-			uint16_t CheckboxWidgetCount{ 0 };
-			uint16_t CheckboxWidgetLocation{};
-			uint16_t ComboWidgetCount{ 0 };
-			uint16_t ComboWidgetLocation{};
-			uint16_t PopupWidgetCount{ 0 };
-			uint16_t PopupWidgetLocation{};
-		};
+		
 	public:
 		std::string Tag{ "None" };
 		Math::vec3 ScreenPosition{};
 		Math::vec2 Size {};
 		Math::vec4 BackgroundColor {1.0f};
-		WidgetCounts WidgetCounts{};
 		int32_t ParentIndex{ -1 };
 		int32_t ChildBufferIndex{ -1 };
 		uint32_t ChildBufferSize{ 0 };
@@ -187,15 +174,8 @@ namespace Kargono::RuntimeUI
 		bool WindowDisplayed = false;
 
 	public:
-		void AddTextWidget(Ref<TextWidget> newWidget);
-		void AddButtonWidget(Ref<ButtonWidget> newWidget);
-		void AddCheckboxWidget(Ref<CheckboxWidget> newWidget);
-		void AddComboWidget(Ref<ComboWidget> newWidget);
-		void AddPopupWidget(Ref<PopupWidget> newWidget);
+		void AddWidget(Ref<Widget> newWidget);
 		void DeleteWidget(int32_t widgetLocation);
-	private:
-		void IncrementIterators(uint16_t iterator);
-		void DecrementIterators(uint16_t iterator);
 	};
 
 	class UserInterface
@@ -245,6 +225,11 @@ namespace Kargono::RuntimeUI
 		static void DeleteActiveWindow(uint32_t windowLocation);
 
 		//==============================
+		// Query Active UI
+		//==============================
+		static bool IsWidgetSelected(const std::string& windowTag, const std::string& widgetTag);
+
+		//==============================
 		// Interact With Active UI
 		//==============================
 		static void MoveRight();
@@ -257,6 +242,7 @@ namespace Kargono::RuntimeUI
 		// Internal Functionality
 		//==============================
 		static void CalculateDirections();
+		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
 
 		//==============================
 		// Getters/Setters
@@ -275,19 +261,6 @@ namespace Kargono::RuntimeUI
 		static void PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth = 0, uint32_t viewportHeight = 0);
 		static bool SaveCurrentUIIntoUIObject();
 		static void RefreshDisplayedWindows();
-
-	public:
-		//==============================
-		// Editor API TODO REMOVE PLEASE AHHHHHHHHHHHHHHHHHHHHGODDD
-		//==============================
-		static int32_t& GetWindowToDelete();
-		static int32_t& GetWidgetToDelete();
-		static int32_t& GetWindowsToAddWidget();
-		static RuntimeUI::WidgetTypes& GetWidgetTypeToAdd();
-		static uint32_t& GetWindowToAdd();
-		static int32_t& GetSelectedWindow();
-		static int32_t& GetSelectedWidget();
-		static Math::vec4& GetSelectColor();
 	private:
 		//==============================
 		// Internal Fields

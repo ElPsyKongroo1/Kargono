@@ -1,19 +1,21 @@
 #pragma once
 #include "Kargono.h"
 
-#include "Panels/SceneHierarchyPanel.h"
+#include "Panels/AssetViewerPanel.h"
+#include "Panels/SceneEditorPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/LogPanel.h"
 #include "Panels/ProjectPanel.h"
+#include "Panels/ProjectComponentPanel.h"
 #include "Panels/StatisticsPanel.h"
 #include "Panels/UIEditorPanel.h"
 #include "Panels/ViewportPanel.h"
-#include "Panels/EntityClassEditor.h"
 #include "Panels/ScriptEditorPanel.h"
 #include "Panels/GameStatePanel.h"
 #include "Panels/TextEditorPanel.h"
-#include "Panels/InputModePanel.h"
+#include "Panels/InputMapPanel.h"
 #include "Panels/PropertiesPanel.h"
+#include "Panels/AIStateEditorPanel.h"
 #include "Panels/TestingPanel.h"
 
 #include <filesystem>
@@ -73,6 +75,13 @@ namespace Kargono
 		//		4. Draw overlay code such as physics colliders, entity selection visualization,
 		//		text/ui, etc...
 		virtual void OnUpdate(Timestep ts) override;
+
+	private:
+		//=========================
+		// Internal Initialization Functions
+		//=========================
+		void InitializeExportProjectWidgets();
+		void InitializeImportAssetWidgets();
 	private:
 		// Increments step
 		void Step(int frames = 1);
@@ -98,8 +107,15 @@ namespace Kargono
 		// This function catches thrown application events and dispatches them to other functions
 		//		(OnKeyPressed(), OnMouseButtonPressed(), and OnPhysicsCollision()).
 		//		Those functions proceed to run logic that responds to the thrown event.
-		virtual void OnEvent(Events::Event& event) override;
+		virtual bool OnApplicationEvent(Events::Event* event) override;
+		virtual bool OnNetworkEvent(Events::Event* event) override;
+		virtual bool OnInputEvent(Events::Event* event) override;
+		virtual bool OnPhysicsEvent(Events::Event* event) override;
+		virtual bool OnSceneEvent(Events::Event* event) override;
+		virtual bool OnAssetEvent(Events::Event* event) override;
+		virtual bool OnEditorEvent(Events::Event* event) override;
 	private:
+		bool OnUpdateProjectComponent(Events::ManageAsset& event);
 		// These private functions are called by the above OnEvent(e) function to handle application events.
 		// These next functions provide different code to respond to user input.
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
@@ -108,7 +124,7 @@ namespace Kargono
 		bool OnKeyPressedRuntime(Events::KeyPressedEvent event);
 		bool OnMouseButtonPressed(Events::MouseButtonPressedEvent event);
 		// This function responds to application collision events.
-		bool OnPhysicsCollision(Events::PhysicsCollisionEvent event);
+		bool OnPhysicsCollisionStart(Events::PhysicsCollisionStart event);
 		bool OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event);
 		bool OnUpdateUserCount(Events::UpdateOnlineUsers event);
 		bool OnApproveJoinSession(Events::ApproveJoinSession event);
@@ -119,6 +135,14 @@ namespace Kargono
 		bool OnStartSession(Events::StartSession event);
 		bool OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event);
 		bool OnReceiveSignal(Events::ReceiveSignal event);
+
+	public:
+		//=========================
+		// External Functionality
+		//=========================
+		void OpenWarningMessage(const char* message);
+		void OpenImportFileDialog(const std::filesystem::path& importFileLocation, Assets::AssetType assetType);
+
 	public:
 		//=========================
 		// Getters/Setters
@@ -136,9 +160,10 @@ namespace Kargono
 		void SaveProject();
 		// These functions allow transitioning between scenes in the editor and saving
 		//		the current scene.
-		void NewScene();
-		void NewScene(const std::string& sceneName);
-		void OpenScene();
+		void NewSceneDialog();
+		bool NewScene(const std::string& sceneName);
+		void NewSceneDialog(const std::filesystem::path& initialDirectory);
+		void OpenSceneDialog();
 	public:
 		void OpenScene(const std::filesystem::path& path);
 	private:
@@ -163,6 +188,7 @@ namespace Kargono
 		//=========================
 		static EditorApp* s_EditorApp;
 		// Booleans to display UI Windows
+		bool m_ShowAssetViewer = false;
 		bool m_ShowSceneHierarchy = true;
 		bool m_ShowProperties = true;
 		bool m_ShowContentBrowser = true;
@@ -170,30 +196,31 @@ namespace Kargono
 		bool m_ShowStats = false;
 		bool m_ShowViewport = true;
 		bool m_ShowProject = false;
+		bool m_ShowProjectComponent = false;
 		bool m_ShowDemoWindow = false;
 		bool m_ShowTesting = false;
 		bool m_ShowUserInterfaceEditor = false;
 		bool m_ShowScriptEditor = false;
-		bool m_ShowClassEditor = false;
 		bool m_ShowTextEditor = false;
 		bool m_ShowGameStateEditor = false;
-		bool m_ShowInputModeEditor = false;
+		bool m_ShowInputMapEditor = false;
+		bool m_ShowAIStateEditor = false;
 
 		// Settings UI Booleans
 		bool m_ShowPhysicsColliders = false;
 		bool m_ShowCameraFrustums = true;
 		bool m_RuntimeFullscreen = false;
-		bool m_ShowUserInterface = true;
+		//bool m_ContentBrowserFullscreen = false;
+		bool m_ShowActiveUserInterface = true;
+
 		// Editor Scenes
 		Ref<Scenes::Scene> m_EditorScene;
 		Assets::AssetHandle m_EditorSceneHandle;
 		SceneState m_SceneState = SceneState::Edit;
 
 		// Cached Scene Data
-		Ref<Input::InputMode> m_EditorInputMode = nullptr;
-		Assets::AssetHandle m_EditorInputModeHandle{0};
-		Ref<RuntimeUI::UserInterface> m_EditorUIObject = nullptr;
-		Assets::AssetHandle m_EditorUIObjectHandle{0};
+		Ref<Input::InputMap> m_EditorInputMap {nullptr};
+		Assets::AssetHandle m_EditorInputMapHandle{Assets::EmptyHandle};
 
 		// Stepping Fields
 		bool m_IsPaused = false;
@@ -201,40 +228,64 @@ namespace Kargono
 
 		// Input Maps
 		std::unordered_map<std::string, std::function<bool(Events::KeyPressedEvent)>> m_PanelToKeyboardInput {};
+		std::unordered_map<std::string, std::function<bool(Events::MouseButtonPressedEvent)>> m_PanelToMousePressedInput {};
 
 		// Initialization Fields
 		std::filesystem::path m_InitProjectPath {};
 	public:
 		// Panels
-		Scope<Panels::SceneHierarchyPanel> m_SceneHierarchyPanel;
+		Scope<Panels::AssetViewerPanel> m_AssetViewerPanel;
+		Scope<Panels::SceneEditorPanel> m_SceneEditorPanel;
 		Scope<Panels::PropertiesPanel> m_PropertiesPanel;
 		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
 		Scope<Panels::LogPanel>  m_LogPanel;
 		Scope<Panels::StatisticsPanel>  m_StatisticsPanel;
 		Scope<Panels::ProjectPanel>  m_ProjectPanel;
+		Scope<Panels::ProjectComponentPanel>  m_ProjectComponentPanel;
 		Scope<Panels::UIEditorPanel>  m_UIEditorPanel;
 		Scope<Panels::ViewportPanel>  m_ViewportPanel;
 		Scope<Panels::ScriptEditorPanel>  m_ScriptEditorPanel;
-		Scope<Panels::EntityClassEditor>  m_EntityClassEditor;
 		Scope<Panels::TextEditorPanel>  m_TextEditorPanel;
 		Scope<Panels::GameStatePanel>  m_GameStatePanel;
-		Scope<Panels::InputModePanel>  m_InputModePanel;
+		Scope<Panels::InputMapPanel>  m_InputMapPanel;
+		Scope<Panels::AIStateEditorPanel>  m_AIStatePanel;
 		Scope<Panels::TestingPanel>  m_TestingPanel;
+
+	public:
+		// Warning widget
+		EditorUI::WarningPopupSpec m_GeneralWarningSpec{};
+		FixedString256 m_GeneralWarningMessage{};
+
+		// Project export popup widgets
+		EditorUI::GenericPopupSpec m_ExportProjectSpec{};
+		EditorUI::ChooseDirectorySpec m_ExportProjectLocation{};
+		EditorUI::CheckboxSpec m_ExportProjectServer{};
+
+		// Import asset widgets
+		EditorUI::GenericPopupSpec m_ImportAssetPopup{};
+		EditorUI::EditTextSpec m_ImportNewAssetName{};
+		std::filesystem::path m_ImportSourceFilePath{};
+		Assets::AssetType m_ImportAssetType{ Assets::AssetType::None };
+		EditorUI::ChooseDirectorySpec m_ImportNewFileLocation{};
+
+
 	private:
+		friend Panels::AssetViewerPanel;
 		friend Panels::ViewportPanel;
-		friend Panels::SceneHierarchyPanel;
+		friend Panels::SceneEditorPanel;
 		friend Panels::ContentBrowserPanel;
 		friend Panels::LogPanel;
 		friend Panels::StatisticsPanel;
 		friend Panels::ProjectPanel;
+		friend Panels::ProjectComponentPanel;
 		friend Panels::UIEditorPanel;
 		friend Panels::ScriptEditorPanel;
-		friend Panels::EntityClassEditor;
 		friend Panels::TextEditorPanel;
 		friend Panels::GameStatePanel;
-		friend Panels::InputModePanel;
+		friend Panels::InputMapPanel;
 		friend Panels::PropertiesPanel;
 		friend Panels::TestingPanel;
+		friend Panels::AIStateEditorPanel;
 
 	};
 

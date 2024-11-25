@@ -14,81 +14,69 @@
 #include <limits>
 #include <cstdint>
 #include <mutex>
-#include <atomic>
 #include <condition_variable>
 
 
 namespace Kargono::Network
 {
 
-	class TCPClientConnection;
+	class ClientTCPConnection;
 
-	class UDPClientConnection : public std::enable_shared_from_this<UDPClientConnection>, public UDPConnection
+	class ClientUDPConnection : public UDPConnection
 	{
 	public:
-		UDPClientConnection(asio::io_context& asioContext, asio::ip::udp::socket&& socket, TSQueue<owned_message>& qIn,
-			std::condition_variable& newCV, std::mutex& newMutex, Ref<TCPClientConnection> connection)
-			: UDPConnection(asioContext, std::move(socket), qIn, newCV, newMutex), m_ActiveConnection(connection)
-		{
-
-		}
-		virtual ~UDPClientConnection() override = default;
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		ClientUDPConnection(NetworkContext* networkContext, asio::ip::udp::socket&& socket, Ref<ClientTCPConnection> connection)
+			: UDPConnection(networkContext, std::move(socket)), m_ActiveTCPConnection(connection) {}
+		virtual ~ClientUDPConnection() override = default;
 	public:
-
+		//==============================
+		// Client Connection Specific Functionality
+		//==============================
 		virtual void Disconnect(asio::ip::udp::endpoint key) override;
-
-		virtual void AddToIncomingMessageQueue() override;
+		virtual void AddMessageToIncomingMessageQueue() override;
 	private:
-		Ref<TCPClientConnection> m_ActiveConnection{ nullptr };
+		Ref<ClientTCPConnection> m_ActiveTCPConnection{ nullptr };
 	};
 
 	//============================================================
 	// TCP Client Connection Class
 	//============================================================
 
-	class TCPClientConnection : public std::enable_shared_from_this<TCPClientConnection>, public TCPConnection
+	class ClientTCPConnection : public TCPConnection
 	{
 	public:
-
 		//==============================
 		// Constructors/Destructors
 		//==============================
-
-		TCPClientConnection(asio::io_context& asioContext, asio::ip::tcp::socket&& socket,
-			TSQueue<owned_message>& qIn, std::condition_variable& newCV,
-			std::mutex& newMutex);
-		virtual ~TCPClientConnection() override {}
+		ClientTCPConnection(NetworkContext* networkContext, asio::ip::tcp::socket&& socket) : TCPConnection(networkContext, std::move(socket)) {}
+		virtual ~ClientTCPConnection() override {}
 
 		//==============================
 		// LifeCycle Functions
 		//==============================
-
 		bool Connect(const asio::ip::tcp::resolver::results_type& endpoints);
-
 		virtual void Disconnect() override;
-
-		bool IsConnected() const { return m_TCPSocket.is_open(); }
-
-	private:
-
-		//==============================
-		// Extra Internal Functionality
-		//==============================
-
-		virtual void AddToIncomingMessageQueue() override;
-
-		//==============================
-		// ASIO ASYNC Functions
-		//==============================
+		bool IsConnected() const 
+		{ 
+			return m_TCPSocket.is_open(); 
+		}
 
 	private:
-		// ASYNC - Used by both client and server to write validation packet
-		void WriteValidation();
+		//==============================
+		// Client Connection Specific Functionality
+		//==============================
+		virtual void AddMessageToIncomingMessageQueue() override;
 
-		void ReadValidation();
+		//==============================
+		// Client Validation Functions
+		//==============================
+		void WriteValidationAsync();
+		void ReadValidationAsync();
 
 	};
-
 
 	class Client
 	{
@@ -97,125 +85,68 @@ namespace Kargono::Network
 		// Constructors/Destructors
 		//==============================
 		Client() = default;
-		~Client();
+		~Client() = default;
 	public:
 		//==============================
-		// LifeCycle Functions
+		// Manage Connection to Server
 		//==============================
-
-		// Connect to server with hostname/ip-address and port
-		bool Connect(const std::string& host, const uint16_t port, bool remote = false);
-
-		// Disconnect from the server
-		void Disconnect();
-
-		// Check if client is actually connected to a server
+		bool ConnectToServer(const std::string& serverIP, const uint16_t serverPort, bool remote = false);
+		void DisconnectFromServer();
 		bool IsConnected();
 
-		void Update(size_t nMaxMessages = -1);
+		//==============================
+		// Receive Messages from Server
+		//==============================
+		void CheckForMessages(size_t nMaxMessages = -1);
+		void OpenMessageFromServer(Kargono::Network::Message& msg);
 
-		// Send message to server
-		void Send(const Message& msg);
-
+		//==============================
+		// Send Messages to Server
+		//==============================
+		void SendTCP(const Message& msg);
 		void SendUDP(Message& msg);
-
-		void Wait();
-
-		void WakeUpNetworkThread();
-	public:
 		void SendChat(const std::string& text);
 
-		void OnEvent(Events::Event& e);
-
-		bool OnRequestUserCount(Events::RequestUserCount event);
-
-		bool OnStartSession(Events::StartSession event);
-
-		bool OnConnectionTerminated(Events::ConnectionTerminated event);
-
-		bool OnRequestJoinSession(Events::RequestJoinSession event);
-
-		bool OnEnableReadyCheck(Events::EnableReadyCheck event);
-
-		bool OnSessionReadyCheck(Events::SessionReadyCheck event);
-
-		bool OnSendAllEntityLocation(Events::SendAllEntityLocation event);
-
-		bool OnSignalAll(Events::SignalAll event);
-
-		bool OnAppTickEvent(Events::AppTickEvent event);
-
-		bool OnSendAllEntityPhysics(Events::SendAllEntityPhysics event);
-
-		bool OnLeaveCurrentSession(Events::LeaveCurrentSession event);
-
-		void RunClient();
-
-		void StopClient();
-
-		void SubmitToFunctionQueue(const std::function<void()>& function);
-
-		void ExecuteFunctionQueue();
-
-		void SubmitToEventQueue(Ref<Events::Event> e);
-
-		void ProcessEventQueue();
-
-		void OnMessage(Kargono::Network::Message& msg);
-
-	
 		//==============================
-		// Getters/Setters
+		// Manage Main Network Thread
 		//==============================
+		void NetworkThreadSleep();
+		void NetworkThreadWakeUp();
 
-		uint16_t GetSessionSlot() const
-		{
-			return m_SessionSlot;
-		}
-		uint64_t GetSessionStartFrame() const
-		{
-			return m_SessionStartFrame;
-		}
-		void SetSessionStartFrame(uint64_t startFrame)
-		{
-			m_SessionStartFrame = startFrame;
-		}
 	private:
-		std::atomic<bool> m_Quit = false;
+		// Asio Thread and Context. This thread handles asynchronous calls from Asio itself
+		NetworkContext m_NetworkContext{};
 
+		// Function and Event Queue for m_NetworkThread to handle
 		std::vector<std::function<void()>> m_FunctionQueue;
 		std::mutex m_FunctionQueueMutex;
-
 		std::vector<Ref<Events::Event>> m_EventQueue {};
 		std::mutex m_EventQueueMutex {};
+
+		// Cached active session information
 		uint64_t m_SessionStartFrame{ 0 };
 		std::atomic<uint16_t> m_SessionSlot{std::numeric_limits<uint16_t>::max()};
 
-
-		// main asio context
-		asio::io_context m_context;
-		// asio context thread
-		std::thread thrContext;
-
+		// TCP and UDP connection objects, which handles reliable and unreliable data transfer
+		Ref<ClientTCPConnection> m_ClientTCPConnection { nullptr };
+		Ref<ClientUDPConnection> m_ClientUDPConnection { nullptr };
 		std::atomic<bool> m_UDPConnectionSuccessful;
 
-		// The client has a single instance of a "connection" object, which handles data transfer
-		Ref<TCPClientConnection> m_connection;
-
-		Ref<UDPClientConnection> m_UDPClientConnection {nullptr};
-		// This is the thread safe queue of incoming messages from the server
-		TSQueue<owned_message> m_qMessagesIn;
-
-		// Variables for sleeping thread until a notify command is received
-		std::condition_variable m_BlockThreadCV {};
-		std::mutex m_BlockThreadMx {};
-		Ref<std::thread> m_NetworkThread { nullptr };
 	private:
 		friend class ClientService;
 	};
 
 	class ClientService
 	{
+	public:
+		//==============================
+		// LifeCycle Functions
+		//==============================
+		static void Init();
+		static void Terminate();
+	private:
+		static void Run();
+		static void EndRun();
 	public:
 		//==============================
 		// External API
@@ -231,25 +162,35 @@ namespace Kargono::Network
 		static void SignalAll(uint16_t signal);
 
 		//==============================
-		// Getters/Setters
+		// Submit Client Events & Functions
 		//==============================
-		static Ref<Network::Client> GetActiveClient()
-		{
-			return s_Client;
-		}
-		static void SetActiveClient(Ref<Network::Client> newClient)
-		{
-			s_Client = newClient;
-		}
+		static void SubmitToFunctionQueue(const std::function<void()>& function);
+		static void SubmitToEventQueue(Ref<Events::Event> e);
 
-		static Ref<std::thread> GetActiveNetworkThread()
-		{
-			return s_Client->m_NetworkThread;
-		}
-		static void SetActiveNetworkThread(Ref<std::thread> newThread)
-		{
-			s_Client->m_NetworkThread = newThread;
-		}
+	private:
+		//==============================
+		// Process Events
+		//==============================
+		static void OnEvent(Events::Event* e);
+		static bool OnRequestUserCount(Events::RequestUserCount event);
+		static bool OnStartSession(Events::StartSession event);
+		static bool OnConnectionTerminated(Events::ConnectionTerminated event);
+		static bool OnRequestJoinSession(Events::RequestJoinSession event);
+		static bool OnEnableReadyCheck(Events::EnableReadyCheck event);
+		static bool OnSessionReadyCheck(Events::SessionReadyCheck event);
+		static bool OnSendAllEntityLocation(Events::SendAllEntityLocation event);
+		static bool OnSignalAll(Events::SignalAll event);
+		static bool OnAppTickEvent(Events::AppTickEvent event);
+		static bool OnSendAllEntityPhysics(Events::SendAllEntityPhysics event);
+		static bool OnLeaveCurrentSession(Events::LeaveCurrentSession event);
+
+	private:
+		//==============================
+		// Internal Functionality
+		//==============================
+		static void ProcessFunctionQueue();
+		static void ProcessEventQueue();
+
 	private:
 		//==============================
 		// Internal Fields

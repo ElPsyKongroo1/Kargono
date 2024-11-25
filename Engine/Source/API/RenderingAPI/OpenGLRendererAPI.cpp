@@ -185,6 +185,12 @@ namespace Kargono::Rendering
 		glDrawArrays(GL_LINES, 0, vertexCount);
 	}
 
+	void RendererAPI::DrawPoints(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
+	{
+		vertexArray->Bind();
+		glDrawArrays(GL_POINTS, 0, vertexCount);
+	}
+
 	void RendererAPI::DrawTriangles(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t vertexCount)
 	{
 		vertexArray->Bind();
@@ -194,6 +200,10 @@ namespace Kargono::Rendering
 	void RendererAPI::SetLineWidth(float width)
 	{
 		glLineWidth(width);
+	}
+	void RendererAPI::SetPointWidth(float size)
+	{
+		glPointSize(size);
 	}
 }
 

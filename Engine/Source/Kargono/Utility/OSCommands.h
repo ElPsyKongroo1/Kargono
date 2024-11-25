@@ -19,16 +19,21 @@ namespace Kargono::Utility
 	class OSCommands
 	{
 	public:
-#ifndef KG_EXPORT
+
+#if !defined(KG_EXPORT_SERVER) && !defined(KG_EXPORT_RUNTIME)
 		// This function opens a file explorer window at the provided absolute
 		//		path. This is operating system dependent and only works on windows.
 		static void OpenFileExplorer(const std::filesystem::path& path);
+		static void OpenTerminal(const std::filesystem::path& path);
 		// This function opens the scripting engine that the provided path describes.
 		//		This scripting engine is a .csproj file that opens the Visual Studio
 		//		project.
 		static void OpenScriptProject(const std::filesystem::path& path);
 		// This function opens the profiler associated with this engine (optick).
 		static void OpenProfiler();
+		static void DownloadGitProject(const std::filesystem::path& downloadPath, const std::string& projectURI);
+		static void OpenWebURL(const std::string& webURL);
 #endif
 	};
+
 }

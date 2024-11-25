@@ -8,7 +8,6 @@
 
 struct ALCdevice;
 struct ALCcontext;
-namespace Kargono::Assets { class AssetManager; }
 
 //============================================================
 // Audio Namespace
@@ -102,12 +101,11 @@ namespace Kargono::Audio
 		// This destructor simply destroys the buffer inside of the OpenAL that is
 		//		referenced by m_BufferID.
 		~AudioBuffer();
-	private:
+	public:
 		// This ID stores a reference to the OpenAL buffer that this class represents.
 		uint32_t m_BufferID {0};
 
 		friend Audio::AudioService;
-		friend Assets::AssetManager;
 	};
 
 	//============================================================

@@ -6,29 +6,72 @@
 
 namespace Kargono
 {
-	static EditorUI::GenericPopupSpec s_ExportProjectSpec {};
-	static EditorUI::ChooseDirectorySpec s_ExportProjectLocation {};
-	static EditorUI::CheckboxSpec s_ExportProjectServer {};
 
-	static void InitializeStaticResources()
+	void EditorApp::InitializeExportProjectWidgets()
 	{
-		s_ExportProjectSpec.Label = "Export Project";
-		s_ExportProjectSpec.PopupWidth = 420.0f;
-		s_ExportProjectSpec.PopupContents = [&]()
+		m_ExportProjectSpec.Label = "Export Project";
+		m_ExportProjectSpec.PopupWidth = 420.0f;
+		m_ExportProjectSpec.PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::ChooseDirectory(s_ExportProjectLocation);
-			EditorUI::EditorUIService::Checkbox(s_ExportProjectServer);
+			EditorUI::EditorUIService::ChooseDirectory(m_ExportProjectLocation);
+			EditorUI::EditorUIService::Checkbox(m_ExportProjectServer);
 		};
-		s_ExportProjectSpec.ConfirmAction = [&]()
+		m_ExportProjectSpec.ConfirmAction = [&]()
 		{
-			Projects::ProjectService::ExportProject(s_ExportProjectLocation.CurrentOption, s_ExportProjectServer.ToggleBoolean);
+			Projects::ProjectService::ExportProject(m_ExportProjectLocation.CurrentOption, m_ExportProjectServer.CurrentBoolean);
 		};
 
-		s_ExportProjectLocation.Label = "Export Location";
-		s_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
+		m_ExportProjectLocation.Label = "Export Location";
+		m_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
 
-		s_ExportProjectServer.Label = "Export Server";
-		s_ExportProjectServer.ToggleBoolean = true;
+		m_ExportProjectServer.Label = "Export Server";
+		m_ExportProjectServer.CurrentBoolean = true;
+	}
+
+	void EditorApp::InitializeImportAssetWidgets()
+	{
+
+		// Initialize import asset popup data
+		m_ImportAssetPopup.Label = "Import Asset";
+		m_ImportAssetPopup.PopupContents = [&]() 
+		{
+			EditorUI::EditorUIService::LabeledText("Source File:", m_ImportSourceFilePath.string());
+			EditorUI::EditorUIService::ChooseDirectory(m_ImportNewFileLocation);
+			EditorUI::EditorUIService::EditText(m_ImportNewAssetName);
+		};
+		m_ImportAssetPopup.ConfirmAction = [&]() 
+		{
+			// Actually import the asset
+			switch (m_ImportAssetType)
+			{
+			case Assets::AssetType::Font:
+				Assets::AssetService::ImportFontFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.CurrentOption.c_str(), m_ImportNewFileLocation.CurrentOption);
+				break;
+			case Assets::AssetType::Audio:
+				Assets::AssetService::ImportAudioBufferFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.CurrentOption.c_str(), m_ImportNewFileLocation.CurrentOption);
+				break;
+			case Assets::AssetType::Texture:
+				Assets::AssetService::ImportTexture2DFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.CurrentOption.c_str(), m_ImportNewFileLocation.CurrentOption);
+				break;
+			default:
+				KG_ERROR("Unsupported asset type attempting to be imported");
+				break;
+			}
+		};
+
+		// Initialize internal popup widgets
+		m_ImportNewAssetName.Label = "New Asset Name:";
+		m_ImportNewAssetName.CurrentOption = "NewAsset";
+
+		m_ImportNewFileLocation.Label = "Destination Folder:";
+		m_ImportNewFileLocation.ConfirmAction = [&](const std::string& path)
+		{
+			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			{
+				KG_WARN("Cannot create an asset outside of the project's asset directory.");
+				m_ImportNewFileLocation.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+			}
+		};
 	}
 
 	EditorApp* EditorApp::s_EditorApp = nullptr;
@@ -39,16 +82,22 @@ namespace Kargono
 		KG_ASSERT(!m_InitProjectPath.empty(), "Attempt to open editor without valid project path!");
 		s_EditorApp = this;
 
-		InitializeStaticResources();
+		InitializeExportProjectWidgets();
+		InitializeImportAssetWidgets();
+
+		m_GeneralWarningSpec.Label = "Warning";
+		m_GeneralWarningSpec.PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::LabeledText("Warning Message:", m_GeneralWarningMessage.CString());
+		};
 	}
+
 
 	void EditorApp::Init()
 	{
 		Scripting::ScriptService::Init();
 		Audio::AudioService::Init();
 		Scenes::SceneService::Init();
-
-		m_SceneHierarchyPanel = CreateScope<Panels::SceneHierarchyPanel>();
 
 		m_EditorScene = CreateRef<Scenes::Scene>();
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
@@ -57,19 +106,23 @@ namespace Kargono
 		OpenProject(m_InitProjectPath);
 
 		EditorUI::EditorUIService::Init();
+		AI::AIService::Init();
 
+		m_SceneEditorPanel = CreateScope<Panels::SceneEditorPanel>();
+		m_AssetViewerPanel = CreateScope<Panels::AssetViewerPanel>();
 		m_LogPanel = CreateScope<Panels::LogPanel>();
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();
 		m_ProjectPanel = CreateScope<Panels::ProjectPanel>();
+		m_ProjectComponentPanel = CreateScope<Panels::ProjectComponentPanel>();
 		m_UIEditorPanel = CreateScope<Panels::UIEditorPanel>();
 		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
-		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
-		m_EntityClassEditor = CreateScope<Panels::EntityClassEditor>();
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
+		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
 		m_GameStatePanel = CreateScope<Panels::GameStatePanel>();
-		m_InputModePanel = CreateScope<Panels::InputModePanel>();
+		m_InputMapPanel = CreateScope<Panels::InputMapPanel>();
 		m_ContentBrowserPanel = CreateScope<Panels::ContentBrowserPanel>();
 		m_PropertiesPanel = CreateScope<Panels::PropertiesPanel>();
+		m_AIStatePanel = CreateScope<Panels::AIStateEditorPanel>();
 		m_TestingPanel = CreateScope<Panels::TestingPanel>();
 
 		m_ViewportPanel->InitializeFrameBuffer();
@@ -80,6 +133,11 @@ namespace Kargono
 		RuntimeUI::RuntimeUIService::Init();
 
 		m_ViewportPanel->m_EditorCamera = Rendering::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+
+		m_ViewportPanel->m_EditorCamera.SetFocalPoint({ 58.0f, 27.0f, 93.0f });
+		m_ViewportPanel->m_EditorCamera.SetDistance(1.0f);
+		m_ViewportPanel->m_EditorCamera.SetPitch(0.195f);
+		m_ViewportPanel->m_EditorCamera.SetYaw(-0.372f);
 		
 		m_ViewportPanel->InitializeOverlayData();
 
@@ -91,6 +149,7 @@ namespace Kargono
 		EditorUI::EditorUIService::Terminate();
 		Audio::AudioService::Terminate();
 		Scripting::ScriptService::Terminate();
+		AI::AIService::Terminate();
 	}
 
 	void EditorApp::OnUpdate(Timestep ts)
@@ -175,14 +234,7 @@ namespace Kargono
 
 				if (ImGui::MenuItem("Export Project"))
 				{
-					s_ExportProjectSpec.PopupActive = true;
-				}
-
-				ImGui::Separator();
-
-				if (ImGui::MenuItem("New Scene"))
-				{
-					NewScene();
+					m_ExportProjectSpec.OpenPopup = true;
 				}
 
 				ImGui::Separator();
@@ -208,21 +260,31 @@ namespace Kargono
 
 			if (ImGui::BeginMenu("Panels"))
 			{
+				ImGui::MenuItem("Asset Viewer", NULL, &m_ShowAssetViewer);
 				ImGui::MenuItem("Content Browser", NULL, &m_ShowContentBrowser);
 				ImGui::MenuItem("Scene Hierarchy", NULL, &m_ShowSceneHierarchy);
 				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
 				ImGui::MenuItem("Properties", NULL, &m_ShowProperties);
 				ImGui::Separator();
 				ImGui::MenuItem("User Interface Editor", NULL, &m_ShowUserInterfaceEditor);
-				ImGui::MenuItem("Input Mode Editor", NULL, &m_ShowInputModeEditor);
+				ImGui::MenuItem("Input Map Editor", NULL, &m_ShowInputMapEditor);
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
 				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
-				ImGui::MenuItem("Class Editor", NULL, &m_ShowClassEditor);
 				ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
+				ImGui::MenuItem("Component Editor", NULL, &m_ShowProjectComponent);
+				ImGui::MenuItem("AI State Editor", NULL, &m_ShowAIStateEditor);
 				ImGui::Separator();
 				ImGui::MenuItem("Project Settings", NULL, &m_ShowProject);
 				ImGui::EndMenu();
 			}
+			// TODO: Fullscreen for select panels
+#if 0
+			if (ImGui::BeginMenu("View"))
+			{
+				ImGui::MenuItem("Display Content Browser Fullscreen", NULL, &m_ContentBrowserFullscreen);
+				ImGui::EndMenu();
+			}
+#endif
 
 			if (ImGui::BeginMenu("Debug"))
 			{
@@ -249,6 +311,15 @@ namespace Kargono
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Help"))
+			{
+				if (ImGui::MenuItem("Engine Docs"))
+				{
+					Utility::OSCommands::OpenWebURL("https://elpsykongroo1.github.io/Kargono/");
+				}
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
 		}
 
@@ -272,79 +343,45 @@ namespace Kargono
 			EditorUI::EditorUIService::EndRendering();
 			return;
 		}
+		
+#if 0
+		/*if (m_ContentBrowserFullscreen)
+		{
+			m_ContentBrowserPanel->OnEditorUIRender();
+			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIService::EndRendering();
+			return;
+		}*/
+#endif
 
 		// Display other panels
-		if (m_ShowSceneHierarchy) { m_SceneHierarchyPanel->OnEditorUIRender(); }
+		if (m_ShowAssetViewer) { m_AssetViewerPanel->OnEditorUIRender(); }
+		if (m_ShowSceneHierarchy) { m_SceneEditorPanel->OnEditorUIRender(); }
 		if (m_ShowContentBrowser) { m_ContentBrowserPanel->OnEditorUIRender(); }
 		if (m_ShowLog) { m_LogPanel->OnEditorUIRender(); }
 		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }
 		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
 		if (m_ShowUserInterfaceEditor) { m_UIEditorPanel->OnEditorUIRender(); }
 		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
+		if (m_ShowProjectComponent) { m_ProjectComponentPanel->OnEditorUIRender(); }
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
-		if (m_ShowClassEditor) { m_EntityClassEditor->OnEditorUIRender(); }
 		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
 		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
-		if (m_ShowInputModeEditor) { m_InputModePanel->OnEditorUIRender(); }
+		if (m_ShowInputMapEditor) { m_InputMapPanel->OnEditorUIRender(); }
 		if (m_ShowProperties) { m_PropertiesPanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
 		if (m_ShowTesting) { m_TestingPanel->OnEditorUIRender(); }
+		if (m_ShowAIStateEditor) { m_AIStatePanel->OnEditorUIRender(); }
 
-		EditorUI::EditorUIService::GenericPopup(s_ExportProjectSpec);
+		EditorUI::EditorUIService::GenericPopup(m_ExportProjectSpec);
+		EditorUI::EditorUIService::GenericPopup(m_ImportAssetPopup);
+		EditorUI::EditorUIService::WarningPopup(m_GeneralWarningSpec);
 
 		EditorUI::EditorUIService::EndWindow();
 
 		EditorUI::EditorUIService::HighlightFocusedWindow();
 
 		EditorUI::EditorUIService::EndRendering();
-	}
-
-
-	void EditorApp::OnEvent(Events::Event& event)
-	{
-		EditorUI::EditorUIService::OnEvent(event);
-		if (event.Handled)
-		{
-			return;
-		}
-		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
-		if (focusedWindow == m_ViewportPanel->m_PanelName)
-		{
-			m_ViewportPanel->OnEvent(event);
-		}
-
-		Events::EventDispatcher dispatcher(event);
-		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
-		{
-			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnKeyPressedEditor));
-			//dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnMouseButtonPressed));
-			if (event.GetEventType() == Events::EventType::KeyReleased)
-			{
-				m_ViewportPanel->m_EditorCamera.OnKeyReleased(*(Events::KeyReleasedEvent*)& event);
-			}
-		}
-		dispatcher.Dispatch<Events::PhysicsCollisionEvent>(KG_BIND_CLASS_FN(EditorApp::OnPhysicsCollision));
-		dispatcher.Dispatch<Events::PhysicsCollisionEnd>(KG_BIND_CLASS_FN(EditorApp::OnPhysicsCollisionEnd));
-
-		if (m_SceneState == SceneState::Play && m_IsPaused)
-		{
-			//dispatcher.Dispatch<Events::MouseButtonPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnMouseButtonPressed));
-		}
-		
-		if (m_SceneState == SceneState::Play)
-		{
-			dispatcher.Dispatch<Events::KeyPressedEvent>(KG_BIND_CLASS_FN(EditorApp::OnKeyPressedRuntime));
-			dispatcher.Dispatch<Events::ApplicationCloseEvent>(KG_BIND_CLASS_FN(EditorApp::OnApplicationClose));
-			dispatcher.Dispatch<Events::UpdateOnlineUsers>(KG_BIND_CLASS_FN(EditorApp::OnUpdateUserCount));
-			dispatcher.Dispatch<Events::ApproveJoinSession>(KG_BIND_CLASS_FN(EditorApp::OnApproveJoinSession));
-			dispatcher.Dispatch<Events::UserLeftSession>(KG_BIND_CLASS_FN(EditorApp::OnUserLeftSession));
-			dispatcher.Dispatch<Events::CurrentSessionInit>(KG_BIND_CLASS_FN(EditorApp::OnCurrentSessionInit));
-			dispatcher.Dispatch<Events::ConnectionTerminated>(KG_BIND_CLASS_FN(EditorApp::OnConnectionTerminated));
-			dispatcher.Dispatch<Events::UpdateSessionUserSlot>(KG_BIND_CLASS_FN(EditorApp::OnUpdateSessionUserSlot));
-			dispatcher.Dispatch<Events::StartSession>(KG_BIND_CLASS_FN(EditorApp::OnStartSession));
-			dispatcher.Dispatch<Events::SessionReadyCheckConfirm>(KG_BIND_CLASS_FN(EditorApp::OnSessionReadyCheckConfirm));
-			dispatcher.Dispatch<Events::ReceiveSignal>(KG_BIND_CLASS_FN(EditorApp::OnReceiveSignal));
-		}
 	}
 
 	bool EditorApp::OnApplicationClose(Events::ApplicationCloseEvent event)
@@ -356,9 +393,323 @@ namespace Kargono
 	bool EditorApp::OnKeyPressedRuntime(Events::KeyPressedEvent event)
 	{
 		KG_PROFILE_FUNCTION()
+		return Input::InputMapService::OnKeyPressed(event);
+	}
 
-		Scenes::SceneService::GetActiveScene()->OnKeyPressed(event);
+	bool EditorApp::OnApplicationEvent(Events::Event* event)
+	{
+		bool handled = false;
+
+		if (m_SceneState == SceneState::Play)
+		{
+			if (event->GetEventType() == Events::EventType::AppClose)
+			{
+				handled = OnApplicationClose(*(Events::ApplicationCloseEvent*)event);
+			}
+		}
+		return handled;
+	}
+
+	bool EditorApp::OnNetworkEvent(Events::Event* event)
+	{
+		bool handled = false;
+		if (m_SceneState == SceneState::Play)
+		{
+			switch (event->GetEventType())
+			{
+			case Events::EventType::UpdateOnlineUsers:
+				handled = OnUpdateUserCount(*(Events::UpdateOnlineUsers*)event);
+				break;
+			case Events::EventType::ApproveJoinSession:
+				handled = OnApproveJoinSession(*(Events::ApproveJoinSession*)event);
+				break;
+			case Events::EventType::UserLeftSession:
+				handled = OnUserLeftSession(*(Events::UserLeftSession*)event);
+				break;
+			case Events::EventType::CurrentSessionInit:
+				handled = OnCurrentSessionInit(*(Events::CurrentSessionInit*)event);
+				break;
+			case Events::EventType::ConnectionTerminated:
+				handled = OnConnectionTerminated(*(Events::ConnectionTerminated*)event);
+				break;
+			case Events::EventType::UpdateSessionUserSlot:
+				handled = OnUpdateSessionUserSlot(*(Events::UpdateSessionUserSlot*)event);
+				break;
+			case Events::EventType::StartSession:
+				handled = OnStartSession(*(Events::StartSession*)event);
+				break;
+			case Events::EventType::SendReadyCheckConfirm:
+				handled = OnSessionReadyCheckConfirm(*(Events::SessionReadyCheckConfirm*)event);
+				break;
+			case Events::EventType::ReceiveSignal:
+				handled = OnReceiveSignal(*(Events::ReceiveSignal*)event);
+				break;
+			}
+		}
+
+		return handled;
+	}
+
+	bool EditorApp::OnInputEvent(Events::Event* event)
+	{
+		bool handled = false;
+		handled = EditorUI::EditorUIService::OnInputEvent(event);
+		if (handled)
+		{
+			return true;
+		}
+		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		if (focusedWindow == m_ViewportPanel->m_PanelName)
+		{
+			m_ViewportPanel->OnInputEvent(event);
+		}
+
+		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+		{
+			if (event->GetEventType() == Events::EventType::MouseButtonPressed)
+			{
+				handled = OnMouseButtonPressed(*(Events::MouseButtonPressedEvent*)event);
+			}
+
+			if (event->GetEventType() == Events::EventType::KeyPressed)
+			{
+				handled = OnKeyPressedEditor(*(Events::KeyPressedEvent*)event);
+			}
+			
+			if (event->GetEventType() == Events::EventType::KeyReleased)
+			{
+				handled = m_ViewportPanel->m_EditorCamera.OnKeyReleased(*(Events::KeyReleasedEvent*)event);
+			}
+		}
+
+		if (m_SceneState == SceneState::Play)
+		{
+			if (event->GetEventType() == Events::EventType::MouseButtonPressed)
+			{
+				handled = OnMouseButtonPressed(*(Events::MouseButtonPressedEvent*)event);
+			}
+
+			if (event->GetEventType() == Events::EventType::KeyPressed)
+			{
+				handled = OnKeyPressedRuntime(*(Events::KeyPressedEvent*)event);
+			}
+		}
+
+		return handled;
+	}
+
+	bool EditorApp::OnPhysicsEvent(Events::Event* event)
+	{
+		bool handled = false;
+		switch (event->GetEventType())
+		{
+		case Events::EventType::PhysicsCollisionStart:
+			handled = OnPhysicsCollisionStart(*(Events::PhysicsCollisionStart*)event);
+			break;
+		case Events::EventType::PhysicsCollisionEnd:
+			handled = OnPhysicsCollisionEnd(*(Events::PhysicsCollisionEnd*)event);
+			break;
+		}
+		return handled;
+	}
+
+	bool EditorApp::OnSceneEvent(Events::Event* event)
+	{
+		return m_SceneEditorPanel->OnSceneEvent(event);
+	}
+
+	bool EditorApp::OnAssetEvent(Events::Event* event)
+	{
+		Events::ManageAsset& manageAsset = *(Events::ManageAsset*)event;
+
+		// Handle adding a project component to the active editor scene
+		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
+			manageAsset.GetAction() == Events::ManageAssetAction::Create &&
+			m_EditorScene)
+		{
+			// Create project component inside scene registry
+			m_EditorScene->AddProjectComponentRegistry(manageAsset.GetAssetID());
+		}
+		// Handle editing a project component by modifying entity component data inside the Assets::AssetService::SceneRegistry and the active editor scene
+		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
+			manageAsset.GetAction() == Events::ManageAssetAction::UpdateAsset)
+		{
+			OnUpdateProjectComponent(manageAsset);
+		}
+		// Handle deleting a project component by removing entity data from all scenes
+		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
+			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			m_EditorScene)
+		{
+			// Remove project component from editor scene
+			Assets::AssetService::RemoveProjectComponentFromScene(m_EditorScene, manageAsset.GetAssetID());
+		}
+
+		// Handle removing scripts from editor scene
+		if (manageAsset.GetAssetType() == Assets::AssetType::Script &&
+			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			m_EditorScene)
+		{
+			Assets::AssetService::RemoveScriptFromScene(m_EditorScene, manageAsset.GetAssetID());
+		}
+
+		// Handle removing ai state from editor scene
+		if (manageAsset.GetAssetType() == Assets::AssetType::AIState &&
+			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			m_EditorScene)
+		{
+			Assets::AssetService::RemoveAIStateFromScene(m_EditorScene, manageAsset.GetAssetID());
+		}
+
+		if (manageAsset.GetAssetType() == Assets::AssetType::Scene && 
+			manageAsset.GetAssetID() == m_EditorSceneHandle)
+		{
+			if (manageAsset.GetAction() == Events::ManageAssetAction::Delete)
+			{
+				// Create new scene w/ unique name
+				uint32_t iteration{ 1 };
+				bool success{ false };
+				while (!success)
+				{
+					FixedString16 sceneName{ "NewScene" };
+					sceneName.AppendInteger(iteration);
+					success = NewScene(sceneName.CString());
+					iteration++;
+				}
+			}
+			
+		}
+
+		m_SceneEditorPanel->OnAssetEvent(event);
+		m_AssetViewerPanel->OnAssetEvent(event);
+		m_UIEditorPanel->OnAssetEvent(event);
+		m_AIStatePanel->OnAssetEvent(event);
+		m_InputMapPanel->OnAssetEvent(event);
+		m_ProjectPanel->OnAssetEvent(event);
+
+		switch (manageAsset.GetAssetType())
+		{
+		case Assets::AssetType::GameState:
+			m_GameStatePanel->OnAssetEvent(event);
+			break;
+		case Assets::AssetType::ProjectComponent:
+			m_ProjectComponentPanel->OnAssetEvent(event);
+			break;
+		case Assets::AssetType::Script:
+			m_ScriptEditorPanel->OnAssetEvent(event);
+			break;
+		default:
+			break;
+		}
+		//NewScene("NewScene");
 		
+		return false;
+	}
+
+	bool EditorApp::OnEditorEvent(Events::Event* event)
+	{
+		m_ViewportPanel->OnEditorEvent(event);
+		return false;
+	}
+
+	static void TransferSceneData(Events::ManageAsset& event, Ref<Scenes::Scene> currentScene)
+	{
+		// Get reallocation instructions
+		KG_ASSERT(event.GetProvidedData());
+		Assets::FieldReallocationInstructions& reallocationInstructions = *(Assets::FieldReallocationInstructions*)event.GetProvidedData().get();
+
+		// Check if original data source is already empty. If it is empty, all there is to do is create a new registry
+		if (reallocationInstructions.m_OldDataLocations.size() == 0)
+		{
+			// Create/Overwrite scene registry using the new archetype of field data
+			currentScene->AddProjectComponentRegistry(event.GetAssetID());
+			return;
+		}
+
+		// Check if new data layout is empty. Simply remove the current registry.
+		if (reallocationInstructions.m_NewDataLocations.size() == 0)
+		{
+			// Create/Overwrite scene registry using the new archetype of field data
+			currentScene->ClearProjectComponentRegistry(event.GetAssetID());
+			return;
+		}
+
+		// Generate and store new entity component data
+		std::unordered_map<UUID, std::vector<uint8_t>> entityToNewDataMap{};
+		for (auto& [entityID, enttID] : currentScene->m_EntityRegistry.m_EntityMap)
+		{
+			ECS::Entity entity = currentScene->GetEntityByEnttID(enttID);
+			if (entity.HasProjectComponentData(event.GetAssetID()))
+			{
+				// Get old data buffer reference and generate new data buffer
+				uint8_t* oldComponentData = (uint8_t*)entity.GetProjectComponentData(event.GetAssetID());
+				std::vector<uint8_t> newComponentData;
+				newComponentData.resize(reallocationInstructions.m_NewDataSize);
+
+				// Transfer old data into new buffer and initialize indicated data
+				for (size_t iteration{ 0 }; iteration < reallocationInstructions.m_FieldTransferDirections.size(); iteration++)
+				{
+					if (reallocationInstructions.m_FieldTransferDirections.at(iteration) == Assets::k_NewAllocationIndex)
+					{
+						// Initialize data
+						Utility::InitializeDataForWrappedVarBuffer(reallocationInstructions.m_NewDataTypes.at(iteration), newComponentData.data() + reallocationInstructions.m_NewDataLocations.at(iteration));
+					}
+					else
+					{
+						// Transfer data
+						Utility::TransferDataForWrappedVarBuffer(reallocationInstructions.m_NewDataTypes.at(iteration),
+							oldComponentData + reallocationInstructions.m_OldDataLocations.at(reallocationInstructions.m_FieldTransferDirections.at(iteration)),
+							newComponentData.data() + reallocationInstructions.m_NewDataLocations.at(iteration));
+					}
+				}
+
+				// Store new data into buffer map
+				entityToNewDataMap.insert_or_assign(entityID, newComponentData);
+			}
+		}
+
+		// Clear old scene registry data for this project component type
+		currentScene->ClearProjectComponentRegistry(event.GetAssetID());
+
+		// Create/Overwrite scene registry using the new archetype of field data
+		currentScene->AddProjectComponentRegistry(event.GetAssetID());
+
+		// Write stored entity component data into new registry
+		for (auto& [entityID, dataBuffer] : entityToNewDataMap)
+		{
+			ECS::Entity currentEntity = currentScene->GetEntityByUUID(entityID);
+			if (!currentEntity.HasProjectComponentData(event.GetAssetID()))
+			{
+				currentEntity.AddProjectComponentData(event.GetAssetID());
+			}
+			uint8_t* currentData = (uint8_t*)currentEntity.GetProjectComponentData(event.GetAssetID());
+			memcpy(currentData, dataBuffer.data(), dataBuffer.size()); // Note that the data buffer is a vector of bytes, which means size == byte size
+		}
+	}
+
+	bool EditorApp::OnUpdateProjectComponent(Events::ManageAsset& event)
+	{
+		// Modify entity component data for all scenes in the scene asset registry and save changes to disk
+		Assets::FieldReallocationInstructions& reallocationInstructions = *(Assets::FieldReallocationInstructions*)event.GetProvidedData().get();
+		for (size_t iteration{0}; iteration < reallocationInstructions.m_OldSceneHandles.size(); iteration++)
+		{
+			TransferSceneData(event, reallocationInstructions.m_OldScenes.at(iteration));
+			// Save scene asset on-disk 
+			Assets::AssetService::SaveScene(reallocationInstructions.m_OldSceneHandles.at(iteration), reallocationInstructions.m_OldScenes.at(iteration));
+		}
+
+		// Reset scenes
+		for (Ref<Scenes::Scene> scene : reallocationInstructions.m_OldScenes)
+		{
+			scene.reset();
+		}
+		
+		// Modify entity component data for editor scene
+		if (m_EditorScene)
+		{
+			TransferSceneData(event, m_EditorScene);
+		}
+
 		return false;
 	}
 
@@ -366,15 +717,17 @@ namespace Kargono
 	{
 		if (event.IsRepeat()) { return false; }
 
-		std::string focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
-		if (m_PanelToKeyboardInput.contains(focusedWindow))
+		// Handle panel specific key pressed events
+		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		if (m_PanelToKeyboardInput.contains(focusedWindow.CString()))
 		{
-			if (m_PanelToKeyboardInput.at(focusedWindow)(event))
+			if (m_PanelToKeyboardInput.at(focusedWindow.CString())(event))
 			{
 				return true;
 			}
 		}
 
+		// Handle general keyboard input chords
 		bool control = Input::InputService::IsKeyPressed(Key::LeftControl) || Input::InputService::IsKeyPressed(Key::RightControl);
 		bool shift = Input::InputService::IsKeyPressed(Key::LeftShift) || Input::InputService::IsKeyPressed(Key::RightShift);
 		bool alt = Input::InputService::IsKeyPressed(Key::LeftAlt) || Input::InputService::IsKeyPressed(Key::RightAlt);
@@ -384,7 +737,7 @@ namespace Kargono
 
 			case Key::N:
 			{
-				if (control) { NewScene(); }
+				if (control) { NewSceneDialog(); }
 				break;
 			}
 			case Key::O:
@@ -425,11 +778,11 @@ namespace Kargono
 			{
 			if (EditorUI::EditorUIService::GetActiveWidgetID() == 0)
 			{
-				Scenes::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+				ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (selectedEntity)
 				{
 					m_EditorScene->DestroyEntity(selectedEntity);
-					m_SceneHierarchyPanel->SetSelectedEntity({});
+					m_SceneEditorPanel->SetSelectedEntity({});
 				}
 			}
 				break;
@@ -445,66 +798,60 @@ namespace Kargono
 
 	bool EditorApp::OnMouseButtonPressed(Events::MouseButtonPressedEvent event)
 	{
-		if (event.GetMouseButton() == Mouse::ButtonLeft)
+		// Refocus window if right click is used
+		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		if (event.GetMouseButton() == Mouse::ButtonRight)
 		{
-			if (m_ViewportPanel->m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
+			if (const char* hoveredName = EditorUI::EditorUIService::GetHoveredWindowName())
 			{
-				if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
-				{
-					m_SceneHierarchyPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
-					// Algorithm to enable double clicking for an entity!
-					static float previousTime{ 0.0f };
-					static Scenes::Entity previousEntity{};
-					float currentTime = Utility::Time::GetTime();
-					if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::SceneService::GetActiveScene()->GetHoveredEntity() == previousEntity)
-					{
-						auto& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<Scenes::TransformComponent>();
-						m_ViewportPanel->m_EditorCamera.SetFocalPoint(transformComponent.Translation);
-						m_ViewportPanel->m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
-						m_ViewportPanel->m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
-					}
-					previousTime = currentTime;
-					previousEntity = *Scenes::SceneService::GetActiveScene()->GetHoveredEntity();
-				}
-				
-
+				EditorUI::EditorUIService::SetFocusedWindow(hoveredName);
+				focusedWindow = hoveredName;
+			}
+		}
+		
+		// Handle panel specific mouse pressed events
+		if (m_PanelToMousePressedInput.contains(focusedWindow.CString()))
+		{
+			if (m_PanelToMousePressedInput.at(focusedWindow.CString())(event))
+			{
+				return true;
 			}
 		}
 		return false;
 	}
 
 
-	bool EditorApp::OnPhysicsCollision(Events::PhysicsCollisionEvent event)
+	bool EditorApp::OnPhysicsCollisionStart(Events::PhysicsCollisionStart event)
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (entityOne.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
-			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
-			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
+			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
+			Scripting::Script* script = component.OnCollisionStartScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOneID, entityTwoID);
+				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
-		if (!collisionHandled && entityTwo.HasComponent<Scenes::ClassInstanceComponent>())
+		if (!collisionHandled && entityTwo.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
-			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionStartHandle;
-			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionStart;
+			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
+			Scripting::Script* script = component.OnCollisionStartScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwoID, entityOneID);
+				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -514,33 +861,33 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		Scenes::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		Scenes::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (entityOne.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityOne.GetComponent<Scenes::ClassInstanceComponent>();
-			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
-			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
+			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
+			Scripting::Script* script = component.OnCollisionEndScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityOneID, entityTwoID);
+				Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
-		if (!collisionHandled && entityOne.HasComponent<Scenes::ClassInstanceComponent>())
+		if (!collisionHandled && entityOne.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			Scenes::ClassInstanceComponent& component = entityTwo.GetComponent<Scenes::ClassInstanceComponent>();
-			Assets::AssetHandle scriptHandle = component.ClassReference->GetScripts().OnPhysicsCollisionEndHandle;
-			Scripting::Script* script = component.ClassReference->GetScripts().OnPhysicsCollisionEnd;
+			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle =  component.OnCollisionEndScriptHandle;
+			Scripting::Script* script = component.OnCollisionEndScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				collisionHandled = ((WrappedBoolUInt64UInt64*)script->m_Function.get())->m_Value(entityTwoID, entityOneID);
+			 	collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -548,10 +895,10 @@ namespace Kargono
 
 	bool EditorApp::OnUpdateUserCount(Events::UpdateOnlineUsers event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCount();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCountHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt32*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserCount());
+			Utility::CallWrappedVoidUInt32(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserCount());
 		}
 
 		return false;
@@ -559,10 +906,10 @@ namespace Kargono
 
 	bool EditorApp::OnApproveJoinSession(Events::ApproveJoinSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnApproveJoinSession();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnApproveJoinSessionHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 
 		return false;
@@ -570,10 +917,10 @@ namespace Kargono
 
 	bool EditorApp::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateSessionUserSlot();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 
 		return false;
@@ -581,62 +928,95 @@ namespace Kargono
 
 	bool EditorApp::OnUserLeftSession(Events::UserLeftSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUserLeftSession();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUserLeftSessionHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetUserSlot());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 		return false;
 	}
 
 	bool EditorApp::OnCurrentSessionInit(Events::CurrentSessionInit event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnCurrentSessionInit();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnCurrentSessionInitHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool EditorApp::OnConnectionTerminated(Events::ConnectionTerminated event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnConnectionTerminated();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnConnectionTerminatedHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool EditorApp::OnStartSession(Events::StartSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnStartSession();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnStartSessionHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool EditorApp::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnSessionReadyCheckConfirm();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool EditorApp::OnReceiveSignal(Events::ReceiveSignal event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnReceiveSignal();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnReceiveSignalHandle();
 		if (scriptHandle != Assets::EmptyHandle)
 		{
-			((WrappedVoidUInt16*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value(event.GetSignal());
+			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetSignal());
 		}
 		return false;
+	}
+
+	void EditorApp::OpenWarningMessage(const char* message)
+	{
+		// Open generic message
+		m_GeneralWarningMessage = message;
+		m_GeneralWarningSpec.OpenPopup = true;
+	}
+
+	void EditorApp::OpenImportFileDialog(const std::filesystem::path& importFileLocation, Assets::AssetType assetType)
+	{
+		// Ensure a file is provided
+		if (!Utility::FileSystem::HasFileExtension(importFileLocation))
+		{
+			KG_WARN("Attempt to import a file that does have a file extension");
+			return;
+		}
+
+		// Fill import asset location
+		m_ImportSourceFilePath = importFileLocation;
+
+		// Fill export file path location
+		m_ImportNewFileLocation.CurrentOption = importFileLocation.parent_path();
+
+		// Add default name to name widget
+		m_ImportNewAssetName.CurrentOption = "NewAsset";
+
+		// Store asset type
+		m_ImportAssetType = assetType;
+
+		// Open Popup and change title
+		m_ImportAssetPopup.OpenPopup = true;
+		m_ImportAssetPopup.Label = "Import " + Utility::AssetTypeToString(assetType);
 	}
 
 
@@ -644,7 +1024,7 @@ namespace Kargono
 	{
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
-		if (!std::filesystem::exists(initialDirectory))
+		if (!Utility::FileSystem::PathExists(initialDirectory))
 		{
 			initialDirectory = "";
 		}
@@ -659,20 +1039,19 @@ namespace Kargono
 		// Reset all resources
 		m_ContentBrowserPanel->ResetPanelResources();
 		m_TextEditorPanel->ResetPanelResources();
-		m_InputModePanel->ResetPanelResources();
+		m_InputMapPanel->ResetPanelResources();
 		m_GameStatePanel->ResetPanelResources();
-		m_EntityClassEditor->ResetPanelResources();
 		m_ScriptEditorPanel->ResetPanelResources();
 		m_ProjectPanel->ResetPanelResources();
 		Scenes::GameStateService::ClearActiveGameState();
-		Input::InputModeService::ClearActiveInputMode();
+		Input::InputMapService::ClearActiveInputMap();
 
 		return true;
 	}
 
 	void EditorApp::OpenProject(const std::filesystem::path& path)
 	{
-		if (Assets::AssetManager::OpenProject(path))
+		if (Projects::ProjectService::OpenProject(path))
 		{
 			if (!EngineService::GetActiveWindow().GetNativeWindow())
 			{
@@ -687,12 +1066,12 @@ namespace Kargono
 			{
 				m_EditorScene->DestroyAllEntities();
 			}
-			Assets::AssetManager::ClearAll();
-			Assets::AssetManager::DeserializeAll();
+			Assets::AssetService::ClearAll();
+			Assets::AssetService::DeserializeAll();
 			if (startSceneHandle == Assets::EmptyHandle)
 			{
 				NewScene("NewScene");
-				Projects::ProjectService::SetActiveStartingScene(m_EditorSceneHandle);
+				Projects::ProjectService::SetActiveStartingSceneHandle(m_EditorSceneHandle);
 				SaveProject();
 			}
 			else
@@ -704,42 +1083,64 @@ namespace Kargono
 
 	void EditorApp::SaveProject()
 	{
-		Assets::AssetManager::SaveActiveProject((Projects::ProjectService::GetActiveProjectDirectory() / Projects::ProjectService::GetActiveProjectName()).replace_extension(".kproj"));
+		Projects::ProjectService::SaveActiveProject();
 	}
 
-	void EditorApp::NewScene()
+	void EditorApp::NewSceneDialog()
 	{
-		std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory() / "Scenes";
+		NewSceneDialog(Projects::ProjectService::GetActiveAssetDirectory());
+	}
+
+	bool EditorApp::NewScene(const std::string& sceneName)
+	{
+		// Ensure scene does not already exist
+		std::filesystem::path filepath = Projects::ProjectService::GetActiveAssetDirectory() / ("Scenes/" + sceneName + ".kgscene");
+		if (Assets::AssetService::HasScene(filepath.stem().string()))
+		{
+			KG_WARN("Attempt to create scene with duplicate name!");
+			return false;
+		}
+
+		// Create new scene
+		m_EditorSceneHandle = Assets::AssetService::CreateScene(filepath.stem().string().c_str());
+
+		// Validate scene creation
+		if (m_EditorSceneHandle == Assets::EmptyHandle)
+		{
+			return false;
+		}
+
+		// Reset editor data
+		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		return true;
+	}
+
+	void EditorApp::NewSceneDialog(const std::filesystem::path& initialDirectory)
+	{
+		// Provide file dialog to select location and name of scene
 		std::filesystem::path filepath = Utility::FileDialogs::SaveFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());
 		if (filepath.empty()) { return; }
-		if (Assets::AssetManager::CheckSceneExists(filepath.stem().string()))
+		if (Assets::AssetService::HasScene(filepath.stem().string()))
 		{
 			KG_WARN("Attempt to create scene with duplicate name!");
 			return;
 		}
-		m_EditorSceneHandle = Assets::AssetManager::CreateNewScene(filepath.stem().string());
 
+		// Create scene file
+		std::string fileName = filepath.stem().string();
+		std::filesystem::path sceneDirectory = filepath.parent_path();
+		m_EditorSceneHandle = Assets::AssetService::CreateScene(fileName.c_str(), sceneDirectory);
+
+		// Open new scene in editor
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
-		m_EditorScene = Assets::AssetManager::GetScene(m_EditorSceneHandle);
+		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		
 	}
 
-	void EditorApp::NewScene(const std::string& sceneName)
-	{
-		std::filesystem::path filepath = Projects::ProjectService::GetActiveAssetDirectory() / ("Scenes/" + sceneName + ".kgscene");
-		if (Assets::AssetManager::CheckSceneExists(filepath.stem().string()))
-		{
-			KG_WARN("Attempt to create scene with duplicate name!");
-			return;
-		}
-		m_EditorSceneHandle = Assets::AssetManager::CreateNewScene(filepath.stem().string());
-
-		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
-		m_EditorScene = Assets::AssetManager::GetScene(m_EditorSceneHandle);
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
-	}
-
-	void EditorApp::OpenScene()
+	void EditorApp::OpenSceneDialog()
 	{
 		std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
 		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());
@@ -762,11 +1163,11 @@ namespace Kargono
 			KG_WARN("Could not load {0} - not a scene file", path.filename().string());
 			return;
 		}
-		auto [sceneHandle, newScene] = Assets::AssetManager::GetScene(path);
+		auto [sceneHandle, newScene] = Assets::AssetService::GetScene(path);
 
 		m_EditorScene = newScene;
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_EditorSceneHandle = sceneHandle;
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 
 	}
 
@@ -777,12 +1178,12 @@ namespace Kargono
 			OnStop();
 		}
 
-		Ref<Scenes::Scene> newScene = Assets::AssetManager::GetScene(sceneHandle);
+		Ref<Scenes::Scene> newScene = Assets::AssetService::GetScene(sceneHandle);
 		if (!newScene) { newScene = CreateRef<Scenes::Scene>(); }
 
 		m_EditorScene = newScene;
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_EditorSceneHandle = sceneHandle;
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 	}
 
 	void EditorApp::SaveScene()
@@ -792,38 +1193,34 @@ namespace Kargono
 
 	void EditorApp::SerializeScene(Ref<Scenes::Scene> scene)
 	{
-		Assets::AssetManager::SaveScene(m_EditorSceneHandle, scene);
+		Assets::AssetService::SaveScene(m_EditorSceneHandle, scene);
 		
 	}
 
 	void EditorApp::OnPlay()
 	{
-		// Cache Current UserInterface/InputMode in editor
-		if (!RuntimeUI::RuntimeUIService::GetActiveUI()) { m_EditorUIObject = nullptr; }
-		else
-		{
-			RuntimeUI::RuntimeUIService::SaveCurrentUIIntoUIObject();
-			m_EditorUIObject = RuntimeUI::RuntimeUIService::GetActiveUI();
-			m_EditorUIObjectHandle = RuntimeUI::RuntimeUIService::GetActiveUIHandle();
+		RuntimeUI::RuntimeUIService::ClearActiveUI();
+		// Cache Current InputMap in editor
+		if (!Input::InputMapService::GetActiveInputMap())
+		{ 
+			m_EditorInputMap = nullptr; 
 		}
-
-		if (!Input::InputModeService::GetActiveInputMode()) { m_EditorInputMode = nullptr; }
 		else
 		{
-			m_EditorInputMode = Input::InputModeService::GetActiveInputMode();
-			m_EditorInputModeHandle = Input::InputModeService::GetActiveInputModeHandle();
+			m_EditorInputMap = Input::InputMapService::GetActiveInputMap();
+			m_EditorInputMapHandle = Input::InputMapService::GetActiveInputMapHandle();
 		}
 
 		// Load Default Game State
-		if (Projects::ProjectService::GetActiveStartGameState() == 0)
+		if (Projects::ProjectService::GetActiveStartGameStateHandle() == 0)
 		{
 			Scenes::GameStateService::ClearActiveGameState();
 		}
 		else
 		{
 			Scenes::GameStateService::SetActiveGameState(
-				Assets::AssetManager::GetGameState(Projects::ProjectService::GetActiveStartGameState()),
-				Projects::ProjectService::GetActiveStartGameState());
+				Assets::AssetService::GetGameState(Projects::ProjectService::GetActiveStartGameStateHandle()),
+				Projects::ProjectService::GetActiveStartGameStateHandle());
 		}
 
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
@@ -831,17 +1228,17 @@ namespace Kargono
 
 		m_SceneState = SceneState::Play;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
+		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStart();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
 		if (scriptHandle != 0)
 		{
-			((WrappedVoidNone*)Assets::AssetManager::GetScript(scriptHandle)->m_Function.get())->m_Value();
+			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked())
 		{
-			Network::ClientService::SetActiveClient(CreateRef<Network::Client>());
-			Network::ClientService::SetActiveNetworkThread(CreateRef<std::thread>(&Network::Client::RunClient, Network::ClientService::GetActiveClient().get()));
+			Network::ClientService::Init();
 		}
 
 		AppTickService::LoadGeneratorsFromProject();
@@ -856,49 +1253,52 @@ namespace Kargono
 
 		m_SceneState = SceneState::Simulate;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
-		Scenes::SceneService::GetActiveScene()->OnSimulationStart();
+		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 	}
 	void EditorApp::OnStop()
 	{
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		KG_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
 
-		if (m_SceneState == SceneState::Play) { Scenes::SceneService::GetActiveScene()->OnRuntimeStop(); }
-		else if (m_SceneState == SceneState::Simulate) { Scenes::SceneService::GetActiveScene()->OnSimulationStop(); }
+		if (m_SceneState == SceneState::Play) 
+		{ 
+			Physics::Physics2DService::Terminate();
+			Scenes::SceneService::GetActiveScene()->OnRuntimeStop(); 
+		}
+		else if (m_SceneState == SceneState::Simulate) 
+		{ 
+			Physics::Physics2DService::Terminate();
+		}
 
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		Audio::AudioService::StopAllAudio();
 
 		// Clear UIObjects during runtime.
-		if (m_EditorUIObject)
+		if (m_UIEditorPanel->m_EditorUI)
 		{
-			RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUIObject, m_EditorUIObjectHandle);
+			RuntimeUI::RuntimeUIService::SetActiveUI(m_UIEditorPanel->m_EditorUI, m_UIEditorPanel->m_EditorUIHandle);
 		}
 		else
 		{
 			RuntimeUI::RuntimeUIService::ClearActiveUI();
 		}
 
-		// Clear InputModes during runtime.
-		if (m_EditorInputMode)
+		// Clear InputMaps during runtime.
+		if (m_EditorInputMap)
 		{
-			Input::InputModeService::SetActiveInputMode(m_EditorInputMode, m_EditorInputModeHandle);
+			Input::InputMapService::SetActiveInputMap(m_EditorInputMap, m_EditorInputMapHandle);
 		}
 		else
 		{
-			Input::InputModeService::SetActiveInputMode(nullptr, Assets::EmptyHandle);
+			Input::InputMapService::SetActiveInputMap(nullptr, Assets::EmptyHandle);
 		}
 
 		Scenes::GameStateService::ClearActiveGameState();
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked() && m_SceneState == SceneState::Play)
 		{
-
-			Network::ClientService::GetActiveClient()->StopClient();
-			Network::ClientService::GetActiveNetworkThread()->join();
-			Network::ClientService::GetActiveNetworkThread().reset();
-			Network::ClientService::GetActiveClient().reset();
+			Network::ClientService::Terminate();
 		}
 
 		AppTickService::ClearGenerators();
@@ -918,11 +1318,12 @@ namespace Kargono
 		if (m_SceneState != SceneState::Edit)
 			return;
 
-		Scenes::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+		ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		if (selectedEntity)
 		{
-			Scenes::Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
-			m_SceneHierarchyPanel->SetSelectedEntity(newEntity);
+			ECS::Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
+			m_SceneEditorPanel->SetSelectedEntity(newEntity);
+			s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
 		}
 	}
 

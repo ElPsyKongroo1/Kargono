@@ -12,6 +12,8 @@ project "Editor"
         "Source/**.cpp"
     }
 
+	
+
     includedirs 
     {
         "%{IncludeDir.spdlog}",
@@ -21,6 +23,7 @@ project "Editor"
         "%{IncludeDir.imGui}",
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.Box2D}",
+        "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",
@@ -37,7 +40,7 @@ project "Editor"
 
     links 
     { 
-        "Engine"  
+        "Engine"
     }
 
 
