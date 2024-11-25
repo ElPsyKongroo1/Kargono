@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['xposition_0',['XPosition',['../structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a57463e3ee02d564538350238a02398b6',1,'Kargono::EditorUI::InlineButtonSpec']]],
-  ['xpositiontype_1',['XPositionType',['../structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a9921d98ec74da16445fae2bf6eaf21ea',1,'Kargono::EditorUI::InlineButtonSpec']]]
+  ['xposition_5084',['XPosition',['../structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a57463e3ee02d564538350238a02398b6',1,'Kargono::EditorUI::InlineButtonSpec']]],
+  ['xpositiontype_5085',['XPositionType',['../structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a9921d98ec74da16445fae2bf6eaf21ea',1,'Kargono::EditorUI::InlineButtonSpec']]]
 ];

@@ -1,7 +1,7 @@
 var namespaceKargono_1_1Projects =
 [
     [ "Project", "classKargono_1_1Projects_1_1Project.html", "classKargono_1_1Projects_1_1Project" ],
-    [ "ProjectService", "classKargono_1_1Projects_1_1ProjectService.html", "classKargono_1_1Projects_1_1ProjectService" ],
+    [ "ProjectService", "classKargono_1_1Projects_1_1ProjectService.html", null ],
     [ "ScreenResolutionOptions", "namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2", [
       [ "None", "namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "R800x800", "namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2ab2cfee26bb8ec1703827d51a076b76d1", null ],

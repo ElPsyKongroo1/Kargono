@@ -4,7 +4,5 @@ var classKargono_1_1Events_1_1MouseScrolledEvent =
     [ "GetXOffset", "classKargono_1_1Events_1_1MouseScrolledEvent.html#a83aafe5af46270eb10a58209f4632321", null ],
     [ "GetYOffset", "classKargono_1_1Events_1_1MouseScrolledEvent.html#a61532d006b1da1f011b714473efabb1b", null ],
     [ "GetEventType", "classKargono_1_1Events_1_1MouseScrolledEvent.html#ab2bd3343dc060a82d56d0eebfd8ddc81", null ],
-    [ "GetName", "classKargono_1_1Events_1_1MouseScrolledEvent.html#a1f6e6e43119bf90a5f2d1fd639a30593", null ],
-    [ "GetCategoryFlags", "classKargono_1_1Events_1_1MouseScrolledEvent.html#abe38679e3e70aa17b63492526e857a77", null ],
-    [ "ToString", "classKargono_1_1Events_1_1MouseScrolledEvent.html#aaa3cfdcc52df462c155653fbe004bce3", null ]
+    [ "GetCategoryFlags", "classKargono_1_1Events_1_1MouseScrolledEvent.html#abe38679e3e70aa17b63492526e857a77", null ]
 ];

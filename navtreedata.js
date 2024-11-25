@@ -44,9 +44,10 @@ var NAVTREE =
         [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", "functions_func" ],
         [ "Variables", "functions_vars.html", "functions_vars" ],
+        [ "Typedefs", "functions_type.html", null ],
         [ "Enumerations", "functions_enum.html", null ],
         [ "Enumerator", "functions_eval.html", null ],
-        [ "Related Symbols", "functions_rela.html", null ]
+        [ "Related Functions", "functions_rela.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -54,6 +55,8 @@ var NAVTREE =
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
         [ "Functions", "globals_func.html", null ],
+        [ "Enumerations", "globals_enum.html", null ],
+        [ "Enumerator", "globals_eval.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
@@ -62,26 +65,23 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"AppTick_8cpp.html",
-"FileSystem_8h.html",
-"Project_8cpp.html",
-"Texture_8cpp_source.html",
-"classKargono_1_1Events_1_1AddExtraUpdateEvent.html#aecbaa89e605d2c8dbd486d58bdf5746e",
-"classKargono_1_1Events_1_1PhysicsCollisionEvent.html",
-"classKargono_1_1Events_1_1WindowResizeEvent.html#af238d036c459ce13af18ae28dde1a1b7",
-"classKargono_1_1Network_1_1TCPConnection.html#a80225e65bb607af6eddffc8c511b396e",
-"classKargono_1_1Panels_1_1UIEditorPanel.html#a46b139a7b541d121767b953d4462895e",
-"classKargono_1_1Rendering_1_1Shader.html#a96b9571b567471359fbfbafeebd33d7a",
-"classKargono_1_1Scenes_1_1Entity.html#a2dc0c6b8d0b1b69908088c7349b2332a",
-"classKargono_1_1TSQueue.html#a3637d2d1d30478fc771750dc2b50c6cc",
-"classKargono_1_1WrappedUInteger16.html#a7b4e978696ab46343e5f7b72c9e7cc39",
-"functions_vars_g.html",
-"namespaceKargono_1_1Network.html#a5e82ac7a52db2786742329689d178f5b",
-"namespaceYAML.html#aa0a3aa4c7adf731458a237288fddd26c",
-"structKargono_1_1EditorUI_1_1ChooseDirectorySpec.html#afc8283493627eef69cf4df20edb1e7d5",
-"structKargono_1_1EngineSpec.html#a819903e00bcb65ddb76e979286651713",
-"structKargono_1_1RuntimeUI_1_1Window.html",
-"structKargono_1_1Scenes_1_1TransformComponent.html#aebc893c97e89006cd0816f9baebff4c1"
+"AIService_8cpp.html",
+"EngineComponents_8h.html#aacb2e0c6614482079e7af384efd9939eaceb650e91535762e884afda8e8325f2d",
+"MathAliases_8h.html#a73e119d2bf751b0cc19c088bd07a90f1",
+"ScriptCompilerCommon_8h.html#a91014d59ac87b323f18ed41b56cb68c2a6adf97f83acf6453d4a6a4b1070f3754",
+"UniformBuffer_8h.html#a951fcfb2d5c1feaa8df52a73327bd2f8a56bf1b0e694b442bf4145a04b82ea943",
+"classKargono_1_1Assets_1_1Texture2DManager.html",
+"classKargono_1_1Events_1_1PhysicsCollisionEnd.html#a5dc028c06ea0306aa53a798cd745c3e3",
+"classKargono_1_1Network_1_1TCPConnection.html#aba98db29ddcb39acaa122c5fd3ca4644",
+"classKargono_1_1Rendering_1_1Shader.html#a398ace344ad6e57bc42ae33ba507c77a",
+"classKargono_1_1ServerApp.html#a99a1c5069a522136abd819f32b473e93",
+"dir_c0adf8aaeb0b8518c08c598a3f33f9f7.html",
+"namespaceKargono_1_1EditorUI.html#a4144fe37419076651380ada0d4bd7911",
+"namespaceKargono_1_1Rendering.html#a45a43b3e52c5279900d3edf586a9cb1aa6adf97f83acf6453d4a6a4b1070f3754",
+"namespacemembers_q.html",
+"structKargono_1_1ECS_1_1ShapeComponent.html#af46c1064dd78f050189358d13073f5e5",
+"structKargono_1_1EditorUI_1_1TooltipSpec.html#ac4aa6a68925abf342197bbfc6fdb3b00",
+"structKargono_1_1Scripting_1_1DataMember.html#a24bde6f79f692f404eacf48eec9a77dc"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

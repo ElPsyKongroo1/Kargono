@@ -5,5 +5,6 @@ var structKargono_1_1EditorUI_1_1EditVec2Spec =
     [ "Label", "structKargono_1_1EditorUI_1_1EditVec2Spec.html#a4db2ec26297ac11a9ced999882cac442", null ],
     [ "Flags", "structKargono_1_1EditorUI_1_1EditVec2Spec.html#af31c8b79efa5589f6799dc0306b252d1", null ],
     [ "CurrentVec2", "structKargono_1_1EditorUI_1_1EditVec2Spec.html#aa17fd5692a5de4fe627496bc9c030690", null ],
-    [ "ConfirmAction", "structKargono_1_1EditorUI_1_1EditVec2Spec.html#aca34b68c5ed73e625c7f03ef6022d25c", null ]
+    [ "ConfirmAction", "structKargono_1_1EditorUI_1_1EditVec2Spec.html#aa7d95be4af7821b5fb804368cf725042", null ],
+    [ "ProvidedData", "structKargono_1_1EditorUI_1_1EditVec2Spec.html#af1270167725f6a4677593e884f62632a", null ]
 ];

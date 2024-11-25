@@ -1,16 +1,17 @@
 var searchData=
 [
-  ['messageallclients_0',['MessageAllClients',['../classKargono_1_1Network_1_1Server.html#aa42dfbaace536b9be01af524c656efc1',1,'Kargono::Network::Server']]],
-  ['messageclient_1',['MessageClient',['../classKargono_1_1Network_1_1Server.html#ae1aafb0126fd2e68d98c87164cd4e1a7',1,'Kargono::Network::Server']]],
-  ['messageclientudp_2',['MessageClientUDP',['../classKargono_1_1Network_1_1Server.html#af99e4c60bb0fd52b4bd03ba205e0f00b',1,'Kargono::Network::Server']]],
-  ['mousebuttonevent_3',['MouseButtonEvent',['../classKargono_1_1Events_1_1MouseButtonEvent.html#a9e585391f380a3ec437bf5cb46e3e637',1,'Kargono::Events::MouseButtonEvent']]],
-  ['mousebuttonpressedevent_4',['MouseButtonPressedEvent',['../classKargono_1_1Events_1_1MouseButtonPressedEvent.html#a891ecf9040cfccb5adec0d7007cf8b65',1,'Kargono::Events::MouseButtonPressedEvent']]],
-  ['mousebuttonreleasedevent_5',['MouseButtonReleasedEvent',['../classKargono_1_1Events_1_1MouseButtonReleasedEvent.html#a5bed1b749dfcf2e14184712a58855fdb',1,'Kargono::Events::MouseButtonReleasedEvent']]],
-  ['mousemovedevent_6',['MouseMovedEvent',['../classKargono_1_1Events_1_1MouseMovedEvent.html#a6812d0533645bfe5226b50a8e24d2143',1,'Kargono::Events::MouseMovedEvent']]],
-  ['mousescrolledevent_7',['MouseScrolledEvent',['../classKargono_1_1Events_1_1MouseScrolledEvent.html#a75255eed5fbf229c1ebf74631d81a263',1,'Kargono::Events::MouseScrolledEvent']]],
-  ['movedown_8',['MoveDown',['../classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#aabb90b6924a86ffcbac8262a23e82e16',1,'Kargono::RuntimeUI::RuntimeUIService']]],
-  ['movefiletodirectory_9',['MoveFileToDirectory',['../classKargono_1_1Utility_1_1FileSystem.html#a86889ff8b4e345e0e8c43e4a92618cea',1,'Kargono::Utility::FileSystem']]],
-  ['moveleft_10',['MoveLeft',['../classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ad95935882e4109f6591eb4b5934197d8',1,'Kargono::RuntimeUI::RuntimeUIService']]],
-  ['moveright_11',['MoveRight',['../classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a42d8830fd8414a23a8b1dd8ab95f5d6e',1,'Kargono::RuntimeUI::RuntimeUIService']]],
-  ['moveup_12',['MoveUp',['../classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ab0583ad48357e7a2f088edcb2e5eb6ef',1,'Kargono::RuntimeUI::RuntimeUIService']]]
+  ['manageasset_3933',['ManageAsset',['../classKargono_1_1Events_1_1ManageAsset.html#a8168c641551e60952a772075ebe4a6e7',1,'Kargono::Events::ManageAsset']]],
+  ['manageeditor_3934',['ManageEditor',['../classKargono_1_1Events_1_1ManageEditor.html#a5f9c8e44c5464e04343df455ab5105bc',1,'Kargono::Events::ManageEditor::ManageEditor(ManageEditorAction action)'],['../classKargono_1_1Events_1_1ManageEditor.html#af6a4370ed06857eec8602d30e4e64206',1,'Kargono::Events::ManageEditor::ManageEditor(DebugLineData lineData)'],['../classKargono_1_1Events_1_1ManageEditor.html#a218d758d2afa6cf9316c2c82f484f11a',1,'Kargono::Events::ManageEditor::ManageEditor(DebugPointData pointData)']]],
+  ['manageentity_3935',['ManageEntity',['../classKargono_1_1Events_1_1ManageEntity.html#a8f87413f06079c96320c987b55f54d49',1,'Kargono::Events::ManageEntity']]],
+  ['managescene_3936',['ManageScene',['../classKargono_1_1Events_1_1ManageScene.html#a88d49c0f603a080d4092838e29c885e9',1,'Kargono::Events::ManageScene']]],
+  ['mousebuttonpressedevent_3937',['MouseButtonPressedEvent',['../classKargono_1_1Events_1_1MouseButtonPressedEvent.html#a891ecf9040cfccb5adec0d7007cf8b65',1,'Kargono::Events::MouseButtonPressedEvent']]],
+  ['mousebuttonreleasedevent_3938',['MouseButtonReleasedEvent',['../classKargono_1_1Events_1_1MouseButtonReleasedEvent.html#a5bed1b749dfcf2e14184712a58855fdb',1,'Kargono::Events::MouseButtonReleasedEvent']]],
+  ['mousecodetostring_3939',['MouseCodeToString',['../namespaceKargono_1_1Utility.html#acebe2d91d3cca590167fba5c29211479',1,'Kargono::Utility']]],
+  ['mousemovedevent_3940',['MouseMovedEvent',['../classKargono_1_1Events_1_1MouseMovedEvent.html#a6812d0533645bfe5226b50a8e24d2143',1,'Kargono::Events::MouseMovedEvent']]],
+  ['mousescrolledevent_3941',['MouseScrolledEvent',['../classKargono_1_1Events_1_1MouseScrolledEvent.html#a75255eed5fbf229c1ebf74631d81a263',1,'Kargono::Events::MouseScrolledEvent']]],
+  ['movedown_3942',['MoveDown',['../structKargono_1_1EditorUI_1_1TreeSpec.html#a67199d6ad8e2c18e9753cb7f1296a1f6',1,'Kargono::EditorUI::TreeSpec::MoveDown()'],['../classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#aabb90b6924a86ffcbac8262a23e82e16',1,'Kargono::RuntimeUI::RuntimeUIService::MoveDown()']]],
+  ['movefiletodirectory_3943',['MoveFileToDirectory',['../classKargono_1_1Utility_1_1FileSystem.html#a3d7e017568d8793e6695a4dc55dae1af',1,'Kargono::Utility::FileSystem']]],
+  ['moveleft_3944',['MoveLeft',['../structKargono_1_1EditorUI_1_1TreeSpec.html#a0ed1b5d746567ecb6c8377cab52aabd5',1,'Kargono::EditorUI::TreeSpec::MoveLeft()'],['../classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ad95935882e4109f6591eb4b5934197d8',1,'Kargono::RuntimeUI::RuntimeUIService::MoveLeft()']]],
+  ['moveright_3945',['MoveRight',['../structKargono_1_1EditorUI_1_1TreeSpec.html#ab201dbbe6eadc29508eef758229aebeb',1,'Kargono::EditorUI::TreeSpec::MoveRight()'],['../classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a42d8830fd8414a23a8b1dd8ab95f5d6e',1,'Kargono::RuntimeUI::RuntimeUIService::MoveRight()']]],
+  ['moveup_3946',['MoveUp',['../structKargono_1_1EditorUI_1_1TreeSpec.html#ab7f1061875dfbc08fd0711675c19a181',1,'Kargono::EditorUI::TreeSpec::MoveUp()'],['../classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#ab0583ad48357e7a2f088edcb2e5eb6ef',1,'Kargono::RuntimeUI::RuntimeUIService::MoveUp()']]]
 ];

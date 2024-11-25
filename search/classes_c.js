@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['operations_0',['Operations',['../classKargono_1_1Utility_1_1Operations.html',1,'Kargono::Utility']]],
-  ['optionentry_1',['OptionEntry',['../structKargono_1_1EditorUI_1_1OptionEntry.html',1,'Kargono::EditorUI']]],
-  ['oscommands_2',['OSCommands',['../classKargono_1_1Utility_1_1OSCommands.html',1,'Kargono::Utility']]],
-  ['owned_5fmessage_3',['owned_message',['../structKargono_1_1Network_1_1owned__message.html',1,'Kargono::Network']]]
+  ['navigationheaderspec_2897',['NavigationHeaderSpec',['../structKargono_1_1EditorUI_1_1NavigationHeaderSpec.html',1,'Kargono::EditorUI']]],
+  ['networkcomponent_2898',['NetworkComponent',['../structKargono_1_1ECS_1_1NetworkComponent.html',1,'Kargono::ECS']]],
+  ['networkcontext_2899',['NetworkContext',['../structKargono_1_1Network_1_1NetworkContext.html',1,'Kargono::Network']]]
 ];

@@ -1,25 +1,41 @@
 var EditorUI_8h =
 [
-    [ "Kargono::EditorUI::InlineButtonSpec", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html", "structKargono_1_1EditorUI_1_1InlineButtonSpec" ],
-    [ "Kargono::EditorUI::EditorUIService", "classKargono_1_1EditorUI_1_1EditorUIService.html", null ],
-    [ "Kargono::EditorUI::GenericPopupSpec", "structKargono_1_1EditorUI_1_1GenericPopupSpec.html", "structKargono_1_1EditorUI_1_1GenericPopupSpec" ],
-    [ "Kargono::EditorUI::CheckboxSpec", "structKargono_1_1EditorUI_1_1CheckboxSpec.html", "structKargono_1_1EditorUI_1_1CheckboxSpec" ],
-    [ "Kargono::EditorUI::EditFloatSpec", "structKargono_1_1EditorUI_1_1EditFloatSpec.html", "structKargono_1_1EditorUI_1_1EditFloatSpec" ],
-    [ "Kargono::EditorUI::EditVec2Spec", "structKargono_1_1EditorUI_1_1EditVec2Spec.html", "structKargono_1_1EditorUI_1_1EditVec2Spec" ],
-    [ "Kargono::EditorUI::EditVec3Spec", "structKargono_1_1EditorUI_1_1EditVec3Spec.html", "structKargono_1_1EditorUI_1_1EditVec3Spec" ],
-    [ "Kargono::EditorUI::RadioSelectorSpec", "structKargono_1_1EditorUI_1_1RadioSelectorSpec.html", "structKargono_1_1EditorUI_1_1RadioSelectorSpec" ],
-    [ "Kargono::EditorUI::TextInputSpec", "structKargono_1_1EditorUI_1_1TextInputSpec.html", "structKargono_1_1EditorUI_1_1TextInputSpec" ],
-    [ "Kargono::EditorUI::ChooseDirectorySpec", "structKargono_1_1EditorUI_1_1ChooseDirectorySpec.html", "structKargono_1_1EditorUI_1_1ChooseDirectorySpec" ],
-    [ "Kargono::EditorUI::CollapsingHeaderSpec", "structKargono_1_1EditorUI_1_1CollapsingHeaderSpec.html", "structKargono_1_1EditorUI_1_1CollapsingHeaderSpec" ],
-    [ "Kargono::EditorUI::PanelHeaderSpec", "structKargono_1_1EditorUI_1_1PanelHeaderSpec.html", "structKargono_1_1EditorUI_1_1PanelHeaderSpec" ],
-    [ "Kargono::EditorUI::TableEntry", "structKargono_1_1EditorUI_1_1TableEntry.html", "structKargono_1_1EditorUI_1_1TableEntry" ],
-    [ "Kargono::EditorUI::TableSpec", "structKargono_1_1EditorUI_1_1TableSpec.html", "structKargono_1_1EditorUI_1_1TableSpec" ],
-    [ "Kargono::EditorUI::OptionEntry", "structKargono_1_1EditorUI_1_1OptionEntry.html", "structKargono_1_1EditorUI_1_1OptionEntry" ],
-    [ "Kargono::EditorUI::SelectOptionSpec", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html", "structKargono_1_1EditorUI_1_1SelectOptionSpec" ],
-    [ "Kargono::EditorUI::EditVariableSpec", "structKargono_1_1EditorUI_1_1EditVariableSpec.html", "structKargono_1_1EditorUI_1_1EditVariableSpec" ],
+    [ "DragDropPayload", "structKargono_1_1EditorUI_1_1DragDropPayload.html", "structKargono_1_1EditorUI_1_1DragDropPayload" ],
+    [ "InlineButtonSpec", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html", "structKargono_1_1EditorUI_1_1InlineButtonSpec" ],
+    [ "EditorUIService", "classKargono_1_1EditorUI_1_1EditorUIService.html", null ],
+    [ "WarningPopupSpec", "structKargono_1_1EditorUI_1_1WarningPopupSpec.html", "structKargono_1_1EditorUI_1_1WarningPopupSpec" ],
+    [ "GenericPopupSpec", "structKargono_1_1EditorUI_1_1GenericPopupSpec.html", "structKargono_1_1EditorUI_1_1GenericPopupSpec" ],
+    [ "CheckboxSpec", "structKargono_1_1EditorUI_1_1CheckboxSpec.html", "structKargono_1_1EditorUI_1_1CheckboxSpec" ],
+    [ "EditIntegerSpec", "structKargono_1_1EditorUI_1_1EditIntegerSpec.html", "structKargono_1_1EditorUI_1_1EditIntegerSpec" ],
+    [ "EditFloatSpec", "structKargono_1_1EditorUI_1_1EditFloatSpec.html", "structKargono_1_1EditorUI_1_1EditFloatSpec" ],
+    [ "EditVec2Spec", "structKargono_1_1EditorUI_1_1EditVec2Spec.html", "structKargono_1_1EditorUI_1_1EditVec2Spec" ],
+    [ "EditVec3Spec", "structKargono_1_1EditorUI_1_1EditVec3Spec.html", "structKargono_1_1EditorUI_1_1EditVec3Spec" ],
+    [ "EditVec4Spec", "structKargono_1_1EditorUI_1_1EditVec4Spec.html", "structKargono_1_1EditorUI_1_1EditVec4Spec" ],
+    [ "RadioSelectorSpec", "structKargono_1_1EditorUI_1_1RadioSelectorSpec.html", "structKargono_1_1EditorUI_1_1RadioSelectorSpec" ],
+    [ "EditTextSpec", "structKargono_1_1EditorUI_1_1EditTextSpec.html", "structKargono_1_1EditorUI_1_1EditTextSpec" ],
+    [ "ChooseDirectorySpec", "structKargono_1_1EditorUI_1_1ChooseDirectorySpec.html", "structKargono_1_1EditorUI_1_1ChooseDirectorySpec" ],
+    [ "CollapsingHeaderSpec", "structKargono_1_1EditorUI_1_1CollapsingHeaderSpec.html", "structKargono_1_1EditorUI_1_1CollapsingHeaderSpec" ],
+    [ "PanelHeaderSpec", "structKargono_1_1EditorUI_1_1PanelHeaderSpec.html", "structKargono_1_1EditorUI_1_1PanelHeaderSpec" ],
+    [ "NavigationHeaderSpec", "structKargono_1_1EditorUI_1_1NavigationHeaderSpec.html", "structKargono_1_1EditorUI_1_1NavigationHeaderSpec" ],
+    [ "GridEntry", "structKargono_1_1EditorUI_1_1GridEntry.html", "structKargono_1_1EditorUI_1_1GridEntry" ],
+    [ "GridEntryArchetype", "structKargono_1_1EditorUI_1_1GridEntryArchetype.html", "structKargono_1_1EditorUI_1_1GridEntryArchetype" ],
+    [ "GridSpec", "structKargono_1_1EditorUI_1_1GridSpec.html", "structKargono_1_1EditorUI_1_1GridSpec" ],
+    [ "TreePath", "classKargono_1_1EditorUI_1_1TreePath.html", "classKargono_1_1EditorUI_1_1TreePath" ],
+    [ "hash< Kargono::EditorUI::TreePath >", "structstd_1_1hash_3_01Kargono_1_1EditorUI_1_1TreePath_01_4.html", "structstd_1_1hash_3_01Kargono_1_1EditorUI_1_1TreePath_01_4" ],
+    [ "SelectionEntry", "structKargono_1_1EditorUI_1_1SelectionEntry.html", "structKargono_1_1EditorUI_1_1SelectionEntry" ],
+    [ "TreeEntry", "structKargono_1_1EditorUI_1_1TreeEntry.html", "structKargono_1_1EditorUI_1_1TreeEntry" ],
+    [ "TreeSpec", "structKargono_1_1EditorUI_1_1TreeSpec.html", "structKargono_1_1EditorUI_1_1TreeSpec" ],
+    [ "TooltipSeperatorData", "structKargono_1_1EditorUI_1_1TooltipSeperatorData.html", "structKargono_1_1EditorUI_1_1TooltipSeperatorData" ],
+    [ "TooltipEntry", "structKargono_1_1EditorUI_1_1TooltipEntry.html", "structKargono_1_1EditorUI_1_1TooltipEntry" ],
+    [ "TooltipSpec", "structKargono_1_1EditorUI_1_1TooltipSpec.html", "structKargono_1_1EditorUI_1_1TooltipSpec" ],
+    [ "ListEntry", "structKargono_1_1EditorUI_1_1ListEntry.html", "structKargono_1_1EditorUI_1_1ListEntry" ],
+    [ "ListSpec", "structKargono_1_1EditorUI_1_1ListSpec.html", "structKargono_1_1EditorUI_1_1ListSpec" ],
+    [ "OptionEntry", "structKargono_1_1EditorUI_1_1OptionEntry.html", "structKargono_1_1EditorUI_1_1OptionEntry" ],
+    [ "SelectOptionSpec", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html", "structKargono_1_1EditorUI_1_1SelectOptionSpec" ],
+    [ "EditVariableSpec", "structKargono_1_1EditorUI_1_1EditVariableSpec.html", "structKargono_1_1EditorUI_1_1EditVariableSpec" ],
     [ "WidgetID", "EditorUI_8h.html#a4144fe37419076651380ada0d4bd7911", null ],
-    [ "SelectionList", "EditorUI_8h.html#ad7278179f15c2bcb3b85a73475c50d0f", null ],
     [ "WidgetFlags", "EditorUI_8h.html#a77396d181434d59fcbfeffa72eb3123c", null ],
+    [ "SelectionList", "EditorUI_8h.html#ad7278179f15c2bcb3b85a73475c50d0f", null ],
     [ "OptionList", "EditorUI_8h.html#a395565ac2e55c1149a670e92e9864ce6", null ],
     [ "SpacingAmount", "EditorUI_8h.html#a021e80ea7b1db7bad67d596cbcc17edd", [
       [ "None", "EditorUI_8h.html#a021e80ea7b1db7bad67d596cbcc17edda6adf97f83acf6453d4a6a4b1070f3754", null ],
@@ -38,6 +54,10 @@ var EditorUI_8h =
       [ "Checkbox_LeftLean", "EditorUI_8h.html#a7c955ff9d1b57d06a6617bce99dda166a846e16d1430194c879eb3d947b3551fd", null ],
       [ "Checkbox_Indented", "EditorUI_8h.html#a7c955ff9d1b57d06a6617bce99dda166abedc3af1bc4de8541dda7eb123aa391e", null ]
     ] ],
+    [ "EditIntegerFlags", "EditorUI_8h.html#aea5612136fa3129b04d753811d9025c9", [
+      [ "EditInteger_None", "EditorUI_8h.html#aea5612136fa3129b04d753811d9025c9a14ead103dcbb6843a770cd224975feb2", null ],
+      [ "EditInteger_Indented", "EditorUI_8h.html#aea5612136fa3129b04d753811d9025c9afab5155d36823840428ebb72ebc8189c", null ]
+    ] ],
     [ "EditFloatFlags", "EditorUI_8h.html#ac037a892258354451fe320119623e711", [
       [ "EditFloat_None", "EditorUI_8h.html#ac037a892258354451fe320119623e711a1221a2e4107811d3dedd29b4946ca49c", null ],
       [ "EditFloat_Indented", "EditorUI_8h.html#ac037a892258354451fe320119623e711ac0595f90537e08ea8e2770568d5a4a52", null ]
@@ -50,27 +70,43 @@ var EditorUI_8h =
       [ "EditVec3_None", "EditorUI_8h.html#afa4f100d3386dfc3a184427f4d423e2fa41f30722b29c3b0b062f78a6dd4add3b", null ],
       [ "EditVec3_Indented", "EditorUI_8h.html#afa4f100d3386dfc3a184427f4d423e2fa50d01641a31bdd8e4d774626e11dd3bf", null ]
     ] ],
+    [ "EditVec4Flags", "EditorUI_8h.html#ad9be52f02a67d7efceedb44f8962ac3b", [
+      [ "EditVec4_None", "EditorUI_8h.html#ad9be52f02a67d7efceedb44f8962ac3ba1ab939f717ed41b1a646e0b9e64e9038", null ],
+      [ "EditVec4_Indented", "EditorUI_8h.html#ad9be52f02a67d7efceedb44f8962ac3bacd46fcb042d105d17b23d0feb86c6ac3", null ],
+      [ "EditVec4_RGBA", "EditorUI_8h.html#ad9be52f02a67d7efceedb44f8962ac3ba317301a58c640d02e3e044351c1516ea", null ]
+    ] ],
     [ "RadioSelectorFlags", "EditorUI_8h.html#a46fc91ab00bbbf6a1b7de2a157164693", [
       [ "RadioSelector_None", "EditorUI_8h.html#a46fc91ab00bbbf6a1b7de2a157164693ae7d5811f8641dc9f0eeb03c9bd1f7422", null ],
       [ "RadioSelector_Indented", "EditorUI_8h.html#a46fc91ab00bbbf6a1b7de2a157164693a40e8fd5d92fb559429bd3f716142d128", null ]
     ] ],
-    [ "TextInputFlags", "EditorUI_8h.html#ada5e94af35dad79f62052c36291d596c", [
-      [ "TextInput_None", "EditorUI_8h.html#ada5e94af35dad79f62052c36291d596ca005b5719a34ad32e3278c52ed215a60a", null ],
-      [ "TextInput_PopupOnly", "EditorUI_8h.html#ada5e94af35dad79f62052c36291d596ca5206a3170ec8a66f1005ff71241615a9", null ]
+    [ "EditTextFlags", "EditorUI_8h.html#aa64092267b9d709831562ae062f28a72", [
+      [ "EditText_None", "EditorUI_8h.html#aa64092267b9d709831562ae062f28a72a2b9d1af5e7e4bd38c7f4d871d6a4c93f", null ],
+      [ "EditText_PopupOnly", "EditorUI_8h.html#aa64092267b9d709831562ae062f28a72a4a5345a127f8eb42149eb06ecdec7082", null ],
+      [ "EditText_Indented", "EditorUI_8h.html#aa64092267b9d709831562ae062f28a72a9e015531be6f9dd7256e573a2bc86849", null ]
     ] ],
     [ "CollapsingHeaderFlags", "EditorUI_8h.html#ab51df84ec73fd1329dd47dc1d4635f9b", [
       [ "CollapsingHeader_None", "EditorUI_8h.html#ab51df84ec73fd1329dd47dc1d4635f9ba0f36bfafafb99509c689215cc651352c", null ],
       [ "CollapsingHeader_UnderlineTitle", "EditorUI_8h.html#ab51df84ec73fd1329dd47dc1d4635f9babb2b3294fa88fc1f3e757abaf2721d94", null ]
     ] ],
-    [ "TableFlags", "EditorUI_8h.html#ab4864f39ad12288c9a225afb8da7e6d0", [
-      [ "Table_None", "EditorUI_8h.html#ab4864f39ad12288c9a225afb8da7e6d0a646e76d2b99ec98a59bafeab0e69ceec", null ],
-      [ "Table_Indented", "EditorUI_8h.html#ab4864f39ad12288c9a225afb8da7e6d0a06d448552c2cd0d223cf53ce84fa3614", null ],
-      [ "Table_UnderlineTitle", "EditorUI_8h.html#ab4864f39ad12288c9a225afb8da7e6d0af06288cd53a5becfbf5c0211f7b4b5cf", null ]
+    [ "NavigationHeaderFlags", "EditorUI_8h.html#a2bfaa201412b7f9a9efb10febdde194e", [
+      [ "NavigationHeader_None", "EditorUI_8h.html#a2bfaa201412b7f9a9efb10febdde194eac7b6c36dc3a7f1a1f009008f95877e60", null ],
+      [ "NavigationHeader_AllowDragDrop", "EditorUI_8h.html#a2bfaa201412b7f9a9efb10febdde194ea4e22a595a4ac902efb29c74d2205bc01", null ]
+    ] ],
+    [ "GridFlags", "EditorUI_8h.html#a998207746c96d51ae88328f95449bc9c", [
+      [ "Grid_None", "EditorUI_8h.html#a998207746c96d51ae88328f95449bc9ca844db50ca1156a29a8a13917248b0f37", null ],
+      [ "Grid_AllowDragDrop", "EditorUI_8h.html#a998207746c96d51ae88328f95449bc9ca23bf2183377c7ca92ec3a749ed4e7bea", null ]
+    ] ],
+    [ "ListFlags", "EditorUI_8h.html#a5922292a1f240c3fc5a77e8a4702b4e3", [
+      [ "List_None", "EditorUI_8h.html#a5922292a1f240c3fc5a77e8a4702b4e3a360941d65558dee387eb676102fc503e", null ],
+      [ "List_UnderlineTitle", "EditorUI_8h.html#a5922292a1f240c3fc5a77e8a4702b4e3a87accca0df8683aa58fce4b37f262f7c", null ],
+      [ "List_RegularSizeTitle", "EditorUI_8h.html#a5922292a1f240c3fc5a77e8a4702b4e3a5e0f7e5cfd938038609f689c5c97f20f", null ],
+      [ "List_Indented", "EditorUI_8h.html#a5922292a1f240c3fc5a77e8a4702b4e3a3303de4d3b2a8b2d1362b0fd9ddf091d", null ]
     ] ],
     [ "SelectOptionFlags", "EditorUI_8h.html#ad3c87b90206a14e6c75aba041ee86b80", [
       [ "SelectOption_None", "EditorUI_8h.html#ad3c87b90206a14e6c75aba041ee86b80aa3d1e501ec952e5a97b93fc9b19ad890", null ],
       [ "SelectOption_Indented", "EditorUI_8h.html#ad3c87b90206a14e6c75aba041ee86b80a7ba4745501fc0bfbde1de09aef669797", null ],
-      [ "SelectOption_PopupOnly", "EditorUI_8h.html#ad3c87b90206a14e6c75aba041ee86b80a23163d8b66ed165fc5b917f5b4d3e395", null ]
+      [ "SelectOption_PopupOnly", "EditorUI_8h.html#ad3c87b90206a14e6c75aba041ee86b80a23163d8b66ed165fc5b917f5b4d3e395", null ],
+      [ "SelectOption_HandleEditButtonExternally", "EditorUI_8h.html#ad3c87b90206a14e6c75aba041ee86b80a380010274524533a8737cabed71b64ca", null ]
     ] ],
     [ "widgetCounter", "EditorUI_8h.html#ac1d85a17348a1e51f5233393fb754325", null ]
 ];

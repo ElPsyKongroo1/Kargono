@@ -1,13 +1,19 @@
 var searchData=
 [
-  ['iconsize_0',['IconSize',['../structKargono_1_1EditorUI_1_1InlineButtonSpec.html#adf3134301ea4ae67e89a06219264b20d',1,'Kargono::EditorUI::InlineButtonSpec']]],
-  ['id_1',['id',['../structKargono_1_1Network_1_1MessageHeader.html#ad2924a25c9b828cb6574c8ad2728a2a3',1,'Kargono::Network::MessageHeader::ID'],['../structKargono_1_1Scenes_1_1IDComponent.html#a4e7d9a01ce0a635f0eebba3ae81a55cd',1,'Kargono::Scenes::IDComponent::ID'],['../classKargono_1_1Network_1_1TCPServerConnection.html#adbc79fa6976d43422fb1510d5c5fe503',1,'Kargono::Network::TCPServerConnection::id']]],
-  ['inactiveicon_2',['InactiveIcon',['../structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a28da622f975a996f1c4279b1e5c56493',1,'Kargono::EditorUI::InlineButtonSpec']]],
-  ['inactivetooltip_3',['InactiveTooltip',['../structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a017cca311f5d8e903d665306453a05d1',1,'Kargono::EditorUI::InlineButtonSpec']]],
-  ['indexbuffer_4',['IndexBuffer',['../structKargono_1_1Rendering_1_1DrawCallBuffer.html#a1e285f5b03d3d21cc1ef85677ca757fa',1,'Kargono::Rendering::DrawCallBuffer']]],
-  ['indices_5',['Indices',['../structKargono_1_1Scenes_1_1ShapeComponent.html#ae66584d89fee8d7abdd120a2a35820b1',1,'Kargono::Scenes::ShapeComponent']]],
-  ['initialfilelocation_6',['initialfilelocation',['../structKargono_1_1Assets_1_1TextureMetaData.html#aa921ee5d8503d1866e480878db3ba259',1,'Kargono::Assets::TextureMetaData::InitialFileLocation'],['../structKargono_1_1Assets_1_1AudioMetaData.html#a3ddfd34cc7da409bdae68db7f4ec65de',1,'Kargono::Assets::AudioMetaData::InitialFileLocation'],['../structKargono_1_1Assets_1_1FontMetaData.html#af37896e77973931b5d3acac14541ea21',1,'Kargono::Assets::FontMetaData::InitialFileLocation']]],
-  ['inputlayout_7',['InputLayout',['../structKargono_1_1Assets_1_1ShaderMetaData.html#a0c631178f0a29835e02ba099d819424e',1,'Kargono::Assets::ShaderMetaData']]],
-  ['intermediatelocation_8',['IntermediateLocation',['../structKargono_1_1Assets_1_1Metadata.html#aeb66c36b2b199e69df6ae94f94d30ca3',1,'Kargono::Assets::Metadata']]],
-  ['islooping_9',['IsLooping',['../structKargono_1_1Audio_1_1AudioSourceSpecification.html#ad97c26a90eccff72d13d9b925e4adc9e',1,'Kargono::Audio::AudioSourceSpecification']]]
+  ['icon_4573',['Icon',['../structKargono_1_1Scripting_1_1PrimitiveType.html#aaa519edc5bde8cef11b1aa2a4dfd56ae',1,'Kargono::Scripting::PrimitiveType']]],
+  ['iconhandle_4574',['IconHandle',['../structKargono_1_1EditorUI_1_1TreeEntry.html#ac1407c21130402a869891b76bf20cd96',1,'Kargono::EditorUI::TreeEntry']]],
+  ['iconsize_4575',['IconSize',['../structKargono_1_1EditorUI_1_1InlineButtonSpec.html#adf3134301ea4ae67e89a06219264b20d',1,'Kargono::EditorUI::InlineButtonSpec']]],
+  ['id_4576',['ID',['../structKargono_1_1ECS_1_1IDComponent.html#a6f6890514a120ad5a1e279bf20e55b17',1,'Kargono::ECS::IDComponent::ID()'],['../structKargono_1_1Network_1_1MessageHeader.html#ad2924a25c9b828cb6574c8ad2728a2a3',1,'Kargono::Network::MessageHeader::ID()']]],
+  ['identifier_4577',['Identifier',['../structKargono_1_1Scripting_1_1FunctionCallNode.html#a60507f3d85aa5fc700c66e04882ae40b',1,'Kargono::Scripting::FunctionCallNode::Identifier()'],['../structKargono_1_1Scripting_1_1FunctionParameter.html#a54415e4ce18ca6326e9ccc52aacba98c',1,'Kargono::Scripting::FunctionParameter::Identifier()'],['../structKargono_1_1Scripting_1_1StackVariable.html#a956ce42096a7b1e149aa2d0091b9df47',1,'Kargono::Scripting::StackVariable::Identifier()']]],
+  ['inactiveicon_4578',['InactiveIcon',['../structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a28da622f975a996f1c4279b1e5c56493',1,'Kargono::EditorUI::InlineButtonSpec']]],
+  ['inactivetooltip_4579',['InactiveTooltip',['../structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a017cca311f5d8e903d665306453a05d1',1,'Kargono::EditorUI::InlineButtonSpec']]],
+  ['incomingmessagesqueue_4580',['IncomingMessagesQueue',['../structKargono_1_1Network_1_1NetworkContext.html#a756b50c84b3c419b3a3d8f84040c510c',1,'Kargono::Network::NetworkContext']]],
+  ['indexbuffer_4581',['IndexBuffer',['../structKargono_1_1Rendering_1_1DrawCallBuffer.html#a1e285f5b03d3d21cc1ef85677ca757fa',1,'Kargono::Rendering::DrawCallBuffer']]],
+  ['indices_4582',['Indices',['../structKargono_1_1ECS_1_1ShapeComponent.html#a03139839cb71138fffecba3c5822a36e',1,'Kargono::ECS::ShapeComponent']]],
+  ['initlisttypes_4583',['InitListTypes',['../structKargono_1_1Scripting_1_1LanguageDefinition.html#a834c5fcf9ebc8407e8a4b4ebaa9f1dae',1,'Kargono::Scripting::LanguageDefinition']]],
+  ['inputlayout_4584',['InputLayout',['../structKargono_1_1Assets_1_1ShaderMetaData.html#a0c631178f0a29835e02ba099d819424e',1,'Kargono::Assets::ShaderMetaData']]],
+  ['intermediatelocation_4585',['IntermediateLocation',['../structKargono_1_1Assets_1_1Metadata.html#aeb66c36b2b199e69df6ae94f94d30ca3',1,'Kargono::Assets::Metadata']]],
+  ['invalidbufferslot_4586',['InvalidBufferSlot',['../namespaceKargono_1_1ECS.html#ad5d92a1c36380e566ebad5ed5ecf7d8d',1,'Kargono::ECS']]],
+  ['islooping_4587',['IsLooping',['../structKargono_1_1Audio_1_1AudioSourceSpecification.html#ad97c26a90eccff72d13d9b925e4adc9e',1,'Kargono::Audio::AudioSourceSpecification']]],
+  ['issensor_4588',['IsSensor',['../structKargono_1_1ECS_1_1BoxCollider2DComponent.html#a0433f3b9ae590e0ce16a38662c138b00',1,'Kargono::ECS::BoxCollider2DComponent::IsSensor()'],['../structKargono_1_1ECS_1_1CircleCollider2DComponent.html#abdf55475030dc032166eba5964383438',1,'Kargono::ECS::CircleCollider2DComponent::IsSensor()']]]
 ];

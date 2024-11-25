@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['messagetype_0',['MessageType',['../namespaceKargono_1_1Network.html#a5e82ac7a52db2786742329689d178f5b',1,'Kargono::Network']]],
-  ['movementtype_1',['MovementType',['../classKargono_1_1Rendering_1_1EditorCamera.html#af2b6f08c1d515238814f125bee2cafb0',1,'Kargono::Rendering::EditorCamera']]]
+  ['imageformat_5160',['ImageFormat',['../namespaceKargono_1_1Rendering.html#a9ac98824abb0b92724f910bafef2952e',1,'Kargono::Rendering']]],
+  ['inputactiontypes_5161',['InputActionTypes',['../namespaceKargono_1_1Input.html#a4be653473e1e1bc6baf5a9b5db26af7e',1,'Kargono::Input']]],
+  ['inputdatatype_5162',['InputDataType',['../namespaceKargono_1_1Rendering.html#a5a184eff7b1827246821dafeb4f7373f',1,'Kargono::Rendering']]]
 ];

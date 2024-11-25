@@ -1,10 +1,9 @@
 var searchData=
 [
-  ['widgetcounter_0',['widgetCounter',['../namespaceKargono_1_1EditorUI.html#ac1d85a17348a1e51f5233393fb754325',1,'Kargono::EditorUI']]],
-  ['widgetcounts_1',['WidgetCounts',['../structKargono_1_1RuntimeUI_1_1Window.html#a457f98f391553040ca518299402f972a',1,'Kargono::RuntimeUI::Window']]],
-  ['widgets_2',['Widgets',['../structKargono_1_1RuntimeUI_1_1Window.html#a9ae248e39c9e8cf0bc3929d99ab3b350',1,'Kargono::RuntimeUI::Window']]],
-  ['widgettype_3',['WidgetType',['../classKargono_1_1RuntimeUI_1_1Widget.html#a9b0d769924e210ae4d14717fc81f1e5e',1,'Kargono::RuntimeUI::Widget']]],
-  ['width_4',['width',['../structKargono_1_1Assets_1_1TextureMetaData.html#a4a3c14c0797ad22abaac95c124820444',1,'Kargono::Assets::TextureMetaData::Width'],['../structKargono_1_1WindowProps.html#adc3f4fe742af52e6096fc713ae178a65',1,'Kargono::WindowProps::Width'],['../structKargono_1_1Rendering_1_1FramebufferSpecification.html#a0c3be828e13f104189a1a662ad516723',1,'Kargono::Rendering::FramebufferSpecification::Width'],['../structKargono_1_1Rendering_1_1TextureSpecification.html#af563e24f4bc31fb3ef1d10c11e3dbc49',1,'Kargono::Rendering::TextureSpecification::Width']]],
-  ['windowposition_5',['WindowPosition',['../classKargono_1_1RuntimeUI_1_1Widget.html#a3536458c929a07d077814d562bc92ad0',1,'Kargono::RuntimeUI::Widget']]],
-  ['workingdirectory_6',['WorkingDirectory',['../structKargono_1_1EngineSpec.html#ac8fc3c3386789bf7555d8ed9ef2e16e1',1,'Kargono::EngineSpec']]]
+  ['widgetcounter_5078',['widgetCounter',['../namespaceKargono_1_1EditorUI.html#ac1d85a17348a1e51f5233393fb754325',1,'Kargono::EditorUI']]],
+  ['widgets_5079',['Widgets',['../structKargono_1_1RuntimeUI_1_1Window.html#a9ae248e39c9e8cf0bc3929d99ab3b350',1,'Kargono::RuntimeUI::Window']]],
+  ['widgettype_5080',['WidgetType',['../classKargono_1_1RuntimeUI_1_1Widget.html#a9b0d769924e210ae4d14717fc81f1e5e',1,'Kargono::RuntimeUI::Widget']]],
+  ['width_5081',['Width',['../structKargono_1_1Assets_1_1TextureMetaData.html#a4a3c14c0797ad22abaac95c124820444',1,'Kargono::Assets::TextureMetaData::Width()'],['../structKargono_1_1WindowProps.html#adc3f4fe742af52e6096fc713ae178a65',1,'Kargono::WindowProps::Width()'],['../structKargono_1_1Rendering_1_1FramebufferSpecification.html#a0c3be828e13f104189a1a662ad516723',1,'Kargono::Rendering::FramebufferSpecification::Width()'],['../structKargono_1_1Rendering_1_1TextureSpecification.html#af563e24f4bc31fb3ef1d10c11e3dbc49',1,'Kargono::Rendering::TextureSpecification::Width()']]],
+  ['windowposition_5082',['WindowPosition',['../classKargono_1_1RuntimeUI_1_1Widget.html#a3536458c929a07d077814d562bc92ad0',1,'Kargono::RuntimeUI::Widget']]],
+  ['workingdirectory_5083',['WorkingDirectory',['../structKargono_1_1EngineSpec.html#ac8fc3c3386789bf7555d8ed9ef2e16e1',1,'Kargono::EngineSpec']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['clientservice_0',['ClientService',['../classKargono_1_1Network_1_1Client.html#a944257f756ee4569d9847a76ee58a738',1,'Kargono::Network::Client']]]
+  ['drawentries_5626',['DrawEntries',['../structKargono_1_1EditorUI_1_1TreeSpec.html#a1bdb1594d8c45a193a509b159d4c99d6',1,'Kargono::EditorUI::TreeSpec']]]
 ];

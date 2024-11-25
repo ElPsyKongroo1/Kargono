@@ -1,4 +1,8 @@
 var searchData=
 [
-  ['newitemscreen_0',['NewItemScreen',['../classKargono_1_1EditorUI_1_1EditorUIService.html#ae192ba132cfc8001886d2ebbcddb3939',1,'Kargono::EditorUI::EditorUIService']]]
+  ['navigationheader_3947',['NavigationHeader',['../classKargono_1_1EditorUI_1_1EditorUIService.html#a485238f885b82b55d8a8a1aa97b945de',1,'Kargono::EditorUI::EditorUIService']]],
+  ['navigationheaderspec_3948',['NavigationHeaderSpec',['../structKargono_1_1EditorUI_1_1NavigationHeaderSpec.html#a977c53d4dffd73a3abc9e5d501097435',1,'Kargono::EditorUI::NavigationHeaderSpec']]],
+  ['networkthreadsleep_3949',['NetworkThreadSleep',['../classKargono_1_1Network_1_1Client.html#acc66cd839ec5d7f7b98a1a01a14ac903',1,'Kargono::Network::Client::NetworkThreadSleep()'],['../classKargono_1_1Network_1_1Server.html#a84d58d313c30bc7e551139bc12334961',1,'Kargono::Network::Server::NetworkThreadSleep()'],['../classKargono_1_1Network_1_1TCPConnection.html#a802a232bcdddd9712bce05e1dfa6d8fc',1,'Kargono::Network::TCPConnection::NetworkThreadSleep()'],['../classKargono_1_1Network_1_1UDPConnection.html#a592fb3f3156a3d5127ab3b0156381a54',1,'Kargono::Network::UDPConnection::NetworkThreadSleep()']]],
+  ['networkthreadwakeup_3950',['NetworkThreadWakeUp',['../classKargono_1_1Network_1_1Client.html#ab3c773aac3438b78d6a69b93c7843c04',1,'Kargono::Network::Client::NetworkThreadWakeUp()'],['../classKargono_1_1Network_1_1Server.html#a0c50f9109890e34211c106069fcc983e',1,'Kargono::Network::Server::NetworkThreadWakeUp()'],['../classKargono_1_1Network_1_1TCPConnection.html#a1e70c89f0b44771310a19a5f39c88a7c',1,'Kargono::Network::TCPConnection::NetworkThreadWakeUp()'],['../classKargono_1_1Network_1_1UDPConnection.html#a3c3c8e224ec4dccca02fc9466ca0db85',1,'Kargono::Network::UDPConnection::NetworkThreadWakeUp()']]],
+  ['newitemscreen_3951',['NewItemScreen',['../classKargono_1_1EditorUI_1_1EditorUIService.html#ae192ba132cfc8001886d2ebbcddb3939',1,'Kargono::EditorUI::EditorUIService']]]
 ];

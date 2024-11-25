@@ -2,6 +2,6 @@ var namespaces_dup =
 [
     [ "API", "namespaceAPI.html", "namespaceAPI" ],
     [ "Kargono", "namespaceKargono.html", "namespaceKargono" ],
-    [ "std", "namespacestd.html", null ],
+    [ "std", "namespacestd.html", "namespacestd" ],
     [ "YAML", "namespaceYAML.html", "namespaceYAML" ]
 ];

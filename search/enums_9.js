@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['radioselectorflags_0',['RadioSelectorFlags',['../namespaceKargono_1_1EditorUI.html#a46fc91ab00bbbf6a1b7de2a157164693',1,'Kargono::EditorUI']]],
-  ['renderingtype_1',['RenderingType',['../namespaceKargono_1_1Rendering.html#ae49bc6b1a8be3de985e6f11a4681eaa3',1,'Kargono::Rendering']]]
+  ['navigationheaderflags_5170',['NavigationHeaderFlags',['../namespaceKargono_1_1EditorUI.html#a2bfaa201412b7f9a9efb10febdde194e',1,'Kargono::EditorUI']]],
+  ['networktype_5171',['NetworkType',['../namespaceKargono_1_1ECS.html#acf0afe50042538440594d165c273cac7',1,'Kargono::ECS']]]
 ];
