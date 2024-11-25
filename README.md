@@ -1,8 +1,14 @@
-# About Project
-![Alt text](Images/editor_screenshot.png)
-*(View of main editor)*
+# About Project 
+
+| Stable-Branch | Development-Branch |
+| ------- | ----- |
+| [![MSBuild](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml/badge.svg)](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml) | [![MSBuildryt](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml/badge.svg?branch=Development-Branch)](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml) |
+
 
 This project is a simple game editor for 2D projects (3D in the future). The project includes: a game editor (Editor), an exporting project (Runtime), a multiplayer server (Server), and a core engine library (Engine). The Editor, Server, and Runtime are all stand alone executables that depend on the Engine library. 
+
+![Alt text](Images/editor_screenshot.png)
+*(View of main editor)*
 
 ![Alt text](Images/pong_runtime.png)
 *(View of pong runtime)*
@@ -19,7 +25,6 @@ The Editor only supports Windows. I do not have plans for supporting Linux or Ma
 
 The latest version of this project is always accessible in the Development-Branch (dev). The Stable-Branch (main) currently holds the latest stable version of the engine. I intend to add a versioning system soon, where the Stable-Branch will only hold major version changes.
 # Quickstart
-
 ## Requirements
 - Windows 64 bit is currently required for all executables.
 - [Visual Studio](https://visualstudio.microsoft.com/downloads/) with C++ support for editor usage. My build is vs2022. These configurations can be added on a fresh install of VS. Adding C++ support to an existing installation requires opening the Visual Studio Installer Standalone app.
@@ -59,7 +64,6 @@ This documentation for the engine is fairly minimal at this point. I intend to a
 - Dungeon Crawler
 
 # Third-Party Dependencies
-
 ## Asio (Non-Boost Version) ([Docs](https://think-async.com/Asio/))
 - Framework that allows TCP/UDP network communication within the engine. 
 - A cross-platform C++ library for asynchronous network and low-level I/O programming.
