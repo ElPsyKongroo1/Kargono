@@ -50,7 +50,7 @@ The latest version of this project is always accessible in the Development-Branc
 	*(Set editor application to be built)*
 - Build and Run!
 
-# [Documentation](https://elpsykongroo1.github.io/Kargono/)
+# Documentation ([Link](https://elpsykongroo1.github.io/Kargono/))
 This documentation for the engine is fairly minimal at this point. I intend to add better engine/editor documentation with the first release version of the editor. Feel free to take a look if you like...
 # Games
 ## Games in Progress

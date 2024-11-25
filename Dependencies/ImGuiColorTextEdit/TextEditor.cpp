@@ -3669,6 +3669,58 @@ namespace API::EditorUI
 		}
 	}
 
+	void AlignText(std::stringstream& ss, const std::string& text)
+	{
+		// Format description to fit in tooltip
+		std::size_t lineIterator{ 0 };
+		std::size_t endWordLength{ 0 };
+		constexpr std::size_t k_MaxWordLength{ 5 };
+		for (std::size_t charIteration{ 0 }; charIteration < text.size(); charIteration++)
+		{
+			// Add character to output buffer
+			ss << text.at(charIteration);
+
+			// Check if we reached the end of a line
+			if (lineIterator % 42 == 0 && lineIterator != 0)
+			{
+				if (text.at(charIteration) == ' ')
+				{
+					ss << "\n  ";
+					endWordLength = 0;
+				}
+				else
+				{
+					endWordLength++;
+					// Handle case where max word length has been reached
+					if (endWordLength >= k_MaxWordLength)
+					{
+						// Terminal state
+						if (charIteration + 1 >= text.size())
+						{
+							continue;
+						}
+						// Peak next character and decide if a hyphen is appropriate
+						if (text.at(charIteration + 1) == ' ')
+						{
+							ss << "\n  ";
+						}
+						else
+						{
+							ss << "-\n  ";
+						}
+						endWordLength = 0;
+					}
+					// Allow characters to contine being drawn normally
+					else
+					{
+						continue;
+					}
+				}
+			}
+			lineIterator++;
+		}
+	}
+
 	const LanguageDefinition& TextEditorService::GenerateKargonoScript()
 	{
 		static bool inited = false;
@@ -3696,10 +3748,82 @@ namespace API::EditorUI
 			for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
 			{
 				Identifier id;
+				
+				std::stringstream descriptionStringStream;
 				if (!funcNode.Description.empty())
 				{
-					id.m_Declaration = funcNode.Description;
+					AlignText(descriptionStringStream, funcNode.Description);
 				}
+
+				// Create function description
+				std::stringstream declarationOutput;
+				declarationOutput << "Function Name: ";
+				if (funcNode.Namespace)
+				{
+					declarationOutput << funcNode.Namespace.Value << "::";
+				}
+				declarationOutput << funcName << "\n";
+				if (funcNode.ReturnType.Type == Kargono::Scripting::ScriptTokenType::None)
+				{
+					declarationOutput << "Return Type: void\n";
+				}
+				else
+				{
+					declarationOutput << "Return Type: " << funcNode.ReturnType.Value << "\n";
+				}
+				declarationOutput << "Parameters:";
+
+				if (funcNode.Parameters.size() > 0)
+				{
+					declarationOutput << '\n';
+					for (Kargono::Scripting::FunctionParameter parameter : funcNode.Parameters)
+					{
+						KG_ASSERT(parameter.AllTypes.size() > 0);
+#if 0
+						if (parameter.AllTypes.size() > 1)
+						{
+							declarationOutput << "  (";
+							constexpr std::size_t k_MaxIterations{ 3 };
+							for (std::size_t iteration{ 0 }; iteration < parameter.AllTypes.size(); iteration++)
+							{
+								declarationOutput << parameter.AllTypes.at(iteration).Value;
+
+								if (iteration + 1 >= k_MaxIterations)
+								{
+									declarationOutput << "/...";
+									break;
+								}
+
+								// Exit early if we are on the last parameter
+								if (iteration + 1 >= parameter.AllTypes.size())
+								{
+									break;
+								}
+
+								declarationOutput << '/';
+							}
+
+							declarationOutput << ") " << parameter.Identifier.Value << "\n";
+						}
+#endif
+						declarationOutput << "  " << parameter.AllTypes.at(0).Value << " " << parameter.Identifier.Value << "\n";
+				
+					}
+				}
+				else
+				{
+					declarationOutput << " none\n";
+				}
+				
+
+				if (!funcNode.Description.empty())
+				{
+					declarationOutput << "Description: \n  ";
+					declarationOutput << descriptionStringStream.str();
+				}
+				
+				id.m_Declaration = declarationOutput.str();
+				
 				langDef.m_Identifiers.insert_or_assign(funcName, id);
 
 				if (funcNode.Namespace)

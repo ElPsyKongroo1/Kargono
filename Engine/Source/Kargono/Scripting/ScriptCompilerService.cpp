@@ -2058,7 +2058,7 @@ namespace Kargono::Scripting
 				{
 					ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(paramType);
 					newParameter.AllTypes.push_back(currentToken);
-					FixedString32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : "emptyName";
+					FixedString32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : ("parameter" + std::to_string(iteration)).c_str();
 					newParameter.Identifier = { ScriptTokenType::Identifier, identifier.CString()};
 					newFunctionNode.Parameters.push_back(newParameter);
 					newParameter = {};
@@ -2067,17 +2067,25 @@ namespace Kargono::Scripting
 			}
 			else
 			{
+				ExplicitFuncType& explicitFuncType = script->m_ExplicitFuncType;
+
 				// Load in return type from function type
 				newFunctionNode.ReturnType = Utility::WrappedVarTypeToPrimitiveType(Utility::WrappedFuncTypeToReturnType(script->m_FuncType));
 
-				// Load in parameter types from function type
-				for (auto parameter : Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType))
+
+				// Load in parameters
+				std::size_t iteration{ 0 };
+				bool useCustomParamNames{ explicitFuncType.m_ParameterNames.size() ==
+					Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType).size() };
+				for (WrappedVarType paramType : Utility::WrappedFuncTypeToParameterTypes(script->m_FuncType))
 				{
-					ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(parameter);
+					ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(paramType);
 					newParameter.AllTypes.push_back(currentToken);
-					newParameter.Identifier = { ScriptTokenType::Identifier, "emptyName" };
+					FixedString32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : ("parameter" + std::to_string(iteration)).c_str();
+					newParameter.Identifier = { ScriptTokenType::Identifier, identifier.CString() };
 					newFunctionNode.Parameters.push_back(newParameter);
 					newParameter = {};
+					iteration++;
 				}
 			}
 			
