@@ -57,6 +57,7 @@ namespace Kargono::EditorUI
 	};
 
 	using WidgetID = uint32_t;
+	constexpr inline WidgetID k_InvalidWidgetID{ std::numeric_limits<WidgetID>::max() };
 	using WidgetFlags = uint8_t;
 	using SelectionList = std::unordered_map<std::string, std::function<void()>>;
 	enum class SpacingAmount
@@ -183,6 +184,11 @@ namespace Kargono::EditorUI
 		static void SetColorDefaults();
 		static void SetButtonDefaults();
 		static const char* GetHoveredWindowName();
+		static void CreateWarningNotification(const char* text, int delayMS);
+		static void CreateCriticalNotification(const char* text, int delayMS);
+
+	private:
+		static void RenderImGuiNotify();
 
 	public:
 		//==============================
@@ -202,7 +208,7 @@ namespace Kargono::EditorUI
 		inline static Ref<Rendering::Texture2D> s_IconCamera,
 			s_IconSettings, s_IconDelete, s_IconEdit, s_IconCancel, s_IconCancel2,
 			s_IconConfirm, s_IconSearch,
-			s_IconCheckbox_Disabled, s_IconCheckbox_Enabled,
+			s_IconCheckbox_Disabled, s_IconCheckbox_Enabled, s_IconNotification,
 			s_IconOptions, s_IconDown, s_IconRight, s_IconDash, s_IconAI;
 
 		// Scene graph icons

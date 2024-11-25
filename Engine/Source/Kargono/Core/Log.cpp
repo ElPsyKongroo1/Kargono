@@ -36,21 +36,22 @@ namespace Kargono
 
 		KG_VERIFY(s_CoreLogger, "Logging System");
 	}
-	void Log::GenerateWarningEvent(const char* text)
-	{
-		if (EngineService::IsEngineActive())
-		{
-			Events::LogEvent logEvent{ text };
-			EngineService::OnEvent(&logEvent);
-		}
-	}
-	void Log::GenerateWarningEvent(const char* format, fmt::format_args args)
-	{
-		if (EngineService::IsEngineActive())
-		{
-			Events::LogEvent logEvent{ fmt::vformat(format, args).c_str()};
-			EngineService::OnEvent(&logEvent);
-		}
 
+	void Log::GenerateLogEventImpl(int logType, const char* text)
+	{
+		if (EngineService::IsEngineActive())
+		{
+			if (logType == KG_WARNING_LOG_EVENT)
+			{
+				Events::LogEvent logEvent{ text, Events::LogEventLevel::Warning };
+				EngineService::OnEvent(&logEvent);
+			}
+			else if (logType == KG_CRITICAL_LOG_EVENT)
+			{
+				Events::LogEvent logEvent{ text, Events::LogEventLevel::Critical };
+				EngineService::OnEvent(&logEvent);
+			}
+			
+		}
 	}
 }

@@ -3,7 +3,6 @@
 #include "EditorApp.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
-#include "API/EditorUI/ImGuiNotifyAPI.h"
 
 namespace Kargono
 {
@@ -382,8 +381,6 @@ namespace Kargono
 
 		EditorUI::EditorUIService::HighlightFocusedWindow();
 
-		EditorUI::RenderImGuiNotify();
-
 		EditorUI::EditorUIService::EndRendering();
 	}
 
@@ -618,7 +615,20 @@ namespace Kargono
 	bool EditorApp::OnLogEvent(Events::Event* event)
 	{
 		Events::LogEvent* logEvent = (Events::LogEvent*)event;
-		ImGui::InsertNotification({ ImGuiToastType::Success, 3000, logEvent->GetEventText().c_str()});
+
+		switch (logEvent->GetEventLevel())
+		{
+		case Events::LogEventLevel::Warning:
+			EditorUI::EditorUIService::CreateWarningNotification(logEvent->GetEventText().c_str(), 5000);
+			break;
+		case Events::LogEventLevel::Critical:
+			EditorUI::EditorUIService::CreateCriticalNotification(logEvent->GetEventText().c_str(), 8000);
+			break;
+		case Events::LogEventLevel::None:
+		default:
+			KG_ERROR("Invalid log event type provided to OnLogEvent()")
+			break;
+		}
 		return false;
 	}
 

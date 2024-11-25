@@ -23,14 +23,7 @@
 #include "imgui_internal.h"
 
 #include "IconsFontAwesome6.h"
-
-
-
-
-
-
-
-
+#include "Kargono/EditorUI/EditorUI.h"
 
 /**
  * CONFIGURATION SECTION Start
@@ -42,13 +35,13 @@
 #define NOTIFY_PADDING_MESSAGE_Y			10.f		// Padding Y between each message
 #define NOTIFY_FADE_IN_OUT_TIME				150			// Fade in and out duration
 #define NOTIFY_DEFAULT_DISMISS				3000		// Auto dismiss after X ms (default, applied only of no data provided in constructors)
-#define NOTIFY_OPACITY						0.8f		// 0-1 Toast opacity
-#define NOTIFY_USE_SEPARATOR 				false 		// If true, a separator will be rendered between the title and the content
+#define NOTIFY_OPACITY						0.93f		// 0-1 Toast opacity
+#define NOTIFY_USE_SEPARATOR 				true 		// If true, a separator will be rendered between the title and the content
 #define NOTIFY_USE_DISMISS_BUTTON			true		// If true, a dismiss button will be rendered in the top right corner of the toast
 #define NOTIFY_RENDER_LIMIT					5			// Max number of toasts rendered at the same time. Set to 0 for unlimited
 
 // Warning: Requires ImGui docking with multi-viewport enabled
-#define NOTIFY_RENDER_OUTSIDE_MAIN_WINDOW	true		// If true, the notifications will be rendered in the corner of the monitor, otherwise in the corner of the main window
+#define NOTIFY_RENDER_OUTSIDE_MAIN_WINDOW	false		// If true, the notifications will be rendered in the corner of the monitor, otherwise in the corner of the main window
 
 /**
  * CONFIGURATION SECTION End
@@ -265,9 +258,9 @@ public:
         case ImGuiToastType::Success:
             return {0, 255, 0, 255}; // Green
         case ImGuiToastType::Warning:
-            return {255, 255, 0, 255}; // Yellow
+            return Kargono::EditorUI::EditorUIService::s_HighlightColor1; // Yellow
         case ImGuiToastType::Error:
-            return {255, 0, 0, 255}; // Error
+            return Kargono::EditorUI::EditorUIService::s_Red; // Red
         case ImGuiToastType::Info:
             return {0, 157, 255, 255}; // Blue
         default:
@@ -463,7 +456,13 @@ public:
 
 namespace ImGui
 {
-    inline std::vector<ImGuiToast> notifications;
+    inline std::vector<ImGuiToast> s_Notifications;
+	inline Kargono::EditorUI::WidgetID s_NotificationsID{ Kargono::EditorUI::k_InvalidWidgetID };
+	
+	void InitNotificationSystem()
+	{
+		s_NotificationsID = Kargono::EditorUI::IncrementWidgetCounter();
+	}
 
     /**
      * Inserts a new notification into the notification queue.
@@ -471,7 +470,7 @@ namespace ImGui
      */
     inline void InsertNotification(const ImGuiToast& toast)
     {
-        notifications.push_back(toast);
+		s_Notifications.push_back(toast);
     }
 
     /**
@@ -481,7 +480,7 @@ namespace ImGui
      */
     inline void RemoveNotification(int index)
     {
-        notifications.erase(notifications.begin() + index);
+		s_Notifications.erase(s_Notifications.begin() + index);
     }
 
     /**
@@ -491,13 +490,15 @@ namespace ImGui
      */
     inline void RenderNotifications()
     {
+		KG_ASSERT(s_NotificationsID != Kargono::EditorUI::k_InvalidWidgetID);
+
         const ImVec2 mainWindowSize = GetMainViewport()->Size;
 
         float height = 0.f;
-
-        for (size_t i = 0; i < notifications.size(); ++i)
+		Kargono::EditorUI::WidgetID currentID{ s_NotificationsID };
+        for (size_t i = 0; i < s_Notifications.size(); ++i)
         {
-            ImGuiToast* currentToast = &notifications[i];
+            ImGuiToast* currentToast = &s_Notifications[i];
 
             // Remove toast if expired
             if (currentToast->getPhase() == ImGuiToastPhase::Expired)
@@ -524,18 +525,6 @@ namespace ImGui
             ImVec4 textColor = currentToast->getColor();
             textColor.w = opacity;
 
-            // Generate new unique name for this toast
-            char windowName[50];
-            #ifdef _WIN32
-                sprintf_s(windowName, "##TOAST%d", (int)i);
-            #elif defined(__linux__) || defined(__EMSCRIPTEN__)
-                std::sprintf(windowName, "##TOAST%d", (int)i);
-            #elif defined (__APPLE__)
-                std::snprintf(windowName, 50, "##TOAST%d", (int)i);
-            #else
-                throw "Unsupported platform";
-            #endif
-
             //PushStyleColor(ImGuiCol_Text, textColor);
             SetNextWindowBgAlpha(opacity);
 
@@ -559,7 +548,13 @@ namespace ImGui
                 currentToast->setWindowFlags(NOTIFY_DEFAULT_TOAST_FLAGS | ImGuiWindowFlags_NoInputs);
             }
 
-            Begin(windowName, nullptr, currentToast->getWindowFlags());
+			// Generate Unique name for window
+			currentID++;
+			Kargono::FixedString<16> id{ "##" };
+			id.AppendInteger(currentID);
+
+			// Draw window
+            Begin(id, nullptr, currentToast->getWindowFlags());
 
             // Render over all other windows
             BringWindowToDisplayFront(GetCurrentWindow());
@@ -568,17 +563,23 @@ namespace ImGui
             {
                 PushTextWrapPos(mainWindowSize.x / 3.f); // We want to support multi-line text, this will wrap the text after 1/3 of the screen width
 
-                bool wasTitleRendered = false;
 
-                // If an icon is set
-                if (!NOTIFY_NULL_OR_EMPTY(icon))
-                {
-                    //Text(icon); // Render icon text
-                    TextColored(textColor, "%s", icon);
-                    wasTitleRendered = true;
-                }
+				// Draw Notification Icon
+				ImGui::PushStyleColor(ImGuiCol_Button, Kargono::EditorUI::EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Kargono::EditorUI::EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Kargono::EditorUI::EditorUIService::s_PureEmpty);
+				ImGui::ImageButton((ImTextureID)(uint64_t)Kargono::EditorUI::EditorUIService::s_IconNotification->GetRendererID(),
+					ImVec2(14.0f, 14.0f),
+					ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, -1, Kargono::EditorUI::EditorUIService::s_PureEmpty,
+					textColor);
+
+				ImGui::PopStyleColor(3);
+
+				ImGui::PushFont(Kargono::EditorUI::EditorUIService::s_FontAntaRegular);
+				ImGui::PushStyleColor(ImGuiCol_Text, textColor);
 
                 // If a title is set
+                bool wasTitleRendered = false;
                 if (!NOTIFY_NULL_OR_EMPTY(title))
                 {
                     // If a title and an icon is set, we want to render on same line
@@ -596,6 +597,8 @@ namespace ImGui
                     Text("%s", defaultTitle); // Render default title text (ImGuiToastType_Success -> "Success", etc...)
                     wasTitleRendered = true;
                 }
+				ImGui::PopFont();
+				ImGui::PopStyleColor();
 
                 // If a dismiss button is enabled
                 if (NOTIFY_USE_DISMISS_BUTTON)
@@ -606,28 +609,32 @@ namespace ImGui
                         SameLine();
                     }
 
-                    // Render the dismiss button on the top right corner
-                    // NEEDS TO BE REWORKED
-                    float scale = 0.8f;
+					// Generate Unique ID for button
+					currentID++;
+					Kargono::FixedString<16> buttonID{ "##" };
+					buttonID.AppendInteger(currentID);
 
-                    if (CalcTextSize(content).x > GetContentRegionAvail().x)
-                    {
-                        scale = 0.8f;
-                    }
-
+					// Render the dismiss button on the top right corner
+					float scale = 0.8f;
                     SetCursorPosX(GetCursorPosX() + (GetWindowSize().x - GetCursorPosX()) * scale);
 
-                    // If the button is pressed, we want to remove the notification
-                    if (Button(ICON_FA_XMARK))
-                    {
-                        RemoveNotification((int)i);
-                    }
-                }
+					// Draw dismiss button
+					ImGui::PushStyleColor(ImGuiCol_Button, Kargono::EditorUI::EditorUIService::s_PureEmpty);
+					if (ImGui::ImageButton((ImTextureID)(uint64_t)Kargono::EditorUI::EditorUIService::s_IconCancel->GetRendererID(), 
+						ImVec2(18.0f, 18.0f),
+						ImVec2{ 0, 1 }, ImVec2{ 1, 0 }))
+					{
+						RemoveNotification((int)i);
+					}
 
-                // In case ANYTHING was rendered in the top, we want to add a small padding so the text (or icon) looks centered vertically
-                if (wasTitleRendered && !NOTIFY_NULL_OR_EMPTY(content))
-                {
-                    SetCursorPosY(GetCursorPosY() + 5.f); // Must be a better way to do this!!!!
+					ImGui::PopStyleColor(1);
+
+					if (ImGui::IsItemHovered())
+					{
+						ImGui::BeginTooltip();
+						ImGui::TextColored(Kargono::EditorUI::EditorUIService::s_HighlightColor1, "Close");
+						ImGui::EndTooltip();
+					}
                 }
 
                 // If a content is set

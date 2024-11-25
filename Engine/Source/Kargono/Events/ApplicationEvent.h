@@ -224,6 +224,14 @@ namespace Kargono::Events
 		uint32_t m_Count;
 	};
 
+
+	enum class LogEventLevel
+	{
+		None = 0,
+		Warning,
+		Critical
+	};
+
 	//============================================================
 	// Log Event Class
 	//============================================================
@@ -233,19 +241,21 @@ namespace Kargono::Events
 		//==============================
 		// Constructors and Destructors
 		//==============================
-		LogEvent(const char* eventText)
-			: m_EventText(eventText) {}
+		LogEvent(const char* eventText, LogEventLevel eventLevel)
+			: m_EventText(eventText), m_EventLevel(eventLevel) {}
 
 		//==============================
 		// Getters/Setters
 		//==============================
 
 		std::string GetEventText() const { return m_EventText; }
+		LogEventLevel GetEventLevel() const { return m_EventLevel; }
 
 		virtual EventType GetEventType() const override { return EventType::LogEvent; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
 	private:
 		std::string m_EventText;
+		LogEventLevel m_EventLevel;
 	};
 
 

@@ -22,7 +22,6 @@ project "EditorTesting"
         "%{IncludeDir.filewatch}",
         "%{IncludeDir.imGui}",
         "%{IncludeDir.ImGuizmo}",
-        "%{IncludeDir.ImGuiNotify}",
         "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.Box2D}",
         "%{IncludeDir.dr_wav}",
