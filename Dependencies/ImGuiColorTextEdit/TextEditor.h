@@ -307,6 +307,7 @@ namespace API::EditorUI
 		void SetSelectionStart(const Coordinates& aPosition);
 		void SetSelectionEnd(const Coordinates& aPosition);
 		void SetSelection(const Coordinates& aStart, const Coordinates& aEnd, SelectionMode aMode = SelectionMode::Normal);
+		void ClearSelection();
 		void SelectAll();
 		void SelectWordUnderCursor();
 
@@ -346,6 +347,8 @@ namespace API::EditorUI
 		void SetSaveCallback(std::function<void()> saveCallback);
 		void CloseSuggestions();
 		void ClearUndoBuffer();
+		void SetUndoBuffer(const UndoBuffer& newBuffer);
+		UndoBuffer GetUndoBuffer();
 
 		//=========================
 		// Query Text Editor Internal State

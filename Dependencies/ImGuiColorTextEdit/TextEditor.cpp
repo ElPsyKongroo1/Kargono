@@ -1776,6 +1776,11 @@ namespace API::EditorUI
 			m_CursorPositionChanged = true;
 	}
 
+	void EditorUI::TextEditorSpec::ClearSelection()
+	{
+		SetSelection({}, {}, SelectionMode::Normal);
+	}
+
 	void TextEditorSpec::SetTabSize(int aValue)
 	{
 		m_TabSize = std::max(0, std::min(32, aValue));
@@ -2300,6 +2305,16 @@ namespace API::EditorUI
 	void EditorUI::TextEditorSpec::ClearUndoBuffer()
 	{
 		m_UndoBuffer.clear();
+	}
+
+	void EditorUI::TextEditorSpec::SetUndoBuffer(const UndoBuffer& newBuffer)
+	{
+		m_UndoBuffer = newBuffer;
+	}
+
+	UndoBuffer EditorUI::TextEditorSpec::GetUndoBuffer()
+	{
+		return m_UndoBuffer;
 	}
 
 	void TextEditorSpec::Copy()
