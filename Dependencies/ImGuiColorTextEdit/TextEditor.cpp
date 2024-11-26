@@ -2511,7 +2511,8 @@ namespace API::EditorUI
 			currentCursorCoord.m_Line++;
 			SetCursorPosition(currentCursorCoord);
 
-			u.m_Added = GetCurrentLineText();
+			u.m_Added = '\n';
+			u.m_Added.append(GetCurrentLineText());
 			u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
 			u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));
 
