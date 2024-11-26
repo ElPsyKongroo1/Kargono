@@ -951,7 +951,7 @@ namespace API::EditorUI
 			//else if (alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_DownArrow)))
 			//	ShiftTextDown();
 			else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_D)))
-				DuplicateLine();
+				DuplicateText();
 			else if (!IsReadOnly() && !ctrl && shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Insert)))
 				Paste();
 			else if (!IsReadOnly() && ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_V)))
@@ -2418,7 +2418,7 @@ namespace API::EditorUI
 		}
 	}
 
-	void EditorUI::TextEditorSpec::DuplicateLine()
+	void EditorUI::TextEditorSpec::DuplicateText()
 	{
 		// Get the index of the line that should be duplicated
 		Coordinates currentCursorCoord = GetCursorPosition();
@@ -2438,23 +2438,64 @@ namespace API::EditorUI
 			return;
 		}
 
-		// Get the line that should be duplicated
-		UndoRecord u;
-		u.m_Before = m_State;
-		Line& currentLine = m_Lines[currentLineIndex];
-		// Insert a line after the current cursor's line
-		InsertLine(currentLine, currentLineIndex);
+		// Check how many lines we need to move
+		bool moveMultipleLines = m_State.m_SelectionStart.m_Line != m_State.m_SelectionEnd.m_Line;
 
-		// Move cursor down one line
-		currentCursorCoord.m_Line++;
-		SetCursorPosition(currentCursorCoord);
+		if (moveMultipleLines)
+		{
+			
+			// Save initial state of text editor
+			UndoRecord u;
+			u.m_Before = m_State;
 
-		u.m_Added = GetCurrentLineText();
-		u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
-		u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));
+			// Insert all lines into text editor
+			int startLine = m_State.m_SelectionStart.m_Line;
+			int endLine = m_State.m_SelectionEnd.m_Line;
+			int iteration{ 0 };
+			for (int currentLine{ startLine }; currentLine <= endLine; currentLine++)
+			{
+				InsertLine(m_Lines[currentLine], endLine + iteration + 1);
+				iteration++;
+			}
 
-		u.m_After = m_State;
-		AddUndo(u);
+			// Move cursor down to beginning of new selection
+			SetCursorPosition({ currentCursorCoord.m_Line + iteration, 0 });
+
+			// Set selection to encompass newly created lines
+			SetSelection(
+				{ m_State.m_SelectionStart.m_Line + iteration, 0 }, 
+				{ m_State.m_SelectionEnd.m_Line + iteration + 1, 0 }, 
+				SelectionMode::Normal
+			);
+
+			u.m_Added = GetCurrentLineText();
+			u.m_AddedStart = m_State.m_SelectionStart;
+			u.m_AddedEnd = m_State.m_SelectionEnd;
+			u.m_After = m_State;
+			AddUndo(u);
+		}
+		else
+		{
+			// Get the line that should be duplicated
+			UndoRecord u;
+			u.m_Before = m_State;
+			Line& currentLine = m_Lines[currentLineIndex];
+			// Insert a line after the current cursor's line
+			InsertLine(currentLine, currentLineIndex);
+
+			// Move cursor down one line
+			currentCursorCoord.m_Line++;
+			SetCursorPosition(currentCursorCoord);
+
+			u.m_Added = GetCurrentLineText();
+			u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
+			u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));
+
+			u.m_After = m_State;
+			AddUndo(u);
+		}
+
+		
 	}
 
 	void EditorUI::TextEditorSpec::ShiftTextUp()

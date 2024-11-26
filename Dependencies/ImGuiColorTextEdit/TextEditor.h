@@ -320,7 +320,7 @@ namespace API::EditorUI
 		void Undo(int aSteps = 1);
 		void Redo(int aSteps = 1);
 		void Save();
-		void DuplicateLine();
+		void DuplicateText();
 		void ShiftTextUp();
 		void ShiftTextDown();
 		void InsertText(const std::string& aValue);
