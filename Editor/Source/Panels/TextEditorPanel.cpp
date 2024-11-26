@@ -55,7 +55,7 @@ namespace Kargono::Panels
 
 		if (m_AllDocuments.size() == 0)
 		{
-			EditorUI::EditorUIService::NewItemScreen("Open Existing File", KG_BIND_CLASS_FN(OnOpenFile), "Create New File", KG_BIND_CLASS_FN(OnCreateFile));
+			EditorUI::EditorUIService::NewItemScreen("Open Existing File", KG_BIND_CLASS_FN(OnOpenFileDialog), "Create New File", KG_BIND_CLASS_FN(OnCreateFileDialog));
 		}
 		else
 		{
@@ -66,12 +66,12 @@ namespace Kargono::Panels
 				{
 					if (ImGui::MenuItem("New File"))
 					{
-						OnCreateFile();
+						OnCreateFileDialog();
 					}
 
 					if (ImGui::MenuItem("Open File"))
 					{
-						OnOpenFile();
+						OnOpenFileDialog();
 					}
 
 					if (ImGui::MenuItem("Save File"))
@@ -94,62 +94,29 @@ namespace Kargono::Panels
 			
 			if (m_TextEditor.IsTextChanged())
 			{
-				FixedString32 comparedWindow = m_EditorWindowName;
-				Document& activeDocument = m_AllDocuments.at(m_ActiveDocument);
-				activeDocument.TextBuffer = m_TextEditor.GetText();
-				activeDocument.Edited = true;
-				if (activeDocument.FilePath.extension().string() == ".kgscript")
-				{
-					CheckForErrors();
-				}
-				else
-				{
-					m_TextEditor.SetErrorMarkers({});
-				}
+				OnTextChanged();
 			}
 
-			for (auto& document : m_AllDocuments)
+			for (Document& currentDocument : m_AllDocuments)
 			{
 				bool setColorHighlight = false;
-				if (document.Edited)
+				if (currentDocument.Edited)
 				{
 					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::EditorUIService::s_HighlightColor2);
 					setColorHighlight = true;
 				}
 				// Handle case 
 				ImGuiTabItemFlags tabItemFlags = 0;
-				if (document.SetActive)
+				if (currentDocument.SetActive)
 				{
 					tabItemFlags |= ImGuiTabItemFlags_SetSelected;
 
-					// Change to new active document index
-					m_ActiveDocument = iteration;
-					Document& activeDocument = m_AllDocuments.at(m_ActiveDocument);
-
-					// Load undo buffer from new active document
-					m_TextEditor.SetUndoBuffer(activeDocument.UndoBuffer);
-
-					// Clear current selection
-					m_TextEditor.ClearSelection();
-
-					// Load active document text and settings into text editor
-					m_TextEditor.SetText(activeDocument.TextBuffer);
-					m_TextEditor.SetLanguageDefinitionByExtension(activeDocument.FilePath.extension().string());
-
-					document.SetActive = false;
-					if (activeDocument.FilePath.extension().string() == ".kgscript")
-					{
-						CheckForErrors();
-					}
-					else
-					{
-						m_TextEditor.SetErrorMarkers({});
-					}
+					SwitchToAnotherDocument(iteration);
 				}
 
 				bool checkTab = true;
-				if (ImGui::BeginTabItem((document.FilePath.filename().string() + "##" + std::to_string(iteration)).c_str(),
-					&document.Opened, tabItemFlags))
+				if (ImGui::BeginTabItem((currentDocument.FilePath.filename().string() + "##" + std::to_string(iteration)).c_str(),
+					&currentDocument.Opened, tabItemFlags))
 				{
 					m_TextEditor.OnEditorUIRender(m_EditorWindowName);
 					checkTab = false;
@@ -159,7 +126,7 @@ namespace Kargono::Panels
 				// Handle Case of switching tabs by clicking
 				if (ImGui::IsItemClicked() && checkTab)
 				{
-					document.SetActive = true;
+					currentDocument.SetActive = true;
 				}
 
 				if (setColorHighlight)
@@ -199,7 +166,6 @@ namespace Kargono::Panels
 	{
 		Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
 		CheckForErrors();
-
 	}
 
 	bool TextEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
@@ -237,7 +203,7 @@ namespace Kargono::Panels
 				EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 			}
 
-			for (auto& document : m_AllDocuments)
+			for (Document& document : m_AllDocuments)
 			{
 				if (std::filesystem::equivalent(document.FilePath, filepath))
 				{
@@ -252,8 +218,8 @@ namespace Kargono::Panels
 			{
 				Document& oldDocument = m_AllDocuments.at(m_ActiveDocument);
 				oldDocument.UndoBuffer = m_TextEditor.GetUndoBuffer();
+				oldDocument.UndoIndex = m_TextEditor.GetUndoIndex();
 			}
-			
 
 			Document newDocument{};
 			newDocument.TextBuffer = Utility::FileSystem::ReadFileString(filepath);
@@ -331,41 +297,51 @@ namespace Kargono::Panels
 		s_EditorApp->m_ShowTextEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
-		OnCreateFile(path);
+		OnCreateFileDialog(path);
 	}
-	void TextEditorPanel::OnOpenFile()
+	void TextEditorPanel::OnOpenFileDialog()
 	{
 		const std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
 		const std::filesystem::path filepath = Utility::FileDialogs::OpenFile("All Files\0*.*\0", initialDirectory.string().c_str());
 		OpenFile(filepath);
 	}
-	void TextEditorPanel::OnCreateFile()
+	void TextEditorPanel::OnCreateFileDialog()
 	{
-		OnCreateFile(Projects::ProjectService::GetActiveAssetDirectory());
+		OnCreateFileDialog(Projects::ProjectService::GetActiveAssetDirectory());
 	}
-	void TextEditorPanel::OnCreateFile(const std::filesystem::path& initialDirectory)
+	void TextEditorPanel::OnCreateFileDialog(const std::filesystem::path& initialDirectory)
 	{
 		const std::filesystem::path filepath = Utility::FileDialogs::SaveFile("All Files\0*.*\0", initialDirectory.string().c_str());
 		if (!filepath.empty())
 		{
-			// Store previously active document's undo buffer
-			if (m_ActiveDocument < m_AllDocuments.size())
-			{
-				Document& oldDocument = m_AllDocuments.at(m_ActiveDocument);
-				oldDocument.UndoBuffer = m_TextEditor.GetUndoBuffer();
-			}
-
-			Document newDocument{};
-			Utility::FileSystem::WriteFileString(filepath, "");
-			newDocument.TextBuffer = "";
-			newDocument.FilePath = filepath;
-			newDocument.Edited = false;
-			newDocument.Opened = true;
-			newDocument.SetActive = true;
-			m_AllDocuments.push_back(newDocument);
-			m_ActiveDocument = static_cast<uint32_t>(m_AllDocuments.size() - 1);
-			m_TextEditor.SetText("");
+			OnCreateFile(filepath);
 		}
+		else
+		{
+			KG_WARN("Could not create file. Issue retreiving filepath from choose file dialog.");
+		}
+	}
+	void TextEditorPanel::OnCreateFile(const std::filesystem::path& filePath)
+	{
+		// Store previously active document's undo buffer
+		if (m_ActiveDocument < m_AllDocuments.size())
+		{
+			Document& oldDocument = m_AllDocuments.at(m_ActiveDocument);
+			oldDocument.UndoBuffer = m_TextEditor.GetUndoBuffer();
+			oldDocument.UndoIndex = m_TextEditor.GetUndoIndex();
+		}
+
+		// Add the file to the active text editor
+		Document newDocument{};
+		Utility::FileSystem::WriteFileString(filePath, "");
+		newDocument.TextBuffer = "";
+		newDocument.FilePath = filePath;
+		newDocument.Edited = false;
+		newDocument.Opened = true;
+		newDocument.SetActive = true;
+		m_AllDocuments.push_back(newDocument);
+		m_ActiveDocument = static_cast<uint32_t>(m_AllDocuments.size() - 1);
+		m_TextEditor.SetText("");
 	}
 	void TextEditorPanel::OnSaveFile()
 	{
@@ -406,5 +382,61 @@ namespace Kargono::Panels
 	{
 		m_AllDocuments.clear();
 		m_ActiveDocument = 0;
+	}
+	void TextEditorPanel::OnTextChanged()
+	{
+		FixedString32 comparedWindow = m_EditorWindowName;
+		Document& activeDocument = m_AllDocuments.at(m_ActiveDocument);
+		activeDocument.TextBuffer = m_TextEditor.GetText();
+		activeDocument.Edited = true;
+		if (activeDocument.FilePath.extension().string() == ".kgscript")
+		{
+			CheckForErrors();
+		}
+		else
+		{
+			m_TextEditor.SetErrorMarkers({});
+		}
+	}
+	void TextEditorPanel::SwitchToAnotherDocument(std::size_t documentIteration)
+	{
+
+		// Change to new active document index
+		if (m_ActiveDocument != (uint32_t)documentIteration)
+		{
+			// Store previously active document's undo buffer
+			if (m_ActiveDocument < m_AllDocuments.size())
+			{
+				Document& oldDocument = m_AllDocuments.at(m_ActiveDocument);
+				oldDocument.UndoBuffer = m_TextEditor.GetUndoBuffer();
+				oldDocument.UndoIndex = m_TextEditor.GetUndoIndex();
+			}
+
+			// Update active document
+			m_ActiveDocument = (uint32_t)documentIteration;
+		}
+
+		Document& activeDocument = m_AllDocuments.at(m_ActiveDocument);
+
+		// Load undo buffer from new active document
+		m_TextEditor.SetUndoBuffer(activeDocument.UndoBuffer, activeDocument.UndoIndex);
+
+		// Clear current selection
+		m_TextEditor.ClearSelection();
+
+		// Load active document text and settings into text editor
+		m_TextEditor.SetText(activeDocument.TextBuffer);
+		m_TextEditor.SetLanguageDefinitionByExtension(activeDocument.FilePath.extension().string());
+
+		// Refresh error markers
+		activeDocument.SetActive = false;
+		if (activeDocument.FilePath.extension().string() == ".kgscript")
+		{
+			CheckForErrors();
+		}
+		else
+		{
+			m_TextEditor.SetErrorMarkers({});
+		}
 	}
 }

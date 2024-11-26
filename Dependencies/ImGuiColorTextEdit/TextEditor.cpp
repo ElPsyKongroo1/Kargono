@@ -1476,8 +1476,9 @@ namespace API::EditorUI
 		//m_TextChanged = true;
 		m_ScrollToTop = true;
 
-		m_UndoBuffer.clear();
-		m_UndoIndex = 0;
+		// TODO: May have to add back undo buffer here
+		//m_UndoBuffer.clear();
+		//m_UndoIndex = 0;
 
 		Colorize();
 	}
@@ -1507,8 +1508,9 @@ namespace API::EditorUI
 		m_TextChanged = true;
 		m_ScrollToTop = true;
 
-		m_UndoBuffer.clear();
-		m_UndoIndex = 0;
+		// TODO: May have to add back undo buffer here
+		//m_UndoBuffer.clear();
+		//m_UndoIndex = 0;
 
 		Colorize();
 	}
@@ -2305,16 +2307,23 @@ namespace API::EditorUI
 	void EditorUI::TextEditorSpec::ClearUndoBuffer()
 	{
 		m_UndoBuffer.clear();
+		m_UndoIndex = 0;
 	}
 
-	void EditorUI::TextEditorSpec::SetUndoBuffer(const UndoBuffer& newBuffer)
+	void EditorUI::TextEditorSpec::SetUndoBuffer(const UndoBuffer& newBuffer, int undoIndex)
 	{
 		m_UndoBuffer = newBuffer;
+		m_UndoIndex = undoIndex;
 	}
 
 	UndoBuffer EditorUI::TextEditorSpec::GetUndoBuffer()
 	{
 		return m_UndoBuffer;
+	}
+
+	int EditorUI::TextEditorSpec::GetUndoIndex()
+	{
+		return m_UndoIndex;
 	}
 
 	void TextEditorSpec::Copy()

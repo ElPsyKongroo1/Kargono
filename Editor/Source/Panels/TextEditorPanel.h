@@ -12,6 +12,7 @@ namespace Kargono::Panels
 	{
 		std::string TextBuffer {};
 		API::EditorUI::UndoBuffer UndoBuffer{};
+		int UndoIndex{0};
 		std::filesystem::path FilePath { "" };
 		bool Edited{ false };
 		bool Opened{ false };
@@ -45,13 +46,16 @@ namespace Kargono::Panels
 		//=========================
 		// Internal Functionality
 		//=========================
-		void OnOpenFile();
-		void OnCreateFile();
-		void OnCreateFile(const std::filesystem::path& initialDirectory);
+		void OnOpenFileDialog();
+		void OnCreateFileDialog();
+		void OnCreateFileDialog(const std::filesystem::path& initialDirectory);
+		void OnCreateFile(const std::filesystem::path& filePath);
 		void OnSaveFile();
 		void OnDeleteFile();
 		void OnCloseFile();
 		void OnCloseAllFiles(); 
+		void OnTextChanged();
+		void SwitchToAnotherDocument(std::size_t documentIteration);
 
 	private:
 		//=========================

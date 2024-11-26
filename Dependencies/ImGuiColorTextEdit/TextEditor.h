@@ -347,8 +347,9 @@ namespace API::EditorUI
 		void SetSaveCallback(std::function<void()> saveCallback);
 		void CloseSuggestions();
 		void ClearUndoBuffer();
-		void SetUndoBuffer(const UndoBuffer& newBuffer);
+		void SetUndoBuffer(const UndoBuffer& newBuffer, int undoIndex);
 		UndoBuffer GetUndoBuffer();
+		int GetUndoIndex();
 
 		//=========================
 		// Query Text Editor Internal State
