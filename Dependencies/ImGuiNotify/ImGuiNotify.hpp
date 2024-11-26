@@ -256,13 +256,13 @@ public:
         case ImGuiToastType::None:
             return {255, 255, 255, 255}; // White
         case ImGuiToastType::Success:
-            return {0, 255, 0, 255}; // Green
+            return { 0, 157, 255, 255 }; // Blue
         case ImGuiToastType::Warning:
             return Kargono::EditorUI::EditorUIService::s_HighlightColor1; // Yellow
         case ImGuiToastType::Error:
             return Kargono::EditorUI::EditorUIService::s_Red; // Red
         case ImGuiToastType::Info:
-            return {0, 157, 255, 255}; // Blue
+            return Kargono::EditorUI::EditorUIService::s_Green; // Green
         default:
             return {255, 255, 255, 255}; // White
         }

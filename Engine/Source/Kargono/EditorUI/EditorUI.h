@@ -184,6 +184,7 @@ namespace Kargono::EditorUI
 		static void SetColorDefaults();
 		static void SetButtonDefaults();
 		static const char* GetHoveredWindowName();
+		static void CreateInfoNotification(const char* text, int delayMS);
 		static void CreateWarningNotification(const char* text, int delayMS);
 		static void CreateCriticalNotification(const char* text, int delayMS);
 

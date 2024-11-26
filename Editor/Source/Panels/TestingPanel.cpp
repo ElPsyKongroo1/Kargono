@@ -87,6 +87,17 @@ namespace Kargono::Panels
 			return;
 		}
 
+		if (ImGui::Button("Crit Log"))
+		{
+			KG_CRITICAL("Hey we in this bihh {}", Utility::RandomService::GenerateRandomNumber(0, 20));
+		}
+
+		if (ImGui::Button("Warn Log"))
+		{
+			KG_WARN("Hey we in this bihh {}", Utility::RandomService::GenerateRandomNumber(0, 20));
+		}
+
+
 		EditorUI::EditorUIService::EditText(s_TestText);
 
 		if (ImGui::Button("Compile File"))

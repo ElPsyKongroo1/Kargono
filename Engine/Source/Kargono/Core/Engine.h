@@ -139,6 +139,18 @@ namespace Kargono
 		//==============================
 		static Engine& GetActiveEngine() { return *s_ActiveEngine; }
 		static bool IsEngineActive() { return (bool)s_ActiveEngine; }
+		static bool IsApplicationActive() 
+		{
+			// Ensure engine core is active
+			if (!IsEngineActive())
+			{
+				return false;
+			}
+
+			// Check if application is active
+			return (bool)s_ActiveEngine->m_CurrentApp;
+
+		}
 		static Window& GetActiveWindow() { return s_ActiveEngine->GetWindow(); }
 	private:
 		//==============================

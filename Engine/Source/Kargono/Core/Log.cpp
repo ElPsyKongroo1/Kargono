@@ -39,9 +39,14 @@ namespace Kargono
 
 	void Log::GenerateLogEventImpl(int logType, const char* text)
 	{
-		if (EngineService::IsEngineActive())
+		if (EngineService::IsApplicationActive())
 		{
-			if (logType == KG_WARNING_LOG_EVENT)
+			if (logType == KG_INFO_LOG_EVENT)
+			{
+				Events::LogEvent logEvent{ text, Events::LogEventLevel::Info };
+				EngineService::OnEvent(&logEvent);
+			}
+			else if (logType == KG_WARNING_LOG_EVENT)
 			{
 				Events::LogEvent logEvent{ text, Events::LogEventLevel::Warning };
 				EngineService::OnEvent(&logEvent);

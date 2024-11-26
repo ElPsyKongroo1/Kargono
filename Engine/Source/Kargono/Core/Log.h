@@ -3,8 +3,9 @@
 
 #define KG_STRINGIFY(x) #x
 #define KG_EXPAND_AND_STRINGIFY(...) KG_STRINGIFY(__VA_ARGS__)
-#define KG_WARNING_LOG_EVENT 1
-#define KG_CRITICAL_LOG_EVENT 2
+#define KG_INFO_LOG_EVENT 1
+#define KG_WARNING_LOG_EVENT 2
+#define KG_CRITICAL_LOG_EVENT 3
 
 namespace Kargono
 {
@@ -38,7 +39,7 @@ namespace Kargono
 // General Logging
 #if defined(KG_DEBUG) || defined(KG_EXPORT_SERVER)
 	// Core Log Macros
-	#define KG_INFO(...)		SPDLOG_LOGGER_INFO(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
+	#define KG_INFO(...)		SPDLOG_LOGGER_INFO(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); Kargono::Log::GenerateLogEvent(KG_INFO_LOG_EVENT, __VA_ARGS__);
 	#define KG_WARN(...)		SPDLOG_LOGGER_WARN(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); Kargono::Log::GenerateLogEvent(KG_WARNING_LOG_EVENT, __VA_ARGS__);
 	#define KG_CRITICAL(...)	SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); Kargono::Log::GenerateLogEvent(KG_CRITICAL_LOG_EVENT, __VA_ARGS__);
 	#define KG_ERROR(...)		SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK_MSG("[KG_ERROR]: " KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));

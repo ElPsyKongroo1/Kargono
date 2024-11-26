@@ -228,6 +228,7 @@ namespace Kargono::Events
 	enum class LogEventLevel
 	{
 		None = 0,
+		Info,
 		Warning,
 		Critical
 	};

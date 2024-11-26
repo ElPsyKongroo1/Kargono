@@ -224,6 +224,12 @@ namespace Kargono::EditorUI
 		}
 		return nullptr;
 	}
+	void EditorUIService::CreateInfoNotification(const char* text, int delayMS)
+	{
+		ImGuiToast toast{ ImGuiToastType::Info, delayMS, text };
+		toast.setTitle("Kargono Editor Information");
+		ImGui::InsertNotification(toast);
+	}
 	void EditorUIService::CreateWarningNotification(const char* text, int delayMS)
 	{
 		ImGuiToast toast{ ImGuiToastType::Warning, delayMS, text };

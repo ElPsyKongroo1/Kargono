@@ -618,14 +618,18 @@ namespace Kargono
 
 		switch (logEvent->GetEventLevel())
 		{
+		case Events::LogEventLevel::Info:
+			EditorUI::EditorUIService::CreateInfoNotification(logEvent->GetEventText().c_str(), 7000);
+			break;
 		case Events::LogEventLevel::Warning:
-			EditorUI::EditorUIService::CreateWarningNotification(logEvent->GetEventText().c_str(), 5000);
+			EditorUI::EditorUIService::CreateWarningNotification(logEvent->GetEventText().c_str(), 7000);
 			break;
 		case Events::LogEventLevel::Critical:
-			EditorUI::EditorUIService::CreateCriticalNotification(logEvent->GetEventText().c_str(), 8000);
+			EditorUI::EditorUIService::CreateCriticalNotification(logEvent->GetEventText().c_str(), 7000);
 			break;
 		case Events::LogEventLevel::None:
 		default:
+			// TODO: Yee, I realize this is a potential circular issue. ehh...
 			KG_ERROR("Invalid log event type provided to OnLogEvent()")
 			break;
 		}

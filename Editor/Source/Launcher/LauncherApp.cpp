@@ -55,6 +55,32 @@ namespace Kargono
 	{
 		EditorUI::EditorUIService::Terminate();
 	}
+
+	bool LauncherApp::OnLogEvent(Events::Event* event)
+	{
+		// TODO: Figure out better solution. This currently looks super wonkyyyyy
+		//Events::LogEvent* logEvent = (Events::LogEvent*)event;
+
+		//switch (logEvent->GetEventLevel())
+		//{
+		//case Events::LogEventLevel::Info:
+		//	EditorUI::EditorUIService::CreateInfoNotification(logEvent->GetEventText().c_str(), 5000);
+		//	break;
+		//case Events::LogEventLevel::Warning:
+		//	EditorUI::EditorUIService::CreateWarningNotification(logEvent->GetEventText().c_str(), 5000);
+		//	break;
+		//case Events::LogEventLevel::Critical:
+		//	EditorUI::EditorUIService::CreateCriticalNotification(logEvent->GetEventText().c_str(), 8000);
+		//	break;
+		//case Events::LogEventLevel::None:
+		//default:
+		//	// TODO: Yee, I realize this is a potential circular issue. ehh...
+		//	KG_ERROR("Invalid log event type provided to OnLogEvent()")
+		//		break;
+		//}
+		return false;
+	}
+
 	void LauncherApp::OnUpdate(Timestep ts)
 	{
 		EditorUI::EditorUIService::StartRendering();
