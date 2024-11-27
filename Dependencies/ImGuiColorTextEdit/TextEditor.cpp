@@ -2467,32 +2467,6 @@ namespace API::EditorUI
 
 		if (moveMultipleLines)
 		{
-#if 0
-			const char* clipText = ImGui::GetClipboardText();
-			if (clipText != nullptr && strlen(clipText) > 0)
-			{
-				UndoRecord u;
-				u.m_Before = m_State;
-
-				if (HasSelection())
-				{
-					u.m_Removed = GetSelectedText();
-					u.m_RemovedStart = m_State.m_SelectionStart;
-					u.m_RemovedEnd = m_State.m_SelectionEnd;
-					DeleteSelection();
-				}
-
-				u.m_Added = clipText;
-				u.m_AddedStart = GetActualCursorCoordinates();
-
-				InsertText(clipText);
-
-				u.m_AddedEnd = GetActualCursorCoordinates();
-				u.m_After = m_State;
-				AddUndo(u);
-			}
-#endif
-
 			// Save initial state of text editor
 			UndoRecord u;
 			u.m_Before = m_State;
@@ -2508,12 +2482,13 @@ namespace API::EditorUI
 			std::string duplicateText{ GetText(startCoordinate, endCoordinate) };
 			InsertText(duplicateText);
 
-			//// Set selection to encompass newly created lines
-			//SetSelection(
-			//	{ m_State.m_SelectionStart.m_Line + iteration, 0 }, 
-			//	{ m_State.m_SelectionEnd.m_Line + iteration + 1, 0 }, 
-			//	SelectionMode::Normal
-			//);
+			// Set selection to encompass newly created lines
+			int selectionLineDistance = (endCoordinate.m_Line - startCoordinate.m_Line);
+			SetSelection(
+				{ startCoordinate.m_Line + selectionLineDistance, 0 }, 
+				{ endCoordinate.m_Line + selectionLineDistance, 0 }, 
+				SelectionMode::Normal
+			);
 			u.m_Added = duplicateText;
 			u.m_AddedStart = startCoordinate;
 			u.m_AddedEnd = endCoordinate;
