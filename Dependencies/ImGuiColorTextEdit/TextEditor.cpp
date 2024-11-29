@@ -945,7 +945,7 @@ namespace API::EditorUI
 				Copy();
 			else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_C)))
 				Copy();
-			// TODO: Need to finish adding undo properly
+			// TODO: STILL NEED TO FIX THIS SHIT
 			//else if (alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_UpArrow)))
 			//	ShiftTextUp();
 			//else if (alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_DownArrow)))
@@ -2560,16 +2560,18 @@ namespace API::EditorUI
 		currentCursorCoord.m_Line--;
 		SetCursorPosition(currentCursorCoord);
 
-		/*u.m_Removed = GetCurrentLineText();
-		u.m_RemovedStart = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));
-		u.m_RemovedEnd = Coordinates(currentCursorCoord.m_Line + 1, GetLineMaxColumn(currentCursorCoord.m_Line + 1));
+		u.m_Removed = '\n';
+		u.m_Removed.append(GetCurrentLineText());
+		u.m_RemovedStart = Coordinates(currentCursorCoord.m_Line + 1, GetLineMaxColumn(currentCursorCoord.m_Line + 1));
+		u.m_RemovedEnd = Coordinates(currentCursorCoord.m_Line + 2, GetLineMaxColumn(currentCursorCoord.m_Line + 2));
 
-		u.m_Added = GetCurrentLineText();
-		u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
-		u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));*/
+		u.m_Added = '\n';
+		u.m_Added.append(GetCurrentLineText());
+		u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 2, GetLineMaxColumn(currentCursorCoord.m_Line - 2));
+		u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
 
 		u.m_After = m_State;
-		//AddUndo(u);
+		AddUndo(u);
 	}
 
 	void EditorUI::TextEditorSpec::ShiftTextDown()

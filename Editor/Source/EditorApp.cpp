@@ -22,7 +22,7 @@ namespace Kargono
 		};
 
 		m_ExportProjectLocation.Label = "Export Location";
-		m_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
+		m_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Export";
 
 		m_ExportProjectServer.Label = "Export Server";
 		m_ExportProjectServer.CurrentBoolean = true;

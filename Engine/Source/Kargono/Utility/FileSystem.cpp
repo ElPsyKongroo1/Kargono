@@ -175,7 +175,7 @@ namespace Kargono::Utility
 	bool FileSystem::DeleteSelectedDirectory(const std::filesystem::path& filepath) noexcept
 	{
 		std::error_code ec;
-		uintmax_t deleteCount = std::filesystem::remove_all(filepath);
+		uintmax_t deleteCount = std::filesystem::remove_all(filepath, ec);
 
 		if (ec)
 		{
