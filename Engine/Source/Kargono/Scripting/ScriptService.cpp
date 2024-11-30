@@ -504,7 +504,7 @@ namespace Kargono::Scripting
 	void ScriptModuleBuilder::CreateScriptModule()
 	{
 		// Release active script module so it is available to be written to...
-		KG_WARN("Closing active script module...");
+		KG_INFO("Closing active script module...");
 		ScriptService::CloseActiveScriptModule();
 
 		// Load in ScriptRegistry if not already loaded

@@ -235,6 +235,12 @@ namespace Kargono::Panels
 		{
 			s_EditorApp->OpenSceneDialog();
 		});
+
+		m_MainSceneHeader.AddToSelectionList("Duplicate Scene", []()
+		{
+			s_EditorApp->DuplicateEditorScene();
+		});
+
 		m_MainSceneHeader.AddToSelectionList("Create Entity", []()
 		{
 			Scenes::SceneService::GetActiveScene()->CreateEntity("Empty Entity");

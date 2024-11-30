@@ -164,6 +164,8 @@ namespace Kargono
 		void NewSceneDialog();
 		bool NewScene(const std::string& sceneName);
 		void NewSceneDialog(const std::filesystem::path& initialDirectory);
+		void DuplicateEditorScene();
+		void DuplicateEditorScene(const std::filesystem::path& initialDirectory);
 		void OpenSceneDialog();
 	public:
 		void OpenScene(const std::filesystem::path& path);

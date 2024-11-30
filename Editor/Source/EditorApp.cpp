@@ -1145,7 +1145,11 @@ namespace Kargono
 	{
 		// Provide file dialog to select location and name of scene
 		std::filesystem::path filepath = Utility::FileDialogs::SaveFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());
-		if (filepath.empty()) { return; }
+		if (filepath.empty())
+		{
+			KG_WARN("Attempt to create scene failed. No creation directory returned from save dialog");
+			return;
+		}
 		if (Assets::AssetService::HasScene(filepath.stem().string()))
 		{
 			KG_WARN("Attempt to create scene with duplicate name!");
@@ -1162,6 +1166,40 @@ namespace Kargono
 		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		
+	}
+
+	void EditorApp::DuplicateEditorScene()
+	{
+		DuplicateEditorScene(Projects::ProjectService::GetActiveAssetDirectory());
+	}
+
+	void EditorApp::DuplicateEditorScene(const std::filesystem::path& initialDirectory)
+	{
+		// Provide file dialog to select location and name of scene
+		std::filesystem::path filepath = Utility::FileDialogs::SaveFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());
+		if (filepath.empty()) 
+		{ 
+			KG_WARN("Attempt to create scene failed. No creation directory returned from save dialog");
+			return; 
+		}
+		if (Assets::AssetService::HasScene(filepath.stem().string()))
+		{
+			KG_WARN("Attempt to create scene with duplicate name!");
+			return;
+		}
+
+		// Create scene file
+		std::string fileName = filepath.stem().string();
+		std::filesystem::path sceneDirectory = filepath.parent_path();
+		m_EditorSceneHandle = Assets::AssetService::CreateScene(fileName.c_str(), sceneDirectory);
+
+		// Duplicate existing scene
+		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		m_EditorScene = Scenes::SceneService::CreateSceneCopy(m_EditorScene);
+		Assets::AssetService::SaveScene(m_EditorInputMapHandle, m_EditorScene);
+
+		// Open new scene in engine
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 	}
 
 	void EditorApp::OpenSceneDialog()
