@@ -1,8 +1,8 @@
 # About Project 
 
-| Stable-Branch | Development-Branch |
+| main | dev |
 | ------- | ----- |
-| [![MSBuild](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml/badge.svg)](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml) | [![MSBuildryt](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml/badge.svg?branch=Development-Branch)](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml) |
+| [![MSBuild](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml/badge.svg?branch=dev)](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml) | [![MSBuildryt](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml/badge.svg?branch=dev)](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml) |
 
 
 This project is a simple game editor for 2D projects (3D in the future). The project includes: a game editor (Editor), an exporting project (Runtime), a multiplayer server (Server), and a core engine library (Engine). The Editor, Server, and Runtime are all stand alone executables that depend on the Engine library. 
@@ -33,12 +33,12 @@ The latest version of this project is always accessible in the Development-Branc
 - [Vulkan](https://vulkan.lunarg.com/) SDK with Debug Binaries. Version should be 3.0 or above.
 ## Instructions
 - Ensure the above requirements are met.
-- Clone the latest version of the Stable-Branch (latest stable version):
+- Clone the latest version of the main branch (latest stable version):
 
 		git clone https://github.com/ElPsyKongroo1/Kargono.git
-- Clone the latest version of the Development-Branch (experimental features):
+- Clone the latest version of the dev branch (experimental features):
 
-		git clone -b Development-Branch https://github.com/ElPsyKongroo1/Kargono.git
+		git clone -b dev https://github.com/ElPsyKongroo1/Kargono.git
 	![Alt text](Images/download_kargono.gif)
 	*(Cloning Stable-Branch)*
 - Run BuildScripts/VS_GenProjects.bat to build Visual Studio Solution/Project files.
