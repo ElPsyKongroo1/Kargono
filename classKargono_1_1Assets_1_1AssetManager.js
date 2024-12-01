@@ -19,6 +19,7 @@ var classKargono_1_1Assets_1_1AssetManager =
     [ "SetAssetFileLocation", "classKargono_1_1Assets_1_1AssetManager.html#afc34f13bf193e121368bf9feb3addd5f", null ],
     [ "GetAssetRegistry", "classKargono_1_1Assets_1_1AssetManager.html#ab10b565f9269fdcb6621013708323305", null ],
     [ "GetAssetCache", "classKargono_1_1Assets_1_1AssetManager.html#a042bbbff9aefda35fa06d5de0b74f0c1", null ],
+    [ "GetAssetRegistrySize", "classKargono_1_1Assets_1_1AssetManager.html#a35c7cfb2c45ef808979baf0744e4466a", null ],
     [ "GetAssetHandleFromFileLocation", "classKargono_1_1Assets_1_1AssetManager.html#a344b6c50f5a7e5f65f7505837eca30b3", null ],
     [ "GetAssetValidImportExtensions", "classKargono_1_1Assets_1_1AssetManager.html#a40ba8f7aa889ffd46ba5e3a5474f33cc", null ],
     [ "SerializeAsset", "classKargono_1_1Assets_1_1AssetManager.html#aa8e81b4cae55de3c316c38829e68d801", null ],

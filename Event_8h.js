@@ -12,6 +12,7 @@ var Event_8h =
       [ "CleanUpTimers", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a28f023b369fd31d7efc454b466956284", null ],
       [ "SkipUpdate", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a70696b7b5f77704be319247809c4976d", null ],
       [ "AddExtraUpdate", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a9db814276a230073c36058f917a71418", null ],
+      [ "LogEvent", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a448ea193c77e6977231916eb08b6cf51", null ],
       [ "AppTick", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a559b408d45669603dbac61cd15984f13", null ],
       [ "AppUpdate", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4ac177abb86f28dea426f2e3409e14bcda", null ],
       [ "AppRender", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a4b2eb3c601042333ac1c0565ff58e3d6", null ],
@@ -54,6 +55,7 @@ var Event_8h =
     ] ],
     [ "EventCategory", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522", [
       [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a661adecac578ef49aefda5401d7c5a8a", null ],
+      [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],

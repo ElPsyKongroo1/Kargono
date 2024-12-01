@@ -94,57 +94,79 @@ $(document).ready(function(){initNavTree('Log_8h_source.html',''); initResizable
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
 <div class="line"><a name="l00004"></a><span class="lineno"><a class="line" href="Log_8h.html#abff906b1cbb717518091a93936461b52">    4</a></span>&#160;<span class="preprocessor">#define KG_STRINGIFY(x) #x</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno"><a class="line" href="Log_8h.html#ae9b7d886e8acbd0ed222cf23a3442ba4">    5</a></span>&#160;<span class="preprocessor">#define KG_EXPAND_AND_STRINGIFY(...) KG_STRINGIFY(__VA_ARGS__)</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
-<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="classKargono_1_1Log.html">    9</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Log.html">Log</a></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    {</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Init</a>();</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">   14</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;spdlog::logger&gt;</a>&amp; <a class="code" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">GetCoreLogger</a>() { <span class="keywordflow">return</span> s_CoreLogger; }</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;spdlog::logger&gt;</a> s_CoreLogger;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    };</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;}</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">// General Logging</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#if defined(KG_DEBUG) || defined(KG_EXPORT_SERVER)</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="comment">// Core Log Macros</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">    #define KG_INFO(...)        SPDLOG_LOGGER_INFO(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">    #define KG_WARN(...)        SPDLOG_LOGGER_WARN(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">    #define KG_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">    #define KG_ERROR(...)       SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK_MSG(&quot;[KG_ERROR]: &quot;</span> KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="comment">// Used for Debugging</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">    #define KG_TRACE_INFO(...)      SPDLOG_LOGGER_TRACE(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">    #define KG_TRACE_CRITICAL(...)      SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">    #define KG_TRACE_ERROR(...)     SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK_MSG(&quot;[KG_ERROR]: &quot;</span> KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="comment">// Core Log Macros</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">   35</a></span>&#160;<span class="preprocessor">    #define KG_INFO(...)        </span></div>
-<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">   36</a></span>&#160;<span class="preprocessor">    #define KG_WARN(...)        SPDLOG_LOGGER_WARN(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="Log_8h.html#aa966f911c6b441ead2497227a9cee59f">   37</a></span>&#160;<span class="preprocessor">    #define KG_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">   38</a></span>&#160;<span class="preprocessor">    #define KG_ERROR(...)       SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK_MSG(&quot;[KG_ERROR]: &quot;</span> KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="comment">// Used for Debugging</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="Log_8h.html#a4e1e8ccd198e616d362371bf2a798f4e">   41</a></span>&#160;<span class="preprocessor">    #define KG_TRACE_INFO(...)      </span></div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="Log_8h.html#a63cfd904b31d136ddbf44645141442fe">   42</a></span>&#160;<span class="preprocessor">    #define KG_TRACE_CRITICAL(...)      </span></div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="Log_8h.html#a82cbfe785a1977a03a1c8521dc703c72">   43</a></span>&#160;<span class="preprocessor">    #define KG_TRACE_ERROR(...)     </span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#ifdef KG_ENABLE_VERIFY</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="comment">// Verify: Used to ensure systems are working correctly</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">    #define KG_VERIFY(predicate, ...) \</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">    if (predicate) { SPDLOG_LOGGER_INFO(::Kargono::Log::GetCoreLogger(), &quot;[Verified] &quot;</span> __VA_ARGS__); } \</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    else { SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), &quot;[Failed to Verify] &quot; __VA_ARGS__); KG_DEBUGBREAK_MSG(&quot;[Failed to Verify]: &quot; KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));  }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="Log_8h.html#a672dde7d3c8b8ee19efe5098b8a9192c">    6</a></span>&#160;<span class="preprocessor">#define KG_INFO_LOG_EVENT 1</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="Log_8h.html#a480bd6f02da57f0fbe34676f1728404e">    7</a></span>&#160;<span class="preprocessor">#define KG_WARNING_LOG_EVENT 2</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="Log_8h.html#ad836362c70d10b554d679009cf7ca338">    8</a></span>&#160;<span class="preprocessor">#define KG_CRITICAL_LOG_EVENT 3</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;{</div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classKargono_1_1Log.html">   12</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classKargono_1_1Log.html">Log</a></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Init</a>();</div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="classKargono_1_1Log.html#aeeec3dfcc5dc32799e941cc01fff09eb">   16</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Log.html#aeeec3dfcc5dc32799e941cc01fff09eb">GenerateLogEvent</a>(<span class="keywordtype">int</span> logType, <span class="keyword">const</span> <span class="keywordtype">char</span>* text)</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        {</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            GenerateLogEventImpl(logType, text);</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        }</div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="classKargono_1_1Log.html#a7e5fa525d56d77e8833d3711cc2fae9b">   20</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Log.html#a7e5fa525d56d77e8833d3711cc2fae9b">GenerateLogEvent</a>(<span class="keywordtype">int</span> logType, <span class="keyword">const</span> std::string&amp; text)</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        {</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            GenerateLogEventImpl(logType, text.c_str());</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        }</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classKargono_1_1Log.html#a2d7dd9175e509e8bf1fce5bc7096fada">   25</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Log.html#a2d7dd9175e509e8bf1fce5bc7096fada">GenerateLogEvent</a>(<span class="keywordtype">int</span> logType, <span class="keyword">const</span> <span class="keywordtype">char</span>* format, Args&amp;&amp;... args) </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            <span class="keywordflow">return</span> GenerateLogEventImpl(logType, fmt::vformat(format, fmt::make_format_args(std::forward&lt;Args&gt;(args)...)).c_str());</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        }</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">   30</a></span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;spdlog::logger&gt;</a>&amp; <a class="code" href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">GetCoreLogger</a>() { <span class="keywordflow">return</span> s_CoreLogger; }</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> GenerateLogEventImpl(<span class="keywordtype">int</span> logType, <span class="keyword">const</span> <span class="keywordtype">char</span>* text);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keyword">static</span> <a class="code" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref&lt;spdlog::logger&gt;</a> s_CoreLogger;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    };</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;}</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">// General Logging</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#if defined(KG_DEBUG) || defined(KG_EXPORT_SERVER)</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="comment">// Core Log Macros</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">    #define KG_INFO(...)        SPDLOG_LOGGER_INFO(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); Kargono::Log::GenerateLogEvent(KG_INFO_LOG_EVENT, __VA_ARGS__);</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">    #define KG_WARN(...)        SPDLOG_LOGGER_WARN(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); Kargono::Log::GenerateLogEvent(KG_WARNING_LOG_EVENT, __VA_ARGS__);</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">    #define KG_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); Kargono::Log::GenerateLogEvent(KG_CRITICAL_LOG_EVENT, __VA_ARGS__);</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">    #define KG_ERROR(...)       SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK_MSG(&quot;[KG_ERROR]: &quot;</span> KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="comment">// Used for Debugging</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">    #define KG_TRACE_INFO(...)      SPDLOG_LOGGER_TRACE(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">    #define KG_TRACE_CRITICAL(...)      SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__);\</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">        Kargono::Log::GenerateLogEvent(KG_WARNING_LOG_EVENT, __VA_ARGS__);</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">    #define KG_TRACE_ERROR(...)     SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK_MSG(&quot;[KG_ERROR]: &quot;</span> KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="comment">// Core Log Macros</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">   54</a></span>&#160;<span class="preprocessor">    #define KG_INFO(...)        </span></div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="Log_8h.html#a764b175145e3ddb27f7467345c905d94">   55</a></span>&#160;<span class="preprocessor">    #define KG_WARN(...)        SPDLOG_LOGGER_WARN(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="Log_8h.html#aa966f911c6b441ead2497227a9cee59f">   56</a></span>&#160;<span class="preprocessor">    #define KG_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="Log_8h.html#a0fde1e10e9504c8cc3a772105b4257f3">   57</a></span>&#160;<span class="preprocessor">    #define KG_ERROR(...)       SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK_MSG(&quot;[KG_ERROR]: &quot;</span> KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="comment">// Used for Debugging</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="Log_8h.html#a4e1e8ccd198e616d362371bf2a798f4e">   60</a></span>&#160;<span class="preprocessor">    #define KG_TRACE_INFO(...)      </span></div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="Log_8h.html#a63cfd904b31d136ddbf44645141442fe">   61</a></span>&#160;<span class="preprocessor">    #define KG_TRACE_CRITICAL(...)      </span></div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="Log_8h.html#a82cbfe785a1977a03a1c8521dc703c72">   62</a></span>&#160;<span class="preprocessor">    #define KG_TRACE_ERROR(...)     </span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor">#ifdef KG_ENABLE_VERIFY</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment">// Verify: Used to ensure systems are working correctly</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor">    #define KG_VERIFY(predicate, ...) \</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">    if (predicate) { SPDLOG_LOGGER_INFO(::Kargono::Log::GetCoreLogger(), &quot;[Verified] &quot;</span> __VA_ARGS__); } \</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    else { SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), &quot;[Failed to Verify] &quot; __VA_ARGS__); KG_DEBUGBREAK_MSG(&quot;[Failed to Verify]: &quot; KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));  }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
 <div class="ttc" id="aSpdLogAPI_8h_html"><div class="ttname"><a href="SpdLogAPI_8h.html">SpdLogAPI.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Log_html"><div class="ttname"><a href="classKargono_1_1Log.html">Kargono::Log</a></div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00009">Log.h:10</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Log_html_a12722783a432e0f50f826a68904c68b1"><div class="ttname"><a href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Kargono::Log::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="Log_8cpp_source.html#l00011">Log.cpp:11</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Log_html_af72965b9102a8a18051aaf08797be610"><div class="ttname"><a href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">Kargono::Log::GetCoreLogger</a></div><div class="ttdeci">static Ref&lt; spdlog::logger &gt; &amp; GetCoreLogger()</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00014">Log.h:14</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Log_html"><div class="ttname"><a href="classKargono_1_1Log.html">Kargono::Log</a></div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00012">Log.h:13</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Log_html_a12722783a432e0f50f826a68904c68b1"><div class="ttname"><a href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Kargono::Log::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="Log_8cpp_source.html#l00013">Log.cpp:13</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Log_html_a2d7dd9175e509e8bf1fce5bc7096fada"><div class="ttname"><a href="classKargono_1_1Log.html#a2d7dd9175e509e8bf1fce5bc7096fada">Kargono::Log::GenerateLogEvent</a></div><div class="ttdeci">static void GenerateLogEvent(int logType, const char *format, Args &amp;&amp;... args)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00025">Log.h:25</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Log_html_a7e5fa525d56d77e8833d3711cc2fae9b"><div class="ttname"><a href="classKargono_1_1Log.html#a7e5fa525d56d77e8833d3711cc2fae9b">Kargono::Log::GenerateLogEvent</a></div><div class="ttdeci">static void GenerateLogEvent(int logType, const std::string &amp;text)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00020">Log.h:20</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Log_html_aeeec3dfcc5dc32799e941cc01fff09eb"><div class="ttname"><a href="classKargono_1_1Log.html#aeeec3dfcc5dc32799e941cc01fff09eb">Kargono::Log::GenerateLogEvent</a></div><div class="ttdeci">static void GenerateLogEvent(int logType, const char *text)</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00016">Log.h:16</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Log_html_af72965b9102a8a18051aaf08797be610"><div class="ttname"><a href="classKargono_1_1Log.html#af72965b9102a8a18051aaf08797be610">Kargono::Log::GetCoreLogger</a></div><div class="ttdeci">static Ref&lt; spdlog::logger &gt; &amp; GetCoreLogger()</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00030">Log.h:30</a></div></div>
 <div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
 <div class="ttc" id="anamespaceKargono_html_ac221b6fb3527122e8eb33e4cf8343e9a"><div class="ttname"><a href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Kargono::Ref</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; Ref</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00063">Base.h:63</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

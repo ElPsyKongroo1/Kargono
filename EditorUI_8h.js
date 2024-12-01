@@ -108,5 +108,6 @@ var EditorUI_8h =
       [ "SelectOption_PopupOnly", "EditorUI_8h.html#ad3c87b90206a14e6c75aba041ee86b80a23163d8b66ed165fc5b917f5b4d3e395", null ],
       [ "SelectOption_HandleEditButtonExternally", "EditorUI_8h.html#ad3c87b90206a14e6c75aba041ee86b80a380010274524533a8737cabed71b64ca", null ]
     ] ],
+    [ "k_InvalidWidgetID", "EditorUI_8h.html#ad7caec6dd7f6f6c799c65986bfc57023", null ],
     [ "widgetCounter", "EditorUI_8h.html#ac1d85a17348a1e51f5233393fb754325", null ]
 ];

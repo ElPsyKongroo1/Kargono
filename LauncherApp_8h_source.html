@@ -112,43 +112,46 @@ $(document).ready(function(){initNavTree('LauncherApp_8h_source.html',''); initR
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1LauncherApp.html#a436d3d2c65124c8b87e4d38c115e05d1">Init</a>() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1LauncherApp.html#ab6f2d03e0a59b6dfcab4c6ed0e814108">Terminate</a>() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1LauncherApp.html#aff481550eab0c7f845c4281167dd4781">OnUpdate</a>(<a class="code" href="classKargono_1_1Timestep.html">Timestep</a> ts) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="comment">//=========================</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="comment">// Manage Projects</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="comment">//=========================</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordtype">void</span> SelectProject();</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="comment">//=========================</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">// Getters/Setters</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="comment">//=========================</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classKargono_1_1LauncherApp.html#af63e8227c2af1df600b590b73822ec8b">   35</a></span>&#160;        std::filesystem::path <a class="code" href="classKargono_1_1LauncherApp.html#af63e8227c2af1df600b590b73822ec8b">GetSelectedProject</a>()</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            <span class="keywordflow">return</span> m_SelectedProject;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        }</div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="classKargono_1_1LauncherApp.html#a45e95805848083bdf0cff6dbd5c1393f">   39</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1LauncherApp.html#a45e95805848083bdf0cff6dbd5c1393f">SetSelectedProject</a>(<span class="keyword">const</span> std::filesystem::path&amp; path)</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            m_SelectedProject = path;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="comment">//=========================</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="comment">// Internal Fields</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="comment">//=========================</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        std::filesystem::path m_SelectedProject{};</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    };</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;}</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classKargono_1_1LauncherApp.html#a150a01d6632eb6a20dad47dc37e442d9">OnLogEvent</a>(<a class="code" href="classKargono_1_1Events_1_1Event.html">Events::Event</a>* event) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="comment">//=========================</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="comment">// Manage Projects</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="comment">//=========================</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="keywordtype">void</span> SelectProject();</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">//=========================</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="comment">// Getters/Setters</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="comment">//=========================</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classKargono_1_1LauncherApp.html#af63e8227c2af1df600b590b73822ec8b">   36</a></span>&#160;        std::filesystem::path <a class="code" href="classKargono_1_1LauncherApp.html#af63e8227c2af1df600b590b73822ec8b">GetSelectedProject</a>()</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            <span class="keywordflow">return</span> m_SelectedProject;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        }</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="classKargono_1_1LauncherApp.html#a45e95805848083bdf0cff6dbd5c1393f">   40</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1LauncherApp.html#a45e95805848083bdf0cff6dbd5c1393f">SetSelectedProject</a>(<span class="keyword">const</span> std::filesystem::path&amp; path)</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            m_SelectedProject = path;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        }</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="comment">//=========================</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="comment">// Internal Fields</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="comment">//=========================</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        std::filesystem::path m_SelectedProject{};</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    };</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;}</div>
 <div class="ttc" id="aKargono_8h_html"><div class="ttname"><a href="Kargono_8h.html">Kargono.h</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Application_html"><div class="ttname"><a href="classKargono_1_1Application.html">Kargono::Application</a></div><div class="ttdef"><b>Definition:</b> <a href="Application_8h_source.html#l00012">Application.h:13</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1Event_html"><div class="ttname"><a href="classKargono_1_1Events_1_1Event.html">Kargono::Events::Event</a></div><div class="ttdef"><b>Definition:</b> <a href="Event_8h_source.html#l00093">Event.h:94</a></div></div>
 <div class="ttc" id="aclassKargono_1_1LauncherApp_html"><div class="ttname"><a href="classKargono_1_1LauncherApp.html">Kargono::LauncherApp</a></div><div class="ttdef"><b>Definition:</b> <a href="LauncherApp_8h_source.html#l00007">LauncherApp.h:8</a></div></div>
+<div class="ttc" id="aclassKargono_1_1LauncherApp_html_a150a01d6632eb6a20dad47dc37e442d9"><div class="ttname"><a href="classKargono_1_1LauncherApp.html#a150a01d6632eb6a20dad47dc37e442d9">Kargono::LauncherApp::OnLogEvent</a></div><div class="ttdeci">virtual bool OnLogEvent(Events::Event *event) override</div><div class="ttdef"><b>Definition:</b> <a href="LauncherApp_8cpp_source.html#l00059">LauncherApp.cpp:59</a></div></div>
 <div class="ttc" id="aclassKargono_1_1LauncherApp_html_a436d3d2c65124c8b87e4d38c115e05d1"><div class="ttname"><a href="classKargono_1_1LauncherApp.html#a436d3d2c65124c8b87e4d38c115e05d1">Kargono::LauncherApp::Init</a></div><div class="ttdeci">virtual void Init() override</div><div class="ttdef"><b>Definition:</b> <a href="LauncherApp_8cpp_source.html#l00040">LauncherApp.cpp:40</a></div></div>
-<div class="ttc" id="aclassKargono_1_1LauncherApp_html_a45e95805848083bdf0cff6dbd5c1393f"><div class="ttname"><a href="classKargono_1_1LauncherApp.html#a45e95805848083bdf0cff6dbd5c1393f">Kargono::LauncherApp::SetSelectedProject</a></div><div class="ttdeci">void SetSelectedProject(const std::filesystem::path &amp;path)</div><div class="ttdef"><b>Definition:</b> <a href="LauncherApp_8h_source.html#l00039">LauncherApp.h:39</a></div></div>
+<div class="ttc" id="aclassKargono_1_1LauncherApp_html_a45e95805848083bdf0cff6dbd5c1393f"><div class="ttname"><a href="classKargono_1_1LauncherApp.html#a45e95805848083bdf0cff6dbd5c1393f">Kargono::LauncherApp::SetSelectedProject</a></div><div class="ttdeci">void SetSelectedProject(const std::filesystem::path &amp;path)</div><div class="ttdef"><b>Definition:</b> <a href="LauncherApp_8h_source.html#l00040">LauncherApp.h:40</a></div></div>
 <div class="ttc" id="aclassKargono_1_1LauncherApp_html_a717157b3083e8f746ec43a4fe81dda1c"><div class="ttname"><a href="classKargono_1_1LauncherApp.html#a717157b3083e8f746ec43a4fe81dda1c">Kargono::LauncherApp::LauncherApp</a></div><div class="ttdeci">LauncherApp()=default</div></div>
 <div class="ttc" id="aclassKargono_1_1LauncherApp_html_a8296fedac10fadf6f28388b45b9548f0"><div class="ttname"><a href="classKargono_1_1LauncherApp.html#a8296fedac10fadf6f28388b45b9548f0">Kargono::LauncherApp::~LauncherApp</a></div><div class="ttdeci">virtual ~LauncherApp() override=default</div></div>
 <div class="ttc" id="aclassKargono_1_1LauncherApp_html_ab6f2d03e0a59b6dfcab4c6ed0e814108"><div class="ttname"><a href="classKargono_1_1LauncherApp.html#ab6f2d03e0a59b6dfcab4c6ed0e814108">Kargono::LauncherApp::Terminate</a></div><div class="ttdeci">virtual void Terminate() override</div><div class="ttdef"><b>Definition:</b> <a href="LauncherApp_8cpp_source.html#l00054">LauncherApp.cpp:54</a></div></div>
-<div class="ttc" id="aclassKargono_1_1LauncherApp_html_af63e8227c2af1df600b590b73822ec8b"><div class="ttname"><a href="classKargono_1_1LauncherApp.html#af63e8227c2af1df600b590b73822ec8b">Kargono::LauncherApp::GetSelectedProject</a></div><div class="ttdeci">std::filesystem::path GetSelectedProject()</div><div class="ttdef"><b>Definition:</b> <a href="LauncherApp_8h_source.html#l00035">LauncherApp.h:35</a></div></div>
-<div class="ttc" id="aclassKargono_1_1LauncherApp_html_aff481550eab0c7f845c4281167dd4781"><div class="ttname"><a href="classKargono_1_1LauncherApp.html#aff481550eab0c7f845c4281167dd4781">Kargono::LauncherApp::OnUpdate</a></div><div class="ttdeci">virtual void OnUpdate(Timestep ts) override</div><div class="ttdef"><b>Definition:</b> <a href="LauncherApp_8cpp_source.html#l00058">LauncherApp.cpp:58</a></div></div>
+<div class="ttc" id="aclassKargono_1_1LauncherApp_html_af63e8227c2af1df600b590b73822ec8b"><div class="ttname"><a href="classKargono_1_1LauncherApp.html#af63e8227c2af1df600b590b73822ec8b">Kargono::LauncherApp::GetSelectedProject</a></div><div class="ttdeci">std::filesystem::path GetSelectedProject()</div><div class="ttdef"><b>Definition:</b> <a href="LauncherApp_8h_source.html#l00036">LauncherApp.h:36</a></div></div>
+<div class="ttc" id="aclassKargono_1_1LauncherApp_html_aff481550eab0c7f845c4281167dd4781"><div class="ttname"><a href="classKargono_1_1LauncherApp.html#aff481550eab0c7f845c4281167dd4781">Kargono::LauncherApp::OnUpdate</a></div><div class="ttdeci">virtual void OnUpdate(Timestep ts) override</div><div class="ttdef"><b>Definition:</b> <a href="LauncherApp_8cpp_source.html#l00084">LauncherApp.cpp:84</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Timestep_html"><div class="ttname"><a href="classKargono_1_1Timestep.html">Kargono::Timestep</a></div><div class="ttdef"><b>Definition:</b> <a href="Timestep_8h_source.html#l00006">Timestep.h:7</a></div></div>
 <div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

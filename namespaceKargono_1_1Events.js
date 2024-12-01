@@ -9,6 +9,7 @@ var namespaceKargono_1_1Events =
     [ "RemoveTickGeneratorUsage", "classKargono_1_1Events_1_1RemoveTickGeneratorUsage.html", "classKargono_1_1Events_1_1RemoveTickGeneratorUsage" ],
     [ "SkipUpdateEvent", "classKargono_1_1Events_1_1SkipUpdateEvent.html", "classKargono_1_1Events_1_1SkipUpdateEvent" ],
     [ "AddExtraUpdateEvent", "classKargono_1_1Events_1_1AddExtraUpdateEvent.html", "classKargono_1_1Events_1_1AddExtraUpdateEvent" ],
+    [ "LogEvent", "classKargono_1_1Events_1_1LogEvent.html", "classKargono_1_1Events_1_1LogEvent" ],
     [ "ManageAsset", "classKargono_1_1Events_1_1ManageAsset.html", "classKargono_1_1Events_1_1ManageAsset" ],
     [ "DebugLineData", "structKargono_1_1Events_1_1DebugLineData.html", "structKargono_1_1Events_1_1DebugLineData" ],
     [ "DebugPointData", "structKargono_1_1Events_1_1DebugPointData.html", "structKargono_1_1Events_1_1DebugPointData" ],
@@ -46,6 +47,12 @@ var namespaceKargono_1_1Events =
     [ "ManageEntity", "classKargono_1_1Events_1_1ManageEntity.html", "classKargono_1_1Events_1_1ManageEntity" ],
     [ "ManageScene", "classKargono_1_1Events_1_1ManageScene.html", "classKargono_1_1Events_1_1ManageScene" ],
     [ "EventCallbackFn", "namespaceKargono_1_1Events.html#a44c4fd28fd93015379592e04f356fee7", null ],
+    [ "LogEventLevel", "namespaceKargono_1_1Events.html#ac737beff7ba8e49fc9fb0e398c94dc20", [
+      [ "None", "namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
+      [ "Info", "namespaceKargono_1_1Events.html#ac737beff7ba8e49fc9fb0e398c94dc20a4059b0251f66a18cb56f544728796875", null ],
+      [ "Warning", "namespaceKargono_1_1Events.html#ac737beff7ba8e49fc9fb0e398c94dc20a0eaadb4fcb48a0a0ed7bc9868be9fbaa", null ],
+      [ "Critical", "namespaceKargono_1_1Events.html#ac737beff7ba8e49fc9fb0e398c94dc20a278d01e5af56273bae1bb99a98b370cd", null ]
+    ] ],
     [ "ManageAssetAction", "namespaceKargono_1_1Events.html#a1803f251f623c192212fa048b22085ec", [
       [ "None", "namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "Delete", "namespaceKargono_1_1Events.html#a1803f251f623c192212fa048b22085ecaf2a6c498fb90ee345d997f888fce3b18", null ],
@@ -70,6 +77,7 @@ var namespaceKargono_1_1Events =
       [ "CleanUpTimers", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a28f023b369fd31d7efc454b466956284", null ],
       [ "SkipUpdate", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a70696b7b5f77704be319247809c4976d", null ],
       [ "AddExtraUpdate", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a9db814276a230073c36058f917a71418", null ],
+      [ "LogEvent", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a448ea193c77e6977231916eb08b6cf51", null ],
       [ "AppTick", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a559b408d45669603dbac61cd15984f13", null ],
       [ "AppUpdate", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4ac177abb86f28dea426f2e3409e14bcda", null ],
       [ "AppRender", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a4b2eb3c601042333ac1c0565ff58e3d6", null ],
@@ -112,6 +120,7 @@ var namespaceKargono_1_1Events =
     ] ],
     [ "EventCategory", "namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522", [
       [ "None", "namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a661adecac578ef49aefda5401d7c5a8a", null ],
+      [ "None", "namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "None", "namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "None", "namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "None", "namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],

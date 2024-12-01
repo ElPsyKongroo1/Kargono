@@ -112,6 +112,7 @@ var annotated_dup =
         [ "RemoveTickGeneratorUsage", "classKargono_1_1Events_1_1RemoveTickGeneratorUsage.html", "classKargono_1_1Events_1_1RemoveTickGeneratorUsage" ],
         [ "SkipUpdateEvent", "classKargono_1_1Events_1_1SkipUpdateEvent.html", "classKargono_1_1Events_1_1SkipUpdateEvent" ],
         [ "AddExtraUpdateEvent", "classKargono_1_1Events_1_1AddExtraUpdateEvent.html", "classKargono_1_1Events_1_1AddExtraUpdateEvent" ],
+        [ "LogEvent", "classKargono_1_1Events_1_1LogEvent.html", "classKargono_1_1Events_1_1LogEvent" ],
         [ "ManageAsset", "classKargono_1_1Events_1_1ManageAsset.html", "classKargono_1_1Events_1_1ManageAsset" ],
         [ "DebugLineData", "structKargono_1_1Events_1_1DebugLineData.html", "structKargono_1_1Events_1_1DebugLineData" ],
         [ "DebugPointData", "structKargono_1_1Events_1_1DebugPointData.html", "structKargono_1_1Events_1_1DebugPointData" ],

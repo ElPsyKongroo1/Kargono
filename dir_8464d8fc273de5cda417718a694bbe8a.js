@@ -1,16 +1,6 @@
 var dir_8464d8fc273de5cda417718a694bbe8a =
 [
-    [ "ApplicationEvent.h", "ApplicationEvent_8h.html", [
-      [ "WindowResizeEvent", "classKargono_1_1Events_1_1WindowResizeEvent.html", "classKargono_1_1Events_1_1WindowResizeEvent" ],
-      [ "WindowCloseEvent", "classKargono_1_1Events_1_1WindowCloseEvent.html", "classKargono_1_1Events_1_1WindowCloseEvent" ],
-      [ "ApplicationCloseEvent", "classKargono_1_1Events_1_1ApplicationCloseEvent.html", "classKargono_1_1Events_1_1ApplicationCloseEvent" ],
-      [ "CleanUpTimersEvent", "classKargono_1_1Events_1_1CleanUpTimersEvent.html", "classKargono_1_1Events_1_1CleanUpTimersEvent" ],
-      [ "AppTickEvent", "classKargono_1_1Events_1_1AppTickEvent.html", "classKargono_1_1Events_1_1AppTickEvent" ],
-      [ "AddTickGeneratorUsage", "classKargono_1_1Events_1_1AddTickGeneratorUsage.html", "classKargono_1_1Events_1_1AddTickGeneratorUsage" ],
-      [ "RemoveTickGeneratorUsage", "classKargono_1_1Events_1_1RemoveTickGeneratorUsage.html", "classKargono_1_1Events_1_1RemoveTickGeneratorUsage" ],
-      [ "SkipUpdateEvent", "classKargono_1_1Events_1_1SkipUpdateEvent.html", "classKargono_1_1Events_1_1SkipUpdateEvent" ],
-      [ "AddExtraUpdateEvent", "classKargono_1_1Events_1_1AddExtraUpdateEvent.html", "classKargono_1_1Events_1_1AddExtraUpdateEvent" ]
-    ] ],
+    [ "ApplicationEvent.h", "ApplicationEvent_8h.html", "ApplicationEvent_8h" ],
     [ "AssetEvent.h", "AssetEvent_8h.html", "AssetEvent_8h" ],
     [ "EditorEvent.h", "EditorEvent_8h.html", "EditorEvent_8h" ],
     [ "Event.h", "Event_8h.html", "Event_8h" ],

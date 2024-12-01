@@ -109,5 +109,6 @@ var namespaceKargono_1_1EditorUI =
     ] ],
     [ "WidgetIterator", "namespaceKargono_1_1EditorUI.html#a82f4b8e89c5f747b8d53866b950eef4e", null ],
     [ "ProcessTooltipEntries", "namespaceKargono_1_1EditorUI.html#af408aeb68c0adfa78b69d207e75c399a", null ],
+    [ "k_InvalidWidgetID", "namespaceKargono_1_1EditorUI.html#ad7caec6dd7f6f6c799c65986bfc57023", null ],
     [ "widgetCounter", "namespaceKargono_1_1EditorUI.html#ac1d85a17348a1e51f5233393fb754325", null ]
 ];

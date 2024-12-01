@@ -92,45 +92,81 @@ $(document).ready(function(){initNavTree('Log_8cpp_source.html',''); initResizab
 <a href="Log_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="kgpch_8h.html">kgpch.h</a>&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Base_8h.html">Kargono/Core/Base.h</a>&quot;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Log_8h.html">Kargono/Core/Log.h</a>&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="SpdlogBackend_8h.html">API/Logger/SpdlogBackend.h</a>&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ApplicationEvent_8h.html">Kargono/Events/ApplicationEvent.h</a>&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Engine_8h.html">Kargono/Core/Engine.h</a>&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    Ref&lt;spdlog::logger&gt; Log::s_CoreLogger;</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">   11</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Log::Init</a> ()</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        std::vector&lt;spdlog::sink_ptr&gt; logSinks;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="namespaceKargono.html#a0607032144c54c0cdc6382c578bf86c8">s_TestingActive</a>)</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;            logSinks.emplace_back(std::make_shared&lt;spdlog::sinks::basic_file_sink_mt&gt;(<span class="stringliteral">&quot;Log/Kargono.log&quot;</span>, <span class="keyword">true</span>));</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            logSinks[0]-&gt;set_pattern(<span class="stringliteral">&quot;[%r] | [%s] | [%#] | [%!] | [%n] | [%v]&quot;</span>);</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        }</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        {</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            logSinks.emplace_back(std::make_shared&lt;spdlog::sinks::stdout_color_sink_mt&gt;());</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            logSinks.emplace_back(std::make_shared&lt;spdlog::sinks::basic_file_sink_mt&gt;(<span class="stringliteral">&quot;Log/Kargono.log&quot;</span>, <span class="keyword">true</span>));</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            logSinks[0]-&gt;set_pattern(<span class="stringliteral">&quot;%^[%r] [%s:%#]: %v%$&quot;</span>);</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            logSinks[1]-&gt;set_pattern(<span class="stringliteral">&quot;[%r] | [%s] | [%#] | [%!] | [%n] | [%v]&quot;</span>);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        }</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        s_CoreLogger = std::make_shared&lt;spdlog::logger&gt;(<span class="stringliteral">&quot;ENGINE&quot;</span>, begin(logSinks), end(logSinks));</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        spdlog::register_logger(s_CoreLogger);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        s_CoreLogger-&gt;set_level(spdlog::level::trace);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        s_CoreLogger-&gt;flush_on(spdlog::level::trace);</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        spdlog::set_default_logger(s_CoreLogger);</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="SpdlogBackend_8h.html">API/Logger/SpdlogBackend.h</a>&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceKargono.html">Kargono</a></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    Ref&lt;spdlog::logger&gt; Log::s_CoreLogger;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">   13</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Log::Init</a> ()</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    {</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        std::vector&lt;spdlog::sink_ptr&gt; logSinks;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="namespaceKargono.html#a0607032144c54c0cdc6382c578bf86c8">s_TestingActive</a>)</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        {</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            logSinks.emplace_back(std::make_shared&lt;spdlog::sinks::basic_file_sink_mt&gt;(<span class="stringliteral">&quot;Log/Kargono.log&quot;</span>, <span class="keyword">true</span>));</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            logSinks[0]-&gt;set_pattern(<span class="stringliteral">&quot;[%r] | [%s] | [%#] | [%!] | [%n] | [%v]&quot;</span>);</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        }</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            logSinks.emplace_back(std::make_shared&lt;spdlog::sinks::stdout_color_sink_mt&gt;());</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            logSinks.emplace_back(std::make_shared&lt;spdlog::sinks::basic_file_sink_mt&gt;(<span class="stringliteral">&quot;Log/Kargono.log&quot;</span>, <span class="keyword">true</span>));</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            logSinks[0]-&gt;set_pattern(<span class="stringliteral">&quot;%^[%r] [%s:%#]: %v%$&quot;</span>);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            logSinks[1]-&gt;set_pattern(<span class="stringliteral">&quot;[%r] | [%s] | [%#] | [%!] | [%n] | [%v]&quot;</span>);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        }</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        s_CoreLogger = std::make_shared&lt;spdlog::logger&gt;(<span class="stringliteral">&quot;ENGINE&quot;</span>, begin(logSinks), end(logSinks));</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        spdlog::register_logger(s_CoreLogger);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        s_CoreLogger-&gt;set_level(spdlog::level::trace);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        s_CoreLogger-&gt;flush_on(spdlog::level::trace);</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        KG_VERIFY(s_CoreLogger, <span class="stringliteral">&quot;Logging System&quot;</span>);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    }</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;}</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        spdlog::set_default_logger(s_CoreLogger);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        KG_VERIFY(s_CoreLogger, <span class="stringliteral">&quot;Logging System&quot;</span>);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    }</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordtype">void</span> Log::GenerateLogEventImpl(<span class="keywordtype">int</span> logType, <span class="keyword">const</span> <span class="keywordtype">char</span>* text)</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classKargono_1_1EngineService.html#af88e1625230c1a2bc919fafbc94fc6a9">EngineService::IsApplicationActive</a>())</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        {</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            <span class="keywordflow">if</span> (logType == <a class="code" href="Log_8h.html#a672dde7d3c8b8ee19efe5098b8a9192c">KG_INFO_LOG_EVENT</a>)</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                <a class="code" href="classKargono_1_1Events_1_1LogEvent.html">Events::LogEvent</a> logEvent{ text, <a class="code" href="namespaceKargono_1_1Events.html#ac737beff7ba8e49fc9fb0e398c94dc20a4059b0251f66a18cb56f544728796875">Events::LogEventLevel::Info</a> };</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                <a class="code" href="classKargono_1_1EngineService.html#aa01404970589911fb71832a527bebd6f">EngineService::OnEvent</a>(&amp;logEvent);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            }</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (logType == <a class="code" href="Log_8h.html#a480bd6f02da57f0fbe34676f1728404e">KG_WARNING_LOG_EVENT</a>)</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                Events::LogEvent logEvent{ text, <a class="code" href="namespaceKargono_1_1Events.html#ac737beff7ba8e49fc9fb0e398c94dc20a0eaadb4fcb48a0a0ed7bc9868be9fbaa">Events::LogEventLevel::Warning</a> };</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                <a class="code" href="classKargono_1_1EngineService.html#aa01404970589911fb71832a527bebd6f">EngineService::OnEvent</a>(&amp;logEvent);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (logType == <a class="code" href="Log_8h.html#ad836362c70d10b554d679009cf7ca338">KG_CRITICAL_LOG_EVENT</a>)</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                Events::LogEvent logEvent{ text, <a class="code" href="namespaceKargono_1_1Events.html#ac737beff7ba8e49fc9fb0e398c94dc20a278d01e5af56273bae1bb99a98b370cd">Events::LogEventLevel::Critical</a> };</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                <a class="code" href="classKargono_1_1EngineService.html#aa01404970589911fb71832a527bebd6f">EngineService::OnEvent</a>(&amp;logEvent);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    }</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;}</div>
+<div class="ttc" id="aApplicationEvent_8h_html"><div class="ttname"><a href="ApplicationEvent_8h.html">ApplicationEvent.h</a></div></div>
 <div class="ttc" id="aBase_8h_html"><div class="ttname"><a href="Base_8h.html">Base.h</a></div></div>
+<div class="ttc" id="aEngine_8h_html"><div class="ttname"><a href="Engine_8h.html">Engine.h</a></div></div>
 <div class="ttc" id="aLog_8h_html"><div class="ttname"><a href="Log_8h.html">Log.h</a></div></div>
+<div class="ttc" id="aLog_8h_html_a480bd6f02da57f0fbe34676f1728404e"><div class="ttname"><a href="Log_8h.html#a480bd6f02da57f0fbe34676f1728404e">KG_WARNING_LOG_EVENT</a></div><div class="ttdeci">#define KG_WARNING_LOG_EVENT</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00007">Log.h:7</a></div></div>
+<div class="ttc" id="aLog_8h_html_a672dde7d3c8b8ee19efe5098b8a9192c"><div class="ttname"><a href="Log_8h.html#a672dde7d3c8b8ee19efe5098b8a9192c">KG_INFO_LOG_EVENT</a></div><div class="ttdeci">#define KG_INFO_LOG_EVENT</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00006">Log.h:6</a></div></div>
+<div class="ttc" id="aLog_8h_html_ad836362c70d10b554d679009cf7ca338"><div class="ttname"><a href="Log_8h.html#ad836362c70d10b554d679009cf7ca338">KG_CRITICAL_LOG_EVENT</a></div><div class="ttdeci">#define KG_CRITICAL_LOG_EVENT</div><div class="ttdef"><b>Definition:</b> <a href="Log_8h_source.html#l00008">Log.h:8</a></div></div>
 <div class="ttc" id="aSpdlogBackend_8h_html"><div class="ttname"><a href="SpdlogBackend_8h.html">SpdlogBackend.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1Log_html_a12722783a432e0f50f826a68904c68b1"><div class="ttname"><a href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Kargono::Log::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="Log_8cpp_source.html#l00011">Log.cpp:11</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineService_html_aa01404970589911fb71832a527bebd6f"><div class="ttname"><a href="classKargono_1_1EngineService.html#aa01404970589911fb71832a527bebd6f">Kargono::EngineService::OnEvent</a></div><div class="ttdeci">static void OnEvent(Events::Event *e)</div><div class="ttdef"><b>Definition:</b> <a href="Engine_8cpp_source.html#l00131">Engine.cpp:131</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineService_html_af88e1625230c1a2bc919fafbc94fc6a9"><div class="ttname"><a href="classKargono_1_1EngineService.html#af88e1625230c1a2bc919fafbc94fc6a9">Kargono::EngineService::IsApplicationActive</a></div><div class="ttdeci">static bool IsApplicationActive()</div><div class="ttdef"><b>Definition:</b> <a href="Engine_8h_source.html#l00142">Engine.h:142</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Events_1_1LogEvent_html"><div class="ttname"><a href="classKargono_1_1Events_1_1LogEvent.html">Kargono::Events::LogEvent</a></div><div class="ttdef"><b>Definition:</b> <a href="ApplicationEvent_8h_source.html#l00239">ApplicationEvent.h:240</a></div></div>
+<div class="ttc" id="aclassKargono_1_1Log_html_a12722783a432e0f50f826a68904c68b1"><div class="ttname"><a href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Kargono::Log::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition:</b> <a href="Log_8cpp_source.html#l00013">Log.cpp:13</a></div></div>
 <div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
+<div class="ttc" id="anamespaceKargono_1_1Events_html_ac737beff7ba8e49fc9fb0e398c94dc20a0eaadb4fcb48a0a0ed7bc9868be9fbaa"><div class="ttname"><a href="namespaceKargono_1_1Events.html#ac737beff7ba8e49fc9fb0e398c94dc20a0eaadb4fcb48a0a0ed7bc9868be9fbaa">Kargono::Events::LogEventLevel::Warning</a></div><div class="ttdeci">@ Warning</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Events_html_ac737beff7ba8e49fc9fb0e398c94dc20a278d01e5af56273bae1bb99a98b370cd"><div class="ttname"><a href="namespaceKargono_1_1Events.html#ac737beff7ba8e49fc9fb0e398c94dc20a278d01e5af56273bae1bb99a98b370cd">Kargono::Events::LogEventLevel::Critical</a></div><div class="ttdeci">@ Critical</div></div>
+<div class="ttc" id="anamespaceKargono_1_1Events_html_ac737beff7ba8e49fc9fb0e398c94dc20a4059b0251f66a18cb56f544728796875"><div class="ttname"><a href="namespaceKargono_1_1Events.html#ac737beff7ba8e49fc9fb0e398c94dc20a4059b0251f66a18cb56f544728796875">Kargono::Events::LogEventLevel::Info</a></div><div class="ttdeci">@ Info</div></div>
 <div class="ttc" id="anamespaceKargono_html"><div class="ttname"><a href="namespaceKargono.html">Kargono</a></div><div class="ttdef"><b>Definition:</b> <a href="RuntimeApp_8cpp_source.html#l00006">RuntimeApp.cpp:7</a></div></div>
 <div class="ttc" id="anamespaceKargono_html_a0607032144c54c0cdc6382c578bf86c8"><div class="ttname"><a href="namespaceKargono.html#a0607032144c54c0cdc6382c578bf86c8">Kargono::s_TestingActive</a></div><div class="ttdeci">bool s_TestingActive</div><div class="ttdef"><b>Definition:</b> <a href="Base_8h_source.html#l00012">Base.h:12</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

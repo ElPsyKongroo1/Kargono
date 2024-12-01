@@ -122,6 +122,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a044bfed0fbed0299a454efb005841a80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfc199ce9b75152a61ce4e77db017398"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Application.html#acfc199ce9b75152a61ce4e77db017398">OnAssetEvent</a> (<a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> *event)</td></tr>
 <tr class="separator:acfc199ce9b75152a61ce4e77db017398"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a190092816fe64f827e275dab9c79d76c"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Application.html#a190092816fe64f827e275dab9c79d76c">OnLogEvent</a> (<a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> *event)</td></tr>
+<tr class="separator:a190092816fe64f827e275dab9c79d76c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb509f42ddfbf266121b6e4838f7ce9f"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Application.html#aeb509f42ddfbf266121b6e4838f7ce9f">OnEditorEvent</a> (<a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> *event)</td></tr>
 <tr class="separator:aeb509f42ddfbf266121b6e4838f7ce9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cf88f0cd4cb94b041fc7810fab5dcf6"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Application.html#a6cf88f0cd4cb94b041fc7810fab5dcf6">GetName</a> () const</td></tr>
@@ -479,6 +481,36 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a190092816fe64f827e275dab9c79d76c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a190092816fe64f827e275dab9c79d76c">&#9670;&nbsp;</a></span>OnLogEvent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool Kargono::Application::OnLogEvent </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> *&#160;</td>
+          <td class="paramname"><em>event</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented in <a class="el" href="classKargono_1_1LauncherApp.html#a150a01d6632eb6a20dad47dc37e442d9">Kargono::LauncherApp</a>, and <a class="el" href="classKargono_1_1EditorApp.html#a820ec5cfa5c42696c74a5c44bb356a6c">Kargono::EditorApp</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="Application_8h_source.html#l00038">38</a> of file <a class="el" href="Application_8h_source.html">Application.h</a>.</p>
+
+</div>
+</div>
 <a id="aeb509f42ddfbf266121b6e4838f7ce9f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeb509f42ddfbf266121b6e4838f7ce9f">&#9670;&nbsp;</a></span>OnEditorEvent()</h2>
 
@@ -505,7 +537,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="classKargono_1_1EditorApp.html#a3f874a5722478a55815ea358128932f1">Kargono::EditorApp</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="Application_8h_source.html#l00038">38</a> of file <a class="el" href="Application_8h_source.html">Application.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Application_8h_source.html#l00039">39</a> of file <a class="el" href="Application_8h_source.html">Application.h</a>.</p>
 
 </div>
 </div>
@@ -524,7 +556,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Application_8h_source.html#l00043">43</a> of file <a class="el" href="Application_8h_source.html">Application.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Application_8h_source.html#l00044">44</a> of file <a class="el" href="Application_8h_source.html">Application.h</a>.</p>
 
 </div>
 </div>
@@ -549,7 +581,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Application_8h_source.html#l00045">45</a> of file <a class="el" href="Application_8h_source.html">Application.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Application_8h_source.html#l00046">46</a> of file <a class="el" href="Application_8h_source.html">Application.h</a>.</p>
 
 </div>
 </div>

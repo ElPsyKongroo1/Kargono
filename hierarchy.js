@@ -137,6 +137,7 @@ var hierarchy =
       [ "Kargono::Events::KeyReleasedEvent", "classKargono_1_1Events_1_1KeyReleasedEvent.html", null ],
       [ "Kargono::Events::KeyTypedEvent", "classKargono_1_1Events_1_1KeyTypedEvent.html", null ],
       [ "Kargono::Events::LeaveCurrentSession", "classKargono_1_1Events_1_1LeaveCurrentSession.html", null ],
+      [ "Kargono::Events::LogEvent", "classKargono_1_1Events_1_1LogEvent.html", null ],
       [ "Kargono::Events::ManageAsset", "classKargono_1_1Events_1_1ManageAsset.html", null ],
       [ "Kargono::Events::ManageEditor", "classKargono_1_1Events_1_1ManageEditor.html", null ],
       [ "Kargono::Events::ManageEntity", "classKargono_1_1Events_1_1ManageEntity.html", null ],

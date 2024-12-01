@@ -12,6 +12,7 @@ var classKargono_1_1Application =
     [ "OnNetworkEvent", "classKargono_1_1Application.html#a6d312a2759a64553cccf7aa28a8061a8", null ],
     [ "OnSceneEvent", "classKargono_1_1Application.html#a044bfed0fbed0299a454efb005841a80", null ],
     [ "OnAssetEvent", "classKargono_1_1Application.html#acfc199ce9b75152a61ce4e77db017398", null ],
+    [ "OnLogEvent", "classKargono_1_1Application.html#a190092816fe64f827e275dab9c79d76c", null ],
     [ "OnEditorEvent", "classKargono_1_1Application.html#aeb509f42ddfbf266121b6e4838f7ce9f", null ],
     [ "GetName", "classKargono_1_1Application.html#a6cf88f0cd4cb94b041fc7810fab5dcf6", null ],
     [ "m_DebugName", "classKargono_1_1Application.html#af68312a5906a5205c24243b07a353a17", null ]

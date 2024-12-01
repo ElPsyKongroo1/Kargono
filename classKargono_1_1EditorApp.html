@@ -125,6 +125,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad592f93e9ad82d97da62aebe6a7a5d0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f874a5722478a55815ea358128932f1"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorApp.html#a3f874a5722478a55815ea358128932f1">OnEditorEvent</a> (<a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> *event) override</td></tr>
 <tr class="separator:a3f874a5722478a55815ea358128932f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a820ec5cfa5c42696c74a5c44bb356a6c"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorApp.html#a820ec5cfa5c42696c74a5c44bb356a6c">OnLogEvent</a> (<a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> *event) override</td></tr>
+<tr class="separator:a820ec5cfa5c42696c74a5c44bb356a6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4046a054d87633bc75d2beddd35acf73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorApp.html#a4046a054d87633bc75d2beddd35acf73">OpenWarningMessage</a> (const char *message)</td></tr>
 <tr class="separator:a4046a054d87633bc75d2beddd35acf73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c63d02f2ddf8531afa81c3691d6eac4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1EditorApp.html#a8c63d02f2ddf8531afa81c3691d6eac4">OpenImportFileDialog</a> (const std::filesystem::path &amp;importFileLocation, <a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5e">Assets::AssetType</a> assetType)</td></tr>
@@ -582,6 +584,36 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a820ec5cfa5c42696c74a5c44bb356a6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a820ec5cfa5c42696c74a5c44bb356a6c">&#9670;&nbsp;</a></span>OnLogEvent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Kargono::EditorApp::OnLogEvent </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classKargono_1_1Events_1_1Event.html">Events::Event</a> *&#160;</td>
+          <td class="paramname"><em>event</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reimplemented from <a class="el" href="classKargono_1_1Application.html#a190092816fe64f827e275dab9c79d76c">Kargono::Application</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="EditorApp_8cpp_source.html#l00615">615</a> of file <a class="el" href="EditorApp_8cpp_source.html">EditorApp.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a4046a054d87633bc75d2beddd35acf73"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4046a054d87633bc75d2beddd35acf73">&#9670;&nbsp;</a></span>OpenWarningMessage()</h2>
 
@@ -598,7 +630,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8cpp_source.html#l00989">989</a> of file <a class="el" href="EditorApp_8cpp_source.html">EditorApp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8cpp_source.html#l01013">1013</a> of file <a class="el" href="EditorApp_8cpp_source.html">EditorApp.cpp</a>.</p>
 
 </div>
 </div>
@@ -628,7 +660,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8cpp_source.html#l00996">996</a> of file <a class="el" href="EditorApp_8cpp_source.html">EditorApp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8cpp_source.html#l01020">1020</a> of file <a class="el" href="EditorApp_8cpp_source.html">EditorApp.cpp</a>.</p>
 
 </div>
 </div>
@@ -655,7 +687,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00150">150</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00151">151</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -675,7 +707,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8cpp_source.html#l01154">1154</a> of file <a class="el" href="EditorApp_8cpp_source.html">EditorApp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8cpp_source.html#l01216">1216</a> of file <a class="el" href="EditorApp_8cpp_source.html">EditorApp.cpp</a>.</p>
 
 </div>
 </div>
@@ -692,7 +724,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00237">237</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00240">240</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -708,7 +740,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00238">238</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00241">241</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -724,7 +756,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00239">239</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00242">242</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -740,7 +772,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00240">240</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00243">243</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -756,7 +788,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00241">241</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00244">244</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -772,7 +804,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00242">242</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00245">245</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -788,7 +820,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00243">243</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00246">246</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -804,7 +836,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00244">244</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00247">247</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -820,7 +852,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00245">245</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00248">248</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -836,7 +868,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00246">246</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00249">249</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -852,7 +884,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00247">247</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00250">250</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -868,7 +900,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00248">248</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00251">251</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -884,7 +916,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00249">249</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00252">252</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -900,7 +932,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00250">250</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00253">253</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -916,7 +948,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00251">251</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00254">254</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -932,7 +964,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00252">252</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00255">255</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -948,7 +980,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00256">256</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00259">259</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -964,7 +996,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00257">257</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00260">260</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -980,7 +1012,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00260">260</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00263">263</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -996,7 +1028,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00261">261</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00264">264</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -1012,7 +1044,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00262">262</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00265">265</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -1028,7 +1060,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00265">265</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00268">268</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -1044,7 +1076,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00266">266</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00269">269</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -1060,7 +1092,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00267">267</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00270">270</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -1076,7 +1108,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00268">268</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00271">271</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>
@@ -1092,7 +1124,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00269">269</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EditorApp_8h_source.html#l00272">272</a> of file <a class="el" href="EditorApp_8h_source.html">EditorApp.h</a>.</p>
 
 </div>
 </div>

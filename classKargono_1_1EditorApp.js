@@ -13,6 +13,7 @@ var classKargono_1_1EditorApp =
     [ "OnSceneEvent", "classKargono_1_1EditorApp.html#a12aed639890bb01ef135dac30aa824f2", null ],
     [ "OnAssetEvent", "classKargono_1_1EditorApp.html#ad592f93e9ad82d97da62aebe6a7a5d0a", null ],
     [ "OnEditorEvent", "classKargono_1_1EditorApp.html#a3f874a5722478a55815ea358128932f1", null ],
+    [ "OnLogEvent", "classKargono_1_1EditorApp.html#a820ec5cfa5c42696c74a5c44bb356a6c", null ],
     [ "OpenWarningMessage", "classKargono_1_1EditorApp.html#a4046a054d87633bc75d2beddd35acf73", null ],
     [ "OpenImportFileDialog", "classKargono_1_1EditorApp.html#a8c63d02f2ddf8531afa81c3691d6eac4", null ],
     [ "OpenScene", "classKargono_1_1EditorApp.html#aec2ea32ec343b21e87285c7f5fc05baa", null ],

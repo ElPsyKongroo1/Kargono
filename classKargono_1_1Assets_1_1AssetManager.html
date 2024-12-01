@@ -136,6 +136,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab10b565f9269fdcb6621013708323305"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a042bbbff9aefda35fa06d5de0b74f0c1"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; <a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">AssetHandle</a>, <a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; AssetValue &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a042bbbff9aefda35fa06d5de0b74f0c1">GetAssetCache</a> ()</td></tr>
 <tr class="separator:a042bbbff9aefda35fa06d5de0b74f0c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35c7cfb2c45ef808979baf0744e4466a"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a35c7cfb2c45ef808979baf0744e4466a">GetAssetRegistrySize</a> ()</td></tr>
+<tr class="separator:a35c7cfb2c45ef808979baf0744e4466a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a344b6c50f5a7e5f65f7505837eca30b3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">AssetHandle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a344b6c50f5a7e5f65f7505837eca30b3">GetAssetHandleFromFileLocation</a> (const std::filesystem::path &amp;queryFileLocation)</td></tr>
 <tr class="separator:a344b6c50f5a7e5f65f7505837eca30b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40ba8f7aa889ffd46ba5e3a5474f33cc"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a40ba8f7aa889ffd46ba5e3a5474f33cc">GetAssetValidImportExtensions</a> ()</td></tr>
@@ -648,6 +650,27 @@ template&lt;typename AssetValue &gt; </div>
 
 </div>
 </div>
+<a id="a35c7cfb2c45ef808979baf0744e4466a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35c7cfb2c45ef808979baf0744e4466a">&#9670;&nbsp;</a></span>GetAssetRegistrySize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename AssetValue &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html">Kargono::Assets::AssetManager</a>&lt; AssetValue &gt;::GetAssetRegistrySize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00692">692</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+
+</div>
+</div>
 <a id="a344b6c50f5a7e5f65f7505837eca30b3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a344b6c50f5a7e5f65f7505837eca30b3">&#9670;&nbsp;</a></span>GetAssetHandleFromFileLocation()</h2>
 
@@ -666,7 +689,7 @@ template&lt;typename AssetValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00692">692</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00697">697</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -687,7 +710,7 @@ template&lt;typename AssetValue &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00709">709</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00714">714</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -729,7 +752,7 @@ template&lt;typename AssetValue &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classKargono_1_1Assets_1_1SceneManager.html#a4c44dc352ad1acd424472cc994da54cf">Kargono::Assets::SceneManager</a>, <a class="el" href="classKargono_1_1Assets_1_1GameStateManager.html#abcafd1c28a8549fbeece5929afc1dcde">Kargono::Assets::GameStateManager</a>, <a class="el" href="classKargono_1_1Assets_1_1UserInterfaceManager.html#a1a3590cc9752a2c31e7b67dc30032118">Kargono::Assets::UserInterfaceManager</a>, <a class="el" href="classKargono_1_1Assets_1_1InputMapManager.html#a703fd55b1b16952702ce2a60de6c04bb">Kargono::Assets::InputMapManager</a>, <a class="el" href="classKargono_1_1Assets_1_1ProjectComponentManager.html#a38b007992203f9caa36c1cf39164daaf">Kargono::Assets::ProjectComponentManager</a>, and <a class="el" href="classKargono_1_1Assets_1_1AIStateManager.html#a27fa1dafed1ff16f1e9caea650bf25ff">Kargono::Assets::AIStateManager</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00714">714</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00719">719</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -777,7 +800,7 @@ template&lt;typename AssetValue &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classKargono_1_1Assets_1_1UserInterfaceManager.html#a2b0c6650bbc7fc48db46fcfba2402df6">Kargono::Assets::UserInterfaceManager</a>, <a class="el" href="classKargono_1_1Assets_1_1Texture2DManager.html#a1889597ea1e236cdc0ca75e840e86a1c">Kargono::Assets::Texture2DManager</a>, <a class="el" href="classKargono_1_1Assets_1_1SceneManager.html#ae8f9131226636c45e35f0a89e4914039">Kargono::Assets::SceneManager</a>, <a class="el" href="classKargono_1_1Assets_1_1ProjectComponentManager.html#ada5e3e6a9165ae7c2b1ccb92afefb2e8">Kargono::Assets::ProjectComponentManager</a>, <a class="el" href="classKargono_1_1Assets_1_1InputMapManager.html#ab317903c843d829ae4164920dce5b254">Kargono::Assets::InputMapManager</a>, <a class="el" href="classKargono_1_1Assets_1_1GameStateManager.html#a7777017bec16b9183871b7532c8ecbb7">Kargono::Assets::GameStateManager</a>, <a class="el" href="classKargono_1_1Assets_1_1FontManager.html#acdb4b74a1ee8e8081067dcbbc82031a7">Kargono::Assets::FontManager</a>, <a class="el" href="classKargono_1_1Assets_1_1AudioBufferManager.html#acfcac010b0cb49a389aeec992589c877">Kargono::Assets::AudioBufferManager</a>, and <a class="el" href="classKargono_1_1Assets_1_1AIStateManager.html#abd3cc3b0383657aecf7103e7f41be821">Kargono::Assets::AIStateManager</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00719">719</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00724">724</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -819,7 +842,7 @@ template&lt;typename AssetValue &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classKargono_1_1Assets_1_1ProjectComponentManager.html#a4280a1c262663451ba5d52340184b946">Kargono::Assets::ProjectComponentManager</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00724">724</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00729">729</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -851,7 +874,7 @@ template&lt;typename AssetValue &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classKargono_1_1Assets_1_1ScriptManager.html#ad3c210e7fe48b8df24d127c792d3114b">Kargono::Assets::ScriptManager</a>, <a class="el" href="classKargono_1_1Assets_1_1ProjectComponentManager.html#aba37f47096354ec118b283b3635fa71e">Kargono::Assets::ProjectComponentManager</a>, and <a class="el" href="classKargono_1_1Assets_1_1AIStateManager.html#ad38ff2ad14fe2bdf9167fbb4d86a17f0">Kargono::Assets::AIStateManager</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00725">725</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00730">730</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -923,7 +946,7 @@ template&lt;typename AssetValue &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classKargono_1_1Assets_1_1ScriptManager.html#a5eace40ea56db86966b87887feaaf274">Kargono::Assets::ScriptManager</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00727">727</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00732">732</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -965,7 +988,7 @@ template&lt;typename AssetValue &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classKargono_1_1Assets_1_1Texture2DManager.html#a242cb95e0380bb1a9fd35fc4b913960c">Kargono::Assets::Texture2DManager</a>, <a class="el" href="classKargono_1_1Assets_1_1ShaderManager.html#a30046f17bd39efa317e3e5f03b812c58">Kargono::Assets::ShaderManager</a>, <a class="el" href="classKargono_1_1Assets_1_1ScriptManager.html#aaa212ae1349d7f63f87c05c8a82839cd">Kargono::Assets::ScriptManager</a>, <a class="el" href="classKargono_1_1Assets_1_1ProjectComponentManager.html#a1b76af6a20ee7202f9e71a5423b3f090">Kargono::Assets::ProjectComponentManager</a>, <a class="el" href="classKargono_1_1Assets_1_1GameStateManager.html#ab5e34bdf9d25db4467073612c09717e8">Kargono::Assets::GameStateManager</a>, <a class="el" href="classKargono_1_1Assets_1_1FontManager.html#a5f5c3fa3610bede953fb96470ebdb6fe">Kargono::Assets::FontManager</a>, and <a class="el" href="classKargono_1_1Assets_1_1AudioBufferManager.html#a4e9006b9db1da5bf7a8577bf58f59f4a">Kargono::Assets::AudioBufferManager</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00728">728</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00733">733</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -997,7 +1020,7 @@ template&lt;typename AssetValue &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classKargono_1_1Assets_1_1ScriptManager.html#a701cf7668906a804ccd4253a426a03a6">Kargono::Assets::ScriptManager</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00729">729</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00734">734</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -1039,7 +1062,7 @@ template&lt;typename AssetValue &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classKargono_1_1Assets_1_1Texture2DManager.html#aafe46349d190fa6bdb46de2501ab79eb">Kargono::Assets::Texture2DManager</a>, <a class="el" href="classKargono_1_1Assets_1_1ShaderManager.html#aa5f376f2ded15f8bf9a2fb97403b595d">Kargono::Assets::ShaderManager</a>, <a class="el" href="classKargono_1_1Assets_1_1ScriptManager.html#a976d6ffd239d1ebf66cd94479c43b617">Kargono::Assets::ScriptManager</a>, <a class="el" href="classKargono_1_1Assets_1_1ProjectComponentManager.html#adfe21ec6900ddaf2065cc9064cb92e09">Kargono::Assets::ProjectComponentManager</a>, <a class="el" href="classKargono_1_1Assets_1_1GameStateManager.html#a7925dc3e6bdb2741a3b5d87191d880ff">Kargono::Assets::GameStateManager</a>, <a class="el" href="classKargono_1_1Assets_1_1FontManager.html#a2574225b134b698038539cfc3ce77a17">Kargono::Assets::FontManager</a>, and <a class="el" href="classKargono_1_1Assets_1_1AudioBufferManager.html#a37ee28265b633323dfc7d9719d590a59">Kargono::Assets::AudioBufferManager</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00730">730</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00735">735</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -1087,7 +1110,7 @@ template&lt;typename AssetValue &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classKargono_1_1Assets_1_1Texture2DManager.html#a1b5c7fb50cc06f400ea0faebd6a18aea">Kargono::Assets::Texture2DManager</a>, <a class="el" href="classKargono_1_1Assets_1_1FontManager.html#a4eb40ceea5ed6f5ff4cef0b35d4db087">Kargono::Assets::FontManager</a>, and <a class="el" href="classKargono_1_1Assets_1_1AudioBufferManager.html#a6d3bd480c6443ba2ff885fdcd5e14053">Kargono::Assets::AudioBufferManager</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00731">731</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00736">736</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -1114,7 +1137,7 @@ template&lt;typename AssetValue &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00734">734</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00739">739</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -1140,7 +1163,7 @@ template&lt;typename AssetValue &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00735">735</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00740">740</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -1166,7 +1189,7 @@ template&lt;typename AssetValue &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00736">736</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00741">741</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -1192,7 +1215,7 @@ template&lt;typename AssetValue &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00737">737</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00742">742</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -1218,7 +1241,7 @@ template&lt;typename AssetValue &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00738">738</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00743">743</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -1244,7 +1267,7 @@ template&lt;typename AssetValue &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00739">739</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00744">744</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -1270,7 +1293,7 @@ template&lt;typename AssetValue &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00740">740</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00745">745</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -1296,7 +1319,7 @@ template&lt;typename AssetValue &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00741">741</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00746">746</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>
@@ -1322,7 +1345,7 @@ template&lt;typename AssetValue &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00742">742</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AssetManager_8h_source.html#l00747">747</a> of file <a class="el" href="AssetManager_8h_source.html">AssetManager.h</a>.</p>
 
 </div>
 </div>

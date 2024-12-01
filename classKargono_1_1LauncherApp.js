@@ -5,6 +5,7 @@ var classKargono_1_1LauncherApp =
     [ "Init", "classKargono_1_1LauncherApp.html#a436d3d2c65124c8b87e4d38c115e05d1", null ],
     [ "Terminate", "classKargono_1_1LauncherApp.html#ab6f2d03e0a59b6dfcab4c6ed0e814108", null ],
     [ "OnUpdate", "classKargono_1_1LauncherApp.html#aff481550eab0c7f845c4281167dd4781", null ],
+    [ "OnLogEvent", "classKargono_1_1LauncherApp.html#a150a01d6632eb6a20dad47dc37e442d9", null ],
     [ "GetSelectedProject", "classKargono_1_1LauncherApp.html#af63e8227c2af1df600b590b73822ec8b", null ],
     [ "SetSelectedProject", "classKargono_1_1LauncherApp.html#a45e95805848083bdf0cff6dbd5c1393f", null ]
 ];

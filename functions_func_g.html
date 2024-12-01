@@ -97,6 +97,9 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 <li>GenerateExpression()
 : <a class="el" href="classKargono_1_1Scripting_1_1ScriptOutputGenerator.html#a601e7804b0d5ab5d8d9dd51cd9932c22">Kargono::Scripting::ScriptOutputGenerator</a>
 </li>
+<li>GenerateLogEvent()
+: <a class="el" href="classKargono_1_1Log.html#aeeec3dfcc5dc32799e941cc01fff09eb">Kargono::Log</a>
+</li>
 <li>GenerateOutput()
 : <a class="el" href="classKargono_1_1Scripting_1_1ScriptOutputGenerator.html#a7679de5ef3ef3e6bdc09b01e112d527c">Kargono::Scripting::ScriptOutputGenerator</a>
 </li>
@@ -299,7 +302,7 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 : <a class="el" href="classKargono_1_1Engine.html#a43f0665a09d79baad5267472c772d75a">Kargono::Engine</a>
 </li>
 <li>GetAsset()
-: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a606d509e9f9c27dc7ffbee9a2d7adbf1">Kargono::Assets::AssetManager&lt; AssetValue &gt;</a>
+: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a7ae1fa7e696a5e9667427f56df96c124">Kargono::Assets::AssetManager&lt; AssetValue &gt;</a>
 </li>
 <li>GetAssetCache()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a042bbbff9aefda35fa06d5de0b74f0c1">Kargono::Assets::AssetManager&lt; AssetValue &gt;</a>
@@ -324,6 +327,9 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 </li>
 <li>GetAssetRegistry()
 : <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#ab10b565f9269fdcb6621013708323305">Kargono::Assets::AssetManager&lt; AssetValue &gt;</a>
+</li>
+<li>GetAssetRegistrySize()
+: <a class="el" href="classKargono_1_1Assets_1_1AssetManager.html#a35c7cfb2c45ef808979baf0744e4466a">Kargono::Assets::AssetManager&lt; AssetValue &gt;</a>
 </li>
 <li>GetAssetType()
 : <a class="el" href="classKargono_1_1Events_1_1ManageAsset.html#ad872ad6b47af116749dd92513a602188">Kargono::Events::ManageAsset</a>
@@ -351,6 +357,7 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 , <a class="el" href="classKargono_1_1Events_1_1KeyReleasedEvent.html#a72032232418df66b9d783b0b496f6c35">Kargono::Events::KeyReleasedEvent</a>
 , <a class="el" href="classKargono_1_1Events_1_1KeyTypedEvent.html#a7172c2a97bf87527ea195500195f42a3">Kargono::Events::KeyTypedEvent</a>
 , <a class="el" href="classKargono_1_1Events_1_1LeaveCurrentSession.html#af53900d82bf0ea278b5866c32526e729">Kargono::Events::LeaveCurrentSession</a>
+, <a class="el" href="classKargono_1_1Events_1_1LogEvent.html#a2ff583f0ac9f28fe057d001864a7dbcc">Kargono::Events::LogEvent</a>
 , <a class="el" href="classKargono_1_1Events_1_1ManageAsset.html#a20940806912965bb38d047f188867dc7">Kargono::Events::ManageAsset</a>
 , <a class="el" href="classKargono_1_1Events_1_1ManageEditor.html#acd8a8d09c8bb125e57a713ed8e34a774">Kargono::Events::ManageEditor</a>
 , <a class="el" href="classKargono_1_1Events_1_1ManageEntity.html#abb2e041618e7f231ba7b73dc8dd06514">Kargono::Events::ManageEntity</a>
@@ -483,6 +490,12 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 <li>GetEventCallback()
 : <a class="el" href="classKargono_1_1Window.html#a0169291a0c0e688d5c233709ea95ccce">Kargono::Window</a>
 </li>
+<li>GetEventLevel()
+: <a class="el" href="classKargono_1_1Events_1_1LogEvent.html#a4ee39c4514e8174f1f49fecb35f420cd">Kargono::Events::LogEvent</a>
+</li>
+<li>GetEventText()
+: <a class="el" href="classKargono_1_1Events_1_1LogEvent.html#a0272ce1b4a938e912aa61d7f8afca27d">Kargono::Events::LogEvent</a>
+</li>
 <li>GetEventType()
 : <a class="el" href="classKargono_1_1Events_1_1AddExtraUpdateEvent.html#aecbaa89e605d2c8dbd486d58bdf5746e">Kargono::Events::AddExtraUpdateEvent</a>
 , <a class="el" href="classKargono_1_1Events_1_1AddTickGeneratorUsage.html#a8c9ff1b0e0c44617982c46646840670d">Kargono::Events::AddTickGeneratorUsage</a>
@@ -499,6 +512,7 @@ $(document).ready(function(){initNavTree('functions_func_g.html',''); initResiza
 , <a class="el" href="classKargono_1_1Events_1_1KeyReleasedEvent.html#a31317a93cf034fb6e63547e7349d8431">Kargono::Events::KeyReleasedEvent</a>
 , <a class="el" href="classKargono_1_1Events_1_1KeyTypedEvent.html#add2a6ee372b3ad41e86a2c2d2cc2d633">Kargono::Events::KeyTypedEvent</a>
 , <a class="el" href="classKargono_1_1Events_1_1LeaveCurrentSession.html#a59390067cf468391f1cf109fb9b25f8f">Kargono::Events::LeaveCurrentSession</a>
+, <a class="el" href="classKargono_1_1Events_1_1LogEvent.html#ad97aa29b97a1b8593a7d96b83fc64fb9">Kargono::Events::LogEvent</a>
 , <a class="el" href="classKargono_1_1Events_1_1ManageAsset.html#a6c104bbaf6a4748c3b4220125359635c">Kargono::Events::ManageAsset</a>
 , <a class="el" href="classKargono_1_1Events_1_1ManageEditor.html#ab887cb0b24987e6a518bdb2f6705469b">Kargono::Events::ManageEditor</a>
 , <a class="el" href="classKargono_1_1Events_1_1ManageEntity.html#a994ad354b048f77db8a3fd9834339107">Kargono::Events::ManageEntity</a>
