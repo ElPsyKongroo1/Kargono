@@ -50,7 +50,7 @@ namespace Kargono::Input
 	{
 		if (Input::InputMapService::GetActiveInputMap())
 		{
-			for (auto& inputBinding : Input::InputMapService::GetActiveOnUpdate())
+			for (Ref<InputActionBinding> inputBinding : Input::InputMapService::GetActiveOnUpdate())
 			{
 				
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
@@ -73,10 +73,15 @@ namespace Kargono::Input
 		if (event.IsRepeat()) { return false; }
 		if (Input::InputMapService::GetActiveInputMap())
 		{
-			for (auto& inputBinding : Input::InputMapService::GetActiveOnKeyPressed())
+			for (Ref<InputActionBinding> inputBinding : Input::InputMapService::GetActiveOnKeyPressed())
 			{
+				
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
-				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
+				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding()) || 
+					keyboardBinding->GetScriptHandle() == Assets::EmptyHandle) 
+				{ 
+					continue; 
+				}
 				Utility::CallWrappedVoidNone(keyboardBinding->GetScript()->m_Function);
 			}
 		}
@@ -111,6 +116,12 @@ namespace Kargono::Input
 	}
 	void InputActionBinding::SetScript(Assets::AssetHandle handle)
 	{
+		if (handle == Assets::EmptyHandle)
+		{
+			ClearScript();
+			return;
+		}
+
 		Ref<Scripting::Script> newScript = Assets::AssetService::GetScript(handle);
 		KG_ASSERT(newScript);
 		m_Script = newScript;

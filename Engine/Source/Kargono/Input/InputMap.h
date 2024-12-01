@@ -43,8 +43,21 @@ namespace Kargono::Input
 		{
 			return m_ScriptHandle;
 		}
+
+		void ClearScript()
+		{
+			m_ScriptHandle = Assets::EmptyHandle;
+			m_Script = nullptr;
+		}
+
 		void SetScript(Ref<Scripting::Script> script, Assets::AssetHandle handle)
 		{
+			if (handle == Assets::EmptyHandle)
+			{
+				ClearScript();
+				return;
+			}
+
 			m_ScriptHandle = handle;
 			m_Script = script;
 		}
