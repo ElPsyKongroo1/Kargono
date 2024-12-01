@@ -716,7 +716,7 @@ namespace API::EditorUI
 			btmp.insert(location >= index ? location + 1 : location);
 		}
 		m_Breakpoints = std::move(btmp);
-
+		m_TextChanged = true;
 		return result;
 	}
 
@@ -945,8 +945,13 @@ namespace API::EditorUI
 				Copy();
 			else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_C)))
 				Copy();
+			// TODO: STILL NEED TO FIX THIS SHIT
+			//else if (alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_UpArrow)))
+			//	ShiftTextUp();
+			//else if (alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_DownArrow)))
+			//	ShiftTextDown();
 			else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_D)))
-				DuplicateLine();
+				DuplicateText();
 			else if (!IsReadOnly() && !ctrl && shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Insert)))
 				Paste();
 			else if (!IsReadOnly() && ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_V)))
@@ -1471,8 +1476,9 @@ namespace API::EditorUI
 		//m_TextChanged = true;
 		m_ScrollToTop = true;
 
-		m_UndoBuffer.clear();
-		m_UndoIndex = 0;
+		// TODO: May have to add back undo buffer here
+		//m_UndoBuffer.clear();
+		//m_UndoIndex = 0;
 
 		Colorize();
 	}
@@ -1502,8 +1508,9 @@ namespace API::EditorUI
 		m_TextChanged = true;
 		m_ScrollToTop = true;
 
-		m_UndoBuffer.clear();
-		m_UndoIndex = 0;
+		// TODO: May have to add back undo buffer here
+		//m_UndoBuffer.clear();
+		//m_UndoIndex = 0;
 
 		Colorize();
 	}
@@ -1769,6 +1776,11 @@ namespace API::EditorUI
 		if (m_State.m_SelectionStart != oldSelStart ||
 			m_State.m_SelectionEnd != oldSelEnd)
 			m_CursorPositionChanged = true;
+	}
+
+	void EditorUI::TextEditorSpec::ClearSelection()
+	{
+		SetSelection({}, {}, SelectionMode::Normal);
 	}
 
 	void TextEditorSpec::SetTabSize(int aValue)
@@ -2292,6 +2304,28 @@ namespace API::EditorUI
 		}
 	}
 
+	void EditorUI::TextEditorSpec::ClearUndoBuffer()
+	{
+		m_UndoBuffer.clear();
+		m_UndoIndex = 0;
+	}
+
+	void EditorUI::TextEditorSpec::SetUndoBuffer(const UndoBuffer& newBuffer, int undoIndex)
+	{
+		m_UndoBuffer = newBuffer;
+		m_UndoIndex = undoIndex;
+	}
+
+	UndoBuffer EditorUI::TextEditorSpec::GetUndoBuffer()
+	{
+		return m_UndoBuffer;
+	}
+
+	int EditorUI::TextEditorSpec::GetUndoIndex()
+	{
+		return m_UndoIndex;
+	}
+
 	void TextEditorSpec::Copy()
 	{
 		if (HasSelection())
@@ -2408,7 +2442,7 @@ namespace API::EditorUI
 		}
 	}
 
-	void EditorUI::TextEditorSpec::DuplicateLine()
+	void EditorUI::TextEditorSpec::DuplicateText()
 	{
 		// Get the index of the line that should be duplicated
 		Coordinates currentCursorCoord = GetCursorPosition();
@@ -2428,23 +2462,168 @@ namespace API::EditorUI
 			return;
 		}
 
+		// Check how many lines we need to move
+		bool moveMultipleLines = m_State.m_SelectionStart.m_Line != m_State.m_SelectionEnd.m_Line;
+
+		if (moveMultipleLines)
+		{
+			// Save initial state of text editor
+			UndoRecord u;
+			u.m_Before = m_State;
+
+			// Insert all lines into text editor
+			Coordinates startCoordinate = { m_State.m_SelectionStart.m_Line, 0 };
+			Coordinates endCoordinate = { m_State.m_SelectionEnd.m_Line + 1, 0 };
+
+			// Move cursor down to beginning of new selection
+			SetCursorPosition({ currentCursorCoord.m_Line, 0 });
+
+			// Get current line text and duplicate it
+			std::string duplicateText{ GetText(startCoordinate, endCoordinate) };
+			InsertText(duplicateText);
+
+			// Set selection to encompass newly created lines
+			int selectionLineDistance = (endCoordinate.m_Line - startCoordinate.m_Line);
+			SetSelection(
+				{ startCoordinate.m_Line + selectionLineDistance, 0 }, 
+				{ endCoordinate.m_Line + selectionLineDistance, 0 }, 
+				SelectionMode::Normal
+			);
+			u.m_Added = duplicateText;
+			u.m_AddedStart = startCoordinate;
+			u.m_AddedEnd = endCoordinate;
+			u.m_After = m_State;
+			AddUndo(u);
+		}
+		else
+		{
+			// Get the line that should be duplicated
+			UndoRecord u;
+			u.m_Before = m_State;
+			Line& currentLine = m_Lines[currentLineIndex];
+			// Insert a line after the current cursor's line
+			InsertLine(currentLine, currentLineIndex);
+
+			// Move cursor down one line
+			currentCursorCoord.m_Line++;
+			SetCursorPosition(currentCursorCoord);
+
+			u.m_Added = '\n';
+			u.m_Added.append(GetCurrentLineText());
+			u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
+			u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));
+
+			u.m_After = m_State;
+			AddUndo(u);
+		}
+
+		
+	}
+
+	void EditorUI::TextEditorSpec::ShiftTextUp()
+	{
+		// Get the index of the line that should be duplicated
+		Coordinates currentCursorCoord = GetCursorPosition();
+		int currentLineIndex = currentCursorCoord.m_Line;
+
+		// Check for invalid index
+		if (currentLineIndex == k_InvalidIndex)
+		{
+			KG_WARN("Failed to duplicate line in text editor. Invalid index found!");
+			return;
+		}
+
+		// Ensure no out of bounds errors occur
+		if (currentLineIndex >= m_Lines.size())
+		{
+			KG_WARN("Failed to duplicate line in text editor. Line index is greater than the line buffer's size!");
+			return;
+		}
+
+		// Ensure no out of bounds errors occur
+		if (currentLineIndex == 0)
+		{
+			return;
+		}
+
 		// Get the line that should be duplicated
 		UndoRecord u;
 		u.m_Before = m_State;
 		Line& currentLine = m_Lines[currentLineIndex];
+		// Insert line above current location
+		InsertLine(currentLine, currentLineIndex - 1);
 		// Insert a line after the current cursor's line
-		InsertLine(currentLine, currentLineIndex);
+		RemoveLine(currentLineIndex + 1);
 
-		// Move cursor down one line
-		currentCursorCoord.m_Line++;
+
+		// Move cursor up one line
+		currentCursorCoord.m_Line--;
 		SetCursorPosition(currentCursorCoord);
 
-		u.m_Added = GetCurrentLineText();
-		u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
-		u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));
+		u.m_Removed = '\n';
+		u.m_Removed.append(GetCurrentLineText());
+		u.m_RemovedStart = Coordinates(currentCursorCoord.m_Line + 1, GetLineMaxColumn(currentCursorCoord.m_Line + 1));
+		u.m_RemovedEnd = Coordinates(currentCursorCoord.m_Line + 2, GetLineMaxColumn(currentCursorCoord.m_Line + 2));
+
+		u.m_Added = '\n';
+		u.m_Added.append(GetCurrentLineText());
+		u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 2, GetLineMaxColumn(currentCursorCoord.m_Line - 2));
+		u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
 
 		u.m_After = m_State;
 		AddUndo(u);
+	}
+
+	void EditorUI::TextEditorSpec::ShiftTextDown()
+	{
+		// Get the index of the line that should be duplicated
+		Coordinates currentCursorCoord = GetCursorPosition();
+		int currentLineIndex = currentCursorCoord.m_Line;
+
+		// Check for invalid index
+		if (currentLineIndex == k_InvalidIndex)
+		{
+			KG_WARN("Failed to duplicate line in text editor. Invalid index found!");
+			return;
+		}
+
+		// Ensure no out of bounds errors occur
+		if (currentLineIndex >= m_Lines.size())
+		{
+			KG_WARN("Failed to duplicate line in text editor. Line index is greater than the line buffer's size!");
+			return;
+		}
+
+		// Ensure no out of bounds errors occur
+		if (currentLineIndex + 1 == m_Lines.size())
+		{
+			return;
+		}
+
+		// Get the line that should be duplicated
+		UndoRecord u;
+		u.m_Before = m_State;
+		Line& currentLine = m_Lines[currentLineIndex];
+		// Insert line above current location
+		InsertLine(currentLine, currentLineIndex + 2);
+		// Insert a line after the current cursor's line
+		RemoveLine(currentLineIndex);
+
+
+		// Move cursor up one line
+		currentCursorCoord.m_Line++;
+		SetCursorPosition(currentCursorCoord);
+
+		/*u.m_Removed = GetCurrentLineText();
+		u.m_RemovedStart = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));
+		u.m_RemovedEnd = Coordinates(currentCursorCoord.m_Line, GetLineMaxColumn(currentCursorCoord.m_Line));
+
+		u.m_Added = GetCurrentLineText();
+		u.m_AddedStart = Coordinates(currentCursorCoord.m_Line - 2, GetLineMaxColumn(currentCursorCoord.m_Line - 2));
+		u.m_AddedEnd = Coordinates(currentCursorCoord.m_Line - 1, GetLineMaxColumn(currentCursorCoord.m_Line - 1));*/
+
+		u.m_After = m_State;
+		//AddUndo(u);
 	}
 
 	Palette& TextEditorService::GetDefaultColorPalette()
@@ -3669,6 +3848,58 @@ namespace API::EditorUI
 		}
 	}
 
+	void AlignText(std::stringstream& ss, const std::string& text)
+	{
+		// Format description to fit in tooltip
+		std::size_t lineIterator{ 0 };
+		std::size_t endWordLength{ 0 };
+		constexpr std::size_t k_MaxWordLength{ 5 };
+		for (std::size_t charIteration{ 0 }; charIteration < text.size(); charIteration++)
+		{
+			// Add character to output buffer
+			ss << text.at(charIteration);
+
+			// Check if we reached the end of a line
+			if (lineIterator % 42 == 0 && lineIterator != 0)
+			{
+				if (text.at(charIteration) == ' ')
+				{
+					ss << "\n  ";
+					endWordLength = 0;
+				}
+				else
+				{
+					endWordLength++;
+					// Handle case where max word length has been reached
+					if (endWordLength >= k_MaxWordLength)
+					{
+						// Terminal state
+						if (charIteration + 1 >= text.size())
+						{
+							continue;
+						}
+						// Peak next character and decide if a hyphen is appropriate
+						if (text.at(charIteration + 1) == ' ')
+						{
+							ss << "\n  ";
+						}
+						else
+						{
+							ss << "-\n  ";
+						}
+						endWordLength = 0;
+					}
+					// Allow characters to contine being drawn normally
+					else
+					{
+						continue;
+					}
+				}
+			}
+			lineIterator++;
+		}
+	}
+
 	const LanguageDefinition& TextEditorService::GenerateKargonoScript()
 	{
 		static bool inited = false;
@@ -3696,10 +3927,82 @@ namespace API::EditorUI
 			for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
 			{
 				Identifier id;
+				
+				std::stringstream descriptionStringStream;
 				if (!funcNode.Description.empty())
 				{
-					id.m_Declaration = funcNode.Description;
+					AlignText(descriptionStringStream, funcNode.Description);
 				}
+
+				// Create function description
+				std::stringstream declarationOutput;
+				declarationOutput << "Function Name: ";
+				if (funcNode.Namespace)
+				{
+					declarationOutput << funcNode.Namespace.Value << "::";
+				}
+				declarationOutput << funcName << "\n";
+				if (funcNode.ReturnType.Type == Kargono::Scripting::ScriptTokenType::None)
+				{
+					declarationOutput << "Return Type: void\n";
+				}
+				else
+				{
+					declarationOutput << "Return Type: " << funcNode.ReturnType.Value << "\n";
+				}
+				declarationOutput << "Parameters:";
+
+				if (funcNode.Parameters.size() > 0)
+				{
+					declarationOutput << '\n';
+					for (Kargono::Scripting::FunctionParameter parameter : funcNode.Parameters)
+					{
+						KG_ASSERT(parameter.AllTypes.size() > 0);
+#if 0
+						if (parameter.AllTypes.size() > 1)
+						{
+							declarationOutput << "  (";
+							constexpr std::size_t k_MaxIterations{ 3 };
+							for (std::size_t iteration{ 0 }; iteration < parameter.AllTypes.size(); iteration++)
+							{
+								declarationOutput << parameter.AllTypes.at(iteration).Value;
+
+								if (iteration + 1 >= k_MaxIterations)
+								{
+									declarationOutput << "/...";
+									break;
+								}
+
+								// Exit early if we are on the last parameter
+								if (iteration + 1 >= parameter.AllTypes.size())
+								{
+									break;
+								}
+
+								declarationOutput << '/';
+							}
+
+							declarationOutput << ") " << parameter.Identifier.Value << "\n";
+						}
+#endif
+						declarationOutput << "  " << parameter.AllTypes.at(0).Value << " " << parameter.Identifier.Value << "\n";
+				
+					}
+				}
+				else
+				{
+					declarationOutput << " none\n";
+				}
+				
+
+				if (!funcNode.Description.empty())
+				{
+					declarationOutput << "Description: \n  ";
+					declarationOutput << descriptionStringStream.str();
+				}
+				
+				id.m_Declaration = declarationOutput.str();
+				
 				langDef.m_Identifiers.insert_or_assign(funcName, id);
 
 				if (funcNode.Namespace)

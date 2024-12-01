@@ -33,6 +33,7 @@ bin-int/**
 # Specific Directories from Root
 /Binary/**
 /Projects/**
+/Export/**
 /Intermediates/**
 /Editor/Resources/Scripts/**
 /Runtime/Resources/Scripts/**

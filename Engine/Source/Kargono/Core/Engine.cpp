@@ -198,6 +198,9 @@ namespace Kargono
 		{
 			switch (e->GetEventType())
 			{
+			case Events::EventType::LogEvent:
+				handled = s_ActiveEngine->m_CurrentApp->OnLogEvent(e);
+				break;
 			case Events::EventType::WindowClose:
 				handled = OnWindowClose(*(Events::WindowCloseEvent*)e);
 				break;

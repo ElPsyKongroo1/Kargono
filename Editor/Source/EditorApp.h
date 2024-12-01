@@ -114,6 +114,7 @@ namespace Kargono
 		virtual bool OnSceneEvent(Events::Event* event) override;
 		virtual bool OnAssetEvent(Events::Event* event) override;
 		virtual bool OnEditorEvent(Events::Event* event) override;
+		virtual bool OnLogEvent(Events::Event* event) override;
 	private:
 		bool OnUpdateProjectComponent(Events::ManageAsset& event);
 		// These private functions are called by the above OnEvent(e) function to handle application events.
@@ -163,6 +164,8 @@ namespace Kargono
 		void NewSceneDialog();
 		bool NewScene(const std::string& sceneName);
 		void NewSceneDialog(const std::filesystem::path& initialDirectory);
+		void DuplicateEditorScene();
+		void DuplicateEditorScene(const std::filesystem::path& initialDirectory);
 		void OpenSceneDialog();
 	public:
 		void OpenScene(const std::filesystem::path& path);

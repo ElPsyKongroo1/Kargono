@@ -4,6 +4,7 @@
 #include "Kargono/Core/UUID.h"
 
 #include <sstream>
+#include <string>
 
 namespace Kargono::Events
 {
@@ -224,6 +225,39 @@ namespace Kargono::Events
 	};
 
 
+	enum class LogEventLevel
+	{
+		None = 0,
+		Info,
+		Warning,
+		Critical
+	};
+
+	//============================================================
+	// Log Event Class
+	//============================================================
+	class LogEvent : public Event
+	{
+	public:
+		//==============================
+		// Constructors and Destructors
+		//==============================
+		LogEvent(const char* eventText, LogEventLevel eventLevel)
+			: m_EventText(eventText), m_EventLevel(eventLevel) {}
+
+		//==============================
+		// Getters/Setters
+		//==============================
+
+		std::string GetEventText() const { return m_EventText; }
+		LogEventLevel GetEventLevel() const { return m_EventLevel; }
+
+		virtual EventType GetEventType() const override { return EventType::LogEvent; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
+	private:
+		std::string m_EventText;
+		LogEventLevel m_EventLevel;
+	};
 
 
 }

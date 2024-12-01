@@ -31,6 +31,10 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetFileLocation(handle); \
 		}\
+		static std::size_t Get##typeName##RegistrySize() \
+		{\
+			return s_AssetsContext.m_##typeName##Manager.GetAssetRegistrySize(); \
+		}\
 		static std::filesystem::path Get##typeName##IntermediateLocation(AssetHandle handle) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetIntermediateLocation(handle); \

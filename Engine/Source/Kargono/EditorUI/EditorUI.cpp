@@ -12,6 +12,7 @@
 #include "API/EditorUI/ImGuiBackendAPI.h"
 #include "API/Platform/GlfwAPI.h"
 #include "API/Platform/gladAPI.h"
+#include "API/EditorUI/ImGuiNotifyAPI.h"
 
 
 namespace Kargono::EditorUI
@@ -223,6 +224,44 @@ namespace Kargono::EditorUI
 		}
 		return nullptr;
 	}
+	void EditorUIService::CreateInfoNotification(const char* text, int delayMS)
+	{
+		ImGuiToast toast{ ImGuiToastType::Info, delayMS, text };
+		toast.setTitle("Kargono Editor Information");
+		ImGui::InsertNotification(toast);
+	}
+	void EditorUIService::CreateWarningNotification(const char* text, int delayMS)
+	{
+		ImGuiToast toast{ ImGuiToastType::Warning, delayMS, text };
+		toast.setTitle("Kargono Editor Warning");
+		ImGui::InsertNotification(toast);
+	}
+
+	void EditorUIService::CreateCriticalNotification(const char* text, int delayMS)
+	{
+		ImGuiToast toast{ ImGuiToastType::Error, delayMS, text };
+		toast.setTitle("Kargono Editor Critical");
+		ImGui::InsertNotification(toast);
+	}
+
+	void EditorUIService::RenderImGuiNotify()
+	{
+		// Notifications style setup
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.f); // Disable round borders
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f); // Disable borders
+
+		// Notifications color setup
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, s_DarkBackgroundColor); // Background color
+
+		// Main rendering function
+		ImGui::RenderNotifications();
+
+		//——————————————————————————————— WARNING ———————————————————————————————
+		// Argument MUST match the amount of ImGui::PushStyleVar() calls 
+		ImGui::PopStyleVar(2);
+		// Argument MUST match the amount of ImGui::PushStyleColor() calls 
+		ImGui::PopStyleColor(1);
+	}
 
 	void EditorUIService::Init()
 	{
@@ -264,6 +303,18 @@ namespace Kargono::EditorUI
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
 
+		// Initialize toast notification API
+		io.Fonts->AddFontDefault();
+		float baseFontSize = 16.0f;
+		float iconFontSize = baseFontSize * 2.0f / 3.0f; // FontAwesome fonts need to have their sizes reduced by 2.0f/3.0f in order to align correctly
+		static constexpr ImWchar iconsRanges[] = { ICON_MIN_FA, ICON_MAX_16_FA, 0 };
+		ImFontConfig iconsConfig;
+		iconsConfig.MergeMode = true;
+		iconsConfig.PixelSnapH = true;
+		iconsConfig.GlyphMinAdvanceX = iconFontSize;
+		io.Fonts->AddFontFromMemoryCompressedTTF(fa_solid_900_compressed_data, fa_solid_900_compressed_size, iconFontSize, &iconsConfig, iconsRanges);
+		ImGui::InitNotificationSystem();
+
 		// Set Up Editor Resources
 		s_IconCamera = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Camera.png").string());
 		s_IconSettings = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Settings.png").string());
@@ -280,6 +331,8 @@ namespace Kargono::EditorUI
 		s_IconCheckbox_Disabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/CheckboxDisabled.png").string());
 		s_IconDash = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Dash.png").string());
 		s_IconAI = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/AI.png").string());
+		s_IconNotification = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Notification.png").string());
+		
 
 		// Viewport icons
 		s_IconGrid = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Viewport/Grid.png").string());
@@ -370,6 +423,7 @@ namespace Kargono::EditorUI
 		s_IconRight.reset();
 		s_IconDash.reset();
 		s_IconAI.reset();
+		s_IconNotification.reset();
 
 		s_IconWindow.reset();
 		s_IconTextWidget.reset();
@@ -435,6 +489,8 @@ namespace Kargono::EditorUI
 
 	void EditorUIService::EndRendering()
 	{
+		RenderImGuiNotify();
+
 		ImGuiIO& io = ImGui::GetIO();
 		Engine& app = EngineService::GetActiveEngine();
 		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));

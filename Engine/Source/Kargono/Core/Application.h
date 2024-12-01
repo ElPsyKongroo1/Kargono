@@ -35,6 +35,7 @@ namespace Kargono
 		virtual bool OnNetworkEvent(Events::Event* event) { return false; }
 		virtual bool OnSceneEvent(Events::Event* event) { return false; }
 		virtual bool OnAssetEvent(Events::Event* event) { return false; }
+		virtual bool OnLogEvent(Events::Event* event) { return false; }
 		virtual bool OnEditorEvent(Events::Event* event) { return false; }
 
 		//==============================

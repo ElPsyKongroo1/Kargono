@@ -689,6 +689,11 @@ namespace Kargono::Assets
 			return m_AssetCache;
 		}
 
+		std::size_t GetAssetRegistrySize()
+		{
+			return m_AssetRegistry.size();
+		}
+
 		AssetHandle GetAssetHandleFromFileLocation(const std::filesystem::path& queryFileLocation)
 		{
 			// Search for game state inside registry

@@ -307,6 +307,7 @@ namespace API::EditorUI
 		void SetSelectionStart(const Coordinates& aPosition);
 		void SetSelectionEnd(const Coordinates& aPosition);
 		void SetSelection(const Coordinates& aStart, const Coordinates& aEnd, SelectionMode aMode = SelectionMode::Normal);
+		void ClearSelection();
 		void SelectAll();
 		void SelectWordUnderCursor();
 
@@ -320,7 +321,9 @@ namespace API::EditorUI
 		void Undo(int aSteps = 1);
 		void Redo(int aSteps = 1);
 		void Save();
-		void DuplicateLine();
+		void DuplicateText();
+		void ShiftTextUp();
+		void ShiftTextDown();
 		void InsertText(const std::string& aValue);
 		void InsertText(const char* aValue);
 		void SetText(const std::string& aText);
@@ -343,6 +346,10 @@ namespace API::EditorUI
 		void SetTabSize(int aValue);
 		void SetSaveCallback(std::function<void()> saveCallback);
 		void CloseSuggestions();
+		void ClearUndoBuffer();
+		void SetUndoBuffer(const UndoBuffer& newBuffer, int undoIndex);
+		UndoBuffer GetUndoBuffer();
+		int GetUndoIndex();
 
 		//=========================
 		// Query Text Editor Internal State

@@ -22,7 +22,7 @@ namespace Kargono
 		};
 
 		m_ExportProjectLocation.Label = "Export Location";
-		m_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
+		m_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Export";
 
 		m_ExportProjectServer.Label = "Export Server";
 		m_ExportProjectServer.CurrentBoolean = true;
@@ -612,6 +612,30 @@ namespace Kargono
 		return false;
 	}
 
+	bool EditorApp::OnLogEvent(Events::Event* event)
+	{
+		Events::LogEvent* logEvent = (Events::LogEvent*)event;
+
+		switch (logEvent->GetEventLevel())
+		{
+		case Events::LogEventLevel::Info:
+			EditorUI::EditorUIService::CreateInfoNotification(logEvent->GetEventText().c_str(), 7000);
+			break;
+		case Events::LogEventLevel::Warning:
+			EditorUI::EditorUIService::CreateWarningNotification(logEvent->GetEventText().c_str(), 7000);
+			break;
+		case Events::LogEventLevel::Critical:
+			EditorUI::EditorUIService::CreateCriticalNotification(logEvent->GetEventText().c_str(), 7000);
+			break;
+		case Events::LogEventLevel::None:
+		default:
+			// TODO: Yee, I realize this is a potential circular issue. ehh...
+			KG_ERROR("Invalid log event type provided to OnLogEvent()")
+			break;
+		}
+		return false;
+	}
+
 	static void TransferSceneData(Events::ManageAsset& event, Ref<Scenes::Scene> currentScene)
 	{
 		// Get reallocation instructions
@@ -1121,7 +1145,11 @@ namespace Kargono
 	{
 		// Provide file dialog to select location and name of scene
 		std::filesystem::path filepath = Utility::FileDialogs::SaveFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());
-		if (filepath.empty()) { return; }
+		if (filepath.empty())
+		{
+			KG_WARN("Attempt to create scene failed. No creation directory returned from save dialog");
+			return;
+		}
 		if (Assets::AssetService::HasScene(filepath.stem().string()))
 		{
 			KG_WARN("Attempt to create scene with duplicate name!");
@@ -1138,6 +1166,40 @@ namespace Kargono
 		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		
+	}
+
+	void EditorApp::DuplicateEditorScene()
+	{
+		DuplicateEditorScene(Projects::ProjectService::GetActiveAssetDirectory());
+	}
+
+	void EditorApp::DuplicateEditorScene(const std::filesystem::path& initialDirectory)
+	{
+		// Provide file dialog to select location and name of scene
+		std::filesystem::path filepath = Utility::FileDialogs::SaveFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());
+		if (filepath.empty()) 
+		{ 
+			KG_WARN("Attempt to create scene failed. No creation directory returned from save dialog");
+			return; 
+		}
+		if (Assets::AssetService::HasScene(filepath.stem().string()))
+		{
+			KG_WARN("Attempt to create scene with duplicate name!");
+			return;
+		}
+
+		// Create scene file
+		std::string fileName = filepath.stem().string();
+		std::filesystem::path sceneDirectory = filepath.parent_path();
+		m_EditorSceneHandle = Assets::AssetService::CreateScene(fileName.c_str(), sceneDirectory);
+
+		// Duplicate existing scene
+		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		m_EditorScene = Scenes::SceneService::CreateSceneCopy(m_EditorScene);
+		Assets::AssetService::SaveScene(m_EditorInputMapHandle, m_EditorScene);
+
+		// Open new scene in engine
+		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 	}
 
 	void EditorApp::OpenSceneDialog()

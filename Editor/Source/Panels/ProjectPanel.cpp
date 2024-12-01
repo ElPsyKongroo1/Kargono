@@ -13,10 +13,25 @@ namespace Kargono::Panels
 		m_SelectStartSceneSpec.Label = "Starting Scene";
 		//m_SelectStartSceneSpec.WidgetID = 0x75ebbc8750034f81;
 		m_SelectStartSceneSpec.LineCount = 2;
+
+		// Check if an active scene handle is valid
+		Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveStartSceneHandle();
+		if (startSceneHandle == Assets::EmptyHandle || !Assets::AssetService::HasScene(startSceneHandle))
+		{
+			// Ensure some scenes are available
+			KG_ASSERT(Assets::AssetService::GetSceneRegistrySize() != 0);
+			
+			// Set the start scene to a random available scene
+			const Assets::AssetRegistry& sceneRegistry = Assets::AssetService::GetSceneRegistry();
+			auto iter = sceneRegistry.begin();
+			KG_ASSERT(iter != sceneRegistry.end());
+
+			startSceneHandle = iter->first;
+		}
 		
 		m_SelectStartSceneSpec.CurrentOption = {
-			 Assets::AssetService::GetSceneRegistry().at(Projects::ProjectService::GetActiveStartSceneHandle()).Data.FileLocation.string(),
-			Projects::ProjectService::GetActiveStartSceneHandle()};
+			 Assets::AssetService::GetSceneRegistry().at(startSceneHandle).Data.FileLocation.string(),
+			startSceneHandle};
 		m_SelectStartSceneSpec.PopupAction = [&]()
 		{
 			m_SelectStartSceneSpec.GetAllOptions().clear();
