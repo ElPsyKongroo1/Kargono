@@ -53,6 +53,21 @@ namespace Kargono::Utility
 		// Return result
 		return returnPath;
 	}
+
+	bool FileSystem::PathsEquivalent(const std::filesystem::path& filePath, const std::filesystem::path& otherPath) noexcept
+	{
+		std::error_code ec;
+		bool success = std::filesystem::equivalent(filePath, otherPath, ec);
+
+		if (ec)
+		{
+			KG_WARN("Error occured while checking if two files are equivalent: {}", ec.message());
+			return false;
+		}
+
+		return success;
+	}
+
 	bool FileSystem::HasFileExtension(const std::filesystem::path& path) noexcept
 	{
 		return !path.extension().empty();

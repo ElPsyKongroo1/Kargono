@@ -430,8 +430,8 @@ namespace Kargono::Panels
 								}
 
 								// Fill the new script handle
-								m_EditorAIState->OnEnterStateHandle = scriptHandle;
-								m_EditorAIState->OnEnterState = script;
+								m_EditorAIState->OnUpdateHandle = scriptHandle;
+								m_EditorAIState->OnUpdate = script;
 								m_MainHeader.EditColorActive = true;
 								m_SelectOnUpdateScript.CurrentOption = { script->m_ScriptName, scriptHandle };
 							}, {"activeEntity", "deltaTime"});
@@ -598,8 +598,8 @@ namespace Kargono::Panels
 								}
 
 								// Fill the new script handle
-								m_EditorAIState->OnEnterStateHandle = scriptHandle;
-								m_EditorAIState->OnEnterState = script;
+								m_EditorAIState->OnExitStateHandle = scriptHandle;
+								m_EditorAIState->OnExitState = script;
 								m_MainHeader.EditColorActive = true;
 								m_SelectOnExitStateScript.CurrentOption = { script->m_ScriptName, scriptHandle };
 						}, {"activeEntity"});
@@ -682,8 +682,8 @@ namespace Kargono::Panels
 								}
 
 								// Fill the new script handle
-								m_EditorAIState->OnEnterStateHandle = scriptHandle;
-								m_EditorAIState->OnEnterState = script;
+								m_EditorAIState->OnMessageHandle = scriptHandle;
+								m_EditorAIState->OnMessage = script;
 								m_MainHeader.EditColorActive = true;
 								m_SelectOnAIMessageScript.CurrentOption = { script->m_ScriptName, scriptHandle };
 							}, {"messageType", "senderEntity", "receiverEntity", "delayTime"});
