@@ -8,7 +8,6 @@
 
 namespace Kargono::Audio
 {
-	AudioContext* AudioService::s_AudioContext = new AudioContext();
 	static AudioSourceSpecification s_DefaultSourceSpec =
 	{
 		{},

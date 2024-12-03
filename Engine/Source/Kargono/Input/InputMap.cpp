@@ -9,9 +9,6 @@
 
 namespace Kargono::Input
 {
-	Ref<InputMap> InputMapService::s_ActiveInputMap { nullptr };
-	Assets::AssetHandle InputMapService::s_ActiveInputMapHandle {0};
-
 	void InputMapService::ClearActiveInputMap()
 	{
 		s_ActiveInputMap = { nullptr };
@@ -55,7 +52,11 @@ namespace Kargono::Input
 				
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 				KG_ASSERT(keyboardBinding->GetScript());
-				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
+				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding()) ||
+					keyboardBinding->GetScriptHandle() == Assets::EmptyHandle)
+				{ 
+					continue; 
+				}
 				if (keyboardBinding->GetScript()->m_FuncType == WrappedFuncType::Void_None)
 				{
 					Utility::CallWrappedVoidNone(keyboardBinding->GetScript()->m_Function);

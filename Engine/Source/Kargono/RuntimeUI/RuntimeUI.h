@@ -13,22 +13,29 @@
 #include <functional>
 
 
+namespace Kargono::Assets
+{
+	class UserInterfaceManager;
+}
 
 namespace Kargono::RuntimeUI
 {
+	class UserInterfaceService;
+
+
 	//============================
 	// Function Callbacks Struct
 	//============================
 	struct WidgetCallbacks
 	{
-		Assets::AssetHandle OnPressHandle { Assets::EmptyHandle };
-		Ref<Scripting::Script> OnPress { nullptr };
+		Assets::AssetHandle m_OnPressHandle { Assets::EmptyHandle };
+		Ref<Scripting::Script> m_OnPress { nullptr };
 	};
 
 	struct UICallbacks
 	{
-		Assets::AssetHandle OnMoveHandle { Assets::EmptyHandle };
-		Ref<Scripting::Script> OnMove { nullptr };
+		Assets::AssetHandle m_OnMoveHandle { Assets::EmptyHandle };
+		Ref<Scripting::Script> m_OnMove { nullptr };
 	};
 
 	//============================
@@ -40,156 +47,225 @@ namespace Kargono::RuntimeUI
 	};
 
 	//============================
-	// Direction Pointers Struct
+	// Navigation Links Struct
 	//============================
-	struct DirectionPointers
+	struct NavigationLinks
 	{
-		int32_t Left { -1 };
-		int32_t Right { -1 };
-		int32_t Up { -1 };
-		int32_t Down { -1 };
+		int32_t m_LeftWidgetIndex { -1 };
+		int32_t m_RightWidgetIndex { -1 };
+		int32_t m_UpWidgetIndex { -1 };
+		int32_t m_DownWidgetIndex { -1 };
 	};
 	
-	//============================================================
+	//============================
 	// Widget Class
-	//============================================================
+	//============================
 	class Widget
 	{
 	public:
+		//============================
+		// Constructors/Destructors
+		//============================
 		virtual ~Widget() = default;
 	public:
+		//============================
+		// Rendering Methods
+		//============================
 		virtual void PushRenderData(Math::vec3 translation, const Math::vec3& scale, float viewportWidth) = 0;
 	public:
-		std::string Tag{ "None" };
-		Math::vec2 WindowPosition{ 0.4f };
-		Math::vec2 Size  {0.3f};
-		Math::vec4 DefaultBackgroundColor{1.0f};
-		Math::vec4 ActiveBackgroundColor{1.0f};
-		WidgetCallbacks FunctionPointers {};
-		WidgetTypes WidgetType{ WidgetTypes::None };
-		DirectionPointers DirectionPointer{};
-		bool Selectable{ true };
+		//============================
+		// Widget Data
+		//============================
+		std::string m_Tag{ "None" };
+		Math::vec2 m_WindowPosition{ 0.4f };
+		Math::vec2 m_Size  {0.3f};
+		Math::vec4 m_DefaultBackgroundColor{0.5f};
+		Math::vec4 m_ActiveBackgroundColor{0.5f};
+		WidgetCallbacks m_FunctionPointers {};
+		WidgetTypes m_WidgetType{ WidgetTypes::None };
+		NavigationLinks m_DirectionPointer{};
+		bool m_Selectable{ true };
 	};
 
-
+	//============================
+	// Text Widget Class
+	//============================
 	class TextWidget : public Widget
 	{
 	public:
+		//============================
+		// Constructors/Destructors
+		//============================
 		TextWidget()
 			: Widget()
 		{
-			WidgetType = WidgetTypes::TextWidget;
-			Size = { 0.3f, 0.1f };
+			m_WidgetType = WidgetTypes::TextWidget;
+			m_Size = { 0.3f, 0.1f };
 			CalculateTextSize();
 		}
 		virtual ~TextWidget() override = default;
 	public:
+		//============================
+		// Rendering Methods
+		//============================
 		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
-	private:
-		void CalculateTextSize();
-
 	public:
+		//============================
+		// Modify State
+		//============================
 		void SetText(const std::string& newText);
 
-		std::string Text{ "New Text Widget" };
-		float TextSize{ 0.12f };
-		Math::vec2 TextAbsoluteDimensions {};
-		Math::vec4 TextColor{0.5f};
-		bool TextCentered = true;
+	private:
+		//============================
+		// Internal Re-validation Methods
+		//============================
+		void CalculateTextSize();
+	public:
+		//============================
+		// Public Fields
+		//============================
+		std::string m_Text{ "New Text Widget" };
+		float m_TextSize{ 0.12f };
+		Math::vec4 m_TextColor{1.0f};
+		bool m_TextCentered = true;
+	private:
+		Math::vec2 m_TextAbsoluteDimensions {};
+	private:
 		friend class RuntimeUIService;
+		friend class Assets::UserInterfaceManager;
 	};
 
 	class ButtonWidget : public Widget
 	{
 	public:
+		//============================
+		// Constructors/Destructors
+		//============================
 		ButtonWidget()
 			: Widget()
 		{
-			WidgetType = WidgetTypes::ButtonWidget;
+			m_WidgetType = WidgetTypes::ButtonWidget;
 		}
 		virtual ~ButtonWidget() override = default;
 	public:
+		//============================
+		// Rendering Methods
+		//============================
 		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
 	class CheckboxWidget : public Widget
 	{
 	public:
+		//============================
+		// Constructors/Destructors
+		//============================
 		CheckboxWidget()
 			: Widget()
 		{
-			WidgetType = WidgetTypes::CheckboxWidget;
+			m_WidgetType = WidgetTypes::CheckboxWidget;
 		}
 		virtual ~CheckboxWidget() override = default;
 	public:
+		//============================
+		// Rendering Methods
+		//============================
 		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
 	class ComboWidget : public Widget
 	{
 	public:
+		//============================
+		// Constructors/Destructors
+		//============================
 		ComboWidget()
 			: Widget()
 		{
-			WidgetType = WidgetTypes::ComboWidget;
+			m_WidgetType = WidgetTypes::ComboWidget;
 		}
 		virtual ~ComboWidget() override = default;
 	public:
+		//============================
+		// Rendering Methods
+		//============================
 		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
 	class PopupWidget : public Widget
 	{
 	public:
+		//============================
+		// Constructors/Destructors
+		//============================
 		PopupWidget()
 			: Widget()
 		{
-			WidgetType = WidgetTypes::PopupWidget;
+			m_WidgetType = WidgetTypes::PopupWidget;
 		}
 		virtual ~PopupWidget() override = default;
 	public:
+		//============================
+		// Rendering Methods
+		//============================
 		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
-	struct Window
+	class Window
 	{
-		
 	public:
-		std::string Tag{ "None" };
-		Math::vec3 ScreenPosition{};
-		Math::vec2 Size {};
-		Math::vec4 BackgroundColor {1.0f};
-		int32_t ParentIndex{ -1 };
-		int32_t ChildBufferIndex{ -1 };
-		uint32_t ChildBufferSize{ 0 };
-		int32_t DefaultActiveWidget{ -1 };
-		Ref<Widget> DefaultActiveWidgetRef { nullptr };
-		std::vector<Ref<Widget>> Widgets {};
-
+		//============================
+		// Interact w/ Window
+		//============================
 		void DisplayWindow();
 		void HideWindow();
-		bool GetWindowDisplayed();
-
-	private:
-		bool WindowDisplayed = false;
-
+		
 	public:
+		//============================
+		// Modify Window
+		//============================
 		void AddWidget(Ref<Widget> newWidget);
 		void DeleteWidget(int32_t widgetLocation);
+
+	public:
+		//============================
+		// Query Window State
+		//============================
+		bool GetWindowDisplayed();
+
+	public:
+		//============================
+		// Public Fields
+		//============================
+		std::string m_Tag{ "None" };
+		Math::vec3 m_ScreenPosition{};
+		Math::vec2 m_Size{};
+		Math::vec4 m_BackgroundColor{ 1.0f };
+		int32_t m_ParentIndex{ -1 };
+		int32_t m_ChildBufferIndex{ -1 };
+		uint32_t m_ChildBufferSize{ 0 };
+		int32_t m_DefaultActiveWidget{ -1 };
+		Ref<Widget> m_DefaultActiveWidgetRef{ nullptr };
+		std::vector<Ref<Widget>> m_Widgets{};
+
+	private:
+		//============================
+		// Internal Fields
+		//============================
+		bool m_WindowDisplayed{ false };
 	};
 
 	class UserInterface
 	{
 	public:
-		//==============================
-		// Internal Fields
-		//==============================
+		// Config data
 		std::vector<Window> m_Windows {};
-		Ref<Font> m_Font = nullptr;
+		Ref<Font> m_Font{ nullptr };
 		Math::vec4 m_SelectColor {1.0f};
 		Assets::AssetHandle m_FontHandle {0};
 		UICallbacks m_FunctionPointers{};
 
+		// Runtime Data
 		std::vector<Window*> m_DisplayedWindows{};
 		Widget* m_SelectedWidget{ nullptr };
 		Widget* m_HoveredWidget{ nullptr };
@@ -237,17 +313,11 @@ namespace Kargono::RuntimeUI
 		static void MoveUp();
 		static void MoveDown();
 		static void OnPress();
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-		static void CalculateDirections();
-		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
 
+	public:
 		//==============================
 		// Getters/Setters
 		//==============================
-	public:
 		static void SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle);
 		static void SetActiveUIFromName(const std::string& uiName);
 		static Ref<UserInterface> GetActiveUI();
@@ -256,19 +326,27 @@ namespace Kargono::RuntimeUI
 
 	public:
 		//==============================
-		// Other
+		// Rendering API
 		//==============================
 		static void PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth = 0, uint32_t viewportHeight = 0);
-		static bool SaveCurrentUIIntoUIObject();
-		static void RefreshDisplayedWindows();
+	private:
+		//==============================
+		// Internal Functionality
+		//==============================
+		static void CalculateWidgetDirections();
+		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
+		static void RevalidateDisplayedWindow();
+		static bool RevalidateUIWidgets();
+
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		static Ref<UserInterface> s_ActiveUI;
-		static Assets::AssetHandle s_ActiveUIHandle;
+		static inline Ref<UserInterface> s_ActiveUI{ nullptr };
+		static inline Assets::AssetHandle s_ActiveUIHandle{ Assets::EmptyHandle };
 	private:
 		friend class TextWidget;
+		friend class Window;
 	};
 }
 

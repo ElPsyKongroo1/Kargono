@@ -121,7 +121,7 @@ namespace Kargono::Panels
 				}
 			}
 			m_EditorProjectComponentHandle = Assets::AssetService::CreateProjectComponent(m_SelectComponentName.CurrentOption.c_str(), m_SelectProjectComponentLocationSpec.CurrentOption);
-			m_EditorProjectComponent = Assets::AssetService::GetProjectComponent(m_EditorProjectComponentHandle);
+			m_EditorProjectComponent = CreateRef<ECS::ProjectComponent>(*Assets::AssetService::GetProjectComponent(m_EditorProjectComponentHandle));
 			m_MainHeader.EditColorActive = false;
 			m_MainHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
 				m_EditorProjectComponentHandle).Data.FileLocation.filename().string();
@@ -432,7 +432,7 @@ namespace Kargono::Panels
 	}
 	void ProjectComponentPanel::OnOpenComponent(Assets::AssetHandle newHandle)
 	{
-		m_EditorProjectComponent = Assets::AssetService::GetProjectComponent(newHandle);
+		m_EditorProjectComponent = CreateRef<ECS::ProjectComponent>(*Assets::AssetService::GetProjectComponent(newHandle));
 		m_EditorProjectComponentHandle = newHandle;
 		m_MainHeader.Label = Assets::AssetService::GetProjectComponentRegistry().at(
 			newHandle).Data.FileLocation.filename().string();

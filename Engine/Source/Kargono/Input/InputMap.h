@@ -154,8 +154,8 @@ namespace Kargono::Input
 		//=========================
 		// Current Input Mode
 		//=========================
-		static Ref<InputMap> s_ActiveInputMap;
-		static Assets::AssetHandle s_ActiveInputMapHandle;
+		static inline Ref<InputMap> s_ActiveInputMap{ nullptr };
+		static inline Assets::AssetHandle s_ActiveInputMapHandle{ Assets::EmptyHandle };
 	};
 }
 

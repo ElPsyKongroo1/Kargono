@@ -633,8 +633,6 @@ namespace Kargono::Network
 			});
 	}
 
-	Ref<Network::Server> ServerService::s_Server { nullptr };
-
 	bool ServerService::Init()
 	{
 		bool isLocal = Projects::ProjectService::GetActiveServerLocation() == "LocalMachine";
