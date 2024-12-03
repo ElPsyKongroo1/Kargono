@@ -12,6 +12,23 @@ namespace Kargono
 	inline bool s_TestingActive = false;
 }
 
+// Fail-safe macro code to ensure correct defines are provided
+#if !defined(KG_PLATFORM_WINDOOWS) && !defined(KG_PLATFORM_LINUX) && !defined(KG_PLATFORM_MAC)
+
+	#if defined(_WIN32) || defined(_WIN64)
+		#define KG_PLATFORM_WINDOWS
+    #elif defined(__linux__)
+		#define KG_PLATFORM_LINUX
+    #elif defined(__APPLE__) && defined(__MACH__)
+		#define KG_PLATFORM_MAC
+    #else
+        std::cout << "Unknown operating system" << std::endl;
+    #endif
+
+#endif
+
+
+
 #if defined(KG_PLATFORM_WINDOWS)
 #define KG_DEBUGBREAK() \
 	if (!Kargono::s_TestingActive) { __debugbreak(); }

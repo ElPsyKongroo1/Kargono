@@ -1,8 +1,15 @@
 #pragma once
 #include "API/Logger/SpdLogAPI.h"
 
-#define KG_STRINGIFY(x) #x
-#define KG_EXPAND_AND_STRINGIFY(...) KG_STRINGIFY(__VA_ARGS__)
+#if defined(KG_PLATFORM_WINDOWS)
+	#define KG_STRINGIFY(x) #x
+	#define KG_EXPAND_AND_STRINGIFY(...) KG_STRINGIFY(__VA_ARGS__)
+#elif defined(KG_PLATFORM_LINUX) 
+	#define KG_STRINGIFY(x) #x
+	#define KG_EXPAND(x) x
+	#define KG_EXPAND_AND_STRINGIFY(...) KG_STRINGIFY(KG_EXPAND(__VA_ARGS__))
+#endif
+
 #define KG_INFO_LOG_EVENT 1
 #define KG_WARNING_LOG_EVENT 2
 #define KG_CRITICAL_LOG_EVENT 3
