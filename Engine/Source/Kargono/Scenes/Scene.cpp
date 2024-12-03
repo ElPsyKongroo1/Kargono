@@ -55,8 +55,11 @@ namespace Kargono::Scenes
 
 				if (existingEntity.HasProjectComponentData(handle))
 				{
-					// Add project component into registry
-					newEntity.AddProjectComponentData(handle);
+					if (!newEntity.HasProjectComponentData(handle))
+					{
+						// Add project component into registry
+						newEntity.AddProjectComponentData(handle);
+					}
 
 					// Get source and destination data buffers
 					uint8_t* sourceDataPtr = (uint8_t*)existingEntity.GetProjectComponentData(handle);
@@ -154,6 +157,11 @@ namespace Kargono::Scenes
 		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(component);
 		KG_ASSERT(component->m_BufferSlot < m_EntityRegistry.m_ProjectComponentStorage.size());
+
+		if (component->m_BufferSize == 0)
+		{
+			return 0;
+		}
 
 		// Get storage and clear registry
 		ECS::ProjectComponentStorage& currentStorage = m_EntityRegistry.m_ProjectComponentStorage.at(component->m_BufferSlot);

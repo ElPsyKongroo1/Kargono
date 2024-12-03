@@ -234,6 +234,6 @@ namespace Kargono::Audio
 		// This is the actual AudioEngine which is staticly created in the AudioEngine.cpp file
 		//		and is active through the lifetime of the application. Init() and Terminate()
 		//		dictate if OpenAL is active.
-		static AudioContext* s_AudioContext;
+		static inline AudioContext* s_AudioContext{ new AudioContext() };
 	};
 }

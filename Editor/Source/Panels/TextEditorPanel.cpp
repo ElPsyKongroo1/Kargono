@@ -205,7 +205,7 @@ namespace Kargono::Panels
 
 			for (Document& document : m_AllDocuments)
 			{
-				if (std::filesystem::equivalent(document.FilePath, filepath))
+				if (Utility::FileSystem::PathsEquivalent(document.FilePath, filepath))
 				{
 					KG_WARN("Attempt to open document that is already open");
 					document.SetActive = true;

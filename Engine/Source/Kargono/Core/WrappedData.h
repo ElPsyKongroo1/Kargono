@@ -642,11 +642,17 @@ namespace Kargono
 			switch (type)
 			{
 			case WrappedVarType::Integer32:
+				*(int32_t*)buffer = 0;
+				return;
 			case WrappedVarType::UInteger16:
+				*(uint16_t*)buffer = 0;
+				return;
 			case WrappedVarType::UInteger32:
+				*(uint32_t*)buffer = 0;
+				return;
 			case WrappedVarType::UInteger64:
 			case WrappedVarType::Entity:
-				*(int32_t*)buffer = 0;
+				*(uint64_t*)buffer = 0;
 				return;
 			case WrappedVarType::Vector3:
 				*(Math::vec3*)buffer = { 0.0f, 0.0f, 0.0f };

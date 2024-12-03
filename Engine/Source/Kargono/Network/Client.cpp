@@ -495,8 +495,6 @@ namespace Kargono::Network
 		}
 	}
 
-	Ref<Network::Client> ClientService::s_Client { nullptr };
-
 	void ClientService::Init()
 	{
 		// Create new client and start network 

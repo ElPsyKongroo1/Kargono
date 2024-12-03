@@ -9,9 +9,6 @@
 
 namespace Kargono::Input
 {
-	Ref<InputMap> InputMapService::s_ActiveInputMap { nullptr };
-	Assets::AssetHandle InputMapService::s_ActiveInputMapHandle {0};
-
 	void InputMapService::ClearActiveInputMap()
 	{
 		s_ActiveInputMap = { nullptr };
@@ -50,12 +47,16 @@ namespace Kargono::Input
 	{
 		if (Input::InputMapService::GetActiveInputMap())
 		{
-			for (auto& inputBinding : Input::InputMapService::GetActiveOnUpdate())
+			for (Ref<InputActionBinding> inputBinding : Input::InputMapService::GetActiveOnUpdate())
 			{
 				
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 				KG_ASSERT(keyboardBinding->GetScript());
-				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
+				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding()) ||
+					keyboardBinding->GetScriptHandle() == Assets::EmptyHandle)
+				{ 
+					continue; 
+				}
 				if (keyboardBinding->GetScript()->m_FuncType == WrappedFuncType::Void_None)
 				{
 					Utility::CallWrappedVoidNone(keyboardBinding->GetScript()->m_Function);
@@ -73,10 +74,15 @@ namespace Kargono::Input
 		if (event.IsRepeat()) { return false; }
 		if (Input::InputMapService::GetActiveInputMap())
 		{
-			for (auto& inputBinding : Input::InputMapService::GetActiveOnKeyPressed())
+			for (Ref<InputActionBinding> inputBinding : Input::InputMapService::GetActiveOnKeyPressed())
 			{
+				
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
-				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding())) { continue; }
+				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding()) || 
+					keyboardBinding->GetScriptHandle() == Assets::EmptyHandle) 
+				{ 
+					continue; 
+				}
 				Utility::CallWrappedVoidNone(keyboardBinding->GetScript()->m_Function);
 			}
 		}
@@ -111,6 +117,12 @@ namespace Kargono::Input
 	}
 	void InputActionBinding::SetScript(Assets::AssetHandle handle)
 	{
+		if (handle == Assets::EmptyHandle)
+		{
+			ClearScript();
+			return;
+		}
+
 		Ref<Scripting::Script> newScript = Assets::AssetService::GetScript(handle);
 		KG_ASSERT(newScript);
 		m_Script = newScript;

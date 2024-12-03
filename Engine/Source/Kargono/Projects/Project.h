@@ -597,7 +597,7 @@ namespace Kargono::Projects
 		//=========================
 		// m_ActiveProject holds a static reference to the currently active project. Only one project can be
 		//		active at a time and that project is held in this variable.
-		static Ref<Project> s_ActiveProject;
+		static inline Ref<Project> s_ActiveProject{ nullptr };
 	};
 }
 

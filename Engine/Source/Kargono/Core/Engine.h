@@ -162,7 +162,7 @@ namespace Kargono
 		//==============================
 		// Internal Fields
 		//==============================
-		static Engine* s_ActiveEngine;
+		static inline Engine* s_ActiveEngine{ nullptr };
 	private:
 		friend Engine;
 	};

@@ -88,8 +88,6 @@ namespace Kargono::Utility
 
 namespace Kargono::Projects
 {
-	Ref<Project> ProjectService::s_ActiveProject { nullptr };
-
 	void ProjectService::ExportProject(const std::filesystem::path& exportLocation, bool createServer)
 	{
 		KG_INFO("Beginning export project process");

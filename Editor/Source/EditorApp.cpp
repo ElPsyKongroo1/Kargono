@@ -1195,8 +1195,7 @@ namespace Kargono
 
 		// Duplicate existing scene
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
-		m_EditorScene = Scenes::SceneService::CreateSceneCopy(m_EditorScene);
-		Assets::AssetService::SaveScene(m_EditorInputMapHandle, m_EditorScene);
+		Assets::AssetService::SaveScene(m_EditorSceneHandle, m_EditorScene);
 
 		// Open new scene in engine
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);

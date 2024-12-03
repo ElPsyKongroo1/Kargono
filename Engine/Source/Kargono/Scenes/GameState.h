@@ -154,7 +154,7 @@ namespace Kargono::Scenes
 		//=========================
 		// Internal Fields
 		//=========================
-		static Ref<GameState> s_ActiveGameState;
-		static Assets::AssetHandle s_ActiveGameStateHandle;
+		static inline Ref<GameState> s_ActiveGameState{ nullptr };
+		static inline Assets::AssetHandle s_ActiveGameStateHandle{ Assets::EmptyHandle };
 	};
 }
