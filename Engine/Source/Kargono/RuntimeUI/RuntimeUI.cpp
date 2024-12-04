@@ -11,16 +11,24 @@
 
 namespace Kargono::RuntimeUI
 {
-	static Ref<Font> s_DefaultFont = nullptr;
-
-	static Rendering::RendererInputSpec s_BackgroundInputSpec{};
+	struct RuntimeUIContext
+	{
+		Ref<UserInterface> m_ActiveUI{ nullptr };
+		Assets::AssetHandle m_ActiveUIHandle{ Assets::EmptyHandle };
+		Ref<Font> m_DefaultFont{ nullptr };
+		Rendering::RendererInputSpec m_BackgroundInputSpec{};
+	};
 
 	void RuntimeUIService::Init()
 	{
-		s_ActiveUI = nullptr;
-		s_ActiveUIHandle = Assets::EmptyHandle;
-		s_DefaultFont = FontService::InstantiateEditorFont("Resources/fonts/arial.ttf");
-		// Initialize Window Spec Data
+		// Initialize Runtime UI Context
+		s_RuntimeUIContext = CreateRef<RuntimeUIContext>();
+		s_RuntimeUIContext->m_ActiveUI = nullptr;
+		s_RuntimeUIContext->m_ActiveUIHandle = Assets::EmptyHandle;
+		s_RuntimeUIContext->m_DefaultFont = FontService::InstantiateEditorFont("Resources/fonts/arial.ttf");
+
+		// Initialize Window/Widget Rendering Data
+
 		{
 			Rendering::ShaderSpecification shaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawIndex, false};
 			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
@@ -33,47 +41,72 @@ namespace Kargono::RuntimeUI
 			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
 			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
 
-			s_BackgroundInputSpec.Shader = localShader;
-			s_BackgroundInputSpec.Buffer = localBuffer;
-			s_BackgroundInputSpec.ShapeComponent = shapeComp;
+			s_RuntimeUIContext->m_BackgroundInputSpec.Shader = localShader;
+			s_RuntimeUIContext->m_BackgroundInputSpec.Buffer = localBuffer;
+			s_RuntimeUIContext->m_BackgroundInputSpec.ShapeComponent = shapeComp;
 		}
+
+		// Verify Initialization
 		KG_VERIFY(true, "Runtime UI Engine Init");
 	}
 
 	void RuntimeUIService::Terminate()
 	{
+		// Terminate Static Variables
+		s_RuntimeUIContext = nullptr;
+
+		// Terminate Window/Widget Rendering Data
+		{
+			delete s_RuntimeUIContext->m_BackgroundInputSpec.ShapeComponent;
+		}
+
+		// Verify Termination
+		KG_VERIFY(true, "Runtime UI Engine Terminate");
 	}
 
 	void RuntimeUIService::SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle)
 	{
+		// Reset previous active UI
 		ClearActiveUI();
 
-		s_ActiveUI = userInterface;
-		s_ActiveUIHandle = uiHandle;
+		// Set new active UI
+		s_RuntimeUIContext->m_ActiveUI = userInterface;
+		s_RuntimeUIContext->m_ActiveUIHandle = uiHandle;
+
+		// Revalidate UI Context
 		RevalidateDisplayedWindow();
+
+		// Load default font if necessary
 		if (!userInterface->m_Font)
 		{
-			userInterface->m_Font = s_DefaultFont;
+			userInterface->m_Font = s_RuntimeUIContext->m_DefaultFont;
 			userInterface->m_FontHandle = Assets::EmptyHandle;
 		}
 
-		if (s_ActiveUI->m_Windows.size() > 0)
+		// Set the first window as active if applicable
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		if (activeUI->m_Windows.size() > 0)
 		{
-			s_ActiveUI->m_Windows.at(0).DisplayWindow();
-			s_ActiveUI->m_ActiveWindow = &s_ActiveUI->m_Windows.at(0);
-			if (s_ActiveUI->m_ActiveWindow->m_DefaultActiveWidgetRef)
+			// Display the first window
+			activeUI->m_Windows.at(0).DisplayWindow();
+			activeUI->m_ActiveWindow = &activeUI->m_Windows.at(0);
+
+			// Set default widget as the selected widget if it exists
+			if (activeUI->m_ActiveWindow->m_DefaultActiveWidgetRef)
 			{
-				s_ActiveUI->m_SelectedWidget = s_ActiveUI->m_ActiveWindow->m_DefaultActiveWidgetRef.get();
-				s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
+				activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_DefaultActiveWidgetRef.get();
+				activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 			}
 			else
 			{
-				s_ActiveUI->m_SelectedWidget = nullptr;
+				activeUI->m_SelectedWidget = nullptr;
 			}
 
-			for (auto& window : s_ActiveUI->m_Windows)
+
+			// Calculate Text Sizes for all windows
+			for (Window& window : activeUI->m_Windows)
 			{
-				for (auto& widget : window.m_Widgets)
+				for (Ref<Widget> widget : window.m_Widgets)
 				{
 					if (widget->m_WidgetType == WidgetTypes::TextWidget)
 					{
@@ -84,114 +117,143 @@ namespace Kargono::RuntimeUI
 			}
 		}
 
-		CalculateWidgetDirections();
+		// Create widget navigation links for all windows
+		CalculateWindowNavigationLinks();
 	}
 
 	void RuntimeUIService::SetActiveUIFromName(const std::string& uiName)
 	{
-		auto [handle, uiReference] = Assets::AssetService::GetUserInterface(uiName);
+		// Get user interface from asset service system
+		auto [uiHandle, uiReference] = Assets::AssetService::GetUserInterface(uiName);
 
+		// Validate returned user interface
 		if (!uiReference)
 		{
-			KG_WARN("Could not locate user interface by name");
+			KG_WARN("Could not locate user interface. Provided name did not lead to a valid user interface.");
 			return;
 		}
 
-		SetActiveUI(uiReference, handle);
+		// Set active user interface
+		SetActiveUI(uiReference, uiHandle);
 	}
 
+	 //TODO: Might use this function in the user interface editor
+	//bool RuntimeUIService::RevalidateUIWidgets()
+	//{
+	//	// Ensure active user interface is valid
+	//	if (!(bool)s_RuntimeUIContext->m_ActiveUI || s_RuntimeUIContext->m_ActiveUIHandle == Assets::EmptyHandle)
+	//	{
+	//		KG_WARN("Attempt to validate user interface with invalid reference or handle.");
+	//		return false;
+	//	}
 
-	bool RuntimeUIService::RevalidateUIWidgets()
+	//	// Validate 
+	//	for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
+	//	{
+	//		if (window.m_DefaultActiveWidgetRef)
+	//		{
+	//			std::vector<Ref<Widget>> iterator = std::find(window.m_Widgets.begin(), window.m_Widgets.end(), window.m_DefaultActiveWidgetRef);
+	//			window.m_DefaultActiveWidget = static_cast<int32_t>(iterator - window.m_Widgets.begin());
+	//		}
+	//		else
+	//		{
+	//			window.m_DefaultActiveWidget = k_InvalidWidgetIndex;
+	//		}
+	//	}
+
+	//	// Create widget navigation links for all windows
+	//	CalculateWindowNavigationLinks();
+	//	return true;
+	//}
+
+	void RuntimeUIService::DeleteActiveWindow(std::size_t windowLocation)
 	{
-		// Ensure active user interface is valid
-		if (!static_cast<bool>(s_ActiveUI) || s_ActiveUIHandle == Assets::EmptyHandle)
+		// Get all active windows
+		std::vector<Window>& windows = GetAllActiveWindows();
+		if (windowLocation >= windows.size())
 		{
-			KG_ERROR("Attempt to save user interface with invalid UserInterface or Assets::AssetHandle in s_Engine");
-			return false;
+			KG_WARN("Attempt to delete window that does not exist");
+			return;
 		}
 
-		// Set default widget for every window
-		for (Window& window : s_ActiveUI->m_Windows)
-		{
-			if (window.m_DefaultActiveWidgetRef)
-			{
-				auto iterator = std::find(window.m_Widgets.begin(), window.m_Widgets.end(), window.m_DefaultActiveWidgetRef);
-				window.m_DefaultActiveWidget = static_cast<int32_t>(iterator - window.m_Widgets.begin());
-			}
-			else
-			{
-				window.m_DefaultActiveWidget = -1;
-			}
-		}
+		// Get the indicated window reference
+		std::vector<Window>::iterator windowPointer = windows.begin() + windowLocation;
 
-		CalculateWidgetDirections();
-		return true;
-	}
-
-	void RuntimeUIService::DeleteActiveWindow(uint32_t windowLocation)
-	{
-		auto& windows = GetActiveWindows();
-		std::vector<Window>::iterator windowPointer = windows.begin() + static_cast<uint32_t>(windowLocation);
+		// Delete the window
 		windows.erase(windowPointer);
 
+		// Display another window if applicable
 		RuntimeUIService::RevalidateDisplayedWindow();
 	}
 
 
 	void RuntimeUIService::PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight)
 	{
-		if (!s_ActiveUI)
+		// Ensure active user interface is valid
+		if (!s_RuntimeUIContext->m_ActiveUI)
 		{
 			return;
 		}
 
+		// Reset the rendering context
 		Rendering::RendererAPI::ClearDepthBuffer();
-		// Iterate through all characters
-		Math::mat4 orthographicProjection = glm::ortho((float)0, static_cast<float>(viewportWidth),
-			(float)0, static_cast<float>(viewportHeight), (float)-1, (float)1);
+
+		// Calculate orthographic projection matrix for user interface
+		Math::mat4 orthographicProjection = glm::ortho((float)0, (float)viewportWidth,
+			(float)0, (float)viewportHeight, (float)-1, (float)1);
 		Math::mat4 outputMatrix = orthographicProjection;
 
+		// Start rendering context
 		Rendering::RenderingService::BeginScene(outputMatrix);
 
-		// Submit all windows
-		for (auto window : s_ActiveUI->m_DisplayedWindows)
+		// Submit rendering data from all windows
+		for (Window* window : s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows)
 		{
+			// Get position data for rendering window
 			Math::vec3 scale = Math::vec3(viewportWidth * window->m_Size.x, viewportHeight * window->m_Size.y, 1.0f);
 			Math::vec3 initialTranslation = Math::vec3((viewportWidth * window->m_ScreenPosition.x), (viewportHeight * window->m_ScreenPosition.y), window->m_ScreenPosition.z);
 			Math::vec3 translation = Math::vec3( initialTranslation.x + (scale.x / 2),  initialTranslation.y + (scale.y / 2), initialTranslation.z);
 
-			s_BackgroundInputSpec.TransformMatrix = glm::translate(Math::mat4(1.0f), translation)
+			// Create background rendering data
+			s_RuntimeUIContext->m_BackgroundInputSpec.TransformMatrix = glm::translate(Math::mat4(1.0f), translation)
 				* glm::scale(Math::mat4(1.0f), scale);
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, "a_Color", s_BackgroundInputSpec.Buffer, s_BackgroundInputSpec.Shader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, "a_Color", s_RuntimeUIContext->m_BackgroundInputSpec.Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.Shader);
 
-			Rendering::RenderingService::SubmitDataToRenderer(s_BackgroundInputSpec);
+			// Submit background data to GPU
+			Rendering::RenderingService::SubmitDataToRenderer(s_RuntimeUIContext->m_BackgroundInputSpec);
 
+			// Call rendering function for every widget
 			initialTranslation.z += 0.001f;
-			for (auto& widget : window->m_Widgets)
+			for (Ref<Widget> widgetRef : window->m_Widgets)
 			{
-				widget->PushRenderData(initialTranslation, scale, static_cast<float>(viewportWidth));
+				widgetRef->PushRenderData(initialTranslation, scale, (float)viewportWidth);
 			}
 		}
 
+		// End rendering context and submit rendering data to GPU
 		Rendering::RenderingService::EndScene();
 
 	}
 
 	void RuntimeUIService::AddActiveWindow(Window& window)
 	{
+		// Store the window in the active user interface
+		s_RuntimeUIContext->m_ActiveUI->m_Windows.push_back(window);
+
+		// Display the window
 		window.DisplayWindow();
-		s_ActiveUI->m_Windows.push_back(window);
-		RuntimeUIService::RevalidateDisplayedWindow();
 	}
 
 	void RuntimeUIService::SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle)
 	{
-		s_ActiveUI->m_Font = newFont;
-		s_ActiveUI->m_FontHandle = fontHandle;
+		// Set the active font for the active user interface
+		s_RuntimeUIContext->m_ActiveUI->m_Font = newFont;
+		s_RuntimeUIContext->m_ActiveUI->m_FontHandle = fontHandle;
 
-		for (auto& window : s_ActiveUI->m_Windows)
+		// Revalidate/calculate text sizes for all windows
+		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
 		{
-			for (auto& widget : window.m_Widgets)
+			for (Ref<Widget> widget : window.m_Widgets)
 			{
 				if (widget->m_WidgetType == WidgetTypes::TextWidget)
 				{
@@ -202,171 +264,199 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	std::vector<Window>& RuntimeUIService::GetActiveWindows()
+	std::vector<Window>& RuntimeUIService::GetAllActiveWindows()
 	{
-		return s_ActiveUI->m_Windows;
+		return s_RuntimeUIContext->m_ActiveUI->m_Windows;
 	}
 
 	void RuntimeUIService::RevalidateDisplayedWindow()
 	{
 		// Ensure/validate that the correct window is being displayed
-		s_ActiveUI->m_DisplayedWindows.clear();
-		for (Window& window : GetActiveWindows())
+		s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows.clear();
+		for (Window& window : GetAllActiveWindows())
 		{
 			if (window.GetWindowDisplayed()) 
 			{ 
-				s_ActiveUI->m_DisplayedWindows.push_back(&window); 
+				s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows.push_back(&window);
 			}
 		}
 	}
 
 	void RuntimeUIService::ClearActiveUI()
 	{
-		s_ActiveUI = nullptr;
-		s_ActiveUIHandle = Assets::EmptyHandle;
+		s_RuntimeUIContext->m_ActiveUI = nullptr;
+		s_RuntimeUIContext->m_ActiveUIHandle = Assets::EmptyHandle;
 	}
 
 	Ref<UserInterface> RuntimeUIService::GetActiveUI()
 	{
-		return s_ActiveUI;
+		return s_RuntimeUIContext->m_ActiveUI;
 	}
 
 	Assets::AssetHandle RuntimeUIService::GetActiveUIHandle()
 	{
-		return s_ActiveUIHandle;
+		return s_RuntimeUIContext->m_ActiveUIHandle;
 	}
 
 	void RuntimeUIService::SetSelectedWidgetColor(const Math::vec4& color)
 	{
-		s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = color;
+		s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = color;
 	}
 
 	bool RuntimeUIService::IsWidgetSelected(const std::string& windowTag, const std::string& widgetTag)
 	{
+		// Get the current widget
 		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
 
+		// Check if the widget is valid
 		if (!currentWidget)
 		{
 			KG_WARN("Could not locate widget when checking the widget is selected");
 			return false;
 		}
 
-		if (s_ActiveUI->m_SelectedWidget == currentWidget.get())
-		{
-			return true;
-		}
-		return false;
+		// Return if the widget is selected
+		return s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget == currentWidget.get();
 	}
 
 	void RuntimeUIService::SetActiveWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
 	{
+		// Search for the indicated widget
 		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
 
+		// Ensure the widget is valid
 		if (!currentWidget)
 		{
 			KG_WARN("Could not locate widget when attempting to set a widget's text");
 			return;
 		}
 
+		// Ensure the widget is a text widget
 		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget)
 		{
 			KG_WARN("Attempt to change the text of a widget that is not a text widget");
 			return;
 		}
 
+		// Set the text of the widget
 		TextWidget* textWidget = (TextWidget*)currentWidget.get();
 		textWidget->m_Text = newText;
 	}
 
 	void RuntimeUIService::SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag)
 	{
+		// Search for the indicated widget
 		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
 
+		// Ensure the widget is valid
 		if (!currentWidget)
 		{
 			KG_WARN("Could not locate widget when attempting to set a widget as selected");
 			return;
 		}
 
-		s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = s_ActiveUI->m_SelectedWidget->m_DefaultBackgroundColor;
-		s_ActiveUI->m_SelectedWidget = currentWidget.get();
-		s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
-		if (s_ActiveUI->m_FunctionPointers.m_OnMove)
+		// Ensure the widget is selectable
+		if (!currentWidget->m_Selectable)
 		{
-			Utility::CallWrappedVoidNone(s_ActiveUI->m_FunctionPointers.m_OnMove->m_Function);
+			KG_WARN("Attempt to set a widget as selected that is not selectable");
+			return;
+		}
+
+		// Set the widget as selected
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectedWidget->m_DefaultBackgroundColor;
+		activeUI->m_SelectedWidget = currentWidget.get();
+		activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectColor;
+
+		// Call the on move function if applicable
+		if (activeUI->m_FunctionPointers.m_OnMove)
+		{
+			Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 		}
 	}
 
 	void RuntimeUIService::SetWidgetTextColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
 	{
+		// Search for the indicated widget
 		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
 
+		// Ensure the widget is valid
 		if (!currentWidget)
 		{
 			KG_WARN("Could not locate widget when attempting to set a widget's text color");
 			return;
 		}
 
+		// Ensure the widget is a text widget
 		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget)
 		{
 			KG_WARN("Attempt to set text color on widget that is not a TextWidget");
 			return;
 		}
 
+		// Set the text color of the widget
 		TextWidget* textWidget = (TextWidget*)currentWidget.get();
 		textWidget->m_TextColor = color;
 	}
 
 	void RuntimeUIService::SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
 	{
+		// Search for the indicated widget
 		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
 
+		// Ensure the widget is valid
 		if (!currentWidget)
 		{
 			KG_WARN("Could not locate widget when attempting to set a widget's background color");
 			return;
 		}
 
+		// Set the background color of the widget
 		currentWidget->m_DefaultBackgroundColor = color;
 		currentWidget->m_ActiveBackgroundColor = color;
 	}
 
 	void RuntimeUIService::SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable)
 	{
+		// Search for the indicated widget
 		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
 
+		// Ensure the widget is valid
 		if (!currentWidget)
 		{
 			KG_WARN("Could not locate widget when attempting to set a widget as selectable");
 			return;
 		}
 
+		// Set the widget as selectable
 		currentWidget->m_Selectable = selectable;
-		CalculateWidgetDirections();
+		CalculateWindowNavigationLinks();
 	}
 
 	void RuntimeUIService::SetActiveOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function)
 	{
-		s_ActiveUI->m_FunctionPointers.m_OnMove = function;
-		s_ActiveUI->m_FunctionPointers.m_OnMoveHandle = functionHandle;
+		s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnMove = function;
+		s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnMoveHandle = functionHandle;
 	}
 
 	Ref<Scripting::Script> RuntimeUIService::GetActiveOnMove()
 	{
-		return s_ActiveUI->m_FunctionPointers.m_OnMove;
+		return s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnMove;
 	}
 
 	Assets::AssetHandle RuntimeUIService::GetActiveOnMoveHandle()
 	{
-		return s_ActiveUI->m_FunctionPointers.m_OnMoveHandle;
+		return s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnMoveHandle;
 	}
 
 	void RuntimeUIService::SetDisplayWindow(const std::string& windowTag, bool display)
 	{
-		for (auto& window : s_ActiveUI->m_Windows)
+		// Search for the indicated window
+		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
 		{
 			if (window.m_Tag == windowTag)
 			{
+				// Display or hide the window
 				if (display)
 				{
 					window.DisplayWindow();
@@ -382,322 +472,243 @@ namespace Kargono::RuntimeUI
 
 	void RuntimeUIService::MoveRight()
 	{
-		if (s_ActiveUI && s_ActiveUI->m_SelectedWidget &&
-			s_ActiveUI->m_ActiveWindow && s_ActiveUI->m_SelectedWidget->m_DirectionPointer.m_RightWidgetIndex != -1)
+		// Ensure the user interface context is valid and the navigation link is valid
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		if (activeUI && activeUI->m_SelectedWidget &&
+			activeUI->m_ActiveWindow && 
+			activeUI->m_SelectedWidget->m_NavigationLinks.m_RightWidgetIndex != k_InvalidWidgetIndex)
 		{
-			s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = s_ActiveUI->m_SelectedWidget->m_DefaultBackgroundColor;
-			s_ActiveUI->m_SelectedWidget = s_ActiveUI->m_ActiveWindow->m_Widgets.at(s_ActiveUI->m_SelectedWidget->m_DirectionPointer.m_RightWidgetIndex).get();
-			s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
-			if (s_ActiveUI->m_FunctionPointers.m_OnMove)
+			// Set the active background color of the original widget to indicate it is no longer selected
+			activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectedWidget->m_DefaultBackgroundColor;
+
+			// Set the new selected widget
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(activeUI->m_SelectedWidget->m_NavigationLinks.m_RightWidgetIndex).get();
+
+			// Set the active background color of the new widget to indicate it is selected
+			activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectColor;
+
+			// Call the on move function if applicable
+			if (activeUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrappedVoidNone(s_ActiveUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
 		}
 	}
 
 	void RuntimeUIService::MoveLeft()
 	{
-		if (s_ActiveUI && s_ActiveUI->m_SelectedWidget &&
-			s_ActiveUI->m_ActiveWindow && s_ActiveUI->m_SelectedWidget->m_DirectionPointer.m_LeftWidgetIndex != -1)
+		// Ensure the user interface context is valid and the navigation link is valid
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		if (activeUI && activeUI->m_SelectedWidget &&
+			activeUI->m_ActiveWindow && activeUI->m_SelectedWidget->m_NavigationLinks.m_LeftWidgetIndex != k_InvalidWidgetIndex)
 		{
-			s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = s_ActiveUI->m_SelectedWidget->m_DefaultBackgroundColor;
-			s_ActiveUI->m_SelectedWidget = s_ActiveUI->m_ActiveWindow->m_Widgets.at(s_ActiveUI->m_SelectedWidget->m_DirectionPointer.m_LeftWidgetIndex).get();
-			s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
-			if (s_ActiveUI->m_FunctionPointers.m_OnMove)
+			// Set the active background color of the original widget to indicate it is no longer selected
+			activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectedWidget->m_DefaultBackgroundColor;
+
+			// Set the new selected widget
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(activeUI->m_SelectedWidget->m_NavigationLinks.m_LeftWidgetIndex).get();
+
+			// Set the active background color of the new widget to indicate it is selected
+			activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectColor;
+
+			// Call the on move function if applicable
+			if (activeUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrappedVoidNone(s_ActiveUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
 		}
 	}
 
 	void RuntimeUIService::MoveUp()
 	{
-		if (s_ActiveUI && s_ActiveUI->m_SelectedWidget &&
-			s_ActiveUI->m_ActiveWindow && s_ActiveUI->m_SelectedWidget->m_DirectionPointer.m_UpWidgetIndex != -1)
+		// Ensure the user interface context is valid and the navigation link is valid
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		if (activeUI && activeUI->m_SelectedWidget &&
+			activeUI->m_ActiveWindow && activeUI->m_SelectedWidget->m_NavigationLinks.m_UpWidgetIndex != k_InvalidWidgetIndex)
 		{
-			s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = s_ActiveUI->m_SelectedWidget->m_DefaultBackgroundColor;
-			s_ActiveUI->m_SelectedWidget = s_ActiveUI->m_ActiveWindow->m_Widgets.at(s_ActiveUI->m_SelectedWidget->m_DirectionPointer.m_UpWidgetIndex).get();
-			s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
-			if (s_ActiveUI->m_FunctionPointers.m_OnMove)
+			// Set the active background color of the original widget to indicate it is no longer selected
+			activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectedWidget->m_DefaultBackgroundColor;
+
+			// Set the new selected widget
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(activeUI->m_SelectedWidget->m_NavigationLinks.m_UpWidgetIndex).get();
+
+			// Set the active background color of the new widget to indicate it is selected
+			activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectColor;
+
+			// Call the on move function if applicable
+			if (activeUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrappedVoidNone(s_ActiveUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
 		}
 	}
 
 	void RuntimeUIService::MoveDown()
 	{
-		if (s_ActiveUI && s_ActiveUI->m_SelectedWidget &&
-			s_ActiveUI->m_ActiveWindow && s_ActiveUI->m_SelectedWidget->m_DirectionPointer.m_DownWidgetIndex != -1)
+		// Ensure the user interface context is valid and the navigation link is valid
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		if (activeUI && activeUI->m_SelectedWidget &&
+			activeUI->m_ActiveWindow && 
+			activeUI->m_SelectedWidget->m_NavigationLinks.m_DownWidgetIndex != k_InvalidWidgetIndex)
 		{
-			s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = s_ActiveUI->m_SelectedWidget->m_DefaultBackgroundColor;
-			s_ActiveUI->m_SelectedWidget = s_ActiveUI->m_ActiveWindow->m_Widgets.at(s_ActiveUI->m_SelectedWidget->m_DirectionPointer.m_DownWidgetIndex).get();
-			s_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = s_ActiveUI->m_SelectColor;
-			if (s_ActiveUI->m_FunctionPointers.m_OnMove)
+			// Set the active background color of the original widget to indicate it is no longer selected
+			activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectedWidget->m_DefaultBackgroundColor;
+
+			// Set the new selected widget
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(activeUI->m_SelectedWidget->m_NavigationLinks.m_DownWidgetIndex).get();
+
+			// Set the active background color of the new widget to indicate it is selected
+			activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectColor;
+
+			// Call the on move function if applicable
+			if (activeUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrappedVoidNone(s_ActiveUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
-			
 		}
 	}
 
 	void RuntimeUIService::OnPress()
 	{
-		if (!s_ActiveUI->m_SelectedWidget) { return; }
-		if (s_ActiveUI->m_SelectedWidget->m_FunctionPointers.m_OnPress)
+		// Ensure selected widget is valid
+		if (!s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget) 
+		{ 
+			return; 
+		}
+
+		// Call the on press function if applicable
+		if (s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget->m_FunctionPointers.m_OnPress)
 		{
-			Utility::CallWrappedVoidNone(s_ActiveUI->m_SelectedWidget->m_FunctionPointers.m_OnPress->m_Function);
+			Utility::CallWrappedVoidNone(s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget->m_FunctionPointers.m_OnPress->m_Function);
 		}
 	}
 
-	void RuntimeUIService::CalculateWidgetDirections()
+
+
+
+	void RuntimeUIService::CalculateWindowNavigationLinks()
 	{
-		for (Window& window : s_ActiveUI->m_Windows)
+		// Iterate through all windows 
+		for (Window& currentWindow : s_RuntimeUIContext->m_ActiveUI->m_Windows)
 		{
-			for (Ref<Widget> currentWidget : window.m_Widgets)
+			// Iterate through all widgets in the window
+			for (Ref<Widget> currentWidget : currentWindow.m_Widgets)
 			{
-				Ref<Widget> currentBestChoice;
-				uint32_t currentChoiceLocation;
-				float currentBestDistance;
-				uint32_t iteration;
-
-
-				// Calculate Right
-				currentBestChoice = nullptr;
-				currentChoiceLocation = 0;
-				currentBestDistance = std::numeric_limits<float>::max();
-				iteration = 0;
-
-				for (Ref<Widget> potentialChoice : window.m_Widgets)
-				{
-					if (potentialChoice == currentWidget || !potentialChoice->m_Selectable)
-					{
-						iteration++;
-						continue;
-					}
-
-					float currentDistance = glm::abs(glm::distance(potentialChoice->m_WindowPosition, currentWidget->m_WindowPosition));
-
-					// Constraints ----------------
-					float currentWidgetRightExtent = currentWidget->m_WindowPosition.x + (currentWidget->m_Size.x / 2);
-					float potentialWidgetLeftExtent = potentialChoice->m_WindowPosition.x - (potentialChoice->m_Size.x / 2);
-					if (currentWidgetRightExtent >= potentialWidgetLeftExtent)
-					{
-						iteration++;
-						continue;
-					}
-
-					// Preferences ----------------
-					if (currentBestChoice == nullptr)
-					{
-						currentBestChoice = potentialChoice;
-						currentChoiceLocation = iteration;
-						currentBestDistance = currentDistance;
-						iteration++;
-						continue;
-					}
-
-					
-					// Prefer Lowest Distance Widget
-					if (currentDistance < currentBestDistance)
-					{
-						currentBestChoice = potentialChoice;
-						currentChoiceLocation = iteration;
-						currentBestDistance = currentDistance;
-						iteration++;
-						continue;
-					}
-
-					iteration++;
-				}
-				if (currentBestChoice)
-				{
-					currentWidget->m_DirectionPointer.m_RightWidgetIndex = currentChoiceLocation;
-				}
-				else
-				{
-					currentWidget->m_DirectionPointer.m_RightWidgetIndex = -1;
-				}
-
-				// Calculate Left
-				currentBestChoice = nullptr;
-				currentChoiceLocation = 0;
-				currentBestDistance = std::numeric_limits<float>::max();
-				iteration = 0;
-
-				for (Ref<Widget> potentialChoice : window.m_Widgets)
-				{
-					if (potentialChoice == currentWidget || !potentialChoice->m_Selectable)
-					{
-						iteration++;
-						continue;
-					}
-
-					float currentDistance = glm::abs(glm::distance(potentialChoice->m_WindowPosition, currentWidget->m_WindowPosition));
-
-					// Constraints ----------------
-					float currentWidgetLeftExtent = currentWidget->m_WindowPosition.x - (currentWidget->m_Size.x / 2);
-					float potentialWidgetRightExtent = potentialChoice->m_WindowPosition.x + (potentialChoice->m_Size.x / 2);
-					if (currentWidgetLeftExtent <= potentialWidgetRightExtent)
-					{
-						iteration++;
-						continue;
-					}
-
-					// Preferences ----------------
-					if (currentBestChoice == nullptr)
-					{
-						currentBestChoice = potentialChoice;
-						currentChoiceLocation = iteration;
-						currentBestDistance = currentDistance;
-						iteration++;
-						continue;
-					}
-
-
-					// Prefer Lowest Distance Widget
-					if (currentDistance < currentBestDistance)
-					{
-						currentBestChoice = potentialChoice;
-						currentChoiceLocation = iteration;
-						currentBestDistance = currentDistance;
-						iteration++;
-						continue;
-					}
-
-					iteration++;
-				}
-				if (currentBestChoice)
-				{
-					currentWidget->m_DirectionPointer.m_LeftWidgetIndex = currentChoiceLocation;
-				}
-				else
-				{
-					currentWidget->m_DirectionPointer.m_LeftWidgetIndex = -1;
-				}
-
-				// Calculate Up
-				currentBestChoice = nullptr;
-				currentChoiceLocation = 0;
-				currentBestDistance = std::numeric_limits<float>::max();
-				iteration = 0;
-
-				for (Ref<Widget> potentialChoice : window.m_Widgets)
-				{
-					if (potentialChoice == currentWidget || !potentialChoice->m_Selectable)
-					{
-						iteration++;
-						continue;
-					}
-
-					float currentDistance = glm::abs(glm::distance(potentialChoice->m_WindowPosition, currentWidget->m_WindowPosition));
-
-					// Constraints ----------------
-					float currentWidgetUpExtent = currentWidget->m_WindowPosition.y + (currentWidget->m_Size.y / 2);
-					float potentialWidgetDownExtent = potentialChoice->m_WindowPosition.y - (potentialChoice->m_Size.y / 2);
-					if (currentWidgetUpExtent >= potentialWidgetDownExtent)
-					{
-						iteration++;
-						continue;
-					}
-
-					// Preferences ----------------
-					if (currentBestChoice == nullptr)
-					{
-						currentBestChoice = potentialChoice;
-						currentChoiceLocation = iteration;
-						currentBestDistance = currentDistance;
-						iteration++;
-						continue;
-					}
-
-
-					// Prefer Lowest Distance Widget
-					if (currentDistance < currentBestDistance)
-					{
-						currentBestChoice = potentialChoice;
-						currentChoiceLocation = iteration;
-						currentBestDistance = currentDistance;
-						iteration++;
-						continue;
-					}
-
-					iteration++;
-				}
-				if (currentBestChoice)
-				{
-					currentWidget->m_DirectionPointer.m_UpWidgetIndex = currentChoiceLocation;
-				}
-				else
-				{
-					currentWidget->m_DirectionPointer.m_UpWidgetIndex = -1;
-				}
-
-				// Calculate Down
-				currentBestChoice = nullptr;
-				currentChoiceLocation = 0;
-				currentBestDistance = std::numeric_limits<float>::max();
-				iteration = 0;
-
-				for (Ref<Widget> potentialChoice : window.m_Widgets)
-				{
-					if (potentialChoice == currentWidget || !potentialChoice->m_Selectable)
-					{
-						iteration++;
-						continue;
-					}
-
-					float currentDistance = glm::abs(glm::distance(potentialChoice->m_WindowPosition, currentWidget->m_WindowPosition));
-
-					// Constraints ----------------
-					float currentWidgetDownExtent = currentWidget->m_WindowPosition.y - (currentWidget->m_Size.y / 2);
-					float potentialWidgetUpExtent = potentialChoice->m_WindowPosition.y + (potentialChoice->m_Size.y / 2);
-					if (currentWidgetDownExtent <= potentialWidgetUpExtent)
-					{
-						iteration++;
-						continue;
-					}
-
-					// Preferences ----------------
-					if (currentBestChoice == nullptr)
-					{
-						currentBestChoice = potentialChoice;
-						currentChoiceLocation = iteration;
-						currentBestDistance = currentDistance;
-						iteration++;
-						continue;
-					}
-
-
-					// Prefer Lowest Distance Widget
-					if (currentDistance < currentBestDistance)
-					{
-						currentBestChoice = potentialChoice;
-						currentChoiceLocation = iteration;
-						currentBestDistance = currentDistance;
-						iteration++;
-						continue;
-					}
-
-					iteration++;
-				}
-				if (currentBestChoice)
-				{
-					currentWidget->m_DirectionPointer.m_DownWidgetIndex = currentChoiceLocation;
-				}
-				else
-				{
-					currentWidget->m_DirectionPointer.m_DownWidgetIndex = -1;
-				}
-
+				// Calculate navigation links for the current widget
+				currentWidget->m_NavigationLinks.m_RightWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, Direction::Right);
+				currentWidget->m_NavigationLinks.m_LeftWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, Direction::Left);
+				currentWidget->m_NavigationLinks.m_UpWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, Direction::Up);
+				currentWidget->m_NavigationLinks.m_DownWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, Direction::Down);
 			}
+		}
+	}
+
+	int32_t RuntimeUIService::CalculateNavigationLink(Window& currentWindow, Ref<Widget> currentWidget, Direction direction)
+	{
+		// Initialize variables for navigation link calculation
+		Ref<Widget> currentBestChoice{ nullptr };
+		uint32_t currentChoiceLocation{ 0 };
+		float currentBestDistance{ std::numeric_limits<float>::max() };
+		uint32_t iteration{ 0 };
+
+		// Iterate through each potential widget and decide which widget makes sense to navigate to
+		for (Ref<Widget> potentialChoice : currentWindow.m_Widgets)
+		{
+			// Skip the current widget and any non-selectable widgets
+			if (potentialChoice == currentWidget || !potentialChoice->m_Selectable)
+			{
+				iteration++;
+				continue;
+			}
+
+			// Calculate the distance between the current widget and the potential widget
+			float currentDistance = glm::abs(glm::distance(potentialChoice->m_WindowPosition, currentWidget->m_WindowPosition));
+
+			// Check if the potential widget is within the constraints of the current widget
+
+			float currentWidgetExtent;
+			float potentialWidgetExtent;
+
+			switch (direction)
+			{
+			case Direction::Right:
+				currentWidgetExtent = currentWidget->m_WindowPosition.x + (currentWidget->m_Size.x / 2);
+				potentialWidgetExtent = potentialChoice->m_WindowPosition.x - (potentialChoice->m_Size.x / 2);
+				if (currentWidgetExtent >= potentialWidgetExtent)
+				{
+					iteration++;
+					continue;
+				}
+				break;
+			case Direction::Left:
+				currentWidgetExtent = currentWidget->m_WindowPosition.x - (currentWidget->m_Size.x / 2);
+				potentialWidgetExtent = potentialChoice->m_WindowPosition.x + (potentialChoice->m_Size.x / 2);
+				if (currentWidgetExtent <= potentialWidgetExtent)
+				{
+					iteration++;
+					continue;
+				}
+				break;
+			case Direction::Up:
+				currentWidgetExtent = currentWidget->m_WindowPosition.y + (currentWidget->m_Size.y / 2);
+				potentialWidgetExtent = potentialChoice->m_WindowPosition.y - (potentialChoice->m_Size.y / 2);
+				if (currentWidgetExtent >= potentialWidgetExtent)
+				{
+					iteration++;
+					continue;
+				}
+				break;
+			case Direction::Down:
+				currentWidgetExtent = currentWidget->m_WindowPosition.y - (currentWidget->m_Size.y / 2);
+				potentialWidgetExtent = potentialChoice->m_WindowPosition.y + (potentialChoice->m_Size.y / 2);
+				if (currentWidgetExtent <= potentialWidgetExtent)
+				{
+					iteration++;
+					continue;
+				}
+				break;
+			default:
+				KG_ERROR("Invalid direction provided when calculating navigation links for active user interface");
+				break;
+			}
+			// Save current best choice if it is the first choice
+			if (currentBestChoice == nullptr)
+			{
+				currentBestChoice = potentialChoice;
+				currentChoiceLocation = iteration;
+				currentBestDistance = currentDistance;
+				iteration++;
+				continue;
+			}
+
+			// Replace current best choice with the potential choice if it is closer
+			if (currentDistance < currentBestDistance)
+			{
+				currentBestChoice = potentialChoice;
+				currentChoiceLocation = iteration;
+				currentBestDistance = currentDistance;
+				iteration++;
+				continue;
+			}
+
+			iteration++;
+		}
+
+		// Return the index of the best widget choice if it exists
+		if (currentBestChoice)
+		{
+			return currentChoiceLocation;
+		}
+		else
+		{
+			return k_InvalidWidgetIndex;
 		}
 	}
 
 	Ref<Widget> RuntimeUIService::GetWidget(const std::string& windowTag, const std::string& widgetTag)
 	{
 		// Get widget using its parent window tag and its widget tag
-		for (Window& window : s_ActiveUI->m_Windows)
+		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
 		{
 			// Ensure window tag matches
 			if (window.m_Tag == windowTag)
@@ -717,20 +728,28 @@ namespace Kargono::RuntimeUI
 
 	void Window::DisplayWindow()
 	{
-		if (m_WindowDisplayed) { return; }
+		// Return if the window is already displayed
+		if (m_WindowDisplayed) 
+		{ 
+			return; 
+		}
 
+		// Set window as displayed and revalidate displayed windows for current user interface
 		m_WindowDisplayed = true;
-
 		RuntimeUIService::RevalidateDisplayedWindow();
 
 	}
 
 	void Window::HideWindow()
 	{
-		if (!m_WindowDisplayed) { return; }
+		// Return if the window is not displayed
+		if (!m_WindowDisplayed) 
+		{ 
+			return; 
+		}
 
+		// Set window as hidden and revalidate displayed windows for current user interface
 		m_WindowDisplayed = false;
-
 		RuntimeUIService::RevalidateDisplayedWindow();
 	}
 
@@ -744,53 +763,69 @@ namespace Kargono::RuntimeUI
 		m_Widgets.push_back(newWidget);
 	}
 
-	void Window::DeleteWidget(int32_t widgetLocation)
+	void Window::DeleteWidget(std::size_t widgetLocation)
 	{
-		KG_ASSERT(widgetLocation >= 0, "Invalid Location provided to DeleteWidget!");
+		// Return if the widget location is out of bounds
+		if (widgetLocation >= m_Widgets.size())
+		{
+			KG_WARN("Attempt to delete a widget, however, the provided index is out of bounds");
+			return;
+		}
 
+		// Delete the widget
 		m_Widgets.erase(m_Widgets.begin() + widgetLocation);
 	}
 
 	void TextWidget::PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		Rendering::RendererInputSpec& inputSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
+
+		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = Math::vec3(windowSize.x * m_Size.x, windowSize.y * m_Size.y, 1.0f);
 		Math::vec3 widgetTranslation = Math::vec3(windowTranslation.x + (windowSize.x * m_WindowPosition.x),
 							windowTranslation.y + (windowSize.y * m_WindowPosition.y),
 							windowTranslation.z);
-		// Draw Widget Background
-		s_BackgroundInputSpec.TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
+
+		// Create the widget's background rendering data
+		inputSpec.TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
 			* glm::scale(Math::mat4(1.0f), widgetSize);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_ActiveBackgroundColor, "a_Color", inputSpec.Buffer, inputSpec.Shader);
 
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_ActiveBackgroundColor, "a_Color", s_BackgroundInputSpec.Buffer, s_BackgroundInputSpec.Shader);
-		Rendering::RenderingService::SubmitDataToRenderer(s_BackgroundInputSpec);
+		// Submit background data to GPU
+		Rendering::RenderingService::SubmitDataToRenderer(RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec);
 
+		// Create the widget's text rendering data
 		widgetTranslation.z += 0.001f;
-
-		// Render Text
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 		float textSize = (viewportWidth * 0.15f * m_TextSize) * (resolution.y / resolution.x);
-
 		if (m_TextCentered)
 		{
 			widgetTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((m_TextAbsoluteDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextAbsoluteDimensions.y * 0.5f) * textSize), widgetTranslation.z);
 		}
 
-		RuntimeUIService::s_ActiveUI->m_Font->PushTextData(m_Text, widgetTranslation, m_TextColor, textSize);
+		// Call the text's rendering function
+		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->PushTextData(m_Text, widgetTranslation, m_TextColor, textSize);
 	}
 
 	void TextWidget::CalculateTextSize()
 	{
-		if (!RuntimeUIService::s_ActiveUI)
+		// Calculate the text size of the widget using the default font if the active user interface is not set
+		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
 		{
-			m_TextAbsoluteDimensions = s_DefaultFont->CalculateTextSize(m_Text);
+			m_TextAbsoluteDimensions = RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextSize(m_Text);
 			return;
 		}
-		m_TextAbsoluteDimensions = RuntimeUIService::s_ActiveUI->m_Font->CalculateTextSize(m_Text);
+
+		// Calculate the text size of the widget using the active user interface font
+		m_TextAbsoluteDimensions = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextSize(m_Text);
 	}
 
 	void TextWidget::SetText(const std::string& newText)
 	{
+		// Set the text of the widget
 		m_Text = newText;
+
+		// Calculate the new text size
 		CalculateTextSize();
 	}
 
