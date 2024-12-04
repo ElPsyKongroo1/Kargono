@@ -603,13 +603,13 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	int32_t RuntimeUIService::CalculateNavigationLink(Window& currentWindow, Ref<Widget> currentWidget, Direction direction)
+	std::size_t RuntimeUIService::CalculateNavigationLink(Window& currentWindow, Ref<Widget> currentWidget, Direction direction)
 	{
 		// Initialize variables for navigation link calculation
 		Ref<Widget> currentBestChoice{ nullptr };
-		uint32_t currentChoiceLocation{ 0 };
+		std::size_t currentChoiceLocation{ 0 };
 		float currentBestDistance{ std::numeric_limits<float>::max() };
-		uint32_t iteration{ 0 };
+		std::size_t iteration{ 0 };
 
 		// Iterate through each potential widget and decide which widget makes sense to navigate to
 		for (Ref<Widget> potentialChoice : currentWindow.m_Widgets)

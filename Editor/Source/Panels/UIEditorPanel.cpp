@@ -10,11 +10,12 @@ namespace Kargono::Panels
 {
 	void UIEditorPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
-		// Open user interface Window
+		// Open main user interface editor panel
 		s_EditorApp->m_ShowUserInterfaceEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 
+		// Check if panel is already occupied by an asset
 		if (!m_EditorUI)
 		{
 			// Open dialog to create editor user interface
@@ -32,38 +33,52 @@ namespace Kargono::Panels
 		m_EditorUI = nullptr;
 		m_EditorUIHandle = Assets::EmptyHandle;
 	}
-	// Reusable Functions
+
 	void UIEditorPanel::OnOpenUIDialog()
 	{
+		// Set dialog popup to open on next frame
 		m_OpenUIPopupSpec.OpenPopup = true;
 	}
 	void UIEditorPanel::OnCreateUIDialog()
 	{
+		// Set default values for new user interface creation location
 		KG_ASSERT(Projects::ProjectService::GetActive());
 		m_SelectUILocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+
+		// Set dialog popup to open on next frame
 		m_CreateUIPopupSpec.OpenPopup = true;
 	}
 	void UIEditorPanel::OnOpenUI(Assets::AssetHandle newHandle)
 	{
+		// Set new in editor user interface
 		m_EditorUI = Assets::AssetService::GetUserInterface(newHandle);
 		m_EditorUIHandle = newHandle;
+
+		// Set default values for header
 		m_MainHeader.EditColorActive = false;
 		m_MainHeader.Label = Assets::AssetService::GetUserInterfaceRegistry().at(
 			m_EditorUIHandle).Data.FileLocation.filename().string();
+
+		// Refresh widget data in editor to use new user interface
 		OnRefreshData();
+
+		// Set editor user interface as active in runtime
 		RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUI, m_EditorUIHandle);
 	}
 	void UIEditorPanel::OnRefreshData()
 	{
+		// Revalidate data with current user interface
 		m_UITree.OnRefresh();
 	}
 
 	UIEditorPanel::UIEditorPanel()
 	{
+		// Set up static editor app reference and register panel to editor app
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(UIEditorPanel::OnKeyPressedEditor));
 
+		// Initialize all panel widget resources
 		InitializeOpeningScreen();
 		InitializeUIHeader();
 		InitializeMainContent();
@@ -75,8 +90,10 @@ namespace Kargono::Panels
 	{
 		KG_PROFILE_FUNCTION();
 
+		// Begin rendering the user interface editor panel
 		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowUserInterfaceEditor);
 
+		// Early out if window is not visible
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
 			EditorUI::EditorUIService::EndWindow();
@@ -85,29 +102,30 @@ namespace Kargono::Panels
 
 		if (!m_EditorUI)
 		{
-			// Opening/Null State Screen
+			// Display opening screen for user interface editor
 			EditorUI::EditorUIService::NewItemScreen("Open Existing User Interface", KG_BIND_CLASS_FN(OnOpenUIDialog), "Create New User Interface", KG_BIND_CLASS_FN(OnCreateUIDialog));
 			EditorUI::EditorUIService::GenericPopup(m_CreateUIPopupSpec);
 			EditorUI::EditorUIService::SelectOption(m_OpenUIPopupSpec);
 		}
 		else
 		{
-			// Header
+			// Display user interface editor panel main content
 			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
 			EditorUI::EditorUIService::GenericPopup(m_DeleteUIWarning);
 			EditorUI::EditorUIService::GenericPopup(m_CloseUIWarning);
-			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
-
-			// Main Content
 			EditorUI::EditorUIService::Tree(m_UITree);
+			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
 		}
 
+		// Finish rendering the user interface editor panel
 		EditorUI::EditorUIService::EndWindow();
 	}
 	bool UIEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
+		// Handle varios key presses for the user interface editor panel
 		switch (event.GetKeyCode())
 		{
+		// Clear selected entry if escape key is pressed
 		case Key::Escape:
 			m_UITree.SelectedEntry = {};
 			m_CurrentDisplay = UIPropertiesDisplay::None;
@@ -123,7 +141,7 @@ namespace Kargono::Panels
 	{
 		Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
 
-		// Manage script deletion event
+		// Clear script references from user interface widgets
 		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
 			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
@@ -138,6 +156,7 @@ namespace Kargono::Panels
 			}
 		}
 
+		// Handle user interface deletion
 		if (manageAsset->GetAssetType() == Assets::AssetType::UserInterface &&
 			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
@@ -152,6 +171,7 @@ namespace Kargono::Panels
 			return true;
 		}
 
+		// Handle user interface name change
 		if (manageAsset->GetAssetType() == Assets::AssetType::UserInterface &&
 			manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
@@ -161,7 +181,7 @@ namespace Kargono::Panels
 				return false;
 			}
 
-			// Update header
+			// Update header name with new asset name
 			m_MainHeader.Label = Assets::AssetService::GetUserInterfaceFileLocation(manageAsset->GetAssetID()).filename().string();
 			return true;
 		}
@@ -215,7 +235,6 @@ namespace Kargono::Panels
 
 	void UIEditorPanel::DrawWindowOptions()
 	{
-
 		EditorUI::EditorUIService::CollapsingHeader(m_WindowHeader);
 
 		if (m_WindowHeader.Expanded)
@@ -223,7 +242,7 @@ namespace Kargono::Panels
 			m_WindowTag.CurrentOption = m_ActiveWindow->m_Tag;
 			EditorUI::EditorUIService::EditText(m_WindowTag);
 
-			int32_t activeWidget = m_ActiveWindow->m_DefaultActiveWidget;
+			std::size_t activeWidget = m_ActiveWindow->m_DefaultActiveWidget;
 			m_WindowDefaultWidget.CurrentOption =
 			{
 				activeWidget == -1 ? "None" : m_ActiveWindow->m_Widgets.at(activeWidget)->m_Tag,
@@ -369,11 +388,11 @@ namespace Kargono::Panels
 	void UIEditorPanel::RecalculateTreeIterators()
 	{
 		uint32_t iterator{ 0 };
-		for (auto& entry : m_UITree.GetTreeEntries())
+		for (EditorUI::TreeEntry& entry : m_UITree.GetTreeEntries())
 		{
 			entry.Handle = iterator;
 			uint32_t iteratorTwo{};
-			for (auto& subEntry : entry.SubEntries)
+			for (EditorUI::TreeEntry& subEntry : entry.SubEntries)
 			{
 				subEntry.Handle = iteratorTwo;
 				subEntry.ProvidedData = CreateRef<uint32_t>(iterator);
@@ -460,7 +479,7 @@ namespace Kargono::Panels
 			}
 			m_UITree.ClearTree();
 			uint32_t iteratorOne{ 0 };
-			for (auto& window : m_EditorUI->m_Windows)
+			for (RuntimeUI::Window& window : m_EditorUI->m_Windows)
 			{
 				EditorUI::TreeEntry newEntry {};
 				newEntry.Label = window.m_Tag;

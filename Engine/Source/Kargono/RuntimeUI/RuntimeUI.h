@@ -48,19 +48,17 @@ namespace Kargono::RuntimeUI
 		None = 0, TextWidget, ButtonWidget, CheckboxWidget, ComboWidget, PopupWidget
 	};
 
-
-	// TODO: Switch to max std::numeric_limits<int32_t>().max()
-	constexpr int32_t k_InvalidWidgetIndex{ -1 };
+	constexpr std::size_t k_InvalidWidgetIndex{ std::numeric_limits<std::size_t>().max() };
 	//============================
 	// Navigation Links Struct
 	//============================
 
 	struct NavigationLinks
 	{
-		int32_t m_LeftWidgetIndex { k_InvalidWidgetIndex };
-		int32_t m_RightWidgetIndex { k_InvalidWidgetIndex };
-		int32_t m_UpWidgetIndex { k_InvalidWidgetIndex };
-		int32_t m_DownWidgetIndex { k_InvalidWidgetIndex };
+		std::size_t m_LeftWidgetIndex { k_InvalidWidgetIndex };
+		std::size_t m_RightWidgetIndex { k_InvalidWidgetIndex };
+		std::size_t m_UpWidgetIndex{ k_InvalidWidgetIndex };
+		std::size_t m_DownWidgetIndex { k_InvalidWidgetIndex };
 	};
 	
 	//============================
@@ -247,10 +245,10 @@ namespace Kargono::RuntimeUI
 		Math::vec3 m_ScreenPosition{};
 		Math::vec2 m_Size{};
 		Math::vec4 m_BackgroundColor{ 1.0f };
-		int32_t m_ParentIndex{ k_InvalidWidgetIndex };
-		int32_t m_ChildBufferIndex{ k_InvalidWidgetIndex };
-		uint32_t m_ChildBufferSize{ 0 };
-		int32_t m_DefaultActiveWidget{ k_InvalidWidgetIndex };
+		std::size_t m_ParentIndex{ k_InvalidWidgetIndex };
+		std::size_t m_ChildBufferIndex{ k_InvalidWidgetIndex };
+		std::size_t m_ChildBufferSize{ 0 };
+		std::size_t m_DefaultActiveWidget{ k_InvalidWidgetIndex };
 		Ref<Widget> m_DefaultActiveWidgetRef{ nullptr };
 		std::vector<Ref<Widget>> m_Widgets{};
 
@@ -340,7 +338,7 @@ namespace Kargono::RuntimeUI
 		// Internal Functionality
 		//==============================
 		static void CalculateWindowNavigationLinks();
-		static int32_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction);
+		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction);
 		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
 		static void RevalidateDisplayedWindow();
 
