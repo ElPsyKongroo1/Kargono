@@ -41,9 +41,9 @@ namespace Kargono::RuntimeUI
 			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
 			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
 
-			s_RuntimeUIContext->m_BackgroundInputSpec.Shader = localShader;
-			s_RuntimeUIContext->m_BackgroundInputSpec.Buffer = localBuffer;
-			s_RuntimeUIContext->m_BackgroundInputSpec.ShapeComponent = shapeComp;
+			s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader = localShader;
+			s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer = localBuffer;
+			s_RuntimeUIContext->m_BackgroundInputSpec.m_ShapeComponent = shapeComp;
 		}
 
 		// Verify Initialization
@@ -57,7 +57,7 @@ namespace Kargono::RuntimeUI
 
 		// Terminate Window/Widget Rendering Data
 		{
-			delete s_RuntimeUIContext->m_BackgroundInputSpec.ShapeComponent;
+			delete s_RuntimeUIContext->m_BackgroundInputSpec.m_ShapeComponent;
 		}
 
 		// Verify Termination
@@ -215,9 +215,9 @@ namespace Kargono::RuntimeUI
 			Math::vec3 translation = Math::vec3( initialTranslation.x + (scale.x / 2),  initialTranslation.y + (scale.y / 2), initialTranslation.z);
 
 			// Create background rendering data
-			s_RuntimeUIContext->m_BackgroundInputSpec.TransformMatrix = glm::translate(Math::mat4(1.0f), translation)
+			s_RuntimeUIContext->m_BackgroundInputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), translation)
 				* glm::scale(Math::mat4(1.0f), scale);
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, "a_Color", s_RuntimeUIContext->m_BackgroundInputSpec.Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.Shader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, "a_Color", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(s_RuntimeUIContext->m_BackgroundInputSpec);
@@ -787,9 +787,9 @@ namespace Kargono::RuntimeUI
 							windowTranslation.z);
 
 		// Create the widget's background rendering data
-		inputSpec.TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
+		inputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
 			* glm::scale(Math::mat4(1.0f), widgetSize);
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_ActiveBackgroundColor, "a_Color", inputSpec.Buffer, inputSpec.Shader);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_ActiveBackgroundColor, "a_Color", inputSpec.m_Buffer, inputSpec.m_Shader);
 
 		// Submit background data to GPU
 		Rendering::RenderingService::SubmitDataToRenderer(RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec);

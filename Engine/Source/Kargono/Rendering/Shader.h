@@ -30,26 +30,26 @@ namespace Kargono::Rendering
 
 	struct DrawCallBuffer
 	{
-		Buffer VertexBuffer{};
-		uint8_t* VertexBufferIterator = VertexBuffer.Data;
-		std::vector<uint32_t> IndexBuffer {};
-		std::vector<Ref<Texture2D>> Textures {};
-		Shader* Shader = nullptr;
+		Buffer m_VertexBuffer{};
+		uint8_t* m_VertexBufferIterator{ m_VertexBuffer.Data };
+		std::vector<uint32_t> m_IndexBuffer {};
+		std::vector<Ref<Texture2D>> m_Textures {};
+		Shader* m_Shader = nullptr;
 	};
 
 	// This struct allows input to be sent to the renderer
 	// TODO: The shape component is a memory leak...
 	struct RendererInputSpec
 	{
-		Ref<Shader> Shader;
-		Ref<Texture2D> Texture;
-		ECS::ShapeComponent* ShapeComponent;
-		Ref<DrawCallBuffer> CurrentDrawBuffer;
-		Buffer Buffer;
-		uint32_t Entity;
-		void* EntityRegistry;
-		Math::mat4 TransformMatrix;
-		Math::mat4 ObjectOutlineMatrix;
+		Ref<Shader> m_Shader;
+		Ref<Texture2D> m_Texture;
+		ECS::ShapeComponent* m_ShapeComponent;
+		Ref<DrawCallBuffer> m_CurrentDrawBuffer;
+		Buffer m_Buffer;
+		uint32_t m_Entity;
+		void* m_EntityRegistry;
+		Math::mat4 m_TransformMatrix;
+		Math::mat4 m_ObjectOutlineMatrix;
 	};
 
 	// This struct specifies the type of color input used by a shader

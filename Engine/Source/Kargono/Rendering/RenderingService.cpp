@@ -96,14 +96,14 @@ namespace Kargono::Rendering
 	void RenderingService::FillTextureIndex(RendererInputSpec& inputSpec)
 	{
 		//if (s_Data.QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
-		KG_ASSERT(inputSpec.ShapeComponent->Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
-		auto& Textures = inputSpec.CurrentDrawBuffer->Textures;
+		KG_ASSERT(inputSpec.m_ShapeComponent->Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
+		auto& m_Textures = inputSpec.m_CurrentDrawBuffer->m_Textures;
 		float textureIndex = -1.0f;
 
 		uint32_t iteration = 0;
-		for (auto& texture : Textures)
+		for (auto& texture : m_Textures)
 		{
-			if (texture == inputSpec.ShapeComponent->Texture)
+			if (texture == inputSpec.m_ShapeComponent->Texture)
 			{
 				textureIndex = (float)iteration;
 				break;
@@ -112,123 +112,123 @@ namespace Kargono::Rendering
 		}
 		if (static_cast<int32_t>(textureIndex) == -1)
 		{
-			if (Textures.size() >= RendererData::MaxTextureSlots)
+			if (m_Textures.size() >= RendererData::MaxTextureSlots)
 			{
 				textureIndex = 0.0f;
 				// TODO: NextBatch, Create a new DrawCallBuffer for the current shader and update Textures Ref
 			}
-			Textures.push_back(inputSpec.ShapeComponent->Texture);
-			textureIndex = static_cast<float>(Textures.size() - 1);
+			m_Textures.push_back(inputSpec.m_ShapeComponent->Texture);
+			textureIndex = static_cast<float>(m_Textures.size() - 1);
 		}
 
-		Shader::SetDataAtInputLocation<float>(textureIndex, "a_TexIndex", inputSpec.Buffer, inputSpec.Shader);
+		Shader::SetDataAtInputLocation<float>(textureIndex, "a_TexIndex", inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 	void RenderingService::FillTextureCoordinate(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
-		const Math::vec2& coordinates  = inputSpec.ShapeComponent->TextureCoordinates->at(iteration);
-		Shader::SetDataAtInputLocation<Math::vec2>(coordinates, "a_TexCoord", inputSpec.Buffer, inputSpec.Shader);
+		const Math::vec2& coordinates = inputSpec.m_ShapeComponent->TextureCoordinates->at(iteration);
+		Shader::SetDataAtInputLocation<Math::vec2>(coordinates, "a_TexCoord", inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 	void RenderingService::FillLocalPosition(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
-		const Math::vec3& localPosition = inputSpec.ShapeComponent->Vertices->at(iteration) * 2.0f;
-		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, "a_LocalPosition", inputSpec.Buffer, inputSpec.Shader);
+		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->Vertices->at(iteration) * 2.0f;
+		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, "a_LocalPosition", inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 	void RenderingService::FillWorldPosition(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
-		const Math::vec3& localPosition = inputSpec.ShapeComponent->Vertices->at(iteration);
-		Math::vec3 worldPosition = inputSpec.TransformMatrix * Math::vec4(localPosition, 1.0f);
-		Shader::SetDataAtInputLocation<Math::vec3>(worldPosition, "a_Position", inputSpec.Buffer, inputSpec.Shader);
+		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->Vertices->at(iteration);
+		Math::vec3 worldPosition = inputSpec.m_TransformMatrix * Math::vec4(localPosition, 1.0f);
+		Shader::SetDataAtInputLocation<Math::vec3>(worldPosition, "a_Position", inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 
 	void RenderingService::FillWorldPositionNoTransform(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
-		const Math::vec3& localPosition = inputSpec.ShapeComponent->Vertices->at(iteration);
+		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->Vertices->at(iteration);
 
-		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, "a_Position", inputSpec.Buffer, inputSpec.Shader);
+		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, "a_Position", inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 	void RenderingService::FillVertexColor(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
-		auto& colorVector = inputSpec.ShapeComponent->VertexColors;
+		auto& colorVector = inputSpec.m_ShapeComponent->VertexColors;
 		KG_ASSERT(iteration < static_cast<uint32_t>(colorVector->size()), "Invalid iteration inside FillVertexColor function");
-		Shader::SetDataAtInputLocation<Math::vec4>(colorVector->at(iteration), "a_Color", inputSpec.Buffer, inputSpec.Shader);
+		Shader::SetDataAtInputLocation<Math::vec4>(colorVector->at(iteration), "a_Color", inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 	void RenderingService::FillIndicesData(RendererInputSpec& inputSpec)
 	{
 		// Upload Indices
-		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
-		std::size_t currentBufferSize = (drawCallBuffer->VertexBufferIterator - drawCallBuffer->VertexBuffer.Data) / inputSpec.Shader->GetInputLayout().GetStride();
-		for (auto& index : *(inputSpec.ShapeComponent->Indices))
+		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.m_Shader->GetCurrentDrawCallBuffer();
+		std::size_t currentBufferSize = (drawCallBuffer->m_VertexBufferIterator - drawCallBuffer->m_VertexBuffer.Data) / inputSpec.m_Shader->GetInputLayout().GetStride();
+		for (auto& index : *(inputSpec.m_ShapeComponent->Indices))
 		{
-			drawCallBuffer->IndexBuffer.push_back(static_cast<uint32_t>(currentBufferSize) + index);
+			drawCallBuffer->m_IndexBuffer.push_back(static_cast<uint32_t>(currentBufferSize) + index);
 		}
 	}
 
 	void RenderingService::FillEntityID(Rendering::RendererInputSpec& inputSpec)
 	{
-		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.Entity, "a_EntityID", inputSpec.Buffer, inputSpec.Shader);
+		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.m_Entity, "a_EntityID", inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 	void RenderingService::SubmitDataToRenderer(RendererInputSpec& inputSpec)
 	{
-		if (!inputSpec.ShapeComponent->Vertices || inputSpec.Shader->GetSpecification().RenderType == RenderingType::None) { return; }
+		if (!inputSpec.m_ShapeComponent->Vertices || inputSpec.m_Shader->GetSpecification().RenderType == RenderingType::None) { return; }
 
-		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.Shader->GetCurrentDrawCallBuffer();
+		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.m_Shader->GetCurrentDrawCallBuffer();
 
 		// Create new DrawCallBuffer if one is not associated with active shader
 		if (!drawCallBuffer)
 		{
 			drawCallBuffer = CreateRef<DrawCallBuffer>();
-			drawCallBuffer->VertexBuffer.Allocate(s_MaxVertexBufferSize);
-			drawCallBuffer->VertexBufferIterator = drawCallBuffer->VertexBuffer.Data;
-			if (inputSpec.Shader->GetSpecification().RenderType == RenderingType::DrawIndex)
+			drawCallBuffer->m_VertexBuffer.Allocate(s_MaxVertexBufferSize);
+			drawCallBuffer->m_VertexBufferIterator = drawCallBuffer->m_VertexBuffer.Data;
+			if (inputSpec.m_Shader->GetSpecification().RenderType == RenderingType::DrawIndex)
 			{
-				drawCallBuffer->IndexBuffer.reserve(s_Data.MaxIndicesBuffer);
+				drawCallBuffer->m_IndexBuffer.reserve(s_Data.MaxIndicesBuffer);
 			}
-			drawCallBuffer->Textures.reserve(s_Data.MaxTextureSlots);
-			drawCallBuffer->Shader = inputSpec.Shader.get();
+			drawCallBuffer->m_Textures.reserve(s_Data.MaxTextureSlots);
+			drawCallBuffer->m_Shader = inputSpec.m_Shader.get();
 			s_Data.DrawCalls.emplace_back(drawCallBuffer);
-			inputSpec.Shader->SetCurrentDrawCallBuffer(drawCallBuffer);
+			inputSpec.m_Shader->SetCurrentDrawCallBuffer(drawCallBuffer);
 		}
 
-		std::size_t currentBufferSize = drawCallBuffer->VertexBufferIterator - drawCallBuffer->VertexBuffer.Data;
-		std::size_t sizeOfNewDrawCallBuffer = inputSpec.Buffer.Size * inputSpec.ShapeComponent->Vertices->size() + currentBufferSize;
+		std::size_t currentBufferSize = drawCallBuffer->m_VertexBufferIterator - drawCallBuffer->m_VertexBuffer.Data;
+		std::size_t sizeOfNewDrawCallBuffer = inputSpec.m_Buffer.Size * inputSpec.m_ShapeComponent->Vertices->size() + currentBufferSize;
 		// Create new DrawCallBuffer if current buffer overflows
 		if (sizeOfNewDrawCallBuffer >= s_MaxVertexBufferSize)
 		{
 			drawCallBuffer = CreateRef<DrawCallBuffer>();
-			drawCallBuffer->VertexBuffer.Allocate(s_MaxVertexBufferSize);
-			drawCallBuffer->VertexBufferIterator = drawCallBuffer->VertexBuffer.Data;
-			if (inputSpec.Shader->GetSpecification().RenderType == RenderingType::DrawIndex)
+			drawCallBuffer->m_VertexBuffer.Allocate(s_MaxVertexBufferSize);
+			drawCallBuffer->m_VertexBufferIterator = drawCallBuffer->m_VertexBuffer.Data;
+			if (inputSpec.m_Shader->GetSpecification().RenderType == RenderingType::DrawIndex)
 			{
-				drawCallBuffer->IndexBuffer.reserve(s_Data.MaxIndicesBuffer);
+				drawCallBuffer->m_IndexBuffer.reserve(s_Data.MaxIndicesBuffer);
 			}
-			drawCallBuffer->Textures.reserve(s_Data.MaxTextureSlots);
-			drawCallBuffer->Shader = inputSpec.Shader.get();
+			drawCallBuffer->m_Textures.reserve(s_Data.MaxTextureSlots);
+			drawCallBuffer->m_Shader = inputSpec.m_Shader.get();
 			s_Data.DrawCalls.emplace_back(drawCallBuffer);
-			inputSpec.Shader->SetCurrentDrawCallBuffer(drawCallBuffer);
+			inputSpec.m_Shader->SetCurrentDrawCallBuffer(drawCallBuffer);
 		}
 
-		inputSpec.CurrentDrawBuffer = drawCallBuffer;
+		inputSpec.m_CurrentDrawBuffer = drawCallBuffer;
 
-		for (const auto& PerObjectFunction : inputSpec.Shader->GetFillDataObject())
+		for (const auto& PerObjectFunction : inputSpec.m_Shader->GetFillDataObject())
 		{
 			PerObjectFunction(inputSpec);
 		}
 
-		for (uint32_t iteration {0}; iteration < inputSpec.ShapeComponent->Vertices->size(); iteration++)
+		for (uint32_t iteration {0}; iteration < inputSpec.m_ShapeComponent->Vertices->size(); iteration++)
 		{
-			for (const auto& PerVertexFunction : inputSpec.Shader->GetFillDataVertex())
+			for (const auto& PerVertexFunction : inputSpec.m_Shader->GetFillDataVertex())
 			{
 				PerVertexFunction(inputSpec, iteration);
 			}
-			memcpy_s(inputSpec.CurrentDrawBuffer->VertexBufferIterator, inputSpec.Buffer.Size, inputSpec.Buffer.Data, inputSpec.Buffer.Size);
-			inputSpec.CurrentDrawBuffer->VertexBufferIterator += inputSpec.Buffer.Size;
+			memcpy_s(inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator, inputSpec.m_Buffer.Size, inputSpec.m_Buffer.Data, inputSpec.m_Buffer.Size);
+			inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator += inputSpec.m_Buffer.Size;
 			s_Data.Stats.VertexCount++;
 		}
 
@@ -237,32 +237,32 @@ namespace Kargono::Rendering
 
 	void RenderingService::FillTextureUniform(Ref<DrawCallBuffer> buffer)
 	{
-		for (uint32_t i = 0; i < buffer->Textures.size(); i++) { buffer->Textures[i]->Bind(i); }
+		for (uint32_t i = 0; i < buffer->m_Textures.size(); i++) { buffer->m_Textures[i]->Bind(i); }
 	}
 
 	void RenderingService::DrawBufferIndices(Ref<DrawCallBuffer> buffer)
 	{
-		RendererAPI::DrawIndexed(buffer->Shader->GetVertexArray(), buffer->IndexBuffer.data(), static_cast<uint32_t>(buffer->IndexBuffer.size()));
+		RendererAPI::DrawIndexed(buffer->m_Shader->GetVertexArray(), buffer->m_IndexBuffer.data(), static_cast<uint32_t>(buffer->m_IndexBuffer.size()));
 		s_Data.Stats.DrawCalls++;
 	}
 
 	void RenderingService::DrawBufferPoints(Ref<DrawCallBuffer> buffer)
 	{
 		RendererAPI::SetPointWidth(s_Data.PointWidth);
-		RendererAPI::DrawPoints(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
+		RendererAPI::DrawPoints(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.Data) / buffer->m_Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 
 	void RenderingService::DrawBufferLine(Ref<DrawCallBuffer> buffer)
 	{
 		RendererAPI::SetLineWidth(s_Data.LineWidth);
-		RendererAPI::DrawLines(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
+		RendererAPI::DrawLines(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.Data) / buffer->m_Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 
 	void RenderingService::DrawBufferTriangles(Ref<DrawCallBuffer> buffer)
 	{
-		RendererAPI::DrawTriangles(buffer->Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data) / buffer->Shader->GetInputLayout().GetStride());
+		RendererAPI::DrawTriangles(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.Data) / buffer->m_Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 
@@ -273,28 +273,28 @@ namespace Kargono::Rendering
 		// Submit all Buffers to DrawCalls!
 		for (auto buffer : allBuffers)
 		{
-			for (const auto& preDrawFunction : buffer->Shader->GetPreDrawBuffer())
+			for (const auto& preDrawFunction : buffer->m_Shader->GetPreDrawBuffer())
 			{
 				preDrawFunction(buffer);
 			}
 
-			buffer->Shader->Bind();
-			uint32_t dataSize = static_cast<uint32_t>(buffer->VertexBufferIterator - buffer->VertexBuffer.Data);
-			buffer->Shader->GetVertexArray()->GetVertexBuffers().at(0)->SetData(buffer->VertexBuffer.Data, dataSize);
+			buffer->m_Shader->Bind();
+			uint32_t dataSize = static_cast<uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.Data);
+			buffer->m_Shader->GetVertexArray()->GetVertexBuffers().at(0)->SetData(buffer->m_VertexBuffer.Data, dataSize);
 
 			// Submit Per Buffer Uniforms
-			for (const auto& uniformFunction : buffer->Shader->GetSubmitUniforms())
+			for (const auto& uniformFunction : buffer->m_Shader->GetSubmitUniforms())
 			{
 				uniformFunction(buffer);
 			}
 
 			// Final Draw Call Functions
-			for (const auto& drawFunction : buffer->Shader->GetDrawFunctions())
+			for (const auto& drawFunction : buffer->m_Shader->GetDrawFunctions())
 			{
 				drawFunction(buffer);
 			}
 
-			for (const auto& postDrawFunction : buffer->Shader->GetPostDrawBuffer())
+			for (const auto& postDrawFunction : buffer->m_Shader->GetPostDrawBuffer())
 			{
 				postDrawFunction(buffer);
 			}
@@ -304,18 +304,18 @@ namespace Kargono::Rendering
 		// Clear current Buffers inside each shader!
 		for (auto& buffer : allBuffers)
 		{
-			if (buffer->Shader->GetCurrentDrawCallBuffer())
+			if (buffer->m_Shader->GetCurrentDrawCallBuffer())
 			{
-				buffer->Shader->ClearCurrentDrawCallBuffer();
+				buffer->m_Shader->ClearCurrentDrawCallBuffer();
 			}
 		}
 
 		// Clear current Buffers in Renderer
 		for (auto& buffer : allBuffers)
 		{
-			if (buffer->VertexBuffer)
+			if (buffer->m_VertexBuffer)
 			{
-				buffer->VertexBuffer.Release();
+				buffer->m_VertexBuffer.Release();
 			}
 		}
 		allBuffers.clear();

@@ -1,7 +1,7 @@
 #pragma once
 #include "Kargono/Assets/AssetManager.h"
 
-namespace Kargono::Rendering { class Rendering::Texture2D; }
+namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono::Assets
 {

@@ -19,11 +19,11 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetInfo(handle); \
 		}\
-		static Ref<typeNamespace##::##typeName> Get##typeName(AssetHandle handle) \
+		static Ref<typeNamespace::typeName> Get##typeName(AssetHandle handle) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAsset(handle); \
 		}\
-		static std::tuple<AssetHandle, Ref<typeNamespace##::##typeName>> Get##typeName(const std::filesystem::path& fileLocation) \
+		static std::tuple<AssetHandle, Ref<typeNamespace::typeName>> Get##typeName(const std::filesystem::path& fileLocation) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAsset(fileLocation); \
 		}\
@@ -79,7 +79,7 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetRegistry(); \
 		}\
-		static std::unordered_map<AssetHandle, Ref<typeNamespace##::##typeName>>& Get##typeName##Cache() \
+		static std::unordered_map<AssetHandle, Ref<typeNamespace::typeName>>& Get##typeName##Cache() \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetCache(); \
 		}\
@@ -87,7 +87,7 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetValidImportExtensions(); \
 		}\
-		static void Save##typeName(AssetHandle assetHandle, Ref<typeNamespace##::##typeName> assetReference) \
+		static void Save##typeName(AssetHandle assetHandle, Ref<typeNamespace::typeName> assetReference) \
 		{\
 			s_AssetsContext.m_##typeName##Manager.SaveAsset(assetHandle, assetReference); \
 		}\

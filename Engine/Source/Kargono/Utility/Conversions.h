@@ -42,26 +42,6 @@ namespace Kargono::Utility
 			}
 			return true;
 		}
-
-		template<>
-		static bool CharBufferToVariable(Buffer buffer, Math::vec3& variable)
-		{
-			// Get the string from the buffer
-			const std::string stringBuffer = buffer.GetString();
-
-			// Create a string stream from the string buffer
-			std::istringstream ss(stringBuffer);
-
-			// Extract the floats
-			if (!(ss >> variable.x >> variable.y >> variable.z)) 
-			{
-				KG_WARN("Unable to parse buffer as Math::vec3");
-				return false;
-			}
-
-			return true; 
-
-		}
 		//==============================
 		// Convert Float -> String
 		//==============================

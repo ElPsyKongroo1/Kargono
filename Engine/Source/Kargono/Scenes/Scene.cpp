@@ -335,12 +335,12 @@ namespace Kargono::Scenes
 				const auto& [transform, shape] = view.get<ECS::TransformComponent, ECS::ShapeComponent>(entity);
 
 				static Rendering::RendererInputSpec inputSpec{};
-				inputSpec.Shader = shape.Shader;
-				inputSpec.Buffer = shape.ShaderData;
-				inputSpec.Entity = static_cast<uint32_t>(entity);
-				inputSpec.EntityRegistry = &m_EntityRegistry.m_EnTTRegistry;
-				inputSpec.ShapeComponent = &shape;
-				inputSpec.TransformMatrix = transform.GetTransform();
+				inputSpec.m_Shader = shape.Shader;
+				inputSpec.m_Buffer = shape.ShaderData;
+				inputSpec.m_Entity = static_cast<uint32_t>(entity);
+				inputSpec.m_EntityRegistry = &m_EntityRegistry.m_EnTTRegistry;
+				inputSpec.m_ShapeComponent = &shape;
+				inputSpec.m_TransformMatrix = transform.GetTransform();
 
 				for (const auto& PerObjectSceneFunction : shape.Shader->GetFillDataObjectScene())
 				{
