@@ -93,7 +93,7 @@ namespace API::Platform
 		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
 			{
-				KG_PROFILE_FUNCTION("GLFW Resize Event");
+				KG_PROFILE_FUNCTION_DESC("GLFW Resize Event");
 
 				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 
@@ -106,7 +106,7 @@ namespace API::Platform
 
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) 
 			{
-				KG_PROFILE_FUNCTION("GLFW Close Event");
+				KG_PROFILE_FUNCTION_DESC("GLFW Close Event");
 				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 				Kargono::Events::WindowCloseEvent event;
 				data.EventCallback(&event);
@@ -114,7 +114,7 @@ namespace API::Platform
 
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
-			KG_PROFILE_FUNCTION("GLFW Keyboard Event");
+			KG_PROFILE_FUNCTION_DESC("GLFW Keyboard Event");
 
 			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 			switch (action)
@@ -142,7 +142,7 @@ namespace API::Platform
 
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
 		{
-			KG_PROFILE_FUNCTION("GLFW Typing Event");
+			KG_PROFILE_FUNCTION_DESC("GLFW Typing Event");
 
 			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 			Kargono::Events::KeyTypedEvent event(keycode);
@@ -152,7 +152,7 @@ namespace API::Platform
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
-			KG_PROFILE_FUNCTION("GLFW Mouse Button Event");
+			KG_PROFILE_FUNCTION_DESC("GLFW Mouse Button Event");
 
 			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 
@@ -175,7 +175,7 @@ namespace API::Platform
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) 
 			{
-				KG_PROFILE_FUNCTION("GLFW Scroll Event");
+				static ::Optick::EventDescription* autogen_description_178 = nullptr; if (autogen_description_178 == nullptr) autogen_description_178 = ::Optick::CreateDescription(__FUNCSIG__, "F:\\VM\\SharedFolder\\Kargono\\Engine\\Source\\API\\Platform\\WindowsWindow.cpp", 178, "KG_DESC" "GLFW Scroll Event"); ::Optick::Event autogen_event_178(*(autogen_description_178));;
 
 				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 
@@ -184,7 +184,7 @@ namespace API::Platform
 			});
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos) 
 			{
-				KG_PROFILE_FUNCTION("GLFW Move Cursor Event");
+				KG_PROFILE_FUNCTION_DESC("GLFW Move Cursor Event");
 
 				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 
@@ -224,7 +224,7 @@ namespace API::Platform
 	{
 		KG_PROFILE_FUNCTION();
 		{
-			KG_PROFILE_FUNCTION("GLFW Polling");
+			KG_PROFILE_FUNCTION_DESC("GLFW Polling");
 			glfwPollEvents();
 		}
 		
