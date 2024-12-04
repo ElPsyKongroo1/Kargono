@@ -38,6 +38,7 @@ namespace Kargono::Rendering
 	};
 
 	// This struct allows input to be sent to the renderer
+	// TODO: The shape component is a memory leak...
 	struct RendererInputSpec
 	{
 		Ref<Shader> Shader;

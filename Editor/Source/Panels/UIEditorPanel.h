@@ -10,6 +10,9 @@ namespace Kargono { class EditorApp; }
 
 namespace Kargono::Panels
 {
+	//=========================
+	// UI Properties Display Enum
+	//=========================
 	enum class UIPropertiesDisplay : uint16_t
 	{
 		None = 0,
@@ -17,6 +20,9 @@ namespace Kargono::Panels
 		Widget
 	};
 
+	//=========================
+	// UI Editor Panel Class
+	//=========================
 	class UIEditorPanel
 	{
 	public:

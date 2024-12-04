@@ -6,6 +6,7 @@
 #include "Kargono/RuntimeUI/Font.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Math/Math.h"
+#include "Kargono/Core/Directions.h"
 
 #include <vector>
 #include <string>
@@ -21,6 +22,7 @@ namespace Kargono::Assets
 namespace Kargono::RuntimeUI
 {
 	class UserInterfaceService;
+	struct RuntimeUIContext;
 
 
 	//============================
@@ -46,15 +48,17 @@ namespace Kargono::RuntimeUI
 		None = 0, TextWidget, ButtonWidget, CheckboxWidget, ComboWidget, PopupWidget
 	};
 
+	constexpr std::size_t k_InvalidWidgetIndex{ std::numeric_limits<std::size_t>().max() };
 	//============================
 	// Navigation Links Struct
 	//============================
+
 	struct NavigationLinks
 	{
-		int32_t m_LeftWidgetIndex { -1 };
-		int32_t m_RightWidgetIndex { -1 };
-		int32_t m_UpWidgetIndex { -1 };
-		int32_t m_DownWidgetIndex { -1 };
+		std::size_t m_LeftWidgetIndex { k_InvalidWidgetIndex };
+		std::size_t m_RightWidgetIndex { k_InvalidWidgetIndex };
+		std::size_t m_UpWidgetIndex{ k_InvalidWidgetIndex };
+		std::size_t m_DownWidgetIndex { k_InvalidWidgetIndex };
 	};
 	
 	//============================
@@ -83,7 +87,7 @@ namespace Kargono::RuntimeUI
 		Math::vec4 m_ActiveBackgroundColor{0.5f};
 		WidgetCallbacks m_FunctionPointers {};
 		WidgetTypes m_WidgetType{ WidgetTypes::None };
-		NavigationLinks m_DirectionPointer{};
+		NavigationLinks m_NavigationLinks{};
 		bool m_Selectable{ true };
 	};
 
@@ -225,7 +229,7 @@ namespace Kargono::RuntimeUI
 		// Modify Window
 		//============================
 		void AddWidget(Ref<Widget> newWidget);
-		void DeleteWidget(int32_t widgetLocation);
+		void DeleteWidget(std::size_t widgetLocation);
 
 	public:
 		//============================
@@ -241,10 +245,10 @@ namespace Kargono::RuntimeUI
 		Math::vec3 m_ScreenPosition{};
 		Math::vec2 m_Size{};
 		Math::vec4 m_BackgroundColor{ 1.0f };
-		int32_t m_ParentIndex{ -1 };
-		int32_t m_ChildBufferIndex{ -1 };
-		uint32_t m_ChildBufferSize{ 0 };
-		int32_t m_DefaultActiveWidget{ -1 };
+		std::size_t m_ParentIndex{ k_InvalidWidgetIndex };
+		std::size_t m_ChildBufferIndex{ k_InvalidWidgetIndex };
+		std::size_t m_ChildBufferSize{ 0 };
+		std::size_t m_DefaultActiveWidget{ k_InvalidWidgetIndex };
 		Ref<Widget> m_DefaultActiveWidgetRef{ nullptr };
 		std::vector<Ref<Widget>> m_Widgets{};
 
@@ -296,9 +300,9 @@ namespace Kargono::RuntimeUI
 		static void SetDisplayWindow(const std::string& windowTag, bool display);
 		static Ref<Scripting::Script> GetActiveOnMove();
 		static Assets::AssetHandle GetActiveOnMoveHandle();
-		static std::vector<Window>& GetActiveWindows();
+		static std::vector<Window>& GetAllActiveWindows();
 		static void AddActiveWindow(Window& window);
-		static void DeleteActiveWindow(uint32_t windowLocation);
+		static void DeleteActiveWindow(std::size_t windowLocation);
 
 		//==============================
 		// Query Active UI
@@ -333,17 +337,16 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Internal Functionality
 		//==============================
-		static void CalculateWidgetDirections();
+		static void CalculateWindowNavigationLinks();
+		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction);
 		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
 		static void RevalidateDisplayedWindow();
-		static bool RevalidateUIWidgets();
 
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		static inline Ref<UserInterface> s_ActiveUI{ nullptr };
-		static inline Assets::AssetHandle s_ActiveUIHandle{ Assets::EmptyHandle };
+		static inline Ref<RuntimeUIContext> s_RuntimeUIContext{ nullptr };
 	private:
 		friend class TextWidget;
 		friend class Window;

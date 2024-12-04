@@ -60,10 +60,10 @@ namespace Kargono::Assets
 				out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << widget->m_DefaultBackgroundColor;
 				out << YAML::Key << "WidgetType" << YAML::Value << Utility::WidgetTypeToString(widget->m_WidgetType);
 				out << YAML::Key << "Selectable" << YAML::Value << widget->m_Selectable;
-				out << YAML::Key << "DirectionPointerUp" << YAML::Value << widget->m_DirectionPointer.m_UpWidgetIndex;
-				out << YAML::Key << "DirectionPointerDown" << YAML::Value << widget->m_DirectionPointer.m_DownWidgetIndex;
-				out << YAML::Key << "DirectionPointerLeft" << YAML::Value << widget->m_DirectionPointer.m_LeftWidgetIndex;
-				out << YAML::Key << "DirectionPointerRight" << YAML::Value << widget->m_DirectionPointer.m_RightWidgetIndex;
+				out << YAML::Key << "DirectionPointerUp" << YAML::Value << widget->m_NavigationLinks.m_UpWidgetIndex;
+				out << YAML::Key << "DirectionPointerDown" << YAML::Value << widget->m_NavigationLinks.m_DownWidgetIndex;
+				out << YAML::Key << "DirectionPointerLeft" << YAML::Value << widget->m_NavigationLinks.m_LeftWidgetIndex;
+				out << YAML::Key << "DirectionPointerRight" << YAML::Value << widget->m_NavigationLinks.m_RightWidgetIndex;
 
 				out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)widget->m_FunctionPointers.m_OnPressHandle;
 				switch (widget->m_WidgetType)
@@ -189,10 +189,10 @@ namespace Kargono::Assets
 						newWidget->m_DefaultBackgroundColor = widget["DefaultBackgroundColor"].as<Math::vec4>();
 						newWidget->m_ActiveBackgroundColor = newWidget->m_DefaultBackgroundColor;
 						newWidget->m_Selectable = widget["Selectable"].as<bool>();
-						newWidget->m_DirectionPointer.m_UpWidgetIndex = widget["DirectionPointerUp"].as<int32_t>();
-						newWidget->m_DirectionPointer.m_DownWidgetIndex = widget["DirectionPointerDown"].as<int32_t>();
-						newWidget->m_DirectionPointer.m_LeftWidgetIndex = widget["DirectionPointerLeft"].as<int32_t>();
-						newWidget->m_DirectionPointer.m_RightWidgetIndex = widget["DirectionPointerRight"].as<int32_t>();
+						newWidget->m_NavigationLinks.m_UpWidgetIndex = widget["DirectionPointerUp"].as<int32_t>();
+						newWidget->m_NavigationLinks.m_DownWidgetIndex = widget["DirectionPointerDown"].as<int32_t>();
+						newWidget->m_NavigationLinks.m_LeftWidgetIndex = widget["DirectionPointerLeft"].as<int32_t>();
+						newWidget->m_NavigationLinks.m_RightWidgetIndex = widget["DirectionPointerRight"].as<int32_t>();
 
 						newWidget->m_FunctionPointers.m_OnPressHandle = widget["FunctionPointerOnPress"].as<uint64_t>();
 						if (newWidget->m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
