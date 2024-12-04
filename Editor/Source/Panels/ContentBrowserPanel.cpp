@@ -262,7 +262,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry deleteFileTooltipEntry{ "Delete File", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				m_DeleteFilePopup.OpenPopup = true;
+				m_DeleteFilePopup.m_OpenPopup = true;
 #if 0
 				switch (fileType)
 				{
@@ -270,7 +270,7 @@ namespace Kargono::Panels
 				case BrowserFileType::RawAudio:
 				case BrowserFileType::RawFont:
 				case BrowserFileType::RawTexture:
-					m_DeleteFilePopup.Label = "Delete File";
+					m_DeleteFilePopup.m_Label = "Delete File";
 
 				}
 #endif
@@ -283,7 +283,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry deleteDirectoryTooltipEntry{ "Delete Directory", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				m_DeleteDirectoryPopup.OpenPopup = true;
+				m_DeleteDirectoryPopup.m_OpenPopup = true;
 			} };
 			m_RightClickTooltip.AddTooltipEntry(deleteDirectoryTooltipEntry);
 		}
@@ -852,41 +852,41 @@ namespace Kargono::Panels
 		});
 
 		// Initialize delete directory popup
-		m_DeleteDirectoryPopup.Label = "Delete Directory";
-		m_DeleteDirectoryPopup.PopupContents = [&]()
+		m_DeleteDirectoryPopup.m_Label = "Delete Directory";
+		m_DeleteDirectoryPopup.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::LabeledText("Directory Name:", m_CurrentFileToModifyCache.string().c_str());
 		};
-		m_DeleteDirectoryPopup.ConfirmAction = [&]()
+		m_DeleteDirectoryPopup.m_ConfirmAction = [&]()
 		{
 			Utility::FileSystem::DeleteSelectedDirectory(m_CurrentFileToModifyCache);
 		};
 
 		// Initialize delete file popup
-		m_DeleteFilePopup.Label = "Delete File";
-		m_DeleteFilePopup.PopupContents = [&]()
+		m_DeleteFilePopup.m_Label = "Delete File";
+		m_DeleteFilePopup.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::LabeledText("File Name:", m_CurrentFileToModifyCache.string().c_str());
 		};
-		m_DeleteFilePopup.ConfirmAction = KG_BIND_CLASS_FN(OnHandleDeleteFile);
+		m_DeleteFilePopup.m_ConfirmAction = KG_BIND_CLASS_FN(OnHandleDeleteFile);
 
 		// Initialize create directory popup
-		m_CreateDirectoryPopup.Label = "Create Directory";
-		m_CreateDirectoryPopup.PopupAction = [&]()
+		m_CreateDirectoryPopup.m_Label = "Create Directory";
+		m_CreateDirectoryPopup.m_PopupAction = [&]()
 		{
 			m_CreateDirectoryEditName.CurrentOption = "NewName";
 		};
-		m_CreateDirectoryPopup.PopupContents = [&]()
+		m_CreateDirectoryPopup.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::EditText(m_CreateDirectoryEditName);
 		};
-		m_CreateDirectoryPopup.ConfirmAction = [&]()
+		m_CreateDirectoryPopup.m_ConfirmAction = [&]()
 		{
 			std::filesystem::path newPath = m_CurrentDirectory / m_CreateDirectoryEditName.CurrentOption;
 			Utility::FileSystem::CreateNewDirectory(newPath);
 		};
 
-		m_CreateDirectoryEditName.Label = "File Name";
+		m_CreateDirectoryEditName.m_Label = "File Name";
 
 	}
 
@@ -1001,7 +1001,7 @@ namespace Kargono::Panels
 			// Add create directory option
 			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "Create Directory", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				m_CreateDirectoryPopup.OpenPopup = true;
+				m_CreateDirectoryPopup.m_OpenPopup = true;
 			} };
 			m_RightClickTooltip.AddTooltipEntry(createDirectoryTooltipEntry);
 

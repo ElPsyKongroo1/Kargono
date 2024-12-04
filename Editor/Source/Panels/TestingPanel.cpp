@@ -34,13 +34,13 @@ namespace Kargono::Panels
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(TestingPanel::OnKeyPressedEditor));
 
-		s_TestText.Label = "File to Compile";
+		s_TestText.m_Label = "File to Compile";
 		s_TestText.CurrentOption = "test.kgscript";
 
-		s_TimerTime.Label = "Timer Time";
-		s_TimerTime.CurrentFloat = 3.0f;
+		s_TimerTime.m_Label = "Timer Time";
+		s_TimerTime.m_CurrentFloat = 3.0f;
 
-		s_RandomTestInteger.Label = "Intenger Time";
+		s_RandomTestInteger.m_Label = "Intenger Time";
 		s_RandomTestInteger.CurrentInteger = 5;
 
 		m_TestHeader.m_Label = "directory/directory/file.txt";
@@ -115,7 +115,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Start Timer"))
 		{
-			Utility::PassiveTimer::CreateTimer(s_TimerTime.CurrentFloat, []()
+			Utility::PassiveTimer::CreateTimer(s_TimerTime.m_CurrentFloat, []()
 			{
 				KG_WARN("The timer has gone off");
 			});

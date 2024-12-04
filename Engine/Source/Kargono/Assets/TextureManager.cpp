@@ -34,11 +34,11 @@ namespace Kargono::Assets
 		// Create New Asset/Handle
 		AssetHandle newHandle{};
 		Assets::AssetInfo newAsset{};
-		newAsset.Handle = newHandle;
+		newAsset.m_Handle = newHandle;
 		newAsset.Data.Type = m_AssetType;
 		newAsset.Data.CheckSum = currentCheckSum;
 		newAsset.Data.FileLocation = "";
-		newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_FileExtension.CString());
+		newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.m_Handle + m_FileExtension.CString());
 
 		// Create Intermediate
 		CreateTextureIntermediateFromBuffer(buffer, width, height, channels, newAsset);

@@ -42,7 +42,7 @@ namespace Kargono::Assets
 		newAsset.Data.Type = AssetType::Script;
 		newAsset.Data.FileLocation = spec.Name + m_FileExtension.CString();
 		newAsset.Data.CheckSum = currentCheckSum;
-		newAsset.Handle = newHandle;
+		newAsset.m_Handle = newHandle;
 
 		// Create Script File
 		FillScriptMetadata(spec, newAsset);
@@ -210,7 +210,7 @@ namespace Kargono::Assets
 		Ref<Scripting::Script> newScript = CreateRef<Scripting::Script>();
 		Assets::ScriptMetaData metadata = *asset.Data.GetSpecificMetaData<ScriptMetaData>();
 
-		newScript->m_ID = asset.Handle;
+		newScript->m_ID = asset.m_Handle;
 		newScript->m_ScriptName = metadata.m_Name;
 		newScript->m_FuncType = metadata.m_FunctionType;
 		newScript->m_ScriptType = metadata.m_ScriptType;
@@ -278,7 +278,7 @@ namespace Kargono::Assets
 		for (auto script : Scripting::ScriptService::GetAllEngineScripts())
 		{
 			Assets::AssetInfo newAsset{};
-			newAsset.Handle = script->m_ID;
+			newAsset.m_Handle = script->m_ID;
 
 			newAsset.Data.CheckSum = "";
 			newAsset.Data.FileLocation = "";
@@ -299,8 +299,8 @@ namespace Kargono::Assets
 			newAsset.Data.SpecificFileData = scriptMetaData;
 
 			// Insert Engine Script into registry/in-memory
-			m_AssetRegistry.insert({ newAsset.Handle, newAsset });
-			m_AssetCache.insert({ newAsset.Handle, script });
+			m_AssetRegistry.insert({ newAsset.m_Handle, newAsset });
+			m_AssetCache.insert({ newAsset.m_Handle, script });
 		}
 
 		// Get Section Labels

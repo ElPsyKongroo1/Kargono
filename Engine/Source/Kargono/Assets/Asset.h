@@ -202,7 +202,7 @@ namespace Kargono::Assets
 	//		asset type, asset location, a checksum, and asset type specific metadata.
 	struct AssetInfo
 	{
-		AssetHandle Handle { Assets::EmptyHandle };
+		AssetHandle m_Handle { Assets::EmptyHandle };
 		Metadata Data;
 	};
 	

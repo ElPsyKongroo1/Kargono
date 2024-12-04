@@ -90,7 +90,7 @@ namespace Kargono::Assets
 				Ref<AssetValue> newAsset = DeserializeAsset(asset, assetPath);
 				if (m_Flags.test(AssetManagerOptions::HasAssetCache))
 				{
-					m_AssetCache.insert({ asset.Handle, newAsset });
+					m_AssetCache.insert({ asset.m_Handle, newAsset });
 				}
 				return newAsset;
 			}
@@ -311,7 +311,7 @@ namespace Kargono::Assets
 			// Create New Asset/Handle
 			AssetHandle newHandle{};
 			Assets::AssetInfo newAsset{};
-			newAsset.Handle = newHandle;
+			newAsset.m_Handle = newHandle;
 			newAsset.Data.Type = m_AssetType;
 			if (usingBaseAssetDir)
 			{
@@ -462,7 +462,7 @@ namespace Kargono::Assets
 			// Create New Asset/Handle
 			AssetHandle newHandle{};
 			Assets::AssetInfo newAsset{};
-			newAsset.Handle = newHandle;
+			newAsset.m_Handle = newHandle;
 			newAsset.Data.Type = m_AssetType;
 
 			// Create asset file inside asset manager
@@ -475,7 +475,7 @@ namespace Kargono::Assets
 			// Check if intermediates are used. If so, generate the intermediate.
 			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
 			{
-				newAsset.Data.IntermediateLocation = Utility::FileSystem::ConvertToUnixStylePath(m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_IntermediateExtension.CString()));
+				newAsset.Data.IntermediateLocation = Utility::FileSystem::ConvertToUnixStylePath(m_RegistryLocation.parent_path() / ((std::string)newAsset.m_Handle + m_IntermediateExtension.CString()));
 				CreateAssetIntermediateFromFile(newAsset, sourcePath, Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation);
 				newAsset.Data.CheckSum = currentCheckSum;
 			}
@@ -596,7 +596,7 @@ namespace Kargono::Assets
 				for (auto asset : assets)
 				{
 					Assets::AssetInfo newAsset{};
-					newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
+					newAsset.m_Handle = asset["AssetHandle"].as<uint64_t>();
 
 					// Retrieving metadata for asset 
 					auto metadata = asset["MetaData"];
@@ -615,7 +615,7 @@ namespace Kargono::Assets
 					DeserializeAssetSpecificMetadata(metadata, newAsset);
 
 					// Add asset to in memory registry 
-					m_AssetRegistry.insert({ newAsset.Handle, newAsset });
+					m_AssetRegistry.insert({ newAsset.m_Handle, newAsset });
 
 				}
 			}

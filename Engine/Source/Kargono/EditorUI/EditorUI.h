@@ -79,26 +79,26 @@ namespace Kargono::EditorUI
 	struct InlineButtonSpec
 	{
 	public:
-		float XPosition{ 0.0f };
-		float YPosition{ 0.0f };
-		float IconSize{ 0.0f };
-		Ref<Rendering::Texture2D> ActiveIcon{ nullptr };
-		Ref<Rendering::Texture2D> InactiveIcon{ nullptr };
-		std::string ActiveTooltip{};
-		std::string InactiveTooltip{};
-		PositionType XPositionType{ PositionType::Inline };
-		bool Disabled{ false };
+		float m_XPosition{ 0.0f };
+		float m_YPosition{ 0.0f };
+		float m_IconSize{ 0.0f };
+		Ref<Rendering::Texture2D> m_ActiveIcon{ nullptr };
+		Ref<Rendering::Texture2D> m_InactiveIcon{ nullptr };
+		std::string m_ActiveTooltip{};
+		std::string m_InactiveTooltip{};
+		PositionType m_XPositionType{ PositionType::Inline };
+		bool m_Disabled{ false };
 	};
 
 	//==============================
 	// Widget Count Management
 	//==============================
-	inline uint32_t widgetCounter{ 1 };
+	inline uint32_t s_WidgetCounter{ 1 };
 	// Maintain unique id for each widget
 	static WidgetID IncrementWidgetCounter()
 	{
-		widgetCounter++;
-		return widgetCounter * 0x400'000; // 2 to the power of 22
+		s_WidgetCounter++;
+		return s_WidgetCounter * 0x400'000; // 2 to the power of 22
 	}
 
 	//==============================
@@ -155,7 +155,7 @@ namespace Kargono::EditorUI
 		static void NavigationHeader(NavigationHeaderSpec& spec);
 		static void Grid(GridSpec& spec);
 		static void CollapsingHeader(CollapsingHeaderSpec& spec);
-		static void LabeledText(const std::string& Label, const std::string& Text);
+		static void LabeledText(const std::string& m_Label, const std::string& Text);
 		static void Text(const char* text);
 		static void EditText(EditTextSpec& spec);
 		static void ChooseDirectory(ChooseDirectorySpec& spec);
@@ -332,9 +332,9 @@ namespace Kargono::EditorUI
 		//==============================
 		// Internal Fields
 		//==============================
-		inline static bool s_BlockMouseEvents = true;
-		inline static bool s_Running = false;
-		inline static bool s_DisableLeftClick = false;
+		inline static bool s_BlockMouseEvents{ true };
+		inline static bool s_Running{ false };
+		inline static bool s_DisableLeftClick{ false };
 	};
 
 	//==============================
@@ -346,15 +346,15 @@ namespace Kargono::EditorUI
 	public:
 		WarningPopupSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
-		float PopupWidth{ 700.0f };
-		std::function<void()> PopupContents{ nullptr };
-		bool OpenPopup{ false };
+		std::string m_Label;
+		float m_PopupWidth{ 700.0f };
+		std::function<void()> m_PopupContents{ nullptr };
+		bool m_OpenPopup{ false };
 	private:
-		WidgetID WidgetID;
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::WarningPopup(WarningPopupSpec& spec);
 	};
@@ -365,24 +365,24 @@ namespace Kargono::EditorUI
 	public:
 		GenericPopupSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
-		float PopupWidth{ 700.0f };
-		std::function<void()> PopupContents{ nullptr };
-		std::function<void()> ConfirmAction{ nullptr };
-		std::function<void()> DeleteAction{ nullptr };
-		std::function<void()> PopupAction{ nullptr };
-		std::function<void()> CancelAction{ nullptr };
-		bool OpenPopup{ false };
+		std::string m_Label;
+		float m_PopupWidth{ 700.0f };
+		std::function<void()> m_PopupContents{ nullptr };
+		std::function<void()> m_ConfirmAction{ nullptr };
+		std::function<void()> m_DeleteAction{ nullptr };
+		std::function<void()> m_PopupAction{ nullptr };
+		std::function<void()> m_CancelAction{ nullptr };
+		bool m_OpenPopup{ false };
 	public:
 		void CloseActivePopup()
 		{
 			m_CloseActivePopup = true;
 		}
 	private:
-		WidgetID WidgetID;
+		WidgetID m_WidgetID;
 		bool m_CloseActivePopup{ false };
 	private:
 		friend void EditorUIService::GenericPopup(GenericPopupSpec& spec);
@@ -401,17 +401,17 @@ namespace Kargono::EditorUI
 	public:
 		CheckboxSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
-		WidgetFlags Flags{ Checkbox_LeftLean };
-		bool CurrentBoolean{ false };
-		std::function<void(CheckboxSpec&)> ConfirmAction;
-		Ref<void> ProvidedData { nullptr };
+		std::string m_Label;
+		WidgetFlags m_Flags{ Checkbox_LeftLean };
+		bool m_CurrentBoolean{ false };
+		std::function<void(CheckboxSpec&)> m_ConfirmAction;
+		Ref<void> m_ProvidedData { nullptr };
 	private:
-		bool Editing{ false };
-		WidgetID WidgetID;
+		bool m_Editing{ false };
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::Checkbox(CheckboxSpec& spec);
 	};
@@ -427,17 +427,17 @@ namespace Kargono::EditorUI
 	public:
 		EditIntegerSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label{};
-		WidgetFlags Flags{ EditInteger_None };
+		std::string m_Label{};
+		WidgetFlags m_Flags{ EditInteger_None };
 		int32_t CurrentInteger{};
-		std::function<void(EditIntegerSpec&)> ConfirmAction{ nullptr };
-		Ref<void> ProvidedData { nullptr };
+		std::function<void(EditIntegerSpec&)> m_ConfirmAction{ nullptr };
+		Ref<void> m_ProvidedData { nullptr };
 	private:
-		bool Editing{ false };
-		WidgetID WidgetID;
+		bool m_Editing{ false };
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::EditInteger(EditIntegerSpec& spec);
 	};
@@ -453,17 +453,17 @@ namespace Kargono::EditorUI
 	public:
 		EditFloatSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label{};
-		WidgetFlags Flags{ EditFloat_None };
-		float CurrentFloat{};
-		std::function<void(EditFloatSpec&)> ConfirmAction{ nullptr };
-		Ref<void> ProvidedData { nullptr };
+		std::string m_Label{};
+		WidgetFlags m_Flags{ EditFloat_None };
+		float m_CurrentFloat{};
+		std::function<void(EditFloatSpec&)> m_ConfirmAction{ nullptr };
+		Ref<void> m_ProvidedData { nullptr };
 	private:
-		bool Editing{ false };
-		WidgetID WidgetID;
+		bool m_Editing{ false };
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::EditFloat(EditFloatSpec& spec);
 	};
@@ -479,17 +479,17 @@ namespace Kargono::EditorUI
 	public:
 		EditVec2Spec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label{};
-		WidgetFlags Flags{ EditVec2_None };
+		std::string m_Label{};
+		WidgetFlags m_Flags{ EditVec2_None };
 		Math::vec2 CurrentVec2{};
-		std::function<void(EditVec2Spec&)> ConfirmAction{ nullptr };
-		Ref<void> ProvidedData { nullptr };
+		std::function<void(EditVec2Spec&)> m_ConfirmAction{ nullptr };
+		Ref<void> m_ProvidedData { nullptr };
 	private:
-		bool Editing{ false };
-		WidgetID WidgetID;
+		bool m_Editing{ false };
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::EditVec2(EditVec2Spec& spec);
 	};
@@ -505,17 +505,17 @@ namespace Kargono::EditorUI
 	public:
 		EditVec3Spec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label{};
-		WidgetFlags Flags{ EditVec3_None };
-		Math::vec3 CurrentVec3{};
-		std::function<void(EditVec3Spec&)> ConfirmAction{ nullptr };
-		Ref<void> ProvidedData { nullptr };
+		std::string m_Label{};
+		WidgetFlags m_Flags{ EditVec3_None };
+		Math::vec3 m_CurrentVec3{};
+		std::function<void(EditVec3Spec&)> m_ConfirmAction{ nullptr };
+		Ref<void> m_ProvidedData { nullptr };
 	private:
-		bool Editing{ false };
-		WidgetID WidgetID;
+		bool m_Editing{ false };
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::EditVec3(EditVec3Spec& spec);
 	};
@@ -532,17 +532,17 @@ namespace Kargono::EditorUI
 	public:
 		EditVec4Spec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label{};
-		WidgetFlags Flags{ EditVec4_None };
-		Math::vec4 CurrentVec4{};
-		std::function<void(EditVec4Spec&)> ConfirmAction{ nullptr };
-		Ref<void> ProvidedData { nullptr };
+		std::string m_Label{};
+		WidgetFlags m_Flags{ EditVec4_None };
+		Math::vec4 m_CurrentVec4{};
+		std::function<void(EditVec4Spec&)> m_ConfirmAction{ nullptr };
+		Ref<void> m_ProvidedData { nullptr };
 	private:
-		bool Editing{ false };
-		WidgetID WidgetID;
+		bool m_Editing{ false };
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::EditVec4(EditVec4Spec& spec);
 	};
@@ -560,18 +560,18 @@ namespace Kargono::EditorUI
 	public:
 		RadioSelectorSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
-		WidgetFlags Flags{ RadioSelector_None };
-		uint16_t SelectedOption{ 0 };
-		std::string FirstOptionLabel{ "None" };
-		std::string SecondOptionLabel{ "None" };
-		bool Editing{ false };
-		std::function<void()> SelectAction{ nullptr };
+		std::string m_Label;
+		WidgetFlags m_Flags{ RadioSelector_None };
+		uint16_t m_SelectedOption{ 0 };
+		std::string m_FirstOptionLabel{ "None" };
+		std::string m_SecondOptionLabel{ "None" };
+		bool m_Editing{ false };
+		std::function<void()> m_SelectAction{ nullptr };
 	private:
-		WidgetID WidgetID;
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::RadioSelector(RadioSelectorSpec& spec);
 	};
@@ -588,17 +588,17 @@ namespace Kargono::EditorUI
 	public:
 		EditTextSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
-		WidgetFlags Flags{ EditText_None };
+		std::string m_Label;
+		WidgetFlags m_Flags{ EditText_None };
 		std::string CurrentOption{};
-		std::function<void(EditTextSpec&)> ConfirmAction;
-		bool StartPopup{ false };
-		Ref<void> ProvidedData { nullptr };
+		std::function<void(EditTextSpec&)> m_ConfirmAction;
+		bool m_StartPopup{ false };
+		Ref<void> m_ProvidedData { nullptr };
 	private:
-		WidgetID WidgetID;
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::EditText(EditTextSpec& spec);
 	};
@@ -608,14 +608,14 @@ namespace Kargono::EditorUI
 	public:
 		ChooseDirectorySpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
+		std::string m_Label;
 		std::filesystem::path CurrentOption{};
-		std::function<void(const std::string&)> ConfirmAction{ nullptr };
+		std::function<void(const std::string&)> m_ConfirmAction{ nullptr };
 	private:
-		WidgetID WidgetID;
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::ChooseDirectory(ChooseDirectorySpec& spec);
 	};
@@ -633,14 +633,14 @@ namespace Kargono::EditorUI
 	public:
 		CollapsingHeaderSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
-		WidgetFlags Flags{ CollapsingHeader_None };
-		bool Expanded{ false };
-		std::function<void()> OnExpand{ nullptr };
-		Ref<void> ProvidedData { nullptr };
+		std::string m_Label;
+		WidgetFlags m_Flags{ CollapsingHeader_None };
+		bool m_Expanded{ false };
+		std::function<void()> m_OnExpand{ nullptr };
+		Ref<void> m_ProvidedData { nullptr };
 	public:
 		void ClearSelectionList()
 		{
@@ -659,7 +659,7 @@ namespace Kargono::EditorUI
 			return SelectionList;
 		}
 	private:
-		WidgetID WidgetID;
+		WidgetID m_WidgetID;
 		CollapsingHeaderSelectionList SelectionList{};
 	private:
 		friend void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec);
@@ -672,31 +672,33 @@ namespace Kargono::EditorUI
 	public:
 		PanelHeaderSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
-		bool EditColorActive{ false };
+		std::string m_Label;
+		bool m_EditColorActive{ false };
+
+	public:
 		void ClearSelectionList()
 		{
-			SelectionsList.clear();
+			m_SelectionsList.clear();
 		}
 		void AddToSelectionList(const std::string& label, std::function<void()> function)
 		{
-			if (!SelectionsList.contains(label))
+			if (!m_SelectionsList.contains(label))
 			{
-				SelectionsList.insert_or_assign(label, function);
+				m_SelectionsList.insert_or_assign(label, function);
 				return;
 			}
 		}
 		SelectionList& GetSelectionList()
 		{
-			return SelectionsList;
+			return m_SelectionsList;
 		}
 
 	private:
-		SelectionList SelectionsList{};
-		WidgetID WidgetID;
+		SelectionList m_SelectionsList{};
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::PanelHeader(PanelHeaderSpec& spec);
 	};
@@ -712,7 +714,7 @@ namespace Kargono::EditorUI
 	public:
 		NavigationHeaderSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
 		FixedString64 m_Label;
@@ -725,7 +727,7 @@ namespace Kargono::EditorUI
 		bool m_IsBackActive{ false };
 		bool m_IsForwardActive{ false };
 	private:
-		WidgetID WidgetID;
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::NavigationHeader(NavigationHeaderSpec& spec);
 	};
@@ -768,7 +770,7 @@ namespace Kargono::EditorUI
 	public:
 		GridSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
 		FixedString16 m_Label;
@@ -792,7 +794,7 @@ namespace Kargono::EditorUI
 			}
 
 			// Insert new entry
-			Entries.push_back(newEntry);
+			m_Entries.push_back(newEntry);
 			return true;
 		}
 		bool AddEntry(GridEntry&& newEntry)
@@ -810,30 +812,30 @@ namespace Kargono::EditorUI
 			}
 
 			// Insert new entry
-			Entries.push_back(std::move(newEntry));
+			m_Entries.push_back(std::move(newEntry));
 			return true;
 		}
 
 		void ClearEntries()
 		{
-			Entries.clear();
+			m_Entries.clear();
 			ClearSelectedEntry();
 		}
 
 		void ClearSelectedEntry()
 		{
-			SelectedEntry = k_EmptyUUID;
+			m_SelectedEntry = k_EmptyUUID;
 		}
 
 		bool AddEntryArchetype(uint32_t key, const GridEntryArchetype& newArchetype)
 		{
-			auto [iterator, success] = EntryArchetypes.insert({key, newArchetype});
+			auto [iterator, success] = m_EntryArchetypes.insert({key, newArchetype});
 			return success;
 		}
 
 		bool AddEntryArchetype(uint32_t key, GridEntryArchetype&& newArchetype)
 		{
-			auto [iterator, success] = EntryArchetypes.insert({ key, std::move(newArchetype) });
+			auto [iterator, success] = m_EntryArchetypes.insert({ key, std::move(newArchetype) });
 			return success;
 		}
 
@@ -847,7 +849,7 @@ namespace Kargono::EditorUI
 			}
 
 			// Ensure that no match id is found in internal entries list
-			for (GridEntry& entry : Entries)
+			for (GridEntry& entry : m_Entries)
 			{
 				if (entry.m_EntryID == queryID)
 				{
@@ -860,10 +862,10 @@ namespace Kargono::EditorUI
 		}
 
 	private:
-		WidgetID WidgetID;
-		UUID SelectedEntry { k_EmptyUUID };
-		std::vector<GridEntry> Entries{};
-		std::unordered_map<uint32_t, GridEntryArchetype> EntryArchetypes;
+		WidgetID m_WidgetID;
+		UUID m_SelectedEntry { k_EmptyUUID };
+		std::vector<GridEntry> m_Entries{};
+		std::unordered_map<uint32_t, GridEntryArchetype> m_EntryArchetypes;
 	private:
 		friend void EditorUIService::Grid(GridSpec& spec);
 	};
@@ -978,18 +980,18 @@ namespace Kargono::EditorUI
 
 	struct SelectionEntry
 	{
-		std::string Label{};
-		std::function<void(TreeEntry&)> OnClick { nullptr };
+		std::string m_Label{};
+		std::function<void(TreeEntry&)> m_OnClick { nullptr };
 	};
 
 	struct TreeEntry
 	{
-		std::string Label {};
-		UUID Handle {};
+		std::string m_Label {};
+		UUID m_Handle {};
 		Ref<Rendering::Texture2D> IconHandle{ nullptr };
 		std::function<void(TreeEntry& entry)> OnLeftClick { nullptr };
 		std::function<void(TreeEntry& entry)> OnDoubleLeftClick { nullptr };
-		Ref<void> ProvidedData { nullptr };
+		Ref<void> m_ProvidedData { nullptr };
 		std::vector<TreeEntry> SubEntries{};
 		std::vector<SelectionEntry> OnRightClickSelection {};
 	};
@@ -999,11 +1001,11 @@ namespace Kargono::EditorUI
 	public:
 		TreeSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
-		TreePath SelectedEntry{};
+		std::string m_Label;
+		TreePath m_SelectedEntry{};
 		std::function<void()> OnRefresh { nullptr };
 	public:
 
@@ -1027,7 +1029,7 @@ namespace Kargono::EditorUI
 		{
 			TreeEntries.clear();
 			ExpandedNodes.clear();
-			SelectedEntry = {};
+			m_SelectedEntry = {};
 		}
 		std::vector<TreeEntry>& GetTreeEntries()
 		{
@@ -1049,7 +1051,7 @@ namespace Kargono::EditorUI
 		void SearchDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, std::function<bool(TreeEntry& entry)> searchFunction, std::vector<TreePath>& allPaths);
 		void EditDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, std::function<void(TreeEntry& entry)> editFunction);
 	private:
-		WidgetID WidgetID;
+		WidgetID m_WidgetID;
 		std::vector<TreeEntry> TreeEntries{};
 		std::unordered_set<TreePath> ExpandedNodes{};
 		TreeEntry* CurrentRightClick{ nullptr };
@@ -1186,9 +1188,9 @@ namespace Kargono::EditorUI
 
 	struct ListEntry
 	{
-		std::string Label;
+		std::string m_Label;
 		std::string Value;
-		UUID Handle;
+		UUID m_Handle;
 		std::function<void(ListEntry& entry, std::size_t iteration)> OnEdit { nullptr };
 	};
 
@@ -1200,14 +1202,14 @@ namespace Kargono::EditorUI
 	public:
 		ListSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
-		WidgetFlags Flags{ List_None };
+		std::string m_Label;
+		WidgetFlags m_Flags{ List_None };
 		std::string Column1Title {};
 		std::string Column2Title {};
-		bool Expanded{ false };
+		bool m_Expanded{ false };
 		std::function<void()> OnRefresh { nullptr };
 	public:
 		void InsertListEntry(const std::string& label, const std::string& value, 
@@ -1294,7 +1296,7 @@ namespace Kargono::EditorUI
 		}
 
 	private:
-		WidgetID WidgetID;
+		WidgetID m_WidgetID;
 		std::vector<ListEntry> ListEntries{};
 		SelectionList EditListSelectionList{};
 	private:
@@ -1304,12 +1306,12 @@ namespace Kargono::EditorUI
 	struct OptionEntry
 	{
 	public:
-		std::string Label{};
-		Assets::AssetHandle Handle { Assets::EmptyHandle };
+		std::string m_Label{};
+		Assets::AssetHandle m_Handle { Assets::EmptyHandle };
 	public:
 		bool operator==(const OptionEntry& other) const
 		{
-			if (this->Label == other.Label && this->Handle == other.Handle)
+			if (this->m_Label == other.m_Label && this->m_Handle == other.m_Handle)
 			{
 				return true;
 			}
@@ -1332,18 +1334,18 @@ namespace Kargono::EditorUI
 	public:
 		SelectOptionSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label{};
+		std::string m_Label{};
 		OptionEntry CurrentOption{};
 		uint32_t LineCount{ 3 };
 		std::function<void()> OnEdit{ nullptr };
-		std::function<void(const OptionEntry&)> ConfirmAction {nullptr};
-		std::function<void()> PopupAction {nullptr};
+		std::function<void(const OptionEntry&)> m_ConfirmAction {nullptr};
+		std::function<void()> m_PopupAction {nullptr};
 		// Only used if PopupOnly is true
-		bool OpenPopup{ false };
-		WidgetFlags Flags{ SelectOption_None };
+		bool m_OpenPopup{ false };
+		WidgetFlags m_Flags{ SelectOption_None };
 		void ClearOptions()
 		{
 			ActiveOptions.clear();
@@ -1366,7 +1368,7 @@ namespace Kargono::EditorUI
 			return ActiveOptions;
 		}
 	private:
-		WidgetID WidgetID;
+		WidgetID m_WidgetID;
 		OptionList ActiveOptions{};
 		bool Searching { false };
 		OptionEntry CachedSelection {};
@@ -1380,10 +1382,10 @@ namespace Kargono::EditorUI
 	public:
 		EditVariableSpec()
 		{
-			WidgetID = IncrementWidgetCounter();
+			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string Label;
+		std::string m_Label;
 		Buffer FieldBuffer {};
 		WrappedVarType VariableType{ WrappedVarType::Integer32 };
 	public:
@@ -1393,7 +1395,7 @@ namespace Kargono::EditorUI
 			FieldBuffer.SetDataToByte(0);
 		}
 	private:
-		WidgetID WidgetID;
+		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::EditVariable(EditVariableSpec&);
 	};
