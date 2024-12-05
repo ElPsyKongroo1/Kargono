@@ -22,16 +22,16 @@ namespace Kargono::Panels
 	
 		m_TextEditor.SetSaveCallback(KG_BIND_CLASS_FN(OnSaveFile));
 
-		m_DeleteWarningSpec.Label = "Delete File";
-		m_DeleteWarningSpec.ConfirmAction = KG_BIND_CLASS_FN(OnDeleteFile);
-		m_DeleteWarningSpec.PopupContents = [&]()
+		m_DeleteWarningSpec.m_Label = "Delete File";
+		m_DeleteWarningSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnDeleteFile);
+		m_DeleteWarningSpec.m_PopupContents = [&]()
 		{
 			ImGui::Text("Are you sure you want to delete this file?");
 		};
 
-		m_DiscardChangesWarningSpec.Label = "Close File";
-		m_DiscardChangesWarningSpec.ConfirmAction = KG_BIND_CLASS_FN(OnCloseFile);
-		m_DiscardChangesWarningSpec.PopupContents = [&]()
+		m_DiscardChangesWarningSpec.m_Label = "Close File";
+		m_DiscardChangesWarningSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnCloseFile);
+		m_DiscardChangesWarningSpec.m_PopupContents = [&]()
 		{
 			ImGui::Text("Are you sure you want to close this file without saving?");
 		};
@@ -80,7 +80,7 @@ namespace Kargono::Panels
 					}
 					if (ImGui::MenuItem("Delete File"))
 					{
-						m_DeleteWarningSpec.OpenPopup = true;
+						m_DeleteWarningSpec.m_OpenPopup = true;
 					}
 					ImGui::EndMenu();
 				}
@@ -148,7 +148,7 @@ namespace Kargono::Panels
 					if (activeDocument.Edited)
 					{
 						activeDocument.Opened = true;
-						m_DiscardChangesWarningSpec.OpenPopup = true;
+						m_DiscardChangesWarningSpec.m_OpenPopup = true;
 					}
 					else
 					{

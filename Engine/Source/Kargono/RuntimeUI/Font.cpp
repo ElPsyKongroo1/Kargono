@@ -50,7 +50,7 @@ namespace Kargono::RuntimeUI
 	void FontService::Init()
 	{
 		// TODO: Change to Proper Boolean Check
-		if (!s_TextInputSpec.Shader)
+		if (!s_TextInputSpec.m_Shader)
 		{
 			// TODO: Unreleased Heap Data with Buffer
 			Rendering::ShaderSpecification textShaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::TextTexture, false, true, false, Rendering::RenderingType::DrawTriangle, false};
@@ -59,12 +59,12 @@ namespace Kargono::RuntimeUI
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
-			s_TextInputSpec.ShapeComponent = new ECS::ShapeComponent();
-			s_TextInputSpec.ShapeComponent->CurrentShape = Rendering::ShapeTypes::Quad;
+			s_TextInputSpec.m_ShapeComponent = new ECS::ShapeComponent();
+			s_TextInputSpec.m_ShapeComponent->CurrentShape = Rendering::ShapeTypes::Quad;
 
-			s_TextInputSpec.Shader = localShader;
-			s_TextInputSpec.ShapeComponent->Shader = localShader;
-			s_TextInputSpec.Buffer = localBuffer;
+			s_TextInputSpec.m_Shader = localShader;
+			s_TextInputSpec.m_ShapeComponent->Shader = localShader;
+			s_TextInputSpec.m_Buffer = localBuffer;
 			s_TexCoordinates = CreateRef<std::vector<Math::vec2>>();
 			s_TexCoordinates->push_back({ 0.0f, 0.0f });
 			s_TexCoordinates->push_back({ 0.0f, 1.0f });
@@ -72,7 +72,7 @@ namespace Kargono::RuntimeUI
 			s_TexCoordinates->push_back({ 0.0f, 0.0f });
 			s_TexCoordinates->push_back({ 1.0f, 1.0f });
 			s_TexCoordinates->push_back({ 1.0f, 0.0f });
-			s_TextInputSpec.ShapeComponent->TextureCoordinates = s_TexCoordinates;
+			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
 
 			s_Vertices = CreateRef<std::vector<Math::vec3>>();
 		}
@@ -202,8 +202,8 @@ namespace Kargono::RuntimeUI
 	{
 		Ref<Rendering::Texture2D> fontAtlas = m_AtlasTexture;
 
-		s_TextInputSpec.ShapeComponent->Texture = fontAtlas;
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.Buffer, s_TextInputSpec.Shader);
+		s_TextInputSpec.m_ShapeComponent->Texture = fontAtlas;
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
 
 		double x = translation.x;
 		double y = translation.y;
@@ -276,7 +276,7 @@ namespace Kargono::RuntimeUI
 			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
 			s_TexCoordinates->push_back(texCoordMax);										// 1, 1
 
-			s_TextInputSpec.ShapeComponent->Vertices = s_Vertices;
+			s_TextInputSpec.m_ShapeComponent->Vertices = s_Vertices;
 
 			Rendering::RenderingService::SubmitDataToRenderer(s_TextInputSpec);
 

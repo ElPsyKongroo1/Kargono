@@ -20,7 +20,7 @@ namespace Kargono::Panels
 		{
 			// Open dialog to create editor user interface
 			OnCreateUIDialog();
-			m_SelectUILocationSpec.CurrentOption = createLocation;
+			m_SelectUILocationSpec.m_CurrentOption = createLocation;
 		}
 		else
 		{
@@ -37,16 +37,16 @@ namespace Kargono::Panels
 	void UIEditorPanel::OnOpenUIDialog()
 	{
 		// Set dialog popup to open on next frame
-		m_OpenUIPopupSpec.OpenPopup = true;
+		m_OpenUIPopupSpec.m_OpenPopup = true;
 	}
 	void UIEditorPanel::OnCreateUIDialog()
 	{
 		// Set default values for new user interface creation location
 		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectUILocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectUILocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 
 		// Set dialog popup to open on next frame
-		m_CreateUIPopupSpec.OpenPopup = true;
+		m_CreateUIPopupSpec.m_OpenPopup = true;
 	}
 	void UIEditorPanel::OnOpenUI(Assets::AssetHandle newHandle)
 	{
@@ -55,8 +55,8 @@ namespace Kargono::Panels
 		m_EditorUIHandle = newHandle;
 
 		// Set default values for header
-		m_MainHeader.EditColorActive = false;
-		m_MainHeader.Label = Assets::AssetService::GetUserInterfaceRegistry().at(
+		m_MainHeader.m_EditColorActive = false;
+		m_MainHeader.m_Label = Assets::AssetService::GetUserInterfaceRegistry().at(
 			m_EditorUIHandle).Data.FileLocation.filename().string();
 
 		// Refresh widget data in editor to use new user interface
@@ -68,7 +68,7 @@ namespace Kargono::Panels
 	void UIEditorPanel::OnRefreshData()
 	{
 		// Revalidate data with current user interface
-		m_UITree.OnRefresh();
+		m_UITree.m_OnRefresh();
 	}
 
 	UIEditorPanel::UIEditorPanel()
@@ -127,7 +127,7 @@ namespace Kargono::Panels
 		{
 		// Clear selected entry if escape key is pressed
 		case Key::Escape:
-			m_UITree.SelectedEntry = {};
+			m_UITree.m_SelectedEntry = {};
 			m_CurrentDisplay = UIPropertiesDisplay::None;
 			return true;
 		
@@ -145,9 +145,9 @@ namespace Kargono::Panels
 		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
 			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
-			if (m_WidgetOnPress.CurrentOption.Handle == manageAsset->GetAssetID())
+			if (m_WidgetOnPress.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_WidgetOnPress.CurrentOption = { "None", Assets::EmptyHandle };
+				m_WidgetOnPress.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
 			if (m_EditorUI)
@@ -182,7 +182,7 @@ namespace Kargono::Panels
 			}
 
 			// Update header name with new asset name
-			m_MainHeader.Label = Assets::AssetService::GetUserInterfaceFileLocation(manageAsset->GetAssetID()).filename().string();
+			m_MainHeader.m_Label = Assets::AssetService::GetUserInterfaceFileLocation(manageAsset->GetAssetID()).filename().string();
 			return true;
 		}
 
@@ -237,29 +237,29 @@ namespace Kargono::Panels
 	{
 		EditorUI::EditorUIService::CollapsingHeader(m_WindowHeader);
 
-		if (m_WindowHeader.Expanded)
+		if (m_WindowHeader.m_Expanded)
 		{
-			m_WindowTag.CurrentOption = m_ActiveWindow->m_Tag;
+			m_WindowTag.m_CurrentOption = m_ActiveWindow->m_Tag;
 			EditorUI::EditorUIService::EditText(m_WindowTag);
 
 			std::size_t activeWidget = m_ActiveWindow->m_DefaultActiveWidget;
-			m_WindowDefaultWidget.CurrentOption =
+			m_WindowDefaultWidget.m_CurrentOption =
 			{
 				activeWidget == -1 ? "None" : m_ActiveWindow->m_Widgets.at(activeWidget)->m_Tag,
 				(uint64_t)activeWidget
 			};
 			EditorUI::EditorUIService::SelectOption(m_WindowDefaultWidget);
 
-			m_WindowDisplay.CurrentBoolean = m_ActiveWindow->GetWindowDisplayed();
+			m_WindowDisplay.m_CurrentBoolean = m_ActiveWindow->GetWindowDisplayed();
 			EditorUI::EditorUIService::Checkbox(m_WindowDisplay);
 
-			m_WindowLocation.CurrentVec3 = m_ActiveWindow->m_ScreenPosition;
+			m_WindowLocation.m_CurrentVec3 = m_ActiveWindow->m_ScreenPosition;
 			EditorUI::EditorUIService::EditVec3(m_WindowLocation);
 
-			m_WindowSize.CurrentVec2 = m_ActiveWindow->m_Size;
+			m_WindowSize.m_CurrentVec2 = m_ActiveWindow->m_Size;
 			EditorUI::EditorUIService::EditVec2(m_WindowSize);
 
-			m_WindowBackgroundColor.CurrentVec4 = m_ActiveWindow->m_BackgroundColor;
+			m_WindowBackgroundColor.m_CurrentVec4 = m_ActiveWindow->m_BackgroundColor;
 			EditorUI::EditorUIService::EditVec4(m_WindowBackgroundColor);
 		}
 	}
@@ -267,18 +267,18 @@ namespace Kargono::Panels
 	void UIEditorPanel::DrawWidgetOptions()
 	{
 		EditorUI::EditorUIService::CollapsingHeader(m_WidgetHeader);
-		if (m_WidgetHeader.Expanded)
+		if (m_WidgetHeader.m_Expanded)
 		{
-			m_WidgetTag.CurrentOption = m_ActiveWidget->m_Tag;
+			m_WidgetTag.m_CurrentOption = m_ActiveWidget->m_Tag;
 			EditorUI::EditorUIService::EditText(m_WidgetTag);
 
-			m_WidgetLocation.CurrentVec2 = m_ActiveWidget->m_WindowPosition;
+			m_WidgetLocation.m_CurrentVec2 = m_ActiveWidget->m_WindowPosition;
 			EditorUI::EditorUIService::EditVec2(m_WidgetLocation);
 
-			m_WidgetSize.CurrentVec2 = m_ActiveWidget->m_Size;
+			m_WidgetSize.m_CurrentVec2 = m_ActiveWidget->m_Size;
 			EditorUI::EditorUIService::EditVec2(m_WidgetSize);
 			
-			m_WidgetBackgroundColor.CurrentVec4 = m_ActiveWidget->m_DefaultBackgroundColor;
+			m_WidgetBackgroundColor.m_CurrentVec4 = m_ActiveWidget->m_DefaultBackgroundColor;
 			EditorUI::EditorUIService::EditVec4(m_WidgetBackgroundColor);
 
 			if (m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::TextWidget)
@@ -286,23 +286,23 @@ namespace Kargono::Panels
 				RuntimeUI::TextWidget& activeTextWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
 
 				Assets::AssetHandle onPressHandle = activeTextWidget.m_FunctionPointers.m_OnPressHandle;
-				m_WidgetOnPress.CurrentOption =
+				m_WidgetOnPress.m_CurrentOption =
 				{
 					onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName,
 					onPressHandle
 				};
 				EditorUI::EditorUIService::SelectOption(m_WidgetOnPress);
 
-				m_WidgetText.CurrentOption = activeTextWidget.m_Text;
+				m_WidgetText.m_CurrentOption = activeTextWidget.m_Text;
 				EditorUI::EditorUIService::EditText(m_WidgetText);
 
-				m_WidgetTextSize.CurrentFloat = activeTextWidget.m_TextSize;
+				m_WidgetTextSize.m_CurrentFloat = activeTextWidget.m_TextSize;
 				EditorUI::EditorUIService::EditFloat(m_WidgetTextSize);
 
-				m_WidgetTextColor.CurrentVec4 = activeTextWidget.m_TextColor;
+				m_WidgetTextColor.m_CurrentVec4 = activeTextWidget.m_TextColor;
 				EditorUI::EditorUIService::EditVec4(m_WidgetTextColor);
 
-				m_WidgetCentered.CurrentBoolean = activeTextWidget.m_TextCentered;
+				m_WidgetCentered.m_CurrentBoolean = activeTextWidget.m_TextCentered;
 				EditorUI::EditorUIService::Checkbox(m_WidgetCentered);
 			}
 			
@@ -311,14 +311,14 @@ namespace Kargono::Panels
 
 	void UIEditorPanel::InitializeOpeningScreen()
 	{
-		m_OpenUIPopupSpec.Label = "Open User Interface";
-		m_OpenUIPopupSpec.LineCount = 2;
-		m_OpenUIPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
-		m_OpenUIPopupSpec.Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenUIPopupSpec.PopupAction = [&]()
+		m_OpenUIPopupSpec.m_Label = "Open User Interface";
+		m_OpenUIPopupSpec.m_LineCount = 2;
+		m_OpenUIPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenUIPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
+		m_OpenUIPopupSpec.m_PopupAction = [&]()
 		{
 			m_OpenUIPopupSpec.GetAllOptions().clear();
-			m_OpenUIPopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			m_OpenUIPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 
 			m_OpenUIPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetUserInterfaceRegistry())
@@ -327,58 +327,58 @@ namespace Kargono::Panels
 			}
 		};
 
-		m_OpenUIPopupSpec.ConfirmAction = [&](const EditorUI::OptionEntry& selection)
+		m_OpenUIPopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.Handle == Assets::EmptyHandle)
+			if (selection.m_Handle == Assets::EmptyHandle)
 			{
 				KG_WARN("No User Interface Selected");
 				return;
 			}
-			if (!Assets::AssetService::GetUserInterfaceRegistry().contains(selection.Handle))
+			if (!Assets::AssetService::GetUserInterfaceRegistry().contains(selection.m_Handle))
 			{
 				KG_WARN("Could not find the user interface specified");
 				return;
 			}
 
-			OnOpenUI(selection.Handle);
+			OnOpenUI(selection.m_Handle);
 		};
 
-		m_SelectUINameSpec.Label = "New Name";
-		m_SelectUINameSpec.CurrentOption = "Empty";
+		m_SelectUINameSpec.m_Label = "New Name";
+		m_SelectUINameSpec.m_CurrentOption = "Empty";
 
-		m_SelectUILocationSpec.Label = "Location";
-		m_SelectUILocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
-		m_SelectUILocationSpec.ConfirmAction = [&](const std::string& path)
+		m_SelectUILocationSpec.m_Label = "Location";
+		m_SelectUILocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectUILocationSpec.m_ConfirmAction = [&](const std::string& path)
 		{
 			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_SelectUILocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+				m_SelectUILocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 			}
 		};
 
-		m_CreateUIPopupSpec.Label = "Create User Interface";
-		m_CreateUIPopupSpec.ConfirmAction = [&]()
+		m_CreateUIPopupSpec.m_Label = "Create User Interface";
+		m_CreateUIPopupSpec.m_ConfirmAction = [&]()
 		{
-			if (m_SelectUINameSpec.CurrentOption == "")
+			if (m_SelectUINameSpec.m_CurrentOption == "")
 			{
 				return;
 			}
 
-			m_EditorUIHandle = Assets::AssetService::CreateUserInterface(m_SelectUINameSpec.CurrentOption.c_str(), m_SelectUILocationSpec.CurrentOption);
+			m_EditorUIHandle = Assets::AssetService::CreateUserInterface(m_SelectUINameSpec.m_CurrentOption.c_str(), m_SelectUILocationSpec.m_CurrentOption);
 			if (m_EditorUIHandle == Assets::EmptyHandle)
 			{
 				KG_WARN("User Interface was not created");
 				return;
 			}
 			m_EditorUI = Assets::AssetService::GetUserInterface(m_EditorUIHandle);
-			m_MainHeader.EditColorActive = false;
-			m_MainHeader.Label = Assets::AssetService::GetUserInterfaceRegistry().at(
+			m_MainHeader.m_EditColorActive = false;
+			m_MainHeader.m_Label = Assets::AssetService::GetUserInterfaceRegistry().at(
 				m_EditorUIHandle).Data.FileLocation.filename().string();
 			OnRefreshData();
 			RuntimeUI::RuntimeUIService::SetActiveUI(m_EditorUI, m_EditorUIHandle);
 		};
-		m_CreateUIPopupSpec.PopupContents = [&]()
+		m_CreateUIPopupSpec.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::EditText(m_SelectUINameSpec);
 			EditorUI::EditorUIService::ChooseDirectory(m_SelectUILocationSpec);
@@ -390,12 +390,12 @@ namespace Kargono::Panels
 		uint32_t iterator{ 0 };
 		for (EditorUI::TreeEntry& entry : m_UITree.GetTreeEntries())
 		{
-			entry.Handle = iterator;
+			entry.m_Handle = iterator;
 			uint32_t iteratorTwo{};
-			for (EditorUI::TreeEntry& subEntry : entry.SubEntries)
+			for (EditorUI::TreeEntry& subEntry : entry.m_SubEntries)
 			{
-				subEntry.Handle = iteratorTwo;
-				subEntry.ProvidedData = CreateRef<uint32_t>(iterator);
+				subEntry.m_Handle = iteratorTwo;
+				subEntry.m_ProvidedData = CreateRef<uint32_t>(iterator);
 				iteratorTwo++;
 			}
 			iterator++;
@@ -406,8 +406,8 @@ namespace Kargono::Panels
 	void UIEditorPanel::InitializeUIHeader()
 	{
 		// Header (Game State Name and Options)
-		m_DeleteUIWarning.Label = "Delete User Interface";
-		m_DeleteUIWarning.ConfirmAction = [&]()
+		m_DeleteUIWarning.m_Label = "Delete User Interface";
+		m_DeleteUIWarning.m_ConfirmAction = [&]()
 		{
 			// TODO: Remove UI from asset manager
 			Assets::AssetService::DeleteUserInterface(m_EditorUIHandle);
@@ -418,13 +418,13 @@ namespace Kargono::Panels
 			m_ActiveWidget = nullptr;
 			m_CurrentDisplay = UIPropertiesDisplay::None;
 		};
-		m_DeleteUIWarning.PopupContents = [&]()
+		m_DeleteUIWarning.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::Text("Are you sure you want to delete this user interface object?");
 		};
 
-		m_CloseUIWarning.Label = "Close User Interface";
-		m_CloseUIWarning.ConfirmAction = [&]()
+		m_CloseUIWarning.m_Label = "Close User Interface";
+		m_CloseUIWarning.m_ConfirmAction = [&]()
 		{
 			m_EditorUIHandle = 0;
 			m_EditorUI = nullptr;
@@ -433,7 +433,7 @@ namespace Kargono::Panels
 			m_ActiveWidget = nullptr;
 			m_CurrentDisplay = UIPropertiesDisplay::None;
 		};
-		m_CloseUIWarning.PopupContents = [&]()
+		m_CloseUIWarning.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::Text("Are you sure you want to close this user interface object without saving?");
 		};
@@ -443,13 +443,13 @@ namespace Kargono::Panels
 		m_MainHeader.AddToSelectionList("Save", [&]()
 		{
 			Assets::AssetService::SaveUserInterface(m_EditorUIHandle, m_EditorUI);
-			m_MainHeader.EditColorActive = false;
+			m_MainHeader.m_EditColorActive = false;
 		});
 		m_MainHeader.AddToSelectionList("Close", [&]()
 		{
-			if (m_MainHeader.EditColorActive)
+			if (m_MainHeader.m_EditColorActive)
 			{
-				m_CloseUIWarning.OpenPopup = true;
+				m_CloseUIWarning.m_OpenPopup = true;
 			}
 			else
 			{
@@ -463,14 +463,14 @@ namespace Kargono::Panels
 		});
 		m_MainHeader.AddToSelectionList("Delete", [&]()
 		{
-			m_DeleteUIWarning.OpenPopup = true;
+			m_DeleteUIWarning.m_OpenPopup = true;
 		});
 	}
 
 	void UIEditorPanel::InitializeMainContent()
 	{
-		m_UITree.Label = "User Interface Tree";
-		m_UITree.OnRefresh = [&]()
+		m_UITree.m_Label = "User Interface Tree";
+		m_UITree.m_OnRefresh = [&]()
 		{
 			if (!m_EditorUI)
 			{
@@ -482,41 +482,41 @@ namespace Kargono::Panels
 			for (RuntimeUI::Window& window : m_EditorUI->m_Windows)
 			{
 				EditorUI::TreeEntry newEntry {};
-				newEntry.Label = window.m_Tag;
-				newEntry.IconHandle = EditorUI::EditorUIService::s_IconWindow;
-				newEntry.Handle = iteratorOne;
-				newEntry.OnLeftClick = [&](EditorUI::TreeEntry& entry)
+				newEntry.m_Label = window.m_Tag;
+				newEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;
+				newEntry.m_Handle = iteratorOne;
+				newEntry.m_OnLeftClick = [&](EditorUI::TreeEntry& entry)
 				{
-					m_ActiveWindow = &m_EditorUI->m_Windows.at(entry.Handle);
+					m_ActiveWindow = &m_EditorUI->m_Windows.at(entry.m_Handle);
 					m_CurrentDisplay = UIPropertiesDisplay::Window;
 					EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
 					s_EditorApp->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 				};
 
 
-				newEntry.OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
+				newEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
 
-				newEntry.OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
+				newEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
 
 				uint32_t iteratorTwo{ 0 };
 				for (auto widget : window.m_Widgets)
 				{
 					EditorUI::TreeEntry newWidgetEntry {};
-					newWidgetEntry.Label = widget->m_Tag;
-					newWidgetEntry.IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
-					newWidgetEntry.ProvidedData = CreateRef<uint32_t>(iteratorOne);
-					newWidgetEntry.Handle = iteratorTwo;
-					newWidgetEntry.OnLeftClick = [&](EditorUI::TreeEntry& entry)
+					newWidgetEntry.m_Label = widget->m_Tag;
+					newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
+					newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>(iteratorOne);
+					newWidgetEntry.m_Handle = iteratorTwo;
+					newWidgetEntry.m_OnLeftClick = [&](EditorUI::TreeEntry& entry)
 					{
-						m_ActiveWindow = &m_EditorUI->m_Windows.at(*(uint32_t*)entry.ProvidedData.get());
-						m_ActiveWidget = m_ActiveWindow->m_Widgets.at(entry.Handle).get();
+						m_ActiveWindow = &m_EditorUI->m_Windows.at(*(uint32_t*)entry.m_ProvidedData.get());
+						m_ActiveWidget = m_ActiveWindow->m_Widgets.at(entry.m_Handle).get();
 						m_CurrentDisplay = UIPropertiesDisplay::Widget;
 						EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
 						s_EditorApp->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 					};
-					newWidgetEntry.OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
+					newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
 
-					newEntry.SubEntries.push_back(newWidgetEntry);
+					newEntry.m_SubEntries.push_back(newWidgetEntry);
 					iteratorTwo++;
 				}
 
@@ -527,41 +527,41 @@ namespace Kargono::Panels
 	}
 	void UIEditorPanel::InitializeWindowOptions()
 	{
-		m_WindowHeader.Label = "Window Options";
-		m_WindowHeader.Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
-		m_WindowHeader.Expanded = true;
+		m_WindowHeader.m_Label = "Window Options";
+		m_WindowHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_WindowHeader.m_Expanded = true;
 
-		m_WindowTag.Label = "Tag";
-		m_WindowTag.Flags |= EditorUI::EditText_Indented;
-		m_WindowTag.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
+		m_WindowTag.m_Label = "Tag";
+		m_WindowTag.m_Flags |= EditorUI::EditText_Indented;
+		m_WindowTag.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
 				KG_WARN("No valid window active when trying to update window tag");
 				return;
 			}
-			if (!m_UITree.SelectedEntry)
+			if (!m_UITree.m_SelectedEntry)
 			{
 				KG_WARN("No valid selected window path available in m_UITree when trying to update window tag");
 				return;
 			}
 
-			EditorUI::TreeEntry* entry = m_UITree.GetEntryFromPath(m_UITree.SelectedEntry);
+			EditorUI::TreeEntry* entry = m_UITree.GetEntryFromPath(m_UITree.m_SelectedEntry);
 			if (!entry)
 			{
 				KG_WARN("No valid selected window active in m_UITree when trying to update window tag");
 				return;
 			}
 
-			entry->Label = m_WindowTag.CurrentOption;
-			m_ActiveWindow->m_Tag = m_WindowTag.CurrentOption;
+			entry->m_Label = m_WindowTag.m_CurrentOption;
+			m_ActiveWindow->m_Tag = m_WindowTag.m_CurrentOption;
 
-			m_MainHeader.EditColorActive = true;
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WindowDefaultWidget.Label = "Default Widget";
-		m_WindowDefaultWidget.Flags |= EditorUI::SelectOption_Indented;
-		m_WindowDefaultWidget.PopupAction = [&]() 
+		m_WindowDefaultWidget.m_Label = "Default Widget";
+		m_WindowDefaultWidget.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WindowDefaultWidget.m_PopupAction = [&]() 
 		{
 			m_WindowDefaultWidget.ClearOptions();
 			m_WindowDefaultWidget.AddToOptions("Clear", "None", (uint64_t)-1);
@@ -581,115 +581,115 @@ namespace Kargono::Panels
 			}
 		};
 
-		m_WindowDefaultWidget.ConfirmAction = [&](const EditorUI::OptionEntry& entry) 
+		m_WindowDefaultWidget.m_ConfirmAction = [&](const EditorUI::OptionEntry& entry) 
 		{
 
-			if (entry.Handle == (uint64_t)-1)
+			if (entry.m_Handle == (uint64_t)-1)
 			{
 				m_ActiveWindow->m_DefaultActiveWidget = -1;
 				m_ActiveWindow->m_DefaultActiveWidgetRef = nullptr;
 				return;
 			}
 
-			if (entry.Handle > m_ActiveWindow->m_Widgets.size())
+			if (entry.m_Handle > m_ActiveWindow->m_Widgets.size())
 			{
 				KG_WARN("Invalid widget location provided when updating default active widget in window");
 				return;
 			}
 
-			m_ActiveWindow->m_DefaultActiveWidget = (int32_t)entry.Handle;
-			m_ActiveWindow->m_DefaultActiveWidgetRef = m_ActiveWindow->m_Widgets.at(entry.Handle);
+			m_ActiveWindow->m_DefaultActiveWidget = (int32_t)entry.m_Handle;
+			m_ActiveWindow->m_DefaultActiveWidgetRef = m_ActiveWindow->m_Widgets.at(entry.m_Handle);
 		};
 
-		m_WindowDisplay.Label = "Display Window";
-		m_WindowDisplay.Flags |= EditorUI::Checkbox_Indented;
-		m_WindowDisplay.ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		m_WindowDisplay.m_Label = "Display Window";
+		m_WindowDisplay.m_Flags |= EditorUI::Checkbox_Indented;
+		m_WindowDisplay.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
 				KG_WARN("No valid window active when trying to update window display option");
 				return;
 			}
-			spec.CurrentBoolean ? m_ActiveWindow->DisplayWindow() : m_ActiveWindow->HideWindow();
-			m_MainHeader.EditColorActive = true;
+			spec.m_CurrentBoolean ? m_ActiveWindow->DisplayWindow() : m_ActiveWindow->HideWindow();
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WindowLocation.Label = "Screen Location";
-		m_WindowLocation.Flags |= EditorUI::EditVec3_Indented;
-		m_WindowLocation.ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
+		m_WindowLocation.m_Label = "Screen Location";
+		m_WindowLocation.m_Flags |= EditorUI::EditVec3_Indented;
+		m_WindowLocation.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
 				KG_WARN("No valid window active when trying to update window location");
 				return;
 			}
-			m_ActiveWindow->m_ScreenPosition = m_WindowLocation.CurrentVec3;
-			m_MainHeader.EditColorActive = true;
+			m_ActiveWindow->m_ScreenPosition = m_WindowLocation.m_CurrentVec3;
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WindowSize.Label = "Screen Size";
-		m_WindowSize.Flags |= EditorUI::EditVec2_Indented;
-		m_WindowSize.ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
+		m_WindowSize.m_Label = "Screen Size";
+		m_WindowSize.m_Flags |= EditorUI::EditVec2_Indented;
+		m_WindowSize.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
 				KG_WARN("No valid window active when trying to update window size");
 				return;
 			}
-			m_ActiveWindow->m_Size = m_WindowSize.CurrentVec2;
-			m_MainHeader.EditColorActive = true;
+			m_ActiveWindow->m_Size = m_WindowSize.m_CurrentVec2;
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WindowBackgroundColor.Label = "Background Color";
-		m_WindowBackgroundColor.Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
-		m_WindowBackgroundColor.ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
+		m_WindowBackgroundColor.m_Label = "Background Color";
+		m_WindowBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_WindowBackgroundColor.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
 				KG_WARN("No valid window active when trying to update window background color");
 				return;
 			}
-			m_ActiveWindow->m_BackgroundColor = m_WindowBackgroundColor.CurrentVec4;
-			m_MainHeader.EditColorActive = true;
+			m_ActiveWindow->m_BackgroundColor = m_WindowBackgroundColor.m_CurrentVec4;
+			m_MainHeader.m_EditColorActive = true;
 		};
 	}
 	void UIEditorPanel::InitializeWidgetOptions()
 	{
-		m_WidgetHeader.Label = "Widget Options";
-		m_WidgetHeader.Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
-		m_WidgetHeader.Expanded = true;
+		m_WidgetHeader.m_Label = "Widget Options";
+		m_WidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_WidgetHeader.m_Expanded = true;
 
-		m_WidgetTag.Label = "Tag";
-		m_WidgetTag.Flags |= EditorUI::EditText_Indented;
-		m_WidgetTag.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
+		m_WidgetTag.m_Label = "Tag";
+		m_WidgetTag.m_Flags |= EditorUI::EditText_Indented;
+		m_WidgetTag.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			if (!m_ActiveWidget)
 			{
 				KG_WARN("No valid widget active when trying to update widget tag");
 				return;
 			}
-			if (!m_UITree.SelectedEntry)
+			if (!m_UITree.m_SelectedEntry)
 			{
 				KG_WARN("No valid selected widget path available in m_UITree when trying to update widget tag");
 				return;
 			}
 
-			EditorUI::TreeEntry* entry = m_UITree.GetEntryFromPath(m_UITree.SelectedEntry);
+			EditorUI::TreeEntry* entry = m_UITree.GetEntryFromPath(m_UITree.m_SelectedEntry);
 			if (!entry)
 			{
 				KG_WARN("No valid selected widget active in m_UITree when trying to update widget tag");
 				return;
 			}
 
-			entry->Label = m_WidgetTag.CurrentOption;
-			m_ActiveWidget->m_Tag = m_WidgetTag.CurrentOption;
+			entry->m_Label = m_WidgetTag.m_CurrentOption;
+			m_ActiveWidget->m_Tag = m_WidgetTag.m_CurrentOption;
 			
-			m_MainHeader.EditColorActive = true;
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WidgetLocation.Label = "Window Location";
-		m_WidgetLocation.Flags |= EditorUI::EditVec2_Indented;
-		m_WidgetLocation.ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
+		m_WidgetLocation.m_Label = "Window Location";
+		m_WidgetLocation.m_Flags |= EditorUI::EditVec2_Indented;
+		m_WidgetLocation.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
@@ -697,13 +697,13 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_ActiveWidget->m_WindowPosition = m_WidgetLocation.CurrentVec2;
-			m_MainHeader.EditColorActive = true;
+			m_ActiveWidget->m_WindowPosition = m_WidgetLocation.m_CurrentVec2;
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WidgetSize.Label = "Size";
-		m_WidgetSize.Flags |= EditorUI::EditVec2_Indented;
-		m_WidgetSize.ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
+		m_WidgetSize.m_Label = "Size";
+		m_WidgetSize.m_Flags |= EditorUI::EditVec2_Indented;
+		m_WidgetSize.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
@@ -711,13 +711,13 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_ActiveWidget->m_Size = m_WidgetSize.CurrentVec2;
-			m_MainHeader.EditColorActive = true;
+			m_ActiveWidget->m_Size = m_WidgetSize.m_CurrentVec2;
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WidgetBackgroundColor.Label = "Background Color";
-		m_WidgetBackgroundColor.Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
-		m_WidgetBackgroundColor.ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
+		m_WidgetBackgroundColor.m_Label = "Background Color";
+		m_WidgetBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_WidgetBackgroundColor.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
 		{
 			if (!m_ActiveWindow)
 			{
@@ -725,14 +725,14 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_ActiveWidget->m_DefaultBackgroundColor = m_WidgetBackgroundColor.CurrentVec4;
-			m_ActiveWidget->m_ActiveBackgroundColor = m_WidgetBackgroundColor.CurrentVec4;
-			m_MainHeader.EditColorActive = true;
+			m_ActiveWidget->m_DefaultBackgroundColor = m_WidgetBackgroundColor.m_CurrentVec4;
+			m_ActiveWidget->m_ActiveBackgroundColor = m_WidgetBackgroundColor.m_CurrentVec4;
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WidgetOnPress.Label = "On Press";
-		m_WidgetOnPress.Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
-		m_WidgetOnPress.PopupAction = [&]()
+		m_WidgetOnPress.m_Label = "On Press";
+		m_WidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_WidgetOnPress.m_PopupAction = [&]()
 		{
 			m_WidgetOnPress.ClearOptions();
 			m_WidgetOnPress.AddToOptions("Clear", "None", Assets::EmptyHandle);
@@ -748,28 +748,28 @@ namespace Kargono::Panels
 			}
 		};
 
-		m_WidgetOnPress.ConfirmAction = [&](const EditorUI::OptionEntry& entry)
+		m_WidgetOnPress.m_ConfirmAction = [&](const EditorUI::OptionEntry& entry)
 		{
 
-			if (entry.Handle == Assets::EmptyHandle)
+			if (entry.m_Handle == Assets::EmptyHandle)
 			{
 				m_ActiveWidget->m_FunctionPointers.m_OnPress = nullptr;
 				m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
 				return;
 			}
 
-			m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = entry.Handle;
-			m_ActiveWidget->m_FunctionPointers.m_OnPress = Assets::AssetService::GetScript(entry.Handle);
-			m_MainHeader.EditColorActive = true;
+			m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = entry.m_Handle;
+			m_ActiveWidget->m_FunctionPointers.m_OnPress = Assets::AssetService::GetScript(entry.m_Handle);
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WidgetOnPress.OnEdit = [&]()
+		m_WidgetOnPress.m_OnEdit = [&]()
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
 			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
-				m_WidgetOnPress.OpenPopup = true;
+				m_WidgetOnPress.m_OpenPopup = true;
 			} };
 			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
@@ -796,19 +796,19 @@ namespace Kargono::Panels
 							// Fill the new script handle
 							m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = scriptHandle;
 							m_ActiveWidget->m_FunctionPointers.m_OnPress = script;
-							m_MainHeader.EditColorActive = true;
-							m_WidgetOnPress.CurrentOption = { script->m_ScriptName, scriptHandle };
+							m_MainHeader.m_EditColorActive = true;
+							m_WidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 						}, {});
 					}};
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 			// Open tooltip
-			m_SelectScriptTooltip.TooltipActive = true;
+			m_SelectScriptTooltip.m_TooltipActive = true;
 		};
 
-		m_WidgetText.Label = "Text";
-		m_WidgetText.Flags |= EditorUI::EditText_Indented;
-		m_WidgetText.ConfirmAction = [&](EditorUI::EditTextSpec& spec)
+		m_WidgetText.m_Label = "Text";
+		m_WidgetText.m_Flags |= EditorUI::EditText_Indented;
+		m_WidgetText.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
 			{
@@ -823,13 +823,13 @@ namespace Kargono::Panels
 				return;
 			}
 
-			textWidget.m_Text = m_WidgetText.CurrentOption;
-			m_MainHeader.EditColorActive = true;
+			textWidget.m_Text = m_WidgetText.m_CurrentOption;
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WidgetTextSize.Label = "Text Size";
-		m_WidgetTextSize.Flags |= EditorUI::EditFloat_Indented;
-		m_WidgetTextSize.ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
+		m_WidgetTextSize.m_Label = "Text Size";
+		m_WidgetTextSize.m_Flags |= EditorUI::EditFloat_Indented;
+		m_WidgetTextSize.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
 			if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
 			{
@@ -844,13 +844,13 @@ namespace Kargono::Panels
 				return;
 			}
 
-			textWidget.m_TextSize = m_WidgetTextSize.CurrentFloat;
-			m_MainHeader.EditColorActive = true;
+			textWidget.m_TextSize = m_WidgetTextSize.m_CurrentFloat;
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WidgetTextColor.Label = "Text Color";
-		m_WidgetTextColor.Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
-		m_WidgetTextColor.ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
+		m_WidgetTextColor.m_Label = "Text Color";
+		m_WidgetTextColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_WidgetTextColor.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
 		{
 			if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
 			{
@@ -865,13 +865,13 @@ namespace Kargono::Panels
 				return;
 			}
 
-			textWidget.m_TextColor = m_WidgetTextColor.CurrentVec4;
-			m_MainHeader.EditColorActive = true;
+			textWidget.m_TextColor = m_WidgetTextColor.m_CurrentVec4;
+			m_MainHeader.m_EditColorActive = true;
 		};
 
-		m_WidgetCentered.Label = "Centered";
-		m_WidgetCentered.Flags |= EditorUI::Checkbox_Indented;
-		m_WidgetCentered.ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		m_WidgetCentered.m_Label = "Centered";
+		m_WidgetCentered.m_Flags |= EditorUI::Checkbox_Indented;
+		m_WidgetCentered.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
 		{
 			if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
 			{
@@ -886,8 +886,8 @@ namespace Kargono::Panels
 				return;
 			}
 
-			textWidget.m_TextCentered = spec.CurrentBoolean;
-			m_MainHeader.EditColorActive = true;
+			textWidget.m_TextCentered = spec.m_CurrentBoolean;
+			m_MainHeader.m_EditColorActive = true;
 		};
 	}
 
@@ -902,29 +902,29 @@ namespace Kargono::Panels
 		}
 
 		// Create Text Widget
-		auto& window = panel.m_EditorUI->m_Windows.at(windowEntry.Handle);
+		auto& window = panel.m_EditorUI->m_Windows.at(windowEntry.m_Handle);
 		Ref<RuntimeUI::TextWidget> newTextWidget = CreateRef<RuntimeUI::TextWidget>();
 
 		// Create new widget entry for m_UITree
 		EditorUI::TreeEntry newWidgetEntry {};
-		newWidgetEntry.Label = newTextWidget->m_Tag;
-		newWidgetEntry.IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
-		newWidgetEntry.ProvidedData = CreateRef<uint32_t>((uint32_t)windowEntry.Handle); ;
-		newWidgetEntry.Handle = window.m_Widgets.size();
-		newWidgetEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+		newWidgetEntry.m_Label = newTextWidget->m_Tag;
+		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
+		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)windowEntry.m_Handle); ;
+		newWidgetEntry.m_Handle = window.m_Widgets.size();
+		newWidgetEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 		{
 			UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
-			panel.m_ActiveWindow = &panel.m_EditorUI->m_Windows.at(*(uint32_t*)entry.ProvidedData.get());
-			panel.m_ActiveWidget = panel.m_ActiveWindow->m_Widgets.at(entry.Handle).get();
+			panel.m_ActiveWindow = &panel.m_EditorUI->m_Windows.at(*(uint32_t*)entry.m_ProvidedData.get());
+			panel.m_ActiveWidget = panel.m_ActiveWindow->m_Widgets.at(entry.m_Handle).get();
 			panel.m_CurrentDisplay = UIPropertiesDisplay::Widget;
 			EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
 			s_EditorApp->m_PropertiesPanel->m_ActiveParent = panel.m_PanelName;
 		};
-		newWidgetEntry.OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
+		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
 
 		// Add Widget to RuntimeUI and EditorUI::Tree
 		window.AddWidget(newTextWidget);
-		windowEntry.SubEntries.push_back(newWidgetEntry);
+		windowEntry.m_SubEntries.push_back(newWidgetEntry);
 	}
 
 	void UIEditorPanel::DeleteWindow(EditorUI::TreeEntry& entry)
@@ -937,13 +937,13 @@ namespace Kargono::Panels
 			return;
 		}
 		auto& windows = panel.m_EditorUI->m_Windows;
-		windows.erase(windows.begin() + entry.Handle);
+		windows.erase(windows.begin() + entry.m_Handle);
 		m_UITree.RemoveEntry(path);
 		panel.m_ActiveWidget = nullptr;
 		panel.m_ActiveWindow = nullptr;
 		panel.m_CurrentDisplay = UIPropertiesDisplay::None;
 
-		m_MainHeader.EditColorActive = true;
+		m_MainHeader.m_EditColorActive = true;
 		RecalculateTreeIterators();
 
 	}
@@ -958,15 +958,15 @@ namespace Kargono::Panels
 			return;
 		}
 		auto& windows = panel.m_EditorUI->m_Windows;
-		auto& widgets = windows.at(*(uint32_t*)entry.ProvidedData.get()).m_Widgets;
+		auto& widgets = windows.at(*(uint32_t*)entry.m_ProvidedData.get()).m_Widgets;
 
-		widgets.erase(widgets.begin() + entry.Handle);
+		widgets.erase(widgets.begin() + entry.m_Handle);
 		m_UITree.RemoveEntry(path);
 		panel.m_ActiveWidget = nullptr;
 		panel.m_ActiveWindow = nullptr;
 		panel.m_CurrentDisplay = UIPropertiesDisplay::None;
 
-		m_MainHeader.EditColorActive = true;
+		m_MainHeader.m_EditColorActive = true;
 		RecalculateTreeIterators();
 
 	}
@@ -975,24 +975,24 @@ namespace Kargono::Panels
 	{
 		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
 		EditorUI::TreeEntry newEntry {};
-		newEntry.Label = "None";
-		newEntry.IconHandle = EditorUI::EditorUIService::s_IconWindow;
-		newEntry.Handle = m_UITree.GetTreeEntries().size();
-		newEntry.OnLeftClick = [&](EditorUI::TreeEntry& entry)
+		newEntry.m_Label = "None";
+		newEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;
+		newEntry.m_Handle = m_UITree.GetTreeEntries().size();
+		newEntry.m_OnLeftClick = [&](EditorUI::TreeEntry& entry)
 		{
 			UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
-			panel.m_ActiveWindow = &panel.m_EditorUI->m_Windows.at(entry.Handle);
+			panel.m_ActiveWindow = &panel.m_EditorUI->m_Windows.at(entry.m_Handle);
 			panel.m_CurrentDisplay = UIPropertiesDisplay::Window;
 			EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
 			s_EditorApp->m_PropertiesPanel->m_ActiveParent = panel.m_PanelName;
 		};
 
-		newEntry.OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
+		newEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
 
-		newEntry.OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
+		newEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
 
 		m_UITree.InsertEntry(newEntry);
 		panel.m_EditorUI->m_Windows.push_back({});
-		m_MainHeader.EditColorActive = true;
+		m_MainHeader.m_EditColorActive = true;
 	}
 }

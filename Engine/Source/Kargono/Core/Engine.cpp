@@ -102,7 +102,7 @@ namespace Kargono
 			s_ActiveEngine->m_Accumulator -= k_ConstantFrameTime;
 
 			{
-				KG_PROFILE_FRAME("Main Thread");
+				KG_PROFILE_FRAME_DESC("Main Thread");
 
 				s_ActiveEngine->m_UpdateCount++;
 				AppTickService::OnUpdate(k_ConstantFrameTimeStep);

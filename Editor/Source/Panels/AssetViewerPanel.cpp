@@ -18,14 +18,14 @@ namespace Kargono::Panels
 
 	void AssetViewerPanel::ViewAssetInformation(EditorUI::ListEntry& entry, std::size_t iteration)
 	{
-		m_ActiveAsset = entry.Handle;
-		m_ActiveAssetType = Utility::StringToAssetType(entry.Label);
-		m_ViewAssetPopup.OpenPopup = true;
+		m_ActiveAsset = entry.m_Handle;
+		m_ActiveAssetType = Utility::StringToAssetType(entry.m_Label);
+		m_ViewAssetPopup.m_OpenPopup = true;
 	}
 
 	void AssetViewerPanel::RefreshPanelData()
 	{
-		m_AllAssetsTable.OnRefresh();
+		m_AllAssetsTable.m_OnRefresh();
 	}
 
 	bool AssetViewerPanel::OnAssetEvent(Events::Event* event)
@@ -39,13 +39,13 @@ namespace Kargono::Panels
 			std::size_t assetLocation = m_AllAssetsTable.SearchEntries([&](const EditorUI::ListEntry& currentEntry) 
 			{
 				// Check if type inside tree is the same
-				if (Utility::StringToAssetType(currentEntry.Label) != manageEvent.GetAssetType())
+				if (Utility::StringToAssetType(currentEntry.m_Label) != manageEvent.GetAssetType())
 				{
 					return false;
 				}
 
 				// Check if handle matches
-				if (currentEntry.Handle != manageEvent.GetAssetID())
+				if (currentEntry.m_Handle != manageEvent.GetAssetID())
 				{
 					return false;
 				}
@@ -74,11 +74,11 @@ namespace Kargono::Panels
 
 	void AssetViewerPanel::InitializeAssetsTable()
 	{
-		m_AllAssetsTable.Label = "All Assets";
-		m_AllAssetsTable.Column1Title = "Asset Type";
-		m_AllAssetsTable.Column2Title = "Asset File Location";
-		m_AllAssetsTable.Expanded = true;
-		m_AllAssetsTable.OnRefresh = [&]()
+		m_AllAssetsTable.m_Label = "All Assets";
+		m_AllAssetsTable.m_Column1Title = "Asset Type";
+		m_AllAssetsTable.m_Column2Title = "Asset File Location";
+		m_AllAssetsTable.m_Expanded = true;
+		m_AllAssetsTable.m_OnRefresh = [&]()
 		{
 			m_AllAssetsTable.ClearList();
 			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
@@ -212,12 +212,12 @@ namespace Kargono::Panels
 			}
 
 		};
-		m_AllAssetsTable.OnRefresh();
+		m_AllAssetsTable.m_OnRefresh();
 	}
 	void AssetViewerPanel::InitializeAssetPopup()
 	{
-		m_ViewAssetPopup.Label = "View Asset";
-		m_ViewAssetPopup.PopupContents = [&]() 
+		m_ViewAssetPopup.m_Label = "View Asset";
+		m_ViewAssetPopup.m_PopupContents = [&]() 
 		{
 			Assets::AssetInfo asset = Assets::AssetService::GetAssetFromAllRegistries(m_ActiveAsset, m_ActiveAssetType);
 			EditorUI::EditorUIService::LabeledText("Asset Type", Utility::AssetTypeToString(asset.Data.Type));

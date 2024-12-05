@@ -60,7 +60,7 @@ namespace API::EditorUI
 		SetLanguageDefinition(TextEditorService::GenerateHLSL());
 		m_Lines.push_back(Line());
 
-		m_SuggestionTree.Label = "Suggestions";
+		m_SuggestionTree.m_Label = "Suggestions";
 	}
 
 	TextEditorSpec::~TextEditorSpec()
@@ -775,10 +775,10 @@ namespace API::EditorUI
 		for (Kargono::Scripting::SuggestionSpec& suggestion : allSuggestions)
 		{
 			Kargono::EditorUI::TreeEntry entry;
-			entry.Label = suggestion.m_Label;
-			entry.ProvidedData = Kargono::CreateRef<std::string>(suggestion.m_ReplacementText);
-			entry.IconHandle = suggestion.m_Icon;
-			entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
+			entry.m_Label = suggestion.m_Label;
+			entry.m_ProvidedData = Kargono::CreateRef<std::string>(suggestion.m_ReplacementText);
+			entry.m_IconHandle = suggestion.m_Icon;
+			entry.m_OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
 			{
 				// Remove Buffer Text and add text
 				UndoRecord u;
@@ -789,7 +789,7 @@ namespace API::EditorUI
 				SetCursorPosition({ cursorPosition.m_Line,cursorPosition.m_Column - (int)m_SuggestionTextBuffer.size() });
 				cursorPosition = GetCursorPosition();
 				u.m_AddedStart = cursorPosition;
-				u.m_Added = (*(std::string*)(entry.ProvidedData.get())).c_str();
+				u.m_Added = (*(std::string*)(entry.m_ProvidedData.get())).c_str();
 				InsertTextAt(cursorPosition, u.m_Added.c_str());
 				SetCursorPosition(cursorPosition);
 				m_CloseTextSuggestions = true;
@@ -805,7 +805,7 @@ namespace API::EditorUI
 		// Select the first available option
 		Kargono::EditorUI::TreePath selectPath {};
 		selectPath.AddNode(0);
-		m_SuggestionTree.SelectedEntry = selectPath;
+		m_SuggestionTree.m_SelectedEntry = selectPath;
 	}
 
 	void TextEditorSpec::EnterCharacter(ImWchar aChar, bool aShift)
@@ -814,10 +814,10 @@ namespace API::EditorUI
 
 		if (m_SuggestionsWindowEnabled && isSuggestionsOpen && aChar == '\t')
 		{
-			Kargono::EditorUI::TreeEntry* entry = m_SuggestionTree.GetEntryFromPath(m_SuggestionTree.SelectedEntry);
-			if (entry && entry->OnDoubleLeftClick)
+			Kargono::EditorUI::TreeEntry* entry = m_SuggestionTree.GetEntryFromPath(m_SuggestionTree.m_SelectedEntry);
+			if (entry && entry->m_OnDoubleLeftClick)
 			{
-				entry->OnDoubleLeftClick(*entry);
+				entry->m_OnDoubleLeftClick(*entry);
 			}
 			Colorize(GetCursorPosition().m_Line, 3);
 			EnsureCursorVisible();

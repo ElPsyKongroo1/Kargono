@@ -9,49 +9,49 @@ namespace Kargono
 
 	void EditorApp::InitializeExportProjectWidgets()
 	{
-		m_ExportProjectSpec.Label = "Export Project";
-		m_ExportProjectSpec.PopupWidth = 420.0f;
-		m_ExportProjectSpec.PopupContents = [&]()
+		m_ExportProjectSpec.m_Label = "Export Project";
+		m_ExportProjectSpec.m_PopupWidth = 420.0f;
+		m_ExportProjectSpec.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::ChooseDirectory(m_ExportProjectLocation);
 			EditorUI::EditorUIService::Checkbox(m_ExportProjectServer);
 		};
-		m_ExportProjectSpec.ConfirmAction = [&]()
+		m_ExportProjectSpec.m_ConfirmAction = [&]()
 		{
-			Projects::ProjectService::ExportProject(m_ExportProjectLocation.CurrentOption, m_ExportProjectServer.CurrentBoolean);
+			Projects::ProjectService::ExportProject(m_ExportProjectLocation.m_CurrentOption, m_ExportProjectServer.m_CurrentBoolean);
 		};
 
-		m_ExportProjectLocation.Label = "Export Location";
-		m_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Export";
+		m_ExportProjectLocation.m_Label = "Export Location";
+		m_ExportProjectLocation.m_CurrentOption = std::filesystem::current_path().parent_path() / "Export";
 
-		m_ExportProjectServer.Label = "Export Server";
-		m_ExportProjectServer.CurrentBoolean = true;
+		m_ExportProjectServer.m_Label = "Export Server";
+		m_ExportProjectServer.m_CurrentBoolean = true;
 	}
 
 	void EditorApp::InitializeImportAssetWidgets()
 	{
 
 		// Initialize import asset popup data
-		m_ImportAssetPopup.Label = "Import Asset";
-		m_ImportAssetPopup.PopupContents = [&]() 
+		m_ImportAssetPopup.m_Label = "Import Asset";
+		m_ImportAssetPopup.m_PopupContents = [&]() 
 		{
 			EditorUI::EditorUIService::LabeledText("Source File:", m_ImportSourceFilePath.string());
 			EditorUI::EditorUIService::ChooseDirectory(m_ImportNewFileLocation);
 			EditorUI::EditorUIService::EditText(m_ImportNewAssetName);
 		};
-		m_ImportAssetPopup.ConfirmAction = [&]() 
+		m_ImportAssetPopup.m_ConfirmAction = [&]() 
 		{
 			// Actually import the asset
 			switch (m_ImportAssetType)
 			{
 			case Assets::AssetType::Font:
-				Assets::AssetService::ImportFontFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.CurrentOption.c_str(), m_ImportNewFileLocation.CurrentOption);
+				Assets::AssetService::ImportFontFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.m_CurrentOption.c_str(), m_ImportNewFileLocation.m_CurrentOption);
 				break;
 			case Assets::AssetType::Audio:
-				Assets::AssetService::ImportAudioBufferFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.CurrentOption.c_str(), m_ImportNewFileLocation.CurrentOption);
+				Assets::AssetService::ImportAudioBufferFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.m_CurrentOption.c_str(), m_ImportNewFileLocation.m_CurrentOption);
 				break;
 			case Assets::AssetType::Texture:
-				Assets::AssetService::ImportTexture2DFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.CurrentOption.c_str(), m_ImportNewFileLocation.CurrentOption);
+				Assets::AssetService::ImportTexture2DFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.m_CurrentOption.c_str(), m_ImportNewFileLocation.m_CurrentOption);
 				break;
 			default:
 				KG_ERROR("Unsupported asset type attempting to be imported");
@@ -60,16 +60,16 @@ namespace Kargono
 		};
 
 		// Initialize internal popup widgets
-		m_ImportNewAssetName.Label = "New Asset Name:";
-		m_ImportNewAssetName.CurrentOption = "NewAsset";
+		m_ImportNewAssetName.m_Label = "New Asset Name:";
+		m_ImportNewAssetName.m_CurrentOption = "NewAsset";
 
-		m_ImportNewFileLocation.Label = "Destination Folder:";
-		m_ImportNewFileLocation.ConfirmAction = [&](const std::string& path)
+		m_ImportNewFileLocation.m_Label = "Destination Folder:";
+		m_ImportNewFileLocation.m_ConfirmAction = [&](const std::string& path)
 		{
 			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_ImportNewFileLocation.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+				m_ImportNewFileLocation.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 			}
 		};
 	}
@@ -85,8 +85,8 @@ namespace Kargono
 		InitializeExportProjectWidgets();
 		InitializeImportAssetWidgets();
 
-		m_GeneralWarningSpec.Label = "Warning";
-		m_GeneralWarningSpec.PopupContents = [&]()
+		m_GeneralWarningSpec.m_Label = "Warning";
+		m_GeneralWarningSpec.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::LabeledText("Warning Message:", m_GeneralWarningMessage.CString());
 		};
@@ -234,7 +234,7 @@ namespace Kargono
 
 				if (ImGui::MenuItem("Export Project"))
 				{
-					m_ExportProjectSpec.OpenPopup = true;
+					m_ExportProjectSpec.m_OpenPopup = true;
 				}
 
 				ImGui::Separator();
@@ -1014,7 +1014,7 @@ namespace Kargono
 	{
 		// Open generic message
 		m_GeneralWarningMessage = message;
-		m_GeneralWarningSpec.OpenPopup = true;
+		m_GeneralWarningSpec.m_OpenPopup = true;
 	}
 
 	void EditorApp::OpenImportFileDialog(const std::filesystem::path& importFileLocation, Assets::AssetType assetType)
@@ -1030,17 +1030,17 @@ namespace Kargono
 		m_ImportSourceFilePath = importFileLocation;
 
 		// Fill export file path location
-		m_ImportNewFileLocation.CurrentOption = importFileLocation.parent_path();
+		m_ImportNewFileLocation.m_CurrentOption = importFileLocation.parent_path();
 
 		// Add default name to name widget
-		m_ImportNewAssetName.CurrentOption = "NewAsset";
+		m_ImportNewAssetName.m_CurrentOption = "NewAsset";
 
 		// Store asset type
 		m_ImportAssetType = assetType;
 
 		// Open Popup and change title
-		m_ImportAssetPopup.OpenPopup = true;
-		m_ImportAssetPopup.Label = "Import " + Utility::AssetTypeToString(assetType);
+		m_ImportAssetPopup.m_OpenPopup = true;
+		m_ImportAssetPopup.m_Label = "Import " + Utility::AssetTypeToString(assetType);
 	}
 
 

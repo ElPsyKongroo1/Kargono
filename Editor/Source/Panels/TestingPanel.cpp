@@ -34,14 +34,14 @@ namespace Kargono::Panels
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(TestingPanel::OnKeyPressedEditor));
 
-		s_TestText.Label = "File to Compile";
-		s_TestText.CurrentOption = "test.kgscript";
+		s_TestText.m_Label = "File to Compile";
+		s_TestText.m_CurrentOption = "test.kgscript";
 
-		s_TimerTime.Label = "Timer Time";
-		s_TimerTime.CurrentFloat = 3.0f;
+		s_TimerTime.m_Label = "Timer Time";
+		s_TimerTime.m_CurrentFloat = 3.0f;
 
-		s_RandomTestInteger.Label = "Intenger Time";
-		s_RandomTestInteger.CurrentInteger = 5;
+		s_RandomTestInteger.m_Label = "Intenger Time";
+		s_RandomTestInteger.m_CurrentInteger = 5;
 
 		m_TestHeader.m_Label = "directory/directory/file.txt";
 		newString = "Hahahaha";
@@ -52,7 +52,7 @@ namespace Kargono::Panels
 		newArchetype.m_Icon = EditorUI::EditorUIService::s_IconDisplay;
 		newArchetype.m_OnLeftClick = [](EditorUI::GridEntry& currentEntry)
 		{
-			testTooltip.TooltipActive = true;
+			testTooltip.m_TooltipActive = true;
 		};
 		testGrid.AddEntryArchetype((uint32_t)TestTypes::Display, std::move(newArchetype));
 		for (std::size_t iteration{ 1 }; iteration < 10; iteration++)
@@ -87,6 +87,8 @@ namespace Kargono::Panels
 			return;
 		}
 
+		EditorUI::EditorUIService::TitleText("Welcome to the Testing Panel!");
+
 		if (ImGui::Button("Crit Log"))
 		{
 			KG_CRITICAL("Hey we in this bihh {}", Utility::RandomService::GenerateRandomNumber(0, 20));
@@ -102,7 +104,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Compile File"))
 		{
-			KG_TRACE_CRITICAL(Scripting::ScriptCompilerService::CompileScriptFile("./../Projects/Pong/Assets/" + s_TestText.CurrentOption));
+			KG_TRACE_CRITICAL(Scripting::ScriptCompilerService::CompileScriptFile("./../Projects/Pong/Assets/" + s_TestText.m_CurrentOption));
 		}
 
 		if (ImGui::Button("Test Popup"))
@@ -115,7 +117,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Start Timer"))
 		{
-			Utility::PassiveTimer::CreateTimer(s_TimerTime.CurrentFloat, []()
+			Utility::PassiveTimer::CreateTimer(s_TimerTime.m_CurrentFloat, []()
 			{
 				KG_WARN("The timer has gone off");
 			});
