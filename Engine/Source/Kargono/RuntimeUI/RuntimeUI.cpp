@@ -28,19 +28,20 @@ namespace Kargono::RuntimeUI
 		s_RuntimeUIContext->m_DefaultFont = FontService::InstantiateEditorFont("Resources/fonts/arial.ttf");
 
 		// Initialize Window/Widget Rendering Data
-
 		{
+			// Create shader for UI background/quad rendering
 			Rendering::ShaderSpecification shaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawIndex, false};
 			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
-
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
+			// Create basic shape component for UI quad rendering
 			ECS::ShapeComponent* shapeComp = new ECS::ShapeComponent();
 			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
 			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
 			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
 
+			// Build the background rendering data
 			s_RuntimeUIContext->m_BackgroundInputSpec.Shader = localShader;
 			s_RuntimeUIContext->m_BackgroundInputSpec.Buffer = localBuffer;
 			s_RuntimeUIContext->m_BackgroundInputSpec.ShapeComponent = shapeComp;
@@ -625,7 +626,6 @@ namespace Kargono::RuntimeUI
 			float currentDistance = glm::abs(glm::distance(potentialChoice->m_WindowPosition, currentWidget->m_WindowPosition));
 
 			// Check if the potential widget is within the constraints of the current widget
-
 			float currentWidgetExtent;
 			float potentialWidgetExtent;
 

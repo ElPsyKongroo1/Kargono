@@ -49,10 +49,10 @@ namespace Kargono::RuntimeUI
 	};
 
 	constexpr std::size_t k_InvalidWidgetIndex{ std::numeric_limits<std::size_t>().max() };
+
 	//============================
 	// Navigation Links Struct
 	//============================
-
 	struct NavigationLinks
 	{
 		std::size_t m_LeftWidgetIndex { k_InvalidWidgetIndex };
@@ -62,7 +62,7 @@ namespace Kargono::RuntimeUI
 	};
 	
 	//============================
-	// Widget Class
+	// Widget Class (Base)
 	//============================
 	class Widget
 	{
@@ -92,7 +92,7 @@ namespace Kargono::RuntimeUI
 	};
 
 	//============================
-	// Text Widget Class
+	// Text Widget Class (Derived)
 	//============================
 	class TextWidget : public Widget
 	{
@@ -139,6 +139,9 @@ namespace Kargono::RuntimeUI
 		friend class Assets::UserInterfaceManager;
 	};
 
+	//============================
+	// Button Widget Class (Derived)
+	//============================
 	class ButtonWidget : public Widget
 	{
 	public:
@@ -158,6 +161,9 @@ namespace Kargono::RuntimeUI
 		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
+	//============================
+	// Checkbox Widget Class (Derived)
+	//============================
 	class CheckboxWidget : public Widget
 	{
 	public:
@@ -177,6 +183,9 @@ namespace Kargono::RuntimeUI
 		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
+	//============================
+	// Combo Widget Class (Derived)
+	//============================
 	class ComboWidget : public Widget
 	{
 	public:
@@ -196,6 +205,9 @@ namespace Kargono::RuntimeUI
 		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
+	//============================
+	// Popup Widget Class (Derived)
+	//============================
 	class PopupWidget : public Widget
 	{
 	public:
@@ -215,6 +227,9 @@ namespace Kargono::RuntimeUI
 		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
+	//============================
+	// Window Class
+	//============================
 	class Window
 	{
 	public:
@@ -259,6 +274,9 @@ namespace Kargono::RuntimeUI
 		bool m_WindowDisplayed{ false };
 	};
 
+	//============================
+	// User Interface Class
+	//============================
 	class UserInterface
 	{
 	public:
@@ -276,7 +294,9 @@ namespace Kargono::RuntimeUI
 		Window* m_ActiveWindow{ nullptr };
 	};
 
-
+	//============================
+	// Runtime UI Service Class
+	//============================
 	class RuntimeUIService
 	{
 	public:
