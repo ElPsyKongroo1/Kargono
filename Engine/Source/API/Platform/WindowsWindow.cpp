@@ -175,7 +175,7 @@ namespace API::Platform
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) 
 			{
-				static ::Optick::EventDescription* autogen_description_178 = nullptr; if (autogen_description_178 == nullptr) autogen_description_178 = ::Optick::CreateDescription(__FUNCSIG__, "F:\\VM\\SharedFolder\\Kargono\\Engine\\Source\\API\\Platform\\WindowsWindow.cpp", 178, "KG_DESC" "GLFW Scroll Event"); ::Optick::Event autogen_event_178(*(autogen_description_178));;
+				KG_PROFILE_FUNCTION_DESC("GLFW Scroll Mouse Event");
 
 				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
 
