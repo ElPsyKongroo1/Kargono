@@ -18,11 +18,11 @@ namespace Kargono
 		};
 		m_ExportProjectSpec.m_ConfirmAction = [&]()
 		{
-			Projects::ProjectService::ExportProject(m_ExportProjectLocation.CurrentOption, m_ExportProjectServer.m_CurrentBoolean);
+			Projects::ProjectService::ExportProject(m_ExportProjectLocation.m_CurrentOption, m_ExportProjectServer.m_CurrentBoolean);
 		};
 
 		m_ExportProjectLocation.m_Label = "Export Location";
-		m_ExportProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Export";
+		m_ExportProjectLocation.m_CurrentOption = std::filesystem::current_path().parent_path() / "Export";
 
 		m_ExportProjectServer.m_Label = "Export Server";
 		m_ExportProjectServer.m_CurrentBoolean = true;
@@ -45,13 +45,13 @@ namespace Kargono
 			switch (m_ImportAssetType)
 			{
 			case Assets::AssetType::Font:
-				Assets::AssetService::ImportFontFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.CurrentOption.c_str(), m_ImportNewFileLocation.CurrentOption);
+				Assets::AssetService::ImportFontFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.m_CurrentOption.c_str(), m_ImportNewFileLocation.m_CurrentOption);
 				break;
 			case Assets::AssetType::Audio:
-				Assets::AssetService::ImportAudioBufferFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.CurrentOption.c_str(), m_ImportNewFileLocation.CurrentOption);
+				Assets::AssetService::ImportAudioBufferFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.m_CurrentOption.c_str(), m_ImportNewFileLocation.m_CurrentOption);
 				break;
 			case Assets::AssetType::Texture:
-				Assets::AssetService::ImportTexture2DFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.CurrentOption.c_str(), m_ImportNewFileLocation.CurrentOption);
+				Assets::AssetService::ImportTexture2DFromFile(m_ImportSourceFilePath, m_ImportNewAssetName.m_CurrentOption.c_str(), m_ImportNewFileLocation.m_CurrentOption);
 				break;
 			default:
 				KG_ERROR("Unsupported asset type attempting to be imported");
@@ -61,7 +61,7 @@ namespace Kargono
 
 		// Initialize internal popup widgets
 		m_ImportNewAssetName.m_Label = "New Asset Name:";
-		m_ImportNewAssetName.CurrentOption = "NewAsset";
+		m_ImportNewAssetName.m_CurrentOption = "NewAsset";
 
 		m_ImportNewFileLocation.m_Label = "Destination Folder:";
 		m_ImportNewFileLocation.m_ConfirmAction = [&](const std::string& path)
@@ -69,7 +69,7 @@ namespace Kargono
 			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_ImportNewFileLocation.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+				m_ImportNewFileLocation.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 			}
 		};
 	}
@@ -1030,10 +1030,10 @@ namespace Kargono
 		m_ImportSourceFilePath = importFileLocation;
 
 		// Fill export file path location
-		m_ImportNewFileLocation.CurrentOption = importFileLocation.parent_path();
+		m_ImportNewFileLocation.m_CurrentOption = importFileLocation.parent_path();
 
 		// Add default name to name widget
-		m_ImportNewAssetName.CurrentOption = "NewAsset";
+		m_ImportNewAssetName.m_CurrentOption = "NewAsset";
 
 		// Store asset type
 		m_ImportAssetType = assetType;

@@ -134,7 +134,7 @@ namespace Kargono::Panels
 		m_CurrentFileToModifyCache = m_CurrentDirectory / currentEntry.m_Label.CString();
 
 		// Enable tooltip menu
-		m_RightClickTooltip.TooltipActive = true;
+		m_RightClickTooltip.m_TooltipActive = true;
 		BrowserFileType fileType = (BrowserFileType)currentEntry.m_ArchetypeID;
 		m_CurrentFileTypeCache = fileType;
 
@@ -874,7 +874,7 @@ namespace Kargono::Panels
 		m_CreateDirectoryPopup.m_Label = "Create Directory";
 		m_CreateDirectoryPopup.m_PopupAction = [&]()
 		{
-			m_CreateDirectoryEditName.CurrentOption = "NewName";
+			m_CreateDirectoryEditName.m_CurrentOption = "NewName";
 		};
 		m_CreateDirectoryPopup.m_PopupContents = [&]()
 		{
@@ -882,7 +882,7 @@ namespace Kargono::Panels
 		};
 		m_CreateDirectoryPopup.m_ConfirmAction = [&]()
 		{
-			std::filesystem::path newPath = m_CurrentDirectory / m_CreateDirectoryEditName.CurrentOption;
+			std::filesystem::path newPath = m_CurrentDirectory / m_CreateDirectoryEditName.m_CurrentOption;
 			Utility::FileSystem::CreateNewDirectory(newPath);
 		};
 
@@ -1023,7 +1023,7 @@ namespace Kargono::Panels
 			m_RightClickTooltip.AddTooltipEntry(openTerminalTooltipEntry);
 
 			// Active tooltip
-			m_RightClickTooltip.TooltipActive = true;
+			m_RightClickTooltip.m_TooltipActive = true;
 			return true;
 		}
 

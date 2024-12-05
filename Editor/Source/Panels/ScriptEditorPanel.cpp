@@ -22,9 +22,9 @@ namespace Kargono::Panels
 		std::string originalLabel = script->m_SectionLabel;
 		// TODO: Ensure works with new system
 		Assets::ScriptSpec spec {};
-		spec.Name = m_EditWidgets.m_EditName.CurrentOption;
+		spec.Name = m_EditWidgets.m_EditName.m_CurrentOption;
 		spec.Type = Scripting::ScriptType::Project;
-		spec.m_SectionLabel = m_EditWidgets.m_SelectSectionLabel.CurrentOption.m_Label;
+		spec.m_SectionLabel = m_EditWidgets.m_SelectSectionLabel.m_CurrentOption.m_Label;
 
 		auto successful = Assets::AssetService::SaveScript(m_ActiveScriptHandle, spec);
 		if (!successful)
@@ -32,7 +32,7 @@ namespace Kargono::Panels
 			KG_ERROR("Unsuccessful at updating script");
 		}
 
-		m_AllScriptsList.OnRefresh();
+		m_AllScriptsList.m_OnRefresh();
 	}
 	void ScriptEditorPanel::OnOpenScriptDialog(EditorUI::ListEntry& entry, std::size_t iteration)
 	{
@@ -48,7 +48,7 @@ namespace Kargono::Panels
 	void ScriptEditorPanel::OnCreateScriptEditParameter(EditorUI::ListEntry& entry, std::size_t iteration)
 	{
 		// Open tooltip
-		m_ScriptTooltip.TooltipActive = true;
+		m_ScriptTooltip.m_TooltipActive = true;
 
 		// Initialize tooltip entries
 		m_ScriptTooltip.ClearEntries();
@@ -77,11 +77,11 @@ namespace Kargono::Panels
 	void ScriptEditorPanel::InitializeAllScriptsList()
 	{
 		m_AllScriptsList.m_Label = "All Scripts";
-		m_AllScriptsList.Column1Title = "Group";
-		m_AllScriptsList.Column2Title = "Name";
+		m_AllScriptsList.m_Column1Title = "Group";
+		m_AllScriptsList.m_Column2Title = "Name";
 		m_AllScriptsList.m_Expanded = true;
 		m_AllScriptsList.AddToSelectionList("Create New Script", KG_BIND_CLASS_FN(OnCreateScriptDialog));
-		m_AllScriptsList.OnRefresh = [&]()
+		m_AllScriptsList.m_OnRefresh = [&]()
 			{
 				m_AllScriptsList.ClearList();
 				for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
@@ -105,7 +105,7 @@ namespace Kargono::Panels
 
 				s_EditorApp->m_TextEditorPanel->RefreshKGScriptEditor();
 			};
-		m_AllScriptsList.OnRefresh();
+		m_AllScriptsList.m_OnRefresh();
 		m_ScriptTooltip.m_Label = "Script Tooltip";
 	}
 
@@ -114,14 +114,14 @@ namespace Kargono::Panels
 		m_CreateWidgets.m_MainPopup.m_Label = "Create New Script";
 		m_CreateWidgets.m_MainPopup.m_PopupAction = [&]()
 		{
-			m_CreateWidgets.m_EditName.CurrentOption = "Empty";
+			m_CreateWidgets.m_EditName.m_CurrentOption = "Empty";
 
 			if (m_OnCreateScriptConfirm)
 			{
 				WrappedVarType currentReturnType = Utility::WrappedFuncTypeToReturnType(m_OnCreateFunctionType);
 				std::vector<WrappedVarType> currentParameters = Utility::WrappedFuncTypeToParameterTypes(m_OnCreateFunctionType);
 
-				m_CreateWidgets.m_SelectReturnType.CurrentOption = { Utility::WrappedVarTypeToString(currentReturnType) , (uint64_t)currentReturnType};
+				m_CreateWidgets.m_SelectReturnType.m_CurrentOption = { Utility::WrappedVarTypeToString(currentReturnType) , (uint64_t)currentReturnType};
 
 				m_CreateWidgets.m_ParameterList.ClearList();
 				std::size_t iteration{ 0 };
@@ -130,9 +130,9 @@ namespace Kargono::Panels
 					// Fill new parameter entry with appropriate data from popup dialog
 					EditorUI::ListEntry newEntry{};
 					newEntry.m_Label = m_OnCreateParameterNames.at(iteration).CString();
-					newEntry.Value = Utility::WrappedVarTypeToString(type);
+					newEntry.m_Value = Utility::WrappedVarTypeToString(type);
 					newEntry.m_Handle = (uint64_t)type;
-					newEntry.OnEdit = KG_BIND_CLASS_FN(OnCreateScriptEditParameter);
+					newEntry.m_OnEdit = KG_BIND_CLASS_FN(OnCreateScriptEditParameter);
 
 					// Add parameter to parameter list
 					m_CreateWidgets.m_ParameterList.InsertListEntry(newEntry);
@@ -143,10 +143,10 @@ namespace Kargono::Panels
 			else
 			{
 				// Clear current return type and parameter list in widgets
-				m_CreateWidgets.m_SelectReturnType.CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::Void), (uint64_t)WrappedVarType::Void };
+				m_CreateWidgets.m_SelectReturnType.m_CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::Void), (uint64_t)WrappedVarType::Void };
 				m_CreateWidgets.m_ParameterList.ClearList();
 			}
-			m_CreateWidgets.m_SelectSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
+			m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::EmptyHandle };
 			m_CreateWidgets.m_ParameterList.m_Expanded = true;
 		};
 		m_CreateWidgets.m_MainPopup.m_PopupContents = [&]()
@@ -163,12 +163,12 @@ namespace Kargono::Panels
 		m_CreateWidgets.m_MainPopup.m_ConfirmAction = [&]()
 		{
 			Assets::ScriptSpec spec{};
-			spec.Name = m_CreateWidgets.m_EditName.CurrentOption;
+			spec.Name = m_CreateWidgets.m_EditName.m_CurrentOption;
 			spec.Type = Scripting::ScriptType::Project;
-			spec.m_SectionLabel = m_CreateWidgets.m_SelectSectionLabel.CurrentOption.m_Label;
+			spec.m_SectionLabel = m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption.m_Label;
 			
 			// Get return type from select widget
-			WrappedVarType returnType = (WrappedVarType)(uint64_t)m_CreateWidgets.m_SelectReturnType.CurrentOption.m_Handle;
+			WrappedVarType returnType = (WrappedVarType)(uint64_t)m_CreateWidgets.m_SelectReturnType.m_CurrentOption.m_Handle;
 
 			// Get vector of parameters from list widget
 			std::vector<WrappedVarType> parameterTypeList;
@@ -223,14 +223,14 @@ namespace Kargono::Panels
 			}
 			m_OnCreateScriptConfirm = nullptr;
 
-			m_AllScriptsList.OnRefresh();
+			m_AllScriptsList.m_OnRefresh();
 		};
 
 		m_CreateWidgets.m_EditName.m_Label = "Name";
-		m_CreateWidgets.m_EditName.CurrentOption = "Empty";
+		m_CreateWidgets.m_EditName.m_CurrentOption = "Empty";
 
 		m_CreateWidgets.m_SelectReturnType.m_Label = "Return Type";
-		m_CreateWidgets.m_SelectReturnType.CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::None), Assets::EmptyHandle };
+		m_CreateWidgets.m_SelectReturnType.m_CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::None), Assets::EmptyHandle };
 		m_CreateWidgets.m_SelectReturnType.m_PopupAction = [&]()
 			{
 				m_CreateWidgets.m_SelectReturnType.ClearOptions();
@@ -245,8 +245,8 @@ namespace Kargono::Panels
 
 		m_CreateWidgets.m_ParameterList.m_Label = "Parameters";
 		m_CreateWidgets.m_ParameterList.m_Flags |= EditorUI::List_RegularSizeTitle;
-		m_CreateWidgets.m_ParameterList.Column1Title = "Name";
-		m_CreateWidgets.m_ParameterList.Column2Title = "Type";
+		m_CreateWidgets.m_ParameterList.m_Column1Title = "Name";
+		m_CreateWidgets.m_ParameterList.m_Column2Title = "Type";
 		m_CreateWidgets.m_ParameterList.AddToSelectionList("Add Parameter", [&]()
 			{
 				m_CreateWidgets.m_CreateParameterPopup.m_OpenPopup = true;
@@ -255,8 +255,8 @@ namespace Kargono::Panels
 		m_CreateWidgets.m_CreateParameterPopup.m_Label = "Create Parameter";
 		m_CreateWidgets.m_CreateParameterPopup.m_PopupAction = [&]()
 			{
-				m_CreateWidgets.m_CreateParameterName.CurrentOption = "NewParameter";
-				m_CreateWidgets.m_CreateParameterType.CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::Float), (uint64_t)WrappedVarType::Float };
+				m_CreateWidgets.m_CreateParameterName.m_CurrentOption = "NewParameter";
+				m_CreateWidgets.m_CreateParameterType.m_CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::Float), (uint64_t)WrappedVarType::Float };
 			};
 
 		m_CreateWidgets.m_CreateParameterPopup.m_PopupContents = [&]()
@@ -268,10 +268,10 @@ namespace Kargono::Panels
 		{
 			// Fill new parameter entry with appropriate data from popup dialog
 			EditorUI::ListEntry newEntry{};
-			newEntry.m_Label = m_CreateWidgets.m_CreateParameterName.CurrentOption;
-			newEntry.Value = Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)m_CreateWidgets.m_CreateParameterType.CurrentOption.m_Handle);
-			newEntry.m_Handle = m_CreateWidgets.m_CreateParameterType.CurrentOption.m_Handle;
-			newEntry.OnEdit = KG_BIND_CLASS_FN(OnCreateScriptEditParameter);
+			newEntry.m_Label = m_CreateWidgets.m_CreateParameterName.m_CurrentOption;
+			newEntry.m_Value = Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)m_CreateWidgets.m_CreateParameterType.m_CurrentOption.m_Handle);
+			newEntry.m_Handle = m_CreateWidgets.m_CreateParameterType.m_CurrentOption.m_Handle;
+			newEntry.m_OnEdit = KG_BIND_CLASS_FN(OnCreateScriptEditParameter);
 				
 			// Add parameter to parameter list
 			m_CreateWidgets.m_ParameterList.InsertListEntry(newEntry);
@@ -305,8 +305,8 @@ namespace Kargono::Panels
 				KG_ASSERT(m_ActiveParameterLocation < m_CreateWidgets.m_ParameterList.GetEntriesListSize());
 				EditorUI::ListEntry& entry = m_CreateWidgets.m_ParameterList.GetEntry(m_ActiveParameterLocation);
 
-				m_CreateWidgets.m_EditParameterName.CurrentOption = entry.m_Label;
-				m_CreateWidgets.m_EditParameterType.CurrentOption = { Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)entry.m_Handle), (uint64_t)entry.m_Handle };
+				m_CreateWidgets.m_EditParameterName.m_CurrentOption = entry.m_Label;
+				m_CreateWidgets.m_EditParameterType.m_CurrentOption = { Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)entry.m_Handle), (uint64_t)entry.m_Handle };
 			};
 
 		m_CreateWidgets.m_EditParameterPopup.m_PopupContents = [&]()
@@ -319,13 +319,13 @@ namespace Kargono::Panels
 				// Fill new parameter entry with appropriate data from popup dialog
 				KG_ASSERT(m_ActiveParameterLocation < m_CreateWidgets.m_ParameterList.GetEntriesListSize());
 				EditorUI::ListEntry& currentEntry = m_CreateWidgets.m_ParameterList.GetEntry(m_ActiveParameterLocation);
-				currentEntry.m_Label = m_CreateWidgets.m_EditParameterName.CurrentOption;
-				currentEntry.Value = Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)m_CreateWidgets.m_EditParameterType.CurrentOption.m_Handle);
-				currentEntry.m_Handle = m_CreateWidgets.m_EditParameterType.CurrentOption.m_Handle;
-				currentEntry.OnEdit = [&](EditorUI::ListEntry& entry, std::size_t iteration)
+				currentEntry.m_Label = m_CreateWidgets.m_EditParameterName.m_CurrentOption;
+				currentEntry.m_Value = Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)m_CreateWidgets.m_EditParameterType.m_CurrentOption.m_Handle);
+				currentEntry.m_Handle = m_CreateWidgets.m_EditParameterType.m_CurrentOption.m_Handle;
+				currentEntry.m_OnEdit = [&](EditorUI::ListEntry& entry, std::size_t iteration)
 					{
 						// Open tooltip
-						m_ScriptTooltip.TooltipActive = true;
+						m_ScriptTooltip.m_TooltipActive = true;
 
 						// Initialize tooltip entries
 						m_ScriptTooltip.ClearEntries();
@@ -372,7 +372,7 @@ namespace Kargono::Panels
 	};
 
 		m_CreateWidgets.m_SelectSectionLabel.m_Label = "Group";
-		m_CreateWidgets.m_SelectSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
+		m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_CreateWidgets.m_SelectSectionLabel.m_PopupAction = [&]()
 			{
 				m_CreateWidgets.m_SelectSectionLabel.ClearOptions();
@@ -389,8 +389,8 @@ namespace Kargono::Panels
 		m_EditWidgets.m_MainPopup.m_Label = "Edit Script";
 		m_EditWidgets.m_MainPopup.m_PopupAction = [&]()
 		{
-			m_EditWidgets.m_EditName.CurrentOption = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_ScriptName;
-			m_EditWidgets.m_SelectSectionLabel.CurrentOption.m_Label = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_SectionLabel;
+			m_EditWidgets.m_EditName.m_CurrentOption = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_ScriptName;
+			m_EditWidgets.m_SelectSectionLabel.m_CurrentOption.m_Label = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_SectionLabel;
 		};
 		m_EditWidgets.m_MainPopup.m_PopupContents = [&]()
 		{
@@ -424,7 +424,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			m_AllScriptsList.OnRefresh();
+			m_AllScriptsList.m_OnRefresh();
 		};
 
 		m_EditWidgets.m_EditWarning.m_Label = "Edit Script";
@@ -438,10 +438,10 @@ namespace Kargono::Panels
 		};
 
 		m_EditWidgets.m_EditName.m_Label = "Name";
-		m_EditWidgets.m_EditName.CurrentOption = "Empty";
+		m_EditWidgets.m_EditName.m_CurrentOption = "Empty";
 
 		m_EditWidgets.m_SelectSectionLabel.m_Label = "Group";
-		m_EditWidgets.m_SelectSectionLabel.CurrentOption = { "None", Assets::EmptyHandle };
+		m_EditWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_EditWidgets.m_SelectSectionLabel.m_PopupAction = [&]()
 		{
 			m_EditWidgets.m_SelectSectionLabel.ClearOptions();
@@ -459,14 +459,14 @@ namespace Kargono::Panels
 	{
 		// Group Labels
 		m_GroupLabelsTable.m_Label = "All Group Labels";
-		m_GroupLabelsTable.Column1Title = "Label";
-		m_GroupLabelsTable.Column2Title = "";
+		m_GroupLabelsTable.m_Column1Title = "Label";
+		m_GroupLabelsTable.m_Column2Title = "";
 		m_GroupLabelsTable.m_Expanded = false;
 		m_GroupLabelsTable.AddToSelectionList("Create New Group Label", [&]()
 			{
 				m_CreateGroupLabelPopup.m_StartPopup = true;
 			});
-		m_GroupLabelsTable.OnRefresh = [&]()
+		m_GroupLabelsTable.m_OnRefresh = [&]()
 			{
 				m_GroupLabelsTable.ClearList();
 				for (auto& label : Assets::AssetService::GetScriptSectionLabels())
@@ -478,39 +478,39 @@ namespace Kargono::Panels
 						});
 				}
 			};
-		m_GroupLabelsTable.OnRefresh();
+		m_GroupLabelsTable.m_OnRefresh();
 
 		m_CreateGroupLabelPopup.m_Label = "Create New Group Label";
 		m_CreateGroupLabelPopup.m_Flags |= EditorUI::EditText_PopupOnly;
 		m_CreateGroupLabelPopup.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 			{
 				// Create new group label
-				bool success = Assets::AssetService::AddScriptSectionLabel(m_CreateGroupLabelPopup.CurrentOption);
+				bool success = Assets::AssetService::AddScriptSectionLabel(m_CreateGroupLabelPopup.m_CurrentOption);
 				if (!success)
 				{
 					KG_WARN("Failed to create group label");
 					return;
 				}
-				m_GroupLabelsTable.OnRefresh();
+				m_GroupLabelsTable.m_OnRefresh();
 			};
 
 		m_EditGroupLabelPopup.m_Label = "Edit Group Label";
 		m_EditGroupLabelPopup.m_PopupAction = [&]()
 			{
-				m_EditGroupLabelText.CurrentOption = m_ActiveLabel;
+				m_EditGroupLabelText.m_CurrentOption = m_ActiveLabel;
 			};
 		m_EditGroupLabelPopup.m_ConfirmAction = [&]()
 			{
 				// Create new group label
 				bool success = Assets::AssetService::EditScriptSectionLabel(
-					m_ActiveLabel, m_EditGroupLabelText.CurrentOption);
+					m_ActiveLabel, m_EditGroupLabelText.m_CurrentOption);
 				if (!success)
 				{
 					KG_WARN("Failed to edit group label");
 					return;
 				}
-				m_GroupLabelsTable.OnRefresh();
-				m_AllScriptsList.OnRefresh();
+				m_GroupLabelsTable.m_OnRefresh();
+				m_AllScriptsList.m_OnRefresh();
 			};
 		m_EditGroupLabelPopup.m_DeleteAction = [&]()
 			{
@@ -521,8 +521,8 @@ namespace Kargono::Panels
 					return;
 				}
 
-				m_AllScriptsList.OnRefresh();
-				m_GroupLabelsTable.OnRefresh();
+				m_AllScriptsList.m_OnRefresh();
+				m_GroupLabelsTable.m_OnRefresh();
 			};
 		m_EditGroupLabelPopup.m_PopupContents = [&]()
 			{
@@ -530,7 +530,7 @@ namespace Kargono::Panels
 			};
 
 		m_EditGroupLabelText.m_Label = "Group Label";
-		m_EditGroupLabelText.CurrentOption = "Empty";
+		m_EditGroupLabelText.m_CurrentOption = "Empty";
 	}
 
 	ScriptEditorPanel::ScriptEditorPanel()
@@ -622,8 +622,8 @@ namespace Kargono::Panels
 	}
 	void ScriptEditorPanel::ResetPanelResources()
 	{
-		m_AllScriptsList.OnRefresh();
-		m_GroupLabelsTable.OnRefresh();
+		m_AllScriptsList.m_OnRefresh();
+		m_GroupLabelsTable.m_OnRefresh();
 	}
 	void ScriptEditorPanel::OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm, const std::vector<FixedString32>& parameterNames, bool openScriptEditor)
 	{

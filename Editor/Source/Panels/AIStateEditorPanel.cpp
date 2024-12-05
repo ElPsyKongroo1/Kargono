@@ -15,7 +15,7 @@ namespace Kargono::Panels
 	void AIStateEditorPanel::OnCreateAIStateDialog()
 	{
 		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectAIStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectAIStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 		m_CreateAIStatePopupSpec.m_OpenPopup = true;
 	}
 
@@ -25,16 +25,16 @@ namespace Kargono::Panels
 		{
 			// Refresh scripts
 			Ref<Scripting::Script> onUpdateScript = Assets::AssetService::GetScript(m_EditorAIState->OnUpdateHandle);
-			m_SelectOnUpdateScript.CurrentOption = onUpdateScript ? EditorUI::OptionEntry(onUpdateScript->m_ScriptName, m_EditorAIState->OnUpdateHandle) : EditorUI::OptionEntry("None", Assets::EmptyHandle);
+			m_SelectOnUpdateScript.m_CurrentOption = onUpdateScript ? EditorUI::OptionEntry(onUpdateScript->m_ScriptName, m_EditorAIState->OnUpdateHandle) : EditorUI::OptionEntry("None", Assets::EmptyHandle);
 
 			Ref<Scripting::Script> onEnterStateScript = Assets::AssetService::GetScript(m_EditorAIState->OnEnterStateHandle);
-			m_SelectOnEnterStateScript.CurrentOption = onEnterStateScript ? EditorUI::OptionEntry(onEnterStateScript->m_ScriptName, m_EditorAIState->OnEnterStateHandle) : EditorUI::OptionEntry("None", Assets::EmptyHandle);
+			m_SelectOnEnterStateScript.m_CurrentOption = onEnterStateScript ? EditorUI::OptionEntry(onEnterStateScript->m_ScriptName, m_EditorAIState->OnEnterStateHandle) : EditorUI::OptionEntry("None", Assets::EmptyHandle);
 
 			Ref<Scripting::Script> onExitStateScript = Assets::AssetService::GetScript(m_EditorAIState->OnExitStateHandle);
-			m_SelectOnExitStateScript.CurrentOption = onExitStateScript ? EditorUI::OptionEntry(onExitStateScript->m_ScriptName, m_EditorAIState->OnExitStateHandle) : EditorUI::OptionEntry("None", Assets::EmptyHandle);
+			m_SelectOnExitStateScript.m_CurrentOption = onExitStateScript ? EditorUI::OptionEntry(onExitStateScript->m_ScriptName, m_EditorAIState->OnExitStateHandle) : EditorUI::OptionEntry("None", Assets::EmptyHandle);
 
 			Ref<Scripting::Script> onAIMessageScript = Assets::AssetService::GetScript(m_EditorAIState->OnMessageHandle);
-			m_SelectOnAIMessageScript.CurrentOption = onAIMessageScript ? EditorUI::OptionEntry(onAIMessageScript->m_ScriptName, m_EditorAIState->OnMessageHandle) : EditorUI::OptionEntry("None", Assets::EmptyHandle);
+			m_SelectOnAIMessageScript.m_CurrentOption = onAIMessageScript ? EditorUI::OptionEntry(onAIMessageScript->m_ScriptName, m_EditorAIState->OnMessageHandle) : EditorUI::OptionEntry("None", Assets::EmptyHandle);
 		}
 	}
 
@@ -105,24 +105,24 @@ namespace Kargono::Panels
 		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
 			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
-			if (m_SelectOnUpdateScript.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectOnUpdateScript.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectOnUpdateScript.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectOnUpdateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
-			if (m_SelectOnEnterStateScript.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectOnEnterStateScript.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectOnEnterStateScript.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectOnEnterStateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
-			if (m_SelectOnExitStateScript.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectOnExitStateScript.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectOnExitStateScript.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectOnExitStateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
-			if (m_SelectOnAIMessageScript.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectOnAIMessageScript.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectOnAIMessageScript.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectOnAIMessageScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
 			if (m_EditorAIState)
@@ -177,7 +177,7 @@ namespace Kargono::Panels
 		{
 			// Open dialog to create editor AI State
 			OnCreateAIStateDialog();
-			m_SelectAIStateLocationSpec.CurrentOption = createLocation;
+			m_SelectAIStateLocationSpec.m_CurrentOption = createLocation;
 		}
 		else
 		{
@@ -235,13 +235,13 @@ namespace Kargono::Panels
 	void AIStateEditorPanel::InitializeOpeningScreen()
 	{
 		m_OpenAIStatePopupSpec.m_Label = "Open AI State";
-		m_OpenAIStatePopupSpec.LineCount = 2;
-		m_OpenAIStatePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenAIStatePopupSpec.m_LineCount = 2;
+		m_OpenAIStatePopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenAIStatePopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_OpenAIStatePopupSpec.m_PopupAction = [&]()
 		{
 			m_OpenAIStatePopupSpec.GetAllOptions().clear();
-			m_OpenAIStatePopupSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			m_OpenAIStatePopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 
 			m_OpenAIStatePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
@@ -267,28 +267,28 @@ namespace Kargono::Panels
 		};
 
 		m_SelectAIStateNameSpec.m_Label = "New Name";
-		m_SelectAIStateNameSpec.CurrentOption = "Empty";
+		m_SelectAIStateNameSpec.m_CurrentOption = "Empty";
 
 		m_SelectAIStateLocationSpec.m_Label = "Location";
-		m_SelectAIStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectAIStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 		m_SelectAIStateLocationSpec.m_ConfirmAction = [&](const std::string& path) 
 		{
 			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_SelectAIStateLocationSpec.CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+				m_SelectAIStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
 			}
 		};
 
 		m_CreateAIStatePopupSpec.m_Label = "Create AI State";
 		m_CreateAIStatePopupSpec.m_ConfirmAction = [&]()
 		{
-			if (m_SelectAIStateNameSpec.CurrentOption == "")
+			if (m_SelectAIStateNameSpec.m_CurrentOption == "")
 			{
 				return;
 			}
 
-			m_EditorAIStateHandle = Assets::AssetService::CreateAIState(m_SelectAIStateNameSpec.CurrentOption.c_str(), m_SelectAIStateLocationSpec.CurrentOption);
+			m_EditorAIStateHandle = Assets::AssetService::CreateAIState(m_SelectAIStateNameSpec.m_CurrentOption.c_str(), m_SelectAIStateLocationSpec.m_CurrentOption);
 			if (m_EditorAIStateHandle == Assets::EmptyHandle)
 			{
 				KG_WARN("AI state was not created");
@@ -362,8 +362,8 @@ namespace Kargono::Panels
 		// On Update Script
 		m_SelectOnUpdateScript.m_Label = "On Update Script";
 		m_SelectOnUpdateScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectOnUpdateScript.LineCount = 3;
-		m_SelectOnUpdateScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectOnUpdateScript.m_LineCount = 3;
+		m_SelectOnUpdateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectOnUpdateScript.m_PopupAction = [&]()
 		{
 			m_SelectOnUpdateScript.GetAllOptions().clear();
@@ -399,7 +399,7 @@ namespace Kargono::Panels
 			m_EditorAIState->OnUpdate = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnUpdateScript.OnEdit = [&]()
+		m_SelectOnUpdateScript.m_OnEdit = [&]()
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -433,21 +433,21 @@ namespace Kargono::Panels
 								m_EditorAIState->OnUpdateHandle = scriptHandle;
 								m_EditorAIState->OnUpdate = script;
 								m_MainHeader.m_EditColorActive = true;
-								m_SelectOnUpdateScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_SelectOnUpdateScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 							}, {"activeEntity", "deltaTime"});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
+				m_SelectScriptTooltip.m_TooltipActive = true;
 			};
 
 		// On Enter State Script
 		m_SelectOnEnterStateScript.m_Label = "On Enter State Script";
-		m_SelectOnEnterStateScript.LineCount = 3;
+		m_SelectOnEnterStateScript.m_LineCount = 3;
 		m_SelectOnEnterStateScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectOnEnterStateScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectOnEnterStateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectOnEnterStateScript.m_PopupAction = [&]()
 		{
 			m_SelectOnEnterStateScript.GetAllOptions().clear();
@@ -483,7 +483,7 @@ namespace Kargono::Panels
 			m_EditorAIState->OnEnterState = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnEnterStateScript.OnEdit = [&]()
+		m_SelectOnEnterStateScript.m_OnEdit = [&]()
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -517,21 +517,21 @@ namespace Kargono::Panels
 								m_EditorAIState->OnEnterStateHandle = scriptHandle;
 								m_EditorAIState->OnEnterState = script;
 								m_MainHeader.m_EditColorActive = true;
-								m_SelectOnEnterStateScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_SelectOnEnterStateScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 						}, {"activeEntity"});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
+				m_SelectScriptTooltip.m_TooltipActive = true;
 			};
 
 		// On Exit State Script
 		m_SelectOnExitStateScript.m_Label = "On Exit State Script";
-		m_SelectOnExitStateScript.LineCount = 3;
+		m_SelectOnExitStateScript.m_LineCount = 3;
 		m_SelectOnExitStateScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectOnExitStateScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectOnExitStateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectOnExitStateScript.m_PopupAction = [&]()
 		{
 			m_SelectOnExitStateScript.GetAllOptions().clear();
@@ -567,7 +567,7 @@ namespace Kargono::Panels
 			m_EditorAIState->OnExitState = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnExitStateScript.OnEdit = [&]()
+		m_SelectOnExitStateScript.m_OnEdit = [&]()
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -601,21 +601,21 @@ namespace Kargono::Panels
 								m_EditorAIState->OnExitStateHandle = scriptHandle;
 								m_EditorAIState->OnExitState = script;
 								m_MainHeader.m_EditColorActive = true;
-								m_SelectOnExitStateScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_SelectOnExitStateScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 						}, {"activeEntity"});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
+				m_SelectScriptTooltip.m_TooltipActive = true;
 			};
 
 		// On Message Script
 		m_SelectOnAIMessageScript.m_Label = "On AI Message Script";
-		m_SelectOnAIMessageScript.LineCount = 3;
+		m_SelectOnAIMessageScript.m_LineCount = 3;
 		m_SelectOnAIMessageScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectOnAIMessageScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectOnAIMessageScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectOnAIMessageScript.m_PopupAction = [&]()
 		{
 			m_SelectOnAIMessageScript.GetAllOptions().clear();
@@ -651,7 +651,7 @@ namespace Kargono::Panels
 			m_EditorAIState->OnMessage = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnAIMessageScript.OnEdit = [&]()
+		m_SelectOnAIMessageScript.m_OnEdit = [&]()
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -685,14 +685,14 @@ namespace Kargono::Panels
 								m_EditorAIState->OnMessageHandle = scriptHandle;
 								m_EditorAIState->OnMessage = script;
 								m_MainHeader.m_EditColorActive = true;
-								m_SelectOnAIMessageScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_SelectOnAIMessageScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 							}, {"messageType", "senderEntity", "receiverEntity", "delayTime"});
 
 				} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
+				m_SelectScriptTooltip.m_TooltipActive = true;
 			};
 
 

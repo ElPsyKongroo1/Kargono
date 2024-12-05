@@ -12,7 +12,7 @@ namespace Kargono::Panels
 		// Resolution Specification
 		m_SelectStartSceneSpec.m_Label = "Starting Scene";
 		//m_SelectStartSceneSpec.WidgetID = 0x75ebbc8750034f81;
-		m_SelectStartSceneSpec.LineCount = 2;
+		m_SelectStartSceneSpec.m_LineCount = 2;
 
 		// Check if an active scene handle is valid
 		Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveStartSceneHandle();
@@ -29,7 +29,7 @@ namespace Kargono::Panels
 			startSceneHandle = iter->first;
 		}
 		
-		m_SelectStartSceneSpec.CurrentOption = {
+		m_SelectStartSceneSpec.m_CurrentOption = {
 			 Assets::AssetService::GetSceneRegistry().at(startSceneHandle).Data.FileLocation.string(),
 			startSceneHandle};
 		m_SelectStartSceneSpec.m_PopupAction = [&]()
@@ -39,7 +39,7 @@ namespace Kargono::Panels
 			{
 				m_SelectStartSceneSpec.AddToOptions("All Options", asset.Data.FileLocation.string(), handle);
 			}
-			m_SelectStartSceneSpec.CurrentOption = {
+			m_SelectStartSceneSpec.m_CurrentOption = {
 				Assets::AssetService::GetSceneRegistry().at(Projects::ProjectService::GetActiveStartSceneHandle()).Data.FileLocation.string(),
 			Projects::ProjectService::GetActiveStartSceneHandle()};
 		};
@@ -71,8 +71,8 @@ namespace Kargono::Panels
 
 		// Resolution Specification
 		m_SelectResolutionSpec.m_Label = "Target Resolution";
-		m_SelectResolutionSpec.LineCount = 4;
-		m_SelectResolutionSpec.CurrentOption = {
+		m_SelectResolutionSpec.m_LineCount = 4;
+		m_SelectResolutionSpec.m_CurrentOption = {
 			Utility::ScreenResolutionToString(Projects::ProjectService::GetActiveTargetResolution()),
 			Assets::EmptyHandle};
 		m_SelectResolutionSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -81,7 +81,7 @@ namespace Kargono::Panels
 		};
 		m_SelectResolutionSpec.m_PopupAction = [&]()
 		{
-			m_SelectResolutionSpec.CurrentOption = {
+			m_SelectResolutionSpec.m_CurrentOption = {
 				Utility::ScreenResolutionToString(Projects::ProjectService::GetActiveTargetResolution()),
 			Assets::EmptyHandle};
 		};
@@ -99,16 +99,16 @@ namespace Kargono::Panels
 
 		// Select Start Game State
 		m_SelectStartGameStateSpec.m_Label = "Start Game State";
-		m_SelectStartGameStateSpec.LineCount = 3;
+		m_SelectStartGameStateSpec.m_LineCount = 3;
 		if (Projects::ProjectService::GetActiveStartGameStateHandle() != 0)
 		{
-			m_SelectStartGameStateSpec.CurrentOption = { Assets::AssetService::GetGameStateRegistry().at
+			m_SelectStartGameStateSpec.m_CurrentOption = { Assets::AssetService::GetGameStateRegistry().at
 			(Projects::ProjectService::GetActiveStartGameStateHandle()).Data.FileLocation.string(),
 			Projects::ProjectService::GetActiveStartGameStateHandle()};
 		}
 		else
 		{
-			m_SelectStartGameStateSpec.CurrentOption = { "None", Assets::EmptyHandle };
+			m_SelectStartGameStateSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		}
 		m_SelectStartGameStateSpec.m_PopupAction = [&]()
 		{
@@ -121,13 +121,13 @@ namespace Kargono::Panels
 
 			if (Projects::ProjectService::GetActiveStartGameStateHandle() != Assets::EmptyHandle)
 			{
-				m_SelectStartGameStateSpec.CurrentOption = { Assets::AssetService::GetGameStateRegistry().at
+				m_SelectStartGameStateSpec.m_CurrentOption = { Assets::AssetService::GetGameStateRegistry().at
 				(Projects::ProjectService::GetActiveStartGameStateHandle()).Data.FileLocation.string(),
 				Projects::ProjectService::GetActiveStartGameStateHandle() };
 			}
 			else
 			{
-				m_SelectStartGameStateSpec.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectStartGameStateSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
 		};
@@ -146,8 +146,8 @@ namespace Kargono::Panels
 		// Runtime Start Spec
 		m_SelectRuntimeStartSpec.m_Label = "Runtime Start";
 		m_SelectRuntimeStartSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectRuntimeStartSpec.LineCount = 3;
-		m_SelectRuntimeStartSpec.CurrentOption = { Projects::ProjectService::GetActiveOnRuntimeStartHandle() ?
+		m_SelectRuntimeStartSpec.m_LineCount = 3;
+		m_SelectRuntimeStartSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnRuntimeStartHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnRuntimeStartHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnRuntimeStartHandle()};
 		m_SelectRuntimeStartSpec.m_PopupAction = [&]()
@@ -167,7 +167,7 @@ namespace Kargono::Panels
 				m_SelectRuntimeStartSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 
-			m_SelectRuntimeStartSpec.CurrentOption = { Projects::ProjectService::GetActiveOnRuntimeStartHandle() ?
+			m_SelectRuntimeStartSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnRuntimeStartHandle() ?
 				Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnRuntimeStartHandle())->m_ScriptName : "None",
 				Projects::ProjectService::GetActiveOnRuntimeStartHandle() };
 		};
@@ -180,7 +180,7 @@ namespace Kargono::Panels
 			}
 			Projects::ProjectService::SetActiveOnRuntimeStartHandle(selection.m_Handle);
 		};
-		m_SelectRuntimeStartSpec.OnEdit = [&]() 
+		m_SelectRuntimeStartSpec.m_OnEdit = [&]() 
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
@@ -212,14 +212,14 @@ namespace Kargono::Panels
 
 					// Fill the new script handle
 					Projects::ProjectService::SetActiveOnRuntimeStartHandle(scriptHandle);
-					m_SelectRuntimeStartSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+					m_SelectRuntimeStartSpec.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 				}, {});
 
 			} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 			// Open tooltip
-			m_SelectScriptTooltip.TooltipActive = true;
+			m_SelectScriptTooltip.m_TooltipActive = true;
 
 		};
 
@@ -227,8 +227,8 @@ namespace Kargono::Panels
 		// Update User Count Spec
 		m_SelectUpdateUserCountSpec.m_Label = "Update User Count";
 		m_SelectUpdateUserCountSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectUpdateUserCountSpec.LineCount = 3;
-		m_SelectUpdateUserCountSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateUserCountHandle() ?
+		m_SelectUpdateUserCountSpec.m_LineCount = 3;
+		m_SelectUpdateUserCountSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnUpdateUserCountHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnUpdateUserCountHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnUpdateUserCountHandle() };
 		m_SelectUpdateUserCountSpec.m_PopupAction = [&]()
@@ -248,7 +248,7 @@ namespace Kargono::Panels
 				m_SelectUpdateUserCountSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 
-			m_SelectUpdateUserCountSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateUserCountHandle() ?
+			m_SelectUpdateUserCountSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnUpdateUserCountHandle() ?
 				Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnUpdateUserCountHandle())->m_ScriptName : "None",
 				Projects::ProjectService::GetActiveOnUpdateUserCountHandle() };
 		};
@@ -261,7 +261,7 @@ namespace Kargono::Panels
 			}
 			Projects::ProjectService::SetActiveOnUpdateUserCountHandle(selection.m_Handle);
 		};
-		m_SelectUpdateUserCountSpec.OnEdit = [&]()
+		m_SelectUpdateUserCountSpec.m_OnEdit = [&]()
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
@@ -293,14 +293,14 @@ namespace Kargono::Panels
 
 							// Fill the new script handle
 							Projects::ProjectService::SetActiveOnUpdateUserCountHandle(scriptHandle);
-							m_SelectUpdateUserCountSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+							m_SelectUpdateUserCountSpec.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 						}, {"userCount"});
 
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 			// Open tooltip
-			m_SelectScriptTooltip.TooltipActive = true;
+			m_SelectScriptTooltip.m_TooltipActive = true;
 
 		};
 
@@ -308,8 +308,8 @@ namespace Kargono::Panels
 		// Approve Join Session Spec
 		m_SelectApproveJoinSessionSpec.m_Label = "Approve Join Session";
 		m_SelectApproveJoinSessionSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectApproveJoinSessionSpec.LineCount = 3;
-		m_SelectApproveJoinSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() ?
+		m_SelectApproveJoinSessionSpec.m_LineCount = 3;
+		m_SelectApproveJoinSessionSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnApproveJoinSessionHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() };
 		m_SelectApproveJoinSessionSpec.m_PopupAction = [&]()
@@ -329,7 +329,7 @@ namespace Kargono::Panels
 				m_SelectApproveJoinSessionSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 
-			m_SelectApproveJoinSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() ?
+			m_SelectApproveJoinSessionSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() ?
 				Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnApproveJoinSessionHandle())->m_ScriptName : "None",
 				Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() };
 		};
@@ -342,7 +342,7 @@ namespace Kargono::Panels
 			}
 			Projects::ProjectService::SetActiveOnApproveJoinSessionHandle(selection.m_Handle);
 		};
-		m_SelectApproveJoinSessionSpec.OnEdit = [&]()
+		m_SelectApproveJoinSessionSpec.m_OnEdit = [&]()
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
@@ -374,22 +374,22 @@ namespace Kargono::Panels
 
 							// Fill the new script handle
 							Projects::ProjectService::SetActiveOnApproveJoinSessionHandle(scriptHandle);
-							m_SelectApproveJoinSessionSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+							m_SelectApproveJoinSessionSpec.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 						}, {"sessionSlot"});
 
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 			// Open tooltip
-			m_SelectScriptTooltip.TooltipActive = true;
+			m_SelectScriptTooltip.m_TooltipActive = true;
 
 		};
 
 		// User Left Session Spec
 		m_SelectUserLeftSessionSpec.m_Label = "User Left Session";
 		m_SelectUserLeftSessionSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectUserLeftSessionSpec.LineCount = 3;
-		m_SelectUserLeftSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUserLeftSessionHandle() ?
+		m_SelectUserLeftSessionSpec.m_LineCount = 3;
+		m_SelectUserLeftSessionSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnUserLeftSessionHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnUserLeftSessionHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnUserLeftSessionHandle() };
 		m_SelectUserLeftSessionSpec.m_PopupAction = [&]()
@@ -409,7 +409,7 @@ namespace Kargono::Panels
 					m_SelectUserLeftSessionSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 				}
 
-				m_SelectUserLeftSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUserLeftSessionHandle() ?
+				m_SelectUserLeftSessionSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnUserLeftSessionHandle() ?
 					Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnUserLeftSessionHandle())->m_ScriptName : "None",
 					Projects::ProjectService::GetActiveOnUserLeftSessionHandle() };
 			};
@@ -422,7 +422,7 @@ namespace Kargono::Panels
 				}
 				Projects::ProjectService::SetActiveOnUserLeftSessionHandle(selection.m_Handle);
 			};
-		m_SelectUserLeftSessionSpec.OnEdit = [&]()
+		m_SelectUserLeftSessionSpec.m_OnEdit = [&]()
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -454,14 +454,14 @@ namespace Kargono::Panels
 
 								// Fill the new script handle
 								Projects::ProjectService::SetActiveOnUserLeftSessionHandle(scriptHandle);
-								m_SelectUserLeftSessionSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_SelectUserLeftSessionSpec.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 							}, {"sessionSlot"});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
+				m_SelectScriptTooltip.m_TooltipActive = true;
 
 			};
 
@@ -471,8 +471,8 @@ namespace Kargono::Panels
 		// Session Initialization Spec
 		m_SelectSessionInitSpec.m_Label = "Session Initialization";
 		m_SelectSessionInitSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectSessionInitSpec.LineCount = 3;
-		m_SelectSessionInitSpec.CurrentOption = { Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() ?
+		m_SelectSessionInitSpec.m_LineCount = 3;
+		m_SelectSessionInitSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnCurrentSessionInitHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() };
 		m_SelectSessionInitSpec.m_PopupAction = [&]()
@@ -492,7 +492,7 @@ namespace Kargono::Panels
 					m_SelectSessionInitSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 				}
 
-				m_SelectSessionInitSpec.CurrentOption = { Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() ?
+				m_SelectSessionInitSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() ?
 					Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnCurrentSessionInitHandle())->m_ScriptName : "None",
 					Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() };
 			};
@@ -505,7 +505,7 @@ namespace Kargono::Panels
 				}
 				Projects::ProjectService::SetActiveOnCurrentSessionInitHandle(selection.m_Handle);
 			};
-		m_SelectSessionInitSpec.OnEdit = [&]()
+		m_SelectSessionInitSpec.m_OnEdit = [&]()
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -537,14 +537,14 @@ namespace Kargono::Panels
 
 								// Fill the new script handle
 								Projects::ProjectService::SetActiveOnCurrentSessionInitHandle(scriptHandle);
-								m_SelectSessionInitSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_SelectSessionInitSpec.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 							}, {});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
+				m_SelectScriptTooltip.m_TooltipActive = true;
 
 			};
 
@@ -552,8 +552,8 @@ namespace Kargono::Panels
 		// Connection Terminated Spec
 		m_SelectConnectionTerminatedSpec.m_Label = "Connection Terminated";
 		m_SelectConnectionTerminatedSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectConnectionTerminatedSpec.LineCount = 3;
-		m_SelectConnectionTerminatedSpec.CurrentOption = { Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() ?
+		m_SelectConnectionTerminatedSpec.m_LineCount = 3;
+		m_SelectConnectionTerminatedSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnConnectionTerminatedHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() };
 		m_SelectConnectionTerminatedSpec.m_PopupAction = [&]()
@@ -573,7 +573,7 @@ namespace Kargono::Panels
 				m_SelectConnectionTerminatedSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 
-			m_SelectConnectionTerminatedSpec.CurrentOption = { Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() ?
+			m_SelectConnectionTerminatedSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() ?
 				Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnConnectionTerminatedHandle())->m_ScriptName : "None",
 				Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() };
 		};
@@ -586,7 +586,7 @@ namespace Kargono::Panels
 			}
 			Projects::ProjectService::SetActiveOnConnectionTerminatedHandle(selection.m_Handle);
 		};
-		m_SelectConnectionTerminatedSpec.OnEdit = [&]()
+		m_SelectConnectionTerminatedSpec.m_OnEdit = [&]()
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
@@ -618,21 +618,21 @@ namespace Kargono::Panels
 
 							// Fill the new script handle
 							Projects::ProjectService::SetActiveOnConnectionTerminatedHandle(scriptHandle);
-							m_SelectConnectionTerminatedSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+							m_SelectConnectionTerminatedSpec.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 						}, {});
 
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 			// Open tooltip
-			m_SelectScriptTooltip.TooltipActive = true;
+			m_SelectScriptTooltip.m_TooltipActive = true;
 		};
 
 		// Update Session User Slot Spec
 		m_SelectUpdateSessionSlotSpec.m_Label = "Update Session User Slot";
 		m_SelectUpdateSessionSlotSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectUpdateSessionSlotSpec.LineCount = 3;
-		m_SelectUpdateSessionSlotSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() ?
+		m_SelectUpdateSessionSlotSpec.m_LineCount = 3;
+		m_SelectUpdateSessionSlotSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() };
 		m_SelectUpdateSessionSlotSpec.m_PopupAction = [&]()
@@ -652,7 +652,7 @@ namespace Kargono::Panels
 				m_SelectUpdateSessionSlotSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 
-			m_SelectUpdateSessionSlotSpec.CurrentOption = { Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() ?
+			m_SelectUpdateSessionSlotSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() ?
 				Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle())->m_ScriptName : "None",
 				Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() };
 		};
@@ -665,7 +665,7 @@ namespace Kargono::Panels
 			}
 			Projects::ProjectService::SetActiveOnUpdateSessionUserSlotHandle(selection.m_Handle);
 		};
-		m_SelectUpdateSessionSlotSpec.OnEdit = [&]()
+		m_SelectUpdateSessionSlotSpec.m_OnEdit = [&]()
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
@@ -697,22 +697,22 @@ namespace Kargono::Panels
 
 							// Fill the new script handle
 							Projects::ProjectService::SetActiveOnUpdateSessionUserSlotHandle(scriptHandle);
-							m_SelectUpdateSessionSlotSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+							m_SelectUpdateSessionSlotSpec.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 						}, {"sessionSlot"});
 
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 			// Open tooltip
-			m_SelectScriptTooltip.TooltipActive = true;
+			m_SelectScriptTooltip.m_TooltipActive = true;
 		};
 
 
 		// Start Session Spec
 		m_SelectStartSessionSpec.m_Label = "Start Session";
 		m_SelectStartSessionSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectStartSessionSpec.LineCount = 3;
-		m_SelectStartSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnStartSessionHandle() ?
+		m_SelectStartSessionSpec.m_LineCount = 3;
+		m_SelectStartSessionSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnStartSessionHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnStartSessionHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnStartSessionHandle() };
 		m_SelectStartSessionSpec.m_PopupAction = [&]()
@@ -732,7 +732,7 @@ namespace Kargono::Panels
 					m_SelectStartSessionSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 				}
 
-				m_SelectStartSessionSpec.CurrentOption = { Projects::ProjectService::GetActiveOnStartSessionHandle() ?
+				m_SelectStartSessionSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnStartSessionHandle() ?
 					Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnStartSessionHandle())->m_ScriptName : "None",
 					Projects::ProjectService::GetActiveOnStartSessionHandle() };
 			};
@@ -745,7 +745,7 @@ namespace Kargono::Panels
 				}
 				Projects::ProjectService::SetActiveOnStartSessionHandle(selection.m_Handle);
 			};
-		m_SelectStartSessionSpec.OnEdit = [&]()
+		m_SelectStartSessionSpec.m_OnEdit = [&]()
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -777,22 +777,22 @@ namespace Kargono::Panels
 
 								// Fill the new script handle
 								Projects::ProjectService::SetActiveOnStartSessionHandle(scriptHandle);
-								m_SelectStartSessionSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_SelectStartSessionSpec.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 							}, {});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
+				m_SelectScriptTooltip.m_TooltipActive = true;
 			};
 
 
 		// Session Ready Check Spec
 		m_SelectSessionReadyCheckSpec.m_Label = "Session Ready Check";
 		m_SelectSessionReadyCheckSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectSessionReadyCheckSpec.LineCount = 3;
-		m_SelectSessionReadyCheckSpec.CurrentOption = { Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() ?
+		m_SelectSessionReadyCheckSpec.m_LineCount = 3;
+		m_SelectSessionReadyCheckSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() };
 		m_SelectSessionReadyCheckSpec.m_PopupAction = [&]()
@@ -812,7 +812,7 @@ namespace Kargono::Panels
 					m_SelectSessionReadyCheckSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 				}
 
-				m_SelectSessionReadyCheckSpec.CurrentOption = { Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() ?
+				m_SelectSessionReadyCheckSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() ?
 					Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle())->m_ScriptName : "None",
 					Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() };
 			};
@@ -825,7 +825,7 @@ namespace Kargono::Panels
 				}
 				Projects::ProjectService::SetActiveOnSessionReadyCheckConfirmHandle(selection.m_Handle);
 			};
-		m_SelectSessionReadyCheckSpec.OnEdit = [&]()
+		m_SelectSessionReadyCheckSpec.m_OnEdit = [&]()
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -857,22 +857,22 @@ namespace Kargono::Panels
 
 								// Fill the new script handle
 								Projects::ProjectService::SetActiveOnSessionReadyCheckConfirmHandle(scriptHandle);
-								m_SelectSessionReadyCheckSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_SelectSessionReadyCheckSpec.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 							}, {});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
+				m_SelectScriptTooltip.m_TooltipActive = true;
 			};
 
 
 		// On Receive Signal Spec
 		m_SelectReceiveSignalSpec.m_Label = "On Receive Signal";
 		m_SelectReceiveSignalSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectReceiveSignalSpec.LineCount = 3;
-		m_SelectReceiveSignalSpec.CurrentOption = { Projects::ProjectService::GetActiveOnReceiveSignalHandle() ?
+		m_SelectReceiveSignalSpec.m_LineCount = 3;
+		m_SelectReceiveSignalSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnReceiveSignalHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnReceiveSignalHandle())->m_ScriptName : "None",
 			Projects::ProjectService::GetActiveOnReceiveSignalHandle() };
 		m_SelectReceiveSignalSpec.m_PopupAction = [&]()
@@ -892,7 +892,7 @@ namespace Kargono::Panels
 					m_SelectReceiveSignalSpec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 				}
 
-				m_SelectReceiveSignalSpec.CurrentOption = { Projects::ProjectService::GetActiveOnReceiveSignalHandle() ?
+				m_SelectReceiveSignalSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnReceiveSignalHandle() ?
 					Assets::AssetService::GetScript(Projects::ProjectService::GetActiveOnReceiveSignalHandle())->m_ScriptName : "None",
 					Projects::ProjectService::GetActiveOnReceiveSignalHandle() };
 			};
@@ -905,7 +905,7 @@ namespace Kargono::Panels
 				}
 				Projects::ProjectService::SetActiveOnReceiveSignalHandle(selection.m_Handle);
 			};
-		m_SelectReceiveSignalSpec.OnEdit = [&]()
+		m_SelectReceiveSignalSpec.m_OnEdit = [&]()
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -937,14 +937,14 @@ namespace Kargono::Panels
 
 								// Fill the new script handle
 								Projects::ProjectService::SetActiveOnReceiveSignalHandle(scriptHandle);
-								m_SelectReceiveSignalSpec.CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_SelectReceiveSignalSpec.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 							}, {"signal"});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
+				m_SelectScriptTooltip.m_TooltipActive = true;
 			};
 
 		m_SelectScriptTooltip.m_Label = "Script Tooltip";
@@ -955,14 +955,14 @@ namespace Kargono::Panels
 	{
 		// Manage AI Message Types
 		m_MessageTypeTable.m_Label = "All Message Types";
-		m_MessageTypeTable.Column1Title = "Message Type";
-		m_MessageTypeTable.Column2Title = "";
+		m_MessageTypeTable.m_Column1Title = "Message Type";
+		m_MessageTypeTable.m_Column2Title = "";
 		m_MessageTypeTable.m_Expanded = false;
 		m_MessageTypeTable.AddToSelectionList("Create New Message Type", [&]()
 		{
 			m_CreateMessageTypePopup.m_StartPopup = true;
 		});
-		m_MessageTypeTable.OnRefresh = [&]()
+		m_MessageTypeTable.m_OnRefresh = [&]()
 		{
 			m_MessageTypeTable.ClearList();
 			for (std::string& label : Projects::ProjectService::GetAllMessageTypes())
@@ -974,37 +974,37 @@ namespace Kargono::Panels
 				});
 			}
 		};
-		m_MessageTypeTable.OnRefresh();
+		m_MessageTypeTable.m_OnRefresh();
 
 		m_CreateMessageTypePopup.m_Label = "Create New Message Type";
 		m_CreateMessageTypePopup.m_Flags |= EditorUI::EditText_PopupOnly;
 		m_CreateMessageTypePopup.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			// Ensure input string does not use whitespace
-			Utility::Operations::RemoveWhitespaceFromString(m_CreateMessageTypePopup.CurrentOption);
+			Utility::Operations::RemoveWhitespaceFromString(m_CreateMessageTypePopup.m_CurrentOption);
 			// Create new AI message
-			bool success = Projects::ProjectService::AddAIMessageType(m_CreateMessageTypePopup.CurrentOption);
+			bool success = Projects::ProjectService::AddAIMessageType(m_CreateMessageTypePopup.m_CurrentOption);
 			if (!success)
 			{
 				KG_WARN("Failed to create message type");
 				return;
 			}
-			m_MessageTypeTable.OnRefresh();
+			m_MessageTypeTable.m_OnRefresh();
 			s_EditorApp->m_TextEditorPanel->RefreshKGScriptEditor();
 		};
 
 		m_EditMessageTypePopup.m_Label = "Edit Message Type";
 		m_EditMessageTypePopup.m_PopupAction = [&]()
 		{
-			m_EditMessageTypeText.CurrentOption = m_ActiveAIMessageType;
+			m_EditMessageTypeText.m_CurrentOption = m_ActiveAIMessageType;
 		};
 		m_EditMessageTypePopup.m_ConfirmAction = [&]()
 		{
 			// Ensure input string does not use whitespace
-			Utility::Operations::RemoveWhitespaceFromString(m_CreateMessageTypePopup.CurrentOption);
+			Utility::Operations::RemoveWhitespaceFromString(m_CreateMessageTypePopup.m_CurrentOption);
 
 			bool success = Projects::ProjectService::EditAIMessageType(m_ActiveAIMessageType, 
-				m_EditMessageTypeText.CurrentOption);
+				m_EditMessageTypeText.m_CurrentOption);
 
 			// Create new AI message type
 			if (!success)
@@ -1033,7 +1033,7 @@ namespace Kargono::Panels
 		};
 
 		m_EditMessageTypeText.m_Label = "Message Type";
-		m_EditMessageTypeText.CurrentOption = "Empty";
+		m_EditMessageTypeText.m_CurrentOption = "Empty";
 
 	}
 
@@ -1278,45 +1278,45 @@ namespace Kargono::Panels
 		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
 			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
-			if (m_SelectRuntimeStartSpec.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectRuntimeStartSpec.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectRuntimeStartSpec.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectRuntimeStartSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			if (m_SelectUpdateUserCountSpec.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectUpdateUserCountSpec.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectUpdateUserCountSpec.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectUpdateUserCountSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			if (m_SelectApproveJoinSessionSpec.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectApproveJoinSessionSpec.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectApproveJoinSessionSpec.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectApproveJoinSessionSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			if (m_SelectUserLeftSessionSpec.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectUserLeftSessionSpec.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectUserLeftSessionSpec.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectUserLeftSessionSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			if (m_SelectSessionInitSpec.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectSessionInitSpec.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectSessionInitSpec.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectSessionInitSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			if (m_SelectConnectionTerminatedSpec.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectConnectionTerminatedSpec.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectConnectionTerminatedSpec.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectConnectionTerminatedSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			if (m_SelectUpdateSessionSlotSpec.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectUpdateSessionSlotSpec.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectUpdateSessionSlotSpec.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectUpdateSessionSlotSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			if (m_SelectStartSessionSpec.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectStartSessionSpec.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectStartSessionSpec.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectStartSessionSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			if (m_SelectSessionReadyCheckSpec.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectSessionReadyCheckSpec.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectSessionReadyCheckSpec.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectSessionReadyCheckSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
-			if (m_SelectReceiveSignalSpec.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectReceiveSignalSpec.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectReceiveSignalSpec.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectReceiveSignalSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 		}
 		return false;
@@ -1327,6 +1327,6 @@ namespace Kargono::Panels
 	}
 	void ProjectPanel::OnRefresh()
 	{
-		m_MessageTypeTable.OnRefresh();
+		m_MessageTypeTable.m_OnRefresh();
 	}
 }

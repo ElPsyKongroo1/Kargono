@@ -14,15 +14,15 @@ namespace Kargono::Panels
 	{
 		EditorUI::TreeEntry newEntry {};
 		newEntry.m_Label = entity.GetComponent<ECS::TagComponent>().Tag;
-		newEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
+		newEntry.m_IconHandle = EditorUI::EditorUIService::s_IconEntity;
 		newEntry.m_Handle = (uint64_t)entity;
-		newEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+		newEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 			s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 			s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
 		};
-		newEntry.OnDoubleLeftClick = [](EditorUI::TreeEntry& entry)
+		newEntry.m_OnDoubleLeftClick = [](EditorUI::TreeEntry& entry)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 			auto& editorCamera = EditorApp::GetCurrentApp()->m_ViewportPanel->m_EditorCamera;
@@ -32,13 +32,13 @@ namespace Kargono::Panels
 			editorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
 		};
 
-		newEntry.OnRightClickSelection.push_back({ "Add Component", [&](EditorUI::TreeEntry& entry)
+		newEntry.m_OnRightClickSelection.push_back({ "Add Component", [&](EditorUI::TreeEntry& entry)
 		{
 			m_AddComponent.m_OpenPopup = true;
 			m_AddComponentEntity = (int32_t)entry.m_Handle;
 		} });
 
-		newEntry.OnRightClickSelection.push_back({ "Delete Entity", [](EditorUI::TreeEntry& entry)
+		newEntry.m_OnRightClickSelection.push_back({ "Delete Entity", [](EditorUI::TreeEntry& entry)
 		{
 			static ECS::Entity entityToDelete;
 			entityToDelete = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
@@ -61,139 +61,139 @@ namespace Kargono::Panels
 		{
 			componentEntry.m_Label = "Tag";
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::Tag, Assets::EmptyHandle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconTag;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTag;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::Tag);
 			};
-			newEntry.SubEntries.push_back(componentEntry);
+			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 		if (entity.HasComponent<ECS::TransformComponent>())
 		{
 			componentEntry.m_Label = "Transform";
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::Transform, Assets::EmptyHandle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconTransform;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTransform;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::Transform);
 			};
-			newEntry.SubEntries.push_back(componentEntry);
+			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
 		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
 		{
 			componentEntry.m_Label = "Rigid Body 2D";
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::Rigidbody2D, Assets::EmptyHandle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconRigidBody;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconRigidBody;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::Rigidbody2D);
 			};
-			newEntry.SubEntries.push_back(componentEntry);
+			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
 		if (entity.HasComponent<ECS::BoxCollider2DComponent>())
 		{
 			componentEntry.m_Label = "Box Collider 2D";
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::BoxCollider2D, Assets::EmptyHandle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconBoxCollider;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconBoxCollider;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::BoxCollider2D);
 			};
-			newEntry.SubEntries.push_back(componentEntry);
+			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
 		if (entity.HasComponent<ECS::CircleCollider2DComponent>())
 		{
 			componentEntry.m_Label = "Circle Collider 2D";
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::CircleCollider2D, Assets::EmptyHandle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCircleCollider;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconCircleCollider;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::CircleCollider2D);
 			};
-			newEntry.SubEntries.push_back(componentEntry);
+			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
 		if (entity.HasComponent<ECS::CameraComponent>())
 		{
 			componentEntry.m_Label = "Camera";
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::Camera, Assets::EmptyHandle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCamera;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconCamera;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::Camera);
 			};
-			newEntry.SubEntries.push_back(componentEntry);
+			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
 		if (entity.HasComponent<ECS::ShapeComponent>())
 		{
 			componentEntry.m_Label = "Shape";
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::Shape, Assets::EmptyHandle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconEntity;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::Shape);
 			};
-			newEntry.SubEntries.push_back(componentEntry);
+			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
 		if (entity.HasComponent<ECS::OnCreateComponent>())
 		{
 			componentEntry.m_Label = "On Create";
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::OnCreate, Assets::EmptyHandle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconFunction;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconFunction;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::OnCreate);
 			};
-			newEntry.SubEntries.push_back(componentEntry);
+			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
 		if (entity.HasComponent<ECS::OnUpdateComponent>())
 		{
 			componentEntry.m_Label = "On Update";
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::OnUpdate, Assets::EmptyHandle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconFunction;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconFunction;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::OnUpdate);
 			};
-			newEntry.SubEntries.push_back(componentEntry);
+			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
 		if (entity.HasComponent<ECS::AIStateComponent>())
 		{
 			componentEntry.m_Label = "AI State";
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::AIState, Assets::EmptyHandle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconAI;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconAI;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::AIState);
 			};
-			newEntry.SubEntries.push_back(componentEntry);
+			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
 		// Handle adding project components
@@ -208,8 +208,8 @@ namespace Kargono::Panels
 			KG_ASSERT(component);
 			componentEntry.m_Label = component->m_Name;
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::ProjectComponent, handle);
-			componentEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
-			componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconEntity;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
@@ -217,7 +217,7 @@ namespace Kargono::Panels
 				SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)entry.m_ProvidedData.get();
 				s_EditorApp->m_SceneEditorPanel->SetDisplayedProjectComponent(entryData.m_ProjectComponentHandle);
 			};
-			newEntry.SubEntries.push_back(componentEntry);
+			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 			
 		m_SceneHierarchyTree.InsertEntry(newEntry);
@@ -248,7 +248,7 @@ namespace Kargono::Panels
 		
 
 		m_SceneHierarchyTree.m_Label = "Scene Hierarchy";
-		m_SceneHierarchyTree.OnRefresh = [&]()
+		m_SceneHierarchyTree.m_OnRefresh = [&]()
 		{
 			if (Scenes::SceneService::GetActiveScene())
 			{
@@ -318,7 +318,7 @@ namespace Kargono::Panels
 				}
 			}
 
-			m_AddComponent.CurrentOption = { "None", Assets::EmptyHandle };
+			m_AddComponent.m_CurrentOption = { "None", Assets::EmptyHandle };
 		};
 
 		m_AddComponent.m_ConfirmAction = [&](const EditorUI::OptionEntry& option)
@@ -350,8 +350,8 @@ namespace Kargono::Panels
 				entity.AddProjectComponentData(option.m_Handle);
 				componentEntry.m_Label = component->m_Name;
 				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::ProjectComponent, option.m_Handle);
-				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
-				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconEntity;
+				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
@@ -359,7 +359,7 @@ namespace Kargono::Panels
 					SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)entry.m_ProvidedData.get();
 					s_EditorApp->m_SceneEditorPanel->SetDisplayedProjectComponent(entryData.m_ProjectComponentHandle);
 				};
-				currentEntry->SubEntries.push_back(componentEntry);
+				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
 			}
 
@@ -376,14 +376,14 @@ namespace Kargono::Panels
 				entity.AddComponent<ECS::CameraComponent>();
 				componentEntry.m_Label = "Camera";
 				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::Camera, Assets::EmptyHandle);
-				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCamera;
-				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconCamera;
+				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::Camera);
 				};
-				currentEntry->SubEntries.push_back(componentEntry);
+				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
 			}
 			if (option.m_Label == "Shape")
@@ -391,14 +391,14 @@ namespace Kargono::Panels
 				entity.AddComponent<ECS::ShapeComponent>();
 				componentEntry.m_Label = "Shape";
 				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::Shape, Assets::EmptyHandle);
-				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconEntity;
-				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconEntity;
+				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::Shape);
 				};
-				currentEntry->SubEntries.push_back(componentEntry);
+				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
 			}
 			if (option.m_Label == "Rigidbody 2D")
@@ -406,14 +406,14 @@ namespace Kargono::Panels
 				entity.AddComponent<ECS::Rigidbody2DComponent>();
 				componentEntry.m_Label = "Rigidbody 2D";
 				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::Rigidbody2D, Assets::EmptyHandle);
-				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconRigidBody;
-				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconRigidBody;
+				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::Rigidbody2D);
 				};
-				currentEntry->SubEntries.push_back(componentEntry);
+				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
 			}
 			if (option.m_Label == "Box Collider 2D")
@@ -421,14 +421,14 @@ namespace Kargono::Panels
 				entity.AddComponent<ECS::BoxCollider2DComponent>();
 				componentEntry.m_Label = "Box Collider 2D";
 				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::BoxCollider2D, Assets::EmptyHandle);
-				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconBoxCollider;
-				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconBoxCollider;
+				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::BoxCollider2D);
 				};
-				currentEntry->SubEntries.push_back(componentEntry);
+				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
 			}
 			if (option.m_Label == "Circle Collider 2D")
@@ -436,14 +436,14 @@ namespace Kargono::Panels
 				entity.AddComponent<ECS::CircleCollider2DComponent>();
 				componentEntry.m_Label = "Circle Collider 2D";
 				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::CircleCollider2D, Assets::EmptyHandle);
-				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconCircleCollider;
-				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconCircleCollider;
+				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::CircleCollider2D);
 				};
-				currentEntry->SubEntries.push_back(componentEntry);
+				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
 			}
 
@@ -452,14 +452,14 @@ namespace Kargono::Panels
 				entity.AddComponent<ECS::OnUpdateComponent>();
 				componentEntry.m_Label = "On Update";
 				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::OnUpdate, Assets::EmptyHandle);
-				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconFunction;
-				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconFunction;
+				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::OnUpdate);
 				};
-				currentEntry->SubEntries.push_back(componentEntry);
+				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
 			}
 
@@ -468,14 +468,14 @@ namespace Kargono::Panels
 				entity.AddComponent<ECS::AIStateComponent>();
 				componentEntry.m_Label = "AI State";
 				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::AIState, Assets::EmptyHandle);
-				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconAI;
-				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconAI;
+				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::AIState);
 				};
-				currentEntry->SubEntries.push_back(componentEntry);
+				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
 			}
 
@@ -484,14 +484,14 @@ namespace Kargono::Panels
 				entity.AddComponent<ECS::OnCreateComponent>();
 				componentEntry.m_Label = "On Create";
 				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::OnCreate, Assets::EmptyHandle);
-				componentEntry.IconHandle = EditorUI::EditorUIService::s_IconFunction;
-				componentEntry.OnLeftClick = [](EditorUI::TreeEntry& entry)
+				componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconFunction;
+				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 					s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::OnCreate);
 				};
-				currentEntry->SubEntries.push_back(componentEntry);
+				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
 			}
 
@@ -514,7 +514,7 @@ namespace Kargono::Panels
 			if (entity && entity.HasComponent<ECS::TagComponent>())
 			{
 				auto& component = entity.GetComponent<ECS::TagComponent>();
-				component.Tag = m_TagEdit.CurrentOption;
+				component.Tag = m_TagEdit.m_CurrentOption;
 
 				m_SceneHierarchyTree.EditDepth([](EditorUI::TreeEntry& entry) 
 				{
@@ -536,7 +536,7 @@ namespace Kargono::Panels
 			if (entity && entity.HasComponent<ECS::TagComponent>())
 			{
 				ECS::TagComponent& component = entity.GetComponent<ECS::TagComponent>();
-				component.Group = m_TagGroupEdit.CurrentOption;
+				component.Group = m_TagGroupEdit.m_CurrentOption;
 			}
 		};
 	}
@@ -607,7 +607,7 @@ namespace Kargono::Panels
 						if ((uint32_t)entry.m_Handle == (uint32_t)entity)
 						{
 							EditorUI::TreePath newPath {};
-							for (auto& subEntry : entry.SubEntries)
+							for (auto& subEntry : entry.m_SubEntries)
 							{
 								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
 								if (entryData.m_ComponentType == ECS::ComponentType::Rigidbody2D)
@@ -679,7 +679,7 @@ namespace Kargono::Panels
 
 		m_SelectRigidBody2DCollisionStartScript.m_Label = "On Collision Start";
 		m_SelectRigidBody2DCollisionStartScript.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectRigidBody2DCollisionStartScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectRigidBody2DCollisionStartScript.m_PopupAction = [&]()
 		{
 			m_SelectRigidBody2DCollisionStartScript.ClearOptions();
@@ -718,7 +718,7 @@ namespace Kargono::Panels
 			component.OnCollisionStartScript = Assets::AssetService::GetScript(entry.m_Handle);
 		};
 
-		m_SelectRigidBody2DCollisionStartScript.OnEdit = [&]()
+		m_SelectRigidBody2DCollisionStartScript.m_OnEdit = [&]()
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -759,20 +759,20 @@ namespace Kargono::Panels
 								// Check for a valid entry, and Update if applicable
 								component.OnCollisionStartScriptHandle = scriptHandle;
 								component.OnCollisionStartScript = script;
-								m_SelectRigidBody2DCollisionStartScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 							}, {"activeEntity", "collidedEntity"});
 
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
+				m_SelectScriptTooltip.m_TooltipActive = true;
 
 			};
 
 		m_SelectRigidBody2DCollisionEndScript.m_Label = "On Collision End";
 		m_SelectRigidBody2DCollisionEndScript.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectRigidBody2DCollisionEndScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectRigidBody2DCollisionEndScript.m_PopupAction = [&]()
 		{
 			m_SelectRigidBody2DCollisionEndScript.ClearOptions();
@@ -811,7 +811,7 @@ namespace Kargono::Panels
 			component.OnCollisionEndScript = Assets::AssetService::GetScript(entry.m_Handle);
 		};
 
-		m_SelectRigidBody2DCollisionEndScript.OnEdit = [&]()
+		m_SelectRigidBody2DCollisionEndScript.m_OnEdit = [&]()
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -852,14 +852,14 @@ namespace Kargono::Panels
 						// Check for a valid entry, and Update if applicable
 						component.OnCollisionEndScriptHandle = scriptHandle;
 						component.OnCollisionEndScript = script;
-						m_SelectRigidBody2DCollisionEndScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+						m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 					}, {"activeEntity", "collidedEntity"});
 
 			}		};
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.TooltipActive = true;
+				m_SelectScriptTooltip.m_TooltipActive = true;
 
 			};
 
@@ -882,7 +882,7 @@ namespace Kargono::Panels
 						if ((uint32_t)entry.m_Handle == (uint32_t)entity)
 						{
 							EditorUI::TreePath newPath {};
-							for (auto& subEntry : entry.SubEntries)
+							for (auto& subEntry : entry.m_SubEntries)
 							{
 								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
 								if (entryData.m_ComponentType == ECS::ComponentType::BoxCollider2D)
@@ -919,7 +919,7 @@ namespace Kargono::Panels
 				return;
 			}
 			auto& component = entity.GetComponent<ECS::BoxCollider2DComponent>();
-			component.Offset = m_BoxColliderOffset.CurrentVec2;
+			component.Offset = m_BoxColliderOffset.m_CurrentVec2;
 		};
 
 		m_BoxColliderSize.m_Label = "Size";
@@ -933,7 +933,7 @@ namespace Kargono::Panels
 				return;
 			}
 			auto& component = entity.GetComponent<ECS::BoxCollider2DComponent>();
-			component.Size = m_BoxColliderSize.CurrentVec2;
+			component.Size = m_BoxColliderSize.m_CurrentVec2;
 		};
 
 		m_BoxColliderDensity.m_Label = "Density";
@@ -1024,7 +1024,7 @@ namespace Kargono::Panels
 						if ((uint32_t)entry.m_Handle == (uint32_t)entity)
 						{
 							EditorUI::TreePath newPath {};
-							for (auto& subEntry : entry.SubEntries)
+							for (auto& subEntry : entry.m_SubEntries)
 							{
 								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
 								if (entryData.m_ComponentType == ECS::ComponentType::CircleCollider2D)
@@ -1061,7 +1061,7 @@ namespace Kargono::Panels
 				return;
 			}
 			auto& component = entity.GetComponent<ECS::CircleCollider2DComponent>();
-			component.Offset = m_CircleColliderOffset.CurrentVec2;
+			component.Offset = m_CircleColliderOffset.m_CurrentVec2;
 		};
 
 		m_CircleColliderRadius.m_Label = "Radius";
@@ -1167,7 +1167,7 @@ namespace Kargono::Panels
 						if ((uint32_t)entry.m_Handle == (uint32_t)entity)
 						{
 							EditorUI::TreePath newPath {};
-							for (auto& subEntry : entry.SubEntries)
+							for (auto& subEntry : entry.m_SubEntries)
 							{
 								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
 								if (entryData.m_ComponentType == ECS::ComponentType::Camera)
@@ -1337,7 +1337,7 @@ namespace Kargono::Panels
 					{
 						if ((uint32_t)entry.m_Handle == (uint32_t)entity)
 						{
-							for (auto& subEntry : entry.SubEntries)
+							for (auto& subEntry : entry.m_SubEntries)
 							{
 								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
 								if (entryData.m_ComponentType == ECS::ComponentType::OnUpdate)
@@ -1364,7 +1364,7 @@ namespace Kargono::Panels
 
 		m_SelectOnUpdateScript.m_Label = "On Update Script";
 		m_SelectOnUpdateScript.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectOnUpdateScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectOnUpdateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectOnUpdateScript.m_PopupAction = [&]()
 		{
 			m_SelectOnUpdateScript.ClearOptions();
@@ -1403,7 +1403,7 @@ namespace Kargono::Panels
 			component.OnUpdateScript = Assets::AssetService::GetScript(entry.m_Handle);
 		};
 
-		m_SelectOnUpdateScript.OnEdit = [&]()
+		m_SelectOnUpdateScript.m_OnEdit = [&]()
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
@@ -1444,14 +1444,14 @@ namespace Kargono::Panels
 							// Update component's data
 							component.OnUpdateScriptHandle = scriptHandle;
 							component.OnUpdateScript = script;
-							m_SelectOnUpdateScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+							m_SelectOnUpdateScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 						}, {"activeEntity", "deltaTime"});
 
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 			// Open tooltip
-			m_SelectScriptTooltip.TooltipActive = true;
+			m_SelectScriptTooltip.m_TooltipActive = true;
 
 		};
 	}
@@ -1473,7 +1473,7 @@ namespace Kargono::Panels
 					{
 						if ((uint32_t)entry.m_Handle == (uint32_t)entity)
 						{
-							for (auto& subEntry : entry.SubEntries)
+							for (auto& subEntry : entry.m_SubEntries)
 							{
 								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
 								if (entryData.m_ComponentType == ECS::ComponentType::OnCreate)
@@ -1500,7 +1500,7 @@ namespace Kargono::Panels
 
 		m_SelectOnCreateScript.m_Label = "On Create Script";
 		m_SelectOnCreateScript.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
-		m_SelectOnCreateScript.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectOnCreateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectOnCreateScript.m_PopupAction = [&]()
 		{
 			m_SelectOnCreateScript.ClearOptions();
@@ -1539,7 +1539,7 @@ namespace Kargono::Panels
 			component.OnCreateScript = Assets::AssetService::GetScript(entry.m_Handle);
 		};
 
-		m_SelectOnCreateScript.OnEdit = [&]()
+		m_SelectOnCreateScript.m_OnEdit = [&]()
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
@@ -1580,14 +1580,14 @@ namespace Kargono::Panels
 							// Update component's data
 							component.OnCreateScriptHandle = scriptHandle;
 							component.OnCreateScript = script;
-							m_SelectOnCreateScript.CurrentOption = { script->m_ScriptName, scriptHandle };
+							m_SelectOnCreateScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 						}, {"activeEntity"});
 
 					}};
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 			// Open tooltip
-			m_SelectScriptTooltip.TooltipActive = true;
+			m_SelectScriptTooltip.m_TooltipActive = true;
 
 		};
 	}
@@ -1610,7 +1610,7 @@ namespace Kargono::Panels
 								{
 									if ((uint32_t)entry.m_Handle == (uint32_t)entity)
 									{
-										for (auto& subEntry : entry.SubEntries)
+										for (auto& subEntry : entry.m_SubEntries)
 										{
 											SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
 											if (entryData.m_ComponentType == ECS::ComponentType::AIState)
@@ -1638,7 +1638,7 @@ namespace Kargono::Panels
 		// Set up global state select options widget
 		m_SelectGlobalState.m_Label = "Global State";
 		m_SelectGlobalState.m_Flags |= EditorUI::SelectOption_Indented;
-		m_SelectGlobalState.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectGlobalState.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectGlobalState.m_PopupAction = [&]()
 		{
 			m_SelectGlobalState.ClearOptions();
@@ -1676,7 +1676,7 @@ namespace Kargono::Panels
 		// Set up current state select options widget
 		m_SelectCurrentState.m_Label = "Current State";
 		m_SelectCurrentState.m_Flags |= EditorUI::SelectOption_Indented;
-		m_SelectCurrentState.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectCurrentState.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectCurrentState.m_PopupAction = [&]()
 		{
 			m_SelectCurrentState.ClearOptions();
@@ -1714,7 +1714,7 @@ namespace Kargono::Panels
 		// Set up previous state select options widget
 		m_SelectPreviousState.m_Label = "Previous State";
 		m_SelectPreviousState.m_Flags |= EditorUI::SelectOption_Indented;
-		m_SelectPreviousState.CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectPreviousState.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_SelectPreviousState.m_PopupAction = [&]()
 		{
 			m_SelectPreviousState.ClearOptions();
@@ -1768,7 +1768,7 @@ namespace Kargono::Panels
 						if ((uint32_t)entry.m_Handle == (uint32_t)entity)
 						{
 							EditorUI::TreePath newPath {};
-							for (auto& subEntry : entry.SubEntries)
+							for (auto& subEntry : entry.m_SubEntries)
 							{
 								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
 								if (entryData.m_ComponentType == ECS::ComponentType::Shape)
@@ -2108,7 +2108,7 @@ namespace Kargono::Panels
 						if ((uint32_t)entry.m_Handle == (uint32_t)entity)
 						{
 							EditorUI::TreePath newPath {};
-							for (auto& subEntry : entry.SubEntries)
+							for (auto& subEntry : entry.m_SubEntries)
 							{
 								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
 								if (entryData.m_ComponentType == ECS::ComponentType::ProjectComponent &&
@@ -2186,7 +2186,7 @@ namespace Kargono::Panels
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
 
 					// Set the data
-					*(std::string*)fieldDataRef = spec.CurrentOption;
+					*(std::string*)fieldDataRef = spec.m_CurrentOption;
 				};
 				newWidgetData.m_Fields.push_back(newStringSpec);
 				break;
@@ -2249,7 +2249,7 @@ namespace Kargono::Panels
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
 
 					// Set the data
-					*(int32_t*)fieldDataRef = (int32_t)spec.CurrentInteger;
+					*(int32_t*)fieldDataRef = (int32_t)spec.m_CurrentInteger;
 				};
 				newWidgetData.m_Fields.push_back(newIntegerSpec);
 				break;
@@ -2270,7 +2270,7 @@ namespace Kargono::Panels
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
 
 					// Set the data
-					*(uint16_t*)fieldDataRef = (uint16_t)spec.CurrentInteger;
+					*(uint16_t*)fieldDataRef = (uint16_t)spec.m_CurrentInteger;
 				};
 				newWidgetData.m_Fields.push_back(newIntegerSpec);
 				break;
@@ -2291,7 +2291,7 @@ namespace Kargono::Panels
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
 
 					// Set the data
-					*(uint32_t*)fieldDataRef = (uint32_t)spec.CurrentInteger;
+					*(uint32_t*)fieldDataRef = (uint32_t)spec.m_CurrentInteger;
 				};
 				newWidgetData.m_Fields.push_back(newIntegerSpec);
 				break;
@@ -2312,7 +2312,7 @@ namespace Kargono::Panels
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
 
 					// Set the data
-					*(uint64_t*)fieldDataRef = (uint64_t)spec.CurrentInteger;
+					*(uint64_t*)fieldDataRef = (uint64_t)spec.m_CurrentInteger;
 				};
 				newWidgetData.m_Fields.push_back(newIntegerSpec);
 				break;
@@ -2379,7 +2379,7 @@ namespace Kargono::Panels
 			Events::ManageScene* manageEvent = (Events::ManageScene*)event;
 			if (manageEvent->GetAction() == Events::ManageSceneAction::Open)
 			{
-				m_SceneHierarchyTree.OnRefresh();
+				m_SceneHierarchyTree.m_OnRefresh();
 			}
 		}
 
@@ -2452,43 +2452,43 @@ namespace Kargono::Panels
 		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
 			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
-			if (m_SelectOnUpdateScript.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectOnUpdateScript.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectOnUpdateScript.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectOnUpdateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
-			if (m_SelectOnCreateScript.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectOnCreateScript.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectOnCreateScript.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectOnCreateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
-			if (m_SelectRigidBody2DCollisionStartScript.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectRigidBody2DCollisionStartScript.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectRigidBody2DCollisionStartScript.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
-			if (m_SelectRigidBody2DCollisionEndScript.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectRigidBody2DCollisionEndScript.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectRigidBody2DCollisionEndScript.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 		}
 
 		if (manageAsset->GetAssetType() == Assets::AssetType::AIState &&
 			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
 		{
-			if (m_SelectCurrentState.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectCurrentState.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectCurrentState.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectCurrentState.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
-			if (m_SelectGlobalState.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectGlobalState.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectGlobalState.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectGlobalState.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
-			if (m_SelectPreviousState.CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_SelectPreviousState.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_SelectPreviousState.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectPreviousState.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 		}
 
@@ -2697,9 +2697,9 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::CollapsingHeader(m_TagHeader);
 		if (m_TagHeader.m_Expanded)
 		{
-			m_TagEdit.CurrentOption = component.Tag;
+			m_TagEdit.m_CurrentOption = component.Tag;
 			EditorUI::EditorUIService::EditText(m_TagEdit);
-			m_TagGroupEdit.CurrentOption = component.Group;
+			m_TagGroupEdit.m_CurrentOption = component.Group;
 			EditorUI::EditorUIService::EditText(m_TagGroupEdit);
 		}
 	}
@@ -2739,13 +2739,13 @@ namespace Kargono::Panels
 
 			// Display collision script functions
 			Ref<Scripting::Script> collisionStartScript = Assets::AssetService::GetScript(component.OnCollisionStartScriptHandle);
-			m_SelectRigidBody2DCollisionStartScript.CurrentOption = component.OnCollisionStartScriptHandle == Assets::EmptyHandle ?
+			m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = component.OnCollisionStartScriptHandle == Assets::EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(collisionStartScript), component.OnCollisionStartScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectRigidBody2DCollisionStartScript);
 
 			Ref<Scripting::Script> collisionEndScript = Assets::AssetService::GetScript(component.OnCollisionEndScriptHandle);
-			m_SelectRigidBody2DCollisionEndScript.CurrentOption = component.OnCollisionEndScriptHandle == Assets::EmptyHandle ?
+			m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = component.OnCollisionEndScriptHandle == Assets::EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(collisionEndScript), component.OnCollisionEndScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectRigidBody2DCollisionEndScript);
@@ -2761,9 +2761,9 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::CollapsingHeader(m_BoxCollider2DHeader);
 		if (m_BoxCollider2DHeader.m_Expanded)
 		{
-			m_BoxColliderOffset.CurrentVec2 = component.Offset;
+			m_BoxColliderOffset.m_CurrentVec2 = component.Offset;
 			EditorUI::EditorUIService::EditVec2(m_BoxColliderOffset);
-			m_BoxColliderSize.CurrentVec2 = component.Size;
+			m_BoxColliderSize.m_CurrentVec2 = component.Size;
 			EditorUI::EditorUIService::EditVec2(m_BoxColliderSize);
 			m_BoxColliderDensity.m_CurrentFloat = component.Density;
 			EditorUI::EditorUIService::EditFloat(m_BoxColliderDensity);
@@ -2789,7 +2789,7 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::CollapsingHeader(m_CircleCollider2DHeader);
 		if (m_CircleCollider2DHeader.m_Expanded)
 		{
-			m_CircleColliderOffset.CurrentVec2 = component.Offset;
+			m_CircleColliderOffset.m_CurrentVec2 = component.Offset;
 			EditorUI::EditorUIService::EditVec2(m_CircleColliderOffset);
 			m_CircleColliderRadius.m_CurrentFloat = component.Radius;
 			EditorUI::EditorUIService::EditFloat(m_CircleColliderRadius);
@@ -2854,7 +2854,7 @@ namespace Kargono::Panels
 		if (m_OnUpdateHeader.m_Expanded)
 		{
 			Ref<Scripting::Script> script = Assets::AssetService::GetScript(component.OnUpdateScriptHandle);
-			m_SelectOnUpdateScript.CurrentOption = component.OnUpdateScriptHandle == Assets::EmptyHandle ? 
+			m_SelectOnUpdateScript.m_CurrentOption = component.OnUpdateScriptHandle == Assets::EmptyHandle ? 
 				EditorUI::OptionEntry( "None", Assets::EmptyHandle ) :
 				EditorUI::OptionEntry(Utility::ScriptToString(script), component.OnUpdateScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectOnUpdateScript);
@@ -2875,11 +2875,11 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& globalAsset = Assets::AssetService::GetAIStateRegistry().at(component.GlobalStateHandle);
-				m_SelectGlobalState.CurrentOption = { globalAsset.Data.FileLocation.string(), component.GlobalStateHandle };
+				m_SelectGlobalState.m_CurrentOption = { globalAsset.Data.FileLocation.string(), component.GlobalStateHandle };
 			}
 			else
 			{
-				m_SelectGlobalState.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectGlobalState.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 			EditorUI::EditorUIService::SelectOption(m_SelectGlobalState);
 
@@ -2888,11 +2888,11 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& currentAsset = Assets::AssetService::GetAIStateRegistry().at(component.CurrentStateHandle);
-				m_SelectCurrentState.CurrentOption = { currentAsset.Data.FileLocation.string(), component.CurrentStateHandle };
+				m_SelectCurrentState.m_CurrentOption = { currentAsset.Data.FileLocation.string(), component.CurrentStateHandle };
 			}
 			else
 			{
-				m_SelectCurrentState.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectCurrentState.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 			EditorUI::EditorUIService::SelectOption(m_SelectCurrentState);
 
@@ -2901,11 +2901,11 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& previousAsset = Assets::AssetService::GetAIStateRegistry().at(component.PreviousStateHandle);
-				m_SelectPreviousState.CurrentOption = { previousAsset.Data.FileLocation.string(), component.PreviousStateHandle };
+				m_SelectPreviousState.m_CurrentOption = { previousAsset.Data.FileLocation.string(), component.PreviousStateHandle };
 			}
 			else
 			{
-				m_SelectPreviousState.CurrentOption = { "None", Assets::EmptyHandle };
+				m_SelectPreviousState.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 			EditorUI::EditorUIService::SelectOption(m_SelectPreviousState);
 		}
@@ -2921,7 +2921,7 @@ namespace Kargono::Panels
 		if (m_OnCreateHeader.m_Expanded)
 		{
 			Ref<Scripting::Script> script = Assets::AssetService::GetScript(component.OnCreateScriptHandle);
-			m_SelectOnCreateScript.CurrentOption = component.OnCreateScriptHandle == Assets::EmptyHandle ?
+			m_SelectOnCreateScript.m_CurrentOption = component.OnCreateScriptHandle == Assets::EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(script), component.OnCreateScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectOnCreateScript);
@@ -2937,7 +2937,7 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::CollapsingHeader(m_ShapeHeader);
 		if (m_ShapeHeader.m_Expanded)
 		{
-			m_ShapeSelect.CurrentOption = { Utility::ShapeTypeToString(component.CurrentShape), Assets::EmptyHandle };
+			m_ShapeSelect.m_CurrentOption = { Utility::ShapeTypeToString(component.CurrentShape), Assets::EmptyHandle };
 			EditorUI::EditorUIService::SelectOption(m_ShapeSelect);
 
 			// This section displays the shader specification options available for the chosen object
@@ -2995,7 +2995,7 @@ namespace Kargono::Panels
 			uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataLocations.at(projectCompFieldInfo.m_FieldSlot);
 
 			// Set the data
-			spec.CurrentOption = *(std::string*)fieldDataRef;
+			spec.m_CurrentOption = *(std::string*)fieldDataRef;
 
 			// Display Text
 			EditorUI::EditorUIService::EditText(spec);
@@ -3018,16 +3018,16 @@ namespace Kargono::Panels
 			switch (fieldType)
 			{
 			case WrappedVarType::Integer32:
-				spec.CurrentInteger = *(int32_t*)fieldDataRef;
+				spec.m_CurrentInteger = *(int32_t*)fieldDataRef;
 				break;
 			case WrappedVarType::UInteger16:
-				spec.CurrentInteger = (int32_t)*(uint16_t*)fieldDataRef;
+				spec.m_CurrentInteger = (int32_t)*(uint16_t*)fieldDataRef;
 				break;
 			case WrappedVarType::UInteger32:
-				spec.CurrentInteger = (int32_t)*(uint32_t*)fieldDataRef;
+				spec.m_CurrentInteger = (int32_t)*(uint32_t*)fieldDataRef;
 				break;
 			case WrappedVarType::UInteger64:
-				spec.CurrentInteger = (int32_t)*(uint64_t*)fieldDataRef;
+				spec.m_CurrentInteger = (int32_t)*(uint64_t*)fieldDataRef;
 				break;
 			default:
 				KG_ERROR("Invalid type provide when processing integers in editor ui");
@@ -3153,7 +3153,7 @@ namespace Kargono::Panels
 	{
 		ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
-		m_ShapeColorType.CurrentOption = { Utility::ColorInputTypeToString(component.ShaderSpecification.ColorInput), Assets::EmptyHandle };
+		m_ShapeColorType.m_CurrentOption = { Utility::ColorInputTypeToString(component.ShaderSpecification.ColorInput), Assets::EmptyHandle };
 		EditorUI::EditorUIService::SelectOption(m_ShapeColorType);
 
 		if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::None) { return; }
@@ -3184,11 +3184,11 @@ namespace Kargono::Panels
 		{
 			if (component.TextureHandle == Assets::EmptyHandle)
 			{
-				m_ShapeSetTexture.CurrentOption = { "None", Assets::EmptyHandle };
+				m_ShapeSetTexture.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 			else
 			{
-				m_ShapeSetTexture.CurrentOption =
+				m_ShapeSetTexture.m_CurrentOption =
 				{
 					Assets::AssetService::GetTexture2DRegistry().at(component.TextureHandle).Data.FileLocation.string(),
 					component.TextureHandle

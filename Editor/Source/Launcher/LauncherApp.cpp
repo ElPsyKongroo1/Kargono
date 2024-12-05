@@ -23,7 +23,7 @@ namespace Kargono
 		};
 		s_CreateProjectSpec.m_ConfirmAction = [&]()
 		{
-			s_LauncherApp->SetSelectedProject(Projects::ProjectService::CreateNewProject(s_CreateProjectName.CurrentOption, s_CreateProjectLocation.CurrentOption));
+			s_LauncherApp->SetSelectedProject(Projects::ProjectService::CreateNewProject(s_CreateProjectName.m_CurrentOption, s_CreateProjectLocation.m_CurrentOption));
 			if (!s_LauncherApp->GetSelectedProject().empty())
 			{
 				EngineService::EndRun();
@@ -31,10 +31,10 @@ namespace Kargono
 		};
 
 		s_CreateProjectName.m_Label = "Project Title";
-		s_CreateProjectName.CurrentOption = "NewProject";
+		s_CreateProjectName.m_CurrentOption = "NewProject";
 
 		s_CreateProjectLocation.m_Label = "Project Location";
-		s_CreateProjectLocation.CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
+		s_CreateProjectLocation.m_CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
 	}
 
 	void LauncherApp::Init()

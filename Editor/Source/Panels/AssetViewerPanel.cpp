@@ -25,7 +25,7 @@ namespace Kargono::Panels
 
 	void AssetViewerPanel::RefreshPanelData()
 	{
-		m_AllAssetsTable.OnRefresh();
+		m_AllAssetsTable.m_OnRefresh();
 	}
 
 	bool AssetViewerPanel::OnAssetEvent(Events::Event* event)
@@ -75,10 +75,10 @@ namespace Kargono::Panels
 	void AssetViewerPanel::InitializeAssetsTable()
 	{
 		m_AllAssetsTable.m_Label = "All Assets";
-		m_AllAssetsTable.Column1Title = "Asset Type";
-		m_AllAssetsTable.Column2Title = "Asset File Location";
+		m_AllAssetsTable.m_Column1Title = "Asset Type";
+		m_AllAssetsTable.m_Column2Title = "Asset File Location";
 		m_AllAssetsTable.m_Expanded = true;
-		m_AllAssetsTable.OnRefresh = [&]()
+		m_AllAssetsTable.m_OnRefresh = [&]()
 		{
 			m_AllAssetsTable.ClearList();
 			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
@@ -212,7 +212,7 @@ namespace Kargono::Panels
 			}
 
 		};
-		m_AllAssetsTable.OnRefresh();
+		m_AllAssetsTable.m_OnRefresh();
 	}
 	void AssetViewerPanel::InitializeAssetPopup()
 	{

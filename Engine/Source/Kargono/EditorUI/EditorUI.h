@@ -432,7 +432,7 @@ namespace Kargono::EditorUI
 	public:
 		std::string m_Label{};
 		WidgetFlags m_Flags{ EditInteger_None };
-		int32_t CurrentInteger{};
+		int32_t m_CurrentInteger{};
 		std::function<void(EditIntegerSpec&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
 	private:
@@ -484,7 +484,7 @@ namespace Kargono::EditorUI
 	public:
 		std::string m_Label{};
 		WidgetFlags m_Flags{ EditVec2_None };
-		Math::vec2 CurrentVec2{};
+		Math::vec2 m_CurrentVec2{};
 		std::function<void(EditVec2Spec&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
 	private:
@@ -593,7 +593,7 @@ namespace Kargono::EditorUI
 	public:
 		std::string m_Label;
 		WidgetFlags m_Flags{ EditText_None };
-		std::string CurrentOption{};
+		std::string m_CurrentOption{};
 		std::function<void(EditTextSpec&)> m_ConfirmAction;
 		bool m_StartPopup{ false };
 		Ref<void> m_ProvidedData { nullptr };
@@ -612,7 +612,7 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string m_Label;
-		std::filesystem::path CurrentOption{};
+		std::filesystem::path m_CurrentOption{};
 		std::function<void(const std::string&)> m_ConfirmAction{ nullptr };
 	private:
 		WidgetID m_WidgetID;
@@ -644,23 +644,23 @@ namespace Kargono::EditorUI
 	public:
 		void ClearSelectionList()
 		{
-			SelectionList.clear();
+			m_SelectionList.clear();
 		}
 		void AddToSelectionList(const std::string& label, std::function<void(CollapsingHeaderSpec&)> function)
 		{
-			if (!SelectionList.contains(label))
+			if (!m_SelectionList.contains(label))
 			{
-				SelectionList.insert_or_assign(label, function);
+				m_SelectionList.insert_or_assign(label, function);
 				return;
 			}
 		}
 		CollapsingHeaderSelectionList& GetSelectionList()
 		{
-			return SelectionList;
+			return m_SelectionList;
 		}
 	private:
 		WidgetID m_WidgetID;
-		CollapsingHeaderSelectionList SelectionList{};
+		CollapsingHeaderSelectionList m_SelectionList{};
 	private:
 		friend void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec);
 	};
@@ -988,12 +988,12 @@ namespace Kargono::EditorUI
 	{
 		std::string m_Label {};
 		UUID m_Handle {};
-		Ref<Rendering::Texture2D> IconHandle{ nullptr };
-		std::function<void(TreeEntry& entry)> OnLeftClick { nullptr };
-		std::function<void(TreeEntry& entry)> OnDoubleLeftClick { nullptr };
+		Ref<Rendering::Texture2D> m_IconHandle{ nullptr };
+		std::function<void(TreeEntry& entry)> m_OnLeftClick { nullptr };
+		std::function<void(TreeEntry& entry)> m_OnDoubleLeftClick { nullptr };
 		Ref<void> m_ProvidedData { nullptr };
-		std::vector<TreeEntry> SubEntries{};
-		std::vector<SelectionEntry> OnRightClickSelection {};
+		std::vector<TreeEntry> m_SubEntries{};
+		std::vector<SelectionEntry> m_OnRightClickSelection {};
 	};
 
 	struct TreeSpec
@@ -1006,7 +1006,7 @@ namespace Kargono::EditorUI
 	public:
 		std::string m_Label;
 		TreePath m_SelectedEntry{};
-		std::function<void()> OnRefresh { nullptr };
+		std::function<void()> m_OnRefresh { nullptr };
 	public:
 
 		void MoveUp();
@@ -1021,24 +1021,24 @@ namespace Kargono::EditorUI
 
 		void InsertEntry(const TreeEntry& entry)
 		{
-			TreeEntries.push_back(entry);
+			m_TreeEntries.push_back(entry);
 		}
 
 		void RemoveEntry(TreePath& path);
 		void ClearTree()
 		{
-			TreeEntries.clear();
-			ExpandedNodes.clear();
+			m_TreeEntries.clear();
+			m_ExpandedNodes.clear();
 			m_SelectedEntry = {};
 		}
 		std::vector<TreeEntry>& GetTreeEntries()
 		{
-			return TreeEntries;
+			return m_TreeEntries;
 		}
 
 		void ClearExpandedNodes()
 		{
-			ExpandedNodes.clear();
+			m_ExpandedNodes.clear();
 		}
 
 		void ExpandFirstLayer();
@@ -1052,10 +1052,10 @@ namespace Kargono::EditorUI
 		void EditDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, std::function<void(TreeEntry& entry)> editFunction);
 	private:
 		WidgetID m_WidgetID;
-		std::vector<TreeEntry> TreeEntries{};
-		std::unordered_set<TreePath> ExpandedNodes{};
-		TreeEntry* CurrentRightClick{ nullptr };
-		bool SelectionChanged{ false };
+		std::vector<TreeEntry> m_TreeEntries{};
+		std::unordered_set<TreePath> m_ExpandedNodes{};
+		TreeEntry* m_CurrentRightClick{ nullptr };
+		bool m_SelectionChanged{ false };
 	private:
 		friend void EditorUIService::Tree(TreeSpec& spec);
 		friend void DrawEntries(TreeSpec& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath , ImVec2 rootPosition);
@@ -1100,7 +1100,7 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string m_Label;
-		bool TooltipActive{ false };
+		bool m_TooltipActive{ false };
 
 	public:
 		void AddSeperator(ImVec4 seperatorColor)
@@ -1189,9 +1189,9 @@ namespace Kargono::EditorUI
 	struct ListEntry
 	{
 		std::string m_Label;
-		std::string Value;
+		std::string m_Value;
 		UUID m_Handle;
-		std::function<void(ListEntry& entry, std::size_t iteration)> OnEdit { nullptr };
+		std::function<void(ListEntry& entry, std::size_t iteration)> m_OnEdit { nullptr };
 	};
 
 	static inline std::size_t k_ListSearchIndex{ std::numeric_limits<std::size_t>::max() };
@@ -1207,30 +1207,30 @@ namespace Kargono::EditorUI
 	public:
 		std::string m_Label;
 		WidgetFlags m_Flags{ List_None };
-		std::string Column1Title {};
-		std::string Column2Title {};
+		std::string m_Column1Title {};
+		std::string m_Column2Title {};
 		bool m_Expanded{ false };
-		std::function<void()> OnRefresh { nullptr };
+		std::function<void()> m_OnRefresh { nullptr };
 	public:
 		void InsertListEntry(const std::string& label, const std::string& value, 
 			std::function<void(ListEntry& entry, std::size_t iteration)> onEdit, Assets::AssetHandle handle = 0)
 		{
 			ListEntry newEntry{label, value, handle, onEdit};
-			ListEntries.push_back(newEntry);
+			m_ListEntries.push_back(newEntry);
 		}
 
 		void InsertListEntry(const ListEntry& entry)
 		{
-			ListEntries.push_back(entry);
+			m_ListEntries.push_back(entry);
 		}
 
 		bool RemoveEntry(std::size_t entryIndex)
 		{
-			if (entryIndex >= ListEntries.size()) 
+			if (entryIndex >= m_ListEntries.size()) 
 			{
 				return false;
 			}
-			ListEntries.erase(ListEntries.begin() + entryIndex);
+			m_ListEntries.erase(m_ListEntries.begin() + entryIndex);
 			return true;
 		}
 
@@ -1238,7 +1238,7 @@ namespace Kargono::EditorUI
 		{
 			// Run search function on entry
 			std::size_t iteration{ 0 };
-			for (const ListEntry& currentEntry : ListEntries)
+			for (const ListEntry& currentEntry : m_ListEntries)
 			{
 				if (searchFunction(currentEntry))
 				{
@@ -1254,7 +1254,7 @@ namespace Kargono::EditorUI
 		void EditEntries(std::function<void(ListEntry& currentEntry)> editFunction)
 		{
 			// Run edit function on every entry
-			for (ListEntry& currentEntry : ListEntries)
+			for (ListEntry& currentEntry : m_ListEntries)
 			{
 				if (editFunction)
 				{
@@ -1265,40 +1265,40 @@ namespace Kargono::EditorUI
 
 		void ClearList()
 		{
-			ListEntries.clear();
+			m_ListEntries.clear();
 		}
 		void ClearEditListSelectionList()
 		{
-			EditListSelectionList.clear();
+			m_EditListSelectionList.clear();
 		}
 		void AddToSelectionList(const std::string& label, std::function<void()> function)
 		{
-			if (!EditListSelectionList.contains(label))
+			if (!m_EditListSelectionList.contains(label))
 			{
-				EditListSelectionList.insert_or_assign(label, function);
+				m_EditListSelectionList.insert_or_assign(label, function);
 				return;
 			}
 		}
 		SelectionList& GetEditSelectionList()
 		{
-			return EditListSelectionList;
+			return m_EditListSelectionList;
 		}
 
 		std::size_t GetEntriesListSize()
 		{
-			return ListEntries.size();
+			return m_ListEntries.size();
 		}
 
 		ListEntry& GetEntry(std::size_t index)
 		{
-			KG_ASSERT(index < ListEntries.size());
-			return ListEntries.at(index);
+			KG_ASSERT(index < m_ListEntries.size());
+			return m_ListEntries.at(index);
 		}
 
 	private:
 		WidgetID m_WidgetID;
-		std::vector<ListEntry> ListEntries{};
-		SelectionList EditListSelectionList{};
+		std::vector<ListEntry> m_ListEntries{};
+		SelectionList m_EditListSelectionList{};
 	private:
 		friend void EditorUIService::List(ListSpec& spec);
 	};
@@ -1338,9 +1338,9 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string m_Label{};
-		OptionEntry CurrentOption{};
-		uint32_t LineCount{ 3 };
-		std::function<void()> OnEdit{ nullptr };
+		OptionEntry m_CurrentOption{};
+		uint32_t m_LineCount{ 3 };
+		std::function<void()> m_OnEdit{ nullptr };
 		std::function<void(const OptionEntry&)> m_ConfirmAction {nullptr};
 		std::function<void()> m_PopupAction {nullptr};
 		// Only used if PopupOnly is true
@@ -1348,31 +1348,31 @@ namespace Kargono::EditorUI
 		WidgetFlags m_Flags{ SelectOption_None };
 		void ClearOptions()
 		{
-			ActiveOptions.clear();
+			m_ActiveOptions.clear();
 		}
 		void AddToOptions(const std::string& group, const std::string& optionLabel, UUID optionIdentifier)
 		{
 			const OptionEntry newEntry{ optionLabel, optionIdentifier };
-			if (!ActiveOptions.contains(group))
+			if (!m_ActiveOptions.contains(group))
 			{
 				std::vector<OptionEntry> newVector {};
 				newVector.push_back(newEntry);
-				ActiveOptions.insert_or_assign(group, newVector);
+				m_ActiveOptions.insert_or_assign(group, newVector);
 				return;
 			}
 
-			ActiveOptions.at(group).push_back(newEntry);
+			m_ActiveOptions.at(group).push_back(newEntry);
 		}
 		OptionList& GetAllOptions()
 		{
-			return ActiveOptions;
+			return m_ActiveOptions;
 		}
 	private:
 		WidgetID m_WidgetID;
-		OptionList ActiveOptions{};
-		bool Searching { false };
-		OptionEntry CachedSelection {};
-		OptionList CachedSearchResults{};
+		OptionList m_ActiveOptions{};
+		bool m_Searching { false };
+		OptionEntry m_CachedSelection {};
+		OptionList m_CachedSearchResults{};
 	private:
 		friend void EditorUIService::SelectOption(SelectOptionSpec&);
 	};

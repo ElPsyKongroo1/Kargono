@@ -777,8 +777,8 @@ namespace API::EditorUI
 			Kargono::EditorUI::TreeEntry entry;
 			entry.m_Label = suggestion.m_Label;
 			entry.m_ProvidedData = Kargono::CreateRef<std::string>(suggestion.m_ReplacementText);
-			entry.IconHandle = suggestion.m_Icon;
-			entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
+			entry.m_IconHandle = suggestion.m_Icon;
+			entry.m_OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
 			{
 				// Remove Buffer Text and add text
 				UndoRecord u;
@@ -815,9 +815,9 @@ namespace API::EditorUI
 		if (m_SuggestionsWindowEnabled && isSuggestionsOpen && aChar == '\t')
 		{
 			Kargono::EditorUI::TreeEntry* entry = m_SuggestionTree.GetEntryFromPath(m_SuggestionTree.m_SelectedEntry);
-			if (entry && entry->OnDoubleLeftClick)
+			if (entry && entry->m_OnDoubleLeftClick)
 			{
-				entry->OnDoubleLeftClick(*entry);
+				entry->m_OnDoubleLeftClick(*entry);
 			}
 			Colorize(GetCursorPosition().m_Line, 3);
 			EnsureCursorVisible();
