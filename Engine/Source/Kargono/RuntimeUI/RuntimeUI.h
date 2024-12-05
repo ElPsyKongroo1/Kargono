@@ -318,16 +318,23 @@ namespace Kargono::RuntimeUI
 		static void SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
 		static void SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable);
 		static void SetDisplayWindow(const std::string& windowTag, bool display);
-		static Ref<Scripting::Script> GetActiveOnMove();
-		static Assets::AssetHandle GetActiveOnMoveHandle();
-		static std::vector<Window>& GetAllActiveWindows();
 		static void AddActiveWindow(Window& window);
-		static void DeleteActiveWindow(std::size_t windowLocation);
+		static bool DeleteActiveUIWindow(std::size_t windowLocation);
+		static bool DeleteActiveUIWidget(std::size_t windowIndex, std::size_t widgetIndex);
+
+		//==============================
+		// Modify Provided UI
+		//==============================
+		static bool DeleteUIWindow(Ref<UserInterface> userInterface, std::size_t windowLocation);
+		static bool DeleteUIWidget(Ref<UserInterface> userInterface, std::size_t windowIndex, std::size_t widgetIndex);
 
 		//==============================
 		// Query Active UI
 		//==============================
 		static bool IsWidgetSelected(const std::string& windowTag, const std::string& widgetTag);
+		static Ref<Scripting::Script> GetActiveOnMove();
+		static Assets::AssetHandle GetActiveOnMoveHandle();
+		static std::vector<Window>& GetAllActiveWindows();
 
 		//==============================
 		// Interact With Active UI
@@ -360,7 +367,7 @@ namespace Kargono::RuntimeUI
 		static void CalculateWindowNavigationLinks();
 		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction);
 		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
-		static void RevalidateDisplayedWindow();
+		static void RevalidateDisplayedWindows();
 
 	private:
 		//==============================

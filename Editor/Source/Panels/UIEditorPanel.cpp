@@ -235,13 +235,17 @@ namespace Kargono::Panels
 
 	void UIEditorPanel::DrawWindowOptions()
 	{
+		// Draw main header for window options
 		EditorUI::EditorUIService::CollapsingHeader(m_WindowHeader);
 
+		// Draw options to edit selected window
 		if (m_WindowHeader.m_Expanded)
 		{
+			// Edit window tag
 			m_WindowTag.m_CurrentOption = m_ActiveWindow->m_Tag;
 			EditorUI::EditorUIService::EditText(m_WindowTag);
 
+			// Edit default active widget
 			std::size_t activeWidget = m_ActiveWindow->m_DefaultActiveWidget;
 			m_WindowDefaultWidget.m_CurrentOption =
 			{
@@ -250,15 +254,19 @@ namespace Kargono::Panels
 			};
 			EditorUI::EditorUIService::SelectOption(m_WindowDefaultWidget);
 
+			// Edit whether window is displayed
 			m_WindowDisplay.m_CurrentBoolean = m_ActiveWindow->GetWindowDisplayed();
 			EditorUI::EditorUIService::Checkbox(m_WindowDisplay);
 
+			// Edit window location relative to screen
 			m_WindowLocation.m_CurrentVec3 = m_ActiveWindow->m_ScreenPosition;
 			EditorUI::EditorUIService::EditVec3(m_WindowLocation);
 
+			// Edit window size relative to screen
 			m_WindowSize.m_CurrentVec2 = m_ActiveWindow->m_Size;
 			EditorUI::EditorUIService::EditVec2(m_WindowSize);
 
+			// Edit window background color
 			m_WindowBackgroundColor.m_CurrentVec4 = m_ActiveWindow->m_BackgroundColor;
 			EditorUI::EditorUIService::EditVec4(m_WindowBackgroundColor);
 		}
@@ -266,25 +274,34 @@ namespace Kargono::Panels
 
 	void UIEditorPanel::DrawWidgetOptions()
 	{
+		// Draw main header for widget options
 		EditorUI::EditorUIService::CollapsingHeader(m_WidgetHeader);
+
+		// Draw options to edit selected widget
 		if (m_WidgetHeader.m_Expanded)
 		{
+			// Edit selected widget's tag
 			m_WidgetTag.m_CurrentOption = m_ActiveWidget->m_Tag;
 			EditorUI::EditorUIService::EditText(m_WidgetTag);
 
+			// Edit selected widget's window location
 			m_WidgetLocation.m_CurrentVec2 = m_ActiveWidget->m_WindowPosition;
 			EditorUI::EditorUIService::EditVec2(m_WidgetLocation);
 
+			// Edit selected widget's size relative to its window
 			m_WidgetSize.m_CurrentVec2 = m_ActiveWidget->m_Size;
 			EditorUI::EditorUIService::EditVec2(m_WidgetSize);
 			
+			// Edit selected widget's background color
 			m_WidgetBackgroundColor.m_CurrentVec4 = m_ActiveWidget->m_DefaultBackgroundColor;
 			EditorUI::EditorUIService::EditVec4(m_WidgetBackgroundColor);
 
+			// Edit text widget specific options
 			if (m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::TextWidget)
 			{
 				RuntimeUI::TextWidget& activeTextWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
 
+				// Edit selected text widget's on press script
 				Assets::AssetHandle onPressHandle = activeTextWidget.m_FunctionPointers.m_OnPressHandle;
 				m_WidgetOnPress.m_CurrentOption =
 				{
@@ -293,15 +310,19 @@ namespace Kargono::Panels
 				};
 				EditorUI::EditorUIService::SelectOption(m_WidgetOnPress);
 
+				// Edit selected text widget's text
 				m_WidgetText.m_CurrentOption = activeTextWidget.m_Text;
 				EditorUI::EditorUIService::EditText(m_WidgetText);
 
+				// Edit selected text widget's text size relative to its window
 				m_WidgetTextSize.m_CurrentFloat = activeTextWidget.m_TextSize;
 				EditorUI::EditorUIService::EditFloat(m_WidgetTextSize);
 
+				// Edit selected text widget's text color
 				m_WidgetTextColor.m_CurrentVec4 = activeTextWidget.m_TextColor;
 				EditorUI::EditorUIService::EditVec4(m_WidgetTextColor);
 
+				// Edit selected text widget's text alignment
 				m_WidgetCentered.m_CurrentBoolean = activeTextWidget.m_TextCentered;
 				EditorUI::EditorUIService::Checkbox(m_WidgetCentered);
 			}
@@ -385,21 +406,31 @@ namespace Kargono::Panels
 		};
 	}
 
-	void UIEditorPanel::RecalculateTreeIterators()
+	void UIEditorPanel::RecalculateWidgetInfo()
 	{
-		uint32_t iterator{ 0 };
-		for (EditorUI::TreeEntry& entry : m_UITree.GetTreeEntries())
+		// Recalculate the handle and provided data for each entry in the user interface tree
+		m_UITree.EditDepth([&](EditorUI::TreeEntry& entry)
 		{
-			entry.m_Handle = iterator;
-			uint32_t iteratorTwo{};
-			for (EditorUI::TreeEntry& subEntry : entry.m_SubEntries)
+			// Get tree path from entry reference
+		 	EditorUI::TreePath entryPath = m_UITree.GetPathFromEntryReference(&entry);
+
+			// Ensure the depth is 2, since this is the expected depth for the user interface tree
+			if (entryPath.GetDepth() != 2)
 			{
-				subEntry.m_Handle = iteratorTwo;
-				subEntry.m_ProvidedData = CreateRef<uint32_t>(iterator);
-				iteratorTwo++;
+				KG_WARN("Invalid depth length when revalidating widget index information");
+				return;
 			}
-			iterator++;
-		}
+
+			// Get the current widget and window index from the path
+			uint16_t currentWidget = entryPath.GetBack();
+			entryPath.PopBack();
+			uint16_t currentWindow = entryPath.GetBack();
+
+			// Update the handle and provided data for the entry
+			entry.m_Handle = (uint64_t)currentWidget;
+			entry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)currentWidget);
+
+		}, 1);
 	}
 
 
@@ -499,7 +530,7 @@ namespace Kargono::Panels
 				newEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
 
 				uint32_t iteratorTwo{ 0 };
-				for (auto widget : window.m_Widgets)
+				for (Ref<RuntimeUI::Widget> widget : window.m_Widgets)
 				{
 					EditorUI::TreeEntry newWidgetEntry {};
 					newWidgetEntry.m_Label = widget->m_Tag;
@@ -566,7 +597,7 @@ namespace Kargono::Panels
 			m_WindowDefaultWidget.ClearOptions();
 			m_WindowDefaultWidget.AddToOptions("Clear", "None", (uint64_t)-1);
 			uint32_t iteration{ 0 };
-			for (auto& widget : m_ActiveWindow->m_Widgets)
+			for (Ref<RuntimeUI::Widget> widget : m_ActiveWindow->m_Widgets)
 			{
 				switch (widget->m_WidgetType)
 				{
@@ -902,7 +933,7 @@ namespace Kargono::Panels
 		}
 
 		// Create Text Widget
-		auto& window = panel.m_EditorUI->m_Windows.at(windowEntry.m_Handle);
+		RuntimeUI::Window& window = panel.m_EditorUI->m_Windows.at(windowEntry.m_Handle);
 		Ref<RuntimeUI::TextWidget> newTextWidget = CreateRef<RuntimeUI::TextWidget>();
 
 		// Create new widget entry for m_UITree
@@ -930,69 +961,100 @@ namespace Kargono::Panels
 	void UIEditorPanel::DeleteWindow(EditorUI::TreeEntry& entry)
 	{
 		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+
+		// Get tree path from provided entry
 		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(&entry);
 		if (!path)
 		{
 			KG_WARN("Could not locate window path inside m_UITree");
 			return;
 		}
-		auto& windows = panel.m_EditorUI->m_Windows;
-		windows.erase(windows.begin() + entry.m_Handle);
+
+		// Remove window from active runtime UI and this panel's tree
+		RuntimeUI::RuntimeUIService::DeleteActiveUIWindow(entry.m_Handle);
 		m_UITree.RemoveEntry(path);
+
+		// Reset active widget and window (used in properties panel)
 		panel.m_ActiveWidget = nullptr;
 		panel.m_ActiveWindow = nullptr;
 		panel.m_CurrentDisplay = UIPropertiesDisplay::None;
 
+		// Set the active editor UI as edited and revalidate widget index information
 		m_MainHeader.m_EditColorActive = true;
-		RecalculateTreeIterators();
+		RecalculateWidgetInfo();
 
 	}
 
 	void UIEditorPanel::DeleteWidget(EditorUI::TreeEntry& entry)
 	{
 		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+
+		// Getpath from provided entry
 		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(&entry);
 		if (!path)
 		{
 			KG_WARN("Could not locate widget path inside m_UITree");
 			return;
 		}
-		auto& windows = panel.m_EditorUI->m_Windows;
-		auto& widgets = windows.at(*(uint32_t*)entry.m_ProvidedData.get()).m_Widgets;
 
-		widgets.erase(widgets.begin() + entry.m_Handle);
+		// Remove widget from RuntimeUI 
+		bool success = RuntimeUI::RuntimeUIService::DeleteActiveUIWidget((size_t)*(uint32_t*)entry.m_ProvidedData.get(), entry.m_Handle);
+
+		// Check if widget was successfully deleted
+		if (!success)
+		{
+			KG_WARN("Could not delete widget from RuntimeUI");
+			return;
+		}
+
+		// Remove widget from panel's tree widget
 		m_UITree.RemoveEntry(path);
+
+		// Reset active widget and window
 		panel.m_ActiveWidget = nullptr;
 		panel.m_ActiveWindow = nullptr;
 		panel.m_CurrentDisplay = UIPropertiesDisplay::None;
+		RecalculateWidgetInfo();
 
+		// Set the active editor UI as edited
 		m_MainHeader.m_EditColorActive = true;
-		RecalculateTreeIterators();
 
+	}
+
+	void UIEditorPanel::SelectWindow(EditorUI::TreeEntry& entry)
+	{
+		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+
+		// Set selected window as active
+		panel.m_ActiveWindow = &panel.m_EditorUI->m_Windows.at(entry.m_Handle);
+
+		// Display window properties in properties panel
+		panel.m_CurrentDisplay = UIPropertiesDisplay::Window;
+		s_EditorApp->m_PropertiesPanel->m_ActiveParent = panel.m_PanelName;
+
+		// Bring properties panel to front
+		EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
 	}
 
 	void UIEditorPanel::AddWindow()
 	{
+		// Create new window entry for m_UITree
 		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
 		EditorUI::TreeEntry newEntry {};
 		newEntry.m_Label = "None";
 		newEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;
 		newEntry.m_Handle = m_UITree.GetTreeEntries().size();
-		newEntry.m_OnLeftClick = [&](EditorUI::TreeEntry& entry)
-		{
-			UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
-			panel.m_ActiveWindow = &panel.m_EditorUI->m_Windows.at(entry.m_Handle);
-			panel.m_CurrentDisplay = UIPropertiesDisplay::Window;
-			EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
-			s_EditorApp->m_PropertiesPanel->m_ActiveParent = panel.m_PanelName;
-		};
 
+		// Add handlers for interacting with the tree entry
+		newEntry.m_OnLeftClick = KG_BIND_CLASS_FN(DeleteWindow);
 		newEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
-
 		newEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
 
+		// Add new window to RuntimeUI and this panel's tree
 		m_UITree.InsertEntry(newEntry);
 		panel.m_EditorUI->m_Windows.push_back({});
+
+		// Set this UI as edited
 		m_MainHeader.m_EditColorActive = true;
 	}
 }

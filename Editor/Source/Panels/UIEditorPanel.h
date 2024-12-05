@@ -64,13 +64,14 @@ namespace Kargono::Panels
 		void OnCreateUIDialog();
 		void OnOpenUI(Assets::AssetHandle newHandle);
 		void OnRefreshData();
-		void RecalculateTreeIterators();
+		void RecalculateWidgetInfo();
 		void DrawWindowOptions();
 		void DrawWidgetOptions();
 		void AddWindow();
 		void AddTextWidget(EditorUI::TreeEntry& entry);
 		void DeleteWindow(EditorUI::TreeEntry& entry);
 		void DeleteWidget(EditorUI::TreeEntry& entry);
+		void SelectWindow(EditorUI::TreeEntry& entry);
 	public:
 		//=========================
 		// Core Panel Data

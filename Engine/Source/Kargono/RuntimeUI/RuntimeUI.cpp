@@ -75,7 +75,7 @@ namespace Kargono::RuntimeUI
 		s_RuntimeUIContext->m_ActiveUIHandle = uiHandle;
 
 		// Revalidate UI Context
-		RevalidateDisplayedWindow();
+		RevalidateDisplayedWindows();
 
 		// Load default font if necessary
 		if (!userInterface->m_Font)
@@ -167,24 +167,93 @@ namespace Kargono::RuntimeUI
 	//	return true;
 	//}
 
-	void RuntimeUIService::DeleteActiveWindow(std::size_t windowLocation)
+	bool RuntimeUIService::DeleteActiveUIWindow(std::size_t windowLocation)
 	{
-		// Get all active windows
-		std::vector<Window>& windows = GetAllActiveWindows();
-		if (windowLocation >= windows.size())
+		// Attempt to delete the window from the active user interface
+		bool success = DeleteUIWindow(s_RuntimeUIContext->m_ActiveUI, windowLocation);
+
+		// Ensure deletion was successful
+		if (!success)
 		{
-			KG_WARN("Attempt to delete window that does not exist");
-			return;
+			KG_WARN("Attempt to delete window from active user interface failed.");
+			return false;
 		}
 
-		// Get the indicated window reference
-		std::vector<Window>::iterator windowPointer = windows.begin() + windowLocation;
+		// Ensure correct windows are displayed
+		RevalidateDisplayedWindows();
+		return true;
+	}
 
-		// Delete the window
-		windows.erase(windowPointer);
+	bool RuntimeUIService::DeleteActiveUIWidget(std::size_t windowIndex, std::size_t widgetIndex)
+	{
+		// Attempt to delete the widget from the active user interface
+		bool success = DeleteUIWidget(s_RuntimeUIContext->m_ActiveUI, windowIndex, widgetIndex);
 
-		// Display another window if applicable
-		RuntimeUIService::RevalidateDisplayedWindow();
+		// Ensure deletion was successful
+		if (!success)
+		{
+			KG_WARN("Attempt to delete widget from active user interface failed.");
+			return false;
+		}
+
+		// Revalidate navigation links
+		CalculateWindowNavigationLinks();
+		return true;
+	}
+
+	bool RuntimeUIService::DeleteUIWindow(Ref<UserInterface> userInterface, std::size_t windowLocation)
+	{
+		// Ensure user interface is valid
+		if (!userInterface)
+		{
+			KG_WARN("Attempt to delete window from invalid user interface reference");
+			return false;
+		}
+
+		// Get all windows
+		std::vector<Window>& uiWindows = userInterface->m_Windows;
+
+		// Ensure window location is valid
+		if (windowLocation >= uiWindows.size())
+		{
+			KG_WARN("Attempt to delete window, however, the provided index is out of bounds");
+			return false;
+		}
+
+		// Delete the indicated window
+		uiWindows.erase(uiWindows.begin() + windowLocation);
+		return true;
+	}
+
+	bool RuntimeUIService::DeleteUIWidget(Ref<UserInterface> userInterface, std::size_t windowIndex, std::size_t widgetIndex)
+	{
+		if (!userInterface)
+		{
+			KG_WARN("Attempt to delete widget from invalid user interface reference");
+			return false;
+		}
+
+		// Ensure window index is valid
+		if (windowIndex >= s_RuntimeUIContext->m_ActiveUI->m_Windows.size())
+		{
+			KG_WARN("Attempt to delete widget from window with out of bounds index");
+			return false;
+		}
+
+		// Get the window reference
+		std::vector<RuntimeUI::Window>& uiWindows = userInterface->m_Windows;
+		RuntimeUI::Window& indicatedWindow = uiWindows.at(windowIndex);
+
+		// Ensure widget index is valid
+		if (widgetIndex >= indicatedWindow.m_Widgets.size())
+		{
+			KG_WARN("Attempt to delete widget with out of bounds index");
+			return false;
+		}
+
+		// Delete the widget
+		indicatedWindow.m_Widgets.erase(indicatedWindow.m_Widgets.begin() + widgetIndex);
+		return true;
 	}
 
 
@@ -270,12 +339,13 @@ namespace Kargono::RuntimeUI
 		return s_RuntimeUIContext->m_ActiveUI->m_Windows;
 	}
 
-	void RuntimeUIService::RevalidateDisplayedWindow()
+	void RuntimeUIService::RevalidateDisplayedWindows()
 	{
 		// Ensure/validate that the correct window is being displayed
 		s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows.clear();
 		for (Window& window : GetAllActiveWindows())
 		{
+			// Add the window to the displayed windows if it is flagged to do so
 			if (window.GetWindowDisplayed()) 
 			{ 
 				s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows.push_back(&window);
@@ -736,7 +806,7 @@ namespace Kargono::RuntimeUI
 
 		// Set window as displayed and revalidate displayed windows for current user interface
 		m_WindowDisplayed = true;
-		RuntimeUIService::RevalidateDisplayedWindow();
+		RuntimeUIService::RevalidateDisplayedWindows();
 
 	}
 
@@ -750,7 +820,7 @@ namespace Kargono::RuntimeUI
 
 		// Set window as hidden and revalidate displayed windows for current user interface
 		m_WindowDisplayed = false;
-		RuntimeUIService::RevalidateDisplayedWindow();
+		RuntimeUIService::RevalidateDisplayedWindows();
 	}
 
 	bool Window::GetWindowDisplayed()

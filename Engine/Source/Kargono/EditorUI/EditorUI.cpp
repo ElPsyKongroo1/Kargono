@@ -3079,7 +3079,7 @@ namespace Kargono::EditorUI
 		TreeEntry* currentEntry{ nullptr };
 
 		// Locate entry and its parent entry using the provided path
-		for (auto location : path.GetPath())
+		for (uint16_t location : path.GetPath())
 		{
 			if (iteration == 0)
 			{
