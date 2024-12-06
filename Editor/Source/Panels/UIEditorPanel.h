@@ -58,20 +58,55 @@ namespace Kargono::Panels
 		void ResetPanelResources();
 	private:
 		//=========================
-		// Internal Functionality
+		// Manage Panel State
+		//=========================
+		void RecalculateTreeIndexData();
+		void OnRefreshData();
+		void ClearPropertiesPanelData();
+
+		//=========================
+		// On Action Functions
 		//=========================
 		void OnOpenUIDialog();
 		void OnCreateUIDialog();
 		void OnOpenUI(Assets::AssetHandle newHandle);
-		void OnRefreshData();
-		void RecalculateWidgetInfo();
+
+		//=========================
+		// Draw Properties Panel Functions
+		//=========================
 		void DrawWindowOptions();
 		void DrawWidgetOptions();
+
+		//=========================
+		// Manage Windows
+		//=========================
 		void AddWindow();
-		void AddTextWidget(EditorUI::TreeEntry& entry);
-		void DeleteWindow(EditorUI::TreeEntry& entry);
-		void DeleteWidget(EditorUI::TreeEntry& entry);
 		void SelectWindow(EditorUI::TreeEntry& entry);
+		void DeleteWindow(EditorUI::TreeEntry& entry);
+
+		//=========================
+		// Change Window Data
+		//=========================
+		// Modify tag
+		void OnModifyWindowTag(EditorUI::EditTextSpec& spec);
+		// Modify default widget
+		void OnModifyWindowDefaultWidget(const EditorUI::OptionEntry& entry);
+		void OnOpenWindowDefaultWidgetPopup();
+		// Modify if window is displayed
+		void OnModifyWindowDisplay(EditorUI::CheckboxSpec& spec);
+		// Modify window location
+		void OnModifyWindowLocation(EditorUI::EditVec3Spec& spec);
+		// Modify window size
+		void OnModifyWindowSize(EditorUI::EditVec2Spec& spec);
+		// Modify window background color
+		void OnModifyWindowBackgroundColor(EditorUI::EditVec4Spec& spec);
+
+		//=========================
+		// Manage Widgets
+		//=========================
+		void AddTextWidget(EditorUI::TreeEntry& entry);
+		void SelectTextWidget(EditorUI::TreeEntry& entry);
+		void DeleteWidget(EditorUI::TreeEntry& entry);
 	public:
 		//=========================
 		// Core Panel Data

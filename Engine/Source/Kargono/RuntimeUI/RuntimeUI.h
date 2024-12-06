@@ -129,7 +129,7 @@ namespace Kargono::RuntimeUI
 		// Public Fields
 		//============================
 		std::string m_Text{ "New Text Widget" };
-		float m_TextSize{ 0.12f };
+		float m_TextSize{ 0.3f };
 		Math::vec4 m_TextColor{1.0f};
 		bool m_TextCentered = true;
 	private:
@@ -258,8 +258,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		std::string m_Tag{ "None" };
 		Math::vec3 m_ScreenPosition{};
-		Math::vec2 m_Size{};
-		Math::vec4 m_BackgroundColor{ 1.0f };
+		Math::vec2 m_Size{1.0f, 1.0f};
+		Math::vec4 m_BackgroundColor{ 0.3f };
 		std::size_t m_ParentIndex{ k_InvalidWidgetIndex };
 		std::size_t m_ChildBufferIndex{ k_InvalidWidgetIndex };
 		std::size_t m_ChildBufferSize{ 0 };
@@ -271,7 +271,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Internal Fields
 		//============================
-		bool m_WindowDisplayed{ false };
+		bool m_WindowDisplayed{ true };
 	};
 
 	//============================
