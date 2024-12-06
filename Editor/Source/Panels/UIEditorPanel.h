@@ -61,8 +61,9 @@ namespace Kargono::Panels
 		// Manage Panel State
 		//=========================
 		void RecalculateTreeIndexData();
-		void OnRefreshData();
 		void ClearPropertiesPanelData();
+		void OnRefreshData();
+		void OnRefreshUITree();
 
 		//=========================
 		// On Action Functions
@@ -107,6 +108,35 @@ namespace Kargono::Panels
 		void AddTextWidget(EditorUI::TreeEntry& entry);
 		void SelectTextWidget(EditorUI::TreeEntry& entry);
 		void DeleteWidget(EditorUI::TreeEntry& entry);
+
+		//=========================
+		// Change Widget Base Data
+		//=========================
+		// Modify widget tag
+		void OnModifyWidgetTag(EditorUI::EditTextSpec& spec);
+		// Modify widget location
+		void OnModifyWidgetLocation(EditorUI::EditVec2Spec& spec);
+		// Modify widget size
+		void OnModifyWidgetSize(EditorUI::EditVec2Spec& spec);
+		// Modify widget background color
+		void OnModifyWidgetBackgroundColor(EditorUI::EditVec4Spec& spec);
+		// Modify widget on press
+		void OnModifyWidgetOnPress(const EditorUI::OptionEntry& entry);
+		void OnOpenWidgetOnPressPopup();
+		void OnOpenTooltipForWidgetOnPress();
+
+		//=========================
+		// Change Text Widget Data
+		//=========================
+		// Modify widget text
+		void OnModifyTextWidgetText(EditorUI::EditTextSpec& spec);
+		// Modify widget text size
+		void OnModifyTextWidgetTextSize(EditorUI::EditFloatSpec& spec);
+		// Modify widget text color
+		void OnModifyTextWidgetTextColor(EditorUI::EditVec4Spec& spec);
+		// Modify if widget text is centered
+		void OnModifyTextWidgetCentered(EditorUI::CheckboxSpec& spec);
+
 	public:
 		//=========================
 		// Core Panel Data

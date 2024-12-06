@@ -75,6 +75,61 @@ namespace Kargono::Panels
 		m_UITree.m_OnRefresh();
 	}
 
+	void UIEditorPanel::OnRefreshUITree()
+	{
+		// Ensure the editor UI is valid
+		if (!m_EditorUI)
+		{
+			KG_WARN("Attempt to load table without valid m_EditorUI");
+			return;
+		}
+
+		// Clear the tree before adding new entries
+		m_UITree.ClearTree();
+
+		// Add all windows and widgets from the editor UI to the tree
+		std::size_t windowIterator{ 0 };
+		for (RuntimeUI::Window& window : m_EditorUI->m_Windows)
+		{
+			// Create new window entry
+			EditorUI::TreeEntry newEntry{};
+			newEntry.m_Label = window.m_Tag;
+			newEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;
+			newEntry.m_Handle = windowIterator;
+
+			// Add functions to call when interacting with window entry
+			newEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWindow);
+			newEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
+			newEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
+
+			// Add widgets to window entry
+			std::size_t widgetIterator{ 0 };
+			for (Ref<RuntimeUI::Widget> widget : window.m_Widgets)
+			{
+				// TODO: Note this only creates text widgets for now
+
+				// Create new widget entry
+				EditorUI::TreeEntry newWidgetEntry{};
+				newWidgetEntry.m_Label = widget->m_Tag;
+				newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
+				newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)windowIterator);
+				newWidgetEntry.m_Handle = widgetIterator;
+
+				// Add functions to call when interacting with widget entry
+				newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectTextWidget);
+				newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
+
+				// Add widget entry to window entry
+				newEntry.m_SubEntries.push_back(newWidgetEntry);
+				widgetIterator++;
+			}
+
+			// Add window entry to the user interface tree
+			m_UITree.InsertEntry(newEntry);
+			windowIterator++;
+		}
+	}
+
 	void UIEditorPanel::ClearPropertiesPanelData()
 	{
 		m_ActiveWidget = nullptr;
@@ -89,10 +144,14 @@ namespace Kargono::Panels
 		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(UIEditorPanel::OnKeyPressedEditor));
 
-		// Initialize all panel widget resources
+		// Initialize null state widget data
 		InitializeOpeningScreen();
+
+		// Initialize main editor panel resources
 		InitializeUIHeader();
 		InitializeMainContent();
+
+		// Initialize properties panel widget resources
 		InitializeWindowOptions();
 		InitializeWidgetOptions();
 	}
@@ -487,23 +546,20 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Text("Are you sure you want to delete this user interface object?");
 		};
 
+		// Intialize widget data for closing the user interface warning popup
 		m_CloseUIWarning.m_Label = "Close User Interface";
 		m_CloseUIWarning.m_ConfirmAction = [&]()
 		{
-			m_EditorUIHandle = 0;
-			m_EditorUI = nullptr;
+			ResetPanelResources();
 			RuntimeUI::RuntimeUIService::ClearActiveUI();
-			m_ActiveWindow = nullptr;
-			m_ActiveWidget = nullptr;
-			m_CurrentDisplay = UIPropertiesDisplay::None;
 		};
 		m_CloseUIWarning.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::Text("Are you sure you want to close this user interface object without saving?");
 		};
 
+		// Set up main header for user interface editor panel
 		m_MainHeader.AddToSelectionList("Add Window", KG_BIND_CLASS_FN(AddWindow));
-
 		m_MainHeader.AddToSelectionList("Save", [&]()
 		{
 			Assets::AssetService::SaveUserInterface(m_EditorUIHandle, m_EditorUI);
@@ -530,53 +586,7 @@ namespace Kargono::Panels
 	void UIEditorPanel::InitializeMainContent()
 	{
 		m_UITree.m_Label = "User Interface Tree";
-		m_UITree.m_OnRefresh = [&]()
-		{
-			// Ensure the editor UI is valid
-			if (!m_EditorUI)
-			{
-				KG_WARN("Attempt to load table without valid m_EditorUI");
-				return;
-			}
-
-			// Clear the tree before adding new entries
-			m_UITree.ClearTree();
-
-			// Add all windows and widgets from the editor UI to the tree
-			uint32_t iteratorOne{ 0 };
-			for (RuntimeUI::Window& window : m_EditorUI->m_Windows)
-			{
-				// Create new window entry
-				EditorUI::TreeEntry newEntry {};
-				newEntry.m_Label = window.m_Tag;
-				newEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;
-				newEntry.m_Handle = iteratorOne;
-
-				// Add functions to call when interacting with window entry
-				newEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWindow);
-				newEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
-				newEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
-
-				// Add widgets to window entry
-				uint32_t iteratorTwo{ 0 };
-				for (Ref<RuntimeUI::Widget> widget : window.m_Widgets)
-				{
-					EditorUI::TreeEntry newWidgetEntry {};
-					newWidgetEntry.m_Label = widget->m_Tag;
-					newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
-					newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>(iteratorOne);
-					newWidgetEntry.m_Handle = iteratorTwo;
-					newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectTextWidget);
-					newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
-					newEntry.m_SubEntries.push_back(newWidgetEntry);
-					iteratorTwo++;
-				}
-
-				// Add window entry to the user interface tree
-				m_UITree.InsertEntry(newEntry);
-				iteratorOne++;
-			}
-		};
+		m_UITree.m_OnRefresh = KG_BIND_CLASS_FN(OnRefreshUITree);
 	}
 	void UIEditorPanel::InitializeWindowOptions()
 	{
@@ -618,240 +628,57 @@ namespace Kargono::Panels
 	}
 	void UIEditorPanel::InitializeWidgetOptions()
 	{
+		// Set up header for widget options
 		m_WidgetHeader.m_Label = "Widget Options";
 		m_WidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
 		m_WidgetHeader.m_Expanded = true;
 
+		// Set up widget to modify the widget's tag
 		m_WidgetTag.m_Label = "Tag";
 		m_WidgetTag.m_Flags |= EditorUI::EditText_Indented;
-		m_WidgetTag.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
-		{
-			if (!m_ActiveWidget)
-			{
-				KG_WARN("No valid widget active when trying to update widget tag");
-				return;
-			}
-			if (!m_UITree.m_SelectedEntry)
-			{
-				KG_WARN("No valid selected widget path available in m_UITree when trying to update widget tag");
-				return;
-			}
+		m_WidgetTag.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetTag);
 
-			EditorUI::TreeEntry* entry = m_UITree.GetEntryFromPath(m_UITree.m_SelectedEntry);
-			if (!entry)
-			{
-				KG_WARN("No valid selected widget active in m_UITree when trying to update widget tag");
-				return;
-			}
-
-			entry->m_Label = m_WidgetTag.m_CurrentOption;
-			m_ActiveWidget->m_Tag = m_WidgetTag.m_CurrentOption;
-			
-			m_MainHeader.m_EditColorActive = true;
-		};
-
+		// Set up widget to modify the widget's location relative to its window
 		m_WidgetLocation.m_Label = "Window Location";
 		m_WidgetLocation.m_Flags |= EditorUI::EditVec2_Indented;
-		m_WidgetLocation.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
-		{
-			if (!m_ActiveWindow)
-			{
-				KG_WARN("No valid widget active when trying to update widget's window location");
-				return;
-			}
+		m_WidgetLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetLocation);
 
-			m_ActiveWidget->m_WindowPosition = m_WidgetLocation.m_CurrentVec2;
-			m_MainHeader.m_EditColorActive = true;
-		};
-
+		// Set up widget to modify the widget's size
 		m_WidgetSize.m_Label = "Size";
 		m_WidgetSize.m_Flags |= EditorUI::EditVec2_Indented;
-		m_WidgetSize.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
-		{
-			if (!m_ActiveWindow)
-			{
-				KG_WARN("No valid widget active when trying to update widget size");
-				return;
-			}
+		m_WidgetSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetSize);
 
-			m_ActiveWidget->m_Size = m_WidgetSize.m_CurrentVec2;
-			m_MainHeader.m_EditColorActive = true;
-		};
-
+		// Set up widget to modify the widget's background color
 		m_WidgetBackgroundColor.m_Label = "Background Color";
 		m_WidgetBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
-		m_WidgetBackgroundColor.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
-		{
-			if (!m_ActiveWindow)
-			{
-				KG_WARN("No valid widget active when trying to update widget background color");
-				return;
-			}
+		m_WidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetBackgroundColor);
 
-			m_ActiveWidget->m_DefaultBackgroundColor = m_WidgetBackgroundColor.m_CurrentVec4;
-			m_ActiveWidget->m_ActiveBackgroundColor = m_WidgetBackgroundColor.m_CurrentVec4;
-			m_MainHeader.m_EditColorActive = true;
-		};
-
+		// Set up widget to modify the text widget's on press script
 		m_WidgetOnPress.m_Label = "On Press";
 		m_WidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
-		m_WidgetOnPress.m_PopupAction = [&]()
-		{
-			m_WidgetOnPress.ClearOptions();
-			m_WidgetOnPress.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		m_WidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenWidgetOnPressPopup);
+		m_WidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetOnPress);
+		m_WidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForWidgetOnPress);
 
-			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
-			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
-				if (script->m_FuncType != WrappedFuncType::Void_None)
-				{
-					continue;
-				}
-				m_WidgetOnPress.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
-			}
-		};
-
-		m_WidgetOnPress.m_ConfirmAction = [&](const EditorUI::OptionEntry& entry)
-		{
-
-			if (entry.m_Handle == Assets::EmptyHandle)
-			{
-				m_ActiveWidget->m_FunctionPointers.m_OnPress = nullptr;
-				m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
-				return;
-			}
-
-			m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = entry.m_Handle;
-			m_ActiveWidget->m_FunctionPointers.m_OnPress = Assets::AssetService::GetScript(entry.m_Handle);
-			m_MainHeader.m_EditColorActive = true;
-		};
-
-		m_WidgetOnPress.m_OnEdit = [&]()
-		{
-			// Initialize tooltip with options
-			m_SelectScriptTooltip.ClearEntries();
-			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
-			{
-				m_WidgetOnPress.m_OpenPopup = true;
-			} };
-			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
-
-			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
-			{
-					// Open create script dialog in script editor
-					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
-					{
-							// Ensure handle provides a script in the registry
-							if (!Assets::AssetService::HasScript(scriptHandle))
-							{
-								KG_WARN("Could not find script");
-								return;
-							}
-
-							// Ensure function type matches definition
-							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-							if (script->m_FuncType != WrappedFuncType::Void_None)
-							{
-								KG_WARN("Incorrect function type returned when linking script to usage point");
-								return;
-							}
-
-							// Fill the new script handle
-							m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = scriptHandle;
-							m_ActiveWidget->m_FunctionPointers.m_OnPress = script;
-							m_MainHeader.m_EditColorActive = true;
-							m_WidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
-						}, {});
-					}};
-			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
-
-			// Open tooltip
-			m_SelectScriptTooltip.m_TooltipActive = true;
-		};
-
+		// Set up widget to modify the text widget's text
 		m_WidgetText.m_Label = "Text";
 		m_WidgetText.m_Flags |= EditorUI::EditText_Indented;
-		m_WidgetText.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
-		{
-			if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
-			{
-				KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
-				return;
-			}
-			RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+		m_WidgetText.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetText);
 
-			if (!m_ActiveWindow)
-			{
-				KG_WARN("No valid widget active when trying to update widget text");
-				return;
-			}
-
-			textWidget.m_Text = m_WidgetText.m_CurrentOption;
-			m_MainHeader.m_EditColorActive = true;
-		};
-
+		// Set up widget to modify the text widget's text size
 		m_WidgetTextSize.m_Label = "Text Size";
 		m_WidgetTextSize.m_Flags |= EditorUI::EditFloat_Indented;
-		m_WidgetTextSize.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
-		{
-			if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
-			{
-				KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
-				return;
-			}
-			RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+		m_WidgetTextSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetTextSize);
 
-			if (!m_ActiveWindow)
-			{
-				KG_WARN("No valid widget active when trying to update widget text size");
-				return;
-			}
-
-			textWidget.m_TextSize = m_WidgetTextSize.m_CurrentFloat;
-			m_MainHeader.m_EditColorActive = true;
-		};
-
+		// Set up widget to modify the text widget's text color
 		m_WidgetTextColor.m_Label = "Text Color";
 		m_WidgetTextColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
-		m_WidgetTextColor.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
-		{
-			if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
-			{
-				KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
-				return;
-			}
-			RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+		m_WidgetTextColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetTextColor);
 
-			if (!m_ActiveWindow)
-			{
-				KG_WARN("No valid widget active when trying to update widget text color");
-				return;
-			}
-
-			textWidget.m_TextColor = m_WidgetTextColor.m_CurrentVec4;
-			m_MainHeader.m_EditColorActive = true;
-		};
-
+		// Set up widget to modify the text widget's text alignment
 		m_WidgetCentered.m_Label = "Centered";
 		m_WidgetCentered.m_Flags |= EditorUI::Checkbox_Indented;
-		m_WidgetCentered.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
-		{
-			if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
-			{
-				KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
-				return;
-			}
-			RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
-
-			if (!m_ActiveWindow)
-			{
-				KG_WARN("No valid widget active when trying to update widget's TextCentered field");
-				return;
-			}
-
-			textWidget.m_TextCentered = spec.m_CurrentBoolean;
-			m_MainHeader.m_EditColorActive = true;
-		};
+		m_WidgetCentered.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetCentered);
 	}
 
 	void UIEditorPanel::AddTextWidget(EditorUI::TreeEntry& windowEntry)
@@ -1093,6 +920,296 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		m_MainHeader.m_EditColorActive = true;
 
+	}
+
+	void UIEditorPanel::OnModifyWidgetTag(EditorUI::EditTextSpec& spec)
+	{
+		// Ensure active widget is valid and update the widget tag
+		if (!m_ActiveWidget)
+		{
+			KG_WARN("No valid widget active when trying to update widget tag");
+			return;
+		}
+		if (!m_UITree.m_SelectedEntry)
+		{
+			KG_WARN("No valid selected widget path available in m_UITree when trying to update widget tag");
+			return;
+		}
+
+		// Get the selected widget entry and ensure it is valid
+		EditorUI::TreeEntry* entry = m_UITree.GetEntryFromPath(m_UITree.m_SelectedEntry);
+		if (!entry)
+		{
+			KG_WARN("No valid selected widget active in m_UITree when trying to update widget tag");
+			return;
+		}
+		// Update the widget tag and tree entry label
+		entry->m_Label = m_WidgetTag.m_CurrentOption;
+		m_ActiveWidget->m_Tag = m_WidgetTag.m_CurrentOption;
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPanel::OnModifyWidgetLocation(EditorUI::EditVec2Spec& spec)
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget's window location");
+			return;
+		}
+
+		// Update the widget location based on the editorUI widget value
+		m_ActiveWidget->m_WindowPosition = m_WidgetLocation.m_CurrentVec2;
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPanel::OnModifyWidgetSize(EditorUI::EditVec2Spec& spec)
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget size");
+			return;
+		}
+
+		// Update the widget size based on the editorUI widget value
+		m_ActiveWidget->m_Size = m_WidgetSize.m_CurrentVec2;
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPanel::OnModifyWidgetBackgroundColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget background color");
+			return;
+		}
+
+		// Update the widget background color based on the editorUI widget value
+		m_ActiveWidget->m_DefaultBackgroundColor = m_WidgetBackgroundColor.m_CurrentVec4;
+		m_ActiveWidget->m_ActiveBackgroundColor = m_WidgetBackgroundColor.m_CurrentVec4;
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPanel::OnModifyWidgetOnPress(const EditorUI::OptionEntry& entry)
+	{
+		// Clear the on press script if the provided handle is empty
+		if (entry.m_Handle == Assets::EmptyHandle)
+		{
+			m_ActiveWidget->m_FunctionPointers.m_OnPress = nullptr;
+			m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
+			return;
+		}
+
+		// Set the on press script for the text widget
+		m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = entry.m_Handle;
+		m_ActiveWidget->m_FunctionPointers.m_OnPress = Assets::AssetService::GetScript(entry.m_Handle);
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPanel::OnOpenWidgetOnPressPopup()
+	{
+		// Clear existing options
+		m_WidgetOnPress.ClearOptions();
+		m_WidgetOnPress.AddToOptions("Clear", "None", Assets::EmptyHandle);
+
+		// Add all compatible scripts to the select options
+		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
+		{
+			// Get script from handle
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+
+			// Ensure script is compatible with the text widget
+			if (script->m_FuncType != WrappedFuncType::Void_None)
+			{
+				continue;
+			}
+
+			// Add script to the select options
+			m_WidgetOnPress.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+		}
+	}
+
+	void UIEditorPanel::OnOpenTooltipForWidgetOnPress()
+	{
+		// Clear existing options
+		m_SelectScriptTooltip.ClearEntries();
+
+		// Add option to opening an existing script
+		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			m_WidgetOnPress.m_OpenPopup = true;
+		} };
+		m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+		// Add option or creating a new script from this usage point
+		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			// Open create script dialog in script editor
+			s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+			{
+					// Ensure handle provides a script in the registry
+					if (!Assets::AssetService::HasScript(scriptHandle))
+					{
+						KG_WARN("Could not find script");
+						return;
+					}
+
+					// Ensure function type matches definition
+					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+					if (script->m_FuncType != WrappedFuncType::Void_None)
+					{
+						KG_WARN("Incorrect function type returned when linking script to usage point");
+						return;
+					}
+
+					// Fill the new script handle
+					m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = scriptHandle;
+					m_ActiveWidget->m_FunctionPointers.m_OnPress = script;
+					m_WidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+
+					// Set the active editor UI as edited
+					m_MainHeader.m_EditColorActive = true;
+				}, {});
+		}   };
+		m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+		// Open tooltip
+		m_SelectScriptTooltip.m_TooltipActive = true;
+	}
+
+	void UIEditorPanel::OnModifyTextWidgetText(EditorUI::EditTextSpec& spec)
+	{
+		// Ensure active window is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget text");
+			return;
+		}
+
+		// Ensure active widget is a valid type
+		if (!m_ActiveWidget)
+		{
+			KG_WARN("No valid widget active when trying to update widget text");
+			return;
+		}
+
+		// Ensure active widget is a valid type and get the text widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
+		{
+			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+
+		// Update the text widget text based on the editorUI widget's value
+		textWidget.m_Text = m_WidgetText.m_CurrentOption;
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPanel::OnModifyTextWidgetTextSize(EditorUI::EditFloatSpec& spec)
+	{
+		// Ensure active window is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget text size");
+			return;
+		}
+
+		// Ensure active widget is a valid type
+		if (!m_ActiveWidget)
+		{
+			KG_WARN("No valid widget active when trying to update widget text size");
+			return;
+		}
+
+		// Ensure active widget is a valid type and get the text widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
+		{
+			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+
+		// Update the text widget text size based on the editorUI widget's value
+		textWidget.m_TextSize = m_WidgetTextSize.m_CurrentFloat;
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPanel::OnModifyTextWidgetTextColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Ensure active window is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget text color");
+			return;
+		}
+
+		if (!m_ActiveWidget)
+		{
+			KG_WARN("No valid widget active when trying to update widget text color");
+			return;
+		}
+
+		// Ensure active widget is a valid type and get the text widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
+		{
+			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+
+		// Update the text widget text color based on the editorUI widget's value
+		textWidget.m_TextColor = m_WidgetTextColor.m_CurrentVec4;
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPanel::OnModifyTextWidgetCentered(EditorUI::CheckboxSpec& spec)
+	{
+		// Ensure active window is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget's TextCentered field");
+			return;
+		}
+
+		// Ensure active widget is a valid type
+		if (!m_ActiveWidget)
+		{
+			KG_WARN("No valid widget active when trying to update widget's TextCentered field");
+			return;
+		}
+
+		// Ensure active widget is a valid type and get the text widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
+		{
+			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+
+		// Update the text widget text alignment based on the editorUI widget's value
+		textWidget.m_TextCentered = spec.m_CurrentBoolean;
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPanel::SelectWindow(EditorUI::TreeEntry& entry)

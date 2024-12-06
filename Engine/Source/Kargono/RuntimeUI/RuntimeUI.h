@@ -271,7 +271,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Internal Fields
 		//============================
-		bool m_WindowDisplayed{ true };
+		bool m_WindowDisplayed{ false };
 	};
 
 	//============================
