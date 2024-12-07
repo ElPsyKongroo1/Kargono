@@ -1,7 +1,7 @@
 #pragma once
 #include "Kargono.h"
 
-#include "Windows/UserInterface/UIEditorPanel.h"
+#include "Windows/UserInterface/UIEditorWindow.h"
 #include "Windows/MainWindow/MainWindow.h"
 
 #include <filesystem>
@@ -13,6 +13,14 @@
 
 namespace Kargono
 {
+
+	enum class ActiveEditorUIWindow
+	{
+		None = 0,
+		MainWindow,
+		UIEditorWindow
+	};
+
 	//============================================================
 	// Editor App Class
 	//============================================================
@@ -58,6 +66,8 @@ namespace Kargono
 		// Getters/Setters
 		//=========================
 		static EditorApp* GetCurrentApp() { return s_EditorApp; }
+		ActiveEditorUIWindow GetActiveEditorWindow() const { return m_ActiveEditorWindow; }
+		void SetActiveEditorWindow(ActiveEditorUIWindow window) { m_ActiveEditorWindow = window; }
 	public:
 		//=========================
 		// Scene/Project Management
@@ -75,6 +85,7 @@ namespace Kargono
 		//=========================
 		// Windows
 		Scope<Windows::MainWindow> m_MainWindow;
+		Scope<Windows::UIEditorWindow> m_UIEditorWindow;
 
 	private:
 		//=========================
@@ -82,6 +93,7 @@ namespace Kargono
 		//=========================
 		// EditorApp Singleton
 		static inline EditorApp* s_EditorApp{ nullptr };
+		ActiveEditorUIWindow m_ActiveEditorWindow{ ActiveEditorUIWindow::None };
 		// Initialization Fields
 		std::filesystem::path m_InitProjectPath {};
 

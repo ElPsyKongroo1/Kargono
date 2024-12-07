@@ -196,7 +196,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry openUserInterfaceTooltipEntry{ "Open User Interface", [&](EditorUI::TooltipEntry& currentEntry)
 			{
-				s_MainWindow->m_UIEditorPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+				s_EditorApp->m_UIEditorWindow->OpenAssetInEditor(m_CurrentFileToModifyCache);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openUserInterfaceTooltipEntry);
 		}
@@ -993,7 +993,7 @@ namespace Kargono::Panels
 			EditorUI::TooltipEntry createUserInterfaceTooltipEntry{ "User Interface", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				// TODO: Add code to add User Interface
-				s_MainWindow->m_UIEditorPanel->OpenCreateDialog(m_CurrentDirectory);
+				s_EditorApp->m_UIEditorWindow->OpenCreateDialog(m_CurrentDirectory);
 			} };
 			createFileOptions.push_back(createUserInterfaceTooltipEntry);
 

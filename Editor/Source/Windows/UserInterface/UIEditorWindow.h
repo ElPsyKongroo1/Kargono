@@ -8,7 +8,7 @@
 
 namespace Kargono { class EditorApp; }
 
-namespace Kargono::Panels
+namespace Kargono::Windows
 {
 	//=========================
 	// UI Properties Display Enum
@@ -23,13 +23,18 @@ namespace Kargono::Panels
 	//=========================
 	// UI Editor Panel Class
 	//=========================
-	class UIEditorPanel
+	class UIEditorWindow
 	{
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
-		UIEditorPanel();
+		UIEditorWindow();
+
+		//=========================
+		// Lifecycle Functions
+		//=========================
+		void InitPanels();
 
 	private:
 		//=========================
@@ -45,6 +50,8 @@ namespace Kargono::Panels
 		//=========================
 		// On Event Functions
 		//=========================
+		bool OnInputEvent(Events::Event* event);
+
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 		bool OnAssetEvent(Events::Event* event);

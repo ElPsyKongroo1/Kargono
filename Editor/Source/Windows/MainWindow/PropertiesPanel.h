@@ -19,7 +19,7 @@ namespace Kargono::Panels
 		//=========================
 		void OnEditorUIRender();
 
-	private:
+	public:
 		//=========================
 		// Core Panel Data
 		//=========================
@@ -27,6 +27,6 @@ namespace Kargono::Panels
 		FixedString32 m_PanelName{ "Properties" };
 	private:
 		friend class SceneEditorPanel;
-		friend class UIEditorPanel;
+		friend class UIEditorWindow;
 	};
 }

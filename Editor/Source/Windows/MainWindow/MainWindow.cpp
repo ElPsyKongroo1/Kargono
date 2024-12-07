@@ -106,7 +106,6 @@ namespace Kargono::Windows
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();
 		m_ProjectPanel = CreateScope<Panels::ProjectPanel>();
 		m_ProjectComponentPanel = CreateScope<Panels::ProjectComponentPanel>();
-		m_UIEditorPanel = CreateScope<Panels::UIEditorPanel>();
 		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
@@ -282,7 +281,6 @@ namespace Kargono::Windows
 
 		m_SceneEditorPanel->OnAssetEvent(event);
 		m_AssetViewerPanel->OnAssetEvent(event);
-		m_UIEditorPanel->OnAssetEvent(event);
 		m_AIStatePanel->OnAssetEvent(event);
 		m_InputMapPanel->OnAssetEvent(event);
 		m_ProjectPanel->OnAssetEvent(event);
@@ -358,6 +356,18 @@ namespace Kargono::Windows
 
 			}
 
+			if (ImGui::BeginMenu("Window"))
+			{
+				if (ImGui::MenuItem("User Interface Editor"))
+				{
+					EngineService::SubmitToMainThread([]() 
+					{
+						s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
+					});
+				}
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::BeginMenu("Panels"))
 			{
 				ImGui::MenuItem("Asset Viewer", NULL, &m_ShowAssetViewer);
@@ -366,7 +376,6 @@ namespace Kargono::Windows
 				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
 				ImGui::MenuItem("Properties", NULL, &m_ShowProperties);
 				ImGui::Separator();
-				ImGui::MenuItem("User Interface Editor", NULL, &m_ShowUserInterfaceEditor);
 				ImGui::MenuItem("Input Map Editor", NULL, &m_ShowInputMapEditor);
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
 				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
@@ -450,7 +459,6 @@ namespace Kargono::Windows
 		if (m_ShowLog) { m_LogPanel->OnEditorUIRender(); }
 		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }
 		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
-		if (m_ShowUserInterfaceEditor) { m_UIEditorPanel->OnEditorUIRender(); }
 		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
 		if (m_ShowProjectComponent) { m_ProjectComponentPanel->OnEditorUIRender(); }
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
@@ -728,15 +736,16 @@ namespace Kargono::Windows
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		Audio::AudioService::StopAllAudio();
 
-		// Clear UIObjects during runtime.
-		if (m_UIEditorPanel->m_EditorUI)
-		{
-			RuntimeUI::RuntimeUIService::SetActiveUI(m_UIEditorPanel->m_EditorUI, m_UIEditorPanel->m_EditorUIHandle);
-		}
-		else
-		{
-			RuntimeUI::RuntimeUIService::ClearActiveUI();
-		}
+		// TODO: DEAL WITH THIS
+		//// Clear UIObjects during runtime.
+		//if (m_UIEditorPanel->m_EditorUI)
+		//{
+		//	RuntimeUI::RuntimeUIService::SetActiveUI(m_UIEditorPanel->m_EditorUI, m_UIEditorPanel->m_EditorUIHandle);
+		//}
+		//else
+		//{
+		//	RuntimeUI::RuntimeUIService::ClearActiveUI();
+		//}
 
 		// Clear InputMaps during runtime.
 		if (m_EditorInputMap)

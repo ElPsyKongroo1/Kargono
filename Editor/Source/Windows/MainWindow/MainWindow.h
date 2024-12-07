@@ -22,8 +22,6 @@
 #include "Windows/MainWindow/TextEditorPanel.h"
 #include "Windows/MainWindow/ViewportPanel.h"
 
-#include "Windows/UserInterface/UIEditorPanel.h"
-
 #include <string>
 
 namespace Kargono
@@ -148,7 +146,6 @@ namespace Kargono::Windows
 		Scope<Panels::StatisticsPanel>  m_StatisticsPanel;
 		Scope<Panels::TestingPanel>  m_TestingPanel;
 		Scope<Panels::ViewportPanel>  m_ViewportPanel;
-		Scope<Panels::UIEditorPanel>  m_UIEditorPanel;
 
 	public:
 		//=========================
@@ -208,7 +205,6 @@ namespace Kargono::Windows
 		bool m_ShowProjectComponent = false;
 		bool m_ShowDemoWindow = false;
 		bool m_ShowTesting = false;
-		bool m_ShowUserInterfaceEditor = false;
 		bool m_ShowScriptEditor = false;
 		bool m_ShowTextEditor = false;
 		bool m_ShowGameStateEditor = false;
@@ -241,7 +237,7 @@ namespace Kargono::Windows
 		friend Panels::SceneEditorPanel;
 		friend Panels::TextEditorPanel;
 		friend Panels::TestingPanel;
-		friend Panels::UIEditorPanel;
+		friend Panels::UIEditorWindow;
 		friend Panels::ViewportPanel;
 	};
 }

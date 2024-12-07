@@ -28,6 +28,7 @@ namespace Kargono
 
 		// Create editor app windows
 		m_MainWindow = CreateScope<Windows::MainWindow>();
+		m_ActiveEditorWindow = ActiveEditorUIWindow::MainWindow;
 		
 		// Open project provided by launcher app
 		OpenProject(m_InitProjectPath);
@@ -42,6 +43,8 @@ namespace Kargono
 
 		// Initialize panels
 		m_MainWindow->InitPanels();
+		m_UIEditorWindow = CreateScope<Windows::UIEditorWindow>();
+		m_UIEditorWindow->InitPanels();
 
 		// Open operating system window
 		EngineService::GetActiveWindow().SetVisible(true);
@@ -64,7 +67,19 @@ namespace Kargono
 		m_MainWindow->OnUpdate(ts);
 
 		// Handle rendering editor UI
-		m_MainWindow->OnEditorUIRender();
+		switch (m_ActiveEditorWindow)
+		{
+		case ActiveEditorUIWindow::MainWindow:
+			m_MainWindow->OnEditorUIRender();
+			break;
+		case ActiveEditorUIWindow::UIEditorWindow:
+			m_UIEditorWindow->OnEditorUIRender();
+			break;
+		case ActiveEditorUIWindow::None:
+		default:
+			KG_ERROR("Invalid window type provided to OnUpdate(ts) function");
+			break;
+		}
 	}
 
 	bool EditorApp::OnApplicationEvent(Events::Event* event)
@@ -87,6 +102,19 @@ namespace Kargono
 			return true;
 		}
 		// Handle main window specific input events
+		switch (m_ActiveEditorWindow)
+		{
+		case ActiveEditorUIWindow::MainWindow:
+			return m_MainWindow->OnInputEvent(event);
+		case ActiveEditorUIWindow::UIEditorWindow:
+			return m_UIEditorWindow->OnInputEvent(event);
+		case ActiveEditorUIWindow::None:
+		default:
+			KG_ERROR("Invalid window type provided to OnInputEvent(event) function");
+			break;
+		}
+
+
 		return m_MainWindow->OnInputEvent(event);
 	}
 
@@ -119,8 +147,6 @@ namespace Kargono
 	{
 		return m_MainWindow->OnAssetEvent(event);
 	}
-
-	
 
 	bool EditorApp::OnLogEvent(Events::Event* event)
 	{
