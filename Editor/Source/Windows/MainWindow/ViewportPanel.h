@@ -84,14 +84,14 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		Rendering::EditorCamera m_EditorCamera;
-	private:
 		FixedString32 m_PanelName{ "Viewport" };
+		int m_GizmoType = -1;
+	private:
 		// Viewport resources
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
 		Math::vec2 m_ScreenViewportBounds[2];
-		int m_GizmoType = -1;
 
 		// Draw world axis Data
 		float m_LargeGridSpacing = 100.0f;

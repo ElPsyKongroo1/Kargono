@@ -8,7 +8,7 @@
 
 namespace Kargono { class EditorApp; }
 
-namespace Kargono::Panels
+namespace Kargono::Windows
 {
 	//=========================
 	// UI Properties Display Enum
@@ -23,13 +23,18 @@ namespace Kargono::Panels
 	//=========================
 	// UI Editor Panel Class
 	//=========================
-	class UIEditorPanel
+	class UIEditorWindow
 	{
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
-		UIEditorPanel();
+		UIEditorWindow();
+
+		//=========================
+		// Lifecycle Functions
+		//=========================
+		void InitPanels();
 
 	private:
 		//=========================
@@ -45,6 +50,8 @@ namespace Kargono::Panels
 		//=========================
 		// On Event Functions
 		//=========================
+		bool OnInputEvent(Events::Event* event);
+
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 		bool OnAssetEvent(Events::Event* event);
@@ -58,19 +65,85 @@ namespace Kargono::Panels
 		void ResetPanelResources();
 	private:
 		//=========================
-		// Internal Functionality
+		// Manage Panel State
+		//=========================
+		void RecalculateTreeIndexData();
+		void ClearPropertiesPanelData();
+		void OnRefreshData();
+		void OnRefreshUITree();
+
+		//=========================
+		// On Action Functions
 		//=========================
 		void OnOpenUIDialog();
 		void OnCreateUIDialog();
 		void OnOpenUI(Assets::AssetHandle newHandle);
-		void OnRefreshData();
-		void RecalculateTreeIterators();
+
+		//=========================
+		// Draw Properties Panel Functions
+		//=========================
 		void DrawWindowOptions();
 		void DrawWidgetOptions();
+
+		//=========================
+		// Manage Windows
+		//=========================
 		void AddWindow();
-		void AddTextWidget(EditorUI::TreeEntry& entry);
+		void SelectWindow(EditorUI::TreeEntry& entry);
 		void DeleteWindow(EditorUI::TreeEntry& entry);
+
+		//=========================
+		// Change Window Data
+		//=========================
+		// Modify tag
+		void OnModifyWindowTag(EditorUI::EditTextSpec& spec);
+		// Modify default widget
+		void OnModifyWindowDefaultWidget(const EditorUI::OptionEntry& entry);
+		void OnOpenWindowDefaultWidgetPopup();
+		// Modify if window is displayed
+		void OnModifyWindowDisplay(EditorUI::CheckboxSpec& spec);
+		// Modify window location
+		void OnModifyWindowLocation(EditorUI::EditVec3Spec& spec);
+		// Modify window size
+		void OnModifyWindowSize(EditorUI::EditVec2Spec& spec);
+		// Modify window background color
+		void OnModifyWindowBackgroundColor(EditorUI::EditVec4Spec& spec);
+
+		//=========================
+		// Manage Widgets
+		//=========================
+		void AddTextWidget(EditorUI::TreeEntry& entry);
+		void SelectTextWidget(EditorUI::TreeEntry& entry);
 		void DeleteWidget(EditorUI::TreeEntry& entry);
+
+		//=========================
+		// Change Widget Base Data
+		//=========================
+		// Modify widget tag
+		void OnModifyWidgetTag(EditorUI::EditTextSpec& spec);
+		// Modify widget location
+		void OnModifyWidgetLocation(EditorUI::EditVec2Spec& spec);
+		// Modify widget size
+		void OnModifyWidgetSize(EditorUI::EditVec2Spec& spec);
+		// Modify widget background color
+		void OnModifyWidgetBackgroundColor(EditorUI::EditVec4Spec& spec);
+		// Modify widget on press
+		void OnModifyWidgetOnPress(const EditorUI::OptionEntry& entry);
+		void OnOpenWidgetOnPressPopup();
+		void OnOpenTooltipForWidgetOnPress();
+
+		//=========================
+		// Change Text Widget Data
+		//=========================
+		// Modify widget text
+		void OnModifyTextWidgetText(EditorUI::EditTextSpec& spec);
+		// Modify widget text size
+		void OnModifyTextWidgetTextSize(EditorUI::EditFloatSpec& spec);
+		// Modify widget text color
+		void OnModifyTextWidgetTextColor(EditorUI::EditVec4Spec& spec);
+		// Modify if widget text is centered
+		void OnModifyTextWidgetCentered(EditorUI::CheckboxSpec& spec);
+
 	public:
 		//=========================
 		// Core Panel Data

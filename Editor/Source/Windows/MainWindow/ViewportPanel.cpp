@@ -1,4 +1,4 @@
-#include "Panels/ViewportPanel.h"
+#include "Windows/MainWindow/ViewportPanel.h"
 
 #include "Kargono.h"
 
@@ -6,6 +6,7 @@
 
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
+static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
 namespace Kargono::Panels
 {
@@ -13,7 +14,8 @@ namespace Kargono::Panels
 	ViewportPanel::ViewportPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ViewportPanel::OnKeyPressedEditor));
 	}
 	void ViewportPanel::OnUpdate(Timestep ts)
@@ -39,7 +41,7 @@ namespace Kargono::Panels
 		m_ViewportFramebuffer->ClearAttachment(1, -1);
 		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
 		// Update Scene
-		switch (s_EditorApp->m_SceneState)
+		switch (s_MainWindow->m_SceneState)
 		{
 		case SceneState::Edit:
 		{
@@ -61,7 +63,7 @@ namespace Kargono::Panels
 		}
 		case SceneState::Play:
 		{
-			if (!s_EditorApp->m_IsPaused || s_EditorApp->m_StepFrames-- > 0)
+			if (!s_MainWindow->m_IsPaused || s_MainWindow->m_StepFrames-- > 0)
 			{
 				// Process AI
 				AI::AIService::OnUpdate(ts);
@@ -81,10 +83,10 @@ namespace Kargono::Panels
 
 		OnOverlayRender();
 
-		if (s_EditorApp->m_ShowActiveUserInterface)
+		if (s_MainWindow->m_ShowActiveUserInterface)
 		{
 			auto& currentApplication = EngineService::GetActiveWindow();
-			if (s_EditorApp->m_SceneState == SceneState::Play)
+			if (s_MainWindow->m_SceneState == SceneState::Play)
 			{
 				ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 				if (cameraEntity)
@@ -142,7 +144,7 @@ namespace Kargono::Panels
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGuiWindowFlags window_flags = 0;
 		//window_flags |= ImGuiWindowFlags_NoDecoration;
-		EditorUI::EditorUIService::StartWindow(m_PanelName.CString(), &s_EditorApp->m_ShowViewport, window_flags);
+		EditorUI::EditorUIService::StartWindow(m_PanelName.CString(), &s_MainWindow->m_ShowViewport, window_flags);
 		ImGui::PopStyleVar();
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
@@ -181,8 +183,8 @@ namespace Kargono::Panels
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
 		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ static_cast<float>(currentWindow.GetViewportWidth()), static_cast<float>(currentWindow.GetViewportHeight()) }, ImVec2{ 0, 1 },
 			ImVec2{ 1, 0 });
-		if ((s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate) ||
-			(s_EditorApp->m_SceneState == SceneState::Play && s_EditorApp->m_IsPaused))
+		if ((s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate) ||
+			(s_MainWindow->m_SceneState == SceneState::Play && s_MainWindow->m_IsPaused))
 		{
 			if (ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left) && ImGui::GetIO().WantCaptureMouse)
 			{
@@ -191,8 +193,8 @@ namespace Kargono::Panels
 				{
 					if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
 					{
-						s_EditorApp->m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
-						s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
+						s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
+						s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
 
 						// Algorithm to enable double clicking for an entity!
 						static float previousTime{ 0.0f };
@@ -223,12 +225,12 @@ namespace Kargono::Panels
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_SCENE"))
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
-				s_EditorApp->OpenScene(path);
+				s_MainWindow->OpenScene(path);
 			}
 			ImGui::EndDragDropTarget();
 		}
 
-		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
+		if (s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate)
 		{
 			// Gizmos
 			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -308,10 +310,10 @@ namespace Kargono::Panels
 				ImVec2(initialScreenCursorPos.x + (windowSize.x), initialScreenCursorPos.y + 30.0f),
 				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
 
-			bool hasPlayButton = s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate;
-			bool hasSimulateButton = s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Play;
-			bool hasPauseButton = s_EditorApp->m_SceneState != SceneState::Edit;
-			bool hasStepButton = hasPauseButton && s_EditorApp->m_IsPaused;
+			bool hasPlayButton = s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate;
+			bool hasSimulateButton = s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Play;
+			bool hasPauseButton = s_MainWindow->m_SceneState != SceneState::Edit;
+			bool hasStepButton = hasPauseButton && s_MainWindow->m_IsPaused;
 
 			// Play/Stop Button
 			if (!hasSimulateButton)
@@ -329,13 +331,13 @@ namespace Kargono::Panels
 			{
 				if (hasSimulateButton)
 				{
-					if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
+					if (s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate)
 					{
-						s_EditorApp->OnPlay();
+						s_MainWindow->OnPlay();
 					}
-					else if (s_EditorApp->m_SceneState == SceneState::Play)
+					else if (s_MainWindow->m_SceneState == SceneState::Play)
 					{
-						s_EditorApp->OnStop();
+						s_MainWindow->OnStop();
 					}
 				}
 				
@@ -372,13 +374,13 @@ namespace Kargono::Panels
 			{
 				if (hasPlayButton)
 				{
-					if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Play)
+					if (s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Play)
 					{
-						s_EditorApp->OnSimulate();
+						s_MainWindow->OnSimulate();
 					}
-					else if (s_EditorApp->m_SceneState == SceneState::Simulate)
+					else if (s_MainWindow->m_SceneState == SceneState::Simulate)
 					{
-						s_EditorApp->OnStop();
+						s_MainWindow->OnStop();
 					}
 				}
 			}
@@ -414,7 +416,7 @@ namespace Kargono::Panels
 			{
 				if (hasPauseButton)
 				{
-					s_EditorApp->m_IsPaused = !s_EditorApp->m_IsPaused;
+					s_MainWindow->m_IsPaused = !s_MainWindow->m_IsPaused;
 				}
 			}
 			if (ImGui::IsItemHovered())
@@ -423,7 +425,7 @@ namespace Kargono::Panels
 				if (hasPauseButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, s_EditorApp->m_IsPaused ? "Resume Application" : "Pause Application");
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, s_MainWindow->m_IsPaused ? "Resume Application" : "Pause Application");
 					ImGui::EndTooltip();
 				}
 			}
@@ -448,7 +450,7 @@ namespace Kargono::Panels
 			{
 				if (hasStepButton)
 				{
-					s_EditorApp->Step(1);
+					s_MainWindow->Step(1);
 				}
 			}
 			if (ImGui::IsItemHovered())
@@ -504,7 +506,7 @@ namespace Kargono::Panels
 			ImGui::SetNextItemWidth(30.0f);
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 138, initialCursorPos.y + 6));
 			ImGui::DragFloat("##CameraSpeed", &m_EditorCamera.GetMovementSpeed(), 0.5f,
-				s_EditorApp->m_ViewportPanel->m_EditorCamera.GetMinMovementSpeed(), m_EditorCamera.GetMaxMovementSpeed(),
+				s_MainWindow->m_ViewportPanel->m_EditorCamera.GetMinMovementSpeed(), m_EditorCamera.GetMaxMovementSpeed(),
 				"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
 			if (ImGui::IsItemHovered())
 			{
@@ -535,21 +537,21 @@ namespace Kargono::Panels
 
 			if (ImGui::BeginPopup("Toggle Display Options"))
 			{
-				if (ImGui::MenuItem("Display Physics Colliders", 0, s_EditorApp->m_ShowPhysicsColliders))
+				if (ImGui::MenuItem("Display Physics Colliders", 0, s_MainWindow->m_ShowPhysicsColliders))
 				{
-					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowPhysicsColliders);
+					Utility::Operations::ToggleBoolean(s_MainWindow->m_ShowPhysicsColliders);
 				}
-				if (ImGui::MenuItem("Display Camera Frustums", 0, s_EditorApp->m_ShowCameraFrustums))
+				if (ImGui::MenuItem("Display Camera Frustums", 0, s_MainWindow->m_ShowCameraFrustums))
 				{
-					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowCameraFrustums);
+					Utility::Operations::ToggleBoolean(s_MainWindow->m_ShowCameraFrustums);
 				}
-				if (ImGui::MenuItem("Display Runtime UI", 0, s_EditorApp->m_ShowActiveUserInterface))
+				if (ImGui::MenuItem("Display Runtime UI", 0, s_MainWindow->m_ShowActiveUserInterface))
 				{
-					Utility::Operations::ToggleBoolean(s_EditorApp->m_ShowActiveUserInterface);
+					Utility::Operations::ToggleBoolean(s_MainWindow->m_ShowActiveUserInterface);
 				}
-				if (ImGui::MenuItem("Fullscreen While Running", 0, s_EditorApp->m_RuntimeFullscreen))
+				if (ImGui::MenuItem("Fullscreen While Running", 0, s_MainWindow->m_RuntimeFullscreen))
 				{
-					Utility::Operations::ToggleBoolean(s_EditorApp->m_RuntimeFullscreen);
+					Utility::Operations::ToggleBoolean(s_MainWindow->m_RuntimeFullscreen);
 				}
 				ImGui::EndPopup();
 			}
@@ -695,7 +697,7 @@ namespace Kargono::Panels
 	}
 	void ViewportPanel::OnInputEvent(Events::Event* event)
 	{
-		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate)
+		if (s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate)
 		{
 			m_EditorCamera.OnInputEvent(event);
 		}
@@ -741,13 +743,13 @@ namespace Kargono::Panels
 		{
 			case Key::Escape:
 			{
-				s_EditorApp->m_SceneEditorPanel->SetSelectedEntity({});
-				s_EditorApp->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
+				s_MainWindow->m_SceneEditorPanel->SetSelectedEntity({});
+				s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
 				return true;
 			}
 			case Key::Tab:
 			{
-				s_EditorApp->m_ViewportPanel->m_EditorCamera.ToggleMovementType();
+				s_MainWindow->m_ViewportPanel->m_EditorCamera.ToggleMovementType();
 				return true;
 			}
 
@@ -756,7 +758,7 @@ namespace Kargono::Panels
 			{
 				if (!ImGuizmo::IsUsing() && !alt)
 				{
-					s_EditorApp->m_ViewportPanel->m_GizmoType = -1;
+					s_MainWindow->m_ViewportPanel->m_GizmoType = -1;
 					return true;
 				}
 				return false;
@@ -765,7 +767,7 @@ namespace Kargono::Panels
 			{
 				if (!ImGuizmo::IsUsing() && !alt)
 				{
-					s_EditorApp->m_ViewportPanel->m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+					s_MainWindow->m_ViewportPanel->m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 					return true;
 				}
 				return false;
@@ -774,7 +776,7 @@ namespace Kargono::Panels
 			{
 				if (!ImGuizmo::IsUsing() && !alt)
 				{
-					s_EditorApp->m_ViewportPanel->m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+					s_MainWindow->m_ViewportPanel->m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 					return true;
 				}
 				return false;
@@ -829,9 +831,8 @@ namespace Kargono::Panels
 
 	void ViewportPanel::OnUpdateSimulation(Timestep ts, Rendering::EditorCamera& camera)
 	{
-		EditorApp* editorLayer = EditorApp::GetCurrentApp();
 
-		if (!editorLayer->m_IsPaused || editorLayer->m_StepFrames-- > 0)
+		if (!s_MainWindow->m_IsPaused || s_MainWindow->m_StepFrames-- > 0)
 		{
 			Physics::Physics2DService::OnUpdate(ts); 
 		}
@@ -973,7 +974,7 @@ namespace Kargono::Panels
 
 	void ViewportPanel::OnOverlayRender()
 	{
-		if (s_EditorApp->m_SceneState == SceneState::Play)
+		if (s_MainWindow->m_SceneState == SceneState::Play)
 		{
 			ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 			if (!cameraEntity)
@@ -987,7 +988,7 @@ namespace Kargono::Panels
 			Rendering::RenderingService::BeginScene(m_EditorCamera);
 		}
 
-		if (s_EditorApp->m_ShowPhysicsColliders)
+		if (s_MainWindow->m_ShowPhysicsColliders)
 		{
 			// Circle Colliders
 			{
@@ -1053,7 +1054,7 @@ namespace Kargono::Panels
 			}
 		}
 
-		if (s_EditorApp->m_SceneState == SceneState::Edit || s_EditorApp->m_SceneState == SceneState::Simulate || (s_EditorApp->m_SceneState == SceneState::Play && s_EditorApp->m_IsPaused))
+		if (s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate || (s_MainWindow->m_SceneState == SceneState::Play && s_MainWindow->m_IsPaused))
 		{
 			// Draw selected entity outline 
 			if (ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity()) {
@@ -1078,7 +1079,7 @@ namespace Kargono::Panels
 					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				}
 
-				if (selectedEntity.HasComponent<ECS::CameraComponent>() && s_EditorApp->m_ShowCameraFrustums)
+				if (selectedEntity.HasComponent<ECS::CameraComponent>() && s_MainWindow->m_ShowCameraFrustums)
 				{
 					DrawFrustrum(selectedEntity);
 				}

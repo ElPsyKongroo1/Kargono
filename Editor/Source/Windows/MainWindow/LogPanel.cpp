@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Panels/LogPanel.h"
+#include "Windows/MainWindow/LogPanel.h"
 
 #include "EditorApp.h"
 #include "Kargono.h"
@@ -11,6 +11,7 @@
 //----------------------------------------------//
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
+static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
 namespace Kargono::Panels
 {
@@ -107,7 +108,8 @@ namespace Kargono::Panels
 		: m_Log({})
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(LogPanel::OnKeyPressedEditor));
 		LoadBuffer();
 	}
@@ -119,7 +121,7 @@ namespace Kargono::Panels
 		// For the demo: add a debug button _BEFORE_ the normal log window contents
 		// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
 		// Most of the contents of the window will be added by the log.Draw() call.
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowLog);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowLog);
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{

@@ -1,17 +1,19 @@
-#include "Panels/ProjectComponentPanel.h"
+#include "Windows/MainWindow/ProjectComponentPanel.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 
 #include "EditorApp.h"
 #include "Kargono.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
+static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
 namespace Kargono::Panels
 {
 	ProjectComponentPanel::ProjectComponentPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ProjectComponentPanel::OnKeyPressedEditor));
 		InitializeOpeningPanel();
 		InitializeComponentFieldsSection();
@@ -19,7 +21,7 @@ namespace Kargono::Panels
 	void ProjectComponentPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowProjectComponent);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowProjectComponent);
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
@@ -357,7 +359,7 @@ namespace Kargono::Panels
 	void ProjectComponentPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// Open project component Window
-		s_EditorApp->m_ShowProjectComponent = true;
+		s_MainWindow->m_ShowProjectComponent = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 
@@ -370,7 +372,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Add warning to close active project component before creating a new project component
-			s_EditorApp->OpenWarningMessage("A project component is already active inside the editor. Please close the current project component before creating a new one.");
+			s_MainWindow->OpenWarningMessage("A project component is already active inside the editor. Please close the current project component before creating a new one.");
 		}
 	}
 	void ProjectComponentPanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
@@ -395,7 +397,7 @@ namespace Kargono::Panels
 		}
 
 		// Open the editor panel to be visible
-		s_EditorApp->m_ShowProjectComponent = true;
+		s_MainWindow->m_ShowProjectComponent = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 
@@ -413,7 +415,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Add warning to close active AI state before opening a new AIState
-			s_EditorApp->OpenWarningMessage("An project component is already active inside the editor. Please close the current project component before opening a new one.");
+			s_MainWindow->OpenWarningMessage("An project component is already active inside the editor. Please close the current project component before opening a new one.");
 		}
 	}
 	void ProjectComponentPanel::OpenComponentDialog()

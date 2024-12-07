@@ -1,9 +1,10 @@
-#include "Panels/InputMapPanel.h"
+#include "Windows/MainWindow/InputMapPanel.h"
 #include "EditorApp.h"
 
 namespace Kargono
 {
 	static EditorApp* s_EditorApp { nullptr };
+	static Windows::MainWindow* s_MainWindow{ nullptr };
 }
 
 namespace Kargono::Panels
@@ -40,7 +41,8 @@ namespace Kargono::Panels
 	InputMapPanel::InputMapPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(InputMapPanel::OnKeyPressedEditor));
 		InitializeOpeningScreen();
 		InitializeInputMapHeader();
@@ -49,7 +51,7 @@ namespace Kargono::Panels
 	void InputMapPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION()
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowInputMapEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowInputMapEditor);
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
@@ -185,7 +187,7 @@ namespace Kargono::Panels
 	void InputMapPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// Open input map Window
-		s_EditorApp->m_ShowInputMapEditor = true;
+		s_MainWindow->m_ShowInputMapEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 
@@ -198,7 +200,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Add warning to close active input map before creating a new input map
-			s_EditorApp->OpenWarningMessage("A input map is already active inside the editor. Please close the current input map before creating a new one.");
+			s_MainWindow->OpenWarningMessage("A input map is already active inside the editor. Please close the current input map before creating a new one.");
 		}
 	}
 
@@ -224,7 +226,7 @@ namespace Kargono::Panels
 		}
 
 		// Open the editor panel to be visible
-		s_EditorApp->m_ShowInputMapEditor = true;
+		s_MainWindow->m_ShowInputMapEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 
@@ -242,7 +244,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Add warning to close active AI state before opening a new AIState
-			s_EditorApp->OpenWarningMessage("An input map is already active inside the editor. Please close the current input map before opening a new one.");
+			s_MainWindow->OpenWarningMessage("An input map is already active inside the editor. Please close the current input map before opening a new one.");
 		}
 	}
 
@@ -438,7 +440,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnUpdateAddKeyCode);
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnUpdateAddFunction);
 			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
-			s_EditorApp->m_ScriptEditorPanel->DrawOnCreatePopup();
+			s_MainWindow->m_ScriptEditorPanel->DrawOnCreatePopup();
 		};
 
 		m_KeyboardOnUpdateAddPopup.m_ConfirmAction = [&]()
@@ -502,7 +504,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -551,7 +553,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnUpdateEditKeyCode);
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnUpdateEditFunction);
 			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
-			s_EditorApp->m_ScriptEditorPanel->DrawOnCreatePopup();
+			s_MainWindow->m_ScriptEditorPanel->DrawOnCreatePopup();
 		};
 		m_KeyboardOnUpdateEditPopup.m_DeleteAction = [&]()
 		{
@@ -622,7 +624,7 @@ namespace Kargono::Panels
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
 					// Open create script dialog in script editor
-					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+					s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 					{
 							// Ensure handle provides a script in the registry
 							if (!Assets::AssetService::HasScript(scriptHandle))
@@ -716,7 +718,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnKeyPressedAddKeyCode);
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnKeyPressedAddFunction);
 			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
-			s_EditorApp->m_ScriptEditorPanel->DrawOnCreatePopup();
+			s_MainWindow->m_ScriptEditorPanel->DrawOnCreatePopup();
 		};
 
 		m_KeyboardOnKeyPressedAddPopup.m_ConfirmAction = [&]()
@@ -780,7 +782,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -829,7 +831,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnKeyPressedEditKeyCode);
 			EditorUI::EditorUIService::SelectOption(m_KeyboardOnKeyPressedEditFunction);
 			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
-			s_EditorApp->m_ScriptEditorPanel->DrawOnCreatePopup();
+			s_MainWindow->m_ScriptEditorPanel->DrawOnCreatePopup();
 		};
 		m_KeyboardOnKeyPressedEditPopup.m_DeleteAction = [&]()
 		{
@@ -899,7 +901,7 @@ namespace Kargono::Panels
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
 					// Open create script dialog in script editor
-					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+					s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 					{
 							// Ensure handle provides a script in the registry
 							if (!Assets::AssetService::HasScript(scriptHandle))

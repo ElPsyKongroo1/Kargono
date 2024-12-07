@@ -34,7 +34,7 @@ namespace Kargono::Assets
 		out << YAML::Key << "Windows" << YAML::Value;
 		out << YAML::BeginSeq; // Start of Windows Seq
 
-		for (auto& window : assetReference->m_Windows)
+		for (RuntimeUI::Window& window : assetReference->m_Windows)
 		{
 			out << YAML::BeginMap; // Start Window Map
 
@@ -50,7 +50,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "Widgets" << YAML::Value;
 			out << YAML::BeginSeq; // Begin Widget Sequence
 
-			for (auto& widget : window.m_Widgets)
+			for (Ref<RuntimeUI::Widget> widget : window.m_Widgets)
 			{
 				out << YAML::BeginMap; // Begin Widget Map
 
@@ -135,28 +135,28 @@ namespace Kargono::Assets
 		newUserInterface->m_FontHandle = data["Font"].as<uint64_t>();
 		newUserInterface->m_Font = AssetService::GetFont(newUserInterface->m_FontHandle);
 		// Get Windows
-		auto windows = data["Windows"];
+		YAML::Node windows = data["Windows"];
 		if (windows)
 		{
-			auto& newWindowsList = newUserInterface->m_Windows;
-			for (auto window : windows)
+			std::vector<RuntimeUI::Window>& newWindowsList = newUserInterface->m_Windows;
+			for (YAML::detail::iterator_value window : windows)
 			{
 				RuntimeUI::Window newWindow{};
 				newWindow.m_Tag = window["Tag"].as<std::string>();
 				newWindow.m_ScreenPosition = window["ScreenPosition"].as<Math::vec3>();
 				newWindow.m_Size = window["Size"].as<Math::vec2>();
 				newWindow.m_BackgroundColor = window["BackgroundColor"].as<Math::vec4>();
-				newWindow.m_ParentIndex = window["ParentIndex"].as<int32_t>();
-				newWindow.m_ChildBufferIndex = window["ChildBufferIndex"].as<int32_t>();
-				newWindow.m_ChildBufferSize = window["ChildBufferSize"].as<uint32_t>();
-				newWindow.m_DefaultActiveWidget = window["DefaultActiveWidget"].as<int32_t>();
+				newWindow.m_ParentIndex = window["ParentIndex"].as<size_t>();
+				newWindow.m_ChildBufferIndex = window["ChildBufferIndex"].as<size_t>();
+				newWindow.m_ChildBufferSize = window["ChildBufferSize"].as<size_t>();
+				newWindow.m_DefaultActiveWidget = window["DefaultActiveWidget"].as<size_t>();
 
-				auto widgets = window["Widgets"];
+				YAML::Node widgets = window["Widgets"];
 
 				if (widgets)
 				{
-					auto& newWidgetsList = newWindow.m_Widgets;
-					for (auto widget : widgets)
+					std::vector<Ref<RuntimeUI::Widget>>& newWidgetsList = newWindow.m_Widgets;
+					for (YAML::detail::iterator_value widget : widgets)
 					{
 						RuntimeUI::WidgetTypes widgetType = Utility::StringToWidgetType(widget["WidgetType"].as<std::string>());
 						Ref<RuntimeUI::Widget> newWidget = nullptr;
@@ -189,10 +189,10 @@ namespace Kargono::Assets
 						newWidget->m_DefaultBackgroundColor = widget["DefaultBackgroundColor"].as<Math::vec4>();
 						newWidget->m_ActiveBackgroundColor = newWidget->m_DefaultBackgroundColor;
 						newWidget->m_Selectable = widget["Selectable"].as<bool>();
-						newWidget->m_NavigationLinks.m_UpWidgetIndex = widget["DirectionPointerUp"].as<int32_t>();
-						newWidget->m_NavigationLinks.m_DownWidgetIndex = widget["DirectionPointerDown"].as<int32_t>();
-						newWidget->m_NavigationLinks.m_LeftWidgetIndex = widget["DirectionPointerLeft"].as<int32_t>();
-						newWidget->m_NavigationLinks.m_RightWidgetIndex = widget["DirectionPointerRight"].as<int32_t>();
+						newWidget->m_NavigationLinks.m_UpWidgetIndex = widget["DirectionPointerUp"].as<size_t>();
+						newWidget->m_NavigationLinks.m_DownWidgetIndex = widget["DirectionPointerDown"].as<size_t>();
+						newWidget->m_NavigationLinks.m_LeftWidgetIndex = widget["DirectionPointerLeft"].as<size_t>();
+						newWidget->m_NavigationLinks.m_RightWidgetIndex = widget["DirectionPointerRight"].as<size_t>();
 
 						newWidget->m_FunctionPointers.m_OnPressHandle = widget["FunctionPointerOnPress"].as<uint64_t>();
 						if (newWidget->m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)

@@ -1,16 +1,18 @@
-#include "Panels/AssetViewerPanel.h"
+#include "Windows/MainWindow/AssetViewerPanel.h"
 
 #include "EditorApp.h"
 #include "Kargono.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
+static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
 namespace Kargono::Panels
 {
 	AssetViewerPanel::AssetViewerPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(AssetViewerPanel::OnKeyPressedEditor));
 		InitializeAssetsTable();
 		InitializeAssetPopup();
@@ -236,7 +238,7 @@ namespace Kargono::Panels
 	void AssetViewerPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowAssetViewer);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowAssetViewer);
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{

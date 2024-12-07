@@ -1,4 +1,4 @@
-#include "Panels/TestingPanel.h"
+#include "Windows/MainWindow/TestingPanel.h"
 
 #include "EditorApp.h"
 #include "Kargono.h"
@@ -7,6 +7,7 @@
 #include "Kargono/Utility/Random.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
+static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
 namespace Kargono::Panels
 {
@@ -31,7 +32,8 @@ namespace Kargono::Panels
 	TestingPanel::TestingPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(TestingPanel::OnKeyPressedEditor));
 
 		s_TestText.m_Label = "File to Compile";
@@ -79,7 +81,7 @@ namespace Kargono::Panels
 	void TestingPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowTesting);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowTesting);
 		// Exit window early if window is not visible
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
