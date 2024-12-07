@@ -118,6 +118,9 @@ namespace Kargono::EditorUI
 
 		static void StartWindow(const char* label, bool* closeWindow = nullptr, int32_t flags = 0);
 		static void EndWindow();
+
+		static void StartDockspaceWindow();
+		static void EndDockspaceWindow();
 	public:
 		//==============================
 		// Event Functions

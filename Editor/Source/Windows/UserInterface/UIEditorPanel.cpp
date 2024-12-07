@@ -1,17 +1,18 @@
-#include "Panels/UIEditorPanel.h"
+#include "Windows/UserInterface/UIEditorPanel.h"
 
 #include "EditorApp.h"
 
 #include "Kargono.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
+static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
 namespace Kargono::Panels
 {
 	void UIEditorPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// Open main user interface editor panel
-		s_EditorApp->m_ShowUserInterfaceEditor = true;
+		s_MainWindow->m_ShowUserInterfaceEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 
@@ -25,7 +26,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Add warning to close active user interface before creating a new user interface
-			s_EditorApp->OpenWarningMessage("A user interface is already active inside the editor. Please close the current user interface before creating a new one.");
+			s_MainWindow->OpenWarningMessage("A user interface is already active inside the editor. Please close the current user interface before creating a new one.");
 		}
 	}
 	void UIEditorPanel::ResetPanelResources()
@@ -141,7 +142,8 @@ namespace Kargono::Panels
 	{
 		// Set up static editor app reference and register panel to editor app
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(UIEditorPanel::OnKeyPressedEditor));
 
 		// Initialize null state widget data
@@ -161,7 +163,7 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 
 		// Begin rendering the user interface editor panel
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowUserInterfaceEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowUserInterfaceEditor);
 
 		// Early out if window is not visible
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
@@ -281,7 +283,7 @@ namespace Kargono::Panels
 		}
 
 		// Open the editor panel to be visible
-		s_EditorApp->m_ShowUserInterfaceEditor = true;
+		s_MainWindow->m_ShowUserInterfaceEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 
@@ -299,7 +301,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Add warning to close active AI state before opening a new AIState
-			s_EditorApp->OpenWarningMessage("An user interface is already active inside the editor. Please close the current user interface before opening a new one.");
+			s_MainWindow->OpenWarningMessage("An user interface is already active inside the editor. Please close the current user interface before opening a new one.");
 		}
 	}
 
@@ -683,7 +685,7 @@ namespace Kargono::Panels
 
 	void UIEditorPanel::AddTextWidget(EditorUI::TreeEntry& windowEntry)
 	{
-		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+		UIEditorPanel& panel = *(s_MainWindow->m_UIEditorPanel.get());
 
 		// Get window path from provided entry and ensure it is valid
 		EditorUI::TreePath windowPath = m_UITree.GetPathFromEntryReference(&windowEntry);
@@ -718,13 +720,13 @@ namespace Kargono::Panels
 		m_ActiveWindow = &m_EditorUI->m_Windows.at(*(uint32_t*)entry.m_ProvidedData.get());
 		m_ActiveWidget = m_ActiveWindow->m_Widgets.at(entry.m_Handle).get();
 		m_CurrentDisplay = UIPropertiesDisplay::Widget;
-		EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
-		s_EditorApp->m_PropertiesPanel->m_ActiveParent = m_PanelName;
+		EditorUI::EditorUIService::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
+		s_MainWindow->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 	}
 
 	void UIEditorPanel::DeleteWindow(EditorUI::TreeEntry& entry)
 	{
-		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+		UIEditorPanel& panel = *(s_MainWindow->m_UIEditorPanel.get());
 
 		// Get tree path from provided entry
 		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(&entry);
@@ -890,7 +892,7 @@ namespace Kargono::Panels
 
 	void UIEditorPanel::DeleteWidget(EditorUI::TreeEntry& entry)
 	{
-		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+		UIEditorPanel& panel = *(s_MainWindow->m_UIEditorPanel.get());
 
 		// Getpath from provided entry
 		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(&entry);
@@ -1057,7 +1059,7 @@ namespace Kargono::Panels
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 		{
 			// Open create script dialog in script editor
-			s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+			s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 			{
 					// Ensure handle provides a script in the registry
 					if (!Assets::AssetService::HasScript(scriptHandle))
@@ -1220,16 +1222,16 @@ namespace Kargono::Panels
 		m_CurrentDisplay = UIPropertiesDisplay::Window;
 
 		// Display window properties in properties panel
-		s_EditorApp->m_PropertiesPanel->m_ActiveParent = m_PanelName;
+		s_MainWindow->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 
 		// Bring properties panel to front
-		EditorUI::EditorUIService::BringWindowToFront(s_EditorApp->m_PropertiesPanel->m_PanelName);
+		EditorUI::EditorUIService::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
 	}
 
 	void UIEditorPanel::AddWindow()
 	{
 		// Create new window entry for m_UITree
-		UIEditorPanel& panel = *(s_EditorApp->m_UIEditorPanel.get());
+		UIEditorPanel& panel = *(s_MainWindow->m_UIEditorPanel.get());
 		EditorUI::TreeEntry newEntry {};
 		newEntry.m_Label = "None";
 		newEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;

@@ -293,6 +293,7 @@ namespace Kargono::EditorUI
 		style.WindowMenuButtonPosition = -1;
 		style.WindowPadding = { 7.0f, 4.0f };
 		style.ItemSpacing = { 8.0f, 6.0f };
+		style.WindowMinSize.x = 420.0f;
 
 		SetColorDefaults();
 
@@ -536,6 +537,40 @@ namespace Kargono::EditorUI
 	}
 
 	void EditorUIService::EndWindow()
+	{
+		ImGui::End();
+	}
+
+	void EditorUIService::StartDockspaceWindow()
+	{
+		// Set dockspace as main viewport window
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+
+		// Apply window padding and rounding settings
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+		// Set window flags
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking |
+			ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+		// Create the dockspace window
+		EditorUI::EditorUIService::StartWindow("DockSpace", nullptr, window_flags);
+
+		// Clear the window padding and rounding settings
+		ImGui::PopStyleVar(3);
+
+		// Submit the DockSpace
+		ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_NoCloseButton;
+		ImGui::DockSpace(ImGui::GetID("MyDockSpace"), ImVec2(0.0f, 0.0f), dockspace_flags);
+	}
+
+	void EditorUIService::EndDockspaceWindow()
 	{
 		ImGui::End();
 	}

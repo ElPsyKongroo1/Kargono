@@ -1,4 +1,4 @@
-#include "Panels/TextEditorPanel.h"
+#include "Windows/MainWindow/TextEditorPanel.h"
 
 #include "EditorApp.h"
 #include "API/EditorUI/ImGuiBackendAPI.h"
@@ -7,13 +7,15 @@
 #include "Kargono/Utility/Timers.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
+static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
 namespace Kargono::Panels
 {
 	TextEditorPanel::TextEditorPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(TextEditorPanel::OnKeyPressedEditor));
 
 		m_TextEditor = {};
@@ -45,7 +47,7 @@ namespace Kargono::Panels
 		{
 			flags |= ImGuiWindowFlags_MenuBar;
 		}
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowTextEditor, flags);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowTextEditor, flags);
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
@@ -193,9 +195,9 @@ namespace Kargono::Panels
 	{
 		if (!filepath.empty())
 		{
-			if (!s_EditorApp->m_ShowTextEditor)
+			if (!s_MainWindow->m_ShowTextEditor)
 			{
-				s_EditorApp->m_ShowTextEditor = true;
+				s_MainWindow->m_ShowTextEditor = true;
 			}
 
 			if (EditorUI::EditorUIService::GetFocusedWindowName() != m_PanelName)
@@ -294,7 +296,7 @@ namespace Kargono::Panels
 	void TextEditorPanel::OpenCreateDialog(const std::filesystem::path& path)
 	{
 		// Open project component Window
-		s_EditorApp->m_ShowTextEditor = true;
+		s_MainWindow->m_ShowTextEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 		OnCreateFileDialog(path);

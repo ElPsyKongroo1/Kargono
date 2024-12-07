@@ -1,9 +1,11 @@
-#include "Panels/AIStateEditorPanel.h"
+#include "Windows/MainWindow/AIStateEditorPanel.h"
 #include "EditorApp.h"
+
 
 namespace Kargono
 {
 	static EditorApp* s_EditorApp { nullptr };
+	static Windows::MainWindow* s_MainWindow{ nullptr };
 }
 
 namespace Kargono::Panels
@@ -51,7 +53,8 @@ namespace Kargono::Panels
 	AIStateEditorPanel::AIStateEditorPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(AIStateEditorPanel::OnKeyPressedEditor));
 		InitializeOpeningScreen();
 		InitializeAIStateHeader();
@@ -60,7 +63,7 @@ namespace Kargono::Panels
 	void AIStateEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION()
-			EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowAIStateEditor);
+			EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowAIStateEditor);
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
@@ -169,7 +172,7 @@ namespace Kargono::Panels
 	void AIStateEditorPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// Open AI State Window
-		s_EditorApp->m_ShowAIStateEditor = true;
+		s_MainWindow->m_ShowAIStateEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 
@@ -182,7 +185,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Add warning to close active AI state before creating a new AIState
-			s_EditorApp->OpenWarningMessage("An AI State is already active inside the editor. Please close the current AI State before creating a new one.");
+			s_MainWindow->OpenWarningMessage("An AI State is already active inside the editor. Please close the current AI State before creating a new one.");
 		}
 
 	}
@@ -207,9 +210,9 @@ namespace Kargono::Panels
 			KG_WARN("Could not open asset in editor. Provided path does not result in an asset inside the registry.");
 			return;
 		}
-		
+
 		// Open the editor panel to be visible
-		s_EditorApp->m_ShowAIStateEditor = true;
+		s_MainWindow->m_ShowAIStateEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 
@@ -228,7 +231,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Add warning to close active AI state before opening a new AIState
-			s_EditorApp->OpenWarningMessage("An AI State is already active inside the editor. Please close the current AI State before opening a new one.");
+			s_MainWindow->OpenWarningMessage("An AI State is already active inside the editor. Please close the current AI State before opening a new one.");
 		}
 	}
 
@@ -412,7 +415,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_EntityFloat, [&](Assets::AssetHandle scriptHandle)
+						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_EntityFloat, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -496,7 +499,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Entity, [&](Assets::AssetHandle scriptHandle)
+						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Entity, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -580,7 +583,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Entity, [&](Assets::AssetHandle scriptHandle)
+						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Entity, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -664,7 +667,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt32EntityEntityFloat, [&](Assets::AssetHandle scriptHandle)
+						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt32EntityEntityFloat, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))

@@ -1,9 +1,10 @@
-#include "GameStatePanel.h"
+#include "Windows/MainWindow/GameStatePanel.h"
 
 #include "EditorApp.h"
 #include "Kargono.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
+static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
 namespace Kargono::Panels
 {
@@ -302,7 +303,8 @@ namespace Kargono::Panels
 	GameStatePanel::GameStatePanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(GameStatePanel::OnKeyPressedEditor));
 
 		InitializeOpeningScreen();
@@ -312,7 +314,7 @@ namespace Kargono::Panels
 	void GameStatePanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowGameStateEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowGameStateEditor);
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
@@ -387,7 +389,7 @@ namespace Kargono::Panels
 	{
 		
 		// Open game state Window
-		s_EditorApp->m_ShowGameStateEditor = true;
+		s_MainWindow->m_ShowGameStateEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 
@@ -400,7 +402,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Add warning to close active game state before creating a new game state
-			s_EditorApp->OpenWarningMessage("A game state is already active inside the editor. Please close the current game state before creating a new one.");
+			s_MainWindow->OpenWarningMessage("A game state is already active inside the editor. Please close the current game state before creating a new one.");
 		}
 	}
 
@@ -426,7 +428,7 @@ namespace Kargono::Panels
 		}
 
 		// Open the editor panel to be visible
-		s_EditorApp->m_ShowGameStateEditor = true;
+		s_MainWindow->m_ShowGameStateEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 
@@ -444,7 +446,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Add warning to close active AI state before opening a new AIState
-			s_EditorApp->OpenWarningMessage("An game state is already active inside the editor. Please close the current game state before opening a new one.");
+			s_MainWindow->OpenWarningMessage("An game state is already active inside the editor. Please close the current game state before opening a new one.");
 		}
 	}
 

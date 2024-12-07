@@ -1,9 +1,10 @@
-#include "Panels/ProjectPanel.h"
+#include "Windows/MainWindow/ProjectPanel.h"
 
 #include "Kargono.h"
 #include "EditorApp.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
+static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
 namespace Kargono::Panels
 {
@@ -193,7 +194,7 @@ namespace Kargono::Panels
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
 				// Open create script dialog in script editor
-				s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 				{
 					// Ensure handle provides a script in the registry
 					if (!Assets::AssetService::HasScript(scriptHandle))
@@ -274,7 +275,7 @@ namespace Kargono::Panels
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
 					// Open create script dialog in script editor
-					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt32, [&](Assets::AssetHandle scriptHandle)
+					s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt32, [&](Assets::AssetHandle scriptHandle)
 					{
 							// Ensure handle provides a script in the registry
 							if (!Assets::AssetService::HasScript(scriptHandle))
@@ -355,7 +356,7 @@ namespace Kargono::Panels
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
 					// Open create script dialog in script editor
-					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
+					s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
 					{
 							// Ensure handle provides a script in the registry
 							if (!Assets::AssetService::HasScript(scriptHandle))
@@ -435,7 +436,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
+						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -518,7 +519,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -599,7 +600,7 @@ namespace Kargono::Panels
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
 					// Open create script dialog in script editor
-					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+					s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 					{
 							// Ensure handle provides a script in the registry
 							if (!Assets::AssetService::HasScript(scriptHandle))
@@ -678,7 +679,7 @@ namespace Kargono::Panels
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
 					// Open create script dialog in script editor
-					s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
+					s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
 					{
 							// Ensure handle provides a script in the registry
 							if (!Assets::AssetService::HasScript(scriptHandle))
@@ -758,7 +759,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -838,7 +839,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -918,7 +919,7 @@ namespace Kargono::Panels
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
 						// Open create script dialog in script editor
-						s_EditorApp->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
+						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt16, [&](Assets::AssetHandle scriptHandle)
 						{
 								// Ensure handle provides a script in the registry
 								if (!Assets::AssetService::HasScript(scriptHandle))
@@ -990,7 +991,7 @@ namespace Kargono::Panels
 				return;
 			}
 			m_MessageTypeTable.m_OnRefresh();
-			s_EditorApp->m_TextEditorPanel->RefreshKGScriptEditor();
+			s_MainWindow->m_TextEditorPanel->RefreshKGScriptEditor();
 		};
 
 		m_EditMessageTypePopup.m_Label = "Edit Message Type";
@@ -1013,7 +1014,7 @@ namespace Kargono::Panels
 				return;
 			}
 			OnRefresh();
-			s_EditorApp->m_TextEditorPanel->RefreshKGScriptEditor();
+			s_MainWindow->m_TextEditorPanel->RefreshKGScriptEditor();
 		};
 		m_EditMessageTypePopup.m_DeleteAction = [&]()
 		{
@@ -1025,7 +1026,7 @@ namespace Kargono::Panels
 			}
 
 			OnRefresh();
-			s_EditorApp->m_TextEditorPanel->RefreshKGScriptEditor();
+			s_MainWindow->m_TextEditorPanel->RefreshKGScriptEditor();
 		};
 		m_EditMessageTypePopup.m_PopupContents = [&]()
 		{
@@ -1040,7 +1041,8 @@ namespace Kargono::Panels
 	ProjectPanel::ProjectPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ProjectPanel::OnKeyPressedEditor));
 		InitializeStaticResources();
 		InitializeMessageTypeResources();
@@ -1048,7 +1050,7 @@ namespace Kargono::Panels
 	void ProjectPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowProject);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowProject);
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
@@ -1248,12 +1250,12 @@ namespace Kargono::Panels
 		ImGui::NewLine();
 
 		ImGui::Text("Physics Settings:");
-		if (ImGui::DragFloat2("Gravity", glm::value_ptr(s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity), 0.05f))
+		if (ImGui::DragFloat2("Gravity", glm::value_ptr(s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity), 0.05f))
 		{
 			if (Physics::Physics2DService::GetActivePhysics2DWorld())
 			{
-				Scenes::SceneService::GetActiveScene()->GetPhysicsSpecification().Gravity = s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity;
-				Physics::Physics2DService::SetActiveGravity(s_EditorApp->m_EditorScene->GetPhysicsSpecification().Gravity);
+				Scenes::SceneService::GetActiveScene()->GetPhysicsSpecification().Gravity = s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity;
+				Physics::Physics2DService::SetActiveGravity(s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity);
 			}
 		}
 

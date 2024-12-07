@@ -1,4 +1,4 @@
-#include "Panels/ScriptEditorPanel.h"
+#include "Windows/MainWindow/ScriptEditorPanel.h"
 
 #include "EditorApp.h"
 
@@ -7,6 +7,7 @@
 #include <unordered_set>
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
+static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
 namespace Kargono::Panels
 {
@@ -103,7 +104,7 @@ namespace Kargono::Panels
 					m_AllScriptsList.InsertListEntry(newEntry);
 				}
 
-				s_EditorApp->m_TextEditorPanel->RefreshKGScriptEditor();
+				s_MainWindow->m_TextEditorPanel->RefreshKGScriptEditor();
 			};
 		m_AllScriptsList.m_OnRefresh();
 		m_ScriptTooltip.m_Label = "Script Tooltip";
@@ -536,7 +537,8 @@ namespace Kargono::Panels
 	ScriptEditorPanel::ScriptEditorPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
-		s_EditorApp->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
+		s_MainWindow = s_EditorApp->m_MainWindow.get();
+		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ScriptEditorPanel::OnKeyPressedEditor));
 
 		InitializeAllScriptsList();
@@ -548,7 +550,7 @@ namespace Kargono::Panels
 	void ScriptEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EditorApp->m_ShowScriptEditor);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowScriptEditor);
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
 		{
@@ -635,7 +637,7 @@ namespace Kargono::Panels
 		if (openScriptEditor)
 		{
 			// Open the editor panel to be visible
-			s_EditorApp->m_ShowScriptEditor = true;
+			s_MainWindow->m_ShowScriptEditor = true;
 			EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 			EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
 		}
