@@ -59,6 +59,24 @@ project "Editor"
         {
             "KG_PLATFORM_WINDOWS"
         }
+        
+    filter "system:linux"
+        systemversion "latest"
+        defines 
+        {
+            "KG_PLATFORM_LINUX"
+        }
+        links 
+		{ 
+        "GLFW",
+        "Box2D",
+        "GLAD",
+        --"opengl32.lib",
+        "imGui",
+        --"dwmapi.lib",
+        "yaml-cpp",
+        "msdf-atlas-gen"
+		}
 
     filter "configurations:Debug"
         kind "ConsoleApp"

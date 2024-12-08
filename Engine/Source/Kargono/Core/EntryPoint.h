@@ -22,7 +22,6 @@ void EntryPoint (int argc, char** argv)
 		
 }
 
-#ifdef KG_PLATFORM_WINDOWS
 //==============================
 // Main with console
 //==============================
@@ -35,6 +34,7 @@ int main(int argc, char** argv)
 //==============================
 // Main without console
 //==============================
+#if defined(KG_PLATFORM_WINDOWS)
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
 	// Get Command Line Arguments in the form of argc and argv line int main(char**, int)
