@@ -1294,7 +1294,7 @@ namespace Kargono::Scripting
 			Ref<Expression> messageExpression = node.Arguments.at(0);
 			messageExpression->GenerationAffixes = CreateRef<ExpressionGenerationAffixes>();
 			messageExpression->GenerationAffixes->Prefix = "\"";
-			messageExpression->GenerationAffixes->Prefix.append(generator.m_AST.ProgramNode.FuncNode.Name.Value);
+			messageExpression->GenerationAffixes->Prefix.append(generator.m_AST.m_ProgramNode.FuncNode.Name.Value);
 			messageExpression->GenerationAffixes->Prefix.append(".kgscript");
 			messageExpression->GenerationAffixes->Prefix.append("\"");
 			messageExpression->GenerationAffixes->Prefix.append(", \"");

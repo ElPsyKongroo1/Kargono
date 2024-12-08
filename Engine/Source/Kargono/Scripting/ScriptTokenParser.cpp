@@ -240,7 +240,7 @@ namespace Kargono::Scripting
 			return { false, m_AST };
 		}
 
-		m_AST.ProgramNode = { newFunctionNode };
+		m_AST.m_ProgramNode = { newFunctionNode };
 
 		Advance();
 		ScriptToken tokenBuffer = GetCurrentToken();
@@ -255,9 +255,9 @@ namespace Kargono::Scripting
 
 	void ScriptTokenParser::PrintAST()
 	{
-		if (m_AST.ProgramNode)
+		if (m_AST.m_ProgramNode)
 		{
-			FunctionNode& funcNode = m_AST.ProgramNode.FuncNode;
+			FunctionNode& funcNode = m_AST.m_ProgramNode.FuncNode;
 			if (funcNode)
 			{
 				Utility::PrintFunction(funcNode);
@@ -1513,7 +1513,7 @@ namespace Kargono::Scripting
 			Ref<MemberNode> childNode = CreateRef<MemberNode>();
 			childNode->ChildMemberNode = nullptr;
 			childNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(memberList.at(0), currentDataMember->PrimitiveType));
-			childNode->MemberType = currentMemberType.get();
+			childNode->m_MemberType = currentMemberType.get();
 			returnMemberNode->ChildMemberNode = childNode;
 
 			// Iterate through all remaining members of memberList
@@ -1532,7 +1532,7 @@ namespace Kargono::Scripting
 
 				if (!currentDataMember->Members.contains(memberList.at(iteration).Value))
 				{
-					StoreParseError(ParseErrorType::Expression, "Could not locate MemberType from identifier", memberList.at(iteration));
+					StoreParseError(ParseErrorType::Expression, "Could not locate m_MemberType from identifier", memberList.at(iteration));
 					return { false, nullptr };
 				}
 				currentMemberType = currentDataMember->Members.at(memberList.at(iteration).Value);
@@ -1548,7 +1548,7 @@ namespace Kargono::Scripting
 				newNode->ChildMemberNode = nullptr;
 				newNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(memberList.at(iteration), currentDataMember->PrimitiveType));
 				childNode->ChildMemberNode = newNode;
-				childNode->MemberType = currentMemberType.get();
+				childNode->m_MemberType = currentMemberType.get();
 				childNode = newNode;
 			}
 			// Check for final context probe
@@ -1563,7 +1563,7 @@ namespace Kargono::Scripting
 			}
 			if (!currentDataMember->Members.contains(memberList.at(memberList.size() - 1).Value))
 			{
-				StoreParseError(ParseErrorType::Expression, "Could not locate MemberType from identifier", memberList.at(memberList.size() - 1));
+				StoreParseError(ParseErrorType::Expression, "Could not locate m_MemberType from identifier", memberList.at(memberList.size() - 1));
 				return { false, nullptr };
 			}
 			currentMemberType = currentDataMember->Members.at(memberList.at(memberList.size() - 1).Value);
@@ -1585,7 +1585,7 @@ namespace Kargono::Scripting
 			Ref<MemberNode> childNode = CreateRef<MemberNode>();
 			childNode->ChildMemberNode = nullptr;
 			childNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(finalToken, currentDataMember.PrimitiveType));
-			childNode->MemberType = currentMemberType.get();
+			childNode->m_MemberType = currentMemberType.get();
 			finalParentNode->ChildMemberNode = childNode;
 		}
 		else if (FunctionNode* functionMemberPtr = std::get_if<FunctionNode>(&currentMemberType->Value))
@@ -1680,7 +1680,7 @@ namespace Kargono::Scripting
 				parameterIteration++;
 			}
 
-			newFunctionCall.FunctionNode = functionMemberPtr;
+			newFunctionCall.m_FunctionNode = functionMemberPtr;
 			Ref<MemberNode> childNode = CreateRef<MemberNode>();
 			childNode->ChildMemberNode = nullptr;
 			childNode->CurrentNodeExpression = CreateRef<Expression>();

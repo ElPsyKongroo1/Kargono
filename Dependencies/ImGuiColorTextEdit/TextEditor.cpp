@@ -1388,9 +1388,9 @@ namespace API::EditorUI
 					{
 						ImGui::BeginTooltip();
 						ImGui::PushStyleColor(ImGuiCol_Text, m_Palette[(int)PaletteIndex::ErrorText]);
-						ImGui::Text(tooltipMessage[0].c_str());
+						ImGui::TextUnformatted(tooltipMessage[0].c_str());
 						ImGui::Separator();
-						ImGui::Text(tooltipMessage[1].c_str());
+						ImGui::TextUnformatted(tooltipMessage[1].c_str());
 						ImGui::PopStyleColor();
 						ImGui::EndTooltip();
 					}
@@ -1399,9 +1399,9 @@ namespace API::EditorUI
 				{
 					ImGui::BeginTooltip();
 					ImGui::PushStyleColor(ImGuiCol_Text, m_Palette[(int)PaletteIndex::ErrorText]);
-					ImGui::Text(tooltipMessage[0].c_str());
+					ImGui::TextUnformatted(tooltipMessage[0].c_str());
 					ImGui::Separator();
-					ImGui::Text(tooltipMessage[1].c_str());
+					ImGui::TextUnformatted(tooltipMessage[1].c_str());
 					ImGui::PopStyleColor();
 					ImGui::EndTooltip();
 				}

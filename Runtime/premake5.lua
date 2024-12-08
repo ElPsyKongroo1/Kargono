@@ -62,18 +62,21 @@ project "Runtime"
         systemversion "latest"
 	defines
 	{
-            "KG_PLATFORM_LINUX"
+        "KG_PLATFORM_LINUX"
 	}
     filter "configurations:Debug"
         kind "ConsoleApp"
-        links 
-        {
-            "%{Library.OpenALSoft_Debug}"
-        }
-
-        -- FIXME: No other platform support for moving .dll files.
         filter { "system:windows", "configurations:Debug" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
+            links
+            {
+                "%{Library.OpenALSoft_Debug}",
+            }
+        filter { "system:linux", "configurations:Debug" }
+            linkoptions
+            {
+                "%{Library.OpenALSoft_Debug_Linux}"
+            }
 
         defines "KG_DEBUG"
         runtime "Debug"
@@ -81,14 +84,17 @@ project "Runtime"
 
     filter "configurations:Release"
         kind "ConsoleApp"
-        links 
-        {
-            "%{Library.OpenALSoft_Release}"
-        }
-
-        -- FIXME: No other platform support for moving .dll files.
         filter { "system:windows", "configurations:Release" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Release}\" \"%{cfg.buildtarget.directory}\" /y" }
+            links 
+            {
+                "%{Library.OpenALSoft_Release}"
+            }
+        filter { "system:linux", "configurations:Release" }
+            linkoptions
+            {
+                "%{Library.OpenALSoft_Release_Linux}"
+            }
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
@@ -96,13 +102,17 @@ project "Runtime"
 
     filter "configurations:Dist"
         kind "WindowedApp"
-        links 
-        {
-            "%{Library.OpenALSoft_Dist}"
-        }
-        -- FIXME: No other platform support for moving .dll files.
         filter { "system:windows", "configurations:Dist" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Dist}\" \"%{cfg.buildtarget.directory}\" /y" }
+            links 
+            {
+                "%{Library.OpenALSoft_Dist}"
+            }
+        filter { "system:linux", "configurations:Release" }
+            linkoptions
+            {
+                "%{Library.OpenALSoft_Dist_Linux}"
+            }
         defines "KG_DIST"
         runtime "Release"
         optimize "on"

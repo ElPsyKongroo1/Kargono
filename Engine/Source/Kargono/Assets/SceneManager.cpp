@@ -489,7 +489,7 @@ namespace Kargono::Assets
 						sc.ShaderSpecification = sc.Shader->GetSpecification();
 						YAML::Binary binary = shapeComponent["Buffer"].as<YAML::Binary>();
 						Buffer buffer{ binary.size() };
-						memcpy_s(buffer.Data, buffer.Size, binary.data(), buffer.Size);
+						memcpy(buffer.Data, binary.data(), buffer.Size);
 						sc.ShaderData = buffer;
 						if (sc.CurrentShape != Rendering::ShapeTypes::None)
 						{

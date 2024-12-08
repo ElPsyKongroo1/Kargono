@@ -96,12 +96,12 @@ namespace Kargono::Panels
 		// Append the file name to current content browser directory
 		static std::filesystem::path relativePath;
 		relativePath = m_CurrentDirectory / currentEntry.m_Label.CString();
-		const wchar_t* itemPath = relativePath.c_str();
+		const char* itemPath = relativePath.string().c_str();
 
 		// Load up payload
 		payload.m_Label = Utility::BrowserFileTypeToPayloadString((BrowserFileType)currentEntry.m_ArchetypeID).c_str();
 		payload.m_DataPointer = (void*)itemPath;
-		payload.m_DataSize = (wcslen(itemPath) + 1) * sizeof(wchar_t);
+		payload.m_DataSize = (std::strlen(itemPath) + 1) * sizeof(char);
 	}
 
 	void ContentBrowserPanel::OnGridReceivePayload(EditorUI::GridEntry& currentEntry, const char* payloadName, void* dataPointer, std::size_t dataSize)
@@ -110,7 +110,7 @@ namespace Kargono::Panels
 		std::filesystem::path newDirectoryPath{ m_CurrentDirectory / currentEntry.m_Label.CString() };
 
 		// Handle receiving payload (Get directory of file...)
-		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
+		const char* payloadPathPointer = (const char*)dataPointer;
 		std::filesystem::path payloadPath(payloadPathPointer);
 
 		// Handle updating internal registry for assets if necessary

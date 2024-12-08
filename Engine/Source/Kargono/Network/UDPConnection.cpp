@@ -78,10 +78,7 @@ namespace Kargono::Network
 				}
 
 				// Load in Message header from buffer
-				memcpy_s(&m_MessageCache.Header,
-					sizeof(MessageHeader),
-					s_SocketReceiveBuffer.data() + sizeof(uint32_t),
-					sizeof(MessageHeader));
+				memcpy(&m_MessageCache.Header, s_SocketReceiveBuffer.data() + sizeof(uint32_t), sizeof(MessageHeader));
 
 				// Get Payload Size
 				uint64_t payloadSize = m_MessageCache.Header.PayloadSize;
@@ -89,7 +86,7 @@ namespace Kargono::Network
 				// Calculate Cyclic Redundency Check and compare with received value
 				uint32_t receivedCRC{};
 
-				memcpy_s(&receivedCRC, sizeof(uint32_t), s_SocketReceiveBuffer.data(), sizeof(uint32_t));
+				memcpy(&receivedCRC, s_SocketReceiveBuffer.data(), sizeof(uint32_t));
 
 				uint32_t currentCRC = Utility::FileSystem::CRCFromBuffer(s_SocketReceiveBuffer.data() + sizeof(uint32_t),
 					sizeof(MessageHeader) + payloadSize);
@@ -113,8 +110,7 @@ namespace Kargono::Network
 				if (payloadSize > 0)
 				{
 					m_MessageCache.Payload.resize(payloadSize);
-					memcpy_s(m_MessageCache.Payload.data(),
-						payloadSize,
+					memcpy(m_MessageCache.Payload.data(),
 						s_SocketReceiveBuffer.data() + sizeof(MessageHeader) + sizeof(uint32_t),
 						payloadSize);
 				}
@@ -136,16 +132,14 @@ namespace Kargono::Network
 		}
 
 		// Load Header after CRC location
-		memcpy_s(s_SocketSendBuffer.data() + sizeof(uint32_t),
-			sizeof(MessageHeader),
+		memcpy(s_SocketSendBuffer.data() + sizeof(uint32_t),
 			&m_OutgoingMessagesQueue.GetFront().msg.Header,
 			sizeof(MessageHeader));
 
 		// Load Buffer after Header
 		if (payloadSize > 0)
 		{
-			memcpy_s(s_SocketSendBuffer.data() + sizeof(uint32_t) + sizeof(MessageHeader),
-				payloadSize,
+			memcpy(s_SocketSendBuffer.data() + sizeof(uint32_t) + sizeof(MessageHeader),
 				m_OutgoingMessagesQueue.GetFront().msg.Payload.data(),
 				payloadSize);
 		}
@@ -155,7 +149,7 @@ namespace Kargono::Network
 			sizeof(MessageHeader) + payloadSize);
 
 		// Fill CRC location
-		memcpy_s(s_SocketSendBuffer.data(), sizeof(uint32_t), &hash, sizeof(uint32_t));
+		memcpy(s_SocketSendBuffer.data(), &hash, sizeof(uint32_t));
 
 		/*KG_TRACE("The local endpoint address/port are {} {} and remote is {} {}", m_Socket.local_endpoint().address().to_string(), m_Socket.local_endpoint().port(),
 			m_qMessagesOut.front().endpoint.address().to_string(), m_qMessagesOut.front().endpoint.port());*/

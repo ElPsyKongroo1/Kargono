@@ -34,17 +34,6 @@
         "Source/API/**.cpp"
     }
 
-    -- prebuildcommands 
-        -- {
-        --     "{COPYDIR} \"%{wks.location}Dependencies/dynamic_libraries\" \"%{cfg.buildtarget.directory}\""
-        -- } 
-        -- postbuildcommands 
-        -- {
-        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Breakout\"",
-        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox3D\"",
-        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox\""
-        -- }
-
     defines
     {
         "_CRT_SECURE_NO_WARNINGS",
@@ -64,7 +53,6 @@
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.yaml_cpp}",
-        --"%{IncludeDir.free_type}",
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.ImGuiNotify}",
         "%{IncludeDir.VulkanSDK}",
@@ -133,18 +121,22 @@
         defines "KG_DEBUG"
         runtime "Debug"
         symbols "on"
-        -- FIXME: No other platform support for moving .dll files.
         filter { "system:windows", "configurations:Debug" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
+            links
+            {
+                "%{Library.OpenALSoft_Debug}",
+            }
+        filter { "system:linux", "configurations:Debug" }
+            linkoptions
+            {
+                "%{Library.OpenALSoft_Debug_Linux}"
+            }
         links
 		{
 			"%{Library.ShaderC_Debug}",
 			"%{Library.SPIRV_Cross_Debug}",
-			"%{Library.SPIRV_Cross_GLSL_Debug}",
-			"%{Library.OpenALSoft_Debug}",
-			-- "%{Library.msdf_gen_Debug}",
-			-- "%{Library.msdf_atlas_gen_Debug}",
-			-- "%{Library.msdf_gen_ext_Debug}"
+			"%{Library.SPIRV_Cross_GLSL_Debug}"
 		}
 
 
@@ -152,19 +144,22 @@
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
-        -- FIXME: No other platform support for moving .dll files.
         filter { "system:windows", "configurations:Release" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Release}\" \"%{cfg.buildtarget.directory}\" /y" }
-
+            links 
+            {
+                "%{Library.OpenALSoft_Release}"
+            }
+        filter { "system:linux", "configurations:Release" }
+            linkoptions
+            {
+                "%{Library.OpenALSoft_Release_Linux}"
+            }
         links
 		{
 			"%{Library.ShaderC_Release}",
 			"%{Library.SPIRV_Cross_Release}",
 			"%{Library.SPIRV_Cross_GLSL_Release}",
-			"%{Library.OpenALSoft_Release}",
-            -- "%{Library.msdf_gen_Release}",
-            -- "%{Library.msdf_atlas_gen_Release}",
-			-- "%{Library.msdf_gen_ext_Release}"
 		}
 
     filter "configurations:Dist"
@@ -172,17 +167,20 @@
         runtime "Release"
         optimize "on"
         symbols "off"
-
-        -- FIXME: No other platform support for moving .dll files.
         filter { "system:windows", "configurations:Dist" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Dist}\" \"%{cfg.buildtarget.directory}\" /y" }
+            links 
+            {
+                "%{Library.OpenALSoft_Dist}"
+            }
+        filter { "system:linux", "configurations:Release" }
+            linkoptions
+            {
+                "%{Library.OpenALSoft_Dist_Linux}"
+            }
         links
 		{
 			"%{Library.ShaderC_Release}",
 			"%{Library.SPIRV_Cross_Release}",
-			"%{Library.SPIRV_Cross_GLSL_Release}",
-			"%{Library.OpenALSoft_Dist}",
-            -- "%{Library.msdf_gen_Dist}",
-            -- "%{Library.msdf_atlas_gen_Dist}",
-			-- "%{Library.msdf_gen_ext_Dist}"
+			"%{Library.SPIRV_Cross_GLSL_Release}"
 		}
