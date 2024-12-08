@@ -62,6 +62,9 @@ project "Editor"
 
     filter "configurations:Debug"
         kind "ConsoleApp"
+        defines "KG_DEBUG"
+        runtime "Debug"
+        symbols "on"
         filter { "system:windows", "configurations:Debug" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
             links
@@ -73,12 +76,12 @@ project "Editor"
             {
                 "%{Library.OpenALSoft_Debug_Linux}"
             }
-        defines "KG_DEBUG"
-        runtime "Debug"
-        symbols "on"
-
     filter "configurations:Release"
         kind "ConsoleApp"
+        defines "KG_RELEASE"
+        runtime "Release"
+        optimize "on"
+        symbols "on"
         filter { "system:windows", "configurations:Release" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Release}\" \"%{cfg.buildtarget.directory}\" /y" }
             links 
@@ -90,13 +93,12 @@ project "Editor"
             {
                 "%{Library.OpenALSoft_Release_Linux}"
             }
-        defines "KG_RELEASE"
-        runtime "Release"
-        optimize "on"
-        symbols "on"
-
     filter "configurations:Dist"
         kind "WindowedApp"
+        defines "KG_DIST"
+        runtime "Release"
+        optimize "on"
+        symbols "off"
         filter { "system:windows", "configurations:Dist" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Dist}\" \"%{cfg.buildtarget.directory}\" /y" }
             links 
@@ -108,7 +110,4 @@ project "Editor"
             {
                 "%{Library.OpenALSoft_Dist_Linux}"
             }
-        defines "KG_DIST"
-        runtime "Release"
-        optimize "on"
-        symbols "off"
+        

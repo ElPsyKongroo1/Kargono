@@ -115,12 +115,18 @@
        systemversion "latest"
        defines
        {
-	        "KG_PLATFORM_LINUX"
+            "KG_PLATFORM_LINUX"
        }
     filter "configurations:Debug"
         defines "KG_DEBUG"
         runtime "Debug"
         symbols "on"
+        links
+        {
+            "%{Library.ShaderC_Debug}",
+            "%{Library.SPIRV_Cross_Debug}",
+            "%{Library.SPIRV_Cross_GLSL_Debug}"
+        }
         filter { "system:windows", "configurations:Debug" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
             links
@@ -132,18 +138,17 @@
             {
                 "%{Library.OpenALSoft_Debug_Linux}"
             }
-        links
-		{
-			"%{Library.ShaderC_Debug}",
-			"%{Library.SPIRV_Cross_Debug}",
-			"%{Library.SPIRV_Cross_GLSL_Debug}"
-		}
-
-
+        
     filter "configurations:Release"
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
+        links
+        {
+            "%{Library.ShaderC_Release}",
+            "%{Library.SPIRV_Cross_Release}",
+            "%{Library.SPIRV_Cross_GLSL_Release}",
+        }
         filter { "system:windows", "configurations:Release" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Release}\" \"%{cfg.buildtarget.directory}\" /y" }
             links 
@@ -155,18 +160,17 @@
             {
                 "%{Library.OpenALSoft_Release_Linux}"
             }
-        links
-		{
-			"%{Library.ShaderC_Release}",
-			"%{Library.SPIRV_Cross_Release}",
-			"%{Library.SPIRV_Cross_GLSL_Release}",
-		}
-
     filter "configurations:Dist"
         defines "KG_DIST"
         runtime "Release"
         optimize "on"
         symbols "off"
+        links
+        {
+            "%{Library.ShaderC_Release}",
+            "%{Library.SPIRV_Cross_Release}",
+            "%{Library.SPIRV_Cross_GLSL_Release}"
+        }
         filter { "system:windows", "configurations:Dist" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Dist}\" \"%{cfg.buildtarget.directory}\" /y" }
             links 
@@ -178,9 +182,4 @@
             {
                 "%{Library.OpenALSoft_Dist_Linux}"
             }
-        links
-		{
-			"%{Library.ShaderC_Release}",
-			"%{Library.SPIRV_Cross_Release}",
-			"%{Library.SPIRV_Cross_GLSL_Release}"
-		}
+        
