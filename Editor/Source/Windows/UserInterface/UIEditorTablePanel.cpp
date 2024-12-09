@@ -317,9 +317,9 @@ namespace Kargono::Panels
 
 	void UIEditorTablePanel::SelectTextWidget(EditorUI::TreeEntry& entry)
 	{
-		s_UIWindow->m_ActiveWindow = &s_UIWindow->m_EditorUI->m_Windows.at(*(uint32_t*)entry.m_ProvidedData.get());
-		s_UIWindow->m_ActiveWidget = s_UIWindow->m_ActiveWindow->m_Widgets.at(entry.m_Handle).get();
-		s_UIWindow->m_CurrentDisplay = Windows::UIPropertiesDisplay::Widget;
+		s_UIWindow->m_PropertiesPanel->m_ActiveWindow = &s_UIWindow->m_EditorUI->m_Windows.at(*(uint32_t*)entry.m_ProvidedData.get());
+		s_UIWindow->m_PropertiesPanel->m_ActiveWidget = s_UIWindow->m_PropertiesPanel->m_ActiveWindow->m_Widgets.at(entry.m_Handle).get();
+		s_UIWindow->m_PropertiesPanel->m_CurrentDisplay = UIPropertiesDisplay::Widget;
 		// TODO: Deal with local properties panel
 		//EditorUI::EditorUIService::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
 		//s_MainWindow->m_PropertiesPanel->m_ActiveParent = m_PanelName;
@@ -340,7 +340,7 @@ namespace Kargono::Panels
 		m_UITree.RemoveEntry(path);
 
 		// Reset properties panel and ensure tree index data is valid
-		s_UIWindow->ClearPropertiesPanelData();
+		s_UIWindow->m_PropertiesPanel->ClearPanelData();
 		RecalculateTreeIndexData();
 
 		// Set the active editor UI as edited
@@ -351,9 +351,9 @@ namespace Kargono::Panels
 	void UIEditorTablePanel::SelectWindow(EditorUI::TreeEntry& entry)
 	{
 		// Set selected window as active
-		s_UIWindow->ClearPropertiesPanelData();
-		s_UIWindow->m_ActiveWindow = &s_UIWindow->m_EditorUI->m_Windows.at(entry.m_Handle);
-		s_UIWindow->m_CurrentDisplay = Windows::UIPropertiesDisplay::Window;
+		s_UIWindow->m_PropertiesPanel->ClearPanelData();
+		s_UIWindow->m_PropertiesPanel->m_ActiveWindow = &s_UIWindow->m_EditorUI->m_Windows.at(entry.m_Handle);
+		s_UIWindow->m_PropertiesPanel->m_CurrentDisplay = UIPropertiesDisplay::Window;
 
 
 		// TODO: Deal with local properties panel
@@ -379,7 +379,8 @@ namespace Kargono::Panels
 
 		// Add new window to RuntimeUI and this panel's tree
 		m_UITree.InsertEntry(newEntry);
-		s_UIWindow->m_EditorUI->m_Windows.push_back({});
+		RuntimeUI::Window newWindow{};
+		RuntimeUI::RuntimeUIService::AddActiveWindow(newWindow);
 
 		// Select the newly created window
 		SelectWindow(newEntry);
@@ -412,7 +413,7 @@ namespace Kargono::Panels
 		m_UITree.RemoveEntry(path);
 
 		// Reset properties panel and ensure tree index data is valid
-		s_UIWindow->ClearPropertiesPanelData();
+		s_UIWindow->m_PropertiesPanel->ClearPanelData();
 		RecalculateTreeIndexData();
 
 		// Set the active editor UI as edited

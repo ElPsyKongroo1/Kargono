@@ -39,22 +39,6 @@ namespace Kargono::Panels
 			}
 		}
 
-		// TODO: Migrate ui editor panel to new system
-		/*if (m_ActiveParent == s_MainWindow->m_UIEditorPanel->m_PanelName)
-		{
-			switch (s_MainWindow->m_UIEditorPanel->m_CurrentDisplay)
-			{
-			case UIPropertiesDisplay::None:
-				break;
-			case UIPropertiesDisplay::Window:
-				s_MainWindow->m_UIEditorPanel->DrawWindowOptions();
-				break;
-			case UIPropertiesDisplay::Widget:
-				s_MainWindow->m_UIEditorPanel->DrawWidgetOptions();
-				break;
-			}
-		}*/
-
 		EditorUI::EditorUIService::EndWindow();
 	}
 }
