@@ -12,8 +12,6 @@ project "Editor"
         "Source/**.cpp"
     }
 
-	
-
     includedirs 
     {
         "%{IncludeDir.spdlog}",
@@ -47,7 +45,7 @@ project "Editor"
     defines 
     {
         "KG_EDITOR",
-		"_CRT_SECURE_NO_WARNINGS"
+	"_CRT_SECURE_NO_WARNINGS"
     }
 
     filter "system:windows"
@@ -61,47 +59,79 @@ project "Editor"
         {
             "KG_PLATFORM_WINDOWS"
         }
+        
+    filter "system:linux"
+        systemversion "latest"
+        defines 
+        {
+            "KG_PLATFORM_LINUX"
+        }
+        links 
+	{ 
+            "GLFW",
+            "Box2D",
+            "GLAD",
+            "imGui",
+            "yaml-cpp",
+            "freetype",
+            "msdfgen",
+            "msdf-atlas-gen"
+	}
 
     filter "configurations:Debug"
         kind "ConsoleApp"
-        links 
-        {
-            "%{Library.OpenALSoft_Debug}"
-        }
-
-        -- FIXME: No other platform support for moving .dll files.
-        filter { "system:windows", "configurations:Debug" }
-            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
-
         defines "KG_DEBUG"
         runtime "Debug"
         symbols "on"
-
+        filter { "system:windows", "configurations:Debug" }
+            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
+            links
+            {
+                "%{Library.OpenALSoft_Debug}"
+            }
+        filter { "system:linux", "configurations:Debug" }
+            links
+            {
+            	"%{Library.OpenALSoft_Debug_Linux}"
+            }
     filter "configurations:Release"
         kind "ConsoleApp"
-        links 
-        {
-            "%{Library.OpenALSoft_Release}"
-        }
-
-        -- FIXME: No other platform support for moving .dll files.
-        filter { "system:windows", "configurations:Release" }
-            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Release}\" \"%{cfg.buildtarget.directory}\" /y" }
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
         symbols "on"
-
+        filter { "system:windows", "configurations:Release" }
+            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Release}\" \"%{cfg.buildtarget.directory}\" /y" }
+            links 
+            {
+                "%{Library.OpenALSoft_Release}"
+            }
+        filter { "system:linux", "configurations:Release" }
+            links
+            {
+                "%{Library.ShaderC_Release_Linux}",
+                "%{Library.SPIRV_Cross_Release_Linux}",
+                "%{Library.SPIRV_Cross_GLSL_Release_Linux}",
+            	"%{Library.OpenALSoft_Release_Linux}"
+            }
     filter "configurations:Dist"
         kind "WindowedApp"
-        links 
-        {
-            "%{Library.OpenALSoft_Dist}"
-        }
-        -- FIXME: No other platform support for moving .dll files.
-        filter { "system:windows", "configurations:Dist" }
-            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Dist}\" \"%{cfg.buildtarget.directory}\" /y" }
         defines "KG_DIST"
         runtime "Release"
         optimize "on"
         symbols "off"
+        filter { "system:windows", "configurations:Dist" }
+            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Dist}\" \"%{cfg.buildtarget.directory}\" /y" }
+            links 
+            {
+                "%{Library.OpenALSoft_Dist}"
+            }
+        filter { "system:linux", "configurations:Dist" }
+            links
+            {
+                "%{Library.ShaderC_Release_Linux}",
+                "%{Library.SPIRV_Cross_Release_Linux}",
+                "%{Library.SPIRV_Cross_GLSL_Release_Linux}",
+            	"%{Library.OpenALSoft_Dist_Linux}"
+            }
+        

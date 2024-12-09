@@ -3138,7 +3138,7 @@ namespace Kargono::Panels
 				std::size_t size = element.Size;
 
 				// Final Memory Copy
-				memcpy_s(newLocationPointer, size, oldLocationPointer, size);
+				memcpy(newLocationPointer, oldLocationPointer, size);
 			}
 		}
 

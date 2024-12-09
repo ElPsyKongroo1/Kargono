@@ -223,7 +223,7 @@ namespace Kargono::Scripting
 		Ref<MemberNode> ChildMemberNode{};
 		Ref<Expression> CurrentNodeExpression{};
 		ScriptToken ReturnType{};
-		MemberType* MemberType{};
+		MemberType* m_MemberType{};
 	};
 
 	struct FunctionNode;
@@ -234,7 +234,7 @@ namespace Kargono::Scripting
 		ScriptToken Identifier{};
 		ScriptToken ReturnType{};
 		std::vector<Ref<Expression>> Arguments{};
-		FunctionNode* FunctionNode{};
+		FunctionNode* m_FunctionNode{};
 	};
 
 	struct UnaryOperationNode
@@ -469,12 +469,12 @@ namespace Kargono::Scripting
 	struct ScriptAST
 	{
 	public:
-		ProgramNode ProgramNode{};
+		ProgramNode m_ProgramNode{};
 
 	public:
 		operator bool() const
 		{
-			return ProgramNode;
+			return m_ProgramNode;
 		}
 	};
 

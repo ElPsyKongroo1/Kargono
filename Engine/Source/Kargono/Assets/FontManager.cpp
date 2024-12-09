@@ -30,7 +30,7 @@ namespace Kargono::Utility
 		textureSpec.GenerateMipMaps = false;
 
 		buffer.Allocate(bitmap.width * bitmap.height * Utility::ImageFormatToBytes(textureSpec.Format));
-		memcpy_s(buffer.Data, buffer.Size, bitmap.pixels, bitmap.width * bitmap.height * Utility::ImageFormatToBytes(textureSpec.Format));
+		memcpy(buffer.Data, bitmap.pixels, buffer.Size);
 	}
 
 

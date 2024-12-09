@@ -237,7 +237,6 @@ namespace Kargono::Windows
 		friend Panels::SceneEditorPanel;
 		friend Panels::TextEditorPanel;
 		friend Panels::TestingPanel;
-		friend Panels::UIEditorWindow;
 		friend Panels::ViewportPanel;
 	};
 }

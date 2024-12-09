@@ -227,7 +227,7 @@ namespace Kargono::Rendering
 			{
 				PerVertexFunction(inputSpec, iteration);
 			}
-			memcpy_s(inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator, inputSpec.m_Buffer.Size, inputSpec.m_Buffer.Data, inputSpec.m_Buffer.Size);
+			memcpy(inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator, inputSpec.m_Buffer.Data, inputSpec.m_Buffer.Size);
 			inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator += inputSpec.m_Buffer.Size;
 			s_Data.Stats.VertexCount++;
 		}
