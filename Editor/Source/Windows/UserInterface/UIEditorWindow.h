@@ -4,6 +4,10 @@
 #include "Kargono/EditorUI/EditorUI.h"
 #include "Kargono/RuntimeUI/RuntimeUI.h"
 
+#include "Windows/UserInterface/UIEditorViewportPanel.h"
+#include "Windows/UserInterface/UIEditorPropertiesPanel.h"
+#include "Windows/UserInterface/UIEditorTablePanel.h"
+
 #include <string>
 
 namespace Kargono { class EditorApp; }
@@ -40,9 +44,6 @@ namespace Kargono::Windows
 		//=========================
 		// Internal Initialization Functions
 		//=========================
-		void InitializeOpeningScreen();
-		void InitializeUIHeader();
-		void InitializeMainContent();
 		void InitializeWindowOptions();
 		void InitializeWidgetOptions();
 
@@ -62,35 +63,15 @@ namespace Kargono::Windows
 		// External Functionality
 		//=========================
 		void OpenCreateDialog(std::filesystem::path& createLocation);
-		void ResetPanelResources();
-	private:
-		//=========================
-		// Manage Panel State
-		//=========================
-		void RecalculateTreeIndexData();
-		void ClearPropertiesPanelData();
+		void ResetWindowResources();
 		void OnRefreshData();
-		void OnRefreshUITree();
-
-		//=========================
-		// On Action Functions
-		//=========================
-		void OnOpenUIDialog();
-		void OnCreateUIDialog();
-		void OnOpenUI(Assets::AssetHandle newHandle);
-
+		void ClearPropertiesPanelData();
+	private:
 		//=========================
 		// Draw Properties Panel Functions
 		//=========================
 		void DrawWindowOptions();
 		void DrawWidgetOptions();
-
-		//=========================
-		// Manage Windows
-		//=========================
-		void AddWindow();
-		void SelectWindow(EditorUI::TreeEntry& entry);
-		void DeleteWindow(EditorUI::TreeEntry& entry);
 
 		//=========================
 		// Change Window Data
@@ -108,13 +89,6 @@ namespace Kargono::Windows
 		void OnModifyWindowSize(EditorUI::EditVec2Spec& spec);
 		// Modify window background color
 		void OnModifyWindowBackgroundColor(EditorUI::EditVec4Spec& spec);
-
-		//=========================
-		// Manage Widgets
-		//=========================
-		void AddTextWidget(EditorUI::TreeEntry& entry);
-		void SelectTextWidget(EditorUI::TreeEntry& entry);
-		void DeleteWidget(EditorUI::TreeEntry& entry);
 
 		//=========================
 		// Change Widget Base Data
@@ -150,30 +124,28 @@ namespace Kargono::Windows
 		//=========================
 		Ref<RuntimeUI::UserInterface> m_EditorUI{ nullptr };
 		Assets::AssetHandle m_EditorUIHandle { Assets::EmptyHandle };
-	private:
-		FixedString32 m_PanelName{ "User Interface Editor" };
 		UIPropertiesDisplay m_CurrentDisplay{ UIPropertiesDisplay::None };
-		RuntimeUI::Widget* m_ActiveWidget {nullptr};
-		RuntimeUI::Window* m_ActiveWindow {nullptr};
+		RuntimeUI::Widget* m_ActiveWidget{ nullptr };
+		RuntimeUI::Window* m_ActiveWindow{ nullptr };
 
+		//=========================
+		// Panels
+		//=========================
+		Scope<Panels::UIEditorViewportPanel> m_ViewportPanel{ nullptr };
+		Scope<Panels::UIEditorPropertiesPanel> m_PropertiesPanel{ nullptr };
+		Scope<Panels::UIEditorTablePanel> m_TablePanel{ nullptr };
+
+		//=========================
+		// Display Panel Booleans
+		//=========================
+		bool m_ShowViewport{ true };
+		bool m_ShowProperties{ true };
+		bool m_ShowTable{ true };
+		
 	private:
 		//=========================
 		// Widgets
 		//=========================
-		// Main Content
-		EditorUI::TreeSpec m_UITree {};
-
-		// Opening Panel w/ Popups
-		EditorUI::SelectOptionSpec m_OpenUIPopupSpec {};
-		EditorUI::GenericPopupSpec m_CreateUIPopupSpec {};
-		EditorUI::EditTextSpec m_SelectUINameSpec {};
-		EditorUI::ChooseDirectorySpec m_SelectUILocationSpec{};
-		EditorUI::TooltipSpec m_SelectScriptTooltip{};
-
-		// User Interface Header
-		EditorUI::PanelHeaderSpec m_MainHeader {};
-		EditorUI::GenericPopupSpec m_DeleteUIWarning {};
-		EditorUI::GenericPopupSpec m_CloseUIWarning {};
 
 		// Edit Window Options
 		EditorUI::CollapsingHeaderSpec m_WindowHeader{};

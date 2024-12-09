@@ -2313,6 +2313,7 @@ namespace Kargono::EditorUI
 			{
 				for (auto& [label, func] : spec.m_CurrentRightClick->m_OnRightClickSelection)
 				{
+					if (!spec.m_CurrentRightClick) { break; }
 					if (ImGui::Selectable((label + "##" + std::to_string(spec.m_WidgetID)).c_str()))
 					{
 						func(*spec.m_CurrentRightClick);
@@ -3146,6 +3147,11 @@ namespace Kargono::EditorUI
 
 		uint32_t locationCurrentList = path.GetPath().at(iteration - 1);
 
+		// Handle Right Click
+		if (m_CurrentRightClick == currentEntry)
+		{
+			m_CurrentRightClick = nullptr;
+		}
 
 		// Clear SelectedEntry field if path is the same
 		if (m_SelectedEntry == path)
