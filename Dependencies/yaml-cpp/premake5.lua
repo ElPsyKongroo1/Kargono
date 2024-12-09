@@ -2,9 +2,9 @@ project "yaml-cpp"
 	kind "StaticLib"
 	language "C++"
 	linkoptions { "-IGNORE:4098", "-IGNORE:4006","-IGNORE:4099", "-IGNORE:4996" }
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
+	targetdir ("%{wks.location}/Binary/" .. outputdir .. "/%{prj.name}")
+    objdir ("%{wks.location}/Intermediates/" .. outputdir .. "/%{prj.name}")
+	
 	files
 	{
 		"src/**.h",
