@@ -45,7 +45,7 @@ project "Editor"
     defines 
     {
         "KG_EDITOR",
-		"_CRT_SECURE_NO_WARNINGS"
+	"_CRT_SECURE_NO_WARNINGS"
     }
 
     filter "system:windows"
@@ -67,16 +67,16 @@ project "Editor"
             "KG_PLATFORM_LINUX"
         }
         links 
-		{ 
-        "GLFW",
-        "Box2D",
-        "GLAD",
-        --"opengl32.lib",
-        "imGui",
-        --"dwmapi.lib",
-        "yaml-cpp",
-        "msdf-atlas-gen"
-		}
+	{ 
+            "GLFW",
+            "Box2D",
+            "GLAD",
+            "imGui",
+            "yaml-cpp",
+            "freetype",
+            "msdfgen",
+            "msdf-atlas-gen"
+	}
 
     filter "configurations:Debug"
         kind "ConsoleApp"
@@ -87,12 +87,12 @@ project "Editor"
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
             links
             {
-                "%{Library.OpenALSoft_Debug}",
+                "%{Library.OpenALSoft_Debug}"
             }
         filter { "system:linux", "configurations:Debug" }
-            linkoptions
+            links
             {
-                "%{Library.OpenALSoft_Debug_Linux}"
+            	"%{Library.OpenALSoft_Debug_Linux}"
             }
     filter "configurations:Release"
         kind "ConsoleApp"
@@ -107,9 +107,12 @@ project "Editor"
                 "%{Library.OpenALSoft_Release}"
             }
         filter { "system:linux", "configurations:Release" }
-            linkoptions
+            links
             {
-                "%{Library.OpenALSoft_Release_Linux}"
+                "%{Library.ShaderC_Release_Linux}",
+                "%{Library.SPIRV_Cross_Release_Linux}",
+                "%{Library.SPIRV_Cross_GLSL_Release_Linux}",
+            	"%{Library.OpenALSoft_Release_Linux}"
             }
     filter "configurations:Dist"
         kind "WindowedApp"
@@ -123,9 +126,12 @@ project "Editor"
             {
                 "%{Library.OpenALSoft_Dist}"
             }
-        filter { "system:linux", "configurations:Release" }
-            linkoptions
+        filter { "system:linux", "configurations:Dist" }
+            links
             {
-                "%{Library.OpenALSoft_Dist_Linux}"
+                "%{Library.ShaderC_Release_Linux}",
+                "%{Library.SPIRV_Cross_Release_Linux}",
+                "%{Library.SPIRV_Cross_GLSL_Release_Linux}",
+            	"%{Library.OpenALSoft_Dist_Linux}"
             }
         

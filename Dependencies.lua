@@ -33,15 +33,16 @@ IncludeDir["ImGuiColorTextEdit"] = "%{wks.location}/Dependencies/ImGuiColorTextE
 LibraryDir = {}
 
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
+LibraryDir["VulkanSDK_Linux"] = "/usr/lib/x86_64-linux-gnu"
 
 -- Library Locations: Points to a specific library file for Linker to link to final .exe
 Library = {}
 Library["OpenALSoft_Debug"] = "%{wks.location}/Dependencies/OpenAL/lib/debug/OpenAL32.lib"
 Library["OpenALSoft_Release"] = "%{wks.location}/Dependencies/OpenAL/lib/release/OpenAL32.lib"
 Library["OpenALSoft_Dist"] = "%{wks.location}/Dependencies/OpenAL/lib/dist/OpenAL32.lib"
-Library["OpenALSoft_Debug_Linux"] = "%{wks.location}/Dependencies/OpenAL/lib/debug/libopenal.a"
-Library["OpenALSoft_Release_Linux"] = "%{wks.location}/Dependencies/OpenAL/lib/release/libopenal.a"
-Library["OpenALSoft_Dist_Linux"] = "%{wks.location}/Dependencies/OpenAL/lib/dist/libopenal.a"
+Library["OpenALSoft_Debug_Linux"] = "%{wks.location}/Dependencies/OpenAL/lib/debug/:libopenal.a"
+Library["OpenALSoft_Release_Linux"] = "%{wks.location}/Dependencies/OpenAL/lib/release/:libopenal.a"
+Library["OpenALSoft_Dist_Linux"] = "%{wks.location}/Dependencies/OpenAL/lib/dist/:libopenal.a"
 
 -- Library["msdf_gen_Debug"] = "%{wks.location}/Dependencies/msdf_gen/lib/debug/msdfgen-core.lib"
 -- Library["msdf_gen_Release"] = "%{wks.location}/Dependencies/msdf_gen/lib/release/msdfgen-core.lib"
@@ -64,11 +65,11 @@ Library["ShaderC_Debug"] = "%{LibraryDir.VulkanSDK}/shaderc_sharedd.lib"
 Library["SPIRV_Cross_Debug"] = "%{LibraryDir.VulkanSDK}/spirv-cross-cored.lib"
 Library["SPIRV_Cross_GLSL_Debug"] = "%{LibraryDir.VulkanSDK}/spirv-cross-glsld.lib"
 Library["SPIRV_Tools_Debug"] = "%{LibraryDir.VulkanSDK}/SPIRV-Toolsd.lib"
+Library["ShaderC_Debug_Linux"] = "%{LibraryDir.VulkanSDK_Linux}/:shaderc_sharedd.a"
 
 Library["ShaderC_Release"] = "%{LibraryDir.VulkanSDK}/shaderc_shared.lib"
 Library["SPIRV_Cross_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-core.lib"
 Library["SPIRV_Cross_GLSL_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-glsl.lib"
-
 -- Windows
 Library["WinSock"] = "Ws2_32.lib"
 Library["WinMM"] = "Winmm.lib"

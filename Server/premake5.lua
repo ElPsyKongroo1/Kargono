@@ -73,9 +73,9 @@ project "Server"
                 "%{Library.OpenALSoft_Debug}",
             }
         filter { "system:linux", "configurations:Debug" }
-            linkoptions
+            links
             {
-                "%{Library.OpenALSoft_Debug_Linux}"
+            	"%{Library.OpenALSoft_Debug_Linux}"
             }
     filter "configurations:Release"
         kind "ConsoleApp"
@@ -89,9 +89,9 @@ project "Server"
                 "%{Library.OpenALSoft_Release}"
             }
         filter { "system:linux", "configurations:Release" }
-            linkoptions
+            links
             {
-                "%{Library.OpenALSoft_Release_Linux}"
+            	"%{Library.OpenALSoft_Release_Linux}"
             }
     filter "configurations:Dist"
         kind "ConsoleApp"
@@ -105,8 +105,8 @@ project "Server"
             {
                 "%{Library.OpenALSoft_Dist}"
             }
-        filter { "system:linux", "configurations:Release" }
-            linkoptions
+        filter { "system:linux", "configurations:Dist" }
+            links
             {
-                "%{Library.OpenALSoft_Dist_Linux}"
+            	"%{Library.OpenALSoft_Dist_Linux}"
             }

@@ -1,5 +1,5 @@
 #pragma once
-#include "box2d/Box2d.h"
+#include "box2d/box2d.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
