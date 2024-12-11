@@ -356,7 +356,7 @@ namespace Kargono::Windows
 
 			}
 
-			if (ImGui::BeginMenu("Window"))
+			if (ImGui::BeginMenu("Windows"))
 			{
 				if (ImGui::MenuItem("User Interface Editor"))
 				{
@@ -397,7 +397,6 @@ namespace Kargono::Windows
 
 			if (ImGui::BeginMenu("Debug"))
 			{
-				ImGui::MenuItem("Log", NULL, &m_ShowLog);
 				ImGui::MenuItem("Log", NULL, &m_ShowLog);
 				if (ImGui::MenuItem("Profiler"))
 				{
