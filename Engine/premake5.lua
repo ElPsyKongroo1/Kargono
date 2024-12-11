@@ -79,6 +79,8 @@
         "imGui",
         "dwmapi.lib",
         "yaml-cpp",
+        "freetype",
+        "msdfgen",
         "msdf-atlas-gen"
     }
 

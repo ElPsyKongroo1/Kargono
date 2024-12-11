@@ -12,8 +12,8 @@ project "msdf-atlas-gen"
 	files
 	{
 		"msdf-atlas-gen/**.h",
-    	"msdf-atlas-gen/**.hpp",
-    	"msdf-atlas-gen/**.cpp"
+    		"msdf-atlas-gen/**.hpp",
+    		"msdf-atlas-gen/**.cpp"
 	}
 
 	includedirs
@@ -30,6 +30,7 @@ project "msdf-atlas-gen"
 
 	links
 	{
+		"freetype",
 		"msdfgen"
 	}
 
