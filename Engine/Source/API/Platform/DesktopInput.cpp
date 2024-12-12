@@ -16,20 +16,20 @@ namespace Kargono::Input
 		{
 			return false;
 		}
-		auto* window = static_cast<GLFWwindow*>(EngineService::GetActiveWindow().GetNativeWindow());
-		auto state = glfwGetKey(window, static_cast<int32_t>(key));
+		GLFWwindow* window = (GLFWwindow*)EngineService::GetActiveWindow().GetNativeWindow();
+		int state = glfwGetKey(window, static_cast<int32_t>(key));
 		return state == GLFW_PRESS;
 
 	}
 	bool InputService::IsMouseButtonPressed(const MouseCode button)
 	{
-		auto* window = static_cast<GLFWwindow*>(EngineService::GetActiveWindow().GetNativeWindow());
-		auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
+		GLFWwindow* window = (GLFWwindow*)EngineService::GetActiveWindow().GetNativeWindow();
+		int state = glfwGetMouseButton(window, static_cast<int32_t>(button));
 		return state == GLFW_PRESS;
 	}
 	Math::vec2 InputService::GetMousePosition()
 	{
-		auto* window = static_cast<GLFWwindow*>(EngineService::GetActiveWindow().GetNativeWindow());
+		GLFWwindow* window = (GLFWwindow*)EngineService::GetActiveWindow().GetNativeWindow();
 		double xpos;
 		double ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);

@@ -7,11 +7,21 @@
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/FileSystem.h"
 
-#include "API/Platform/WindowsWindow.h"
+
+#if defined(KG_PLATFORM_WINDOWS) || defined(KG_PLATFORM_LINUX)
+
+#include "API/Platform/DesktopWindow.h"
 #include "API/ImageProcessing/stbAPI.h"
 #include "API/Platform/gladAPI.h"
 
-#ifdef KG_PLATFORM_WINDOWS
+
+namespace Kargono
+{
+	Scope<Window> Window::Create(const WindowProps& props)
+	{
+		return CreateScope<API::Platform::DesktopWindow>(props);
+	}
+}
 
 namespace API::Utility
 {
@@ -25,7 +35,7 @@ namespace API::Platform
 {
 	static uint8_t s_GLFWWindowCount = 0;
 
-	WindowsWindow::WindowsWindow(const Kargono::WindowProps& props)
+	DesktopWindow::DesktopWindow(const Kargono::WindowProps& props)
 	{
 		// Update Class Data
 		m_Data.Title = props.Title;
@@ -36,12 +46,12 @@ namespace API::Platform
 		m_Window = nullptr;
 
 	}
-	WindowsWindow::~WindowsWindow()
+	DesktopWindow::~DesktopWindow()
 	{
 		Shutdown();
 	}
 
-	void WindowsWindow::Init(const Kargono::WindowProps& props, const std::filesystem::path& logoPath)
+	void DesktopWindow::Init(const Kargono::WindowProps& props, const std::filesystem::path& logoPath)
 	{
 		// Update Class Data
 		m_Data.Title = props.Title;
@@ -52,7 +62,7 @@ namespace API::Platform
 		Init(logoPath);
 	}
 
-	void WindowsWindow::Init(const std::filesystem::path& logoPath)
+	void DesktopWindow::Init(const std::filesystem::path& logoPath)
 	{
 		// Ensure Only One Window Instance is active
 		if (s_GLFWWindowCount > 0)
@@ -85,7 +95,7 @@ namespace API::Platform
 		KG_INFO("\tVendor: {0}", (const char*)glGetString(GL_VENDOR));
 		KG_INFO("\tRenderer: {0}", (const char*)glGetString(GL_RENDERER));
 		KG_INFO("\tVersion: {0}", (const char*)glGetString(GL_VERSION));
-		KG_ASSERT(GLVersion.major > m_Data.VersionMajor || (GLVersion.major == m_Data.VersionMajor && GLVersion.minor >= m_Data.VersionMinor), "Kargono requires at least OpenGL version 4.5!");
+		KG_ASSERT(GLVersion.major > m_Data.VersionMajor || (GLVersion.major == m_Data.VersionMajor && GLVersion.minor >= m_Data.VersionMinor), "Kargono requires at least OpenGL version 4.1!");
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(false);
@@ -95,7 +105,7 @@ namespace API::Platform
 			{
 				KG_PROFILE_FUNCTION_DESC("GLFW Resize Event");
 
-				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+				DesktopWindowData& data = *(DesktopWindowData*)glfwGetWindowUserPointer(window);
 
 				data.Width = width;
 				data.Height = height;
@@ -107,7 +117,7 @@ namespace API::Platform
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) 
 			{
 				KG_PROFILE_FUNCTION_DESC("GLFW Close Event");
-				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+				DesktopWindowData& data = *(DesktopWindowData*)glfwGetWindowUserPointer(window);
 				Kargono::Events::WindowCloseEvent event;
 				data.EventCallback(&event);
 			});
@@ -116,7 +126,7 @@ namespace API::Platform
 		{
 			KG_PROFILE_FUNCTION_DESC("GLFW Keyboard Event");
 
-			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+			DesktopWindowData& data = *(DesktopWindowData*)glfwGetWindowUserPointer(window);
 			switch (action)
 			{
 				case GLFW_PRESS:
@@ -144,7 +154,7 @@ namespace API::Platform
 		{
 			KG_PROFILE_FUNCTION_DESC("GLFW Typing Event");
 
-			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+			DesktopWindowData& data = *(DesktopWindowData*)glfwGetWindowUserPointer(window);
 			Kargono::Events::KeyTypedEvent event(keycode);
 			data.EventCallback(&event);
 
@@ -154,7 +164,7 @@ namespace API::Platform
 		{
 			KG_PROFILE_FUNCTION_DESC("GLFW Mouse Button Event");
 
-			WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+			DesktopWindowData& data = *(DesktopWindowData*)glfwGetWindowUserPointer(window);
 
 			switch (action)
 			{
@@ -177,7 +187,7 @@ namespace API::Platform
 			{
 				KG_PROFILE_FUNCTION_DESC("GLFW Scroll Mouse Event");
 
-				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+				DesktopWindowData& data = *(DesktopWindowData*)glfwGetWindowUserPointer(window);
 
 				Kargono::Events::MouseScrolledEvent event((float)xOffset, (float)yOffset);
 				data.EventCallback(&event);
@@ -186,7 +196,7 @@ namespace API::Platform
 			{
 				KG_PROFILE_FUNCTION_DESC("GLFW Move Cursor Event");
 
-				WindowsWindowData& data = *(WindowsWindowData*)glfwGetWindowUserPointer(window);
+				DesktopWindowData& data = *(DesktopWindowData*)glfwGetWindowUserPointer(window);
 
 				Kargono::Events::MouseMovedEvent event((float)xPos, (float)yPos);
 				data.EventCallback(&event);
@@ -201,7 +211,7 @@ namespace API::Platform
 
 	}
 
-	void WindowsWindow::Shutdown()
+	void DesktopWindow::Shutdown()
 	{
 		glfwDestroyWindow(m_Window);
 		--s_GLFWWindowCount;
@@ -213,14 +223,14 @@ namespace API::Platform
 		}
 	}
 
-	void WindowsWindow::SwapBuffers()
+	void DesktopWindow::SwapBuffers()
 	{
 		KG_PROFILE_FUNCTION();
 		glfwSwapBuffers(m_Window);
 	}
 
 
-	void WindowsWindow::OnUpdate() 
+	void DesktopWindow::OnUpdate() 
 	{
 		KG_PROFILE_FUNCTION();
 		{
@@ -231,13 +241,13 @@ namespace API::Platform
 		SwapBuffers();
 	}
 
-	void WindowsWindow::SetVSync(bool enabled)
+	void DesktopWindow::SetVSync(bool enabled)
 	{
 		if (enabled)	{ glfwSwapInterval(1); }
 		else			{ glfwSwapInterval(0); }
 		m_Data.VSync = enabled;
 	}
-	void WindowsWindow::SetFullscreen(bool enabled)
+	void DesktopWindow::SetFullscreen(bool enabled)
 	{
 		if (enabled)
 		{
@@ -254,11 +264,11 @@ namespace API::Platform
 			glfwSetWindowMonitor(m_Window, nullptr, 0, 0, m_Data.Width, m_Data.Height, GLFW_DONT_CARE);
 		}
 	}
-	void WindowsWindow::SetResizable(bool resizable)
+	void DesktopWindow::SetResizable(bool resizable)
 	{
 		glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
 	}
-	void WindowsWindow::CenterWindow()
+	void DesktopWindow::CenterWindow()
 	{
 		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 		if (!monitor)
@@ -269,7 +279,7 @@ namespace API::Platform
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 		glfwSetWindowPos(m_Window, (mode->width - m_Data.Width) / 2, (mode->height - m_Data.Height) / 2);
 	}
-	glm::vec2 WindowsWindow::GetMonitorDimensions()
+	glm::vec2 DesktopWindow::GetMonitorDimensions()
 	{
 		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 		if (!monitor)
@@ -280,7 +290,7 @@ namespace API::Platform
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 		return glm::vec2(static_cast<float>(mode->width), static_cast<float>(mode->height));
 	}
-	void WindowsWindow::ResizeWindow(glm::vec2 newWindowSize)
+	void DesktopWindow::ResizeWindow(glm::vec2 newWindowSize)
 	{
 		glfwSetWindowSize(m_Window, static_cast<int>(newWindowSize.x), static_cast<int>(newWindowSize.y));
 
@@ -297,7 +307,7 @@ namespace API::Platform
 		m_Data.EventCallback(&event);
 
 	}
-	void WindowsWindow::ToggleMaximized()
+	void DesktopWindow::ToggleMaximized()
 	{
 		if (glfwGetWindowAttrib(m_Window, GLFW_MAXIMIZED))
 		{
@@ -308,12 +318,12 @@ namespace API::Platform
 			glfwMaximizeWindow(m_Window);
 		}
 	}
-	void WindowsWindow::SetMouseCursorVisible(bool choice)
+	void DesktopWindow::SetMouseCursorVisible(bool choice)
 	{
 		auto cursorVisibility = choice ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;
 		glfwSetInputMode(m_Window, GLFW_CURSOR, cursorVisibility);
 	}
-	void WindowsWindow::SetVisible(bool visible)
+	void DesktopWindow::SetVisible(bool visible)
 	{
 		if (visible)
 		{

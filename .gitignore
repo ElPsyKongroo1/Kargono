@@ -41,6 +41,8 @@ bin-int/**
 /Kargono.sln.DotSettings.user
 /docs/**
 /.vscode/**
+!/.vscode/launch.json
+!/.vscode/settings.json
 
 # Specific File Paths
 **/Assets/Scripts/Binaries/**
