@@ -4,6 +4,16 @@
             "cwd": "/media/sf_SharedFolder/Kargono/Editor",
             "binaryPath": "/media/sf_SharedFolder/Kargono/Binary/Debug_linux/Editor/Editor",
             "binaryArgs": []
+        },
+        {
+            "cwd": "/home/elpsykongroo/Desktop/Kargono/Server",
+            "binaryPath": "/home/elpsykongroo/Desktop/Kargono/Binary/Debug_linux/Server/Server",
+            "binaryArgs": []
+        },
+        {
+            "cwd": "/home/elpsykongroo/Desktop/Kargono/Editor",
+            "binaryPath": "/home/elpsykongroo/Desktop/Kargono/Binary/Debug_linux/Editor/Editor",
+            "binaryArgs": []
         }
     ],
     "makefile.alwaysPreConfigure": true,

@@ -156,6 +156,7 @@ namespace Kargono::Audio
 		// Find default audio device
 		s_AudioContext->CurrentDeviceName = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
 		s_AudioContext->CurrentDeviceID = alcOpenDevice(s_AudioContext->CurrentDeviceName.c_str());
+		if ()
 		KG_ASSERT(s_AudioContext->CurrentDeviceID, "Failed to get the default device for OpenAL");
 		//KG_INFO("OpenAL Device: {}", alcGetString(s_AudioContext->m_CurrentDeviceID, ALC_DEVICE_SPECIFIER));
 
