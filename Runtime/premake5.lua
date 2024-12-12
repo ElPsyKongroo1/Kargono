@@ -31,11 +31,6 @@ project "Runtime"
 
     }
 
-    libdirs
-    {
-
-    }
-
     links 
     { 
         "Engine"
@@ -44,16 +39,16 @@ project "Runtime"
     defines 
     {
         "KG_RUNTIME",
-		"_CRT_SECURE_NO_WARNINGS"
+        "_CRT_SECURE_NO_WARNINGS"
     }
 
     filter "system:windows"
         
         systemversion "latest"
-		buildoptions 
-		{
-		"/wd4996" 
-		}
+        buildoptions 
+        {
+            "/wd4996" 
+        }
         defines 
         {
             "KG_PLATFORM_WINDOWS"
@@ -62,7 +57,19 @@ project "Runtime"
         systemversion "latest"
 	defines
 	{
-        "KG_PLATFORM_LINUX"
+            "KG_PLATFORM_LINUX"
+	}
+	links 
+	{ 
+            "GLFW",
+            "Box2D",
+            "GLAD",
+            "imGui",
+            "yaml-cpp",
+            "msdf-atlas-gen",
+            "msdfgen",
+            "freetype",
+            "%{Library.ShaderC_Linux}"
 	}
     filter "configurations:Debug"
         kind "ConsoleApp"

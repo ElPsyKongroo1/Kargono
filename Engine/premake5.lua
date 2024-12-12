@@ -13,11 +13,11 @@
     
     files 
     {
-		"Source/Kargono.h",
-		"Source/kgpch.h",
-		"Source/kgpch.cpp",
-		"Source/Kargono/**.h",
-		"Source/Kargono/**.cpp",
+        "Source/Kargono.h",
+        "Source/kgpch.h",
+        "Source/kgpch.cpp",
+        "Source/Kargono/**.h",
+	"Source/Kargono/**.cpp",
         "%{wks.location}/Dependencies/stb_image/**.cpp",
         "%{wks.location}/Dependencies/stb_image/**.h",
         "%{wks.location}/Dependencies/ImGuizmo/ImGuizmo.h",
@@ -37,7 +37,7 @@
     defines
     {
         "_CRT_SECURE_NO_WARNINGS",
-		"GLFW_INCLUDE_NONE",
+	"GLFW_INCLUDE_NONE",
         "KG_RENDERER_OPENGL"
     }
     includedirs 
@@ -66,22 +66,16 @@
         "%{IncludeDir.ImGuiColorTextEdit}"
     }
 
-    libdirs
-    {
-    }
-
     links 
     { 
         "GLFW",
         "Box2D",
         "GLAD",
-        "opengl32.lib",
         "imGui",
-        "dwmapi.lib",
         "yaml-cpp",
-        "freetype",
+        "msdf-atlas-gen",
         "msdfgen",
-        "msdf-atlas-gen"
+        "freetype"
     }
 
     filter "files:../Dependencies/ImGuizmo/**.cpp"
@@ -108,6 +102,8 @@
 
         links 
         {
+            "opengl32.lib",
+            "dwmapi.lib",
             "%{Library.WinSock}",
             "%{Library.WinMM}",
             "%{Library.WinVersion}",
@@ -123,65 +119,41 @@
         defines "KG_DEBUG"
         runtime "Debug"
         symbols "on"
-        links
-        {
-            "%{Library.ShaderC_Debug}",
-            "%{Library.SPIRV_Cross_Debug}",
-            "%{Library.SPIRV_Cross_GLSL_Debug}"
-        }
         filter { "system:windows", "configurations:Debug" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
             links
             {
+            	"%{Library.ShaderC_Debug}",
+                "%{Library.SPIRV_Cross_Debug}",
+                "%{Library.SPIRV_Cross_GLSL_Debug}",
                 "%{Library.OpenALSoft_Debug}",
-            }
-        filter { "system:linux", "configurations:Debug" }
-            links
-            {
-            	"%{Library.OpenALSoft_Debug_Linux}"
             }
         
     filter "configurations:Release"
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
-        links
-        {
-            "%{Library.ShaderC_Release}",
-            "%{Library.SPIRV_Cross_Release}",
-            "%{Library.SPIRV_Cross_GLSL_Release}",
-        }
         filter { "system:windows", "configurations:Release" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Release}\" \"%{cfg.buildtarget.directory}\" /y" }
             links 
             {
+                "%{Library.ShaderC_Release}",
+                "%{Library.SPIRV_Cross_Release}",
+                "%{Library.SPIRV_Cross_GLSL_Release}",
                 "%{Library.OpenALSoft_Release}"
-            }
-        filter { "system:linux", "configurations:Release" }
-            links
-            {
-            	"%{Library.OpenALSoft_Release_Linux}"
             }
     filter "configurations:Dist"
         defines "KG_DIST"
         runtime "Release"
         optimize "on"
         symbols "off"
-        links
-        {
-            "%{Library.ShaderC_Release}",
-            "%{Library.SPIRV_Cross_Release}",
-            "%{Library.SPIRV_Cross_GLSL_Release}"
-        }
         filter { "system:windows", "configurations:Dist" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Dist}\" \"%{cfg.buildtarget.directory}\" /y" }
             links 
             {
+                "%{Library.ShaderC_Release}",
+                "%{Library.SPIRV_Cross_Release}",
+                "%{Library.SPIRV_Cross_GLSL_Release}",
                 "%{Library.OpenALSoft_Dist}"
-            }
-        filter { "system:linux", "configurations:Dist" }
-            links
-            {
-            	"%{Library.OpenALSoft_Dist_Linux}"
             }
         
