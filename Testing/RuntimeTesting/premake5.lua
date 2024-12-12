@@ -34,11 +34,6 @@ project "RuntimeTesting"
         "%{IncludeDir.ImGuiColorTextEdit}"
     }
 
-    libdirs
-    {
-
-    }
-
     links 
     { 
         "Engine"  
@@ -46,7 +41,7 @@ project "RuntimeTesting"
 
     defines 
     {
-		"_CRT_SECURE_NO_WARNINGS",
+        "_CRT_SECURE_NO_WARNINGS",
         "KG_TESTING"
     }
 
@@ -61,6 +56,25 @@ project "RuntimeTesting"
         {
             "KG_PLATFORM_WINDOWS"
         }
+        
+    filter "system:linux"
+        systemversion "latest"
+        defines 
+        {
+            "KG_PLATFORM_LINUX"
+        }
+        links 
+	{ 
+            "GLFW",
+            "Box2D",
+            "GLAD",
+            "imGui",
+            "yaml-cpp",
+            "msdf-atlas-gen",
+            "msdfgen",
+            "freetype",
+            "%{Library.ShaderC_Linux}"
+	}
 
     filter "configurations:Debug"
         kind "ConsoleApp"

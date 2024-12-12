@@ -30,17 +30,11 @@ project "Editor"
         "%{IncludeDir.asio}",
         "%{IncludeDir.ImGuiColorTextEdit}",
     }
-
-    libdirs
-    {
-
-    }
-
+    
     links 
     { 
         "Engine"
     }
-
 
     defines 
     {
@@ -73,9 +67,10 @@ project "Editor"
             "GLAD",
             "imGui",
             "yaml-cpp",
-            "freetype",
+            "msdf-atlas-gen",
             "msdfgen",
-            "msdf-atlas-gen"
+            "freetype",
+            "%{Library.ShaderC_Linux}"
 	}
 
     filter "configurations:Debug"
@@ -109,9 +104,6 @@ project "Editor"
         filter { "system:linux", "configurations:Release" }
             links
             {
-                "%{Library.ShaderC_Release_Linux}",
-                "%{Library.SPIRV_Cross_Release_Linux}",
-                "%{Library.SPIRV_Cross_GLSL_Release_Linux}",
             	"%{Library.OpenALSoft_Release_Linux}"
             }
     filter "configurations:Dist"
@@ -129,9 +121,6 @@ project "Editor"
         filter { "system:linux", "configurations:Dist" }
             links
             {
-                "%{Library.ShaderC_Release_Linux}",
-                "%{Library.SPIRV_Cross_Release_Linux}",
-                "%{Library.SPIRV_Cross_GLSL_Release_Linux}",
             	"%{Library.OpenALSoft_Dist_Linux}"
             }
         

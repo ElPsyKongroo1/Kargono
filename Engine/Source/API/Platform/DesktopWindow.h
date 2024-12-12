@@ -5,12 +5,12 @@
 
 #include "API/Platform/GlfwAPI.h"
 
-#ifdef KG_PLATFORM_WINDOWS
+#if defined(KG_PLATFORM_WINDOWS) || defined(KG_PLATFORM_LINUX)
 
 namespace API::Platform
 {
 	//==============================
-	// WindowsWindow Structs
+	// DesktopWindow Structs
 	//==============================
 	// This struct holds data that describes the GLFW window. The member variable m_Data
 	//		represents that information. The title is the name presented on the window,
@@ -18,7 +18,7 @@ namespace API::Platform
 	//		Versions simply state what version of OpenGL we are using, and EventCallback is
 	//		the function that is called when an event needs to be handled. Currently the
 	//		EventCallback is always connected to the Application function OnEvent()
-	struct WindowsWindowData
+	struct DesktopWindowData
 	{
 		std::string Title;
 		uint32_t Width, Height;
@@ -39,7 +39,7 @@ namespace API::Platform
 	//		and Window Resize Events. These events are registered with
 	//		callback functions in the Init() function. The events are
 	//		handled later in the engine through the Application class.
-	class WindowsWindow : public Kargono::Window
+	class DesktopWindow : public Kargono::Window
 	{
 
 	public:
@@ -48,9 +48,9 @@ namespace API::Platform
 		//==============================
 		// This constructor simply calls the Init() lifetime function.
 		//		The Init Description will be more useful.
-		WindowsWindow(const Kargono::WindowProps& props);
+		DesktopWindow(const Kargono::WindowProps& props);
 		// This destructor simply calls the Shutdown() lifetime function.
-		virtual ~WindowsWindow() override;
+		virtual ~DesktopWindow() override;
 
 		//==============================
 		// Lifecycle Functions
@@ -126,7 +126,7 @@ namespace API::Platform
 		// m_Window holds the reference to the underlying GLFW window that is represented by this class.
 		GLFWwindow* m_Window;
 		// m_Data holds specification data for the window such as its size.
-		WindowsWindowData m_Data;
+		DesktopWindowData m_Data;
 
 	};
 }
