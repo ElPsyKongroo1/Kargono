@@ -314,6 +314,9 @@ namespace Kargono::Windows
 
 		EditorUI::EditorUIService::StartDockspaceWindow();
 
+		// Set the active viewport for the window
+		EngineService::GetActiveWindow().SetActiveViewport(&m_ViewportPanel->m_ViewportData);
+
 		// Set up Menu Toolbar
 		if (ImGui::BeginMenuBar())
 		{

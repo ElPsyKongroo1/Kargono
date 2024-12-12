@@ -9,6 +9,9 @@
 
 namespace API::Platform
 {
+	// Default Viewport Data if none is provided
+	static inline Kargono::ViewportData s_DefaultViewportData { 0, 0 };
+
 	//==============================
 	// DesktopWindow Structs
 	//==============================
@@ -20,12 +23,14 @@ namespace API::Platform
 	//		EventCallback is always connected to the Application function OnEvent()
 	struct DesktopWindowData
 	{
-		std::string Title;
-		uint32_t Width, Height;
-		uint32_t ViewportWidth, ViewportHeight;
-		bool VSync;
-		uint8_t VersionMajor = 4, VersionMinor = 5;
-		Kargono::Events::EventCallbackFn EventCallback;
+		std::string Title{ "Empty Title"};
+		uint32_t Width { 0 };
+		uint32_t Height { 0 };
+		Kargono::ViewportData* m_ViewportData{ &s_DefaultViewportData };
+		bool VSync{ false };
+		uint8_t VersionMajor{ 4 };
+		uint8_t VersionMinor{ 5 };
+		Kargono::Events::EventCallbackFn EventCallback{ nullptr };
 	};
 
 	//============================================================
@@ -108,18 +113,15 @@ namespace API::Platform
 		void SetEventCallback(const Kargono::Events::EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
 		virtual Kargono::Events::EventCallbackFn& GetEventCallback() override { return m_Data.EventCallback; }
 
+		virtual Kargono::ViewportData& GetActiveViewport() const override;
+		virtual void SetActiveViewport(Kargono::ViewportData* viewportData) override;
+
 		//==============================
 		// Getters/Setters
 		//==============================
 	public:
 		virtual uint32_t GetWidth() const override { return m_Data.Width; }
 		virtual uint32_t GetHeight() const override { return m_Data.Height; }
-
-		virtual uint32_t GetViewportWidth() const override { return m_Data.ViewportWidth; }
-		virtual uint32_t GetViewportHeight() const override { return m_Data.ViewportHeight; }
-
-		virtual void SetViewportWidth(uint32_t width) override { m_Data.ViewportWidth = width; }
-		virtual void SetViewportHeight(uint32_t height) override { m_Data.ViewportHeight = height; }
 
 		virtual void* GetNativeWindow() const override { return m_Window; }
 	private:

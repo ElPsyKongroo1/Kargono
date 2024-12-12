@@ -21,25 +21,29 @@ namespace Kargono::Panels
 	void ViewportPanel::OnUpdate(Timestep ts)
 	{
 		KG_PROFILE_FUNCTION();
-		// Adjust Framebuffer Size Based on Viewport
-		auto& currentWindow = EngineService::GetActiveWindow();
+
+		// Adjust framebuffer & camera viewport size if necessary
+		Window& currentWindow = EngineService::GetActiveWindow();
+		currentWindow.SetActiveViewport(&m_ViewportData);
 		if (Rendering::FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
-			static_cast<float>(currentWindow.GetViewportWidth()) > 0.0f && static_cast<float>(currentWindow.GetViewportHeight()) > 0.0f &&
-			(spec.Width != currentWindow.GetViewportWidth() || spec.Height != currentWindow.GetViewportHeight()))
+			(float)m_ViewportData.m_Width > 0.0f && (float)m_ViewportData.m_Height > 0.0f &&
+			(spec.Width != m_ViewportData.m_Width || spec.Height != m_ViewportData.m_Height))
 		{
-			m_ViewportFramebuffer->Resize((uint32_t)currentWindow.GetViewportWidth(), (uint32_t)currentWindow.GetViewportHeight());
-			m_EditorCamera.SetViewportSize(static_cast<float>(currentWindow.GetViewportWidth()), static_cast<float>(currentWindow.GetViewportHeight()));
+			// Update framebuffer and camera viewport size
+			m_ViewportFramebuffer->Resize(m_ViewportData.m_Width, m_ViewportData.m_Height);
+			m_EditorCamera.SetViewportSize((float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height);
 		}
 
-		// Reset Framebuffer
+		// Prepare for rendering
 		Rendering::RenderingService::ResetStats();
 		m_ViewportFramebuffer->Bind();
 		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Rendering::RendererAPI::Clear();
 
-		// Clear our entity ID attachment to -1
-		m_ViewportFramebuffer->ClearAttachment(1, -1);
+		// Set our entity ID attachment to -1
+		m_ViewportFramebuffer->SetAttachment(1, -1);
 		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
+
 		// Update Scene
 		switch (s_MainWindow->m_SceneState)
 		{
@@ -83,9 +87,10 @@ namespace Kargono::Panels
 
 		OnOverlayRender();
 
+		// Handle drawing user interface
 		if (s_MainWindow->m_ShowActiveUserInterface)
 		{
-			auto& currentApplication = EngineService::GetActiveWindow();
+			Window& currentApplication = EngineService::GetActiveWindow();
 			if (s_MainWindow->m_SceneState == SceneState::Play)
 			{
 				ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
@@ -96,7 +101,7 @@ namespace Kargono::Panels
 
 					if (mainCamera)
 					{
-						RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
+						RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), m_ViewportData.m_Width, m_ViewportData.m_Height);
 					}
 				}
 				
@@ -104,7 +109,7 @@ namespace Kargono::Panels
 			else
 			{
 				Math::mat4 cameraViewMatrix = glm::inverse(m_EditorCamera.GetViewMatrix());
-				RuntimeUI::RuntimeUIService::PushRenderData(cameraViewMatrix, currentApplication.GetViewportWidth(), currentApplication.GetViewportHeight());
+				RuntimeUI::RuntimeUIService::PushRenderData(cameraViewMatrix, m_ViewportData.m_Width, m_ViewportData.m_Height);
 			}
 
 		}
@@ -140,11 +145,9 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 
 		// Create Window
-		auto& currentWindow = EngineService::GetActiveWindow();
+		Window& currentWindow = EngineService::GetActiveWindow();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGuiWindowFlags window_flags = 0;
-		//window_flags |= ImGuiWindowFlags_NoDecoration;
-		EditorUI::EditorUIService::StartWindow(m_PanelName.CString(), &s_MainWindow->m_ShowViewport, window_flags);
+		EditorUI::EditorUIService::StartWindow(m_PanelName.CString(), &s_MainWindow->m_ShowViewport, NULL);
 		ImGui::PopStyleVar();
 
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
@@ -154,8 +157,8 @@ namespace Kargono::Panels
 		}
 
 		// Get current cursor position and GLFW viewport size
-		auto windowScreenOffset = ImGui::GetWindowPos();
-		static Math::uvec2 oldViewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
+		ImVec2 windowScreenOffset = ImGui::GetWindowPos();
+		static Math::uvec2 oldViewportSize = { m_ViewportData.m_Width, m_ViewportData.m_Height };
 		Math::vec2 localViewportBounds[2];
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
@@ -166,22 +169,22 @@ namespace Kargono::Panels
 		Math::uvec2 aspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 		if (aspectRatio.x > aspectRatio.y && ((windowSize.x / aspectRatio.x) * aspectRatio.y) < windowSize.y)
 		{
-			currentWindow.SetViewportWidth(static_cast<uint32_t>(windowSize.x));
-			currentWindow.SetViewportHeight(static_cast<uint32_t>((windowSize.x / aspectRatio.x) * aspectRatio.y));
+			m_ViewportData.m_Width = (uint32_t)windowSize.x;
+			m_ViewportData.m_Height = (uint32_t)(windowSize.x / aspectRatio.x) * aspectRatio.y;
 		}
 		else
 		{
-			currentWindow.SetViewportWidth(static_cast<uint32_t>((windowSize.y / aspectRatio.y) * aspectRatio.x));
-			currentWindow.SetViewportHeight(static_cast<uint32_t>(windowSize.y));
+			m_ViewportData.m_Width = (uint32_t)(windowSize.y / aspectRatio.y) * aspectRatio.x;
+			m_ViewportData.m_Height = (uint32_t)windowSize.y;
 		}
 
-		localViewportBounds[0] = { cursorPosition.x + (windowSize.x - static_cast<float>(currentWindow.GetViewportWidth())) * 0.5f, cursorPosition.y + (windowSize.y - static_cast<float>(currentWindow.GetViewportHeight())) * 0.5f};
-		localViewportBounds[1] = { localViewportBounds[0].x + static_cast<float>(currentWindow.GetViewportWidth()),  localViewportBounds[0].y + static_cast<float>(currentWindow.GetViewportHeight())};
+		localViewportBounds[0] = { cursorPosition.x + (windowSize.x - (float)m_ViewportData.m_Width) * 0.5f, cursorPosition.y + (windowSize.y - (float)m_ViewportData.m_Height) * 0.5f};
+		localViewportBounds[1] = { localViewportBounds[0].x + (float)m_ViewportData.m_Width,  localViewportBounds[0].y + (float)m_ViewportData.m_Height};
 		m_ScreenViewportBounds[0] = { localViewportBounds[0].x + windowScreenOffset.x, localViewportBounds[0].y + windowScreenOffset.y };
-		m_ScreenViewportBounds[1] = { m_ScreenViewportBounds[0].x + static_cast<float>(currentWindow.GetViewportWidth()), m_ScreenViewportBounds[0].y + static_cast<float>(currentWindow.GetViewportHeight()) };
+		m_ScreenViewportBounds[1] = { m_ScreenViewportBounds[0].x + (float)m_ViewportData.m_Width, m_ScreenViewportBounds[0].y + m_ViewportData.m_Height };
 		ImGui::SetCursorPos(ImVec2(localViewportBounds[0].x, localViewportBounds[0].y));
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
-		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ static_cast<float>(currentWindow.GetViewportWidth()), static_cast<float>(currentWindow.GetViewportHeight()) }, ImVec2{ 0, 1 },
+		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height }, ImVec2{ 0, 1 },
 			ImVec2{ 1, 0 });
 		if ((s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate) ||
 			(s_MainWindow->m_SceneState == SceneState::Play && s_MainWindow->m_IsPaused))
@@ -202,7 +205,7 @@ namespace Kargono::Panels
 						float currentTime = Utility::Time::GetTime();
 						if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::SceneService::GetActiveScene()->GetHoveredEntity() == previousEntity)
 						{
-							auto& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TransformComponent>();
+							ECS::TransformComponent& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TransformComponent>();
 							m_EditorCamera.SetFocalPoint(transformComponent.Translation);
 							m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
 							m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
@@ -215,10 +218,10 @@ namespace Kargono::Panels
 			}
 		}
 
-		Math::uvec2 viewportSize = { currentWindow.GetViewportWidth(), currentWindow.GetViewportHeight() };
+		Math::uvec2 viewportSize = { m_ViewportData.m_Width, m_ViewportData.m_Height };
 		if (oldViewportSize != viewportSize)
 		{
-			Scenes::SceneService::GetActiveScene()->OnViewportResize((uint32_t)currentWindow.GetViewportWidth(), (uint32_t)currentWindow.GetViewportHeight());
+			Scenes::SceneService::GetActiveScene()->OnViewportResize((uint32_t)m_ViewportData.m_Width, (uint32_t)m_ViewportData.m_Height);
 		}
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -247,8 +250,8 @@ namespace Kargono::Panels
 				Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 				// Entity Transform
-				auto& tc = selectedEntity.GetComponent<ECS::TransformComponent>();
-				Math::mat4 transform = tc.GetTransform();
+				ECS::TransformComponent& transformComponent = selectedEntity.GetComponent<ECS::TransformComponent>();
+				Math::mat4 transform = transformComponent.GetTransform();
 
 				// Snapping
 				bool snap = Input::InputService::IsKeyPressed(Key::LeftControl);
@@ -265,10 +268,10 @@ namespace Kargono::Panels
 					Math::vec3 translation, rotation, scale;
 					Math::DecomposeTransform(transform, translation, rotation, scale);
 
-					Math::vec3 deltaRotation = rotation - tc.Rotation;
-					tc.Translation = translation;
-					tc.Rotation += deltaRotation;
-					tc.Scale = scale;
+					Math::vec3 deltaRotation = rotation - transformComponent.Rotation;
+					transformComponent.Translation = translation;
+					transformComponent.Rotation += deltaRotation;
+					transformComponent.Scale = scale;
 				}
 			}
 		}

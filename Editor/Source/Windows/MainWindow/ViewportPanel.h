@@ -86,6 +86,7 @@ namespace Kargono::Panels
 		Rendering::EditorCamera m_EditorCamera;
 		FixedString32 m_PanelName{ "Viewport" };
 		int m_GizmoType = -1;
+		ViewportData m_ViewportData;
 	private:
 		// Viewport resources
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;

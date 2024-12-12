@@ -52,7 +52,7 @@ namespace API::RenderingAPI
 		// Function clears a specific color attachment with a specific clear value.
 		//		Ex: An attachmentIndex(2) selects the second color attachment in m_ColorAttachmentIDs
 		//		and clears its buffer to value(-1). 
-		virtual void ClearAttachment(uint32_t attachmentIndex, int value) override;
+		virtual void SetAttachment(uint32_t attachmentIndex, int value) override;
 
 		//==============================
 		// Getters/Setters

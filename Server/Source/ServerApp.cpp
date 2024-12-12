@@ -76,7 +76,6 @@ namespace Kargono
 		if (Projects::ProjectService::OpenProject(path)) {}
 	}
 
-
 	void ServerApp::Terminate()
 	{
 		Network::ServerService::Terminate();

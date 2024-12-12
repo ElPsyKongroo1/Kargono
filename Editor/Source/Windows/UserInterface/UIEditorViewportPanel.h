@@ -21,6 +21,6 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{ "UIEditorViewportPanel" };
+		FixedString32 m_PanelName{ "User Interface Viewport" };
 	};
 }

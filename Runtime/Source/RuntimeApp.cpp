@@ -28,7 +28,7 @@ namespace Kargono
 			Audio::AudioService::SetMute(true);
 		}
 
-		auto& currentWindow = EngineService::GetActiveWindow();
+		Window& currentWindow = EngineService::GetActiveWindow();
 
 		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
 
@@ -206,8 +206,9 @@ namespace Kargono
 
 	bool RuntimeApp::OnWindowResize(Events::WindowResizeEvent event)
 	{
-		EngineService::GetActiveWindow().SetViewportWidth(event.GetWidth());
-		EngineService::GetActiveWindow().SetViewportHeight(event.GetHeight());
+		ViewportData& viewportData = EngineService::GetActiveWindow().GetActiveViewport();
+		viewportData.m_Width = event.GetWidth();
+		viewportData.m_Height = event.GetHeight();
 		Scenes::SceneService::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
 		return false;
 	}

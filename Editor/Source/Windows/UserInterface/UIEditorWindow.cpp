@@ -91,6 +91,7 @@ namespace Kargono::Windows
 
 			if (ImGui::BeginMenu("Panels"))
 			{
+				ImGui::MenuItem("Tree", NULL, &m_ShowTable);
 				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
 				ImGui::MenuItem("Properties", NULL, &m_ShowProperties);
 				ImGui::EndMenu();
