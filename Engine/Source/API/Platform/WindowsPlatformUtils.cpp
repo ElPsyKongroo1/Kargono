@@ -10,6 +10,7 @@
 #if defined(KG_PLATFORM_WINDOWS) 
 
 #include "API/Platform/WindowsBackendAPI.h"
+#include "API/Platform/GlfwBackendAPI.h"
 
 namespace Kargono::Utility
 {
