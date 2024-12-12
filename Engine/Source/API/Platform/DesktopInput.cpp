@@ -4,9 +4,9 @@
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Math/Math.h"
 
-#include "API/Platform/GlfwAPI.h"
+#if defined(KG_PLATFORM_WINDOWS) || defined(KG_PLATFORM_LINUX) 
 
-#ifdef KG_PLATFORM_WINDOWS
+#include "API/Platform/GlfwAPI.h"
 
 namespace Kargono::Input
 {
