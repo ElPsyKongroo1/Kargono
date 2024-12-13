@@ -87,7 +87,7 @@ project "Editor"
         filter { "system:linux", "configurations:Debug" }
             links
             {
-            	"%{Library.OpenALSoft_Debug_Linux}"
+            	"%{DynamicLibrary.OpenALSoft_Debug_Linux}"
             }
     filter "configurations:Release"
         kind "ConsoleApp"
@@ -104,7 +104,7 @@ project "Editor"
         filter { "system:linux", "configurations:Release" }
             links
             {
-            	"%{Library.OpenALSoft_Release_Linux}"
+            	"%{DynamicLibrary.OpenALSoft_Release_Linux}"
             }
     filter "configurations:Dist"
         kind "WindowedApp"
@@ -121,6 +121,6 @@ project "Editor"
         filter { "system:linux", "configurations:Dist" }
             links
             {
-            	"%{Library.OpenALSoft_Dist_Linux}"
+            	"%{DynamicLibrary.OpenALSoft_Dist_Linux}"
             }
         
