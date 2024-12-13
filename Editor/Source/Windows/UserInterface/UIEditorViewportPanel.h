@@ -22,6 +22,7 @@ namespace Kargono::Panels
 		// Initialization Functions
 		//=========================
 		void InitializeFrameBuffer();
+		void InitializeOverlayData();
 
 	public:
 		//=========================
@@ -29,6 +30,10 @@ namespace Kargono::Panels
 		//=========================
 		void OnUpdate(Timestep ts);
 		void OnEditorUIRender();
+
+		void DrawOverlay();
+		void ProcessMousePicking();
+		
 	public:
 		//=========================
 		// Core Panel Data
@@ -42,5 +47,7 @@ namespace Kargono::Panels
 		bool m_ViewportFocused{ false };
 		bool m_ViewportHovered{ false };
 		Math::vec2 m_ScreenViewportBounds[2];
+		uint16_t m_HoveredWindowID{ std::numeric_limits<uint16_t>().max() };
+		uint16_t m_HoveredWidgetID{ std::numeric_limits<uint16_t>().max() };
 	};
 }

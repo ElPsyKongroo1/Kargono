@@ -988,7 +988,7 @@ namespace Kargono::Panels
 			// Box Colliders
 			{
 				auto view = Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<ECS::TransformComponent, ECS::BoxCollider2DComponent>();
-				for (auto entity : view)
+				for (entt::entity entity : view)
 				{
 					auto [tc, bc2d] = view.get<ECS::TransformComponent, ECS::BoxCollider2DComponent>(entity);
 
@@ -1047,7 +1047,7 @@ namespace Kargono::Panels
 					lineVertices[i] = transform.GetTransform() * s_CubeVertexPositions[i];
 				}
 				// Create and submit lines to renderer
-				for (auto& indices : s_CubeIndices)
+				for (Math::uvec2& indices : s_CubeIndices)
 				{
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[indices.x]);

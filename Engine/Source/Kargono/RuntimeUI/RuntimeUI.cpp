@@ -269,8 +269,8 @@ namespace Kargono::RuntimeUI
 		Rendering::RendererAPI::ClearDepthBuffer();
 
 		// Calculate orthographic projection matrix for user interface
-		Math::mat4 orthographicProjection = glm::ortho((float)0, (float)viewportWidth,
-			(float)0, (float)viewportHeight, (float)-1, (float)1);
+		Math::mat4 orthographicProjection = glm::ortho(0.0f, (float)viewportWidth,
+			0.0f, (float)viewportHeight, -1.0f, 1.0f);
 		Math::mat4 outputMatrix = orthographicProjection;
 
 		// Start rendering context
