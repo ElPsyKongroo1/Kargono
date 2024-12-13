@@ -59,6 +59,7 @@ project "Runtime"
 	{
             "KG_PLATFORM_LINUX"
 	}
+    linkoptions { "`pkg-config --libs gtk4`" }
 	links 
 	{ 
             "GLFW",

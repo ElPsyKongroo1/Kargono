@@ -61,7 +61,7 @@ project "Editor"
             "KG_PLATFORM_LINUX"
         }
         links 
-	{ 
+        { 
             "GLFW",
             "Box2D",
             "GLAD",
@@ -71,7 +71,8 @@ project "Editor"
             "msdfgen",
             "freetype",
             "%{Library.ShaderC_Linux}"
-	}
+        }
+        linkoptions { "`pkg-config --libs gtk4`" }
 
     filter "configurations:Debug"
         kind "ConsoleApp"
