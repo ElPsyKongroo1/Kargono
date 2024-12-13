@@ -229,11 +229,11 @@ namespace API::RenderingAPI
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
 		return pixelData;
 	}
-	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+	void OpenGLFramebuffer::SetAttachment(uint32_t attachmentIndex, int value)
 	{
 		KG_ASSERT(attachmentIndex < m_ColorAttachmentIDs.size(), "Color attachment selection is out of bounds!")
 
-		auto& spec = m_ColorAttachmentSpecifications[attachmentIndex];
+		Kargono::Rendering::FramebufferDataSpecification& spec = m_ColorAttachmentSpecifications[attachmentIndex];
 
 		glClearTexImage(m_ColorAttachmentIDs[attachmentIndex], 0,
 			Utility::KargonoTextureFormatToGL(spec.DataFormat), GL_INT, &value);

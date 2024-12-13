@@ -36,6 +36,7 @@ namespace Kargono::Windows
 		// On Event Functions
 		//=========================
 		bool OnInputEvent(Events::Event* event);
+		void OnUpdate(Timestep ts);
 
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);

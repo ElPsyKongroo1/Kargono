@@ -64,7 +64,12 @@ namespace Kargono::Rendering
 		const Math::mat4& GetViewMatrix() const { return m_ViewMatrix; }
 		Math::mat4 GetViewProjection() const { return m_Projection * m_ViewMatrix; }
 
-		void SetViewportSize(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; UpdateProjection(); }
+		void SetViewportSize(float width, float height) 
+		{
+			m_ViewportWidth = width; 
+			m_ViewportHeight = height; 
+			UpdateProjection();
+		}
 
 		//============================================================
 		// Camera Orientation Getters/Setters

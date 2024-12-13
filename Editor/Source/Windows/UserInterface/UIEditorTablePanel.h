@@ -61,7 +61,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{ "UIEditorTablePanel" };
+		FixedString32 m_PanelName{ "User Interface Tree" };
 
 		//=========================
 		// Widgets

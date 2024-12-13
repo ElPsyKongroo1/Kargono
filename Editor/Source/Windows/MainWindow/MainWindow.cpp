@@ -106,7 +106,6 @@ namespace Kargono::Windows
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();
 		m_ProjectPanel = CreateScope<Panels::ProjectPanel>();
 		m_ProjectComponentPanel = CreateScope<Panels::ProjectComponentPanel>();
-		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
 		m_GameStatePanel = CreateScope<Panels::GameStatePanel>();
@@ -116,16 +115,7 @@ namespace Kargono::Windows
 		m_AIStatePanel = CreateScope<Panels::AIStateEditorPanel>();
 		m_TestingPanel = CreateScope<Panels::TestingPanel>();
 
-		m_ViewportPanel->InitializeFrameBuffer();
-
-		m_ViewportPanel->m_EditorCamera = Rendering::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
-
-		m_ViewportPanel->m_EditorCamera.SetFocalPoint({ 58.0f, 27.0f, 93.0f });
-		m_ViewportPanel->m_EditorCamera.SetDistance(1.0f);
-		m_ViewportPanel->m_EditorCamera.SetPitch(0.195f);
-		m_ViewportPanel->m_EditorCamera.SetYaw(-0.372f);
-
-		m_ViewportPanel->InitializeOverlayData();
+		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
 	}
 	void MainWindow::OnUpdate(Timestep ts)
 	{
@@ -313,6 +303,9 @@ namespace Kargono::Windows
 		EditorUI::EditorUIService::StartRendering();
 
 		EditorUI::EditorUIService::StartDockspaceWindow();
+
+		// Set the active viewport for the window
+		EngineService::GetActiveWindow().SetActiveViewport(&m_ViewportPanel->m_ViewportData);
 
 		// Set up Menu Toolbar
 		if (ImGui::BeginMenuBar())

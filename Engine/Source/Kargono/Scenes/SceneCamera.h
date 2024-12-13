@@ -2,6 +2,7 @@
 
 #include "Kargono/Rendering/Camera.h"
 #include "Kargono/Math/Math.h"
+#include "Kargono/Core/Window.h"
 
 namespace Kargono::Scenes
 {
@@ -37,7 +38,7 @@ namespace Kargono::Scenes
 			RecalculateProjection();
 		}
 		float GetPerspectiveFarClip() const
-		{ 
+		{
 			return m_PerspectiveFar;
 		}
 		void SetPerspectiveFarClip(float farClip)
@@ -86,11 +87,13 @@ namespace Kargono::Scenes
 	private:
 		void RecalculateProjection();
 	private:
-		ProjectionType m_ProjectionType = ProjectionType::Orthographic;
-		float m_OrthographicSize = 10.0f;
-		float m_OrthographicNear = -1.0f, m_OrthographicFar = 1.0f;
+		ProjectionType m_ProjectionType{ ProjectionType::Orthographic };
+		float m_OrthographicSize{ 10.0f };
+		float m_OrthographicNear{ -1.0f };
+		float m_OrthographicFar { 1.0f };
 
-		float m_PerspectiveFOV = glm::radians(45.0f);
-		float m_PerspectiveNear = 0.01f, m_PerspectiveFar = 1000.0f;
+		float m_PerspectiveFOV{ glm::radians(45.0f) };
+		float m_PerspectiveNear{ 0.01f };
+		float m_PerspectiveFar{ 1000.0f };
 	};
 }

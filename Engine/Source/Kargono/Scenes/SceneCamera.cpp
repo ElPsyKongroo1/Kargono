@@ -35,8 +35,8 @@ namespace Kargono::Scenes
 	}
 	void SceneCamera::RecalculateProjection()
 	{
-		auto& application = EngineService::GetActiveWindow();
-		float aspectRatio = static_cast<float>(application.GetViewportWidth()) / static_cast<float>(application.GetViewportHeight());
+		ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+		float aspectRatio = (float)activeViewport.m_Width / (float)activeViewport.m_Height;
 
 		if (m_ProjectionType == ProjectionType::Perspective)
 		{

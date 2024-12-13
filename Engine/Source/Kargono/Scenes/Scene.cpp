@@ -302,9 +302,9 @@ namespace Kargono::Scenes
 	{
 		// Resize non-fixed
 		auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::CameraComponent>();
-		for (auto entity : view)
+		for (entt::entity entity : view)
 		{
-			auto& cameraComponent = view.get<ECS::CameraComponent>(entity);
+			ECS::CameraComponent& cameraComponent = view.get<ECS::CameraComponent>(entity);
 			
 			cameraComponent.Camera.OnViewportResize();
 		}

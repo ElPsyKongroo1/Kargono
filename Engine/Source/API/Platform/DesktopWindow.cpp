@@ -41,8 +41,6 @@ namespace API::Platform
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
-		m_Data.ViewportWidth = props.Width;
-		m_Data.ViewportHeight = props.Height;
 		m_Window = nullptr;
 
 	}
@@ -57,8 +55,6 @@ namespace API::Platform
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
-		m_Data.ViewportWidth = props.Width;
-		m_Data.ViewportHeight = props.Height;
 		Init(logoPath);
 	}
 
@@ -333,6 +329,29 @@ namespace API::Platform
 		{
 			glfwHideWindow(m_Window);
 		}
+	}
+	Kargono::ViewportData& DesktopWindow::GetActiveViewport() const
+	{
+		// Check if the viewport data is valid
+		if (!m_Data.m_ViewportData)
+		{
+			KG_ERROR("No viewport active when attempting to modify the viewport");
+		}
+
+		// Return the viewport data
+		return *m_Data.m_ViewportData;
+	}
+	void DesktopWindow::SetActiveViewport(Kargono::ViewportData* viewportData)
+	{
+		// Check if the viewport data is valid
+		if (!viewportData)
+		{
+			KG_ERROR("Invalid viewport provided to desktop window class");
+			return;
+		}
+
+		// Set the viewport data
+		m_Data.m_ViewportData = viewportData;
 	}
 }
 

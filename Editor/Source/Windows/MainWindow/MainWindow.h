@@ -217,7 +217,6 @@ namespace Kargono::Windows
 		bool m_ShowPhysicsColliders = false;
 		bool m_ShowCameraFrustums = true;
 		bool m_RuntimeFullscreen = false;
-		bool m_ShowActiveUserInterface = true;
 
 	private:
 		//=========================

@@ -23,6 +23,16 @@ namespace Kargono
 		WindowProps(const std::string& title, uint32_t width, uint32_t height)
 			: Title(title), Width(width), Height(height) {}
 	};
+
+	//==============================
+	// Viewport Data Struct
+	//==============================
+	struct ViewportData
+	{
+		uint32_t m_Width{ 0 };
+		uint32_t m_Height{ 0 };
+	};
+
 	//==============================
 	// Window Class
 	//==============================
@@ -51,11 +61,8 @@ namespace Kargono
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
 
-		virtual uint32_t GetViewportWidth() const = 0;
-		virtual uint32_t GetViewportHeight() const = 0;
-
-		virtual void SetViewportWidth(uint32_t width) = 0;
-		virtual void SetViewportHeight(uint32_t height) = 0;
+		virtual ViewportData& GetActiveViewport() const = 0;
+		virtual void SetActiveViewport(ViewportData* viewportData) = 0;
 
 		virtual Math::vec2 GetMonitorDimensions() = 0;
 		virtual void ResizeWindow(Math::vec2 newWindowSize) = 0;

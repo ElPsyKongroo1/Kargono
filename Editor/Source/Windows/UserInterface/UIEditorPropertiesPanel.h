@@ -100,7 +100,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{ "UIEditorPropertiesPanel" };
+		FixedString32 m_PanelName{ "User Interface Properties" };
 		UIPropertiesDisplay m_CurrentDisplay{ UIPropertiesDisplay::None };
 		RuntimeUI::Widget* m_ActiveWidget{ nullptr };
 		RuntimeUI::Window* m_ActiveWindow{ nullptr };

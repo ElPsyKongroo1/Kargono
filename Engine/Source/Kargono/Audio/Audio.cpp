@@ -143,7 +143,7 @@ namespace Kargono::Audio
 	{
 		for (uint32_t iterator{0}; iterator < s_AudioContext->AudioSourceQueue.size(); iterator++)
 		{
-			auto audioSource = s_AudioContext->AudioSourceQueue.front();
+			Ref<AudioSource> audioSource = s_AudioContext->AudioSourceQueue.front();
 			CallAndCheckALError(alSourceStop(audioSource->GetSourceID()));
 			s_AudioContext->AudioSourceQueue.pop();
 			s_AudioContext->AudioSourceQueue.push(audioSource);
@@ -156,8 +156,11 @@ namespace Kargono::Audio
 		// Find default audio device
 		s_AudioContext->CurrentDeviceName = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
 		s_AudioContext->CurrentDeviceID = alcOpenDevice(s_AudioContext->CurrentDeviceName.c_str());
-		if ()
-		KG_ASSERT(s_AudioContext->CurrentDeviceID, "Failed to get the default device for OpenAL");
+		if (!s_AudioContext->CurrentDeviceID)
+		{
+			KG_ERROR("Failed to get the default device for OpenAL");
+			return;
+		}
 		//KG_INFO("OpenAL Device: {}", alcGetString(s_AudioContext->m_CurrentDeviceID, ALC_DEVICE_SPECIFIER));
 
 		// Create an OpenAL audio context from the device
@@ -165,8 +168,11 @@ namespace Kargono::Audio
 		//OpenAL_ErrorCheck(context);
 
 		// Activate this context so that OpenAL state modifications are applied to the context
-		bool makeCurrentValid = alcMakeContextCurrent(s_AudioContext->ContextID);
-		KG_ASSERT(makeCurrentValid, "Failed to make the OpenAL context the current context");
+		if (!alcMakeContextCurrent(s_AudioContext->ContextID))
+		{
+			KG_ERROR("Failed to make the OpenAL context the current context");
+			return;
+		}
 
 		// Create a listener in 3D space
 		s_AudioContext->DefaultListener = CreateScope<AudioListener>();
