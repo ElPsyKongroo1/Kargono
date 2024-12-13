@@ -5,6 +5,7 @@
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Core/Buffer.h"
 #include "Kargono/Core/WrappedData.h"
+#include "Kargono/Core/Window.h"
 
 #include "API/EditorUI/ImGuiAPI.h"
 #include "API/EditorUI/ImGuizmoAPI.h"
@@ -190,6 +191,7 @@ namespace Kargono::EditorUI
 		static void CreateInfoNotification(const char* text, int delayMS);
 		static void CreateWarningNotification(const char* text, int delayMS);
 		static void CreateCriticalNotification(const char* text, int delayMS);
+		static void AutoCalcViewportSize(Math::vec2 screenViewportBounds[2], ViewportData& viewportData, bool& viewportFocused, bool& viewportHovered);
 
 	private:
 		static void RenderImGuiNotify();

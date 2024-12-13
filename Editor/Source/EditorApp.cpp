@@ -73,6 +73,7 @@ namespace Kargono
 			m_MainWindow->OnEditorUIRender();
 			break;
 		case ActiveEditorUIWindow::UIEditorWindow:
+			m_UIEditorWindow->OnUpdate(ts);
 			m_UIEditorWindow->OnEditorUIRender();
 			break;
 		case ActiveEditorUIWindow::None:

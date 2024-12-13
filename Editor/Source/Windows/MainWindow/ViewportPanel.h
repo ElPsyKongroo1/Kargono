@@ -83,26 +83,26 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		Rendering::EditorCamera m_EditorCamera;
 		FixedString32 m_PanelName{ "Viewport" };
-		int m_GizmoType = -1;
+		Rendering::EditorCamera m_EditorCamera;
+		int m_GizmoType{ -1 };
 		ViewportData m_ViewportData;
 	private:
 		// Viewport resources
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;
-		bool m_ViewportFocused = false;
-		bool m_ViewportHovered = false;
+		bool m_ViewportFocused{ false };
+		bool m_ViewportHovered{ false };
 		Math::vec2 m_ScreenViewportBounds[2];
 
 		// Draw world axis Data
-		float m_LargeGridSpacing = 100.0f;
-		float m_FineGridSpacing = 10.0f;
-		bool m_DisplayXYMajorGrid = false;
-		bool m_DisplayXZMajorGrid = true;
-		bool m_DisplayYZMajorGrid = false;
-		bool m_DisplayXYMinorGrid = false;
-		bool m_DisplayXZMinorGrid = true;
-		bool m_DisplayYZMinorGrid = false;
+		float m_LargeGridSpacing{ 100.0f };
+		float m_FineGridSpacing{ 10.0f };
+		bool m_DisplayXYMajorGrid{ false };
+		bool m_DisplayXZMajorGrid {true};
+		bool m_DisplayYZMajorGrid {false};
+		bool m_DisplayXYMinorGrid {false};
+		bool m_DisplayXZMinorGrid {true};
+		bool m_DisplayYZMinorGrid{ false };
 
 		// Draw debug lines data
 		std::vector<DebugLine> m_DebugLines;

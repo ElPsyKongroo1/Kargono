@@ -17,6 +17,17 @@ namespace Kargono::Panels
 		s_MainWindow = s_EditorApp->m_MainWindow.get();
 		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ViewportPanel::OnKeyPressedEditor));
+
+		InitializeFrameBuffer();
+
+		m_EditorCamera = Rendering::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+
+		m_EditorCamera.SetFocalPoint({ 58.0f, 27.0f, 93.0f });
+		m_EditorCamera.SetDistance(1.0f);
+		m_EditorCamera.SetPitch(0.195f);
+		m_EditorCamera.SetYaw(-0.372f);
+
+		InitializeOverlayData();
 	}
 	void ViewportPanel::OnUpdate(Timestep ts)
 	{
@@ -88,30 +99,21 @@ namespace Kargono::Panels
 		OnOverlayRender();
 
 		// Handle drawing user interface
-		if (s_MainWindow->m_ShowActiveUserInterface)
+		Window& currentApplication = EngineService::GetActiveWindow();
+		if (s_MainWindow->m_SceneState == SceneState::Play)
 		{
-			Window& currentApplication = EngineService::GetActiveWindow();
-			if (s_MainWindow->m_SceneState == SceneState::Play)
+			ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+			if (cameraEntity)
 			{
-				ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
-				if (cameraEntity)
+				Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
+				Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
+
+				if (mainCamera)
 				{
-					Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
-					Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
-
-					if (mainCamera)
-					{
-						RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), m_ViewportData.m_Width, m_ViewportData.m_Height);
-					}
+					RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), m_ViewportData.m_Width, m_ViewportData.m_Height);
 				}
+			}
 				
-			}
-			else
-			{
-				Math::mat4 cameraViewMatrix = glm::inverse(m_EditorCamera.GetViewMatrix());
-				RuntimeUI::RuntimeUIService::PushRenderData(cameraViewMatrix, m_ViewportData.m_Width, m_ViewportData.m_Height);
-			}
-
 		}
 
 		m_ViewportFramebuffer->Unbind();
@@ -155,36 +157,12 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::EndWindow();
 			return;
 		}
+		Math::uvec2 oldViewportSize = { m_ViewportData.m_Width, m_ViewportData.m_Height };
 
-		// Get current cursor position and GLFW viewport size
-		ImVec2 windowScreenOffset = ImGui::GetWindowPos();
-		static Math::uvec2 oldViewportSize = { m_ViewportData.m_Width, m_ViewportData.m_Height };
-		Math::vec2 localViewportBounds[2];
-		m_ViewportFocused = ImGui::IsWindowFocused();
-		m_ViewportHovered = ImGui::IsWindowHovered();
-
-		// Adjust viewport size based on current aspect ratio
-		ImVec2 windowSize = ImGui::GetContentRegionAvail();
-		ImVec2 cursorPosition = ImGui::GetCursorPos();
-		Math::uvec2 aspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
-		if (aspectRatio.x > aspectRatio.y && ((windowSize.x / aspectRatio.x) * aspectRatio.y) < windowSize.y)
-		{
-			m_ViewportData.m_Width = (uint32_t)windowSize.x;
-			m_ViewportData.m_Height = (uint32_t)(windowSize.x / aspectRatio.x) * aspectRatio.y;
-		}
-		else
-		{
-			m_ViewportData.m_Width = (uint32_t)(windowSize.y / aspectRatio.y) * aspectRatio.x;
-			m_ViewportData.m_Height = (uint32_t)windowSize.y;
-		}
-
-		localViewportBounds[0] = { cursorPosition.x + (windowSize.x - (float)m_ViewportData.m_Width) * 0.5f, cursorPosition.y + (windowSize.y - (float)m_ViewportData.m_Height) * 0.5f};
-		localViewportBounds[1] = { localViewportBounds[0].x + (float)m_ViewportData.m_Width,  localViewportBounds[0].y + (float)m_ViewportData.m_Height};
-		m_ScreenViewportBounds[0] = { localViewportBounds[0].x + windowScreenOffset.x, localViewportBounds[0].y + windowScreenOffset.y };
-		m_ScreenViewportBounds[1] = { m_ScreenViewportBounds[0].x + (float)m_ViewportData.m_Width, m_ScreenViewportBounds[0].y + m_ViewportData.m_Height };
-		ImGui::SetCursorPos(ImVec2(localViewportBounds[0].x, localViewportBounds[0].y));
+		EditorUI::EditorUIService::AutoCalcViewportSize(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered);
+		
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
-		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height }, ImVec2{ 0, 1 },
+		ImGui::Image((ImTextureID)textureID, ImVec2{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height }, ImVec2{ 0, 1 },
 			ImVec2{ 1, 0 });
 		if ((s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate) ||
 			(s_MainWindow->m_SceneState == SceneState::Play && s_MainWindow->m_IsPaused))
@@ -218,8 +196,8 @@ namespace Kargono::Panels
 			}
 		}
 
-		Math::uvec2 viewportSize = { m_ViewportData.m_Width, m_ViewportData.m_Height };
-		if (oldViewportSize != viewportSize)
+		// Check if the viewport size has changed and update the scene's viewport
+		if (oldViewportSize.x != m_ViewportData.m_Width || oldViewportSize.y != m_ViewportData.m_Height)
 		{
 			Scenes::SceneService::GetActiveScene()->OnViewportResize((uint32_t)m_ViewportData.m_Width, (uint32_t)m_ViewportData.m_Height);
 		}
@@ -284,7 +262,7 @@ namespace Kargono::Panels
 		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();
 		ImVec2 initialCursorPos = ImGui::GetCursorStartPos();
 		
-		windowSize = ImGui::GetWindowSize();
+		ImVec2 windowSize = ImGui::GetWindowSize();
 		Ref<Rendering::Texture2D> icon {nullptr};
 		if (toolbarEnabled)
 		{
@@ -547,10 +525,6 @@ namespace Kargono::Panels
 				if (ImGui::MenuItem("Display Camera Frustums", 0, s_MainWindow->m_ShowCameraFrustums))
 				{
 					Utility::Operations::ToggleBoolean(s_MainWindow->m_ShowCameraFrustums);
-				}
-				if (ImGui::MenuItem("Display Runtime UI", 0, s_MainWindow->m_ShowActiveUserInterface))
-				{
-					Utility::Operations::ToggleBoolean(s_MainWindow->m_ShowActiveUserInterface);
 				}
 				if (ImGui::MenuItem("Fullscreen While Running", 0, s_MainWindow->m_RuntimeFullscreen))
 				{

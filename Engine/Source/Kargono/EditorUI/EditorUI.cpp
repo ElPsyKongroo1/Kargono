@@ -8,6 +8,7 @@
 #include "Kargono/Input/InputMap.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Kargono/Rendering/Texture.h"
+#include "Kargono/Projects/Project.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
 #include "API/Platform/GlfwAPI.h"
@@ -242,6 +243,36 @@ namespace Kargono::EditorUI
 		ImGuiToast toast{ ImGuiToastType::Error, delayMS, text };
 		toast.setTitle("Kargono Editor Critical");
 		ImGui::InsertNotification(toast);
+	}
+
+	void EditorUIService::AutoCalcViewportSize(Math::vec2 screenViewportBounds[2], ViewportData& viewportData, bool& viewportFocused, bool& viewportHovered)
+	{
+		// Get current cursor position and GLFW viewport size
+		ImVec2 windowScreenOffset = ImGui::GetWindowPos();
+		Math::vec2 localViewportBounds[2];
+		viewportFocused = ImGui::IsWindowFocused();
+		viewportHovered = ImGui::IsWindowHovered();
+
+		// Adjust viewport size based on current aspect ratio
+		ImVec2 windowSize = ImGui::GetContentRegionAvail();
+		ImVec2 cursorPosition = ImGui::GetCursorPos();
+		Math::uvec2 aspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		if (aspectRatio.x > aspectRatio.y && ((windowSize.x / aspectRatio.x) * aspectRatio.y) < windowSize.y)
+		{
+			viewportData.m_Width = (uint32_t)windowSize.x;
+			viewportData.m_Height = (uint32_t)(windowSize.x / aspectRatio.x) * aspectRatio.y;
+		}
+		else
+		{
+			viewportData.m_Width = (uint32_t)(windowSize.y / aspectRatio.y) * aspectRatio.x;
+			viewportData.m_Height = (uint32_t)windowSize.y;
+		}
+
+		localViewportBounds[0] = { cursorPosition.x + (windowSize.x - (float)viewportData.m_Width) * 0.5f, cursorPosition.y + (windowSize.y - (float)viewportData.m_Height) * 0.5f };
+		localViewportBounds[1] = { localViewportBounds[0].x + (float)viewportData.m_Width,  localViewportBounds[0].y + (float)viewportData.m_Height };
+		screenViewportBounds[0] = { localViewportBounds[0].x + windowScreenOffset.x, localViewportBounds[0].y + windowScreenOffset.y };
+		screenViewportBounds[1] = { screenViewportBounds[0].x + (float)viewportData.m_Width, screenViewportBounds[0].y + viewportData.m_Height };
+		ImGui::SetCursorPos(ImVec2(localViewportBounds[0].x, localViewportBounds[0].y));
 	}
 
 	void EditorUIService::RenderImGuiNotify()

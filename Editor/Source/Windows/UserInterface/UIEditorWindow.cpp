@@ -71,6 +71,15 @@ namespace Kargono::Windows
 		return false;
 	}
 
+	void UIEditorWindow::OnUpdate(Timestep ts)
+	{
+		// Update the viewport panel
+		if (m_EditorUI)
+		{
+			m_ViewportPanel->OnUpdate(ts);
+		}
+	}
+
 	void UIEditorWindow::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
