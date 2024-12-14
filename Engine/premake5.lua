@@ -111,6 +111,7 @@
         }
     filter "system:linux"
        systemversion "latest"
+       buildoptions {"`pkg-config --cflags gtk4`"}
        defines
        {
             "KG_PLATFORM_LINUX"

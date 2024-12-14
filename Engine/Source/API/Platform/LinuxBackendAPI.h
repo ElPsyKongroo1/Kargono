@@ -1,4 +1,5 @@
 #pragma once
-#ifdef KG_PLATFORM_LINUX
+#if defined(KG_PLATFORM_LINUX) 
 #include <dlfcn.h>
+#include <gtk/gtk.h>
 #endif

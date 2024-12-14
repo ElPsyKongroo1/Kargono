@@ -61,7 +61,7 @@ project "Editor"
             "KG_PLATFORM_LINUX"
         }
         links 
-	{ 
+        { 
             "GLFW",
             "Box2D",
             "GLAD",
@@ -70,8 +70,25 @@ project "Editor"
             "msdf-atlas-gen",
             "msdfgen",
             "freetype",
-            "%{Library.ShaderC_Linux}"
-	}
+            "%{Library.ShaderC_Linux}",
+            "gtk-4",
+            --"gdk-4",
+            "gio-2.0",
+            "pangoft2-1.0",
+            "gdk_pixbuf-2.0",
+            "pangocairo-1.0",
+            "cairo",
+            "pango-1.0",
+            "freetype",
+            "fontconfig",
+            "gobject-2.0",
+            "gmodule-2.0",
+            "gthread-2.0",
+            "rt",
+            "glib-2.0"
+        }
+        buildoptions {"`pkg-config --cflags gtk4`"}
+        linkoptions { "-pthread" }
 
     filter "configurations:Debug"
         kind "ConsoleApp"
@@ -87,7 +104,7 @@ project "Editor"
         filter { "system:linux", "configurations:Debug" }
             links
             {
-            	"%{Library.OpenALSoft_Debug_Linux}"
+            	"%{DynamicLibrary.OpenALSoft_Debug_Linux}"
             }
     filter "configurations:Release"
         kind "ConsoleApp"
@@ -104,7 +121,7 @@ project "Editor"
         filter { "system:linux", "configurations:Release" }
             links
             {
-            	"%{Library.OpenALSoft_Release_Linux}"
+            	"%{DynamicLibrary.OpenALSoft_Release_Linux}"
             }
     filter "configurations:Dist"
         kind "WindowedApp"
@@ -121,6 +138,6 @@ project "Editor"
         filter { "system:linux", "configurations:Dist" }
             links
             {
-            	"%{Library.OpenALSoft_Dist_Linux}"
+            	"%{DynamicLibrary.OpenALSoft_Dist_Linux}"
             }
         

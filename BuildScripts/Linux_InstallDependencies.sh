@@ -21,6 +21,16 @@ else
   exit 1
 fi
 
+# Install UI Dependency: gtk-4-dev
+echo "Installing libgtk-4-dev..."
+apt install -y libgtk-4-dev
+if [ $? -eq 0 ]; then
+  echo "libgtk-4-dev installed successfully."
+else
+  echo "An error occurred while installing libgtk-4-dev."
+  exit 1
+fi
+
 # Install C++ Compiler: build-essential
 echo "Installing build-essential..."
 apt install -y build-essential
