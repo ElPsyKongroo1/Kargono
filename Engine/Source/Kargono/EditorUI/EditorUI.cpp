@@ -3047,6 +3047,27 @@ namespace Kargono::EditorUI
 		}
 	}
 
+	bool TreeSpec::SelectEntry(TreePath& path)
+	{
+		// Check if entry exists
+		if (TreeEntry* entry = GetEntryFromPath(path))
+		{
+			// Handle Left Click
+			if (entry->m_OnLeftClick)
+			{
+				entry->m_OnLeftClick(*entry);
+			}
+			// Set SelectedEntry to provided path
+			m_SelectedEntry = path;
+			m_SelectionChanged = true;
+			return true;
+		}
+
+		// Entry could not be found
+		return false;
+
+	}
+
 	TreeEntry* TreeSpec::SearchFirstLayer(UUID handle)
 	{
 		for (auto& entry : m_TreeEntries)

@@ -256,14 +256,14 @@ namespace Kargono::Panels
 		}
 
 		// Ensure selected window path is valid
-		if (!s_UIWindow->m_TablePanel->m_UITree.m_SelectedEntry)
+		if (!s_UIWindow->m_TreePanel->m_UITree.m_SelectedEntry)
 		{
 			KG_WARN("No valid selected window path available in m_UITree when trying to update window tag");
 			return;
 		}
 
 		// Get the selected window entry and ensure it is valid
-		EditorUI::TreeEntry* entry = s_UIWindow->m_TablePanel->m_UITree.GetEntryFromPath(s_UIWindow->m_TablePanel->m_UITree.m_SelectedEntry);
+		EditorUI::TreeEntry* entry = s_UIWindow->m_TreePanel->m_UITree.GetEntryFromPath(s_UIWindow->m_TreePanel->m_UITree.m_SelectedEntry);
 		if (!entry)
 		{
 			KG_WARN("No valid selected window active in m_UITree when trying to update window tag");
@@ -275,7 +275,7 @@ namespace Kargono::Panels
 		m_ActiveWindow->m_Tag = m_WindowTag.m_CurrentOption;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnOpenWindowDefaultWidgetPopup()
@@ -314,7 +314,7 @@ namespace Kargono::Panels
 		spec.m_CurrentBoolean ? m_ActiveWindow->DisplayWindow() : m_ActiveWindow->HideWindow();
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 
 	}
 
@@ -331,7 +331,7 @@ namespace Kargono::Panels
 		m_ActiveWindow->m_ScreenPosition = m_WindowLocation.m_CurrentVec3;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWindowSize(EditorUI::EditVec2Spec& spec)
@@ -347,7 +347,7 @@ namespace Kargono::Panels
 		m_ActiveWindow->m_Size = m_WindowSize.m_CurrentVec2;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWindowBackgroundColor(EditorUI::EditVec4Spec& spec)
@@ -363,7 +363,7 @@ namespace Kargono::Panels
 		m_ActiveWindow->m_BackgroundColor = m_WindowBackgroundColor.m_CurrentVec4;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWindowDefaultWidget(const EditorUI::OptionEntry& entry)
@@ -395,14 +395,14 @@ namespace Kargono::Panels
 			KG_WARN("No valid widget active when trying to update widget tag");
 			return;
 		}
-		if (!s_UIWindow->m_TablePanel->m_UITree.m_SelectedEntry)
+		if (!s_UIWindow->m_TreePanel->m_UITree.m_SelectedEntry)
 		{
 			KG_WARN("No valid selected widget path available in m_UITree when trying to update widget tag");
 			return;
 		}
 
 		// Get the selected widget entry and ensure it is valid
-		EditorUI::TreeEntry* entry = s_UIWindow->m_TablePanel->m_UITree.GetEntryFromPath(s_UIWindow->m_TablePanel->m_UITree.m_SelectedEntry);
+		EditorUI::TreeEntry* entry = s_UIWindow->m_TreePanel->m_UITree.GetEntryFromPath(s_UIWindow->m_TreePanel->m_UITree.m_SelectedEntry);
 		if (!entry)
 		{
 			KG_WARN("No valid selected widget active in m_UITree when trying to update widget tag");
@@ -413,7 +413,7 @@ namespace Kargono::Panels
 		m_ActiveWidget->m_Tag = m_WidgetTag.m_CurrentOption;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWidgetLocation(EditorUI::EditVec2Spec& spec)
@@ -429,7 +429,7 @@ namespace Kargono::Panels
 		m_ActiveWidget->m_WindowPosition = m_WidgetLocation.m_CurrentVec2;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWidgetSize(EditorUI::EditVec2Spec& spec)
@@ -445,7 +445,7 @@ namespace Kargono::Panels
 		m_ActiveWidget->m_Size = m_WidgetSize.m_CurrentVec2;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWidgetBackgroundColor(EditorUI::EditVec4Spec& spec)
@@ -462,7 +462,7 @@ namespace Kargono::Panels
 		m_ActiveWidget->m_ActiveBackgroundColor = m_WidgetBackgroundColor.m_CurrentVec4;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWidgetOnPress(const EditorUI::OptionEntry& entry)
@@ -480,7 +480,7 @@ namespace Kargono::Panels
 		m_ActiveWidget->m_FunctionPointers.m_OnPress = Assets::AssetService::GetScript(entry.m_Handle);
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnOpenWidgetOnPressPopup()
@@ -509,14 +509,14 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::OnOpenTooltipForWidgetOnPress()
 	{
 		// Clear existing options
-		s_UIWindow->m_TablePanel->m_SelectScriptTooltip.ClearEntries();
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
 
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 		{
 			m_WidgetOnPress.m_OpenPopup = true;
 		} };
-		s_UIWindow->m_TablePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
@@ -545,13 +545,13 @@ namespace Kargono::Panels
 						m_WidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 
 						// Set the active editor UI as edited
-						s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 					}, {});
 			} };
-		s_UIWindow->m_TablePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 		// Open tooltip
-		s_UIWindow->m_TablePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyTextWidgetText(EditorUI::EditTextSpec& spec)
@@ -582,7 +582,7 @@ namespace Kargono::Panels
 		textWidget.m_Text = m_WidgetText.m_CurrentOption;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyTextWidgetTextSize(EditorUI::EditFloatSpec& spec)
@@ -613,7 +613,7 @@ namespace Kargono::Panels
 		textWidget.m_TextSize = m_WidgetTextSize.m_CurrentFloat;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyTextWidgetTextColor(EditorUI::EditVec4Spec& spec)
@@ -643,7 +643,7 @@ namespace Kargono::Panels
 		textWidget.m_TextColor = m_WidgetTextColor.m_CurrentVec4;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyTextWidgetCentered(EditorUI::CheckboxSpec& spec)
@@ -674,6 +674,6 @@ namespace Kargono::Panels
 		textWidget.m_TextCentered = spec.m_CurrentBoolean;
 
 		// Set the active editor UI as edited
-		s_UIWindow->m_TablePanel->m_MainHeader.m_EditColorActive = true;
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 }

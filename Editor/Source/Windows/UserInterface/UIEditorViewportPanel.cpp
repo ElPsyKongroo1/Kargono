@@ -54,12 +54,17 @@ namespace Kargono::Panels
 		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Rendering::RendererAPI::Clear();
 
+		// Clear mouse picking attachment value
+		m_ViewportFramebuffer->SetAttachment(1, -1);
+
 		// TODO: Add background image to viewport
 
 		// Handle drawing user interface
 		Window& currentApplication = EngineService::GetActiveWindow();
 		Math::mat4 cameraViewMatrix = glm::inverse(m_EditorCamera.GetViewMatrix());
 		RuntimeUI::RuntimeUIService::PushRenderData(cameraViewMatrix, m_ViewportData.m_Width, m_ViewportData.m_Height);
+
+		ProcessMousePicking();
 
 		// Draw window/widget overlay
 		DrawOverlay();
@@ -87,6 +92,29 @@ namespace Kargono::Panels
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((ImTextureID)textureID, ImVec2{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height }, ImVec2{ 0, 1 },
 			ImVec2{ 1, 0 });
+		if (ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left) && ImGui::GetIO().WantCaptureMouse)
+		{
+			if (m_HoveredWindowID != k_InvalidWindowID)
+			{
+				EditorUI::TreePath path;
+				bool success{ false };
+				path.AddNode(m_HoveredWindowID);
+				if (m_HoveredWidgetID == k_InvalidWidgetID)
+				{
+					success = s_UIWindow->m_TreePanel->m_UITree.SelectEntry(path);
+				}
+				else
+				{
+					path.AddNode(m_HoveredWidgetID);
+					success = s_UIWindow->m_TreePanel->m_UITree.SelectEntry(path);
+				}
+
+				if (!success)
+				{
+					KG_WARN("Failed to select window/widget with ID {} and {}", m_HoveredWindowID, m_HoveredWidgetID);
+				}
+			}
+		}
 
 		// End the window
 		EditorUI::EditorUIService::EndWindow();
@@ -255,7 +283,11 @@ namespace Kargono::Panels
 		{
 			int pixelData = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
 
-			/**Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID((entt::entity)pixelData);*/
+			// Extract lower 16 bits
+			m_HoveredWidgetID = (uint16_t)(pixelData & 0xFFFF);
+
+			// Extract upper 16 bits
+			m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
 		}
 	}
 }

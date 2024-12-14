@@ -1020,6 +1020,7 @@ namespace Kargono::EditorUI
 		void MoveRight();
 
 		void SelectFirstEntry();
+		bool SelectEntry(TreePath& path);
 		TreeEntry* SearchFirstLayer(UUID handle);
 		std::vector<TreePath> SearchDepth(std::function<bool(TreeEntry& entry)> searchFunction, size_t depth = 0);
 		void EditDepth(std::function<void(TreeEntry& entry)> editFunction, size_t depth = 0);

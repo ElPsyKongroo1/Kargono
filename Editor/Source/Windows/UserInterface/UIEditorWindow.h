@@ -6,7 +6,7 @@
 
 #include "Windows/UserInterface/UIEditorViewportPanel.h"
 #include "Windows/UserInterface/UIEditorPropertiesPanel.h"
-#include "Windows/UserInterface/UIEditorTablePanel.h"
+#include "Windows/UserInterface/UIEditorTreePanel.h"
 
 #include <string>
 
@@ -63,14 +63,14 @@ namespace Kargono::Windows
 		//=========================
 		Scope<Panels::UIEditorViewportPanel> m_ViewportPanel{ nullptr };
 		Scope<Panels::UIEditorPropertiesPanel> m_PropertiesPanel{ nullptr };
-		Scope<Panels::UIEditorTablePanel> m_TablePanel{ nullptr };
+		Scope<Panels::UIEditorTreePanel> m_TreePanel{ nullptr };
 
 		//=========================
 		// Display Panel Booleans
 		//=========================
 		bool m_ShowViewport{ true };
 		bool m_ShowProperties{ true };
-		bool m_ShowTable{ true };
+		bool m_ShowTree{ true };
 	private:
 		friend class PropertiesPanel;
 		friend Kargono::EditorApp;

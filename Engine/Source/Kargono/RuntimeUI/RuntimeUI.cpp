@@ -30,7 +30,7 @@ namespace Kargono::RuntimeUI
 		// Initialize Window/Widget Rendering Data
 		{
 			// Create shader for UI background/quad rendering
-			Rendering::ShaderSpecification shaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawIndex, false};
+			Rendering::ShaderSpecification shaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, true, Rendering::RenderingType::DrawIndex, false};
 			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", localBuffer, localShader);
@@ -277,6 +277,7 @@ namespace Kargono::RuntimeUI
 		Rendering::RenderingService::BeginScene(outputMatrix);
 
 		// Submit rendering data from all windows
+		uint16_t windowIteration{ 0 };
 		for (Window* window : s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows)
 		{
 			// Get position data for rendering window
@@ -284,20 +285,31 @@ namespace Kargono::RuntimeUI
 			Math::vec3 initialTranslation = Math::vec3((viewportWidth * window->m_ScreenPosition.x), (viewportHeight * window->m_ScreenPosition.y), window->m_ScreenPosition.z);
 			Math::vec3 translation = Math::vec3( initialTranslation.x + (scale.x / 2),  initialTranslation.y + (scale.y / 2), initialTranslation.z);
 
+
 			// Create background rendering data
 			s_RuntimeUIContext->m_BackgroundInputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), translation)
 				* glm::scale(Math::mat4(1.0f), scale);
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, "a_Color", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+
+			// Push window ID and invalid widgetID
+			Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIteration << 16) | (uint32_t)0xFFFF, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(s_RuntimeUIContext->m_BackgroundInputSpec);
 
 			// Call rendering function for every widget
 			initialTranslation.z += 0.001f;
+			uint16_t widgetIteration{ 0 };
 			for (Ref<Widget> widgetRef : window->m_Widgets)
 			{
+				// Push window ID and invalid widget ID
+				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIteration << 16) | (uint32_t)widgetIteration, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+				RuntimeUI::FontService::SetID(((uint32_t)windowIteration << 16) | (uint32_t)widgetIteration);
+				// Call the widget's rendering function
 				widgetRef->PushRenderData(initialTranslation, scale, (float)viewportWidth);
+				widgetIteration++;
 			}
+			windowIteration++;
 		}
 
 		// End rendering context and submit rendering data to GPU

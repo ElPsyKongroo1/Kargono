@@ -7,13 +7,13 @@
 
 namespace Kargono::Panels
 {
-	class UIEditorTablePanel
+	class UIEditorTreePanel
 	{
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
-		UIEditorTablePanel();
+		UIEditorTreePanel();
 
 	private:
 		//=========================

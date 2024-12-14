@@ -1,4 +1,4 @@
-#include "Windows/UserInterface/UIEditorTablePanel.h"
+#include "Windows/UserInterface/UIEditorTreePanel.h"
 
 #include "EditorApp.h"
 #include "Kargono.h"
@@ -8,7 +8,7 @@ static Kargono::Windows::UIEditorWindow* s_UIWindow{ nullptr };
 
 namespace Kargono::Panels
 {
-	UIEditorTablePanel::UIEditorTablePanel()
+	UIEditorTreePanel::UIEditorTreePanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_UIWindow = s_EditorApp->m_UIEditorWindow.get();
@@ -20,10 +20,10 @@ namespace Kargono::Panels
 		InitializeUIHeader();
 		InitializeMainContent();
 	}
-	void UIEditorTablePanel::OnEditorUIRender()
+	void UIEditorTreePanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_UIWindow->m_ShowTable);
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_UIWindow->m_ShowTree);
 
 		// Early out if the window is not visible
 		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
@@ -54,12 +54,12 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::EndWindow();
 	}
 
-	void UIEditorTablePanel::OnRefreshData()
+	void UIEditorTreePanel::OnRefreshData()
 	{
 		OnRefreshUITree();
 	}
 
-	void UIEditorTablePanel::OnRefreshUITree()
+	void UIEditorTreePanel::OnRefreshUITree()
 	{
 		// Ensure the editor UI is valid
 		if (!s_UIWindow->m_EditorUI)
@@ -114,7 +114,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	void UIEditorTablePanel::InitializeUIHeader()
+	void UIEditorTreePanel::InitializeUIHeader()
 	{
 		// Header (Game State Name and Options)
 		m_DeleteUIWarning.m_Label = "Delete User Interface";
@@ -167,13 +167,13 @@ namespace Kargono::Panels
 			});
 	}
 
-	void UIEditorTablePanel::InitializeMainContent()
+	void UIEditorTreePanel::InitializeMainContent()
 	{
 		m_UITree.m_Label = "User Interface Tree";
 		m_UITree.m_OnRefresh = KG_BIND_CLASS_FN(OnRefreshUITree);
 	}
 
-	void UIEditorTablePanel::InitializeOpeningScreen()
+	void UIEditorTreePanel::InitializeOpeningScreen()
 	{
 		// Initialize open existing user interface popup data
 		m_OpenUIPopupSpec.m_Label = "Open User Interface";
@@ -253,12 +253,12 @@ namespace Kargono::Panels
 
 	}
 
-	void UIEditorTablePanel::OnOpenUIDialog()
+	void UIEditorTreePanel::OnOpenUIDialog()
 	{
 		// Set dialog popup to open on next frame
 		m_OpenUIPopupSpec.m_OpenPopup = true;
 	}
-	void UIEditorTablePanel::OnCreateUIDialog()
+	void UIEditorTreePanel::OnCreateUIDialog()
 	{
 		// Set default values for new user interface creation location
 		KG_ASSERT(Projects::ProjectService::GetActive());
@@ -267,7 +267,7 @@ namespace Kargono::Panels
 		// Set dialog popup to open on next frame
 		m_CreateUIPopupSpec.m_OpenPopup = true;
 	}
-	void UIEditorTablePanel::OnOpenUI(Assets::AssetHandle newHandle)
+	void UIEditorTreePanel::OnOpenUI(Assets::AssetHandle newHandle)
 	{
 		// Set new in editor user interface
 		s_UIWindow->m_EditorUI = Assets::AssetService::GetUserInterface(newHandle);
@@ -285,7 +285,7 @@ namespace Kargono::Panels
 		RuntimeUI::RuntimeUIService::SetActiveUI(s_UIWindow->m_EditorUI, s_UIWindow->m_EditorUIHandle);
 	}
 
-	void UIEditorTablePanel::AddTextWidget(EditorUI::TreeEntry& windowEntry)
+	void UIEditorTreePanel::AddTextWidget(EditorUI::TreeEntry& windowEntry)
 	{
 		// Get window path from provided entry and ensure it is valid
 		EditorUI::TreePath windowPath = m_UITree.GetPathFromEntryReference(&windowEntry);
@@ -315,17 +315,18 @@ namespace Kargono::Panels
 		windowEntry.m_SubEntries.push_back(newWidgetEntry);
 	}
 
-	void UIEditorTablePanel::SelectTextWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::SelectTextWidget(EditorUI::TreeEntry& entry)
 	{
 		s_UIWindow->m_PropertiesPanel->m_ActiveWindow = &s_UIWindow->m_EditorUI->m_Windows.at(*(uint32_t*)entry.m_ProvidedData.get());
 		s_UIWindow->m_PropertiesPanel->m_ActiveWidget = s_UIWindow->m_PropertiesPanel->m_ActiveWindow->m_Widgets.at(entry.m_Handle).get();
 		s_UIWindow->m_PropertiesPanel->m_CurrentDisplay = UIPropertiesDisplay::Widget;
+
 		// TODO: Deal with local properties panel
 		//EditorUI::EditorUIService::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
 		//s_MainWindow->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 	}
 
-	void UIEditorTablePanel::DeleteWindow(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::DeleteWindow(EditorUI::TreeEntry& entry)
 	{
 		// Get tree path from provided entry
 		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(&entry);
@@ -348,7 +349,7 @@ namespace Kargono::Panels
 
 	}
 
-	void UIEditorTablePanel::SelectWindow(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::SelectWindow(EditorUI::TreeEntry& entry)
 	{
 		// Set selected window as active
 		s_UIWindow->m_PropertiesPanel->ClearPanelData();
@@ -364,7 +365,7 @@ namespace Kargono::Panels
 		//EditorUI::EditorUIService::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
 	}
 
-	void UIEditorTablePanel::AddWindow()
+	void UIEditorTreePanel::AddWindow()
 	{
 		// Create new window entry for m_UITree
 		EditorUI::TreeEntry newEntry{};
@@ -389,7 +390,7 @@ namespace Kargono::Panels
 		m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorTablePanel::DeleteWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::DeleteWidget(EditorUI::TreeEntry& entry)
 	{
 		// Getpath from provided entry
 		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(&entry);
@@ -421,7 +422,7 @@ namespace Kargono::Panels
 
 	}
 
-	void UIEditorTablePanel::RecalculateTreeIndexData()
+	void UIEditorTreePanel::RecalculateTreeIndexData()
 	{
 		// Recalculate the handle for each window entry in the user interface tree
 		m_UITree.EditDepth([&](EditorUI::TreeEntry& entry)

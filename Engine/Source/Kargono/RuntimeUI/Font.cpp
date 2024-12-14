@@ -53,7 +53,7 @@ namespace Kargono::RuntimeUI
 		if (!s_TextInputSpec.m_Shader)
 		{
 			// TODO: Unreleased Heap Data with Buffer
-			Rendering::ShaderSpecification textShaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::TextTexture, false, true, false, Rendering::RenderingType::DrawTriangle, false};
+			Rendering::ShaderSpecification textShaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::TextTexture, false, true, true, Rendering::RenderingType::DrawTriangle, false};
 			auto [uuid, localShader] = Assets::AssetService::GetShader(textShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
@@ -198,9 +198,15 @@ namespace Kargono::RuntimeUI
 		return newFont;
 	}
 
+	void FontService::SetID(uint32_t id)
+	{
+		Rendering::Shader::SetDataAtInputLocation<uint32_t>(id, "a_EntityID", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
+	}
+
 	void Font::PushTextData(const std::string& string, Math::vec3 translation, const glm::vec4& color, float scale)
 	{
 		Ref<Rendering::Texture2D> fontAtlas = m_AtlasTexture;
+
 
 		s_TextInputSpec.m_ShapeComponent->Texture = fontAtlas;
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);

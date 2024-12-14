@@ -46,7 +46,7 @@ namespace Kargono::Rendering
 		ECS::ShapeComponent* m_ShapeComponent;
 		Ref<DrawCallBuffer> m_CurrentDrawBuffer;
 		Buffer m_Buffer;
-		uint32_t m_Entity;
+		uint32_t m_Entity{ (uint32_t)-1};
 		void* m_EntityRegistry;
 		Math::mat4 m_TransformMatrix;
 		Math::mat4 m_ObjectOutlineMatrix;

@@ -12,15 +12,15 @@ namespace Kargono::Windows
 	void UIEditorWindow::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// TODO: Open UIEditorWindow
-		EditorUI::EditorUIService::BringWindowToFront(m_TablePanel->m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_TablePanel->m_PanelName);
+		EditorUI::EditorUIService::BringWindowToFront(m_TreePanel->m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_TreePanel->m_PanelName);
 
 		// Check if panel is already occupied by an asset
 		if (!m_EditorUI)
 		{
 			// Open dialog to create editor user interface
-			m_TablePanel->OnCreateUIDialog();
-			m_TablePanel->m_SelectUILocationSpec.m_CurrentOption = createLocation;
+			m_TreePanel->OnCreateUIDialog();
+			m_TreePanel->m_SelectUILocationSpec.m_CurrentOption = createLocation;
 		}
 		else
 		{
@@ -41,7 +41,7 @@ namespace Kargono::Windows
 	void UIEditorWindow::OnRefreshData()
 	{
 		// Revalidate data with current user interface
-		m_TablePanel->OnRefreshData();
+		m_TreePanel->OnRefreshData();
 	}
 
 	UIEditorWindow::UIEditorWindow()
@@ -56,7 +56,7 @@ namespace Kargono::Windows
 		// Initialize panels
 		m_ViewportPanel = CreateScope<Panels::UIEditorViewportPanel>();
 		m_PropertiesPanel = CreateScope<Panels::UIEditorPropertiesPanel>();
-		m_TablePanel = CreateScope<Panels::UIEditorTablePanel>();
+		m_TreePanel = CreateScope<Panels::UIEditorTreePanel>();
 	}
 
 	bool UIEditorWindow::OnInputEvent(Events::Event* event)
@@ -100,7 +100,7 @@ namespace Kargono::Windows
 
 			if (ImGui::BeginMenu("Panels"))
 			{
-				ImGui::MenuItem("Tree", NULL, &m_ShowTable);
+				ImGui::MenuItem("Tree", NULL, &m_ShowTree);
 				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
 				ImGui::MenuItem("Properties", NULL, &m_ShowProperties);
 				ImGui::EndMenu();
@@ -133,9 +133,9 @@ namespace Kargono::Windows
 		}
 
 		// Render the table panel
-		if (m_ShowTable)
+		if (m_ShowTree)
 		{
-			m_TablePanel->OnEditorUIRender();
+			m_TreePanel->OnEditorUIRender();
 		}
 
 		// Clean up dockspace window
@@ -154,8 +154,8 @@ namespace Kargono::Windows
 		{
 		// Clear selected entry if escape key is pressed
 		case Key::Escape:
-			m_TablePanel->m_UITree.m_SelectedEntry = {};
-			m_PropertiesPanel->m_CurrentDisplay = Panels::UIPropertiesDisplay::None;
+			m_TreePanel->m_UITree.m_SelectedEntry = {};
+			m_PropertiesPanel->ClearPanelData();
 			return true;
 		default:
 			return false;
@@ -208,7 +208,7 @@ namespace Kargono::Windows
 			}
 
 			// Update header name with new asset name
-			m_TablePanel->m_MainHeader.m_Label = Assets::AssetService::GetUserInterfaceFileLocation(manageAsset->GetAssetID()).filename().string();
+			m_TreePanel->m_MainHeader.m_Label = Assets::AssetService::GetUserInterfaceFileLocation(manageAsset->GetAssetID()).filename().string();
 			return true;
 		}
 
@@ -237,8 +237,8 @@ namespace Kargono::Windows
 		}
 
 		// TODO: Ensure the UIEditorWindow is open
-		EditorUI::EditorUIService::BringWindowToFront(m_TablePanel->m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_TablePanel->m_PanelName);
+		EditorUI::EditorUIService::BringWindowToFront(m_TreePanel->m_PanelName);
+		EditorUI::EditorUIService::SetFocusedWindow(m_TreePanel->m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorUIHandle == assetHandle)
@@ -249,7 +249,7 @@ namespace Kargono::Windows
 		// Check if panel is already occupied by an asset
 		if (!m_EditorUI)
 		{
-			m_TablePanel->OnOpenUI(assetHandle);
+			m_TreePanel->OnOpenUI(assetHandle);
 		}
 		else
 		{

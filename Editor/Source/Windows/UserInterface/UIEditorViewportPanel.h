@@ -6,9 +6,13 @@
 #include "Kargono/Core/Window.h"
 
 #include <string>
+#include <limits>
 
 namespace Kargono::Panels
 {
+	constexpr uint16_t k_InvalidWindowID{ std::numeric_limits<uint16_t>().max() };
+	constexpr uint16_t k_InvalidWidgetID{ std::numeric_limits<uint16_t>().max() };
+
 	class UIEditorViewportPanel
 	{
 	public:
@@ -47,7 +51,7 @@ namespace Kargono::Panels
 		bool m_ViewportFocused{ false };
 		bool m_ViewportHovered{ false };
 		Math::vec2 m_ScreenViewportBounds[2];
-		uint16_t m_HoveredWindowID{ std::numeric_limits<uint16_t>().max() };
-		uint16_t m_HoveredWidgetID{ std::numeric_limits<uint16_t>().max() };
+		uint16_t m_HoveredWindowID{ k_InvalidWindowID };
+		uint16_t m_HoveredWidgetID{ k_InvalidWidgetID };
 	};
 }

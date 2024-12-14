@@ -41,6 +41,8 @@ namespace Kargono::RuntimeUI
 		//		AssetManager. This font will persist inside the application until the
 		//		application is closed. This is primarily useful for editor only assets.
 		static Ref<Font> InstantiateEditorFont(const std::filesystem::path& filepath);
+
+		static void SetID(uint32_t id);
 	};
 
 	//==============================
@@ -83,6 +85,7 @@ namespace Kargono::RuntimeUI
 		Ref<Rendering::Texture2D> m_AtlasTexture = nullptr;
 		float m_LineHeight {0};
 		std::unordered_map<unsigned char, Character> m_Characters{};
+
 	};
 
 
