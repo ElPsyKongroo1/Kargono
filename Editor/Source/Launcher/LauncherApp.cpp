@@ -11,6 +11,7 @@ namespace Kargono
 	static EditorUI::GenericPopupSpec s_CreateProjectSpec {};
 	static EditorUI::EditTextSpec s_CreateProjectName {};
 	static EditorUI::ChooseDirectorySpec s_CreateProjectLocation {};
+	static EditorUI::ChooseFileSpec s_TestFileSpec{};
 
 	static void InitializeStaticResources()
 	{
@@ -20,6 +21,7 @@ namespace Kargono
 		{
 			EditorUI::EditorUIService::EditText(s_CreateProjectName);
 			EditorUI::EditorUIService::ChooseDirectory(s_CreateProjectLocation);
+			EditorUI::EditorUIService::ChooseFile(s_TestFileSpec);
 		};
 		s_CreateProjectSpec.m_ConfirmAction = [&]()
 		{
@@ -35,6 +37,9 @@ namespace Kargono
 
 		s_CreateProjectLocation.m_Label = "Project Location";
 		s_CreateProjectLocation.m_CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
+
+		s_TestFileSpec.m_Label = "Test Thing";
+		s_TestFileSpec.m_CurrentOption = "/home/elpsykongroo";
 	}
 
 	void LauncherApp::Init()

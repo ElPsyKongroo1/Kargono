@@ -894,12 +894,15 @@ namespace Kargono::EditorUI
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
+		// Open generic popup if indicated externally
 		if (spec.m_OpenPopup)
 		{
+			// Open the correct popup
 			ImGui::OpenPopup(id);
 			spec.m_OpenPopup = false;
 			spec.m_CloseActivePopup = false;
 
+			// Handle popup action function
 			if (spec.m_PopupAction)
 			{
 				spec.m_PopupAction();
@@ -919,6 +922,7 @@ namespace Kargono::EditorUI
 			RecalculateWindowDimensions();
 			EditorUI::EditorUIService::TitleText(spec.m_Label);
 
+			// Draw delete action button if necessary
 			ImGui::PushFont(EditorUI::EditorUIService::s_FontAntaRegular);
 			if (spec.m_DeleteAction)
 			{
@@ -934,7 +938,7 @@ namespace Kargono::EditorUI
 				}, s_LargeDeleteButton, false, s_PrimaryTextColor);
 			}
 
-			// Cancel Tool Bar Button
+			// Draw Cancel Tool Bar Button
 			ImGui::SameLine();
 			CreateButton(spec.m_WidgetID + WidgetIterator(widgetCount), [&]()
 			{
@@ -945,7 +949,7 @@ namespace Kargono::EditorUI
 				ImGui::CloseCurrentPopup();
 			}, s_LargeCancelButton, false, s_PrimaryTextColor);
 
-			// Confirm Tool Bar Button
+			// Draw Confirm Tool Bar Button
 			ImGui::SameLine();
 			CreateButton(spec.m_WidgetID + WidgetIterator(widgetCount), [&]()
 			{
@@ -958,11 +962,13 @@ namespace Kargono::EditorUI
 
 			ImGui::Separator();
 
+			// Draw user provided popup contents
 			if (spec.m_PopupContents)
 			{
 				spec.m_PopupContents();
 			}
 
+			// End popup
 			ImGui::PopFont();
 			ImGui::EndPopup();
 			RecalculateWindowDimensions();
@@ -2719,6 +2725,74 @@ namespace Kargono::EditorUI
 			ImGui::EndPopup();
 		}
 	}
+	void EditorUIService::ChooseFile(ChooseFileSpec& spec)
+	{
+		// Local Variables
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.m_WidgetID);
+		uint32_t widgetCount{ 0 };
+
+		// Draw primary text label
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.m_Label.c_str(), s_PrimaryTextWidth);
+		TruncateText(spec.m_Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
+
+		// Draw current selected file
+		ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
+		WriteMultilineText(spec.m_CurrentOption.string(), s_SecondaryTextLargeWidth, s_SecondaryTextPosOne);
+		ImGui::PopStyleColor();
+
+		// Draw button to open dialog
+		ImGui::SameLine();
+		CreateButton(spec.m_WidgetID + WidgetIterator(widgetCount), [&]()
+		{
+			// Open popup
+			ImGui::OpenPopup(id);
+		},
+		EditorUIService::s_SmallEditButton, false, s_DisabledColor);
+
+		// Display Popup
+		ImGui::SetNextWindowSize(ImVec2(spec.m_PopupWidth, 0.0f));
+		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar))
+		{
+
+			RecalculateWindowDimensions();
+			ImGui::PushFont(EditorUIService::s_FontAntaLarge);
+			EditorUI::EditorUIService::TitleText(spec.m_Label);
+
+			// Draw Cancel Tool Bar Button
+			ImGui::SameLine();
+			CreateButton(spec.m_WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				ImGui::CloseCurrentPopup();
+			}, s_LargeCancelButton, false, s_PrimaryTextColor);
+
+			// Draw Confirm Tool Bar Button
+			ImGui::SameLine();
+			CreateButton(spec.m_WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				// Update current option, handle user defined confirm action, and close popup 
+				// TODO: Update current option please!
+				//spec.m_CurrentOption = outputDirectory;
+				if (spec.m_ConfirmAction)
+				{
+					spec.m_ConfirmAction(spec.m_CurrentOption.string());
+				}
+				ImGui::CloseCurrentPopup();
+
+			}, s_LargeConfirmButton, false, s_PrimaryTextColor);
+
+			ImGui::Separator();
+
+			// End popup
+			ImGui::PopFont();
+			ImGui::EndPopup();
+			RecalculateWindowDimensions();
+		}
+
+	}
+
 	void EditorUIService::ChooseDirectory(ChooseDirectorySpec& spec)
 	{
 		// Local Variables

@@ -45,7 +45,7 @@ namespace Kargono::EditorUI
 	struct EditVec2Spec;
 	struct EditVec3Spec;
 	struct EditVec4Spec;
-
+	struct ChooseFileSpec;
 	//==============================
 	// Type Defines
 	//==============================
@@ -163,6 +163,7 @@ namespace Kargono::EditorUI
 		static void Text(const char* text);
 		static void EditText(EditTextSpec& spec);
 		static void ChooseDirectory(ChooseDirectorySpec& spec);
+		static void ChooseFile(ChooseFileSpec& spec);
 		static void Tooltip(TooltipSpec& spec);
 		static void BeginTabBar(const std::string& title);
 		static void EndTabBar();
@@ -606,6 +607,24 @@ namespace Kargono::EditorUI
 		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::EditText(EditTextSpec& spec);
+	};
+
+	struct ChooseFileSpec
+	{
+	public:
+		ChooseFileSpec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string m_Label;
+		float m_PopupWidth { 700.0f };
+		std::filesystem::path m_CurrentOption{};
+		std::function<void(const std::string&)> m_ConfirmAction{ nullptr };
+	private:
+		WidgetID m_WidgetID;
+	private:
+		friend void EditorUIService::ChooseFile(ChooseFileSpec& spec);
 	};
 
 	struct ChooseDirectorySpec
