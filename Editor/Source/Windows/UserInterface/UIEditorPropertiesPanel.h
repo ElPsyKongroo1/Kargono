@@ -31,7 +31,8 @@ namespace Kargono::Panels
 		// Internal Initialization Functions
 		//=========================
 		void InitializeWindowOptions();
-		void InitializeWidgetOptions();
+		void InitializeWidgetGeneralOptions();
+		void InitializeWidgetLocationOptions();
 
 	public:
 		//=========================
@@ -73,8 +74,6 @@ namespace Kargono::Panels
 		//=========================
 		// Modify widget tag
 		void OnModifyWidgetTag(EditorUI::EditTextSpec& spec);
-		// Modify widget location
-		void OnModifyWidgetLocation(EditorUI::EditVec2Spec& spec);
 		// Modify widget size
 		void OnModifyWidgetSize(EditorUI::EditVec2Spec& spec);
 		// Modify widget background color
@@ -83,6 +82,14 @@ namespace Kargono::Panels
 		void OnModifyWidgetOnPress(const EditorUI::OptionEntry& entry);
 		void OnOpenWidgetOnPressPopup();
 		void OnOpenTooltipForWidgetOnPress();
+		// Modify widget location
+		void OnModifyWidgetXLocationPixelOrPercent();
+		void OnModifyWidgetYLocationPixelOrPercent();
+		void OnModifyWidgetXPixelLocation(EditorUI::EditIntegerSpec& spec);
+		void OnModifyWidgetYPixelLocation(EditorUI::EditIntegerSpec& spec);
+		void OnModifyWidgetXPercentLocation(EditorUI::EditFloatSpec& spec);
+		void OnModifyWidgetYPercentLocation(EditorUI::EditFloatSpec& spec);
+		
 
 		//=========================
 		// Change Text Widget Data
@@ -119,9 +126,8 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec m_WindowBackgroundColor{};
 
 		// Edit Widget Options
-		EditorUI::CollapsingHeaderSpec m_WidgetHeader{};
+		EditorUI::CollapsingHeaderSpec m_WidgetGeneralHeader{};
 		EditorUI::EditTextSpec m_WidgetTag{};
-		EditorUI::EditVec2Spec m_WidgetLocation{};
 		EditorUI::EditVec2Spec m_WidgetSize{};
 		EditorUI::EditVec4Spec m_WidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_WidgetOnPress{};
@@ -129,5 +135,15 @@ namespace Kargono::Panels
 		EditorUI::EditFloatSpec m_WidgetTextSize{};
 		EditorUI::EditVec4Spec m_WidgetTextColor{};
 		EditorUI::CheckboxSpec m_WidgetCentered{};
+
+		// Edit Widget Location Options
+		EditorUI::CollapsingHeaderSpec m_WidgetLocationHeader{};
+		EditorUI::RadioSelectorSpec m_WidgetXPixelOrPercent{};
+		EditorUI::RadioSelectorSpec m_WidgetYPixelOrPercent{};
+		EditorUI::EditIntegerSpec m_WidgetXPixelLocation{};
+		EditorUI::EditIntegerSpec m_WidgetYPixelLocation{};
+		EditorUI::EditFloatSpec m_WidgetXPercentLocation{};
+		EditorUI::EditFloatSpec m_WidgetYPercentLocation{};
+
 	};
 }

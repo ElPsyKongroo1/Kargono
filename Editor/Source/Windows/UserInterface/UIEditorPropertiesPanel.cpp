@@ -18,7 +18,8 @@ namespace Kargono::Panels
 
 		// Initialize properties panel widget resources
 		InitializeWindowOptions();
-		InitializeWidgetOptions();
+		InitializeWidgetGeneralOptions();
+		InitializeWidgetLocationOptions();
 	}
 	void UIEditorPropertiesPanel::OnEditorUIRender()
 	{
@@ -91,18 +92,13 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::DrawWidgetOptions()
 	{
 		// Draw main header for widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_WidgetHeader);
-
+		EditorUI::EditorUIService::CollapsingHeader(m_WidgetGeneralHeader);
 		// Draw options to edit selected widget
-		if (m_WidgetHeader.m_Expanded)
+		if (m_WidgetGeneralHeader.m_Expanded)
 		{
 			// Edit selected widget's tag
 			m_WidgetTag.m_CurrentOption = m_ActiveWidget->m_Tag;
 			EditorUI::EditorUIService::EditText(m_WidgetTag);
-
-			// Edit selected widget's window location
-			m_WidgetLocation.m_CurrentVec2 = m_ActiveWidget->m_WindowPosition;
-			EditorUI::EditorUIService::EditVec2(m_WidgetLocation);
 
 			// Edit selected widget's size relative to its window
 			m_WidgetSize.m_CurrentVec2 = m_ActiveWidget->m_Size;
@@ -142,7 +138,41 @@ namespace Kargono::Panels
 				m_WidgetCentered.m_CurrentBoolean = activeTextWidget.m_TextCentered;
 				EditorUI::EditorUIService::Checkbox(m_WidgetCentered);
 			}
+		}
 
+		// Draw location header for widget options and display options to edit selected widget's location
+		EditorUI::EditorUIService::CollapsingHeader(m_WidgetLocationHeader);
+		if (m_WidgetLocationHeader.m_Expanded)
+		{
+			// Modify the X location metric
+			m_WidgetXPixelOrPercent.m_SelectedOption = (uint16_t)m_ActiveWidget->m_XPositionType;
+			EditorUI::EditorUIService::RadioSelector(m_WidgetXPixelOrPercent);
+			if (m_WidgetXPixelOrPercent.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
+			{
+				m_WidgetXPixelLocation.m_CurrentInteger = m_ActiveWidget->m_PixelPosition.x;
+				EditorUI::EditorUIService::EditInteger(m_WidgetXPixelLocation);
+			}
+			else
+			{
+				m_WidgetXPercentLocation.m_CurrentFloat = m_ActiveWidget->m_PercentPosition.x;
+				EditorUI::EditorUIService::EditFloat(m_WidgetXPercentLocation);
+			}
+			
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Modify the Y location metric
+			m_WidgetYPixelOrPercent.m_SelectedOption = (uint16_t)m_ActiveWidget->m_YPositionType;
+			EditorUI::EditorUIService::RadioSelector(m_WidgetYPixelOrPercent);
+			if (m_WidgetYPixelOrPercent.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
+			{
+				m_WidgetYPixelLocation.m_CurrentInteger = m_ActiveWidget->m_PixelPosition.y;
+				EditorUI::EditorUIService::EditInteger(m_WidgetYPixelLocation);
+			}
+			else
+			{
+				m_WidgetYPercentLocation.m_CurrentFloat = m_ActiveWidget->m_PercentPosition.y;
+				EditorUI::EditorUIService::EditFloat(m_WidgetYPercentLocation);
+			}
 		}
 	}
 
@@ -191,22 +221,17 @@ namespace Kargono::Panels
 		m_WindowBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_WindowBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWindowBackgroundColor);
 	}
-	void UIEditorPropertiesPanel::InitializeWidgetOptions()
+	void UIEditorPropertiesPanel::InitializeWidgetGeneralOptions()
 	{
 		// Set up header for widget options
-		m_WidgetHeader.m_Label = "Widget Options";
-		m_WidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
-		m_WidgetHeader.m_Expanded = true;
+		m_WidgetGeneralHeader.m_Label = "Widget General Options";
+		m_WidgetGeneralHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_WidgetGeneralHeader.m_Expanded = true;
 
 		// Set up widget to modify the widget's tag
 		m_WidgetTag.m_Label = "Tag";
 		m_WidgetTag.m_Flags |= EditorUI::EditText_Indented;
 		m_WidgetTag.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetTag);
-
-		// Set up widget to modify the widget's location relative to its window
-		m_WidgetLocation.m_Label = "Window Location";
-		m_WidgetLocation.m_Flags |= EditorUI::EditVec2_Indented;
-		m_WidgetLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetLocation);
 
 		// Set up widget to modify the widget's size
 		m_WidgetSize.m_Label = "Size";
@@ -244,6 +269,49 @@ namespace Kargono::Panels
 		m_WidgetCentered.m_Label = "Centered";
 		m_WidgetCentered.m_Flags |= EditorUI::Checkbox_Indented;
 		m_WidgetCentered.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetCentered);
+	}
+
+	void UIEditorPropertiesPanel::InitializeWidgetLocationOptions()
+	{
+		// Set up location collapsing header
+		m_WidgetLocationHeader.m_Label = "Widget Location Options";
+		m_WidgetLocationHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_WidgetLocationHeader.m_Expanded = true;
+
+		// Initialize pixel or percent location options
+
+		// Set up widgets to select between pixel and percent location
+		m_WidgetXPixelOrPercent.m_Label = "X Position Metric";
+		m_WidgetXPixelOrPercent.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetXPixelOrPercent.m_FirstOptionLabel = "Pixels";
+		m_WidgetXPixelOrPercent.m_SecondOptionLabel = "Percent";
+		m_WidgetXPixelOrPercent.m_SelectedOption = (uint16_t)RuntimeUI::PixelOrPercent::Percent;
+		m_WidgetXPixelOrPercent.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetXLocationPixelOrPercent);
+
+		m_WidgetYPixelOrPercent.m_Label = "Y Position Metric";
+		m_WidgetYPixelOrPercent.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetYPixelOrPercent.m_FirstOptionLabel = "Pixels";
+		m_WidgetYPixelOrPercent.m_SecondOptionLabel = "Percent";
+		m_WidgetYPixelOrPercent.m_SelectedOption = (uint16_t)RuntimeUI::PixelOrPercent::Percent;
+		m_WidgetYPixelOrPercent.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetYLocationPixelOrPercent);
+
+		// Set up widget to modify the widget's location based on the pixel value
+		m_WidgetXPixelLocation.m_Label = "Pixel X Location";
+		m_WidgetXPixelLocation.m_Flags |= EditorUI::EditInteger_Indented;
+		m_WidgetXPixelLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetXPixelLocation);
+
+		m_WidgetYPixelLocation.m_Label = "Pixel Y Location";
+		m_WidgetYPixelLocation.m_Flags |= EditorUI::EditInteger_Indented;
+		m_WidgetYPixelLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetYPixelLocation);
+
+		// Set up widget to modify the widget's location relative to its window
+		m_WidgetXPercentLocation.m_Label = "Percent X Location";
+		m_WidgetXPercentLocation.m_Flags |= EditorUI::EditFloat_Indented;
+		m_WidgetXPercentLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetXPercentLocation);
+
+		m_WidgetYPercentLocation.m_Label = "Percent Y Location";
+		m_WidgetYPercentLocation.m_Flags |= EditorUI::EditFloat_Indented;
+		m_WidgetYPercentLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetYPercentLocation);
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWindowTag(EditorUI::EditTextSpec& spec)
@@ -416,7 +484,39 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWidgetLocation(EditorUI::EditVec2Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyWidgetXLocationPixelOrPercent()
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget location metric");
+			return;
+		}
+
+		// Update the widget location metric based on the radio selector value
+		m_ActiveWidget->m_XPositionType = (RuntimeUI::PixelOrPercent)m_WidgetXPixelOrPercent.m_SelectedOption;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyWidgetYLocationPixelOrPercent()
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget location metric");
+			return;
+		}
+
+		// Update the widget location metric based on the radio selector value
+		m_ActiveWidget->m_YPositionType = (RuntimeUI::PixelOrPercent)m_WidgetYPixelOrPercent.m_SelectedOption;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyWidgetXPixelLocation(EditorUI::EditIntegerSpec& spec)
 	{
 		// Ensure active widget is valid
 		if (!m_ActiveWindow)
@@ -426,7 +526,55 @@ namespace Kargono::Panels
 		}
 
 		// Update the widget location based on the editorUI widget value
-		m_ActiveWidget->m_WindowPosition = m_WidgetLocation.m_CurrentVec2;
+		m_ActiveWidget->m_PixelPosition.x = spec.m_CurrentInteger;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyWidgetYPixelLocation(EditorUI::EditIntegerSpec& spec)
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget's window location");
+			return;
+		}
+
+		// Update the widget location based on the editorUI widget value
+		m_ActiveWidget->m_PixelPosition.y = spec.m_CurrentInteger;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyWidgetXPercentLocation(EditorUI::EditFloatSpec& spec)
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget's window location");
+			return;
+		}
+
+		// Update the widget location based on the editorUI widget value
+		m_ActiveWidget->m_PercentPosition.x = spec.m_CurrentFloat;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyWidgetYPercentLocation(EditorUI::EditFloatSpec& spec)
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget's window location");
+			return;
+		}
+
+		// Update the widget location based on the editorUI widget value
+		m_ActiveWidget->m_PercentPosition.y = spec.m_CurrentFloat;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;

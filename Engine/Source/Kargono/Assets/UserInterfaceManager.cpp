@@ -55,7 +55,10 @@ namespace Kargono::Assets
 				out << YAML::BeginMap; // Begin Widget Map
 
 				out << YAML::Key << "Tag" << YAML::Value << widget->m_Tag;
-				out << YAML::Key << "WindowPosition" << YAML::Value << widget->m_WindowPosition;
+				out << YAML::Key << "PercentPosition" << YAML::Value << widget->m_PercentPosition;
+				out << YAML::Key << "PixelPosition" << YAML::Value << widget->m_PixelPosition;
+				out << YAML::Key << "XPositionType" << YAML::Value << Utility::PixelOrPercentToString(widget->m_XPositionType);
+				out << YAML::Key << "YPositionType" << YAML::Value << Utility::PixelOrPercentToString(widget->m_YPositionType);
 				out << YAML::Key << "Size" << YAML::Value << widget->m_Size;
 				out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << widget->m_DefaultBackgroundColor;
 				out << YAML::Key << "WidgetType" << YAML::Value << Utility::WidgetTypeToString(widget->m_WidgetType);
@@ -184,7 +187,10 @@ namespace Kargono::Assets
 						}
 
 						newWidget->m_Tag = widget["Tag"].as<std::string>();
-						newWidget->m_WindowPosition = widget["WindowPosition"].as<Math::vec2>();
+						newWidget->m_PercentPosition = widget["PercentPosition"].as<Math::vec2>();
+						newWidget->m_PixelPosition = widget["PixelPosition"].as<Math::ivec2>();
+						newWidget->m_XPositionType = Utility::StringToPixelOrPercent(widget["XPositionType"].as<std::string>());
+						newWidget->m_YPositionType = Utility::StringToPixelOrPercent(widget["YPositionType"].as<std::string>());
 						newWidget->m_Size = widget["Size"].as<Math::vec2>();
 						newWidget->m_DefaultBackgroundColor = widget["DefaultBackgroundColor"].as<Math::vec4>();
 						newWidget->m_ActiveBackgroundColor = newWidget->m_DefaultBackgroundColor;

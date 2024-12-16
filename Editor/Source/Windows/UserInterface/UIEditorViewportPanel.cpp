@@ -200,9 +200,7 @@ namespace Kargono::Panels
 			{
 				// Calculate the widget's rendering data
 				Math::vec3 widgetSize = Math::vec3(windowScale.x * widget->m_Size.x, windowScale.y * widget->m_Size.y, 1.0f);
-				Math::vec3 widgetTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x * widget->m_WindowPosition.x),
-					initialWindowTranslation.y + (windowScale.y * widget->m_WindowPosition.y),
-					initialWindowTranslation.z);
+				Math::vec3 widgetTranslation = widget->CalculatePosition(initialWindowTranslation, windowScale);
 
 				// Create the widget's background rendering data
 				Math::mat4 transform = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))

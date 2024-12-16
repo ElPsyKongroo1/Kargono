@@ -283,11 +283,11 @@ namespace Kargono::RuntimeUI
 			// Get position data for rendering window
 			Math::vec3 scale = Math::vec3(viewportWidth * window->m_Size.x, viewportHeight * window->m_Size.y, 1.0f);
 			Math::vec3 initialTranslation = Math::vec3((viewportWidth * window->m_ScreenPosition.x), (viewportHeight * window->m_ScreenPosition.y), window->m_ScreenPosition.z);
-			Math::vec3 translation = Math::vec3( initialTranslation.x + (scale.x / 2),  initialTranslation.y + (scale.y / 2), initialTranslation.z);
+			Math::vec3 bottomLeftTranslation = Math::vec3( initialTranslation.x + (scale.x / 2),  initialTranslation.y + (scale.y / 2), initialTranslation.z);
 
 
 			// Create background rendering data
-			s_RuntimeUIContext->m_BackgroundInputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), translation)
+			s_RuntimeUIContext->m_BackgroundInputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), bottomLeftTranslation)
 				* glm::scale(Math::mat4(1.0f), scale);
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, "a_Color", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 
@@ -298,7 +298,7 @@ namespace Kargono::RuntimeUI
 			Rendering::RenderingService::SubmitDataToRenderer(s_RuntimeUIContext->m_BackgroundInputSpec);
 
 			// Call rendering function for every widget
-			initialTranslation.z += 0.001f;
+			initialTranslation.z += 0.1f;
 			uint16_t widgetIteration{ 0 };
 			for (Ref<Widget> widgetRef : window->m_Widgets)
 			{
@@ -705,7 +705,7 @@ namespace Kargono::RuntimeUI
 			}
 
 			// Calculate the distance between the current widget and the potential widget
-			float currentDistance = glm::abs(glm::distance(potentialChoice->m_WindowPosition, currentWidget->m_WindowPosition));
+			float currentDistance = glm::abs(glm::distance(potentialChoice->m_PercentPosition, currentWidget->m_PercentPosition));
 
 			// Check if the potential widget is within the constraints of the current widget
 			float currentWidgetExtent;
@@ -714,8 +714,8 @@ namespace Kargono::RuntimeUI
 			switch (direction)
 			{
 			case Direction::Right:
-				currentWidgetExtent = currentWidget->m_WindowPosition.x + (currentWidget->m_Size.x / 2);
-				potentialWidgetExtent = potentialChoice->m_WindowPosition.x - (potentialChoice->m_Size.x / 2);
+				currentWidgetExtent = currentWidget->m_PercentPosition.x + (currentWidget->m_Size.x / 2);
+				potentialWidgetExtent = potentialChoice->m_PercentPosition.x - (potentialChoice->m_Size.x / 2);
 				if (currentWidgetExtent >= potentialWidgetExtent)
 				{
 					iteration++;
@@ -723,8 +723,8 @@ namespace Kargono::RuntimeUI
 				}
 				break;
 			case Direction::Left:
-				currentWidgetExtent = currentWidget->m_WindowPosition.x - (currentWidget->m_Size.x / 2);
-				potentialWidgetExtent = potentialChoice->m_WindowPosition.x + (potentialChoice->m_Size.x / 2);
+				currentWidgetExtent = currentWidget->m_PercentPosition.x - (currentWidget->m_Size.x / 2);
+				potentialWidgetExtent = potentialChoice->m_PercentPosition.x + (potentialChoice->m_Size.x / 2);
 				if (currentWidgetExtent <= potentialWidgetExtent)
 				{
 					iteration++;
@@ -732,8 +732,8 @@ namespace Kargono::RuntimeUI
 				}
 				break;
 			case Direction::Up:
-				currentWidgetExtent = currentWidget->m_WindowPosition.y + (currentWidget->m_Size.y / 2);
-				potentialWidgetExtent = potentialChoice->m_WindowPosition.y - (potentialChoice->m_Size.y / 2);
+				currentWidgetExtent = currentWidget->m_PercentPosition.y + (currentWidget->m_Size.y / 2);
+				potentialWidgetExtent = potentialChoice->m_PercentPosition.y - (potentialChoice->m_Size.y / 2);
 				if (currentWidgetExtent >= potentialWidgetExtent)
 				{
 					iteration++;
@@ -741,8 +741,8 @@ namespace Kargono::RuntimeUI
 				}
 				break;
 			case Direction::Down:
-				currentWidgetExtent = currentWidget->m_WindowPosition.y - (currentWidget->m_Size.y / 2);
-				potentialWidgetExtent = potentialChoice->m_WindowPosition.y + (potentialChoice->m_Size.y / 2);
+				currentWidgetExtent = currentWidget->m_PercentPosition.y - (currentWidget->m_Size.y / 2);
+				potentialWidgetExtent = potentialChoice->m_PercentPosition.y + (potentialChoice->m_Size.y / 2);
 				if (currentWidgetExtent <= potentialWidgetExtent)
 				{
 					iteration++;
@@ -864,9 +864,9 @@ namespace Kargono::RuntimeUI
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = Math::vec3(windowSize.x * m_Size.x, windowSize.y * m_Size.y, 1.0f);
-		Math::vec3 widgetTranslation = Math::vec3(windowTranslation.x + (windowSize.x * m_WindowPosition.x),
-							windowTranslation.y + (windowSize.y * m_WindowPosition.y),
-							windowTranslation.z);
+
+		// Get widget translation
+		Math::vec3 widgetTranslation = CalculatePosition(windowTranslation, windowSize);
 
 		// Create the widget's background rendering data
 		inputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
@@ -909,6 +909,16 @@ namespace Kargono::RuntimeUI
 
 		// Calculate the new text size
 		CalculateTextSize();
+	}
+
+	Math::vec3 Widget::CalculatePosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize)
+	{
+		// Calculate the widget's window position based on the pixel or percent position
+		float widgetXPos = m_XPositionType == PixelOrPercent::Percent ? windowSize.x * m_PercentPosition.x : (float)m_PixelPosition.x;
+		float widgetYPos = m_YPositionType == PixelOrPercent::Percent ? windowSize.y * m_PercentPosition.y : (float)m_PixelPosition.y;
+
+		// Calculate final widget position on screen
+		return Math::vec3(windowTranslation.x + widgetXPos, windowTranslation.y + widgetYPos, windowTranslation.z);
 	}
 
 }

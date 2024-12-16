@@ -61,6 +61,12 @@ namespace Kargono::RuntimeUI
 		std::size_t m_DownWidgetIndex { k_InvalidWidgetIndex };
 	};
 	
+	enum class PixelOrPercent
+	{
+		Pixel = 0, 
+		Percent
+	};
+
 	//============================
 	// Widget Class (Base)
 	//============================
@@ -76,12 +82,21 @@ namespace Kargono::RuntimeUI
 		// Rendering Methods
 		//============================
 		virtual void PushRenderData(Math::vec3 translation, const Math::vec3& scale, float viewportWidth) = 0;
+
+	public:
+		//============================
+		// Supporting Methods
+		//============================
+		Math::vec3 CalculatePosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize);
 	public:
 		//============================
 		// Widget Data
 		//============================
 		std::string m_Tag{ "None" };
-		Math::vec2 m_WindowPosition{ 0.4f };
+		PixelOrPercent m_XPositionType{ PixelOrPercent::Percent };
+		PixelOrPercent m_YPositionType{ PixelOrPercent::Percent };
+		Math::vec2 m_PercentPosition{ 0.4f };
+		Math::ivec2 m_PixelPosition{ 0 };
 		Math::vec2 m_Size  {0.3f};
 		Math::vec4 m_DefaultBackgroundColor{0.5f};
 		Math::vec4 m_ActiveBackgroundColor{0.5f};
@@ -411,6 +426,29 @@ namespace Kargono::Utility
 
 		KG_ERROR("Invalid Widget Type at StringToWidgetType");
 		return RuntimeUI::WidgetTypes::None;
+	}
+
+	static std::string PixelOrPercentToString(RuntimeUI::PixelOrPercent type)
+	{
+		switch (type)
+		{
+			case RuntimeUI::PixelOrPercent::Pixel: return "Pixel";
+			case RuntimeUI::PixelOrPercent::Percent: return "Percent";
+			default:
+			{
+				KG_ERROR("Invalid PixelOrPercent at PixelOrPercentToString");
+				return "Pixel";
+			}
+		}
+	}
+
+	static RuntimeUI::PixelOrPercent StringToPixelOrPercent(const std::string& type)
+	{
+		if (type == "Pixel") { return RuntimeUI::PixelOrPercent::Pixel; }
+		if (type == "Percent") { return RuntimeUI::PixelOrPercent::Percent; }
+
+		KG_ERROR("Invalid PixelOrPercent at StringToPixelOrPercent");
+		return RuntimeUI::PixelOrPercent::Pixel;
 	}
 }
 
