@@ -949,9 +949,46 @@ namespace Kargono::RuntimeUI
 
 	Math::vec3 Widget::CalculatePosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize)
 	{
-		// Calculate the widget's window position based on the pixel or percent position
-		float widgetXPos = m_XPositionType == PixelOrPercent::Percent ? windowSize.x * m_PercentPosition.x : (float)m_PixelPosition.x;
-		float widgetYPos = m_YPositionType == PixelOrPercent::Percent ? windowSize.y * m_PercentPosition.y : (float)m_PixelPosition.y;
+		float widgetXPos{ m_XPositionType == PixelOrPercent::Percent ? windowSize.x * m_PercentPosition.x : (float)m_PixelPosition.x };
+		float widgetYPos{ m_YPositionType == PixelOrPercent::Percent ? windowSize.y * m_PercentPosition.y : (float)m_PixelPosition.y };
+		if (m_XRelativeOrAbsolute == RelativeOrAbsolute::Relative && m_XConstraint != Constraint::None)
+		{
+			// Handle relative code
+			switch (m_XConstraint)
+			{
+			case Constraint::Center:
+				widgetXPos = (windowSize.x * 0.5f) + widgetXPos - (m_Size.x * windowSize.x / 2.0f);
+				break;
+			case Constraint::Right:
+				widgetXPos = windowSize.x + widgetXPos - (m_Size.x * windowSize.x);
+				break;
+			case Constraint::Left:
+				break;
+			default:
+				KG_ERROR("Invalid constraint {} provided while calculating widget's position", (uint16_t)m_XConstraint);
+				break;
+			}
+		}
+
+		if (m_YRelativeOrAbsolute == RelativeOrAbsolute::Relative && m_YConstraint != Constraint::None)
+		{
+			// Handle relative code
+			switch (m_YConstraint)
+			{
+			case Constraint::Center:
+				widgetYPos = (windowSize.y * 0.5f) + widgetYPos - (m_Size.y * windowSize.y / 2.0f);;
+				break;
+			case Constraint::Top:
+				widgetYPos = windowSize.y + widgetYPos - (m_Size.y * windowSize.y);
+				break;
+			case Constraint::Bottom:
+				break;
+			default:
+				KG_ERROR("Invalid constraint {} provided while calculating widget's position", (uint16_t)m_YConstraint);
+				break;
+			}
+		}
+
 
 		// Calculate final widget position on screen
 		return Math::vec3(windowTranslation.x + widgetXPos, windowTranslation.y + widgetYPos, windowTranslation.z);

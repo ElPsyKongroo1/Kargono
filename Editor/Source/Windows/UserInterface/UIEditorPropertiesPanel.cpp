@@ -592,8 +592,6 @@ namespace Kargono::Panels
 	{
 		m_WidgetXConstraint.ClearOptions();
 		m_WidgetXConstraint.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
-		m_WidgetXConstraint.AddToOptions("All Options", "Top", (uint64_t)RuntimeUI::Constraint::Top);
-		m_WidgetXConstraint.AddToOptions("All Options", "Bottom", (uint64_t)RuntimeUI::Constraint::Bottom);
 		m_WidgetXConstraint.AddToOptions("All Options", "Left", (uint64_t)RuntimeUI::Constraint::Left);
 		m_WidgetXConstraint.AddToOptions("All Options", "Right", (uint64_t)RuntimeUI::Constraint::Right);
 		m_WidgetXConstraint.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
@@ -605,8 +603,6 @@ namespace Kargono::Panels
 		m_WidgetYConstraint.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
 		m_WidgetYConstraint.AddToOptions("All Options", "Top", (uint64_t)RuntimeUI::Constraint::Top);
 		m_WidgetYConstraint.AddToOptions("All Options", "Bottom", (uint64_t)RuntimeUI::Constraint::Bottom);
-		m_WidgetYConstraint.AddToOptions("All Options", "Left", (uint64_t)RuntimeUI::Constraint::Left);
-		m_WidgetYConstraint.AddToOptions("All Options", "Right", (uint64_t)RuntimeUI::Constraint::Right);
 		m_WidgetYConstraint.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
 	}
 
