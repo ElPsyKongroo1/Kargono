@@ -83,8 +83,14 @@ namespace Kargono::Panels
 		void OnOpenWidgetOnPressPopup();
 		void OnOpenTooltipForWidgetOnPress();
 		// Modify widget location
+		void OnModifyWidgetXLocationRelOrAbs();
+		void OnModifyWidgetYLocationRelOrAbs();
 		void OnModifyWidgetXLocationPixelOrPercent();
 		void OnModifyWidgetYLocationPixelOrPercent();
+		void OnModifyWidgetXConstraint(const EditorUI::OptionEntry& entry);
+		void OnModifyWidgetYConstraint(const EditorUI::OptionEntry& entry);
+		void OnOpenWidgetXConstraint();
+		void OnOpenWidgetYConstraint();
 		void OnModifyWidgetXPixelLocation(EditorUI::EditIntegerSpec& spec);
 		void OnModifyWidgetYPixelLocation(EditorUI::EditIntegerSpec& spec);
 		void OnModifyWidgetXPercentLocation(EditorUI::EditFloatSpec& spec);
@@ -140,6 +146,10 @@ namespace Kargono::Panels
 		EditorUI::CollapsingHeaderSpec m_WidgetLocationHeader{};
 		EditorUI::RadioSelectorSpec m_WidgetXPixelOrPercent{};
 		EditorUI::RadioSelectorSpec m_WidgetYPixelOrPercent{};
+		EditorUI::RadioSelectorSpec m_WidgetXRelOrAbs{};
+		EditorUI::RadioSelectorSpec m_WidgetYRelOrAbs{};
+		EditorUI::SelectOptionSpec m_WidgetXConstraint{};
+		EditorUI::SelectOptionSpec m_WidgetYConstraint{};
 		EditorUI::EditIntegerSpec m_WidgetXPixelLocation{};
 		EditorUI::EditIntegerSpec m_WidgetYPixelLocation{};
 		EditorUI::EditFloatSpec m_WidgetXPercentLocation{};

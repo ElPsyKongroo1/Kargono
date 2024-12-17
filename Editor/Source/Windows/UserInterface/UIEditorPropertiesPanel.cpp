@@ -145,6 +145,13 @@ namespace Kargono::Panels
 		if (m_WidgetLocationHeader.m_Expanded)
 		{
 			// Modify the X location metric
+			m_WidgetXRelOrAbs.m_SelectedOption = (uint16_t)m_ActiveWidget->m_XRelativeOrAbsolute;
+			EditorUI::EditorUIService::RadioSelector(m_WidgetXRelOrAbs);
+			if (m_WidgetXRelOrAbs.m_SelectedOption == (uint16_t)RuntimeUI::RelativeOrAbsolute::Relative)
+			{
+				m_WidgetXConstraint.m_CurrentOption = { Utility::ConstraintToString(m_ActiveWidget->m_XConstraint) , (uint16_t)m_ActiveWidget->m_XConstraint};
+				EditorUI::EditorUIService::SelectOption(m_WidgetXConstraint);
+			}
 			m_WidgetXPixelOrPercent.m_SelectedOption = (uint16_t)m_ActiveWidget->m_XPositionType;
 			EditorUI::EditorUIService::RadioSelector(m_WidgetXPixelOrPercent);
 			if (m_WidgetXPixelOrPercent.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
@@ -161,6 +168,13 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Modify the Y location metric
+			m_WidgetYRelOrAbs.m_SelectedOption = (uint16_t)m_ActiveWidget->m_YRelativeOrAbsolute;
+			EditorUI::EditorUIService::RadioSelector(m_WidgetYRelOrAbs);
+			if (m_WidgetYRelOrAbs.m_SelectedOption == (uint16_t)RuntimeUI::RelativeOrAbsolute::Relative)
+			{
+				m_WidgetYConstraint.m_CurrentOption = { Utility::ConstraintToString(m_ActiveWidget->m_YConstraint) , (uint16_t)m_ActiveWidget->m_YConstraint };
+				EditorUI::EditorUIService::SelectOption(m_WidgetYConstraint);
+			}
 			m_WidgetYPixelOrPercent.m_SelectedOption = (uint16_t)m_ActiveWidget->m_YPositionType;
 			EditorUI::EditorUIService::RadioSelector(m_WidgetYPixelOrPercent);
 			if (m_WidgetYPixelOrPercent.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
@@ -278,7 +292,33 @@ namespace Kargono::Panels
 		m_WidgetLocationHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
 		m_WidgetLocationHeader.m_Expanded = true;
 
-		// Initialize pixel or percent location options
+		// Set up widgets for selecting a constraint type
+		m_WidgetXConstraint.m_Label = "X Constraint";
+		m_WidgetXConstraint.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetXConstraint.m_CurrentOption = {"None", (uint64_t)RuntimeUI::Constraint::None};
+		m_WidgetXConstraint.m_PopupAction = KG_BIND_CLASS_FN(OnOpenWidgetXConstraint);
+		m_WidgetXConstraint.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetXConstraint);
+
+		m_WidgetYConstraint.m_Label = "Y Constraint";
+		m_WidgetYConstraint.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetYConstraint.m_CurrentOption = { "None", (uint64_t)RuntimeUI::Constraint::None };
+		m_WidgetYConstraint.m_PopupAction = KG_BIND_CLASS_FN(OnOpenWidgetYConstraint);
+		m_WidgetYConstraint.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetYConstraint);
+
+		// Set up widgets to select between relative and absolute location
+		m_WidgetXRelOrAbs.m_Label = "X Spacing Mode";
+		m_WidgetXRelOrAbs.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetXRelOrAbs.m_FirstOptionLabel = "Relative";
+		m_WidgetXRelOrAbs.m_SecondOptionLabel = "Absolute";
+		m_WidgetXRelOrAbs.m_SelectedOption = (uint16_t)RuntimeUI::RelativeOrAbsolute::Absolute;
+		m_WidgetXRelOrAbs.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetXLocationRelOrAbs);
+
+		m_WidgetYRelOrAbs.m_Label = "Y Spacing Mode";
+		m_WidgetYRelOrAbs.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetYRelOrAbs.m_FirstOptionLabel = "Relative";
+		m_WidgetYRelOrAbs.m_SecondOptionLabel = "Absolute";
+		m_WidgetYRelOrAbs.m_SelectedOption = (uint16_t)RuntimeUI::RelativeOrAbsolute::Absolute;
+		m_WidgetYRelOrAbs.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetYLocationRelOrAbs);
 
 		// Set up widgets to select between pixel and percent location
 		m_WidgetXPixelOrPercent.m_Label = "X Position Metric";
@@ -516,6 +556,60 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
+	void UIEditorPropertiesPanel::OnModifyWidgetXConstraint(const EditorUI::OptionEntry& entry)
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget location metric");
+			return;
+		}
+
+		// Update the widget location metric based on the radio selector value
+		m_ActiveWidget->m_XConstraint = (RuntimeUI::Constraint)(uint16_t)entry.m_Handle;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyWidgetYConstraint(const EditorUI::OptionEntry& entry)
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget location metric");
+			return;
+		}
+
+		// Update the widget location metric based on the radio selector value
+		m_ActiveWidget->m_YConstraint = (RuntimeUI::Constraint)(uint16_t)entry.m_Handle;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnOpenWidgetXConstraint()
+	{
+		m_WidgetXConstraint.ClearOptions();
+		m_WidgetXConstraint.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
+		m_WidgetXConstraint.AddToOptions("All Options", "Top", (uint64_t)RuntimeUI::Constraint::Top);
+		m_WidgetXConstraint.AddToOptions("All Options", "Bottom", (uint64_t)RuntimeUI::Constraint::Bottom);
+		m_WidgetXConstraint.AddToOptions("All Options", "Left", (uint64_t)RuntimeUI::Constraint::Left);
+		m_WidgetXConstraint.AddToOptions("All Options", "Right", (uint64_t)RuntimeUI::Constraint::Right);
+		m_WidgetXConstraint.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
+	}
+
+	void UIEditorPropertiesPanel::OnOpenWidgetYConstraint()
+	{
+		m_WidgetYConstraint.ClearOptions();
+		m_WidgetYConstraint.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
+		m_WidgetYConstraint.AddToOptions("All Options", "Top", (uint64_t)RuntimeUI::Constraint::Top);
+		m_WidgetYConstraint.AddToOptions("All Options", "Bottom", (uint64_t)RuntimeUI::Constraint::Bottom);
+		m_WidgetYConstraint.AddToOptions("All Options", "Left", (uint64_t)RuntimeUI::Constraint::Left);
+		m_WidgetYConstraint.AddToOptions("All Options", "Right", (uint64_t)RuntimeUI::Constraint::Right);
+		m_WidgetYConstraint.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
+	}
+
 	void UIEditorPropertiesPanel::OnModifyWidgetXPixelLocation(EditorUI::EditIntegerSpec& spec)
 	{
 		// Ensure active widget is valid
@@ -669,37 +763,69 @@ namespace Kargono::Panels
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 		{
-				// Open create script dialog in script editor
-				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
-				{
-						// Ensure handle provides a script in the registry
-						if (!Assets::AssetService::HasScript(scriptHandle))
-						{
-							KG_WARN("Could not find script");
-							return;
-						}
+			// Open create script dialog in script editor
+			s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+			{
+					// Ensure handle provides a script in the registry
+					if (!Assets::AssetService::HasScript(scriptHandle))
+					{
+						KG_WARN("Could not find script");
+						return;
+					}
 
-						// Ensure function type matches definition
-						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-						if (script->m_FuncType != WrappedFuncType::Void_None)
-						{
-							KG_WARN("Incorrect function type returned when linking script to usage point");
-							return;
-						}
+					// Ensure function type matches definition
+					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+					if (script->m_FuncType != WrappedFuncType::Void_None)
+					{
+						KG_WARN("Incorrect function type returned when linking script to usage point");
+						return;
+					}
 
-						// Fill the new script handle
-						m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = scriptHandle;
-						m_ActiveWidget->m_FunctionPointers.m_OnPress = script;
-						m_WidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+					// Fill the new script handle
+					m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = scriptHandle;
+					m_ActiveWidget->m_FunctionPointers.m_OnPress = script;
+					m_WidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 
-						// Set the active editor UI as edited
-						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-					}, {});
+					// Set the active editor UI as edited
+					s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+				}, {});
 			} };
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 		// Open tooltip
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyWidgetXLocationRelOrAbs()
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget location metric");
+			return;
+		}
+
+		// Update the widget location metric based on the radio selector value
+		m_ActiveWidget->m_XRelativeOrAbsolute = (RuntimeUI::RelativeOrAbsolute)m_WidgetXRelOrAbs.m_SelectedOption;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyWidgetYLocationRelOrAbs()
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget location metric");
+			return;
+		}
+
+		// Update the widget location metric based on the radio selector value
+		m_ActiveWidget->m_YRelativeOrAbsolute = (RuntimeUI::RelativeOrAbsolute)m_WidgetYRelOrAbs.m_SelectedOption;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyTextWidgetText(EditorUI::EditTextSpec& spec)

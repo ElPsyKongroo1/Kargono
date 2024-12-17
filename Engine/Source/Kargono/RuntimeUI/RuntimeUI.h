@@ -61,6 +61,22 @@ namespace Kargono::RuntimeUI
 		std::size_t m_DownWidgetIndex { k_InvalidWidgetIndex };
 	};
 	
+	enum class RelativeOrAbsolute
+	{
+		Relative = 0,
+		Absolute
+	};
+
+	enum class Constraint
+	{
+		None = 0,
+		Top,
+		Bottom,
+		Left,
+		Right,
+		Center
+	};
+
 	enum class PixelOrPercent
 	{
 		Pixel = 0, 
@@ -96,6 +112,10 @@ namespace Kargono::RuntimeUI
 		std::string m_Tag{ "None" };
 		PixelOrPercent m_XPositionType{ PixelOrPercent::Percent };
 		PixelOrPercent m_YPositionType{ PixelOrPercent::Percent };
+		RelativeOrAbsolute m_XRelativeOrAbsolute{ RelativeOrAbsolute::Absolute };
+		RelativeOrAbsolute m_YRelativeOrAbsolute{ RelativeOrAbsolute::Absolute };
+		Constraint m_XConstraint{ Constraint::None };
+		Constraint m_YConstraint{ Constraint::None };
 		Math::vec2 m_PercentPosition{ 0.4f };
 		Math::ivec2 m_PixelPosition{ 0 };
 		Math::vec2 m_Size  {0.3f};
@@ -456,6 +476,60 @@ namespace Kargono::Utility
 
 		KG_ERROR("Invalid PixelOrPercent at StringToPixelOrPercent");
 		return RuntimeUI::PixelOrPercent::Pixel;
+	}
+
+	static std::string RelativeOrAbsoluteToString(RuntimeUI::RelativeOrAbsolute type)
+	{
+		switch (type)
+		{
+		case RuntimeUI::RelativeOrAbsolute::Relative: return "Relative";
+		case RuntimeUI::RelativeOrAbsolute::Absolute: return "Absolute";
+		default:
+		{
+			KG_ERROR("Invalid RelativeOrAbsolute at RelativeOrAbsoluteToString");
+			return "Absolute";
+		}
+		}
+	}
+
+	static RuntimeUI::RelativeOrAbsolute StringToRelativeOrAbsolute(const std::string& type)
+	{
+		if (type == "Relative") { return RuntimeUI::RelativeOrAbsolute::Relative; }
+		if (type == "Absolute") { return RuntimeUI::RelativeOrAbsolute::Absolute; }
+
+		KG_ERROR("Invalid RelativeOrAbsolute at StringToRelativeOrAbsolute");
+		return RuntimeUI::RelativeOrAbsolute::Absolute;
+	}
+
+	static std::string ConstraintToString(RuntimeUI::Constraint type)
+	{
+		switch (type)
+		{
+		case RuntimeUI::Constraint::None: return "None";
+		case RuntimeUI::Constraint::Top: return "Top";
+		case RuntimeUI::Constraint::Bottom: return "Bottom";
+		case RuntimeUI::Constraint::Left: return "Left";
+		case RuntimeUI::Constraint::Right: return "Right";
+		case RuntimeUI::Constraint::Center: return "Center";
+		default:
+		{
+			KG_ERROR("Invalid Constraint at ConstraintToString");
+			return "None";
+		}
+		}
+	}
+
+	static RuntimeUI::Constraint StringToConstraint(const std::string& type)
+	{
+		if (type == "None") { return RuntimeUI::Constraint::None; }
+		if (type == "Top") { return RuntimeUI::Constraint::Top; }
+		if (type == "Bottom") { return RuntimeUI::Constraint::Bottom; }
+		if (type == "Left") { return RuntimeUI::Constraint::Left; }
+		if (type == "Right") { return RuntimeUI::Constraint::Right; }
+		if (type == "Center") { return RuntimeUI::Constraint::Center; }
+
+		KG_ERROR("Invalid Constraint at StringToConstraint");
+		return RuntimeUI::Constraint::None;
 	}
 }
 
