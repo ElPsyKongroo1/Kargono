@@ -63,8 +63,9 @@ project "EditorTesting"
         {
             "KG_PLATFORM_LINUX"
         }
+        linkoptions { "`pkg-config --libs gtk4`" }
         links 
-	{ 
+        { 
             "GLFW",
             "Box2D",
             "GLAD",
@@ -74,7 +75,7 @@ project "EditorTesting"
             "msdfgen",
             "freetype",
             "%{Library.ShaderC_Linux}"
-	}
+        }
 
     filter "configurations:Debug"
         kind "ConsoleApp"
@@ -90,7 +91,7 @@ project "EditorTesting"
         filter { "system:linux", "configurations:Debug" }
             links
             {
-            	"%{Library.OpenALSoft_Debug_Linux}"
+            	"%{DynamicLibrary.OpenALSoft_Debug_Linux}"
             }
     filter "configurations:Release"
         kind "ConsoleApp"
@@ -106,7 +107,7 @@ project "EditorTesting"
         filter { "system:linux", "configurations:Release" }
             links
             {
-            	"%{Library.OpenALSoft_Release_Linux}"
+            	"%{DynamicLibrary.OpenALSoft_Release_Linux}"
             }
 
     filter "configurations:Dist"
@@ -124,5 +125,5 @@ project "EditorTesting"
         filter { "system:linux", "configurations:Dist" }
             links
             {
-            	"%{Library.OpenALSoft_Dist_Linux}"
+            	"%{DynamicLibrary.OpenALSoft_Dist_Linux}"
             }

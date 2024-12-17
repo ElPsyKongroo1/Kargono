@@ -172,10 +172,20 @@ namespace Kargono::Scripting
 
 	void ScriptService::LoadActiveScriptModule()
 	{
-#ifdef KG_DEBUG
-		std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script\\ExportBodyDebug.dll" };
-#else
-		std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script\\ExportBody.dll" };
+#if defined(KG_PLATFORM_WINDOWS)
+	#if defined(KG_DEBUG) 
+			std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script\\ExportBodyDebug.dll" };
+	#else
+			std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script\\ExportBody.dll" };
+	#endif
+#endif
+
+#if defined(KG_PLATFORM_LINUX)
+	#if defined(KG_DEBUG) 
+			std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportBodyDebug.so" };
+	#else
+			std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportBody.so" };
+	#endif
 #endif
 
 		// Rebuild shared library if no library exists
@@ -306,7 +316,8 @@ namespace Kargono::Scripting
 			script->m_Function = CreateRef<WrappedVoidNone>();
 #if defined(KG_PLATFORM_WINDOWS)
 			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
+#endif
+#if defined(KG_PLATFORM_LINUX)
 			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
 #endif
 			break;
@@ -630,8 +641,11 @@ namespace Kargono::Scripting
 		KG_INFO("Clearing previous compilation logs...");
 		Utility::FileSystem::DeleteSelectedFile("Log/BuildScriptLibraryDebug.log");
 		KG_INFO("Compiling debug script module...");
-
-		bool buildSuccessful = CompileModuleCode(true);
+#if defined(KG_PLATFORM_WINDOWS)
+		bool buildSuccessful = CompileModuleCodeMSVC(true);
+#elif defined(KG_PLATFORM_LINUX)
+		bool buildSuccessful = CompileModuleCodeGCC(true);
+#endif
 		if (!buildSuccessful)
 		{
 			KG_WARN("Failure to compile script module");
@@ -642,7 +656,11 @@ namespace Kargono::Scripting
 		KG_INFO("Clearing previous compilation logs...");
 		Utility::FileSystem::DeleteSelectedFile("Log/BuildScriptLibrary.log");
 		KG_INFO("Compiling release script module...");
-		buildSuccessful = CompileModuleCode(false);
+#if defined(KG_PLATFORM_WINDOWS)
+		buildSuccessful = CompileModuleCodeMSVC(false);
+#elif defined(KG_PLATFORM_LINUX)
+		buildSuccessful = CompileModuleCodeGCC(false);
+#endif
 		if (!buildSuccessful)
 		{
 			KG_WARN("Failed to compile release script module");
@@ -668,11 +686,19 @@ namespace Kargono::Scripting
 		// Write out return value and function name
 		std::stringstream outputStream {};
 		outputStream << "#pragma once\n";
+#if defined(KG_PLATFORM_WINDOWS)
 		outputStream << "#ifdef KARGONO_EXPORTS\n";
 		outputStream << "#define KARGONO_API __declspec(dllexport)\n";
 		outputStream << "#else\n";
 		outputStream << "#define KARGONO_API __declspec(dllimport)\n";
 		outputStream << "#endif\n";
+#elif defined(KG_PLATFORM_LINUX)
+		outputStream << "#ifdef KARGONO_EXPORTS\n";
+		outputStream << "#define KARGONO_API __attribute__((visibility(\"default\")))\n";
+		outputStream << "#else\n";
+		outputStream << "#define KARGONO_API\n";
+		outputStream << "#endif\n";
+#endif
 
 		outputStream << "#include <functional>\n";
 		outputStream << "#include <string>\n";
@@ -1035,7 +1061,7 @@ namespace Kargono::Scripting
 		return true;
 	}
 
-	bool ScriptModuleBuilder::CompileModuleCode(bool createDebug)
+	bool ScriptModuleBuilder::CompileModuleCodeMSVC(bool createDebug)
 	{
 		Utility::FileSystem::CreateNewDirectory(Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/");
 		std::filesystem::path binaryPath { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/" };
@@ -1119,6 +1145,79 @@ namespace Kargono::Scripting
 		}
 
 		// Call Command
+		return system(outputStream.str().c_str()) == 0;
+	}
+
+	bool ScriptModuleBuilder::CompileModuleCodeGCC(bool createDebug)
+	{
+		// Set up paths and files
+		Utility::FileSystem::CreateNewDirectory(Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/");
+		std::filesystem::path binaryPath = Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/";
+		std::filesystem::path binaryFile;
+		std::filesystem::path objectPath;
+		
+		if (createDebug) 
+		{
+			binaryFile = binaryPath / "ExportBodyDebug.so";  // Using .so for shared libraries on Linux
+			objectPath = binaryPath / "ExportBody.o";       // Object file with .o extension
+		} 
+		else 
+		{
+			binaryFile = binaryPath / "ExportBody.so";
+			objectPath = binaryPath / "ExportBody.o";
+		}
+
+		std::filesystem::path sourcePath = Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportBody.cpp";
+
+		// Set up the output stream for the commands
+		std::stringstream outputStream;
+		outputStream << "("; // Parentheses to group all function calls together
+
+		// Start GCC Command
+		outputStream << "g++ ";  // GCC compiler command
+		outputStream << "-c ";   // Tell GCC to only compile the code (not link)
+		outputStream << "-fPIC "; // Ensure position independent code for 64bit arch
+		if (createDebug) 
+		{
+			outputStream << "-g ";  // Enable debug symbols in the object file
+		}
+		outputStream << "-std=c++20 "; // Specify language version (C++20)
+		outputStream << "-I../Dependencies/glm "; // Include GLM headers
+		outputStream << "-I../Engine/Source ";  // Include Kargono headers
+		outputStream << "-fexceptions ";  // Handle exceptions
+		outputStream << "-D KARGONO_EXPORTS ";  // Define macros for exporting DLL functions
+
+		// Output the object file path
+		outputStream << "-o \"" << objectPath.string() << "\" ";  // Object file path
+		outputStream << "\"" << sourcePath.string() << "\" "; // Compile the source file
+
+		// Start Linking Stage
+		outputStream << "&& ";  // Combine commands
+
+		outputStream << "g++ ";  // GCC linker command
+		outputStream << "-shared ";  // Create a shared library (.so)
+		outputStream << "-fPIC "; // Ensure position independent code for 64bit arch
+		if (createDebug) 
+		{
+			outputStream << "-g ";  // Debug information for shared library
+			outputStream << "-Wl,-Map=" << binaryPath / "ExportBody.map" << " "; // Map file for debugging
+		}
+		outputStream << "-o \"" << binaryFile.string() << "\" "; // Output shared library file path
+		outputStream << "\"" << objectPath.string() << "\" "; // Object file to link
+
+		outputStream << ")";  // Parentheses to group the commands
+
+		// Redirect logs if debugging
+		if (createDebug) 
+		{
+			outputStream << " >> Log/BuildScriptLibraryDebug.log 2>&1 ";
+		} 
+		else 
+		{
+			outputStream << " >> Log/BuildScriptLibrary.log 2>&1 ";
+		}
+
+		// Call system command
 		return system(outputStream.str().c_str()) == 0;
 	}
 

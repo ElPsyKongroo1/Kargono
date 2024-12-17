@@ -26,7 +26,7 @@ namespace Kargono::RuntimeUI
 		s_RuntimeUIContext = CreateRef<RuntimeUIContext>();
 		s_RuntimeUIContext->m_ActiveUI = nullptr;
 		s_RuntimeUIContext->m_ActiveUIHandle = Assets::EmptyHandle;
-		s_RuntimeUIContext->m_DefaultFont = FontService::InstantiateEditorFont("Resources/fonts/arial.ttf");
+		s_RuntimeUIContext->m_DefaultFont = FontService::InstantiateEditorFont("Resources/Fonts/arial.ttf");
 
 		// Initialize Window/Widget Rendering Data
 		{
