@@ -381,7 +381,7 @@ namespace Kargono::Panels
 		{
 			m_KeyboardOnUpdateTable.ClearList();
 			uint32_t iteration{ 0 };
-			for (auto& inputBinding : m_EditorInputMap->GetOnUpdateBindings())
+			for (Ref<Input::InputActionBinding> inputBinding : m_EditorInputMap->GetOnUpdateBindings())
 			{
 
 				if (inputBinding->GetActionType() != Input::KeyboardAction)

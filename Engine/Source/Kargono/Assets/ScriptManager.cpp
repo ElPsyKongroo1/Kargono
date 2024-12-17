@@ -275,7 +275,7 @@ namespace Kargono::Assets
 	void ScriptManager::DeserializeRegistrySpecificData(YAML::Node& registryNode)
 	{
 		// Load in Engine Scripts
-		for (auto script : Scripting::ScriptService::GetAllEngineScripts())
+		for (Ref<Scripting::Script> script : Scripting::ScriptService::GetAllEngineScripts())
 		{
 			Assets::AssetInfo newAsset{};
 			newAsset.m_Handle = script->m_ID;
@@ -306,10 +306,10 @@ namespace Kargono::Assets
 		// Get Section Labels
 		{
 			m_ScriptSectionLabels.clear();
-			auto sectionLabels = registryNode["SectionLabels"];
+			YAML::Node sectionLabels = registryNode["SectionLabels"];
 			if (sectionLabels)
 			{
-				for (auto label : sectionLabels)
+				for (YAML::iterator::value_type label : sectionLabels)
 				{
 					m_ScriptSectionLabels.insert(label.as<std::string>());
 				}

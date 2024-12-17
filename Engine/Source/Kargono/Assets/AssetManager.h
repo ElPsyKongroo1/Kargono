@@ -11,33 +11,6 @@
 #include <bitset>
 #include <tuple>
 
-// Functions to call
-
-// Virtual functions to inject functionality
-
-
-//==============================
-// Manage Registry
-//==============================
-
-// DeserializeRegistry
-// SerializeRegistry
-// Clear Registry
-// GetAssetRegistry()
-
-//==============================
-// Import Asset
-//==============================
-
-// ImportNewAssetFromFile
-// ImportNewAssetFromData()
-
-//==============================
-// Read Asset from Registry
-//==============================
-
-// GetAsset(handle)
-
 enum AssetManagerOptions : uint8_t
 {
 	None = 0, // Default value
@@ -563,8 +536,8 @@ namespace Kargono::Assets
 
 			if (!Utility::FileSystem::PathExists(registryPath))
 			{
-				KG_WARN("No .kgreg file found at provided registry path {}", registryPath.string());
-				return;
+				KG_WARN("No .kgreg file found at provided registry path {}. Creating a new one.", registryPath.string());
+				SerializeAssetRegistry();
 			}
 			YAML::Node data;
 			try

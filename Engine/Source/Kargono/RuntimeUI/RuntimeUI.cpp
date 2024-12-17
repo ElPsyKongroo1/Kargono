@@ -4,6 +4,7 @@
 
 #include "Kargono/Assets/AssetService.h"
 #include "Kargono/Core/Engine.h"
+#include "Kargono/Core/Window.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Rendering/Shader.h"
@@ -281,8 +282,8 @@ namespace Kargono::RuntimeUI
 		for (Window* window : s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows)
 		{
 			// Get position data for rendering window
-			Math::vec3 scale = Math::vec3(viewportWidth * window->m_Size.x, viewportHeight * window->m_Size.y, 1.0f);
-			Math::vec3 initialTranslation = Math::vec3((viewportWidth * window->m_ScreenPosition.x), (viewportHeight * window->m_ScreenPosition.y), window->m_ScreenPosition.z);
+			Math::vec3 scale = window->CalculateSize(viewportWidth, viewportHeight);
+			Math::vec3 initialTranslation = window->CalculatePosition(viewportWidth, viewportHeight);
 			Math::vec3 bottomLeftTranslation = Math::vec3( initialTranslation.x + (scale.x / 2),  initialTranslation.y + (scale.y / 2), initialTranslation.z);
 
 
@@ -447,7 +448,10 @@ namespace Kargono::RuntimeUI
 
 		// Set the widget as selected
 		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
-		activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectedWidget->m_DefaultBackgroundColor;
+		if (activeUI->m_SelectedWidget)
+		{
+			activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectedWidget->m_DefaultBackgroundColor;
+		}
 		activeUI->m_SelectedWidget = currentWidget.get();
 		activeUI->m_SelectedWidget->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
@@ -671,28 +675,42 @@ namespace Kargono::RuntimeUI
 
 	void RuntimeUIService::CalculateWindowNavigationLinks()
 	{
+		ViewportData& viewportData = EngineService::GetActiveWindow().GetActiveViewport();
+
 		// Iterate through all windows 
 		for (Window& currentWindow : s_RuntimeUIContext->m_ActiveUI->m_Windows)
 		{
+			// Calculate window scale and position
+			Math::vec3 windowScale = currentWindow.CalculateSize(viewportData.m_Width, viewportData.m_Height);
+			Math::vec3 windowPosition = currentWindow.CalculatePosition(viewportData.m_Width, viewportData.m_Height);
+
 			// Iterate through all widgets in the window
 			for (Ref<Widget> currentWidget : currentWindow.m_Widgets)
 			{
 				// Calculate navigation links for the current widget
-				currentWidget->m_NavigationLinks.m_RightWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, Direction::Right);
-				currentWidget->m_NavigationLinks.m_LeftWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, Direction::Left);
-				currentWidget->m_NavigationLinks.m_UpWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, Direction::Up);
-				currentWidget->m_NavigationLinks.m_DownWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, Direction::Down);
+				currentWidget->m_NavigationLinks.m_RightWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, 
+					Direction::Right, windowPosition, windowScale);
+				currentWidget->m_NavigationLinks.m_LeftWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, 
+					Direction::Left, windowPosition, windowScale);
+				currentWidget->m_NavigationLinks.m_UpWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget,
+					Direction::Up, windowPosition, windowScale);
+				currentWidget->m_NavigationLinks.m_DownWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget,
+					Direction::Down, windowPosition, windowScale);
 			}
 		}
 	}
 
-	std::size_t RuntimeUIService::CalculateNavigationLink(Window& currentWindow, Ref<Widget> currentWidget, Direction direction)
+	std::size_t RuntimeUIService::CalculateNavigationLink(Window& currentWindow, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize)
 	{
 		// Initialize variables for navigation link calculation
 		Ref<Widget> currentBestChoice{ nullptr };
 		std::size_t currentChoiceLocation{ 0 };
 		float currentBestDistance{ std::numeric_limits<float>::max() };
 		std::size_t iteration{ 0 };
+
+		// Calculate the position and size of the current widget
+		Math::vec2 currentWidgetPosition = currentWidget->CalculatePosition(windowPosition, windowSize);
+		Math::vec2 currentWidgetSize = currentWidget->CalculateSize(windowSize);
 
 		// Iterate through each potential widget and decide which widget makes sense to navigate to
 		for (Ref<Widget> potentialChoice : currentWindow.m_Widgets)
@@ -703,9 +721,12 @@ namespace Kargono::RuntimeUI
 				iteration++;
 				continue;
 			}
+			// Calculate the position and size of the potential widget
+			Math::vec2 potentialChoicePosition = potentialChoice->CalculatePosition(windowPosition, windowSize);
+			Math::vec2 potentialChoiceSize = potentialChoice->CalculateSize(windowSize);
 
 			// Calculate the distance between the current widget and the potential widget
-			float currentDistance = glm::abs(glm::distance(potentialChoice->m_PercentPosition, currentWidget->m_PercentPosition));
+			float currentDistance = glm::abs(glm::distance(currentWidgetPosition, potentialChoicePosition));
 
 			// Check if the potential widget is within the constraints of the current widget
 			float currentWidgetExtent;
@@ -714,8 +735,8 @@ namespace Kargono::RuntimeUI
 			switch (direction)
 			{
 			case Direction::Right:
-				currentWidgetExtent = currentWidget->m_PercentPosition.x + (currentWidget->m_Size.x / 2);
-				potentialWidgetExtent = potentialChoice->m_PercentPosition.x - (potentialChoice->m_Size.x / 2);
+				currentWidgetExtent = currentWidgetPosition.x + (currentWidgetSize.x / 2);
+				potentialWidgetExtent = potentialChoicePosition.x - (potentialChoiceSize.x / 2);
 				if (currentWidgetExtent >= potentialWidgetExtent)
 				{
 					iteration++;
@@ -723,8 +744,8 @@ namespace Kargono::RuntimeUI
 				}
 				break;
 			case Direction::Left:
-				currentWidgetExtent = currentWidget->m_PercentPosition.x - (currentWidget->m_Size.x / 2);
-				potentialWidgetExtent = potentialChoice->m_PercentPosition.x + (potentialChoice->m_Size.x / 2);
+				currentWidgetExtent = currentWidgetPosition.x - (currentWidgetSize.x / 2);
+				potentialWidgetExtent = potentialChoicePosition.x + (potentialChoiceSize.x / 2);
 				if (currentWidgetExtent <= potentialWidgetExtent)
 				{
 					iteration++;
@@ -732,8 +753,8 @@ namespace Kargono::RuntimeUI
 				}
 				break;
 			case Direction::Up:
-				currentWidgetExtent = currentWidget->m_PercentPosition.y + (currentWidget->m_Size.y / 2);
-				potentialWidgetExtent = potentialChoice->m_PercentPosition.y - (potentialChoice->m_Size.y / 2);
+				currentWidgetExtent = currentWidgetPosition.y + (currentWidgetSize.y / 2);
+				potentialWidgetExtent = potentialChoicePosition.y - (potentialChoiceSize.y / 2);
 				if (currentWidgetExtent >= potentialWidgetExtent)
 				{
 					iteration++;
@@ -741,8 +762,8 @@ namespace Kargono::RuntimeUI
 				}
 				break;
 			case Direction::Down:
-				currentWidgetExtent = currentWidget->m_PercentPosition.y - (currentWidget->m_Size.y / 2);
-				potentialWidgetExtent = potentialChoice->m_PercentPosition.y + (potentialChoice->m_Size.y / 2);
+				currentWidgetExtent = currentWidgetPosition.y - (currentWidgetSize.y / 2);
+				potentialWidgetExtent = potentialChoicePosition.y + (potentialChoiceSize.y / 2);
 				if (currentWidgetExtent <= potentialWidgetExtent)
 				{
 					iteration++;
@@ -840,6 +861,16 @@ namespace Kargono::RuntimeUI
 		return m_WindowDisplayed;
 	}
 
+	Math::vec3 Window::CalculateSize(uint32_t viewportWidth, uint32_t viewportHeight)
+	{
+		return Math::vec3(viewportWidth * m_Size.x, viewportHeight * m_Size.y, 1.0f);
+	}
+
+	Math::vec3 Window::CalculatePosition(uint32_t viewportWidth, uint32_t viewportHeight)
+	{
+		return Math::vec3((viewportWidth * m_ScreenPosition.x), (viewportHeight * m_ScreenPosition.y), m_ScreenPosition.z);
+	}
+
 	void Window::AddWidget(Ref<Widget> newWidget)
 	{
 		m_Widgets.push_back(newWidget);
@@ -863,7 +894,7 @@ namespace Kargono::RuntimeUI
 		Rendering::RendererInputSpec& inputSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
 
 		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = Math::vec3(windowSize.x * m_Size.x, windowSize.y * m_Size.y, 1.0f);
+		Math::vec3 widgetSize = CalculateSize(windowSize);
 
 		// Get widget translation
 		Math::vec3 widgetTranslation = CalculatePosition(windowTranslation, windowSize);
@@ -909,6 +940,11 @@ namespace Kargono::RuntimeUI
 
 		// Calculate the new text size
 		CalculateTextSize();
+	}
+
+	Math::vec3 Widget::CalculateSize(const Math::vec3& windowSize)
+	{
+		return Math::vec3(windowSize.x * m_Size.x, windowSize.y * m_Size.y, 1.0f);
 	}
 
 	Math::vec3 Widget::CalculatePosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize)

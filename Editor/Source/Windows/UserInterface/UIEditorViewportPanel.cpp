@@ -191,15 +191,15 @@ namespace Kargono::Panels
 			//cameraViewMatrix, m_ViewportData.m_Width, m_ViewportData.m_Height
 
 			// Get position data for rendering window
-			Math::vec3 windowScale = Math::vec3(m_ViewportData.m_Width * window->m_Size.x, m_ViewportData.m_Height * window->m_Size.y, 1.0f);
-			Math::vec3 initialWindowTranslation = Math::vec3((m_ViewportData.m_Width * window->m_ScreenPosition.x), (m_ViewportData.m_Height * window->m_ScreenPosition.y), window->m_ScreenPosition.z);
+			Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
+			Math::vec3 initialWindowTranslation = window->CalculatePosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
 			Math::vec3 finalWindowTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x / 2), initialWindowTranslation.y + (windowScale.y / 2), initialWindowTranslation.z);
 
 			// Draw outline for either the active widget or the active window
 			if (s_UIWindow->m_PropertiesPanel->m_ActiveWidget)
 			{
 				// Calculate the widget's rendering data
-				Math::vec3 widgetSize = Math::vec3(windowScale.x * widget->m_Size.x, windowScale.y * widget->m_Size.y, 1.0f);
+				Math::vec3 widgetSize = widget->CalculateSize(windowScale);
 				Math::vec3 widgetTranslation = widget->CalculatePosition(initialWindowTranslation, windowScale);
 
 				// Create the widget's background rendering data

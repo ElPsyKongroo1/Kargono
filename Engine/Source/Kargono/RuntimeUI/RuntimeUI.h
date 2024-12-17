@@ -87,6 +87,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Supporting Methods
 		//============================
+		Math::vec3 CalculateSize(const Math::vec3& windowSize);
 		Math::vec3 CalculatePosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize);
 	public:
 		//============================
@@ -269,6 +270,12 @@ namespace Kargono::RuntimeUI
 
 	public:
 		//============================
+		// Supporting Methods
+		//============================
+		Math::vec3 CalculateSize(uint32_t viewportWidth, uint32_t viewportHeight);
+		Math::vec3 CalculatePosition(uint32_t viewportWidth, uint32_t viewportHeight);
+	public:
+		//============================
 		// Public Fields
 		//============================
 		std::string m_Tag{ "None" };
@@ -380,7 +387,7 @@ namespace Kargono::RuntimeUI
 		// Internal Functionality
 		//==============================
 		static void CalculateWindowNavigationLinks();
-		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction);
+		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
 		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
 		static void RevalidateDisplayedWindows();
 
