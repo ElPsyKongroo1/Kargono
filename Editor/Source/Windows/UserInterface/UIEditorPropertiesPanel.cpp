@@ -849,7 +849,7 @@ namespace Kargono::Panels
 		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
 
 		// Update the text widget text based on the editorUI widget's value
-		textWidget.m_Text = m_WidgetText.m_CurrentOption;
+		textWidget.SetText(m_WidgetText.m_CurrentOption);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;

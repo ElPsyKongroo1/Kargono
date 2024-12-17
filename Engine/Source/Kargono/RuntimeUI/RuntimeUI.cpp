@@ -279,6 +279,7 @@ namespace Kargono::RuntimeUI
 
 		// Submit rendering data from all windows
 		uint16_t windowIteration{ 0 };
+		std::vector<size_t>& windowIndices = s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindowIndices;
 		for (Window* window : s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows)
 		{
 			// Get position data for rendering window
@@ -286,14 +287,13 @@ namespace Kargono::RuntimeUI
 			Math::vec3 initialTranslation = window->CalculatePosition(viewportWidth, viewportHeight);
 			Math::vec3 bottomLeftTranslation = Math::vec3( initialTranslation.x + (scale.x / 2),  initialTranslation.y + (scale.y / 2), initialTranslation.z);
 
-
 			// Create background rendering data
 			s_RuntimeUIContext->m_BackgroundInputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), bottomLeftTranslation)
 				* glm::scale(Math::mat4(1.0f), scale);
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, "a_Color", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 
 			// Push window ID and invalid widgetID
-			Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIteration << 16) | (uint32_t)0xFFFF, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+			Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)0xFFFF, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(s_RuntimeUIContext->m_BackgroundInputSpec);
@@ -304,8 +304,8 @@ namespace Kargono::RuntimeUI
 			for (Ref<Widget> widgetRef : window->m_Widgets)
 			{
 				// Push window ID and invalid widget ID
-				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIteration << 16) | (uint32_t)widgetIteration, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
-				RuntimeUI::FontService::SetID(((uint32_t)windowIteration << 16) | (uint32_t)widgetIteration);
+				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+				RuntimeUI::FontService::SetID(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration);
 				// Call the widget's rendering function
 				widgetRef->PushRenderData(initialTranslation, scale, (float)viewportWidth);
 				widgetIteration++;
@@ -356,13 +356,17 @@ namespace Kargono::RuntimeUI
 	{
 		// Ensure/validate that the correct window is being displayed
 		s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows.clear();
+		s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindowIndices.clear();
+		size_t iteration{ 0 };
 		for (Window& window : GetAllActiveWindows())
 		{
 			// Add the window to the displayed windows if it is flagged to do so
 			if (window.GetWindowDisplayed()) 
 			{ 
 				s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows.push_back(&window);
+				s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindowIndices.push_back(iteration);
 			}
+			iteration++;
 		}
 	}
 

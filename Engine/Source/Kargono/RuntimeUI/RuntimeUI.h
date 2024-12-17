@@ -331,6 +331,7 @@ namespace Kargono::RuntimeUI
 
 		// Runtime Data
 		std::vector<Window*> m_DisplayedWindows{};
+		std::vector<size_t> m_DisplayedWindowIndices{};
 		Widget* m_SelectedWidget{ nullptr };
 		Widget* m_HoveredWidget{ nullptr };
 		Window* m_ActiveWindow{ nullptr };
