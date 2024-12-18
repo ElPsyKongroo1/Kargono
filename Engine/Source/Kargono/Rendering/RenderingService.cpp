@@ -58,7 +58,7 @@ namespace Kargono::Rendering
 		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * transform;
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
-	void RenderingService::BeginScene(const EditorCamera& camera)
+	void RenderingService::BeginScene(const EditorPerspectiveCamera& camera)
 	{
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));

@@ -61,7 +61,7 @@
 #include "Kargono/Rendering/Framebuffer.h"
 #include "Kargono/Rendering/Texture.h"
 #include "Kargono/Rendering/VertexArray.h"
-#include "Kargono/Rendering/EditorCamera.h"
+#include "Kargono/Rendering/EditorPerspectiveCamera.h"
 
 //-----------------Scene-----------------//
 #include "Kargono/Scenes/Scene.h"

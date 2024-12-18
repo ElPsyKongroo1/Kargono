@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Rendering/RendererAPI.h"
-#include "Kargono/Rendering/EditorCamera.h"
+#include "Kargono/Rendering/EditorPerspectiveCamera.h"
 #include "Kargono/Rendering/Camera.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Math/Math.h"
@@ -26,7 +26,7 @@ namespace Kargono::Rendering
 		// Scene Rendering Submission LifeTime Functions
 		//============================================================
 		static void BeginScene(const Camera& camera, const Math::mat4& transform);
-		static void BeginScene(const EditorCamera& camera);
+		static void BeginScene(const EditorPerspectiveCamera& camera);
 		static void BeginScene(const Math::mat4 projection);
 		static void SubmitDataToRenderer(RendererInputSpec& inputSpec);
 		static void EndScene();

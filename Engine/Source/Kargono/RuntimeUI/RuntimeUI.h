@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Rendering/EditorCamera.h"
+#include "Kargono/Rendering/EditorPerspectiveCamera.h"
 #include "Kargono/Scripting/ScriptService.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/RuntimeUI/Font.h"
@@ -402,7 +402,8 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Rendering API
 		//==============================
-		static void PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth = 0, uint32_t viewportHeight = 0);
+		static void PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight);
+		static void PushRenderData(uint32_t viewportWidth, uint32_t viewportHeight);
 	private:
 		//==============================
 		// Internal Functionality

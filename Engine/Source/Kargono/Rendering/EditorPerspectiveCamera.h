@@ -9,7 +9,7 @@
 
 namespace Kargono::Rendering
 {
-	class EditorCamera : public Camera
+	class EditorPerspectiveCamera : public Camera
 	{
 
 	public:
@@ -24,8 +24,8 @@ namespace Kargono::Rendering
 		// Camera Constructors
 		//============================================================
 		// This camera is only meant to be instantiated in the editor
-		EditorCamera() = default;
-		EditorCamera(float fov, float aspectRatio, float nearClip, float farClip);
+		EditorPerspectiveCamera() = default;
+		EditorPerspectiveCamera(float fov, float aspectRatio, float nearClip, float farClip);
 
 		//============================================================
 		// Update Camera State Functions
@@ -95,20 +95,20 @@ namespace Kargono::Rendering
 			UpdateView();
 		}
 		// Change Camera Type
-		EditorCamera::MovementType& GetMovementType() { return m_MovementType; }
-		void SetMovementType(EditorCamera::MovementType movementType)
+		EditorPerspectiveCamera::MovementType& GetMovementType() { return m_MovementType; }
+		void SetMovementType(EditorPerspectiveCamera::MovementType movementType)
 		{
 			m_MovementType = movementType;
 		}
 		void ToggleMovementType()
 		{
-			if (m_MovementType == EditorCamera::MovementType::ModelView)
+			if (m_MovementType == EditorPerspectiveCamera::MovementType::ModelView)
 			{
-				m_MovementType = EditorCamera::MovementType::FreeFly;
+				m_MovementType = EditorPerspectiveCamera::MovementType::FreeFly;
 			}
 			else
 			{
-				m_MovementType = EditorCamera::MovementType::ModelView;
+				m_MovementType = EditorPerspectiveCamera::MovementType::ModelView;
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace Kargono::Rendering
 		float ZoomSpeed() const;
 	private:
 		// Camera Movement Type
-		EditorCamera::MovementType m_MovementType = MovementType::FreeFly;
+		EditorPerspectiveCamera::MovementType m_MovementType = MovementType::FreeFly;
 
 		// Camera Projection Fields
 		float m_FOV = 45.0f, m_AspectRatio = 1.778f, m_NearClip = 0.1f, m_FarClip = 1000.0f;

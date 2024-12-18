@@ -115,8 +115,10 @@ namespace Kargono
 
 		if (mainCamera)
 		{
-			RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), 
-				EngineService::GetActiveWindow().GetWidth(), EngineService::GetActiveWindow().GetHeight());
+			/*RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), 
+				EngineService::GetActiveWindow().GetWidth(), EngineService::GetActiveWindow().GetHeight());*/
+			RuntimeUI::RuntimeUIService::PushRenderData(EngineService::GetActiveWindow().GetWidth(), 
+				EngineService::GetActiveWindow().GetHeight());
 		}
 	}
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Core/Timestep.h"
-#include "Kargono/Rendering/EditorCamera.h"
+#include "Kargono/Rendering/EditorOrthographicCamera.h"
 #include "Kargono/Rendering/Framebuffer.h"
 #include "Kargono/Core/Window.h"
 #include "Kargono/RuntimeUI/RuntimeUI.h"
@@ -52,7 +52,7 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		FixedString32 m_PanelName{ "User Interface Viewport" };
-		Rendering::EditorCamera m_EditorCamera;
+		Rendering::EditorOrthographicCamera m_EditorCamera;
 		ViewportData m_ViewportData;
 	private:
 		// Viewport resources

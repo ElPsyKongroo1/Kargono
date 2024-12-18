@@ -16,12 +16,10 @@ namespace Kargono::Panels
 		InitializeFrameBuffer();
 		InitializeOverlayData();
 
-		m_EditorCamera = Rendering::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
-
-		m_EditorCamera.SetFocalPoint({ 58.0f, 27.0f, 93.0f });
-		m_EditorCamera.SetDistance(1.0f);
-		m_EditorCamera.SetPitch(0.195f);
-		m_EditorCamera.SetYaw(-0.372f);
+		m_EditorCamera = Rendering::EditorOrthographicCamera(1000.0f, -2.0f, 2.0f);
+		m_EditorCamera.SetPosition(Math::vec3(0.0f, 0.0f, 0.0f));
+		m_EditorCamera.SetOrientation(Math::vec3(0.0f, 0.0f, 0.0f));
+		m_EditorCamera.SetKeyboardSpeed(100.0f);
 	}
 	void UIEditorViewportPanel::InitializeFrameBuffer()
 	{
@@ -36,6 +34,13 @@ namespace Kargono::Panels
 	{
 		KG_PROFILE_FUNCTION();
 
+		// Handle editor camera movement
+		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
+		if (focusedWindow == m_PanelName)
+		{
+			m_EditorCamera.OnUpdate(ts);
+		}
+
 		// Adjust framebuffer & camera viewport size if necessary
 		Window& currentWindow = EngineService::GetActiveWindow();
 		currentWindow.SetActiveViewport(&m_ViewportData);
@@ -45,7 +50,7 @@ namespace Kargono::Panels
 		{
 			// Update framebuffer and camera viewport size
 			m_ViewportFramebuffer->Resize(m_ViewportData.m_Width, m_ViewportData.m_Height);
-			m_EditorCamera.SetViewportSize((float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height);
+			m_EditorCamera.OnViewportResize();
 		}
 
 		// Prepare for rendering
@@ -61,8 +66,7 @@ namespace Kargono::Panels
 
 		// Handle drawing user interface
 		Window& currentApplication = EngineService::GetActiveWindow();
-		Math::mat4 cameraViewMatrix = glm::inverse(m_EditorCamera.GetViewMatrix());
-		RuntimeUI::RuntimeUIService::PushRenderData(cameraViewMatrix, m_ViewportData.m_Width, m_ViewportData.m_Height);
+		RuntimeUI::RuntimeUIService::PushRenderData(m_EditorCamera.GetViewProjection(), m_ViewportData.m_Width, m_ViewportData.m_Height);
 
 		HandleMouseHovering();
 
@@ -169,13 +173,12 @@ namespace Kargono::Panels
 			// Reset the rendering context
 			Rendering::RendererAPI::ClearDepthBuffer();
 
-			// Calculate orthographic projection matrix for user interface
-			Math::mat4 orthographicProjection = glm::ortho(0.0f, (float)m_ViewportData.m_Width,
-				0.0f, (float)m_ViewportData.m_Height, -1.0f, 1.0f);
-			Math::mat4 outputMatrix = orthographicProjection;
+			//// Calculate orthographic projection matrix for user interface
+			//Math::mat4 orthographicProjection = glm::ortho(0.0f, (float)m_ViewportData.m_Width,
+			//	0.0f, (float)m_ViewportData.m_Height, -1.0f, 1.0f);
 
 			// Start rendering context
-			Rendering::RenderingService::BeginScene(outputMatrix);
+			Rendering::RenderingService::BeginScene(m_EditorCamera.GetViewProjection());
 
 			// Draw window/widget bounding boxes
 			DrawWindowWidgetDebugLines();

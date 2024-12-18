@@ -26,11 +26,11 @@ namespace Kargono::Panels
 		newEntry.m_OnDoubleLeftClick = [](EditorUI::TreeEntry& entry)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
-			Rendering::EditorCamera& editorCamera = s_MainWindow->m_ViewportPanel->m_EditorCamera;
+			Rendering::EditorPerspectiveCamera& editorCamera = s_MainWindow->m_ViewportPanel->m_EditorCamera;
 			ECS::TransformComponent& transformComponent = entity.GetComponent<ECS::TransformComponent>();
 			editorCamera.SetFocalPoint(transformComponent.Translation);
 			editorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
-			editorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
+			editorCamera.SetMovementType(Rendering::EditorPerspectiveCamera::MovementType::ModelView);
 		};
 
 		newEntry.m_OnRightClickSelection.push_back({ "Add Component", [&](EditorUI::TreeEntry& entry)

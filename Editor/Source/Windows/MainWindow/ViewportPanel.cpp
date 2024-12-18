@@ -20,8 +20,7 @@ namespace Kargono::Panels
 
 		InitializeFrameBuffer();
 
-		m_EditorCamera = Rendering::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
-
+		m_EditorCamera = Rendering::EditorPerspectiveCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		m_EditorCamera.SetFocalPoint({ 58.0f, 27.0f, 93.0f });
 		m_EditorCamera.SetDistance(1.0f);
 		m_EditorCamera.SetPitch(0.195f);
@@ -110,10 +109,9 @@ namespace Kargono::Panels
 
 				if (mainCamera)
 				{
-					RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), m_ViewportData.m_Width, m_ViewportData.m_Height);
+					RuntimeUI::RuntimeUIService::PushRenderData(m_ViewportData.m_Width, m_ViewportData.m_Height);
 				}
-			}
-				
+			}	
 		}
 
 		m_ViewportFramebuffer->Unbind();
@@ -186,7 +184,7 @@ namespace Kargono::Panels
 							ECS::TransformComponent& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TransformComponent>();
 							m_EditorCamera.SetFocalPoint(transformComponent.Translation);
 							m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
-							m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
+							m_EditorCamera.SetMovementType(Rendering::EditorPerspectiveCamera::MovementType::ModelView);
 						}
 						previousTime = currentTime;
 						previousEntity = *Scenes::SceneService::GetActiveScene()->GetHoveredEntity();
@@ -471,14 +469,14 @@ namespace Kargono::Panels
 			if (ImGui::BeginPopup("Toggle Viewport Camera Options"))
 			{
 				if (ImGui::MenuItem("Model Viewer", 0,
-					m_EditorCamera.GetMovementType() == Rendering::EditorCamera::MovementType::ModelView))
+					m_EditorCamera.GetMovementType() == Rendering::EditorPerspectiveCamera::MovementType::ModelView))
 				{
-					m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::ModelView);
+					m_EditorCamera.SetMovementType(Rendering::EditorPerspectiveCamera::MovementType::ModelView);
 				}
 				if (ImGui::MenuItem("FreeFly", 0,
-					m_EditorCamera.GetMovementType() == Rendering::EditorCamera::MovementType::FreeFly))
+					m_EditorCamera.GetMovementType() == Rendering::EditorPerspectiveCamera::MovementType::FreeFly))
 				{
-					m_EditorCamera.SetMovementType(Rendering::EditorCamera::MovementType::FreeFly);
+					m_EditorCamera.SetMovementType(Rendering::EditorPerspectiveCamera::MovementType::FreeFly);
 				}
 				ImGui::EndPopup();
 			}
@@ -782,7 +780,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	void ViewportPanel::OnUpdateEditor(Timestep ts, Rendering::EditorCamera& camera)
+	void ViewportPanel::OnUpdateEditor(Timestep ts, Rendering::EditorPerspectiveCamera& camera)
 	{
 		Scenes::SceneService::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
 	}
@@ -806,7 +804,7 @@ namespace Kargono::Panels
 
 	}
 
-	void ViewportPanel::OnUpdateSimulation(Timestep ts, Rendering::EditorCamera& camera)
+	void ViewportPanel::OnUpdateSimulation(Timestep ts, Rendering::EditorPerspectiveCamera& camera)
 	{
 
 		if (!s_MainWindow->m_IsPaused || s_MainWindow->m_StepFrames-- > 0)

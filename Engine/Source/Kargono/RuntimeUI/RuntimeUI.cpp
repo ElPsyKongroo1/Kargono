@@ -269,13 +269,8 @@ namespace Kargono::RuntimeUI
 		// Reset the rendering context
 		Rendering::RendererAPI::ClearDepthBuffer();
 
-		// Calculate orthographic projection matrix for user interface
-		Math::mat4 orthographicProjection = glm::ortho(0.0f, (float)viewportWidth,
-			0.0f, (float)viewportHeight, -1.0f, 1.0f);
-		Math::mat4 outputMatrix = orthographicProjection;
-
 		// Start rendering context
-		Rendering::RenderingService::BeginScene(outputMatrix);
+		Rendering::RenderingService::BeginScene(cameraViewMatrix);
 
 		// Submit rendering data from all windows
 		uint16_t windowIteration{ 0 };
@@ -316,6 +311,14 @@ namespace Kargono::RuntimeUI
 		// End rendering context and submit rendering data to GPU
 		Rendering::RenderingService::EndScene();
 
+	}
+
+	void RuntimeUIService::PushRenderData(uint32_t viewportWidth, uint32_t viewportHeight)
+	{
+		// Calculate orthographic projection matrix for user interface
+		Math::mat4 orthographicProjection = glm::ortho(0.0f, (float)viewportWidth,
+			0.0f, (float)viewportHeight, -1.0f, 1.0f);
+		PushRenderData(orthographicProjection, viewportWidth, viewportHeight);
 	}
 
 	void RuntimeUIService::AddActiveWindow(Window& window)
