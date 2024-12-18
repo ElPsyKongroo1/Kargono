@@ -61,6 +61,11 @@ namespace Kargono::Windows
 
 	bool UIEditorWindow::OnInputEvent(Events::Event* event)
 	{
+		if (m_EditorUI)
+		{
+			m_ViewportPanel->OnInputEvent(event);
+		}
+
 		// Handle key press events for the user interface editor panel
 		if (event->GetEventType() == Events::EventType::KeyPressed)
 		{

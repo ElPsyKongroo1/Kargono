@@ -19,7 +19,7 @@ namespace Kargono::Panels
 		m_EditorCamera = Rendering::EditorOrthographicCamera(1000.0f, -2.0f, 2.0f);
 		m_EditorCamera.SetPosition(Math::vec3(0.0f, 0.0f, 0.0f));
 		m_EditorCamera.SetOrientation(Math::vec3(0.0f, 0.0f, 0.0f));
-		m_EditorCamera.SetKeyboardSpeed(100.0f);
+		m_EditorCamera.SetKeyboardSpeed(150.0f);
 	}
 	void UIEditorViewportPanel::InitializeFrameBuffer()
 	{
@@ -122,6 +122,15 @@ namespace Kargono::Panels
 
 		// End the window
 		EditorUI::EditorUIService::EndWindow();
+	}
+
+	void UIEditorViewportPanel::OnInputEvent(Events::Event* event)
+	{
+		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
+		if (m_ViewportFocused)
+		{
+			m_EditorCamera.OnInputEvent(event);
+		}
 	}
 
 	// Overlay Data

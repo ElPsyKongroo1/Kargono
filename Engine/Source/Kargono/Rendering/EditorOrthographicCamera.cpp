@@ -111,7 +111,18 @@ namespace Kargono::Rendering
 
 	bool EditorOrthographicCamera::OnMouseScroll(Events::MouseScrolledEvent& e)
 	{
-		// TODO Zoom In/Out
+		if (Input::InputService::IsKeyPressed(Key::LeftAlt))
+		{
+			float delta = e.GetYOffset() * 15.0f;
+			
+			if (m_CameraSize - delta <= 5.0f)
+			{
+				return false;
+			}
+			m_CameraSize -= delta;
+			RecalculateProjection();
+		}
+
 		return false;
 	}
 	void EditorOrthographicCamera::RecalculateView()

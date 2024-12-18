@@ -35,6 +35,7 @@ namespace Kargono::Panels
 		//=========================
 		void OnUpdate(Timestep ts);
 		void OnEditorUIRender();
+		void OnInputEvent(Events::Event* event);
 
 		void DrawOverlay();
 		void HandleMouseHovering();
