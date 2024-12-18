@@ -9,11 +9,19 @@
 
 namespace Kargono::Rendering
 {
+	enum class CameraSizeType
+	{
+		None = 0,
+		Fixed,
+		AspectRatio
+	};
+
 	class EditorOrthographicCamera : public Rendering::Camera
 	{
 	public:
 		EditorOrthographicCamera();
 		EditorOrthographicCamera(float size, float nearClip, float farClip);
+		EditorOrthographicCamera(Math::vec2 cameraSizeFixed, float nearClip, float farClip);
 		virtual ~EditorOrthographicCamera() = default;
 
 	public:
@@ -61,14 +69,14 @@ namespace Kargono::Rendering
 		{ 
 			return m_Position; 
 		}
-		void SetOrientation(const Math::vec3& orientation)
+		void SetScale(const Math::vec3& orientation)
 		{
-			m_Orientation = orientation;
+			m_Scale = orientation;
 			RecalculateView();
 		}
-		const Math::vec3& GetOrientation() const
+		const Math::vec3& GetScale() const
 		{
-			return m_Orientation;
+			return m_Scale;
 		}
 		
 		void SetKeyboardSpeed(float speed)
@@ -79,6 +87,16 @@ namespace Kargono::Rendering
 		{
 			return m_KeyboardSpeed;
 		}
+		void SetCameraFixedSize(Math::vec2 size)
+		{
+			m_CameraSizeFixed = size;
+			RecalculateProjection();
+		}
+		Math::vec2 GetCameraFixedSize() const
+		{
+			return m_CameraSizeFixed;
+		}
+		
 
 		const Math::mat4& GetViewMatrix() const { return m_ViewMatrix; }
 		Math::mat4 GetViewProjection() const { return m_Projection * m_ViewMatrix; }
@@ -86,13 +104,15 @@ namespace Kargono::Rendering
 		void RecalculateProjection();
 		void RecalculateView();
 	private:
+		CameraSizeType m_CameraSizeType{ CameraSizeType::None };
+		Math::vec2 m_CameraSizeFixed{ 0.0f, 0.0f };
 		float m_CameraSize{ 10.0f };
 		float m_NearPlane{ 1.0f };
 		float m_FarPlane{ 10.0f };
 
 		Math::mat4 m_ViewMatrix;
 		Math::vec3 m_Position{ 0.0f, 0.0f, 0.0f };
-		Math::vec3 m_Orientation{ 0.0f, 0.0f, 0.0f };
+		Math::vec3 m_Scale{ 0.0f, 0.0f, 0.0f };
 
 		float m_KeyboardSpeed{ 7.0f };
 		float m_KeyboardMinSpeed{ 5.0f };

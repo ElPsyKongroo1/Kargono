@@ -16,9 +16,9 @@ namespace Kargono::Panels
 		InitializeFrameBuffer();
 		InitializeOverlayData();
 
-		m_EditorCamera = Rendering::EditorOrthographicCamera(1000.0f, -2.0f, 2.0f);
+		m_EditorCamera = Rendering::EditorOrthographicCamera(Math::vec2(100.0f, 100.0f), -2.0f, 2.0f);
 		m_EditorCamera.SetPosition(Math::vec3(0.0f, 0.0f, 0.0f));
-		m_EditorCamera.SetOrientation(Math::vec3(0.0f, 0.0f, 0.0f));
+		m_EditorCamera.SetScale(Math::vec3(0.0f, 0.0f, 0.0f));
 		m_EditorCamera.SetKeyboardSpeed(150.0f);
 	}
 	void UIEditorViewportPanel::InitializeFrameBuffer()
@@ -50,6 +50,7 @@ namespace Kargono::Panels
 		{
 			// Update framebuffer and camera viewport size
 			m_ViewportFramebuffer->Resize(m_ViewportData.m_Width, m_ViewportData.m_Height);
+			m_EditorCamera.SetCameraFixedSize(Math::vec2((float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height));
 			m_EditorCamera.OnViewportResize();
 		}
 
@@ -250,6 +251,10 @@ namespace Kargono::Panels
 			// Extract upper 16 bits
 			m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
 		}
+	}
+	void UIEditorViewportPanel::OnOpenUI()
+	{
+		ResetCamera();
 	}
 	void UIEditorViewportPanel::DrawDebugLines()
 	{
@@ -667,6 +672,12 @@ namespace Kargono::Panels
 		s_OutputVector->push_back(constraintDistanceVerts[5]);
 		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+	}
+
+	void UIEditorViewportPanel::ResetCamera()
+	{
+		m_EditorCamera.SetOrthographicSize(1.0f);
+		m_EditorCamera.SetPosition({ 0.0f, 0.0f, 0.0f });
 	}
 
 }

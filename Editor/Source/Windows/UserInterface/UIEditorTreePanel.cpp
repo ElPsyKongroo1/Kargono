@@ -278,6 +278,9 @@ namespace Kargono::Panels
 		m_MainHeader.m_Label = Assets::AssetService::GetUserInterfaceRegistry().at(
 			s_UIWindow->m_EditorUIHandle).Data.FileLocation.filename().string();
 
+		// Handle opening the UI in viewport
+		s_UIWindow->m_ViewportPanel->OnOpenUI();
+
 		// Refresh widget data in editor to use new user interface
 		s_UIWindow->OnRefreshData();
 

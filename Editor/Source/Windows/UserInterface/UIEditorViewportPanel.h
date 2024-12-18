@@ -40,7 +40,11 @@ namespace Kargono::Panels
 		void DrawOverlay();
 		void DrawViewportOutline();
 		void HandleMouseHovering();
-		
+
+		//=========================
+		// External Functionality
+		//=========================
+		void OnOpenUI();
 	private:
 		//=========================
 		// Supporting Functions
@@ -48,6 +52,8 @@ namespace Kargono::Panels
 		void DrawDebugLines();
 		void DrawWidgetConstraintDistanceLines(RuntimeUI::Window* window, RuntimeUI::Widget* widget, const Math::mat4& widgetTransform, const Math::vec3& widgetTranslation);
 		void DrawWindowConstraintDistanceLines(RuntimeUI::Window* window);
+
+		void ResetCamera();
 		
 	public:
 		//=========================

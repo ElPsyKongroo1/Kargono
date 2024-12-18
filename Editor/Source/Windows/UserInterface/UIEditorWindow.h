@@ -14,7 +14,6 @@ namespace Kargono { class EditorApp; }
 
 namespace Kargono::Windows
 {
-
 	//=========================
 	// UI Editor Panel Class
 	//=========================
