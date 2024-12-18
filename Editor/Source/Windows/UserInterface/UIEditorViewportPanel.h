@@ -45,6 +45,7 @@ namespace Kargono::Panels
 		//=========================
 		void DrawWindowWidgetDebugLines();
 		void DrawWidgetConstraintDistanceLines(RuntimeUI::Window* window, RuntimeUI::Widget* widget, const Math::mat4& widgetTransform, const Math::vec3& widgetTranslation);
+		void DrawWindowConstraintDistanceLines(RuntimeUI::Window* window);
 		
 	public:
 		//=========================

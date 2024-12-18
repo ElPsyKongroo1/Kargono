@@ -289,6 +289,11 @@ namespace Kargono::Panels
 			s_OutputVector->push_back(selectionBoxVertices[0]);
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+
+			if (!widget)
+			{
+				DrawWindowConstraintDistanceLines(window);
+			}
 		}
 
 	}
@@ -298,10 +303,8 @@ namespace Kargono::Panels
 		constexpr float k_ConstraintPadding{ 5.0f };
 		constexpr float k_VanityPaddingSize{ 15.0f };
 
-		// TODO: DELTE THIS
 		Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
 		Math::vec3 initialWindowTranslation = window->CalculatePosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 finalWindowTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x / 2), initialWindowTranslation.y + (windowScale.y / 2), initialWindowTranslation.z);
 		Math::vec3 widgetSize = widget->CalculateSize(windowScale);
 
 
@@ -516,6 +519,107 @@ namespace Kargono::Panels
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
+	}
+
+	void UIEditorViewportPanel::DrawWindowConstraintDistanceLines(RuntimeUI::Window* window)
+	{
+		Math::vec3 constraintDistanceVerts[6];
+		constexpr float k_ConstraintPadding{ 5.0f };
+		constexpr float k_VanityPaddingSize{ 15.0f };
+
+		Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
+		Math::vec3 initialWindowTranslation = window->CalculatePosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
+		Math::vec3 finalWindowTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x / 2), initialWindowTranslation.y + (windowScale.y / 2), initialWindowTranslation.z);
+
+		// Create window's constraint distance lines
+		constraintDistanceVerts[0] = { 0.0f, finalWindowTranslation.y, finalWindowTranslation.z };
+		constraintDistanceVerts[1] = { finalWindowTranslation.x - windowScale.x / 2.0f, finalWindowTranslation.y, finalWindowTranslation.z }; 
+		float windowLeftEdge = finalWindowTranslation.x - (windowScale.x / 2.0f);
+		float viewportLeftEdge = 0.0f;
+
+		// Check if the window's edge is outside the viewport
+		if (windowLeftEdge > viewportLeftEdge + k_ConstraintPadding)
+		{
+			// Apply padding when the window's edge is outside the viewport
+			constraintDistanceVerts[0].x += k_ConstraintPadding;
+			constraintDistanceVerts[1].x -= k_ConstraintPadding;
+		}
+		else if (windowLeftEdge < viewportLeftEdge - k_ConstraintPadding)
+		{
+			// Apply padding when the window's edge is inside the viewport
+			constraintDistanceVerts[0].x -= k_ConstraintPadding;
+			constraintDistanceVerts[1].x += k_ConstraintPadding;
+		}
+		// Note, otherwise just leave the lines as is
+
+		// Add vanity lines
+		constraintDistanceVerts[2] = { constraintDistanceVerts[0].x, constraintDistanceVerts[0].y - k_VanityPaddingSize, finalWindowTranslation.z };
+		constraintDistanceVerts[3] = { constraintDistanceVerts[0].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, finalWindowTranslation.z };
+		constraintDistanceVerts[4] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y - k_VanityPaddingSize, finalWindowTranslation.z };
+		constraintDistanceVerts[5] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, finalWindowTranslation.z };
+
+		// Draw the x-axis constraint distance lines
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+		s_OutputVector->clear();
+		s_OutputVector->push_back(constraintDistanceVerts[0]);
+		s_OutputVector->push_back(constraintDistanceVerts[1]);
+		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		s_OutputVector->clear();
+		s_OutputVector->push_back(constraintDistanceVerts[2]);
+		s_OutputVector->push_back(constraintDistanceVerts[3]);
+		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		s_OutputVector->clear();
+		s_OutputVector->push_back(constraintDistanceVerts[4]);
+		s_OutputVector->push_back(constraintDistanceVerts[5]);
+		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		
+		// Create window's constraint distance lines
+		constraintDistanceVerts[0] = { finalWindowTranslation.x, 0.0f, finalWindowTranslation.z };
+		constraintDistanceVerts[1] = { finalWindowTranslation.x, finalWindowTranslation.y - windowScale.y / 2.0f , finalWindowTranslation.z };
+		float windowBottomEdge = finalWindowTranslation.y - (windowScale.y / 2.0f);
+		float viewportBottomEdge = 0.0f;
+
+		// Check if the window's edge is outside the viewport
+		if (windowBottomEdge > viewportBottomEdge + k_ConstraintPadding)
+		{
+			// Apply padding when the window's edge is outside the viewport
+			constraintDistanceVerts[0].y += k_ConstraintPadding;
+			constraintDistanceVerts[1].y -= k_ConstraintPadding;
+		}
+		else if (windowBottomEdge < viewportBottomEdge - k_ConstraintPadding)
+		{
+			// Apply padding when the window's edge is inside the viewport
+			constraintDistanceVerts[0].y -= k_ConstraintPadding;
+			constraintDistanceVerts[1].y += k_ConstraintPadding;
+		}
+		// Note, otherwise just leave the lines as is
+
+		// Add vanity lines
+		constraintDistanceVerts[2] = { constraintDistanceVerts[0].x - k_VanityPaddingSize, constraintDistanceVerts[0].y, finalWindowTranslation.z };
+		constraintDistanceVerts[3] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[0].y, finalWindowTranslation.z };
+		constraintDistanceVerts[4] = { constraintDistanceVerts[0].x - k_VanityPaddingSize, constraintDistanceVerts[1].y, finalWindowTranslation.z };
+		constraintDistanceVerts[5] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[1].y, finalWindowTranslation.z };
+
+		// Draw the x-axis constraint distance lines
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+		s_OutputVector->clear();
+		s_OutputVector->push_back(constraintDistanceVerts[0]);
+		s_OutputVector->push_back(constraintDistanceVerts[1]);
+		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		s_OutputVector->clear();
+		s_OutputVector->push_back(constraintDistanceVerts[2]);
+		s_OutputVector->push_back(constraintDistanceVerts[3]);
+		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		s_OutputVector->clear();
+		s_OutputVector->push_back(constraintDistanceVerts[4]);
+		s_OutputVector->push_back(constraintDistanceVerts[5]);
+		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 	}
 
 }
