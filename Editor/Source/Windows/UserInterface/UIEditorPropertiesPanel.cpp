@@ -568,6 +568,10 @@ namespace Kargono::Panels
 		// Update the widget location metric based on the radio selector value
 		m_ActiveWidget->m_XConstraint = (RuntimeUI::Constraint)(uint16_t)entry.m_Handle;
 
+		// Reset the pixel and percent positions if the constraint is set
+		m_ActiveWidget->m_PixelPosition.x = 0;
+		m_ActiveWidget->m_PercentPosition.x = 0;
+
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
@@ -583,6 +587,10 @@ namespace Kargono::Panels
 
 		// Update the widget location metric based on the radio selector value
 		m_ActiveWidget->m_YConstraint = (RuntimeUI::Constraint)(uint16_t)entry.m_Handle;
+
+		// Reset the pixel and percent positions if the constraint is set
+		m_ActiveWidget->m_PixelPosition.y = 0;
+		m_ActiveWidget->m_PercentPosition.y = 0;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;

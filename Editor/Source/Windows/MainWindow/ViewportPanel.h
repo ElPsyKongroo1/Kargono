@@ -43,7 +43,7 @@ namespace Kargono::Panels
 		//=========================
 	public:
 		void InitializeFrameBuffer();
-		void ProcessMousePicking();
+		void HandleMouseHovering();
 		// This function runs the overlay code that displays visualization for physics colliders,
 		//		entity selection, Text/UI, and Camera Frustrums. This private function is called
 		//		in OnUpdate().

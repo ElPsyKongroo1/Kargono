@@ -94,7 +94,7 @@ namespace Kargono::Panels
 		}
 		}
 
-		ProcessMousePicking();
+		HandleMouseHovering();
 
 		OnOverlayRender();
 
@@ -764,7 +764,7 @@ namespace Kargono::Panels
 			}
 		}
 	}
-	void ViewportPanel::ProcessMousePicking()
+	void ViewportPanel::HandleMouseHovering()
 	{
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= m_ScreenViewportBounds[0].x;

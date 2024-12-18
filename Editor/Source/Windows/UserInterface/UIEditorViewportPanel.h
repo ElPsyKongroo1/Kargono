@@ -4,6 +4,7 @@
 #include "Kargono/Rendering/EditorCamera.h"
 #include "Kargono/Rendering/Framebuffer.h"
 #include "Kargono/Core/Window.h"
+#include "Kargono/RuntimeUI/RuntimeUI.h"
 
 #include <string>
 #include <limits>
@@ -36,7 +37,14 @@ namespace Kargono::Panels
 		void OnEditorUIRender();
 
 		void DrawOverlay();
-		void ProcessMousePicking();
+		void HandleMouseHovering();
+		
+	private:
+		//=========================
+		// Supporting Functions
+		//=========================
+		void DrawWindowWidgetDebugLines();
+		void DrawWidgetConstraintDistanceLines(RuntimeUI::Window* window, RuntimeUI::Widget* widget, const Math::mat4& widgetTransform, const Math::vec3& widgetTranslation);
 		
 	public:
 		//=========================
