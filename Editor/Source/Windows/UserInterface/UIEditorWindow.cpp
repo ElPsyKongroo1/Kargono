@@ -241,20 +241,28 @@ namespace Kargono::Windows
 			return;
 		}
 
-		// TODO: Ensure the UIEditorWindow is open
-		EditorUI::EditorUIService::BringWindowToFront(m_TreePanel->m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_TreePanel->m_PanelName);
-
 		// Early out if asset is already open
 		if (m_EditorUIHandle == assetHandle)
 		{
+			// Open the user interface window in the editor
+			EngineService::SubmitToMainThread([]()
+			{
+				s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
+			});
 			return;
 		}
 
 		// Check if panel is already occupied by an asset
 		if (!m_EditorUI)
 		{
+			// Open user interface in editor
 			m_TreePanel->OnOpenUI(assetHandle);
+
+			// Open the user interface window in the editor
+			EngineService::SubmitToMainThread([]()
+			{
+				s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
+			});
 		}
 		else
 		{

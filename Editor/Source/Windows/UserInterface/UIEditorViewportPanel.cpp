@@ -64,6 +64,10 @@ namespace Kargono::Panels
 
 		// TODO: Add background image to viewport
 
+
+		// Draw viewport outline
+		DrawViewportOutline();
+
 		// Handle drawing user interface
 		Window& currentApplication = EngineService::GetActiveWindow();
 		RuntimeUI::RuntimeUIService::PushRenderData(m_EditorCamera.GetViewProjection(), m_ViewportData.m_Width, m_ViewportData.m_Height);
@@ -126,11 +130,7 @@ namespace Kargono::Panels
 
 	void UIEditorViewportPanel::OnInputEvent(Events::Event* event)
 	{
-		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
-		if (m_ViewportFocused)
-		{
-			m_EditorCamera.OnInputEvent(event);
-		}
+		m_EditorCamera.OnInputEvent(event);
 	}
 
 	// Overlay Data
@@ -190,9 +190,47 @@ namespace Kargono::Panels
 			Rendering::RenderingService::BeginScene(m_EditorCamera.GetViewProjection());
 
 			// Draw window/widget bounding boxes
-			DrawWindowWidgetDebugLines();
+			DrawDebugLines();
 			Rendering::RenderingService::EndScene();
 		}
+	}
+	void UIEditorViewportPanel::DrawViewportOutline()
+	{
+		// Start rendering context
+		Rendering::RenderingService::BeginScene(m_EditorCamera.GetViewProjection());
+
+		// Draw viewport bounds
+		Math::vec3 selectionBoxVertices[4]
+		{
+		{ 0.0f, 0.0f, -1.0f },
+		{ (float)m_ViewportData.m_Width, 0.0f, -1.0f },
+		{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height, -1.0f },
+		{ 0.0f, (float)m_ViewportData.m_Height, -1.0f }
+		};
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+		s_OutputVector->clear();
+		s_OutputVector->push_back(selectionBoxVertices[0]);
+		s_OutputVector->push_back(selectionBoxVertices[1]);
+		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		s_OutputVector->clear();
+		s_OutputVector->push_back(selectionBoxVertices[1]);
+		s_OutputVector->push_back(selectionBoxVertices[2]);
+		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		s_OutputVector->clear();
+		s_OutputVector->push_back(selectionBoxVertices[2]);
+		s_OutputVector->push_back(selectionBoxVertices[3]);
+		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		s_OutputVector->clear();
+		s_OutputVector->push_back(selectionBoxVertices[3]);
+		s_OutputVector->push_back(selectionBoxVertices[0]);
+		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+
+		Rendering::RenderingService::EndScene();
+		
 	}
 	void UIEditorViewportPanel::HandleMouseHovering()
 	{
@@ -213,7 +251,7 @@ namespace Kargono::Panels
 			m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
 		}
 	}
-	void UIEditorViewportPanel::DrawWindowWidgetDebugLines()
+	void UIEditorViewportPanel::DrawDebugLines()
 	{
 		// Retrieve the active widget and window
 		RuntimeUI::Widget* widget{ s_UIWindow->m_PropertiesPanel->m_ActiveWidget };
@@ -329,7 +367,6 @@ namespace Kargono::Panels
 			constraintDistanceVerts[0] = { initialWindowTranslation.x, widgetTranslation.y, widgetTranslation.z };
 			constraintDistanceVerts[1] = widgetTransform * Math::vec4(-0.5f, 0.0f, 0.0f, 1.0f); // Transform center of widget to world space
 
-
 			float widgetLeftEdge = widgetTranslation.x - (widgetSize.x / 2.0f);
 			float windowLeftEdge = initialWindowTranslation.x;
 
@@ -379,26 +416,25 @@ namespace Kargono::Panels
 			constraintDistanceVerts[1] = { initialWindowTranslation.x + windowScale.x, widgetTranslation.y, widgetTranslation.z };
 
 			// Apply padding to distance lines
-			if (widget->m_XPositionType == RuntimeUI::PixelOrPercent::Percent)
-			{
-				float widgetRightEdge = widgetTranslation.x + (widgetSize.x / 2.0f);
-				float windowRightEdge = initialWindowTranslation.x + windowScale.x;
+			
+			float widgetRightEdge = widgetTranslation.x + (widgetSize.x / 2.0f);
+			float windowRightEdge = initialWindowTranslation.x + windowScale.x;
 
-				// Check if the widget's edge is outside the window
-				if (widgetRightEdge > windowRightEdge + k_ConstraintPadding)
-				{
-					// Apply padding when the widget's edge is outside the window
-					constraintDistanceVerts[0].x -= k_ConstraintPadding;
-					constraintDistanceVerts[1].x += k_ConstraintPadding;
-				}
-				else if (widgetRightEdge < windowRightEdge - k_ConstraintPadding)
-				{
-					// Apply padding when the widget's edge is inside the window
-					constraintDistanceVerts[0].x += k_ConstraintPadding;
-					constraintDistanceVerts[1].x -= k_ConstraintPadding;
-				}
-				// Note, otherwise just leave the lines as is
+			// Check if the widget's edge is outside the window
+			if (widgetRightEdge > windowRightEdge + k_ConstraintPadding)
+			{
+				// Apply padding when the widget's edge is outside the window
+				constraintDistanceVerts[0].x -= k_ConstraintPadding;
+				constraintDistanceVerts[1].x += k_ConstraintPadding;
 			}
+			else if (widgetRightEdge < windowRightEdge - k_ConstraintPadding)
+			{
+				// Apply padding when the widget's edge is inside the window
+				constraintDistanceVerts[0].x += k_ConstraintPadding;
+				constraintDistanceVerts[1].x -= k_ConstraintPadding;
+			}
+			// Note, otherwise just leave the lines as is
+			
 			
 
 			// Add vanity lines
@@ -485,26 +521,24 @@ namespace Kargono::Panels
 			constraintDistanceVerts[1] = { widgetTranslation.x, initialWindowTranslation.y + windowScale.y, widgetTranslation.z };
 
 			// Apply padding to distance lines
-			if (widget->m_YPositionType == RuntimeUI::PixelOrPercent::Percent)
-			{
-				float widgetTopEdge = widgetTranslation.y + (widgetSize.y / 2.0f);
-				float windowTopEdge = initialWindowTranslation.y + windowScale.y;
+			float widgetTopEdge = widgetTranslation.y + (widgetSize.y / 2.0f);
+			float windowTopEdge = initialWindowTranslation.y + windowScale.y;
 
-				// Check if the widget's edge is outside the window
-				if (widgetTopEdge > windowTopEdge + k_ConstraintPadding)
-				{
-					// Apply padding when the widget's edge is outside the window
-					constraintDistanceVerts[0].y -= k_ConstraintPadding;
-					constraintDistanceVerts[1].y += k_ConstraintPadding;
-				}
-				else if (widgetTopEdge < windowTopEdge - k_ConstraintPadding)
-				{
-					// Apply padding when the widget's edge is inside the window
-					constraintDistanceVerts[0].y += k_ConstraintPadding;
-					constraintDistanceVerts[1].y -= k_ConstraintPadding;
-				}
-				// Note, otherwise just leave the lines as is
+			// Check if the widget's edge is outside the window
+			if (widgetTopEdge > windowTopEdge + k_ConstraintPadding)
+			{
+				// Apply padding when the widget's edge is outside the window
+				constraintDistanceVerts[0].y -= k_ConstraintPadding;
+				constraintDistanceVerts[1].y += k_ConstraintPadding;
 			}
+			else if (widgetTopEdge < windowTopEdge - k_ConstraintPadding)
+			{
+				// Apply padding when the widget's edge is inside the window
+				constraintDistanceVerts[0].y += k_ConstraintPadding;
+				constraintDistanceVerts[1].y -= k_ConstraintPadding;
+			}
+			// Note, otherwise just leave the lines as is
+			
 
 
 			// Add vanity lines
@@ -546,6 +580,7 @@ namespace Kargono::Panels
 		// Create window's constraint distance lines
 		constraintDistanceVerts[0] = { 0.0f, finalWindowTranslation.y, finalWindowTranslation.z };
 		constraintDistanceVerts[1] = { finalWindowTranslation.x - windowScale.x / 2.0f, finalWindowTranslation.y, finalWindowTranslation.z }; 
+
 		float windowLeftEdge = finalWindowTranslation.x - (windowScale.x / 2.0f);
 		float viewportLeftEdge = 0.0f;
 

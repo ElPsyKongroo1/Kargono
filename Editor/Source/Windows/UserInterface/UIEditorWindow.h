@@ -41,12 +41,12 @@ namespace Kargono::Windows
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 		bool OnAssetEvent(Events::Event* event);
-		void OpenAssetInEditor(std::filesystem::path& assetLocation);
 
 	public:
 		//=========================
 		// External Functionality
 		//=========================
+		void OpenAssetInEditor(std::filesystem::path& assetLocation);
 		void OpenCreateDialog(std::filesystem::path& createLocation);
 		void ResetWindowResources();
 		void OnRefreshData();

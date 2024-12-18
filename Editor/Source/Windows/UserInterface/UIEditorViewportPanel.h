@@ -38,13 +38,14 @@ namespace Kargono::Panels
 		void OnInputEvent(Events::Event* event);
 
 		void DrawOverlay();
+		void DrawViewportOutline();
 		void HandleMouseHovering();
 		
 	private:
 		//=========================
 		// Supporting Functions
 		//=========================
-		void DrawWindowWidgetDebugLines();
+		void DrawDebugLines();
 		void DrawWidgetConstraintDistanceLines(RuntimeUI::Window* window, RuntimeUI::Widget* widget, const Math::mat4& widgetTransform, const Math::vec3& widgetTranslation);
 		void DrawWindowConstraintDistanceLines(RuntimeUI::Window* window);
 		
