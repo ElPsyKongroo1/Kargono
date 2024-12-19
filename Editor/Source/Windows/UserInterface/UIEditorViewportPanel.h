@@ -40,6 +40,7 @@ namespace Kargono::Panels
 		void DrawOverlay();
 		void DrawViewportOutline();
 		void HandleMouseHovering();
+		void DrawToolbarOverlay();
 
 		//=========================
 		// External Functionality
@@ -52,7 +53,6 @@ namespace Kargono::Panels
 		void DrawDebugLines();
 		void DrawWidgetConstraintDistanceLines(RuntimeUI::Window* window, RuntimeUI::Widget* widget, const Math::mat4& widgetTransform, const Math::vec3& widgetTranslation);
 		void DrawWindowConstraintDistanceLines(RuntimeUI::Window* window);
-
 		void ResetCamera();
 		
 	public:
@@ -62,6 +62,7 @@ namespace Kargono::Panels
 		FixedString32 m_PanelName{ "User Interface Viewport" };
 		Rendering::EditorOrthographicCamera m_EditorCamera;
 		ViewportData m_ViewportData;
+		Math::uvec2 m_ViewportAspectRatio{ 1, 1 };
 	private:
 		// Viewport resources
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;
@@ -70,5 +71,8 @@ namespace Kargono::Panels
 		Math::vec2 m_ScreenViewportBounds[2];
 		uint16_t m_HoveredWindowID{ k_InvalidWindowID };
 		uint16_t m_HoveredWidgetID{ k_InvalidWidgetID };
+
+		// Debug overlay data
+		bool m_ToolbarEnabled{ true };
 	};
 }

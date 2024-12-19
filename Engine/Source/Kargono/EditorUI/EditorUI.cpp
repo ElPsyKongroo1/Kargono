@@ -245,7 +245,7 @@ namespace Kargono::EditorUI
 		ImGui::InsertNotification(toast);
 	}
 
-	void EditorUIService::AutoCalcViewportSize(Math::vec2 screenViewportBounds[2], ViewportData& viewportData, bool& viewportFocused, bool& viewportHovered)
+	void EditorUIService::AutoCalcViewportSize(Math::vec2 screenViewportBounds[2], ViewportData& viewportData, bool& viewportFocused, bool& viewportHovered, const Math::uvec2& aspectRatio)
 	{
 		// Get current cursor position and GLFW viewport size
 		ImVec2 windowScreenOffset = ImGui::GetWindowPos();
@@ -256,7 +256,6 @@ namespace Kargono::EditorUI
 		// Adjust viewport size based on current aspect ratio
 		ImVec2 windowSize = ImGui::GetContentRegionAvail();
 		ImVec2 cursorPosition = ImGui::GetCursorPos();
-		Math::uvec2 aspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 		if (aspectRatio.x > aspectRatio.y && ((windowSize.x / aspectRatio.x) * aspectRatio.y) < windowSize.y)
 		{
 			viewportData.m_Width = (uint32_t)windowSize.x;

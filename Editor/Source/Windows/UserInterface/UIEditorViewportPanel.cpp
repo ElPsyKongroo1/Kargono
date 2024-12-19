@@ -19,7 +19,13 @@ namespace Kargono::Panels
 		m_EditorCamera = Rendering::EditorOrthographicCamera(Math::vec2(100.0f, 100.0f), -2.0f, 2.0f);
 		m_EditorCamera.SetPosition(Math::vec3(0.0f, 0.0f, 0.0f));
 		m_EditorCamera.SetScale(Math::vec3(0.0f, 0.0f, 0.0f));
-		m_EditorCamera.SetKeyboardSpeed(150.0f);
+		m_EditorCamera.SetKeyboardSpeed(200.0f);
+		m_EditorCamera.SetKeyboardMinSpeed(50.0f);
+		m_EditorCamera.SetKeyboardMaxSpeed(500.0f);
+
+		KG_ASSERT(Projects::ProjectService::GetActive());
+		m_ViewportAspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+
 	}
 	void UIEditorViewportPanel::InitializeFrameBuffer()
 	{
@@ -96,7 +102,8 @@ namespace Kargono::Panels
 			return;
 		}
 
-		EditorUI::EditorUIService::AutoCalcViewportSize(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered);
+		EditorUI::EditorUIService::AutoCalcViewportSize(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered,
+			m_ViewportAspectRatio);
 
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((ImTextureID)textureID, ImVec2{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height }, ImVec2{ 0, 1 },
@@ -124,6 +131,8 @@ namespace Kargono::Panels
 				}
 			}
 		}
+
+		DrawToolbarOverlay();
 
 		// End the window
 		EditorUI::EditorUIService::EndWindow();
@@ -251,6 +260,262 @@ namespace Kargono::Panels
 			// Extract upper 16 bits
 			m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
 		}
+	}
+	void UIEditorViewportPanel::DrawToolbarOverlay()
+	{
+		constexpr float k_IconSize{ 36.0f };
+		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();
+		ImVec2 initialCursorPos = ImGui::GetCursorStartPos();
+
+		ImVec2 windowSize = ImGui::GetWindowSize();
+		Ref<Rendering::Texture2D> icon{ nullptr };
+		if (m_ToolbarEnabled)
+		{
+			// Draw Display Options Background
+			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 80.0f, initialScreenCursorPos.y),
+				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 48.0f, initialScreenCursorPos.y + 30.0f),
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+
+			//// Draw Grid Options Background
+			//draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 257.0f, initialScreenCursorPos.y),
+			//	ImVec2(initialScreenCursorPos.x + (windowSize.x) - 187.0f, initialScreenCursorPos.y + 30.0f),
+			//	ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+
+			// Draw Camera Options Background
+			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 170.0f, initialScreenCursorPos.y),
+				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 100.0f, initialScreenCursorPos.y + 30.0f),
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+
+			// Draw Toggle Top Bar Background
+			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 30.0f, initialScreenCursorPos.y),
+				ImVec2(initialScreenCursorPos.x + (windowSize.x), initialScreenCursorPos.y + 30.0f),
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
+
+
+			// Camera Options Button
+			icon = EditorUI::EditorUIService::s_IconCamera;
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 163, initialCursorPos.y + 5));
+			if (ImGui::ImageButton("Camera Options",
+				(ImTextureID)(uint64_t)icon->GetRendererID(),
+				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				EditorUI::EditorUIService::s_PureEmpty,
+				EditorUI::EditorUIService::s_HighlightColor1))
+			{
+				ImGui::OpenPopup("UI Camera Options");
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Options");
+				ImGui::EndTooltip();
+			}
+
+			if (ImGui::BeginPopup("UI Camera Options"))
+			{
+				if (ImGui::MenuItem("Reset Camera Position"))
+				{
+					ResetCamera();
+				}
+				ImGui::EndPopup();
+			}
+
+			// Camera Speed
+			ImGui::SetNextItemWidth(30.0f);
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 138, initialCursorPos.y + 6));
+			ImGui::DragFloat("##CameraSpeed", &m_EditorCamera.GetKeyboardSpeed(), 0.5f,
+				m_EditorCamera.GetKeyboardMinSpeed(), m_EditorCamera.GetKeyboardMaxSpeed(),
+				"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Speed");
+				ImGui::EndTooltip();
+			}
+
+			// Viewport Display Options Button
+			icon = EditorUI::EditorUIService::s_IconDisplay;
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 75, initialCursorPos.y + 4));
+			if (ImGui::ImageButton("Display Toggle",
+				(ImTextureID)(uint64_t)icon->GetRendererID(),
+				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				EditorUI::EditorUIService::s_PureEmpty,
+				EditorUI::EditorUIService::s_HighlightColor1))
+			{
+				ImGui::OpenPopup("Toggle Display Options");
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Display Options");
+				ImGui::EndTooltip();
+			}
+
+			if (ImGui::BeginPopup("Toggle Display Options"))
+			{
+				if (ImGui::BeginMenu("Resolution Options"))
+				{
+					if (ImGui::MenuItem("Wide Screen (16:9)"))
+					{
+						m_ViewportAspectRatio = Math::uvec2(16, 9);
+					}
+					if (ImGui::MenuItem("Standard SD (4:3)"))
+					{
+						m_ViewportAspectRatio = Math::uvec2(4, 3);
+					}
+					if (ImGui::MenuItem("Box (1:1)"))
+					{
+						m_ViewportAspectRatio = Math::uvec2(1, 1);
+					}
+
+					ImGui::Separator();
+
+					if (ImGui::MenuItem("Match Current Monitor"))
+					{
+						m_ViewportAspectRatio = Utility::ScreenResolutionToAspectRatio(
+							Projects::ScreenResolutionOptions::MatchDevice);
+					}
+					if (ImGui::MenuItem("Set to Project Resolution"))
+					{
+						m_ViewportAspectRatio = Utility::ScreenResolutionToAspectRatio(
+							Projects::ProjectService::GetActiveTargetResolution());
+					}
+
+					ImGui::EndMenu();
+				}
+				
+				ImGui::EndPopup();
+			}
+
+		//	// Grid Options Button
+		//	icon = EditorUI::EditorUIService::s_IconGrid;
+		//	ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 252, initialCursorPos.y + 4));
+		//	if (ImGui::ImageButton("Grid Toggle",
+		//		(ImTextureID)(uint64_t)icon->GetRendererID(),
+		//		ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+		//		EditorUI::EditorUIService::s_PureEmpty,
+		//		EditorUI::EditorUIService::s_HighlightColor1))
+		//	{
+		//		ImGui::OpenPopup("Grid Options");
+		//	}
+		//	if (ImGui::IsItemHovered())
+		//	{
+		//		ImGui::SetNextFrameWantCaptureMouse(false);
+		//		ImGui::BeginTooltip();
+		//		ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Grid Options");
+		//		ImGui::EndTooltip();
+		//	}
+
+		//	if (ImGui::BeginPopup("Grid Options"))
+		//	{
+		//		if (ImGui::BeginMenu("X-Y Grid"))
+		//		{
+		//			if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXYMajorGrid))
+		//			{
+		//				Utility::Operations::ToggleBoolean(m_DisplayXYMajorGrid);
+
+		//				if (!m_DisplayXYMajorGrid && m_DisplayXYMinorGrid)
+		//				{
+		//					Utility::Operations::ToggleBoolean(m_DisplayXYMinorGrid);
+		//				}
+		//			}
+		//			if (m_DisplayXYMajorGrid)
+		//			{
+		//				if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXYMinorGrid))
+		//				{
+		//					Utility::Operations::ToggleBoolean(m_DisplayXYMinorGrid);
+		//				}
+		//			}
+
+		//			ImGui::EndMenu();
+		//		}
+
+		//		if (ImGui::BeginMenu("X-Z Grid"))
+		//		{
+		//			if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXZMajorGrid))
+		//			{
+		//				Utility::Operations::ToggleBoolean(m_DisplayXZMajorGrid);
+
+		//				if (!m_DisplayXZMajorGrid && m_DisplayXZMinorGrid)
+		//				{
+		//					Utility::Operations::ToggleBoolean(m_DisplayXZMinorGrid);
+		//				}
+		//			}
+
+		//			if (m_DisplayXZMajorGrid)
+		//			{
+		//				if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXZMinorGrid))
+		//				{
+		//					Utility::Operations::ToggleBoolean(m_DisplayXZMinorGrid);
+		//				}
+		//			}
+
+		//			ImGui::EndMenu();
+		//		}
+
+		//		if (ImGui::BeginMenu("Y-Z Grid"))
+		//		{
+		//			if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayYZMajorGrid))
+		//			{
+		//				Utility::Operations::ToggleBoolean(m_DisplayYZMajorGrid);
+		//				if (!m_DisplayYZMajorGrid && m_DisplayYZMinorGrid)
+		//				{
+		//					Utility::Operations::ToggleBoolean(m_DisplayYZMinorGrid);
+		//				}
+		//			}
+		//			if (m_DisplayYZMajorGrid)
+		//			{
+		//				if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayYZMinorGrid))
+		//				{
+		//					Utility::Operations::ToggleBoolean(m_DisplayYZMinorGrid);
+		//				}
+		//			}
+
+		//			ImGui::EndMenu();
+		//		}
+		//		ImGui::EndPopup();
+		//	}
+
+		//	// Grid Spacing
+		//	ImGui::SetNextItemWidth(30.0f);
+		//	ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 227, initialCursorPos.y + 6));
+		//	ImGui::DragFloat("##GridSpacing", &m_FineGridSpacing, 1.0f,
+		//		1.0f, 50.0f,
+		//		"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
+		//	if (ImGui::IsItemHovered())
+		//	{
+		//		ImGui::SetNextFrameWantCaptureMouse(false);
+		//		ImGui::BeginTooltip();
+		//		ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Local Grid Spacing");
+		//		ImGui::EndTooltip();
+		//	}
+		}
+
+		// Toggle Top Bar Button
+		icon = m_ToolbarEnabled ? EditorUI::EditorUIService::s_IconCheckbox_Enabled :
+			EditorUI::EditorUIService::s_IconCheckbox_Disabled;
+		ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 25, initialCursorPos.y + 4));
+		if (ImGui::ImageButton("Toggle Top Bar",
+			(ImTextureID)(uint64_t)icon->GetRendererID(),
+			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+			EditorUI::EditorUIService::s_PureEmpty,
+			m_ToolbarEnabled ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor))
+		{
+			Utility::Operations::ToggleBoolean(m_ToolbarEnabled);
+		}
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetNextFrameWantCaptureMouse(false);
+			ImGui::BeginTooltip();
+			ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, m_ToolbarEnabled ? "Close Toolbar" : "Open Toolbar");
+			ImGui::EndTooltip();
+		}
+
+		ImGui::PopStyleColor();
 	}
 	void UIEditorViewportPanel::OnOpenUI()
 	{

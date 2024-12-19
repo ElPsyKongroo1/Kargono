@@ -83,10 +83,28 @@ namespace Kargono::Rendering
 		{
 			m_KeyboardSpeed = speed;
 		}
-		float GetKeyboardSpeed() const
+		float& GetKeyboardSpeed()
 		{
 			return m_KeyboardSpeed;
 		}
+
+		void SetKeyboardMinSpeed(float speed)
+		{
+			m_KeyboardMinSpeed = speed;
+		}
+		float GetKeyboardMinSpeed()
+		{
+			return m_KeyboardMinSpeed;
+		}
+		void SetKeyboardMaxSpeed(float speed)
+		{
+			m_KeyboardMaxSpeed = speed;
+		}
+		float GetKeyboardMaxSpeed()
+		{
+			return m_KeyboardMaxSpeed;
+		}
+
 		void SetCameraFixedSize(Math::vec2 size)
 		{
 			m_CameraSizeFixed = size;
@@ -114,9 +132,9 @@ namespace Kargono::Rendering
 		Math::vec3 m_Position{ 0.0f, 0.0f, 0.0f };
 		Math::vec3 m_Scale{ 0.0f, 0.0f, 0.0f };
 
-		float m_KeyboardSpeed{ 7.0f };
-		float m_KeyboardMinSpeed{ 5.0f };
-		float m_KeyboardMaxSpeed{ 300.0f };
+		float m_KeyboardSpeed{ 10.0f };
+		float m_KeyboardMinSpeed{ 1.0f };
+		float m_KeyboardMaxSpeed{ 100.0f };
 	};
 
 }

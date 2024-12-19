@@ -157,7 +157,8 @@ namespace Kargono::Panels
 		}
 		Math::uvec2 oldViewportSize = { m_ViewportData.m_Width, m_ViewportData.m_Height };
 
-		EditorUI::EditorUIService::AutoCalcViewportSize(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered);
+		EditorUI::EditorUIService::AutoCalcViewportSize(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered,
+			Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
 		
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((ImTextureID)textureID, ImVec2{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height }, ImVec2{ 0, 1 },
@@ -252,421 +253,7 @@ namespace Kargono::Panels
 			}
 		}
 
-		static bool toolbarEnabled{ true };
-		constexpr float iconSize{ 36.0f };
-
-		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();
-		ImVec2 initialCursorPos = ImGui::GetCursorStartPos();
-		
-		ImVec2 windowSize = ImGui::GetWindowSize();
-		Ref<Rendering::Texture2D> icon {nullptr};
-		if (toolbarEnabled)
-		{
-			// Draw Play/Simulate/Step Background
-			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + (windowSize.x / 2) - 90.0f, initialScreenCursorPos.y),
-				ImVec2(initialScreenCursorPos.x + (windowSize.x / 2) + 90.0f, initialScreenCursorPos.y + 43.0f),
-				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
-
-			// Draw Display Options Background
-			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 80.0f, initialScreenCursorPos.y),
-				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 48.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
-
-			// Draw Grid Options Background
-			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 257.0f, initialScreenCursorPos.y),
-				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 187.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
-
-			// Draw Camera Options Background
-			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 170.0f, initialScreenCursorPos.y),
-				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 100.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
-
-			// Draw Toggle Top Bar Background
-			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 30.0f, initialScreenCursorPos.y),
-				ImVec2(initialScreenCursorPos.x + (windowSize.x), initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
-
-			bool hasPlayButton = s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate;
-			bool hasSimulateButton = s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Play;
-			bool hasPauseButton = s_MainWindow->m_SceneState != SceneState::Edit;
-			bool hasStepButton = hasPauseButton && s_MainWindow->m_IsPaused;
-
-			// Play/Stop Button
-			if (!hasSimulateButton)
-			{
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
-			}
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) - 77.0f, initialCursorPos.y + 4));
-			icon = hasPlayButton ? EditorUI::EditorUIService::s_IconPlay : EditorUI::EditorUIService::s_IconStop;
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasSimulateButton ? icon : EditorUI::EditorUIService::s_IconPlay)->GetRendererID(),
-				ImVec2(iconSize, iconSize), ImVec2(0, 0),
-				ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				EditorUI::EditorUIService::s_HighlightColor1)
-				&& toolbarEnabled)
-			{
-				if (hasSimulateButton)
-				{
-					if (s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate)
-					{
-						s_MainWindow->OnPlay();
-					}
-					else if (s_MainWindow->m_SceneState == SceneState::Play)
-					{
-						s_MainWindow->OnStop();
-					}
-				}
-				
-			}
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetNextFrameWantCaptureMouse(false);
-				if (hasSimulateButton)
-				{
-					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, hasPlayButton ?
-						"Run Application" : "Stop Application");
-					ImGui::EndTooltip();
-				}
-			}
-			if (!hasSimulateButton)
-			{
-				ImGui::PopStyleColor(2);
-			}
-
-			// Simulate/Stop Simulate
-			if (!hasPlayButton)
-			{
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
-			}
-			icon = hasSimulateButton ? EditorUI::EditorUIService::s_IconSimulate : EditorUI::EditorUIService::s_IconStop;
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) - 37.0f, initialCursorPos.y + 4));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasPlayButton ? icon : EditorUI::EditorUIService::s_IconSimulate)->GetRendererID(),
-				ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				EditorUI::EditorUIService::s_HighlightColor1)
-				&& toolbarEnabled)
-			{
-				if (hasPlayButton)
-				{
-					if (s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Play)
-					{
-						s_MainWindow->OnSimulate();
-					}
-					else if (s_MainWindow->m_SceneState == SceneState::Simulate)
-					{
-						s_MainWindow->OnStop();
-					}
-				}
-			}
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetNextFrameWantCaptureMouse(false);
-				if (hasPlayButton)
-				{
-					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, hasSimulateButton ?
-						"Simulate Physics" : "Stop Physics Simulation");
-					ImGui::EndTooltip();
-				}
-			}
-			if (!hasPlayButton)
-			{
-				ImGui::PopStyleColor(2);
-			}
-
-			// Pause Icon
-			if (!hasPauseButton)
-			{
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
-			}
-			icon = EditorUI::EditorUIService::s_IconPause;
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) + 3.0f, initialCursorPos.y + 4));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(iconSize, iconSize),
-				ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				hasPauseButton ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor)
-				&& toolbarEnabled)
-			{
-				if (hasPauseButton)
-				{
-					s_MainWindow->m_IsPaused = !s_MainWindow->m_IsPaused;
-				}
-			}
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetNextFrameWantCaptureMouse(false);
-				if (hasPauseButton)
-				{
-					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, s_MainWindow->m_IsPaused ? "Resume Application" : "Pause Application");
-					ImGui::EndTooltip();
-				}
-			}
-			if (!hasPauseButton)
-			{
-				ImGui::PopStyleColor(2);
-			}
-			// Step Icon
-			if (!hasStepButton)
-			{
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
-			}
-			icon = EditorUI::EditorUIService::s_IconStep;
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) + 43.0f, initialCursorPos.y + 4));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), 
-				ImVec2(iconSize, iconSize), ImVec2{ 0, 1 }, 
-				ImVec2{ 1, 0 }, 0, 
-				ImVec4(0.0f, 0.0f, 0.0f, 0.0f), 
-				hasStepButton ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor)
-				&& toolbarEnabled)
-			{
-				if (hasStepButton)
-				{
-					s_MainWindow->Step(1);
-				}
-			}
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetNextFrameWantCaptureMouse(false);
-				if (hasStepButton)
-				{
-					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Step Application");
-					ImGui::EndTooltip();
-				}
-			}
-			if (!hasStepButton)
-			{
-				ImGui::PopStyleColor(2);
-			}
-
-			// Camera Options Button
-			icon = EditorUI::EditorUIService::s_IconCamera;
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 163, initialCursorPos.y + 5));
-			if (ImGui::ImageButton("Camera Options",
-				(ImTextureID)(uint64_t)icon->GetRendererID(),
-				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_HighlightColor1))
-			{
-				ImGui::OpenPopup("Toggle Viewport Camera Options");
-			}
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetNextFrameWantCaptureMouse(false);
-				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Movement Types");
-				ImGui::EndTooltip();
-			}
-
-			if (ImGui::BeginPopup("Toggle Viewport Camera Options"))
-			{
-				if (ImGui::MenuItem("Model Viewer", 0,
-					m_EditorCamera.GetMovementType() == Rendering::EditorPerspectiveCamera::MovementType::ModelView))
-				{
-					m_EditorCamera.SetMovementType(Rendering::EditorPerspectiveCamera::MovementType::ModelView);
-				}
-				if (ImGui::MenuItem("FreeFly", 0,
-					m_EditorCamera.GetMovementType() == Rendering::EditorPerspectiveCamera::MovementType::FreeFly))
-				{
-					m_EditorCamera.SetMovementType(Rendering::EditorPerspectiveCamera::MovementType::FreeFly);
-				}
-				ImGui::EndPopup();
-			}
-
-			// Camera Speed
-			ImGui::SetNextItemWidth(30.0f);
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 138, initialCursorPos.y + 6));
-			ImGui::DragFloat("##CameraSpeed", &m_EditorCamera.GetMovementSpeed(), 0.5f,
-				s_MainWindow->m_ViewportPanel->m_EditorCamera.GetMinMovementSpeed(), m_EditorCamera.GetMaxMovementSpeed(),
-				"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetNextFrameWantCaptureMouse(false);
-				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Speed");
-				ImGui::EndTooltip();
-			}
-
-			// Viewport Display Options Button
-			icon = EditorUI::EditorUIService::s_IconDisplay;
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 75, initialCursorPos.y + 4));
-			if (ImGui::ImageButton("Display Toggle",
-				(ImTextureID)(uint64_t)icon->GetRendererID(),
-				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_HighlightColor1))
-			{
-				ImGui::OpenPopup("Toggle Display Options");
-			}
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetNextFrameWantCaptureMouse(false);
-				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Display Options");
-				ImGui::EndTooltip();
-			}
-
-			if (ImGui::BeginPopup("Toggle Display Options"))
-			{
-				if (ImGui::MenuItem("Display Physics Colliders", 0, s_MainWindow->m_ShowPhysicsColliders))
-				{
-					Utility::Operations::ToggleBoolean(s_MainWindow->m_ShowPhysicsColliders);
-				}
-				if (ImGui::MenuItem("Display Camera Frustums", 0, s_MainWindow->m_ShowCameraFrustums))
-				{
-					Utility::Operations::ToggleBoolean(s_MainWindow->m_ShowCameraFrustums);
-				}
-				if (ImGui::MenuItem("Fullscreen While Running", 0, s_MainWindow->m_RuntimeFullscreen))
-				{
-					Utility::Operations::ToggleBoolean(s_MainWindow->m_RuntimeFullscreen);
-				}
-				ImGui::EndPopup();
-			}
-
-			// Grid Options Button
-			icon = EditorUI::EditorUIService::s_IconGrid;
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 252, initialCursorPos.y + 4));
-			if (ImGui::ImageButton("Grid Toggle",
-				(ImTextureID)(uint64_t)icon->GetRendererID(),
-				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_HighlightColor1))
-			{
-				ImGui::OpenPopup("Grid Options");
-			}
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetNextFrameWantCaptureMouse(false);
-				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Grid Options");
-				ImGui::EndTooltip();
-			}
-
-			if (ImGui::BeginPopup("Grid Options"))
-			{
-				if (ImGui::BeginMenu("X-Y Grid"))
-				{
-					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXYMajorGrid))
-					{
-						Utility::Operations::ToggleBoolean(m_DisplayXYMajorGrid);
-
-						if (!m_DisplayXYMajorGrid && m_DisplayXYMinorGrid)
-						{
-							Utility::Operations::ToggleBoolean(m_DisplayXYMinorGrid);
-						}
-					}
-					if (m_DisplayXYMajorGrid)
-					{
-						if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXYMinorGrid))
-						{
-							Utility::Operations::ToggleBoolean(m_DisplayXYMinorGrid);
-						}
-					}
-					
-					ImGui::EndMenu();
-				}
-
-				if (ImGui::BeginMenu("X-Z Grid"))
-				{
-					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXZMajorGrid))
-					{
-						Utility::Operations::ToggleBoolean(m_DisplayXZMajorGrid);
-
-						if (!m_DisplayXZMajorGrid && m_DisplayXZMinorGrid)
-						{
-							Utility::Operations::ToggleBoolean(m_DisplayXZMinorGrid);
-						}
-					}
-
-					if (m_DisplayXZMajorGrid)
-					{
-						if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXZMinorGrid))
-						{
-							Utility::Operations::ToggleBoolean(m_DisplayXZMinorGrid);
-						}
-					}
-					
-					ImGui::EndMenu();
-				}
-
-				if (ImGui::BeginMenu("Y-Z Grid"))
-				{
-					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayYZMajorGrid))
-					{
-						Utility::Operations::ToggleBoolean(m_DisplayYZMajorGrid);
-						if (!m_DisplayYZMajorGrid && m_DisplayYZMinorGrid)
-						{
-							Utility::Operations::ToggleBoolean(m_DisplayYZMinorGrid);
-						}
-					}
-					if (m_DisplayYZMajorGrid)
-					{
-						if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayYZMinorGrid))
-						{
-							Utility::Operations::ToggleBoolean(m_DisplayYZMinorGrid);
-						}
-					}
-					
-					ImGui::EndMenu();
-				}
-				ImGui::EndPopup();
-			}
-
-			// Grid Spacing
-			ImGui::SetNextItemWidth(30.0f);
-			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 227, initialCursorPos.y + 6));
-			ImGui::DragFloat("##GridSpacing", &m_FineGridSpacing, 1.0f,
-				1.0f, 50.0f,
-				"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetNextFrameWantCaptureMouse(false);
-				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Local Grid Spacing");
-				ImGui::EndTooltip();
-			}
-		}
-
-		// Toggle Top Bar Button
-		icon = toolbarEnabled ? EditorUI::EditorUIService::s_IconCheckbox_Enabled :
-		EditorUI::EditorUIService::s_IconCheckbox_Disabled;
-		ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 25, initialCursorPos.y + 4));
-		if (ImGui::ImageButton("Toggle Top Bar",
-			(ImTextureID)(uint64_t)icon->GetRendererID(),
-			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-			EditorUI::EditorUIService::s_PureEmpty,
-			toolbarEnabled ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor))
-		{
-			Utility::Operations::ToggleBoolean(toolbarEnabled);
-		}
-		if (ImGui::IsItemHovered())
-		{
-			ImGui::SetNextFrameWantCaptureMouse(false);
-			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, toolbarEnabled ? "Close Toolbar" : "Open Toolbar");
-			ImGui::EndTooltip();
-		}
-
-		ImGui::PopStyleColor();
-
-		if (Scenes::SceneService::GetActiveScene()->IsRunning() && !Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity())
-		{
-			ImGui::PushFont(EditorUI::EditorUIService::s_FontAntaLarge);
-			ImVec2 cursorStart = ImGui::GetCursorStartPos();
-			windowSize = ImGui::GetContentRegionAvail();
-			ImVec2 textSize = ImGui::CalcTextSize("No Primary Camera Set");
-			ImGui::SetCursorPos({ cursorStart.x + (windowSize.x / 2) - (textSize.x / 2), cursorStart.y + (windowSize.y / 2) - (textSize.y / 2) });
-			ImGui::Text("No Primary Camera Set");
-			ImGui::PopFont();
-		}
+		DrawToolbarOverlay();
 
 		EditorUI::EditorUIService::EndWindow();
 	}
@@ -1449,6 +1036,423 @@ namespace Kargono::Panels
 			Rendering::RenderingService::SubmitDataToRenderer(s_PointInputSpec);
 		}
 		
+	}
+
+	void ViewportPanel::DrawToolbarOverlay()
+	{
+		constexpr float k_IconSize{ 36.0f };
+		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();
+		ImVec2 initialCursorPos = ImGui::GetCursorStartPos();
+
+		ImVec2 windowSize = ImGui::GetWindowSize();
+		Ref<Rendering::Texture2D> icon{ nullptr };
+		if (m_ToolbarEnabled)
+		{
+			// Draw Play/Simulate/Step Background
+			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + (windowSize.x / 2) - 90.0f, initialScreenCursorPos.y),
+				ImVec2(initialScreenCursorPos.x + (windowSize.x / 2) + 90.0f, initialScreenCursorPos.y + 43.0f),
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+
+			// Draw Display Options Background
+			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 80.0f, initialScreenCursorPos.y),
+				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 48.0f, initialScreenCursorPos.y + 30.0f),
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+
+			// Draw Grid Options Background
+			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 257.0f, initialScreenCursorPos.y),
+				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 187.0f, initialScreenCursorPos.y + 30.0f),
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+
+			// Draw Camera Options Background
+			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 170.0f, initialScreenCursorPos.y),
+				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 100.0f, initialScreenCursorPos.y + 30.0f),
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+
+			// Draw Toggle Top Bar Background
+			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 30.0f, initialScreenCursorPos.y),
+				ImVec2(initialScreenCursorPos.x + (windowSize.x), initialScreenCursorPos.y + 30.0f),
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
+
+			bool hasPlayButton = s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate;
+			bool hasSimulateButton = s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Play;
+			bool hasPauseButton = s_MainWindow->m_SceneState != SceneState::Edit;
+			bool hasStepButton = hasPauseButton && s_MainWindow->m_IsPaused;
+
+			// Play/Stop Button
+			if (!hasSimulateButton)
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
+			}
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) - 77.0f, initialCursorPos.y + 4));
+			icon = hasPlayButton ? EditorUI::EditorUIService::s_IconPlay : EditorUI::EditorUIService::s_IconStop;
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasSimulateButton ? icon : EditorUI::EditorUIService::s_IconPlay)->GetRendererID(),
+				ImVec2(k_IconSize, k_IconSize), ImVec2(0, 0),
+				ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+				EditorUI::EditorUIService::s_HighlightColor1)
+				&& m_ToolbarEnabled)
+			{
+				if (hasSimulateButton)
+				{
+					if (s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate)
+					{
+						s_MainWindow->OnPlay();
+					}
+					else if (s_MainWindow->m_SceneState == SceneState::Play)
+					{
+						s_MainWindow->OnStop();
+					}
+				}
+
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				if (hasSimulateButton)
+				{
+					ImGui::BeginTooltip();
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, hasPlayButton ?
+						"Run Application" : "Stop Application");
+					ImGui::EndTooltip();
+				}
+			}
+			if (!hasSimulateButton)
+			{
+				ImGui::PopStyleColor(2);
+			}
+
+			// Simulate/Stop Simulate
+			if (!hasPlayButton)
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
+			}
+			icon = hasSimulateButton ? EditorUI::EditorUIService::s_IconSimulate : EditorUI::EditorUIService::s_IconStop;
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) - 37.0f, initialCursorPos.y + 4));
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasPlayButton ? icon : EditorUI::EditorUIService::s_IconSimulate)->GetRendererID(),
+				ImVec2(k_IconSize, k_IconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+				EditorUI::EditorUIService::s_HighlightColor1)
+				&& m_ToolbarEnabled)
+			{
+				if (hasPlayButton)
+				{
+					if (s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Play)
+					{
+						s_MainWindow->OnSimulate();
+					}
+					else if (s_MainWindow->m_SceneState == SceneState::Simulate)
+					{
+						s_MainWindow->OnStop();
+					}
+				}
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				if (hasPlayButton)
+				{
+					ImGui::BeginTooltip();
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, hasSimulateButton ?
+						"Simulate Physics" : "Stop Physics Simulation");
+					ImGui::EndTooltip();
+				}
+			}
+			if (!hasPlayButton)
+			{
+				ImGui::PopStyleColor(2);
+			}
+
+			// Pause Icon
+			if (!hasPauseButton)
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
+			}
+			icon = EditorUI::EditorUIService::s_IconPause;
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) + 3.0f, initialCursorPos.y + 4));
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(k_IconSize, k_IconSize),
+				ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+				hasPauseButton ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor)
+				&& m_ToolbarEnabled)
+			{
+				if (hasPauseButton)
+				{
+					s_MainWindow->m_IsPaused = !s_MainWindow->m_IsPaused;
+				}
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				if (hasPauseButton)
+				{
+					ImGui::BeginTooltip();
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, s_MainWindow->m_IsPaused ? "Resume Application" : "Pause Application");
+					ImGui::EndTooltip();
+				}
+			}
+			if (!hasPauseButton)
+			{
+				ImGui::PopStyleColor(2);
+			}
+			// Step Icon
+			if (!hasStepButton)
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::EditorUIService::s_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::EditorUIService::s_PureEmpty);
+			}
+			icon = EditorUI::EditorUIService::s_IconStep;
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) + 43.0f, initialCursorPos.y + 4));
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(),
+				ImVec2(k_IconSize, k_IconSize), ImVec2{ 0, 1 },
+				ImVec2{ 1, 0 }, 0,
+				ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
+				hasStepButton ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor)
+				&& m_ToolbarEnabled)
+			{
+				if (hasStepButton)
+				{
+					s_MainWindow->Step(1);
+				}
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				if (hasStepButton)
+				{
+					ImGui::BeginTooltip();
+					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Step Application");
+					ImGui::EndTooltip();
+				}
+			}
+			if (!hasStepButton)
+			{
+				ImGui::PopStyleColor(2);
+			}
+
+			// Camera Options Button
+			icon = EditorUI::EditorUIService::s_IconCamera;
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 163, initialCursorPos.y + 5));
+			if (ImGui::ImageButton("Camera Options",
+				(ImTextureID)(uint64_t)icon->GetRendererID(),
+				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				EditorUI::EditorUIService::s_PureEmpty,
+				EditorUI::EditorUIService::s_HighlightColor1))
+			{
+				ImGui::OpenPopup("Toggle Viewport Camera Options");
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Movement Types");
+				ImGui::EndTooltip();
+			}
+
+			if (ImGui::BeginPopup("Toggle Viewport Camera Options"))
+			{
+				if (ImGui::MenuItem("Model Viewer", 0,
+					m_EditorCamera.GetMovementType() == Rendering::EditorPerspectiveCamera::MovementType::ModelView))
+				{
+					m_EditorCamera.SetMovementType(Rendering::EditorPerspectiveCamera::MovementType::ModelView);
+				}
+				if (ImGui::MenuItem("FreeFly", 0,
+					m_EditorCamera.GetMovementType() == Rendering::EditorPerspectiveCamera::MovementType::FreeFly))
+				{
+					m_EditorCamera.SetMovementType(Rendering::EditorPerspectiveCamera::MovementType::FreeFly);
+				}
+				ImGui::EndPopup();
+			}
+
+			// Camera Speed
+			ImGui::SetNextItemWidth(30.0f);
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 138, initialCursorPos.y + 6));
+			ImGui::DragFloat("##CameraSpeed", &m_EditorCamera.GetMovementSpeed(), 0.5f,
+				s_MainWindow->m_ViewportPanel->m_EditorCamera.GetMinMovementSpeed(), m_EditorCamera.GetMaxMovementSpeed(),
+				"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Speed");
+				ImGui::EndTooltip();
+			}
+
+			// Viewport Display Options Button
+			icon = EditorUI::EditorUIService::s_IconDisplay;
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 75, initialCursorPos.y + 4));
+			if (ImGui::ImageButton("Display Toggle",
+				(ImTextureID)(uint64_t)icon->GetRendererID(),
+				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				EditorUI::EditorUIService::s_PureEmpty,
+				EditorUI::EditorUIService::s_HighlightColor1))
+			{
+				ImGui::OpenPopup("Toggle Display Options");
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Display Options");
+				ImGui::EndTooltip();
+			}
+
+			if (ImGui::BeginPopup("Toggle Display Options"))
+			{
+				if (ImGui::MenuItem("Display Physics Colliders", 0, s_MainWindow->m_ShowPhysicsColliders))
+				{
+					Utility::Operations::ToggleBoolean(s_MainWindow->m_ShowPhysicsColliders);
+				}
+				if (ImGui::MenuItem("Display Camera Frustums", 0, s_MainWindow->m_ShowCameraFrustums))
+				{
+					Utility::Operations::ToggleBoolean(s_MainWindow->m_ShowCameraFrustums);
+				}
+				if (ImGui::MenuItem("Fullscreen While Running", 0, s_MainWindow->m_RuntimeFullscreen))
+				{
+					Utility::Operations::ToggleBoolean(s_MainWindow->m_RuntimeFullscreen);
+				}
+				ImGui::EndPopup();
+			}
+
+			// Grid Options Button
+			icon = EditorUI::EditorUIService::s_IconGrid;
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 252, initialCursorPos.y + 4));
+			if (ImGui::ImageButton("Grid Toggle",
+				(ImTextureID)(uint64_t)icon->GetRendererID(),
+				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				EditorUI::EditorUIService::s_PureEmpty,
+				EditorUI::EditorUIService::s_HighlightColor1))
+			{
+				ImGui::OpenPopup("Grid Options");
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Grid Options");
+				ImGui::EndTooltip();
+			}
+
+			if (ImGui::BeginPopup("Grid Options"))
+			{
+				if (ImGui::BeginMenu("X-Y Grid"))
+				{
+					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXYMajorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayXYMajorGrid);
+
+						if (!m_DisplayXYMajorGrid && m_DisplayXYMinorGrid)
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayXYMinorGrid);
+						}
+					}
+					if (m_DisplayXYMajorGrid)
+					{
+						if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXYMinorGrid))
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayXYMinorGrid);
+						}
+					}
+
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("X-Z Grid"))
+				{
+					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXZMajorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayXZMajorGrid);
+
+						if (!m_DisplayXZMajorGrid && m_DisplayXZMinorGrid)
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayXZMinorGrid);
+						}
+					}
+
+					if (m_DisplayXZMajorGrid)
+					{
+						if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXZMinorGrid))
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayXZMinorGrid);
+						}
+					}
+
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Y-Z Grid"))
+				{
+					if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayYZMajorGrid))
+					{
+						Utility::Operations::ToggleBoolean(m_DisplayYZMajorGrid);
+						if (!m_DisplayYZMajorGrid && m_DisplayYZMinorGrid)
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayYZMinorGrid);
+						}
+					}
+					if (m_DisplayYZMajorGrid)
+					{
+						if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayYZMinorGrid))
+						{
+							Utility::Operations::ToggleBoolean(m_DisplayYZMinorGrid);
+						}
+					}
+
+					ImGui::EndMenu();
+				}
+				ImGui::EndPopup();
+			}
+
+			// Grid Spacing
+			ImGui::SetNextItemWidth(30.0f);
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 227, initialCursorPos.y + 6));
+			ImGui::DragFloat("##GridSpacing", &m_FineGridSpacing, 1.0f,
+				1.0f, 50.0f,
+				"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Local Grid Spacing");
+				ImGui::EndTooltip();
+			}
+		}
+
+		// Toggle Top Bar Button
+		icon = m_ToolbarEnabled ? EditorUI::EditorUIService::s_IconCheckbox_Enabled :
+			EditorUI::EditorUIService::s_IconCheckbox_Disabled;
+		ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 25, initialCursorPos.y + 4));
+		if (ImGui::ImageButton("Toggle Top Bar",
+			(ImTextureID)(uint64_t)icon->GetRendererID(),
+			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+			EditorUI::EditorUIService::s_PureEmpty,
+			m_ToolbarEnabled ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor))
+		{
+			Utility::Operations::ToggleBoolean(m_ToolbarEnabled);
+		}
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetNextFrameWantCaptureMouse(false);
+			ImGui::BeginTooltip();
+			ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, m_ToolbarEnabled ? "Close Toolbar" : "Open Toolbar");
+			ImGui::EndTooltip();
+		}
+
+		ImGui::PopStyleColor();
+
+		if (Scenes::SceneService::GetActiveScene()->IsRunning() && !Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity())
+		{
+			ImGui::PushFont(EditorUI::EditorUIService::s_FontAntaLarge);
+			ImVec2 cursorStart = ImGui::GetCursorStartPos();
+			windowSize = ImGui::GetContentRegionAvail();
+			ImVec2 textSize = ImGui::CalcTextSize("No Primary Camera Set");
+			ImGui::SetCursorPos({ cursorStart.x + (windowSize.x / 2) - (textSize.x / 2), cursorStart.y + (windowSize.y / 2) - (textSize.y / 2) });
+			ImGui::Text("No Primary Camera Set");
+			ImGui::PopFont();
+		}
 	}
 
 }

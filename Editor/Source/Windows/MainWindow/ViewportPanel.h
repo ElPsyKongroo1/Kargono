@@ -53,6 +53,7 @@ namespace Kargono::Panels
 		void DrawFrustrum(ECS::Entity& entity);
 		void DrawWorldAxis();
 		void DrawDebugOverlay();
+		void DrawToolbarOverlay();
 
 		// These three functions selectively call the scene functions on m_ActiveScene to render the scene,
 		//		update physics, and update scripts for m_ActiveScene.
@@ -93,6 +94,9 @@ namespace Kargono::Panels
 		bool m_ViewportFocused{ false };
 		bool m_ViewportHovered{ false };
 		Math::vec2 m_ScreenViewportBounds[2];
+
+		// Overlay Data
+		bool m_ToolbarEnabled{ true };
 
 		// Draw world axis Data
 		float m_LargeGridSpacing{ 100.0f };

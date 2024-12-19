@@ -191,7 +191,7 @@ namespace Kargono::EditorUI
 		static void CreateInfoNotification(const char* text, int delayMS);
 		static void CreateWarningNotification(const char* text, int delayMS);
 		static void CreateCriticalNotification(const char* text, int delayMS);
-		static void AutoCalcViewportSize(Math::vec2 screenViewportBounds[2], ViewportData& viewportData, bool& viewportFocused, bool& viewportHovered);
+		static void AutoCalcViewportSize(Math::vec2 screenViewportBounds[2], ViewportData& viewportData, bool& viewportFocused, bool& viewportHovered, const Math::uvec2& aspectRatio);
 
 	private:
 		static void RenderImGuiNotify();
