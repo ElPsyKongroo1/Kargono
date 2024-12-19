@@ -38,9 +38,11 @@ namespace Kargono::Panels
 		void OnInputEvent(Events::Event* event);
 
 		void DrawOverlay();
+		void DrawUnderlay();
 		void DrawViewportOutline();
 		void HandleMouseHovering();
 		void DrawToolbarOverlay();
+		void DrawProportionalGrid();
 
 		//=========================
 		// External Functionality
@@ -74,5 +76,7 @@ namespace Kargono::Panels
 
 		// Debug overlay data
 		bool m_ToolbarEnabled{ true };
+		bool m_DisplayGrid{ true };
+		float m_PropertionalGridSections{ 2.0f };
 	};
 }

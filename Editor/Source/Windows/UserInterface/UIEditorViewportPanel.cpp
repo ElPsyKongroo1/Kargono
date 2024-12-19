@@ -72,8 +72,7 @@ namespace Kargono::Panels
 		// TODO: Add background image to viewport
 
 
-		// Draw viewport outline
-		DrawViewportOutline();
+		DrawUnderlay();
 
 		// Handle drawing user interface
 		Window& currentApplication = EngineService::GetActiveWindow();
@@ -121,6 +120,7 @@ namespace Kargono::Panels
 				}
 				else
 				{
+					s_UIWindow->m_TreePanel->m_UITree.ExpandNodePath(path);
 					path.AddNode(m_HoveredWidgetID);
 					success = s_UIWindow->m_TreePanel->m_UITree.SelectEntry(path);
 				}
@@ -204,10 +204,25 @@ namespace Kargono::Panels
 			Rendering::RenderingService::EndScene();
 		}
 	}
-	void UIEditorViewportPanel::DrawViewportOutline()
+	void UIEditorViewportPanel::DrawUnderlay()
 	{
 		// Start rendering context
 		Rendering::RenderingService::BeginScene(m_EditorCamera.GetViewProjection());
+
+		// Draw grid if enabled
+		if (m_DisplayGrid)
+		{
+			DrawProportionalGrid();
+		}
+
+		// Draw viewport outline
+		DrawViewportOutline();
+
+		Rendering::RenderingService::EndScene();
+
+	}
+	void UIEditorViewportPanel::DrawViewportOutline()
+	{
 
 		// Draw viewport bounds
 		Math::vec3 selectionBoxVertices[4]
@@ -238,8 +253,6 @@ namespace Kargono::Panels
 		s_OutputVector->push_back(selectionBoxVertices[0]);
 		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
-
-		Rendering::RenderingService::EndScene();
 		
 	}
 	void UIEditorViewportPanel::HandleMouseHovering()
@@ -278,10 +291,10 @@ namespace Kargono::Panels
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 48.0f, initialScreenCursorPos.y + 30.0f),
 				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
-			//// Draw Grid Options Background
-			//draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 257.0f, initialScreenCursorPos.y),
-			//	ImVec2(initialScreenCursorPos.x + (windowSize.x) - 187.0f, initialScreenCursorPos.y + 30.0f),
-			//	ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+			// Draw Grid Options Background
+			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 257.0f, initialScreenCursorPos.y),
+				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 187.0f, initialScreenCursorPos.y + 30.0f),
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Camera Options Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 170.0f, initialScreenCursorPos.y),
@@ -391,108 +404,47 @@ namespace Kargono::Panels
 				ImGui::EndPopup();
 			}
 
-		//	// Grid Options Button
-		//	icon = EditorUI::EditorUIService::s_IconGrid;
-		//	ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 252, initialCursorPos.y + 4));
-		//	if (ImGui::ImageButton("Grid Toggle",
-		//		(ImTextureID)(uint64_t)icon->GetRendererID(),
-		//		ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-		//		EditorUI::EditorUIService::s_PureEmpty,
-		//		EditorUI::EditorUIService::s_HighlightColor1))
-		//	{
-		//		ImGui::OpenPopup("Grid Options");
-		//	}
-		//	if (ImGui::IsItemHovered())
-		//	{
-		//		ImGui::SetNextFrameWantCaptureMouse(false);
-		//		ImGui::BeginTooltip();
-		//		ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Grid Options");
-		//		ImGui::EndTooltip();
-		//	}
+			// Grid Options Button
+			icon = EditorUI::EditorUIService::s_IconGrid;
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 252, initialCursorPos.y + 4));
+			if (ImGui::ImageButton("Grid Toggle",
+				(ImTextureID)(uint64_t)icon->GetRendererID(),
+				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
+				EditorUI::EditorUIService::s_PureEmpty,
+				EditorUI::EditorUIService::s_HighlightColor1))
+			{
+				ImGui::OpenPopup("Grid Options");
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Grid Options");
+				ImGui::EndTooltip();
+			}
 
-		//	if (ImGui::BeginPopup("Grid Options"))
-		//	{
-		//		if (ImGui::BeginMenu("X-Y Grid"))
-		//		{
-		//			if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXYMajorGrid))
-		//			{
-		//				Utility::Operations::ToggleBoolean(m_DisplayXYMajorGrid);
+			if (ImGui::BeginPopup("Grid Options"))
+			{
+				if (ImGui::MenuItem("Display Grid", 0, m_DisplayGrid))
+				{
+					Utility::Operations::ToggleBoolean(m_DisplayGrid);
+				}
+				ImGui::EndPopup();
+			}
 
-		//				if (!m_DisplayXYMajorGrid && m_DisplayXYMinorGrid)
-		//				{
-		//					Utility::Operations::ToggleBoolean(m_DisplayXYMinorGrid);
-		//				}
-		//			}
-		//			if (m_DisplayXYMajorGrid)
-		//			{
-		//				if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXYMinorGrid))
-		//				{
-		//					Utility::Operations::ToggleBoolean(m_DisplayXYMinorGrid);
-		//				}
-		//			}
-
-		//			ImGui::EndMenu();
-		//		}
-
-		//		if (ImGui::BeginMenu("X-Z Grid"))
-		//		{
-		//			if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayXZMajorGrid))
-		//			{
-		//				Utility::Operations::ToggleBoolean(m_DisplayXZMajorGrid);
-
-		//				if (!m_DisplayXZMajorGrid && m_DisplayXZMinorGrid)
-		//				{
-		//					Utility::Operations::ToggleBoolean(m_DisplayXZMinorGrid);
-		//				}
-		//			}
-
-		//			if (m_DisplayXZMajorGrid)
-		//			{
-		//				if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayXZMinorGrid))
-		//				{
-		//					Utility::Operations::ToggleBoolean(m_DisplayXZMinorGrid);
-		//				}
-		//			}
-
-		//			ImGui::EndMenu();
-		//		}
-
-		//		if (ImGui::BeginMenu("Y-Z Grid"))
-		//		{
-		//			if (ImGui::MenuItem("Display Infinite Grid", 0, m_DisplayYZMajorGrid))
-		//			{
-		//				Utility::Operations::ToggleBoolean(m_DisplayYZMajorGrid);
-		//				if (!m_DisplayYZMajorGrid && m_DisplayYZMinorGrid)
-		//				{
-		//					Utility::Operations::ToggleBoolean(m_DisplayYZMinorGrid);
-		//				}
-		//			}
-		//			if (m_DisplayYZMajorGrid)
-		//			{
-		//				if (ImGui::MenuItem("Display Local Grid", 0, m_DisplayYZMinorGrid))
-		//				{
-		//					Utility::Operations::ToggleBoolean(m_DisplayYZMinorGrid);
-		//				}
-		//			}
-
-		//			ImGui::EndMenu();
-		//		}
-		//		ImGui::EndPopup();
-		//	}
-
-		//	// Grid Spacing
-		//	ImGui::SetNextItemWidth(30.0f);
-		//	ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 227, initialCursorPos.y + 6));
-		//	ImGui::DragFloat("##GridSpacing", &m_FineGridSpacing, 1.0f,
-		//		1.0f, 50.0f,
-		//		"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
-		//	if (ImGui::IsItemHovered())
-		//	{
-		//		ImGui::SetNextFrameWantCaptureMouse(false);
-		//		ImGui::BeginTooltip();
-		//		ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Local Grid Spacing");
-		//		ImGui::EndTooltip();
-		//	}
+			// Grid Spacing
+			ImGui::SetNextItemWidth(30.0f);
+			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 227, initialCursorPos.y + 6));
+			ImGui::DragFloat("##GridSpacing", &m_PropertionalGridSections, 1.0f,
+				1.0f, 50.0f,
+				"%.0f", ImGuiSliderFlags_NoInput | ImGuiSliderFlags_CenterText);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::BeginTooltip();
+				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Section Count");
+				ImGui::EndTooltip();
+			}
 		}
 
 		// Toggle Top Bar Button
@@ -516,6 +468,46 @@ namespace Kargono::Panels
 		}
 
 		ImGui::PopStyleColor();
+	}
+	void UIEditorViewportPanel::DrawProportionalGrid()
+	{
+		// Draw grid lines
+		if (m_PropertionalGridSections == 1)
+		{
+			return;
+		}
+
+		// Calculate grid line values and set up vertex data
+		size_t lineCount = {((size_t)m_PropertionalGridSections - 1) * 2};
+		size_t vertexCount = lineCount * 2;
+		std::vector<Math::vec3> gridVertices;
+		gridVertices.reserve(vertexCount);
+
+		// Fill vertex data
+		for (size_t iteration{ 1 }; iteration <= lineCount; iteration++)
+		{
+			float x = ((float)m_ViewportData.m_Width / m_PropertionalGridSections) * iteration;
+			float y = ((float)m_ViewportData.m_Height / m_PropertionalGridSections) * iteration;
+
+			// Horizontal line
+			gridVertices.push_back({ 0.0f, y, -1.0f });
+			gridVertices.push_back({ (float)m_ViewportData.m_Width, y, -1.0f });
+
+			// Vertical line
+			gridVertices.push_back({ x, 0.0f, -1.0f });
+			gridVertices.push_back({ x, (float)m_ViewportData.m_Height, -1.0f });
+		}
+
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_GridMinor), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+
+		for (size_t i = 0; i < vertexCount; i += 2)
+		{
+			s_OutputVector->clear();
+			s_OutputVector->push_back(gridVertices[i]);
+			s_OutputVector->push_back(gridVertices[i + 1]);
+			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		}
 	}
 	void UIEditorViewportPanel::OnOpenUI()
 	{
