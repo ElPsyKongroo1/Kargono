@@ -32,6 +32,7 @@ namespace Kargono::Panels
 		//=========================
 		void InitializeWindowOptions();
 		void InitializeWidgetGeneralOptions();
+		void InitializeTextWidgetOptions();
 		void InitializeWidgetLocationOptions();
 
 	public:
@@ -45,6 +46,7 @@ namespace Kargono::Panels
 		//=========================
 		void DrawWindowOptions();
 		void DrawWidgetOptions();
+		void DrawTextWidgetOptions();
 
 		//=========================
 		// Modify Panel Data
@@ -78,10 +80,6 @@ namespace Kargono::Panels
 		void OnModifyWidgetSize(EditorUI::EditVec2Spec& spec);
 		// Modify widget background color
 		void OnModifyWidgetBackgroundColor(EditorUI::EditVec4Spec& spec);
-		// Modify widget on press
-		void OnModifyWidgetOnPress(const EditorUI::OptionEntry& entry);
-		void OnOpenWidgetOnPressPopup();
-		void OnOpenTooltipForWidgetOnPress();
 		// Modify widget location
 		void OnModifyWidgetXLocationRelOrAbs();
 		void OnModifyWidgetYLocationRelOrAbs();
@@ -108,6 +106,12 @@ namespace Kargono::Panels
 		void OnModifyTextWidgetTextColor(EditorUI::EditVec4Spec& spec);
 		// Modify if widget text is centered
 		void OnModifyTextWidgetCentered(EditorUI::CheckboxSpec& spec);
+		// Modify if widget text is wrapped
+		void OnModifyTextWidgetWrapped(EditorUI::CheckboxSpec& spec);
+		// Modify widget on press
+		void OnModifyWidgetOnPress(const EditorUI::OptionEntry& entry);
+		void OnOpenWidgetOnPressPopup();
+		void OnOpenTooltipForWidgetOnPress();
 
 	public:
 		//=========================
@@ -137,10 +141,14 @@ namespace Kargono::Panels
 		EditorUI::EditVec2Spec m_WidgetSize{};
 		EditorUI::EditVec4Spec m_WidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_WidgetOnPress{};
+
+		// Edit Text Widget Options
+		EditorUI::CollapsingHeaderSpec m_WidgetTextHeader{};
 		EditorUI::EditTextSpec m_WidgetText{};
 		EditorUI::EditFloatSpec m_WidgetTextSize{};
 		EditorUI::EditVec4Spec m_WidgetTextColor{};
 		EditorUI::CheckboxSpec m_WidgetCentered{};
+		EditorUI::CheckboxSpec m_WidgetWrapped{};
 
 		// Edit Widget Location Options
 		EditorUI::CollapsingHeaderSpec m_WidgetLocationHeader{};

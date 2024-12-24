@@ -19,6 +19,7 @@ namespace Kargono::Panels
 		// Initialize properties panel widget resources
 		InitializeWindowOptions();
 		InitializeWidgetGeneralOptions();
+		InitializeTextWidgetOptions();
 		InitializeWidgetLocationOptions();
 	}
 	void UIEditorPropertiesPanel::OnEditorUIRender()
@@ -42,6 +43,7 @@ namespace Kargono::Panels
 			DrawWindowOptions();
 			break;
 		case UIPropertiesDisplay::Widget:
+			DrawTextWidgetOptions();
 			DrawWidgetOptions();
 			break;
 		}
@@ -108,36 +110,6 @@ namespace Kargono::Panels
 			m_WidgetBackgroundColor.m_CurrentVec4 = m_ActiveWidget->m_DefaultBackgroundColor;
 			EditorUI::EditorUIService::EditVec4(m_WidgetBackgroundColor);
 
-			// Edit text widget specific options
-			if (m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::TextWidget)
-			{
-				RuntimeUI::TextWidget& activeTextWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
-
-				// Edit selected text widget's on press script
-				Assets::AssetHandle onPressHandle = activeTextWidget.m_FunctionPointers.m_OnPressHandle;
-				m_WidgetOnPress.m_CurrentOption =
-				{
-					onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName,
-					onPressHandle
-				};
-				EditorUI::EditorUIService::SelectOption(m_WidgetOnPress);
-
-				// Edit selected text widget's text
-				m_WidgetText.m_CurrentOption = activeTextWidget.m_Text;
-				EditorUI::EditorUIService::EditText(m_WidgetText);
-
-				// Edit selected text widget's text size relative to its window
-				m_WidgetTextSize.m_CurrentFloat = activeTextWidget.m_TextSize;
-				EditorUI::EditorUIService::EditFloat(m_WidgetTextSize);
-
-				// Edit selected text widget's text color
-				m_WidgetTextColor.m_CurrentVec4 = activeTextWidget.m_TextColor;
-				EditorUI::EditorUIService::EditVec4(m_WidgetTextColor);
-
-				// Edit selected text widget's text alignment
-				m_WidgetCentered.m_CurrentBoolean = activeTextWidget.m_TextCentered;
-				EditorUI::EditorUIService::Checkbox(m_WidgetCentered);
-			}
 		}
 
 		// Draw location header for widget options and display options to edit selected widget's location
@@ -190,6 +162,52 @@ namespace Kargono::Panels
 		}
 	}
 
+	void UIEditorPropertiesPanel::DrawTextWidgetOptions()
+	{
+		// Early out if the active widget is not a text widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
+		{
+			return;
+		}
+		
+		// Draw main header for text widget options
+		EditorUI::EditorUIService::CollapsingHeader(m_WidgetTextHeader);
+		if (m_WidgetGeneralHeader.m_Expanded)
+		{
+			// Draw options to edit selected text widget
+			RuntimeUI::TextWidget& activeTextWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+
+			// Edit selected text widget's text
+			m_WidgetText.m_CurrentOption = activeTextWidget.m_Text;
+			EditorUI::EditorUIService::EditText(m_WidgetText);
+
+			// Edit selected text widget's text size relative to its window
+			m_WidgetTextSize.m_CurrentFloat = activeTextWidget.m_TextSize;
+			EditorUI::EditorUIService::EditFloat(m_WidgetTextSize);
+
+			// Edit selected text widget's text color
+			m_WidgetTextColor.m_CurrentVec4 = activeTextWidget.m_TextColor;
+			EditorUI::EditorUIService::EditVec4(m_WidgetTextColor);
+
+			// Edit selected text widget's text alignment
+			m_WidgetCentered.m_CurrentBoolean = activeTextWidget.m_TextCentered;
+			EditorUI::EditorUIService::Checkbox(m_WidgetCentered);
+
+			// Edit selected text widget's wrapped alignment
+			m_WidgetWrapped.m_CurrentBoolean = activeTextWidget.m_TextWrapped;
+			EditorUI::EditorUIService::Checkbox(m_WidgetWrapped);
+
+			// Edit selected widget's on press script
+			Assets::AssetHandle onPressHandle = activeTextWidget.m_FunctionPointers.m_OnPressHandle;
+			m_WidgetOnPress.m_CurrentOption =
+			{
+				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName,
+				onPressHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_WidgetOnPress);
+		}
+	}
+
 	void UIEditorPropertiesPanel::ClearPanelData()
 	{
 		m_ActiveWidget = nullptr;
@@ -200,7 +218,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::InitializeWindowOptions()
 	{
 		// Set up header for window options
-		m_WindowHeader.m_Label = "Window Options";
+		m_WindowHeader.m_Label = "General Window Options";
 		m_WindowHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
 		m_WindowHeader.m_Expanded = true;
 
@@ -238,7 +256,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::InitializeWidgetGeneralOptions()
 	{
 		// Set up header for widget options
-		m_WidgetGeneralHeader.m_Label = "Widget General Options";
+		m_WidgetGeneralHeader.m_Label = "General Widget Options";
 		m_WidgetGeneralHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
 		m_WidgetGeneralHeader.m_Expanded = true;
 
@@ -256,13 +274,21 @@ namespace Kargono::Panels
 		m_WidgetBackgroundColor.m_Label = "Background Color";
 		m_WidgetBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_WidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetBackgroundColor);
+	}
 
+	void UIEditorPropertiesPanel::InitializeTextWidgetOptions()
+	{
 		// Set up widget to modify the text widget's on press script
 		m_WidgetOnPress.m_Label = "On Press";
 		m_WidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
 		m_WidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenWidgetOnPressPopup);
 		m_WidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetOnPress);
 		m_WidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForWidgetOnPress);
+
+		// Set up header for text widget options
+		m_WidgetTextHeader.m_Label = "Text Widget Options";
+		m_WidgetTextHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_WidgetTextHeader.m_Expanded = true;
 
 		// Set up widget to modify the text widget's text
 		m_WidgetText.m_Label = "Text";
@@ -283,6 +309,11 @@ namespace Kargono::Panels
 		m_WidgetCentered.m_Label = "Centered";
 		m_WidgetCentered.m_Flags |= EditorUI::Checkbox_Indented;
 		m_WidgetCentered.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetCentered);
+
+		// Set up widget to modify if the text widget is wrapped
+		m_WidgetWrapped.m_Label = "Text Wrapped";
+		m_WidgetWrapped.m_Flags |= EditorUI::Checkbox_Indented;
+		m_WidgetWrapped.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetWrapped);
 	}
 
 	void UIEditorPropertiesPanel::InitializeWidgetLocationOptions()
@@ -950,6 +981,36 @@ namespace Kargono::Panels
 
 		// Update the text widget text alignment based on the editorUI widget's value
 		textWidget.m_TextCentered = spec.m_CurrentBoolean;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifyTextWidgetWrapped(EditorUI::CheckboxSpec& spec)
+	{
+		// Ensure active window is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget's TextWrapped field");
+			return;
+		}
+
+		// Ensure active widget is a valid type
+		if (!m_ActiveWidget)
+		{
+			KG_WARN("No valid widget active when trying to update widget's TextWrapped field");
+			return;
+		}
+
+		// Ensure active widget is a valid type and get the text widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
+		{
+			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
+
+		// Update the text widget text alignment based on the editorUI widget's value
+		textWidget.m_TextWrapped = spec.m_CurrentBoolean;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;

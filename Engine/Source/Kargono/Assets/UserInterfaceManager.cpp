@@ -88,6 +88,7 @@ namespace Kargono::Assets
 					out << YAML::Key << "TextColor" << YAML::Value << textWidget->m_TextColor;
 					out << YAML::Key << "TextAbsoluteDimensions" << YAML::Value << textWidget->m_TextAbsoluteDimensions;
 					out << YAML::Key << "TextCentered" << YAML::Value << textWidget->m_TextCentered;
+					out << YAML::Key << "TextWrapped" << YAML::Value << textWidget->m_TextWrapped;
 					out << YAML::EndMap; // End TextWidget Map
 					break;
 				}
@@ -184,6 +185,7 @@ namespace Kargono::Assets
 							textWidget->m_TextColor = specificWidget["TextColor"].as<glm::vec4>();
 							textWidget->m_TextAbsoluteDimensions = specificWidget["TextAbsoluteDimensions"].as<Math::vec2>();
 							textWidget->m_TextCentered = specificWidget["TextCentered"].as<bool>();
+							textWidget->m_TextWrapped = specificWidget["TextWrapped"].as<bool>();
 							break;
 						}
 						default:

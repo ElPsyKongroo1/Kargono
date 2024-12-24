@@ -653,7 +653,7 @@ namespace Kargono::Panels
 				}
 				else
 				{
-					widget->m_PixelPosition.x = screenPosition.x;
+					widget->m_PixelPosition.x = (int)screenPosition.x;
 				}
 
 				// Update the widget's y position
@@ -663,7 +663,7 @@ namespace Kargono::Panels
 				}
 				else
 				{
-					widget->m_PixelPosition.y = screenPosition.y;
+					widget->m_PixelPosition.y = (int)screenPosition.y;
 				}
 				
 			}
