@@ -69,14 +69,14 @@ namespace Kargono::Rendering
 		{ 
 			return m_Position; 
 		}
-		void SetScale(const Math::vec3& orientation)
+		void SetRotation(const Math::vec3& orientation)
 		{
-			m_Scale = orientation;
+			m_Rotation = orientation;
 			RecalculateView();
 		}
 		const Math::vec3& GetScale() const
 		{
-			return m_Scale;
+			return m_Rotation;
 		}
 		
 		void SetKeyboardSpeed(float speed)
@@ -130,7 +130,7 @@ namespace Kargono::Rendering
 
 		Math::mat4 m_ViewMatrix;
 		Math::vec3 m_Position{ 0.0f, 0.0f, 0.0f };
-		Math::vec3 m_Scale{ 0.0f, 0.0f, 0.0f };
+		Math::vec3 m_Rotation{ 0.0f, 0.0f, 0.0f };
 
 		float m_KeyboardSpeed{ 10.0f };
 		float m_KeyboardMinSpeed{ 1.0f };

@@ -104,7 +104,8 @@ namespace Kargono::RuntimeUI
 		// Supporting Methods
 		//============================
 		Math::vec3 CalculateSize(const Math::vec3& windowSize);
-		Math::vec3 CalculatePosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize);
+		Math::vec3 CalculateWorldPosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize);
+		Math::vec3 CalculateWindowPosition(Math::vec2 worldPosition, const Math::vec3& windowTranslation, const Math::vec3& windowSize);
 	public:
 		//============================
 		// Widget Data
@@ -293,7 +294,8 @@ namespace Kargono::RuntimeUI
 		// Supporting Methods
 		//============================
 		Math::vec3 CalculateSize(uint32_t viewportWidth, uint32_t viewportHeight);
-		Math::vec3 CalculatePosition(uint32_t viewportWidth, uint32_t viewportHeight);
+		Math::vec3 CalculateWorldPosition(uint32_t viewportWidth, uint32_t viewportHeight);
+		Math::vec3 CalculateScreenPosition(Math::vec2 worldPosition, uint32_t viewportWidth, uint32_t viewportHeight);
 	public:
 		//============================
 		// Public Fields

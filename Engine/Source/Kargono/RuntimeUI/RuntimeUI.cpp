@@ -279,7 +279,7 @@ namespace Kargono::RuntimeUI
 		{
 			// Get position data for rendering window
 			Math::vec3 scale = window->CalculateSize(viewportWidth, viewportHeight);
-			Math::vec3 initialTranslation = window->CalculatePosition(viewportWidth, viewportHeight);
+			Math::vec3 initialTranslation = window->CalculateWorldPosition(viewportWidth, viewportHeight);
 			Math::vec3 bottomLeftTranslation = Math::vec3( initialTranslation.x + (scale.x / 2),  initialTranslation.y + (scale.y / 2), initialTranslation.z);
 
 			// Create background rendering data
@@ -689,7 +689,7 @@ namespace Kargono::RuntimeUI
 		{
 			// Calculate window scale and position
 			Math::vec3 windowScale = currentWindow.CalculateSize(viewportData.m_Width, viewportData.m_Height);
-			Math::vec3 windowPosition = currentWindow.CalculatePosition(viewportData.m_Width, viewportData.m_Height);
+			Math::vec3 windowPosition = currentWindow.CalculateWorldPosition(viewportData.m_Width, viewportData.m_Height);
 
 			// Iterate through all widgets in the window
 			for (Ref<Widget> currentWidget : currentWindow.m_Widgets)
@@ -716,7 +716,7 @@ namespace Kargono::RuntimeUI
 		std::size_t iteration{ 0 };
 
 		// Calculate the position and size of the current widget
-		Math::vec2 currentWidgetPosition = currentWidget->CalculatePosition(windowPosition, windowSize);
+		Math::vec2 currentWidgetPosition = currentWidget->CalculateWorldPosition(windowPosition, windowSize);
 		Math::vec2 currentWidgetSize = currentWidget->CalculateSize(windowSize);
 
 		// Iterate through each potential widget and decide which widget makes sense to navigate to
@@ -729,7 +729,7 @@ namespace Kargono::RuntimeUI
 				continue;
 			}
 			// Calculate the position and size of the potential widget
-			Math::vec2 potentialChoicePosition = potentialChoice->CalculatePosition(windowPosition, windowSize);
+			Math::vec2 potentialChoicePosition = potentialChoice->CalculateWorldPosition(windowPosition, windowSize);
 			Math::vec2 potentialChoiceSize = potentialChoice->CalculateSize(windowSize);
 
 			// Calculate the distance between the current widget and the potential widget
@@ -873,9 +873,14 @@ namespace Kargono::RuntimeUI
 		return Math::vec3(viewportWidth * m_Size.x, viewportHeight * m_Size.y, 1.0f);
 	}
 
-	Math::vec3 Window::CalculatePosition(uint32_t viewportWidth, uint32_t viewportHeight)
+	Math::vec3 Window::CalculateWorldPosition(uint32_t viewportWidth, uint32_t viewportHeight)
 	{
 		return Math::vec3((viewportWidth * m_ScreenPosition.x), (viewportHeight * m_ScreenPosition.y), m_ScreenPosition.z);
+	}
+
+	Math::vec3 Window::CalculateScreenPosition(Math::vec2 worldPosition, uint32_t viewportWidth, uint32_t viewportHeight)
+	{
+		return Math::vec3(worldPosition.x / viewportWidth, worldPosition.y / viewportHeight, m_ScreenPosition.z);
 	}
 
 	void Window::AddWidget(Ref<Widget> newWidget)
@@ -904,7 +909,7 @@ namespace Kargono::RuntimeUI
 		Math::vec3 widgetSize = CalculateSize(windowSize);
 
 		// Get widget translation
-		Math::vec3 widgetTranslation = CalculatePosition(windowTranslation, windowSize);
+		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
 		// Create the widget's background rendering data
 		inputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
@@ -954,7 +959,7 @@ namespace Kargono::RuntimeUI
 		return Math::vec3(windowSize.x * m_Size.x, windowSize.y * m_Size.y, 1.0f);
 	}
 
-	Math::vec3 Widget::CalculatePosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize)
+	Math::vec3 Widget::CalculateWorldPosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize)
 	{
 		float widgetXPos{ m_XPositionType == PixelOrPercent::Percent ? windowSize.x * m_PercentPosition.x : (float)m_PixelPosition.x };
 		float widgetYPos{ m_YPositionType == PixelOrPercent::Percent ? windowSize.y * m_PercentPosition.y : (float)m_PixelPosition.y };
@@ -999,6 +1004,54 @@ namespace Kargono::RuntimeUI
 
 		// Calculate final widget position on screen
 		return Math::vec3(windowTranslation.x + widgetXPos, windowTranslation.y + widgetYPos, windowTranslation.z);
+	}
+
+	Math::vec3 Widget::CalculateWindowPosition(Math::vec2 worldPosition, const Math::vec3& windowTranslation, const Math::vec3& windowSize)
+	{
+		float widgetXPos{ worldPosition.x - windowTranslation.x };
+		float widgetYPos{ worldPosition.y - windowTranslation.y };
+
+		if (m_XRelativeOrAbsolute == RelativeOrAbsolute::Relative && m_XConstraint != Constraint::None)
+		{
+			// Handle relative code
+			switch (m_XConstraint)
+			{
+			case Constraint::Center:
+				widgetXPos = widgetXPos - (windowSize.x * 0.5f) + (m_Size.x * windowSize.x / 2.0f);
+				break;
+			case Constraint::Right:
+				widgetXPos = widgetXPos - windowSize.x + (m_Size.x * windowSize.x);
+				break;
+			case Constraint::Left:
+				break;
+			default:
+				KG_ERROR("Invalid constraint {} provided while calculating widget's position", (uint16_t)m_XConstraint);
+				break;
+			}
+		}
+
+		if (m_YRelativeOrAbsolute == RelativeOrAbsolute::Relative && m_YConstraint != Constraint::None)
+		{
+			// Handle relative code
+			switch (m_YConstraint)
+			{
+			case Constraint::Center:
+				widgetYPos = widgetYPos - (windowSize.y * 0.5f) + (m_Size.y * windowSize.y / 2.0f);
+				break;
+			case Constraint::Top:
+				widgetYPos = widgetYPos - windowSize.y + (m_Size.y * windowSize.y);
+				break;
+			case Constraint::Bottom:
+				break;
+			default:
+				KG_ERROR("Invalid constraint {} provided while calculating widget's position", (uint16_t)m_YConstraint);
+				break;
+			}
+		}
+		// Calculate final widget position on screen
+		widgetXPos = m_XPositionType == PixelOrPercent::Percent ? widgetXPos / windowSize.x : widgetXPos;
+		widgetYPos = m_YPositionType == PixelOrPercent::Percent ? widgetYPos / windowSize.y : widgetYPos;
+		return Math::vec3(widgetXPos, widgetYPos, 0.0f);
 	}
 
 }

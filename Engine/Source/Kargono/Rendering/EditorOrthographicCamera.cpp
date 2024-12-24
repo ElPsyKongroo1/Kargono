@@ -169,7 +169,7 @@ namespace Kargono::Rendering
 	}
 	void EditorOrthographicCamera::RecalculateView()
 	{
-		Math::quat orientation = Math::quat(m_Scale);
+		Math::quat orientation = Math::quat(m_Rotation);
 		m_ViewMatrix = glm::translate(Math::mat4(1.0f), m_Position) * glm::toMat4(orientation);
 		m_ViewMatrix = glm::inverse(m_ViewMatrix);
 	}

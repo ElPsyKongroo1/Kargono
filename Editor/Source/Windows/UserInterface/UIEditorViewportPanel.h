@@ -36,6 +36,7 @@ namespace Kargono::Panels
 		void OnUpdate(Timestep ts);
 		void OnEditorUIRender();
 		void OnInputEvent(Events::Event* event);
+		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 
 		void DrawOverlay();
 		void DrawUnderlay();
@@ -43,6 +44,7 @@ namespace Kargono::Panels
 		void HandleMouseHovering();
 		void DrawToolbarOverlay();
 		void DrawProportionalGrid();
+		void DrawGizmo();
 
 		//=========================
 		// External Functionality
@@ -65,6 +67,7 @@ namespace Kargono::Panels
 		Rendering::EditorOrthographicCamera m_EditorCamera;
 		ViewportData m_ViewportData;
 		Math::uvec2 m_ViewportAspectRatio{ 1, 1 };
+		int m_GizmoType{ -1 };
 	private:
 		// Viewport resources
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;

@@ -16,9 +16,9 @@ namespace Kargono::Panels
 		InitializeFrameBuffer();
 		InitializeOverlayData();
 
-		m_EditorCamera = Rendering::EditorOrthographicCamera(Math::vec2(100.0f, 100.0f), -2.0f, 2.0f);
+		m_EditorCamera = Rendering::EditorOrthographicCamera(Math::vec2(100.0f, 100.0f), -3.0f, 3.0f);
 		m_EditorCamera.SetPosition(Math::vec3(0.0f, 0.0f, 0.0f));
-		m_EditorCamera.SetScale(Math::vec3(0.0f, 0.0f, 0.0f));
+		m_EditorCamera.SetRotation(Math::vec3(0.0f, 0.0f, 0.0f));
 		m_EditorCamera.SetKeyboardSpeed(200.0f);
 		m_EditorCamera.SetKeyboardMinSpeed(50.0f);
 		m_EditorCamera.SetKeyboardMaxSpeed(500.0f);
@@ -109,28 +109,34 @@ namespace Kargono::Panels
 			ImVec2{ 1, 0 });
 		if (ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left) && ImGui::GetIO().WantCaptureMouse)
 		{
-			if (m_HoveredWindowID != k_InvalidWindowID)
+			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 			{
-				EditorUI::TreePath path;
-				bool success{ false };
-				path.AddNode(m_HoveredWindowID);
-				if (m_HoveredWidgetID == k_InvalidWidgetID)
+				if (m_HoveredWindowID != k_InvalidWindowID)
 				{
-					success = s_UIWindow->m_TreePanel->m_UITree.SelectEntry(path);
-				}
-				else
-				{
-					s_UIWindow->m_TreePanel->m_UITree.ExpandNodePath(path);
-					path.AddNode(m_HoveredWidgetID);
-					success = s_UIWindow->m_TreePanel->m_UITree.SelectEntry(path);
-				}
+					EditorUI::TreePath path;
+					bool success{ false };
+					path.AddNode(m_HoveredWindowID);
+					if (m_HoveredWidgetID == k_InvalidWidgetID)
+					{
+						success = s_UIWindow->m_TreePanel->m_UITree.SelectEntry(path);
+					}
+					else
+					{
+						s_UIWindow->m_TreePanel->m_UITree.ExpandNodePath(path);
+						path.AddNode(m_HoveredWidgetID);
+						success = s_UIWindow->m_TreePanel->m_UITree.SelectEntry(path);
+					}
 
-				if (!success)
-				{
-					KG_WARN("Failed to select window/widget with ID {} and {}", m_HoveredWindowID, m_HoveredWidgetID);
+					if (!success)
+					{
+						KG_WARN("Failed to select window/widget with ID {} and {}", m_HoveredWindowID, m_HoveredWidgetID);
+					}
 				}
 			}
+			
 		}
+
+		DrawGizmo();
 
 		DrawToolbarOverlay();
 
@@ -141,6 +147,42 @@ namespace Kargono::Panels
 	void UIEditorViewportPanel::OnInputEvent(Events::Event* event)
 	{
 		m_EditorCamera.OnInputEvent(event);
+	}
+
+	bool UIEditorViewportPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	{
+		// Check if alt key is pressed
+		bool alt = Input::InputService::IsKeyPressed(Key::LeftAlt) || Input::InputService::IsKeyPressed(Key::RightAlt);
+
+		// Handle various key presses for the user interface editor panel
+		switch (event.GetKeyCode())
+		{
+			
+			case Key::Q:
+			{
+				// Reset gizmo type
+				if (!ImGuizmo::IsUsing() && !alt)
+				{
+					m_GizmoType = -1;
+					return true;
+				}
+			}
+			case Key::W:
+			{
+				// Set gizmo type to translate
+				if (!ImGuizmo::IsUsing() && !alt)
+				{
+					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+					return true;
+				}
+			}
+			default:
+			{
+				return false;
+			}
+		}
+
+		return false;
 	}
 
 	// Overlay Data
@@ -509,6 +551,124 @@ namespace Kargono::Panels
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
 	}
+	void UIEditorViewportPanel::DrawGizmo()
+	{
+		// Retrieve the active widget and window
+		RuntimeUI::Widget* widget{ s_UIWindow->m_PropertiesPanel->m_ActiveWidget };
+		RuntimeUI::Window* window{ s_UIWindow->m_PropertiesPanel->m_ActiveWindow };
+
+		// Ensure that the window is valid
+		if (!window || m_GizmoType == -1)
+		{
+			return;
+		}
+		
+		
+		if (!widget)
+		{
+			// Set up the gizmo for the window
+			ImGuizmo::SetOrthographic(true);
+			ImGuizmo::SetDrawlist();
+			ImGuizmo::SetRect(m_ScreenViewportBounds[0].x, m_ScreenViewportBounds[0].y,
+				m_ScreenViewportBounds[1].x - m_ScreenViewportBounds[0].x,
+				m_ScreenViewportBounds[1].y - m_ScreenViewportBounds[0].y);
+
+			// Editor Camera
+			const Math::mat4& cameraProjection = m_EditorCamera.GetProjection();
+			Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+
+			// Get window transform
+			Math::vec3 windowPosition = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
+			Math::mat4 transform{ glm::translate(Math::mat4(1.0), windowPosition)};
+
+			// Snapping
+			bool snap = Input::InputService::IsKeyPressed(Key::LeftControl);
+			float snapValue = 0.5f;
+			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) { snapValue = 45.0f; }
+
+			float snapValues[3] = { snapValue, snapValue, snapValue };
+
+			// Manipulate and draw the gizmo
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::WORLD, glm::value_ptr(transform),
+				nullptr, snap ? snapValues : nullptr);
+			if (ImGuizmo::IsUsing())
+			{
+				// Get the new transform
+				Math::vec3 translation, rotation, scale;
+				Math::DecomposeTransform(transform, translation, rotation, scale);
+
+				// Update the window's position
+				window->m_ScreenPosition = window->CalculateScreenPosition(
+					Math::vec2(translation.x, translation.y), 
+					m_ViewportData.m_Width, 
+					m_ViewportData.m_Height);
+			}
+		}
+		else
+		{
+			ImGuizmo::SetOrthographic(true);
+			ImGuizmo::SetDrawlist();
+			ImGuizmo::SetRect(m_ScreenViewportBounds[0].x, m_ScreenViewportBounds[0].y,
+				m_ScreenViewportBounds[1].x - m_ScreenViewportBounds[0].x,
+				m_ScreenViewportBounds[1].y - m_ScreenViewportBounds[0].y);
+
+			// Editor Camera
+			const Math::mat4& cameraProjection = m_EditorCamera.GetProjection();
+			Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+
+			// Get widget transform
+			Math::vec3 windowPosition = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
+			Math::vec3 windowSize = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
+			Math::vec3 widgetPosition = widget->CalculateWorldPosition(windowPosition, windowSize);
+			Math::mat4 transform{ glm::translate(Math::mat4(1.0), widgetPosition) };
+
+			// Snapping
+			bool snap = Input::InputService::IsKeyPressed(Key::LeftControl);
+			float snapValue = 0.5f;
+			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE) { snapValue = 45.0f; }
+
+			float snapValues[3] = { snapValue, snapValue, snapValue };
+
+			// Manipulate and draw the gizmo
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::WORLD, glm::value_ptr(transform),
+				nullptr, snap ? snapValues : nullptr);
+			if (ImGuizmo::IsUsing())
+			{
+				// Get the new transform
+				Math::vec3 translation, rotation, scale;
+				Math::DecomposeTransform(transform, translation, rotation, scale);
+
+				// Update the widget's position
+				Math::vec3 screenPosition = widget->CalculateWindowPosition(
+					Math::vec2(translation.x, translation.y),
+					windowPosition,
+					windowSize);
+
+				// Update the widget's x position
+				if (widget->m_XPositionType == RuntimeUI::PixelOrPercent::Percent)
+				{
+					widget->m_PercentPosition.x = screenPosition.x;
+				}
+				else
+				{
+					widget->m_PixelPosition.x = screenPosition.x;
+				}
+
+				// Update the widget's y position
+				if (widget->m_YPositionType == RuntimeUI::PixelOrPercent::Percent)
+				{
+					widget->m_PercentPosition.y = screenPosition.y;
+				}
+				else
+				{
+					widget->m_PixelPosition.y = screenPosition.y;
+				}
+				
+			}
+		}
+	}
 	void UIEditorViewportPanel::OnOpenUI()
 	{
 		ResetCamera();
@@ -521,7 +681,7 @@ namespace Kargono::Panels
 
 		// Get position data for rendering window
 		Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 initialWindowTranslation = window->CalculatePosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
+		Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
 		Math::vec3 finalWindowTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x / 2), initialWindowTranslation.y + (windowScale.y / 2), initialWindowTranslation.z);
 
 		// Handle either active widget specific debug lines or active window debug lines
@@ -529,7 +689,7 @@ namespace Kargono::Panels
 		{
 			// Calculate the widget's rendering data
 			Math::vec3 widgetSize = widget->CalculateSize(windowScale);
-			Math::vec3 widgetTranslation = widget->CalculatePosition(initialWindowTranslation, windowScale);
+			Math::vec3 widgetTranslation = widget->CalculateWorldPosition(initialWindowTranslation, windowScale);
 			Math::vec3 modifiedOriginTranslation = Math::vec3(
 				widgetTranslation.x + (widgetSize.x / 2), 
 				widgetTranslation.y + (widgetSize.y / 2), 
@@ -616,7 +776,7 @@ namespace Kargono::Panels
 		constexpr float k_VanityPaddingSize{ 15.0f };
 
 		Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 initialWindowTranslation = window->CalculatePosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
+		Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
 		Math::vec3 widgetSize = widget->CalculateSize(windowScale);
 
 
@@ -836,7 +996,7 @@ namespace Kargono::Panels
 		constexpr float k_VanityPaddingSize{ 15.0f };
 
 		Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 initialWindowTranslation = window->CalculatePosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
+		Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
 		Math::vec3 finalWindowTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x / 2), initialWindowTranslation.y + (windowScale.y / 2), initialWindowTranslation.z);
 
 		// Create window's constraint distance lines

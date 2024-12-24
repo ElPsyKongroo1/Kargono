@@ -154,6 +154,19 @@ namespace Kargono::Windows
 	}
 	bool UIEditorWindow::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
+		bool handled{ false };
+		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		if (focusedWindow == m_ViewportPanel->m_PanelName)
+		{
+			handled = m_ViewportPanel->OnKeyPressedEditor(event);
+		}
+
+		// Return if the event was handled
+		if (handled)
+		{
+			return false;
+		}
+
 		// Handle varios key presses for the user interface editor panel
 		switch (event.GetKeyCode())
 		{
