@@ -53,13 +53,13 @@ namespace Kargono::RuntimeUI
 
 	void RuntimeUIService::Terminate()
 	{
-		// Terminate Static Variables
-		s_RuntimeUIContext = nullptr;
-
 		// Terminate Window/Widget Rendering Data
 		{
 			delete s_RuntimeUIContext->m_BackgroundInputSpec.m_ShapeComponent;
 		}
+
+		// Terminate Static Variables
+		s_RuntimeUIContext = nullptr;
 
 		// Verify Termination
 		KG_VERIFY(true, "Runtime UI Engine Terminate");

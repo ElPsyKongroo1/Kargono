@@ -20,6 +20,11 @@ namespace Kargono::Scripting
 	{
 	public:
 		//==============================
+		// Lifecycle Functions
+		//==============================
+		static void Terminate();
+		
+		//==============================
 		// External API
 		//==============================
 		static std::string CompileScriptFile(const std::filesystem::path& scriptLocation);

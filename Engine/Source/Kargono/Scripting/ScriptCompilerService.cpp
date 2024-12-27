@@ -68,6 +68,11 @@ namespace Kargono::Scripting
 		{ ScriptTokenType::PrimitiveType, "float" }
 	};
 
+	void ScriptCompilerService::Terminate()
+	{
+		s_ActiveLanguageDefinition.Clear();
+	}
+
 	std::string ScriptCompilerService::CompileScriptFile(const std::filesystem::path& scriptLocation)
 	{
 		// Lazy loading KGScript language def
