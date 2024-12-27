@@ -52,6 +52,8 @@ namespace Kargono::Rendering
 	}
 	void RenderingService::Shutdown()
 	{
+		s_Data.CameraUniformBuffer.reset();
+		s_Data.DrawCalls.clear();
 	}
 	void RenderingService::BeginScene(const Camera& camera, const Math::mat4& transform)
 	{

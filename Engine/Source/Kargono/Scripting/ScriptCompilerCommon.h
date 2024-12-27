@@ -562,7 +562,6 @@ namespace Kargono::Scripting
 		std::unordered_map<std::string, std::string> NamespaceDescriptions {};
 		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
 		std::vector<InitializationListType> InitListTypes {};
-
 		std::unordered_set<std::string> AllMessageTypes{};
 	public:
 		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)
@@ -575,6 +574,17 @@ namespace Kargono::Scripting
 			return {};
 		}
 	public:
+
+		void Clear()
+		{
+			Keywords.clear();
+			PrimitiveTypes.clear();
+			NamespaceDescriptions.clear();
+			FunctionDefinitions.clear();
+			InitListTypes.clear();
+			AllMessageTypes.clear();
+		}
+
 		operator bool() const
 		{
 			return Keywords.size() > 0 || PrimitiveTypes.size() > 0 || FunctionDefinitions.size() > 0;

@@ -21,13 +21,23 @@ else
   exit 1
 fi
 
-# Install UI Dependency: gtk-4-dev
-echo "Installing libgtk-4-dev..."
-apt install -y libgtk-4-dev
+# Install GTK-3 for Zenity
+echo "Installing libgtk-3-dev..."
+apt install -y libgtk-3-dev
 if [ $? -eq 0 ]; then
-  echo "libgtk-4-dev installed successfully."
+  echo "libgtk-3-dev installed successfully."
 else
-  echo "An error occurred while installing libgtk-4-dev."
+  echo "An error occurred while installing libgtk-3-dev."
+  exit 1
+fi
+
+# Install Zenity for GUI dialogs
+echo "Installing zenity..."
+apt install -y zenity
+if [ $? -eq 0 ]; then
+  echo "zenity installed successfully."
+else
+  echo "An error occurred while installing zenity."
   exit 1
 fi
 

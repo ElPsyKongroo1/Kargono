@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
 #include "EditorApp.h"
+#include "Kargono/Scripting/ScriptCompilerService.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
 
@@ -54,9 +55,13 @@ namespace Kargono
 	{
 		// Terminate engine services
 		EditorUI::EditorUIService::Terminate();
+		RuntimeUI::RuntimeUIService::Terminate();
 		Audio::AudioService::Terminate();
 		Scripting::ScriptService::Terminate();
 		AI::AIService::Terminate();
+		Scripting::ScriptCompilerService::Terminate();
+		Rendering::RenderingService::Shutdown();
+		Assets::AssetService::ClearAll();
 	}
 
 	void EditorApp::OnUpdate(Timestep ts)
