@@ -114,6 +114,7 @@ namespace Kargono::RuntimeUI
 					{
 						TextWidget* textWidget = (TextWidget*)widget.get();
 						textWidget->CalculateTextSize();
+						textWidget->CalculateTextMetadata(&window);
 					}
 				}
 			}
@@ -345,6 +346,7 @@ namespace Kargono::RuntimeUI
 				{
 					TextWidget* textWidget = (TextWidget*)widget.get();
 					textWidget->CalculateTextSize();
+					textWidget->CalculateTextMetadata(&window);
 				}
 			}
 		}
@@ -922,14 +924,24 @@ namespace Kargono::RuntimeUI
 		// Create the widget's text rendering data
 		widgetTranslation.z += 0.001f;
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
-		float textSize = (viewportWidth * 0.15f * m_TextSize) * (resolution.y / resolution.x);
+		float textSize{ (viewportWidth * 0.15f * m_TextSize) * (resolution.y / resolution.x) };
+
 		if (m_TextCentered)
 		{
 			widgetTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((m_TextAbsoluteDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextAbsoluteDimensions.y * 0.5f) * textSize), widgetTranslation.z);
 		}
 
 		// Call the text's rendering function
-		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->PushTextData(m_Text, widgetTranslation, m_TextColor, textSize);
+		if (m_TextWrapped)
+		{
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->PushTextData(m_Text, 
+				widgetTranslation, m_TextColor, textSize, (int)widgetSize.x);
+		}
+		else
+		{
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->PushTextData(m_Text,
+				widgetTranslation, m_TextColor, textSize);
+		}
 	}
 
 	void TextWidget::CalculateTextSize()
@@ -945,13 +957,37 @@ namespace Kargono::RuntimeUI
 		m_TextAbsoluteDimensions = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextSize(m_Text);
 	}
 
-	void TextWidget::SetText(const std::string& newText)
+	void TextWidget::CalculateTextMetadata(Window* parentWindow)
+	{
+		KG_ASSERT(parentWindow);
+
+		// Get the resolution of the screen and the viewport
+		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		ViewportData viewportData = EngineService::GetActiveWindow().GetActiveViewport();
+		float textSize{ (viewportData.m_Width * 0.15f * m_TextSize) * (resolution.y / resolution.x) };
+
+		// Get widget width
+		Math::vec3 widgetSize = CalculateSize(parentWindow->CalculateSize(viewportData.m_Width, viewportData.m_Height));
+
+		// Calculate the text size of the widget using the default font if the active user interface is not set
+		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
+		{
+			RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize, (int)widgetSize.x);
+			return;
+		}
+
+		// Calculate the text size of the widget using the active user interface font
+		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize, (int)widgetSize.x);
+	}
+
+	void TextWidget::SetText(const std::string& newText, Window* parentWindow)
 	{
 		// Set the text of the widget
 		m_Text = newText;
 
 		// Calculate the new text size
 		CalculateTextSize();
+		CalculateTextMetadata(parentWindow);
 	}
 
 	Math::vec3 Widget::CalculateSize(const Math::vec3& windowSize)

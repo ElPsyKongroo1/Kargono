@@ -23,6 +23,7 @@ namespace Kargono::RuntimeUI
 {
 	class UserInterfaceService;
 	struct RuntimeUIContext;
+	class Window;
 
 
 	//============================
@@ -154,13 +155,14 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Modify State
 		//============================
-		void SetText(const std::string& newText);
+		void SetText(const std::string& newText, Window* parentWindow);
 
 	private:
 		//============================
 		// Internal Re-validation Methods
 		//============================
 		void CalculateTextSize();
+		void CalculateTextMetadata(Window* parentWindow);
 	public:
 		//============================
 		// Public Fields
@@ -171,7 +173,8 @@ namespace Kargono::RuntimeUI
 		bool m_TextCentered{ true };
 		bool m_TextWrapped{ true };
 	private:
-		Math::vec2 m_TextAbsoluteDimensions {};
+		TextMetadata m_TextMetadata{};
+		Math::vec2 m_TextAbsoluteDimensions{};
 	private:
 		friend class RuntimeUIService;
 		friend class Assets::UserInterfaceManager;

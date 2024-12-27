@@ -17,6 +17,13 @@ namespace Kargono::RuntimeUI
 {
 	class Font;
 
+	struct TextMetadata
+	{
+		std::vector<float> m_LineWidths;
+		std::vector<size_t> m_LineBreaks;
+	};
+
+
 	//============================================================
 	// Text Class
 	//============================================================
@@ -67,8 +74,9 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Font API
 		//==============================
-		void PushTextData(const std::string& string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f);
+		void PushTextData(const std::string& string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f, int maxLineWidth = 0);
 		Math::vec2 CalculateTextSize(const std::string& text);
+		void CalculateTextMetadata(const std::string& text, TextMetadata& metadata, float scale, int maxLineWidth = 0);
 
 	public:
 		//==============================
