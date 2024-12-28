@@ -124,8 +124,12 @@ namespace Kargono::Utility
 	{
 		KG_ASSERT(std::filesystem::is_directory(path), "Invalid path provided, needs to be a directory!");
 		// TODO: Add More Input Validation for system call.
-		std::string outputString = "explorer " + path.string();
-		system(outputString.c_str());
+		#if defined(KG_PLATFORM_WINDOWS)
+		std::string command = "explorer " + path.string();
+		#elif defined(KG_PLATFORM_LINUX)
+		std::string command = "xdg-open " + path.string();
+		#endif
+		system(command.c_str());
 	}
 
 	void OSCommands::OpenTerminal(const std::filesystem::path& path)
@@ -135,28 +139,24 @@ namespace Kargono::Utility
 		std::string command;
 
 		// Open Command Prompt at the specified directory
+		#if defined(KG_PLATFORM_WINDOWS)
 		command = "start cmd /K \"cd /d " + path.string() + "\"";
-
+		#elif defined(KG_PLATFORM_LINUX)
+	    command = "gnome-terminal -- bash -c 'cd " + path.string() + " && exec bash'";
+		#endif
 		// Execute the command to open the terminal
 		system(command.c_str());
 	}
 
-	void OSCommands::OpenScriptProject(const std::filesystem::path& path)
-	{
-		// TODO: Add More Input Validation for system call.
-		if (!Utility::FileSystem::PathExists(path))
-		{
-			KG_ERROR("Invalid path provided to OpenScriptProject");
-			return;
-		}
-		std::string outputString = "start " + path.string();
-		system(outputString.c_str());
-	}
 
 	void OSCommands::OpenProfiler()
 	{
+	#if defined(KG_PLATFORM_WINDOWS)
 		std::string outputString = "start " + std::string("../Dependencies/optick/Optick.exe");
 		system(outputString.c_str());
+	#else
+		KG_WARN("Profiler only supported on Windows currently");
+	#endif 
 	}
 
 	void OSCommands::DownloadGitProject(const std::filesystem::path& downloadPath, const std::string& projectURI)
@@ -167,8 +167,12 @@ namespace Kargono::Utility
 
 	void OSCommands::OpenWebURL(const std::string& webURL)
 	{
-		std::string op = std::string("start ").append(webURL);
-		system(op.c_str());
+		#if defined(KG_PLATFORM_WINDOWS)
+		std::string command = std::string("start ").append(webURL);
+		#elif defined(KG_PLATFORM_LINUX)
+		std::string command = "xdg-open " + webURL;
+		#endif
+		system(command.c_str());
 	}
 
 #endif

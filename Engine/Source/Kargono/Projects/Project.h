@@ -148,7 +148,8 @@ namespace Kargono::Projects
 	public:
 		static void ExportProject(const std::filesystem::path& exportLocation, bool createServer);
 	private:
-		static bool BuildRuntimeExecutable(const std::filesystem::path& projectDirectory, bool createServer);
+		static bool BuildExecutableMSVC(const std::filesystem::path& projectDirectory, bool createServer);
+		static bool BuildExecutableGCC(const std::filesystem::path& projectDirectory, bool createServer);
 	public:
 		//=========================
 		// Getters/Setters API

@@ -6,8 +6,10 @@
 
 #include "API/Serialization/yamlcppAPI.h"
 
-#ifdef KG_PLATFORM_WINDOWS
+#if defined(KG_PLATFORM_WINDOWS) 
 #include "API/Platform/WindowsBackendAPI.h"
+#elif defined(KG_PLATFORM_LINUX)
+#include "API/Platform/LinuxBackendAPI.h"
 #endif
 
 namespace Kargono::Utility
@@ -124,13 +126,19 @@ namespace Kargono::Projects
 		}
 
 		KG_INFO("Copying runtime shared libraries");
-		// Copy OpenAL.dll file
+		// Copy OpenAL shared library
+#if defined(KG_PLATFORM_WINDOWS)
 		success = Utility::FileSystem::CopySingleFile(
 			std::filesystem::current_path().parent_path() / "Dependencies/OpenAL/lib/dist/OpenAL32.dll",
 			exportDirectory / "OpenAL32.dll");
+#elif defined(KG_PLATFORM_LINUX)
+		success = Utility::FileSystem::CopySingleFile(
+			std::filesystem::current_path().parent_path() / "Dependencies/OpenAL/lib/dist/libopenal.so",
+			exportDirectory / "libopenal.so");
+#endif
 		if (!success)
 		{
-			KG_WARN("Failed to move OpenAL32.dll file into export directory!");
+			KG_WARN("Failed to move openAL shared library file into export directory!");
 			Utility::FileSystem::DeleteSelectedDirectory(exportDirectory);
 			return;
 		}
@@ -151,7 +159,12 @@ namespace Kargono::Projects
 
 		KG_INFO("Building runtime executable");
 		Utility::FileSystem::DeleteSelectedFile("Log/BuildRuntimeExecutable.log");
-		success = BuildRuntimeExecutable(exportDirectory, false);
+#if defined(KG_PLATFORM_WINDOWS)
+		success = BuildExecutableMSVC(exportDirectory, false);
+#elif defined(KG_PLATFORM_LINUX)
+		success = BuildExecutableGCC(exportDirectory, false);
+#endif
+		
 
 		if (!success)
 		{
@@ -168,7 +181,11 @@ namespace Kargono::Projects
 		{
 			KG_INFO("Building server executable");
 			Utility::FileSystem::DeleteSelectedFile("Log/BuildServerExecutable.log");
-			success = BuildRuntimeExecutable(serverExportDirectory, true);
+#if defined(KG_PLATFORM_WINDOWS)
+				success = BuildExecutableMSVC(serverExportDirectory, true);
+#elif defined(KG_PLATFORM_LINUX)
+				success = BuildExecutableGCC(serverExportDirectory, true);
+#endif
 
 			if (!success)
 			{
@@ -185,7 +202,103 @@ namespace Kargono::Projects
 			KG_INFO("Successfully exported {} project server to {}", s_ActiveProject->Name, serverExportDirectory.string());
 		}
 	}
-	bool ProjectService::BuildRuntimeExecutable(const std::filesystem::path& exportDirectory, bool createServer)
+
+	bool ProjectService::BuildExecutableGCC(const std::filesystem::path& exportDirectory, bool createServer)
+	{
+		KG_ASSERT(s_ActiveProject, "Failed to build runtime executable since no active project exists");
+		std::filesystem::path projectPath { std::filesystem::current_path().parent_path()};
+		std::filesystem::path intermediatesPath { exportDirectory / "Temp/" };
+
+		// Ensure all relevant directories have been created
+		Utility::FileSystem::CreateNewDirectory(intermediatesPath);
+		Utility::FileSystem::CreateNewDirectory(projectPath / "Editor/Log");
+
+		// Check if the project path exists
+		if (!Utility::FileSystem::PathExists(projectPath) || !Utility::FileSystem::IsRegularFile(projectPath / "Makefile")) 
+		{
+			KG_WARN("Failed to build executable. Could not locate/invalid Makefile");
+			return false;
+		}
+
+		std::stringstream outputStream {};
+
+		// Group commands together
+		outputStream << "{ ";
+
+		// Change directory to the project path
+		outputStream << "cd \"" << projectPath.string() << "\" && ";
+
+		// Set environment variables or build options
+		if (createServer) 
+		{
+			outputStream << "export ExternalCompilerOptions=KG_EXPORT_SERVER && ";
+		} 
+		else 
+		{
+			outputStream << "export ExternalCompilerOptions=KG_EXPORT_RUNTIME && ";
+		}
+
+		// Specify make command
+		outputStream << "make ";
+
+		// Specify target executable
+		if (createServer)
+		{
+			outputStream << "Server ";
+		}
+		else
+		{
+			outputStream << "Runtime ";
+		}
+
+		// Specify the output directory and configuration
+		outputStream << "TARGETDIR=\"" << intermediatesPath.string() << "\" ";
+		outputStream << "CONFIG=Dist; ";
+
+		// Group commands together
+		outputStream << " } ";
+
+		// Redirect output to log files
+		if (createServer) 
+		{
+			outputStream << ">> ./Log/BuildServerExecutable.log 2>&1 ";
+		} 
+		else 
+		{
+			outputStream << ">> ./Log/BuildRuntimeExecutable.log 2>&1 ";
+		}
+		// Execute the build command
+		bool success = system(outputStream.str().c_str()) == 0;
+
+		if (!success) 
+		{
+			KG_WARN("Command line operation returned error code");
+			return false;
+		}
+
+		// Move Executable into main directory
+		if (createServer) 
+		{
+			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Server", exportDirectory / (s_ActiveProject->Name + "Server"));
+		} 
+		else 
+		{
+			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Runtime", exportDirectory / (s_ActiveProject->Name));
+		}
+
+		if (!success) 
+		{
+			KG_WARN("Failed to copy executable file into export directory");
+			return false;
+		}
+
+		// Remove Intermediates
+		Utility::FileSystem::DeleteSelectedDirectory(intermediatesPath);
+
+		return true;
+	}
+
+	bool ProjectService::BuildExecutableMSVC(const std::filesystem::path& exportDirectory, bool createServer)
 	{
 		KG_ASSERT(s_ActiveProject, "Failed to build runtime executable since no active project exists");
 		std::filesystem::path solutionPath { std::filesystem::current_path().parent_path() / "Kargono.sln" };

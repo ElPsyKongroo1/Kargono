@@ -14,6 +14,21 @@
             "cwd": "/home/elpsykongroo/Desktop/Kargono/Editor",
             "binaryPath": "/home/elpsykongroo/Desktop/Kargono/Binary/Debug_linux/Editor/Editor",
             "binaryArgs": []
+        },
+        {
+            "cwd": "/home/elpsykongroo/Desktop/Kargono/Runtime",
+            "binaryPath": "/home/elpsykongroo/Desktop/Kargono/Binary/Debug_linux/Runtime/Runtime",
+            "binaryArgs": []
+        },
+        {
+            "cwd": "/home/elpsykongroo/Desktop/Kargono/Runtime",
+            "binaryPath": "/home/elpsykongroo/Desktop/Kargono/Binary/Debug_linux/Runtime/Runtime",
+            "binaryArgs": []
+        },
+        {
+            "cwd": "/home/elpsykongroo/Desktop/Kargono/Server",
+            "binaryPath": "/home/elpsykongroo/Desktop/Kargono/Binary/Debug_linux/Server/Server",
+            "binaryArgs": []
         }
     ],
     "makefile.alwaysPreConfigure": true,

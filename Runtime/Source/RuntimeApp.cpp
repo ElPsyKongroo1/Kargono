@@ -93,9 +93,9 @@ namespace Kargono
 		Audio::AudioService::Terminate();
 		Scripting::ScriptService::Terminate();
 		AI::AIService::Terminate();
+		Assets::AssetService::ClearAll();
 		RuntimeUI::FontService::Terminate();
 		Scenes::SceneService::Terminate();
-		Assets::AssetService::ClearAll();
 		Rendering::RenderingService::Shutdown();
 	}
 
