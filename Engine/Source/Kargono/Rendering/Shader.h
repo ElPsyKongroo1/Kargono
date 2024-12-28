@@ -50,6 +50,8 @@ namespace Kargono::Rendering
 		void* m_EntityRegistry;
 		Math::mat4 m_TransformMatrix;
 		Math::mat4 m_ObjectOutlineMatrix;
+	public:
+		void ClearData();
 	};
 
 	// This struct specifies the type of color input used by a shader

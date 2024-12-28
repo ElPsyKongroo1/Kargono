@@ -40,6 +40,7 @@ namespace Kargono::RuntimeUI
 		//		file that enables draw call data for the text to be submitted to the
 		//		renderer.
 		static void Init();
+		static void Terminate();
 
 		//==============================
 		// Create Unmanaged Font

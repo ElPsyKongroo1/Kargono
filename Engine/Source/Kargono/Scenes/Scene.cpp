@@ -16,6 +16,7 @@
 
 namespace Kargono::Scenes
 {
+	static Rendering::RendererInputSpec s_InputSpec{};
 
 	Ref<Scene> SceneService::CreateSceneCopy(Ref<Scene> other)
 	{
@@ -333,26 +334,22 @@ namespace Kargono::Scenes
 			for (auto entity : view)
 			{
 				const auto& [transform, shape] = view.get<ECS::TransformComponent, ECS::ShapeComponent>(entity);
-
-				static Rendering::RendererInputSpec inputSpec{};
-				inputSpec.m_Shader = shape.Shader;
-				inputSpec.m_Buffer = shape.ShaderData;
-				inputSpec.m_Entity = static_cast<uint32_t>(entity);
-				inputSpec.m_EntityRegistry = &m_EntityRegistry.m_EnTTRegistry;
-				inputSpec.m_ShapeComponent = &shape;
-				inputSpec.m_TransformMatrix = transform.GetTransform();
+				s_InputSpec.m_Shader = shape.Shader;
+				s_InputSpec.m_Buffer = shape.ShaderData;
+				s_InputSpec.m_Entity = static_cast<uint32_t>(entity);
+				s_InputSpec.m_EntityRegistry = &m_EntityRegistry.m_EnTTRegistry;
+				s_InputSpec.m_ShapeComponent = &shape;
+				s_InputSpec.m_TransformMatrix = transform.GetTransform();
 
 				for (const auto& PerObjectSceneFunction : shape.Shader->GetFillDataObjectScene())
 				{
-					PerObjectSceneFunction(inputSpec);
+					PerObjectSceneFunction(s_InputSpec);
 				}
 
-				Rendering::RenderingService::SubmitDataToRenderer(inputSpec);
+				Rendering::RenderingService::SubmitDataToRenderer(s_InputSpec);
 			}
 		}
-
 		Rendering::RenderingService::EndScene();
-
 	}
 	void Scene::OnUpdateEntities(Timestep ts)
 	{
@@ -373,6 +370,13 @@ namespace Kargono::Scenes
 	void SceneService::Init()
 	{
 		Utility::RegisterHasComponent(ECS::AllComponents{});
+	}
+
+	void SceneService::Terminate()
+	{
+		s_InputSpec.ClearData();
+		s_ActiveScene.reset();
+		s_ActiveSceneHandle = Assets::EmptyHandle;
 	}
 	Math::vec3 SceneService::TransformComponentGetTranslation(UUID entityID)
 	{

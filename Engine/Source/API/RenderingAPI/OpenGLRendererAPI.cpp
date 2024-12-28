@@ -45,7 +45,7 @@ namespace Kargono::Utility
 		case GL_DEBUG_SEVERITY_HIGH:
 		{
 			severityString = "High";
-			KG_ERROR("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
+			KG_CRITICAL("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
 			return;
 		}
 		case GL_DEBUG_SEVERITY_MEDIUM:

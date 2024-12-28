@@ -60,8 +60,13 @@ namespace Kargono
 		Scripting::ScriptService::Terminate();
 		AI::AIService::Terminate();
 		Scripting::ScriptCompilerService::Terminate();
-		Rendering::RenderingService::Shutdown();
 		Assets::AssetService::ClearAll();
+		RuntimeUI::FontService::Terminate();
+		Scenes::SceneService::Terminate();
+		Rendering::RenderingService::Shutdown();
+
+		m_MainWindow.reset();
+		m_UIEditorWindow.reset();
 	}
 
 	void EditorApp::OnUpdate(Timestep ts)

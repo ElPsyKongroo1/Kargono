@@ -153,6 +153,7 @@ namespace Kargono::Scenes
 		// LifeCycle Functions
 		//====================
 		static void Init();
+		static void Terminate();
 	public:
 		//====================
 		// Get Entity Components

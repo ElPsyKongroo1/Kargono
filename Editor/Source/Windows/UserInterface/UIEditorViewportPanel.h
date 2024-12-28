@@ -21,6 +21,7 @@ namespace Kargono::Panels
 		// Constructor/Destructor
 		//=========================
 		UIEditorViewportPanel();
+		~UIEditorViewportPanel();
 
 	private:
 		//=========================
@@ -29,6 +30,11 @@ namespace Kargono::Panels
 		void InitializeFrameBuffer();
 		void InitializeOverlayData();
 
+	private:
+		//=========================
+		// Termination Functions
+		//=========================
+		void ClearOverlayData();
 	public:
 		//=========================
 		// On Event Functions

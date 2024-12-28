@@ -28,6 +28,11 @@ namespace Kargono::Panels
 
 		InitializeOverlayData();
 	}
+
+	ViewportPanel::~ViewportPanel()
+	{
+		ClearOverlayData();
+	}
 	void ViewportPanel::OnUpdate(Timestep ts)
 	{
 		KG_PROFILE_FUNCTION();
@@ -532,6 +537,13 @@ namespace Kargono::Panels
 		}
 
 		// TODO: Shape Components and Buffers are memory leaks!
+	}
+
+	void ViewportPanel::ClearOverlayData()
+	{
+		s_LineInputSpec.ClearData();
+		s_PointInputSpec.ClearData();
+		s_CircleInputSpec.ClearData();
 	}
 
 	void ViewportPanel::OnOverlayRender()

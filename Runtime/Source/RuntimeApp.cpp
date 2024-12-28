@@ -93,8 +93,10 @@ namespace Kargono
 		Audio::AudioService::Terminate();
 		Scripting::ScriptService::Terminate();
 		AI::AIService::Terminate();
-		Rendering::RenderingService::Shutdown();
+		RuntimeUI::FontService::Terminate();
+		Scenes::SceneService::Terminate();
 		Assets::AssetService::ClearAll();
+		Rendering::RenderingService::Shutdown();
 	}
 
 	void RuntimeApp::OnUpdate(Timestep ts)

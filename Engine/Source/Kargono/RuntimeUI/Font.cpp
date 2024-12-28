@@ -79,6 +79,12 @@ namespace Kargono::RuntimeUI
 		KG_VERIFY(true, "Runtime Text Engine Init")
 	}
 
+	void FontService::Terminate()
+	{
+		s_TextInputSpec.ClearData();
+	}
+
+
 	Ref<Font> FontService::InstantiateEditorFont(const std::filesystem::path& filepath)
 	{
 		std::vector<msdf_atlas::GlyphGeometry> glyphs;

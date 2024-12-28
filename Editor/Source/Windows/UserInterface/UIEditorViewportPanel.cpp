@@ -27,6 +27,12 @@ namespace Kargono::Panels
 		m_ViewportAspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 
 	}
+
+	UIEditorViewportPanel::~UIEditorViewportPanel()
+	{
+		ClearOverlayData();
+	}
+
 	void UIEditorViewportPanel::InitializeFrameBuffer()
 	{
 		Rendering::FramebufferSpecification fbSpec;
@@ -224,6 +230,11 @@ namespace Kargono::Panels
 			s_LineInputSpec.m_Buffer = localBuffer;
 			s_LineInputSpec.m_ShapeComponent = lineShapeComponent;
 		}
+	}
+
+	void UIEditorViewportPanel::ClearOverlayData()
+	{
+		s_LineInputSpec.ClearData();
 	}
 
 	void UIEditorViewportPanel::DrawOverlay()

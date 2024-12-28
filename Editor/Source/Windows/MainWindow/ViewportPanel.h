@@ -27,6 +27,7 @@ namespace Kargono::Panels
 		// Constructor/Destructor
 		//=========================
 		ViewportPanel();
+		~ViewportPanel();
 
 		//=========================
 		// On Event Functions
@@ -69,6 +70,7 @@ namespace Kargono::Panels
 		// This function initializes the static data used by the OnOverlayRender()
 		//		function below. This function is called in Init().
 		void InitializeOverlayData();
+		void ClearOverlayData();
 
 
 	private:
