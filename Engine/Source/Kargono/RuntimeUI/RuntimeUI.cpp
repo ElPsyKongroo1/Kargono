@@ -391,6 +391,10 @@ namespace Kargono::RuntimeUI
 
 	void RuntimeUIService::SetSelectedWidgetColor(const Math::vec4& color)
 	{
+		if (!s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget)
+		{
+			return;
+		}
 		s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = color;
 	}
 

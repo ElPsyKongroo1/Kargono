@@ -72,6 +72,19 @@ namespace Kargono::Panels
 				fontHandle
 			};
 			EditorUI::EditorUIService::SelectOption(m_UISelectFont);
+
+			// Edit on move for current UI
+			Assets::AssetHandle onMoveHandle = s_UIWindow->m_EditorUI->m_FunctionPointers.m_OnMoveHandle;
+			m_UIOnMove.m_CurrentOption =
+			{
+				onMoveHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScriptInfo(onMoveHandle).Data.FileLocation.stem().string(),
+				onMoveHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_UIOnMove);
+
+			// Edit UI's selection color
+			m_UISelectionColor.m_CurrentVec4 = s_UIWindow->m_EditorUI->m_SelectColor;
+			EditorUI::EditorUIService::EditVec4(m_UISelectionColor);
 		}
 	}
 
@@ -245,6 +258,9 @@ namespace Kargono::Panels
 		{
 			s_UIWindow->m_EditorUI->m_FontHandle = Assets::EmptyHandle;
 			s_UIWindow->m_EditorUI->m_Font = nullptr;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 			return;
 		}
 
@@ -256,6 +272,8 @@ namespace Kargono::Panels
 		// Update UI font to new type
 		RuntimeUI::RuntimeUIService::SetActiveFont(fontRef, entry.m_Handle);
 
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnOpenUIFontPopup()
@@ -271,6 +289,110 @@ namespace Kargono::Panels
 		}
 	}
 
+	void UIEditorPropertiesPanel::OnModifyUIOnMove(const EditorUI::OptionEntry& entry)
+	{
+		// Clear the on move script if the provided handle is empty
+		if (entry.m_Handle == Assets::EmptyHandle)
+		{
+			RuntimeUI::RuntimeUIService::SetActiveOnMove(Assets::EmptyHandle, nullptr);
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		// Get script and ensure valid
+		Ref<Scripting::Script> script = Assets::AssetService::GetScript(entry.m_Handle);
+		KG_ASSERT(script);
+
+		// Set the on move script for the UI
+		RuntimeUI::RuntimeUIService::SetActiveOnMove(entry.m_Handle, script);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnOpenUIOnMovePopup()
+	{
+		// Clear existing options
+		m_UIOnMove.ClearOptions();
+		m_UIOnMove.AddToOptions("Clear", "None", Assets::EmptyHandle);
+
+		// Add all compatible scripts to the select options
+		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
+		{
+			// Get script from handle
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+
+			// Ensure script is compatible with the text widget
+			if (script->m_FuncType != WrappedFuncType::Void_None)
+			{
+				continue;
+			}
+
+			// Add script to the select options
+			m_UIOnMove.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+		}
+	}
+
+	void UIEditorPropertiesPanel::OnOpenTooltipForUIOnMove()
+	{
+		// Clear existing options
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+
+		// Add option to opening an existing script
+		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			m_UIOnMove.m_OpenPopup = true;
+		} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+		// Add option or creating a new script from this usage point
+		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			// Open create script dialog in script editor
+			s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+			{
+					// Ensure handle provides a script in the registry
+					if (!Assets::AssetService::HasScript(scriptHandle))
+					{
+						KG_WARN("Could not find script");
+						return;
+					}
+
+					// Ensure function type matches definition
+					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+					if (script->m_FuncType != WrappedFuncType::Void_None)
+					{
+						KG_WARN("Incorrect function type returned when linking script to usage point");
+						return;
+					}
+
+					// Set the on move script for the UI and editor
+					RuntimeUI::RuntimeUIService::SetActiveOnMove(scriptHandle, script);
+					m_UIOnMove.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+
+					// Set the active editor UI as edited
+					s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+				}, {});
+			} 
+		};
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+		// Open tooltip
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyUISelectionColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Update the UI's selection color
+		s_UIWindow->m_EditorUI->m_SelectColor = spec.m_CurrentVec4;
+		RuntimeUI::RuntimeUIService::SetSelectedWidgetColor(spec.m_CurrentVec4);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
 	void UIEditorPropertiesPanel::InitializeUIOptions()
 	{
 		// Set up header for window options
@@ -278,11 +400,23 @@ namespace Kargono::Panels
 		m_UIHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
 		m_UIHeader.m_Expanded = true;
 
-		// Set up widget to modify the window's default widget
+		// Set up widget to modify the UI's font
 		m_UISelectFont.m_Label = "Font";
 		m_UISelectFont.m_Flags |= EditorUI::SelectOption_Indented;
 		m_UISelectFont.m_PopupAction = KG_BIND_CLASS_FN(OnOpenUIFontPopup);
 		m_UISelectFont.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUIFont);
+
+		// Set up widget to modify the UI's OnMove functions
+		m_UIOnMove.m_Label = "On Move";
+		m_UIOnMove.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_UIOnMove.m_PopupAction = KG_BIND_CLASS_FN(OnOpenUIOnMovePopup);
+		m_UIOnMove.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUIOnMove);
+		m_UIOnMove.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForUIOnMove);
+
+		// Set up widget to modify the UI's selection background color
+		m_UISelectionColor.m_Label = "Selection Color";
+		m_UISelectionColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_UISelectionColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUISelectionColor);
 
 		
 	}
@@ -821,6 +955,9 @@ namespace Kargono::Panels
 		{
 			m_ActiveWidget->m_FunctionPointers.m_OnPress = nullptr;
 			m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 			return;
 		}
 

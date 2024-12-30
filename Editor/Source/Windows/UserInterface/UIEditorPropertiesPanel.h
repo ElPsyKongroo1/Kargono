@@ -61,8 +61,15 @@ namespace Kargono::Panels
 		//=========================
 		// Change UI Data
 		//=========================
+		// Modify font
 		void OnModifyUIFont(const EditorUI::OptionEntry& entry);
 		void OnOpenUIFontPopup();
+		// Modify on move function
+		void OnModifyUIOnMove(const EditorUI::OptionEntry& entry);
+		void OnOpenUIOnMovePopup();
+		void OnOpenTooltipForUIOnMove();
+		// Modify selection color
+		void OnModifyUISelectionColor(EditorUI::EditVec4Spec& spec);
 
 		//=========================
 		// Change Window Data
@@ -140,6 +147,8 @@ namespace Kargono::Panels
 		// Edit UI Options
 		EditorUI::CollapsingHeaderSpec m_UIHeader{};
 		EditorUI::SelectOptionSpec m_UISelectFont{};
+		EditorUI::SelectOptionSpec m_UIOnMove{};
+		EditorUI::EditVec4Spec m_UISelectionColor{};
 
 		// Edit Window Options
 		EditorUI::CollapsingHeaderSpec m_WindowHeader{};
