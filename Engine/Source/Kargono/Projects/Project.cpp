@@ -253,6 +253,7 @@ namespace Kargono::Projects
 
 		// Specify the output directory and configuration
 		outputStream << "TARGETDIR=\"" << intermediatesPath.string() << "\" ";
+		outputStream << "OBJDIR=\"" << intermediatesPath.string() << "\" ";
 		outputStream << "CONFIG=Dist; ";
 
 		// Group commands together

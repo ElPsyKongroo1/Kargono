@@ -36,6 +36,7 @@ namespace Kargono::Panels
 		void OnRefreshData();
 		void OnRefreshUITree();
 		void RecalculateTreeIndexData();
+		void SelectTreeNode(uint16_t windowID, uint16_t widgetID);
 
 		//=========================
 		// On Action Functions
@@ -45,9 +46,15 @@ namespace Kargono::Panels
 		void OnOpenUI(Assets::AssetHandle newHandle);
 
 		//=========================
+		// Manage UserInterface
+		//=========================
+		void SelectUI(EditorUI::TreeEntry& entry);
+
+		//=========================
 		// Manage Windows
 		//=========================
 		void AddWindow();
+		void AddWindow(EditorUI::TreeEntry& entry);
 		void SelectWindow(EditorUI::TreeEntry& entry);
 		void DeleteWindow(EditorUI::TreeEntry& entry);
 

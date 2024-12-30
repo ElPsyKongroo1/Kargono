@@ -71,20 +71,32 @@ namespace Kargono::Panels
 		// Clear the tree before adding new entries
 		m_UITree.ClearTree();
 
+		// Create UI tree entry
+		// Create new window entry
+		EditorUI::TreeEntry uiEntry{};
+		uiEntry.m_Label = Assets::AssetService::GetUserInterfaceRegistry().at(
+			s_UIWindow->m_EditorUIHandle).Data.FileLocation.stem().string();
+		uiEntry.m_IconHandle = EditorUI::EditorUIService::s_IconUserInterface;
+		uiEntry.m_Handle = s_UIWindow->m_EditorUIHandle;
+
+		// Add functions to call when interacting with window entry
+		uiEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectUI);
+		uiEntry.m_OnRightClickSelection.push_back({ "Add Window", KG_BIND_CLASS_FN(AddWindow) });
+
 		// Add all windows and widgets from the editor UI to the tree
 		std::size_t windowIterator{ 0 };
 		for (RuntimeUI::Window& window : s_UIWindow->m_EditorUI->m_Windows)
 		{
 			// Create new window entry
-			EditorUI::TreeEntry newEntry{};
-			newEntry.m_Label = window.m_Tag;
-			newEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;
-			newEntry.m_Handle = windowIterator;
+			EditorUI::TreeEntry windowEntry{};
+			windowEntry.m_Label = window.m_Tag;
+			windowEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;
+			windowEntry.m_Handle = windowIterator;
 
 			// Add functions to call when interacting with window entry
-			newEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWindow);
-			newEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
-			newEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
+			windowEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWindow);
+			windowEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
+			windowEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
 
 			// Add widgets to window entry
 			std::size_t widgetIterator{ 0 };
@@ -93,25 +105,28 @@ namespace Kargono::Panels
 				// TODO: Note this only creates text widgets for now
 
 				// Create new widget entry
-				EditorUI::TreeEntry newWidgetEntry{};
-				newWidgetEntry.m_Label = widget->m_Tag;
-				newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
-				newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)windowIterator);
-				newWidgetEntry.m_Handle = widgetIterator;
+				EditorUI::TreeEntry widgetEntry{};
+				widgetEntry.m_Label = widget->m_Tag;
+				widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
+				widgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)windowIterator);
+				widgetEntry.m_Handle = widgetIterator;
 
 				// Add functions to call when interacting with widget entry
-				newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectTextWidget);
-				newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
+				widgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectTextWidget);
+				widgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
 
 				// Add widget entry to window entry
-				newEntry.m_SubEntries.push_back(newWidgetEntry);
+				windowEntry.m_SubEntries.push_back(widgetEntry);
 				widgetIterator++;
 			}
 
 			// Add window entry to the user interface tree
-			m_UITree.InsertEntry(newEntry);
+			uiEntry.m_SubEntries.push_back(windowEntry);
 			windowIterator++;
 		}
+
+		m_UITree.InsertEntry(uiEntry);
+		m_UITree.ExpandFirstLayer();
 	}
 
 	void UIEditorTreePanel::InitializeUIHeader()
@@ -288,6 +303,12 @@ namespace Kargono::Panels
 		RuntimeUI::RuntimeUIService::SetActiveUI(s_UIWindow->m_EditorUI, s_UIWindow->m_EditorUIHandle);
 	}
 
+	void UIEditorTreePanel::SelectUI(EditorUI::TreeEntry& entry)
+	{
+		s_UIWindow->m_PropertiesPanel->ClearPanelData();
+		s_UIWindow->m_PropertiesPanel->m_CurrentDisplay = UIPropertiesDisplay::UserInterface;
+	}
+
 	void UIEditorTreePanel::AddTextWidget(EditorUI::TreeEntry& windowEntry)
 	{
 		// Get window path from provided entry and ensure it is valid
@@ -370,11 +391,24 @@ namespace Kargono::Panels
 
 	void UIEditorTreePanel::AddWindow()
 	{
+		
+	}
+
+	void UIEditorTreePanel::AddWindow(EditorUI::TreeEntry& entry)
+	{
+		// Get tree path from provided entry
+		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(&entry);
+		if (!path)
+		{
+			KG_WARN("Could not locate UI path inside m_UITree");
+			return;
+		}
+
 		// Create new window entry for m_UITree
 		EditorUI::TreeEntry newEntry{};
 		newEntry.m_Label = "None";
 		newEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;
-		newEntry.m_Handle = m_UITree.GetTreeEntries().size();
+		newEntry.m_Handle = entry.m_SubEntries.size();
 
 		// Add handlers for interacting with the tree entry
 		newEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWindow);
@@ -382,7 +416,7 @@ namespace Kargono::Panels
 		newEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
 
 		// Add new window to RuntimeUI and this panel's tree
-		m_UITree.InsertEntry(newEntry);
+		entry.m_SubEntries.push_back(newEntry);
 		RuntimeUI::Window newWindow{};
 		RuntimeUI::RuntimeUIService::AddActiveWindow(newWindow);
 
@@ -429,48 +463,83 @@ namespace Kargono::Panels
 	{
 		// Recalculate the handle for each window entry in the user interface tree
 		m_UITree.EditDepth([&](EditorUI::TreeEntry& entry)
+		{
+			// Get tree path from entry reference
+			EditorUI::TreePath entryPath = m_UITree.GetPathFromEntryReference(&entry);
+
+			// Ensure the depth is 1, since this is the expected depth for the user interface tree
+			if (entryPath.GetDepth() != 2)
 			{
-				// Get tree path from entry reference
-				EditorUI::TreePath entryPath = m_UITree.GetPathFromEntryReference(&entry);
+				KG_WARN("Invalid depth length when revalidating window index information");
+				return;
+			}
 
-				// Ensure the depth is 1, since this is the expected depth for the user interface tree
-				if (entryPath.GetDepth() != 1)
-				{
-					KG_WARN("Invalid depth length when revalidating window index information");
-					return;
-				}
+			// Get the window index from the path
+			uint16_t currentWindow = entryPath.GetBack();
 
-				// Get the window index from the path
-				uint16_t currentWindow = entryPath.GetBack();
+			// Update the handle for the window entry
+			entry.m_Handle = (uint64_t)currentWindow;
 
-				// Update the handle for the window entry
-				entry.m_Handle = (uint64_t)currentWindow;
-
-			}, 0);
+		}, 1);
 
 
 		// Recalculate the handle and provided data for each widget entry in the user interface tree
 		m_UITree.EditDepth([&](EditorUI::TreeEntry& entry)
+		{
+			// Get tree path from entry reference
+			EditorUI::TreePath entryPath = m_UITree.GetPathFromEntryReference(&entry);
+
+			// Ensure the depth is 2, since this is the expected depth for the user interface tree
+			if (entryPath.GetDepth() != 3)
 			{
-				// Get tree path from entry reference
-				EditorUI::TreePath entryPath = m_UITree.GetPathFromEntryReference(&entry);
+				KG_WARN("Invalid depth length when revalidating widget index information");
+				return;
+			}
 
-				// Ensure the depth is 2, since this is the expected depth for the user interface tree
-				if (entryPath.GetDepth() != 2)
-				{
-					KG_WARN("Invalid depth length when revalidating widget index information");
-					return;
-				}
+			// Get the current widget and window index from the path
+			uint16_t currentWidget = entryPath.GetBack();
+			entryPath.PopBack();
+			uint16_t currentWindow = entryPath.GetBack();
 
-				// Get the current widget and window index from the path
-				uint16_t currentWidget = entryPath.GetBack();
-				entryPath.PopBack();
-				uint16_t currentWindow = entryPath.GetBack();
+			// Update the handle and provided data for the widget entry
+			entry.m_Handle = (uint64_t)currentWidget;
+			entry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)currentWindow);
 
-				// Update the handle and provided data for the widget entry
-				entry.m_Handle = (uint64_t)currentWidget;
-				entry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)currentWindow);
+		}, 2);
+	}
+	void UIEditorTreePanel::SelectTreeNode(uint16_t windowID, uint16_t widgetID)
+	{
+		if (windowID == k_InvalidWindowID)
+		{
+			return;
+		}
+		
+		EditorUI::TreePath path;
+		bool success{ false };
 
-			}, 1);
+		// Add UI node
+		path.AddNode(0);
+
+		// Add window node
+		path.AddNode(windowID);
+
+		if (widgetID == k_InvalidWidgetID)
+		{
+			m_UITree.ExpandFirstLayer();
+			success = m_UITree.SelectEntry(path);
+		}
+		else
+		{
+			m_UITree.ExpandFirstLayer();
+			m_UITree.ExpandNodePath(path);
+			path.AddNode(widgetID);
+			success = m_UITree.SelectEntry(path);
+		}
+
+		if (!success)
+		{
+			KG_WARN("Failed to select window/widget with ID {} and {}", windowID, widgetID);
+		}
+		
 	}
 }

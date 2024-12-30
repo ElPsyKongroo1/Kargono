@@ -117,27 +117,7 @@ namespace Kargono::Panels
 		{
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 			{
-				if (m_HoveredWindowID != k_InvalidWindowID)
-				{
-					EditorUI::TreePath path;
-					bool success{ false };
-					path.AddNode(m_HoveredWindowID);
-					if (m_HoveredWidgetID == k_InvalidWidgetID)
-					{
-						success = s_UIWindow->m_TreePanel->m_UITree.SelectEntry(path);
-					}
-					else
-					{
-						s_UIWindow->m_TreePanel->m_UITree.ExpandNodePath(path);
-						path.AddNode(m_HoveredWidgetID);
-						success = s_UIWindow->m_TreePanel->m_UITree.SelectEntry(path);
-					}
-
-					if (!success)
-					{
-						KG_WARN("Failed to select window/widget with ID {} and {}", m_HoveredWindowID, m_HoveredWidgetID);
-					}
-				}
+				s_UIWindow->m_TreePanel->SelectTreeNode(m_HoveredWindowID, m_HoveredWidgetID);
 			}
 			
 		}

@@ -358,7 +358,7 @@ namespace Kargono::RuntimeUI
 			outputSize.x += glyph.Advance;
 		}
 		//TODO: FIX THIS MAGIC NUMBER PLEASE
-		outputSize.y /= 42.0f;
+		outputSize.y /= 45.5f;
 		return outputSize;
 	}
 	void Font::CalculateTextMetadata(const std::string& text, TextMetadata& metadata, float scale, int maxLineWidth)
@@ -411,7 +411,7 @@ namespace Kargono::RuntimeUI
 			{
 			case '\n':
 				// Move to next line
-				metadata.m_LineWidths.push_back(xLocation);
+				metadata.m_LineWidths.push_back((float)xLocation);
 				xLocation = initialXLocation;
 				yLocation -= scale * m_LineHeight;
 				continue;

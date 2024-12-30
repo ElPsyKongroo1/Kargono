@@ -15,7 +15,8 @@ namespace Kargono::Panels
 	{
 		None = 0,
 		Window,
-		Widget
+		Widget,
+		UserInterface
 	};
 
 	class UIEditorPropertiesPanel
@@ -30,6 +31,7 @@ namespace Kargono::Panels
 		//=========================
 		// Internal Initialization Functions
 		//=========================
+		void InitializeUIOptions();
 		void InitializeWindowOptions();
 		void InitializeWidgetGeneralOptions();
 		void InitializeTextWidgetOptions();
@@ -44,6 +46,7 @@ namespace Kargono::Panels
 		//=========================
 		// Draw Properties Panel Functions
 		//=========================
+		void DrawUIOptions();
 		void DrawWindowOptions();
 		void DrawWidgetOptions();
 		void DrawTextWidgetOptions();
@@ -54,6 +57,13 @@ namespace Kargono::Panels
 		void ClearPanelData();
 
 	private:
+
+		//=========================
+		// Change UI Data
+		//=========================
+		void OnModifyUIFont(const EditorUI::OptionEntry& entry);
+		void OnOpenUIFontPopup();
+
 		//=========================
 		// Change Window Data
 		//=========================
@@ -126,6 +136,11 @@ namespace Kargono::Panels
 		//=========================
 		// Widgets
 		//=========================
+		
+		// Edit UI Options
+		EditorUI::CollapsingHeaderSpec m_UIHeader{};
+		EditorUI::SelectOptionSpec m_UISelectFont{};
+
 		// Edit Window Options
 		EditorUI::CollapsingHeaderSpec m_WindowHeader{};
 		EditorUI::EditTextSpec m_WindowTag{};

@@ -17,6 +17,7 @@ namespace Kargono::Panels
 		s_UIWindow = s_EditorApp->m_UIEditorWindow.get();
 
 		// Initialize properties panel widget resources
+		InitializeUIOptions();
 		InitializeWindowOptions();
 		InitializeWidgetGeneralOptions();
 		InitializeTextWidgetOptions();
@@ -46,10 +47,32 @@ namespace Kargono::Panels
 			DrawTextWidgetOptions();
 			DrawWidgetOptions();
 			break;
+		case UIPropertiesDisplay::UserInterface:
+			DrawUIOptions();
+			break;
 		}
 
 		// End the window
 		EditorUI::EditorUIService::EndWindow();
+	}
+
+	void UIEditorPropertiesPanel::DrawUIOptions()
+	{
+		// Draw main header for UI options
+		EditorUI::EditorUIService::CollapsingHeader(m_UIHeader);
+
+		// Draw options for UI
+		if (m_UIHeader.m_Expanded)
+		{
+			// Edit font for current UI
+			Assets::AssetHandle fontHandle = s_UIWindow->m_EditorUI->m_FontHandle;
+			m_UISelectFont.m_CurrentOption =
+			{
+				fontHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetFontInfo(fontHandle).Data.FileLocation.stem().string(),
+				fontHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_UISelectFont);
+		}
 	}
 
 	void UIEditorPropertiesPanel::DrawWindowOptions()
@@ -213,6 +236,55 @@ namespace Kargono::Panels
 		m_ActiveWidget = nullptr;
 		m_ActiveWindow = nullptr;
 		m_CurrentDisplay = UIPropertiesDisplay::None;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyUIFont(const EditorUI::OptionEntry& entry)
+	{
+		// Check for empty case
+		if (entry.m_Handle == Assets::EmptyHandle)
+		{
+			s_UIWindow->m_EditorUI->m_FontHandle = Assets::EmptyHandle;
+			s_UIWindow->m_EditorUI->m_Font = nullptr;
+			return;
+		}
+
+		Ref<RuntimeUI::Font> fontRef{ Assets::AssetService::GetFont(entry.m_Handle) };
+
+		// Ensure returned font is valid
+		KG_ASSERT(fontRef);
+
+		// Update UI font to new type
+		RuntimeUI::RuntimeUIService::SetActiveFont(fontRef, entry.m_Handle);
+
+	}
+
+	void UIEditorPropertiesPanel::OnOpenUIFontPopup()
+	{
+		// Clear existing options
+		m_UISelectFont.ClearOptions();
+		m_UISelectFont.AddToOptions("Clear", "None", Assets::EmptyHandle);
+
+		// Add all font options
+		for (auto& [fontHandle, fontInfo] : Assets::AssetService::GetFontRegistry())
+		{
+			m_UISelectFont.AddToOptions("All Options", fontInfo.Data.FileLocation.stem().string(), fontHandle);
+		}
+	}
+
+	void UIEditorPropertiesPanel::InitializeUIOptions()
+	{
+		// Set up header for window options
+		m_UIHeader.m_Label = "User Interface Options";
+		m_UIHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_UIHeader.m_Expanded = true;
+
+		// Set up widget to modify the window's default widget
+		m_UISelectFont.m_Label = "Font";
+		m_UISelectFont.m_Flags |= EditorUI::SelectOption_Indented;
+		m_UISelectFont.m_PopupAction = KG_BIND_CLASS_FN(OnOpenUIFontPopup);
+		m_UISelectFont.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUIFont);
+
+		
 	}
 
 	void UIEditorPropertiesPanel::InitializeWindowOptions()
