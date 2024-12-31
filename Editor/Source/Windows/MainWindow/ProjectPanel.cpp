@@ -1,7 +1,11 @@
 #include "Windows/MainWindow/ProjectPanel.h"
 
-#include "Kargono.h"
 #include "EditorApp.h"
+
+#include "Kargono/Utility/Operations.h"
+#include "Kargono/Rendering/Texture.h"
+#include "Kargono/Utility/Time.h"
+#include "Kargono/Scenes/Scene.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };

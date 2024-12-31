@@ -4,6 +4,9 @@
 
 #include "EditorApp.h"
 
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/Events/SceneEvent.h"
+
 #include "API/EditorUI/ImGuiBackendAPI.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };

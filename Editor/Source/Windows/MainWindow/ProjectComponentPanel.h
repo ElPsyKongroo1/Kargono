@@ -1,5 +1,11 @@
 #pragma once
-#include "Kargono.h"
+
+#include "Kargono/Events/KeyEvent.h"
+#include "Kargono/Assets/Asset.h"
+#include "Kargono/EditorUI/EditorUI.h"
+#include "Kargono/ECS/ProjectComponent.h"
+
+#include <filesystem>
 
 namespace Kargono::Panels
 {

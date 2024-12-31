@@ -1,14 +1,13 @@
 #pragma once
-#include "Kargono.h"
 
 #include "Windows/UserInterface/UIEditorWindow.h"
 #include "Windows/MainWindow/MainWindow.h"
 
+#include "Kargono/Core/Timestep.h"
+#include "Kargono/Core/Base.h"
+
 #include <filesystem>
-#include <thread>
-#include <unordered_map>
 #include <string>
-#include <functional>
 
 
 namespace Kargono

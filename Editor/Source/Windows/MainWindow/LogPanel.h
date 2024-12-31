@@ -1,7 +1,11 @@
 #pragma once
 
-#include "Kargono.h"
 #include "Kargono/Utility/FileSystem.h"
+#include "Kargono/Events/KeyEvent.h"
+#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/Buffer.h"
+
+#include "API/EditorUI/ImGuiAPI.h"
 
 #include <string>
 

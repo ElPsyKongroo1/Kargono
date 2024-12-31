@@ -1,7 +1,11 @@
 #include "Windows/UserInterface/UIEditorViewportPanel.h"
 
+#include "Kargono/Rendering/RenderingService.h"
+#include "Kargono/Input/InputService.h"
+#include "Kargono/Rendering/Texture.h"
+#include "Kargono/Utility/Operations.h"
+
 #include "EditorApp.h"
-#include "Kargono.h"
 
 static Kargono::EditorApp* s_EditorApp{ nullptr };
 static Kargono::Windows::UIEditorWindow* s_UIWindow{ nullptr };

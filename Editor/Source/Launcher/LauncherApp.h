@@ -1,6 +1,11 @@
 #pragma once
 
-#include "Kargono.h"
+#include "Kargono/Core/Base.h"
+#include "Kargono/Core/Application.h"
+#include "Kargono/Core/Timestep.h"
+#include "Kargono/Events/Event.h"
+
+#include <filesystem>
 
 namespace Kargono
 {

@@ -2,8 +2,6 @@
 
 #include "EditorApp.h"
 
-#include "Kargono.h"
-
 #include <unordered_set>
 
 static Kargono::EditorApp* s_EditorApp { nullptr };

@@ -1,7 +1,10 @@
 #include "Windows/MainWindow/StatisticsPanel.h"
 
 #include "EditorApp.h"
-#include "Kargono.h"
+
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/Rendering/RenderingService.h"
+#include "Kargono/Utility/Time.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };

@@ -1,4 +1,6 @@
-#include "Kargono.h"
+
+#include "Kargono/Core/Engine.h"
+
 #ifndef KG_TESTING
 #include "Kargono/Core/EntryPoint.h"
 #endif

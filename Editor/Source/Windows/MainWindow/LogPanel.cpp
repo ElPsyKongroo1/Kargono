@@ -3,7 +3,6 @@
 #include "Windows/MainWindow/LogPanel.h"
 
 #include "EditorApp.h"
-#include "Kargono.h"
 
 
 //----------------------------------------------//

@@ -2,7 +2,8 @@
 
 #include "EditorApp.h"
 
-#include "Kargono.h"
+#include "Kargono/Utility/OSCommands.h"
+
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };

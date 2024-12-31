@@ -1,8 +1,9 @@
 #include "Windows/MainWindow/ProjectComponentPanel.h"
-#include "Kargono/Scripting/ScriptCompilerService.h"
 
 #include "EditorApp.h"
-#include "Kargono.h"
+
+#include "Kargono/Scripting/ScriptCompilerService.h"
+#include "Kargono/Utility/Operations.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };

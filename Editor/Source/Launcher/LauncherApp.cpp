@@ -1,7 +1,14 @@
 
 #include "Launcher/LauncherApp.h"
 
-#include "imgui_internal.h"
+#include "Kargono/EditorUI/EditorUI.h"
+#include "Kargono/Projects/Project.h"
+#include "Kargono/Core/Engine.h"
+#include "Kargono/Utility/OSCommands.h"
+#include "Kargono/Utility/FileDialogs.h"
+#include "Kargono/Rendering/Texture.h"
+
+#include "API/EditorUI/ImGuiBackendAPI.h"
 
 namespace Kargono
 {

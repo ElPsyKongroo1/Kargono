@@ -1,6 +1,14 @@
 #include "MainWindow.h"
 #include "EditorApp.h"
 
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/Scripting/ScriptModuleBuilder.h"
+#include "Kargono/Utility/OSCommands.h"
+#include "Kargono/Utility/FileDialogs.h"
+#include "Kargono/Network/Client.h"
+#include "Kargono/Core/AppTick.h"
+#include "Kargono/Input/InputService.h"
+
 static Kargono::EditorApp* s_EditorApp{ nullptr };
 
 namespace Kargono::Windows

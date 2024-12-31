@@ -1,4 +1,5 @@
 #include "Windows/MainWindow/InputMapPanel.h"
+
 #include "EditorApp.h"
 
 namespace Kargono

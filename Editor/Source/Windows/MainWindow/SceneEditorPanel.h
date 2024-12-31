@@ -1,6 +1,12 @@
 #pragma once
 
-#include "Kargono.h"
+#include "Kargono/ECS/EngineComponents.h"
+#include "Kargono/ECS/Entity.h"
+#include "Kargono/Events/Event.h"
+#include "Kargono/Events/KeyEvent.h"
+#include "Kargono/Assets/Asset.h"
+#include "Kargono/Core/FixedString.h"
+#include "Kargono/EditorUI/EditorUI.h"
 
 #include <unordered_map>
 #include <variant>

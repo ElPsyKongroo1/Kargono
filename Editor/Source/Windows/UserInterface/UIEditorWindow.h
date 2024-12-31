@@ -3,6 +3,7 @@
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/EditorUI/EditorUI.h"
 #include "Kargono/RuntimeUI/RuntimeUI.h"
+#include "Kargono/Core/Base.h"
 
 #include "Windows/UserInterface/UIEditorViewportPanel.h"
 #include "Windows/UserInterface/UIEditorPropertiesPanel.h"

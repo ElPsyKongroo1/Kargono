@@ -1,9 +1,14 @@
 #include "Windows/MainWindow/ViewportPanel.h"
 
-#include "Kargono.h"
-
 #include "EditorApp.h"
 
+#include "Kargono/Rendering/RenderingService.h"
+#include "Kargono/Rendering/Texture.h"
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/Input/InputService.h"
+#include "Kargono/Utility/Time.h"
+#include "Kargono/Events/EditorEvent.h"
+#include "Kargono/Utility/Operations.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };

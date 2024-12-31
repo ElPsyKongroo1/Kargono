@@ -1,10 +1,14 @@
 #include "Windows/MainWindow/TextEditorPanel.h"
 
 #include "EditorApp.h"
-#include "API/EditorUI/ImGuiBackendAPI.h"
-#include "Kargono.h"
+
 #include "Kargono/Scripting/ScriptCompilerService.h"
+#include "Kargono/Input/InputService.h"
+#include "Kargono/Utility/FileDialogs.h"
+#include "Kargono/Utility/Operations.h"
 #include "Kargono/Utility/Timers.h"
+
+#include "API/EditorUI/ImGuiBackendAPI.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };

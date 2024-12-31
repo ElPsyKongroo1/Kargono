@@ -1,7 +1,18 @@
-#include "kgpch.h"
-
 #include "EditorApp.h"
+
 #include "Kargono/Scripting/ScriptCompilerService.h"
+#include "Kargono/Utility/FileDialogs.h"
+#include "Kargono/Audio/Audio.h"
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/EditorUI/EditorUI.h"
+#include "Kargono/RuntimeUI/Font.h"
+#include "Kargono/RuntimeUI/RuntimeUI.h"
+#include "Kargono/Core/Engine.h"
+#include "Kargono/AI/AIService.h"
+#include "Kargono/Rendering/RenderingService.h"
+#include "Kargono/Events/PhysicsEvent.h"
+#include "Kargono/Events/ApplicationEvent.h"
+#include "Kargono/Projects/Project.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
 

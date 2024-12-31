@@ -1,7 +1,6 @@
 #include "Windows/MainWindow/TestingPanel.h"
 
 #include "EditorApp.h"
-#include "Kargono.h"
 #include "Kargono/Utility/Timers.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Utility/Random.h"

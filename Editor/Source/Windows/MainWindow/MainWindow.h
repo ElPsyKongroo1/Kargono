@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Kargono.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/EditorUI/EditorUI.h"

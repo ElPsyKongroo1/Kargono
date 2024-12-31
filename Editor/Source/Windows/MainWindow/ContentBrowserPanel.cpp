@@ -2,6 +2,8 @@
 
 #include "Windows/MainWindow/ContentBrowserPanel.h"
 
+#include "Kargono/Utility/OSCommands.h"
+
 #include "EditorApp.h"
 
 static Kargono::EditorApp* s_EditorApp{ nullptr };
