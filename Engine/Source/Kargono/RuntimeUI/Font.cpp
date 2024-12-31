@@ -323,6 +323,7 @@ namespace Kargono::RuntimeUI
 			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
 			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
 			s_Vertices->push_back({ quadMax, translation.z });											// 1, 1
+			s_TextInputSpec.m_ShapeComponent->Vertices = s_Vertices;
 
 			// Submit the texture coordinates data to the renderer
 			s_TexCoordinates->clear();
@@ -331,11 +332,11 @@ namespace Kargono::RuntimeUI
 			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
 			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
 			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
-			s_TexCoordinates->push_back(texCoordMax);								// 1, 1
+			s_TexCoordinates->push_back(texCoordMax);				
+			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
 
 			// TODO: Submit multiple glyphs at once for CPU optimization
 			// Submit the glyph data to the renderer
-			s_TextInputSpec.m_ShapeComponent->Vertices = s_Vertices;
 			Rendering::RenderingService::SubmitDataToRenderer(s_TextInputSpec);
 
 			// Shift the location to the next character
@@ -345,20 +346,31 @@ namespace Kargono::RuntimeUI
 
 	Math::vec2 Font::CalculateTextSize(const std::string& text)
 	{
+		// Loop through all glyphs of provided text and generate the text's x and y extents
 		Math::vec2 outputSize{ 0.0f };
 		std::string::const_iterator currentCharacter;
-		for (currentCharacter = text.begin(); currentCharacter != text.end(); currentCharacter++)
+		for (size_t characterIndex = 0; characterIndex < text.size(); characterIndex++)
 		{
-			if (!m_Characters.contains(*currentCharacter))
+			// Early out if glyph does not exist
+			if (!m_Characters.contains(text[characterIndex]))
 			{
 				continue;
 			}
-			Character glyph = m_Characters[*currentCharacter];
-			if (glyph.Size.y > outputSize.y) { outputSize.y = glyph.Size.y; }
+			Character glyph = m_Characters[text[characterIndex]];
+
+			// Get the maximum y glyph size for the text
+			float ySize{ glyph.QuadMax.y - glyph.QuadMin.y };
+			if (ySize > outputSize.y)
+			{ 
+				outputSize.y = ySize; 
+			}
+
+			// Get the total x-axis length of the text
 			outputSize.x += glyph.Advance;
 		}
-		//TODO: FIX THIS MAGIC NUMBER PLEASE
-		outputSize.y /= 45.5f;
+
+		// Magic number to center the text
+		//outputSize.y /= 45.5f; // TODO: FIX THIS MAGIC NUMBER PLEASE
 		return outputSize;
 	}
 	void Font::CalculateTextMetadata(const std::string& text, TextMetadata& metadata, float scale, int maxLineWidth)

@@ -1689,7 +1689,6 @@ namespace Kargono::Scripting
 		}
 		else
 		{
-			KG_TRACE_CRITICAL("Could not get data/function member");
 			return { false, nullptr };
 		}
 

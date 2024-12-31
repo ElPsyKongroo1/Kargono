@@ -930,7 +930,9 @@ namespace Kargono::RuntimeUI
 
 		if (m_TextCentered)
 		{
-			widgetTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((m_TextAbsoluteDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextAbsoluteDimensions.y * 0.5f) * textSize), widgetTranslation.z);
+			constexpr float k_AdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
+
+			widgetTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((m_TextAbsoluteDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextAbsoluteDimensions.y * 0.5f) * textSize) + k_AdjustmentSize, widgetTranslation.z);
 		}
 
 		// Call the text's rendering function
