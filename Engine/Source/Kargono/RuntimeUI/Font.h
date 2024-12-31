@@ -3,6 +3,7 @@
 #include "Kargono/Math/Math.h"
 
 #include <string>
+#include <string_view>
 #include <filesystem>
 
 namespace Kargono::Rendering { class Texture2D; }
@@ -19,8 +20,8 @@ namespace Kargono::RuntimeUI
 
 	struct TextMetadata
 	{
-		std::vector<float> m_LineWidths;
-		std::vector<size_t> m_LineBreaks;
+		std::vector<Math::vec2> m_LineSize;
+		std::vector<Math::ivec2> m_LineBreaks;
 	};
 
 
@@ -75,7 +76,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Font API
 		//==============================
-		void PushTextData(const std::string& string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f, int maxLineWidth = 0);
+		void PushTextData(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f, int maxLineWidth = 0);
 		Math::vec2 CalculateTextSize(const std::string& text);
 		void CalculateTextMetadata(const std::string& text, TextMetadata& metadata, float scale, int maxLineWidth = 0);
 

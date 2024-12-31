@@ -209,7 +209,7 @@ namespace Kargono::RuntimeUI
 		Rendering::Shader::SetDataAtInputLocation<uint32_t>(id, "a_EntityID", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
 	}
 
-	void Font::PushTextData(const std::string& string, Math::vec3 translation, const glm::vec4& color, float scale, int maxLineWidth)
+	void Font::PushTextData(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale, int maxLineWidth)
 	{
 		// Submit text color to the renderer buffer. The text will now be rendered with this color.
 		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
@@ -376,12 +376,17 @@ namespace Kargono::RuntimeUI
 	void Font::CalculateTextMetadata(const std::string& text, TextMetadata& metadata, float scale, int maxLineWidth)
 	{
 		// Initialize the active location where text is being rendered
-		double initialXLocation{ 0.0 };
-		double initialYLocation{ 0.0 };
-		double xLocation{ initialXLocation };
-		double yLocation{ initialYLocation };
+		float initialXLocation{ 0.0f };
+		float initialYLocation{ 0.0f };
+		float xLocation{ initialXLocation };
+		float yLocation{ initialYLocation };
+		float lineHeight{ 0.0f };
 		bool wrapText{ maxLineWidth > 0 };
 		size_t activeWordEnding{ 0 };
+		int lastBreak{0};
+
+		// Reset metadata
+		metadata = {};
 
 		// Iterate through each character in the string
 		for (size_t characterIndex = 0; characterIndex < text.size(); characterIndex++)
@@ -407,8 +412,10 @@ namespace Kargono::RuntimeUI
 				// Check if newline is appropriate for active word
 				if (xLocation + wordWidth > initialXLocation + maxLineWidth)
 				{
-					metadata.m_LineBreaks.push_back(characterIndex);
-					metadata.m_LineWidths.push_back((float)xLocation);
+					metadata.m_LineBreaks.push_back({ lastBreak, (int)characterIndex });
+					metadata.m_LineSize.push_back({ xLocation / scale, lineHeight });
+					lastBreak = (int)characterIndex;
+					lineHeight = 0.0f;
 					xLocation = initialXLocation;
 					yLocation -= scale * m_LineHeight;
 				}
@@ -423,7 +430,10 @@ namespace Kargono::RuntimeUI
 			{
 			case '\n':
 				// Move to next line
-				metadata.m_LineWidths.push_back((float)xLocation);
+				metadata.m_LineBreaks.push_back({ lastBreak, (int)characterIndex });
+				metadata.m_LineSize.push_back({ xLocation / scale, lineHeight });
+				lastBreak = (int)characterIndex;
+				lineHeight = 0.0f;
 				xLocation = initialXLocation;
 				yLocation -= scale * m_LineHeight;
 				continue;
@@ -447,8 +457,18 @@ namespace Kargono::RuntimeUI
 				glyph = m_Characters.at('?');
 			}
 
+			// Get the line height from each glyph
+			if (glyph.QuadMax.y - glyph.QuadMin.y > lineHeight)
+			{
+				lineHeight = glyph.QuadMax.y - glyph.QuadMin.y;
+			}
+
 			// Shift the location to the next character
 			xLocation += scale * glyph.Advance;
 		}
+
+		// Get data for final line
+		metadata.m_LineBreaks.push_back({ lastBreak , text.size()});
+		metadata.m_LineSize.push_back({ xLocation / scale, lineHeight });
 	}
 }

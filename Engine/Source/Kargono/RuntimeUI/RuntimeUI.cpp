@@ -928,24 +928,30 @@ namespace Kargono::RuntimeUI
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 		float textSize{ (viewportWidth * 0.15f * m_TextSize) * (resolution.y / resolution.x) };
 
-		if (m_TextCentered)
-		{
-			constexpr float k_AdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
-
-			widgetTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((m_TextAbsoluteDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextAbsoluteDimensions.y * 0.5f) * textSize) + k_AdjustmentSize, widgetTranslation.z);
-		}
-
 		// Call the text's rendering function
-		if (m_TextWrapped)
+		for (size_t iteration{ 0 }; iteration < m_TextMetadata.m_LineSize.size(); iteration++)
 		{
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->PushTextData(m_Text, 
-				widgetTranslation, m_TextColor, textSize, (int)widgetSize.x);
+			Math::vec3 finalTranslation;
+			Math::vec2 lineDimensions{ m_TextMetadata.m_LineSize[iteration] };
+			Math::ivec2 currentBreaks{ m_TextMetadata.m_LineBreaks[iteration] };
+			if (m_TextCentered)
+			{
+				constexpr float k_AdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
+
+				finalTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((lineDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f) - ((lineDimensions.y * 0.5f) * textSize) + k_AdjustmentSize, widgetTranslation.z);
+			}
+			else
+			{
+				finalTranslation = widgetTranslation;
+			}
+
+			finalTranslation.y -= iteration * textSize * RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_LineHeight;
+
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->PushTextData(
+				std::string_view(m_Text.c_str()),
+				finalTranslation, m_TextColor, textSize, (int)widgetSize.x);
 		}
-		else
-		{
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->PushTextData(m_Text,
-				widgetTranslation, m_TextColor, textSize);
-		}
+
 	}
 
 	void TextWidget::CalculateTextSize()
