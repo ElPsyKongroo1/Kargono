@@ -192,7 +192,7 @@ namespace Kargono::Panels
 			2, 3,
 			3, 0
 	};
-	static Ref<std::vector<Math::vec3>> s_OutputVector = CreateRef<std::vector<Math::vec3>>();
+	static Ref<std::vector<Math::vec3>> s_OutputVector {CreateRef<std::vector<Math::vec3>>()};
 
 
 	void UIEditorViewportPanel::InitializeOverlayData()

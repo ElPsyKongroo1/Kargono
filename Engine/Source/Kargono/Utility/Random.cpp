@@ -16,4 +16,21 @@ namespace Kargono::Utility
 
 		return std::mt19937{ seedSequence };
 	}
+
+	PseudoGenerator::PseudoGenerator(uint64_t seed)
+	{
+		m_Seed = seed;
+		m_State = seed;
+	}
+
+	uint64_t PseudoRandomService::GenerateNumber(PseudoGenerator& gen)
+	{
+		gen.m_State = (gen.m_State * s_Multiplier) % s_Modulus;
+		return gen.m_State;
+	}
+
+	void PseudoRandomService::ResetState(PseudoGenerator& gen)
+	{
+		gen.m_State = gen.m_Seed;
+	}
 }

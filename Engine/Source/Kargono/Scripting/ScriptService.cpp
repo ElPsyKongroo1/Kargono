@@ -29,22 +29,10 @@
 #error "Platform not supported"
 #endif
 
-namespace Kargono::Utility
-{
-	// Pseudo-Random Number Generation for GenerateEngineScripts Func
-	static constexpr uint64_t s_Seed { 0xc3bc4ead8efa4c3a };
-	static uint64_t s_State {s_Seed};
-	static constexpr uint64_t s_Multiplier {6364136223846793005ULL};
-	static constexpr uint64_t s_Modulus { std::numeric_limits<uint64_t>::max() };
-	static uint64_t GeneratePseudoRandomNumber()
-	{
-		s_State = (s_State * s_Multiplier) % s_Modulus;
-		return s_State;
-	}
-}
-
 namespace Kargono::Scripting
 {
+	static Utility::PseudoGenerator s_IDGenerator{ 0xc3bc4ead8efa4c3a };
+
 	struct ScriptingData
 	{
 #if defined(KG_PLATFORM_WINDOWS)
@@ -63,12 +51,12 @@ namespace Kargono::Scripting
 
 	static void GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts)
 	{
-		Utility::s_State = Utility::s_Seed;
+		Utility::PseudoRandomService::ResetState(s_IDGenerator);
 		engineScripts.clear();
 		// RuntimeUI
 		Ref<Script> RuntimeUI_MoveUp = CreateRef<Script>();
 		RuntimeUI_MoveUp->m_ScriptName = "MoveUp";
-		RuntimeUI_MoveUp->m_ID = Utility::GeneratePseudoRandomNumber();
+		RuntimeUI_MoveUp->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
 		RuntimeUI_MoveUp->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveUp->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveUp->m_SectionLabel = "UserInterface";
@@ -77,7 +65,7 @@ namespace Kargono::Scripting
 
 		Ref<Script> RuntimeUI_MoveDown = CreateRef<Script>();
 		RuntimeUI_MoveDown->m_ScriptName = "MoveDown";
-		RuntimeUI_MoveDown->m_ID = Utility::GeneratePseudoRandomNumber();
+		RuntimeUI_MoveDown->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
 		RuntimeUI_MoveDown->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveDown->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveDown->m_SectionLabel = "UserInterface";
@@ -86,7 +74,7 @@ namespace Kargono::Scripting
 
 		Ref<Script> RuntimeUI_MoveLeft = CreateRef<Script>();
 		RuntimeUI_MoveLeft->m_ScriptName = "MoveLeft";
-		RuntimeUI_MoveLeft->m_ID = Utility::GeneratePseudoRandomNumber();
+		RuntimeUI_MoveLeft->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
 		RuntimeUI_MoveLeft->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveLeft->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveLeft->m_SectionLabel = "UserInterface";
@@ -95,7 +83,7 @@ namespace Kargono::Scripting
 
 		Ref<Script> RuntimeUI_MoveRight = CreateRef<Script>();
 		RuntimeUI_MoveRight->m_ScriptName = "MoveRight";
-		RuntimeUI_MoveRight->m_ID = Utility::GeneratePseudoRandomNumber();
+		RuntimeUI_MoveRight->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
 		RuntimeUI_MoveRight->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveRight->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveRight->m_SectionLabel = "UserInterface";
@@ -104,7 +92,7 @@ namespace Kargono::Scripting
 
 		Ref<Script> RuntimeUI_OnPress = CreateRef<Script>();
 		RuntimeUI_OnPress->m_ScriptName = "OnPress";
-		RuntimeUI_OnPress->m_ID = Utility::GeneratePseudoRandomNumber();
+		RuntimeUI_OnPress->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
 		RuntimeUI_OnPress->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_OnPress->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_OnPress->m_SectionLabel = "UserInterface";
@@ -113,7 +101,7 @@ namespace Kargono::Scripting
 
 		Ref<Script> EngineCore_CloseApplication = CreateRef<Script>();
 		EngineCore_CloseApplication->m_ScriptName = "CloseApplication";
-		EngineCore_CloseApplication->m_ID = Utility::GeneratePseudoRandomNumber();
+		EngineCore_CloseApplication->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
 		EngineCore_CloseApplication->m_ScriptType = ScriptType::Engine;
 		EngineCore_CloseApplication->m_FuncType = WrappedFuncType::Void_None;
 		EngineCore_CloseApplication->m_SectionLabel = "Engine";
@@ -122,7 +110,7 @@ namespace Kargono::Scripting
 
 		Ref<Script> Client_SessionReadyCheck = CreateRef<Script>();
 		Client_SessionReadyCheck->m_ScriptName = "SessionReadyCheck";
-		Client_SessionReadyCheck->m_ID = Utility::GeneratePseudoRandomNumber();
+		Client_SessionReadyCheck->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
 		Client_SessionReadyCheck->m_ScriptType = ScriptType::Engine;
 		Client_SessionReadyCheck->m_FuncType = WrappedFuncType::Void_None;
 		Client_SessionReadyCheck->m_SectionLabel = "Network";
@@ -131,7 +119,7 @@ namespace Kargono::Scripting
 
 		Ref<Script> Client_RequestUserCount = CreateRef<Script>();
 		Client_RequestUserCount->m_ScriptName = "RequestUserCount";
-		Client_RequestUserCount->m_ID = Utility::GeneratePseudoRandomNumber();
+		Client_RequestUserCount->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
 		Client_RequestUserCount->m_ScriptType = ScriptType::Engine;
 		Client_RequestUserCount->m_FuncType = WrappedFuncType::Void_None;
 		Client_RequestUserCount->m_SectionLabel = "Network";
@@ -140,7 +128,7 @@ namespace Kargono::Scripting
 
 		Ref<Script> Client_RequestJoinSession = CreateRef<Script>();
 		Client_RequestJoinSession->m_ScriptName = "RequestJoinSession";
-		Client_RequestJoinSession->m_ID = Utility::GeneratePseudoRandomNumber();
+		Client_RequestJoinSession->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
 		Client_RequestJoinSession->m_ScriptType = ScriptType::Engine;
 		Client_RequestJoinSession->m_FuncType = WrappedFuncType::Void_None;
 		Client_RequestJoinSession->m_SectionLabel = "Network";
