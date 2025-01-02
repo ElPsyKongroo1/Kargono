@@ -27,8 +27,14 @@ namespace Kargono::Particles
 		std::chrono::time_point<std::chrono::high_resolution_clock> endTime;
     };
 
-    class ParticlesService
+    class ParticleService
     {
+    public:
+        //==============================
+        // Lifecycle Functions
+        //==============================
+        void Init();
+        void Terminate();
     public:
         //==============================
         // On Event Functions
@@ -39,8 +45,6 @@ namespace Kargono::Particles
         // Submit Particles
         //==============================
 	    static void AddParticle(const Particle& particle);
-    public:
-        static inline Ref<ParticlesContext> s_ParticlesContext {nullptr};
     };
 }
 

@@ -6,20 +6,32 @@
 
 namespace Kargono::Particles
 {
-    struct ParticlesContext
+    struct ParticleContext
     {
         // All particles being managed
         std::vector<Particle> m_ParticlePool;
         Rendering::RendererInputSpec m_ParticleRenderSpec;
     };
 
-	    void ParticlesService::OnUpdate(Timestep ts)
-        {
-            // Render Particles
-        }
+    static Ref<ParticleContext> s_ParticlesContext {nullptr};
 
-	    void ParticlesService::AddParticle(const Particle& particle)
-        {
-        }
+    void ParticleService::Init()
+    {
+
+    }
+
+    void ParticleService::Terminate()
+    {
+        
+    }
+
+    void ParticleService::OnUpdate(Timestep ts)
+    {
+        // Render Particles
+    }
+
+    void ParticleService::AddParticle(const Particle& particle)
+    {
+    }
 
 }
