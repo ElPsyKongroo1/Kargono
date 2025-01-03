@@ -2,7 +2,7 @@
 
 | main | dev |
 | ------- | ----- |
-| [![MSBuild](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml/badge.svg?branch=dev)](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml) | [![MSBuildryt](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml/badge.svg?branch=dev)](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml) |
+| [![MSBuild](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml/badge.svg?branch=main)](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml) | [![MSBuildryt](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml/badge.svg?branch=dev)](https://github.com/ElPsyKongroo1/Kargono/actions/workflows/msbuild.yml) |
 
 
 This project is a simple game editor for 2D projects (3D in the future). The project includes: a game editor (Editor), an exporting project (Runtime), a multiplayer server (Server), and a core engine library (Engine). The Editor, Server, and Runtime are all stand alone executables that depend on the Engine library. 
