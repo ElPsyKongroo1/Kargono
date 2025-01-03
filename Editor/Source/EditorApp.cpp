@@ -13,6 +13,7 @@
 #include "Kargono/Events/PhysicsEvent.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Projects/Project.h"
+#include "Kargono/Particles/ParticleService.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
 
@@ -52,6 +53,7 @@ namespace Kargono
 		Rendering::RenderingService::SetLineWidth(1.0f);
 		RuntimeUI::FontService::Init();
 		RuntimeUI::RuntimeUIService::Init();
+		Particles::ParticleService::Init();
 
 		// Initialize panels
 		m_MainWindow->InitPanels();
@@ -67,6 +69,7 @@ namespace Kargono
 		// Terminate engine services
 		EditorUI::EditorUIService::Terminate();
 		RuntimeUI::RuntimeUIService::Terminate();
+		Particles::ParticleService::Terminate();
 		Audio::AudioService::Terminate();
 		Scripting::ScriptService::Terminate();
 		AI::AIService::Terminate();

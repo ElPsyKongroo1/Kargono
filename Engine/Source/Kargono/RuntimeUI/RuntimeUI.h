@@ -98,7 +98,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Rendering Methods
 		//============================
-		virtual void PushRenderData(Math::vec3 translation, const Math::vec3& scale, float viewportWidth) = 0;
+		virtual void OnRender(Math::vec3 translation, const Math::vec3& scale, float viewportWidth) = 0;
 
 	public:
 		//============================
@@ -150,7 +150,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Rendering Methods
 		//============================
-		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	public:
 		//============================
 		// Modify State
@@ -199,7 +199,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Rendering Methods
 		//============================
-		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
 	//============================
@@ -221,7 +221,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Rendering Methods
 		//============================
-		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
 	//============================
@@ -243,7 +243,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Rendering Methods
 		//============================
-		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
 	//============================
@@ -265,7 +265,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Rendering Methods
 		//============================
-		virtual void PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
 	//============================
@@ -408,8 +408,8 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Rendering API
 		//==============================
-		static void PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight);
-		static void PushRenderData(uint32_t viewportWidth, uint32_t viewportHeight);
+		static void OnRender(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight);
+		static void OnRender(uint32_t viewportWidth, uint32_t viewportHeight);
 	private:
 		//==============================
 		// Internal Functionality

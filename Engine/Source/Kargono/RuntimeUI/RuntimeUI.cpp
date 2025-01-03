@@ -257,7 +257,7 @@ namespace Kargono::RuntimeUI
 	}
 
 
-	void RuntimeUIService::PushRenderData(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight)
+	void RuntimeUIService::OnRender(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight)
 	{
 		// Ensure active user interface is valid
 		if (!s_RuntimeUIContext->m_ActiveUI)
@@ -301,7 +301,7 @@ namespace Kargono::RuntimeUI
 				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 				RuntimeUI::FontService::SetID(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration);
 				// Call the widget's rendering function
-				widgetRef->PushRenderData(initialTranslation, scale, (float)viewportWidth);
+				widgetRef->OnRender(initialTranslation, scale, (float)viewportWidth);
 				widgetIteration++;
 			}
 			windowIteration++;
@@ -312,12 +312,12 @@ namespace Kargono::RuntimeUI
 
 	}
 
-	void RuntimeUIService::PushRenderData(uint32_t viewportWidth, uint32_t viewportHeight)
+	void RuntimeUIService::OnRender(uint32_t viewportWidth, uint32_t viewportHeight)
 	{
 		// Calculate orthographic projection matrix for user interface
 		Math::mat4 orthographicProjection = glm::ortho(0.0f, (float)viewportWidth,
 			0.0f, (float)viewportHeight, -1.0f, 1.0f);
-		PushRenderData(orthographicProjection, viewportWidth, viewportHeight);
+		OnRender(orthographicProjection, viewportWidth, viewportHeight);
 	}
 
 	void RuntimeUIService::AddActiveWindow(Window& window)
@@ -905,7 +905,7 @@ namespace Kargono::RuntimeUI
 		m_Widgets.erase(m_Widgets.begin() + widgetLocation);
 	}
 
-	void TextWidget::PushRenderData(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	void TextWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
 		Rendering::RendererInputSpec& inputSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
 

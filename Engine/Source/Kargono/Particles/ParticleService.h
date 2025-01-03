@@ -9,22 +9,18 @@ namespace Kargono::Particles
 {
     struct Particle
     {
+	public:
         // Particle position data
         Math::vec3 m_Position;
-        Math::vec3 m_Velocity;
+		Math::vec2 m_Size;
         float m_Rotation;
 
-        // Particle color interpolated from start to end of lifetime
-        Math::vec4 m_ColorStart;
-        Math::vec4 m_ColorEnd;
-
-        // Particle width interpolated from start to end of lifetime
-        float m_SizeStart;
-        float m_SizeEnd;
-
+	private:
         // Particle lifetime information
 		std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 		std::chrono::time_point<std::chrono::high_resolution_clock> endTime;
+	private:
+		friend class ParticleService;
     };
 
     class ParticleService
@@ -33,18 +29,20 @@ namespace Kargono::Particles
         //==============================
         // Lifecycle Functions
         //==============================
-        void Init();
-        void Terminate();
+        static void Init();
+        static void Terminate();
     public:
         //==============================
         // On Event Functions
         //==============================
 	    static void OnUpdate(Timestep ts);
+		static void OnRender(const Math::mat4& viewProjection);
 
         //==============================
         // Submit Particles
         //==============================
-	    static void AddParticle(const Particle& particle);
+	    static void AddParticle(const Particle& particle, float lifeTime);
+		static void AddParticle(const Math::vec3& particleLocation, float lifeTime);
     };
 }
 

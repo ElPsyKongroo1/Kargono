@@ -314,6 +314,7 @@ namespace Kargono::Scenes
 
 	ECS::Entity Scene::GetPrimaryCameraEntity()
 	{
+		// TODO: This is ridiculous
 		auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::CameraComponent>();
 		for (auto entity: view)
 		{

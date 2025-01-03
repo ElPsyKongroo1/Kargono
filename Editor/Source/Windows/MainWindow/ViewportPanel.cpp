@@ -9,6 +9,7 @@
 #include "Kargono/Utility/Time.h"
 #include "Kargono/Events/EditorEvent.h"
 #include "Kargono/Utility/Operations.h"
+#include "Kargono/Particles/ParticleService.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
@@ -91,6 +92,8 @@ namespace Kargono::Panels
 			{
 				// Process AI
 				AI::AIService::OnUpdate(ts);
+				// Process Particles
+				Particles::ParticleService::OnUpdate(ts);
 				// Process Input Mode
 				Input::InputMapService::OnUpdate(ts);
 				// Process entity OnUpdate
@@ -115,11 +118,18 @@ namespace Kargono::Panels
 			if (cameraEntity)
 			{
 				Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
-				Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
 
 				if (mainCamera)
 				{
-					RuntimeUI::RuntimeUIService::PushRenderData(m_ViewportData.m_Width, m_ViewportData.m_Height);
+					// Get camera transform
+					Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
+					Math::mat4 cameraViewProjection = mainCamera->GetProjection() * glm::inverse(cameraTransform);
+
+					// Render particles
+					Particles::ParticleService::OnRender(cameraViewProjection);
+
+					// Render RuntimeUI directory to viewport bounds
+					RuntimeUI::RuntimeUIService::OnRender(m_ViewportData.m_Width, m_ViewportData.m_Height);
 				}
 			}	
 		}

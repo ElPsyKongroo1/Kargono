@@ -25,9 +25,9 @@ namespace Kargono::Rendering
 		//============================================================
 		// Scene Rendering Submission LifeTime Functions
 		//============================================================
-		static void BeginScene(const Camera& camera, const Math::mat4& transform);
+		static void BeginScene(const Camera& camera, const Math::mat4& viewMatrix);
 		static void BeginScene(const EditorPerspectiveCamera& camera);
-		static void BeginScene(const Math::mat4 projection);
+		static void BeginScene(const Math::mat4 viewProjection);
 		static void SubmitDataToRenderer(RendererInputSpec& inputSpec);
 		static void EndScene();
 	private:

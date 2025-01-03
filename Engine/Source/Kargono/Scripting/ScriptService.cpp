@@ -20,6 +20,7 @@
 #include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Events/EditorEvent.h"
 #include "Kargono/Physics/Physics2DCommon.h"
+#include "Kargono/Particles/ParticleService.h"
 
 #if defined(KG_PLATFORM_WINDOWS)
 #include "API/Platform/WindowsBackendAPI.h"

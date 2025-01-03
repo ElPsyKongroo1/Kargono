@@ -79,6 +79,7 @@ namespace Kargono
 		Rendering::RenderingService::SetLineWidth(4.0f);
 		RuntimeUI::FontService::Init();
 		RuntimeUI::RuntimeUIService::Init();
+		Particles::ParticleService::Init();
 
 		OnPlay();
 		currentWindow.SetVisible(true);
@@ -90,6 +91,7 @@ namespace Kargono
 
 		// Terminate engine services
 		RuntimeUI::RuntimeUIService::Terminate();
+		Particles::ParticleService::Terminate();
 		Audio::AudioService::Terminate();
 		Scripting::ScriptService::Terminate();
 		AI::AIService::Terminate();
@@ -110,20 +112,26 @@ namespace Kargono
 		// Draw all scene entities
  		OnUpdateRuntime(ts);
 
-		// Draw runtimeUI, if applicable
+		// Get primary scene camera for render UI and particles over
 		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
 			return;
 		}
 		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
+		
 
+		// Only handle UI and particles if a main camera exists
 		if (mainCamera)
 		{
-			/*RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), 
-				EngineService::GetActiveWindow().GetWidth(), EngineService::GetActiveWindow().GetHeight());*/
-			RuntimeUI::RuntimeUIService::PushRenderData(EngineService::GetActiveWindow().GetWidth(), 
+			// Get camera transform
+			Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
+
+			// Draw particles
+			Particles::ParticleService::OnRender(mainCamera->GetProjection() * cameraTransform);
+
+			// Draw runtimeUI
+			RuntimeUI::RuntimeUIService::OnRender(EngineService::GetActiveWindow().GetWidth(), 
 				EngineService::GetActiveWindow().GetHeight());
 		}
 	}
@@ -303,6 +311,7 @@ namespace Kargono
 	{
 		// Process AI
 		AI::AIService::OnUpdate(ts);
+		Particles::ParticleService::OnUpdate(ts);
 
 		// Update
 		Input::InputMapService::OnUpdate(ts);

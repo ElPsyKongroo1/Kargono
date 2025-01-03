@@ -4,7 +4,6 @@
 
 #include <filesystem>
 
-
 namespace Kargono
 {
 	//============================================================
@@ -32,6 +31,10 @@ namespace Kargono
 		virtual void Init() override;
 		// Closes Audio System and calls OnSceneStop()
 		virtual void Terminate() override;
+
+		//==========================
+		// On Event Functions
+		//==========================
 		// Calls Runtime Update for Physics, Scripting, and Rendering.
 		virtual void OnUpdate(Timestep ts) override;
 		// Currently does nothing!

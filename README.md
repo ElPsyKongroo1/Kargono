@@ -41,7 +41,7 @@ The latest version of this project is always accessible in the Development-Branc
 		git clone -b dev https://github.com/ElPsyKongroo1/Kargono.git
 	![Alt text](Images/download_kargono.gif)
 	*(Cloning Stable-Branch)*
-- Run BuildScripts/VS_GenProjects.bat to build Visual Studio Solution/Project files.
+- Run BuildScripts/Windows_GenVSProjectFiles.bat to build Visual Studio Solution/Project files.
 	![Alt text](Images/run_build_file.gif)
 	*(Building visual studio project files)*
 - Open Kargono.sln in central directory.

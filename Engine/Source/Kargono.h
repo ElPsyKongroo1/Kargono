@@ -50,6 +50,9 @@
 #include "Kargono/Network/Client.h"
 #include "Kargono/Network/Server.h"
 
+//-----------------Particles-----------------//
+#include "Kargono/Particles/ParticleService.h"
+
 //-----------------Project-----------------//
 #include "Kargono/Projects/Project.h"
 
