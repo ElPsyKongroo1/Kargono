@@ -7,5 +7,5 @@ var classKargono_1_1Rendering_1_1Framebuffer =
     [ "ReadPixel", "classKargono_1_1Rendering_1_1Framebuffer.html#a8ea1ac2f51946ada1a523ef9c1525e62", null ],
     [ "ClearAttachment", "classKargono_1_1Rendering_1_1Framebuffer.html#a02a59acb0f1bbd1b3ab29e6fb104e9bc", null ],
     [ "GetColorAttachmentRendererID", "classKargono_1_1Rendering_1_1Framebuffer.html#a69d896c612b7a261380c165ad79f7b5a", null ],
-    [ "GetSpecification", "classKargono_1_1Rendering_1_1Framebuffer.html#adcb5f8cc7352c6d6dced15dc10ed9ab9", null ]
+    [ "GetSpecification", "classKargono_1_1Rendering_1_1Framebuffer.html#a38688e79a6e2c60872d6817c909f56cd", null ]
 ];

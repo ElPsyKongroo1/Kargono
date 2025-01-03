@@ -1,9 +1,9 @@
 var Event_8h =
 [
-    [ "Event", "classKargono_1_1Events_1_1Event.html", "classKargono_1_1Events_1_1Event" ],
+    [ "Kargono::Events::Event", "classKargono_1_1Events_1_1Event.html", "classKargono_1_1Events_1_1Event" ],
     [ "EventCallbackFn", "Event_8h.html#a44c4fd28fd93015379592e04f356fee7", null ],
     [ "EventType", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4", [
-      [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
+      [ "None", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "WindowClose", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4ac984201d37197ab297a14d19efee4b07", null ],
       [ "WindowResize", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a9f8f27bff2915738c4fe1b970e12f89c", null ],
       [ "WindowFocus", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a1c68d5453b28d52622bf5486a5fd95ca", null ],
@@ -55,10 +55,6 @@ var Event_8h =
     ] ],
     [ "EventCategory", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522", [
       [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a661adecac578ef49aefda5401d7c5a8a", null ],
-      [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
-      [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
-      [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
-      [ "None", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "Application", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84", null ],
       [ "Input", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522a796f2a9de3d08f65af121153131cf6da", null ],
       [ "Scene", "Event_8h.html#ac4113af6aab03b68f20ae298e9aa0522ab5ad2919f7bacbac2852f251f2585be4", null ],

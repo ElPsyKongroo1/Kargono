@@ -1,7 +1,7 @@
 var SceneEvent_8h =
 [
-    [ "ManageEntity", "classKargono_1_1Events_1_1ManageEntity.html", "classKargono_1_1Events_1_1ManageEntity" ],
-    [ "ManageScene", "classKargono_1_1Events_1_1ManageScene.html", "classKargono_1_1Events_1_1ManageScene" ],
+    [ "Kargono::Events::ManageEntity", "classKargono_1_1Events_1_1ManageEntity.html", "classKargono_1_1Events_1_1ManageEntity" ],
+    [ "Kargono::Events::ManageScene", "classKargono_1_1Events_1_1ManageScene.html", "classKargono_1_1Events_1_1ManageScene" ],
     [ "ManageEntityAction", "SceneEvent_8h.html#ae2bdcffcfd744fa1d145a60fabefd241", [
       [ "None", "SceneEvent_8h.html#ae2bdcffcfd744fa1d145a60fabefd241a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "Delete", "SceneEvent_8h.html#ae2bdcffcfd744fa1d145a60fabefd241af2a6c498fb90ee345d997f888fce3b18", null ],

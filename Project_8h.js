@@ -1,7 +1,7 @@
 var Project_8h =
 [
-    [ "Project", "classKargono_1_1Projects_1_1Project.html", "classKargono_1_1Projects_1_1Project" ],
-    [ "ProjectService", "classKargono_1_1Projects_1_1ProjectService.html", null ],
+    [ "Kargono::Projects::Project", "classKargono_1_1Projects_1_1Project.html", "classKargono_1_1Projects_1_1Project" ],
+    [ "Kargono::Projects::ProjectService", "classKargono_1_1Projects_1_1ProjectService.html", null ],
     [ "ScreenResolutionOptions", "Project_8h.html#af00e4df2500c541fcef05df57849b8c2", [
       [ "None", "Project_8h.html#af00e4df2500c541fcef05df57849b8c2a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "R800x800", "Project_8h.html#af00e4df2500c541fcef05df57849b8c2ab2cfee26bb8ec1703827d51a076b76d1", null ],
@@ -16,8 +16,6 @@ var Project_8h =
       [ "R1024x768", "Project_8h.html#af00e4df2500c541fcef05df57849b8c2ab911a12e4f44ebedd1deca5619ae34e7", null ],
       [ "MatchDevice", "Project_8h.html#af00e4df2500c541fcef05df57849b8c2a7c2133ab7b1c84cc802c72d02732e148", null ]
     ] ],
-    [ "ScreenResolutionToString", "Project_8h.html#ade0d6656874ad935f6fec81054ad0ee5", null ],
-    [ "StringToScreenResolution", "Project_8h.html#a5de0a9a69308b8f9dfeeaceceb36573a", null ],
     [ "ScreenResolutionToAspectRatio", "Project_8h.html#a3cf817a2341f3ef7771e7f2eb6374824", null ],
     [ "ScreenResolutionToVec2", "Project_8h.html#ac3d88fa43ef1c6e55c8e1e2383856bda", null ]
 ];

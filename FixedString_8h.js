@@ -1,7 +1,6 @@
 var FixedString_8h =
 [
-    [ "FixedString", "classKargono_1_1FixedString.html", "classKargono_1_1FixedString" ],
-    [ "hash< Kargono::FixedString< BufferSize > >", "structstd_1_1hash_3_01Kargono_1_1FixedString_3_01BufferSize_01_4_01_4.html", "structstd_1_1hash_3_01Kargono_1_1FixedString_3_01BufferSize_01_4_01_4" ],
+    [ "Kargono::FixedString< BufferSize >", "classKargono_1_1FixedString.html", "classKargono_1_1FixedString" ],
     [ "FixedString16", "FixedString_8h.html#abeb07e0919c3506dfe7d2ef9f339579b", null ],
     [ "FixedString32", "FixedString_8h.html#a50e3c85e333554b4fc6ad254b2a2398f", null ],
     [ "FixedString64", "FixedString_8h.html#a699a907abb344b050ce1f9ca2c640b7d", null ],

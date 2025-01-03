@@ -1,10 +1,10 @@
 var NetworkCommon_8h =
 [
-    [ "MessageHeader", "structKargono_1_1Network_1_1MessageHeader.html", "structKargono_1_1Network_1_1MessageHeader" ],
-    [ "Message", "structKargono_1_1Network_1_1Message.html", "structKargono_1_1Network_1_1Message" ],
-    [ "owned_message", "structKargono_1_1Network_1_1owned__message.html", "structKargono_1_1Network_1_1owned__message" ],
-    [ "LabeledMessage", "structKargono_1_1Network_1_1LabeledMessage.html", "structKargono_1_1Network_1_1LabeledMessage" ],
-    [ "NetworkContext", "structKargono_1_1Network_1_1NetworkContext.html", "structKargono_1_1Network_1_1NetworkContext" ],
+    [ "Kargono::Network::MessageHeader", "structKargono_1_1Network_1_1MessageHeader.html", "structKargono_1_1Network_1_1MessageHeader" ],
+    [ "Kargono::Network::Message", "structKargono_1_1Network_1_1Message.html", "structKargono_1_1Network_1_1Message" ],
+    [ "Kargono::Network::owned_message", "structKargono_1_1Network_1_1owned__message.html", "structKargono_1_1Network_1_1owned__message" ],
+    [ "Kargono::Network::LabeledMessage", "structKargono_1_1Network_1_1LabeledMessage.html", "structKargono_1_1Network_1_1LabeledMessage" ],
+    [ "Kargono::Network::NetworkContext", "structKargono_1_1Network_1_1NetworkContext.html", "structKargono_1_1Network_1_1NetworkContext" ],
     [ "MessageType", "NetworkCommon_8h.html#a5e82ac7a52db2786742329689d178f5b", [
       [ "AcceptConnection", "NetworkCommon_8h.html#a5e82ac7a52db2786742329689d178f5ba843677171190ceaabbc5dec412139c97", null ],
       [ "DenyConnection", "NetworkCommon_8h.html#a5e82ac7a52db2786742329689d178f5ba6787e988fe1dc2f224f662661112718e", null ],
@@ -36,6 +36,6 @@ var NetworkCommon_8h =
       [ "SignalAll", "NetworkCommon_8h.html#a5e82ac7a52db2786742329689d178f5ba1419ca18aafb4da5671c1debddbc682f", null ],
       [ "ReceiveSignal", "NetworkCommon_8h.html#a5e82ac7a52db2786742329689d178f5ba506ae7683b97bf907a249be202eaa6e9", null ]
     ] ],
-    [ "operator<<", "NetworkCommon_8h.html#aa0edece53d96ccb8f91002f7ec10d83a", null ],
-    [ "operator>>", "NetworkCommon_8h.html#a79d4971ffb062d2c8516f25ae5a65a4d", null ]
+    [ "operator<<", "NetworkCommon_8h.html#a01242e9a23912d4c2269431eda371da7", null ],
+    [ "operator>>", "NetworkCommon_8h.html#a5fff9503450bfbea8c22f908b1d8b7b2", null ]
 ];

@@ -1,33 +1,15 @@
 var dir_0451741c93a62944666cecd3ae0c391f =
 [
-    [ "Conversions.h", "Conversions_8h.html", [
-      [ "Conversions", "classKargono_1_1Utility_1_1Conversions.html", "classKargono_1_1Utility_1_1Conversions" ]
-    ] ],
-    [ "FileDialogs.h", "FileDialogs_8h.html", [
-      [ "FileDialogs", "classKargono_1_1Utility_1_1FileDialogs.html", null ]
-    ] ],
+    [ "Conversions.h", "Conversions_8h.html", "Conversions_8h" ],
+    [ "FileDialogs.h", "FileDialogs_8h.html", "FileDialogs_8h" ],
     [ "FileSystem.cpp", "FileSystem_8cpp.html", null ],
     [ "FileSystem.h", "FileSystem_8h.html", "FileSystem_8h" ],
-    [ "Operations.h", "Operations_8h.html", [
-      [ "Operations", "classKargono_1_1Utility_1_1Operations.html", null ]
-    ] ],
-    [ "OSCommands.h", "OSCommands_8h.html", [
-      [ "OSCommands", "classKargono_1_1Utility_1_1OSCommands.html", null ]
-    ] ],
+    [ "Operations.h", "Operations_8h.html", "Operations_8h" ],
+    [ "OSCommands.h", "OSCommands_8h.html", "OSCommands_8h" ],
     [ "Random.cpp", "Random_8cpp.html", null ],
-    [ "Random.h", "Random_8h.html", [
-      [ "RandomService", "classKargono_1_1Utility_1_1RandomService.html", null ]
-    ] ],
-    [ "Regex.h", "Regex_8h.html", [
-      [ "Regex", "classKargono_1_1Utility_1_1Regex.html", null ]
-    ] ],
-    [ "Time.h", "Time_8h.html", [
-      [ "Time", "classKargono_1_1Utility_1_1Time.html", null ]
-    ] ],
+    [ "Random.h", "Random_8h.html", "Random_8h" ],
+    [ "Regex.h", "Regex_8h.html", "Regex_8h" ],
+    [ "Time.h", "Time_8h.html", "Time_8h" ],
     [ "Timers.cpp", "Timers_8cpp.html", null ],
-    [ "Timers.h", "Timers_8h.html", [
-      [ "ScopedTimer", "classKargono_1_1Utility_1_1ScopedTimer.html", "classKargono_1_1Utility_1_1ScopedTimer" ],
-      [ "AsyncBusyTimer", "classKargono_1_1Utility_1_1AsyncBusyTimer.html", "classKargono_1_1Utility_1_1AsyncBusyTimer" ],
-      [ "PassiveTimer", "classKargono_1_1Utility_1_1PassiveTimer.html", "classKargono_1_1Utility_1_1PassiveTimer" ]
-    ] ]
+    [ "Timers.h", "Timers_8h.html", "Timers_8h" ]
 ];

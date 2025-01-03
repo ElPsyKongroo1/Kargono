@@ -1,9 +1,9 @@
 var Shader_8h =
 [
-    [ "DrawCallBuffer", "structKargono_1_1Rendering_1_1DrawCallBuffer.html", "structKargono_1_1Rendering_1_1DrawCallBuffer" ],
-    [ "RendererInputSpec", "structKargono_1_1Rendering_1_1RendererInputSpec.html", "structKargono_1_1Rendering_1_1RendererInputSpec" ],
-    [ "ShaderSpecification", "structKargono_1_1Rendering_1_1ShaderSpecification.html", "structKargono_1_1Rendering_1_1ShaderSpecification" ],
-    [ "Shader", "classKargono_1_1Rendering_1_1Shader.html", "classKargono_1_1Rendering_1_1Shader" ],
+    [ "Kargono::Rendering::DrawCallBuffer", "structKargono_1_1Rendering_1_1DrawCallBuffer.html", "structKargono_1_1Rendering_1_1DrawCallBuffer" ],
+    [ "Kargono::Rendering::RendererInputSpec", "structKargono_1_1Rendering_1_1RendererInputSpec.html", "structKargono_1_1Rendering_1_1RendererInputSpec" ],
+    [ "Kargono::Rendering::ShaderSpecification", "structKargono_1_1Rendering_1_1ShaderSpecification.html", "structKargono_1_1Rendering_1_1ShaderSpecification" ],
+    [ "Kargono::Rendering::Shader", "classKargono_1_1Rendering_1_1Shader.html", "classKargono_1_1Rendering_1_1Shader" ],
     [ "GLenum", "Shader_8h.html#a3081aaa3e7c4b72155cbd4c2d56b8656", null ],
     [ "ShaderSource", "Shader_8h.html#a29c117ac2ca6b7f0f8f1d7d26c960606", null ],
     [ "ColorInputType", "Shader_8h.html#a7941cbc8fd7c93c475d08980c8b53212", [

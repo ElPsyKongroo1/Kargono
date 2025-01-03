@@ -1,6 +1,6 @@
 var ContentBrowserPanel_8h =
 [
-    [ "ContentBrowserPanel", "classKargono_1_1Panels_1_1ContentBrowserPanel.html", "classKargono_1_1Panels_1_1ContentBrowserPanel" ],
+    [ "Kargono::Panels::ContentBrowserPanel", "classKargono_1_1Panels_1_1ContentBrowserPanel.html", "classKargono_1_1Panels_1_1ContentBrowserPanel" ],
     [ "BrowserFileType", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723b", [
       [ "None", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723ba6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "Directory", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723bae73cda510e8bb947f7e61089e5581494", null ],
@@ -20,7 +20,5 @@ var ContentBrowserPanel_8h =
       [ "RawAudio", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723bad13a1ab10f78ebf74f945696913d75e2", null ],
       [ "RawFont", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723bae4753725e3b714349a4a8adde6543393", null ],
       [ "GenericFile", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723ba3b488019ae08e2f28be9d9f430780216", null ]
-    ] ],
-    [ "DetermineFileType", "ContentBrowserPanel_8h.html#abf0b693a5c312e06efabf024f13f747b", null ],
-    [ "BrowserFileTypeToPayloadString", "ContentBrowserPanel_8h.html#a4d55bead8350155c8f07ff678d1607a5", null ]
+    ] ]
 ];

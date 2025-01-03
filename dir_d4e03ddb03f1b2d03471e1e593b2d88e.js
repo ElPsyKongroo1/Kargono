@@ -1,71 +1,35 @@
 var dir_d4e03ddb03f1b2d03471e1e593b2d88e =
 [
     [ "AIStateEditorPanel.cpp", "AIStateEditorPanel_8cpp.html", null ],
-    [ "AIStateEditorPanel.h", "AIStateEditorPanel_8h.html", [
-      [ "AIStateEditorPanel", "classKargono_1_1Panels_1_1AIStateEditorPanel.html", "classKargono_1_1Panels_1_1AIStateEditorPanel" ]
-    ] ],
+    [ "AIStateEditorPanel.h", "AIStateEditorPanel_8h.html", "AIStateEditorPanel_8h" ],
     [ "AssetViewerPanel.cpp", "AssetViewerPanel_8cpp.html", null ],
-    [ "AssetViewerPanel.h", "AssetViewerPanel_8h.html", [
-      [ "AssetViewerPanel", "classKargono_1_1Panels_1_1AssetViewerPanel.html", "classKargono_1_1Panels_1_1AssetViewerPanel" ]
-    ] ],
+    [ "AssetViewerPanel.h", "AssetViewerPanel_8h.html", "AssetViewerPanel_8h" ],
     [ "ContentBrowserPanel.cpp", "ContentBrowserPanel_8cpp.html", null ],
     [ "ContentBrowserPanel.h", "ContentBrowserPanel_8h.html", "ContentBrowserPanel_8h" ],
     [ "GameStatePanel.cpp", "GameStatePanel_8cpp.html", null ],
-    [ "GameStatePanel.h", "GameStatePanel_8h.html", [
-      [ "GameStatePanel", "classKargono_1_1Panels_1_1GameStatePanel.html", "classKargono_1_1Panels_1_1GameStatePanel" ]
-    ] ],
+    [ "GameStatePanel.h", "GameStatePanel_8h.html", "GameStatePanel_8h" ],
     [ "InputMapPanel.cpp", "InputMapPanel_8cpp.html", null ],
-    [ "InputMapPanel.h", "InputMapPanel_8h.html", [
-      [ "InputMapPanel", "classKargono_1_1Panels_1_1InputMapPanel.html", "classKargono_1_1Panels_1_1InputMapPanel" ]
-    ] ],
+    [ "InputMapPanel.h", "InputMapPanel_8h.html", "InputMapPanel_8h" ],
     [ "LogPanel.cpp", "LogPanel_8cpp.html", null ],
-    [ "LogPanel.h", "LogPanel_8h.html", [
-      [ "ImGuiLog", "structKargono_1_1Panels_1_1ImGuiLog.html", "structKargono_1_1Panels_1_1ImGuiLog" ],
-      [ "LogPanel", "classKargono_1_1Panels_1_1LogPanel.html", "classKargono_1_1Panels_1_1LogPanel" ]
-    ] ],
+    [ "LogPanel.h", "LogPanel_8h.html", "LogPanel_8h" ],
     [ "ProjectComponentPanel.cpp", "ProjectComponentPanel_8cpp.html", null ],
-    [ "ProjectComponentPanel.h", "ProjectComponentPanel_8h.html", [
-      [ "ProjectComponentPanel", "classKargono_1_1Panels_1_1ProjectComponentPanel.html", "classKargono_1_1Panels_1_1ProjectComponentPanel" ]
-    ] ],
+    [ "ProjectComponentPanel.h", "ProjectComponentPanel_8h.html", "ProjectComponentPanel_8h" ],
     [ "ProjectPanel.cpp", "ProjectPanel_8cpp.html", null ],
-    [ "ProjectPanel.h", "ProjectPanel_8h.html", [
-      [ "ProjectPanel", "classKargono_1_1Panels_1_1ProjectPanel.html", "classKargono_1_1Panels_1_1ProjectPanel" ]
-    ] ],
+    [ "ProjectPanel.h", "ProjectPanel_8h.html", "ProjectPanel_8h" ],
     [ "PropertiesPanel.cpp", "PropertiesPanel_8cpp.html", null ],
-    [ "PropertiesPanel.h", "PropertiesPanel_8h.html", [
-      [ "PropertiesPanel", "classKargono_1_1Panels_1_1PropertiesPanel.html", "classKargono_1_1Panels_1_1PropertiesPanel" ]
-    ] ],
+    [ "PropertiesPanel.h", "PropertiesPanel_8h.html", "PropertiesPanel_8h" ],
     [ "SceneEditorPanel.cpp", "SceneEditorPanel_8cpp.html", null ],
-    [ "SceneEditorPanel.h", "SceneEditorPanel_8h.html", [
-      [ "ProjectComponentWidgetData", "structKargono_1_1Panels_1_1ProjectComponentWidgetData.html", "structKargono_1_1Panels_1_1ProjectComponentWidgetData" ],
-      [ "SceneEditorTreeEntryData", "structKargono_1_1Panels_1_1SceneEditorTreeEntryData.html", "structKargono_1_1Panels_1_1SceneEditorTreeEntryData" ],
-      [ "SceneEditorPanel", "classKargono_1_1Panels_1_1SceneEditorPanel.html", "classKargono_1_1Panels_1_1SceneEditorPanel" ]
-    ] ],
+    [ "SceneEditorPanel.h", "SceneEditorPanel_8h.html", "SceneEditorPanel_8h" ],
     [ "ScriptEditorPanel.cpp", "ScriptEditorPanel_8cpp.html", null ],
-    [ "ScriptEditorPanel.h", "ScriptEditorPanel_8h.html", [
-      [ "CreateWidgets", "structKargono_1_1Panels_1_1CreateWidgets.html", "structKargono_1_1Panels_1_1CreateWidgets" ],
-      [ "EditWidgets", "structKargono_1_1Panels_1_1EditWidgets.html", "structKargono_1_1Panels_1_1EditWidgets" ],
-      [ "ScriptEditorPanel", "classKargono_1_1Panels_1_1ScriptEditorPanel.html", "classKargono_1_1Panels_1_1ScriptEditorPanel" ]
-    ] ],
+    [ "ScriptEditorPanel.h", "ScriptEditorPanel_8h.html", "ScriptEditorPanel_8h" ],
     [ "StatisticsPanel.cpp", "StatisticsPanel_8cpp.html", null ],
-    [ "StatisticsPanel.h", "StatisticsPanel_8h.html", [
-      [ "StatisticsPanel", "classKargono_1_1Panels_1_1StatisticsPanel.html", "classKargono_1_1Panels_1_1StatisticsPanel" ]
-    ] ],
+    [ "StatisticsPanel.h", "StatisticsPanel_8h.html", "StatisticsPanel_8h" ],
     [ "TestingPanel.cpp", "TestingPanel_8cpp.html", "TestingPanel_8cpp" ],
-    [ "TestingPanel.h", "TestingPanel_8h.html", [
-      [ "TestingPanel", "classKargono_1_1Panels_1_1TestingPanel.html", "classKargono_1_1Panels_1_1TestingPanel" ]
-    ] ],
+    [ "TestingPanel.h", "TestingPanel_8h.html", "TestingPanel_8h" ],
     [ "TextEditorPanel.cpp", "TextEditorPanel_8cpp.html", null ],
-    [ "TextEditorPanel.h", "TextEditorPanel_8h.html", [
-      [ "Document", "structKargono_1_1Panels_1_1Document.html", "structKargono_1_1Panels_1_1Document" ],
-      [ "TextEditorPanel", "classKargono_1_1Panels_1_1TextEditorPanel.html", "classKargono_1_1Panels_1_1TextEditorPanel" ]
-    ] ],
+    [ "TextEditorPanel.h", "TextEditorPanel_8h.html", "TextEditorPanel_8h" ],
     [ "UIEditorPanel.cpp", "UIEditorPanel_8cpp.html", null ],
     [ "UIEditorPanel.h", "UIEditorPanel_8h.html", "UIEditorPanel_8h" ],
     [ "ViewportPanel.cpp", "ViewportPanel_8cpp.html", null ],
-    [ "ViewportPanel.h", "ViewportPanel_8h.html", [
-      [ "DebugLine", "structKargono_1_1Panels_1_1DebugLine.html", "structKargono_1_1Panels_1_1DebugLine" ],
-      [ "DebugPoint", "structKargono_1_1Panels_1_1DebugPoint.html", "structKargono_1_1Panels_1_1DebugPoint" ],
-      [ "ViewportPanel", "classKargono_1_1Panels_1_1ViewportPanel.html", "classKargono_1_1Panels_1_1ViewportPanel" ]
-    ] ]
+    [ "ViewportPanel.h", "ViewportPanel_8h.html", "ViewportPanel_8h" ]
 ];

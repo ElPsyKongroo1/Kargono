@@ -11,6 +11,6 @@ var classKargono_1_1Network_1_1Session =
     [ "EnableReadyCheck", "classKargono_1_1Network_1_1Session.html#ad450040d0553b74e38aa8e857482d12a", null ],
     [ "SetSessionStartFrame", "classKargono_1_1Network_1_1Session.html#a07f48ef212dd2acbadf20e89844eea1f", null ],
     [ "GetSessionStartFrame", "classKargono_1_1Network_1_1Session.html#a5d6eb7d0c56552ae57606b473e1e5af3", null ],
-    [ "GetAllClients", "classKargono_1_1Network_1_1Session.html#a4ba9e01b512c1adda55a52a900c18cbb", null ],
-    [ "GetAllSlots", "classKargono_1_1Network_1_1Session.html#a975c108c438282417a4ce4c4a92dbd3c", null ]
+    [ "GetAllClients", "classKargono_1_1Network_1_1Session.html#a6b088d91c78ab93b07b672255c963698", null ],
+    [ "GetAllSlots", "classKargono_1_1Network_1_1Session.html#a9e4f0a11992d83a24edc732a8e8657c7", null ]
 ];

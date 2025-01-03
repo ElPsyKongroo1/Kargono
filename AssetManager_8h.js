@@ -1,6 +1,6 @@
 var AssetManager_8h =
 [
-    [ "AssetManager", "classKargono_1_1Assets_1_1AssetManager.html", "classKargono_1_1Assets_1_1AssetManager" ],
+    [ "Kargono::Assets::AssetManager< AssetValue >", "classKargono_1_1Assets_1_1AssetManager.html", "classKargono_1_1Assets_1_1AssetManager" ],
     [ "AssetRegistry", "AssetManager_8h.html#acf697e4d9bae8dbce046e4e64a45c979", null ],
     [ "AssetManagerOptions", "AssetManager_8h.html#af3ee1e9456ea075957d9d7f5f44d041c", [
       [ "None", "AssetManager_8h.html#af3ee1e9456ea075957d9d7f5f44d041cac9d3e887722f2bc482bcca9d41c512af", null ],

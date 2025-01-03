@@ -1,6 +1,6 @@
 var Shape_8h =
 [
-    [ "Shape", "classKargono_1_1Rendering_1_1Shape.html", "classKargono_1_1Rendering_1_1Shape" ],
+    [ "Kargono::Rendering::Shape", "classKargono_1_1Rendering_1_1Shape.html", "classKargono_1_1Rendering_1_1Shape" ],
     [ "Vertex", "Shape_8h.html#a8adb284242a15e28848f51c29f41660f", null ],
     [ "RenderingType", "Shape_8h.html#ae49bc6b1a8be3de985e6f11a4681eaa3", [
       [ "None", "Shape_8h.html#ae49bc6b1a8be3de985e6f11a4681eaa3a6adf97f83acf6453d4a6a4b1070f3754", null ],
