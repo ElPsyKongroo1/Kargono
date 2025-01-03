@@ -1253,6 +1253,7 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Scripts", "This namespace provides access to all available scripts in the current project.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AI", "This namespace provides functions that interact with the AI system in the engine.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Physics", "This namespace provides functions that interact with the physics system in the engine.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Particles", "This namespace provides functions that interact with the particle system in the engine.");
 	}
 
 	void ScriptCompilerService::CreateKGScriptFunctionDefinitions()
@@ -1456,6 +1457,29 @@ namespace Kargono::Scripting
 		{
 			node.Namespace = {};
 			node.Identifier.Value = "SetDisplayWindow";
+		};
+
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Particles" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "AddParticle" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "particleLocation" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "float" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "particleLifetime" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Create a simple particle at the specified point. This function takes in a vector3 for the particle position and a float to indicate its lifetime.";
+		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "Particle_AddParticleByLocation";
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -1804,10 +1828,34 @@ namespace Kargono::Scripting
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "GenerateRandomNumber";
+			node.Identifier.Value = "GenerateRandomInteger";
 
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Random" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "GetFloat" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "float" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "float" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "lowerBound" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "float" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "upperBound" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Generate a random float between the provided lower and upper bounds. Note that this function uses a fairly expensive algorithm for generating numbers compared to pseudorandom number generators. This function takes two integers to denote the lower and upper bounds respectively.";
+		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "GenerateRandomFloat";
+
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+
 		newFunctionNode = {};
 		newParameter = {};
 

@@ -72,7 +72,17 @@ namespace Kargono::Particles
     void ParticleService::OnUpdate(Timestep ts)
     {
 		KG_ASSERT(s_ParticleContext);
+		std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
+		// TODO: Find data structure that works best for this use case
+		/*for (Particles::Particle& particle : s_ParticleContext->m_ParticlePool)
+		{
+			if (currentTime > particle.endTime)
+			{
 
+			}
+		}*/
+
+		// Delete indicated particles
     }
 
 	void ParticleService::OnRender(const Math::mat4& viewProjection)
@@ -89,7 +99,7 @@ namespace Kargono::Particles
 		for (Particles::Particle& particle : s_ParticleContext->m_ParticlePool)
 		{
 			// Create background rendering data
-			s_ParticleContext->m_ParticleRenderSpec.m_TransformMatrix = glm::mat4(1.0f);
+			s_ParticleContext->m_ParticleRenderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), particle.m_Position);
 
 			// Submit particle to the GPU
 			Rendering::RenderingService::SubmitDataToRenderer(s_ParticleContext->m_ParticleRenderSpec);
@@ -105,11 +115,13 @@ namespace Kargono::Particles
 		s_ParticleContext->m_ParticlePool.push_back(particle);
     }
 
-	void ParticleService::AddParticle(const Math::vec3& particleLocation, float lifeTime)
+	void ParticleService::AddParticleByLocation(Math::vec3 particleLocation, float lifeTime)
 	{
 		Particle newParticle;
 		newParticle.m_Position = particleLocation;
-		//newParticle.startTime = 
+		newParticle.startTime = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<float> duration = std::chrono::duration<float>(lifeTime);  // lifeTime is in seconds (float)
+		newParticle.endTime = newParticle.startTime + std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
 		s_ParticleContext->m_ParticlePool.push_back(newParticle);
 	}
 

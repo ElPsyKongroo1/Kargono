@@ -74,12 +74,12 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Crit Log"))
 		{
-			KG_CRITICAL("Hey we in this bihh {}", Utility::RandomService::GenerateRandomNumber(0, 20));
+			KG_CRITICAL("Hey we in this bihh {}", Utility::RandomService::GenerateRandomInteger(0, 20));
 		}
 
 		if (ImGui::Button("Warn Log"))
 		{
-			KG_WARN("Hey we in this bihh {}", Utility::RandomService::GenerateRandomNumber(0, 20));
+			KG_WARN("Hey we in this bihh {}", Utility::RandomService::GenerateRandomInteger(0, 20));
 		}
 
 

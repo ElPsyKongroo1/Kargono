@@ -42,7 +42,7 @@ namespace Kargono::Particles
         // Submit Particles
         //==============================
 	    static void AddParticle(const Particle& particle, float lifeTime);
-		static void AddParticle(const Math::vec3& particleLocation, float lifeTime);
+		static void AddParticleByLocation(Math::vec3 particleLocation, float lifeTime);
     };
 }
 

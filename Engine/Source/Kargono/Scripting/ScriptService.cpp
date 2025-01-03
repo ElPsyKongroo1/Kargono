@@ -532,6 +532,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidUInt64, void, uint64_t)
 	DefineInsertFunction(VoidUInt64UInt64, void, uint64_t, uint64_t)
 	DefineInsertFunction(VoidVec3, void, Math::vec3)
+	DefineInsertFunction(VoidVec3Float, void, Math::vec3, float)
 	DefineInsertFunction(VoidVec3Vec3, void, Math::vec3, Math::vec3)
 	DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
 	DefineInsertFunction(VoidStringVoidPtr, void, const std::string&, void*)
@@ -555,6 +556,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(BoolString, bool, const std::string&)
 	DefineInsertFunction(UInt16None, uint16_t)
 	DefineInsertFunction(Int32Int32Int32, int32_t, int32_t, int32_t)
+	DefineInsertFunction(FloatFloatFloat, float, float, float)
 	DefineInsertFunction(UInt64String, uint64_t, const std::string&)
 	DefineInsertFunction(Vec2UInt64, Math::vec2, uint64_t)
 	DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
@@ -716,6 +718,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidUInt64, void, uint64_t)
 		AddImportFunctionToHeaderFile(VoidUInt64UInt64, void, uint64_t, uint64_t)
 		AddImportFunctionToHeaderFile(VoidVec3, void, Math::vec3)
+		AddImportFunctionToHeaderFile(VoidVec3Float, void, Math::vec3, float)
 		AddImportFunctionToHeaderFile(VoidVec3Vec3, void, Math::vec3, Math::vec3)
 		AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool)
 		AddImportFunctionToHeaderFile(VoidStringVoidPtr, void, const std::string&, void*)
@@ -740,6 +743,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(UInt16None, uint16_t)
 		AddImportFunctionToHeaderFile(UInt64String, uint64_t, const std::string&)
 		AddImportFunctionToHeaderFile(Int32Int32Int32, int32_t, int32_t, int32_t)
+		AddImportFunctionToHeaderFile(FloatFloatFloat, float, float, float)
 		AddImportFunctionToHeaderFile(Vec2UInt64, Math::vec2, uint64_t)
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
 		AddImportFunctionToHeaderFile(StringUInt64, const std::string&, uint64_t)
@@ -838,7 +842,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(AddDebugLine, void, Math::vec3, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_IsWidgetSelected, bool, const std::string&, const std::string&)
-		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomNumber, int32_t, int32_t, int32_t)
+		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomInteger, int32_t, int32_t, int32_t)
+		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomFloat, float, float, float)
 		AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)
 		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
@@ -848,6 +853,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(AI_IsGlobalState, bool, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(AI_IsCurrentState, bool, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(AI_IsPreviousState, bool, uint64_t, uint64_t)
+		AddEngineFunctionToCPPFileTwoParameters(Particle_AddParticleByLocation, void, Math::vec3, float)
 		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(Physics_Raycast, Physics::RaycastResult, Math::vec2, Math::vec2)
@@ -878,6 +884,10 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(VoidVec3, void, Math::vec3)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(AddDebugPoint)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidVec3Float, void, Math::vec3, float)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(Particle_AddParticleByLocation)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidVec3Vec3, void, Math::vec3, Math::vec3)
 		outputStream << "{\n";
@@ -985,7 +995,11 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(Int32Int32Int32, int32_t, int32_t, int32_t)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(GenerateRandomNumber)
+		AddEngineFunctionToCPPFileEnd(GenerateRandomInteger)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(FloatFloatFloat, float, float, float)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(GenerateRandomFloat)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolUInt16, bool, uint16_t)
 		outputStream << "{\n";
@@ -1218,6 +1232,7 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidUInt64)
 		ImportInsertFunction(VoidString)
 		ImportInsertFunction(VoidVec3)
+		ImportInsertFunction(VoidVec3Float)
 		ImportInsertFunction(VoidVec3Vec3)
 		ImportInsertFunction(VoidPtrString)
 		ImportInsertFunction(VoidStringBool)
@@ -1243,10 +1258,12 @@ namespace Kargono::Scripting
 		ImportInsertFunction(UInt16None)
 		ImportInsertFunction(UInt64String)
 		ImportInsertFunction(Int32Int32Int32)
+		ImportInsertFunction(FloatFloatFloat)
 		ImportInsertFunction(Vec2UInt64)
 		ImportInsertFunction(Vec3UInt64)
 		ImportInsertFunction(StringUInt64)
 		ImportInsertFunction(RaycastResultVec2Vec2)
+
 		AddEngineFunctionPointerToDll(LeaveCurrentSession, Network::ClientService::LeaveCurrentSession, VoidNone)
 		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::ClientService::EnableReadyCheck, VoidNone)
 		AddEngineFunctionPointerToDll(RequestJoinSession, Network::ClientService::RequestJoinSession, VoidNone)
@@ -1286,7 +1303,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, Scenes::SceneService::GetProjectComponentField, VoidPtrUInt64UInt64UInt64)
 		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, Scenes::SceneService::SetProjectComponentField, VoidUInt64UInt64UInt64VoidPtr)
 		AddEngineFunctionPointerToDll(TagComponent_GetTag, Scenes::SceneService::TagComponentGetTag, StringUInt64)
-		AddEngineFunctionPointerToDll(GenerateRandomNumber, Utility::RandomService::GenerateRandomNumber, Int32Int32Int32)
+		AddEngineFunctionPointerToDll(GenerateRandomInteger, Utility::RandomService::GenerateRandomInteger, Int32Int32Int32)
+		AddEngineFunctionPointerToDll(GenerateRandomFloat, Utility::RandomService::GenerateRandomFloat, FloatFloatFloat)
 		AddEngineFunctionPointerToDll(AI_ChangeGlobalState, AI::AIService::ChangeGlobalState, VoidUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_ChangeCurrentState, AI::AIService::ChangeCurrentState, VoidUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_RevertPreviousState, AI::AIService::RevertPreviousState, VoidUInt64)
@@ -1299,5 +1317,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AI_IsCurrentState, AI::AIService::IsCurrentState, BoolUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_IsPreviousState, AI::AIService::IsPreviousState, BoolUInt64UInt64)
 		AddEngineFunctionPointerToDll(Physics_Raycast, Physics::Physics2DService::Raycast, RaycastResultVec2Vec2)
+		AddEngineFunctionPointerToDll(Particle_AddParticleByLocation, Particles::ParticleService::AddParticleByLocation, VoidVec3Float)
+
 	}
 }

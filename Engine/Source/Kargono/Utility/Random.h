@@ -11,9 +11,14 @@ namespace Kargono::Utility
 		//==============================
 		// Service API
 		//==============================
-		static int32_t GenerateRandomNumber(int32_t lowerBound, int32_t upperBound)
+		static int32_t GenerateRandomInteger(int32_t lowerBound, int32_t upperBound)
 		{
 			return std::uniform_int_distribution<int32_t>{lowerBound, upperBound}(randomGenerator);
+		}
+
+		static float GenerateRandomFloat(float lowerBound, float upperBound)
+		{
+			return std::uniform_real_distribution<float>{lowerBound, upperBound}(randomGenerator);
 		}
 	private:
 		//==============================
