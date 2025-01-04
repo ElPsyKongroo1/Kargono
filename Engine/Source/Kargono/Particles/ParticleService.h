@@ -3,7 +3,6 @@
 #include "Kargono/Core/Timestep.h"
 
 #include <vector>
-#include <chrono>
 
 namespace Kargono::Particles
 {
@@ -17,8 +16,8 @@ namespace Kargono::Particles
 
 	private:
         // Particle lifetime information
-		std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
-		std::chrono::time_point<std::chrono::high_resolution_clock> endTime;
+		float startTime;
+		float endTime;
 	private:
 		friend class ParticleService;
     };

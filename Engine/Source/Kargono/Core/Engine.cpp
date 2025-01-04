@@ -23,6 +23,11 @@ namespace Kargono
 	std::chrono::nanoseconds k_ConstantFrameTime { 1'000 * 1'000 * 1'000 / 60 };
 	Timestep k_ConstantFrameTimeStep { 1.0f / 60.0f };
 
+	float Engine::GetInApplicationTime() const
+	{
+		return (float)m_UpdateCount * k_ConstantFrameTimeStep;
+	}
+
 	void Engine::UpdateAppStartTime()
 	{
 		m_AppStartTime = Utility::Time::GetTime();

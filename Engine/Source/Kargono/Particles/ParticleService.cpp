@@ -5,6 +5,7 @@
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Assets/AssetService.h"
+#include "Kargono/Core/Engine.h"
 
 namespace Kargono::Particles
 {
@@ -117,11 +118,15 @@ namespace Kargono::Particles
 
 	void ParticleService::AddParticleByLocation(Math::vec3 particleLocation, float lifeTime)
 	{
+		// Create the new particle
 		Particle newParticle;
 		newParticle.m_Position = particleLocation;
-		newParticle.startTime = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<float> duration = std::chrono::duration<float>(lifeTime);  // lifeTime is in seconds (float)
-		newParticle.endTime = newParticle.startTime + std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
+		
+		// Set start and end times of particle's lifecycle
+		newParticle.startTime = EngineService::GetActiveEngine().GetInApplicationTime();
+		newParticle.endTime = newParticle.startTime + lifeTime;
+
+		// Add particle to buffer
 		s_ParticleContext->m_ParticlePool.push_back(newParticle);
 	}
 
