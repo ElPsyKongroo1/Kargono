@@ -1,13 +1,14 @@
+#if 0
+
 #pragma once
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/EditorUI/EditorUI.h"
-#include "Kargono/RuntimeUI/RuntimeUI.h"
+#include "Kargono/Particles/ParticleService.h"
 #include "Kargono/Core/Base.h"
 
-#include "Windows/UserInterface/UIEditorViewportPanel.h"
-#include "Windows/UserInterface/UIEditorPropertiesPanel.h"
-#include "Windows/UserInterface/UIEditorTreePanel.h"
+#include "Windows/ParticleEmitter/ParticleEmitterViewportPanel.h"
+#include "Windows/ParticleEmitter/ParticleEmitterPropertiesPanel.h"
 
 #include <string>
 
@@ -18,13 +19,13 @@ namespace Kargono::Windows
 	//=========================
 	// UI Editor Panel Class
 	//=========================
-	class UIEditorWindow
+	class ParticleEmitterWindow
 	{
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
-		UIEditorWindow();
+		ParticleEmitterWindow();
 
 		//=========================
 		// Lifecycle Functions
@@ -55,24 +56,24 @@ namespace Kargono::Windows
 		//=========================
 		// Core Panel Data
 		//=========================
-		Ref<RuntimeUI::UserInterface> m_EditorUI{ nullptr };
-		Assets::AssetHandle m_EditorUIHandle { Assets::EmptyHandle };
+		Ref<Particles::EmitterConfig> m_EditorEmitter{ nullptr };
+		Assets::AssetHandle m_EditorEmitterHandle{ Assets::EmptyHandle };
 
 		//=========================
 		// Panels
 		//=========================
-		Scope<Panels::UIEditorViewportPanel> m_ViewportPanel{ nullptr };
-		Scope<Panels::UIEditorPropertiesPanel> m_PropertiesPanel{ nullptr };
-		Scope<Panels::UIEditorTreePanel> m_TreePanel{ nullptr };
+		Scope<Panels::ParticleEmitterViewportPanel> m_ViewportPanel{ nullptr };
+		Scope<Panels::ParticleEmitterPropertiesPanel> m_PropertiesPanel{ nullptr };
 
 		//=========================
 		// Display Panel Booleans
 		//=========================
 		bool m_ShowViewport{ true };
 		bool m_ShowProperties{ true };
-		bool m_ShowTree{ true };
 	private:
 		friend Kargono::EditorApp;
 
 	};
 }
+
+#endif
