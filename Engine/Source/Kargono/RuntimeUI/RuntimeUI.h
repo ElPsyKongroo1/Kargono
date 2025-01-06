@@ -157,9 +157,9 @@ namespace Kargono::RuntimeUI
 		//============================
 		void SetText(const std::string& newText, Window* parentWindow);
 
-	private:
+	public:
 		//============================
-		// Internal Re-validation Methods
+		// Re-validation Methods
 		//============================
 		void CalculateTextSize();
 		void CalculateTextMetadata(Window* parentWindow);

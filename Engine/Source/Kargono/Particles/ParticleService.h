@@ -36,12 +36,6 @@ namespace Kargono::Particles
         //==============================
 	    static void OnUpdate(Timestep ts);
 		static void OnRender(const Math::mat4& viewProjection);
-
-        //==============================
-        // Submit Particles
-        //==============================
-	    static void AddParticle(const Particle& particle, float lifeTime);
-		static void AddParticleByLocation(Math::vec3 particleLocation, float lifeTime);
     };
 }
 

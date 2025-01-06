@@ -853,7 +853,6 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(AI_IsGlobalState, bool, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(AI_IsCurrentState, bool, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(AI_IsPreviousState, bool, uint64_t, uint64_t)
-		AddEngineFunctionToCPPFileTwoParameters(Particle_AddParticleByLocation, void, Math::vec3, float)
 		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(Physics_Raycast, Physics::RaycastResult, Math::vec2, Math::vec2)
@@ -887,7 +886,6 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidVec3Float, void, Math::vec3, float)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(Particle_AddParticleByLocation)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidVec3Vec3, void, Math::vec3, Math::vec3)
 		outputStream << "{\n";
@@ -1317,7 +1315,6 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AI_IsCurrentState, AI::AIService::IsCurrentState, BoolUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_IsPreviousState, AI::AIService::IsPreviousState, BoolUInt64UInt64)
 		AddEngineFunctionPointerToDll(Physics_Raycast, Physics::Physics2DService::Raycast, RaycastResultVec2Vec2)
-		AddEngineFunctionPointerToDll(Particle_AddParticleByLocation, Particles::ParticleService::AddParticleByLocation, VoidVec3Float)
 
 	}
 }

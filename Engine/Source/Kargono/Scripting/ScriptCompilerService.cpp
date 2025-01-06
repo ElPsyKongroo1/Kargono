@@ -1464,29 +1464,6 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Particles" };
-		newFunctionNode.Name = { ScriptTokenType::Identifier, "AddParticle" };
-		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "particleLocation" };
-		newFunctionNode.Parameters.push_back(newParameter);
-		newParameter = {};
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "float" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "particleLifetime" };
-		newFunctionNode.Parameters.push_back(newParameter);
-		newParameter = {};
-		newFunctionNode.Description = "Create a simple particle at the specified point. This function takes in a vector3 for the particle position and a float to indicate its lifetime.";
-		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			node.Namespace = {};
-			node.Identifier.Value = "Particle_AddParticleByLocation";
-		};
-
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
-
-		newFunctionNode = {};
-		newParameter = {};
-
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "WidgetSelectable" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };

@@ -982,12 +982,28 @@ namespace Kargono::RuntimeUI
 		// Calculate the text size of the widget using the default font if the active user interface is not set
 		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
 		{
-			RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize, (int)widgetSize.x);
+			if (m_TextWrapped)
+			{
+				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize, (int)widgetSize.x);
+			}
+			else
+			{
+				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize);
+			}
+			
 			return;
 		}
 
 		// Calculate the text size of the widget using the active user interface font
-		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize, (int)widgetSize.x);
+		if (m_TextWrapped)
+		{
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize, (int)widgetSize.x);
+		}
+		else
+		{
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize);
+		}
+		
 	}
 
 	void TextWidget::SetText(const std::string& newText, Window* parentWindow)

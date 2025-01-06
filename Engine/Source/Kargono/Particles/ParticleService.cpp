@@ -12,7 +12,6 @@ namespace Kargono::Particles
     struct ParticleContext
     {
         // All particles being managed
-		std::vector<Particle> m_ParticlePool;
         Rendering::RendererInputSpec m_ParticleRenderSpec;
     };
 
@@ -24,7 +23,6 @@ namespace Kargono::Particles
 
 		// Initialize basic particle context
 		s_ParticleContext = CreateRef<ParticleContext>();
-		s_ParticleContext->m_ParticlePool.reserve(1000); // TODO: Maybe rethink this
 
 		// Initialize rendering data for particles
 		{
@@ -48,10 +46,6 @@ namespace Kargono::Particles
 			s_ParticleContext->m_ParticleRenderSpec.m_Buffer = localBuffer;
 			s_ParticleContext->m_ParticleRenderSpec.m_ShapeComponent = shapeComp;
 		}
-
-		//{
-			//AddParticle({}, 1.0f);
-		//}
 		
 		KG_VERIFY(s_ParticleContext, "Particle System Init");
     }
@@ -73,21 +67,11 @@ namespace Kargono::Particles
     void ParticleService::OnUpdate(Timestep ts)
     {
 		KG_ASSERT(s_ParticleContext);
-		std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
-		// TODO: Find data structure that works best for this use case
-		/*for (Particles::Particle& particle : s_ParticleContext->m_ParticlePool)
-		{
-			if (currentTime > particle.endTime)
-			{
-
-			}
-		}*/
-
-		// Delete indicated particles
     }
 
 	void ParticleService::OnRender(const Math::mat4& viewProjection)
 	{
+#if 0
 		KG_ASSERT(s_ParticleContext);
 
 		// Reset the rendering context
@@ -108,26 +92,6 @@ namespace Kargono::Particles
 
 		// End rendering context and submit rendering data to GPU
 		Rendering::RenderingService::EndScene();
+#endif
 	}
-
-    void ParticleService::AddParticle(const Particle& particle, float lifeTime)
-    {
-		// Add the particle...
-		s_ParticleContext->m_ParticlePool.push_back(particle);
-    }
-
-	void ParticleService::AddParticleByLocation(Math::vec3 particleLocation, float lifeTime)
-	{
-		// Create the new particle
-		Particle newParticle;
-		newParticle.m_Position = particleLocation;
-		
-		// Set start and end times of particle's lifecycle
-		newParticle.startTime = EngineService::GetActiveEngine().GetInApplicationTime();
-		newParticle.endTime = newParticle.startTime + lifeTime;
-
-		// Add particle to buffer
-		s_ParticleContext->m_ParticlePool.push_back(newParticle);
-	}
-
 }

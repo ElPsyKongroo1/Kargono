@@ -1219,6 +1219,7 @@ namespace Kargono::Panels
 
 		// Update the text widget text alignment based on the editorUI widget's value
 		textWidget.m_TextWrapped = spec.m_CurrentBoolean;
+		textWidget.CalculateTextMetadata(m_ActiveWindow);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;

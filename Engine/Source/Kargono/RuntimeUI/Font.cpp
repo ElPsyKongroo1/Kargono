@@ -231,7 +231,7 @@ namespace Kargono::RuntimeUI
 			//	xLocation = translation.x;
 			//	yLocation -= scale * m_LineHeight;
 			//}
-
+#if 0
 			// Check if we should evaluate the word this letter exists in
 			if (wrapText && characterIndex >= activeWordEnding)
 			{
@@ -259,6 +259,7 @@ namespace Kargono::RuntimeUI
 				}
 
 			}
+#endif
 
 
 			// Get the active character from the string
