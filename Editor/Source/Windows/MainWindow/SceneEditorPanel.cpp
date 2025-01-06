@@ -1769,7 +1769,7 @@ namespace Kargono::Panels
 				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
 				KG_ASSERT(aiStateRef);
 
-				m_SelectGlobalState.AddToOptions("All States", asset.Data.FileLocation.string(), handle);
+				m_SelectGlobalState.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -1807,7 +1807,7 @@ namespace Kargono::Panels
 				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
 				KG_ASSERT(aiStateRef);
 
-				m_SelectCurrentState.AddToOptions("All States", asset.Data.FileLocation.string(), handle);
+				m_SelectCurrentState.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -1845,7 +1845,7 @@ namespace Kargono::Panels
 				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
 				KG_ASSERT(aiStateRef);
 
-				m_SelectPreviousState.AddToOptions("All States", asset.Data.FileLocation.string(), handle);
+				m_SelectPreviousState.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -2080,7 +2080,7 @@ namespace Kargono::Panels
 			m_ShapeSetTexture.ClearOptions();
 			for (auto& [handle, asset] : Assets::AssetService::GetTexture2DRegistry())
 			{
-				m_ShapeSetTexture.AddToOptions("All Textures", asset.Data.FileLocation.string(), handle);
+				m_ShapeSetTexture.AddToOptions("All Textures", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 		m_ShapeSetTexture.m_ConfirmAction = [&](const EditorUI::OptionEntry& entry)
@@ -3020,7 +3020,7 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& globalAsset = Assets::AssetService::GetAIStateRegistry().at(component.GlobalStateHandle);
-				m_SelectGlobalState.m_CurrentOption = { globalAsset.Data.FileLocation.string(), component.GlobalStateHandle };
+				m_SelectGlobalState.m_CurrentOption = { globalAsset.Data.FileLocation.filename().string(), component.GlobalStateHandle };
 			}
 			else
 			{
@@ -3033,7 +3033,7 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& currentAsset = Assets::AssetService::GetAIStateRegistry().at(component.CurrentStateHandle);
-				m_SelectCurrentState.m_CurrentOption = { currentAsset.Data.FileLocation.string(), component.CurrentStateHandle };
+				m_SelectCurrentState.m_CurrentOption = { currentAsset.Data.FileLocation.filename().string(), component.CurrentStateHandle };
 			}
 			else
 			{
@@ -3046,7 +3046,7 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& previousAsset = Assets::AssetService::GetAIStateRegistry().at(component.PreviousStateHandle);
-				m_SelectPreviousState.m_CurrentOption = { previousAsset.Data.FileLocation.string(), component.PreviousStateHandle };
+				m_SelectPreviousState.m_CurrentOption = { previousAsset.Data.FileLocation.filename().string(), component.PreviousStateHandle };
 			}
 			else
 			{
@@ -3335,7 +3335,7 @@ namespace Kargono::Panels
 			{
 				m_ShapeSetTexture.m_CurrentOption =
 				{
-					Assets::AssetService::GetTexture2DRegistry().at(component.TextureHandle).Data.FileLocation.string(),
+					Assets::AssetService::GetTexture2DRegistry().at(component.TextureHandle).Data.FileLocation.filename().string(),
 					component.TextureHandle
 				};
 			}
