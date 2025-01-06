@@ -378,6 +378,29 @@ namespace Kargono::Panels
 				}
 			}
 		}
+		else if (fileExtension == ".kgparticle")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetEmitterConfigHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If EmitterConfig in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a EmitterConfig, however, no EmitterConfig could be found in registry. Moving the indicated file without updating registry.");
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetEmitterConfigFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of EmitterConfig asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update EmitterConfig location in registry");
+				}
+			}
+		}
 		else if (fileExtension == ".kgfont")
 		{
 			// Search registry for asset with identical file location
@@ -597,6 +620,21 @@ namespace Kargono::Panels
 
 			Assets::AssetService::DeleteAudioBuffer(resultHandle);
 		}
+		else if (currentExtension == ".kgparticle")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetEmitterConfigHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If EmitterConfig in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a EmitterConfig asset, however, no EmitterConfig asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+
+			Assets::AssetService::DeleteEmitterConfig(resultHandle);
+		}
+
 		else if (currentExtension == ".kgfont")
 		{
 			// Search registry for asset with identical file location
@@ -801,11 +839,11 @@ namespace Kargono::Panels
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GameState, gameStateArch);
 
 		EditorUI::GridEntryArchetype emitterConfigArch;
-		emitterConfigArch.m_Icon = EditorUI::EditorUIService::s_IconGameState;
+		emitterConfigArch.m_Icon = EditorUI::EditorUIService::s_IconEmitterConfig;
 		emitterConfigArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
 		emitterConfigArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		emitterConfigArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GameState, emitterConfigArch);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::EmitterConfig, emitterConfigArch);
 
 		EditorUI::GridEntryArchetype inputMapArch;
 		inputMapArch.m_Icon = EditorUI::EditorUIService::s_IconInput;
