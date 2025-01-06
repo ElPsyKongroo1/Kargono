@@ -12,6 +12,7 @@
 #include <unordered_map>
 
 namespace Kargono::Rendering { class Texture2D; }
+namespace Kargono::Particles { struct EmitterConfig; }
 
 namespace Kargono::ECS
 {
@@ -118,6 +119,12 @@ namespace Kargono::ECS
 	{
 		Assets::AssetHandle OnUpdateScriptHandle{ Assets::EmptyHandle };
 		Ref<Scripting::Script> OnUpdateScript{ nullptr };
+	};
+
+	struct ParticleEmitterComponent
+	{
+		Assets::AssetHandle m_EmitterConfigHandle{ Assets::EmptyHandle };
+		Ref<Particles::EmitterConfig> m_EmitterConfigRef{ nullptr };
 	};
 
 	// Physics
@@ -259,7 +266,8 @@ namespace Kargono::ECS
 		Shape,
 		Network,
 		AIState,
-		ProjectComponent
+		ProjectComponent,
+		ParticleEmitter
 	};
 
 	template<typename... Components>
@@ -269,5 +277,5 @@ namespace Kargono::ECS
 
 	using AllComponents = ComponentGroup<TransformComponent, CameraComponent, AIStateComponent,
 	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ShapeComponent,
-	TagComponent, OnUpdateComponent, OnCreateComponent, NetworkComponent>;
+	TagComponent, OnUpdateComponent, OnCreateComponent, ParticleEmitterComponent, NetworkComponent>;
 }

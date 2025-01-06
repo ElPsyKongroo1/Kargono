@@ -382,6 +382,7 @@ namespace Kargono::EditorUI
 		s_IconClassInstance = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/ClassInstance.png").string());
 		s_IconRigidBody = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Rigidbody.png").string());
 		s_IconTransform = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Transform.png").string());
+		s_IconParticles = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Particles.png").string());
 
 		// Runtime UI icons
 		s_IconWindow = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/Window.png").string());
@@ -491,6 +492,7 @@ namespace Kargono::EditorUI
 		s_IconProjectComponent.reset();
 		s_IconScript.reset();
 		s_IconTexture_KG.reset();
+		s_IconParticles.reset();
 
 		s_SmallEditButton = {};
 		s_SmallExpandButton = {};

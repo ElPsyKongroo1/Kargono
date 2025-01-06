@@ -36,7 +36,8 @@ namespace Kargono::Assets
 		Script,
 		GameState,
 		ProjectComponent,
-		AIState
+		AIState,
+		ParticleEmitterConfig
 	};
 
 	//==============================
@@ -165,6 +166,11 @@ namespace Kargono::Assets
 	// This metadata struct is currently empty but keeps a consistent API when working with assets.
 	//		There may be later additions to this struct.
 	struct InputMapMetaData
+	{
+
+	};
+
+	struct ParticleEmitterConfigMetaData
 	{
 
 	};

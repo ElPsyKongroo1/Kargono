@@ -218,7 +218,7 @@ namespace Kargono::EditorUI
 			s_IconOptions, s_IconDown, s_IconRight, s_IconDash, s_IconAI;
 
 		// Scene graph icons
-		inline static Ref<Rendering::Texture2D> s_IconBoxCollider, s_IconCircleCollider, s_IconEntity,
+		inline static Ref<Rendering::Texture2D> s_IconBoxCollider, s_IconCircleCollider, s_IconEntity, s_IconParticles,
 			s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform;
 
 		// Viewport icons

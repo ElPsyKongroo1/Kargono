@@ -144,6 +144,20 @@ namespace Kargono::Panels
 			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
+		if (entity.HasComponent<ECS::ParticleEmitterComponent>())
+		{
+			componentEntry.m_Label = "Particle Emitter";
+			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::ParticleEmitter, Assets::EmptyHandle);
+			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconParticles;
+			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
+			{
+				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
+				s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
+				s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::ParticleEmitter);
+			};
+			newEntry.m_SubEntries.push_back(componentEntry);
+		}
+
 		if (entity.HasComponent<ECS::ShapeComponent>())
 		{
 			componentEntry.m_Label = "Shape";
@@ -282,6 +296,10 @@ namespace Kargono::Panels
 			{
 				m_AddComponent.AddToOptions("Engine Component", "Camera", Assets::EmptyHandle);
 			}
+			if (!entity.HasComponent<ECS::ParticleEmitterComponent>())
+			{
+				m_AddComponent.AddToOptions("Engine Component", "Particle Emitter", Assets::EmptyHandle);
+			}
 			if (!entity.HasComponent<ECS::ShapeComponent>())
 			{
 				m_AddComponent.AddToOptions("Engine Component", "Shape", Assets::EmptyHandle);
@@ -386,6 +404,21 @@ namespace Kargono::Panels
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::Camera);
+				};
+				currentEntry->m_SubEntries.push_back(componentEntry);
+				return;
+			}
+			if (option.m_Label == "Particle Emitter")
+			{
+				entity.AddComponent<ECS::ParticleEmitterComponent>();
+				componentEntry.m_Label = "Particle Emitter";
+				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECS::ComponentType::ParticleEmitter, Assets::EmptyHandle);
+				componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconParticles;
+				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
+				{
+					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
+					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
+					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::ParticleEmitter);
 				};
 				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
@@ -1322,6 +1355,90 @@ namespace Kargono::Panels
 			auto& component = entity.GetComponent<ECS::CameraComponent>();
 			component.Camera.SetPerspectiveFarClip(m_CameraPerspectiveFarPlane.m_CurrentFloat);
 		};
+	}
+
+	void SceneEditorPanel::InitializeParticleEmitterComponent()
+	{
+		// Set up particle emitter header
+		m_ParticleEmitterHeader.m_Label = "Particle Emitter";
+		m_ParticleEmitterHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		m_ParticleEmitterHeader.m_Expanded = true;
+		m_ParticleEmitterHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
+		{
+			EngineService::SubmitToMainThread([&]()
+			{
+				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+				EditorUI::TreePath pathToDelete;
+				if (entity.HasComponent<ECS::ParticleEmitterComponent>())
+				{
+					m_SceneHierarchyTree.EditDepth([&](EditorUI::TreeEntry& entry)
+					{
+						if ((uint32_t)entry.m_Handle == (uint32_t)entity)
+						{
+							for (EditorUI::TreeEntry& subEntry : entry.m_SubEntries)
+							{
+								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
+								if (entryData.m_ComponentType == ECS::ComponentType::ParticleEmitter)
+								{
+									pathToDelete = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
+									break;
+								}
+							}
+							if (!pathToDelete)
+							{
+								KG_WARN("Could not locate component inside of specified entry in tree");
+								return;
+							}
+
+						}
+					}, 0);
+
+					KG_ASSERT(pathToDelete);
+					m_SceneHierarchyTree.RemoveEntry(pathToDelete);
+					entity.RemoveComponent<ECS::ParticleEmitterComponent>();
+				}
+			});
+		});
+
+		// Set up particle component config select options widget
+		m_SelectParticleEmitter.m_Label = "Particle Emitter";
+		m_SelectParticleEmitter.m_Flags |= EditorUI::SelectOption_Indented;
+		m_SelectParticleEmitter.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_SelectParticleEmitter.m_PopupAction = [&]()
+		{
+			m_SelectParticleEmitter.ClearOptions();
+			m_SelectParticleEmitter.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [handle, asset] : Assets::AssetService::GetEmitterConfigRegistry())
+			{
+				Ref<Particles::EmitterConfig> emitterConfigRef = Assets::AssetService::GetEmitterConfig(handle);
+				KG_ASSERT(emitterConfigRef);
+
+				m_SelectParticleEmitter.AddToOptions("All Emitters", asset.Data.FileLocation.filename().string(), handle);
+			}
+		};
+
+		m_SelectParticleEmitter.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
+		{
+			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+			if (!entity.HasComponent<ECS::ParticleEmitterComponent>())
+			{
+				KG_ERROR("Attempt to edit entity particle emitter component when none exists!");
+				return;
+			}
+			ECS::ParticleEmitterComponent& component = entity.GetComponent<ECS::ParticleEmitterComponent>();
+
+			// Check for empty entry
+			if (entry.m_Handle == Assets::EmptyHandle)
+			{
+				component.m_EmitterConfigHandle = Assets::EmptyHandle;
+				component.m_EmitterConfigRef = nullptr;
+			}
+			// Check for a valid entry, and Update if applicable
+			component.m_EmitterConfigHandle = entry.m_Handle;
+			component.m_EmitterConfigRef = Assets::AssetService::GetEmitterConfig(entry.m_Handle);
+		};
+
+
 	}
 
 	void SceneEditorPanel::InitializeOnUpdateComponent()
@@ -2342,6 +2459,7 @@ namespace Kargono::Panels
 		InitializeRigidbody2DComponent();
 		InitializeOnUpdateComponent();
 		InitializeOnCreateComponent();
+		InitializeParticleEmitterComponent();
 		InitializeBoxCollider2DComponent();
 		InitializeCircleCollider2DComponent();
 		InitializeAIComponent();
@@ -2641,6 +2759,7 @@ namespace Kargono::Panels
 		DrawAIStateComponent(entity);
 		DrawCircleCollider2DComponent(entity);
 		DrawCameraComponent(entity);
+		DrawParticleEmitterComponent(entity);
 		DrawShapeComponent(entity);
 		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 		{
@@ -2668,6 +2787,9 @@ namespace Kargono::Panels
 			return;
 		case ECS::ComponentType::Camera:
 			DrawCameraComponent(entity);
+			return;
+		case ECS::ComponentType::ParticleEmitter:
+			DrawParticleEmitterComponent(entity);
 			return;
 		case ECS::ComponentType::OnUpdate:
 			DrawOnUpdateComponent(entity);
@@ -2847,6 +2969,24 @@ namespace Kargono::Panels
 			}
 		}
 		
+	}
+	void SceneEditorPanel::DrawParticleEmitterComponent(ECS::Entity entity)
+	{
+		if (!entity.HasComponent<ECS::ParticleEmitterComponent>())
+		{
+			return;
+		}
+		ECS::ParticleEmitterComponent& component = entity.GetComponent<ECS::ParticleEmitterComponent>();
+		EditorUI::EditorUIService::CollapsingHeader(m_ParticleEmitterHeader);
+		if (m_ParticleEmitterHeader.m_Expanded)
+		{
+			Ref<Particles::EmitterConfig> emitterConfig = Assets::AssetService::GetEmitterConfig(component.m_EmitterConfigHandle);
+			Assets::AssetInfo emitterInfo = Assets::AssetService::GetEmitterConfigInfo(component.m_EmitterConfigHandle);
+			m_SelectParticleEmitter.m_CurrentOption = component.m_EmitterConfigHandle == Assets::EmptyHandle ?
+				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
+				EditorUI::OptionEntry(emitterInfo.Data.FileLocation.filename().string(), component.m_EmitterConfigHandle);
+			EditorUI::EditorUIService::SelectOption(m_SelectParticleEmitter);
+		}
 	}
 	void SceneEditorPanel::DrawOnUpdateComponent(ECS::Entity entity)
 	{

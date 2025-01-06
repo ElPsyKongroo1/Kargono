@@ -4,16 +4,29 @@
 
 #include <vector>
 
+namespace Kargono::ECS { struct TransformComponent; }
+
 namespace Kargono::Particles
 {
+
+	struct EmitterConfig
+	{
+		Math::vec4 m_ColorBegin;
+		Math::vec4 m_ColorEnd;
+		Math::vec4 m_SizeBegin;
+		Math::vec4 m_SizeEnd;
+	};
+
     struct Particle
     {
 	public:
-        // Particle position data
+        // Particle transform 
         Math::vec3 m_Position;
-		Math::vec2 m_Size;
-        float m_Rotation;
+		Math::vec3 m_Size;
+		Math::vec3 m_Rotation;
 
+		// Particle physics information
+		Math::vec3 m_Velocity;
 	private:
         // Particle lifetime information
 		float startTime;
@@ -21,6 +34,13 @@ namespace Kargono::Particles
 	private:
 		friend class ParticleService;
     };
+
+	struct EmitterInstance
+	{
+		ECS::TransformComponent* m_ParentTransform;
+		EmitterConfig* m_Config;
+		std::vector<Particle> m_Particles;
+	};
 
     class ParticleService
     {

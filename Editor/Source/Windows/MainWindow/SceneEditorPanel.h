@@ -45,6 +45,7 @@ namespace Kargono::Panels
 		void InitializeBoxCollider2DComponent();
 		void InitializeCircleCollider2DComponent();
 		void InitializeCameraComponent();
+		void InitializeParticleEmitterComponent();
 		void InitializeOnUpdateComponent();
 		void InitializeOnCreateComponent();
 		void InitializeAIComponent();
@@ -93,6 +94,7 @@ namespace Kargono::Panels
 		void DrawBoxCollider2DComponent(ECS::Entity entity);
 		void DrawCircleCollider2DComponent(ECS::Entity entity);
 		void DrawCameraComponent(ECS::Entity entity);
+		void DrawParticleEmitterComponent(ECS::Entity entity);
 		void DrawOnUpdateComponent(ECS::Entity entity);
 		void DrawAIStateComponent(ECS::Entity entity);
 		void DrawOnCreateComponent(ECS::Entity entity);
@@ -204,6 +206,10 @@ namespace Kargono::Panels
 		EditorUI::EditFloatSpec m_CameraOrthographicSize{};
 		EditorUI::EditFloatSpec m_CameraOrthographicNearPlane{};
 		EditorUI::EditFloatSpec m_CameraOrthographicFarPlane{};
+
+		// Particle Emitter Component
+		EditorUI::CollapsingHeaderSpec m_ParticleEmitterHeader{};
+		EditorUI::SelectOptionSpec m_SelectParticleEmitter{};
 
 		// Shape Component
 		EditorUI::CollapsingHeaderSpec m_ShapeHeader{};

@@ -13,6 +13,7 @@
 #include "Kargono/Assets/ShaderManager.h"
 #include "Kargono/Assets/TextureManager.h"
 #include "Kargono/Assets/UserInterfaceManager.h"
+#include "Kargono/Assets/EmitterConfigManager.h"
 
 #define DEFINE_MANAGER(typeNamespace, typeName) \
 		static AssetInfo Get##typeName##Info(AssetHandle handle) \
@@ -120,6 +121,7 @@ namespace Kargono::Assets
 		ShaderManager m_ShaderManager;
 		Texture2DManager m_Texture2DManager;
 		UserInterfaceManager m_UserInterfaceManager;
+		EmitterConfigManager m_EmitterConfigManager;
 	};
 
 	class AssetService
@@ -137,6 +139,7 @@ namespace Kargono::Assets
 		DEFINE_MANAGER(Rendering, Shader)
 		DEFINE_MANAGER(Rendering, Texture2D)
 		DEFINE_MANAGER(RuntimeUI, UserInterface)
+		DEFINE_MANAGER(Particles, EmitterConfig)
 
 		// Expose unique functionality of each class
 	public:
@@ -220,6 +223,7 @@ namespace Kargono::Assets
 			DeserializeScriptRegistry();
 			DeserializeProjectComponentRegistry();
 			DeserializeInputMapRegistry();
+			DeserializeEmitterConfigRegistry();
 			DeserializeGameStateRegistry();
 			DeserializeUserInterfaceRegistry();
 			DeserializeAIStateRegistry();
@@ -236,6 +240,7 @@ namespace Kargono::Assets
 			SerializeScriptRegistry();
 			SerializeProjectComponentRegistry();
 			SerializeInputMapRegistry();
+			SerializeEmitterConfigRegistry();
 			SerializeGameStateRegistry();
 			SerializeUserInterfaceRegistry();
 			SerializeAIStateRegistry();
