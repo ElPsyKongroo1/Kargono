@@ -159,6 +159,14 @@ namespace Kargono::Panels
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openGameStateTooltipEntry);
 		}
+		else if (fileType == BrowserFileType::EmitterConfig)
+		{
+			EditorUI::TooltipEntry openEmitterConfigTooltipEntry{ "Open Emitter Config", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				s_EditorApp->m_EmitterConfigEditorWindow->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openEmitterConfigTooltipEntry);
+		}
 		else if (fileType == BrowserFileType::InputMap)
 		{
 			EditorUI::TooltipEntry openInputMapTooltipEntry{ "Open Input Map", [&](EditorUI::TooltipEntry& currentEntry)
@@ -791,6 +799,13 @@ namespace Kargono::Panels
 		gameStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		gameStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GameState, gameStateArch);
+
+		EditorUI::GridEntryArchetype emitterConfigArch;
+		emitterConfigArch.m_Icon = EditorUI::EditorUIService::s_IconGameState;
+		emitterConfigArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		emitterConfigArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		emitterConfigArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GameState, emitterConfigArch);
 
 		EditorUI::GridEntryArchetype inputMapArch;
 		inputMapArch.m_Icon = EditorUI::EditorUIService::s_IconInput;

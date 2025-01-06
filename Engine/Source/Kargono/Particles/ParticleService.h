@@ -1,3 +1,4 @@
+#pragma once
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Timestep.h"

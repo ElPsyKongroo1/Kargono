@@ -24,6 +24,7 @@ namespace Kargono::Panels
 		AIState,
 		Audio,
 		Binary,
+		EmitterConfig,
 		Font,
 		GameState,
 		ProjectComponent,
@@ -191,6 +192,7 @@ namespace Kargono::Utility
 		if (currentFileExtension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
 		if (currentFileExtension == ".kgscript") { return Panels::BrowserFileType::Script; }
 		if (currentFileExtension == ".kgstate") { return Panels::BrowserFileType::GameState; }
+		if (currentFileExtension == ".kgparticle") { return Panels::BrowserFileType::EmitterConfig; }
 		if (currentFileExtension == ".kgscene") { return Panels::BrowserFileType::Scene; }
 		if (currentFileExtension == ".kgtexture") { return Panels::BrowserFileType::Texture; }
 		if (currentFileExtension == ".kginput") { return Panels::BrowserFileType::InputMap; }
@@ -217,6 +219,7 @@ namespace Kargono::Utility
 		case Panels::BrowserFileType::AIState: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Audio: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::EmitterConfig: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Font: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::GameState: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::ProjectComponent: { return "CONTENT_BROWSER_ITEM"; }

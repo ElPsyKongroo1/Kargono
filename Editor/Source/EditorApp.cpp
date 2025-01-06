@@ -59,6 +59,8 @@ namespace Kargono
 		m_MainWindow->InitPanels();
 		m_UIEditorWindow = CreateScope<Windows::UIEditorWindow>();
 		m_UIEditorWindow->InitPanels();
+		m_EmitterConfigEditorWindow = CreateScope<Windows::EmitterConfigWindow>();
+		m_EmitterConfigEditorWindow->InitPanels();
 
 		// Open operating system window
 		EngineService::GetActiveWindow().SetVisible(true);
@@ -81,6 +83,7 @@ namespace Kargono
 
 		m_MainWindow.reset();
 		m_UIEditorWindow.reset();
+		m_EmitterConfigEditorWindow.reset();
 	}
 
 	void EditorApp::OnUpdate(Timestep ts)
@@ -99,6 +102,10 @@ namespace Kargono
 		case ActiveEditorUIWindow::UIEditorWindow:
 			m_UIEditorWindow->OnUpdate(ts);
 			m_UIEditorWindow->OnEditorUIRender();
+			break;
+		case ActiveEditorUIWindow::EmitterConfigWindow:
+			m_EmitterConfigEditorWindow->OnUpdate(ts);
+			m_EmitterConfigEditorWindow->OnEditorUIRender();
 			break;
 		case ActiveEditorUIWindow::None:
 		default:
@@ -133,6 +140,8 @@ namespace Kargono
 			return m_MainWindow->OnInputEvent(event);
 		case ActiveEditorUIWindow::UIEditorWindow:
 			return m_UIEditorWindow->OnInputEvent(event);
+		case ActiveEditorUIWindow::EmitterConfigWindow:
+			return m_EmitterConfigEditorWindow->OnInputEvent(event);
 		case ActiveEditorUIWindow::None:
 		default:
 			KG_ERROR("Invalid window type provided to OnInputEvent(event) function");

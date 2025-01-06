@@ -1,5 +1,3 @@
-#if 0
-
 #pragma once
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/EditorUI/EditorUI.h"
@@ -10,20 +8,19 @@
 
 namespace Kargono::Panels
 {
-
-	class ParticleEmitterPropertiesPanel
+	class EmitterConfigPropertiesPanel
 	{
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
-		ParticleEmitterPropertiesPanel();
+		EmitterConfigPropertiesPanel();
 
 	private:
 		//=========================
 		// Internal Initialization Functions
 		//=========================
-		void InitializeParticleEmitterOptions();
+		void InitializeEmitterConfigOptions();
 
 	public:
 		//=========================
@@ -34,7 +31,7 @@ namespace Kargono::Panels
 		//=========================
 		// Draw Properties Panel Functions
 		//=========================
-		void DrawParticleEmitterOptions();
+		void DrawEmitterConfigOptions();
 
 		//=========================
 		// Modify Panel Data
@@ -59,5 +56,3 @@ namespace Kargono::Panels
 		//=========================
 	};
 }
-
-#endif

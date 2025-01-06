@@ -11,9 +11,9 @@ namespace Kargono::Assets
 		EmitterConfigManager() : AssetManager<Particles::EmitterConfig>()
 		{
 			m_AssetName = "Particle Emitter Config";
-			m_AssetType = AssetType::ParticleEmitterConfig;
+			m_AssetType = AssetType::EmitterConfig;
 			m_FileExtension = ".kgparticle";
-			m_RegistryLocation = "ParticleEmitterConfig/ParticleEmitterConfigRegistry.kgreg";
+			m_RegistryLocation = "EmitterConfig/EmitterConfigRegistry.kgreg";
 			m_Flags.set(AssetManagerOptions::HasAssetCache, true);
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);

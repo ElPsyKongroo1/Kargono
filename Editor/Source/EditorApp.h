@@ -2,6 +2,7 @@
 
 #include "Windows/UserInterface/UIEditorWindow.h"
 #include "Windows/MainWindow/MainWindow.h"
+#include "Windows/EmitterConfig/EmitterConfigWindow.h"
 
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/Base.h"
@@ -17,7 +18,8 @@ namespace Kargono
 	{
 		None = 0,
 		MainWindow,
-		UIEditorWindow
+		UIEditorWindow,
+		EmitterConfigWindow
 	};
 
 	//============================================================
@@ -85,6 +87,7 @@ namespace Kargono
 		// Windows
 		Scope<Windows::MainWindow> m_MainWindow;
 		Scope<Windows::UIEditorWindow> m_UIEditorWindow;
+		Scope<Windows::EmitterConfigWindow> m_EmitterConfigEditorWindow;
 
 	private:
 		//=========================

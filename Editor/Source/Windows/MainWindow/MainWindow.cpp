@@ -366,6 +366,13 @@ namespace Kargono::Windows
 						s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
 					});
 				}
+				if (ImGui::MenuItem("Particle Emitter Editor"))
+				{
+					EngineService::SubmitToMainThread([]()
+					{
+						s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
+					});
+				}
 				ImGui::EndMenu();
 			}
 

@@ -1,5 +1,3 @@
-#if 0
-
 #pragma once
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Core/Timestep.h"
@@ -12,14 +10,14 @@
 
 namespace Kargono::Panels
 {
-	class ParticleEmitterViewportPanel
+	class EmitterConfigViewportPanel
 	{
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
-		ParticleEmitterViewportPanel();
-		~ParticleEmitterViewportPanel();
+		EmitterConfigViewportPanel();
+		~EmitterConfigViewportPanel();
 
 	private:
 		//=========================
@@ -53,7 +51,7 @@ namespace Kargono::Panels
 		//=========================
 		// External Functionality
 		//=========================
-		void OnOpenParticleEmitter();
+		void OnOpenEmitterConfig();
 	private:
 		//=========================
 		// Supporting Functions
@@ -81,5 +79,3 @@ namespace Kargono::Panels
 		bool m_DisplayGrid{ true };
 	};
 }
-
-#endif

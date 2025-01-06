@@ -37,7 +37,7 @@ namespace Kargono::Assets
 		GameState,
 		ProjectComponent,
 		AIState,
-		ParticleEmitterConfig
+		EmitterConfig
 	};
 
 	//==============================
@@ -234,6 +234,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::GameState: return "GameState";
 		case Assets::AssetType::ProjectComponent: return "ProjectComponent";
 		case Assets::AssetType::AIState: return "AIState";
+		case Assets::AssetType::EmitterConfig: return "EmitterConfig";
 		case Assets::AssetType::None: return "None";
 		}
 		KG_ERROR("Unknown Type of AssetType.");
@@ -253,6 +254,7 @@ namespace Kargono::Utility
 		if (type == "GameState") { return Assets::AssetType::GameState; }
 		if (type == "ProjectComponent") { return Assets::AssetType::ProjectComponent; }
 		if (type == "AIState") { return Assets::AssetType::AIState; }
+		if (type == "EmitterConfig") { return Assets::AssetType::EmitterConfig; }
 		if (type == "None") { return Assets::AssetType::None; }
 
 		KG_ERROR("Unknown Type of AssetType String.");

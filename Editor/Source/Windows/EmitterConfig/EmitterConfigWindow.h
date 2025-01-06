@@ -1,4 +1,4 @@
-#if 0
+
 
 #pragma once
 #include "Kargono/Events/KeyEvent.h"
@@ -7,8 +7,8 @@
 #include "Kargono/Particles/ParticleService.h"
 #include "Kargono/Core/Base.h"
 
-#include "Windows/ParticleEmitter/ParticleEmitterViewportPanel.h"
-#include "Windows/ParticleEmitter/ParticleEmitterPropertiesPanel.h"
+#include "Windows/EmitterConfig/EmitterConfigViewportPanel.h"
+#include "Windows/EmitterConfig/EmitterConfigPropertiesPanel.h"
 
 #include <string>
 
@@ -19,13 +19,18 @@ namespace Kargono::Windows
 	//=========================
 	// UI Editor Panel Class
 	//=========================
-	class ParticleEmitterWindow
+	class EmitterConfigWindow
 	{
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
-		ParticleEmitterWindow();
+		EmitterConfigWindow();
+
+	private:
+		void InitializeOpeningScreen();
+		void InitializeEmitterConfigHeader();
+	public:
 
 		//=========================
 		// Lifecycle Functions
@@ -52,28 +57,52 @@ namespace Kargono::Windows
 		void ResetWindowResources();
 		void OnRefreshData();
 
+	private:
+		//=========================
+		// Internal Functionality
+		//=========================
+		void OnCreateEmitterConfigDialog();
+		void OnOpenEmitterConfigDialog();
+		void OnOpenEmitterConfig(Assets::AssetHandle newHandle);
+
 	public:
 		//=========================
 		// Core Panel Data
 		//=========================
-		Ref<Particles::EmitterConfig> m_EditorEmitter{ nullptr };
-		Assets::AssetHandle m_EditorEmitterHandle{ Assets::EmptyHandle };
+		Ref<Particles::EmitterConfig> m_EditorEmitterConfig{ nullptr };
+		Assets::AssetHandle m_EditorEmitterConfigHandle{ Assets::EmptyHandle };
+		FixedString32 m_PanelName{ "Main Particle Emitter Panel" };
 
 		//=========================
 		// Panels
 		//=========================
-		Scope<Panels::ParticleEmitterViewportPanel> m_ViewportPanel{ nullptr };
-		Scope<Panels::ParticleEmitterPropertiesPanel> m_PropertiesPanel{ nullptr };
+		Scope<Panels::EmitterConfigViewportPanel> m_ViewportPanel{ nullptr };
+		Scope<Panels::EmitterConfigPropertiesPanel> m_PropertiesPanel{ nullptr };
 
 		//=========================
 		// Display Panel Booleans
 		//=========================
 		bool m_ShowViewport{ true };
 		bool m_ShowProperties{ true };
+
+		//=========================
+		// Widgets
+		//=========================
+		// Opening Panel w/ Popups
+		EditorUI::SelectOptionSpec m_OpenEmitterConfigPopupSpec{};
+		EditorUI::GenericPopupSpec m_CreateEmitterConfigPopupSpec{};
+		EditorUI::EditTextSpec m_SelectEmitterConfigNameSpec{};
+		EditorUI::ChooseDirectorySpec m_SelectEmitterConfigLocationSpec{};
+		EditorUI::TooltipSpec m_SelectScriptTooltip{};
+
+		// User Interface Header
+		EditorUI::PanelHeaderSpec m_MainHeader{};
+		EditorUI::GenericPopupSpec m_DeleteEmitterConfigWarning{};
+		EditorUI::GenericPopupSpec m_CloseEmitterConfigWarning{};
+
 	private:
 		friend Kargono::EditorApp;
-
 	};
 }
 
-#endif
+
