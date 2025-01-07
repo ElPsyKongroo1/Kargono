@@ -89,6 +89,27 @@ namespace Kargono::Windows
 		};
 	}
 
+	void MainWindow::LoadSceneParticleEmitters()
+	{
+		if (!m_EditorScene)
+		{
+			return;
+		}
+		Particles::ParticleService::ClearEmitters();
+		for (entt::entity enttID : m_EditorScene->GetAllEntitiesWith<ECS::ParticleEmitterComponent>())
+		{
+			ECS::Entity entity{ m_EditorScene->GetEntityByEnttID(enttID) };
+			ECS::ParticleEmitterComponent particleComp = entity.GetComponent<ECS::ParticleEmitterComponent>();
+			ECS::TransformComponent transform = entity.GetComponent<ECS::TransformComponent>();
+			if (particleComp.m_EmitterConfigHandle == Assets::EmptyHandle)
+			{
+				continue;
+			}
+
+			Particles::ParticleService::AddEmitter(particleComp.m_EmitterConfigRef.get(), transform.Translation);
+		}
+	}
+
 	MainWindow::MainWindow()
 	{
 		// Initialize the editor app
@@ -622,6 +643,10 @@ namespace Kargono::Windows
 		m_EditorScene = newScene;
 		m_EditorSceneHandle = sceneHandle;
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		EngineService::SubmitToMainThread([&]()
+		{
+			LoadSceneParticleEmitters();
+		});
 
 	}
 
@@ -638,6 +663,12 @@ namespace Kargono::Windows
 		m_EditorScene = newScene;
 		m_EditorSceneHandle = sceneHandle;
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+
+		EngineService::SubmitToMainThread([&]() 
+		{
+			LoadSceneParticleEmitters();
+		});
+		
 	}
 
 	void MainWindow::SaveScene()

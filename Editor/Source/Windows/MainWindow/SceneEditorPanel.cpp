@@ -1396,6 +1396,7 @@ namespace Kargono::Panels
 					KG_ASSERT(pathToDelete);
 					m_SceneHierarchyTree.RemoveEntry(pathToDelete);
 					entity.RemoveComponent<ECS::ParticleEmitterComponent>();
+					s_MainWindow->LoadSceneParticleEmitters();
 				}
 			});
 		});
@@ -1436,6 +1437,8 @@ namespace Kargono::Panels
 			// Check for a valid entry, and Update if applicable
 			component.m_EmitterConfigHandle = entry.m_Handle;
 			component.m_EmitterConfigRef = Assets::AssetService::GetEmitterConfig(entry.m_Handle);
+
+			s_MainWindow->LoadSceneParticleEmitters();
 		};
 
 

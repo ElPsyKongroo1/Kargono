@@ -47,13 +47,13 @@ namespace Kargono
 		OpenProject(m_InitProjectPath);
 		
 		// Initialize other various engine services
+		Particles::ParticleService::Init();
 		EditorUI::EditorUIService::Init();
 		AI::AIService::Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(1.0f);
 		RuntimeUI::FontService::Init();
 		RuntimeUI::RuntimeUIService::Init();
-		Particles::ParticleService::Init();
 
 		// Initialize panels
 		m_MainWindow->InitPanels();

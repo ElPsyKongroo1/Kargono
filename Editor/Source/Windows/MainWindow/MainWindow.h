@@ -77,6 +77,12 @@ namespace Kargono::Windows
 		bool OnMouseButtonPressed(Events::MouseButtonPressedEvent event);
 		bool OnUpdateProjectComponent(Events::ManageAsset& event);
 
+	public:
+		//=========================
+		// External Functions
+		//=========================
+		void LoadSceneParticleEmitters();
+
 	private:
 		//=========================
 		// Internal Initialization Functions

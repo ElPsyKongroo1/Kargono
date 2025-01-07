@@ -92,8 +92,6 @@ namespace Kargono::Panels
 			{
 				// Process AI
 				AI::AIService::OnUpdate(ts);
-				// Process Particles
-				Particles::ParticleService::OnUpdate(ts);
 				// Process Input Mode
 				Input::InputMapService::OnUpdate(ts);
 				// Process entity OnUpdate
@@ -105,6 +103,9 @@ namespace Kargono::Panels
 			break;
 		}
 		}
+
+		// Process Particles
+		Particles::ParticleService::OnUpdate(ts);
 
 		HandleMouseHovering();
 
@@ -130,9 +131,16 @@ namespace Kargono::Panels
 
 					// Render RuntimeUI directory to viewport bounds
 					RuntimeUI::RuntimeUIService::OnRender(m_ViewportData.m_Width, m_ViewportData.m_Height);
+
 				}
-			}	
+			}
 		}
+		else
+		{
+			// Render particles
+			Particles::ParticleService::OnRender(m_EditorCamera.GetViewProjection());
+		}
+		
 
 		m_ViewportFramebuffer->Unbind();
 	}

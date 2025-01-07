@@ -93,8 +93,8 @@ namespace Kargono::Particles
 				currentParticle.m_Size = emitter.m_Config->m_SizeBegin;
 
 				//TODO: Generate random velocity TODO: CHANGE THIS
-				currentParticle.m_Velocity.x = Utility::PseudoRandomService::GenerateFloatBounds(s_ParticleContext->m_RandomGenerator, 0.0f, 1.0f);
-				currentParticle.m_Velocity.y = Utility::PseudoRandomService::GenerateFloatBounds(s_ParticleContext->m_RandomGenerator, 0.0f, 1.0f);
+				currentParticle.m_Velocity.x = Utility::PseudoRandomService::GenerateFloatBounds(s_ParticleContext->m_RandomGenerator, -1.0f, 1.0f);
+				currentParticle.m_Velocity.y = Utility::PseudoRandomService::GenerateFloatBounds(s_ParticleContext->m_RandomGenerator, -1.0f, 1.0f);
 				currentParticle.m_Velocity.z = 0.0f;
 
 				// Move iterator down
@@ -111,7 +111,7 @@ namespace Kargono::Particles
 				}
 
 				// Check particle lifetime
-				if (particle.endTime > currentTime)
+				if (currentTime > particle.endTime)
 				{
 					particle.active = false;
 					continue;
