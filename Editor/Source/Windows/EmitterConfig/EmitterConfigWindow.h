@@ -54,6 +54,7 @@ namespace Kargono::Windows
 		//=========================
 		void OpenAssetInEditor(std::filesystem::path& assetLocation);
 		void OpenCreateDialog(std::filesystem::path& createLocation);
+		void LoadEditorEmitterIntoParticleService();
 		void ResetWindowResources();
 		void OnRefreshData();
 

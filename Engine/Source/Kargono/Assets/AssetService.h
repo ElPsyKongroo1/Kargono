@@ -259,6 +259,7 @@ namespace Kargono::Assets
 			ClearInputMapRegistry();
 			ClearGameStateRegistry();
 			ClearUserInterfaceRegistry();
+			ClearEmitterConfigRegistry();
 			ClearAIStateRegistry();
 			ClearSceneRegistry();
 		}
@@ -278,6 +279,7 @@ namespace Kargono::Assets
 			case AssetType::Texture: return GetTexture2DRegistry().at(handle);
 			case AssetType::UserInterface: return GetUserInterfaceRegistry().at(handle);
 			case AssetType::ProjectComponent: return GetProjectComponentRegistry().at(handle);
+			case AssetType::EmitterConfig: return GetEmitterConfigRegistry().at(handle);
 			case AssetType::None: 
 			default:
 				KG_ERROR("Invalid asset type provided to GetAssetFromAllRegistries function");

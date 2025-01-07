@@ -58,7 +58,13 @@ namespace Kargono::Windows
 	void EmitterConfigWindow::OnOpenEmitterConfig(Assets::AssetHandle newHandle)
 	{
 		// Set new in editor user interface
-		m_EditorEmitterConfig = Assets::AssetService::GetEmitterConfig(newHandle);
+
+		// Get emitter an ensure it is valid
+		Particles::EmitterConfig* openedEmitter = Assets::AssetService::GetEmitterConfig(newHandle).get();
+		KG_ASSERT(openedEmitter);
+
+		// Create editor only variant of emitter
+		m_EditorEmitterConfig = CreateRef<Particles::EmitterConfig>(*openedEmitter);
 		m_EditorEmitterConfigHandle = newHandle;
 
 		// Set default values for header
@@ -71,6 +77,27 @@ namespace Kargono::Windows
 
 		// Refresh widget data in editor to use new user interface
 		OnRefreshData();
+
+		// Load emitter
+		LoadEditorEmitterIntoParticleService();
+		
+		
+	}
+
+	void EmitterConfigWindow::LoadEditorEmitterIntoParticleService()
+	{
+		if (!m_EditorEmitterConfig)
+		{
+			// Just clear the emitters if switching
+			Particles::ParticleService::ClearEmitters();
+		}
+		else
+		{
+			// Open single emitter in editor
+			Particles::ParticleService::ClearEmitters();
+			Particles::ParticleService::AddEmitter(m_EditorEmitterConfig.get(), { 0.0f, 0.0f, 0.0f });
+		}
+		
 	}
 
 	EmitterConfigWindow::EmitterConfigWindow()
@@ -129,7 +156,15 @@ namespace Kargono::Windows
 				KG_WARN("Emitter Config was not created");
 				return;
 			}
-			m_EditorEmitterConfig = Assets::AssetService::GetEmitterConfig(m_EditorEmitterConfigHandle);
+
+			// Get emitter an ensure it is valid
+			Particles::EmitterConfig* openedEmitter = Assets::AssetService::GetEmitterConfig(m_EditorEmitterConfigHandle).get();
+			KG_ASSERT(openedEmitter);
+
+			// Create editor only variant of emitterConfig
+			m_EditorEmitterConfig = CreateRef<Particles::EmitterConfig>(*openedEmitter);
+
+			// Manage changing main header to new emitter
 			m_MainHeader.m_EditColorActive = false;
 			m_MainHeader.m_Label = Assets::AssetService::GetEmitterConfigRegistry().at(
 				m_EditorEmitterConfigHandle).Data.FileLocation.filename().string();
@@ -187,7 +222,15 @@ namespace Kargono::Windows
 		// Set up main header for Emitter Config editor panel
 		m_MainHeader.AddToSelectionList("Save", [&]()
 		{
-			Assets::AssetService::SaveEmitterConfig(m_EditorEmitterConfigHandle, m_EditorEmitterConfig);
+			// Modify the asset memory
+			Ref<Particles::EmitterConfig> cachedRef = Assets::AssetService::GetEmitterConfig(m_EditorEmitterConfigHandle);
+			KG_ASSERT(cachedRef);
+			*cachedRef = *m_EditorEmitterConfig; // KINDA DANGEROUS
+
+			// Save emitter asset in registry
+			Assets::AssetService::SaveEmitterConfig(m_EditorEmitterConfigHandle, cachedRef);
+
+			// Update editted status
 			m_MainHeader.m_EditColorActive = false;
 		});
 		m_MainHeader.AddToSelectionList("Close", [&]()
@@ -259,6 +302,7 @@ namespace Kargono::Windows
 				EngineService::SubmitToMainThread([]()
 				{
 					s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::MainWindow);
+					s_EditorApp->m_MainWindow->LoadSceneParticleEmitters();
 				});
 			}
 
@@ -415,6 +459,7 @@ namespace Kargono::Windows
 			EngineService::SubmitToMainThread([]()
 			{
 				s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
+				s_EditorApp->m_EmitterConfigEditorWindow->LoadEditorEmitterIntoParticleService();
 			});
 			return;
 		}

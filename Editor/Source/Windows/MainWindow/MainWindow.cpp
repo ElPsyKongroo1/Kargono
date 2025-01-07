@@ -392,6 +392,7 @@ namespace Kargono::Windows
 					EngineService::SubmitToMainThread([]()
 					{
 						s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
+						s_EditorApp->m_EmitterConfigEditorWindow->LoadEditorEmitterIntoParticleService();
 					});
 				}
 				ImGui::EndMenu();
