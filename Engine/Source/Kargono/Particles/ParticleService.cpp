@@ -6,13 +6,16 @@
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Assets/AssetService.h"
 #include "Kargono/Core/Engine.h"
+#include "Kargono/Utility/Random.h"
 
 namespace Kargono::Particles
 {
     struct ParticleContext
     {
-        // All particles being managed
+        // All emitters being managed
+		std::unordered_map<UUID, EmitterInstance> m_AllEmitters;
         Rendering::RendererInputSpec m_ParticleRenderSpec;
+		Utility::PseudoGenerator m_RandomGenerator{ 37427394 };
     };
 
     static Ref<ParticleContext> s_ParticleContext {nullptr};
@@ -67,11 +70,63 @@ namespace Kargono::Particles
     void ParticleService::OnUpdate(Timestep ts)
     {
 		KG_ASSERT(s_ParticleContext);
+
+		// Get current time
+		float currentTime{ EngineService::GetActiveEngine().GetInApplicationTime() };
+
+		for (auto& [uuid, emitter] : s_ParticleContext->m_AllEmitters)
+		{
+			// Spawn more particles
+			float spawnThreshold{ 1.0f / (float)emitter.m_Config->m_SpawnRatePerSec };
+			emitter.m_ParticleSpawnAccumulator += ts;
+			while (emitter.m_ParticleSpawnAccumulator > spawnThreshold)
+			{
+				// Decriment accumulator
+				emitter.m_ParticleSpawnAccumulator -= spawnThreshold;
+
+				// Spawn a particle
+				Particle& currentParticle = emitter.m_Particles[emitter.m_ParticleIndex];
+				currentParticle.active = true;
+				currentParticle.m_Position = emitter.m_Position;
+				currentParticle.startTime = currentTime;
+				currentParticle.endTime = currentTime + emitter.m_Config->m_ParticleLifetime;
+				currentParticle.m_Size = emitter.m_Config->m_SizeBegin;
+
+				//TODO: Generate random velocity TODO: CHANGE THIS
+				currentParticle.m_Velocity.x = Utility::PseudoRandomService::GenerateFloatBounds(s_ParticleContext->m_RandomGenerator, 0.0f, 1.0f);
+				currentParticle.m_Velocity.y = Utility::PseudoRandomService::GenerateFloatBounds(s_ParticleContext->m_RandomGenerator, 0.0f, 1.0f);
+				currentParticle.m_Velocity.z = 0.0f;
+
+				// Move iterator down
+				emitter.m_ParticleIndex = --emitter.m_ParticleIndex % emitter.m_Particles.size();
+			}
+
+			// Manage particles
+			for (Particles::Particle& particle : emitter.m_Particles)
+			{
+				// Check if particle is active
+				if (!particle.active)
+				{
+					continue;
+				}
+
+				// Check particle lifetime
+				if (particle.endTime > currentTime)
+				{
+					particle.active = false;
+					continue;
+				}
+
+				// Move particle based on velocity
+				particle.m_Position += particle.m_Velocity * (float)ts;
+			}
+
+		}
+
     }
 
 	void ParticleService::OnRender(const Math::mat4& viewProjection)
 	{
-#if 0
 		KG_ASSERT(s_ParticleContext);
 
 		// Reset the rendering context
@@ -80,18 +135,73 @@ namespace Kargono::Particles
 		// Start rendering context
 		Rendering::RenderingService::BeginScene(viewProjection);
 
-		// Render all particles
-		for (Particles::Particle& particle : s_ParticleContext->m_ParticlePool)
-		{
-			// Create background rendering data
-			s_ParticleContext->m_ParticleRenderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), particle.m_Position);
+		// Get current time
+		float currentTime{ EngineService::GetActiveEngine().GetInApplicationTime() };
 
-			// Submit particle to the GPU
-			Rendering::RenderingService::SubmitDataToRenderer(s_ParticleContext->m_ParticleRenderSpec);
+		for (auto& [uuid, emitter] : s_ParticleContext->m_AllEmitters)
+		{
+			for (Particles::Particle& particle : emitter.m_Particles)
+			{
+				// Check if particle is active
+				if (!particle.active)
+				{
+					continue;
+				}
+
+				// Render the particle
+
+				// Create background rendering data
+				s_ParticleContext->m_ParticleRenderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), particle.m_Position);
+
+				// Submit particle to the GPU
+				Rendering::RenderingService::SubmitDataToRenderer(s_ParticleContext->m_ParticleRenderSpec);
+			}
 		}
 
 		// End rendering context and submit rendering data to GPU
 		Rendering::RenderingService::EndScene();
-#endif
+	}
+	UUID ParticleService::AddEmitter(EmitterConfig* config, const Math::vec3 position)
+	{
+		KG_ASSERT(s_ParticleContext);
+		KG_ASSERT(config);
+		KG_ASSERT(config->m_BufferSize > 0);
+
+		// Create emitter instance
+		UUID returnID{};
+		EmitterInstance newEmitterInstance;
+		newEmitterInstance.m_Config = config;
+		newEmitterInstance.m_Particles.resize(config->m_BufferSize);
+		newEmitterInstance.m_Position = position;
+		newEmitterInstance.m_ParticleIndex = config->m_BufferSize - 1;
+
+		// Attempt to insert new emitter
+		auto [iter, success] = s_ParticleContext->m_AllEmitters.insert_or_assign(returnID, newEmitterInstance);
+
+		// Ensure insertion of emitter was successful
+		if (!success)
+		{
+			return k_EmptyUUID;
+		}
+
+		return returnID;
+	}
+	bool ParticleService::RemoveEmitter(UUID emitterID)
+	{
+		KG_ASSERT(s_ParticleContext);
+
+		// Attempt to erase emitter from context
+		size_t erased = s_ParticleContext->m_AllEmitters.erase(emitterID);
+
+		// Return success of erase operation
+		return erased > 0;
+	}
+	void ParticleService::ClearEmitters()
+	{
+		s_ParticleContext->m_AllEmitters.clear();
+	}
+	std::unordered_map<UUID, EmitterInstance>& ParticleService::GetAllEmitters()
+	{
+		return s_ParticleContext->m_AllEmitters;
 	}
 }

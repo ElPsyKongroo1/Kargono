@@ -25,6 +25,10 @@ namespace Kargono::Assets
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
 
+		out << YAML::Key << "BufferSize" << YAML::Value << assetReference->m_BufferSize;
+		out << YAML::Key << "SpawnRatePerSec" << YAML::Value << assetReference->m_SpawnRatePerSec;
+		out << YAML::Key << "ParticleLifetime" << YAML::Value << assetReference->m_ParticleLifetime;
+
 		out << YAML::Key << "ColorBegin" << YAML::Value << assetReference->m_ColorBegin;
 		out << YAML::Key << "ColorEnd" << YAML::Value << assetReference->m_ColorEnd;
 
@@ -50,6 +54,10 @@ namespace Kargono::Assets
 			KG_WARN("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
 			return nullptr;
 		}
+
+		newEmitterConfig->m_BufferSize = data["BufferSize"].as<size_t>();
+		newEmitterConfig->m_SpawnRatePerSec = data["SpawnRatePerSec"].as<size_t>();
+		newEmitterConfig->m_ParticleLifetime = data["ParticleLifetime"].as<float>();
 
 		newEmitterConfig->m_ColorBegin = data["ColorBegin"].as<Math::vec4>();
 		newEmitterConfig->m_ColorEnd = data["ColorEnd"].as<Math::vec4>();

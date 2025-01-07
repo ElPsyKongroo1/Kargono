@@ -66,6 +66,7 @@ namespace Kargono::Utility
 		// Service API
 		//==============================
 		static uint64_t GenerateNumber(PseudoGenerator& state);
+		static float GenerateFloatBounds(PseudoGenerator& gen, float lowerBound, float upperBound);
 
 		//==============================
 		// Modify Generators

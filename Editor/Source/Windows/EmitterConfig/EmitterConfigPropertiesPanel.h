@@ -48,6 +48,10 @@ namespace Kargono::Panels
 
 		void OnModifySizeBegin(EditorUI::EditVec3Spec& spec);
 		void OnModifySizeEnd(EditorUI::EditVec3Spec& spec);
+
+		void OnModifyLifetime(EditorUI::EditFloatSpec& spec);
+		void OnModifySpawnRate(EditorUI::EditIntegerSpec& spec);
+		void OnModifyBufferSize(EditorUI::EditIntegerSpec& spec);
 	public:
 		//=========================
 		// Core Panel Data
@@ -62,5 +66,8 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec m_ColorEndSpec;
 		EditorUI::EditVec3Spec m_SizeBeginSpec;
 		EditorUI::EditVec3Spec m_SizeEndSpec;
+		EditorUI::EditIntegerSpec m_BufferSizeSpec;
+		EditorUI::EditIntegerSpec m_SpawnPerSecSpec;
+		EditorUI::EditFloatSpec m_LifetimeSpec;
 	};
 }

@@ -38,6 +38,18 @@ namespace Kargono::Panels
 		m_SizeEndSpec.m_Label = "Ending Size";
 		m_SizeEndSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySizeEnd);
 
+		// Set up widget to modify the particle lifetimes
+		m_LifetimeSpec.m_Label = "Lifetime";
+		m_LifetimeSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyLifetime);
+
+		// Set up widget to modify the particle emitter's buffer size
+		m_BufferSizeSpec.m_Label = "Buffer Size";
+		m_BufferSizeSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyBufferSize);
+
+		// Set up widget to modify the particle spawn rate per second
+		m_SpawnPerSecSpec.m_Label = "Spawn Rate Per Second";
+		m_SpawnPerSecSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySpawnRate);
+
 	}
 	void EmitterConfigPropertiesPanel::OnEditorUIRender()
 	{
@@ -66,6 +78,18 @@ namespace Kargono::Panels
 		{
 			return;
 		}
+
+		// Draw buffer size widget
+		m_BufferSizeSpec.m_CurrentInteger = (int32_t)s_EmitterConfigWindow->m_EditorEmitterConfig->m_BufferSize;
+		EditorUI::EditorUIService::EditInteger(m_BufferSizeSpec);
+
+		// Draw spawn rate widget
+		m_SpawnPerSecSpec.m_CurrentInteger = (int32_t)s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawnRatePerSec;
+		EditorUI::EditorUIService::EditInteger(m_SpawnPerSecSpec);
+
+		// Draw particle lifetime widget
+		m_LifetimeSpec.m_CurrentFloat= s_EmitterConfigWindow->m_EditorEmitterConfig->m_ParticleLifetime;
+		EditorUI::EditorUIService::EditFloat(m_LifetimeSpec);
 
 		// Draw color begin/end specs
 		m_ColorBeginSpec.m_CurrentVec4 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_ColorBegin;
@@ -111,6 +135,30 @@ namespace Kargono::Panels
 	{
 		// Update the ending size for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SizeEnd = spec.m_CurrentVec3;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+	}
+	void EmitterConfigPropertiesPanel::OnModifyLifetime(EditorUI::EditFloatSpec& spec)
+	{
+		// Update the lifetime for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_ParticleLifetime = spec.m_CurrentFloat;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+	}
+	void EmitterConfigPropertiesPanel::OnModifySpawnRate(EditorUI::EditIntegerSpec& spec)
+	{
+		// Update the spawn rate for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawnRatePerSec = (size_t)spec.m_CurrentInteger;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+	}
+	void EmitterConfigPropertiesPanel::OnModifyBufferSize(EditorUI::EditIntegerSpec& spec)
+	{
+		// Update the buffer size for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_BufferSize = (size_t)spec.m_CurrentInteger;
 
 		// Set the active editor UI as edited
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
