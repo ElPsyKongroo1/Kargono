@@ -20,28 +20,24 @@ namespace Kargono::Panels
 	}
 	void EmitterConfigPropertiesPanel::InitializeEmitterConfigOptions()
 	{
-		//// Set up header for window options
-		//m_UIHeader.m_Label = "User Interface Options";
-		//m_UIHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
-		//m_UIHeader.m_Expanded = true;
+		// Set up widget to modify the particle emitter's starting color
+		m_ColorBeginSpec.m_Label = "Starting Color";
+		m_ColorBeginSpec.m_Flags |= EditorUI::EditVec4_RGBA;
+		m_ColorBeginSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyColorBegin);
 
-		//// Set up widget to modify the UI's font
-		//m_UISelectFont.m_Label = "Font";
-		//m_UISelectFont.m_Flags |= EditorUI::SelectOption_Indented;
-		//m_UISelectFont.m_PopupAction = KG_BIND_CLASS_FN(OnOpenUIFontPopup);
-		//m_UISelectFont.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUIFont);
+		// Set up widget to modify the particle emitter's end color
+		m_ColorEndSpec.m_Label = "Ending Color";
+		m_ColorEndSpec.m_Flags |= EditorUI::EditVec4_RGBA;
+		m_ColorEndSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyColorEnd);
 
-		//// Set up widget to modify the UI's OnMove functions
-		//m_UIOnMove.m_Label = "On Move";
-		//m_UIOnMove.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
-		//m_UIOnMove.m_PopupAction = KG_BIND_CLASS_FN(OnOpenUIOnMovePopup);
-		//m_UIOnMove.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUIOnMove);
-		//m_UIOnMove.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForUIOnMove);
+		// Set up widget to modify the particle emitter's Start size
+		m_SizeBeginSpec.m_Label = "Starting Size";
+		m_SizeBeginSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySizeBegin);
 
-		//// Set up widget to modify the UI's selection background color
-		//m_UISelectionColor.m_Label = "Selection Color";
-		//m_UISelectionColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
-		//m_UISelectionColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUISelectionColor);
+		// Set up widget to modify the particle emitter's end size
+		m_SizeEndSpec.m_Label = "Ending Size";
+		m_SizeEndSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySizeEnd);
+
 	}
 	void EmitterConfigPropertiesPanel::OnEditorUIRender()
 	{
@@ -54,7 +50,6 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::EndWindow();
 			return;
 		}
-
 		// Draw header
 		EditorUI::EditorUIService::PanelHeader(s_EmitterConfigWindow->m_MainHeader);
 
@@ -67,38 +62,58 @@ namespace Kargono::Panels
 
 	void EmitterConfigPropertiesPanel::DrawEmitterConfigOptions()
 	{
-		//// Draw main header for UI options
-		//EditorUI::EditorUIService::CollapsingHeader(m_UIHeader);
+		if (!s_EmitterConfigWindow->m_EditorEmitterConfig)
+		{
+			return;
+		}
 
-		//// Draw options for UI
-		//if (m_UIHeader.m_Expanded)
-		//{
-		//	// Edit font for current UI
-		//	Assets::AssetHandle fontHandle = s_EmitterConfigWindow->m_EditorUI->m_FontHandle;
-		//	m_UISelectFont.m_CurrentOption =
-		//	{
-		//		fontHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetFontInfo(fontHandle).Data.FileLocation.stem().string(),
-		//		fontHandle
-		//	};
-		//	EditorUI::EditorUIService::SelectOption(m_UISelectFont);
+		// Draw color begin/end specs
+		m_ColorBeginSpec.m_CurrentVec4 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_ColorBegin;
+		EditorUI::EditorUIService::EditVec4(m_ColorBeginSpec);
+		m_ColorEndSpec.m_CurrentVec4 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_ColorEnd;
+		EditorUI::EditorUIService::EditVec4(m_ColorEndSpec);
 
-		//	// Edit on move for current UI
-		//	Assets::AssetHandle onMoveHandle = s_EmitterConfigWindow->m_EditorUI->m_FunctionPointers.m_OnMoveHandle;
-		//	m_UIOnMove.m_CurrentOption =
-		//	{
-		//		onMoveHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScriptInfo(onMoveHandle).Data.FileLocation.stem().string(),
-		//		onMoveHandle
-		//	};
-		//	EditorUI::EditorUIService::SelectOption(m_UIOnMove);
-
-		//	// Edit UI's selection color
-		//	m_UISelectionColor.m_CurrentVec4 = s_EmitterConfigWindow->m_EditorUI->m_SelectColor;
-		//	EditorUI::EditorUIService::EditVec4(m_UISelectionColor);
-		//}
+		// Draw size begin/end specs
+		m_SizeBeginSpec.m_CurrentVec3 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_SizeBegin;
+		EditorUI::EditorUIService::EditVec3(m_SizeBeginSpec);
+		m_SizeEndSpec.m_CurrentVec3 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_SizeEnd;
+		EditorUI::EditorUIService::EditVec3(m_SizeEndSpec);
 	}
 
 	void EmitterConfigPropertiesPanel::ClearPanelData()
 	{
+	}
+	void EmitterConfigPropertiesPanel::OnModifyColorBegin(EditorUI::EditVec4Spec& spec)
+	{
+		// Update the starting color for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_ColorBegin = spec.m_CurrentVec4;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+	}
+	void EmitterConfigPropertiesPanel::OnModifyColorEnd(EditorUI::EditVec4Spec& spec)
+	{
+		// Update the ending color for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_ColorEnd = spec.m_CurrentVec4;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+	}
+	void EmitterConfigPropertiesPanel::OnModifySizeBegin(EditorUI::EditVec3Spec& spec)
+	{
+		// Update the starting size for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SizeBegin = spec.m_CurrentVec3;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+	}
+	void EmitterConfigPropertiesPanel::OnModifySizeEnd(EditorUI::EditVec3Spec& spec)
+	{
+		// Update the ending size for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SizeEnd = spec.m_CurrentVec3;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 	}
 }
 

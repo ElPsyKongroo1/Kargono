@@ -12,10 +12,10 @@ namespace Kargono::Particles
 
 	struct EmitterConfig
 	{
-		Math::vec4 m_ColorBegin;
-		Math::vec4 m_ColorEnd;
-		Math::vec4 m_SizeBegin;
-		Math::vec4 m_SizeEnd;
+		Math::vec4 m_ColorBegin{ 1.0f };
+		Math::vec4 m_ColorEnd{ 1.0f };
+		Math::vec3 m_SizeBegin{ 1.0f };
+		Math::vec3 m_SizeEnd{ 1.0f };
 	};
 
     struct Particle

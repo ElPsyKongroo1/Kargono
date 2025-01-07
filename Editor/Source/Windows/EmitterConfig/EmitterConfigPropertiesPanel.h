@@ -43,7 +43,11 @@ namespace Kargono::Panels
 		//=========================
 		// Change Emitter Data
 		//=========================
+		void OnModifyColorBegin(EditorUI::EditVec4Spec& spec);
+		void OnModifyColorEnd(EditorUI::EditVec4Spec& spec);
 
+		void OnModifySizeBegin(EditorUI::EditVec3Spec& spec);
+		void OnModifySizeEnd(EditorUI::EditVec3Spec& spec);
 	public:
 		//=========================
 		// Core Panel Data
@@ -54,5 +58,9 @@ namespace Kargono::Panels
 		//=========================
 		// Widgets
 		//=========================
+		EditorUI::EditVec4Spec m_ColorBeginSpec;
+		EditorUI::EditVec4Spec m_ColorEndSpec;
+		EditorUI::EditVec3Spec m_SizeBeginSpec;
+		EditorUI::EditVec3Spec m_SizeEndSpec;
 	};
 }

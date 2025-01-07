@@ -54,8 +54,8 @@ namespace Kargono::Assets
 		newEmitterConfig->m_ColorBegin = data["ColorBegin"].as<Math::vec4>();
 		newEmitterConfig->m_ColorEnd = data["ColorEnd"].as<Math::vec4>();
 
-		newEmitterConfig->m_SizeBegin = data["SizeBegin"].as<Math::vec4>();
-		newEmitterConfig->m_SizeEnd = data["SizeEnd"].as<Math::vec4>();
+		newEmitterConfig->m_SizeBegin = data["SizeBegin"].as<Math::vec3>();
+		newEmitterConfig->m_SizeEnd = data["SizeEnd"].as<Math::vec3>();
 
 		return newEmitterConfig;
 	}
