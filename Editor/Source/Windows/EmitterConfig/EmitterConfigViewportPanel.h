@@ -45,7 +45,7 @@ namespace Kargono::Panels
 		//=========================
 		void HandleMouseHovering();
 		void DrawToolbarOverlay();
-		void DrawGrid();
+		void DrawGridLines();
 		void DrawGizmo();
 
 		//=========================
@@ -64,9 +64,8 @@ namespace Kargono::Panels
 		//=========================
 		FixedString32 m_PanelName{ "Particle Emitter Viewport" };
 		Rendering::EditorPerspectiveCamera m_EditorCamera;
-		ViewportData m_ViewportData;
-		Math::uvec2 m_ViewportAspectRatio{ 1, 1 };
 		int m_GizmoType{ -1 };
+		ViewportData m_ViewportData;
 	private:
 		// Viewport resources
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;
@@ -76,6 +75,15 @@ namespace Kargono::Panels
 
 		// Debug overlay data
 		bool m_ToolbarEnabled{ true };
-		bool m_DisplayGrid{ true };
+
+		// Draw world axis Data
+		float m_LargeGridSpacing{ 100.0f };
+		float m_FineGridSpacing{ 5.0f };
+		bool m_DisplayXYMajorGrid{ false };
+		bool m_DisplayXZMajorGrid{ true };
+		bool m_DisplayYZMajorGrid{ false };
+		bool m_DisplayXYMinorGrid{ false };
+		bool m_DisplayXZMinorGrid{ true };
+		bool m_DisplayYZMinorGrid{ false };
 	};
 }

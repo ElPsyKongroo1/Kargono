@@ -673,10 +673,10 @@ namespace Kargono::Panels
 					DrawFrustrum(selectedEntity);
 				}
 			}
-			DrawWorldAxis(); 
+			DrawGridLines(); 
 		}
 
-		DrawDebugOverlay();
+		DrawDebugLines();
 
 
 		Rendering::RenderingService::EndScene();
@@ -723,7 +723,7 @@ namespace Kargono::Panels
 
 	}
 
-	void ViewportPanel::DrawWorldAxis()
+	void ViewportPanel::DrawGridLines()
 	{
 		Math::vec3 cameraPosition = m_EditorCamera.GetPosition();
 		Math::vec3 fineGridStart =
@@ -1038,7 +1038,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	void ViewportPanel::DrawDebugOverlay()
+	void ViewportPanel::DrawDebugLines()
 	{
 		// Draw debug line
 		for (DebugLine& line : m_DebugLines)
