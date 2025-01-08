@@ -67,4 +67,23 @@ namespace Kargono::Assets
 
 		return newEmitterConfig;
 	}
+	void EmitterConfigManager::DeleteAssetValidation(AssetHandle emitterConfigHandle)
+	{
+		// Ensure all other assets do not contain this emitter config
+		// If they do, remove the reference
+
+		// Check scene assets
+		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())
+		{
+			// Handle UI level function pointers
+			Ref<Scenes::Scene> sceneRef = Assets::AssetService::GetScene(sceneHandle);
+
+			bool sceneModified = Assets::AssetService::RemoveEmitterConfigFromScene(sceneRef, emitterConfigHandle);
+			if (sceneModified)
+			{
+				// Save scene
+				Assets::AssetService::SaveScene(sceneHandle, sceneRef);
+			}
+		}
+	}
 }

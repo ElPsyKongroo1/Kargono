@@ -140,6 +140,15 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
+		if (entity.HasComponent<ECS::ParticleEmitterComponent>())
+		{
+			out << YAML::Key << "ParticleEmitterComponent";
+			out << YAML::BeginMap; // Component Map
+			ECS::ParticleEmitterComponent& emitterComp = entity.GetComponent<ECS::ParticleEmitterComponent>();
+			out << YAML::Key << "EmitterHandle" << YAML::Value << static_cast<uint64_t>(emitterComp.m_EmitterConfigHandle);
+			out << YAML::EndMap; // Component Map
+		}
+
 
 		if (entity.HasComponent<ECS::CameraComponent>())
 		{
@@ -415,12 +424,22 @@ namespace Kargono::Assets
 					}
 				}
 
+
+
 				YAML::Node onCreateNode = entity["OnCreateComponent"];
 				if (onCreateNode)
 				{
 					ECS::OnCreateComponent& component = deserializedEntity.AddComponent<ECS::OnCreateComponent>();
 					component.OnCreateScriptHandle = onCreateNode["OnCreateHandle"].as<uint64_t>();
 					component.OnCreateScript = Assets::AssetService::GetScript(component.OnCreateScriptHandle);
+				}
+
+				YAML::Node particleEmitterNode = entity["ParticleEmitterComponent"];
+				if (particleEmitterNode)
+				{
+					ECS::ParticleEmitterComponent& component = deserializedEntity.AddComponent<ECS::ParticleEmitterComponent>();
+					component.m_EmitterConfigHandle = particleEmitterNode["EmitterHandle"].as<uint64_t>();
+					component.m_EmitterConfigRef = Assets::AssetService::GetEmitterConfig(component.m_EmitterConfigHandle);
 				}
 
 				auto cameraComponent = entity["CameraComponent"];
@@ -679,5 +698,25 @@ namespace Kargono::Assets
 		sceneRef->ClearProjectComponentRegistry(projectCompHandle);
 
 		return componentCount > 0;
+	}
+	bool SceneManager::RemoveEmitterConfig(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle emitterConfigHandle)
+	{
+		bool emitterConfigModified{ false };
+
+		// Check for emitterConfig
+		auto emitterConfigView = sceneRef->GetAllEntitiesWith<ECS::ParticleEmitterComponent>();
+		for (entt::entity enttEntity : emitterConfigView)
+		{
+			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::ParticleEmitterComponent& component = currentEntity.GetComponent<ECS::ParticleEmitterComponent>();
+
+			if (component.m_EmitterConfigHandle == emitterConfigHandle)
+			{
+				component.m_EmitterConfigHandle = Assets::EmptyHandle;
+				component.m_EmitterConfigRef = nullptr;
+				emitterConfigModified = true;
+			}
+		}
+		return emitterConfigModified;
 	}
 }

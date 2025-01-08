@@ -95,19 +95,10 @@ namespace Kargono::Windows
 		{
 			return;
 		}
-		Particles::ParticleService::ClearEmitters();
-		for (entt::entity enttID : m_EditorScene->GetAllEntitiesWith<ECS::ParticleEmitterComponent>())
-		{
-			ECS::Entity entity{ m_EditorScene->GetEntityByEnttID(enttID) };
-			ECS::ParticleEmitterComponent particleComp = entity.GetComponent<ECS::ParticleEmitterComponent>();
-			ECS::TransformComponent transform = entity.GetComponent<ECS::TransformComponent>();
-			if (particleComp.m_EmitterConfigHandle == Assets::EmptyHandle)
-			{
-				continue;
-			}
 
-			Particles::ParticleService::AddEmitter(particleComp.m_EmitterConfigRef.get(), transform.Translation);
-		}
+		// Load the emitters for the editor scene
+		Particles::ParticleService::ClearEmitters();
+		Particles::ParticleService::LoadSceneEmitters(m_EditorScene);
 	}
 
 	MainWindow::MainWindow()
@@ -261,6 +252,18 @@ namespace Kargono::Windows
 		{
 			// Remove project component from editor scene
 			Assets::AssetService::RemoveProjectComponentFromScene(m_EditorScene, manageAsset.GetAssetID());
+		}
+
+		// Handle deleting a emitter config by removing entity data from all scenes
+		if (manageAsset.GetAssetType() == Assets::AssetType::EmitterConfig &&
+			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			m_EditorScene)
+		{
+			// Remove emitter config from editor scene
+			Assets::AssetService::RemoveEmitterConfigFromScene(m_EditorScene, manageAsset.GetAssetID());
+
+			// Reset emitters in the scene
+			LoadSceneParticleEmitters();
 		}
 
 		// Handle removing scripts from editor scene
@@ -742,6 +745,10 @@ namespace Kargono::Windows
 			Network::ClientService::Init();
 		}
 
+		// Load particle emitters
+		Particles::ParticleService::ClearEmitters();
+		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
+
 		AppTickService::LoadGeneratorsFromProject();
 		EngineService::GetActiveEngine().UpdateAppStartTime();
 		EditorUI::EditorUIService::SetFocusedWindow(m_ViewportPanel->m_PanelName);
@@ -802,6 +809,10 @@ namespace Kargono::Windows
 		{
 			Network::ClientService::Terminate();
 		}
+
+		// Revalidate particles for editor scene
+		Particles::ParticleService::ClearEmitters();
+		Particles::ParticleService::LoadSceneEmitters(m_EditorScene);
 
 		AppTickService::ClearGenerators();
 

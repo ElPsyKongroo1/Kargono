@@ -2618,6 +2618,16 @@ namespace Kargono::Panels
 			}
 		}
 
+		// Remove emitter config from editor UI
+		if (manageAsset->GetAssetType() == Assets::AssetType::EmitterConfig &&
+			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		{
+			if (m_SelectParticleEmitter.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
+			{
+				m_SelectParticleEmitter.m_CurrentOption = { "None", Assets::EmptyHandle };
+			}
+
+		}
 
 		if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
 			manageAsset->GetAction() == Events::ManageAssetAction::UpdateAsset)

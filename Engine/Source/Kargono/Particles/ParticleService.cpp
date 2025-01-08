@@ -7,6 +7,9 @@
 #include "Kargono/Assets/AssetService.h"
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Utility/Random.h"
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/ECS/Entity.h"
+#include "Kargono/ECS/EngineComponents.h"
 
 namespace Kargono::Particles
 {
@@ -203,5 +206,20 @@ namespace Kargono::Particles
 	std::unordered_map<UUID, EmitterInstance>& ParticleService::GetAllEmitters()
 	{
 		return s_ParticleContext->m_AllEmitters;
+	}
+	void ParticleService::LoadSceneEmitters(Ref<Scenes::Scene> scene)
+	{
+		for (entt::entity enttID : scene->GetAllEntitiesWith<ECS::ParticleEmitterComponent>())
+		{
+			ECS::Entity entity{ scene->GetEntityByEnttID(enttID) };
+			ECS::ParticleEmitterComponent particleComp = entity.GetComponent<ECS::ParticleEmitterComponent>();
+			ECS::TransformComponent transform = entity.GetComponent<ECS::TransformComponent>();
+			if (particleComp.m_EmitterConfigHandle == Assets::EmptyHandle)
+			{
+				continue;
+			}
+
+			AddEmitter(particleComp.m_EmitterConfigRef.get(), transform.Translation);
+		}
 	}
 }

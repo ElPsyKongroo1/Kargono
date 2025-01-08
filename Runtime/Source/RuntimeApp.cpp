@@ -128,7 +128,7 @@ namespace Kargono
 			Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
 
 			// Draw particles
-			Particles::ParticleService::OnRender(mainCamera->GetProjection() * cameraTransform);
+			Particles::ParticleService::OnRender(mainCamera->GetProjection() * glm::inverse(cameraTransform));
 
 			// Draw runtimeUI
 			RuntimeUI::RuntimeUIService::OnRender(EngineService::GetActiveWindow().GetWidth(), 
@@ -512,6 +512,10 @@ namespace Kargono
 		{
 			Network::ClientService::Init();
 		}
+
+		// Load particle emitters
+		Particles::ParticleService::ClearEmitters();
+		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 	}
 
 	void RuntimeApp::OnStop()

@@ -13,6 +13,7 @@
 #include "Kargono/Events/SceneEvent.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Assets/AssetService.h"
+#include "Kargono/Particles/ParticleService.h"
 
 namespace Kargono::Scenes
 {
@@ -557,10 +558,18 @@ namespace Kargono::Scenes
 		if (sceneReference)
 		{
 			TransitionScene(sceneReference);
+
+			s_ActiveSceneHandle = handle;
+			Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(handle, Events::ManageSceneAction::Open);
+			EngineService::SubmitToEventQueue(event);
+
+			Particles::ParticleService::ClearEmitters();
+			Particles::ParticleService::LoadSceneEmitters(sceneReference);
 		}
-		s_ActiveSceneHandle = handle;
-		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(handle, Events::ManageSceneAction::Open);
-		EngineService::SubmitToEventQueue(event);
+		else
+		{
+			KG_WARN("Attempt to transition scenes, however, new scene reference could not be found!");
+		}
 	}
 
 	void SceneService::SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle)

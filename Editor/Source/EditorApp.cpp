@@ -179,7 +179,10 @@ namespace Kargono
 
 	bool EditorApp::OnAssetEvent(Events::Event* event)
 	{
-		return m_MainWindow->OnAssetEvent(event);
+		m_MainWindow->OnAssetEvent(event);
+		m_UIEditorWindow->OnAssetEvent(event);
+		m_EmitterConfigEditorWindow->OnAssetEvent(event);
+		return false;
 	}
 
 	bool EditorApp::OnLogEvent(Events::Event* event)

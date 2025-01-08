@@ -213,6 +213,13 @@ namespace Kargono::Assets
 			return s_AssetsContext.m_SceneManager.RemoveAIState(sceneRef, aiStateHandle);
 		}
 
+		static AssetHandle RemoveEmitterConfigFromScene(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle emitterConfigHandle)
+		{
+			return s_AssetsContext.m_SceneManager.RemoveEmitterConfig(sceneRef, emitterConfigHandle);
+		}
+
+		
+
 		// Deserializes all registries into memory
 		static void DeserializeAll()
 		{

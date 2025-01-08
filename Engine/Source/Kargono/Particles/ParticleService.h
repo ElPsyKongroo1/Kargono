@@ -6,6 +6,7 @@
 #include <vector>
 
 namespace Kargono::ECS { struct TransformComponent; }
+namespace Kargono::Scenes { class Scene; }
 
 namespace Kargono::Particles
 {
@@ -71,6 +72,9 @@ namespace Kargono::Particles
 		static bool RemoveEmitter(UUID emitterID);
 		static void ClearEmitters();
 		static std::unordered_map<UUID, EmitterInstance>& GetAllEmitters();
+
+		static void LoadSceneEmitters(Ref<Scenes::Scene> scene);
+		
     };
 }
 

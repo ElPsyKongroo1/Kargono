@@ -31,6 +31,8 @@ namespace Kargono::Windows
 		m_EditorEmitterConfigHandle = 0;
 		m_EditorEmitterConfig = nullptr;
 
+		Particles::ParticleService::ClearEmitters();
+
 		// Reset properties panel data
 		m_PropertiesPanel->ClearPanelData();
 	}
@@ -169,6 +171,9 @@ namespace Kargono::Windows
 			m_MainHeader.m_Label = Assets::AssetService::GetEmitterConfigRegistry().at(
 				m_EditorEmitterConfigHandle).Data.FileLocation.filename().string();
 			OnRefreshData();
+
+			// Load emitter
+			LoadEditorEmitterIntoParticleService();
 		};
 		m_CreateEmitterConfigPopupSpec.m_PopupContents = [&]()
 		{
