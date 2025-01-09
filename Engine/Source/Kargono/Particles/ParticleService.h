@@ -1,5 +1,6 @@
 #pragma once
 #include "Kargono/Math/Math.h"
+#include "Kargono/Math/Interpolation.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Timestep.h"
 
@@ -15,8 +16,10 @@ namespace Kargono::Particles
 		float m_ParticleLifetime{ 1.0f };
 		size_t m_SpawnRatePerSec{ 5 };
 		size_t m_BufferSize{ 1000 };
+		Math::InterpolationType m_ColorInterpolationType{ Math::InterpolationType::Linear };
 		Math::vec4 m_ColorBegin{ 1.0f };
 		Math::vec4 m_ColorEnd{ 1.0f };
+		Math::InterpolationType m_SizeInterpolationType{ Math::InterpolationType::Linear };
 		Math::vec3 m_SizeBegin{ 1.0f };
 		Math::vec3 m_SizeEnd{ 1.0f };
 	};

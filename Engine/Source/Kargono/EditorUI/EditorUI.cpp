@@ -1453,16 +1453,16 @@ namespace Kargono::EditorUI
 		ImGui::PopStyleColor();
 
 		ImGui::SameLine(s_SecondaryTextPosOne);
-
+		
 		if (spec.m_Editing)
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor1);
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
-			if (ImGui::DragInt(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentInteger), 1.0f,
-				0, 0,
-				"%d"))
+			if (ImGui::DragInt(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentInteger), (float)spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%d", ImGuiSliderFlags_AlwaysClamp))
 			{
 				if (spec.m_ConfirmAction)
 				{
@@ -1535,9 +1535,9 @@ namespace Kargono::EditorUI
 			// x value
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor1);
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentFloat), 0.01f,
-				0.0f, 0.0f,
-				"%.2f"))
+			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentFloat), spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				if (spec.m_ConfirmAction)
 				{
@@ -1612,9 +1612,9 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec2.x), 0.01f,
-				0.0f, 0.0f,
-				"%.2f"))
+			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec2.x), spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				if (spec.m_ConfirmAction)
 				{
@@ -1633,9 +1633,9 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor2);
 			ImGui::SetCursorPos({ s_SecondaryTextPosTwo, yPosition });
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec2.y), 0.01f,
-				0.0f, 0.0f,
-				"%.2f"))
+			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec2.y), spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				if (spec.m_ConfirmAction)
 				{
@@ -1718,9 +1718,9 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec3.x), 0.01f,
-				0.0f, 0.0f,
-				"%.2f"))
+			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec3.x), spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				if (spec.m_ConfirmAction)
 				{
@@ -1739,9 +1739,9 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor2);
 			ImGui::SetCursorPos({ s_SecondaryTextPosTwo, yPosition });
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec3.y), 0.01f,
-				0.0f, 0.0f,
-				"%.2f"))
+			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec3.y), spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				if (spec.m_ConfirmAction)
 				{
@@ -1760,9 +1760,9 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor3);
 			ImGui::SetCursorPos({ s_SecondaryTextPosThree, yPosition });
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec3.z), 0.01f,
-				0.0f, 0.0f,
-				"%.2f"))
+			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec3.z), spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				if (spec.m_ConfirmAction)
 				{
@@ -1853,9 +1853,9 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, (spec.m_Flags & EditVec4_RGBA) ? s_Red : s_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.x), 0.01f,
-				0.0f, 0.0f,
-				"%.2f"))
+			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.x), spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				if (spec.m_ConfirmAction)
 				{
@@ -1875,9 +1875,9 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, (spec.m_Flags & EditVec4_RGBA) ? s_Green : s_HighlightColor2);
 			ImGui::SetCursorPos({ s_SecondaryTextPosTwo, yPosition });
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.y), 0.01f,
-				0.0f, 0.0f,
-				"%.2f"))
+			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.y), spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				if (spec.m_ConfirmAction)
 				{
@@ -1897,9 +1897,9 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, (spec.m_Flags & EditVec4_RGBA) ? s_Blue : s_HighlightColor3);
 			ImGui::SetCursorPos({ s_SecondaryTextPosThree, yPosition });
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.z), 0.01f,
-				0.0f, 0.0f,
-				"%.2f"))
+			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.z), spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				if (spec.m_ConfirmAction)
 				{
@@ -1919,9 +1919,9 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, (spec.m_Flags & EditVec4_RGBA) ? s_Alpha : s_HighlightColor4);
 			ImGui::SetCursorPos({ s_SecondaryTextPosFour, yPosition });
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.w), 0.01f,
-				0.0f, 0.0f,
-				"%.2f"))
+			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.w), spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
 				if (spec.m_ConfirmAction)
 				{

@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <variant>
+#include <array>
 
 
 namespace Kargono::Rendering { class Texture2D; }
@@ -438,6 +439,8 @@ namespace Kargono::EditorUI
 		std::string m_Label{};
 		WidgetFlags m_Flags{ EditInteger_None };
 		int32_t m_CurrentInteger{};
+		std::array<int32_t, 2> m_Bounds{ 0, 0 };
+		int32_t m_ScrollSpeed{ 1 };
 		std::function<void(EditIntegerSpec&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
 	private:
@@ -466,6 +469,8 @@ namespace Kargono::EditorUI
 		float m_CurrentFloat{};
 		std::function<void(EditFloatSpec&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
+		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
+		float m_ScrollSpeed{ 0.01f };
 	private:
 		bool m_Editing{ false };
 		WidgetID m_WidgetID;
@@ -492,6 +497,8 @@ namespace Kargono::EditorUI
 		Math::vec2 m_CurrentVec2{};
 		std::function<void(EditVec2Spec&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
+		std::array<float, 2> m_Bounds{ 0.0f,0.0f };
+		float m_ScrollSpeed{ 0.01f };
 	private:
 		bool m_Editing{ false };
 		WidgetID m_WidgetID;
@@ -518,6 +525,8 @@ namespace Kargono::EditorUI
 		Math::vec3 m_CurrentVec3{};
 		std::function<void(EditVec3Spec&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
+		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
+		float m_ScrollSpeed{ 0.01f };
 	private:
 		bool m_Editing{ false };
 		WidgetID m_WidgetID;
@@ -545,6 +554,8 @@ namespace Kargono::EditorUI
 		Math::vec4 m_CurrentVec4{};
 		std::function<void(EditVec4Spec&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
+		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
+		float m_ScrollSpeed{ 0.01f };
 	private:
 		bool m_Editing{ false };
 		WidgetID m_WidgetID;
@@ -1346,12 +1357,16 @@ namespace Kargono::EditorUI
 		std::string m_Label{};
 		OptionEntry m_CurrentOption{};
 		uint32_t m_LineCount{ 3 };
-		std::function<void()> m_OnEdit{ nullptr };
-		std::function<void(const OptionEntry&)> m_ConfirmAction {nullptr};
 		std::function<void()> m_PopupAction {nullptr};
+		std::function<void(const OptionEntry&)> m_ConfirmAction {nullptr};
+		WidgetFlags m_Flags{ SelectOption_None };
+	public:
 		// Only used if PopupOnly is true
 		bool m_OpenPopup{ false };
-		WidgetFlags m_Flags{ SelectOption_None };
+		// Only used if HandleEditButtonExternally is true
+		std::function<void()> m_OnEdit{ nullptr };
+
+	public:
 		void ClearOptions()
 		{
 			m_ActiveOptions.clear();

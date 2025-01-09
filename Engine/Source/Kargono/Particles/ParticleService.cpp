@@ -10,6 +10,7 @@
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/ECS/Entity.h"
 #include "Kargono/ECS/EngineComponents.h"
+#include "Kargono/Math/Interpolation.h"
 
 namespace Kargono::Particles
 {
@@ -143,6 +144,17 @@ namespace Kargono::Particles
 
 		for (auto& [uuid, emitter] : s_ParticleContext->m_AllEmitters)
 		{
+			// Get color/size interpolation functions
+			Math::EaseVec3Function sizeEaseFunc
+			{
+				Math::Interpolation::GetEasingFunctionVec3(emitter.m_Config->m_SizeInterpolationType)
+			};
+
+			Math::EaseVec4Function colorEaseFunc
+			{
+				Math::Interpolation::GetEasingFunctionVec4(emitter.m_Config->m_ColorInterpolationType)
+			};
+
 			for (Particles::Particle& particle : emitter.m_Particles)
 			{
 				// Check if particle is active
@@ -151,12 +163,36 @@ namespace Kargono::Particles
 					continue;
 				}
 
-				// Render the particle
+				// Calculate lerp progress value
+				float progress{ (currentTime - particle.startTime) / (particle.endTime - particle.startTime) };
+
+				// Calculate size interpolation
+				Math::vec3 size = sizeEaseFunc
+				(
+					emitter.m_Config->m_SizeBegin, 
+					emitter.m_Config->m_SizeEnd, progress
+				);
 
 				// Create background rendering data
-				s_ParticleContext->m_ParticleRenderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), particle.m_Position);
+				s_ParticleContext->m_ParticleRenderSpec.m_TransformMatrix = 
+					glm::translate(Math::mat4(1.0f), particle.m_Position) * 
+					glm::scale(glm::mat4(1.0f), { size.x, size.y, size.z });
 
-				// Submit particle to the GPU
+				// Submit a color based on the current interpolation
+				Rendering::Shader::SetDataAtInputLocation<Math::vec4>
+				(
+					colorEaseFunc
+					(
+						emitter.m_Config->m_ColorBegin, 
+						emitter.m_Config->m_ColorEnd, 
+						progress
+					),
+					"a_Color", 
+					s_ParticleContext->m_ParticleRenderSpec.m_Buffer, 
+					s_ParticleContext->m_ParticleRenderSpec.m_Shader
+				);
+
+				// Render the particle
 				Rendering::RenderingService::SubmitDataToRenderer(s_ParticleContext->m_ParticleRenderSpec);
 			}
 		}

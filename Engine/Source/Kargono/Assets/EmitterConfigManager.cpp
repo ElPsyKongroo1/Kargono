@@ -29,9 +29,13 @@ namespace Kargono::Assets
 		out << YAML::Key << "SpawnRatePerSec" << YAML::Value << assetReference->m_SpawnRatePerSec;
 		out << YAML::Key << "ParticleLifetime" << YAML::Value << assetReference->m_ParticleLifetime;
 
+		out << YAML::Key << "ColorInterpolationType" << YAML::Value << 
+			Utility::InterpolationTypeToString(assetReference->m_ColorInterpolationType);
 		out << YAML::Key << "ColorBegin" << YAML::Value << assetReference->m_ColorBegin;
 		out << YAML::Key << "ColorEnd" << YAML::Value << assetReference->m_ColorEnd;
 
+		out << YAML::Key << "SizeInterpolationType" << YAML::Value << 
+			Utility::InterpolationTypeToString(assetReference->m_SizeInterpolationType);
 		out << YAML::Key << "SizeBegin" << YAML::Value << assetReference->m_SizeBegin;
 		out << YAML::Key << "SizeEnd" << YAML::Value << assetReference->m_SizeEnd;
 
@@ -59,9 +63,13 @@ namespace Kargono::Assets
 		newEmitterConfig->m_SpawnRatePerSec = data["SpawnRatePerSec"].as<size_t>();
 		newEmitterConfig->m_ParticleLifetime = data["ParticleLifetime"].as<float>();
 
+		newEmitterConfig->m_ColorInterpolationType = 
+			Utility::StringToInterpolationType(data["ColorInterpolationType"].as<std::string>());
 		newEmitterConfig->m_ColorBegin = data["ColorBegin"].as<Math::vec4>();
 		newEmitterConfig->m_ColorEnd = data["ColorEnd"].as<Math::vec4>();
 
+		newEmitterConfig->m_SizeInterpolationType =
+			Utility::StringToInterpolationType(data["SizeInterpolationType"].as<std::string>());
 		newEmitterConfig->m_SizeBegin = data["SizeBegin"].as<Math::vec3>();
 		newEmitterConfig->m_SizeEnd = data["SizeEnd"].as<Math::vec3>();
 
