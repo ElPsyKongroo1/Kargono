@@ -85,6 +85,15 @@ namespace Kargono::Particles
 		{
 			// TODO: If a parent entity exists, maybe just set to inactive
 
+			// Set emitter location if a parent entity exists
+			if (emitter.m_ParentScene)
+			{
+				ECS::Entity entity = emitter.m_ParentScene->GetEntityByUUID(emitter.m_ParentEntityID);
+				ECS::TransformComponent entityTransform = entity.GetComponent<ECS::TransformComponent>();
+				emitter.m_Position = entityTransform.Translation;
+			}
+
+
 			// Check if emitter should be removed
 			if (emitter.m_Config->m_EmitterLifecycle == EmitterLifecycle::FixedTime && currentTime > emitter.m_EndTime)
 			{
@@ -196,9 +205,6 @@ namespace Kargono::Particles
 	{
 		KG_ASSERT(s_ParticleContext);
 
-		// Reset the rendering context
-		Rendering::RendererAPI::ClearDepthBuffer(); // TODO: PLEASE REMOVE THIS AHHHHHHHHH
-
 		// Start rendering context
 		Rendering::RenderingService::BeginScene(viewProjection);
 
@@ -293,6 +299,39 @@ namespace Kargono::Particles
 
 		return returnID;
 	}
+
+	UUID ParticleService::AddEmitter(EmitterConfig* config, Scenes::Scene* parentScene, UUID entityID)
+	{
+		KG_ASSERT(s_ParticleContext);
+		KG_ASSERT(config);
+		KG_ASSERT(config->m_BufferSize > 0);
+
+		// Get current time
+		float currentTime{ EngineService::GetActiveEngine().GetInApplicationTime() };
+
+		// Create emitter instance
+		UUID returnID{};
+		EmitterInstance newEmitterInstance;
+		newEmitterInstance.m_Config = config;
+		newEmitterInstance.m_Particles.resize(config->m_BufferSize);
+		newEmitterInstance.m_ParentScene = parentScene;
+		newEmitterInstance.m_ParentEntityID = entityID;
+		newEmitterInstance.m_ParticleIndex = config->m_BufferSize - 1;
+		newEmitterInstance.m_StartTime = currentTime;
+		newEmitterInstance.m_EndTime = currentTime + config->m_EmitterLifetime;
+
+		// Attempt to insert new emitter
+		auto [iter, success] = s_ParticleContext->m_AllEmitters.insert_or_assign(returnID, newEmitterInstance);
+
+		// Ensure insertion of emitter was successful
+		if (!success)
+		{
+			return k_EmptyUUID;
+		}
+
+		return returnID;
+	}
+
 	bool ParticleService::RemoveEmitter(UUID emitterID)
 	{
 		KG_ASSERT(s_ParticleContext);
@@ -323,7 +362,7 @@ namespace Kargono::Particles
 				continue;
 			}
 
-			AddEmitter(particleComp.m_EmitterConfigRef.get(), transform.Translation);
+			AddEmitter(particleComp.m_EmitterConfigRef.get(), scene.get(), entity.GetUUID());
 		}
 	}
 }

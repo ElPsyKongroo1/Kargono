@@ -73,7 +73,8 @@ namespace Kargono::Particles
 	{
 		Math::vec3 m_Position;
 		EmitterMotionType m_EmitterMotionType{ EmitterMotionType::NoMotion };
-		ECS::Entity* m_ParentEntity{ nullptr };
+		Scenes::Scene* m_ParentScene{ nullptr };
+		UUID m_ParentEntityID{ k_EmptyUUID };
 		EmitterConfig* m_Config;
 		std::vector<Particle> m_Particles;
 		size_t m_ParticleIndex;
@@ -103,6 +104,7 @@ namespace Kargono::Particles
 		// Manage Emitters
 		//==============================
 		static UUID AddEmitter(EmitterConfig* config, const Math::vec3 position);
+		static UUID AddEmitter(EmitterConfig* config, Scenes::Scene* parentScene, UUID entityID);
 		static bool RemoveEmitter(UUID emitterID);
 		static void ClearEmitters();
 		static std::unordered_map<UUID, EmitterInstance>& GetAllEmitters();
