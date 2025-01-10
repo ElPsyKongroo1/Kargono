@@ -651,10 +651,13 @@ namespace Kargono::Panels
 			}
 		}
 
-		if (s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate || (s_MainWindow->m_SceneState == SceneState::Play && s_MainWindow->m_IsPaused))
+		if (s_MainWindow->m_SceneState == SceneState::Edit || 
+			s_MainWindow->m_SceneState == SceneState::Simulate || 
+			(s_MainWindow->m_SceneState == SceneState::Play && s_MainWindow->m_IsPaused))
 		{
 			// Draw selected entity outline 
-			if (ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity()) {
+			if (ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity()) 
+			{
 				ECS::TransformComponent transform = selectedEntity.GetComponent<ECS::TransformComponent>();
 				static Math::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};
 				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);

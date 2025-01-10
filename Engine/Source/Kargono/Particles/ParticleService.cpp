@@ -71,6 +71,8 @@ namespace Kargono::Particles
 		KG_VERIFY(!s_ParticleContext, "Particle System Terminate");
     }
 
+
+
     void ParticleService::OnUpdate(Timestep ts)
     {
 		KG_ASSERT(s_ParticleContext);
@@ -78,8 +80,41 @@ namespace Kargono::Particles
 		// Get current time
 		float currentTime{ EngineService::GetActiveEngine().GetInApplicationTime() };
 
+		size_t iteration{ 0 };
 		for (auto& [uuid, emitter] : s_ParticleContext->m_AllEmitters)
 		{
+			// TODO: If a parent entity exists, maybe just set to inactive
+
+			// Check if emitter should be removed
+			if (emitter.m_Config->m_EmitterLifecycle == EmitterLifecycle::FixedTime && currentTime > emitter.m_EndTime)
+			{
+				// List of emitters to be removed
+				static std::vector<UUID> s_EmittersToRemove;
+
+				// Check if a list of emitters already exists
+				if (s_EmittersToRemove.size() > 0)
+				{
+					// Add current emitter to list of emitters to remove
+					s_EmittersToRemove.emplace_back(uuid);
+				}
+				else
+				{
+					// Submit job to main thread that removes indicated emitters from the s_ParticleContext
+					s_EmittersToRemove.emplace_back(uuid);
+					EngineService::SubmitToMainThread([]()
+					{
+						for (UUID id : s_EmittersToRemove)
+						{
+							s_ParticleContext->m_AllEmitters.erase(id);
+						}
+						s_EmittersToRemove.clear();
+					});
+				}
+
+				// Continue on to next emitter
+				continue;
+			}
+
 			// Spawn more particles
 			float spawnThreshold{ 1.0f / (float)emitter.m_Config->m_SpawnRatePerSec };
 			emitter.m_ParticleSpawnAccumulator += ts;
@@ -91,7 +126,27 @@ namespace Kargono::Particles
 				// Spawn a particle
 				Particle& currentParticle = emitter.m_Particles[emitter.m_ParticleIndex];
 				currentParticle.m_Active = true;
-				currentParticle.m_Position = emitter.m_Position;
+
+				// Set x,y,z position based on the bounds provide in the emitter's config
+				currentParticle.m_Position.x = emitter.m_Position.x + Utility::PseudoRandomService::GenerateFloatBounds
+				(
+					s_ParticleContext->m_RandomGenerator, 
+					emitter.m_Config->m_SpawningBounds[0].x,
+					emitter.m_Config->m_SpawningBounds[1].x
+				);
+				currentParticle.m_Position.y = emitter.m_Position.y + Utility::PseudoRandomService::GenerateFloatBounds
+				(
+					s_ParticleContext->m_RandomGenerator,
+					emitter.m_Config->m_SpawningBounds[0].y,
+					emitter.m_Config->m_SpawningBounds[1].y
+				);
+				currentParticle.m_Position.z = emitter.m_Position.z + Utility::PseudoRandomService::GenerateFloatBounds
+				(
+					s_ParticleContext->m_RandomGenerator,
+					emitter.m_Config->m_SpawningBounds[0].z,
+					emitter.m_Config->m_SpawningBounds[1].z
+				);
+
 				currentParticle.m_StartTime = currentTime;
 				currentParticle.m_EndTime = currentTime + emitter.m_Config->m_ParticleLifetime;
 				currentParticle.m_Size = emitter.m_Config->m_SizeBegin;
@@ -121,9 +176,17 @@ namespace Kargono::Particles
 					continue;
 				}
 
+				// Adjust velocity based on gravity if being used
+				if (emitter.m_Config->m_UseGravity)
+				{
+					particle.m_Velocity += emitter.m_Config->m_GravityAcceleration;
+				}
+
 				// Move particle based on velocity
 				particle.m_Position += particle.m_Velocity * (float)ts;
 			}
+
+			iteration++;
 
 		}
 
@@ -206,6 +269,9 @@ namespace Kargono::Particles
 		KG_ASSERT(config);
 		KG_ASSERT(config->m_BufferSize > 0);
 
+		// Get current time
+		float currentTime{ EngineService::GetActiveEngine().GetInApplicationTime() };
+
 		// Create emitter instance
 		UUID returnID{};
 		EmitterInstance newEmitterInstance;
@@ -213,6 +279,8 @@ namespace Kargono::Particles
 		newEmitterInstance.m_Particles.resize(config->m_BufferSize);
 		newEmitterInstance.m_Position = position;
 		newEmitterInstance.m_ParticleIndex = config->m_BufferSize - 1;
+		newEmitterInstance.m_StartTime = currentTime;
+		newEmitterInstance.m_EndTime = currentTime + config->m_EmitterLifetime;
 
 		// Attempt to insert new emitter
 		auto [iter, success] = s_ParticleContext->m_AllEmitters.insert_or_assign(returnID, newEmitterInstance);

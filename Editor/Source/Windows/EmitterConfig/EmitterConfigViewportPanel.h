@@ -44,9 +44,10 @@ namespace Kargono::Panels
 		// Draw overlay
 		//=========================
 		void HandleMouseHovering();
-		void DrawToolbarOverlay();
 		void DrawGridLines();
 		void DrawGizmo();
+		void DrawParticleSpawningBounds();
+		void DrawToolbarOverlay();
 
 		//=========================
 		// External Functionality
@@ -75,6 +76,7 @@ namespace Kargono::Panels
 
 		// Debug overlay data
 		bool m_ToolbarEnabled{ true };
+		bool m_DisplaySpawningBoundsOutline{ true };
 
 		// Draw world axis Data
 		float m_LargeGridSpacing{ 100.0f };

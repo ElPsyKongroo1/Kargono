@@ -78,9 +78,16 @@ namespace Kargono::Panels
 		// Draw gridlines
 		DrawGridLines();
 
+		// Draw particle bounds
+		if (m_DisplaySpawningBoundsOutline)
+		{
+			DrawParticleSpawningBounds();
+		}
+
 		// Draw emitters
 		Particles::ParticleService::OnUpdate(ts);
 		Particles::ParticleService::OnRender(m_EditorCamera.GetViewProjection());
+
 
 		HandleMouseHovering();
 
@@ -142,6 +149,7 @@ namespace Kargono::Panels
 
 	// Overlay Data
 	static Rendering::RendererInputSpec s_LineInputSpec{};
+	static Rendering::RendererInputSpec s_PointInputSpec{};
 	static std::vector<Math::vec4> s_RectangleVertexPositions
 	{
 			{ -0.5f, -0.5f, 0.0f, 1.0f },
@@ -158,7 +166,6 @@ namespace Kargono::Panels
 			3, 0
 	};
 	static Ref<std::vector<Math::vec3>> s_OutputVector {CreateRef<std::vector<Math::vec3>>()};
-
 
 	void EmitterConfigViewportPanel::InitializeOverlayData()
 	{
@@ -179,6 +186,22 @@ namespace Kargono::Panels
 			s_LineInputSpec.m_Shader = localShader;
 			s_LineInputSpec.m_Buffer = localBuffer;
 			s_LineInputSpec.m_ShapeComponent = lineShapeComponent;
+		}
+		// Set up Point Input Specifications for Overlay Calls
+		{
+			Rendering::ShaderSpecification pointShaderSpec{ Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawPoint, false };
+			auto [uuid, localShader] = Assets::AssetService::GetShader(pointShaderSpec);
+			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
+
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
+
+			ECS::ShapeComponent* pointShapeComponent = new ECS::ShapeComponent();
+			pointShapeComponent->CurrentShape = Rendering::ShapeTypes::None;
+			pointShapeComponent->Vertices = nullptr;
+
+			s_PointInputSpec.m_Shader = localShader;
+			s_PointInputSpec.m_Buffer = localBuffer;
+			s_PointInputSpec.m_ShapeComponent = pointShapeComponent;
 		}
 	}
 
@@ -203,12 +226,11 @@ namespace Kargono::Panels
 		Ref<Rendering::Texture2D> icon{ nullptr };
 		if (m_ToolbarEnabled)
 		{
-#if 0
+
 			// Draw Display Options Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 80.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 48.0f, initialScreenCursorPos.y + 30.0f),
 				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
-#endif
 
 			// Draw Grid Options Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 257.0f, initialScreenCursorPos.y),
@@ -283,7 +305,6 @@ namespace Kargono::Panels
 				ImGui::EndTooltip();
 			}
 
-#if 0
 			// Viewport Display Options Button
 			icon = EditorUI::EditorUIService::s_IconDisplay;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 75, initialCursorPos.y + 4));
@@ -293,7 +314,7 @@ namespace Kargono::Panels
 				EditorUI::EditorUIService::s_PureEmpty,
 				EditorUI::EditorUIService::s_HighlightColor1))
 			{
-				ImGui::OpenPopup("Toggle Display Options");
+				ImGui::OpenPopup("Display Options");
 			}
 			if (ImGui::IsItemHovered())
 			{
@@ -303,12 +324,16 @@ namespace Kargono::Panels
 				ImGui::EndTooltip();
 			}
 
-			// TODO: Place for other options
-			if (ImGui::BeginPopup("Toggle Display Options"))
+			// Display options popup
+			if (ImGui::BeginPopup("Display Options"))
 			{
+				if (ImGui::MenuItem("Display Spawning Bounds Outline", 0, m_DisplaySpawningBoundsOutline))
+				{
+					Utility::Operations::ToggleBoolean(m_DisplaySpawningBoundsOutline);
+				}
 				ImGui::EndPopup();
 			}
-#endif
+
 
 			// Grid Options Button
 			icon = EditorUI::EditorUIService::s_IconGrid;
@@ -771,6 +796,83 @@ namespace Kargono::Panels
 	void EmitterConfigViewportPanel::DrawGizmo()
 	{
 		// TODO: Draw perspective gizmo
+	}
+
+	static Math::uvec2 s_CubeIndices[12]
+	{
+		{0,1},
+		{1,2},
+		{2,3},
+		{3,0},
+		{4,5},
+		{5,6},
+		{6,7},
+		{7,4},
+		{0,4},
+		{1,5},
+		{2,6},
+		{3,7}
+	};
+
+	void EmitterConfigViewportPanel::DrawParticleSpawningBounds()
+	{
+		// Ensure an emitter config is available
+		if (!s_EmitterConfigWindow->m_EditorEmitterConfig)
+		{
+			return;
+		}
+
+		// Get the current bounds
+		std::array<Math::vec3, 2>& currentBounds = s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawningBounds;
+
+		// Do not draw boxes if the bounds are the same
+		if (currentBounds[0] == currentBounds[1])
+		{
+			return;
+		}
+
+		Rendering::RenderingService::BeginScene(m_EditorCamera);
+
+		{ // Draw the indicated bound lines for spawning particles
+			
+			static Math::vec4 selectionColor{ 1.0f, 0.5f, 0.0f, 1.0f };
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+
+			Math::vec3 lineVertices[8]
+			{
+				{ currentBounds[0].x, currentBounds[0].y, currentBounds[1].z }, // 0
+				{ currentBounds[1].x, currentBounds[0].y, currentBounds[1].z }, // 1
+				{ currentBounds[1].x, currentBounds[1].y, currentBounds[1].z }, // 2
+				{ currentBounds[0].x, currentBounds[1].y, currentBounds[1].z }, // 3
+				{ currentBounds[0].x, currentBounds[0].y, currentBounds[0].z }, // 4
+				{ currentBounds[1].x, currentBounds[0].y, currentBounds[0].z }, // 5
+				{ currentBounds[1].x, currentBounds[1].y, currentBounds[0].z }, // 6
+				{ currentBounds[0].x, currentBounds[1].y, currentBounds[0].z }	// 7
+			};
+
+			// Create and submit lines to renderer
+			for (Math::uvec2& indices : s_CubeIndices)
+			{
+				s_OutputVector->clear();
+				s_OutputVector->push_back(lineVertices[indices.x]);
+				s_OutputVector->push_back(lineVertices[indices.y]);
+				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+			}
+		}
+
+		{ // Draw the bounds as points
+			s_OutputVector->clear();
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red),
+				"a_Color", s_PointInputSpec.m_Buffer, s_PointInputSpec.m_Shader);
+			s_OutputVector->push_back(currentBounds[0]);
+			s_OutputVector->push_back(currentBounds[1]);
+			s_PointInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_PointInputSpec);
+		}
+		
+		Rendering::RenderingService::EndScene();
+		
 	}
 	void EmitterConfigViewportPanel::OnOpenEmitterConfig()
 	{
