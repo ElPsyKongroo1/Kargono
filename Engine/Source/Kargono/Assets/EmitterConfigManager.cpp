@@ -28,8 +28,6 @@ namespace Kargono::Assets
 		// Emitter specific data
 		out << YAML::Key << "BufferSize" << YAML::Value << assetReference->m_BufferSize;
 		out << YAML::Key << "SpawnRatePerSec" << YAML::Value << assetReference->m_SpawnRatePerSec;
-		out << YAML::Key << "EmitterMotionType" << YAML::Value << 
-			Utility::EmitterMotionTypeToString(assetReference->m_EmitterMotionType);
 		out << YAML::Key << "EmitterLifecycle" << YAML::Value <<
 			Utility::EmitterLifecycleToString(assetReference->m_EmitterLifecycle);
 		out << YAML::Key << "EmitterLifetime" << YAML::Value << assetReference->m_EmitterLifetime;
@@ -77,8 +75,6 @@ namespace Kargono::Assets
 		// Get emitter specific data from YAML
 		newEmitterConfig->m_BufferSize = data["BufferSize"].as<size_t>();
 		newEmitterConfig->m_SpawnRatePerSec = data["SpawnRatePerSec"].as<size_t>();
-		newEmitterConfig->m_EmitterMotionType =
-			Utility::StringToEmitterMotionType(data["EmitterMotionType"].as<std::string>());
 		newEmitterConfig->m_EmitterLifecycle =
 			Utility::StringToEmitterLifecycle(data["EmitterLifecycle"].as<std::string>());
 		newEmitterConfig->m_EmitterLifetime = data["EmitterLifetime"].as<float>();

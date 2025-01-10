@@ -31,7 +31,6 @@ namespace Kargono::Particles
 	struct EmitterConfig
 	{
 		// Emitter data
-		EmitterMotionType m_EmitterMotionType{ EmitterMotionType::None };
 		EmitterLifecycle m_EmitterLifecycle{ EmitterLifecycle::Immortal };
 		float m_EmitterLifetime{ 1.0f };
 		size_t m_BufferSize{ 1000 };
@@ -73,6 +72,7 @@ namespace Kargono::Particles
 	struct EmitterInstance
 	{
 		Math::vec3 m_Position;
+		EmitterMotionType m_EmitterMotionType{ EmitterMotionType::NoMotion };
 		ECS::Entity* m_ParentEntity{ nullptr };
 		EmitterConfig* m_Config;
 		std::vector<Particle> m_Particles;

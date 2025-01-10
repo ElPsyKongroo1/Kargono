@@ -18,20 +18,38 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow = s_EditorApp->m_EmitterConfigEditorWindow.get();
 
 		// Initialize properties panel widget resources
-		InitializeEmitterConfigOptions();
+		InitializeGeneralEmitterConfigOptions();
+		InitializeSpawningOptions();
+		InitializeParticleColorOptions();
+		InitializeParticleSizeOptions();
 	}
-	void EmitterConfigPropertiesPanel::InitializeEmitterConfigOptions()
+
+	
+	void EmitterConfigPropertiesPanel::InitializeGeneralEmitterConfigOptions()
 	{
 		// General options header
 		m_GeneralOptionsHeaderSpec.m_Label = "General Options";
 		m_GeneralOptionsHeaderSpec.m_Expanded = true;
 		m_GeneralOptionsHeaderSpec.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 
+		// Set up widget to modify the emitter's lifecycle type
+		m_EmitterLifecycleSpec.m_Label = "Emitter Lifecycle Type";
+		m_EmitterLifecycleSpec.m_Flags |= EditorUI::RadioSelector_Indented;
+		m_EmitterLifecycleSpec.m_FirstOptionLabel = "Immortal";
+		m_EmitterLifecycleSpec.m_SecondOptionLabel = "Fixed Time";
+		m_EmitterLifecycleSpec.m_SelectAction = KG_BIND_CLASS_FN(OnModifyEmitterLifecycleType);
+		
+		// Set up widget to modify the emitter lifetimes
+		m_EmitterLifetimeSpec.m_Label = "Emitter Lifetime";
+		m_EmitterLifetimeSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyEmitterLifetime);
+		m_EmitterLifetimeSpec.m_Flags |= EditorUI::EditFloat_Indented;
+		m_EmitterLifetimeSpec.m_Bounds = { 0.0f, 10'000.0f };
+
 		// Set up widget to modify the particle lifetimes
-		m_LifetimeSpec.m_Label = "Lifetime";
-		m_LifetimeSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyLifetime);
-		m_LifetimeSpec.m_Flags |= EditorUI::EditFloat_Indented;
-		m_LifetimeSpec.m_Bounds = { 0.0f, 10'000.0f };
+		m_ParticleLifetimeSpec.m_Label = "Particle Lifetime";
+		m_ParticleLifetimeSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyParticleLifetime);
+		m_ParticleLifetimeSpec.m_Flags |= EditorUI::EditFloat_Indented;
+		m_ParticleLifetimeSpec.m_Bounds = { 0.0f, 10'000.0f };
 
 		// Set up widget to modify the particle emitter's buffer size
 		m_BufferSizeSpec.m_Label = "Buffer Size";
@@ -39,12 +57,44 @@ namespace Kargono::Panels
 		m_BufferSizeSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyBufferSize);
 		m_BufferSizeSpec.m_Bounds = { 1, 100'000 };
 
+		// Set up widget to specific if gravity is used for the emitter
+		m_UseGravitySpec.m_Label = "Use Gravity";
+		m_UseGravitySpec.m_Flags |= EditorUI::Checkbox_Indented;
+		m_UseGravitySpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUseGravity);
+
+		// Set up widget to modify the particle emitter's gravity acceleration
+		m_GravityAccelerationSpec.m_Label = "Gravity Acceleration";
+		m_GravityAccelerationSpec.m_Flags |= EditorUI::EditVec3_Indented;
+		m_GravityAccelerationSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyGravityAcceleration);
+		m_GravityAccelerationSpec.m_Bounds = { -10'000.0f, 10'000.0f };
+	}
+	void EmitterConfigPropertiesPanel::InitializeSpawningOptions()
+	{
+		// Color options header
+		m_SpawningOptionsHeaderSpec.m_Label = "Particle Spawning Options";
+		m_SpawningOptionsHeaderSpec.m_Expanded = true;
+		m_SpawningOptionsHeaderSpec.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+
 		// Set up widget to modify the particle spawn rate per second
 		m_SpawnPerSecSpec.m_Label = "Spawn Rate Per Second";
 		m_SpawnPerSecSpec.m_Flags |= EditorUI::EditInteger_Indented;
 		m_SpawnPerSecSpec.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySpawnRate);
 		m_SpawnPerSecSpec.m_Bounds = { 1, 1'000 };
 
+		// Set up widget to modify the particle emitter's spawning lower bounds
+		m_SpawningLowerBounds.m_Label = "Spawning Lower Bounds";
+		m_SpawningLowerBounds.m_Flags |= EditorUI::EditVec3_Indented;
+		m_SpawningLowerBounds.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyLowerSpawningBounds);
+		m_SpawningLowerBounds.m_Bounds = { -10'000.0f, 10'000.0f };
+
+		// Set up widget to modify the particle emitter's spawning lower bounds
+		m_SpawningUpperBounds.m_Label = "Spawning Upper Bounds";
+		m_SpawningUpperBounds.m_Flags |= EditorUI::EditVec3_Indented;
+		m_SpawningUpperBounds.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUpperSpawningBounds);
+		m_SpawningUpperBounds.m_Bounds = { -10'000.0f, 10'000.0f };
+	}
+	void EmitterConfigPropertiesPanel::InitializeParticleColorOptions()
+	{
 		// Color options header
 		m_ColorOptionsHeaderSpec.m_Label = "Particle Color Options";
 		m_ColorOptionsHeaderSpec.m_Expanded = true;
@@ -80,8 +130,10 @@ namespace Kargono::Panels
 				Utility::InterpolationTypeToString(type),
 				(uint64_t)type
 			);
-		}
-
+	}
+	}
+	void EmitterConfigPropertiesPanel::InitializeParticleSizeOptions()
+	{
 		// Size options header
 		m_SizeOptionsHeaderSpec.m_Label = "Particle Size Options";
 		m_SizeOptionsHeaderSpec.m_Expanded = true;
@@ -118,7 +170,6 @@ namespace Kargono::Panels
 				(uint64_t)type
 			);
 		}
-
 	}
 	void EmitterConfigPropertiesPanel::OnEditorUIRender()
 	{
@@ -134,37 +185,90 @@ namespace Kargono::Panels
 		// Draw header
 		EditorUI::EditorUIService::PanelHeader(s_EmitterConfigWindow->m_MainHeader);
 
+		// Early out if no emitter config is selected
+		if (!s_EmitterConfigWindow->m_EditorEmitterConfig)
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
 		// Draw configuration options
-		DrawEmitterConfigOptions();
+		DrawGeneralEmitterConfigOptions();
+		DrawSpawningOptions();
+		DrawParticleColorOptions();
+		DrawParticleSizeOptions();
 
 		// End the window
 		EditorUI::EditorUIService::EndWindow();
 	}
 
-	void EmitterConfigPropertiesPanel::DrawEmitterConfigOptions()
+	void EmitterConfigPropertiesPanel::DrawGeneralEmitterConfigOptions()
 	{
-		if (!s_EmitterConfigWindow->m_EditorEmitterConfig)
-		{
-			return;
-		}
-
 		// General emitter/particle options section
 		EditorUI::EditorUIService::CollapsingHeader(m_GeneralOptionsHeaderSpec);
 		if (m_GeneralOptionsHeaderSpec.m_Expanded)
 		{
 			// Draw buffer size widget
+			Particles::EmitterLifecycle lifeCycleOption = s_EmitterConfigWindow->m_EditorEmitterConfig->m_EmitterLifecycle;
+			if (lifeCycleOption == Particles::EmitterLifecycle::Immortal)
+			{
+				m_EmitterLifecycleSpec.m_SelectedOption = 0;
+			}
+			else if (lifeCycleOption == Particles::EmitterLifecycle::FixedTime)
+			{
+				m_EmitterLifecycleSpec.m_SelectedOption = 1;
+			}
+			else
+			{
+				KG_WARN("Invalid lifecycle type provided when rendering emitter config UI");
+			}
+			EditorUI::EditorUIService::RadioSelector(m_EmitterLifecycleSpec);
+
+			// Draw emitter lifetime widget
+			m_EmitterLifetimeSpec.m_CurrentFloat = s_EmitterConfigWindow->m_EditorEmitterConfig->m_EmitterLifetime;
+			EditorUI::EditorUIService::EditFloat(m_EmitterLifetimeSpec);
+
+			// Draw particle lifetime widget
+			m_ParticleLifetimeSpec.m_CurrentFloat = s_EmitterConfigWindow->m_EditorEmitterConfig->m_ParticleLifetime;
+			EditorUI::EditorUIService::EditFloat(m_ParticleLifetimeSpec);
+
+			// Draw buffer size widget
 			m_BufferSizeSpec.m_CurrentInteger = (int32_t)s_EmitterConfigWindow->m_EditorEmitterConfig->m_BufferSize;
 			EditorUI::EditorUIService::EditInteger(m_BufferSizeSpec);
 
+			// Draw (use gravity) widget
+			m_UseGravitySpec.m_CurrentBoolean= s_EmitterConfigWindow->m_EditorEmitterConfig->m_UseGravity;
+			EditorUI::EditorUIService::Checkbox(m_UseGravitySpec);
+
+			// Draw gravity acceleration widget
+			m_GravityAccelerationSpec.m_CurrentVec3 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_GravityAcceleration;
+			EditorUI::EditorUIService::EditVec3(m_GravityAccelerationSpec);
+		}
+
+	}
+
+	void EmitterConfigPropertiesPanel::DrawSpawningOptions()
+	{
+		// General emitter/particle options section
+		EditorUI::EditorUIService::CollapsingHeader(m_SpawningOptionsHeaderSpec);
+		if (m_SpawningOptionsHeaderSpec.m_Expanded)
+		{
 			// Draw spawn rate widget
 			m_SpawnPerSecSpec.m_CurrentInteger = (int32_t)s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawnRatePerSec;
 			EditorUI::EditorUIService::EditInteger(m_SpawnPerSecSpec);
 
-			// Draw particle lifetime widget
-			m_LifetimeSpec.m_CurrentFloat = s_EmitterConfigWindow->m_EditorEmitterConfig->m_ParticleLifetime;
-			EditorUI::EditorUIService::EditFloat(m_LifetimeSpec);
-		}
+			// Draw lower spawning bounds widget
+			m_SpawningLowerBounds.m_CurrentVec3 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawningBounds[0];
+			EditorUI::EditorUIService::EditVec3(m_SpawningLowerBounds);
 
+			// Draw upper spawning bounds widget
+			m_SpawningUpperBounds.m_CurrentVec3 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawningBounds[1];
+			EditorUI::EditorUIService::EditVec3(m_SpawningUpperBounds);
+		}
+	}
+
+	void EmitterConfigPropertiesPanel::DrawParticleColorOptions()
+	{
 		// Particle color section
 		EditorUI::EditorUIService::CollapsingHeader(m_ColorOptionsHeaderSpec);
 		if (m_ColorOptionsHeaderSpec.m_Expanded)
@@ -185,7 +289,10 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::SelectOption(m_SelectColorInterpSpec);
 
 		}
+	}
 
+	void EmitterConfigPropertiesPanel::DrawParticleSizeOptions()
+	{
 		// Particle size section
 		EditorUI::EditorUIService::CollapsingHeader(m_SizeOptionsHeaderSpec);
 		if (m_SizeOptionsHeaderSpec.m_Expanded)
@@ -205,7 +312,6 @@ namespace Kargono::Panels
 			};
 			EditorUI::EditorUIService::SelectOption(m_SelectSizeInterpSpec);
 		}
-		
 	}
 
 	void EmitterConfigPropertiesPanel::ClearPanelData()
@@ -270,9 +376,9 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
-	void EmitterConfigPropertiesPanel::OnModifyLifetime(EditorUI::EditFloatSpec& spec)
+	void EmitterConfigPropertiesPanel::OnModifyParticleLifetime(EditorUI::EditFloatSpec& spec)
 	{
-		// Update the lifetime for the current emitter config
+		// Update the particle lifetime for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_ParticleLifetime = spec.m_CurrentFloat;
 
 		// Set the active editor UI as edited
@@ -288,10 +394,78 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
+	void EmitterConfigPropertiesPanel::OnModifyLowerSpawningBounds(EditorUI::EditVec3Spec& spec)
+	{
+		// Update the lower spawning bounds for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawningBounds[0] = spec.m_CurrentVec3;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
+	}
+	void EmitterConfigPropertiesPanel::OnModifyUpperSpawningBounds(EditorUI::EditVec3Spec& spec)
+	{
+		// Update the upper spawning bounds for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawningBounds[1] = spec.m_CurrentVec3;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
+	}
 	void EmitterConfigPropertiesPanel::OnModifyBufferSize(EditorUI::EditIntegerSpec& spec)
 	{
 		// Update the buffer size for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_BufferSize = (size_t)spec.m_CurrentInteger;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
+	}
+	void EmitterConfigPropertiesPanel::OnModifyEmitterLifecycleType()
+	{
+		// Update the emitter lifecycle type for the current emitter config
+		if (m_EmitterLifecycleSpec.m_SelectedOption == 0)
+		{
+			// Immortal option selected
+			s_EmitterConfigWindow->m_EditorEmitterConfig->m_EmitterLifecycle = Particles::EmitterLifecycle::Immortal;
+		}
+		else if (m_EmitterLifecycleSpec.m_SelectedOption == 1)
+		{
+			// Fixed time option selected
+			s_EmitterConfigWindow->m_EditorEmitterConfig->m_EmitterLifecycle = Particles::EmitterLifecycle::FixedTime;
+		}
+		else
+		{
+			KG_ERROR("Invalid option provided when modifying lifecycle type of an emitter");
+		}
+		
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
+	}
+	void EmitterConfigPropertiesPanel::OnModifyEmitterLifetime(EditorUI::EditFloatSpec& spec)
+	{
+		// Update the emitter lifetime for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_EmitterLifetime = spec.m_CurrentFloat;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
+	}
+	void EmitterConfigPropertiesPanel::OnModifyUseGravity(EditorUI::CheckboxSpec& spec)
+	{
+		// Update the use gravity for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_UseGravity = spec.m_CurrentBoolean;
+
+		// Set the active editor UI as edited
+		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
+		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
+	}
+	void EmitterConfigPropertiesPanel::OnModifyGravityAcceleration(EditorUI::EditVec3Spec& spec)
+	{
+		// Update the gravity acceleration for the current emitter config
+		s_EmitterConfigWindow->m_EditorEmitterConfig->m_GravityAcceleration = spec.m_CurrentVec3;
 
 		// Set the active editor UI as edited
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
