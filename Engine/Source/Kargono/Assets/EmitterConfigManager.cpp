@@ -25,10 +25,25 @@ namespace Kargono::Assets
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
 
+		// Emitter specific data
 		out << YAML::Key << "BufferSize" << YAML::Value << assetReference->m_BufferSize;
 		out << YAML::Key << "SpawnRatePerSec" << YAML::Value << assetReference->m_SpawnRatePerSec;
-		out << YAML::Key << "ParticleLifetime" << YAML::Value << assetReference->m_ParticleLifetime;
+		out << YAML::Key << "EmitterMotionType" << YAML::Value << 
+			Utility::EmitterMotionTypeToString(assetReference->m_EmitterMotionType);
+		out << YAML::Key << "EmitterLifecycle" << YAML::Value <<
+			Utility::EmitterLifecycleToString(assetReference->m_EmitterLifecycle);
+		out << YAML::Key << "EmitterLifetime" << YAML::Value << assetReference->m_EmitterLifetime;
 
+		// Spawning bounds sequence
+		out << YAML::Key << "SpawningBounds" << YAML::Value << YAML::BeginSeq; // Start spawning bounds sequence
+		out << YAML::Value << assetReference->m_SpawningBounds[0];
+		out << YAML::Value << assetReference->m_SpawningBounds[1];
+		out << YAML::EndSeq; // End of spawning bounds sequence
+
+		// Particle specific data
+		out << YAML::Key << "UseGravity" << YAML::Value << assetReference->m_UseGravity;
+		out << YAML::Key << "GravityAcceleration" << YAML::Value << assetReference->m_GravityAcceleration;
+		out << YAML::Key << "ParticleLifetime" << YAML::Value << assetReference->m_ParticleLifetime;
 		out << YAML::Key << "ColorInterpolationType" << YAML::Value << 
 			Utility::InterpolationTypeToString(assetReference->m_ColorInterpolationType);
 		out << YAML::Key << "ColorBegin" << YAML::Value << assetReference->m_ColorBegin;
@@ -59,15 +74,34 @@ namespace Kargono::Assets
 			return nullptr;
 		}
 
+		// Get emitter specific data from YAML
 		newEmitterConfig->m_BufferSize = data["BufferSize"].as<size_t>();
 		newEmitterConfig->m_SpawnRatePerSec = data["SpawnRatePerSec"].as<size_t>();
+		newEmitterConfig->m_EmitterMotionType =
+			Utility::StringToEmitterMotionType(data["EmitterMotionType"].as<std::string>());
+		newEmitterConfig->m_EmitterLifecycle =
+			Utility::StringToEmitterLifecycle(data["EmitterLifecycle"].as<std::string>());
+		newEmitterConfig->m_EmitterLifetime = data["EmitterLifetime"].as<float>();
+		YAML::Node spawningBoundsNode = data["SpawningBounds"];
+		size_t iteration{ 0 };
+		for (YAML::iterator::value_type bound : spawningBoundsNode)
+		{
+			newEmitterConfig->m_SpawningBounds[iteration] = bound.as<Math::vec3>();
+			iteration++;
+		}
+
+		// Get particle specific data from YAML
+		newEmitterConfig->m_UseGravity = data["UseGravity"].as<bool>();
+		newEmitterConfig->m_GravityAcceleration = data["GravityAcceleration"].as<Math::vec3>();
 		newEmitterConfig->m_ParticleLifetime = data["ParticleLifetime"].as<float>();
 
+		// Get particle color data from YAML
 		newEmitterConfig->m_ColorInterpolationType = 
 			Utility::StringToInterpolationType(data["ColorInterpolationType"].as<std::string>());
 		newEmitterConfig->m_ColorBegin = data["ColorBegin"].as<Math::vec4>();
 		newEmitterConfig->m_ColorEnd = data["ColorEnd"].as<Math::vec4>();
 
+		// Get particle size data from YAML
 		newEmitterConfig->m_SizeInterpolationType =
 			Utility::StringToInterpolationType(data["SizeInterpolationType"].as<std::string>());
 		newEmitterConfig->m_SizeBegin = data["SizeBegin"].as<Math::vec3>();

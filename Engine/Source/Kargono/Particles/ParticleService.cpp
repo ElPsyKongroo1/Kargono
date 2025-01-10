@@ -90,10 +90,10 @@ namespace Kargono::Particles
 
 				// Spawn a particle
 				Particle& currentParticle = emitter.m_Particles[emitter.m_ParticleIndex];
-				currentParticle.active = true;
+				currentParticle.m_Active = true;
 				currentParticle.m_Position = emitter.m_Position;
-				currentParticle.startTime = currentTime;
-				currentParticle.endTime = currentTime + emitter.m_Config->m_ParticleLifetime;
+				currentParticle.m_StartTime = currentTime;
+				currentParticle.m_EndTime = currentTime + emitter.m_Config->m_ParticleLifetime;
 				currentParticle.m_Size = emitter.m_Config->m_SizeBegin;
 
 				//TODO: Generate random velocity TODO: CHANGE THIS
@@ -109,15 +109,15 @@ namespace Kargono::Particles
 			for (Particles::Particle& particle : emitter.m_Particles)
 			{
 				// Check if particle is active
-				if (!particle.active)
+				if (!particle.m_Active)
 				{
 					continue;
 				}
 
 				// Check particle lifetime
-				if (currentTime > particle.endTime)
+				if (currentTime > particle.m_EndTime)
 				{
-					particle.active = false;
+					particle.m_Active = false;
 					continue;
 				}
 
@@ -158,13 +158,13 @@ namespace Kargono::Particles
 			for (Particles::Particle& particle : emitter.m_Particles)
 			{
 				// Check if particle is active
-				if (!particle.active)
+				if (!particle.m_Active)
 				{
 					continue;
 				}
 
 				// Calculate lerp progress value
-				float progress{ (currentTime - particle.startTime) / (particle.endTime - particle.startTime) };
+				float progress{ (currentTime - particle.m_StartTime) / (particle.m_EndTime - particle.m_StartTime) };
 
 				// Calculate size interpolation
 				Math::vec3 size = sizeEaseFunc
