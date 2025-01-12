@@ -38,6 +38,23 @@ namespace Kargono::Utility
 		// Return result
 		return exists;
 	}
+
+	bool FileSystem::IsDirectory(const std::filesystem::path& path) noexcept
+	{
+		std::error_code ec;
+		bool isDirectory = std::filesystem::is_directory(path, ec);
+
+		// Check for an error code
+		if (ec)
+		{
+			KG_WARN("Error occured while checking the existence of a path: {}", ec.message());
+			return false;
+		}
+
+		// Return result
+		return isDirectory;
+	}
+
 	std::filesystem::path FileSystem::GetAbsolutePath(const std::filesystem::path& path) noexcept
 	{
 		std::error_code ec;

@@ -155,7 +155,7 @@ namespace Kargono::Utility
 
 	inline Panels::BrowserFileType DetermineFileType(const std::filesystem::path& entry)
 	{
-		if (std::filesystem::is_directory(entry)) { return Panels::BrowserFileType::Directory; }
+		if (Utility::FileSystem::IsDirectory(entry)) { return Panels::BrowserFileType::Directory; }
 		if (!entry.has_extension()) { return Panels::BrowserFileType::None; }
 		std::filesystem::path currentFileExtension = entry.extension();
 
