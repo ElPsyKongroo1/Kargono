@@ -126,16 +126,6 @@ namespace Kargono::Panels
 			ImGui::EndPopup();
 		}
 
-		static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 200.0f / 255.0f);
-		
-		ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_NoInputs | 
-			ImGuiColorEditFlags_NoLabel | 
-			ImGuiColorEditFlags_AlphaPreviewHalf |
-			//ImGuiColorEditFlags_NoAlpha | 
-			ImGuiColorEditFlags_NoSidePreview;
-
-		ImGui::ColorEdit4("##MainColorPicker", (float*)&color, misc_flags);
-
 #if 0
 		bool backActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));

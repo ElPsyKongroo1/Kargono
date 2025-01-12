@@ -325,6 +325,13 @@ namespace Kargono::EditorUI
 		style.ItemSpacing = { 8.0f, 6.0f };
 		style.WindowMinSize.x = 420.0f;
 
+		ImGui::SetColorEditOptions(ImGuiColorEditFlags_Float | 
+			ImGuiColorEditFlags_DisplayHSV | 
+			ImGuiColorEditFlags_PickerHueBar | 
+			ImGuiColorEditFlags_NoInputs |
+			ImGuiColorEditFlags_NoSidePreview |
+			ImGuiColorEditFlags_AlphaBar);
+
 		SetColorDefaults();
 
 		// Setup Platform/Renderer backends
@@ -1830,8 +1837,17 @@ namespace Kargono::EditorUI
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
 			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour - 5.0f, screenPosition.y),
-			ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour + ((spec.m_Flags & EditVec4_RGBA) ?
+				s_SecondaryTextSmallWidth - 25.0f : s_SecondaryTextSmallWidth), screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
 			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+
+		if (spec.m_Flags & EditVec4_RGBA)
+		{
+			draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour + s_SecondaryTextSmallWidth - 23.0f, screenPosition.y),
+				ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		}
+		
 
 		// Display Item
 		if (spec.m_Flags & EditVec4_Indented)
@@ -1918,7 +1934,7 @@ namespace Kargono::EditorUI
 			// w value
 			ImGui::PushStyleColor(ImGuiCol_Text, (spec.m_Flags & EditVec4_RGBA) ? s_Alpha : s_HighlightColor4);
 			ImGui::SetCursorPos({ s_SecondaryTextPosFour, yPosition });
-			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
+			ImGui::SetNextItemWidth((spec.m_Flags & EditVec4_RGBA) ? s_SecondaryTextSmallWidth - 28.0f : s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.w), spec.m_ScrollSpeed,
 				spec.m_Bounds[0], spec.m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
@@ -1939,6 +1955,25 @@ namespace Kargono::EditorUI
 
 			ImGui::PopStyleVar();
 
+			if (spec.m_Flags & EditVec4_RGBA)
+			{
+				ImVec4 colorPickerValue{ Utility::MathVec4ToImVec4(spec.m_CurrentVec4) };
+				ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_NoInputs |
+					ImGuiColorEditFlags_NoLabel |
+					ImGuiColorEditFlags_AlphaPreviewHalf |
+					ImGuiColorEditFlags_NoSidePreview;
+				ImGui::SetCursorPos({ s_SecondaryTextPosFour + s_SecondaryTextSmallWidth - 20.0f, yPosition + 1.0f });
+				if (ImGui::ColorEdit4(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
+					(float*)&colorPickerValue, 
+					misc_flags))
+				{
+					spec.m_CurrentVec4 = Utility::ImVec4ToMathVec4(colorPickerValue);
+					if (spec.m_ConfirmAction)
+					{
+						spec.m_ConfirmAction(spec);
+					}
+				}
+			}
 		}
 		else
 		{
@@ -1961,10 +1996,25 @@ namespace Kargono::EditorUI
 				floatPosition == -1 ? std::numeric_limits<int32_t>::max() : floatPosition);
 			ImGui::SetCursorPos({ s_SecondaryTextPosFour, yPosition });
 			floatPosition = ImGui::FindPositionAfterLength(
-				Utility::Conversions::FloatToString(spec.m_CurrentVec4.w).c_str(), s_SecondaryTextSmallWidth);
+				Utility::Conversions::FloatToString(spec.m_CurrentVec4.w).c_str(), s_SecondaryTextSmallWidth - 
+			((spec.m_Flags & EditVec4_RGBA) ? 24.0f : 0.0f));
 			TruncateText(Utility::Conversions::FloatToString(spec.m_CurrentVec4.w),
 				floatPosition == -1 ? std::numeric_limits<int32_t>::max() : floatPosition);
 			ImGui::PopStyleColor();
+
+			if (spec.m_Flags & EditVec4_RGBA)
+			{
+				ImVec4 colorPickerValue{ Utility::MathVec4ToImVec4(spec.m_CurrentVec4) };
+				ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_NoInputs |
+					ImGuiColorEditFlags_NoLabel |
+					ImGuiColorEditFlags_AlphaPreviewHalf |
+					ImGuiColorEditFlags_NoSidePreview |
+					ImGuiColorEditFlags_NoPicker;
+				ImGui::SetCursorPos({ s_SecondaryTextPosFour + s_SecondaryTextSmallWidth - 20.0f, yPosition + 1.0f });
+				ImGui::ColorButton(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
+					colorPickerValue,
+					misc_flags, ImVec2(18.0f, 18.0f));
+			}
 		}
 
 		ImGui::SameLine();
