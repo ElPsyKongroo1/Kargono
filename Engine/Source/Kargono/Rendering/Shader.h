@@ -43,7 +43,7 @@ namespace Kargono::Rendering
 	{
 		Ref<Shader> m_Shader;
 		Ref<Texture2D> m_Texture;
-		ECS::ShapeComponent* m_ShapeComponent;
+		ECS::ShapeComponent* m_ShapeComponent{ nullptr };
 		Ref<DrawCallBuffer> m_CurrentDrawBuffer;
 		Buffer m_Buffer;
 		uint32_t m_Entity{ (uint32_t)-1};

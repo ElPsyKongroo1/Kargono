@@ -583,6 +583,7 @@ namespace Kargono::Windows
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		LoadSceneParticleEmitters();
 
 	}
 

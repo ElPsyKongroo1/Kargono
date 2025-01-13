@@ -376,7 +376,12 @@ namespace Kargono::Scenes
 
 	void SceneService::Terminate()
 	{
-		s_InputSpec.ClearData();
+		// Custom closing of input spec
+		s_InputSpec.m_Shader = nullptr;
+		s_InputSpec.m_Texture = nullptr;
+		s_InputSpec.m_ShapeComponent = nullptr;
+		s_InputSpec.m_CurrentDrawBuffer = nullptr;
+
 		s_ActiveScene.reset();
 		s_ActiveSceneHandle = Assets::EmptyHandle;
 	}
