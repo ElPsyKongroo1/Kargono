@@ -236,7 +236,7 @@ namespace Kargono::EditorUI
 		inline static Ref<Rendering::Texture2D> s_IconDirectory, s_IconGenericFile,
 			s_IconBack, s_IconForward,
 			s_IconAudio, s_IconTexture, s_IconBinary,
-			s_IconScene, s_IconRegistry,
+			s_IconScene, s_IconScene_KG, s_IconRegistry,
 			s_IconUserInterface, s_IconFont, s_IconInput, s_IconAI_KG,
 			s_IconAudio_KG, s_IconFont_KG, s_IconGameState, s_IconProjectComponent,
 			s_IconScript, s_IconTexture_KG, s_IconEmitterConfig;
@@ -1032,7 +1032,8 @@ namespace Kargono::EditorUI
 
 		void SelectFirstEntry();
 		bool SelectEntry(TreePath& path);
-		TreeEntry* SearchFirstLayer(UUID handle);
+		TreeEntry* SearchFirstLayer(UUID queryHandle);
+		TreeEntry* SearchDepth(UUID queryHandle, size_t terminalDepth = 0);
 		std::vector<TreePath> SearchDepth(std::function<bool(TreeEntry& entry)> searchFunction, size_t depth = 0);
 		void EditDepth(std::function<void(TreeEntry& entry)> editFunction, size_t depth = 0);
 
@@ -1066,6 +1067,7 @@ namespace Kargono::EditorUI
 		TreePath GetPathFromEntryReference(TreeEntry* entryQuery);
 	private:
 		void SearchDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, std::function<bool(TreeEntry& entry)> searchFunction, std::vector<TreePath>& allPaths);
+		TreeEntry* SearchDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, UUID queryID);
 		void EditDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, std::function<void(TreeEntry& entry)> editFunction);
 	private:
 		WidgetID m_WidgetID;

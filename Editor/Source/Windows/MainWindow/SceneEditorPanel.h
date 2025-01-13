@@ -27,6 +27,13 @@ namespace Kargono::Panels
 		Assets::AssetHandle m_ProjectComponentHandle{ Assets::EmptyHandle };
 	};
 
+	enum class ScenePropertiesDisplay : uint16_t
+	{
+		None = 0,
+		Scene,
+		Entity
+	};
+
 	class SceneEditorPanel
 	{
 	public:
@@ -100,6 +107,7 @@ namespace Kargono::Panels
 		void DrawOnCreateComponent(ECS::Entity entity);
 		void DrawShapeComponent(ECS::Entity entity);
 		void DrawProjectComponent(ECS::Entity entity, Assets::AssetHandle handle);
+		void DrawSceneOptions();
 
 		//=========================
 		// Shape Component Supporting Functions
@@ -114,7 +122,7 @@ namespace Kargono::Panels
 		//=========================
 		// Scene Hierarchy Supporting Functions
 		//=========================
-		void CreateSceneEntityInTree(ECS::Entity entity);
+		void CreateSceneEntityInTree(ECS::Entity entity, EditorUI::TreeEntry& sceneEntry);
 	private:
 		//=========================
 		// Core Panel Data
@@ -123,6 +131,7 @@ namespace Kargono::Panels
 		ECS::ComponentType m_DisplayedComponent{ECS::ComponentType::None };
 		Assets::AssetHandle m_DisplayedProjectComponentHandle {Assets::EmptyHandle};
 		std::unordered_map<Assets::AssetHandle, ProjectComponentWidgetData> m_AllProjectComponents{};
+		ScenePropertiesDisplay m_CurrentDisplayed{ ScenePropertiesDisplay::None };
 
 	private:
 		//=========================

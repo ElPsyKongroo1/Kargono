@@ -11,6 +11,7 @@
 #include "Kargono/ECS/Entity.h"
 #include "Kargono/ECS/EngineComponents.h"
 #include "Kargono/Math/Interpolation.h"
+#include "Kargono/Events/SceneEvent.h"
 
 namespace Kargono::Particles
 {
@@ -268,6 +269,47 @@ namespace Kargono::Particles
 
 		// End rendering context and submit rendering data to GPU
 		Rendering::RenderingService::EndScene();
+	}
+	bool ParticleService::OnSceneEvent(Events::Event* event)
+	{
+		if (event->GetEventType() == Events::EventType::ManageEntity)
+		{
+			Events::ManageEntity* manageEntity = (Events::ManageEntity*)event;
+			if (manageEntity->GetAction() == Events::ManageEntityAction::Delete)
+			{
+				if (Scenes::SceneService::GetActiveScene().get() != manageEntity->GetSceneReference())
+				{
+					KG_WARN("Attempt to remove particle emitters from a scene that is not active");
+					return false;
+				}
+				if (manageEntity->GetEntityID() == k_EmptyUUID)
+				{
+					KG_WARN("Attempt to remove particle emitters using an empty entity handle");
+					return false;
+				}
+
+				// Search for entity to delete
+				UUID emitterToRemove{ k_EmptyUUID };
+				for (auto& [handle, emitter] : s_ParticleContext->m_AllEmitters)
+				{
+					if (emitter.m_ParentEntityID == manageEntity->GetEntityID())
+					{
+						emitterToRemove = emitter.m_ParentEntityID;
+						break;
+					}
+				}
+
+				// Remove indicated entity
+				if (emitterToRemove != k_EmptyUUID)
+				{
+					s_ParticleContext->m_AllEmitters.erase(emitterToRemove);
+					return true;
+				}
+
+			}
+		}
+
+		return false;
 	}
 	UUID ParticleService::AddEmitter(EmitterConfig* config, const Math::vec3 position)
 	{

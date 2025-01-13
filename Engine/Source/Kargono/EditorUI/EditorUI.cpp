@@ -411,6 +411,7 @@ namespace Kargono::EditorUI
 		s_IconTexture = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Texture.png");
 		s_IconBinary = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Binary.png");
 		s_IconScene = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Scene.png");
+		s_IconScene_KG = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Scene_KG.png");
 		s_IconRegistry = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Registry.png");
 		s_IconFont = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Font.png");
 		s_IconUserInterface = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/UserInterface.png");
@@ -483,6 +484,7 @@ namespace Kargono::EditorUI
 		s_IconTexture.reset();
 		s_IconBinary.reset();
 		s_IconScene.reset();
+		s_IconScene_KG.reset();
 		s_IconRegistry.reset();
 		s_IconUserInterface.reset();
 		s_IconFont.reset();
@@ -3124,7 +3126,7 @@ namespace Kargono::EditorUI
 
 	TreeEntry* TreeSpec::SearchFirstLayer(UUID handle)
 	{
-		for (auto& entry : m_TreeEntries)
+		for (TreeEntry& entry : m_TreeEntries)
 		{
 			// Found the entry
 			if (entry.m_Handle == handle)
@@ -3133,6 +3135,63 @@ namespace Kargono::EditorUI
 			}
 		}
 		return {};
+	}
+
+	TreeEntry* TreeSpec::SearchDepth(UUID queryHandle, size_t terminalDepth)
+	{
+		if (terminalDepth == 0)
+		{
+			for (TreeEntry& entry : m_TreeEntries)
+			{
+				if (entry.m_Handle == queryHandle)
+				{
+					return &entry;
+				}
+			}
+			return nullptr;
+		}
+
+		TreeEntry* returnEntry{ nullptr };
+		for (TreeEntry& entry : m_TreeEntries)
+		{
+			returnEntry = SearchDepthRecursive(entry, 1, terminalDepth, queryHandle);
+			if (returnEntry)
+			{
+				return returnEntry;
+			}
+		}
+		return nullptr;
+	}
+
+	TreeEntry* TreeSpec::SearchDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, UUID queryHandle)
+	{
+		if (currentDepth == terminalDepth)
+		{
+			for (TreeEntry& subEntry : currentEntry.m_SubEntries)
+			{
+				if (subEntry.m_Handle == queryHandle)
+				{
+					return &subEntry;
+				}
+			}
+			return nullptr;
+		}
+
+		if (currentDepth > terminalDepth)
+		{
+			return nullptr;
+		}
+
+		TreeEntry* returnedEntry{ nullptr };
+		for (TreeEntry& subEntry : currentEntry.m_SubEntries)
+		{
+			returnedEntry = SearchDepthRecursive(subEntry, currentDepth + 1, terminalDepth, queryHandle);
+			if (returnedEntry)
+			{
+				return returnedEntry;
+			}
+		}
+		return nullptr;
 	}
 
 	void TreeSpec::SearchDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth,
@@ -3150,7 +3209,7 @@ namespace Kargono::EditorUI
 			return;
 		}
 
-		for (auto& subEntry : currentEntry.m_SubEntries)
+		for (TreeEntry& subEntry : currentEntry.m_SubEntries)
 		{
 			SearchDepthRecursive(subEntry, currentDepth + 1, terminalDepth, searchFunction, allPaths);
 		}

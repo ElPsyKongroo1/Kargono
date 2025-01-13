@@ -27,17 +27,25 @@ namespace Kargono::Panels
 
 		if (m_ActiveParent == s_MainWindow->m_SceneEditorPanel->m_PanelName)
 		{
-			if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
+			if (s_MainWindow->m_SceneEditorPanel->m_CurrentDisplayed == ScenePropertiesDisplay::Entity)
 			{
-				if (s_MainWindow->m_SceneEditorPanel->m_DisplayedComponent == ECS::ComponentType::None)
+				if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
 				{
-					s_MainWindow->m_SceneEditorPanel->DrawAllComponents(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
-				}
-				else
-				{
-					s_MainWindow->m_SceneEditorPanel->DrawSingleComponent(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
+					if (s_MainWindow->m_SceneEditorPanel->m_DisplayedComponent == ECS::ComponentType::None)
+					{
+						s_MainWindow->m_SceneEditorPanel->DrawAllComponents(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
+					}
+					else
+					{
+						s_MainWindow->m_SceneEditorPanel->DrawSingleComponent(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
+					}
 				}
 			}
+			if (s_MainWindow->m_SceneEditorPanel->m_CurrentDisplayed == ScenePropertiesDisplay::Scene)
+			{
+				s_MainWindow->m_SceneEditorPanel->DrawSceneOptions();
+			}
+			
 		}
 
 		EditorUI::EditorUIService::EndWindow();

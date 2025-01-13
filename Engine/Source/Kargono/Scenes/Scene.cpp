@@ -175,7 +175,7 @@ namespace Kargono::Scenes
 		ECS::Entity entity = { m_EntityRegistry.m_EnTTRegistry.create(), &m_EntityRegistry };
 		entity.AddComponent<ECS::IDComponent>(uuid);
 		entity.AddComponent<ECS::TransformComponent>();
-		auto& tag = entity.AddComponent<ECS::TagComponent>();
+		ECS::TagComponent& tag = entity.AddComponent<ECS::TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		m_EntityRegistry.m_EntityMap[uuid] = entity;

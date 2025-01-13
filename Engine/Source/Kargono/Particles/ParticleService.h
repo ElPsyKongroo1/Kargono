@@ -4,6 +4,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Utility/Traits.h"
+#include "Kargono/Events/Event.h"
 
 #include <vector>
 #include <array>
@@ -99,6 +100,7 @@ namespace Kargono::Particles
         //==============================
 	    static void OnUpdate(Timestep ts);
 		static void OnRender(const Math::mat4& viewProjection);
+		static bool OnSceneEvent(Events::Event* event);
 
 		//==============================
 		// Manage Emitters

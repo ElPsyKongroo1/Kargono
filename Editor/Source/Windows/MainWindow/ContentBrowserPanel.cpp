@@ -687,6 +687,7 @@ namespace Kargono::Panels
 				return;
 			}
 			Assets::AssetService::DeleteScene(resultHandle);
+			s_MainWindow->LoadSceneParticleEmitters();
 		}
 		else if (currentExtension == ".kgscript")
 		{
@@ -867,7 +868,7 @@ namespace Kargono::Panels
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Registry, registryArch);
 
 		EditorUI::GridEntryArchetype sceneArch;
-		sceneArch.m_Icon = EditorUI::EditorUIService::s_IconScene;
+		sceneArch.m_Icon = EditorUI::EditorUIService::s_IconScene_KG;
 		sceneArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor3_Thin;
 		sceneArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		sceneArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);

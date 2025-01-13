@@ -169,7 +169,9 @@ namespace Kargono
 
 	bool EditorApp::OnSceneEvent(Events::Event* event)
 	{
-		return m_MainWindow->OnSceneEvent(event);
+		Particles::ParticleService::OnSceneEvent(event);
+		m_MainWindow->OnSceneEvent(event);
+		return false;
 	}
 
 	bool EditorApp::OnEditorEvent(Events::Event* event)
