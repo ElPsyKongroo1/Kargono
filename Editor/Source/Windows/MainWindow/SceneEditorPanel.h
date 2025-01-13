@@ -46,6 +46,7 @@ namespace Kargono::Panels
 		// Internal Inititialization
 		//=========================
 		void InitializeSceneHierarchy();
+		void InitializeSceneOptions();
 		void InitializeTagComponent();
 		void InitializeTransformComponent();
 		void InitializeRigidbody2DComponent();
@@ -137,12 +138,16 @@ namespace Kargono::Panels
 		//=========================
 		// Widgets
 		//=========================
+		
 		// Scene Hierarchy Tree
 		EditorUI::PanelHeaderSpec m_MainSceneHeader{};
 		EditorUI::TreeSpec m_SceneHierarchyTree {};
 		int32_t m_AddComponentEntity {};
 		EditorUI::SelectOptionSpec m_AddComponent{};
 		EditorUI::TooltipSpec m_SelectScriptTooltip{};
+
+		// Scene Options
+		EditorUI::EditVec4Spec m_BackgroundColorSpec;
 
 		// Tag Component
 		EditorUI::CollapsingHeaderSpec m_TagHeader{};

@@ -1964,7 +1964,7 @@ namespace Kargono::EditorUI
 					ImGuiColorEditFlags_NoLabel |
 					ImGuiColorEditFlags_AlphaPreviewHalf |
 					ImGuiColorEditFlags_NoSidePreview;
-				ImGui::SetCursorPos({ s_SecondaryTextPosFour + s_SecondaryTextSmallWidth - 20.0f, yPosition + 1.0f });
+				ImGui::SetCursorPos({ s_SecondaryTextPosFour + s_SecondaryTextSmallWidth - 21.0f, yPosition + 1.0f });
 				if (ImGui::ColorEdit4(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
 					(float*)&colorPickerValue, 
 					misc_flags))
@@ -2012,7 +2012,7 @@ namespace Kargono::EditorUI
 					ImGuiColorEditFlags_AlphaPreviewHalf |
 					ImGuiColorEditFlags_NoSidePreview |
 					ImGuiColorEditFlags_NoPicker;
-				ImGui::SetCursorPos({ s_SecondaryTextPosFour + s_SecondaryTextSmallWidth - 20.0f, yPosition + 1.0f });
+				ImGui::SetCursorPos({ s_SecondaryTextPosFour + s_SecondaryTextSmallWidth - 21.0f, yPosition + 1.0f });
 				ImGui::ColorButton(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
 					colorPickerValue,
 					misc_flags, ImVec2(18.0f, 18.0f));

@@ -103,10 +103,10 @@ namespace Kargono
 
 	void RuntimeApp::OnUpdate(Timestep ts)
 	{
-
 		// Render
+		Ref<Scenes::Scene> activeScene{ Scenes::SceneService::GetActiveScene() };
 		Rendering::RenderingService::ResetStats();
-		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		Rendering::RendererAPI::SetClearColor(activeScene->m_BackgroundColor);
 		Rendering::RendererAPI::Clear();
 
 		// Draw all scene entities

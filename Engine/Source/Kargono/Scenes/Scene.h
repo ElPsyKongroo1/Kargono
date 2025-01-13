@@ -135,6 +135,9 @@ namespace Kargono::Scenes
 		// Physics Spec
 		Physics::PhysicsSpecification m_PhysicsSpecification{};
 
+		// Scene description data
+		Math::vec4 m_BackgroundColor{ 0.1f, 0.1f, 0.1f, 1.0f };
+
 		// Scene State Fields
 		bool m_IsRunning = false;
 		ECS::Entity* m_HoveredEntity = nullptr;

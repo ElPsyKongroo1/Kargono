@@ -336,6 +336,22 @@ namespace Kargono::Panels
 		};
 	}
 
+	void SceneEditorPanel::InitializeSceneOptions()
+	{
+		// Set up widget to modify the the scene's background color
+		m_BackgroundColorSpec.m_Label = "Background Color";
+		m_BackgroundColorSpec.m_Flags |= EditorUI::EditVec4_RGBA;
+		m_BackgroundColorSpec.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec) 
+		{
+			Ref<Scenes::Scene> editorScene{ s_MainWindow->m_EditorScene };
+			KG_ASSERT(editorScene);
+
+			// Update the scene's background color
+			editorScene->m_BackgroundColor = spec.m_CurrentVec4;
+		};
+		m_BackgroundColorSpec.m_Bounds = { 0.0f, 1.0f };
+	}
+
 	void SceneEditorPanel::InitializeTagComponent()
 	{
 		m_TagHeader.m_Label = "Tag";
@@ -2219,6 +2235,7 @@ namespace Kargono::Panels
 		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(SceneEditorPanel::OnKeyPressedEditor));
 		InitializeSceneHierarchy();
+		InitializeSceneOptions();
 		InitializeTagComponent();
 		InitializeTransformComponent();
 		InitializeRigidbody2DComponent();
@@ -3024,7 +3041,10 @@ namespace Kargono::Panels
 	}
 	void SceneEditorPanel::DrawSceneOptions()
 	{
-		EditorUI::EditorUIService::Text("Hello world");
+		Ref<Scenes::Scene> editorScene{ s_MainWindow->m_EditorScene };
+		KG_ASSERT(editorScene);
+		m_BackgroundColorSpec.m_CurrentVec4 = editorScene->m_BackgroundColor;
+		EditorUI::EditorUIService::EditVec4(m_BackgroundColorSpec);
 	}
 	void SceneEditorPanel::UpdateShapeComponent()
 	{

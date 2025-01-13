@@ -316,6 +316,9 @@ namespace Kargono::Assets
 			out << YAML::EndMap; // Physics Maps
 		}
 
+		// Add background color
+		out << YAML::Key << "BackgroundColor" << YAML::Value << assetReference->m_BackgroundColor;
+
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 		assetReference->m_EntityRegistry.m_EnTTRegistry.each([&](auto entityID)
 		{
@@ -355,10 +358,12 @@ namespace Kargono::Assets
 			return nullptr;
 		}
 
-		auto physics = data["Physics"];
+		YAML::Node physics = data["Physics"];
 		newScene->GetPhysicsSpecification().Gravity = physics["Gravity"].as<Math::vec2>();
 
-		auto entities = data["Entities"];
+		newScene->m_BackgroundColor = data["BackgroundColor"].as<Math::vec4>();
+
+		YAML::Node entities = data["Entities"];
 		if (entities)
 		{
 			for (auto entity : entities)
