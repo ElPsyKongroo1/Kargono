@@ -224,25 +224,6 @@ namespace Kargono::Scripting
 
 	void Scripting::ScriptCompilerService::GetSuggestionsForAfterNamespace(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
 	{
-		// Generate suggestions for emitter configs
-		for (auto& [emitterName, handle] : ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs)
-		{
-			// Ensure namespaces match
-			if (context.CurrentNamespace.Value != "EmitterConfigs")
-			{
-				continue;
-			}
-
-			if (Utility::Regex::GetMatchSuccess(emitterName, queryText, false))
-			{
-				SuggestionSpec newSuggestion;
-				newSuggestion.m_Label = emitterName;
-				newSuggestion.m_ReplacementText = emitterName;
-				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEmitterConfig;
-				allSuggestions.push_back(newSuggestion);
-			}
-		}
-
 		// Generate suggestions for function identifiers
 		for (auto& [funcName, funcNode] : ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
 		{
@@ -260,6 +241,25 @@ namespace Kargono::Scripting
 				newSuggestion.m_Label = label;
 				newSuggestion.m_ReplacementText = funcNode.Name.Value + "()";
 				newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
+				allSuggestions.push_back(newSuggestion);
+			}
+		}
+
+		// Generate suggestions for emitter configs
+		for (auto& [emitterName, handle] : ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs)
+		{
+			// Ensure namespaces match
+			if (context.CurrentNamespace.Value != "EmitterConfigs")
+			{
+				continue;
+			}
+
+			if (Utility::Regex::GetMatchSuccess(emitterName, queryText, false))
+			{
+				SuggestionSpec newSuggestion;
+				newSuggestion.m_Label = emitterName;
+				newSuggestion.m_ReplacementText = emitterName;
+				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEmitterConfig;
 				allSuggestions.push_back(newSuggestion);
 			}
 		}
@@ -313,19 +313,13 @@ namespace Kargono::Scripting
 
 	void Scripting::ScriptCompilerService::GetSuggestionsDefault(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
 	{
+		// Store the return types in a set for easy checking
+		std::unordered_set<std::string> returnTypes;
 
-		// Generate suggestions for emitter configs
-		for (auto& [emitterName, handle] : ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs)
+		// Fill return types set
+		for (const ScriptToken& type : context.AllReturnTypes)
 		{
-			std::string label = "EmitterConfigs" + std::string("::" + emitterName);
-			if (Utility::Regex::GetMatchSuccess(label, queryText, false))
-			{
-				SuggestionSpec newSuggestion;
-				newSuggestion.m_Label = label;
-				newSuggestion.m_ReplacementText = label;
-				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEmitterConfig;
-				allSuggestions.push_back(newSuggestion);
-			}
+			returnTypes.insert(type.Value);
 		}
 
 		// Generate suggestions for primitive types
@@ -349,16 +343,8 @@ namespace Kargono::Scripting
 		{
 			for (auto& variable : stackFrame)
 			{
-				bool returnTypesMatch = false;
-				for (auto& type : context.AllReturnTypes)
-				{
-					if (variable.Type.Value == type.Value)
-					{
-						returnTypesMatch = true;
-						break;
-					}
-				}
-
+				bool returnTypesMatch = returnTypes.contains(variable.Type.Value);
+				
 				if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
 				{
 					if (Utility::Regex::GetMatchSuccess(variable.Identifier.Value, queryText, false))
@@ -377,15 +363,7 @@ namespace Kargono::Scripting
 		for (auto& [funcName, funcNode] : ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
 		{
 			// Determine if the return types indeed match
-			bool returnTypesMatch = false;
-			for (auto& type : context.AllReturnTypes)
-			{
-				if (funcNode.ReturnType.Value == type.Value)
-				{
-					returnTypesMatch = true;
-					break;
-				}
-			}
+			bool returnTypesMatch = returnTypes.contains(funcNode.ReturnType.Value);
 
 			if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
 			{
@@ -402,6 +380,26 @@ namespace Kargono::Scripting
 			}
 		}
 		
+		// Generate suggestions for emitter configs
+		for (auto& [emitterName, handle] : ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs)
+		{
+			// Determine if the return types indeed match
+			bool returnTypesMatch = returnTypes.contains("emitter_config");
+
+			if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
+			{
+				std::string label = "EmitterConfigs" + std::string("::" + emitterName);
+				if (Utility::Regex::GetMatchSuccess(label, queryText, false))
+				{
+					SuggestionSpec newSuggestion;
+					newSuggestion.m_Label = label;
+					newSuggestion.m_ReplacementText = label;
+					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEmitterConfig;
+					allSuggestions.push_back(newSuggestion);
+				}
+			}
+		}
+
 	}
 
 

@@ -82,25 +82,31 @@ namespace Kargono::Panels
 			Assets::EmptyHandle};
 		m_SelectResolutionSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			Projects::ProjectService::SetActiveTargetResolution(Utility::StringToScreenResolution(selection.m_Label));
+			Projects::ProjectService::SetActiveTargetResolution((Projects::ScreenResolutionOptions)(uint64_t)selection.m_Handle);
 		};
 		m_SelectResolutionSpec.m_PopupAction = [&]()
 		{
-			m_SelectResolutionSpec.m_CurrentOption = {
+			m_SelectResolutionSpec.m_CurrentOption = 
+			{
 				Utility::ScreenResolutionToString(Projects::ProjectService::GetActiveTargetResolution()),
-			Assets::EmptyHandle};
+			(uint64_t)Projects::ProjectService::GetActiveTargetResolution()
+			};
 		};
-		m_SelectResolutionSpec.AddToOptions("Aspect Ratio: 1:1 (Box)", "800x800", Assets::EmptyHandle);
-		m_SelectResolutionSpec.AddToOptions("Aspect Ratio: 1:1 (Box)", "400x400", Assets::EmptyHandle);
-		m_SelectResolutionSpec.AddToOptions("Aspect Ratio: 16:9 (Widescreen)", "1920x1080", Assets::EmptyHandle);
-		m_SelectResolutionSpec.AddToOptions("Aspect Ratio: 16:9 (Widescreen)", "1600x900", Assets::EmptyHandle);
-		m_SelectResolutionSpec.AddToOptions("Aspect Ratio: 16:9 (Widescreen)", "1366x768", Assets::EmptyHandle);
-		m_SelectResolutionSpec.AddToOptions("Aspect Ratio: 16:9 (Widescreen)", "1280x720", Assets::EmptyHandle);
-		m_SelectResolutionSpec.AddToOptions("Aspect Ratio: 4:3 (Fullscreen)", "1600x1200", Assets::EmptyHandle);
-		m_SelectResolutionSpec.AddToOptions("Aspect Ratio: 4:3 (Fullscreen)", "1280x960", Assets::EmptyHandle);
-		m_SelectResolutionSpec.AddToOptions("Aspect Ratio: 4:3 (Fullscreen)", "1152x864", Assets::EmptyHandle);
-		m_SelectResolutionSpec.AddToOptions("Aspect Ratio: 4:3 (Fullscreen)", "1024x768", Assets::EmptyHandle);
-		m_SelectResolutionSpec.AddToOptions("Aspect Ratio: Automatic (Based on Device Used)", "Match Device", Assets::EmptyHandle);
+
+		for (Projects::ScreenResolutionOptions option : Projects::s_AllScreenResolutions)
+		{
+			if (option == Projects::ScreenResolutionOptions::None)
+			{
+				continue;
+			}
+
+			m_SelectResolutionSpec.AddToOptions
+			(
+				Utility::ScreenResolutionToCategoryTitle(option),
+				Utility::ScreenResolutionToString(option),
+				(uint64_t)option
+			);
+		}
 
 		// Select Start Game State
 		m_SelectStartGameStateSpec.m_Label = "Start Game State";

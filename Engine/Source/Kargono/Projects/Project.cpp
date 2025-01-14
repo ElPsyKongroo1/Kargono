@@ -21,10 +21,25 @@ namespace Kargono::Utility
 		case Projects::ScreenResolutionOptions::R400x400: return Math::vec2(400.0f, 400.0f);
 		case Projects::ScreenResolutionOptions::R800x800: return Math::vec2(800.0f, 800.0f);
 
+
+		case Projects::ScreenResolutionOptions::R122880x69120: return Math::vec2(122880.0f, 69120.0f);
+		case Projects::ScreenResolutionOptions::R61440x34560: return Math::vec2(61440.0f, 34560.0f);
+		case Projects::ScreenResolutionOptions::R30720x17280: return Math::vec2(30720.0f, 17280.0f);
+		case Projects::ScreenResolutionOptions::R15360x8640: return Math::vec2(15360.0f, 8640.0f);
+		case Projects::ScreenResolutionOptions::R7680x4320: return Math::vec2(7680.0f, 4320.0f);
+		case Projects::ScreenResolutionOptions::R5120x2880: return Math::vec2(5120.0f, 2880.0f);
+		case Projects::ScreenResolutionOptions::R3840x2160: return Math::vec2(3840.0f, 2160.0f);
+		case Projects::ScreenResolutionOptions::R3200x1800: return Math::vec2(3200.0f, 1800.0f);
+		case Projects::ScreenResolutionOptions::R2560x1440: return Math::vec2(2560.0f, 1440.0f);
+		case Projects::ScreenResolutionOptions::R2048x1152: return Math::vec2(2048.0f, 1152.0f);
 		case Projects::ScreenResolutionOptions::R1920x1080: return Math::vec2(1920.0f, 1080.0f);
 		case Projects::ScreenResolutionOptions::R1600x900: return Math::vec2(1600.0f, 900.0f);
 		case Projects::ScreenResolutionOptions::R1366x768: return Math::vec2(1366.0f, 768.0f);
 		case Projects::ScreenResolutionOptions::R1280x720: return Math::vec2(1280.0f, 720.0f);
+		case Projects::ScreenResolutionOptions::R1024x576: return Math::vec2(1024.0f, 576.0f);
+		case Projects::ScreenResolutionOptions::R960x540: return Math::vec2(960.0f, 540.0f);
+		case Projects::ScreenResolutionOptions::R854x480: return Math::vec2(854.0f, 480.0f);
+		case Projects::ScreenResolutionOptions::R640x360: return Math::vec2(640.0f, 360.0f);
 
 		case Projects::ScreenResolutionOptions::R1600x1200: return Math::vec2(1600.0f, 1200.0f);
 		case Projects::ScreenResolutionOptions::R1280x960: return Math::vec2(1280.0f, 960.0f);
@@ -70,10 +85,25 @@ namespace Kargono::Utility
 		case Projects::ScreenResolutionOptions::R800x800: return Math::uvec2(1, 1);
 		case Projects::ScreenResolutionOptions::R400x400: return Math::uvec2(1, 1);
 
-		case Projects::ScreenResolutionOptions::R1280x720:
+		case Projects::ScreenResolutionOptions::R122880x69120:
+		case Projects::ScreenResolutionOptions::R61440x34560:
+		case Projects::ScreenResolutionOptions::R30720x17280:
+		case Projects::ScreenResolutionOptions::R15360x8640:
+		case Projects::ScreenResolutionOptions::R7680x4320:
+		case Projects::ScreenResolutionOptions::R5120x2880:
+		case Projects::ScreenResolutionOptions::R3840x2160:
+		case Projects::ScreenResolutionOptions::R3200x1800:
+		case Projects::ScreenResolutionOptions::R2560x1440:
+		case Projects::ScreenResolutionOptions::R2048x1152:
+		case Projects::ScreenResolutionOptions::R1920x1080:
 		case Projects::ScreenResolutionOptions::R1600x900:
 		case Projects::ScreenResolutionOptions::R1366x768:
-		case Projects::ScreenResolutionOptions::R1920x1080: return Math::uvec2(16, 9);
+		case Projects::ScreenResolutionOptions::R1280x720:
+		case Projects::ScreenResolutionOptions::R1024x576:
+		case Projects::ScreenResolutionOptions::R960x540:
+		case Projects::ScreenResolutionOptions::R854x480:
+		case Projects::ScreenResolutionOptions::R640x360: 
+			return Math::uvec2(16, 9);
 
 		case Projects::ScreenResolutionOptions::R1600x1200:
 		case Projects::ScreenResolutionOptions::R1280x960:

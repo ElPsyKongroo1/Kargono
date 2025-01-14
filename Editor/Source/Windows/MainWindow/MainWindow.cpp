@@ -97,7 +97,7 @@ namespace Kargono::Windows
 		}
 
 		// Load the emitters for the editor scene
-		Particles::ParticleService::ClearSceneEmitters();
+		Particles::ParticleService::ClearEmitters();
 		Particles::ParticleService::LoadSceneEmitters(m_EditorScene);
 	}
 

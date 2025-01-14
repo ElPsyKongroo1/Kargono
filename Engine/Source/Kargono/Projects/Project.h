@@ -7,6 +7,7 @@
 #include <string>
 #include <filesystem>
 #include <unordered_set>
+#include <array>
 
 //============================================================
 // Projects Namespace
@@ -26,10 +27,55 @@ namespace Kargono::Projects
 	{
 		None = 0,
 		R800x800, R400x400,									// 1x1
+
+		R122880x69120, R61440x34560, R30720x17280,			// 16x9
+		R15360x8640, R7680x4320, R5120x2880,				// 16x9
+		R3840x2160, R3200x1800, R2560x1440, R2048x1152,		// 16x9
 		R1920x1080, R1600x900, R1366x768, R1280x720,		// 16x9
+		R1024x576, R960x540, R854x480, R640x360,			// 16x9
+
 		R1600x1200, R1280x960, R1152x864, R1024x768,		// 4x3
 		MatchDevice											// Automatic
 	};
+
+	inline constexpr std::array<ScreenResolutionOptions, 26> s_AllScreenResolutions
+	{
+		ScreenResolutionOptions::None,
+
+		// 1x1
+		ScreenResolutionOptions::R800x800, 
+		ScreenResolutionOptions::R400x400,
+
+		//16x9
+		ScreenResolutionOptions::R122880x69120, 
+		ScreenResolutionOptions::R61440x34560, 
+		ScreenResolutionOptions::R30720x17280,		
+		ScreenResolutionOptions::R15360x8640,
+		ScreenResolutionOptions::R7680x4320, 
+		ScreenResolutionOptions::R5120x2880,
+		ScreenResolutionOptions::R3840x2160, 
+		ScreenResolutionOptions::R3200x1800, 
+		ScreenResolutionOptions::R2560x1440, 
+		ScreenResolutionOptions::R2048x1152,
+		ScreenResolutionOptions::R1920x1080, 
+		ScreenResolutionOptions::R1600x900, 
+		ScreenResolutionOptions::R1366x768, 
+		ScreenResolutionOptions::R1280x720,
+		ScreenResolutionOptions::R1024x576, 
+		ScreenResolutionOptions::R960x540, 
+		ScreenResolutionOptions::R854x480, 
+		ScreenResolutionOptions::R640x360,
+
+		// 4x3
+		ScreenResolutionOptions::R1600x1200, 
+		ScreenResolutionOptions::R1280x960, 
+		ScreenResolutionOptions::R1152x864, 
+		ScreenResolutionOptions::R1024x768,
+
+		// Other
+		ScreenResolutionOptions::MatchDevice
+	};
+
 	//=========================
 	// Project Class
 	//=========================
@@ -619,10 +665,25 @@ namespace Kargono::Utility
 		case Projects::ScreenResolutionOptions::R800x800: return "800x800";
 		case Projects::ScreenResolutionOptions::R400x400: return "400x400";
 
+		// 16:9
+		case Projects::ScreenResolutionOptions::R122880x69120: return "122880x69120";
+		case Projects::ScreenResolutionOptions::R61440x34560: return "61440x34560";
+		case Projects::ScreenResolutionOptions::R30720x17280: return "30720x17280";
+		case Projects::ScreenResolutionOptions::R15360x8640: return "15360x8640";
+		case Projects::ScreenResolutionOptions::R7680x4320: return "7680x4320";
+		case Projects::ScreenResolutionOptions::R5120x2880: return "5120x2880";
+		case Projects::ScreenResolutionOptions::R3840x2160: return "3840x2160";
+		case Projects::ScreenResolutionOptions::R3200x1800: return "3200x1800";
+		case Projects::ScreenResolutionOptions::R2560x1440: return "2560x1440";
+		case Projects::ScreenResolutionOptions::R2048x1152: return "2048x1152";
 		case Projects::ScreenResolutionOptions::R1920x1080: return "1920x1080";
 		case Projects::ScreenResolutionOptions::R1600x900: return "1600x900";
 		case Projects::ScreenResolutionOptions::R1366x768: return "1366x768";
 		case Projects::ScreenResolutionOptions::R1280x720: return "1280x720";
+		case Projects::ScreenResolutionOptions::R1024x576: return "1024x576";
+		case Projects::ScreenResolutionOptions::R960x540: return "960x540";
+		case Projects::ScreenResolutionOptions::R854x480: return "854x480";
+		case Projects::ScreenResolutionOptions::R640x360: return "640x360";
 
 		case Projects::ScreenResolutionOptions::R1600x1200: return "1600x1200";
 		case Projects::ScreenResolutionOptions::R1280x960: return "1280x960";
@@ -636,15 +697,71 @@ namespace Kargono::Utility
 		return "None";
 	}
 
+	inline std::string ScreenResolutionToCategoryTitle(Projects::ScreenResolutionOptions option)
+	{
+		switch (option)
+		{
+		case Projects::ScreenResolutionOptions::R800x800:
+		case Projects::ScreenResolutionOptions::R400x400:
+			return "Aspect Ratio: 1:1 (Box)";
+			// 16:9
+		case Projects::ScreenResolutionOptions::R122880x69120:
+		case Projects::ScreenResolutionOptions::R61440x34560:
+		case Projects::ScreenResolutionOptions::R30720x17280:
+		case Projects::ScreenResolutionOptions::R15360x8640:
+		case Projects::ScreenResolutionOptions::R7680x4320:
+		case Projects::ScreenResolutionOptions::R5120x2880:
+		case Projects::ScreenResolutionOptions::R3840x2160:
+		case Projects::ScreenResolutionOptions::R3200x1800:
+		case Projects::ScreenResolutionOptions::R2560x1440:
+		case Projects::ScreenResolutionOptions::R2048x1152:
+		case Projects::ScreenResolutionOptions::R1920x1080:
+		case Projects::ScreenResolutionOptions::R1600x900:
+		case Projects::ScreenResolutionOptions::R1366x768:
+		case Projects::ScreenResolutionOptions::R1280x720:
+		case Projects::ScreenResolutionOptions::R1024x576:
+		case Projects::ScreenResolutionOptions::R960x540:
+		case Projects::ScreenResolutionOptions::R854x480:
+		case Projects::ScreenResolutionOptions::R640x360:
+			return "Aspect Ratio: 16:9 (Widescreen)";
+		case Projects::ScreenResolutionOptions::R1600x1200:
+		case Projects::ScreenResolutionOptions::R1280x960:
+		case Projects::ScreenResolutionOptions::R1152x864:
+		case Projects::ScreenResolutionOptions::R1024x768:
+			return "Aspect Ratio: 4:3 (Fullscreen)";
+		case Projects::ScreenResolutionOptions::MatchDevice:
+			return "Aspect Ratio: Automatic (Based on Device Used)";
+		case Projects::ScreenResolutionOptions::None:
+			return "Invalid Aspect Ratio";
+		}
+		KG_ERROR("Invalid ScreenResolutionOptions enum provided to ScreenResolutionToString function");
+		return "None";
+	}
+
 	inline Projects::ScreenResolutionOptions StringToScreenResolution(const std::string& optionStr)
 	{
 		if (optionStr == "800x800") { return Projects::ScreenResolutionOptions::R800x800; }
 		if (optionStr == "400x400") { return Projects::ScreenResolutionOptions::R400x400; }
 
+		if (optionStr == "122880x69120") { return Projects::ScreenResolutionOptions::R122880x69120; }
+		if (optionStr == "61440x34560") { return Projects::ScreenResolutionOptions::R61440x34560; }
+		if (optionStr == "30720x17280") { return Projects::ScreenResolutionOptions::R30720x17280; }
+		if (optionStr == "15360x8640") { return Projects::ScreenResolutionOptions::R15360x8640; }
+		if (optionStr == "7680x4320") { return Projects::ScreenResolutionOptions::R7680x4320; }
+		if (optionStr == "5120x2880") { return Projects::ScreenResolutionOptions::R5120x2880; }
+		if (optionStr == "3840x2160") { return Projects::ScreenResolutionOptions::R3840x2160; }
+		if (optionStr == "3200x1800") { return Projects::ScreenResolutionOptions::R3200x1800; }
+		if (optionStr == "2560x1440") { return Projects::ScreenResolutionOptions::R2560x1440; }
+		if (optionStr == "2048x1152") { return Projects::ScreenResolutionOptions::R2048x1152; }
 		if (optionStr == "1920x1080") { return Projects::ScreenResolutionOptions::R1920x1080; }
 		if (optionStr == "1600x900") { return Projects::ScreenResolutionOptions::R1600x900; }
 		if (optionStr == "1366x768") { return Projects::ScreenResolutionOptions::R1366x768; }
 		if (optionStr == "1280x720") { return Projects::ScreenResolutionOptions::R1280x720; }
+		if (optionStr == "1024x576") { return Projects::ScreenResolutionOptions::R1024x576; }
+		if (optionStr == "960x540") { return Projects::ScreenResolutionOptions::R960x540; }
+		if (optionStr == "854x480") { return Projects::ScreenResolutionOptions::R854x480; }
+		if (optionStr == "640x360") { return Projects::ScreenResolutionOptions::R640x360; }
+
 
 		if (optionStr == "1600x1200") { return Projects::ScreenResolutionOptions::R1600x1200; }
 		if (optionStr == "1280x960") { return Projects::ScreenResolutionOptions::R1280x960; }
@@ -657,6 +774,8 @@ namespace Kargono::Utility
 		KG_ERROR("Invalid ScreenResolutionOptions enum provided to StringToScreenResolution function");
 		return Projects::ScreenResolutionOptions::None;
 	}
+
+
 
 	Math::uvec2 ScreenResolutionToAspectRatio(Projects::ScreenResolutionOptions option);
 
