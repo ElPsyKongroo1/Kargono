@@ -195,7 +195,13 @@ namespace Kargono::Assets
 			}
 			asset.Data.CheckSum = currentCheckSum;
 
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::UpdateAsset, providedData);
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+			(
+				assetHandle, 
+				asset.Data.Type, 
+				Events::ManageAssetAction::UpdateAsset,
+				providedData
+			);
 			EngineService::SubmitToEventQueue(event);
 		}
 
@@ -210,8 +216,13 @@ namespace Kargono::Assets
 			// Find location of asset's data
 			Assets::AssetInfo& asset = m_AssetRegistry[assetHandle];
 			
-			// Process delete event and validation
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::Delete);
+			// Pre-delete event and validation
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+			(
+				assetHandle, 
+				asset.Data.Type, 
+				Events::ManageAssetAction::PreDelete
+			);
 			DeleteAssetValidation(assetHandle);
 			EngineService::OnEvent(event.get());
 
@@ -238,6 +249,15 @@ namespace Kargono::Assets
 
 			// Save the modified registry to disk
 			SerializeAssetRegistry();
+
+			// Post-delete event and validation
+			Ref<Events::ManageAsset> postEvent = CreateRef<Events::ManageAsset>
+			(
+				assetHandle,
+				asset.Data.Type,
+				Events::ManageAssetAction::PostDelete
+			);
+			EngineService::OnEvent(postEvent.get());
 
 			return true;
 		}
@@ -322,7 +342,12 @@ namespace Kargono::Assets
 				m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation) });
 			}
 
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, newAsset.Data.Type, Events::ManageAssetAction::Create);
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+			(
+				newHandle, 
+				newAsset.Data.Type, 
+				Events::ManageAssetAction::Create
+			);
 			EngineService::SubmitToEventQueue(event);
 			return newHandle;
 		}
@@ -473,7 +498,12 @@ namespace Kargono::Assets
 				m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, assetPath) });
 			}
 
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, newAsset.Data.Type, Events::ManageAssetAction::Create);
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+			(
+				newHandle, 
+				newAsset.Data.Type, 
+				Events::ManageAssetAction::Create
+			);
 			EngineService::SubmitToEventQueue(event);
 			return newHandle;
 		}
@@ -647,7 +677,12 @@ namespace Kargono::Assets
 			SerializeAssetRegistry();
 
 			// Throw update asset event
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(handle, currentAsset.Data.Type, Events::ManageAssetAction::UpdateAssetInfo);
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+			(
+				handle, 
+				currentAsset.Data.Type, 
+				Events::ManageAssetAction::UpdateAssetInfo
+			);
 			EngineService::SubmitToEventQueue(event);
 			return true;
 		}

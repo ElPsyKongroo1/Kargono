@@ -98,13 +98,16 @@ namespace Kargono::Scripting
 					}
 				}
 
-				// Check for message literals
+				// Check for emitter config literals
 				if (m_TextBuffer == "EmitterConfigs")
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 					{
-						Advance(2);
+
+						ScriptToken emitterToken = CreateTokenExplicit(ScriptTokenType::Identifier, "EmitterConfigs");
 						ClearBuffer();
+						ScriptToken namespaceToken = CreateTokenExplicit(ScriptTokenType::NamespaceResolver, { "::" });
+						Advance(2);
 						// Fill remainder of buffer
 						while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
 						{
@@ -114,7 +117,8 @@ namespace Kargono::Scripting
 						// Ensure the provided value is valid
 						if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs.contains(m_TextBuffer))
 						{
-							ClearBuffer();
+							AddTokenExplicit(emitterToken);
+							AddTokenExplicit(namespaceToken);
 							continue;
 						}
 						
@@ -508,6 +512,14 @@ namespace Kargono::Scripting
 		ScriptToken newToken{ type, value, m_LineCount, m_ColumnCount - (uint32_t)m_TextBuffer.size() };
 		m_Tokens.push_back(newToken);
 		m_TextBuffer.clear();
+	}
+	ScriptToken ScriptTokenizer::CreateTokenExplicit(ScriptTokenType type, const std::string& value)
+	{
+		return { type, value, m_LineCount, m_ColumnCount - (uint32_t)m_TextBuffer.size() };
+	}
+	void ScriptTokenizer::AddTokenExplicit(const ScriptToken& token)
+	{
+		m_Tokens.push_back(token);
 	}
 	void ScriptTokenizer::ClearBuffer()
 	{

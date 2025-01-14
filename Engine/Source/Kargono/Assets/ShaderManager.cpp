@@ -179,7 +179,12 @@ namespace Kargono::Assets
 		Ref<Kargono::Rendering::Shader> newShader = DeserializeAsset(newAsset, Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation);
 		m_AssetCache.insert({ newHandle, newShader });
 
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, AssetType::Shader, Events::ManageAssetAction::Create);
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+		(
+			newHandle, 
+			AssetType::Shader, 
+			Events::ManageAssetAction::Create
+		);
 		EngineService::SubmitToEventQueue(event);
 
 		return newHandle;

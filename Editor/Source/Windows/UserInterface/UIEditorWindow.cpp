@@ -188,7 +188,7 @@ namespace Kargono::Windows
 
 		// Clear script references from user interface widgets
 		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			if (m_PropertiesPanel->m_WidgetOnPress.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
@@ -203,7 +203,7 @@ namespace Kargono::Windows
 
 		// Handle user interface deletion
 		if (manageAsset->GetAssetType() == Assets::AssetType::UserInterface &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			// Check if editor needs modification
 			if (manageAsset->GetAssetID() != m_EditorUIHandle)

@@ -231,6 +231,9 @@ namespace Kargono::Windows
 	{
 		Events::ManageAsset& manageAsset = *(Events::ManageAsset*)event;
 
+		// Refresh text editor
+		m_TextEditorPanel->OnAssetEvent(event);
+
 		// Handle adding a project component to the active editor scene
 		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
 			manageAsset.GetAction() == Events::ManageAssetAction::Create &&
@@ -247,7 +250,7 @@ namespace Kargono::Windows
 		}
 		// Handle deleting a project component by removing entity data from all scenes
 		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
-			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			manageAsset.GetAction() == Events::ManageAssetAction::PreDelete &&
 			m_EditorScene)
 		{
 			// Remove project component from editor scene
@@ -256,7 +259,7 @@ namespace Kargono::Windows
 
 		// Handle deleting a emitter config by removing entity data from all scenes
 		if (manageAsset.GetAssetType() == Assets::AssetType::EmitterConfig &&
-			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			manageAsset.GetAction() == Events::ManageAssetAction::PreDelete &&
 			m_EditorScene)
 		{
 			// Remove emitter config from editor scene
@@ -268,7 +271,7 @@ namespace Kargono::Windows
 
 		// Handle removing scripts from editor scene
 		if (manageAsset.GetAssetType() == Assets::AssetType::Script &&
-			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			manageAsset.GetAction() == Events::ManageAssetAction::PreDelete &&
 			m_EditorScene)
 		{
 			Assets::AssetService::RemoveScriptFromScene(m_EditorScene, manageAsset.GetAssetID());
@@ -276,7 +279,7 @@ namespace Kargono::Windows
 
 		// Handle removing ai state from editor scene
 		if (manageAsset.GetAssetType() == Assets::AssetType::AIState &&
-			manageAsset.GetAction() == Events::ManageAssetAction::Delete &&
+			manageAsset.GetAction() == Events::ManageAssetAction::PreDelete &&
 			m_EditorScene)
 		{
 			Assets::AssetService::RemoveAIStateFromScene(m_EditorScene, manageAsset.GetAssetID());
@@ -285,7 +288,7 @@ namespace Kargono::Windows
 		if (manageAsset.GetAssetType() == Assets::AssetType::Scene &&
 			manageAsset.GetAssetID() == m_EditorSceneHandle)
 		{
-			if (manageAsset.GetAction() == Events::ManageAssetAction::Delete)
+			if (manageAsset.GetAction() == Events::ManageAssetAction::PreDelete)
 			{
 				// Create new scene w/ unique name
 				uint32_t iteration{ 1 };

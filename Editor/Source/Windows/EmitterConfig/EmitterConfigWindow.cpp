@@ -405,7 +405,7 @@ namespace Kargono::Windows
 
 		// Handle emitter config deletion
 		if (manageAsset->GetAssetType() == Assets::AssetType::EmitterConfig &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			// Check if editor needs modification
 			if (manageAsset->GetAssetID() != m_EditorEmitterConfigHandle)

@@ -55,7 +55,12 @@ namespace Kargono::Assets
 			m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, assetPath) });
 		}
 
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, AssetType::Texture, Events::ManageAssetAction::Create);
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+		(
+			newHandle, 
+			AssetType::Texture, 
+			Events::ManageAssetAction::Create
+		);
 		EngineService::SubmitToEventQueue(event);
 		return newHandle;
 

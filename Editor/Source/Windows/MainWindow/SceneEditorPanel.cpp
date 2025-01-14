@@ -2358,7 +2358,7 @@ namespace Kargono::Panels
 		}
 
 		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			if (m_SelectOnUpdateScript.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
@@ -2382,7 +2382,7 @@ namespace Kargono::Panels
 		}
 
 		if (manageAsset->GetAssetType() == Assets::AssetType::AIState &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			if (m_SelectCurrentState.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
@@ -2402,7 +2402,7 @@ namespace Kargono::Panels
 
 		// Remove emitter config from editor UI
 		if (manageAsset->GetAssetType() == Assets::AssetType::EmitterConfig &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			if (m_SelectParticleEmitter.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
@@ -2449,7 +2449,7 @@ namespace Kargono::Panels
 		}
 
 		if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			m_AllProjectComponents.erase(manageAsset->GetAssetID());
 

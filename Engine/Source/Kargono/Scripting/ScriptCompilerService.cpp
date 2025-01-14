@@ -224,6 +224,25 @@ namespace Kargono::Scripting
 
 	void Scripting::ScriptCompilerService::GetSuggestionsForAfterNamespace(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
 	{
+		// Generate suggestions for emitter configs
+		for (auto& [emitterName, handle] : ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs)
+		{
+			// Ensure namespaces match
+			if (context.CurrentNamespace.Value != "EmitterConfigs")
+			{
+				continue;
+			}
+
+			if (Utility::Regex::GetMatchSuccess(emitterName, queryText, false))
+			{
+				SuggestionSpec newSuggestion;
+				newSuggestion.m_Label = emitterName;
+				newSuggestion.m_ReplacementText = emitterName;
+				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEmitterConfig;
+				allSuggestions.push_back(newSuggestion);
+			}
+		}
+
 		// Generate suggestions for function identifiers
 		for (auto& [funcName, funcNode] : ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
 		{
@@ -294,6 +313,21 @@ namespace Kargono::Scripting
 
 	void Scripting::ScriptCompilerService::GetSuggestionsDefault(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
 	{
+
+		// Generate suggestions for emitter configs
+		for (auto& [emitterName, handle] : ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs)
+		{
+			std::string label = "EmitterConfigs" + std::string("::" + emitterName);
+			if (Utility::Regex::GetMatchSuccess(label, queryText, false))
+			{
+				SuggestionSpec newSuggestion;
+				newSuggestion.m_Label = label;
+				newSuggestion.m_ReplacementText = label;
+				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEmitterConfig;
+				allSuggestions.push_back(newSuggestion);
+			}
+		}
+
 		// Generate suggestions for primitive types
 		if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes))
 		{
@@ -378,12 +412,14 @@ namespace Kargono::Scripting
 
 		// Load in AI Message Types from current project
 		KG_ASSERT(Projects::ProjectService::GetActive());
+		s_ActiveLanguageDefinition.AllMessageTypes.clear();
 		for (const std::string& messageType : Projects::ProjectService::GetAllMessageTypes())
 		{
 			s_ActiveLanguageDefinition.AllMessageTypes.insert(messageType);
 		}
 
 		// Load in names of all emitter configs
+		s_ActiveLanguageDefinition.AllEmitterConfigs.clear();
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetEmitterConfigRegistry())
 		{
 			s_ActiveLanguageDefinition.AllEmitterConfigs.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
@@ -1269,6 +1305,7 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AI", "This namespace provides functions that interact with the AI system in the engine.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Physics", "This namespace provides functions that interact with the physics system in the engine.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Particles", "This namespace provides functions that interact with the particle system in the engine.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("EmitterConfigs", "This namespace provides access to all emitter configuration assets.");
 	}
 
 	void ScriptCompilerService::CreateKGScriptFunctionDefinitions()

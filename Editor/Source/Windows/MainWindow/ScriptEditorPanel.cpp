@@ -588,7 +588,7 @@ namespace Kargono::Panels
 		}
 
 		// Handle deletion event
-		if (manageEvent.GetAction() == Events::ManageAssetAction::Delete)
+		if (manageEvent.GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			// Search table for deleted asset
 			std::size_t assetLocation = m_AllScriptsList.SearchEntries([&](const EditorUI::ListEntry& currentEntry)

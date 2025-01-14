@@ -106,7 +106,7 @@ namespace Kargono::Panels
 		Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
 		// Manage script deletion event
 		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			if (m_SelectOnUpdateScript.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
@@ -135,7 +135,7 @@ namespace Kargono::Panels
 		}
 
 		if (manageAsset->GetAssetType() == Assets::AssetType::AIState &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			if (manageAsset->GetAssetID() != m_EditorAIStateHandle)
 			{

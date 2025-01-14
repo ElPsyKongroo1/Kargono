@@ -195,6 +195,26 @@ namespace Kargono::Panels
 			}
 		}
 	}
+	bool TextEditorPanel::OnAssetEvent(Events::Event* event)
+	{
+		// Ensure event is a manage asset event before casting
+		if (event->GetEventType() != Events::EventType::ManageAsset)
+		{
+			return false;
+		}
+
+		// Only respond to post delete events
+		Events::ManageAsset* manageEvent = (Events::ManageAsset*)event;
+		Events::ManageAssetAction eventAction{ manageEvent->GetAction() };
+		if (eventAction == Events::ManageAssetAction::PreDelete)
+		{
+			return false;
+		}
+
+		// Refresh scripting languange definition
+		RefreshKGScriptEditor();
+		return false;
+	}
 	void TextEditorPanel::OpenFile(const std::filesystem::path& filepath)
 	{
 		if (!filepath.empty())

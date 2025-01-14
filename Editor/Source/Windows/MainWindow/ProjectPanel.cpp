@@ -1282,7 +1282,7 @@ namespace Kargono::Panels
 
 		// Manage script deletion event
 		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			if (m_SelectRuntimeStartSpec.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{

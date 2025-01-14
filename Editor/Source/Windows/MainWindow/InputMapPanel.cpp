@@ -119,7 +119,7 @@ namespace Kargono::Panels
 
 		// Manage script deletion event
 		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			if (m_KeyboardOnUpdateAddFunction.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
@@ -151,7 +151,7 @@ namespace Kargono::Panels
 		}
 
 		if (manageAsset->GetAssetType() == Assets::AssetType::InputMap &&
-			manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			// Handle deletion of asset
 			if (manageAsset->GetAssetID() != m_EditorInputMapHandle)

@@ -337,7 +337,7 @@ namespace Kargono::Panels
 		}
 
 		// Handle deletion of asset
-		if (manageAsset->GetAction() == Events::ManageAssetAction::Delete)
+		if (manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			ResetPanelResources();
 			return true;
