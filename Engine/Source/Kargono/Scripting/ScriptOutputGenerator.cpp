@@ -231,6 +231,12 @@ namespace Kargono::Scripting
 			{
 				m_OutputText << Utility::FileSystem::CRCFromString(token->Value.Value.c_str());
 			}
+			else if (token->Value.Type == ScriptTokenType::EmitterConfigLiteral)
+			{
+				KG_ASSERT(ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs.contains(token->Value.Value));
+				
+				m_OutputText << ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs.at(token->Value.Value);
+			}
 			else
 			{
 				m_OutputText << token->Value.Value;

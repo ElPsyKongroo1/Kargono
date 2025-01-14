@@ -311,7 +311,7 @@ namespace Kargono::Particles
 
 		return false;
 	}
-	UUID ParticleService::AddEmitter(EmitterConfig* config, const Math::vec3 position)
+	UUID ParticleService::AddEmitter(EmitterConfig* config, const Math::vec3& position)
 	{
 		KG_ASSERT(s_ParticleContext);
 		KG_ASSERT(config);
@@ -340,6 +340,19 @@ namespace Kargono::Particles
 		}
 
 		return returnID;
+	}
+
+	void ParticleService::AddEmitterByHandle(Assets::AssetHandle emitterHandle, const Math::vec3& position)
+	{
+		KG_ASSERT(emitterHandle != Assets::EmptyHandle);
+
+		// Get emitter from asset service
+		Ref<Particles::EmitterConfig> emitter = Assets::AssetService::GetEmitterConfig(emitterHandle);
+
+		KG_ASSERT(emitter);
+
+		// Call add emitter function
+		AddEmitter(emitter.get(), position);
 	}
 
 	UUID ParticleService::AddEmitter(EmitterConfig* config, Scenes::Scene* parentScene, UUID entityID)
@@ -387,6 +400,25 @@ namespace Kargono::Particles
 	void ParticleService::ClearEmitters()
 	{
 		s_ParticleContext->m_AllEmitters.clear();
+	}
+	void ParticleService::ClearSceneEmitters()
+	{
+		std::vector<UUID> emittersToRemove;
+
+		// Get ID's for all scene emitters
+		for (auto& [emitterHandle, emitterInstance] : s_ParticleContext->m_AllEmitters)
+		{
+			if (emitterInstance.m_ParentScene)
+			{
+				emittersToRemove.emplace_back(emitterHandle);
+			}
+		}
+
+		// Remove all of the scene emitters
+		for (UUID emitterID : emittersToRemove)
+		{
+			s_ParticleContext->m_AllEmitters.erase(emitterID);
+		}
 	}
 	std::unordered_map<UUID, EmitterInstance>& ParticleService::GetAllEmitters()
 	{

@@ -97,7 +97,7 @@ namespace Kargono::Windows
 		}
 
 		// Load the emitters for the editor scene
-		Particles::ParticleService::ClearEmitters();
+		Particles::ParticleService::ClearSceneEmitters();
 		Particles::ParticleService::LoadSceneEmitters(m_EditorScene);
 	}
 
@@ -731,6 +731,8 @@ namespace Kargono::Windows
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		if (m_SceneState == SceneState::Simulate) { OnStop(); }
 
+		Particles::ParticleService::ClearEmitters();
+
 		m_SceneState = SceneState::Play;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
 		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
@@ -747,7 +749,6 @@ namespace Kargono::Windows
 		}
 
 		// Load particle emitters
-		Particles::ParticleService::ClearEmitters();
 		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 
 		AppTickService::LoadGeneratorsFromProject();

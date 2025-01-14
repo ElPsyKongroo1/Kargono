@@ -383,6 +383,12 @@ namespace Kargono::Scripting
 			s_ActiveLanguageDefinition.AllMessageTypes.insert(messageType);
 		}
 
+		// Load in names of all emitter configs
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetEmitterConfigRegistry())
+		{
+			s_ActiveLanguageDefinition.AllEmitterConfigs.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+		}
+
 		CreateKGScriptKeywords();
 
 		CreateKGScriptInitializationPrototypes();
@@ -531,6 +537,15 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "emitter_config";
+		newPrimitiveType.Description = "Reference to an emitter config asset. The emitter config is used to describe the behavior of a particle emitter instance. The config can be used to generate a new emitter instance.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::EmitterConfigLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint64_t";
+		newPrimitiveType.EmittedParameter = "uint64_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEmitterConfig;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -1583,6 +1598,27 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Particles" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "AddEmitter" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "emitter_config" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "emitterConfig" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector3" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "emitterPosition" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Create an instance of an emitter at the specified location. This location takes in an emitter configuration and a vector3 to denote its spawning location.";
+		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "Particles_AddEmitterByHandle";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "GameState" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetField" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
@@ -2146,6 +2182,7 @@ namespace Kargono::Scripting
 			token.Type == ScriptTokenType::BooleanLiteral ||
 			token.Type == ScriptTokenType::FloatLiteral ||
 			token.Type == ScriptTokenType::InputKeyLiteral ||
+			token.Type == ScriptTokenType::EmitterConfigLiteral ||
 			token.Type == ScriptTokenType::MessageTypeLiteral)
 		{
 			return true;

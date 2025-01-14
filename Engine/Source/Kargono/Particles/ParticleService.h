@@ -5,6 +5,7 @@
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Utility/Traits.h"
 #include "Kargono/Events/Event.h"
+#include "Kargono/Assets/Asset.h"
 
 #include <vector>
 #include <array>
@@ -105,14 +106,15 @@ namespace Kargono::Particles
 		//==============================
 		// Manage Emitters
 		//==============================
-		static UUID AddEmitter(EmitterConfig* config, const Math::vec3 position);
+		static UUID AddEmitter(EmitterConfig* config, const Math::vec3& position);
+		static void AddEmitterByHandle(Assets::AssetHandle emitterHandle, const Math::vec3& position);
 		static UUID AddEmitter(EmitterConfig* config, Scenes::Scene* parentScene, UUID entityID);
 		static bool RemoveEmitter(UUID emitterID);
 		static void ClearEmitters();
+		static void ClearSceneEmitters();
 		static std::unordered_map<UUID, EmitterInstance>& GetAllEmitters();
 
 		static void LoadSceneEmitters(Ref<Scenes::Scene> scene);
-		
     };
 }
 

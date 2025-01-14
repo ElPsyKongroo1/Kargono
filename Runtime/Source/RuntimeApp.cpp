@@ -488,6 +488,7 @@ namespace Kargono
 
 	void RuntimeApp::OnPlay()
 	{
+		Particles::ParticleService::ClearEmitters();
 		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
@@ -514,7 +515,6 @@ namespace Kargono
 		}
 
 		// Load particle emitters
-		Particles::ParticleService::ClearEmitters();
 		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 	}
 

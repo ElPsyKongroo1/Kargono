@@ -562,13 +562,13 @@ namespace Kargono::Scenes
 		auto [handle, sceneReference] = Assets::AssetService::GetScene(sceneName);
 		if (sceneReference)
 		{
+			Particles::ParticleService::ClearEmitters();
 			TransitionScene(sceneReference);
 
 			s_ActiveSceneHandle = handle;
 			Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(handle, Events::ManageSceneAction::Open);
 			EngineService::SubmitToEventQueue(event);
 
-			Particles::ParticleService::ClearEmitters();
 			Particles::ParticleService::LoadSceneEmitters(sceneReference);
 		}
 		else

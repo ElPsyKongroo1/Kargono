@@ -29,7 +29,7 @@ namespace Kargono::Scripting
 
 				// Check for keywords
 				bool foundKeyword = false;
-				for (auto& keyword : ScriptCompilerService::s_ActiveLanguageDefinition.Keywords)
+				for (std::string& keyword : ScriptCompilerService::s_ActiveLanguageDefinition.Keywords)
 				{
 					if (m_TextBuffer == keyword)
 					{
@@ -73,7 +73,7 @@ namespace Kargono::Scripting
 					}
 				}
 
-				// Check for key literals
+				// Check for message literals
 				if (m_TextBuffer == "MessageType")
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
@@ -87,13 +87,38 @@ namespace Kargono::Scripting
 							Advance();
 						}
 						// Ensure the provided value is valid
-;						if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllMessageTypes.contains(m_TextBuffer))
+						if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllMessageTypes.contains(m_TextBuffer))
 						{
 							ClearBuffer();
 							continue;
 						}
 						
 						AddTokenAndClearBuffer(ScriptTokenType::MessageTypeLiteral, { m_TextBuffer });
+						continue;
+					}
+				}
+
+				// Check for message literals
+				if (m_TextBuffer == "EmitterConfigs")
+				{
+					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
+					{
+						Advance(2);
+						ClearBuffer();
+						// Fill remainder of buffer
+						while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
+						{
+							AddCurrentCharToBuffer();
+							Advance();
+						}
+						// Ensure the provided value is valid
+						if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs.contains(m_TextBuffer))
+						{
+							ClearBuffer();
+							continue;
+						}
+						
+						AddTokenAndClearBuffer(ScriptTokenType::EmitterConfigLiteral, { m_TextBuffer });
 						continue;
 					}
 				}

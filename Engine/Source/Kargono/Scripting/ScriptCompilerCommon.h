@@ -34,6 +34,9 @@ namespace Kargono::Scripting
 		InputKeyLiteral,
 		MessageTypeLiteral,
 
+		// Asset Literals
+		EmitterConfigLiteral,
+
 		// Keywords
 		Keyword,
 
@@ -121,6 +124,8 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::FloatLiteral: return "Float Literal";
 		case Scripting::ScriptTokenType::InputKeyLiteral: return "Input Key Literal";
 		case Scripting::ScriptTokenType::MessageTypeLiteral: return "Message Type Literal";
+
+		case Scripting::ScriptTokenType::EmitterConfigLiteral: return "Emitter Config Literal";
 
 		case Scripting::ScriptTokenType::Keyword: return "Keyword";
 		case Scripting::ScriptTokenType::PrimitiveType: return "Primitive Type";
@@ -563,6 +568,7 @@ namespace Kargono::Scripting
 		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
 		std::vector<InitializationListType> InitListTypes {};
 		std::unordered_set<std::string> AllMessageTypes{};
+		std::unordered_map<std::string, UUID> AllEmitterConfigs{};
 	public:
 		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)
 		{
@@ -583,6 +589,7 @@ namespace Kargono::Scripting
 			FunctionDefinitions.clear();
 			InitListTypes.clear();
 			AllMessageTypes.clear();
+			AllEmitterConfigs.clear();
 		}
 
 		operator bool() const

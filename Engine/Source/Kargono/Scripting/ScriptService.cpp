@@ -848,6 +848,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
 		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
+		AddEngineFunctionToCPPFileTwoParameters(Particles_AddEmitterByHandle, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(AI_ChangeGlobalState, void, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(AI_ChangeCurrentState, void, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(AI_IsGlobalState, bool, uint64_t, uint64_t)
@@ -942,6 +943,7 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SendAllEntityLocation)
 		AddEngineFunctionToCPPFileEnd(TransformComponent_SetTranslation)
+		AddEngineFunctionToCPPFileEnd(Particles_AddEmitterByHandle)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64Vec2, void, uint64_t, Math::vec2)
 		outputStream << "{\n";
@@ -1269,6 +1271,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(RequestUserCount, Network::ClientService::RequestUserCount, VoidNone)
 		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::ClientService::GetActiveSessionSlot, UInt16None)
 		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::ClientService::SendAllEntityLocation, VoidUInt64Vec3)
+		
 		AddEngineFunctionPointerToDll(SignalAll, Network::ClientService::SignalAll, VoidUInt16)
 		AddEngineFunctionPointerToDll(Log, Scripting::Log, VoidStringStringString)
 		AddEngineFunctionPointerToDll(ClearDebugLines, Scripting::ClearDebugLines, VoidNone)
@@ -1315,6 +1318,6 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AI_IsCurrentState, AI::AIService::IsCurrentState, BoolUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_IsPreviousState, AI::AIService::IsPreviousState, BoolUInt64UInt64)
 		AddEngineFunctionPointerToDll(Physics_Raycast, Physics::Physics2DService::Raycast, RaycastResultVec2Vec2)
-
+		AddEngineFunctionPointerToDll(Particles_AddEmitterByHandle, Particles::ParticleService::AddEmitterByHandle, VoidUInt64Vec3)
 	}
 }
