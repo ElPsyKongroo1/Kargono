@@ -245,24 +245,34 @@ namespace Kargono::Scripting
 			}
 		}
 
-		// Generate suggestions for emitter configs
-		for (auto& [emitterName, handle] : ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs)
+
+		// Generate suggestions for all assets
+		for (auto& [assetType, assetTypeInfo] : ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes)
 		{
-			// Ensure namespaces match
-			if (context.CurrentNamespace.Value != "EmitterConfigs")
+			// Ensure asset type matches namespace
+			if (context.CurrentNamespace.Value != assetType)
 			{
 				continue;
 			}
 
-			if (Utility::Regex::GetMatchSuccess(emitterName, queryText, false))
+			// Ensure map pointer references data
+			KG_ASSERT(assetTypeInfo.m_AssetNameToID);
+
+			// Generate suggestions for emitter configs
+			for (auto& [assetName, handle] : *assetTypeInfo.m_AssetNameToID)
 			{
-				SuggestionSpec newSuggestion;
-				newSuggestion.m_Label = emitterName;
-				newSuggestion.m_ReplacementText = emitterName;
-				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEmitterConfig;
-				allSuggestions.push_back(newSuggestion);
+				if (Utility::Regex::GetMatchSuccess(assetName, queryText, false))
+				{
+					SuggestionSpec newSuggestion;
+					newSuggestion.m_Label = assetName;
+					newSuggestion.m_ReplacementText = assetName;
+					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEmitterConfig;
+					allSuggestions.push_back(newSuggestion);
+				}
 			}
 		}
+
+		
 	}
 
 	void Scripting::ScriptCompilerService::GetSuggestionsForIsParameter(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
@@ -380,20 +390,26 @@ namespace Kargono::Scripting
 			}
 		}
 		
-		// Generate suggestions for emitter configs
-		for (auto& [emitterName, handle] : ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs)
+		// Generate suggestions for all assets
+		for (auto& [assetType, assetTypeInfo] : ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes)
 		{
-			// Determine if the return types indeed match
-			bool returnTypesMatch = returnTypes.contains("emitter_config");
+			// Ensure map pointer references data
+			KG_ASSERT(assetTypeInfo.m_AssetNameToID);
 
-			if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
+			// Ensure the return types match for this asset type
+			if (!returnTypes.contains(assetTypeInfo.m_ReturnType))
 			{
-				std::string label = "EmitterConfigs" + std::string("::" + emitterName);
-				if (Utility::Regex::GetMatchSuccess(label, queryText, false))
+				continue;
+			}
+
+			// Generate suggestions for this asset type
+			for (auto& [assetName, handle] : *assetTypeInfo.m_AssetNameToID)
+			{
+				if (Utility::Regex::GetMatchSuccess(assetName, queryText, false))
 				{
 					SuggestionSpec newSuggestion;
-					newSuggestion.m_Label = label;
-					newSuggestion.m_ReplacementText = label;
+					newSuggestion.m_Label = assetName;
+					newSuggestion.m_ReplacementText = assetName;
 					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEmitterConfig;
 					allSuggestions.push_back(newSuggestion);
 				}
@@ -416,11 +432,82 @@ namespace Kargono::Scripting
 			s_ActiveLanguageDefinition.AllMessageTypes.insert(messageType);
 		}
 
+		// Load all asset type declarations
+		s_ActiveLanguageDefinition.AllAssetTypes.clear();
+		s_ActiveLanguageDefinition.AllAssetTypes =
+		{
+			{"AIStates", {&s_ActiveLanguageDefinition.AllAIStates, "ai_state"}},
+			{"AudioBuffers", {&s_ActiveLanguageDefinition.AllAudioBuffers, "audio_buffer"}},
+			{"EmitterConfigs", {&s_ActiveLanguageDefinition.AllEmitterConfigs, "emitter_config"}},
+			{"Fonts", {&s_ActiveLanguageDefinition.AllFonts, "font"}},
+			{"GameStates", {&s_ActiveLanguageDefinition.AllGameStates, "game_state"}},
+			{"InputMaps", {&s_ActiveLanguageDefinition.AllInputMaps, "input_map"}},
+			{"ProjectComponents", {&s_ActiveLanguageDefinition.AllProjectComponents, "project_component"}},
+			{"Scenes", {&s_ActiveLanguageDefinition.AllScenes, "scene"}},
+			{"UserInterfaces", {&s_ActiveLanguageDefinition.AllUserInterfaces, "user_interface"}}
+		};
+
+		// Load in names of all AI States
+		s_ActiveLanguageDefinition.AllAIStates.clear();
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAIStateRegistry())
+		{
+			s_ActiveLanguageDefinition.AllAIStates.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+		}
+
+		// Load in names of all audio buffers
+		s_ActiveLanguageDefinition.AllAudioBuffers.clear();
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAudioBufferRegistry())
+		{
+			s_ActiveLanguageDefinition.AllAudioBuffers.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+		}
+
 		// Load in names of all emitter configs
 		s_ActiveLanguageDefinition.AllEmitterConfigs.clear();
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetEmitterConfigRegistry())
 		{
 			s_ActiveLanguageDefinition.AllEmitterConfigs.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+		}
+
+		// Load in names of all fonts
+		s_ActiveLanguageDefinition.AllFonts.clear();
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetFontRegistry())
+		{
+			s_ActiveLanguageDefinition.AllFonts.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+		}
+
+		// Load in names of all game states
+		s_ActiveLanguageDefinition.AllGameStates.clear();
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetGameStateRegistry())
+		{
+			s_ActiveLanguageDefinition.AllGameStates.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+		}
+
+		// Load in names of all input map
+		s_ActiveLanguageDefinition.AllInputMaps.clear();
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetInputMapRegistry())
+		{
+			s_ActiveLanguageDefinition.AllInputMaps.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+		}
+
+		// Load in names of all project component
+		s_ActiveLanguageDefinition.AllProjectComponents.clear();
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetProjectComponentRegistry())
+		{
+			s_ActiveLanguageDefinition.AllProjectComponents.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+		}
+
+		// Load in names of all scene
+		s_ActiveLanguageDefinition.AllScenes.clear();
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetSceneRegistry())
+		{
+			s_ActiveLanguageDefinition.AllScenes.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+		}
+
+		// Load in names of all UserInterface
+		s_ActiveLanguageDefinition.AllUserInterfaces.clear();
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetUserInterfaceRegistry())
+		{
+			s_ActiveLanguageDefinition.AllUserInterfaces.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
 		}
 
 		CreateKGScriptKeywords();
@@ -574,12 +661,84 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
+		newPrimitiveType.Name = "ai_state";
+		newPrimitiveType.Description = "Reference to an AI state asset. The ai state is used to describe an individual state that an entity can be in, inside a large finite state machine context. This state describes its OnEvent() actions and how it enters/exits the state.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint64_t";
+		newPrimitiveType.EmittedParameter = "uint64_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconAI;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "audio_buffer";
+		newPrimitiveType.Description = "Reference to an audio buffer asset. The audio buffer is typicaly loaded into the engine and referenced when it should be played by the audio system.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint64_t";
+		newPrimitiveType.EmittedParameter = "uint64_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconAudio;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
 		newPrimitiveType.Name = "emitter_config";
 		newPrimitiveType.Description = "Reference to an emitter config asset. The emitter config is used to describe the behavior of a particle emitter instance. The config can be used to generate a new emitter instance.";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::EmitterConfigLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEmitterConfig;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "font";
+		newPrimitiveType.Description = "Reference to an font asset. A font is typically loaded into the engine and referenced by in-game user interfaces.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint64_t";
+		newPrimitiveType.EmittedParameter = "uint64_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconFont;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "game_state";
+		newPrimitiveType.Description = "Reference to a game state asset. A game state asset is a global accessible chunk of data that described the game's current state.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint64_t";
+		newPrimitiveType.EmittedParameter = "uint64_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGameState;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "input_map";
+		newPrimitiveType.Description = "Reference to an input map asset. An input map asset is a list of input->script bindings that describe how the user can interact with the game when it is loaded.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint64_t";
+		newPrimitiveType.EmittedParameter = "uint64_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "project_component";
+		newPrimitiveType.Description = "Reference to a project component asset. A project component is a chunk of data that can be associated with any entity and is specific to a particular game project.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint64_t";
+		newPrimitiveType.EmittedParameter = "uint64_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEntity;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "scene";
+		newPrimitiveType.Description = "Reference to a scene asset. A scene is a world that can be loaded into that contains a list of entities and other world defining data.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint64_t";
+		newPrimitiveType.EmittedParameter = "uint64_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconScene;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "user_interface";
+		newPrimitiveType.Description = "Reference to a user interface. A user interface is a structure holding a series of windows and widgets that can be rendered if attached to the engine's active context.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint64_t";
+		newPrimitiveType.EmittedParameter = "uint64_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconUserInterface;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -1303,7 +1462,13 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AI", "This namespace provides functions that interact with the AI system in the engine.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Physics", "This namespace provides functions that interact with the physics system in the engine.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Particles", "This namespace provides functions that interact with the particle system in the engine.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("EmitterConfigs", "This namespace provides access to all emitter configuration assets.");
+
+		// Add all asset types as namespaces
+		for (auto& [assetType, assetNameToIDMap] : s_ActiveLanguageDefinition.AllAssetTypes)
+		{
+			s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign(assetType, "This namespace provides access to all of the engine's " + assetType);
+		}
+
 	}
 
 	void ScriptCompilerService::CreateKGScriptFunctionDefinitions()
@@ -2217,7 +2382,7 @@ namespace Kargono::Scripting
 			token.Type == ScriptTokenType::BooleanLiteral ||
 			token.Type == ScriptTokenType::FloatLiteral ||
 			token.Type == ScriptTokenType::InputKeyLiteral ||
-			token.Type == ScriptTokenType::EmitterConfigLiteral ||
+			token.Type == ScriptTokenType::AssetLiteral ||
 			token.Type == ScriptTokenType::MessageTypeLiteral)
 		{
 			return true;

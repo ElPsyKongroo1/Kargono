@@ -98,13 +98,12 @@ namespace Kargono::Scripting
 					}
 				}
 
-				// Check for emitter config literals
-				if (m_TextBuffer == "EmitterConfigs")
+				// Check for all asset literal types
+				if (ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes.contains(m_TextBuffer))
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 					{
-
-						ScriptToken emitterToken = CreateTokenExplicit(ScriptTokenType::Identifier, "EmitterConfigs");
+						ScriptToken emitterToken = CreateTokenExplicit(ScriptTokenType::Identifier, m_TextBuffer);
 						ClearBuffer();
 						ScriptToken namespaceToken = CreateTokenExplicit(ScriptTokenType::NamespaceResolver, { "::" });
 						Advance(2);
@@ -121,8 +120,8 @@ namespace Kargono::Scripting
 							AddTokenExplicit(namespaceToken);
 							continue;
 						}
-						
-						AddTokenAndClearBuffer(ScriptTokenType::EmitterConfigLiteral, { m_TextBuffer });
+
+						AddTokenAndClearBuffer(ScriptTokenType::AssetLiteral, { emitterToken.Value + "::" + m_TextBuffer});
 						continue;
 					}
 				}

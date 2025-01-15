@@ -35,7 +35,7 @@ namespace Kargono::Scripting
 		MessageTypeLiteral,
 
 		// Asset Literals
-		EmitterConfigLiteral,
+		AssetLiteral,
 
 		// Keywords
 		Keyword,
@@ -125,7 +125,7 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::InputKeyLiteral: return "Input Key Literal";
 		case Scripting::ScriptTokenType::MessageTypeLiteral: return "Message Type Literal";
 
-		case Scripting::ScriptTokenType::EmitterConfigLiteral: return "Emitter Config Literal";
+		case Scripting::ScriptTokenType::AssetLiteral: return "Asset Literal";
 
 		case Scripting::ScriptTokenType::Keyword: return "Keyword";
 		case Scripting::ScriptTokenType::PrimitiveType: return "Primitive Type";
@@ -559,6 +559,15 @@ namespace Kargono::Scripting
 		std::variant<FunctionNode, DataMember> Value {};
 	};
 
+	// Asset management structs
+	using AssetNameToIDMap = std::unordered_map<std::string, UUID>;
+	struct AssetTypeInfo
+	{
+		AssetNameToIDMap* m_AssetNameToID;
+		std::string m_ReturnType;
+	};
+
+
 	struct LanguageDefinition
 	{
 	public:
@@ -568,7 +577,18 @@ namespace Kargono::Scripting
 		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
 		std::vector<InitializationListType> InitListTypes {};
 		std::unordered_set<std::string> AllMessageTypes{};
+
+		// All Assets
+		std::unordered_map<std::string, AssetTypeInfo> AllAssetTypes{};
+		std::unordered_map<std::string, UUID> AllAIStates{};
+		std::unordered_map<std::string, UUID> AllAudioBuffers{};
 		std::unordered_map<std::string, UUID> AllEmitterConfigs{};
+		std::unordered_map<std::string, UUID> AllFonts{};
+		std::unordered_map<std::string, UUID> AllGameStates{};
+		std::unordered_map<std::string, UUID> AllInputMaps{};
+		std::unordered_map<std::string, UUID> AllProjectComponents{};
+		std::unordered_map<std::string, UUID> AllScenes{};
+		std::unordered_map<std::string, UUID> AllUserInterfaces{};
 	public:
 		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)
 		{

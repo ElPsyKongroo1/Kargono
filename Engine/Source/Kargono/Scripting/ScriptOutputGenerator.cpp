@@ -231,11 +231,37 @@ namespace Kargono::Scripting
 			{
 				m_OutputText << Utility::FileSystem::CRCFromString(token->Value.Value.c_str());
 			}
-			else if (token->Value.Type == ScriptTokenType::EmitterConfigLiteral)
+			else if (token->Value.Type == ScriptTokenType::AssetLiteral)
 			{
-				KG_ASSERT(ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs.contains(token->Value.Value));
+				std::string assetType;
+				std::string assetName;
+
+				// Find the position of the delimiter "::"
+				size_t delimiterPos = token->Value.Value.find("::");
+
+				// Ensure input string is not malformed
+				KG_ASSERT(delimiterPos != std::string::npos, "These is no :: delimiter");
+				KG_ASSERT(delimiterPos != 0, "The :: delimiter is at the beginning of the input string");
+				KG_ASSERT(delimiterPos < token->Value.Value.size() - 2, "The :: delimiter is at the end of the input string");
+
+				// Split the string into the assetType and assetName segments
+				assetType = token->Value.Value.substr(0, delimiterPos);
+				assetName = token->Value.Value.substr(delimiterPos + 2);
+
+				// Ensure this is a valid asset type
+				KG_ASSERT(ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes.contains(assetType));
+
+				// Get the appropriate map from the AllAssetTypes
+				std::unordered_map<std::string, UUID>* assetNameToIDMap = ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes.at(assetType).m_AssetNameToID;
+
+				// Ensure map pointer references data
+				KG_ASSERT(assetNameToIDMap);
+
+				// Get reference to the asset's assetName -> assetID map
+				KG_ASSERT(assetNameToIDMap->contains(assetName));
 				
-				m_OutputText << ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs.at(token->Value.Value);
+				// Output ID of the asset
+				m_OutputText << assetNameToIDMap->at(assetName);
 			}
 			else
 			{

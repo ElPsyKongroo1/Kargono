@@ -2813,7 +2813,7 @@ namespace API::EditorUI
 					case Kargono::Scripting::ScriptTokenType::InputKeyLiteral:
 						tokenColor = PaletteIndex::Number;
 						break;
-					case Kargono::Scripting::ScriptTokenType::EmitterConfigLiteral:
+					case Kargono::Scripting::ScriptTokenType::AssetLiteral:
 						tokenColor = PaletteIndex::Number;
 						break;
 					case Kargono::Scripting::ScriptTokenType::BooleanLiteral:
