@@ -1442,17 +1442,17 @@ namespace Kargono::Scripting
 	void ScriptCompilerService::CreateKGScriptNamespaces()
 	{
 		// Add namespace descriptions
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("UI", "This namespace provides functions that can manage and interact with the active user interface.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("GameState", "This namespace provides functions that can manage and interact with the active game state");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("UIService", "This namespace provides functions that can manage and interact with the active user interface.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("GameStateService", "This namespace provides functions that can manage and interact with the active game state");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("SceneService", "This namespace provides functions that can manage the active scene.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Input", "This namespace provides functions allow access to the current input state and manage the current input map/mapping");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Audio", "This namespace provides functions that can manage audio files and play audio");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("InputService", "This namespace provides functions allow access to the current input state and manage the current input map/mapping");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AudioService", "This namespace provides functions that can manage audio files and play audio");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Math", "This namespace provides various math functions to be used.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Network", "This namespace provides functions that interact with the active network connection between the current client and the server.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("NetworkService", "This namespace provides functions that interact with the active network connection between the current client and the server.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Scripts", "This namespace provides access to all available scripts in the current project.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AI", "This namespace provides functions that interact with the AI system in the engine.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Physics", "This namespace provides functions that interact with the physics system in the engine.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Particles", "This namespace provides functions that interact with the particle system in the engine.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AIService", "This namespace provides functions that interact with the AI system in the engine.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("PhysicsService", "This namespace provides functions that interact with the physics system in the engine.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("ParticleService", "This namespace provides functions that interact with the particle system in the engine.");
 
 		// Add all asset types as namespaces
 		for (auto& [assetType, assetNameToIDMap] : s_ActiveLanguageDefinition.AllAssetTypes)
@@ -1574,7 +1574,7 @@ namespace Kargono::Scripting
 		newParameter = {};
 
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AI" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SendMessage" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "message_type" });
@@ -1604,7 +1604,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetWidgetText" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1628,7 +1628,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "LoadUI" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1647,7 +1647,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "DisplayWindow" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1670,7 +1670,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "WidgetSelectable" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1695,7 +1695,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsWidgetSelected" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1716,7 +1716,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "WidgetTextColor" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1743,7 +1743,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "WidgetBackgroundColor" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1768,7 +1768,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UI" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetSelectedWidget" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1789,11 +1789,10 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Particles" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "ParticleService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "AddEmitter" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "emitter_config" });
-		newParameter.AllTypes.push_back({ ScriptTokenType::AssetLiteral, ""});
 
 		newParameter.Identifier = { ScriptTokenType::Identifier, "emitterConfig" };
 		newFunctionNode.Parameters.push_back(newParameter);
@@ -1812,7 +1811,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "GameState" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "GameStateService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetField" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1854,7 +1853,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "GameState" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "GameStateService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "GetFieldUInt16" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "uint16" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1927,7 +1926,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Input" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "InputService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "LoadInputMap" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1945,7 +1944,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Input" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "InputService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsKeyPressed" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "keycode" });
@@ -1962,7 +1961,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Input" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "InputService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsPollingSlotPressed" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		newParameter.AllTypes = s_AllIntegerTypes;
@@ -1979,7 +1978,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Audio" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AudioService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "PlaySound" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1999,7 +1998,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Audio" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AudioService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "PlayMusic" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -2137,7 +2136,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "NetworkService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "GetActiveSessionSlot" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "uint16" };
 		newFunctionNode.Description = "This function retreives the slot of the current client inside the active application session. This function takes no parameters.";
@@ -2151,7 +2150,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "NetworkService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "PushAllEntityLocation" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "entity" });
@@ -2173,7 +2172,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "NetworkService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "RequestJoinSession" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newFunctionNode.Description = "This function sends a request message to the server to join a session. This function takes no parameters.";
@@ -2187,7 +2186,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "NetworkService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "LeaveCurrentSession" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newFunctionNode.Description = "This function sends a message to the server to leave the active session. This function takes no parameters.";
@@ -2200,7 +2199,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "NetworkService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SendAllEntityPhysics" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "entity" });
@@ -2226,7 +2225,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "NetworkService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SignalAll" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newParameter.AllTypes = s_AllIntegerTypes;
@@ -2244,7 +2243,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "NetworkService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "RequestUserCount" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newFunctionNode.Description = "This function sends a request to the server to find out the number of users currently online. Note that a function needs to be set up to receive the user count request.";
@@ -2257,7 +2256,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Network" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "NetworkService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "EnableReadyCheck" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newFunctionNode.Description = "This function sends a signal to the server indicating this client is ready. This can be intepretted differently depending on your application.";
@@ -2271,7 +2270,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Physics" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "PhysicsService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "Raycast" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "raycast_result" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector2" });
