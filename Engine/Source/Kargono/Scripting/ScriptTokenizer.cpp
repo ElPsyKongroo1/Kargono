@@ -103,25 +103,20 @@ namespace Kargono::Scripting
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 					{
-						ScriptToken emitterToken = CreateTokenExplicit(ScriptTokenType::Identifier, m_TextBuffer);
-						ClearBuffer();
-						ScriptToken namespaceToken = CreateTokenExplicit(ScriptTokenType::NamespaceResolver, { "::" });
+
+						AddTokenAndClearBuffer(ScriptTokenType::Identifier, m_TextBuffer);
+						AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, { "::" });
 						Advance(2);
 						// Fill remainder of buffer
-						while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
+						while (CurrentLocationValid() && (std::isalnum(GetCurrentChar()) || GetCurrentChar() == '_'))
 						{
 							AddCurrentCharToBuffer();
 							Advance();
 						}
-						// Ensure the provided value is valid
-						if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllEmitterConfigs.contains(m_TextBuffer))
+						if (m_TextBuffer.size() > 0)
 						{
-							AddTokenExplicit(emitterToken);
-							AddTokenExplicit(namespaceToken);
-							continue;
+							AddTokenAndClearBuffer(ScriptTokenType::AssetLiteral, { m_TextBuffer });
 						}
-
-						AddTokenAndClearBuffer(ScriptTokenType::AssetLiteral, { emitterToken.Value + "::" + m_TextBuffer});
 						continue;
 					}
 				}

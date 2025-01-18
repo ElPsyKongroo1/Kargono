@@ -49,6 +49,16 @@ namespace Kargono::Utility
 				PrintExpression(argument, indentation + 2);
 			}
 		}
+		else if (Scripting::AssetNode* AssetExpression = std::get_if<Scripting::AssetNode>(&expression->Value))
+		{
+			KG_INFO("{}Expression Asset", GetIndentation(indentation));
+			KG_INFO("{}Namespace", GetIndentation(indentation + 1));
+			PrintToken(AssetExpression->Namespace, indentation + 2);
+			KG_INFO("{}Identifier", GetIndentation(indentation + 1));
+			PrintToken(AssetExpression->Identifier, indentation + 2);
+			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
+			PrintToken(AssetExpression->ReturnType, indentation + 2);
+		}
 		else if (Scripting::InitializationListNode* initListExpression = std::get_if<Scripting::InitializationListNode>(&expression->Value))
 		{
 			KG_INFO("{}Expression Initialization List", GetIndentation(indentation));
@@ -794,6 +804,22 @@ namespace Kargono::Scripting
 			}
 		}
 
+		// Parse Expression Asset
+		if (!foundValidExpression)
+		{
+			auto [success, expression] = ParseExpressionAsset(parentExpressionSize);
+			if (success)
+			{
+				newExpression = expression;
+				foundValidExpression = true;
+			}
+			if (CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Expression, "Invalid asset identifier", GetCurrentToken(parentExpressionSize));
+				return { false, {} };
+			}
+		}
+
 		// Parse Expression Initialization List
 		if (!foundValidExpression)
 		{
@@ -1206,6 +1232,76 @@ namespace Kargono::Scripting
 		newFunctionExpression->Value = newFunctionCallNode;
 		parentExpressionSize = currentArgumentLocation;
 		return { true, newFunctionExpression };
+	}
+	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionAsset(uint32_t& parentExpressionSize)
+	{
+		Ref<Expression> newAssetExpression{ CreateRef<Expression>() };
+		AssetNode newAssetNode{};
+
+		// Check for asset namespace, namespace resolver symbol, and asset identifier
+		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
+		int32_t initialAdvance{ 0 };
+		if (tokenBuffer.Type == ScriptTokenType::Identifier &&
+			GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::NamespaceResolver &&
+			GetCurrentToken(parentExpressionSize + 2).Type == ScriptTokenType::AssetLiteral )
+		{
+			newAssetNode.Namespace = tokenBuffer;
+			newAssetNode.Identifier = GetCurrentToken(parentExpressionSize + 2);
+			initialAdvance = 3;
+		}
+		else
+		{
+			return { false, {} };
+		}
+
+		// Check for context probe
+		if (IsContextProbe(GetCurrentToken(parentExpressionSize + 2)))
+		{
+			// Ensure namespace identifier exists
+			if (!ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(tokenBuffer.Value))
+			{
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, namespace node is invalid", tokenBuffer);
+				return { false, {} };
+			}
+			// Store context probe for argument
+			CursorContext newContext;
+			newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AfterNamespaceResolution);
+			newContext.CurrentNamespace = tokenBuffer;
+			m_CursorContext = newContext;
+			StoreParseError(ParseErrorType::ContextProbe, "Found context probe for function namespace", tokenBuffer);
+			return { false, {} };
+		}
+
+
+		// Ensure asset namespace exists
+		if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes.contains(newAssetNode.Namespace.Value))
+		{
+			StoreParseError(ParseErrorType::Expression, "Unknown asset type provided", newAssetNode.Identifier);
+			return { false, {} };
+		}
+
+		// Get the asset information
+		AssetTypeInfo& assetInfo{ ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes.at(newAssetNode.Namespace.Value) };
+		
+		// Get the asset map appropriate for this asset type
+		AssetNameToIDMap* assetMap = assetInfo.m_AssetNameToID;
+		KG_ASSERT(assetMap);
+
+		// Ensure the asset identifier is valid
+		if (!assetMap->contains(newAssetNode.Identifier.Value))
+		{
+			StoreParseError(ParseErrorType::Expression, "Unknown asset type provided", newAssetNode.Identifier);
+			return { false, {} };
+		}
+	
+		// Get return type from function node and emplace it into the assetNode
+		newAssetNode.ReturnType = { ScriptTokenType::PrimitiveType, assetInfo.m_ReturnType };
+
+		// Fill the expression buffer and exit
+		newAssetExpression->Value = newAssetNode;
+		parentExpressionSize += initialAdvance;
+		return { true, newAssetExpression };
 	}
 	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionUnaryOperation(uint32_t& parentExpressionSize)
 	{
@@ -2597,8 +2693,8 @@ namespace Kargono::Scripting
 
 	bool ScriptTokenParser::IsContextProbe(ScriptToken token)
 	{
-
-		if (token.Type == ScriptTokenType::Identifier && token.Value == ContextProbe)
+		if ((token.Type == ScriptTokenType::Identifier || token.Type == ScriptTokenType::AssetLiteral) && 
+			token.Value == ContextProbe)
 		{
 			return true;
 		}
@@ -2610,12 +2706,8 @@ namespace Kargono::Scripting
 	{
 		if (const TokenExpressionNode* token = std::get_if<TokenExpressionNode>(&expression->Value))
 		{
-			if (token->Value.Type == ScriptTokenType::Identifier && token->Value.Value == ContextProbe)
-			{
-				return true;
-			}
+			return IsContextProbe(token->Value);
 		}
-
 		return false;
 	}
 

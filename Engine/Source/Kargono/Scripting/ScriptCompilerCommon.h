@@ -242,6 +242,13 @@ namespace Kargono::Scripting
 		FunctionNode* m_FunctionNode{};
 	};
 
+	struct AssetNode
+	{
+		ScriptToken Namespace{};
+		ScriptToken Identifier{};
+		ScriptToken ReturnType{};
+	};
+
 	struct UnaryOperationNode
 	{
 		ScriptToken Operator{};
@@ -285,7 +292,7 @@ namespace Kargono::Scripting
 
 	struct Expression
 	{
-		std::variant<FunctionCallNode, TokenExpressionNode, UnaryOperationNode, BinaryOperationNode, InitializationListNode, MemberNode, TernaryOperationNode> Value{};
+		std::variant<FunctionCallNode, TokenExpressionNode, UnaryOperationNode, BinaryOperationNode, InitializationListNode, MemberNode, TernaryOperationNode, AssetNode> Value{};
 		Ref<ExpressionGenerationAffixes> GenerationAffixes{ nullptr };
 
 		ScriptToken GetReturnType()
@@ -294,6 +301,11 @@ namespace Kargono::Scripting
 			{
 				FunctionCallNode& functionCallNode = *functionCallNodePtr;
 				return functionCallNode.ReturnType;
+			}
+			else if (AssetNode* assetNodePtr = std::get_if<AssetNode>(&Value))
+			{
+				AssetNode& assetNode = *assetNodePtr;
+				return assetNode.ReturnType;
 			}
 			else if (UnaryOperationNode* unaryOperationNodePtr = std::get_if<UnaryOperationNode>(&Value))
 			{
@@ -565,6 +577,7 @@ namespace Kargono::Scripting
 	{
 		AssetNameToIDMap* m_AssetNameToID;
 		std::string m_ReturnType;
+		Ref<Rendering::Texture2D> m_AssetIcon;
 	};
 
 

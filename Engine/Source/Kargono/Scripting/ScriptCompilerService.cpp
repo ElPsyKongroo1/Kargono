@@ -257,7 +257,6 @@ namespace Kargono::Scripting
 
 			// Ensure map pointer references data
 			KG_ASSERT(assetTypeInfo.m_AssetNameToID);
-
 			// Generate suggestions for emitter configs
 			for (auto& [assetName, handle] : *assetTypeInfo.m_AssetNameToID)
 			{
@@ -266,7 +265,7 @@ namespace Kargono::Scripting
 					SuggestionSpec newSuggestion;
 					newSuggestion.m_Label = assetName;
 					newSuggestion.m_ReplacementText = assetName;
-					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEmitterConfig;
+					newSuggestion.m_Icon = assetTypeInfo.m_AssetIcon;
 					allSuggestions.push_back(newSuggestion);
 				}
 			}
@@ -332,6 +331,19 @@ namespace Kargono::Scripting
 			returnTypes.insert(type.Value);
 		}
 
+		// Generate suggestions for all namespaces
+		for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions)
+		{
+			if (Utility::Regex::GetMatchSuccess(name, queryText, false))
+			{
+				SuggestionSpec newSuggestion;
+				newSuggestion.m_Label = name;
+				newSuggestion.m_ReplacementText = name + "::";
+				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconDirectory;
+				allSuggestions.push_back(newSuggestion);
+			}
+		}
+
 		// Generate suggestions for primitive types
 		if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes))
 		{
@@ -375,42 +387,21 @@ namespace Kargono::Scripting
 			// Determine if the return types indeed match
 			bool returnTypesMatch = returnTypes.contains(funcNode.ReturnType.Value);
 
-			if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
-			{
-				// Decide whether to insert function
-				std::string label = funcNode.Namespace ? funcNode.Namespace.Value + "::" + funcNode.Name.Value : funcNode.Name.Value;
-				if (Utility::Regex::GetMatchSuccess(label, queryText, false))
-				{
-					SuggestionSpec newSuggestion;
-					newSuggestion.m_Label = label;
-					newSuggestion.m_ReplacementText = funcNode.Namespace ? funcNode.Namespace.Value + "::" + funcNode.Name.Value + "()" : funcNode.Name.Value + "()";
-					newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
-					allSuggestions.push_back(newSuggestion);
-				}
-			}
-		}
-		
-		// Generate suggestions for all assets
-		for (auto& [assetType, assetTypeInfo] : ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes)
-		{
-			// Ensure map pointer references data
-			KG_ASSERT(assetTypeInfo.m_AssetNameToID);
-
-			// Ensure the return types match for this asset type
-			if (!returnTypes.contains(assetTypeInfo.m_ReturnType))
+			if (funcNode.Namespace)
 			{
 				continue;
 			}
 
-			// Generate suggestions for this asset type
-			for (auto& [assetName, handle] : *assetTypeInfo.m_AssetNameToID)
+			if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
 			{
-				if (Utility::Regex::GetMatchSuccess(assetName, queryText, false))
+				// Decide whether to insert function
+				std::string label = funcNode.Name.Value;
+				if (Utility::Regex::GetMatchSuccess(label, queryText, false))
 				{
 					SuggestionSpec newSuggestion;
-					newSuggestion.m_Label = assetName;
-					newSuggestion.m_ReplacementText = assetName;
-					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEmitterConfig;
+					newSuggestion.m_Label = label;
+					newSuggestion.m_ReplacementText = funcNode.Name.Value + "()";
+					newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
 					allSuggestions.push_back(newSuggestion);
 				}
 			}
@@ -434,17 +425,17 @@ namespace Kargono::Scripting
 
 		// Load all asset type declarations
 		s_ActiveLanguageDefinition.AllAssetTypes.clear();
-		s_ActiveLanguageDefinition.AllAssetTypes =
+		s_ActiveLanguageDefinition.AllAssetTypes = 
 		{
-			{"AIStates", {&s_ActiveLanguageDefinition.AllAIStates, "ai_state"}},
-			{"AudioBuffers", {&s_ActiveLanguageDefinition.AllAudioBuffers, "audio_buffer"}},
-			{"EmitterConfigs", {&s_ActiveLanguageDefinition.AllEmitterConfigs, "emitter_config"}},
-			{"Fonts", {&s_ActiveLanguageDefinition.AllFonts, "font"}},
-			{"GameStates", {&s_ActiveLanguageDefinition.AllGameStates, "game_state"}},
-			{"InputMaps", {&s_ActiveLanguageDefinition.AllInputMaps, "input_map"}},
-			{"ProjectComponents", {&s_ActiveLanguageDefinition.AllProjectComponents, "project_component"}},
-			{"Scenes", {&s_ActiveLanguageDefinition.AllScenes, "scene"}},
-			{"UserInterfaces", {&s_ActiveLanguageDefinition.AllUserInterfaces, "user_interface"}}
+			{"AIStates", {&s_ActiveLanguageDefinition.AllAIStates, "ai_state", EditorUI::EditorUIService::s_IconAI}},
+			{"AudioBuffers", {&s_ActiveLanguageDefinition.AllAudioBuffers, "audio_buffer", EditorUI::EditorUIService::s_IconAudio}},
+			{"EmitterConfigs", {&s_ActiveLanguageDefinition.AllEmitterConfigs, "emitter_config", EditorUI::EditorUIService::s_IconParticles}},
+			{"Fonts", {&s_ActiveLanguageDefinition.AllFonts, "font", EditorUI::EditorUIService::s_IconFont}},
+			{"GameStates", {&s_ActiveLanguageDefinition.AllGameStates, "game_state", EditorUI::EditorUIService::s_IconGameState}},
+			{"InputMaps", {&s_ActiveLanguageDefinition.AllInputMaps, "input_map", EditorUI::EditorUIService::s_IconInput}},
+			{"ProjectComponents", {&s_ActiveLanguageDefinition.AllProjectComponents, "project_component", EditorUI::EditorUIService::s_IconProjectComponent}},
+			{"Scenes", {&s_ActiveLanguageDefinition.AllScenes, "scene", EditorUI::EditorUIService::s_IconScene}},
+			{"UserInterfaces", {&s_ActiveLanguageDefinition.AllUserInterfaces, "user_interface", EditorUI::EditorUIService::s_IconUserInterface}}
 		};
 
 		// Load in names of all AI States
@@ -1453,7 +1444,7 @@ namespace Kargono::Scripting
 		// Add namespace descriptions
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("UI", "This namespace provides functions that can manage and interact with the active user interface.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("GameState", "This namespace provides functions that can manage and interact with the active game state");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Scenes", "This namespace provides functions that can manage the active scene.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("SceneService", "This namespace provides functions that can manage the active scene.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Input", "This namespace provides functions allow access to the current input state and manage the current input map/mapping");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Audio", "This namespace provides functions that can manage audio files and play audio");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Math", "This namespace provides various math functions to be used.");
@@ -1802,6 +1793,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "AddEmitter" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "emitter_config" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::AssetLiteral, ""});
+
 		newParameter.Identifier = { ScriptTokenType::Identifier, "emitterConfig" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1878,7 +1871,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Scenes" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "SceneService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "LoadScene" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1898,7 +1891,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Scenes" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "SceneService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "GetEntity" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "entity" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
@@ -1916,7 +1909,7 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Scenes" };
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "SceneService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsSceneActive" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
