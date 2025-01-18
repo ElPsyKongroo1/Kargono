@@ -399,7 +399,7 @@ namespace Kargono::RuntimeUI
 		// Getters/Setters
 		//==============================
 		static void SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle);
-		static void SetActiveUIFromName(const std::string& uiName);
+		static void SetActiveUIFromHandle(Assets::AssetHandle uiHandle);
 		static Ref<UserInterface> GetActiveUI();
 		static Assets::AssetHandle GetActiveUIHandle();
 		static void ClearActiveUI();

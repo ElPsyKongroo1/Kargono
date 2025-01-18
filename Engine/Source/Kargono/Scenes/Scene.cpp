@@ -508,21 +508,11 @@ namespace Kargono::Scenes
 		KG_ASSERT(activeEntity);
 		return Utility::s_EntityHasComponentFunc.at(componentName)(activeEntity);
 	}
-	bool SceneService::IsSceneActive(const std::string& sceneName)
+	bool SceneService::IsSceneActive(UUID sceneID)
 	{
 		KG_ASSERT(s_ActiveScene);
-		if (!Assets::AssetService::GetSceneRegistry().contains(s_ActiveSceneHandle))
-		{
-			KG_WARN("Could not locate active scene in asset manager using current scene handle");
-			return false;
-		}
-
-		Assets::AssetInfo sceneAsset = Assets::AssetService::GetSceneRegistry().at(s_ActiveSceneHandle);
-		if (sceneAsset.Data.FileLocation == sceneName)
-		{
-			return true;
-		}
-		return false;
+		KG_ASSERT(s_ActiveSceneHandle != Assets::EmptyHandle);
+		return sceneID == s_ActiveSceneHandle;
 	}
 	void SceneService::TransitionScene(Assets::AssetHandle newSceneHandle)
 	{
@@ -557,16 +547,16 @@ namespace Kargono::Scenes
 		s_ActiveScene->OnRuntimeStart();
 	}
 
-	void SceneService::TransitionSceneFromName(const std::string& sceneName)
+	void SceneService::TransitionSceneFromHandle(Assets::AssetHandle sceneID)
 	{
-		auto [handle, sceneReference] = Assets::AssetService::GetScene(sceneName);
+		Ref<Scenes::Scene> sceneReference = Assets::AssetService::GetScene(sceneID);
 		if (sceneReference)
 		{
 			Particles::ParticleService::ClearEmitters();
 			TransitionScene(sceneReference);
 
-			s_ActiveSceneHandle = handle;
-			Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(handle, Events::ManageSceneAction::Open);
+			s_ActiveSceneHandle = sceneID;
+			Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(sceneID, Events::ManageSceneAction::Open);
 			EngineService::SubmitToEventQueue(event);
 
 			Particles::ParticleService::LoadSceneEmitters(sceneReference);

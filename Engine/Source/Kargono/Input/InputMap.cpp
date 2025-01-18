@@ -21,14 +21,14 @@ namespace Kargono::Input
 		s_ActiveInputMapHandle = newHandle;
 	}
 
-	void InputMapService::SetActiveInputMapByName(const std::string& inputMap)
+	void InputMapService::SetActiveInputMapFromHandle(Assets::AssetHandle inputMapHandle)
 	{
 		static Ref<InputMap> s_InputRef {nullptr};
 		static Assets::AssetHandle s_InputHandle {0};
 
-		auto [handle, inputReference] = Assets::AssetService::GetInputMap(inputMap);
+		Ref<Input::InputMap> inputReference = Assets::AssetService::GetInputMap(inputMapHandle);
 		s_InputRef = inputReference;
-		s_InputHandle = handle;
+		s_InputHandle = inputMapHandle;
 
 		if (!inputReference)
 		{

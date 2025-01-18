@@ -122,15 +122,15 @@ namespace Kargono::RuntimeUI
 		CalculateWindowNavigationLinks();
 	}
 
-	void RuntimeUIService::SetActiveUIFromName(const std::string& uiName)
+	void RuntimeUIService::SetActiveUIFromHandle(Assets::AssetHandle uiHandle)
 	{
 		// Get user interface from asset service system
-		auto [uiHandle, uiReference] = Assets::AssetService::GetUserInterface(uiName);
+		Ref<RuntimeUI::UserInterface> uiReference = Assets::AssetService::GetUserInterface(uiHandle);
 
 		// Validate returned user interface
 		if (!uiReference)
 		{
-			KG_WARN("Could not locate user interface. Provided name did not lead to a valid user interface.");
+			KG_WARN("Could not locate user interface. Provided handle did not lead to a valid user interface.");
 			return;
 		}
 
@@ -400,6 +400,12 @@ namespace Kargono::RuntimeUI
 
 	bool RuntimeUIService::IsWidgetSelected(const std::string& windowTag, const std::string& widgetTag)
 	{
+		if (!s_RuntimeUIContext->m_ActiveUI)
+		{
+			KG_WARN("Attempt to check if a widget is selected when no runtime UI is provided");
+			return false;
+		}
+
 		// Get the current widget
 		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
 

@@ -2,6 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Math/Math.h"
+#include "Kargono/Assets/Asset.h"
 
 #include <queue>
 #include <string>
@@ -206,7 +207,7 @@ namespace Kargono::Audio
 		// This function is currently unimplemented! This function should play requested
 		//		stereo audio and take in a buffer.
 		static void PlayStereoSound(Ref<AudioBuffer> audioBuffer);
-		static void PlayStereoSoundFromName(const std::string& audioName);
+		static void PlayStereoSoundFromHandle(Assets::AssetHandle audioHandle);
 		// This function is the main API for playing sound effects. The sourceSpec and
 		//		listenerSpec allow for customization of concepts such as source/listener
 		//		distance, source volume, source pitch, relative velocities (doppler effect),
@@ -217,7 +218,7 @@ namespace Kargono::Audio
 		//		The API simply needs to know what audio should be played! This function
 		//		calls the other PlaySound function with default values btw.
 		static void PlaySound(Ref<AudioBuffer> audioBuffer);
-		static void PlaySoundFromName(const std::string& audioName);
+		static void PlaySoundFromHandle(Assets::AssetHandle audioHandle);
 		static void SetMute(bool isMute);
 		// This function provides a method to stop all audio from playing. This function
 		//		function simply iterates through the audio source queue and stops any

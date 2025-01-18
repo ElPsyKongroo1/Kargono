@@ -71,12 +71,16 @@ namespace Kargono::Audio
 		CallAndCheckALError(alListenerfv(AL_ORIENTATION, forwardAndUpVectors));
 		CallAndCheckALError(alSourcePlay(sourceID));
 	}
-	void AudioService::PlayStereoSoundFromName(const std::string& audioName)
+	void AudioService::PlayStereoSoundFromHandle(Assets::AssetHandle audioHandle)
 	{
-		auto [handle, audioBuffer] = Assets::AssetService::GetAudioBuffer(audioName);
+		Ref<Audio::AudioBuffer> audioBuffer = Assets::AssetService::GetAudioBuffer(audioHandle);
 		if (audioBuffer)
 		{
 			PlayStereoSound(audioBuffer);
+		}
+		else
+		{
+			KG_WARN("Could not find an audio buffer with the provided handle {}", audioHandle);
 		}
 	}
 	void AudioService::PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec)
@@ -119,12 +123,16 @@ namespace Kargono::Audio
 		PlaySound(s_DefaultSourceSpec);
 	}
 
-	void AudioService::PlaySoundFromName(const std::string& audioName)
+	void AudioService::PlaySoundFromHandle(Assets::AssetHandle audioHandle)
 	{
-		auto [handle, audioBuffer] = Assets::AssetService::GetAudioBuffer(audioName);
+		Ref<Audio::AudioBuffer> audioBuffer = Assets::AssetService::GetAudioBuffer(audioHandle);
 		if (audioBuffer)
 		{
 			Audio::AudioService::PlaySound(audioBuffer);
+		}
+		else
+		{
+			KG_WARN("Could not find an audio buffer with the provided handle {}", audioHandle);
 		}
 	}
 	void AudioService::SetMute(bool isMute)

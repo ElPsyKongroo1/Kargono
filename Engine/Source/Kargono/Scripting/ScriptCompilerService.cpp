@@ -442,63 +442,81 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.AllAIStates.clear();
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAIStateRegistry())
 		{
-			s_ActiveLanguageDefinition.AllAIStates.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			s_ActiveLanguageDefinition.AllAIStates.insert_or_assign(fileName, configHandle);
 		}
 
 		// Load in names of all audio buffers
 		s_ActiveLanguageDefinition.AllAudioBuffers.clear();
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAudioBufferRegistry())
 		{
-			s_ActiveLanguageDefinition.AllAudioBuffers.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			s_ActiveLanguageDefinition.AllAudioBuffers.insert_or_assign(fileName, configHandle);
 		}
 
 		// Load in names of all emitter configs
 		s_ActiveLanguageDefinition.AllEmitterConfigs.clear();
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetEmitterConfigRegistry())
 		{
-			s_ActiveLanguageDefinition.AllEmitterConfigs.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			s_ActiveLanguageDefinition.AllEmitterConfigs.insert_or_assign(fileName, configHandle);
 		}
 
 		// Load in names of all fonts
 		s_ActiveLanguageDefinition.AllFonts.clear();
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetFontRegistry())
 		{
-			s_ActiveLanguageDefinition.AllFonts.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			s_ActiveLanguageDefinition.AllFonts.insert_or_assign(fileName, configHandle);
 		}
 
 		// Load in names of all game states
 		s_ActiveLanguageDefinition.AllGameStates.clear();
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetGameStateRegistry())
 		{
-			s_ActiveLanguageDefinition.AllGameStates.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			s_ActiveLanguageDefinition.AllGameStates.insert_or_assign(fileName, configHandle);
 		}
 
 		// Load in names of all input map
 		s_ActiveLanguageDefinition.AllInputMaps.clear();
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetInputMapRegistry())
 		{
-			s_ActiveLanguageDefinition.AllInputMaps.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			s_ActiveLanguageDefinition.AllInputMaps.insert_or_assign(fileName, configHandle);
 		}
 
 		// Load in names of all project component
 		s_ActiveLanguageDefinition.AllProjectComponents.clear();
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetProjectComponentRegistry())
 		{
-			s_ActiveLanguageDefinition.AllProjectComponents.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			s_ActiveLanguageDefinition.AllProjectComponents.insert_or_assign(fileName, configHandle);
 		}
 
 		// Load in names of all scene
 		s_ActiveLanguageDefinition.AllScenes.clear();
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetSceneRegistry())
 		{
-			s_ActiveLanguageDefinition.AllScenes.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			s_ActiveLanguageDefinition.AllScenes.insert_or_assign(fileName, configHandle);
 		}
 
 		// Load in names of all UserInterface
 		s_ActiveLanguageDefinition.AllUserInterfaces.clear();
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetUserInterfaceRegistry())
 		{
-			s_ActiveLanguageDefinition.AllUserInterfaces.insert_or_assign(configInfo.Data.FileLocation.stem().string(), configHandle);
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			s_ActiveLanguageDefinition.AllUserInterfaces.insert_or_assign(fileName, configHandle);
 		}
 
 		CreateKGScriptKeywords();
@@ -951,8 +969,8 @@ namespace Kargono::Scripting
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionMember.Description = "This function changes this entities's global state to the indicated state. This function takes in the location of an AI state component in the current project as a parameter.";
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newStateLocation" };
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "ai_state" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newAIState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
@@ -961,26 +979,7 @@ namespace Kargono::Scripting
 			generator.m_OutputText << "AI_ChangeGlobalState(";
 			generator.GenerateExpression(member.CurrentNodeExpression);
 			generator.m_OutputText << ", ";
-
-			// Output UUID of AIState if it exists
-			TokenExpressionNode* aiStateExpression = std::get_if<TokenExpressionNode>(&funcCall->Arguments.at(0)->Value);
-			KG_ASSERT(aiStateExpression);
-
-			// Check if UUID is valid
-			bool foundAIStateAsset = false;
-			std::string queryFileLocation = aiStateExpression->Value.Value;
-			Utility::Operations::RemoveCharacterFromString(queryFileLocation, '\"');
-			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
-			{
-				// Check for identical file location
-				if (asset.Data.FileLocation == queryFileLocation)
-				{
-					generator.m_OutputText << std::to_string(handle);
-					foundAIStateAsset = true;
-					break;
-				}
-			}
-			KG_ASSERT(foundAIStateAsset, "Could not locate ai state asset from provided file location");
+			generator.GenerateExpression(funcCall->Arguments.at(0));
 			generator.m_OutputText << ")";
 		};
 		newMemberParameter = {};
@@ -991,8 +990,8 @@ namespace Kargono::Scripting
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionMember.Description = "This function changes this entities's current state to the indicated state. This function takes in the location of an AI state component in the current project as a parameter.";
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newStateLocation" };
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "ai_state" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newAIState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
@@ -1001,26 +1000,7 @@ namespace Kargono::Scripting
 			generator.m_OutputText << "AI_ChangeCurrentState(";
 			generator.GenerateExpression(member.CurrentNodeExpression);
 			generator.m_OutputText << ", ";
-
-			// Output UUID of AIState if it exists
-			TokenExpressionNode* aiStateExpression = std::get_if<TokenExpressionNode>(&funcCall->Arguments.at(0)->Value);
-			KG_ASSERT(aiStateExpression);
-
-			// Check if UUID is valid
-			bool foundAIStateAsset = false;
-			std::string queryFileLocation = aiStateExpression->Value.Value;
-			Utility::Operations::RemoveCharacterFromString(queryFileLocation, '\"');
-			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
-			{
-				// Check for identical file location
-				if (asset.Data.FileLocation == queryFileLocation)
-				{
-					generator.m_OutputText << std::to_string(handle);
-					foundAIStateAsset = true;
-					break;
-				}
-			}
-			KG_ASSERT(foundAIStateAsset, "Could not locate ai state asset from provided file location");
+			generator.GenerateExpression(funcCall->Arguments.at(0));
 			generator.m_OutputText << ")";
 		};
 		newMemberParameter = {};
@@ -1031,8 +1011,8 @@ namespace Kargono::Scripting
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		newFunctionMember.Description = "This function check whether the global state of this entity is identical to the indicated aistate. This function takes in the location of an AI state component in the current project as a parameter.";
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "queryStateLocation" };
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "ai_state" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "queryAIState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
@@ -1041,26 +1021,7 @@ namespace Kargono::Scripting
 				generator.m_OutputText << "AI_IsGlobalState(";
 				generator.GenerateExpression(member.CurrentNodeExpression);
 				generator.m_OutputText << ", ";
-
-				// Output UUID of AIState if it exists
-				TokenExpressionNode* aiStateExpression = std::get_if<TokenExpressionNode>(&funcCall->Arguments.at(0)->Value);
-				KG_ASSERT(aiStateExpression);
-
-				// Check if UUID is valid
-				bool foundAIStateAsset = false;
-				std::string queryFileLocation = aiStateExpression->Value.Value;
-				Utility::Operations::RemoveCharacterFromString(queryFileLocation, '\"');
-				for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
-				{
-					// Check for identical file location
-					if (asset.Data.FileLocation == queryFileLocation)
-					{
-						generator.m_OutputText << std::to_string(handle);
-						foundAIStateAsset = true;
-						break;
-					}
-				}
-				KG_ASSERT(foundAIStateAsset, "Could not locate ai state asset from provided file location");
+				generator.GenerateExpression(funcCall->Arguments.at(0));
 				generator.m_OutputText << ")";
 			};
 		newMemberParameter = {};
@@ -1071,38 +1032,19 @@ namespace Kargono::Scripting
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		newFunctionMember.Description = "This function check whether the current state of this entity is identical to the indicated aistate. This function takes in the location of an AI state component in the current project as a parameter.";
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "queryStateLocation" };
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "ai_state" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newAIState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-			{
-				FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+		{
+			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 
-				generator.m_OutputText << "AI_IsCurrentState(";
-				generator.GenerateExpression(member.CurrentNodeExpression);
-				generator.m_OutputText << ", ";
-
-				// Output UUID of AIState if it exists
-				TokenExpressionNode* aiStateExpression = std::get_if<TokenExpressionNode>(&funcCall->Arguments.at(0)->Value);
-				KG_ASSERT(aiStateExpression);
-
-				// Check if UUID is valid
-				bool foundAIStateAsset = false;
-				std::string queryFileLocation = aiStateExpression->Value.Value;
-				Utility::Operations::RemoveCharacterFromString(queryFileLocation, '\"');
-				for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
-				{
-					// Check for identical file location
-					if (asset.Data.FileLocation == queryFileLocation)
-					{
-						generator.m_OutputText << std::to_string(handle);
-						foundAIStateAsset = true;
-						break;
-					}
-				}
-				KG_ASSERT(foundAIStateAsset, "Could not locate ai state asset from provided file location");
-				generator.m_OutputText << ")";
-			};
+			generator.m_OutputText << "AI_IsCurrentState(";
+			generator.GenerateExpression(member.CurrentNodeExpression);
+			generator.m_OutputText << ", ";
+			generator.GenerateExpression(funcCall->Arguments.at(0));
+			generator.m_OutputText << ")";
+		};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -1111,8 +1053,8 @@ namespace Kargono::Scripting
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		newFunctionMember.Description = "This function check whether the previous state of this entity is identical to the indicated aistate. This function takes in the location of an AI state component in the current project as a parameter.";
-		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "queryStateLocation" };
+		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "ai_state" });
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newAIState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
@@ -1121,26 +1063,7 @@ namespace Kargono::Scripting
 				generator.m_OutputText << "AI_IsPreviousState(";
 				generator.GenerateExpression(member.CurrentNodeExpression);
 				generator.m_OutputText << ", ";
-
-				// Output UUID of AIState if it exists
-				TokenExpressionNode* aiStateExpression = std::get_if<TokenExpressionNode>(&funcCall->Arguments.at(0)->Value);
-				KG_ASSERT(aiStateExpression);
-
-				// Check if UUID is valid
-				bool foundAIStateAsset = false;
-				std::string queryFileLocation = aiStateExpression->Value.Value;
-				Utility::Operations::RemoveCharacterFromString(queryFileLocation, '\"');
-				for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
-				{
-					// Check for identical file location
-					if (asset.Data.FileLocation == queryFileLocation)
-					{
-						generator.m_OutputText << std::to_string(handle);
-						foundAIStateAsset = true;
-						break;
-					}
-				}
-				KG_ASSERT(foundAIStateAsset, "Could not locate ai state asset from provided file location");
+				generator.GenerateExpression(funcCall->Arguments.at(0));
 				generator.m_OutputText << ")";
 			};
 		newMemberParameter = {};
@@ -1631,15 +1554,15 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "LoadUI" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "uiName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "newUserInterface" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newFunctionNode.Description = "Change the currently open user interface. This function takes the name of the new user inteface as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "LoadUserInterfaceFromName";
+			node.Identifier.Value = "LoadUserInterfaceFromHandle";
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -1793,7 +1716,6 @@ namespace Kargono::Scripting
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "AddEmitter" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "emitter_config" });
-
 		newParameter.Identifier = { ScriptTokenType::Identifier, "emitterConfig" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1873,7 +1795,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "SceneService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "LoadScene" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "scene" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "sceneName" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1881,7 +1803,7 @@ namespace Kargono::Scripting
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "TransitionSceneFromName";
+			node.Identifier.Value = "TransitionSceneFromHandle";
 
 		};
 
@@ -1911,8 +1833,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "SceneService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsSceneActive" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "sceneName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "scene" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "scene" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newFunctionNode.Description = "This function indicates whether the provided scene is currently active. This function takes a string which is the local filepath to the scene and returns a bool.";
@@ -1929,15 +1851,15 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "InputService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "LoadInputMap" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "inputMapName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "input_map" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "inputMap" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newFunctionNode.Description = "Change the active input mapping/map. The input map maps user input to functionality/scripts. This function takes the name of the new input map as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "InputMap_LoadInputMapByName";
+			node.Identifier.Value = "InputMap_LoadInputMapFromHandle";
 
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -1981,15 +1903,15 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AudioService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "PlaySound" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "soundName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "audio_buffer" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "audioBuffer" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newFunctionNode.Description = "Play a sound file. This function call is intended for short sound segments that play as mono. This function takes the name of the sound file as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "PlaySoundFromName";
+			node.Identifier.Value = "PlaySoundFromHandle";
 
 		};
 
@@ -2001,15 +1923,15 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AudioService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "PlayMusic" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "musicName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "audio_buffer" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "audioBuffer" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newFunctionNode.Description = "Play a music file. This function call is intended to play a single song file, preferebly in stereo. This function takes the name of the sound file as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "PlayStereoSoundFromName";
+			node.Identifier.Value = "PlayStereoSoundFromHandle";
 
 		};
 

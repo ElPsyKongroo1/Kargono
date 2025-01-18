@@ -141,7 +141,7 @@ namespace Kargono::Input
 		//=========================
 		static void ClearActiveInputMap();
 		static void SetActiveInputMap(Ref<InputMap> newInput, Assets::AssetHandle newHandle);
-		static void SetActiveInputMapByName(const std::string& inputMap);
+		static void SetActiveInputMapFromHandle(Assets::AssetHandle inputMapHandle);
 		static Ref<InputMap> GetActiveInputMap()
 		{
 			return s_ActiveInputMap;

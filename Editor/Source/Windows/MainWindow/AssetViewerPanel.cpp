@@ -234,6 +234,7 @@ namespace Kargono::Panels
 		m_ViewAssetPopup.m_PopupContents = [&]() 
 		{
 			Assets::AssetInfo asset = Assets::AssetService::GetAssetFromAllRegistries(m_ActiveAsset, m_ActiveAssetType);
+			EditorUI::EditorUIService::LabeledText("Asset Handle", m_ActiveAsset);
 			EditorUI::EditorUIService::LabeledText("Asset Type", Utility::AssetTypeToString(asset.Data.Type));
 			if (!asset.Data.FileLocation.empty())
 			{
