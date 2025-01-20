@@ -427,7 +427,7 @@ namespace Kargono::Panels
 					if (ImGui::MenuItem("Match Current Monitor"))
 					{
 						m_ViewportAspectRatio = Utility::ScreenResolutionToAspectRatio(
-							Projects::ScreenResolutionOptions::MatchDevice);
+							ScreenResolution::MatchDevice);
 					}
 					if (ImGui::MenuItem("Set to Project Resolution"))
 					{

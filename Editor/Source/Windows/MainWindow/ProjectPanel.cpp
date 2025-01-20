@@ -82,7 +82,7 @@ namespace Kargono::Panels
 			Assets::EmptyHandle};
 		m_SelectResolutionSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			Projects::ProjectService::SetActiveTargetResolution((Projects::ScreenResolutionOptions)(uint64_t)selection.m_Handle);
+			Projects::ProjectService::SetActiveTargetResolution((ScreenResolution)(uint64_t)selection.m_Handle);
 		};
 		m_SelectResolutionSpec.m_PopupAction = [&]()
 		{
@@ -93,9 +93,9 @@ namespace Kargono::Panels
 			};
 		};
 
-		for (Projects::ScreenResolutionOptions option : Projects::s_AllScreenResolutions)
+		for (ScreenResolution option : s_AllScreenResolutions)
 		{
-			if (option == Projects::ScreenResolutionOptions::None)
+			if (option == ScreenResolution::None)
 			{
 				continue;
 			}
