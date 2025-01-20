@@ -35,6 +35,7 @@ namespace Kargono::Panels
 		InitializeOverlayData();
 	}
 
+
 	ViewportPanel::~ViewportPanel()
 	{
 		ClearOverlayData();
@@ -690,6 +691,8 @@ namespace Kargono::Panels
 
 		DrawDebugLines();
 
+		DrawSplines();
+
 
 		Rendering::RenderingService::EndScene();
 	}
@@ -1075,6 +1078,42 @@ namespace Kargono::Panels
 			Rendering::RenderingService::SubmitDataToRenderer(s_PointInputSpec);
 		}
 		
+	}
+
+	void ViewportPanel::DrawSplines()
+	{
+		const float stepValue{ 0.05f };
+
+		for (const Math::Spline& spline : m_DebugSplines)
+		{
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_PureWhite),
+				"a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+			float adjustmentFactor{ spline.m_Looped ? 0.0f : 3.0f };
+			for (float time{ 0.0f }; time < (float)spline.m_Points.size() - adjustmentFactor; time += stepValue) // Note we subtract 3.0f to account for edge control points
+			{
+				// Get the point from the spline
+				Math::vec3 point = Math::SplineService::GetSplinePoint(spline, time);
+				Math::vec3 point2 = Math::SplineService::GetSplinePoint(spline, time + stepValue);
+				
+				s_OutputVector->clear();
+				
+				s_OutputVector->push_back(point);
+				s_OutputVector->push_back(point2);
+				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+			}
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red),
+				"a_Color", s_PointInputSpec.m_Buffer, s_PointInputSpec.m_Shader);
+			for (const Math::vec3& point : spline.m_Points)
+			{
+				// Draw the point
+				s_OutputVector->clear();
+				s_OutputVector->push_back(point);
+				s_PointInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				Rendering::RenderingService::SubmitDataToRenderer(s_PointInputSpec);
+			}
+		}
+
 	}
 
 	void ViewportPanel::DrawToolbarOverlay()

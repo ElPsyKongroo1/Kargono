@@ -133,9 +133,10 @@ namespace Kargono::Windows
 		m_ContentBrowserPanel = CreateScope<Panels::ContentBrowserPanel>();
 		m_PropertiesPanel = CreateScope<Panels::PropertiesPanel>();
 		m_AIStatePanel = CreateScope<Panels::AIStateEditorPanel>();
-		m_TestingPanel = CreateScope<Panels::TestingPanel>();
 
 		m_ViewportPanel = CreateScope<Panels::ViewportPanel>();
+
+		m_TestingPanel = CreateScope<Panels::TestingPanel>();
 	}
 	void MainWindow::OnUpdate(Timestep ts)
 	{

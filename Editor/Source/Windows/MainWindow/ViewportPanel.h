@@ -7,10 +7,12 @@
 #include "Kargono/ECS/Entity.h"
 #include "Kargono/Rendering/EditorPerspectiveCamera.h"
 #include "Kargono/Rendering/Framebuffer.h"
+#include "Kargono/Math/Spline.h"
 
 #include <vector>
 
 namespace Kargono { class EditorApp; }
+namespace Kargono::Panels { class TestingPanel; }
 
 namespace Kargono::Panels
 {
@@ -60,6 +62,7 @@ namespace Kargono::Panels
 		void DrawFrustrum(ECS::Entity& entity);
 		void DrawGridLines();
 		void DrawDebugLines();
+		void DrawSplines();
 		void DrawToolbarOverlay();
 
 		// These three functions selectively call the scene functions on m_ActiveScene to render the scene,
@@ -119,7 +122,9 @@ namespace Kargono::Panels
 		// Draw debug lines data
 		std::vector<DebugLine> m_DebugLines;
 		std::vector<DebugPoint> m_DebugPoints;
+		std::vector<Math::Spline> m_DebugSplines;
 
 		friend Kargono::EditorApp;
+		friend class Kargono::Panels::TestingPanel;
 	};
 }

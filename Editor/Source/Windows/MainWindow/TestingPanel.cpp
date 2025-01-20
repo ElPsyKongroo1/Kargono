@@ -1,4 +1,5 @@
 #include "Windows/MainWindow/TestingPanel.h"
+#include "Windows/MainWindow/ViewportPanel.h"
 
 #include "EditorApp.h"
 #include "Kargono/Utility/Timers.h"
@@ -15,7 +16,10 @@ namespace Kargono::Panels
 	static EditorUI::EditFloatSpec s_TimerTime{};
 	static EditorUI::EditIntegerSpec s_RandomTestInteger{};
 
-
+// TODO: Testing Splines
+#if 0
+	static std::vector<EditorUI::EditVec3Spec> s_ControlPointWidgets;
+#endif
 
 	static FixedString256 newString;
 	static EditorUI::TooltipSpec testTooltip{};
@@ -55,6 +59,39 @@ namespace Kargono::Panels
 		} };
 
 		testTooltip.AddTooltipEntry(std::move(newEntry));
+// TODO Testing Splines
+#if 0
+		// TODO: Please Remove
+		Math::Spline testSpline;
+		testSpline.m_Points.push_back({ 10.0f, 41.0f, 0.0f });
+		testSpline.m_Points.push_back({ 40.0f, 41.0f, 0.0f });
+		testSpline.m_Points.push_back({ 70.0f, 41.0f, 0.0f });
+		testSpline.m_Points.push_back({ 100.0f, 41.0f, 0.0f });
+		testSpline.m_Points.push_back({ 130.0f, 41.0f, 0.0f });
+		testSpline.m_Points.push_back({ 160.0f, 41.0f, 0.0f });
+		testSpline.m_Looped = true;
+		s_EditorApp->m_MainWindow->m_ViewportPanel->m_DebugSplines.push_back(testSpline);
+
+		std::vector<Math::vec3>& allPoints = s_EditorApp->m_MainWindow->m_ViewportPanel->m_DebugSplines.at(0).m_Points;
+		size_t iteration{ 0 };
+		s_ControlPointWidgets.resize(allPoints.size());
+		for (Math::vec3& point : allPoints)
+		{
+			EditorUI::EditVec3Spec& currentSpec = s_ControlPointWidgets.at(iteration);
+			currentSpec.m_Label = "Control" + std::to_string(iteration);
+			currentSpec.m_ScrollSpeed = 0.5f;
+			currentSpec.m_ProvidedData = CreateRef<size_t>(iteration);
+			currentSpec.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
+			{
+				// Get provided data
+				size_t iteration = *(size_t*)spec.m_ProvidedData.get();
+
+				Math::Spline& spline = s_EditorApp->m_MainWindow->m_ViewportPanel->m_DebugSplines.at(0);
+				spline.m_Points.at(iteration) = spec.m_CurrentVec3;
+			};
+			iteration++;
+		}
+#endif
 
 	}
 
@@ -125,6 +162,18 @@ namespace Kargono::Panels
 			}
 			ImGui::EndPopup();
 		}
+// TODO: Testing Splines
+#if 0 
+		Math::Spline& spline = s_EditorApp->m_MainWindow->m_ViewportPanel->m_DebugSplines.at(0);
+		size_t iteration{ 0 };
+		for (Math::vec3& point : spline.m_Points)
+		{
+			EditorUI::EditVec3Spec& spec = s_ControlPointWidgets.at(iteration);
+			spec.m_CurrentVec3 = spline.m_Points.at(iteration);
+			EditorUI::EditorUIService::EditVec3(spec);
+			iteration++;
+		}
+#endif
 
 #if 0
 		bool backActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
