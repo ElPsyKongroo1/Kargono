@@ -3,6 +3,7 @@
 #include "Kargono/Scripting/ScriptTokenizer.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Core/KeyCodes.h"
+#include "Kargono/Core/Resolution.h"
 
 namespace Kargono::Scripting
 {
@@ -69,6 +70,31 @@ namespace Kargono::Scripting
 							continue;
 						}
 						AddTokenAndClearBuffer(ScriptTokenType::InputKeyLiteral, { m_TextBuffer});
+						continue;
+					}
+				}
+
+				// Check for key literals
+				if (m_TextBuffer == "ScreenResolution")
+				{
+					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
+					{
+						Advance(2);
+						ClearBuffer();
+						// Fill remainder of buffer
+						while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
+						{
+							AddCurrentCharToBuffer();
+							Advance();
+						}
+
+						if (Utility::StringToScreenResolution(m_TextBuffer) == ScreenResolution::None)
+						{
+							ClearBuffer();
+							continue;
+						}
+
+						AddTokenAndClearBuffer(ScriptTokenType::ResolutionLiteral, { m_TextBuffer });
 						continue;
 					}
 				}

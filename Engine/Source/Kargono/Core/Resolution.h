@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Kargono/Core/Base.h"
-#include "Kargono/Math/Math.h"
+#include "Kargono/Math/MathAliases.h"
 
 #include <array>
 #include <string>
@@ -19,7 +18,7 @@ namespace Kargono
 	//R2560×1080, R3440×1440, R3840×1600,
 	//R5120×2160, R5760×2400, R7680×3200, R10240×4320,
 
-	enum class ScreenResolution
+	enum class ScreenResolution : uint16_t
 	{
 		None = 0,
 
@@ -285,7 +284,6 @@ namespace Kargono::Utility
 			case ScreenResolution::MatchDevice: return "Match Device";
 			case ScreenResolution::None: return "None";
 		}
-		KG_ERROR("Invalid ScreenResolution enum provided to ScreenResolutionToString function");
 		return "None";
 	}
 
@@ -392,7 +390,6 @@ namespace Kargono::Utility
 		if (optionStr == "Match Device") { return ScreenResolution::MatchDevice; }
 		if (optionStr == "None") { return ScreenResolution::None; }
 
-		KG_ERROR("Invalid ScreenResolution enum provided to StringToScreenResolution function");
 		return ScreenResolution::None;
 	}
 
@@ -504,7 +501,6 @@ namespace Kargono::Utility
 		case ScreenResolution::None:
 			return "Invalid Aspect Ratio";
 		}
-		KG_ERROR("Invalid ScreenResolution enum provided to ScreenResolutionToString function");
 		return "None";
 	}
 

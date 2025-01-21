@@ -1,5 +1,6 @@
 #include "kgpch.h"
 
+#include "Kargono/Core/Base.h"
 #include "Kargono/Core/Resolution.h"
 #include "Kargono/Core/Engine.h"
 

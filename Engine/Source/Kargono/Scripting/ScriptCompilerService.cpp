@@ -616,6 +616,14 @@ namespace Kargono::Scripting
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
+		newPrimitiveType.Name = "screen_resolution";
+		newPrimitiveType.Description = "A predefined type taht contains all available screen resolutions. Ex: ScreenResolution::1920x1080 or ScreenResolution::512x512";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::ResolutionLiteral;
+		newPrimitiveType.EmittedDeclaration = "ScreenResolution";
+		newPrimitiveType.EmittedParameter = "ScreenResolution";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGrid;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
 		newPrimitiveType.Name = "message_type";
 		newPrimitiveType.Description = "A type that enumerates the different messages that can be sent between entities directly";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::MessageTypeLiteral;
@@ -2331,6 +2339,7 @@ namespace Kargono::Scripting
 			token.Type == ScriptTokenType::BooleanLiteral ||
 			token.Type == ScriptTokenType::FloatLiteral ||
 			token.Type == ScriptTokenType::InputKeyLiteral ||
+			token.Type == ScriptTokenType::ResolutionLiteral ||
 			token.Type == ScriptTokenType::AssetLiteral ||
 			token.Type == ScriptTokenType::MessageTypeLiteral)
 		{

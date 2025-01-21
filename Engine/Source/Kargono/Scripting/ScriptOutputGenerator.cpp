@@ -227,6 +227,10 @@ namespace Kargono::Scripting
 			{
 				m_OutputText << "Key::" + token->Value.Value;
 			}
+			else if (token->Value.Type == ScriptTokenType::ResolutionLiteral)
+			{
+				m_OutputText << "ScreenResolution::" + token->Value.Value;
+			}
 			else if (token->Value.Type == ScriptTokenType::MessageTypeLiteral)
 			{
 				m_OutputText << Utility::FileSystem::CRCFromString(token->Value.Value.c_str());

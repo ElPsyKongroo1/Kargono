@@ -725,6 +725,7 @@ namespace Kargono::Scripting
 		outputStream << "#include <limits>\n";
 		outputStream << "#include \"" << "Kargono/Math/MathAliases.h" << "\"\n"; // Include Math Library
 		outputStream << "#include \"" << "Kargono/Core/KeyCodes.h" << "\"\n"; // Include KeyCodes
+		outputStream << "#include \"" << "Kargono/Core/Resolution.h" << "\"\n"; // Include Resolutions
 		outputStream << "#include \"" << "Kargono/Core/MouseCodes.h" << "\"\n"; // Include MouseCodes
 		outputStream << "#include \"" << "Kargono/Physics/Physics2DCommon.h" << "\"\n"; // Include Physics Common
 

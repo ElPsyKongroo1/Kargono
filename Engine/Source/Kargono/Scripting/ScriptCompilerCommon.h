@@ -32,6 +32,7 @@ namespace Kargono::Scripting
 		BooleanLiteral,
 		FloatLiteral,
 		InputKeyLiteral,
+		ResolutionLiteral,
 		MessageTypeLiteral,
 
 		// Asset Literals
@@ -123,6 +124,7 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::StringLiteral: return "String Literal";
 		case Scripting::ScriptTokenType::FloatLiteral: return "Float Literal";
 		case Scripting::ScriptTokenType::InputKeyLiteral: return "Input Key Literal";
+		case Scripting::ScriptTokenType::ResolutionLiteral: return "Resolution Literal";
 		case Scripting::ScriptTokenType::MessageTypeLiteral: return "Message Type Literal";
 
 		case Scripting::ScriptTokenType::AssetLiteral: return "Asset Literal";
