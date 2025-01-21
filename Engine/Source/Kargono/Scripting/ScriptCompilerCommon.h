@@ -251,6 +251,20 @@ namespace Kargono::Scripting
 		ScriptToken ReturnType{};
 	};
 
+	struct ResolutionNode
+	{
+		ScriptToken Namespace{};
+		ScriptToken Identifier{};
+		ScriptToken ReturnType{};
+	};
+
+	struct InputKeyNode
+	{
+		ScriptToken Namespace{};
+		ScriptToken Identifier{};
+		ScriptToken ReturnType{};
+	};
+
 	struct UnaryOperationNode
 	{
 		ScriptToken Operator{};
@@ -294,7 +308,7 @@ namespace Kargono::Scripting
 
 	struct Expression
 	{
-		std::variant<FunctionCallNode, TokenExpressionNode, UnaryOperationNode, BinaryOperationNode, InitializationListNode, MemberNode, TernaryOperationNode, AssetNode> Value{};
+		std::variant<FunctionCallNode, TokenExpressionNode, UnaryOperationNode, BinaryOperationNode, InitializationListNode, MemberNode, TernaryOperationNode, AssetNode, InputKeyNode, ResolutionNode> Value{};
 		Ref<ExpressionGenerationAffixes> GenerationAffixes{ nullptr };
 
 		ScriptToken GetReturnType()
@@ -308,6 +322,16 @@ namespace Kargono::Scripting
 			{
 				AssetNode& assetNode = *assetNodePtr;
 				return assetNode.ReturnType;
+			}
+			else if (InputKeyNode* inputKeyNodePtr = std::get_if<InputKeyNode>(&Value))
+			{
+				InputKeyNode& inputKeyNode = *inputKeyNodePtr;
+				return inputKeyNode.ReturnType;
+			}
+			else if (ResolutionNode* resolutionNodePtr = std::get_if<ResolutionNode>(&Value))
+			{
+				ResolutionNode& resolutionNode = *resolutionNodePtr;
+				return resolutionNode.ReturnType;
 			}
 			else if (UnaryOperationNode* unaryOperationNodePtr = std::get_if<UnaryOperationNode>(&Value))
 			{

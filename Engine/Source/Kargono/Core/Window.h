@@ -64,7 +64,7 @@ namespace Kargono
 		virtual ViewportData& GetActiveViewport() const = 0;
 		virtual void SetActiveViewport(ViewportData* viewportData) = 0;
 
-		virtual Math::vec2 GetMonitorDimensions() = 0;
+		virtual Math::uvec2 GetMonitorDimensions() = 0;
 		virtual void ResizeWindow(Math::vec2 newWindowSize) = 0;
 		//==============================
 		// Manage Event Callback

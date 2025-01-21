@@ -507,5 +507,5 @@ namespace Kargono::Utility
 
 	Math::uvec2 GetClosestAspectRatio(Math::vec2 monitorResolution);
 	Math::uvec2 ScreenResolutionToAspectRatio(ScreenResolution option);
-	Math::vec2 ScreenResolutionToVec2(ScreenResolution option);
+	Math::uvec2 ScreenResolutionToVec2(ScreenResolution option);
 }

@@ -82,7 +82,11 @@ namespace Kargono::Panels
 			Assets::EmptyHandle};
 		m_SelectResolutionSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
+			// Set the target resolution
 			Projects::ProjectService::SetActiveTargetResolution((ScreenResolution)(uint64_t)selection.m_Handle);
+
+			// Revalidate the editor's viewport
+			s_MainWindow->m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio((ScreenResolution)(uint64_t)selection.m_Handle));
 		};
 		m_SelectResolutionSpec.m_PopupAction = [&]()
 		{

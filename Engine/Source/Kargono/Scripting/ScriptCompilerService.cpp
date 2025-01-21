@@ -11,6 +11,7 @@
 #include "Kargono/Assets/AssetService.h"
 #include "Kargono/ECS/ProjectComponent.h"
 #include "Kargono/Utility/Operations.h"
+#include "Kargono/Core/KeyCodes.h"
 
 
 namespace Kargono::Utility
@@ -268,6 +269,54 @@ namespace Kargono::Scripting
 					newSuggestion.m_Icon = assetTypeInfo.m_AssetIcon;
 					allSuggestions.push_back(newSuggestion);
 				}
+			}
+		}
+
+		// Generate suggestions for screen resolution literals
+		if (context.CurrentNamespace.Value == "ScreenResolution")
+		{
+			for (ScreenResolution resolution : s_AllScreenResolutions)
+			{
+				if (resolution == ScreenResolution::None)
+				{
+					continue;
+				}
+				std::string resolutionString = Utility::ScreenResolutionToString(resolution);
+
+				// Generate suggestions for each key
+				if (Utility::Regex::GetMatchSuccess(resolutionString, queryText, false))
+				{
+					SuggestionSpec newSuggestion;
+					newSuggestion.m_Label = resolutionString;
+					newSuggestion.m_ReplacementText = resolutionString;
+					newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconGrid;
+					allSuggestions.push_back(newSuggestion);
+				}
+
+			}
+		}
+
+		// Generate suggestions for keyboard literals
+		if (context.CurrentNamespace.Value == "Key")
+		{
+			for (KeyCode key : Key::s_AllKeyCodes)
+			{
+				if (key == Key::None)
+				{
+					continue;
+				}
+				std::string keyString = Utility::KeyCodeToString(key);
+
+				// Generate suggestions for each key
+				if (Utility::Regex::GetMatchSuccess(keyString, queryText, false))
+				{
+					SuggestionSpec newSuggestion;
+					newSuggestion.m_Label = keyString;
+					newSuggestion.m_ReplacementText = keyString;
+					newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconGrid;
+					allSuggestions.push_back(newSuggestion);
+				}
+
 			}
 		}
 
@@ -611,16 +660,16 @@ namespace Kargono::Scripting
 		newPrimitiveType.Name = "keycode";
 		newPrimitiveType.Description = "A predefined type that contains all available input keys. Ex: Key::RightShift or Key::A";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::InputKeyLiteral;
-		newPrimitiveType.EmittedDeclaration = "KeyCode";
-		newPrimitiveType.EmittedParameter = "KeyCode";
+		newPrimitiveType.EmittedDeclaration = "uint16_t";
+		newPrimitiveType.EmittedParameter = "uint16_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType.Name = "screen_resolution";
 		newPrimitiveType.Description = "A predefined type taht contains all available screen resolutions. Ex: ScreenResolution::1920x1080 or ScreenResolution::512x512";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::ResolutionLiteral;
-		newPrimitiveType.EmittedDeclaration = "ScreenResolution";
-		newPrimitiveType.EmittedParameter = "ScreenResolution";
+		newPrimitiveType.EmittedDeclaration = "uint16_t";
+		newPrimitiveType.EmittedParameter = "uint16_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGrid;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
@@ -1385,6 +1434,8 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("PhysicsService", "This namespace provides functions that interact with the physics system in the engine.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("ParticleService", "This namespace provides functions that interact with the particle system in the engine.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AppService", "This namespace provides functions that interact with the application's state.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Key", "This namespace resolves to different keyboard key literals to be used with the InputService namespace.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("ScreenResolution", "This namespace resolves to different screen resolution literals to be used with the AppService namespace.");
 
 		// Add all asset types as namespaces
 		for (auto& [assetType, assetNameToIDMap] : s_ActiveLanguageDefinition.AllAssetTypes)
@@ -1508,15 +1559,11 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AppService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "ResizeApp" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "uint32" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "screen_resolution" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "newWidth" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "uint32" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "newHeight" };
-		newFunctionNode.Parameters.push_back(newParameter);
-		newParameter = {};
-		newFunctionNode.Description = "Resize the current application viewport and window to the indicated width and height in pixels. This function takes two uint32 values to represent the window's new dimensions.";
+		newFunctionNode.Description = "Resize the current application viewport and window to the indicated resolution. This function a screen_resolution as a paramter such as: ScreenResolution::1920x1080";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};

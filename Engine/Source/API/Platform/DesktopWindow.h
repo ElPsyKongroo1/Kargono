@@ -102,7 +102,7 @@ namespace API::Platform
 		// This function simply places the GLFW window in the middle of the screen
 		virtual void CenterWindow() override;
 		// This function queries GLFW for the dimensions of the current monitor
-		virtual Kargono::Math::vec2 GetMonitorDimensions() override;
+		virtual Kargono::Math::uvec2 GetMonitorDimensions() override;
 		// This function resizes the GLFW window to the specified dimensions.
 		virtual void ResizeWindow(Kargono::Math::vec2 newWindowSize) override;
 		virtual void ToggleMaximized() override;

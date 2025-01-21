@@ -56,20 +56,19 @@ namespace Kargono::Scripting
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 					{
+						AddTokenAndClearBuffer(ScriptTokenType::Identifier, m_TextBuffer);
+						AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, { "::" });
 						Advance(2);
-						ClearBuffer();
 						// Fill remainder of buffer
-						while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
+						while (CurrentLocationValid() && (std::isalnum(GetCurrentChar()) || GetCurrentChar() == '_'))
 						{
 							AddCurrentCharToBuffer();
 							Advance();
 						}
-						if (Utility::StringToKeyCode(m_TextBuffer) == Key::None)
+						if (m_TextBuffer.size() > 0)
 						{
-							ClearBuffer();
-							continue;
+							AddTokenAndClearBuffer(ScriptTokenType::InputKeyLiteral, { m_TextBuffer });
 						}
-						AddTokenAndClearBuffer(ScriptTokenType::InputKeyLiteral, { m_TextBuffer});
 						continue;
 					}
 				}
@@ -79,22 +78,19 @@ namespace Kargono::Scripting
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 					{
+						AddTokenAndClearBuffer(ScriptTokenType::Identifier, m_TextBuffer);
+						AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, { "::" });
 						Advance(2);
-						ClearBuffer();
 						// Fill remainder of buffer
-						while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
+						while (CurrentLocationValid() && (std::isalnum(GetCurrentChar()) || GetCurrentChar() == '_'))
 						{
 							AddCurrentCharToBuffer();
 							Advance();
 						}
-
-						if (Utility::StringToScreenResolution(m_TextBuffer) == ScreenResolution::None)
+						if (m_TextBuffer.size() > 0)
 						{
-							ClearBuffer();
-							continue;
+							AddTokenAndClearBuffer(ScriptTokenType::ResolutionLiteral, { m_TextBuffer });
 						}
-
-						AddTokenAndClearBuffer(ScriptTokenType::ResolutionLiteral, { m_TextBuffer });
 						continue;
 					}
 				}
@@ -107,7 +103,7 @@ namespace Kargono::Scripting
 						Advance(2);
 						ClearBuffer();
 						// Fill remainder of buffer
-						while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
+						while (CurrentLocationValid() && (std::isalnum(GetCurrentChar()) || GetCurrentChar() == '_'))
 						{
 							AddCurrentCharToBuffer();
 							Advance();
@@ -129,7 +125,6 @@ namespace Kargono::Scripting
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 					{
-
 						AddTokenAndClearBuffer(ScriptTokenType::Identifier, m_TextBuffer);
 						AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, { "::" });
 						Advance(2);

@@ -281,16 +281,16 @@ namespace API::Platform
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 		glfwSetWindowPos(m_Window, (mode->width - m_Data.Width) / 2, (mode->height - m_Data.Height) / 2);
 	}
-	glm::vec2 DesktopWindow::GetMonitorDimensions()
+	glm::uvec2 DesktopWindow::GetMonitorDimensions()
 	{
 		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 		if (!monitor)
 		{
 			KG_WARN("Could not locate primary monitor! Returning default monitor dimensions.");
-			return glm::vec2(400.0f, 400.0f);
+			return glm::uvec2(400, 400);
 		}
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-		return glm::vec2(static_cast<float>(mode->width), static_cast<float>(mode->height));
+		return glm::uvec2(mode->width, mode->height);
 	}
 	void DesktopWindow::ResizeWindow(glm::vec2 newWindowSize)
 	{

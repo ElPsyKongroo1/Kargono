@@ -3,6 +3,8 @@
 #include "Kargono/Scripting/ScriptOutputGenerator.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 
+#include "Kargono/Core/Resolution.h"
+#include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Utility/FileSystem.h"
 
 namespace Kargono::Scripting
@@ -225,11 +227,11 @@ namespace Kargono::Scripting
 		{
 			if (token->Value.Type == ScriptTokenType::InputKeyLiteral)
 			{
-				m_OutputText << "Key::" + token->Value.Value;
+				m_OutputText << std::to_string((uint16_t)Utility::StringToKeyCode(token->Value.Value));
 			}
 			else if (token->Value.Type == ScriptTokenType::ResolutionLiteral)
 			{
-				m_OutputText << "ScreenResolution::" + token->Value.Value;
+				m_OutputText << std::to_string((uint16_t)Utility::StringToScreenResolution(token->Value.Value));
 			}
 			else if (token->Value.Type == ScriptTokenType::MessageTypeLiteral)
 			{
@@ -289,6 +291,20 @@ namespace Kargono::Scripting
 
 			// Output ID of the asset
 			m_OutputText << assetNameToIDMap->at(assetNode->Identifier.Value);
+		}
+		else if (InputKeyNode* inputKeyNode = std::get_if<InputKeyNode>(&expression->Value))
+		{
+			KeyCode currentKey = Utility::StringToKeyCode(inputKeyNode->Identifier.Value);
+			KG_ASSERT(currentKey != Key::None);
+
+			m_OutputText << std::to_string((uint16_t)currentKey);
+		}
+		else if (ResolutionNode* resolutionNode = std::get_if<ResolutionNode>(&expression->Value))
+		{
+			ScreenResolution currentResolution = Utility::StringToScreenResolution(resolutionNode->Identifier.Value);
+			KG_ASSERT(currentResolution != ScreenResolution::None);
+
+			m_OutputText << std::to_string((uint16_t)currentResolution);
 		}
 
 		else if (InitializationListNode* initListNode = std::get_if<InitializationListNode>(&expression->Value))

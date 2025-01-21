@@ -76,18 +76,16 @@ namespace Kargono::Scripting
 		EngineService::OnEvent(&newEvent);
 	}
 
-	static void ApplicationResize(uint32_t windowWidth, uint32_t windowHeight)
+	static void ApplicationResize(uint16_t resolution)
 	{
-		static uint32_t s_NewWidth;
-		static uint32_t s_NewHeight;
-
-		s_NewWidth = windowWidth;
-		s_NewHeight = windowHeight;
+		static ScreenResolution s_NewResolution;
+		s_NewResolution = (ScreenResolution)resolution;
 
 		EngineService::SubmitToMainThread([&]()
 		{
 			// Send app resize event to either the runtime or the editor
-			Events::ApplicationResizeEvent newEvent = Events::ApplicationResizeEvent(s_NewWidth, s_NewHeight);
+			Math::uvec2 resolution= Utility::ScreenResolutionToVec2(s_NewResolution);
+			Events::ApplicationResizeEvent newEvent = Events::ApplicationResizeEvent(resolution.x, resolution.y);
 			EngineService::OnEvent(&newEvent);
 		});
 	}
@@ -724,9 +722,6 @@ namespace Kargono::Scripting
 		outputStream << "#include <sstream>\n";
 		outputStream << "#include <limits>\n";
 		outputStream << "#include \"" << "Kargono/Math/MathAliases.h" << "\"\n"; // Include Math Library
-		outputStream << "#include \"" << "Kargono/Core/KeyCodes.h" << "\"\n"; // Include KeyCodes
-		outputStream << "#include \"" << "Kargono/Core/Resolution.h" << "\"\n"; // Include Resolutions
-		outputStream << "#include \"" << "Kargono/Core/MouseCodes.h" << "\"\n"; // Include MouseCodes
 		outputStream << "#include \"" << "Kargono/Physics/Physics2DCommon.h" << "\"\n"; // Include Physics Common
 
 		// Conversion Function from RValueToLValue
@@ -871,12 +866,12 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileOneParameters(Rigidbody2DComponent_GetLinearVelocity, Math::vec2, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(FindEntityHandleByName, uint64_t, const std::string&)
 		AddEngineFunctionToCPPFileOneParameters(AddDebugPoint, void, Math::vec3)
+		AddEngineFunctionToCPPFileOneParameters(Application_Resize, void, uint16_t)
 		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(AddDebugLine, void, Math::vec3, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_IsWidgetSelected, bool, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomInteger, int32_t, int32_t, int32_t)
 		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomFloat, float, float, float)
-		AddEngineFunctionToCPPFileTwoParameters(Application_Resize, void, uint32_t, uint32_t)
 		AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)
 		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
@@ -914,6 +909,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(VoidUInt16, void, uint16_t)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SignalAll)
+		AddEngineFunctionToCPPFileEnd(Application_Resize)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidVec3, void, Math::vec3)
 		outputStream << "{\n";
@@ -1019,7 +1015,6 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt32UInt32, void, uint32_t, uint32_t)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(Application_Resize)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrString, void*, const std::string&)
 		outputStream << "{\n";
@@ -1362,7 +1357,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AI_IsPreviousState, AI::AIService::IsPreviousState, BoolUInt64UInt64)
 		AddEngineFunctionPointerToDll(Physics_Raycast, Physics::Physics2DService::Raycast, RaycastResultVec2Vec2)
 		AddEngineFunctionPointerToDll(Particles_AddEmitterByHandle, Particles::ParticleService::AddEmitterByHandle, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(Application_Resize, ApplicationResize, VoidUInt32UInt32)
+		AddEngineFunctionPointerToDll(Application_Resize, ApplicationResize, VoidUInt16)
 		AddEngineFunctionPointerToDll(Application_Close, EngineService::SubmitApplicationCloseEvent, VoidNone)
 	}
 }

@@ -1,6 +1,8 @@
 #include "kgpch.h"
 #include "Kargono/Scripting/ScriptTokenParser.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
+#include "Kargono/Core/KeyCodes.h"
+#include "Kargono/Core/Resolution.h"
 
 namespace Kargono::Utility
 {
@@ -49,15 +51,35 @@ namespace Kargono::Utility
 				PrintExpression(argument, indentation + 2);
 			}
 		}
-		else if (Scripting::AssetNode* AssetExpression = std::get_if<Scripting::AssetNode>(&expression->Value))
+		else if (Scripting::AssetNode* assetExpression = std::get_if<Scripting::AssetNode>(&expression->Value))
 		{
 			KG_INFO("{}Expression Asset", GetIndentation(indentation));
 			KG_INFO("{}Namespace", GetIndentation(indentation + 1));
-			PrintToken(AssetExpression->Namespace, indentation + 2);
+			PrintToken(assetExpression->Namespace, indentation + 2);
 			KG_INFO("{}Identifier", GetIndentation(indentation + 1));
-			PrintToken(AssetExpression->Identifier, indentation + 2);
+			PrintToken(assetExpression->Identifier, indentation + 2);
 			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
-			PrintToken(AssetExpression->ReturnType, indentation + 2);
+			PrintToken(assetExpression->ReturnType, indentation + 2);
+		}
+		else if (Scripting::InputKeyNode* inputKeyExpression = std::get_if<Scripting::InputKeyNode>(&expression->Value))
+		{
+			KG_INFO("{}Expression Asset", GetIndentation(indentation));
+			KG_INFO("{}Namespace", GetIndentation(indentation + 1));
+			PrintToken(inputKeyExpression->Namespace, indentation + 2);
+			KG_INFO("{}Identifier", GetIndentation(indentation + 1));
+			PrintToken(inputKeyExpression->Identifier, indentation + 2);
+			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
+			PrintToken(inputKeyExpression->ReturnType, indentation + 2);
+		}
+		else if (Scripting::ResolutionNode* resolutionExpression = std::get_if<Scripting::ResolutionNode>(&expression->Value))
+		{
+			KG_INFO("{}Expression Asset", GetIndentation(indentation));
+			KG_INFO("{}Namespace", GetIndentation(indentation + 1));
+			PrintToken(resolutionExpression->Namespace, indentation + 2);
+			KG_INFO("{}Identifier", GetIndentation(indentation + 1));
+			PrintToken(resolutionExpression->Identifier, indentation + 2);
+			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
+			PrintToken(resolutionExpression->ReturnType, indentation + 2);
 		}
 		else if (Scripting::InitializationListNode* initListExpression = std::get_if<Scripting::InitializationListNode>(&expression->Value))
 		{
@@ -820,6 +842,38 @@ namespace Kargono::Scripting
 			}
 		}
 
+		// Parse Expression Input Key
+		if (!foundValidExpression)
+		{
+			auto [success, expression] = ParseExpressionInputKey(parentExpressionSize);
+			if (success)
+			{
+				newExpression = expression;
+				foundValidExpression = true;
+			}
+			if (CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Expression, "Invalid input key identifier", GetCurrentToken(parentExpressionSize));
+				return { false, {} };
+			}
+		}
+
+		// Parse Expression Input Key
+		if (!foundValidExpression)
+		{
+			auto [success, expression] = ParseExpressionResolution(parentExpressionSize);
+			if (success)
+			{
+				newExpression = expression;
+				foundValidExpression = true;
+			}
+			if (CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Expression, "Invalid resolution identifier", GetCurrentToken(parentExpressionSize));
+				return { false, {} };
+			}
+		}
+
 		// Parse Expression Initialization List
 		if (!foundValidExpression)
 		{
@@ -1302,6 +1356,134 @@ namespace Kargono::Scripting
 		newAssetExpression->Value = newAssetNode;
 		parentExpressionSize += initialAdvance;
 		return { true, newAssetExpression };
+	}
+	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionInputKey(uint32_t& parentExpressionSize)
+	{
+		Ref<Expression> newInputKeyExpression{ CreateRef<Expression>() };
+		InputKeyNode newInputKeyNode{};
+
+		// Check for input key namespace, namespace resolver symbol, and input key identifier
+		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
+		int32_t initialAdvance{ 0 };
+		if (tokenBuffer.Type == ScriptTokenType::Identifier &&
+			GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::NamespaceResolver &&
+			GetCurrentToken(parentExpressionSize + 2).Type == ScriptTokenType::InputKeyLiteral)
+		{
+			newInputKeyNode.Namespace = tokenBuffer;
+			newInputKeyNode.Identifier = GetCurrentToken(parentExpressionSize + 2);
+			initialAdvance = 3;
+		}
+		else
+		{
+			return { false, {} };
+		}
+
+		// Check for context probe
+		if (IsContextProbe(GetCurrentToken(parentExpressionSize + 2)))
+		{
+			// Ensure namespace identifier exists
+			if (!ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(tokenBuffer.Value))
+			{
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, namespace node is invalid", tokenBuffer);
+				return { false, {} };
+			}
+			// Store context probe for argument
+			CursorContext newContext;
+			newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AfterNamespaceResolution);
+			newContext.CurrentNamespace = tokenBuffer;
+			m_CursorContext = newContext;
+			StoreParseError(ParseErrorType::ContextProbe, "Found context probe for function namespace", tokenBuffer);
+			return { false, {} };
+		}
+
+
+		// Ensure input key namespace is valid
+		if (newInputKeyNode.Namespace.Value != "Key")
+		{
+			StoreParseError(ParseErrorType::Expression, "Unknown key provided", newInputKeyNode.Identifier);
+			return { false, {} };
+		}
+
+		
+		// Ensure the key identifier is valid
+		if (Utility::StringToKeyCode(newInputKeyNode.Identifier.Value) == Key::None)
+		{
+			StoreParseError(ParseErrorType::Expression, "Unknown key provided", newInputKeyNode.Identifier);
+			return { false, {} };
+		}
+
+		// Get return type from function node and emplace it into the input key node
+		newInputKeyNode.ReturnType = { ScriptTokenType::PrimitiveType, "keycode"};
+
+		// Fill the expression buffer and exit
+		newInputKeyExpression->Value = newInputKeyNode;
+		parentExpressionSize += initialAdvance;
+		return { true, newInputKeyExpression };
+	}
+	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionResolution(uint32_t& parentExpressionSize)
+	{
+		Ref<Expression> newResolutionExpression{ CreateRef<Expression>() };
+		ResolutionNode newResolutionNode{};
+
+		// Check for resolution namespace, namespace resolver symbol, and resolution identifier
+		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
+		int32_t initialAdvance{ 0 };
+		if (tokenBuffer.Type == ScriptTokenType::Identifier &&
+			GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::NamespaceResolver &&
+			GetCurrentToken(parentExpressionSize + 2).Type == ScriptTokenType::ResolutionLiteral)
+		{
+			newResolutionNode.Namespace = tokenBuffer;
+			newResolutionNode.Identifier = GetCurrentToken(parentExpressionSize + 2);
+			initialAdvance = 3;
+		}
+		else
+		{
+			return { false, {} };
+		}
+
+		// Check for context probe
+		if (IsContextProbe(GetCurrentToken(parentExpressionSize + 2)))
+		{
+			// Ensure namespace identifier exists
+			if (!ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(tokenBuffer.Value))
+			{
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, namespace node is invalid", tokenBuffer);
+				return { false, {} };
+			}
+			// Store context probe for argument
+			CursorContext newContext;
+			newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AfterNamespaceResolution);
+			newContext.CurrentNamespace = tokenBuffer;
+			m_CursorContext = newContext;
+			StoreParseError(ParseErrorType::ContextProbe, "Found context probe for function namespace", tokenBuffer);
+			return { false, {} };
+		}
+
+
+		// Ensure resolution namespace is valid
+		if (newResolutionNode.Namespace.Value != "ScreenResolution")
+		{
+			StoreParseError(ParseErrorType::Expression, "Unknown resolution provided", newResolutionNode.Identifier);
+			return { false, {} };
+		}
+
+
+		// Ensure the resolution identifier is valid
+		if (Utility::StringToScreenResolution(newResolutionNode.Identifier.Value) == ScreenResolution::None)
+		{
+			StoreParseError(ParseErrorType::Expression, "Unknown resolution provided", newResolutionNode.Identifier);
+			return { false, {} };
+		}
+
+		// Get return type from function node and emplace it into the input key node
+		newResolutionNode.ReturnType = { ScriptTokenType::PrimitiveType, "screen_resolution" };
+
+		// Fill the expression buffer and exit
+		newResolutionExpression->Value = newResolutionNode;
+		parentExpressionSize += initialAdvance;
+		return { true, newResolutionExpression };
 	}
 	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionUnaryOperation(uint32_t& parentExpressionSize)
 	{
@@ -2693,7 +2875,10 @@ namespace Kargono::Scripting
 
 	bool ScriptTokenParser::IsContextProbe(ScriptToken token)
 	{
-		if ((token.Type == ScriptTokenType::Identifier || token.Type == ScriptTokenType::AssetLiteral) && 
+		if ((token.Type == ScriptTokenType::Identifier ||
+			token.Type == ScriptTokenType::AssetLiteral ||
+			token.Type == ScriptTokenType::InputKeyLiteral ||
+			token.Type == ScriptTokenType::ResolutionLiteral) &&
 			token.Value == ContextProbe)
 		{
 			return true;
