@@ -226,6 +226,8 @@ namespace Kargono::Windows
 			}
 		}
 
+		m_TestingPanel->OnInputEvent(event);
+
 		return handled;
 	}
 	bool MainWindow::OnAssetEvent(Events::Event* event)
@@ -521,6 +523,14 @@ namespace Kargono::Windows
 		EditorUI::EditorUIService::EndRendering();
 	}
 
+	bool MainWindow::OnApplicationResize(Events::ApplicationResizeEvent event)
+	{
+		// Resize the window's viewport
+		Math::uvec2 aspectRatio = Utility::GetClosestAspectRatio({ event.GetWidth(), event.GetHeight() });
+		m_ViewportPanel->SetViewportAspectRatio(aspectRatio);
+		return false;
+	}
+
 	bool MainWindow::OnApplicationClose(Events::ApplicationCloseEvent event)
 	{
 		OnStop();
@@ -708,6 +718,9 @@ namespace Kargono::Windows
 
 	void MainWindow::OnPlay()
 	{
+		// Resize the window to the project's viewport settings
+		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
+
 		RuntimeUI::RuntimeUIService::ClearActiveUI();
 		// Cache Current InputMap in editor
 		if (!Input::InputMapService::GetActiveInputMap())
@@ -771,6 +784,9 @@ namespace Kargono::Windows
 	}
 	void MainWindow::OnStop()
 	{
+		// Resize the window to the project's viewport settings
+		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
+
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		KG_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
 
@@ -875,6 +891,10 @@ namespace Kargono::Windows
 			if (event->GetEventType() == Events::EventType::AppClose)
 			{
 				handled = OnApplicationClose(*(Events::ApplicationCloseEvent*)event);
+			}
+			else if (event->GetEventType() == Events::EventType::AppResize)
+			{
+				handled = OnApplicationResize(*(Events::ApplicationResizeEvent*)event);
 			}
 		}
 		return handled;

@@ -1376,6 +1376,7 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AIService", "This namespace provides functions that interact with the AI system in the engine.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("PhysicsService", "This namespace provides functions that interact with the physics system in the engine.");
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("ParticleService", "This namespace provides functions that interact with the particle system in the engine.");
+		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AppService", "This namespace provides functions that interact with the application's state.");
 
 		// Add all asset types as namespaces
 		for (auto& [assetType, assetNameToIDMap] : s_ActiveLanguageDefinition.AllAssetTypes)
@@ -1491,6 +1492,40 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Debug function clears all debug points from the editor. This function takes no arguments.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AppService" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "ResizeApp" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "uint32" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "newWidth" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "uint32" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "newHeight" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Resize the current application viewport and window to the indicated width and height in pixels. This function takes two uint32 values to represent the window's new dimensions.";
+		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "Application_Resize";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AppService" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "CloseApp" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionNode.Description = "Send a message to the engine to close the currently running application. This function terminates your application!";
+		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "Application_Close";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};

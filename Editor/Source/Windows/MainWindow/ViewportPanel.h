@@ -81,6 +81,8 @@ namespace Kargono::Panels
 		void InitializeOverlayData();
 		void ClearOverlayData();
 
+		void SetViewportAspectRatio(const Math::uvec2& newAspectRatio);
+
 
 	private:
 		//=========================
@@ -99,6 +101,7 @@ namespace Kargono::Panels
 		Rendering::EditorPerspectiveCamera m_EditorCamera;
 		int m_GizmoType{ -1 };
 		ViewportData m_ViewportData;
+		Math::uvec2 m_ViewportAspectRatio{ 1, 1 };
 	private:
 		// Viewport resources
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;

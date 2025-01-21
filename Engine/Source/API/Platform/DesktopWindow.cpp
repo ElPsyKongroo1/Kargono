@@ -294,11 +294,14 @@ namespace API::Platform
 	}
 	void DesktopWindow::ResizeWindow(glm::vec2 newWindowSize)
 	{
+		// Set window size
 		glfwSetWindowSize(m_Window, static_cast<int>(newWindowSize.x), static_cast<int>(newWindowSize.y));
 
+		// Update window data
 		m_Data.Width = static_cast<uint32_t>(newWindowSize.x);
 		m_Data.Height = static_cast<uint32_t>(newWindowSize.y);
 
+		// Ensure window is centered around new size
 		if (!Kargono::Projects::ProjectService::GetActiveIsFullscreen())
 		{
 			CenterWindow();
@@ -307,7 +310,6 @@ namespace API::Platform
 		// Event thrown to ensure resize updates viewport
 		Kargono::Events::WindowResizeEvent event(static_cast<uint32_t>(newWindowSize.x), static_cast<uint32_t>(newWindowSize.y));
 		m_Data.EventCallback(&event);
-
 	}
 	void DesktopWindow::ToggleMaximized()
 	{

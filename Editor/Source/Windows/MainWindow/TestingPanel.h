@@ -14,6 +14,7 @@ namespace Kargono::Panels
 
 		void OnEditorUIRender();
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
+		bool OnInputEvent(Events::Event* event);
 	private:
 		FixedString32 m_PanelName{ "Testing" };
 

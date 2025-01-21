@@ -52,6 +52,8 @@ namespace Kargono
 		bool OnWindowResize(Events::WindowResizeEvent event);
 		// This function closes the runtime application
 		bool OnApplicationClose(Events::ApplicationCloseEvent event);
+
+		bool OnApplicationResize(Events::ApplicationResizeEvent event);
 		// This function responds to application collision events. Currently it plays a sound(Very Temporary).
 		bool OnPhysicsCollisionStart(Events::PhysicsCollisionStart event);
 

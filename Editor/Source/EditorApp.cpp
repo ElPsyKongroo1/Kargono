@@ -148,8 +148,7 @@ namespace Kargono
 			break;
 		}
 
-
-		return m_MainWindow->OnInputEvent(event);
+		return false;
 	}
 
 	bool EditorApp::OnPhysicsEvent(Events::Event* event)

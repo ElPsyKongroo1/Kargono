@@ -147,6 +147,9 @@ namespace Kargono
 		case Events::EventType::AppClose:
 			handled = OnApplicationClose(*(Events::ApplicationCloseEvent*)event);
 			break;
+		case Events::EventType::AppResize:
+			handled = OnApplicationResize(*(Events::ApplicationResizeEvent*)event);
+			break;
 		}
 		return handled;
 	}
@@ -217,6 +220,13 @@ namespace Kargono
 		Events::WindowCloseEvent windowEvent {};
 		Events::EventCallbackFn eventCallback = EngineService::GetActiveWindow().GetEventCallback();
 		eventCallback(&windowEvent);
+		return false;
+	}
+
+	bool RuntimeApp::OnApplicationResize(Events::ApplicationResizeEvent event)
+	{
+		// Resize the window
+		EngineService::GetActiveWindow().ResizeWindow({ event.GetWidth(), event.GetHeight() });
 		return false;
 	}
 
@@ -488,6 +498,7 @@ namespace Kargono
 
 	void RuntimeApp::OnPlay()
 	{
+		// Handle initializing core services
 		Particles::ParticleService::ClearEmitters();
 		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();

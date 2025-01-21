@@ -33,6 +33,11 @@ namespace Kargono::Panels
 		m_EditorCamera.SetYaw(-0.372f);
 
 		InitializeOverlayData();
+
+		KG_ASSERT(Projects::ProjectService::GetActive());
+
+		SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
+		
 	}
 
 
@@ -188,7 +193,7 @@ namespace Kargono::Panels
 		Math::uvec2 oldViewportSize = { m_ViewportData.m_Width, m_ViewportData.m_Height };
 
 		EditorUI::EditorUIService::AutoCalcViewportSize(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered,
-			Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
+			m_ViewportAspectRatio);
 		
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((ImTextureID)textureID, ImVec2{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height }, ImVec2{ 0, 1 },
@@ -569,6 +574,11 @@ namespace Kargono::Panels
 		s_LineInputSpec.ClearData();
 		s_PointInputSpec.ClearData();
 		s_CircleInputSpec.ClearData();
+	}
+
+	void ViewportPanel::SetViewportAspectRatio(const Math::uvec2& newAspectRatio)
+	{
+		m_ViewportAspectRatio = newAspectRatio;
 	}
 
 	void ViewportPanel::OnOverlayRender()

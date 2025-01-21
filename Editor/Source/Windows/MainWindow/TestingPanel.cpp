@@ -304,4 +304,8 @@ namespace Kargono::Panels
 	{
 		return false;
 	}
+	bool TestingPanel::OnInputEvent(Events::Event* event)
+	{
+		return false;
+	}
 }

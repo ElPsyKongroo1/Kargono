@@ -48,6 +48,50 @@ namespace Kargono::Scripting
 
 namespace Kargono::Scripting
 {
+	// Engine Functions that need to be defined only in this file
+	static void Log(const std::string& scriptName, const std::string& scriptLine, const std::string& info)
+	{
+		KG_WARN("[{}:{}]: {}", scriptName, scriptLine, info);
+	}
+	static void AddDebugLine(Math::vec3 startPoint, Math::vec3 endPoint)
+	{
+		Events::DebugLineData lineData{ startPoint, endPoint };
+		Events::ManageEditor newEvent = Events::ManageEditor(lineData);
+		EngineService::OnEvent(&newEvent);
+	}
+	static void AddDebugPoint(Math::vec3 point)
+	{
+		Events::DebugPointData pointData{ point };
+		Events::ManageEditor newEvent = Events::ManageEditor(pointData);
+		EngineService::OnEvent(&newEvent);
+	}
+	static void ClearDebugPoints()
+	{
+		Events::ManageEditor newEvent = Events::ManageEditor(Events::ManageEditorAction::ClearDebugPoints);
+		EngineService::OnEvent(&newEvent);
+	}
+	static void ClearDebugLines()
+	{
+		Events::ManageEditor newEvent = Events::ManageEditor(Events::ManageEditorAction::ClearDebugLines);
+		EngineService::OnEvent(&newEvent);
+	}
+
+	static void ApplicationResize(uint32_t windowWidth, uint32_t windowHeight)
+	{
+		static uint32_t s_NewWidth;
+		static uint32_t s_NewHeight;
+
+		s_NewWidth = windowWidth;
+		s_NewHeight = windowHeight;
+
+		EngineService::SubmitToMainThread([&]()
+		{
+			// Send app resize event to either the runtime or the editor
+			Events::ApplicationResizeEvent newEvent = Events::ApplicationResizeEvent(s_NewWidth, s_NewHeight);
+			EngineService::OnEvent(&newEvent);
+		});
+	}
+
 	std::vector<Ref<Script>> ScriptService::s_AllEngineScripts {};
 
 	static void GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts)
@@ -354,6 +398,16 @@ namespace Kargono::Scripting
 #endif
 			break;
 		}
+		case WrappedFuncType::Void_UInt32UInt32:
+		{
+			script->m_Function = CreateRef<WrappedVoidUInt32UInt32>();
+#if defined(KG_PLATFORM_WINDOWS)
+			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint32>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+#elif defined(KG_PLATFORM_LINUX)
+			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint32>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+#endif
+			break;
+		}
 
 		case WrappedFuncType::Void_Entity:
 		{
@@ -532,6 +586,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidUInt64, void, uint64_t)
 	DefineInsertFunction(VoidUInt64UInt64, void, uint64_t, uint64_t)
 	DefineInsertFunction(VoidVec3, void, Math::vec3)
+	DefineInsertFunction(VoidUInt32UInt32, void, uint32_t, uint32_t)
 	DefineInsertFunction(VoidVec3Float, void, Math::vec3, float)
 	DefineInsertFunction(VoidVec3Vec3, void, Math::vec3, Math::vec3)
 	DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
@@ -563,34 +618,6 @@ namespace Kargono::Scripting
 	DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
 	DefineInsertFunction(StringUInt64, const std::string&, uint64_t)
 	DefineInsertFunction(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
-
-	// Engine Functions that need to be defined only in this file
-	static void Log(const std::string& scriptName, const std::string& scriptLine, const std::string& info)
-	{
-		KG_WARN("[{}:{}]: {}", scriptName, scriptLine, info);
-	}
-	static void AddDebugLine(Math::vec3 startPoint, Math::vec3 endPoint)
-	{
-		Events::DebugLineData lineData {startPoint, endPoint};
-		Events::ManageEditor newEvent = Events::ManageEditor(lineData);
-		EngineService::OnEvent(&newEvent);
-	}
-	static void AddDebugPoint(Math::vec3 point)
-	{
-		Events::DebugPointData pointData {point};
-		Events::ManageEditor newEvent = Events::ManageEditor(pointData);
-		EngineService::OnEvent(&newEvent);
-	}
-	static void ClearDebugPoints()
-	{
-		Events::ManageEditor newEvent = Events::ManageEditor(Events::ManageEditorAction::ClearDebugPoints);
-		EngineService::OnEvent(&newEvent);
-	}
-	static void ClearDebugLines()
-	{
-		Events::ManageEditor newEvent = Events::ManageEditor(Events::ManageEditorAction::ClearDebugLines);
-		EngineService::OnEvent(&newEvent);
-	}
 
 	void ScriptModuleBuilder::CreateScriptModule()
 	{
@@ -719,6 +746,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidUInt64, void, uint64_t)
 		AddImportFunctionToHeaderFile(VoidUInt64UInt64, void, uint64_t, uint64_t)
 		AddImportFunctionToHeaderFile(VoidVec3, void, Math::vec3)
+		AddImportFunctionToHeaderFile(VoidUInt32UInt32, void, uint32_t, uint32_t)
 		AddImportFunctionToHeaderFile(VoidVec3Float, void, Math::vec3, float)
 		AddImportFunctionToHeaderFile(VoidVec3Vec3, void, Math::vec3, Math::vec3)
 		AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool)
@@ -821,6 +849,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileNoParameters(GetActiveSessionSlot, uint16_t)
 		AddEngineFunctionToCPPFileNoParameters(ClearDebugLines, void)
 		AddEngineFunctionToCPPFileNoParameters(ClearDebugPoints, void)
+		AddEngineFunctionToCPPFileNoParameters(Application_Close, void)
 		AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, const std::string&, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(PlaySoundFromHandle, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(Input_IsKeyPressed, bool, uint16_t)
@@ -846,6 +875,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_IsWidgetSelected, bool, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomInteger, int32_t, int32_t, int32_t)
 		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomFloat, float, float, float)
+		AddEngineFunctionToCPPFileTwoParameters(Application_Resize, void, uint32_t, uint32_t)
 		AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)
 		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
@@ -878,6 +908,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileEnd(LeaveCurrentSession)
 		AddEngineFunctionToCPPFileEnd(ClearDebugLines)
 		AddEngineFunctionToCPPFileEnd(ClearDebugPoints)
+		AddEngineFunctionToCPPFileEnd(Application_Close)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt16, void, uint16_t)
 		outputStream << "{\n";
@@ -984,6 +1015,10 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
 		outputStream << "{\n";
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt32UInt32, void, uint32_t, uint32_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(Application_Resize)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrString, void*, const std::string&)
 		outputStream << "{\n";
@@ -1237,6 +1272,7 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidUInt64)
 		ImportInsertFunction(VoidString)
 		ImportInsertFunction(VoidVec3)
+		ImportInsertFunction(VoidUInt32UInt32)
 		ImportInsertFunction(VoidVec3Float)
 		ImportInsertFunction(VoidVec3Vec3)
 		ImportInsertFunction(VoidPtrString)
@@ -1325,5 +1361,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AI_IsPreviousState, AI::AIService::IsPreviousState, BoolUInt64UInt64)
 		AddEngineFunctionPointerToDll(Physics_Raycast, Physics::Physics2DService::Raycast, RaycastResultVec2Vec2)
 		AddEngineFunctionPointerToDll(Particles_AddEmitterByHandle, Particles::ParticleService::AddEmitterByHandle, VoidUInt64Vec3)
+		AddEngineFunctionPointerToDll(Application_Resize, ApplicationResize, VoidUInt32UInt32)
+		AddEngineFunctionPointerToDll(Application_Close, EngineService::SubmitApplicationCloseEvent, VoidNone)
 	}
 }
