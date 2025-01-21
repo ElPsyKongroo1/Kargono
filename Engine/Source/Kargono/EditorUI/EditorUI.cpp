@@ -1141,13 +1141,13 @@ namespace Kargono::EditorUI
 		}
 		
 		// Display Popup
-		ImGui::SetNextWindowSize(ImVec2(700.0f, 0.0f));
-		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar))
+		ImGui::SetNextWindowSize(ImVec2(700.0f, 500.0f));
+		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar))
 		{
 			static char searchBuffer[256];
 
+			// Set up the header for the popup
 			EditorUI::EditorUIService::TitleText(spec.m_Label);
-
 			ImGui::PushFont(EditorUI::EditorUIService::s_FontAntaRegular);
 			if (spec.m_Searching)
 			{
@@ -1212,6 +1212,9 @@ namespace Kargono::EditorUI
 
 			ImGui::Separator();
 
+			ImGui::BeginChildEx("##", spec.m_WidgetID + WidgetIterator(widgetCount), 
+				{ 0.0f, 0.0f }, false, 0);
+			// Start the window body
 			for (auto& [title, options] :
 				spec.m_Searching ? spec.m_CachedSearchResults : spec.GetAllOptions())
 			{
@@ -1248,6 +1251,8 @@ namespace Kargono::EditorUI
 				}
 				EditorUIService::Spacing(SpacingAmount::Medium);
 			}
+
+			ImGui::EndChild();
 
 			ImGui::PopFont();
 			ImGui::EndPopup();
