@@ -15,6 +15,7 @@ namespace Kargono::Panels
 	static EditorUI::EditTextSpec s_TestText {};
 	static EditorUI::EditFloatSpec s_TimerTime{};
 	static EditorUI::EditIntegerSpec s_RandomTestInteger{};
+	static EditorUI::EditMultiLineTextSpec s_MultiLineText{};
 
 // TODO: Testing Splines
 #if 0
@@ -93,6 +94,8 @@ namespace Kargono::Panels
 		}
 #endif
 
+		s_MultiLineText.m_Label = "Test Multi Line";
+		s_MultiLineText.m_CurrentOption = "This is a paragraph of text bahahahahahahahahahahahaha";
 	}
 
 
@@ -162,6 +165,9 @@ namespace Kargono::Panels
 			}
 			ImGui::EndPopup();
 		}
+
+		EditorUI::EditorUIService::EditMultiLineText(s_MultiLineText);
+
 // TODO: Testing Splines
 #if 0 
 		Math::Spline& spline = s_EditorApp->m_MainWindow->m_ViewportPanel->m_DebugSplines.at(0);

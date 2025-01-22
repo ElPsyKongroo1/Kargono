@@ -29,6 +29,7 @@ namespace Kargono::EditorUI
 	struct RadioSelectorSpec;
 	struct CollapsingHeaderSpec;
 	struct EditTextSpec;
+	struct EditMultiLineTextSpec;
 	struct PanelHeaderSpec;
 	struct NavigationHeaderSpec;
 	struct CheckboxSpec;
@@ -163,6 +164,7 @@ namespace Kargono::EditorUI
 		static void LabeledText(const std::string& m_Label, const std::string& Text);
 		static void Text(const char* text);
 		static void EditText(EditTextSpec& spec);
+		static void EditMultiLineText(EditMultiLineTextSpec& spec);
 		static void ChooseDirectory(ChooseDirectorySpec& spec);
 		static void Tooltip(TooltipSpec& spec);
 		static void BeginTabBar(const std::string& title);
@@ -617,6 +619,33 @@ namespace Kargono::EditorUI
 		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::EditText(EditTextSpec& spec);
+	};
+
+	enum EditMultiLineTextFlags
+	{
+		EditMultiLineText_None = 0,
+		EditMultiLineText_PopupOnly = BIT(0), // Only use a popup and remove inline text
+		EditMultiLineText_Indented = BIT(1) // Display indented
+	};
+
+	struct EditMultiLineTextSpec
+	{
+	public:
+		EditMultiLineTextSpec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string m_Label;
+		WidgetFlags m_Flags{ EditMultiLineText_None };
+		std::string m_CurrentOption{};
+		std::function<void(EditMultiLineTextSpec&)> m_ConfirmAction;
+		bool m_StartPopup{ false };
+		Ref<void> m_ProvidedData{ nullptr };
+	private:
+		WidgetID m_WidgetID;
+	private:
+		friend void EditorUIService::EditMultiLineText(EditMultiLineTextSpec& spec);
 	};
 
 	struct ChooseDirectorySpec

@@ -862,6 +862,7 @@ namespace Kargono::EditorUI
 					ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne + EditorUI::EditorUIService::s_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
 					ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersAll: ImDrawFlags_RoundCornersBottom);
 				
+				// Draw the text
 				ImGui::TextUnformatted(previewRemainder.c_str());
 			}
 			else
@@ -871,6 +872,8 @@ namespace Kargono::EditorUI
 				draw_list->AddRectFilled(ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 					ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne + EditorUI::EditorUIService::s_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
 					ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersTop: ImDrawFlags_RoundCornersNone);
+
+
 				previewOutput = previewRemainder.substr(0, lineEndPosition);
 				previewRemainder = previewRemainder.substr(lineEndPosition, std::string::npos);
 				ImGui::TextUnformatted(previewOutput.c_str());
@@ -2776,6 +2779,94 @@ namespace Kargono::EditorUI
 
 			ImGui::SetNextItemWidth(583.0f);
 			ImGui::InputText((id + "InputText").c_str(), stringBuffer, sizeof(stringBuffer));
+			ImGui::PopFont();
+			ImGui::EndPopup();
+		}
+	}
+	void EditorUIService::EditMultiLineText(EditMultiLineTextSpec& spec)
+	{
+		// Local Variables
+		static char stringBuffer[2 * 1024];
+		uint32_t widgetCount{ 0 };
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.m_WidgetID);
+		std::string popUpLabel = spec.m_Label;
+
+		if (spec.m_Flags & EditText_PopupOnly)
+		{
+			if (spec.m_StartPopup)
+			{
+				ImGui::OpenPopup(id);
+				spec.m_StartPopup = false;
+				memset(stringBuffer, 0, sizeof(stringBuffer));
+				memcpy(stringBuffer, spec.m_CurrentOption.data(), sizeof(stringBuffer));
+			}
+		}
+		else
+		{
+			if (spec.m_Flags & EditText_Indented)
+			{
+				ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+			}
+			ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+			int32_t labelPosition = ImGui::FindPositionAfterLength(spec.m_Label.c_str(),
+				spec.m_Flags & EditText_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
+			TruncateText(spec.m_Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+			ImGui::PopStyleColor();
+
+			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
+			WriteMultilineText(spec.m_CurrentOption, s_SecondaryTextLargeWidth, s_SecondaryTextPosOne);
+			ImGui::PopStyleColor();
+
+			ImGui::SameLine();
+			CreateButton(spec.m_WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				ImGui::OpenPopup(id);
+				memset(stringBuffer, 0, sizeof(stringBuffer));
+				memcpy(stringBuffer, spec.m_CurrentOption.data(), sizeof(stringBuffer));
+			},
+			EditorUIService::s_SmallEditButton, false, s_DisabledColor);
+		}
+
+		ImGuiWindowFlags popupFlags
+		{
+			ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | 
+			ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollWithMouse
+		};
+
+		ImGui::SetNextWindowSize(ImVec2(700.0f, 500.0f));
+		if (ImGui::BeginPopupModal(id, NULL, popupFlags))
+		{
+			EditorUI::EditorUIService::TitleText(popUpLabel);
+
+			ImGui::PushFont(EditorUI::EditorUIService::s_FontAntaRegular);
+
+			// Cancel Tool Bar Button
+			ImGui::SameLine();
+			CreateButton(spec.m_WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				memset(stringBuffer, 0, sizeof(stringBuffer));
+				ImGui::CloseCurrentPopup();
+			}, s_LargeCancelButton);
+
+			// Confirm Tool Bar Button
+			ImGui::SameLine();
+			CreateButton(spec.m_WidgetID + WidgetIterator(widgetCount), [&]()
+			{
+				spec.m_CurrentOption = std::string(stringBuffer);
+				if (spec.m_ConfirmAction)
+				{
+					spec.m_ConfirmAction(spec);
+				}
+				memset(stringBuffer, 0, sizeof(stringBuffer));
+				ImGui::CloseCurrentPopup();
+			}, s_LargeConfirmButton);
+
+			ImGui::Separator();
+
+			//ImGui::SetNextItemWidth(0.0f);
+			
+			ImGui::InputTextMultiline((id + "InputText").c_str(), stringBuffer, sizeof(stringBuffer), ImVec2(683.0f, 450.0f));
 			ImGui::PopFont();
 			ImGui::EndPopup();
 		}

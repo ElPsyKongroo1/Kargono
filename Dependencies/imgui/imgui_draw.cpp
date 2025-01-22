@@ -3565,25 +3565,29 @@ int ImFont::FindPositionAfterLengthA(float size, const char* text_begin, const c
         // Decode and advance source
         const char* prev_s = s;
         unsigned int c = (unsigned int)*s;
+
+        // Move forward character pointer depending on underlying data
         if (c < 0x80)
             s += 1;
         else
             s += ImTextCharFromUtf8(&c, s, text_end);
 
+        // Handle non-character ASCII values
         if (c < 32)
         {
             if (c == '\n')
             {
-                textWidth = ImMax(textWidth, line_width);
-                line_width = 0.0f;
-                continue;
+                //textWidth = ImMax(textWidth, line_width);
+                //line_width = 0.0f;
+                return ++iteration;
+               
             }
             if (c == '\r')
                 continue;
         }
 
+        // If character glyph is valid, add the width to the running linewidth value
         const float char_width = ((int)c < IndexAdvanceX.Size ? IndexAdvanceX.Data[c] : FallbackAdvanceX) * scale;
-
         line_width += char_width;
 
         // Check if line_width exceeds provided length
