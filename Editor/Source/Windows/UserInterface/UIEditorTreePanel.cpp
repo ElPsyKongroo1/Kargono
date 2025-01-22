@@ -1,5 +1,7 @@
 #include "Windows/UserInterface/UIEditorTreePanel.h"
 
+#include "Kargono/Utility/Operations.h"
+
 #include "EditorApp.h"
 
 static Kargono::EditorApp* s_EditorApp{ nullptr };

@@ -116,7 +116,7 @@ namespace Kargono::Panels
 		// Change Text Widget Data
 		//=========================
 		// Modify widget text
-		void OnModifyTextWidgetText(EditorUI::EditTextSpec& spec);
+		void OnModifyTextWidgetText(EditorUI::EditMultiLineTextSpec& spec);
 		// Modify widget text size
 		void OnModifyTextWidgetTextSize(EditorUI::EditFloatSpec& spec);
 		// Modify widget text color
@@ -168,7 +168,7 @@ namespace Kargono::Panels
 
 		// Edit Text Widget Options
 		EditorUI::CollapsingHeaderSpec m_WidgetTextHeader{};
-		EditorUI::EditTextSpec m_WidgetText{};
+		EditorUI::EditMultiLineTextSpec m_WidgetText{};
 		EditorUI::EditFloatSpec m_WidgetTextSize{};
 		EditorUI::EditVec4Spec m_WidgetTextColor{};
 		EditorUI::CheckboxSpec m_WidgetCentered{};

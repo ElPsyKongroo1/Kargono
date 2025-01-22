@@ -214,7 +214,7 @@ namespace Kargono::Panels
 
 			// Edit selected text widget's text
 			m_WidgetText.m_CurrentOption = activeTextWidget.m_Text;
-			EditorUI::EditorUIService::EditText(m_WidgetText);
+			EditorUI::EditorUIService::EditMultiLineText(m_WidgetText);
 
 			// Edit selected text widget's text size relative to its window
 			m_WidgetTextSize.m_CurrentFloat = activeTextWidget.m_TextSize;
@@ -497,7 +497,7 @@ namespace Kargono::Panels
 
 		// Set up widget to modify the text widget's text
 		m_WidgetText.m_Label = "Text";
-		m_WidgetText.m_Flags |= EditorUI::EditText_Indented;
+		m_WidgetText.m_Flags |= EditorUI::EditMultiLineText_Indented;
 		m_WidgetText.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetText);
 
 		// Set up widget to modify the text widget's text size
@@ -1071,7 +1071,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyTextWidgetText(EditorUI::EditTextSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyTextWidgetText(EditorUI::EditMultiLineTextSpec& spec)
 	{
 		// Ensure active window is valid
 		if (!m_ActiveWindow)
