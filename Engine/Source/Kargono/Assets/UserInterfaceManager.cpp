@@ -55,9 +55,6 @@ namespace Kargono::Assets
 				out << YAML::BeginMap; // Begin Widget Map
 
 				out << YAML::Key << "Tag" << YAML::Value << widget->m_Tag;
-
-
-
 				out << YAML::Key << "XRelativeOrAbsolute" << YAML::Value << Utility::RelativeOrAbsoluteToString(widget->m_XRelativeOrAbsolute);
 				out << YAML::Key << "YRelativeOrAbsolute" << YAML::Value << Utility::RelativeOrAbsoluteToString(widget->m_YRelativeOrAbsolute);
 				out << YAML::Key << "XConstraint" << YAML::Value << Utility::ConstraintToString(widget->m_XConstraint);
@@ -87,7 +84,7 @@ namespace Kargono::Assets
 					out << YAML::Key << "TextSize" << YAML::Value << textWidget->m_TextSize;
 					out << YAML::Key << "TextColor" << YAML::Value << textWidget->m_TextColor;
 					out << YAML::Key << "TextAbsoluteDimensions" << YAML::Value << textWidget->m_TextAbsoluteDimensions;
-					out << YAML::Key << "TextCentered" << YAML::Value << textWidget->m_TextCentered;
+					out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(textWidget->m_TextAlignment);
 					out << YAML::Key << "TextWrapped" << YAML::Value << textWidget->m_TextWrapped;
 					out << YAML::EndMap; // End TextWidget Map
 					break;
@@ -184,7 +181,7 @@ namespace Kargono::Assets
 							textWidget->m_TextSize = specificWidget["TextSize"].as<float>();
 							textWidget->m_TextColor = specificWidget["TextColor"].as<glm::vec4>();
 							textWidget->m_TextAbsoluteDimensions = specificWidget["TextAbsoluteDimensions"].as<Math::vec2>();
-							textWidget->m_TextCentered = specificWidget["TextCentered"].as<bool>();
+							textWidget->m_TextAlignment = Utility::StringToConstraint(specificWidget["TextAlignment"].as<std::string>());
 							textWidget->m_TextWrapped = specificWidget["TextWrapped"].as<bool>();
 							break;
 						}

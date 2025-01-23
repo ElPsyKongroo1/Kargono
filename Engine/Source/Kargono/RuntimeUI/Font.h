@@ -76,7 +76,8 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Font API
 		//==============================
-		void PushTextData(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f, int maxLineWidth = 0);
+		void OnRenderMultiLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f, int maxLineWidth = 0);
+		void OnRenderSingleLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f);
 		Math::vec2 CalculateTextSize(const std::string& text);
 		void CalculateTextMetadata(const std::string& text, TextMetadata& metadata, float scale, int maxLineWidth = 0);
 

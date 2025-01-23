@@ -933,29 +933,60 @@ namespace Kargono::RuntimeUI
 		widgetTranslation.z += 0.001f;
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 		float textSize{ (viewportWidth * 0.15f * m_TextSize) * (resolution.y / resolution.x) };
+		float lineAdvance = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_LineHeight;
+		float allLineAdvanceHeight{ 0.0f };
+		// Calculate entire text's height
+		if (m_TextMetadata.m_LineSize.size() > 0)
+		{
+			//// Add the first line's dimensions
+			//allLineAdvanceHeight += m_TextMetadata.m_LineSize[0].y;
+
+			// Add the line advance for the remaining lines
+			allLineAdvanceHeight += lineAdvance * (float)(m_TextMetadata.m_LineSize.size() - 1);
+		}
 
 		// Call the text's rendering function
 		for (size_t iteration{ 0 }; iteration < m_TextMetadata.m_LineSize.size(); iteration++)
 		{
+
 			Math::vec3 finalTranslation;
 			Math::vec2 lineDimensions{ m_TextMetadata.m_LineSize[iteration] };
 			Math::ivec2 currentBreaks{ m_TextMetadata.m_LineBreaks[iteration] };
-			if (m_TextCentered)
-			{
-				constexpr float k_AdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
 
-				finalTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x * 0.5f) - ((lineDimensions.x * 0.5f) * textSize), widgetTranslation.y + (widgetSize.y * 0.5f) - ((lineDimensions.y * 0.5f) * textSize) + k_AdjustmentSize, widgetTranslation.z);
-			}
-			else
+			
+			constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
+
+			// Handle placing each line of the text widget based on alignment constraints
+			switch (m_TextAlignment)
 			{
+			case Constraint::Left:
 				finalTranslation = widgetTranslation;
+				break;
+			case Constraint::Right:
+				finalTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x) - ((lineDimensions.x) * textSize), widgetTranslation.y, widgetTranslation.z);
+				break;
+			case Constraint::Center:
+				// Adjust current line translation to be centered
+				finalTranslation = Math::vec3(
+					widgetTranslation.x + (widgetSize.x * 0.5f) - ((lineDimensions.x * 0.5f) * textSize), 
+					widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextMetadata.m_LineSize[0].y * 0.5f - (allLineAdvanceHeight * 0.5f)) * textSize) + k_CenterAdjustmentSize,
+					widgetTranslation.z);
+				break;
+			case Constraint::Bottom:
+			case Constraint::Top:
+			case Constraint::None:
+				KG_ERROR("Invalid constraint type for aligning text {}", Utility::ConstraintToString(m_TextAlignment));
+				break;
 			}
 
-			finalTranslation.y -= iteration * textSize * RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_LineHeight;
+			// Move the line down in the y-axis to it's correct location
+			finalTranslation.y -= iteration * textSize * lineAdvance;
 
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->PushTextData(
-				std::string_view(m_Text.c_str()),
-				finalTranslation, m_TextColor, textSize, (int)widgetSize.x);
+			// Render the single line of text
+			std::string_view outputText{ m_Text.data() + currentBreaks.x, (size_t)(currentBreaks.y - currentBreaks.x) };
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->OnRenderSingleLineText(
+				outputText,
+				finalTranslation, m_TextColor, textSize);
 		}
 
 	}

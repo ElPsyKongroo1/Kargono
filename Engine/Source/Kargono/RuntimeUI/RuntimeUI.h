@@ -170,7 +170,7 @@ namespace Kargono::RuntimeUI
 		std::string m_Text{ "New Text Widget" };
 		float m_TextSize{ 0.3f };
 		Math::vec4 m_TextColor{1.0f};
-		bool m_TextCentered{ true };
+		Constraint m_TextAlignment{ Constraint::Center };
 		bool m_TextWrapped{ true };
 	private:
 		TextMetadata m_TextMetadata{};

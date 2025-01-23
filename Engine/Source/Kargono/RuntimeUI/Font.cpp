@@ -209,7 +209,7 @@ namespace Kargono::RuntimeUI
 		Rendering::Shader::SetDataAtInputLocation<uint32_t>(id, "a_EntityID", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
 	}
 
-	void Font::PushTextData(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale, int maxLineWidth)
+	void Font::OnRenderMultiLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale, int maxLineWidth)
 	{
 		// Submit text color to the renderer buffer. The text will now be rendered with this color.
 		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
@@ -334,6 +334,100 @@ namespace Kargono::RuntimeUI
 			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
 			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
 			s_TexCoordinates->push_back(texCoordMax);				
+			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
+
+			// TODO: Submit multiple glyphs at once for CPU optimization
+			// Submit the glyph data to the renderer
+			Rendering::RenderingService::SubmitDataToRenderer(s_TextInputSpec);
+
+			// Shift the location to the next character
+			xLocation += scale * glyph.Advance;
+		}
+	}
+
+	void Font::OnRenderSingleLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale)
+	{
+		// Submit text color to the renderer buffer. The text will now be rendered with this color.
+		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
+
+		// Initialize the active location where text is being rendered
+		double xLocation{ translation.x };
+		double yLocation{ translation.y };
+
+		// Iterate through each character in the string
+		for (size_t characterIndex = 0; characterIndex < string.size(); characterIndex++)
+		{
+			// Get the active character from the string
+			char character = string[characterIndex];
+			Character glyph;
+
+			// Handle specific character cases
+			switch (character)
+			{
+			case '\n':
+				// Skip newline
+				continue;
+			case '\r':
+				// Skip carriage return
+				continue;
+			case '\t':
+				// Tab character
+				character = ' ';
+				break;
+			}
+
+			// Ensure the character exists in the font atlas
+			if (m_Characters.contains(character))
+			{
+				glyph = m_Characters.at(character);
+			}
+			else
+			{
+				// TODO: Handle this case better
+				glyph = m_Characters.at('?');
+			}
+
+			// Coordinates of the glyph in the texture atlas
+			glm::vec2 texCoordMin(glyph.TexCoordinateMin);
+			glm::vec2 texCoordMax(glyph.TexCoordinateMax);
+
+			// Minimum and maximum bounds of the quad to be rendered 
+			glm::vec2 quadMin(glyph.QuadMin);
+			glm::vec2 quadMax(glyph.QuadMax);
+
+			// Scale the rendering size of the glyph
+			quadMin *= scale;
+			quadMax *= scale;
+
+			// Adjust the quad location based on the current location
+			quadMin += glm::vec2(xLocation, yLocation);
+			quadMax += glm::vec2(xLocation, yLocation);
+
+			// Adjust the texture coordinates based on the texture atlas size
+			float texelWidth = 1.0f / m_AtlasTexture->GetWidth();
+			float texelHeight = 1.0f / m_AtlasTexture->GetHeight();
+			texCoordMin *= glm::vec2(texelWidth, texelHeight);
+			texCoordMax *= glm::vec2(texelWidth, texelHeight);
+
+			// Submit the quad location data to the renderer
+			s_Vertices->clear();
+			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
+			s_Vertices->push_back({ quadMin, translation.z });											// 0, 0
+			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
+			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
+			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
+			s_Vertices->push_back({ quadMax, translation.z });											// 1, 1
+			s_TextInputSpec.m_ShapeComponent->Vertices = s_Vertices;
+
+			// Submit the texture coordinates data to the renderer
+			s_TexCoordinates->clear();
+			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
+			s_TexCoordinates->push_back(texCoordMin);								// 0, 0
+			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
+			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
+			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
+			s_TexCoordinates->push_back(texCoordMax);
 			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
 
 			// TODO: Submit multiple glyphs at once for CPU optimization

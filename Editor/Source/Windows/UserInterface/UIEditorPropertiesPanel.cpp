@@ -225,8 +225,8 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::EditVec4(m_WidgetTextColor);
 
 			// Edit selected text widget's text alignment
-			m_WidgetCentered.m_CurrentBoolean = activeTextWidget.m_TextCentered;
-			EditorUI::EditorUIService::Checkbox(m_WidgetCentered);
+			m_WidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeTextWidget.m_TextAlignment) , (uint64_t)activeTextWidget.m_TextAlignment };
+			EditorUI::EditorUIService::SelectOption(m_WidgetTextAlignment);
 
 			// Edit selected text widget's wrapped alignment
 			m_WidgetWrapped.m_CurrentBoolean = activeTextWidget.m_TextWrapped;
@@ -511,9 +511,10 @@ namespace Kargono::Panels
 		m_WidgetTextColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetTextColor);
 
 		// Set up widget to modify the text widget's text alignment
-		m_WidgetCentered.m_Label = "Centered";
-		m_WidgetCentered.m_Flags |= EditorUI::Checkbox_Indented;
-		m_WidgetCentered.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetCentered);
+		m_WidgetTextAlignment.m_Label = "Text Alignment";
+		m_WidgetTextAlignment.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetTextAlignment.m_PopupAction = KG_BIND_CLASS_FN(OnOpenWidgetAlignmentPopup);
+		m_WidgetTextAlignment.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetAlignment);
 
 		// Set up widget to modify if the text widget is wrapped
 		m_WidgetWrapped.m_Label = "Text Wrapped";
@@ -1163,19 +1164,19 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyTextWidgetCentered(EditorUI::CheckboxSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyWidgetAlignment(const EditorUI::OptionEntry& entry)
 	{
 		// Ensure active window is valid
 		if (!m_ActiveWindow)
 		{
-			KG_WARN("No valid widget active when trying to update widget's TextCentered field");
+			KG_WARN("No valid widget active when trying to update widget text size");
 			return;
 		}
 
 		// Ensure active widget is a valid type
 		if (!m_ActiveWidget)
 		{
-			KG_WARN("No valid widget active when trying to update widget's TextCentered field");
+			KG_WARN("No valid widget active when trying to update widget text size");
 			return;
 		}
 
@@ -1187,25 +1188,53 @@ namespace Kargono::Panels
 		}
 		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
 
-		// Update the text widget text alignment based on the editorUI widget's value
-		textWidget.m_TextCentered = spec.m_CurrentBoolean;
+		// Change the alignment option for the text widget
+		textWidget.m_TextAlignment = (RuntimeUI::Constraint)(uint64_t)entry.m_Handle;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
+
+	void UIEditorPropertiesPanel::OnOpenWidgetAlignmentPopup()
+	{
+		// Clear existing options
+		m_WidgetTextAlignment.ClearOptions();
+
+		// Add left, right, and center alignment options
+		m_WidgetTextAlignment.AddToOptions
+		(
+			"All Options", 
+			Utility::ConstraintToString(RuntimeUI::Constraint::Left),
+			(uint64_t)RuntimeUI::Constraint::Left
+		);
+
+		m_WidgetTextAlignment.AddToOptions
+		(
+			"All Options",
+			Utility::ConstraintToString(RuntimeUI::Constraint::Right),
+			(uint64_t)RuntimeUI::Constraint::Right
+		);
+		m_WidgetTextAlignment.AddToOptions
+		(
+			"All Options",
+			Utility::ConstraintToString(RuntimeUI::Constraint::Center),
+			(uint64_t)RuntimeUI::Constraint::Center
+		);
+	}
+
 	void UIEditorPropertiesPanel::OnModifyTextWidgetWrapped(EditorUI::CheckboxSpec& spec)
 	{
 		// Ensure active window is valid
 		if (!m_ActiveWindow)
 		{
-			KG_WARN("No valid widget active when trying to update widget's TextWrapped field");
+			KG_WARN("No valid widget active when trying to update widget's text alignment field");
 			return;
 		}
 
 		// Ensure active widget is a valid type
 		if (!m_ActiveWidget)
 		{
-			KG_WARN("No valid widget active when trying to update widget's TextWrapped field");
+			KG_WARN("No valid widget active when trying to update widget's text alignment field");
 			return;
 		}
 

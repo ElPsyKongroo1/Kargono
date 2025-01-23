@@ -121,8 +121,9 @@ namespace Kargono::Panels
 		void OnModifyTextWidgetTextSize(EditorUI::EditFloatSpec& spec);
 		// Modify widget text color
 		void OnModifyTextWidgetTextColor(EditorUI::EditVec4Spec& spec);
-		// Modify if widget text is centered
-		void OnModifyTextWidgetCentered(EditorUI::CheckboxSpec& spec);
+		// Modify if widget text is aligned
+		void OnModifyWidgetAlignment(const EditorUI::OptionEntry& entry);
+		void OnOpenWidgetAlignmentPopup();
 		// Modify if widget text is wrapped
 		void OnModifyTextWidgetWrapped(EditorUI::CheckboxSpec& spec);
 		// Modify widget on press
@@ -171,7 +172,7 @@ namespace Kargono::Panels
 		EditorUI::EditMultiLineTextSpec m_WidgetText{};
 		EditorUI::EditFloatSpec m_WidgetTextSize{};
 		EditorUI::EditVec4Spec m_WidgetTextColor{};
-		EditorUI::CheckboxSpec m_WidgetCentered{};
+		EditorUI::SelectOptionSpec m_WidgetTextAlignment{};
 		EditorUI::CheckboxSpec m_WidgetWrapped{};
 
 		// Edit Widget Location Options
