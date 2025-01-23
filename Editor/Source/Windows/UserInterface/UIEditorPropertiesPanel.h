@@ -35,6 +35,7 @@ namespace Kargono::Panels
 		void InitializeWindowOptions();
 		void InitializeWidgetGeneralOptions();
 		void InitializeTextWidgetOptions();
+		void InitializeButtonWidgetOptions();
 		void InitializeWidgetLocationOptions();
 
 	public:
@@ -50,6 +51,8 @@ namespace Kargono::Panels
 		void DrawWindowOptions();
 		void DrawWidgetOptions();
 		void DrawTextWidgetOptions();
+		void DrawButtonWidgetOptions();
+		void DrawSpecificWidgetOptions();
 
 		//=========================
 		// Modify Panel Data
@@ -110,26 +113,40 @@ namespace Kargono::Panels
 		void OnModifyWidgetYPixelLocation(EditorUI::EditIntegerSpec& spec);
 		void OnModifyWidgetXPercentLocation(EditorUI::EditFloatSpec& spec);
 		void OnModifyWidgetYPercentLocation(EditorUI::EditFloatSpec& spec);
+		// Modify widget on press
+		void OnModifyWidgetOnPress(const EditorUI::OptionEntry& entry);
+		void OnOpenWidgetOnPressPopup();
+		void OnOpenTooltipForWidgetOnPress();
 		
 
 		//=========================
 		// Change Text Widget Data
 		//=========================
-		// Modify widget text
+		// Modify text widget's text
 		void OnModifyTextWidgetText(EditorUI::EditMultiLineTextSpec& spec);
-		// Modify widget text size
+		// Modify text widget's text size
 		void OnModifyTextWidgetTextSize(EditorUI::EditFloatSpec& spec);
-		// Modify widget text color
+		// Modify text widget's text color
 		void OnModifyTextWidgetTextColor(EditorUI::EditVec4Spec& spec);
-		// Modify if widget text is aligned
-		void OnModifyWidgetAlignment(const EditorUI::OptionEntry& entry);
-		void OnOpenWidgetAlignmentPopup();
-		// Modify if widget text is wrapped
+		// Modify if text widget's text is aligned
+		void OnModifyTextWidgetAlignment(const EditorUI::OptionEntry& entry);
+		void OnOpenTextWidgetAlignmentPopup();
+		// Modify if text widget's text is wrapped
 		void OnModifyTextWidgetWrapped(EditorUI::CheckboxSpec& spec);
-		// Modify widget on press
-		void OnModifyWidgetOnPress(const EditorUI::OptionEntry& entry);
-		void OnOpenWidgetOnPressPopup();
-		void OnOpenTooltipForWidgetOnPress();
+
+		//=========================
+		// Change Button Widget Data
+		//=========================
+		// Modify the button widget's text
+		void OnModifyButtonWidgetText(EditorUI::EditTextSpec& spec);
+		// Modify button widget's text size
+		void OnModifyButtonWidgetButtonTextSize(EditorUI::EditFloatSpec& spec);
+		// Modify button widget's text color
+		void OnModifyButtonWidgetButtonTextColor(EditorUI::EditVec4Spec& spec);
+		// Modify if button widget's text is aligned
+		void OnModifyButtonWidgetTextAlignment(const EditorUI::OptionEntry& entry);
+		void OnOpenButtonWidgetTextAlignmentPopup();
+		
 
 
 	public:
@@ -169,12 +186,19 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_WidgetOnPress{};
 
 		// Edit Text Widget Options
-		EditorUI::CollapsingHeaderSpec m_WidgetTextHeader{};
-		EditorUI::EditMultiLineTextSpec m_WidgetText{};
-		EditorUI::EditFloatSpec m_WidgetTextSize{};
-		EditorUI::EditVec4Spec m_WidgetTextColor{};
-		EditorUI::SelectOptionSpec m_WidgetTextAlignment{};
-		EditorUI::CheckboxSpec m_WidgetWrapped{};
+		EditorUI::CollapsingHeaderSpec m_TextWidgetHeader{};
+		EditorUI::EditMultiLineTextSpec m_TextWidgetText{};
+		EditorUI::EditFloatSpec m_TextWidgetTextSize{};
+		EditorUI::EditVec4Spec m_TextWidgetTextColor{};
+		EditorUI::SelectOptionSpec m_TextWidgetTextAlignment{};
+		EditorUI::CheckboxSpec m_TextWidgetTextWrapped{};
+
+		// Edit Button Widget Options
+		EditorUI::CollapsingHeaderSpec m_ButtonWidgetHeader{};
+		EditorUI::EditTextSpec m_ButtonWidgetText{};
+		EditorUI::EditFloatSpec m_ButtonWidgetTextSize{};
+		EditorUI::EditVec4Spec m_ButtonWidgetTextColor{};
+		EditorUI::SelectOptionSpec m_ButtonWidgetTextAlignment{};
 
 		// Edit Widget Location Options
 		EditorUI::CollapsingHeaderSpec m_WidgetLocationHeader{};

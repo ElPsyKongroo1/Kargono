@@ -683,7 +683,7 @@ namespace Kargono::Panels
 		if (widget)
 		{
 			// Calculate the widget's rendering data
-			Math::vec3 widgetSize = widget->CalculateSize(windowScale);
+			Math::vec3 widgetSize = widget->CalculateWidgetSize(windowScale);
 			Math::vec3 widgetTranslation = widget->CalculateWorldPosition(initialWindowTranslation, windowScale);
 			Math::vec3 modifiedOriginTranslation = Math::vec3(
 				widgetTranslation.x + (widgetSize.x / 2), 
@@ -772,7 +772,7 @@ namespace Kargono::Panels
 
 		Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
 		Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 widgetSize = widget->CalculateSize(windowScale);
+		Math::vec3 widgetSize = widget->CalculateWidgetSize(windowScale);
 
 
 		if (widget->m_XRelativeOrAbsolute == RuntimeUI::RelativeOrAbsolute::Absolute ||

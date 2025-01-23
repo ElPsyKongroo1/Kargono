@@ -113,6 +113,11 @@ namespace Kargono::RuntimeUI
 						TextWidget* textWidget = (TextWidget*)widget.get();
 						textWidget->CalculateTextMetadata(&window);
 					}
+					else if (widget->m_WidgetType == WidgetTypes::ButtonWidget)
+					{
+						ButtonWidget* buttonWidget = (ButtonWidget*)widget.get();
+						buttonWidget->CalculateTextSize();
+					}
 				}
 			}
 		}
@@ -344,6 +349,11 @@ namespace Kargono::RuntimeUI
 					TextWidget* textWidget = (TextWidget*)widget.get();
 					textWidget->CalculateTextMetadata(&window);
 				}
+				else if (widget->m_WidgetType == WidgetTypes::ButtonWidget)
+				{
+					ButtonWidget* buttonWidget = (ButtonWidget*)widget.get();
+					buttonWidget->CalculateTextSize();
+				}
 			}
 		}
 	}
@@ -432,16 +442,28 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Ensure the widget is a text widget
-		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget)
+		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget && 
+			currentWidget->m_WidgetType != WidgetTypes::ButtonWidget)
 		{
-			KG_WARN("Attempt to change the text of a widget that is not a text widget");
+			KG_WARN("Attempt to change the text of a widget that is not a text widget nor a button widget");
 			return;
 		}
 
-		// Set the text of the widget
-		TextWidget* textWidget = (TextWidget*)currentWidget.get();
-		textWidget->m_Text = newText;
-		textWidget->CalculateTextMetadata(currentWindow);
+		if (currentWidget->m_WidgetType == WidgetTypes::TextWidget)
+		{
+			// Set the text of the widget
+			TextWidget* textWidget = (TextWidget*)currentWidget.get();
+			textWidget->m_Text = newText;
+			textWidget->CalculateTextMetadata(currentWindow);
+		}
+		else if (currentWidget->m_WidgetType == WidgetTypes::ButtonWidget)
+		{
+			// Set the text of the widget
+			ButtonWidget* buttonWidget = (ButtonWidget*)currentWidget.get();
+			buttonWidget->m_Text = newText;
+			buttonWidget->CalculateTextSize();
+		}
+		
 	}
 
 	void RuntimeUIService::SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag)
@@ -492,15 +514,28 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Ensure the widget is a text widget
-		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget)
+		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget && 
+			currentWidget->m_WidgetType != WidgetTypes::ButtonWidget)
 		{
 			KG_WARN("Attempt to set text color on widget that is not a TextWidget");
 			return;
 		}
 
-		// Set the text color of the widget
-		TextWidget* textWidget = (TextWidget*)currentWidget.get();
-		textWidget->m_TextColor = color;
+		if (currentWidget->m_WidgetType == WidgetTypes::TextWidget)
+		{
+			// Set the text color of the widget
+			TextWidget* textWidget = (TextWidget*)currentWidget.get();
+			textWidget->m_TextColor = color;
+		}
+		else if (currentWidget->m_WidgetType == WidgetTypes::ButtonWidget)
+		{
+			// Set the text of the widget
+			ButtonWidget* buttonWidget = (ButtonWidget*)currentWidget.get();
+			// Set the text color of the widget
+			buttonWidget->m_TextColor = color;
+		}
+
+		
 	}
 
 	void RuntimeUIService::SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
@@ -727,7 +762,7 @@ namespace Kargono::RuntimeUI
 
 		// Calculate the position and size of the current widget
 		Math::vec2 currentWidgetPosition = currentWidget->CalculateWorldPosition(windowPosition, windowSize);
-		Math::vec2 currentWidgetSize = currentWidget->CalculateSize(windowSize);
+		Math::vec2 currentWidgetSize = currentWidget->CalculateWidgetSize(windowSize);
 
 		// Iterate through each potential widget and decide which widget makes sense to navigate to
 		for (Ref<Widget> potentialChoice : currentWindow.m_Widgets)
@@ -740,7 +775,7 @@ namespace Kargono::RuntimeUI
 			}
 			// Calculate the position and size of the potential widget
 			Math::vec2 potentialChoicePosition = potentialChoice->CalculateWorldPosition(windowPosition, windowSize);
-			Math::vec2 potentialChoiceSize = potentialChoice->CalculateSize(windowSize);
+			Math::vec2 potentialChoiceSize = potentialChoice->CalculateWidgetSize(windowSize);
 
 			// Calculate the distance between the current widget and the potential widget
 			float currentDistance = glm::abs(glm::distance(currentWidgetPosition, potentialChoicePosition));
@@ -937,7 +972,7 @@ namespace Kargono::RuntimeUI
 		Rendering::RendererInputSpec& inputSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
 
 		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateSize(windowSize);
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
 		// Get widget translation
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
@@ -1023,7 +1058,7 @@ namespace Kargono::RuntimeUI
 		float textSize{ (viewportData.m_Width * 0.15f * m_TextSize) * (resolution.y / resolution.x) };
 
 		// Get widget width
-		Math::vec3 widgetSize = CalculateSize(parentWindow->CalculateSize(viewportData.m_Width, viewportData.m_Height));
+		Math::vec3 widgetSize = CalculateWidgetSize(parentWindow->CalculateSize(viewportData.m_Width, viewportData.m_Height));
 
 		// Calculate the text size of the widget using the default font if the active user interface is not set
 		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
@@ -1061,7 +1096,29 @@ namespace Kargono::RuntimeUI
 		CalculateTextMetadata(parentWindow);
 	}
 
-	Math::vec3 Widget::CalculateSize(const Math::vec3& windowSize)
+	void ButtonWidget::SetText(const std::string& newText)
+	{
+		// Set the text of the widget
+		m_Text = newText;
+
+		// Calculate the new text size
+		CalculateTextSize();
+	}
+
+	void ButtonWidget::CalculateTextSize()
+	{
+		// Calculate the text size of the widget using the default font if the active user interface is not set
+		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
+		{
+			m_TextDimensions = RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextSize(m_Text);
+			return;
+		}
+
+		// Calculate the text size of the widget using the active user interface font
+		m_TextDimensions = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextSize(m_Text);
+	}
+
+	Math::vec3 Widget::CalculateWidgetSize(const Math::vec3& windowSize)
 	{
 		return Math::vec3(windowSize.x * m_Size.x, windowSize.y * m_Size.y, 1.0f);
 	}
@@ -1166,7 +1223,7 @@ namespace Kargono::RuntimeUI
 		Rendering::RendererInputSpec& inputSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
 
 		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateSize(windowSize);
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
 		// Get widget translation
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);

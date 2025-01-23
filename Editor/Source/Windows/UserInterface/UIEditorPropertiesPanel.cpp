@@ -20,6 +20,7 @@ namespace Kargono::Panels
 		InitializeWindowOptions();
 		InitializeWidgetGeneralOptions();
 		InitializeTextWidgetOptions();
+		InitializeButtonWidgetOptions();
 		InitializeWidgetLocationOptions();
 	}
 	void UIEditorPropertiesPanel::OnEditorUIRender()
@@ -43,7 +44,7 @@ namespace Kargono::Panels
 			DrawWindowOptions();
 			break;
 		case UIPropertiesDisplay::Widget:
-			DrawTextWidgetOptions();
+			DrawSpecificWidgetOptions();
 			DrawWidgetOptions();
 			break;
 		case UIPropertiesDisplay::UserInterface:
@@ -199,38 +200,32 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::DrawTextWidgetOptions()
 	{
-		// Early out if the active widget is not a text widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
-		{
-			return;
-		}
-		
 		// Draw main header for text widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_WidgetTextHeader);
+		EditorUI::EditorUIService::CollapsingHeader(m_TextWidgetHeader);
 		if (m_WidgetGeneralHeader.m_Expanded)
 		{
 			// Draw options to edit selected text widget
 			RuntimeUI::TextWidget& activeTextWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
 
 			// Edit selected text widget's text
-			m_WidgetText.m_CurrentOption = activeTextWidget.m_Text;
-			EditorUI::EditorUIService::EditMultiLineText(m_WidgetText);
+			m_TextWidgetText.m_CurrentOption = activeTextWidget.m_Text;
+			EditorUI::EditorUIService::EditMultiLineText(m_TextWidgetText);
 
 			// Edit selected text widget's text size relative to its window
-			m_WidgetTextSize.m_CurrentFloat = activeTextWidget.m_TextSize;
-			EditorUI::EditorUIService::EditFloat(m_WidgetTextSize);
+			m_TextWidgetTextSize.m_CurrentFloat = activeTextWidget.m_TextSize;
+			EditorUI::EditorUIService::EditFloat(m_TextWidgetTextSize);
 
 			// Edit selected text widget's text color
-			m_WidgetTextColor.m_CurrentVec4 = activeTextWidget.m_TextColor;
-			EditorUI::EditorUIService::EditVec4(m_WidgetTextColor);
+			m_TextWidgetTextColor.m_CurrentVec4 = activeTextWidget.m_TextColor;
+			EditorUI::EditorUIService::EditVec4(m_TextWidgetTextColor);
 
 			// Edit selected text widget's text alignment
-			m_WidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeTextWidget.m_TextAlignment) , (uint64_t)activeTextWidget.m_TextAlignment };
-			EditorUI::EditorUIService::SelectOption(m_WidgetTextAlignment);
+			m_TextWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeTextWidget.m_TextAlignment) , (uint64_t)activeTextWidget.m_TextAlignment };
+			EditorUI::EditorUIService::SelectOption(m_TextWidgetTextAlignment);
 
 			// Edit selected text widget's wrapped alignment
-			m_WidgetWrapped.m_CurrentBoolean = activeTextWidget.m_TextWrapped;
-			EditorUI::EditorUIService::Checkbox(m_WidgetWrapped);
+			m_TextWidgetTextWrapped.m_CurrentBoolean = activeTextWidget.m_TextWrapped;
+			EditorUI::EditorUIService::Checkbox(m_TextWidgetTextWrapped);
 
 			// Edit selected widget's on press script
 			Assets::AssetHandle onPressHandle = activeTextWidget.m_FunctionPointers.m_OnPressHandle;
@@ -240,6 +235,49 @@ namespace Kargono::Panels
 				onPressHandle
 			};
 			EditorUI::EditorUIService::SelectOption(m_WidgetOnPress);
+		}
+	}
+
+	void UIEditorPropertiesPanel::DrawButtonWidgetOptions()
+	{
+		// Draw main header for button widget options
+		EditorUI::EditorUIService::CollapsingHeader(m_ButtonWidgetHeader);
+		if (m_WidgetGeneralHeader.m_Expanded)
+		{
+			// Draw options to edit selected button widget
+			RuntimeUI::ButtonWidget& activeButtonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
+
+			// Edit selected button widget's text
+			m_ButtonWidgetText.m_CurrentOption = activeButtonWidget.m_Text;
+			EditorUI::EditorUIService::EditText(m_ButtonWidgetText);
+
+			// Edit selected button widget's text size relative to its window
+			m_ButtonWidgetTextSize.m_CurrentFloat = activeButtonWidget.m_TextSize;
+			EditorUI::EditorUIService::EditFloat(m_ButtonWidgetTextSize);
+
+			// Edit selected button widget's text color
+			m_ButtonWidgetTextColor.m_CurrentVec4 = activeButtonWidget.m_TextColor;
+			EditorUI::EditorUIService::EditVec4(m_ButtonWidgetTextColor);
+
+			// Edit selected button widget's text alignment
+			m_ButtonWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeButtonWidget.m_TextAlignment) , (uint64_t)activeButtonWidget.m_TextAlignment };
+			EditorUI::EditorUIService::SelectOption(m_ButtonWidgetTextAlignment);
+		}
+	}
+
+	void UIEditorPropertiesPanel::DrawSpecificWidgetOptions()
+	{
+		switch (m_ActiveWidget->m_WidgetType)
+		{
+		case RuntimeUI::WidgetTypes::TextWidget:
+			DrawTextWidgetOptions();
+			break;
+		case RuntimeUI::WidgetTypes::ButtonWidget:
+			DrawButtonWidgetOptions();
+			break;
+		default:
+			KG_ERROR("Invalid widget type attempted to be drawn");
+			break;
 		}
 	}
 
@@ -491,35 +529,64 @@ namespace Kargono::Panels
 		m_WidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForWidgetOnPress);
 
 		// Set up header for text widget options
-		m_WidgetTextHeader.m_Label = "Text Widget Options";
-		m_WidgetTextHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
-		m_WidgetTextHeader.m_Expanded = true;
+		m_TextWidgetHeader.m_Label = "Text Widget Options";
+		m_TextWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_TextWidgetHeader.m_Expanded = true;
 
 		// Set up widget to modify the text widget's text
-		m_WidgetText.m_Label = "Text";
-		m_WidgetText.m_Flags |= EditorUI::EditMultiLineText_Indented;
-		m_WidgetText.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetText);
+		m_TextWidgetText.m_Label = "Text";
+		m_TextWidgetText.m_Flags |= EditorUI::EditMultiLineText_Indented;
+		m_TextWidgetText.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetText);
 
 		// Set up widget to modify the text widget's text size
-		m_WidgetTextSize.m_Label = "Text Size";
-		m_WidgetTextSize.m_Flags |= EditorUI::EditFloat_Indented;
-		m_WidgetTextSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetTextSize);
+		m_TextWidgetTextSize.m_Label = "Text Size";
+		m_TextWidgetTextSize.m_Flags |= EditorUI::EditFloat_Indented;
+		m_TextWidgetTextSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetTextSize);
 
 		// Set up widget to modify the text widget's text color
-		m_WidgetTextColor.m_Label = "Text Color";
-		m_WidgetTextColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
-		m_WidgetTextColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetTextColor);
+		m_TextWidgetTextColor.m_Label = "Text Color";
+		m_TextWidgetTextColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_TextWidgetTextColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetTextColor);
 
 		// Set up widget to modify the text widget's text alignment
-		m_WidgetTextAlignment.m_Label = "Text Alignment";
-		m_WidgetTextAlignment.m_Flags |= EditorUI::SelectOption_Indented;
-		m_WidgetTextAlignment.m_PopupAction = KG_BIND_CLASS_FN(OnOpenWidgetAlignmentPopup);
-		m_WidgetTextAlignment.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetAlignment);
+		m_TextWidgetTextAlignment.m_Label = "Text Alignment";
+		m_TextWidgetTextAlignment.m_Flags |= EditorUI::SelectOption_Indented;
+		m_TextWidgetTextAlignment.m_PopupAction = KG_BIND_CLASS_FN(OnOpenTextWidgetAlignmentPopup);
+		m_TextWidgetTextAlignment.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetAlignment);
 
 		// Set up widget to modify if the text widget is wrapped
-		m_WidgetWrapped.m_Label = "Text Wrapped";
-		m_WidgetWrapped.m_Flags |= EditorUI::Checkbox_Indented;
-		m_WidgetWrapped.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetWrapped);
+		m_TextWidgetTextWrapped.m_Label = "Text Wrapped";
+		m_TextWidgetTextWrapped.m_Flags |= EditorUI::Checkbox_Indented;
+		m_TextWidgetTextWrapped.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetWrapped);
+	}
+
+	void UIEditorPropertiesPanel::InitializeButtonWidgetOptions()
+	{
+		// Set up header for button widget options
+		m_ButtonWidgetHeader.m_Label = "Button Widget Options";
+		m_ButtonWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_ButtonWidgetHeader.m_Expanded = true;
+
+		// Set up widget to modify the button widget's text
+		m_ButtonWidgetText.m_Label = "Text";
+		m_ButtonWidgetText.m_Flags |= EditorUI::EditText_Indented;
+		m_ButtonWidgetText.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetText);
+
+		// Set up widget to modify the button widget's text size
+		m_ButtonWidgetTextSize.m_Label = "Text Size";
+		m_ButtonWidgetTextSize.m_Flags |= EditorUI::EditFloat_Indented;
+		m_ButtonWidgetTextSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetButtonTextSize);
+
+		// Set up widget to modify the button widget's text color
+		m_ButtonWidgetTextColor.m_Label = "Text Color";
+		m_ButtonWidgetTextColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_ButtonWidgetTextColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetButtonTextColor);
+
+		// Set up widget to modify the button widget's text alignment
+		m_ButtonWidgetTextAlignment.m_Label = "Text Alignment";
+		m_ButtonWidgetTextAlignment.m_Flags |= EditorUI::SelectOption_Indented;
+		m_ButtonWidgetTextAlignment.m_PopupAction = KG_BIND_CLASS_FN(OnOpenButtonWidgetTextAlignmentPopup);
+		m_ButtonWidgetTextAlignment.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetTextAlignment);
 	}
 
 	void UIEditorPropertiesPanel::InitializeWidgetLocationOptions()
@@ -1097,7 +1164,7 @@ namespace Kargono::Panels
 		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
 
 		// Update the text widget text based on the editorUI widget's value
-		textWidget.SetText(m_WidgetText.m_CurrentOption, m_ActiveWindow);
+		textWidget.SetText(m_TextWidgetText.m_CurrentOption, m_ActiveWindow);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1128,7 +1195,8 @@ namespace Kargono::Panels
 		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
 
 		// Update the text widget text size based on the editorUI widget's value
-		textWidget.m_TextSize = m_WidgetTextSize.m_CurrentFloat;
+		textWidget.m_TextSize = m_TextWidgetTextSize.m_CurrentFloat;
+		textWidget.CalculateTextMetadata(m_ActiveWindow);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1158,13 +1226,13 @@ namespace Kargono::Panels
 		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
 
 		// Update the text widget text color based on the editorUI widget's value
-		textWidget.m_TextColor = m_WidgetTextColor.m_CurrentVec4;
+		textWidget.m_TextColor = m_TextWidgetTextColor.m_CurrentVec4;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWidgetAlignment(const EditorUI::OptionEntry& entry)
+	void UIEditorPropertiesPanel::OnModifyTextWidgetAlignment(const EditorUI::OptionEntry& entry)
 	{
 		// Ensure active window is valid
 		if (!m_ActiveWindow)
@@ -1195,26 +1263,26 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenWidgetAlignmentPopup()
+	void UIEditorPropertiesPanel::OnOpenTextWidgetAlignmentPopup()
 	{
 		// Clear existing options
-		m_WidgetTextAlignment.ClearOptions();
+		m_TextWidgetTextAlignment.ClearOptions();
 
 		// Add left, right, and center alignment options
-		m_WidgetTextAlignment.AddToOptions
+		m_TextWidgetTextAlignment.AddToOptions
 		(
 			"All Options", 
 			Utility::ConstraintToString(RuntimeUI::Constraint::Left),
 			(uint64_t)RuntimeUI::Constraint::Left
 		);
 
-		m_WidgetTextAlignment.AddToOptions
+		m_TextWidgetTextAlignment.AddToOptions
 		(
 			"All Options",
 			Utility::ConstraintToString(RuntimeUI::Constraint::Right),
 			(uint64_t)RuntimeUI::Constraint::Right
 		);
-		m_WidgetTextAlignment.AddToOptions
+		m_TextWidgetTextAlignment.AddToOptions
 		(
 			"All Options",
 			Utility::ConstraintToString(RuntimeUI::Constraint::Center),
@@ -1252,5 +1320,151 @@ namespace Kargono::Panels
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifyButtonWidgetText(EditorUI::EditTextSpec& spec)
+	{
+		// Ensure active window is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update the button widget's text");
+			return;
+		}
+
+		// Ensure active widget is a valid type
+		if (!m_ActiveWidget)
+		{
+			KG_WARN("No valid widget active when trying to update the button widget's text");
+			return;
+		}
+
+		// Ensure active widget is a valid type and get the button widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
+		{
+			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
+
+		// Update the button widget text based on the editorUI widget's value
+		buttonWidget.SetText(spec.m_CurrentOption);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifyButtonWidgetButtonTextSize(EditorUI::EditFloatSpec& spec)
+	{
+		// Ensure active window is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update button widget's text size");
+			return;
+		}
+
+		// Ensure active widget is a valid type
+		if (!m_ActiveWidget)
+		{
+			KG_WARN("No valid widget active when trying to update the button widget's text size");
+			return;
+		}
+
+		// Ensure active widget is a valid type and get the button widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
+		{
+			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
+
+		// Update the button widget text size based on the editorUI widget's value
+		buttonWidget.m_TextSize = spec.m_CurrentFloat;
+		buttonWidget.CalculateTextSize();
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifyButtonWidgetButtonTextColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Ensure active window is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update button widget's text color");
+			return;
+		}
+
+		if (!m_ActiveWidget)
+		{
+			KG_WARN("No valid widget active when trying to update button widget's text color");
+			return;
+		}
+
+		// Ensure active widget is a valid type and get the button widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
+		{
+			KG_WARN("Attempt to modify button widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
+
+		// Update the button widget text color based on the editorUI widget's value
+		buttonWidget.m_TextColor = spec.m_CurrentVec4;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifyButtonWidgetTextAlignment(const EditorUI::OptionEntry& entry)
+	{
+		// Ensure active window is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update button widget's text alignment");
+			return;
+		}
+
+		// Ensure active widget is a valid type
+		if (!m_ActiveWidget)
+		{
+			KG_WARN("No valid widget active when trying to update the button widget's text alignment");
+			return;
+		}
+
+		// Ensure active widget is a valid type and get the button widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
+		{
+			KG_WARN("Attempt to modify button widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
+
+		// Change the alignment option for the button widget
+		buttonWidget.m_TextAlignment = (RuntimeUI::Constraint)(uint64_t)entry.m_Handle;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnOpenButtonWidgetTextAlignmentPopup()
+	{
+		// Clear existing options
+		m_ButtonWidgetTextAlignment.ClearOptions();
+
+		// Add left, right, and center alignment options
+		m_ButtonWidgetTextAlignment.AddToOptions
+		(
+			"All Options",
+			Utility::ConstraintToString(RuntimeUI::Constraint::Left),
+			(uint64_t)RuntimeUI::Constraint::Left
+		);
+
+		m_ButtonWidgetTextAlignment.AddToOptions
+		(
+			"All Options",
+			Utility::ConstraintToString(RuntimeUI::Constraint::Right),
+			(uint64_t)RuntimeUI::Constraint::Right
+		);
+		m_ButtonWidgetTextAlignment.AddToOptions
+		(
+			"All Options",
+			Utility::ConstraintToString(RuntimeUI::Constraint::Center),
+			(uint64_t)RuntimeUI::Constraint::Center
+		);
 	}
 }

@@ -836,6 +836,10 @@ namespace Kargono::Windows
 		Particles::ParticleService::ClearEmitters();
 		Particles::ParticleService::LoadSceneEmitters(m_EditorScene);
 
+		// Bring back the old UI
+		RuntimeUI::RuntimeUIService::SetActiveUI(s_EditorApp->m_UIEditorWindow->m_EditorUI, 
+			s_EditorApp->m_UIEditorWindow->m_EditorUIHandle);
+
 		AppTickService::ClearGenerators();
 
 		m_SceneState = SceneState::Edit;

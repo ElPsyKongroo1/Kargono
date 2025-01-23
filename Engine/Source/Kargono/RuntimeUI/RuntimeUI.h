@@ -22,7 +22,7 @@ namespace Kargono::Assets
 
 namespace Kargono::RuntimeUI
 {
-	class UserInterfaceService;
+	class RuntimeUIService;
 	struct RuntimeUIContext;
 	class Window;
 
@@ -105,7 +105,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Supporting Methods
 		//============================
-		Math::vec3 CalculateSize(const Math::vec3& windowSize);
+		Math::vec3 CalculateWidgetSize(const Math::vec3& windowSize);
 		Math::vec3 CalculateWorldPosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize);
 		Math::vec3 CalculateWindowPosition(Math::vec2 worldPosition, const Math::vec3& windowTranslation, const Math::vec3& windowSize);
 	public:
@@ -200,6 +200,18 @@ namespace Kargono::RuntimeUI
 		// Rendering Methods
 		//============================
 		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+
+	public:
+		//============================
+		// Modify State
+		//============================
+		void SetText(const std::string& newText);
+
+	public:
+		//============================
+		// Re-validation Methods
+		//============================
+		void CalculateTextSize();
 	public:
 		//============================
 		// Public Fields
