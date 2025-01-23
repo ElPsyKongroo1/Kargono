@@ -98,6 +98,7 @@ namespace Kargono::Panels
 			windowEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWindow);
 			windowEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
 			windowEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
+			windowEntry.m_OnRightClickSelection.push_back({ "Add Button Widget", KG_BIND_CLASS_FN(AddButtonWidget) });
 
 			// Add widgets to window entry
 			std::size_t widgetIterator{ 0 };
@@ -108,12 +109,29 @@ namespace Kargono::Panels
 				// Create new widget entry
 				EditorUI::TreeEntry widgetEntry{};
 				widgetEntry.m_Label = widget->m_Tag;
-				widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
+
+				switch (widget->m_WidgetType)
+				{
+				case RuntimeUI::WidgetTypes::TextWidget:
+					// Provide text widget icon
+					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
+					
+					break;
+				case RuntimeUI::WidgetTypes::ButtonWidget:
+					// Provide text widget icon
+					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconButtonWidget;
+					break;
+				default:
+					KG_ERROR("Invalid widget type provided");
+					break;
+				}
+
+				// Provide widget/window ID's
 				widgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)windowIterator);
 				widgetEntry.m_Handle = widgetIterator;
 
 				// Add functions to call when interacting with widget entry
-				widgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectTextWidget);
+				widgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
 				widgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
 
 				// Add widget entry to window entry
@@ -332,7 +350,7 @@ namespace Kargono::Panels
 		newWidgetEntry.m_Handle = window.m_Widgets.size();
 
 		// Add handlers for interacting with the tree entry
-		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectTextWidget);
+		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
 		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
 
 		// Add Widget to RuntimeUI and EditorUI::Tree
@@ -340,7 +358,37 @@ namespace Kargono::Panels
 		windowEntry.m_SubEntries.push_back(newWidgetEntry);
 	}
 
-	void UIEditorTreePanel::SelectTextWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::AddButtonWidget(EditorUI::TreeEntry& windowEntry)
+	{
+		// Get window path from provided entry and ensure it is valid
+		EditorUI::TreePath windowPath = m_UITree.GetPathFromEntryReference(&windowEntry);
+		if (!windowPath)
+		{
+			KG_WARN("Could not locate window path inside m_UITree");
+			return;
+		}
+
+		// Create Text Widget
+		RuntimeUI::Window& window = s_UIWindow->m_EditorUI->m_Windows.at(windowEntry.m_Handle);
+		Ref<RuntimeUI::ButtonWidget> newButtonWidget = CreateRef<RuntimeUI::ButtonWidget>();
+
+		// Create new widget entry for m_UITree
+		EditorUI::TreeEntry newWidgetEntry{};
+		newWidgetEntry.m_Label = newButtonWidget->m_Tag;
+		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconButtonWidget;
+		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)windowEntry.m_Handle); ;
+		newWidgetEntry.m_Handle = window.m_Widgets.size();
+
+		// Add handlers for interacting with the tree entry
+		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
+		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
+
+		// Add Widget to RuntimeUI and EditorUI::Tree
+		window.AddWidget(newButtonWidget);
+		windowEntry.m_SubEntries.push_back(newWidgetEntry);
+	}
+
+	void UIEditorTreePanel::SelectWidget(EditorUI::TreeEntry& entry)
 	{
 		s_UIWindow->m_PropertiesPanel->m_ActiveWindow = &s_UIWindow->m_EditorUI->m_Windows.at(*(uint32_t*)entry.m_ProvidedData.get());
 		s_UIWindow->m_PropertiesPanel->m_ActiveWidget = s_UIWindow->m_PropertiesPanel->m_ActiveWindow->m_Widgets.at(entry.m_Handle).get();
@@ -413,8 +461,9 @@ namespace Kargono::Panels
 
 		// Add handlers for interacting with the tree entry
 		newEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWindow);
-		newEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
 		newEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
+		newEntry.m_OnRightClickSelection.push_back({ "Add Button Widget", KG_BIND_CLASS_FN(AddButtonWidget) });
+		newEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
 
 		// Add new window to RuntimeUI and this panel's tree
 		entry.m_SubEntries.push_back(newEntry);

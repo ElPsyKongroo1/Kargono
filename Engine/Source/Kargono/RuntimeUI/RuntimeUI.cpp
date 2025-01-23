@@ -111,7 +111,6 @@ namespace Kargono::RuntimeUI
 					if (widget->m_WidgetType == WidgetTypes::TextWidget)
 					{
 						TextWidget* textWidget = (TextWidget*)widget.get();
-						textWidget->CalculateTextSize();
 						textWidget->CalculateTextMetadata(&window);
 					}
 				}
@@ -343,7 +342,6 @@ namespace Kargono::RuntimeUI
 				if (widget->m_WidgetType == WidgetTypes::TextWidget)
 				{
 					TextWidget* textWidget = (TextWidget*)widget.get();
-					textWidget->CalculateTextSize();
 					textWidget->CalculateTextMetadata(&window);
 				}
 			}
@@ -423,7 +421,8 @@ namespace Kargono::RuntimeUI
 	void RuntimeUIService::SetActiveWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
 	{
 		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+		auto [currentWidget, currentWindow] = GetWidgetAndWindow(windowTag, widgetTag);
+		KG_ASSERT(currentWindow);
 
 		// Ensure the widget is valid
 		if (!currentWidget)
@@ -442,6 +441,7 @@ namespace Kargono::RuntimeUI
 		// Set the text of the widget
 		TextWidget* textWidget = (TextWidget*)currentWidget.get();
 		textWidget->m_Text = newText;
+		textWidget->CalculateTextMetadata(currentWindow);
 	}
 
 	void RuntimeUIService::SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag)
@@ -846,6 +846,27 @@ namespace Kargono::RuntimeUI
 		return nullptr;
 	}
 
+	std::tuple<Ref<Widget>, Window*> RuntimeUIService::GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag)
+	{
+		// Get widget using its parent window tag and its widget tag
+		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
+		{
+			// Ensure window tag matches
+			if (window.m_Tag == windowTag)
+			{
+				// Ensure widget tag matches
+				for (Ref<Widget> widget : window.m_Widgets)
+				{
+					if (widget->m_Tag == widgetTag)
+					{
+						return { widget, &window };
+					}
+				}
+			}
+		}
+		return { nullptr, nullptr };
+	}
+
 	void Window::DisplayWindow()
 	{
 		// Return if the window is already displayed
@@ -956,21 +977,18 @@ namespace Kargono::RuntimeUI
 			
 			constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
 
-			// Handle placing each line of the text widget based on alignment constraints
+			// Place the starting x-location of the text widget based on the provided alignment option
 			switch (m_TextAlignment)
 			{
 			case Constraint::Left:
-				finalTranslation = widgetTranslation;
+				finalTranslation.x = widgetTranslation.x;
 				break;
 			case Constraint::Right:
-				finalTranslation = Math::vec3(widgetTranslation.x + (widgetSize.x) - ((lineDimensions.x) * textSize), widgetTranslation.y, widgetTranslation.z);
+				finalTranslation.x = widgetTranslation.x + (widgetSize.x) - ((lineDimensions.x) * textSize);
 				break;
 			case Constraint::Center:
 				// Adjust current line translation to be centered
-				finalTranslation = Math::vec3(
-					widgetTranslation.x + (widgetSize.x * 0.5f) - ((lineDimensions.x * 0.5f) * textSize), 
-					widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextMetadata.m_LineSize[0].y * 0.5f - (allLineAdvanceHeight * 0.5f)) * textSize) + k_CenterAdjustmentSize,
-					widgetTranslation.z);
+				finalTranslation.x = widgetTranslation.x + (widgetSize.x * 0.5f) - ((lineDimensions.x * 0.5f) * textSize);
 				break;
 			case Constraint::Bottom:
 			case Constraint::Top:
@@ -978,6 +996,10 @@ namespace Kargono::RuntimeUI
 				KG_ERROR("Invalid constraint type for aligning text {}", Utility::ConstraintToString(m_TextAlignment));
 				break;
 			}
+
+			// Set the starting y/z locations
+			finalTranslation.y = widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextMetadata.m_LineSize[0].y * 0.5f - (allLineAdvanceHeight * 0.5f)) * textSize) + k_CenterAdjustmentSize;
+			finalTranslation.z = widgetTranslation.z;
 
 			// Move the line down in the y-axis to it's correct location
 			finalTranslation.y -= iteration * textSize * lineAdvance;
@@ -989,19 +1011,6 @@ namespace Kargono::RuntimeUI
 				finalTranslation, m_TextColor, textSize);
 		}
 
-	}
-
-	void TextWidget::CalculateTextSize()
-	{
-		// Calculate the text size of the widget using the default font if the active user interface is not set
-		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
-		{
-			m_TextAbsoluteDimensions = RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextSize(m_Text);
-			return;
-		}
-
-		// Calculate the text size of the widget using the active user interface font
-		m_TextAbsoluteDimensions = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextSize(m_Text);
 	}
 
 	void TextWidget::CalculateTextMetadata(Window* parentWindow)
@@ -1021,11 +1030,11 @@ namespace Kargono::RuntimeUI
 		{
 			if (m_TextWrapped)
 			{
-				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize, (int)widgetSize.x);
+				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(m_Text, m_TextMetadata, textSize, (int)widgetSize.x);
 			}
 			else
 			{
-				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize);
+				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(m_Text, m_TextMetadata, textSize);
 			}
 			
 			return;
@@ -1034,11 +1043,11 @@ namespace Kargono::RuntimeUI
 		// Calculate the text size of the widget using the active user interface font
 		if (m_TextWrapped)
 		{
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize, (int)widgetSize.x);
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(m_Text, m_TextMetadata, textSize, (int)widgetSize.x);
 		}
 		else
 		{
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(m_Text, m_TextMetadata, m_TextSize);
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(m_Text, m_TextMetadata, textSize);
 		}
 		
 	}
@@ -1049,7 +1058,6 @@ namespace Kargono::RuntimeUI
 		m_Text = newText;
 
 		// Calculate the new text size
-		CalculateTextSize();
 		CalculateTextMetadata(parentWindow);
 	}
 
@@ -1151,6 +1159,57 @@ namespace Kargono::RuntimeUI
 		widgetXPos = m_XPositionType == PixelOrPercent::Percent ? widgetXPos / windowSize.x : widgetXPos;
 		widgetYPos = m_YPositionType == PixelOrPercent::Percent ? widgetYPos / windowSize.y : widgetYPos;
 		return Math::vec3(widgetXPos, widgetYPos, 0.0f);
+	}
+
+	void ButtonWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	{
+		Rendering::RendererInputSpec& inputSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
+
+		// Calculate the widget's rendering data
+		Math::vec3 widgetSize = CalculateSize(windowSize);
+
+		// Get widget translation
+		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
+
+		// Create the widget's background rendering data
+		inputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
+			* glm::scale(Math::mat4(1.0f), widgetSize);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_ActiveBackgroundColor, "a_Color", inputSpec.m_Buffer, inputSpec.m_Shader);
+
+		// Submit background data to GPU
+		Rendering::RenderingService::SubmitDataToRenderer(RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec);
+
+		// Create the widget's text rendering data
+		widgetTranslation.z += 0.001f;
+		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		float textSize{ (viewportWidth * 0.15f * m_TextSize) * (resolution.y / resolution.x) };
+
+		constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
+
+		// Place the starting x-location of the text widget based on the provided alignment option
+		switch (m_TextAlignment)
+		{
+		case Constraint::Left:
+			break;
+		case Constraint::Right:
+			widgetTranslation.x = widgetTranslation.x + (widgetSize.x) - ((m_TextDimensions.x) * textSize);
+			break;
+		case Constraint::Center:
+			// Adjust current line translation to be centered
+			widgetTranslation.x = widgetTranslation.x + (widgetSize.x * 0.5f) - ((m_TextDimensions.x * 0.5f) * textSize);
+			break;
+		case Constraint::Bottom:
+		case Constraint::Top:
+		case Constraint::None:
+			KG_ERROR("Invalid constraint type for aligning text {}", Utility::ConstraintToString(m_TextAlignment));
+			break;
+		}
+
+		// Set the starting y/z locations
+		widgetTranslation.y = widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextDimensions.y * 0.5f) * textSize) + k_CenterAdjustmentSize;
+
+		// Call the text's rendering function
+		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->OnRenderSingleLineText(m_Text, widgetTranslation, m_TextColor, textSize);
 	}
 
 }

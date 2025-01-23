@@ -63,7 +63,8 @@ namespace Kargono::Panels
 		// Manage Widgets
 		//=========================
 		void AddTextWidget(EditorUI::TreeEntry& entry);
-		void SelectTextWidget(EditorUI::TreeEntry& entry);
+		void AddButtonWidget(EditorUI::TreeEntry& entry);
+		void SelectWidget(EditorUI::TreeEntry& entry);
 		void DeleteWidget(EditorUI::TreeEntry& entry);
 	public:
 		//=========================

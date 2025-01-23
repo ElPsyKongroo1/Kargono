@@ -131,6 +131,7 @@ namespace Kargono::Panels
 		void OnOpenWidgetOnPressPopup();
 		void OnOpenTooltipForWidgetOnPress();
 
+
 	public:
 		//=========================
 		// Core Panel Data

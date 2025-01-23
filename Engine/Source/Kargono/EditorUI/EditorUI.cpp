@@ -394,6 +394,7 @@ namespace Kargono::EditorUI
 		// Runtime UI icons
 		s_IconWindow = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/Window.png").string());
 		s_IconTextWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/TextWidget.png").string());
+		s_IconButtonWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/ButtonWidget.png").string());
 
 		// Scripting UI icons
 		s_IconNumber = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Number.png").string());
@@ -469,6 +470,7 @@ namespace Kargono::EditorUI
 
 		s_IconWindow.reset();
 		s_IconTextWidget.reset();
+		s_IconButtonWidget.reset();
 
 		s_IconNumber.reset();
 		s_IconVariable.reset();

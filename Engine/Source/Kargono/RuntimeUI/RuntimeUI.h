@@ -12,6 +12,7 @@
 #include <string>
 #include <unordered_map>
 #include <functional>
+#include <tuple>
 
 
 namespace Kargono::Assets
@@ -143,7 +144,6 @@ namespace Kargono::RuntimeUI
 		{
 			m_WidgetType = WidgetTypes::TextWidget;
 			m_Size = { 0.3f, 0.1f };
-			CalculateTextSize();
 		}
 		virtual ~TextWidget() override = default;
 	public:
@@ -161,7 +161,6 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Re-validation Methods
 		//============================
-		void CalculateTextSize();
 		void CalculateTextMetadata(Window* parentWindow);
 	public:
 		//============================
@@ -171,7 +170,7 @@ namespace Kargono::RuntimeUI
 		float m_TextSize{ 0.3f };
 		Math::vec4 m_TextColor{1.0f};
 		Constraint m_TextAlignment{ Constraint::Center };
-		bool m_TextWrapped{ true };
+		bool m_TextWrapped{ false };
 	private:
 		TextMetadata m_TextMetadata{};
 		Math::vec2 m_TextAbsoluteDimensions{};
@@ -193,6 +192,7 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::ButtonWidget;
+			m_Size = { 0.3f, 0.1f };
 		}
 		virtual ~ButtonWidget() override = default;
 	public:
@@ -200,6 +200,19 @@ namespace Kargono::RuntimeUI
 		// Rendering Methods
 		//============================
 		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+	public:
+		//============================
+		// Public Fields
+		//============================
+		std::string m_Text{ "New Button Widget" };
+		float m_TextSize{ 0.3f };
+		Math::vec4 m_TextColor{ 1.0f };
+		Constraint m_TextAlignment{ Constraint::Center };
+	private:
+		Math::vec2 m_TextDimensions{};
+	private:
+		friend class RuntimeUIService;
+		friend class Assets::UserInterfaceManager;
 	};
 
 	//============================
@@ -417,6 +430,7 @@ namespace Kargono::RuntimeUI
 		static void CalculateWindowNavigationLinks();
 		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
 		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
+		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag);
 		static void RevalidateDisplayedWindows();
 
 	private:
@@ -426,6 +440,7 @@ namespace Kargono::RuntimeUI
 		static inline Ref<RuntimeUIContext> s_RuntimeUIContext{ nullptr };
 	private:
 		friend class TextWidget;
+		friend class ButtonWidget;
 		friend class Window;
 	};
 }

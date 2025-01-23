@@ -83,10 +83,22 @@ namespace Kargono::Assets
 					out << YAML::Key << "Text" << YAML::Value << textWidget->m_Text;
 					out << YAML::Key << "TextSize" << YAML::Value << textWidget->m_TextSize;
 					out << YAML::Key << "TextColor" << YAML::Value << textWidget->m_TextColor;
-					out << YAML::Key << "TextAbsoluteDimensions" << YAML::Value << textWidget->m_TextAbsoluteDimensions;
 					out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(textWidget->m_TextAlignment);
 					out << YAML::Key << "TextWrapped" << YAML::Value << textWidget->m_TextWrapped;
 					out << YAML::EndMap; // End TextWidget Map
+					break;
+				}
+				case RuntimeUI::WidgetTypes::ButtonWidget:
+				{
+					RuntimeUI::ButtonWidget* buttonWidget = static_cast<RuntimeUI::ButtonWidget*>(widget.get());
+					out << YAML::Key << "ButtonWidget" << YAML::Value;
+					out << YAML::BeginMap; // Begin buttonWidget Map
+					out << YAML::Key << "Text" << YAML::Value << buttonWidget->m_Text;
+					out << YAML::Key << "TextSize" << YAML::Value << buttonWidget->m_TextSize;
+					out << YAML::Key << "TextColor" << YAML::Value << buttonWidget->m_TextColor;
+					out << YAML::Key << "TextDimensions" << YAML::Value << buttonWidget->m_TextDimensions;
+					out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(buttonWidget->m_TextAlignment);
+					out << YAML::EndMap; // End buttonWidget Map
 					break;
 				}
 				}
@@ -180,9 +192,21 @@ namespace Kargono::Assets
 							textWidget->m_Text = specificWidget["Text"].as<std::string>();
 							textWidget->m_TextSize = specificWidget["TextSize"].as<float>();
 							textWidget->m_TextColor = specificWidget["TextColor"].as<glm::vec4>();
-							textWidget->m_TextAbsoluteDimensions = specificWidget["TextAbsoluteDimensions"].as<Math::vec2>();
 							textWidget->m_TextAlignment = Utility::StringToConstraint(specificWidget["TextAlignment"].as<std::string>());
 							textWidget->m_TextWrapped = specificWidget["TextWrapped"].as<bool>();
+							break;
+						}
+						case RuntimeUI::WidgetTypes::ButtonWidget:
+						{
+							specificWidget = widget["ButtonWidget"];
+							newWidget = CreateRef<RuntimeUI::ButtonWidget>();
+							newWidget->m_WidgetType = widgetType;
+							RuntimeUI::ButtonWidget* buttonWidget = static_cast<RuntimeUI::ButtonWidget*>(newWidget.get());
+							buttonWidget->m_Text = specificWidget["Text"].as<std::string>();
+							buttonWidget->m_TextSize = specificWidget["TextSize"].as<float>();
+							buttonWidget->m_TextColor = specificWidget["TextColor"].as<glm::vec4>();
+							buttonWidget->m_TextDimensions = specificWidget["TextDimensions"].as<Math::vec2>();
+							buttonWidget->m_TextAlignment = Utility::StringToConstraint(specificWidget["TextAlignment"].as<std::string>());
 							break;
 						}
 						default:

@@ -229,7 +229,7 @@ namespace Kargono::EditorUI
 			s_IconPause, s_IconStop, s_IconGrid;
 
 		// Runtime UI icons
-		inline static Ref<Rendering::Texture2D> s_IconWindow, s_IconTextWidget;
+		inline static Ref<Rendering::Texture2D> s_IconWindow, s_IconTextWidget, s_IconButtonWidget;
 
 		// Scripting icons
 		inline static Ref<Rendering::Texture2D> s_IconNumber, s_IconVariable, s_IconFunction, s_IconBoolean, s_IconDecimal;
