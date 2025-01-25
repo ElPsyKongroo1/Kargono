@@ -31,12 +31,9 @@ namespace Kargono::Scripting
 		StringLiteral,
 		BooleanLiteral,
 		FloatLiteral,
-		InputKeyLiteral,
-		ResolutionLiteral,
 		MessageTypeLiteral,
-
-		// Asset Literals
-		AssetLiteral,
+		// Language specific literals
+		CustomLiteral,
 
 		// Keywords
 		Keyword,
@@ -123,11 +120,8 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::IntegerLiteral: return "Integer Literal";
 		case Scripting::ScriptTokenType::StringLiteral: return "String Literal";
 		case Scripting::ScriptTokenType::FloatLiteral: return "Float Literal";
-		case Scripting::ScriptTokenType::InputKeyLiteral: return "Input Key Literal";
-		case Scripting::ScriptTokenType::ResolutionLiteral: return "Resolution Literal";
 		case Scripting::ScriptTokenType::MessageTypeLiteral: return "Message Type Literal";
-
-		case Scripting::ScriptTokenType::AssetLiteral: return "Asset Literal";
+		case Scripting::ScriptTokenType::CustomLiteral: return "Custom Literal";
 
 		case Scripting::ScriptTokenType::Keyword: return "Keyword";
 		case Scripting::ScriptTokenType::PrimitiveType: return "Primitive Type";
@@ -244,21 +238,7 @@ namespace Kargono::Scripting
 		FunctionNode* m_FunctionNode{};
 	};
 
-	struct AssetNode
-	{
-		ScriptToken Namespace{};
-		ScriptToken Identifier{};
-		ScriptToken ReturnType{};
-	};
-
-	struct ResolutionNode
-	{
-		ScriptToken Namespace{};
-		ScriptToken Identifier{};
-		ScriptToken ReturnType{};
-	};
-
-	struct InputKeyNode
+	struct CustomLiteralNode
 	{
 		ScriptToken Namespace{};
 		ScriptToken Identifier{};
@@ -308,7 +288,7 @@ namespace Kargono::Scripting
 
 	struct Expression
 	{
-		std::variant<FunctionCallNode, TokenExpressionNode, UnaryOperationNode, BinaryOperationNode, InitializationListNode, MemberNode, TernaryOperationNode, AssetNode, InputKeyNode, ResolutionNode> Value{};
+		std::variant<FunctionCallNode, TokenExpressionNode, UnaryOperationNode, BinaryOperationNode, InitializationListNode, MemberNode, TernaryOperationNode, CustomLiteralNode> Value{};
 		Ref<ExpressionGenerationAffixes> GenerationAffixes{ nullptr };
 
 		ScriptToken GetReturnType()
@@ -318,20 +298,10 @@ namespace Kargono::Scripting
 				FunctionCallNode& functionCallNode = *functionCallNodePtr;
 				return functionCallNode.ReturnType;
 			}
-			else if (AssetNode* assetNodePtr = std::get_if<AssetNode>(&Value))
+			else if (CustomLiteralNode* customLiteralNodePtr = std::get_if<CustomLiteralNode>(&Value))
 			{
-				AssetNode& assetNode = *assetNodePtr;
-				return assetNode.ReturnType;
-			}
-			else if (InputKeyNode* inputKeyNodePtr = std::get_if<InputKeyNode>(&Value))
-			{
-				InputKeyNode& inputKeyNode = *inputKeyNodePtr;
-				return inputKeyNode.ReturnType;
-			}
-			else if (ResolutionNode* resolutionNodePtr = std::get_if<ResolutionNode>(&Value))
-			{
-				ResolutionNode& resolutionNode = *resolutionNodePtr;
-				return resolutionNode.ReturnType;
+				CustomLiteralNode& customLiteralNode = *customLiteralNodePtr;
+				return customLiteralNode.ReturnType;
 			}
 			else if (UnaryOperationNode* unaryOperationNodePtr = std::get_if<UnaryOperationNode>(&Value))
 			{
@@ -597,15 +567,20 @@ namespace Kargono::Scripting
 		std::variant<FunctionNode, DataMember> Value {};
 	};
 
-	// Asset management structs
-	using AssetNameToIDMap = std::unordered_map<std::string, UUID>;
-	struct AssetTypeInfo
+	struct CustomLiteralMember
 	{
-		AssetNameToIDMap* m_AssetNameToID;
-		std::string m_ReturnType;
-		Ref<Rendering::Texture2D> m_AssetIcon;
+		std::string m_OutputText{};
+		ScriptToken m_PrimitiveType{};
+		std::unordered_map<std::string, Ref<CustomLiteralMember>> m_Members{};
 	};
 
+	// Asset management structs
+	using CustomLiteralNameToIDMap = std::unordered_map<std::string, CustomLiteralMember>;
+	struct CustomLiteralInfo
+	{
+		CustomLiteralNameToIDMap m_CustomLiteralNameToID;
+		Ref<Rendering::Texture2D> m_LiteralIcon;
+	};
 
 	struct LanguageDefinition
 	{
@@ -618,16 +593,7 @@ namespace Kargono::Scripting
 		std::unordered_set<std::string> AllMessageTypes{};
 
 		// All Assets
-		std::unordered_map<std::string, AssetTypeInfo> AllAssetTypes{};
-		std::unordered_map<std::string, UUID> AllAIStates{};
-		std::unordered_map<std::string, UUID> AllAudioBuffers{};
-		std::unordered_map<std::string, UUID> AllEmitterConfigs{};
-		std::unordered_map<std::string, UUID> AllFonts{};
-		std::unordered_map<std::string, UUID> AllGameStates{};
-		std::unordered_map<std::string, UUID> AllInputMaps{};
-		std::unordered_map<std::string, UUID> AllProjectComponents{};
-		std::unordered_map<std::string, UUID> AllScenes{};
-		std::unordered_map<std::string, UUID> AllUserInterfaces{};
+		std::unordered_map<std::string, CustomLiteralInfo> AllLiteralTypes{};
 	public:
 		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)
 		{
@@ -648,7 +614,7 @@ namespace Kargono::Scripting
 			FunctionDefinitions.clear();
 			InitListTypes.clear();
 			AllMessageTypes.clear();
-			AllEmitterConfigs.clear();
+			AllLiteralTypes.clear();
 		}
 
 		operator bool() const

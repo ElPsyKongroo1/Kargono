@@ -43,6 +43,7 @@ namespace Kargono::Scripting
 		static void CreateKGScriptKeywords();
 		static void CreateKGScriptInitializationPrototypes();
 		static void CreateKGScriptPrimitiveTypes();
+		static void CreateKGScriptCustomLiterals();
 		static void CreateKGScriptNamespaces();
 		static void CreateKGScriptFunctionDefinitions();
 	public:

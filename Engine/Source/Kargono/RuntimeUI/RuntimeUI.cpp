@@ -66,6 +66,12 @@ namespace Kargono::RuntimeUI
 
 	void RuntimeUIService::SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle)
 	{
+		if (!userInterface || uiHandle == Assets::EmptyHandle)
+		{
+			KG_WARN("Attempt to make a user interface active that is null or has an empty handle");
+			return;
+		}
+
 		// Reset previous active UI
 		ClearActiveUI();
 

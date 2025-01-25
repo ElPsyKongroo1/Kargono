@@ -51,35 +51,15 @@ namespace Kargono::Utility
 				PrintExpression(argument, indentation + 2);
 			}
 		}
-		else if (Scripting::AssetNode* assetExpression = std::get_if<Scripting::AssetNode>(&expression->Value))
+		else if (Scripting::CustomLiteralNode* customLiteralExpression = std::get_if<Scripting::CustomLiteralNode>(&expression->Value))
 		{
-			KG_INFO("{}Expression Asset", GetIndentation(indentation));
+			KG_INFO("{}Expression Custom Literal", GetIndentation(indentation));
 			KG_INFO("{}Namespace", GetIndentation(indentation + 1));
-			PrintToken(assetExpression->Namespace, indentation + 2);
+			PrintToken(customLiteralExpression->Namespace, indentation + 2);
 			KG_INFO("{}Identifier", GetIndentation(indentation + 1));
-			PrintToken(assetExpression->Identifier, indentation + 2);
+			PrintToken(customLiteralExpression->Identifier, indentation + 2);
 			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
-			PrintToken(assetExpression->ReturnType, indentation + 2);
-		}
-		else if (Scripting::InputKeyNode* inputKeyExpression = std::get_if<Scripting::InputKeyNode>(&expression->Value))
-		{
-			KG_INFO("{}Expression Asset", GetIndentation(indentation));
-			KG_INFO("{}Namespace", GetIndentation(indentation + 1));
-			PrintToken(inputKeyExpression->Namespace, indentation + 2);
-			KG_INFO("{}Identifier", GetIndentation(indentation + 1));
-			PrintToken(inputKeyExpression->Identifier, indentation + 2);
-			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
-			PrintToken(inputKeyExpression->ReturnType, indentation + 2);
-		}
-		else if (Scripting::ResolutionNode* resolutionExpression = std::get_if<Scripting::ResolutionNode>(&expression->Value))
-		{
-			KG_INFO("{}Expression Asset", GetIndentation(indentation));
-			KG_INFO("{}Namespace", GetIndentation(indentation + 1));
-			PrintToken(resolutionExpression->Namespace, indentation + 2);
-			KG_INFO("{}Identifier", GetIndentation(indentation + 1));
-			PrintToken(resolutionExpression->Identifier, indentation + 2);
-			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
-			PrintToken(resolutionExpression->ReturnType, indentation + 2);
+			PrintToken(customLiteralExpression->ReturnType, indentation + 2);
 		}
 		else if (Scripting::InitializationListNode* initListExpression = std::get_if<Scripting::InitializationListNode>(&expression->Value))
 		{
@@ -829,7 +809,7 @@ namespace Kargono::Scripting
 		// Parse Expression Asset
 		if (!foundValidExpression)
 		{
-			auto [success, expression] = ParseExpressionAsset(parentExpressionSize);
+			auto [success, expression] = ParseExpressionCustomLiteral(parentExpressionSize);
 			if (success)
 			{
 				newExpression = expression;
@@ -837,39 +817,7 @@ namespace Kargono::Scripting
 			}
 			if (CheckForErrors())
 			{
-				StoreParseError(ParseErrorType::Expression, "Invalid asset identifier", GetCurrentToken(parentExpressionSize));
-				return { false, {} };
-			}
-		}
-
-		// Parse Expression Input Key
-		if (!foundValidExpression)
-		{
-			auto [success, expression] = ParseExpressionInputKey(parentExpressionSize);
-			if (success)
-			{
-				newExpression = expression;
-				foundValidExpression = true;
-			}
-			if (CheckForErrors())
-			{
-				StoreParseError(ParseErrorType::Expression, "Invalid input key identifier", GetCurrentToken(parentExpressionSize));
-				return { false, {} };
-			}
-		}
-
-		// Parse Expression Input Key
-		if (!foundValidExpression)
-		{
-			auto [success, expression] = ParseExpressionResolution(parentExpressionSize);
-			if (success)
-			{
-				newExpression = expression;
-				foundValidExpression = true;
-			}
-			if (CheckForErrors())
-			{
-				StoreParseError(ParseErrorType::Expression, "Invalid resolution identifier", GetCurrentToken(parentExpressionSize));
+				StoreParseError(ParseErrorType::Expression, "Invalid custom literal identifier", GetCurrentToken(parentExpressionSize));
 				return { false, {} };
 			}
 		}
@@ -1287,17 +1235,17 @@ namespace Kargono::Scripting
 		parentExpressionSize = currentArgumentLocation;
 		return { true, newFunctionExpression };
 	}
-	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionAsset(uint32_t& parentExpressionSize)
+	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionCustomLiteral(uint32_t& parentExpressionSize)
 	{
-		Ref<Expression> newAssetExpression{ CreateRef<Expression>() };
-		AssetNode newAssetNode{};
+		Ref<Expression> newCustomLiteralExpression{ CreateRef<Expression>() };
+		CustomLiteralNode newAssetNode{};
 
-		// Check for asset namespace, namespace resolver symbol, and asset identifier
+		// Check for asset namespace, namespace resolver symbol, and custom literal identifier
 		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
 		int32_t initialAdvance{ 0 };
 		if (tokenBuffer.Type == ScriptTokenType::Identifier &&
 			GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::NamespaceResolver &&
-			GetCurrentToken(parentExpressionSize + 2).Type == ScriptTokenType::AssetLiteral )
+			GetCurrentToken(parentExpressionSize + 2).Type == ScriptTokenType::CustomLiteral)
 		{
 			newAssetNode.Namespace = tokenBuffer;
 			newAssetNode.Identifier = GetCurrentToken(parentExpressionSize + 2);
@@ -1327,164 +1275,38 @@ namespace Kargono::Scripting
 			return { false, {} };
 		}
 
-
 		// Ensure asset namespace exists
-		if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes.contains(newAssetNode.Namespace.Value))
+		if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.contains(newAssetNode.Namespace.Value))
 		{
-			StoreParseError(ParseErrorType::Expression, "Unknown asset type provided", newAssetNode.Identifier);
+			StoreParseError(ParseErrorType::Expression, "Unknown custom literal type provided", newAssetNode.Namespace);
 			return { false, {} };
 		}
 
 		// Get the asset information
-		AssetTypeInfo& assetInfo{ ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes.at(newAssetNode.Namespace.Value) };
-		
+		CustomLiteralInfo& assetInfo{ ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.at(newAssetNode.Namespace.Value) };
+
 		// Get the asset map appropriate for this asset type
-		AssetNameToIDMap* assetMap = assetInfo.m_AssetNameToID;
-		KG_ASSERT(assetMap);
+		CustomLiteralNameToIDMap& assetMap = assetInfo.m_CustomLiteralNameToID;
 
 		// Ensure the asset identifier is valid
-		if (!assetMap->contains(newAssetNode.Identifier.Value))
+		if (!assetMap.contains(newAssetNode.Identifier.Value))
 		{
-			StoreParseError(ParseErrorType::Expression, "Unknown asset type provided", newAssetNode.Identifier);
+			StoreParseError(ParseErrorType::Expression, "Unknown custom type identifier provided", newAssetNode.Identifier);
 			return { false, {} };
 		}
-	
+
+		// Get the script member to indicate return type
+		CustomLiteralMember& literalMember = assetMap.at(newAssetNode.Identifier.Value);
+
 		// Get return type from function node and emplace it into the assetNode
-		newAssetNode.ReturnType = { ScriptTokenType::PrimitiveType, assetInfo.m_ReturnType };
+		newAssetNode.ReturnType = literalMember.m_PrimitiveType;
 
 		// Fill the expression buffer and exit
-		newAssetExpression->Value = newAssetNode;
+		newCustomLiteralExpression->Value = newAssetNode;
 		parentExpressionSize += initialAdvance;
-		return { true, newAssetExpression };
+		return { true, newCustomLiteralExpression };
 	}
-	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionInputKey(uint32_t& parentExpressionSize)
-	{
-		Ref<Expression> newInputKeyExpression{ CreateRef<Expression>() };
-		InputKeyNode newInputKeyNode{};
 
-		// Check for input key namespace, namespace resolver symbol, and input key identifier
-		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
-		int32_t initialAdvance{ 0 };
-		if (tokenBuffer.Type == ScriptTokenType::Identifier &&
-			GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::NamespaceResolver &&
-			GetCurrentToken(parentExpressionSize + 2).Type == ScriptTokenType::InputKeyLiteral)
-		{
-			newInputKeyNode.Namespace = tokenBuffer;
-			newInputKeyNode.Identifier = GetCurrentToken(parentExpressionSize + 2);
-			initialAdvance = 3;
-		}
-		else
-		{
-			return { false, {} };
-		}
-
-		// Check for context probe
-		if (IsContextProbe(GetCurrentToken(parentExpressionSize + 2)))
-		{
-			// Ensure namespace identifier exists
-			if (!ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(tokenBuffer.Value))
-			{
-				StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, namespace node is invalid", tokenBuffer);
-				return { false, {} };
-			}
-			// Store context probe for argument
-			CursorContext newContext;
-			newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
-			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AfterNamespaceResolution);
-			newContext.CurrentNamespace = tokenBuffer;
-			m_CursorContext = newContext;
-			StoreParseError(ParseErrorType::ContextProbe, "Found context probe for function namespace", tokenBuffer);
-			return { false, {} };
-		}
-
-
-		// Ensure input key namespace is valid
-		if (newInputKeyNode.Namespace.Value != "Key")
-		{
-			StoreParseError(ParseErrorType::Expression, "Unknown key provided", newInputKeyNode.Identifier);
-			return { false, {} };
-		}
-
-		
-		// Ensure the key identifier is valid
-		if (Utility::StringToKeyCode(newInputKeyNode.Identifier.Value) == Key::None)
-		{
-			StoreParseError(ParseErrorType::Expression, "Unknown key provided", newInputKeyNode.Identifier);
-			return { false, {} };
-		}
-
-		// Get return type from function node and emplace it into the input key node
-		newInputKeyNode.ReturnType = { ScriptTokenType::PrimitiveType, "keycode"};
-
-		// Fill the expression buffer and exit
-		newInputKeyExpression->Value = newInputKeyNode;
-		parentExpressionSize += initialAdvance;
-		return { true, newInputKeyExpression };
-	}
-	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionResolution(uint32_t& parentExpressionSize)
-	{
-		Ref<Expression> newResolutionExpression{ CreateRef<Expression>() };
-		ResolutionNode newResolutionNode{};
-
-		// Check for resolution namespace, namespace resolver symbol, and resolution identifier
-		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
-		int32_t initialAdvance{ 0 };
-		if (tokenBuffer.Type == ScriptTokenType::Identifier &&
-			GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::NamespaceResolver &&
-			GetCurrentToken(parentExpressionSize + 2).Type == ScriptTokenType::ResolutionLiteral)
-		{
-			newResolutionNode.Namespace = tokenBuffer;
-			newResolutionNode.Identifier = GetCurrentToken(parentExpressionSize + 2);
-			initialAdvance = 3;
-		}
-		else
-		{
-			return { false, {} };
-		}
-
-		// Check for context probe
-		if (IsContextProbe(GetCurrentToken(parentExpressionSize + 2)))
-		{
-			// Ensure namespace identifier exists
-			if (!ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(tokenBuffer.Value))
-			{
-				StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, namespace node is invalid", tokenBuffer);
-				return { false, {} };
-			}
-			// Store context probe for argument
-			CursorContext newContext;
-			newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
-			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AfterNamespaceResolution);
-			newContext.CurrentNamespace = tokenBuffer;
-			m_CursorContext = newContext;
-			StoreParseError(ParseErrorType::ContextProbe, "Found context probe for function namespace", tokenBuffer);
-			return { false, {} };
-		}
-
-
-		// Ensure resolution namespace is valid
-		if (newResolutionNode.Namespace.Value != "ScreenResolution")
-		{
-			StoreParseError(ParseErrorType::Expression, "Unknown resolution provided", newResolutionNode.Identifier);
-			return { false, {} };
-		}
-
-
-		// Ensure the resolution identifier is valid
-		if (Utility::StringToScreenResolution(newResolutionNode.Identifier.Value) == ScreenResolution::None)
-		{
-			StoreParseError(ParseErrorType::Expression, "Unknown resolution provided", newResolutionNode.Identifier);
-			return { false, {} };
-		}
-
-		// Get return type from function node and emplace it into the input key node
-		newResolutionNode.ReturnType = { ScriptTokenType::PrimitiveType, "screen_resolution" };
-
-		// Fill the expression buffer and exit
-		newResolutionExpression->Value = newResolutionNode;
-		parentExpressionSize += initialAdvance;
-		return { true, newResolutionExpression };
-	}
 	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionUnaryOperation(uint32_t& parentExpressionSize)
 	{
 		Ref<Expression> newExpression{ CreateRef<Expression>() };
@@ -2876,9 +2698,7 @@ namespace Kargono::Scripting
 	bool ScriptTokenParser::IsContextProbe(ScriptToken token)
 	{
 		if ((token.Type == ScriptTokenType::Identifier ||
-			token.Type == ScriptTokenType::AssetLiteral ||
-			token.Type == ScriptTokenType::InputKeyLiteral ||
-			token.Type == ScriptTokenType::ResolutionLiteral) &&
+			token.Type == ScriptTokenType::CustomLiteral) &&
 			token.Value == ContextProbe)
 		{
 			return true;
@@ -2907,6 +2727,7 @@ namespace Kargono::Scripting
 			{
 				return true;
 			}
+
 			// Check if token is an identifier
 			if (queryToken.Type == ScriptTokenType::Identifier)
 			{
@@ -2949,7 +2770,7 @@ namespace Kargono::Scripting
 				if (queryPrimitiveType.AcceptableLiteral == tokenPrimitiveType.AcceptableLiteral)
 				{
 					// Check to ensure that asset value are distinct
-					if (queryPrimitiveType.AcceptableLiteral == ScriptTokenType::AssetLiteral)
+					if (queryPrimitiveType.AcceptableLiteral == ScriptTokenType::CustomLiteral)
 					{
 						if (queryPrimitiveType.Name == queryToken.Value)
 						{

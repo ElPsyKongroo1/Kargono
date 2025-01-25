@@ -51,50 +51,6 @@ namespace Kargono::Scripting
 					continue;
 				}
 
-				// Check for key literals
-				if (m_TextBuffer == "Key")
-				{
-					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
-					{
-						AddTokenAndClearBuffer(ScriptTokenType::Identifier, m_TextBuffer);
-						AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, { "::" });
-						Advance(2);
-						// Fill remainder of buffer
-						while (CurrentLocationValid() && (std::isalnum(GetCurrentChar()) || GetCurrentChar() == '_'))
-						{
-							AddCurrentCharToBuffer();
-							Advance();
-						}
-						if (m_TextBuffer.size() > 0)
-						{
-							AddTokenAndClearBuffer(ScriptTokenType::InputKeyLiteral, { m_TextBuffer });
-						}
-						continue;
-					}
-				}
-
-				// Check for key literals
-				if (m_TextBuffer == "ScreenResolution")
-				{
-					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
-					{
-						AddTokenAndClearBuffer(ScriptTokenType::Identifier, m_TextBuffer);
-						AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, { "::" });
-						Advance(2);
-						// Fill remainder of buffer
-						while (CurrentLocationValid() && (std::isalnum(GetCurrentChar()) || GetCurrentChar() == '_'))
-						{
-							AddCurrentCharToBuffer();
-							Advance();
-						}
-						if (m_TextBuffer.size() > 0)
-						{
-							AddTokenAndClearBuffer(ScriptTokenType::ResolutionLiteral, { m_TextBuffer });
-						}
-						continue;
-					}
-				}
-
 				// Check for message literals
 				if (m_TextBuffer == "MessageType")
 				{
@@ -121,7 +77,7 @@ namespace Kargono::Scripting
 				}
 
 				// Check for all asset literal types
-				if (ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes.contains(m_TextBuffer))
+				if (ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.contains(m_TextBuffer))
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 					{
@@ -136,7 +92,7 @@ namespace Kargono::Scripting
 						}
 						if (m_TextBuffer.size() > 0)
 						{
-							AddTokenAndClearBuffer(ScriptTokenType::AssetLiteral, { m_TextBuffer });
+							AddTokenAndClearBuffer(ScriptTokenType::CustomLiteral, { m_TextBuffer });
 						}
 						continue;
 					}

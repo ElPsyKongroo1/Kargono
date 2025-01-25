@@ -248,7 +248,7 @@ namespace Kargono::Scripting
 
 
 		// Generate suggestions for all assets
-		for (auto& [assetType, assetTypeInfo] : ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes)
+		for (auto& [assetType, assetTypeInfo] : ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes)
 		{
 			// Ensure asset type matches namespace
 			if (context.CurrentNamespace.Value != assetType)
@@ -256,71 +256,19 @@ namespace Kargono::Scripting
 				continue;
 			}
 
-			// Ensure map pointer references data
-			KG_ASSERT(assetTypeInfo.m_AssetNameToID);
 			// Generate suggestions for emitter configs
-			for (auto& [assetName, handle] : *assetTypeInfo.m_AssetNameToID)
+			for (auto& [assetName, handle] : assetTypeInfo.m_CustomLiteralNameToID)
 			{
 				if (Utility::Regex::GetMatchSuccess(assetName, queryText, false))
 				{
 					SuggestionSpec newSuggestion;
 					newSuggestion.m_Label = assetName;
 					newSuggestion.m_ReplacementText = assetName;
-					newSuggestion.m_Icon = assetTypeInfo.m_AssetIcon;
+					newSuggestion.m_Icon = assetTypeInfo.m_LiteralIcon;
 					allSuggestions.push_back(newSuggestion);
 				}
 			}
 		}
-
-		// Generate suggestions for screen resolution literals
-		if (context.CurrentNamespace.Value == "ScreenResolution")
-		{
-			for (ScreenResolution resolution : s_AllScreenResolutions)
-			{
-				if (resolution == ScreenResolution::None)
-				{
-					continue;
-				}
-				std::string resolutionString = Utility::ScreenResolutionToString(resolution);
-
-				// Generate suggestions for each key
-				if (Utility::Regex::GetMatchSuccess(resolutionString, queryText, false))
-				{
-					SuggestionSpec newSuggestion;
-					newSuggestion.m_Label = resolutionString;
-					newSuggestion.m_ReplacementText = resolutionString;
-					newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconGrid;
-					allSuggestions.push_back(newSuggestion);
-				}
-
-			}
-		}
-
-		// Generate suggestions for keyboard literals
-		if (context.CurrentNamespace.Value == "Key")
-		{
-			for (KeyCode key : Key::s_AllKeyCodes)
-			{
-				if (key == Key::None)
-				{
-					continue;
-				}
-				std::string keyString = Utility::KeyCodeToString(key);
-
-				// Generate suggestions for each key
-				if (Utility::Regex::GetMatchSuccess(keyString, queryText, false))
-				{
-					SuggestionSpec newSuggestion;
-					newSuggestion.m_Label = keyString;
-					newSuggestion.m_ReplacementText = keyString;
-					newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconGrid;
-					allSuggestions.push_back(newSuggestion);
-				}
-
-			}
-		}
-
-		
 	}
 
 	void Scripting::ScriptCompilerService::GetSuggestionsForIsParameter(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
@@ -472,107 +420,13 @@ namespace Kargono::Scripting
 			s_ActiveLanguageDefinition.AllMessageTypes.insert(messageType);
 		}
 
-		// Load all asset type declarations
-		s_ActiveLanguageDefinition.AllAssetTypes.clear();
-		s_ActiveLanguageDefinition.AllAssetTypes = 
-		{
-			{"AIStates", {&s_ActiveLanguageDefinition.AllAIStates, "ai_state", EditorUI::EditorUIService::s_IconAI}},
-			{"AudioBuffers", {&s_ActiveLanguageDefinition.AllAudioBuffers, "audio_buffer", EditorUI::EditorUIService::s_IconAudio}},
-			{"EmitterConfigs", {&s_ActiveLanguageDefinition.AllEmitterConfigs, "emitter_config", EditorUI::EditorUIService::s_IconParticles}},
-			{"Fonts", {&s_ActiveLanguageDefinition.AllFonts, "font", EditorUI::EditorUIService::s_IconFont}},
-			{"GameStates", {&s_ActiveLanguageDefinition.AllGameStates, "game_state", EditorUI::EditorUIService::s_IconGameState}},
-			{"InputMaps", {&s_ActiveLanguageDefinition.AllInputMaps, "input_map", EditorUI::EditorUIService::s_IconInput}},
-			{"ProjectComponents", {&s_ActiveLanguageDefinition.AllProjectComponents, "project_component", EditorUI::EditorUIService::s_IconProjectComponent}},
-			{"Scenes", {&s_ActiveLanguageDefinition.AllScenes, "scene", EditorUI::EditorUIService::s_IconScene}},
-			{"UserInterfaces", {&s_ActiveLanguageDefinition.AllUserInterfaces, "user_interface", EditorUI::EditorUIService::s_IconUserInterface}}
-		};
-
-		// Load in names of all AI States
-		s_ActiveLanguageDefinition.AllAIStates.clear();
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAIStateRegistry())
-		{
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
-			Utility::Operations::RemoveWhitespaceFromString(fileName);
-			s_ActiveLanguageDefinition.AllAIStates.insert_or_assign(fileName, configHandle);
-		}
-
-		// Load in names of all audio buffers
-		s_ActiveLanguageDefinition.AllAudioBuffers.clear();
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAudioBufferRegistry())
-		{
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
-			Utility::Operations::RemoveWhitespaceFromString(fileName);
-			s_ActiveLanguageDefinition.AllAudioBuffers.insert_or_assign(fileName, configHandle);
-		}
-
-		// Load in names of all emitter configs
-		s_ActiveLanguageDefinition.AllEmitterConfigs.clear();
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetEmitterConfigRegistry())
-		{
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
-			Utility::Operations::RemoveWhitespaceFromString(fileName);
-			s_ActiveLanguageDefinition.AllEmitterConfigs.insert_or_assign(fileName, configHandle);
-		}
-
-		// Load in names of all fonts
-		s_ActiveLanguageDefinition.AllFonts.clear();
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetFontRegistry())
-		{
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
-			Utility::Operations::RemoveWhitespaceFromString(fileName);
-			s_ActiveLanguageDefinition.AllFonts.insert_or_assign(fileName, configHandle);
-		}
-
-		// Load in names of all game states
-		s_ActiveLanguageDefinition.AllGameStates.clear();
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetGameStateRegistry())
-		{
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
-			Utility::Operations::RemoveWhitespaceFromString(fileName);
-			s_ActiveLanguageDefinition.AllGameStates.insert_or_assign(fileName, configHandle);
-		}
-
-		// Load in names of all input map
-		s_ActiveLanguageDefinition.AllInputMaps.clear();
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetInputMapRegistry())
-		{
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
-			Utility::Operations::RemoveWhitespaceFromString(fileName);
-			s_ActiveLanguageDefinition.AllInputMaps.insert_or_assign(fileName, configHandle);
-		}
-
-		// Load in names of all project component
-		s_ActiveLanguageDefinition.AllProjectComponents.clear();
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetProjectComponentRegistry())
-		{
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
-			Utility::Operations::RemoveWhitespaceFromString(fileName);
-			s_ActiveLanguageDefinition.AllProjectComponents.insert_or_assign(fileName, configHandle);
-		}
-
-		// Load in names of all scene
-		s_ActiveLanguageDefinition.AllScenes.clear();
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetSceneRegistry())
-		{
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
-			Utility::Operations::RemoveWhitespaceFromString(fileName);
-			s_ActiveLanguageDefinition.AllScenes.insert_or_assign(fileName, configHandle);
-		}
-
-		// Load in names of all UserInterface
-		s_ActiveLanguageDefinition.AllUserInterfaces.clear();
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetUserInterfaceRegistry())
-		{
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
-			Utility::Operations::RemoveWhitespaceFromString(fileName);
-			s_ActiveLanguageDefinition.AllUserInterfaces.insert_or_assign(fileName, configHandle);
-		}
-
 		CreateKGScriptKeywords();
 
 		CreateKGScriptInitializationPrototypes();
 
 		CreateKGScriptPrimitiveTypes();
+
+		CreateKGScriptCustomLiterals();
 
 		CreateKGScriptNamespaces();
 
@@ -659,7 +513,7 @@ namespace Kargono::Scripting
 
 		newPrimitiveType.Name = "keycode";
 		newPrimitiveType.Description = "A predefined type that contains all available input keys. Ex: Key::RightShift or Key::A";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::InputKeyLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint16_t";
 		newPrimitiveType.EmittedParameter = "uint16_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
@@ -667,7 +521,7 @@ namespace Kargono::Scripting
 
 		newPrimitiveType.Name = "screen_resolution";
 		newPrimitiveType.Description = "A predefined type taht contains all available screen resolutions. Ex: ScreenResolution::1920x1080 or ScreenResolution::512x512";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::ResolutionLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint16_t";
 		newPrimitiveType.EmittedParameter = "uint16_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGrid;
@@ -729,7 +583,7 @@ namespace Kargono::Scripting
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "ai_state";
 		newPrimitiveType.Description = "Reference to an AI state asset. The ai state is used to describe an individual state that an entity can be in, inside a large finite state machine context. This state describes its OnEvent() actions and how it enters/exits the state.";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconAI;
@@ -738,7 +592,7 @@ namespace Kargono::Scripting
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "audio_buffer";
 		newPrimitiveType.Description = "Reference to an audio buffer asset. The audio buffer is typicaly loaded into the engine and referenced when it should be played by the audio system.";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconAudio;
@@ -747,7 +601,7 @@ namespace Kargono::Scripting
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "emitter_config";
 		newPrimitiveType.Description = "Reference to an emitter config asset. The emitter config is used to describe the behavior of a particle emitter instance. The config can be used to generate a new emitter instance.";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEmitterConfig;
@@ -756,7 +610,7 @@ namespace Kargono::Scripting
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "font";
 		newPrimitiveType.Description = "Reference to an font asset. A font is typically loaded into the engine and referenced by in-game user interfaces.";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconFont;
@@ -765,7 +619,7 @@ namespace Kargono::Scripting
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "game_state";
 		newPrimitiveType.Description = "Reference to a game state asset. A game state asset is a global accessible chunk of data that described the game's current state.";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGameState;
@@ -774,7 +628,7 @@ namespace Kargono::Scripting
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "input_map";
 		newPrimitiveType.Description = "Reference to an input map asset. An input map asset is a list of input->script bindings that describe how the user can interact with the game when it is loaded.";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
@@ -783,7 +637,7 @@ namespace Kargono::Scripting
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "project_component";
 		newPrimitiveType.Description = "Reference to a project component asset. A project component is a chunk of data that can be associated with any entity and is specific to a particular game project.";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEntity;
@@ -792,7 +646,7 @@ namespace Kargono::Scripting
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "scene";
 		newPrimitiveType.Description = "Reference to a scene asset. A scene is a world that can be loaded into that contains a list of entities and other world defining data.";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconScene;
@@ -801,7 +655,7 @@ namespace Kargono::Scripting
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "user_interface";
 		newPrimitiveType.Description = "Reference to a user interface. A user interface is a structure holding a series of windows and widgets that can be rendered if attached to the engine's active context.";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::AssetLiteral;
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconUserInterface;
@@ -1419,6 +1273,175 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 	}
 
+	void ScriptCompilerService::CreateKGScriptCustomLiterals()
+	{
+		// Load all asset type declarations
+		s_ActiveLanguageDefinition.AllLiteralTypes.clear();
+		s_ActiveLanguageDefinition.AllLiteralTypes =
+		{
+			{"AIStates", {{}, EditorUI::EditorUIService::s_IconAI}},
+			{"AudioBuffers", {{}, EditorUI::EditorUIService::s_IconAudio}},
+			{"EmitterConfigs", {{}, EditorUI::EditorUIService::s_IconParticles}},
+			{"Fonts", {{}, EditorUI::EditorUIService::s_IconFont}},
+			{"GameStates", {{}, EditorUI::EditorUIService::s_IconGameState}},
+			{"InputMaps", {{}, EditorUI::EditorUIService::s_IconInput}},
+			{"ProjectComponents", {{}, EditorUI::EditorUIService::s_IconProjectComponent}},
+			{"Scenes", {{}, EditorUI::EditorUIService::s_IconScene}},
+			{"UserInterfaces", {{}, EditorUI::EditorUIService::s_IconUserInterface}},
+			{"ScreenResolution", {{}, EditorUI::EditorUIService::s_IconGrid}},
+			{"Key", {{}, EditorUI::EditorUIService::s_IconInput}}
+		};
+
+		// Load in names of all AI States
+		CustomLiteralNameToIDMap& aiMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("AIStates").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAIStateRegistry())
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "ai_state"};
+			newMember.m_OutputText = std::string(configHandle);
+
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			aiMap.insert_or_assign(fileName, newMember);
+		}
+
+		// Load in names of all audio buffers
+		CustomLiteralNameToIDMap& audioMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("AudioBuffers").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAudioBufferRegistry())
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "audio_buffer" };
+			newMember.m_OutputText = std::string(configHandle);
+
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			audioMap.insert_or_assign(fileName, newMember);
+		}
+
+		// Load in names of all emitter configs
+		CustomLiteralNameToIDMap& emitterConfigMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("EmitterConfigs").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetEmitterConfigRegistry())
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "emitter_config" };
+			newMember.m_OutputText = std::string(configHandle);
+
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			emitterConfigMap.insert_or_assign(fileName, newMember);
+		}
+
+		// Load in names of all fonts
+		CustomLiteralNameToIDMap& fontMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Fonts").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetFontRegistry())
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "font" };
+			newMember.m_OutputText = std::string(configHandle);
+
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			fontMap.insert_or_assign(fileName, newMember);
+		}
+
+		// Load in names of all game states
+		CustomLiteralNameToIDMap& gameStateMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("GameStates").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetGameStateRegistry())
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "game_state" };
+			newMember.m_OutputText = std::string(configHandle);
+
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			gameStateMap.insert_or_assign(fileName, newMember);
+		}
+
+		// Load in names of all input map
+		CustomLiteralNameToIDMap& inputMapMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("InputMaps").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetInputMapRegistry())
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "input_map" };
+			newMember.m_OutputText = std::string(configHandle);
+
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			inputMapMap.insert_or_assign(fileName, newMember);
+		}
+
+		// Load in names of all project component
+		CustomLiteralNameToIDMap& projectComponentMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("ProjectComponents").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetProjectComponentRegistry())
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "project_component" };
+			newMember.m_OutputText = std::string(configHandle);
+
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			projectComponentMap.insert_or_assign(fileName, newMember);
+		}
+
+		// Load in names of all scene
+		CustomLiteralNameToIDMap& sceneMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Scenes").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetSceneRegistry())
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "scene" };
+			newMember.m_OutputText = std::string(configHandle);
+
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			sceneMap.insert_or_assign(fileName, newMember);
+		}
+
+		// Load in names of all UserInterface
+		CustomLiteralNameToIDMap& userInterfaceMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("UserInterfaces").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetUserInterfaceRegistry())
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface" };
+			newMember.m_OutputText = std::string(configHandle);
+
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			userInterfaceMap.insert_or_assign(fileName, newMember);
+		}
+
+		// Load in names of all input keys
+		CustomLiteralNameToIDMap& inputKeyMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Key").m_CustomLiteralNameToID;
+
+		for (KeyCode code : Key::s_AllKeyCodes)
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "keycode" };
+			newMember.m_OutputText = std::to_string(code);
+
+			if (code == Key::None)
+			{
+				continue;
+			}
+			inputKeyMap.insert_or_assign(Utility::KeyCodeToString(code), newMember);
+		}
+
+		// Load in names of all resolutions
+		CustomLiteralNameToIDMap& resolutionMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Key").m_CustomLiteralNameToID;
+		for (ScreenResolution resolution : s_AllScreenResolutions)
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "screen_resolution" };
+			newMember.m_OutputText = std::to_string((uint16_t)resolution);
+
+			if (resolution == ScreenResolution::None)
+			{
+				continue;
+			}
+			resolutionMap.insert_or_assign(Utility::ScreenResolutionToString(resolution), newMember);
+		}
+
+	}
+
 	void ScriptCompilerService::CreateKGScriptNamespaces()
 	{
 		// Add namespace descriptions
@@ -1438,7 +1461,7 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("ScreenResolution", "This namespace resolves to different screen resolution literals to be used with the AppService namespace.");
 
 		// Add all asset types as namespaces
-		for (auto& [assetType, assetNameToIDMap] : s_ActiveLanguageDefinition.AllAssetTypes)
+		for (auto& [assetType, assetNameToIDMap] : s_ActiveLanguageDefinition.AllLiteralTypes)
 		{
 			s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign(assetType, "This namespace provides access to all of the engine's " + assetType);
 		}
@@ -2385,9 +2408,7 @@ namespace Kargono::Scripting
 			token.Type == ScriptTokenType::StringLiteral ||
 			token.Type == ScriptTokenType::BooleanLiteral ||
 			token.Type == ScriptTokenType::FloatLiteral ||
-			token.Type == ScriptTokenType::InputKeyLiteral ||
-			token.Type == ScriptTokenType::ResolutionLiteral ||
-			token.Type == ScriptTokenType::AssetLiteral ||
+			token.Type == ScriptTokenType::CustomLiteral ||
 			token.Type == ScriptTokenType::MessageTypeLiteral)
 		{
 			return true;

@@ -24,9 +24,7 @@ namespace Kargono::Scripting
 		std::tuple<bool, Ref<Expression>> ParseExpressionLiteral(uint32_t& parentExpressionSize);
 		std::tuple<bool, Ref<Expression>> ParseExpressionIdentifier(uint32_t& parentExpressionSize);
 		std::tuple<bool, Ref<Expression>> ParseExpressionFunctionCall(uint32_t& parentExpressionSize);
-		std::tuple<bool, Ref<Expression>> ParseExpressionAsset(uint32_t& parentExpressionSize);
-		std::tuple<bool, Ref<Expression>> ParseExpressionInputKey(uint32_t& parentExpressionSize);
-		std::tuple<bool, Ref<Expression>> ParseExpressionResolution(uint32_t& parentExpressionSize);
+		std::tuple<bool, Ref<Expression>> ParseExpressionCustomLiteral(uint32_t& parentExpressionSize);
 		std::tuple<bool, Ref<Expression>> ParseExpressionUnaryOperation(uint32_t& parentExpressionSize);
 		std::tuple<bool, Ref<Expression>> ParseExpressionInitializationList(uint32_t& parentExpressionSize);
 		std::tuple<bool, Ref<Expression>> ParseExpressionTernaryOperation(Ref<Expression> currentExpression, uint32_t& parentExpressionSize);

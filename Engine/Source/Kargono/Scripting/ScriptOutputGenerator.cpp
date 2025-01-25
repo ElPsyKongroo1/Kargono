@@ -225,15 +225,9 @@ namespace Kargono::Scripting
 
 		if (TokenExpressionNode* token = std::get_if<TokenExpressionNode>(&expression->Value))
 		{
-			if (token->Value.Type == ScriptTokenType::InputKeyLiteral)
-			{
-				m_OutputText << std::to_string((uint16_t)Utility::StringToKeyCode(token->Value.Value));
-			}
-			else if (token->Value.Type == ScriptTokenType::ResolutionLiteral)
-			{
-				m_OutputText << std::to_string((uint16_t)Utility::StringToScreenResolution(token->Value.Value));
-			}
-			else if (token->Value.Type == ScriptTokenType::MessageTypeLiteral)
+			KG_ASSERT(token->Value.Type != ScriptTokenType::CustomLiteral);
+
+			if (token->Value.Type == ScriptTokenType::MessageTypeLiteral)
 			{
 				m_OutputText << Utility::FileSystem::CRCFromString(token->Value.Value.c_str());
 			}
@@ -275,43 +269,26 @@ namespace Kargono::Scripting
 			m_OutputText << ')';
 		}
 
-		else if (AssetNode* assetNode = std::get_if<AssetNode>(&expression->Value))
+		else if (CustomLiteralNode* customLiteralNode = std::get_if<CustomLiteralNode>(&expression->Value))
 		{
-			// Ensure this is a valid asset type
-			KG_ASSERT(ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes.contains(assetNode->Namespace.Value));
+			// Ensure this is a valid customLiteral type
+			KG_ASSERT(ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.contains(customLiteralNode->Namespace.Value));
 
-			// Get the appropriate map from the AllAssetTypes
-			std::unordered_map<std::string, UUID>* assetNameToIDMap = ScriptCompilerService::s_ActiveLanguageDefinition.AllAssetTypes.at(assetNode->Namespace.Value).m_AssetNameToID;
+			// Get the appropriate map from the AllLiteralTypes
+			CustomLiteralNameToIDMap& customLiteralNameToIDMap = ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.at(customLiteralNode->Namespace.Value).m_CustomLiteralNameToID;
 
-			// Ensure map pointer references data
-			KG_ASSERT(assetNameToIDMap);
+			// Get reference to the custom literal's customLiteralName -> customLiteralID map
+			KG_ASSERT(customLiteralNameToIDMap.contains(customLiteralNode->Identifier.Value));
 
-			// Get reference to the asset's assetName -> assetID map
-			KG_ASSERT(assetNameToIDMap->contains(assetNode->Identifier.Value));
-
-			// Output ID of the asset
-			m_OutputText << assetNameToIDMap->at(assetNode->Identifier.Value);
-		}
-		else if (InputKeyNode* inputKeyNode = std::get_if<InputKeyNode>(&expression->Value))
-		{
-			KeyCode currentKey = Utility::StringToKeyCode(inputKeyNode->Identifier.Value);
-			KG_ASSERT(currentKey != Key::None);
-
-			m_OutputText << std::to_string((uint16_t)currentKey);
-		}
-		else if (ResolutionNode* resolutionNode = std::get_if<ResolutionNode>(&expression->Value))
-		{
-			ScreenResolution currentResolution = Utility::StringToScreenResolution(resolutionNode->Identifier.Value);
-			KG_ASSERT(currentResolution != ScreenResolution::None);
-
-			m_OutputText << std::to_string((uint16_t)currentResolution);
+			// Output ID of the customLiteral
+			m_OutputText << customLiteralNameToIDMap.at(customLiteralNode->Identifier.Value).m_OutputText;
 		}
 
 		else if (InitializationListNode* initListNode = std::get_if<InitializationListNode>(&expression->Value))
 		{
 			m_OutputText << '{';
 			uint32_t iteration{ 0 };
-			for (auto argument : initListNode->Arguments)
+			for (Ref<Expression> argument : initListNode->Arguments)
 			{
 				GenerateExpression(argument);
 				if (iteration + 1 < initListNode->Arguments.size())
