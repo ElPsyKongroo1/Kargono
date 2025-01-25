@@ -243,6 +243,8 @@ namespace Kargono::Scripting
 		ScriptToken Namespace{};
 		ScriptToken Identifier{};
 		ScriptToken ReturnType{};
+		std::vector<ScriptToken> Members{};
+		std::string OutputValue{};
 	};
 
 	struct UnaryOperationNode

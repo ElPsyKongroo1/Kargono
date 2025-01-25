@@ -81,19 +81,24 @@ namespace Kargono::Scripting
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 					{
+						// Add namespace add namespace resolver tokens
 						AddTokenAndClearBuffer(ScriptTokenType::Identifier, m_TextBuffer);
 						AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, { "::" });
 						Advance(2);
-						// Fill remainder of buffer
+						// Fill remainder of buffer for literal identifier
 						while (CurrentLocationValid() && (std::isalnum(GetCurrentChar()) || GetCurrentChar() == '_'))
 						{
 							AddCurrentCharToBuffer();
 							Advance();
 						}
-						if (m_TextBuffer.size() > 0)
+
+						// Ensure an identifer is available to be added
+						if (m_TextBuffer.size() == 0)
 						{
-							AddTokenAndClearBuffer(ScriptTokenType::CustomLiteral, { m_TextBuffer });
+							continue;
 						}
+						
+						AddTokenAndClearBuffer(ScriptTokenType::CustomLiteral, { m_TextBuffer });
 						continue;
 					}
 				}

@@ -60,6 +60,11 @@ namespace Kargono::Utility
 			PrintToken(customLiteralExpression->Identifier, indentation + 2);
 			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
 			PrintToken(customLiteralExpression->ReturnType, indentation + 2);
+			KG_INFO("{}All Members", GetIndentation(indentation + 1));
+			for (Scripting::ScriptToken& member : customLiteralExpression->Members)
+			{
+				PrintToken(member, indentation + 2);
+			}
 		}
 		else if (Scripting::InitializationListNode* initListExpression = std::get_if<Scripting::InitializationListNode>(&expression->Value))
 		{
@@ -1238,7 +1243,7 @@ namespace Kargono::Scripting
 	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionCustomLiteral(uint32_t& parentExpressionSize)
 	{
 		Ref<Expression> newCustomLiteralExpression{ CreateRef<Expression>() };
-		CustomLiteralNode newAssetNode{};
+		CustomLiteralNode newCustomLiteralNode{};
 
 		// Check for asset namespace, namespace resolver symbol, and custom literal identifier
 		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
@@ -1247,8 +1252,8 @@ namespace Kargono::Scripting
 			GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::NamespaceResolver &&
 			GetCurrentToken(parentExpressionSize + 2).Type == ScriptTokenType::CustomLiteral)
 		{
-			newAssetNode.Namespace = tokenBuffer;
-			newAssetNode.Identifier = GetCurrentToken(parentExpressionSize + 2);
+			newCustomLiteralNode.Namespace = tokenBuffer;
+			newCustomLiteralNode.Identifier = GetCurrentToken(parentExpressionSize + 2);
 			initialAdvance = 3;
 		}
 		else
@@ -1276,33 +1281,66 @@ namespace Kargono::Scripting
 		}
 
 		// Ensure asset namespace exists
-		if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.contains(newAssetNode.Namespace.Value))
+		if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.contains(newCustomLiteralNode.Namespace.Value))
 		{
-			StoreParseError(ParseErrorType::Expression, "Unknown custom literal type provided", newAssetNode.Namespace);
+			StoreParseError(ParseErrorType::Expression, "Unknown custom literal type provided", newCustomLiteralNode.Namespace);
 			return { false, {} };
 		}
 
 		// Get the asset information
-		CustomLiteralInfo& assetInfo{ ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.at(newAssetNode.Namespace.Value) };
+		CustomLiteralInfo& assetInfo{ ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.at(newCustomLiteralNode.Namespace.Value) };
 
 		// Get the asset map appropriate for this asset type
 		CustomLiteralNameToIDMap& assetMap = assetInfo.m_CustomLiteralNameToID;
 
 		// Ensure the asset identifier is valid
-		if (!assetMap.contains(newAssetNode.Identifier.Value))
+		if (!assetMap.contains(newCustomLiteralNode.Identifier.Value))
 		{
-			StoreParseError(ParseErrorType::Expression, "Unknown custom type identifier provided", newAssetNode.Identifier);
+			StoreParseError(ParseErrorType::Expression, "Unknown custom type identifier provided", newCustomLiteralNode.Identifier);
 			return { false, {} };
 		}
 
 		// Get the script member to indicate return type
-		CustomLiteralMember& literalMember = assetMap.at(newAssetNode.Identifier.Value);
+		CustomLiteralMember& literalMember = assetMap.at(newCustomLiteralNode.Identifier.Value);
+
+		// Loop through members if they exist
+		CustomLiteralMember* currentMember = &literalMember;
+		while (GetCurrentToken(parentExpressionSize + initialAdvance).Type == ScriptTokenType::DotOperator &&
+			GetCurrentToken(parentExpressionSize + initialAdvance + 1).Type == ScriptTokenType::Identifier)
+		{
+			// 
+			ScriptToken currentMemberIdentifier{ GetCurrentToken(parentExpressionSize + initialAdvance + 1) };
+
+			// Validate that this identifier represents a node
+			if (currentMember->m_Members.contains
+			(
+				currentMemberIdentifier.Value)
+			)
+			{
+				// Add the new node to the list of members
+				newCustomLiteralNode.Members.push_back(GetCurrentToken(
+					parentExpressionSize + initialAdvance + 1));
+
+				// Advance
+				initialAdvance += 2;
+
+				// Update the current member
+				currentMember = currentMember->m_Members.at(currentMemberIdentifier.Value).get();
+				KG_ASSERT(currentMember);
+			}
+			else
+			{
+				break;
+			}
+		}
+
 
 		// Get return type from function node and emplace it into the assetNode
-		newAssetNode.ReturnType = literalMember.m_PrimitiveType;
+		newCustomLiteralNode.ReturnType = currentMember->m_PrimitiveType;
+		newCustomLiteralNode.OutputValue = currentMember->m_OutputText;
 
 		// Fill the expression buffer and exit
-		newCustomLiteralExpression->Value = newAssetNode;
+		newCustomLiteralExpression->Value = newCustomLiteralNode;
 		parentExpressionSize += initialAdvance;
 		return { true, newCustomLiteralExpression };
 	}

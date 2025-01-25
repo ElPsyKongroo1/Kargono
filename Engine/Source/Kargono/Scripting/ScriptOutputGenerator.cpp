@@ -271,17 +271,8 @@ namespace Kargono::Scripting
 
 		else if (CustomLiteralNode* customLiteralNode = std::get_if<CustomLiteralNode>(&expression->Value))
 		{
-			// Ensure this is a valid customLiteral type
-			KG_ASSERT(ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.contains(customLiteralNode->Namespace.Value));
-
-			// Get the appropriate map from the AllLiteralTypes
-			CustomLiteralNameToIDMap& customLiteralNameToIDMap = ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.at(customLiteralNode->Namespace.Value).m_CustomLiteralNameToID;
-
-			// Get reference to the custom literal's customLiteralName -> customLiteralID map
-			KG_ASSERT(customLiteralNameToIDMap.contains(customLiteralNode->Identifier.Value));
-
 			// Output ID of the customLiteral
-			m_OutputText << customLiteralNameToIDMap.at(customLiteralNode->Identifier.Value).m_OutputText;
+			m_OutputText << customLiteralNode->OutputValue;
 		}
 
 		else if (InitializationListNode* initListNode = std::get_if<InitializationListNode>(&expression->Value))
