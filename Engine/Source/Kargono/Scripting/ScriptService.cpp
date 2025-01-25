@@ -588,6 +588,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidVec3Float, void, Math::vec3, float)
 	DefineInsertFunction(VoidVec3Vec3, void, Math::vec3, Math::vec3)
 	DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
+	DefineInsertFunction(VoidUInt16Bool, void, uint16_t, bool)
 	DefineInsertFunction(VoidStringVoidPtr, void, const std::string&, void*)
 	DefineInsertFunction(VoidStringString, void, const std::string&, const std::string&)
 	DefineInsertFunction(VoidStringStringBool, void, const std::string&, const std::string&, bool)
@@ -746,6 +747,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidVec3Float, void, Math::vec3, float)
 		AddImportFunctionToHeaderFile(VoidVec3Vec3, void, Math::vec3, Math::vec3)
 		AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool)
+		AddImportFunctionToHeaderFile(VoidUInt16Bool, void, uint16_t, bool)
 		AddImportFunctionToHeaderFile(VoidStringVoidPtr, void, const std::string&, void*)
 		AddImportFunctionToHeaderFile(VoidStringString, void, const std::string&, const std::string&)
 		AddImportFunctionToHeaderFile(VoidStringStringBool, void, const std::string&, const std::string&, bool)
@@ -860,7 +862,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromHandle, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(InputMap_LoadInputMapFromHandle, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(InputMap_IsPollingSlotPressed, bool, uint16_t)
-		AddEngineFunctionToCPPFileOneParameters(LoadUserInterfaceFromHandle, void, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(UI_LoadUserInterfaceFromHandle, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromHandle, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(TransformComponent_GetTranslation, Math::vec3, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(Rigidbody2DComponent_GetLinearVelocity, Math::vec2, uint64_t)
@@ -872,7 +874,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_IsWidgetSelected, bool, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomInteger, int32_t, int32_t, int32_t)
 		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomFloat, float, float, float)
-		AddEngineFunctionToCPPFileTwoParameters(SetDisplayWindow, void, const std::string&, bool)
+		AddEngineFunctionToCPPFileTwoParameters(UI_SetDisplayWindow, void, uint16_t, bool)
 		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
 		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
@@ -933,7 +935,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileEnd(AI_ClearPreviousState)
 		AddEngineFunctionToCPPFileEnd(AI_ClearAllStates)
 		AddEngineFunctionToCPPFileEnd(TransitionSceneFromHandle)
-		AddEngineFunctionToCPPFileEnd(LoadUserInterfaceFromHandle)
+		AddEngineFunctionToCPPFileEnd(UI_LoadUserInterfaceFromHandle)
 		AddEngineFunctionToCPPFileEnd(PlaySoundFromHandle)
 		AddEngineFunctionToCPPFileEnd(PlayStereoSoundFromHandle)
 		AddEngineFunctionToCPPFileEnd(InputMap_LoadInputMapFromHandle)
@@ -945,7 +947,10 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringBool, void, const std::string&, bool)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(SetDisplayWindow)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt16Bool, void, uint16_t, bool)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(UI_SetDisplayWindow)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringVoidPtr, void, const std::string&, void*)
 		outputStream << "{\n";
@@ -1273,6 +1278,7 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidVec3Vec3)
 		ImportInsertFunction(VoidPtrString)
 		ImportInsertFunction(VoidStringBool)
+		ImportInsertFunction(VoidUInt16Bool)
 		ImportInsertFunction(VoidStringVoidPtr)
 		ImportInsertFunction(VoidStringString)
 		ImportInsertFunction(VoidStringStringBool)
@@ -1321,12 +1327,13 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(Input_IsKeyPressed, Input::InputService::IsKeyPressed, BoolUInt16)
 		AddEngineFunctionPointerToDll(InputMap_LoadInputMapFromHandle, Input::InputMapService::SetActiveInputMapFromHandle, VoidUInt64)
 		AddEngineFunctionPointerToDll(InputMap_IsPollingSlotPressed, Input::InputMapService::IsPollingSlotPressed, BoolUInt16)
-		AddEngineFunctionPointerToDll(LoadUserInterfaceFromHandle, RuntimeUI::RuntimeUIService::SetActiveUIFromHandle, VoidUInt64)
+		
 		AddEngineFunctionPointerToDll(TransitionSceneFromHandle, Scenes::SceneService::TransitionSceneFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindow, VoidStringBool)
 		AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameStateService::SetActiveGameStateField, VoidStringVoidPtr)
 		AddEngineFunctionPointerToDll(GetGameStateField, Scenes::GameStateService::GetActiveGameStateField, VoidPtrString)
 		AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::RuntimeUIService::SetActiveWidgetText, VoidStringStringString)
+		AddEngineFunctionPointerToDll(UI_LoadUserInterfaceFromHandle, RuntimeUI::RuntimeUIService::SetActiveUIFromHandle, VoidUInt64)
+		AddEngineFunctionPointerToDll(UI_SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindowByID, VoidUInt16Bool)
 		AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::RuntimeUIService::SetSelectedWidget, VoidStringString)
 		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::RuntimeUIService::SetWidgetTextColor, VoidStringStringVec4)
 		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColor, VoidStringStringVec4)

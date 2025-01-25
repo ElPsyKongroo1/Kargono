@@ -12,7 +12,9 @@
 #include "Kargono/ECS/ProjectComponent.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Core/KeyCodes.h"
-
+#include "Kargono/RuntimeUI/RuntimeUI.h"
+#include "Kargono/Scenes/Scene.h"
+#include "Kargono/ECS/Entity.h"
 
 namespace Kargono::Utility
 {
@@ -214,6 +216,10 @@ namespace Kargono::Scripting
 		{
 			GetSuggestionsForIsParameter(allSuggestions, context, queryText);
 		}
+		else if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::IsLiteralMember))
+		{
+			GetSuggestionsForLiteralMember(allSuggestions, context, queryText);
+		}
 		else
 		{
 			GetSuggestionsDefault(allSuggestions, context, queryText);
@@ -404,6 +410,22 @@ namespace Kargono::Scripting
 			}
 		}
 
+	}
+
+	void ScriptCompilerService::GetSuggestionsForLiteralMember(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
+	{
+		// Generate suggestions for all member fields
+		for (const std::string& name : context.LiteralMembers)
+		{
+			if (Utility::Regex::GetMatchSuccess(name, queryText, false))
+			{
+				SuggestionSpec newSuggestion;
+				newSuggestion.m_Label = name;
+				newSuggestion.m_ReplacementText = name;
+				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
+				allSuggestions.push_back(newSuggestion);
+			}
+		}
 	}
 
 
@@ -659,6 +681,22 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconUserInterface;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "user_interface_window";
+		newPrimitiveType.Description = "Reference to a user interface window. This object is a reference to a window that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.";
+		newPrimitiveType.EmittedDeclaration = "uint16_t";
+		newPrimitiveType.EmittedParameter = "uint16_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconWindow;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "user_interface_widget";
+		newPrimitiveType.Description = "Reference to a user interface widget. This object is a reference to a widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
+		newPrimitiveType.EmittedDeclaration = "uint16_t";
+		newPrimitiveType.EmittedParameter = "uint16_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTextWidget;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -1387,9 +1425,30 @@ namespace Kargono::Scripting
 		CustomLiteralNameToIDMap& sceneMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Scenes").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetSceneRegistry())
 		{
+			// Get the active scene
+			Ref<Scenes::Scene> currentScene{ Assets::AssetService::GetScene(configHandle) };
+			KG_ASSERT(currentScene);
+
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "scene" };
 			newMember.m_OutputText = std::string(configHandle);
+
+			for (auto& [entityHandle, enttID] : currentScene->m_EntityRegistry.m_EntityMap)
+			{
+				// Get the actual entity reference
+				ECS::Entity entityRef = currentScene->GetEntityByEnttID(enttID);
+
+				// Get the entity's tag component
+				ECS::TagComponent& currentTagComp = entityRef.GetComponent<ECS::TagComponent>();
+
+				// Create new literal member for each entity
+				Ref<CustomLiteralMember> newEntityLiteral = CreateRef<CustomLiteralMember>();
+				std::string currentTag{ currentTagComp.Tag };
+				Utility::Operations::RemoveWhitespaceFromString(currentTag);
+				newEntityLiteral->m_OutputText = std::to_string(entityHandle);
+				newEntityLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "entity" };
+				newMember.m_Members.insert_or_assign(currentTag, newEntityLiteral);
+			}
 
 			std::string fileName = configInfo.Data.FileLocation.stem().string();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
@@ -1400,9 +1459,38 @@ namespace Kargono::Scripting
 		CustomLiteralNameToIDMap& userInterfaceMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("UserInterfaces").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetUserInterfaceRegistry())
 		{
+			// Get the active user interface
+			Ref<RuntimeUI::UserInterface> currentUI{ Assets::AssetService::GetUserInterface(configHandle) };
+			KG_ASSERT(currentUI);
+
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface" };
 			newMember.m_OutputText = std::string(configHandle);
+
+			size_t windowIteration{ 0 };
+			for (RuntimeUI::Window& currentWindow : currentUI->m_Windows)
+			{
+				Ref<CustomLiteralMember> newWindowLiteral = CreateRef<CustomLiteralMember>();
+				std::string currentWindowLabel{ currentWindow.m_Tag };
+				Utility::Operations::RemoveWhitespaceFromString(currentWindowLabel);
+				newWindowLiteral->m_OutputText = std::to_string(windowIteration);
+				newWindowLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_window" };
+				
+				size_t widgetIteration{ 0 };
+				for (Ref<RuntimeUI::Widget> currentWidget : currentWindow.m_Widgets)
+				{
+					Ref<CustomLiteralMember> newWidgetLiteral = CreateRef<CustomLiteralMember>();
+					std::string currentWidgetLabel{ currentWidget->m_Tag };
+					Utility::Operations::RemoveWhitespaceFromString(currentWidgetLabel);
+					newWidgetLiteral->m_OutputText = std::to_string(widgetIteration);
+					newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_widget" };
+					newWindowLiteral->m_Members.insert_or_assign(currentWidgetLabel, newWidgetLiteral);
+					widgetIteration++;
+				}
+
+				newMember.m_Members.insert_or_assign(currentWindowLabel, newWindowLiteral);
+				windowIteration++;
+			}
 
 			std::string fileName = configInfo.Data.FileLocation.stem().string();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
@@ -1675,7 +1763,7 @@ namespace Kargono::Scripting
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "LoadUserInterfaceFromHandle";
+			node.Identifier.Value = "UI_LoadUserInterfaceFromHandle";
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -1686,8 +1774,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "DisplayWindow" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_window" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "indicatedWindow" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "bool" });
@@ -1698,7 +1786,7 @@ namespace Kargono::Scripting
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "SetDisplayWindow";
+			node.Identifier.Value = "UI_SetDisplayWindow";
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);

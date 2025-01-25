@@ -594,7 +594,7 @@ namespace Kargono::RuntimeUI
 		return s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnMoveHandle;
 	}
 
-	void RuntimeUIService::SetDisplayWindow(const std::string& windowTag, bool display)
+	void RuntimeUIService::SetDisplayWindowByTag(const std::string& windowTag, bool display)
 	{
 		// Search for the indicated window
 		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
@@ -612,6 +612,29 @@ namespace Kargono::RuntimeUI
 				}
 				return;
 			}
+		}
+	}
+
+	void RuntimeUIService::SetDisplayWindowByID(uint16_t windowID, bool display)
+	{
+		std::vector<Window>& activeWindows{ s_RuntimeUIContext->m_ActiveUI->m_Windows };
+
+		if (windowID > (activeWindows.size() - 1))
+		{
+			KG_WARN("Provided window ID is out of bounds for the UI's windows");
+			return;
+		}
+
+		Window& window = activeWindows.at((size_t)windowID);
+		
+		// Display or hide the window
+		if (display)
+		{
+			window.DisplayWindow();
+		}
+		else
+		{
+			window.HideWindow();
 		}
 	}
 

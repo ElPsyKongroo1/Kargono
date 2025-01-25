@@ -140,8 +140,3 @@ Profiler used in Editor for Engine.
 ## yaml-cpp ([Docs](https://github.com/jbeder/yaml-cpp))
 - Used for all human readable serialization/deserialization in the engine.
 - A C++ library for parsing and emitting YAML, offering a simple API for working with configuration files.
-
-# Mental Health Fluffer
-![Alt text](Images/Contributors/bootyboy768.png)
-
-![Alt text](Images/Contributors/djvibes.png)

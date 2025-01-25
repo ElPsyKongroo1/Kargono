@@ -1261,7 +1261,7 @@ namespace Kargono::Scripting
 			return { false, {} };
 		}
 
-		// Check for context probe
+		// Check for context probe 
 		if (IsContextProbe(GetCurrentToken(parentExpressionSize + 2)))
 		{
 			// Ensure namespace identifier exists
@@ -1308,8 +1308,27 @@ namespace Kargono::Scripting
 		while (GetCurrentToken(parentExpressionSize + initialAdvance).Type == ScriptTokenType::DotOperator &&
 			GetCurrentToken(parentExpressionSize + initialAdvance + 1).Type == ScriptTokenType::Identifier)
 		{
-			// 
+			// Get the current identifier
 			ScriptToken currentMemberIdentifier{ GetCurrentToken(parentExpressionSize + initialAdvance + 1) };
+
+			// Check for member context probe
+			if (IsContextProbe(currentMemberIdentifier))
+			{
+				// Store context probe for argument
+				CursorContext newContext;
+				newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+				newContext.m_Flags.SetFlag((uint8_t)CursorFlags::IsLiteralMember);
+
+				// Add current members
+				for (auto& [name, member] : currentMember->m_Members)
+				{
+					newContext.LiteralMembers.push_back(name);
+				}
+
+				m_CursorContext = newContext;
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe for function namespace", tokenBuffer);
+				return { false, {} };
+			}
 
 			// Validate that this identifier represents a node
 			if (currentMember->m_Members.contains

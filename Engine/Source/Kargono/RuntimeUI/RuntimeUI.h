@@ -391,7 +391,8 @@ namespace Kargono::RuntimeUI
 		static void SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag);
 		static void SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
 		static void SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable);
-		static void SetDisplayWindow(const std::string& windowTag, bool display);
+		static void SetDisplayWindowByTag(const std::string& windowTag, bool display);
+		static void SetDisplayWindowByID(uint16_t windowID, bool display);
 		static void AddActiveWindow(Window& window);
 		static bool DeleteActiveUIWindow(std::size_t windowLocation);
 		static bool DeleteActiveUIWidget(std::size_t windowIndex, std::size_t widgetIndex);

@@ -528,6 +528,7 @@ namespace Kargono::Scripting
 		None = 0,
 		IsFunctionParameter,
 		IsDataMember,
+		IsLiteralMember,
 		AfterNamespaceResolution,
 		AllowAllVariableTypes
 	};
@@ -537,6 +538,7 @@ namespace Kargono::Scripting
 		std::vector<ScriptToken> AllReturnTypes{};
 		std::vector<std::vector<StackVariable>> StackVariables {};
 		ScriptToken CurrentNamespace{};
+		std::vector<std::string> LiteralMembers{};
 		std::unordered_map<std::string, Ref<MemberType>> DataMembers{};
 		BitField<uint8_t> m_Flags {};
 
