@@ -7,6 +7,7 @@
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/Directions.h"
+#include "Kargono/RuntimeUI/RuntimeUICommon.h"
 
 #include <vector>
 #include <string>
@@ -385,14 +386,19 @@ namespace Kargono::RuntimeUI
 		//==============================
 		static void SetSelectedWidgetColor(const Math::vec4& color);
 		static void SetActiveWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText);
+		static void SetActiveWidgetTextByIndex(WidgetID widgetID, const std::string& newText);
 		static void SetActiveOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
 		static void SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle);
-		static void SetWidgetTextColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
-		static void SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag);
-		static void SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
-		static void SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable);
+		static void SetWidgetTextColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
+		static void SetWidgetTextColorByIndex(WidgetID widgetID, const Math::vec4& color);
+		static void SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag);
+		static void SetSelectedWidgetByIndex(WidgetID widgetID);
+		static void SetWidgetBackgroundColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
+		static void SetWidgetBackgroundColorByIndex(WidgetID widgetID, const Math::vec4& color);
+		static void SetWidgetSelectableByTag(const std::string& windowTag, const std::string& widgetTag, bool selectable);
+		static void SetWidgetSelectableByIndex(WidgetID widgetID, bool selectable);
 		static void SetDisplayWindowByTag(const std::string& windowTag, bool display);
-		static void SetDisplayWindowByID(uint16_t windowID, bool display);
+		static void SetDisplayWindowByIndex(WindowID widgetID, bool display);
 		static void AddActiveWindow(Window& window);
 		static bool DeleteActiveUIWindow(std::size_t windowLocation);
 		static bool DeleteActiveUIWidget(std::size_t windowIndex, std::size_t widgetIndex);
@@ -406,7 +412,8 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Query Active UI
 		//==============================
-		static bool IsWidgetSelected(const std::string& windowTag, const std::string& widgetTag);
+		static bool IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag);
+		static bool IsWidgetSelectedByIndex(WidgetID widgetID);
 		static Ref<Scripting::Script> GetActiveOnMove();
 		static Assets::AssetHandle GetActiveOnMoveHandle();
 		static std::vector<Window>& GetAllActiveWindows();
@@ -443,8 +450,17 @@ namespace Kargono::RuntimeUI
 		static void CalculateWindowNavigationLinks();
 		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
 		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
+		static Ref<Widget> GetWidget(uint16_t windowIndex, uint16_t widgetIndex);
 		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag);
+		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(uint16_t windowIndex, uint16_t widgetIndex);
 		static void RevalidateDisplayedWindows();
+		static void SetWidgetTextInternal(Window* currentWindow, Ref<Widget> currentWidget, const std::string& newText);
+		static void SetSelectedWidgetInternal(Ref<Widget> currentWidget);
+		static void SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
+		static void SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
+		static void SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable);
+		static bool IsWidgetSelectedInternal(Ref<Widget> currentWidget);
+
 
 	private:
 		//==============================

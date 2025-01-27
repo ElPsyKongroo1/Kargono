@@ -686,16 +686,16 @@ namespace Kargono::Scripting
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "user_interface_window";
 		newPrimitiveType.Description = "Reference to a user interface window. This object is a reference to a window that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.";
-		newPrimitiveType.EmittedDeclaration = "uint16_t";
-		newPrimitiveType.EmittedParameter = "uint16_t";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WindowID";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WindowID";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconWindow;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "user_interface_widget";
 		newPrimitiveType.Description = "Reference to a user interface widget. This object is a reference to a widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "uint16_t";
-		newPrimitiveType.EmittedParameter = "uint16_t";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTextWidget;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
@@ -1473,7 +1473,9 @@ namespace Kargono::Scripting
 				Ref<CustomLiteralMember> newWindowLiteral = CreateRef<CustomLiteralMember>();
 				std::string currentWindowLabel{ currentWindow.m_Tag };
 				Utility::Operations::RemoveWhitespaceFromString(currentWindowLabel);
-				newWindowLiteral->m_OutputText = std::to_string(windowIteration);
+				newWindowLiteral->m_OutputText = std::format("RuntimeUI::WindowID({}, {})",
+					std::to_string(configHandle),
+					std::to_string(windowIteration));
 				newWindowLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_window" };
 				
 				size_t widgetIteration{ 0 };
@@ -1482,7 +1484,10 @@ namespace Kargono::Scripting
 					Ref<CustomLiteralMember> newWidgetLiteral = CreateRef<CustomLiteralMember>();
 					std::string currentWidgetLabel{ currentWidget->m_Tag };
 					Utility::Operations::RemoveWhitespaceFromString(currentWidgetLabel);
-					newWidgetLiteral->m_OutputText = std::to_string(widgetIteration);
+					newWidgetLiteral->m_OutputText = std::format("RuntimeUI::WidgetID({}, {}, {})",
+						std::to_string(configHandle),
+						std::to_string(windowIteration),
+						std::to_string(widgetIteration));
 					newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_widget" };
 					newWindowLiteral->m_Members.insert_or_assign(currentWidgetLabel, newWidgetLiteral);
 					widgetIteration++;
@@ -1731,22 +1736,19 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetWidgetText" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" };
-		newFunctionNode.Parameters.push_back(newParameter);
-		newParameter = {};
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "widgetName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_widget" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "text" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
-		newFunctionNode.Description = "Change the displayed text of a TextWidget in the active user interface. This function takes the window tag, widget tag, and new text as arguments.";
+		newFunctionNode.Description = "Change the displayed text of a TextWidget in the active user interface.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
+			node.Identifier.Value = "RuntimeUI_SetWidgetText";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -1763,7 +1765,7 @@ namespace Kargono::Scripting
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "UI_LoadUserInterfaceFromHandle";
+			node.Identifier.Value = "RuntimeUI_LoadUserInterfaceFromHandle";
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -1786,7 +1788,7 @@ namespace Kargono::Scripting
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "UI_SetDisplayWindow";
+			node.Identifier.Value = "RuntimeUI_SetDisplayWindow";
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -1797,23 +1799,19 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "WidgetSelectable" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" };
-		newFunctionNode.Parameters.push_back(newParameter);
-		newParameter = {};
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "widgetName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_widget" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "bool" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "isSelectable" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
-		newFunctionNode.Description = "Set whether a specified widget is selectable using the keyboard/mouse/etc navigation. This function takes the name of the window the widget exists inside, the name of the widget to modify, and a boolean which sets the selectable state of the widget as arguments.";
+		newFunctionNode.Description = "Set whether a specified widget is selectable using the keyboard/mouse/etc navigation.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "SetWidgetSelectable";
+			node.Identifier.Value = "RuntimeUI_SetWidgetSelectable";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -1822,15 +1820,11 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsWidgetSelected" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_widget" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "widgetName" };
-		newFunctionNode.Parameters.push_back(newParameter);
-		newParameter = {};
-		newFunctionNode.Description = "Check if the indicated widget is currently selected in the active UI. This function takes the name of the window the widget exists inside and the name of the widget itself.";
+		newFunctionNode.Description = "Check if the indicated widget is currently selected in the active UI.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
@@ -1843,23 +1837,19 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "WidgetTextColor" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" };
-		newFunctionNode.Parameters.push_back(newParameter);
-		newParameter = {};
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "widgetName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_widget" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector4" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "newColor" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
-		newFunctionNode.Description = "Set the color of the text in a TextWidget. This function takes the name of the window the widget exists inside, the name of the widget to modify, and a vector4 to denote the new color using RGBA floats.";
+		newFunctionNode.Description = "Set the color of the text in a TextWidget.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "SetWidgetTextColor";
+			node.Identifier.Value = "RuntimeUI_SetWidgetTextColor";
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -1870,23 +1860,19 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "WidgetBackgroundColor" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" };
-		newFunctionNode.Parameters.push_back(newParameter);
-		newParameter = {};
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "widgetName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_widget" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "vector4" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "newColor" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
-		newFunctionNode.Description = "Set the background color of the provided widget. This function takes the name of the window the widget exists inside, the name of the widget to modify, and a vector4 to denote the new color using RGBA floats.";
+		newFunctionNode.Description = "Set the background color of the provided widget.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "SetWidgetBackgroundColor";
+			node.Identifier.Value = "RuntimeUI_SetWidgetBackgroundColor";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -1895,19 +1881,15 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetSelectedWidget" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "windowName" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_widget" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "string" });
-		newParameter.Identifier = { ScriptTokenType::Identifier, "widgetName" };
-		newFunctionNode.Parameters.push_back(newParameter);
-		newParameter = {};
-		newFunctionNode.Description = "Set the provided widget as selected in the current in-game user interface. This function takes the name of the window and the name of the widget as parameters.";
+		newFunctionNode.Description = "Set the provided widget as selected in the current in-game user interface.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
 			node.Namespace = {};
-			node.Identifier.Value = "SetSelectedWidget";
+			node.Identifier.Value = "RuntimeUI_SetSelectedWidget";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};

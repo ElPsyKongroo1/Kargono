@@ -810,6 +810,12 @@ namespace API::EditorUI
 
 	void TextEditorSpec::EnterCharacter(ImWchar aChar, bool aShift)
 	{
+		// Currently only support ascii
+		if (aChar > 255)
+		{
+			return;
+		}
+
 		bool isSuggestionsOpen = ImGui::IsPopupOpen("TextEditorSuggestions");
 
 		if (m_SuggestionsWindowEnabled && isSuggestionsOpen && aChar == '\t')
@@ -2254,7 +2260,32 @@ namespace API::EditorUI
 				u.m_RemovedStart = u.m_RemovedEnd = GetActualCursorCoordinates();
 				--u.m_RemovedStart.m_Column;
 				if (line[cindex].m_Char == '\t')
-					m_State.m_CursorPosition.m_Column -= (pos.m_Column % m_TabSize);
+				{
+					// If a character exists before this tab, check its location
+					if (cindex > 0)
+					{
+						// Get previous character column location
+						int previousCharacter = GetCharacterColumn(m_State.m_CursorPosition.m_Line, cindex - 1) + 1;
+
+
+						if (m_State.m_CursorPosition.m_Column - previousCharacter >= m_TabSize)
+						{
+							// Move back one tab size if previous character is aligned with tabs
+							m_State.m_CursorPosition.m_Column -= m_TabSize;
+						}
+						else
+						{
+							// Calculate the tab size based on the previous character's column location
+							m_State.m_CursorPosition.m_Column -= m_TabSize - (previousCharacter % m_TabSize);
+						}
+					}
+					else
+					{
+						// Simply move back one tab size
+						m_State.m_CursorPosition.m_Column -= m_TabSize;
+					}
+				}
+					
 				else
 					--m_State.m_CursorPosition.m_Column;
 

@@ -387,57 +387,8 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::ClearActiveUI()
+	void RuntimeUIService::SetWidgetTextInternal(Window* currentWindow, Ref<Widget> currentWidget, const std::string& newText)
 	{
-		s_RuntimeUIContext->m_ActiveUI = nullptr;
-		s_RuntimeUIContext->m_ActiveUIHandle = Assets::EmptyHandle;
-	}
-
-	Ref<UserInterface> RuntimeUIService::GetActiveUI()
-	{
-		return s_RuntimeUIContext->m_ActiveUI;
-	}
-
-	Assets::AssetHandle RuntimeUIService::GetActiveUIHandle()
-	{
-		return s_RuntimeUIContext->m_ActiveUIHandle;
-	}
-
-	void RuntimeUIService::SetSelectedWidgetColor(const Math::vec4& color)
-	{
-		if (!s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget)
-		{
-			return;
-		}
-		s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = color;
-	}
-
-	bool RuntimeUIService::IsWidgetSelected(const std::string& windowTag, const std::string& widgetTag)
-	{
-		if (!s_RuntimeUIContext->m_ActiveUI)
-		{
-			KG_WARN("Attempt to check if a widget is selected when no runtime UI is provided");
-			return false;
-		}
-
-		// Get the current widget
-		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
-
-		// Check if the widget is valid
-		if (!currentWidget)
-		{
-			KG_WARN("Could not locate widget when checking the widget is selected");
-			return false;
-		}
-
-		// Return if the widget is selected
-		return s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget == currentWidget.get();
-	}
-
-	void RuntimeUIService::SetActiveWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
-	{
-		// Search for the indicated widget
-		auto [currentWidget, currentWindow] = GetWidgetAndWindow(windowTag, widgetTag);
 		KG_ASSERT(currentWindow);
 
 		// Ensure the widget is valid
@@ -448,7 +399,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Ensure the widget is a text widget
-		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget && 
+		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget &&
 			currentWidget->m_WidgetType != WidgetTypes::ButtonWidget)
 		{
 			KG_WARN("Attempt to change the text of a widget that is not a text widget nor a button widget");
@@ -469,14 +420,10 @@ namespace Kargono::RuntimeUI
 			buttonWidget->m_Text = newText;
 			buttonWidget->CalculateTextSize();
 		}
-		
 	}
 
-	void RuntimeUIService::SetSelectedWidget(const std::string& windowTag, const std::string& widgetTag)
+	void RuntimeUIService::SetSelectedWidgetInternal(Ref<Widget> currentWidget)
 	{
-		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
-
 		// Ensure the widget is valid
 		if (!currentWidget)
 		{
@@ -507,11 +454,8 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::SetWidgetTextColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
+	void RuntimeUIService::SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor)
 	{
-		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
-
 		// Ensure the widget is valid
 		if (!currentWidget)
 		{
@@ -520,7 +464,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Ensure the widget is a text widget
-		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget && 
+		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget &&
 			currentWidget->m_WidgetType != WidgetTypes::ButtonWidget)
 		{
 			KG_WARN("Attempt to set text color on widget that is not a TextWidget");
@@ -531,24 +475,19 @@ namespace Kargono::RuntimeUI
 		{
 			// Set the text color of the widget
 			TextWidget* textWidget = (TextWidget*)currentWidget.get();
-			textWidget->m_TextColor = color;
+			textWidget->m_TextColor = newColor;
 		}
 		else if (currentWidget->m_WidgetType == WidgetTypes::ButtonWidget)
 		{
 			// Set the text of the widget
 			ButtonWidget* buttonWidget = (ButtonWidget*)currentWidget.get();
 			// Set the text color of the widget
-			buttonWidget->m_TextColor = color;
+			buttonWidget->m_TextColor = newColor;
 		}
-
-		
 	}
 
-	void RuntimeUIService::SetWidgetBackgroundColor(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
+	void RuntimeUIService::SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor)
 	{
-		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
-
 		// Ensure the widget is valid
 		if (!currentWidget)
 		{
@@ -557,15 +496,12 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Set the background color of the widget
-		currentWidget->m_DefaultBackgroundColor = color;
-		currentWidget->m_ActiveBackgroundColor = color;
+		currentWidget->m_DefaultBackgroundColor = newColor;
+		currentWidget->m_ActiveBackgroundColor = newColor;
 	}
 
-	void RuntimeUIService::SetWidgetSelectable(const std::string& windowTag, const std::string& widgetTag, bool selectable)
+	void RuntimeUIService::SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable)
 	{
-		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
-
 		// Ensure the widget is valid
 		if (!currentWidget)
 		{
@@ -576,6 +512,181 @@ namespace Kargono::RuntimeUI
 		// Set the widget as selectable
 		currentWidget->m_Selectable = selectable;
 		CalculateWindowNavigationLinks();
+	}
+
+	bool RuntimeUIService::IsWidgetSelectedInternal(Ref<Widget> currentWidget)
+	{
+		// Check if the widget is valid
+		if (!currentWidget)
+		{
+			KG_WARN("Could not locate widget when checking the widget is selected");
+			return false;
+		}
+
+		// Return if the widget is selected
+		return s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget == currentWidget.get();
+	}
+
+	void RuntimeUIService::ClearActiveUI()
+	{
+		s_RuntimeUIContext->m_ActiveUI = nullptr;
+		s_RuntimeUIContext->m_ActiveUIHandle = Assets::EmptyHandle;
+	}
+
+	Ref<UserInterface> RuntimeUIService::GetActiveUI()
+	{
+		return s_RuntimeUIContext->m_ActiveUI;
+	}
+
+	Assets::AssetHandle RuntimeUIService::GetActiveUIHandle()
+	{
+		return s_RuntimeUIContext->m_ActiveUIHandle;
+	}
+
+	void RuntimeUIService::SetSelectedWidgetColor(const Math::vec4& color)
+	{
+		if (!s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget)
+		{
+			return;
+		}
+		s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget->m_ActiveBackgroundColor = color;
+	}
+
+	bool RuntimeUIService::IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag)
+	{
+		// Get the current widget
+		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+
+		return IsWidgetSelectedInternal(currentWidget);
+	}
+
+	bool RuntimeUIService::IsWidgetSelectedByIndex(WidgetID widgetID)
+	{
+		// Ensure the correct user interface is active
+		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return false;
+		}
+
+		// Get the current widget
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+
+		return IsWidgetSelectedInternal(currentWidget);
+	}
+
+	void RuntimeUIService::SetActiveWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
+	{
+		// Search for the indicated widget
+		auto [currentWidget, currentWindow] = GetWidgetAndWindow(windowTag, widgetTag);
+		SetWidgetTextInternal(currentWindow, currentWidget, newText);
+		
+	}
+
+	void RuntimeUIService::SetActiveWidgetTextByIndex(WidgetID widgetID, const std::string& newText)
+	{
+		// Ensure the correct user interface is active
+		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return;
+		}
+
+		// Search for the indicated widget
+		auto [currentWidget, currentWindow] = GetWidgetAndWindow(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		SetWidgetTextInternal(currentWindow, currentWidget, newText);
+	}
+
+	void RuntimeUIService::SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag)
+	{
+		// Search for the indicated widget
+		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+
+		SetSelectedWidgetInternal(currentWidget);
+	}
+
+	void RuntimeUIService::SetSelectedWidgetByIndex(WidgetID widgetID)
+	{
+		// Ensure the correct user interface is active
+		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return;
+		}
+
+		// Search for the indicated widget
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+
+		SetSelectedWidgetInternal(currentWidget);
+	}
+
+	void RuntimeUIService::SetWidgetTextColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
+	{
+		// Search for the indicated widget
+		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+
+		SetWidgetTextColorInternal(currentWidget, color);
+	}
+
+	void RuntimeUIService::SetWidgetTextColorByIndex(WidgetID widgetID, const Math::vec4& color)
+	{
+		// Ensure the correct user interface is active
+		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return;
+		}
+
+		// Search for the indicated widget
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+
+		SetWidgetTextColorInternal(currentWidget, color);
+	}
+
+	void RuntimeUIService::SetWidgetBackgroundColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
+	{
+		// Search for the indicated widget
+		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+
+		SetWidgetBackgroundColorInternal(currentWidget, color);
+	}
+
+	void RuntimeUIService::SetWidgetBackgroundColorByIndex(WidgetID widgetID, const Math::vec4& color)
+	{
+		// Ensure the correct user interface is active
+		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return;
+		}
+
+		// Search for the indicated widget
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+
+		SetWidgetBackgroundColorInternal(currentWidget, color);
+	}
+
+	void RuntimeUIService::SetWidgetSelectableByTag(const std::string& windowTag, const std::string& widgetTag, bool selectable)
+	{
+		// Search for the indicated widget
+		Ref<Widget> currentWidget = GetWidget(windowTag, widgetTag);
+
+		SetWidgetSelectableInternal(currentWidget, selectable);
+	}
+
+	void RuntimeUIService::SetWidgetSelectableByIndex(WidgetID widgetID, bool selectable)
+	{
+		// Ensure the correct user interface is active
+		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return;
+		}
+
+		// Search for the indicated widget
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+
+		SetWidgetSelectableInternal(currentWidget, selectable);
 	}
 
 	void RuntimeUIService::SetActiveOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function)
@@ -615,17 +726,24 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::SetDisplayWindowByID(uint16_t windowID, bool display)
+	void RuntimeUIService::SetDisplayWindowByIndex(WindowID windowID, bool display)
 	{
+		// Ensure the correct user interface is active
+		if (windowID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return;
+		}
+
 		std::vector<Window>& activeWindows{ s_RuntimeUIContext->m_ActiveUI->m_Windows };
 
-		if (windowID > (activeWindows.size() - 1))
+		if (windowID.m_WindowIndex > (activeWindows.size() - 1))
 		{
 			KG_WARN("Provided window ID is out of bounds for the UI's windows");
 			return;
 		}
 
-		Window& window = activeWindows.at((size_t)windowID);
+		Window& window = activeWindows.at((size_t)windowID.m_WindowIndex);
 		
 		// Display or hide the window
 		if (display)
@@ -891,6 +1009,12 @@ namespace Kargono::RuntimeUI
 
 	Ref<Widget> RuntimeUIService::GetWidget(const std::string& windowTag, const std::string& widgetTag)
 	{
+		if (!s_RuntimeUIContext->m_ActiveUI)
+		{
+			KG_WARN("Attempt to get a widget from the active user interface, however, no UI is active!");
+			return nullptr;
+		}
+
 		// Get widget using its parent window tag and its widget tag
 		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
 		{
@@ -908,6 +1032,35 @@ namespace Kargono::RuntimeUI
 			}
 		}
 		return nullptr;
+	}
+
+	Ref<Widget> RuntimeUIService::GetWidget(uint16_t windowIndex, uint16_t widgetIndex)
+	{
+		// Ensure a user interface is active
+		if (!s_RuntimeUIContext->m_ActiveUI)
+		{
+			KG_WARN("Attempt to get a widget from the active user interface, however, no UI is active!");
+			return nullptr;
+		}
+
+		// Ensure window index is within bounds
+		if (windowIndex > (s_RuntimeUIContext->m_ActiveUI->m_Windows.size() - 1))
+		{
+			KG_WARN("Attempt to retrieve a widget but the window index was out of bounds");
+			return nullptr;
+		}
+		// Get the indiciated window
+		Window& currentWindow = s_RuntimeUIContext->m_ActiveUI->m_Windows.at((size_t)windowIndex);
+
+		// Ensure widget index is within bounds
+		if (widgetIndex > (currentWindow.m_Widgets.size() - 1))
+		{
+			KG_WARN("Attempt to retrieve a widget but the widget index was out of bounds");
+			return nullptr;
+		}
+
+		// Return the indicated widget and window
+		return currentWindow.m_Widgets.at(widgetIndex);
 	}
 
 	std::tuple<Ref<Widget>, Window*> RuntimeUIService::GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag)
@@ -929,6 +1082,28 @@ namespace Kargono::RuntimeUI
 			}
 		}
 		return { nullptr, nullptr };
+	}
+
+	std::tuple<Ref<Widget>, Window*> RuntimeUIService::GetWidgetAndWindow(uint16_t windowIndex, uint16_t widgetIndex)
+	{
+		// Ensure window index is within bounds
+		if (windowIndex > (s_RuntimeUIContext->m_ActiveUI->m_Windows.size() - 1))
+		{
+			KG_WARN("Attempt to retrieve a window/widget but the window index was out of bounds");
+			return { nullptr, nullptr };
+		}
+		// Get the indiciated window
+		Window& currentWindow = s_RuntimeUIContext->m_ActiveUI->m_Windows.at((size_t)windowIndex);
+
+		// Ensure widget index is within bounds
+		if (widgetIndex > (currentWindow.m_Widgets.size() - 1))
+		{
+			KG_WARN("Attempt to retrieve a window/widget but the widget index was out of bounds");
+			return { nullptr, nullptr };
+		}
+
+		// Return the indicated widget and window
+		return { currentWindow.m_Widgets.at(widgetIndex), &currentWindow };
 	}
 
 	void Window::DisplayWindow()

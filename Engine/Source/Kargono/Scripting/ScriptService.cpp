@@ -578,6 +578,8 @@ namespace Kargono::Utility
 namespace Kargono::Scripting
 {
 	// Initial definitions and static members for insertion functions (functions that insert engine pointers into the scripting dll)
+
+	// Void return type
 	DefineInsertFunction(VoidNone, void)
 	DefineInsertFunction(VoidString, void, const std::string&)
 	DefineInsertFunction(VoidUInt16, void, uint16_t)
@@ -589,6 +591,14 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidVec3Vec3, void, Math::vec3, Math::vec3)
 	DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
 	DefineInsertFunction(VoidUInt16Bool, void, uint16_t, bool)
+	DefineInsertFunction(VoidUInt16UInt16, void, uint16_t, uint16_t)
+	DefineInsertFunction(VoidUIWidgetString, void, RuntimeUI::WidgetID, const std::string&)
+	DefineInsertFunction(VoidUIWindowBool, void, RuntimeUI::WindowID, bool)
+	DefineInsertFunction(VoidUIWidgetBool, void, RuntimeUI::WidgetID, bool)
+	DefineInsertFunction(VoidUIWidget, void, RuntimeUI::WidgetID)
+	DefineInsertFunction(VoidUIWidgetVec4, void, RuntimeUI::WidgetID, Math::vec4)
+	DefineInsertFunction(VoidUInt16UInt16String, void, uint16_t, uint16_t, const std::string&)
+	DefineInsertFunction(VoidUInt16UInt16Bool, void, uint16_t, uint16_t, bool)
 	DefineInsertFunction(VoidStringVoidPtr, void, const std::string&, void*)
 	DefineInsertFunction(VoidStringString, void, const std::string&, const std::string&)
 	DefineInsertFunction(VoidStringStringBool, void, const std::string&, const std::string&, bool)
@@ -597,25 +607,34 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
 	DefineInsertFunction(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
 	DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
+	DefineInsertFunction(VoidUInt16UInt16Vec4, void, uint16_t, uint16_t, Math::vec4)
 	DefineInsertFunction(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
 	DefineInsertFunction(VoidPtrString, void*, const std::string&)
 	DefineInsertFunction(VoidPtrUInt64String, void*, uint64_t, const std::string&)
 	DefineInsertFunction(VoidUInt64Vec2, void, uint64_t, Math::vec2)
 	DefineInsertFunction(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 	DefineInsertFunction(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
+	// Bool return type
+	DefineInsertFunction(BoolUIWidget, bool, RuntimeUI::WidgetID)
 	DefineInsertFunction(BoolStringString, bool, const std::string&, const std::string&)
 	DefineInsertFunction(BoolUInt64String, bool, uint64_t, const std::string&)
 	DefineInsertFunction(BoolUInt64UInt64, bool, uint64_t, uint64_t)
+	DefineInsertFunction(BoolUInt16UInt16, bool, uint16_t, uint16_t)
 	DefineInsertFunction(BoolUInt16, bool, uint16_t)
 	DefineInsertFunction(BoolUInt64, bool, uint64_t)
 	DefineInsertFunction(BoolString, bool, const std::string&)
+	// Integer return types
 	DefineInsertFunction(UInt16None, uint16_t)
 	DefineInsertFunction(Int32Int32Int32, int32_t, int32_t, int32_t)
-	DefineInsertFunction(FloatFloatFloat, float, float, float)
 	DefineInsertFunction(UInt64String, uint64_t, const std::string&)
+	// Float return type
+	DefineInsertFunction(FloatFloatFloat, float, float, float)
+	// Vector return types
 	DefineInsertFunction(Vec2UInt64, Math::vec2, uint64_t)
 	DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
+	// String return type
 	DefineInsertFunction(StringUInt64, const std::string&, uint64_t)
+	// Other return types
 	DefineInsertFunction(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 
 	void ScriptModuleBuilder::CreateScriptModule()
@@ -723,6 +742,7 @@ namespace Kargono::Scripting
 		outputStream << "#include <sstream>\n";
 		outputStream << "#include <limits>\n";
 		outputStream << "#include \"" << "Kargono/Math/MathAliases.h" << "\"\n"; // Include Math Library
+		outputStream << "#include \"" << "Kargono/RuntimeUI/RuntimeUICommon.h" << "\"\n"; // Include Runtime UI Common
 		outputStream << "#include \"" << "Kargono/Physics/Physics2DCommon.h" << "\"\n"; // Include Physics Common
 
 		// Conversion Function from RValueToLValue
@@ -737,6 +757,7 @@ namespace Kargono::Scripting
 		outputStream << "extern \"C\"" << "\n";
 		outputStream << "\t{" << "\n";
 
+		// Void return type
 		AddImportFunctionToHeaderFile(VoidNone, void)
 		AddImportFunctionToHeaderFile(VoidString, void, const std::string&)
 		AddImportFunctionToHeaderFile(VoidUInt16, void, uint16_t)
@@ -753,29 +774,48 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidStringStringBool, void, const std::string&, const std::string&, bool)
 		AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
 		AddImportFunctionToHeaderFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
+		AddImportFunctionToHeaderFile(VoidUInt16UInt16Vec4, void, uint16_t, uint16_t, Math::vec4)
+		AddImportFunctionToHeaderFile(VoidUInt16UInt16Bool, void, uint16_t, uint16_t, bool)
+		AddImportFunctionToHeaderFile(VoidUIWidgetString, void, RuntimeUI::WidgetID, const std::string&)
 		AddImportFunctionToHeaderFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
 		AddImportFunctionToHeaderFile(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
 		AddImportFunctionToHeaderFile(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
 		AddImportFunctionToHeaderFile(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
+		AddImportFunctionToHeaderFile(VoidUInt16UInt16, void, uint16_t, uint16_t)
+		AddImportFunctionToHeaderFile(VoidUInt16UInt16String, void, uint16_t, uint16_t, const std::string&)
 		AddImportFunctionToHeaderFile(VoidPtrString, void*, const std::string&)
 		AddImportFunctionToHeaderFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec2, void, uint64_t, Math::vec2)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
+		AddImportFunctionToHeaderFile(VoidUIWidgetString, void, RuntimeUI::WidgetID, const std::string&)
+		AddImportFunctionToHeaderFile(VoidUIWindowBool, void, RuntimeUI::WindowID, bool)
+		AddImportFunctionToHeaderFile(VoidUIWidgetBool, void, RuntimeUI::WidgetID, bool)
+		AddImportFunctionToHeaderFile(VoidUIWidget, void, RuntimeUI::WidgetID)
+		AddImportFunctionToHeaderFile(VoidUIWidgetVec4, void, RuntimeUI::WidgetID, Math::vec4)
+		// Bool return type
+		AddImportFunctionToHeaderFile(BoolUIWidget, bool, RuntimeUI::WidgetID)
 		AddImportFunctionToHeaderFile(BoolStringString, bool, const std::string&, const std::string&)
 		AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, const std::string&)
 		AddImportFunctionToHeaderFile(BoolUInt64UInt64, bool, uint64_t, uint64_t)
 		AddImportFunctionToHeaderFile(BoolUInt16, bool, uint16_t)
+		AddImportFunctionToHeaderFile(BoolUInt16UInt16, bool, uint16_t, uint16_t)
 		AddImportFunctionToHeaderFile(BoolUInt64, bool, uint64_t)
 		AddImportFunctionToHeaderFile(BoolString, bool, const std::string&)
+		// Integer return types
 		AddImportFunctionToHeaderFile(UInt16None, uint16_t)
 		AddImportFunctionToHeaderFile(UInt64String, uint64_t, const std::string&)
 		AddImportFunctionToHeaderFile(Int32Int32Int32, int32_t, int32_t, int32_t)
+		// Float return type
 		AddImportFunctionToHeaderFile(FloatFloatFloat, float, float, float)
+		// Vector return types
 		AddImportFunctionToHeaderFile(Vec2UInt64, Math::vec2, uint64_t)
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
+		// String return type
 		AddImportFunctionToHeaderFile(StringUInt64, const std::string&, uint64_t)
+		// Other return types
 		AddImportFunctionToHeaderFile(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
+
 		// Add Script Function Declarations
 		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 		{
@@ -840,62 +880,76 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 
 		// Insert Callable Function Definitions into CPP file
-		AddEngineFunctionToCPPFileNoParameters(EnableReadyCheck, void)
-		AddEngineFunctionToCPPFileNoParameters(RequestUserCount, void)
-		AddEngineFunctionToCPPFileNoParameters(RequestJoinSession, void)
-		AddEngineFunctionToCPPFileNoParameters(LeaveCurrentSession, void)
-		AddEngineFunctionToCPPFileNoParameters(GetActiveSessionSlot, uint16_t)
-		AddEngineFunctionToCPPFileNoParameters(ClearDebugLines, void)
-		AddEngineFunctionToCPPFileNoParameters(ClearDebugPoints, void)
+
+		// Application
 		AddEngineFunctionToCPPFileNoParameters(Application_Close, void)
-		AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, const std::string&, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(PlaySoundFromHandle, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(Input_IsKeyPressed, bool, uint16_t)
-		AddEngineFunctionToCPPFileOneParameters(Scenes_IsSceneActive, bool, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(SignalAll, void, uint16_t)
+		AddEngineFunctionToCPPFileOneParameters(Application_Resize, void, uint16_t)
+		// Artificial Intelligence
 		AddEngineFunctionToCPPFileOneParameters(AI_RevertPreviousState, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(AI_ClearGlobalState, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(AI_ClearCurrentState, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(AI_ClearPreviousState, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(AI_ClearAllStates, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(GetGameStateField, void*, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromHandle, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(InputMap_LoadInputMapFromHandle, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(InputMap_IsPollingSlotPressed, bool, uint16_t)
-		AddEngineFunctionToCPPFileOneParameters(UI_LoadUserInterfaceFromHandle, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromHandle, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(TransformComponent_GetTranslation, Math::vec3, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(Rigidbody2DComponent_GetLinearVelocity, Math::vec2, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(FindEntityHandleByName, uint64_t, const std::string&)
-		AddEngineFunctionToCPPFileOneParameters(AddDebugPoint, void, Math::vec3)
-		AddEngineFunctionToCPPFileOneParameters(Application_Resize, void, uint16_t)
-		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, const std::string&)
-		AddEngineFunctionToCPPFileTwoParameters(AddDebugLine, void, Math::vec3, Math::vec3)
-		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_IsWidgetSelected, bool, const std::string&, const std::string&)
-		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomInteger, int32_t, int32_t, int32_t)
-		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomFloat, float, float, float)
-		AddEngineFunctionToCPPFileTwoParameters(UI_SetDisplayWindow, void, uint16_t, bool)
-		AddEngineFunctionToCPPFileTwoParameters(SetSelectedWidget, void, const std::string&, const std::string&)
-		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
-		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
-		AddEngineFunctionToCPPFileTwoParameters(Particles_AddEmitterByHandle, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(AI_ChangeGlobalState, void, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(AI_ChangeCurrentState, void, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(AI_IsGlobalState, bool, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(AI_IsCurrentState, bool, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileTwoParameters(AI_IsPreviousState, bool, uint64_t, uint64_t)
+		AddEngineFunctionToCPPFileFourParameters(AI_SendMessage, void, uint32_t, uint64_t, uint64_t, float)
+		// Audio
+		AddEngineFunctionToCPPFileOneParameters(PlaySoundFromHandle, void, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(PlayStereoSoundFromHandle, void, uint64_t)
+		// Debug
+		AddEngineFunctionToCPPFileNoParameters(ClearDebugLines, void)
+		AddEngineFunctionToCPPFileNoParameters(ClearDebugPoints, void)
+		AddEngineFunctionToCPPFileOneParameters(AddDebugPoint, void, Math::vec3)
+		AddEngineFunctionToCPPFileTwoParameters(AddDebugLine, void, Math::vec3, Math::vec3)
+		AddEngineFunctionToCPPFileThreeParameters(Log, void, const std::string&, const std::string&, const std::string&)
+		// Game State
+		AddEngineFunctionToCPPFileOneParameters(GetGameStateField, void*, const std::string&)
+		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
+		// Input
+		AddEngineFunctionToCPPFileOneParameters(Input_IsKeyPressed, bool, uint16_t)
+		AddEngineFunctionToCPPFileOneParameters(InputMap_LoadInputMapFromHandle, void, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(InputMap_IsPollingSlotPressed, bool, uint16_t)
+		// Network
+		AddEngineFunctionToCPPFileNoParameters(EnableReadyCheck, void)
+		AddEngineFunctionToCPPFileNoParameters(RequestUserCount, void)
+		AddEngineFunctionToCPPFileNoParameters(RequestJoinSession, void)
+		AddEngineFunctionToCPPFileNoParameters(LeaveCurrentSession, void)
+		AddEngineFunctionToCPPFileNoParameters(GetActiveSessionSlot, uint16_t)
+		AddEngineFunctionToCPPFileOneParameters(SignalAll, void, uint16_t)
+		AddEngineFunctionToCPPFileThreeParameters(SendAllEntityPhysics, void, uint64_t, Math::vec3, Math::vec2)
+		// Particles
+		AddEngineFunctionToCPPFileTwoParameters(Particles_AddEmitterByHandle, void, uint64_t, Math::vec3)
+		// Physics
+		AddEngineFunctionToCPPFileTwoParameters(Physics_Raycast, Physics::RaycastResult, Math::vec2, Math::vec2)
+		// Random
+		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomInteger, int32_t, int32_t, int32_t)
+		AddEngineFunctionToCPPFileTwoParameters(GenerateRandomFloat, float, float, float)
+		// Scenes
+		AddEngineFunctionToCPPFileOneParameters(Scenes_IsSceneActive, bool, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromHandle, void, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, const std::string&, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(TransformComponent_GetTranslation, Math::vec3, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(Rigidbody2DComponent_GetLinearVelocity, Math::vec2, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(FindEntityHandleByName, uint64_t, const std::string&)
+		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, const std::string&)
+		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
-		AddEngineFunctionToCPPFileTwoParameters(Physics_Raycast, Physics::RaycastResult, Math::vec2, Math::vec2)
-		AddEngineFunctionToCPPFileThreeParameters(Log, void, const std::string&, const std::string&, const std::string&)
-		AddEngineFunctionToCPPFileThreeParameters(SetWidgetSelectable, void, const std::string&, const std::string&, bool)
-		AddEngineFunctionToCPPFileThreeParameters(SetWidgetText, void, const std::string&, const std::string&, const std::string&)
-		AddEngineFunctionToCPPFileThreeParameters(SetWidgetTextColor, void, const std::string&, const std::string&, Math::vec4)
-		AddEngineFunctionToCPPFileThreeParameters(SetWidgetBackgroundColor, void, const std::string&, const std::string&, Math::vec4)
 		AddEngineFunctionToCPPFileThreeParameters(Scenes_GetProjectComponentField, void*, uint64_t, uint64_t, uint64_t)
-		AddEngineFunctionToCPPFileThreeParameters(SendAllEntityPhysics, void, uint64_t, Math::vec3, Math::vec2)
 		AddEngineFunctionToCPPFileFourParameters(Scenes_SetProjectComponentField, void, uint64_t, uint64_t, uint64_t, void*)
-		AddEngineFunctionToCPPFileFourParameters(AI_SendMessage, void, uint32_t, uint64_t, uint64_t, float)
+		// User Interface
+		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_LoadUserInterfaceFromHandle, void, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_SetSelectedWidget, void, RuntimeUI::WidgetID)
+		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_IsWidgetSelected, bool, RuntimeUI::WidgetID)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetDisplayWindow, void, RuntimeUI::WindowID, bool)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetSelectable, void, RuntimeUI::WidgetID, bool)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetText, void, RuntimeUI::WidgetID, const std::string&)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetBackgroundColor, void, RuntimeUI::WidgetID, Math::vec4)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetTextColor, void, RuntimeUI::WidgetID, Math::vec4)
+
 
 		// Insert FuncPointer Importing for DLL processing
 		AddImportFunctionToCPPFile(VoidNone, void)
@@ -935,7 +989,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileEnd(AI_ClearPreviousState)
 		AddEngineFunctionToCPPFileEnd(AI_ClearAllStates)
 		AddEngineFunctionToCPPFileEnd(TransitionSceneFromHandle)
-		AddEngineFunctionToCPPFileEnd(UI_LoadUserInterfaceFromHandle)
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_LoadUserInterfaceFromHandle)
 		AddEngineFunctionToCPPFileEnd(PlaySoundFromHandle)
 		AddEngineFunctionToCPPFileEnd(PlayStereoSoundFromHandle)
 		AddEngineFunctionToCPPFileEnd(InputMap_LoadInputMapFromHandle)
@@ -950,7 +1004,24 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt16Bool, void, uint16_t, bool)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(UI_SetDisplayWindow)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUIWindowBool, void, RuntimeUI::WindowID, bool)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetDisplayWindow)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt16UInt16, void, uint16_t, uint16_t)
+		outputStream << "{\n";
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUIWidget, void, RuntimeUI::WidgetID)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetSelectedWidget)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt16UInt16Bool, void, uint16_t, uint16_t, bool)
+		outputStream << "{\n";
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUIWidgetBool, void, RuntimeUI::WidgetID, bool)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetWidgetSelectable)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringVoidPtr, void, const std::string&, void*)
 		outputStream << "{\n";
@@ -958,21 +1029,23 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringString, void, const std::string&, const std::string&)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(SetSelectedWidget)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringStringBool, void, const std::string&, const std::string&, bool)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(SetWidgetSelectable)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(SetWidgetText)
 		AddEngineFunctionToCPPFileEnd(Log)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt16UInt16String, void, uint16_t, uint16_t, const std::string&)
+		outputStream << "{\n";
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUIWidgetString, void, RuntimeUI::WidgetID, const std::string&)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetWidgetText)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(SetWidgetTextColor)
-		AddEngineFunctionToCPPFileEnd(SetWidgetBackgroundColor)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 		outputStream << "{\n";
@@ -990,7 +1063,6 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolStringString, bool, const std::string&, const std::string&)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(RuntimeUI_IsWidgetSelected)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(UInt16None, uint16_t)
 		outputStream << "{\n";
@@ -1014,6 +1086,14 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SendAllEntityPhysics)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUInt16UInt16Vec4, void, uint16_t, uint16_t, Math::vec4)
+		outputStream << "{\n";
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUIWidgetVec4, void, RuntimeUI::WidgetID, Math::vec4)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetWidgetTextColor);
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetWidgetBackgroundColor);
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
 		outputStream << "{\n";
@@ -1050,6 +1130,13 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(BoolUInt64, bool, uint64_t)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Scenes_IsSceneActive)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(BoolUInt16UInt16, bool, uint16_t, uint16_t)
+		outputStream << "{\n";
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(BoolUIWidget, bool, RuntimeUI::WidgetID)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_IsWidgetSelected)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(StringUInt64, const std::string&, uint64_t)
 		outputStream << "{\n";
@@ -1268,6 +1355,7 @@ namespace Kargono::Scripting
 
 	void ScriptModuleBuilder::AttachEngineFunctionsToModule()
 	{
+		// Void return type
 		ImportInsertFunction(VoidNone)
 		ImportInsertFunction(VoidUInt16)
 		ImportInsertFunction(VoidUInt64)
@@ -1279,6 +1367,9 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidPtrString)
 		ImportInsertFunction(VoidStringBool)
 		ImportInsertFunction(VoidUInt16Bool)
+		ImportInsertFunction(VoidUInt16UInt16)
+		ImportInsertFunction(VoidUInt16UInt16String)
+		ImportInsertFunction(VoidUInt16UInt16Bool)
 		ImportInsertFunction(VoidStringVoidPtr)
 		ImportInsertFunction(VoidStringString)
 		ImportInsertFunction(VoidStringStringBool)
@@ -1288,69 +1379,44 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidPtrUInt64UInt64UInt64)
 		ImportInsertFunction(VoidUInt64UInt64UInt64VoidPtr)
 		ImportInsertFunction(VoidUInt32UInt64UInt64Float)
+		ImportInsertFunction(VoidUInt16UInt16Vec4)
 		ImportInsertFunction(VoidPtrUInt64String)
 		ImportInsertFunction(VoidUInt64Vec3)
 		ImportInsertFunction(VoidUInt64Vec2)
 		ImportInsertFunction(VoidUInt64UInt64)
 		ImportInsertFunction(VoidUInt64Vec3Vec2)
+		ImportInsertFunction(VoidUIWidgetString)
+		ImportInsertFunction(VoidUIWindowBool)
+		ImportInsertFunction(VoidUIWidgetBool)
+		ImportInsertFunction(VoidUIWidget)
+		ImportInsertFunction(VoidUIWidgetVec4)
+		// Bool return type
+		ImportInsertFunction(BoolUIWidget)
 		ImportInsertFunction(BoolStringString)
 		ImportInsertFunction(BoolUInt64String)
 		ImportInsertFunction(BoolUInt64UInt64)
 		ImportInsertFunction(BoolUInt16)
+		ImportInsertFunction(BoolUInt16UInt16)
 		ImportInsertFunction(BoolUInt64)
 		ImportInsertFunction(BoolString)
+		// Integer return types
 		ImportInsertFunction(UInt16None)
 		ImportInsertFunction(UInt64String)
 		ImportInsertFunction(Int32Int32Int32)
+		// Float return type
 		ImportInsertFunction(FloatFloatFloat)
+		// Vector return types
 		ImportInsertFunction(Vec2UInt64)
 		ImportInsertFunction(Vec3UInt64)
+		// String return types
 		ImportInsertFunction(StringUInt64)
+		// Other return types
 		ImportInsertFunction(RaycastResultVec2Vec2)
 
-		AddEngineFunctionPointerToDll(LeaveCurrentSession, Network::ClientService::LeaveCurrentSession, VoidNone)
-		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::ClientService::EnableReadyCheck, VoidNone)
-		AddEngineFunctionPointerToDll(RequestJoinSession, Network::ClientService::RequestJoinSession, VoidNone)
-		AddEngineFunctionPointerToDll(SendAllEntityPhysics, Network::ClientService::SendAllEntityPhysics, VoidUInt64Vec3Vec2)
-		AddEngineFunctionPointerToDll(RequestUserCount, Network::ClientService::RequestUserCount, VoidNone)
-		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::ClientService::GetActiveSessionSlot, UInt16None)
-		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::ClientService::SendAllEntityLocation, VoidUInt64Vec3)
-		
-		AddEngineFunctionPointerToDll(SignalAll, Network::ClientService::SignalAll, VoidUInt16)
-		AddEngineFunctionPointerToDll(Log, Scripting::Log, VoidStringStringString)
-		AddEngineFunctionPointerToDll(ClearDebugLines, Scripting::ClearDebugLines, VoidNone)
-		AddEngineFunctionPointerToDll(ClearDebugPoints, Scripting::ClearDebugPoints, VoidNone)
-		AddEngineFunctionPointerToDll(AddDebugPoint, Scripting::AddDebugPoint, VoidVec3)
-		AddEngineFunctionPointerToDll(AddDebugLine, Scripting::AddDebugLine, VoidVec3Vec3)
-		AddEngineFunctionPointerToDll(PlaySoundFromHandle, Audio::AudioService::PlaySoundFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(PlayStereoSoundFromHandle, Audio::AudioService::PlayStereoSoundFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(Input_IsKeyPressed, Input::InputService::IsKeyPressed, BoolUInt16)
-		AddEngineFunctionPointerToDll(InputMap_LoadInputMapFromHandle, Input::InputMapService::SetActiveInputMapFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(InputMap_IsPollingSlotPressed, Input::InputMapService::IsPollingSlotPressed, BoolUInt16)
-		
-		AddEngineFunctionPointerToDll(TransitionSceneFromHandle, Scenes::SceneService::TransitionSceneFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameStateService::SetActiveGameStateField, VoidStringVoidPtr)
-		AddEngineFunctionPointerToDll(GetGameStateField, Scenes::GameStateService::GetActiveGameStateField, VoidPtrString)
-		AddEngineFunctionPointerToDll(SetWidgetText, RuntimeUI::RuntimeUIService::SetActiveWidgetText, VoidStringStringString)
-		AddEngineFunctionPointerToDll(UI_LoadUserInterfaceFromHandle, RuntimeUI::RuntimeUIService::SetActiveUIFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(UI_SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindowByID, VoidUInt16Bool)
-		AddEngineFunctionPointerToDll(SetSelectedWidget, RuntimeUI::RuntimeUIService::SetSelectedWidget, VoidStringString)
-		AddEngineFunctionPointerToDll(SetWidgetTextColor, RuntimeUI::RuntimeUIService::SetWidgetTextColor, VoidStringStringVec4)
-		AddEngineFunctionPointerToDll(SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColor, VoidStringStringVec4)
-		AddEngineFunctionPointerToDll(SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectable, VoidStringStringBool)
-		AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, RuntimeUI::RuntimeUIService::IsWidgetSelected, BoolStringString)
-		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)
-		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::SceneService::FindEntityHandleByName, UInt64String)
-		AddEngineFunctionPointerToDll(Scenes_IsSceneActive, Scenes::SceneService::IsSceneActive, BoolUInt64)
-		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)
-		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_SetLinearVelocity, VoidUInt64Vec2)
-		AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_GetLinearVelocity, Vec2UInt64)
-		AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, Scenes::SceneService::GetProjectComponentField, VoidPtrUInt64UInt64UInt64)
-		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, Scenes::SceneService::SetProjectComponentField, VoidUInt64UInt64UInt64VoidPtr)
-		AddEngineFunctionPointerToDll(TagComponent_GetTag, Scenes::SceneService::TagComponentGetTag, StringUInt64)
-		AddEngineFunctionPointerToDll(GenerateRandomInteger, Utility::RandomService::GenerateRandomInteger, Int32Int32Int32)
-		AddEngineFunctionPointerToDll(GenerateRandomFloat, Utility::RandomService::GenerateRandomFloat, FloatFloatFloat)
+		// Application
+		AddEngineFunctionPointerToDll(Application_Resize, ApplicationResize, VoidUInt16)
+		AddEngineFunctionPointerToDll(Application_Close, EngineService::SubmitApplicationCloseEvent, VoidNone)
+		// Artificial Intelligence
 		AddEngineFunctionPointerToDll(AI_ChangeGlobalState, AI::AIService::ChangeGlobalState, VoidUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_ChangeCurrentState, AI::AIService::ChangeCurrentState, VoidUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_RevertPreviousState, AI::AIService::RevertPreviousState, VoidUInt64)
@@ -1362,9 +1428,59 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AI_IsGlobalState, AI::AIService::IsGlobalState, BoolUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_IsCurrentState, AI::AIService::IsCurrentState, BoolUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_IsPreviousState, AI::AIService::IsPreviousState, BoolUInt64UInt64)
-		AddEngineFunctionPointerToDll(Physics_Raycast, Physics::Physics2DService::Raycast, RaycastResultVec2Vec2)
+		// Audio
+		AddEngineFunctionPointerToDll(PlaySoundFromHandle, Audio::AudioService::PlaySoundFromHandle, VoidUInt64)
+		AddEngineFunctionPointerToDll(PlayStereoSoundFromHandle, Audio::AudioService::PlayStereoSoundFromHandle, VoidUInt64)
+		AddEngineFunctionPointerToDll(SignalAll, Network::ClientService::SignalAll, VoidUInt16)
+		// Debug
+		AddEngineFunctionPointerToDll(Log, Scripting::Log, VoidStringStringString)
+		AddEngineFunctionPointerToDll(ClearDebugLines, Scripting::ClearDebugLines, VoidNone)
+		AddEngineFunctionPointerToDll(ClearDebugPoints, Scripting::ClearDebugPoints, VoidNone)
+		AddEngineFunctionPointerToDll(AddDebugPoint, Scripting::AddDebugPoint, VoidVec3)
+		AddEngineFunctionPointerToDll(AddDebugLine, Scripting::AddDebugLine, VoidVec3Vec3)
+		// Game State
+		AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameStateService::SetActiveGameStateField, VoidStringVoidPtr)
+		AddEngineFunctionPointerToDll(GetGameStateField, Scenes::GameStateService::GetActiveGameStateField, VoidPtrString)
+		// Input
+		AddEngineFunctionPointerToDll(Input_IsKeyPressed, Input::InputService::IsKeyPressed, BoolUInt16)
+		AddEngineFunctionPointerToDll(InputMap_LoadInputMapFromHandle, Input::InputMapService::SetActiveInputMapFromHandle, VoidUInt64)
+		AddEngineFunctionPointerToDll(InputMap_IsPollingSlotPressed, Input::InputMapService::IsPollingSlotPressed, BoolUInt16)
+		// Networking
+		AddEngineFunctionPointerToDll(LeaveCurrentSession, Network::ClientService::LeaveCurrentSession, VoidNone)
+		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::ClientService::EnableReadyCheck, VoidNone)
+		AddEngineFunctionPointerToDll(RequestJoinSession, Network::ClientService::RequestJoinSession, VoidNone)
+		AddEngineFunctionPointerToDll(SendAllEntityPhysics, Network::ClientService::SendAllEntityPhysics, VoidUInt64Vec3Vec2)
+		AddEngineFunctionPointerToDll(RequestUserCount, Network::ClientService::RequestUserCount, VoidNone)
+		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::ClientService::GetActiveSessionSlot, UInt16None)
+		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::ClientService::SendAllEntityLocation, VoidUInt64Vec3)
+		// Particles
 		AddEngineFunctionPointerToDll(Particles_AddEmitterByHandle, Particles::ParticleService::AddEmitterByHandle, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(Application_Resize, ApplicationResize, VoidUInt16)
-		AddEngineFunctionPointerToDll(Application_Close, EngineService::SubmitApplicationCloseEvent, VoidNone)
+		// Physics 2D
+		AddEngineFunctionPointerToDll(Physics_Raycast, Physics::Physics2DService::Raycast, RaycastResultVec2Vec2)
+		// Random
+		AddEngineFunctionPointerToDll(GenerateRandomInteger, Utility::RandomService::GenerateRandomInteger, Int32Int32Int32)
+		AddEngineFunctionPointerToDll(GenerateRandomFloat, Utility::RandomService::GenerateRandomFloat, FloatFloatFloat)
+		// Runtime User Interface
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetText, RuntimeUI::RuntimeUIService::SetActiveWidgetTextByIndex, VoidUIWidgetString)
+		AddEngineFunctionPointerToDll(RuntimeUI_LoadUserInterfaceFromHandle, RuntimeUI::RuntimeUIService::SetActiveUIFromHandle, VoidUInt64)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindowByIndex, VoidUIWindowBool)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetSelectedWidget, RuntimeUI::RuntimeUIService::SetSelectedWidgetByIndex, VoidUIWidget)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetTextColor, RuntimeUI::RuntimeUIService::SetWidgetTextColorByIndex, VoidUIWidgetVec4)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColorByIndex, VoidUIWidgetVec4)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectableByIndex, VoidUIWidgetBool)
+		AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, RuntimeUI::RuntimeUIService::IsWidgetSelectedByIndex, BoolUIWidget)
+		// Scenes
+		AddEngineFunctionPointerToDll(TransitionSceneFromHandle, Scenes::SceneService::TransitionSceneFromHandle, VoidUInt64)
+		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)
+		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::SceneService::FindEntityHandleByName, UInt64String)
+		AddEngineFunctionPointerToDll(Scenes_IsSceneActive, Scenes::SceneService::IsSceneActive, BoolUInt64)
+		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)
+		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
+		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_SetLinearVelocity, VoidUInt64Vec2)
+		AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_GetLinearVelocity, Vec2UInt64)
+		AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, Scenes::SceneService::GetProjectComponentField, VoidPtrUInt64UInt64UInt64)
+		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, Scenes::SceneService::SetProjectComponentField, VoidUInt64UInt64UInt64VoidPtr)
+		AddEngineFunctionPointerToDll(TagComponent_GetTag, Scenes::SceneService::TagComponentGetTag, StringUInt64)
+		
 	}
 }

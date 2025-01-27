@@ -1783,6 +1783,17 @@ namespace Kargono::Scripting
 					return { false, {} };
 				}
 
+				if (IsContextProbe(expression))
+				{
+					// Store context probe for argument
+					CursorContext newContext;
+					newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+					newContext.StackVariables = m_StackVariables;
+					m_CursorContext = newContext;
+					StoreParseError(ParseErrorType::ContextProbe, "Found context probe inside member function argument", newFunctionCall.Identifier);
+					return { false, {} };
+				}
+
 				// Decide whether to continue looking for more arguments
 				if (success && GetCurrentToken(currentLocation).Type == ScriptTokenType::Comma)
 				{
