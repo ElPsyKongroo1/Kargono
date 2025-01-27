@@ -96,9 +96,9 @@ namespace Kargono::Panels
 
 			// Add functions to call when interacting with window entry
 			windowEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWindow);
-			windowEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
 			windowEntry.m_OnRightClickSelection.push_back({ "Add Text Widget", KG_BIND_CLASS_FN(AddTextWidget) });
 			windowEntry.m_OnRightClickSelection.push_back({ "Add Button Widget", KG_BIND_CLASS_FN(AddButtonWidget) });
+			windowEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
 
 			// Add widgets to window entry
 			std::size_t widgetIterator{ 0 };
@@ -356,6 +356,9 @@ namespace Kargono::Panels
 		// Add Widget to RuntimeUI and EditorUI::Tree
 		window.AddWidget(newTextWidget);
 		windowEntry.m_SubEntries.push_back(newWidgetEntry);
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorTreePanel::AddButtonWidget(EditorUI::TreeEntry& windowEntry)
@@ -386,6 +389,9 @@ namespace Kargono::Panels
 		// Add Widget to RuntimeUI and EditorUI::Tree
 		window.AddWidget(newButtonWidget);
 		windowEntry.m_SubEntries.push_back(newWidgetEntry);
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorTreePanel::SelectWidget(EditorUI::TreeEntry& entry)

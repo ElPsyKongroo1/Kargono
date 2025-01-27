@@ -1155,7 +1155,24 @@ namespace Kargono::RuntimeUI
 
 	void Window::AddWidget(Ref<Widget> newWidget)
 	{
+		KG_ASSERT(newWidget);
+
+		// Add new widget to buffer
 		m_Widgets.push_back(newWidget);
+
+		// Revalidate text dimensions for widget
+		switch (newWidget->m_WidgetType)
+		{
+		case WidgetTypes::TextWidget:
+			(*(TextWidget*)newWidget.get()).CalculateTextMetadata(this);
+			break;
+		case WidgetTypes::ButtonWidget:
+			(*(ButtonWidget*)newWidget.get()).CalculateTextSize();
+			break;
+		default:
+			KG_ERROR("Invalid widget type provided when revalidating widget text size");
+			break;
+		}
 	}
 
 	void Window::DeleteWidget(std::size_t widgetLocation)
