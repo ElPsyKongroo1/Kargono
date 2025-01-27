@@ -11,6 +11,7 @@ namespace Kargono::Scripting
 		Ref<Rendering::Texture2D> m_Icon { nullptr };
 		std::string m_Label {};
 		std::string m_ReplacementText {};
+		int16_t m_ShiftValue{ 0 };
 	};
 
 	//==============================

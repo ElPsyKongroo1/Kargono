@@ -248,6 +248,7 @@ namespace Kargono::Scripting
 				newSuggestion.m_Label = label;
 				newSuggestion.m_ReplacementText = funcNode.Name.Value + "()";
 				newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
+				newSuggestion.m_ShiftValue = -1;
 				allSuggestions.push_back(newSuggestion);
 			}
 		}
@@ -317,6 +318,7 @@ namespace Kargono::Scripting
 					newSuggestion.m_Label = funcNode->Name.Value;
 					newSuggestion.m_ReplacementText = funcNode->Name.Value + "()";
 					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconFunction;
+					newSuggestion.m_ShiftValue = -1;
 					allSuggestions.push_back(newSuggestion);
 				}
 			}
@@ -405,6 +407,7 @@ namespace Kargono::Scripting
 					newSuggestion.m_Label = label;
 					newSuggestion.m_ReplacementText = funcNode.Name.Value + "()";
 					newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
+					newSuggestion.m_ShiftValue = -1;
 					allSuggestions.push_back(newSuggestion);
 				}
 			}

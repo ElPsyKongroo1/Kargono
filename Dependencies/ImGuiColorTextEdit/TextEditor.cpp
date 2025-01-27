@@ -769,6 +769,7 @@ namespace API::EditorUI
 			return;
 		}
 		m_OpenTextSuggestions = true;
+		m_CloseTextSuggestions = false;
 		m_SuggestionTree.ClearTree();
 	
 		// Move suggestions into user interface 
@@ -776,10 +777,16 @@ namespace API::EditorUI
 		{
 			Kargono::EditorUI::TreeEntry entry;
 			entry.m_Label = suggestion.m_Label;
-			entry.m_ProvidedData = Kargono::CreateRef<std::string>(suggestion.m_ReplacementText);
+			entry.m_ProvidedData = Kargono::CreateRef<std::tuple<std::string, int16_t>>(
+				suggestion.m_ReplacementText, 
+				suggestion.m_ShiftValue
+			);
 			entry.m_IconHandle = suggestion.m_Icon;
 			entry.m_OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
 			{
+				// Retrieve tuple
+				auto& [replacementText, shiftValue] = (*(std::tuple<std::string, int16_t>*)(entry.m_ProvidedData.get()));
+
 				// Remove Buffer Text and add text
 				UndoRecord u;
 				u.m_Before = m_State;
@@ -789,14 +796,18 @@ namespace API::EditorUI
 				SetCursorPosition({ cursorPosition.m_Line,cursorPosition.m_Column - (int)m_SuggestionTextBuffer.size() });
 				cursorPosition = GetCursorPosition();
 				u.m_AddedStart = cursorPosition;
-				u.m_Added = (*(std::string*)(entry.m_ProvidedData.get())).c_str();
+				u.m_Added = replacementText.c_str();
 				InsertTextAt(cursorPosition, u.m_Added.c_str());
+				cursorPosition.m_Column += shiftValue;
 				SetCursorPosition(cursorPosition);
-				m_CloseTextSuggestions = true;
 
 				u.m_AddedEnd = cursorPosition;
 				u.m_After = m_State;
 				AddUndo(u);
+
+				// Open suggestions again
+				m_SuggestionTextBuffer.clear();
+				RefreshSuggestionsContent();
 			};
 
 			m_SuggestionTree.InsertEntry(entry);
@@ -810,6 +821,9 @@ namespace API::EditorUI
 
 	void TextEditorSpec::EnterCharacter(ImWchar aChar, bool aShift)
 	{
+		static std::unordered_set<char> s_TriggerCharacters { '.',':','(' };
+		static std::unordered_set<char> s_AllowedCharacters { '\"', '_'};
+
 		// Currently only support ascii
 		if (aChar > 255)
 		{
@@ -833,7 +847,10 @@ namespace API::EditorUI
 		EnterCharacterInternal(aChar, aShift);
 		if (m_SuggestionsWindowEnabled)
 		{
-			if (!std::isalpha(aChar) && !std::isdigit(aChar) && aChar != '\"' && aChar != '_')
+			if (!std::isalpha(aChar) && 
+				!std::isdigit(aChar) && 
+				!s_TriggerCharacters.contains((char)aChar) &&
+				!s_AllowedCharacters.contains((char)aChar))
 			{
 				if (isSuggestionsOpen)
 				{
@@ -846,8 +863,17 @@ namespace API::EditorUI
 				m_SuggestionTextBuffer.clear();
 			}
 
-			m_SuggestionTextBuffer.push_back((char)aChar);
-			RefreshSuggestionsContent();
+			if (s_TriggerCharacters.contains((char)aChar))
+			{
+				m_SuggestionTextBuffer.clear();
+				RefreshSuggestionsContent();
+			}
+			else
+			{
+				m_SuggestionTextBuffer.push_back((char)aChar);
+				RefreshSuggestionsContent();
+			}
+			
 		}
 	}
 
