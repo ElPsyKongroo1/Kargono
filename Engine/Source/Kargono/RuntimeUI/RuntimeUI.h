@@ -101,7 +101,7 @@ namespace Kargono::RuntimeUI
 		// Rendering Methods
 		//============================
 		virtual void OnRender(Math::vec3 translation, const Math::vec3& scale, float viewportWidth) = 0;
-
+		virtual bool Selectable() = 0;
 	public:
 		//============================
 		// Supporting Methods
@@ -122,13 +122,8 @@ namespace Kargono::RuntimeUI
 		Constraint m_YConstraint{ Constraint::None };
 		Math::vec2 m_PercentPosition{ 0.4f };
 		Math::ivec2 m_PixelPosition{ 0 };
-		Math::vec2 m_Size  {0.3f};
-		Math::vec4 m_DefaultBackgroundColor{0.5f};
-		Math::vec4 m_ActiveBackgroundColor{0.5f};
-		WidgetCallbacks m_FunctionPointers {};
+		Math::vec2 m_Size  { 0.3f };
 		WidgetTypes m_WidgetType{ WidgetTypes::None };
-		NavigationLinks m_NavigationLinks{};
-		bool m_Selectable{ true };
 	};
 
 	//============================
@@ -157,6 +152,14 @@ namespace Kargono::RuntimeUI
 		// Modify State
 		//============================
 		void SetText(const std::string& newText, Window* parentWindow);
+
+		//============================
+		// Query State
+		//============================
+		virtual bool Selectable() override
+		{
+			return false;
+		}
 
 	public:
 		//============================
@@ -208,6 +211,14 @@ namespace Kargono::RuntimeUI
 		//============================
 		void SetText(const std::string& newText);
 
+		//============================
+		// Query State
+		//============================
+		virtual bool Selectable() override
+		{
+			return m_Selectable;
+		}
+
 	public:
 		//============================
 		// Re-validation Methods
@@ -221,6 +232,11 @@ namespace Kargono::RuntimeUI
 		float m_TextSize{ 0.3f };
 		Math::vec4 m_TextColor{ 1.0f };
 		Constraint m_TextAlignment{ Constraint::Center };
+		Math::vec4 m_DefaultBackgroundColor{ 0.5f };
+		Math::vec4 m_ActiveBackgroundColor{ 0.5f };
+		WidgetCallbacks m_FunctionPointers{};
+		bool m_Selectable{ true };
+		NavigationLinks m_NavigationLinks{};
 	private:
 		Math::vec2 m_TextDimensions{};
 	private:
@@ -427,6 +443,11 @@ namespace Kargono::RuntimeUI
 		static void MoveDown();
 		static void OnPress();
 
+		//==============================
+		// Revalidate UI Context
+		//==============================
+		static void CalculateWindowNavigationLinks();
+
 	public:
 		//==============================
 		// Getters/Setters
@@ -447,7 +468,6 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Internal Functionality
 		//==============================
-		static void CalculateWindowNavigationLinks();
 		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
 		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
 		static Ref<Widget> GetWidget(uint16_t windowIndex, uint16_t widgetIndex);

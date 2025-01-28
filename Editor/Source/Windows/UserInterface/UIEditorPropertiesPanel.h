@@ -99,7 +99,7 @@ namespace Kargono::Panels
 		// Modify widget size
 		void OnModifyWidgetSize(EditorUI::EditVec2Spec& spec);
 		// Modify widget background color
-		void OnModifyWidgetBackgroundColor(EditorUI::EditVec4Spec& spec);
+		void OnModifyButtonWidgetBackgroundColor(EditorUI::EditVec4Spec& spec);
 		// Modify widget location
 		void OnModifyWidgetXLocationRelOrAbs();
 		void OnModifyWidgetYLocationRelOrAbs();
@@ -114,9 +114,9 @@ namespace Kargono::Panels
 		void OnModifyWidgetXPercentLocation(EditorUI::EditFloatSpec& spec);
 		void OnModifyWidgetYPercentLocation(EditorUI::EditFloatSpec& spec);
 		// Modify widget on press
-		void OnModifyWidgetOnPress(const EditorUI::OptionEntry& entry);
-		void OnOpenWidgetOnPressPopup();
-		void OnOpenTooltipForWidgetOnPress();
+		void OnModifyButtonWidgetOnPress(const EditorUI::OptionEntry& entry);
+		void OnOpenButtonWidgetOnPressPopup();
+		void OnOpenTooltipForButtonWidgetOnPress();
 		
 
 		//=========================
@@ -146,6 +146,8 @@ namespace Kargono::Panels
 		// Modify if button widget's text is aligned
 		void OnModifyButtonWidgetTextAlignment(const EditorUI::OptionEntry& entry);
 		void OnOpenButtonWidgetTextAlignmentPopup();
+		// Modify if button widget is selectable
+		void OnModifyButtonWidgetSelectable(EditorUI::CheckboxSpec& spec);
 		
 
 
@@ -182,8 +184,6 @@ namespace Kargono::Panels
 		EditorUI::CollapsingHeaderSpec m_WidgetGeneralHeader{};
 		EditorUI::EditTextSpec m_WidgetTag{};
 		EditorUI::EditVec2Spec m_WidgetSize{};
-		EditorUI::EditVec4Spec m_WidgetBackgroundColor{};
-		EditorUI::SelectOptionSpec m_WidgetOnPress{};
 
 		// Edit Text Widget Options
 		EditorUI::CollapsingHeaderSpec m_TextWidgetHeader{};
@@ -199,6 +199,10 @@ namespace Kargono::Panels
 		EditorUI::EditFloatSpec m_ButtonWidgetTextSize{};
 		EditorUI::EditVec4Spec m_ButtonWidgetTextColor{};
 		EditorUI::SelectOptionSpec m_ButtonWidgetTextAlignment{};
+
+		EditorUI::EditVec4Spec m_ButtonWidgetBackgroundColor{};
+		EditorUI::SelectOptionSpec m_ButtonWidgetOnPress{};
+		EditorUI::CheckboxSpec m_ButtonWidgetSelectable{};
 
 		// Edit Widget Location Options
 		EditorUI::CollapsingHeaderSpec m_WidgetLocationHeader{};

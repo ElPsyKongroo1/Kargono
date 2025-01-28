@@ -190,9 +190,9 @@ namespace Kargono::Windows
 		if (manageAsset->GetAssetType() == Assets::AssetType::Script &&
 			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
-			if (m_PropertiesPanel->m_WidgetOnPress.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
+			if (m_PropertiesPanel->m_ButtonWidgetOnPress.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_PropertiesPanel->m_WidgetOnPress.m_CurrentOption = { "None", Assets::EmptyHandle };
+				m_PropertiesPanel->m_ButtonWidgetOnPress.m_CurrentOption = { "None", Assets::EmptyHandle };
 			}
 
 			if (m_EditorUI)

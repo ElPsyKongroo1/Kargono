@@ -64,15 +64,7 @@ namespace Kargono::Assets
 				out << YAML::Key << "XPositionType" << YAML::Value << Utility::PixelOrPercentToString(widget->m_XPositionType);
 				out << YAML::Key << "YPositionType" << YAML::Value << Utility::PixelOrPercentToString(widget->m_YPositionType);
 				out << YAML::Key << "Size" << YAML::Value << widget->m_Size;
-				out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << widget->m_DefaultBackgroundColor;
 				out << YAML::Key << "WidgetType" << YAML::Value << Utility::WidgetTypeToString(widget->m_WidgetType);
-				out << YAML::Key << "Selectable" << YAML::Value << widget->m_Selectable;
-				out << YAML::Key << "DirectionPointerUp" << YAML::Value << widget->m_NavigationLinks.m_UpWidgetIndex;
-				out << YAML::Key << "DirectionPointerDown" << YAML::Value << widget->m_NavigationLinks.m_DownWidgetIndex;
-				out << YAML::Key << "DirectionPointerLeft" << YAML::Value << widget->m_NavigationLinks.m_LeftWidgetIndex;
-				out << YAML::Key << "DirectionPointerRight" << YAML::Value << widget->m_NavigationLinks.m_RightWidgetIndex;
-
-				out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)widget->m_FunctionPointers.m_OnPressHandle;
 				switch (widget->m_WidgetType)
 				{
 				case RuntimeUI::WidgetTypes::TextWidget:
@@ -93,11 +85,23 @@ namespace Kargono::Assets
 					RuntimeUI::ButtonWidget* buttonWidget = static_cast<RuntimeUI::ButtonWidget*>(widget.get());
 					out << YAML::Key << "ButtonWidget" << YAML::Value;
 					out << YAML::BeginMap; // Begin buttonWidget Map
+					// Text fields
 					out << YAML::Key << "Text" << YAML::Value << buttonWidget->m_Text;
 					out << YAML::Key << "TextSize" << YAML::Value << buttonWidget->m_TextSize;
 					out << YAML::Key << "TextColor" << YAML::Value << buttonWidget->m_TextColor;
 					out << YAML::Key << "TextDimensions" << YAML::Value << buttonWidget->m_TextDimensions;
 					out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(buttonWidget->m_TextAlignment);
+					// Color fields
+					out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << buttonWidget->m_DefaultBackgroundColor;
+					// Selectable fields
+					out << YAML::Key << "Selectable" << YAML::Value << buttonWidget->m_Selectable;
+					// Direction index fields
+					out << YAML::Key << "DirectionPointerUp" << YAML::Value << buttonWidget->m_NavigationLinks.m_UpWidgetIndex;
+					out << YAML::Key << "DirectionPointerDown" << YAML::Value << buttonWidget->m_NavigationLinks.m_DownWidgetIndex;
+					out << YAML::Key << "DirectionPointerLeft" << YAML::Value << buttonWidget->m_NavigationLinks.m_LeftWidgetIndex;
+					out << YAML::Key << "DirectionPointerRight" << YAML::Value << buttonWidget->m_NavigationLinks.m_RightWidgetIndex;
+					// Function pointer fields
+					out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)buttonWidget->m_FunctionPointers.m_OnPressHandle;
 					out << YAML::EndMap; // End buttonWidget Map
 					break;
 				}
@@ -202,11 +206,38 @@ namespace Kargono::Assets
 							newWidget = CreateRef<RuntimeUI::ButtonWidget>();
 							newWidget->m_WidgetType = widgetType;
 							RuntimeUI::ButtonWidget* buttonWidget = static_cast<RuntimeUI::ButtonWidget*>(newWidget.get());
+							// Text fields
 							buttonWidget->m_Text = specificWidget["Text"].as<std::string>();
 							buttonWidget->m_TextSize = specificWidget["TextSize"].as<float>();
 							buttonWidget->m_TextColor = specificWidget["TextColor"].as<glm::vec4>();
 							buttonWidget->m_TextDimensions = specificWidget["TextDimensions"].as<Math::vec2>();
 							buttonWidget->m_TextAlignment = Utility::StringToConstraint(specificWidget["TextAlignment"].as<std::string>());
+							// Color fields
+							buttonWidget->m_DefaultBackgroundColor = widget["DefaultBackgroundColor"].as<Math::vec4>();
+							buttonWidget->m_ActiveBackgroundColor = buttonWidget->m_DefaultBackgroundColor;
+							// Selectable field
+							buttonWidget->m_Selectable = widget["Selectable"].as<bool>();
+							// Navigation fields
+							buttonWidget->m_NavigationLinks.m_UpWidgetIndex = widget["DirectionPointerUp"].as<size_t>();
+							buttonWidget->m_NavigationLinks.m_DownWidgetIndex = widget["DirectionPointerDown"].as<size_t>();
+							buttonWidget->m_NavigationLinks.m_LeftWidgetIndex = widget["DirectionPointerLeft"].as<size_t>();
+							buttonWidget->m_NavigationLinks.m_RightWidgetIndex = widget["DirectionPointerRight"].as<size_t>();
+							// Function pointer fields
+							buttonWidget->m_FunctionPointers.m_OnPressHandle = widget["FunctionPointerOnPress"].as<uint64_t>();
+							if (buttonWidget->m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
+							{
+								buttonWidget->m_FunctionPointers.m_OnPress = nullptr;
+							}
+							else
+							{
+								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(buttonWidget->m_FunctionPointers.m_OnPressHandle);
+								if (!onPressScript)
+								{
+									KG_WARN("Unable to locate OnPress Script!");
+									return nullptr;
+								}
+								buttonWidget->m_FunctionPointers.m_OnPress = onPressScript;
+							}
 							break;
 						}
 						default:
@@ -226,30 +257,6 @@ namespace Kargono::Assets
 						newWidget->m_XConstraint = Utility::StringToConstraint(widget["XConstraint"].as<std::string>());
 						newWidget->m_YConstraint= Utility::StringToConstraint(widget["YConstraint"].as<std::string>());
 						newWidget->m_Size = widget["Size"].as<Math::vec2>();
-						newWidget->m_DefaultBackgroundColor = widget["DefaultBackgroundColor"].as<Math::vec4>();
-						newWidget->m_ActiveBackgroundColor = newWidget->m_DefaultBackgroundColor;
-						newWidget->m_Selectable = widget["Selectable"].as<bool>();
-						newWidget->m_NavigationLinks.m_UpWidgetIndex = widget["DirectionPointerUp"].as<size_t>();
-						newWidget->m_NavigationLinks.m_DownWidgetIndex = widget["DirectionPointerDown"].as<size_t>();
-						newWidget->m_NavigationLinks.m_LeftWidgetIndex = widget["DirectionPointerLeft"].as<size_t>();
-						newWidget->m_NavigationLinks.m_RightWidgetIndex = widget["DirectionPointerRight"].as<size_t>();
-
-						newWidget->m_FunctionPointers.m_OnPressHandle = widget["FunctionPointerOnPress"].as<uint64_t>();
-						if (newWidget->m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
-						{
-							newWidget->m_FunctionPointers.m_OnPress = nullptr;
-						}
-						else
-						{
-							Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(newWidget->m_FunctionPointers.m_OnPressHandle);
-							if (!onPressScript)
-							{
-								KG_WARN("Unable to locate OnPress Script!");
-								return nullptr;
-							}
-							newWidget->m_FunctionPointers.m_OnPress = onPressScript;
-						}
-
 						newWidgetsList.push_back(newWidget);
 
 
@@ -274,15 +281,23 @@ namespace Kargono::Assets
 			uiModified = true;
 		}
 
-		// Handle all widgets
+		// Handle all widgets in all windows
 		for (RuntimeUI::Window& currentWindow : userInterfaceRef->m_Windows)
 		{
 			for (Ref<RuntimeUI::Widget> widgetRef : currentWindow.m_Widgets)
 			{
-				if (widgetRef->m_FunctionPointers.m_OnPressHandle == scriptHandle)
+				// Ensure we are handling a button widget
+				if (widgetRef->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
 				{
-					widgetRef->m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
-					widgetRef->m_FunctionPointers.m_OnPress = nullptr;
+					continue;
+				}
+				// Remove script references from button widget if necessary
+				RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)widgetRef.get();
+				if (buttonWidget.m_FunctionPointers.m_OnPressHandle == scriptHandle)
+				{
+					RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)widgetRef.get();
+					buttonWidget.m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
+					buttonWidget.m_FunctionPointers.m_OnPress = nullptr;
 					uiModified = true;
 				}
 			}

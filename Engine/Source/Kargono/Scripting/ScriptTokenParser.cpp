@@ -3,6 +3,7 @@
 #include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/Resolution.h"
+#include "Kargono/EditorUI/EditorUI.h"
 
 namespace Kargono::Utility
 {
@@ -1322,7 +1323,22 @@ namespace Kargono::Scripting
 				// Add current members
 				for (auto& [name, member] : currentMember->m_Members)
 				{
-					newContext.LiteralMembers.push_back(name);
+					KG_ASSERT(member);
+
+					Ref<Rendering::Texture2D> primitiveTypeIcon{ nullptr };
+					if (ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(member->m_PrimitiveType.Value))
+					{
+						// Get primitive type's icon
+						primitiveTypeIcon = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(member->m_PrimitiveType.Value).Icon;
+					}
+					else
+					{
+						// Default icon
+						primitiveTypeIcon = EditorUI::EditorUIService::s_IconEntity;
+					}
+					// Get the icon texture from the primitive type
+					
+					newContext.LiteralMembers.push_back({ name, primitiveTypeIcon });
 				}
 
 				m_CursorContext = newContext;

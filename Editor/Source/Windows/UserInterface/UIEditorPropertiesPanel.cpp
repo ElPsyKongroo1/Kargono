@@ -142,10 +142,6 @@ namespace Kargono::Panels
 			m_WidgetSize.m_CurrentVec2 = m_ActiveWidget->m_Size;
 			EditorUI::EditorUIService::EditVec2(m_WidgetSize);
 
-			// Edit selected widget's background color
-			m_WidgetBackgroundColor.m_CurrentVec4 = m_ActiveWidget->m_DefaultBackgroundColor;
-			EditorUI::EditorUIService::EditVec4(m_WidgetBackgroundColor);
-
 		}
 
 		// Draw location header for widget options and display options to edit selected widget's location
@@ -226,15 +222,6 @@ namespace Kargono::Panels
 			// Edit selected text widget's wrapped alignment
 			m_TextWidgetTextWrapped.m_CurrentBoolean = activeTextWidget.m_TextWrapped;
 			EditorUI::EditorUIService::Checkbox(m_TextWidgetTextWrapped);
-
-			// Edit selected widget's on press script
-			Assets::AssetHandle onPressHandle = activeTextWidget.m_FunctionPointers.m_OnPressHandle;
-			m_WidgetOnPress.m_CurrentOption =
-			{
-				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName,
-				onPressHandle
-			};
-			EditorUI::EditorUIService::SelectOption(m_WidgetOnPress);
 		}
 	}
 
@@ -246,6 +233,10 @@ namespace Kargono::Panels
 		{
 			// Draw options to edit selected button widget
 			RuntimeUI::ButtonWidget& activeButtonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
+
+			// Edit selected text widget's wrapped alignment
+			m_ButtonWidgetSelectable.m_CurrentBoolean = activeButtonWidget.m_Selectable;
+			EditorUI::EditorUIService::Checkbox(m_ButtonWidgetSelectable);
 
 			// Edit selected button widget's text
 			m_ButtonWidgetText.m_CurrentOption = activeButtonWidget.m_Text;
@@ -262,6 +253,19 @@ namespace Kargono::Panels
 			// Edit selected button widget's text alignment
 			m_ButtonWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeButtonWidget.m_TextAlignment) , (uint64_t)activeButtonWidget.m_TextAlignment };
 			EditorUI::EditorUIService::SelectOption(m_ButtonWidgetTextAlignment);
+
+			// Edit selected widget's background color
+			m_ButtonWidgetBackgroundColor.m_CurrentVec4 = activeButtonWidget.m_DefaultBackgroundColor;
+			EditorUI::EditorUIService::EditVec4(m_ButtonWidgetBackgroundColor);
+
+			// Edit selected widget's on press script
+			Assets::AssetHandle onPressHandle = activeButtonWidget.m_FunctionPointers.m_OnPressHandle;
+			m_ButtonWidgetOnPress.m_CurrentOption =
+			{
+				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName,
+				onPressHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_ButtonWidgetOnPress);
 		}
 	}
 
@@ -512,22 +516,10 @@ namespace Kargono::Panels
 		m_WidgetSize.m_Label = "Size";
 		m_WidgetSize.m_Flags |= EditorUI::EditVec2_Indented;
 		m_WidgetSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetSize);
-
-		// Set up widget to modify the widget's background color
-		m_WidgetBackgroundColor.m_Label = "Background Color";
-		m_WidgetBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
-		m_WidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetBackgroundColor);
 	}
 
 	void UIEditorPropertiesPanel::InitializeTextWidgetOptions()
 	{
-		// Set up widget to modify the text widget's on press script
-		m_WidgetOnPress.m_Label = "On Press";
-		m_WidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
-		m_WidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenWidgetOnPressPopup);
-		m_WidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetOnPress);
-		m_WidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForWidgetOnPress);
-
 		// Set up header for text widget options
 		m_TextWidgetHeader.m_Label = "Text Widget Options";
 		m_TextWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
@@ -567,6 +559,11 @@ namespace Kargono::Panels
 		m_ButtonWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
 		m_ButtonWidgetHeader.m_Expanded = true;
 
+		// Set up widget to modify the text widget's text alignment
+		m_ButtonWidgetSelectable.m_Label = "Selectable";
+		m_ButtonWidgetSelectable.m_Flags |= EditorUI::Checkbox_Indented;
+		m_ButtonWidgetSelectable.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetSelectable);
+
 		// Set up widget to modify the button widget's text
 		m_ButtonWidgetText.m_Label = "Text";
 		m_ButtonWidgetText.m_Flags |= EditorUI::EditText_Indented;
@@ -587,6 +584,18 @@ namespace Kargono::Panels
 		m_ButtonWidgetTextAlignment.m_Flags |= EditorUI::SelectOption_Indented;
 		m_ButtonWidgetTextAlignment.m_PopupAction = KG_BIND_CLASS_FN(OnOpenButtonWidgetTextAlignmentPopup);
 		m_ButtonWidgetTextAlignment.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetTextAlignment);
+
+		// Set up widget to modify the button widget's background color
+		m_ButtonWidgetBackgroundColor.m_Label = "Background Color";
+		m_ButtonWidgetBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_ButtonWidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetBackgroundColor);
+
+		// Set up widget to modify the button widget's on press script
+		m_ButtonWidgetOnPress.m_Label = "On Press";
+		m_ButtonWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_ButtonWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenButtonWidgetOnPressPopup);
+		m_ButtonWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetOnPress);
+		m_ButtonWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForButtonWidgetOnPress);
 	}
 
 	void UIEditorPropertiesPanel::InitializeWidgetLocationOptions()
@@ -998,7 +1007,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWidgetBackgroundColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyButtonWidgetBackgroundColor(EditorUI::EditVec4Spec& spec)
 	{
 		// Ensure active widget is valid
 		if (!m_ActiveWindow)
@@ -1007,21 +1016,29 @@ namespace Kargono::Panels
 			return;
 		}
 
+		// Get the active widget as a button widget
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ButtonWidget);
+		RuntimeUI::ButtonWidget& activeButton = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
+
 		// Update the widget background color based on the editorUI widget value
-		m_ActiveWidget->m_DefaultBackgroundColor = m_WidgetBackgroundColor.m_CurrentVec4;
-		m_ActiveWidget->m_ActiveBackgroundColor = m_WidgetBackgroundColor.m_CurrentVec4;
+		activeButton.m_DefaultBackgroundColor = m_ButtonWidgetBackgroundColor.m_CurrentVec4;
+		activeButton.m_ActiveBackgroundColor = m_ButtonWidgetBackgroundColor.m_CurrentVec4;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWidgetOnPress(const EditorUI::OptionEntry& entry)
+	void UIEditorPropertiesPanel::OnModifyButtonWidgetOnPress(const EditorUI::OptionEntry& entry)
 	{
+		// Get the active widget as a button widget
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ButtonWidget);
+		RuntimeUI::ButtonWidget& activeButton = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
+
 		// Clear the on press script if the provided handle is empty
 		if (entry.m_Handle == Assets::EmptyHandle)
 		{
-			m_ActiveWidget->m_FunctionPointers.m_OnPress = nullptr;
-			m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
+			activeButton.m_FunctionPointers.m_OnPress = nullptr;
+			activeButton.m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1029,18 +1046,18 @@ namespace Kargono::Panels
 		}
 
 		// Set the on press script for the text widget
-		m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = entry.m_Handle;
-		m_ActiveWidget->m_FunctionPointers.m_OnPress = Assets::AssetService::GetScript(entry.m_Handle);
+		activeButton.m_FunctionPointers.m_OnPressHandle = entry.m_Handle;
+		activeButton.m_FunctionPointers.m_OnPress = Assets::AssetService::GetScript(entry.m_Handle);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenWidgetOnPressPopup()
+	void UIEditorPropertiesPanel::OnOpenButtonWidgetOnPressPopup()
 	{
 		// Clear existing options
-		m_WidgetOnPress.ClearOptions();
-		m_WidgetOnPress.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		m_ButtonWidgetOnPress.ClearOptions();
+		m_ButtonWidgetOnPress.AddToOptions("Clear", "None", Assets::EmptyHandle);
 
 		// Add all compatible scripts to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
@@ -1055,11 +1072,11 @@ namespace Kargono::Panels
 			}
 
 			// Add script to the select options
-			m_WidgetOnPress.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+			m_ButtonWidgetOnPress.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 		}
 	}
 
-	void UIEditorPropertiesPanel::OnOpenTooltipForWidgetOnPress()
+	void UIEditorPropertiesPanel::OnOpenTooltipForButtonWidgetOnPress()
 	{
 		// Clear existing options
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
@@ -1067,7 +1084,7 @@ namespace Kargono::Panels
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 		{
-			m_WidgetOnPress.m_OpenPopup = true;
+			m_ButtonWidgetOnPress.m_OpenPopup = true;
 		} };
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
@@ -1092,10 +1109,14 @@ namespace Kargono::Panels
 						return;
 					}
 
+					// Get the active widget as a button widget
+					KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ButtonWidget);
+					RuntimeUI::ButtonWidget& activeButton = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
+
 					// Fill the new script handle
-					m_ActiveWidget->m_FunctionPointers.m_OnPressHandle = scriptHandle;
-					m_ActiveWidget->m_FunctionPointers.m_OnPress = script;
-					m_WidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+					activeButton.m_FunctionPointers.m_OnPressHandle = scriptHandle;
+					activeButton.m_FunctionPointers.m_OnPress = script;
+					m_ButtonWidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 
 					// Set the active editor UI as edited
 					s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1466,5 +1487,36 @@ namespace Kargono::Panels
 			Utility::ConstraintToString(RuntimeUI::Constraint::Center),
 			(uint64_t)RuntimeUI::Constraint::Center
 		);
+	}
+	void UIEditorPropertiesPanel::OnModifyButtonWidgetSelectable(EditorUI::CheckboxSpec& spec)
+	{
+		// Ensure active window is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget's text alignment field");
+			return;
+		}
+
+		// Ensure active widget is a valid type
+		if (!m_ActiveWidget)
+		{
+			KG_WARN("No valid widget active when trying to update widget's text alignment field");
+			return;
+		}
+
+		// Ensure active widget is a valid type and get the button widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
+		{
+			KG_WARN("Attempt to modify button widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
+
+		// Update the text widget text alignment based on the editorUI widget's value
+		buttonWidget.m_Selectable = spec.m_CurrentBoolean;
+		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 }
