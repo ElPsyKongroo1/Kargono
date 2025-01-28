@@ -112,8 +112,8 @@ namespace Kargono::Scripting
 			KG_WARN("Token parsing failed");
 			// Print out error messages
 			tokenParser.PrintErrors();
-			tokenParser.PrintTokens();
-			tokenParser.PrintAST();
+			//tokenParser.PrintTokens();
+			//tokenParser.PrintAST();
 			return {};
 		}
 

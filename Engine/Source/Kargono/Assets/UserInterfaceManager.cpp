@@ -89,7 +89,6 @@ namespace Kargono::Assets
 					out << YAML::Key << "Text" << YAML::Value << buttonWidget->m_Text;
 					out << YAML::Key << "TextSize" << YAML::Value << buttonWidget->m_TextSize;
 					out << YAML::Key << "TextColor" << YAML::Value << buttonWidget->m_TextColor;
-					out << YAML::Key << "TextDimensions" << YAML::Value << buttonWidget->m_TextDimensions;
 					out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(buttonWidget->m_TextAlignment);
 					// Color fields
 					out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << buttonWidget->m_DefaultBackgroundColor;
@@ -210,20 +209,19 @@ namespace Kargono::Assets
 							buttonWidget->m_Text = specificWidget["Text"].as<std::string>();
 							buttonWidget->m_TextSize = specificWidget["TextSize"].as<float>();
 							buttonWidget->m_TextColor = specificWidget["TextColor"].as<glm::vec4>();
-							buttonWidget->m_TextDimensions = specificWidget["TextDimensions"].as<Math::vec2>();
 							buttonWidget->m_TextAlignment = Utility::StringToConstraint(specificWidget["TextAlignment"].as<std::string>());
 							// Color fields
-							buttonWidget->m_DefaultBackgroundColor = widget["DefaultBackgroundColor"].as<Math::vec4>();
+							buttonWidget->m_DefaultBackgroundColor = specificWidget["DefaultBackgroundColor"].as<Math::vec4>();
 							buttonWidget->m_ActiveBackgroundColor = buttonWidget->m_DefaultBackgroundColor;
 							// Selectable field
-							buttonWidget->m_Selectable = widget["Selectable"].as<bool>();
+							buttonWidget->m_Selectable = specificWidget["Selectable"].as<bool>();
 							// Navigation fields
-							buttonWidget->m_NavigationLinks.m_UpWidgetIndex = widget["DirectionPointerUp"].as<size_t>();
-							buttonWidget->m_NavigationLinks.m_DownWidgetIndex = widget["DirectionPointerDown"].as<size_t>();
-							buttonWidget->m_NavigationLinks.m_LeftWidgetIndex = widget["DirectionPointerLeft"].as<size_t>();
-							buttonWidget->m_NavigationLinks.m_RightWidgetIndex = widget["DirectionPointerRight"].as<size_t>();
+							buttonWidget->m_NavigationLinks.m_UpWidgetIndex = specificWidget["DirectionPointerUp"].as<size_t>();
+							buttonWidget->m_NavigationLinks.m_DownWidgetIndex = specificWidget["DirectionPointerDown"].as<size_t>();
+							buttonWidget->m_NavigationLinks.m_LeftWidgetIndex = specificWidget["DirectionPointerLeft"].as<size_t>();
+							buttonWidget->m_NavigationLinks.m_RightWidgetIndex = specificWidget["DirectionPointerRight"].as<size_t>();
 							// Function pointer fields
-							buttonWidget->m_FunctionPointers.m_OnPressHandle = widget["FunctionPointerOnPress"].as<uint64_t>();
+							buttonWidget->m_FunctionPointers.m_OnPressHandle = specificWidget["FunctionPointerOnPress"].as<uint64_t>();
 							if (buttonWidget->m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
 							{
 								buttonWidget->m_FunctionPointers.m_OnPress = nullptr;

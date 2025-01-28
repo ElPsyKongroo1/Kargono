@@ -817,8 +817,12 @@ namespace Kargono::RuntimeUI
 			// Set the new selected widget
 			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(selectedButton.m_NavigationLinks.m_RightWidgetIndex).get();
 
+			// Get the new selected widget as a button
+			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
+			ButtonWidget& newSelectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+
 			// Set the active background color of the new widget to indicate it is selected
-			selectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
+			newSelectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -851,8 +855,12 @@ namespace Kargono::RuntimeUI
 			// Set the new selected widget
 			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(selectedButton.m_NavigationLinks.m_LeftWidgetIndex).get();
 
+			// Get the new selected widget as a button
+			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
+			ButtonWidget& newSelectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+
 			// Set the active background color of the new widget to indicate it is selected
-			selectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
+			newSelectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -872,7 +880,7 @@ namespace Kargono::RuntimeUI
 		{
 			return;
 		}
-		// Get the selected widget as a button
+		// Get the current selected widget as a button
 		KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
 		ButtonWidget& selectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
 
@@ -885,8 +893,12 @@ namespace Kargono::RuntimeUI
 			// Set the new selected widget
 			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(selectedButton.m_NavigationLinks.m_UpWidgetIndex).get();
 
+			// Get the new selected widget as a button
+			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
+			ButtonWidget& newSelectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+
 			// Set the active background color of the new widget to indicate it is selected
-			selectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
+			newSelectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -919,8 +931,12 @@ namespace Kargono::RuntimeUI
 			// Set the new selected widget
 			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(selectedButton.m_NavigationLinks.m_DownWidgetIndex).get();
 
+			// Get the new selected widget as a button
+			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
+			ButtonWidget& newSelectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+
 			// Set the active background color of the new widget to indicate it is selected
-			selectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
+			newSelectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
