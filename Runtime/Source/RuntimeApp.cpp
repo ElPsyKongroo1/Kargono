@@ -92,6 +92,7 @@ namespace Kargono
 
 	void RuntimeApp::Terminate()
 	{
+
 		OnStop();
 
 		// Terminate engine services
@@ -109,11 +110,16 @@ namespace Kargono
 	void RuntimeApp::InitializeFrameBuffer()
 	{
 		Rendering::FramebufferSpecification fbSpec;
-		fbSpec.Attachments = { Rendering::FramebufferDataFormat::RGBA8, Rendering::FramebufferDataFormat::RED_INTEGER, Rendering::FramebufferDataFormat::Depth };
+		fbSpec.Attachments = 
+		{
+			Rendering::FramebufferDataFormat::RGBA8, 
+			Rendering::FramebufferDataFormat::RED_INTEGER, 
+			Rendering::FramebufferDataFormat::Depth 
+		};
 		fbSpec.Width = EngineService::GetActiveWindow().GetWidth();
 		fbSpec.Height = EngineService::GetActiveWindow().GetHeight();
 		m_ViewportFramebuffer = Rendering::Framebuffer::Create(fbSpec);
-		//m_ViewportFramebuffer->Bind();
+		m_ViewportFramebuffer->Bind();
 	}
 
 	void RuntimeApp::OnUpdate(Timestep ts)
@@ -144,10 +150,22 @@ namespace Kargono
 			// Draw particles
 			Particles::ParticleService::OnRender(mainCamera->GetProjection() * glm::inverse(cameraTransform));
 
+			// Clear mouse picking buffer
+			m_ViewportFramebuffer->SetAttachment(1, -1);
+
 			// Draw runtimeUI
 			RuntimeUI::RuntimeUIService::OnRender(EngineService::GetActiveWindow().GetWidth(), 
 				EngineService::GetActiveWindow().GetHeight());
+
+			// Handle mouse picking for the UI
+			HandleUIMouseHovering();
+
 		}
+
+		// Display the framebuffer inside the default
+		Rendering::RendererAPI::SetDepthTesting(false);
+		m_ViewportFramebuffer->DisplayToDefaultFrameBuffer();
+		Rendering::RendererAPI::SetDepthTesting(true);
 	}
 
 	bool RuntimeApp::OnApplicationEvent(Events::Event* event)
@@ -211,6 +229,11 @@ namespace Kargono
 		{
 			handled = OnKeyPressed(*(Events::KeyPressedEvent*)event);
 		}
+		else if (event->GetEventType() == Events::EventType::MouseButtonPressed)
+		{
+			handled = OnMousePressed(*(Events::MouseButtonPressedEvent*)event);
+		}
+
 		return handled;
 	}
 
@@ -329,6 +352,23 @@ namespace Kargono
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
 		Input::InputMapService::OnKeyPressed(event);
+		return false;
+	}
+
+	bool RuntimeApp::OnMousePressed(Events::MouseButtonPressedEvent event)
+	{
+		// Ensure we are handling a left-click
+		if (event.GetMouseButton() != Mouse::ButtonLeft)
+		{
+			return false;
+		}
+
+		// Handle on press for the active user interface if applicable
+		if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowID && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetID)
+		{
+			RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+				m_HoveredWindowID, m_HoveredWidgetID });
+		}
 		return false;
 	}
 
@@ -451,23 +491,28 @@ namespace Kargono
 
 	void RuntimeApp::HandleUIMouseHovering()
 	{
-#if 0
-		ImVec2 mousePos = ImGui::GetMousePos();
-		mousePos.x -= m_ScreenViewportBounds[0].x;
-		mousePos.y -= m_ScreenViewportBounds[0].y;
-		Math::vec2 viewportSize = m_ScreenViewportBounds[1] - m_ScreenViewportBounds[0];
-		mousePos.y = viewportSize.y - mousePos.y;
+		// Get the active viewport bounds and mouse position
+		Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+		Math::vec2 mousePos = Input::InputService::GetMousePosition();
 
-		if ((int)mousePos.x >= 0 && (int)mousePos.y >= 0 && (int)mousePos.x < (int)viewportSize.x && (int)mousePos.y < (int)viewportSize.y)
+		// Make sure the mouse position is within bounds
+		if ((int)mousePos.x < 0 || 
+			(int)mousePos.y < 0 || 
+			(int)mousePos.x > (int)activeViewport.m_Width || 
+			(int)mousePos.y > (int)activeViewport.m_Height)
 		{
-			int pixelData = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
-
-			// Extract lower 16 bits
-			m_HoveredWidgetID = (uint16_t)(pixelData & 0xFFFF);
-
-			// Extract upper 16 bits
-			m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
+			return;
 		}
+
+		// Make sure the y-position is oriented correctly
+		mousePos.y = (float)activeViewport.m_Height - mousePos.y;
+
+		// Extract mouse picking information from the active framebuffer
+		int pixelData = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
+		// Extract lower 16 bits
+		m_HoveredWidgetID = (uint16_t)(pixelData & 0xFFFF);
+		// Extract upper 16 bits
+		m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
 
 		// Exit early if no valid widget/window is available
 		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetID || m_HoveredWindowID == RuntimeUI::k_InvalidWindowID)
@@ -478,7 +523,7 @@ namespace Kargono
 		// Select the widget if applicable
 		RuntimeUI::RuntimeUIService::SetSelectedWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 			m_HoveredWindowID, m_HoveredWidgetID });
-#endif
+
 	}
 
 

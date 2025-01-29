@@ -209,13 +209,19 @@ namespace API::RenderingAPI
 	}
 	void OpenGLFramebuffer::DisplayToDefaultFrameBuffer()
 	{
-#if 0
-		Kargono::Rendere
-		glBindVertexArray(quadVAO);
-		glDisable(GL_DEPTH_TEST);
-		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+		// Bind default framebuffer
+		Unbind();
+
+		// Bind the screen space shader
+		glUseProgram(API::RenderingAPI::OpenGLFrameBufferService::GetScreenSpaceShaderProgram());
+
+		// Draw the quad onto the default frame buffer
+		glBindVertexArray(API::RenderingAPI::OpenGLFrameBufferService::GetScreenSpaceQuadVAO());
+		glBindTexture(GL_TEXTURE_2D, GetColorAttachmentRendererID());
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-#endif
+
+		// Rebind the current framebuffer
+		Bind();
 	}
 	void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
 	{

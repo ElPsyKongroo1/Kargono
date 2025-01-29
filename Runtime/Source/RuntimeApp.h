@@ -50,6 +50,8 @@ namespace Kargono
 	private:
 		// This function processes key pressed events
 		bool OnKeyPressed(Events::KeyPressedEvent event);
+		// This function processes mouse pressed events
+		bool OnMousePressed(Events::MouseButtonPressedEvent event);
 		// This function renders the active scene, updates scripts, and updates the scene's physics.
 		void OnUpdateRuntime(Timestep ts);
 		// This function updates the scene cameras when the window is resized
