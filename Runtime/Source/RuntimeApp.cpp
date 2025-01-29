@@ -81,6 +81,11 @@ namespace Kargono
 		RuntimeUI::RuntimeUIService::Init();
 		Particles::ParticleService::Init();
 
+		if (!m_Headless)
+		{
+			InitializeFrameBuffer();;
+		}
+
 		OnPlay();
 		currentWindow.SetVisible(true);
 	}
@@ -99,6 +104,16 @@ namespace Kargono
 		RuntimeUI::FontService::Terminate();
 		Scenes::SceneService::Terminate();
 		Rendering::RenderingService::Shutdown();
+	}
+
+	void RuntimeApp::InitializeFrameBuffer()
+	{
+		Rendering::FramebufferSpecification fbSpec;
+		fbSpec.Attachments = { Rendering::FramebufferDataFormat::RGBA8, Rendering::FramebufferDataFormat::RED_INTEGER, Rendering::FramebufferDataFormat::Depth };
+		fbSpec.Width = EngineService::GetActiveWindow().GetWidth();
+		fbSpec.Height = EngineService::GetActiveWindow().GetHeight();
+		m_ViewportFramebuffer = Rendering::Framebuffer::Create(fbSpec);
+		//m_ViewportFramebuffer->Bind();
 	}
 
 	void RuntimeApp::OnUpdate(Timestep ts)
@@ -120,7 +135,6 @@ namespace Kargono
 		}
 		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
 		
-
 		// Only handle UI and particles if a main camera exists
 		if (mainCamera)
 		{
@@ -227,6 +241,7 @@ namespace Kargono
 	{
 		// Resize the window
 		EngineService::GetActiveWindow().ResizeWindow({ event.GetWidth(), event.GetHeight() });
+		m_ViewportFramebuffer->Resize(event.GetWidth(), event.GetHeight());
 		return false;
 	}
 
@@ -432,6 +447,38 @@ namespace Kargono
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetSignal());
 		}
 		return false;
+	}
+
+	void RuntimeApp::HandleUIMouseHovering()
+	{
+#if 0
+		ImVec2 mousePos = ImGui::GetMousePos();
+		mousePos.x -= m_ScreenViewportBounds[0].x;
+		mousePos.y -= m_ScreenViewportBounds[0].y;
+		Math::vec2 viewportSize = m_ScreenViewportBounds[1] - m_ScreenViewportBounds[0];
+		mousePos.y = viewportSize.y - mousePos.y;
+
+		if ((int)mousePos.x >= 0 && (int)mousePos.y >= 0 && (int)mousePos.x < (int)viewportSize.x && (int)mousePos.y < (int)viewportSize.y)
+		{
+			int pixelData = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
+
+			// Extract lower 16 bits
+			m_HoveredWidgetID = (uint16_t)(pixelData & 0xFFFF);
+
+			// Extract upper 16 bits
+			m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
+		}
+
+		// Exit early if no valid widget/window is available
+		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetID || m_HoveredWindowID == RuntimeUI::k_InvalidWindowID)
+		{
+			return;
+		}
+
+		// Select the widget if applicable
+		RuntimeUI::RuntimeUIService::SetSelectedWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+			m_HoveredWindowID, m_HoveredWidgetID });
+#endif
 	}
 
 

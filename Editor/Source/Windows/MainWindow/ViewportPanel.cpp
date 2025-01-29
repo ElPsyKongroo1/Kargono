@@ -68,7 +68,7 @@ namespace Kargono::Panels
 		Rendering::RendererAPI::SetClearColor(activeScene->m_BackgroundColor);
 		Rendering::RendererAPI::Clear();
 
-		// Set our entity ID attachment to -1
+		// Clear mouse picking buffer
 		m_ViewportFramebuffer->SetAttachment(1, -1);
 		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
 
@@ -114,7 +114,8 @@ namespace Kargono::Panels
 		// Process Particles
 		Particles::ParticleService::OnUpdate(ts);
 
-		HandleMouseHovering();
+		// Use mouse picking buffer to handle scene mouse picking
+		HandleSceneMouseHovering();
 
 		OnOverlayRender();
 
@@ -136,9 +137,6 @@ namespace Kargono::Panels
 					// Render particles
 					Particles::ParticleService::OnRender(cameraViewProjection);
 
-					// Render RuntimeUI directory to viewport bounds
-					RuntimeUI::RuntimeUIService::OnRender(m_ViewportData.m_Width, m_ViewportData.m_Height);
-
 				}
 			}
 		}
@@ -147,8 +145,19 @@ namespace Kargono::Panels
 			// Render particles
 			Particles::ParticleService::OnRender(m_EditorCamera.GetViewProjection());
 		}
-		
 
+		if (s_MainWindow->m_SceneState == SceneState::Play)
+		{
+			// Clear mouse picking buffer again
+			m_ViewportFramebuffer->SetAttachment(1, -1);
+
+			// Render RuntimeUI directory to viewport bounds
+			RuntimeUI::RuntimeUIService::OnRender(m_ViewportData.m_Width, m_ViewportData.m_Height);
+
+			// Use mouse picking buffer to handle runtime UI mouse picking
+			HandleUIMouseHovering();
+		}
+		
 		m_ViewportFramebuffer->Unbind();
 	}
 	void ViewportPanel::AddDebugLine(Math::vec3 startPoint, Math::vec3 endPoint)
@@ -206,6 +215,7 @@ namespace Kargono::Panels
 				// Handle selecting entities inside of the viewport panel
 				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 				{
+					
 					if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
 					{
 						s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
@@ -227,6 +237,22 @@ namespace Kargono::Panels
 					}
 				}
 				
+			}
+		}
+		else
+		{
+			if (ImGui::IsItemHovered() && ImGui::IsItemClicked(ImGuiMouseButton_Left) && ImGui::GetIO().WantCaptureMouse)
+			{
+				// Handle selecting entities inside of the viewport panel
+				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
+				{
+
+					if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowID && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetID)
+					{
+						RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+							m_HoveredWindowID, m_HoveredWidgetID });
+					}
+				}
 			}
 		}
 
@@ -384,22 +410,53 @@ namespace Kargono::Panels
 			}
 		}
 	}
-	void ViewportPanel::HandleMouseHovering()
+	void ViewportPanel::HandleSceneMouseHovering()
 	{
-		auto [mx, my] = ImGui::GetMousePos();
-		mx -= m_ScreenViewportBounds[0].x;
-		my -= m_ScreenViewportBounds[0].y;
+		ImVec2 mousePosition = ImGui::GetMousePos();
+		mousePosition.x -= m_ScreenViewportBounds[0].x;
+		mousePosition.y -= m_ScreenViewportBounds[0].y;
 		Math::vec2 viewportSize = m_ScreenViewportBounds[1] - m_ScreenViewportBounds[0];
-		my = viewportSize.y - my;
+		mousePosition.y = viewportSize.y - mousePosition.y;
 
-		int mouseX = (int)mx;
-		int mouseY = (int)my;
+		int mouseX = (int)mousePosition.x;
+		int mouseY = (int)mousePosition.y;
 
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_ViewportFramebuffer->ReadPixel(1, mouseX, mouseY);
 			*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID((entt::entity)pixelData);
 		}
+	}
+
+	void ViewportPanel::HandleUIMouseHovering()
+	{
+		ImVec2 mousePos = ImGui::GetMousePos();
+		mousePos.x -= m_ScreenViewportBounds[0].x;
+		mousePos.y -= m_ScreenViewportBounds[0].y;
+		Math::vec2 viewportSize = m_ScreenViewportBounds[1] - m_ScreenViewportBounds[0];
+		mousePos.y = viewportSize.y - mousePos.y;
+
+		if ((int)mousePos.x >= 0 && (int)mousePos.y >= 0 && (int)mousePos.x < (int)viewportSize.x && (int)mousePos.y < (int)viewportSize.y)
+		{
+			int pixelData = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
+
+			// Extract lower 16 bits
+			m_HoveredWidgetID = (uint16_t)(pixelData & 0xFFFF);
+
+			// Extract upper 16 bits
+			m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
+		}
+
+		// Exit early if no valid widget/window is available
+		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetID || m_HoveredWindowID == RuntimeUI::k_InvalidWindowID)
+		{
+			return;
+		}
+
+		// Select the widget if applicable
+		RuntimeUI::RuntimeUIService::SetSelectedWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+			m_HoveredWindowID, m_HoveredWidgetID });
+
 	}
 
 	void ViewportPanel::OnUpdateEditor(Timestep ts, Rendering::EditorPerspectiveCamera& camera)

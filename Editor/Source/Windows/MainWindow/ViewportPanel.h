@@ -8,6 +8,7 @@
 #include "Kargono/Rendering/EditorPerspectiveCamera.h"
 #include "Kargono/Rendering/Framebuffer.h"
 #include "Kargono/Math/Spline.h"
+#include "Kargono/RuntimeUI/RuntimeUICommon.h"
 
 #include <vector>
 
@@ -16,7 +17,6 @@ namespace Kargono::Panels { class TestingPanel; }
 
 namespace Kargono::Panels
 {
-
 	struct DebugLine
 	{
 		Math::vec3 m_StartPoint;
@@ -52,7 +52,8 @@ namespace Kargono::Panels
 		//=========================
 	public:
 		void InitializeFrameBuffer();
-		void HandleMouseHovering();
+		void HandleSceneMouseHovering();
+		void HandleUIMouseHovering();
 		// This function runs the overlay code that displays visualization for physics colliders,
 		//		entity selection, Text/UI, and Camera Frustrums. This private function is called
 		//		in OnUpdate().
@@ -102,6 +103,8 @@ namespace Kargono::Panels
 		int m_GizmoType{ -1 };
 		ViewportData m_ViewportData;
 		Math::uvec2 m_ViewportAspectRatio{ 1, 1 };
+		uint16_t m_HoveredWindowID{ Kargono::RuntimeUI::k_InvalidWindowID };
+		uint16_t m_HoveredWidgetID{ Kargono::RuntimeUI::k_InvalidWidgetID };
 	private:
 		// Viewport resources
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;

@@ -442,6 +442,7 @@ namespace Kargono::RuntimeUI
 		static void MoveUp();
 		static void MoveDown();
 		static void OnPress();
+		static void OnPressByIndex(WidgetID widgetID);
 
 		//==============================
 		// Revalidate UI Context
@@ -475,7 +476,7 @@ namespace Kargono::RuntimeUI
 		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(uint16_t windowIndex, uint16_t widgetIndex);
 		static void RevalidateDisplayedWindows();
 		static void SetWidgetTextInternal(Window* currentWindow, Ref<Widget> currentWidget, const std::string& newText);
-		static void SetSelectedWidgetInternal(Ref<Widget> currentWidget);
+		static void SetSelectedWidgetInternal(Ref<Widget> newSelectedWidget);
 		static void SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
 		static void SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
 		static void SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable);

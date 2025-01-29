@@ -207,6 +207,16 @@ namespace API::RenderingAPI
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
+	void OpenGLFramebuffer::DisplayToDefaultFrameBuffer()
+	{
+#if 0
+		Kargono::Rendere
+		glBindVertexArray(quadVAO);
+		glDisable(GL_DEPTH_TEST);
+		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+#endif
+	}
 	void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
 	{
 		if (width == 0 || height == 0 || width > s_MaxFramebufferSize || height > s_MaxFramebufferSize)
@@ -237,6 +247,118 @@ namespace API::RenderingAPI
 
 		glClearTexImage(m_ColorAttachmentIDs[attachmentIndex], 0,
 			Utility::KargonoTextureFormatToGL(spec.DataFormat), GL_INT, &value);
+	}
+
+	static GLuint CompileShader(GLenum type, const char* source)
+	{
+		GLuint shader = glCreateShader(type);
+		glShaderSource(shader, 1, &source, nullptr);
+		glCompileShader(shader);
+
+		// Check for compilation errors
+		GLint success;
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+		if (!success) {
+			char infoLog[512];
+			glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+			std::cerr << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+		}
+		return shader;
+	}
+
+	static GLuint CreateShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
+	{
+		GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderSource);
+		GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+
+		// Create shader program and attach the compiled shaders
+		GLuint shaderProgram = glCreateProgram();
+		glAttachShader(shaderProgram, vertexShader);
+		glAttachShader(shaderProgram, fragmentShader);
+		glLinkProgram(shaderProgram);
+
+		// Check for linking errors
+		GLint success;
+		glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+		if (!success) {
+			char infoLog[512];
+			glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+			std::cerr << "ERROR::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+		}
+
+		glDeleteShader(vertexShader);   // No longer need the vertex shader after linking
+		glDeleteShader(fragmentShader); // No longer need the fragment shader after linking
+		return shaderProgram;
+	}
+
+	void OpenGLFrameBufferService::Init()
+	{
+		// Create default vertex/fragment shader code
+		const char* vertexShaderSource = R"(
+		#version 430 core
+		layout (location = 0) in vec2 aPos;
+		layout (location = 1) in vec2 aTexCoords;
+
+		out vec2 TexCoords;
+
+		void main()
+		{
+			gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
+			TexCoords = aTexCoords;
+		}
+		)";
+		const char* fragmentShaderSource = R"(
+		#version 330 core
+		out vec4 FragColor;
+  
+		in vec2 TexCoords;
+
+		uniform sampler2D screenTexture;
+
+		void main()
+		{ 
+			FragColor = texture(screenTexture, TexCoords);
+		}
+		)";
+
+		// Create the shader program required to render
+		s_ScreenSpaceShaderProgram = CreateShaderProgram(vertexShaderSource, fragmentShaderSource);
+
+		constexpr float quadVertices[] = 
+		{ 
+			// positions   // texCoords
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			-1.0f, -1.0f,  0.0f, 0.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+			 1.0f,  1.0f,  1.0f, 1.0f
+		};
+
+		// Initialize framebuffer -> default framebuffer rendering data
+		glGenVertexArrays(1, &s_ScreenSpaceQuadVAO);
+		glGenBuffers(1, &s_ScreenSpaceQuadVBO);
+		glBindVertexArray(s_ScreenSpaceQuadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, s_ScreenSpaceQuadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+	}
+	unsigned int OpenGLFrameBufferService::GetScreenSpaceQuadVAO()
+	{
+		return s_ScreenSpaceQuadVAO;
+	}
+	unsigned int OpenGLFrameBufferService::GetScreenSpaceQuadVBO()
+	{
+		return s_ScreenSpaceQuadVBO;
+	}
+	unsigned int OpenGLFrameBufferService::GetScreenSpaceShaderProgram()
+	{
+		return s_ScreenSpaceShaderProgram;
 	}
 }
 

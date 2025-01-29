@@ -2,6 +2,8 @@
 
 #include "Kargono.h"
 
+#include "Kargono/Rendering/Framebuffer.h"
+
 #include <filesystem>
 
 namespace Kargono
@@ -31,6 +33,8 @@ namespace Kargono
 		virtual void Init() override;
 		// Closes Audio System and calls OnSceneStop()
 		virtual void Terminate() override;
+
+		void InitializeFrameBuffer();
 
 		//==========================
 		// On Event Functions
@@ -77,6 +81,8 @@ namespace Kargono
 
 		bool OnReceiveSignal(Events::ReceiveSignal event);
 
+		void HandleUIMouseHovering();
+
 
 		// Logic to open the project and its main scene
 		//==========================
@@ -102,6 +108,9 @@ namespace Kargono
 
 
 	private:
+		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;
+		uint16_t m_HoveredWindowID{ Kargono::RuntimeUI::k_InvalidWindowID };
+		uint16_t m_HoveredWidgetID{ Kargono::RuntimeUI::k_InvalidWidgetID };
 		bool m_Headless{ false };
 		std::filesystem::path m_ProjectPath;
 	};

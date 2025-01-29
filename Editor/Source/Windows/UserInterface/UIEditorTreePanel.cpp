@@ -565,7 +565,7 @@ namespace Kargono::Panels
 	}
 	void UIEditorTreePanel::SelectTreeNode(uint16_t windowID, uint16_t widgetID)
 	{
-		if (windowID == k_InvalidWindowID)
+		if (windowID == RuntimeUI::k_InvalidWindowID)
 		{
 			return;
 		}
@@ -579,7 +579,7 @@ namespace Kargono::Panels
 		// Add window node
 		path.AddNode(windowID);
 
-		if (widgetID == k_InvalidWidgetID)
+		if (widgetID == RuntimeUI::k_InvalidWidgetID)
 		{
 			m_UITree.ExpandFirstLayer();
 			success = m_UITree.SelectEntry(path);

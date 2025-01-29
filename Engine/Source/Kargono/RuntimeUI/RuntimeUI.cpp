@@ -297,23 +297,28 @@ namespace Kargono::RuntimeUI
 			Math::vec3 initialTranslation = window->CalculateWorldPosition(viewportWidth, viewportHeight);
 			Math::vec3 bottomLeftTranslation = Math::vec3( initialTranslation.x + (scale.x / 2),  initialTranslation.y + (scale.y / 2), initialTranslation.z);
 
-			// Create background rendering data
-			s_RuntimeUIContext->m_BackgroundInputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), bottomLeftTranslation)
-				* glm::scale(Math::mat4(1.0f), scale);
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, "a_Color", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 
-			// Push window ID and invalid widgetID
-			Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)0xFFFF, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+			if (window->m_BackgroundColor.w > 0.001f)
+			{
+				// Create background rendering data
+				s_RuntimeUIContext->m_BackgroundInputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), bottomLeftTranslation)
+					* glm::scale(Math::mat4(1.0f), scale);
+				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, "a_Color", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 
-			// Submit background data to GPU
-			Rendering::RenderingService::SubmitDataToRenderer(s_RuntimeUIContext->m_BackgroundInputSpec);
+				// Push window ID and invalid widgetID
+				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)0xFFFF, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+
+				// Submit background data to GPU
+				Rendering::RenderingService::SubmitDataToRenderer(s_RuntimeUIContext->m_BackgroundInputSpec);
+			}
+			
 
 			// Call rendering function for every widget
 			initialTranslation.z += 0.1f;
 			uint16_t widgetIteration{ 0 };
 			for (Ref<Widget> widgetRef : window->m_Widgets)
 			{
-				// Push window ID and invalid widget ID
+				// Push window ID and widget ID
 				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 				RuntimeUI::FontService::SetID(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration);
 				// Call the widget's rendering function
@@ -428,24 +433,29 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::SetSelectedWidgetInternal(Ref<Widget> currentWidget)
+	void RuntimeUIService::SetSelectedWidgetInternal(Ref<Widget> newSelectedWidget)
 	{
 		// Ensure the widget is valid
-		if (!currentWidget)
+		if (!newSelectedWidget)
 		{
 			KG_WARN("Could not locate widget when attempting to set a widget as selected");
 			return;
 		}
 
 		// Ensure the widget is selectable
-		if (!currentWidget->Selectable())
+		if (!newSelectedWidget->Selectable())
 		{
-			KG_WARN("Attempt to set a widget as selected that is not selectable");
+			return;
+		}
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+
+		// If the selected widget is the same as the new selected widget, just exit
+		if (newSelectedWidget.get() == activeUI->m_SelectedWidget)
+		{
 			return;
 		}
 
 		// Set the previous selected widget's color to the default color
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
 		if (activeUI->m_SelectedWidget)
 		{
 			ButtonWidget& previousSelectedWidget = *(ButtonWidget*)activeUI->m_SelectedWidget;
@@ -453,9 +463,9 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Set the new widget as selected and set it's color to the active color
-		activeUI->m_SelectedWidget = currentWidget.get();
-		ButtonWidget& newSelectedWidget = *(ButtonWidget*)currentWidget.get();
-		newSelectedWidget.m_ActiveBackgroundColor = activeUI->m_SelectColor;
+		activeUI->m_SelectedWidget = newSelectedWidget.get();
+		ButtonWidget& newSelectedButton = *(ButtonWidget*)newSelectedWidget.get();
+		newSelectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 		// Call the on move function if applicable
 		if (activeUI->m_FunctionPointers.m_OnMove)
@@ -957,6 +967,32 @@ namespace Kargono::RuntimeUI
 		// Call the on press function if applicable
 		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
 		ButtonWidget& selectedButton = *(ButtonWidget*)s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget;
+		if (selectedButton.m_FunctionPointers.m_OnPress)
+		{
+			Utility::CallWrappedVoidNone(selectedButton.m_FunctionPointers.m_OnPress->m_Function);
+		}
+	}
+
+	void RuntimeUIService::OnPressByIndex(WidgetID widgetID)
+	{
+		// Ensure the correct user interface is active
+		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return;
+		}
+
+		// Get the current widget
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+
+		// Ensure selected widget is the correct type
+		if (currentWidget->m_WidgetType != WidgetTypes::ButtonWidget)
+		{
+			return;
+		}
+
+		// Call the on press function if applicable
+		ButtonWidget& selectedButton = *(ButtonWidget*)currentWidget.get();
 		if (selectedButton.m_FunctionPointers.m_OnPress)
 		{
 			Utility::CallWrappedVoidNone(selectedButton.m_FunctionPointers.m_OnPress->m_Function);
@@ -1541,14 +1577,17 @@ namespace Kargono::RuntimeUI
 		// Get widget translation
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
-		// Create the widget's background rendering data
-		inputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
-			* glm::scale(Math::mat4(1.0f), widgetSize);
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_ActiveBackgroundColor, "a_Color", inputSpec.m_Buffer, inputSpec.m_Shader);
+		if (m_ActiveBackgroundColor.w > 0.001f)
+		{
+			// Create the widget's background rendering data
+			inputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
+				* glm::scale(Math::mat4(1.0f), widgetSize);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_ActiveBackgroundColor, "a_Color", inputSpec.m_Buffer, inputSpec.m_Shader);
 
-		// Submit background data to GPU
-		Rendering::RenderingService::SubmitDataToRenderer(RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec);
-
+			// Submit background data to GPU
+			Rendering::RenderingService::SubmitDataToRenderer(RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec);
+		}
+		
 		// Create the widget's text rendering data
 		widgetTranslation.z += 0.001f;
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
