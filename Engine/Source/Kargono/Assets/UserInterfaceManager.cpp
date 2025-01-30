@@ -106,11 +106,11 @@ namespace Kargono::Assets
 				}
 				case RuntimeUI::WidgetTypes::ImageWidget:
 				{
-					RuntimeUI::ImageWidget* ImageWidget = static_cast<RuntimeUI::ImageWidget*>(widget.get());
+					RuntimeUI::ImageWidget* imageWidget = static_cast<RuntimeUI::ImageWidget*>(widget.get());
 					out << YAML::Key << "ImageWidget" << YAML::Value;
+					// Image field
 					out << YAML::BeginMap; // Begin ImageWidget Map
-					// Text fields
-					//out << YAML::Key << "Text" << YAML::Value << ImageWidget->m_ImageHandle;
+					out << YAML::Key << "Image" << YAML::Value << (uint64_t)imageWidget->m_ImageHandle;
 					out << YAML::EndMap; // End ImageWidget Map
 					break;
 				}
@@ -248,6 +248,30 @@ namespace Kargono::Assets
 							}
 							break;
 						}
+
+						case RuntimeUI::WidgetTypes::ImageWidget:
+						{
+							specificWidget = widget["ImageWidget"];
+							newWidget = CreateRef<RuntimeUI::ImageWidget>();
+							newWidget->m_WidgetType = widgetType;
+							RuntimeUI::ImageWidget* imageWidget = static_cast<RuntimeUI::ImageWidget*>(newWidget.get());
+							imageWidget->m_ImageHandle = specificWidget["Image"].as<uint64_t>();
+							if (imageWidget->m_ImageHandle == Assets::EmptyHandle)
+							{
+								imageWidget->m_ImageRef = nullptr;
+							}
+							else
+							{
+								Ref<Rendering::Texture2D> imageRef = Assets::AssetService::GetTexture2D(imageWidget->m_ImageHandle);
+								if (!imageRef)
+								{
+									KG_WARN("Unable to locate provided image reference");
+									return nullptr;
+								}
+								imageWidget->m_ImageRef = imageRef;
+							}
+							break;
+						}
 						default:
 						{
 							KG_WARN("Invalid Widget Type in UserInterface Deserialization");
@@ -306,6 +330,34 @@ namespace Kargono::Assets
 					RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)widgetRef.get();
 					buttonWidget.m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
 					buttonWidget.m_FunctionPointers.m_OnPress = nullptr;
+					uiModified = true;
+				}
+			}
+		}
+
+		return uiModified;
+	}
+	bool UserInterfaceManager::RemoveTexture(Ref<RuntimeUI::UserInterface> userInterfaceRef, Assets::AssetHandle textureHandle)
+	{
+		bool uiModified{ false };
+
+		// Handle all widgets in all windows
+		for (RuntimeUI::Window& currentWindow : userInterfaceRef->m_Windows)
+		{
+			for (Ref<RuntimeUI::Widget> widgetRef : currentWindow.m_Widgets)
+			{
+				// Ensure we are handling an image widget
+				if (widgetRef->m_WidgetType != RuntimeUI::WidgetTypes::ImageWidget)
+				{
+					continue;
+				}
+				// Remove texture reference from widget if necessary
+				RuntimeUI::ImageWidget& imageWidget = *(RuntimeUI::ImageWidget*)widgetRef.get();
+				if (imageWidget.m_ImageHandle == textureHandle)
+				{
+					RuntimeUI::ImageWidget& buttonWidget = *(RuntimeUI::ImageWidget*)widgetRef.get();
+					buttonWidget.m_ImageHandle = Assets::EmptyHandle;
+					buttonWidget.m_ImageRef = nullptr;
 					uiModified = true;
 				}
 			}

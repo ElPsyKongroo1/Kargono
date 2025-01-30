@@ -36,6 +36,7 @@ namespace Kargono::Panels
 		void InitializeWidgetGeneralOptions();
 		void InitializeTextWidgetOptions();
 		void InitializeButtonWidgetOptions();
+		void InitializeImageWidgetOptions();
 		void InitializeWidgetLocationOptions();
 
 	public:
@@ -149,6 +150,13 @@ namespace Kargono::Panels
 		void OnOpenButtonWidgetTextAlignmentPopup();
 		// Modify if button widget is selectable
 		void OnModifyButtonWidgetSelectable(EditorUI::CheckboxSpec& spec);
+
+		//=========================
+		// Change Image Widget Data
+		//=========================
+		// Modify image widget's image
+		void OnModifyImageWidgetImage(const EditorUI::OptionEntry& entry);
+		void OnOpenImageWidgetImagePopup();
 		
 
 
@@ -204,6 +212,10 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec m_ButtonWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_ButtonWidgetOnPress{};
 		EditorUI::CheckboxSpec m_ButtonWidgetSelectable{};
+
+		// Edit Image Widget Options
+		EditorUI::CollapsingHeaderSpec m_ImageWidgetHeader{};
+		EditorUI::SelectOptionSpec m_ImageWidgetImage{};
 
 		// Edit Widget Location Options
 		EditorUI::CollapsingHeaderSpec m_WidgetLocationHeader{};

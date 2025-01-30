@@ -199,6 +199,11 @@ namespace Kargono::Assets
 			return s_AssetsContext.m_UserInterfaceManager.RemoveScript(userInterfaceRef, scriptHandle);
 		}
 
+		static AssetHandle RemoveTextureFromUserInterface(Ref<RuntimeUI::UserInterface> userInterfaceRef, Assets::AssetHandle textureHandle)
+		{
+			return s_AssetsContext.m_UserInterfaceManager.RemoveTexture(userInterfaceRef, textureHandle);
+		}
+
 		static AssetHandle RemoveScriptFromScene(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle scriptHandle)
 		{
 			return s_AssetsContext.m_SceneManager.RemoveScript(sceneRef, scriptHandle);

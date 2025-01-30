@@ -153,5 +153,20 @@ namespace Kargono::Assets
 		currentAsset.Data.SpecificFileData = texMetaData;
 	}
 
+	void Texture2DManager::DeleteAssetValidation(AssetHandle assetHandle)
+	{
+		// Check user interface assets
+		for (auto& [uiHandle, assetInfo] : Assets::AssetService::GetUserInterfaceRegistry())
+		{
+			// Handle UI level function pointers
+			Ref<RuntimeUI::UserInterface> userInterfaceRef = Assets::AssetService::GetUserInterface(uiHandle);
+			bool uiModified = Assets::AssetService::RemoveTextureFromUserInterface(userInterfaceRef, assetHandle);
+			if (uiModified)
+			{
+				Assets::AssetService::SaveUserInterface(uiHandle, userInterfaceRef);
+			}
+		}
+	}
+
 	
 }

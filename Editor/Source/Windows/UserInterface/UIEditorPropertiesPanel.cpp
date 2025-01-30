@@ -21,6 +21,7 @@ namespace Kargono::Panels
 		InitializeWidgetGeneralOptions();
 		InitializeTextWidgetOptions();
 		InitializeButtonWidgetOptions();
+		InitializeImageWidgetOptions();
 		InitializeWidgetLocationOptions();
 	}
 	void UIEditorPropertiesPanel::OnEditorUIRender()
@@ -271,6 +272,23 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::DrawImageWidgetOptions()
 	{
+		// Draw main header for Image widget options
+		EditorUI::EditorUIService::CollapsingHeader(m_ImageWidgetHeader);
+		if (m_WidgetGeneralHeader.m_Expanded)
+		{
+			// Draw options to edit selected Image widget
+			RuntimeUI::ImageWidget& activeImageWidget = *(RuntimeUI::ImageWidget*)m_ActiveWidget;
+
+			// Edit selected widget's image handle
+			Assets::AssetHandle imageHandle = activeImageWidget.m_ImageHandle;
+			m_ImageWidgetImage.m_CurrentOption =
+			{
+				imageHandle == Assets::EmptyHandle ? "None" : 
+				Assets::AssetService::GetTexture2DInfo(imageHandle).Data.FileLocation.stem().string(),
+				imageHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_ImageWidgetImage);
+		}
 	}
 
 	void UIEditorPropertiesPanel::DrawSpecificWidgetOptions()
@@ -285,6 +303,7 @@ namespace Kargono::Panels
 			break;
 		case RuntimeUI::WidgetTypes::ImageWidget:
 			DrawImageWidgetOptions();
+			break;
 		default:
 			KG_ERROR("Invalid widget type attempted to be drawn");
 			break;
@@ -602,6 +621,20 @@ namespace Kargono::Panels
 		m_ButtonWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenButtonWidgetOnPressPopup);
 		m_ButtonWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetOnPress);
 		m_ButtonWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForButtonWidgetOnPress);
+	}
+
+	void UIEditorPropertiesPanel::InitializeImageWidgetOptions()
+	{
+		// Set up header for button widget options
+		m_ImageWidgetHeader.m_Label = "Button Widget Options";
+		m_ImageWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_ImageWidgetHeader.m_Expanded = true;
+
+		// Set up widget to modify the button widget's on press script
+		m_ImageWidgetImage.m_Label = "Image";
+		m_ImageWidgetImage.m_Flags |= EditorUI::SelectOption_Indented;
+		m_ImageWidgetImage.m_PopupAction = KG_BIND_CLASS_FN(OnOpenImageWidgetImagePopup);
+		m_ImageWidgetImage.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageWidgetImage);
 	}
 
 	void UIEditorPropertiesPanel::InitializeWidgetLocationOptions()
@@ -1530,5 +1563,45 @@ namespace Kargono::Panels
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifyImageWidgetImage(const EditorUI::OptionEntry& entry)
+	{
+		// Get the active widget as a image widget
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ImageWidget);
+		RuntimeUI::ImageWidget& activeImageWidget = *(RuntimeUI::ImageWidget*)m_ActiveWidget;
+
+		// Clear the on press script if the provided handle is empty
+		if (entry.m_Handle == Assets::EmptyHandle)
+		{
+			activeImageWidget.m_ImageRef = nullptr;
+			activeImageWidget.m_ImageHandle = Assets::EmptyHandle;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		// Set the texture reference for the image widget
+		activeImageWidget.m_ImageRef = Assets::AssetService::GetTexture2D(entry.m_Handle);
+		activeImageWidget.m_ImageHandle = entry.m_Handle;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnOpenImageWidgetImagePopup()
+	{
+		// Clear existing options
+		m_ImageWidgetImage.ClearOptions();
+		m_ImageWidgetImage.AddToOptions("Clear", "None", Assets::EmptyHandle);
+
+		// Add all compatible textures to the select options
+		for (auto& [handle, assetInfo] : Assets::AssetService::GetTexture2DRegistry())
+		{
+			// Get texture from handle
+			Ref<Rendering::Texture2D> script = Assets::AssetService::GetTexture2D(handle);
+
+			// Add texture to the select options
+			m_ImageWidgetImage.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
+		}
 	}
 }

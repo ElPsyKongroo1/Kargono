@@ -54,18 +54,30 @@ namespace Kargono::RuntimeUI
 			Rendering::ShaderSpecification shaderSpec{ Rendering::ColorInputType::None, Rendering::TextureInputType::ColorTexture, false, true, true, Rendering::RenderingType::DrawIndex, false };
 			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
 			// Create basic shape component for UI quad rendering
 			ECS::ShapeComponent* shapeComp = new ECS::ShapeComponent();
 			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
 			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
 			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
+			shapeComp->TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Rendering::Shape::s_Quad.GetIndexTextureCoordinates());
+			shapeComp->Shader = localShader;
 			shapeComp->Texture = nullptr;
+			
 
-			s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader = localShader;
-			s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer = localBuffer;
-			s_RuntimeUIContext->m_BackgroundInputSpec.m_ShapeComponent = shapeComp;
+			/*s_InputSpec.m_Shader = shape.Shader;
+			s_InputSpec.m_Buffer = shape.ShaderData;
+			s_InputSpec.m_Entity = static_cast<uint32_t>(entity);
+			s_InputSpec.m_EntityRegistry = &m_EntityRegistry.m_EnTTRegistry;
+			s_InputSpec.m_ShapeComponent = &shape;
+			s_InputSpec.m_TransformMatrix = transform.GetTransform();*/
+			
+			float* tilingFactor = Rendering::Shader::GetInputLocation<float>("a_TilingFactor", localBuffer, localShader);
+			*tilingFactor = 1.0f;
+
+			s_RuntimeUIContext->m_ImageInputSpec.m_Shader = localShader;
+			s_RuntimeUIContext->m_ImageInputSpec.m_Buffer = localBuffer;
+			s_RuntimeUIContext->m_ImageInputSpec.m_ShapeComponent = shapeComp;
 		}
 
 		// Verify Initialization
@@ -76,6 +88,7 @@ namespace Kargono::RuntimeUI
 	{
 		// Clear input spec data
 		s_RuntimeUIContext->m_BackgroundInputSpec.ClearData();
+		s_RuntimeUIContext->m_ImageInputSpec.ClearData();
 
 		// Terminate Static Variables
 		s_RuntimeUIContext = nullptr;
@@ -339,8 +352,10 @@ namespace Kargono::RuntimeUI
 			uint16_t widgetIteration{ 0 };
 			for (Ref<Widget> widgetRef : window->m_Widgets)
 			{
+				// TODO: Seperate these into multiple functions
 				// Push window ID and widget ID
 				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration, "a_EntityID", s_RuntimeUIContext->m_ImageInputSpec.m_Buffer, s_RuntimeUIContext->m_ImageInputSpec.m_Shader);
 				RuntimeUI::FontService::SetID(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration);
 				// Call the widget's rendering function
 				widgetRef->OnRender(initialTranslation, scale, (float)viewportWidth);
@@ -642,7 +657,7 @@ namespace Kargono::RuntimeUI
 		return IsWidgetSelectedInternal(currentWidget);
 	}
 
-	void RuntimeUIService::SetActiveWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
+	void RuntimeUIService::SetActiveWidgetTextByTag(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
 	{
 		// Search for the indicated widget
 		auto [currentWidget, currentWindow] = GetWidgetAndWindow(windowTag, widgetTag);
@@ -662,6 +677,46 @@ namespace Kargono::RuntimeUI
 		// Search for the indicated widget
 		auto [currentWidget, currentWindow] = GetWidgetAndWindow(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
 		SetWidgetTextInternal(currentWindow, currentWidget, newText);
+	}
+
+	void RuntimeUIService::SetWidgetImageByIndex(WidgetID widgetID, Assets::AssetHandle textureHandle)
+	{
+		// Ensure the correct user interface is active
+		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return;
+		}
+
+		// Search for the indicated widget
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+
+		// Ensure the widget is valid
+		if (!currentWidget)
+		{
+			KG_WARN("Could not locate widget when attempting to set a widget's image");
+			return;
+		}
+
+		// Ensure the widget is an image widget
+		if (currentWidget->m_WidgetType != WidgetTypes::ImageWidget)
+		{
+			KG_WARN("Attempt to change the image of a widget that is not an image widget");
+			return;
+		}
+
+		// Ensure the texture provided is valid
+		Ref<Rendering::Texture2D> textureRef{ Assets::AssetService::GetTexture2D(textureHandle) };
+		if (!textureRef)
+		{
+			KG_WARN("Attempt to modify the image of a widget, however, the provided image is invalid!");
+			return;
+		}
+
+		// Set the text of the widget
+		ImageWidget* imageWidget = (ImageWidget*)currentWidget.get();
+		imageWidget->m_ImageHandle = textureHandle;
+		imageWidget->m_ImageRef = textureRef;
 	}
 
 	void RuntimeUIService::SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag)
@@ -1326,6 +1381,8 @@ namespace Kargono::RuntimeUI
 		case WidgetTypes::ButtonWidget:
 			(*(ButtonWidget*)newWidget.get()).CalculateTextSize();
 			break;
+		case WidgetTypes::ImageWidget:
+			break;
 		default:
 			KG_ERROR("Invalid widget type provided when revalidating widget text size");
 			break;
@@ -1659,6 +1716,7 @@ namespace Kargono::RuntimeUI
 				* glm::scale(Math::mat4(1.0f), widgetSize);
 
 			imageRendererSpec.m_Texture = m_ImageRef;
+			imageRendererSpec.m_ShapeComponent->Texture = m_ImageRef;
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(imageRendererSpec);

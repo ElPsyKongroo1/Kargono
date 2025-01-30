@@ -444,8 +444,9 @@ namespace Kargono::RuntimeUI
 		// Modify Active UI
 		//==============================
 		static void SetSelectedWidgetColor(const Math::vec4& color);
-		static void SetActiveWidgetText(const std::string& windowTag, const std::string& widgetTag, const std::string& newText);
+		static void SetActiveWidgetTextByTag(const std::string& windowTag, const std::string& widgetTag, const std::string& newText);
 		static void SetActiveWidgetTextByIndex(WidgetID widgetID, const std::string& newText);
+		static void SetWidgetImageByIndex(WidgetID widgetID, Assets::AssetHandle textureHandle);
 		static void SetActiveOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
 		static void SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle);
 		static void SetWidgetTextColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);

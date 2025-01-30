@@ -678,6 +678,15 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
+		newPrimitiveType.Name = "texture_2d";
+		newPrimitiveType.Description = "Reference to a 2D texture asset. A texture_2d is a 2 dimensional (width and height) image that is managed by the engine.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint64_t";
+		newPrimitiveType.EmittedParameter = "uint64_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTexture;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
 		newPrimitiveType.Name = "user_interface";
 		newPrimitiveType.Description = "Reference to a user interface. A user interface is a structure holding a series of windows and widgets that can be rendered if attached to the engine's active context.";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
@@ -708,6 +717,14 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
 		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconButtonWidget;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "user_interface_image_widget";
+		newPrimitiveType.Description = "Reference to a user interface image widget. This object is a reference to a image widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTexture;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -1336,6 +1353,7 @@ namespace Kargono::Scripting
 			{"InputMaps", {{}, EditorUI::EditorUIService::s_IconInput}},
 			{"ProjectComponents", {{}, EditorUI::EditorUIService::s_IconProjectComponent}},
 			{"Scenes", {{}, EditorUI::EditorUIService::s_IconScene}},
+			{"Textures", {{}, EditorUI::EditorUIService::s_IconTexture}},
 			{"UserInterfaces", {{}, EditorUI::EditorUIService::s_IconUserInterface}},
 			{"ScreenResolution", {{}, EditorUI::EditorUIService::s_IconGrid}},
 			{"Key", {{}, EditorUI::EditorUIService::s_IconInput}}
@@ -1464,6 +1482,19 @@ namespace Kargono::Scripting
 			std::string fileName = configInfo.Data.FileLocation.stem().string();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			sceneMap.insert_or_assign(fileName, newMember);
+		}
+
+		// Load in names of all texture 2D's
+		CustomLiteralNameToIDMap& texture2DMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Textures").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetTexture2DRegistry())
+		{
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "texture_2d" };
+			newMember.m_OutputText = std::string(configHandle);
+
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+			texture2DMap.insert_or_assign(fileName, newMember);
 		}
 
 		// Load in names of all UserInterface
@@ -1929,6 +1960,27 @@ namespace Kargono::Scripting
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_SetSelectedWidget";
 		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+		
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetWidgetImage" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_image_widget" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "texture_2d" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "newTexture" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Change the displayed texture of the indicated image widget.";
+		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
+			{
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_SetWidgetImage";
+			};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};

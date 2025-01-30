@@ -597,6 +597,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidUIWidgetBool, void, RuntimeUI::WidgetID, bool)
 	DefineInsertFunction(VoidUIWidget, void, RuntimeUI::WidgetID)
 	DefineInsertFunction(VoidUIWidgetVec4, void, RuntimeUI::WidgetID, Math::vec4)
+	DefineInsertFunction(VoidUIWidgetUInt64, void, RuntimeUI::WidgetID, uint64_t)
 	DefineInsertFunction(VoidUInt16UInt16String, void, uint16_t, uint16_t, const std::string&)
 	DefineInsertFunction(VoidUInt16UInt16Bool, void, uint16_t, uint16_t, bool)
 	DefineInsertFunction(VoidStringVoidPtr, void, const std::string&, void*)
@@ -793,6 +794,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidUIWidgetBool, void, RuntimeUI::WidgetID, bool)
 		AddImportFunctionToHeaderFile(VoidUIWidget, void, RuntimeUI::WidgetID)
 		AddImportFunctionToHeaderFile(VoidUIWidgetVec4, void, RuntimeUI::WidgetID, Math::vec4)
+		AddImportFunctionToHeaderFile(VoidUIWidgetUInt64, void, RuntimeUI::WidgetID, uint64_t)
 		// Bool return type
 		AddImportFunctionToHeaderFile(BoolUIWidget, bool, RuntimeUI::WidgetID)
 		AddImportFunctionToHeaderFile(BoolStringString, bool, const std::string&, const std::string&)
@@ -949,6 +951,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetText, void, RuntimeUI::WidgetID, const std::string&)
 		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetBackgroundColor, void, RuntimeUI::WidgetID, Math::vec4)
 		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetTextColor, void, RuntimeUI::WidgetID, Math::vec4)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetImage, void, RuntimeUI::WidgetID, uint64_t)
 
 
 		// Insert FuncPointer Importing for DLL processing
@@ -1043,6 +1046,10 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(VoidUIWidgetString, void, RuntimeUI::WidgetID, const std::string&)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetWidgetText)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(VoidUIWidgetUInt64, void, RuntimeUI::WidgetID, uint64_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetWidgetImage)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
 		outputStream << "{\n";
@@ -1390,6 +1397,7 @@ namespace Kargono::Scripting
 		ImportInsertFunction(VoidUIWidgetBool)
 		ImportInsertFunction(VoidUIWidget)
 		ImportInsertFunction(VoidUIWidgetVec4)
+		ImportInsertFunction(VoidUIWidgetUInt64)
 		// Bool return type
 		ImportInsertFunction(BoolUIWidget)
 		ImportInsertFunction(BoolStringString)
@@ -1469,6 +1477,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColorByIndex, VoidUIWidgetVec4)
 		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectableByIndex, VoidUIWidgetBool)
 		AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, RuntimeUI::RuntimeUIService::IsWidgetSelectedByIndex, BoolUIWidget)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetImage, RuntimeUI::RuntimeUIService::SetWidgetImageByIndex, VoidUIWidgetUInt64)
+			
 		// Scenes
 		AddEngineFunctionPointerToDll(TransitionSceneFromHandle, Scenes::SceneService::TransitionSceneFromHandle, VoidUInt64)
 		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)

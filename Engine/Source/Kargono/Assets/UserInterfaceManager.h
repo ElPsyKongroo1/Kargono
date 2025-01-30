@@ -29,5 +29,6 @@ namespace Kargono::Assets
 		virtual Ref<RuntimeUI::UserInterface> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
 
 		bool RemoveScript(Ref<RuntimeUI::UserInterface> userInterfaceRef, Assets::AssetHandle scriptHandle);
+		bool RemoveTexture(Ref<RuntimeUI::UserInterface> userInterfaceRef, Assets::AssetHandle textureHandle);
 	};
 }
