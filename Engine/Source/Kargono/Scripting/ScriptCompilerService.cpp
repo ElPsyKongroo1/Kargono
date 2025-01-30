@@ -1515,6 +1515,9 @@ namespace Kargono::Scripting
 					case RuntimeUI::WidgetTypes::ButtonWidget:
 						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_button_widget" };
 						break;
+					case RuntimeUI::WidgetTypes::ImageWidget:
+						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_image_widget" };
+						break;
 					default:
 						KG_ERROR("Invalid widget type provided when loading widget information into kgscript language");
 						break;

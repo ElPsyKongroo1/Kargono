@@ -269,6 +269,10 @@ namespace Kargono::Panels
 		}
 	}
 
+	void UIEditorPropertiesPanel::DrawImageWidgetOptions()
+	{
+	}
+
 	void UIEditorPropertiesPanel::DrawSpecificWidgetOptions()
 	{
 		switch (m_ActiveWidget->m_WidgetType)
@@ -279,6 +283,8 @@ namespace Kargono::Panels
 		case RuntimeUI::WidgetTypes::ButtonWidget:
 			DrawButtonWidgetOptions();
 			break;
+		case RuntimeUI::WidgetTypes::ImageWidget:
+			DrawImageWidgetOptions();
 		default:
 			KG_ERROR("Invalid widget type attempted to be drawn");
 			break;
@@ -713,6 +719,12 @@ namespace Kargono::Panels
 			{
 			case RuntimeUI::WidgetTypes::TextWidget:
 				m_WindowDefaultWidget.AddToOptions("Text Widget", widget->m_Tag, iteration);
+				break;
+			case RuntimeUI::WidgetTypes::ButtonWidget:
+				m_WindowDefaultWidget.AddToOptions("Button Widget", widget->m_Tag, iteration);
+				break;
+			case RuntimeUI::WidgetTypes::ImageWidget:
+				m_WindowDefaultWidget.AddToOptions("Image Widget", widget->m_Tag, iteration);
 				break;
 			default:
 				KG_ERROR("Invalid widge type provided to UIEditorWindow");

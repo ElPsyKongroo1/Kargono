@@ -52,6 +52,7 @@ namespace Kargono::Panels
 		void DrawWidgetOptions();
 		void DrawTextWidgetOptions();
 		void DrawButtonWidgetOptions();
+		void DrawImageWidgetOptions();
 		void DrawSpecificWidgetOptions();
 
 		//=========================

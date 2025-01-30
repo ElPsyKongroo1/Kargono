@@ -21,12 +21,16 @@ namespace Kargono::Assets
 	class UserInterfaceManager;
 }
 
+namespace Kargono::Rendering
+{
+	class Texture2D;
+}
+
 namespace Kargono::RuntimeUI
 {
 	class RuntimeUIService;
 	struct RuntimeUIContext;
 	class Window;
-
 
 	//============================
 	// Function Callbacks Struct
@@ -48,7 +52,7 @@ namespace Kargono::RuntimeUI
 	//============================
 	enum class WidgetTypes
 	{
-		None = 0, TextWidget, ButtonWidget, CheckboxWidget, ComboWidget, PopupWidget
+		None = 0, TextWidget, ButtonWidget, CheckboxWidget, ComboWidget, PopupWidget, ImageWidget
 	};
 
 	constexpr std::size_t k_InvalidWidgetIndex{ std::numeric_limits<std::size_t>().max() };
@@ -311,6 +315,45 @@ namespace Kargono::RuntimeUI
 	};
 
 	//============================
+	// Image Widget Class (Derived)
+	//============================
+	class ImageWidget : public Widget
+	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		ImageWidget()
+			: Widget()
+		{
+			m_WidgetType = WidgetTypes::ImageWidget;
+		}
+		virtual ~ImageWidget() override = default;
+
+	public:
+		//============================
+		// Query State
+		//============================
+		virtual bool Selectable() override
+		{
+			return false;
+		}
+
+	public:
+		//============================
+		// Rendering Methods
+		//============================
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+
+	public:
+		//============================
+		// Public Fields
+		//============================
+		Ref<Rendering::Texture2D> m_ImageRef{ nullptr };
+		Assets::AssetHandle m_ImageHandle{ Assets::EmptyHandle };
+	};
+
+	//============================
 	// Window Class
 	//============================
 	class Window
@@ -491,6 +534,7 @@ namespace Kargono::RuntimeUI
 	private:
 		friend class TextWidget;
 		friend class ButtonWidget;
+		friend class ImageWidget;
 		friend class Window;
 	};
 }
@@ -506,6 +550,7 @@ namespace Kargono::Utility
 			case RuntimeUI::WidgetTypes::CheckboxWidget: return "CheckboxWidget";
 			case RuntimeUI::WidgetTypes::ComboWidget: return "ComboWidget";
 			case RuntimeUI::WidgetTypes::PopupWidget: return "PopupWidget";
+			case RuntimeUI::WidgetTypes::ImageWidget: return "ImageWidget";
 			case RuntimeUI::WidgetTypes::None: return "None";
 			default:
 			{
@@ -522,6 +567,7 @@ namespace Kargono::Utility
 		if (widgetName == "CheckboxWidget") { return RuntimeUI::WidgetTypes::CheckboxWidget; }
 		if (widgetName == "ComboWidget") { return RuntimeUI::WidgetTypes::ComboWidget; }
 		if (widgetName == "PopupWidget") { return RuntimeUI::WidgetTypes::PopupWidget; }
+		if (widgetName == "ImageWidget") { return RuntimeUI::WidgetTypes::ImageWidget; }
 		if (widgetName == "None") { return RuntimeUI::WidgetTypes::None; }
 
 		KG_ERROR("Invalid Widget Type at StringToWidgetType");

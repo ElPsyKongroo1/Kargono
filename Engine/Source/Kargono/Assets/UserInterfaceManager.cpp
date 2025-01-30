@@ -104,6 +104,16 @@ namespace Kargono::Assets
 					out << YAML::EndMap; // End buttonWidget Map
 					break;
 				}
+				case RuntimeUI::WidgetTypes::ImageWidget:
+				{
+					RuntimeUI::ImageWidget* ImageWidget = static_cast<RuntimeUI::ImageWidget*>(widget.get());
+					out << YAML::Key << "ImageWidget" << YAML::Value;
+					out << YAML::BeginMap; // Begin ImageWidget Map
+					// Text fields
+					//out << YAML::Key << "Text" << YAML::Value << ImageWidget->m_ImageHandle;
+					out << YAML::EndMap; // End ImageWidget Map
+					break;
+				}
 				}
 
 				out << YAML::EndMap; // End Widget Map

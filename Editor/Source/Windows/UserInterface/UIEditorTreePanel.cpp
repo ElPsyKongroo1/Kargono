@@ -113,13 +113,14 @@ namespace Kargono::Panels
 				switch (widget->m_WidgetType)
 				{
 				case RuntimeUI::WidgetTypes::TextWidget:
-					// Provide text widget icon
 					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
-					
 					break;
 				case RuntimeUI::WidgetTypes::ButtonWidget:
-					// Provide text widget icon
+
 					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconButtonWidget;
+					break;
+				case RuntimeUI::WidgetTypes::ImageWidget:
+					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTexture;
 					break;
 				default:
 					KG_ERROR("Invalid widget type provided");

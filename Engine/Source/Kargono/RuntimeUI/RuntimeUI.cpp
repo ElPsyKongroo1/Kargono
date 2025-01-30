@@ -18,6 +18,7 @@ namespace Kargono::RuntimeUI
 		Assets::AssetHandle m_ActiveUIHandle{ Assets::EmptyHandle };
 		Ref<Font> m_DefaultFont{ nullptr };
 		Rendering::RendererInputSpec m_BackgroundInputSpec{};
+		Rendering::RendererInputSpec m_ImageInputSpec{};
 	};
 
 	void RuntimeUIService::Init()
@@ -28,7 +29,7 @@ namespace Kargono::RuntimeUI
 		s_RuntimeUIContext->m_ActiveUIHandle = Assets::EmptyHandle;
 		s_RuntimeUIContext->m_DefaultFont = FontService::InstantiateEditorFont("Resources/Fonts/arial.ttf");
 
-		// Initialize Window/Widget Rendering Data
+		// Initialize Window/Widget background Rendering Data
 		{
 			// Create shader for UI background/quad rendering
 			Rendering::ShaderSpecification shaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, true, Rendering::RenderingType::DrawIndex, false};
@@ -41,6 +42,26 @@ namespace Kargono::RuntimeUI
 			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
 			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
 			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
+
+			s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader = localShader;
+			s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer = localBuffer;
+			s_RuntimeUIContext->m_BackgroundInputSpec.m_ShapeComponent = shapeComp;
+		}
+
+		// Initialize texture rendering data
+		{
+			// Create shader for UI background/quad rendering
+			Rendering::ShaderSpecification shaderSpec{ Rendering::ColorInputType::None, Rendering::TextureInputType::ColorTexture, false, true, true, Rendering::RenderingType::DrawIndex, false };
+			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
+			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", localBuffer, localShader);
+
+			// Create basic shape component for UI quad rendering
+			ECS::ShapeComponent* shapeComp = new ECS::ShapeComponent();
+			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
+			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
+			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
+			shapeComp->Texture = nullptr;
 
 			s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader = localShader;
 			s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer = localBuffer;
@@ -1619,6 +1640,29 @@ namespace Kargono::RuntimeUI
 
 		// Call the text's rendering function
 		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->OnRenderSingleLineText(m_Text, widgetTranslation, m_TextColor, textSize);
+	}
+
+	void ImageWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	{
+		Rendering::RendererInputSpec& imageRendererSpec = RuntimeUIService::s_RuntimeUIContext->m_ImageInputSpec;
+
+		// Calculate the widget's rendering data
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
+
+		// Get widget translation
+		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
+
+		if (m_ImageRef)
+		{
+			// Create the widget's background rendering data
+			imageRendererSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
+				* glm::scale(Math::mat4(1.0f), widgetSize);
+
+			imageRendererSpec.m_Texture = m_ImageRef;
+
+			// Submit background data to GPU
+			Rendering::RenderingService::SubmitDataToRenderer(imageRendererSpec);
+		}
 	}
 
 }
