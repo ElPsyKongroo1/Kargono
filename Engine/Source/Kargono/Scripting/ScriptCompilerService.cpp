@@ -704,7 +704,7 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
-		newPrimitiveType.Name = "user_interface_text_widget";
+		newPrimitiveType.Name = "text_widget";
 		newPrimitiveType.Description = "Reference to a user interface text widget. This object is a reference to a text widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
 		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
 		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
@@ -712,7 +712,7 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
-		newPrimitiveType.Name = "user_interface_button_widget";
+		newPrimitiveType.Name = "button_widget";
 		newPrimitiveType.Description = "Reference to a user interface button widget. This object is a reference to a button widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
 		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
 		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
@@ -720,8 +720,16 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
-		newPrimitiveType.Name = "user_interface_image_widget";
+		newPrimitiveType.Name = "image_widget";
 		newPrimitiveType.Description = "Reference to a user interface image widget. This object is a reference to a image widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTexture;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "image_button_widget";
+		newPrimitiveType.Description = "Reference to a user interface image button widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
 		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
 		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTexture;
@@ -1541,16 +1549,16 @@ namespace Kargono::Scripting
 					switch (currentWidget->m_WidgetType)
 					{
 					case RuntimeUI::WidgetTypes::TextWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_text_widget" };
+						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "text_widget" };
 						break;
 					case RuntimeUI::WidgetTypes::ButtonWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_button_widget" };
+						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "button_widget" };
 						break;
 					case RuntimeUI::WidgetTypes::ImageWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_image_widget" };
+						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "image_widget" };
 						break;
 					case RuntimeUI::WidgetTypes::ImageButtonWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_image_button_widget" };
+						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "image_button_widget" };
 						break;
 					default:
 						KG_ERROR("Invalid widget type provided when loading widget information into kgscript language");
@@ -1806,8 +1814,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetWidgetText" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_text_widget" });
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "text_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "button_widget" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1870,7 +1878,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "WidgetSelectable" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "image_button_widget" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1891,7 +1900,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsWidgetSelected" };
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "image_button_widget" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1908,8 +1918,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "WidgetTextColor" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_text_widget" });
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "text_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "button_widget" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1932,7 +1942,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "WidgetBackgroundColor" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "image_button_widget" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1953,7 +1964,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetSelectedWidget" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "image_button_widget" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1970,7 +1982,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetWidgetImage" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface_image_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "image_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "image_button_widget" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};

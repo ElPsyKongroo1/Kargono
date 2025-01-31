@@ -54,6 +54,8 @@ namespace Kargono::Panels
 			break;
 		}
 
+		s_EditorApp->m_MainWindow->m_ScriptEditorPanel->DrawOnCreatePopup();
+
 		// End the window
 		EditorUI::EditorUIService::EndWindow();
 	}

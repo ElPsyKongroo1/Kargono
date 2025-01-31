@@ -587,6 +587,7 @@ namespace Kargono::RuntimeUI
 		friend class TextWidget;
 		friend class ButtonWidget;
 		friend class ImageWidget;
+		friend class ImageButtonWidget;
 		friend class Window;
 	};
 }
@@ -603,6 +604,7 @@ namespace Kargono::Utility
 			case RuntimeUI::WidgetTypes::ComboWidget: return "ComboWidget";
 			case RuntimeUI::WidgetTypes::PopupWidget: return "PopupWidget";
 			case RuntimeUI::WidgetTypes::ImageWidget: return "ImageWidget";
+			case RuntimeUI::WidgetTypes::ImageButtonWidget: return "ImageButtonWidget";
 			case RuntimeUI::WidgetTypes::None: return "None";
 			default:
 			{
@@ -620,6 +622,7 @@ namespace Kargono::Utility
 		if (widgetName == "ComboWidget") { return RuntimeUI::WidgetTypes::ComboWidget; }
 		if (widgetName == "PopupWidget") { return RuntimeUI::WidgetTypes::PopupWidget; }
 		if (widgetName == "ImageWidget") { return RuntimeUI::WidgetTypes::ImageWidget; }
+		if (widgetName == "ImageButtonWidget") { return RuntimeUI::WidgetTypes::ImageButtonWidget; }
 		if (widgetName == "None") { return RuntimeUI::WidgetTypes::None; }
 
 		KG_ERROR("Invalid Widget Type at StringToWidgetType");

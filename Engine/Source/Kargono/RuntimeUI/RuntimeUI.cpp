@@ -251,6 +251,7 @@ namespace Kargono::RuntimeUI
 
 		// Revalidate navigation links
 		CalculateWindowNavigationLinks();
+
 		return true;
 	}
 
@@ -304,8 +305,32 @@ namespace Kargono::RuntimeUI
 			return false;
 		}
 
+		// Clear default active widget if necessary
+		if (widgetIndex == indicatedWindow.m_DefaultActiveWidget)
+		{
+			indicatedWindow.m_DefaultActiveWidget = k_InvalidWidgetIndex;
+			indicatedWindow.m_DefaultActiveWidgetRef = nullptr;
+		}
+
 		// Delete the widget
 		indicatedWindow.m_Widgets.erase(indicatedWindow.m_Widgets.begin() + widgetIndex);
+
+		// Revalidate the default active widget for this window
+		if (indicatedWindow.m_DefaultActiveWidgetRef)
+		{
+			// Find the indicated default active widget
+			size_t iteration{ 0 };
+			for (Ref<Widget> widget : indicatedWindow.m_Widgets)
+			{
+				if (indicatedWindow.m_DefaultActiveWidgetRef == widget)
+				{
+					indicatedWindow.m_DefaultActiveWidget = iteration;
+					break;
+				}
+				iteration++;
+			}
+		}
+
 		return true;
 	}
 
@@ -1773,6 +1798,42 @@ namespace Kargono::RuntimeUI
 
 	void ImageButtonWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		Rendering::RendererInputSpec& backgroundRendererSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
+		Rendering::RendererInputSpec& imageRendererSpec = RuntimeUIService::s_RuntimeUIContext->m_ImageInputSpec;
+
+		// Calculate the widget's rendering data
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
+
+		// Get widget translation
+		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
+
+		// Draw background
+		if (m_SelectionData.m_ActiveBackgroundColor.w > 0.001f)
+		{
+			// Create the widget's background rendering data
+			backgroundRendererSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
+				* glm::scale(Math::mat4(1.0f), widgetSize);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_SelectionData.m_ActiveBackgroundColor, "a_Color", backgroundRendererSpec.m_Buffer, backgroundRendererSpec.m_Shader);
+
+			// Submit background data to GPU
+			Rendering::RenderingService::SubmitDataToRenderer(backgroundRendererSpec);
+		}
+
+		widgetTranslation.z += 0.001f;
+
+		// Draw image
+		if (m_ImageRef)
+		{
+			// Create the widget's background rendering data
+			imageRendererSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
+				* glm::scale(Math::mat4(1.0f), widgetSize);
+
+			imageRendererSpec.m_Texture = m_ImageRef;
+			imageRendererSpec.m_ShapeComponent->Texture = m_ImageRef;
+
+			// Submit background data to GPU
+			Rendering::RenderingService::SubmitDataToRenderer(imageRendererSpec);
+		}
 	}
 
 }
