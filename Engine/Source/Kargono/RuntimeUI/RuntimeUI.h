@@ -127,6 +127,7 @@ namespace Kargono::RuntimeUI
 		// Widget Data
 		//============================
 		std::string m_Tag{ "None" };
+		PixelOrPercent m_SizeType{ PixelOrPercent::Percent };
 		PixelOrPercent m_XPositionType{ PixelOrPercent::Percent };
 		PixelOrPercent m_YPositionType{ PixelOrPercent::Percent };
 		RelativeOrAbsolute m_XRelativeOrAbsolute{ RelativeOrAbsolute::Absolute };
@@ -135,7 +136,8 @@ namespace Kargono::RuntimeUI
 		Constraint m_YConstraint{ Constraint::None };
 		Math::vec2 m_PercentPosition{ 0.4f };
 		Math::ivec2 m_PixelPosition{ 0 };
-		Math::vec2 m_Size  { 0.3f };
+		Math::vec2 m_PercentSize  { 0.3f, 0.1f };
+		Math::ivec2 m_PixelSize  { 50 };
 		WidgetTypes m_WidgetType{ WidgetTypes::None };
 	};
 
@@ -152,7 +154,6 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::TextWidget;
-			m_Size = { 0.3f, 0.1f };
 		}
 		virtual ~TextWidget() override = default;
 	public:
@@ -209,7 +210,6 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::ButtonWidget;
-			m_Size = { 0.3f, 0.1f };
 		}
 		virtual ~ButtonWidget() override = default;
 	public:
@@ -266,7 +266,6 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::ImageButtonWidget;
-			m_Size = { 0.3f, 0.1f };
 		}
 		virtual ~ImageButtonWidget() override = default;
 	public:
@@ -290,6 +289,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		Ref<Rendering::Texture2D> m_ImageRef{ nullptr };
 		Assets::AssetHandle m_ImageHandle{ Assets::EmptyHandle };
+		bool m_FixedAspectRatio{ false };
 		SelectionData m_SelectionData;
 	private:
 		Math::vec2 m_TextDimensions{};
@@ -401,6 +401,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		Ref<Rendering::Texture2D> m_ImageRef{ nullptr };
 		Assets::AssetHandle m_ImageHandle{ Assets::EmptyHandle };
+		bool m_FixedAspectRatio{ false };
 	};
 
 	//============================
@@ -542,6 +543,7 @@ namespace Kargono::RuntimeUI
 		// Revalidate UI Context
 		//==============================
 		static void CalculateWindowNavigationLinks();
+		static void RecalculateTextData(Window* parentWindow, Widget* widget);
 
 	public:
 		//==============================

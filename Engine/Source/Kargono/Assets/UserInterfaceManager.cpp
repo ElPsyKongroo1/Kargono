@@ -61,9 +61,11 @@ namespace Kargono::Assets
 				out << YAML::Key << "YConstraint" << YAML::Value << Utility::ConstraintToString(widget->m_YConstraint);
 				out << YAML::Key << "PercentPosition" << YAML::Value << widget->m_PercentPosition;
 				out << YAML::Key << "PixelPosition" << YAML::Value << widget->m_PixelPosition;
+				out << YAML::Key << "SizeType" << YAML::Value << Utility::PixelOrPercentToString(widget->m_SizeType);
 				out << YAML::Key << "XPositionType" << YAML::Value << Utility::PixelOrPercentToString(widget->m_XPositionType);
 				out << YAML::Key << "YPositionType" << YAML::Value << Utility::PixelOrPercentToString(widget->m_YPositionType);
-				out << YAML::Key << "Size" << YAML::Value << widget->m_Size;
+				out << YAML::Key << "PercentSize" << YAML::Value << widget->m_PercentSize;
+				out << YAML::Key << "PixelSize" << YAML::Value << widget->m_PixelSize;
 				out << YAML::Key << "WidgetType" << YAML::Value << Utility::WidgetTypeToString(widget->m_WidgetType);
 				switch (widget->m_WidgetType)
 				{
@@ -111,6 +113,7 @@ namespace Kargono::Assets
 					// Image field
 					out << YAML::BeginMap; // Begin ImageWidget Map
 					out << YAML::Key << "Image" << YAML::Value << (uint64_t)imageWidget->m_ImageHandle;
+					out << YAML::Key << "FixedAspectRatio" << YAML::Value << imageWidget->m_FixedAspectRatio;
 					out << YAML::EndMap; // End ImageWidget Map
 					break;
 				}
@@ -122,6 +125,7 @@ namespace Kargono::Assets
 					// Image field
 					out << YAML::BeginMap; // Begin ImageWidget Map
 					out << YAML::Key << "Image" << YAML::Value << (uint64_t)imageButtonWidget->m_ImageHandle;
+					out << YAML::Key << "FixedAspectRatio" << YAML::Value << imageButtonWidget->m_FixedAspectRatio;
 					// Color fields
 					out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << imageButtonWidget->m_SelectionData.m_DefaultBackgroundColor;
 					// Selectable fields
@@ -291,6 +295,7 @@ namespace Kargono::Assets
 								}
 								imageWidget->m_ImageRef = imageRef;
 							}
+							imageWidget->m_FixedAspectRatio = specificWidget["FixedAspectRatio"].as<bool>();
 							break;
 						}
 						case RuntimeUI::WidgetTypes::ImageButtonWidget:
@@ -340,6 +345,7 @@ namespace Kargono::Assets
 								}
 								imageButtonWidget->m_ImageRef = imageButtonRef;
 							}
+							imageButtonWidget->m_FixedAspectRatio = specificWidget["FixedAspectRatio"].as<bool>();
 							break;
 						}
 						default:
@@ -358,7 +364,9 @@ namespace Kargono::Assets
 						newWidget->m_YRelativeOrAbsolute = Utility::StringToRelativeOrAbsolute(widget["YRelativeOrAbsolute"].as<std::string>());
 						newWidget->m_XConstraint = Utility::StringToConstraint(widget["XConstraint"].as<std::string>());
 						newWidget->m_YConstraint= Utility::StringToConstraint(widget["YConstraint"].as<std::string>());
-						newWidget->m_Size = widget["Size"].as<Math::vec2>();
+						newWidget->m_PercentSize = widget["PercentSize"].as<Math::vec2>();
+						newWidget->m_PixelSize = widget["PixelSize"].as<Math::ivec2>();
+						
 						newWidgetsList.push_back(newWidget);
 
 

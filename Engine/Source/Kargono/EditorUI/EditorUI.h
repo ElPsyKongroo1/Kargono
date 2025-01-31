@@ -43,6 +43,7 @@ namespace Kargono::EditorUI
 	struct TreeSpec;
 	struct InlineButtonSpec;
 	struct EditIntegerSpec;
+	struct EditIVec2Spec;
 	struct EditFloatSpec;
 	struct EditVec2Spec;
 	struct EditVec3Spec;
@@ -149,6 +150,7 @@ namespace Kargono::EditorUI
 		static void Checkbox(CheckboxSpec& spec);
 
 		static void EditInteger(EditIntegerSpec& spec);
+		static void EditIVec2(EditIVec2Spec& spec);
 		static void EditFloat(EditFloatSpec& spec);
 		static void EditVec2(EditVec2Spec& spec);
 		static void EditVec3(EditVec3Spec& spec);
@@ -450,6 +452,34 @@ namespace Kargono::EditorUI
 		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::EditInteger(EditIntegerSpec& spec);
+	};
+
+	enum EditIVec2Flags
+	{
+		EditIVec2_None = 0,
+		EditIVec2_Indented = BIT(0)
+	};
+
+	struct EditIVec2Spec
+	{
+	public:
+		EditIVec2Spec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string m_Label{};
+		WidgetFlags m_Flags{ EditIVec2_None };
+		Math::ivec2 m_CurrentIVec2{};
+		std::array<int32_t, 2> m_Bounds{ 0, 0 };
+		int32_t m_ScrollSpeed{ 1 };
+		std::function<void(EditIVec2Spec&)> m_ConfirmAction{ nullptr };
+		Ref<void> m_ProvidedData{ nullptr };
+	private:
+		bool m_Editing{ false };
+		WidgetID m_WidgetID;
+	private:
+		friend void EditorUIService::EditIVec2(EditIVec2Spec& spec);
 	};
 
 	enum EditFloatFlags

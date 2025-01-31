@@ -1518,6 +1518,109 @@ namespace Kargono::EditorUI
 			spec.m_Editing, spec.m_Editing ? s_PrimaryTextColor : s_DisabledColor);
 	}
 
+	void EditorUIService::EditIVec2(EditIVec2Spec& spec)
+	{
+		// Local Variables
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.m_WidgetID);
+		uint32_t widgetCount{ 0 };
+
+		// Draw backgrounds
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
+			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+
+		// Display Item
+		if (spec.m_Flags & EditIVec2_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.m_Label.c_str(),
+			spec.m_Flags & EditIVec2_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
+		TruncateText(spec.m_Label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+
+		ImGui::PopStyleColor();
+		ImGui::SameLine(s_SecondaryTextPosOne);
+
+		if (spec.m_Editing)
+		{
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+			// x value
+			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor1);
+			float yPosition = ImGui::GetCursorPosY();
+			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentIVec2.x), (float)spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%d", ImGuiSliderFlags_AlwaysClamp))
+			{
+				if (spec.m_ConfirmAction)
+				{
+					spec.m_ConfirmAction(spec);
+				}
+			}
+			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(s_HighlightColor1, "X-Value");
+				ImGui::EndTooltip();
+			}
+
+			// y value
+			ImGui::PushStyleColor(ImGuiCol_Text, s_HighlightColor2);
+			ImGui::SetCursorPos({ s_SecondaryTextPosTwo, yPosition });
+			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentIVec2.y), (float)spec.m_ScrollSpeed,
+				spec.m_Bounds[0], spec.m_Bounds[1],
+				"%d", ImGuiSliderFlags_AlwaysClamp))
+			{
+				if (spec.m_ConfirmAction)
+				{
+					spec.m_ConfirmAction(spec);
+				}
+			}
+			ImGui::PopStyleColor();
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextColored(s_HighlightColor2, "Y-Value");
+				ImGui::EndTooltip();
+			}
+			ImGui::PopStyleVar();
+
+		}
+		else
+		{
+			float yPosition = ImGui::GetCursorPosY();
+			ImGui::SetCursorPos({ s_SecondaryTextPosOne, yPosition });
+			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
+			int32_t integerPosition = ImGui::FindPositionAfterLength(
+				std::to_string(spec.m_CurrentIVec2.x).c_str(), s_SecondaryTextSmallWidth);
+			TruncateText(std::to_string(spec.m_CurrentIVec2.x),
+				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
+			ImGui::SetCursorPos({ s_SecondaryTextPosTwo, yPosition });
+			integerPosition = ImGui::FindPositionAfterLength(
+				std::to_string(spec.m_CurrentIVec2.y).c_str(), s_SecondaryTextSmallWidth);
+			TruncateText(std::to_string(spec.m_CurrentIVec2.y),
+				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
+			ImGui::PopStyleColor();
+		}
+
+		ImGui::SameLine();
+		CreateButton(spec.m_WidgetID + WidgetIterator(widgetCount), [&]()
+		{
+			Utility::Operations::ToggleBoolean(spec.m_Editing);
+		},
+		EditorUIService::s_SmallEditButton,
+		spec.m_Editing, spec.m_Editing ? s_PrimaryTextColor : s_DisabledColor);
+	}
+
 	void EditorUIService::EditFloat(EditFloatSpec& spec)
 	{
 		// Local Variables

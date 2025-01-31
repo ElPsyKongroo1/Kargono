@@ -1182,6 +1182,29 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
+	void RuntimeUIService::RecalculateTextData(Window* parentWindow, Widget* widget)
+	{
+		KG_ASSERT(parentWindow);
+		KG_ASSERT(widget);
+
+		// Revalidate text dimensions for widget
+		switch (widget->m_WidgetType)
+		{
+		case WidgetTypes::TextWidget:
+			(*(TextWidget*)widget).CalculateTextMetadata(parentWindow);
+			break;
+		case WidgetTypes::ButtonWidget:
+			(*(ButtonWidget*)widget).CalculateTextSize();
+			break;
+		case WidgetTypes::ImageWidget:
+		case WidgetTypes::ImageButtonWidget:
+			break;
+		default:
+			KG_ERROR("Invalid widget type provided when revalidating widget text size");
+			break;
+		}
+	}
+
 	std::size_t RuntimeUIService::CalculateNavigationLink(Window& currentWindow, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize)
 	{
 		// Initialize variables for navigation link calculation
@@ -1443,22 +1466,7 @@ namespace Kargono::RuntimeUI
 		// Add new widget to buffer
 		m_Widgets.push_back(newWidget);
 
-		// Revalidate text dimensions for widget
-		switch (newWidget->m_WidgetType)
-		{
-		case WidgetTypes::TextWidget:
-			(*(TextWidget*)newWidget.get()).CalculateTextMetadata(this);
-			break;
-		case WidgetTypes::ButtonWidget:
-			(*(ButtonWidget*)newWidget.get()).CalculateTextSize();
-			break;
-		case WidgetTypes::ImageWidget:
-		case WidgetTypes::ImageButtonWidget:
-			break;
-		default:
-			KG_ERROR("Invalid widget type provided when revalidating widget text size");
-			break;
-		}
+		RuntimeUIService::RecalculateTextData(this, newWidget.get());
 	}
 
 	void Window::DeleteWidget(std::size_t widgetLocation)
@@ -1619,23 +1627,29 @@ namespace Kargono::RuntimeUI
 
 	Math::vec3 Widget::CalculateWidgetSize(const Math::vec3& windowSize)
 	{
-		return Math::vec3(windowSize.x * m_Size.x, windowSize.y * m_Size.y, 1.0f);
+		return Math::vec3
+		(
+			m_SizeType == PixelOrPercent::Percent ? windowSize.x * m_PercentSize.x : m_PixelSize.x, 
+			m_SizeType == PixelOrPercent::Percent ? windowSize.y * m_PercentSize.y : m_PixelSize.y,
+			1.0f
+		);
 	}
 
 	Math::vec3 Widget::CalculateWorldPosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize)
 	{
 		float widgetXPos{ m_XPositionType == PixelOrPercent::Percent ? windowSize.x * m_PercentPosition.x : (float)m_PixelPosition.x };
 		float widgetYPos{ m_YPositionType == PixelOrPercent::Percent ? windowSize.y * m_PercentPosition.y : (float)m_PixelPosition.y };
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 		if (m_XRelativeOrAbsolute == RelativeOrAbsolute::Relative && m_XConstraint != Constraint::None)
 		{
 			// Handle relative code
 			switch (m_XConstraint)
 			{
 			case Constraint::Center:
-				widgetXPos = (windowSize.x * 0.5f) + widgetXPos - (m_Size.x * windowSize.x / 2.0f);
+				widgetXPos = (windowSize.x * 0.5f) + widgetXPos - (widgetSize.x / 2.0f);
 				break;
 			case Constraint::Right:
-				widgetXPos = windowSize.x + widgetXPos - (m_Size.x * windowSize.x);
+				widgetXPos = windowSize.x + widgetXPos - (widgetSize.x);
 				break;
 			case Constraint::Left:
 				break;
@@ -1651,10 +1665,10 @@ namespace Kargono::RuntimeUI
 			switch (m_YConstraint)
 			{
 			case Constraint::Center:
-				widgetYPos = (windowSize.y * 0.5f) + widgetYPos - (m_Size.y * windowSize.y / 2.0f);;
+				widgetYPos = (windowSize.y * 0.5f) + widgetYPos - (widgetSize.y / 2.0f);;
 				break;
 			case Constraint::Top:
-				widgetYPos = windowSize.y + widgetYPos - (m_Size.y * windowSize.y);
+				widgetYPos = windowSize.y + widgetYPos - widgetSize.y;
 				break;
 			case Constraint::Bottom:
 				break;
@@ -1673,6 +1687,7 @@ namespace Kargono::RuntimeUI
 	{
 		float widgetXPos{ worldPosition.x - windowTranslation.x };
 		float widgetYPos{ worldPosition.y - windowTranslation.y };
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
 		if (m_XRelativeOrAbsolute == RelativeOrAbsolute::Relative && m_XConstraint != Constraint::None)
 		{
@@ -1680,10 +1695,10 @@ namespace Kargono::RuntimeUI
 			switch (m_XConstraint)
 			{
 			case Constraint::Center:
-				widgetXPos = widgetXPos - (windowSize.x * 0.5f) + (m_Size.x * windowSize.x / 2.0f);
+				widgetXPos = widgetXPos - (windowSize.x * 0.5f) + (widgetSize.x / 2.0f);
 				break;
 			case Constraint::Right:
-				widgetXPos = widgetXPos - windowSize.x + (m_Size.x * windowSize.x);
+				widgetXPos = widgetXPos - windowSize.x + (widgetSize.x);
 				break;
 			case Constraint::Left:
 				break;
@@ -1699,10 +1714,10 @@ namespace Kargono::RuntimeUI
 			switch (m_YConstraint)
 			{
 			case Constraint::Center:
-				widgetYPos = widgetYPos - (windowSize.y * 0.5f) + (m_Size.y * windowSize.y / 2.0f);
+				widgetYPos = widgetYPos - (windowSize.y * 0.5f) + (widgetSize.y / 2.0f);
 				break;
 			case Constraint::Top:
-				widgetYPos = widgetYPos - windowSize.y + (m_Size.y * windowSize.y);
+				widgetYPos = widgetYPos - windowSize.y + (widgetSize.y);
 				break;
 			case Constraint::Bottom:
 				break;

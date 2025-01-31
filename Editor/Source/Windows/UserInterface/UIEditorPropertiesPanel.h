@@ -101,7 +101,9 @@ namespace Kargono::Panels
 		// Modify widget tag
 		void OnModifyWidgetTag(EditorUI::EditTextSpec& spec);
 		// Modify widget size
-		void OnModifyWidgetSize(EditorUI::EditVec2Spec& spec);
+		void OnModifyWidgetSizePixelOrPercent();
+		void OnModifyWidgetPercentSize(EditorUI::EditVec2Spec& spec);
+		void OnModifyWidgetPixelSize(EditorUI::EditIVec2Spec& spec);
 		// Modify widget location
 		void OnModifyWidgetXLocationRelOrAbs();
 		void OnModifyWidgetYLocationRelOrAbs();
@@ -116,7 +118,6 @@ namespace Kargono::Panels
 		void OnModifyWidgetXPercentLocation(EditorUI::EditFloatSpec& spec);
 		void OnModifyWidgetYPercentLocation(EditorUI::EditFloatSpec& spec);
 		
-
 		//=========================
 		// Change Text Widget Data
 		//=========================
@@ -159,6 +160,8 @@ namespace Kargono::Panels
 		// Modify image widget's image
 		void OnModifyImageWidgetImage(const EditorUI::OptionEntry& entry);
 		void OnOpenImageWidgetImagePopup();
+		// Modify image widget's fixed aspect ratio option
+		void OnModifyImageWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec);
 
 		//=========================
 		// Change Image Widget Data
@@ -166,6 +169,8 @@ namespace Kargono::Panels
 		// Modify image button widget's image
 		void OnModifyImageButtonWidgetImage(const EditorUI::OptionEntry& entry);
 		void OnOpenImageButtonWidgetImagePopup();
+		// Modify image button widget's fixed aspect ratio option
+		void OnModifyImageButtonWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec);
 		// Modify if button widget is selectable
 		void OnModifyImageButtonWidgetSelectable(EditorUI::CheckboxSpec& spec);
 		// Modify widget on press
@@ -207,7 +212,22 @@ namespace Kargono::Panels
 		// Edit Widget Options
 		EditorUI::CollapsingHeaderSpec m_WidgetGeneralHeader{};
 		EditorUI::EditTextSpec m_WidgetTag{};
-		EditorUI::EditVec2Spec m_WidgetSize{};
+		EditorUI::RadioSelectorSpec m_WidgetPixelOrPercentSize{};
+		EditorUI::EditVec2Spec m_WidgetPercentSize{};
+		EditorUI::EditIVec2Spec m_WidgetPixelSize{};
+
+		// Edit Widget Location Options
+		EditorUI::CollapsingHeaderSpec m_WidgetLocationHeader{};
+		EditorUI::RadioSelectorSpec m_WidgetXPixelOrPercentLocation{};
+		EditorUI::RadioSelectorSpec m_WidgetYPixelOrPercentLocation{};
+		EditorUI::RadioSelectorSpec m_WidgetXRelOrAbsLocation{};
+		EditorUI::RadioSelectorSpec m_WidgetYRelOrAbsLocation{};
+		EditorUI::SelectOptionSpec m_WidgetXConstraintLocation{};
+		EditorUI::SelectOptionSpec m_WidgetYConstraintLocation{};
+		EditorUI::EditIntegerSpec m_WidgetXPixelLocation{};
+		EditorUI::EditIntegerSpec m_WidgetYPixelLocation{};
+		EditorUI::EditFloatSpec m_WidgetXPercentLocation{};
+		EditorUI::EditFloatSpec m_WidgetYPercentLocation{};
 
 		// Edit Text Widget Options
 		EditorUI::CollapsingHeaderSpec m_TextWidgetHeader{};
@@ -223,7 +243,6 @@ namespace Kargono::Panels
 		EditorUI::EditFloatSpec m_ButtonWidgetTextSize{};
 		EditorUI::EditVec4Spec m_ButtonWidgetTextColor{};
 		EditorUI::SelectOptionSpec m_ButtonWidgetTextAlignment{};
-
 		EditorUI::EditVec4Spec m_ButtonWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_ButtonWidgetOnPress{};
 		EditorUI::CheckboxSpec m_ButtonWidgetSelectable{};
@@ -231,23 +250,12 @@ namespace Kargono::Panels
 		// Edit Image Widget Options
 		EditorUI::CollapsingHeaderSpec m_ImageWidgetHeader{};
 		EditorUI::SelectOptionSpec m_ImageWidgetImage{};
-
-		// Edit Widget Location Options
-		EditorUI::CollapsingHeaderSpec m_WidgetLocationHeader{};
-		EditorUI::RadioSelectorSpec m_WidgetXPixelOrPercent{};
-		EditorUI::RadioSelectorSpec m_WidgetYPixelOrPercent{};
-		EditorUI::RadioSelectorSpec m_WidgetXRelOrAbs{};
-		EditorUI::RadioSelectorSpec m_WidgetYRelOrAbs{};
-		EditorUI::SelectOptionSpec m_WidgetXConstraint{};
-		EditorUI::SelectOptionSpec m_WidgetYConstraint{};
-		EditorUI::EditIntegerSpec m_WidgetXPixelLocation{};
-		EditorUI::EditIntegerSpec m_WidgetYPixelLocation{};
-		EditorUI::EditFloatSpec m_WidgetXPercentLocation{};
-		EditorUI::EditFloatSpec m_WidgetYPercentLocation{};
+		EditorUI::CheckboxSpec m_ImageWidgetFixedAspectRatio{};
 
 		// Edit Image Button Widget Options
 		EditorUI::CollapsingHeaderSpec m_ImageButtonWidgetHeader{};
 		EditorUI::SelectOptionSpec m_ImageButtonWidgetImage{};
+		EditorUI::CheckboxSpec m_ImageButtonWidgetFixedAspectRatio{};
 		EditorUI::EditVec4Spec m_ImageButtonWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_ImageButtonWidgetOnPress{};
 		EditorUI::CheckboxSpec m_ImageButtonWidgetSelectable{};

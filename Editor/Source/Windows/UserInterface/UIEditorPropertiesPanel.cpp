@@ -142,10 +142,20 @@ namespace Kargono::Panels
 			m_WidgetTag.m_CurrentOption = m_ActiveWidget->m_Tag;
 			EditorUI::EditorUIService::EditText(m_WidgetTag);
 
-			// Edit selected widget's size relative to its window
-			m_WidgetSize.m_CurrentVec2 = m_ActiveWidget->m_Size;
-			EditorUI::EditorUIService::EditVec2(m_WidgetSize);
-
+			m_WidgetPixelOrPercentSize.m_SelectedOption = (uint16_t)m_ActiveWidget->m_SizeType;
+			EditorUI::EditorUIService::RadioSelector(m_WidgetPixelOrPercentSize);
+			if (m_WidgetPixelOrPercentSize.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
+			{
+				// Edit selected widget's size in pixels
+				m_WidgetPixelSize.m_CurrentIVec2 = m_ActiveWidget->m_PixelSize;
+				EditorUI::EditorUIService::EditIVec2(m_WidgetPixelSize);
+			}
+			else
+			{
+				// Edit selected widget's size relative to its window
+				m_WidgetPercentSize.m_CurrentVec2 = m_ActiveWidget->m_PercentSize;
+				EditorUI::EditorUIService::EditVec2(m_WidgetPercentSize);
+			}
 		}
 
 		// Draw location header for widget options and display options to edit selected widget's location
@@ -153,16 +163,16 @@ namespace Kargono::Panels
 		if (m_WidgetLocationHeader.m_Expanded)
 		{
 			// Modify the X location metric
-			m_WidgetXRelOrAbs.m_SelectedOption = (uint16_t)m_ActiveWidget->m_XRelativeOrAbsolute;
-			EditorUI::EditorUIService::RadioSelector(m_WidgetXRelOrAbs);
-			if (m_WidgetXRelOrAbs.m_SelectedOption == (uint16_t)RuntimeUI::RelativeOrAbsolute::Relative)
+			m_WidgetXRelOrAbsLocation.m_SelectedOption = (uint16_t)m_ActiveWidget->m_XRelativeOrAbsolute;
+			EditorUI::EditorUIService::RadioSelector(m_WidgetXRelOrAbsLocation);
+			if (m_WidgetXRelOrAbsLocation.m_SelectedOption == (uint16_t)RuntimeUI::RelativeOrAbsolute::Relative)
 			{
-				m_WidgetXConstraint.m_CurrentOption = { Utility::ConstraintToString(m_ActiveWidget->m_XConstraint) , (uint16_t)m_ActiveWidget->m_XConstraint};
-				EditorUI::EditorUIService::SelectOption(m_WidgetXConstraint);
+				m_WidgetXConstraintLocation.m_CurrentOption = { Utility::ConstraintToString(m_ActiveWidget->m_XConstraint) , (uint16_t)m_ActiveWidget->m_XConstraint};
+				EditorUI::EditorUIService::SelectOption(m_WidgetXConstraintLocation);
 			}
-			m_WidgetXPixelOrPercent.m_SelectedOption = (uint16_t)m_ActiveWidget->m_XPositionType;
-			EditorUI::EditorUIService::RadioSelector(m_WidgetXPixelOrPercent);
-			if (m_WidgetXPixelOrPercent.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
+			m_WidgetXPixelOrPercentLocation.m_SelectedOption = (uint16_t)m_ActiveWidget->m_XPositionType;
+			EditorUI::EditorUIService::RadioSelector(m_WidgetXPixelOrPercentLocation);
+			if (m_WidgetXPixelOrPercentLocation.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
 			{
 				m_WidgetXPixelLocation.m_CurrentInteger = m_ActiveWidget->m_PixelPosition.x;
 				EditorUI::EditorUIService::EditInteger(m_WidgetXPixelLocation);
@@ -176,16 +186,16 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Modify the Y location metric
-			m_WidgetYRelOrAbs.m_SelectedOption = (uint16_t)m_ActiveWidget->m_YRelativeOrAbsolute;
-			EditorUI::EditorUIService::RadioSelector(m_WidgetYRelOrAbs);
-			if (m_WidgetYRelOrAbs.m_SelectedOption == (uint16_t)RuntimeUI::RelativeOrAbsolute::Relative)
+			m_WidgetYRelOrAbsLocation.m_SelectedOption = (uint16_t)m_ActiveWidget->m_YRelativeOrAbsolute;
+			EditorUI::EditorUIService::RadioSelector(m_WidgetYRelOrAbsLocation);
+			if (m_WidgetYRelOrAbsLocation.m_SelectedOption == (uint16_t)RuntimeUI::RelativeOrAbsolute::Relative)
 			{
-				m_WidgetYConstraint.m_CurrentOption = { Utility::ConstraintToString(m_ActiveWidget->m_YConstraint) , (uint16_t)m_ActiveWidget->m_YConstraint };
-				EditorUI::EditorUIService::SelectOption(m_WidgetYConstraint);
+				m_WidgetYConstraintLocation.m_CurrentOption = { Utility::ConstraintToString(m_ActiveWidget->m_YConstraint) , (uint16_t)m_ActiveWidget->m_YConstraint };
+				EditorUI::EditorUIService::SelectOption(m_WidgetYConstraintLocation);
 			}
-			m_WidgetYPixelOrPercent.m_SelectedOption = (uint16_t)m_ActiveWidget->m_YPositionType;
-			EditorUI::EditorUIService::RadioSelector(m_WidgetYPixelOrPercent);
-			if (m_WidgetYPixelOrPercent.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
+			m_WidgetYPixelOrPercentLocation.m_SelectedOption = (uint16_t)m_ActiveWidget->m_YPositionType;
+			EditorUI::EditorUIService::RadioSelector(m_WidgetYPixelOrPercentLocation);
+			if (m_WidgetYPixelOrPercentLocation.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
 			{
 				m_WidgetYPixelLocation.m_CurrentInteger = m_ActiveWidget->m_PixelPosition.y;
 				EditorUI::EditorUIService::EditInteger(m_WidgetYPixelLocation);
@@ -291,6 +301,10 @@ namespace Kargono::Panels
 				imageHandle
 			};
 			EditorUI::EditorUIService::SelectOption(m_ImageWidgetImage);
+
+			// Edit selected widget's fixed aspect ratio usage
+			m_ImageWidgetFixedAspectRatio.m_CurrentBoolean = activeImageWidget.m_FixedAspectRatio;
+			EditorUI::EditorUIService::Checkbox(m_ImageWidgetFixedAspectRatio);
 		}
 	}
 
@@ -312,6 +326,10 @@ namespace Kargono::Panels
 				imageHandle
 			};
 			EditorUI::EditorUIService::SelectOption(m_ImageButtonWidgetImage);
+
+			// Edit selected widget's fixed aspect ratio usage
+			m_ImageButtonWidgetFixedAspectRatio.m_CurrentBoolean = activeImageButtonWidget.m_FixedAspectRatio;
+			EditorUI::EditorUIService::Checkbox(m_ImageButtonWidgetFixedAspectRatio);
 
 			// Edit selected text widget's wrapped alignment
 			m_ImageButtonWidgetSelectable.m_CurrentBoolean = activeImageButtonWidget.m_SelectionData.m_Selectable;
@@ -581,10 +599,94 @@ namespace Kargono::Panels
 		m_WidgetTag.m_Flags |= EditorUI::EditText_Indented;
 		m_WidgetTag.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetTag);
 
+		// Set up widgets to select between relative and absolute location
+		m_WidgetPixelOrPercentSize.m_Label = "Sizing Mode";
+		m_WidgetPixelOrPercentSize.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetPixelOrPercentSize.m_FirstOptionLabel = "Pixel";
+		m_WidgetPixelOrPercentSize.m_SecondOptionLabel = "Percent";
+		m_WidgetPixelOrPercentSize.m_SelectedOption = (uint16_t)RuntimeUI::RelativeOrAbsolute::Relative;
+		m_WidgetPixelOrPercentSize.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetSizePixelOrPercent);
+
 		// Set up widget to modify the widget's size
-		m_WidgetSize.m_Label = "Size";
-		m_WidgetSize.m_Flags |= EditorUI::EditVec2_Indented;
-		m_WidgetSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetSize);
+		m_WidgetPercentSize.m_Label = "Percent Size";
+		m_WidgetPercentSize.m_Flags |= EditorUI::EditVec2_Indented;
+		m_WidgetPercentSize.m_Bounds = { 0, 10'000 };
+		m_WidgetPercentSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetPercentSize);
+
+		// Set up widget to modify the widget's size
+		m_WidgetPixelSize.m_Label = "Pixel Size";
+		m_WidgetPixelSize.m_Flags |= EditorUI::EditIVec2_Indented;
+		m_WidgetPixelSize.m_Bounds = { 0, 10'000 };
+		m_WidgetPixelSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetPixelSize);
+	}
+
+	void UIEditorPropertiesPanel::InitializeWidgetLocationOptions()
+	{
+		// Set up location collapsing header
+		m_WidgetLocationHeader.m_Label = "Widget Location Options";
+		m_WidgetLocationHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_WidgetLocationHeader.m_Expanded = true;
+
+		// Set up widgets for selecting a constraint type
+		m_WidgetXConstraintLocation.m_Label = "X Constraint";
+		m_WidgetXConstraintLocation.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetXConstraintLocation.m_CurrentOption = { "None", (uint64_t)RuntimeUI::Constraint::None };
+		m_WidgetXConstraintLocation.m_PopupAction = KG_BIND_CLASS_FN(OnOpenWidgetXConstraint);
+		m_WidgetXConstraintLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetXConstraint);
+
+		m_WidgetYConstraintLocation.m_Label = "Y Constraint";
+		m_WidgetYConstraintLocation.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetYConstraintLocation.m_CurrentOption = { "None", (uint64_t)RuntimeUI::Constraint::None };
+		m_WidgetYConstraintLocation.m_PopupAction = KG_BIND_CLASS_FN(OnOpenWidgetYConstraint);
+		m_WidgetYConstraintLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetYConstraint);
+
+		// Set up widgets to select between relative and absolute location
+		m_WidgetXRelOrAbsLocation.m_Label = "X Spacing Mode";
+		m_WidgetXRelOrAbsLocation.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetXRelOrAbsLocation.m_FirstOptionLabel = "Relative";
+		m_WidgetXRelOrAbsLocation.m_SecondOptionLabel = "Absolute";
+		m_WidgetXRelOrAbsLocation.m_SelectedOption = (uint16_t)RuntimeUI::RelativeOrAbsolute::Absolute;
+		m_WidgetXRelOrAbsLocation.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetXLocationRelOrAbs);
+
+		m_WidgetYRelOrAbsLocation.m_Label = "Y Spacing Mode";
+		m_WidgetYRelOrAbsLocation.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetYRelOrAbsLocation.m_FirstOptionLabel = "Relative";
+		m_WidgetYRelOrAbsLocation.m_SecondOptionLabel = "Absolute";
+		m_WidgetYRelOrAbsLocation.m_SelectedOption = (uint16_t)RuntimeUI::RelativeOrAbsolute::Absolute;
+		m_WidgetYRelOrAbsLocation.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetYLocationRelOrAbs);
+
+		// Set up widgets to select between pixel and percent location
+		m_WidgetXPixelOrPercentLocation.m_Label = "X Position Metric";
+		m_WidgetXPixelOrPercentLocation.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetXPixelOrPercentLocation.m_FirstOptionLabel = "Pixels";
+		m_WidgetXPixelOrPercentLocation.m_SecondOptionLabel = "Percent";
+		m_WidgetXPixelOrPercentLocation.m_SelectedOption = (uint16_t)RuntimeUI::PixelOrPercent::Percent;
+		m_WidgetXPixelOrPercentLocation.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetXLocationPixelOrPercent);
+
+		m_WidgetYPixelOrPercentLocation.m_Label = "Y Position Metric";
+		m_WidgetYPixelOrPercentLocation.m_Flags |= EditorUI::SelectOption_Indented;
+		m_WidgetYPixelOrPercentLocation.m_FirstOptionLabel = "Pixels";
+		m_WidgetYPixelOrPercentLocation.m_SecondOptionLabel = "Percent";
+		m_WidgetYPixelOrPercentLocation.m_SelectedOption = (uint16_t)RuntimeUI::PixelOrPercent::Percent;
+		m_WidgetYPixelOrPercentLocation.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetYLocationPixelOrPercent);
+
+		// Set up widget to modify the widget's location based on the pixel value
+		m_WidgetXPixelLocation.m_Label = "Pixel X Location";
+		m_WidgetXPixelLocation.m_Flags |= EditorUI::EditInteger_Indented;
+		m_WidgetXPixelLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetXPixelLocation);
+
+		m_WidgetYPixelLocation.m_Label = "Pixel Y Location";
+		m_WidgetYPixelLocation.m_Flags |= EditorUI::EditInteger_Indented;
+		m_WidgetYPixelLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetYPixelLocation);
+
+		// Set up widget to modify the widget's location relative to its window
+		m_WidgetXPercentLocation.m_Label = "Percent X Location";
+		m_WidgetXPercentLocation.m_Flags |= EditorUI::EditFloat_Indented;
+		m_WidgetXPercentLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetXPercentLocation);
+
+		m_WidgetYPercentLocation.m_Label = "Percent Y Location";
+		m_WidgetYPercentLocation.m_Flags |= EditorUI::EditFloat_Indented;
+		m_WidgetYPercentLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetYPercentLocation);
 	}
 
 	void UIEditorPropertiesPanel::InitializeTextWidgetOptions()
@@ -674,11 +776,16 @@ namespace Kargono::Panels
 		m_ImageWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
 		m_ImageWidgetHeader.m_Expanded = true;
 
-		// Set up widget to modify the button widget's on press script
+		// Set up widget to modify the image widget's image
 		m_ImageWidgetImage.m_Label = "Image";
 		m_ImageWidgetImage.m_Flags |= EditorUI::SelectOption_Indented;
 		m_ImageWidgetImage.m_PopupAction = KG_BIND_CLASS_FN(OnOpenImageWidgetImagePopup);
 		m_ImageWidgetImage.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageWidgetImage);
+
+		// Set up widget to modify the image widget's fixed aspect ratio display
+		m_ImageWidgetFixedAspectRatio.m_Label = "Fixed Aspect Ratio";
+		m_ImageWidgetFixedAspectRatio.m_Flags |= EditorUI::Checkbox_Indented;
+		m_ImageWidgetFixedAspectRatio.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageWidgetFixedAspectRatio);
 	}
 
 	void UIEditorPropertiesPanel::InitializeImageButtonWidgetOptions()
@@ -693,6 +800,11 @@ namespace Kargono::Panels
 		m_ImageButtonWidgetImage.m_Flags |= EditorUI::SelectOption_Indented;
 		m_ImageButtonWidgetImage.m_PopupAction = KG_BIND_CLASS_FN(OnOpenImageButtonWidgetImagePopup);
 		m_ImageButtonWidgetImage.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageButtonWidgetImage);
+
+		// Set up widget to modify the image widget's fixed aspect ratio display
+		m_ImageButtonWidgetFixedAspectRatio.m_Label = "Fixed Aspect Ratio";
+		m_ImageButtonWidgetFixedAspectRatio.m_Flags |= EditorUI::Checkbox_Indented;
+		m_ImageButtonWidgetFixedAspectRatio.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageButtonWidgetFixedAspectRatio);
 
 		// Set up widget to modify the text widget's text alignment
 		m_ImageButtonWidgetSelectable.m_Label = "Selectable";
@@ -711,75 +823,6 @@ namespace Kargono::Panels
 		m_ImageButtonWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageButtonWidgetOnPress);
 		m_ImageButtonWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForImageButtonWidgetOnPress);
 
-	}
-
-	void UIEditorPropertiesPanel::InitializeWidgetLocationOptions()
-	{
-		// Set up location collapsing header
-		m_WidgetLocationHeader.m_Label = "Widget Location Options";
-		m_WidgetLocationHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
-		m_WidgetLocationHeader.m_Expanded = true;
-
-		// Set up widgets for selecting a constraint type
-		m_WidgetXConstraint.m_Label = "X Constraint";
-		m_WidgetXConstraint.m_Flags |= EditorUI::SelectOption_Indented;
-		m_WidgetXConstraint.m_CurrentOption = {"None", (uint64_t)RuntimeUI::Constraint::None};
-		m_WidgetXConstraint.m_PopupAction = KG_BIND_CLASS_FN(OnOpenWidgetXConstraint);
-		m_WidgetXConstraint.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetXConstraint);
-
-		m_WidgetYConstraint.m_Label = "Y Constraint";
-		m_WidgetYConstraint.m_Flags |= EditorUI::SelectOption_Indented;
-		m_WidgetYConstraint.m_CurrentOption = { "None", (uint64_t)RuntimeUI::Constraint::None };
-		m_WidgetYConstraint.m_PopupAction = KG_BIND_CLASS_FN(OnOpenWidgetYConstraint);
-		m_WidgetYConstraint.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetYConstraint);
-
-		// Set up widgets to select between relative and absolute location
-		m_WidgetXRelOrAbs.m_Label = "X Spacing Mode";
-		m_WidgetXRelOrAbs.m_Flags |= EditorUI::SelectOption_Indented;
-		m_WidgetXRelOrAbs.m_FirstOptionLabel = "Relative";
-		m_WidgetXRelOrAbs.m_SecondOptionLabel = "Absolute";
-		m_WidgetXRelOrAbs.m_SelectedOption = (uint16_t)RuntimeUI::RelativeOrAbsolute::Absolute;
-		m_WidgetXRelOrAbs.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetXLocationRelOrAbs);
-
-		m_WidgetYRelOrAbs.m_Label = "Y Spacing Mode";
-		m_WidgetYRelOrAbs.m_Flags |= EditorUI::SelectOption_Indented;
-		m_WidgetYRelOrAbs.m_FirstOptionLabel = "Relative";
-		m_WidgetYRelOrAbs.m_SecondOptionLabel = "Absolute";
-		m_WidgetYRelOrAbs.m_SelectedOption = (uint16_t)RuntimeUI::RelativeOrAbsolute::Absolute;
-		m_WidgetYRelOrAbs.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetYLocationRelOrAbs);
-
-		// Set up widgets to select between pixel and percent location
-		m_WidgetXPixelOrPercent.m_Label = "X Position Metric";
-		m_WidgetXPixelOrPercent.m_Flags |= EditorUI::SelectOption_Indented;
-		m_WidgetXPixelOrPercent.m_FirstOptionLabel = "Pixels";
-		m_WidgetXPixelOrPercent.m_SecondOptionLabel = "Percent";
-		m_WidgetXPixelOrPercent.m_SelectedOption = (uint16_t)RuntimeUI::PixelOrPercent::Percent;
-		m_WidgetXPixelOrPercent.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetXLocationPixelOrPercent);
-
-		m_WidgetYPixelOrPercent.m_Label = "Y Position Metric";
-		m_WidgetYPixelOrPercent.m_Flags |= EditorUI::SelectOption_Indented;
-		m_WidgetYPixelOrPercent.m_FirstOptionLabel = "Pixels";
-		m_WidgetYPixelOrPercent.m_SecondOptionLabel = "Percent";
-		m_WidgetYPixelOrPercent.m_SelectedOption = (uint16_t)RuntimeUI::PixelOrPercent::Percent;
-		m_WidgetYPixelOrPercent.m_SelectAction = KG_BIND_CLASS_FN(OnModifyWidgetYLocationPixelOrPercent);
-
-		// Set up widget to modify the widget's location based on the pixel value
-		m_WidgetXPixelLocation.m_Label = "Pixel X Location";
-		m_WidgetXPixelLocation.m_Flags |= EditorUI::EditInteger_Indented;
-		m_WidgetXPixelLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetXPixelLocation);
-
-		m_WidgetYPixelLocation.m_Label = "Pixel Y Location";
-		m_WidgetYPixelLocation.m_Flags |= EditorUI::EditInteger_Indented;
-		m_WidgetYPixelLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetYPixelLocation);
-
-		// Set up widget to modify the widget's location relative to its window
-		m_WidgetXPercentLocation.m_Label = "Percent X Location";
-		m_WidgetXPercentLocation.m_Flags |= EditorUI::EditFloat_Indented;
-		m_WidgetXPercentLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetXPercentLocation);
-
-		m_WidgetYPercentLocation.m_Label = "Percent Y Location";
-		m_WidgetYPercentLocation.m_Flags |= EditorUI::EditFloat_Indented;
-		m_WidgetYPercentLocation.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyWidgetYPercentLocation);
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWindowTag(EditorUI::EditTextSpec& spec)
@@ -971,7 +1014,7 @@ namespace Kargono::Panels
 		}
 
 		// Update the widget location metric based on the radio selector value
-		m_ActiveWidget->m_XPositionType = (RuntimeUI::PixelOrPercent)m_WidgetXPixelOrPercent.m_SelectedOption;
+		m_ActiveWidget->m_XPositionType = (RuntimeUI::PixelOrPercent)m_WidgetXPixelOrPercentLocation.m_SelectedOption;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -987,7 +1030,7 @@ namespace Kargono::Panels
 		}
 
 		// Update the widget location metric based on the radio selector value
-		m_ActiveWidget->m_YPositionType = (RuntimeUI::PixelOrPercent)m_WidgetYPixelOrPercent.m_SelectedOption;
+		m_ActiveWidget->m_YPositionType = (RuntimeUI::PixelOrPercent)m_WidgetYPixelOrPercentLocation.m_SelectedOption;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1035,20 +1078,20 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::OnOpenWidgetXConstraint()
 	{
-		m_WidgetXConstraint.ClearOptions();
-		m_WidgetXConstraint.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
-		m_WidgetXConstraint.AddToOptions("All Options", "Left", (uint64_t)RuntimeUI::Constraint::Left);
-		m_WidgetXConstraint.AddToOptions("All Options", "Right", (uint64_t)RuntimeUI::Constraint::Right);
-		m_WidgetXConstraint.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
+		m_WidgetXConstraintLocation.ClearOptions();
+		m_WidgetXConstraintLocation.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
+		m_WidgetXConstraintLocation.AddToOptions("All Options", "Left", (uint64_t)RuntimeUI::Constraint::Left);
+		m_WidgetXConstraintLocation.AddToOptions("All Options", "Right", (uint64_t)RuntimeUI::Constraint::Right);
+		m_WidgetXConstraintLocation.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
 	}
 
 	void UIEditorPropertiesPanel::OnOpenWidgetYConstraint()
 	{
-		m_WidgetYConstraint.ClearOptions();
-		m_WidgetYConstraint.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
-		m_WidgetYConstraint.AddToOptions("All Options", "Top", (uint64_t)RuntimeUI::Constraint::Top);
-		m_WidgetYConstraint.AddToOptions("All Options", "Bottom", (uint64_t)RuntimeUI::Constraint::Bottom);
-		m_WidgetYConstraint.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
+		m_WidgetYConstraintLocation.ClearOptions();
+		m_WidgetYConstraintLocation.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
+		m_WidgetYConstraintLocation.AddToOptions("All Options", "Top", (uint64_t)RuntimeUI::Constraint::Top);
+		m_WidgetYConstraintLocation.AddToOptions("All Options", "Bottom", (uint64_t)RuntimeUI::Constraint::Bottom);
+		m_WidgetYConstraintLocation.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWidgetXPixelLocation(EditorUI::EditIntegerSpec& spec)
@@ -1115,7 +1158,24 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWidgetSize(EditorUI::EditVec2Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyWidgetSizePixelOrPercent()
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget size metric");
+			return;
+		}
+
+		// Update the widget location metric based on the radio selector value
+		m_ActiveWidget->m_SizeType = (RuntimeUI::PixelOrPercent)m_WidgetPixelOrPercentSize.m_SelectedOption;
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyWidgetPercentSize(EditorUI::EditVec2Spec& spec)
 	{
 		// Ensure active widget is valid
 		if (!m_ActiveWindow)
@@ -1125,7 +1185,25 @@ namespace Kargono::Panels
 		}
 
 		// Update the widget size based on the editorUI widget value
-		m_ActiveWidget->m_Size = m_WidgetSize.m_CurrentVec2;
+		m_ActiveWidget->m_PercentSize = m_WidgetPercentSize.m_CurrentVec2;
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyWidgetPixelSize(EditorUI::EditIVec2Spec& spec)
+	{
+		// Ensure active widget is valid
+		if (!m_ActiveWindow)
+		{
+			KG_WARN("No valid widget active when trying to update widget size");
+			return;
+		}
+
+		// Update the widget size based on the editorUI widget value
+		m_ActiveWidget->m_PixelSize = spec.m_CurrentIVec2;
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1262,7 +1340,7 @@ namespace Kargono::Panels
 		}
 
 		// Update the widget location metric based on the radio selector value
-		m_ActiveWidget->m_XRelativeOrAbsolute = (RuntimeUI::RelativeOrAbsolute)m_WidgetXRelOrAbs.m_SelectedOption;
+		m_ActiveWidget->m_XRelativeOrAbsolute = (RuntimeUI::RelativeOrAbsolute)m_WidgetXRelOrAbsLocation.m_SelectedOption;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1278,7 +1356,7 @@ namespace Kargono::Panels
 		}
 
 		// Update the widget location metric based on the radio selector value
-		m_ActiveWidget->m_YRelativeOrAbsolute = (RuntimeUI::RelativeOrAbsolute)m_WidgetYRelOrAbs.m_SelectedOption;
+		m_ActiveWidget->m_YRelativeOrAbsolute = (RuntimeUI::RelativeOrAbsolute)m_WidgetYRelOrAbsLocation.m_SelectedOption;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1683,6 +1761,22 @@ namespace Kargono::Panels
 			m_ImageWidgetImage.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
 		}
 	}
+	void UIEditorPropertiesPanel::OnModifyImageWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec)
+	{
+		// Ensure active widget is a valid type and get the iamge widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ImageWidget)
+		{
+			KG_WARN("Attempt to modify an image widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::ImageWidget& imageWidget = *(RuntimeUI::ImageWidget*)m_ActiveWidget;
+
+		// Update the 
+		imageWidget.m_FixedAspectRatio = spec.m_CurrentBoolean;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
 	void UIEditorPropertiesPanel::OnModifyImageButtonWidgetImage(const EditorUI::OptionEntry& entry)
 	{
 		// Get the active widget as a image button widget
@@ -1722,6 +1816,23 @@ namespace Kargono::Panels
 			// Add texture to the select options
 			m_ImageButtonWidgetImage.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
 		}
+	}
+	void UIEditorPropertiesPanel::OnModifyImageButtonWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec)
+	{
+		// Ensure active widget is a valid type and get the button widget
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ImageButtonWidget)
+		{
+			KG_WARN("Attempt to modify an image button widget member, however, active widget is an invalid type");
+			return;
+		}
+		RuntimeUI::ImageButtonWidget& imageButtonWidget = *(RuntimeUI::ImageButtonWidget*)m_ActiveWidget;
+
+		// Update the text widget text alignment based on the editorUI widget's value
+		imageButtonWidget.m_FixedAspectRatio = spec.m_CurrentBoolean;
+		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 	void UIEditorPropertiesPanel::OnModifyImageButtonWidgetSelectable(EditorUI::CheckboxSpec& spec)
 	{
@@ -1808,7 +1919,7 @@ namespace Kargono::Panels
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 		{
-			m_ButtonWidgetOnPress.m_OpenPopup = true;
+			m_ImageButtonWidgetOnPress.m_OpenPopup = true;
 		} };
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
