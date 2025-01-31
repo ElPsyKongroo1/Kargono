@@ -99,6 +99,13 @@ namespace Kargono::RuntimeUI
 		NavigationLinks m_NavigationLinks{};
 	};
 
+	struct ImageData
+	{
+		Ref<Rendering::Texture2D> m_ImageRef{ nullptr };
+		Assets::AssetHandle m_ImageHandle{ Assets::EmptyHandle };
+		bool m_FixedAspectRatio{ false };
+	};
+
 	//============================
 	// Widget Class (Base)
 	//============================
@@ -287,9 +294,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Public Fields
 		//============================
-		Ref<Rendering::Texture2D> m_ImageRef{ nullptr };
-		Assets::AssetHandle m_ImageHandle{ Assets::EmptyHandle };
-		bool m_FixedAspectRatio{ false };
+		ImageData m_ImageData;
 		SelectionData m_SelectionData;
 	private:
 		Math::vec2 m_TextDimensions{};
@@ -399,9 +404,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Public Fields
 		//============================
-		Ref<Rendering::Texture2D> m_ImageRef{ nullptr };
-		Assets::AssetHandle m_ImageHandle{ Assets::EmptyHandle };
-		bool m_FixedAspectRatio{ false };
+		ImageData m_ImageData;
 	};
 
 	//============================
@@ -544,6 +547,9 @@ namespace Kargono::RuntimeUI
 		//==============================
 		static void CalculateWindowNavigationLinks();
 		static void RecalculateTextData(Window* parentWindow, Widget* widget);
+		static void CalculateFixedAspectRatioSize(Window* parentWindow, Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight);
+		static SelectionData* GetSelectionDataFromWidget(Widget* currentWidget);
+		static ImageData* GetImageDataFromWidget(Widget* currentWidget);
 
 	public:
 		//==============================
@@ -577,7 +583,6 @@ namespace Kargono::RuntimeUI
 		static void SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
 		static void SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable);
 		static bool IsWidgetSelectedInternal(Ref<Widget> currentWidget);
-		static SelectionData* GetSelectionDataFromWidget(Widget* currentWidget);
 
 
 	private:

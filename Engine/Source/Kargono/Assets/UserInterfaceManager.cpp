@@ -112,8 +112,8 @@ namespace Kargono::Assets
 					out << YAML::Key << "ImageWidget" << YAML::Value;
 					// Image field
 					out << YAML::BeginMap; // Begin ImageWidget Map
-					out << YAML::Key << "Image" << YAML::Value << (uint64_t)imageWidget->m_ImageHandle;
-					out << YAML::Key << "FixedAspectRatio" << YAML::Value << imageWidget->m_FixedAspectRatio;
+					out << YAML::Key << "Image" << YAML::Value << (uint64_t)imageWidget->m_ImageData.m_ImageHandle;
+					out << YAML::Key << "FixedAspectRatio" << YAML::Value << imageWidget->m_ImageData.m_FixedAspectRatio;
 					out << YAML::EndMap; // End ImageWidget Map
 					break;
 				}
@@ -124,8 +124,8 @@ namespace Kargono::Assets
 					out << YAML::Key << "ImageButtonWidget" << YAML::Value;
 					// Image field
 					out << YAML::BeginMap; // Begin ImageWidget Map
-					out << YAML::Key << "Image" << YAML::Value << (uint64_t)imageButtonWidget->m_ImageHandle;
-					out << YAML::Key << "FixedAspectRatio" << YAML::Value << imageButtonWidget->m_FixedAspectRatio;
+					out << YAML::Key << "Image" << YAML::Value << (uint64_t)imageButtonWidget->m_ImageData.m_ImageHandle;
+					out << YAML::Key << "FixedAspectRatio" << YAML::Value << imageButtonWidget->m_ImageData.m_FixedAspectRatio;
 					// Color fields
 					out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << imageButtonWidget->m_SelectionData.m_DefaultBackgroundColor;
 					// Selectable fields
@@ -280,22 +280,22 @@ namespace Kargono::Assets
 							newWidget = CreateRef<RuntimeUI::ImageWidget>();
 							newWidget->m_WidgetType = widgetType;
 							RuntimeUI::ImageWidget* imageWidget = static_cast<RuntimeUI::ImageWidget*>(newWidget.get());
-							imageWidget->m_ImageHandle = specificWidget["Image"].as<uint64_t>();
-							if (imageWidget->m_ImageHandle == Assets::EmptyHandle)
+							imageWidget->m_ImageData.m_ImageHandle = specificWidget["Image"].as<uint64_t>();
+							if (imageWidget->m_ImageData.m_ImageHandle == Assets::EmptyHandle)
 							{
-								imageWidget->m_ImageRef = nullptr;
+								imageWidget->m_ImageData.m_ImageRef = nullptr;
 							}
 							else
 							{
-								Ref<Rendering::Texture2D> imageRef = Assets::AssetService::GetTexture2D(imageWidget->m_ImageHandle);
+								Ref<Rendering::Texture2D> imageRef = Assets::AssetService::GetTexture2D(imageWidget->m_ImageData.m_ImageHandle);
 								if (!imageRef)
 								{
 									KG_WARN("Unable to locate provided image reference");
 									return nullptr;
 								}
-								imageWidget->m_ImageRef = imageRef;
+								imageWidget->m_ImageData.m_ImageRef = imageRef;
 							}
-							imageWidget->m_FixedAspectRatio = specificWidget["FixedAspectRatio"].as<bool>();
+							imageWidget->m_ImageData.m_FixedAspectRatio = specificWidget["FixedAspectRatio"].as<bool>();
 							break;
 						}
 						case RuntimeUI::WidgetTypes::ImageButtonWidget:
@@ -330,22 +330,22 @@ namespace Kargono::Assets
 								}
 								imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPress = onPressScript;
 							}
-							imageButtonWidget->m_ImageHandle = specificWidget["Image"].as<uint64_t>();
-							if (imageButtonWidget->m_ImageHandle == Assets::EmptyHandle)
+							imageButtonWidget->m_ImageData.m_ImageHandle = specificWidget["Image"].as<uint64_t>();
+							if (imageButtonWidget->m_ImageData.m_ImageHandle == Assets::EmptyHandle)
 							{
-								imageButtonWidget->m_ImageRef = nullptr;
+								imageButtonWidget->m_ImageData.m_ImageRef = nullptr;
 							}
 							else
 							{
-								Ref<Rendering::Texture2D> imageButtonRef = Assets::AssetService::GetTexture2D(imageButtonWidget->m_ImageHandle);
+								Ref<Rendering::Texture2D> imageButtonRef = Assets::AssetService::GetTexture2D(imageButtonWidget->m_ImageData.m_ImageHandle);
 								if (!imageButtonRef)
 								{
 									KG_WARN("Unable to locate provided ImageButton reference");
 									return nullptr;
 								}
-								imageButtonWidget->m_ImageRef = imageButtonRef;
+								imageButtonWidget->m_ImageData.m_ImageRef = imageButtonRef;
 							}
-							imageButtonWidget->m_FixedAspectRatio = specificWidget["FixedAspectRatio"].as<bool>();
+							imageButtonWidget->m_ImageData.m_FixedAspectRatio = specificWidget["FixedAspectRatio"].as<bool>();
 							break;
 						}
 						default:
@@ -364,6 +364,7 @@ namespace Kargono::Assets
 						newWidget->m_YRelativeOrAbsolute = Utility::StringToRelativeOrAbsolute(widget["YRelativeOrAbsolute"].as<std::string>());
 						newWidget->m_XConstraint = Utility::StringToConstraint(widget["XConstraint"].as<std::string>());
 						newWidget->m_YConstraint= Utility::StringToConstraint(widget["YConstraint"].as<std::string>());
+						newWidget->m_SizeType = Utility::StringToPixelOrPercent(widget["SizeType"].as<std::string>());
 						newWidget->m_PercentSize = widget["PercentSize"].as<Math::vec2>();
 						newWidget->m_PixelSize = widget["PixelSize"].as<Math::ivec2>();
 						
@@ -428,11 +429,11 @@ namespace Kargono::Assets
 				{
 					// Remove texture reference from widget if necessary
 					RuntimeUI::ImageWidget& imageWidget = *(RuntimeUI::ImageWidget*)widgetRef.get();
-					if (imageWidget.m_ImageHandle == textureHandle)
+					if (imageWidget.m_ImageData.m_ImageHandle == textureHandle)
 					{
 						RuntimeUI::ImageWidget& buttonWidget = *(RuntimeUI::ImageWidget*)widgetRef.get();
-						buttonWidget.m_ImageHandle = Assets::EmptyHandle;
-						buttonWidget.m_ImageRef = nullptr;
+						buttonWidget.m_ImageData.m_ImageHandle = Assets::EmptyHandle;
+						buttonWidget.m_ImageData.m_ImageRef = nullptr;
 						uiModified = true;
 					}
 				}
@@ -440,11 +441,11 @@ namespace Kargono::Assets
 				{
 					// Remove texture reference from widget if necessary
 					RuntimeUI::ImageButtonWidget& imageWidget = *(RuntimeUI::ImageButtonWidget*)widgetRef.get();
-					if (imageWidget.m_ImageHandle == textureHandle)
+					if (imageWidget.m_ImageData.m_ImageHandle == textureHandle)
 					{
 						RuntimeUI::ImageButtonWidget& imageButtonWidget = *(RuntimeUI::ImageButtonWidget*)widgetRef.get();
-						imageButtonWidget.m_ImageHandle = Assets::EmptyHandle;
-						imageButtonWidget.m_ImageRef = nullptr;
+						imageButtonWidget.m_ImageData.m_ImageHandle = Assets::EmptyHandle;
+						imageButtonWidget.m_ImageData.m_ImageRef = nullptr;
 						uiModified = true;
 					}
 				}

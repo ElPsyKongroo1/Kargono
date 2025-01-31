@@ -644,6 +644,21 @@ namespace Kargono::RuntimeUI
 		return nullptr;
 	}
 
+	ImageData* RuntimeUIService::GetImageDataFromWidget(Widget* currentWidget)
+	{
+		// Return the selection data for each widget
+		if (currentWidget->m_WidgetType == WidgetTypes::ImageWidget)
+		{
+			return &((ImageWidget*)currentWidget)->m_ImageData;
+		}
+		if (currentWidget->m_WidgetType == WidgetTypes::ImageButtonWidget)
+		{
+			return &((ImageButtonWidget*)currentWidget)->m_ImageData;
+		}
+
+		return nullptr;
+	}
+
 	void RuntimeUIService::ClearActiveUI()
 	{
 		s_RuntimeUIContext->m_ActiveUI = nullptr;
@@ -743,13 +758,6 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		// Ensure the widget is an image widget
-		if (currentWidget->m_WidgetType != WidgetTypes::ImageWidget && currentWidget->m_WidgetType != WidgetTypes::ImageButtonWidget)
-		{
-			KG_WARN("Attempt to change the image of a widget that is not an image/image button widget");
-			return;
-		}
-
 		// Ensure the texture provided is valid
 		Ref<Rendering::Texture2D> textureRef{ Assets::AssetService::GetTexture2D(textureHandle) };
 		if (!textureRef)
@@ -758,20 +766,16 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		if (currentWidget->m_WidgetType == WidgetTypes::ImageWidget)
+		// Get the selection specific data from the widget
+		ImageData* imageData = GetImageDataFromWidget(s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget);
+		if (!imageData)
 		{
-			// Set the text of the widget
-			ImageWidget* imageWidget = (ImageWidget*)currentWidget.get();
-			imageWidget->m_ImageHandle = textureHandle;
-			imageWidget->m_ImageRef = textureRef;
+			KG_WARN("Unable to retrieve image data. May be invalid widget type!");
+			return;
 		}
-		else if (currentWidget->m_WidgetType == WidgetTypes::ImageButtonWidget)
-		{
-			// Set the text of the widget
-			ImageButtonWidget* imageButtonWidget = (ImageButtonWidget*)currentWidget.get();
-			imageButtonWidget->m_ImageHandle = textureHandle;
-			imageButtonWidget->m_ImageRef = textureRef;
-		}
+
+		imageData->m_ImageHandle = textureHandle;
+		imageData->m_ImageRef = textureRef;
 	}
 
 	void RuntimeUIService::SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag)
@@ -1203,6 +1207,55 @@ namespace Kargono::RuntimeUI
 			KG_ERROR("Invalid widget type provided when revalidating widget text size");
 			break;
 		}
+	}
+
+	void RuntimeUIService::CalculateFixedAspectRatioSize(Window* parentWindow, Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight)
+	{
+		KG_ASSERT(parentWindow);
+		KG_ASSERT(widget);
+
+		// TODO: FIX: Assume x-value is the basis for the aspect ratio
+
+		Math::vec2 windowSize = parentWindow->CalculateSize(viewportWidth, viewportHeight);
+		
+		// Get the image data from the provided widget
+		ImageData* currentImageData = GetImageDataFromWidget(widget);
+		if (!currentImageData)
+		{
+			KG_WARN("Attempt to recalculate fixed aspect ratio of a widget that does not support images.");
+			return;
+		}
+
+		// Ensure there is an image to base the aspect ratio off of
+		if (!currentImageData->m_ImageRef)
+		{
+			return;
+		}
+
+		// Get the aspect ratio from the image value as a vec2
+		Assets::AssetInfo textureInfo = Assets::AssetService::GetTexture2DInfo(currentImageData->m_ImageHandle);
+		Assets::TextureMetaData* textureMetadata = textureInfo.Data.GetSpecificMetaData<Assets::TextureMetaData>();
+		Math::vec2 textureAspectRatio = Math::vec2((float)textureMetadata->Width, (float)textureMetadata->Height);
+
+		// Ensure we avoid division by 0
+		if (textureMetadata->Width == 0 || textureMetadata->Height == 0)
+		{
+			KG_WARN("Unable to enforce fixed aspect ratio because the indicated texture's dimensions are invalid");
+			return;
+		}
+
+		// Normalize the aspect ratio based on the x-value
+		textureAspectRatio.y = textureAspectRatio.y / textureAspectRatio.x;
+		textureAspectRatio.x = 1.0f;
+
+		// Use the normalized y-value ratio to calculate the new y-value...
+
+		// For the pixel dimensions
+		widget->m_PixelSize.y = (int)((float)widget->m_PixelSize.x * textureAspectRatio.y);
+
+		// And for the percentage dimensions
+		//widget->m_PercentSize.y = (int)((float)widget->m_PercentSize.x * textureAspectRatio.y / windowSize.y);
+		widget->m_PercentSize.y = ((windowSize.x * widget->m_PercentSize.x) * textureAspectRatio.y) / windowSize.y;
 	}
 
 	std::size_t RuntimeUIService::CalculateNavigationLink(Window& currentWindow, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize)
@@ -1797,14 +1850,14 @@ namespace Kargono::RuntimeUI
 		// Get widget translation
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
-		if (m_ImageRef)
+		if (m_ImageData.m_ImageRef)
 		{
 			// Create the widget's background rendering data
 			imageRendererSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
 				* glm::scale(Math::mat4(1.0f), widgetSize);
 
-			imageRendererSpec.m_Texture = m_ImageRef;
-			imageRendererSpec.m_ShapeComponent->Texture = m_ImageRef;
+			imageRendererSpec.m_Texture = m_ImageData.m_ImageRef;
+			imageRendererSpec.m_ShapeComponent->Texture = m_ImageData.m_ImageRef;
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(imageRendererSpec);
@@ -1837,14 +1890,15 @@ namespace Kargono::RuntimeUI
 		widgetTranslation.z += 0.001f;
 
 		// Draw image
-		if (m_ImageRef)
+		if (m_ImageData.m_ImageRef)
 		{
 			// Create the widget's background rendering data
 			imageRendererSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
 				* glm::scale(Math::mat4(1.0f), widgetSize);
 
-			imageRendererSpec.m_Texture = m_ImageRef;
-			imageRendererSpec.m_ShapeComponent->Texture = m_ImageRef;
+
+			imageRendererSpec.m_Texture = m_ImageData.m_ImageRef;
+			imageRendererSpec.m_ShapeComponent->Texture = m_ImageData.m_ImageRef;
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(imageRendererSpec);

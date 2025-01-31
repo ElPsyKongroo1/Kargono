@@ -293,7 +293,7 @@ namespace Kargono::Panels
 			RuntimeUI::ImageWidget& activeImageWidget = *(RuntimeUI::ImageWidget*)m_ActiveWidget;
 
 			// Edit selected widget's image handle
-			Assets::AssetHandle imageHandle = activeImageWidget.m_ImageHandle;
+			Assets::AssetHandle imageHandle = activeImageWidget.m_ImageData.m_ImageHandle;
 			m_ImageWidgetImage.m_CurrentOption =
 			{
 				imageHandle == Assets::EmptyHandle ? "None" : 
@@ -303,7 +303,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::SelectOption(m_ImageWidgetImage);
 
 			// Edit selected widget's fixed aspect ratio usage
-			m_ImageWidgetFixedAspectRatio.m_CurrentBoolean = activeImageWidget.m_FixedAspectRatio;
+			m_ImageWidgetFixedAspectRatio.m_CurrentBoolean = activeImageWidget.m_ImageData.m_FixedAspectRatio;
 			EditorUI::EditorUIService::Checkbox(m_ImageWidgetFixedAspectRatio);
 		}
 	}
@@ -318,7 +318,7 @@ namespace Kargono::Panels
 			RuntimeUI::ImageButtonWidget& activeImageButtonWidget = *(RuntimeUI::ImageButtonWidget*)m_ActiveWidget;
 
 			// Edit selected widget's image handle
-			Assets::AssetHandle imageHandle = activeImageButtonWidget.m_ImageHandle;
+			Assets::AssetHandle imageHandle = activeImageButtonWidget.m_ImageData.m_ImageHandle;
 			m_ImageButtonWidgetImage.m_CurrentOption =
 			{
 				imageHandle == Assets::EmptyHandle ? "None" :
@@ -328,7 +328,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::SelectOption(m_ImageButtonWidgetImage);
 
 			// Edit selected widget's fixed aspect ratio usage
-			m_ImageButtonWidgetFixedAspectRatio.m_CurrentBoolean = activeImageButtonWidget.m_FixedAspectRatio;
+			m_ImageButtonWidgetFixedAspectRatio.m_CurrentBoolean = activeImageButtonWidget.m_ImageData.m_FixedAspectRatio;
 			EditorUI::EditorUIService::Checkbox(m_ImageButtonWidgetFixedAspectRatio);
 
 			// Edit selected text widget's wrapped alignment
@@ -772,7 +772,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::InitializeImageWidgetOptions()
 	{
 		// Set up header for button widget options
-		m_ImageWidgetHeader.m_Label = "Button Widget Options";
+		m_ImageWidgetHeader.m_Label = "Image Widget Options";
 		m_ImageWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
 		m_ImageWidgetHeader.m_Expanded = true;
 
@@ -1188,6 +1188,20 @@ namespace Kargono::Panels
 		m_ActiveWidget->m_PercentSize = m_WidgetPercentSize.m_CurrentVec2;
 		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
 
+		// Revalidate widget size if fixed aspect ratio is specified
+		RuntimeUI::ImageData* imageData = RuntimeUI::RuntimeUIService::GetImageDataFromWidget(m_ActiveWidget);
+		if (imageData && imageData->m_FixedAspectRatio)
+		{
+			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
+			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
+			(
+				m_ActiveWindow,
+				m_ActiveWidget,
+				currentViewport.m_Width,
+				currentViewport.m_Height
+			);
+		}
+
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
@@ -1204,6 +1218,20 @@ namespace Kargono::Panels
 		// Update the widget size based on the editorUI widget value
 		m_ActiveWidget->m_PixelSize = spec.m_CurrentIVec2;
 		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+		// Revalidate widget size if fixed aspect ratio is specified
+		RuntimeUI::ImageData* imageData = RuntimeUI::RuntimeUIService::GetImageDataFromWidget(m_ActiveWidget);
+		if (imageData && imageData->m_FixedAspectRatio)
+		{
+			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
+			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
+			(
+				m_ActiveWindow,
+				m_ActiveWidget,
+				currentViewport.m_Width,
+				currentViewport.m_Height
+			);
+		}
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1730,8 +1758,8 @@ namespace Kargono::Panels
 		// Clear the on press script if the provided handle is empty
 		if (entry.m_Handle == Assets::EmptyHandle)
 		{
-			activeImageWidget.m_ImageRef = nullptr;
-			activeImageWidget.m_ImageHandle = Assets::EmptyHandle;
+			activeImageWidget.m_ImageData.m_ImageRef = nullptr;
+			activeImageWidget.m_ImageData.m_ImageHandle = Assets::EmptyHandle;
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1739,8 +1767,8 @@ namespace Kargono::Panels
 		}
 
 		// Set the texture reference for the image widget
-		activeImageWidget.m_ImageRef = Assets::AssetService::GetTexture2D(entry.m_Handle);
-		activeImageWidget.m_ImageHandle = entry.m_Handle;
+		activeImageWidget.m_ImageData.m_ImageRef = Assets::AssetService::GetTexture2D(entry.m_Handle);
+		activeImageWidget.m_ImageData.m_ImageHandle = entry.m_Handle;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1771,8 +1799,20 @@ namespace Kargono::Panels
 		}
 		RuntimeUI::ImageWidget& imageWidget = *(RuntimeUI::ImageWidget*)m_ActiveWidget;
 
-		// Update the 
-		imageWidget.m_FixedAspectRatio = spec.m_CurrentBoolean;
+		imageWidget.m_ImageData.m_FixedAspectRatio = spec.m_CurrentBoolean;
+
+		if (spec.m_CurrentBoolean)
+		{
+			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
+			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
+			(
+				m_ActiveWindow,
+				m_ActiveWidget,
+				currentViewport.m_Width,
+				currentViewport.m_Height
+			);
+		}
+		
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1786,8 +1826,8 @@ namespace Kargono::Panels
 		// Clear the on press script if the provided handle is empty
 		if (entry.m_Handle == Assets::EmptyHandle)
 		{
-			activeImageButtonWidget.m_ImageRef = nullptr;
-			activeImageButtonWidget.m_ImageHandle = Assets::EmptyHandle;
+			activeImageButtonWidget.m_ImageData.m_ImageRef = nullptr;
+			activeImageButtonWidget.m_ImageData.m_ImageHandle = Assets::EmptyHandle;
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1795,8 +1835,8 @@ namespace Kargono::Panels
 		}
 
 		// Set the texture reference for the image button widget
-		activeImageButtonWidget.m_ImageRef = Assets::AssetService::GetTexture2D(entry.m_Handle);
-		activeImageButtonWidget.m_ImageHandle = entry.m_Handle;
+		activeImageButtonWidget.m_ImageData.m_ImageRef = Assets::AssetService::GetTexture2D(entry.m_Handle);
+		activeImageButtonWidget.m_ImageData.m_ImageHandle = entry.m_Handle;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1828,8 +1868,19 @@ namespace Kargono::Panels
 		RuntimeUI::ImageButtonWidget& imageButtonWidget = *(RuntimeUI::ImageButtonWidget*)m_ActiveWidget;
 
 		// Update the text widget text alignment based on the editorUI widget's value
-		imageButtonWidget.m_FixedAspectRatio = spec.m_CurrentBoolean;
+		imageButtonWidget.m_ImageData.m_FixedAspectRatio = spec.m_CurrentBoolean;
 		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
+		if (spec.m_CurrentBoolean)
+		{
+			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
+			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
+			(
+				m_ActiveWindow,
+				m_ActiveWidget,
+				currentViewport.m_Width,
+				currentViewport.m_Height
+			);
+		}
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
