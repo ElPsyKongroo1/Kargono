@@ -52,7 +52,7 @@ namespace Kargono::RuntimeUI
 	//============================
 	enum class WidgetTypes
 	{
-		None = 0, TextWidget, ButtonWidget, CheckboxWidget, ComboWidget, PopupWidget, ImageWidget
+		None = 0, TextWidget, ButtonWidget, CheckboxWidget, ComboWidget, PopupWidget, ImageWidget, ImageButtonWidget
 	};
 
 	constexpr std::size_t k_InvalidWidgetIndex{ std::numeric_limits<std::size_t>().max() };
@@ -88,6 +88,15 @@ namespace Kargono::RuntimeUI
 	{
 		Pixel = 0, 
 		Percent
+	};
+
+	struct SelectionData
+	{
+		Math::vec4 m_DefaultBackgroundColor{ 0.5f };
+		Math::vec4 m_ActiveBackgroundColor{ 0.5f };
+		WidgetCallbacks m_FunctionPointers{};
+		bool m_Selectable{ true };
+		NavigationLinks m_NavigationLinks{};
 	};
 
 	//============================
@@ -220,7 +229,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		virtual bool Selectable() override
 		{
-			return m_Selectable;
+			return m_SelectionData.m_Selectable;
 		}
 
 	public:
@@ -236,11 +245,52 @@ namespace Kargono::RuntimeUI
 		float m_TextSize{ 0.3f };
 		Math::vec4 m_TextColor{ 1.0f };
 		Constraint m_TextAlignment{ Constraint::Center };
-		Math::vec4 m_DefaultBackgroundColor{ 0.5f };
-		Math::vec4 m_ActiveBackgroundColor{ 0.5f };
-		WidgetCallbacks m_FunctionPointers{};
-		bool m_Selectable{ true };
-		NavigationLinks m_NavigationLinks{};
+		SelectionData m_SelectionData;
+	private:
+		Math::vec2 m_TextDimensions{};
+	private:
+		friend class RuntimeUIService;
+		friend class Assets::UserInterfaceManager;
+	};
+
+	//============================
+	// ImageButton Widget Class (Derived)
+	//============================
+	class ImageButtonWidget : public Widget
+	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		ImageButtonWidget()
+			: Widget()
+		{
+			m_WidgetType = WidgetTypes::ImageButtonWidget;
+			m_Size = { 0.3f, 0.1f };
+		}
+		virtual ~ImageButtonWidget() override = default;
+	public:
+		//============================
+		// Rendering Methods
+		//============================
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+
+	public:
+		//============================
+		// Query State
+		//============================
+		virtual bool Selectable() override
+		{
+			return m_SelectionData.m_Selectable;
+		}
+
+	public:
+		//============================
+		// Public Fields
+		//============================
+		Ref<Rendering::Texture2D> m_ImageRef{ nullptr };
+		Assets::AssetHandle m_ImageHandle{ Assets::EmptyHandle };
+		SelectionData m_SelectionData;
 	private:
 		Math::vec2 m_TextDimensions{};
 	private:
@@ -525,6 +575,7 @@ namespace Kargono::RuntimeUI
 		static void SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
 		static void SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable);
 		static bool IsWidgetSelectedInternal(Ref<Widget> currentWidget);
+		static SelectionData* GetSelectionDataFromWidget(Widget* currentWidget);
 
 
 	private:

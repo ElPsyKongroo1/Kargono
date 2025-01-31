@@ -91,16 +91,16 @@ namespace Kargono::Assets
 					out << YAML::Key << "TextColor" << YAML::Value << buttonWidget->m_TextColor;
 					out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(buttonWidget->m_TextAlignment);
 					// Color fields
-					out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << buttonWidget->m_DefaultBackgroundColor;
+					out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << buttonWidget->m_SelectionData.m_DefaultBackgroundColor;
 					// Selectable fields
-					out << YAML::Key << "Selectable" << YAML::Value << buttonWidget->m_Selectable;
+					out << YAML::Key << "Selectable" << YAML::Value << buttonWidget->m_SelectionData.m_Selectable;
 					// Direction index fields
-					out << YAML::Key << "DirectionPointerUp" << YAML::Value << buttonWidget->m_NavigationLinks.m_UpWidgetIndex;
-					out << YAML::Key << "DirectionPointerDown" << YAML::Value << buttonWidget->m_NavigationLinks.m_DownWidgetIndex;
-					out << YAML::Key << "DirectionPointerLeft" << YAML::Value << buttonWidget->m_NavigationLinks.m_LeftWidgetIndex;
-					out << YAML::Key << "DirectionPointerRight" << YAML::Value << buttonWidget->m_NavigationLinks.m_RightWidgetIndex;
+					out << YAML::Key << "DirectionPointerUp" << YAML::Value << buttonWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex;
+					out << YAML::Key << "DirectionPointerDown" << YAML::Value << buttonWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex;
+					out << YAML::Key << "DirectionPointerLeft" << YAML::Value << buttonWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex;
+					out << YAML::Key << "DirectionPointerRight" << YAML::Value << buttonWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex;
 					// Function pointer fields
-					out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)buttonWidget->m_FunctionPointers.m_OnPressHandle;
+					out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 					out << YAML::EndMap; // End buttonWidget Map
 					break;
 				}
@@ -111,6 +111,28 @@ namespace Kargono::Assets
 					// Image field
 					out << YAML::BeginMap; // Begin ImageWidget Map
 					out << YAML::Key << "Image" << YAML::Value << (uint64_t)imageWidget->m_ImageHandle;
+					out << YAML::EndMap; // End ImageWidget Map
+					break;
+				}
+
+				case RuntimeUI::WidgetTypes::ImageButtonWidget:
+				{
+					RuntimeUI::ImageButtonWidget* imageButtonWidget = static_cast<RuntimeUI::ImageButtonWidget*>(widget.get());
+					out << YAML::Key << "ImageButtonWidget" << YAML::Value;
+					// Image field
+					out << YAML::BeginMap; // Begin ImageWidget Map
+					out << YAML::Key << "Image" << YAML::Value << (uint64_t)imageButtonWidget->m_ImageHandle;
+					// Color fields
+					out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << imageButtonWidget->m_SelectionData.m_DefaultBackgroundColor;
+					// Selectable fields
+					out << YAML::Key << "Selectable" << YAML::Value << imageButtonWidget->m_SelectionData.m_Selectable;
+					// Direction index fields
+					out << YAML::Key << "DirectionPointerUp" << YAML::Value << imageButtonWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex;
+					out << YAML::Key << "DirectionPointerDown" << YAML::Value << imageButtonWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex;
+					out << YAML::Key << "DirectionPointerLeft" << YAML::Value << imageButtonWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex;
+					out << YAML::Key << "DirectionPointerRight" << YAML::Value << imageButtonWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex;
+					// Function pointer fields
+					out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 					out << YAML::EndMap; // End ImageWidget Map
 					break;
 				}
@@ -221,34 +243,33 @@ namespace Kargono::Assets
 							buttonWidget->m_TextColor = specificWidget["TextColor"].as<glm::vec4>();
 							buttonWidget->m_TextAlignment = Utility::StringToConstraint(specificWidget["TextAlignment"].as<std::string>());
 							// Color fields
-							buttonWidget->m_DefaultBackgroundColor = specificWidget["DefaultBackgroundColor"].as<Math::vec4>();
-							buttonWidget->m_ActiveBackgroundColor = buttonWidget->m_DefaultBackgroundColor;
+							buttonWidget->m_SelectionData.m_DefaultBackgroundColor = specificWidget["DefaultBackgroundColor"].as<Math::vec4>();
+							buttonWidget->m_SelectionData.m_ActiveBackgroundColor = buttonWidget->m_SelectionData.m_DefaultBackgroundColor;
 							// Selectable field
-							buttonWidget->m_Selectable = specificWidget["Selectable"].as<bool>();
+							buttonWidget->m_SelectionData.m_Selectable = specificWidget["Selectable"].as<bool>();
 							// Navigation fields
-							buttonWidget->m_NavigationLinks.m_UpWidgetIndex = specificWidget["DirectionPointerUp"].as<size_t>();
-							buttonWidget->m_NavigationLinks.m_DownWidgetIndex = specificWidget["DirectionPointerDown"].as<size_t>();
-							buttonWidget->m_NavigationLinks.m_LeftWidgetIndex = specificWidget["DirectionPointerLeft"].as<size_t>();
-							buttonWidget->m_NavigationLinks.m_RightWidgetIndex = specificWidget["DirectionPointerRight"].as<size_t>();
+							buttonWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex = specificWidget["DirectionPointerUp"].as<size_t>();
+							buttonWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex = specificWidget["DirectionPointerDown"].as<size_t>();
+							buttonWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex = specificWidget["DirectionPointerLeft"].as<size_t>();
+							buttonWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex = specificWidget["DirectionPointerRight"].as<size_t>();
 							// Function pointer fields
-							buttonWidget->m_FunctionPointers.m_OnPressHandle = specificWidget["FunctionPointerOnPress"].as<uint64_t>();
-							if (buttonWidget->m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
+							buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle = specificWidget["FunctionPointerOnPress"].as<uint64_t>();
+							if (buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
 							{
-								buttonWidget->m_FunctionPointers.m_OnPress = nullptr;
+								buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPress = nullptr;
 							}
 							else
 							{
-								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(buttonWidget->m_FunctionPointers.m_OnPressHandle);
+								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle);
 								if (!onPressScript)
 								{
 									KG_WARN("Unable to locate OnPress Script!");
 									return nullptr;
 								}
-								buttonWidget->m_FunctionPointers.m_OnPress = onPressScript;
+								buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPress = onPressScript;
 							}
 							break;
 						}
-
 						case RuntimeUI::WidgetTypes::ImageWidget:
 						{
 							specificWidget = widget["ImageWidget"];
@@ -269,6 +290,55 @@ namespace Kargono::Assets
 									return nullptr;
 								}
 								imageWidget->m_ImageRef = imageRef;
+							}
+							break;
+						}
+						case RuntimeUI::WidgetTypes::ImageButtonWidget:
+						{
+							specificWidget = widget["ImageButtonWidget"];
+							newWidget = CreateRef<RuntimeUI::ImageButtonWidget>();
+							newWidget->m_WidgetType = widgetType;
+							RuntimeUI::ImageButtonWidget* imageButtonWidget = static_cast<RuntimeUI::ImageButtonWidget*>(newWidget.get());
+							// Color fields
+							imageButtonWidget->m_SelectionData.m_DefaultBackgroundColor = specificWidget["DefaultBackgroundColor"].as<Math::vec4>();
+							imageButtonWidget->m_SelectionData.m_ActiveBackgroundColor = imageButtonWidget->m_SelectionData.m_DefaultBackgroundColor;
+							// Selectable field
+							imageButtonWidget->m_SelectionData.m_Selectable = specificWidget["Selectable"].as<bool>();
+							// Navigation fields
+							imageButtonWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex = specificWidget["DirectionPointerUp"].as<size_t>();
+							imageButtonWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex = specificWidget["DirectionPointerDown"].as<size_t>();
+							imageButtonWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex = specificWidget["DirectionPointerLeft"].as<size_t>();
+							imageButtonWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex = specificWidget["DirectionPointerRight"].as<size_t>();
+							// Function pointer fields
+							imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle = specificWidget["FunctionPointerOnPress"].as<uint64_t>();
+							if (imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
+							{
+								imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPress = nullptr;
+							}
+							else
+							{
+								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle);
+								if (!onPressScript)
+								{
+									KG_WARN("Unable to locate OnPress Script!");
+									return nullptr;
+								}
+								imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPress = onPressScript;
+							}
+							imageButtonWidget->m_ImageHandle = specificWidget["Image"].as<uint64_t>();
+							if (imageButtonWidget->m_ImageHandle == Assets::EmptyHandle)
+							{
+								imageButtonWidget->m_ImageRef = nullptr;
+							}
+							else
+							{
+								Ref<Rendering::Texture2D> imageButtonRef = Assets::AssetService::GetTexture2D(imageButtonWidget->m_ImageHandle);
+								if (!imageButtonRef)
+								{
+									KG_WARN("Unable to locate provided ImageButton reference");
+									return nullptr;
+								}
+								imageButtonWidget->m_ImageRef = imageButtonRef;
 							}
 							break;
 						}
@@ -325,11 +395,11 @@ namespace Kargono::Assets
 				}
 				// Remove script references from button widget if necessary
 				RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)widgetRef.get();
-				if (buttonWidget.m_FunctionPointers.m_OnPressHandle == scriptHandle)
+				if (buttonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle == scriptHandle)
 				{
 					RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)widgetRef.get();
-					buttonWidget.m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
-					buttonWidget.m_FunctionPointers.m_OnPress = nullptr;
+					buttonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
+					buttonWidget.m_SelectionData.m_FunctionPointers.m_OnPress = nullptr;
 					uiModified = true;
 				}
 			}
@@ -346,20 +416,32 @@ namespace Kargono::Assets
 		{
 			for (Ref<RuntimeUI::Widget> widgetRef : currentWindow.m_Widgets)
 			{
-				// Ensure we are handling an image widget
 				if (widgetRef->m_WidgetType != RuntimeUI::WidgetTypes::ImageWidget)
 				{
-					continue;
+					// Remove texture reference from widget if necessary
+					RuntimeUI::ImageWidget& imageWidget = *(RuntimeUI::ImageWidget*)widgetRef.get();
+					if (imageWidget.m_ImageHandle == textureHandle)
+					{
+						RuntimeUI::ImageWidget& buttonWidget = *(RuntimeUI::ImageWidget*)widgetRef.get();
+						buttonWidget.m_ImageHandle = Assets::EmptyHandle;
+						buttonWidget.m_ImageRef = nullptr;
+						uiModified = true;
+					}
 				}
-				// Remove texture reference from widget if necessary
-				RuntimeUI::ImageWidget& imageWidget = *(RuntimeUI::ImageWidget*)widgetRef.get();
-				if (imageWidget.m_ImageHandle == textureHandle)
+				if (widgetRef->m_WidgetType != RuntimeUI::WidgetTypes::ImageButtonWidget)
 				{
-					RuntimeUI::ImageWidget& buttonWidget = *(RuntimeUI::ImageWidget*)widgetRef.get();
-					buttonWidget.m_ImageHandle = Assets::EmptyHandle;
-					buttonWidget.m_ImageRef = nullptr;
-					uiModified = true;
+					// Remove texture reference from widget if necessary
+					RuntimeUI::ImageButtonWidget& imageWidget = *(RuntimeUI::ImageButtonWidget*)widgetRef.get();
+					if (imageWidget.m_ImageHandle == textureHandle)
+					{
+						RuntimeUI::ImageButtonWidget& imageButtonWidget = *(RuntimeUI::ImageButtonWidget*)widgetRef.get();
+						imageButtonWidget.m_ImageHandle = Assets::EmptyHandle;
+						imageButtonWidget.m_ImageRef = nullptr;
+						uiModified = true;
+					}
 				}
+
+				
 			}
 		}
 

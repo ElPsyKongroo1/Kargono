@@ -139,9 +139,12 @@ namespace Kargono::RuntimeUI
 				// Ensure the widget is selectable
 				KG_ASSERT(activeUI->m_SelectedWidget->Selectable());
 
-				// Set the button background color as active
-				ButtonWidget& selectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
-				selectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
+				// Get the selection data from the widget
+				SelectionData* selectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+				KG_ASSERT(selectionData);
+
+				// Set the background color as active
+				selectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 			}
 			else
 			{
@@ -494,14 +497,15 @@ namespace Kargono::RuntimeUI
 		// Set the previous selected widget's color to the default color
 		if (activeUI->m_SelectedWidget)
 		{
-			ButtonWidget& previousSelectedWidget = *(ButtonWidget*)activeUI->m_SelectedWidget;
-			previousSelectedWidget.m_ActiveBackgroundColor = previousSelectedWidget.m_DefaultBackgroundColor;
+			SelectionData* previousSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+			KG_ASSERT(previousSelectionData);
+			previousSelectionData->m_ActiveBackgroundColor = previousSelectionData->m_DefaultBackgroundColor;
 		}
 
 		// Set the new widget as selected and set it's color to the active color
 		activeUI->m_SelectedWidget = newSelectedWidget.get();
-		ButtonWidget& newSelectedButton = *(ButtonWidget*)newSelectedWidget.get();
-		newSelectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
+		SelectionData* newSelectionData = GetSelectionDataFromWidget(newSelectedWidget.get());
+		newSelectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 		// Call the on move function if applicable
 		if (activeUI->m_FunctionPointers.m_OnMove)
@@ -551,17 +555,18 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		// Ensure the widget is valid
-		if (currentWidget->m_WidgetType != WidgetTypes::ButtonWidget)
+		// Get the selection specific data from the widget
+		SelectionData* selectionData = GetSelectionDataFromWidget(currentWidget.get());
+		if (!selectionData)
 		{
-			KG_WARN("Invalid widget type attempting to change its background color");
+			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
 			return;
 		}
 
-		// Set the background color of the button widget
-		ButtonWidget& buttonWidget = *(ButtonWidget*)currentWidget.get();
-		buttonWidget.m_DefaultBackgroundColor = newColor;
-		buttonWidget.m_ActiveBackgroundColor = newColor;
+		// Set the widget's new color
+		selectionData->m_DefaultBackgroundColor = newColor;
+		selectionData->m_ActiveBackgroundColor = newColor;
+		
 	}
 
 	void RuntimeUIService::SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable)
@@ -573,16 +578,16 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		// Ensure the widget is valid
-		if (currentWidget->m_WidgetType != WidgetTypes::ButtonWidget)
+		// Get the selection specific data from the widget
+		SelectionData* selectionData = GetSelectionDataFromWidget(currentWidget.get());
+		if (!selectionData)
 		{
-			KG_WARN("Invalid widget type attempting to set a widget as selectable");
+			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
 			return;
 		}
 
 		// Set the widget as selectable
-		ButtonWidget& buttonWidget = *(ButtonWidget*)currentWidget.get();
-		buttonWidget.m_Selectable = selectable;
+		selectionData->m_Selectable = selectable;
 		CalculateWindowNavigationLinks();
 	}
 
@@ -597,6 +602,21 @@ namespace Kargono::RuntimeUI
 
 		// Return if the widget is selected
 		return s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget == currentWidget.get();
+	}
+
+	SelectionData* RuntimeUIService::GetSelectionDataFromWidget(Widget* currentWidget)
+	{
+		// Return the selection data for each widget
+		if (currentWidget->m_WidgetType == WidgetTypes::ButtonWidget)
+		{
+			return &((ButtonWidget*)currentWidget)->m_SelectionData;
+		}
+		if (currentWidget->m_WidgetType == WidgetTypes::ImageButtonWidget)
+		{
+			return &((ImageButtonWidget*)currentWidget)->m_SelectionData;
+		}
+
+		return nullptr;
 	}
 
 	void RuntimeUIService::ClearActiveUI()
@@ -622,16 +642,16 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		// Ensure the widget is valid
-		if (s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget->m_WidgetType != WidgetTypes::ButtonWidget)
+		// Get the selection specific data from the widget
+		SelectionData* selectionData = GetSelectionDataFromWidget(s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget);
+		if (!selectionData)
 		{
-			KG_WARN("Invalid widget type attempting to change it's active color");
+			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
 			return;
 		}
 
 		// Set the widget's active color
-		ButtonWidget& buttonWidget = *(ButtonWidget*)s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget;
-		buttonWidget.m_ActiveBackgroundColor = color;
+		selectionData->m_ActiveBackgroundColor = color;
 	}
 
 	bool RuntimeUIService::IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag)
@@ -699,9 +719,9 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Ensure the widget is an image widget
-		if (currentWidget->m_WidgetType != WidgetTypes::ImageWidget)
+		if (currentWidget->m_WidgetType != WidgetTypes::ImageWidget && currentWidget->m_WidgetType != WidgetTypes::ImageButtonWidget)
 		{
-			KG_WARN("Attempt to change the image of a widget that is not an image widget");
+			KG_WARN("Attempt to change the image of a widget that is not an image/image button widget");
 			return;
 		}
 
@@ -713,10 +733,20 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		// Set the text of the widget
-		ImageWidget* imageWidget = (ImageWidget*)currentWidget.get();
-		imageWidget->m_ImageHandle = textureHandle;
-		imageWidget->m_ImageRef = textureRef;
+		if (currentWidget->m_WidgetType == WidgetTypes::ImageWidget)
+		{
+			// Set the text of the widget
+			ImageWidget* imageWidget = (ImageWidget*)currentWidget.get();
+			imageWidget->m_ImageHandle = textureHandle;
+			imageWidget->m_ImageRef = textureRef;
+		}
+		else if (currentWidget->m_WidgetType == WidgetTypes::ImageButtonWidget)
+		{
+			// Set the text of the widget
+			ImageButtonWidget* imageButtonWidget = (ImageButtonWidget*)currentWidget.get();
+			imageButtonWidget->m_ImageHandle = textureHandle;
+			imageButtonWidget->m_ImageRef = textureRef;
+		}
 	}
 
 	void RuntimeUIService::SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag)
@@ -889,26 +919,25 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-
-		// Get the selected widget as a button
-		KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
-		ButtonWidget& selectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+		// Get the selected widget's selection data
+		SelectionData* originalSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+		KG_ASSERT(originalSelectionData);
 
 		// Move to the right
-		if (selectedButton.m_NavigationLinks.m_RightWidgetIndex != k_InvalidWidgetIndex)
+		if (originalSelectionData->m_NavigationLinks.m_RightWidgetIndex != k_InvalidWidgetIndex)
 		{
 			// Set the active background color of the original widget to indicate it is no longer selected
-			selectedButton.m_ActiveBackgroundColor = selectedButton.m_DefaultBackgroundColor;
+			originalSelectionData->m_ActiveBackgroundColor = originalSelectionData->m_DefaultBackgroundColor;
 
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(selectedButton.m_NavigationLinks.m_RightWidgetIndex).get();
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_RightWidgetIndex).get();
 
-			// Get the new selected widget as a button
-			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
-			ButtonWidget& newSelectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+			// Get the new widget's selection data
+			SelectionData* newSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+			KG_ASSERT(newSelectionData);
 
 			// Set the active background color of the new widget to indicate it is selected
-			newSelectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
+			newSelectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -928,25 +957,26 @@ namespace Kargono::RuntimeUI
 		{
 			return;
 		}
-		// Get the selected widget as a button
-		KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
-		ButtonWidget& selectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+
+		// Get the selected widget's selection data
+		SelectionData* originalSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+		KG_ASSERT(originalSelectionData);
 
 		// Move to the left
-		if (selectedButton.m_NavigationLinks.m_LeftWidgetIndex != k_InvalidWidgetIndex)
+		if (originalSelectionData->m_NavigationLinks.m_LeftWidgetIndex != k_InvalidWidgetIndex)
 		{
 			// Set the active background color of the original widget to indicate it is no longer selected
-			selectedButton.m_ActiveBackgroundColor = selectedButton.m_DefaultBackgroundColor;
+			originalSelectionData->m_ActiveBackgroundColor = originalSelectionData->m_DefaultBackgroundColor;
 
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(selectedButton.m_NavigationLinks.m_LeftWidgetIndex).get();
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_LeftWidgetIndex).get();
 
-			// Get the new selected widget as a button
-			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
-			ButtonWidget& newSelectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+			// Get the new widget's selection data
+			SelectionData* newSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+			KG_ASSERT(newSelectionData);
 
 			// Set the active background color of the new widget to indicate it is selected
-			newSelectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
+			newSelectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -966,25 +996,26 @@ namespace Kargono::RuntimeUI
 		{
 			return;
 		}
-		// Get the current selected widget as a button
-		KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
-		ButtonWidget& selectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+
+		// Get the selected widget's selection data
+		SelectionData* originalSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+		KG_ASSERT(originalSelectionData);
 
 		// Move up
-		if (selectedButton.m_NavigationLinks.m_UpWidgetIndex != k_InvalidWidgetIndex)
+		if (originalSelectionData->m_NavigationLinks.m_UpWidgetIndex != k_InvalidWidgetIndex)
 		{
 			// Set the active background color of the original widget to indicate it is no longer selected
-			selectedButton.m_ActiveBackgroundColor = selectedButton.m_DefaultBackgroundColor;
+			originalSelectionData->m_ActiveBackgroundColor = originalSelectionData->m_DefaultBackgroundColor;
 
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(selectedButton.m_NavigationLinks.m_UpWidgetIndex).get();
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_UpWidgetIndex).get();
 
-			// Get the new selected widget as a button
-			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
-			ButtonWidget& newSelectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+			// Get the new widget's selection data
+			SelectionData* newSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+			KG_ASSERT(newSelectionData);
 
 			// Set the active background color of the new widget to indicate it is selected
-			newSelectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
+			newSelectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -1004,25 +1035,26 @@ namespace Kargono::RuntimeUI
 		{
 			return;
 		}
-		// Get the selected widget as a button
-		KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
-		ButtonWidget& selectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+
+		// Get the selected widget's selection data
+		SelectionData* originalSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+		KG_ASSERT(originalSelectionData);
 
 		// Move down
-		if (selectedButton.m_NavigationLinks.m_DownWidgetIndex != k_InvalidWidgetIndex)
+		if (originalSelectionData->m_NavigationLinks.m_DownWidgetIndex != k_InvalidWidgetIndex)
 		{
 			// Set the active background color of the original widget to indicate it is no longer selected
-			selectedButton.m_ActiveBackgroundColor = selectedButton.m_DefaultBackgroundColor;
+			originalSelectionData->m_ActiveBackgroundColor = originalSelectionData->m_DefaultBackgroundColor;
 
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(selectedButton.m_NavigationLinks.m_DownWidgetIndex).get();
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_DownWidgetIndex).get();
 
-			// Get the new selected widget as a button
-			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
-			ButtonWidget& newSelectedButton = *(ButtonWidget*)activeUI->m_SelectedWidget;
+			// Get the new widget's selection data
+			SelectionData* newSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+			KG_ASSERT(newSelectionData);
 
 			// Set the active background color of the new widget to indicate it is selected
-			newSelectedButton.m_ActiveBackgroundColor = activeUI->m_SelectColor;
+			newSelectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -1034,18 +1066,26 @@ namespace Kargono::RuntimeUI
 
 	void RuntimeUIService::OnPress()
 	{
+		Widget* currentWidget = s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget;
+
 		// Ensure selected widget is valid
-		if (!s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget) 
-		{ 
-			return; 
+		if (!currentWidget) 
+		{
+			return;
+		}
+
+		// Get the selection specific data from the widget
+		SelectionData* selectionData = GetSelectionDataFromWidget(currentWidget);
+		if (!selectionData)
+		{
+			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
+			return;
 		}
 
 		// Call the on press function if applicable
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget->m_WidgetType == WidgetTypes::ButtonWidget);
-		ButtonWidget& selectedButton = *(ButtonWidget*)s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget;
-		if (selectedButton.m_FunctionPointers.m_OnPress)
+		if (selectionData->m_FunctionPointers.m_OnPress)
 		{
-			Utility::CallWrappedVoidNone(selectedButton.m_FunctionPointers.m_OnPress->m_Function);
+			Utility::CallWrappedVoidNone(selectionData->m_FunctionPointers.m_OnPress->m_Function);
 		}
 	}
 
@@ -1061,17 +1101,18 @@ namespace Kargono::RuntimeUI
 		// Get the current widget
 		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
 
-		// Ensure selected widget is the correct type
-		if (currentWidget->m_WidgetType != WidgetTypes::ButtonWidget)
+		// Get the selection specific data from the widget
+		SelectionData* selectionData = GetSelectionDataFromWidget(currentWidget.get());
+		if (!selectionData)
 		{
+			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
 			return;
 		}
 
 		// Call the on press function if applicable
-		ButtonWidget& selectedButton = *(ButtonWidget*)currentWidget.get();
-		if (selectedButton.m_FunctionPointers.m_OnPress)
+		if (selectionData->m_FunctionPointers.m_OnPress)
 		{
-			Utility::CallWrappedVoidNone(selectedButton.m_FunctionPointers.m_OnPress->m_Function);
+			Utility::CallWrappedVoidNone(selectionData->m_FunctionPointers.m_OnPress->m_Function);
 		}
 	}
 
@@ -1089,23 +1130,28 @@ namespace Kargono::RuntimeUI
 			// Iterate through all widgets in the window
 			for (Ref<Widget> currentWidget : currentWindow.m_Widgets)
 			{
+				// Ensure the widget is selectable
 				if (!currentWidget->Selectable())
 				{
 					continue;
 				}
 
-				// Get the widget as a button widget
-				KG_ASSERT(currentWidget->m_WidgetType == WidgetTypes::ButtonWidget);
-				ButtonWidget& selectedButton = *(ButtonWidget*)currentWidget.get();
+				// Get the selection specific data from the widget
+				SelectionData* selectionData = GetSelectionDataFromWidget(currentWidget.get());
+				if (!selectionData)
+				{
+					KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
+					return;
+				}
 
 				// Calculate navigation links for the current widget
-				selectedButton.m_NavigationLinks.m_RightWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, 
+				selectionData->m_NavigationLinks.m_RightWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, 
 					Direction::Right, windowPosition, windowScale);
-				selectedButton.m_NavigationLinks.m_LeftWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, 
+				selectionData->m_NavigationLinks.m_LeftWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget,
 					Direction::Left, windowPosition, windowScale);
-				selectedButton.m_NavigationLinks.m_UpWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget,
+				selectionData->m_NavigationLinks.m_UpWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget,
 					Direction::Up, windowPosition, windowScale);
-				selectedButton.m_NavigationLinks.m_DownWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget,
+				selectionData->m_NavigationLinks.m_DownWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget,
 					Direction::Down, windowPosition, windowScale);
 			}
 		}
@@ -1382,6 +1428,7 @@ namespace Kargono::RuntimeUI
 			(*(ButtonWidget*)newWidget.get()).CalculateTextSize();
 			break;
 		case WidgetTypes::ImageWidget:
+		case WidgetTypes::ImageButtonWidget:
 			break;
 		default:
 			KG_ERROR("Invalid widget type provided when revalidating widget text size");
@@ -1655,12 +1702,13 @@ namespace Kargono::RuntimeUI
 		// Get widget translation
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
-		if (m_ActiveBackgroundColor.w > 0.001f)
+		
+		if (m_SelectionData.m_ActiveBackgroundColor.w > 0.001f)
 		{
 			// Create the widget's background rendering data
 			inputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
 				* glm::scale(Math::mat4(1.0f), widgetSize);
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_ActiveBackgroundColor, "a_Color", inputSpec.m_Buffer, inputSpec.m_Shader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_SelectionData.m_ActiveBackgroundColor, "a_Color", inputSpec.m_Buffer, inputSpec.m_Shader);
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec);
@@ -1721,6 +1769,10 @@ namespace Kargono::RuntimeUI
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(imageRendererSpec);
 		}
+	}
+
+	void ImageButtonWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	{
 	}
 
 }
