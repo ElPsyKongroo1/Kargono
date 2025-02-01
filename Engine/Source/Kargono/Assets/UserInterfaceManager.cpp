@@ -140,6 +140,30 @@ namespace Kargono::Assets
 					out << YAML::EndMap; // End ImageWidget Map
 					break;
 				}
+				case RuntimeUI::WidgetTypes::CheckboxWidget:
+				{
+					RuntimeUI::CheckboxWidget* CheckboxWidget = static_cast<RuntimeUI::CheckboxWidget*>(widget.get());
+					out << YAML::Key << "CheckboxWidget" << YAML::Value;
+					// Image fields
+					out << YAML::BeginMap; // Begin Checkbox Map
+					out << YAML::Key << "CheckedImage" << YAML::Value << (uint64_t)CheckboxWidget->m_ImageChecked.m_ImageHandle;
+					out << YAML::Key << "CheckedFixedAspectRatio" << YAML::Value << CheckboxWidget->m_ImageChecked.m_FixedAspectRatio;
+					out << YAML::Key << "UnCheckedImage" << YAML::Value << (uint64_t)CheckboxWidget->m_ImageUnChecked.m_ImageHandle;
+					out << YAML::Key << "UnCheckedFixedAspectRatio" << YAML::Value << CheckboxWidget->m_ImageUnChecked.m_FixedAspectRatio;
+					// Color fields
+					out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << CheckboxWidget->m_SelectionData.m_DefaultBackgroundColor;
+					// Selectable fields
+					out << YAML::Key << "Selectable" << YAML::Value << CheckboxWidget->m_SelectionData.m_Selectable;
+					// Direction index fields
+					out << YAML::Key << "DirectionPointerUp" << YAML::Value << CheckboxWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex;
+					out << YAML::Key << "DirectionPointerDown" << YAML::Value << CheckboxWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex;
+					out << YAML::Key << "DirectionPointerLeft" << YAML::Value << CheckboxWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex;
+					out << YAML::Key << "DirectionPointerRight" << YAML::Value << CheckboxWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex;
+					// Function pointer fields
+					out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)CheckboxWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle;
+					out << YAML::EndMap; // End Checkbox Map
+					break;
+				}
 				}
 
 				out << YAML::EndMap; // End Widget Map
@@ -348,6 +372,72 @@ namespace Kargono::Assets
 							imageButtonWidget->m_ImageData.m_FixedAspectRatio = specificWidget["FixedAspectRatio"].as<bool>();
 							break;
 						}
+						case RuntimeUI::WidgetTypes::CheckboxWidget:
+						{
+							specificWidget = widget["CheckboxWidget"];
+							newWidget = CreateRef<RuntimeUI::CheckboxWidget>();
+							newWidget->m_WidgetType = widgetType;
+							RuntimeUI::CheckboxWidget* checkboxWidget = static_cast<RuntimeUI::CheckboxWidget*>(newWidget.get());
+							// Color fields
+							checkboxWidget->m_SelectionData.m_DefaultBackgroundColor = specificWidget["DefaultBackgroundColor"].as<Math::vec4>();
+							checkboxWidget->m_SelectionData.m_ActiveBackgroundColor = checkboxWidget->m_SelectionData.m_DefaultBackgroundColor;
+							// Selectable field
+							checkboxWidget->m_SelectionData.m_Selectable = specificWidget["Selectable"].as<bool>();
+							// Navigation fields
+							checkboxWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex = specificWidget["DirectionPointerUp"].as<size_t>();
+							checkboxWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex = specificWidget["DirectionPointerDown"].as<size_t>();
+							checkboxWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex = specificWidget["DirectionPointerLeft"].as<size_t>();
+							checkboxWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex = specificWidget["DirectionPointerRight"].as<size_t>();
+							// Function pointer fields
+							checkboxWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle = specificWidget["FunctionPointerOnPress"].as<uint64_t>();
+							if (checkboxWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
+							{
+								checkboxWidget->m_SelectionData.m_FunctionPointers.m_OnPress = nullptr;
+							}
+							else
+							{
+								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(checkboxWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle);
+								if (!onPressScript)
+								{
+									KG_WARN("Unable to locate OnPress Script!");
+									return nullptr;
+								}
+								checkboxWidget->m_SelectionData.m_FunctionPointers.m_OnPress = onPressScript;
+							}
+							checkboxWidget->m_ImageChecked.m_ImageHandle = specificWidget["CheckedImage"].as<uint64_t>();
+							if (checkboxWidget->m_ImageChecked.m_ImageHandle == Assets::EmptyHandle)
+							{
+								checkboxWidget->m_ImageChecked.m_ImageRef = nullptr;
+							}
+							else
+							{
+								Ref<Rendering::Texture2D> CheckboxRef = Assets::AssetService::GetTexture2D(checkboxWidget->m_ImageChecked.m_ImageHandle);
+								if (!CheckboxRef)
+								{
+									KG_WARN("Unable to locate provided Checkbox reference");
+									return nullptr;
+								}
+								checkboxWidget->m_ImageChecked.m_ImageRef = CheckboxRef;
+							}
+							checkboxWidget->m_ImageChecked.m_FixedAspectRatio = specificWidget["CheckedFixedAspectRatio"].as<bool>();
+							checkboxWidget->m_ImageUnChecked.m_ImageHandle = specificWidget["UnCheckedImage"].as<uint64_t>();
+							if (checkboxWidget->m_ImageUnChecked.m_ImageHandle == Assets::EmptyHandle)
+							{
+								checkboxWidget->m_ImageUnChecked.m_ImageRef = nullptr;
+							}
+							else
+							{
+								Ref<Rendering::Texture2D> CheckboxRef = Assets::AssetService::GetTexture2D(checkboxWidget->m_ImageUnChecked.m_ImageHandle);
+								if (!CheckboxRef)
+								{
+									KG_WARN("Unable to locate provided Checkbox reference");
+									return nullptr;
+								}
+								checkboxWidget->m_ImageUnChecked.m_ImageRef = CheckboxRef;
+							}
+							checkboxWidget->m_ImageUnChecked.m_FixedAspectRatio = specificWidget["UnCheckedFixedAspectRatio"].as<bool>();
+							break;
+						}
 						default:
 						{
 							KG_WARN("Invalid Widget Type in UserInterface Deserialization");
@@ -367,7 +457,6 @@ namespace Kargono::Assets
 						newWidget->m_SizeType = Utility::StringToPixelOrPercent(widget["SizeType"].as<std::string>());
 						newWidget->m_PercentSize = widget["PercentSize"].as<Math::vec2>();
 						newWidget->m_PixelSize = widget["PixelSize"].as<Math::ivec2>();
-						
 						newWidgetsList.push_back(newWidget);
 
 
@@ -397,18 +486,20 @@ namespace Kargono::Assets
 		{
 			for (Ref<RuntimeUI::Widget> widgetRef : currentWindow.m_Widgets)
 			{
-				// Ensure we are handling a button widget
-				if (widgetRef->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
+
+				RuntimeUI::SelectionData* selectionData = RuntimeUI::RuntimeUIService::GetSelectionDataFromWidget(widgetRef.get());
+
+				// Check if this widget has a selection data
+				if (!selectionData)
 				{
 					continue;
 				}
-				// Remove script references from button widget if necessary
-				RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)widgetRef.get();
-				if (buttonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle == scriptHandle)
+
+				// Remove script references from widget if necessary
+				if (selectionData->m_FunctionPointers.m_OnPressHandle == scriptHandle)
 				{
-					RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)widgetRef.get();
-					buttonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
-					buttonWidget.m_SelectionData.m_FunctionPointers.m_OnPress = nullptr;
+					selectionData->m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
+					selectionData->m_FunctionPointers.m_OnPress = nullptr;
 					uiModified = true;
 				}
 			}
@@ -446,6 +537,23 @@ namespace Kargono::Assets
 						RuntimeUI::ImageButtonWidget& imageButtonWidget = *(RuntimeUI::ImageButtonWidget*)widgetRef.get();
 						imageButtonWidget.m_ImageData.m_ImageHandle = Assets::EmptyHandle;
 						imageButtonWidget.m_ImageData.m_ImageRef = nullptr;
+						uiModified = true;
+					}
+				}
+				if (widgetRef->m_WidgetType != RuntimeUI::WidgetTypes::CheckboxWidget)
+				{
+					// Remove texture reference from widget if necessary
+					RuntimeUI::CheckboxWidget& checkboxWidget = *(RuntimeUI::CheckboxWidget*)widgetRef.get();
+					if (checkboxWidget.m_ImageUnChecked.m_ImageHandle == textureHandle)
+					{
+						checkboxWidget.m_ImageUnChecked.m_ImageHandle = Assets::EmptyHandle;
+						checkboxWidget.m_ImageUnChecked.m_ImageRef = nullptr;
+						uiModified = true;
+					}
+					if (checkboxWidget.m_ImageChecked.m_ImageHandle == textureHandle)
+					{
+						checkboxWidget.m_ImageChecked.m_ImageHandle = Assets::EmptyHandle;
+						checkboxWidget.m_ImageChecked.m_ImageRef = nullptr;
 						uiModified = true;
 					}
 				}

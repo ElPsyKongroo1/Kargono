@@ -629,6 +629,43 @@ namespace Kargono::RuntimeUI
 		return s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget == currentWidget.get();
 	}
 
+	void RuntimeUIService::RenderBackground(const SelectionData& selectionData, const Math::vec3& translation, const Math::vec3 size)
+	{
+		Rendering::RendererInputSpec& renderSpec = s_RuntimeUIContext->m_BackgroundInputSpec;
+
+		if (selectionData.m_ActiveBackgroundColor.w > 0.001f)
+		{
+			// Create the widget's background rendering data
+			renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), 
+				Math::vec3(translation.x + (size.x / 2), translation.y + (size.y / 2), translation.z))
+				* glm::scale(Math::mat4(1.0f), size);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionData.m_ActiveBackgroundColor, 
+				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
+
+			// Submit background data to GPU
+			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
+		}
+	}
+
+	void RuntimeUIService::RenderImage(const ImageData& imageData, const Math::vec3& translation, const Math::vec3 size)
+	{
+		Rendering::RendererInputSpec& renderSpec = RuntimeUIService::s_RuntimeUIContext->m_ImageInputSpec;
+
+		if (imageData.m_ImageRef)
+		{
+			// Create the widget's background rendering data
+			renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(translation.x + (size.x / 2), translation.y + (size.y / 2), translation.z))
+				* glm::scale(Math::mat4(1.0f), size);
+
+
+			renderSpec.m_Texture = imageData.m_ImageRef;
+			renderSpec.m_ShapeComponent->Texture = imageData.m_ImageRef;
+
+			// Submit background data to GPU
+			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
+		}
+	}
+
 	SelectionData* RuntimeUIService::GetSelectionDataFromWidget(Widget* currentWidget)
 	{
 		// Return the selection data for each widget
@@ -639,6 +676,10 @@ namespace Kargono::RuntimeUI
 		if (currentWidget->m_WidgetType == WidgetTypes::ImageButtonWidget)
 		{
 			return &((ImageButtonWidget*)currentWidget)->m_SelectionData;
+		}
+		if (currentWidget->m_WidgetType == WidgetTypes::CheckboxWidget)
+		{
+			return &((CheckboxWidget*)currentWidget)->m_SelectionData;
 		}
 
 		return nullptr;
@@ -1553,8 +1594,6 @@ namespace Kargono::RuntimeUI
 
 	void TextWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
-		Rendering::RendererInputSpec& inputSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
-
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
@@ -1585,7 +1624,6 @@ namespace Kargono::RuntimeUI
 			Math::vec2 lineDimensions{ m_TextMetadata.m_LineSize[iteration] };
 			Math::ivec2 currentBreaks{ m_TextMetadata.m_LineBreaks[iteration] };
 
-			
 			constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
 
 			// Place the starting x-location of the text widget based on the provided alignment option
@@ -1803,25 +1841,14 @@ namespace Kargono::RuntimeUI
 
 	void ButtonWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
-		Rendering::RendererInputSpec& inputSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
-
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
 		// Get widget translation
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
-		
-		if (m_SelectionData.m_ActiveBackgroundColor.w > 0.001f)
-		{
-			// Create the widget's background rendering data
-			inputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
-				* glm::scale(Math::mat4(1.0f), widgetSize);
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_SelectionData.m_ActiveBackgroundColor, "a_Color", inputSpec.m_Buffer, inputSpec.m_Shader);
-
-			// Submit background data to GPU
-			Rendering::RenderingService::SubmitDataToRenderer(RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec);
-		}
+		// Draw background
+		RuntimeUIService::RenderBackground(m_SelectionData, widgetTranslation, widgetSize);
 		
 		// Create the widget's text rendering data
 		widgetTranslation.z += 0.001f;
@@ -1858,33 +1885,18 @@ namespace Kargono::RuntimeUI
 
 	void ImageWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
-		Rendering::RendererInputSpec& imageRendererSpec = RuntimeUIService::s_RuntimeUIContext->m_ImageInputSpec;
-
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
 		// Get widget translation
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
-		if (m_ImageData.m_ImageRef)
-		{
-			// Create the widget's background rendering data
-			imageRendererSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
-				* glm::scale(Math::mat4(1.0f), widgetSize);
-
-			imageRendererSpec.m_Texture = m_ImageData.m_ImageRef;
-			imageRendererSpec.m_ShapeComponent->Texture = m_ImageData.m_ImageRef;
-
-			// Submit background data to GPU
-			Rendering::RenderingService::SubmitDataToRenderer(imageRendererSpec);
-		}
+		// Draw image
+		RuntimeUIService::RenderImage(m_ImageData, widgetTranslation, widgetSize);
 	}
 
 	void ImageButtonWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
-		Rendering::RendererInputSpec& backgroundRendererSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
-		Rendering::RendererInputSpec& imageRendererSpec = RuntimeUIService::s_RuntimeUIContext->m_ImageInputSpec;
-
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
@@ -1892,32 +1904,34 @@ namespace Kargono::RuntimeUI
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
 		// Draw background
-		if (m_SelectionData.m_ActiveBackgroundColor.w > 0.001f)
-		{
-			// Create the widget's background rendering data
-			backgroundRendererSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
-				* glm::scale(Math::mat4(1.0f), widgetSize);
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(m_SelectionData.m_ActiveBackgroundColor, "a_Color", backgroundRendererSpec.m_Buffer, backgroundRendererSpec.m_Shader);
-
-			// Submit background data to GPU
-			Rendering::RenderingService::SubmitDataToRenderer(backgroundRendererSpec);
-		}
+		RuntimeUIService::RenderBackground(m_SelectionData, widgetTranslation, widgetSize);
 
 		widgetTranslation.z += 0.001f;
 
 		// Draw image
-		if (m_ImageData.m_ImageRef)
+		RuntimeUIService::RenderImage(m_ImageData, widgetTranslation, widgetSize);
+	}
+
+	void CheckboxWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	{
+		// Calculate the widget's rendering data
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
+
+		// Get widget translation
+		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
+
+		// Draw background
+		RuntimeUIService::RenderBackground(m_SelectionData, widgetTranslation, widgetSize);
+
+		widgetTranslation.z += 0.001f;
+
+		if (m_Checked)
 		{
-			// Create the widget's background rendering data
-			imageRendererSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), Math::vec3(widgetTranslation.x + (widgetSize.x / 2), widgetTranslation.y + (widgetSize.y / 2), widgetTranslation.z))
-				* glm::scale(Math::mat4(1.0f), widgetSize);
-
-
-			imageRendererSpec.m_Texture = m_ImageData.m_ImageRef;
-			imageRendererSpec.m_ShapeComponent->Texture = m_ImageData.m_ImageRef;
-
-			// Submit background data to GPU
-			Rendering::RenderingService::SubmitDataToRenderer(imageRendererSpec);
+			RuntimeUIService::RenderImage(m_ImageChecked, widgetTranslation, widgetSize);
+		}
+		else
+		{
+			RuntimeUIService::RenderImage(m_ImageUnChecked, widgetTranslation, widgetSize);
 		}
 	}
 

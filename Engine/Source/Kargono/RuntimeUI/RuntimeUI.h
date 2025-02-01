@@ -323,6 +323,17 @@ namespace Kargono::RuntimeUI
 		// Rendering Methods
 		//============================
 		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual bool Selectable()
+		{
+			return m_SelectionData.m_Selectable;
+		}
+		//============================
+		// Public Fields
+		//============================
+		ImageData m_ImageChecked;
+		ImageData m_ImageUnChecked;
+		SelectionData m_SelectionData;
+		bool m_Checked{ false };
 	};
 
 	//============================
@@ -518,7 +529,7 @@ namespace Kargono::RuntimeUI
 		static bool DeleteActiveUIWidget(std::size_t windowIndex, std::size_t widgetIndex);
 
 		//==============================
-		// Modify Provided UI
+		// Modify Indicated UI
 		//==============================
 		static bool DeleteUIWindow(Ref<UserInterface> userInterface, std::size_t windowLocation);
 		static bool DeleteUIWidget(Ref<UserInterface> userInterface, std::size_t windowIndex, std::size_t widgetIndex);
@@ -570,20 +581,35 @@ namespace Kargono::RuntimeUI
 		static void OnRender(uint32_t viewportWidth, uint32_t viewportHeight);
 	private:
 		//==============================
-		// Internal Functionality
+		// Getters (Internal)
 		//==============================
-		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
 		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
 		static Ref<Widget> GetWidget(uint16_t windowIndex, uint16_t widgetIndex);
 		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag);
 		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(uint16_t windowIndex, uint16_t widgetIndex);
+
+		//==============================
+		// Revalidate UI Context (Internal)
+		//==============================
+		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
 		static void RevalidateDisplayedWindows();
+
+		//==============================
+		// Manage Active UI (Internal)
+		//==============================
 		static void SetWidgetTextInternal(Window* currentWindow, Ref<Widget> currentWidget, const std::string& newText);
 		static void SetSelectedWidgetInternal(Ref<Widget> newSelectedWidget);
 		static void SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
-		static void SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
 		static void SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable);
 		static bool IsWidgetSelectedInternal(Ref<Widget> currentWidget);
+		static void SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
+		
+
+		//==============================
+		// Rendering API (Internal)
+		//==============================
+		static void RenderBackground(const SelectionData& selectionData, const Math::vec3& translation, const Math::vec3 size);
+		static void RenderImage(const ImageData& imageData, const Math::vec3& translation, const Math::vec3 size);
 
 
 	private:
@@ -596,6 +622,7 @@ namespace Kargono::RuntimeUI
 		friend class ButtonWidget;
 		friend class ImageWidget;
 		friend class ImageButtonWidget;
+		friend class CheckboxWidget;
 		friend class Window;
 	};
 }

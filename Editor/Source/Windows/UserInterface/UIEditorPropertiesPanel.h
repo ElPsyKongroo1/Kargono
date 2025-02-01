@@ -259,7 +259,5 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec m_ImageButtonWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_ImageButtonWidgetOnPress{};
 		EditorUI::CheckboxSpec m_ImageButtonWidgetSelectable{};
-
-
 	};
 }
