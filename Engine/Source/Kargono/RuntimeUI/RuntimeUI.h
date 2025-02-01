@@ -547,7 +547,8 @@ namespace Kargono::RuntimeUI
 		//==============================
 		static void CalculateWindowNavigationLinks();
 		static void RecalculateTextData(Window* parentWindow, Widget* widget);
-		static void CalculateFixedAspectRatioSize(Window* parentWindow, Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight);
+		static void CalculateFixedAspectRatioSize(Window* parentWindow, Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight,
+			bool useXValueAsBase);
 		static SelectionData* GetSelectionDataFromWidget(Widget* currentWidget);
 		static ImageData* GetImageDataFromWidget(Widget* currentWidget);
 

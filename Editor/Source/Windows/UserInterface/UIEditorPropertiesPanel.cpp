@@ -1184,6 +1184,9 @@ namespace Kargono::Panels
 			return;
 		}
 
+		bool useXAsBasis = std::fabs(spec.m_CurrentVec2.x - m_ActiveWidget->m_PercentSize.x) >
+			std::fabs(spec.m_CurrentVec2.y - m_ActiveWidget->m_PercentSize.y);
+
 		// Update the widget size based on the editorUI widget value
 		m_ActiveWidget->m_PercentSize = m_WidgetPercentSize.m_CurrentVec2;
 		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
@@ -1198,7 +1201,8 @@ namespace Kargono::Panels
 				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
-				currentViewport.m_Height
+				currentViewport.m_Height,
+				useXAsBasis
 			);
 		}
 
@@ -1215,6 +1219,9 @@ namespace Kargono::Panels
 			return;
 		}
 
+		bool useXAsBasis = std::abs(spec.m_CurrentIVec2.x - m_ActiveWidget->m_PixelSize.x) >=
+			std::abs(spec.m_CurrentIVec2.y - m_ActiveWidget->m_PixelSize.y);
+
 		// Update the widget size based on the editorUI widget value
 		m_ActiveWidget->m_PixelSize = spec.m_CurrentIVec2;
 		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
@@ -1229,7 +1236,8 @@ namespace Kargono::Panels
 				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
-				currentViewport.m_Height
+				currentViewport.m_Height,
+				useXAsBasis
 			);
 		}
 
@@ -1809,7 +1817,8 @@ namespace Kargono::Panels
 				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
-				currentViewport.m_Height
+				currentViewport.m_Height,
+				true
 			);
 		}
 		
@@ -1878,7 +1887,8 @@ namespace Kargono::Panels
 				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
-				currentViewport.m_Height
+				currentViewport.m_Height,
+				true
 			);
 		}
 

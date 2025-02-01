@@ -1209,12 +1209,10 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::CalculateFixedAspectRatioSize(Window* parentWindow, Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight)
+	void RuntimeUIService::CalculateFixedAspectRatioSize(Window* parentWindow, Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight, bool useXValueAsBase)
 	{
 		KG_ASSERT(parentWindow);
 		KG_ASSERT(widget);
-
-		// TODO: FIX: Assume x-value is the basis for the aspect ratio
 
 		Math::vec2 windowSize = parentWindow->CalculateSize(viewportWidth, viewportHeight);
 		
@@ -1244,18 +1242,36 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		// Normalize the aspect ratio based on the x-value
-		textureAspectRatio.y = textureAspectRatio.y / textureAspectRatio.x;
-		textureAspectRatio.x = 1.0f;
 
-		// Use the normalized y-value ratio to calculate the new y-value...
+		if (useXValueAsBase)
+		{
+			// Normalize the aspect ratio based on the x-value
+			textureAspectRatio.y = textureAspectRatio.y / textureAspectRatio.x;
+			textureAspectRatio.x = 1.0f;
 
-		// For the pixel dimensions
-		widget->m_PixelSize.y = (int)((float)widget->m_PixelSize.x * textureAspectRatio.y);
+			// Use the normalized y-value ratio to calculate the new y-value...
 
-		// And for the percentage dimensions
-		//widget->m_PercentSize.y = (int)((float)widget->m_PercentSize.x * textureAspectRatio.y / windowSize.y);
-		widget->m_PercentSize.y = ((windowSize.x * widget->m_PercentSize.x) * textureAspectRatio.y) / windowSize.y;
+			// For the pixel dimensions
+			widget->m_PixelSize.y = (int)((float)widget->m_PixelSize.x * textureAspectRatio.y);
+
+			// And for the percentage dimensions
+			widget->m_PercentSize.y = ((windowSize.x * widget->m_PercentSize.x) * textureAspectRatio.y) / windowSize.y;
+		}
+		else
+		{
+			// Normalize the aspect ratio based on the y-value
+			textureAspectRatio.x = textureAspectRatio.x / textureAspectRatio.y;
+			textureAspectRatio.y = 1.0f;
+
+			// Use the normalized y-value ratio to calculate the new y-value...
+
+			// For the pixel dimensions
+			widget->m_PixelSize.x = (int)((float)widget->m_PixelSize.y * textureAspectRatio.x);
+
+			// And for the percentage dimensions
+			widget->m_PercentSize.x = ((windowSize.y * widget->m_PercentSize.y) * textureAspectRatio.x) / windowSize.x;
+		}
+		
 	}
 
 	std::size_t RuntimeUIService::CalculateNavigationLink(Window& currentWindow, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize)
