@@ -93,7 +93,6 @@ namespace Kargono::RuntimeUI
 	struct SelectionData
 	{
 		Math::vec4 m_DefaultBackgroundColor{ 0.5f };
-		Math::vec4 m_ActiveBackgroundColor{ 0.5f };
 		WidgetCallbacks m_FunctionPointers{};
 		bool m_Selectable{ true };
 		NavigationLinks m_NavigationLinks{};
@@ -482,6 +481,7 @@ namespace Kargono::RuntimeUI
 		std::vector<Window> m_Windows {};
 		Ref<Font> m_Font{ nullptr };
 		Math::vec4 m_SelectColor {1.0f};
+		Math::vec4 m_HoveredColor{ 0.5f };
 		Assets::AssetHandle m_FontHandle {0};
 		UICallbacks m_FunctionPointers{};
 
@@ -518,6 +518,7 @@ namespace Kargono::RuntimeUI
 		static void SetWidgetTextColorByIndex(WidgetID widgetID, const Math::vec4& color);
 		static void SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag);
 		static void SetSelectedWidgetByIndex(WidgetID widgetID);
+		static void SetHoveredWidgetByIndex(WidgetID widgetID);
 		static void SetWidgetBackgroundColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
 		static void SetWidgetBackgroundColorByIndex(WidgetID widgetID, const Math::vec4& color);
 		static void SetWidgetSelectableByTag(const std::string& windowTag, const std::string& widgetTag, bool selectable);
@@ -525,6 +526,7 @@ namespace Kargono::RuntimeUI
 		static void SetDisplayWindowByTag(const std::string& windowTag, bool display);
 		static void SetDisplayWindowByIndex(WindowID widgetID, bool display);
 		static void AddActiveWindow(Window& window);
+		static void ClearHoveredWidget();
 		static bool DeleteActiveUIWindow(std::size_t windowLocation);
 		static bool DeleteActiveUIWidget(std::size_t windowIndex, std::size_t widgetIndex);
 
@@ -599,6 +601,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		static void SetWidgetTextInternal(Window* currentWindow, Ref<Widget> currentWidget, const std::string& newText);
 		static void SetSelectedWidgetInternal(Ref<Widget> newSelectedWidget);
+		static void SetHoveredWidgetInternal(Ref<Widget> newSelectedWidget);
 		static void SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
 		static void SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable);
 		static bool IsWidgetSelectedInternal(Ref<Widget> currentWidget);
@@ -612,7 +615,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Rendering API (Internal)
 		//==============================
-		static void RenderBackground(const SelectionData& selectionData, const Math::vec3& translation, const Math::vec3 size);
+		static void RenderBackground(const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size);
 		static void RenderImage(const ImageData& imageData, const Math::vec3& translation, const Math::vec3 size);
 
 

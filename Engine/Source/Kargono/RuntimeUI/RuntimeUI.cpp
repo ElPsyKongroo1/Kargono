@@ -139,13 +139,6 @@ namespace Kargono::RuntimeUI
 
 				// Ensure the widget is selectable
 				KG_ASSERT(activeUI->m_SelectedWidget->Selectable());
-
-				// Get the selection data from the widget
-				SelectionData* selectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
-				KG_ASSERT(selectionData);
-
-				// Set the background color as active
-				selectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 			}
 			else
 			{
@@ -338,6 +331,7 @@ namespace Kargono::RuntimeUI
 
 	void RuntimeUIService::OnRender(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight)
 	{
+		KG_PROFILE_FUNCTION()
 		// Ensure active user interface is valid
 		if (!s_RuntimeUIContext->m_ActiveUI)
 		{
@@ -413,6 +407,13 @@ namespace Kargono::RuntimeUI
 
 		// Display the window
 		window.DisplayWindow();
+	}
+
+	void RuntimeUIService::ClearHoveredWidget()
+	{
+		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
+
+		s_RuntimeUIContext->m_ActiveUI->m_HoveredWidget = nullptr;
 	}
 
 	void RuntimeUIService::SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle)
@@ -520,24 +521,40 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		// Set the previous selected widget's color to the default color
-		if (activeUI->m_SelectedWidget)
-		{
-			SelectionData* previousSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
-			KG_ASSERT(previousSelectionData);
-			previousSelectionData->m_ActiveBackgroundColor = previousSelectionData->m_DefaultBackgroundColor;
-		}
-
 		// Set the new widget as selected and set it's color to the active color
 		activeUI->m_SelectedWidget = newSelectedWidget.get();
-		SelectionData* newSelectionData = GetSelectionDataFromWidget(newSelectedWidget.get());
-		newSelectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 		// Call the on move function if applicable
 		if (activeUI->m_FunctionPointers.m_OnMove)
 		{
 			Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 		}
+	}
+
+	void RuntimeUIService::SetHoveredWidgetInternal(Ref<Widget> newHoveredWidget)
+	{
+		// Ensure the widget is valid
+		if (!newHoveredWidget)
+		{
+			KG_WARN("Could not locate widget when attempting to set a widget as selected");
+			return;
+		}
+
+		// Ensure the widget is selectable
+		if (!newHoveredWidget->Selectable())
+		{
+			return;
+		}
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+
+		// If the selected widget is the same as the new selected widget, just exit
+		if (newHoveredWidget.get() == activeUI->m_HoveredWidget)
+		{
+			return;
+		}
+
+		// Set the new widget as selected and set it's color to the active color
+		activeUI->m_HoveredWidget = newHoveredWidget.get();
 	}
 
 	void RuntimeUIService::SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor)
@@ -591,8 +608,6 @@ namespace Kargono::RuntimeUI
 
 		// Set the widget's new color
 		selectionData->m_DefaultBackgroundColor = newColor;
-		selectionData->m_ActiveBackgroundColor = newColor;
-		
 	}
 
 	void RuntimeUIService::OnPressInternal(Widget* currentWidget)
@@ -604,6 +619,9 @@ namespace Kargono::RuntimeUI
 			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
 			return;
 		}
+
+		// Set the pressed widget to be selected
+		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget = currentWidget;
 
 		// Call the on press function if applicable
 		if (currentWidget->m_WidgetType == WidgetTypes::CheckboxWidget)
@@ -618,7 +636,6 @@ namespace Kargono::RuntimeUI
 					selectionData->m_FunctionPointers.m_OnPress->m_Function,
 					checkboxWidget.m_Checked);
 			}
-
 		}
 		else
 		{
@@ -629,9 +646,6 @@ namespace Kargono::RuntimeUI
 			}
 			Utility::CallWrappedVoidNone(selectionData->m_FunctionPointers.m_OnPress->m_Function);
 		}
-		
-
-		
 	}
 
 	void RuntimeUIService::SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable)
@@ -669,17 +683,17 @@ namespace Kargono::RuntimeUI
 		return s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget == currentWidget.get();
 	}
 
-	void RuntimeUIService::RenderBackground(const SelectionData& selectionData, const Math::vec3& translation, const Math::vec3 size)
+	void RuntimeUIService::RenderBackground(const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size)
 	{
 		Rendering::RendererInputSpec& renderSpec = s_RuntimeUIContext->m_BackgroundInputSpec;
 
-		if (selectionData.m_ActiveBackgroundColor.w > 0.001f)
+		if (color.w > 0.001f)
 		{
 			// Create the widget's background rendering data
 			renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), 
 				Math::vec3(translation.x + (size.x / 2), translation.y + (size.y / 2), translation.z))
 				* glm::scale(Math::mat4(1.0f), size);
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionData.m_ActiveBackgroundColor, 
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, 
 				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
 
 			// Submit background data to GPU
@@ -784,7 +798,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Set the widget's active color
-		selectionData->m_ActiveBackgroundColor = color;
+		selectionData->m_DefaultBackgroundColor = color;
 	}
 
 	bool RuntimeUIService::IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag)
@@ -892,6 +906,21 @@ namespace Kargono::RuntimeUI
 		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
 
 		SetSelectedWidgetInternal(currentWidget);
+	}
+
+	void RuntimeUIService::SetHoveredWidgetByIndex(WidgetID widgetID)
+	{
+		// Ensure the correct user interface is active
+		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return;
+		}
+
+		// Search for the indicated widget
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+
+		SetHoveredWidgetInternal(currentWidget);
 	}
 
 	void RuntimeUIService::SetWidgetTextColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
@@ -1048,18 +1077,8 @@ namespace Kargono::RuntimeUI
 		// Move to the right
 		if (originalSelectionData->m_NavigationLinks.m_RightWidgetIndex != k_InvalidWidgetIndex)
 		{
-			// Set the active background color of the original widget to indicate it is no longer selected
-			originalSelectionData->m_ActiveBackgroundColor = originalSelectionData->m_DefaultBackgroundColor;
-
 			// Set the new selected widget
 			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_RightWidgetIndex).get();
-
-			// Get the new widget's selection data
-			SelectionData* newSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
-			KG_ASSERT(newSelectionData);
-
-			// Set the active background color of the new widget to indicate it is selected
-			newSelectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -1087,18 +1106,9 @@ namespace Kargono::RuntimeUI
 		// Move to the left
 		if (originalSelectionData->m_NavigationLinks.m_LeftWidgetIndex != k_InvalidWidgetIndex)
 		{
-			// Set the active background color of the original widget to indicate it is no longer selected
-			originalSelectionData->m_ActiveBackgroundColor = originalSelectionData->m_DefaultBackgroundColor;
 
 			// Set the new selected widget
 			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_LeftWidgetIndex).get();
-
-			// Get the new widget's selection data
-			SelectionData* newSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
-			KG_ASSERT(newSelectionData);
-
-			// Set the active background color of the new widget to indicate it is selected
-			newSelectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -1126,18 +1136,12 @@ namespace Kargono::RuntimeUI
 		// Move up
 		if (originalSelectionData->m_NavigationLinks.m_UpWidgetIndex != k_InvalidWidgetIndex)
 		{
-			// Set the active background color of the original widget to indicate it is no longer selected
-			originalSelectionData->m_ActiveBackgroundColor = originalSelectionData->m_DefaultBackgroundColor;
-
 			// Set the new selected widget
 			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_UpWidgetIndex).get();
 
 			// Get the new widget's selection data
 			SelectionData* newSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
 			KG_ASSERT(newSelectionData);
-
-			// Set the active background color of the new widget to indicate it is selected
-			newSelectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -1165,18 +1169,8 @@ namespace Kargono::RuntimeUI
 		// Move down
 		if (originalSelectionData->m_NavigationLinks.m_DownWidgetIndex != k_InvalidWidgetIndex)
 		{
-			// Set the active background color of the original widget to indicate it is no longer selected
-			originalSelectionData->m_ActiveBackgroundColor = originalSelectionData->m_DefaultBackgroundColor;
-
 			// Set the new selected widget
 			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_DownWidgetIndex).get();
-
-			// Get the new widget's selection data
-			SelectionData* newSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
-			KG_ASSERT(newSelectionData);
-
-			// Set the active background color of the new widget to indicate it is selected
-			newSelectionData->m_ActiveBackgroundColor = activeUI->m_SelectColor;
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -1630,6 +1624,8 @@ namespace Kargono::RuntimeUI
 
 	void TextWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		KG_PROFILE_FUNCTION();
+
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
@@ -1877,6 +1873,10 @@ namespace Kargono::RuntimeUI
 
 	void ButtonWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		KG_PROFILE_FUNCTION();
+
+		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
+
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
@@ -1884,7 +1884,19 @@ namespace Kargono::RuntimeUI
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
 		// Draw background
-		RuntimeUIService::RenderBackground(m_SelectionData, widgetTranslation, widgetSize);
+		if (activeUI->m_HoveredWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
+		}
+		else if (activeUI->m_SelectedWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
+		}
+		else
+		{
+			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
+		}
+		
 		
 		// Create the widget's text rendering data
 		widgetTranslation.z += 0.001f;
@@ -1921,6 +1933,8 @@ namespace Kargono::RuntimeUI
 
 	void ImageWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		KG_PROFILE_FUNCTION();
+
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
@@ -1933,6 +1947,10 @@ namespace Kargono::RuntimeUI
 
 	void ImageButtonWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		KG_PROFILE_FUNCTION();
+
+		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
+
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
@@ -1940,7 +1958,18 @@ namespace Kargono::RuntimeUI
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
 		// Draw background
-		RuntimeUIService::RenderBackground(m_SelectionData, widgetTranslation, widgetSize);
+		if (activeUI->m_HoveredWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
+		}
+		else if (activeUI->m_SelectedWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
+		}
+		else
+		{
+			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
+		}
 
 		widgetTranslation.z += 0.001f;
 
@@ -1950,6 +1979,10 @@ namespace Kargono::RuntimeUI
 
 	void CheckboxWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		KG_PROFILE_FUNCTION();
+
+		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
+
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 
@@ -1957,7 +1990,18 @@ namespace Kargono::RuntimeUI
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
 		// Draw background
-		RuntimeUIService::RenderBackground(m_SelectionData, widgetTranslation, widgetSize);
+		if (activeUI->m_HoveredWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
+		}
+		else if (activeUI->m_SelectedWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
+		}
+		else
+		{
+			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
+		}
 
 		widgetTranslation.z += 0.001f;
 

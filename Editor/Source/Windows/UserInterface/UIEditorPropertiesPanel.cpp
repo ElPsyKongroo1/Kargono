@@ -90,6 +90,10 @@ namespace Kargono::Panels
 			// Edit UI's selection color
 			m_UISelectionColor.m_CurrentVec4 = s_UIWindow->m_EditorUI->m_SelectColor;
 			EditorUI::EditorUIService::EditVec4(m_UISelectionColor);
+
+			// Edit UI's hovered color
+			m_UIHoveredColor.m_CurrentVec4 = s_UIWindow->m_EditorUI->m_HoveredColor;
+			EditorUI::EditorUIService::EditVec4(m_UIHoveredColor);
 		}
 	}
 
@@ -581,6 +585,15 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
+	void UIEditorPropertiesPanel::OnModifyUIHoveredColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Update the UI's selection color
+		s_UIWindow->m_EditorUI->m_HoveredColor = spec.m_CurrentVec4;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
 	bool UIEditorPropertiesPanel::ValidateActiveWindowAndWidget()
 	{
 		// Ensure active window is valid
@@ -636,6 +649,12 @@ namespace Kargono::Panels
 		m_UISelectionColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_UISelectionColor.m_Bounds = { 0.0f, 1.0f };
 		m_UISelectionColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUISelectionColor);
+
+		// Set up widget to modify the UI's hovered background color
+		m_UIHoveredColor.m_Label = "Hovered Color";
+		m_UIHoveredColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_UIHoveredColor.m_Bounds = { 0.0f, 1.0f };
+		m_UIHoveredColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUIHoveredColor);
 	}
 
 	void UIEditorPropertiesPanel::InitializeWindowOptions()
@@ -1397,7 +1416,6 @@ namespace Kargono::Panels
 
 		// Update the widget background color based on the editorUI widget value
 		activeButton.m_SelectionData.m_DefaultBackgroundColor = m_ButtonWidgetBackgroundColor.m_CurrentVec4;
-		activeButton.m_SelectionData.m_ActiveBackgroundColor = m_ButtonWidgetBackgroundColor.m_CurrentVec4;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -2149,7 +2167,6 @@ namespace Kargono::Panels
 
 		// Update the widget background color based on the editorUI widget value
 		activeButton.m_SelectionData.m_DefaultBackgroundColor = m_ImageButtonWidgetBackgroundColor.m_CurrentVec4;
-		activeButton.m_SelectionData.m_ActiveBackgroundColor = m_ImageButtonWidgetBackgroundColor.m_CurrentVec4;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -2485,7 +2502,6 @@ namespace Kargono::Panels
 
 		// Update the widget background color based on the editorUI widget value
 		activeButton.m_SelectionData.m_DefaultBackgroundColor = m_CheckboxWidgetBackgroundColor.m_CurrentVec4;
-		activeButton.m_SelectionData.m_ActiveBackgroundColor = m_CheckboxWidgetBackgroundColor.m_CurrentVec4;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;

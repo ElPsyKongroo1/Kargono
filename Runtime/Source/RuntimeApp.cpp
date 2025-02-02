@@ -517,11 +517,12 @@ namespace Kargono
 		// Exit early if no valid widget/window is available
 		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetID || m_HoveredWindowID == RuntimeUI::k_InvalidWindowID)
 		{
+			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
 			return;
 		}
 
 		// Select the widget if applicable
-		RuntimeUI::RuntimeUIService::SetSelectedWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+		RuntimeUI::RuntimeUIService::SetHoveredWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 			m_HoveredWindowID, m_HoveredWidgetID });
 
 	}

@@ -79,6 +79,7 @@ namespace Kargono::Panels
 		void OnOpenTooltipForUIOnMove();
 		// Modify selection color
 		void OnModifyUISelectionColor(EditorUI::EditVec4Spec& spec);
+		void OnModifyUIHoveredColor(EditorUI::EditVec4Spec& spec);
 
 		//=========================
 		// Validation Functions
@@ -229,6 +230,7 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_UISelectFont{};
 		EditorUI::SelectOptionSpec m_UIOnMove{};
 		EditorUI::EditVec4Spec m_UISelectionColor{};
+		EditorUI::EditVec4Spec m_UIHoveredColor{};
 
 		// Edit Window Options
 		EditorUI::CollapsingHeaderSpec m_WindowHeader{};

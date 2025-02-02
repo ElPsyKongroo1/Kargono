@@ -25,6 +25,7 @@ namespace Kargono::Assets
 		out << YAML::BeginMap; // Start of File Map
 		// Select Color
 		out << YAML::Key << "SelectColor" << YAML::Value << assetReference->m_SelectColor;
+		out << YAML::Key << "HoveredColor" << YAML::Value << assetReference->m_HoveredColor;
 
 		// Function Pointers
 		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << (uint64_t)assetReference->m_FunctionPointers.m_OnMoveHandle;
@@ -197,6 +198,7 @@ namespace Kargono::Assets
 
 		// Get SelectColor
 		newUserInterface->m_SelectColor = data["SelectColor"].as<Math::vec4>();
+		newUserInterface->m_HoveredColor = data["HoveredColor"].as<Math::vec4>();
 		// Function Pointers
 		newUserInterface->m_FunctionPointers.m_OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
 		if (newUserInterface->m_FunctionPointers.m_OnMoveHandle == Assets::EmptyHandle)
@@ -272,7 +274,6 @@ namespace Kargono::Assets
 							buttonWidget->m_TextAlignment = Utility::StringToConstraint(specificWidget["TextAlignment"].as<std::string>());
 							// Color fields
 							buttonWidget->m_SelectionData.m_DefaultBackgroundColor = specificWidget["DefaultBackgroundColor"].as<Math::vec4>();
-							buttonWidget->m_SelectionData.m_ActiveBackgroundColor = buttonWidget->m_SelectionData.m_DefaultBackgroundColor;
 							// Selectable field
 							buttonWidget->m_SelectionData.m_Selectable = specificWidget["Selectable"].as<bool>();
 							// Navigation fields
@@ -330,7 +331,6 @@ namespace Kargono::Assets
 							RuntimeUI::ImageButtonWidget* imageButtonWidget = static_cast<RuntimeUI::ImageButtonWidget*>(newWidget.get());
 							// Color fields
 							imageButtonWidget->m_SelectionData.m_DefaultBackgroundColor = specificWidget["DefaultBackgroundColor"].as<Math::vec4>();
-							imageButtonWidget->m_SelectionData.m_ActiveBackgroundColor = imageButtonWidget->m_SelectionData.m_DefaultBackgroundColor;
 							// Selectable field
 							imageButtonWidget->m_SelectionData.m_Selectable = specificWidget["Selectable"].as<bool>();
 							// Navigation fields
@@ -380,7 +380,6 @@ namespace Kargono::Assets
 							RuntimeUI::CheckboxWidget* checkboxWidget = static_cast<RuntimeUI::CheckboxWidget*>(newWidget.get());
 							// Color fields
 							checkboxWidget->m_SelectionData.m_DefaultBackgroundColor = specificWidget["DefaultBackgroundColor"].as<Math::vec4>();
-							checkboxWidget->m_SelectionData.m_ActiveBackgroundColor = checkboxWidget->m_SelectionData.m_DefaultBackgroundColor;
 							// Selectable field
 							checkboxWidget->m_SelectionData.m_Selectable = specificWidget["Selectable"].as<bool>();
 							// Navigation fields
