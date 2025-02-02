@@ -421,6 +421,18 @@ namespace Kargono::Panels
 					{
 						m_ViewportAspectRatio = Math::uvec2(1, 1);
 					}
+					if (ImGui::MenuItem("Standard Phone (9:16)"))
+					{
+						m_ViewportAspectRatio = Math::uvec2(9, 16);
+					}
+					if (ImGui::MenuItem("Ultra Wide (32:9)"))
+					{
+						m_ViewportAspectRatio = Math::uvec2(32, 9);
+					}
+					if (ImGui::MenuItem("Tablet Resolution (5:4)"))
+					{
+						m_ViewportAspectRatio = Math::uvec2(5, 4);
+					}
 
 					ImGui::Separator();
 
@@ -598,6 +610,9 @@ namespace Kargono::Panels
 					Math::vec2(translation.x, translation.y), 
 					m_ViewportData.m_Width, 
 					m_ViewportData.m_Height);
+
+				// Set the active editor UI as edited
+				s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 			}
 		}
 		else
@@ -660,7 +675,9 @@ namespace Kargono::Panels
 				{
 					widget->m_PixelPosition.y = (int)screenPosition.y;
 				}
-				
+
+				// Set the active editor UI as edited
+				s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 			}
 		}
 	}
@@ -826,7 +843,7 @@ namespace Kargono::Panels
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
-		if (widget->m_XConstraint == RuntimeUI::Constraint::Right || widget->m_XConstraint == RuntimeUI::Constraint::Center)
+		if (widget->m_XRelativeOrAbsolute != RuntimeUI::RelativeOrAbsolute::Absolute && (widget->m_XConstraint == RuntimeUI::Constraint::Right || widget->m_XConstraint == RuntimeUI::Constraint::Center))
 		{
 			// Create widget's constraint distance lines
 			constraintDistanceVerts[0] = widgetTransform * Math::vec4(0.5f, 0.0f, 0.0f, 1.0f); // Transform center of widget to world space

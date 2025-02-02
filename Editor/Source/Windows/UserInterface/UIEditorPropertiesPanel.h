@@ -38,6 +38,7 @@ namespace Kargono::Panels
 		void InitializeButtonWidgetOptions();
 		void InitializeImageWidgetOptions();
 		void InitializeImageButtonWidgetOptions();
+		void InitializeCheckboxWidgetOptions();
 		void InitializeWidgetLocationOptions();
 
 	public:
@@ -56,6 +57,7 @@ namespace Kargono::Panels
 		void DrawButtonWidgetOptions();
 		void DrawImageWidgetOptions();
 		void DrawImageButtonWidgetOptions();
+		void DrawCheckboxWidgetOptions();
 		void DrawSpecificWidgetOptions();
 
 		//=========================
@@ -77,6 +79,12 @@ namespace Kargono::Panels
 		void OnOpenTooltipForUIOnMove();
 		// Modify selection color
 		void OnModifyUISelectionColor(EditorUI::EditVec4Spec& spec);
+
+		//=========================
+		// Validation Functions
+		//=========================
+		bool ValidateActiveWindowAndWidget();
+		bool ValidateActiveWindow();
 
 		//=========================
 		// Change Window Data
@@ -180,6 +188,28 @@ namespace Kargono::Panels
 		// Modify widget background color
 		void OnModifyImageButtonWidgetBackgroundColor(EditorUI::EditVec4Spec& spec);
 
+		//=========================
+		// Change Checkbox Data
+		//=========================
+		// Modify if button widget is selectable
+		void OnModifyCheckboxWidgetChecked(EditorUI::CheckboxSpec& spec);
+		// Modify checkbox widget's checked image
+		void OnModifyCheckboxWidgetCheckedImage(const EditorUI::OptionEntry& entry);
+		void OnOpenCheckboxWidgetCheckedImagePopup();
+		// Modify checkbox widget's unchecked image
+		void OnModifyCheckboxWidgetUnCheckedImage(const EditorUI::OptionEntry& entry);
+		void OnOpenCheckboxWidgetUnCheckedImagePopup();
+		// Modify checkbox widget's fixed aspect ratio option
+		void OnModifyCheckboxWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec);
+		// Modify if button widget is selectable
+		void OnModifyCheckboxWidgetSelectable(EditorUI::CheckboxSpec& spec);
+		// Modify widget on press
+		void OnModifyCheckboxWidgetOnPress(const EditorUI::OptionEntry& entry);
+		void OnOpenCheckboxWidgetOnPressPopup();
+		void OnOpenTooltipForCheckboxWidgetOnPress();
+		// Modify widget background color
+		void OnModifyCheckboxWidgetBackgroundColor(EditorUI::EditVec4Spec& spec);
+
 	public:
 		//=========================
 		// Core Panel Data
@@ -259,5 +289,15 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec m_ImageButtonWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_ImageButtonWidgetOnPress{};
 		EditorUI::CheckboxSpec m_ImageButtonWidgetSelectable{};
+
+		// Edit Checkbox Widget Options
+		EditorUI::CollapsingHeaderSpec m_CheckboxWidgetHeader{};
+		EditorUI::CheckboxSpec m_CheckboxWidgetChecked{};
+		EditorUI::SelectOptionSpec m_CheckboxWidgetCheckedImage{};
+		EditorUI::SelectOptionSpec m_CheckboxWidgetUnCheckedImage{};
+		EditorUI::CheckboxSpec m_CheckboxWidgetFixedAspectRatio{};
+		EditorUI::EditVec4Spec m_CheckboxWidgetBackgroundColor{};
+		EditorUI::SelectOptionSpec m_CheckboxWidgetOnPress{};
+		EditorUI::CheckboxSpec m_CheckboxWidgetSelectable{};
 	};
 }

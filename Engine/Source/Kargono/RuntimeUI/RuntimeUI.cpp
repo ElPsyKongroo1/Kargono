@@ -9,6 +9,7 @@
 #include "Kargono/Rendering/RenderingService.h"
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/ECS/EngineComponents.h"
+#include "Kargono/Utility/Operations.h"
 
 namespace Kargono::RuntimeUI
 {
@@ -594,6 +595,45 @@ namespace Kargono::RuntimeUI
 		
 	}
 
+	void RuntimeUIService::OnPressInternal(Widget* currentWidget)
+	{
+		// Get the selection specific data from the widget
+		SelectionData* selectionData = GetSelectionDataFromWidget(currentWidget);
+		if (!selectionData)
+		{
+			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
+			return;
+		}
+
+		// Call the on press function if applicable
+		if (currentWidget->m_WidgetType == WidgetTypes::CheckboxWidget)
+		{
+			// Handle case for checkbox
+			CheckboxWidget& checkboxWidget = *(CheckboxWidget*)currentWidget;
+			Utility::Operations::ToggleBoolean(checkboxWidget.m_Checked);
+
+			if (selectionData->m_FunctionPointers.m_OnPress)
+			{
+				Utility::CallWrappedVoidBool(
+					selectionData->m_FunctionPointers.m_OnPress->m_Function,
+					checkboxWidget.m_Checked);
+			}
+
+		}
+		else
+		{
+			// Handle all other cases
+			if (!selectionData->m_FunctionPointers.m_OnPress)
+			{
+				return;
+			}
+			Utility::CallWrappedVoidNone(selectionData->m_FunctionPointers.m_OnPress->m_Function);
+		}
+		
+
+		
+	}
+
 	void RuntimeUIService::SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable)
 	{
 		// Ensure the widget is valid
@@ -695,6 +735,18 @@ namespace Kargono::RuntimeUI
 		if (currentWidget->m_WidgetType == WidgetTypes::ImageButtonWidget)
 		{
 			return &((ImageButtonWidget*)currentWidget)->m_ImageData;
+		}
+		if (currentWidget->m_WidgetType == WidgetTypes::CheckboxWidget)
+		{
+			// Return the currently appropriate image data
+			if (((CheckboxWidget*)currentWidget)->m_Checked)
+			{
+				return &((CheckboxWidget*)currentWidget)->m_ImageChecked;
+			}
+			else
+			{
+				return &((CheckboxWidget*)currentWidget)->m_ImageUnChecked;
+			}
 		}
 
 		return nullptr;
@@ -1144,19 +1196,7 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		// Get the selection specific data from the widget
-		SelectionData* selectionData = GetSelectionDataFromWidget(currentWidget);
-		if (!selectionData)
-		{
-			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
-			return;
-		}
-
-		// Call the on press function if applicable
-		if (selectionData->m_FunctionPointers.m_OnPress)
-		{
-			Utility::CallWrappedVoidNone(selectionData->m_FunctionPointers.m_OnPress->m_Function);
-		}
+		OnPressInternal(currentWidget);
 	}
 
 	void RuntimeUIService::OnPressByIndex(WidgetID widgetID)
@@ -1171,19 +1211,12 @@ namespace Kargono::RuntimeUI
 		// Get the current widget
 		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
 
-		// Get the selection specific data from the widget
-		SelectionData* selectionData = GetSelectionDataFromWidget(currentWidget.get());
-		if (!selectionData)
+		if (!currentWidget)
 		{
-			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
 			return;
 		}
 
-		// Call the on press function if applicable
-		if (selectionData->m_FunctionPointers.m_OnPress)
-		{
-			Utility::CallWrappedVoidNone(selectionData->m_FunctionPointers.m_OnPress->m_Function);
-		}
+		OnPressInternal(currentWidget.get());
 	}
 
 	void RuntimeUIService::CalculateWindowNavigationLinks()
@@ -1243,6 +1276,7 @@ namespace Kargono::RuntimeUI
 			break;
 		case WidgetTypes::ImageWidget:
 		case WidgetTypes::ImageButtonWidget:
+		case WidgetTypes::CheckboxWidget:
 			break;
 		default:
 			KG_ERROR("Invalid widget type provided when revalidating widget text size");
@@ -1326,6 +1360,7 @@ namespace Kargono::RuntimeUI
 		// Calculate the position and size of the current widget
 		Math::vec2 currentWidgetPosition = currentWidget->CalculateWorldPosition(windowPosition, windowSize);
 		Math::vec2 currentWidgetSize = currentWidget->CalculateWidgetSize(windowSize);
+		Math::vec2 currentWidgetCenterPosition = { currentWidgetPosition.x + (currentWidgetSize.x * 0.5f), currentWidgetPosition.y + (currentWidgetSize.y * 0.5f) };
 
 		// Iterate through each potential widget and decide which widget makes sense to navigate to
 		for (Ref<Widget> potentialChoice : currentWindow.m_Widgets)
@@ -1339,9 +1374,10 @@ namespace Kargono::RuntimeUI
 			// Calculate the position and size of the potential widget
 			Math::vec2 potentialChoicePosition = potentialChoice->CalculateWorldPosition(windowPosition, windowSize);
 			Math::vec2 potentialChoiceSize = potentialChoice->CalculateWidgetSize(windowSize);
+			Math::vec2 potentialWidgetCenterPosition = { potentialChoicePosition.x + (potentialChoiceSize.x * 0.5f), potentialChoicePosition.y + (potentialChoiceSize.y * 0.5f) };
 
 			// Calculate the distance between the current widget and the potential widget
-			float currentDistance = glm::abs(glm::distance(currentWidgetPosition, potentialChoicePosition));
+			float currentDistance = glm::distance(currentWidgetCenterPosition, potentialWidgetCenterPosition);
 
 			// Check if the potential widget is within the constraints of the current widget
 			float currentWidgetExtent;
@@ -1350,8 +1386,8 @@ namespace Kargono::RuntimeUI
 			switch (direction)
 			{
 			case Direction::Right:
-				currentWidgetExtent = currentWidgetPosition.x + (currentWidgetSize.x / 2);
-				potentialWidgetExtent = potentialChoicePosition.x - (potentialChoiceSize.x / 2);
+				currentWidgetExtent = currentWidgetPosition.x + currentWidgetSize.x;
+				potentialWidgetExtent = potentialChoicePosition.x;
 				if (currentWidgetExtent >= potentialWidgetExtent)
 				{
 					iteration++;
@@ -1359,8 +1395,8 @@ namespace Kargono::RuntimeUI
 				}
 				break;
 			case Direction::Left:
-				currentWidgetExtent = currentWidgetPosition.x - (currentWidgetSize.x / 2);
-				potentialWidgetExtent = potentialChoicePosition.x + (potentialChoiceSize.x / 2);
+				currentWidgetExtent = currentWidgetPosition.x;
+				potentialWidgetExtent = potentialChoicePosition.x + potentialChoiceSize.x;
 				if (currentWidgetExtent <= potentialWidgetExtent)
 				{
 					iteration++;
@@ -1368,8 +1404,8 @@ namespace Kargono::RuntimeUI
 				}
 				break;
 			case Direction::Up:
-				currentWidgetExtent = currentWidgetPosition.y + (currentWidgetSize.y / 2);
-				potentialWidgetExtent = potentialChoicePosition.y - (potentialChoiceSize.y / 2);
+				currentWidgetExtent = currentWidgetPosition.y + currentWidgetSize.y;
+				potentialWidgetExtent = potentialChoicePosition.y;
 				if (currentWidgetExtent >= potentialWidgetExtent)
 				{
 					iteration++;
@@ -1377,8 +1413,8 @@ namespace Kargono::RuntimeUI
 				}
 				break;
 			case Direction::Down:
-				currentWidgetExtent = currentWidgetPosition.y - (currentWidgetSize.y / 2);
-				potentialWidgetExtent = potentialChoicePosition.y + (potentialChoiceSize.y / 2);
+				currentWidgetExtent = currentWidgetPosition.y;
+				potentialWidgetExtent = potentialChoicePosition.y + potentialChoiceSize.y;
 				if (currentWidgetExtent <= potentialWidgetExtent)
 				{
 					iteration++;

@@ -418,6 +418,17 @@ namespace Kargono::Scripting
 			break;
 		}
 
+		case WrappedFuncType::Void_Bool:
+		{
+			script->m_Function = CreateRef<WrappedVoidBool>();
+#if defined(KG_PLATFORM_WINDOWS)
+			((WrappedVoidBool*)script->m_Function.get())->m_Value = reinterpret_cast<void_bool>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+#elif defined(KG_PLATFORM_LINUX)
+			((WrappedVoidBool*)script->m_Function.get())->m_Value = reinterpret_cast<void_bool>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+#endif
+			break;
+		}
+
 		case WrappedFuncType::Void_EntityFloat:
 		{
 			script->m_Function = CreateRef<WrappedVoidEntityFloat>();
@@ -472,7 +483,7 @@ namespace Kargono::Scripting
 		}
 		default:
 		{
-			KG_CRITICAL("Invalid WrappedFuncType in LoadScriptFunction!");
+			KG_ERROR("Invalid WrappedFuncType in LoadScriptFunction!");
 			return;
 		}
 		}

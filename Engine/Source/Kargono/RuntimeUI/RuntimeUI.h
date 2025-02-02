@@ -603,7 +603,11 @@ namespace Kargono::RuntimeUI
 		static void SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable);
 		static bool IsWidgetSelectedInternal(Ref<Widget> currentWidget);
 		static void SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
-		
+
+		//==============================
+		// Interact With Active UI (Internal)
+		//==============================
+		static void OnPressInternal(Widget* currentWidget);
 
 		//==============================
 		// Rendering API (Internal)

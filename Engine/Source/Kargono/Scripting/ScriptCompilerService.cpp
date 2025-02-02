@@ -736,6 +736,14 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
+		newPrimitiveType.Name = "checkbox_widget";
+		newPrimitiveType.Description = "Reference to a user interface checkbox widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconCheckbox_Enabled;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
 		newPrimitiveType.Name = "entity";
 		newPrimitiveType.Description = "This type represents a specific entity in the active scene. An entity is the basic unit that exists inside of a scene. Entities are composed of multiple components. Note that this type can represent entities in other scenes, however, this can lead to undefined behavior.";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
@@ -1560,6 +1568,9 @@ namespace Kargono::Scripting
 					case RuntimeUI::WidgetTypes::ImageButtonWidget:
 						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "image_button_widget" };
 						break;
+					case RuntimeUI::WidgetTypes::CheckboxWidget:
+						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "checkbox_widget" };
+						break;
 					default:
 						KG_ERROR("Invalid widget type provided when loading widget information into kgscript language");
 						break;
@@ -1880,6 +1891,7 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "button_widget" });
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "image_button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "checkbox_widget" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1902,6 +1914,7 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "button_widget" });
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "image_button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "checkbox_widget" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1944,6 +1957,7 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "button_widget" });
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "image_button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "checkbox_widget" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1966,6 +1980,7 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "button_widget" });
 		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "image_button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "checkbox_widget" });
 		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
