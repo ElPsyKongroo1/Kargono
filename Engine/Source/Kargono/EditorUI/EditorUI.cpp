@@ -274,6 +274,11 @@ namespace Kargono::EditorUI
 		ImGui::SetCursorPos(ImVec2(localViewportBounds[0].x, localViewportBounds[0].y));
 	}
 
+	void EditorUIService::SkipMouseIconChange()
+	{
+		s_BlockMouseIconChange = true;
+	}
+
 	void EditorUIService::RenderImGuiNotify()
 	{
 		// Notifications style setup
@@ -534,22 +539,34 @@ namespace Kargono::EditorUI
 
 	void EditorUIService::StartRendering()
 	{
+		ImGuiIO& io = ImGui::GetIO();
+		if (s_BlockMouseIconChange)
+		{
+			io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+		}
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 		ImGuizmo::BeginFrame();
+
+		if (s_BlockMouseIconChange)
+		{
+			io.ConfigFlags &= (~ImGuiConfigFlags_NoMouseCursorChange);
+			s_BlockMouseIconChange = false;
+		}
 	}
 
 	void EditorUIService::EndRendering()
 	{
 		RenderImGuiNotify();
-
+		
 		ImGuiIO& io = ImGui::GetIO();
+		
 		Engine& app = EngineService::GetActiveEngine();
 		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
 		if (s_DisableLeftClick)
 		{
-			ImGui::GetIO().MouseClicked[0] = false;
+			io.MouseClicked[0] = false;
 			s_DisableLeftClick = false;
 		}
 		ImGui::Render();

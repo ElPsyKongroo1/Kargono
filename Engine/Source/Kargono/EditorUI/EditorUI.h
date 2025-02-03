@@ -197,6 +197,7 @@ namespace Kargono::EditorUI
 		static void CreateWarningNotification(const char* text, int delayMS);
 		static void CreateCriticalNotification(const char* text, int delayMS);
 		static void AutoCalcViewportSize(Math::vec2 screenViewportBounds[2], ViewportData& viewportData, bool& viewportFocused, bool& viewportHovered, const Math::uvec2& aspectRatio);
+		static void SkipMouseIconChange();
 
 	private:
 		static void RenderImGuiNotify();
@@ -346,6 +347,7 @@ namespace Kargono::EditorUI
 		inline static bool s_BlockMouseEvents{ true };
 		inline static bool s_Running{ false };
 		inline static bool s_DisableLeftClick{ false };
+		inline static bool s_BlockMouseIconChange{ false };
 	};
 
 	//==============================

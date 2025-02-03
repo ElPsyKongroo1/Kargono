@@ -33,6 +33,14 @@ namespace Kargono
 		uint32_t m_Height{ 0 };
 	};
 
+	enum class CursorIconType : uint16_t
+	{
+		None = 0,
+		Standard,
+		IBeam,
+		Hand
+	};
+
 	//==============================
 	// Window Class
 	//==============================
@@ -81,6 +89,7 @@ namespace Kargono
 		virtual void SetResizable(bool resizable) = 0;
 		virtual void SetVisible(bool visible) = 0;
 		virtual void SetMouseCursorVisible(bool choice) = 0;
+		virtual void SetMouseCursorIcon(CursorIconType iconType) = 0;
 		virtual void CenterWindow() = 0;
 		virtual void ToggleMaximized() = 0;
 

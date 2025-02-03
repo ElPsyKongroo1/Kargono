@@ -12,8 +12,16 @@ namespace API::Platform
 	// Default Viewport Data if none is provided
 	static inline Kargono::ViewportData s_DefaultViewportData { 0, 0 };
 
+
+	struct CursorIcons
+	{
+		GLFWcursor* m_StandardCursor{ nullptr };
+		GLFWcursor* m_IBeamCursor{ nullptr };
+		GLFWcursor* m_HandCursor{ nullptr };
+	};
+
 	//==============================
-	// DesktopWindow Structs
+	// DesktopWindow Struct
 	//==============================
 	// This struct holds data that describes the GLFW window. The member variable m_Data
 	//		represents that information. The title is the name presented on the window,
@@ -31,6 +39,7 @@ namespace API::Platform
 		uint8_t VersionMajor{ 4 };
 		uint8_t VersionMinor{ 5 };
 		Kargono::Events::EventCallbackFn EventCallback{ nullptr };
+		CursorIcons m_CursorIcons;
 	};
 
 	//============================================================
@@ -77,6 +86,13 @@ namespace API::Platform
 		// This function simply closes the GLFW window associated with its instance. This window
 		//		should be a singleton. If all GLFW windows are closed successfully, GLFW will terminate.
 		virtual void Shutdown();
+
+	private:
+		//==============================
+		// Lifecycle Functions (Internal)
+		//==============================
+		void CreateCursors();
+		void DestroyCursors();
 	public:
 		// This function simply polls window events and swaps the framebuffer using SwapBuffers(). Polling Window events
 		//		essentially handles any events thrown by GLFW. The events are thrown asynchronously, however,
@@ -108,6 +124,7 @@ namespace API::Platform
 		virtual void ToggleMaximized() override;
 		// This function enables or disables the mouse cursor over the GLFW window
 		virtual void SetMouseCursorVisible(bool choice) override;
+		virtual void SetMouseCursorIcon(Kargono::CursorIconType iconType) override;
 		virtual void SetVisible(bool visible) override;
 		bool IsVSync() const override { return m_Data.VSync; }
 		void SetEventCallback(const Kargono::Events::EventCallbackFn& callback) override { m_Data.EventCallback = callback; }

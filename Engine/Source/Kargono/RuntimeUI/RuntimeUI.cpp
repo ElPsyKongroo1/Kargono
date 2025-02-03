@@ -375,7 +375,15 @@ namespace Kargono::RuntimeUI
 	{
 		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
 
+		if (!s_RuntimeUIContext->m_ActiveUI->m_HoveredWidget)
+		{
+			return;
+		}
+
 		s_RuntimeUIContext->m_ActiveUI->m_HoveredWidget = nullptr;
+
+		// Reset the cursor icon
+		EngineService::GetActiveWindow().SetMouseCursorIcon(CursorIconType::Standard);
 	}
 
 	void RuntimeUIService::SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle)
@@ -550,6 +558,13 @@ namespace Kargono::RuntimeUI
 
 		// Set the new widget as selected and set it's color to the active color
 		activeUI->m_HoveredWidget = newHoveredWidget.get();
+
+		// Set the cursor to IBeam
+		if (newHoveredWidget->m_WidgetType == WidgetTypes::InputTextWidget)
+		{
+			// Reset the cursor icon
+			EngineService::GetActiveWindow().SetMouseCursorIcon(CursorIconType::IBeam);
+		}
 
 		// Call the on move function if applicable
 		if (activeUI->m_FunctionPointers.m_OnHover)

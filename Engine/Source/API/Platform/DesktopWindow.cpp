@@ -96,6 +96,8 @@ namespace API::Platform
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(false);
 
+		CreateCursors();
+
 		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
 			{
@@ -215,6 +217,8 @@ namespace API::Platform
 
 	void DesktopWindow::Shutdown()
 	{
+		DestroyCursors();
+
 		glfwDestroyWindow(m_Window);
 		--s_GLFWWindowCount;
 
@@ -223,6 +227,20 @@ namespace API::Platform
 			KG_INFO("All GLFW Windows have been closed and GLFW has terminated!");
 			glfwTerminate();
 		}
+	}
+
+	void DesktopWindow::CreateCursors()
+	{
+		m_Data.m_CursorIcons.m_StandardCursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR); // Default arrow
+		m_Data.m_CursorIcons.m_IBeamCursor = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR); // I-beam (text)
+		m_Data.m_CursorIcons.m_HandCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR); // Hand cursor
+	}
+
+	void DesktopWindow::DestroyCursors()
+	{
+		glfwDestroyCursor(m_Data.m_CursorIcons.m_StandardCursor);
+		glfwDestroyCursor(m_Data.m_CursorIcons.m_IBeamCursor);
+		glfwDestroyCursor(m_Data.m_CursorIcons.m_HandCursor);
 	}
 
 	void DesktopWindow::SwapBuffers()
@@ -326,6 +344,24 @@ namespace API::Platform
 	{
 		auto cursorVisibility = choice ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;
 		glfwSetInputMode(m_Window, GLFW_CURSOR, cursorVisibility);
+	}
+	void DesktopWindow::SetMouseCursorIcon(Kargono::CursorIconType iconType)
+	{
+		switch (iconType)
+		{
+		case Kargono::CursorIconType::Standard:
+			glfwSetCursor(m_Window, m_Data.m_CursorIcons.m_StandardCursor);
+			return;
+		case Kargono::CursorIconType::IBeam:
+			glfwSetCursor(m_Window, m_Data.m_CursorIcons.m_IBeamCursor);
+			return;
+		case Kargono::CursorIconType::Hand:
+			glfwSetCursor(m_Window, m_Data.m_CursorIcons.m_HandCursor);
+			return;
+		default:
+			KG_ERROR("Unknown icon type provided when modifying the mouse cursor's icon");
+			return;
+		}
 	}
 	void DesktopWindow::SetVisible(bool visible)
 	{
