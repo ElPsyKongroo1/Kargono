@@ -75,6 +75,7 @@ namespace Kargono::Windows
 		bool OnReceiveSignal(Events::ReceiveSignal event);
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 		bool OnKeyPressedRuntime(Events::KeyPressedEvent event);
+		bool OnKeyTypedRuntime(Events::KeyTypedEvent event);
 		bool OnMouseButtonPressed(Events::MouseButtonPressedEvent event);
 		bool OnUpdateProjectComponent(Events::ManageAsset& event);
 

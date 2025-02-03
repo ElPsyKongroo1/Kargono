@@ -553,6 +553,7 @@ namespace Kargono::RuntimeUI
 		std::vector<size_t> m_DisplayedWindowIndices{};
 		Widget* m_SelectedWidget{ nullptr };
 		Widget* m_HoveredWidget{ nullptr };
+		Widget* m_EditingWidget{ nullptr };
 		Window* m_ActiveWindow{ nullptr };
 	};
 
@@ -569,6 +570,12 @@ namespace Kargono::RuntimeUI
 		static void Terminate();
 
 		//==============================
+		// On Event Functions
+		//==============================
+		static bool OnKeyTypedEvent(Events::KeyTypedEvent event);
+		static bool OnKeyPressedEvent(Events::KeyPressedEvent event);
+
+		//==============================
 		// Modify Active UI
 		//==============================
 		static void SetSelectedWidgetColor(const Math::vec4& color);
@@ -582,7 +589,10 @@ namespace Kargono::RuntimeUI
 		static void SetWidgetTextColorByIndex(WidgetID widgetID, const Math::vec4& color);
 		static void SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag);
 		static void SetSelectedWidgetByIndex(WidgetID widgetID);
+		static void SetEditingWidgetByIndex(WidgetID widgetID);
 		static void SetHoveredWidgetByIndex(WidgetID widgetID);
+		static void ClearHoveredWidget();
+		static void ClearEditingWidget();
 		static void SetWidgetBackgroundColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
 		static void SetWidgetBackgroundColorByIndex(WidgetID widgetID, const Math::vec4& color);
 		static void SetWidgetSelectableByTag(const std::string& windowTag, const std::string& widgetTag, bool selectable);
@@ -590,7 +600,6 @@ namespace Kargono::RuntimeUI
 		static void SetDisplayWindowByTag(const std::string& windowTag, bool display);
 		static void SetDisplayWindowByIndex(WindowID widgetID, bool display);
 		static void AddActiveWindow(Window& window);
-		static void ClearHoveredWidget();
 		static bool DeleteActiveUIWindow(std::size_t windowLocation);
 		static bool DeleteActiveUIWidget(std::size_t windowIndex, std::size_t widgetIndex);
 

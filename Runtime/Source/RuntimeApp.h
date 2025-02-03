@@ -49,6 +49,7 @@ namespace Kargono
 		
 	private:
 		// This function processes key pressed events
+		bool OnKeyTyped(Events::KeyTypedEvent event);
 		bool OnKeyPressed(Events::KeyPressedEvent event);
 		// This function processes mouse pressed events
 		bool OnMousePressed(Events::MouseButtonPressedEvent event);

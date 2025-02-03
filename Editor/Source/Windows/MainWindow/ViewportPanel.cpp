@@ -256,6 +256,10 @@ namespace Kargono::Panels
 					{
 						RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 							m_HoveredWindowID, m_HoveredWidgetID });
+
+						// Handle start editing
+						RuntimeUI::RuntimeUIService::SetEditingWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+							m_HoveredWindowID, m_HoveredWidgetID });
 					}
 				}
 			}

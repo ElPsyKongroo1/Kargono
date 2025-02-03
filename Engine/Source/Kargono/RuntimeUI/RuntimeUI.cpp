@@ -98,6 +98,69 @@ namespace Kargono::RuntimeUI
 		KG_VERIFY(true, "Runtime UI Engine Terminate");
 	}
 
+	bool RuntimeUIService::OnKeyTypedEvent(Events::KeyTypedEvent event)
+	{
+		// Ensure a valid user interface is active
+		if (!s_RuntimeUIContext->m_ActiveUI)
+		{
+			return false;
+		}
+
+		// Pass in key typed events for the current widget to be edited
+		if (s_RuntimeUIContext->m_ActiveUI->m_EditingWidget)
+		{
+			// Get the text data
+			SingleLineTextData* textData = RuntimeUIService::GetSingleLineTextDataFromWidget(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+			KG_ASSERT(textData);
+
+			// Add the event's character to the text buffer
+			textData->m_Text.push_back((char)event.GetKeyCode());
+			
+			// Revalidate text dimensions
+			RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_ActiveWindow,
+				s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+		}
+		return false;
+	}
+
+	bool RuntimeUIService::OnKeyPressedEvent(Events::KeyPressedEvent event)
+	{
+		// Ensure a valid user interface is active
+		if (!s_RuntimeUIContext->m_ActiveUI)
+		{
+			return false;
+		}
+
+		// Handle key pressed events for the currently editing widget
+		if (s_RuntimeUIContext->m_ActiveUI->m_EditingWidget)
+		{
+			// Get the text data
+			SingleLineTextData* textData = RuntimeUIService::GetSingleLineTextDataFromWidget(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+			KG_ASSERT(textData);
+
+			if (event.GetKeyCode() == Key::Backspace)
+			{
+				if (textData->m_Text.size() > 0)
+				{
+					// Remove last character from text
+					textData->m_Text.pop_back();
+
+					// Revalidate text dimensions
+					RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_ActiveWindow,
+						s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+				}
+			}
+
+			// Handle exiting 
+			if (event.GetKeyCode() == Key::Enter)
+			{
+				ClearEditingWidget();
+			}
+		}
+
+		return false;
+	}
+
 	void RuntimeUIService::SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle)
 	{
 		if (!userInterface || uiHandle == Assets::EmptyHandle)
@@ -384,6 +447,12 @@ namespace Kargono::RuntimeUI
 
 		// Reset the cursor icon
 		EngineService::GetActiveWindow().SetMouseCursorIcon(CursorIconType::Standard);
+	}
+
+	void RuntimeUIService::ClearEditingWidget()
+	{
+		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
+		s_RuntimeUIContext->m_ActiveUI->m_EditingWidget = nullptr;
 	}
 
 	void RuntimeUIService::SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle)
@@ -981,6 +1050,50 @@ namespace Kargono::RuntimeUI
 		SetSelectedWidgetInternal(currentWidget);
 	}
 
+	void RuntimeUIService::SetEditingWidgetByIndex(WidgetID widgetID)
+	{
+		// Ensure the correct user interface is active
+		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return;
+		}
+
+		// Search for the indicated widget
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+
+		// Ensure the widget is valid
+		if (!currentWidget)
+		{
+			KG_WARN("Could not locate widget when attempting to set a widget as edited");
+			return;
+		}
+
+		// Ensure the widget is selectable
+		if (!currentWidget->Selectable())
+		{
+			return;
+		}
+
+		// If we do not have the correct type, just clear the editing widget
+		if (currentWidget->m_WidgetType != WidgetTypes::InputTextWidget)
+		{
+			ClearEditingWidget();
+			return;
+		}
+
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+
+		// If the indicated widget is the same as the current editing widget, just exit
+		if (currentWidget.get() == activeUI->m_EditingWidget)
+		{
+			return;
+		}
+
+		// Set the new widget as editing
+		activeUI->m_EditingWidget = currentWidget.get();
+	}
+
 	void RuntimeUIService::SetHoveredWidgetByIndex(WidgetID widgetID)
 	{
 		// Ensure the correct user interface is active
@@ -1164,6 +1277,12 @@ namespace Kargono::RuntimeUI
 			{
 				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
+
+			// Handle modifying the editing widget
+			if (activeUI->m_EditingWidget != activeUI->m_SelectedWidget)
+			{
+				ClearEditingWidget();
+			}
 		}
 	}
 
@@ -1193,6 +1312,12 @@ namespace Kargono::RuntimeUI
 			if (activeUI->m_FunctionPointers.m_OnMove)
 			{
 				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+			}
+
+			// Handle modifying the editing widget
+			if (activeUI->m_EditingWidget != activeUI->m_SelectedWidget)
+			{
+				ClearEditingWidget();
 			}
 		}
 	}
@@ -1227,6 +1352,12 @@ namespace Kargono::RuntimeUI
 			{
 				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
+
+			// Handle modifying the editing widget
+			if (activeUI->m_EditingWidget != activeUI->m_SelectedWidget)
+			{
+				ClearEditingWidget();
+			}
 		}
 	}
 
@@ -1255,6 +1386,12 @@ namespace Kargono::RuntimeUI
 			if (activeUI->m_FunctionPointers.m_OnMove)
 			{
 				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+			}
+
+			// Handle modifying the editing widget
+			if (activeUI->m_EditingWidget != activeUI->m_SelectedWidget)
+			{
+				ClearEditingWidget();
 			}
 		}
 	}

@@ -229,9 +229,13 @@ namespace Kargono
 		{
 			handled = OnKeyPressed(*(Events::KeyPressedEvent*)event);
 		}
-		else if (event->GetEventType() == Events::EventType::MouseButtonPressed)
+		if (event->GetEventType() == Events::EventType::MouseButtonPressed)
 		{
 			handled = OnMousePressed(*(Events::MouseButtonPressedEvent*)event);
+		}
+		if (event->GetEventType() == Events::EventType::KeyTyped)
+		{
+			handled = OnKeyTyped(*(Events::KeyTypedEvent*)event);
 		}
 
 		return handled;
@@ -349,9 +353,16 @@ namespace Kargono
 		return false;
 	}
 
+	bool RuntimeApp::OnKeyTyped(Events::KeyTypedEvent event)
+	{
+		RuntimeUI::RuntimeUIService::OnKeyTypedEvent(event);
+		return false;
+	}
+
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
 		Input::InputMapService::OnKeyPressed(event);
+		RuntimeUI::RuntimeUIService::OnKeyPressedEvent(event);
 		return false;
 	}
 
@@ -367,6 +378,9 @@ namespace Kargono
 		if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowID && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetID)
 		{
 			RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+				m_HoveredWindowID, m_HoveredWidgetID });
+			// Handle start editing
+			RuntimeUI::RuntimeUIService::SetEditingWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 				m_HoveredWindowID, m_HoveredWidgetID });
 		}
 		return false;

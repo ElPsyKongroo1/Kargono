@@ -224,6 +224,10 @@ namespace Kargono::Windows
 			{
 				handled = OnKeyPressedRuntime(*(Events::KeyPressedEvent*)event);
 			}
+			if (event->GetEventType() == Events::EventType::KeyTyped)
+			{
+				handled = OnKeyTypedRuntime(*(Events::KeyTypedEvent*)event);
+			}
 		}
 
 		m_TestingPanel->OnInputEvent(event);
@@ -1003,8 +1007,16 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnKeyPressedRuntime(Events::KeyPressedEvent event)
 	{
-		KG_PROFILE_FUNCTION()
-			return Input::InputMapService::OnKeyPressed(event);
+		KG_PROFILE_FUNCTION();
+		Input::InputMapService::OnKeyPressed(event);
+		RuntimeUI::RuntimeUIService::OnKeyPressedEvent(event);
+		return false;
+	}
+
+	bool MainWindow::OnKeyTypedRuntime(Events::KeyTypedEvent event)
+	{
+		RuntimeUI::RuntimeUIService::OnKeyTypedEvent(event);
+		return false;
 	}
 
 	bool MainWindow::OnKeyPressedEditor(Events::KeyPressedEvent event)
