@@ -81,7 +81,7 @@ namespace Kargono::Panels
 
 		m_AddComponent.m_Label = "Add Component";
 		m_AddComponent.m_Flags = EditorUI::SelectOption_PopupOnly;
-		m_AddComponent.m_PopupAction = [&]()
+		m_AddComponent.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity(m_AddComponentEntity));
 			if (!entity)
@@ -89,44 +89,44 @@ namespace Kargono::Panels
 				KG_WARN("Attempt to add component to empty entity");
 				return;
 			}
-			m_AddComponent.ClearOptions();
-			m_AddComponent.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			if (!entity.HasComponent<ECS::CameraComponent>())
 			{
-				m_AddComponent.AddToOptions("Engine Component", "Camera", Assets::EmptyHandle);
+				spec.AddToOptions("Engine Component", "Camera", Assets::EmptyHandle);
 			}
 			if (!entity.HasComponent<ECS::ParticleEmitterComponent>())
 			{
-				m_AddComponent.AddToOptions("Engine Component", "Particle Emitter", Assets::EmptyHandle);
+				spec.AddToOptions("Engine Component", "Particle Emitter", Assets::EmptyHandle);
 			}
 			if (!entity.HasComponent<ECS::ShapeComponent>())
 			{
-				m_AddComponent.AddToOptions("Engine Component", "Shape", Assets::EmptyHandle);
+				spec.AddToOptions("Engine Component", "Shape", Assets::EmptyHandle);
 			}
 			if (!entity.HasComponent<ECS::Rigidbody2DComponent>())
 			{
-				m_AddComponent.AddToOptions("Engine Component", "Rigidbody 2D", Assets::EmptyHandle);
+				spec.AddToOptions("Engine Component", "Rigidbody 2D", Assets::EmptyHandle);
 			}
 			if (!entity.HasComponent<ECS::BoxCollider2DComponent>())
 			{
-				m_AddComponent.AddToOptions("Engine Component", "Box Collider 2D", Assets::EmptyHandle);
+				spec.AddToOptions("Engine Component", "Box Collider 2D", Assets::EmptyHandle);
 			}
 			if (!entity.HasComponent<ECS::CircleCollider2DComponent>())
 			{
-				m_AddComponent.AddToOptions("Engine Component", "Circle Collider 2D", Assets::EmptyHandle);
+				spec.AddToOptions("Engine Component", "Circle Collider 2D", Assets::EmptyHandle);
 			}
 			if (!entity.HasComponent<ECS::OnCreateComponent>())
 			{
-				m_AddComponent.AddToOptions("Engine Component", "On Create", Assets::EmptyHandle);
+				spec.AddToOptions("Engine Component", "On Create", Assets::EmptyHandle);
 			}
 			if (!entity.HasComponent<ECS::OnUpdateComponent>())
 			{
-				m_AddComponent.AddToOptions("Engine Component", "On Update", Assets::EmptyHandle);
+				spec.AddToOptions("Engine Component", "On Update", Assets::EmptyHandle);
 			}
 
 			if (!entity.HasComponent<ECS::AIStateComponent>())
 			{
-				m_AddComponent.AddToOptions("Engine Component", "AI State", Assets::EmptyHandle);
+				spec.AddToOptions("Engine Component", "AI State", Assets::EmptyHandle);
 			}
 
 			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
@@ -135,11 +135,11 @@ namespace Kargono::Panels
 				KG_ASSERT(projectComponentRef);
 				if (!entity.HasProjectComponentData(handle) && projectComponentRef->m_BufferSize != 0)
 				{
-					m_AddComponent.AddToOptions("Project Component", asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name, handle);
+					spec.AddToOptions("Project Component", asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name, handle);
 				}
 			}
 
-			m_AddComponent.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		};
 
 		m_AddComponent.m_ConfirmAction = [&](const EditorUI::OptionEntry& option)
@@ -525,10 +525,10 @@ namespace Kargono::Panels
 		m_SelectRigidBody2DCollisionStartScript.m_Label = "On Collision Start";
 		m_SelectRigidBody2DCollisionStartScript.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectRigidBody2DCollisionStartScript.m_PopupAction = [&]()
+		m_SelectRigidBody2DCollisionStartScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectRigidBody2DCollisionStartScript.ClearOptions();
-			m_SelectRigidBody2DCollisionStartScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
@@ -538,7 +538,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectRigidBody2DCollisionStartScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+				spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 
@@ -563,7 +563,7 @@ namespace Kargono::Panels
 			component.OnCollisionStartScript = Assets::AssetService::GetScript(entry.m_Handle);
 		};
 
-		m_SelectRigidBody2DCollisionStartScript.m_OnEdit = [&]()
+		m_SelectRigidBody2DCollisionStartScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
@@ -618,10 +618,10 @@ namespace Kargono::Panels
 		m_SelectRigidBody2DCollisionEndScript.m_Label = "On Collision End";
 		m_SelectRigidBody2DCollisionEndScript.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectRigidBody2DCollisionEndScript.m_PopupAction = [&]()
+		m_SelectRigidBody2DCollisionEndScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectRigidBody2DCollisionEndScript.ClearOptions();
-			m_SelectRigidBody2DCollisionEndScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
@@ -631,7 +631,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectRigidBody2DCollisionEndScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+				spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 
@@ -656,7 +656,7 @@ namespace Kargono::Panels
 			component.OnCollisionEndScript = Assets::AssetService::GetScript(entry.m_Handle);
 		};
 
-		m_SelectRigidBody2DCollisionEndScript.m_OnEdit = [&]()
+		m_SelectRigidBody2DCollisionEndScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -1192,16 +1192,16 @@ namespace Kargono::Panels
 		m_SelectParticleEmitter.m_Label = "Particle Emitter";
 		m_SelectParticleEmitter.m_Flags |= EditorUI::SelectOption_Indented;
 		m_SelectParticleEmitter.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectParticleEmitter.m_PopupAction = [&]()
+		m_SelectParticleEmitter.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectParticleEmitter.ClearOptions();
-			m_SelectParticleEmitter.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetEmitterConfigRegistry())
 			{
 				Ref<Particles::EmitterConfig> emitterConfigRef = Assets::AssetService::GetEmitterConfig(handle);
 				KG_ASSERT(emitterConfigRef);
 
-				m_SelectParticleEmitter.AddToOptions("All Emitters", asset.Data.FileLocation.filename().string(), handle);
+				spec.AddToOptions("All Emitters", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -1276,10 +1276,10 @@ namespace Kargono::Panels
 		m_SelectOnUpdateScript.m_Label = "On Update Script";
 		m_SelectOnUpdateScript.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnUpdateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectOnUpdateScript.m_PopupAction = [&]()
+		m_SelectOnUpdateScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectOnUpdateScript.ClearOptions();
-			m_SelectOnUpdateScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
@@ -1289,7 +1289,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectOnUpdateScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+				spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 
@@ -1314,7 +1314,7 @@ namespace Kargono::Panels
 			component.OnUpdateScript = Assets::AssetService::GetScript(entry.m_Handle);
 		};
 
-		m_SelectOnUpdateScript.m_OnEdit = [&]()
+		m_SelectOnUpdateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
@@ -1412,10 +1412,10 @@ namespace Kargono::Panels
 		m_SelectOnCreateScript.m_Label = "On Create Script";
 		m_SelectOnCreateScript.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnCreateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectOnCreateScript.m_PopupAction = [&]()
+		m_SelectOnCreateScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectOnCreateScript.ClearOptions();
-			m_SelectOnCreateScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
@@ -1425,7 +1425,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectOnCreateScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+				spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 
@@ -1450,7 +1450,7 @@ namespace Kargono::Panels
 			component.OnCreateScript = Assets::AssetService::GetScript(entry.m_Handle);
 		};
 
-		m_SelectOnCreateScript.m_OnEdit = [&]()
+		m_SelectOnCreateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
@@ -1550,16 +1550,16 @@ namespace Kargono::Panels
 		m_SelectGlobalState.m_Label = "Global State";
 		m_SelectGlobalState.m_Flags |= EditorUI::SelectOption_Indented;
 		m_SelectGlobalState.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectGlobalState.m_PopupAction = [&]()
+		m_SelectGlobalState.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectGlobalState.ClearOptions();
-			m_SelectGlobalState.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
 			{
 				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
 				KG_ASSERT(aiStateRef);
 
-				m_SelectGlobalState.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
+				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -1588,16 +1588,16 @@ namespace Kargono::Panels
 		m_SelectCurrentState.m_Label = "Current State";
 		m_SelectCurrentState.m_Flags |= EditorUI::SelectOption_Indented;
 		m_SelectCurrentState.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectCurrentState.m_PopupAction = [&]()
+		m_SelectCurrentState.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectCurrentState.ClearOptions();
-			m_SelectCurrentState.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
 			{
 				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
 				KG_ASSERT(aiStateRef);
 
-				m_SelectCurrentState.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
+				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -1626,16 +1626,16 @@ namespace Kargono::Panels
 		m_SelectPreviousState.m_Label = "Previous State";
 		m_SelectPreviousState.m_Flags |= EditorUI::SelectOption_Indented;
 		m_SelectPreviousState.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectPreviousState.m_PopupAction = [&]()
+		m_SelectPreviousState.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectPreviousState.ClearOptions();
-			m_SelectPreviousState.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
 			{
 				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
 				KG_ASSERT(aiStateRef);
 
-				m_SelectPreviousState.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
+				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -1704,13 +1704,13 @@ namespace Kargono::Panels
 
 		m_ShapeSelect.m_Label = "Mesh";
 		m_ShapeSelect.m_Flags |= EditorUI::SelectOption_Indented;
-		m_ShapeSelect.m_PopupAction = [&]()
+		m_ShapeSelect.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_ShapeSelect.ClearOptions();
-			m_ShapeSelect.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			m_ShapeSelect.AddToOptions("All Shapes", "Quad", Assets::EmptyHandle);
-			m_ShapeSelect.AddToOptions("All Shapes", "Pyramid", Assets::EmptyHandle);
-			m_ShapeSelect.AddToOptions("All Shapes", "Cube", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("All Shapes", "Quad", Assets::EmptyHandle);
+			spec.AddToOptions("All Shapes", "Pyramid", Assets::EmptyHandle);
+			spec.AddToOptions("All Shapes", "Cube", Assets::EmptyHandle);
 		};
 		m_ShapeSelect.m_ConfirmAction = [&](const EditorUI::OptionEntry& entry)
 		{
@@ -1767,12 +1767,12 @@ namespace Kargono::Panels
 
 		m_ShapeColorType.m_Label = "Color Type";
 		m_ShapeColorType.m_Flags |= EditorUI::SelectOption_Indented;
-		m_ShapeColorType.m_PopupAction = [&]()
+		m_ShapeColorType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_ShapeColorType.ClearOptions();
-			m_ShapeColorType.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			m_ShapeColorType.AddToOptions("All Types", "FlatColor", Assets::EmptyHandle);
-			m_ShapeColorType.AddToOptions("All Types", "VertexColor", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("All Types", "FlatColor", Assets::EmptyHandle);
+			spec.AddToOptions("All Types", "VertexColor", Assets::EmptyHandle);
 		};
 		m_ShapeColorType.m_ConfirmAction = [&](const EditorUI::OptionEntry& entry)
 		{
@@ -1862,12 +1862,12 @@ namespace Kargono::Panels
 
 		m_ShapeSetTexture.m_Label = "Select Texture";
 		m_ShapeSetTexture.m_Flags |= EditorUI::SelectOption_Indented;
-		m_ShapeSetTexture.m_PopupAction = [&]()
+		m_ShapeSetTexture.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_ShapeSetTexture.ClearOptions();
+			spec.ClearOptions();
 			for (auto& [handle, asset] : Assets::AssetService::GetTexture2DRegistry())
 			{
-				m_ShapeSetTexture.AddToOptions("All Textures", asset.Data.FileLocation.filename().string(), handle);
+				spec.AddToOptions("All Textures", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 		m_ShapeSetTexture.m_ConfirmAction = [&](const EditorUI::OptionEntry& entry)

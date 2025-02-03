@@ -1091,7 +1091,7 @@ namespace Kargono::EditorUI
 				spec.m_OpenPopup = false;
 				if (spec.m_PopupAction)
 				{
-					spec.m_PopupAction();
+					spec.m_PopupAction(spec);
 				}
 				spec.m_CachedSelection = spec.m_CurrentOption;
 			}
@@ -1128,7 +1128,7 @@ namespace Kargono::EditorUI
 				{
 					if (spec.m_OnEdit)
 					{
-						spec.m_OnEdit();
+						spec.m_OnEdit(spec);
 					}
 				}
 				// Open the button normally
@@ -1137,7 +1137,7 @@ namespace Kargono::EditorUI
 					ImGui::OpenPopup(id);
 					if (spec.m_PopupAction)
 					{
-						spec.m_PopupAction();
+						spec.m_PopupAction(spec);
 					}
 					spec.m_CachedSelection = spec.m_CurrentOption;
 				}

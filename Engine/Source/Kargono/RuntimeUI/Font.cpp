@@ -468,7 +468,7 @@ namespace Kargono::RuntimeUI
 		//outputSize.y /= 45.5f; // TODO: FIX THIS MAGIC NUMBER PLEASE
 		return outputSize;
 	}
-	void Font::CalculateTextMetadata(const std::string& text, TextMetadata& metadata, float scale, int maxLineWidth)
+	void Font::CalculateTextMetadata(const std::string& text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth)
 	{
 		// Initialize the active location where text is being rendered
 		float initialXLocation{ 0.0f };

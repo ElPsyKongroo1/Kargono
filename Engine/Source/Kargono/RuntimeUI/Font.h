@@ -18,7 +18,7 @@ namespace Kargono::RuntimeUI
 {
 	class Font;
 
-	struct TextMetadata
+	struct MultiLineTextDimensions
 	{
 		std::vector<Math::vec2> m_LineSize;
 		std::vector<Math::ivec2> m_LineBreaks;
@@ -79,7 +79,7 @@ namespace Kargono::RuntimeUI
 		void OnRenderMultiLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f, int maxLineWidth = 0);
 		void OnRenderSingleLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f);
 		Math::vec2 CalculateTextSize(const std::string& text);
-		void CalculateTextMetadata(const std::string& text, TextMetadata& metadata, float scale, int maxLineWidth = 0);
+		void CalculateTextMetadata(const std::string& text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth = 0);
 
 	public:
 		//==============================

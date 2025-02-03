@@ -23,11 +23,16 @@ namespace Kargono::Assets
 		}
 		virtual ~UserInterfaceManager() = default;
 	public:
-		// Class specific functions
+		//============================
+		// Parent Class Overrides
+		//============================
 		virtual void CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAsset(Ref<RuntimeUI::UserInterface> assetReference, const std::filesystem::path& assetPath) override;
 		virtual Ref<RuntimeUI::UserInterface> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
 
+		//============================
+		// Asset Clean-up Functions
+		//============================
 		bool RemoveScript(Ref<RuntimeUI::UserInterface> userInterfaceRef, Assets::AssetHandle scriptHandle);
 		bool RemoveTexture(Ref<RuntimeUI::UserInterface> userInterfaceRef, Assets::AssetHandle textureHandle);
 	};

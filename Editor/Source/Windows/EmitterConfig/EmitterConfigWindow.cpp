@@ -116,15 +116,15 @@ namespace Kargono::Windows
 		m_OpenEmitterConfigPopupSpec.m_LineCount = 2;
 		m_OpenEmitterConfigPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenEmitterConfigPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenEmitterConfigPopupSpec.m_PopupAction = [&]()
+		m_OpenEmitterConfigPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec spec)
 		{
-			m_OpenEmitterConfigPopupSpec.GetAllOptions().clear();
-			m_OpenEmitterConfigPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.GetAllOptions().clear();
+			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
 
-			m_OpenEmitterConfigPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetEmitterConfigRegistry())
 			{
-				m_OpenEmitterConfigPopupSpec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
+				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 		m_OpenEmitterConfigPopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)

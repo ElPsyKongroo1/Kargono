@@ -241,15 +241,15 @@ namespace Kargono::Panels
 		m_OpenAIStatePopupSpec.m_LineCount = 2;
 		m_OpenAIStatePopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenAIStatePopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenAIStatePopupSpec.m_PopupAction = [&]()
+		m_OpenAIStatePopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_OpenAIStatePopupSpec.GetAllOptions().clear();
-			m_OpenAIStatePopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.GetAllOptions().clear();
+			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
 
-			m_OpenAIStatePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
 			{
-				m_OpenAIStatePopupSpec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
+				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -361,17 +361,16 @@ namespace Kargono::Panels
 
 	void AIStateEditorPanel::InitializeMainPanel()
 	{
-
 		// On Update Script
 		m_SelectOnUpdateScript.m_Label = "On Update Script";
 		m_SelectOnUpdateScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnUpdateScript.m_LineCount = 3;
 		m_SelectOnUpdateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectOnUpdateScript.m_PopupAction = [&]()
+		m_SelectOnUpdateScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectOnUpdateScript.GetAllOptions().clear();
+			spec.GetAllOptions().clear();
 
-			m_SelectOnUpdateScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
@@ -379,7 +378,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectOnUpdateScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+				spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 		m_SelectOnUpdateScript.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -402,60 +401,60 @@ namespace Kargono::Panels
 			m_EditorAIState->OnUpdate = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnUpdateScript.m_OnEdit = [&]()
+		m_SelectOnUpdateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		{
+			// Initialize tooltip with options
+			m_SelectScriptTooltip.ClearEntries();
+			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
-				// Initialize tooltip with options
-				m_SelectScriptTooltip.ClearEntries();
-				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
-				{
-					m_SelectOnUpdateScript.m_OpenPopup = true;
-				} };
-				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+				m_SelectOnUpdateScript.m_OpenPopup = true;
+			} };
+			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
-				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
-				{
-						// Open create script dialog in script editor
-						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_EntityFloat, [&](Assets::AssetHandle scriptHandle)
-						{
-								// Ensure handle provides a script in the registry
-								if (!Assets::AssetService::HasScript(scriptHandle))
-								{
-									KG_WARN("Could not find on update function in ai state panel");
-									return;
-								}
+			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+			{
+					// Open create script dialog in script editor
+					s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_EntityFloat, [&](Assets::AssetHandle scriptHandle)
+					{
+							// Ensure handle provides a script in the registry
+							if (!Assets::AssetService::HasScript(scriptHandle))
+							{
+								KG_WARN("Could not find on update function in ai state panel");
+								return;
+							}
 
-								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-								if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
-								{
-									KG_WARN("Incorrect function type returned when linking script to usage point");
-									return;
-								}
+							// Ensure function type matches definition
+							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
+							{
+								KG_WARN("Incorrect function type returned when linking script to usage point");
+								return;
+							}
 
-								// Fill the new script handle
-								m_EditorAIState->OnUpdateHandle = scriptHandle;
-								m_EditorAIState->OnUpdate = script;
-								m_MainHeader.m_EditColorActive = true;
-								m_SelectOnUpdateScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
-							}, {"activeEntity", "deltaTime"});
+							// Fill the new script handle
+							m_EditorAIState->OnUpdateHandle = scriptHandle;
+							m_EditorAIState->OnUpdate = script;
+							m_MainHeader.m_EditColorActive = true;
+							m_SelectOnUpdateScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+						}, {"activeEntity", "deltaTime"});
 
-						} };
-				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+					} };
+			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
-				// Open tooltip
-				m_SelectScriptTooltip.m_TooltipActive = true;
-			};
+			// Open tooltip
+			m_SelectScriptTooltip.m_TooltipActive = true;
+		};
 
 		// On Enter State Script
 		m_SelectOnEnterStateScript.m_Label = "On Enter State Script";
 		m_SelectOnEnterStateScript.m_LineCount = 3;
 		m_SelectOnEnterStateScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnEnterStateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectOnEnterStateScript.m_PopupAction = [&]()
+		m_SelectOnEnterStateScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectOnEnterStateScript.GetAllOptions().clear();
+			spec.GetAllOptions().clear();
 
-			m_SelectOnEnterStateScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
@@ -463,7 +462,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectOnEnterStateScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+				spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 		m_SelectOnEnterStateScript.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -486,7 +485,7 @@ namespace Kargono::Panels
 			m_EditorAIState->OnEnterState = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnEnterStateScript.m_OnEdit = [&]()
+		m_SelectOnEnterStateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -535,11 +534,11 @@ namespace Kargono::Panels
 		m_SelectOnExitStateScript.m_LineCount = 3;
 		m_SelectOnExitStateScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnExitStateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectOnExitStateScript.m_PopupAction = [&]()
+		m_SelectOnExitStateScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectOnExitStateScript.GetAllOptions().clear();
+			spec.GetAllOptions().clear();
 
-			m_SelectOnExitStateScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
@@ -547,7 +546,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectOnExitStateScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+				spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 		m_SelectOnExitStateScript.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -570,7 +569,7 @@ namespace Kargono::Panels
 			m_EditorAIState->OnExitState = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnExitStateScript.m_OnEdit = [&]()
+		m_SelectOnExitStateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
@@ -619,11 +618,11 @@ namespace Kargono::Panels
 		m_SelectOnAIMessageScript.m_LineCount = 3;
 		m_SelectOnAIMessageScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnAIMessageScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectOnAIMessageScript.m_PopupAction = [&]()
+		m_SelectOnAIMessageScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_SelectOnAIMessageScript.GetAllOptions().clear();
+			spec.GetAllOptions().clear();
 
-			m_SelectOnAIMessageScript.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
@@ -631,7 +630,7 @@ namespace Kargono::Panels
 				{
 					continue;
 				}
-				m_SelectOnAIMessageScript.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+				spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 			}
 		};
 		m_SelectOnAIMessageScript.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -654,7 +653,7 @@ namespace Kargono::Panels
 			m_EditorAIState->OnMessage = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnAIMessageScript.m_OnEdit = [&]()
+		m_SelectOnAIMessageScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 			{
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();

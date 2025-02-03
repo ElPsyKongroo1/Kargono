@@ -1418,14 +1418,14 @@ namespace Kargono::EditorUI
 		std::string m_Label{};
 		OptionEntry m_CurrentOption{};
 		uint32_t m_LineCount{ 3 };
-		std::function<void()> m_PopupAction {nullptr};
+		std::function<void(SelectOptionSpec&)> m_PopupAction {nullptr};
 		std::function<void(const OptionEntry&)> m_ConfirmAction {nullptr};
 		WidgetFlags m_Flags{ SelectOption_None };
 	public:
 		// Only used if PopupOnly is true
 		bool m_OpenPopup{ false };
 		// Only used if HandleEditButtonExternally is true
-		std::function<void()> m_OnEdit{ nullptr };
+		std::function<void(SelectOptionSpec&)> m_OnEdit{ nullptr };
 
 	public:
 		void ClearOptions()

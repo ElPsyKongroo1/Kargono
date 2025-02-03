@@ -101,6 +101,7 @@ namespace Kargono::Panels
 			windowEntry.m_OnRightClickSelection.push_back({ "Add Image Widget", KG_BIND_CLASS_FN(AddImageWidget) });
 			windowEntry.m_OnRightClickSelection.push_back({ "Add Image Button Widget", KG_BIND_CLASS_FN(AddImageButtonWidget) });
 			windowEntry.m_OnRightClickSelection.push_back({ "Add Checkbox Widget", KG_BIND_CLASS_FN(AddCheckboxWidget) });
+			windowEntry.m_OnRightClickSelection.push_back({ "Add Input Text Widget", KG_BIND_CLASS_FN(AddInputTextWidget) });
 			windowEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
 
 			// Add widgets to window entry
@@ -129,6 +130,9 @@ namespace Kargono::Panels
 					break;
 				case RuntimeUI::WidgetTypes::CheckboxWidget:
 					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconCheckbox_Enabled;
+					break;
+				case RuntimeUI::WidgetTypes::InputTextWidget:
+					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconInput;
 					break;
 				default:
 					KG_ERROR("Invalid widget type provided");
@@ -502,6 +506,39 @@ namespace Kargono::Panels
 		m_MainHeader.m_EditColorActive = true;
 	}
 
+	void UIEditorTreePanel::AddInputTextWidget(EditorUI::TreeEntry& entry)
+	{
+		// Get window path from provided entry and ensure it is valid
+		EditorUI::TreePath windowPath = m_UITree.GetPathFromEntryReference(&entry);
+		if (!windowPath)
+		{
+			KG_WARN("Could not locate window path inside m_UITree");
+			return;
+		}
+
+		// Create input text widget
+		RuntimeUI::Window& window = s_UIWindow->m_EditorUI->m_Windows.at(entry.m_Handle);
+		Ref<RuntimeUI::InputTextWidget> newInputTextWidget = CreateRef<RuntimeUI::InputTextWidget>();
+
+		// Create new widget entry for m_UITree
+		EditorUI::TreeEntry newWidgetEntry{};
+		newWidgetEntry.m_Label = newInputTextWidget->m_Tag;
+		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconInput;
+		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)entry.m_Handle);
+		newWidgetEntry.m_Handle = window.m_Widgets.size();
+
+		// Add handlers for interacting with the tree entry
+		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
+		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
+
+		// Add Widget to RuntimeUI and EditorUI::Tree
+		window.AddWidget(newInputTextWidget);
+		entry.m_SubEntries.push_back(newWidgetEntry);
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
+	}
+
 	void UIEditorTreePanel::SelectWidget(EditorUI::TreeEntry& entry)
 	{
 		s_UIWindow->m_PropertiesPanel->m_ActiveWindow = &s_UIWindow->m_EditorUI->m_Windows.at(*(uint32_t*)entry.m_ProvidedData.get());
@@ -580,6 +617,7 @@ namespace Kargono::Panels
 		newEntry.m_OnRightClickSelection.push_back({ "Add Image Widget", KG_BIND_CLASS_FN(AddImageWidget) });
 		newEntry.m_OnRightClickSelection.push_back({ "Add Image Button Widget", KG_BIND_CLASS_FN(AddImageButtonWidget) });
 		newEntry.m_OnRightClickSelection.push_back({ "Add Checkbox Widget", KG_BIND_CLASS_FN(AddCheckboxWidget) });
+		newEntry.m_OnRightClickSelection.push_back({ "Add Input Text Widget", KG_BIND_CLASS_FN(AddInputTextWidget) });
 		newEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
 
 		// Add new window to RuntimeUI and this panel's tree

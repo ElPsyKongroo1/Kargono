@@ -230,17 +230,17 @@ namespace Kargono::Panels
 
 		m_CreateWidgets.m_SelectReturnType.m_Label = "Return Type";
 		m_CreateWidgets.m_SelectReturnType.m_CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::None), Assets::EmptyHandle };
-		m_CreateWidgets.m_SelectReturnType.m_PopupAction = [&]()
+		m_CreateWidgets.m_SelectReturnType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		{
+			spec.ClearOptions();
+
+			// Add all possible return types
+			for (WrappedVarType type : s_AllWrappedVarTypes)
 			{
-				m_CreateWidgets.m_SelectReturnType.ClearOptions();
+				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), (uint64_t)type);
+			}
 
-				// Add all possible return types
-				for (WrappedVarType type : s_AllWrappedVarTypes)
-				{
-					m_CreateWidgets.m_SelectReturnType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), (uint64_t)type);
-				}
-
-			};
+		};
 
 		m_CreateWidgets.m_ParameterList.m_Label = "Parameters";
 		m_CreateWidgets.m_ParameterList.m_Flags |= EditorUI::List_RegularSizeTitle;
@@ -279,24 +279,24 @@ namespace Kargono::Panels
 		m_CreateWidgets.m_CreateParameterName.m_Label = "Name";
 
 		m_CreateWidgets.m_CreateParameterType.m_Label = "Type";
-		m_CreateWidgets.m_CreateParameterType.m_PopupAction = [&]()
+		m_CreateWidgets.m_CreateParameterType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		{
+			spec.ClearOptions();
+
+			// Add all possible return types
+			for (WrappedVarType type : s_AllWrappedVarTypes)
 			{
-				m_CreateWidgets.m_CreateParameterType.ClearOptions();
-
-				// Add all possible return types
-				for (WrappedVarType type : s_AllWrappedVarTypes)
+				// Void makes no sense as a parameter
+				if (type == WrappedVarType::Void)
 				{
-					// Void makes no sense as a parameter
-					if (type == WrappedVarType::Void)
-					{
-						continue;
-					}
-
-					// Fill options list
-					m_CreateWidgets.m_CreateParameterType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), (uint64_t)type);
+					continue;
 				}
 
-			};
+				// Fill options list
+				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), (uint64_t)type);
+			}
+
+		};
 
 		m_CreateWidgets.m_EditParameterPopup.m_Label = "Edit Parameter";
 		m_CreateWidgets.m_EditParameterPopup.m_PopupAction = [&]()
@@ -351,36 +351,36 @@ namespace Kargono::Panels
 
 		m_CreateWidgets.m_EditParameterName.m_Label = "Name";
 		m_CreateWidgets.m_EditParameterType.m_Label = "Type";
-		m_CreateWidgets.m_EditParameterType.m_PopupAction = [&]()
+		m_CreateWidgets.m_EditParameterType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		{
+			spec.ClearOptions();
+
+			// Add all possible return types
+			for (WrappedVarType type : s_AllWrappedVarTypes)
 			{
-				m_CreateWidgets.m_EditParameterType.ClearOptions();
-
-				// Add all possible return types
-				for (WrappedVarType type : s_AllWrappedVarTypes)
+				// Void makes no sense as a parameter
+				if (type == WrappedVarType::Void)
 				{
-					// Void makes no sense as a parameter
-					if (type == WrappedVarType::Void)
-					{
-						continue;
-					}
+					continue;
+				}
 
-					// Fill options list
-					m_CreateWidgets.m_EditParameterType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), (uint64_t)type);
+				// Fill options list
+				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), (uint64_t)type);
 			}
 
-	};
+		};
 
 		m_CreateWidgets.m_SelectSectionLabel.m_Label = "Group";
 		m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_CreateWidgets.m_SelectSectionLabel.m_PopupAction = [&]()
+		m_CreateWidgets.m_SelectSectionLabel.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		{
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& label : Assets::AssetService::GetScriptSectionLabels())
 			{
-				m_CreateWidgets.m_SelectSectionLabel.ClearOptions();
-				m_CreateWidgets.m_SelectSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& label : Assets::AssetService::GetScriptSectionLabels())
-				{
-					m_CreateWidgets.m_SelectSectionLabel.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
-				}
-			};
+				spec.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
+			}
+		};
 	}
 
 	void ScriptEditorPanel::InitializeEditScriptPopup()
@@ -441,13 +441,13 @@ namespace Kargono::Panels
 
 		m_EditWidgets.m_SelectSectionLabel.m_Label = "Group";
 		m_EditWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_EditWidgets.m_SelectSectionLabel.m_PopupAction = [&]()
+		m_EditWidgets.m_SelectSectionLabel.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_EditWidgets.m_SelectSectionLabel.ClearOptions();
-			m_EditWidgets.m_SelectSectionLabel.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (auto& label : Assets::AssetService::GetScriptSectionLabels())
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (const std::string& label : Assets::AssetService::GetScriptSectionLabels())
 			{
-				m_EditWidgets.m_SelectSectionLabel.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
+				spec.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
 			}
 
 		};

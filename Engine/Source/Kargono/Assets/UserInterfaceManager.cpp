@@ -19,6 +19,37 @@ namespace Kargono::Assets
 		Ref<Assets::UserInterfaceMetaData> metadata = CreateRef<Assets::UserInterfaceMetaData>();
 		asset.Data.SpecificFileData = metadata;
 	}
+
+	static void SerializeSelectionData(YAML::Emitter& out, RuntimeUI::SelectionData& selectionData)
+	{
+		// Color fields
+		out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << selectionData.m_DefaultBackgroundColor;
+		// Selectable fields
+		out << YAML::Key << "Selectable" << YAML::Value << selectionData.m_Selectable;
+		// Function pointer fields
+		out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)selectionData.m_FunctionPointers.m_OnPressHandle;
+	}
+	static void SerializeImageData(YAML::Emitter& out, RuntimeUI::ImageData& imageData, const std::string& title)
+	{
+		out << YAML::Key << (title + "Image") << YAML::Value << (uint64_t)imageData.m_ImageHandle;
+		out << YAML::Key << (title + "FixedAspectRatio") << YAML::Value << imageData.m_FixedAspectRatio;
+	}
+	static void SerializeSingleLineTextData(YAML::Emitter& out, RuntimeUI::SingleLineTextData& textData)
+	{
+		out << YAML::Key << "Text" << YAML::Value << textData.m_Text;
+		out << YAML::Key << "TextSize" << YAML::Value << textData.m_TextSize;
+		out << YAML::Key << "TextColor" << YAML::Value << textData.m_TextColor;
+		out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(textData.m_TextAlignment);
+	}
+	static void SerializeMultiLineTextData(YAML::Emitter& out, RuntimeUI::MultiLineTextData& textData)
+	{
+		out << YAML::Key << "Text" << YAML::Value << textData.m_Text;
+		out << YAML::Key << "TextSize" << YAML::Value << textData.m_TextSize;
+		out << YAML::Key << "TextColor" << YAML::Value << textData.m_TextColor;
+		out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(textData.m_TextAlignment);
+		out << YAML::Key << "TextWrapped" << YAML::Value << textData.m_TextWrapped;
+	}
+
 	void UserInterfaceManager::SerializeAsset(Ref<RuntimeUI::UserInterface> assetReference, const std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
@@ -75,11 +106,7 @@ namespace Kargono::Assets
 					RuntimeUI::TextWidget* textWidget = static_cast<RuntimeUI::TextWidget*>(widget.get());
 					out << YAML::Key << "TextWidget" << YAML::Value;
 					out << YAML::BeginMap; // Begin TextWidget Map
-					out << YAML::Key << "Text" << YAML::Value << textWidget->m_Text;
-					out << YAML::Key << "TextSize" << YAML::Value << textWidget->m_TextSize;
-					out << YAML::Key << "TextColor" << YAML::Value << textWidget->m_TextColor;
-					out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(textWidget->m_TextAlignment);
-					out << YAML::Key << "TextWrapped" << YAML::Value << textWidget->m_TextWrapped;
+					SerializeMultiLineTextData(out, textWidget->m_TextData);
 					out << YAML::EndMap; // End TextWidget Map
 					break;
 				}
@@ -88,22 +115,10 @@ namespace Kargono::Assets
 					RuntimeUI::ButtonWidget* buttonWidget = static_cast<RuntimeUI::ButtonWidget*>(widget.get());
 					out << YAML::Key << "ButtonWidget" << YAML::Value;
 					out << YAML::BeginMap; // Begin buttonWidget Map
-					// Text fields
-					out << YAML::Key << "Text" << YAML::Value << buttonWidget->m_Text;
-					out << YAML::Key << "TextSize" << YAML::Value << buttonWidget->m_TextSize;
-					out << YAML::Key << "TextColor" << YAML::Value << buttonWidget->m_TextColor;
-					out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(buttonWidget->m_TextAlignment);
-					// Color fields
-					out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << buttonWidget->m_SelectionData.m_DefaultBackgroundColor;
-					// Selectable fields
-					out << YAML::Key << "Selectable" << YAML::Value << buttonWidget->m_SelectionData.m_Selectable;
-					// Direction index fields
-					out << YAML::Key << "DirectionPointerUp" << YAML::Value << buttonWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex;
-					out << YAML::Key << "DirectionPointerDown" << YAML::Value << buttonWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex;
-					out << YAML::Key << "DirectionPointerLeft" << YAML::Value << buttonWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex;
-					out << YAML::Key << "DirectionPointerRight" << YAML::Value << buttonWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex;
-					// Function pointer fields
-					out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle;
+					// Save text data
+					SerializeSingleLineTextData(out, buttonWidget->m_TextData);
+					// Save selection fields
+					SerializeSelectionData(out, buttonWidget->m_SelectionData);
 					out << YAML::EndMap; // End buttonWidget Map
 					break;
 				}
@@ -113,8 +128,8 @@ namespace Kargono::Assets
 					out << YAML::Key << "ImageWidget" << YAML::Value;
 					// Image field
 					out << YAML::BeginMap; // Begin ImageWidget Map
-					out << YAML::Key << "Image" << YAML::Value << (uint64_t)imageWidget->m_ImageData.m_ImageHandle;
-					out << YAML::Key << "FixedAspectRatio" << YAML::Value << imageWidget->m_ImageData.m_FixedAspectRatio;
+					// Save image data
+					SerializeImageData(out, imageWidget->m_ImageData, "");
 					out << YAML::EndMap; // End ImageWidget Map
 					break;
 				}
@@ -125,44 +140,41 @@ namespace Kargono::Assets
 					out << YAML::Key << "ImageButtonWidget" << YAML::Value;
 					// Image field
 					out << YAML::BeginMap; // Begin ImageWidget Map
-					out << YAML::Key << "Image" << YAML::Value << (uint64_t)imageButtonWidget->m_ImageData.m_ImageHandle;
-					out << YAML::Key << "FixedAspectRatio" << YAML::Value << imageButtonWidget->m_ImageData.m_FixedAspectRatio;
-					// Color fields
-					out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << imageButtonWidget->m_SelectionData.m_DefaultBackgroundColor;
-					// Selectable fields
-					out << YAML::Key << "Selectable" << YAML::Value << imageButtonWidget->m_SelectionData.m_Selectable;
-					// Direction index fields
-					out << YAML::Key << "DirectionPointerUp" << YAML::Value << imageButtonWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex;
-					out << YAML::Key << "DirectionPointerDown" << YAML::Value << imageButtonWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex;
-					out << YAML::Key << "DirectionPointerLeft" << YAML::Value << imageButtonWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex;
-					out << YAML::Key << "DirectionPointerRight" << YAML::Value << imageButtonWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex;
-					// Function pointer fields
-					out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle;
+					// Save image data
+					SerializeImageData(out, imageButtonWidget->m_ImageData, "");
+					// Save selection fields
+					SerializeSelectionData(out, imageButtonWidget->m_SelectionData);
 					out << YAML::EndMap; // End ImageWidget Map
 					break;
 				}
 				case RuntimeUI::WidgetTypes::CheckboxWidget:
 				{
-					RuntimeUI::CheckboxWidget* CheckboxWidget = static_cast<RuntimeUI::CheckboxWidget*>(widget.get());
+					RuntimeUI::CheckboxWidget* checkboxWidget = static_cast<RuntimeUI::CheckboxWidget*>(widget.get());
 					out << YAML::Key << "CheckboxWidget" << YAML::Value;
 					// Image fields
 					out << YAML::BeginMap; // Begin Checkbox Map
-					out << YAML::Key << "CheckedImage" << YAML::Value << (uint64_t)CheckboxWidget->m_ImageChecked.m_ImageHandle;
-					out << YAML::Key << "CheckedFixedAspectRatio" << YAML::Value << CheckboxWidget->m_ImageChecked.m_FixedAspectRatio;
-					out << YAML::Key << "UnCheckedImage" << YAML::Value << (uint64_t)CheckboxWidget->m_ImageUnChecked.m_ImageHandle;
-					out << YAML::Key << "UnCheckedFixedAspectRatio" << YAML::Value << CheckboxWidget->m_ImageUnChecked.m_FixedAspectRatio;
-					// Color fields
-					out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << CheckboxWidget->m_SelectionData.m_DefaultBackgroundColor;
-					// Selectable fields
-					out << YAML::Key << "Selectable" << YAML::Value << CheckboxWidget->m_SelectionData.m_Selectable;
-					// Direction index fields
-					out << YAML::Key << "DirectionPointerUp" << YAML::Value << CheckboxWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex;
-					out << YAML::Key << "DirectionPointerDown" << YAML::Value << CheckboxWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex;
-					out << YAML::Key << "DirectionPointerLeft" << YAML::Value << CheckboxWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex;
-					out << YAML::Key << "DirectionPointerRight" << YAML::Value << CheckboxWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex;
-					// Function pointer fields
-					out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)CheckboxWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle;
+					// Save checked
+					out << YAML::Key << "Checked" << YAML::Value << checkboxWidget->m_Checked;
+					// Save image data
+					SerializeImageData(out, checkboxWidget->m_ImageChecked, "Checked");
+					// Save image data
+					SerializeImageData(out, checkboxWidget->m_ImageUnChecked, "UnChecked");
+					// Save selection fields
+					SerializeSelectionData(out, checkboxWidget->m_SelectionData);
 					out << YAML::EndMap; // End Checkbox Map
+					break;
+				}
+
+				case RuntimeUI::WidgetTypes::InputTextWidget:
+				{
+					RuntimeUI::InputTextWidget* inputTextWidget = static_cast<RuntimeUI::InputTextWidget*>(widget.get());
+					out << YAML::Key << "InputTextWidget" << YAML::Value;
+					out << YAML::BeginMap; // Begin InputTextWidget Map
+					// Save text data
+					SerializeSingleLineTextData(out, inputTextWidget->m_TextData);
+					// Save selection fields
+					SerializeSelectionData(out, inputTextWidget->m_SelectionData);
+					out << YAML::EndMap; // End InputTextWidget Map
 					break;
 				}
 				}
@@ -182,6 +194,67 @@ namespace Kargono::Assets
 		std::ofstream fout(assetPath);
 		fout << out.c_str();
 	}
+
+	static void DeserializeMultiLineTextData(RuntimeUI::MultiLineTextData& textData, YAML::Node& node)
+	{
+		textData.m_Text = node["Text"].as<std::string>();
+		textData.m_TextSize = node["TextSize"].as<float>();
+		textData.m_TextColor = node["TextColor"].as<glm::vec4>();
+		textData.m_TextAlignment = Utility::StringToConstraint(node["TextAlignment"].as<std::string>());
+		textData.m_TextWrapped = node["TextWrapped"].as<bool>();
+	}
+	static void DeserializeSingleLineTextData(RuntimeUI::SingleLineTextData& textData, YAML::Node& node)
+	{
+		// Text fields
+		textData.m_Text = node["Text"].as<std::string>();
+		textData.m_TextSize = node["TextSize"].as<float>();
+		textData.m_TextColor = node["TextColor"].as<glm::vec4>();
+		textData.m_TextAlignment = Utility::StringToConstraint(node["TextAlignment"].as<std::string>());
+	}
+	static void DeserializeSelectionData(RuntimeUI::SelectionData& selectionData, YAML::Node& node)
+	{
+		// Color fields
+		selectionData.m_DefaultBackgroundColor = node["DefaultBackgroundColor"].as<Math::vec4>();
+		// Selectable field
+		selectionData.m_Selectable = node["Selectable"].as<bool>();
+		// Function pointer fields
+		selectionData.m_FunctionPointers.m_OnPressHandle = node["FunctionPointerOnPress"].as<uint64_t>();
+		if (selectionData.m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
+		{
+			selectionData.m_FunctionPointers.m_OnPress = nullptr;
+		}
+		else
+		{
+			Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(selectionData.m_FunctionPointers.m_OnPressHandle);
+			if (!onPressScript)
+			{
+				KG_WARN("Unable to locate OnPress Script!");
+				return;
+			}
+			selectionData.m_FunctionPointers.m_OnPress = onPressScript;
+		}
+	}
+
+	static void DeserializeImageData(RuntimeUI::ImageData& imageData, YAML::Node& node, const std::string& title)
+	{
+		imageData.m_ImageHandle = node[(title + "Image")].as<uint64_t>();
+		if (imageData.m_ImageHandle == Assets::EmptyHandle)
+		{
+			imageData.m_ImageRef = nullptr;
+		}
+		else
+		{
+			Ref<Rendering::Texture2D> imageRef = Assets::AssetService::GetTexture2D(imageData.m_ImageHandle);
+			if (!imageRef)
+			{
+				KG_WARN("Unable to locate provided image reference");
+				return;
+			}
+			imageData.m_ImageRef = imageRef;
+		}
+		imageData.m_FixedAspectRatio = node[(title + "FixedAspectRatio")].as<bool>();
+	}
+
 	Ref<RuntimeUI::UserInterface> UserInterfaceManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		Ref<RuntimeUI::UserInterface> newUserInterface = CreateRef<RuntimeUI::UserInterface>();
@@ -254,11 +327,8 @@ namespace Kargono::Assets
 							newWidget = CreateRef<RuntimeUI::TextWidget>();
 							newWidget->m_WidgetType = widgetType;
 							RuntimeUI::TextWidget* textWidget = static_cast<RuntimeUI::TextWidget*>(newWidget.get());
-							textWidget->m_Text = specificWidget["Text"].as<std::string>();
-							textWidget->m_TextSize = specificWidget["TextSize"].as<float>();
-							textWidget->m_TextColor = specificWidget["TextColor"].as<glm::vec4>();
-							textWidget->m_TextAlignment = Utility::StringToConstraint(specificWidget["TextAlignment"].as<std::string>());
-							textWidget->m_TextWrapped = specificWidget["TextWrapped"].as<bool>();
+							// Get multiline data
+							DeserializeMultiLineTextData(textWidget->m_TextData, specificWidget);
 							break;
 						}
 						case RuntimeUI::WidgetTypes::ButtonWidget:
@@ -267,36 +337,10 @@ namespace Kargono::Assets
 							newWidget = CreateRef<RuntimeUI::ButtonWidget>();
 							newWidget->m_WidgetType = widgetType;
 							RuntimeUI::ButtonWidget* buttonWidget = static_cast<RuntimeUI::ButtonWidget*>(newWidget.get());
-							// Text fields
-							buttonWidget->m_Text = specificWidget["Text"].as<std::string>();
-							buttonWidget->m_TextSize = specificWidget["TextSize"].as<float>();
-							buttonWidget->m_TextColor = specificWidget["TextColor"].as<glm::vec4>();
-							buttonWidget->m_TextAlignment = Utility::StringToConstraint(specificWidget["TextAlignment"].as<std::string>());
-							// Color fields
-							buttonWidget->m_SelectionData.m_DefaultBackgroundColor = specificWidget["DefaultBackgroundColor"].as<Math::vec4>();
-							// Selectable field
-							buttonWidget->m_SelectionData.m_Selectable = specificWidget["Selectable"].as<bool>();
-							// Navigation fields
-							buttonWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex = specificWidget["DirectionPointerUp"].as<size_t>();
-							buttonWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex = specificWidget["DirectionPointerDown"].as<size_t>();
-							buttonWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex = specificWidget["DirectionPointerLeft"].as<size_t>();
-							buttonWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex = specificWidget["DirectionPointerRight"].as<size_t>();
-							// Function pointer fields
-							buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle = specificWidget["FunctionPointerOnPress"].as<uint64_t>();
-							if (buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
-							{
-								buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPress = nullptr;
-							}
-							else
-							{
-								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle);
-								if (!onPressScript)
-								{
-									KG_WARN("Unable to locate OnPress Script!");
-									return nullptr;
-								}
-								buttonWidget->m_SelectionData.m_FunctionPointers.m_OnPress = onPressScript;
-							}
+							// Get single line data
+							DeserializeSingleLineTextData(buttonWidget->m_TextData, specificWidget);
+							// Get selection data
+							DeserializeSelectionData(buttonWidget->m_SelectionData, specificWidget);
 							break;
 						}
 						case RuntimeUI::WidgetTypes::ImageWidget:
@@ -305,22 +349,8 @@ namespace Kargono::Assets
 							newWidget = CreateRef<RuntimeUI::ImageWidget>();
 							newWidget->m_WidgetType = widgetType;
 							RuntimeUI::ImageWidget* imageWidget = static_cast<RuntimeUI::ImageWidget*>(newWidget.get());
-							imageWidget->m_ImageData.m_ImageHandle = specificWidget["Image"].as<uint64_t>();
-							if (imageWidget->m_ImageData.m_ImageHandle == Assets::EmptyHandle)
-							{
-								imageWidget->m_ImageData.m_ImageRef = nullptr;
-							}
-							else
-							{
-								Ref<Rendering::Texture2D> imageRef = Assets::AssetService::GetTexture2D(imageWidget->m_ImageData.m_ImageHandle);
-								if (!imageRef)
-								{
-									KG_WARN("Unable to locate provided image reference");
-									return nullptr;
-								}
-								imageWidget->m_ImageData.m_ImageRef = imageRef;
-							}
-							imageWidget->m_ImageData.m_FixedAspectRatio = specificWidget["FixedAspectRatio"].as<bool>();
+							// Get image data
+							DeserializeImageData(imageWidget->m_ImageData, specificWidget, "");
 							break;
 						}
 						case RuntimeUI::WidgetTypes::ImageButtonWidget:
@@ -329,47 +359,10 @@ namespace Kargono::Assets
 							newWidget = CreateRef<RuntimeUI::ImageButtonWidget>();
 							newWidget->m_WidgetType = widgetType;
 							RuntimeUI::ImageButtonWidget* imageButtonWidget = static_cast<RuntimeUI::ImageButtonWidget*>(newWidget.get());
-							// Color fields
-							imageButtonWidget->m_SelectionData.m_DefaultBackgroundColor = specificWidget["DefaultBackgroundColor"].as<Math::vec4>();
-							// Selectable field
-							imageButtonWidget->m_SelectionData.m_Selectable = specificWidget["Selectable"].as<bool>();
-							// Navigation fields
-							imageButtonWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex = specificWidget["DirectionPointerUp"].as<size_t>();
-							imageButtonWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex = specificWidget["DirectionPointerDown"].as<size_t>();
-							imageButtonWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex = specificWidget["DirectionPointerLeft"].as<size_t>();
-							imageButtonWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex = specificWidget["DirectionPointerRight"].as<size_t>();
-							// Function pointer fields
-							imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle = specificWidget["FunctionPointerOnPress"].as<uint64_t>();
-							if (imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
-							{
-								imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPress = nullptr;
-							}
-							else
-							{
-								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle);
-								if (!onPressScript)
-								{
-									KG_WARN("Unable to locate OnPress Script!");
-									return nullptr;
-								}
-								imageButtonWidget->m_SelectionData.m_FunctionPointers.m_OnPress = onPressScript;
-							}
-							imageButtonWidget->m_ImageData.m_ImageHandle = specificWidget["Image"].as<uint64_t>();
-							if (imageButtonWidget->m_ImageData.m_ImageHandle == Assets::EmptyHandle)
-							{
-								imageButtonWidget->m_ImageData.m_ImageRef = nullptr;
-							}
-							else
-							{
-								Ref<Rendering::Texture2D> imageButtonRef = Assets::AssetService::GetTexture2D(imageButtonWidget->m_ImageData.m_ImageHandle);
-								if (!imageButtonRef)
-								{
-									KG_WARN("Unable to locate provided ImageButton reference");
-									return nullptr;
-								}
-								imageButtonWidget->m_ImageData.m_ImageRef = imageButtonRef;
-							}
-							imageButtonWidget->m_ImageData.m_FixedAspectRatio = specificWidget["FixedAspectRatio"].as<bool>();
+							// Get selection data
+							DeserializeSelectionData(imageButtonWidget->m_SelectionData, specificWidget);
+							// Get image data
+							DeserializeImageData(imageButtonWidget->m_ImageData, specificWidget, "");
 							break;
 						}
 						case RuntimeUI::WidgetTypes::CheckboxWidget:
@@ -378,63 +371,26 @@ namespace Kargono::Assets
 							newWidget = CreateRef<RuntimeUI::CheckboxWidget>();
 							newWidget->m_WidgetType = widgetType;
 							RuntimeUI::CheckboxWidget* checkboxWidget = static_cast<RuntimeUI::CheckboxWidget*>(newWidget.get());
-							// Color fields
-							checkboxWidget->m_SelectionData.m_DefaultBackgroundColor = specificWidget["DefaultBackgroundColor"].as<Math::vec4>();
-							// Selectable field
-							checkboxWidget->m_SelectionData.m_Selectable = specificWidget["Selectable"].as<bool>();
-							// Navigation fields
-							checkboxWidget->m_SelectionData.m_NavigationLinks.m_UpWidgetIndex = specificWidget["DirectionPointerUp"].as<size_t>();
-							checkboxWidget->m_SelectionData.m_NavigationLinks.m_DownWidgetIndex = specificWidget["DirectionPointerDown"].as<size_t>();
-							checkboxWidget->m_SelectionData.m_NavigationLinks.m_LeftWidgetIndex = specificWidget["DirectionPointerLeft"].as<size_t>();
-							checkboxWidget->m_SelectionData.m_NavigationLinks.m_RightWidgetIndex = specificWidget["DirectionPointerRight"].as<size_t>();
-							// Function pointer fields
-							checkboxWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle = specificWidget["FunctionPointerOnPress"].as<uint64_t>();
-							if (checkboxWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
-							{
-								checkboxWidget->m_SelectionData.m_FunctionPointers.m_OnPress = nullptr;
-							}
-							else
-							{
-								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(checkboxWidget->m_SelectionData.m_FunctionPointers.m_OnPressHandle);
-								if (!onPressScript)
-								{
-									KG_WARN("Unable to locate OnPress Script!");
-									return nullptr;
-								}
-								checkboxWidget->m_SelectionData.m_FunctionPointers.m_OnPress = onPressScript;
-							}
-							checkboxWidget->m_ImageChecked.m_ImageHandle = specificWidget["CheckedImage"].as<uint64_t>();
-							if (checkboxWidget->m_ImageChecked.m_ImageHandle == Assets::EmptyHandle)
-							{
-								checkboxWidget->m_ImageChecked.m_ImageRef = nullptr;
-							}
-							else
-							{
-								Ref<Rendering::Texture2D> CheckboxRef = Assets::AssetService::GetTexture2D(checkboxWidget->m_ImageChecked.m_ImageHandle);
-								if (!CheckboxRef)
-								{
-									KG_WARN("Unable to locate provided Checkbox reference");
-									return nullptr;
-								}
-								checkboxWidget->m_ImageChecked.m_ImageRef = CheckboxRef;
-							}
-							checkboxWidget->m_ImageChecked.m_FixedAspectRatio = specificWidget["CheckedFixedAspectRatio"].as<bool>();
-							checkboxWidget->m_ImageUnChecked.m_ImageHandle = specificWidget["UnCheckedImage"].as<uint64_t>();
-							if (checkboxWidget->m_ImageUnChecked.m_ImageHandle == Assets::EmptyHandle)
-							{
-								checkboxWidget->m_ImageUnChecked.m_ImageRef = nullptr;
-							}
-							else
-							{
-								Ref<Rendering::Texture2D> CheckboxRef = Assets::AssetService::GetTexture2D(checkboxWidget->m_ImageUnChecked.m_ImageHandle);
-								if (!CheckboxRef)
-								{
-									KG_WARN("Unable to locate provided Checkbox reference");
-									return nullptr;
-								}
-								checkboxWidget->m_ImageUnChecked.m_ImageRef = CheckboxRef;
-							}
-							checkboxWidget->m_ImageUnChecked.m_FixedAspectRatio = specificWidget["UnCheckedFixedAspectRatio"].as<bool>();
+							// Get checked status
+							checkboxWidget->m_Checked= specificWidget["Checked"].as<bool>();
+							// Get selection data
+							DeserializeSelectionData(checkboxWidget->m_SelectionData, specificWidget);
+							// Get checked image data
+							DeserializeImageData(checkboxWidget->m_ImageChecked, specificWidget, "Checked");
+							// Get unchecked image data
+							DeserializeImageData(checkboxWidget->m_ImageUnChecked, specificWidget, "UnChecked");
+							break;
+						}
+						case RuntimeUI::WidgetTypes::InputTextWidget:
+						{
+							specificWidget = widget["InputTextWidget"];
+							newWidget = CreateRef<RuntimeUI::InputTextWidget>();
+							newWidget->m_WidgetType = widgetType;
+							RuntimeUI::InputTextWidget* inputTextWidget = static_cast<RuntimeUI::InputTextWidget*>(newWidget.get());
+							// Get single line data
+							DeserializeSingleLineTextData(inputTextWidget->m_TextData, specificWidget);
+							// Get selection data
+							DeserializeSelectionData(inputTextWidget->m_SelectionData, specificWidget);
 							break;
 						}
 						default:
@@ -485,10 +441,8 @@ namespace Kargono::Assets
 		{
 			for (Ref<RuntimeUI::Widget> widgetRef : currentWindow.m_Widgets)
 			{
-
-				RuntimeUI::SelectionData* selectionData = RuntimeUI::RuntimeUIService::GetSelectionDataFromWidget(widgetRef.get());
-
 				// Check if this widget has a selection data
+				RuntimeUI::SelectionData* selectionData = RuntimeUI::RuntimeUIService::GetSelectionDataFromWidget(widgetRef.get());
 				if (!selectionData)
 				{
 					continue;

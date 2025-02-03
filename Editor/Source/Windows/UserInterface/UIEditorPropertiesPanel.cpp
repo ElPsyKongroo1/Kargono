@@ -24,6 +24,7 @@ namespace Kargono::Panels
 		InitializeImageButtonWidgetOptions();
 		InitializeImageWidgetOptions();
 		InitializeCheckboxWidgetOptions();
+		InitializeInputTextWidgetOptions();
 		InitializeWidgetLocationOptions();
 	}
 	void UIEditorPropertiesPanel::OnEditorUIRender()
@@ -223,23 +224,23 @@ namespace Kargono::Panels
 			RuntimeUI::TextWidget& activeTextWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
 
 			// Edit selected text widget's text
-			m_TextWidgetText.m_CurrentOption = activeTextWidget.m_Text;
+			m_TextWidgetText.m_CurrentOption = activeTextWidget.m_TextData.m_Text;
 			EditorUI::EditorUIService::EditMultiLineText(m_TextWidgetText);
 
 			// Edit selected text widget's text size relative to its window
-			m_TextWidgetTextSize.m_CurrentFloat = activeTextWidget.m_TextSize;
+			m_TextWidgetTextSize.m_CurrentFloat = activeTextWidget.m_TextData.m_TextSize;
 			EditorUI::EditorUIService::EditFloat(m_TextWidgetTextSize);
 
 			// Edit selected text widget's text color
-			m_TextWidgetTextColor.m_CurrentVec4 = activeTextWidget.m_TextColor;
+			m_TextWidgetTextColor.m_CurrentVec4 = activeTextWidget.m_TextData.m_TextColor;
 			EditorUI::EditorUIService::EditVec4(m_TextWidgetTextColor);
 
 			// Edit selected text widget's text alignment
-			m_TextWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeTextWidget.m_TextAlignment) , (uint64_t)activeTextWidget.m_TextAlignment };
+			m_TextWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeTextWidget.m_TextData.m_TextAlignment) , (uint64_t)activeTextWidget.m_TextData.m_TextAlignment };
 			EditorUI::EditorUIService::SelectOption(m_TextWidgetTextAlignment);
 
 			// Edit selected text widget's wrapped alignment
-			m_TextWidgetTextWrapped.m_CurrentBoolean = activeTextWidget.m_TextWrapped;
+			m_TextWidgetTextWrapped.m_CurrentBoolean = activeTextWidget.m_TextData.m_TextWrapped;
 			EditorUI::EditorUIService::Checkbox(m_TextWidgetTextWrapped);
 		}
 	}
@@ -258,19 +259,19 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Checkbox(m_ButtonWidgetSelectable);
 
 			// Edit selected button widget's text
-			m_ButtonWidgetText.m_CurrentOption = activeButtonWidget.m_Text;
+			m_ButtonWidgetText.m_CurrentOption = activeButtonWidget.m_TextData.m_Text;
 			EditorUI::EditorUIService::EditText(m_ButtonWidgetText);
 
 			// Edit selected button widget's text size relative to its window
-			m_ButtonWidgetTextSize.m_CurrentFloat = activeButtonWidget.m_TextSize;
+			m_ButtonWidgetTextSize.m_CurrentFloat = activeButtonWidget.m_TextData.m_TextSize;
 			EditorUI::EditorUIService::EditFloat(m_ButtonWidgetTextSize);
 
 			// Edit selected button widget's text color
-			m_ButtonWidgetTextColor.m_CurrentVec4 = activeButtonWidget.m_TextColor;
+			m_ButtonWidgetTextColor.m_CurrentVec4 = activeButtonWidget.m_TextData.m_TextColor;
 			EditorUI::EditorUIService::EditVec4(m_ButtonWidgetTextColor);
 
 			// Edit selected button widget's text alignment
-			m_ButtonWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeButtonWidget.m_TextAlignment) , (uint64_t)activeButtonWidget.m_TextAlignment };
+			m_ButtonWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeButtonWidget.m_TextData.m_TextAlignment) , (uint64_t)activeButtonWidget.m_TextData.m_TextAlignment };
 			EditorUI::EditorUIService::SelectOption(m_ButtonWidgetTextAlignment);
 
 			// Edit selected widget's background color
@@ -411,6 +412,50 @@ namespace Kargono::Panels
 		}
 	}
 
+	void UIEditorPropertiesPanel::DrawInputTextWidgetOptions()
+	{
+		// Draw main header for input text widget options
+		EditorUI::EditorUIService::CollapsingHeader(m_InputTextWidgetHeader);
+		if (m_InputTextWidgetHeader.m_Expanded)
+		{
+			// Draw options to edit selected InputText widget
+			RuntimeUI::InputTextWidget& activeInputTextWidget = *(RuntimeUI::InputTextWidget*)m_ActiveWidget;
+
+			// Edit selected text widget's wrapped alignment
+			m_InputTextWidgetSelectable.m_CurrentBoolean = activeInputTextWidget.m_SelectionData.m_Selectable;
+			EditorUI::EditorUIService::Checkbox(m_InputTextWidgetSelectable);
+
+			// Edit selected InputText widget's text
+			m_InputTextWidgetText.m_CurrentOption = activeInputTextWidget.m_TextData.m_Text;
+			EditorUI::EditorUIService::EditText(m_InputTextWidgetText);
+
+			// Edit selected InputText widget's text size relative to its window
+			m_InputTextWidgetTextSize.m_CurrentFloat = activeInputTextWidget.m_TextData.m_TextSize;
+			EditorUI::EditorUIService::EditFloat(m_InputTextWidgetTextSize);
+
+			// Edit selected InputText widget's text color
+			m_InputTextWidgetTextColor.m_CurrentVec4 = activeInputTextWidget.m_TextData.m_TextColor;
+			EditorUI::EditorUIService::EditVec4(m_InputTextWidgetTextColor);
+
+			// Edit selected InputText widget's text alignment
+			m_InputTextWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeInputTextWidget.m_TextData.m_TextAlignment) , (uint64_t)activeInputTextWidget.m_TextData.m_TextAlignment };
+			EditorUI::EditorUIService::SelectOption(m_InputTextWidgetTextAlignment);
+
+			// Edit selected widget's background color
+			m_InputTextWidgetBackgroundColor.m_CurrentVec4 = activeInputTextWidget.m_SelectionData.m_DefaultBackgroundColor;
+			EditorUI::EditorUIService::EditVec4(m_InputTextWidgetBackgroundColor);
+
+			// Edit selected widget's on press script
+			Assets::AssetHandle onPressHandle = activeInputTextWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
+			m_InputTextWidgetOnPress.m_CurrentOption =
+			{
+				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName,
+				onPressHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_InputTextWidgetOnPress);
+		}
+	}
+
 	void UIEditorPropertiesPanel::DrawSpecificWidgetOptions()
 	{
 		switch (m_ActiveWidget->m_WidgetType)
@@ -429,6 +474,9 @@ namespace Kargono::Panels
 			break;
 		case RuntimeUI::WidgetTypes::CheckboxWidget:
 			DrawCheckboxWidgetOptions();
+			break;
+		case RuntimeUI::WidgetTypes::InputTextWidget:
+			DrawInputTextWidgetOptions();
 			break;
 		default:
 			KG_ERROR("Invalid widget type attempted to be drawn");
@@ -468,16 +516,16 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenUIFontPopup()
+	void UIEditorPropertiesPanel::OnOpenUIFontPopup(EditorUI::SelectOptionSpec& spec)
 	{
 		// Clear existing options
-		m_UISelectFont.ClearOptions();
-		m_UISelectFont.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 
 		// Add all font options
 		for (auto& [fontHandle, fontInfo] : Assets::AssetService::GetFontRegistry())
 		{
-			m_UISelectFont.AddToOptions("All Options", fontInfo.Data.FileLocation.stem().string(), fontHandle);
+			spec.AddToOptions("All Options", fontInfo.Data.FileLocation.stem().string(), fontHandle);
 		}
 	}
 
@@ -504,11 +552,11 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenUIOnMovePopup()
+	void UIEditorPropertiesPanel::OnOpenUIOnMovePopup(EditorUI::SelectOptionSpec& spec)
 	{
 		// Clear existing options
-		m_UIOnMove.ClearOptions();
-		m_UIOnMove.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 
 		// Add all compatible scripts to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
@@ -523,11 +571,11 @@ namespace Kargono::Panels
 			}
 
 			// Add script to the select options
-			m_UIOnMove.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+			spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 		}
 	}
 
-	void UIEditorPropertiesPanel::OnOpenTooltipForUIOnMove()
+	void UIEditorPropertiesPanel::OnOpenTooltipForUIOnMove(EditorUI::SelectOptionSpec& spec)
 	{
 		// Clear existing options
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
@@ -809,30 +857,30 @@ namespace Kargono::Panels
 		// Set up widget to modify the text widget's text
 		m_TextWidgetText.m_Label = "Text";
 		m_TextWidgetText.m_Flags |= EditorUI::EditMultiLineText_Indented;
-		m_TextWidgetText.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetText);
+		m_TextWidgetText.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyMultiLineDataText);
 
 		// Set up widget to modify the text widget's text size
 		m_TextWidgetTextSize.m_Label = "Text Size";
 		m_TextWidgetTextSize.m_Flags |= EditorUI::EditFloat_Indented;
 		m_TextWidgetTextSize.m_Bounds = { 0.0f, 10'000.0f };
-		m_TextWidgetTextSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetTextSize);
+		m_TextWidgetTextSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextDataTextSize);
 
 		// Set up widget to modify the text widget's text color
 		m_TextWidgetTextColor.m_Label = "Text Color";
 		m_TextWidgetTextColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_TextWidgetTextColor.m_Bounds = { 0.0f, 1.0f };
-		m_TextWidgetTextColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetTextColor);
+		m_TextWidgetTextColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextDataTextColor);
 
 		// Set up widget to modify the text widget's text alignment
 		m_TextWidgetTextAlignment.m_Label = "Text Alignment";
 		m_TextWidgetTextAlignment.m_Flags |= EditorUI::SelectOption_Indented;
-		m_TextWidgetTextAlignment.m_PopupAction = KG_BIND_CLASS_FN(OnOpenTextWidgetAlignmentPopup);
-		m_TextWidgetTextAlignment.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetAlignment);
+		m_TextWidgetTextAlignment.m_PopupAction = KG_BIND_CLASS_FN(OnOpenTextDataAlignmentPopup);
+		m_TextWidgetTextAlignment.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextDataAlignment);
 
 		// Set up widget to modify if the text widget is wrapped
 		m_TextWidgetTextWrapped.m_Label = "Text Wrapped";
 		m_TextWidgetTextWrapped.m_Flags |= EditorUI::Checkbox_Indented;
-		m_TextWidgetTextWrapped.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextWidgetWrapped);
+		m_TextWidgetTextWrapped.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextDataWrapped);
 	}
 
 	void UIEditorPropertiesPanel::InitializeButtonWidgetOptions()
@@ -845,42 +893,42 @@ namespace Kargono::Panels
 		// Set up widget to modify the text widget's text alignment
 		m_ButtonWidgetSelectable.m_Label = "Selectable";
 		m_ButtonWidgetSelectable.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ButtonWidgetSelectable.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetSelectable);
+		m_ButtonWidgetSelectable.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataSelectable);
 
 		// Set up widget to modify the button widget's text
 		m_ButtonWidgetText.m_Label = "Text";
 		m_ButtonWidgetText.m_Flags |= EditorUI::EditText_Indented;
-		m_ButtonWidgetText.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetText);
+		m_ButtonWidgetText.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySingleLineDataText);
 
 		// Set up widget to modify the button widget's text size
 		m_ButtonWidgetTextSize.m_Label = "Text Size";
 		m_ButtonWidgetTextSize.m_Flags |= EditorUI::EditFloat_Indented;
 		m_ButtonWidgetTextSize.m_Bounds = { 0.0f, 10'000.0f };
-		m_ButtonWidgetTextSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetButtonTextSize);
+		m_ButtonWidgetTextSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextDataTextSize);
 
 		// Set up widget to modify the button widget's text color
 		m_ButtonWidgetTextColor.m_Label = "Text Color";
 		m_ButtonWidgetTextColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_ButtonWidgetTextColor.m_Bounds = { 0.0f, 1.0f };
-		m_ButtonWidgetTextColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetButtonTextColor);
+		m_ButtonWidgetTextColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextDataTextColor);
 
 		// Set up widget to modify the button widget's text alignment
 		m_ButtonWidgetTextAlignment.m_Label = "Text Alignment";
 		m_ButtonWidgetTextAlignment.m_Flags |= EditorUI::SelectOption_Indented;
-		m_ButtonWidgetTextAlignment.m_PopupAction = KG_BIND_CLASS_FN(OnOpenButtonWidgetTextAlignmentPopup);
-		m_ButtonWidgetTextAlignment.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetTextAlignment);
+		m_ButtonWidgetTextAlignment.m_PopupAction = KG_BIND_CLASS_FN(OnOpenTextDataAlignmentPopup);
+		m_ButtonWidgetTextAlignment.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextDataAlignment);
 
 		// Set up widget to modify the button widget's background color
 		m_ButtonWidgetBackgroundColor.m_Label = "Background Color";
 		m_ButtonWidgetBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_ButtonWidgetBackgroundColor.m_Bounds = { 0.0f, 1.0f };
-		m_ButtonWidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetBackgroundColor);
+		m_ButtonWidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataBackgroundColor);
 
 		// Set up widget to modify the button widget's on press script
 		m_ButtonWidgetOnPress.m_Label = "On Press";
 		m_ButtonWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
-		m_ButtonWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenButtonWidgetOnPressPopup);
-		m_ButtonWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyButtonWidgetOnPress);
+		m_ButtonWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
+		m_ButtonWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
 		m_ButtonWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForButtonWidgetOnPress);
 	}
 
@@ -894,13 +942,13 @@ namespace Kargono::Panels
 		// Set up widget to modify the image widget's image
 		m_ImageWidgetImage.m_Label = "Image";
 		m_ImageWidgetImage.m_Flags |= EditorUI::SelectOption_Indented;
-		m_ImageWidgetImage.m_PopupAction = KG_BIND_CLASS_FN(OnOpenImageWidgetImagePopup);
-		m_ImageWidgetImage.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageWidgetImage);
+		m_ImageWidgetImage.m_PopupAction = KG_BIND_CLASS_FN(OnOpenImageDataImagePopup);
+		m_ImageWidgetImage.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageDataImage);
 
 		// Set up widget to modify the image widget's fixed aspect ratio display
 		m_ImageWidgetFixedAspectRatio.m_Label = "Fixed Aspect Ratio";
 		m_ImageWidgetFixedAspectRatio.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ImageWidgetFixedAspectRatio.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageWidgetFixedAspectRatio);
+		m_ImageWidgetFixedAspectRatio.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageDataFixedAspectRatio);
 	}
 
 	void UIEditorPropertiesPanel::InitializeImageButtonWidgetOptions()
@@ -913,30 +961,30 @@ namespace Kargono::Panels
 		// Set up widget to modify the button widget's on press script
 		m_ImageButtonWidgetImage.m_Label = "Image";
 		m_ImageButtonWidgetImage.m_Flags |= EditorUI::SelectOption_Indented;
-		m_ImageButtonWidgetImage.m_PopupAction = KG_BIND_CLASS_FN(OnOpenImageButtonWidgetImagePopup);
-		m_ImageButtonWidgetImage.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageButtonWidgetImage);
+		m_ImageButtonWidgetImage.m_PopupAction = KG_BIND_CLASS_FN(OnOpenImageDataImagePopup);
+		m_ImageButtonWidgetImage.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageDataImage);
 
 		// Set up widget to modify the image widget's fixed aspect ratio display
 		m_ImageButtonWidgetFixedAspectRatio.m_Label = "Fixed Aspect Ratio";
 		m_ImageButtonWidgetFixedAspectRatio.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ImageButtonWidgetFixedAspectRatio.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageButtonWidgetFixedAspectRatio);
+		m_ImageButtonWidgetFixedAspectRatio.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageDataFixedAspectRatio);
 
 		// Set up widget to modify the text widget's text alignment
 		m_ImageButtonWidgetSelectable.m_Label = "Selectable";
 		m_ImageButtonWidgetSelectable.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ImageButtonWidgetSelectable.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageButtonWidgetSelectable);
+		m_ImageButtonWidgetSelectable.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataSelectable);
 
 		// Set up widget to modify the button widget's background color
 		m_ImageButtonWidgetBackgroundColor.m_Label = "Background Color";
 		m_ImageButtonWidgetBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_ImageButtonWidgetBackgroundColor.m_Bounds = { 0.0f, 1.0f };
-		m_ImageButtonWidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageButtonWidgetBackgroundColor);
+		m_ImageButtonWidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataBackgroundColor);
 
 		// Set up widget to modify the button widget's on press script
 		m_ImageButtonWidgetOnPress.m_Label = "On Press";
 		m_ImageButtonWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
-		m_ImageButtonWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenImageButtonWidgetOnPressPopup);
-		m_ImageButtonWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyImageButtonWidgetOnPress);
+		m_ImageButtonWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
+		m_ImageButtonWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
 		m_ImageButtonWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForImageButtonWidgetOnPress);
 
 	}
@@ -973,20 +1021,69 @@ namespace Kargono::Panels
 		// Set up widget to modify the text widget's text alignment
 		m_CheckboxWidgetSelectable.m_Label = "Selectable";
 		m_CheckboxWidgetSelectable.m_Flags |= EditorUI::Checkbox_Indented;
-		m_CheckboxWidgetSelectable.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyCheckboxWidgetSelectable);
+		m_CheckboxWidgetSelectable.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataSelectable);
 
 		// Set up widget to modify the button widget's background color
 		m_CheckboxWidgetBackgroundColor.m_Label = "Background Color";
 		m_CheckboxWidgetBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_CheckboxWidgetBackgroundColor.m_Bounds = { 0.0f, 1.0f };
-		m_CheckboxWidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyCheckboxWidgetBackgroundColor);
+		m_CheckboxWidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataBackgroundColor);
 
 		// Set up widget to modify the button widget's on press script
 		m_CheckboxWidgetOnPress.m_Label = "On Press";
 		m_CheckboxWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
-		m_CheckboxWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenCheckboxWidgetOnPressPopup);
-		m_CheckboxWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyCheckboxWidgetOnPress);
+		m_CheckboxWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
+		m_CheckboxWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
 		m_CheckboxWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForCheckboxWidgetOnPress);
+	}
+
+	void UIEditorPropertiesPanel::InitializeInputTextWidgetOptions()
+	{
+		// Set up header for input text widget options
+		m_InputTextWidgetHeader.m_Label = "InputText Widget Options";
+		m_InputTextWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_InputTextWidgetHeader.m_Expanded = true;
+
+		// Set up widget to modify the text widget's text alignment
+		m_InputTextWidgetSelectable.m_Label = "Selectable";
+		m_InputTextWidgetSelectable.m_Flags |= EditorUI::Checkbox_Indented;
+		m_InputTextWidgetSelectable.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataSelectable);
+
+		// Set up widget to modify the InputText widget's text
+		m_InputTextWidgetText.m_Label = "Text";
+		m_InputTextWidgetText.m_Flags |= EditorUI::EditText_Indented;
+		m_InputTextWidgetText.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySingleLineDataText);
+
+		// Set up widget to modify the InputText widget's text size
+		m_InputTextWidgetTextSize.m_Label = "Text Size";
+		m_InputTextWidgetTextSize.m_Flags |= EditorUI::EditFloat_Indented;
+		m_InputTextWidgetTextSize.m_Bounds = { 0.0f, 10'000.0f };
+		m_InputTextWidgetTextSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextDataTextSize);
+
+		// Set up widget to modify the InputText widget's text color
+		m_InputTextWidgetTextColor.m_Label = "Text Color";
+		m_InputTextWidgetTextColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_InputTextWidgetTextColor.m_Bounds = { 0.0f, 1.0f };
+		m_InputTextWidgetTextColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextDataTextColor);
+
+		// Set up widget to modify the InputText widget's text alignment
+		m_InputTextWidgetTextAlignment.m_Label = "Text Alignment";
+		m_InputTextWidgetTextAlignment.m_Flags |= EditorUI::SelectOption_Indented;
+		m_InputTextWidgetTextAlignment.m_PopupAction = KG_BIND_CLASS_FN(OnOpenTextDataAlignmentPopup);
+		m_InputTextWidgetTextAlignment.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyTextDataAlignment);
+
+		// Set up widget to modify the InputText widget's background color
+		m_InputTextWidgetBackgroundColor.m_Label = "Background Color";
+		m_InputTextWidgetBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_InputTextWidgetBackgroundColor.m_Bounds = { 0.0f, 1.0f };
+		m_InputTextWidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataBackgroundColor);
+
+		// Set up widget to modify the InputText widget's on press script
+		m_InputTextWidgetOnPress.m_Label = "On Press";
+		m_InputTextWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_InputTextWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
+		m_InputTextWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
+		m_InputTextWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForInputTextWidgetOnPress);
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWindowTag(EditorUI::EditTextSpec& spec)
@@ -1020,11 +1117,11 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenWindowDefaultWidgetPopup()
+	void UIEditorPropertiesPanel::OnOpenWindowDefaultWidgetPopup(EditorUI::SelectOptionSpec& spec)
 	{
 		// Clear existing options
-		m_WindowDefaultWidget.ClearOptions();
-		m_WindowDefaultWidget.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::k_InvalidWidgetIndex);
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::k_InvalidWidgetIndex);
 
 		// Add all text widgets to the options
 		std::size_t iteration{ 0 };
@@ -1038,13 +1135,16 @@ namespace Kargono::Panels
 			switch (widget->m_WidgetType)
 			{
 			case RuntimeUI::WidgetTypes::ButtonWidget:
-				m_WindowDefaultWidget.AddToOptions("Button Widget", widget->m_Tag, iteration);
+				spec.AddToOptions("Button Widget", widget->m_Tag, iteration);
 				break;
 			case RuntimeUI::WidgetTypes::ImageButtonWidget:
-				m_WindowDefaultWidget.AddToOptions("Image Button Widget", widget->m_Tag, iteration);
+				spec.AddToOptions("Image Button Widget", widget->m_Tag, iteration);
 				break;
 			case RuntimeUI::WidgetTypes::CheckboxWidget:
-				m_WindowDefaultWidget.AddToOptions("Checkbox Widget", widget->m_Tag, iteration);
+				spec.AddToOptions("Checkbox Widget", widget->m_Tag, iteration);
+				break;
+			case RuntimeUI::WidgetTypes::InputTextWidget:
+				spec.AddToOptions("Input Text Widget", widget->m_Tag, iteration);
 				break;
 			default:
 				KG_ERROR("Invalid widge type provided to UIEditorWindow");
@@ -1240,22 +1340,22 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenWidgetXConstraint()
+	void UIEditorPropertiesPanel::OnOpenWidgetXConstraint(EditorUI::SelectOptionSpec& spec)
 	{
-		m_WidgetXConstraintLocation.ClearOptions();
-		m_WidgetXConstraintLocation.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
-		m_WidgetXConstraintLocation.AddToOptions("All Options", "Left", (uint64_t)RuntimeUI::Constraint::Left);
-		m_WidgetXConstraintLocation.AddToOptions("All Options", "Right", (uint64_t)RuntimeUI::Constraint::Right);
-		m_WidgetXConstraintLocation.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
+		spec.AddToOptions("All Options", "Left", (uint64_t)RuntimeUI::Constraint::Left);
+		spec.AddToOptions("All Options", "Right", (uint64_t)RuntimeUI::Constraint::Right);
+		spec.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
 	}
 
-	void UIEditorPropertiesPanel::OnOpenWidgetYConstraint()
+	void UIEditorPropertiesPanel::OnOpenWidgetYConstraint(EditorUI::SelectOptionSpec& spec)
 	{
-		m_WidgetYConstraintLocation.ClearOptions();
-		m_WidgetYConstraintLocation.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
-		m_WidgetYConstraintLocation.AddToOptions("All Options", "Top", (uint64_t)RuntimeUI::Constraint::Top);
-		m_WidgetYConstraintLocation.AddToOptions("All Options", "Bottom", (uint64_t)RuntimeUI::Constraint::Bottom);
-		m_WidgetYConstraintLocation.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
+		spec.AddToOptions("All Options", "Top", (uint64_t)RuntimeUI::Constraint::Top);
+		spec.AddToOptions("All Options", "Bottom", (uint64_t)RuntimeUI::Constraint::Bottom);
+		spec.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWidgetXPixelLocation(EditorUI::EditIntegerSpec& spec)
@@ -1402,80 +1502,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyButtonWidgetBackgroundColor(EditorUI::EditVec4Spec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Get the active widget as a button widget
-		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ButtonWidget);
-		RuntimeUI::ButtonWidget& activeButton = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
-
-		// Update the widget background color based on the editorUI widget value
-		activeButton.m_SelectionData.m_DefaultBackgroundColor = m_ButtonWidgetBackgroundColor.m_CurrentVec4;
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-
-	void UIEditorPropertiesPanel::OnModifyButtonWidgetOnPress(const EditorUI::OptionEntry& entry)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Get the active widget as a button widget
-		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ButtonWidget);
-		RuntimeUI::ButtonWidget& activeButton = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
-
-		// Clear the on press script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
-		{
-			activeButton.m_SelectionData.m_FunctionPointers.m_OnPress = nullptr;
-			activeButton.m_SelectionData.m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
-
-			// Set the active editor UI as edited
-			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-			return;
-		}
-
-		// Set the on press script for the text widget
-		activeButton.m_SelectionData.m_FunctionPointers.m_OnPressHandle = entry.m_Handle;
-		activeButton.m_SelectionData.m_FunctionPointers.m_OnPress = Assets::AssetService::GetScript(entry.m_Handle);
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-
-	void UIEditorPropertiesPanel::OnOpenButtonWidgetOnPressPopup()
-	{
-		// Clear existing options
-		m_ButtonWidgetOnPress.ClearOptions();
-		m_ButtonWidgetOnPress.AddToOptions("Clear", "None", Assets::EmptyHandle);
-
-		// Add all compatible scripts to the select options
-		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
-		{
-			// Get script from handle
-			Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
-
-			// Ensure script is compatible with the text widget
-			if (script->m_FuncType != WrappedFuncType::Void_None)
-			{
-				continue;
-			}
-
-			// Add script to the select options
-			m_ButtonWidgetOnPress.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
-		}
-	}
-
-	void UIEditorPropertiesPanel::OnOpenTooltipForButtonWidgetOnPress()
+	void UIEditorPropertiesPanel::OnOpenTooltipForButtonWidgetOnPress(EditorUI::SelectOptionSpec& spec)
 	{
 		// Clear existing options
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
@@ -1556,553 +1583,8 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-
-	void UIEditorPropertiesPanel::OnModifyTextWidgetText(EditorUI::EditMultiLineTextSpec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the text widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
-		{
-			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
-
-		// Update the text widget text based on the editorUI widget's value
-		textWidget.SetText(m_TextWidgetText.m_CurrentOption, m_ActiveWindow);
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-
-	void UIEditorPropertiesPanel::OnModifyTextWidgetTextSize(EditorUI::EditFloatSpec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the text widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
-		{
-			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
-
-		// Update the text widget text size based on the editorUI widget's value
-		textWidget.m_TextSize = m_TextWidgetTextSize.m_CurrentFloat;
-		textWidget.CalculateTextMetadata(m_ActiveWindow);
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-
-	void UIEditorPropertiesPanel::OnModifyTextWidgetTextColor(EditorUI::EditVec4Spec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the text widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
-		{
-			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
-
-		// Update the text widget text color based on the editorUI widget's value
-		textWidget.m_TextColor = m_TextWidgetTextColor.m_CurrentVec4;
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-
-	void UIEditorPropertiesPanel::OnModifyTextWidgetAlignment(const EditorUI::OptionEntry& entry)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the text widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
-		{
-			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
-
-		// Change the alignment option for the text widget
-		textWidget.m_TextAlignment = (RuntimeUI::Constraint)(uint64_t)entry.m_Handle;
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-
-	void UIEditorPropertiesPanel::OnOpenTextWidgetAlignmentPopup()
-	{
-		// Clear existing options
-		m_TextWidgetTextAlignment.ClearOptions();
-
-		// Add left, right, and center alignment options
-		m_TextWidgetTextAlignment.AddToOptions
-		(
-			"All Options", 
-			Utility::ConstraintToString(RuntimeUI::Constraint::Left),
-			(uint64_t)RuntimeUI::Constraint::Left
-		);
-
-		m_TextWidgetTextAlignment.AddToOptions
-		(
-			"All Options",
-			Utility::ConstraintToString(RuntimeUI::Constraint::Right),
-			(uint64_t)RuntimeUI::Constraint::Right
-		);
-		m_TextWidgetTextAlignment.AddToOptions
-		(
-			"All Options",
-			Utility::ConstraintToString(RuntimeUI::Constraint::Center),
-			(uint64_t)RuntimeUI::Constraint::Center
-		);
-	}
-
-	void UIEditorPropertiesPanel::OnModifyTextWidgetWrapped(EditorUI::CheckboxSpec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the text widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::TextWidget)
-		{
-			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::TextWidget& textWidget = *(RuntimeUI::TextWidget*)m_ActiveWidget;
-
-		// Update the text widget text alignment based on the editorUI widget's value
-		textWidget.m_TextWrapped = spec.m_CurrentBoolean;
-		textWidget.CalculateTextMetadata(m_ActiveWindow);
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnModifyButtonWidgetText(EditorUI::EditTextSpec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the button widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
-		{
-			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
-
-		// Update the button widget text based on the editorUI widget's value
-		buttonWidget.SetText(spec.m_CurrentOption);
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnModifyButtonWidgetButtonTextSize(EditorUI::EditFloatSpec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the button widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
-		{
-			KG_WARN("Attempt to modify text widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
-
-		// Update the button widget text size based on the editorUI widget's value
-		buttonWidget.m_TextSize = spec.m_CurrentFloat;
-		buttonWidget.CalculateTextSize();
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnModifyButtonWidgetButtonTextColor(EditorUI::EditVec4Spec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the button widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
-		{
-			KG_WARN("Attempt to modify button widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
-
-		// Update the button widget text color based on the editorUI widget's value
-		buttonWidget.m_TextColor = spec.m_CurrentVec4;
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnModifyButtonWidgetTextAlignment(const EditorUI::OptionEntry& entry)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the button widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
-		{
-			KG_WARN("Attempt to modify button widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
-
-		// Change the alignment option for the button widget
-		buttonWidget.m_TextAlignment = (RuntimeUI::Constraint)(uint64_t)entry.m_Handle;
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnOpenButtonWidgetTextAlignmentPopup()
-	{
-		// Clear existing options
-		m_ButtonWidgetTextAlignment.ClearOptions();
-
-		// Add left, right, and center alignment options
-		m_ButtonWidgetTextAlignment.AddToOptions
-		(
-			"All Options",
-			Utility::ConstraintToString(RuntimeUI::Constraint::Left),
-			(uint64_t)RuntimeUI::Constraint::Left
-		);
-
-		m_ButtonWidgetTextAlignment.AddToOptions
-		(
-			"All Options",
-			Utility::ConstraintToString(RuntimeUI::Constraint::Right),
-			(uint64_t)RuntimeUI::Constraint::Right
-		);
-		m_ButtonWidgetTextAlignment.AddToOptions
-		(
-			"All Options",
-			Utility::ConstraintToString(RuntimeUI::Constraint::Center),
-			(uint64_t)RuntimeUI::Constraint::Center
-		);
-	}
-	void UIEditorPropertiesPanel::OnModifyButtonWidgetSelectable(EditorUI::CheckboxSpec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the button widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ButtonWidget)
-		{
-			KG_WARN("Attempt to modify button widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::ButtonWidget& buttonWidget = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
-
-		// Update the text widget text alignment based on the editorUI widget's value
-		buttonWidget.m_SelectionData.m_Selectable = spec.m_CurrentBoolean;
-		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnModifyImageWidgetImage(const EditorUI::OptionEntry& entry)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Get the active widget as a image widget
-		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ImageWidget);
-		RuntimeUI::ImageWidget& activeImageWidget = *(RuntimeUI::ImageWidget*)m_ActiveWidget;
-
-		// Clear the on press script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
-		{
-			activeImageWidget.m_ImageData.m_ImageRef = nullptr;
-			activeImageWidget.m_ImageData.m_ImageHandle = Assets::EmptyHandle;
-
-			// Set the active editor UI as edited
-			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-			return;
-		}
-
-		// Set the texture reference for the image widget
-		activeImageWidget.m_ImageData.m_ImageRef = Assets::AssetService::GetTexture2D(entry.m_Handle);
-		activeImageWidget.m_ImageData.m_ImageHandle = entry.m_Handle;
-
-		if (activeImageWidget.m_ImageData.m_FixedAspectRatio)
-		{
-			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
-			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
-			(
-				m_ActiveWindow,
-				m_ActiveWidget,
-				currentViewport.m_Width,
-				currentViewport.m_Height,
-				true
-			);
-		}
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnOpenImageWidgetImagePopup()
-	{
-		// Clear existing options
-		m_ImageWidgetImage.ClearOptions();
-		m_ImageWidgetImage.AddToOptions("Clear", "None", Assets::EmptyHandle);
-
-		// Add all compatible textures to the select options
-		for (auto& [handle, assetInfo] : Assets::AssetService::GetTexture2DRegistry())
-		{
-			// Get texture from handle
-			Ref<Rendering::Texture2D> script = Assets::AssetService::GetTexture2D(handle);
-
-			// Add texture to the select options
-			m_ImageWidgetImage.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
-		}
-	}
-	void UIEditorPropertiesPanel::OnModifyImageWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the iamge widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ImageWidget)
-		{
-			KG_WARN("Attempt to modify an image widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::ImageWidget& imageWidget = *(RuntimeUI::ImageWidget*)m_ActiveWidget;
-
-		imageWidget.m_ImageData.m_FixedAspectRatio = spec.m_CurrentBoolean;
-
-		if (spec.m_CurrentBoolean)
-		{
-			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
-			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
-			(
-				m_ActiveWindow,
-				m_ActiveWidget,
-				currentViewport.m_Width,
-				currentViewport.m_Height,
-				true
-			);
-		}
-		
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnModifyImageButtonWidgetImage(const EditorUI::OptionEntry& entry)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Get the active widget as a image button widget
-		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ImageButtonWidget);
-		RuntimeUI::ImageButtonWidget& activeImageButtonWidget = *(RuntimeUI::ImageButtonWidget*)m_ActiveWidget;
-
-		// Clear the on press script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
-		{
-			activeImageButtonWidget.m_ImageData.m_ImageRef = nullptr;
-			activeImageButtonWidget.m_ImageData.m_ImageHandle = Assets::EmptyHandle;
-
-			// Set the active editor UI as edited
-			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-			return;
-		}
-
-		// Set the texture reference for the image button widget
-		activeImageButtonWidget.m_ImageData.m_ImageRef = Assets::AssetService::GetTexture2D(entry.m_Handle);
-		activeImageButtonWidget.m_ImageData.m_ImageHandle = entry.m_Handle;
-
-		// Resize to fit new image aspect ratio if necessary
-		if (activeImageButtonWidget.m_ImageData.m_FixedAspectRatio)
-		{
-			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
-			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
-			(
-				m_ActiveWindow,
-				m_ActiveWidget,
-				currentViewport.m_Width,
-				currentViewport.m_Height,
-				true
-			);
-		}
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnOpenImageButtonWidgetImagePopup()
-	{
-		// Clear existing options
-		m_ImageButtonWidgetImage.ClearOptions();
-		m_ImageButtonWidgetImage.AddToOptions("Clear", "None", Assets::EmptyHandle);
-
-		// Add all compatible textures to the select options
-		for (auto& [handle, assetInfo] : Assets::AssetService::GetTexture2DRegistry())
-		{
-			// Get texture from handle
-			Ref<Rendering::Texture2D> script = Assets::AssetService::GetTexture2D(handle);
-
-			// Add texture to the select options
-			m_ImageButtonWidgetImage.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
-		}
-	}
-	void UIEditorPropertiesPanel::OnModifyImageButtonWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the button widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ImageButtonWidget)
-		{
-			KG_WARN("Attempt to modify an image button widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::ImageButtonWidget& imageButtonWidget = *(RuntimeUI::ImageButtonWidget*)m_ActiveWidget;
-
-		// Update the text widget text alignment based on the editorUI widget's value
-		imageButtonWidget.m_ImageData.m_FixedAspectRatio = spec.m_CurrentBoolean;
-		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
-		if (spec.m_CurrentBoolean)
-		{
-			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
-			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
-			(
-				m_ActiveWindow,
-				m_ActiveWidget,
-				currentViewport.m_Width,
-				currentViewport.m_Height,
-				true
-			);
-		}
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnModifyImageButtonWidgetSelectable(EditorUI::CheckboxSpec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the button widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::ImageButtonWidget)
-		{
-			KG_WARN("Attempt to modify image button widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::ImageButtonWidget& imageButtonWidget = *(RuntimeUI::ImageButtonWidget*)m_ActiveWidget;
-
-		// Update the image button widget selectable value
-		imageButtonWidget.m_SelectionData.m_Selectable = spec.m_CurrentBoolean;
-		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnModifyImageButtonWidgetOnPress(const EditorUI::OptionEntry& entry)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Get the active widget as a image button widget
-		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ImageButtonWidget);
-		RuntimeUI::ImageButtonWidget& activeButton = *(RuntimeUI::ImageButtonWidget*)m_ActiveWidget;
-
-		// Clear the on press script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
-		{
-			activeButton.m_SelectionData.m_FunctionPointers.m_OnPress = nullptr;
-			activeButton.m_SelectionData.m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
-
-			// Set the active editor UI as edited
-			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-			return;
-		}
-
-		// Set the on press script for the image button widget
-		activeButton.m_SelectionData.m_FunctionPointers.m_OnPressHandle = entry.m_Handle;
-		activeButton.m_SelectionData.m_FunctionPointers.m_OnPress = Assets::AssetService::GetScript(entry.m_Handle);
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnOpenImageButtonWidgetOnPressPopup()
-	{
-		// Clear existing options
-		m_ImageButtonWidgetOnPress.ClearOptions();
-		m_ImageButtonWidgetOnPress.AddToOptions("Clear", "None", Assets::EmptyHandle);
-
-		// Add all compatible scripts to the select options
-		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
-		{
-			// Get script from handle
-			Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
-
-			// Ensure script is compatible with the text widget
-			if (script->m_FuncType != WrappedFuncType::Void_None)
-			{
-				continue;
-			}
-
-			// Add script to the select options
-			m_ImageButtonWidgetOnPress.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
-		}
-	}
-	void UIEditorPropertiesPanel::OnOpenTooltipForImageButtonWidgetOnPress()
+	
+	void UIEditorPropertiesPanel::OnOpenTooltipForImageButtonWidgetOnPress(EditorUI::SelectOptionSpec& spec)
 	{
 		// Clear existing options
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
@@ -2152,25 +1634,6 @@ namespace Kargono::Panels
 
 		// Open tooltip
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
-	}
-	void UIEditorPropertiesPanel::OnModifyImageButtonWidgetBackgroundColor(EditorUI::EditVec4Spec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Get the active widget as a button widget
-		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ImageButtonWidget);
-		RuntimeUI::ImageButtonWidget& activeButton = *(RuntimeUI::ImageButtonWidget*)m_ActiveWidget;
-
-		// Update the widget background color based on the editorUI widget value
-		activeButton.m_SelectionData.m_DefaultBackgroundColor = m_ImageButtonWidgetBackgroundColor.m_CurrentVec4;
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-
 	}
 	void UIEditorPropertiesPanel::OnModifyCheckboxWidgetChecked(EditorUI::CheckboxSpec& spec)
 	{
@@ -2250,11 +1713,11 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	void UIEditorPropertiesPanel::OnOpenCheckboxWidgetCheckedImagePopup()
+	void UIEditorPropertiesPanel::OnOpenCheckboxWidgetCheckedImagePopup(EditorUI::SelectOptionSpec& spec)
 	{
 		// Clear existing options
-		m_CheckboxWidgetCheckedImage.ClearOptions();
-		m_CheckboxWidgetCheckedImage.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 
 		// Add all compatible textures to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetTexture2DRegistry())
@@ -2263,7 +1726,7 @@ namespace Kargono::Panels
 			Ref<Rendering::Texture2D> script = Assets::AssetService::GetTexture2D(handle);
 
 			// Add texture to the select options
-			m_CheckboxWidgetCheckedImage.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
+			spec.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
 		}
 	}
 	void UIEditorPropertiesPanel::OnModifyCheckboxWidgetUnCheckedImage(const EditorUI::OptionEntry& entry)
@@ -2310,11 +1773,11 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	void UIEditorPropertiesPanel::OnOpenCheckboxWidgetUnCheckedImagePopup()
+	void UIEditorPropertiesPanel::OnOpenCheckboxWidgetUnCheckedImagePopup(EditorUI::SelectOptionSpec& spec)
 	{
 		// Clear existing options
-		m_CheckboxWidgetUnCheckedImage.ClearOptions();
-		m_CheckboxWidgetUnCheckedImage.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 
 		// Add all compatible textures to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetTexture2DRegistry())
@@ -2323,7 +1786,7 @@ namespace Kargono::Panels
 			Ref<Rendering::Texture2D> script = Assets::AssetService::GetTexture2D(handle);
 
 			// Add texture to the select options
-			m_CheckboxWidgetUnCheckedImage.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
+			spec.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
 		}
 	}
 	void UIEditorPropertiesPanel::OnModifyCheckboxWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec)
@@ -2362,82 +1825,8 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	void UIEditorPropertiesPanel::OnModifyCheckboxWidgetSelectable(EditorUI::CheckboxSpec& spec)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Ensure active widget is a valid type and get the checkbox widget
-		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::CheckboxWidget)
-		{
-			KG_WARN("Attempt to modify checkbox widget member, however, active widget is an invalid type");
-			return;
-		}
-		RuntimeUI::CheckboxWidget& CheckboxWidget = *(RuntimeUI::CheckboxWidget*)m_ActiveWidget;
-
-		// Update the checkbox widget selectable value
-		CheckboxWidget.m_SelectionData.m_Selectable = spec.m_CurrentBoolean;
-		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnModifyCheckboxWidgetOnPress(const EditorUI::OptionEntry& entry)
-	{
-		// Ensure active window and widget are valid
-		if (!ValidateActiveWindowAndWidget())
-		{
-			return;
-		}
-
-		// Get the active widget as a checkbox widget
-		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::CheckboxWidget);
-		RuntimeUI::CheckboxWidget& activeCheckbox = *(RuntimeUI::CheckboxWidget*)m_ActiveWidget;
-
-		// Clear the on press script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
-		{
-			activeCheckbox.m_SelectionData.m_FunctionPointers.m_OnPress = nullptr;
-			activeCheckbox.m_SelectionData.m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
-
-			// Set the active editor UI as edited
-			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-			return;
-		}
-
-		// Set the on press script for the checkbox widget
-		activeCheckbox.m_SelectionData.m_FunctionPointers.m_OnPressHandle = entry.m_Handle;
-		activeCheckbox.m_SelectionData.m_FunctionPointers.m_OnPress = Assets::AssetService::GetScript(entry.m_Handle);
-
-		// Set the active editor UI as edited
-		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-	}
-	void UIEditorPropertiesPanel::OnOpenCheckboxWidgetOnPressPopup()
-	{
-		// Clear existing options
-		m_CheckboxWidgetOnPress.ClearOptions();
-		m_CheckboxWidgetOnPress.AddToOptions("Clear", "None", Assets::EmptyHandle);
-
-		// Add all compatible scripts to the select options
-		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
-		{
-			// Get script from handle
-			Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
-
-			// Ensure script is compatible with the text widget
-			if (script->m_FuncType != WrappedFuncType::Void_Bool)
-			{
-				continue;
-			}
-
-			// Add script to the select options
-			m_CheckboxWidgetOnPress.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
-		}
-	}
-	void UIEditorPropertiesPanel::OnOpenTooltipForCheckboxWidgetOnPress()
+	
+	void UIEditorPropertiesPanel::OnOpenTooltipForCheckboxWidgetOnPress(EditorUI::SelectOptionSpec& spec)
 	{
 		// Clear existing options
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
@@ -2452,43 +1841,95 @@ namespace Kargono::Panels
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 		{
-			// Open create script dialog in script editor
-			s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Bool, [&](Assets::AssetHandle scriptHandle)
-			{
-				// Ensure handle provides a script in the registry
-				if (!Assets::AssetService::HasScript(scriptHandle))
+				// Open create script dialog in script editor
+				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Bool, [&](Assets::AssetHandle scriptHandle)
 				{
-					KG_WARN("Could not find script");
-					return;
-				}
+						// Ensure handle provides a script in the registry
+						if (!Assets::AssetService::HasScript(scriptHandle))
+						{
+							KG_WARN("Could not find script");
+							return;
+						}
 
-				// Ensure function type matches definition
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-				if (script->m_FuncType != WrappedFuncType::Void_Bool)
-				{
-					KG_WARN("Incorrect function type returned when linking script to usage point");
-					return;
-				}
+						// Ensure function type matches definition
+						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+						if (script->m_FuncType != WrappedFuncType::Void_Bool)
+						{
+							KG_WARN("Incorrect function type returned when linking script to usage point");
+							return;
+						}
 
-				// Get the active widget as a button widget
-				KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::CheckboxWidget);
-				RuntimeUI::CheckboxWidget& activeButton = *(RuntimeUI::CheckboxWidget*)m_ActiveWidget;
+						// Get the active widget as a button widget
+						KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::CheckboxWidget);
+						RuntimeUI::CheckboxWidget& activeButton = *(RuntimeUI::CheckboxWidget*)m_ActiveWidget;
 
-				// Fill the new script handle
-				activeButton.m_SelectionData.m_FunctionPointers.m_OnPressHandle = scriptHandle;
-				activeButton.m_SelectionData.m_FunctionPointers.m_OnPress = script;
-				m_CheckboxWidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+						// Fill the new script handle
+						activeButton.m_SelectionData.m_FunctionPointers.m_OnPressHandle = scriptHandle;
+						activeButton.m_SelectionData.m_FunctionPointers.m_OnPress = script;
+						m_CheckboxWidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 
-				// Set the active editor UI as edited
-				s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-			}, { "isChecked"});
-			} };
+						// Set the active editor UI as edited
+						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+					}, { "isChecked"});
+					} };
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 		// Open tooltip
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
 	}
-	void UIEditorPropertiesPanel::OnModifyCheckboxWidgetBackgroundColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnOpenTooltipForInputTextWidgetOnPress(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+
+		// Add option to opening an existing script
+		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			m_InputTextWidgetOnPress.m_OpenPopup = true;
+		} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+		// Add option or creating a new script from this usage point
+		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+		{
+				// Open create script dialog in script editor
+				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+				{
+						// Ensure handle provides a script in the registry
+						if (!Assets::AssetService::HasScript(scriptHandle))
+						{
+							KG_WARN("Could not find script");
+							return;
+						}
+
+						// Ensure function type matches definition
+						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+						if (script->m_FuncType != WrappedFuncType::Void_None)
+						{
+							KG_WARN("Incorrect function type returned when linking script to usage point");
+							return;
+						}
+
+						// Get the active widget as a InputText widget
+						KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::InputTextWidget);
+						RuntimeUI::InputTextWidget& activeInputText = *(RuntimeUI::InputTextWidget*)m_ActiveWidget;
+
+						// Fill the new script handle
+						activeInputText.m_SelectionData.m_FunctionPointers.m_OnPressHandle = scriptHandle;
+						activeInputText.m_SelectionData.m_FunctionPointers.m_OnPress = script;
+						m_InputTextWidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+
+						// Set the active editor UI as edited
+						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+					}, {});
+				} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+		// Open tooltip
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+	}
+	
+	void UIEditorPropertiesPanel::OnModifySingleLineDataText(EditorUI::EditTextSpec& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -2496,12 +1937,394 @@ namespace Kargono::Panels
 			return;
 		}
 
-		// Get the active widget as a button widget
-		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::CheckboxWidget);
-		RuntimeUI::CheckboxWidget& activeButton = *(RuntimeUI::CheckboxWidget*)m_ActiveWidget;
+		// Get the widget's text data
+		RuntimeUI::SingleLineTextData* textData = RuntimeUI::RuntimeUIService::GetSingleLineTextDataFromWidget(m_ActiveWidget);
+		if (!textData)
+		{
+			KG_WARN("Attempt to modify widget's text data, but none could be found.");
+			return;
+		}
+
+		// Update text data and recalculate text metrics
+		textData->m_Text = spec.m_CurrentOption;
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifyTextDataTextSize(EditorUI::EditFloatSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the widget's text data
+		RuntimeUI::SingleLineTextData* singleLineData = RuntimeUI::RuntimeUIService::GetSingleLineTextDataFromWidget(m_ActiveWidget);
+		if (singleLineData)
+		{
+			// Update the text widget text size based on the editorUI widget's value
+			singleLineData->m_TextSize = spec.m_CurrentFloat;
+			RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		// Get the widget's text data
+		RuntimeUI::MultiLineTextData* multiLineData = RuntimeUI::RuntimeUIService::GetMultiLineTextDataFromWidget(m_ActiveWidget);
+		if (multiLineData)
+		{
+			// Update the text widget text size based on the editorUI widget's value
+			multiLineData->m_TextSize = spec.m_CurrentFloat;
+			RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		KG_WARN("Attempt to modify widget's text data, but none could be found.");
+	}
+	void UIEditorPropertiesPanel::OnModifyTextDataTextColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the widget's text data
+		RuntimeUI::SingleLineTextData* singleLineData = RuntimeUI::RuntimeUIService::GetSingleLineTextDataFromWidget(m_ActiveWidget);
+		if (singleLineData)
+		{
+			// Update the text widget text size based on the editorUI widget's value
+			singleLineData->m_TextColor = spec.m_CurrentVec4;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		// Get the widget's text data
+		RuntimeUI::MultiLineTextData* multiLineData = RuntimeUI::RuntimeUIService::GetMultiLineTextDataFromWidget(m_ActiveWidget);
+		if (multiLineData)
+		{
+			// Update the text widget text size based on the editorUI widget's value
+			multiLineData->m_TextColor = spec.m_CurrentVec4;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		KG_WARN("Attempt to modify widget's text data, but none could be found.");
+	}
+	void UIEditorPropertiesPanel::OnModifyTextDataAlignment(const EditorUI::OptionEntry& entry)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the widget's text data
+		RuntimeUI::SingleLineTextData* singleLineData = RuntimeUI::RuntimeUIService::GetSingleLineTextDataFromWidget(m_ActiveWidget);
+		if (singleLineData)
+		{
+			// Update the text widget text size based on the editorUI widget's value
+			singleLineData->m_TextAlignment = (RuntimeUI::Constraint)(uint64_t)entry.m_Handle;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		// Get the widget's text data
+		RuntimeUI::MultiLineTextData* multiLineData = RuntimeUI::RuntimeUIService::GetMultiLineTextDataFromWidget(m_ActiveWidget);
+		if (multiLineData)
+		{
+			// Update the text widget text size based on the editorUI widget's value
+			multiLineData->m_TextAlignment = (RuntimeUI::Constraint)(uint64_t)entry.m_Handle;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		KG_WARN("Attempt to modify widget's text data, but none could be found.");
+
+
+	}
+	void UIEditorPropertiesPanel::OnOpenTextDataAlignmentPopup(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		spec.ClearOptions();
+
+		// Add left, right, and center alignment options
+		spec.AddToOptions
+		(
+			"All Options",
+			Utility::ConstraintToString(RuntimeUI::Constraint::Left),
+			(uint64_t)RuntimeUI::Constraint::Left
+		);
+
+		spec.AddToOptions
+		(
+			"All Options",
+			Utility::ConstraintToString(RuntimeUI::Constraint::Right),
+			(uint64_t)RuntimeUI::Constraint::Right
+		);
+		spec.AddToOptions
+		(
+			"All Options",
+			Utility::ConstraintToString(RuntimeUI::Constraint::Center),
+			(uint64_t)RuntimeUI::Constraint::Center
+		);
+	}
+	void UIEditorPropertiesPanel::OnModifyMultiLineDataText(EditorUI::EditMultiLineTextSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the widget's text data
+		RuntimeUI::MultiLineTextData* textData = RuntimeUI::RuntimeUIService::GetMultiLineTextDataFromWidget(m_ActiveWidget);
+		if (!textData)
+		{
+			KG_WARN("Attempt to modify widget's text data, but none could be found.");
+			return;
+		}
+
+		// Update text data and recalculate text metrics
+		textData->m_Text = spec.m_CurrentOption;
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifyTextDataWrapped(EditorUI::CheckboxSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the widget's text data
+		RuntimeUI::MultiLineTextData* textData = RuntimeUI::RuntimeUIService::GetMultiLineTextDataFromWidget(m_ActiveWidget);
+		if (!textData)
+		{
+			KG_WARN("Attempt to modify widget's text data, but none could be found.");
+			return;
+		}
+
+		// Update text data and recalculate text metrics
+		textData->m_TextWrapped = spec.m_CurrentBoolean;
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifySelectionDataSelectable(EditorUI::CheckboxSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the widget's selection data
+		RuntimeUI::SelectionData* selectionData = RuntimeUI::RuntimeUIService::GetSelectionDataFromWidget(m_ActiveWidget);
+		if (!selectionData)
+		{
+			KG_WARN("Attempt to modify widget's selection data, but none could be found.");
+			return;
+		}
+
+		// Update the text widget text alignment based on the editorUI widget's value
+		selectionData->m_Selectable = spec.m_CurrentBoolean;
+		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifySelectionDataOnPress(const EditorUI::OptionEntry& entry)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the widget's selection data
+		RuntimeUI::SelectionData* selectionData = RuntimeUI::RuntimeUIService::GetSelectionDataFromWidget(m_ActiveWidget);
+		if (!selectionData)
+		{
+			KG_WARN("Attempt to modify widget's selection data, but none could be found.");
+			return;
+		}
+
+		// Clear the on press script if the provided handle is empty
+		if (entry.m_Handle == Assets::EmptyHandle)
+		{
+			selectionData->m_FunctionPointers.m_OnPress = nullptr;
+			selectionData->m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		// Set the on press script for the text widget
+		selectionData->m_FunctionPointers.m_OnPressHandle = entry.m_Handle;
+		selectionData->m_FunctionPointers.m_OnPress = Assets::AssetService::GetScript(entry.m_Handle);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnOpenSelectionDataOnPressPopup(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+
+		// Add all compatible scripts to the select options
+		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
+		{
+			// Get script from handle
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+
+			// Ensure script is compatible with the text widget
+			if (script->m_FuncType != WrappedFuncType::Void_None)
+			{
+				continue;
+			}
+
+			// Add script to the select options
+			spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+		}
+	}
+	void UIEditorPropertiesPanel::OnModifySelectionDataBackgroundColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the widget's selection data
+		RuntimeUI::SelectionData* selectionData = RuntimeUI::RuntimeUIService::GetSelectionDataFromWidget(m_ActiveWidget);
+		if (!selectionData)
+		{
+			KG_WARN("Attempt to modify widget's selection data, but none could be found.");
+			return;
+		}
 
 		// Update the widget background color based on the editorUI widget value
-		activeButton.m_SelectionData.m_DefaultBackgroundColor = m_CheckboxWidgetBackgroundColor.m_CurrentVec4;
+		selectionData->m_DefaultBackgroundColor = spec.m_CurrentVec4;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifyImageDataImage(const EditorUI::OptionEntry& entry)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the widget's image data
+		RuntimeUI::ImageData* imageData = RuntimeUI::RuntimeUIService::GetImageDataFromWidget(m_ActiveWidget);
+		if (!imageData)
+		{
+			KG_WARN("Attempt to modify widget's image data, but none could be found.");
+			return;
+		}
+
+		// Clear the on press script if the provided handle is empty
+		if (entry.m_Handle == Assets::EmptyHandle)
+		{
+			imageData->m_ImageRef = nullptr;
+			imageData->m_ImageHandle = Assets::EmptyHandle;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		// Set the texture reference for the image widget
+		imageData->m_ImageRef = Assets::AssetService::GetTexture2D(entry.m_Handle);
+		imageData->m_ImageHandle = entry.m_Handle;
+
+		if (imageData->m_FixedAspectRatio)
+		{
+			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
+			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
+			(
+				m_ActiveWindow,
+				m_ActiveWidget,
+				currentViewport.m_Width,
+				currentViewport.m_Height,
+				true
+			);
+		}
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnOpenImageDataImagePopup(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+
+		// Add all compatible textures to the select options
+		for (auto& [handle, assetInfo] : Assets::AssetService::GetTexture2DRegistry())
+		{
+			// Get texture from handle
+			Ref<Rendering::Texture2D> script = Assets::AssetService::GetTexture2D(handle);
+
+			// Add texture to the select options
+			spec.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
+		}
+	}
+	void UIEditorPropertiesPanel::OnModifyImageDataFixedAspectRatio(EditorUI::CheckboxSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the widget's image data
+		RuntimeUI::ImageData* imageData = RuntimeUI::RuntimeUIService::GetImageDataFromWidget(m_ActiveWidget);
+		if (!imageData)
+		{
+			KG_WARN("Attempt to modify widget's image data, but none could be found.");
+			return;
+		}
+
+		// Update the text widget text alignment based on the editorUI widget's value
+		imageData->m_FixedAspectRatio = spec.m_CurrentBoolean;
+		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
+		if (spec.m_CurrentBoolean)
+		{
+			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
+			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
+			(
+				m_ActiveWindow,
+				m_ActiveWidget,
+				currentViewport.m_Width,
+				currentViewport.m_Height,
+				true
+			);
+		}
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;

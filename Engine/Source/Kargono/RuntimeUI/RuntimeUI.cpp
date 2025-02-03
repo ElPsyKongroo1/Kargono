@@ -151,16 +151,7 @@ namespace Kargono::RuntimeUI
 			{
 				for (Ref<Widget> widget : window.m_Widgets)
 				{
-					if (widget->m_WidgetType == WidgetTypes::TextWidget)
-					{
-						TextWidget* textWidget = (TextWidget*)widget.get();
-						textWidget->CalculateTextMetadata(&window);
-					}
-					else if (widget->m_WidgetType == WidgetTypes::ButtonWidget)
-					{
-						ButtonWidget* buttonWidget = (ButtonWidget*)widget.get();
-						buttonWidget->CalculateTextSize();
-					}
+					RecalculateTextData(&window, widget.get());
 				}
 			}
 		}
@@ -184,35 +175,6 @@ namespace Kargono::RuntimeUI
 		// Set active user interface
 		SetActiveUI(uiReference, uiHandle);
 	}
-
-	 //TODO: Might use this function in the user interface editor
-	//bool RuntimeUIService::RevalidateUIWidgets()
-	//{
-	//	// Ensure active user interface is valid
-	//	if (!(bool)s_RuntimeUIContext->m_ActiveUI || s_RuntimeUIContext->m_ActiveUIHandle == Assets::EmptyHandle)
-	//	{
-	//		KG_WARN("Attempt to validate user interface with invalid reference or handle.");
-	//		return false;
-	//	}
-
-	//	// Validate 
-	//	for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
-	//	{
-	//		if (window.m_DefaultActiveWidgetRef)
-	//		{
-	//			std::vector<Ref<Widget>> iterator = std::find(window.m_Widgets.begin(), window.m_Widgets.end(), window.m_DefaultActiveWidgetRef);
-	//			window.m_DefaultActiveWidget = static_cast<int32_t>(iterator - window.m_Widgets.begin());
-	//		}
-	//		else
-	//		{
-	//			window.m_DefaultActiveWidget = k_InvalidWidgetIndex;
-	//		}
-	//	}
-
-	//	// Create widget navigation links for all windows
-	//	CalculateWindowNavigationLinks();
-	//	return true;
-	//}
 
 	bool RuntimeUIService::DeleteActiveUIWindow(std::size_t windowLocation)
 	{
@@ -427,16 +389,7 @@ namespace Kargono::RuntimeUI
 		{
 			for (Ref<Widget> widget : window.m_Widgets)
 			{
-				if (widget->m_WidgetType == WidgetTypes::TextWidget)
-				{
-					TextWidget* textWidget = (TextWidget*)widget.get();
-					textWidget->CalculateTextMetadata(&window);
-				}
-				else if (widget->m_WidgetType == WidgetTypes::ButtonWidget)
-				{
-					ButtonWidget* buttonWidget = (ButtonWidget*)widget.get();
-					buttonWidget->CalculateTextSize();
-				}
+				RecalculateTextData(&window, widget.get());
 			}
 		}
 	}
@@ -464,6 +417,47 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
+	void RuntimeUIService::CalculateSingleLineText(SingleLineTextData& textData)
+	{
+		// Calculate the text size of the widget using the default font if the active user interface is not set
+		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
+		{
+			textData.m_CachedTextDimensions = RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextSize(textData.m_Text);
+			return;
+		}
+
+		// Calculate the text size of the widget using the active user interface font
+		textData.m_CachedTextDimensions= RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextSize(textData.m_Text);
+	}
+
+	void RuntimeUIService::CalculateMultiLineText(MultiLineTextData& textData, const Math::vec3& widgetSize, float textSize)
+	{
+		// Calculate the text size of the widget using the default font if the active user interface is not set
+		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
+		{
+			if (textData.m_TextWrapped)
+			{
+				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize, (int)widgetSize.x);
+			}
+			else
+			{
+				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize);
+			}
+
+			return;
+		}
+
+		// Calculate the text size of the widget using the active user interface font
+		if (textData.m_TextWrapped)
+		{
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize, (int)widgetSize.x);
+		}
+		else
+		{
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize);
+		}
+	}
+
 	void RuntimeUIService::SetWidgetTextInternal(Window* currentWindow, Ref<Widget> currentWidget, const std::string& newText)
 	{
 		KG_ASSERT(currentWindow);
@@ -475,28 +469,29 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		// Ensure the widget is a text widget
-		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget &&
-			currentWidget->m_WidgetType != WidgetTypes::ButtonWidget)
+		// Get the selection specific data from the widget
+		MultiLineTextData* multiLineData = GetMultiLineTextDataFromWidget(currentWidget.get());
+		if (multiLineData)
 		{
-			KG_WARN("Attempt to change the text of a widget that is not a text widget nor a button widget");
+			// Set the text of the widget
+			multiLineData->m_Text = newText;
+			RecalculateTextData(currentWindow, currentWidget.get());
 			return;
 		}
 
-		if (currentWidget->m_WidgetType == WidgetTypes::TextWidget)
+		// Get the selection specific data from the widget
+		SingleLineTextData* singleLineData = GetSingleLineTextDataFromWidget(currentWidget.get());
+		if (singleLineData)
 		{
-			// Set the text of the widget
-			TextWidget* textWidget = (TextWidget*)currentWidget.get();
-			textWidget->m_Text = newText;
-			textWidget->CalculateTextMetadata(currentWindow);
+			// Modify the single line text
+			singleLineData->m_Text = newText;
+			CalculateSingleLineText(*singleLineData);
+			return;
 		}
-		else if (currentWidget->m_WidgetType == WidgetTypes::ButtonWidget)
-		{
-			// Set the text of the widget
-			ButtonWidget* buttonWidget = (ButtonWidget*)currentWidget.get();
-			buttonWidget->m_Text = newText;
-			buttonWidget->CalculateTextSize();
-		}
+
+		KG_WARN("Invalid widget type provided when modifying a widget's text");
+		return;
+		
 	}
 
 	void RuntimeUIService::SetSelectedWidgetInternal(Ref<Widget> newSelectedWidget)
@@ -566,27 +561,26 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		// Ensure the widget is a text widget
-		if (currentWidget->m_WidgetType != WidgetTypes::TextWidget &&
-			currentWidget->m_WidgetType != WidgetTypes::ButtonWidget)
+		// Get the selection specific data from the widget
+		MultiLineTextData* multiLineData = GetMultiLineTextDataFromWidget(currentWidget.get());
+		if (multiLineData)
 		{
-			KG_WARN("Attempt to set text color on widget that is not a TextWidget");
+			// Set the text of the widget
+			multiLineData->m_TextColor = newColor;
 			return;
 		}
 
-		if (currentWidget->m_WidgetType == WidgetTypes::TextWidget)
+		// Get the selection specific data from the widget
+		SingleLineTextData* singleLineData = GetSingleLineTextDataFromWidget(currentWidget.get());
+		if (singleLineData)
 		{
-			// Set the text color of the widget
-			TextWidget* textWidget = (TextWidget*)currentWidget.get();
-			textWidget->m_TextColor = newColor;
+			// Modify the single line text
+			singleLineData->m_TextColor = newColor;
+			return;
 		}
-		else if (currentWidget->m_WidgetType == WidgetTypes::ButtonWidget)
-		{
-			// Set the text of the widget
-			ButtonWidget* buttonWidget = (ButtonWidget*)currentWidget.get();
-			// Set the text color of the widget
-			buttonWidget->m_TextColor = newColor;
-		}
+
+		KG_WARN("Invalid widget type provided when modifying a widget's text color");
+		return;
 	}
 
 	void RuntimeUIService::SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor)
@@ -720,38 +714,70 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	SelectionData* RuntimeUIService::GetSelectionDataFromWidget(Widget* currentWidget)
+	void RuntimeUIService::RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float viewportWidth)
 	{
-		// Return the selection data for each widget
-		if (currentWidget->m_WidgetType == WidgetTypes::ButtonWidget)
+		Math::vec3 translationOutput = translation;
+		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		float textSize{ (viewportWidth * 0.15f * textData.m_TextSize) * (resolution.y / resolution.x) };
+
+		constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
+
+		// Place the starting x-location of the text widget based on the provided alignment option
+		switch (textData.m_TextAlignment)
 		{
-			return &((ButtonWidget*)currentWidget)->m_SelectionData;
-		}
-		if (currentWidget->m_WidgetType == WidgetTypes::ImageButtonWidget)
-		{
-			return &((ImageButtonWidget*)currentWidget)->m_SelectionData;
-		}
-		if (currentWidget->m_WidgetType == WidgetTypes::CheckboxWidget)
-		{
-			return &((CheckboxWidget*)currentWidget)->m_SelectionData;
+		case Constraint::Left:
+			break;
+		case Constraint::Right:
+			translationOutput.x = translation.x + (size.x) - ((textData.m_CachedTextDimensions.x) * textSize);
+			break;
+		case Constraint::Center:
+			// Adjust current line translation to be centered
+			translationOutput.x = translation.x + (size.x * 0.5f) - ((textData.m_CachedTextDimensions.x * 0.5f) * textSize);
+			break;
+		case Constraint::Bottom:
+		case Constraint::Top:
+		case Constraint::None:
+			KG_ERROR("Invalid constraint type for aligning text {}", Utility::ConstraintToString(textData.m_TextAlignment));
+			break;
 		}
 
-		return nullptr;
+		// Set the starting y/z locations
+		translationOutput.y = translation.y + (size.y * 0.5f) - ((textData.m_CachedTextDimensions.y * 0.5f) * textSize) + k_CenterAdjustmentSize;
+
+		// Call the text's rendering function
+		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->OnRenderSingleLineText(textData.m_Text, translationOutput, textData.m_TextColor, textSize);
+	}
+
+	SelectionData* RuntimeUIService::GetSelectionDataFromWidget(Widget* currentWidget)
+	{
+		KG_ASSERT(currentWidget);
+
+		switch (currentWidget->m_WidgetType)
+		{
+		case WidgetTypes::ButtonWidget:
+			return &((ButtonWidget*)currentWidget)->m_SelectionData;
+		case WidgetTypes::ImageButtonWidget:
+			return &((ImageButtonWidget*)currentWidget)->m_SelectionData;
+		case WidgetTypes::CheckboxWidget:
+			return &((CheckboxWidget*)currentWidget)->m_SelectionData;
+		case WidgetTypes::InputTextWidget:
+			return &((InputTextWidget*)currentWidget)->m_SelectionData;
+		default:
+			return nullptr;
+		}
 	}
 
 	ImageData* RuntimeUIService::GetImageDataFromWidget(Widget* currentWidget)
 	{
-		// Return the selection data for each widget
-		if (currentWidget->m_WidgetType == WidgetTypes::ImageWidget)
+		KG_ASSERT(currentWidget);
+
+		switch (currentWidget->m_WidgetType)
 		{
+		case WidgetTypes::ImageWidget:
 			return &((ImageWidget*)currentWidget)->m_ImageData;
-		}
-		if (currentWidget->m_WidgetType == WidgetTypes::ImageButtonWidget)
-		{
+		case WidgetTypes::ImageButtonWidget:
 			return &((ImageButtonWidget*)currentWidget)->m_ImageData;
-		}
-		if (currentWidget->m_WidgetType == WidgetTypes::CheckboxWidget)
-		{
+		case WidgetTypes::CheckboxWidget:
 			// Return the currently appropriate image data
 			if (((CheckboxWidget*)currentWidget)->m_Checked)
 			{
@@ -761,8 +787,34 @@ namespace Kargono::RuntimeUI
 			{
 				return &((CheckboxWidget*)currentWidget)->m_ImageUnChecked;
 			}
+		default:
+			return nullptr;
 		}
+	}
 
+	SingleLineTextData* RuntimeUIService::GetSingleLineTextDataFromWidget(Widget* currentWidget)
+	{
+		KG_ASSERT(currentWidget);
+
+		switch (currentWidget->m_WidgetType)
+		{
+		case WidgetTypes::ButtonWidget:
+			return &((ButtonWidget*)currentWidget)->m_TextData;
+		case WidgetTypes::InputTextWidget:
+			return &((InputTextWidget*)currentWidget)->m_TextData;
+		default:
+			return nullptr;
+		}
+	}
+
+	MultiLineTextData* RuntimeUIService::GetMultiLineTextDataFromWidget(Widget* currentWidget)
+	{
+		KG_ASSERT(currentWidget);
+
+		if (currentWidget->m_WidgetType == WidgetTypes::TextWidget)
+		{
+			return &((TextWidget*)currentWidget)->m_TextData;
+		}
 		return nullptr;
 	}
 
@@ -1263,10 +1315,13 @@ namespace Kargono::RuntimeUI
 		switch (widget->m_WidgetType)
 		{
 		case WidgetTypes::TextWidget:
-			(*(TextWidget*)widget).CalculateTextMetadata(parentWindow);
+			(*(TextWidget*)widget).CalculateTextSize(parentWindow);
 			break;
 		case WidgetTypes::ButtonWidget:
 			(*(ButtonWidget*)widget).CalculateTextSize();
+			break;
+		case WidgetTypes::InputTextWidget:
+			(*(InputTextWidget*)widget).CalculateTextSize();
 			break;
 		case WidgetTypes::ImageWidget:
 		case WidgetTypes::ImageButtonWidget:
@@ -1635,31 +1690,31 @@ namespace Kargono::RuntimeUI
 		// Create the widget's text rendering data
 		widgetTranslation.z += 0.001f;
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
-		float textSize{ (viewportWidth * 0.15f * m_TextSize) * (resolution.y / resolution.x) };
+		float textSize{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
 		float lineAdvance = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_LineHeight;
 		float allLineAdvanceHeight{ 0.0f };
 		// Calculate entire text's height
-		if (m_TextMetadata.m_LineSize.size() > 0)
+		if (m_TextData.m_CachedTextDimensions.m_LineSize.size() > 0)
 		{
 			//// Add the first line's dimensions
 			//allLineAdvanceHeight += m_TextMetadata.m_LineSize[0].y;
 
 			// Add the line advance for the remaining lines
-			allLineAdvanceHeight += lineAdvance * (float)(m_TextMetadata.m_LineSize.size() - 1);
+			allLineAdvanceHeight += lineAdvance * (float)(m_TextData.m_CachedTextDimensions.m_LineSize.size() - 1);
 		}
 
 		// Call the text's rendering function
-		for (size_t iteration{ 0 }; iteration < m_TextMetadata.m_LineSize.size(); iteration++)
+		for (size_t iteration{ 0 }; iteration < m_TextData.m_CachedTextDimensions.m_LineSize.size(); iteration++)
 		{
 
 			Math::vec3 finalTranslation;
-			Math::vec2 lineDimensions{ m_TextMetadata.m_LineSize[iteration] };
-			Math::ivec2 currentBreaks{ m_TextMetadata.m_LineBreaks[iteration] };
+			Math::vec2 lineDimensions{ m_TextData.m_CachedTextDimensions.m_LineSize[iteration] };
+			Math::ivec2 currentBreaks{ m_TextData.m_CachedTextDimensions.m_LineBreaks[iteration] };
 
 			constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
 
 			// Place the starting x-location of the text widget based on the provided alignment option
-			switch (m_TextAlignment)
+			switch (m_TextData.m_TextAlignment)
 			{
 			case Constraint::Left:
 				finalTranslation.x = widgetTranslation.x;
@@ -1674,78 +1729,55 @@ namespace Kargono::RuntimeUI
 			case Constraint::Bottom:
 			case Constraint::Top:
 			case Constraint::None:
-				KG_ERROR("Invalid constraint type for aligning text {}", Utility::ConstraintToString(m_TextAlignment));
+				KG_ERROR("Invalid constraint type for aligning text {}", Utility::ConstraintToString(m_TextData.m_TextAlignment));
 				break;
 			}
 
 			// Set the starting y/z locations
-			finalTranslation.y = widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextMetadata.m_LineSize[0].y * 0.5f - (allLineAdvanceHeight * 0.5f)) * textSize) + k_CenterAdjustmentSize;
+			finalTranslation.y = widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextData.m_CachedTextDimensions.m_LineSize[0].y * 0.5f - (allLineAdvanceHeight * 0.5f)) * textSize) + k_CenterAdjustmentSize;
 			finalTranslation.z = widgetTranslation.z;
 
 			// Move the line down in the y-axis to it's correct location
 			finalTranslation.y -= iteration * textSize * lineAdvance;
 
 			// Render the single line of text
-			std::string_view outputText{ m_Text.data() + currentBreaks.x, (size_t)(currentBreaks.y - currentBreaks.x) };
+			std::string_view outputText{ m_TextData.m_Text.data() + currentBreaks.x, (size_t)(currentBreaks.y - currentBreaks.x) };
 			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->OnRenderSingleLineText(
 				outputText,
-				finalTranslation, m_TextColor, textSize);
+				finalTranslation, m_TextData.m_TextColor, textSize);
 		}
 
 	}
 
-	void TextWidget::CalculateTextMetadata(Window* parentWindow)
+	void TextWidget::CalculateTextSize(Window* parentWindow)
 	{
 		KG_ASSERT(parentWindow);
 
 		// Get the resolution of the screen and the viewport
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
-		ViewportData viewportData = EngineService::GetActiveWindow().GetActiveViewport();
-		float textSize{ (viewportData.m_Width * 0.15f * m_TextSize) * (resolution.y / resolution.x) };
+		ViewportData& viewportData = EngineService::GetActiveWindow().GetActiveViewport();
+		
+		// Calculate the text size used by the rendering calls
+		float textSize{ (viewportData.m_Width * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
 
 		// Get widget width
 		Math::vec3 widgetSize = CalculateWidgetSize(parentWindow->CalculateSize(viewportData.m_Width, viewportData.m_Height));
-
-		// Calculate the text size of the widget using the default font if the active user interface is not set
-		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
-		{
-			if (m_TextWrapped)
-			{
-				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(m_Text, m_TextMetadata, textSize, (int)widgetSize.x);
-			}
-			else
-			{
-				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(m_Text, m_TextMetadata, textSize);
-			}
-			
-			return;
-		}
-
-		// Calculate the text size of the widget using the active user interface font
-		if (m_TextWrapped)
-		{
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(m_Text, m_TextMetadata, textSize, (int)widgetSize.x);
-		}
-		else
-		{
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(m_Text, m_TextMetadata, textSize);
-		}
-		
+		RuntimeUIService::CalculateMultiLineText(m_TextData, widgetSize, textSize);
 	}
 
 	void TextWidget::SetText(const std::string& newText, Window* parentWindow)
 	{
 		// Set the text of the widget
-		m_Text = newText;
+		m_TextData.m_Text = newText;
 
 		// Calculate the new text size
-		CalculateTextMetadata(parentWindow);
+		CalculateTextSize(parentWindow);
 	}
 
 	void ButtonWidget::SetText(const std::string& newText)
 	{
 		// Set the text of the widget
-		m_Text = newText;
+		m_TextData.m_Text = newText;
 
 		// Calculate the new text size
 		CalculateTextSize();
@@ -1753,15 +1785,7 @@ namespace Kargono::RuntimeUI
 
 	void ButtonWidget::CalculateTextSize()
 	{
-		// Calculate the text size of the widget using the default font if the active user interface is not set
-		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
-		{
-			m_TextDimensions = RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextSize(m_Text);
-			return;
-		}
-
-		// Calculate the text size of the widget using the active user interface font
-		m_TextDimensions = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextSize(m_Text);
+		RuntimeUIService::CalculateSingleLineText(m_TextData);
 	}
 
 	Math::vec3 Widget::CalculateWidgetSize(const Math::vec3& windowSize)
@@ -1900,35 +1924,9 @@ namespace Kargono::RuntimeUI
 		
 		// Create the widget's text rendering data
 		widgetTranslation.z += 0.001f;
-		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
-		float textSize{ (viewportWidth * 0.15f * m_TextSize) * (resolution.y / resolution.x) };
 
-		constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
-
-		// Place the starting x-location of the text widget based on the provided alignment option
-		switch (m_TextAlignment)
-		{
-		case Constraint::Left:
-			break;
-		case Constraint::Right:
-			widgetTranslation.x = widgetTranslation.x + (widgetSize.x) - ((m_TextDimensions.x) * textSize);
-			break;
-		case Constraint::Center:
-			// Adjust current line translation to be centered
-			widgetTranslation.x = widgetTranslation.x + (widgetSize.x * 0.5f) - ((m_TextDimensions.x * 0.5f) * textSize);
-			break;
-		case Constraint::Bottom:
-		case Constraint::Top:
-		case Constraint::None:
-			KG_ERROR("Invalid constraint type for aligning text {}", Utility::ConstraintToString(m_TextAlignment));
-			break;
-		}
-
-		// Set the starting y/z locations
-		widgetTranslation.y = widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextDimensions.y * 0.5f) * textSize) + k_CenterAdjustmentSize;
-
-		// Call the text's rendering function
-		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->OnRenderSingleLineText(m_Text, widgetTranslation, m_TextColor, textSize);
+		RuntimeUIService::RenderSingleLineText(m_TextData, widgetTranslation, widgetSize, viewportWidth);
+		
 	}
 
 	void ImageWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
@@ -2013,6 +2011,53 @@ namespace Kargono::RuntimeUI
 		{
 			RuntimeUIService::RenderImage(m_ImageUnChecked, widgetTranslation, widgetSize);
 		}
+	}
+
+	void InputTextWidget::SetText(const std::string& newText)
+	{
+		// Set the text of the widget
+		m_TextData.m_Text = newText;
+
+		// Calculate the new text size
+		CalculateTextSize();
+	}
+
+	void InputTextWidget::CalculateTextSize()
+	{
+		RuntimeUIService::CalculateSingleLineText(m_TextData);
+	}
+
+	void InputTextWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	{
+		KG_PROFILE_FUNCTION();
+
+		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
+
+		// Calculate the widget's rendering data
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
+
+		// Get widget translation
+		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
+
+		// Draw background
+		if (activeUI->m_HoveredWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
+		}
+		else if (activeUI->m_SelectedWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
+		}
+		else
+		{
+			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
+		}
+
+
+		// Create the widget's text rendering data
+		widgetTranslation.z += 0.001f;
+
+		RuntimeUIService::RenderSingleLineText(m_TextData, widgetTranslation, widgetSize, viewportWidth);
 	}
 
 }

@@ -12,15 +12,15 @@ namespace Kargono::Panels
 		m_OpenGameStatePopupSpec.m_Label = "Open Game State";
 		m_OpenGameStatePopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenGameStatePopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenGameStatePopupSpec.m_PopupAction = [&]()
+		m_OpenGameStatePopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_OpenGameStatePopupSpec.GetAllOptions().clear();
-			m_OpenGameStatePopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.GetAllOptions().clear();
+			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
 
-			m_OpenGameStatePopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetGameStateRegistry())
 			{
-				m_OpenGameStatePopupSpec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
+				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -176,11 +176,11 @@ namespace Kargono::Panels
 		m_AddFieldPopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_AddFieldPopup.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_AddFieldPopup.m_LineCount = 2;
-		m_AddFieldPopup.m_PopupAction = [&]()
+		m_AddFieldPopup.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_AddFieldPopup.ClearOptions();
-			m_AddFieldPopup.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			m_AddFieldPopup.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
 		};
 		m_AddFieldPopup.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -208,10 +208,10 @@ namespace Kargono::Panels
 		m_EditFieldType.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_EditFieldType.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_EditFieldType.m_LineCount = 2;
-		m_EditFieldType.m_PopupAction = [&]()
+		m_EditFieldType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_EditFieldType.ClearOptions();
-			m_EditFieldType.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
+			spec.ClearOptions();
+			spec.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
 		};
 		m_EditFieldType.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{

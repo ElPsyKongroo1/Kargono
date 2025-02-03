@@ -39,6 +39,7 @@ namespace Kargono::Panels
 		void InitializeImageWidgetOptions();
 		void InitializeImageButtonWidgetOptions();
 		void InitializeCheckboxWidgetOptions();
+		void InitializeInputTextWidgetOptions();
 		void InitializeWidgetLocationOptions();
 
 	public:
@@ -58,6 +59,7 @@ namespace Kargono::Panels
 		void DrawImageWidgetOptions();
 		void DrawImageButtonWidgetOptions();
 		void DrawCheckboxWidgetOptions();
+		void DrawInputTextWidgetOptions();
 		void DrawSpecificWidgetOptions();
 
 		//=========================
@@ -72,11 +74,11 @@ namespace Kargono::Panels
 		//=========================
 		// Modify font
 		void OnModifyUIFont(const EditorUI::OptionEntry& entry);
-		void OnOpenUIFontPopup();
+		void OnOpenUIFontPopup(EditorUI::SelectOptionSpec& spec);
 		// Modify on move function
 		void OnModifyUIOnMove(const EditorUI::OptionEntry& entry);
-		void OnOpenUIOnMovePopup();
-		void OnOpenTooltipForUIOnMove();
+		void OnOpenUIOnMovePopup(EditorUI::SelectOptionSpec& spec);
+		void OnOpenTooltipForUIOnMove(EditorUI::SelectOptionSpec& spec);
 		// Modify selection color
 		void OnModifyUISelectionColor(EditorUI::EditVec4Spec& spec);
 		void OnModifyUIHoveredColor(EditorUI::EditVec4Spec& spec);
@@ -94,7 +96,7 @@ namespace Kargono::Panels
 		void OnModifyWindowTag(EditorUI::EditTextSpec& spec);
 		// Modify default widget
 		void OnModifyWindowDefaultWidget(const EditorUI::OptionEntry& entry);
-		void OnOpenWindowDefaultWidgetPopup();
+		void OnOpenWindowDefaultWidgetPopup(EditorUI::SelectOptionSpec& spec);
 		// Modify if window is displayed
 		void OnModifyWindowDisplay(EditorUI::CheckboxSpec& spec);
 		// Modify window location
@@ -120,74 +122,24 @@ namespace Kargono::Panels
 		void OnModifyWidgetYLocationPixelOrPercent();
 		void OnModifyWidgetXConstraint(const EditorUI::OptionEntry& entry);
 		void OnModifyWidgetYConstraint(const EditorUI::OptionEntry& entry);
-		void OnOpenWidgetXConstraint();
-		void OnOpenWidgetYConstraint();
+		void OnOpenWidgetXConstraint(EditorUI::SelectOptionSpec& spec);
+		void OnOpenWidgetYConstraint(EditorUI::SelectOptionSpec& spec);
 		void OnModifyWidgetXPixelLocation(EditorUI::EditIntegerSpec& spec);
 		void OnModifyWidgetYPixelLocation(EditorUI::EditIntegerSpec& spec);
 		void OnModifyWidgetXPercentLocation(EditorUI::EditFloatSpec& spec);
 		void OnModifyWidgetYPercentLocation(EditorUI::EditFloatSpec& spec);
-		
-		//=========================
-		// Change Text Widget Data
-		//=========================
-		// Modify text widget's text
-		void OnModifyTextWidgetText(EditorUI::EditMultiLineTextSpec& spec);
-		// Modify text widget's text size
-		void OnModifyTextWidgetTextSize(EditorUI::EditFloatSpec& spec);
-		// Modify text widget's text color
-		void OnModifyTextWidgetTextColor(EditorUI::EditVec4Spec& spec);
-		// Modify if text widget's text is aligned
-		void OnModifyTextWidgetAlignment(const EditorUI::OptionEntry& entry);
-		void OnOpenTextWidgetAlignmentPopup();
-		// Modify if text widget's text is wrapped
-		void OnModifyTextWidgetWrapped(EditorUI::CheckboxSpec& spec);
 
 		//=========================
 		// Change Button Widget Data
 		//=========================
-		// Modify the button widget's text
-		void OnModifyButtonWidgetText(EditorUI::EditTextSpec& spec);
-		// Modify button widget's text size
-		void OnModifyButtonWidgetButtonTextSize(EditorUI::EditFloatSpec& spec);
-		// Modify button widget's text color
-		void OnModifyButtonWidgetButtonTextColor(EditorUI::EditVec4Spec& spec);
-		// Modify if button widget's text is aligned
-		void OnModifyButtonWidgetTextAlignment(const EditorUI::OptionEntry& entry);
-		void OnOpenButtonWidgetTextAlignmentPopup();
-		// Modify if button widget is selectable
-		void OnModifyButtonWidgetSelectable(EditorUI::CheckboxSpec& spec);
 		// Modify widget on press
-		void OnModifyButtonWidgetOnPress(const EditorUI::OptionEntry& entry);
-		void OnOpenButtonWidgetOnPressPopup();
-		void OnOpenTooltipForButtonWidgetOnPress();
-		// Modify widget background color
-		void OnModifyButtonWidgetBackgroundColor(EditorUI::EditVec4Spec& spec);
+		void OnOpenTooltipForButtonWidgetOnPress(EditorUI::SelectOptionSpec& spec);
 
 		//=========================
-		// Change Image Widget Data
+		// Change Image Button Widget Data
 		//=========================
-		// Modify image widget's image
-		void OnModifyImageWidgetImage(const EditorUI::OptionEntry& entry);
-		void OnOpenImageWidgetImagePopup();
-		// Modify image widget's fixed aspect ratio option
-		void OnModifyImageWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec);
-
-		//=========================
-		// Change Image Widget Data
-		//=========================
-		// Modify image button widget's image
-		void OnModifyImageButtonWidgetImage(const EditorUI::OptionEntry& entry);
-		void OnOpenImageButtonWidgetImagePopup();
-		// Modify image button widget's fixed aspect ratio option
-		void OnModifyImageButtonWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec);
-		// Modify if button widget is selectable
-		void OnModifyImageButtonWidgetSelectable(EditorUI::CheckboxSpec& spec);
 		// Modify widget on press
-		void OnModifyImageButtonWidgetOnPress(const EditorUI::OptionEntry& entry);
-		void OnOpenImageButtonWidgetOnPressPopup();
-		void OnOpenTooltipForImageButtonWidgetOnPress();
-		// Modify widget background color
-		void OnModifyImageButtonWidgetBackgroundColor(EditorUI::EditVec4Spec& spec);
+		void OnOpenTooltipForImageButtonWidgetOnPress(EditorUI::SelectOptionSpec& spec);
 
 		//=========================
 		// Change Checkbox Data
@@ -196,20 +148,43 @@ namespace Kargono::Panels
 		void OnModifyCheckboxWidgetChecked(EditorUI::CheckboxSpec& spec);
 		// Modify checkbox widget's checked image
 		void OnModifyCheckboxWidgetCheckedImage(const EditorUI::OptionEntry& entry);
-		void OnOpenCheckboxWidgetCheckedImagePopup();
+		void OnOpenCheckboxWidgetCheckedImagePopup(EditorUI::SelectOptionSpec& spec);
 		// Modify checkbox widget's unchecked image
 		void OnModifyCheckboxWidgetUnCheckedImage(const EditorUI::OptionEntry& entry);
-		void OnOpenCheckboxWidgetUnCheckedImagePopup();
+		void OnOpenCheckboxWidgetUnCheckedImagePopup(EditorUI::SelectOptionSpec& spec);
 		// Modify checkbox widget's fixed aspect ratio option
 		void OnModifyCheckboxWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec);
-		// Modify if button widget is selectable
-		void OnModifyCheckboxWidgetSelectable(EditorUI::CheckboxSpec& spec);
 		// Modify widget on press
-		void OnModifyCheckboxWidgetOnPress(const EditorUI::OptionEntry& entry);
-		void OnOpenCheckboxWidgetOnPressPopup();
-		void OnOpenTooltipForCheckboxWidgetOnPress();
-		// Modify widget background color
-		void OnModifyCheckboxWidgetBackgroundColor(EditorUI::EditVec4Spec& spec);
+		void OnOpenTooltipForCheckboxWidgetOnPress(EditorUI::SelectOptionSpec& spec);
+
+		//=========================
+		// Change Input Text Widget Data
+		//=========================
+		// Modify widget on press
+		void OnOpenTooltipForInputTextWidgetOnPress(EditorUI::SelectOptionSpec& spec);
+
+		//=========================
+		// Modify UI Component Structs (Common data between widgets)
+		//=========================
+		// Generic text data
+		void OnModifyTextDataTextSize(EditorUI::EditFloatSpec& spec);
+		void OnModifyTextDataTextColor(EditorUI::EditVec4Spec& spec);
+		void OnModifyTextDataAlignment(const EditorUI::OptionEntry& entry);
+		void OnOpenTextDataAlignmentPopup(EditorUI::SelectOptionSpec& spec);
+		// Single line text data
+		void OnModifySingleLineDataText(EditorUI::EditTextSpec& spec);
+		// Multi line text data
+		void OnModifyMultiLineDataText(EditorUI::EditMultiLineTextSpec& spec);
+		void OnModifyTextDataWrapped(EditorUI::CheckboxSpec& spec);
+		// Selection data
+		void OnModifySelectionDataSelectable(EditorUI::CheckboxSpec& spec);
+		void OnModifySelectionDataOnPress(const EditorUI::OptionEntry& entry);
+		void OnOpenSelectionDataOnPressPopup(EditorUI::SelectOptionSpec& spec);
+		void OnModifySelectionDataBackgroundColor(EditorUI::EditVec4Spec& spec);
+		// Image data
+		void OnModifyImageDataImage(const EditorUI::OptionEntry& entry);
+		void OnOpenImageDataImagePopup(EditorUI::SelectOptionSpec& spec);
+		void OnModifyImageDataFixedAspectRatio(EditorUI::CheckboxSpec& spec);
 
 	public:
 		//=========================
@@ -224,7 +199,6 @@ namespace Kargono::Panels
 		//=========================
 		// Widgets
 		//=========================
-		
 		// Edit UI Options
 		EditorUI::CollapsingHeaderSpec m_UIHeader{};
 		EditorUI::SelectOptionSpec m_UISelectFont{};
@@ -301,5 +275,15 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec m_CheckboxWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_CheckboxWidgetOnPress{};
 		EditorUI::CheckboxSpec m_CheckboxWidgetSelectable{};
+
+		// Edit InputText Widget Options
+		EditorUI::CollapsingHeaderSpec m_InputTextWidgetHeader{};
+		EditorUI::EditTextSpec m_InputTextWidgetText{};
+		EditorUI::EditFloatSpec m_InputTextWidgetTextSize{};
+		EditorUI::EditVec4Spec m_InputTextWidgetTextColor{};
+		EditorUI::SelectOptionSpec m_InputTextWidgetTextAlignment{};
+		EditorUI::EditVec4Spec m_InputTextWidgetBackgroundColor{};
+		EditorUI::SelectOptionSpec m_InputTextWidgetOnPress{};
+		EditorUI::CheckboxSpec m_InputTextWidgetSelectable{};
 	};
 }

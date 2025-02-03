@@ -67,6 +67,7 @@ namespace Kargono::Panels
 		void AddImageWidget(EditorUI::TreeEntry& entry);
 		void AddImageButtonWidget(EditorUI::TreeEntry& entry);
 		void AddCheckboxWidget(EditorUI::TreeEntry& entry);
+		void AddInputTextWidget(EditorUI::TreeEntry& entry);
 		void SelectWidget(EditorUI::TreeEntry& entry);
 		void DeleteWidget(EditorUI::TreeEntry& entry);
 	public:

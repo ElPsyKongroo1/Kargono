@@ -52,7 +52,9 @@ namespace Kargono::RuntimeUI
 	//============================
 	enum class WidgetTypes
 	{
-		None = 0, TextWidget, ButtonWidget, CheckboxWidget, ComboWidget, PopupWidget, ImageWidget, ImageButtonWidget
+		None = 0, TextWidget, ButtonWidget, CheckboxWidget, 
+		ComboWidget, PopupWidget, ImageWidget, ImageButtonWidget,
+		InputTextWidget
 	};
 
 	constexpr std::size_t k_InvalidWidgetIndex{ std::numeric_limits<std::size_t>().max() };
@@ -95,7 +97,9 @@ namespace Kargono::RuntimeUI
 		Math::vec4 m_DefaultBackgroundColor{ 0.5f };
 		WidgetCallbacks m_FunctionPointers{};
 		bool m_Selectable{ true };
-		NavigationLinks m_NavigationLinks{};
+
+		// Runtime calculated data
+		NavigationLinks m_NavigationLinks;
 	};
 
 	struct ImageData
@@ -103,6 +107,29 @@ namespace Kargono::RuntimeUI
 		Ref<Rendering::Texture2D> m_ImageRef{ nullptr };
 		Assets::AssetHandle m_ImageHandle{ Assets::EmptyHandle };
 		bool m_FixedAspectRatio{ false };
+	};
+
+	struct SingleLineTextData
+	{
+		std::string m_Text{ "New Widget" };
+		float m_TextSize{ 0.3f };
+		Math::vec4 m_TextColor{ 1.0f };
+		Constraint m_TextAlignment{ Constraint::Center };
+
+		// Runtime calculated data
+		Math::vec2 m_CachedTextDimensions{};
+	};
+
+	struct MultiLineTextData
+	{
+		std::string m_Text{ "New Text Widget" };
+		float m_TextSize{ 0.3f };
+		Math::vec4 m_TextColor{ 1.0f };
+		Constraint m_TextAlignment{ Constraint::Center };
+		bool m_TextWrapped{ false };
+
+		// Runtime calculated data
+		MultiLineTextDimensions m_CachedTextDimensions{};
 	};
 
 	//============================
@@ -185,19 +212,12 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Re-validation Methods
 		//============================
-		void CalculateTextMetadata(Window* parentWindow);
+		void CalculateTextSize(Window* parentWindow);
 	public:
 		//============================
 		// Public Fields
 		//============================
-		std::string m_Text{ "New Text Widget" };
-		float m_TextSize{ 0.3f };
-		Math::vec4 m_TextColor{1.0f};
-		Constraint m_TextAlignment{ Constraint::Center };
-		bool m_TextWrapped{ false };
-	private:
-		TextMetadata m_TextMetadata{};
-		Math::vec2 m_TextAbsoluteDimensions{};
+		MultiLineTextData m_TextData;
 	private:
 		friend class RuntimeUIService;
 		friend class Assets::UserInterfaceManager;
@@ -247,13 +267,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Public Fields
 		//============================
-		std::string m_Text{ "New Button Widget" };
-		float m_TextSize{ 0.3f };
-		Math::vec4 m_TextColor{ 1.0f };
-		Constraint m_TextAlignment{ Constraint::Center };
+		SingleLineTextData m_TextData;
 		SelectionData m_SelectionData;
-	private:
-		Math::vec2 m_TextDimensions{};
 	private:
 		friend class RuntimeUIService;
 		friend class Assets::UserInterfaceManager;
@@ -295,8 +310,6 @@ namespace Kargono::RuntimeUI
 		//============================
 		ImageData m_ImageData;
 		SelectionData m_SelectionData;
-	private:
-		Math::vec2 m_TextDimensions{};
 	private:
 		friend class RuntimeUIService;
 		friend class Assets::UserInterfaceManager;
@@ -415,6 +428,54 @@ namespace Kargono::RuntimeUI
 		// Public Fields
 		//============================
 		ImageData m_ImageData;
+	};
+
+	//============================
+	// InputText Widget Class (Derived)
+	//============================
+	class InputTextWidget : public Widget
+	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		InputTextWidget()
+			: Widget()
+		{
+			m_WidgetType = WidgetTypes::InputTextWidget;
+		}
+		virtual ~InputTextWidget() override = default;
+
+	public:
+		//============================
+		// Query State
+		//============================
+		virtual bool Selectable() override
+		{
+			return m_SelectionData.m_Selectable;
+		}
+		//============================
+		// Modify State
+		//============================
+		void SetText(const std::string& newText);
+
+	public:
+		//============================
+		// Re-validation Methods
+		//============================
+		void CalculateTextSize();
+	public:
+		//============================
+		// Rendering Methods
+		//============================
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+
+	public:
+		//============================
+		// Public Fields
+		//============================
+		SingleLineTextData m_TextData;
+		SelectionData m_SelectionData;
 	};
 
 	//============================
@@ -564,6 +625,8 @@ namespace Kargono::RuntimeUI
 			bool useXValueAsBase);
 		static SelectionData* GetSelectionDataFromWidget(Widget* currentWidget);
 		static ImageData* GetImageDataFromWidget(Widget* currentWidget);
+		static SingleLineTextData* GetSingleLineTextDataFromWidget(Widget* currentWidget);
+		static MultiLineTextData* GetMultiLineTextDataFromWidget(Widget* currentWidget);
 
 	public:
 		//==============================
@@ -595,6 +658,8 @@ namespace Kargono::RuntimeUI
 		//==============================
 		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
 		static void RevalidateDisplayedWindows();
+		static void CalculateSingleLineText(SingleLineTextData& textData);
+		static void CalculateMultiLineText(MultiLineTextData& textData, const Math::vec3& widgetSize, float textSize);
 
 		//==============================
 		// Manage Active UI (Internal)
@@ -617,6 +682,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		static void RenderBackground(const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size);
 		static void RenderImage(const ImageData& imageData, const Math::vec3& translation, const Math::vec3 size);
+		static void RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float viewportWidth);
 
 
 	private:
@@ -630,6 +696,7 @@ namespace Kargono::RuntimeUI
 		friend class ImageWidget;
 		friend class ImageButtonWidget;
 		friend class CheckboxWidget;
+		friend class InputTextWidget;
 		friend class Window;
 	};
 }
@@ -647,6 +714,7 @@ namespace Kargono::Utility
 			case RuntimeUI::WidgetTypes::PopupWidget: return "PopupWidget";
 			case RuntimeUI::WidgetTypes::ImageWidget: return "ImageWidget";
 			case RuntimeUI::WidgetTypes::ImageButtonWidget: return "ImageButtonWidget";
+			case RuntimeUI::WidgetTypes::InputTextWidget: return "InputTextWidget";
 			case RuntimeUI::WidgetTypes::None: return "None";
 			default:
 			{
@@ -665,6 +733,7 @@ namespace Kargono::Utility
 		if (widgetName == "PopupWidget") { return RuntimeUI::WidgetTypes::PopupWidget; }
 		if (widgetName == "ImageWidget") { return RuntimeUI::WidgetTypes::ImageWidget; }
 		if (widgetName == "ImageButtonWidget") { return RuntimeUI::WidgetTypes::ImageButtonWidget; }
+		if (widgetName == "InputTextWidget") { return RuntimeUI::WidgetTypes::InputTextWidget; }
 		if (widgetName == "None") { return RuntimeUI::WidgetTypes::None; }
 
 		KG_ERROR("Invalid Widget Type at StringToWidgetType");
@@ -748,5 +817,3 @@ namespace Kargono::Utility
 		return RuntimeUI::Constraint::None;
 	}
 }
-
-

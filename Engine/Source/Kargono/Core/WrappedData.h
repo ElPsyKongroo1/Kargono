@@ -361,143 +361,143 @@ namespace Kargono
 	{
 	public:
 		WrappedVoidNone() = default;
-		WrappedVoidNone(std::function<void()> value) : m_Value {value} {}
+		WrappedVoidNone(void_none value) : m_Value {value} {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_None; }
 	public:
-		std::function<void()> m_Value{};
+		void_none m_Value{};
 	};
 
 	class WrappedVoidString : public WrappedFunction
 	{
 	public:
 		WrappedVoidString() = default;
-		WrappedVoidString(std::function<void(const std::string&)> value) : m_Value{ value } {}
+		WrappedVoidString(void_string value) : m_Value{ value } {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_String; }
 	public:
-		std::function<void(const std::string&)> m_Value{};
+		void_string m_Value{};
 	};
 
 	class WrappedVoidFloat : public WrappedFunction
 	{
 	public:
 		WrappedVoidFloat() = default;
-		WrappedVoidFloat(std::function<void(float)> value) : m_Value(value) {}
+		WrappedVoidFloat(void_float value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_Float; }
 	public:
-		std::function<void(float)> m_Value{};
+		void_float m_Value{};
 	};
 
 	class WrappedVoidUInt16 : public WrappedFunction
 	{
 	public:
 		WrappedVoidUInt16() = default;
-		WrappedVoidUInt16(std::function<void(uint16_t)> value) : m_Value(value) {}
+		WrappedVoidUInt16(void_uint16 value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_UInt16; }
 	public:
-		std::function<void(uint16_t)> m_Value{};
+		void_uint16 m_Value{};
 	};
 
 	class WrappedVoidUInt32 : public WrappedFunction
 	{
 	public:
 		WrappedVoidUInt32() = default;
-		WrappedVoidUInt32(std::function<void(uint32_t)> value) : m_Value(value) {}
+		WrappedVoidUInt32(void_uint32 value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_UInt32; }
 	public:
-		std::function<void(uint32_t)> m_Value{};
+		void_uint32 m_Value{};
 	};
 
 	class WrappedVoidUInt32UInt32 : public WrappedFunction
 	{
 	public:
 		WrappedVoidUInt32UInt32() = default;
-		WrappedVoidUInt32UInt32(std::function<void(uint32_t, uint32_t)> value) : m_Value(value) {}
+		WrappedVoidUInt32UInt32(void_uint32uint32 value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_UInt32UInt32; }
 	public:
-		std::function<void(uint32_t, uint32_t)> m_Value{};
+		void_uint32uint32 m_Value{};
 	};
 
 	class WrappedVoidEntity : public WrappedFunction
 	{
 	public:
 		WrappedVoidEntity() = default;
-		WrappedVoidEntity(std::function<void(uint64_t)> value) : m_Value(value) {}
+		WrappedVoidEntity(void_uint64 value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_Entity; }
 	public:
-		std::function<void(uint64_t)> m_Value{};
+		void_uint64 m_Value{};
 	};
 
 	class WrappedVoidEntityFloat : public WrappedFunction
 	{
 	public:
 		WrappedVoidEntityFloat() = default;
-		WrappedVoidEntityFloat(std::function<void(uint64_t, float)> value) : m_Value(value) {}
+		WrappedVoidEntityFloat(void_uint64float value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_EntityFloat; }
 	public:
-		std::function<void(uint64_t, float)> m_Value{};
+		void_uint64float m_Value{};
 	};
 
 	class WrappedVoidUInt32EntityEntityFloat : public WrappedFunction
 	{
 	public:
 		WrappedVoidUInt32EntityEntityFloat() = default;
-		WrappedVoidUInt32EntityEntityFloat(std::function<void(uint32_t, uint64_t, uint64_t, float)> value) : m_Value(value) {}
+		WrappedVoidUInt32EntityEntityFloat(void_uint32uint64uint64float value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_UInt32EntityEntityFloat; }
 	public:
-		std::function<void(uint32_t, uint64_t, uint64_t, float)> m_Value{};
+		void_uint32uint64uint64float m_Value{};
 	};
 
 	class WrappedVoidBool : public WrappedFunction
 	{
 	public:
 		WrappedVoidBool() = default;
-		WrappedVoidBool(std::function<void(bool)> value) : m_Value(value) {}
+		WrappedVoidBool(void_bool value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Void_Bool; }
 	public:
-		std::function<void(bool)> m_Value{};
+		void_bool m_Value{};
 	};
 
 	class WrappedBoolNone : public WrappedFunction
 	{
 	public:
 		WrappedBoolNone() = default;
-		WrappedBoolNone(std::function<bool()> value) : m_Value(value) {}
+		WrappedBoolNone(bool_none value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Bool_None; }
 	public:
-		std::function<bool()> m_Value{};
+		bool_none m_Value{};
 	};
 
 	class WrappedBoolEntity : public WrappedFunction
 	{
 	public:
 		WrappedBoolEntity() = default;
-		WrappedBoolEntity(std::function<bool(uint64_t)> value) : m_Value(value) {}
+		WrappedBoolEntity(bool_uint64 value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Bool_Entity; }
 	public:
-		std::function<bool(uint64_t)> m_Value{};
+		bool_uint64 m_Value{};
 	};
 
 	class WrappedBoolEntityEntity : public WrappedFunction
 	{
 	public:
 		WrappedBoolEntityEntity() = default;
-		WrappedBoolEntityEntity(std::function<bool(uint64_t, uint64_t)> value) : m_Value(value) {}
+		WrappedBoolEntityEntity(bool_uint64uint64 value) : m_Value(value) {}
 	public:
 		virtual WrappedFuncType Type() override { return WrappedFuncType::Bool_EntityEntity; }
 	public:
-		std::function<bool(uint64_t, uint64_t)> m_Value{};
+		bool_uint64uint64 m_Value{};
 	};
 
 	namespace Utility
