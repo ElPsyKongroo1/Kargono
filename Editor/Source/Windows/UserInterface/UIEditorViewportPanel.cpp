@@ -76,13 +76,13 @@ namespace Kargono::Panels
 		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Rendering::RendererAPI::Clear();
 
-		// Clear mouse picking attachment value
-		m_ViewportFramebuffer->SetAttachment(1, -1);
+		
 
 		// TODO: Add background image to viewport
-
-
 		DrawUnderlay();
+
+		// Clear mouse picking attachment value
+		m_ViewportFramebuffer->SetAttachment(1, -1);
 
 		// Handle drawing user interface
 		Window& currentApplication = EngineService::GetActiveWindow();
@@ -122,8 +122,20 @@ namespace Kargono::Panels
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 			{
 				s_UIWindow->m_TreePanel->SelectTreeNode(m_HoveredWindowID, m_HoveredWidgetID);
+
+				if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowID && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetID)
+				{
+					// Set widget as selected manually
+					Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidget(m_HoveredWindowID, m_HoveredWidgetID);
+					if (hoveredWidget && hoveredWidget->Selectable())
+					{
+						Ref<RuntimeUI::UserInterface> userInterface = RuntimeUI::RuntimeUIService::GetActiveUI();
+						KG_ASSERT(userInterface);
+						userInterface->m_SelectedWidget = hoveredWidget.get();
+					}
+					
+				}
 			}
-			
 		}
 
 		DrawGizmo();
@@ -310,6 +322,25 @@ namespace Kargono::Panels
 			// Extract upper 16 bits
 			m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
 		}
+
+		// Exit early if no valid widget/window is available
+		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetID || m_HoveredWindowID == RuntimeUI::k_InvalidWindowID)
+		{
+			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
+			return;
+		}
+		
+		// Set widget as hovered manually
+		Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidget(m_HoveredWindowID, m_HoveredWidgetID);
+		
+		if (!hoveredWidget || !hoveredWidget->Selectable())
+		{
+			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
+			return;
+		}
+		Ref<RuntimeUI::UserInterface> userInterface = RuntimeUI::RuntimeUIService::GetActiveUI();
+		KG_ASSERT(userInterface);
+		userInterface->m_HoveredWidget = hoveredWidget.get();
 	}
 	void UIEditorViewportPanel::DrawToolbarOverlay()
 	{

@@ -77,7 +77,7 @@ namespace Kargono::Panels
 		EditorUI::TreeEntry uiEntry{};
 		uiEntry.m_Label = Assets::AssetService::GetUserInterfaceRegistry().at(
 			s_UIWindow->m_EditorUIHandle).Data.FileLocation.stem().string();
-		uiEntry.m_IconHandle = EditorUI::EditorUIService::s_IconUserInterface;
+		uiEntry.m_IconHandle = EditorUI::EditorUIService::s_IconUserInterface2;
 		uiEntry.m_Handle = s_UIWindow->m_EditorUIHandle;
 
 		// Add functions to call when interacting with window entry
@@ -126,13 +126,13 @@ namespace Kargono::Panels
 					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTexture;
 					break;
 				case RuntimeUI::WidgetTypes::ImageButtonWidget:
-					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTexture;
+					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconImageButtonWidget;
 					break;
 				case RuntimeUI::WidgetTypes::CheckboxWidget:
 					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconCheckbox_Enabled;
 					break;
 				case RuntimeUI::WidgetTypes::InputTextWidget:
-					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconInput;
+					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconInputTextWidget;
 					break;
 				default:
 					KG_ERROR("Invalid widget type provided");
@@ -457,7 +457,7 @@ namespace Kargono::Panels
 		// Create new widget entry for m_UITree
 		EditorUI::TreeEntry newWidgetEntry{};
 		newWidgetEntry.m_Label = newImageButtonWidget->m_Tag;
-		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTexture;
+		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconImageButtonWidget;
 		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)entry.m_Handle);
 		newWidgetEntry.m_Handle = window.m_Widgets.size();
 
@@ -523,7 +523,7 @@ namespace Kargono::Panels
 		// Create new widget entry for m_UITree
 		EditorUI::TreeEntry newWidgetEntry{};
 		newWidgetEntry.m_Label = newInputTextWidget->m_Tag;
-		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconInput;
+		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconInputTextWidget;
 		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)entry.m_Handle);
 		newWidgetEntry.m_Handle = window.m_Widgets.size();
 

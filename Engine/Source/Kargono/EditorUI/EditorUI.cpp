@@ -395,6 +395,9 @@ namespace Kargono::EditorUI
 		s_IconWindow = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/Window.png").string());
 		s_IconTextWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/TextWidget.png").string());
 		s_IconButtonWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/ButtonWidget.png").string());
+		s_IconInputTextWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/InputText.png").string());
+		s_IconUserInterface2 = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/UserInterface2.png").string());
+		s_IconImageButtonWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/ImageButtonWidget.png").string());
 
 		// Scripting UI icons
 		s_IconNumber = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Number.png").string());
@@ -471,6 +474,9 @@ namespace Kargono::EditorUI
 		s_IconWindow.reset();
 		s_IconTextWidget.reset();
 		s_IconButtonWidget.reset();
+		s_IconImageButtonWidget.reset();
+		s_IconInputTextWidget.reset();
+		s_IconUserInterface2.reset();
 
 		s_IconNumber.reset();
 		s_IconVariable.reset();

@@ -336,42 +336,13 @@ namespace Kargono::Scripting
 			returnTypes.insert(type.Value);
 		}
 
-		// Generate suggestions for all namespaces
-		for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions)
-		{
-			if (Utility::Regex::GetMatchSuccess(name, queryText, false))
-			{
-				SuggestionSpec newSuggestion;
-				newSuggestion.m_Label = name;
-				newSuggestion.m_ReplacementText = name + "::";
-				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconDirectory;
-				allSuggestions.push_back(newSuggestion);
-			}
-		}
-
-		// Generate suggestions for primitive types
-		if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes))
-		{
-			for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
-			{
-				if (Utility::Regex::GetMatchSuccess(primitiveType.Name, queryText, false))
-				{
-					SuggestionSpec newSuggestion;
-					newSuggestion.m_Label = primitiveType.Name;
-					newSuggestion.m_ReplacementText = primitiveType.Name;
-					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
-					allSuggestions.push_back(newSuggestion);
-				}
-			}
-		}
-
 		// Generate suggestions for stack variables
 		for (auto& stackFrame : context.StackVariables)
 		{
 			for (auto& variable : stackFrame)
 			{
 				bool returnTypesMatch = returnTypes.contains(variable.Type.Value);
-				
+
 				if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
 				{
 					if (Utility::Regex::GetMatchSuccess(variable.Identifier.Value, queryText, false))
@@ -385,7 +356,20 @@ namespace Kargono::Scripting
 				}
 			}
 		}
-		
+
+		// Generate suggestions for all namespaces
+		for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions)
+		{
+			if (Utility::Regex::GetMatchSuccess(name, queryText, false))
+			{
+				SuggestionSpec newSuggestion;
+				newSuggestion.m_Label = name;
+				newSuggestion.m_ReplacementText = name + "::";
+				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconDirectory;
+				allSuggestions.push_back(newSuggestion);
+			}
+		}
+
 		// Handle Functions Identifiers
 		for (auto& [funcName, funcNode] : ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
 		{
@@ -408,6 +392,22 @@ namespace Kargono::Scripting
 					newSuggestion.m_ReplacementText = funcNode.Name.Value + "()";
 					newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
 					newSuggestion.m_ShiftValue = -1;
+					allSuggestions.push_back(newSuggestion);
+				}
+			}
+		}
+
+		// Generate suggestions for primitive types
+		if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes))
+		{
+			for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+			{
+				if (Utility::Regex::GetMatchSuccess(primitiveType.Name, queryText, false))
+				{
+					SuggestionSpec newSuggestion;
+					newSuggestion.m_Label = primitiveType.Name;
+					newSuggestion.m_ReplacementText = primitiveType.Name;
+					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
 					allSuggestions.push_back(newSuggestion);
 				}
 			}
@@ -692,7 +692,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconUserInterface;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconUserInterface2;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -732,7 +732,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.Description = "Reference to a user interface image button widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
 		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
 		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTexture;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconImageButtonWidget;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -748,7 +748,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.Description = "Reference to a user interface input text widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
 		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
 		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInputTextWidget;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};

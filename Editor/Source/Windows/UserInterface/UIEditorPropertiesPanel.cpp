@@ -48,6 +48,7 @@ namespace Kargono::Panels
 			DrawWindowOptions();
 			break;
 		case UIPropertiesDisplay::Widget:
+			DrawGeneralWidgetOptions();
 			DrawSpecificWidgetOptions();
 			DrawWidgetOptions();
 			break;
@@ -139,31 +140,6 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::DrawWidgetOptions()
 	{
-		// Draw main header for widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_WidgetGeneralHeader);
-		// Draw options to edit selected widget
-		if (m_WidgetGeneralHeader.m_Expanded)
-		{
-			// Edit selected widget's tag
-			m_WidgetTag.m_CurrentOption = m_ActiveWidget->m_Tag;
-			EditorUI::EditorUIService::EditText(m_WidgetTag);
-
-			m_WidgetPixelOrPercentSize.m_SelectedOption = (uint16_t)m_ActiveWidget->m_SizeType;
-			EditorUI::EditorUIService::RadioSelector(m_WidgetPixelOrPercentSize);
-			if (m_WidgetPixelOrPercentSize.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
-			{
-				// Edit selected widget's size in pixels
-				m_WidgetPixelSize.m_CurrentIVec2 = m_ActiveWidget->m_PixelSize;
-				EditorUI::EditorUIService::EditIVec2(m_WidgetPixelSize);
-			}
-			else
-			{
-				// Edit selected widget's size relative to its window
-				m_WidgetPercentSize.m_CurrentVec2 = m_ActiveWidget->m_PercentSize;
-				EditorUI::EditorUIService::EditVec2(m_WidgetPercentSize);
-			}
-		}
-
 		// Draw location header for widget options and display options to edit selected widget's location
 		EditorUI::EditorUIService::CollapsingHeader(m_WidgetLocationHeader);
 		if (m_WidgetLocationHeader.m_Expanded)
@@ -210,6 +186,34 @@ namespace Kargono::Panels
 			{
 				m_WidgetYPercentLocation.m_CurrentFloat = m_ActiveWidget->m_PercentPosition.y;
 				EditorUI::EditorUIService::EditFloat(m_WidgetYPercentLocation);
+			}
+		}
+	}
+
+	void UIEditorPropertiesPanel::DrawGeneralWidgetOptions()
+	{
+		// Draw main header for widget options
+		EditorUI::EditorUIService::CollapsingHeader(m_WidgetGeneralHeader);
+		// Draw options to edit selected widget
+		if (m_WidgetGeneralHeader.m_Expanded)
+		{
+			// Edit selected widget's tag
+			m_WidgetTag.m_CurrentOption = m_ActiveWidget->m_Tag;
+			EditorUI::EditorUIService::EditText(m_WidgetTag);
+
+			m_WidgetPixelOrPercentSize.m_SelectedOption = (uint16_t)m_ActiveWidget->m_SizeType;
+			EditorUI::EditorUIService::RadioSelector(m_WidgetPixelOrPercentSize);
+			if (m_WidgetPixelOrPercentSize.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
+			{
+				// Edit selected widget's size in pixels
+				m_WidgetPixelSize.m_CurrentIVec2 = m_ActiveWidget->m_PixelSize;
+				EditorUI::EditorUIService::EditIVec2(m_WidgetPixelSize);
+			}
+			else
+			{
+				// Edit selected widget's size relative to its window
+				m_WidgetPercentSize.m_CurrentVec2 = m_ActiveWidget->m_PercentSize;
+				EditorUI::EditorUIService::EditVec2(m_WidgetPercentSize);
 			}
 		}
 	}

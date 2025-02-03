@@ -215,7 +215,6 @@ namespace Kargono::Panels
 				// Handle selecting entities inside of the viewport panel
 				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 				{
-					
 					if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
 					{
 						s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
@@ -246,7 +245,6 @@ namespace Kargono::Panels
 				// Handle selecting entities inside of the viewport panel
 				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 				{
-
 					if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowID && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetID)
 					{
 						RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
@@ -454,7 +452,7 @@ namespace Kargono::Panels
 			return;
 		}
 
-		// Select the widget if applicable
+		// Set the widget as hovered
 		RuntimeUI::RuntimeUIService::SetHoveredWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 			m_HoveredWindowID, m_HoveredWidgetID });
 

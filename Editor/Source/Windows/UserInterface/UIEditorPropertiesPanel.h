@@ -54,6 +54,7 @@ namespace Kargono::Panels
 		void DrawUIOptions();
 		void DrawWindowOptions();
 		void DrawWidgetOptions();
+		void DrawGeneralWidgetOptions();
 		void DrawTextWidgetOptions();
 		void DrawButtonWidgetOptions();
 		void DrawImageWidgetOptions();

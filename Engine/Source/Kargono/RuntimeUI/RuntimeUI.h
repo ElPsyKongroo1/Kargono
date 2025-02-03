@@ -41,7 +41,7 @@ namespace Kargono::RuntimeUI
 		Ref<Scripting::Script> m_OnPress { nullptr };
 	};
 
-	struct UICallbacks
+	struct UserInterfaceCallbacks
 	{
 		Assets::AssetHandle m_OnMoveHandle { Assets::EmptyHandle };
 		Ref<Scripting::Script> m_OnMove { nullptr };
@@ -544,7 +544,7 @@ namespace Kargono::RuntimeUI
 		Math::vec4 m_SelectColor {1.0f};
 		Math::vec4 m_HoveredColor{ 0.5f };
 		Assets::AssetHandle m_FontHandle {0};
-		UICallbacks m_FunctionPointers{};
+		UserInterfaceCallbacks m_FunctionPointers{};
 
 		// Runtime Data
 		std::vector<Window*> m_DisplayedWindows{};
@@ -637,6 +637,10 @@ namespace Kargono::RuntimeUI
 		static Ref<UserInterface> GetActiveUI();
 		static Assets::AssetHandle GetActiveUIHandle();
 		static void ClearActiveUI();
+		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
+		static Ref<Widget> GetWidget(uint16_t windowIndex, uint16_t widgetIndex);
+		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag);
+		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(uint16_t windowIndex, uint16_t widgetIndex);
 
 	public:
 		//==============================
@@ -645,14 +649,6 @@ namespace Kargono::RuntimeUI
 		static void OnRender(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight);
 		static void OnRender(uint32_t viewportWidth, uint32_t viewportHeight);
 	private:
-		//==============================
-		// Getters (Internal)
-		//==============================
-		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
-		static Ref<Widget> GetWidget(uint16_t windowIndex, uint16_t widgetIndex);
-		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag);
-		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(uint16_t windowIndex, uint16_t widgetIndex);
-
 		//==============================
 		// Revalidate UI Context (Internal)
 		//==============================
