@@ -63,15 +63,15 @@ namespace Kargono::Panels
 		m_OpenComponentPopup.m_Label = "Open Component";
 		m_OpenComponentPopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_OpenComponentPopup.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_OpenComponentPopup.m_PopupAction = [&]()
+		m_OpenComponentPopup.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_OpenComponentPopup.GetAllOptions().clear();
-			m_OpenComponentPopup.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.GetAllOptions().clear();
+			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
 
-			m_OpenComponentPopup.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 			{
-				m_OpenComponentPopup.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
+				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
@@ -220,12 +220,12 @@ namespace Kargono::Panels
 		m_AddFieldType.m_Label = "Field Type";
 		m_AddFieldType.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_AddFieldType.m_LineCount = 2;
-		m_AddFieldType.m_PopupAction = [&]()
+		m_AddFieldType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_AddFieldType.ClearOptions();
-			for (auto& type : Kargono::s_AllWrappedVarTypes)
+			spec.ClearOptions();
+			for (WrappedVarType type : Kargono::s_AllWrappedVarTypes)
 			{
-				m_AddFieldType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
 			}
 		};
 		m_AddFieldType.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -266,12 +266,12 @@ namespace Kargono::Panels
 		m_EditFieldType.m_Label = "Field Type";
 		m_EditFieldType.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_EditFieldType.m_LineCount = 2;
-		m_EditFieldType.m_PopupAction = [&]()
+		m_EditFieldType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
-			m_EditFieldType.ClearOptions();
-			for (auto& type : Kargono::s_AllWrappedVarTypes)
+			spec.ClearOptions();
+			for (WrappedVarType type : Kargono::s_AllWrappedVarTypes)
 			{
-				m_EditFieldType.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
 			}
 		};
 		m_EditFieldType.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)

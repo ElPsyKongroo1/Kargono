@@ -227,17 +227,17 @@ namespace Kargono::Panels
 		m_OpenUIPopupSpec.m_LineCount = 2;
 		m_OpenUIPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenUIPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenUIPopupSpec.m_PopupAction = [&]()
-			{
-				m_OpenUIPopupSpec.GetAllOptions().clear();
-				m_OpenUIPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenUIPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		{
+			spec.GetAllOptions().clear();
+			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
 
-				m_OpenUIPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-				for (auto& [handle, asset] : Assets::AssetService::GetUserInterfaceRegistry())
-				{
-					m_OpenUIPopupSpec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
-				}
-			};
+			m_OpenUIPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			for (auto& [handle, asset] : Assets::AssetService::GetUserInterfaceRegistry())
+			{
+				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
+			}
+		};
 		m_OpenUIPopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
 				if (selection.m_Handle == Assets::EmptyHandle)
