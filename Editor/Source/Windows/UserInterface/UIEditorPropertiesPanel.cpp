@@ -89,6 +89,15 @@ namespace Kargono::Panels
 			};
 			EditorUI::EditorUIService::SelectOption(m_UIOnMove);
 
+			// Edit on Hover for current UI
+			Assets::AssetHandle onHoverHandle = s_UIWindow->m_EditorUI->m_FunctionPointers.m_OnHoverHandle;
+			m_UIOnHover.m_CurrentOption =
+			{
+				onHoverHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScriptInfo(onHoverHandle).Data.FileLocation.stem().string(),
+				onHoverHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_UIOnHover);
+
 			// Edit UI's selection color
 			m_UISelectionColor.m_CurrentVec4 = s_UIWindow->m_EditorUI->m_SelectColor;
 			EditorUI::EditorUIService::EditVec4(m_UISelectionColor);
@@ -627,6 +636,100 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
 	}
 
+	void UIEditorPropertiesPanel::OnModifyUIOnHover(const EditorUI::OptionEntry& entry)
+	{
+		// Clear the on Hover script if the provided handle is empty
+		if (entry.m_Handle == Assets::EmptyHandle)
+		{
+			RuntimeUI::RuntimeUIService::SetActiveOnHover(Assets::EmptyHandle, nullptr);
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		// Get script and ensure valid
+		Ref<Scripting::Script> script = Assets::AssetService::GetScript(entry.m_Handle);
+		KG_ASSERT(script);
+
+		// Set the on Hover script for the UI
+		RuntimeUI::RuntimeUIService::SetActiveOnHover(entry.m_Handle, script);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnOpenUIOnHoverPopup(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+
+		// Add all compatible scripts to the select options
+		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
+		{
+			// Get script from handle
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+
+			// Ensure script is compatible with the text widget
+			if (script->m_FuncType != WrappedFuncType::Void_None)
+			{
+				continue;
+			}
+
+			// Add script to the select options
+			spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+		}
+	}
+
+	void UIEditorPropertiesPanel::OnOpenTooltipForUIOnHover(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+
+		// Add option to opening an existing script
+		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			m_UIOnHover.m_OpenPopup = true;
+		} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+		// Add option or creating a new script from this usage point
+		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+		{
+				// Open create script dialog in script editor
+				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+				{
+						// Ensure handle provides a script in the registry
+						if (!Assets::AssetService::HasScript(scriptHandle))
+						{
+							KG_WARN("Could not find script");
+							return;
+						}
+
+						// Ensure function type matches definition
+						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+						if (script->m_FuncType != WrappedFuncType::Void_None)
+						{
+							KG_WARN("Incorrect function type returned when linking script to usage point");
+							return;
+						}
+
+						// Set the on Hover script for the UI and editor
+						RuntimeUI::RuntimeUIService::SetActiveOnHover(scriptHandle, script);
+						m_UIOnHover.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+
+						// Set the active editor UI as edited
+						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+					}, {});
+				}
+		};
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+		// Open tooltip
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+	}
+
 	void UIEditorPropertiesPanel::OnModifyUISelectionColor(EditorUI::EditVec4Spec& spec)
 	{
 		// Update the UI's selection color
@@ -695,6 +798,13 @@ namespace Kargono::Panels
 		m_UIOnMove.m_PopupAction = KG_BIND_CLASS_FN(OnOpenUIOnMovePopup);
 		m_UIOnMove.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUIOnMove);
 		m_UIOnMove.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForUIOnMove);
+
+		// Set up widget to modify the UI's OnHover functions
+		m_UIOnHover.m_Label = "On Hover";
+		m_UIOnHover.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_UIOnHover.m_PopupAction = KG_BIND_CLASS_FN(OnOpenUIOnHoverPopup);
+		m_UIOnHover.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUIOnHover);
+		m_UIOnHover.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForUIOnHover);
 
 		// Set up widget to modify the UI's selection background color
 		m_UISelectionColor.m_Label = "Selection Color";

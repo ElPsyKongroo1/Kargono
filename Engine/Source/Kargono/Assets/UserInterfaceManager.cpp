@@ -60,6 +60,7 @@ namespace Kargono::Assets
 
 		// Function Pointers
 		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << (uint64_t)assetReference->m_FunctionPointers.m_OnMoveHandle;
+		out << YAML::Key << "FunctionPointerOnHover" << YAML::Value << (uint64_t)assetReference->m_FunctionPointers.m_OnHoverHandle;
 		// Font
 		out << YAML::Key << "Font" << YAML::Value << static_cast<uint64_t>(assetReference->m_FontHandle);
 		// Windows
@@ -288,6 +289,21 @@ namespace Kargono::Assets
 			}
 			newUserInterface->m_FunctionPointers.m_OnMove = onMoveScript;
 		}
+		newUserInterface->m_FunctionPointers.m_OnHoverHandle = data["FunctionPointerOnHover"].as<uint64_t>();
+		if (newUserInterface->m_FunctionPointers.m_OnHoverHandle == Assets::EmptyHandle)
+		{
+			newUserInterface->m_FunctionPointers.m_OnHover = nullptr;
+		}
+		else
+		{
+			Ref<Scripting::Script> onHoverScript = AssetService::GetScript(newUserInterface->m_FunctionPointers.m_OnHoverHandle);
+			if (!onHoverScript)
+			{
+				KG_WARN("Unable to locate OnHover Script!");
+				return nullptr;
+			}
+			newUserInterface->m_FunctionPointers.m_OnHover = onHoverScript;
+		}
 
 		// Get Font
 		newUserInterface->m_FontHandle = data["Font"].as<uint64_t>();
@@ -433,6 +449,12 @@ namespace Kargono::Assets
 		{
 			userInterfaceRef->m_FunctionPointers.m_OnMoveHandle = Assets::EmptyHandle;
 			userInterfaceRef->m_FunctionPointers.m_OnMove = nullptr;
+			uiModified = true;
+		}
+		if (userInterfaceRef->m_FunctionPointers.m_OnHoverHandle == scriptHandle)
+		{
+			userInterfaceRef->m_FunctionPointers.m_OnHoverHandle = Assets::EmptyHandle;
+			userInterfaceRef->m_FunctionPointers.m_OnHover = nullptr;
 			uiModified = true;
 		}
 

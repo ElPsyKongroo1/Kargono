@@ -80,6 +80,10 @@ namespace Kargono::Panels
 		void OnModifyUIOnMove(const EditorUI::OptionEntry& entry);
 		void OnOpenUIOnMovePopup(EditorUI::SelectOptionSpec& spec);
 		void OnOpenTooltipForUIOnMove(EditorUI::SelectOptionSpec& spec);
+		// Modify on Hover function
+		void OnModifyUIOnHover(const EditorUI::OptionEntry& entry);
+		void OnOpenUIOnHoverPopup(EditorUI::SelectOptionSpec& spec);
+		void OnOpenTooltipForUIOnHover(EditorUI::SelectOptionSpec& spec);
 		// Modify selection color
 		void OnModifyUISelectionColor(EditorUI::EditVec4Spec& spec);
 		void OnModifyUIHoveredColor(EditorUI::EditVec4Spec& spec);
@@ -204,6 +208,7 @@ namespace Kargono::Panels
 		EditorUI::CollapsingHeaderSpec m_UIHeader{};
 		EditorUI::SelectOptionSpec m_UISelectFont{};
 		EditorUI::SelectOptionSpec m_UIOnMove{};
+		EditorUI::SelectOptionSpec m_UIOnHover{};
 		EditorUI::EditVec4Spec m_UISelectionColor{};
 		EditorUI::EditVec4Spec m_UIHoveredColor{};
 

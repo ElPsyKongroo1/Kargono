@@ -116,7 +116,7 @@ namespace Kargono::Windows
 		m_OpenEmitterConfigPopupSpec.m_LineCount = 2;
 		m_OpenEmitterConfigPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenEmitterConfigPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenEmitterConfigPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec spec)
+		m_OpenEmitterConfigPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
 		{
 			spec.GetAllOptions().clear();
 			spec.m_CurrentOption = { "None", Assets::EmptyHandle };

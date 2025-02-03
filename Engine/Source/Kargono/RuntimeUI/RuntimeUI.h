@@ -45,6 +45,8 @@ namespace Kargono::RuntimeUI
 	{
 		Assets::AssetHandle m_OnMoveHandle { Assets::EmptyHandle };
 		Ref<Scripting::Script> m_OnMove { nullptr };
+		Assets::AssetHandle m_OnHoverHandle{ Assets::EmptyHandle };
+		Ref<Scripting::Script> m_OnHover{ nullptr };
 	};
 
 	//============================
@@ -574,6 +576,7 @@ namespace Kargono::RuntimeUI
 		static void SetActiveWidgetTextByIndex(WidgetID widgetID, const std::string& newText);
 		static void SetWidgetImageByIndex(WidgetID widgetID, Assets::AssetHandle textureHandle);
 		static void SetActiveOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
+		static void SetActiveOnHover(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
 		static void SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle);
 		static void SetWidgetTextColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
 		static void SetWidgetTextColorByIndex(WidgetID widgetID, const Math::vec4& color);

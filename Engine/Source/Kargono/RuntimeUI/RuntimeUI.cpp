@@ -550,6 +550,12 @@ namespace Kargono::RuntimeUI
 
 		// Set the new widget as selected and set it's color to the active color
 		activeUI->m_HoveredWidget = newHoveredWidget.get();
+
+		// Call the on move function if applicable
+		if (activeUI->m_FunctionPointers.m_OnHover)
+		{
+			Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnHover->m_Function);
+		}
 	}
 
 	void RuntimeUIService::SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor)
@@ -1048,6 +1054,12 @@ namespace Kargono::RuntimeUI
 	{
 		s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnMove = function;
 		s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnMoveHandle = functionHandle;
+	}
+
+	void RuntimeUIService::SetActiveOnHover(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function)
+	{
+		s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnHover = function;
+		s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnHoverHandle = functionHandle;
 	}
 
 	Ref<Scripting::Script> RuntimeUIService::GetActiveOnMove()
