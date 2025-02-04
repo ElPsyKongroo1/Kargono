@@ -65,14 +65,6 @@ namespace Kargono::RuntimeUI
 			shapeComp->Shader = localShader;
 			shapeComp->Texture = nullptr;
 			
-
-			/*s_InputSpec.m_Shader = shape.Shader;
-			s_InputSpec.m_Buffer = shape.ShaderData;
-			s_InputSpec.m_Entity = static_cast<uint32_t>(entity);
-			s_InputSpec.m_EntityRegistry = &m_EntityRegistry.m_EnTTRegistry;
-			s_InputSpec.m_ShapeComponent = &shape;
-			s_InputSpec.m_TransformMatrix = transform.GetTransform();*/
-			
 			float* tilingFactor = Rendering::Shader::GetInputLocation<float>("a_TilingFactor", localBuffer, localShader);
 			*tilingFactor = 1.0f;
 
@@ -135,12 +127,18 @@ namespace Kargono::RuntimeUI
 			SingleLineTextData* textData = RuntimeUIService::GetSingleLineTextDataFromWidget(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
 			KG_ASSERT(textData);
 
-			// Add the event's character to the text buffer
-			textData->m_Text.push_back((char)event.GetKeyCode());
-			
-			// Revalidate text dimensions
-			RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_ActiveWindow,
-				s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+			// Ensure the cursor index is within the correct text bounds
+			if (textData->m_CursorIndex >= 0 && textData->m_CursorIndex <= textData->m_Text.size())
+			{
+				std::string character = { (char)event.GetKeyCode() };
+				// Add the event's character to the text buffer
+				textData->m_Text.insert(textData->m_CursorIndex, character);
+				textData->m_CursorIndex++;
+
+				// Revalidate text dimensions
+				RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_ActiveWindow,
+					s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+			}
 		}
 		return false;
 	}
@@ -153,6 +151,8 @@ namespace Kargono::RuntimeUI
 			return false;
 		}
 
+		KeyCode key = event.GetKeyCode();
+
 		// Handle key pressed events for the currently editing widget
 		if (s_RuntimeUIContext->m_ActiveUI->m_EditingWidget)
 		{
@@ -160,28 +160,31 @@ namespace Kargono::RuntimeUI
 			SingleLineTextData* textData = RuntimeUIService::GetSingleLineTextDataFromWidget(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
 			KG_ASSERT(textData);
 
-			if (event.GetKeyCode() == Key::Backspace)
+			if (key == Key::Backspace)
 			{
 				if (textData->m_Text.size() > 0)
 				{
-					// Remove last character from text
-					textData->m_Text.pop_back();
-
-					// Revalidate text dimensions
-					RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_ActiveWindow,
-						s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+					if (textData->m_CursorIndex > 0 && textData->m_CursorIndex <= textData->m_Text.size())
+					{
+						textData->m_Text.erase(textData->m_CursorIndex - 1, 1);
+						textData->m_CursorIndex--;
+						// Revalidate text dimensions
+						RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_ActiveWindow,
+							s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+					}
+					
 				}
 				return true;
 			}
 
 			// Handle exiting 
-			if (event.GetKeyCode() == Key::Enter)
+			if (key == Key::Enter || key == Key::Escape)
 			{
 				ClearEditingWidget();
 				return true;
 			}
 
-			if (event.GetKeyCode() == Key::Left)
+			if (key == Key::Left)
 			{
 				// Enforce lower bounds of cursor and decriment
 				if (textData->m_CursorIndex > 0)
@@ -190,7 +193,7 @@ namespace Kargono::RuntimeUI
 				}
 				return true;
 			}
-			if (event.GetKeyCode() == Key::Right)
+			if (key == Key::Right)
 			{
 				// Enforce upper bounds of cursor and increment
 				if (textData->m_CursorIndex < textData->m_Text.size())
@@ -258,6 +261,13 @@ namespace Kargono::RuntimeUI
 				for (Ref<Widget> widget : window.m_Widgets)
 				{
 					RecalculateTextData(&window, widget.get());
+
+					// Ensure the default cursor position is at the end of the text
+					SingleLineTextData* textData = GetSingleLineTextDataFromWidget(widget.get());
+					if (textData)
+					{
+						textData->m_CursorIndex = textData->m_Text.size();
+					}
 				}
 			}
 		}
@@ -548,6 +558,18 @@ namespace Kargono::RuntimeUI
 
 		// Calculate the text size of the widget using the active user interface font
 		textData.m_CachedTextDimensions= RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextSize(textData.m_Text);
+	}
+
+	Math::vec2 RuntimeUIService::CalculateSingleLineText(std::string_view text)
+	{
+		// Calculate the text size of the widget using the default font if the active user interface is not set
+		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
+		{
+			return RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextSize(text);
+		}
+
+		// Calculate the text size of the widget using the active user interface font
+		return RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextSize(text);
 	}
 
 	void RuntimeUIService::CalculateMultiLineText(MultiLineTextData& textData, const Math::vec3& widgetSize, float textSize)
@@ -1637,16 +1659,16 @@ namespace Kargono::RuntimeUI
 			Math::vec2 potentialChoiceSize = potentialChoice->CalculateWidgetSize(windowSize);
 			Math::vec2 potentialWidgetCenterPosition = { potentialChoicePosition.x + (potentialChoiceSize.x * 0.5f), potentialChoicePosition.y + (potentialChoiceSize.y * 0.5f) };
 
-			// Calculate the distance between the current widget and the potential widget
-			float currentDistance = glm::distance(currentWidgetCenterPosition, potentialWidgetCenterPosition);
-
 			// Check if the potential widget is within the constraints of the current widget
+			float extentDistance;
+			float singleDimensionDistance;
 			float currentWidgetExtent;
 			float potentialWidgetExtent;
 
 			switch (direction)
 			{
 			case Direction::Right:
+				// Ensure the current widget's left extent does not overlap with the potential widget's right extent
 				currentWidgetExtent = currentWidgetPosition.x + currentWidgetSize.x;
 				potentialWidgetExtent = potentialChoicePosition.x;
 				if (currentWidgetExtent >= potentialWidgetExtent)
@@ -1654,8 +1676,12 @@ namespace Kargono::RuntimeUI
 					iteration++;
 					continue;
 				}
+				// Calculate the distance between the extents
+				extentDistance = glm::distance(Math::vec2( currentWidgetExtent, currentWidgetCenterPosition.y ), Math::vec2(potentialWidgetExtent, potentialWidgetCenterPosition.y));
+				singleDimensionDistance = glm::distance(currentWidgetCenterPosition.y, potentialWidgetCenterPosition.y);
 				break;
 			case Direction::Left:
+				// Ensure the current widget's right extent does not overlap with the potential widget's left extent
 				currentWidgetExtent = currentWidgetPosition.x;
 				potentialWidgetExtent = potentialChoicePosition.x + potentialChoiceSize.x;
 				if (currentWidgetExtent <= potentialWidgetExtent)
@@ -1663,8 +1689,12 @@ namespace Kargono::RuntimeUI
 					iteration++;
 					continue;
 				}
+				// Calculate the distance between the extents
+				extentDistance = glm::distance(Math::vec2(currentWidgetExtent, currentWidgetCenterPosition.y), Math::vec2(potentialWidgetExtent, potentialWidgetCenterPosition.y));
+				singleDimensionDistance = glm::distance(currentWidgetCenterPosition.y, potentialWidgetCenterPosition.y);
 				break;
 			case Direction::Up:
+				// Ensure the current widget's top extent does not overlap with the potential widget's bottom extent
 				currentWidgetExtent = currentWidgetPosition.y + currentWidgetSize.y;
 				potentialWidgetExtent = potentialChoicePosition.y;
 				if (currentWidgetExtent >= potentialWidgetExtent)
@@ -1672,8 +1702,12 @@ namespace Kargono::RuntimeUI
 					iteration++;
 					continue;
 				}
+				// Calculate the distance between the extents
+				extentDistance = glm::distance(Math::vec2(currentWidgetCenterPosition.x, currentWidgetExtent), Math::vec2(potentialWidgetCenterPosition.x, potentialWidgetExtent));
+				singleDimensionDistance = glm::distance(currentWidgetCenterPosition.x, potentialWidgetCenterPosition.x);
 				break;
 			case Direction::Down:
+				// Ensure the current widget's bottom extent does not overlap with the potential widget's top extent
 				currentWidgetExtent = currentWidgetPosition.y;
 				potentialWidgetExtent = potentialChoicePosition.y + potentialChoiceSize.y;
 				if (currentWidgetExtent <= potentialWidgetExtent)
@@ -1681,27 +1715,38 @@ namespace Kargono::RuntimeUI
 					iteration++;
 					continue;
 				}
+				// Calculate the distance between the extents
+				extentDistance = glm::distance(Math::vec2(currentWidgetCenterPosition.x, currentWidgetExtent), Math::vec2(potentialWidgetCenterPosition.x, potentialWidgetExtent));
+				singleDimensionDistance = glm::distance(currentWidgetCenterPosition.x, potentialWidgetCenterPosition.x);
 				break;
 			default:
 				KG_ERROR("Invalid direction provided when calculating navigation links for active user interface");
 				break;
 			}
+
+			// Magic number found by tinkering with settings until it felt right...
+			constexpr float singleDimensionAdjustment{ 0.65f };
+
+			// Calculate final distance factor
+			float finalDistanceFactor = extentDistance + singleDimensionAdjustment * singleDimensionDistance; 
+
 			// Save current best choice if it is the first choice
 			if (currentBestChoice == nullptr)
 			{
 				currentBestChoice = potentialChoice;
 				currentChoiceLocation = iteration;
-				currentBestDistance = currentDistance;
+				currentBestDistance = finalDistanceFactor;
 				iteration++;
 				continue;
 			}
 
+
 			// Replace current best choice with the potential choice if it is closer
-			if (currentDistance < currentBestDistance)
+			if (finalDistanceFactor < currentBestDistance)
 			{
 				currentBestChoice = potentialChoice;
 				currentChoiceLocation = iteration;
-				currentBestDistance = currentDistance;
+				currentBestDistance = finalDistanceFactor;
 				iteration++;
 				continue;
 			}
@@ -2276,7 +2321,15 @@ namespace Kargono::RuntimeUI
 		if (RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_EditingWidget == this && 
 			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible)
 		{
-			//RuntimeUIService::CalculateSingleLineText();
+			Math::vec2 cursorLocation;
+			if (m_TextData.m_Text.size() == m_TextData.m_CursorIndex || m_TextData.m_Text.size() == 0)
+			{
+				cursorLocation = m_TextData.m_CachedTextDimensions;
+			}
+			else
+			{
+				cursorLocation = RuntimeUIService::CalculateSingleLineText(std::string_view(m_TextData.m_Text.data(), m_TextData.m_CursorIndex));
+			}
 			Math::vec3 translationOutput = widgetTranslation;
 			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 			float textSize{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
@@ -2302,7 +2355,7 @@ namespace Kargono::RuntimeUI
 			}
 
 			// Move the x-cursor to the end of the text
-			translationOutput.x += m_TextData.m_CachedTextDimensions.x * textSize;
+			translationOutput.x += cursorLocation.x * textSize;
 
 			// Set the starting y/z locations
 			translationOutput.y = widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextData.m_CachedTextDimensions.y * 0.5f) * textSize) + k_CenterAdjustmentSize;

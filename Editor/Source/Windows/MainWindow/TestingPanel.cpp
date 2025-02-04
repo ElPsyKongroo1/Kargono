@@ -2,6 +2,7 @@
 #include "Windows/MainWindow/ViewportPanel.h"
 
 #include "EditorApp.h"
+#include "Kargono/Utility/DebugGlobals.h"
 #include "Kargono/Utility/Timers.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Utility/Random.h"
@@ -11,7 +12,6 @@ static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
 namespace Kargono::Panels
 {
-
 	static EditorUI::EditTextSpec s_TestText {};
 	static EditorUI::EditFloatSpec s_TimerTime{};
 	static EditorUI::EditIntegerSpec s_RandomTestInteger{};
@@ -39,6 +39,218 @@ namespace Kargono::Panels
 		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(TestingPanel::OnKeyPressedEditor));
 
+		InitializeDebugGlobalsWidgets();
+		InitializeGeneralTestingWidgets();
+	}
+
+
+	void TestingPanel::OnEditorUIRender()
+	{
+		KG_PROFILE_FUNCTION();
+		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowTesting);
+		// Exit window early if window is not visible
+		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		{
+			EditorUI::EditorUIService::EndWindow();
+			return;
+		}
+
+		EditorUI::EditorUIService::TitleText("Welcome to the Testing Panel!");
+		DrawDebugGlobalWidgets();
+		DrawGeneralTestingWidgets();
+
+		EditorUI::EditorUIService::EndWindow();
+	}
+	void TestingPanel::InitializeDebugGlobalsWidgets()
+	{
+#if defined(KG_DEBUG)
+		s_DebugGlobalsHeader.m_Label = "Debug Globals";
+		s_DebugGlobalsHeader.m_Expanded = false;
+		s_DebugGlobalsHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+
+		// Checkbox initialization
+		s_EditTestBool_1.m_Label = "Test Bool 1";
+		s_EditTestBool_1.m_Flags |= EditorUI::Checkbox_Indented;
+		s_EditTestBool_1.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_1;
+		s_EditTestBool_1.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec) 
+		{
+				Utility::DebugGlobals::s_TestBool_1 = spec.m_CurrentBoolean;
+		};
+
+		s_EditTestBool_2.m_Label = "Test Bool 2";
+		s_EditTestBool_2.m_Flags |= EditorUI::Checkbox_Indented;
+		s_EditTestBool_2.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_2;
+		s_EditTestBool_2.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+			{
+				Utility::DebugGlobals::s_TestBool_2 = spec.m_CurrentBoolean;
+			};
+
+		s_EditTestBool_3.m_Label = "Test Bool 3";
+		s_EditTestBool_3.m_Flags |= EditorUI::Checkbox_Indented;
+		s_EditTestBool_3.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_3;
+		s_EditTestBool_3.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+			{
+				Utility::DebugGlobals::s_TestBool_3 = spec.m_CurrentBoolean;
+			};
+
+
+		// Float initialization
+		s_EditTestFloat_1.m_Label = "Test Float 1";
+		s_EditTestFloat_1.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_1;
+		s_EditTestFloat_1.m_Flags |= EditorUI::EditFloatFlags::EditFloat_Indented;
+		s_EditTestFloat_1.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
+			{
+				Utility::DebugGlobals::s_TestFloat_1 = spec.m_CurrentFloat;
+			};
+
+		s_EditTestFloat_2.m_Label = "Test Float 2";
+		s_EditTestFloat_2.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_2;
+		s_EditTestFloat_2.m_Flags |= EditorUI::EditFloatFlags::EditFloat_Indented;
+		s_EditTestFloat_2.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
+			{
+				Utility::DebugGlobals::s_TestFloat_2 = spec.m_CurrentFloat;
+			};
+
+		s_EditTestFloat_3.m_Label = "Test Float 3";
+		s_EditTestFloat_3.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_3;
+		s_EditTestFloat_3.m_Flags |= EditorUI::EditFloatFlags::EditFloat_Indented;
+		s_EditTestFloat_3.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
+			{
+				Utility::DebugGlobals::s_TestFloat_3 = spec.m_CurrentFloat;
+			};
+
+		// Integer initialization
+		s_EditTestInt_1.m_Label = "Test Int 1";
+		s_EditTestInt_1.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_1;
+		s_EditTestInt_1.m_Flags |= EditorUI::EditIntegerFlags::EditInteger_Indented;
+		s_EditTestInt_1.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
+			{
+				Utility::DebugGlobals::s_TestInt_1 = spec.m_CurrentInteger;
+			};
+
+		s_EditTestInt_2.m_Label = "Test Int 2";
+		s_EditTestInt_2.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_2;
+		s_EditTestInt_2.m_Flags |= EditorUI::EditIntegerFlags::EditInteger_Indented;
+		s_EditTestInt_2.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
+			{
+				Utility::DebugGlobals::s_TestInt_2 = spec.m_CurrentInteger;
+			};
+
+		s_EditTestInt_3.m_Label = "Test Int 3";
+		s_EditTestInt_3.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_3;
+		s_EditTestInt_3.m_Flags |= EditorUI::EditIntegerFlags::EditInteger_Indented;
+		s_EditTestInt_3.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
+			{
+				Utility::DebugGlobals::s_TestInt_3 = spec.m_CurrentInteger;
+			};
+
+		// Unsigned Integer initialization
+		s_EditTestUInt_1.m_Label = "Test UInt 1";
+		s_EditTestUInt_1.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_1;
+		s_EditTestUInt_1.m_Bounds = { 0, 10'000 };
+		s_EditTestUInt_1.m_Flags |= EditorUI::EditIntegerFlags::EditInteger_Indented;
+		s_EditTestUInt_1.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
+			{
+				Utility::DebugGlobals::s_TestUInt_1 = spec.m_CurrentInteger;
+			};
+
+		s_EditTestUInt_2.m_Label = "Test UInt 2";
+		s_EditTestUInt_2.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_2;
+		s_EditTestUInt_2.m_Bounds = { 0, 10'000 };
+		s_EditTestUInt_2.m_Flags |= EditorUI::EditIntegerFlags::EditInteger_Indented;
+		s_EditTestUInt_2.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
+			{
+				Utility::DebugGlobals::s_TestUInt_2 = spec.m_CurrentInteger;
+			};
+
+		s_EditTestUInt_3.m_Label = "Test UInt 3";
+		s_EditTestUInt_3.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_3;
+		s_EditTestUInt_3.m_Bounds = { 0, 10'000 };
+		s_EditTestUInt_3.m_Flags |= EditorUI::EditIntegerFlags::EditInteger_Indented;
+		s_EditTestUInt_3.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
+			{
+				Utility::DebugGlobals::s_TestUInt_3 = spec.m_CurrentInteger;
+			};
+
+		// Vec2 initialization
+		s_EditTestVec2_1.m_Label = "Test Vec2 1";
+		s_EditTestVec2_1.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_1;
+		s_EditTestVec2_1.m_Flags |= EditorUI::EditVec2Flags::EditVec2_Indented;
+		s_EditTestVec2_1.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
+			{
+				Utility::DebugGlobals::s_TestVec2_1 = spec.m_CurrentVec2;
+			};
+
+		s_EditTestVec2_2.m_Label = "Test Vec2 2";
+		s_EditTestVec2_2.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_2;
+		s_EditTestVec2_2.m_Flags |= EditorUI::EditVec2Flags::EditVec2_Indented;
+		s_EditTestVec2_2.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
+			{
+				Utility::DebugGlobals::s_TestVec2_2 = spec.m_CurrentVec2;
+			};
+
+		s_EditTestVec2_3.m_Label = "Test Vec2 3";
+		s_EditTestVec2_3.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_3;
+		s_EditTestVec2_3.m_Flags |= EditorUI::EditVec2Flags::EditVec2_Indented;
+		s_EditTestVec2_3.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
+			{
+				Utility::DebugGlobals::s_TestVec2_3 = spec.m_CurrentVec2;
+			};
+
+		// Vec3 initialization
+		s_EditTestVec3_1.m_Label = "Test Vec3 1";
+		s_EditTestVec3_1.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_1;
+		s_EditTestVec3_1.m_Flags |= EditorUI::EditVec3Flags::EditVec3_Indented;
+		s_EditTestVec3_1.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
+			{
+				Utility::DebugGlobals::s_TestVec3_1 = spec.m_CurrentVec3;
+			};
+
+		s_EditTestVec3_2.m_Label = "Test Vec3 2";
+		s_EditTestVec3_2.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_2;
+		s_EditTestVec3_2.m_Flags |= EditorUI::EditVec3Flags::EditVec3_Indented;
+		s_EditTestVec3_2.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
+			{
+				Utility::DebugGlobals::s_TestVec3_2 = spec.m_CurrentVec3;
+			};
+
+		s_EditTestVec3_3.m_Label = "Test Vec3 3";
+		s_EditTestVec3_3.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_3;
+		s_EditTestVec3_3.m_Flags |= EditorUI::EditVec3Flags::EditVec3_Indented;
+		s_EditTestVec3_3.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
+			{
+				Utility::DebugGlobals::s_TestVec3_3 = spec.m_CurrentVec3;
+			};
+
+		// Vec4 initialization
+		s_EditTestVec4_1.m_Label = "Test Vec4 1";
+		s_EditTestVec4_1.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_1;
+		s_EditTestVec4_1.m_Flags |= EditorUI::EditVec4Flags::EditVec4_Indented;
+		s_EditTestVec4_1.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
+			{
+				Utility::DebugGlobals::s_TestVec4_1 = spec.m_CurrentVec4;
+			};
+
+		s_EditTestVec4_2.m_Label = "Test Vec4 2";
+		s_EditTestVec4_2.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_2;
+		s_EditTestVec4_2.m_Flags |= EditorUI::EditVec4Flags::EditVec4_Indented;
+		s_EditTestVec4_2.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
+			{
+				Utility::DebugGlobals::s_TestVec4_2 = spec.m_CurrentVec4;
+			};
+
+		s_EditTestVec4_3.m_Label = "Test Vec4 3";
+		s_EditTestVec4_3.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_3;
+		s_EditTestVec4_3.m_Flags |= EditorUI::EditVec4Flags::EditVec4_Indented;
+		s_EditTestVec4_3.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
+			{
+				Utility::DebugGlobals::s_TestVec4_3 = spec.m_CurrentVec4;
+			};
+#endif
+
+	}
+	void TestingPanel::InitializeGeneralTestingWidgets()
+	{
 		s_TestText.m_Label = "File to Compile";
 		s_TestText.m_CurrentOption = "test.kgscript";
 
@@ -54,13 +266,13 @@ namespace Kargono::Panels
 		// Test tooltip api
 		testTooltip.m_Label = "Test Tooltip";
 		// Create menu items
-		EditorUI::TooltipEntry newEntry{ "First Test Entry", [](EditorUI::TooltipEntry& entry) 
+		EditorUI::TooltipEntry newEntry{ "First Test Entry", [](EditorUI::TooltipEntry& entry)
 		{
 			KG_WARN("Meow");
 		} };
 
 		testTooltip.AddTooltipEntry(std::move(newEntry));
-// TODO Testing Splines
+		// TODO Testing Splines
 #if 0
 		// TODO: Please Remove
 		Math::Spline testSpline;
@@ -83,13 +295,13 @@ namespace Kargono::Panels
 			currentSpec.m_ScrollSpeed = 0.5f;
 			currentSpec.m_ProvidedData = CreateRef<size_t>(iteration);
 			currentSpec.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
-			{
-				// Get provided data
-				size_t iteration = *(size_t*)spec.m_ProvidedData.get();
+				{
+					// Get provided data
+					size_t iteration = *(size_t*)spec.m_ProvidedData.get();
 
-				Math::Spline& spline = s_EditorApp->m_MainWindow->m_ViewportPanel->m_DebugSplines.at(0);
-				spline.m_Points.at(iteration) = spec.m_CurrentVec3;
-			};
+					Math::Spline& spline = s_EditorApp->m_MainWindow->m_ViewportPanel->m_DebugSplines.at(0);
+					spline.m_Points.at(iteration) = spec.m_CurrentVec3;
+				};
 			iteration++;
 		}
 #endif
@@ -97,20 +309,106 @@ namespace Kargono::Panels
 		s_MultiLineText.m_Label = "Test Multi Line";
 		s_MultiLineText.m_CurrentOption = "This is a paragraph of text bahahahahahahahahahahahaha";
 	}
-
-
-	void TestingPanel::OnEditorUIRender()
+	void TestingPanel::DrawDebugGlobalWidgets()
 	{
-		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowTesting);
-		// Exit window early if window is not visible
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
-		{
-			EditorUI::EditorUIService::EndWindow();
-			return;
-		}
+#if defined(KG_DEBUG)
+		EditorUI::EditorUIService::CollapsingHeader(s_DebugGlobalsHeader);
 
-		EditorUI::EditorUIService::TitleText("Welcome to the Testing Panel!");
+		if (s_DebugGlobalsHeader.m_Expanded)
+		{
+			// Bool initialization
+			s_EditTestBool_1.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_1;
+			EditorUI::EditorUIService::Checkbox(s_EditTestBool_1);
+
+			s_EditTestBool_2.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_2;
+			EditorUI::EditorUIService::Checkbox(s_EditTestBool_2);
+
+			s_EditTestBool_3.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_3;
+			EditorUI::EditorUIService::Checkbox(s_EditTestBool_3);
+
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Float initialization
+			s_EditTestFloat_1.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_1;
+			EditorUI::EditorUIService::EditFloat(s_EditTestFloat_1);
+
+			s_EditTestFloat_2.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_2;
+			EditorUI::EditorUIService::EditFloat(s_EditTestFloat_2);
+
+			s_EditTestFloat_3.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_3;
+			EditorUI::EditorUIService::EditFloat(s_EditTestFloat_3);
+
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Integer initialization
+			s_EditTestInt_1.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_1;
+			EditorUI::EditorUIService::EditInteger(s_EditTestInt_1);
+
+			s_EditTestInt_2.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_2;
+			EditorUI::EditorUIService::EditInteger(s_EditTestInt_2);
+
+			s_EditTestInt_3.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_3;
+			EditorUI::EditorUIService::EditInteger(s_EditTestInt_3);
+
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Unsigned Integer initialization
+			s_EditTestUInt_1.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_1;
+			EditorUI::EditorUIService::EditInteger(s_EditTestUInt_1);
+
+			s_EditTestUInt_2.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_2;
+			EditorUI::EditorUIService::EditInteger(s_EditTestUInt_2);
+
+			s_EditTestUInt_3.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_3;
+			EditorUI::EditorUIService::EditInteger(s_EditTestUInt_3);
+
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Vec2 initialization
+			s_EditTestVec2_1.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_1;
+			EditorUI::EditorUIService::EditVec2(s_EditTestVec2_1);
+
+			s_EditTestVec2_2.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_2;
+			EditorUI::EditorUIService::EditVec2(s_EditTestVec2_2);
+
+			s_EditTestVec2_3.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_3;
+			EditorUI::EditorUIService::EditVec2(s_EditTestVec2_3);
+
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Vec3 initialization
+			s_EditTestVec3_1.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_1;
+			EditorUI::EditorUIService::EditVec3(s_EditTestVec3_1);
+
+			s_EditTestVec3_2.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_2;
+			EditorUI::EditorUIService::EditVec3(s_EditTestVec3_2);
+
+			s_EditTestVec3_3.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_3;
+			EditorUI::EditorUIService::EditVec3(s_EditTestVec3_3);
+
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Vec4 initialization
+			s_EditTestVec4_1.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_1;
+			EditorUI::EditorUIService::EditVec4(s_EditTestVec4_1);
+
+			s_EditTestVec4_2.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_2;
+			EditorUI::EditorUIService::EditVec4(s_EditTestVec4_2);
+
+			s_EditTestVec4_3.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_3;
+			EditorUI::EditorUIService::EditVec4(s_EditTestVec4_3);
+
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		}
+		
+#endif
+	}
+	void TestingPanel::DrawGeneralTestingWidgets()
+	{
+		if (ImGui::Button("Calculate Navigation Links"))
+		{
+			RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
+		}
 
 		if (ImGui::Button("Crit Log"))
 		{
@@ -141,9 +439,9 @@ namespace Kargono::Panels
 		if (ImGui::Button("Start Timer"))
 		{
 			Utility::PassiveTimer::CreateTimer(s_TimerTime.m_CurrentFloat, []()
-			{
-				KG_WARN("The timer has gone off");
-			});
+				{
+					KG_WARN("The timer has gone off");
+				});
 		}
 
 		ImGuiWindowFlags popupFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing;
@@ -157,7 +455,7 @@ namespace Kargono::Panels
 		if (ImGui::BeginPopup("The Test Popup", popupFlags))
 		{
 			EditorUI::EditorUIService::BringCurrentWindowToFront();
-			
+
 			ImGui::Text("Ayooo, the popup is open");
 			if (closePopup)
 			{
@@ -168,7 +466,7 @@ namespace Kargono::Panels
 
 		EditorUI::EditorUIService::EditMultiLineText(s_MultiLineText);
 
-// TODO: Testing Splines
+		// TODO: Testing Splines
 #if 0 
 		Math::Spline& spline = s_EditorApp->m_MainWindow->m_ViewportPanel->m_DebugSplines.at(0);
 		size_t iteration{ 0 };
@@ -303,8 +601,6 @@ namespace Kargono::Panels
 
 		EditorUI::EditorUIService::Tooltip(testTooltip);
 #endif
-
-		EditorUI::EditorUIService::EndWindow();
 	}
 	bool TestingPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

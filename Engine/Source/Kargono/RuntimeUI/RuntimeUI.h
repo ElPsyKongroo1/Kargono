@@ -15,7 +15,6 @@
 #include <functional>
 #include <tuple>
 
-
 namespace Kargono::Assets
 {
 	class UserInterfaceManager;
@@ -672,6 +671,7 @@ namespace Kargono::RuntimeUI
 		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
 		static void RevalidateDisplayedWindows();
 		static void CalculateSingleLineText(SingleLineTextData& textData);
+		static Math::vec2 CalculateSingleLineText(std::string_view textData);
 		static void CalculateMultiLineText(MultiLineTextData& textData, const Math::vec3& widgetSize, float textSize);
 
 		//==============================
