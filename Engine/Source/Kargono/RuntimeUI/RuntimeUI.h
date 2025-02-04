@@ -478,6 +478,9 @@ namespace Kargono::RuntimeUI
 		//============================
 		SingleLineTextData m_TextData;
 		SelectionData m_SelectionData;
+		Assets::AssetHandle m_OnMoveCursorHandle{ Assets::EmptyHandle };
+		Ref<Scripting::Script> m_OnMoveCursor{ nullptr };
+		
 	};
 
 	//============================
@@ -545,6 +548,7 @@ namespace Kargono::RuntimeUI
 		Ref<Font> m_Font{ nullptr };
 		Math::vec4 m_SelectColor {1.0f};
 		Math::vec4 m_HoveredColor{ 0.5f };
+		Math::vec4 m_EditingColor{ 0.15f, 0.15f, 0.15f, 1.0f };
 		Assets::AssetHandle m_FontHandle {0};
 		UserInterfaceCallbacks m_FunctionPointers{};
 
@@ -616,6 +620,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Query Active UI
 		//==============================
+		static std::string GetWidgetTextByIndex(WidgetID widgetID);
 		static bool IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag);
 		static bool IsWidgetSelectedByIndex(WidgetID widgetID);
 		static Ref<Scripting::Script> GetActiveOnMove();
@@ -689,6 +694,7 @@ namespace Kargono::RuntimeUI
 		// Interact With Active UI (Internal)
 		//==============================
 		static void OnPressInternal(Widget* currentWidget);
+		static void OnMoveCursorInternal(Widget* currentWidget);
 
 		//==============================
 		// Rendering API (Internal)

@@ -134,9 +134,11 @@ namespace Kargono::Assets
 	//		debugging.
 	struct FontMetaData
 	{
-		float AtlasWidth;
-		float AtlasHeight;
-		float LineHeight{};
+		float AtlasWidth{ 0.0f };
+		float AtlasHeight{ 0.0f };
+		float LineHeight{ 0.0f };
+		float Ascender{ 0.0f };
+		float Descender{ 0.0f };
 		std::vector<std::pair<unsigned char, RuntimeUI::Character>> Characters{};
 	};
 

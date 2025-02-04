@@ -65,7 +65,7 @@ namespace Kargono::Panels
 	{
 #if defined(KG_DEBUG)
 		s_DebugGlobalsHeader.m_Label = "Debug Globals";
-		s_DebugGlobalsHeader.m_Expanded = false;
+		s_DebugGlobalsHeader.m_Expanded = true;
 		s_DebugGlobalsHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 
 		// Checkbox initialization

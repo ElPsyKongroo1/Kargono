@@ -1378,7 +1378,7 @@ namespace Kargono::Scripting
 			{"ProjectComponents", {{}, EditorUI::EditorUIService::s_IconProjectComponent}},
 			{"Scenes", {{}, EditorUI::EditorUIService::s_IconScene}},
 			{"Textures", {{}, EditorUI::EditorUIService::s_IconTexture}},
-			{"UserInterfaces", {{}, EditorUI::EditorUIService::s_IconUserInterface}},
+			{"UserInterfaces", {{}, EditorUI::EditorUIService::s_IconUserInterface2}},
 			{"ScreenResolution", {{}, EditorUI::EditorUIService::s_IconGrid}},
 			{"Key", {{}, EditorUI::EditorUIService::s_IconInput}}
 		};
@@ -1851,6 +1851,25 @@ namespace Kargono::Scripting
 		{
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_SetWidgetText";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "GetWidgetText" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "string" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "text_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "button_widget" });
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "input_text_widget" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "widget" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "Get the displayed text from the indicated widget. This function works with any widget that contains text.";
+		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
+		{
+			node.Namespace = {};
+			node.Identifier.Value = "RuntimeUI_GetWidgetText";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};

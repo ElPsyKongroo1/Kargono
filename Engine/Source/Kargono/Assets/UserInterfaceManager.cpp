@@ -57,6 +57,7 @@ namespace Kargono::Assets
 		// Select Color
 		out << YAML::Key << "SelectColor" << YAML::Value << assetReference->m_SelectColor;
 		out << YAML::Key << "HoveredColor" << YAML::Value << assetReference->m_HoveredColor;
+		out << YAML::Key << "EditingColor" << YAML::Value << assetReference->m_EditingColor;
 
 		// Function Pointers
 		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << (uint64_t)assetReference->m_FunctionPointers.m_OnMoveHandle;
@@ -175,6 +176,8 @@ namespace Kargono::Assets
 					SerializeSingleLineTextData(out, inputTextWidget->m_TextData);
 					// Save selection fields
 					SerializeSelectionData(out, inputTextWidget->m_SelectionData);
+					// Save input text unique function pointers
+					out << YAML::Key << "OnMoveCursor" << YAML::Value << (uint64_t)inputTextWidget->m_OnMoveCursorHandle;
 					out << YAML::EndMap; // End InputTextWidget Map
 					break;
 				}
@@ -273,6 +276,7 @@ namespace Kargono::Assets
 		// Get SelectColor
 		newUserInterface->m_SelectColor = data["SelectColor"].as<Math::vec4>();
 		newUserInterface->m_HoveredColor = data["HoveredColor"].as<Math::vec4>();
+		newUserInterface->m_EditingColor = data["EditingColor"].as<Math::vec4>();
 		// Function Pointers
 		newUserInterface->m_FunctionPointers.m_OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
 		if (newUserInterface->m_FunctionPointers.m_OnMoveHandle == Assets::EmptyHandle)
@@ -407,6 +411,22 @@ namespace Kargono::Assets
 							DeserializeSingleLineTextData(inputTextWidget->m_TextData, specificWidget);
 							// Get selection data
 							DeserializeSelectionData(inputTextWidget->m_SelectionData, specificWidget);
+							// Get input map specific function pointers
+							inputTextWidget->m_OnMoveCursorHandle = specificWidget["OnMoveCursor"].as<uint64_t>();
+							if (inputTextWidget->m_OnMoveCursorHandle == Assets::EmptyHandle)
+							{
+								inputTextWidget->m_OnMoveCursor = nullptr;
+							}
+							else
+							{
+								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(inputTextWidget->m_OnMoveCursorHandle);
+								if (!onPressScript)
+								{
+									KG_WARN("Unable to locate On Move Cursor Script!");
+									return nullptr;
+								}
+								inputTextWidget->m_OnMoveCursor = onPressScript;
+							}
 							break;
 						}
 						default:
@@ -476,6 +496,17 @@ namespace Kargono::Assets
 					selectionData->m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
 					selectionData->m_FunctionPointers.m_OnPress = nullptr;
 					uiModified = true;
+				}
+
+				if (widgetRef->m_WidgetType == RuntimeUI::WidgetTypes::InputTextWidget)
+				{
+					RuntimeUI::InputTextWidget& inputTextWidget = *(RuntimeUI::InputTextWidget*)widgetRef.get();
+					if (inputTextWidget.m_OnMoveCursorHandle == scriptHandle)
+					{
+						inputTextWidget.m_OnMoveCursorHandle = Assets::EmptyHandle;
+						inputTextWidget.m_OnMoveCursor = nullptr;
+						uiModified = true;
+					}
 				}
 			}
 		}

@@ -174,6 +174,7 @@ namespace Kargono::RuntimeUI
 
 		const auto& metrics = fontGeometry.getMetrics();
 		newFont->m_LineHeight = static_cast<float>(metrics.lineHeight);
+		
 
 		const auto& glyphMetrics = fontGeometry.getGlyphs();
 		newFont->m_Characters.clear();

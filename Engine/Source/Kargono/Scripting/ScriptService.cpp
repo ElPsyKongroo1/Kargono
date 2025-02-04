@@ -646,6 +646,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
 	// String return type
 	DefineInsertFunction(StringUInt64, const std::string&, uint64_t)
+	DefineInsertFunction(StringUIWidget, std::string, RuntimeUI::WidgetID)
 	// Other return types
 	DefineInsertFunction(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 
@@ -826,6 +827,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
 		// String return type
 		AddImportFunctionToHeaderFile(StringUInt64, const std::string&, uint64_t)
+		AddImportFunctionToHeaderFile(StringUIWidget, std::string, RuntimeUI::WidgetID)
 		// Other return types
 		AddImportFunctionToHeaderFile(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 
@@ -955,6 +957,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileFourParameters(Scenes_SetProjectComponentField, void, uint64_t, uint64_t, uint64_t, void*)
 		// User Interface
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_LoadUserInterfaceFromHandle, void, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_GetWidgetText, std::string, RuntimeUI::WidgetID
+		)
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_SetSelectedWidget, void, RuntimeUI::WidgetID)
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_IsWidgetSelected, bool, RuntimeUI::WidgetID)
 		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetDisplayWindow, void, RuntimeUI::WindowID, bool)
@@ -1156,10 +1160,6 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_IsWidgetSelected)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(StringUInt64, const std::string&, uint64_t)
-		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(TagComponent_GetTag)
-		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Scenes_GetProjectComponentField)
@@ -1175,6 +1175,14 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Physics_Raycast)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(StringUInt64, const std::string&, uint64_t)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(TagComponent_GetTag)
+		outputStream << "}\n";
+		AddImportFunctionToCPPFile(StringUIWidget, std::string, RuntimeUI::WidgetID)
+		outputStream << "{\n";
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_GetWidgetText)
 		outputStream << "}\n";
 
 		// Write scripts into a single cpp file
@@ -1429,6 +1437,7 @@ namespace Kargono::Scripting
 		ImportInsertFunction(Vec3UInt64)
 		// String return types
 		ImportInsertFunction(StringUInt64)
+		ImportInsertFunction(StringUIWidget)
 		// Other return types
 		ImportInsertFunction(RaycastResultVec2Vec2)
 
@@ -1489,7 +1498,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectableByIndex, VoidUIWidgetBool)
 		AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, RuntimeUI::RuntimeUIService::IsWidgetSelectedByIndex, BoolUIWidget)
 		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetImage, RuntimeUI::RuntimeUIService::SetWidgetImageByIndex, VoidUIWidgetUInt64)
-			
+		AddEngineFunctionPointerToDll(RuntimeUI_GetWidgetText, RuntimeUI::RuntimeUIService::GetWidgetTextByIndex, StringUIWidget)
 		// Scenes
 		AddEngineFunctionPointerToDll(TransitionSceneFromHandle, Scenes::SceneService::TransitionSceneFromHandle, VoidUInt64)
 		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)

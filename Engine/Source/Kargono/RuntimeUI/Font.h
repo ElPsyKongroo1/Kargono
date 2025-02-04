@@ -86,16 +86,16 @@ namespace Kargono::RuntimeUI
 		// Getters/Setters
 		//==============================
 		std::unordered_map<unsigned char, Character>& GetCharacters() { return m_Characters; }
-		float GetLineHeight() const { return m_LineHeight; }
-		void SetLineHeight(float height) { m_LineHeight = height; }
 
 	public:
 		//==============================
 		// Internal Fields
 		//==============================
 		Ref<Rendering::Texture2D> m_AtlasTexture = nullptr;
-		float m_LineHeight {0};
+		float m_LineHeight {0.0f};
 		std::unordered_map<unsigned char, Character> m_Characters{};
+		float m_Ascender{ 0.0f };
+		float m_Descender{ 0.0f };
 
 	};
 

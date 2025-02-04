@@ -87,6 +87,7 @@ namespace Kargono::Panels
 		// Modify selection color
 		void OnModifyUISelectionColor(EditorUI::EditVec4Spec& spec);
 		void OnModifyUIHoveredColor(EditorUI::EditVec4Spec& spec);
+		void OnModifyUIEditingColor(EditorUI::EditVec4Spec& spec);
 
 		//=========================
 		// Validation Functions
@@ -167,6 +168,10 @@ namespace Kargono::Panels
 		//=========================
 		// Modify widget on press
 		void OnOpenTooltipForInputTextWidgetOnPress(EditorUI::SelectOptionSpec& spec);
+		// Modify widget on move cursor
+		void OnModifyInputTextOnMoveCursor(const EditorUI::OptionEntry& entry);
+		void OnOpenInputTextOnMoveCursorPopup(EditorUI::SelectOptionSpec& spec);
+		void OnOpenTooltipForInputTextWidgetOnMoveCursor(EditorUI::SelectOptionSpec& spec);
 
 		//=========================
 		// Modify UI Component Structs (Common data between widgets)
@@ -211,6 +216,7 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_UIOnHover{};
 		EditorUI::EditVec4Spec m_UISelectionColor{};
 		EditorUI::EditVec4Spec m_UIHoveredColor{};
+		EditorUI::EditVec4Spec m_UIEditingColor{};
 
 		// Edit Window Options
 		EditorUI::CollapsingHeaderSpec m_WindowHeader{};
@@ -291,5 +297,6 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec m_InputTextWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_InputTextWidgetOnPress{};
 		EditorUI::CheckboxSpec m_InputTextWidgetSelectable{};
+		EditorUI::SelectOptionSpec m_InputTextWidgetOnMoveCursor{};
 	};
 }

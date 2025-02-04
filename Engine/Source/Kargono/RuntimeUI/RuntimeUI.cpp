@@ -138,6 +138,9 @@ namespace Kargono::RuntimeUI
 				// Revalidate text dimensions
 				RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_ActiveWindow,
 					s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+
+				// Run on move cursor if necessary
+				OnMoveCursorInternal(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
 			}
 		}
 		return false;
@@ -171,6 +174,10 @@ namespace Kargono::RuntimeUI
 						// Revalidate text dimensions
 						RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_ActiveWindow,
 							s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+
+						// Run on move cursor if necessary
+						OnMoveCursorInternal(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+
 					}
 					
 				}
@@ -186,19 +193,35 @@ namespace Kargono::RuntimeUI
 
 			if (key == Key::Left)
 			{
-				// Enforce lower bounds of cursor and decriment
+				// Enforce lower bounds of the text
 				if (textData->m_CursorIndex > 0)
 				{
+					// Decriment the cursor
 					textData->m_CursorIndex--;
+
+					// Ensure the IBeam is visible when moving
+					s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible = true;
+					s_RuntimeUIContext->m_ActiveUI->m_IBeamAccumulator = 0.0f;
+
+					// Run on move cursor if necessary
+					OnMoveCursorInternal(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+
 				}
 				return true;
 			}
 			if (key == Key::Right)
 			{
-				// Enforce upper bounds of cursor and increment
+				// Enforce upper bounds of the text
 				if (textData->m_CursorIndex < textData->m_Text.size())
 				{
 					textData->m_CursorIndex++;
+
+					// Ensure the IBeam is visible when moving
+					s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible = true;
+					s_RuntimeUIContext->m_ActiveUI->m_IBeamAccumulator = 0.0f;
+
+					// Run on move cursor if necessary
+					OnMoveCursorInternal(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
 				}
 				return true;
 			}
@@ -792,6 +815,17 @@ namespace Kargono::RuntimeUI
 					checkboxWidget.m_Checked);
 			}
 		}
+		else if (currentWidget->m_WidgetType == WidgetTypes::InputTextWidget)
+		{
+			// Handle all other cases
+			if (selectionData->m_FunctionPointers.m_OnPress)
+			{
+				Utility::CallWrappedVoidNone(selectionData->m_FunctionPointers.m_OnPress->m_Function);
+			}
+
+			// Set the current widget as the editing widget
+			s_RuntimeUIContext->m_ActiveUI->m_EditingWidget = currentWidget;
+		}
 		else
 		{
 			// Handle all other cases
@@ -800,6 +834,19 @@ namespace Kargono::RuntimeUI
 				return;
 			}
 			Utility::CallWrappedVoidNone(selectionData->m_FunctionPointers.m_OnPress->m_Function);
+		}
+	}
+
+	void RuntimeUIService::OnMoveCursorInternal(Widget* currentWidget)
+	{
+		// Ensure the widget is the correct type and get it
+		KG_ASSERT(currentWidget->m_WidgetType == WidgetTypes::InputTextWidget);
+		InputTextWidget* inputTextWidget = (InputTextWidget*)currentWidget;
+
+		// Call on move cursor if available
+		if (inputTextWidget->m_OnMoveCursor)
+		{
+			Utility::CallWrappedVoidNone(inputTextWidget->m_OnMoveCursor->m_Function);
 		}
 	}
 
@@ -1011,6 +1058,36 @@ namespace Kargono::RuntimeUI
 
 		// Set the widget's active color
 		selectionData->m_DefaultBackgroundColor = color;
+	}
+
+	std::string RuntimeUIService::GetWidgetTextByIndex(WidgetID widgetID)
+	{
+		// Ensure the correct user interface is active
+		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		{
+			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
+			return "";
+		}
+
+		// Search for the indicated widget
+		Ref<Widget> widget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+
+		KG_ASSERT(widget);
+
+		SingleLineTextData* singleLineTextData = GetSingleLineTextDataFromWidget(widget.get());
+		if (singleLineTextData)
+		{
+			return singleLineTextData->m_Text;
+		}
+
+		MultiLineTextData* multiLineTextData = GetMultiLineTextDataFromWidget(widget.get());
+		if (multiLineTextData)
+		{
+			return multiLineTextData->m_Text;
+		}
+
+		KG_WARN("Provide widget does not yield a text data struct when attempting to get text");
+		return "";
 	}
 
 	bool RuntimeUIService::IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag)
@@ -1948,7 +2025,7 @@ namespace Kargono::RuntimeUI
 		widgetTranslation.z += 0.001f;
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 		float textSize{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
-		float lineAdvance = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_LineHeight;
+		float yAdvance = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_LineHeight;
 		float allLineAdvanceHeight{ 0.0f };
 		// Calculate entire text's height
 		if (m_TextData.m_CachedTextDimensions.m_LineSize.size() > 0)
@@ -1957,7 +2034,7 @@ namespace Kargono::RuntimeUI
 			//allLineAdvanceHeight += m_TextMetadata.m_LineSize[0].y;
 
 			// Add the line advance for the remaining lines
-			allLineAdvanceHeight += lineAdvance * (float)(m_TextData.m_CachedTextDimensions.m_LineSize.size() - 1);
+			allLineAdvanceHeight += yAdvance * (float)(m_TextData.m_CachedTextDimensions.m_LineSize.size() - 1);
 		}
 
 		// Call the text's rendering function
@@ -1995,7 +2072,7 @@ namespace Kargono::RuntimeUI
 			finalTranslation.z = widgetTranslation.z;
 
 			// Move the line down in the y-axis to it's correct location
-			finalTranslation.y -= iteration * textSize * lineAdvance;
+			finalTranslation.y -= iteration * textSize * yAdvance;
 
 			// Render the single line of text
 			std::string_view outputText{ m_TextData.m_Text.data() + currentBreaks.x, (size_t)(currentBreaks.y - currentBreaks.x) };
@@ -2297,7 +2374,11 @@ namespace Kargono::RuntimeUI
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
 		// Draw background
-		if (activeUI->m_HoveredWidget == this)
+		if (activeUI->m_EditingWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_EditingColor, widgetTranslation, widgetSize);
+		}
+		else if (activeUI->m_HoveredWidget == this)
 		{
 			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
 		}
@@ -2332,6 +2413,7 @@ namespace Kargono::RuntimeUI
 			}
 			Math::vec3 translationOutput = widgetTranslation;
 			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+			float ascender = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_Ascender;
 			float textSize{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
 			constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
 
@@ -2358,16 +2440,16 @@ namespace Kargono::RuntimeUI
 			translationOutput.x += cursorLocation.x * textSize;
 
 			// Set the starting y/z locations
-			translationOutput.y = widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextData.m_CachedTextDimensions.y * 0.5f) * textSize) + k_CenterAdjustmentSize;
+			translationOutput.y = widgetTranslation.y + (widgetSize.y * 0.5f) - ((ascender * 0.5f) * textSize) + k_CenterAdjustmentSize;
 
 			// Move the y-cursor up by half of its y-extent
-			translationOutput.y += m_TextData.m_CachedTextDimensions.y * textSize * 0.5f;
+			translationOutput.y += ascender * textSize * 0.5f;
 
 			// Create the widget's background rendering data
 			Math::vec4 whiteColor{ 1.0f };
 			renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f),
 				Math::vec3(translationOutput))
-				* glm::scale(Math::mat4(1.0f), Math::vec3(textSize * 0.05f, m_TextData.m_CachedTextDimensions.y * textSize, 1.0f));
+				* glm::scale(Math::mat4(1.0f), Math::vec3(textSize * 0.05f, ascender * textSize, 1.0f));
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(whiteColor,
 				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
 		}

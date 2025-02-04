@@ -105,6 +105,10 @@ namespace Kargono::Panels
 			// Edit UI's hovered color
 			m_UIHoveredColor.m_CurrentVec4 = s_UIWindow->m_EditorUI->m_HoveredColor;
 			EditorUI::EditorUIService::EditVec4(m_UIHoveredColor);
+
+			// Edit UI's editing color
+			m_UIEditingColor.m_CurrentVec4 = s_UIWindow->m_EditorUI->m_EditingColor;
+			EditorUI::EditorUIService::EditVec4(m_UIEditingColor);
 		}
 	}
 
@@ -466,6 +470,17 @@ namespace Kargono::Panels
 				onPressHandle
 			};
 			EditorUI::EditorUIService::SelectOption(m_InputTextWidgetOnPress);
+
+			// Edit selected widget's on move cursor script
+			Assets::AssetHandle onMoveCursorHandle = activeInputTextWidget.m_OnMoveCursorHandle;
+			m_InputTextWidgetOnMoveCursor.m_CurrentOption =
+			{
+				onMoveCursorHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onMoveCursorHandle)->m_ScriptName,
+				onMoveCursorHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_InputTextWidgetOnMoveCursor);
+
+
 		}
 	}
 
@@ -749,6 +764,15 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
+	void UIEditorPropertiesPanel::OnModifyUIEditingColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Update the UI's selection color
+		s_UIWindow->m_EditorUI->m_EditingColor = spec.m_CurrentVec4;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
 	bool UIEditorPropertiesPanel::ValidateActiveWindowAndWidget()
 	{
 		// Ensure active window is valid
@@ -817,6 +841,12 @@ namespace Kargono::Panels
 		m_UIHoveredColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_UIHoveredColor.m_Bounds = { 0.0f, 1.0f };
 		m_UIHoveredColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUIHoveredColor);
+
+		// Set up widget to modify the UI's Editing background color
+		m_UIEditingColor.m_Label = "Editing Color";
+		m_UIEditingColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_UIEditingColor.m_Bounds = { 0.0f, 1.0f };
+		m_UIEditingColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyUIEditingColor);
 	}
 
 	void UIEditorPropertiesPanel::InitializeWindowOptions()
@@ -1154,7 +1184,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::InitializeInputTextWidgetOptions()
 	{
 		// Set up header for input text widget options
-		m_InputTextWidgetHeader.m_Label = "InputText Widget Options";
+		m_InputTextWidgetHeader.m_Label = "Input Text Widget Options";
 		m_InputTextWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
 		m_InputTextWidgetHeader.m_Expanded = true;
 
@@ -1198,6 +1228,13 @@ namespace Kargono::Panels
 		m_InputTextWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
 		m_InputTextWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
 		m_InputTextWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForInputTextWidgetOnPress);
+
+		// Set up widget to modify the InputText widget's on press script
+		m_InputTextWidgetOnMoveCursor.m_Label = "On Move Cursor";
+		m_InputTextWidgetOnMoveCursor.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_InputTextWidgetOnMoveCursor.m_PopupAction = KG_BIND_CLASS_FN(OnOpenInputTextOnMoveCursorPopup);
+		m_InputTextWidgetOnMoveCursor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyInputTextOnMoveCursor);
+		m_InputTextWidgetOnMoveCursor.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForInputTextWidgetOnMoveCursor);
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWindowTag(EditorUI::EditTextSpec& spec)
@@ -2032,6 +2069,118 @@ namespace Kargono::Panels
 						activeInputText.m_SelectionData.m_FunctionPointers.m_OnPressHandle = scriptHandle;
 						activeInputText.m_SelectionData.m_FunctionPointers.m_OnPress = script;
 						m_InputTextWidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+
+						// Set the active editor UI as edited
+						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+					}, {});
+				} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+		// Open tooltip
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyInputTextOnMoveCursor(const EditorUI::OptionEntry& entry)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure this is the correct widget type
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::InputTextWidget)
+		{
+			KG_WARN("Invalid widget type provided when modifying widget");
+			return;
+		}
+
+		// Get the underlying widget
+		RuntimeUI::InputTextWidget* activeInputTextWidget = (RuntimeUI::InputTextWidget*)m_ActiveWidget;
+
+		// Clear the widget's script if the provided handle is empty
+		if (entry.m_Handle == Assets::EmptyHandle)
+		{
+			activeInputTextWidget->m_OnMoveCursor = nullptr;
+			activeInputTextWidget->m_OnMoveCursorHandle = Assets::EmptyHandle;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		// Set the script for the widget
+		activeInputTextWidget->m_OnMoveCursorHandle = entry.m_Handle;
+		activeInputTextWidget->m_OnMoveCursor = Assets::AssetService::GetScript(entry.m_Handle);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnOpenInputTextOnMoveCursorPopup(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+
+		// Add all compatible scripts to the select options
+		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
+		{
+			// Get script from handle
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+
+			// Ensure script is compatible with the text widget
+			if (script->m_FuncType != WrappedFuncType::Void_None)
+			{
+				continue;
+			}
+
+			// Add script to the select options
+			spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+		}
+	}
+
+	void UIEditorPropertiesPanel::OnOpenTooltipForInputTextWidgetOnMoveCursor(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+
+		// Add option to opening an existing script
+		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			m_InputTextWidgetOnMoveCursor.m_OpenPopup = true;
+		} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+		// Add option or creating a new script from this usage point
+		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+		{
+				// Open create script dialog in script editor
+				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+				{
+						// Ensure handle provides a script in the registry
+						if (!Assets::AssetService::HasScript(scriptHandle))
+						{
+							KG_WARN("Could not find script");
+							return;
+						}
+
+						// Ensure function type matches definition
+						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+						if (script->m_FuncType != WrappedFuncType::Void_None)
+						{
+							KG_WARN("Incorrect function type returned when linking script to usage point");
+							return;
+						}
+
+						// Get the active widget as its underlying widget type
+						KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::InputTextWidget);
+						RuntimeUI::InputTextWidget& activeInputTextWidget = *(RuntimeUI::InputTextWidget*)m_ActiveWidget;
+
+						// Fill the new script handle
+						activeInputTextWidget.m_OnMoveCursorHandle = scriptHandle;
+						activeInputTextWidget.m_OnMoveCursor = Assets::AssetService::GetScript(scriptHandle);
+						m_InputTextWidgetOnMoveCursor.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 
 						// Set the active editor UI as edited
 						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;

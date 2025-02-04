@@ -80,7 +80,9 @@ namespace Kargono::Assets
 		texture->SetData((void*)currentResource.Data, spec.Width * spec.Height * Utility::ImageFormatToBytes(spec.Format));
 		newFont->m_AtlasTexture = texture;
 
-		newFont->SetLineHeight(metadata.LineHeight);
+		newFont->m_LineHeight = metadata.LineHeight;
+		newFont->m_Ascender = metadata.Ascender;
+		newFont->m_Descender = metadata.Descender;
 
 		for (auto& [character, characterStruct] : metadata.Characters)
 		{
@@ -97,6 +99,8 @@ namespace Kargono::Assets
 		serializer << YAML::Key << "AtlasWidth" << YAML::Value << metadata->AtlasWidth;
 		serializer << YAML::Key << "AtlasHeight" << YAML::Value << metadata->AtlasHeight;
 		serializer << YAML::Key << "LineHeight" << YAML::Value << metadata->LineHeight;
+		serializer << YAML::Key << "Ascender" << YAML::Value << metadata->Ascender;
+		serializer << YAML::Key << "Descender" << YAML::Value << metadata->Descender;
 
 		serializer << YAML::Key << "Characters" << YAML::Value << YAML::BeginSeq;
 		for (auto& [character, characterStruct] : metadata->Characters)
@@ -249,6 +253,8 @@ namespace Kargono::Assets
 		metadata->AtlasHeight = static_cast<float>(textureSpec.Height);
 		metadata->LineHeight = lineHeight;
 		metadata->Characters = characters;
+		metadata->Ascender = (float)metrics.ascenderY;
+		metadata->Descender = (float)metrics.descenderY;
 		newAsset.Data.SpecificFileData = metadata;
 		buffer.Release();
 	}
@@ -259,10 +265,12 @@ namespace Kargono::Assets
 		fontMetaData->AtlasWidth = metadataNode["AtlasWidth"].as<float>();
 		fontMetaData->AtlasHeight = metadataNode["AtlasHeight"].as<float>();
 		fontMetaData->LineHeight = metadataNode["LineHeight"].as<float>();
+		fontMetaData->Ascender = metadataNode["Ascender"].as<float>();
+		fontMetaData->Descender = metadataNode["Descender"].as<float>();
 
-		auto characters = metadataNode["Characters"];
+		YAML::Node characters = metadataNode["Characters"];
 		auto& characterVector = fontMetaData->Characters;
-		for (auto character : characters)
+		for (YAML::Node character : characters)
 		{
 			RuntimeUI::Character newCharacter{};
 			newCharacter.Size = character["Size"].as<Math::vec2>();
