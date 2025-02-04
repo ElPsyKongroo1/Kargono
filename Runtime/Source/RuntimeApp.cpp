@@ -154,6 +154,7 @@ namespace Kargono
 			m_ViewportFramebuffer->SetAttachment(1, -1);
 
 			// Draw runtimeUI
+			RuntimeUI::RuntimeUIService::OnUpdate(ts);
 			RuntimeUI::RuntimeUIService::OnRender(EngineService::GetActiveWindow().GetWidth(), 
 				EngineService::GetActiveWindow().GetHeight());
 
@@ -361,9 +362,15 @@ namespace Kargono
 
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
-		Input::InputMapService::OnKeyPressed(event);
-		RuntimeUI::RuntimeUIService::OnKeyPressedEvent(event);
-		return false;
+		KG_PROFILE_FUNCTION();
+		bool handled = RuntimeUI::RuntimeUIService::OnKeyPressedEvent(event);
+
+		if (!handled)
+		{
+			Input::InputMapService::OnKeyPressed(event);
+		}
+
+		return handled;
 	}
 
 	bool RuntimeApp::OnMousePressed(Events::MouseButtonPressedEvent event)

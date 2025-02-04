@@ -439,7 +439,7 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	Math::vec2 Font::CalculateTextSize(const std::string& text)
+	Math::vec2 Font::CalculateTextSize(std::string_view text)
 	{
 		// Loop through all glyphs of provided text and generate the text's x and y extents
 		Math::vec2 outputSize{ 0.0f };

@@ -98,6 +98,28 @@ namespace Kargono::RuntimeUI
 		KG_VERIFY(true, "Runtime UI Engine Terminate");
 	}
 
+	void RuntimeUIService::OnUpdate(Timestep ts)
+	{
+		// Ensure a valid user interface is active and get it
+		if (!s_RuntimeUIContext->m_ActiveUI)
+		{
+			return;
+		}
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+
+
+		// Handle IBeam flipping for input text widgets
+		if (activeUI->m_EditingWidget)
+		{
+			activeUI->m_IBeamAccumulator += ts;
+			if (activeUI->m_IBeamAccumulator > activeUI->m_IBeamVisiblilityInterval)
+			{
+				activeUI->m_IBeamAccumulator -= activeUI->m_IBeamVisiblilityInterval;
+				Utility::Operations::ToggleBoolean(activeUI->m_IBeamVisible);
+			}
+		}
+	}
+
 	bool RuntimeUIService::OnKeyTypedEvent(Events::KeyTypedEvent event)
 	{
 		// Ensure a valid user interface is active
@@ -149,12 +171,33 @@ namespace Kargono::RuntimeUI
 					RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_ActiveWindow,
 						s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
 				}
+				return true;
 			}
 
 			// Handle exiting 
 			if (event.GetKeyCode() == Key::Enter)
 			{
 				ClearEditingWidget();
+				return true;
+			}
+
+			if (event.GetKeyCode() == Key::Left)
+			{
+				// Enforce lower bounds of cursor and decriment
+				if (textData->m_CursorIndex > 0)
+				{
+					textData->m_CursorIndex--;
+				}
+				return true;
+			}
+			if (event.GetKeyCode() == Key::Right)
+			{
+				// Enforce upper bounds of cursor and increment
+				if (textData->m_CursorIndex < textData->m_Text.size())
+				{
+					textData->m_CursorIndex++;
+				}
+				return true;
 			}
 		}
 
@@ -704,6 +747,12 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
+		// Ensure the indicated widget is selectable
+		if (!currentWidget->Selectable())
+		{
+			return;
+		}
+
 		// Set the pressed widget to be selected
 		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget = currentWidget;
 
@@ -809,7 +858,6 @@ namespace Kargono::RuntimeUI
 		Math::vec3 translationOutput = translation;
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 		float textSize{ (viewportWidth * 0.15f * textData.m_TextSize) * (resolution.y / resolution.x) };
-
 		constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
 
 		// Place the starting x-location of the text widget based on the provided alignment option
@@ -2220,8 +2268,61 @@ namespace Kargono::RuntimeUI
 
 		// Create the widget's text rendering data
 		widgetTranslation.z += 0.001f;
-
 		RuntimeUIService::RenderSingleLineText(m_TextData, widgetTranslation, widgetSize, viewportWidth);
+
+		// Create IBeam for current text index
+		Rendering::RendererInputSpec& renderSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
+		
+		if (RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_EditingWidget == this && 
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible)
+		{
+			//RuntimeUIService::CalculateSingleLineText();
+			Math::vec3 translationOutput = widgetTranslation;
+			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+			float textSize{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
+			constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
+
+			// Place the starting x-location of the text widget based on the provided alignment option
+			switch (m_TextData.m_TextAlignment)
+			{
+			case Constraint::Left:
+				break;
+			case Constraint::Right:
+				translationOutput.x = widgetTranslation.x + (widgetSize.x) - ((m_TextData.m_CachedTextDimensions.x) * textSize);
+				break;
+			case Constraint::Center:
+				// Adjust current line translation to be centered
+				translationOutput.x = widgetTranslation.x + (widgetSize.x * 0.5f) - ((m_TextData.m_CachedTextDimensions.x * 0.5f) * textSize);
+				break;
+			case Constraint::Bottom:
+			case Constraint::Top:
+			case Constraint::None:
+				KG_ERROR("Invalid constraint type for aligning text {}", Utility::ConstraintToString(m_TextData.m_TextAlignment));
+				break;
+			}
+
+			// Move the x-cursor to the end of the text
+			translationOutput.x += m_TextData.m_CachedTextDimensions.x * textSize;
+
+			// Set the starting y/z locations
+			translationOutput.y = widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextData.m_CachedTextDimensions.y * 0.5f) * textSize) + k_CenterAdjustmentSize;
+
+			// Move the y-cursor up by half of its y-extent
+			translationOutput.y += m_TextData.m_CachedTextDimensions.y * textSize * 0.5f;
+
+			// Create the widget's background rendering data
+			Math::vec4 whiteColor{ 1.0f };
+			renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f),
+				Math::vec3(translationOutput))
+				* glm::scale(Math::mat4(1.0f), Math::vec3(textSize * 0.05f, m_TextData.m_CachedTextDimensions.y * textSize, 1.0f));
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(whiteColor,
+				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
+		}
+		
+
+		// Submit background data to GPU
+		Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
+		
 	}
 
 }

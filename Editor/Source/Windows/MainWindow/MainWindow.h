@@ -59,7 +59,6 @@ namespace Kargono::Windows
 		bool OnNetworkEvent(Events::Event* event);
 		bool OnSceneEvent(Events::Event* event);
 		void OnUpdate(Timestep ts);
-		
 
 		void OnEditorUIRender();
 		bool OnApplicationResize(Events::ApplicationResizeEvent event);

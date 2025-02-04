@@ -86,6 +86,7 @@ namespace Kargono::Panels
 
 		// Handle drawing user interface
 		Window& currentApplication = EngineService::GetActiveWindow();
+		RuntimeUI::RuntimeUIService::OnUpdate(ts);
 		RuntimeUI::RuntimeUIService::OnRender(m_EditorCamera.GetViewProjection(), m_ViewportData.m_Width, m_ViewportData.m_Height);
 
 		HandleMouseHovering();

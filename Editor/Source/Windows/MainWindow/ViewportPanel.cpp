@@ -152,6 +152,7 @@ namespace Kargono::Panels
 			m_ViewportFramebuffer->SetAttachment(1, -1);
 
 			// Render RuntimeUI directory to viewport bounds
+			RuntimeUI::RuntimeUIService::OnUpdate(ts);
 			RuntimeUI::RuntimeUIService::OnRender(m_ViewportData.m_Width, m_ViewportData.m_Height);
 
 			// Use mouse picking buffer to handle runtime UI mouse picking

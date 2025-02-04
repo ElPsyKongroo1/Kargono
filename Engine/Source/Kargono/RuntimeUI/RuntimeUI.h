@@ -120,6 +120,7 @@ namespace Kargono::RuntimeUI
 
 		// Runtime calculated data
 		Math::vec2 m_CachedTextDimensions{};
+		size_t m_CursorIndex{ 0 };
 	};
 
 	struct MultiLineTextData
@@ -549,6 +550,9 @@ namespace Kargono::RuntimeUI
 		UserInterfaceCallbacks m_FunctionPointers{};
 
 		// Runtime Data
+		bool m_IBeamVisible{ true };
+		float m_IBeamAccumulator{ 0.0f };
+		float m_IBeamVisiblilityInterval{ 0.75f };
 		std::vector<Window*> m_DisplayedWindows{};
 		std::vector<size_t> m_DisplayedWindowIndices{};
 		Widget* m_SelectedWidget{ nullptr };
@@ -572,6 +576,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// On Event Functions
 		//==============================
+		static void OnUpdate(Timestep ts);
 		static bool OnKeyTypedEvent(Events::KeyTypedEvent event);
 		static bool OnKeyPressedEvent(Events::KeyPressedEvent event);
 
