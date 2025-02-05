@@ -922,11 +922,50 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float viewportWidth)
+	void RuntimeUIService::RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& textStartingPoint, float textScalingFactor)
+	{
+		// Call the text's rendering function
+		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->OnRenderSingleLineText(textData.m_Text, textStartingPoint, textData.m_TextColor, textScalingFactor);
+	}
+
+	void RuntimeUIService::RenderTextCursor(const SingleLineTextData& textData, const Math::vec3& textStartingPoint, float textScalingFactor)
+	{
+		Rendering::RendererInputSpec& renderSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
+
+		// Start the cursor's translation at the text's origin
+		Math::vec3 cursorTranslation{ textStartingPoint };
+
+		// Get the cursor offset relative to the text's starting point
+		Math::vec2 cursorOffset;
+		float ascender = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_Ascender;
+		if (textData.m_Text.size() == 0)
+		{
+			cursorOffset = textData.m_CachedTextDimensions;
+		}
+		else
+		{
+			cursorOffset = RuntimeUIService::CalculateSingleLineText(std::string_view(textData.m_Text.data(), textData.m_CursorIndex));
+			// Move the cursor back down by a half-extent
+			cursorTranslation.y += textScalingFactor * 0.5f * ascender;
+		}
+
+		// Move the x-cursor to the end of the text
+		cursorTranslation.x += cursorOffset.x * textScalingFactor;
+
+		// Create the widget's background rendering data
+		renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f),
+			cursorTranslation)
+			* glm::scale(Math::mat4(1.0f), Math::vec3(textScalingFactor * 0.05f, ascender * textScalingFactor, 1.0f));
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Math::vec4(1.0f),
+			"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
+
+		// Submit background data to GPU
+		Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
+	}
+
+	Math::vec3 RuntimeUIService::GetSingleLineTextStartingPosition(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float textScalingFactor)
 	{
 		Math::vec3 translationOutput = translation;
-		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
-		float textSize{ (viewportWidth * 0.15f * textData.m_TextSize) * (resolution.y / resolution.x) };
 		constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
 
 		// Place the starting x-location of the text widget based on the provided alignment option
@@ -935,11 +974,11 @@ namespace Kargono::RuntimeUI
 		case Constraint::Left:
 			break;
 		case Constraint::Right:
-			translationOutput.x = translation.x + (size.x) - ((textData.m_CachedTextDimensions.x) * textSize);
+			translationOutput.x = translation.x + (size.x) - ((textData.m_CachedTextDimensions.x) * textScalingFactor);
 			break;
 		case Constraint::Center:
 			// Adjust current line translation to be centered
-			translationOutput.x = translation.x + (size.x * 0.5f) - ((textData.m_CachedTextDimensions.x * 0.5f) * textSize);
+			translationOutput.x = translation.x + (size.x * 0.5f) - ((textData.m_CachedTextDimensions.x * 0.5f) * textScalingFactor);
 			break;
 		case Constraint::Bottom:
 		case Constraint::Top:
@@ -949,10 +988,10 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Set the starting y/z locations
-		translationOutput.y = translation.y + (size.y * 0.5f) - ((textData.m_CachedTextDimensions.y * 0.5f) * textSize) + k_CenterAdjustmentSize;
+		translationOutput.y = translation.y + (size.y * 0.5f) - ((textData.m_CachedTextDimensions.y * 0.5f) * textScalingFactor) + k_CenterAdjustmentSize;
 
-		// Call the text's rendering function
-		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->OnRenderSingleLineText(textData.m_Text, translationOutput, textData.m_TextColor, textSize);
+		// Return starting point
+		return translationOutput;
 	}
 
 	SelectionData* RuntimeUIService::GetSelectionDataFromWidget(Widget* currentWidget)
@@ -1060,13 +1099,14 @@ namespace Kargono::RuntimeUI
 		selectionData->m_DefaultBackgroundColor = color;
 	}
 
-	std::string RuntimeUIService::GetWidgetTextByIndex(WidgetID widgetID)
+	const std::string& RuntimeUIService::GetWidgetTextByIndex(WidgetID widgetID)
 	{
+		static std::string nullString{ "" };
 		// Ensure the correct user interface is active
 		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
-			return "";
+			return nullString;
 		}
 
 		// Search for the indicated widget
@@ -1087,7 +1127,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		KG_WARN("Provide widget does not yield a text data struct when attempting to get text");
-		return "";
+		return nullString;
 	}
 
 	bool RuntimeUIService::IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag)
@@ -2255,11 +2295,15 @@ namespace Kargono::RuntimeUI
 			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
 		}
 		
-		
-		// Create the widget's text rendering data
-		widgetTranslation.z += 0.001f;
+		// Calculate text starting point
+		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		float textScalingFactor{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
+		Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(m_TextData, widgetTranslation, widgetSize, textScalingFactor);
 
-		RuntimeUIService::RenderSingleLineText(m_TextData, widgetTranslation, widgetSize, viewportWidth);
+		// Create the widget's text rendering data
+		textStartingPoint.z += 0.001f;
+
+		RuntimeUIService::RenderSingleLineText(m_TextData, textStartingPoint, textScalingFactor);
 		
 	}
 
@@ -2391,72 +2435,22 @@ namespace Kargono::RuntimeUI
 			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
 		}
 
+		// Calculate text starting point
+		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		float textScalingFactor{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
+		Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(m_TextData, widgetTranslation, widgetSize, textScalingFactor);
 
-		// Create the widget's text rendering data
-		widgetTranslation.z += 0.001f;
-		RuntimeUIService::RenderSingleLineText(m_TextData, widgetTranslation, widgetSize, viewportWidth);
-
-		// Create IBeam for current text index
-		Rendering::RendererInputSpec& renderSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
+		// Render the widget's text
+		textStartingPoint.z += 0.001f;
+		RuntimeUIService::RenderSingleLineText(m_TextData, textStartingPoint, textScalingFactor);
 		
+		// Render the IBeam icon/cursor if necessary
+		textStartingPoint.z += 0.001f;
 		if (RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_EditingWidget == this && 
 			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible)
 		{
-			Math::vec2 cursorLocation;
-			if (m_TextData.m_Text.size() == m_TextData.m_CursorIndex || m_TextData.m_Text.size() == 0)
-			{
-				cursorLocation = m_TextData.m_CachedTextDimensions;
-			}
-			else
-			{
-				cursorLocation = RuntimeUIService::CalculateSingleLineText(std::string_view(m_TextData.m_Text.data(), m_TextData.m_CursorIndex));
-			}
-			Math::vec3 translationOutput = widgetTranslation;
-			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
-			float ascender = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_Ascender;
-			float textSize{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
-			constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
-
-			// Place the starting x-location of the text widget based on the provided alignment option
-			switch (m_TextData.m_TextAlignment)
-			{
-			case Constraint::Left:
-				break;
-			case Constraint::Right:
-				translationOutput.x = widgetTranslation.x + (widgetSize.x) - ((m_TextData.m_CachedTextDimensions.x) * textSize);
-				break;
-			case Constraint::Center:
-				// Adjust current line translation to be centered
-				translationOutput.x = widgetTranslation.x + (widgetSize.x * 0.5f) - ((m_TextData.m_CachedTextDimensions.x * 0.5f) * textSize);
-				break;
-			case Constraint::Bottom:
-			case Constraint::Top:
-			case Constraint::None:
-				KG_ERROR("Invalid constraint type for aligning text {}", Utility::ConstraintToString(m_TextData.m_TextAlignment));
-				break;
-			}
-
-			// Move the x-cursor to the end of the text
-			translationOutput.x += cursorLocation.x * textSize;
-
-			// Set the starting y/z locations
-			translationOutput.y = widgetTranslation.y + (widgetSize.y * 0.5f) - ((ascender * 0.5f) * textSize) + k_CenterAdjustmentSize;
-
-			// Move the y-cursor up by half of its y-extent
-			translationOutput.y += ascender * textSize * 0.5f;
-
-			// Create the widget's background rendering data
-			Math::vec4 whiteColor{ 1.0f };
-			renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f),
-				Math::vec3(translationOutput))
-				* glm::scale(Math::mat4(1.0f), Math::vec3(textSize * 0.05f, ascender * textSize, 1.0f));
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(whiteColor,
-				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
+			RuntimeUIService::RenderTextCursor(m_TextData, textStartingPoint, textScalingFactor);
 		}
-		
-
-		// Submit background data to GPU
-		Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
 		
 	}
 

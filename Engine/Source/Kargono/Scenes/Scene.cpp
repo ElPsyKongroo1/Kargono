@@ -413,7 +413,7 @@ namespace Kargono::Scenes
 		ECS::Entity entity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
 		KG_ASSERT(entity.HasComponent<ECS::TagComponent>());
-		auto& tagComponent = entity.GetComponent<ECS::TagComponent>();
+		ECS::TagComponent& tagComponent = entity.GetComponent<ECS::TagComponent>();
 		return tagComponent.Tag;
 	}
 	void SceneService::Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity)

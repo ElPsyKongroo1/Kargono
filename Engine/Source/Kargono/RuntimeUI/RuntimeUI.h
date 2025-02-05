@@ -620,7 +620,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Query Active UI
 		//==============================
-		static std::string GetWidgetTextByIndex(WidgetID widgetID);
+		static const std::string& GetWidgetTextByIndex(WidgetID widgetID);
 		static bool IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag);
 		static bool IsWidgetSelectedByIndex(WidgetID widgetID);
 		static Ref<Scripting::Script> GetActiveOnMove();
@@ -701,7 +701,9 @@ namespace Kargono::RuntimeUI
 		//==============================
 		static void RenderBackground(const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size);
 		static void RenderImage(const ImageData& imageData, const Math::vec3& translation, const Math::vec3 size);
-		static void RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float viewportWidth);
+		static void RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& textStartingPoint, float textScalingFactor);
+		static void RenderTextCursor(const SingleLineTextData& textData, const Math::vec3& renderLocation, float textScalingFactor);
+		static Math::vec3 GetSingleLineTextStartingPosition(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float textScalingFactor);
 
 
 	private:

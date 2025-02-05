@@ -646,7 +646,7 @@ namespace Kargono::Scripting
 	DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
 	// String return type
 	DefineInsertFunction(StringUInt64, const std::string&, uint64_t)
-	DefineInsertFunction(StringUIWidget, std::string, RuntimeUI::WidgetID)
+	DefineInsertFunction(StringUIWidget, const std::string&, RuntimeUI::WidgetID)
 	// Other return types
 	DefineInsertFunction(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 
@@ -827,7 +827,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
 		// String return type
 		AddImportFunctionToHeaderFile(StringUInt64, const std::string&, uint64_t)
-		AddImportFunctionToHeaderFile(StringUIWidget, std::string, RuntimeUI::WidgetID)
+		AddImportFunctionToHeaderFile(StringUIWidget, const std::string&, RuntimeUI::WidgetID)
 		// Other return types
 		AddImportFunctionToHeaderFile(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 
@@ -957,7 +957,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileFourParameters(Scenes_SetProjectComponentField, void, uint64_t, uint64_t, uint64_t, void*)
 		// User Interface
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_LoadUserInterfaceFromHandle, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_GetWidgetText, std::string, RuntimeUI::WidgetID
+		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_GetWidgetText, const std::string&, RuntimeUI::WidgetID
 		)
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_SetSelectedWidget, void, RuntimeUI::WidgetID)
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_IsWidgetSelected, bool, RuntimeUI::WidgetID)
@@ -1180,7 +1180,7 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(TagComponent_GetTag)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(StringUIWidget, std::string, RuntimeUI::WidgetID)
+		AddImportFunctionToCPPFile(StringUIWidget, const std::string&, RuntimeUI::WidgetID)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_GetWidgetText)
 		outputStream << "}\n";
