@@ -255,12 +255,21 @@ namespace Kargono::Panels
 				{
 					if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowID && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetID)
 					{
+						// Handle on press
 						RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 							m_HoveredWindowID, m_HoveredWidgetID });
 
 						// Handle start editing
 						RuntimeUI::RuntimeUIService::SetEditingWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 							m_HoveredWindowID, m_HoveredWidgetID });
+
+						// Handle specific widget on click's
+						ImVec2 mousePos = ImGui::GetMousePos();
+						mousePos.x -= m_ScreenViewportBounds[0].x;
+						mousePos.y -= m_ScreenViewportBounds[0].y;
+						Math::vec2 viewportSize = m_ScreenViewportBounds[1] - m_ScreenViewportBounds[0];
+						mousePos.y = viewportSize.y - mousePos.y;
+						RuntimeUI::RuntimeUIService::OnLeftMouseButtonPressed({ mousePos.x, mousePos.y }, &m_ViewportData);
 					}
 				}
 			}

@@ -8,6 +8,7 @@
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/Directions.h"
 #include "Kargono/RuntimeUI/RuntimeUICommon.h"
+#include "Kargono/Core/Window.h"
 
 #include <vector>
 #include <string>
@@ -582,6 +583,7 @@ namespace Kargono::RuntimeUI
 		static void OnUpdate(Timestep ts);
 		static bool OnKeyTypedEvent(Events::KeyTypedEvent event);
 		static bool OnKeyPressedEvent(Events::KeyPressedEvent event);
+		static void OnLeftMouseButtonPressed(Math::vec2 mousePosition, ViewportData* viewportData);
 
 		//==============================
 		// Modify Active UI
@@ -677,6 +679,7 @@ namespace Kargono::RuntimeUI
 		static void RevalidateDisplayedWindows();
 		static void CalculateSingleLineText(SingleLineTextData& textData);
 		static Math::vec2 CalculateSingleLineText(std::string_view textData);
+		static size_t CalculateCursorIndexFromMousePosition(SingleLineTextData& textData, float textStartingPosition, float mouseXPosition, float textScalingFactor);
 		static void CalculateMultiLineText(MultiLineTextData& textData, const Math::vec3& widgetSize, float textSize);
 
 		//==============================

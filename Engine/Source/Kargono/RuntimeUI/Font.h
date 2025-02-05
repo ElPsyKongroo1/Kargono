@@ -78,8 +78,9 @@ namespace Kargono::RuntimeUI
 		//==============================
 		void OnRenderMultiLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f, int maxLineWidth = 0);
 		void OnRenderSingleLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f);
-		Math::vec2 CalculateTextSize(std::string_view text);
-		void CalculateTextMetadata(const std::string& text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth = 0);
+		Math::vec2 CalculateSingleLineTextSize(std::string_view text);
+		size_t CalculateIndexFromMousePosition(std::string_view text, float textStartPoint, float mouseXPosition, float textScalingFactor);
+		void CalculateMultiLineTextMetadata(const std::string& text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth = 0);
 
 	public:
 		//==============================

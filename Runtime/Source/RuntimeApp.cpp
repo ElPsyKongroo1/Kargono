@@ -389,6 +389,13 @@ namespace Kargono
 			// Handle start editing
 			RuntimeUI::RuntimeUIService::SetEditingWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 				m_HoveredWindowID, m_HoveredWidgetID });
+
+			// Handle specific widget on click's
+			Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+			Math::vec2 mousePos = Input::InputService::GetMousePosition();
+			// Make sure the y-position is oriented correctly
+			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
+			RuntimeUI::RuntimeUIService::OnLeftMouseButtonPressed({ mousePos.x, mousePos.y }, &activeViewport);
 		}
 		return false;
 	}

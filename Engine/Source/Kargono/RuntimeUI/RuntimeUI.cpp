@@ -230,6 +230,41 @@ namespace Kargono::RuntimeUI
 		return false;
 	}
 
+	void RuntimeUIService::OnLeftMouseButtonPressed(Math::vec2 mousePosition, ViewportData* viewportData)
+	{
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+
+		// Handle mouse click for the editing widget
+		if (activeUI->m_EditingWidget)
+		{
+			SingleLineTextData* textData = GetSingleLineTextDataFromWidget(activeUI->m_EditingWidget);
+			KG_ASSERT(textData);
+
+			// Get window size and translation
+			Math::vec3 windowTranslation = activeUI->m_ActiveWindow->CalculateWorldPosition(
+				viewportData->m_Width, viewportData->m_Height);
+			Math::vec3 windowSize = activeUI->m_ActiveWindow->CalculateSize(
+				viewportData->m_Width, viewportData->m_Height);
+
+			// Get the widget size and translation
+			Math::vec3 widgetTranslation = activeUI->m_EditingWidget->CalculateWorldPosition(
+				windowTranslation, windowSize);
+			Math::vec3 widgetSize = activeUI->m_EditingWidget->CalculateWidgetSize(windowSize);
+
+			// Get the widget's text's starting position
+			// Calculate text starting point
+			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+			float textScalingFactor{ (viewportData->m_Width * 0.15f * textData->m_TextSize) * (resolution.y / resolution.x) };
+			Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(*textData, widgetTranslation, widgetSize, textScalingFactor);
+
+			// Find new cursor location
+			size_t newCursorIndex = CalculateCursorIndexFromMousePosition(*textData, textStartingPoint.x, mousePosition.x, textScalingFactor);
+
+			// Update the cursor
+			textData->m_CursorIndex = newCursorIndex;
+		}
+	}
+
 	void RuntimeUIService::SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle)
 	{
 		if (!userInterface || uiHandle == Assets::EmptyHandle)
@@ -575,12 +610,12 @@ namespace Kargono::RuntimeUI
 		// Calculate the text size of the widget using the default font if the active user interface is not set
 		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
 		{
-			textData.m_CachedTextDimensions = RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextSize(textData.m_Text);
+			textData.m_CachedTextDimensions = RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateSingleLineTextSize(textData.m_Text);
 			return;
 		}
 
 		// Calculate the text size of the widget using the active user interface font
-		textData.m_CachedTextDimensions= RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextSize(textData.m_Text);
+		textData.m_CachedTextDimensions= RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateSingleLineTextSize(textData.m_Text);
 	}
 
 	Math::vec2 RuntimeUIService::CalculateSingleLineText(std::string_view text)
@@ -588,11 +623,25 @@ namespace Kargono::RuntimeUI
 		// Calculate the text size of the widget using the default font if the active user interface is not set
 		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
 		{
-			return RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextSize(text);
+			return RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateSingleLineTextSize(text);
 		}
 
 		// Calculate the text size of the widget using the active user interface font
-		return RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextSize(text);
+		return RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateSingleLineTextSize(text);
+	}
+
+	size_t RuntimeUIService::CalculateCursorIndexFromMousePosition(SingleLineTextData& textData, float textStartingPosition, float mouseXPosition, float textScalingFactor)
+	{
+		// Calculate the text size of the widget using the default font if the active user interface is not set
+		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
+		{
+			return RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateIndexFromMousePosition(
+				textData.m_Text, textStartingPosition, mouseXPosition, textScalingFactor);
+		}
+
+		// Calculate the text size of the widget using the active user interface font
+		return RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateIndexFromMousePosition(
+			textData.m_Text, textStartingPosition, mouseXPosition, textScalingFactor);
 	}
 
 	void RuntimeUIService::CalculateMultiLineText(MultiLineTextData& textData, const Math::vec3& widgetSize, float textSize)
@@ -602,11 +651,11 @@ namespace Kargono::RuntimeUI
 		{
 			if (textData.m_TextWrapped)
 			{
-				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize, (int)widgetSize.x);
+				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize, (int)widgetSize.x);
 			}
 			else
 			{
-				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize);
+				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize);
 			}
 
 			return;
@@ -615,11 +664,11 @@ namespace Kargono::RuntimeUI
 		// Calculate the text size of the widget using the active user interface font
 		if (textData.m_TextWrapped)
 		{
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize, (int)widgetSize.x);
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize, (int)widgetSize.x);
 		}
 		else
 		{
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize);
+			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize);
 		}
 	}
 
@@ -938,7 +987,7 @@ namespace Kargono::RuntimeUI
 		// Get the cursor offset relative to the text's starting point
 		Math::vec2 cursorOffset;
 		float ascender = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_Ascender;
-		if (textData.m_Text.size() == 0)
+		if (textData.m_Text.size() == 0 || textData.m_CachedTextDimensions.y < 0.001f)
 		{
 			cursorOffset = textData.m_CachedTextDimensions;
 		}

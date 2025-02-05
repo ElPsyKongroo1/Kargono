@@ -440,7 +440,7 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	Math::vec2 Font::CalculateTextSize(std::string_view text)
+	Math::vec2 Font::CalculateSingleLineTextSize(std::string_view text)
 	{
 		// Loop through all glyphs of provided text and generate the text's x and y extents
 		Math::vec2 outputSize{ 0.0f };
@@ -469,7 +469,34 @@ namespace Kargono::RuntimeUI
 		//outputSize.y /= 45.5f; // TODO: FIX THIS MAGIC NUMBER PLEASE
 		return outputSize;
 	}
-	void Font::CalculateTextMetadata(const std::string& text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth)
+	size_t Font::CalculateIndexFromMousePosition(std::string_view text, float textStartPoint, float mouseXPosition, float textScalingFactor)
+	{
+		// Loop through all glyphs of provided text and generate the text's x and y extents
+		float accumulatedXPosition{ textStartPoint };
+		std::string::const_iterator currentCharacter;
+		for (size_t characterIndex = 0; characterIndex < text.size(); characterIndex++)
+		{
+			// Early out if glyph does not exist
+			if (!m_Characters.contains(text[characterIndex]))
+			{
+				continue;
+			}
+			Character glyph = m_Characters[text[characterIndex]];
+
+			// Get the total x-axis length of the text
+			accumulatedXPosition += glyph.Advance * textScalingFactor;
+
+			// Check if the (middle position of the this glyph) surpases the mouse position
+			if (accumulatedXPosition - glyph.Advance * 0.5f * textScalingFactor > mouseXPosition)
+			{
+				return characterIndex;
+			}
+		}
+
+		// Return the text's size if no position is identified
+		return text.size();
+	}
+	void Font::CalculateMultiLineTextMetadata(const std::string& text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth)
 	{
 		// Initialize the active location where text is being rendered
 		float initialXLocation{ 0.0f };
