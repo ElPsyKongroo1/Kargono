@@ -2582,4 +2582,8 @@ namespace Kargono::RuntimeUI
 		
 	}
 
+	void DropDownWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	{
+	}
+
 }

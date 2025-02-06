@@ -55,7 +55,7 @@ namespace Kargono::RuntimeUI
 	enum class WidgetTypes
 	{
 		None = 0, TextWidget, ButtonWidget, CheckboxWidget, 
-		ComboWidget, PopupWidget, ImageWidget, ImageButtonWidget,
+		DropDownWidget, PopupWidget, ImageWidget, ImageButtonWidget,
 		InputTextWidget, SliderWidget
 	};
 
@@ -338,10 +338,15 @@ namespace Kargono::RuntimeUI
 		// Rendering Methods
 		//============================
 		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
-		virtual bool Selectable()
+
+		//============================
+		// Query State
+		//============================
+		virtual bool Selectable() override
 		{
 			return m_SelectionData.m_Selectable;
 		}
+
 		//============================
 		// Public Fields
 		//============================
@@ -352,25 +357,43 @@ namespace Kargono::RuntimeUI
 	};
 
 	//============================
-	// Combo Widget Class (Derived)
+	// Drop Down Widget Class (Derived)
 	//============================
-	class ComboWidget : public Widget
+	class DropDownWidget : public Widget
 	{
 	public:
 		//============================
 		// Constructors/Destructors
 		//============================
-		ComboWidget()
+		DropDownWidget()
 			: Widget()
 		{
-			m_WidgetType = WidgetTypes::ComboWidget;
+			m_WidgetType = WidgetTypes::DropDownWidget;
 		}
-		virtual ~ComboWidget() override = default;
+		virtual ~DropDownWidget() override = default;
 	public:
 		//============================
 		// Rendering Methods
 		//============================
 		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+
+		//============================
+		// Query State
+		//============================
+		virtual bool Selectable() override
+		{
+			return m_SelectionData.m_Selectable;
+		}
+	public:
+		//============================
+		// Public Fields
+		//============================
+		SelectionData m_SelectionData;
+		std::vector<SingleLineTextData> m_DropDownOptions;
+		Math::vec4 m_DropDownBackground{ 1.0f };
+		
+		// Runtime Values
+		size_t m_CurrentOption{ 0 };
 	};
 
 	//============================
@@ -771,20 +794,21 @@ namespace Kargono::RuntimeUI
 		friend class CheckboxWidget;
 		friend class InputTextWidget;
 		friend class SliderWidget;
+		friend class DropDownWidget;
 		friend class Window;
 	};
 }
 
 namespace Kargono::Utility
 {
-	static std::string WidgetTypeToString(RuntimeUI::WidgetTypes widgetType)
+	static inline std::string WidgetTypeToString(RuntimeUI::WidgetTypes widgetType)
 	{
 		switch (widgetType)
 		{
 			case RuntimeUI::WidgetTypes::TextWidget: return "TextWidget";
 			case RuntimeUI::WidgetTypes::ButtonWidget: return "ButtonWidget";
 			case RuntimeUI::WidgetTypes::CheckboxWidget: return "CheckboxWidget";
-			case RuntimeUI::WidgetTypes::ComboWidget: return "ComboWidget";
+			case RuntimeUI::WidgetTypes::DropDownWidget: return "DropDownWidget";
 			case RuntimeUI::WidgetTypes::PopupWidget: return "PopupWidget";
 			case RuntimeUI::WidgetTypes::ImageWidget: return "ImageWidget";
 			case RuntimeUI::WidgetTypes::ImageButtonWidget: return "ImageButtonWidget";
@@ -799,12 +823,34 @@ namespace Kargono::Utility
 		}
 	}
 
-	static RuntimeUI::WidgetTypes StringToWidgetType(const std::string& widgetName)
+	static inline std::string WidgetTypeToDisplayString(RuntimeUI::WidgetTypes widgetType)
+	{
+		switch (widgetType)
+		{
+		case RuntimeUI::WidgetTypes::TextWidget: return "Text Widget";
+		case RuntimeUI::WidgetTypes::ButtonWidget: return "Button Widget";
+		case RuntimeUI::WidgetTypes::CheckboxWidget: return "Checkbox Widget";
+		case RuntimeUI::WidgetTypes::DropDownWidget: return "Drop-Down Widget";
+		case RuntimeUI::WidgetTypes::PopupWidget: return "Popup Widget";
+		case RuntimeUI::WidgetTypes::ImageWidget: return "Image Widget";
+		case RuntimeUI::WidgetTypes::ImageButtonWidget: return "Image-Button Widget";
+		case RuntimeUI::WidgetTypes::InputTextWidget: return "Input Text Widget";
+		case RuntimeUI::WidgetTypes::SliderWidget: return "Slider Widget";
+		case RuntimeUI::WidgetTypes::None: return "None";
+		default:
+		{
+			KG_ERROR("Invalid Widget Type at WidgetTypeToString");
+			return "None";
+		}
+		}
+	}
+
+	static inline RuntimeUI::WidgetTypes StringToWidgetType(const std::string& widgetName)
 	{
 		if (widgetName == "TextWidget") { return RuntimeUI::WidgetTypes::TextWidget; }
 		if (widgetName == "ButtonWidget") { return RuntimeUI::WidgetTypes::ButtonWidget; }
 		if (widgetName == "CheckboxWidget") { return RuntimeUI::WidgetTypes::CheckboxWidget; }
-		if (widgetName == "ComboWidget") { return RuntimeUI::WidgetTypes::ComboWidget; }
+		if (widgetName == "DropDownWidget") { return RuntimeUI::WidgetTypes::DropDownWidget; }
 		if (widgetName == "PopupWidget") { return RuntimeUI::WidgetTypes::PopupWidget; }
 		if (widgetName == "ImageWidget") { return RuntimeUI::WidgetTypes::ImageWidget; }
 		if (widgetName == "ImageButtonWidget") { return RuntimeUI::WidgetTypes::ImageButtonWidget; }
@@ -816,7 +862,7 @@ namespace Kargono::Utility
 		return RuntimeUI::WidgetTypes::None;
 	}
 
-	static std::string PixelOrPercentToString(RuntimeUI::PixelOrPercent type)
+	static inline std::string PixelOrPercentToString(RuntimeUI::PixelOrPercent type)
 	{
 		switch (type)
 		{
@@ -830,7 +876,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	static RuntimeUI::PixelOrPercent StringToPixelOrPercent(const std::string& type)
+	static inline RuntimeUI::PixelOrPercent StringToPixelOrPercent(const std::string& type)
 	{
 		if (type == "Pixel") { return RuntimeUI::PixelOrPercent::Pixel; }
 		if (type == "Percent") { return RuntimeUI::PixelOrPercent::Percent; }
@@ -839,7 +885,7 @@ namespace Kargono::Utility
 		return RuntimeUI::PixelOrPercent::Pixel;
 	}
 
-	static std::string RelativeOrAbsoluteToString(RuntimeUI::RelativeOrAbsolute type)
+	static inline std::string RelativeOrAbsoluteToString(RuntimeUI::RelativeOrAbsolute type)
 	{
 		switch (type)
 		{
@@ -853,7 +899,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	static RuntimeUI::RelativeOrAbsolute StringToRelativeOrAbsolute(const std::string& type)
+	static inline RuntimeUI::RelativeOrAbsolute StringToRelativeOrAbsolute(const std::string& type)
 	{
 		if (type == "Relative") { return RuntimeUI::RelativeOrAbsolute::Relative; }
 		if (type == "Absolute") { return RuntimeUI::RelativeOrAbsolute::Absolute; }
@@ -862,7 +908,7 @@ namespace Kargono::Utility
 		return RuntimeUI::RelativeOrAbsolute::Absolute;
 	}
 
-	static std::string ConstraintToString(RuntimeUI::Constraint type)
+	static inline std::string ConstraintToString(RuntimeUI::Constraint type)
 	{
 		switch (type)
 		{
@@ -880,7 +926,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	static RuntimeUI::Constraint StringToConstraint(const std::string& type)
+	static inline RuntimeUI::Constraint StringToConstraint(const std::string& type)
 	{
 		if (type == "None") { return RuntimeUI::Constraint::None; }
 		if (type == "Top") { return RuntimeUI::Constraint::Top; }

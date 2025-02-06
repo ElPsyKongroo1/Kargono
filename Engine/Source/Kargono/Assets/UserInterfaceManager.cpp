@@ -183,7 +183,7 @@ namespace Kargono::Assets
 				}
 
 				case RuntimeUI::WidgetTypes::SliderWidget:
-
+				{
 					RuntimeUI::SliderWidget* sliderWidget = static_cast<RuntimeUI::SliderWidget*>(widget.get());
 					out << YAML::Key << "SliderWidget" << YAML::Value;
 					out << YAML::BeginMap; // Begin SliderWidget Map
@@ -198,6 +198,34 @@ namespace Kargono::Assets
 					out << YAML::EndMap; // End SliderWidget Map
 					break;
 				}
+
+				case RuntimeUI::WidgetTypes::DropDownWidget:
+				{
+					RuntimeUI::DropDownWidget* dropDownWidget = static_cast<RuntimeUI::DropDownWidget*>(widget.get());
+					out << YAML::Key << "DropDownWidget" << YAML::Value;
+					out << YAML::BeginMap; // Begin DropDownWidget Map
+					// Save selection fields
+					SerializeSelectionData(out, dropDownWidget->m_SelectionData);
+
+					// Serialize list of options
+					out << YAML::Key << "DropDownOptions" << YAML::Value;
+					out << YAML::BeginSeq; // Begin Option Sequence
+					for (RuntimeUI::SingleLineTextData& currentOption : dropDownWidget->m_DropDownOptions)
+					{
+						out << YAML::BeginMap; // Begin DropDown Option Map
+						SerializeSingleLineTextData(out, currentOption);
+						out << YAML::EndMap; // End DropDown Option Map
+					}
+					out << YAML::EndSeq; // End Option Sequence
+
+					// Save drop down color
+					out << YAML::Key << "DropDownBackground" << YAML::Value << dropDownWidget->m_DropDownBackground;
+
+					out << YAML::EndMap; // End DropDownWidget Map
+					break;
+				}
+				}
+
 
 				out << YAML::EndMap; // End Widget Map
 			}
@@ -476,6 +504,37 @@ namespace Kargono::Assets
 								}
 								sliderWidget->m_OnMoveSlider = onPressScript;
 							}
+							break;
+						}
+
+						case RuntimeUI::WidgetTypes::DropDownWidget:
+						{
+							specificWidget = widget["DropDownWidget"];
+							newWidget = CreateRef<RuntimeUI::DropDownWidget>();
+							newWidget->m_WidgetType = widgetType;
+							RuntimeUI::DropDownWidget* dropDownWidget = static_cast<RuntimeUI::DropDownWidget*>(newWidget.get());
+							// Get selection data
+							DeserializeSelectionData(dropDownWidget->m_SelectionData, specificWidget);
+
+							// Get slider specific fields
+							dropDownWidget->m_DropDownBackground = specificWidget["DropDownBackground"].as<Math::vec4>();
+
+							// Get slider widget specific function pointers
+							/*dropDownWidget->m_OnMoveSliderHandle = specificWidget["OnMoveSlider"].as<uint64_t>();
+							if (dropDownWidget->m_OnMoveSliderHandle == Assets::EmptyHandle)
+							{
+								dropDownWidget->m_OnMoveSlider = nullptr;
+							}
+							else
+							{
+								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(dropDownWidget->m_OnMoveSliderHandle);
+								if (!onPressScript)
+								{
+									KG_WARN("Unable to locate on move slider Script!");
+									return nullptr;
+								}
+								dropDownWidget->m_OnMoveSlider = onPressScript;
+							}*/
 							break;
 						}
 						
