@@ -25,6 +25,7 @@ namespace Kargono::Panels
 		InitializeImageWidgetOptions();
 		InitializeCheckboxWidgetOptions();
 		InitializeInputTextWidgetOptions();
+		InitializeSliderWidgetOptions();
 		InitializeWidgetLocationOptions();
 	}
 	void UIEditorPropertiesPanel::OnEditorUIRender()
@@ -479,8 +480,55 @@ namespace Kargono::Panels
 				onMoveCursorHandle
 			};
 			EditorUI::EditorUIService::SelectOption(m_InputTextWidgetOnMoveCursor);
+		}
+	}
 
+	void UIEditorPropertiesPanel::DrawSliderWidgetOptions()
+	{
+		// Draw main header for Slider widget options
+		EditorUI::EditorUIService::CollapsingHeader(m_SliderWidgetHeader);
+		if (m_SliderWidgetHeader.m_Expanded)
+		{
+			// Draw options to edit selected Slider widget
+			RuntimeUI::SliderWidget& activeSliderWidget = *(RuntimeUI::SliderWidget*)m_ActiveWidget;
 
+			// Edit selected text widget's wrapped alignment
+			m_SliderWidgetSelectable.m_CurrentBoolean = activeSliderWidget.m_SelectionData.m_Selectable;
+			EditorUI::EditorUIService::Checkbox(m_SliderWidgetSelectable);
+
+			// Edit selected widget's size relative to its window
+			m_SliderWidgetBounds.m_CurrentVec2 = activeSliderWidget.m_Bounds;
+			EditorUI::EditorUIService::EditVec2(m_SliderWidgetBounds);
+
+			// Edit selected widget's Slider color
+			m_SliderWidgetSliderColor.m_CurrentVec4 = activeSliderWidget.m_SliderColor;
+			EditorUI::EditorUIService::EditVec4(m_SliderWidgetSliderColor);
+
+			// Edit selected widget's Line color
+			m_SliderWidgetLineColor.m_CurrentVec4 = activeSliderWidget.m_LineColor;
+			EditorUI::EditorUIService::EditVec4(m_SliderWidgetLineColor);
+
+			// Edit selected widget's background color
+			m_SliderWidgetBackgroundColor.m_CurrentVec4 = activeSliderWidget.m_SelectionData.m_DefaultBackgroundColor;
+			EditorUI::EditorUIService::EditVec4(m_SliderWidgetBackgroundColor);
+
+			// Edit selected widget's on press script
+			Assets::AssetHandle onPressHandle = activeSliderWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
+			m_SliderWidgetOnPress.m_CurrentOption =
+			{
+				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName,
+				onPressHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_SliderWidgetOnPress);
+
+			// Edit selected widget's on move slider script
+			Assets::AssetHandle onMoveSliderHandle = activeSliderWidget.m_OnMoveSliderHandle;
+			m_SliderWidgetOnMoveSlider.m_CurrentOption =
+			{
+				onMoveSliderHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onMoveSliderHandle)->m_ScriptName,
+				onMoveSliderHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_SliderWidgetOnMoveSlider);
 		}
 	}
 
@@ -505,6 +553,9 @@ namespace Kargono::Panels
 			break;
 		case RuntimeUI::WidgetTypes::InputTextWidget:
 			DrawInputTextWidgetOptions();
+			break;
+		case RuntimeUI::WidgetTypes::SliderWidget:
+			DrawSliderWidgetOptions();
 			break;
 		default:
 			KG_ERROR("Invalid widget type attempted to be drawn");
@@ -1237,6 +1288,57 @@ namespace Kargono::Panels
 		m_InputTextWidgetOnMoveCursor.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForInputTextWidgetOnMoveCursor);
 	}
 
+	void UIEditorPropertiesPanel::InitializeSliderWidgetOptions()
+	{
+		// Set up header for Slider widget options
+		m_SliderWidgetHeader.m_Label = "Slider Widget Options";
+		m_SliderWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_SliderWidgetHeader.m_Expanded = true;
+
+		// Set up widget to modify the text widget's text alignment
+		m_SliderWidgetSelectable.m_Label = "Selectable";
+		m_SliderWidgetSelectable.m_Flags |= EditorUI::Checkbox_Indented;
+		m_SliderWidgetSelectable.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataSelectable);
+
+		// Set up widget to modify the widget's size
+		m_SliderWidgetBounds.m_Label = "Bounds";
+		m_SliderWidgetBounds.m_Flags |= EditorUI::EditVec2_Indented;
+		m_SliderWidgetBounds.m_Bounds = { 0, 10'000 };
+		m_SliderWidgetBounds.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySliderWidgetBounds);
+
+		// Set up widget to modify the Slider widget's color
+		m_SliderWidgetSliderColor.m_Label = "Slider Color";
+		m_SliderWidgetSliderColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_SliderWidgetSliderColor.m_Bounds = { 0.0f, 1.0f };
+		m_SliderWidgetSliderColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySliderWidgetSliderColor);
+
+		// Set up widget to modify the Slider widget's color
+		m_SliderWidgetLineColor.m_Label = "Line Color";
+		m_SliderWidgetLineColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_SliderWidgetLineColor.m_Bounds = { 0.0f, 1.0f };
+		m_SliderWidgetLineColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySliderWidgetLineColor);
+
+		// Set up widget to modify the Slider widget's background color
+		m_SliderWidgetBackgroundColor.m_Label = "Background Color";
+		m_SliderWidgetBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_SliderWidgetBackgroundColor.m_Bounds = { 0.0f, 1.0f };
+		m_SliderWidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataBackgroundColor);
+
+		// Set up widget to modify the Slider widget's on press script
+		m_SliderWidgetOnPress.m_Label = "On Press";
+		m_SliderWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_SliderWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
+		m_SliderWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
+		m_SliderWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForSliderWidgetOnPress);
+
+		// Set up widget to modify the Slider widget's on press script
+		m_SliderWidgetOnMoveSlider.m_Label = "On Move Slider";
+		m_SliderWidgetOnMoveSlider.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_SliderWidgetOnMoveSlider.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSliderWidgetOnMoveSliderPopup);
+		m_SliderWidgetOnMoveSlider.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySliderWidgetOnMoveSlider);
+		m_SliderWidgetOnMoveSlider.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForSliderWidgetOnMoveSlider);
+	}
+
 	void UIEditorPropertiesPanel::OnModifyWindowTag(EditorUI::EditTextSpec& spec)
 	{
 		// Ensure active window is valid
@@ -1296,6 +1398,9 @@ namespace Kargono::Panels
 				break;
 			case RuntimeUI::WidgetTypes::InputTextWidget:
 				spec.AddToOptions("Input Text Widget", widget->m_Tag, iteration);
+				break;
+			case RuntimeUI::WidgetTypes::SliderWidget:
+				spec.AddToOptions("Slider Widget", widget->m_Tag, iteration);
 				break;
 			default:
 				KG_ERROR("Invalid widge type provided to UIEditorWindow");
@@ -2181,6 +2286,233 @@ namespace Kargono::Panels
 						activeInputTextWidget.m_OnMoveCursorHandle = scriptHandle;
 						activeInputTextWidget.m_OnMoveCursor = Assets::AssetService::GetScript(scriptHandle);
 						m_InputTextWidgetOnMoveCursor.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+
+						// Set the active editor UI as edited
+						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+					}, {});
+				} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+		// Open tooltip
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnOpenTooltipForSliderWidgetOnPress(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+
+		// Add option to opening an existing script
+		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			m_SliderWidgetOnPress.m_OpenPopup = true;
+		} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+		// Add option or creating a new script from this usage point
+		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			// Open create script dialog in script editor
+			s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
+			{
+				// Ensure handle provides a script in the registry
+				if (!Assets::AssetService::HasScript(scriptHandle))
+				{
+					KG_WARN("Could not find script");
+					return;
+				}
+
+				// Ensure function type matches definition
+				Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+				if (script->m_FuncType != WrappedFuncType::Void_None)
+				{
+					KG_WARN("Incorrect function type returned when linking script to usage point");
+					return;
+				}
+
+				// Get the active widget as a button widget
+				KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::SliderWidget);
+				RuntimeUI::SliderWidget& activeSlider = *(RuntimeUI::SliderWidget*)m_ActiveWidget;
+
+				// Fill the new script handle
+				activeSlider.m_SelectionData.m_FunctionPointers.m_OnPressHandle = scriptHandle;
+				activeSlider.m_SelectionData.m_FunctionPointers.m_OnPress = script;
+				m_SliderWidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+
+				// Set the active editor UI as edited
+				s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+				}, {});
+			} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+		// Open tooltip
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifySliderWidgetBounds(EditorUI::EditVec2Spec& spec)
+	{
+		// Ensure active window is valid
+		if (!ValidateActiveWindow())
+		{
+			return;
+		}
+
+		// Ensure we have the correct widget type
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::SliderWidget);
+
+		// Get the underlying widget type
+		RuntimeUI::SliderWidget* activeSlider = (RuntimeUI::SliderWidget*)m_ActiveWidget;
+
+		// Update the widget value
+		activeSlider->m_Bounds = spec.m_CurrentVec2;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifySliderWidgetSliderColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Ensure active window is valid
+		if (!ValidateActiveWindow())
+		{
+			return;
+		}
+
+		// Ensure we have the correct widget type
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::SliderWidget);
+
+		// Get the underlying widget type
+		RuntimeUI::SliderWidget* activeSlider = (RuntimeUI::SliderWidget*)m_ActiveWidget;
+
+		// Update the widget value
+		activeSlider->m_SliderColor = spec.m_CurrentVec4;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifySliderWidgetLineColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Ensure active window is valid
+		if (!ValidateActiveWindow())
+		{
+			return;
+		}
+
+		// Ensure we have the correct widget type
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::SliderWidget);
+
+		// Get the underlying widget type
+		RuntimeUI::SliderWidget* activeSlider = (RuntimeUI::SliderWidget*)m_ActiveWidget;
+
+		// Update the widget value
+		activeSlider->m_LineColor = spec.m_CurrentVec4;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifySliderWidgetOnMoveSlider(const EditorUI::OptionEntry& entry)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure this is the correct widget type
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::SliderWidget)
+		{
+			KG_WARN("Invalid widget type provided when modifying widget");
+			return;
+		}
+
+		// Get the underlying widget
+		RuntimeUI::SliderWidget* activeSliderWidget = (RuntimeUI::SliderWidget*)m_ActiveWidget;
+
+		// Clear the widget's script if the provided handle is empty
+		if (entry.m_Handle == Assets::EmptyHandle)
+		{
+			activeSliderWidget->m_OnMoveSlider = nullptr;
+			activeSliderWidget->m_OnMoveSliderHandle = Assets::EmptyHandle;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		// Set the script for the widget
+		activeSliderWidget->m_OnMoveSliderHandle = entry.m_Handle;
+		activeSliderWidget->m_OnMoveSlider = Assets::AssetService::GetScript(entry.m_Handle);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnOpenSliderWidgetOnMoveSliderPopup(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+
+		// Add all compatible scripts to the select options
+		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
+		{
+			// Get script from handle
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+
+			// Ensure script is compatible with the text widget
+			if (script->m_FuncType != WrappedFuncType::Void_Float)
+			{
+				continue;
+			}
+
+			// Add script to the select options
+			spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+		}
+	}
+
+	void UIEditorPropertiesPanel::OnOpenTooltipForSliderWidgetOnMoveSlider(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+
+		// Add option to opening an existing script
+		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			m_SliderWidgetOnMoveSlider.m_OpenPopup = true;
+		} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+		// Add option or creating a new script from this usage point
+		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+		{
+				// Open create script dialog in script editor
+				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Float, [&](Assets::AssetHandle scriptHandle)
+				{
+						// Ensure handle provides a script in the registry
+						if (!Assets::AssetService::HasScript(scriptHandle))
+						{
+							KG_WARN("Could not find script");
+							return;
+						}
+
+						// Ensure function type matches definition
+						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+						if (script->m_FuncType != WrappedFuncType::Void_Float)
+						{
+							KG_WARN("Incorrect function type returned when linking script to usage point");
+							return;
+						}
+
+						// Get the active widget as its underlying widget type
+						KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::SliderWidget);
+						RuntimeUI::SliderWidget& activeSliderWidget = *(RuntimeUI::SliderWidget*)m_ActiveWidget;
+
+						// Fill the new script handle
+						activeSliderWidget.m_OnMoveSliderHandle = scriptHandle;
+						activeSliderWidget.m_OnMoveSlider = Assets::AssetService::GetScript(scriptHandle);
+						m_SliderWidgetOnMoveSlider.m_CurrentOption = { script->m_ScriptName, scriptHandle };
 
 						// Set the active editor UI as edited
 						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;

@@ -181,6 +181,22 @@ namespace Kargono::Assets
 					out << YAML::EndMap; // End InputTextWidget Map
 					break;
 				}
+
+				case RuntimeUI::WidgetTypes::SliderWidget:
+
+					RuntimeUI::SliderWidget* sliderWidget = static_cast<RuntimeUI::SliderWidget*>(widget.get());
+					out << YAML::Key << "SliderWidget" << YAML::Value;
+					out << YAML::BeginMap; // Begin SliderWidget Map
+					// Save selection fields
+					SerializeSelectionData(out, sliderWidget->m_SelectionData);
+					// Save slider unique function pointers
+					out << YAML::Key << "OnMoveSlider" << YAML::Value << (uint64_t)sliderWidget->m_OnMoveSliderHandle;
+					out << YAML::Key << "Bounds" << YAML::Value << sliderWidget->m_Bounds;
+					out << YAML::Key << "SliderColor" << YAML::Value << sliderWidget->m_SliderColor;
+					out << YAML::Key << "LineColor" << YAML::Value << sliderWidget->m_LineColor;
+
+					out << YAML::EndMap; // End SliderWidget Map
+					break;
 				}
 
 				out << YAML::EndMap; // End Widget Map
@@ -429,6 +445,41 @@ namespace Kargono::Assets
 							}
 							break;
 						}
+
+						case RuntimeUI::WidgetTypes::SliderWidget:
+						{
+							specificWidget = widget["SliderWidget"];
+							newWidget = CreateRef<RuntimeUI::SliderWidget>();
+							newWidget->m_WidgetType = widgetType;
+							RuntimeUI::SliderWidget* sliderWidget = static_cast<RuntimeUI::SliderWidget*>(newWidget.get());
+							// Get selection data
+							DeserializeSelectionData(sliderWidget->m_SelectionData, specificWidget);
+
+							// Get slider specific fields
+							sliderWidget->m_Bounds = specificWidget["Bounds"].as<Math::vec2>();
+							sliderWidget->m_SliderColor = specificWidget["SliderColor"].as<Math::vec4>();
+							sliderWidget->m_LineColor = specificWidget["LineColor"].as<Math::vec4>();
+
+							// Get slider widget specific function pointers
+							sliderWidget->m_OnMoveSliderHandle = specificWidget["OnMoveSlider"].as<uint64_t>();
+							if (sliderWidget->m_OnMoveSliderHandle == Assets::EmptyHandle)
+							{
+								sliderWidget->m_OnMoveSlider = nullptr;
+							}
+							else
+							{
+								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(sliderWidget->m_OnMoveSliderHandle);
+								if (!onPressScript)
+								{
+									KG_WARN("Unable to locate on move slider Script!");
+									return nullptr;
+								}
+								sliderWidget->m_OnMoveSlider = onPressScript;
+							}
+							break;
+						}
+						
+
 						default:
 						{
 							KG_WARN("Invalid Widget Type in UserInterface Deserialization");
@@ -449,10 +500,11 @@ namespace Kargono::Assets
 						newWidget->m_PercentSize = widget["PercentSize"].as<Math::vec2>();
 						newWidget->m_PixelSize = widget["PixelSize"].as<Math::ivec2>();
 						newWidgetsList.push_back(newWidget);
-
-
 					}
-					if (newWindow.m_DefaultActiveWidget != -1) { newWindow.m_DefaultActiveWidgetRef = newWidgetsList.at(newWindow.m_DefaultActiveWidget); }
+					if (newWindow.m_DefaultActiveWidget != -1) 
+					{
+						newWindow.m_DefaultActiveWidgetRef = newWidgetsList.at(newWindow.m_DefaultActiveWidget); 
+					}
 				}
 
 				newWindowsList.push_back(newWindow);
@@ -505,6 +557,17 @@ namespace Kargono::Assets
 					{
 						inputTextWidget.m_OnMoveCursorHandle = Assets::EmptyHandle;
 						inputTextWidget.m_OnMoveCursor = nullptr;
+						uiModified = true;
+					}
+				}
+
+				if (widgetRef->m_WidgetType == RuntimeUI::WidgetTypes::SliderWidget)
+				{
+					RuntimeUI::SliderWidget& sliderWidget = *(RuntimeUI::SliderWidget*)widgetRef.get();
+					if (sliderWidget.m_OnMoveSliderHandle == scriptHandle)
+					{
+						sliderWidget.m_OnMoveSliderHandle = Assets::EmptyHandle;
+						sliderWidget.m_OnMoveSlider = nullptr;
 						uiModified = true;
 					}
 				}

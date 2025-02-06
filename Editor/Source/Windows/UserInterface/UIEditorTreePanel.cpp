@@ -102,6 +102,7 @@ namespace Kargono::Panels
 			windowEntry.m_OnRightClickSelection.push_back({ "Add Image Button Widget", KG_BIND_CLASS_FN(AddImageButtonWidget) });
 			windowEntry.m_OnRightClickSelection.push_back({ "Add Checkbox Widget", KG_BIND_CLASS_FN(AddCheckboxWidget) });
 			windowEntry.m_OnRightClickSelection.push_back({ "Add Input Text Widget", KG_BIND_CLASS_FN(AddInputTextWidget) });
+			windowEntry.m_OnRightClickSelection.push_back({ "Add Slider Widget", KG_BIND_CLASS_FN(AddSliderWidget) });
 			windowEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
 
 			// Add widgets to window entry
@@ -133,6 +134,9 @@ namespace Kargono::Panels
 					break;
 				case RuntimeUI::WidgetTypes::InputTextWidget:
 					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconInputTextWidget;
+					break;
+				case RuntimeUI::WidgetTypes::SliderWidget:
+					widgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconSliderWidget;
 					break;
 				default:
 					KG_ERROR("Invalid widget type provided");
@@ -190,7 +194,6 @@ namespace Kargono::Panels
 			};
 
 		// Set up main header for user interface editor panel
-		m_MainHeader.AddToSelectionList("Add Window", KG_BIND_CLASS_FN(AddWindow));
 		m_MainHeader.AddToSelectionList("Save", [&]()
 			{
 				Assets::AssetService::SaveUserInterface(s_UIWindow->m_EditorUIHandle, s_UIWindow->m_EditorUI);
@@ -341,202 +344,53 @@ namespace Kargono::Panels
 		s_UIWindow->m_PropertiesPanel->m_CurrentDisplay = UIPropertiesDisplay::UserInterface;
 	}
 
-	void UIEditorTreePanel::AddTextWidget(EditorUI::TreeEntry& windowEntry)
+	void UIEditorTreePanel::AddTextWidget(EditorUI::TreeEntry& entry)
 	{
-		// Get window path from provided entry and ensure it is valid
-		EditorUI::TreePath windowPath = m_UITree.GetPathFromEntryReference(&windowEntry);
-		if (!windowPath)
-		{
-			KG_WARN("Could not locate window path inside m_UITree");
-			return;
-		}
-
-		// Create Text Widget
-		RuntimeUI::Window& window = s_UIWindow->m_EditorUI->m_Windows.at(windowEntry.m_Handle);
-		Ref<RuntimeUI::TextWidget> newTextWidget = CreateRef<RuntimeUI::TextWidget>();
-
-		// Create new widget entry for m_UITree
-		EditorUI::TreeEntry newWidgetEntry{};
-		newWidgetEntry.m_Label = newTextWidget->m_Tag;
-		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTextWidget;
-		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)windowEntry.m_Handle); ;
-		newWidgetEntry.m_Handle = window.m_Widgets.size();
-
-		// Add handlers for interacting with the tree entry
-		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
-		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
-
-		// Add Widget to RuntimeUI and EditorUI::Tree
-		window.AddWidget(newTextWidget);
-		windowEntry.m_SubEntries.push_back(newWidgetEntry);
-
-		// Set the active editor UI as edited
-		m_MainHeader.m_EditColorActive = true;
+		// Create new widget
+		Ref<RuntimeUI::TextWidget> newWidget = CreateRef<RuntimeUI::TextWidget>();
+		AddWidgetInternal(entry, newWidget, EditorUI::EditorUIService::s_IconTextWidget);
 	}
 
-	void UIEditorTreePanel::AddButtonWidget(EditorUI::TreeEntry& windowEntry)
+	void UIEditorTreePanel::AddButtonWidget(EditorUI::TreeEntry& entry)
 	{
-		// Get window path from provided entry and ensure it is valid
-		EditorUI::TreePath windowPath = m_UITree.GetPathFromEntryReference(&windowEntry);
-		if (!windowPath)
-		{
-			KG_WARN("Could not locate window path inside m_UITree");
-			return;
-		}
-
-		// Create Text Widget
-		RuntimeUI::Window& window = s_UIWindow->m_EditorUI->m_Windows.at(windowEntry.m_Handle);
-		Ref<RuntimeUI::ButtonWidget> newButtonWidget = CreateRef<RuntimeUI::ButtonWidget>();
-
-		// Create new widget entry for m_UITree
-		EditorUI::TreeEntry newWidgetEntry{};
-		newWidgetEntry.m_Label = newButtonWidget->m_Tag;
-		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconButtonWidget;
-		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)windowEntry.m_Handle); ;
-		newWidgetEntry.m_Handle = window.m_Widgets.size();
-
-		// Add handlers for interacting with the tree entry
-		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
-		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
-
-		// Add Widget to RuntimeUI and EditorUI::Tree
-		window.AddWidget(newButtonWidget);
-		windowEntry.m_SubEntries.push_back(newWidgetEntry);
-
-		// Set the active editor UI as edited
-		m_MainHeader.m_EditColorActive = true;
+		// Create new widget
+		Ref<RuntimeUI::ButtonWidget> newWidget = CreateRef<RuntimeUI::ButtonWidget>();
+		AddWidgetInternal(entry, newWidget, EditorUI::EditorUIService::s_IconButtonWidget);
 	}
 
 	void UIEditorTreePanel::AddImageWidget(EditorUI::TreeEntry& entry)
 	{
-		// Get window path from provided entry and ensure it is valid
-		EditorUI::TreePath windowPath = m_UITree.GetPathFromEntryReference(&entry);
-		if (!windowPath)
-		{
-			KG_WARN("Could not locate window path inside m_UITree");
-			return;
-		}
-
-		// Create Image Widget
-		RuntimeUI::Window& window = s_UIWindow->m_EditorUI->m_Windows.at(entry.m_Handle);
-		Ref<RuntimeUI::ImageWidget> newImageWidget = CreateRef<RuntimeUI::ImageWidget>();
-
-		// Create new widget entry for m_UITree
-		EditorUI::TreeEntry newWidgetEntry{};
-		newWidgetEntry.m_Label = newImageWidget->m_Tag;
-		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconTexture;
-		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)entry.m_Handle); ;
-		newWidgetEntry.m_Handle = window.m_Widgets.size();
-
-		// Add handlers for interacting with the tree entry
-		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
-		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
-
-		// Add Widget to RuntimeUI and EditorUI::Tree
-		window.AddWidget(newImageWidget);
-		entry.m_SubEntries.push_back(newWidgetEntry);
-
-		// Set the active editor UI as edited
-		m_MainHeader.m_EditColorActive = true;
+		// Create new widget
+		Ref<RuntimeUI::ImageWidget> newWidget = CreateRef<RuntimeUI::ImageWidget>();
+		AddWidgetInternal(entry, newWidget, EditorUI::EditorUIService::s_IconTexture);
 	}
 
 	void UIEditorTreePanel::AddImageButtonWidget(EditorUI::TreeEntry& entry)
 	{
-		// Get window path from provided entry and ensure it is valid
-		EditorUI::TreePath windowPath = m_UITree.GetPathFromEntryReference(&entry);
-		if (!windowPath)
-		{
-			KG_WARN("Could not locate window path inside m_UITree");
-			return;
-		}
-
-		// Create image button Widget
-		RuntimeUI::Window& window = s_UIWindow->m_EditorUI->m_Windows.at(entry.m_Handle);
-		Ref<RuntimeUI::ImageButtonWidget> newImageButtonWidget = CreateRef<RuntimeUI::ImageButtonWidget>();
-
-		// Create new widget entry for m_UITree
-		EditorUI::TreeEntry newWidgetEntry{};
-		newWidgetEntry.m_Label = newImageButtonWidget->m_Tag;
-		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconImageButtonWidget;
-		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)entry.m_Handle);
-		newWidgetEntry.m_Handle = window.m_Widgets.size();
-
-		// Add handlers for interacting with the tree entry
-		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
-		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
-
-		// Add Widget to RuntimeUI and EditorUI::Tree
-		window.AddWidget(newImageButtonWidget);
-		entry.m_SubEntries.push_back(newWidgetEntry);
-
-		// Set the active editor UI as edited
-		m_MainHeader.m_EditColorActive = true;
+		// Create new widget
+		Ref<RuntimeUI::ImageButtonWidget> newWidget = CreateRef<RuntimeUI::ImageButtonWidget>();
+		AddWidgetInternal(entry, newWidget, EditorUI::EditorUIService::s_IconImageButtonWidget);
 	}
 
 	void UIEditorTreePanel::AddCheckboxWidget(EditorUI::TreeEntry& entry)
 	{
-		// Get window path from provided entry and ensure it is valid
-		EditorUI::TreePath windowPath = m_UITree.GetPathFromEntryReference(&entry);
-		if (!windowPath)
-		{
-			KG_WARN("Could not locate window path inside m_UITree");
-			return;
-		}
-
-		// Create checkbox Widget
-		RuntimeUI::Window& window = s_UIWindow->m_EditorUI->m_Windows.at(entry.m_Handle);
-		Ref<RuntimeUI::CheckboxWidget> newCheckboxWidget = CreateRef<RuntimeUI::CheckboxWidget>();
-
-		// Create new widget entry for m_UITree
-		EditorUI::TreeEntry newWidgetEntry{};
-		newWidgetEntry.m_Label = newCheckboxWidget->m_Tag;
-		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconCheckbox_Enabled;
-		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)entry.m_Handle);
-		newWidgetEntry.m_Handle = window.m_Widgets.size();
-
-		// Add handlers for interacting with the tree entry
-		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
-		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
-
-		// Add Widget to RuntimeUI and EditorUI::Tree
-		window.AddWidget(newCheckboxWidget);
-		entry.m_SubEntries.push_back(newWidgetEntry);
-
-		// Set the active editor UI as edited
-		m_MainHeader.m_EditColorActive = true;
+		// Create new widget
+		Ref<RuntimeUI::CheckboxWidget> newWidget = CreateRef<RuntimeUI::CheckboxWidget>();
+		AddWidgetInternal(entry, newWidget, EditorUI::EditorUIService::s_IconCheckbox_Enabled);
 	}
 
 	void UIEditorTreePanel::AddInputTextWidget(EditorUI::TreeEntry& entry)
 	{
-		// Get window path from provided entry and ensure it is valid
-		EditorUI::TreePath windowPath = m_UITree.GetPathFromEntryReference(&entry);
-		if (!windowPath)
-		{
-			KG_WARN("Could not locate window path inside m_UITree");
-			return;
-		}
+		// Create new widget
+		Ref<RuntimeUI::InputTextWidget> newWidget = CreateRef<RuntimeUI::InputTextWidget>();
+		AddWidgetInternal(entry, newWidget, EditorUI::EditorUIService::s_IconInputTextWidget);
+	}
 
-		// Create input text widget
-		RuntimeUI::Window& window = s_UIWindow->m_EditorUI->m_Windows.at(entry.m_Handle);
-		Ref<RuntimeUI::InputTextWidget> newInputTextWidget = CreateRef<RuntimeUI::InputTextWidget>();
-
-		// Create new widget entry for m_UITree
-		EditorUI::TreeEntry newWidgetEntry{};
-		newWidgetEntry.m_Label = newInputTextWidget->m_Tag;
-		newWidgetEntry.m_IconHandle = EditorUI::EditorUIService::s_IconInputTextWidget;
-		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)entry.m_Handle);
-		newWidgetEntry.m_Handle = window.m_Widgets.size();
-
-		// Add handlers for interacting with the tree entry
-		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
-		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
-
-		// Add Widget to RuntimeUI and EditorUI::Tree
-		window.AddWidget(newInputTextWidget);
-		entry.m_SubEntries.push_back(newWidgetEntry);
-
-		// Set the active editor UI as edited
-		m_MainHeader.m_EditColorActive = true;
+	void UIEditorTreePanel::AddSliderWidget(EditorUI::TreeEntry& entry)
+	{
+		// Create new widget
+		Ref<RuntimeUI::SliderWidget> newWidget = CreateRef<RuntimeUI::SliderWidget>();
+		AddWidgetInternal(entry, newWidget, EditorUI::EditorUIService::s_IconSliderWidget);
 	}
 
 	void UIEditorTreePanel::SelectWidget(EditorUI::TreeEntry& entry)
@@ -589,11 +443,6 @@ namespace Kargono::Panels
 		//EditorUI::EditorUIService::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
 	}
 
-	void UIEditorTreePanel::AddWindow()
-	{
-		
-	}
-
 	void UIEditorTreePanel::AddWindow(EditorUI::TreeEntry& entry)
 	{
 		// Get tree path from provided entry
@@ -618,6 +467,7 @@ namespace Kargono::Panels
 		newEntry.m_OnRightClickSelection.push_back({ "Add Image Button Widget", KG_BIND_CLASS_FN(AddImageButtonWidget) });
 		newEntry.m_OnRightClickSelection.push_back({ "Add Checkbox Widget", KG_BIND_CLASS_FN(AddCheckboxWidget) });
 		newEntry.m_OnRightClickSelection.push_back({ "Add Input Text Widget", KG_BIND_CLASS_FN(AddInputTextWidget) });
+		newEntry.m_OnRightClickSelection.push_back({ "Add Slider Widget", KG_BIND_CLASS_FN(AddSliderWidget) });
 		newEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
 
 		// Add new window to RuntimeUI and this panel's tree
@@ -662,6 +512,36 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		m_MainHeader.m_EditColorActive = true;
 
+	}
+
+	void UIEditorTreePanel::AddWidgetInternal(EditorUI::TreeEntry& entry, Ref<RuntimeUI::Widget> newWidget, Ref<Rendering::Texture2D> widgetIcon)
+	{
+		// Get window path from provided entry and ensure it is valid
+		EditorUI::TreePath windowPath = m_UITree.GetPathFromEntryReference(&entry);
+		if (!windowPath)
+		{
+			KG_WARN("Could not locate window path inside m_UITree");
+			return;
+		}
+		RuntimeUI::Window& window = s_UIWindow->m_EditorUI->m_Windows.at(entry.m_Handle);
+
+		// Create new widget entry for m_UITree
+		EditorUI::TreeEntry newWidgetEntry{};
+		newWidgetEntry.m_Label = newWidget->m_Tag;
+		newWidgetEntry.m_IconHandle = widgetIcon;
+		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)entry.m_Handle); ;
+		newWidgetEntry.m_Handle = window.m_Widgets.size();
+
+		// Add handlers for interacting with the tree entry
+		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
+		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
+
+		// Add Widget to RuntimeUI and EditorUI::Tree
+		window.AddWidget(newWidget);
+		entry.m_SubEntries.push_back(newWidgetEntry);
+
+		// Set the active editor UI as edited
+		m_MainHeader.m_EditColorActive = true;
 	}
 
 	void UIEditorTreePanel::RecalculateTreeIndexData()

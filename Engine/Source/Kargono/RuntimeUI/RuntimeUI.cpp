@@ -141,6 +141,10 @@ namespace Kargono::RuntimeUI
 
 				// Run on move cursor if necessary
 				OnMoveCursorInternal(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+
+				// Ensure the IBeam is visible when moving
+				s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible = true;
+				s_RuntimeUIContext->m_ActiveUI->m_IBeamAccumulator = 0.0f;
 			}
 		}
 		return false;
@@ -262,6 +266,10 @@ namespace Kargono::RuntimeUI
 
 			// Update the cursor
 			textData->m_CursorIndex = newCursorIndex;
+
+			// Ensure the IBeam is visible when moving
+			s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible = true;
+			s_RuntimeUIContext->m_ActiveUI->m_IBeamAccumulator = 0.0f;
 		}
 	}
 
@@ -1012,6 +1020,26 @@ namespace Kargono::RuntimeUI
 		Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
 	}
 
+	void RuntimeUIService::RenderSliderLine(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size)
+	{
+		Rendering::RendererInputSpec& renderSpec = s_RuntimeUIContext->m_BackgroundInputSpec;
+
+		Math::vec3 sliderSize = { size.x , 0.1f * size.y , size.z};
+
+		if (color.w > 0.001f)
+		{
+			// Create the widget's background rendering data
+			renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f),
+				Math::vec3(translation.x + (sliderSize.x / 2), translation.y + (sliderSize.y / 2), translation.z))
+				* glm::scale(Math::mat4(1.0f), sliderSize);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color,
+				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
+
+			// Submit background data to GPU
+			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
+		}
+	}
+
 	Math::vec3 RuntimeUIService::GetSingleLineTextStartingPosition(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float textScalingFactor)
 	{
 		Math::vec3 translationOutput = translation;
@@ -1057,6 +1085,8 @@ namespace Kargono::RuntimeUI
 			return &((CheckboxWidget*)currentWidget)->m_SelectionData;
 		case WidgetTypes::InputTextWidget:
 			return &((InputTextWidget*)currentWidget)->m_SelectionData;
+		case WidgetTypes::SliderWidget:
+			return &((SliderWidget*)currentWidget)->m_SelectionData;
 		default:
 			return nullptr;
 		}
@@ -1726,6 +1756,7 @@ namespace Kargono::RuntimeUI
 		case WidgetTypes::ImageWidget:
 		case WidgetTypes::ImageButtonWidget:
 		case WidgetTypes::CheckboxWidget:
+		case WidgetTypes::SliderWidget:
 			break;
 		default:
 			KG_ERROR("Invalid widget type provided when revalidating widget text size");
@@ -2501,6 +2532,38 @@ namespace Kargono::RuntimeUI
 			RuntimeUIService::RenderTextCursor(m_TextData, textStartingPoint, textScalingFactor);
 		}
 		
+	}
+
+	void SliderWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	{
+		KG_PROFILE_FUNCTION();
+
+		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
+
+		// Calculate the widget's rendering data
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
+
+		// Get widget translation
+		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
+
+		// Draw background
+		if (activeUI->m_HoveredWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
+		}
+		else if (activeUI->m_SelectedWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
+		}
+		else
+		{
+			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
+		}
+
+		widgetTranslation.z += 0.001f;
+
+		// Render the background line
+		RuntimeUIService::RenderSliderLine(m_LineColor, widgetTranslation, widgetSize);
 	}
 
 }

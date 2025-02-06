@@ -56,7 +56,7 @@ namespace Kargono::RuntimeUI
 	{
 		None = 0, TextWidget, ButtonWidget, CheckboxWidget, 
 		ComboWidget, PopupWidget, ImageWidget, ImageButtonWidget,
-		InputTextWidget
+		InputTextWidget, SliderWidget
 	};
 
 	constexpr std::size_t k_InvalidWidgetIndex{ std::numeric_limits<std::size_t>().max() };
@@ -485,6 +485,53 @@ namespace Kargono::RuntimeUI
 	};
 
 	//============================
+	// InputText Widget Class (Derived)
+	//============================
+	class SliderWidget : public Widget
+	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		SliderWidget()
+			: Widget()
+		{
+			m_WidgetType = WidgetTypes::SliderWidget;
+		}
+		virtual ~SliderWidget() override = default;
+
+	public:
+		//============================
+		// Query State
+		//============================
+		virtual bool Selectable() override
+		{
+			return m_SelectionData.m_Selectable;
+		}
+
+	public:
+		//============================
+		// Rendering Methods
+		//============================
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+
+	public:
+		//============================
+		// Public Fields
+		//============================
+		SelectionData m_SelectionData;
+		Math::vec2 m_Bounds{ 0.0f, 1.0f };
+		Assets::AssetHandle m_OnMoveSliderHandle{ Assets::EmptyHandle };
+		Ref<Scripting::Script> m_OnMoveSlider{ nullptr };
+		Math::vec4 m_SliderColor{ 1.0f };
+		Math::vec4 m_LineColor{ 1.0f };
+
+		// Runtime Value
+		float m_CurrentValue{ 0.0f };
+
+	};
+
+	//============================
 	// Window Class
 	//============================
 	class Window
@@ -706,6 +753,7 @@ namespace Kargono::RuntimeUI
 		static void RenderImage(const ImageData& imageData, const Math::vec3& translation, const Math::vec3 size);
 		static void RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& textStartingPoint, float textScalingFactor);
 		static void RenderTextCursor(const SingleLineTextData& textData, const Math::vec3& renderLocation, float textScalingFactor);
+		static void RenderSliderLine(const Math::vec4& color, const Math::vec3& widgetTranslation, const Math::vec3& widgetSize);
 		static Math::vec3 GetSingleLineTextStartingPosition(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float textScalingFactor);
 
 
@@ -721,6 +769,7 @@ namespace Kargono::RuntimeUI
 		friend class ImageButtonWidget;
 		friend class CheckboxWidget;
 		friend class InputTextWidget;
+		friend class SliderWidget;
 		friend class Window;
 	};
 }
@@ -739,6 +788,7 @@ namespace Kargono::Utility
 			case RuntimeUI::WidgetTypes::ImageWidget: return "ImageWidget";
 			case RuntimeUI::WidgetTypes::ImageButtonWidget: return "ImageButtonWidget";
 			case RuntimeUI::WidgetTypes::InputTextWidget: return "InputTextWidget";
+			case RuntimeUI::WidgetTypes::SliderWidget: return "SliderWidget";
 			case RuntimeUI::WidgetTypes::None: return "None";
 			default:
 			{
@@ -758,6 +808,7 @@ namespace Kargono::Utility
 		if (widgetName == "ImageWidget") { return RuntimeUI::WidgetTypes::ImageWidget; }
 		if (widgetName == "ImageButtonWidget") { return RuntimeUI::WidgetTypes::ImageButtonWidget; }
 		if (widgetName == "InputTextWidget") { return RuntimeUI::WidgetTypes::InputTextWidget; }
+		if (widgetName == "SliderWidget") { return RuntimeUI::WidgetTypes::SliderWidget; }
 		if (widgetName == "None") { return RuntimeUI::WidgetTypes::None; }
 
 		KG_ERROR("Invalid Widget Type at StringToWidgetType");

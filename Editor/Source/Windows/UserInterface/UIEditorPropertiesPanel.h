@@ -40,6 +40,7 @@ namespace Kargono::Panels
 		void InitializeImageButtonWidgetOptions();
 		void InitializeCheckboxWidgetOptions();
 		void InitializeInputTextWidgetOptions();
+		void InitializeSliderWidgetOptions();
 		void InitializeWidgetLocationOptions();
 
 	public:
@@ -61,6 +62,7 @@ namespace Kargono::Panels
 		void DrawImageButtonWidgetOptions();
 		void DrawCheckboxWidgetOptions();
 		void DrawInputTextWidgetOptions();
+		void DrawSliderWidgetOptions();
 		void DrawSpecificWidgetOptions();
 
 		//=========================
@@ -172,6 +174,21 @@ namespace Kargono::Panels
 		void OnModifyInputTextOnMoveCursor(const EditorUI::OptionEntry& entry);
 		void OnOpenInputTextOnMoveCursorPopup(EditorUI::SelectOptionSpec& spec);
 		void OnOpenTooltipForInputTextWidgetOnMoveCursor(EditorUI::SelectOptionSpec& spec);
+
+		//=========================
+		// Change Slider Widget Data
+		//=========================
+		// Modify widget on press
+		void OnOpenTooltipForSliderWidgetOnPress(EditorUI::SelectOptionSpec& spec);
+		// Modify widget bounds
+		void OnModifySliderWidgetBounds(EditorUI::EditVec2Spec& spec);
+		// Modify widget colors
+		void OnModifySliderWidgetSliderColor(EditorUI::EditVec4Spec& spec);
+		void OnModifySliderWidgetLineColor(EditorUI::EditVec4Spec& spec);
+		// Modify widget on move slider
+		void OnModifySliderWidgetOnMoveSlider(const EditorUI::OptionEntry& entry);
+		void OnOpenSliderWidgetOnMoveSliderPopup(EditorUI::SelectOptionSpec& spec);
+		void OnOpenTooltipForSliderWidgetOnMoveSlider(EditorUI::SelectOptionSpec& spec);
 
 		//=========================
 		// Modify UI Component Structs (Common data between widgets)
@@ -298,5 +315,15 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_InputTextWidgetOnPress{};
 		EditorUI::CheckboxSpec m_InputTextWidgetSelectable{};
 		EditorUI::SelectOptionSpec m_InputTextWidgetOnMoveCursor{};
+
+		// Edit Slider Widget Options
+		EditorUI::CollapsingHeaderSpec m_SliderWidgetHeader{};
+		EditorUI::EditVec4Spec m_SliderWidgetBackgroundColor{};
+		EditorUI::SelectOptionSpec m_SliderWidgetOnPress{};
+		EditorUI::CheckboxSpec m_SliderWidgetSelectable{};
+		EditorUI::EditVec2Spec m_SliderWidgetBounds{};
+		EditorUI::EditVec4Spec m_SliderWidgetSliderColor{};
+		EditorUI::EditVec4Spec m_SliderWidgetLineColor{};
+		EditorUI::SelectOptionSpec m_SliderWidgetOnMoveSlider{};
 	};
 }

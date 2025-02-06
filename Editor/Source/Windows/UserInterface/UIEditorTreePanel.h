@@ -3,6 +3,9 @@
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/EditorUI/EditorUI.h"
+#include "Kargono/Rendering/Texture.h"
+#include "Kargono/RuntimeUI/RuntimeUI.h"
+
 
 #include <string>
 
@@ -54,7 +57,6 @@ namespace Kargono::Panels
 		//=========================
 		// Manage Windows
 		//=========================
-		void AddWindow();
 		void AddWindow(EditorUI::TreeEntry& entry);
 		void SelectWindow(EditorUI::TreeEntry& entry);
 		void DeleteWindow(EditorUI::TreeEntry& entry);
@@ -68,8 +70,15 @@ namespace Kargono::Panels
 		void AddImageButtonWidget(EditorUI::TreeEntry& entry);
 		void AddCheckboxWidget(EditorUI::TreeEntry& entry);
 		void AddInputTextWidget(EditorUI::TreeEntry& entry);
+		void AddSliderWidget(EditorUI::TreeEntry& entry);
 		void SelectWidget(EditorUI::TreeEntry& entry);
 		void DeleteWidget(EditorUI::TreeEntry& entry);
+
+	private:
+		//=========================
+		// Manage Widgets (Internal)
+		//=========================
+		void AddWidgetInternal(EditorUI::TreeEntry& entry, Ref<RuntimeUI::Widget> newWidget, Ref<Rendering::Texture2D> widgetIcon);
 	public:
 		//=========================
 		// Core Panel Data
