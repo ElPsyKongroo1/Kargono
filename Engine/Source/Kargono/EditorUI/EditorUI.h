@@ -1424,6 +1424,7 @@ namespace Kargono::EditorUI
 		std::function<void(SelectOptionSpec&)> m_PopupAction {nullptr};
 		std::function<void(const OptionEntry&)> m_ConfirmAction {nullptr};
 		WidgetFlags m_Flags{ SelectOption_None };
+		Ref<void> m_ProvidedData{ nullptr };
 	public:
 		// Only used if PopupOnly is true
 		bool m_OpenPopup{ false };

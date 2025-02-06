@@ -1122,9 +1122,10 @@ namespace Kargono::Panels
 		// Set up widget to modify the button widget's on press script
 		m_ButtonWidgetOnPress.m_Label = "On Press";
 		m_ButtonWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_ButtonWidgetOnPress.m_ProvidedData = CreateRef<WrappedFuncType>(WrappedFuncType::Void_None);
 		m_ButtonWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
 		m_ButtonWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
-		m_ButtonWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForButtonWidgetOnPress);
+		m_ButtonWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForSelectionDataOnPress);
 	}
 
 	void UIEditorPropertiesPanel::InitializeImageWidgetOptions()
@@ -1178,9 +1179,10 @@ namespace Kargono::Panels
 		// Set up widget to modify the button widget's on press script
 		m_ImageButtonWidgetOnPress.m_Label = "On Press";
 		m_ImageButtonWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_ImageButtonWidgetOnPress.m_ProvidedData = CreateRef<WrappedFuncType>(WrappedFuncType::Void_None);
 		m_ImageButtonWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
 		m_ImageButtonWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
-		m_ImageButtonWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForImageButtonWidgetOnPress);
+		m_ImageButtonWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForSelectionDataOnPress);
 
 	}
 
@@ -1227,9 +1229,10 @@ namespace Kargono::Panels
 		// Set up widget to modify the button widget's on press script
 		m_CheckboxWidgetOnPress.m_Label = "On Press";
 		m_CheckboxWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_CheckboxWidgetOnPress.m_ProvidedData = CreateRef<WrappedFuncType>(WrappedFuncType::Void_Bool);
 		m_CheckboxWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
 		m_CheckboxWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
-		m_CheckboxWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForCheckboxWidgetOnPress);
+		m_CheckboxWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForSelectionDataOnPress);
 	}
 
 	void UIEditorPropertiesPanel::InitializeInputTextWidgetOptions()
@@ -1276,9 +1279,10 @@ namespace Kargono::Panels
 		// Set up widget to modify the InputText widget's on press script
 		m_InputTextWidgetOnPress.m_Label = "On Press";
 		m_InputTextWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_InputTextWidgetOnPress.m_ProvidedData = CreateRef<WrappedFuncType>(WrappedFuncType::Void_None);
 		m_InputTextWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
 		m_InputTextWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
-		m_InputTextWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForInputTextWidgetOnPress);
+		m_InputTextWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForSelectionDataOnPress);
 
 		// Set up widget to modify the InputText widget's on press script
 		m_InputTextWidgetOnMoveCursor.m_Label = "On Move Cursor";
@@ -1327,9 +1331,10 @@ namespace Kargono::Panels
 		// Set up widget to modify the Slider widget's on press script
 		m_SliderWidgetOnPress.m_Label = "On Press";
 		m_SliderWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_SliderWidgetOnPress.m_ProvidedData = CreateRef<WrappedFuncType>(WrappedFuncType::Void_None);
 		m_SliderWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
 		m_SliderWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
-		m_SliderWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForSliderWidgetOnPress);
+		m_SliderWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForSelectionDataOnPress);
 
 		// Set up widget to modify the Slider widget's on press script
 		m_SliderWidgetOnMoveSlider.m_Label = "On Move Slider";
@@ -1758,58 +1763,6 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenTooltipForButtonWidgetOnPress(EditorUI::SelectOptionSpec& spec)
-	{
-		// Clear existing options
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
-
-		// Add option to opening an existing script
-		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
-		{
-			m_ButtonWidgetOnPress.m_OpenPopup = true;
-		} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
-
-		// Add option or creating a new script from this usage point
-		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
-		{
-			// Open create script dialog in script editor
-			s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
-			{
-					// Ensure handle provides a script in the registry
-					if (!Assets::AssetService::HasScript(scriptHandle))
-					{
-						KG_WARN("Could not find script");
-						return;
-					}
-
-					// Ensure function type matches definition
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-					if (script->m_FuncType != WrappedFuncType::Void_None)
-					{
-						KG_WARN("Incorrect function type returned when linking script to usage point");
-						return;
-					}
-
-					// Get the active widget as a button widget
-					KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ButtonWidget);
-					RuntimeUI::ButtonWidget& activeButton = *(RuntimeUI::ButtonWidget*)m_ActiveWidget;
-
-					// Fill the new script handle
-					activeButton.m_SelectionData.m_FunctionPointers.m_OnPressHandle = scriptHandle;
-					activeButton.m_SelectionData.m_FunctionPointers.m_OnPress = script;
-					m_ButtonWidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
-
-					// Set the active editor UI as edited
-					s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-				}, {});
-			} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
-
-		// Open tooltip
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
-	}
-
 	void UIEditorPropertiesPanel::OnModifyWidgetXLocationRelOrAbs()
 	{
 		// Ensure active window and widget are valid
@@ -1840,57 +1793,6 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 	
-	void UIEditorPropertiesPanel::OnOpenTooltipForImageButtonWidgetOnPress(EditorUI::SelectOptionSpec& spec)
-	{
-		// Clear existing options
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
-
-		// Add option to opening an existing script
-		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
-		{
-			m_ImageButtonWidgetOnPress.m_OpenPopup = true;
-		} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
-
-		// Add option or creating a new script from this usage point
-		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
-		{
-			// Open create script dialog in script editor
-			s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
-			{
-					// Ensure handle provides a script in the registry
-					if (!Assets::AssetService::HasScript(scriptHandle))
-					{
-						KG_WARN("Could not find script");
-						return;
-					}
-
-					// Ensure function type matches definition
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-					if (script->m_FuncType != WrappedFuncType::Void_None)
-					{
-						KG_WARN("Incorrect function type returned when linking script to usage point");
-						return;
-					}
-
-					// Get the active widget as a button widget
-					KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::ImageButtonWidget);
-					RuntimeUI::ImageButtonWidget& activeButton = *(RuntimeUI::ImageButtonWidget*)m_ActiveWidget;
-
-					// Fill the new script handle
-					activeButton.m_SelectionData.m_FunctionPointers.m_OnPressHandle = scriptHandle;
-					activeButton.m_SelectionData.m_FunctionPointers.m_OnPress = script;
-					m_ImageButtonWidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
-
-					// Set the active editor UI as edited
-					s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-				}, {});
-			} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
-
-		// Open tooltip
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
-	}
 	void UIEditorPropertiesPanel::OnModifyCheckboxWidgetChecked(EditorUI::CheckboxSpec& spec)
 	{
 		// Ensure active window and widget are valid
@@ -2081,109 +1983,6 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	
-	void UIEditorPropertiesPanel::OnOpenTooltipForCheckboxWidgetOnPress(EditorUI::SelectOptionSpec& spec)
-	{
-		// Clear existing options
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
-
-		// Add option to opening an existing script
-		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
-		{
-			m_CheckboxWidgetOnPress.m_OpenPopup = true;
-		} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
-
-		// Add option or creating a new script from this usage point
-		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
-		{
-				// Open create script dialog in script editor
-				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Bool, [&](Assets::AssetHandle scriptHandle)
-				{
-						// Ensure handle provides a script in the registry
-						if (!Assets::AssetService::HasScript(scriptHandle))
-						{
-							KG_WARN("Could not find script");
-							return;
-						}
-
-						// Ensure function type matches definition
-						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-						if (script->m_FuncType != WrappedFuncType::Void_Bool)
-						{
-							KG_WARN("Incorrect function type returned when linking script to usage point");
-							return;
-						}
-
-						// Get the active widget as a button widget
-						KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::CheckboxWidget);
-						RuntimeUI::CheckboxWidget& activeButton = *(RuntimeUI::CheckboxWidget*)m_ActiveWidget;
-
-						// Fill the new script handle
-						activeButton.m_SelectionData.m_FunctionPointers.m_OnPressHandle = scriptHandle;
-						activeButton.m_SelectionData.m_FunctionPointers.m_OnPress = script;
-						m_CheckboxWidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
-
-						// Set the active editor UI as edited
-						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-					}, { "isChecked"});
-					} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
-
-		// Open tooltip
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
-	}
-	void UIEditorPropertiesPanel::OnOpenTooltipForInputTextWidgetOnPress(EditorUI::SelectOptionSpec& spec)
-	{
-		// Clear existing options
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
-
-		// Add option to opening an existing script
-		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
-		{
-			m_InputTextWidgetOnPress.m_OpenPopup = true;
-		} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
-
-		// Add option or creating a new script from this usage point
-		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
-		{
-				// Open create script dialog in script editor
-				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
-				{
-						// Ensure handle provides a script in the registry
-						if (!Assets::AssetService::HasScript(scriptHandle))
-						{
-							KG_WARN("Could not find script");
-							return;
-						}
-
-						// Ensure function type matches definition
-						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-						if (script->m_FuncType != WrappedFuncType::Void_None)
-						{
-							KG_WARN("Incorrect function type returned when linking script to usage point");
-							return;
-						}
-
-						// Get the active widget as a InputText widget
-						KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::InputTextWidget);
-						RuntimeUI::InputTextWidget& activeInputText = *(RuntimeUI::InputTextWidget*)m_ActiveWidget;
-
-						// Fill the new script handle
-						activeInputText.m_SelectionData.m_FunctionPointers.m_OnPressHandle = scriptHandle;
-						activeInputText.m_SelectionData.m_FunctionPointers.m_OnPress = script;
-						m_InputTextWidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
-
-						// Set the active editor UI as edited
-						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-					}, {});
-				} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
-
-		// Open tooltip
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
-	}
 
 	void UIEditorPropertiesPanel::OnModifyInputTextOnMoveCursor(const EditorUI::OptionEntry& entry)
 	{
@@ -2291,58 +2090,6 @@ namespace Kargono::Panels
 						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 					}, {});
 				} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
-
-		// Open tooltip
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
-	}
-
-	void UIEditorPropertiesPanel::OnOpenTooltipForSliderWidgetOnPress(EditorUI::SelectOptionSpec& spec)
-	{
-		// Clear existing options
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
-
-		// Add option to opening an existing script
-		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
-		{
-			m_SliderWidgetOnPress.m_OpenPopup = true;
-		} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
-
-		// Add option or creating a new script from this usage point
-		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
-		{
-			// Open create script dialog in script editor
-			s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
-			{
-				// Ensure handle provides a script in the registry
-				if (!Assets::AssetService::HasScript(scriptHandle))
-				{
-					KG_WARN("Could not find script");
-					return;
-				}
-
-				// Ensure function type matches definition
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
-				if (script->m_FuncType != WrappedFuncType::Void_None)
-				{
-					KG_WARN("Incorrect function type returned when linking script to usage point");
-					return;
-				}
-
-				// Get the active widget as a button widget
-				KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::SliderWidget);
-				RuntimeUI::SliderWidget& activeSlider = *(RuntimeUI::SliderWidget*)m_ActiveWidget;
-
-				// Fill the new script handle
-				activeSlider.m_SelectionData.m_FunctionPointers.m_OnPressHandle = scriptHandle;
-				activeSlider.m_SelectionData.m_FunctionPointers.m_OnPress = script;
-				m_SliderWidgetOnPress.m_CurrentOption = { script->m_ScriptName, scriptHandle };
-
-				// Set the active editor UI as edited
-				s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-				}, {});
-			} };
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 
 		// Open tooltip
@@ -2784,6 +2531,8 @@ namespace Kargono::Panels
 	}
 	void UIEditorPropertiesPanel::OnOpenSelectionDataOnPressPopup(EditorUI::SelectOptionSpec& spec)
 	{
+		// Get the current func type
+		WrappedFuncType currentFuncType{ *(WrappedFuncType*)spec.m_ProvidedData.get() };
 		// Clear existing options
 		spec.ClearOptions();
 		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
@@ -2795,7 +2544,7 @@ namespace Kargono::Panels
 			Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
 
 			// Ensure script is compatible with the text widget
-			if (script->m_FuncType != WrappedFuncType::Void_None)
+			if (script->m_FuncType != currentFuncType)
 			{
 				continue;
 			}
@@ -2803,6 +2552,78 @@ namespace Kargono::Panels
 			// Add script to the select options
 			spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 		}
+	}
+	void UIEditorPropertiesPanel::OnOpenTooltipForSelectionDataOnPress(EditorUI::SelectOptionSpec& spec)
+	{
+		// Store the current select option spec, function type, and parameter names
+		static EditorUI::SelectOptionSpec* s_CurrentSpec{ nullptr };
+		static WrappedFuncType s_CurrentFuncType{ WrappedFuncType::None };
+		static std::vector<FixedString32> s_ParameterNames;
+		s_CurrentSpec = &spec;
+		s_CurrentFuncType = *(WrappedFuncType*)s_CurrentSpec->m_ProvidedData.get();
+
+		switch (s_CurrentFuncType)
+		{
+		case WrappedFuncType::Void_None:
+			s_ParameterNames = {};
+			break;
+		case WrappedFuncType::Void_Bool:
+			s_ParameterNames = { "isChecked" };
+			break;
+		default:
+			KG_ERROR("Invalid function type provided!");
+		}
+
+		// Clear existing options
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+
+		// Add option to opening an existing script
+		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			s_CurrentSpec->m_OpenPopup = true;
+		} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+		// Add option or creating a new script from this usage point
+		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			// Open create script dialog in script editor
+			s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(
+				s_CurrentFuncType, [&](Assets::AssetHandle scriptHandle)
+			{
+					// Ensure handle provides a script in the registry
+					if (!Assets::AssetService::HasScript(scriptHandle))
+					{
+						KG_WARN("Could not find script");
+						return;
+					}
+
+					// Ensure function type matches definition
+					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+					if (script->m_FuncType != s_CurrentFuncType)
+					{
+						KG_WARN("Incorrect function type returned when linking script to usage point");
+						return;
+					}
+
+					// Get the selection data associated with the active widget
+					RuntimeUI::SelectionData* selectionData = RuntimeUI::RuntimeUIService::GetSelectionDataFromWidget(m_ActiveWidget);
+					KG_ASSERT(selectionData);
+
+
+					// Fill the new script handle
+					selectionData->m_FunctionPointers.m_OnPressHandle = scriptHandle;
+					selectionData->m_FunctionPointers.m_OnPress = script;
+					s_CurrentSpec->m_CurrentOption = { script->m_ScriptName, scriptHandle };
+
+					// Set the active editor UI as edited
+					s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+				}, s_ParameterNames);
+			} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+		// Open tooltip
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
 	}
 	void UIEditorPropertiesPanel::OnModifySelectionDataBackgroundColor(EditorUI::EditVec4Spec& spec)
 	{

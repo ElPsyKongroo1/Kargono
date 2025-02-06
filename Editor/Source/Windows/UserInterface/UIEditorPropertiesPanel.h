@@ -140,14 +140,10 @@ namespace Kargono::Panels
 		//=========================
 		// Change Button Widget Data
 		//=========================
-		// Modify widget on press
-		void OnOpenTooltipForButtonWidgetOnPress(EditorUI::SelectOptionSpec& spec);
 
 		//=========================
 		// Change Image Button Widget Data
 		//=========================
-		// Modify widget on press
-		void OnOpenTooltipForImageButtonWidgetOnPress(EditorUI::SelectOptionSpec& spec);
 
 		//=========================
 		// Change Checkbox Data
@@ -162,14 +158,10 @@ namespace Kargono::Panels
 		void OnOpenCheckboxWidgetUnCheckedImagePopup(EditorUI::SelectOptionSpec& spec);
 		// Modify checkbox widget's fixed aspect ratio option
 		void OnModifyCheckboxWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec);
-		// Modify widget on press
-		void OnOpenTooltipForCheckboxWidgetOnPress(EditorUI::SelectOptionSpec& spec);
 
 		//=========================
 		// Change Input Text Widget Data
 		//=========================
-		// Modify widget on press
-		void OnOpenTooltipForInputTextWidgetOnPress(EditorUI::SelectOptionSpec& spec);
 		// Modify widget on move cursor
 		void OnModifyInputTextOnMoveCursor(const EditorUI::OptionEntry& entry);
 		void OnOpenInputTextOnMoveCursorPopup(EditorUI::SelectOptionSpec& spec);
@@ -178,8 +170,6 @@ namespace Kargono::Panels
 		//=========================
 		// Change Slider Widget Data
 		//=========================
-		// Modify widget on press
-		void OnOpenTooltipForSliderWidgetOnPress(EditorUI::SelectOptionSpec& spec);
 		// Modify widget bounds
 		void OnModifySliderWidgetBounds(EditorUI::EditVec2Spec& spec);
 		// Modify widget colors
@@ -207,6 +197,7 @@ namespace Kargono::Panels
 		void OnModifySelectionDataSelectable(EditorUI::CheckboxSpec& spec);
 		void OnModifySelectionDataOnPress(const EditorUI::OptionEntry& entry);
 		void OnOpenSelectionDataOnPressPopup(EditorUI::SelectOptionSpec& spec);
+		void OnOpenTooltipForSelectionDataOnPress(EditorUI::SelectOptionSpec& spec);
 		void OnModifySelectionDataBackgroundColor(EditorUI::EditVec4Spec& spec);
 		// Image data
 		void OnModifyImageDataImage(const EditorUI::OptionEntry& entry);
