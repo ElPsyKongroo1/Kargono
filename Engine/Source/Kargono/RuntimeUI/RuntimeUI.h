@@ -753,7 +753,8 @@ namespace Kargono::RuntimeUI
 		static void RenderImage(const ImageData& imageData, const Math::vec3& translation, const Math::vec3 size);
 		static void RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& textStartingPoint, float textScalingFactor);
 		static void RenderTextCursor(const SingleLineTextData& textData, const Math::vec3& renderLocation, float textScalingFactor);
-		static void RenderSliderLine(const Math::vec4& color, const Math::vec3& widgetTranslation, const Math::vec3& widgetSize);
+		static void RenderSliderLine(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size);
+		static void RenderSlider(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size);
 		static Math::vec3 GetSingleLineTextStartingPosition(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float textScalingFactor);
 
 

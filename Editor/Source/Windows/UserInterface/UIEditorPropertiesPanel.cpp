@@ -508,9 +508,9 @@ namespace Kargono::Panels
 			m_SliderWidgetLineColor.m_CurrentVec4 = activeSliderWidget.m_LineColor;
 			EditorUI::EditorUIService::EditVec4(m_SliderWidgetLineColor);
 
-			// Edit selected widget's background color
-			m_SliderWidgetBackgroundColor.m_CurrentVec4 = activeSliderWidget.m_SelectionData.m_DefaultBackgroundColor;
-			EditorUI::EditorUIService::EditVec4(m_SliderWidgetBackgroundColor);
+			//// Edit selected widget's background color
+			//m_SliderWidgetBackgroundColor.m_CurrentVec4 = activeSliderWidget.m_SelectionData.m_DefaultBackgroundColor;
+			//EditorUI::EditorUIService::EditVec4(m_SliderWidgetBackgroundColor);
 
 			// Edit selected widget's on press script
 			Assets::AssetHandle onPressHandle = activeSliderWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;

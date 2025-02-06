@@ -1030,7 +1030,27 @@ namespace Kargono::RuntimeUI
 		{
 			// Create the widget's background rendering data
 			renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f),
-				Math::vec3(translation.x + (sliderSize.x / 2), translation.y + (sliderSize.y / 2), translation.z))
+				Math::vec3(translation.x + (sliderSize.x / 2.0f), translation.y + (size.y / 2.0f), translation.z))
+				* glm::scale(Math::mat4(1.0f), sliderSize);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color,
+				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
+
+			// Submit background data to GPU
+			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
+		}
+	}
+
+	void RuntimeUIService::RenderSlider(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size)
+	{
+		Rendering::RendererInputSpec& renderSpec = s_RuntimeUIContext->m_BackgroundInputSpec;
+
+		Math::vec3 sliderSize = { 0.04f * size.x , 0.35f * size.y , size.z };
+
+		if (color.w > 0.001f)
+		{
+			// Create the widget's background rendering data
+			renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f),
+				Math::vec3(translation.x + (sliderSize.x / 2.0f), translation.y + (size.y / 2.0f), translation.z))
 				* glm::scale(Math::mat4(1.0f), sliderSize);
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color,
 				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
@@ -2546,24 +2566,20 @@ namespace Kargono::RuntimeUI
 		// Get widget translation
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
-		// Draw background
-		if (activeUI->m_HoveredWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
-		}
-		else if (activeUI->m_SelectedWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
-		}
-		else
-		{
-			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
-		}
+		// Render the slider
+		RuntimeUIService::RenderSliderLine(m_LineColor, widgetTranslation, widgetSize);
 
 		widgetTranslation.z += 0.001f;
 
-		// Render the background line
-		RuntimeUIService::RenderSliderLine(m_LineColor, widgetTranslation, widgetSize);
+		if (activeUI->m_SelectedWidget == this)
+		{
+			RuntimeUIService::RenderSlider(activeUI->m_SelectColor, widgetTranslation, widgetSize);
+		}
+		else
+		{
+			RuntimeUIService::RenderSlider(m_SliderColor, widgetTranslation, widgetSize);
+		}
+		
 	}
 
 }
