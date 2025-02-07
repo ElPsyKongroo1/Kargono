@@ -220,6 +220,11 @@ namespace Kargono::Windows
 				handled = OnMouseButtonPressed(*(Events::MouseButtonPressedEvent*)event);
 			}
 
+			if (event->GetEventType() == Events::EventType::MouseButtonReleased)
+			{
+				handled = OnMouseButtonReleasedRuntime(*(Events::MouseButtonReleasedEvent*)event);
+			}
+
 			if (event->GetEventType() == Events::EventType::KeyPressed)
 			{
 				handled = OnKeyPressedRuntime(*(Events::KeyPressedEvent*)event);
@@ -1130,6 +1135,15 @@ namespace Kargono::Windows
 			{
 				return true;
 			}
+		}
+		return false;
+	}
+
+	bool MainWindow::OnMouseButtonReleasedRuntime(const Events::MouseButtonReleasedEvent& event)
+	{
+		if (RuntimeUI::RuntimeUIService::GetActiveUI())
+		{
+			RuntimeUI::RuntimeUIService::OnMouseButtonReleasedEvent(event);
 		}
 		return false;
 	}

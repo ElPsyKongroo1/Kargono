@@ -2263,7 +2263,7 @@ namespace Kargono::Panels
 
 						// Set the active editor UI as edited
 						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
-					}, {});
+					}, {"sliderValue"});
 				} };
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
 

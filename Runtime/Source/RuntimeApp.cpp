@@ -153,8 +153,14 @@ namespace Kargono
 			// Clear mouse picking buffer
 			m_ViewportFramebuffer->SetAttachment(1, -1);
 
+			// Handle runtime UI's OnUpdate()
+			Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+			Math::vec2 mousePos = Input::InputService::GetMousePosition();
+			// Make sure the y-position is oriented correctly
+			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
+			RuntimeUI::RuntimeUIService::OnUpdate(ts, { mousePos.x, mousePos.y }, &activeViewport);
+
 			// Draw runtimeUI
-			RuntimeUI::RuntimeUIService::OnUpdate(ts);
 			RuntimeUI::RuntimeUIService::OnRender(EngineService::GetActiveWindow().GetWidth(), 
 				EngineService::GetActiveWindow().GetHeight());
 
@@ -234,6 +240,12 @@ namespace Kargono
 		{
 			handled = OnMousePressed(*(Events::MouseButtonPressedEvent*)event);
 		}
+
+		if (event->GetEventType() == Events::EventType::MouseButtonReleased)
+		{
+			handled = OnMouseButtonReleased(*(Events::MouseButtonReleasedEvent*)event);
+		}
+
 		if (event->GetEventType() == Events::EventType::KeyTyped)
 		{
 			handled = OnKeyTyped(*(Events::KeyTypedEvent*)event);
@@ -396,6 +408,15 @@ namespace Kargono
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
 			RuntimeUI::RuntimeUIService::OnLeftMouseButtonPressed({ mousePos.x, mousePos.y }, &activeViewport);
+		}
+		return false;
+	}
+
+	bool RuntimeApp::OnMouseButtonReleased(const Events::MouseButtonReleasedEvent& event)
+	{
+		if (RuntimeUI::RuntimeUIService::GetActiveUI())
+		{
+			RuntimeUI::RuntimeUIService::OnMouseButtonReleasedEvent(event);
 		}
 		return false;
 	}

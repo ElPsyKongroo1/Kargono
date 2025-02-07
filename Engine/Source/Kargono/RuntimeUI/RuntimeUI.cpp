@@ -10,6 +10,7 @@
 #include "Kargono/Rendering/Shader.h"
 #include "Kargono/ECS/EngineComponents.h"
 #include "Kargono/Utility/Operations.h"
+#include "Kargono/Math/Interpolation.h"
 
 namespace Kargono::RuntimeUI
 {
@@ -90,7 +91,7 @@ namespace Kargono::RuntimeUI
 		KG_VERIFY(true, "Runtime UI Engine Terminate");
 	}
 
-	void RuntimeUIService::OnUpdate(Timestep ts)
+	void RuntimeUIService::OnUpdate(Timestep ts, Math::vec2 mousePosition, ViewportData* viewportData)
 	{
 		// Ensure a valid user interface is active and get it
 		if (!s_RuntimeUIContext->m_ActiveUI)
@@ -109,6 +110,67 @@ namespace Kargono::RuntimeUI
 				activeUI->m_IBeamAccumulator -= activeUI->m_IBeamVisiblilityInterval;
 				Utility::Operations::ToggleBoolean(activeUI->m_IBeamVisible);
 			}
+		}
+
+		if (activeUI->m_PressedWidget)
+		{
+			// Get the widget's translation and size
+			Math::vec3 widgetTranslation;
+			Math::vec3 widgetSize;
+			GetWidgetLocationAndSize(activeUI->m_ActiveWindow, activeUI->m_PressedWidget, viewportData,
+				widgetTranslation, widgetSize);
+
+			// Get the underlying widget type
+			KG_ASSERT(activeUI->m_PressedWidget->m_WidgetType == WidgetTypes::SliderWidget);
+			SliderWidget& activeSlider = *(SliderWidget*)activeUI->m_PressedWidget;
+
+			// Get the line dimensions
+			float sliderLineLowerBound{ widgetTranslation.x };
+			float sliderLineUpperBound{ widgetTranslation.x + widgetSize.x };
+
+			// Check if the mouse click falls within the bounds of the slider
+			if (mousePosition.x < sliderLineLowerBound)
+			{
+				// Set the resultant value to its lowest!
+				activeSlider.m_CurrentValue = activeSlider.m_Bounds.x;
+				// Call the on move slider function if applicable
+				if (activeSlider.m_OnMoveSlider)
+				{
+					Utility::CallWrappedVoidFloat(activeSlider.m_OnMoveSlider->m_Function, activeSlider.m_CurrentValue);
+				}
+
+			}
+			else if (mousePosition.x > sliderLineUpperBound)
+			{
+				// Set the resultant value to its highest!
+				activeSlider.m_CurrentValue = activeSlider.m_Bounds.y;
+				// Call the on move slider function if applicable
+				if (activeSlider.m_OnMoveSlider)
+				{
+					Utility::CallWrappedVoidFloat(activeSlider.m_OnMoveSlider->m_Function, activeSlider.m_CurrentValue);
+				}
+			}
+			else
+			{
+				// Get the slider's current normalized location based on the bounds and currentValue
+				float normalizedSliderLocation = (mousePosition.x - sliderLineLowerBound) /
+					(sliderLineUpperBound - sliderLineLowerBound);
+
+				// Use linear interpolation to set the value
+				activeSlider.m_CurrentValue = Math::Interpolation::Linear
+				(
+					activeSlider.m_Bounds.x, 
+					activeSlider.m_Bounds.y, 
+					normalizedSliderLocation
+				);
+
+				// Call the on move slider function if applicable
+				if (activeSlider.m_OnMoveSlider)
+				{
+					Utility::CallWrappedVoidFloat(activeSlider.m_OnMoveSlider->m_Function, activeSlider.m_CurrentValue);
+				}
+			}
+
 		}
 	}
 
@@ -244,19 +306,13 @@ namespace Kargono::RuntimeUI
 			SingleLineTextData* textData = GetSingleLineTextDataFromWidget(activeUI->m_EditingWidget);
 			KG_ASSERT(textData);
 
-			// Get window size and translation
-			Math::vec3 windowTranslation = activeUI->m_ActiveWindow->CalculateWorldPosition(
-				viewportData->m_Width, viewportData->m_Height);
-			Math::vec3 windowSize = activeUI->m_ActiveWindow->CalculateSize(
-				viewportData->m_Width, viewportData->m_Height);
-
-			// Get the widget size and translation
-			Math::vec3 widgetTranslation = activeUI->m_EditingWidget->CalculateWorldPosition(
-				windowTranslation, windowSize);
-			Math::vec3 widgetSize = activeUI->m_EditingWidget->CalculateWidgetSize(windowSize);
+			// Get the widget's translation and size
+			Math::vec3 widgetTranslation;
+			Math::vec3 widgetSize;
+			GetWidgetLocationAndSize(activeUI->m_ActiveWindow, activeUI->m_EditingWidget, viewportData,
+				widgetTranslation, widgetSize);
 
 			// Get the widget's text's starting position
-			// Calculate text starting point
 			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 			float textScalingFactor{ (viewportData->m_Width * 0.15f * textData->m_TextSize) * (resolution.y / resolution.x) };
 			Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(*textData, widgetTranslation, widgetSize, textScalingFactor);
@@ -270,6 +326,45 @@ namespace Kargono::RuntimeUI
 			// Ensure the IBeam is visible when moving
 			s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible = true;
 			s_RuntimeUIContext->m_ActiveUI->m_IBeamAccumulator = 0.0f;
+		}
+		else if (activeUI->m_SelectedWidget && activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::SliderWidget)
+		{
+			// Get the underlying widget type
+			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::SliderWidget);
+			SliderWidget& activeSlider = *(SliderWidget*)activeUI->m_SelectedWidget;
+
+			// Get the widget's translation and size
+			Math::vec3 widgetTranslation;
+			Math::vec3 widgetSize;
+			GetWidgetLocationAndSize(activeUI->m_ActiveWindow, activeUI->m_SelectedWidget, viewportData,
+				widgetTranslation, widgetSize);
+
+			// Get the slider's current normalized location based on the bounds and currentValue
+			float normalizedSliderLocation = (activeSlider.m_CurrentValue - activeSlider.m_Bounds.x) /
+				(activeSlider.m_Bounds.y - activeSlider.m_Bounds.x);
+
+			// Get slider bounding box
+			Math::vec3 sliderSize { 0.04f * widgetSize.x , 0.35f * widgetSize.y  , widgetSize.z };
+			Math::vec3 sliderLocation{ widgetTranslation.x + widgetSize.x * normalizedSliderLocation - (sliderSize.x / 2.0f), widgetTranslation.y + (widgetSize.y / 2.0f) - (sliderSize.y / 2.0f), widgetTranslation.z};
+
+			// Check if the mouse click falls within the bounds of the slider
+			if (mousePosition.x > (sliderLocation.x) && mousePosition.x < (sliderLocation.x + sliderSize.x) &&
+				mousePosition.y >(sliderLocation.y) && mousePosition.y < (sliderLocation.y + sliderSize.y))
+			{
+				activeUI->m_PressedWidget = activeUI->m_SelectedWidget;
+			}
+
+		}
+	}
+
+	void RuntimeUIService::OnMouseButtonReleasedEvent(const Events::MouseButtonReleasedEvent& mouseEvent)
+	{
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+
+		if (activeUI->m_PressedWidget)
+		{
+			// Clear the pressed widget
+			activeUI->m_PressedWidget = nullptr;
 		}
 	}
 
@@ -839,6 +934,20 @@ namespace Kargono::RuntimeUI
 		selectionData->m_DefaultBackgroundColor = newColor;
 	}
 
+	void RuntimeUIService::GetWidgetLocationAndSize(Window* window, Widget* widget, ViewportData* viewportData, Math::vec3& translationOut, Math::vec3& sizeOut)
+	{
+		// Get window size and translation
+		Math::vec3 windowTranslation = window->CalculateWorldPosition(
+			viewportData->m_Width, viewportData->m_Height);
+		Math::vec3 windowSize = window->CalculateSize(
+			viewportData->m_Width, viewportData->m_Height);
+
+		// Get the widget size and translation
+		translationOut = widget->CalculateWorldPosition(
+			windowTranslation, windowSize);
+		sizeOut = widget->CalculateWidgetSize(windowSize);
+	}
+
 	void RuntimeUIService::OnPressInternal(Widget* currentWidget)
 	{
 		// Get the selection specific data from the widget
@@ -1028,7 +1137,7 @@ namespace Kargono::RuntimeUI
 
 		if (color.w > 0.001f)
 		{
-			// Create the widget's background rendering data
+			// Create the transform of the quad
 			renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f),
 				Math::vec3(translation.x + (sliderSize.x / 2.0f), translation.y + (size.y / 2.0f), translation.z))
 				* glm::scale(Math::mat4(1.0f), sliderSize);
@@ -1050,7 +1159,7 @@ namespace Kargono::RuntimeUI
 		{
 			// Create the widget's background rendering data
 			renderSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f),
-				Math::vec3(translation.x + (sliderSize.x / 2.0f), translation.y + (size.y / 2.0f), translation.z))
+				Math::vec3(translation.x, translation.y + (size.y / 2.0f), translation.z))
 				* glm::scale(Math::mat4(1.0f), sliderSize);
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color,
 				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
@@ -2571,13 +2680,20 @@ namespace Kargono::RuntimeUI
 
 		widgetTranslation.z += 0.001f;
 
+		// Get the slider's current normalized location based on the bounds and currentValue
+		float normalizedSliderLocation = (m_CurrentValue - m_Bounds.x) / (m_Bounds.y - m_Bounds.x);
+
 		if (activeUI->m_SelectedWidget == this)
 		{
-			RuntimeUIService::RenderSlider(activeUI->m_SelectColor, widgetTranslation, widgetSize);
+			RuntimeUIService::RenderSlider(activeUI->m_SelectColor, 
+				{ widgetTranslation.x + widgetSize.x * normalizedSliderLocation, widgetTranslation.y, widgetTranslation.z },
+				widgetSize);
 		}
 		else
 		{
-			RuntimeUIService::RenderSlider(m_SliderColor, widgetTranslation, widgetSize);
+			RuntimeUIService::RenderSlider(m_SliderColor,
+				{ widgetTranslation.x + widgetSize.x * normalizedSliderLocation, widgetTranslation.y, widgetTranslation.z },
+				widgetSize);
 		}
 		
 	}

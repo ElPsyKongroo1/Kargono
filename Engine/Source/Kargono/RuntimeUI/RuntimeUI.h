@@ -632,6 +632,7 @@ namespace Kargono::RuntimeUI
 		Widget* m_SelectedWidget{ nullptr };
 		Widget* m_HoveredWidget{ nullptr };
 		Widget* m_EditingWidget{ nullptr };
+		Widget* m_PressedWidget{ nullptr };
 		Window* m_ActiveWindow{ nullptr };
 	};
 
@@ -650,10 +651,11 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// On Event Functions
 		//==============================
-		static void OnUpdate(Timestep ts);
+		static void OnUpdate(Timestep ts, Math::vec2 mousePosition, ViewportData* viewportData);
 		static bool OnKeyTypedEvent(Events::KeyTypedEvent event);
 		static bool OnKeyPressedEvent(Events::KeyPressedEvent event);
 		static void OnLeftMouseButtonPressed(Math::vec2 mousePosition, ViewportData* viewportData);
+		static void OnMouseButtonReleasedEvent(const Events::MouseButtonReleasedEvent& mouseEvent);
 
 		//==============================
 		// Modify Active UI
@@ -762,6 +764,8 @@ namespace Kargono::RuntimeUI
 		static void SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable);
 		static bool IsWidgetSelectedInternal(Ref<Widget> currentWidget);
 		static void SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
+		static void GetWidgetLocationAndSize(Window* window, Widget* widget, ViewportData* viewportData, Math::vec3& translationOut, Math::vec3& sizeOut);
+		
 
 		//==============================
 		// Interact With Active UI (Internal)
