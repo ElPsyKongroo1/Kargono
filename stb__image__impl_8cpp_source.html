@@ -105,10 +105,13 @@ $(document).ready(function(){initNavTree('stb__image__impl_8cpp_source.html','')
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment">//==============================</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">// Dependency Implementation</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">//==============================</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="stb__image__impl_8cpp.html#a18372412ad2fc3ce1e3240b3cf0efe78">    6</a></span><span class="preprocessor">#define STB_IMAGE_IMPLEMENTATION</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;stb_image.h&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno"><a class="line" href="stb__image__impl_8cpp.html#aefe397a94e8feddc652f92ef40ce9597">    8</a></span><span class="preprocessor">#define STB_IMAGE_WRITE_IMPLEMENTATION</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;stb_image_write.h&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#if defined (KG_PLATFORM_LINUX)</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">    #define STBI_NO_SIMD </span><span class="comment">// Here is a link to the issue: https://stackoverflow.com/questions/71495886/error-when-compiling-source-file-which-includes-stb-image-h/71496373</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno"><a class="line" href="stb__image__impl_8cpp.html#a18372412ad2fc3ce1e3240b3cf0efe78">    9</a></span><span class="preprocessor">#define STB_IMAGE_IMPLEMENTATION</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;stb_image.h&quot;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="stb__image__impl_8cpp.html#aefe397a94e8feddc652f92ef40ce9597">   11</a></span><span class="preprocessor">#define STB_IMAGE_WRITE_IMPLEMENTATION</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;stb_image_write.h&quot;</span></div>
 <div class="ttc" id="akgpch_8h_html"><div class="ttname"><a href="kgpch_8h.html">kgpch.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

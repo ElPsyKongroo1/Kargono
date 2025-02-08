@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['textwidget_0',['TextWidget',['../classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#af456a1da14608c2b3e1b66078e1886c2',1,'Kargono::RuntimeUI::RuntimeUIService']]],
-  ['tooltipspec_1',['TooltipSpec',['../structKargono_1_1EditorUI_1_1TooltipEntry.html#a0954fa82bc3226d4129b7dfc199a5d35',1,'Kargono::EditorUI::TooltipEntry']]]
+  ['operator_3c_3c_0',['operator&lt;&lt;',['../structKargono_1_1Network_1_1Message.html#a8e0e3b7d6e6f492da359592f4b952e11',1,'Kargono::Network::Message']]],
+  ['operator_3e_3e_1',['operator&gt;&gt;',['../structKargono_1_1Network_1_1Message.html#a38708a77e9e2df0ed32db317c529205e',1,'Kargono::Network::Message']]]
 ];

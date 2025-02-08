@@ -4,6 +4,7 @@ var structKargono_1_1Scripting_1_1CursorContext =
     [ "AllReturnTypes", "structKargono_1_1Scripting_1_1CursorContext.html#a2698d764ddc5ffdcdbff7505abc08d65", null ],
     [ "StackVariables", "structKargono_1_1Scripting_1_1CursorContext.html#a51a87abad86266fcc84e55419fdf7071", null ],
     [ "CurrentNamespace", "structKargono_1_1Scripting_1_1CursorContext.html#a742a2e36ec264e516c82e1212bd9d00a", null ],
+    [ "LiteralMembers", "structKargono_1_1Scripting_1_1CursorContext.html#a2d3b01786f6b1dab1c9d8f0b1c703966", null ],
     [ "DataMembers", "structKargono_1_1Scripting_1_1CursorContext.html#a69f438e33e3ecbeca3141c71de0a754a", null ],
     [ "m_Flags", "structKargono_1_1Scripting_1_1CursorContext.html#ac91e1d14418c5c3a42764b57c35896ff", null ]
 ];

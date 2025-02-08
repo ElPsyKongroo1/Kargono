@@ -8,6 +8,7 @@ var Asset_8h =
     [ "Kargono::Assets::SceneMetaData", "structKargono_1_1Assets_1_1SceneMetaData.html", null ],
     [ "Kargono::Assets::UserInterfaceMetaData", "structKargono_1_1Assets_1_1UserInterfaceMetaData.html", null ],
     [ "Kargono::Assets::InputMapMetaData", "structKargono_1_1Assets_1_1InputMapMetaData.html", null ],
+    [ "Kargono::Assets::ParticleEmitterConfigMetaData", "structKargono_1_1Assets_1_1ParticleEmitterConfigMetaData.html", null ],
     [ "Kargono::Assets::AIStateMetaData", "structKargono_1_1Assets_1_1AIStateMetaData.html", null ],
     [ "Kargono::Assets::GameStateMetaData", "structKargono_1_1Assets_1_1GameStateMetaData.html", "structKargono_1_1Assets_1_1GameStateMetaData" ],
     [ "Kargono::Assets::ScriptMetaData", "structKargono_1_1Assets_1_1ScriptMetaData.html", "structKargono_1_1Assets_1_1ScriptMetaData" ],
@@ -26,7 +27,8 @@ var Asset_8h =
       [ "Script", "Asset_8h.html#a87d009e5376073cedbbc0c6a82318d5eaf907e651164789346ae0a1e257c462d8", null ],
       [ "GameState", "Asset_8h.html#a87d009e5376073cedbbc0c6a82318d5ea9b2b13057e7b26024b1c05665108a78e", null ],
       [ "ProjectComponent", "Asset_8h.html#a87d009e5376073cedbbc0c6a82318d5ea281c173adbce733b04e505851ffc664e", null ],
-      [ "AIState", "Asset_8h.html#a87d009e5376073cedbbc0c6a82318d5ea778fdbea8377a30a1aca834408560dfd", null ]
+      [ "AIState", "Asset_8h.html#a87d009e5376073cedbbc0c6a82318d5ea778fdbea8377a30a1aca834408560dfd", null ],
+      [ "EmitterConfig", "Asset_8h.html#a87d009e5376073cedbbc0c6a82318d5ea4e1566077eaab369e7358e44aef781ba", null ]
     ] ],
     [ "AssetTypeToString", "Asset_8h.html#a4b8ac365850f8567c1fdcee6161a9f15", null ],
     [ "StringToAssetType", "Asset_8h.html#a8229273526e8700e37576ea6b280c97f", null ]

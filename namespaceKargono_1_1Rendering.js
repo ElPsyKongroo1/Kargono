@@ -2,7 +2,8 @@ var namespaceKargono_1_1Rendering =
 [
     [ "Camera", "classKargono_1_1Rendering_1_1Camera.html", "classKargono_1_1Rendering_1_1Camera" ],
     [ "DrawCallBuffer", "structKargono_1_1Rendering_1_1DrawCallBuffer.html", "structKargono_1_1Rendering_1_1DrawCallBuffer" ],
-    [ "EditorCamera", "classKargono_1_1Rendering_1_1EditorCamera.html", "classKargono_1_1Rendering_1_1EditorCamera" ],
+    [ "EditorOrthographicCamera", "classKargono_1_1Rendering_1_1EditorOrthographicCamera.html", "classKargono_1_1Rendering_1_1EditorOrthographicCamera" ],
+    [ "EditorPerspectiveCamera", "classKargono_1_1Rendering_1_1EditorPerspectiveCamera.html", "classKargono_1_1Rendering_1_1EditorPerspectiveCamera" ],
     [ "Framebuffer", "classKargono_1_1Rendering_1_1Framebuffer.html", "classKargono_1_1Rendering_1_1Framebuffer" ],
     [ "FramebufferAttachmentSpecification", "structKargono_1_1Rendering_1_1FramebufferAttachmentSpecification.html", "structKargono_1_1Rendering_1_1FramebufferAttachmentSpecification" ],
     [ "FramebufferDataSpecification", "structKargono_1_1Rendering_1_1FramebufferDataSpecification.html", "structKargono_1_1Rendering_1_1FramebufferDataSpecification" ],
@@ -29,6 +30,11 @@ var namespaceKargono_1_1Rendering =
     [ "ShaderSource", "namespaceKargono_1_1Rendering.html#a29c117ac2ca6b7f0f8f1d7d26c960606", null ],
     [ "Priority", "namespaceKargono_1_1Rendering.html#a234cc9e0228bec5ad1ab0c5557c5cdae", null ],
     [ "Vertex", "namespaceKargono_1_1Rendering.html#a8adb284242a15e28848f51c29f41660f", null ],
+    [ "CameraSizeType", "namespaceKargono_1_1Rendering.html#a59fe16389b3a404bd2460222b5befbc1", [
+      [ "None", "namespaceKargono_1_1Rendering.html#a59fe16389b3a404bd2460222b5befbc1a6adf97f83acf6453d4a6a4b1070f3754", null ],
+      [ "Fixed", "namespaceKargono_1_1Rendering.html#a59fe16389b3a404bd2460222b5befbc1a4457d440870ad6d42bab9082d9bf9b61", null ],
+      [ "AspectRatio", "namespaceKargono_1_1Rendering.html#a59fe16389b3a404bd2460222b5befbc1abdb15abbafc953693ffa4ed7154c4ab6", null ]
+    ] ],
     [ "FramebufferDataFormat", "namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31", [
       [ "None", "namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "RGBA8", "namespaceKargono_1_1Rendering.html#a50ccbfd89075033a1cb2d05deef6dc31ab4b279046a02077466fa26cabb00c642", null ],

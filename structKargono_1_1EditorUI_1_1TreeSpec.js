@@ -6,7 +6,9 @@ var structKargono_1_1EditorUI_1_1TreeSpec =
     [ "MoveLeft", "structKargono_1_1EditorUI_1_1TreeSpec.html#a0ed1b5d746567ecb6c8377cab52aabd5", null ],
     [ "MoveRight", "structKargono_1_1EditorUI_1_1TreeSpec.html#ab201dbbe6eadc29508eef758229aebeb", null ],
     [ "SelectFirstEntry", "structKargono_1_1EditorUI_1_1TreeSpec.html#ac09dbcc24462a31848c949a4015743db", null ],
-    [ "SearchFirstLayer", "structKargono_1_1EditorUI_1_1TreeSpec.html#a00286b074377ec80dc730660c9775c19", null ],
+    [ "SelectEntry", "structKargono_1_1EditorUI_1_1TreeSpec.html#ac961abd5b16a34740ff91693489bb028", null ],
+    [ "SearchFirstLayer", "structKargono_1_1EditorUI_1_1TreeSpec.html#a72d5f933837da020035dc5fa71404017", null ],
+    [ "SearchDepth", "structKargono_1_1EditorUI_1_1TreeSpec.html#a4b1eb9b277d757602ee885d508e66594", null ],
     [ "SearchDepth", "structKargono_1_1EditorUI_1_1TreeSpec.html#aa0a1028a5f84d60399d065501d69bded", null ],
     [ "EditDepth", "structKargono_1_1EditorUI_1_1TreeSpec.html#a0ba0435ade593e7bcf7928c10da6daf8", null ],
     [ "InsertEntry", "structKargono_1_1EditorUI_1_1TreeSpec.html#a3c0297259c0286f39526ee8701cdcc87", null ],
@@ -20,7 +22,7 @@ var structKargono_1_1EditorUI_1_1TreeSpec =
     [ "GetPathFromEntryReference", "structKargono_1_1EditorUI_1_1TreeSpec.html#acf13333cd28f161a6c6c802f9c9f9f90", null ],
     [ "EditorUIService::Tree", "structKargono_1_1EditorUI_1_1TreeSpec.html#ac7a1e5452e857bc9ac67ef45cef14ace", null ],
     [ "DrawEntries", "structKargono_1_1EditorUI_1_1TreeSpec.html#a1bdb1594d8c45a193a509b159d4c99d6", null ],
-    [ "Label", "structKargono_1_1EditorUI_1_1TreeSpec.html#ae9721927e30123cc066709bc0953b34c", null ],
-    [ "SelectedEntry", "structKargono_1_1EditorUI_1_1TreeSpec.html#a447ae3c677a49ca4acdceb906a6fe70b", null ],
-    [ "OnRefresh", "structKargono_1_1EditorUI_1_1TreeSpec.html#a547bfb9d2d3f69c79a33c201596aa96d", null ]
+    [ "m_Label", "structKargono_1_1EditorUI_1_1TreeSpec.html#a802e233f73df5df83822096d579a402f", null ],
+    [ "m_SelectedEntry", "structKargono_1_1EditorUI_1_1TreeSpec.html#a43b9c600a0bf9a6a05282f0870cad78e", null ],
+    [ "m_OnRefresh", "structKargono_1_1EditorUI_1_1TreeSpec.html#a47f3d2de06ed1cd32d85c0f6b4b4b9e5", null ]
 ];

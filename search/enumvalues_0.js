@@ -1,7 +1,7 @@
 var searchData=
 [
   ['a_0',['A',['../namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6aed46cc1f4680fd6b10cd44bf3e3d5382',1,'Kargono::Key']]],
-  ['absolute_1',['Absolute',['../namespaceKargono_1_1EditorUI.html#aca3af13ddb3306beaf394c7dee4eb86dab51ca26c6c89cfc9bec338f7a0d3e0c8',1,'Kargono::EditorUI']]],
+  ['absolute_1',['absolute',['../namespaceKargono_1_1EditorUI.html#aca3af13ddb3306beaf394c7dee4eb86dab51ca26c6c89cfc9bec338f7a0d3e0c8',1,'Kargono::EditorUI::Absolute'],['../namespaceKargono_1_1RuntimeUI.html#aa3fc0fc07d94625ce2862d516bc589eeab51ca26c6c89cfc9bec338f7a0d3e0c8',1,'Kargono::RuntimeUI::Absolute']]],
   ['acceptconnection_2',['AcceptConnection',['../namespaceKargono_1_1Network.html#a5e82ac7a52db2786742329689d178f5ba843677171190ceaabbc5dec412139c97',1,'Kargono::Network']]],
   ['adddebugline_3',['AddDebugLine',['../namespaceKargono_1_1Events.html#a5e4de4fbf6d7aab8a2a47bfa26ed53c9aa0aaff065d16099acf47355a9588b6ba',1,'Kargono::Events']]],
   ['adddebugpoint_4',['AddDebugPoint',['../namespaceKargono_1_1Events.html#a5e4de4fbf6d7aab8a2a47bfa26ed53c9a8e34405f8d35da3eceae38f231fa53cc',1,'Kargono::Events']]],
@@ -17,11 +17,13 @@ var searchData=
   ['appclose_14',['AppClose',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4ab569e9b21b2f4983198637f6331f79b6',1,'Kargono::Events']]],
   ['application_15',['Application',['../namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522a4bedaf5c0160051abd4ffcc062285d84',1,'Kargono::Events']]],
   ['apprender_16',['AppRender',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a4b2eb3c601042333ac1c0565ff58e3d6',1,'Kargono::Events']]],
-  ['approvejoinsession_17',['approvejoinsession',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4abf649e930ad7459ec42bac3675db09bd',1,'Kargono::Events::ApproveJoinSession'],['../namespaceKargono_1_1Network.html#a5e82ac7a52db2786742329689d178f5babf649e930ad7459ec42bac3675db09bd',1,'Kargono::Network::ApproveJoinSession']]],
-  ['apptick_18',['AppTick',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a559b408d45669603dbac61cd15984f13',1,'Kargono::Events']]],
-  ['appupdate_19',['AppUpdate',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4ac177abb86f28dea426f2e3409e14bcda',1,'Kargono::Events']]],
-  ['arbitraryfunction_20',['ArbitraryFunction',['../namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618a73dcf5f75c4409299ac5d6a9d24100ab',1,'Kargono']]],
-  ['asset_21',['Asset',['../namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522afd141ad52a55b34b7679fc9f252b918f',1,'Kargono::Events']]],
-  ['assignmentoperator_22',['AssignmentOperator',['../namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6ad311bcb570590a769d3e5a39f9cf63ce',1,'Kargono::Scripting']]],
-  ['audio_23',['audio',['../namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eab22f0418e8ac915eb66f829d262d14a2',1,'Kargono::Assets::Audio'],['../namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723bab22f0418e8ac915eb66f829d262d14a2',1,'Kargono::Panels::Audio']]]
+  ['appresize_17',['AppResize',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4ad6659b57ac6cee3ff9bd2150bee6fc59',1,'Kargono::Events']]],
+  ['approvejoinsession_18',['approvejoinsession',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4abf649e930ad7459ec42bac3675db09bd',1,'Kargono::Events::ApproveJoinSession'],['../namespaceKargono_1_1Network.html#a5e82ac7a52db2786742329689d178f5babf649e930ad7459ec42bac3675db09bd',1,'Kargono::Network::ApproveJoinSession']]],
+  ['apptick_19',['AppTick',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a559b408d45669603dbac61cd15984f13',1,'Kargono::Events']]],
+  ['appupdate_20',['AppUpdate',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4ac177abb86f28dea426f2e3409e14bcda',1,'Kargono::Events']]],
+  ['arbitraryfunction_21',['ArbitraryFunction',['../namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618a73dcf5f75c4409299ac5d6a9d24100ab',1,'Kargono']]],
+  ['aspectratio_22',['AspectRatio',['../namespaceKargono_1_1Rendering.html#a59fe16389b3a404bd2460222b5befbc1abdb15abbafc953693ffa4ed7154c4ab6',1,'Kargono::Rendering']]],
+  ['asset_23',['Asset',['../namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522afd141ad52a55b34b7679fc9f252b918f',1,'Kargono::Events']]],
+  ['assignmentoperator_24',['AssignmentOperator',['../namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6ad311bcb570590a769d3e5a39f9cf63ce',1,'Kargono::Scripting']]],
+  ['audio_25',['audio',['../namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eab22f0418e8ac915eb66f829d262d14a2',1,'Kargono::Assets::Audio'],['../namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723bab22f0418e8ac915eb66f829d262d14a2',1,'Kargono::Panels::Audio']]]
 ];

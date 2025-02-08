@@ -8,6 +8,7 @@ var namespaceKargono_1_1Assets =
     [ "AssetService", "classKargono_1_1Assets_1_1AssetService.html", null ],
     [ "AudioBufferManager", "classKargono_1_1Assets_1_1AudioBufferManager.html", "classKargono_1_1Assets_1_1AudioBufferManager" ],
     [ "AudioMetaData", "structKargono_1_1Assets_1_1AudioMetaData.html", "structKargono_1_1Assets_1_1AudioMetaData" ],
+    [ "EmitterConfigManager", "classKargono_1_1Assets_1_1EmitterConfigManager.html", "classKargono_1_1Assets_1_1EmitterConfigManager" ],
     [ "FieldReallocationInstructions", "structKargono_1_1Assets_1_1FieldReallocationInstructions.html", "structKargono_1_1Assets_1_1FieldReallocationInstructions" ],
     [ "FontManager", "classKargono_1_1Assets_1_1FontManager.html", "classKargono_1_1Assets_1_1FontManager" ],
     [ "FontMetaData", "structKargono_1_1Assets_1_1FontMetaData.html", "structKargono_1_1Assets_1_1FontMetaData" ],
@@ -16,6 +17,7 @@ var namespaceKargono_1_1Assets =
     [ "InputMapManager", "classKargono_1_1Assets_1_1InputMapManager.html", "classKargono_1_1Assets_1_1InputMapManager" ],
     [ "InputMapMetaData", "structKargono_1_1Assets_1_1InputMapMetaData.html", null ],
     [ "Metadata", "structKargono_1_1Assets_1_1Metadata.html", "structKargono_1_1Assets_1_1Metadata" ],
+    [ "ParticleEmitterConfigMetaData", "structKargono_1_1Assets_1_1ParticleEmitterConfigMetaData.html", null ],
     [ "ProjectComponentManager", "classKargono_1_1Assets_1_1ProjectComponentManager.html", "classKargono_1_1Assets_1_1ProjectComponentManager" ],
     [ "ProjectComponentMetaData", "structKargono_1_1Assets_1_1ProjectComponentMetaData.html", "structKargono_1_1Assets_1_1ProjectComponentMetaData" ],
     [ "SceneManager", "classKargono_1_1Assets_1_1SceneManager.html", "classKargono_1_1Assets_1_1SceneManager" ],
@@ -43,7 +45,8 @@ var namespaceKargono_1_1Assets =
       [ "Script", "namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eaf907e651164789346ae0a1e257c462d8", null ],
       [ "GameState", "namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea9b2b13057e7b26024b1c05665108a78e", null ],
       [ "ProjectComponent", "namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea281c173adbce733b04e505851ffc664e", null ],
-      [ "AIState", "namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea778fdbea8377a30a1aca834408560dfd", null ]
+      [ "AIState", "namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea778fdbea8377a30a1aca834408560dfd", null ],
+      [ "EmitterConfig", "namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea4e1566077eaab369e7358e44aef781ba", null ]
     ] ],
     [ "k_NewAllocationIndex", "namespaceKargono_1_1Assets.html#a4e9c00c4c82c4cb8e3ff2e144ebf37fc", null ]
 ];

@@ -130,6 +130,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Assets_1_1InputMapMetaData.html">Kargono::Assets::InputMapMetaData</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Assets_1_1ParticleEmitterConfigMetaData.html">Kargono::Assets::ParticleEmitterConfigMetaData</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Assets_1_1AIStateMetaData.html">Kargono::Assets::AIStateMetaData</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Assets_1_1GameStateMetaData.html">Kargono::Assets::GameStateMetaData</a></td></tr>
@@ -152,7 +154,7 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:af3b6830c6804fbd8dbea92b8ef79d3a5" id="r_af3b6830c6804fbd8dbea92b8ef79d3a5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Kargono::Assets::AssetHandle</a> = <a class="el" href="classKargono_1_1UUID.html">Kargono::UUID</a></td></tr>
+<tr class="memitem:af3b6830c6804fbd8dbea92b8ef79d3a5" id="r_af3b6830c6804fbd8dbea92b8ef79d3a5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Assets.html#af3b6830c6804fbd8dbea92b8ef79d3a5">Kargono::Assets::AssetHandle</a> = <a class="el" href="classKargono_1_1UUID.html">Kargono::UUID</a></td></tr>
 <tr class="separator:af3b6830c6804fbd8dbea92b8ef79d3a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -172,15 +174,17 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea9b2b13057e7b26024b1c05665108a78e">Kargono::Assets::GameState</a>
 , <a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea281c173adbce733b04e505851ffc664e">Kargono::Assets::ProjectComponent</a>
 , <a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea778fdbea8377a30a1aca834408560dfd">Kargono::Assets::AIState</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea4e1566077eaab369e7358e44aef781ba">Kargono::Assets::EmitterConfig</a>
 <br />
  }</td></tr>
 <tr class="separator:a87d009e5376073cedbbc0c6a82318d5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a4b8ac365850f8567c1fdcee6161a9f15" id="r_a4b8ac365850f8567c1fdcee6161a9f15"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a4b8ac365850f8567c1fdcee6161a9f15">Kargono::Utility::AssetTypeToString</a> (<a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5e">Assets::AssetType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a4b8ac365850f8567c1fdcee6161a9f15" id="r_a4b8ac365850f8567c1fdcee6161a9f15"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a4b8ac365850f8567c1fdcee6161a9f15">Kargono::Utility::AssetTypeToString</a> (<a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5e">Assets::AssetType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a4b8ac365850f8567c1fdcee6161a9f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8229273526e8700e37576ea6b280c97f" id="r_a8229273526e8700e37576ea6b280c97f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5e">Assets::AssetType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a8229273526e8700e37576ea6b280c97f">Kargono::Utility::StringToAssetType</a> (std::string <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a8229273526e8700e37576ea6b280c97f" id="r_a8229273526e8700e37576ea6b280c97f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5e">Assets::AssetType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a8229273526e8700e37576ea6b280c97f">Kargono::Utility::StringToAssetType</a> (std::string <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a8229273526e8700e37576ea6b280c97f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->

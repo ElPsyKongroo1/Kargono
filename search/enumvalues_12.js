@@ -2,7 +2,7 @@ var searchData=
 [
   ['s_0',['S',['../namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6a6c8e9466e9eefd3056e031de1f7f302f',1,'Kargono::Key']]],
   ['sampler2d_1',['Sampler2D',['../namespaceKargono_1_1Rendering.html#a951fcfb2d5c1feaa8df52a73327bd2f8a6f0987d6f82566fca538d8c3b8f07ee1',1,'Kargono::Rendering']]],
-  ['scene_2',['scene',['../namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522ab5ad2919f7bacbac2852f251f2585be4',1,'Kargono::Events::Scene'],['../namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea9ead0d38e06ec253ca0ecbf6ea56e59b',1,'Kargono::Assets::Scene'],['../namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723ba9ead0d38e06ec253ca0ecbf6ea56e59b',1,'Kargono::Panels::Scene']]],
+  ['scene_2',['scene',['../namespaceKargono_1_1Events.html#ac4113af6aab03b68f20ae298e9aa0522ab5ad2919f7bacbac2852f251f2585be4',1,'Kargono::Events::Scene'],['../namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5ea9ead0d38e06ec253ca0ecbf6ea56e59b',1,'Kargono::Assets::Scene'],['../namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723ba9ead0d38e06ec253ca0ecbf6ea56e59b',1,'Kargono::Panels::Scene'],['../namespaceKargono_1_1Panels.html#a3d17fdc3d655ffd8548324e80a9ac821a9ead0d38e06ec253ca0ecbf6ea56e59b',1,'Kargono::Panels::Scene']]],
   ['script_3',['script',['../namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5eaf907e651164789346ae0a1e257c462d8',1,'Kargono::Assets::Script'],['../namespaceKargono_1_1Panels.html#ace92b7c6f3257be3748a1c65e7f8723baf907e651164789346ae0a1e257c462d8',1,'Kargono::Panels::Script']]],
   ['scrolllock_4',['ScrollLock',['../namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6a94f406de2539b2903091a1cf808c5371',1,'Kargono::Key']]],
   ['selectoption_5fhandleeditbuttonexternally_5',['SelectOption_HandleEditButtonExternally',['../namespaceKargono_1_1EditorUI.html#ad3c87b90206a14e6c75aba041ee86b80a380010274524533a8737cabed71b64ca',1,'Kargono::EditorUI']]],
@@ -27,12 +27,15 @@ var searchData=
   ['singlelinecomment_24',['SingleLineComment',['../namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6a7cbd9af2ba2127f86960a7da25467dc6',1,'Kargono::Scripting']]],
   ['skipupdate_25',['SkipUpdate',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a70696b7b5f77704be319247809c4976d',1,'Kargono::Events']]],
   ['slash_26',['Slash',['../namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6a04a433d3cb9d42e34f0524ca98e2f425',1,'Kargono::Key']]],
-  ['small_27',['Small',['../namespaceKargono_1_1EditorUI.html#a021e80ea7b1db7bad67d596cbcc17edda2660064e68655415da2628c2ae2f7592',1,'Kargono::EditorUI']]],
-  ['space_28',['Space',['../namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6a702e82bf05a63ac9a721977fce047a23',1,'Kargono::Key']]],
-  ['startsession_29',['startsession',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4ab3cf27cc1224b4a4341c993566eb16f3',1,'Kargono::Events::StartSession'],['../namespaceKargono_1_1Network.html#a5e82ac7a52db2786742329689d178f5bab3cf27cc1224b4a4341c993566eb16f3',1,'Kargono::Network::StartSession']]],
-  ['statement_30',['Statement',['../namespaceKargono_1_1Scripting.html#a07987ddae06682e6b95eb195d94d7ec5a2af6fd9ec72aee193ee7ffe09638e08f',1,'Kargono::Scripting']]],
-  ['static_31',['Static',['../structKargono_1_1ECS_1_1Rigidbody2DComponent.html#abac8e806a6e1c74807d4324232dbba69a84a8921b25f505d0d2077aeb5db4bc16',1,'Kargono::ECS::Rigidbody2DComponent']]],
-  ['string_32',['String',['../namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04da27118326006d3829667a400ad23d5d98',1,'Kargono']]],
-  ['stringliteral_33',['StringLiteral',['../namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6a7029cff17180550e1214f19dba74a32a',1,'Kargono::Scripting']]],
-  ['subtractionoperator_34',['SubtractionOperator',['../namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6a796ddb4c3caab8095cb82e584477100c',1,'Kargono::Scripting']]]
+  ['sliderwidget_27',['SliderWidget',['../namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fa201a712d12c1f7e01d5699a56a8eb274',1,'Kargono::RuntimeUI']]],
+  ['small_28',['Small',['../namespaceKargono_1_1EditorUI.html#a021e80ea7b1db7bad67d596cbcc17edda2660064e68655415da2628c2ae2f7592',1,'Kargono::EditorUI']]],
+  ['south_29',['South',['../namespaceKargono.html#a77925674421111c0d5e708d3d36fffd9a263d7b2cf53802c9ed127b718c0bf9fd',1,'Kargono']]],
+  ['space_30',['Space',['../namespaceKargono_1_1Key.html#a207f6058c8c45a949ccfbd2814638bb6a702e82bf05a63ac9a721977fce047a23',1,'Kargono::Key']]],
+  ['standard_31',['Standard',['../namespaceKargono.html#a939498d6f4da85ec2720816b9c637d27aeb6d8ae6f20283755b339c0dc273988b',1,'Kargono']]],
+  ['startsession_32',['startsession',['../namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4ab3cf27cc1224b4a4341c993566eb16f3',1,'Kargono::Events::StartSession'],['../namespaceKargono_1_1Network.html#a5e82ac7a52db2786742329689d178f5bab3cf27cc1224b4a4341c993566eb16f3',1,'Kargono::Network::StartSession']]],
+  ['statement_33',['Statement',['../namespaceKargono_1_1Scripting.html#a07987ddae06682e6b95eb195d94d7ec5a2af6fd9ec72aee193ee7ffe09638e08f',1,'Kargono::Scripting']]],
+  ['static_34',['Static',['../structKargono_1_1ECS_1_1Rigidbody2DComponent.html#abac8e806a6e1c74807d4324232dbba69a84a8921b25f505d0d2077aeb5db4bc16',1,'Kargono::ECS::Rigidbody2DComponent']]],
+  ['string_35',['String',['../namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04da27118326006d3829667a400ad23d5d98',1,'Kargono']]],
+  ['stringliteral_36',['StringLiteral',['../namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6a7029cff17180550e1214f19dba74a32a',1,'Kargono::Scripting']]],
+  ['subtractionoperator_37',['SubtractionOperator',['../namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6a796ddb4c3caab8095cb82e584477100c',1,'Kargono::Scripting']]]
 ];

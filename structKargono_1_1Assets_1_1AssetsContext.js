@@ -10,5 +10,6 @@ var structKargono_1_1Assets_1_1AssetsContext =
     [ "m_ScriptManager", "structKargono_1_1Assets_1_1AssetsContext.html#a4f40269e9f2001e99373bb72fea428f0", null ],
     [ "m_ShaderManager", "structKargono_1_1Assets_1_1AssetsContext.html#a99bd9830f91c2ff51cea13db7289aecd", null ],
     [ "m_Texture2DManager", "structKargono_1_1Assets_1_1AssetsContext.html#a61b61a06efe54b9ce0857372da7cf5ab", null ],
-    [ "m_UserInterfaceManager", "structKargono_1_1Assets_1_1AssetsContext.html#ac5f9d4a7dc434538ebdf1a1f09e47f75", null ]
+    [ "m_UserInterfaceManager", "structKargono_1_1Assets_1_1AssetsContext.html#ac5f9d4a7dc434538ebdf1a1f09e47f75", null ],
+    [ "m_EmitterConfigManager", "structKargono_1_1Assets_1_1AssetsContext.html#a470ee9ab02a30b44b585c2c6b0dd786b", null ]
 ];

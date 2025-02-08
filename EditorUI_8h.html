@@ -106,6 +106,7 @@ $(document).ready(function(){initNavTree('EditorUI_8h.html',''); initResizable()
 <code>#include &quot;<a class="el" href="Asset_8h_source.html">Kargono/Assets/Asset.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Buffer_8h_source.html">Kargono/Core/Buffer.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="WrappedData_8h_source.html">Kargono/Core/WrappedData.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Window_8h_source.html">Kargono/Core/Window.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ImGuiAPI_8h_source.html">API/EditorUI/ImGuiAPI.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ImGuizmoAPI_8h_source.html">API/EditorUI/ImGuizmoAPI.h</a>&quot;</code><br />
 <code>#include &lt;functional&gt;</code><br />
@@ -113,6 +114,7 @@ $(document).ready(function(){initNavTree('EditorUI_8h.html',''); initResizable()
 <code>#include &lt;unordered_map&gt;</code><br />
 <code>#include &lt;unordered_set&gt;</code><br />
 <code>#include &lt;variant&gt;</code><br />
+<code>#include &lt;array&gt;</code><br />
 </div>
 <p><a href="EditorUI_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -132,6 +134,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1EditIntegerSpec.html">Kargono::EditorUI::EditIntegerSpec</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1EditIVec2Spec.html">Kargono::EditorUI::EditIVec2Spec</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1EditFloatSpec.html">Kargono::EditorUI::EditFloatSpec</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1EditVec2Spec.html">Kargono::EditorUI::EditVec2Spec</a></td></tr>
@@ -143,6 +147,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1RadioSelectorSpec.html">Kargono::EditorUI::RadioSelectorSpec</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1EditTextSpec.html">Kargono::EditorUI::EditTextSpec</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1EditMultiLineTextSpec.html">Kargono::EditorUI::EditMultiLineTextSpec</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1EditorUI_1_1ChooseDirectorySpec.html">Kargono::EditorUI::ChooseDirectorySpec</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -198,13 +204,13 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a4144fe37419076651380ada0d4bd7911" id="r_a4144fe37419076651380ada0d4bd7911"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#a4144fe37419076651380ada0d4bd7911">Kargono::EditorUI::WidgetID</a> = <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">uint32_t</a></td></tr>
+<tr class="memitem:a4144fe37419076651380ada0d4bd7911" id="r_a4144fe37419076651380ada0d4bd7911"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#a4144fe37419076651380ada0d4bd7911">Kargono::EditorUI::WidgetID</a> = <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a></td></tr>
 <tr class="separator:a4144fe37419076651380ada0d4bd7911"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77396d181434d59fcbfeffa72eb3123c" id="r_a77396d181434d59fcbfeffa72eb3123c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#a77396d181434d59fcbfeffa72eb3123c">Kargono::EditorUI::WidgetFlags</a> = <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">uint8_t</a></td></tr>
+<tr class="memitem:a77396d181434d59fcbfeffa72eb3123c" id="r_a77396d181434d59fcbfeffa72eb3123c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#a77396d181434d59fcbfeffa72eb3123c">Kargono::EditorUI::WidgetFlags</a> = <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint8_t</a></td></tr>
 <tr class="separator:a77396d181434d59fcbfeffa72eb3123c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7278179f15c2bcb3b85a73475c50d0f" id="r_ad7278179f15c2bcb3b85a73475c50d0f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#ad7278179f15c2bcb3b85a73475c50d0f">Kargono::EditorUI::SelectionList</a> = std::unordered_map&lt; std::string, std::function&lt; void()&gt; &gt;</td></tr>
+<tr class="memitem:ad7278179f15c2bcb3b85a73475c50d0f" id="r_ad7278179f15c2bcb3b85a73475c50d0f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#ad7278179f15c2bcb3b85a73475c50d0f">Kargono::EditorUI::SelectionList</a> = std::unordered_map&lt; std::string, std::function&lt; void()&gt; &gt;</td></tr>
 <tr class="separator:ad7278179f15c2bcb3b85a73475c50d0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a395565ac2e55c1149a670e92e9864ce6" id="r_a395565ac2e55c1149a670e92e9864ce6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#a395565ac2e55c1149a670e92e9864ce6">Kargono::EditorUI::OptionList</a> = std::unordered_map&lt; std::string, std::vector&lt; <a class="el" href="structKargono_1_1EditorUI_1_1OptionEntry.html">OptionEntry</a> &gt; &gt;</td></tr>
+<tr class="memitem:a395565ac2e55c1149a670e92e9864ce6" id="r_a395565ac2e55c1149a670e92e9864ce6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#a395565ac2e55c1149a670e92e9864ce6">Kargono::EditorUI::OptionList</a> = std::unordered_map&lt; std::string, std::vector&lt; <a class="el" href="structKargono_1_1EditorUI_1_1OptionEntry.html">OptionEntry</a> &gt; &gt;</td></tr>
 <tr class="separator:a395565ac2e55c1149a670e92e9864ce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -230,6 +236,10 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceKargono_1_1EditorUI.html#aea5612136fa3129b04d753811d9025c9afab5155d36823840428ebb72ebc8189c">Kargono::EditorUI::EditInteger_Indented</a> = BIT(0)
  }</td></tr>
 <tr class="separator:aea5612136fa3129b04d753811d9025c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dae9d9e918cc99a2f6d55a97db9e4f6" id="r_a6dae9d9e918cc99a2f6d55a97db9e4f6"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#a6dae9d9e918cc99a2f6d55a97db9e4f6">Kargono::EditorUI::EditIVec2Flags</a> { <a class="el" href="namespaceKargono_1_1EditorUI.html#a6dae9d9e918cc99a2f6d55a97db9e4f6a0ce497cc80833cc986191ac2d452a0d2">Kargono::EditorUI::EditIVec2_None</a> = 0
+, <a class="el" href="namespaceKargono_1_1EditorUI.html#a6dae9d9e918cc99a2f6d55a97db9e4f6addb3f26ee6a9d534f1eed234d80b05f8">Kargono::EditorUI::EditIVec2_Indented</a> = BIT(0)
+ }</td></tr>
+<tr class="separator:a6dae9d9e918cc99a2f6d55a97db9e4f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac037a892258354451fe320119623e711" id="r_ac037a892258354451fe320119623e711"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#ac037a892258354451fe320119623e711">Kargono::EditorUI::EditFloatFlags</a> { <a class="el" href="namespaceKargono_1_1EditorUI.html#ac037a892258354451fe320119623e711a1221a2e4107811d3dedd29b4946ca49c">Kargono::EditorUI::EditFloat_None</a> = 0
 , <a class="el" href="namespaceKargono_1_1EditorUI.html#ac037a892258354451fe320119623e711ac0595f90537e08ea8e2770568d5a4a52">Kargono::EditorUI::EditFloat_Indented</a> = BIT(0)
  }</td></tr>
@@ -256,6 +266,11 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceKargono_1_1EditorUI.html#aa64092267b9d709831562ae062f28a72a9e015531be6f9dd7256e573a2bc86849">Kargono::EditorUI::EditText_Indented</a> = BIT(1)
  }</td></tr>
 <tr class="separator:aa64092267b9d709831562ae062f28a72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3225a6f59d727a8425e1b1bc98f031d" id="r_ab3225a6f59d727a8425e1b1bc98f031d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#ab3225a6f59d727a8425e1b1bc98f031d">Kargono::EditorUI::EditMultiLineTextFlags</a> { <a class="el" href="namespaceKargono_1_1EditorUI.html#ab3225a6f59d727a8425e1b1bc98f031da9086677cdf11b919e05dd7f55e00e604">Kargono::EditorUI::EditMultiLineText_None</a> = 0
+, <a class="el" href="namespaceKargono_1_1EditorUI.html#ab3225a6f59d727a8425e1b1bc98f031da7b034d0ee0593622f28e44fbe6ba97a5">Kargono::EditorUI::EditMultiLineText_PopupOnly</a> = BIT(0)
+, <a class="el" href="namespaceKargono_1_1EditorUI.html#ab3225a6f59d727a8425e1b1bc98f031da020162e4a805d6c6e70816e76dd786ed">Kargono::EditorUI::EditMultiLineText_Indented</a> = BIT(1)
+ }</td></tr>
+<tr class="separator:ab3225a6f59d727a8425e1b1bc98f031d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab51df84ec73fd1329dd47dc1d4635f9b" id="r_ab51df84ec73fd1329dd47dc1d4635f9b"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#ab51df84ec73fd1329dd47dc1d4635f9b">Kargono::EditorUI::CollapsingHeaderFlags</a> { <a class="el" href="namespaceKargono_1_1EditorUI.html#ab51df84ec73fd1329dd47dc1d4635f9ba0f36bfafafb99509c689215cc651352c">Kargono::EditorUI::CollapsingHeader_None</a> = 0
 , <a class="el" href="namespaceKargono_1_1EditorUI.html#ab51df84ec73fd1329dd47dc1d4635f9babb2b3294fa88fc1f3e757abaf2721d94">Kargono::EditorUI::CollapsingHeader_UnderlineTitle</a> = BIT(0)
  }</td></tr>
@@ -283,10 +298,10 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:ad7caec6dd7f6f6c799c65986bfc57023" id="r_ad7caec6dd7f6f6c799c65986bfc57023"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">constexpr</a> <a class="el" href="namespaceKargono_1_1EditorUI.html#a4144fe37419076651380ada0d4bd7911">WidgetID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#ad7caec6dd7f6f6c799c65986bfc57023">Kargono::EditorUI::k_InvalidWidgetID</a> { std::numeric_limits&lt;<a class="el" href="namespaceKargono_1_1EditorUI.html#a4144fe37419076651380ada0d4bd7911">WidgetID</a>&gt;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">::max</a>() }</td></tr>
+<tr class="memitem:ad7caec6dd7f6f6c799c65986bfc57023" id="r_ad7caec6dd7f6f6c799c65986bfc57023"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">constexpr</a> <a class="el" href="namespaceKargono_1_1EditorUI.html#a4144fe37419076651380ada0d4bd7911">WidgetID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#ad7caec6dd7f6f6c799c65986bfc57023">Kargono::EditorUI::k_InvalidWidgetID</a> { std::numeric_limits&lt;<a class="el" href="namespaceKargono_1_1EditorUI.html#a4144fe37419076651380ada0d4bd7911">WidgetID</a>&gt;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">::max</a>() }</td></tr>
 <tr class="separator:ad7caec6dd7f6f6c799c65986bfc57023"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1d85a17348a1e51f5233393fb754325" id="r_ac1d85a17348a1e51f5233393fb754325"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">uint32_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#ac1d85a17348a1e51f5233393fb754325">Kargono::EditorUI::widgetCounter</a> { 1 }</td></tr>
-<tr class="separator:ac1d85a17348a1e51f5233393fb754325"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ed9e998ee35af25be82949071ea5794" id="r_a1ed9e998ee35af25be82949071ea5794"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1EditorUI.html#a1ed9e998ee35af25be82949071ea5794">Kargono::EditorUI::s_WidgetCounter</a> { 1 }</td></tr>
+<tr class="separator:a1ed9e998ee35af25be82949071ea5794"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -5,6 +5,7 @@ var ApplicationEvent_8h =
     [ "Kargono::Events::ApplicationCloseEvent", "classKargono_1_1Events_1_1ApplicationCloseEvent.html", "classKargono_1_1Events_1_1ApplicationCloseEvent" ],
     [ "Kargono::Events::CleanUpTimersEvent", "classKargono_1_1Events_1_1CleanUpTimersEvent.html", "classKargono_1_1Events_1_1CleanUpTimersEvent" ],
     [ "Kargono::Events::AppTickEvent", "classKargono_1_1Events_1_1AppTickEvent.html", "classKargono_1_1Events_1_1AppTickEvent" ],
+    [ "Kargono::Events::ApplicationResizeEvent", "classKargono_1_1Events_1_1ApplicationResizeEvent.html", "classKargono_1_1Events_1_1ApplicationResizeEvent" ],
     [ "Kargono::Events::AddTickGeneratorUsage", "classKargono_1_1Events_1_1AddTickGeneratorUsage.html", "classKargono_1_1Events_1_1AddTickGeneratorUsage" ],
     [ "Kargono::Events::RemoveTickGeneratorUsage", "classKargono_1_1Events_1_1RemoveTickGeneratorUsage.html", "classKargono_1_1Events_1_1RemoveTickGeneratorUsage" ],
     [ "Kargono::Events::SkipUpdateEvent", "classKargono_1_1Events_1_1SkipUpdateEvent.html", "classKargono_1_1Events_1_1SkipUpdateEvent" ],

@@ -32,6 +32,7 @@ var classKargono_1_1Scenes_1_1Scene =
     [ "m_EntityRegistry", "classKargono_1_1Scenes_1_1Scene.html#a84bec6e323eee0951b86409faac83d09", null ],
     [ "m_GroupToEntityList", "classKargono_1_1Scenes_1_1Scene.html#ae0eb7a096ba0d1b77bafca704076ddd2", null ],
     [ "m_PhysicsSpecification", "classKargono_1_1Scenes_1_1Scene.html#a4c0a07715d02ae123952558eda37c27f", null ],
+    [ "m_BackgroundColor", "classKargono_1_1Scenes_1_1Scene.html#ae2997c31a1a9824b52603085a46e48cd", null ],
     [ "m_IsRunning", "classKargono_1_1Scenes_1_1Scene.html#a98297b29fa8b71a6b04b36d99925eded", null ],
     [ "m_HoveredEntity", "classKargono_1_1Scenes_1_1Scene.html#af3dcbd40d66b790dbac5c0f115e360b8", null ],
     [ "m_SelectedEntity", "classKargono_1_1Scenes_1_1Scene.html#aa9c074d321134f847cdbf14e7b574b63", null ]

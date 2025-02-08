@@ -5,5 +5,6 @@ var classKargono_1_1Engine =
     [ "GetWorkingDirectory", "classKargono_1_1Engine.html#aee91e862ac6c6845aae93632e7ea3daf", null ],
     [ "GetAppStartTime", "classKargono_1_1Engine.html#a43f0665a09d79baad5267472c772d75a", null ],
     [ "GetUpdateCount", "classKargono_1_1Engine.html#a7bdc261ae421f43b2cf4938f440ebf36", null ],
+    [ "GetInApplicationTime", "classKargono_1_1Engine.html#a7dda431d20f8527cf14330e55a387821", null ],
     [ "UpdateAppStartTime", "classKargono_1_1Engine.html#ace1e047103f79a7612e79ef2792c703d", null ]
 ];

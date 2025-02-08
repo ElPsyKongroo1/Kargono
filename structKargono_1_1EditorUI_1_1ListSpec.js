@@ -13,10 +13,10 @@ var structKargono_1_1EditorUI_1_1ListSpec =
     [ "GetEntriesListSize", "structKargono_1_1EditorUI_1_1ListSpec.html#a5b227b8c0d1c4923a43b0eda54e6f9b1", null ],
     [ "GetEntry", "structKargono_1_1EditorUI_1_1ListSpec.html#a5f772ca7d73f2bb79452cdc2a4e5abf0", null ],
     [ "EditorUIService::List", "structKargono_1_1EditorUI_1_1ListSpec.html#a87302e1616607256e1ccea8fbcaf33b7", null ],
-    [ "Label", "structKargono_1_1EditorUI_1_1ListSpec.html#ad362128dc2a02ba37d876d0a1c23e353", null ],
-    [ "Flags", "structKargono_1_1EditorUI_1_1ListSpec.html#a98bca75ae203c2ad0b07c7337e9e3946", null ],
-    [ "Column1Title", "structKargono_1_1EditorUI_1_1ListSpec.html#a09318621dee26f16c7cf6d7741022adc", null ],
-    [ "Column2Title", "structKargono_1_1EditorUI_1_1ListSpec.html#a780e8dd442ea50a4a84f60ca857ea835", null ],
-    [ "Expanded", "structKargono_1_1EditorUI_1_1ListSpec.html#a128b40eb34196c25fe8d5a0011262163", null ],
-    [ "OnRefresh", "structKargono_1_1EditorUI_1_1ListSpec.html#a1521723ee94780570b7575bf04a8b495", null ]
+    [ "m_Label", "structKargono_1_1EditorUI_1_1ListSpec.html#ad931b6b546a250ec457ad28a7b26b972", null ],
+    [ "m_Flags", "structKargono_1_1EditorUI_1_1ListSpec.html#a0462c91a8842aafffc0a7c496e79cf71", null ],
+    [ "m_Column1Title", "structKargono_1_1EditorUI_1_1ListSpec.html#a8f5c56847cfbd2ee8092aed7f9a95b2e", null ],
+    [ "m_Column2Title", "structKargono_1_1EditorUI_1_1ListSpec.html#a7a5fc8e60394af631c6dbf8ef1eb6220", null ],
+    [ "m_Expanded", "structKargono_1_1EditorUI_1_1ListSpec.html#a8339699a979e76131c857c6d4bbf09f5", null ],
+    [ "m_OnRefresh", "structKargono_1_1EditorUI_1_1ListSpec.html#a7aa46e5001488d86ec6fc9604d56ddf1", null ]
 ];

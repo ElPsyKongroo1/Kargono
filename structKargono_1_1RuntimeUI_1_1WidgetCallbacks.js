@@ -1,5 +1,5 @@
 var structKargono_1_1RuntimeUI_1_1WidgetCallbacks =
 [
-    [ "OnPressHandle", "structKargono_1_1RuntimeUI_1_1WidgetCallbacks.html#a1294884ceb5ef29a28ec0bae11eecb01", null ],
-    [ "OnPress", "structKargono_1_1RuntimeUI_1_1WidgetCallbacks.html#a06d6a41a0a4274a0940c57156e157dd5", null ]
+    [ "m_OnPressHandle", "structKargono_1_1RuntimeUI_1_1WidgetCallbacks.html#aaefb846847f6cdb12809bb50c59d42ae", null ],
+    [ "m_OnPress", "structKargono_1_1RuntimeUI_1_1WidgetCallbacks.html#a6e04d8fddb336b28f023ea813728eecf", null ]
 ];

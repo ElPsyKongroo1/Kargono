@@ -1,8 +1,6 @@
 var Log_8h =
 [
     [ "Kargono::Log", "classKargono_1_1Log.html", null ],
-    [ "KG_STRINGIFY", "Log_8h.html#abff906b1cbb717518091a93936461b52", null ],
-    [ "KG_EXPAND_AND_STRINGIFY", "Log_8h.html#ae9b7d886e8acbd0ed222cf23a3442ba4", null ],
     [ "KG_INFO_LOG_EVENT", "Log_8h.html#a672dde7d3c8b8ee19efe5098b8a9192c", null ],
     [ "KG_WARNING_LOG_EVENT", "Log_8h.html#a480bd6f02da57f0fbe34676f1728404e", null ],
     [ "KG_CRITICAL_LOG_EVENT", "Log_8h.html#ad836362c70d10b554d679009cf7ca338", null ],

@@ -7,12 +7,14 @@ var EditorUI_8h =
     [ "Kargono::EditorUI::GenericPopupSpec", "structKargono_1_1EditorUI_1_1GenericPopupSpec.html", "structKargono_1_1EditorUI_1_1GenericPopupSpec" ],
     [ "Kargono::EditorUI::CheckboxSpec", "structKargono_1_1EditorUI_1_1CheckboxSpec.html", "structKargono_1_1EditorUI_1_1CheckboxSpec" ],
     [ "Kargono::EditorUI::EditIntegerSpec", "structKargono_1_1EditorUI_1_1EditIntegerSpec.html", "structKargono_1_1EditorUI_1_1EditIntegerSpec" ],
+    [ "Kargono::EditorUI::EditIVec2Spec", "structKargono_1_1EditorUI_1_1EditIVec2Spec.html", "structKargono_1_1EditorUI_1_1EditIVec2Spec" ],
     [ "Kargono::EditorUI::EditFloatSpec", "structKargono_1_1EditorUI_1_1EditFloatSpec.html", "structKargono_1_1EditorUI_1_1EditFloatSpec" ],
     [ "Kargono::EditorUI::EditVec2Spec", "structKargono_1_1EditorUI_1_1EditVec2Spec.html", "structKargono_1_1EditorUI_1_1EditVec2Spec" ],
     [ "Kargono::EditorUI::EditVec3Spec", "structKargono_1_1EditorUI_1_1EditVec3Spec.html", "structKargono_1_1EditorUI_1_1EditVec3Spec" ],
     [ "Kargono::EditorUI::EditVec4Spec", "structKargono_1_1EditorUI_1_1EditVec4Spec.html", "structKargono_1_1EditorUI_1_1EditVec4Spec" ],
     [ "Kargono::EditorUI::RadioSelectorSpec", "structKargono_1_1EditorUI_1_1RadioSelectorSpec.html", "structKargono_1_1EditorUI_1_1RadioSelectorSpec" ],
     [ "Kargono::EditorUI::EditTextSpec", "structKargono_1_1EditorUI_1_1EditTextSpec.html", "structKargono_1_1EditorUI_1_1EditTextSpec" ],
+    [ "Kargono::EditorUI::EditMultiLineTextSpec", "structKargono_1_1EditorUI_1_1EditMultiLineTextSpec.html", "structKargono_1_1EditorUI_1_1EditMultiLineTextSpec" ],
     [ "Kargono::EditorUI::ChooseDirectorySpec", "structKargono_1_1EditorUI_1_1ChooseDirectorySpec.html", "structKargono_1_1EditorUI_1_1ChooseDirectorySpec" ],
     [ "Kargono::EditorUI::CollapsingHeaderSpec", "structKargono_1_1EditorUI_1_1CollapsingHeaderSpec.html", "structKargono_1_1EditorUI_1_1CollapsingHeaderSpec" ],
     [ "Kargono::EditorUI::PanelHeaderSpec", "structKargono_1_1EditorUI_1_1PanelHeaderSpec.html", "structKargono_1_1EditorUI_1_1PanelHeaderSpec" ],
@@ -57,6 +59,10 @@ var EditorUI_8h =
       [ "EditInteger_None", "EditorUI_8h.html#aea5612136fa3129b04d753811d9025c9a14ead103dcbb6843a770cd224975feb2", null ],
       [ "EditInteger_Indented", "EditorUI_8h.html#aea5612136fa3129b04d753811d9025c9afab5155d36823840428ebb72ebc8189c", null ]
     ] ],
+    [ "EditIVec2Flags", "EditorUI_8h.html#a6dae9d9e918cc99a2f6d55a97db9e4f6", [
+      [ "EditIVec2_None", "EditorUI_8h.html#a6dae9d9e918cc99a2f6d55a97db9e4f6a0ce497cc80833cc986191ac2d452a0d2", null ],
+      [ "EditIVec2_Indented", "EditorUI_8h.html#a6dae9d9e918cc99a2f6d55a97db9e4f6addb3f26ee6a9d534f1eed234d80b05f8", null ]
+    ] ],
     [ "EditFloatFlags", "EditorUI_8h.html#ac037a892258354451fe320119623e711", [
       [ "EditFloat_None", "EditorUI_8h.html#ac037a892258354451fe320119623e711a1221a2e4107811d3dedd29b4946ca49c", null ],
       [ "EditFloat_Indented", "EditorUI_8h.html#ac037a892258354451fe320119623e711ac0595f90537e08ea8e2770568d5a4a52", null ]
@@ -83,6 +89,11 @@ var EditorUI_8h =
       [ "EditText_PopupOnly", "EditorUI_8h.html#aa64092267b9d709831562ae062f28a72a4a5345a127f8eb42149eb06ecdec7082", null ],
       [ "EditText_Indented", "EditorUI_8h.html#aa64092267b9d709831562ae062f28a72a9e015531be6f9dd7256e573a2bc86849", null ]
     ] ],
+    [ "EditMultiLineTextFlags", "EditorUI_8h.html#ab3225a6f59d727a8425e1b1bc98f031d", [
+      [ "EditMultiLineText_None", "EditorUI_8h.html#ab3225a6f59d727a8425e1b1bc98f031da9086677cdf11b919e05dd7f55e00e604", null ],
+      [ "EditMultiLineText_PopupOnly", "EditorUI_8h.html#ab3225a6f59d727a8425e1b1bc98f031da7b034d0ee0593622f28e44fbe6ba97a5", null ],
+      [ "EditMultiLineText_Indented", "EditorUI_8h.html#ab3225a6f59d727a8425e1b1bc98f031da020162e4a805d6c6e70816e76dd786ed", null ]
+    ] ],
     [ "CollapsingHeaderFlags", "EditorUI_8h.html#ab51df84ec73fd1329dd47dc1d4635f9b", [
       [ "CollapsingHeader_None", "EditorUI_8h.html#ab51df84ec73fd1329dd47dc1d4635f9ba0f36bfafafb99509c689215cc651352c", null ],
       [ "CollapsingHeader_UnderlineTitle", "EditorUI_8h.html#ab51df84ec73fd1329dd47dc1d4635f9babb2b3294fa88fc1f3e757abaf2721d94", null ]
@@ -108,5 +119,5 @@ var EditorUI_8h =
       [ "SelectOption_HandleEditButtonExternally", "EditorUI_8h.html#ad3c87b90206a14e6c75aba041ee86b80a380010274524533a8737cabed71b64ca", null ]
     ] ],
     [ "k_InvalidWidgetID", "EditorUI_8h.html#ad7caec6dd7f6f6c799c65986bfc57023", null ],
-    [ "widgetCounter", "EditorUI_8h.html#ac1d85a17348a1e51f5233393fb754325", null ]
+    [ "s_WidgetCounter", "EditorUI_8h.html#a1ed9e998ee35af25be82949071ea5794", null ]
 ];

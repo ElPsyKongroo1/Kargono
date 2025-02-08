@@ -12,6 +12,7 @@ var namespaceKargono_1_1ECS =
     [ "NetworkComponent", "structKargono_1_1ECS_1_1NetworkComponent.html", "structKargono_1_1ECS_1_1NetworkComponent" ],
     [ "OnCreateComponent", "structKargono_1_1ECS_1_1OnCreateComponent.html", "structKargono_1_1ECS_1_1OnCreateComponent" ],
     [ "OnUpdateComponent", "structKargono_1_1ECS_1_1OnUpdateComponent.html", "structKargono_1_1ECS_1_1OnUpdateComponent" ],
+    [ "ParticleEmitterComponent", "structKargono_1_1ECS_1_1ParticleEmitterComponent.html", "structKargono_1_1ECS_1_1ParticleEmitterComponent" ],
     [ "ProjectComponent", "structKargono_1_1ECS_1_1ProjectComponent.html", "structKargono_1_1ECS_1_1ProjectComponent" ],
     [ "ProjectComponentService", "classKargono_1_1ECS_1_1ProjectComponentService.html", null ],
     [ "ProjectComponentStorage", "structKargono_1_1ECS_1_1ProjectComponentStorage.html", "structKargono_1_1ECS_1_1ProjectComponentStorage" ],
@@ -19,7 +20,7 @@ var namespaceKargono_1_1ECS =
     [ "ShapeComponent", "structKargono_1_1ECS_1_1ShapeComponent.html", "structKargono_1_1ECS_1_1ShapeComponent" ],
     [ "TagComponent", "structKargono_1_1ECS_1_1TagComponent.html", "structKargono_1_1ECS_1_1TagComponent" ],
     [ "TransformComponent", "structKargono_1_1ECS_1_1TransformComponent.html", "structKargono_1_1ECS_1_1TransformComponent" ],
-    [ "AllComponents", "namespaceKargono_1_1ECS.html#a7a647f3254a60cbb1b6b42372431c359", null ],
+    [ "AllComponents", "namespaceKargono_1_1ECS.html#a27e89e7d50413b8f82638ce1617c8e32", null ],
     [ "NetworkType", "namespaceKargono_1_1ECS.html#acf0afe50042538440594d165c273cac7", [
       [ "None", "namespaceKargono_1_1ECS.html#acf0afe50042538440594d165c273cac7a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "ClientAuthoritative", "namespaceKargono_1_1ECS.html#acf0afe50042538440594d165c273cac7af2d7f1ac6f0d428b9a8a1423555551ca", null ],
@@ -39,7 +40,8 @@ var namespaceKargono_1_1ECS =
       [ "Shape", "namespaceKargono_1_1ECS.html#aacb2e0c6614482079e7af384efd9939ea880c1273b27d27cfc82004c3a4b205c9", null ],
       [ "Network", "namespaceKargono_1_1ECS.html#aacb2e0c6614482079e7af384efd9939eaeec89088ee408b80387155272b113256", null ],
       [ "AIState", "namespaceKargono_1_1ECS.html#aacb2e0c6614482079e7af384efd9939ea778fdbea8377a30a1aca834408560dfd", null ],
-      [ "ProjectComponent", "namespaceKargono_1_1ECS.html#aacb2e0c6614482079e7af384efd9939ea281c173adbce733b04e505851ffc664e", null ]
+      [ "ProjectComponent", "namespaceKargono_1_1ECS.html#aacb2e0c6614482079e7af384efd9939ea281c173adbce733b04e505851ffc664e", null ],
+      [ "ParticleEmitter", "namespaceKargono_1_1ECS.html#aacb2e0c6614482079e7af384efd9939ea4b7951571edf311a90e670cb3fcc8289", null ]
     ] ],
     [ "GetBufferSizeFromComponentSize", "namespaceKargono_1_1ECS.html#ae4ee291c8168f5642599d07865fca714", null ],
     [ "DataSizeSpecificRegistryAccessorFunctions", "namespaceKargono_1_1ECS.html#ae34d0586ff795672220c5587b4990f21", null ],

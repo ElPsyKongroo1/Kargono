@@ -1,6 +1,7 @@
 var dir_0451741c93a62944666cecd3ae0c391f =
 [
     [ "Conversions.h", "Conversions_8h.html", "Conversions_8h" ],
+    [ "DebugGlobals.h", "DebugGlobals_8h.html", null ],
     [ "FileDialogs.h", "FileDialogs_8h.html", "FileDialogs_8h" ],
     [ "FileSystem.cpp", "FileSystem_8cpp.html", null ],
     [ "FileSystem.h", "FileSystem_8h.html", "FileSystem_8h" ],

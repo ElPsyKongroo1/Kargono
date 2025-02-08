@@ -95,6 +95,7 @@ $(document).ready(function(){initNavTree('ScriptCompilerCommon_8h.html',''); ini
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
@@ -125,6 +126,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Scripting_1_1MemberNode.html">Kargono::Scripting::MemberNode</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Scripting_1_1FunctionCallNode.html">Kargono::Scripting::FunctionCallNode</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Scripting_1_1CustomLiteralNode.html">Kargono::Scripting::CustomLiteralNode</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Scripting_1_1UnaryOperationNode.html">Kargono::Scripting::UnaryOperationNode</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -182,6 +185,10 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Scripting_1_1MemberType.html">Kargono::Scripting::MemberType</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Scripting_1_1CustomLiteralMember.html">Kargono::Scripting::CustomLiteralMember</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Scripting_1_1CustomLiteralInfo.html">Kargono::Scripting::CustomLiteralInfo</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1Scripting_1_1LanguageDefinition.html">Kargono::Scripting::LanguageDefinition</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -196,6 +203,11 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespaceKargono_1_1Utility" id="r_namespaceKargono_1_1Utility"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a24c211023ccdf1f690cc26df517c1c11" id="r_a24c211023ccdf1f690cc26df517c1c11"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Scripting.html#a24c211023ccdf1f690cc26df517c1c11">Kargono::Scripting::CustomLiteralNameToIDMap</a> = std::unordered_map&lt; std::string, <a class="el" href="structKargono_1_1Scripting_1_1CustomLiteralMember.html">CustomLiteralMember</a> &gt;</td></tr>
+<tr class="separator:a24c211023ccdf1f690cc26df517c1c11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:a9d5df1a5bcc72cbdd97d63c24bb5b9e6" id="r_a9d5df1a5bcc72cbdd97d63c24bb5b9e6"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6">Kargono::Scripting::ScriptTokenType</a> { <br />
@@ -205,8 +217,8 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6aaed4714d4cbc7034c894d175bbc5978d">Kargono::Scripting::BooleanLiteral</a>
 , <br />
 &#160;&#160;<a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6ac87d365562b52bede2325a8b460f9214">Kargono::Scripting::FloatLiteral</a>
-, <a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6aec38d112ae7b2e663d55458ae4203690">Kargono::Scripting::InputKeyLiteral</a>
 , <a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6affff152f2bb57f0d3a78e604e4f0be10">Kargono::Scripting::MessageTypeLiteral</a>
+, <a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6aea45ea14941c81c57077d9b7425a73e3">Kargono::Scripting::CustomLiteral</a>
 , <a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6a220f3d3750583b9db48568a0b5b9a5f1">Kargono::Scripting::Keyword</a>
 , <br />
 &#160;&#160;<a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6ac2d18c0838a320f641b24829355f48ef">Kargono::Scripting::PrimitiveType</a>
@@ -267,20 +279,21 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="namespaceKargono_1_1Scripting.html#aa99cf6d1ac80378b1edb0a300b686c6fa6adf97f83acf6453d4a6a4b1070f3754">Kargono::Scripting::None</a> = 0
 , <a class="el" href="namespaceKargono_1_1Scripting.html#aa99cf6d1ac80378b1edb0a300b686c6fad717ee60bc15040be92bd9c16279f320">Kargono::Scripting::IsFunctionParameter</a>
 , <a class="el" href="namespaceKargono_1_1Scripting.html#aa99cf6d1ac80378b1edb0a300b686c6fa4f73f86ae7ee5b599c45532b255e93f4">Kargono::Scripting::IsDataMember</a>
-, <a class="el" href="namespaceKargono_1_1Scripting.html#aa99cf6d1ac80378b1edb0a300b686c6fa83e2d770148285cbc4f6a8501ea54426">Kargono::Scripting::AfterNamespaceResolution</a>
+, <a class="el" href="namespaceKargono_1_1Scripting.html#aa99cf6d1ac80378b1edb0a300b686c6fa65db4d51dd87a0ad9e29164a8ef64c70">Kargono::Scripting::IsLiteralMember</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceKargono_1_1Scripting.html#aa99cf6d1ac80378b1edb0a300b686c6fa3f9dec61c1d368f04d12a40635018c6b">Kargono::Scripting::AllowAllVariableTypes</a>
+&#160;&#160;<a class="el" href="namespaceKargono_1_1Scripting.html#aa99cf6d1ac80378b1edb0a300b686c6fa83e2d770148285cbc4f6a8501ea54426">Kargono::Scripting::AfterNamespaceResolution</a>
+, <a class="el" href="namespaceKargono_1_1Scripting.html#aa99cf6d1ac80378b1edb0a300b686c6fa3f9dec61c1d368f04d12a40635018c6b">Kargono::Scripting::AllowAllVariableTypes</a>
 <br />
  }</td></tr>
 <tr class="separator:aa99cf6d1ac80378b1edb0a300b686c6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6fc13609e168cbd2f5013125d96eea95" id="r_a6fc13609e168cbd2f5013125d96eea95"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a6fc13609e168cbd2f5013125d96eea95">Kargono::Utility::ScriptTokenTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6">Scripting::ScriptTokenType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a6fc13609e168cbd2f5013125d96eea95" id="r_a6fc13609e168cbd2f5013125d96eea95"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a6fc13609e168cbd2f5013125d96eea95">Kargono::Utility::ScriptTokenTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6">Scripting::ScriptTokenType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a6fc13609e168cbd2f5013125d96eea95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04ce4efa31aaa738ec1933247f2ad8e1" id="r_a04ce4efa31aaa738ec1933247f2ad8e1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a04ce4efa31aaa738ec1933247f2ad8e1">Kargono::Utility::ParseErrorTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a07987ddae06682e6b95eb195d94d7ec5">Scripting::ParseErrorType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a04ce4efa31aaa738ec1933247f2ad8e1" id="r_a04ce4efa31aaa738ec1933247f2ad8e1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a04ce4efa31aaa738ec1933247f2ad8e1">Kargono::Utility::ParseErrorTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a07987ddae06682e6b95eb195d94d7ec5">Scripting::ParseErrorType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a04ce4efa31aaa738ec1933247f2ad8e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a308909a6adc91e3eee4e68a43805e6e4" id="r_a308909a6adc91e3eee4e68a43805e6e4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a308909a6adc91e3eee4e68a43805e6e4">Kargono::Utility::ConditionalTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a91014d59ac87b323f18ed41b56cb68c2">Scripting::ConditionalType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a308909a6adc91e3eee4e68a43805e6e4" id="r_a308909a6adc91e3eee4e68a43805e6e4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a308909a6adc91e3eee4e68a43805e6e4">Kargono::Utility::ConditionalTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a91014d59ac87b323f18ed41b56cb68c2">Scripting::ConditionalType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a308909a6adc91e3eee4e68a43805e6e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>

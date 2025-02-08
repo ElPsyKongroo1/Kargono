@@ -3,7 +3,7 @@ var structKargono_1_1EditorUI_1_1EditVariableSpec =
     [ "EditVariableSpec", "structKargono_1_1EditorUI_1_1EditVariableSpec.html#a95c6073759111433612f3c8c8ff0d9a6", null ],
     [ "AllocateBuffer", "structKargono_1_1EditorUI_1_1EditVariableSpec.html#a2ad48a5808288caf6c5d93696f80f07c", null ],
     [ "EditorUIService::EditVariable", "structKargono_1_1EditorUI_1_1EditVariableSpec.html#af21744f307036629f56665fba079a7d3", null ],
-    [ "Label", "structKargono_1_1EditorUI_1_1EditVariableSpec.html#ae041ace5d015eb6e33b692021fb0e4f0", null ],
+    [ "m_Label", "structKargono_1_1EditorUI_1_1EditVariableSpec.html#a2603b5b12286bb34b2cb12ec200e8781", null ],
     [ "FieldBuffer", "structKargono_1_1EditorUI_1_1EditVariableSpec.html#adf061eb0ebff6df17853fc6ae9655d86", null ],
     [ "VariableType", "structKargono_1_1EditorUI_1_1EditVariableSpec.html#a50fe2df579af09f7bfcbceecc9cc64ee", null ]
 ];

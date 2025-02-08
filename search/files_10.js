@@ -43,8 +43,10 @@ var searchData=
   ['shape_2eh_40',['Shape.h',['../Shape_8h.html',1,'']]],
   ['spdlogapi_2eh_41',['SpdLogAPI.h',['../SpdLogAPI_8h.html',1,'']]],
   ['spdlogbackend_2eh_42',['SpdlogBackend.h',['../SpdlogBackend_8h.html',1,'']]],
-  ['statisticspanel_2ecpp_43',['StatisticsPanel.cpp',['../StatisticsPanel_8cpp.html',1,'']]],
-  ['statisticspanel_2eh_44',['StatisticsPanel.h',['../StatisticsPanel_8h.html',1,'']]],
-  ['stb_5fimage_5fimpl_2ecpp_45',['stb_image_impl.cpp',['../stb__image__impl_8cpp.html',1,'']]],
-  ['stbapi_2eh_46',['stbAPI.h',['../stbAPI_8h.html',1,'']]]
+  ['spline_2ecpp_43',['Spline.cpp',['../Spline_8cpp.html',1,'']]],
+  ['spline_2eh_44',['Spline.h',['../Spline_8h.html',1,'']]],
+  ['statisticspanel_2ecpp_45',['StatisticsPanel.cpp',['../StatisticsPanel_8cpp.html',1,'']]],
+  ['statisticspanel_2eh_46',['StatisticsPanel.h',['../StatisticsPanel_8h.html',1,'']]],
+  ['stb_5fimage_5fimpl_2ecpp_47',['stb_image_impl.cpp',['../stb__image__impl_8cpp.html',1,'']]],
+  ['stbapi_2eh_48',['stbAPI.h',['../stbAPI_8h.html',1,'']]]
 ];

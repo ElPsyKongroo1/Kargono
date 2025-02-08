@@ -1,12 +1,12 @@
 var structKargono_1_1EditorUI_1_1InlineButtonSpec =
 [
-    [ "XPosition", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a57463e3ee02d564538350238a02398b6", null ],
-    [ "YPosition", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#ac20f1b3587d7b350a0abe874182e3691", null ],
-    [ "IconSize", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#adf3134301ea4ae67e89a06219264b20d", null ],
-    [ "ActiveIcon", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a8369b82e6afcb175f5e84d12c3ac6711", null ],
-    [ "InactiveIcon", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a28da622f975a996f1c4279b1e5c56493", null ],
-    [ "ActiveTooltip", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a6fd4c3dbe198f8232c6ffc6e2e971540", null ],
-    [ "InactiveTooltip", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a017cca311f5d8e903d665306453a05d1", null ],
-    [ "XPositionType", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a9921d98ec74da16445fae2bf6eaf21ea", null ],
-    [ "Disabled", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a9a38a9428af030236e5f2aa294a552e8", null ]
+    [ "m_XPosition", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a6eab56ca149a302243ee30d335d6f285", null ],
+    [ "m_YPosition", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a760f0ed789623cf5993897e2acae8e17", null ],
+    [ "m_IconSize", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#acb11b3a863af552231636cd3d9a3f089", null ],
+    [ "m_ActiveIcon", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a51ba1ce730606b0e5660867a2aa9268d", null ],
+    [ "m_InactiveIcon", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a4bac30d267c95c504bb8cdc6924a194e", null ],
+    [ "m_ActiveTooltip", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a48c51829d302b045bd25716cad4c1824", null ],
+    [ "m_InactiveTooltip", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a2e5e06d50694d9311b62f42fd078de45", null ],
+    [ "m_XPositionType", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#afae49852d06362b201117aa6f8036e77", null ],
+    [ "m_Disabled", "structKargono_1_1EditorUI_1_1InlineButtonSpec.html#a11a00dbffe73958a0b52003fa966feff", null ]
 ];

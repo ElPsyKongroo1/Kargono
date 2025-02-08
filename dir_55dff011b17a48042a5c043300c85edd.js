@@ -9,6 +9,7 @@ var dir_55dff011b17a48042a5c043300c85edd =
     [ "BitField.h", "BitField_8h.html", "BitField_8h" ],
     [ "Buffer.h", "Buffer_8h.html", "Buffer_8h" ],
     [ "DataStructures.h", "DataStructures_8h.html", "DataStructures_8h" ],
+    [ "Directions.h", "Directions_8h.html", "Directions_8h" ],
     [ "Engine.cpp", "Engine_8cpp.html", "Engine_8cpp" ],
     [ "Engine.h", "Engine_8h.html", "Engine_8h" ],
     [ "EntryPoint.h", "EntryPoint_8h.html", "EntryPoint_8h" ],
@@ -18,10 +19,11 @@ var dir_55dff011b17a48042a5c043300c85edd =
     [ "Log.h", "Log_8h.html", "Log_8h" ],
     [ "MouseCodes.h", "MouseCodes_8h.html", "MouseCodes_8h" ],
     [ "Profiler.h", "Profiler_8h.html", "Profiler_8h" ],
+    [ "Resolution.cpp", "Resolution_8cpp.html", "Resolution_8cpp" ],
+    [ "Resolution.h", "Resolution_8h.html", "Resolution_8h" ],
     [ "Timestep.h", "Timestep_8h.html", "Timestep_8h" ],
     [ "UUID.cpp", "UUID_8cpp.html", null ],
     [ "UUID.h", "UUID_8h.html", "UUID_8h" ],
-    [ "Window.cpp", "Window_8cpp.html", null ],
     [ "Window.h", "Window_8h.html", "Window_8h" ],
     [ "WrappedData.h", "WrappedData_8h.html", "WrappedData_8h" ]
 ];

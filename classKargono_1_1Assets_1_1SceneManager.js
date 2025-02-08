@@ -7,5 +7,6 @@ var classKargono_1_1Assets_1_1SceneManager =
     [ "DeserializeAsset", "classKargono_1_1Assets_1_1SceneManager.html#a6fed28b66332d3064d24c69d5db901cd", null ],
     [ "RemoveScript", "classKargono_1_1Assets_1_1SceneManager.html#a7dc9f53370a5f26cd26869b14a223591", null ],
     [ "RemoveAIState", "classKargono_1_1Assets_1_1SceneManager.html#a9614029df79767429928f24c78c22c6f", null ],
-    [ "RemoveProjectComponent", "classKargono_1_1Assets_1_1SceneManager.html#a57223c00e718e5da0276d4355c93135e", null ]
+    [ "RemoveProjectComponent", "classKargono_1_1Assets_1_1SceneManager.html#a57223c00e718e5da0276d4355c93135e", null ],
+    [ "RemoveEmitterConfig", "classKargono_1_1Assets_1_1SceneManager.html#a3c1051bd292048e89f7e16ea51d39c99", null ]
 ];

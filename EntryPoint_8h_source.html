@@ -126,19 +126,21 @@ $(document).ready(function(){initNavTree('EntryPoint_8h_source.html',''); initRe
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>}</div>
 </div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#ifdef KG_PLATFORM_WINDOWS</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">//==============================</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">// Main with console</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment">//==============================</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv)</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>{</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <a class="code hl_function" href="EntryPoint_8h.html#a25b2fbe1a4bf16c00ab9df6904d9ab91">EntryPoint</a>(argc, argv);</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <a class="code hl_define" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Application Shut Down Successfully!&quot;</span>);</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment">//==============================</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="comment">// Main without console</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">//==============================</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">//==============================</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">// Main with console</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">//==============================</span></div>
+<div class="foldopen" id="foldopen00028" data-start="{" data-end="}">
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="EntryPoint_8h.html#a3c04138a5bfe5d72780bb7e82a18e627">   28</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="EntryPoint_8h.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv)</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>{</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <a class="code hl_function" href="EntryPoint_8h.html#a25b2fbe1a4bf16c00ab9df6904d9ab91">EntryPoint</a>(argc, argv);</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <a class="code hl_define" href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a>(<span class="stringliteral">&quot;Application Shut Down Successfully!&quot;</span>);</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>}</div>
+</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">//==============================</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment">// Main without console</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="comment">//==============================</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#if defined(KG_PLATFORM_WINDOWS)</span></div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keywordtype">int</span> APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, <span class="keywordtype">int</span> cmdshow)</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>{</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="comment">// Get Command Line Arguments in the form of argc and argv line int main(char**, int)</span></div>
@@ -158,11 +160,12 @@ $(document).ready(function(){initNavTree('EntryPoint_8h_source.html',''); initRe
 <div class="ttc" id="aBase_8h_html"><div class="ttname"><a href="Base_8h.html">Base.h</a></div></div>
 <div class="ttc" id="aEngine_8h_html"><div class="ttname"><a href="Engine_8h.html">Engine.h</a></div></div>
 <div class="ttc" id="aEntryPoint_8h_html_a25b2fbe1a4bf16c00ab9df6904d9ab91"><div class="ttname"><a href="EntryPoint_8h.html#a25b2fbe1a4bf16c00ab9df6904d9ab91">EntryPoint</a></div><div class="ttdeci">void EntryPoint(int argc, char **argv)</div><div class="ttdef"><b>Definition</b> <a href="EntryPoint_8h_source.html#l00014">EntryPoint.h:14</a></div></div>
-<div class="ttc" id="aLog_8h_html_a9e8d3aab6c4ab2b51b625e9aea62f862"><div class="ttname"><a href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a></div><div class="ttdeci">#define KG_INFO(...)</div><div class="ttdef"><b>Definition</b> <a href="Log_8h_source.html#l00054">Log.h:54</a></div></div>
+<div class="ttc" id="aEntryPoint_8h_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="EntryPoint_8h.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition</b> <a href="EntryPoint_8h_source.html#l00028">EntryPoint.h:28</a></div></div>
+<div class="ttc" id="aLog_8h_html_a9e8d3aab6c4ab2b51b625e9aea62f862"><div class="ttname"><a href="Log_8h.html#a9e8d3aab6c4ab2b51b625e9aea62f862">KG_INFO</a></div><div class="ttdeci">#define KG_INFO(...)</div><div class="ttdef"><b>Definition</b> <a href="Log_8h_source.html#l00061">Log.h:61</a></div></div>
 <div class="ttc" id="aTimers_8h_html"><div class="ttname"><a href="Timers_8h.html">Timers.h</a></div></div>
 <div class="ttc" id="aWindowsBackendAPI_8h_html"><div class="ttname"><a href="WindowsBackendAPI_8h.html">WindowsBackendAPI.h</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineService_html_a3c05c1b096f642ae81de35dd482568fd"><div class="ttname"><a href="classKargono_1_1EngineService.html#a3c05c1b096f642ae81de35dd482568fd">Kargono::EngineService::Run</a></div><div class="ttdeci">static void Run()</div><div class="ttdef"><b>Definition</b> <a href="Engine_8cpp_source.html#l00080">Engine.cpp:80</a></div></div>
-<div class="ttc" id="aclassKargono_1_1EngineService_html_a4bf2c14af91f4c96c8777118a0e51edd"><div class="ttname"><a href="classKargono_1_1EngineService.html#a4bf2c14af91f4c96c8777118a0e51edd">Kargono::EngineService::Terminate</a></div><div class="ttdeci">static bool Terminate()</div><div class="ttdef"><b>Definition</b> <a href="Engine_8cpp_source.html#l00057">Engine.cpp:57</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineService_html_a3c05c1b096f642ae81de35dd482568fd"><div class="ttname"><a href="classKargono_1_1EngineService.html#a3c05c1b096f642ae81de35dd482568fd">Kargono::EngineService::Run</a></div><div class="ttdeci">static void Run()</div><div class="ttdef"><b>Definition</b> <a href="Engine_8cpp_source.html#l00082">Engine.cpp:82</a></div></div>
+<div class="ttc" id="aclassKargono_1_1EngineService_html_a4bf2c14af91f4c96c8777118a0e51edd"><div class="ttname"><a href="classKargono_1_1EngineService.html#a4bf2c14af91f4c96c8777118a0e51edd">Kargono::EngineService::Terminate</a></div><div class="ttdeci">static bool Terminate()</div><div class="ttdef"><b>Definition</b> <a href="Engine_8cpp_source.html#l00059">Engine.cpp:59</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Log_html_a12722783a432e0f50f826a68904c68b1"><div class="ttname"><a href="classKargono_1_1Log.html#a12722783a432e0f50f826a68904c68b1">Kargono::Log::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdef"><b>Definition</b> <a href="Log_8cpp_source.html#l00013">Log.cpp:13</a></div></div>
 <div class="ttc" id="aclassKargono_1_1Utility_1_1AsyncBusyTimer_html_a665ddea3a841de134d35d8ba7fc44442"><div class="ttname"><a href="classKargono_1_1Utility_1_1AsyncBusyTimer.html#a665ddea3a841de134d35d8ba7fc44442">Kargono::Utility::AsyncBusyTimer::CloseAllTimers</a></div><div class="ttdeci">static bool CloseAllTimers()</div><div class="ttdef"><b>Definition</b> <a href="Timers_8cpp_source.html#l00039">Timers.cpp:39</a></div></div>
 <div class="ttc" id="anamespaceKargono_html_a696e7f52a7ae18cc2ecfbc4d14c52f73"><div class="ttname"><a href="namespaceKargono.html#a696e7f52a7ae18cc2ecfbc4d14c52f73">Kargono::InitEngineAndCreateApp</a></div><div class="ttdeci">void InitEngineAndCreateApp(CommandLineArguments args)</div><div class="ttdef"><b>Definition</b> <a href="RuntimeInit_8cpp_source.html#l00016">RuntimeInit.cpp:16</a></div></div>

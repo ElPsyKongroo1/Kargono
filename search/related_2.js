@@ -1,24 +1,5 @@
 var searchData=
 [
-  ['ecs_3a_3aentity_0',['Entity',['../classKargono_1_1Scenes_1_1Scene.html#a15582205dde6658db6719cbf804bdbb3',1,'Kargono::Scenes::Scene']]],
-  ['editoruiservice_3a_3acheckbox_1',['Checkbox',['../structKargono_1_1EditorUI_1_1CheckboxSpec.html#a154b180a26a991975fe44fc3c8e0bf15',1,'Kargono::EditorUI::CheckboxSpec']]],
-  ['editoruiservice_3a_3achoosedirectory_2',['ChooseDirectory',['../structKargono_1_1EditorUI_1_1ChooseDirectorySpec.html#a5a8076c46df08ab0be269ca05fd5480b',1,'Kargono::EditorUI::ChooseDirectorySpec']]],
-  ['editoruiservice_3a_3acollapsingheader_3',['CollapsingHeader',['../structKargono_1_1EditorUI_1_1CollapsingHeaderSpec.html#affa1b9199d36ce39e83db8ae40b91f81',1,'Kargono::EditorUI::CollapsingHeaderSpec']]],
-  ['editoruiservice_3a_3aeditfloat_4',['EditFloat',['../structKargono_1_1EditorUI_1_1EditFloatSpec.html#a8e7c56c7144fd0bc58336d0f491d9a62',1,'Kargono::EditorUI::EditFloatSpec']]],
-  ['editoruiservice_3a_3aeditinteger_5',['EditInteger',['../structKargono_1_1EditorUI_1_1EditIntegerSpec.html#a646d88a7bd3d752099fbf111014364dc',1,'Kargono::EditorUI::EditIntegerSpec']]],
-  ['editoruiservice_3a_3aedittext_6',['EditText',['../structKargono_1_1EditorUI_1_1EditTextSpec.html#a29499fbf406780603064cf719512f1e3',1,'Kargono::EditorUI::EditTextSpec']]],
-  ['editoruiservice_3a_3aeditvariable_7',['EditVariable',['../structKargono_1_1EditorUI_1_1EditVariableSpec.html#af21744f307036629f56665fba079a7d3',1,'Kargono::EditorUI::EditVariableSpec']]],
-  ['editoruiservice_3a_3aeditvec2_8',['EditVec2',['../structKargono_1_1EditorUI_1_1EditVec2Spec.html#a23b46487d2f78be7a83de5ae53fbbf30',1,'Kargono::EditorUI::EditVec2Spec']]],
-  ['editoruiservice_3a_3aeditvec3_9',['EditVec3',['../structKargono_1_1EditorUI_1_1EditVec3Spec.html#a2ed7dcd0bce76ace27a8a71664b8cdf5',1,'Kargono::EditorUI::EditVec3Spec']]],
-  ['editoruiservice_3a_3aeditvec4_10',['EditVec4',['../structKargono_1_1EditorUI_1_1EditVec4Spec.html#a79f49b647fac35006ec19a0cba54b1f7',1,'Kargono::EditorUI::EditVec4Spec']]],
-  ['editoruiservice_3a_3agenericpopup_11',['GenericPopup',['../structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a9874acfcacd8e986bc124e2e015dc299',1,'Kargono::EditorUI::GenericPopupSpec']]],
-  ['editoruiservice_3a_3agrid_12',['Grid',['../structKargono_1_1EditorUI_1_1GridSpec.html#aad8182265f5ab2be46f502393f971434',1,'Kargono::EditorUI::GridSpec']]],
-  ['editoruiservice_3a_3alist_13',['List',['../structKargono_1_1EditorUI_1_1ListSpec.html#a87302e1616607256e1ccea8fbcaf33b7',1,'Kargono::EditorUI::ListSpec']]],
-  ['editoruiservice_3a_3anavigationheader_14',['NavigationHeader',['../structKargono_1_1EditorUI_1_1NavigationHeaderSpec.html#a4468afe408317f8b1a5a0da8e656b9f7',1,'Kargono::EditorUI::NavigationHeaderSpec']]],
-  ['editoruiservice_3a_3apanelheader_15',['PanelHeader',['../structKargono_1_1EditorUI_1_1PanelHeaderSpec.html#a558c8305b4fe6ef2d3b3d76ddfe320e0',1,'Kargono::EditorUI::PanelHeaderSpec']]],
-  ['editoruiservice_3a_3aradioselector_16',['RadioSelector',['../structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a6153eb049234889adc6b35c525d31d5e',1,'Kargono::EditorUI::RadioSelectorSpec']]],
-  ['editoruiservice_3a_3aselectoption_17',['SelectOption',['../structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a82b249b5df8d1ebaf21920dd9fea795e',1,'Kargono::EditorUI::SelectOptionSpec']]],
-  ['editoruiservice_3a_3atooltip_18',['Tooltip',['../structKargono_1_1EditorUI_1_1TooltipSpec.html#a518b5781c4698091a2f69ba520ac46ea',1,'Kargono::EditorUI::TooltipSpec']]],
-  ['editoruiservice_3a_3atree_19',['Tree',['../structKargono_1_1EditorUI_1_1TreeSpec.html#ac7a1e5452e857bc9ac67ef45cef14ace',1,'Kargono::EditorUI::TreeSpec']]],
-  ['editoruiservice_3a_3awarningpopup_20',['WarningPopup',['../structKargono_1_1EditorUI_1_1WarningPopupSpec.html#ab911e3c50d36bcdcfb8b34b3e4592d9d',1,'Kargono::EditorUI::WarningPopupSpec']]]
+  ['checkboxwidget_0',['CheckboxWidget',['../classKargono_1_1RuntimeUI_1_1RuntimeUIService.html#a0783d772f5cf2fdb90522b7a07f98e47',1,'Kargono::RuntimeUI::RuntimeUIService']]],
+  ['clientservice_1',['ClientService',['../classKargono_1_1Network_1_1Client.html#a944257f756ee4569d9847a76ee58a738',1,'Kargono::Network::Client']]]
 ];

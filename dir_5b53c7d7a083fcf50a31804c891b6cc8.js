@@ -7,6 +7,8 @@ var dir_5b53c7d7a083fcf50a31804c891b6cc8 =
     [ "AssetService.h", "AssetService_8h.html", "AssetService_8h" ],
     [ "AudioManager.cpp", "AudioManager_8cpp.html", null ],
     [ "AudioManager.h", "AudioManager_8h.html", "AudioManager_8h" ],
+    [ "EmitterConfigManager.cpp", "EmitterConfigManager_8cpp.html", null ],
+    [ "EmitterConfigManager.h", "EmitterConfigManager_8h.html", "EmitterConfigManager_8h" ],
     [ "FontManager.cpp", "FontManager_8cpp.html", "FontManager_8cpp" ],
     [ "FontManager.h", "FontManager_8h.html", "FontManager_8h" ],
     [ "GameStateManager.cpp", "GameStateManager_8cpp.html", null ],

@@ -6,6 +6,8 @@ var namespaceKargono_1_1EditorUI =
     [ "DragDropPayload", "structKargono_1_1EditorUI_1_1DragDropPayload.html", "structKargono_1_1EditorUI_1_1DragDropPayload" ],
     [ "EditFloatSpec", "structKargono_1_1EditorUI_1_1EditFloatSpec.html", "structKargono_1_1EditorUI_1_1EditFloatSpec" ],
     [ "EditIntegerSpec", "structKargono_1_1EditorUI_1_1EditIntegerSpec.html", "structKargono_1_1EditorUI_1_1EditIntegerSpec" ],
+    [ "EditIVec2Spec", "structKargono_1_1EditorUI_1_1EditIVec2Spec.html", "structKargono_1_1EditorUI_1_1EditIVec2Spec" ],
+    [ "EditMultiLineTextSpec", "structKargono_1_1EditorUI_1_1EditMultiLineTextSpec.html", "structKargono_1_1EditorUI_1_1EditMultiLineTextSpec" ],
     [ "EditorUIService", "classKargono_1_1EditorUI_1_1EditorUIService.html", null ],
     [ "EditTextSpec", "structKargono_1_1EditorUI_1_1EditTextSpec.html", "structKargono_1_1EditorUI_1_1EditTextSpec" ],
     [ "EditVariableSpec", "structKargono_1_1EditorUI_1_1EditVariableSpec.html", "structKargono_1_1EditorUI_1_1EditVariableSpec" ],
@@ -57,6 +59,10 @@ var namespaceKargono_1_1EditorUI =
       [ "EditInteger_None", "namespaceKargono_1_1EditorUI.html#aea5612136fa3129b04d753811d9025c9a14ead103dcbb6843a770cd224975feb2", null ],
       [ "EditInteger_Indented", "namespaceKargono_1_1EditorUI.html#aea5612136fa3129b04d753811d9025c9afab5155d36823840428ebb72ebc8189c", null ]
     ] ],
+    [ "EditIVec2Flags", "namespaceKargono_1_1EditorUI.html#a6dae9d9e918cc99a2f6d55a97db9e4f6", [
+      [ "EditIVec2_None", "namespaceKargono_1_1EditorUI.html#a6dae9d9e918cc99a2f6d55a97db9e4f6a0ce497cc80833cc986191ac2d452a0d2", null ],
+      [ "EditIVec2_Indented", "namespaceKargono_1_1EditorUI.html#a6dae9d9e918cc99a2f6d55a97db9e4f6addb3f26ee6a9d534f1eed234d80b05f8", null ]
+    ] ],
     [ "EditFloatFlags", "namespaceKargono_1_1EditorUI.html#ac037a892258354451fe320119623e711", [
       [ "EditFloat_None", "namespaceKargono_1_1EditorUI.html#ac037a892258354451fe320119623e711a1221a2e4107811d3dedd29b4946ca49c", null ],
       [ "EditFloat_Indented", "namespaceKargono_1_1EditorUI.html#ac037a892258354451fe320119623e711ac0595f90537e08ea8e2770568d5a4a52", null ]
@@ -83,6 +89,11 @@ var namespaceKargono_1_1EditorUI =
       [ "EditText_PopupOnly", "namespaceKargono_1_1EditorUI.html#aa64092267b9d709831562ae062f28a72a4a5345a127f8eb42149eb06ecdec7082", null ],
       [ "EditText_Indented", "namespaceKargono_1_1EditorUI.html#aa64092267b9d709831562ae062f28a72a9e015531be6f9dd7256e573a2bc86849", null ]
     ] ],
+    [ "EditMultiLineTextFlags", "namespaceKargono_1_1EditorUI.html#ab3225a6f59d727a8425e1b1bc98f031d", [
+      [ "EditMultiLineText_None", "namespaceKargono_1_1EditorUI.html#ab3225a6f59d727a8425e1b1bc98f031da9086677cdf11b919e05dd7f55e00e604", null ],
+      [ "EditMultiLineText_PopupOnly", "namespaceKargono_1_1EditorUI.html#ab3225a6f59d727a8425e1b1bc98f031da7b034d0ee0593622f28e44fbe6ba97a5", null ],
+      [ "EditMultiLineText_Indented", "namespaceKargono_1_1EditorUI.html#ab3225a6f59d727a8425e1b1bc98f031da020162e4a805d6c6e70816e76dd786ed", null ]
+    ] ],
     [ "CollapsingHeaderFlags", "namespaceKargono_1_1EditorUI.html#ab51df84ec73fd1329dd47dc1d4635f9b", [
       [ "CollapsingHeader_None", "namespaceKargono_1_1EditorUI.html#ab51df84ec73fd1329dd47dc1d4635f9ba0f36bfafafb99509c689215cc651352c", null ],
       [ "CollapsingHeader_UnderlineTitle", "namespaceKargono_1_1EditorUI.html#ab51df84ec73fd1329dd47dc1d4635f9babb2b3294fa88fc1f3e757abaf2721d94", null ]
@@ -108,7 +119,8 @@ var namespaceKargono_1_1EditorUI =
       [ "SelectOption_HandleEditButtonExternally", "namespaceKargono_1_1EditorUI.html#ad3c87b90206a14e6c75aba041ee86b80a380010274524533a8737cabed71b64ca", null ]
     ] ],
     [ "WidgetIterator", "namespaceKargono_1_1EditorUI.html#a82f4b8e89c5f747b8d53866b950eef4e", null ],
+    [ "DrawEntries", "namespaceKargono_1_1EditorUI.html#a19232ce7fcaebc8a0daf3e0ca4de66d7", null ],
     [ "ProcessTooltipEntries", "namespaceKargono_1_1EditorUI.html#af408aeb68c0adfa78b69d207e75c399a", null ],
     [ "k_InvalidWidgetID", "namespaceKargono_1_1EditorUI.html#ad7caec6dd7f6f6c799c65986bfc57023", null ],
-    [ "widgetCounter", "namespaceKargono_1_1EditorUI.html#ac1d85a17348a1e51f5233393fb754325", null ]
+    [ "s_WidgetCounter", "namespaceKargono_1_1EditorUI.html#a1ed9e998ee35af25be82949071ea5794", null ]
 ];

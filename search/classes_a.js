@@ -1,16 +1,19 @@
 var searchData=
 [
-  ['manageasset_0',['ManageAsset',['../classKargono_1_1Events_1_1ManageAsset.html',1,'Kargono::Events']]],
-  ['manageeditor_1',['ManageEditor',['../classKargono_1_1Events_1_1ManageEditor.html',1,'Kargono::Events']]],
-  ['manageentity_2',['ManageEntity',['../classKargono_1_1Events_1_1ManageEntity.html',1,'Kargono::Events']]],
-  ['managescene_3',['ManageScene',['../classKargono_1_1Events_1_1ManageScene.html',1,'Kargono::Events']]],
-  ['membernode_4',['MemberNode',['../structKargono_1_1Scripting_1_1MemberNode.html',1,'Kargono::Scripting']]],
-  ['membertype_5',['MemberType',['../structKargono_1_1Scripting_1_1MemberType.html',1,'Kargono::Scripting']]],
-  ['message_6',['Message',['../structKargono_1_1Network_1_1Message.html',1,'Kargono::Network']]],
-  ['messageheader_7',['MessageHeader',['../structKargono_1_1Network_1_1MessageHeader.html',1,'Kargono::Network']]],
-  ['metadata_8',['Metadata',['../structKargono_1_1Assets_1_1Metadata.html',1,'Kargono::Assets']]],
-  ['mousebuttonpressedevent_9',['MouseButtonPressedEvent',['../classKargono_1_1Events_1_1MouseButtonPressedEvent.html',1,'Kargono::Events']]],
-  ['mousebuttonreleasedevent_10',['MouseButtonReleasedEvent',['../classKargono_1_1Events_1_1MouseButtonReleasedEvent.html',1,'Kargono::Events']]],
-  ['mousemovedevent_11',['MouseMovedEvent',['../classKargono_1_1Events_1_1MouseMovedEvent.html',1,'Kargono::Events']]],
-  ['mousescrolledevent_12',['MouseScrolledEvent',['../classKargono_1_1Events_1_1MouseScrolledEvent.html',1,'Kargono::Events']]]
+  ['mainwindow_0',['MainWindow',['../classKargono_1_1Windows_1_1MainWindow.html',1,'Kargono::Windows']]],
+  ['manageasset_1',['ManageAsset',['../classKargono_1_1Events_1_1ManageAsset.html',1,'Kargono::Events']]],
+  ['manageeditor_2',['ManageEditor',['../classKargono_1_1Events_1_1ManageEditor.html',1,'Kargono::Events']]],
+  ['manageentity_3',['ManageEntity',['../classKargono_1_1Events_1_1ManageEntity.html',1,'Kargono::Events']]],
+  ['managescene_4',['ManageScene',['../classKargono_1_1Events_1_1ManageScene.html',1,'Kargono::Events']]],
+  ['membernode_5',['MemberNode',['../structKargono_1_1Scripting_1_1MemberNode.html',1,'Kargono::Scripting']]],
+  ['membertype_6',['MemberType',['../structKargono_1_1Scripting_1_1MemberType.html',1,'Kargono::Scripting']]],
+  ['message_7',['Message',['../structKargono_1_1Network_1_1Message.html',1,'Kargono::Network']]],
+  ['messageheader_8',['MessageHeader',['../structKargono_1_1Network_1_1MessageHeader.html',1,'Kargono::Network']]],
+  ['metadata_9',['Metadata',['../structKargono_1_1Assets_1_1Metadata.html',1,'Kargono::Assets']]],
+  ['mousebuttonpressedevent_10',['MouseButtonPressedEvent',['../classKargono_1_1Events_1_1MouseButtonPressedEvent.html',1,'Kargono::Events']]],
+  ['mousebuttonreleasedevent_11',['MouseButtonReleasedEvent',['../classKargono_1_1Events_1_1MouseButtonReleasedEvent.html',1,'Kargono::Events']]],
+  ['mousemovedevent_12',['MouseMovedEvent',['../classKargono_1_1Events_1_1MouseMovedEvent.html',1,'Kargono::Events']]],
+  ['mousescrolledevent_13',['MouseScrolledEvent',['../classKargono_1_1Events_1_1MouseScrolledEvent.html',1,'Kargono::Events']]],
+  ['multilinetextdata_14',['MultiLineTextData',['../structKargono_1_1RuntimeUI_1_1MultiLineTextData.html',1,'Kargono::RuntimeUI']]],
+  ['multilinetextdimensions_15',['MultiLineTextDimensions',['../structKargono_1_1RuntimeUI_1_1MultiLineTextDimensions.html',1,'Kargono::RuntimeUI']]]
 ];

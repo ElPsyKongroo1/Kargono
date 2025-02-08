@@ -5,12 +5,13 @@ var structKargono_1_1EditorUI_1_1SelectOptionSpec =
     [ "AddToOptions", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a2f7a5cb763607e3a67387c903b9a20a9", null ],
     [ "GetAllOptions", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a75c6a61dbfbbf76dd3d23b539492a0cb", null ],
     [ "EditorUIService::SelectOption", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a82b249b5df8d1ebaf21920dd9fea795e", null ],
-    [ "Label", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#ae092d2a18663acebc43a16a46187e4ce", null ],
-    [ "CurrentOption", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a5d1c4d8639e39315f72c0a3bb4e84b79", null ],
-    [ "LineCount", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a8aeb79c686c8fd440ae674c099546fcb", null ],
-    [ "OnEdit", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a047ae8738a703b7241e9e01918573ccf", null ],
-    [ "ConfirmAction", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#ac0f8054d7156f223242e39c70299bca2", null ],
-    [ "PopupAction", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a45009d67866144092d5099e3d4a9629a", null ],
-    [ "OpenPopup", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a369f1839f327ff0cf55a66917394d8f4", null ],
-    [ "Flags", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a8d43119659aa310d7014a34e488ee337", null ]
+    [ "m_Label", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a7fbb256795ce98706f246aaefd765495", null ],
+    [ "m_CurrentOption", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a871dc848767e4c551bf22f628a9a7c97", null ],
+    [ "m_LineCount", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a296c40a54d111f315f70562a1945b8e9", null ],
+    [ "m_PopupAction", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a070841c77ec4a2df958b2fcc52cc9dba", null ],
+    [ "m_ConfirmAction", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a86335af715133b32284735f33e7b0f17", null ],
+    [ "m_Flags", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a5570c8c91a1522d5e18bcb0a83e38f1b", null ],
+    [ "m_ProvidedData", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#afbca61e3fea1796376f1a25315080892", null ],
+    [ "m_OpenPopup", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a5ab66c80a30b4f713dcc687061b333a4", null ],
+    [ "m_OnEdit", "structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a193b1cfc0b795cb6c0613af41da3b943", null ]
 ];

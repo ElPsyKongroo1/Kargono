@@ -99,28 +99,13 @@ $(document).ready(function(){initNavTree('EditorApp_8h.html',''); initResizable(
   <div class="headertitle"><div class="title">EditorApp.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="Kargono_8h_source.html">Kargono.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="AssetViewerPanel_8h_source.html">Panels/AssetViewerPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="SceneEditorPanel_8h_source.html">Panels/SceneEditorPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ContentBrowserPanel_8h_source.html">Panels/ContentBrowserPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="LogPanel_8h_source.html">Panels/LogPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ProjectPanel_8h_source.html">Panels/ProjectPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ProjectComponentPanel_8h_source.html">Panels/ProjectComponentPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="StatisticsPanel_8h_source.html">Panels/StatisticsPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="UIEditorPanel_8h_source.html">Panels/UIEditorPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ViewportPanel_8h_source.html">Panels/ViewportPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ScriptEditorPanel_8h_source.html">Panels/ScriptEditorPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="GameStatePanel_8h_source.html">Panels/GameStatePanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="TextEditorPanel_8h_source.html">Panels/TextEditorPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="InputMapPanel_8h_source.html">Panels/InputMapPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="PropertiesPanel_8h_source.html">Panels/PropertiesPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="AIStateEditorPanel_8h_source.html">Panels/AIStateEditorPanel.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="TestingPanel_8h_source.html">Panels/TestingPanel.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="UIEditorWindow_8h_source.html">Windows/UserInterface/UIEditorWindow.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="MainWindow_8h_source.html">Windows/MainWindow/MainWindow.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="EmitterConfigWindow_8h_source.html">Windows/EmitterConfig/EmitterConfigWindow.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Timestep_8h_source.html">Kargono/Core/Timestep.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Base_8h_source.html">Kargono/Core/Base.h</a>&quot;</code><br />
 <code>#include &lt;filesystem&gt;</code><br />
-<code>#include &lt;thread&gt;</code><br />
-<code>#include &lt;unordered_map&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
-<code>#include &lt;functional&gt;</code><br />
 </div>
 <p><a href="EditorApp_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -136,11 +121,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a294edcb4991a08ea71c44c2a8753ebf3" id="r_a294edcb4991a08ea71c44c2a8753ebf3"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3">Kargono::SceneState</a> { <a class="el" href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3a7dce122004969d56ae2e0245cb754d35">Kargono::Edit</a> = 0
-, <a class="el" href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3ade3c731be5633838089a07179d301d7b">Kargono::Play</a> = 1
-, <a class="el" href="namespaceKargono.html#a294edcb4991a08ea71c44c2a8753ebf3a61eb21e9980dcc0537fc220659ea1ebe">Kargono::Simulate</a> = 2
+<tr class="memitem:ad2ba85e1b0dabae7ccb10b87ae35a93f" id="r_ad2ba85e1b0dabae7ccb10b87ae35a93f"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono.html#ad2ba85e1b0dabae7ccb10b87ae35a93f">Kargono::ActiveEditorUIWindow</a> { <a class="el" href="namespaceKargono.html#ad2ba85e1b0dabae7ccb10b87ae35a93fa6adf97f83acf6453d4a6a4b1070f3754">Kargono::None</a> = 0
+, <a class="el" href="namespaceKargono.html#ad2ba85e1b0dabae7ccb10b87ae35a93fa85644ee843dfffda19287556b9e18ea3">Kargono::MainWindow</a>
+, <a class="el" href="namespaceKargono.html#ad2ba85e1b0dabae7ccb10b87ae35a93fabb0edfb2c2779dae5cda8f9ec0dbbe20">Kargono::UIEditorWindow</a>
+, <a class="el" href="namespaceKargono.html#ad2ba85e1b0dabae7ccb10b87ae35a93fad0f8ecd90c18c4298232c9977b4e3a86">Kargono::EmitterConfigWindow</a>
  }</td></tr>
-<tr class="separator:a294edcb4991a08ea71c44c2a8753ebf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:ad2ba85e1b0dabae7ccb10b87ae35a93f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

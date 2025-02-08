@@ -95,7 +95,8 @@ $(document).ready(function(){initNavTree('namespaceKargono_1_1Utility.html','');
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">Kargono::Utility Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -116,6 +117,10 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1PassiveTimer.html">PassiveTimer</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1PseudoGenerator.html">PseudoGenerator</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1PseudoRandomService.html">PseudoRandomService</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1RandomService.html">RandomService</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1Utility_1_1Regex.html">Regex</a></td></tr>
@@ -135,106 +140,139 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a53c807d30da5b83fee26f7f22f961935" id="r_a53c807d30da5b83fee26f7f22f961935"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a53c807d30da5b83fee26f7f22f961935">SerializeWrappedVariableData</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">variable</a>, YAML::Emitter &amp;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">out</a>)</td></tr>
+<tr class="memitem:a53c807d30da5b83fee26f7f22f961935" id="r_a53c807d30da5b83fee26f7f22f961935"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a53c807d30da5b83fee26f7f22f961935">SerializeWrappedVariableData</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">variable</a>, YAML::Emitter &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">out</a>)</td></tr>
 <tr class="separator:a53c807d30da5b83fee26f7f22f961935"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e7f264a1e952a3a1e2adf7c1d5c443f" id="r_a5e7f264a1e952a3a1e2adf7c1d5c443f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a5e7f264a1e952a3a1e2adf7c1d5c443f">DeserializeWrappedVariableData</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>, YAML::detail::iterator_value &amp;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">field</a>)</td></tr>
+<tr class="memitem:a5e7f264a1e952a3a1e2adf7c1d5c443f" id="r_a5e7f264a1e952a3a1e2adf7c1d5c443f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a5e7f264a1e952a3a1e2adf7c1d5c443f">DeserializeWrappedVariableData</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>, YAML::detail::iterator_value &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">field</a>)</td></tr>
 <tr class="separator:a5e7f264a1e952a3a1e2adf7c1d5c443f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47e06daaa2ef8a44e182acc1bd73a72e" id="r_a47e06daaa2ef8a44e182acc1bd73a72e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a47e06daaa2ef8a44e182acc1bd73a72e">RigidBody2DBodyTypeToString</a> (<a class="el" href="structKargono_1_1ECS_1_1Rigidbody2DComponent.html#abac8e806a6e1c74807d4324232dbba69">ECS::Rigidbody2DComponent::BodyType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">bodyType</a>)</td></tr>
+<tr class="memitem:a47e06daaa2ef8a44e182acc1bd73a72e" id="r_a47e06daaa2ef8a44e182acc1bd73a72e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a47e06daaa2ef8a44e182acc1bd73a72e">RigidBody2DBodyTypeToString</a> (<a class="el" href="structKargono_1_1ECS_1_1Rigidbody2DComponent.html#abac8e806a6e1c74807d4324232dbba69">ECS::Rigidbody2DComponent::BodyType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">bodyType</a>)</td></tr>
 <tr class="separator:a47e06daaa2ef8a44e182acc1bd73a72e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a18197baa8de2bdab5bd437d8a614df" id="r_a2a18197baa8de2bdab5bd437d8a614df"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structKargono_1_1ECS_1_1Rigidbody2DComponent.html#abac8e806a6e1c74807d4324232dbba69">ECS::Rigidbody2DComponent::BodyType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a2a18197baa8de2bdab5bd437d8a614df">StringToRigidBody2DBodyType</a> (<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">bodyTypeString</a>)</td></tr>
+<tr class="memitem:a2a18197baa8de2bdab5bd437d8a614df" id="r_a2a18197baa8de2bdab5bd437d8a614df"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structKargono_1_1ECS_1_1Rigidbody2DComponent.html#abac8e806a6e1c74807d4324232dbba69">ECS::Rigidbody2DComponent::BodyType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a2a18197baa8de2bdab5bd437d8a614df">StringToRigidBody2DBodyType</a> (<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">bodyTypeString</a>)</td></tr>
 <tr class="separator:a2a18197baa8de2bdab5bd437d8a614df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b8ac365850f8567c1fdcee6161a9f15" id="r_a4b8ac365850f8567c1fdcee6161a9f15"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a4b8ac365850f8567c1fdcee6161a9f15">AssetTypeToString</a> (<a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5e">Assets::AssetType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a4b8ac365850f8567c1fdcee6161a9f15" id="r_a4b8ac365850f8567c1fdcee6161a9f15"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a4b8ac365850f8567c1fdcee6161a9f15">AssetTypeToString</a> (<a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5e">Assets::AssetType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a4b8ac365850f8567c1fdcee6161a9f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8229273526e8700e37576ea6b280c97f" id="r_a8229273526e8700e37576ea6b280c97f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5e">Assets::AssetType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a8229273526e8700e37576ea6b280c97f">StringToAssetType</a> (std::string <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a8229273526e8700e37576ea6b280c97f" id="r_a8229273526e8700e37576ea6b280c97f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Assets.html#a87d009e5376073cedbbc0c6a82318d5e">Assets::AssetType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a8229273526e8700e37576ea6b280c97f">StringToAssetType</a> (std::string <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a8229273526e8700e37576ea6b280c97f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe990007f37ba7124284e8f7517d44dc" id="r_afe990007f37ba7124284e8f7517d44dc"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#afe990007f37ba7124284e8f7517d44dc">KeyCodeToString</a> (<a class="el" href="namespaceKargono.html#a5d9d8bc09d8eadf807acc6aec40f3a3b">KeyCode</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">key</a>)</td></tr>
+<tr class="memitem:afe990007f37ba7124284e8f7517d44dc" id="r_afe990007f37ba7124284e8f7517d44dc"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#afe990007f37ba7124284e8f7517d44dc">KeyCodeToString</a> (<a class="el" href="namespaceKargono.html#a5d9d8bc09d8eadf807acc6aec40f3a3b">KeyCode</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">key</a>)</td></tr>
 <tr class="separator:afe990007f37ba7124284e8f7517d44dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adefd0fc99b82bf9b20d12361c5da6f54" id="r_adefd0fc99b82bf9b20d12361c5da6f54"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a5d9d8bc09d8eadf807acc6aec40f3a3b">KeyCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#adefd0fc99b82bf9b20d12361c5da6f54">StringToKeyCode</a> (<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">codeString</a>)</td></tr>
+<tr class="memitem:adefd0fc99b82bf9b20d12361c5da6f54" id="r_adefd0fc99b82bf9b20d12361c5da6f54"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a5d9d8bc09d8eadf807acc6aec40f3a3b">KeyCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#adefd0fc99b82bf9b20d12361c5da6f54">StringToKeyCode</a> (<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">codeString</a>)</td></tr>
 <tr class="separator:adefd0fc99b82bf9b20d12361c5da6f54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acebe2d91d3cca590167fba5c29211479" id="r_acebe2d91d3cca590167fba5c29211479"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#acebe2d91d3cca590167fba5c29211479">MouseCodeToString</a> (<a class="el" href="namespaceKargono.html#a38c4cd764f4138362cbb432cf30c9f48">MouseCode</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">mouseCode</a>)</td></tr>
+<tr class="memitem:acebe2d91d3cca590167fba5c29211479" id="r_acebe2d91d3cca590167fba5c29211479"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#acebe2d91d3cca590167fba5c29211479">MouseCodeToString</a> (<a class="el" href="namespaceKargono.html#a38c4cd764f4138362cbb432cf30c9f48">MouseCode</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">mouseCode</a>)</td></tr>
 <tr class="separator:acebe2d91d3cca590167fba5c29211479"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a478763e36a2933e4f8c32a1ffa075058" id="r_a478763e36a2933e4f8c32a1ffa075058"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a478763e36a2933e4f8c32a1ffa075058">WrappedVarTypeToString</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a46daceef75e4078d5544448484884319" id="r_a46daceef75e4078d5544448484884319"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#ac09d94284381b8b3e5813bc11e8e4a1b">Math::uvec2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a46daceef75e4078d5544448484884319">ScreenResolutionToVec2</a> (<a class="el" href="namespaceKargono.html#a6d3b61610ea12c1399c4313e860e3e55">ScreenResolution</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">option</a>)</td></tr>
+<tr class="separator:a46daceef75e4078d5544448484884319"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97ff9057e0ae817bf41e812e8acbdae5" id="r_a97ff9057e0ae817bf41e812e8acbdae5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#ac09d94284381b8b3e5813bc11e8e4a1b">Math::uvec2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a97ff9057e0ae817bf41e812e8acbdae5">GetClosestAspectRatio</a> (<a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">monitorResolution</a>)</td></tr>
+<tr class="separator:a97ff9057e0ae817bf41e812e8acbdae5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92ab3b9cd63699c9965d73488185683e" id="r_a92ab3b9cd63699c9965d73488185683e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#ac09d94284381b8b3e5813bc11e8e4a1b">Math::uvec2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a92ab3b9cd63699c9965d73488185683e">ScreenResolutionToAspectRatio</a> (<a class="el" href="namespaceKargono.html#a6d3b61610ea12c1399c4313e860e3e55">ScreenResolution</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">option</a>)</td></tr>
+<tr class="separator:a92ab3b9cd63699c9965d73488185683e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e2e92a7ddca17443b22a9628e72de07" id="r_a5e2e92a7ddca17443b22a9628e72de07"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a5e2e92a7ddca17443b22a9628e72de07">ScreenResolutionToString</a> (<a class="el" href="namespaceKargono.html#a6d3b61610ea12c1399c4313e860e3e55">ScreenResolution</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">option</a>)</td></tr>
+<tr class="separator:a5e2e92a7ddca17443b22a9628e72de07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a768161d7b012b00de84a68f292cf02e5" id="r_a768161d7b012b00de84a68f292cf02e5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a6d3b61610ea12c1399c4313e860e3e55">ScreenResolution</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a768161d7b012b00de84a68f292cf02e5">StringToScreenResolution</a> (<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">optionStr</a>)</td></tr>
+<tr class="separator:a768161d7b012b00de84a68f292cf02e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5deeda465119ce8da680f99886ec0b5b" id="r_a5deeda465119ce8da680f99886ec0b5b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a5deeda465119ce8da680f99886ec0b5b">ScreenResolutionToCategoryTitle</a> (<a class="el" href="namespaceKargono.html#a6d3b61610ea12c1399c4313e860e3e55">ScreenResolution</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">option</a>)</td></tr>
+<tr class="separator:a5deeda465119ce8da680f99886ec0b5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a478763e36a2933e4f8c32a1ffa075058" id="r_a478763e36a2933e4f8c32a1ffa075058"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a478763e36a2933e4f8c32a1ffa075058">WrappedVarTypeToString</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a478763e36a2933e4f8c32a1ffa075058"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0164fb2e83bfb22fe2eaf6569b6fb13a" id="r_a0164fb2e83bfb22fe2eaf6569b6fb13a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a0164fb2e83bfb22fe2eaf6569b6fb13a">WrappedVarTypeToWrappedVariable</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a0164fb2e83bfb22fe2eaf6569b6fb13a" id="r_a0164fb2e83bfb22fe2eaf6569b6fb13a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a0164fb2e83bfb22fe2eaf6569b6fb13a">WrappedVarTypeToWrappedVariable</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a0164fb2e83bfb22fe2eaf6569b6fb13a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab589d06440118ed713d3dad1d6f13efc" id="r_ab589d06440118ed713d3dad1d6f13efc"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ab589d06440118ed713d3dad1d6f13efc">WrappedVarTypeToCPPString</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:ab589d06440118ed713d3dad1d6f13efc" id="r_ab589d06440118ed713d3dad1d6f13efc"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ab589d06440118ed713d3dad1d6f13efc">WrappedVarTypeToCPPString</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:ab589d06440118ed713d3dad1d6f13efc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb89e3ddeb53886bc56daecbea96a16d" id="r_acb89e3ddeb53886bc56daecbea96a16d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#acb89e3ddeb53886bc56daecbea96a16d">WrappedVarTypeToCPPParameter</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:acb89e3ddeb53886bc56daecbea96a16d" id="r_acb89e3ddeb53886bc56daecbea96a16d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#acb89e3ddeb53886bc56daecbea96a16d">WrappedVarTypeToCPPParameter</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:acb89e3ddeb53886bc56daecbea96a16d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a137c10ad8d0887577b4e0233f784e760" id="r_a137c10ad8d0887577b4e0233f784e760"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">size_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a137c10ad8d0887577b4e0233f784e760">WrappedVarTypeToDataSizeBytes</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a137c10ad8d0887577b4e0233f784e760" id="r_a137c10ad8d0887577b4e0233f784e760"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">size_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a137c10ad8d0887577b4e0233f784e760">WrappedVarTypeToDataSizeBytes</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a137c10ad8d0887577b4e0233f784e760"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe7668b6d6b1aa05bd84ebd839dca860" id="r_abe7668b6d6b1aa05bd84ebd839dca860"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#abe7668b6d6b1aa05bd84ebd839dca860">WrappedVarTypeToKGScript</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:abe7668b6d6b1aa05bd84ebd839dca860" id="r_abe7668b6d6b1aa05bd84ebd839dca860"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#abe7668b6d6b1aa05bd84ebd839dca860">WrappedVarTypeToKGScript</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:abe7668b6d6b1aa05bd84ebd839dca860"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9dd77e357d53094e3143e19ffcc39e2b" id="r_a9dd77e357d53094e3143e19ffcc39e2b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a9dd77e357d53094e3143e19ffcc39e2b">KGScriptToWrappedVarType</a> (<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">scriptType</a>)</td></tr>
+<tr class="memitem:a9dd77e357d53094e3143e19ffcc39e2b" id="r_a9dd77e357d53094e3143e19ffcc39e2b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a9dd77e357d53094e3143e19ffcc39e2b">KGScriptToWrappedVarType</a> (<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">scriptType</a>)</td></tr>
 <tr class="separator:a9dd77e357d53094e3143e19ffcc39e2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a675b928361d1af95197265a90657a16b" id="r_a675b928361d1af95197265a90657a16b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a675b928361d1af95197265a90657a16b">StringToWrappedVarType</a> (std::string <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a675b928361d1af95197265a90657a16b" id="r_a675b928361d1af95197265a90657a16b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a675b928361d1af95197265a90657a16b">StringToWrappedVarType</a> (std::string <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a675b928361d1af95197265a90657a16b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4899dbcc9e287fad30e808ac65a818af" id="r_a4899dbcc9e287fad30e808ac65a818af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a4899dbcc9e287fad30e808ac65a818af">InitializeDataForWrappedVarBuffer</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>, void *<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">buffer</a>)</td></tr>
+<tr class="memitem:a4899dbcc9e287fad30e808ac65a818af" id="r_a4899dbcc9e287fad30e808ac65a818af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a4899dbcc9e287fad30e808ac65a818af">InitializeDataForWrappedVarBuffer</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>, void *<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">buffer</a>)</td></tr>
 <tr class="separator:a4899dbcc9e287fad30e808ac65a818af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36d4014148a44280f2abd3a251357bdb" id="r_a36d4014148a44280f2abd3a251357bdb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a36d4014148a44280f2abd3a251357bdb">TransferDataForWrappedVarBuffer</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>, void *<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">source</a>, void *<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">destination</a>)</td></tr>
+<tr class="memitem:a36d4014148a44280f2abd3a251357bdb" id="r_a36d4014148a44280f2abd3a251357bdb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a36d4014148a44280f2abd3a251357bdb">TransferDataForWrappedVarBuffer</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>, void *<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">source</a>, void *<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">destination</a>)</td></tr>
 <tr class="separator:a36d4014148a44280f2abd3a251357bdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afad5e9992f50c1bc5d629c1c2cf7cd26" id="r_afad5e9992f50c1bc5d629c1c2cf7cd26"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#afad5e9992f50c1bc5d629c1c2cf7cd26">FillBufferWithWrappedVarString</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">variable</a>, <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">buffer</a>)</td></tr>
+<tr class="memitem:afad5e9992f50c1bc5d629c1c2cf7cd26" id="r_afad5e9992f50c1bc5d629c1c2cf7cd26"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#afad5e9992f50c1bc5d629c1c2cf7cd26">FillBufferWithWrappedVarString</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">variable</a>, <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">buffer</a>)</td></tr>
 <tr class="separator:afad5e9992f50c1bc5d629c1c2cf7cd26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a948449a3d8340019224fffacf0085db7" id="r_a948449a3d8340019224fffacf0085db7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a948449a3d8340019224fffacf0085db7">FillWrappedVarWithStringBuffer</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">variable</a>, <a class="el" href="structKargono_1_1Buffer.html">Buffer</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">buffer</a>)</td></tr>
-<tr class="separator:a948449a3d8340019224fffacf0085db7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cf5242dea87bd37c597ce3e0b30bae8" id="r_a6cf5242dea87bd37c597ce3e0b30bae8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a6cf5242dea87bd37c597ce3e0b30bae8">WrappedFuncTypeToString</a> (<a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a6cf5242dea87bd37c597ce3e0b30bae8" id="r_a6cf5242dea87bd37c597ce3e0b30bae8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a6cf5242dea87bd37c597ce3e0b30bae8">WrappedFuncTypeToString</a> (<a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a6cf5242dea87bd37c597ce3e0b30bae8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a666e91563225d65775743f7e0508ad55" id="r_a666e91563225d65775743f7e0508ad55"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a666e91563225d65775743f7e0508ad55">StringToWrappedFuncType</a> (std::string <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a666e91563225d65775743f7e0508ad55" id="r_a666e91563225d65775743f7e0508ad55"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a666e91563225d65775743f7e0508ad55">StringToWrappedFuncType</a> (std::string <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a666e91563225d65775743f7e0508ad55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68e0da09b0ba0c0aee46177bfbd9d521" id="r_a68e0da09b0ba0c0aee46177bfbd9d521"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a68e0da09b0ba0c0aee46177bfbd9d521">CallWrappedVoidNone</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">wrappedFunction</a>)</td></tr>
+<tr class="memitem:a68e0da09b0ba0c0aee46177bfbd9d521" id="r_a68e0da09b0ba0c0aee46177bfbd9d521"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a68e0da09b0ba0c0aee46177bfbd9d521">CallWrappedVoidNone</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>)</td></tr>
 <tr class="separator:a68e0da09b0ba0c0aee46177bfbd9d521"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c1b1c16dfbe3ee26785b1c526657ed8" id="r_a9c1b1c16dfbe3ee26785b1c526657ed8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a9c1b1c16dfbe3ee26785b1c526657ed8">CallWrappedVoidString</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">wrappedFunction</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentOne</a>)</td></tr>
+<tr class="memitem:a9c1b1c16dfbe3ee26785b1c526657ed8" id="r_a9c1b1c16dfbe3ee26785b1c526657ed8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a9c1b1c16dfbe3ee26785b1c526657ed8">CallWrappedVoidString</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentOne</a>)</td></tr>
 <tr class="separator:a9c1b1c16dfbe3ee26785b1c526657ed8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69e86bd14fb473e7631551c141c09357" id="r_a69e86bd14fb473e7631551c141c09357"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a69e86bd14fb473e7631551c141c09357">CallWrappedVoidFloat</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">wrappedFunction</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">float</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentOne</a>)</td></tr>
+<tr class="memitem:a69e86bd14fb473e7631551c141c09357" id="r_a69e86bd14fb473e7631551c141c09357"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a69e86bd14fb473e7631551c141c09357">CallWrappedVoidFloat</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">float</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentOne</a>)</td></tr>
 <tr class="separator:a69e86bd14fb473e7631551c141c09357"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9dca999866d0cbbad400be8ea0958dd" id="r_ae9dca999866d0cbbad400be8ea0958dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ae9dca999866d0cbbad400be8ea0958dd">CallWrappedVoidUInt16</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">wrappedFunction</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">uint16_t</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentOne</a>)</td></tr>
+<tr class="memitem:ae9dca999866d0cbbad400be8ea0958dd" id="r_ae9dca999866d0cbbad400be8ea0958dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ae9dca999866d0cbbad400be8ea0958dd">CallWrappedVoidUInt16</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>, uint16_t <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentOne</a>)</td></tr>
 <tr class="separator:ae9dca999866d0cbbad400be8ea0958dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24ea4010669715ddf97fcf7cf54a1b8d" id="r_a24ea4010669715ddf97fcf7cf54a1b8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a24ea4010669715ddf97fcf7cf54a1b8d">CallWrappedVoidUInt32</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">wrappedFunction</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">uint32_t</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentOne</a>)</td></tr>
+<tr class="memitem:a24ea4010669715ddf97fcf7cf54a1b8d" id="r_a24ea4010669715ddf97fcf7cf54a1b8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a24ea4010669715ddf97fcf7cf54a1b8d">CallWrappedVoidUInt32</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentOne</a>)</td></tr>
 <tr class="separator:a24ea4010669715ddf97fcf7cf54a1b8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd03e1638b99c68dd480ce088f3d4281" id="r_abd03e1638b99c68dd480ce088f3d4281"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#abd03e1638b99c68dd480ce088f3d4281">CallWrappedVoidEntity</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">wrappedFunction</a>, uint64_t <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentOne</a>)</td></tr>
+<tr class="memitem:a5adf0dd673834fb5a984be711e578dec" id="r_a5adf0dd673834fb5a984be711e578dec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a5adf0dd673834fb5a984be711e578dec">CallWrappedVoidUInt32UInt32</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentOne</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentTwo</a>)</td></tr>
+<tr class="separator:a5adf0dd673834fb5a984be711e578dec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd03e1638b99c68dd480ce088f3d4281" id="r_abd03e1638b99c68dd480ce088f3d4281"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#abd03e1638b99c68dd480ce088f3d4281">CallWrappedVoidEntity</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>, uint64_t <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentOne</a>)</td></tr>
 <tr class="separator:abd03e1638b99c68dd480ce088f3d4281"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac567fa2ea6a83aa419284166821656f3" id="r_ac567fa2ea6a83aa419284166821656f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ac567fa2ea6a83aa419284166821656f3">CallWrappedVoidEntityFloat</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">wrappedFunction</a>, uint64_t <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentOne</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">float</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentTwo</a>)</td></tr>
+<tr class="memitem:a7bf97cc53fb57b0a0183c9a8a5c6aab7" id="r_a7bf97cc53fb57b0a0183c9a8a5c6aab7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a7bf97cc53fb57b0a0183c9a8a5c6aab7">CallWrappedVoidBool</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>, bool <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentOne</a>)</td></tr>
+<tr class="separator:a7bf97cc53fb57b0a0183c9a8a5c6aab7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac567fa2ea6a83aa419284166821656f3" id="r_ac567fa2ea6a83aa419284166821656f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ac567fa2ea6a83aa419284166821656f3">CallWrappedVoidEntityFloat</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>, uint64_t <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentOne</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">float</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentTwo</a>)</td></tr>
 <tr class="separator:ac567fa2ea6a83aa419284166821656f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af64484b643acff661c3a9e9d8196387f" id="r_af64484b643acff661c3a9e9d8196387f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#af64484b643acff661c3a9e9d8196387f">CallWrappedVoidUInt32EntityEntityFloat</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">wrappedFunction</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">uint32_t</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentOne</a>, uint64_t <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentTwo</a>, uint64_t <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentThree</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">float</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentFour</a>)</td></tr>
+<tr class="memitem:af64484b643acff661c3a9e9d8196387f" id="r_af64484b643acff661c3a9e9d8196387f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#af64484b643acff661c3a9e9d8196387f">CallWrappedVoidUInt32EntityEntityFloat</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentOne</a>, uint64_t <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentTwo</a>, uint64_t <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentThree</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">float</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentFour</a>)</td></tr>
 <tr class="separator:af64484b643acff661c3a9e9d8196387f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeeff7c5f71aac2c855e29b7b6fab0975" id="r_aeeff7c5f71aac2c855e29b7b6fab0975"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#aeeff7c5f71aac2c855e29b7b6fab0975">CallWrappedBoolNone</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">wrappedFunction</a>)</td></tr>
+<tr class="memitem:aeeff7c5f71aac2c855e29b7b6fab0975" id="r_aeeff7c5f71aac2c855e29b7b6fab0975"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#aeeff7c5f71aac2c855e29b7b6fab0975">CallWrappedBoolNone</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>)</td></tr>
 <tr class="separator:aeeff7c5f71aac2c855e29b7b6fab0975"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a00675a5ba9bec2e045a0b046681f44" id="r_a2a00675a5ba9bec2e045a0b046681f44"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a2a00675a5ba9bec2e045a0b046681f44">CallWrappedBoolEntity</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">wrappedFunction</a>, uint64_t <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentOne</a>)</td></tr>
+<tr class="memitem:a2a00675a5ba9bec2e045a0b046681f44" id="r_a2a00675a5ba9bec2e045a0b046681f44"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a2a00675a5ba9bec2e045a0b046681f44">CallWrappedBoolEntity</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>, uint64_t <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentOne</a>)</td></tr>
 <tr class="separator:a2a00675a5ba9bec2e045a0b046681f44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51c5985ce31cb071c29b926fd6ebdf0a" id="r_a51c5985ce31cb071c29b926fd6ebdf0a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a51c5985ce31cb071c29b926fd6ebdf0a">CallWrappedBoolEntityEntity</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">wrappedFunction</a>, uint64_t <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentOne</a>, uint64_t <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">argumentTwo</a>)</td></tr>
+<tr class="memitem:a51c5985ce31cb071c29b926fd6ebdf0a" id="r_a51c5985ce31cb071c29b926fd6ebdf0a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a51c5985ce31cb071c29b926fd6ebdf0a">CallWrappedBoolEntityEntity</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">wrappedFunction</a>, uint64_t <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentOne</a>, uint64_t <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">argumentTwo</a>)</td></tr>
 <tr class="separator:a51c5985ce31cb071c29b926fd6ebdf0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc60d44d1a9522896f0649e9e3b8c8c5" id="r_afc60d44d1a9522896f0649e9e3b8c8c5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#afc60d44d1a9522896f0649e9e3b8c8c5">WrappedFuncTypeToReturnType</a> (<a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:afc60d44d1a9522896f0649e9e3b8c8c5" id="r_afc60d44d1a9522896f0649e9e3b8c8c5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#afc60d44d1a9522896f0649e9e3b8c8c5">WrappedFuncTypeToReturnType</a> (<a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:afc60d44d1a9522896f0649e9e3b8c8c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84967f3bbe23b7709cb91cce54a1fee6" id="r_a84967f3bbe23b7709cb91cce54a1fee6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a84967f3bbe23b7709cb91cce54a1fee6">WrappedFuncTypeToParameterTypes</a> (<a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a84967f3bbe23b7709cb91cce54a1fee6" id="r_a84967f3bbe23b7709cb91cce54a1fee6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a84967f3bbe23b7709cb91cce54a1fee6">WrappedFuncTypeToParameterTypes</a> (<a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a84967f3bbe23b7709cb91cce54a1fee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd2fd0c0f6c26825d9435c9d802030ac" id="r_afd2fd0c0f6c26825d9435c9d802030ac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#afd2fd0c0f6c26825d9435c9d802030ac">ExplicitSignatureToWrappedFuncType</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">queryReturnType</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::vector&lt; <a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> &gt; &amp;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">queryParameterList</a>)</td></tr>
+<tr class="memitem:afd2fd0c0f6c26825d9435c9d802030ac" id="r_afd2fd0c0f6c26825d9435c9d802030ac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#afd2fd0c0f6c26825d9435c9d802030ac">ExplicitSignatureToWrappedFuncType</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">queryReturnType</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::vector&lt; <a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> &gt; &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">queryParameterList</a>)</td></tr>
 <tr class="separator:afd2fd0c0f6c26825d9435c9d802030ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3d88fa43ef1c6e55c8e1e2383856bda" id="r_ac3d88fa43ef1c6e55c8e1e2383856bda"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ac3d88fa43ef1c6e55c8e1e2383856bda">ScreenResolutionToVec2</a> (<a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2">Projects::ScreenResolutionOptions</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">option</a>)</td></tr>
-<tr class="separator:ac3d88fa43ef1c6e55c8e1e2383856bda"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cf817a2341f3ef7771e7f2eb6374824" id="r_a3cf817a2341f3ef7771e7f2eb6374824"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#ac09d94284381b8b3e5813bc11e8e4a1b">Math::uvec2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a3cf817a2341f3ef7771e7f2eb6374824">ScreenResolutionToAspectRatio</a> (<a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2">Projects::ScreenResolutionOptions</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">option</a>)</td></tr>
-<tr class="separator:a3cf817a2341f3ef7771e7f2eb6374824"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d22b6fe4debdde07fd6b035f57843c7" id="r_a1d22b6fe4debdde07fd6b035f57843c7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">uint32_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a1d22b6fe4debdde07fd6b035f57843c7">ImageFormatToBytes</a> (<a class="el" href="namespaceKargono_1_1Rendering.html#a9ac98824abb0b92724f910bafef2952e">Rendering::ImageFormat</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">format</a>)</td></tr>
+<tr class="memitem:a7a29b82693963264c695012637cd23f7" id="r_a7a29b82693963264c695012637cd23f7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">char</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a7a29b82693963264c695012637cd23f7">InterpolationTypeToString</a> (<a class="el" href="namespaceKargono_1_1Math.html#a420c8942ff4d24cd6fe1928411cd6eb3">Math::InterpolationType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
+<tr class="separator:a7a29b82693963264c695012637cd23f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09c85ea8aeb7cfe3c4c7d65acdd15a76" id="r_a09c85ea8aeb7cfe3c4c7d65acdd15a76"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#a420c8942ff4d24cd6fe1928411cd6eb3">Math::InterpolationType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a09c85ea8aeb7cfe3c4c7d65acdd15a76">StringToInterpolationType</a> (<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">str</a>)</td></tr>
+<tr class="separator:a09c85ea8aeb7cfe3c4c7d65acdd15a76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7a0a00df855b88c347fd3031e397315" id="r_ab7a0a00df855b88c347fd3031e397315"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">char</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ab7a0a00df855b88c347fd3031e397315">InterpolationTypeToCategory</a> (<a class="el" href="namespaceKargono_1_1Math.html#a420c8942ff4d24cd6fe1928411cd6eb3">Math::InterpolationType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
+<tr class="separator:ab7a0a00df855b88c347fd3031e397315"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad87233a7a642ef129708f4cb3f9cb4d3" id="r_ad87233a7a642ef129708f4cb3f9cb4d3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ad87233a7a642ef129708f4cb3f9cb4d3">EmitterMotionTypeToString</a> (<a class="el" href="namespaceKargono_1_1Particles.html#a73c27948dff916e8d7be0f12ee9858e4">Particles::EmitterMotionType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">motionType</a>)</td></tr>
+<tr class="separator:ad87233a7a642ef129708f4cb3f9cb4d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ba86e51cee2b47311608d60f525f096" id="r_a3ba86e51cee2b47311608d60f525f096"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Particles.html#a73c27948dff916e8d7be0f12ee9858e4">Particles::EmitterMotionType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a3ba86e51cee2b47311608d60f525f096">StringToEmitterMotionType</a> (<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">str</a>)</td></tr>
+<tr class="separator:a3ba86e51cee2b47311608d60f525f096"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2ebde0935874ed384028e272789bd07" id="r_ae2ebde0935874ed384028e272789bd07"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ae2ebde0935874ed384028e272789bd07">EmitterLifecycleToString</a> (<a class="el" href="namespaceKargono_1_1Particles.html#a9eeecb004331326060c81b609d6abbf2">Particles::EmitterLifecycle</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">lifecycle</a>)</td></tr>
+<tr class="separator:ae2ebde0935874ed384028e272789bd07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2146efb361a10684c2dcebbb2c71530" id="r_aa2146efb361a10684c2dcebbb2c71530"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Particles.html#a9eeecb004331326060c81b609d6abbf2">Particles::EmitterLifecycle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#aa2146efb361a10684c2dcebbb2c71530">StringToEmitterLifecycle</a> (<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">str</a>)</td></tr>
+<tr class="separator:aa2146efb361a10684c2dcebbb2c71530"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d22b6fe4debdde07fd6b035f57843c7" id="r_a1d22b6fe4debdde07fd6b035f57843c7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a1d22b6fe4debdde07fd6b035f57843c7">ImageFormatToBytes</a> (<a class="el" href="namespaceKargono_1_1Rendering.html#a9ac98824abb0b92724f910bafef2952e">Rendering::ImageFormat</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">format</a>)</td></tr>
 <tr class="separator:a1d22b6fe4debdde07fd6b035f57843c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fc13609e168cbd2f5013125d96eea95" id="r_a6fc13609e168cbd2f5013125d96eea95"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a6fc13609e168cbd2f5013125d96eea95">ScriptTokenTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6">Scripting::ScriptTokenType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a1b93bb85e4961525a01c6d036f451689" id="r_a1b93bb85e4961525a01c6d036f451689"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Rendering_1_1Texture2D.html">Rendering::Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a1b93bb85e4961525a01c6d036f451689">WidgetTypeToIcon</a> (<a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720f">RuntimeUI::WidgetTypes</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">widgetType</a>)</td></tr>
+<tr class="separator:a1b93bb85e4961525a01c6d036f451689"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fc13609e168cbd2f5013125d96eea95" id="r_a6fc13609e168cbd2f5013125d96eea95"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a6fc13609e168cbd2f5013125d96eea95">ScriptTokenTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a9d5df1a5bcc72cbdd97d63c24bb5b9e6">Scripting::ScriptTokenType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a6fc13609e168cbd2f5013125d96eea95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04ce4efa31aaa738ec1933247f2ad8e1" id="r_a04ce4efa31aaa738ec1933247f2ad8e1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a04ce4efa31aaa738ec1933247f2ad8e1">ParseErrorTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a07987ddae06682e6b95eb195d94d7ec5">Scripting::ParseErrorType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a04ce4efa31aaa738ec1933247f2ad8e1" id="r_a04ce4efa31aaa738ec1933247f2ad8e1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a04ce4efa31aaa738ec1933247f2ad8e1">ParseErrorTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a07987ddae06682e6b95eb195d94d7ec5">Scripting::ParseErrorType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a04ce4efa31aaa738ec1933247f2ad8e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a308909a6adc91e3eee4e68a43805e6e4" id="r_a308909a6adc91e3eee4e68a43805e6e4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a308909a6adc91e3eee4e68a43805e6e4">ConditionalTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a91014d59ac87b323f18ed41b56cb68c2">Scripting::ConditionalType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a308909a6adc91e3eee4e68a43805e6e4" id="r_a308909a6adc91e3eee4e68a43805e6e4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a308909a6adc91e3eee4e68a43805e6e4">ConditionalTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a91014d59ac87b323f18ed41b56cb68c2">Scripting::ConditionalType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a308909a6adc91e3eee4e68a43805e6e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ae2589a5ae644d6666dde15b600c880" id="r_a2ae2589a5ae644d6666dde15b600c880"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structKargono_1_1Scripting_1_1ScriptToken.html">Scripting::ScriptToken</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a2ae2589a5ae644d6666dde15b600c880">WrappedVarTypeToPrimitiveType</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a2ae2589a5ae644d6666dde15b600c880" id="r_a2ae2589a5ae644d6666dde15b600c880"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structKargono_1_1Scripting_1_1ScriptToken.html">Scripting::ScriptToken</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a2ae2589a5ae644d6666dde15b600c880">WrappedVarTypeToPrimitiveType</a> (<a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a2ae2589a5ae644d6666dde15b600c880"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43f99269e8338d2856db2ebf747b4cf3" id="r_a43f99269e8338d2856db2ebf747b4cf3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a43f99269e8338d2856db2ebf747b4cf3">ScriptTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a6f2712628592af6fb15f522f4c325cbb">Scripting::ScriptType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a43f99269e8338d2856db2ebf747b4cf3" id="r_a43f99269e8338d2856db2ebf747b4cf3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a43f99269e8338d2856db2ebf747b4cf3">ScriptTypeToString</a> (<a class="el" href="namespaceKargono_1_1Scripting.html#a6f2712628592af6fb15f522f4c325cbb">Scripting::ScriptType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a43f99269e8338d2856db2ebf747b4cf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97973b1d9425b8d80843a18909a5e581" id="r_a97973b1d9425b8d80843a18909a5e581"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Scripting.html#a6f2712628592af6fb15f522f4c325cbb">Scripting::ScriptType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a97973b1d9425b8d80843a18909a5e581">StringToScriptType</a> (std::string <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">type</a>)</td></tr>
+<tr class="memitem:a97973b1d9425b8d80843a18909a5e581" id="r_a97973b1d9425b8d80843a18909a5e581"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Scripting.html#a6f2712628592af6fb15f522f4c325cbb">Scripting::ScriptType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a97973b1d9425b8d80843a18909a5e581">StringToScriptType</a> (std::string <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">type</a>)</td></tr>
 <tr class="separator:a97973b1d9425b8d80843a18909a5e581"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc19ff4c2e3046ff24ecad35f859050e" id="r_abc19ff4c2e3046ff24ecad35f859050e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#abc19ff4c2e3046ff24ecad35f859050e">ScriptToString</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scripting_1_1Script.html">Scripting::Script</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">script</a>)</td></tr>
+<tr class="memitem:abc19ff4c2e3046ff24ecad35f859050e" id="r_abc19ff4c2e3046ff24ecad35f859050e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#abc19ff4c2e3046ff24ecad35f859050e">ScriptToString</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scripting_1_1Script.html">Scripting::Script</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">script</a>)</td></tr>
 <tr class="separator:abc19ff4c2e3046ff24ecad35f859050e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a2aacbce09b9b69555cd9c4b9f9099d" id="r_a7a2aacbce09b9b69555cd9c4b9f9099d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a7a2aacbce09b9b69555cd9c4b9f9099d">ScriptToEditorUIGroup</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scripting_1_1Script.html">Scripting::Script</a> &gt; <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">script</a>)</td></tr>
+<tr class="memitem:a7a2aacbce09b9b69555cd9c4b9f9099d" id="r_a7a2aacbce09b9b69555cd9c4b9f9099d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a7a2aacbce09b9b69555cd9c4b9f9099d">ScriptToEditorUIGroup</a> (<a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Scripting_1_1Script.html">Scripting::Script</a> &gt; <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">script</a>)</td></tr>
 <tr class="separator:a7a2aacbce09b9b69555cd9c4b9f9099d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad1fe56797c63d78dc066316fc764d20" id="r_aad1fe56797c63d78dc066316fc764d20"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#aad1fe56797c63d78dc066316fc764d20">GenerateFunctionSignature</a> (<a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">funcType</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">name</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> <a class="el" href="structKargono_1_1Scripting_1_1ExplicitFuncType.html">Scripting::ExplicitFuncType</a> &amp;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">explicitType</a>)</td></tr>
+<tr class="memitem:aad1fe56797c63d78dc066316fc764d20" id="r_aad1fe56797c63d78dc066316fc764d20"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#aad1fe56797c63d78dc066316fc764d20">GenerateFunctionSignature</a> (<a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">funcType</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">name</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> <a class="el" href="structKargono_1_1Scripting_1_1ExplicitFuncType.html">Scripting::ExplicitFuncType</a> &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">explicitType</a>)</td></tr>
 <tr class="separator:aad1fe56797c63d78dc066316fc764d20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0e3a46beff387bbe458dd1956bf681e" id="r_ae0e3a46beff387bbe458dd1956bf681e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ae0e3a46beff387bbe458dd1956bf681e">GenerateFunctionStub</a> (<a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">funcType</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">name</a>, <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> <a class="el" href="structKargono_1_1Scripting_1_1ExplicitFuncType.html">Scripting::ExplicitFuncType</a> &amp;<a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">explicitType</a>)</td></tr>
+<tr class="memitem:ae0e3a46beff387bbe458dd1956bf681e" id="r_ae0e3a46beff387bbe458dd1956bf681e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ae0e3a46beff387bbe458dd1956bf681e">GenerateFunctionStub</a> (<a class="el" href="namespaceKargono.html#a76e8dedc812f6822eba89474cf06f618">WrappedFuncType</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">funcType</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">name</a>, <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> <a class="el" href="structKargono_1_1Scripting_1_1ExplicitFuncType.html">Scripting::ExplicitFuncType</a> &amp;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">explicitType</a>)</td></tr>
 <tr class="separator:ae0e3a46beff387bbe458dd1956bf681e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a29c72e52feecf1cfdb014cc23daf672f" id="r_a29c72e52feecf1cfdb014cc23daf672f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">constexpr</a> uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a29c72e52feecf1cfdb014cc23daf672f">s_Multiplier</a> { 6364136223846793005<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">ULL</a> }</td></tr>
+<tr class="separator:a29c72e52feecf1cfdb014cc23daf672f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8524e0f4f94a652f9aa33e1b98e7317" id="r_aa8524e0f4f94a652f9aa33e1b98e7317"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">constexpr</a> uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#aa8524e0f4f94a652f9aa33e1b98e7317">s_Modulus</a> { std::numeric_limits&lt;uint64_t&gt;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">::max</a>() }</td></tr>
+<tr class="separator:aa8524e0f4f94a652f9aa33e1b98e7317"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="ac79473b04b254724888c129990f2c479" name="ac79473b04b254724888c129990f2c479"></a>
@@ -247,7 +285,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">enum</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">class</a> <a class="el" href="namespaceKargono_1_1Utility.html#ac79473b04b254724888c129990f2c479">Kargono::Utility::FileTypes</a></td>
+          <td class="memname"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">enum</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">class</a> <a class="el" href="namespaceKargono_1_1Utility.html#ac79473b04b254724888c129990f2c479">Kargono::Utility::FileTypes</a></td>
         </tr>
       </table>
   </td>
@@ -356,7 +394,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="structKargono_1_1ECS_1_1Rigidbody2DComponent.html#abac8e806a6e1c74807d4324232dbba69">ECS::Rigidbody2DComponent::BodyType</a> Kargono::Utility::StringToRigidBody2DBodyType </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;&#160;</td>
           <td class="paramname"><em>bodyTypeString</em></td><td>)</td>
           <td></td>
         </tr>
@@ -383,7 +421,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Asset_8h_source.html#l00216">216</a> of file <a class="el" href="Asset_8h_source.html">Asset.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Asset_8h_source.html#l00224">224</a> of file <a class="el" href="Asset_8h_source.html">Asset.h</a>.</p>
 
 </div>
 </div>
@@ -403,7 +441,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Asset_8h_source.html#l00237">237</a> of file <a class="el" href="Asset_8h_source.html">Asset.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Asset_8h_source.html#l00246">246</a> of file <a class="el" href="Asset_8h_source.html">Asset.h</a>.</p>
 
 </div>
 </div>
@@ -436,7 +474,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="namespaceKargono.html#a5d9d8bc09d8eadf807acc6aec40f3a3b">KeyCode</a> Kargono::Utility::StringToKeyCode </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;&#160;</td>
           <td class="paramname"><em>codeString</em></td><td>)</td>
           <td></td>
         </tr>
@@ -467,6 +505,126 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a46daceef75e4078d5544448484884319" name="a46daceef75e4078d5544448484884319"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46daceef75e4078d5544448484884319">&#9670;&#160;</a></span>ScreenResolutionToVec2()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#ac09d94284381b8b3e5813bc11e8e4a1b">Math::uvec2</a> Kargono::Utility::ScreenResolutionToVec2 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a6d3b61610ea12c1399c4313e860e3e55">ScreenResolution</a>&#160;</td>
+          <td class="paramname"><em>option</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Resolution_8cpp_source.html#l00009">9</a> of file <a class="el" href="Resolution_8cpp_source.html">Resolution.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a97ff9057e0ae817bf41e812e8acbdae5" name="a97ff9057e0ae817bf41e812e8acbdae5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97ff9057e0ae817bf41e812e8acbdae5">&#9670;&#160;</a></span>GetClosestAspectRatio()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#ac09d94284381b8b3e5813bc11e8e4a1b">Math::uvec2</a> Kargono::Utility::GetClosestAspectRatio </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a>&#160;</td>
+          <td class="paramname"><em>monitorResolution</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Resolution_8cpp_source.html#l00119">119</a> of file <a class="el" href="Resolution_8cpp_source.html">Resolution.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a92ab3b9cd63699c9965d73488185683e" name="a92ab3b9cd63699c9965d73488185683e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92ab3b9cd63699c9965d73488185683e">&#9670;&#160;</a></span>ScreenResolutionToAspectRatio()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#ac09d94284381b8b3e5813bc11e8e4a1b">Math::uvec2</a> Kargono::Utility::ScreenResolutionToAspectRatio </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a6d3b61610ea12c1399c4313e860e3e55">ScreenResolution</a>&#160;</td>
+          <td class="paramname"><em>option</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Resolution_8cpp_source.html#l00147">147</a> of file <a class="el" href="Resolution_8cpp_source.html">Resolution.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a5e2e92a7ddca17443b22a9628e72de07" name="a5e2e92a7ddca17443b22a9628e72de07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e2e92a7ddca17443b22a9628e72de07">&#9670;&#160;</a></span>ScreenResolutionToString()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Kargono::Utility::ScreenResolutionToString </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a6d3b61610ea12c1399c4313e860e3e55">ScreenResolution</a>&#160;</td>
+          <td class="paramname"><em>option</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Resolution_8h_source.html#l00181">181</a> of file <a class="el" href="Resolution_8h_source.html">Resolution.h</a>.</p>
+
+</div>
+</div>
+<a id="a768161d7b012b00de84a68f292cf02e5" name="a768161d7b012b00de84a68f292cf02e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a768161d7b012b00de84a68f292cf02e5">&#9670;&#160;</a></span>StringToScreenResolution()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono.html#a6d3b61610ea12c1399c4313e860e3e55">ScreenResolution</a> Kargono::Utility::StringToScreenResolution </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;&#160;</td>
+          <td class="paramname"><em>optionStr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Resolution_8h_source.html#l00290">290</a> of file <a class="el" href="Resolution_8h_source.html">Resolution.h</a>.</p>
+
+</div>
+</div>
+<a id="a5deeda465119ce8da680f99886ec0b5b" name="a5deeda465119ce8da680f99886ec0b5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5deeda465119ce8da680f99886ec0b5b">&#9670;&#160;</a></span>ScreenResolutionToCategoryTitle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Kargono::Utility::ScreenResolutionToCategoryTitle </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a6d3b61610ea12c1399c4313e860e3e55">ScreenResolution</a>&#160;</td>
+          <td class="paramname"><em>option</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Resolution_8h_source.html#l00396">396</a> of file <a class="el" href="Resolution_8h_source.html">Resolution.h</a>.</p>
+
+</div>
+</div>
 <a id="a478763e36a2933e4f8c32a1ffa075058" name="a478763e36a2933e4f8c32a1ffa075058"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a478763e36a2933e4f8c32a1ffa075058">&#9670;&#160;</a></span>WrappedVarTypeToString()</h2>
 
@@ -483,7 +641,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00480">480</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00508">508</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -503,7 +661,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00500">500</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00528">528</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -523,7 +681,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00521">521</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00549">549</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -543,7 +701,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00541">541</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00569">569</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -554,7 +712,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">size_t</a> Kargono::Utility::WrappedVarTypeToDataSizeBytes </td>
+          <td class="memname"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">size_t</a> Kargono::Utility::WrappedVarTypeToDataSizeBytes </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a>&#160;</td>
           <td class="paramname"><em>type</em></td><td>)</td>
@@ -563,7 +721,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00561">561</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00589">589</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -583,7 +741,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00584">584</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00612">612</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -596,14 +754,14 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname"><a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> Kargono::Utility::KGScriptToWrappedVarType </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;&#160;</td>
           <td class="paramname"><em>scriptType</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00604">604</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00632">632</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -623,7 +781,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00622">622</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00650">650</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -653,7 +811,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00640">640</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00668">668</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -689,7 +847,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00670">670</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00704">704</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -719,37 +877,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00708">708</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
-
-</div>
-</div>
-<a id="a948449a3d8340019224fffacf0085db7" name="a948449a3d8340019224fffacf0085db7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a948449a3d8340019224fffacf0085db7">&#9670;&#160;</a></span>FillWrappedVarWithStringBuffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Kargono::Utility::FillWrappedVarWithStringBuffer </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedVariable.html">WrappedVariable</a> &gt;&#160;</td>
-          <td class="paramname"><em>variable</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structKargono_1_1Buffer.html">Buffer</a>&#160;</td>
-          <td class="paramname"><em>buffer</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00716">716</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00742">742</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -769,7 +897,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00794">794</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00753">753</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -789,7 +917,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00816">816</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00777">777</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -809,7 +937,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00836">836</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00799">799</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -828,7 +956,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;&#160;</td>
           <td class="paramname"><em>argumentOne</em>&#160;</td>
         </tr>
         <tr>
@@ -839,7 +967,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00842">842</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00805">805</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -858,7 +986,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">float</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">float</a>&#160;</td>
           <td class="paramname"><em>argumentOne</em>&#160;</td>
         </tr>
         <tr>
@@ -869,7 +997,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00848">848</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00811">811</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -888,7 +1016,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">uint16_t</a>&#160;</td>
+          <td class="paramtype">uint16_t&#160;</td>
           <td class="paramname"><em>argumentOne</em>&#160;</td>
         </tr>
         <tr>
@@ -899,7 +1027,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00854">854</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00817">817</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -918,7 +1046,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">uint32_t</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a>&#160;</td>
           <td class="paramname"><em>argumentOne</em>&#160;</td>
         </tr>
         <tr>
@@ -929,7 +1057,43 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00860">860</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00823">823</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+
+</div>
+</div>
+<a id="a5adf0dd673834fb5a984be711e578dec" name="a5adf0dd673834fb5a984be711e578dec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5adf0dd673834fb5a984be711e578dec">&#9670;&#160;</a></span>CallWrappedVoidUInt32UInt32()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Utility::CallWrappedVoidUInt32UInt32 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt;&#160;</td>
+          <td class="paramname"><em>wrappedFunction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a>&#160;</td>
+          <td class="paramname"><em>argumentOne</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a>&#160;</td>
+          <td class="paramname"><em>argumentTwo</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00828">828</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -959,7 +1123,37 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00866">866</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00834">834</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+
+</div>
+</div>
+<a id="a7bf97cc53fb57b0a0183c9a8a5c6aab7" name="a7bf97cc53fb57b0a0183c9a8a5c6aab7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bf97cc53fb57b0a0183c9a8a5c6aab7">&#9670;&#160;</a></span>CallWrappedVoidBool()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Kargono::Utility::CallWrappedVoidBool </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1WrappedFunction.html">WrappedFunction</a> &gt;&#160;</td>
+          <td class="paramname"><em>wrappedFunction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>argumentOne</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00840">840</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -984,7 +1178,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">float</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">float</a>&#160;</td>
           <td class="paramname"><em>argumentTwo</em>&#160;</td>
         </tr>
         <tr>
@@ -995,7 +1189,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00872">872</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00846">846</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -1014,7 +1208,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">uint32_t</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a>&#160;</td>
           <td class="paramname"><em>argumentOne</em>, </td>
         </tr>
         <tr>
@@ -1032,7 +1226,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">float</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">float</a>&#160;</td>
           <td class="paramname"><em>argumentFour</em>&#160;</td>
         </tr>
         <tr>
@@ -1043,7 +1237,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00878">878</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00852">852</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -1063,7 +1257,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00884">884</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00858">858</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -1093,7 +1287,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00890">890</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00864">864</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -1129,7 +1323,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00896">896</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00870">870</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -1149,7 +1343,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00902">902</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00876">876</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -1169,7 +1363,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00932">932</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00908">908</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
@@ -1188,7 +1382,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::vector&lt; <a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::vector&lt; <a class="el" href="namespaceKargono.html#a0d27d03a784d5bc2820c9e72b957d04d">WrappedVarType</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>queryParameterList</em>&#160;</td>
         </tr>
         <tr>
@@ -1199,47 +1393,147 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00969">969</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="WrappedData_8h_source.html#l00949">949</a> of file <a class="el" href="WrappedData_8h_source.html">WrappedData.h</a>.</p>
 
 </div>
 </div>
-<a id="ac3d88fa43ef1c6e55c8e1e2383856bda" name="ac3d88fa43ef1c6e55c8e1e2383856bda"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3d88fa43ef1c6e55c8e1e2383856bda">&#9670;&#160;</a></span>ScreenResolutionToVec2()</h2>
+<a id="a7a29b82693963264c695012637cd23f7" name="a7a29b82693963264c695012637cd23f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a29b82693963264c695012637cd23f7">&#9670;&#160;</a></span>InterpolationTypeToString()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a> Kargono::Utility::ScreenResolutionToVec2 </td>
+          <td class="memname"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">char</a> * Kargono::Utility::InterpolationTypeToString </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2">Projects::ScreenResolutionOptions</a>&#160;</td>
-          <td class="paramname"><em>option</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Math.html#a420c8942ff4d24cd6fe1928411cd6eb3">Math::InterpolationType</a>&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Project_8cpp_source.html#l00015">15</a> of file <a class="el" href="Project_8cpp_source.html">Project.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Interpolation_8h_source.html#l00327">327</a> of file <a class="el" href="Interpolation_8h_source.html">Interpolation.h</a>.</p>
 
 </div>
 </div>
-<a id="a3cf817a2341f3ef7771e7f2eb6374824" name="a3cf817a2341f3ef7771e7f2eb6374824"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3cf817a2341f3ef7771e7f2eb6374824">&#9670;&#160;</a></span>ScreenResolutionToAspectRatio()</h2>
+<a id="a09c85ea8aeb7cfe3c4c7d65acdd15a76" name="a09c85ea8aeb7cfe3c4c7d65acdd15a76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09c85ea8aeb7cfe3c4c7d65acdd15a76">&#9670;&#160;</a></span>StringToInterpolationType()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#ac09d94284381b8b3e5813bc11e8e4a1b">Math::uvec2</a> Kargono::Utility::ScreenResolutionToAspectRatio </td>
+          <td class="memname"><a class="el" href="namespaceKargono_1_1Math.html#a420c8942ff4d24cd6fe1928411cd6eb3">Math::InterpolationType</a> Kargono::Utility::StringToInterpolationType </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2">Projects::ScreenResolutionOptions</a>&#160;</td>
-          <td class="paramname"><em>option</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;&#160;</td>
+          <td class="paramname"><em>str</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Project_8cpp_source.html#l00063">63</a> of file <a class="el" href="Project_8cpp_source.html">Project.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Interpolation_8h_source.html#l00368">368</a> of file <a class="el" href="Interpolation_8h_source.html">Interpolation.h</a>.</p>
+
+</div>
+</div>
+<a id="ab7a0a00df855b88c347fd3031e397315" name="ab7a0a00df855b88c347fd3031e397315"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7a0a00df855b88c347fd3031e397315">&#9670;&#160;</a></span>InterpolationTypeToCategory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">char</a> * Kargono::Utility::InterpolationTypeToCategory </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Math.html#a420c8942ff4d24cd6fe1928411cd6eb3">Math::InterpolationType</a>&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Interpolation_8h_source.html#l00408">408</a> of file <a class="el" href="Interpolation_8h_source.html">Interpolation.h</a>.</p>
+
+</div>
+</div>
+<a id="ad87233a7a642ef129708f4cb3f9cb4d3" name="ad87233a7a642ef129708f4cb3f9cb4d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad87233a7a642ef129708f4cb3f9cb4d3">&#9670;&#160;</a></span>EmitterMotionTypeToString()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Kargono::Utility::EmitterMotionTypeToString </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Particles.html#a73c27948dff916e8d7be0f12ee9858e4">Particles::EmitterMotionType</a>&#160;</td>
+          <td class="paramname"><em>motionType</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ParticleService_8h_source.html#l00123">123</a> of file <a class="el" href="ParticleService_8h_source.html">ParticleService.h</a>.</p>
+
+</div>
+</div>
+<a id="a3ba86e51cee2b47311608d60f525f096" name="a3ba86e51cee2b47311608d60f525f096"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ba86e51cee2b47311608d60f525f096">&#9670;&#160;</a></span>StringToEmitterMotionType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono_1_1Particles.html#a73c27948dff916e8d7be0f12ee9858e4">Particles::EmitterMotionType</a> Kargono::Utility::StringToEmitterMotionType </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;&#160;</td>
+          <td class="paramname"><em>str</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ParticleService_8h_source.html#l00136">136</a> of file <a class="el" href="ParticleService_8h_source.html">ParticleService.h</a>.</p>
+
+</div>
+</div>
+<a id="ae2ebde0935874ed384028e272789bd07" name="ae2ebde0935874ed384028e272789bd07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2ebde0935874ed384028e272789bd07">&#9670;&#160;</a></span>EmitterLifecycleToString()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Kargono::Utility::EmitterLifecycleToString </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono_1_1Particles.html#a9eeecb004331326060c81b609d6abbf2">Particles::EmitterLifecycle</a>&#160;</td>
+          <td class="paramname"><em>lifecycle</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ParticleService_8h_source.html#l00145">145</a> of file <a class="el" href="ParticleService_8h_source.html">ParticleService.h</a>.</p>
+
+</div>
+</div>
+<a id="aa2146efb361a10684c2dcebbb2c71530" name="aa2146efb361a10684c2dcebbb2c71530"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2146efb361a10684c2dcebbb2c71530">&#9670;&#160;</a></span>StringToEmitterLifecycle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono_1_1Particles.html#a9eeecb004331326060c81b609d6abbf2">Particles::EmitterLifecycle</a> Kargono::Utility::StringToEmitterLifecycle </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;&#160;</td>
+          <td class="paramname"><em>str</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ParticleService_8h_source.html#l00158">158</a> of file <a class="el" href="ParticleService_8h_source.html">ParticleService.h</a>.</p>
 
 </div>
 </div>
@@ -1250,7 +1544,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">uint32_t</a> Kargono::Utility::ImageFormatToBytes </td>
+          <td class="memname"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">uint32_t</a> Kargono::Utility::ImageFormatToBytes </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespaceKargono_1_1Rendering.html#a9ac98824abb0b92724f910bafef2952e">Rendering::ImageFormat</a>&#160;</td>
           <td class="paramname"><em>format</em></td><td>)</td>
@@ -1260,6 +1554,26 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="Texture_8h_source.html#l00065">65</a> of file <a class="el" href="Texture_8h_source.html">Texture.h</a>.</p>
+
+</div>
+</div>
+<a id="a1b93bb85e4961525a01c6d036f451689" name="a1b93bb85e4961525a01c6d036f451689"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b93bb85e4961525a01c6d036f451689">&#9670;&#160;</a></span>WidgetTypeToIcon()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Rendering_1_1Texture2D.html">Rendering::Texture2D</a> &gt; Kargono::Utility::WidgetTypeToIcon </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720f">RuntimeUI::WidgetTypes</a>&#160;</td>
+          <td class="paramname"><em>widgetType</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="RuntimeUI_8cpp_source.html#l00018">18</a> of file <a class="el" href="RuntimeUI_8cpp_source.html">RuntimeUI.cpp</a>.</p>
 
 </div>
 </div>
@@ -1279,7 +1593,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ScriptCompilerCommon_8h_source.html#l00114">114</a> of file <a class="el" href="ScriptCompilerCommon_8h_source.html">ScriptCompilerCommon.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ScriptCompilerCommon_8h_source.html#l00115">115</a> of file <a class="el" href="ScriptCompilerCommon_8h_source.html">ScriptCompilerCommon.h</a>.</p>
 
 </div>
 </div>
@@ -1299,7 +1613,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ScriptCompilerCommon_8h_source.html#l00168">168</a> of file <a class="el" href="ScriptCompilerCommon_8h_source.html">ScriptCompilerCommon.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ScriptCompilerCommon_8h_source.html#l00169">169</a> of file <a class="el" href="ScriptCompilerCommon_8h_source.html">ScriptCompilerCommon.h</a>.</p>
 
 </div>
 </div>
@@ -1319,7 +1633,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ScriptCompilerCommon_8h_source.html#l00400">400</a> of file <a class="el" href="ScriptCompilerCommon_8h_source.html">ScriptCompilerCommon.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ScriptCompilerCommon_8h_source.html#l00415">415</a> of file <a class="el" href="ScriptCompilerCommon_8h_source.html">ScriptCompilerCommon.h</a>.</p>
 
 </div>
 </div>
@@ -1339,7 +1653,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ScriptCompilerService_8cpp_source.html#l00018">18</a> of file <a class="el" href="ScriptCompilerService_8cpp_source.html">ScriptCompilerService.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ScriptCompilerService_8cpp_source.html#l00021">21</a> of file <a class="el" href="ScriptCompilerService_8cpp_source.html">ScriptCompilerService.cpp</a>.</p>
 
 </div>
 </div>
@@ -1438,13 +1752,13 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;&#160;</td>
           <td class="paramname"><em>name</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> <a class="el" href="structKargono_1_1Scripting_1_1ExplicitFuncType.html">Scripting::ExplicitFuncType</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> <a class="el" href="structKargono_1_1Scripting_1_1ExplicitFuncType.html">Scripting::ExplicitFuncType</a> &amp;&#160;</td>
           <td class="paramname"><em>explicitType</em>&#160;</td>
         </tr>
         <tr>
@@ -1474,13 +1788,13 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> std::string &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> std::string &amp;&#160;</td>
           <td class="paramname"><em>name</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">const</a> <a class="el" href="structKargono_1_1Scripting_1_1ExplicitFuncType.html">Scripting::ExplicitFuncType</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">const</a> <a class="el" href="structKargono_1_1Scripting_1_1ExplicitFuncType.html">Scripting::ExplicitFuncType</a> &amp;&#160;</td>
           <td class="paramname"><em>explicitType</em>&#160;</td>
         </tr>
         <tr>
@@ -1492,6 +1806,55 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="ScriptService_8h_source.html#l00137">137</a> of file <a class="el" href="ScriptService_8h_source.html">ScriptService.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a29c72e52feecf1cfdb014cc23daf672f" name="a29c72e52feecf1cfdb014cc23daf672f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29c72e52feecf1cfdb014cc23daf672f">&#9670;&#160;</a></span>s_Multiplier</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">constexpr</a> uint64_t Kargono::Utility::s_Multiplier { 6364136223846793005<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">ULL</a> }</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Random_8h_source.html#l00056">56</a> of file <a class="el" href="Random_8h_source.html">Random.h</a>.</p>
+
+</div>
+</div>
+<a id="aa8524e0f4f94a652f9aa33e1b98e7317" name="aa8524e0f4f94a652f9aa33e1b98e7317"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8524e0f4f94a652f9aa33e1b98e7317">&#9670;&#160;</a></span>s_Modulus</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">constexpr</a> uint64_t Kargono::Utility::s_Modulus { std::numeric_limits&lt;uint64_t&gt;<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">::max</a>() }</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Random_8h_source.html#l00057">57</a> of file <a class="el" href="Random_8h_source.html">Random.h</a>.</p>
 
 </div>
 </div>

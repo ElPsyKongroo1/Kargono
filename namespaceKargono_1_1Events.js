@@ -3,6 +3,7 @@ var namespaceKargono_1_1Events =
     [ "AddExtraUpdateEvent", "classKargono_1_1Events_1_1AddExtraUpdateEvent.html", "classKargono_1_1Events_1_1AddExtraUpdateEvent" ],
     [ "AddTickGeneratorUsage", "classKargono_1_1Events_1_1AddTickGeneratorUsage.html", "classKargono_1_1Events_1_1AddTickGeneratorUsage" ],
     [ "ApplicationCloseEvent", "classKargono_1_1Events_1_1ApplicationCloseEvent.html", "classKargono_1_1Events_1_1ApplicationCloseEvent" ],
+    [ "ApplicationResizeEvent", "classKargono_1_1Events_1_1ApplicationResizeEvent.html", "classKargono_1_1Events_1_1ApplicationResizeEvent" ],
     [ "ApproveJoinSession", "classKargono_1_1Events_1_1ApproveJoinSession.html", "classKargono_1_1Events_1_1ApproveJoinSession" ],
     [ "AppTickEvent", "classKargono_1_1Events_1_1AppTickEvent.html", "classKargono_1_1Events_1_1AppTickEvent" ],
     [ "CleanUpTimersEvent", "classKargono_1_1Events_1_1CleanUpTimersEvent.html", "classKargono_1_1Events_1_1CleanUpTimersEvent" ],
@@ -55,7 +56,8 @@ var namespaceKargono_1_1Events =
     ] ],
     [ "ManageAssetAction", "namespaceKargono_1_1Events.html#a1803f251f623c192212fa048b22085ec", [
       [ "None", "namespaceKargono_1_1Events.html#a1803f251f623c192212fa048b22085eca6adf97f83acf6453d4a6a4b1070f3754", null ],
-      [ "Delete", "namespaceKargono_1_1Events.html#a1803f251f623c192212fa048b22085ecaf2a6c498fb90ee345d997f888fce3b18", null ],
+      [ "PreDelete", "namespaceKargono_1_1Events.html#a1803f251f623c192212fa048b22085eca57588d4b754bb133a0b2c0c1453d7c15", null ],
+      [ "PostDelete", "namespaceKargono_1_1Events.html#a1803f251f623c192212fa048b22085eca06940cb1ad13af778ab73192d91b40c9", null ],
       [ "Create", "namespaceKargono_1_1Events.html#a1803f251f623c192212fa048b22085eca686e697538050e4664636337cc3b834f", null ],
       [ "UpdateAsset", "namespaceKargono_1_1Events.html#a1803f251f623c192212fa048b22085eca601f71d49371542a27ba1973900fe899", null ],
       [ "UpdateAssetInfo", "namespaceKargono_1_1Events.html#a1803f251f623c192212fa048b22085eca655e4e54554d32a50725d8801340a349", null ]
@@ -82,6 +84,7 @@ var namespaceKargono_1_1Events =
       [ "AppUpdate", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4ac177abb86f28dea426f2e3409e14bcda", null ],
       [ "AppRender", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a4b2eb3c601042333ac1c0565ff58e3d6", null ],
       [ "AppClose", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4ab569e9b21b2f4983198637f6331f79b6", null ],
+      [ "AppResize", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4ad6659b57ac6cee3ff9bd2150bee6fc59", null ],
       [ "AddTickGeneratorUsage", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4abc2a3d6e4d5d1921b2cc4b97a73652d1", null ],
       [ "RemoveTickGeneratorUsage", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a99e75ee667eaac2600e5ec22c42a1258", null ],
       [ "ManageAsset", "namespaceKargono_1_1Events.html#af0cdbb2551ddb7ee0cce300ca02900a4a167f5930d7f70efdbcc81d74e77a839f", null ],

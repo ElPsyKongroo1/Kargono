@@ -17,6 +17,7 @@ var Event_8h =
       [ "AppUpdate", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4ac177abb86f28dea426f2e3409e14bcda", null ],
       [ "AppRender", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a4b2eb3c601042333ac1c0565ff58e3d6", null ],
       [ "AppClose", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4ab569e9b21b2f4983198637f6331f79b6", null ],
+      [ "AppResize", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4ad6659b57ac6cee3ff9bd2150bee6fc59", null ],
       [ "AddTickGeneratorUsage", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4abc2a3d6e4d5d1921b2cc4b97a73652d1", null ],
       [ "RemoveTickGeneratorUsage", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a99e75ee667eaac2600e5ec22c42a1258", null ],
       [ "ManageAsset", "Event_8h.html#af0cdbb2551ddb7ee0cce300ca02900a4a167f5930d7f70efdbcc81d74e77a839f", null ],

@@ -10,5 +10,5 @@ var structKargono_1_1EditorUI_1_1TooltipSpec =
     [ "EditorUIService::Tooltip", "structKargono_1_1EditorUI_1_1TooltipSpec.html#a518b5781c4698091a2f69ba520ac46ea", null ],
     [ "ProcessTooltipEntries", "structKargono_1_1EditorUI_1_1TooltipSpec.html#a8b3742d2d3e4a8598e77b0fb8d7c82c1", null ],
     [ "m_Label", "structKargono_1_1EditorUI_1_1TooltipSpec.html#aeec77cce5a1ddf6144b7578363ba27b1", null ],
-    [ "TooltipActive", "structKargono_1_1EditorUI_1_1TooltipSpec.html#a48687080993bbe57c2bcd50e3a4cfbaf", null ]
+    [ "m_TooltipActive", "structKargono_1_1EditorUI_1_1TooltipSpec.html#af32bd5e3ab9b2807f19b5039535d334d", null ]
 ];

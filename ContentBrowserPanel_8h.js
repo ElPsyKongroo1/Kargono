@@ -7,6 +7,7 @@ var ContentBrowserPanel_8h =
       [ "AIState", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723ba778fdbea8377a30a1aca834408560dfd", null ],
       [ "Audio", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723bab22f0418e8ac915eb66f829d262d14a2", null ],
       [ "Binary", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723ba6ce976e8f061b2b5cfe4d0c50c3405dd", null ],
+      [ "EmitterConfig", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723ba4e1566077eaab369e7358e44aef781ba", null ],
       [ "Font", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723ba194f5394ae2e9c74dc3c441b92862d1d", null ],
       [ "GameState", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723ba9b2b13057e7b26024b1c05665108a78e", null ],
       [ "ProjectComponent", "ContentBrowserPanel_8h.html#ace92b7c6f3257be3748a1c65e7f8723ba281c173adbce733b04e505851ffc664e", null ],

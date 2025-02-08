@@ -152,43 +152,46 @@ $(document).ready(function(){initNavTree('Kargono_8h_source.html',''); initResiz
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#include &quot;<a class="code" href="Client_8h.html">Kargono/Network/Client.h</a>&quot;</span></div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">#include &quot;<a class="code" href="Server_8h.html">Kargono/Network/Server.h</a>&quot;</span></div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">//-----------------Project-----------------//</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#include &quot;<a class="code" href="Project_8h.html">Kargono/Projects/Project.h</a>&quot;</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">//-----------------Particles-----------------//</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#include &quot;<a class="code" href="ParticleService_8h.html">Kargono/Particles/ParticleService.h</a>&quot;</span></div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment">//-----------------Rendering-----------------//</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">#include &quot;<a class="code" href="RenderingService_8h.html">Kargono/Rendering/RenderingService.h</a>&quot;</span></div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#include &quot;<a class="code" href="InputBuffer_8h.html">Kargono/Rendering/InputBuffer.h</a>&quot;</span></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#include &quot;<a class="code" href="Shader_8h.html">Kargono/Rendering/Shader.h</a>&quot;</span></div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor">#include &quot;<a class="code" href="Shape_8h.html">Kargono/Rendering/Shape.h</a>&quot;</span></div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">#include &quot;<a class="code" href="Framebuffer_8h.html">Kargono/Rendering/Framebuffer.h</a>&quot;</span></div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#include &quot;<a class="code" href="Texture_8h.html">Kargono/Rendering/Texture.h</a>&quot;</span></div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">#include &quot;<a class="code" href="VertexArray_8h.html">Kargono/Rendering/VertexArray.h</a>&quot;</span></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">#include &quot;<a class="code" href="EditorCamera_8h.html">Kargono/Rendering/EditorCamera.h</a>&quot;</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="comment">//-----------------Scene-----------------//</span></div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">#include &quot;<a class="code" href="Scene_8h.html">Kargono/Scenes/Scene.h</a>&quot;</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="preprocessor">#include &quot;<a class="code" href="GameState_8h.html">Kargono/Scenes/GameState.h</a>&quot;</span></div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment">//-----------------Scripting-----------------//</span></div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="preprocessor">#include &quot;<a class="code" href="ScriptService_8h.html">Kargono/Scripting/ScriptService.h</a>&quot;</span></div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="preprocessor">#include &quot;<a class="code" href="ScriptModuleBuilder_8h.html">Kargono/Scripting/ScriptModuleBuilder.h</a>&quot;</span></div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="comment">//-----------------Runtime-UserInterface-----------------//</span></div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="preprocessor">#include &quot;<a class="code" href="RuntimeUI_8h.html">Kargono/RuntimeUI/RuntimeUI.h</a>&quot;</span></div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="preprocessor">#include &quot;<a class="code" href="Font_8h.html">Kargono/RuntimeUI/Font.h</a>&quot;</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="comment">//-----------------Editor-UserInterface-----------------//</span></div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="preprocessor">#include &quot;<a class="code" href="EditorUI_8h.html">Kargono/EditorUI/EditorUI.h</a>&quot;</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment">//-----------------Project-----------------//</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">#include &quot;<a class="code" href="Project_8h.html">Kargono/Projects/Project.h</a>&quot;</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="comment">//-----------------Rendering-----------------//</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor">#include &quot;<a class="code" href="RenderingService_8h.html">Kargono/Rendering/RenderingService.h</a>&quot;</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">#include &quot;<a class="code" href="InputBuffer_8h.html">Kargono/Rendering/InputBuffer.h</a>&quot;</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#include &quot;<a class="code" href="Shader_8h.html">Kargono/Rendering/Shader.h</a>&quot;</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">#include &quot;<a class="code" href="Shape_8h.html">Kargono/Rendering/Shape.h</a>&quot;</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">#include &quot;<a class="code" href="Framebuffer_8h.html">Kargono/Rendering/Framebuffer.h</a>&quot;</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="preprocessor">#include &quot;<a class="code" href="Texture_8h.html">Kargono/Rendering/Texture.h</a>&quot;</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="preprocessor">#include &quot;<a class="code" href="VertexArray_8h.html">Kargono/Rendering/VertexArray.h</a>&quot;</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">#include &quot;<a class="code" href="EditorPerspectiveCamera_8h.html">Kargono/Rendering/EditorPerspectiveCamera.h</a>&quot;</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="comment">//-----------------Scene-----------------//</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="preprocessor">#include &quot;<a class="code" href="Scene_8h.html">Kargono/Scenes/Scene.h</a>&quot;</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="preprocessor">#include &quot;<a class="code" href="GameState_8h.html">Kargono/Scenes/GameState.h</a>&quot;</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="comment">//-----------------Scripting-----------------//</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="preprocessor">#include &quot;<a class="code" href="ScriptService_8h.html">Kargono/Scripting/ScriptService.h</a>&quot;</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="preprocessor">#include &quot;<a class="code" href="ScriptModuleBuilder_8h.html">Kargono/Scripting/ScriptModuleBuilder.h</a>&quot;</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="comment">//-----------------Runtime-UserInterface-----------------//</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="preprocessor">#include &quot;<a class="code" href="RuntimeUI_8h.html">Kargono/RuntimeUI/RuntimeUI.h</a>&quot;</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="preprocessor">#include &quot;<a class="code" href="Font_8h.html">Kargono/RuntimeUI/Font.h</a>&quot;</span></div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="comment">//-----------------Utilities-----------------//</span></div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="preprocessor">#include &quot;<a class="code" href="Time_8h.html">Kargono/Utility/Time.h</a>&quot;</span></div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="preprocessor">#include &quot;<a class="code" href="OSCommands_8h.html">Kargono/Utility/OSCommands.h</a>&quot;</span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="preprocessor">#include &quot;<a class="code" href="FileDialogs_8h.html">Kargono/Utility/FileDialogs.h</a>&quot;</span></div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="preprocessor">#include &quot;<a class="code" href="Regex_8h.html">Kargono/Utility/Regex.h</a>&quot;</span></div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="preprocessor">#include &quot;<a class="code" href="Operations_8h.html">Kargono/Utility/Operations.h</a>&quot;</span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="preprocessor">#include &quot;<a class="code" href="Conversions_8h.html">Kargono/Utility/Conversions.h</a>&quot;</span></div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="preprocessor">#include &quot;<a class="code" href="Random_8h.html">Kargono/Utility/Random.h</a>&quot;</span></div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="preprocessor">#include &quot;<a class="code" href="FileSystem_8h.html">Kargono/Utility/FileSystem.h</a>&quot;</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="comment">//-----------------Editor-UserInterface-----------------//</span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="preprocessor">#include &quot;<a class="code" href="EditorUI_8h.html">Kargono/EditorUI/EditorUI.h</a>&quot;</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="comment">//-----------------Utilities-----------------//</span></div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="preprocessor">#include &quot;<a class="code" href="Time_8h.html">Kargono/Utility/Time.h</a>&quot;</span></div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="preprocessor">#include &quot;<a class="code" href="OSCommands_8h.html">Kargono/Utility/OSCommands.h</a>&quot;</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="preprocessor">#include &quot;<a class="code" href="FileDialogs_8h.html">Kargono/Utility/FileDialogs.h</a>&quot;</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="preprocessor">#include &quot;<a class="code" href="Regex_8h.html">Kargono/Utility/Regex.h</a>&quot;</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="preprocessor">#include &quot;<a class="code" href="Operations_8h.html">Kargono/Utility/Operations.h</a>&quot;</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="preprocessor">#include &quot;<a class="code" href="Conversions_8h.html">Kargono/Utility/Conversions.h</a>&quot;</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="preprocessor">#include &quot;<a class="code" href="Random_8h.html">Kargono/Utility/Random.h</a>&quot;</span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="preprocessor">#include &quot;<a class="code" href="FileSystem_8h.html">Kargono/Utility/FileSystem.h</a>&quot;</span></div>
 <div class="ttc" id="aAIService_8h_html"><div class="ttname"><a href="AIService_8h.html">AIService.h</a></div></div>
 <div class="ttc" id="aAppTick_8h_html"><div class="ttname"><a href="AppTick_8h.html">AppTick.h</a></div></div>
 <div class="ttc" id="aApplication_8h_html"><div class="ttname"><a href="Application_8h.html">Application.h</a></div></div>
@@ -199,8 +202,8 @@ $(document).ready(function(){initNavTree('Kargono_8h_source.html',''); initResiz
 <div class="ttc" id="aBase_8h_html"><div class="ttname"><a href="Base_8h.html">Base.h</a></div></div>
 <div class="ttc" id="aClient_8h_html"><div class="ttname"><a href="Client_8h.html">Client.h</a></div></div>
 <div class="ttc" id="aConversions_8h_html"><div class="ttname"><a href="Conversions_8h.html">Conversions.h</a></div></div>
-<div class="ttc" id="aEditorCamera_8h_html"><div class="ttname"><a href="EditorCamera_8h.html">EditorCamera.h</a></div></div>
 <div class="ttc" id="aEditorEvent_8h_html"><div class="ttname"><a href="EditorEvent_8h.html">EditorEvent.h</a></div></div>
+<div class="ttc" id="aEditorPerspectiveCamera_8h_html"><div class="ttname"><a href="EditorPerspectiveCamera_8h.html">EditorPerspectiveCamera.h</a></div></div>
 <div class="ttc" id="aEditorUI_8h_html"><div class="ttname"><a href="EditorUI_8h.html">EditorUI.h</a></div></div>
 <div class="ttc" id="aEngineComponents_8h_html"><div class="ttname"><a href="EngineComponents_8h.html">EngineComponents.h</a></div></div>
 <div class="ttc" id="aEngine_8h_html"><div class="ttname"><a href="Engine_8h.html">Engine.h</a></div></div>
@@ -222,6 +225,7 @@ $(document).ready(function(){initNavTree('Kargono_8h_source.html',''); initResiz
 <div class="ttc" id="aNetworkingEvent_8h_html"><div class="ttname"><a href="NetworkingEvent_8h.html">NetworkingEvent.h</a></div></div>
 <div class="ttc" id="aOSCommands_8h_html"><div class="ttname"><a href="OSCommands_8h.html">OSCommands.h</a></div></div>
 <div class="ttc" id="aOperations_8h_html"><div class="ttname"><a href="Operations_8h.html">Operations.h</a></div></div>
+<div class="ttc" id="aParticleService_8h_html"><div class="ttname"><a href="ParticleService_8h.html">ParticleService.h</a></div></div>
 <div class="ttc" id="aPhysicsEvent_8h_html"><div class="ttname"><a href="PhysicsEvent_8h.html">PhysicsEvent.h</a></div></div>
 <div class="ttc" id="aProfiler_8h_html"><div class="ttname"><a href="Profiler_8h.html">Profiler.h</a></div></div>
 <div class="ttc" id="aProjectComponent_8h_html"><div class="ttname"><a href="ProjectComponent_8h.html">ProjectComponent.h</a></div></div>

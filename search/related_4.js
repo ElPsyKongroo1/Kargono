@@ -1,7 +1,26 @@
 var searchData=
 [
-  ['physics2dservice_0',['Physics2DService',['../classKargono_1_1Physics_1_1Physics2DWorld.html#a62f7541bf07bf734a34d0c62a3c3cbd7',1,'Kargono::Physics::Physics2DWorld']]],
-  ['processtooltipentries_1',['processtooltipentries',['../structKargono_1_1EditorUI_1_1TooltipEntry.html#a8b3742d2d3e4a8598e77b0fb8d7c82c1',1,'Kargono::EditorUI::TooltipEntry::ProcessTooltipEntries'],['../structKargono_1_1EditorUI_1_1TooltipSpec.html#a8b3742d2d3e4a8598e77b0fb8d7c82c1',1,'Kargono::EditorUI::TooltipSpec::ProcessTooltipEntries']]],
-  ['projectservice_2',['ProjectService',['../classKargono_1_1Projects_1_1Project.html#a9bfe8a4067513c70ec2612f72f59856f',1,'Kargono::Projects::Project']]],
-  ['propertiespanel_3',['propertiespanel',['../classKargono_1_1Panels_1_1SceneEditorPanel.html#a7f127147cac200329253c5e60abfbe6c',1,'Kargono::Panels::SceneEditorPanel::PropertiesPanel'],['../classKargono_1_1Panels_1_1UIEditorPanel.html#a7f127147cac200329253c5e60abfbe6c',1,'Kargono::Panels::UIEditorPanel::PropertiesPanel']]]
+  ['ecs_3a_3aentity_0',['Entity',['../classKargono_1_1Scenes_1_1Scene.html#a15582205dde6658db6719cbf804bdbb3',1,'Kargono::Scenes::Scene']]],
+  ['editoruiservice_3a_3acheckbox_1',['Checkbox',['../structKargono_1_1EditorUI_1_1CheckboxSpec.html#a154b180a26a991975fe44fc3c8e0bf15',1,'Kargono::EditorUI::CheckboxSpec']]],
+  ['editoruiservice_3a_3achoosedirectory_2',['ChooseDirectory',['../structKargono_1_1EditorUI_1_1ChooseDirectorySpec.html#a5a8076c46df08ab0be269ca05fd5480b',1,'Kargono::EditorUI::ChooseDirectorySpec']]],
+  ['editoruiservice_3a_3acollapsingheader_3',['CollapsingHeader',['../structKargono_1_1EditorUI_1_1CollapsingHeaderSpec.html#affa1b9199d36ce39e83db8ae40b91f81',1,'Kargono::EditorUI::CollapsingHeaderSpec']]],
+  ['editoruiservice_3a_3aeditfloat_4',['EditFloat',['../structKargono_1_1EditorUI_1_1EditFloatSpec.html#a8e7c56c7144fd0bc58336d0f491d9a62',1,'Kargono::EditorUI::EditFloatSpec']]],
+  ['editoruiservice_3a_3aeditinteger_5',['EditInteger',['../structKargono_1_1EditorUI_1_1EditIntegerSpec.html#a646d88a7bd3d752099fbf111014364dc',1,'Kargono::EditorUI::EditIntegerSpec']]],
+  ['editoruiservice_3a_3aeditivec2_6',['EditIVec2',['../structKargono_1_1EditorUI_1_1EditIVec2Spec.html#aa4c5d0825c2370da1ef80de73aa1bf55',1,'Kargono::EditorUI::EditIVec2Spec']]],
+  ['editoruiservice_3a_3aeditmultilinetext_7',['EditMultiLineText',['../structKargono_1_1EditorUI_1_1EditMultiLineTextSpec.html#ae5a153160e52becf79696b42df88dc93',1,'Kargono::EditorUI::EditMultiLineTextSpec']]],
+  ['editoruiservice_3a_3aedittext_8',['EditText',['../structKargono_1_1EditorUI_1_1EditTextSpec.html#a29499fbf406780603064cf719512f1e3',1,'Kargono::EditorUI::EditTextSpec']]],
+  ['editoruiservice_3a_3aeditvariable_9',['EditVariable',['../structKargono_1_1EditorUI_1_1EditVariableSpec.html#af21744f307036629f56665fba079a7d3',1,'Kargono::EditorUI::EditVariableSpec']]],
+  ['editoruiservice_3a_3aeditvec2_10',['EditVec2',['../structKargono_1_1EditorUI_1_1EditVec2Spec.html#a23b46487d2f78be7a83de5ae53fbbf30',1,'Kargono::EditorUI::EditVec2Spec']]],
+  ['editoruiservice_3a_3aeditvec3_11',['EditVec3',['../structKargono_1_1EditorUI_1_1EditVec3Spec.html#a2ed7dcd0bce76ace27a8a71664b8cdf5',1,'Kargono::EditorUI::EditVec3Spec']]],
+  ['editoruiservice_3a_3aeditvec4_12',['EditVec4',['../structKargono_1_1EditorUI_1_1EditVec4Spec.html#a79f49b647fac35006ec19a0cba54b1f7',1,'Kargono::EditorUI::EditVec4Spec']]],
+  ['editoruiservice_3a_3agenericpopup_13',['GenericPopup',['../structKargono_1_1EditorUI_1_1GenericPopupSpec.html#a9874acfcacd8e986bc124e2e015dc299',1,'Kargono::EditorUI::GenericPopupSpec']]],
+  ['editoruiservice_3a_3agrid_14',['Grid',['../structKargono_1_1EditorUI_1_1GridSpec.html#aad8182265f5ab2be46f502393f971434',1,'Kargono::EditorUI::GridSpec']]],
+  ['editoruiservice_3a_3alist_15',['List',['../structKargono_1_1EditorUI_1_1ListSpec.html#a87302e1616607256e1ccea8fbcaf33b7',1,'Kargono::EditorUI::ListSpec']]],
+  ['editoruiservice_3a_3anavigationheader_16',['NavigationHeader',['../structKargono_1_1EditorUI_1_1NavigationHeaderSpec.html#a4468afe408317f8b1a5a0da8e656b9f7',1,'Kargono::EditorUI::NavigationHeaderSpec']]],
+  ['editoruiservice_3a_3apanelheader_17',['PanelHeader',['../structKargono_1_1EditorUI_1_1PanelHeaderSpec.html#a558c8305b4fe6ef2d3b3d76ddfe320e0',1,'Kargono::EditorUI::PanelHeaderSpec']]],
+  ['editoruiservice_3a_3aradioselector_18',['RadioSelector',['../structKargono_1_1EditorUI_1_1RadioSelectorSpec.html#a6153eb049234889adc6b35c525d31d5e',1,'Kargono::EditorUI::RadioSelectorSpec']]],
+  ['editoruiservice_3a_3aselectoption_19',['SelectOption',['../structKargono_1_1EditorUI_1_1SelectOptionSpec.html#a82b249b5df8d1ebaf21920dd9fea795e',1,'Kargono::EditorUI::SelectOptionSpec']]],
+  ['editoruiservice_3a_3atooltip_20',['Tooltip',['../structKargono_1_1EditorUI_1_1TooltipSpec.html#a518b5781c4698091a2f69ba520ac46ea',1,'Kargono::EditorUI::TooltipSpec']]],
+  ['editoruiservice_3a_3atree_21',['Tree',['../structKargono_1_1EditorUI_1_1TreeSpec.html#ac7a1e5452e857bc9ac67ef45cef14ace',1,'Kargono::EditorUI::TreeSpec']]],
+  ['editoruiservice_3a_3awarningpopup_22',['WarningPopup',['../structKargono_1_1EditorUI_1_1WarningPopupSpec.html#ab911e3c50d36bcdcfb8b34b3e4592d9d',1,'Kargono::EditorUI::WarningPopupSpec']]]
 ];

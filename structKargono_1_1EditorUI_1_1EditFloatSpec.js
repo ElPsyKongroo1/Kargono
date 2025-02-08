@@ -2,9 +2,11 @@ var structKargono_1_1EditorUI_1_1EditFloatSpec =
 [
     [ "EditFloatSpec", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#ae9e9f8250099ce3432934808205045c8", null ],
     [ "EditorUIService::EditFloat", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#a8e7c56c7144fd0bc58336d0f491d9a62", null ],
-    [ "Label", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#a78f368efc509274701b1b52629bd25c0", null ],
-    [ "Flags", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#a647abfd46bc8276ba62bd7a6113314cd", null ],
-    [ "CurrentFloat", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#ace337656e290205e305cd9368c47a511", null ],
-    [ "ConfirmAction", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#a266fde6c23c3cbe0124f93bb6aa7ebb0", null ],
-    [ "ProvidedData", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#a7961c672bbbf32840c37ccbacc2690f7", null ]
+    [ "m_Label", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#ae08cd832473fdb96cf5af75ce79b8adc", null ],
+    [ "m_Flags", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#a287705556c546c77d25663327d4ba80a", null ],
+    [ "m_CurrentFloat", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#af9389cd872de1524de38f1227ad11205", null ],
+    [ "m_ConfirmAction", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#a805ab7ed1957e211fb46e3fb24499ed1", null ],
+    [ "m_ProvidedData", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#a69a49449ffe3eca35feff70e8ec02082", null ],
+    [ "m_Bounds", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#ad25f44014348a2963be0907ec0466331", null ],
+    [ "m_ScrollSpeed", "structKargono_1_1EditorUI_1_1EditFloatSpec.html#a92bbcaae94a22e563d39eacc5912488e", null ]
 ];

@@ -1,8 +1,10 @@
 var dir_8d85c20224a44fa307f1309d7dd5ba3e =
 [
     [ "Camera.h", "Camera_8h.html", "Camera_8h" ],
-    [ "EditorCamera.cpp", "EditorCamera_8cpp.html", null ],
-    [ "EditorCamera.h", "EditorCamera_8h.html", "EditorCamera_8h" ],
+    [ "EditorOrthographicCamera.cpp", "EditorOrthographicCamera_8cpp.html", null ],
+    [ "EditorOrthographicCamera.h", "EditorOrthographicCamera_8h.html", "EditorOrthographicCamera_8h" ],
+    [ "EditorPerspectiveCamera.cpp", "EditorPerspectiveCamera_8cpp.html", null ],
+    [ "EditorPerspectiveCamera.h", "EditorPerspectiveCamera_8h.html", "EditorPerspectiveCamera_8h" ],
     [ "Framebuffer.cpp", "Framebuffer_8cpp.html", null ],
     [ "Framebuffer.h", "Framebuffer_8h.html", "Framebuffer_8h" ],
     [ "InputBuffer.cpp", "InputBuffer_8cpp.html", null ],

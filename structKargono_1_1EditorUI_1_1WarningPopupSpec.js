@@ -2,8 +2,8 @@ var structKargono_1_1EditorUI_1_1WarningPopupSpec =
 [
     [ "WarningPopupSpec", "structKargono_1_1EditorUI_1_1WarningPopupSpec.html#a8005e2a775d7a301e820b1be693889b0", null ],
     [ "EditorUIService::WarningPopup", "structKargono_1_1EditorUI_1_1WarningPopupSpec.html#ab911e3c50d36bcdcfb8b34b3e4592d9d", null ],
-    [ "Label", "structKargono_1_1EditorUI_1_1WarningPopupSpec.html#ab6de6d676965cf50b0e607835dd08d01", null ],
-    [ "PopupWidth", "structKargono_1_1EditorUI_1_1WarningPopupSpec.html#aec59d04c4894a575ecab23b3ef6d490e", null ],
-    [ "PopupContents", "structKargono_1_1EditorUI_1_1WarningPopupSpec.html#a95cd0c2ac70ff4b244c71dff54e6c377", null ],
-    [ "OpenPopup", "structKargono_1_1EditorUI_1_1WarningPopupSpec.html#ab1071165c1ca25f65d7a7984ac7b3929", null ]
+    [ "m_Label", "structKargono_1_1EditorUI_1_1WarningPopupSpec.html#ad502ecf664f0b3289aca2dfb0ef38083", null ],
+    [ "m_PopupWidth", "structKargono_1_1EditorUI_1_1WarningPopupSpec.html#abd120e1e67a5e9998a56aaa3d1a8ba25", null ],
+    [ "m_PopupContents", "structKargono_1_1EditorUI_1_1WarningPopupSpec.html#adf722007bdad1631efee214654fda458", null ],
+    [ "m_OpenPopup", "structKargono_1_1EditorUI_1_1WarningPopupSpec.html#a7271bce51855d5ff12f7056dc5bc8c95", null ]
 ];

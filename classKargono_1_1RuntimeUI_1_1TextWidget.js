@@ -2,12 +2,11 @@ var classKargono_1_1RuntimeUI_1_1TextWidget =
 [
     [ "TextWidget", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a682aaa0e312a32b553fca72d0e1dae01", null ],
     [ "~TextWidget", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a4c7f5dfea8530f207ecdd6b16dda3eb5", null ],
-    [ "PushRenderData", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a1bd0d41991116591148056789faf151d", null ],
-    [ "SetText", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a866a3f971254d07cccd7d5d0b3e0d8e3", null ],
+    [ "OnRender", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a263b736b24ebba537c112e4832ed0367", null ],
+    [ "SetText", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a0eee5e3ae66bc5398a30a00ccd4f49a2", null ],
+    [ "Selectable", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a36c0a82020ad73dde8c57af0dec54c26", null ],
+    [ "CalculateTextSize", "classKargono_1_1RuntimeUI_1_1TextWidget.html#aeae891a8e7e2a8efe80debaaf008bb90", null ],
     [ "RuntimeUIService", "classKargono_1_1RuntimeUI_1_1TextWidget.html#aeba14d711b387aceeced5194058d1571", null ],
-    [ "Text", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a5b8a95b7215cd90017f37a5fa63792cf", null ],
-    [ "TextSize", "classKargono_1_1RuntimeUI_1_1TextWidget.html#ad051d953c452f5801d388243a67ff2dc", null ],
-    [ "TextAbsoluteDimensions", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a1a77e641efbab30167ba60074ba6a56e", null ],
-    [ "TextColor", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a5f3c0815346b3c30e51d188b922d58cc", null ],
-    [ "TextCentered", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a2dfcb66194d8f5c35c2cdcb5888333e9", null ]
+    [ "Assets::UserInterfaceManager", "classKargono_1_1RuntimeUI_1_1TextWidget.html#a3f43d71465bb6e249a0b7b5f79eb4188", null ],
+    [ "m_TextData", "classKargono_1_1RuntimeUI_1_1TextWidget.html#aa9eddbe7145edb68809b701267b29cfa", null ]
 ];

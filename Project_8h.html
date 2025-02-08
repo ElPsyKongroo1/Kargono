@@ -94,18 +94,18 @@ $(document).ready(function(){initNavTree('Project_8h.html',''); initResizable();
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle"><div class="title">Project.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="Base_8h_source.html">Kargono/Core/Base.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Asset_8h_source.html">Kargono/Assets/Asset.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Math_8h_source.html">Kargono/Math/Math.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Resolution_8h_source.html">Kargono/Core/Resolution.h</a>&quot;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;filesystem&gt;</code><br />
 <code>#include &lt;unordered_set&gt;</code><br />
+<code>#include &lt;array&gt;</code><br />
 </div>
 <p><a href="Project_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -122,36 +122,6 @@ Namespaces</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceKargono_1_1Projects" id="r_namespaceKargono_1_1Projects"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Projects.html">Kargono::Projects</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:namespaceKargono_1_1Utility" id="r_namespaceKargono_1_1Utility"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html">Kargono::Utility</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
-Enumerations</h2></td></tr>
-<tr class="memitem:af00e4df2500c541fcef05df57849b8c2" id="r_af00e4df2500c541fcef05df57849b8c2"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2">Kargono::Projects::ScreenResolutionOptions</a> { <br />
-&#160;&#160;<a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2a6adf97f83acf6453d4a6a4b1070f3754">Kargono::Projects::None</a> = 0
-, <a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2ab2cfee26bb8ec1703827d51a076b76d1">Kargono::Projects::R800x800</a>
-, <a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2a6da1524f61d6cc02874c4aff9d478b81">Kargono::Projects::R400x400</a>
-, <a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2adc40ee16b220985ef3d3e7a50b21e805">Kargono::Projects::R1920x1080</a>
-, <br />
-&#160;&#160;<a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2ab643be4d3d603f20bcee324cb2b801d6">Kargono::Projects::R1600x900</a>
-, <a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2ac329722a7b8863a6495e630347821104">Kargono::Projects::R1366x768</a>
-, <a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2a73486672b09719d81ea0b0b1781e3b9c">Kargono::Projects::R1280x720</a>
-, <a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2adffedce1ea3aa8185c8eb2379893102c">Kargono::Projects::R1600x1200</a>
-, <br />
-&#160;&#160;<a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2a7783ac08fbaccfdcfd534a836cb64efa">Kargono::Projects::R1280x960</a>
-, <a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2a2c5615ec40b3e5afbb4727386d8e11bd">Kargono::Projects::R1152x864</a>
-, <a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2ab911a12e4f44ebedd1deca5619ae34e7">Kargono::Projects::R1024x768</a>
-, <a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2a7c2133ab7b1c84cc802c72d02732e148">Kargono::Projects::MatchDevice</a>
-<br />
- }</td></tr>
-<tr class="separator:af00e4df2500c541fcef05df57849b8c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a3cf817a2341f3ef7771e7f2eb6374824" id="r_a3cf817a2341f3ef7771e7f2eb6374824"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#ac09d94284381b8b3e5813bc11e8e4a1b">Math::uvec2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a3cf817a2341f3ef7771e7f2eb6374824">Kargono::Utility::ScreenResolutionToAspectRatio</a> (<a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2">Projects::ScreenResolutionOptions</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">option</a>)</td></tr>
-<tr class="separator:a3cf817a2341f3ef7771e7f2eb6374824"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3d88fa43ef1c6e55c8e1e2383856bda" id="r_ac3d88fa43ef1c6e55c8e1e2383856bda"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono_1_1Math.html#afe66e1ce2eda99d406c4d29062f8f9af">Math::vec2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#ac3d88fa43ef1c6e55c8e1e2383856bda">Kargono::Utility::ScreenResolutionToVec2</a> (<a class="el" href="namespaceKargono_1_1Projects.html#af00e4df2500c541fcef05df57849b8c2">Projects::ScreenResolutionOptions</a> <a class="el" href="namespaceKargono.html#a9785158f337ef6b579203fb48a6b9af1">option</a>)</td></tr>
-<tr class="separator:ac3d88fa43ef1c6e55c8e1e2383856bda"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

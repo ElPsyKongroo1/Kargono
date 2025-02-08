@@ -95,20 +95,26 @@ $(document).ready(function(){initNavTree('RuntimeUI_8h.html',''); initResizable(
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">RuntimeUI.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="EditorCamera_8h_source.html">Kargono/Rendering/EditorCamera.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="EditorPerspectiveCamera_8h_source.html">Kargono/Rendering/EditorPerspectiveCamera.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ScriptService_8h_source.html">Kargono/Scripting/ScriptService.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Base_8h_source.html">Kargono/Core/Base.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Font_8h_source.html">Kargono/RuntimeUI/Font.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Asset_8h_source.html">Kargono/Assets/Asset.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Math_8h_source.html">Kargono/Math/Math.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Directions_8h_source.html">Kargono/Core/Directions.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="RuntimeUICommon_8h_source.html">Kargono/RuntimeUI/RuntimeUICommon.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Window_8h_source.html">Kargono/Core/Window.h</a>&quot;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;unordered_map&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
+<code>#include &lt;tuple&gt;</code><br />
 </div>
 <p><a href="RuntimeUI_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -116,9 +122,17 @@ $(document).ready(function(){initNavTree('RuntimeUI_8h.html',''); initResizable(
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1WidgetCallbacks.html">Kargono::RuntimeUI::WidgetCallbacks</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1UICallbacks.html">Kargono::RuntimeUI::UICallbacks</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1UserInterfaceCallbacks.html">Kargono::RuntimeUI::UserInterfaceCallbacks</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1DirectionPointers.html">Kargono::RuntimeUI::DirectionPointers</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1NavigationLinks.html">Kargono::RuntimeUI::NavigationLinks</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1SelectionData.html">Kargono::RuntimeUI::SelectionData</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1ImageData.html">Kargono::RuntimeUI::ImageData</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1SingleLineTextData.html">Kargono::RuntimeUI::SingleLineTextData</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1MultiLineTextData.html">Kargono::RuntimeUI::MultiLineTextData</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1Widget.html">Kargono::RuntimeUI::Widget</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -126,13 +140,21 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1ButtonWidget.html">Kargono::RuntimeUI::ButtonWidget</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1ImageButtonWidget.html">Kargono::RuntimeUI::ImageButtonWidget</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1CheckboxWidget.html">Kargono::RuntimeUI::CheckboxWidget</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1ComboWidget.html">Kargono::RuntimeUI::ComboWidget</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1DropDownWidget.html">Kargono::RuntimeUI::DropDownWidget</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1PopupWidget.html">Kargono::RuntimeUI::PopupWidget</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1ImageWidget.html">Kargono::RuntimeUI::ImageWidget</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1InputTextWidget.html">Kargono::RuntimeUI::InputTextWidget</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1SliderWidget.html">Kargono::RuntimeUI::SliderWidget</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1Window.html">Kargono::RuntimeUI::Window</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classKargono_1_1RuntimeUI_1_1UserInterface.html">Kargono::RuntimeUI::UserInterface</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,6 +164,10 @@ Classes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespaceKargono" id="r_namespaceKargono"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono.html">Kargono</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespaceKargono_1_1Assets" id="r_namespaceKargono_1_1Assets"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Assets.html">Kargono::Assets</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespaceKargono_1_1Rendering" id="r_namespaceKargono_1_1Rendering"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Rendering.html">Kargono::Rendering</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceKargono_1_1RuntimeUI" id="r_namespaceKargono_1_1RuntimeUI"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1RuntimeUI.html">Kargono::RuntimeUI</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -156,11 +182,45 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720faadd017b5c3e8a0ec3236daa8b863200b">Kargono::RuntimeUI::ButtonWidget</a>
 , <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fae16daa45a3c838130365467422b18f9c">Kargono::RuntimeUI::CheckboxWidget</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fac8953aec118add027a8086c0dbab4afb">Kargono::RuntimeUI::ComboWidget</a>
+&#160;&#160;<a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fafffa2364a3aebf48c40b2db4cf625305">Kargono::RuntimeUI::DropDownWidget</a>
 , <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fa524a8b25e7402c5ed760c46b9f0ed51f">Kargono::RuntimeUI::PopupWidget</a>
+, <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fa3007bfd529d345d1f816f236bd40e938">Kargono::RuntimeUI::ImageWidget</a>
+, <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fac427bc04c33cac4d1206deeaefbae921">Kargono::RuntimeUI::ImageButtonWidget</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fa28c71a99baa8985bbddcadfb8a4f5c4b">Kargono::RuntimeUI::InputTextWidget</a>
+, <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720fa201a712d12c1f7e01d5699a56a8eb274">Kargono::RuntimeUI::SliderWidget</a>
 <br />
  }</td></tr>
 <tr class="separator:a900087a85fbae11ea45b1b8376fc720f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3fc0fc07d94625ce2862d516bc589ee" id="r_aa3fc0fc07d94625ce2862d516bc589ee"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1RuntimeUI.html#aa3fc0fc07d94625ce2862d516bc589ee">Kargono::RuntimeUI::RelativeOrAbsolute</a> { <a class="el" href="namespaceKargono_1_1RuntimeUI.html#aa3fc0fc07d94625ce2862d516bc589eea2ca9469819fb0fb61ff98e914a7ccca0">Kargono::RuntimeUI::Relative</a> = 0
+, <a class="el" href="namespaceKargono_1_1RuntimeUI.html#aa3fc0fc07d94625ce2862d516bc589eeab51ca26c6c89cfc9bec338f7a0d3e0c8">Kargono::RuntimeUI::Absolute</a>
+ }</td></tr>
+<tr class="separator:aa3fc0fc07d94625ce2862d516bc589ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13b2cddf872177156d91d60449799585" id="r_a13b2cddf872177156d91d60449799585"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1RuntimeUI.html#a13b2cddf872177156d91d60449799585">Kargono::RuntimeUI::Constraint</a> { <br />
+&#160;&#160;<a class="el" href="namespaceKargono_1_1RuntimeUI.html#a13b2cddf872177156d91d60449799585a6adf97f83acf6453d4a6a4b1070f3754">Kargono::RuntimeUI::None</a> = 0
+, <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a13b2cddf872177156d91d60449799585aa4ffdcf0dc1f31b9acaf295d75b51d00">Kargono::RuntimeUI::Top</a>
+, <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a13b2cddf872177156d91d60449799585a2ad9d63b69c4a10a5cc9cad923133bc4">Kargono::RuntimeUI::Bottom</a>
+, <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a13b2cddf872177156d91d60449799585a945d5e233cf7d6240f6b783b36a374ff">Kargono::RuntimeUI::Left</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceKargono_1_1RuntimeUI.html#a13b2cddf872177156d91d60449799585a92b09c7c48c520c3c55e497875da437c">Kargono::RuntimeUI::Right</a>
+, <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a13b2cddf872177156d91d60449799585a4f1f6016fc9f3f2353c0cc7c67b292bd">Kargono::RuntimeUI::Center</a>
+<br />
+ }</td></tr>
+<tr class="separator:a13b2cddf872177156d91d60449799585"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21f0b08a52822946d2714085c5a35e9d" id="r_a21f0b08a52822946d2714085c5a35e9d"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1RuntimeUI.html#a21f0b08a52822946d2714085c5a35e9d">Kargono::RuntimeUI::PixelOrPercent</a> { <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a21f0b08a52822946d2714085c5a35e9da08822b3ae4e2aede0afe08abe600e9c0">Kargono::RuntimeUI::Pixel</a> = 0
+, <a class="el" href="namespaceKargono_1_1RuntimeUI.html#a21f0b08a52822946d2714085c5a35e9daadaaee4b22041c27198d410c68d952c9">Kargono::RuntimeUI::Percent</a>
+ }</td></tr>
+<tr class="separator:a21f0b08a52822946d2714085c5a35e9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a1b93bb85e4961525a01c6d036f451689" id="r_a1b93bb85e4961525a01c6d036f451689"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#ac221b6fb3527122e8eb33e4cf8343e9a">Ref</a>&lt; <a class="el" href="classKargono_1_1Rendering_1_1Texture2D.html">Rendering::Texture2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1Utility.html#a1b93bb85e4961525a01c6d036f451689">Kargono::Utility::WidgetTypeToIcon</a> (<a class="el" href="namespaceKargono_1_1RuntimeUI.html#a900087a85fbae11ea45b1b8376fc720f">RuntimeUI::WidgetTypes</a> <a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">widgetType</a>)</td></tr>
+<tr class="separator:a1b93bb85e4961525a01c6d036f451689"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a7695769be3096c9450e048dac4dc4039" id="r_a7695769be3096c9450e048dac4dc4039"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">constexpr</a> std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKargono_1_1RuntimeUI.html#a7695769be3096c9450e048dac4dc4039">Kargono::RuntimeUI::k_InvalidWidgetIndex</a> { std::numeric_limits&lt;std::size_t&gt;().<a class="el" href="namespaceKargono.html#a4b4883d599b01ac0799be5f5357bbb46">max</a>() }</td></tr>
+<tr class="separator:a7695769be3096c9450e048dac4dc4039"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->
