@@ -15,15 +15,10 @@ workspace "Kargono"
         "$(ExternalCompilerOptions)"
     }
 
-    -- solution_items
-	-- {
-	-- 	".editorconfig"
-	-- }
-
     flags
-	{
-		"MultiProcessorCompile"
-	}
+    {
+        "MultiProcessorCompile"
+    }
 
 outputdir = "%{cfg.buildcfg}_%{cfg.system}"
 
@@ -33,6 +28,7 @@ group "Dependencies"
     include "Dependencies/Box2D"
     include "Dependencies/GLAD"
     include "Dependencies/imgui"
+    include "Dependencies/msdf_atlas_gen/msdfgen"
     include "Dependencies/msdf_atlas_gen"
     include "Dependencies/yaml-cpp"
 group ""

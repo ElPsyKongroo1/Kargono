@@ -12,11 +12,13 @@ namespace Kargono::Events
 	enum class ManageAssetAction : uint16_t
 	{
 		None = 0,
-		Delete,
+		PreDelete,
+		PostDelete,
 		Create,
 		UpdateAsset,
 		UpdateAssetInfo
 	};
+
 	//============================================================
 	// Manage Asset Class
 	//============================================================
@@ -27,7 +29,7 @@ namespace Kargono::Events
 		// Constructors and Destructors
 		//==============================
 		ManageAsset(UUID AssetID, Assets::AssetType type, ManageAssetAction action, Ref<void> providedData = nullptr)
-			: m_AssetID(AssetID), m_AssetType(type), m_Action(action), m_ProvidedData(providedData) 
+			: m_AssetID(AssetID), m_AssetType(type), m_Action(action), m_ProvidedData(providedData)
 		{
 		
 		}
@@ -46,7 +48,7 @@ namespace Kargono::Events
 	private:
 		UUID m_AssetID;
 		Assets::AssetType m_AssetType {Assets::AssetType::None};
-		ManageAssetAction m_Action;
+		ManageAssetAction m_Action{ ManageAssetAction::None };
 		Ref<void> m_ProvidedData{ nullptr };
 	};
 

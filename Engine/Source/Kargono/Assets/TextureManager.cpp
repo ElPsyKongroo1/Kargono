@@ -34,11 +34,11 @@ namespace Kargono::Assets
 		// Create New Asset/Handle
 		AssetHandle newHandle{};
 		Assets::AssetInfo newAsset{};
-		newAsset.Handle = newHandle;
+		newAsset.m_Handle = newHandle;
 		newAsset.Data.Type = m_AssetType;
 		newAsset.Data.CheckSum = currentCheckSum;
 		newAsset.Data.FileLocation = "";
-		newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_FileExtension.CString());
+		newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.m_Handle + m_FileExtension.CString());
 
 		// Create Intermediate
 		CreateTextureIntermediateFromBuffer(buffer, width, height, channels, newAsset);
@@ -55,7 +55,12 @@ namespace Kargono::Assets
 			m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, assetPath) });
 		}
 
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, AssetType::Texture, Events::ManageAssetAction::Create);
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+		(
+			newHandle, 
+			AssetType::Texture, 
+			Events::ManageAssetAction::Create
+		);
 		EngineService::SubmitToEventQueue(event);
 		return newHandle;
 
@@ -146,6 +151,21 @@ namespace Kargono::Assets
 		texMetaData->Channels = metadataNode["TextureChannels"].as<int32_t>();
 
 		currentAsset.Data.SpecificFileData = texMetaData;
+	}
+
+	void Texture2DManager::DeleteAssetValidation(AssetHandle assetHandle)
+	{
+		// Check user interface assets
+		for (auto& [uiHandle, assetInfo] : Assets::AssetService::GetUserInterfaceRegistry())
+		{
+			// Handle UI level function pointers
+			Ref<RuntimeUI::UserInterface> userInterfaceRef = Assets::AssetService::GetUserInterface(uiHandle);
+			bool uiModified = Assets::AssetService::RemoveTextureFromUserInterface(userInterfaceRef, assetHandle);
+			if (uiModified)
+			{
+				Assets::AssetService::SaveUserInterface(uiHandle, userInterfaceRef);
+			}
+		}
 	}
 
 	

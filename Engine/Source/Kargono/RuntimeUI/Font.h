@@ -3,6 +3,7 @@
 #include "Kargono/Math/Math.h"
 
 #include <string>
+#include <string_view>
 #include <filesystem>
 
 namespace Kargono::Rendering { class Texture2D; }
@@ -16,6 +17,13 @@ namespace Kargono::Rendering { class Texture2D; }
 namespace Kargono::RuntimeUI
 {
 	class Font;
+
+	struct MultiLineTextDimensions
+	{
+		std::vector<Math::vec2> m_LineSize;
+		std::vector<Math::ivec2> m_LineBreaks;
+	};
+
 
 	//============================================================
 	// Text Class
@@ -33,6 +41,7 @@ namespace Kargono::RuntimeUI
 		//		file that enables draw call data for the text to be submitted to the
 		//		renderer.
 		static void Init();
+		static void Terminate();
 
 		//==============================
 		// Create Unmanaged Font
@@ -41,6 +50,8 @@ namespace Kargono::RuntimeUI
 		//		AssetManager. This font will persist inside the application until the
 		//		application is closed. This is primarily useful for editor only assets.
 		static Ref<Font> InstantiateEditorFont(const std::filesystem::path& filepath);
+
+		static void SetID(uint32_t id);
 	};
 
 	//==============================
@@ -65,24 +76,28 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Font API
 		//==============================
-		void PushTextData(const std::string& string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f);
-		Math::vec2 CalculateTextSize(const std::string& text);
+		void OnRenderMultiLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f, int maxLineWidth = 0);
+		void OnRenderSingleLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f);
+		Math::vec2 CalculateSingleLineTextSize(std::string_view text);
+		size_t CalculateIndexFromMousePosition(std::string_view text, float textStartPoint, float mouseXPosition, float textScalingFactor);
+		void CalculateMultiLineTextMetadata(const std::string& text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth = 0);
 
 	public:
 		//==============================
 		// Getters/Setters
 		//==============================
 		std::unordered_map<unsigned char, Character>& GetCharacters() { return m_Characters; }
-		float GetLineHeight() const { return m_LineHeight; }
-		void SetLineHeight(float height) { m_LineHeight = height; }
 
 	public:
 		//==============================
 		// Internal Fields
 		//==============================
 		Ref<Rendering::Texture2D> m_AtlasTexture = nullptr;
-		float m_LineHeight {0};
+		float m_LineHeight {0.0f};
 		std::unordered_map<unsigned char, Character> m_Characters{};
+		float m_Ascender{ 0.0f };
+		float m_Descender{ 0.0f };
+
 	};
 
 

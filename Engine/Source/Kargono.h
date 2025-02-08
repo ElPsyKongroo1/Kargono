@@ -50,6 +50,9 @@
 #include "Kargono/Network/Client.h"
 #include "Kargono/Network/Server.h"
 
+//-----------------Particles-----------------//
+#include "Kargono/Particles/ParticleService.h"
+
 //-----------------Project-----------------//
 #include "Kargono/Projects/Project.h"
 
@@ -61,7 +64,7 @@
 #include "Kargono/Rendering/Framebuffer.h"
 #include "Kargono/Rendering/Texture.h"
 #include "Kargono/Rendering/VertexArray.h"
-#include "Kargono/Rendering/EditorCamera.h"
+#include "Kargono/Rendering/EditorPerspectiveCamera.h"
 
 //-----------------Scene-----------------//
 #include "Kargono/Scenes/Scene.h"

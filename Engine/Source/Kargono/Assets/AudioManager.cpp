@@ -46,8 +46,8 @@ namespace Kargono::Assets
 		// Create Buffers
 		uint32_t channels = 0;
 		uint32_t sampleRate = 0;
-		uint64_t totalPcmFrameCount = 0;
-		uint64_t totalSize = 0;
+		drwav_uint64 totalPcmFrameCount = 0;
+		drwav_uint64 totalSize = 0;
 		Buffer pcmData{};
 		drwav_int16* pSampleData = drwav_open_file_and_read_pcm_frames_s16(fullFileLocation.string().c_str(), &channels, &sampleRate, &totalPcmFrameCount, nullptr);
 		if (!pSampleData)

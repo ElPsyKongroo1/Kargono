@@ -13,11 +13,11 @@
     
     files 
     {
-		"Source/Kargono.h",
-		"Source/kgpch.h",
-		"Source/kgpch.cpp",
-		"Source/Kargono/**.h",
-		"Source/Kargono/**.cpp",
+        "Source/Kargono.h",
+        "Source/kgpch.h",
+        "Source/kgpch.cpp",
+        "Source/Kargono/**.h",
+	"Source/Kargono/**.cpp",
         "%{wks.location}/Dependencies/stb_image/**.cpp",
         "%{wks.location}/Dependencies/stb_image/**.h",
         "%{wks.location}/Dependencies/ImGuizmo/ImGuizmo.h",
@@ -34,21 +34,10 @@
         "Source/API/**.cpp"
     }
 
-    -- prebuildcommands 
-        -- {
-        --     "{COPYDIR} \"%{wks.location}Dependencies/dynamic_libraries\" \"%{cfg.buildtarget.directory}\""
-        -- } 
-        -- postbuildcommands 
-        -- {
-        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Breakout\"",
-        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox3D\"",
-        --     "{COPYDIR} \"%{cfg.buildtarget.directory}\" \"%{cfg.buildtarget.directory}../Sandbox\""
-        -- }
-
     defines
     {
         "_CRT_SECURE_NO_WARNINGS",
-		"GLFW_INCLUDE_NONE",
+	"GLFW_INCLUDE_NONE",
         "KG_RENDERER_OPENGL"
     }
     includedirs 
@@ -64,7 +53,6 @@
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.yaml_cpp}",
-        --"%{IncludeDir.free_type}",
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.ImGuiNotify}",
         "%{IncludeDir.VulkanSDK}",
@@ -78,20 +66,16 @@
         "%{IncludeDir.ImGuiColorTextEdit}"
     }
 
-    libdirs
-    {
-    }
-
     links 
     { 
         "GLFW",
         "Box2D",
         "GLAD",
-        "opengl32.lib",
         "imGui",
-        "dwmapi.lib",
         "yaml-cpp",
-        "msdf-atlas-gen"
+        "msdf-atlas-gen",
+        "msdfgen",
+        "freetype"
     }
 
     filter "files:../Dependencies/ImGuizmo/**.cpp"
@@ -118,6 +102,8 @@
 
         links 
         {
+            "opengl32.lib",
+            "dwmapi.lib",
             "%{Library.WinSock}",
             "%{Library.WinMM}",
             "%{Library.WinVersion}",
@@ -125,64 +111,50 @@
         }
     filter "system:linux"
        systemversion "latest"
+       buildoptions {"`pkg-config --cflags gtk4`"}
        defines
        {
-	        "KG_PLATFORM_LINUX"
+            "KG_PLATFORM_LINUX"
        }
     filter "configurations:Debug"
         defines "KG_DEBUG"
         runtime "Debug"
         symbols "on"
-        -- FIXME: No other platform support for moving .dll files.
         filter { "system:windows", "configurations:Debug" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
-        links
-		{
-			"%{Library.ShaderC_Debug}",
-			"%{Library.SPIRV_Cross_Debug}",
-			"%{Library.SPIRV_Cross_GLSL_Debug}",
-			"%{Library.OpenALSoft_Debug}",
-			-- "%{Library.msdf_gen_Debug}",
-			-- "%{Library.msdf_atlas_gen_Debug}",
-			-- "%{Library.msdf_gen_ext_Debug}"
-		}
-
-
+            links
+            {
+            	"%{Library.ShaderC_Debug}",
+                "%{Library.SPIRV_Cross_Debug}",
+                "%{Library.SPIRV_Cross_GLSL_Debug}",
+                "%{Library.OpenALSoft_Debug}",
+            }
+        
     filter "configurations:Release"
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
-        -- FIXME: No other platform support for moving .dll files.
         filter { "system:windows", "configurations:Release" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Release}\" \"%{cfg.buildtarget.directory}\" /y" }
-
-        links
-		{
-			"%{Library.ShaderC_Release}",
-			"%{Library.SPIRV_Cross_Release}",
-			"%{Library.SPIRV_Cross_GLSL_Release}",
-			"%{Library.OpenALSoft_Release}",
-            -- "%{Library.msdf_gen_Release}",
-            -- "%{Library.msdf_atlas_gen_Release}",
-			-- "%{Library.msdf_gen_ext_Release}"
-		}
-
+            links 
+            {
+                "%{Library.ShaderC_Release}",
+                "%{Library.SPIRV_Cross_Release}",
+                "%{Library.SPIRV_Cross_GLSL_Release}",
+                "%{Library.OpenALSoft_Release}"
+            }
     filter "configurations:Dist"
         defines "KG_DIST"
         runtime "Release"
         optimize "on"
         symbols "off"
-
-        -- FIXME: No other platform support for moving .dll files.
         filter { "system:windows", "configurations:Dist" }
             postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Dist}\" \"%{cfg.buildtarget.directory}\" /y" }
-        links
-		{
-			"%{Library.ShaderC_Release}",
-			"%{Library.SPIRV_Cross_Release}",
-			"%{Library.SPIRV_Cross_GLSL_Release}",
-			"%{Library.OpenALSoft_Dist}",
-            -- "%{Library.msdf_gen_Dist}",
-            -- "%{Library.msdf_atlas_gen_Dist}",
-			-- "%{Library.msdf_gen_ext_Dist}"
-		}
+            links 
+            {
+                "%{Library.ShaderC_Release}",
+                "%{Library.SPIRV_Cross_Release}",
+                "%{Library.SPIRV_Cross_GLSL_Release}",
+                "%{Library.OpenALSoft_Dist}"
+            }
+        

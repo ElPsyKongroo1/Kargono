@@ -50,21 +50,21 @@ namespace Kargono::RuntimeUI
 	void FontService::Init()
 	{
 		// TODO: Change to Proper Boolean Check
-		if (!s_TextInputSpec.Shader)
+		if (!s_TextInputSpec.m_Shader)
 		{
 			// TODO: Unreleased Heap Data with Buffer
-			Rendering::ShaderSpecification textShaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::TextTexture, false, true, false, Rendering::RenderingType::DrawTriangle, false};
+			Rendering::ShaderSpecification textShaderSpec{ Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::TextTexture, false, true, true, Rendering::RenderingType::DrawTriangle, false };
 			auto [uuid, localShader] = Assets::AssetService::GetShader(textShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
 
-			s_TextInputSpec.ShapeComponent = new ECS::ShapeComponent();
-			s_TextInputSpec.ShapeComponent->CurrentShape = Rendering::ShapeTypes::Quad;
+			s_TextInputSpec.m_ShapeComponent = new ECS::ShapeComponent();
+			s_TextInputSpec.m_ShapeComponent->CurrentShape = Rendering::ShapeTypes::Quad;
 
-			s_TextInputSpec.Shader = localShader;
-			s_TextInputSpec.ShapeComponent->Shader = localShader;
-			s_TextInputSpec.Buffer = localBuffer;
+			s_TextInputSpec.m_Shader = localShader;
+			s_TextInputSpec.m_ShapeComponent->Shader = localShader;
+			s_TextInputSpec.m_Buffer = localBuffer;
 			s_TexCoordinates = CreateRef<std::vector<Math::vec2>>();
 			s_TexCoordinates->push_back({ 0.0f, 0.0f });
 			s_TexCoordinates->push_back({ 0.0f, 1.0f });
@@ -72,12 +72,18 @@ namespace Kargono::RuntimeUI
 			s_TexCoordinates->push_back({ 0.0f, 0.0f });
 			s_TexCoordinates->push_back({ 1.0f, 1.0f });
 			s_TexCoordinates->push_back({ 1.0f, 0.0f });
-			s_TextInputSpec.ShapeComponent->TextureCoordinates = s_TexCoordinates;
+			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
 
 			s_Vertices = CreateRef<std::vector<Math::vec3>>();
 		}
 		KG_VERIFY(true, "Runtime Text Engine Init")
 	}
+
+	void FontService::Terminate()
+	{
+		s_TextInputSpec.ClearData();
+	}
+
 
 	Ref<Font> FontService::InstantiateEditorFont(const std::filesystem::path& filepath)
 	{
@@ -168,6 +174,7 @@ namespace Kargono::RuntimeUI
 
 		const auto& metrics = fontGeometry.getMetrics();
 		newFont->m_LineHeight = static_cast<float>(metrics.lineHeight);
+		
 
 		const auto& glyphMetrics = fontGeometry.getGlyphs();
 		newFont->m_Characters.clear();
@@ -198,68 +205,119 @@ namespace Kargono::RuntimeUI
 		return newFont;
 	}
 
-	void Font::PushTextData(const std::string& string, Math::vec3 translation, const glm::vec4& color, float scale)
+	void FontService::SetID(uint32_t id)
 	{
-		Ref<Rendering::Texture2D> fontAtlas = m_AtlasTexture;
+		Rendering::Shader::SetDataAtInputLocation<uint32_t>(id, "a_EntityID", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
+	}
 
-		s_TextInputSpec.ShapeComponent->Texture = fontAtlas;
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.Buffer, s_TextInputSpec.Shader);
+	void Font::OnRenderMultiLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale, int maxLineWidth)
+	{
+		// Submit text color to the renderer buffer. The text will now be rendered with this color.
+		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
 
-		double x = translation.x;
-		double y = translation.y;
-		//double fsScale = scale / (metrics.ascenderY - metrics.descenderY);
+		// Initialize the active location where text is being rendered
+		double xLocation{ translation.x };
+		double yLocation{ translation.y };
+		bool wrapText{ maxLineWidth > 0 };
+		size_t activeWordEnding{ 0 };
 
-		for (size_t i = 0; i < string.size(); i++)
+		// Iterate through each character in the string
+		for (size_t characterIndex = 0; characterIndex < string.size(); characterIndex++)
 		{
-			char character = string[i];
+			//// Wrap text if necessary
+			//if (wrapText && xLocation > translation.x + maxLineWidth)
+			//{
+			//	// Move to next line
+			//	xLocation = translation.x;
+			//	yLocation -= scale * m_LineHeight;
+			//}
+#if 0
+			// Check if we should evaluate the word this letter exists in
+			if (wrapText && characterIndex >= activeWordEnding)
+			{
+				// Get active word's terminal location and word width
+				size_t wordIndex{ characterIndex };
+				double wordWidth{ 0.0f };
+				while (wordIndex < string.size())
+				{
+					if (std::isspace(string[wordIndex]))
+					{
+						activeWordEnding = wordIndex;
+						break;
+					}
+					wordWidth += m_Characters.at(string[wordIndex]).Advance;
+					wordIndex++;
+				}
+				wordWidth *= scale;
+
+				// Check if newline is appropriate for active word
+				if (xLocation + wordWidth > translation.x + maxLineWidth)
+				{
+					// Move to next line
+					xLocation = translation.x;
+					yLocation -= scale * m_LineHeight;
+				}
+
+			}
+#endif
+
+
+			// Get the active character from the string
+			char character = string[characterIndex];
 			Character glyph;
 
+			// Handle specific character cases
 			switch (character)
 			{
 			case '\n':
-				{
-					x = translation.x;
-					y -= scale * m_LineHeight;
-					continue;
-				}
+				// Move to next line
+				xLocation = translation.x;
+				yLocation -= scale * m_LineHeight;
+				continue;
 			case '\r':
-				{
-					continue;
-				}
+				// Skip carriage return
+				continue;
 			case '\t':
-				{
-					character = ' ';
-					break;
-				}
+				// Tab character
+				character = ' ';
+				break;
 			}
 
+			// Ensure the character exists in the font atlas
 			if (m_Characters.contains(character))
 			{
 				glyph = m_Characters.at(character);
 			}
 			else
 			{
+				// TODO: Handle this case better
 				glyph = m_Characters.at('?');
 			}
 
-			// Glyph inside Atlas size
+			// Coordinates of the glyph in the texture atlas
 			glm::vec2 texCoordMin(glyph.TexCoordinateMin);
 			glm::vec2 texCoordMax(glyph.TexCoordinateMax);
 
-			// Glyph size when rendered
-			
+			// Minimum and maximum bounds of the quad to be rendered 
 			glm::vec2 quadMin(glyph.QuadMin);
 			glm::vec2 quadMax(glyph.QuadMax);
 
-			quadMin *= scale, quadMax *= scale;
-			quadMin += glm::vec2(x, y);
-			quadMax += glm::vec2(x, y);
+			// Scale the rendering size of the glyph
+			quadMin *= scale;
+			quadMax *= scale;
 
-			float texelWidth = 1.0f / fontAtlas->GetWidth();
-			float texelHeight = 1.0f / fontAtlas->GetHeight();
+			// Adjust the quad location based on the current location
+			quadMin += glm::vec2(xLocation, yLocation);
+			quadMax += glm::vec2(xLocation, yLocation);
+
+			// Adjust the texture coordinates based on the texture atlas size
+			float texelWidth = 1.0f / m_AtlasTexture->GetWidth();
+			float texelHeight = 1.0f / m_AtlasTexture->GetHeight();
 			texCoordMin *= glm::vec2(texelWidth, texelHeight);
 			texCoordMax *= glm::vec2(texelWidth, texelHeight);
 
+			// Submit the quad location data to the renderer
 			s_Vertices->clear();
 			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
 			s_Vertices->push_back({ quadMin, translation.z });											// 0, 0
@@ -267,47 +325,273 @@ namespace Kargono::RuntimeUI
 			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
 			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
 			s_Vertices->push_back({ quadMax, translation.z });											// 1, 1
+			s_TextInputSpec.m_ShapeComponent->Vertices = s_Vertices;
 
+			// Submit the texture coordinates data to the renderer
 			s_TexCoordinates->clear();
 			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
-			s_TexCoordinates->push_back(texCoordMin);										// 0, 0
+			s_TexCoordinates->push_back(texCoordMin);								// 0, 0
 			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
 			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
 			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
-			s_TexCoordinates->push_back(texCoordMax);										// 1, 1
+			s_TexCoordinates->push_back(texCoordMax);				
+			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
 
-			s_TextInputSpec.ShapeComponent->Vertices = s_Vertices;
-
+			// TODO: Submit multiple glyphs at once for CPU optimization
+			// Submit the glyph data to the renderer
 			Rendering::RenderingService::SubmitDataToRenderer(s_TextInputSpec);
 
-			// TODO: Add Kerning back! Info on Kerning is here: https://freetype.org/freetype2/docs/glyphs/glyphs-4.html
-			//double advance = 0;
-			//char nextCharacter = string[i + 1];
-			//fontGeometry.getAdvance(advance, character, nextCharacter);
-			//float kerningOffset = 0.0f;
-			//x += fsScale * advance + kerningOffset;
-
-			x += scale * glyph.Advance;
-
+			// Shift the location to the next character
+			xLocation += scale * glyph.Advance;
 		}
 	}
 
-	Math::vec2 Font::CalculateTextSize(const std::string& text)
+	void Font::OnRenderSingleLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale)
 	{
-		Math::vec2 outputSize {0.0f};
-		std::string::const_iterator currentCharacter;
-		for (currentCharacter = text.begin(); currentCharacter != text.end(); currentCharacter++)
+		// Submit text color to the renderer buffer. The text will now be rendered with this color.
+		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
+
+		// Initialize the active location where text is being rendered
+		double xLocation{ translation.x };
+		double yLocation{ translation.y };
+
+		// Iterate through each character in the string
+		for (size_t characterIndex = 0; characterIndex < string.size(); characterIndex++)
 		{
-			if (!m_Characters.contains(*currentCharacter))
+			// Get the active character from the string
+			char character = string[characterIndex];
+			Character glyph;
+
+			// Handle specific character cases
+			switch (character)
+			{
+			case '\n':
+				// Skip newline
+				continue;
+			case '\r':
+				// Skip carriage return
+				continue;
+			case '\t':
+				// Tab character
+				character = ' ';
+				break;
+			}
+
+			// Ensure the character exists in the font atlas
+			if (m_Characters.contains(character))
+			{
+				glyph = m_Characters.at(character);
+			}
+			else
+			{
+				// TODO: Handle this case better
+				glyph = m_Characters.at('?');
+			}
+
+			// Coordinates of the glyph in the texture atlas
+			glm::vec2 texCoordMin(glyph.TexCoordinateMin);
+			glm::vec2 texCoordMax(glyph.TexCoordinateMax);
+
+			// Minimum and maximum bounds of the quad to be rendered 
+			glm::vec2 quadMin(glyph.QuadMin);
+			glm::vec2 quadMax(glyph.QuadMax);
+
+			// Scale the rendering size of the glyph
+			quadMin *= scale;
+			quadMax *= scale;
+
+			// Adjust the quad location based on the current location
+			quadMin += glm::vec2(xLocation, yLocation);
+			quadMax += glm::vec2(xLocation, yLocation);
+
+			// Adjust the texture coordinates based on the texture atlas size
+			float texelWidth = 1.0f / m_AtlasTexture->GetWidth();
+			float texelHeight = 1.0f / m_AtlasTexture->GetHeight();
+			texCoordMin *= glm::vec2(texelWidth, texelHeight);
+			texCoordMax *= glm::vec2(texelWidth, texelHeight);
+
+			// Submit the quad location data to the renderer
+			s_Vertices->clear();
+			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
+			s_Vertices->push_back({ quadMin, translation.z });											// 0, 0
+			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
+			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
+			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
+			s_Vertices->push_back({ quadMax, translation.z });											// 1, 1
+			s_TextInputSpec.m_ShapeComponent->Vertices = s_Vertices;
+
+			// Submit the texture coordinates data to the renderer
+			s_TexCoordinates->clear();
+			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
+			s_TexCoordinates->push_back(texCoordMin);								// 0, 0
+			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
+			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
+			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
+			s_TexCoordinates->push_back(texCoordMax);
+			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
+
+			// TODO: Submit multiple glyphs at once for CPU optimization
+			// Submit the glyph data to the renderer
+			Rendering::RenderingService::SubmitDataToRenderer(s_TextInputSpec);
+
+			// Shift the location to the next character
+			xLocation += scale * glyph.Advance;
+		}
+	}
+
+	Math::vec2 Font::CalculateSingleLineTextSize(std::string_view text)
+	{
+		// Loop through all glyphs of provided text and generate the text's x and y extents
+		Math::vec2 outputSize{ 0.0f };
+		std::string::const_iterator currentCharacter;
+		for (size_t characterIndex = 0; characterIndex < text.size(); characterIndex++)
+		{
+			// Early out if glyph does not exist
+			if (!m_Characters.contains(text[characterIndex]))
 			{
 				continue;
 			}
-			Character glyph = m_Characters[*currentCharacter];
-			if (glyph.Size.y > outputSize.y) { outputSize.y = glyph.Size.y; }
+			Character glyph = m_Characters[text[characterIndex]];
+
+			// Get the maximum y glyph size for the text
+			float ySize{ glyph.QuadMax.y - glyph.QuadMin.y };
+			if (ySize > outputSize.y)
+			{ 
+				outputSize.y = ySize; 
+			}
+
+			// Get the total x-axis length of the text
 			outputSize.x += glyph.Advance;
 		}
-		//TODO: FIX THIS MAGIC NUMBER PLEASE
-		outputSize.y /= 42.0f;
+
+		// Magic number to center the text
+		//outputSize.y /= 45.5f; // TODO: FIX THIS MAGIC NUMBER PLEASE
 		return outputSize;
+	}
+	size_t Font::CalculateIndexFromMousePosition(std::string_view text, float textStartPoint, float mouseXPosition, float textScalingFactor)
+	{
+		// Loop through all glyphs of provided text and generate the text's x and y extents
+		float accumulatedXPosition{ textStartPoint };
+		std::string::const_iterator currentCharacter;
+		for (size_t characterIndex = 0; characterIndex < text.size(); characterIndex++)
+		{
+			// Early out if glyph does not exist
+			if (!m_Characters.contains(text[characterIndex]))
+			{
+				continue;
+			}
+			Character glyph = m_Characters[text[characterIndex]];
+
+			// Get the total x-axis length of the text
+			accumulatedXPosition += glyph.Advance * textScalingFactor;
+
+			// Check if the (middle position of the this glyph) surpases the mouse position
+			if (accumulatedXPosition - glyph.Advance * 0.5f * textScalingFactor > mouseXPosition)
+			{
+				return characterIndex;
+			}
+		}
+
+		// Return the text's size if no position is identified
+		return text.size();
+	}
+	void Font::CalculateMultiLineTextMetadata(const std::string& text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth)
+	{
+		// Initialize the active location where text is being rendered
+		float initialXLocation{ 0.0f };
+		float initialYLocation{ 0.0f };
+		float xLocation{ initialXLocation };
+		float yLocation{ initialYLocation };
+		float lineHeight{ 0.0f };
+		bool wrapText{ maxLineWidth > 0 };
+		size_t activeWordEnding{ 0 };
+		int lastBreak{0};
+
+		// Reset metadata
+		metadata = {};
+
+		// Iterate through each character in the string
+		for (size_t characterIndex = 0; characterIndex < text.size(); characterIndex++)
+		{
+			// Check if we should evaluate the word this letter exists in
+			if (wrapText && characterIndex >= activeWordEnding)
+			{
+				// Get active word's terminal location and word width
+				size_t wordIndex{ characterIndex };
+				double wordWidth{ 0.0f };
+				while (wordIndex < text.size())
+				{
+					if (std::isspace(text[wordIndex]))
+					{
+						activeWordEnding = wordIndex;
+						break;
+					}
+					wordWidth += m_Characters.at(text[wordIndex]).Advance;
+					wordIndex++;
+				}
+				wordWidth *= scale;
+
+				// Check if newline is appropriate for active word
+				if (xLocation + wordWidth > initialXLocation + maxLineWidth)
+				{
+					metadata.m_LineBreaks.push_back({ lastBreak, (int)characterIndex });
+					metadata.m_LineSize.push_back({ xLocation / scale, lineHeight });
+					lastBreak = (int)characterIndex;
+					lineHeight = 0.0f;
+					xLocation = initialXLocation;
+					yLocation -= scale * m_LineHeight;
+				}
+			}
+
+			// Get the active character from the string
+			char character = text[characterIndex];
+			Character glyph;
+
+			// Handle specific character cases
+			switch (character)
+			{
+			case '\n':
+				// Move to next line
+				metadata.m_LineBreaks.push_back({ lastBreak, (int)characterIndex });
+				metadata.m_LineSize.push_back({ xLocation / scale, lineHeight });
+				lastBreak = (int)characterIndex;
+				lineHeight = 0.0f;
+				xLocation = initialXLocation;
+				yLocation -= scale * m_LineHeight;
+				continue;
+			case '\r':
+				// Skip carriage return
+				continue;
+			case '\t':
+				// Tab character
+				character = ' ';
+				break;
+			}
+
+			// Ensure the character exists in the font atlas
+			if (m_Characters.contains(character))
+			{
+				glyph = m_Characters.at(character);
+			}
+			else
+			{
+				// TODO: Handle this case better
+				glyph = m_Characters.at('?');
+			}
+
+			// Get the line height from each glyph
+			if (glyph.QuadMax.y - glyph.QuadMin.y > lineHeight)
+			{
+				lineHeight = glyph.QuadMax.y - glyph.QuadMin.y;
+			}
+
+			// Shift the location to the next character
+			xLocation += scale * glyph.Advance;
+		}
+
+		// Get data for final line
+		metadata.m_LineBreaks.push_back({ lastBreak , text.size()});
+		metadata.m_LineSize.push_back({ xLocation / scale, lineHeight });
 	}
 }

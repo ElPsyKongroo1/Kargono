@@ -9,6 +9,18 @@
 
 namespace Kargono::Rendering
 {
+	void RendererInputSpec::ClearData()
+	{
+		m_Shader = nullptr;
+		m_Texture = nullptr;
+		if (m_ShapeComponent)
+		{
+			m_ShapeComponent->Texture = nullptr;
+			m_ShapeComponent->Shader = nullptr;
+		}
+		m_CurrentDrawBuffer = nullptr;
+	}
+
 	Ref<Shader> Shader::Create(const std::string& name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries)
 	{
 #ifdef KG_RENDERER_OPENGL

@@ -41,6 +41,9 @@ namespace API::RenderingAPI
 		//==============================
 		// External API Functionality
 		//==============================
+		
+		// Function takes the current framebuffer's color buffer and displays it onto
+		virtual void DisplayToDefaultFrameBuffer() override;
 		// Function allows the framebuffer to be resized. This function changes the size in
 		//		m_Specification and calls the Invalidate() method.
 		virtual void Resize(uint32_t width, uint32_t height) override;
@@ -52,7 +55,7 @@ namespace API::RenderingAPI
 		// Function clears a specific color attachment with a specific clear value.
 		//		Ex: An attachmentIndex(2) selects the second color attachment in m_ColorAttachmentIDs
 		//		and clears its buffer to value(-1). 
-		virtual void ClearAttachment(uint32_t attachmentIndex, int value) override;
+		virtual void SetAttachment(uint32_t attachmentIndex, int value) override;
 
 		//==============================
 		// Getters/Setters
@@ -90,6 +93,22 @@ namespace API::RenderingAPI
 		std::vector<uint32_t> m_ColorAttachmentIDs; 
 		uint32_t m_DepthAttachmentID = 0;
 		
+	};
+
+	class OpenGLFrameBufferService
+	{
+	public:
+		static void Init();
+
+	public:
+		static unsigned int GetScreenSpaceQuadVAO();
+		static unsigned int GetScreenSpaceQuadVBO();
+		static unsigned int GetScreenSpaceShaderProgram();
+
+	private:
+		inline static unsigned int s_ScreenSpaceQuadVAO;
+		inline static unsigned int s_ScreenSpaceQuadVBO;
+		inline static unsigned int s_ScreenSpaceShaderProgram;
 	};
 }
 

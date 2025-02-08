@@ -31,8 +31,9 @@ namespace Kargono::Scripting
 		StringLiteral,
 		BooleanLiteral,
 		FloatLiteral,
-		InputKeyLiteral,
 		MessageTypeLiteral,
+		// Language specific literals
+		CustomLiteral,
 
 		// Keywords
 		Keyword,
@@ -119,8 +120,8 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::IntegerLiteral: return "Integer Literal";
 		case Scripting::ScriptTokenType::StringLiteral: return "String Literal";
 		case Scripting::ScriptTokenType::FloatLiteral: return "Float Literal";
-		case Scripting::ScriptTokenType::InputKeyLiteral: return "Input Key Literal";
 		case Scripting::ScriptTokenType::MessageTypeLiteral: return "Message Type Literal";
+		case Scripting::ScriptTokenType::CustomLiteral: return "Custom Literal";
 
 		case Scripting::ScriptTokenType::Keyword: return "Keyword";
 		case Scripting::ScriptTokenType::PrimitiveType: return "Primitive Type";
@@ -223,7 +224,7 @@ namespace Kargono::Scripting
 		Ref<MemberNode> ChildMemberNode{};
 		Ref<Expression> CurrentNodeExpression{};
 		ScriptToken ReturnType{};
-		MemberType* MemberType{};
+		MemberType* m_MemberType{};
 	};
 
 	struct FunctionNode;
@@ -234,7 +235,16 @@ namespace Kargono::Scripting
 		ScriptToken Identifier{};
 		ScriptToken ReturnType{};
 		std::vector<Ref<Expression>> Arguments{};
-		FunctionNode* FunctionNode{};
+		FunctionNode* m_FunctionNode{};
+	};
+
+	struct CustomLiteralNode
+	{
+		ScriptToken Namespace{};
+		ScriptToken Identifier{};
+		ScriptToken ReturnType{};
+		std::vector<ScriptToken> Members{};
+		std::string OutputValue{};
 	};
 
 	struct UnaryOperationNode
@@ -280,7 +290,7 @@ namespace Kargono::Scripting
 
 	struct Expression
 	{
-		std::variant<FunctionCallNode, TokenExpressionNode, UnaryOperationNode, BinaryOperationNode, InitializationListNode, MemberNode, TernaryOperationNode> Value{};
+		std::variant<FunctionCallNode, TokenExpressionNode, UnaryOperationNode, BinaryOperationNode, InitializationListNode, MemberNode, TernaryOperationNode, CustomLiteralNode> Value{};
 		Ref<ExpressionGenerationAffixes> GenerationAffixes{ nullptr };
 
 		ScriptToken GetReturnType()
@@ -289,6 +299,11 @@ namespace Kargono::Scripting
 			{
 				FunctionCallNode& functionCallNode = *functionCallNodePtr;
 				return functionCallNode.ReturnType;
+			}
+			else if (CustomLiteralNode* customLiteralNodePtr = std::get_if<CustomLiteralNode>(&Value))
+			{
+				CustomLiteralNode& customLiteralNode = *customLiteralNodePtr;
+				return customLiteralNode.ReturnType;
 			}
 			else if (UnaryOperationNode* unaryOperationNodePtr = std::get_if<UnaryOperationNode>(&Value))
 			{
@@ -469,12 +484,12 @@ namespace Kargono::Scripting
 	struct ScriptAST
 	{
 	public:
-		ProgramNode ProgramNode{};
+		ProgramNode m_ProgramNode{};
 
 	public:
 		operator bool() const
 		{
-			return ProgramNode;
+			return m_ProgramNode;
 		}
 	};
 
@@ -513,6 +528,7 @@ namespace Kargono::Scripting
 		None = 0,
 		IsFunctionParameter,
 		IsDataMember,
+		IsLiteralMember,
 		AfterNamespaceResolution,
 		AllowAllVariableTypes
 	};
@@ -522,6 +538,7 @@ namespace Kargono::Scripting
 		std::vector<ScriptToken> AllReturnTypes{};
 		std::vector<std::vector<StackVariable>> StackVariables {};
 		ScriptToken CurrentNamespace{};
+		std::vector<std::tuple<std::string, Ref<Rendering::Texture2D>>> LiteralMembers{};
 		std::unordered_map<std::string, Ref<MemberType>> DataMembers{};
 		BitField<uint8_t> m_Flags {};
 
@@ -554,6 +571,21 @@ namespace Kargono::Scripting
 		std::variant<FunctionNode, DataMember> Value {};
 	};
 
+	struct CustomLiteralMember
+	{
+		std::string m_OutputText{};
+		ScriptToken m_PrimitiveType{};
+		std::unordered_map<std::string, Ref<CustomLiteralMember>> m_Members{};
+	};
+
+	// Asset management structs
+	using CustomLiteralNameToIDMap = std::unordered_map<std::string, CustomLiteralMember>;
+	struct CustomLiteralInfo
+	{
+		CustomLiteralNameToIDMap m_CustomLiteralNameToID;
+		Ref<Rendering::Texture2D> m_LiteralIcon;
+	};
+
 	struct LanguageDefinition
 	{
 	public:
@@ -562,8 +594,10 @@ namespace Kargono::Scripting
 		std::unordered_map<std::string, std::string> NamespaceDescriptions {};
 		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
 		std::vector<InitializationListType> InitListTypes {};
-
 		std::unordered_set<std::string> AllMessageTypes{};
+
+		// All Assets
+		std::unordered_map<std::string, CustomLiteralInfo> AllLiteralTypes{};
 	public:
 		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)
 		{
@@ -575,6 +609,18 @@ namespace Kargono::Scripting
 			return {};
 		}
 	public:
+
+		void Clear()
+		{
+			Keywords.clear();
+			PrimitiveTypes.clear();
+			NamespaceDescriptions.clear();
+			FunctionDefinitions.clear();
+			InitListTypes.clear();
+			AllMessageTypes.clear();
+			AllLiteralTypes.clear();
+		}
+
 		operator bool() const
 		{
 			return Keywords.size() > 0 || PrimitiveTypes.size() > 0 || FunctionDefinitions.size() > 0;

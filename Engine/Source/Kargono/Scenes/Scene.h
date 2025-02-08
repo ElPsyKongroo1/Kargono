@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/UUID.h"
-#include "Kargono/Rendering/EditorCamera.h"
+#include "Kargono/Rendering/EditorPerspectiveCamera.h"
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Assets/Asset.h"
@@ -135,6 +135,9 @@ namespace Kargono::Scenes
 		// Physics Spec
 		Physics::PhysicsSpecification m_PhysicsSpecification{};
 
+		// Scene description data
+		Math::vec4 m_BackgroundColor{ 0.1f, 0.1f, 0.1f, 1.0f };
+
 		// Scene State Fields
 		bool m_IsRunning = false;
 		ECS::Entity* m_HoveredEntity = nullptr;
@@ -153,6 +156,7 @@ namespace Kargono::Scenes
 		// LifeCycle Functions
 		//====================
 		static void Init();
+		static void Terminate();
 	public:
 		//====================
 		// Get Entity Components
@@ -176,10 +180,10 @@ namespace Kargono::Scenes
 		//====================
 		// Manage Active Scene
 		//====================
-		static bool IsSceneActive(const std::string& sceneName);
+		static bool IsSceneActive(UUID sceneID);
 		static void TransitionScene(Assets::AssetHandle newSceneHandle);
 		static void TransitionScene(Ref<Scene> newScene);
-		static void TransitionSceneFromName(const std::string& sceneName);
+		static void TransitionSceneFromHandle(Assets::AssetHandle sceneID);
 		static Ref<Scene> CreateSceneCopy(Ref<Scene> other);
 
 	public:

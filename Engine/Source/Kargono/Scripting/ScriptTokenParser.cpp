@@ -1,6 +1,9 @@
 #include "kgpch.h"
 #include "Kargono/Scripting/ScriptTokenParser.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
+#include "Kargono/Core/KeyCodes.h"
+#include "Kargono/Core/Resolution.h"
+#include "Kargono/EditorUI/EditorUI.h"
 
 namespace Kargono::Utility
 {
@@ -47,6 +50,21 @@ namespace Kargono::Utility
 			{
 				KG_INFO("{}Argument", GetIndentation(indentation + 1));
 				PrintExpression(argument, indentation + 2);
+			}
+		}
+		else if (Scripting::CustomLiteralNode* customLiteralExpression = std::get_if<Scripting::CustomLiteralNode>(&expression->Value))
+		{
+			KG_INFO("{}Expression Custom Literal", GetIndentation(indentation));
+			KG_INFO("{}Namespace", GetIndentation(indentation + 1));
+			PrintToken(customLiteralExpression->Namespace, indentation + 2);
+			KG_INFO("{}Identifier", GetIndentation(indentation + 1));
+			PrintToken(customLiteralExpression->Identifier, indentation + 2);
+			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
+			PrintToken(customLiteralExpression->ReturnType, indentation + 2);
+			KG_INFO("{}All Members", GetIndentation(indentation + 1));
+			for (Scripting::ScriptToken& member : customLiteralExpression->Members)
+			{
+				PrintToken(member, indentation + 2);
 			}
 		}
 		else if (Scripting::InitializationListNode* initListExpression = std::get_if<Scripting::InitializationListNode>(&expression->Value))
@@ -240,7 +258,7 @@ namespace Kargono::Scripting
 			return { false, m_AST };
 		}
 
-		m_AST.ProgramNode = { newFunctionNode };
+		m_AST.m_ProgramNode = { newFunctionNode };
 
 		Advance();
 		ScriptToken tokenBuffer = GetCurrentToken();
@@ -255,9 +273,9 @@ namespace Kargono::Scripting
 
 	void ScriptTokenParser::PrintAST()
 	{
-		if (m_AST.ProgramNode)
+		if (m_AST.m_ProgramNode)
 		{
-			FunctionNode& funcNode = m_AST.ProgramNode.FuncNode;
+			FunctionNode& funcNode = m_AST.m_ProgramNode.FuncNode;
 			if (funcNode)
 			{
 				Utility::PrintFunction(funcNode);
@@ -794,6 +812,22 @@ namespace Kargono::Scripting
 			}
 		}
 
+		// Parse Expression Asset
+		if (!foundValidExpression)
+		{
+			auto [success, expression] = ParseExpressionCustomLiteral(parentExpressionSize);
+			if (success)
+			{
+				newExpression = expression;
+				foundValidExpression = true;
+			}
+			if (CheckForErrors())
+			{
+				StoreParseError(ParseErrorType::Expression, "Invalid custom literal identifier", GetCurrentToken(parentExpressionSize));
+				return { false, {} };
+			}
+		}
+
 		// Parse Expression Initialization List
 		if (!foundValidExpression)
 		{
@@ -1207,6 +1241,145 @@ namespace Kargono::Scripting
 		parentExpressionSize = currentArgumentLocation;
 		return { true, newFunctionExpression };
 	}
+	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionCustomLiteral(uint32_t& parentExpressionSize)
+	{
+		Ref<Expression> newCustomLiteralExpression{ CreateRef<Expression>() };
+		CustomLiteralNode newCustomLiteralNode{};
+
+		// Check for asset namespace, namespace resolver symbol, and custom literal identifier
+		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
+		int32_t initialAdvance{ 0 };
+		if (tokenBuffer.Type == ScriptTokenType::Identifier &&
+			GetCurrentToken(parentExpressionSize + 1).Type == ScriptTokenType::NamespaceResolver &&
+			GetCurrentToken(parentExpressionSize + 2).Type == ScriptTokenType::CustomLiteral)
+		{
+			newCustomLiteralNode.Namespace = tokenBuffer;
+			newCustomLiteralNode.Identifier = GetCurrentToken(parentExpressionSize + 2);
+			initialAdvance = 3;
+		}
+		else
+		{
+			return { false, {} };
+		}
+
+		// Check for context probe 
+		if (IsContextProbe(GetCurrentToken(parentExpressionSize + 2)))
+		{
+			// Ensure namespace identifier exists
+			if (!ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(tokenBuffer.Value))
+			{
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, namespace node is invalid", tokenBuffer);
+				return { false, {} };
+			}
+			// Store context probe for argument
+			CursorContext newContext;
+			newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AfterNamespaceResolution);
+			newContext.CurrentNamespace = tokenBuffer;
+			m_CursorContext = newContext;
+			StoreParseError(ParseErrorType::ContextProbe, "Found context probe for function namespace", tokenBuffer);
+			return { false, {} };
+		}
+
+		// Ensure asset namespace exists
+		if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.contains(newCustomLiteralNode.Namespace.Value))
+		{
+			StoreParseError(ParseErrorType::Expression, "Unknown custom literal type provided", newCustomLiteralNode.Namespace);
+			return { false, {} };
+		}
+
+		// Get the asset information
+		CustomLiteralInfo& assetInfo{ ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.at(newCustomLiteralNode.Namespace.Value) };
+
+		// Get the asset map appropriate for this asset type
+		CustomLiteralNameToIDMap& assetMap = assetInfo.m_CustomLiteralNameToID;
+
+		// Ensure the asset identifier is valid
+		if (!assetMap.contains(newCustomLiteralNode.Identifier.Value))
+		{
+			StoreParseError(ParseErrorType::Expression, "Unknown custom type identifier provided", newCustomLiteralNode.Identifier);
+			return { false, {} };
+		}
+
+		// Get the script member to indicate return type
+		CustomLiteralMember& literalMember = assetMap.at(newCustomLiteralNode.Identifier.Value);
+
+		// Loop through members if they exist
+		CustomLiteralMember* currentMember = &literalMember;
+		while (GetCurrentToken(parentExpressionSize + initialAdvance).Type == ScriptTokenType::DotOperator &&
+			GetCurrentToken(parentExpressionSize + initialAdvance + 1).Type == ScriptTokenType::Identifier)
+		{
+			// Get the current identifier
+			ScriptToken currentMemberIdentifier{ GetCurrentToken(parentExpressionSize + initialAdvance + 1) };
+
+			// Check for member context probe
+			if (IsContextProbe(currentMemberIdentifier))
+			{
+				// Store context probe for argument
+				CursorContext newContext;
+				newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+				newContext.m_Flags.SetFlag((uint8_t)CursorFlags::IsLiteralMember);
+
+				// Add current members
+				for (auto& [name, member] : currentMember->m_Members)
+				{
+					KG_ASSERT(member);
+
+					Ref<Rendering::Texture2D> primitiveTypeIcon{ nullptr };
+					if (ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(member->m_PrimitiveType.Value))
+					{
+						// Get primitive type's icon
+						primitiveTypeIcon = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(member->m_PrimitiveType.Value).Icon;
+					}
+					else
+					{
+						// Default icon
+						primitiveTypeIcon = EditorUI::EditorUIService::s_IconEntity;
+					}
+					// Get the icon texture from the primitive type
+					
+					newContext.LiteralMembers.push_back({ name, primitiveTypeIcon });
+				}
+
+				m_CursorContext = newContext;
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe for function namespace", tokenBuffer);
+				return { false, {} };
+			}
+
+			// Validate that this identifier represents a node
+			if (currentMember->m_Members.contains
+			(
+				currentMemberIdentifier.Value)
+			)
+			{
+				// Add the new node to the list of members
+				newCustomLiteralNode.Members.push_back(GetCurrentToken(
+					parentExpressionSize + initialAdvance + 1));
+
+				// Advance
+				initialAdvance += 2;
+
+				// Update the current member
+				currentMember = currentMember->m_Members.at(currentMemberIdentifier.Value).get();
+				KG_ASSERT(currentMember);
+			}
+			else
+			{
+				break;
+			}
+		}
+
+
+		// Get return type from function node and emplace it into the assetNode
+		newCustomLiteralNode.ReturnType = currentMember->m_PrimitiveType;
+		newCustomLiteralNode.OutputValue = currentMember->m_OutputText;
+
+		// Fill the expression buffer and exit
+		newCustomLiteralExpression->Value = newCustomLiteralNode;
+		parentExpressionSize += initialAdvance;
+		return { true, newCustomLiteralExpression };
+	}
+
 	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionUnaryOperation(uint32_t& parentExpressionSize)
 	{
 		Ref<Expression> newExpression{ CreateRef<Expression>() };
@@ -1513,7 +1686,7 @@ namespace Kargono::Scripting
 			Ref<MemberNode> childNode = CreateRef<MemberNode>();
 			childNode->ChildMemberNode = nullptr;
 			childNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(memberList.at(0), currentDataMember->PrimitiveType));
-			childNode->MemberType = currentMemberType.get();
+			childNode->m_MemberType = currentMemberType.get();
 			returnMemberNode->ChildMemberNode = childNode;
 
 			// Iterate through all remaining members of memberList
@@ -1532,7 +1705,7 @@ namespace Kargono::Scripting
 
 				if (!currentDataMember->Members.contains(memberList.at(iteration).Value))
 				{
-					StoreParseError(ParseErrorType::Expression, "Could not locate MemberType from identifier", memberList.at(iteration));
+					StoreParseError(ParseErrorType::Expression, "Could not locate m_MemberType from identifier", memberList.at(iteration));
 					return { false, nullptr };
 				}
 				currentMemberType = currentDataMember->Members.at(memberList.at(iteration).Value);
@@ -1548,7 +1721,7 @@ namespace Kargono::Scripting
 				newNode->ChildMemberNode = nullptr;
 				newNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(memberList.at(iteration), currentDataMember->PrimitiveType));
 				childNode->ChildMemberNode = newNode;
-				childNode->MemberType = currentMemberType.get();
+				childNode->m_MemberType = currentMemberType.get();
 				childNode = newNode;
 			}
 			// Check for final context probe
@@ -1563,7 +1736,7 @@ namespace Kargono::Scripting
 			}
 			if (!currentDataMember->Members.contains(memberList.at(memberList.size() - 1).Value))
 			{
-				StoreParseError(ParseErrorType::Expression, "Could not locate MemberType from identifier", memberList.at(memberList.size() - 1));
+				StoreParseError(ParseErrorType::Expression, "Could not locate m_MemberType from identifier", memberList.at(memberList.size() - 1));
 				return { false, nullptr };
 			}
 			currentMemberType = currentDataMember->Members.at(memberList.at(memberList.size() - 1).Value);
@@ -1585,7 +1758,7 @@ namespace Kargono::Scripting
 			Ref<MemberNode> childNode = CreateRef<MemberNode>();
 			childNode->ChildMemberNode = nullptr;
 			childNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(finalToken, currentDataMember.PrimitiveType));
-			childNode->MemberType = currentMemberType.get();
+			childNode->m_MemberType = currentMemberType.get();
 			finalParentNode->ChildMemberNode = childNode;
 		}
 		else if (FunctionNode* functionMemberPtr = std::get_if<FunctionNode>(&currentMemberType->Value))
@@ -1623,6 +1796,17 @@ namespace Kargono::Scripting
 				if (CheckForErrors())
 				{
 					StoreParseError(ParseErrorType::Expression, "Invalid function argument", GetCurrentToken(currentLocation));
+					return { false, {} };
+				}
+
+				if (IsContextProbe(expression))
+				{
+					// Store context probe for argument
+					CursorContext newContext;
+					newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+					newContext.StackVariables = m_StackVariables;
+					m_CursorContext = newContext;
+					StoreParseError(ParseErrorType::ContextProbe, "Found context probe inside member function argument", newFunctionCall.Identifier);
 					return { false, {} };
 				}
 
@@ -1680,7 +1864,7 @@ namespace Kargono::Scripting
 				parameterIteration++;
 			}
 
-			newFunctionCall.FunctionNode = functionMemberPtr;
+			newFunctionCall.m_FunctionNode = functionMemberPtr;
 			Ref<MemberNode> childNode = CreateRef<MemberNode>();
 			childNode->ChildMemberNode = nullptr;
 			childNode->CurrentNodeExpression = CreateRef<Expression>();
@@ -1689,7 +1873,6 @@ namespace Kargono::Scripting
 		}
 		else
 		{
-			KG_TRACE_CRITICAL("Could not get data/function member");
 			return { false, nullptr };
 		}
 
@@ -2598,8 +2781,9 @@ namespace Kargono::Scripting
 
 	bool ScriptTokenParser::IsContextProbe(ScriptToken token)
 	{
-
-		if (token.Type == ScriptTokenType::Identifier && token.Value == ContextProbe)
+		if ((token.Type == ScriptTokenType::Identifier ||
+			token.Type == ScriptTokenType::CustomLiteral) &&
+			token.Value == ContextProbe)
 		{
 			return true;
 		}
@@ -2611,12 +2795,8 @@ namespace Kargono::Scripting
 	{
 		if (const TokenExpressionNode* token = std::get_if<TokenExpressionNode>(&expression->Value))
 		{
-			if (token->Value.Type == ScriptTokenType::Identifier && token->Value.Value == ContextProbe)
-			{
-				return true;
-			}
+			return IsContextProbe(token->Value);
 		}
-
 		return false;
 	}
 
@@ -2631,6 +2811,7 @@ namespace Kargono::Scripting
 			{
 				return true;
 			}
+
 			// Check if token is an identifier
 			if (queryToken.Type == ScriptTokenType::Identifier)
 			{
@@ -2672,6 +2853,16 @@ namespace Kargono::Scripting
 				PrimitiveType tokenPrimitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(queryToken.Value);
 				if (queryPrimitiveType.AcceptableLiteral == tokenPrimitiveType.AcceptableLiteral)
 				{
+					// Check to ensure that asset value are distinct
+					if (queryPrimitiveType.AcceptableLiteral == ScriptTokenType::CustomLiteral)
+					{
+						if (queryPrimitiveType.Name == queryToken.Value)
+						{
+							return true;
+						}
+						return false;
+					}
+
 					// Ensure types match if both do not accept a literal
 					if (queryPrimitiveType.AcceptableLiteral == ScriptTokenType::None)
 					{

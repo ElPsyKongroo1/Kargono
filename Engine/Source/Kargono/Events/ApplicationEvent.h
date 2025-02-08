@@ -128,6 +128,30 @@ namespace Kargono::Events
 		uint64_t m_DelayMilliseconds;
 	};
 
+	class ApplicationResizeEvent : public Event
+	{
+	public:
+		//==============================
+		// Constructors and Destructors
+		//==============================
+		// This event is initialized with the new width and height of the window.
+		ApplicationResizeEvent(unsigned int width, unsigned int height)
+			: m_Width(width), m_Height(height) {}
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		unsigned int GetWidth() const { return m_Width; }
+		unsigned int GetHeight() const { return m_Height; }
+
+		virtual EventType GetEventType() const override { return EventType::AppResize; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
+	private:
+		// m_Width and m_Height represent the new width and height of the window
+		//		after the resize has occurred on the Window.
+		unsigned int m_Width, m_Height;
+	};
+
 	//============================================================
 	// Add Tick Generator Usage Event Class
 	//============================================================

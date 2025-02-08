@@ -13,6 +13,8 @@ namespace Kargono::Scripting
 		void AddCurrentCharToBuffer();
 		void Advance(uint32_t count = 1);
 		void AddTokenAndClearBuffer(ScriptTokenType type, const std::string& value);
+		ScriptToken CreateTokenExplicit(ScriptTokenType type, const std::string& value);
+		void AddTokenExplicit(const ScriptToken& token);
 		void ClearBuffer();
 	private:
 		std::string m_ScriptText{};

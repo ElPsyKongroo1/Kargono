@@ -203,6 +203,6 @@ namespace Kargono::Network
 		//==============================
 		// Internal Fields
 		//==============================
-		static Ref<Network::Server> s_Server;
+		static inline Ref<Network::Server> s_Server{ nullptr };
 	};
 }

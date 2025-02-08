@@ -3,6 +3,7 @@
 #include "Kargono/Scripting/ScriptTokenizer.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Core/KeyCodes.h"
+#include "Kargono/Core/Resolution.h"
 
 namespace Kargono::Scripting
 {
@@ -29,7 +30,7 @@ namespace Kargono::Scripting
 
 				// Check for keywords
 				bool foundKeyword = false;
-				for (auto& keyword : ScriptCompilerService::s_ActiveLanguageDefinition.Keywords)
+				for (std::string& keyword : ScriptCompilerService::s_ActiveLanguageDefinition.Keywords)
 				{
 					if (m_TextBuffer == keyword)
 					{
@@ -50,30 +51,7 @@ namespace Kargono::Scripting
 					continue;
 				}
 
-				// Check for key literals
-				if (m_TextBuffer == "Key")
-				{
-					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
-					{
-						Advance(2);
-						ClearBuffer();
-						// Fill remainder of buffer
-						while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
-						{
-							AddCurrentCharToBuffer();
-							Advance();
-						}
-						if (Utility::StringToKeyCode(m_TextBuffer) == Key::None)
-						{
-							ClearBuffer();
-							continue;
-						}
-						AddTokenAndClearBuffer(ScriptTokenType::InputKeyLiteral, { m_TextBuffer});
-						continue;
-					}
-				}
-
-				// Check for key literals
+				// Check for message literals
 				if (m_TextBuffer == "MessageType")
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
@@ -81,19 +59,46 @@ namespace Kargono::Scripting
 						Advance(2);
 						ClearBuffer();
 						// Fill remainder of buffer
-						while (CurrentLocationValid() && std::isalnum(GetCurrentChar()))
+						while (CurrentLocationValid() && (std::isalnum(GetCurrentChar()) || GetCurrentChar() == '_'))
 						{
 							AddCurrentCharToBuffer();
 							Advance();
 						}
 						// Ensure the provided value is valid
-;						if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllMessageTypes.contains(m_TextBuffer))
+						if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllMessageTypes.contains(m_TextBuffer))
 						{
 							ClearBuffer();
 							continue;
 						}
 						
 						AddTokenAndClearBuffer(ScriptTokenType::MessageTypeLiteral, { m_TextBuffer });
+						continue;
+					}
+				}
+
+				// Check for all asset literal types
+				if (ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.contains(m_TextBuffer))
+				{
+					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
+					{
+						// Add namespace add namespace resolver tokens
+						AddTokenAndClearBuffer(ScriptTokenType::Identifier, m_TextBuffer);
+						AddTokenAndClearBuffer(ScriptTokenType::NamespaceResolver, { "::" });
+						Advance(2);
+						// Fill remainder of buffer for literal identifier
+						while (CurrentLocationValid() && (std::isalnum(GetCurrentChar()) || GetCurrentChar() == '_'))
+						{
+							AddCurrentCharToBuffer();
+							Advance();
+						}
+
+						// Ensure an identifer is available to be added
+						if (m_TextBuffer.size() == 0)
+						{
+							continue;
+						}
+						
+						AddTokenAndClearBuffer(ScriptTokenType::CustomLiteral, { m_TextBuffer });
 						continue;
 					}
 				}
@@ -483,6 +488,14 @@ namespace Kargono::Scripting
 		ScriptToken newToken{ type, value, m_LineCount, m_ColumnCount - (uint32_t)m_TextBuffer.size() };
 		m_Tokens.push_back(newToken);
 		m_TextBuffer.clear();
+	}
+	ScriptToken ScriptTokenizer::CreateTokenExplicit(ScriptTokenType type, const std::string& value)
+	{
+		return { type, value, m_LineCount, m_ColumnCount - (uint32_t)m_TextBuffer.size() };
+	}
+	void ScriptTokenizer::AddTokenExplicit(const ScriptToken& token)
+	{
+		m_Tokens.push_back(token);
 	}
 	void ScriptTokenizer::ClearBuffer()
 	{

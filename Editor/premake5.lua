@@ -12,8 +12,6 @@ project "Editor"
         "Source/**.cpp"
     }
 
-	
-
     includedirs 
     {
         "%{IncludeDir.spdlog}",
@@ -32,22 +30,16 @@ project "Editor"
         "%{IncludeDir.asio}",
         "%{IncludeDir.ImGuiColorTextEdit}",
     }
-
-    libdirs
-    {
-
-    }
-
+    
     links 
     { 
         "Engine"
     }
 
-
     defines 
     {
         "KG_EDITOR",
-		"_CRT_SECURE_NO_WARNINGS"
+	"_CRT_SECURE_NO_WARNINGS"
     }
 
     filter "system:windows"
@@ -61,47 +53,91 @@ project "Editor"
         {
             "KG_PLATFORM_WINDOWS"
         }
+        
+    filter "system:linux"
+        systemversion "latest"
+        defines 
+        {
+            "KG_PLATFORM_LINUX"
+        }
+        links 
+        { 
+            "GLFW",
+            "Box2D",
+            "GLAD",
+            "imGui",
+            "yaml-cpp",
+            "msdf-atlas-gen",
+            "msdfgen",
+            "freetype",
+            "%{Library.ShaderC_Linux}",
+            "gtk-4",
+            --"gdk-4",
+            "gio-2.0",
+            "pangoft2-1.0",
+            "gdk_pixbuf-2.0",
+            "pangocairo-1.0",
+            "cairo",
+            "pango-1.0",
+            "freetype",
+            "fontconfig",
+            "gobject-2.0",
+            "gmodule-2.0",
+            "gthread-2.0",
+            "rt",
+            "glib-2.0"
+        }
+        buildoptions {"`pkg-config --cflags gtk4`"}
+        linkoptions { "-pthread" }
 
     filter "configurations:Debug"
         kind "ConsoleApp"
-        links 
-        {
-            "%{Library.OpenALSoft_Debug}"
-        }
-
-        -- FIXME: No other platform support for moving .dll files.
-        filter { "system:windows", "configurations:Debug" }
-            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
-
         defines "KG_DEBUG"
         runtime "Debug"
         symbols "on"
-
+        filter { "system:windows", "configurations:Debug" }
+            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Debug}\" \"%{cfg.buildtarget.directory}\" /y" }
+            links
+            {
+                "%{Library.OpenALSoft_Debug}"
+            }
+        filter { "system:linux", "configurations:Debug" }
+            links
+            {
+            	"%{DynamicLibrary.OpenALSoft_Debug_Linux}"
+            }
     filter "configurations:Release"
         kind "ConsoleApp"
-        links 
-        {
-            "%{Library.OpenALSoft_Release}"
-        }
-
-        -- FIXME: No other platform support for moving .dll files.
-        filter { "system:windows", "configurations:Release" }
-            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Release}\" \"%{cfg.buildtarget.directory}\" /y" }
         defines "KG_RELEASE"
         runtime "Release"
         optimize "on"
         symbols "on"
-
+        filter { "system:windows", "configurations:Release" }
+            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Release}\" \"%{cfg.buildtarget.directory}\" /y" }
+            links 
+            {
+                "%{Library.OpenALSoft_Release}"
+            }
+        filter { "system:linux", "configurations:Release" }
+            links
+            {
+            	"%{DynamicLibrary.OpenALSoft_Release_Linux}"
+            }
     filter "configurations:Dist"
         kind "WindowedApp"
-        links 
-        {
-            "%{Library.OpenALSoft_Dist}"
-        }
-        -- FIXME: No other platform support for moving .dll files.
-        filter { "system:windows", "configurations:Dist" }
-            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Dist}\" \"%{cfg.buildtarget.directory}\" /y" }
         defines "KG_DIST"
         runtime "Release"
         optimize "on"
         symbols "off"
+        filter { "system:windows", "configurations:Dist" }
+            postbuildcommands { "xcopy \"%{DynamicLibrary.OpenALSoft_Dist}\" \"%{cfg.buildtarget.directory}\" /y" }
+            links 
+            {
+                "%{Library.OpenALSoft_Dist}"
+            }
+        filter { "system:linux", "configurations:Dist" }
+            links
+            {
+            	"%{DynamicLibrary.OpenALSoft_Dist_Linux}"
+            }
+        

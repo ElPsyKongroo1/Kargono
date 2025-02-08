@@ -28,7 +28,7 @@ namespace Kargono
 			Audio::AudioService::SetMute(true);
 		}
 
-		auto& currentWindow = EngineService::GetActiveWindow();
+		Window& currentWindow = EngineService::GetActiveWindow();
 
 		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
 
@@ -79,6 +79,12 @@ namespace Kargono
 		Rendering::RenderingService::SetLineWidth(4.0f);
 		RuntimeUI::FontService::Init();
 		RuntimeUI::RuntimeUIService::Init();
+		Particles::ParticleService::Init();
+
+		if (!m_Headless)
+		{
+			InitializeFrameBuffer();;
+		}
 
 		OnPlay();
 		currentWindow.SetVisible(true);
@@ -86,38 +92,87 @@ namespace Kargono
 
 	void RuntimeApp::Terminate()
 	{
+
 		OnStop();
 
+		// Terminate engine services
+		RuntimeUI::RuntimeUIService::Terminate();
+		Particles::ParticleService::Terminate();
 		Audio::AudioService::Terminate();
+		Scripting::ScriptService::Terminate();
 		AI::AIService::Terminate();
+		Assets::AssetService::ClearAll();
+		RuntimeUI::FontService::Terminate();
+		Scenes::SceneService::Terminate();
+		Rendering::RenderingService::Shutdown();
+	}
 
+	void RuntimeApp::InitializeFrameBuffer()
+	{
+		Rendering::FramebufferSpecification fbSpec;
+		fbSpec.Attachments = 
+		{
+			Rendering::FramebufferDataFormat::RGBA8, 
+			Rendering::FramebufferDataFormat::RED_INTEGER, 
+			Rendering::FramebufferDataFormat::Depth 
+		};
+		fbSpec.Width = EngineService::GetActiveWindow().GetWidth();
+		fbSpec.Height = EngineService::GetActiveWindow().GetHeight();
+		m_ViewportFramebuffer = Rendering::Framebuffer::Create(fbSpec);
+		m_ViewportFramebuffer->Bind();
 	}
 
 	void RuntimeApp::OnUpdate(Timestep ts)
 	{
-
 		// Render
+		Ref<Scenes::Scene> activeScene{ Scenes::SceneService::GetActiveScene() };
 		Rendering::RenderingService::ResetStats();
-		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		Rendering::RendererAPI::SetClearColor(activeScene->m_BackgroundColor);
 		Rendering::RendererAPI::Clear();
 
 		// Draw all scene entities
  		OnUpdateRuntime(ts);
 
-		// Draw runtimeUI, if applicable
+		// Get primary scene camera for render UI and particles over
 		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
 			return;
 		}
 		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
-
+		
+		// Only handle UI and particles if a main camera exists
 		if (mainCamera)
 		{
-			RuntimeUI::RuntimeUIService::PushRenderData(glm::inverse(cameraTransform), 
-				EngineService::GetActiveWindow().GetWidth(), EngineService::GetActiveWindow().GetHeight());
+			// Get camera transform
+			Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
+
+			// Draw particles
+			Particles::ParticleService::OnRender(mainCamera->GetProjection() * glm::inverse(cameraTransform));
+
+			// Clear mouse picking buffer
+			m_ViewportFramebuffer->SetAttachment(1, -1);
+
+			// Handle runtime UI's OnUpdate()
+			Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+			Math::vec2 mousePos = Input::InputService::GetMousePosition();
+			// Make sure the y-position is oriented correctly
+			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
+			RuntimeUI::RuntimeUIService::OnUpdate(ts, { mousePos.x, mousePos.y }, &activeViewport);
+
+			// Draw runtimeUI
+			RuntimeUI::RuntimeUIService::OnRender(EngineService::GetActiveWindow().GetWidth(), 
+				EngineService::GetActiveWindow().GetHeight());
+
+			// Handle mouse picking for the UI
+			HandleUIMouseHovering();
+
 		}
+
+		// Display the framebuffer inside the default
+		Rendering::RendererAPI::SetDepthTesting(false);
+		m_ViewportFramebuffer->DisplayToDefaultFrameBuffer();
+		Rendering::RendererAPI::SetDepthTesting(true);
 	}
 
 	bool RuntimeApp::OnApplicationEvent(Events::Event* event)
@@ -130,6 +185,9 @@ namespace Kargono
 			break;
 		case Events::EventType::AppClose:
 			handled = OnApplicationClose(*(Events::ApplicationCloseEvent*)event);
+			break;
+		case Events::EventType::AppResize:
+			handled = OnApplicationResize(*(Events::ApplicationResizeEvent*)event);
 			break;
 		}
 		return handled;
@@ -178,6 +236,21 @@ namespace Kargono
 		{
 			handled = OnKeyPressed(*(Events::KeyPressedEvent*)event);
 		}
+		if (event->GetEventType() == Events::EventType::MouseButtonPressed)
+		{
+			handled = OnMousePressed(*(Events::MouseButtonPressedEvent*)event);
+		}
+
+		if (event->GetEventType() == Events::EventType::MouseButtonReleased)
+		{
+			handled = OnMouseButtonReleased(*(Events::MouseButtonReleasedEvent*)event);
+		}
+
+		if (event->GetEventType() == Events::EventType::KeyTyped)
+		{
+			handled = OnKeyTyped(*(Events::KeyTypedEvent*)event);
+		}
+
 		return handled;
 	}
 
@@ -204,10 +277,19 @@ namespace Kargono
 		return false;
 	}
 
+	bool RuntimeApp::OnApplicationResize(Events::ApplicationResizeEvent event)
+	{
+		// Resize the window
+		EngineService::GetActiveWindow().ResizeWindow({ event.GetWidth(), event.GetHeight() });
+		m_ViewportFramebuffer->Resize(event.GetWidth(), event.GetHeight());
+		return false;
+	}
+
 	bool RuntimeApp::OnWindowResize(Events::WindowResizeEvent event)
 	{
-		EngineService::GetActiveWindow().SetViewportWidth(event.GetWidth());
-		EngineService::GetActiveWindow().SetViewportHeight(event.GetHeight());
+		ViewportData& viewportData = EngineService::GetActiveWindow().GetActiveViewport();
+		viewportData.m_Width = event.GetWidth();
+		viewportData.m_Height = event.GetHeight();
 		Scenes::SceneService::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
 		return false;
 	}
@@ -284,9 +366,58 @@ namespace Kargono
 		return false;
 	}
 
+	bool RuntimeApp::OnKeyTyped(Events::KeyTypedEvent event)
+	{
+		RuntimeUI::RuntimeUIService::OnKeyTypedEvent(event);
+		return false;
+	}
+
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
-		Input::InputMapService::OnKeyPressed(event);
+		KG_PROFILE_FUNCTION();
+		bool handled = RuntimeUI::RuntimeUIService::OnKeyPressedEvent(event);
+
+		if (!handled)
+		{
+			Input::InputMapService::OnKeyPressed(event);
+		}
+
+		return handled;
+	}
+
+	bool RuntimeApp::OnMousePressed(Events::MouseButtonPressedEvent event)
+	{
+		// Ensure we are handling a left-click
+		if (event.GetMouseButton() != Mouse::ButtonLeft)
+		{
+			return false;
+		}
+
+		// Handle on press for the active user interface if applicable
+		if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowID && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetID)
+		{
+			RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+				m_HoveredWindowID, m_HoveredWidgetID });
+			// Handle start editing
+			RuntimeUI::RuntimeUIService::SetEditingWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+				m_HoveredWindowID, m_HoveredWidgetID });
+
+			// Handle specific widget on click's
+			Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+			Math::vec2 mousePos = Input::InputService::GetMousePosition();
+			// Make sure the y-position is oriented correctly
+			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
+			RuntimeUI::RuntimeUIService::OnLeftMouseButtonPressed({ mousePos.x, mousePos.y }, &activeViewport);
+		}
+		return false;
+	}
+
+	bool RuntimeApp::OnMouseButtonReleased(const Events::MouseButtonReleasedEvent& event)
+	{
+		if (RuntimeUI::RuntimeUIService::GetActiveUI())
+		{
+			RuntimeUI::RuntimeUIService::OnMouseButtonReleasedEvent(event);
+		}
 		return false;
 	}
 
@@ -294,6 +425,7 @@ namespace Kargono
 	{
 		// Process AI
 		AI::AIService::OnUpdate(ts);
+		Particles::ParticleService::OnUpdate(ts);
 
 		// Update
 		Input::InputMapService::OnUpdate(ts);
@@ -406,6 +538,44 @@ namespace Kargono
 		return false;
 	}
 
+	void RuntimeApp::HandleUIMouseHovering()
+	{
+		// Get the active viewport bounds and mouse position
+		Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+		Math::vec2 mousePos = Input::InputService::GetMousePosition();
+
+		// Make sure the mouse position is within bounds
+		if ((int)mousePos.x < 0 || 
+			(int)mousePos.y < 0 || 
+			(int)mousePos.x > (int)activeViewport.m_Width || 
+			(int)mousePos.y > (int)activeViewport.m_Height)
+		{
+			return;
+		}
+
+		// Make sure the y-position is oriented correctly
+		mousePos.y = (float)activeViewport.m_Height - mousePos.y;
+
+		// Extract mouse picking information from the active framebuffer
+		int pixelData = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
+		// Extract lower 16 bits
+		m_HoveredWidgetID = (uint16_t)(pixelData & 0xFFFF);
+		// Extract upper 16 bits
+		m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
+
+		// Exit early if no valid widget/window is available
+		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetID || m_HoveredWindowID == RuntimeUI::k_InvalidWindowID)
+		{
+			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
+			return;
+		}
+
+		// Select the widget if applicable
+		RuntimeUI::RuntimeUIService::SetHoveredWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+			m_HoveredWindowID, m_HoveredWidgetID });
+
+	}
+
 
 	bool RuntimeApp::OpenProject()
 	{
@@ -470,6 +640,8 @@ namespace Kargono
 
 	void RuntimeApp::OnPlay()
 	{
+		// Handle initializing core services
+		Particles::ParticleService::ClearEmitters();
 		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
@@ -494,6 +666,9 @@ namespace Kargono
 		{
 			Network::ClientService::Init();
 		}
+
+		// Load particle emitters
+		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 	}
 
 	void RuntimeApp::OnStop()

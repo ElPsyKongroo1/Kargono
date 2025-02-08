@@ -33,6 +33,7 @@ IncludeDir["ImGuiColorTextEdit"] = "%{wks.location}/Dependencies/ImGuiColorTextE
 LibraryDir = {}
 
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
+LibraryDir["VulkanSDK_Linux"] = "/usr/lib/x86_64-linux-gnu"
 
 -- Library Locations: Points to a specific library file for Linker to link to final .exe
 Library = {}
@@ -66,6 +67,7 @@ Library["ShaderC_Release"] = "%{LibraryDir.VulkanSDK}/shaderc_shared.lib"
 Library["SPIRV_Cross_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-core.lib"
 Library["SPIRV_Cross_GLSL_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-glsl.lib"
 
+Library["ShaderC_Linux"] = "%{LibraryDir.VulkanSDK_Linux}/:libshaderc_combined.a"
 -- Windows
 Library["WinSock"] = "Ws2_32.lib"
 Library["WinMM"] = "Winmm.lib"
@@ -79,3 +81,6 @@ DynamicLibrary = {}
 DynamicLibrary["OpenALSoft_Debug"] = "%{wks.location}Dependencies\\OpenAL\\lib\\debug\\OpenAL32.dll"
 DynamicLibrary["OpenALSoft_Release"] = "%{wks.location}Dependencies\\OpenAL\\lib\\release\\OpenAL32.dll"
 DynamicLibrary["OpenALSoft_Dist"] = "%{wks.location}Dependencies\\OpenAL\\lib\\dist\\OpenAL32.dll"
+DynamicLibrary["OpenALSoft_Debug_Linux"] = "%{wks.location}/Dependencies/OpenAL/lib/debug/:libopenal.so"
+DynamicLibrary["OpenALSoft_Release_Linux"] = "%{wks.location}/Dependencies/OpenAL/lib/release/:libopenal.so"
+DynamicLibrary["OpenALSoft_Dist_Linux"] = "%{wks.location}/Dependencies/OpenAL/lib/dist/:libopenal.a"

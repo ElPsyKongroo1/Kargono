@@ -2,8 +2,9 @@
 
 #include "Kargono.h"
 
-#include <filesystem>
+#include "Kargono/Rendering/Framebuffer.h"
 
+#include <filesystem>
 
 namespace Kargono
 {
@@ -32,6 +33,12 @@ namespace Kargono
 		virtual void Init() override;
 		// Closes Audio System and calls OnSceneStop()
 		virtual void Terminate() override;
+
+		void InitializeFrameBuffer();
+
+		//==========================
+		// On Event Functions
+		//==========================
 		// Calls Runtime Update for Physics, Scripting, and Rendering.
 		virtual void OnUpdate(Timestep ts) override;
 		// Currently does nothing!
@@ -42,13 +49,20 @@ namespace Kargono
 		
 	private:
 		// This function processes key pressed events
+		bool OnKeyTyped(Events::KeyTypedEvent event);
 		bool OnKeyPressed(Events::KeyPressedEvent event);
+		// This function processes mouse pressed events
+		bool OnMousePressed(Events::MouseButtonPressedEvent event);
+
+		bool OnMouseButtonReleased(const Events::MouseButtonReleasedEvent& event);
 		// This function renders the active scene, updates scripts, and updates the scene's physics.
 		void OnUpdateRuntime(Timestep ts);
 		// This function updates the scene cameras when the window is resized
 		bool OnWindowResize(Events::WindowResizeEvent event);
 		// This function closes the runtime application
 		bool OnApplicationClose(Events::ApplicationCloseEvent event);
+
+		bool OnApplicationResize(Events::ApplicationResizeEvent event);
 		// This function responds to application collision events. Currently it plays a sound(Very Temporary).
 		bool OnPhysicsCollisionStart(Events::PhysicsCollisionStart event);
 
@@ -71,6 +85,8 @@ namespace Kargono
 		bool OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event);
 
 		bool OnReceiveSignal(Events::ReceiveSignal event);
+
+		void HandleUIMouseHovering();
 
 
 		// Logic to open the project and its main scene
@@ -97,6 +113,9 @@ namespace Kargono
 
 
 	private:
+		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;
+		uint16_t m_HoveredWindowID{ Kargono::RuntimeUI::k_InvalidWindowID };
+		uint16_t m_HoveredWidgetID{ Kargono::RuntimeUI::k_InvalidWidgetID };
 		bool m_Headless{ false };
 		std::filesystem::path m_ProjectPath;
 	};

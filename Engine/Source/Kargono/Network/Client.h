@@ -195,7 +195,7 @@ namespace Kargono::Network
 		//==============================
 		// Internal Fields
 		//==============================
-		static Ref<Network::Client> s_Client;
+		static inline Ref<Network::Client> s_Client{ nullptr };
 	};
 	
 }

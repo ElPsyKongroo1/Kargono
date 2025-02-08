@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Rendering/RendererAPI.h"
+#include "API/RenderingAPI/OpenGLFramebuffer.h"
 
 #include "API/Platform/gladAPI.h"
 
@@ -45,7 +46,7 @@ namespace Kargono::Utility
 		case GL_DEBUG_SEVERITY_HIGH:
 		{
 			severityString = "High";
-			KG_ERROR("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
+			KG_CRITICAL("[Severity: {0}][Source: {1}] [Type: {2}] Message: {3}", severityString, sourceString, typeString, message);
 			return;
 		}
 		case GL_DEBUG_SEVERITY_MEDIUM:
@@ -111,7 +112,6 @@ namespace Kargono::Rendering
 
 	void RendererAPI::Init()
 	{
-
 	// Only Enable OpenGL logging if debug is enabled
 	#ifdef KG_DEBUG
 		// Enable Debug Output
@@ -129,6 +129,9 @@ namespace Kargono::Rendering
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_LINE_SMOOTH);
+
+		// Initialize static framebuffer resources
+		API::RenderingAPI::OpenGLFrameBufferService::Init();
 	}
 
 	void RendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

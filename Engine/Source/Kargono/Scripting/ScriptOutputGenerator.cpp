@@ -3,6 +3,8 @@
 #include "Kargono/Scripting/ScriptOutputGenerator.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 
+#include "Kargono/Core/Resolution.h"
+#include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Utility/FileSystem.h"
 
 namespace Kargono::Scripting
@@ -13,12 +15,12 @@ namespace Kargono::Scripting
 		m_OutputText = {};
 
 		// Get Program Node
-		if (!m_AST.ProgramNode)
+		if (!m_AST.m_ProgramNode)
 		{
 			return { false, {} };
 		}
 
-		FunctionNode& funcNode = m_AST.ProgramNode.FuncNode;
+		FunctionNode& funcNode = m_AST.m_ProgramNode.FuncNode;
 		// Emit Function Signature
 		m_OutputText << funcNode.ReturnType.Value << " " << funcNode.Name.Value << '(';
 		uint32_t iteration{ 0 };
@@ -102,7 +104,7 @@ namespace Kargono::Scripting
 				}
 
 				// Check if terminal node uses an OnGenerateSetter override
-				if (DataMember* currentDataMember = std::get_if<DataMember>(&terminalNode->MemberType->Value))
+				if (DataMember* currentDataMember = std::get_if<DataMember>(&terminalNode->m_MemberType->Value))
 				{
 					if (currentDataMember->OnGenerateSetter)
 					{
@@ -223,11 +225,9 @@ namespace Kargono::Scripting
 
 		if (TokenExpressionNode* token = std::get_if<TokenExpressionNode>(&expression->Value))
 		{
-			if (token->Value.Type == ScriptTokenType::InputKeyLiteral)
-			{
-				m_OutputText << "Key::" + token->Value.Value;
-			}
-			else if (token->Value.Type == ScriptTokenType::MessageTypeLiteral)
+			KG_ASSERT(token->Value.Type != ScriptTokenType::CustomLiteral);
+
+			if (token->Value.Type == ScriptTokenType::MessageTypeLiteral)
 			{
 				m_OutputText << Utility::FileSystem::CRCFromString(token->Value.Value.c_str());
 			}
@@ -257,7 +257,7 @@ namespace Kargono::Scripting
 			}
 			m_OutputText << funcNode->Identifier.Value << '(';
 			uint32_t iteration{ 0 };
-			for (auto argument : funcNode->Arguments)
+			for (auto& argument : funcNode->Arguments)
 			{
 				GenerateExpression(argument);
 				if (iteration + 1 < funcNode->Arguments.size())
@@ -268,11 +268,18 @@ namespace Kargono::Scripting
 			}
 			m_OutputText << ')';
 		}
+
+		else if (CustomLiteralNode* customLiteralNode = std::get_if<CustomLiteralNode>(&expression->Value))
+		{
+			// Output ID of the customLiteral
+			m_OutputText << customLiteralNode->OutputValue;
+		}
+
 		else if (InitializationListNode* initListNode = std::get_if<InitializationListNode>(&expression->Value))
 		{
 			m_OutputText << '{';
 			uint32_t iteration{ 0 };
-			for (auto argument : initListNode->Arguments)
+			for (Ref<Expression> argument : initListNode->Arguments)
 			{
 				GenerateExpression(argument);
 				if (iteration + 1 < initListNode->Arguments.size())
@@ -316,16 +323,16 @@ namespace Kargono::Scripting
 			bool useOnGenerate = false;
 			if (FunctionCallNode* funcCallNode = std::get_if<FunctionCallNode>(&currentNode->CurrentNodeExpression->Value))
 			{
-				if (funcCallNode->FunctionNode && funcCallNode->FunctionNode->OnGenerateGetter)
+				if (funcCallNode->m_FunctionNode && funcCallNode->m_FunctionNode->OnGenerateGetter)
 				{
-					funcCallNode->FunctionNode->OnGenerateGetter(*this, *memberNode);
+					funcCallNode->m_FunctionNode->OnGenerateGetter(*this, *memberNode);
 					useOnGenerate = true;
 				}
 			}
 			else if (TokenExpressionNode* tokenNode = std::get_if<TokenExpressionNode>(&currentNode->CurrentNodeExpression->Value))
 			{
 				std::variant<FunctionNode, DataMember> Value {};
-				DataMember* currentDataMember = std::get_if<DataMember>(&currentNode->MemberType->Value);
+				DataMember* currentDataMember = std::get_if<DataMember>(&currentNode->m_MemberType->Value);
 				KG_ASSERT(currentDataMember);
 
 				if (tokenNode &&  currentDataMember->OnGenerateGetter)

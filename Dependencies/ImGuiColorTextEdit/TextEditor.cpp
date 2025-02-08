@@ -60,7 +60,7 @@ namespace API::EditorUI
 		SetLanguageDefinition(TextEditorService::GenerateHLSL());
 		m_Lines.push_back(Line());
 
-		m_SuggestionTree.Label = "Suggestions";
+		m_SuggestionTree.m_Label = "Suggestions";
 	}
 
 	TextEditorSpec::~TextEditorSpec()
@@ -769,17 +769,24 @@ namespace API::EditorUI
 			return;
 		}
 		m_OpenTextSuggestions = true;
+		m_CloseTextSuggestions = false;
 		m_SuggestionTree.ClearTree();
 	
 		// Move suggestions into user interface 
 		for (Kargono::Scripting::SuggestionSpec& suggestion : allSuggestions)
 		{
 			Kargono::EditorUI::TreeEntry entry;
-			entry.Label = suggestion.m_Label;
-			entry.ProvidedData = Kargono::CreateRef<std::string>(suggestion.m_ReplacementText);
-			entry.IconHandle = suggestion.m_Icon;
-			entry.OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
+			entry.m_Label = suggestion.m_Label;
+			entry.m_ProvidedData = Kargono::CreateRef<std::tuple<std::string, int16_t>>(
+				suggestion.m_ReplacementText, 
+				suggestion.m_ShiftValue
+			);
+			entry.m_IconHandle = suggestion.m_Icon;
+			entry.m_OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
 			{
+				// Retrieve tuple
+				auto& [replacementText, shiftValue] = (*(std::tuple<std::string, int16_t>*)(entry.m_ProvidedData.get()));
+
 				// Remove Buffer Text and add text
 				UndoRecord u;
 				u.m_Before = m_State;
@@ -789,14 +796,18 @@ namespace API::EditorUI
 				SetCursorPosition({ cursorPosition.m_Line,cursorPosition.m_Column - (int)m_SuggestionTextBuffer.size() });
 				cursorPosition = GetCursorPosition();
 				u.m_AddedStart = cursorPosition;
-				u.m_Added = (*(std::string*)(entry.ProvidedData.get())).c_str();
+				u.m_Added = replacementText.c_str();
 				InsertTextAt(cursorPosition, u.m_Added.c_str());
+				cursorPosition.m_Column += shiftValue;
 				SetCursorPosition(cursorPosition);
-				m_CloseTextSuggestions = true;
 
 				u.m_AddedEnd = cursorPosition;
 				u.m_After = m_State;
 				AddUndo(u);
+
+				// Open suggestions again
+				m_SuggestionTextBuffer.clear();
+				RefreshSuggestionsContent();
 			};
 
 			m_SuggestionTree.InsertEntry(entry);
@@ -805,19 +816,28 @@ namespace API::EditorUI
 		// Select the first available option
 		Kargono::EditorUI::TreePath selectPath {};
 		selectPath.AddNode(0);
-		m_SuggestionTree.SelectedEntry = selectPath;
+		m_SuggestionTree.m_SelectedEntry = selectPath;
 	}
 
 	void TextEditorSpec::EnterCharacter(ImWchar aChar, bool aShift)
 	{
+		static std::unordered_set<char> s_TriggerCharacters { '.',':','(' };
+		static std::unordered_set<char> s_AllowedCharacters { '\"', '_'};
+
+		// Currently only support ascii
+		if (aChar > 255)
+		{
+			return;
+		}
+
 		bool isSuggestionsOpen = ImGui::IsPopupOpen("TextEditorSuggestions");
 
 		if (m_SuggestionsWindowEnabled && isSuggestionsOpen && aChar == '\t')
 		{
-			Kargono::EditorUI::TreeEntry* entry = m_SuggestionTree.GetEntryFromPath(m_SuggestionTree.SelectedEntry);
-			if (entry && entry->OnDoubleLeftClick)
+			Kargono::EditorUI::TreeEntry* entry = m_SuggestionTree.GetEntryFromPath(m_SuggestionTree.m_SelectedEntry);
+			if (entry && entry->m_OnDoubleLeftClick)
 			{
-				entry->OnDoubleLeftClick(*entry);
+				entry->m_OnDoubleLeftClick(*entry);
 			}
 			Colorize(GetCursorPosition().m_Line, 3);
 			EnsureCursorVisible();
@@ -827,7 +847,10 @@ namespace API::EditorUI
 		EnterCharacterInternal(aChar, aShift);
 		if (m_SuggestionsWindowEnabled)
 		{
-			if (!std::isalpha(aChar) && !std::isdigit(aChar) && aChar != '\"' && aChar != '_')
+			if (!std::isalpha(aChar) && 
+				!std::isdigit(aChar) && 
+				!s_TriggerCharacters.contains((char)aChar) &&
+				!s_AllowedCharacters.contains((char)aChar))
 			{
 				if (isSuggestionsOpen)
 				{
@@ -840,8 +863,17 @@ namespace API::EditorUI
 				m_SuggestionTextBuffer.clear();
 			}
 
-			m_SuggestionTextBuffer.push_back((char)aChar);
-			RefreshSuggestionsContent();
+			if (s_TriggerCharacters.contains((char)aChar))
+			{
+				m_SuggestionTextBuffer.clear();
+				RefreshSuggestionsContent();
+			}
+			else
+			{
+				m_SuggestionTextBuffer.push_back((char)aChar);
+				RefreshSuggestionsContent();
+			}
+			
 		}
 	}
 
@@ -1388,9 +1420,9 @@ namespace API::EditorUI
 					{
 						ImGui::BeginTooltip();
 						ImGui::PushStyleColor(ImGuiCol_Text, m_Palette[(int)PaletteIndex::ErrorText]);
-						ImGui::Text(tooltipMessage[0].c_str());
+						ImGui::TextUnformatted(tooltipMessage[0].c_str());
 						ImGui::Separator();
-						ImGui::Text(tooltipMessage[1].c_str());
+						ImGui::TextUnformatted(tooltipMessage[1].c_str());
 						ImGui::PopStyleColor();
 						ImGui::EndTooltip();
 					}
@@ -1399,9 +1431,9 @@ namespace API::EditorUI
 				{
 					ImGui::BeginTooltip();
 					ImGui::PushStyleColor(ImGuiCol_Text, m_Palette[(int)PaletteIndex::ErrorText]);
-					ImGui::Text(tooltipMessage[0].c_str());
+					ImGui::TextUnformatted(tooltipMessage[0].c_str());
 					ImGui::Separator();
-					ImGui::Text(tooltipMessage[1].c_str());
+					ImGui::TextUnformatted(tooltipMessage[1].c_str());
 					ImGui::PopStyleColor();
 					ImGui::EndTooltip();
 				}
@@ -2254,7 +2286,32 @@ namespace API::EditorUI
 				u.m_RemovedStart = u.m_RemovedEnd = GetActualCursorCoordinates();
 				--u.m_RemovedStart.m_Column;
 				if (line[cindex].m_Char == '\t')
-					m_State.m_CursorPosition.m_Column -= (pos.m_Column % m_TabSize);
+				{
+					// If a character exists before this tab, check its location
+					if (cindex > 0)
+					{
+						// Get previous character column location
+						int previousCharacter = GetCharacterColumn(m_State.m_CursorPosition.m_Line, cindex - 1) + 1;
+
+
+						if (m_State.m_CursorPosition.m_Column - previousCharacter >= m_TabSize)
+						{
+							// Move back one tab size if previous character is aligned with tabs
+							m_State.m_CursorPosition.m_Column -= m_TabSize;
+						}
+						else
+						{
+							// Calculate the tab size based on the previous character's column location
+							m_State.m_CursorPosition.m_Column -= m_TabSize - (previousCharacter % m_TabSize);
+						}
+					}
+					else
+					{
+						// Simply move back one tab size
+						m_State.m_CursorPosition.m_Column -= m_TabSize;
+					}
+				}
+					
 				else
 					--m_State.m_CursorPosition.m_Column;
 
@@ -2810,7 +2867,7 @@ namespace API::EditorUI
 					case Kargono::Scripting::ScriptTokenType::MessageTypeLiteral:
 						tokenColor = PaletteIndex::Number;
 						break;
-					case Kargono::Scripting::ScriptTokenType::InputKeyLiteral:
+					case Kargono::Scripting::ScriptTokenType::CustomLiteral:
 						tokenColor = PaletteIndex::Number;
 						break;
 					case Kargono::Scripting::ScriptTokenType::BooleanLiteral:

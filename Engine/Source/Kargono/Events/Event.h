@@ -37,7 +37,8 @@ namespace Kargono::Events
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		CleanUpTimers,
 		SkipUpdate, AddExtraUpdate, LogEvent,
-		AppTick, AppUpdate, AppRender, AppClose, AddTickGeneratorUsage, RemoveTickGeneratorUsage,
+		AppTick, AppUpdate, AppRender, AppClose, AppResize,
+		AddTickGeneratorUsage, RemoveTickGeneratorUsage,
 		// Assets
 		ManageAsset,
 		// Physics
@@ -77,7 +78,7 @@ namespace Kargono::Events
 		MouseButton			= BIT(6),
 		Physics				= BIT(7),
 		Asset				= BIT(8),
-		Editor				= BIT(9),
+		Editor				= BIT(9)
 	};
 
 	//============================================================

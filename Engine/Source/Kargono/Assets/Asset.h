@@ -36,7 +36,8 @@ namespace Kargono::Assets
 		Script,
 		GameState,
 		ProjectComponent,
-		AIState
+		AIState,
+		EmitterConfig
 	};
 
 	//==============================
@@ -133,9 +134,11 @@ namespace Kargono::Assets
 	//		debugging.
 	struct FontMetaData
 	{
-		float AtlasWidth;
-		float AtlasHeight;
-		float LineHeight{};
+		float AtlasWidth{ 0.0f };
+		float AtlasHeight{ 0.0f };
+		float LineHeight{ 0.0f };
+		float Ascender{ 0.0f };
+		float Descender{ 0.0f };
 		std::vector<std::pair<unsigned char, RuntimeUI::Character>> Characters{};
 	};
 
@@ -165,6 +168,11 @@ namespace Kargono::Assets
 	// This metadata struct is currently empty but keeps a consistent API when working with assets.
 	//		There may be later additions to this struct.
 	struct InputMapMetaData
+	{
+
+	};
+
+	struct ParticleEmitterConfigMetaData
 	{
 
 	};
@@ -202,7 +210,7 @@ namespace Kargono::Assets
 	//		asset type, asset location, a checksum, and asset type specific metadata.
 	struct AssetInfo
 	{
-		AssetHandle Handle { Assets::EmptyHandle };
+		AssetHandle m_Handle { Assets::EmptyHandle };
 		Metadata Data;
 	};
 	
@@ -228,6 +236,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::GameState: return "GameState";
 		case Assets::AssetType::ProjectComponent: return "ProjectComponent";
 		case Assets::AssetType::AIState: return "AIState";
+		case Assets::AssetType::EmitterConfig: return "EmitterConfig";
 		case Assets::AssetType::None: return "None";
 		}
 		KG_ERROR("Unknown Type of AssetType.");
@@ -247,6 +256,7 @@ namespace Kargono::Utility
 		if (type == "GameState") { return Assets::AssetType::GameState; }
 		if (type == "ProjectComponent") { return Assets::AssetType::ProjectComponent; }
 		if (type == "AIState") { return Assets::AssetType::AIState; }
+		if (type == "EmitterConfig") { return Assets::AssetType::EmitterConfig; }
 		if (type == "None") { return Assets::AssetType::None; }
 
 		KG_ERROR("Unknown Type of AssetType String.");

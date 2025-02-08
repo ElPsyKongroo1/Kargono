@@ -11,6 +11,7 @@ namespace Kargono::Scripting
 		Ref<Rendering::Texture2D> m_Icon { nullptr };
 		std::string m_Label {};
 		std::string m_ReplacementText {};
+		int16_t m_ShiftValue{ 0 };
 	};
 
 	//==============================
@@ -19,6 +20,11 @@ namespace Kargono::Scripting
 	class ScriptCompilerService
 	{
 	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		static void Terminate();
+		
 		//==============================
 		// External API
 		//==============================
@@ -32,12 +38,15 @@ namespace Kargono::Scripting
 		static void GetSuggestionsForIsParameter(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText);
 		static void GetSuggestionsForIsDataMember(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText);
 		static void GetSuggestionsDefault(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText);
+		static void GetSuggestionsForLiteralMember(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText);
+		
 	public:
 		static void CreateKGScriptLanguageDefinition();
 	private:
 		static void CreateKGScriptKeywords();
 		static void CreateKGScriptInitializationPrototypes();
 		static void CreateKGScriptPrimitiveTypes();
+		static void CreateKGScriptCustomLiterals();
 		static void CreateKGScriptNamespaces();
 		static void CreateKGScriptFunctionDefinitions();
 	public:

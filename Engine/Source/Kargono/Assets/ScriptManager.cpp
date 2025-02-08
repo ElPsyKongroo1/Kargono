@@ -42,7 +42,7 @@ namespace Kargono::Assets
 		newAsset.Data.Type = AssetType::Script;
 		newAsset.Data.FileLocation = spec.Name + m_FileExtension.CString();
 		newAsset.Data.CheckSum = currentCheckSum;
-		newAsset.Handle = newHandle;
+		newAsset.m_Handle = newHandle;
 
 		// Create Script File
 		FillScriptMetadata(spec, newAsset);
@@ -54,7 +54,12 @@ namespace Kargono::Assets
 
 		m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation) });
 
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, newAsset.Data.Type, Events::ManageAssetAction::Create);
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+		(
+			newHandle,
+			newAsset.Data.Type, 
+			Events::ManageAssetAction::Create
+		);
 		EngineService::SubmitToEventQueue(event);
 		return std::make_tuple(newHandle, true);
 	}
@@ -89,7 +94,12 @@ namespace Kargono::Assets
 			script->m_Function = nullptr;
 		}
 
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(scriptHandle, asset.Data.Type, Events::ManageAssetAction::UpdateAsset);
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+		(
+			scriptHandle, 
+			asset.Data.Type, 
+			Events::ManageAssetAction::UpdateAsset
+		);
 		EngineService::SubmitToEventQueue(event);
 		return true;
 	}
@@ -149,7 +159,12 @@ namespace Kargono::Assets
 
 		SerializeAssetRegistry();
 
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(Assets::EmptyHandle, AssetType::Script, Events::ManageAssetAction::UpdateAsset);
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+		(
+			Assets::EmptyHandle, 
+			AssetType::Script, 
+			Events::ManageAssetAction::UpdateAsset
+		);
 		EngineService::SubmitToEventQueue(event);
 		return true;
 	}
@@ -183,7 +198,12 @@ namespace Kargono::Assets
 
 		SerializeAssetRegistry();
 
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(Assets::EmptyHandle, AssetType::Script, Events::ManageAssetAction::UpdateAsset);
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+		(
+			Assets::EmptyHandle, 
+			AssetType::Script, 
+			Events::ManageAssetAction::UpdateAsset
+		);
 		EngineService::SubmitToEventQueue(event); 
 		return true;
 	}
@@ -210,7 +230,7 @@ namespace Kargono::Assets
 		Ref<Scripting::Script> newScript = CreateRef<Scripting::Script>();
 		Assets::ScriptMetaData metadata = *asset.Data.GetSpecificMetaData<ScriptMetaData>();
 
-		newScript->m_ID = asset.Handle;
+		newScript->m_ID = asset.m_Handle;
 		newScript->m_ScriptName = metadata.m_Name;
 		newScript->m_FuncType = metadata.m_FunctionType;
 		newScript->m_ScriptType = metadata.m_ScriptType;
@@ -275,10 +295,10 @@ namespace Kargono::Assets
 	void ScriptManager::DeserializeRegistrySpecificData(YAML::Node& registryNode)
 	{
 		// Load in Engine Scripts
-		for (auto script : Scripting::ScriptService::GetAllEngineScripts())
+		for (Ref<Scripting::Script> script : Scripting::ScriptService::GetAllEngineScripts())
 		{
 			Assets::AssetInfo newAsset{};
-			newAsset.Handle = script->m_ID;
+			newAsset.m_Handle = script->m_ID;
 
 			newAsset.Data.CheckSum = "";
 			newAsset.Data.FileLocation = "";
@@ -299,17 +319,17 @@ namespace Kargono::Assets
 			newAsset.Data.SpecificFileData = scriptMetaData;
 
 			// Insert Engine Script into registry/in-memory
-			m_AssetRegistry.insert({ newAsset.Handle, newAsset });
-			m_AssetCache.insert({ newAsset.Handle, script });
+			m_AssetRegistry.insert({ newAsset.m_Handle, newAsset });
+			m_AssetCache.insert({ newAsset.m_Handle, script });
 		}
 
 		// Get Section Labels
 		{
 			m_ScriptSectionLabels.clear();
-			auto sectionLabels = registryNode["SectionLabels"];
+			YAML::Node sectionLabels = registryNode["SectionLabels"];
 			if (sectionLabels)
 			{
-				for (auto label : sectionLabels)
+				for (YAML::iterator::value_type label : sectionLabels)
 				{
 					m_ScriptSectionLabels.insert(label.as<std::string>());
 				}

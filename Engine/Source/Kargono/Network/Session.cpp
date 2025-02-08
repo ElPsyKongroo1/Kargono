@@ -99,7 +99,7 @@ namespace Kargono::Network
 				varianceSum += static_cast<float>(std::pow(latency - meanLatency, 2));
 			}
 
-			float standardDeviation = std::sqrtf(varianceSum / static_cast<float>(latencies.size()));
+			float standardDeviation = sqrt(varianceSum / static_cast<float>(latencies.size()));
 
 			
 

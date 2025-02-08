@@ -40,6 +40,7 @@
 #include <variant>
 
 #include <cmath>
+#include <numbers>
 #include <cassert>
 #include <limits>
 #include <cstdint>

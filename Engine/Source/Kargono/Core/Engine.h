@@ -66,6 +66,7 @@ namespace Kargono
 		const std::filesystem::path& GetWorkingDirectory() const { return m_Specification.WorkingDirectory; }
 		double GetAppStartTime() const { return m_AppStartTime; }
 		uint64_t GetUpdateCount() const { return m_UpdateCount; }
+		float GetInApplicationTime() const;
 		void UpdateAppStartTime();
 
 	private:
@@ -162,7 +163,7 @@ namespace Kargono
 		//==============================
 		// Internal Fields
 		//==============================
-		static Engine* s_ActiveEngine;
+		static inline Engine* s_ActiveEngine{ nullptr };
 	private:
 		friend Engine;
 	};

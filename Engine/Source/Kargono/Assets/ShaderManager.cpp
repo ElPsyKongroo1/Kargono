@@ -165,7 +165,7 @@ namespace Kargono::Assets
 		// Create New Asset/Handle
 		AssetHandle newHandle{};
 		Assets::AssetInfo newAsset{};
-		newAsset.Handle = newHandle;
+		newAsset.m_Handle = newHandle;
 		newAsset.Data.Type = m_AssetType;
 		newAsset.Data.CheckSum = currentCheckSum;
 		newAsset.Data.IntermediateLocation = m_RegistryLocation.parent_path() / (std::string)newHandle;
@@ -179,7 +179,12 @@ namespace Kargono::Assets
 		Ref<Kargono::Rendering::Shader> newShader = DeserializeAsset(newAsset, Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation);
 		m_AssetCache.insert({ newHandle, newShader });
 
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, AssetType::Shader, Events::ManageAssetAction::Create);
+		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+		(
+			newHandle, 
+			AssetType::Shader, 
+			Events::ManageAssetAction::Create
+		);
 		EngineService::SubmitToEventQueue(event);
 
 		return newHandle;
@@ -204,7 +209,7 @@ namespace Kargono::Assets
 			{
 				Ref<Kargono::Rendering::Shader> newShader = DeserializeAsset(asset, 
 					Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation);
-				m_AssetCache.insert({ asset.Handle, newShader });
+				m_AssetCache.insert({ asset.m_Handle, newShader });
 				return std::make_tuple(assetHandle, newShader);
 			}
 		}
@@ -226,7 +231,7 @@ namespace Kargono::Assets
 
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
 #if !defined(KG_EXPORT_SERVER) && !defined(KG_EXPORT_RUNTIME)
-		Utility::CompileBinaries(newAsset.Handle, shaderSources, openGLSPIRV);
+		Utility::CompileBinaries(newAsset.m_Handle, shaderSources, openGLSPIRV);
 #endif
 
 		// Save binary intermediates for all shader stages!
@@ -287,7 +292,7 @@ namespace Kargono::Assets
 			}
 		}
 
-		Ref<Kargono::Rendering::Shader> newShader = Rendering::Shader::Create(static_cast<std::string>(asset.Handle), openGLSPIRV);
+		Ref<Kargono::Rendering::Shader> newShader = Rendering::Shader::Create(static_cast<std::string>(asset.m_Handle), openGLSPIRV);
 		newShader->SetSpecification(metadata.ShaderSpec);
 		newShader->SetInputLayout(metadata.InputLayout);
 		newShader->SetUniformList(metadata.UniformList);

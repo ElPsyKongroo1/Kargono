@@ -23,8 +23,10 @@ namespace Kargono
 	std::chrono::nanoseconds k_ConstantFrameTime { 1'000 * 1'000 * 1'000 / 60 };
 	Timestep k_ConstantFrameTimeStep { 1.0f / 60.0f };
 
-	Engine* EngineService::s_ActiveEngine = nullptr;
-	
+	float Engine::GetInApplicationTime() const
+	{
+		return (float)m_UpdateCount * k_ConstantFrameTimeStep;
+	}
 
 	void Engine::UpdateAppStartTime()
 	{
@@ -105,7 +107,7 @@ namespace Kargono
 			s_ActiveEngine->m_Accumulator -= k_ConstantFrameTime;
 
 			{
-				KG_PROFILE_FRAME("Main Thread");
+				KG_PROFILE_FRAME_DESC("Main Thread");
 
 				s_ActiveEngine->m_UpdateCount++;
 				AppTickService::OnUpdate(k_ConstantFrameTimeStep);

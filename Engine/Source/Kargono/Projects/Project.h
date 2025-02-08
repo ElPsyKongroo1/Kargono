@@ -3,33 +3,21 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Math/Math.h"
+#include "Kargono/Core/Resolution.h"
 
 #include <string>
 #include <filesystem>
 #include <unordered_set>
+#include <array>
 
 //============================================================
 // Projects Namespace
 //============================================================
 // This namespace holds the Project class which describes a Game/Rendering application.
-//		Other accessory classes such as the ProjectConfig and ScreenResolutionOptions serve
+//		Other accessory classes such as the ProjectConfig  serve
 //		to add functionality to the Project class. 
 namespace Kargono::Projects
 {
-	//=========================
-	// Screen Resolution Options Enum
-	//=========================
-	// This enum provides the different screen resolution options available
-	//		at a project level. This enum is used to set the default and stored
-	//		screen resolution for the project.
-	enum class ScreenResolutionOptions
-	{
-		None = 0,
-		R800x800, R400x400,									// 1x1
-		R1920x1080, R1600x900, R1366x768, R1280x720,		// 16x9
-		R1600x1200, R1280x960, R1152x864, R1024x768,		// 4x3
-		MatchDevice											// Automatic
-	};
 	//=========================
 	// Project Class
 	//=========================
@@ -67,7 +55,7 @@ namespace Kargono::Projects
 		bool DefaultFullscreen = false;
 		// TargetResolution describes the screen resolution the application will attempt
 		//		to display when starting the runtime application.
-		ScreenResolutionOptions TargetResolution{ ScreenResolutionOptions::MatchDevice };
+		ScreenResolution TargetResolution{ ScreenResolution::MatchDevice };
 		// OnRuntimeStartFunction holds the name of the custom call that is run when
 		//		the application is started.
 		Assets::AssetHandle OnRuntimeStart {Assets::EmptyHandle};
@@ -148,7 +136,8 @@ namespace Kargono::Projects
 	public:
 		static void ExportProject(const std::filesystem::path& exportLocation, bool createServer);
 	private:
-		static bool BuildRuntimeExecutable(const std::filesystem::path& projectDirectory, bool createServer);
+		static bool BuildExecutableMSVC(const std::filesystem::path& projectDirectory, bool createServer);
+		static bool BuildExecutableGCC(const std::filesystem::path& projectDirectory, bool createServer);
 	public:
 		//=========================
 		// Getters/Setters API
@@ -229,14 +218,14 @@ namespace Kargono::Projects
 		}
 		// This function returns the current target resolution associated with
 		//		the current project in s_ActiveProject.
-		static ScreenResolutionOptions GetActiveTargetResolution()
+		static ScreenResolution GetActiveTargetResolution()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->TargetResolution;
 		}
 		// This function provides an API to set the target resolution on the currently
 		//		active project, s_ActiveProject
-		static void SetActiveTargetResolution(ScreenResolutionOptions option)
+		static void SetActiveTargetResolution(ScreenResolution option)
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->TargetResolution = option;
@@ -597,67 +586,6 @@ namespace Kargono::Projects
 		//=========================
 		// m_ActiveProject holds a static reference to the currently active project. Only one project can be
 		//		active at a time and that project is held in this variable.
-		static Ref<Project> s_ActiveProject;
+		static inline Ref<Project> s_ActiveProject{ nullptr };
 	};
-}
-
-namespace Kargono::Utility
-{
-
-	//=========================
-	// Conversion Functions
-	//=========================
-
-	// These functions help convert the screen resolution and aspect ratio enum into a string
-	//		to serialization purposes.
-
-	inline std::string ScreenResolutionToString(Projects::ScreenResolutionOptions option)
-	{
-		switch (option)
-		{
-		case Projects::ScreenResolutionOptions::R800x800: return "800x800";
-		case Projects::ScreenResolutionOptions::R400x400: return "400x400";
-
-		case Projects::ScreenResolutionOptions::R1920x1080: return "1920x1080";
-		case Projects::ScreenResolutionOptions::R1600x900: return "1600x900";
-		case Projects::ScreenResolutionOptions::R1366x768: return "1366x768";
-		case Projects::ScreenResolutionOptions::R1280x720: return "1280x720";
-
-		case Projects::ScreenResolutionOptions::R1600x1200: return "1600x1200";
-		case Projects::ScreenResolutionOptions::R1280x960: return "1280x960";
-		case Projects::ScreenResolutionOptions::R1152x864: return "1152x864";
-		case Projects::ScreenResolutionOptions::R1024x768: return "1024x768";
-
-		case Projects::ScreenResolutionOptions::MatchDevice: return "Match Device";
-		case Projects::ScreenResolutionOptions::None: return "None";
-		}
-		KG_ERROR("Invalid ScreenResolutionOptions enum provided to ScreenResolutionToString function");
-		return "None";
-	}
-
-	inline Projects::ScreenResolutionOptions StringToScreenResolution(const std::string& optionStr)
-	{
-		if (optionStr == "800x800") { return Projects::ScreenResolutionOptions::R800x800; }
-		if (optionStr == "400x400") { return Projects::ScreenResolutionOptions::R400x400; }
-
-		if (optionStr == "1920x1080") { return Projects::ScreenResolutionOptions::R1920x1080; }
-		if (optionStr == "1600x900") { return Projects::ScreenResolutionOptions::R1600x900; }
-		if (optionStr == "1366x768") { return Projects::ScreenResolutionOptions::R1366x768; }
-		if (optionStr == "1280x720") { return Projects::ScreenResolutionOptions::R1280x720; }
-
-		if (optionStr == "1600x1200") { return Projects::ScreenResolutionOptions::R1600x1200; }
-		if (optionStr == "1280x960") { return Projects::ScreenResolutionOptions::R1280x960; }
-		if (optionStr == "1152x864") { return Projects::ScreenResolutionOptions::R1152x864; }
-		if (optionStr == "1024x768") { return Projects::ScreenResolutionOptions::R1024x768; }
-
-		if (optionStr == "Match Device") { return Projects::ScreenResolutionOptions::MatchDevice; }
-		if (optionStr == "None") { return Projects::ScreenResolutionOptions::None; }
-
-		KG_ERROR("Invalid ScreenResolutionOptions enum provided to StringToScreenResolution function");
-		return Projects::ScreenResolutionOptions::None;
-	}
-
-	Math::uvec2 ScreenResolutionToAspectRatio(Projects::ScreenResolutionOptions option);
-
-	Math::vec2 ScreenResolutionToVec2(Projects::ScreenResolutionOptions option);
 }

@@ -13,17 +13,18 @@
 #include "Kargono/Assets/ShaderManager.h"
 #include "Kargono/Assets/TextureManager.h"
 #include "Kargono/Assets/UserInterfaceManager.h"
+#include "Kargono/Assets/EmitterConfigManager.h"
 
 #define DEFINE_MANAGER(typeNamespace, typeName) \
 		static AssetInfo Get##typeName##Info(AssetHandle handle) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetInfo(handle); \
 		}\
-		static Ref<typeNamespace##::##typeName> Get##typeName(AssetHandle handle) \
+		static Ref<typeNamespace::typeName> Get##typeName(AssetHandle handle) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAsset(handle); \
 		}\
-		static std::tuple<AssetHandle, Ref<typeNamespace##::##typeName>> Get##typeName(const std::filesystem::path& fileLocation) \
+		static std::tuple<AssetHandle, Ref<typeNamespace::typeName>> Get##typeName(const std::filesystem::path& fileLocation) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAsset(fileLocation); \
 		}\
@@ -79,7 +80,7 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetRegistry(); \
 		}\
-		static std::unordered_map<AssetHandle, Ref<typeNamespace##::##typeName>>& Get##typeName##Cache() \
+		static std::unordered_map<AssetHandle, Ref<typeNamespace::typeName>>& Get##typeName##Cache() \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetCache(); \
 		}\
@@ -87,7 +88,7 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetValidImportExtensions(); \
 		}\
-		static void Save##typeName(AssetHandle assetHandle, Ref<typeNamespace##::##typeName> assetReference) \
+		static void Save##typeName(AssetHandle assetHandle, Ref<typeNamespace::typeName> assetReference) \
 		{\
 			s_AssetsContext.m_##typeName##Manager.SaveAsset(assetHandle, assetReference); \
 		}\
@@ -120,6 +121,7 @@ namespace Kargono::Assets
 		ShaderManager m_ShaderManager;
 		Texture2DManager m_Texture2DManager;
 		UserInterfaceManager m_UserInterfaceManager;
+		EmitterConfigManager m_EmitterConfigManager;
 	};
 
 	class AssetService
@@ -137,6 +139,7 @@ namespace Kargono::Assets
 		DEFINE_MANAGER(Rendering, Shader)
 		DEFINE_MANAGER(Rendering, Texture2D)
 		DEFINE_MANAGER(RuntimeUI, UserInterface)
+		DEFINE_MANAGER(Particles, EmitterConfig)
 
 		// Expose unique functionality of each class
 	public:
@@ -196,6 +199,11 @@ namespace Kargono::Assets
 			return s_AssetsContext.m_UserInterfaceManager.RemoveScript(userInterfaceRef, scriptHandle);
 		}
 
+		static AssetHandle RemoveTextureFromUserInterface(Ref<RuntimeUI::UserInterface> userInterfaceRef, Assets::AssetHandle textureHandle)
+		{
+			return s_AssetsContext.m_UserInterfaceManager.RemoveTexture(userInterfaceRef, textureHandle);
+		}
+
 		static AssetHandle RemoveScriptFromScene(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle scriptHandle)
 		{
 			return s_AssetsContext.m_SceneManager.RemoveScript(sceneRef, scriptHandle);
@@ -210,6 +218,13 @@ namespace Kargono::Assets
 			return s_AssetsContext.m_SceneManager.RemoveAIState(sceneRef, aiStateHandle);
 		}
 
+		static AssetHandle RemoveEmitterConfigFromScene(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle emitterConfigHandle)
+		{
+			return s_AssetsContext.m_SceneManager.RemoveEmitterConfig(sceneRef, emitterConfigHandle);
+		}
+
+		
+
 		// Deserializes all registries into memory
 		static void DeserializeAll()
 		{
@@ -220,6 +235,7 @@ namespace Kargono::Assets
 			DeserializeScriptRegistry();
 			DeserializeProjectComponentRegistry();
 			DeserializeInputMapRegistry();
+			DeserializeEmitterConfigRegistry();
 			DeserializeGameStateRegistry();
 			DeserializeUserInterfaceRegistry();
 			DeserializeAIStateRegistry();
@@ -236,6 +252,7 @@ namespace Kargono::Assets
 			SerializeScriptRegistry();
 			SerializeProjectComponentRegistry();
 			SerializeInputMapRegistry();
+			SerializeEmitterConfigRegistry();
 			SerializeGameStateRegistry();
 			SerializeUserInterfaceRegistry();
 			SerializeAIStateRegistry();
@@ -254,6 +271,7 @@ namespace Kargono::Assets
 			ClearInputMapRegistry();
 			ClearGameStateRegistry();
 			ClearUserInterfaceRegistry();
+			ClearEmitterConfigRegistry();
 			ClearAIStateRegistry();
 			ClearSceneRegistry();
 		}
@@ -273,6 +291,7 @@ namespace Kargono::Assets
 			case AssetType::Texture: return GetTexture2DRegistry().at(handle);
 			case AssetType::UserInterface: return GetUserInterfaceRegistry().at(handle);
 			case AssetType::ProjectComponent: return GetProjectComponentRegistry().at(handle);
+			case AssetType::EmitterConfig: return GetEmitterConfigRegistry().at(handle);
 			case AssetType::None: 
 			default:
 				KG_ERROR("Invalid asset type provided to GetAssetFromAllRegistries function");

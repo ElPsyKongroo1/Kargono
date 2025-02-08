@@ -11,33 +11,6 @@
 #include <bitset>
 #include <tuple>
 
-// Functions to call
-
-// Virtual functions to inject functionality
-
-
-//==============================
-// Manage Registry
-//==============================
-
-// DeserializeRegistry
-// SerializeRegistry
-// Clear Registry
-// GetAssetRegistry()
-
-//==============================
-// Import Asset
-//==============================
-
-// ImportNewAssetFromFile
-// ImportNewAssetFromData()
-
-//==============================
-// Read Asset from Registry
-//==============================
-
-// GetAsset(handle)
-
 enum AssetManagerOptions : uint8_t
 {
 	None = 0, // Default value
@@ -90,7 +63,7 @@ namespace Kargono::Assets
 				Ref<AssetValue> newAsset = DeserializeAsset(asset, assetPath);
 				if (m_Flags.test(AssetManagerOptions::HasAssetCache))
 				{
-					m_AssetCache.insert({ asset.Handle, newAsset });
+					m_AssetCache.insert({ asset.m_Handle, newAsset });
 				}
 				return newAsset;
 			}
@@ -222,7 +195,13 @@ namespace Kargono::Assets
 			}
 			asset.Data.CheckSum = currentCheckSum;
 
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::UpdateAsset, providedData);
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+			(
+				assetHandle, 
+				asset.Data.Type, 
+				Events::ManageAssetAction::UpdateAsset,
+				providedData
+			);
 			EngineService::SubmitToEventQueue(event);
 		}
 
@@ -237,8 +216,13 @@ namespace Kargono::Assets
 			// Find location of asset's data
 			Assets::AssetInfo& asset = m_AssetRegistry[assetHandle];
 			
-			// Process delete event and validation
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(assetHandle, asset.Data.Type, Events::ManageAssetAction::Delete);
+			// Pre-delete event and validation
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+			(
+				assetHandle, 
+				asset.Data.Type, 
+				Events::ManageAssetAction::PreDelete
+			);
 			DeleteAssetValidation(assetHandle);
 			EngineService::OnEvent(event.get());
 
@@ -265,6 +249,15 @@ namespace Kargono::Assets
 
 			// Save the modified registry to disk
 			SerializeAssetRegistry();
+
+			// Post-delete event and validation
+			Ref<Events::ManageAsset> postEvent = CreateRef<Events::ManageAsset>
+			(
+				assetHandle,
+				asset.Data.Type,
+				Events::ManageAssetAction::PostDelete
+			);
+			EngineService::OnEvent(postEvent.get());
 
 			return true;
 		}
@@ -311,7 +304,7 @@ namespace Kargono::Assets
 			// Create New Asset/Handle
 			AssetHandle newHandle{};
 			Assets::AssetInfo newAsset{};
-			newAsset.Handle = newHandle;
+			newAsset.m_Handle = newHandle;
 			newAsset.Data.Type = m_AssetType;
 			if (usingBaseAssetDir)
 			{
@@ -349,7 +342,12 @@ namespace Kargono::Assets
 				m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation) });
 			}
 
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, newAsset.Data.Type, Events::ManageAssetAction::Create);
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+			(
+				newHandle, 
+				newAsset.Data.Type, 
+				Events::ManageAssetAction::Create
+			);
 			EngineService::SubmitToEventQueue(event);
 			return newHandle;
 		}
@@ -462,7 +460,7 @@ namespace Kargono::Assets
 			// Create New Asset/Handle
 			AssetHandle newHandle{};
 			Assets::AssetInfo newAsset{};
-			newAsset.Handle = newHandle;
+			newAsset.m_Handle = newHandle;
 			newAsset.Data.Type = m_AssetType;
 
 			// Create asset file inside asset manager
@@ -475,7 +473,7 @@ namespace Kargono::Assets
 			// Check if intermediates are used. If so, generate the intermediate.
 			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
 			{
-				newAsset.Data.IntermediateLocation = Utility::FileSystem::ConvertToUnixStylePath(m_RegistryLocation.parent_path() / ((std::string)newAsset.Handle + m_IntermediateExtension.CString()));
+				newAsset.Data.IntermediateLocation = Utility::FileSystem::ConvertToUnixStylePath(m_RegistryLocation.parent_path() / ((std::string)newAsset.m_Handle + m_IntermediateExtension.CString()));
 				CreateAssetIntermediateFromFile(newAsset, sourcePath, Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation);
 				newAsset.Data.CheckSum = currentCheckSum;
 			}
@@ -500,7 +498,12 @@ namespace Kargono::Assets
 				m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, assetPath) });
 			}
 
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(newHandle, newAsset.Data.Type, Events::ManageAssetAction::Create);
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+			(
+				newHandle, 
+				newAsset.Data.Type, 
+				Events::ManageAssetAction::Create
+			);
 			EngineService::SubmitToEventQueue(event);
 			return newHandle;
 		}
@@ -563,8 +566,8 @@ namespace Kargono::Assets
 
 			if (!Utility::FileSystem::PathExists(registryPath))
 			{
-				KG_WARN("No .kgreg file found at provided registry path {}", registryPath.string());
-				return;
+				KG_WARN("No .kgreg file found at provided registry path {}. Creating a new one.", registryPath.string());
+				SerializeAssetRegistry();
 			}
 			YAML::Node data;
 			try
@@ -596,7 +599,7 @@ namespace Kargono::Assets
 				for (auto asset : assets)
 				{
 					Assets::AssetInfo newAsset{};
-					newAsset.Handle = asset["AssetHandle"].as<uint64_t>();
+					newAsset.m_Handle = asset["AssetHandle"].as<uint64_t>();
 
 					// Retrieving metadata for asset 
 					auto metadata = asset["MetaData"];
@@ -615,7 +618,7 @@ namespace Kargono::Assets
 					DeserializeAssetSpecificMetadata(metadata, newAsset);
 
 					// Add asset to in memory registry 
-					m_AssetRegistry.insert({ newAsset.Handle, newAsset });
+					m_AssetRegistry.insert({ newAsset.m_Handle, newAsset });
 
 				}
 			}
@@ -674,7 +677,12 @@ namespace Kargono::Assets
 			SerializeAssetRegistry();
 
 			// Throw update asset event
-			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>(handle, currentAsset.Data.Type, Events::ManageAssetAction::UpdateAssetInfo);
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+			(
+				handle, 
+				currentAsset.Data.Type, 
+				Events::ManageAssetAction::UpdateAssetInfo
+			);
 			EngineService::SubmitToEventQueue(event);
 			return true;
 		}

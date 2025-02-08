@@ -13,9 +13,11 @@
 #include "Kargono/Events/SceneEvent.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Assets/AssetService.h"
+#include "Kargono/Particles/ParticleService.h"
 
 namespace Kargono::Scenes
 {
+	static Rendering::RendererInputSpec s_InputSpec{};
 
 	Ref<Scene> SceneService::CreateSceneCopy(Ref<Scene> other)
 	{
@@ -55,8 +57,11 @@ namespace Kargono::Scenes
 
 				if (existingEntity.HasProjectComponentData(handle))
 				{
-					// Add project component into registry
-					newEntity.AddProjectComponentData(handle);
+					if (!newEntity.HasProjectComponentData(handle))
+					{
+						// Add project component into registry
+						newEntity.AddProjectComponentData(handle);
+					}
 
 					// Get source and destination data buffers
 					uint8_t* sourceDataPtr = (uint8_t*)existingEntity.GetProjectComponentData(handle);
@@ -155,6 +160,11 @@ namespace Kargono::Scenes
 		KG_ASSERT(component);
 		KG_ASSERT(component->m_BufferSlot < m_EntityRegistry.m_ProjectComponentStorage.size());
 
+		if (component->m_BufferSize == 0)
+		{
+			return 0;
+		}
+
 		// Get storage and clear registry
 		ECS::ProjectComponentStorage& currentStorage = m_EntityRegistry.m_ProjectComponentStorage.at(component->m_BufferSlot);
 		return currentStorage.m_GetProjectComponentCount(currentStorage.m_EnTTStorageReference);
@@ -165,7 +175,7 @@ namespace Kargono::Scenes
 		ECS::Entity entity = { m_EntityRegistry.m_EnTTRegistry.create(), &m_EntityRegistry };
 		entity.AddComponent<ECS::IDComponent>(uuid);
 		entity.AddComponent<ECS::TransformComponent>();
-		auto& tag = entity.AddComponent<ECS::TagComponent>();
+		ECS::TagComponent& tag = entity.AddComponent<ECS::TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		m_EntityRegistry.m_EntityMap[uuid] = entity;
@@ -294,9 +304,9 @@ namespace Kargono::Scenes
 	{
 		// Resize non-fixed
 		auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::CameraComponent>();
-		for (auto entity : view)
+		for (entt::entity entity : view)
 		{
-			auto& cameraComponent = view.get<ECS::CameraComponent>(entity);
+			ECS::CameraComponent& cameraComponent = view.get<ECS::CameraComponent>(entity);
 			
 			cameraComponent.Camera.OnViewportResize();
 		}
@@ -305,6 +315,7 @@ namespace Kargono::Scenes
 
 	ECS::Entity Scene::GetPrimaryCameraEntity()
 	{
+		// TODO: This is ridiculous
 		auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::CameraComponent>();
 		for (auto entity: view)
 		{
@@ -325,26 +336,22 @@ namespace Kargono::Scenes
 			for (auto entity : view)
 			{
 				const auto& [transform, shape] = view.get<ECS::TransformComponent, ECS::ShapeComponent>(entity);
-
-				static Rendering::RendererInputSpec inputSpec{};
-				inputSpec.Shader = shape.Shader;
-				inputSpec.Buffer = shape.ShaderData;
-				inputSpec.Entity = static_cast<uint32_t>(entity);
-				inputSpec.EntityRegistry = &m_EntityRegistry.m_EnTTRegistry;
-				inputSpec.ShapeComponent = &shape;
-				inputSpec.TransformMatrix = transform.GetTransform();
+				s_InputSpec.m_Shader = shape.Shader;
+				s_InputSpec.m_Buffer = shape.ShaderData;
+				s_InputSpec.m_Entity = static_cast<uint32_t>(entity);
+				s_InputSpec.m_EntityRegistry = &m_EntityRegistry.m_EnTTRegistry;
+				s_InputSpec.m_ShapeComponent = &shape;
+				s_InputSpec.m_TransformMatrix = transform.GetTransform();
 
 				for (const auto& PerObjectSceneFunction : shape.Shader->GetFillDataObjectScene())
 				{
-					PerObjectSceneFunction(inputSpec);
+					PerObjectSceneFunction(s_InputSpec);
 				}
 
-				Rendering::RenderingService::SubmitDataToRenderer(inputSpec);
+				Rendering::RenderingService::SubmitDataToRenderer(s_InputSpec);
 			}
 		}
-
 		Rendering::RenderingService::EndScene();
-
 	}
 	void Scene::OnUpdateEntities(Timestep ts)
 	{
@@ -365,6 +372,18 @@ namespace Kargono::Scenes
 	void SceneService::Init()
 	{
 		Utility::RegisterHasComponent(ECS::AllComponents{});
+	}
+
+	void SceneService::Terminate()
+	{
+		// Custom closing of input spec
+		s_InputSpec.m_Shader = nullptr;
+		s_InputSpec.m_Texture = nullptr;
+		s_InputSpec.m_ShapeComponent = nullptr;
+		s_InputSpec.m_CurrentDrawBuffer = nullptr;
+
+		s_ActiveScene.reset();
+		s_ActiveSceneHandle = Assets::EmptyHandle;
 	}
 	Math::vec3 SceneService::TransformComponentGetTranslation(UUID entityID)
 	{
@@ -394,7 +413,7 @@ namespace Kargono::Scenes
 		ECS::Entity entity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
 		KG_ASSERT(entity.HasComponent<ECS::TagComponent>());
-		auto& tagComponent = entity.GetComponent<ECS::TagComponent>();
+		ECS::TagComponent& tagComponent = entity.GetComponent<ECS::TagComponent>();
 		return tagComponent.Tag;
 	}
 	void SceneService::Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity)
@@ -489,21 +508,11 @@ namespace Kargono::Scenes
 		KG_ASSERT(activeEntity);
 		return Utility::s_EntityHasComponentFunc.at(componentName)(activeEntity);
 	}
-	bool SceneService::IsSceneActive(const std::string& sceneName)
+	bool SceneService::IsSceneActive(UUID sceneID)
 	{
 		KG_ASSERT(s_ActiveScene);
-		if (!Assets::AssetService::GetSceneRegistry().contains(s_ActiveSceneHandle))
-		{
-			KG_WARN("Could not locate active scene in asset manager using current scene handle");
-			return false;
-		}
-
-		Assets::AssetInfo sceneAsset = Assets::AssetService::GetSceneRegistry().at(s_ActiveSceneHandle);
-		if (sceneAsset.Data.FileLocation == sceneName)
-		{
-			return true;
-		}
-		return false;
+		KG_ASSERT(s_ActiveSceneHandle != Assets::EmptyHandle);
+		return sceneID == s_ActiveSceneHandle;
 	}
 	void SceneService::TransitionScene(Assets::AssetHandle newSceneHandle)
 	{
@@ -538,16 +547,24 @@ namespace Kargono::Scenes
 		s_ActiveScene->OnRuntimeStart();
 	}
 
-	void SceneService::TransitionSceneFromName(const std::string& sceneName)
+	void SceneService::TransitionSceneFromHandle(Assets::AssetHandle sceneID)
 	{
-		auto [handle, sceneReference] = Assets::AssetService::GetScene(sceneName);
+		Ref<Scenes::Scene> sceneReference = Assets::AssetService::GetScene(sceneID);
 		if (sceneReference)
 		{
+			Particles::ParticleService::ClearEmitters();
 			TransitionScene(sceneReference);
+
+			s_ActiveSceneHandle = sceneID;
+			Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(sceneID, Events::ManageSceneAction::Open);
+			EngineService::SubmitToEventQueue(event);
+
+			Particles::ParticleService::LoadSceneEmitters(sceneReference);
 		}
-		s_ActiveSceneHandle = handle;
-		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(handle, Events::ManageSceneAction::Open);
-		EngineService::SubmitToEventQueue(event);
+		else
+		{
+			KG_WARN("Attempt to transition scenes, however, new scene reference could not be found!");
+		}
 	}
 
 	void SceneService::SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle)

@@ -43,8 +43,21 @@ namespace Kargono::Input
 		{
 			return m_ScriptHandle;
 		}
+
+		void ClearScript()
+		{
+			m_ScriptHandle = Assets::EmptyHandle;
+			m_Script = nullptr;
+		}
+
 		void SetScript(Ref<Scripting::Script> script, Assets::AssetHandle handle)
 		{
+			if (handle == Assets::EmptyHandle)
+			{
+				ClearScript();
+				return;
+			}
+
 			m_ScriptHandle = handle;
 			m_Script = script;
 		}
@@ -128,7 +141,7 @@ namespace Kargono::Input
 		//=========================
 		static void ClearActiveInputMap();
 		static void SetActiveInputMap(Ref<InputMap> newInput, Assets::AssetHandle newHandle);
-		static void SetActiveInputMapByName(const std::string& inputMap);
+		static void SetActiveInputMapFromHandle(Assets::AssetHandle inputMapHandle);
 		static Ref<InputMap> GetActiveInputMap()
 		{
 			return s_ActiveInputMap;
@@ -141,8 +154,8 @@ namespace Kargono::Input
 		//=========================
 		// Current Input Mode
 		//=========================
-		static Ref<InputMap> s_ActiveInputMap;
-		static Assets::AssetHandle s_ActiveInputMapHandle;
+		static inline Ref<InputMap> s_ActiveInputMap{ nullptr };
+		static inline Assets::AssetHandle s_ActiveInputMapHandle{ Assets::EmptyHandle };
 	};
 }
 

@@ -31,6 +31,20 @@ namespace Kargono::Utility
 			});
 		}
 
+		static std::string_view GetSubstringToCharacter(const std::string& inputString, char queryCharacter)
+		{
+			// Find the position of the first occurrence of queryCharacter
+			size_t position = inputString.find(queryCharacter);
+
+			// If the character is not found, return the entire string
+			if (position == std::string::npos) {
+				return std::string_view(inputString);
+			}
+
+			// Otherwise, return a substring view up to the found position
+			return std::string_view(inputString.data(), position);
+		}
+
 		template <typename T>
 		static T RoundDown(T valueToRound, T multipleOf)
 		{
