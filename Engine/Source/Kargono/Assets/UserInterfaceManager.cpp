@@ -191,6 +191,7 @@ namespace Kargono::Assets
 					SerializeSelectionData(out, sliderWidget->m_SelectionData);
 					// Save slider unique function pointers
 					out << YAML::Key << "OnMoveSlider" << YAML::Value << (uint64_t)sliderWidget->m_OnMoveSliderHandle;
+					// Save other slider options
 					out << YAML::Key << "Bounds" << YAML::Value << sliderWidget->m_Bounds;
 					out << YAML::Key << "SliderColor" << YAML::Value << sliderWidget->m_SliderColor;
 					out << YAML::Key << "LineColor" << YAML::Value << sliderWidget->m_LineColor;
@@ -220,6 +221,9 @@ namespace Kargono::Assets
 
 					// Save drop down color
 					out << YAML::Key << "DropDownBackground" << YAML::Value << dropDownWidget->m_DropDownBackground;
+
+					// Save function pointer
+					out << YAML::Key << "OnSelectOption" << YAML::Value << (uint64_t)dropDownWidget->m_OnSelectOptionHandle;
 
 					out << YAML::EndMap; // End DropDownWidget Map
 					break;
@@ -251,7 +255,7 @@ namespace Kargono::Assets
 		textData.m_TextAlignment = Utility::StringToConstraint(node["TextAlignment"].as<std::string>());
 		textData.m_TextWrapped = node["TextWrapped"].as<bool>();
 	}
-	static void DeserializeSingleLineTextData(RuntimeUI::SingleLineTextData& textData, YAML::Node& node)
+	static void DeserializeSingleLineTextData(RuntimeUI::SingleLineTextData& textData, const YAML::Node& node)
 	{
 		// Text fields
 		textData.m_Text = node["Text"].as<std::string>();
@@ -516,25 +520,33 @@ namespace Kargono::Assets
 							// Get selection data
 							DeserializeSelectionData(dropDownWidget->m_SelectionData, specificWidget);
 
-							// Get slider specific fields
+							// Get drop-down specific fields
 							dropDownWidget->m_DropDownBackground = specificWidget["DropDownBackground"].as<Math::vec4>();
 
-							// Get slider widget specific function pointers
-							/*dropDownWidget->m_OnMoveSliderHandle = specificWidget["OnMoveSlider"].as<uint64_t>();
-							if (dropDownWidget->m_OnMoveSliderHandle == Assets::EmptyHandle)
+							// Get all drop down options
+							YAML::Node dropDownOptionsNode = specificWidget["DropDownOptions"];
+							for (const YAML::Node& optionNode : dropDownOptionsNode)
 							{
-								dropDownWidget->m_OnMoveSlider = nullptr;
+								RuntimeUI::SingleLineTextData& newTextData = dropDownWidget->m_DropDownOptions.emplace_back(RuntimeUI::SingleLineTextData());
+								DeserializeSingleLineTextData(newTextData, optionNode);
+							}
+
+							// Get slider widget specific function pointers
+							dropDownWidget->m_OnSelectOptionHandle = specificWidget["OnSelectOption"].as<uint64_t>();
+							if (dropDownWidget->m_OnSelectOptionHandle == Assets::EmptyHandle)
+							{
+								dropDownWidget->m_OnSelectOption = nullptr;
 							}
 							else
 							{
-								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(dropDownWidget->m_OnMoveSliderHandle);
+								Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(dropDownWidget->m_OnSelectOptionHandle);
 								if (!onPressScript)
 								{
-									KG_WARN("Unable to locate on move slider Script!");
+									KG_WARN("Unable to locate on select option Script!");
 									return nullptr;
 								}
-								dropDownWidget->m_OnMoveSlider = onPressScript;
-							}*/
+								dropDownWidget->m_OnSelectOption = onPressScript;
+							}
 							break;
 						}
 						
@@ -627,6 +639,17 @@ namespace Kargono::Assets
 					{
 						sliderWidget.m_OnMoveSliderHandle = Assets::EmptyHandle;
 						sliderWidget.m_OnMoveSlider = nullptr;
+						uiModified = true;
+					}
+				}
+
+				if (widgetRef->m_WidgetType == RuntimeUI::WidgetTypes::DropDownWidget)
+				{
+					RuntimeUI::DropDownWidget& dropDownWidget = *(RuntimeUI::DropDownWidget*)widgetRef.get();
+					if (dropDownWidget.m_OnSelectOptionHandle == scriptHandle)
+					{
+						dropDownWidget.m_OnSelectOptionHandle = Assets::EmptyHandle;
+						dropDownWidget.m_OnSelectOption = nullptr;
 						uiModified = true;
 					}
 				}

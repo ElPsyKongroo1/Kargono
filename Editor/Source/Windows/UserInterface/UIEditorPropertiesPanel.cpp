@@ -532,6 +532,10 @@ namespace Kargono::Panels
 		}
 	}
 
+	void UIEditorPropertiesPanel::DrawDropDownWidgetOptions()
+	{
+	}
+
 	void UIEditorPropertiesPanel::DrawSpecificWidgetOptions()
 	{
 		switch (m_ActiveWidget->m_WidgetType)
@@ -556,6 +560,9 @@ namespace Kargono::Panels
 			break;
 		case RuntimeUI::WidgetTypes::SliderWidget:
 			DrawSliderWidgetOptions();
+			break;
+		case RuntimeUI::WidgetTypes::DropDownWidget:
+			DrawDropDownWidgetOptions();
 			break;
 		default:
 			KG_ERROR("Invalid widget type attempted to be drawn");
@@ -1344,6 +1351,10 @@ namespace Kargono::Panels
 		m_SliderWidgetOnMoveSlider.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForSliderWidgetOnMoveSlider);
 	}
 
+	void UIEditorPropertiesPanel::InitializeDropDownWidgetOptions()
+	{
+	}
+
 	void UIEditorPropertiesPanel::OnModifyWindowTag(EditorUI::EditTextSpec& spec)
 	{
 		// Ensure active window is valid
@@ -1389,28 +1400,8 @@ namespace Kargono::Panels
 			{
 				continue;
 			}
+			spec.AddToOptions(Utility::WidgetTypeToDisplayString(widget->m_WidgetType), widget->m_Tag, iteration);
 
-			switch (widget->m_WidgetType)
-			{
-			case RuntimeUI::WidgetTypes::ButtonWidget:
-				spec.AddToOptions("Button Widget", widget->m_Tag, iteration);
-				break;
-			case RuntimeUI::WidgetTypes::ImageButtonWidget:
-				spec.AddToOptions("Image Button Widget", widget->m_Tag, iteration);
-				break;
-			case RuntimeUI::WidgetTypes::CheckboxWidget:
-				spec.AddToOptions("Checkbox Widget", widget->m_Tag, iteration);
-				break;
-			case RuntimeUI::WidgetTypes::InputTextWidget:
-				spec.AddToOptions("Input Text Widget", widget->m_Tag, iteration);
-				break;
-			case RuntimeUI::WidgetTypes::SliderWidget:
-				spec.AddToOptions("Slider Widget", widget->m_Tag, iteration);
-				break;
-			default:
-				KG_ERROR("Invalid widge type provided to UIEditorWindow");
-				break;
-			}
 			iteration++;
 		}
 	}

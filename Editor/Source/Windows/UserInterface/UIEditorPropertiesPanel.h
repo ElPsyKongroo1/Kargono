@@ -41,6 +41,7 @@ namespace Kargono::Panels
 		void InitializeCheckboxWidgetOptions();
 		void InitializeInputTextWidgetOptions();
 		void InitializeSliderWidgetOptions();
+		void InitializeDropDownWidgetOptions();
 		void InitializeWidgetLocationOptions();
 
 	public:
@@ -63,6 +64,7 @@ namespace Kargono::Panels
 		void DrawCheckboxWidgetOptions();
 		void DrawInputTextWidgetOptions();
 		void DrawSliderWidgetOptions();
+		void DrawDropDownWidgetOptions();
 		void DrawSpecificWidgetOptions();
 
 		//=========================

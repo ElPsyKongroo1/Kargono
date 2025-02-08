@@ -11,6 +11,39 @@
 #include "Kargono/ECS/EngineComponents.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Math/Interpolation.h"
+#include "Kargono/EditorUI/EditorUI.h"
+
+namespace Kargono::Utility
+{
+	Ref<Rendering::Texture2D> WidgetTypeToIcon(RuntimeUI::WidgetTypes widgetType)
+	{
+		switch (widgetType)
+		{
+		case RuntimeUI::WidgetTypes::TextWidget:
+			return EditorUI::EditorUIService::s_IconTextWidget;
+		case RuntimeUI::WidgetTypes::ButtonWidget:
+			return EditorUI::EditorUIService::s_IconButtonWidget;
+		case RuntimeUI::WidgetTypes::ImageWidget:
+			return EditorUI::EditorUIService::s_IconTexture;
+		case RuntimeUI::WidgetTypes::ImageButtonWidget:
+			return EditorUI::EditorUIService::s_IconImageButtonWidget;
+		case RuntimeUI::WidgetTypes::CheckboxWidget:
+			return EditorUI::EditorUIService::s_IconCheckbox_Enabled;
+		case RuntimeUI::WidgetTypes::InputTextWidget:
+			return EditorUI::EditorUIService::s_IconInputTextWidget;
+		case RuntimeUI::WidgetTypes::DropDownWidget:
+			return EditorUI::EditorUIService::s_IconDropDownWidget;
+		case RuntimeUI::WidgetTypes::SliderWidget:
+			return EditorUI::EditorUIService::s_IconSliderWidget;
+		default:
+			KG_ERROR("Invalid widget type provided");
+			return nullptr;
+		}
+
+		return nullptr;
+	}
+	
+}
 
 namespace Kargono::RuntimeUI
 {
@@ -875,6 +908,12 @@ namespace Kargono::RuntimeUI
 			EngineService::GetActiveWindow().SetMouseCursorIcon(CursorIconType::IBeam);
 		}
 
+		// Do not handle the on move function if the widget is a slider
+		if (newHoveredWidget->m_WidgetType == WidgetTypes::SliderWidget)
+		{
+			return;
+		}
+
 		// Call the on move function if applicable
 		if (activeUI->m_FunctionPointers.m_OnHover)
 		{
@@ -983,7 +1022,7 @@ namespace Kargono::RuntimeUI
 		}
 		else if (currentWidget->m_WidgetType == WidgetTypes::InputTextWidget)
 		{
-			// Handle all other cases
+			// Handle the input text widget
 			if (selectionData->m_FunctionPointers.m_OnPress)
 			{
 				Utility::CallWrappedVoidNone(selectionData->m_FunctionPointers.m_OnPress->m_Function);
@@ -1216,6 +1255,8 @@ namespace Kargono::RuntimeUI
 			return &((InputTextWidget*)currentWidget)->m_SelectionData;
 		case WidgetTypes::SliderWidget:
 			return &((SliderWidget*)currentWidget)->m_SelectionData;
+		case WidgetTypes::DropDownWidget:
+			return &((DropDownWidget*)currentWidget)->m_SelectionData;
 		default:
 			return nullptr;
 		}
@@ -1256,6 +1297,8 @@ namespace Kargono::RuntimeUI
 			return &((ButtonWidget*)currentWidget)->m_TextData;
 		case WidgetTypes::InputTextWidget:
 			return &((InputTextWidget*)currentWidget)->m_TextData;
+		case WidgetTypes::DropDownWidget:
+			return &((DropDownWidget*)currentWidget)->m_DropDownOptions.at(((DropDownWidget*)currentWidget)->m_CurrentOption);
 		default:
 			return nullptr;
 		}
@@ -1886,6 +1929,7 @@ namespace Kargono::RuntimeUI
 		case WidgetTypes::ImageButtonWidget:
 		case WidgetTypes::CheckboxWidget:
 		case WidgetTypes::SliderWidget:
+		case WidgetTypes::DropDownWidget:
 			break;
 		default:
 			KG_ERROR("Invalid widget type provided when revalidating widget text size");

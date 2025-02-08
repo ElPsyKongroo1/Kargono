@@ -3,7 +3,6 @@
 #include "Kargono/Math/Interpolation.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Timestep.h"
-#include "Kargono/Utility/Traits.h"
 #include "Kargono/Events/Event.h"
 #include "Kargono/Assets/Asset.h"
 
