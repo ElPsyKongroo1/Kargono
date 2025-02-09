@@ -70,7 +70,7 @@ namespace Kargono::Windows
 		m_ImportNewAssetName.m_CurrentOption = "NewAsset";
 
 		m_ImportNewFileLocation.m_Label = "Destination Folder:";
-		m_ImportNewFileLocation.m_ConfirmAction = [&](const std::string& path)
+		m_ImportNewFileLocation.m_ConfirmAction = [&](std::string_view path)
 			{
 				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
 				{
@@ -556,10 +556,10 @@ namespace Kargono::Windows
 		NewSceneDialog(Projects::ProjectService::GetActiveAssetDirectory());
 	}
 
-	bool MainWindow::NewScene(const std::string& sceneName)
+	bool MainWindow::NewScene(std::string_view sceneName)
 	{
 		// Ensure scene does not already exist
-		std::filesystem::path filepath = Projects::ProjectService::GetActiveAssetDirectory() / ("Scenes/" + sceneName + ".kgscene");
+		std::filesystem::path filepath = Projects::ProjectService::GetActiveAssetDirectory() / ("Scenes/" + std::string(sceneName) + ".kgscene");
 		if (Assets::AssetService::HasScene(filepath.stem().string()))
 		{
 			KG_WARN("Attempt to create scene with duplicate name!");
@@ -896,7 +896,7 @@ namespace Kargono::Windows
 
 		// Open Popup and change title
 		m_ImportAssetPopup.m_OpenPopup = true;
-		m_ImportAssetPopup.m_Label = "Import " + Utility::AssetTypeToString(assetType);
+		m_ImportAssetPopup.m_Label = std::string("Import ") + Utility::AssetTypeToString(assetType);
 	}
 
 	bool MainWindow::OnApplicationEvent(Events::Event* event)

@@ -7,7 +7,7 @@
 
 namespace Kargono::Assets
 {
-	void GameStateManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
+	void GameStateManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary GameState
 		Ref<Scenes::GameState> temporaryGameState = CreateRef<Scenes::GameState>();

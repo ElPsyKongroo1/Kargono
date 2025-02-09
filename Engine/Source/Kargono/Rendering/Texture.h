@@ -66,16 +66,20 @@ namespace Kargono::Utility
 	{
 		switch (format)
 		{
-		case Rendering::ImageFormat::R8:		{ return 1;}
-		case Rendering::ImageFormat::RGB8:		{ return 3;}
-		case Rendering::ImageFormat::RGBA8:	{ return 4;}
-		case Rendering::ImageFormat::RGBA32F:	{ return 16;}
-		case Rendering::ImageFormat::None:		{ return 1; }
+		case Rendering::ImageFormat::R8:
+			return 1;
+		case Rendering::ImageFormat::RGB8:
+			return 3;
+		case Rendering::ImageFormat::RGBA8:
+			return 4;
+		case Rendering::ImageFormat::RGBA32F: 
+			return 16;
+		case Rendering::ImageFormat::None:
+			return 1;
 		default:
-			{
-				KG_ERROR("Invalid ImageFormat submitted to ImageFormatToSize");
-				return 0;
-			}
+			KG_ERROR("Invalid ImageFormat submitted to ImageFormatToSize");
+			return 0;
+			
 		}
 	}
 }

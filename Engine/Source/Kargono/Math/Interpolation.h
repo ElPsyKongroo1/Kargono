@@ -365,7 +365,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	inline Math::InterpolationType StringToInterpolationType(const std::string& str)
+	inline Math::InterpolationType StringToInterpolationType(std::string_view str)
 	{
 		if (str == "None") return Math::InterpolationType::None;
 		else if (str == "Linear") return Math::InterpolationType::Linear;

@@ -342,7 +342,7 @@ namespace Kargono::Utility
 	}
 
 	// These are simply here to help with serialization for the rigid body components in an entity
-	inline std::string RigidBody2DBodyTypeToString(ECS::Rigidbody2DComponent::BodyType bodyType)
+	inline const char* RigidBody2DBodyTypeToString(ECS::Rigidbody2DComponent::BodyType bodyType)
 	{
 		switch (bodyType)
 		{
@@ -355,7 +355,7 @@ namespace Kargono::Utility
 			return {};
 	}
 
-	inline ECS::Rigidbody2DComponent::BodyType StringToRigidBody2DBodyType(const std::string& bodyTypeString)
+	inline ECS::Rigidbody2DComponent::BodyType StringToRigidBody2DBodyType(std::string_view bodyTypeString)
 	{
 		if (bodyTypeString == "Static") return ECS::Rigidbody2DComponent::BodyType::Static;
 		if (bodyTypeString == "Dynamic") return ECS::Rigidbody2DComponent::BodyType::Dynamic;

@@ -10,7 +10,7 @@
 namespace Kargono::Utility
 {
 
-	static void SerializeWrappedVarType(YAML::Emitter& out, WrappedVarType type, const std::string& name, void* dataSource)
+	static void SerializeWrappedVarType(YAML::Emitter& out, WrappedVarType type, const char* name, void* dataSource)
 	{
 		switch (type)
 		{
@@ -47,7 +47,7 @@ namespace Kargono::Utility
 		return;
 	}
 
-	static void DeserializeWrappedVarType(YAML::Node& componentNode, WrappedVarType type, const std::string& name, void* destination)
+	static void DeserializeWrappedVarType(YAML::Node& componentNode, WrappedVarType type, const char* name, void* destination)
 	{
 		switch (type)
 		{
@@ -279,7 +279,7 @@ namespace Kargono::Utility
 			{
 				SerializeWrappedVarType(out, 
 					projectComponent->m_DataTypes.at(iteration), 
-					projectComponent->m_DataNames.at(iteration), 
+					projectComponent->m_DataNames.at(iteration).c_str(),
 					componentRef + projectComponent->m_DataLocations.at(iteration));
 			}
 			out << YAML::EndMap; // Component Map
@@ -293,7 +293,7 @@ namespace Kargono::Utility
 
 namespace Kargono::Assets
 {
-	void Assets::SceneManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
+	void Assets::SceneManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary Scene
 		Ref<Scenes::Scene> temporaryScene = CreateRef<Scenes::Scene>();
@@ -596,7 +596,7 @@ namespace Kargono::Assets
 					{
 						Utility::DeserializeWrappedVarType(projectComponentNode,
 							projectComponent->m_DataTypes.at(iteration),
-							projectComponent->m_DataNames.at(iteration),
+							projectComponent->m_DataNames.at(iteration).c_str(),
 							componentRef + projectComponent->m_DataLocations.at(iteration));
 					}
 				}

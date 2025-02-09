@@ -1493,7 +1493,7 @@ namespace Kargono::Utility
 	//==============================
 	// ImVec4 -> Math::vec4
 	//==============================
-	static Math::vec4 ImVec4ToMathVec4(const ImVec4& color )
+	inline Math::vec4 ImVec4ToMathVec4(const ImVec4& color )
 	{
 		return { color.x, color.y, color.z, color.w };
 	}
@@ -1501,7 +1501,7 @@ namespace Kargono::Utility
 	//==============================
 	// Math::vec4 -> ImVec4
 	//==============================
-	static ImVec4 MathVec4ToImVec4(const Math::vec4& color)
+	inline ImVec4 MathVec4ToImVec4(const Math::vec4& color)
 	{
 		return { color.x, color.y, color.z, color.w };
 	}

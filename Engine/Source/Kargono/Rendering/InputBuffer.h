@@ -16,7 +16,7 @@ namespace Kargono::Rendering
 
 namespace Kargono::Utility
 {
-	static uint32_t ShaderDataTypeSize(Rendering::InputDataType type)
+	inline uint32_t ShaderDataTypeSize(Rendering::InputDataType type)
 	{
 		switch (type)
 		{
@@ -36,7 +36,7 @@ namespace Kargono::Utility
 		return 0;
 	}
 
-	static Rendering::InputDataType StringToInputDataType(std::string_view type)
+	inline Rendering::InputDataType StringToInputDataType(std::string_view type)
 	{
 		if (type == "int") { return Rendering::InputDataType::Int; }
 		if (type == "float") { return Rendering::InputDataType::Float; }
@@ -51,7 +51,7 @@ namespace Kargono::Utility
 		return Rendering::InputDataType::None;
 	}
 
-	static std::string InputDataTypeToString(Rendering::InputDataType type)
+	inline const char* InputDataTypeToString(Rendering::InputDataType type)
 	{
 		switch (type)
 		{

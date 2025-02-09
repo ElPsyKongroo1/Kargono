@@ -25,7 +25,7 @@ namespace Kargono::Assets
 	public:
 
 		// Class specific functions
-		virtual void CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
+		virtual void CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAsset(Ref<Scenes::Scene> assetReference, const std::filesystem::path& assetPath) override;
 		virtual Ref<Scenes::Scene> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
 

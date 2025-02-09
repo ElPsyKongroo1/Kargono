@@ -29,7 +29,7 @@ namespace Kargono::Rendering
 	{
 			KG_ASSERT(path.is_absolute(), "Path provided to texture create function is not an absolute path!")
 #ifdef KG_RENDERER_OPENGL
-			return CreateRef<API::RenderingAPI::OpenGLTexture2D>(path.string());
+			return CreateRef<API::RenderingAPI::OpenGLTexture2D>(path.string().c_str());
 #endif
 	}
 }

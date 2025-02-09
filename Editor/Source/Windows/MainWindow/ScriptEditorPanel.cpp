@@ -445,9 +445,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			for (const std::string& label : Assets::AssetService::GetScriptSectionLabels())
+			for (std::string_view label : Assets::AssetService::GetScriptSectionLabels())
 			{
-				spec.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
+				spec.AddToOptions("All Project Groups", std::string(label), Assets::EmptyHandle);
 			}
 
 		};

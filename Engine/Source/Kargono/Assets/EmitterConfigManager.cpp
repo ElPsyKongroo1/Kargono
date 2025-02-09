@@ -8,7 +8,7 @@
 
 namespace Kargono::Assets
 {
-	void EmitterConfigManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
+	void EmitterConfigManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary EmitterConfig
 		Ref<Particles::EmitterConfig> temporaryEmitterConfig = CreateRef<Particles::EmitterConfig>();

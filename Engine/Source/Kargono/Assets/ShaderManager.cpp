@@ -11,7 +11,7 @@
 
 namespace Kargono::Utility
 {
-	static GLenum ShaderTypeFromString(const std::string& type)
+	static GLenum ShaderTypeFromString(std::string_view type)
 	{
 		if (type == "vertex")
 			return GL_VERTEX_SHADER;
@@ -22,7 +22,7 @@ namespace Kargono::Utility
 		return 0;
 	}
 
-	static std::string ShaderTypeToString(GLenum stage)
+	static const char* ShaderTypeToString(GLenum stage)
 	{
 		switch (stage)
 		{
@@ -55,7 +55,7 @@ namespace Kargono::Utility
 		return "";
 	}
 
-	static std::unordered_map<GLenum, std::string> PreProcess(const std::string& source)
+	static std::unordered_map<GLenum, std::string> PreProcess(std::string_view source)
 	{
 		std::unordered_map<GLenum, std::string> shaderSources;
 
@@ -67,7 +67,7 @@ namespace Kargono::Utility
 			size_t eol = source.find_first_of("\r\n", pos); //End of shader type declaration line
 			KG_ASSERT(eol != std::string::npos, "Syntax error");
 			size_t begin = pos + typeTokenLength + 1; //Start of shader type name (after "#type " keyword)
-			std::string type = source.substr(begin, eol - begin);
+			std::string_view type = source.substr(begin, eol - begin);
 			KG_ASSERT(Utility::ShaderTypeFromString(type), "Invalid shader type specified");
 
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol); //Start of shader code after shader type declaration line

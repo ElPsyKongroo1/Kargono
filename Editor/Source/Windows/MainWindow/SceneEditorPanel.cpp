@@ -2046,7 +2046,7 @@ namespace Kargono::Panels
 			static EditorUI::EditIntegerSpec newIntegerSpec;
 
 			WrappedVarType currentType = component->m_DataTypes.at(iteration);
-			const std::string& currentName = component->m_DataNames.at(iteration);
+			std::string_view currentName = component->m_DataNames.at(iteration);
 
 			switch (currentType)
 			{

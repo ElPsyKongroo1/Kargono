@@ -112,7 +112,7 @@ namespace Kargono::Scripting
 namespace Kargono::Utility
 {
 
-	inline std::string ScriptTokenTypeToString(Scripting::ScriptTokenType type)
+	inline const char* ScriptTokenTypeToString(Scripting::ScriptTokenType type)
 	{
 		switch (type)
 		{
@@ -166,7 +166,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	inline std::string ParseErrorTypeToString(Scripting::ParseErrorType type)
+	inline const char* ParseErrorTypeToString(Scripting::ParseErrorType type)
 	{
 		switch (type)
 		{
@@ -412,7 +412,7 @@ namespace Kargono::Scripting
 
 namespace Kargono::Utility
 {
-	inline std::string ConditionalTypeToString(Scripting::ConditionalType type)
+	inline const char* ConditionalTypeToString(Scripting::ConditionalType type)
 	{
 		switch (type)
 		{
@@ -521,7 +521,7 @@ namespace Kargono::Scripting
 		}
 	};
 
-	inline std::string ContextProbe {"CONTEXT_PROBE_INTERNAL"};
+	inline const char* ContextProbe {"CONTEXT_PROBE_INTERNAL"};
 
 	enum class CursorFlags : uint8_t
 	{

@@ -26,7 +26,7 @@ namespace Kargono::Assets
 		//============================
 		// Parent Class Overrides
 		//============================
-		virtual void CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
+		virtual void CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAsset(Ref<RuntimeUI::UserInterface> assetReference, const std::filesystem::path& assetPath) override;
 		virtual Ref<RuntimeUI::UserInterface> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
 

@@ -128,7 +128,7 @@ namespace Kargono::Assets
 		}
 
 		// TODO: Redo this API, I hate it
-		bool HasAsset(const std::string& assetName)
+		bool HasAsset(std::string_view assetName)
 		{
 			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileLocation), 
 				"Attempt to query the state of an asset using an asset name when asset type does not support using a file location.");
@@ -729,7 +729,7 @@ namespace Kargono::Assets
 			KG_ERROR("Attempt to serialize an asset that does not override the base class's implentation of SerializeAsset()");
 		};
 
-		virtual void CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
+		virtual void CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 		{
 			KG_ERROR("Attempt to create an asset from a name that does not override the base class's implmentation of CreateAssetFileFromName()");
 		}

@@ -43,7 +43,7 @@ namespace Kargono::Assets
 	public:
 		// Class specific functions
 		virtual Ref<void> SaveAssetValidation(Ref<ECS::ProjectComponent> newAsset, AssetHandle assetHandle) override;
-		virtual void CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
+		virtual void CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAsset(Ref<ECS::ProjectComponent> assetReference, const std::filesystem::path& assetPath) override;
 		virtual Ref<ECS::ProjectComponent> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset) override;

@@ -31,7 +31,7 @@ namespace Kargono::Mouse
 
 namespace Kargono::Utility
 {
-	inline std::string MouseCodeToString(MouseCode mouseCode)
+	inline const char* MouseCodeToString(MouseCode mouseCode)
 	{
 		switch (mouseCode)
 		{

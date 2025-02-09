@@ -110,14 +110,14 @@ namespace Kargono::Rendering
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
-		virtual void SetMat3Uniform(const std::string& name, const Math::mat3& value) = 0;
-		virtual void SetMat4Uniform(const std::string& name, const Math::mat4& value) = 0;
-		virtual void SetFloatUniform(const std::string& name, float value) = 0;
-		virtual void SetFloat2Uniform(const std::string& name, const Math::vec2& value) = 0;
-		virtual void SetFloat3Uniform(const std::string& name, const Math::vec3& value) = 0;
-		virtual void SetFloat4Uniform(const std::string& name, const Math::vec4& value) = 0;
-		virtual void SetIntUniform(const std::string& name, int value) = 0;
-		virtual void SetIntArrayUniform(const std::string& name, int* values, uint32_t count) = 0;
+		virtual void SetMat3Uniform(const char* name, const Math::mat3& value) = 0;
+		virtual void SetMat4Uniform(const char* name, const Math::mat4& value) = 0;
+		virtual void SetFloatUniform(const char* name, float value) = 0;
+		virtual void SetFloat2Uniform(const char* name, const Math::vec2& value) = 0;
+		virtual void SetFloat3Uniform(const char* name, const Math::vec3& value) = 0;
+		virtual void SetFloat4Uniform(const char* name, const Math::vec4& value) = 0;
+		virtual void SetIntUniform(const char* name, int value) = 0;
+		virtual void SetIntArrayUniform(const char* name, int* values, uint32_t count) = 0;
 	public:
 		static Ref<Shader> Create(const std::string& name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries);
 	public:
@@ -182,7 +182,7 @@ namespace Kargono::Rendering
 
 namespace Kargono::Utility
 {
-	static std::string ColorInputTypeToString(Rendering::ColorInputType colorInput)
+	inline const char* ColorInputTypeToString(Rendering::ColorInputType colorInput)
 	{
 		switch (colorInput)
 		{
@@ -194,7 +194,7 @@ namespace Kargono::Utility
 		return "None";
 	}
 
-	static Rendering::ColorInputType StringToColorInputType(std::string_view string)
+	inline Rendering::ColorInputType StringToColorInputType(std::string_view string)
 	{
 		if (string == "None") { return Rendering::ColorInputType::None; }
 		if (string == "FlatColor") { return Rendering::ColorInputType::FlatColor; }
@@ -204,7 +204,7 @@ namespace Kargono::Utility
 		return Rendering::ColorInputType::None;
 	}
 
-	static std::string TextureInputTypeToString(Rendering::TextureInputType textureInput)
+	inline const char* TextureInputTypeToString(Rendering::TextureInputType textureInput)
 	{
 		switch (textureInput)
 		{
@@ -216,7 +216,7 @@ namespace Kargono::Utility
 		return "None";
 	}
 
-	static Rendering::TextureInputType StringToTextureInputType(std::string_view string)
+	inline Rendering::TextureInputType StringToTextureInputType(std::string_view string)
 	{
 		if (string == "None") { return Rendering::TextureInputType::None; }
 		if (string == "ColorTexture") { return Rendering::TextureInputType::ColorTexture; }

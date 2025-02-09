@@ -87,7 +87,7 @@ namespace Kargono::Rendering
 
 namespace Kargono::Utility
 {
-	static uint32_t UniformDataTypeSize(Rendering::UniformDataType type)
+	inline uint32_t UniformDataTypeSize(Rendering::UniformDataType type)
 	{
 		switch (type)
 		{
@@ -108,7 +108,7 @@ namespace Kargono::Utility
 		return 0;
 	}
 
-	static Rendering::UniformDataType StringToUniformDataType(std::string_view type)
+	inline Rendering::UniformDataType StringToUniformDataType(std::string_view type)
 	{
 		if (type == "int") { return Rendering::UniformDataType::Int; }
 		if (type == "float") { return Rendering::UniformDataType::Float; }
@@ -124,7 +124,7 @@ namespace Kargono::Utility
 		return Rendering::UniformDataType::None;
 	}
 
-	static std::string UniformDataTypeToString(Rendering::UniformDataType type)
+	inline const char* UniformDataTypeToString(Rendering::UniformDataType type)
 	{
 		switch (type)
 		{

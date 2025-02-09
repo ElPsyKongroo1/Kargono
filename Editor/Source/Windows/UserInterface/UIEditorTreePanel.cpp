@@ -257,7 +257,7 @@ namespace Kargono::Panels
 		// Initialize widget for selecting user interface location
 		m_SelectUILocationSpec.m_Label = "Location";
 		m_SelectUILocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
-		m_SelectUILocationSpec.m_ConfirmAction = [&](const std::string& path)
+		m_SelectUILocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
 			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
 			{
@@ -514,47 +514,47 @@ namespace Kargono::Panels
 		windowEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWindow);
 		windowEntry.m_OnRightClickSelection.push_back
 		({
-			"Add " + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::TextWidget),
+			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::TextWidget),
 			KG_BIND_CLASS_FN(AddTextWidget)
 			});
 		windowEntry.m_OnRightClickSelection.push_back
 		({
-			"Add " + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ButtonWidget),
+			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ButtonWidget),
 			KG_BIND_CLASS_FN(AddButtonWidget)
 			});
 		windowEntry.m_OnRightClickSelection.push_back
 		({
-			"Add " + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ImageWidget),
+			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ImageWidget),
 			KG_BIND_CLASS_FN(AddImageWidget)
 			});
 		windowEntry.m_OnRightClickSelection.push_back
 		({
-			"Add " + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ImageButtonWidget),
+			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ImageButtonWidget),
 			KG_BIND_CLASS_FN(AddImageButtonWidget)
 			});
 		windowEntry.m_OnRightClickSelection.push_back
 		({
-			"Add " + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ImageButtonWidget),
+			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ImageButtonWidget),
 			KG_BIND_CLASS_FN(AddImageButtonWidget)
 			});
 		windowEntry.m_OnRightClickSelection.push_back
 		({
-			"Add " + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::CheckboxWidget),
+			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::CheckboxWidget),
 			KG_BIND_CLASS_FN(AddCheckboxWidget)
 			});
 		windowEntry.m_OnRightClickSelection.push_back
 		({
-			"Add " + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::InputTextWidget),
+			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::InputTextWidget),
 			KG_BIND_CLASS_FN(AddInputTextWidget)
 			});
 		windowEntry.m_OnRightClickSelection.push_back
 		({
-			"Add " + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::SliderWidget),
+			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::SliderWidget),
 			KG_BIND_CLASS_FN(AddSliderWidget)
 			});
 		windowEntry.m_OnRightClickSelection.push_back
 		({
-			"Add " + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::DropDownWidget),
+			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::DropDownWidget),
 			KG_BIND_CLASS_FN(AddDropDownWidget)
 			});
 		windowEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });

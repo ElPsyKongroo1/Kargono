@@ -165,7 +165,7 @@ namespace Kargono::Utility
 	//==============================
 	// InputMap::InputActionTypes <-> String Conversions
 	//==============================
-	inline std::string InputActionTypeToString(Input::InputActionTypes type)
+	inline const char* InputActionTypeToString(Input::InputActionTypes type)
 	{
 		switch (type)
 		{
@@ -176,7 +176,7 @@ namespace Kargono::Utility
 		return "";
 	}
 
-	inline Input::InputActionTypes StringToInputActionType(std::string type)
+	inline Input::InputActionTypes StringToInputActionType(std::string_view type)
 	{
 		if (type == "KeyboardAction") { return Input::InputActionTypes::KeyboardAction; }
 		if (type == "None") { return Input::InputActionTypes::None; }

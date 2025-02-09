@@ -807,7 +807,7 @@ namespace Kargono::RuntimeUI
 
 namespace Kargono::Utility
 {
-	static inline std::string WidgetTypeToString(RuntimeUI::WidgetTypes widgetType)
+	inline const char* WidgetTypeToString(RuntimeUI::WidgetTypes widgetType)
 	{
 		switch (widgetType)
 		{
@@ -829,7 +829,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	static inline std::string WidgetTypeToDisplayString(RuntimeUI::WidgetTypes widgetType)
+	inline const char* WidgetTypeToDisplayString(RuntimeUI::WidgetTypes widgetType)
 	{
 		switch (widgetType)
 		{
@@ -853,7 +853,7 @@ namespace Kargono::Utility
 
 	Ref<Rendering::Texture2D> WidgetTypeToIcon(RuntimeUI::WidgetTypes widgetType);
 
-	static inline RuntimeUI::WidgetTypes StringToWidgetType(const std::string& widgetName)
+	inline RuntimeUI::WidgetTypes StringToWidgetType(std::string_view widgetName)
 	{
 		if (widgetName == "TextWidget") { return RuntimeUI::WidgetTypes::TextWidget; }
 		if (widgetName == "ButtonWidget") { return RuntimeUI::WidgetTypes::ButtonWidget; }
@@ -870,7 +870,7 @@ namespace Kargono::Utility
 		return RuntimeUI::WidgetTypes::None;
 	}
 
-	static inline std::string PixelOrPercentToString(RuntimeUI::PixelOrPercent type)
+	inline const char* PixelOrPercentToString(RuntimeUI::PixelOrPercent type)
 	{
 		switch (type)
 		{
@@ -884,7 +884,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	static inline RuntimeUI::PixelOrPercent StringToPixelOrPercent(const std::string& type)
+	inline RuntimeUI::PixelOrPercent StringToPixelOrPercent(std::string_view type)
 	{
 		if (type == "Pixel") { return RuntimeUI::PixelOrPercent::Pixel; }
 		if (type == "Percent") { return RuntimeUI::PixelOrPercent::Percent; }
@@ -893,7 +893,7 @@ namespace Kargono::Utility
 		return RuntimeUI::PixelOrPercent::Pixel;
 	}
 
-	static inline std::string RelativeOrAbsoluteToString(RuntimeUI::RelativeOrAbsolute type)
+	inline const char* RelativeOrAbsoluteToString(RuntimeUI::RelativeOrAbsolute type)
 	{
 		switch (type)
 		{
@@ -907,7 +907,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	static inline RuntimeUI::RelativeOrAbsolute StringToRelativeOrAbsolute(const std::string& type)
+	inline RuntimeUI::RelativeOrAbsolute StringToRelativeOrAbsolute(std::string_view type)
 	{
 		if (type == "Relative") { return RuntimeUI::RelativeOrAbsolute::Relative; }
 		if (type == "Absolute") { return RuntimeUI::RelativeOrAbsolute::Absolute; }
@@ -916,7 +916,7 @@ namespace Kargono::Utility
 		return RuntimeUI::RelativeOrAbsolute::Absolute;
 	}
 
-	static inline std::string ConstraintToString(RuntimeUI::Constraint type)
+	inline const char* ConstraintToString(RuntimeUI::Constraint type)
 	{
 		switch (type)
 		{
@@ -934,7 +934,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	static inline RuntimeUI::Constraint StringToConstraint(const std::string& type)
+	inline RuntimeUI::Constraint StringToConstraint(std::string_view type)
 	{
 		if (type == "None") { return RuntimeUI::Constraint::None; }
 		if (type == "Top") { return RuntimeUI::Constraint::Top; }

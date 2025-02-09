@@ -70,18 +70,27 @@ namespace Kargono::Utility
 {
 	inline std::string ScriptToString(Ref<Scripting::Script> script)
 	{
-		return Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel + "::" + script->m_ScriptName;
+		std::string returnString = Utility::ScriptTypeToString(script->m_ScriptType);
+		returnString.append("::");
+		returnString.append(script->m_SectionLabel);
+		returnString.append("::");
+		returnString.append(script->m_ScriptName);
+		return returnString;
 	}
+
 
 	inline std::string ScriptToEditorUIGroup(Ref<Scripting::Script> script)
 	{
-		return Utility::ScriptTypeToString(script->m_ScriptType) + "::" + script->m_SectionLabel;
+		std::string returnString = Utility::ScriptTypeToString(script->m_ScriptType);
+		returnString.append("::");
+		returnString.append(script->m_SectionLabel);
+		return returnString;
 	}
 
 	//==============================
 	// Utility for Creating Function Definition/Signatures
 	//==============================
-	inline std::string GenerateFunctionSignature(WrappedFuncType funcType, const std::string& name, const Scripting::ExplicitFuncType& explicitType)
+	inline std::string GenerateFunctionSignature(WrappedFuncType funcType, std::string_view name, const Scripting::ExplicitFuncType& explicitType)
 	{
 		// Initialize return type and parameter list depending on provided types
 		WrappedVarType returnType;
@@ -134,7 +143,7 @@ namespace Kargono::Utility
 	}
 	
 
-	inline std::string GenerateFunctionStub(WrappedFuncType funcType, const std::string& name, const Scripting::ExplicitFuncType& explicitType)
+	inline std::string GenerateFunctionStub(WrappedFuncType funcType, std::string_view name, const Scripting::ExplicitFuncType& explicitType)
 	{
 		std::stringstream outputStream {};
 		outputStream << GenerateFunctionSignature(funcType, name, explicitType);

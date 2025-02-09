@@ -178,7 +178,7 @@ namespace Kargono::Utility
 	// These functions help convert the screen resolution and aspect ratio enum into a string
 	//		to serialization purposes.
 
-	inline std::string ScreenResolutionToString(ScreenResolution option)
+	inline const char* ScreenResolutionToString(ScreenResolution option)
 	{
 
 		switch (option)
@@ -287,7 +287,7 @@ namespace Kargono::Utility
 		return "None";
 	}
 
-	inline ScreenResolution StringToScreenResolution(const std::string& optionStr)
+	inline ScreenResolution StringToScreenResolution(std::string_view optionStr)
 	{
 
 		// 1x1 resolutions
@@ -393,7 +393,7 @@ namespace Kargono::Utility
 		return ScreenResolution::None;
 	}
 
-	inline std::string ScreenResolutionToCategoryTitle(ScreenResolution option)
+	inline const char* ScreenResolutionToCategoryTitle(ScreenResolution option)
 	{
 		switch (option)
 		{

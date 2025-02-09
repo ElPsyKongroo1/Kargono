@@ -96,7 +96,7 @@ namespace Kargono::Panels
 
 		m_SelectProjectComponentLocationSpec.m_Label = "Location";
 		m_SelectProjectComponentLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
-		m_SelectProjectComponentLocationSpec.m_ConfirmAction = [&](const std::string& path)
+		m_SelectProjectComponentLocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
 			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
 			{

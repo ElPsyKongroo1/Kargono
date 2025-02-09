@@ -120,7 +120,7 @@ namespace Kargono::Particles
 
 namespace Kargono::Utility
 {
-	inline std::string EmitterMotionTypeToString(Particles::EmitterMotionType motionType)
+	inline const char* EmitterMotionTypeToString(Particles::EmitterMotionType motionType)
 	{
 		switch (motionType)
 		{
@@ -133,7 +133,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	inline Particles::EmitterMotionType StringToEmitterMotionType(const std::string& str)
+	inline Particles::EmitterMotionType StringToEmitterMotionType(std::string_view str)
 	{
 		if (str == "None") return Particles::EmitterMotionType::None;
 		if (str == "NoMotion") return Particles::EmitterMotionType::NoMotion;
@@ -142,7 +142,7 @@ namespace Kargono::Utility
 		return Particles::EmitterMotionType::None;
 	}
 
-	inline std::string EmitterLifecycleToString(Particles::EmitterLifecycle lifecycle)
+	inline const char* EmitterLifecycleToString(Particles::EmitterLifecycle lifecycle)
 	{
 		switch (lifecycle)
 		{
@@ -155,7 +155,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	inline Particles::EmitterLifecycle StringToEmitterLifecycle(const std::string& str)
+	inline Particles::EmitterLifecycle StringToEmitterLifecycle(std::string_view str)
 	{
 		if (str == "None") return Particles::EmitterLifecycle::None;
 		if (str == "Immortal") return Particles::EmitterLifecycle::Immortal;

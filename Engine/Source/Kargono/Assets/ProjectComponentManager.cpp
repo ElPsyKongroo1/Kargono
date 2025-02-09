@@ -62,7 +62,7 @@ namespace Kargono::Assets
 
 		return newReallocationInstructions;
 	}
-	void ProjectComponentManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
+	void ProjectComponentManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		// Create new project component
 		Ref<ECS::ProjectComponent> newProjectComponent = CreateRef<ECS::ProjectComponent>();

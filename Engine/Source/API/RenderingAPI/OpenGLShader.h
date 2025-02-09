@@ -23,7 +23,7 @@ namespace API::RenderingAPI
 		//==============================
 		// This constructor simply calls CreateProgram since most of the source code processing is done in the
 		//		AssetManager. The CreateProgram call instantiates the shader program in OpenGL.
-		OpenGLShader(const std::string& name, const std::unordered_map<Kargono::Rendering::GLenum, std::vector<uint32_t>>& shaderBinaries);
+		OpenGLShader(std::string_view name, const std::unordered_map<Kargono::Rendering::GLenum, std::vector<uint32_t>>& shaderBinaries);
 		// This destructor simply deletes the shader program in OpenGL
 		virtual ~OpenGLShader();
 
@@ -44,14 +44,14 @@ namespace API::RenderingAPI
 		//		Ex. Using the SetFloatUniform with name(position) and value(0.22f) will set the uniform
 		//		position inside the current shader program to 0.22f. All subsequent uses of this shader
 		//		will have that uniform set.
-		virtual void SetIntUniform(const std::string& name, int value) override;
-		virtual void SetIntArrayUniform(const std::string& name, int* values, uint32_t count) override;
-		virtual void SetFloatUniform(const std::string& name, float value) override;
-		virtual void SetFloat2Uniform(const std::string& name, const Kargono::Math::vec2& value) override;
-		virtual void SetFloat3Uniform(const std::string& name, const Kargono::Math::vec3& value) override;
-		virtual void SetFloat4Uniform(const std::string& name, const Kargono::Math::vec4& value) override;
-		virtual void SetMat3Uniform(const std::string& name, const Kargono::Math::mat3& value) override;
-		virtual void SetMat4Uniform(const std::string& name, const Kargono::Math::mat4& value) override;
+		virtual void SetIntUniform(const char* name, int value) override;
+		virtual void SetIntArrayUniform(const char* name, int* values, uint32_t count) override;
+		virtual void SetFloatUniform(const char* name, float value) override;
+		virtual void SetFloat2Uniform(const char* name, const Kargono::Math::vec2& value) override;
+		virtual void SetFloat3Uniform(const char* name, const Kargono::Math::vec3& value) override;
+		virtual void SetFloat4Uniform(const char* name, const Kargono::Math::vec4& value) override;
+		virtual void SetMat3Uniform(const char* name, const Kargono::Math::mat3& value) override;
+		virtual void SetMat4Uniform(const char* name, const Kargono::Math::mat4& value) override;
 	private:
 		//==============================
 		// Internal Functionality

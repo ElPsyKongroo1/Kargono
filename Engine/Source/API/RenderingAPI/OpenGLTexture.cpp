@@ -63,14 +63,14 @@ namespace API::RenderingAPI
 	{
 		
 	}
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
+	OpenGLTexture2D::OpenGLTexture2D(const char* path)
 	{
 		// Load texture into byte buffer
 		int32_t width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
 		stbi_uc* data = nullptr;
 		{
-			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+			data = stbi_load(path, &width, &height, &channels, 0);
 		}
 
 		// Find internal format of texture

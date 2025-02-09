@@ -288,7 +288,7 @@ namespace Kargono::Panels
 
 		m_SelectInputMapLocationSpec.m_Label = "Location";
 		m_SelectInputMapLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
-		m_SelectInputMapLocationSpec.m_ConfirmAction = [&](const std::string& path)
+		m_SelectInputMapLocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
 			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
 			{
@@ -402,7 +402,7 @@ namespace Kargono::Panels
 				if (scriptHandle == Assets::EmptyHandle)
 				{
 					newEntry = {
-						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
+						std::string("Key::") + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						"None",
 						iteration,
 						m_EditKeyboardSlot
@@ -412,7 +412,7 @@ namespace Kargono::Panels
 				{
 					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
 					newEntry = {
-						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
+						std::string("Key::") + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						script->m_ScriptName,
 						iteration,
 						m_EditKeyboardSlot
@@ -680,7 +680,7 @@ namespace Kargono::Panels
 				if (scriptHandle == Assets::EmptyHandle)
 				{
 					newEntry = {
-						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
+						std::string("Key::") + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						"None",
 						iteration,
 						m_EditKeyboardSlot
@@ -690,7 +690,7 @@ namespace Kargono::Panels
 				{
 					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
 					newEntry = {
-						"Key::" + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
+						std::string("Key::") + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						script->m_ScriptName,
 						iteration,
 						m_EditKeyboardSlot
@@ -947,7 +947,7 @@ namespace Kargono::Panels
 
 				EditorUI::ListEntry newEntry = {
 					"Slot::" + std::to_string(iteration),
-					"Key::" + Utility::KeyCodeToString(code),
+					std::string("Key::") + Utility::KeyCodeToString(code),
 					iteration,
 					m_EditKeyboardSlot
 				};

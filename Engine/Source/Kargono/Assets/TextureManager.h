@@ -27,7 +27,7 @@ namespace Kargono::Assets
 		// Class specific functions
 		virtual Ref<Rendering::Texture2D> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset) override;
-		virtual void CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
+		virtual void CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void CreateAssetIntermediateFromFile(AssetInfo& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) override;
 		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset) override;
 		virtual void DeleteAssetValidation(AssetHandle assetHandle) override;

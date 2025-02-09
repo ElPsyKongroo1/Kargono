@@ -10,7 +10,7 @@
 namespace Kargono::Utility
 {
 	template<typename T, typename S, int32_t N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
-	static void CreateAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
+	static void CreateAtlas(std::string_view fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
 		const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height, Rendering::TextureSpecification& textureSpec, Buffer& buffer)
 	{
 		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
@@ -117,11 +117,11 @@ namespace Kargono::Assets
 		}
 		serializer << YAML::EndSeq;
 	}
-	void FontManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
+	void FontManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
-		out << YAML::Key << "Name" << YAML::Value << name; // Output font name
+		out << YAML::Key << "Name" << YAML::Value << std::string(name); // Output font name
 		out << YAML::EndMap; // End of File Map
 
 		std::ofstream fout(assetPath);

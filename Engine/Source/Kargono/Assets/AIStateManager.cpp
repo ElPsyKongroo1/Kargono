@@ -7,7 +7,7 @@
 
 namespace Kargono::Assets
 {
-	void AIStateManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
+	void AIStateManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary AIState
 		Ref<AI::AIState> temporaryAIState = CreateRef<AI::AIState>();

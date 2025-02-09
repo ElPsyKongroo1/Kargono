@@ -11,7 +11,7 @@
 namespace API::RenderingAPI
 {
 
-	OpenGLShader::OpenGLShader(const std::string& name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries)
+	OpenGLShader::OpenGLShader(std::string_view name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries)
 		: m_Name(name)
 	{
 		CreateProgram(shaderBinaries);
@@ -74,51 +74,51 @@ namespace API::RenderingAPI
 		glUseProgram(0);
 	}
 
-	void OpenGLShader::SetIntUniform(const std::string& name, int value)
+	void OpenGLShader::SetIntUniform(const char* name, int value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		GLint location = glGetUniformLocation(m_RendererID, name);
 		glUniform1i(location, value);
 	}
 
-	void OpenGLShader::SetIntArrayUniform(const std::string& name, int* values, uint32_t count)
+	void OpenGLShader::SetIntArrayUniform(const char* name, int* values, uint32_t count)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		GLint location = glGetUniformLocation(m_RendererID, name);
 		glUniform1iv(location, count, values);
 	}
 
-	void OpenGLShader::SetFloatUniform(const std::string& name, float value)
+	void OpenGLShader::SetFloatUniform(const char* name, float value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		GLint location = glGetUniformLocation(m_RendererID, name);
 		glUniform1f(location, value);
 	}
 
-	void OpenGLShader::SetFloat2Uniform(const std::string& name, const Kargono::Math::vec2& value)
+	void OpenGLShader::SetFloat2Uniform(const char* name, const Kargono::Math::vec2& value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		GLint location = glGetUniformLocation(m_RendererID, name);
 		glUniform2f(location, value.x, value.y);
 	}
 
-	void OpenGLShader::SetFloat3Uniform(const std::string& name, const Kargono::Math::vec3& value)
+	void OpenGLShader::SetFloat3Uniform(const char* name, const Kargono::Math::vec3& value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		GLint location = glGetUniformLocation(m_RendererID, name);
 		glUniform3f(location, value.x, value.y, value.z);
 	}
 
-	void OpenGLShader::SetFloat4Uniform(const std::string& name, const Kargono::Math::vec4& value)
+	void OpenGLShader::SetFloat4Uniform(const char* name, const Kargono::Math::vec4& value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		GLint location = glGetUniformLocation(m_RendererID, name);
 		glUniform4f(location, value.x, value.y, value.z, value.w);
 	}
 
-	void OpenGLShader::SetMat3Uniform(const std::string& name, const Kargono::Math::mat3& value)
+	void OpenGLShader::SetMat3Uniform(const char* name, const Kargono::Math::mat3& value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		GLint location = glGetUniformLocation(m_RendererID, name);
 		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value));
 	}
 
-	void OpenGLShader::SetMat4Uniform(const std::string& name, const Kargono::Math::mat4& value)
+	void OpenGLShader::SetMat4Uniform(const char* name, const Kargono::Math::mat4& value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		GLint location = glGetUniformLocation(m_RendererID, name);
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 	}
 

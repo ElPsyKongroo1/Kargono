@@ -28,7 +28,7 @@ namespace Kargono
 
 namespace Kargono::Utility
 {
-	static std::string CardinalDirectionToString(CardinalDirection direction)
+	inline const char* CardinalDirectionToString(CardinalDirection direction)
 	{
 		switch (direction)
 		{
@@ -45,7 +45,7 @@ namespace Kargono::Utility
 		return "None";
 	}
 
-	static CardinalDirection StringToCardinalDirection(std::string_view string)
+	inline CardinalDirection StringToCardinalDirection(std::string_view string)
 	{
 		if (string == "North") { return CardinalDirection::North; }
 		if (string == "East") { return CardinalDirection::East; }
@@ -61,7 +61,7 @@ namespace Kargono::Utility
 		return CardinalDirection::None;
 	}
 
-	static std::string DirectionToString(Direction direction)
+	inline const char* DirectionToString(Direction direction)
 	{
 		switch (direction)
 		{
@@ -80,7 +80,7 @@ namespace Kargono::Utility
 		return "None";
 	}
 
-	static Direction StringToDirection(std::string_view string)
+	inline Direction StringToDirection(std::string_view string)
 	{
 		if (string == "Up") { return Direction::Up; }
 		if (string == "Down") { return Direction::Down; }

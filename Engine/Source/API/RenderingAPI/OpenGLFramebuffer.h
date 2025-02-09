@@ -106,9 +106,9 @@ namespace API::RenderingAPI
 		static unsigned int GetScreenSpaceShaderProgram();
 
 	private:
-		inline static unsigned int s_ScreenSpaceQuadVAO;
-		inline static unsigned int s_ScreenSpaceQuadVBO;
-		inline static unsigned int s_ScreenSpaceShaderProgram;
+		static inline unsigned int s_ScreenSpaceQuadVAO;
+		static inline unsigned int s_ScreenSpaceQuadVBO;
+		static inline unsigned int s_ScreenSpaceShaderProgram;
 	};
 }
 

@@ -96,11 +96,11 @@ namespace Kargono::Assets
 		serializer << YAML::Key << "TextureChannels" << YAML::Value << metadata->Channels;
 	}
 
-	void Texture2DManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
+	void Texture2DManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
-		out << YAML::Key << "Name" << YAML::Value << name; // Output texture name
+		out << YAML::Key << "Name" << YAML::Value << std::string(name); // Output texture name
 		out << YAML::EndMap; // End of File Map
 
 		std::ofstream fout(assetPath);

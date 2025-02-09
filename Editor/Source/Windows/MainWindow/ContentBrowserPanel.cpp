@@ -12,7 +12,7 @@ static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 namespace Kargono::Panels
 {
 
-	void ContentBrowserPanel::OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type)
+	void ContentBrowserPanel::OnFileWatchUpdate(std::string_view name, const API::FileWatch::EventType change_type)
 	{
 		EngineService::SubmitToMainThread([&]()
 		{
@@ -101,7 +101,7 @@ namespace Kargono::Panels
 		const char* itemPath = relativePath.c_str();
 
 		// Load up payload
-		payload.m_Label = Utility::BrowserFileTypeToPayloadString((BrowserFileType)currentEntry.m_ArchetypeID).c_str();
+		payload.m_Label = Utility::BrowserFileTypeToPayloadString((BrowserFileType)currentEntry.m_ArchetypeID);
 		payload.m_DataPointer = (void*)itemPath;
 		payload.m_DataSize = (std::strlen(itemPath) + 1) * sizeof(char);
 		

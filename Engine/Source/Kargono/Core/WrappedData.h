@@ -505,7 +505,7 @@ namespace Kargono
 		//==============================
 		// Wrapped Variable Utility Functions
 		//==============================
-		inline std::string WrappedVarTypeToString(WrappedVarType type)
+		inline const char* WrappedVarTypeToString(WrappedVarType type)
 		{
 			switch (type)
 			{
@@ -546,7 +546,7 @@ namespace Kargono
 			return nullptr;
 		}
 
-		inline std::string WrappedVarTypeToCPPString(WrappedVarType type)
+		inline const char* WrappedVarTypeToCPPString(WrappedVarType type)
 		{
 			switch (type)
 			{
@@ -566,7 +566,7 @@ namespace Kargono
 			return "";
 		}
 
-		inline std::string WrappedVarTypeToCPPParameter(WrappedVarType type)
+		inline const char* WrappedVarTypeToCPPParameter(WrappedVarType type)
 		{
 			switch (type)
 			{
@@ -609,7 +609,7 @@ namespace Kargono
 			return std::numeric_limits<size_t>::max();
 		}
 
-		inline std::string WrappedVarTypeToKGScript(WrappedVarType type)
+		inline const char* WrappedVarTypeToKGScript(WrappedVarType type)
 		{
 			switch (type)
 			{
@@ -750,7 +750,7 @@ namespace Kargono
 		//==============================
 		// Wrapped Function Utility Functions
 		//==============================
-		inline std::string WrappedFuncTypeToString(WrappedFuncType type)
+		inline const char* WrappedFuncTypeToString(WrappedFuncType type)
 		{
 			switch (type)
 			{

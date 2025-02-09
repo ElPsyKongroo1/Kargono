@@ -2,7 +2,7 @@
 
 namespace Kargono::ECS
 {
-	inline static std::array<uint64_t, 32> s_AllBufferSizes
+	static inline std::array<uint64_t, 32> s_AllBufferSizes
 	{
 		4, 8, 12, 16, 20, 24, 28, 32,
 			40, 48, 56, 64, 72, 80, 88, 96,

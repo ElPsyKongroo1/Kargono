@@ -168,7 +168,7 @@ namespace Kargono::Utility
 	//==============================
 	// Conversion KeyCode <-> String
 	//==============================
-	inline std::string KeyCodeToString(KeyCode key)
+	inline const char* KeyCodeToString(KeyCode key)
 	{
 		switch (key)
 		{
@@ -297,7 +297,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	inline KeyCode StringToKeyCode(const std::string& codeString)
+	inline KeyCode StringToKeyCode(std::string_view codeString)
 	{
 		if (codeString == "Space")				{ return Key::Space; }
 		if (codeString == "Apostrophe")			{ return Key::Apostrophe; }

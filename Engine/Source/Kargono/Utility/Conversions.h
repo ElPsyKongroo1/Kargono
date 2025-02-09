@@ -55,7 +55,7 @@ namespace Kargono::Utility
 		//==============================
 		// Convert String -> Bool
 		//==============================
-		static bool StringToBool(const std::string& value)
+		static bool StringToBool(std::string_view value)
 		{
 			if (value == "True")
 			{

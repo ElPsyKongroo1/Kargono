@@ -34,7 +34,7 @@ namespace API::RenderingAPI
 		OpenGLTexture2D(uint32_t rendererID, uint32_t width, uint32_t height);
 		// This constructor instantiates a texture directly from a filepath. This functionality
 		//		is mainly used for the editor logos.
-		OpenGLTexture2D(const std::string& path);
+		OpenGLTexture2D(const char* path);
 		// This constructor takes an intermediate byte buffer and it's associated metadata
 		//		to instantiate a texture. This is the main way to create a texture through the
 		//		asset system.

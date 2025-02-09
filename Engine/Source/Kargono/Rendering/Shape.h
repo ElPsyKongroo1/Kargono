@@ -86,7 +86,7 @@ namespace Kargono::Rendering
 
 namespace Kargono::Utility
 {
-	static std::string RenderingTypeToString(Rendering::RenderingType renderType)
+	inline const char* RenderingTypeToString(Rendering::RenderingType renderType)
 	{
 		switch (renderType)
 		{
@@ -100,7 +100,7 @@ namespace Kargono::Utility
 		return "None";
 	}
 
-	static Rendering::RenderingType StringToRenderingType(std::string_view string)
+	inline Rendering::RenderingType StringToRenderingType(std::string_view string)
 	{
 		if (string == "None") { return Rendering::RenderingType::None; }
 		if (string == "DrawIndex") { return Rendering::RenderingType::DrawIndex; }
@@ -112,7 +112,7 @@ namespace Kargono::Utility
 		return Rendering::RenderingType::None;
 	}
 
-	static std::string ShapeTypeToString(Rendering::ShapeTypes shapeType)
+	static const char* ShapeTypeToString(Rendering::ShapeTypes shapeType)
 	{
 		switch (shapeType)
 		{

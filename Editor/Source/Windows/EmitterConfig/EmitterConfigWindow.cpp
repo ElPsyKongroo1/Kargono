@@ -188,7 +188,7 @@ namespace Kargono::Windows
 		// Initialize widget for selecting Emitter Config location
 		m_SelectEmitterConfigLocationSpec.m_Label = "Location";
 		m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
-		m_SelectEmitterConfigLocationSpec.m_ConfirmAction = [&](const std::string& path)
+		m_SelectEmitterConfigLocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
 			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
 			{

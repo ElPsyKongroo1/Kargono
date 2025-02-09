@@ -92,7 +92,7 @@ namespace Kargono::Scenes
 			return m_Name;
 		}
 
-		void SetName(const std::string& name)
+		void SetName(std::string_view name)
 		{
 			m_Name = name;
 		}

@@ -52,7 +52,7 @@
 		{\
 			return s_AssetsContext.m_##typeName##Manager.HasAsset(handle); \
 		}\
-		static bool Has##typeName(const std::string& assetName) \
+		static bool Has##typeName(std::string_view assetName) \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.HasAsset(assetName); \
 		}\

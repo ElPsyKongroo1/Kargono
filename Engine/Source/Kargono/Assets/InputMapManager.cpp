@@ -7,7 +7,7 @@
 
 namespace Kargono::Assets
 {
-	void InputMapManager::CreateAssetFileFromName(const std::string& name, AssetInfo& asset, const std::filesystem::path& assetPath)
+	void InputMapManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		// Create Temporary InputMap
 		Ref<Input::InputMap> temporaryInputMap = CreateRef<Input::InputMap>();

@@ -45,7 +45,7 @@ namespace Kargono::Panels
 	};
 
 
-	inline static std::vector<FixedString32> s_ContentBrowserPayloads
+	static inline std::vector<FixedString32> s_ContentBrowserPayloads
 	{
 		"CONTENT_BROWSER_RAWIMAGE", 
 		"CONTENT_BROWSER_RAWAUDIO", 
@@ -90,7 +90,7 @@ namespace Kargono::Panels
 		//=========================
 		// General Internal Functionality
 		//=========================
-		void OnFileWatchUpdate(const std::string&, const API::FileWatch::EventType change_type);
+		void OnFileWatchUpdate(std::string_view name, const API::FileWatch::EventType change_type);
 		void UpdateCurrentDirectory(const std::filesystem::path& newPath);
 		void OnHandleMoveAssetLocation(const std::filesystem::path& originalFilePath, const std::filesystem::path& newDirectory);
 
@@ -160,7 +160,7 @@ namespace Kargono::Utility
 		std::filesystem::path currentFileExtension = entry.extension();
 
 		// Check for raw texture extension
-		for (const std::string& textureExtension : Assets::AssetService::GetTexture2DValidImportExtensions())
+		for (std::string_view textureExtension : Assets::AssetService::GetTexture2DValidImportExtensions())
 		{
 			if (textureExtension == currentFileExtension)
 			{
@@ -169,7 +169,7 @@ namespace Kargono::Utility
 		}
 
 		// Check for raw audio extension
-		for (const std::string& audioExtension : Assets::AssetService::GetAudioBufferValidImportExtensions())
+		for (std::string_view audioExtension : Assets::AssetService::GetAudioBufferValidImportExtensions())
 		{
 			if (audioExtension == currentFileExtension)
 			{
@@ -177,7 +177,7 @@ namespace Kargono::Utility
 			}
 		}
 		// Check for raw font extension
-		for (const std::string& fontExtension : Assets::AssetService::GetFontValidImportExtensions())
+		for (std::string_view fontExtension : Assets::AssetService::GetFontValidImportExtensions())
 		{
 			if (fontExtension == currentFileExtension)
 			{
@@ -204,7 +204,7 @@ namespace Kargono::Utility
 		return Panels::BrowserFileType::GenericFile;
 	}
 
-	inline std::string BrowserFileTypeToPayloadString(Panels::BrowserFileType type)
+	inline const char* BrowserFileTypeToPayloadString(Panels::BrowserFileType type)
 	{
 		switch (type)
 		{

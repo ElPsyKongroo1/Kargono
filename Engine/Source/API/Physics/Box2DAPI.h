@@ -9,7 +9,7 @@ namespace Kargono::Utility
 	// Simple Conversions
 	//==============================
 
-	inline static b2BodyType Rigidbody2DTypeToBox2DBody(ECS::Rigidbody2DComponent::BodyType bodyType)
+	inline b2BodyType Rigidbody2DTypeToBox2DBody(ECS::Rigidbody2DComponent::BodyType bodyType)
 	{
 		switch (bodyType)
 		{
@@ -21,7 +21,7 @@ namespace Kargono::Utility
 		return b2_staticBody;
 	}
 
-	inline static ECS::Rigidbody2DComponent::BodyType Rigidbody2DTypeFromBox2DBody(b2BodyType bodyType)
+	inline ECS::Rigidbody2DComponent::BodyType Rigidbody2DTypeFromBox2DBody(b2BodyType bodyType)
 	{
 		switch (bodyType)
 		{

@@ -30,7 +30,7 @@ namespace Kargono::Utility
 	//==============================
 	// Conversion ScriptType <-> String
 	//==============================
-	inline std::string ScriptTypeToString(Scripting::ScriptType type)
+	inline const char* ScriptTypeToString(Scripting::ScriptType type)
 	{
 		switch (type)
 		{
@@ -42,7 +42,7 @@ namespace Kargono::Utility
 		return "";
 	}
 
-	inline Scripting::ScriptType StringToScriptType(std::string type)
+	inline Scripting::ScriptType StringToScriptType(std::string_view type)
 	{
 		if (type == "Project") { return Scripting::ScriptType::Project; }
 		if (type == "Engine") { return Scripting::ScriptType::Engine; }

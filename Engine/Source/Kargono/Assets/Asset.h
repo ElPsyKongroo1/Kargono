@@ -221,7 +221,7 @@ namespace Kargono::Utility
 	//==============================
 	// AssetType <-> String Conversions
 	//==============================
-	inline std::string AssetTypeToString(Assets::AssetType type)
+	inline const char* AssetTypeToString(Assets::AssetType type)
 	{
 		switch (type)
 		{
@@ -243,7 +243,7 @@ namespace Kargono::Utility
 		return "";
 	}
 
-	inline Assets::AssetType StringToAssetType(std::string type)
+	inline Assets::AssetType StringToAssetType(std::string_view type)
 	{
 		if (type == "Texture") { return Assets::AssetType::Texture; }
 		if (type == "Shader") { return Assets::AssetType::Shader; }

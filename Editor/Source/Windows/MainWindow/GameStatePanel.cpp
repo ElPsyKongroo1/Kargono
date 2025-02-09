@@ -45,7 +45,7 @@ namespace Kargono::Panels
 
 		m_SelectGameStateLocationSpec.m_Label = "Location";
 		m_SelectGameStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
-		m_SelectGameStateLocationSpec.m_ConfirmAction = [&](const std::string& path)
+		m_SelectGameStateLocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
 			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
 			{

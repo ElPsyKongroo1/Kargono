@@ -99,7 +99,7 @@ namespace Kargono::Windows
 		// Create Scene
 		void NewSceneDialog();
 		void NewSceneDialog(const std::filesystem::path& initialDirectory);
-		bool NewScene(const std::string& sceneName);
+		bool NewScene(std::string_view sceneName);
 		void DuplicateEditorScene();
 		void DuplicateEditorScene(const std::filesystem::path& initialDirectory);
 		// Open Scene
