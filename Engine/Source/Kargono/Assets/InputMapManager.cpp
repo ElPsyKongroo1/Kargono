@@ -31,7 +31,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "KeyboardPolling" << YAML::Value;
 			out << YAML::BeginSeq; // Start of KeyboardPolling Seq
 			uint32_t iteration{ 0 };
-			for (auto keyCode : assetReference->m_KeyboardPolling)
+			for (KeyCode keyCode : assetReference->m_KeyboardPolling)
 			{
 				out << YAML::BeginMap; // Start Polling Combo
 
@@ -49,7 +49,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "OnUpdate" << YAML::Value;
 			out << YAML::BeginSeq; // Start of OnUpdate Seq
 
-			for (auto& inputBinding : assetReference->m_OnUpdateBindings)
+			for (Ref<Input::InputActionBinding>& inputBinding : assetReference->m_OnUpdateBindings)
 			{
 				out << YAML::BeginMap; // InputActionBinding Start
 
@@ -82,7 +82,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "OnKeyPressed" << YAML::Value;
 			out << YAML::BeginSeq; // Start of OnKeyPressed Seq
 
-			for (auto& inputBinding : assetReference->m_OnKeyPressedBindings)
+			for (Ref<Input::InputActionBinding>& inputBinding : assetReference->m_OnKeyPressedBindings)
 			{
 				out << YAML::BeginMap; // InputActionBinding Start
 
@@ -134,25 +134,25 @@ namespace Kargono::Assets
 
 		// Get Keyboard Polling!
 		{
-			auto keyboardPolling = data["KeyboardPolling"];
+			YAML::Node keyboardPolling = data["KeyboardPolling"];
 			if (keyboardPolling)
 			{
 				std::vector<KeyCode>& keyboardPollingNew = newInputMap->m_KeyboardPolling;
 				for (const YAML::Node& binding : keyboardPolling)
 				{
 					uint16_t keyCode = (uint16_t)binding["KeyCode"].as<uint32_t>();
-					keyboardPollingNew.push_back(keyCode);
+					keyboardPollingNew.emplace_back(keyCode);
 				}
 			}
 		}
 
 		// OnUpdate
 		{
-			auto onUpdate = data["OnUpdate"];
+			YAML::Node onUpdate = data["OnUpdate"];
 			if (onUpdate)
 			{
-				auto& onUpdateNew = newInputMap->m_OnUpdateBindings;
-				for (auto binding : onUpdate)
+				std::vector<Ref<Input::InputActionBinding>>& onUpdateNew = newInputMap->m_OnUpdateBindings;
+				for (const YAML::Node& binding : onUpdate)
 				{
 					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
 					Ref<Input::InputActionBinding> newActionBinding = nullptr;
@@ -180,7 +180,7 @@ namespace Kargono::Assets
 					{
 						newActionBinding->SetScript(handle);
 					}
-					onUpdateNew.push_back(newActionBinding);
+					onUpdateNew.emplace_back(newActionBinding);
 				}
 			}
 		}
@@ -188,11 +188,11 @@ namespace Kargono::Assets
 
 		// OnKeyPressed
 		{
-			auto onKeyPressed = data["OnKeyPressed"];
+			YAML::Node onKeyPressed = data["OnKeyPressed"];
 			if (onKeyPressed)
 			{
-				auto& onKeyPressedNew = newInputMap->m_OnKeyPressedBindings;
-				for (auto binding : onKeyPressed)
+				std::vector<Ref<Input::InputActionBinding>>& onKeyPressedNew = newInputMap->m_OnKeyPressedBindings;
+				for (const YAML::Node& binding : onKeyPressed)
 				{
 					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
 					Ref<Input::InputActionBinding> newActionBinding = nullptr;
@@ -213,7 +213,7 @@ namespace Kargono::Assets
 					}
 
 					newActionBinding->SetScript(binding["ScriptHandle"].as<uint64_t>());
-					onKeyPressedNew.push_back(newActionBinding);
+					onKeyPressedNew.emplace_back(newActionBinding);
 				}
 			}
 		}

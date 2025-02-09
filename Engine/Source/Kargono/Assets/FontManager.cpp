@@ -230,26 +230,26 @@ namespace Kargono::Assets
 		const auto& glyphMetrics = fontGeometry.getGlyphs();
 		for (auto& glyphGeometry : glyphMetrics)
 		{
-			unsigned char character = static_cast<uint8_t>(glyphGeometry.getCodepoint());
-			RuntimeUI::Character characterStruct{};
+			std::pair<unsigned char, RuntimeUI::Character>& character = characters.emplace_back();
+
+			character.first = static_cast<uint8_t>(glyphGeometry.getCodepoint());
 
 			// Fill the texture location inside Atlas
 			double al, ab, ar, at;
 			glyphGeometry.getQuadAtlasBounds(al, ab, ar, at);
-			characterStruct.TexCoordinateMin = { (float)al, (float)ab };
-			characterStruct.TexCoordinateMax = { (float)ar, (float)at };
+			character.second.TexCoordinateMin = { (float)al, (float)ab };
+			character.second.TexCoordinateMax = { (float)ar, (float)at };
 			// Fill the Bounding Box Size when Rendering
 			double pl, pb, pr, pt;
 			glyphGeometry.getQuadPlaneBounds(pl, pb, pr, pt);
-			characterStruct.QuadMin = { (float)pl, (float)pb };
-			characterStruct.QuadMax = { (float)pr, (float)pt };
+			character.second.QuadMin = { (float)pl, (float)pb };
+			character.second.QuadMax = { (float)pr, (float)pt };
 			// Fill the Advance
-			characterStruct.Advance = (float)glyphGeometry.getAdvance();
+			character.second.Advance = (float)glyphGeometry.getAdvance();
 			// Fill Glyph Size
 			int32_t glyphWidth, glyphHeight;
 			glyphGeometry.getBoxSize(glyphWidth, glyphHeight);
-			characterStruct.Size = { glyphWidth, glyphHeight };
-			characters.push_back({ character, characterStruct });
+			character.second.Size = { glyphWidth, glyphHeight };
 		}
 
 		// Save Binary Intermediate into File
@@ -280,14 +280,17 @@ namespace Kargono::Assets
 		auto& characterVector = fontMetaData->Characters;
 		for (YAML::Node character : characters)
 		{
-			RuntimeUI::Character newCharacter{};
-			newCharacter.Size = character["Size"].as<Math::vec2>();
-			newCharacter.Advance = character["Advance"].as<float>();
-			newCharacter.TexCoordinateMin = character["TexCoordinateMin"].as<Math::vec2>();
-			newCharacter.TexCoordinateMax = character["TexCoordinateMax"].as<Math::vec2>();
-			newCharacter.QuadMin = character["QuadMin"].as<Math::vec2>();
-			newCharacter.QuadMax = character["QuadMax"].as<Math::vec2>();
-			characterVector.push_back(std::pair<unsigned char, RuntimeUI::Character>(static_cast<uint8_t>(character["Character"].as<uint32_t>()), newCharacter));
+			// Add new character to the character list
+			std::pair<unsigned char, RuntimeUI::Character>& newCharacter = characterVector.emplace_back();
+
+			// Fill the character fields
+			newCharacter.first = static_cast<uint8_t>(character["Character"].as<uint32_t>());
+			newCharacter.second.Size = character["Size"].as<Math::vec2>();
+			newCharacter.second.Advance = character["Advance"].as<float>();
+			newCharacter.second.TexCoordinateMin = character["TexCoordinateMin"].as<Math::vec2>();
+			newCharacter.second.TexCoordinateMax = character["TexCoordinateMax"].as<Math::vec2>();
+			newCharacter.second.QuadMin = character["QuadMin"].as<Math::vec2>();
+			newCharacter.second.QuadMax = character["QuadMax"].as<Math::vec2>();
 		}
 
 		currentAsset.Data.SpecificFileData = fontMetaData;

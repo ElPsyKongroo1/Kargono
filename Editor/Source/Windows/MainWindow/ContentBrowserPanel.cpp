@@ -1026,21 +1026,19 @@ namespace Kargono::Panels
 			createFileOptions.reserve(7);
 
 			// Add create ai state
-			EditorUI::TooltipEntry createAIStateTooltipEntry{ "AI State", [&](EditorUI::TooltipEntry& currentEntry)
+			createFileOptions.emplace_back("AI State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				UNREFERENCED_PARAMETER(currentEntry);
 				// Open create ai state dialog
 				s_MainWindow->m_AIStatePanel->OpenCreateDialog(m_CurrentDirectory);
-			} };
-			createFileOptions.push_back(createAIStateTooltipEntry);
+			});
 			// Add create game state
-			EditorUI::TooltipEntry createGameStateTooltipEntry{ "Game State", [&](EditorUI::TooltipEntry& currentEntry)
+			createFileOptions.emplace_back("Game State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				UNREFERENCED_PARAMETER(currentEntry);
 				// TODO: Add code to add Game State
 				s_MainWindow->m_GameStatePanel->OpenCreateDialog(m_CurrentDirectory);
-			} };
-			createFileOptions.push_back(createGameStateTooltipEntry);
+			});
 
 			// Add create Input Map
 			EditorUI::TooltipEntry createInputMapTooltipEntry{ "Input Map", [&](EditorUI::TooltipEntry& currentEntry)

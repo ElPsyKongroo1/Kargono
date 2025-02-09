@@ -543,8 +543,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ currentLine, minimumValues.y, 0.0f });
-				s_OutputVector->push_back({ currentLine, maximumValues.y, 0.0f });
+				s_OutputVector->emplace_back(currentLine, minimumValues.y, 0.0f);
+				s_OutputVector->emplace_back(currentLine, maximumValues.y, 0.0f);
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
@@ -560,8 +560,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ minimumValues.x, currentLine, 0.0f });
-				s_OutputVector->push_back({ maximumValues.x, currentLine, 0.0f });
+				s_OutputVector->emplace_back(minimumValues.x, currentLine, 0.0f);
+				s_OutputVector->emplace_back(maximumValues.x, currentLine, 0.0f);
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
@@ -581,8 +581,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ 0.0f, currentLine, minimumValues.z });
-				s_OutputVector->push_back({ 0.0f, currentLine, maximumValues.z });
+				s_OutputVector->emplace_back( 0.0f, currentLine, minimumValues.z );
+				s_OutputVector->emplace_back( 0.0f, currentLine, maximumValues.z );
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
@@ -598,8 +598,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ 0.0f, minimumValues.y, currentLine });
-				s_OutputVector->push_back({ 0.0f, maximumValues.y, currentLine });
+				s_OutputVector->emplace_back( 0.0f, minimumValues.y, currentLine );
+				s_OutputVector->emplace_back( 0.0f, maximumValues.y, currentLine );
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
@@ -619,8 +619,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ currentLine, 0.0f, minimumValues.z });
-				s_OutputVector->push_back({ currentLine, 0.0f, maximumValues.z });
+				s_OutputVector->emplace_back( currentLine, 0.0f, minimumValues.z );
+				s_OutputVector->emplace_back( currentLine, 0.0f, maximumValues.z );
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
@@ -636,8 +636,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ minimumValues.x, 0.0f, currentLine });
-				s_OutputVector->push_back({ maximumValues.x, 0.0f, currentLine });
+				s_OutputVector->emplace_back( minimumValues.x, 0.0f, currentLine );
+				s_OutputVector->emplace_back( maximumValues.x, 0.0f, currentLine );
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
@@ -660,8 +660,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ currentLine,   fineGridStart.y - m_LargeGridSpacing, 0.0f });
-				s_OutputVector->push_back({ currentLine,fineGridStart.y + 2 * m_LargeGridSpacing , 0.0f });
+				s_OutputVector->emplace_back( currentLine,   fineGridStart.y - m_LargeGridSpacing, 0.0f );
+				s_OutputVector->emplace_back( currentLine,fineGridStart.y + 2 * m_LargeGridSpacing , 0.0f );
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
@@ -677,8 +677,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ fineGridStart.x - m_LargeGridSpacing, currentLine, 0.0f });
-				s_OutputVector->push_back({ fineGridStart.x + 2 * m_LargeGridSpacing , currentLine, 0.0f });
+				s_OutputVector->emplace_back(fineGridStart.x - m_LargeGridSpacing, currentLine, 0.0f);
+				s_OutputVector->emplace_back( fineGridStart.x + 2 * m_LargeGridSpacing , currentLine, 0.0f );
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
@@ -697,8 +697,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z - m_LargeGridSpacing });
-				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z + 2 * m_LargeGridSpacing });
+				s_OutputVector->emplace_back( currentLine, 0.0f, fineGridStart.z - m_LargeGridSpacing );
+				s_OutputVector->emplace_back( currentLine, 0.0f, fineGridStart.z + 2 * m_LargeGridSpacing );
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
@@ -714,8 +714,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ fineGridStart.x - m_LargeGridSpacing, 0.0f, currentLine });
-				s_OutputVector->push_back({ fineGridStart.x + 2 * m_LargeGridSpacing, 0.0f, currentLine });
+				s_OutputVector->emplace_back( fineGridStart.x - m_LargeGridSpacing, 0.0f, currentLine );
+				s_OutputVector->emplace_back( fineGridStart.x + 2 * m_LargeGridSpacing, 0.0f, currentLine );
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
@@ -734,8 +734,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ 0.0f, currentLine,  fineGridStart.z - m_LargeGridSpacing });
-				s_OutputVector->push_back({ 0.0f , currentLine,  fineGridStart.z + (2 * m_LargeGridSpacing) });
+				s_OutputVector->emplace_back( 0.0f, currentLine,  fineGridStart.z - m_LargeGridSpacing );
+				s_OutputVector->emplace_back( 0.0f , currentLine,  fineGridStart.z + (2 * m_LargeGridSpacing) );
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
@@ -751,8 +751,8 @@ namespace Kargono::Panels
 					continue;
 				}
 				s_OutputVector->clear();
-				s_OutputVector->push_back({ 0.0f, fineGridStart.y - m_LargeGridSpacing, currentLine });
-				s_OutputVector->push_back({ 0.0f , fineGridStart.y + 2 * m_LargeGridSpacing, currentLine });
+				s_OutputVector->emplace_back( 0.0f, fineGridStart.y - m_LargeGridSpacing, currentLine );
+				s_OutputVector->emplace_back( 0.0f , fineGridStart.y + 2 * m_LargeGridSpacing, currentLine );
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
@@ -765,8 +765,8 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1),
 				"a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
-			s_OutputVector->push_back({ minimumValues.x, 0.0f, 0.0f });
-			s_OutputVector->push_back({ maximumValues.x, 0.0f, 0.0f });
+			s_OutputVector->emplace_back( minimumValues.x, 0.0f, 0.0f );
+			s_OutputVector->emplace_back( maximumValues.x, 0.0f, 0.0f );
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 
@@ -775,8 +775,8 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2),
 				"a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
-			s_OutputVector->push_back({ 0.0f, minimumValues.y, 0.0f });
-			s_OutputVector->push_back({ 0.0f, maximumValues.y, 0.0f });
+			s_OutputVector->emplace_back( 0.0f, minimumValues.y, 0.0f );
+			s_OutputVector->emplace_back( 0.0f, maximumValues.y, 0.0f );
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 
@@ -785,8 +785,8 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor3),
 				"a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
-			s_OutputVector->push_back({ 0.0f, 0.0f, minimumValues.z });
-			s_OutputVector->push_back({ 0.0f, 0.0f, maximumValues.z });
+			s_OutputVector->emplace_back( 0.0f, 0.0f, minimumValues.z );
+			s_OutputVector->emplace_back( 0.0f, 0.0f, maximumValues.z );
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
@@ -854,8 +854,8 @@ namespace Kargono::Panels
 			for (Math::uvec2& indices : s_CubeIndices)
 			{
 				s_OutputVector->clear();
-				s_OutputVector->push_back(lineVertices[indices.x]);
-				s_OutputVector->push_back(lineVertices[indices.y]);
+				s_OutputVector->emplace_back(lineVertices[indices.x]);
+				s_OutputVector->emplace_back(lineVertices[indices.y]);
 				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			}
@@ -865,8 +865,8 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red),
 				"a_Color", s_PointInputSpec.m_Buffer, s_PointInputSpec.m_Shader);
-			s_OutputVector->push_back(currentBounds[0]);
-			s_OutputVector->push_back(currentBounds[1]);
+			s_OutputVector->emplace_back(currentBounds[0]);
+			s_OutputVector->emplace_back(currentBounds[1]);
 			s_PointInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_PointInputSpec);
 		}
