@@ -14,6 +14,10 @@ namespace Kargono::Utility
 	static void OpenGLMessageCallback(unsigned source, unsigned type, unsigned id,
 		unsigned severity, int length, const char* message, const void* userParam)
 	{
+		UNREFERENCED_PARAMETER(id);
+		UNREFERENCED_PARAMETER(length);
+		UNREFERENCED_PARAMETER(userParam);
+
 		std::string sourceString = "";
 		std::string typeString = "";
 		std::string severityString = "";

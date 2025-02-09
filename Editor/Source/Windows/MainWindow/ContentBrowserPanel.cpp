@@ -14,6 +14,8 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::OnFileWatchUpdate(std::string_view name, const API::FileWatch::EventType change_type)
 	{
+		UNREFERENCED_PARAMETER(name);
+		UNREFERENCED_PARAMETER(change_type);
 		EngineService::SubmitToMainThread([&]()
 		{
 			s_MainWindow->m_ContentBrowserPanel->RefreshCachedDirectoryEntries();
@@ -68,6 +70,8 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::OnNavHeaderBackReceivePayload(const char* payloadName, void* dataPointer, std::size_t dataSize)
 	{
+		UNREFERENCED_PARAMETER(payloadName);
+		UNREFERENCED_PARAMETER(dataSize);
 		// Get original file path from payload
 		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
 		std::filesystem::path payloadPath(payloadPathPointer);
@@ -81,6 +85,9 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::OnNavHeaderForwardReceivePayload(const char* payloadName, void* dataPointer, std::size_t dataSize)
 	{
+		UNREFERENCED_PARAMETER(dataSize);
+		UNREFERENCED_PARAMETER(payloadName);
+
 		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
 		std::filesystem::path payloadPath(payloadPathPointer);
 		std::filesystem::path currentIterationPath{ m_LongestRecentPath };
@@ -109,6 +116,9 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::OnGridReceivePayload(EditorUI::GridEntry& currentEntry, const char* payloadName, void* dataPointer, std::size_t dataSize)
 	{
+		UNREFERENCED_PARAMETER(payloadName);
+		UNREFERENCED_PARAMETER(dataSize);
+
 		// Get absolute path of the in-grid directory
 		std::filesystem::path newDirectoryPath{ m_CurrentDirectory / currentEntry.m_Label.CString() };
 
@@ -148,6 +158,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry openAIStateTooltipEntry{ "Open AI State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				s_MainWindow->m_AIStatePanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openAIStateTooltipEntry);
@@ -156,6 +167,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry openGameStateTooltipEntry{ "Open Game State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				s_MainWindow->m_GameStatePanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openGameStateTooltipEntry);
@@ -164,6 +176,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry openEmitterConfigTooltipEntry{ "Open Emitter Config", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				s_EditorApp->m_EmitterConfigEditorWindow->OpenAssetInEditor(m_CurrentFileToModifyCache);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openEmitterConfigTooltipEntry);
@@ -172,6 +185,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry openInputMapTooltipEntry{ "Open Input Map", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				s_MainWindow->m_InputMapPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openInputMapTooltipEntry);
@@ -180,6 +194,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry openProjectComponentTooltipEntry{ "Open Project Component", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				s_MainWindow->m_ProjectComponentPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openProjectComponentTooltipEntry);
@@ -188,6 +203,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry openScriptTooltipEntry{ "Open Script", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// Open the file in the text editor
 				s_MainWindow->m_TextEditorPanel->OpenFile(m_CurrentFileToModifyCache);
 			} };
@@ -198,6 +214,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry openSceneTooltipEntry{ "Open Scene", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				s_MainWindow->OpenScene(m_CurrentFileToModifyCache);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openSceneTooltipEntry);
@@ -207,6 +224,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry openUserInterfaceTooltipEntry{ "Open User Interface", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				s_EditorApp->m_UIEditorWindow->OpenAssetInEditor(m_CurrentFileToModifyCache);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openUserInterfaceTooltipEntry);
@@ -216,6 +234,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry importAudioTooltipEntry{ "Import Audio", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// Open import font dialog
 				s_MainWindow->OpenImportFileDialog(m_CurrentFileToModifyCache, Assets::AssetType::Audio);
 			} };
@@ -226,6 +245,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry importTextureTooltipEntry{ "Import Texture", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// Open import font dialog
 				s_MainWindow->OpenImportFileDialog(m_CurrentFileToModifyCache, Assets::AssetType::Texture);
 			} };
@@ -236,6 +256,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry importFontTooltipEntry{ "Import Font", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// Open import font dialog
 				s_MainWindow->OpenImportFileDialog(m_CurrentFileToModifyCache, Assets::AssetType::Font);
 			} };
@@ -243,6 +264,7 @@ namespace Kargono::Panels
 
 			EditorUI::TooltipEntry useFontTooltipEntry{ "Use Font In Current User Interface", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				Assets::AssetHandle currentHandle = Assets::AssetService::ImportFontFromFile(m_CurrentFileToModifyCache);
 				Ref<RuntimeUI::Font> font = Assets::AssetService::GetFont(currentHandle);
 				if (font)
@@ -265,6 +287,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry openFileTooltipEntry{ "Open File in Text Editor", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// Open the file in the text editor
 				s_MainWindow->m_TextEditorPanel->OpenFile(m_CurrentFileToModifyCache);
 			} };
@@ -274,6 +297,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry deleteFileTooltipEntry{ "Delete File", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				m_DeleteFilePopup.m_OpenPopup = true;
 #if 0
 				switch (fileType)
@@ -295,6 +319,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::TooltipEntry deleteDirectoryTooltipEntry{ "Delete Directory", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				m_DeleteDirectoryPopup.m_OpenPopup = true;
 			} };
 			m_RightClickTooltip.AddTooltipEntry(deleteDirectoryTooltipEntry);
@@ -908,6 +933,7 @@ namespace Kargono::Panels
 		// Create open file in text editor entry inside tooltip menu
 		EditorUI::TooltipEntry openFileEntry("Open File In Text Editor", [&](EditorUI::TooltipEntry& entry) 
 		{
+			UNREFERENCED_PARAMETER(entry);
 			s_MainWindow->m_TextEditorPanel->OpenFile(m_CurrentFileToModifyCache);
 		});
 
@@ -1002,6 +1028,7 @@ namespace Kargono::Panels
 			// Add create ai state
 			EditorUI::TooltipEntry createAIStateTooltipEntry{ "AI State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// Open create ai state dialog
 				s_MainWindow->m_AIStatePanel->OpenCreateDialog(m_CurrentDirectory);
 			} };
@@ -1009,6 +1036,7 @@ namespace Kargono::Panels
 			// Add create game state
 			EditorUI::TooltipEntry createGameStateTooltipEntry{ "Game State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// TODO: Add code to add Game State
 				s_MainWindow->m_GameStatePanel->OpenCreateDialog(m_CurrentDirectory);
 			} };
@@ -1017,6 +1045,7 @@ namespace Kargono::Panels
 			// Add create Input Map
 			EditorUI::TooltipEntry createInputMapTooltipEntry{ "Input Map", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// TODO: Add code to add Input Map
 				s_MainWindow->m_InputMapPanel->OpenCreateDialog(m_CurrentDirectory);
 			}};
@@ -1025,6 +1054,7 @@ namespace Kargono::Panels
 			// Add create Project Component
 			EditorUI::TooltipEntry createProjectComponentTooltipEntry{ "Project Component", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// TODO: Add code to add Project Component
 				s_MainWindow->m_ProjectComponentPanel->OpenCreateDialog(m_CurrentDirectory);
 			} };
@@ -1033,22 +1063,25 @@ namespace Kargono::Panels
 			// Add create Scene
 			EditorUI::TooltipEntry createSceneTooltipEntry{ "Scene", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// TODO: Add code to add Scene
-					s_MainWindow->NewSceneDialog();
+				s_MainWindow->NewSceneDialog();
 			} };
 			createFileOptions.push_back(createSceneTooltipEntry);
 
 			// Add create text file
 			EditorUI::TooltipEntry creatTextFileTooltipEntry{ "Text File", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// TODO: Add code to add Text File
-					s_MainWindow->m_TextEditorPanel->OpenCreateDialog(m_CurrentDirectory);
+				s_MainWindow->m_TextEditorPanel->OpenCreateDialog(m_CurrentDirectory);
 			} };
 			createFileOptions.push_back(creatTextFileTooltipEntry);
 
 			// Add create User Interface
 			EditorUI::TooltipEntry createUserInterfaceTooltipEntry{ "User Interface", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				// TODO: Add code to add User Interface
 				s_EditorApp->m_UIEditorWindow->OpenCreateDialog(m_CurrentDirectory);
 			} };
@@ -1061,6 +1094,7 @@ namespace Kargono::Panels
 			// Add create directory option
 			EditorUI::TooltipEntry createDirectoryTooltipEntry{ "Create Directory", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				m_CreateDirectoryPopup.m_OpenPopup = true;
 			} };
 			m_RightClickTooltip.AddTooltipEntry(createDirectoryTooltipEntry);
@@ -1071,6 +1105,7 @@ namespace Kargono::Panels
 			// Add open current directory in file explorer
 			EditorUI::TooltipEntry openCurrentDirectoryTooltipEntry{ "Open File Explorer", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				Utility::OSCommands::OpenFileExplorer(m_CurrentDirectory);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openCurrentDirectoryTooltipEntry);
@@ -1078,6 +1113,7 @@ namespace Kargono::Panels
 			// Add open current directory in file explorer
 			EditorUI::TooltipEntry openTerminalTooltipEntry{ "Open Terminal", [&](EditorUI::TooltipEntry& currentEntry)
 			{
+				UNREFERENCED_PARAMETER(currentEntry);
 				Utility::OSCommands::OpenTerminal(m_CurrentDirectory);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openTerminalTooltipEntry);

@@ -12,6 +12,8 @@ namespace Kargono::Network
 
 	void ClientUDPConnection::Disconnect(asio::ip::udp::endpoint key)
 	{
+		UNREFERENCED_PARAMETER(key);
+
 		// Check if TCP connection is valid since it is the connection we are trying to stop
 		if (!m_ActiveTCPConnection)
 		{
@@ -37,6 +39,8 @@ namespace Kargono::Network
 		// Start async connection
 		asio::async_connect(m_TCPSocket, endpoints, [&](std::error_code ec, const asio::ip::tcp::endpoint& endpoint)
 		{
+			UNREFERENCED_PARAMETER(endpoint);
+
 			if (ec)
 			{
 				KG_WARN("Error while attempting to connect to server. Error Code: [{}] Message: {}", ec.value(), ec.message());
@@ -105,6 +109,8 @@ namespace Kargono::Network
 		asio::async_write(m_TCPSocket, asio::buffer(&m_ValidationOutput, sizeof(uint64_t)),
 			[this](std::error_code ec, std::size_t length)
 		{
+			UNREFERENCED_PARAMETER(length);
+
 			if (ec)
 			{
 				KG_WARN("Error occurred while attempting to write a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());
@@ -120,6 +126,8 @@ namespace Kargono::Network
 		asio::async_read(m_TCPSocket, asio::buffer(&m_ValidationInput, sizeof(uint64_t)),
 			[&](std::error_code ec, std::size_t length)
 		{
+			UNREFERENCED_PARAMETER(length);
+
 			if (ec)
 			{
 				KG_WARN("Error occurred while attempting to read a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());

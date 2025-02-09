@@ -117,7 +117,7 @@ namespace Kargono::Utility
 			{
 				// Fill parameterNames with default names
 				char letterIteration{ 'a' };
-				for (WrappedVarType type : parameterTypes)
+				for (size_t iteration{ 0 }; iteration < parameterTypes.size(); iteration++)
 				{
 					parameterNames.emplace_back(letterIteration);
 					letterIteration++;

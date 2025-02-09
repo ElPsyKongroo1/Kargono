@@ -227,6 +227,8 @@ namespace Kargono::Assets
 	}
 	Ref<Scripting::Script> ScriptManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(assetPath);
+
 		Ref<Scripting::Script> newScript = CreateRef<Scripting::Script>();
 		Assets::ScriptMetaData metadata = *asset.Data.GetSpecificMetaData<ScriptMetaData>();
 

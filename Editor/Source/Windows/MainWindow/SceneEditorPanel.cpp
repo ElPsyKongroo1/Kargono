@@ -50,6 +50,7 @@ namespace Kargono::Panels
 				sceneEntry.m_Handle = Assets::EmptyHandle;
 				sceneEntry.m_OnLeftClick = [&](EditorUI::TreeEntry& entry)
 				{
+					UNREFERENCED_PARAMETER(entry);
 					// Display scene options in properties panel
 					m_CurrentDisplayed = ScenePropertiesDisplay::Scene;
 
@@ -61,6 +62,7 @@ namespace Kargono::Panels
 
 				sceneEntry.m_OnRightClickSelection.push_back({ "Add Entity", [&](EditorUI::TreeEntry& entry)
 				{
+					UNREFERENCED_PARAMETER(entry);
 					EngineService::SubmitToMainThread([]() 
 					{
 						Scenes::SceneService::GetActiveScene()->CreateEntity("Empty Entity");
@@ -362,6 +364,7 @@ namespace Kargono::Panels
 		m_TagEdit.m_Flags |= EditorUI::EditText_Indented;
 		m_TagEdit.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (entity && entity.HasComponent<ECS::TagComponent>())
 			{
@@ -384,6 +387,7 @@ namespace Kargono::Panels
 		m_TagGroupEdit.m_Flags |= EditorUI::EditText_Indented;
 		m_TagGroupEdit.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (entity && entity.HasComponent<ECS::TagComponent>())
 			{
@@ -403,6 +407,7 @@ namespace Kargono::Panels
 		m_TransformEditTranslation.m_Flags = EditorUI::EditVec3_Indented;
 		m_TransformEditTranslation.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::TransformComponent>())
 			{
@@ -417,6 +422,7 @@ namespace Kargono::Panels
 		m_TransformEditScale.m_Flags = EditorUI::EditVec3_Indented;
 		m_TransformEditScale.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::TransformComponent>())
 			{
@@ -430,6 +436,7 @@ namespace Kargono::Panels
 		m_TransformEditRotation.m_Flags = EditorUI::EditVec3_Indented;
 		m_TransformEditRotation.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::TransformComponent>())
 			{
@@ -449,6 +456,7 @@ namespace Kargono::Panels
 		m_Rigidbody2DHeader.m_Expanded = true;
 		m_Rigidbody2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			EngineService::SubmitToMainThread([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -565,16 +573,19 @@ namespace Kargono::Panels
 
 		m_SelectRigidBody2DCollisionStartScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
 			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
+				UNREFERENCED_PARAMETER(entry);
 				m_SelectRigidBody2DCollisionStartScript.m_OpenPopup = true;
 			} };
 			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
+				UNREFERENCED_PARAMETER(entry);
 				// Open create script dialog in script editor
 				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Bool_EntityEntity, [&](Assets::AssetHandle scriptHandle)
 				{
@@ -658,16 +669,19 @@ namespace Kargono::Panels
 
 		m_SelectRigidBody2DCollisionEndScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 			{
+				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
 				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 				{
+					UNREFERENCED_PARAMETER(entry);
 					m_SelectRigidBody2DCollisionEndScript.m_OpenPopup = true;
 				} };
 				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
+					UNREFERENCED_PARAMETER(entry);
 					// Open create script dialog in script editor
 					s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Bool_EntityEntity, [&](Assets::AssetHandle scriptHandle)
 					{
@@ -717,6 +731,7 @@ namespace Kargono::Panels
 		m_BoxCollider2DHeader.m_Expanded = true;
 		m_BoxCollider2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			EngineService::SubmitToMainThread([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -750,6 +765,7 @@ namespace Kargono::Panels
 		m_BoxColliderOffset.m_Flags |= EditorUI::EditVec2_Indented;
 		m_BoxColliderOffset.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::BoxCollider2DComponent>())
 			{
@@ -764,6 +780,7 @@ namespace Kargono::Panels
 		m_BoxColliderSize.m_Flags |= EditorUI::EditVec2_Indented;
 		m_BoxColliderSize.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::BoxCollider2DComponent>())
 			{
@@ -778,6 +795,7 @@ namespace Kargono::Panels
 		m_BoxColliderDensity.m_Flags |= EditorUI::EditFloat_Indented;
 		m_BoxColliderDensity.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::BoxCollider2DComponent>())
 			{
@@ -792,6 +810,7 @@ namespace Kargono::Panels
 		m_BoxColliderFriction.m_Flags |= EditorUI::EditFloat_Indented;
 		m_BoxColliderFriction.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::BoxCollider2DComponent>())
 			{
@@ -806,6 +825,7 @@ namespace Kargono::Panels
 		m_BoxColliderRestitution.m_Flags |= EditorUI::EditFloat_Indented;
 		m_BoxColliderRestitution.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::BoxCollider2DComponent>())
 			{
@@ -820,6 +840,7 @@ namespace Kargono::Panels
 		m_BoxColliderRestitutionThreshold.m_Flags |= EditorUI::EditFloat_Indented;
 		m_BoxColliderRestitutionThreshold.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::BoxCollider2DComponent>())
 			{
@@ -852,6 +873,7 @@ namespace Kargono::Panels
 		m_CircleCollider2DHeader.m_Expanded = true;
 		m_CircleCollider2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			EngineService::SubmitToMainThread([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -885,6 +907,7 @@ namespace Kargono::Panels
 		m_CircleColliderOffset.m_Flags |= EditorUI::EditVec2_Indented;
 		m_CircleColliderOffset.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CircleCollider2DComponent>())
 			{
@@ -899,6 +922,7 @@ namespace Kargono::Panels
 		m_CircleColliderRadius.m_Flags |= EditorUI::EditFloat_Indented;
 		m_CircleColliderRadius.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CircleCollider2DComponent>())
 			{
@@ -913,6 +937,7 @@ namespace Kargono::Panels
 		m_CircleColliderDensity.m_Flags |= EditorUI::EditFloat_Indented;
 		m_CircleColliderDensity.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CircleCollider2DComponent>())
 			{
@@ -927,6 +952,7 @@ namespace Kargono::Panels
 		m_CircleColliderFriction.m_Flags |= EditorUI::EditFloat_Indented;
 		m_CircleColliderFriction.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CircleCollider2DComponent>())
 			{
@@ -941,6 +967,7 @@ namespace Kargono::Panels
 		m_CircleColliderRestitution.m_Flags |= EditorUI::EditFloat_Indented;
 		m_CircleColliderRestitution.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CircleCollider2DComponent>())
 			{
@@ -955,6 +982,7 @@ namespace Kargono::Panels
 		m_CircleColliderRestitutionThreshold.m_Flags |= EditorUI::EditFloat_Indented;
 		m_CircleColliderRestitutionThreshold.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CircleCollider2DComponent>())
 			{
@@ -988,6 +1016,7 @@ namespace Kargono::Panels
 		m_CameraHeader.m_Expanded = true;
 		m_CameraHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			EngineService::SubmitToMainThread([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -1063,6 +1092,7 @@ namespace Kargono::Panels
 		m_CameraOrthographicSize.m_Flags |= EditorUI::EditFloat_Indented;
 		m_CameraOrthographicSize.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CameraComponent>())
 			{
@@ -1077,6 +1107,7 @@ namespace Kargono::Panels
 		m_CameraOrthographicNearPlane.m_Flags |= EditorUI::EditFloat_Indented;
 		m_CameraOrthographicNearPlane.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CameraComponent>())
 			{
@@ -1091,6 +1122,7 @@ namespace Kargono::Panels
 		m_CameraOrthographicFarPlane.m_Flags |= EditorUI::EditFloat_Indented;
 		m_CameraOrthographicFarPlane.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CameraComponent>())
 			{
@@ -1105,6 +1137,7 @@ namespace Kargono::Panels
 		m_CameraPerspectiveFOV.m_Flags |= EditorUI::EditFloat_Indented;
 		m_CameraPerspectiveFOV.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CameraComponent>())
 			{
@@ -1119,6 +1152,7 @@ namespace Kargono::Panels
 		m_CameraPerspectiveNearPlane.m_Flags |= EditorUI::EditFloat_Indented;
 		m_CameraPerspectiveNearPlane.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CameraComponent>())
 			{
@@ -1133,6 +1167,7 @@ namespace Kargono::Panels
 		m_CameraPerspectiveFarPlane.m_Flags |= EditorUI::EditFloat_Indented;
 		m_CameraPerspectiveFarPlane.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CameraComponent>())
 			{
@@ -1152,6 +1187,7 @@ namespace Kargono::Panels
 		m_ParticleEmitterHeader.m_Expanded = true;
 		m_ParticleEmitterHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			EngineService::SubmitToMainThread([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -1238,6 +1274,7 @@ namespace Kargono::Panels
 		m_OnUpdateHeader.m_Expanded = true;
 		m_OnUpdateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			EngineService::SubmitToMainThread([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -1316,16 +1353,19 @@ namespace Kargono::Panels
 
 		m_SelectOnUpdateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
 			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
+				UNREFERENCED_PARAMETER(entry);
 				m_SelectOnUpdateScript.m_OpenPopup = true;
 			}};
 			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
+				UNREFERENCED_PARAMETER(entry);
 				// Open create script dialog in script editor
 				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_EntityFloat, [&](Assets::AssetHandle scriptHandle)
 				{
@@ -1374,6 +1414,7 @@ namespace Kargono::Panels
 		m_OnCreateHeader.m_Expanded = true;
 		m_OnCreateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			EngineService::SubmitToMainThread([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -1452,16 +1493,19 @@ namespace Kargono::Panels
 
 		m_SelectOnCreateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
 			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
+				UNREFERENCED_PARAMETER(entry);
 				m_SelectOnCreateScript.m_OpenPopup = true;
 			} };
 			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
+				UNREFERENCED_PARAMETER(entry);
 				// Open create script dialog in script editor
 				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Entity, [&](Assets::AssetHandle scriptHandle)
 				{
@@ -1511,6 +1555,7 @@ namespace Kargono::Panels
 		m_AIStateHeader.m_Expanded = true;
 		m_AIStateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			EngineService::SubmitToMainThread([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -1669,6 +1714,7 @@ namespace Kargono::Panels
 		m_ShapeHeader.m_Expanded = true;
 		m_ShapeHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			EngineService::SubmitToMainThread([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
@@ -1811,6 +1857,7 @@ namespace Kargono::Panels
 		m_ShapeColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_ShapeColor.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::ShapeComponent>())
 			{
@@ -1897,6 +1944,7 @@ namespace Kargono::Panels
 		m_ShapeTilingFactor.m_Flags |= EditorUI::EditFloat_Indented;
 		m_ShapeTilingFactor.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::ShapeComponent>())
 			{
@@ -1928,6 +1976,7 @@ namespace Kargono::Panels
 		m_ShapeCircleThickness.m_Flags |= EditorUI::EditFloat_Indented;
 		m_ShapeCircleThickness.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::ShapeComponent>())
 			{
@@ -1943,6 +1992,7 @@ namespace Kargono::Panels
 		m_ShapeCircleFade.m_Flags |= EditorUI::EditFloat_Indented;
 		m_ShapeCircleFade.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::ShapeComponent>())
 			{

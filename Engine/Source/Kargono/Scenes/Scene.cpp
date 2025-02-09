@@ -302,6 +302,8 @@ namespace Kargono::Scenes
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
+		UNREFERENCED_PARAMETER(width);
+		UNREFERENCED_PARAMETER(height);
 		// Resize non-fixed
 		auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::CameraComponent>();
 		for (entt::entity entity : view)
@@ -327,13 +329,13 @@ namespace Kargono::Scenes
 		}
 		return {};
 	}
-	void Scene::RenderScene(Rendering::Camera& camera, const Math::mat4& transform)
+	void Scene::RenderScene(Rendering::Camera& camera, const Math::mat4& transformMatrix)
 	{
-		Rendering::RenderingService::BeginScene(camera, transform);
+		Rendering::RenderingService::BeginScene(camera, transformMatrix);
 		// Draw Shapes
 		{
 			auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::TransformComponent, ECS::ShapeComponent>();
-			for (auto entity : view)
+			for (entt::entity entity : view)
 			{
 				const auto& [transform, shape] = view.get<ECS::TransformComponent, ECS::ShapeComponent>(entity);
 				s_InputSpec.m_Shader = shape.Shader;

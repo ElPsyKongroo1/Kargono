@@ -84,8 +84,6 @@ namespace Kargono::Panels
 		// Clear mouse picking attachment value
 		m_ViewportFramebuffer->SetAttachment(1, -1);
 
-		// Handle drawing user interface
-		Window& currentApplication = EngineService::GetActiveWindow();
 		// Handle specific widget on click's
 		ImVec2 mousePos = ImGui::GetMousePos();
 		mousePos.x -= m_ScreenViewportBounds[0].x;
@@ -351,7 +349,7 @@ namespace Kargono::Panels
 	}
 	void UIEditorViewportPanel::DrawToolbarOverlay()
 	{
-		constexpr float k_IconSize{ 36.0f };
+		//constexpr float k_IconSize{ 36.0f };
 		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();

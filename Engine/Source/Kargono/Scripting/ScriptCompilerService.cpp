@@ -280,6 +280,8 @@ namespace Kargono::Scripting
 
 	void Scripting::ScriptCompilerService::GetSuggestionsForIsParameter(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
 	{
+		UNREFERENCED_PARAMETER(context);
+
 		// Generate suggestions for primitive types
 		for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
 		{
@@ -1093,8 +1095,6 @@ namespace Kargono::Scripting
 		newFunctionMember.Description = "This function changes this entities's current state its previous state if it exists. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
-
 			generator.m_OutputText << "AI_RevertPreviousState(";
 			generator.GenerateExpression(member.CurrentNodeExpression);
 			generator.m_OutputText << ")";
@@ -1109,8 +1109,6 @@ namespace Kargono::Scripting
 		newFunctionMember.Description = "This function clears the current global state of the entity's AIStateComponent. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
-
 			generator.m_OutputText << "AI_ClearGlobalState(";
 			generator.GenerateExpression(member.CurrentNodeExpression);
 			generator.m_OutputText << ")";
@@ -1125,8 +1123,6 @@ namespace Kargono::Scripting
 		newFunctionMember.Description = "This function clears the current current state of the entity's AIStateComponent. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
-
 			generator.m_OutputText << "AI_ClearCurrentState(";
 			generator.GenerateExpression(member.CurrentNodeExpression);
 			generator.m_OutputText << ")";
@@ -1141,8 +1137,6 @@ namespace Kargono::Scripting
 		newFunctionMember.Description = "This function clears the current previous state of the entity's AIStateComponent. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
-
 			generator.m_OutputText << "AI_ClearPreviousState(";
 			generator.GenerateExpression(member.CurrentNodeExpression);
 			generator.m_OutputText << ")";
@@ -1157,7 +1151,6 @@ namespace Kargono::Scripting
 		newFunctionMember.Description = "This function clears all AI State references inside an entity's AIStateComponent. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 
 			generator.m_OutputText << "AI_ClearAllStates(";
 			generator.GenerateExpression(member.CurrentNodeExpression);
@@ -1202,8 +1195,6 @@ namespace Kargono::Scripting
 		newFunctionMember.Description = "This function gets the current linear velocity of the 2D physics object associated with this entity.";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
-
 			generator.m_OutputText << "Rigidbody2DComponent_GetLinearVelocity(";
 			generator.GenerateExpression(member.CurrentNodeExpression);
 			generator.m_OutputText << ")";
@@ -1224,8 +1215,6 @@ namespace Kargono::Scripting
 		newFunctionMember.Description = "This functions gets the current tag of the entity as a string.";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
-
 			generator.m_OutputText << "TagComponent_GetTag(";
 			generator.GenerateExpression(member.CurrentNodeExpression);
 			generator.m_OutputText << ")";
@@ -1698,6 +1687,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Convert basic variable types into a string. Ex: 23 -> \"23\", false -> \"false\"";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Identifier.Value = "std::to_string";
 		};
 
@@ -1751,9 +1741,6 @@ namespace Kargono::Scripting
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newFunctionNode.Description = "Debug function that draws a line in the editor. This function takes the start point 3D coordinates and end the point point 3D coordinates of the line as parameters.";
-		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -1766,9 +1753,6 @@ namespace Kargono::Scripting
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newFunctionNode.Description = "Debug function that draws a point in the editor. This function takes a vector3 that represents the 3D coordinate of the point.";
-		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -1777,9 +1761,6 @@ namespace Kargono::Scripting
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "ClearDebugLines" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionNode.Description = "Debug function clears all debug lines from the editor. This function takes no arguments.";
-		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
@@ -1787,9 +1768,6 @@ namespace Kargono::Scripting
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "ClearDebugPoints" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionNode.Description = "Debug function clears all debug points from the editor. This function takes no arguments.";
-		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
@@ -1804,6 +1782,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Resize the current application viewport and window to the indicated resolution. This function a screen_resolution as a paramter such as: ScreenResolution::1920x1080";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "Application_Resize";
 		};
@@ -1817,6 +1796,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Send a message to the engine to close the currently running application. This function terminates your application!";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
+
 			node.Namespace = {};
 			node.Identifier.Value = "Application_Close";
 		};
@@ -1847,6 +1828,8 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Send a message from the indicated sender entity to the indicated receiver entity. The first parameter is the message type, second parameter is the sender entity, third parameter is the receiver entity, and the final parameter is the delay as a float.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
+
 			node.Namespace = {};
 			node.Identifier.Value = "AI_SendMessage";
 		};
@@ -1871,6 +1854,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Change the displayed text of a TextWidget in the active user interface.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_SetWidgetText";
 		};
@@ -1890,6 +1874,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Get the displayed text from the indicated widget. This function works with any widget that contains text.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_GetWidgetText";
 		};
@@ -1907,6 +1892,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Change the currently open user interface. This function takes the name of the new user inteface as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_LoadUserInterfaceFromHandle";
 		};
@@ -1930,6 +1916,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Set whether a specified window is displayed in the active user interface. This function takes the name of the window to modify as a string and a boolean representing the display option as arguments.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_SetDisplayWindow";
 		};
@@ -1958,6 +1945,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Set whether a specified widget is selectable using the keyboard/mouse/etc navigation.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_SetWidgetSelectable";
 		};
@@ -1980,6 +1968,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Check if the indicated widget is currently selected in the active UI.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_IsWidgetSelected";
 		};
@@ -2003,6 +1992,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Set the color of the text in a TextWidget.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_SetWidgetTextColor";
 		};
@@ -2031,6 +2021,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Set the background color of the provided widget.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_SetWidgetBackgroundColor";
 		};
@@ -2053,6 +2044,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Set the provided widget as selected in the current in-game user interface.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_SetSelectedWidget";
 		};
@@ -2074,10 +2066,11 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Change the displayed texture of the indicated image widget.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-			{
-				node.Namespace = {};
-				node.Identifier.Value = "RuntimeUI_SetWidgetImage";
-			};
+		{
+			UNREFERENCED_PARAMETER(generator);
+			node.Namespace = {};
+			node.Identifier.Value = "RuntimeUI_SetWidgetImage";
+		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
@@ -2096,6 +2089,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Create an instance of an emitter at the specified location. This location takes in an emitter configuration and a vector3 to denote its spawning location.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "Particles_AddEmitterByHandle";
 		};
@@ -2117,6 +2111,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Set the specified field in the active Game State. This function requires the name of the field and the value it will be set to.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "SetGameStateField";
 
@@ -2155,6 +2150,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Get the specified field in the active Game State and returns it as a uint16. This function requires the name of the field as a parameter.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "*(uint16_t*)GetGameStateField";
 		};
@@ -2172,9 +2168,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Change the active scene to the scene specified. This function takes the name of the scene that should be transitioned towards as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "TransitionSceneFromHandle";
-
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -2192,6 +2188,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Get a reference to the entity with provided tag within the current scene. Note that if multiple entities exist inside the current scene with the same tag, there is no guarentee which entity will be returned. This function takes the name inside the entity's tag component as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "FindEntityHandleByName";
 
@@ -2210,6 +2207,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "This function indicates whether the provided scene is currently active. This function takes a string which is the local filepath to the scene and returns a bool.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "Scenes_IsSceneActive";
 
@@ -2228,6 +2226,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Change the active input mapping/map. The input map maps user input to functionality/scripts. This function takes the name of the new input map as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "InputMap_LoadInputMapFromHandle";
 
@@ -2246,6 +2245,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Check if the provided key is current pressed on the keyboard. This function takes a keycode as a parameter.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "Input_IsKeyPressed";
 		};
@@ -2263,6 +2263,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Check if the provided slot from the input map is current pressed on the keyboard. This function takes an integer as a parameter.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "InputMap_IsPollingSlotPressed";
 		};
@@ -2280,9 +2281,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Play a sound file. This function call is intended for short sound segments that play as mono. This function takes the name of the sound file as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "PlaySoundFromHandle";
-
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -2300,9 +2301,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Play a music file. This function call is intended to play a single song file, preferebly in stereo. This function takes the name of the sound file as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "PlayStereoSoundFromHandle";
-
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
@@ -2324,9 +2325,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Generate a random integer between the provided lower and upper bounds. Note that this function uses a fairly expensive algorithm for generating numbers compared to pseudorandom number generators. This function takes two integers to denote the lower and upper bounds respectively.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "GenerateRandomInteger";
-
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
@@ -2347,9 +2348,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Generate a random float between the provided lower and upper bounds. Note that this function uses a fairly expensive algorithm for generating numbers compared to pseudorandom number generators. This function takes two integers to denote the lower and upper bounds respectively.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "GenerateRandomFloat";
-
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
@@ -2366,6 +2367,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Normalize a provided vector. This function ensures that the magnitude (length) of the vector is 1. The ratios between component vectors (x,y,z) remain unchanged. This function takes in a single vector2.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "glm::normalize";
 		};
@@ -2387,6 +2389,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Find the distance between two vectors. This function takes in two vector2 parameters to find the distance between.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "glm::distance";
 		};
@@ -2408,6 +2411,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "Find the distance between two vectors. This function takes in two vector3 parameters to find the distance between.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "glm::distance";
 		};
@@ -2421,6 +2425,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "This function returns the maximum value for a uint16.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "std::numeric_limits<uint16_t>().max";
 		};
@@ -2434,9 +2439,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "This function retreives the slot of the current client inside the active application session. This function takes no parameters.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "GetActiveSessionSlot";
-
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -2456,9 +2461,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "This function sends the provided location to the server and all other clients in the current session for the provided entity. This function takes an entity and a vector3 as parameters.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "SendAllEntityLocation";
-
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -2470,9 +2475,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "This function sends a request message to the server to join a session. This function takes no parameters.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RequestJoinSession";
-
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -2484,6 +2489,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "This function sends a message to the server to leave the active session. This function takes no parameters.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "LeaveCurrentSession";
 		};
@@ -2509,9 +2515,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "This functions sends all other clients on the network new translation and linear velocity for the provided entity. This function takes an entity to update, a new translation as a vector3, and a new linear velocity as a vector2.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "SendAllEntityPhysics";
-
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -2527,9 +2533,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "This function sends a signal to the server, which is then sent to all other clients. This signal can be interpretted in different ways depending on your application's needs.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "SignalAll";
-
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -2541,6 +2547,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "This function sends a request to the server to find out the number of users currently online. Note that a function needs to be set up to receive the user count request.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RequestUserCount";
 		};
@@ -2554,9 +2561,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "This function sends a signal to the server indicating this client is ready. This can be intepretted differently depending on your application.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "EnableReadyCheck";
-
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -2576,9 +2583,9 @@ namespace Kargono::Scripting
 		newFunctionNode.Description = "This function conducts a raycast starting from the first indicated 2D point and ends at the second indicated point. This function returns the first entity that a collision occurs with. This function takes a starting vector2 and an ending vector2 as arguments.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 		{
+			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "Physics_Raycast";
-
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
@@ -2642,6 +2649,7 @@ namespace Kargono::Scripting
 			newFunctionNode.Description = "";
 			newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
 			{
+				UNREFERENCED_PARAMETER(generator);
 				node.Namespace = {};
 			};
 			s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);

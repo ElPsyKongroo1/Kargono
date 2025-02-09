@@ -84,6 +84,8 @@ namespace Kargono::Rendering
 
 	void EditorPerspectiveCamera::OnUpdateModelView(Timestep ts)
 	{
+		UNREFERENCED_PARAMETER(ts);
+
 		if (Input::InputService::IsKeyPressed(Key::LeftAlt))
 		{
 			const Math::vec2& mouse{ Input::InputService::GetMouseX(), Input::InputService::GetMouseY() };

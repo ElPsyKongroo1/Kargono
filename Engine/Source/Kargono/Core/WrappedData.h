@@ -605,8 +605,6 @@ namespace Kargono
 				KG_ERROR("Invalid wrapped variable type presented when trying to get it's data size in bytes");
 				return std::numeric_limits<size_t>::max();
 			}
-			KG_ERROR("Invalid wrapped variable type presented when trying to get it's data size in bytes");
-			return std::numeric_limits<size_t>::max();
 		}
 
 		inline const char* WrappedVarTypeToKGScript(WrappedVarType type)
@@ -949,7 +947,6 @@ namespace Kargono
 		inline WrappedFuncType ExplicitSignatureToWrappedFuncType(WrappedVarType queryReturnType, const std::vector<WrappedVarType>& queryParameterList)
 		{
 			// Check every predefined func type
-			bool foundFuncType{ false };
 			for (WrappedFuncType funcType : s_AllWrappedFuncs)
 			{
 				// Check return type

@@ -663,12 +663,14 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::OnOpenTooltipForUIOnMove(EditorUI::SelectOptionSpec& spec)
 	{
+		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
 
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 		{
+			UNREFERENCED_PARAMETER(entry);
 			m_UIOnMove.m_OpenPopup = true;
 		} };
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
@@ -676,6 +678,7 @@ namespace Kargono::Panels
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 		{
+			UNREFERENCED_PARAMETER(entry);
 			// Open create script dialog in script editor
 			s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 			{
@@ -757,12 +760,14 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::OnOpenTooltipForUIOnHover(EditorUI::SelectOptionSpec& spec)
 	{
+		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
 
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 		{
+			UNREFERENCED_PARAMETER(entry);
 			m_UIOnHover.m_OpenPopup = true;
 		} };
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
@@ -770,6 +775,7 @@ namespace Kargono::Panels
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 		{
+				UNREFERENCED_PARAMETER(entry);
 				// Open create script dialog in script editor
 				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 				{
@@ -1357,6 +1363,7 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::OnModifyWindowTag(EditorUI::EditTextSpec& spec)
 	{
+		UNREFERENCED_PARAMETER(spec);
 		// Ensure active window is valid
 		if (!ValidateActiveWindow())
 		{
@@ -1424,6 +1431,7 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::OnModifyWindowLocation(EditorUI::EditVec3Spec& spec)
 	{
+		UNREFERENCED_PARAMETER(spec);
 		// Ensure active window is valid
 		if (!ValidateActiveWindow())
 		{
@@ -1439,6 +1447,7 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::OnModifyWindowSize(EditorUI::EditVec2Spec& spec)
 	{
+		UNREFERENCED_PARAMETER(spec);
 		// Ensure active window is valid
 		if (!ValidateActiveWindow())
 		{
@@ -1454,6 +1463,7 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::OnModifyWindowBackgroundColor(EditorUI::EditVec4Spec& spec)
 	{
+		UNREFERENCED_PARAMETER(spec);
 		// Ensure active window is valid
 		if (!ValidateActiveWindow())
 		{
@@ -1496,6 +1506,7 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::OnModifyWidgetTag(EditorUI::EditTextSpec& spec)
 	{
+		UNREFERENCED_PARAMETER(spec);
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
 		{
@@ -2037,12 +2048,14 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::OnOpenTooltipForInputTextWidgetOnMoveCursor(EditorUI::SelectOptionSpec& spec)
 	{
+		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
 
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 		{
+			UNREFERENCED_PARAMETER(entry);
 			m_InputTextWidgetOnMoveCursor.m_OpenPopup = true;
 		} };
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
@@ -2050,6 +2063,7 @@ namespace Kargono::Panels
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 		{
+				UNREFERENCED_PARAMETER(entry);
 				// Open create script dialog in script editor
 				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 				{
@@ -2212,12 +2226,14 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::OnOpenTooltipForSliderWidgetOnMoveSlider(EditorUI::SelectOptionSpec& spec)
 	{
+		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
 
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 		{
+			UNREFERENCED_PARAMETER(entry);
 			m_SliderWidgetOnMoveSlider.m_OpenPopup = true;
 		} };
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
@@ -2225,6 +2241,7 @@ namespace Kargono::Panels
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 		{
+				UNREFERENCED_PARAMETER(entry);
 				// Open create script dialog in script editor
 				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Float, [&](Assets::AssetHandle scriptHandle)
 				{
@@ -2571,6 +2588,7 @@ namespace Kargono::Panels
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 		{
+			UNREFERENCED_PARAMETER(entry);
 			s_CurrentSpec->m_OpenPopup = true;
 		} };
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
@@ -2578,6 +2596,7 @@ namespace Kargono::Panels
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 		{
+			UNREFERENCED_PARAMETER(entry);
 			// Open create script dialog in script editor
 			s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(
 				s_CurrentFuncType, [&](Assets::AssetHandle scriptHandle)

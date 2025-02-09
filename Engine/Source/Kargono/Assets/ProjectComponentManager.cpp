@@ -12,12 +12,12 @@ namespace Kargono::Assets
 	{
 
 		// Get old assetInfo reference
-		AssetInfo asset = GetAssetRegistry().at(assetHandle);
+		AssetInfo assetInfo = GetAssetRegistry().at(assetHandle);
 		std::filesystem::path assetPath =
 			(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
-				Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation :
-				Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
-		Ref<ECS::ProjectComponent> oldAssetRef = DeserializeAsset(asset, assetPath);
+				Projects::ProjectService::GetActiveIntermediateDirectory() / assetInfo.Data.IntermediateLocation :
+				Projects::ProjectService::GetActiveAssetDirectory() / assetInfo.Data.FileLocation);
+		Ref<ECS::ProjectComponent> oldAssetRef = DeserializeAsset(assetInfo, assetPath);
 
 		// Create reallocation instructions which stores information for transferring data from old entity components to new entity components
 		Ref<FieldReallocationInstructions> newReallocationInstructions = CreateRef<FieldReallocationInstructions>();
@@ -62,7 +62,7 @@ namespace Kargono::Assets
 
 		return newReallocationInstructions;
 	}
-	void ProjectComponentManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
+	void ProjectComponentManager::CreateAssetFileFromName(std::string_view name, AssetInfo& assetInfo, const std::filesystem::path& assetPath)
 	{
 		// Create new project component
 		Ref<ECS::ProjectComponent> newProjectComponent = CreateRef<ECS::ProjectComponent>();
@@ -95,7 +95,7 @@ namespace Kargono::Assets
 		// Load data into In-Memory Metadata object
 		Ref<Assets::ProjectComponentMetaData> metadata = CreateRef<Assets::ProjectComponentMetaData>();
 		metadata->Name = name;
-		asset.Data.SpecificFileData = metadata;
+		assetInfo.Data.SpecificFileData = metadata;
 	}
 	void ProjectComponentManager::SerializeAsset(Ref<ECS::ProjectComponent> assetReference, const std::filesystem::path& assetPath)
 	{
@@ -143,6 +143,8 @@ namespace Kargono::Assets
 	}
 	Ref<ECS::ProjectComponent> ProjectComponentManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(asset);
+
 		Ref<ECS::ProjectComponent> newProjectComponent = CreateRef<ECS::ProjectComponent>();
 		YAML::Node data;
 		try

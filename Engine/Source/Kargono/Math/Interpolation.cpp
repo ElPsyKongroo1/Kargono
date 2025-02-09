@@ -471,7 +471,6 @@ namespace Kargono::Math
 	static float EaseInOutExpoCalc(float progress)
 	{
 		constexpr float k_LowTolerance{ 0.0001f };
-		constexpr float k_HighTolerance{ 0.9999f };
 
 		float returnValue;
 

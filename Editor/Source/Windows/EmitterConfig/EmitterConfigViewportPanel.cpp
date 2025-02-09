@@ -216,7 +216,7 @@ namespace Kargono::Panels
 	void EmitterConfigViewportPanel::DrawToolbarOverlay()
 	{
 
-		constexpr float k_IconSize{ 36.0f };
+		//constexpr float k_IconSize{ 36.0f };
 		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();

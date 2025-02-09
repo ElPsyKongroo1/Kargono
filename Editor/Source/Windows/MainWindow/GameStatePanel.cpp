@@ -151,6 +151,8 @@ namespace Kargono::Panels
 							std::to_string(field->GetWrappedValue<uint16_t>()),
 							[&](EditorUI::ListEntry& entry, std::size_t iteration)
 							{
+								UNREFERENCED_PARAMETER(iteration);
+								UNREFERENCED_PARAMETER(entry);
 								m_EditFieldPopup.m_OpenPopup = true;
 								m_CurrentField = name;
 							});
@@ -215,6 +217,7 @@ namespace Kargono::Panels
 		};
 		m_EditFieldType.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
+			UNREFERENCED_PARAMETER(selection);
 			m_FieldsTable.m_OnRefresh();
 		};
 		m_EditFieldValue.m_Label = "Field Value";

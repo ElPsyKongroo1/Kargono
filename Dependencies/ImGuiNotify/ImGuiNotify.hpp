@@ -155,10 +155,10 @@ public:
      * 
      * @param type The type of the toast notification.
      */
-    inline void setType(const ImGuiToastType& type)
+    inline void setType(const ImGuiToastType& newType)
     {
-        IM_ASSERT(type < ImGuiToastType::COUNT);
-        this->type = type;
+        IM_ASSERT(newType < ImGuiToastType::COUNT);
+        type = newType;
     };
 
     /**
@@ -166,9 +166,9 @@ public:
      * 
      * @param flags ImGui window flags to set.
     */
-    inline void setWindowFlags(const ImGuiWindowFlags& flags)
+    inline void setWindowFlags(const ImGuiWindowFlags& newFlags)
     {
-        this->flags = flags;
+        this->flags = newFlags;
     }
 
     /**
@@ -176,9 +176,9 @@ public:
      * 
      * @param onButtonPress std::fuction or lambda expression, which contains the code for execution.
     */
-    inline void setOnButtonPress(const std::function<void()>& onButtonPress)
+    inline void setOnButtonPress(const std::function<void()>& newOnButtonPress)
     {
-        this->onButtonPress = onButtonPress;
+        onButtonPress = newOnButtonPress;
     }
 
     /**
@@ -542,11 +542,15 @@ namespace ImGui
                 SetNextWindowPos(ImVec2(mainWindowPos.x + mainWindowSize.x - NOTIFY_PADDING_X, mainWindowPos.y + mainWindowSize.y - NOTIFY_PADDING_Y - height), ImGuiCond_Always, ImVec2(1.0f, 1.0f));
             #endif
 
-            // Set notification window flags
-            if (!NOTIFY_USE_DISMISS_BUTTON && currentToast->getOnButtonPress() == nullptr)
-            {
-                currentToast->setWindowFlags(NOTIFY_DEFAULT_TOAST_FLAGS | ImGuiWindowFlags_NoInputs);
-            }
+#if NOTIFY_USE_DISMISS_BUTTON == false
+			// Set notification window flags
+			if (currentToast->getOnButtonPress() == nullptr)
+			{
+				currentToast->setWindowFlags(NOTIFY_DEFAULT_TOAST_FLAGS | ImGuiWindowFlags_NoInputs);
+			}
+#endif
+
+            
 
 			// Generate Unique name for window
 			currentID++;

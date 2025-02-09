@@ -305,6 +305,7 @@ namespace Kargono::Panels
 
 	void UIEditorTreePanel::SelectUI(EditorUI::TreeEntry& entry)
 	{
+		UNREFERENCED_PARAMETER(entry);
 		s_UIWindow->m_PropertiesPanel->ClearPanelData();
 		s_UIWindow->m_PropertiesPanel->m_CurrentDisplay = UIPropertiesDisplay::UserInterface;
 	}

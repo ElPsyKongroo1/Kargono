@@ -156,6 +156,7 @@ namespace Kargono::Network
 
 		m_Socket.async_send_to(asio::buffer(s_SocketSendBuffer.data(), sizeof(uint32_t) + sizeof(MessageHeader) + payloadSize), m_OutgoingMessagesQueue.GetFront().endpoint, [this](std::error_code ec, std::size_t length)
 		{
+			UNREFERENCED_PARAMETER(length);
 			if (ec)
 			{
 				KG_WARN("Error occurred while attempting write a UDP Message. Error Code: [{}] Message: {}", ec.value(), ec.message());

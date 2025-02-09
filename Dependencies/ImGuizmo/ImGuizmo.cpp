@@ -865,7 +865,7 @@ namespace ImGuizmo
 
    void BeginFrame()
    {
-      ImGuiIO& io = ImGui::GetIO();
+      [[maybe_unused]] ImGuiIO& io = ImGui::GetIO();
 
       const ImU32 flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
@@ -919,12 +919,12 @@ namespace ImGuizmo
       }
    }
 
-   static float GetUniform(const vec_t& position, const matrix_t& mat)
-   {
-      vec_t trf = makeVect(position.x, position.y, position.z, 1.f);
-      trf.Transform(mat);
-      return trf.w;
-   }
+   //static float GetUniform(const vec_t& position, const matrix_t& mat)
+   //{
+   //   vec_t trf = makeVect(position.x, position.y, position.z, 1.f);
+   //   trf.Transform(mat);
+   //   return trf.w;
+   //}
 
    static void ComputeContext(const float* view, const float* projection, float* matrix, MODE mode)
    {
@@ -1189,15 +1189,15 @@ namespace ImGuizmo
       }
    }
 
-   static void DrawHatchedAxis(const vec_t& axis)
-   {
-      for (int j = 1; j < 10; j++)
-      {
-         ImVec2 baseSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2) * gContext.mScreenFactor, gContext.mMVP);
-         ImVec2 worldDirSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2 + 1) * gContext.mScreenFactor, gContext.mMVP);
-         gContext.mDrawList->AddLine(baseSSpace2, worldDirSSpace2, 0x80000000, 6.f);
-      }
-   }
+   //static void DrawHatchedAxis(const vec_t& axis)
+   //{
+   //   for (int j = 1; j < 10; j++)
+   //   {
+   //      ImVec2 baseSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2) * gContext.mScreenFactor, gContext.mMVP);
+   //      ImVec2 worldDirSSpace2 = worldToPos(axis * 0.05f * (float)(j * 2 + 1) * gContext.mScreenFactor, gContext.mMVP);
+   //      gContext.mDrawList->AddLine(baseSSpace2, worldDirSSpace2, 0x80000000, 6.f);
+   //   }
+   //}
 
    static void DrawScaleGizmo(int type)
    {
@@ -2278,7 +2278,6 @@ namespace ImGuizmo
       {
          const float* matrix = &matrices[cube * 16];
 
-         const matrix_t& model = *(matrix_t*)matrix;
          matrix_t res = *(matrix_t*)matrix * *(matrix_t*)view * *(matrix_t*)projection;
          matrix_t modelView = *(matrix_t*)matrix * *(matrix_t*)view;
 

@@ -19,6 +19,7 @@ namespace Kargono::Panels
 
 	void AssetViewerPanel::ViewAssetInformation(EditorUI::ListEntry& entry, std::size_t iteration)
 	{
+		UNREFERENCED_PARAMETER(iteration);
 		m_ActiveAsset = entry.m_Handle;
 		m_ActiveAssetType = Utility::StringToAssetType(entry.m_Label);
 		m_ViewAssetPopup.m_OpenPopup = true;

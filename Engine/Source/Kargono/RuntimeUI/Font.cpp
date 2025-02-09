@@ -19,6 +19,10 @@ namespace Kargono::Utility
 	static Ref<Rendering::Texture2D> CreateAndCacheAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
 		const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height)
 	{
+		UNREFERENCED_PARAMETER(fontGeometry);
+		UNREFERENCED_PARAMETER(fontSize);
+		UNREFERENCED_PARAMETER(fontName);
+
 		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
 		msdf_atlas::GeneratorAttributes attributes;
 		attributes.config.overlapSupport = true;
@@ -151,11 +155,13 @@ namespace Kargono::RuntimeUI
 		bool expensiveColoring = false;
 		if (expensiveColoring)
 		{
-			msdf_atlas::Workload([&glyphs = glyphs, &coloringSeed](int i, int threadNo) -> bool {
+			msdf_atlas::Workload([&glyphs = glyphs, &coloringSeed](int i, int threadNo) -> bool 
+			{
+				UNREFERENCED_PARAMETER(threadNo);
 				unsigned long long glyphSeed = (LCG_MULTIPLIER * (coloringSeed ^ i) + LCG_INCREMENT) * !!coloringSeed;
 				glyphs[i].edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
 				return true;
-				}, static_cast<int32_t>(glyphs.size())).finish(numAvailableThread);
+			}, static_cast<int32_t>(glyphs.size())).finish(numAvailableThread);
 		}
 		else {
 			unsigned long long glyphSeed = coloringSeed;
@@ -212,6 +218,7 @@ namespace Kargono::RuntimeUI
 
 	void Font::OnRenderMultiLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale, int maxLineWidth)
 	{
+		UNREFERENCED_PARAMETER(maxLineWidth);
 		// Submit text color to the renderer buffer. The text will now be rendered with this color.
 		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
@@ -219,50 +226,10 @@ namespace Kargono::RuntimeUI
 		// Initialize the active location where text is being rendered
 		double xLocation{ translation.x };
 		double yLocation{ translation.y };
-		bool wrapText{ maxLineWidth > 0 };
-		size_t activeWordEnding{ 0 };
 
 		// Iterate through each character in the string
 		for (size_t characterIndex = 0; characterIndex < string.size(); characterIndex++)
 		{
-			//// Wrap text if necessary
-			//if (wrapText && xLocation > translation.x + maxLineWidth)
-			//{
-			//	// Move to next line
-			//	xLocation = translation.x;
-			//	yLocation -= scale * m_LineHeight;
-			//}
-#if 0
-			// Check if we should evaluate the word this letter exists in
-			if (wrapText && characterIndex >= activeWordEnding)
-			{
-				// Get active word's terminal location and word width
-				size_t wordIndex{ characterIndex };
-				double wordWidth{ 0.0f };
-				while (wordIndex < string.size())
-				{
-					if (std::isspace(string[wordIndex]))
-					{
-						activeWordEnding = wordIndex;
-						break;
-					}
-					wordWidth += m_Characters.at(string[wordIndex]).Advance;
-					wordIndex++;
-				}
-				wordWidth *= scale;
-
-				// Check if newline is appropriate for active word
-				if (xLocation + wordWidth > translation.x + maxLineWidth)
-				{
-					// Move to next line
-					xLocation = translation.x;
-					yLocation -= scale * m_LineHeight;
-				}
-
-			}
-#endif
-
-
 			// Get the active character from the string
 			char character = string[characterIndex];
 			Character glyph;

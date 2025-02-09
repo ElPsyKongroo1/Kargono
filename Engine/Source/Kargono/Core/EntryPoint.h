@@ -37,6 +37,10 @@ int main(int argc, char** argv)
 #if defined(KG_PLATFORM_WINDOWS)
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
+	UNREFERENCED_PARAMETER(cmdshow);
+	UNREFERENCED_PARAMETER(cmdline);
+	UNREFERENCED_PARAMETER(hInstPrev);
+	UNREFERENCED_PARAMETER(hInst);
 	// Get Command Line Arguments in the form of argc and argv line int main(char**, int)
 	LPWSTR* argv;
 	int argc;

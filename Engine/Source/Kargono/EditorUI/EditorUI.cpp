@@ -215,10 +215,7 @@ namespace Kargono::EditorUI
 			// Get window pointer and ensure it is valid
 			ImGuiWindow* hoveredWindow = context->HoveredWindow;
 			if (hoveredWindow != nullptr) 
-			{
-				// Get the pointer to the hovered window
-				ImGuiWindow* windowPtr = hoveredWindow;
-
+			{	
 				// Get the name of the hovered window
 				return hoveredWindow->Name;
 			}
@@ -639,7 +636,7 @@ namespace Kargono::EditorUI
 		ImGui::PopStyleVar(3);
 
 		// Submit the DockSpace
-		ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_NoCloseButton;
+		ImGuiDockNodeFlags dockspace_flags = (uint32_t)ImGuiDockNodeFlags_None | (uint32_t)ImGuiDockNodeFlags_NoCloseButton;
 		ImGui::DockSpace(ImGui::GetID("MyDockSpace"), ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
 
@@ -1331,7 +1328,7 @@ namespace Kargono::EditorUI
 					{
 						spec.FieldBuffer.SetString("True");
 					}
-				}, s_SmallCheckboxButton, std::string(spec.FieldBuffer.As<char>()) == "True", s_HighlightColor1);
+				}, s_SmallCheckboxButton, std::string(spec.FieldBuffer.As<char>()) == std::string("True"), s_HighlightColor1);
 
 				ImGui::SameLine(300.0f);
 				TruncateText("False", 12);
@@ -1346,7 +1343,7 @@ namespace Kargono::EditorUI
 					{
 						spec.FieldBuffer.SetString("False");
 					}
-				}, s_SmallCheckboxButton, std::string(spec.FieldBuffer.As<char>()) == "False", s_HighlightColor1);
+				}, s_SmallCheckboxButton, std::string(spec.FieldBuffer.As<char>()) == std::string("False"), s_HighlightColor1);
 				ImGui::PopStyleColor(2);
 				break;
 			}
@@ -1358,6 +1355,7 @@ namespace Kargono::EditorUI
 				ImGui::SetNextItemWidth(170.0f);
 				ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
 				{
+					UNREFERENCED_PARAMETER(data);
 					return 0;
 				};
 				ImGui::InputText(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
@@ -1377,6 +1375,7 @@ namespace Kargono::EditorUI
 				ImGui::SetNextItemWidth(170.0f);
 				ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
 				{
+					UNREFERENCED_PARAMETER(data);
 					return 0;
 				};
 				ImGui::InputText(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
@@ -2400,9 +2399,9 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition{};
 		uint64_t depth = currentPath.GetDepth();
 		uint32_t iteration = 0;
-		for (auto& treeEntry : entries)
+		for (EditorUI::TreeEntry& treeEntry : entries)
 		{
-			currentPath.AddNode(iteration);
+			currentPath.AddNode((uint16_t)iteration);
 			// Set x-position based on current tree depth
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (depth * 30.0f));
 			screenPosition = ImGui::GetCursorScreenPos();
@@ -3094,7 +3093,6 @@ namespace Kargono::EditorUI
 
 	void EditorUIService::Tooltip(TooltipSpec& spec)
 	{
-		uint32_t widgetCount{ 0 };
 		FixedString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 
@@ -3137,9 +3135,9 @@ namespace Kargono::EditorUI
 	static bool RecursiveGetPathFromEntry(TreePath& outputPath, TreeEntry* entryQuery, const std::vector<TreeEntry>& entries)
 	{
 		uint32_t iteration{ 0 };
-		for (auto& treeEntry : entries)
+		for (const EditorUI::TreeEntry& treeEntry : entries)
 		{
-			outputPath.AddNode(iteration);
+			outputPath.AddNode((uint16_t)iteration);
 			if (entryQuery == &treeEntry)
 			{
 				return true;

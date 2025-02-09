@@ -22,7 +22,7 @@ namespace Kargono::Utility
 		return 0;
 	}
 
-	static const char* ShaderTypeToString(GLenum stage)
+	/*static const char* ShaderTypeToString(GLenum stage)
 	{
 		switch (stage)
 		{
@@ -31,7 +31,7 @@ namespace Kargono::Utility
 		}
 		KG_ERROR("Invalid Shader Type!");
 		return "";
-	}
+	}*/
 
 	static const char* GLShaderStageToString(GLenum stage)
 	{
@@ -93,7 +93,8 @@ namespace Kargono::Utility
 
 	static void CompileBinaries(const Assets::AssetHandle& assetHandle, const std::unordered_map<GLenum, std::string>& shaderSources, std::unordered_map<GLenum, std::vector<uint32_t>>& openGLSPIRV)
 	{
-		GLuint program = glCreateProgram();
+		//GLuint program = glCreateProgram(); // TODO: For some reason, program is not used here?
+		glCreateProgram();
 
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
@@ -269,6 +270,8 @@ namespace Kargono::Assets
 
 	Ref<Rendering::Shader> Assets::ShaderManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(assetPath);
+
 		Assets::ShaderMetaData metadata = *asset.Data.GetSpecificMetaData<ShaderMetaData>();
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
 		std::filesystem::path intermediatePath = Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation;
@@ -350,7 +353,8 @@ namespace Kargono::Assets
 		shaderMetaData->ShaderSpec.DrawOutline = metadataNode["DrawOutline"].as<bool>();
 		shaderMetaData->ShaderSpec.RenderType = Utility::StringToRenderingType(metadataNode["RenderType"].as<std::string>());
 
-		KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Shader Deserializer!")
+		static_assert(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification));
+
 		{
 			// InputBufferLayout Section
 			auto inputBufferLayout = metadataNode["InputBufferLayout"];

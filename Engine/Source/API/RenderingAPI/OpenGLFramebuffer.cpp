@@ -98,15 +98,15 @@ namespace API::RenderingAPI
 	{
 		// For Loop organizes specifications into color or depth attachments that are held
 		//		locally
-		for (auto spec : m_Specification.Attachments.Attachments)
+		for (Kargono::Rendering::FramebufferDataSpecification attachement : m_Specification.Attachments.Attachments)
 		{
-			if (!Utility::IsDepthFormat(spec.DataFormat))
+			if (!Utility::IsDepthFormat(attachement.DataFormat))
 			{
-				m_ColorAttachmentSpecifications.emplace_back(spec);
+				m_ColorAttachmentSpecifications.emplace_back(attachement);
 			}
 			else
 			{
-				m_DepthAttachmentSpecification = spec;
+				m_DepthAttachmentSpecification = attachement;
 			}
 		}
 		// Call Invalidate to instantiate framebuffer with provided spec

@@ -9,6 +9,8 @@ namespace Kargono::Assets
 {
 	void UserInterfaceManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(name);
+
 		// Create Temporary UserInterface
 		Ref<RuntimeUI::UserInterface> temporaryUserInterface = CreateRef<RuntimeUI::UserInterface>();
 
@@ -309,6 +311,8 @@ namespace Kargono::Assets
 
 	Ref<RuntimeUI::UserInterface> UserInterfaceManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(asset);
+
 		Ref<RuntimeUI::UserInterface> newUserInterface = CreateRef<RuntimeUI::UserInterface>();
 		YAML::Node data;
 		try

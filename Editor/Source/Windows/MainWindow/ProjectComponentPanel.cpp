@@ -201,6 +201,7 @@ namespace Kargono::Panels
 						Utility::WrappedVarTypeToString(m_EditorProjectComponent->m_DataTypes.at(iteration)),
 						[&](EditorUI::ListEntry& entry, std::size_t iteration)
 						{
+							UNREFERENCED_PARAMETER(iteration);
 							m_EditFieldPopup.m_OpenPopup = true;
 							m_ActiveField = entry.m_Handle;
 						}, iteration);
@@ -230,6 +231,7 @@ namespace Kargono::Panels
 		};
 		m_AddFieldType.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
+			UNREFERENCED_PARAMETER(selection);
 			RefreshData();
 		};
 
@@ -276,6 +278,7 @@ namespace Kargono::Panels
 		};
 		m_EditFieldType.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
+			UNREFERENCED_PARAMETER(selection);
 			RefreshData();
 		};
 

@@ -31,6 +31,8 @@ namespace Kargono::Assets
 
 	void AudioBufferManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(asset);
+
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
 		out << YAML::Key << "Name" << YAML::Value << std::string(name); // Output audio name

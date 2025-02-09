@@ -143,11 +143,11 @@ namespace Kargono::Utility
 		{
 			KG_INFO("{}Single Semicolon Statement", GetIndentation(indentation));
 		}
-		else if (Scripting::StatementReturn* expressionStatement = std::get_if<Scripting::StatementReturn>(&statement->Value))
+		else if (Scripting::StatementReturn* returnStatement = std::get_if<Scripting::StatementReturn>(&statement->Value))
 		{
 			KG_INFO("{}Return Statement", GetIndentation(indentation));
 			KG_INFO("{}Return Value", GetIndentation(indentation + 1));
-			PrintExpression(expressionStatement->ReturnValue, indentation + 2);
+			PrintExpression(returnStatement->ReturnValue, indentation + 2);
 		}
 		else if (Scripting::StatementExpression* expressionStatement = std::get_if<Scripting::StatementExpression>(&statement->Value))
 		{
@@ -2046,20 +2046,20 @@ namespace Kargono::Scripting
 
 		// Get the return type of the Name and Value
 		ScriptToken statementNameType;
-		if (MemberNode* currentStatementName = std::get_if<MemberNode>(&newStatementAssignment.Name->Value))
+		if (MemberNode* memberExpression = std::get_if<MemberNode>(&newStatementAssignment.Name->Value))
 		{
 			// Add logic for storing member node
-			statementNameType = currentStatementName->ReturnType;
+			statementNameType = memberExpression->ReturnType;
 		}
-		else if (TokenExpressionNode* currentStatementName = std::get_if<TokenExpressionNode>(&newStatementAssignment.Name->Value))
+		else if (TokenExpressionNode* tokenExpression = std::get_if<TokenExpressionNode>(&newStatementAssignment.Name->Value))
 		{
 			// Ensure identifer is a valid StackVariable
-			if (!CheckStackForIdentifier(currentStatementName->Value))
+			if (!CheckStackForIdentifier(tokenExpression->Value))
 			{
-				StoreParseError(ParseErrorType::Statement, "Unknown variable found in assignment statement", currentStatementName->Value);
+				StoreParseError(ParseErrorType::Statement, "Unknown variable found in assignment statement", tokenExpression->Value);
 				return { false, {} };
 			}
-			StackVariable statementNameVariable = GetStackVariable(currentStatementName->Value);
+			StackVariable statementNameVariable = GetStackVariable(tokenExpression->Value);
 			statementNameType = statementNameVariable.Type;
 		}
 		else
@@ -2682,7 +2682,7 @@ namespace Kargono::Scripting
 		return newExpression;
 		
 	}
-	void ScriptTokenParser::Advance(uint32_t count)
+	void ScriptTokenParser::Advance(int32_t count)
 	{
 		m_TokenLocation += count;
 	}

@@ -44,7 +44,7 @@ namespace Kargono::Scripting
 		ScriptToken GetToken(int32_t location);
 		ScriptToken GetCurrentToken(int32_t offset = 0);
 		Ref<Expression> TokenToExpression(ScriptToken token);
-		void Advance(uint32_t count = 1);
+		void Advance(int32_t count = 1);
 		void StoreStackVariable(ScriptToken type, ScriptToken identifier);
 		void AddStackFrame();
 		void PopStackFrame();

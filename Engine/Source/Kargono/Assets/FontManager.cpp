@@ -13,6 +13,10 @@ namespace Kargono::Utility
 	static void CreateAtlas(std::string_view fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs,
 		const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height, Rendering::TextureSpecification& textureSpec, Buffer& buffer)
 	{
+		UNREFERENCED_PARAMETER(fontGeometry);
+		UNREFERENCED_PARAMETER(fontSize);
+		UNREFERENCED_PARAMETER(fontName);
+
 		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
 		msdf_atlas::GeneratorAttributes attributes;
 		attributes.config.overlapSupport = true;
@@ -119,6 +123,8 @@ namespace Kargono::Assets
 	}
 	void FontManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(asset);
+
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
 		out << YAML::Key << "Name" << YAML::Value << std::string(name); // Output font name
@@ -195,11 +201,13 @@ namespace Kargono::Assets
 		bool expensiveColoring = false;
 		if (expensiveColoring)
 		{
-			msdf_atlas::Workload([&glyphs = glyphs, &coloringSeed](int i, int threadNo) -> bool {
+			msdf_atlas::Workload([&glyphs = glyphs, &coloringSeed](int i, int threadNo) -> bool 
+			{
+				UNREFERENCED_PARAMETER(threadNo);
 				unsigned long long glyphSeed = (LCG_MULTIPLIER * (coloringSeed ^ i) + LCG_INCREMENT) * !!coloringSeed;
 				glyphs[i].edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
 				return true;
-				}, static_cast<int32_t>(glyphs.size())).finish(numAvailableThread);
+			}, static_cast<int32_t>(glyphs.size())).finish(numAvailableThread);
 		}
 		else {
 			unsigned long long glyphSeed = coloringSeed;

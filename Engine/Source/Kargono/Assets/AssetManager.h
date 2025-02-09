@@ -726,22 +726,54 @@ namespace Kargono::Assets
 
 		virtual void SerializeAsset(Ref<AssetValue> assetReference, const std::filesystem::path& assetPath) 
 		{ 
+			UNREFERENCED_PARAMETER(assetReference);
+			UNREFERENCED_PARAMETER(assetPath);
 			KG_ERROR("Attempt to serialize an asset that does not override the base class's implentation of SerializeAsset()");
 		};
 
 		virtual void CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 		{
+			UNREFERENCED_PARAMETER(name);
+			UNREFERENCED_PARAMETER(asset);
+			UNREFERENCED_PARAMETER(assetPath);
 			KG_ERROR("Attempt to create an asset from a name that does not override the base class's implmentation of CreateAssetFileFromName()");
 		}
 
-		virtual Ref<void> SaveAssetValidation(Ref<AssetValue> newAsset, AssetHandle assetHandle) { return nullptr; };
-		virtual void DeleteAssetValidation(AssetHandle assetHandle) {};
+		virtual Ref<void> SaveAssetValidation(Ref<AssetValue> newAsset, AssetHandle assetHandle) 
+		{
+			UNREFERENCED_PARAMETER(newAsset);
+			UNREFERENCED_PARAMETER(assetHandle);
+			return nullptr; 
+		};
+		virtual void DeleteAssetValidation(AssetHandle assetHandle) 
+		{
+			UNREFERENCED_PARAMETER(assetHandle);
+		};
 		virtual Ref<AssetValue> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) = 0;
-		virtual void SerializeRegistrySpecificData(YAML::Emitter& serializer) {};
-		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset) {};
-		virtual void DeserializeRegistrySpecificData(YAML::Node& registryNode) {};
-		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset) {};
-		virtual void CreateAssetIntermediateFromFile(AssetInfo& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) {};
+		virtual void SerializeRegistrySpecificData(YAML::Emitter& serializer) 
+		{
+			UNREFERENCED_PARAMETER(serializer);
+		};
+		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset) 
+		{
+			UNREFERENCED_PARAMETER(serializer);
+			UNREFERENCED_PARAMETER(currentAsset);
+		};
+		virtual void DeserializeRegistrySpecificData(YAML::Node& registryNode) 
+		{
+			UNREFERENCED_PARAMETER(registryNode);
+		};
+		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset) 
+		{
+			UNREFERENCED_PARAMETER(metadataNode);
+			UNREFERENCED_PARAMETER(currentAsset);
+		};
+		virtual void CreateAssetIntermediateFromFile(AssetInfo& newAsset, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) 
+		{
+			UNREFERENCED_PARAMETER(newAsset);
+			UNREFERENCED_PARAMETER(fullFileLocation);
+			UNREFERENCED_PARAMETER(fullIntermediateLocation);
+		};
 		
 	protected:
 		std::string m_AssetName{ "Uninitialized Asset Name" };

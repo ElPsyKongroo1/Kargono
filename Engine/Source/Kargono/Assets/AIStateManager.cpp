@@ -9,6 +9,9 @@ namespace Kargono::Assets
 {
 	void AIStateManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(name);
+		UNREFERENCED_PARAMETER(asset);
+
 		// Create Temporary AIState
 		Ref<AI::AIState> temporaryAIState = CreateRef<AI::AIState>();
 
@@ -38,6 +41,7 @@ namespace Kargono::Assets
 	}
 	Ref<AI::AIState> AIStateManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(asset);
 		Ref<AI::AIState> newAIState = CreateRef<AI::AIState>();
 		YAML::Node data;
 		try

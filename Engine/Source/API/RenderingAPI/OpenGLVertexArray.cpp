@@ -8,6 +8,7 @@
 
 namespace API::Utility
 {
+
 	static GLenum ShaderDataTypeToOpenGLBaseType(Kargono::Rendering::InputDataType type)
 	{
 		switch (type)
@@ -25,7 +26,7 @@ namespace API::Utility
 		case Kargono::Rendering::InputDataType::Bool:		return GL_BOOL;
 		}
 		KG_ERROR("Invalid Conversion at ShaderDataTypeToOpenGLBaseType!");
-		return -1;
+		return (GLenum) - 1;
 	}
 }
 
@@ -54,8 +55,7 @@ namespace API::RenderingAPI
 		// Get the Vertex Buffer Layout
 		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
-		uint32_t index = 0;
-		const auto& layout = vertexBuffer->GetLayout();
+		const Kargono::Rendering::InputBufferLayout& layout = vertexBuffer->GetLayout();
 		for (const auto& element : layout)
 		{
 			// Here we bind all of the individual elements in a layout to the VertexBufferArray
@@ -95,7 +95,7 @@ namespace API::RenderingAPI
 			case Kargono::Rendering::InputDataType::Mat3:
 			case Kargono::Rendering::InputDataType::Mat4:
 			{
-				uint8_t count = element.GetComponentCount();
+				uint8_t count = (uint8_t)element.GetComponentCount();
 				for (uint8_t i = 0; i < count; i++)
 				{
 					glEnableVertexAttribArray(m_VertexBufferIndex);

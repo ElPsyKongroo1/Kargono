@@ -16,7 +16,6 @@ namespace Kargono::Utility
 {
 	std::filesystem::path FileDialogs::OpenFile(const char* filter, const char* initialDirectory)
 	{
-		
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
 		CHAR currentDir[256] = { 0 };
@@ -25,7 +24,7 @@ namespace Kargono::Utility
 		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)EngineService::GetActiveWindow().GetNativeWindow());
 		ofn.lpstrFile = szFile;
 		ofn.nMaxFile = sizeof(szFile);
-		if (initialDirectory == "")
+		if (initialDirectory == nullptr || *initialDirectory == '\0')
 		{
 			if (GetCurrentDirectoryA(256, currentDir))
 			{
@@ -36,7 +35,8 @@ namespace Kargono::Utility
 		{
 			ofn.lpstrInitialDir = initialDirectory;
 		}
-		if (filter != "")
+
+		if (filter != nullptr && *filter != '\0')
 		{
 			ofn.lpstrFilter = filter;
 		}
@@ -62,7 +62,7 @@ namespace Kargono::Utility
 		ofn.lpstrFile = szFile;
 		ofn.nMaxFile = sizeof(szFile);
 
-		if (initialDirectory == "")
+		if (initialDirectory == nullptr || *initialDirectory == '\0')
 		{
 			if (GetCurrentDirectoryA(256, currentDir))
 			{
@@ -74,7 +74,7 @@ namespace Kargono::Utility
 			ofn.lpstrInitialDir = initialDirectory;
 		}
 
-		if (filter != "")
+		if (filter != nullptr && *filter != '\0')
 		{
 			ofn.lpstrFilter = filter;
 		}

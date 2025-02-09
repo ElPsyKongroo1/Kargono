@@ -122,7 +122,7 @@ namespace Kargono::Utility
 		{
 			out << YAML::Key << "TransformComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& tc = entity.GetComponent<ECS::TransformComponent>();
+			ECS::TransformComponent& tc = entity.GetComponent<ECS::TransformComponent>();
 			out << YAML::Key << "Translation" << YAML::Value << tc.Translation;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.Rotation;
 			out << YAML::Key << "Scale" << YAML::Value << tc.Scale;
@@ -155,8 +155,8 @@ namespace Kargono::Utility
 			out << YAML::Key << "CameraComponent";
 			out << YAML::BeginMap; // Component Map
 
-			auto& cameraComponent = entity.GetComponent<ECS::CameraComponent>();
-			auto& camera = cameraComponent.Camera;
+			ECS::CameraComponent& cameraComponent = entity.GetComponent<ECS::CameraComponent>();
+			Scenes::SceneCamera& camera = cameraComponent.Camera;
 
 			out << YAML::Key << "Camera" << YAML::Value;
 			out << YAML::BeginMap;
@@ -180,7 +180,7 @@ namespace Kargono::Utility
 		{
 			out << YAML::Key << "ShapeComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& shapeComponent = entity.GetComponent<ECS::ShapeComponent>();
+			ECS::ShapeComponent& shapeComponent = entity.GetComponent<ECS::ShapeComponent>();
 			out << YAML::Key << "CurrentShape" << YAML::Value << Utility::ShapeTypeToString(shapeComponent.CurrentShape);
 			if (shapeComponent.VertexColors)
 			{
@@ -197,7 +197,8 @@ namespace Kargono::Utility
 			{
 				out << YAML::Key << "TextureHandle" << YAML::Value << static_cast<uint64_t>(shapeComponent.TextureHandle);
 			}
-			KG_ASSERT(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification), "Please Update Deserialization and Serialization. Incorrect size of input data in Scene Serializer!");
+
+			static_assert(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification));
 			if (shapeComponent.Shader)
 			{
 				// Add Shader Handle
@@ -225,7 +226,7 @@ namespace Kargono::Utility
 		{
 			out << YAML::Key << "Rigidbody2DComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& rb2dComponent = entity.GetComponent<ECS::Rigidbody2DComponent>();
+			ECS::Rigidbody2DComponent& rb2dComponent = entity.GetComponent<ECS::Rigidbody2DComponent>();
 			out << YAML::Key << "BodyType" << YAML::Value << Utility::RigidBody2DBodyTypeToString(rb2dComponent.Type);
 			out << YAML::Key << "FixedRotation" << YAML::Value << rb2dComponent.FixedRotation;
 			out << YAML::Key << "OnCollisionStartHandle" << YAML::Value << static_cast<uint64_t>(rb2dComponent.OnCollisionStartScriptHandle);
@@ -237,7 +238,7 @@ namespace Kargono::Utility
 		{
 			out << YAML::Key << "BoxCollider2DComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& bc2dComponent = entity.GetComponent<ECS::BoxCollider2DComponent>();
+			ECS::BoxCollider2DComponent& bc2dComponent = entity.GetComponent<ECS::BoxCollider2DComponent>();
 			out << YAML::Key << "Offset" << YAML::Value << bc2dComponent.Offset;
 			out << YAML::Key << "Size" << YAML::Value << bc2dComponent.Size;
 			out << YAML::Key << "Density" << YAML::Value << bc2dComponent.Density;
@@ -252,7 +253,7 @@ namespace Kargono::Utility
 		{
 			out << YAML::Key << "CircleCollider2DComponent";
 			out << YAML::BeginMap; // Component Map
-			auto& cc2dComponent = entity.GetComponent<ECS::CircleCollider2DComponent>();
+			ECS::CircleCollider2DComponent& cc2dComponent = entity.GetComponent<ECS::CircleCollider2DComponent>();
 			out << YAML::Key << "Offset" << YAML::Value << cc2dComponent.Offset;
 			out << YAML::Key << "Radius" << YAML::Value << cc2dComponent.Radius;
 			out << YAML::Key << "Density" << YAML::Value << cc2dComponent.Density;
@@ -295,6 +296,7 @@ namespace Kargono::Assets
 {
 	void Assets::SceneManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(name);
 		// Create Temporary Scene
 		Ref<Scenes::Scene> temporaryScene = CreateRef<Scenes::Scene>();
 
@@ -344,8 +346,9 @@ namespace Kargono::Assets
 			KG_WARN("Failed to Serialize Scene");
 		}
 	}
-	Ref<Scenes::Scene> SceneManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
+	Ref<Scenes::Scene> SceneManager::DeserializeAsset(Assets::AssetInfo& assetInfo, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(assetInfo);
 		Ref<Scenes::Scene> newScene = CreateRef<Scenes::Scene>();
 		YAML::Node data;
 		try
@@ -366,7 +369,7 @@ namespace Kargono::Assets
 		YAML::Node entities = data["Entities"];
 		if (entities)
 		{
-			for (auto entity : entities)
+			for (const YAML::Node& entity : entities)
 			{
 				uint64_t uuid = entity["Entity"].as<uint64_t>();
 
@@ -385,7 +388,7 @@ namespace Kargono::Assets
 				YAML::Node transformComponent = entity["TransformComponent"];
 				if (transformComponent)
 				{
-					auto& tc = deserializedEntity.GetComponent<ECS::TransformComponent>();
+					ECS::TransformComponent& tc = deserializedEntity.GetComponent<ECS::TransformComponent>();
 					tc.Translation = transformComponent["Translation"].as<Math::vec3>();
 					tc.Rotation = transformComponent["Rotation"].as<Math::vec3>();
 					tc.Scale = transformComponent["Scale"].as<Math::vec3>();
@@ -447,10 +450,10 @@ namespace Kargono::Assets
 					component.m_EmitterConfigRef = Assets::AssetService::GetEmitterConfig(component.m_EmitterConfigHandle);
 				}
 
-				auto cameraComponent = entity["CameraComponent"];
+				YAML::Node cameraComponent = entity["CameraComponent"];
 				if (cameraComponent)
 				{
-					auto& cc = deserializedEntity.AddComponent<ECS::CameraComponent>();
+					ECS::CameraComponent& cc = deserializedEntity.AddComponent<ECS::CameraComponent>();
 
 					const auto& cameraProps = cameraComponent["Camera"];
 
@@ -466,17 +469,17 @@ namespace Kargono::Assets
 					cc.Primary = cameraComponent["Primary"].as<bool>();
 				}
 
-				auto shapeComponent = entity["ShapeComponent"];
+				YAML::Node shapeComponent = entity["ShapeComponent"];
 				if (shapeComponent)
 				{
-					auto& sc = deserializedEntity.AddComponent<ECS::ShapeComponent>();
+					ECS::ShapeComponent& sc = deserializedEntity.AddComponent<ECS::ShapeComponent>();
 					sc.CurrentShape = Utility::StringToShapeType(shapeComponent["CurrentShape"].as<std::string>());
 
 					if (shapeComponent["VertexColors"])
 					{
-						auto vertexColors = shapeComponent["VertexColors"];
+						YAML::Node vertexColors = shapeComponent["VertexColors"];
 						sc.VertexColors = CreateRef<std::vector<Math::vec4>>();
-						for (auto color : vertexColors)
+						for (const YAML::Node& color : vertexColors)
 						{
 							sc.VertexColors->push_back(color["Color"].as<Math::vec4>());
 						}
@@ -495,7 +498,7 @@ namespace Kargono::Assets
 						sc.Shader = AssetService::GetShader(shaderHandle);
 						if (!sc.Shader)
 						{
-							auto shaderSpecificationNode = shapeComponent["ShaderSpecification"];
+							YAML::Node shaderSpecificationNode = shapeComponent["ShaderSpecification"];
 							Rendering::ShaderSpecification shaderSpec{};
 							// ShaderSpecification Section
 							shaderSpec.ColorInput = Utility::StringToColorInputType(shaderSpecificationNode["ColorInputType"].as<std::string>());
@@ -533,10 +536,10 @@ namespace Kargono::Assets
 					}
 				}
 
-				auto rigidbody2DComponent = entity["Rigidbody2DComponent"];
+				YAML::Node rigidbody2DComponent = entity["Rigidbody2DComponent"];
 				if (rigidbody2DComponent)
 				{
-					auto& rb2d = deserializedEntity.AddComponent<ECS::Rigidbody2DComponent>();
+					ECS::Rigidbody2DComponent& rb2d = deserializedEntity.AddComponent<ECS::Rigidbody2DComponent>();
 					rb2d.Type = Utility::StringToRigidBody2DBodyType(rigidbody2DComponent["BodyType"].as<std::string>());
 					rb2d.FixedRotation = rigidbody2DComponent["FixedRotation"].as<bool>();
 
@@ -547,10 +550,10 @@ namespace Kargono::Assets
 					rb2d.OnCollisionEndScript = Assets::AssetService::GetScript(rb2d.OnCollisionEndScriptHandle);
 				}
 
-				auto boxCollider2DComponent = entity["BoxCollider2DComponent"];
+				YAML::Node boxCollider2DComponent = entity["BoxCollider2DComponent"];
 				if (boxCollider2DComponent)
 				{
-					auto& bc2d = deserializedEntity.AddComponent<ECS::BoxCollider2DComponent>();
+					ECS::BoxCollider2DComponent& bc2d = deserializedEntity.AddComponent<ECS::BoxCollider2DComponent>();
 					bc2d.Offset = boxCollider2DComponent["Offset"].as<Math::vec2>();
 					bc2d.Size = boxCollider2DComponent["Size"].as<Math::vec2>();
 					bc2d.Density = boxCollider2DComponent["Density"].as<float>();
@@ -560,10 +563,10 @@ namespace Kargono::Assets
 					bc2d.IsSensor = boxCollider2DComponent["IsSensor"].as<bool>();
 				}
 
-				auto circleCollider2DComponent = entity["CircleCollider2DComponent"];
+				YAML::Node circleCollider2DComponent = entity["CircleCollider2DComponent"];
 				if (circleCollider2DComponent)
 				{
-					auto& cc2d = deserializedEntity.AddComponent<ECS::CircleCollider2DComponent>();
+					ECS::CircleCollider2DComponent& cc2d = deserializedEntity.AddComponent<ECS::CircleCollider2DComponent>();
 					cc2d.Offset = circleCollider2DComponent["Offset"].as<Math::vec2>();
 					cc2d.Radius = circleCollider2DComponent["Radius"].as<float>();
 					cc2d.Density = circleCollider2DComponent["Density"].as<float>();

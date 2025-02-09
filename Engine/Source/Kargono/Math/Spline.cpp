@@ -94,7 +94,7 @@ namespace Kargono::Math
 		time -= (int)time; // Get remainder (0.0f - 1.0f)
 
 		float timeSquared = time * time;
-		float timeCubed = time * time * time;
+		//float timeCubed = time * time * time;
 
 		float constant1 = -3.0f * timeSquared + 4.0f * time - 1;
 		float constant2 = 9.0f * timeSquared - 10.0f * time;

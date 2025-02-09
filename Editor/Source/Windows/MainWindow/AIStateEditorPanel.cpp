@@ -403,16 +403,19 @@ namespace Kargono::Panels
 		};
 		m_SelectOnUpdateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
 			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
+				UNREFERENCED_PARAMETER(entry);
 				m_SelectOnUpdateScript.m_OpenPopup = true;
 			} };
 			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
+					UNREFERENCED_PARAMETER(entry);
 					// Open create script dialog in script editor
 					s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_EntityFloat, [&](Assets::AssetHandle scriptHandle)
 					{
@@ -487,16 +490,19 @@ namespace Kargono::Panels
 		};
 		m_SelectOnEnterStateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 			{
+				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
 				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 				{
+					UNREFERENCED_PARAMETER(entry);
 					m_SelectOnEnterStateScript.m_OpenPopup = true;
 				} };
 				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
+						UNREFERENCED_PARAMETER(entry);
 						// Open create script dialog in script editor
 						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Entity, [&](Assets::AssetHandle scriptHandle)
 						{
@@ -571,16 +577,19 @@ namespace Kargono::Panels
 		};
 		m_SelectOnExitStateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 			{
+				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
 				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 				{
+					UNREFERENCED_PARAMETER(entry);
 					m_SelectOnExitStateScript.m_OpenPopup = true;
 				} };
 				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
+						UNREFERENCED_PARAMETER(entry);
 						// Open create script dialog in script editor
 						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_Entity, [&](Assets::AssetHandle scriptHandle)
 						{
@@ -655,16 +664,19 @@ namespace Kargono::Panels
 		};
 		m_SelectOnAIMessageScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 			{
+				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
 				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 				{
+					UNREFERENCED_PARAMETER(entry);
 					m_SelectOnAIMessageScript.m_OpenPopup = true;
 				} };
 				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
+						UNREFERENCED_PARAMETER(entry);
 						// Open create script dialog in script editor
 						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_UInt32EntityEntityFloat, [&](Assets::AssetHandle scriptHandle)
 						{

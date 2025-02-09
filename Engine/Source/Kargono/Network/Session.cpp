@@ -38,7 +38,7 @@ namespace Kargono::Network
 	void Session::ReceiveSyncPing(uint32_t clientID)
 	{
 		// Record Current TimePoint
-		auto currentTime = std::chrono::high_resolution_clock::now();
+		std::chrono::steady_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
 		float durationSeconds = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - m_InitCache.RecentTimePoints.at(clientID)).count() * 0.001f * 0.001f * 0.001f;
 		float singleDirectionLatency = durationSeconds / 2.0f;
 
@@ -57,9 +57,13 @@ namespace Kargono::Network
 			m_InitCache.LatencyCacheFilled.insert_or_assign(clientID, true);
 
 			// Check if we are done with ping aggregation
-			for (auto& [clientID, isCacheFilled] : m_InitCache.LatencyCacheFilled)
+			for (auto& [currentClientID, isCacheFilled] : m_InitCache.LatencyCacheFilled)
 			{
-				if (isCacheFilled == false) { return; }
+				UNREFERENCED_PARAMETER(currentClientID);
+				if (isCacheFilled == false) 
+				{ 
+					return; 
+				}
 			}
 
 			// If we have collected all of the pings, move on to next stage
@@ -178,7 +182,7 @@ namespace Kargono::Network
 			//KG_ERROR("Entered Ready Check Resolver");
 			// Find highest latency
 			std::vector<float> allLatencies{};
-			for (auto& [clientID, connection] : m_ConnectedClients)
+			for (auto& [currentClientID, connection] : m_ConnectedClients)
 			{
 				allLatencies.push_back(connection->GetTCPLatency());
 			}
@@ -190,7 +194,7 @@ namespace Kargono::Network
 			float waitTime{ 0 };
 			Kargono::Network::Message newMessage;
 			newMessage.Header.ID = static_cast<uint32_t>(MessageType::SessionReadyCheckConfirm);
-			for (auto& [clientID, connection] : m_ConnectedClients)
+			for (auto& [currentClientID, connection] : m_ConnectedClients)
 			{
 				// Calculate wait time
 				waitTime = longestLatency - connection->GetTCPLatency();
@@ -198,7 +202,7 @@ namespace Kargono::Network
 
 				// Send Message
 				newMessage << waitTime;
-				m_ConnectedClients.at(clientID)->SendTCPMessage(newMessage);
+				m_ConnectedClients.at(currentClientID)->SendTCPMessage(newMessage);
 			}
 
 			// Reset Ready Check

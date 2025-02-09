@@ -162,7 +162,7 @@ namespace Kargono::Utility
 	void OSCommands::DownloadGitProject(const std::filesystem::path& downloadPath, std::string_view projectURI)
 	{
 		std::string outputString{ "git clone " };
-		outputString.append(projectURI); " " + downloadPath.string();
+		outputString.append(projectURI);
 		outputString.append(" ");
 		outputString.append(downloadPath.string());
 		system(outputString.c_str());

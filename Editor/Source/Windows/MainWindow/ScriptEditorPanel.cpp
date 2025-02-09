@@ -17,7 +17,6 @@ namespace Kargono::Panels
 			KG_WARN("No script pointer available from asset manager when editing script in script editor");
 			return;
 		}
-		Scripting::ScriptType originalType = script->m_ScriptType;
 		std::string originalLabel = script->m_SectionLabel;
 		// TODO: Ensure works with new system
 		Assets::ScriptSpec spec {};
@@ -25,7 +24,7 @@ namespace Kargono::Panels
 		spec.Type = Scripting::ScriptType::Project;
 		spec.m_SectionLabel = m_EditWidgets.m_SelectSectionLabel.m_CurrentOption.m_Label;
 
-		auto successful = Assets::AssetService::SaveScript(m_ActiveScriptHandle, spec);
+		bool successful = Assets::AssetService::SaveScript(m_ActiveScriptHandle, spec);
 		if (!successful)
 		{
 			KG_ERROR("Unsuccessful at updating script");
@@ -35,6 +34,7 @@ namespace Kargono::Panels
 	}
 	void ScriptEditorPanel::OnOpenScriptDialog(EditorUI::ListEntry& entry, std::size_t iteration)
 	{
+		UNREFERENCED_PARAMETER(iteration);
 		m_ActiveScriptHandle = entry.m_Handle;
 		m_EditWidgets.m_MainPopup.m_OpenPopup = true;
 	}
@@ -46,6 +46,7 @@ namespace Kargono::Panels
 
 	void ScriptEditorPanel::OnCreateScriptEditParameter(EditorUI::ListEntry& entry, std::size_t iteration)
 	{
+		UNREFERENCED_PARAMETER(entry);
 		// Open tooltip
 		m_ScriptTooltip.m_TooltipActive = true;
 
@@ -53,6 +54,7 @@ namespace Kargono::Panels
 		m_ScriptTooltip.ClearEntries();
 		EditorUI::TooltipEntry editTooltipEntry{ "Edit", [&](EditorUI::TooltipEntry& entry)
 		{
+			UNREFERENCED_PARAMETER(entry);
 			m_CreateWidgets.m_EditParameterPopup.m_OpenPopup = true;
 		} };
 		m_ScriptTooltip.AddTooltipEntry(editTooltipEntry);
@@ -60,13 +62,14 @@ namespace Kargono::Panels
 
 		EditorUI::TooltipEntry deleteTooltipEntry{ "Delete", [&](EditorUI::TooltipEntry& entry)
 		{
-				// Delete current selected entry
-				EngineService::SubmitToMainThread([&]()
-				{
-					m_CreateWidgets.m_ParameterList.RemoveEntry(m_ActiveParameterLocation);
-				});
+			UNREFERENCED_PARAMETER(entry);
+			// Delete current selected entry
+			EngineService::SubmitToMainThread([&]()
+			{
+				m_CreateWidgets.m_ParameterList.RemoveEntry(m_ActiveParameterLocation);
+			});
 
-			} };
+		} };
 		m_ScriptTooltip.AddTooltipEntry(deleteTooltipEntry);
 
 		// Store parameter location inside list
@@ -322,31 +325,34 @@ namespace Kargono::Panels
 				currentEntry.m_Value = Utility::WrappedVarTypeToString((WrappedVarType)(uint64_t)m_CreateWidgets.m_EditParameterType.m_CurrentOption.m_Handle);
 				currentEntry.m_Handle = m_CreateWidgets.m_EditParameterType.m_CurrentOption.m_Handle;
 				currentEntry.m_OnEdit = [&](EditorUI::ListEntry& entry, std::size_t iteration)
+				{
+					UNREFERENCED_PARAMETER(entry);
+					// Open tooltip
+					m_ScriptTooltip.m_TooltipActive = true;
+
+					// Initialize tooltip entries
+					m_ScriptTooltip.ClearEntries();
+					EditorUI::TooltipEntry editTooltipEntry{ "Edit", [&](EditorUI::TooltipEntry& entry)
 					{
-						// Open tooltip
-						m_ScriptTooltip.m_TooltipActive = true;
+						UNREFERENCED_PARAMETER(entry);
+						m_CreateWidgets.m_EditParameterPopup.m_OpenPopup = true;
+					} };
+					m_ScriptTooltip.AddTooltipEntry(editTooltipEntry);
+					EditorUI::TooltipEntry deleteTooltipEntry{ "Delete", [&](EditorUI::TooltipEntry& entry)
+					{
+							UNREFERENCED_PARAMETER(entry);
+							// Delete current selected entry
+							EngineService::SubmitToMainThread([&]()
+							{
+								m_CreateWidgets.m_ParameterList.RemoveEntry(m_ActiveParameterLocation);
+							});
 
-						// Initialize tooltip entries
-						m_ScriptTooltip.ClearEntries();
-						EditorUI::TooltipEntry editTooltipEntry{ "Edit", [&](EditorUI::TooltipEntry& entry)
-						{
-							m_CreateWidgets.m_EditParameterPopup.m_OpenPopup = true;
 						} };
-						m_ScriptTooltip.AddTooltipEntry(editTooltipEntry);
-						EditorUI::TooltipEntry deleteTooltipEntry{ "Delete", [&](EditorUI::TooltipEntry& entry)
-						{
-								// Delete current selected entry
-								EngineService::SubmitToMainThread([&]()
-								{
-									m_CreateWidgets.m_ParameterList.RemoveEntry(m_ActiveParameterLocation);
-								});
+					m_ScriptTooltip.AddTooltipEntry(deleteTooltipEntry);
 
-							} };
-						m_ScriptTooltip.AddTooltipEntry(deleteTooltipEntry);
-
-						// Store parameter location inside list
-						m_ActiveParameterLocation = iteration;
-					};
+					// Store parameter location inside list
+					m_ActiveParameterLocation = iteration;
+				};
 			};
 
 		m_CreateWidgets.m_EditParameterName.m_Label = "Name";
@@ -413,7 +419,6 @@ namespace Kargono::Panels
 		m_EditWidgets.m_DeleteWarning.m_ConfirmAction = [&]()
 		{
 			Ref<Scripting::Script> script = Assets::AssetService::GetScript(m_ActiveScriptHandle);
-			Scripting::ScriptType type = script->m_ScriptType;
 			std::string sectionLabel = script->m_SectionLabel;
 
 			bool success = Assets::AssetService::DeleteScript(m_ActiveScriptHandle);
@@ -472,6 +477,7 @@ namespace Kargono::Panels
 				{
 					m_GroupLabelsTable.InsertListEntry(label, "", [&](EditorUI::ListEntry& entry, std::size_t iteration)
 						{
+							UNREFERENCED_PARAMETER(iteration);
 							m_ActiveLabel = entry.m_Label;
 							m_EditGroupLabelPopup.m_OpenPopup = true;
 						});
@@ -483,6 +489,7 @@ namespace Kargono::Panels
 		m_CreateGroupLabelPopup.m_Flags |= EditorUI::EditText_PopupOnly;
 		m_CreateGroupLabelPopup.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 			{
+				UNREFERENCED_PARAMETER(spec);
 				// Create new group label
 				bool success = Assets::AssetService::AddScriptSectionLabel(m_CreateGroupLabelPopup.m_CurrentOption);
 				if (!success)

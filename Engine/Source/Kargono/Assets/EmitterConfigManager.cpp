@@ -10,6 +10,8 @@ namespace Kargono::Assets
 {
 	void EmitterConfigManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(name);
+
 		// Create Temporary EmitterConfig
 		Ref<Particles::EmitterConfig> temporaryEmitterConfig = CreateRef<Particles::EmitterConfig>();
 
@@ -60,6 +62,8 @@ namespace Kargono::Assets
 	}
 	Ref<Particles::EmitterConfig> EmitterConfigManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(asset);
+
 		Ref<Particles::EmitterConfig> newEmitterConfig = CreateRef<Particles::EmitterConfig>();
 		YAML::Node data;
 		try

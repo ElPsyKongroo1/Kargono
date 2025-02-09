@@ -249,6 +249,8 @@ namespace Kargono
 
 	bool EngineService::OnWindowClose(Events::WindowCloseEvent& e)
 	{
+		UNREFERENCED_PARAMETER(e);
+
 		s_ActiveEngine->m_Running = false;
 		return true;
 	}
@@ -318,6 +320,8 @@ namespace Kargono
 
 	bool EngineService::OnCleanUpTimers(Events::CleanUpTimersEvent& e)
 	{
+		UNREFERENCED_PARAMETER(e);
+
 		Utility::AsyncBusyTimer::CleanUpClosedTimers();
 		return false;
 	}

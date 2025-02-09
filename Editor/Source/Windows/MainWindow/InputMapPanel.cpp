@@ -393,6 +393,7 @@ namespace Kargono::Panels
 
 				static std::function<void(EditorUI::ListEntry&, std::size_t iteration)> m_EditKeyboardSlot = [&](EditorUI::ListEntry& entry, std::size_t iteration)
 				{
+					UNREFERENCED_PARAMETER(iteration);
 					m_KeyboardOnUpdateActiveSlot = (uint32_t)entry.m_Handle;
 					m_KeyboardOnUpdateEditPopup.m_OpenPopup = true;
 				};
@@ -494,16 +495,19 @@ namespace Kargono::Panels
 		};
 		m_KeyboardOnUpdateAddFunction.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 			{
+				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
 				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 				{
+					UNREFERENCED_PARAMETER(entry);
 					m_KeyboardOnUpdateAddFunction.m_OpenPopup = true;
 				} };
 				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
+						UNREFERENCED_PARAMETER(entry);
 						// Open create script dialog in script editor
 						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 						{
@@ -614,16 +618,19 @@ namespace Kargono::Panels
 
 		m_KeyboardOnUpdateEditFunction.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
 			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
+				UNREFERENCED_PARAMETER(entry);
 				m_KeyboardOnUpdateEditFunction.m_OpenPopup = true;
 			} };
 			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
+					UNREFERENCED_PARAMETER(entry);
 					// Open create script dialog in script editor
 					s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 					{
@@ -671,6 +678,7 @@ namespace Kargono::Panels
 
 				static std::function<void(EditorUI::ListEntry&, std::size_t)> m_EditKeyboardSlot = [&](EditorUI::ListEntry& entry, std::size_t iteration)
 				{
+					UNREFERENCED_PARAMETER(iteration);
 					m_KeyboardOnKeyPressedActiveSlot = (uint32_t)entry.m_Handle;
 					m_KeyboardOnKeyPressedEditPopup.m_OpenPopup = true;
 				};
@@ -772,16 +780,19 @@ namespace Kargono::Panels
 		};
 		m_KeyboardOnKeyPressedAddFunction.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 			{
+				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
 				m_SelectScriptTooltip.ClearEntries();
 				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 				{
+					UNREFERENCED_PARAMETER(entry);
 					m_KeyboardOnKeyPressedAddFunction.m_OpenPopup = true;
 				} };
 				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
+						UNREFERENCED_PARAMETER(entry);
 						// Open create script dialog in script editor
 						s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 						{
@@ -891,16 +902,19 @@ namespace Kargono::Panels
 		};
 		m_KeyboardOnKeyPressedEditFunction.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
 		{
+			UNREFERENCED_PARAMETER(spec);
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
 			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
+				UNREFERENCED_PARAMETER(entry);
 				m_KeyboardOnKeyPressedEditFunction.m_OpenPopup = true;
 			} };
 			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
 
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
+					UNREFERENCED_PARAMETER(entry);
 					// Open create script dialog in script editor
 					s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_None, [&](Assets::AssetHandle scriptHandle)
 					{
@@ -941,6 +955,7 @@ namespace Kargono::Panels
 
 				static std::function<void(EditorUI::ListEntry&, std::size_t)> m_EditKeyboardSlot = [&](EditorUI::ListEntry& entry, std::size_t iteration)
 				{
+					UNREFERENCED_PARAMETER(iteration);
 					m_KeyboardPollingActiveSlot = (uint32_t)entry.m_Handle;
 					m_KeyboardPollingEditSlot.m_OpenPopup = true;
 				};

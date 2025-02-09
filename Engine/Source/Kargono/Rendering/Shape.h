@@ -112,7 +112,7 @@ namespace Kargono::Utility
 		return Rendering::RenderingType::None;
 	}
 
-	static const char* ShapeTypeToString(Rendering::ShapeTypes shapeType)
+	inline const char* ShapeTypeToString(Rendering::ShapeTypes shapeType)
 	{
 		switch (shapeType)
 		{
@@ -125,7 +125,7 @@ namespace Kargono::Utility
 		return "None";
 	}
 
-	static Rendering::ShapeTypes StringToShapeType(std::string_view string)
+	inline Rendering::ShapeTypes StringToShapeType(std::string_view string)
 	{
 		if (string == "None") { return Rendering::ShapeTypes::None; }
 		if (string == "Quad") { return Rendering::ShapeTypes::Quad; }
@@ -136,7 +136,7 @@ namespace Kargono::Utility
 		return Rendering::ShapeTypes::None;
 	}
 
-	static const Rendering::Shape& ShapeTypeToShape(Rendering::ShapeTypes shapeType)
+	inline const Rendering::Shape& ShapeTypeToShape(Rendering::ShapeTypes shapeType)
 	{
 		switch (shapeType)
 		{

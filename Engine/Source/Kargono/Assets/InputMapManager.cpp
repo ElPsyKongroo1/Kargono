@@ -9,6 +9,8 @@ namespace Kargono::Assets
 {
 	void InputMapManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(name);
+
 		// Create Temporary InputMap
 		Ref<Input::InputMap> temporaryInputMap = CreateRef<Input::InputMap>();
 
@@ -116,6 +118,8 @@ namespace Kargono::Assets
 	}
 	Ref<Input::InputMap> InputMapManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(asset);
+
 		Ref<Input::InputMap> newInputMap = CreateRef<Input::InputMap>();
 		YAML::Node data;
 		try
@@ -133,10 +137,9 @@ namespace Kargono::Assets
 			auto keyboardPolling = data["KeyboardPolling"];
 			if (keyboardPolling)
 			{
-				auto& keyboardPollingNew = newInputMap->m_KeyboardPolling;
-				for (auto binding : keyboardPolling)
+				std::vector<KeyCode>& keyboardPollingNew = newInputMap->m_KeyboardPolling;
+				for (const YAML::Node& binding : keyboardPolling)
 				{
-					uint16_t slot = (uint16_t)binding["Slot"].as<uint32_t>();
 					uint16_t keyCode = (uint16_t)binding["KeyCode"].as<uint32_t>();
 					keyboardPollingNew.push_back(keyCode);
 				}
@@ -158,7 +161,7 @@ namespace Kargono::Assets
 					case Input::InputActionTypes::KeyboardAction:
 					{
 						newActionBinding = CreateRef<Input::KeyboardActionBinding>();
-						((Input::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding(binding["KeyBinding"].as<uint32_t>());
+						((Input::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding((KeyCode)binding["KeyBinding"].as<uint32_t>());
 						break;
 					}
 					case Input::InputActionTypes::None:
@@ -198,7 +201,7 @@ namespace Kargono::Assets
 					case Input::InputActionTypes::KeyboardAction:
 					{
 						newActionBinding = CreateRef<Input::KeyboardActionBinding>();
-						((Input::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding(binding["KeyBinding"].as<uint32_t>());
+						((Input::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding((KeyCode)binding["KeyBinding"].as<uint32_t>());
 						break;
 					}
 					case Input::InputActionTypes::None:

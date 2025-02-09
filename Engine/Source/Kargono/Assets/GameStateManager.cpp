@@ -51,6 +51,8 @@ namespace Kargono::Assets
 	}
 	Ref<Scenes::GameState> GameStateManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
+		UNREFERENCED_PARAMETER(asset);
+
 		Ref<Scenes::GameState> newGameState = CreateRef<Scenes::GameState>();
 		YAML::Node data;
 		try

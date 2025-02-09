@@ -120,7 +120,6 @@ namespace Kargono::Panels
 		OnOverlayRender();
 
 		// Handle drawing user interface
-		Window& currentApplication = EngineService::GetActiveWindow();
 		if (s_MainWindow->m_SceneState == SceneState::Play)
 		{
 			ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
@@ -196,7 +195,6 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 
 		// Create Window
-		Window& currentWindow = EngineService::GetActiveWindow();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		EditorUI::EditorUIService::StartWindow(m_PanelName.CString(), &s_MainWindow->m_ShowViewport, NULL);
 		ImGui::PopStyleVar();
@@ -383,8 +381,8 @@ namespace Kargono::Panels
 	}
 	bool ViewportPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
-		bool control = Input::InputService::IsKeyPressed(Key::LeftControl) || Input::InputService::IsKeyPressed(Key::RightControl);
-		bool shift = Input::InputService::IsKeyPressed(Key::LeftShift) || Input::InputService::IsKeyPressed(Key::RightShift);
+		//bool control = Input::InputService::IsKeyPressed(Key::LeftControl) || Input::InputService::IsKeyPressed(Key::RightControl);
+		//bool shift = Input::InputService::IsKeyPressed(Key::LeftShift) || Input::InputService::IsKeyPressed(Key::RightShift);
 		bool alt = Input::InputService::IsKeyPressed(Key::LeftAlt) || Input::InputService::IsKeyPressed(Key::RightAlt);
 
 		switch (event.GetKeyCode())
@@ -487,11 +485,13 @@ namespace Kargono::Panels
 
 	void ViewportPanel::OnUpdateEditor(Timestep ts, Rendering::EditorPerspectiveCamera& camera)
 	{
+		UNREFERENCED_PARAMETER(ts);
 		Scenes::SceneService::GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
 	}
 
 	void ViewportPanel::OnUpdateRuntime(Timestep ts)
 	{
+		UNREFERENCED_PARAMETER(ts);
 		// Render 
 		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)

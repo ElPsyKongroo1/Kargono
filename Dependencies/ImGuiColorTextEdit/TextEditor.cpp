@@ -1796,7 +1796,7 @@ namespace API::EditorUI
 		case SelectionMode::Line:
 		{
 			const int lineNo = m_State.m_SelectionEnd.m_Line;
-			const size_t lineSize = (size_t)lineNo < m_Lines.size() ? m_Lines[lineNo].size() : 0;
+			//const size_t lineSize = (size_t)lineNo < m_Lines.size() ? m_Lines[lineNo].size() : 0;
 			m_State.m_SelectionStart = Coordinates(m_State.m_SelectionStart.m_Line, 0);
 			m_State.m_SelectionEnd = Coordinates(lineNo, GetLineMaxColumn(lineNo));
 			break;

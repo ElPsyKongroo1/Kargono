@@ -42,6 +42,7 @@ namespace Kargono::Network
 		asio::async_read(m_TCPSocket, asio::buffer(&m_MessageCache.Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
 			{
+				UNREFERENCED_PARAMETER(length);
 				if (ec)
 				{
 					KG_WARN("Error occurred while attempting to read TCP Header. Error Code: [{}] Message: {}", ec.value(), ec.message());
@@ -71,6 +72,7 @@ namespace Kargono::Network
 		asio::async_read(m_TCPSocket, asio::buffer(m_MessageCache.Payload.data(), m_MessageCache.Payload.size()),
 			[this](std::error_code ec, std::size_t length)
 			{
+				UNREFERENCED_PARAMETER(length);
 				if (ec)
 				{
 					KG_WARN("Error occurred while attempting to read TCP Payload. Error Code: [{}] Message: {}", ec.value(), ec.message());
@@ -86,6 +88,7 @@ namespace Kargono::Network
 		asio::async_write(m_TCPSocket, asio::buffer(&m_OutgoingMessageQueue.GetFront().Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
 			{
+				UNREFERENCED_PARAMETER(length);
 				if (ec)
 				{
 					KG_WARN("Error occurred while attempting to write a TCP Header. Error Code: [{}] Message: {}", ec.value(), ec.message());
@@ -120,6 +123,8 @@ namespace Kargono::Network
 		asio::async_write(m_TCPSocket, asio::buffer(m_OutgoingMessageQueue.GetFront().Payload.data(), m_OutgoingMessageQueue.GetFront().Payload.size()),
 			[this](std::error_code ec, std::size_t length)
 			{
+				UNREFERENCED_PARAMETER(length);
+
 				if (ec)
 				{
 					KG_WARN("Error occurred while attempting to write a TCP Payload. Error Code: [{}] Message: {}", ec.value(), ec.message());

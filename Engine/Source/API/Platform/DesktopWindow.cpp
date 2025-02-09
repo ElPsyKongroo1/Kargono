@@ -122,6 +122,8 @@ namespace API::Platform
 
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
+			UNREFERENCED_PARAMETER(mods);
+			UNREFERENCED_PARAMETER(scancode);
 			KG_PROFILE_FUNCTION_DESC("GLFW Keyboard Event");
 
 			DesktopWindowData& data = *(DesktopWindowData*)glfwGetWindowUserPointer(window);
@@ -129,19 +131,19 @@ namespace API::Platform
 			{
 				case GLFW_PRESS:
 				{
-					Kargono::Events::KeyPressedEvent event(key, false);
+					Kargono::Events::KeyPressedEvent event((Kargono::KeyCode)key, false);
 					data.EventCallback(&event);
 				}
 					break;
 				case GLFW_RELEASE:
 				{
-					Kargono::Events::KeyReleasedEvent event(key);
+					Kargono::Events::KeyReleasedEvent event((Kargono::KeyCode)key);
 					data.EventCallback(&event);
 				}
 					break;
 				case GLFW_REPEAT:
 				{
-					Kargono::Events::KeyPressedEvent event(key, true);
+					Kargono::Events::KeyPressedEvent event((Kargono::KeyCode)key, true);
 					data.EventCallback(&event);
 				}
 					break;
@@ -153,13 +155,14 @@ namespace API::Platform
 			KG_PROFILE_FUNCTION_DESC("GLFW Typing Event");
 
 			DesktopWindowData& data = *(DesktopWindowData*)glfwGetWindowUserPointer(window);
-			Kargono::Events::KeyTypedEvent event(keycode);
+			Kargono::Events::KeyTypedEvent event((Kargono::KeyCode)keycode);
 			data.EventCallback(&event);
 
 		});
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
+			UNREFERENCED_PARAMETER(mods);
 			KG_PROFILE_FUNCTION_DESC("GLFW Mouse Button Event");
 
 			DesktopWindowData& data = *(DesktopWindowData*)glfwGetWindowUserPointer(window);
@@ -168,13 +171,13 @@ namespace API::Platform
 			{
 			case GLFW_PRESS:
 			{
-				Kargono::Events::MouseButtonPressedEvent event(button);
+				Kargono::Events::MouseButtonPressedEvent event((Kargono::KeyCode)button);
 				data.EventCallback(&event);
 				break;
 			}
 			case GLFW_RELEASE:
 			{
-				Kargono::Events::MouseButtonReleasedEvent event(button);
+				Kargono::Events::MouseButtonReleasedEvent event((Kargono::KeyCode)button);
 				data.EventCallback(&event);
 				break;
 			}

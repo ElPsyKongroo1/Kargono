@@ -128,6 +128,7 @@ namespace Kargono::Network
 		asio::async_write(m_TCPSocket, asio::buffer(&m_ValidationOutput, sizeof(uint64_t)),
 			[this](std::error_code ec, std::size_t length)
 			{
+				UNREFERENCED_PARAMETER(length);
 				if (ec)
 				{
 					KG_WARN("Error occurred while attempting to write a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());
@@ -140,6 +141,8 @@ namespace Kargono::Network
 		asio::async_read(m_TCPSocket, asio::buffer(&m_ValidationInput, sizeof(uint64_t)),
 			[&](std::error_code ec, std::size_t length)
 			{
+				UNREFERENCED_PARAMETER(length);
+
 				if (ec)
 				{
 					KG_WARN("Error occurred while attempting to read a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());

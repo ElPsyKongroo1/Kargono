@@ -27,16 +27,51 @@ namespace Kargono
 		//==============================
 		// Event Functions
 		//==============================
-		virtual void OnUpdate(Timestep ts) {}
+		virtual void OnUpdate(Timestep ts) 
+		{
+			UNREFERENCED_PARAMETER(ts);
+		}
 		virtual void OnEditorUIRender() {}
-		virtual bool OnInputEvent(Events::Event* event) { return false; }
-		virtual bool OnPhysicsEvent(Events::Event* event) { return false; }
-		virtual bool OnApplicationEvent(Events::Event* event) { return false; }
-		virtual bool OnNetworkEvent(Events::Event* event) { return false; }
-		virtual bool OnSceneEvent(Events::Event* event) { return false; }
-		virtual bool OnAssetEvent(Events::Event* event) { return false; }
-		virtual bool OnLogEvent(Events::Event* event) { return false; }
-		virtual bool OnEditorEvent(Events::Event* event) { return false; }
+		virtual bool OnInputEvent(Events::Event* event) 
+		{ 
+			UNREFERENCED_PARAMETER(event);
+			return false; 
+		}
+		virtual bool OnPhysicsEvent(Events::Event* event) 
+		{ 
+			UNREFERENCED_PARAMETER(event);
+			return false; 
+		}
+		virtual bool OnApplicationEvent(Events::Event* event) 
+		{ 
+			UNREFERENCED_PARAMETER(event);
+			return false; 
+		}
+		virtual bool OnNetworkEvent(Events::Event* event) 
+		{ 
+			UNREFERENCED_PARAMETER(event);
+			return false; 
+		}
+		virtual bool OnSceneEvent(Events::Event* event) 
+		{ 
+			UNREFERENCED_PARAMETER(event);
+			return false; 
+		}
+		virtual bool OnAssetEvent(Events::Event* event) 
+		{ 
+			UNREFERENCED_PARAMETER(event);
+			return false; 
+		}
+		virtual bool OnLogEvent(Events::Event* event) 
+		{ 
+			UNREFERENCED_PARAMETER(event);
+			return false; 
+		}
+		virtual bool OnEditorEvent(Events::Event* event) 
+		{
+			UNREFERENCED_PARAMETER(event);
+			return false; 
+		}
 
 		//==============================
 		// Getter/Setter

@@ -166,17 +166,17 @@ namespace Kargono::Scripting
 			m_OutputText << "{\n";
 
 			m_IndentLevel++;
-			for (auto& statement : conditionalStatement->BodyStatements)
+			for (Ref<Statement> bodyStatement : conditionalStatement->BodyStatements)
 			{
-				GenerateStatement(statement);
+				GenerateStatement(bodyStatement);
 			}
 			m_IndentLevel--;
 			AddIndentation();
 			m_OutputText << "}\n";
 
-			for (auto& statement : conditionalStatement->ChainedConditionals)
+			for (Ref<Statement> chainedConditional : conditionalStatement->ChainedConditionals)
 			{
-				GenerateStatement(statement);
+				GenerateStatement(chainedConditional);
 			}
 
 		}
@@ -193,9 +193,9 @@ namespace Kargono::Scripting
 			m_OutputText << "{\n";
 
 			m_IndentLevel++;
-			for (auto& statement : whileLoopStatement->BodyStatements)
+			for (Ref<Statement> bodyStatement : whileLoopStatement->BodyStatements)
 			{
-				GenerateStatement(statement);
+				GenerateStatement(bodyStatement);
 			}
 			m_IndentLevel--;
 			AddIndentation();

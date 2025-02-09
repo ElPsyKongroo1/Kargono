@@ -268,6 +268,7 @@ namespace Kargono::Panels
 		// Create menu items
 		EditorUI::TooltipEntry newEntry{ "First Test Entry", [](EditorUI::TooltipEntry& entry)
 		{
+			UNREFERENCED_PARAMETER(entry);
 			KG_WARN("Meow");
 		} };
 
@@ -608,6 +609,7 @@ namespace Kargono::Panels
 	}
 	bool TestingPanel::OnInputEvent(Events::Event* event)
 	{
+		UNREFERENCED_PARAMETER(event);
 		return false;
 	}
 }

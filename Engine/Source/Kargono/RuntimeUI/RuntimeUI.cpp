@@ -39,8 +39,6 @@ namespace Kargono::Utility
 			KG_ERROR("Invalid widget type provided");
 			return nullptr;
 		}
-
-		return nullptr;
 	}
 	
 }
@@ -392,6 +390,8 @@ namespace Kargono::RuntimeUI
 
 	void RuntimeUIService::OnMouseButtonReleasedEvent(const Events::MouseButtonReleasedEvent& mouseEvent)
 	{
+		UNREFERENCED_PARAMETER(mouseEvent);
+
 		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
 
 		if (activeUI->m_PressedWidget)
@@ -2030,10 +2030,10 @@ namespace Kargono::RuntimeUI
 			Math::vec2 potentialWidgetCenterPosition = { potentialChoicePosition.x + (potentialChoiceSize.x * 0.5f), potentialChoicePosition.y + (potentialChoiceSize.y * 0.5f) };
 
 			// Check if the potential widget is within the constraints of the current widget
-			float extentDistance;
-			float singleDimensionDistance;
-			float currentWidgetExtent;
-			float potentialWidgetExtent;
+			float extentDistance{ 0.0f };
+			float singleDimensionDistance{ 0.0f };
+			float currentWidgetExtent{ 0.0f };
+			float potentialWidgetExtent{ 0.0f };
 
 			switch (direction)
 			{
@@ -2562,6 +2562,7 @@ namespace Kargono::RuntimeUI
 
 	void ImageWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		UNREFERENCED_PARAMETER(viewportWidth);
 		KG_PROFILE_FUNCTION();
 
 		// Calculate the widget's rendering data
@@ -2576,6 +2577,7 @@ namespace Kargono::RuntimeUI
 
 	void ImageButtonWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		UNREFERENCED_PARAMETER(viewportWidth);
 		KG_PROFILE_FUNCTION();
 
 		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
@@ -2608,6 +2610,7 @@ namespace Kargono::RuntimeUI
 
 	void CheckboxWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		UNREFERENCED_PARAMETER(viewportWidth);
 		KG_PROFILE_FUNCTION();
 
 		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
@@ -2709,6 +2712,7 @@ namespace Kargono::RuntimeUI
 
 	void SliderWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		UNREFERENCED_PARAMETER(viewportWidth);
 		KG_PROFILE_FUNCTION();
 
 		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
@@ -2744,6 +2748,9 @@ namespace Kargono::RuntimeUI
 
 	void DropDownWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
+		UNREFERENCED_PARAMETER(windowTranslation);
+		UNREFERENCED_PARAMETER(windowSize);
+		UNREFERENCED_PARAMETER(viewportWidth);
 	}
 
 }
