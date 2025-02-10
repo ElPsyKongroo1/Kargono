@@ -17,7 +17,7 @@
         "Source/kgpch.h",
         "Source/kgpch.cpp",
         "Source/Kargono/**.h",
-	"Source/Kargono/**.cpp",
+        "Source/Kargono/**.cpp",
         "%{wks.location}/Dependencies/stb_image/**.cpp",
         "%{wks.location}/Dependencies/stb_image/**.h",
         "%{wks.location}/Dependencies/ImGuizmo/ImGuizmo.h",
@@ -37,7 +37,7 @@
     defines
     {
         "_CRT_SECURE_NO_WARNINGS",
-	"GLFW_INCLUDE_NONE",
+        "GLFW_INCLUDE_NONE",
         "KG_RENDERER_OPENGL"
     }
     includedirs 

@@ -9,7 +9,11 @@ project "Runtime"
     files 
     {
         "Source/**.h",
-        "Source/**.cpp"
+        "Source/**.cpp",
+		"%{wks.location}/Dependencies/hash_library/sha256.cpp",
+        "%{wks.location}/Dependencies/hash_library/sha256.h",
+        "%{wks.location}/Dependencies/hash_library/crc32.cpp",
+        "%{wks.location}/Dependencies/hash_library/crc32.h"
     }
 
     includedirs 
@@ -22,6 +26,7 @@ project "Runtime"
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.Box2D}",
+		"%{IncludeDir.hash_library}",
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",

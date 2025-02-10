@@ -9,7 +9,11 @@ project "Server"
     files 
     {
         "Source/**.h",
-        "Source/**.cpp"
+        "Source/**.cpp",
+        "%{wks.location}/Dependencies/hash_library/sha256.cpp",
+        "%{wks.location}/Dependencies/hash_library/sha256.h",
+        "%{wks.location}/Dependencies/hash_library/crc32.cpp",
+        "%{wks.location}/Dependencies/hash_library/crc32.h",
     }
 
     includedirs 
@@ -23,6 +27,7 @@ project "Server"
         "%{IncludeDir.Box2D}",
         "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.dr_wav}",
+        "%{IncludeDir.hash_library}",
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Runtime/Source",

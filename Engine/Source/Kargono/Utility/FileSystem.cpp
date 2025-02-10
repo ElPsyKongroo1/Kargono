@@ -3,7 +3,6 @@
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Rendering/Texture.h"
 
-#include "API/Cryptography/hashlibraryAPI.h"
 #include "API/ImageProcessing/stbAPI.h"
 
 namespace Kargono::Utility
@@ -428,12 +427,7 @@ namespace Kargono::Utility
 		CRC32 crc;
 		return crc.CalculateHash(bufferPointer, bufferSize);
 	}
-
-	uint32_t FileSystem::CRCFromString(const char* inputString)
-	{
-		CRC32 crc;
-		return crc.CalculateHash(inputString, std::strlen(inputString)); // Note that std::strlen works here assuming ascii character sizes
-	}
+	
 
 	bool FileSystem::CreateNewDirectory(const std::filesystem::path& filepath) noexcept
 	{

@@ -3,6 +3,8 @@
 #include "Kargono/Core/Buffer.h"
 #include "Kargono/Core/FixedString.h"
 
+#include "API/Cryptography/hashlibraryAPI.h"
+
 #include <filesystem>
 #include <vector>
 #include <string>
@@ -67,7 +69,10 @@ namespace Kargono::Utility
 		static std::string ChecksumFromString(const char* inputString);
 		static std::string ChecksumFromBuffer(Buffer buffer);
 		static uint32_t CRCFromBuffer(void* bufferPointer, uint64_t bufferSize);
-		static uint32_t CRCFromString(const char* inputString);
+		constexpr static uint32_t CRCFromString(const char* inputString)
+		{
+			return Hashing::CalculateHash(inputString, std::strlen(inputString));
+		}
 
 	};
 }
