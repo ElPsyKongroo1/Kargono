@@ -143,8 +143,8 @@ namespace Kargono::Rendering
 		{
 			if (!m_ElementLocations.contains(nameHash))
 			{
-				KG_WARN("Could not locate element inside InputBufferLayout")
-				return {};
+				KG_WARN("Could not locate element inside InputBufferLayout");
+				return nullptr;
 			}
 
 			return &m_Elements.at(m_ElementLocations.at(nameHash));
