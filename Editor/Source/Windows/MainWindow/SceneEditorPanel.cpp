@@ -1852,14 +1852,18 @@ namespace Kargono::Panels
 			{
 				component.ShaderSpecification.ColorInput = Rendering::ColorInputType::FlatColor;
 				UpdateShapeComponent();
-				Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", component.ShaderData, component.Shader);
+				Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, 
+					Utility::FileSystem::CRCFromString("a_Color"),
+					component.ShaderData, component.Shader);
 			}
 			if (entry.m_Label == "VertexColor")
 			{
 				Math::vec4 transferColor {1.0f, 1.0f, 1.0f, 1.0f};
 				if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
 				{
-					transferColor = *Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
+					transferColor = *Rendering::Shader::GetInputLocation<Math::vec4>(
+						Utility::FileSystem::CRCFromString("a_Color"),
+						component.ShaderData, component.Shader);
 				}
 				component.ShaderSpecification.ColorInput = Rendering::ColorInputType::VertexColor;
 				UpdateShapeComponent();
@@ -1884,7 +1888,9 @@ namespace Kargono::Panels
 				return;
 			}
 			ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
-			Math::vec4* color = Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader);
+			Math::vec4* color = Rendering::Shader::GetInputLocation<Math::vec4>(
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				component.ShaderData, component.Shader);
 			*color = m_ShapeColor.m_CurrentVec4;
 		};
 
@@ -1909,7 +1915,9 @@ namespace Kargono::Panels
 					component.TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Utility::ShapeTypeToShape(component.CurrentShape).GetTriangleTextureCoordinates());
 					if (component.VertexColors) { component.VertexColors->resize(component.Vertices->size(), { 1.0f, 1.0f, 1.0f, 1.0f }); }
 				}
-				Rendering::Shader::SetDataAtInputLocation<float>(1.0f, "a_TilingFactor", component.ShaderData, component.Shader);
+				Rendering::Shader::SetDataAtInputLocation<float>(1.0f, 
+					Utility::FileSystem::CRCFromString("a_TilingFactor"),
+					component.ShaderData, component.Shader);
 			}
 			// Checkbox is switched off
 			if (!spec.m_CurrentBoolean)
@@ -1971,7 +1979,9 @@ namespace Kargono::Panels
 				return;
 			}
 			ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
-			float* tilingFactor = Rendering::Shader::GetInputLocation<float>("a_TilingFactor", component.ShaderData, component.Shader);
+			float* tilingFactor = Rendering::Shader::GetInputLocation<float>(
+				Utility::FileSystem::CRCFromString("a_TilingFactor"), 
+				component.ShaderData, component.Shader);
 			*tilingFactor = m_ShapeTilingFactor.m_CurrentFloat;
 		};
 
@@ -1986,8 +1996,12 @@ namespace Kargono::Panels
 			UpdateShapeComponent();
 			if (spec.m_CurrentBoolean)
 			{
-				Rendering::Shader::SetDataAtInputLocation<float>(1.0f, "a_Thickness", component.ShaderData, component.Shader);
-				Rendering::Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", component.ShaderData, component.Shader);
+				Rendering::Shader::SetDataAtInputLocation<float>(1.0f, 
+					Utility::FileSystem::CRCFromString("a_Thickness"),
+					component.ShaderData, component.Shader);
+				Rendering::Shader::SetDataAtInputLocation<float>(0.005f, 
+					Utility::FileSystem::CRCFromString("a_Fade"),
+					component.ShaderData, component.Shader);
 			}
 		};
 
@@ -2003,7 +2017,9 @@ namespace Kargono::Panels
 				return;
 			}
 			ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
-			float* thickness = Rendering::Shader::GetInputLocation<float>("a_Thickness", component.ShaderData, component.Shader);
+			float* thickness = Rendering::Shader::GetInputLocation<float>(
+				Utility::FileSystem::CRCFromString("a_Thickness"), 
+				component.ShaderData, component.Shader);
 			*thickness = m_ShapeCircleThickness.m_CurrentFloat;
 		};
 
@@ -2019,7 +2035,9 @@ namespace Kargono::Panels
 				return;
 			}
 			ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
-			float* fade = Rendering::Shader::GetInputLocation<float>("a_Fade", component.ShaderData, component.Shader);
+			float* fade = Rendering::Shader::GetInputLocation<float>(
+				Utility::FileSystem::CRCFromString("a_Fade"), 
+				component.ShaderData, component.Shader);
 			*fade = m_ShapeCircleFade.m_CurrentFloat;
 		};
 
@@ -3141,14 +3159,16 @@ namespace Kargono::Panels
 		// transferred to the new buffer!
 		for (const auto& element : oldShader->GetInputLayout().GetElements())
 		{
-			if (newShader->GetInputLayout().FindElementByName(element.Name))
+			if (newShader->GetInputLayout().FindElementByName(Utility::FileSystem::CRCFromString(element.Name.c_str())))
 			{
 				// Get Location of Old Data Pointer
 				std::size_t oldLocation = element.Offset;
 				uint8_t* oldLocationPointer = oldBuffer.As<uint8_t>(oldLocation);
 
 				// Get Location of New Data Pointer
-				uint8_t* newLocationPointer = Rendering::Shader::GetInputLocation<uint8_t>(element.Name, newBuffer, newShader);
+				uint8_t* newLocationPointer = Rendering::Shader::GetInputLocation<uint8_t>(
+					Utility::FileSystem::CRCFromString(element.Name.c_str()),
+					newBuffer, newShader);
 
 				// Get Size of Data to Transfer
 				std::size_t size = element.Size;
@@ -3178,7 +3198,9 @@ namespace Kargono::Panels
 
 		if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::FlatColor)
 		{
-			m_ShapeColor.m_CurrentVec4 = *(Rendering::Shader::GetInputLocation<Math::vec4>("a_Color", component.ShaderData, component.Shader));
+			m_ShapeColor.m_CurrentVec4 = *(Rendering::Shader::GetInputLocation<Math::vec4>(
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				component.ShaderData, component.Shader));
 			EditorUI::EditorUIService::EditVec4(m_ShapeColor);
 		}
 		if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::VertexColor)
@@ -3214,7 +3236,9 @@ namespace Kargono::Panels
 			}
 			EditorUI::EditorUIService::SelectOption(m_ShapeSetTexture);
 
-			m_ShapeTilingFactor.m_CurrentFloat = *Rendering::Shader::GetInputLocation<float>("a_TilingFactor", component.ShaderData, component.Shader);
+			m_ShapeTilingFactor.m_CurrentFloat = *Rendering::Shader::GetInputLocation<float>(
+				Utility::FileSystem::CRCFromString("a_TilingFactor"), 
+				component.ShaderData, component.Shader);
 			EditorUI::EditorUIService::EditFloat(m_ShapeTilingFactor);
 		}
 	}
@@ -3226,10 +3250,14 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::Checkbox(m_ShapeAddCircle);
 		if (component.ShaderSpecification.AddCircleShape)
 		{
-			m_ShapeCircleThickness.m_CurrentFloat = *Rendering::Shader::GetInputLocation<float>("a_Thickness", component.ShaderData, component.Shader);
+			m_ShapeCircleThickness.m_CurrentFloat = *Rendering::Shader::GetInputLocation<float>(
+				Utility::FileSystem::CRCFromString("a_Thickness"), 
+				component.ShaderData, component.Shader);
 			EditorUI::EditorUIService::EditFloat(m_ShapeCircleThickness);
 
-			m_ShapeCircleFade.m_CurrentFloat = *Rendering::Shader::GetInputLocation<float>("a_Fade", component.ShaderData, component.Shader);
+			m_ShapeCircleFade.m_CurrentFloat = *Rendering::Shader::GetInputLocation<float>(\
+				Utility::FileSystem::CRCFromString("a_Fade"), 
+				component.ShaderData, component.Shader);
 			EditorUI::EditorUIService::EditFloat(m_ShapeCircleFade);
 		}
 	}

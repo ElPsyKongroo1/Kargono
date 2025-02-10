@@ -2,6 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
+#include "Kargono/Utility/FileSystem.h"
 
 #include <string>
 #include <unordered_map>
@@ -138,16 +139,18 @@ namespace Kargono::Rendering
 			CalculateOffsetsAndStride();
 		}
 
-		InputBufferElement FindElementByName(const std::string& name)
+		InputBufferElement* FindElementByName(uint32_t nameHash)
 		{
-			if (!m_ElementLocations.contains(name))
+			if (!m_ElementLocations.contains(nameHash))
 			{
-				//KG_ERROR("Could not find element inside InputBufferLayout using name: {0}", name);
+				KG_WARN("Could not locate element inside InputBufferLayout")
 				return {};
 			}
 
-			return m_Elements.at(m_ElementLocations.at(name));
+			return &m_Elements.at(m_ElementLocations.at(nameHash));
 		}
+
+
 
 		void Clear() { m_Elements.clear(); CalculateOffsetsAndStride(); }
 
@@ -164,9 +167,9 @@ namespace Kargono::Rendering
 
 			size_t offset = 0;
 			uint32_t iteration = 0;
-			for (auto& element : m_Elements)
+			for (InputBufferElement& element : m_Elements)
 			{
-				m_ElementLocations.insert({ element.Name, static_cast<std::uint32_t>(iteration) });
+				m_ElementLocations.insert({ Utility::FileSystem::CRCFromString(element.Name.c_str()), static_cast<std::uint32_t>(iteration) });
 				element.Offset = offset;
 				offset += element.Size;
 				m_Stride += element.Size;
@@ -175,7 +178,7 @@ namespace Kargono::Rendering
 		}
 	private:
 		std::vector<InputBufferElement> m_Elements {};
-		std::unordered_map<std::string, uint32_t> m_ElementLocations {};
+		std::unordered_map<uint32_t, uint32_t> m_ElementLocations {};
 		uint32_t m_Stride = 0;
 	};
 

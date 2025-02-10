@@ -41,7 +41,10 @@ namespace Kargono::Particles
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			// Default particle color is pure white
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, 
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				localBuffer, 
+				localShader);
 
 			// Create basic shape component for UI quad rendering
 			ECS::ShapeComponent* shapeComp = new ECS::ShapeComponent();
@@ -257,7 +260,7 @@ namespace Kargono::Particles
 						emitter.m_Config->m_ColorEnd, 
 						progress
 					),
-					"a_Color", 
+					Utility::FileSystem::CRCFromString("a_Color"),
 					s_ParticleContext->m_ParticleRenderSpec.m_Buffer, 
 					s_ParticleContext->m_ParticleRenderSpec.m_Shader
 				);

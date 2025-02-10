@@ -122,15 +122,30 @@ namespace Kargono::Rendering
 		static Ref<Shader> Create(const std::string& name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries);
 	public:
 		template<typename T>
-		static T* GetInputLocation(const std::string& inputName, Buffer inputBuffer, Ref<Shader> shader)
+		static T* GetInputLocation(uint32_t inputNameHash, Buffer inputBuffer, Ref<Shader> shader)
 		{
-			std::size_t inputLocation = shader->GetInputLayout().FindElementByName(inputName).Offset;
+			InputBufferElement* currentInputBufferElement = shader->GetInputLayout().FindElementByName(inputNameHash);
+
+			if (!currentInputBufferElement)
+			{
+				KG_WARN("Input name hash did not retrieve an InputBufferElement");
+				return nullptr;
+			}
+			std::size_t inputLocation = currentInputBufferElement->Offset;
 			return inputBuffer.As<T>(inputLocation);
 		}
 		template<typename T>
-		static void SetDataAtInputLocation(const T& value , const std::string& inputName, Buffer inputBuffer, Ref<Shader> shader)
+		static void SetDataAtInputLocation(const T& value , uint32_t inputNameHash, Buffer inputBuffer, Ref<Shader> shader)
 		{
-			std::size_t inputLocation = shader->GetInputLayout().FindElementByName(inputName).Offset;
+			InputBufferElement* currentInputBufferElement = shader->GetInputLayout().FindElementByName(inputNameHash);
+
+			if (!currentInputBufferElement)
+			{
+				KG_WARN("Input name hash did not retrieve an InputBufferElement");
+				return;
+			}
+
+			std::size_t inputLocation = currentInputBufferElement->Offset;
 			T* inputPointer = inputBuffer.As<T>(inputLocation);
 			*inputPointer = value;
 		}

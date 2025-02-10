@@ -221,7 +221,9 @@ namespace Kargono::Panels
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			// Add red color to shader
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red), "a_Color", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red), 
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				localBuffer, localShader);
 
 			// Create the shape component
 			ECS::ShapeComponent* lineShapeComponent = new ECS::ShapeComponent();
@@ -286,7 +288,9 @@ namespace Kargono::Panels
 		{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height, -1.0f },
 		{ 0.0f, (float)m_ViewportData.m_Height, -1.0f }
 		};
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), 
+			Utility::FileSystem::CRCFromString("a_Color"), 
+			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 		s_OutputVector->clear();
 		s_OutputVector->push_back(selectionBoxVertices[0]);
 		s_OutputVector->push_back(selectionBoxVertices[1]);
@@ -583,7 +587,9 @@ namespace Kargono::Panels
 			gridVertices.push_back({ x, (float)m_ViewportData.m_Height, -1.0f });
 		}
 
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_GridMinor), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_GridMinor), 
+			Utility::FileSystem::CRCFromString("a_Color"), 
+			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 
 		for (size_t i = 0; i < vertexCount; i += 2)
 		{
@@ -752,7 +758,9 @@ namespace Kargono::Panels
 			{
 				selectionBoxVertices[i] = widgetTransform * s_RectangleVertexPositions[i];
 			}
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor4), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor4), 
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(selectionBoxVertices[0]);
 			s_OutputVector->push_back(selectionBoxVertices[1]);
@@ -788,7 +796,9 @@ namespace Kargono::Panels
 			{
 				selectionBoxVertices[i] = windowTransform * s_RectangleVertexPositions[i];
 			}
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red), 
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(selectionBoxVertices[0]);
 			s_OutputVector->push_back(selectionBoxVertices[1]);
@@ -862,7 +872,9 @@ namespace Kargono::Panels
 			constraintDistanceVerts[5] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, widgetTranslation.z };
 
 			// Draw the x-axis constraint distance lines
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), 
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[0]);
 			s_OutputVector->push_back(constraintDistanceVerts[1]);
@@ -914,7 +926,9 @@ namespace Kargono::Panels
 			constraintDistanceVerts[5] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, widgetTranslation.z };
 
 			// Draw the x-axis constraint distance lines
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), 
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[0]);
 			s_OutputVector->push_back(constraintDistanceVerts[1]);
@@ -966,7 +980,9 @@ namespace Kargono::Panels
 			constraintDistanceVerts[5] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[1].y, widgetTranslation.z };
 
 			// Draw the x-axis constraint distance lines
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2), 
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[0]);
 			s_OutputVector->push_back(constraintDistanceVerts[1]);
@@ -1018,7 +1034,9 @@ namespace Kargono::Panels
 			constraintDistanceVerts[5] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[1].y, widgetTranslation.z };
 
 			// Draw the x-axis constraint distance lines
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2), 
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[0]);
 			s_OutputVector->push_back(constraintDistanceVerts[1]);
@@ -1076,7 +1094,9 @@ namespace Kargono::Panels
 		constraintDistanceVerts[5] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, finalWindowTranslation.z };
 
 		// Draw the x-axis constraint distance lines
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), 
+			Utility::FileSystem::CRCFromString("a_Color"), 
+			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 		s_OutputVector->clear();
 		s_OutputVector->push_back(constraintDistanceVerts[0]);
 		s_OutputVector->push_back(constraintDistanceVerts[1]);
@@ -1121,7 +1141,9 @@ namespace Kargono::Panels
 		constraintDistanceVerts[5] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[1].y, finalWindowTranslation.z };
 
 		// Draw the x-axis constraint distance lines
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2), "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2), 
+			Utility::FileSystem::CRCFromString("a_Color"), 
+			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 		s_OutputVector->clear();
 		s_OutputVector->push_back(constraintDistanceVerts[0]);
 		s_OutputVector->push_back(constraintDistanceVerts[1]);

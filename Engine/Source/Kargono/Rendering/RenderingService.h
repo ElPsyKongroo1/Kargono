@@ -53,6 +53,7 @@ namespace Kargono::Rendering
 		// Per Object Function Pointers for Filling Input Data
 		//============================================================
 		static void FillTextureIndex(RendererInputSpec& inputSpec);
+		static void FillTextureAtlas(RendererInputSpec& inputSpec);
 		static void FillIndicesData(RendererInputSpec& inputSpec);
 		static void FillEntityID(Rendering::RendererInputSpec& inputSpec);
 

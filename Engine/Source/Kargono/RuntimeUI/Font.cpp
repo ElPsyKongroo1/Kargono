@@ -61,7 +61,9 @@ namespace Kargono::RuntimeUI
 			auto [uuid, localShader] = Assets::AssetService::GetShader(textShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, 
+				Utility::FileSystem::CRCFromString("a_Color"),
+				localBuffer, localShader);
 
 			s_TextInputSpec.m_ShapeComponent = new ECS::ShapeComponent();
 			s_TextInputSpec.m_ShapeComponent->CurrentShape = Rendering::ShapeTypes::Quad;
@@ -213,7 +215,9 @@ namespace Kargono::RuntimeUI
 
 	void FontService::SetID(uint32_t id)
 	{
-		Rendering::Shader::SetDataAtInputLocation<uint32_t>(id, "a_EntityID", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
+		Rendering::Shader::SetDataAtInputLocation<uint32_t>(id, 
+			Utility::FileSystem::CRCFromString("a_EntityID"),
+			s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
 	}
 
 	void Font::OnRenderMultiLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale, int maxLineWidth)
@@ -221,7 +225,9 @@ namespace Kargono::RuntimeUI
 		UNREFERENCED_PARAMETER(maxLineWidth);
 		// Submit text color to the renderer buffer. The text will now be rendered with this color.
 		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, 
+			Utility::FileSystem::CRCFromString("a_Color"),
+			s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
 
 		// Initialize the active location where text is being rendered
 		double xLocation{ translation.x };
@@ -317,7 +323,9 @@ namespace Kargono::RuntimeUI
 	{
 		// Submit text color to the renderer buffer. The text will now be rendered with this color.
 		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, "a_Color", s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, 
+			Utility::FileSystem::CRCFromString("a_Color"),
+			s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
 
 		// Initialize the active location where text is being rendered
 		double xLocation{ translation.x };

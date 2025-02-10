@@ -602,7 +602,9 @@ namespace Kargono::Panels
 			auto [uuid, localShader] = Assets::AssetService::GetShader(lineShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, 
+				Utility::FileSystem::CRCFromString("a_Color"),
+				localBuffer, localShader);
 
 			ECS::ShapeComponent* lineShapeComponent = new ECS::ShapeComponent();
 			lineShapeComponent->CurrentShape = Rendering::ShapeTypes::None;
@@ -618,9 +620,15 @@ namespace Kargono::Panels
 			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
-			Rendering::Shader::SetDataAtInputLocation<float>(0.05f, "a_Thickness", localBuffer, localShader);
-			Rendering::Shader::SetDataAtInputLocation<float>(0.005f, "a_Fade", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, 
+				Utility::FileSystem::CRCFromString("a_Color"),
+				localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<float>(0.05f, 
+				Utility::FileSystem::CRCFromString("a_Thickness"),
+				localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<float>(0.005f, 
+				Utility::FileSystem::CRCFromString("a_Fade"),
+				localBuffer, localShader);
 
 			ECS::ShapeComponent* shapeComp = new ECS::ShapeComponent();
 			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
@@ -638,7 +646,9 @@ namespace Kargono::Panels
 			auto [uuid, localShader] = Assets::AssetService::GetShader(pointShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, "a_Color", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, 
+				Utility::FileSystem::CRCFromString("a_Color"),
+				localBuffer, localShader);
 
 			ECS::ShapeComponent* pointShapeComponent = new ECS::ShapeComponent();
 			pointShapeComponent->CurrentShape = Rendering::ShapeTypes::None;
@@ -715,7 +725,9 @@ namespace Kargono::Panels
 						* glm::scale(Math::mat4(1.0f), scale);
 
 					static Math::vec4 boxColliderColor {0.0f, 1.0f, 0.0f, 1.0f};
-					Rendering::Shader::SetDataAtInputLocation<Math::vec4>(boxColliderColor, "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+					Rendering::Shader::SetDataAtInputLocation<Math::vec4>(boxColliderColor, 
+						Utility::FileSystem::CRCFromString("a_Color"),
+						s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 
 					Math::vec3 lineVertices[4];
 					for (size_t i = 0; i < 4; i++)
@@ -755,7 +767,9 @@ namespace Kargono::Panels
 			{
 				ECS::TransformComponent transform = selectedEntity.GetComponent<ECS::TransformComponent>();
 				static Math::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};
-				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, 
+					Utility::FileSystem::CRCFromString("a_Color"),
+					s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 
 				Math::vec3 lineVertices[8];
 
@@ -799,7 +813,9 @@ namespace Kargono::Panels
 		auto& transform = entity.GetComponent<ECS::TransformComponent>();
 		auto& camera = entity.GetComponent<ECS::CameraComponent>();
 		// Submit frustrum cube color to renderer input
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, 
+			Utility::FileSystem::CRCFromString("a_Color"),
+			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 
 
 		// Set lineVertices 0 - 7 with vertices from camera frustum
@@ -818,7 +834,9 @@ namespace Kargono::Panels
 			if (iteration >= 12 && !colorChanged)
 			{
 				selectionColor = { 0.3f, 0.1f, 0.8f, 1.0f };
-				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, "a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, 
+					Utility::FileSystem::CRCFromString("a_Color"),
+					s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 				colorChanged = true;
 			}
 			s_OutputVector->clear();
@@ -883,7 +901,8 @@ namespace Kargono::Panels
 		int32_t currentLine;
 		s_OutputVector->clear();
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_GridMajor),
-			"a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+			Utility::FileSystem::CRCFromString("a_Color"), 
+			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 		// X-Y Grid
 		if (m_DisplayXYMajorGrid)
 		{
@@ -1000,7 +1019,8 @@ namespace Kargono::Panels
 
 		// Set Color for minor grid lines
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_GridMinor),
-			"a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+			Utility::FileSystem::CRCFromString("a_Color"), 
+			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 
 		if (m_DisplayXYMinorGrid)
 		{
@@ -1118,7 +1138,8 @@ namespace Kargono::Panels
 			// X Axis
 			s_OutputVector->clear();
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1),
-				"a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->push_back({ minimumValues.x, 0.0f, 0.0f });
 			s_OutputVector->push_back({ maximumValues.x, 0.0f, 0.0f });
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
@@ -1128,7 +1149,8 @@ namespace Kargono::Panels
 			// Y Axis
 			s_OutputVector->clear();
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2),
-				"a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->push_back({ 0.0f, minimumValues.y, 0.0f });
 			s_OutputVector->push_back({ 0.0f, maximumValues.y, 0.0f });
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
@@ -1138,7 +1160,8 @@ namespace Kargono::Panels
 			// Z Axis
 			s_OutputVector->clear();
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor3),
-				"a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->push_back({ 0.0f, 0.0f, minimumValues.z });
 			s_OutputVector->push_back({ 0.0f, 0.0f, maximumValues.z });
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
@@ -1153,7 +1176,8 @@ namespace Kargono::Panels
 		{
 			s_OutputVector->clear();
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red),
-				"a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->push_back(line.m_StartPoint);
 			s_OutputVector->push_back(line.m_EndPoint);
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
@@ -1165,7 +1189,8 @@ namespace Kargono::Panels
 		{
 			s_OutputVector->clear();
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red),
-				"a_Color", s_PointInputSpec.m_Buffer, s_PointInputSpec.m_Shader);
+				Utility::FileSystem::CRCFromString("a_Color"), 
+				s_PointInputSpec.m_Buffer, s_PointInputSpec.m_Shader);
 			s_OutputVector->push_back(point.m_Point);
 			s_PointInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_PointInputSpec);
@@ -1180,7 +1205,8 @@ namespace Kargono::Panels
 		for (const Math::Spline& spline : m_DebugSplines)
 		{
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_PureWhite),
-				"a_Color", s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+				Utility::FileSystem::CRCFromString("a_Color"),
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			float adjustmentFactor{ spline.m_Looped ? 0.0f : 3.0f };
 			for (float time{ 0.0f }; time < (float)spline.m_Points.size() - adjustmentFactor; time += stepValue) // Note we subtract 3.0f to account for edge control points
 			{
@@ -1196,7 +1222,8 @@ namespace Kargono::Panels
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			}
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red),
-				"a_Color", s_PointInputSpec.m_Buffer, s_PointInputSpec.m_Shader);
+				Utility::FileSystem::CRCFromString("a_Color"),
+				s_PointInputSpec.m_Buffer, s_PointInputSpec.m_Shader);
 			for (const Math::vec3& point : spline.m_Points)
 			{
 				// Draw the point

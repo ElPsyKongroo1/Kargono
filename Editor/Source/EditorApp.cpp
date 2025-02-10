@@ -91,12 +91,13 @@ namespace Kargono
 		KG_PROFILE_FUNCTION();
 
 		// Call on update for all windows
-		m_MainWindow->OnUpdate(ts);
+		
 
 		// Handle rendering editor UI
 		switch (m_ActiveEditorWindow)
 		{
 		case ActiveEditorUIWindow::MainWindow:
+			m_MainWindow->OnUpdate(ts);
 			m_MainWindow->OnEditorUIRender();
 			break;
 		case ActiveEditorUIWindow::UIEditorWindow:

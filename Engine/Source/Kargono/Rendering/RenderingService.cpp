@@ -123,26 +123,44 @@ namespace Kargono::Rendering
 			textureIndex = static_cast<float>(m_Textures.size() - 1);
 		}
 
-		Shader::SetDataAtInputLocation<float>(textureIndex, "a_TexIndex", inputSpec.m_Buffer, inputSpec.m_Shader);
+		Shader::SetDataAtInputLocation<float>(textureIndex, 
+			Utility::FileSystem::CRCFromString("a_TexIndex"),
+			inputSpec.m_Buffer, inputSpec.m_Shader);
+	}
+
+	void RenderingService::FillTextureAtlas(RendererInputSpec& inputSpec)
+	{
+		//if (s_Data.QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
+		KG_ASSERT(inputSpec.m_ShapeComponent->Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
+		std::vector<Ref<Texture2D>>& m_Textures = inputSpec.m_CurrentDrawBuffer->m_Textures;
+		m_Textures.clear();
+		m_Textures.emplace_back(inputSpec.m_ShapeComponent->Texture);
 	}
 
 	void RenderingService::FillTextureCoordinate(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		const Math::vec2& coordinates = inputSpec.m_ShapeComponent->TextureCoordinates->at(iteration);
-		Shader::SetDataAtInputLocation<Math::vec2>(coordinates, "a_TexCoord", inputSpec.m_Buffer, inputSpec.m_Shader);
+		Shader::SetDataAtInputLocation<Math::vec2>(coordinates, 
+			Utility::FileSystem::CRCFromString("a_TexCoord"),
+			inputSpec.m_Buffer, 
+			inputSpec.m_Shader);
 	}
 
 	void RenderingService::FillLocalPosition(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->Vertices->at(iteration) * 2.0f;
-		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, "a_LocalPosition", inputSpec.m_Buffer, inputSpec.m_Shader);
+		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, 
+			Utility::FileSystem::CRCFromString("a_LocalPosition"),
+			inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 	void RenderingService::FillWorldPosition(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->Vertices->at(iteration);
 		Math::vec3 worldPosition = inputSpec.m_TransformMatrix * Math::vec4(localPosition, 1.0f);
-		Shader::SetDataAtInputLocation<Math::vec3>(worldPosition, "a_Position", inputSpec.m_Buffer, inputSpec.m_Shader);
+		Shader::SetDataAtInputLocation<Math::vec3>(worldPosition, 
+			Utility::FileSystem::CRCFromString("a_Position"),
+			inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 
@@ -150,14 +168,18 @@ namespace Kargono::Rendering
 	{
 		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->Vertices->at(iteration);
 
-		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, "a_Position", inputSpec.m_Buffer, inputSpec.m_Shader);
+		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, 
+			Utility::FileSystem::CRCFromString("a_Position"),
+			inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 	void RenderingService::FillVertexColor(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
 		auto& colorVector = inputSpec.m_ShapeComponent->VertexColors;
 		KG_ASSERT(iteration < static_cast<uint32_t>(colorVector->size()), "Invalid iteration inside FillVertexColor function");
-		Shader::SetDataAtInputLocation<Math::vec4>(colorVector->at(iteration), "a_Color", inputSpec.m_Buffer, inputSpec.m_Shader);
+		Shader::SetDataAtInputLocation<Math::vec4>(colorVector->at(iteration), 
+			Utility::FileSystem::CRCFromString("a_Color"),
+			inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 	void RenderingService::FillIndicesData(RendererInputSpec& inputSpec)
@@ -173,7 +195,9 @@ namespace Kargono::Rendering
 
 	void RenderingService::FillEntityID(Rendering::RendererInputSpec& inputSpec)
 	{
-		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.m_Entity, "a_EntityID", inputSpec.m_Buffer, inputSpec.m_Shader);
+		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.m_Entity, 
+			Utility::FileSystem::CRCFromString("a_EntityID"),
+			inputSpec.m_Buffer, inputSpec.m_Shader);
 	}
 
 	void RenderingService::SubmitDataToRenderer(RendererInputSpec& inputSpec)
@@ -239,7 +263,10 @@ namespace Kargono::Rendering
 
 	void RenderingService::FillTextureUniform(Ref<DrawCallBuffer> buffer)
 	{
-		for (uint32_t i = 0; i < buffer->m_Textures.size(); i++) { buffer->m_Textures[i]->Bind(i); }
+		for (uint32_t i = 0; i < buffer->m_Textures.size(); i++) 
+		{ 
+			buffer->m_Textures[i]->Bind(i); 
+		}
 	}
 
 	void RenderingService::DrawBufferIndices(Ref<DrawCallBuffer> buffer)

@@ -68,7 +68,9 @@ namespace Kargono::RuntimeUI
 			Rendering::ShaderSpecification shaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, true, Rendering::RenderingType::DrawIndex, false};
 			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, "a_Color", localBuffer, localShader);
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, 
+				Utility::FileSystem::CRCFromString("a_Color"),
+				localBuffer, localShader);
 
 			// Create basic shape component for UI quad rendering
 			ECS::ShapeComponent* shapeComp = new ECS::ShapeComponent();
@@ -97,7 +99,9 @@ namespace Kargono::RuntimeUI
 			shapeComp->Shader = localShader;
 			shapeComp->Texture = nullptr;
 			
-			float* tilingFactor = Rendering::Shader::GetInputLocation<float>("a_TilingFactor", localBuffer, localShader);
+			float* tilingFactor = Rendering::Shader::GetInputLocation<float>(
+				Utility::FileSystem::CRCFromString("a_TilingFactor"), 
+				localBuffer, localShader);
 			*tilingFactor = 1.0f;
 
 			s_RuntimeUIContext->m_ImageInputSpec.m_Shader = localShader;
@@ -632,10 +636,14 @@ namespace Kargono::RuntimeUI
 				// Create background rendering data
 				s_RuntimeUIContext->m_BackgroundInputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), bottomLeftTranslation)
 					* glm::scale(Math::mat4(1.0f), scale);
-				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, "a_Color", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, 
+					Utility::FileSystem::CRCFromString("a_Color"),
+					s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 
 				// Push window ID and invalid widgetID
-				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)0xFFFF, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)0xFFFF, 
+					Utility::FileSystem::CRCFromString("a_EntityID"),
+					s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 
 				// Submit background data to GPU
 				Rendering::RenderingService::SubmitDataToRenderer(s_RuntimeUIContext->m_BackgroundInputSpec);
@@ -649,8 +657,12 @@ namespace Kargono::RuntimeUI
 			{
 				// TODO: Seperate these into multiple functions
 				// Push window ID and widget ID
-				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration, "a_EntityID", s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
-				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration, "a_EntityID", s_RuntimeUIContext->m_ImageInputSpec.m_Buffer, s_RuntimeUIContext->m_ImageInputSpec.m_Shader);
+				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration, 
+					Utility::FileSystem::CRCFromString("a_EntityID"),
+					s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration, 
+					Utility::FileSystem::CRCFromString("a_EntityID"),
+					s_RuntimeUIContext->m_ImageInputSpec.m_Buffer, s_RuntimeUIContext->m_ImageInputSpec.m_Shader);
 				RuntimeUI::FontService::SetID(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration);
 				// Call the widget's rendering function
 				widgetRef->OnRender(initialTranslation, scale, (float)viewportWidth);
@@ -1101,7 +1113,8 @@ namespace Kargono::RuntimeUI
 				Math::vec3(translation.x + (size.x / 2), translation.y + (size.y / 2), translation.z))
 				* glm::scale(Math::mat4(1.0f), size);
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, 
-				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
+				Utility::FileSystem::CRCFromString("a_Color"),
+				renderSpec.m_Buffer, renderSpec.m_Shader);
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
@@ -1162,7 +1175,8 @@ namespace Kargono::RuntimeUI
 			cursorTranslation)
 			* glm::scale(Math::mat4(1.0f), Math::vec3(textScalingFactor * 0.05f, ascender * textScalingFactor, 1.0f));
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Math::vec4(1.0f),
-			"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
+			Utility::FileSystem::CRCFromString("a_Color"),
+			renderSpec.m_Buffer, renderSpec.m_Shader);
 
 		// Submit background data to GPU
 		Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
@@ -1181,7 +1195,8 @@ namespace Kargono::RuntimeUI
 				Math::vec3(translation.x + (sliderSize.x / 2.0f), translation.y + (size.y / 2.0f), translation.z))
 				* glm::scale(Math::mat4(1.0f), sliderSize);
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color,
-				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
+				Utility::FileSystem::CRCFromString("a_Color"),
+				renderSpec.m_Buffer, renderSpec.m_Shader);
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
@@ -1201,7 +1216,8 @@ namespace Kargono::RuntimeUI
 				Math::vec3(translation.x, translation.y + (size.y / 2.0f), translation.z))
 				* glm::scale(Math::mat4(1.0f), sliderSize);
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color,
-				"a_Color", renderSpec.m_Buffer, renderSpec.m_Shader);
+				Utility::FileSystem::CRCFromString("a_Color"),
+				renderSpec.m_Buffer, renderSpec.m_Shader);
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);

@@ -72,10 +72,18 @@ namespace Kargono::Rendering
 		{
 			m_FillDataInScene.push_back(RenderingService::FillEntityID);
 		}
-		if (m_ShaderSpecification.TextureInput == TextureInputType::ColorTexture ||
-			m_ShaderSpecification.TextureInput == TextureInputType::TextTexture)
+
+		if (m_ShaderSpecification.TextureInput == TextureInputType::ColorTexture)
 		{
-			m_FillDataPerObject.push_back( RenderingService::FillTextureIndex);
+			m_FillDataPerObject.push_back(RenderingService::FillTextureIndex);
+			m_FillDataPerVertex.push_back(RenderingService::FillTextureCoordinate);
+			m_SubmitUniforms.push_back(RenderingService::FillTextureUniform);
+		}
+
+		if (m_ShaderSpecification.TextureInput == TextureInputType::TextTexture)
+		{
+
+			m_FillDataPerObject.push_back(RenderingService::FillTextureAtlas);
 			m_FillDataPerVertex.push_back(RenderingService::FillTextureCoordinate);
 			m_SubmitUniforms.push_back(RenderingService::FillTextureUniform);
 		}
