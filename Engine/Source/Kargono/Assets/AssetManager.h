@@ -55,7 +55,7 @@ namespace Kargono::Assets
 
 			if (m_AssetRegistry.contains(handle))
 			{
-				auto asset = m_AssetRegistry[handle];
+				AssetInfo& asset = m_AssetRegistry[handle];
 				std::filesystem::path assetPath = 
 					(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ? 
 						Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation : 

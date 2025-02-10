@@ -8,6 +8,7 @@
 #include "Kargono/Assets/GameStateManager.h"
 #include "Kargono/Assets/InputMapManager.h"
 #include "Kargono/Assets/ProjectComponentManager.h"
+#include "Kargono/Assets/ProjectEnumManager.h"
 #include "Kargono/Assets/SceneManager.h"
 #include "Kargono/Assets/ScriptManager.h"
 #include "Kargono/Assets/ShaderManager.h"
@@ -116,6 +117,7 @@ namespace Kargono::Assets
 		GameStateManager m_GameStateManager;
 		InputMapManager m_InputMapManager;
 		ProjectComponentManager m_ProjectComponentManager;
+		ProjectEnumManager m_ProjectEnumManager;
 		SceneManager m_SceneManager;
 		ScriptManager m_ScriptManager;
 		ShaderManager m_ShaderManager;
@@ -134,6 +136,7 @@ namespace Kargono::Assets
 		DEFINE_MANAGER(Scenes, GameState)
 		DEFINE_MANAGER(Input, InputMap)
 		DEFINE_MANAGER(ECS, ProjectComponent)
+		DEFINE_MANAGER(ProjectData, ProjectEnum)
 		DEFINE_MANAGER(Scenes, Scene)
 		DEFINE_MANAGER(Scripting, Script)
 		DEFINE_MANAGER(Rendering, Shader)
@@ -234,6 +237,7 @@ namespace Kargono::Assets
 			DeserializeFontRegistry();
 			DeserializeScriptRegistry();
 			DeserializeProjectComponentRegistry();
+			DeserializeProjectEnumRegistry();
 			DeserializeInputMapRegistry();
 			DeserializeEmitterConfigRegistry();
 			DeserializeGameStateRegistry();
@@ -251,6 +255,7 @@ namespace Kargono::Assets
 			SerializeFontRegistry();
 			SerializeScriptRegistry();
 			SerializeProjectComponentRegistry();
+			SerializeProjectEnumRegistry();
 			SerializeInputMapRegistry();
 			SerializeEmitterConfigRegistry();
 			SerializeGameStateRegistry();
@@ -268,6 +273,7 @@ namespace Kargono::Assets
 			ClearFontRegistry();
 			ClearScriptRegistry();
 			ClearProjectComponentRegistry();
+			ClearProjectEnumRegistry();
 			ClearInputMapRegistry();
 			ClearGameStateRegistry();
 			ClearUserInterfaceRegistry();
@@ -291,6 +297,7 @@ namespace Kargono::Assets
 			case AssetType::Texture: return GetTexture2DRegistry().at(handle);
 			case AssetType::UserInterface: return GetUserInterfaceRegistry().at(handle);
 			case AssetType::ProjectComponent: return GetProjectComponentRegistry().at(handle);
+			case AssetType::ProjectEnum: return GetProjectEnumRegistry().at(handle);
 			case AssetType::EmitterConfig: return GetEmitterConfigRegistry().at(handle);
 			case AssetType::None: 
 			default:

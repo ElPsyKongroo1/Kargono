@@ -996,94 +996,6 @@ namespace Kargono::Panels
 
 	}
 
-	void ProjectPanel::InitializeMessageTypeResources()
-	{
-		// Manage AI Message Types
-		m_MessageTypeTable.m_Label = "All Message Types";
-		m_MessageTypeTable.m_Column1Title = "Message Type";
-		m_MessageTypeTable.m_Column2Title = "";
-		m_MessageTypeTable.m_Expanded = false;
-		m_MessageTypeTable.AddToSelectionList("Create New Message Type", [&]()
-		{
-			m_CreateMessageTypePopup.m_StartPopup = true;
-		});
-		m_MessageTypeTable.m_OnRefresh = [&]()
-		{
-			m_MessageTypeTable.ClearList();
-			for (std::string& label : Projects::ProjectService::GetAllMessageTypes())
-			{
-				m_MessageTypeTable.InsertListEntry(label, "", [&](EditorUI::ListEntry& entry, std::size_t iteration)
-				{
-					UNREFERENCED_PARAMETER(iteration);
-					m_ActiveAIMessageType = entry.m_Label;
-					m_EditMessageTypePopup.m_OpenPopup = true;
-				});
-			}
-		};
-		m_MessageTypeTable.m_OnRefresh();
-
-		m_CreateMessageTypePopup.m_Label = "Create New Message Type";
-		m_CreateMessageTypePopup.m_Flags |= EditorUI::EditText_PopupOnly;
-		m_CreateMessageTypePopup.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
-		{
-			UNREFERENCED_PARAMETER(spec);
-			// Ensure input string does not use whitespace
-			Utility::Operations::RemoveWhitespaceFromString(m_CreateMessageTypePopup.m_CurrentOption);
-			// Create new AI message
-			bool success = Projects::ProjectService::AddAIMessageType(m_CreateMessageTypePopup.m_CurrentOption);
-			if (!success)
-			{
-				KG_WARN("Failed to create message type");
-				return;
-			}
-			m_MessageTypeTable.m_OnRefresh();
-			s_MainWindow->m_TextEditorPanel->RefreshKGScriptEditor();
-		};
-
-		m_EditMessageTypePopup.m_Label = "Edit Message Type";
-		m_EditMessageTypePopup.m_PopupAction = [&]()
-		{
-			m_EditMessageTypeText.m_CurrentOption = m_ActiveAIMessageType;
-		};
-		m_EditMessageTypePopup.m_ConfirmAction = [&]()
-		{
-			// Ensure input string does not use whitespace
-			Utility::Operations::RemoveWhitespaceFromString(m_CreateMessageTypePopup.m_CurrentOption);
-
-			bool success = Projects::ProjectService::EditAIMessageType(m_ActiveAIMessageType, 
-				m_EditMessageTypeText.m_CurrentOption);
-
-			// Create new AI message type
-			if (!success)
-			{
-				KG_WARN("Failed to edit message type");
-				return;
-			}
-			OnRefresh();
-			s_MainWindow->m_TextEditorPanel->RefreshKGScriptEditor();
-		};
-		m_EditMessageTypePopup.m_DeleteAction = [&]()
-		{
-			bool success = Projects::ProjectService::DeleteAIMessageType(m_ActiveAIMessageType);
-			if (!success)
-			{
-				KG_WARN("Failed to delete section label");
-				return;
-			}
-
-			OnRefresh();
-			s_MainWindow->m_TextEditorPanel->RefreshKGScriptEditor();
-		};
-		m_EditMessageTypePopup.m_PopupContents = [&]()
-		{
-			EditorUI::EditorUIService::EditText(m_EditMessageTypeText);
-		};
-
-		m_EditMessageTypeText.m_Label = "Message Type";
-		m_EditMessageTypeText.m_CurrentOption = "Empty";
-
-	}
-
 	ProjectPanel::ProjectPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
@@ -1091,7 +1003,6 @@ namespace Kargono::Panels
 		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ProjectPanel::OnKeyPressedEditor));
 		InitializeStaticResources();
-		InitializeMessageTypeResources();
 	}
 	void ProjectPanel::OnEditorUIRender()
 	{
@@ -1293,20 +1204,6 @@ namespace Kargono::Panels
 			generators.erase(generatorToDelete);
 		}
 
-		ImGui::NewLine();
-
-		ImGui::Text("Physics Settings:");
-		if (ImGui::DragFloat2("Gravity", glm::value_ptr(s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity), 0.05f))
-		{
-			if (Physics::Physics2DService::GetActivePhysics2DWorld())
-			{
-				Scenes::SceneService::GetActiveScene()->GetPhysicsSpecification().Gravity = s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity;
-				Physics::Physics2DService::SetActiveGravity(s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity);
-			}
-		}
-
-
-		EditorUI::EditorUIService::List(m_MessageTypeTable);
 		EditorUI::EditorUIService::EditText(m_CreateMessageTypePopup);
 		EditorUI::EditorUIService::GenericPopup(m_EditMessageTypePopup);
 		EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
@@ -1375,6 +1272,6 @@ namespace Kargono::Panels
 	}
 	void ProjectPanel::OnRefresh()
 	{
-		m_MessageTypeTable.m_OnRefresh();
+		
 	}
 }

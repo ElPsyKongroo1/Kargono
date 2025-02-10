@@ -148,6 +148,7 @@ namespace Kargono::Panels
 
 		// Scene Options
 		EditorUI::EditVec4Spec m_BackgroundColorSpec;
+		EditorUI::EditVec2Spec m_Gravity2DSpec;
 
 		// Tag Component
 		EditorUI::CollapsingHeaderSpec m_TagHeader{};

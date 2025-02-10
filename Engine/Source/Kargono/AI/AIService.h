@@ -58,7 +58,6 @@ namespace Kargono::AI
 	struct AIContext
 	{
 		std::priority_queue<AIMessage, std::vector<AIMessage>, decltype(k_MessageQueueComparisonFunctor)> MessageQueue {};
-		std::unordered_set<uint32_t> AllMessageTypes {};
 	};
 
 

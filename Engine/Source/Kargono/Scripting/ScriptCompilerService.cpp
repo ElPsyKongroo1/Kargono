@@ -10,6 +10,7 @@
 #include "Kargono/Scripting/ScriptOutputGenerator.h"
 #include "Kargono/Assets/AssetService.h"
 #include "Kargono/ECS/ProjectComponent.h"
+#include "Kargono/ProjectData/ProjectEnum.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/RuntimeUI/RuntimeUI.h"
@@ -70,6 +71,8 @@ namespace Kargono::Scripting
 		{ ScriptTokenType::PrimitiveType, "uint64" },
 		{ ScriptTokenType::PrimitiveType, "float" }
 	};
+
+	static std::vector<ScriptToken> s_AllEnums;
 
 	void ScriptCompilerService::Terminate()
 	{
@@ -439,21 +442,13 @@ namespace Kargono::Scripting
 	{
 		s_ActiveLanguageDefinition = {};
 
-		// Load in AI Message Types from current project
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		s_ActiveLanguageDefinition.AllMessageTypes.clear();
-		for (const std::string& messageType : Projects::ProjectService::GetAllMessageTypes())
-		{
-			s_ActiveLanguageDefinition.AllMessageTypes.insert(messageType);
-		}
-
 		CreateKGScriptKeywords();
 
 		CreateKGScriptInitializationPrototypes();
 
-		CreateKGScriptPrimitiveTypes();
-
 		CreateKGScriptCustomLiterals();
+
+		CreateKGScriptPrimitiveTypes();
 
 		CreateKGScriptNamespaces();
 
@@ -552,14 +547,6 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedDeclaration = "uint16_t";
 		newPrimitiveType.EmittedParameter = "uint16_t";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGrid;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
-
-		newPrimitiveType.Name = "message_type";
-		newPrimitiveType.Description = "A type that enumerates the different messages that can be sent between entities directly";
-		newPrimitiveType.AcceptableLiteral = ScriptTokenType::MessageTypeLiteral;
-		newPrimitiveType.EmittedDeclaration = "uint32_t";
-		newPrimitiveType.EmittedParameter = "uint32_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconRight;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -671,6 +658,15 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
+		newPrimitiveType.Name = "project_enum";
+		newPrimitiveType.Description = "Reference to a project enum asset. A project enum is a chunk of data that can be associated with any entity and is specific to a particular game project.";
+		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
+		newPrimitiveType.EmittedDeclaration = "uint64_t";
+		newPrimitiveType.EmittedParameter = "uint64_t";
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEnum;
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
 		newPrimitiveType.Name = "scene";
 		newPrimitiveType.Description = "Reference to a scene asset. A scene is a world that can be loaded into that contains a list of entities and other world defining data.";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
@@ -697,6 +693,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconUserInterface2;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
+		// User interface widgets
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "user_interface_window";
 		newPrimitiveType.Description = "Reference to a user interface window. This object is a reference to a window that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.";
@@ -768,6 +765,23 @@ namespace Kargono::Scripting
 		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::DropDownWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		if (s_ActiveLanguageDefinition.AllLiteralTypes.contains("Enums"))
+		{
+			// Load custom enum types
+			CustomLiteralNameToIDMap& projectEnumMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Enums").m_CustomLiteralNameToID;
+			for (auto& [name, type] : projectEnumMap)
+			{
+				newPrimitiveType = {};
+				newPrimitiveType.Name = name;
+				newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
+				newPrimitiveType.Description = "Reference to a custom enum.";
+				newPrimitiveType.EmittedDeclaration = "uint16_t";
+				newPrimitiveType.EmittedParameter = "uint16_t";
+				newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEnum;
+				s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+			}
+		}
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "entity";
@@ -1381,6 +1395,7 @@ namespace Kargono::Scripting
 			{"GameStates", {{}, EditorUI::EditorUIService::s_IconGameState}},
 			{"InputMaps", {{}, EditorUI::EditorUIService::s_IconInput}},
 			{"ProjectComponents", {{}, EditorUI::EditorUIService::s_IconProjectComponent}},
+			{"Enums", {{}, EditorUI::EditorUIService::s_IconEnum}},
 			{"Scenes", {{}, EditorUI::EditorUIService::s_IconScene}},
 			{"Textures", {{}, EditorUI::EditorUIService::s_IconTexture}},
 			{"UserInterfaces", {{}, EditorUI::EditorUIService::s_IconUserInterface2}},
@@ -1477,6 +1492,36 @@ namespace Kargono::Scripting
 			std::string fileName = configInfo.Data.FileLocation.stem().string();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			projectComponentMap.insert_or_assign(fileName, newMember);
+		}
+
+		// Load in names of all project enums
+		CustomLiteralNameToIDMap& projectEnumMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Enums").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetProjectEnumRegistry())
+		{
+			s_AllEnums.clear();
+			Ref<ProjectData::ProjectEnum> currentEnum{ Assets::AssetService::GetProjectEnum(configHandle) };
+
+			CustomLiteralMember newMember;
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "project_enum" };
+			newMember.m_OutputText = std::string(configHandle);
+
+			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			Utility::Operations::RemoveWhitespaceFromString(fileName);
+
+			size_t iteration{ 0 };
+			for (const FixedString32& identifier : currentEnum->m_EnumIdentifiers)
+			{
+				// Create new literal member for each entity
+				Ref<CustomLiteralMember> newEntityLiteral = CreateRef<CustomLiteralMember>();
+				std::string currentTag{ identifier };
+				Utility::Operations::RemoveWhitespaceFromString(currentTag);
+				newEntityLiteral->m_OutputText = std::to_string(iteration);
+				newEntityLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, fileName }; // TODO: Change this please
+				newMember.m_Members.insert_or_assign(currentTag, newEntityLiteral);
+				iteration++;
+			}
+			projectEnumMap.insert_or_assign(fileName, newMember);
+			s_AllEnums.emplace_back(ScriptTokenType::PrimitiveType, fileName);
 		}
 
 		// Load in names of all scene
@@ -1809,7 +1854,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SendMessage" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "message_type" });
+		newParameter.AllTypes = s_AllEnums;
 		newParameter.Identifier = { ScriptTokenType::Identifier, "messageType" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -2527,6 +2572,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SignalAll" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newParameter.AllTypes = s_AllIntegerTypes;
+		newParameter.AllTypes.insert(newParameter.AllTypes.end(), s_AllEnums.begin(), s_AllEnums.end());
 		newParameter.Identifier = { ScriptTokenType::Identifier, "signal" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -2673,8 +2719,7 @@ namespace Kargono::Scripting
 			token.Type == ScriptTokenType::StringLiteral ||
 			token.Type == ScriptTokenType::BooleanLiteral ||
 			token.Type == ScriptTokenType::FloatLiteral ||
-			token.Type == ScriptTokenType::CustomLiteral ||
-			token.Type == ScriptTokenType::MessageTypeLiteral)
+			token.Type == ScriptTokenType::CustomLiteral)
 		{
 			return true;
 		}

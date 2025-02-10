@@ -432,6 +432,7 @@ namespace Kargono::EditorUI
 		s_IconScript = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Script.png");
 		s_IconTexture_KG = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Texture_KG.png");
 		s_IconEmitterConfig = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/EmitterConfig.png");
+		s_IconEnum = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Enum.png");
 		
 
 		SetButtonDefaults();
@@ -519,6 +520,7 @@ namespace Kargono::EditorUI
 		s_IconTexture_KG.reset();
 		s_IconParticles.reset();
 		s_IconEmitterConfig.reset();
+		s_IconEnum.reset();
 
 		s_SmallEditButton = {};
 		s_SmallExpandButton = {};

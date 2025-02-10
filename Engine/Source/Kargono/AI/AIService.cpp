@@ -17,14 +17,6 @@ namespace Kargono::AI
 		if (!s_AIContext)
 		{
 			s_AIContext = CreateRef<AI::AIContext>();
-
-			// Load in Message Types from active project (vector<string> -> unordered_set<uint64_t>)
-			KG_ASSERT(Projects::ProjectService::GetActive());
-			for (const std::string& messageName : Projects::ProjectService::GetAllMessageTypes())
-			{
-				auto [iterator, success] = s_AIContext->AllMessageTypes.insert(Utility::FileSystem::CRCFromString(messageName.c_str()));
-				KG_ASSERT(success);
-			}
 		}
 		
 		// Verify init is successful

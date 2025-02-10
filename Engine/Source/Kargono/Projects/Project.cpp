@@ -476,14 +476,6 @@ namespace Kargono::Projects
 					out << YAML::EndSeq;
 				}
 
-				// Serialize AI Message Types
-				out << YAML::Key << "AllMessageTypes" << YAML::BeginSeq;
-				for (std::string& aiTypeName : project->AllMessageTypes)
-				{
-					out << YAML::Value << aiTypeName;
-				}
-				out << YAML::EndSeq;
-
 				out << YAML::EndMap; // Close Project
 			}
 
@@ -509,7 +501,7 @@ namespace Kargono::Projects
 			KG_ERROR("Failed to load project file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
-		auto projectNode = data["Project"];
+		YAML::Node projectNode = data["Project"];
 		if (!projectNode) { return false; }
 
 		project->Name = projectNode["Name"].as<std::string>();
@@ -537,18 +529,11 @@ namespace Kargono::Projects
 
 		if (tickGenerators)
 		{
-			for (auto generator : tickGenerators)
+			for (const YAML::Node& generator : tickGenerators)
 			{
 				uint64_t value = generator.as<uint64_t>();
 				project->AppTickGenerators.insert(value);
 			}
-		}
-
-		YAML::Node aiMessageTypeNode = projectNode["AllMessageTypes"];
-		std::vector<std::string>& allMessageTypesRef = project->AllMessageTypes;
-		for (auto aiMessage : aiMessageTypeNode)
-		{
-			allMessageTypesRef.push_back(aiMessage.as<std::string>());
 		}
 		
 		DeserializeServerVariables(project, filepath);

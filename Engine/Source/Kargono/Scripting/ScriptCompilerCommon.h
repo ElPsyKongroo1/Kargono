@@ -31,7 +31,6 @@ namespace Kargono::Scripting
 		StringLiteral,
 		BooleanLiteral,
 		FloatLiteral,
-		MessageTypeLiteral,
 		// Language specific literals
 		CustomLiteral,
 
@@ -120,7 +119,6 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::IntegerLiteral: return "Integer Literal";
 		case Scripting::ScriptTokenType::StringLiteral: return "String Literal";
 		case Scripting::ScriptTokenType::FloatLiteral: return "Float Literal";
-		case Scripting::ScriptTokenType::MessageTypeLiteral: return "Message Type Literal";
 		case Scripting::ScriptTokenType::CustomLiteral: return "Custom Literal";
 
 		case Scripting::ScriptTokenType::Keyword: return "Keyword";
@@ -594,7 +592,6 @@ namespace Kargono::Scripting
 		std::unordered_map<std::string, std::string> NamespaceDescriptions {};
 		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
 		std::vector<InitializationListType> InitListTypes {};
-		std::unordered_set<std::string> AllMessageTypes{};
 
 		// All Assets
 		std::unordered_map<std::string, CustomLiteralInfo> AllLiteralTypes{};
@@ -617,7 +614,6 @@ namespace Kargono::Scripting
 			NamespaceDescriptions.clear();
 			FunctionDefinitions.clear();
 			InitListTypes.clear();
-			AllMessageTypes.clear();
 			AllLiteralTypes.clear();
 		}
 

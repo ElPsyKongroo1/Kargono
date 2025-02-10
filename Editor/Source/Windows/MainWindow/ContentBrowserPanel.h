@@ -28,6 +28,7 @@ namespace Kargono::Panels
 		Font,
 		GameState,
 		ProjectComponent,
+		ProjectEnum,
 		InputMap,
 		Registry,
 		Scene,
@@ -188,6 +189,7 @@ namespace Kargono::Utility
 		if (currentFileExtension == ".kgaudio") { return Panels::BrowserFileType::Audio; }
 		if (currentFileExtension == ".kgfont") { return Panels::BrowserFileType::Font; }
 		if (currentFileExtension == ".kgcomponent") { return Panels::BrowserFileType::ProjectComponent; }
+		if (currentFileExtension == ".kgenum") { return Panels::BrowserFileType::ProjectEnum; }
 		if (currentFileExtension == ".kgreg") { return Panels::BrowserFileType::Registry; }
 		if (currentFileExtension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
 		if (currentFileExtension == ".kgscript") { return Panels::BrowserFileType::Script; }
@@ -223,6 +225,7 @@ namespace Kargono::Utility
 		case Panels::BrowserFileType::Font: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::GameState: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::ProjectComponent: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::ProjectEnum: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::InputMap: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Registry: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Scene: { return "CONTENT_BROWSER_SCENE"; }

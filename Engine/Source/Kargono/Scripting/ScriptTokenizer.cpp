@@ -51,31 +51,6 @@ namespace Kargono::Scripting
 					continue;
 				}
 
-				// Check for message literals
-				if (m_TextBuffer == "MessageType")
-				{
-					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
-					{
-						Advance(2);
-						ClearBuffer();
-						// Fill remainder of buffer
-						while (CurrentLocationValid() && (std::isalnum(GetCurrentChar()) || GetCurrentChar() == '_'))
-						{
-							AddCurrentCharToBuffer();
-							Advance();
-						}
-						// Ensure the provided value is valid
-						if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllMessageTypes.contains(m_TextBuffer))
-						{
-							ClearBuffer();
-							continue;
-						}
-						
-						AddTokenAndClearBuffer(ScriptTokenType::MessageTypeLiteral, { m_TextBuffer });
-						continue;
-					}
-				}
-
 				// Check for all asset literal types
 				if (ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.contains(m_TextBuffer))
 				{

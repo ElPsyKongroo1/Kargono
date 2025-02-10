@@ -343,6 +343,7 @@ namespace Kargono::Panels
 		// Set up widget to modify the the scene's background color
 		m_BackgroundColorSpec.m_Label = "Background Color";
 		m_BackgroundColorSpec.m_Flags |= EditorUI::EditVec4_RGBA;
+		m_BackgroundColorSpec.m_Bounds = { 0.0f, 1.0f };
 		m_BackgroundColorSpec.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec) 
 		{
 			Ref<Scenes::Scene> editorScene{ s_MainWindow->m_EditorScene };
@@ -351,7 +352,25 @@ namespace Kargono::Panels
 			// Update the scene's background color
 			editorScene->m_BackgroundColor = spec.m_CurrentVec4;
 		};
-		m_BackgroundColorSpec.m_Bounds = { 0.0f, 1.0f };
+
+		// Set up widget to modify the the scene's background color
+		m_Gravity2DSpec.m_Label = "2D Gravity";
+		m_Gravity2DSpec.m_Bounds = { -10'000.0f, 10'000.0f };
+		m_Gravity2DSpec.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
+		{
+			Ref<Scenes::Scene> editorScene{ s_MainWindow->m_EditorScene };
+			KG_ASSERT(editorScene);
+
+			// Update the scene's gravity value
+			editorScene->GetPhysicsSpecification().Gravity = spec.m_CurrentVec2;
+
+			// If the simulation is running, modify the gravity value inside the simulation
+			if (Physics::Physics2DService::GetActivePhysics2DWorld())
+			{
+				Scenes::SceneService::GetActiveScene()->GetPhysicsSpecification().Gravity = s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity;
+				Physics::Physics2DService::SetActiveGravity(s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity);
+			}
+		};
 	}
 
 	void SceneEditorPanel::InitializeTagComponent()
@@ -3093,8 +3112,12 @@ namespace Kargono::Panels
 	{
 		Ref<Scenes::Scene> editorScene{ s_MainWindow->m_EditorScene };
 		KG_ASSERT(editorScene);
+		// Draw background color option
 		m_BackgroundColorSpec.m_CurrentVec4 = editorScene->m_BackgroundColor;
 		EditorUI::EditorUIService::EditVec4(m_BackgroundColorSpec);
+		// Draw gravity option
+		m_Gravity2DSpec.m_CurrentVec2 = editorScene->GetPhysicsSpecification().Gravity;
+		EditorUI::EditorUIService::EditVec2(m_Gravity2DSpec);
 	}
 	void SceneEditorPanel::UpdateShapeComponent()
 	{

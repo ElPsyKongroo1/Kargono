@@ -166,6 +166,18 @@ namespace Kargono::Panels
 				m_AllAssetsTable.InsertListEntry(newEntry);
 			}
 
+			for (auto& [handle, asset] : Assets::AssetService::GetProjectEnumRegistry())
+			{
+				EditorUI::ListEntry newEntry
+				{
+					Utility::AssetTypeToString(asset.Data.Type),
+						asset.Data.FileLocation.filename().string(),
+						handle,
+						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
+				};
+				m_AllAssetsTable.InsertListEntry(newEntry);
+			}
+
 			for (auto& [handle, asset] : Assets::AssetService::GetSceneRegistry())
 			{
 				EditorUI::ListEntry newEntry

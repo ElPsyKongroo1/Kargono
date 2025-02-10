@@ -14,6 +14,7 @@
 #include "Windows/MainWindow/PropertiesPanel.h"
 #include "Windows/MainWindow/ProjectPanel.h"
 #include "Windows/MainWindow/ProjectComponentPanel.h"
+#include "Windows/MainWindow/ProjectEnumPanel.h"
 #include "Windows/MainWindow/ScriptEditorPanel.h"
 #include "Windows/MainWindow/SceneEditorPanel.h"
 #include "Windows/MainWindow/StatisticsPanel.h"
@@ -78,6 +79,13 @@ namespace Kargono::Windows
 		bool OnMouseButtonPressed(Events::MouseButtonPressedEvent event);
 		bool OnMouseButtonReleasedRuntime(const Events::MouseButtonReleasedEvent& event);
 		bool OnUpdateProjectComponent(Events::ManageAsset& event);
+
+	private:
+		//=========================
+		// Internal Functions
+		//=========================
+		void DrawWindowMenuBar();
+		void DrawPanels();
 
 	public:
 		//=========================
@@ -147,6 +155,7 @@ namespace Kargono::Windows
 		Scope<Panels::PropertiesPanel> m_PropertiesPanel;
 		Scope<Panels::ProjectPanel>  m_ProjectPanel;
 		Scope<Panels::ProjectComponentPanel>  m_ProjectComponentPanel;
+		Scope<Panels::ProjectEnumPanel>  m_ProjectEnumPanel;
 		Scope<Panels::ScriptEditorPanel>  m_ScriptEditorPanel;
 		Scope<Panels::TextEditorPanel>  m_TextEditorPanel;
 		Scope<Panels::SceneEditorPanel> m_SceneEditorPanel;
@@ -210,6 +219,7 @@ namespace Kargono::Windows
 		bool m_ShowViewport = true;
 		bool m_ShowProject = false;
 		bool m_ShowProjectComponent = false;
+		bool m_ShowProjectEnum = false;
 		bool m_ShowDemoWindow = false;
 		bool m_ShowTesting = false;
 		bool m_ShowScriptEditor = false;
@@ -236,6 +246,7 @@ namespace Kargono::Windows
 		friend Panels::InputMapPanel;
 		friend Panels::LogPanel;
 		friend Panels::ProjectComponentPanel;
+		friend Panels::ProjectEnumPanel;
 		friend Panels::ProjectPanel;
 		friend Panels::PropertiesPanel;
 		friend Panels::ScriptEditorPanel;

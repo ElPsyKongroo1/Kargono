@@ -160,6 +160,13 @@ namespace Kargono
 			return *this;
 		}
 
+		FixedString& operator=(std::string_view newStringView)
+		{
+			// TODO: Maybe alert when fails????
+			ReplaceBuffer(newStringView);
+			return *this;
+		}
+
 		operator const char* () const 
 		{
 			return m_DataBuffer.data(); 
@@ -227,6 +234,28 @@ namespace Kargono
 
 			// Fill data (Overwrite current null terminator)
 			std::strncpy(m_DataBuffer.data(), newString, newStringLength);
+			m_StringLength = newStringLength;
+
+			// Add new null terminator
+			m_DataBuffer[m_StringLength] = '\0';
+			return true;
+		}
+
+		bool ReplaceBuffer(std::string_view newString)
+		{
+			// Get size of new string
+			std::size_t newStringLength = newString.size();
+
+			// Truncate provided string based on buffer size
+			if (newStringLength + 1 > BufferSize)
+			{
+				// Set a new string length to fill buffer as much as possible
+				// * Note, leaving space for null terminator
+				newStringLength = BufferSize - 1;
+			}
+
+			// Fill data (Overwrite current null terminator)
+			std::memcpy(m_DataBuffer.data(), newString.data(), newStringLength); // Note, this assumes a char size of 1 byte
 			m_StringLength = newStringLength;
 
 			// Add new null terminator

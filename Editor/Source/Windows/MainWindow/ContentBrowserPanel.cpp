@@ -199,6 +199,15 @@ namespace Kargono::Panels
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openProjectComponentTooltipEntry);
 		}
+		else if (fileType == BrowserFileType::ProjectEnum)
+		{
+			EditorUI::TooltipEntry openProjectEnumTooltipEntry{ "Open Project Enum", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				UNREFERENCED_PARAMETER(currentEntry);
+				s_MainWindow->m_ProjectEnumPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openProjectEnumTooltipEntry);
+		}
 		else if (fileType == BrowserFileType::Script)
 		{
 			EditorUI::TooltipEntry openScriptTooltipEntry{ "Open Script", [&](EditorUI::TooltipEntry& currentEntry)
@@ -547,6 +556,30 @@ namespace Kargono::Panels
 				}
 			}
 		}
+		else if (fileExtension == ".kgenum")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectEnumHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If ProjectEnum in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a ProjectEnum, however, no ProjectEnum could be found in registry. Moving the indicated file without updating registry.");
+
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetProjectEnumFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of ProjectEnum asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update ProjectEnum location in registry");
+				}
+			}
+		}
 		else if (fileExtension == ".kgtexture")
 		{
 			// Search registry for asset with identical file location
@@ -674,6 +707,20 @@ namespace Kargono::Panels
 			}
 
 			Assets::AssetService::DeleteFont(resultHandle);
+		}
+		else if (currentExtension == ".kgenum")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectEnumHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If ProjectEnum in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a ProjectEnum asset, however, no ProjectEnum asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+
+			Assets::AssetService::DeleteProjectEnum(resultHandle);
 		}
 		else if (currentExtension == ".kginput")
 		{
@@ -907,6 +954,13 @@ namespace Kargono::Panels
 		scriptArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Script, scriptArch);
 
+		EditorUI::GridEntryArchetype projectEnumArch;
+		projectEnumArch.m_Icon = EditorUI::EditorUIService::s_IconEnum;
+		projectEnumArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor2_Thin;
+		projectEnumArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		projectEnumArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::ProjectEnum, projectEnumArch);
+
 		EditorUI::GridEntryArchetype textureArch;
 		textureArch.m_Icon = EditorUI::EditorUIService::s_IconTexture_KG;
 		textureArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
@@ -1057,6 +1111,15 @@ namespace Kargono::Panels
 				s_MainWindow->m_ProjectComponentPanel->OpenCreateDialog(m_CurrentDirectory);
 			} };
 			createFileOptions.push_back(createProjectComponentTooltipEntry);
+
+			// Add create Project Enum
+			EditorUI::TooltipEntry createProjectEnumTooltipEntry{ "Project Enum", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				UNREFERENCED_PARAMETER(currentEntry);
+				// TODO: Add code to add Project Enum
+				s_MainWindow->m_ProjectEnumPanel->OpenCreateDialog(m_CurrentDirectory);
+			} };
+			createFileOptions.push_back(createProjectEnumTooltipEntry);
 
 			// Add create Scene
 			EditorUI::TooltipEntry createSceneTooltipEntry{ "Scene", [&](EditorUI::TooltipEntry& currentEntry)

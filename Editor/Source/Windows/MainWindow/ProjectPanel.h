@@ -19,7 +19,6 @@ namespace Kargono::Panels
 		// Internal Initialization Functions
 		//=========================
 		void InitializeStaticResources();
-		void InitializeMessageTypeResources();
 
 	public:
 		//=========================
@@ -44,7 +43,6 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		FixedString32 m_PanelName{ "Project" };
-		std::string m_ActiveAIMessageType{};
 
 	private:
 		//=========================
@@ -68,7 +66,6 @@ namespace Kargono::Panels
 		EditorUI::TooltipSpec m_SelectScriptTooltip{};
 
 		// Editor AI Message Types
-		EditorUI::ListSpec m_MessageTypeTable {};
 		EditorUI::EditTextSpec m_CreateMessageTypePopup {};
 		EditorUI::GenericPopupSpec m_EditMessageTypePopup {};
 		EditorUI::EditTextSpec m_EditMessageTypeText {};

@@ -126,6 +126,7 @@ namespace Kargono::Windows
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();
 		m_ProjectPanel = CreateScope<Panels::ProjectPanel>();
 		m_ProjectComponentPanel = CreateScope<Panels::ProjectComponentPanel>();
+		m_ProjectEnumPanel = CreateScope<Panels::ProjectEnumPanel>();
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
 		m_GameStatePanel = CreateScope<Panels::GameStatePanel>();
@@ -321,6 +322,7 @@ namespace Kargono::Windows
 		m_AIStatePanel->OnAssetEvent(event);
 		m_InputMapPanel->OnAssetEvent(event);
 		m_ProjectPanel->OnAssetEvent(event);
+		m_ProjectEnumPanel->OnAssetEvent(event);
 
 		switch (manageAsset.GetAssetType())
 		{
@@ -354,131 +356,8 @@ namespace Kargono::Windows
 		// Set the active viewport for the window
 		EngineService::GetActiveWindow().SetActiveViewport(&m_ViewportPanel->m_ViewportData);
 
-		// Set up Menu Toolbar
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("Open Project"))
-				{
-					s_EditorApp->OpenProject();
-				}
-
-				if (ImGui::MenuItem("Save Project", "Ctrl+S"))
-				{
-					SaveScene();
-					s_EditorApp->SaveProject();
-				}
-
-				if (ImGui::MenuItem("Export Project"))
-				{
-					m_ExportProjectSpec.m_OpenPopup = true;
-				}
-
-				ImGui::Separator();
-
-				if (ImGui::MenuItem("Reload Script Module"))
-				{
-					Scripting::ScriptService::LoadActiveScriptModule();
-				}
-				if (ImGui::MenuItem("Rebuild Script Module"))
-				{
-					Scripting::ScriptModuleBuilder::CreateScriptModule();
-				}
-
-				ImGui::Separator();
-
-				if (ImGui::MenuItem("Exit"))
-				{
-					EngineService::EndRun();
-				}
-				ImGui::EndMenu();
-
-			}
-
-			if (ImGui::BeginMenu("Windows"))
-			{
-				if (ImGui::MenuItem("User Interface Editor"))
-				{
-					EngineService::SubmitToMainThread([]() 
-					{
-						s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
-					});
-				}
-				if (ImGui::MenuItem("Particle Emitter Editor"))
-				{
-					EngineService::SubmitToMainThread([]()
-					{
-						s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
-						s_EditorApp->m_EmitterConfigEditorWindow->LoadEditorEmitterIntoParticleService();
-					});
-				}
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Panels"))
-			{
-				ImGui::MenuItem("Asset Viewer", NULL, &m_ShowAssetViewer);
-				ImGui::MenuItem("Content Browser", NULL, &m_ShowContentBrowser);
-				ImGui::MenuItem("Scene Hierarchy", NULL, &m_ShowSceneHierarchy);
-				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
-				ImGui::MenuItem("Properties", NULL, &m_ShowProperties);
-				ImGui::Separator();
-				ImGui::MenuItem("Input Map Editor", NULL, &m_ShowInputMapEditor);
-				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
-				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
-				ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
-				ImGui::MenuItem("Component Editor", NULL, &m_ShowProjectComponent);
-				ImGui::MenuItem("AI State Editor", NULL, &m_ShowAIStateEditor);
-				ImGui::Separator();
-				ImGui::MenuItem("Project Settings", NULL, &m_ShowProject);
-				ImGui::EndMenu();
-			}
-			// TODO: Fullscreen for select panels SHOUTOUT OPERATOR DOOOOOOM
-#if 0
-			if (ImGui::BeginMenu("View"))
-			{
-				ImGui::MenuItem("Display Content Browser Fullscreen", NULL, &m_ContentBrowserFullscreen);
-				ImGui::EndMenu();
-			}
-#endif
-
-			if (ImGui::BeginMenu("Debug"))
-			{
-				ImGui::MenuItem("Log", NULL, &m_ShowLog);
-				if (ImGui::MenuItem("Profiler"))
-				{
-					Utility::OSCommands::OpenProfiler();
-				}
-
-				ImGui::MenuItem("Testing Window", NULL, &m_ShowTesting);
-				ImGui::MenuItem("Stats", NULL, &m_ShowStats);
-
-				if (ImGui::BeginMenu("ImGui Options"))
-				{
-
-					if (ImGui::MenuItem("Save Config Settings"))
-					{
-						ImGui::SaveIniSettingsToDisk("./Resources/EditorConfig.ini");
-					}
-					ImGui::MenuItem("ImGui Demo", NULL, &m_ShowDemoWindow);
-					ImGui::EndMenu();
-				}
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Help"))
-			{
-				if (ImGui::MenuItem("Engine Docs"))
-				{
-					Utility::OSCommands::OpenWebURL("https://elpsykongroo1.github.io/Kargono/");
-				}
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndMenuBar();
-		}
+		// Display the menu bar at the top of the window
+		DrawWindowMenuBar();
 
 		// Only display the viewport if the scene is in play mode and the fullscreen flag is set
 		if (m_RuntimeFullscreen && (m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate) && !m_IsPaused)
@@ -499,23 +378,8 @@ namespace Kargono::Windows
 		}*/
 #endif
 
-		// Display all main window panels
-		if (m_ShowAssetViewer) { m_AssetViewerPanel->OnEditorUIRender(); }
-		if (m_ShowSceneHierarchy) { m_SceneEditorPanel->OnEditorUIRender(); }
-		if (m_ShowContentBrowser) { m_ContentBrowserPanel->OnEditorUIRender(); }
-		if (m_ShowLog) { m_LogPanel->OnEditorUIRender(); }
-		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }
-		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
-		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
-		if (m_ShowProjectComponent) { m_ProjectComponentPanel->OnEditorUIRender(); }
-		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
-		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
-		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
-		if (m_ShowInputMapEditor) { m_InputMapPanel->OnEditorUIRender(); }
-		if (m_ShowProperties) { m_PropertiesPanel->OnEditorUIRender(); }
-		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
-		if (m_ShowTesting) { m_TestingPanel->OnEditorUIRender(); }
-		if (m_ShowAIStateEditor) { m_AIStatePanel->OnEditorUIRender(); }
+		// Actually draw all of the window's panels
+		DrawPanels();
 
 		// Handle displaying popups if necessary
 		EditorUI::EditorUIService::GenericPopup(m_ExportProjectSpec);
@@ -1247,6 +1111,162 @@ namespace Kargono::Windows
 		}
 
 		return false;
+	}
+
+	void MainWindow::DrawWindowMenuBar()
+	{
+		// Set up Menu Toolbar
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Open Project"))
+				{
+					s_EditorApp->OpenProject();
+				}
+
+				if (ImGui::MenuItem("Save Project", "Ctrl+S"))
+				{
+					SaveScene();
+					s_EditorApp->SaveProject();
+				}
+
+				if (ImGui::MenuItem("Export Project"))
+				{
+					m_ExportProjectSpec.m_OpenPopup = true;
+				}
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Reload Script Module"))
+				{
+					Scripting::ScriptService::LoadActiveScriptModule();
+				}
+				if (ImGui::MenuItem("Rebuild Script Module"))
+				{
+					Scripting::ScriptModuleBuilder::CreateScriptModule();
+				}
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Exit"))
+				{
+					EngineService::EndRun();
+				}
+				ImGui::EndMenu();
+
+			}
+
+			if (ImGui::BeginMenu("Windows"))
+			{
+				if (ImGui::MenuItem("User Interface Editor"))
+				{
+					EngineService::SubmitToMainThread([]()
+						{
+							s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
+						});
+				}
+				if (ImGui::MenuItem("Particle Emitter Editor"))
+				{
+					EngineService::SubmitToMainThread([]()
+						{
+							s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
+							s_EditorApp->m_EmitterConfigEditorWindow->LoadEditorEmitterIntoParticleService();
+						});
+				}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Panels"))
+			{
+				ImGui::MenuItem("Asset Viewer", NULL, &m_ShowAssetViewer);
+				ImGui::MenuItem("Content Browser", NULL, &m_ShowContentBrowser);
+				ImGui::MenuItem("Properties", NULL, &m_ShowProperties);
+				ImGui::MenuItem("Text Editor", NULL, &m_ShowTextEditor);
+				ImGui::MenuItem("Viewport", NULL, &m_ShowViewport);
+				ImGui::Separator();
+				ImGui::MenuItem("AI State Editor", NULL, &m_ShowAIStateEditor);
+				ImGui::MenuItem("Input Map Editor", NULL, &m_ShowInputMapEditor);
+				ImGui::MenuItem("Scene Editor", NULL, &m_ShowSceneHierarchy);
+				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
+				if (ImGui::BeginMenu("Project Data"))
+				{
+					ImGui::MenuItem("Component Editor", NULL, &m_ShowProjectComponent);
+					ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
+					ImGui::MenuItem("Enum Editor", NULL, &m_ShowProjectEnum);
+					ImGui::EndMenu();
+				}
+				ImGui::Separator();
+				ImGui::MenuItem("Project Settings", NULL, &m_ShowProject);
+				ImGui::EndMenu();
+			}
+			// TODO: Fullscreen for select panels SHOUTOUT OPERATOR DOOOOOOM
+#if 0
+			if (ImGui::BeginMenu("View"))
+			{
+				ImGui::MenuItem("Display Content Browser Fullscreen", NULL, &m_ContentBrowserFullscreen);
+				ImGui::EndMenu();
+			}
+#endif
+
+			if (ImGui::BeginMenu("Debug"))
+			{
+				ImGui::MenuItem("Log", NULL, &m_ShowLog);
+				if (ImGui::MenuItem("Profiler"))
+				{
+					Utility::OSCommands::OpenProfiler();
+				}
+
+				ImGui::MenuItem("Testing Window", NULL, &m_ShowTesting);
+				ImGui::MenuItem("Stats", NULL, &m_ShowStats);
+
+				if (ImGui::BeginMenu("ImGui Options"))
+				{
+
+					if (ImGui::MenuItem("Save Config Settings"))
+					{
+						ImGui::SaveIniSettingsToDisk("./Resources/EditorConfig.ini");
+					}
+					ImGui::MenuItem("ImGui Demo", NULL, &m_ShowDemoWindow);
+					ImGui::EndMenu();
+				}
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Help"))
+			{
+				if (ImGui::MenuItem("Engine Docs"))
+				{
+					Utility::OSCommands::OpenWebURL("https://elpsykongroo1.github.io/Kargono/");
+				}
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenuBar();
+		}
+	}
+
+	void MainWindow::DrawPanels()
+	{
+		// Display all main window panels
+		if (m_ShowAssetViewer) { m_AssetViewerPanel->OnEditorUIRender(); }
+		if (m_ShowSceneHierarchy) { m_SceneEditorPanel->OnEditorUIRender(); }
+		if (m_ShowContentBrowser) { m_ContentBrowserPanel->OnEditorUIRender(); }
+		if (m_ShowLog) { m_LogPanel->OnEditorUIRender(); }
+		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }
+		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
+		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
+		if (m_ShowProjectComponent) { m_ProjectComponentPanel->OnEditorUIRender(); }
+		if (m_ShowProjectEnum) { m_ProjectEnumPanel->OnEditorUIRender(); }
+		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
+		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
+		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
+		if (m_ShowInputMapEditor) { m_InputMapPanel->OnEditorUIRender(); }
+		if (m_ShowProperties) { m_PropertiesPanel->OnEditorUIRender(); }
+		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
+		if (m_ShowTesting) { m_TestingPanel->OnEditorUIRender(); }
+		if (m_ShowAIStateEditor) { m_AIStatePanel->OnEditorUIRender(); }
 	}
 
 }

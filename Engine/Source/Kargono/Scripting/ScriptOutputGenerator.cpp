@@ -226,15 +226,8 @@ namespace Kargono::Scripting
 		if (TokenExpressionNode* token = std::get_if<TokenExpressionNode>(&expression->Value))
 		{
 			KG_ASSERT(token->Value.Type != ScriptTokenType::CustomLiteral);
-
-			if (token->Value.Type == ScriptTokenType::MessageTypeLiteral)
-			{
-				m_OutputText << Utility::FileSystem::CRCFromString(token->Value.Value.c_str());
-			}
-			else
-			{
-				m_OutputText << token->Value.Value;
-			}
+			m_OutputText << token->Value.Value;
+			
 		}
 		else if (FunctionCallNode* funcNode = std::get_if<FunctionCallNode>(&expression->Value))
 		{
