@@ -130,6 +130,7 @@ namespace Kargono::Windows
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
 		m_GameStatePanel = CreateScope<Panels::GameStatePanel>();
+		m_GlobalStatePanel = CreateScope<Panels::GlobalStatePanel>();
 		m_InputMapPanel = CreateScope<Panels::InputMapPanel>();
 		m_ContentBrowserPanel = CreateScope<Panels::ContentBrowserPanel>();
 		m_PropertiesPanel = CreateScope<Panels::PropertiesPanel>();
@@ -1193,6 +1194,7 @@ namespace Kargono::Windows
 				{
 					ImGui::MenuItem("Component Editor", NULL, &m_ShowProjectComponent);
 					ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
+					ImGui::MenuItem("Global State Editor", NULL, &m_ShowGlobalStateEditor);
 					ImGui::MenuItem("Enum Editor", NULL, &m_ShowProjectEnum);
 					ImGui::EndMenu();
 				}
@@ -1262,6 +1264,7 @@ namespace Kargono::Windows
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
 		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }
 		if (m_ShowGameStateEditor) { m_GameStatePanel->OnEditorUIRender(); }
+		if (m_ShowGlobalStateEditor) { m_GlobalStatePanel->OnEditorUIRender(); }
 		if (m_ShowInputMapEditor) { m_InputMapPanel->OnEditorUIRender(); }
 		if (m_ShowProperties) { m_PropertiesPanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }

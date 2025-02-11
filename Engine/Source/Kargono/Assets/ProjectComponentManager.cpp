@@ -192,7 +192,7 @@ namespace Kargono::Assets
 		if (dataNamesNode)
 		{
 			std::vector<std::string>& newNamesList = newProjectComponent->m_DataNames;
-			for (auto dataNameNode : dataNamesNode)
+			for (const YAML::Node& dataNameNode : dataNamesNode)
 			{
 				newNamesList.push_back(dataNameNode.as<std::string>());
 			}

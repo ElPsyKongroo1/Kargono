@@ -6,6 +6,7 @@
 #include "Kargono/Assets/AIStateManager.h"
 #include "Kargono/Assets/FontManager.h"
 #include "Kargono/Assets/GameStateManager.h"
+#include "Kargono/Assets/GlobalStateManager.h"
 #include "Kargono/Assets/InputMapManager.h"
 #include "Kargono/Assets/ProjectComponentManager.h"
 #include "Kargono/Assets/ProjectEnumManager.h"
@@ -115,6 +116,7 @@ namespace Kargono::Assets
 		AudioBufferManager m_AudioBufferManager;
 		FontManager m_FontManager;
 		GameStateManager m_GameStateManager;
+		GlobalStateManager m_GlobalStateManager;
 		InputMapManager m_InputMapManager;
 		ProjectComponentManager m_ProjectComponentManager;
 		ProjectEnumManager m_ProjectEnumManager;
@@ -134,6 +136,7 @@ namespace Kargono::Assets
 		DEFINE_MANAGER(Audio, AudioBuffer)
 		DEFINE_MANAGER(RuntimeUI, Font)
 		DEFINE_MANAGER(Scenes, GameState)
+		DEFINE_MANAGER(ProjectData, GlobalState)
 		DEFINE_MANAGER(Input, InputMap)
 		DEFINE_MANAGER(ECS, ProjectComponent)
 		DEFINE_MANAGER(ProjectData, ProjectEnum)
@@ -241,6 +244,7 @@ namespace Kargono::Assets
 			DeserializeInputMapRegistry();
 			DeserializeEmitterConfigRegistry();
 			DeserializeGameStateRegistry();
+			DeserializeGlobalStateRegistry();
 			DeserializeUserInterfaceRegistry();
 			DeserializeAIStateRegistry();
 			DeserializeSceneRegistry();
@@ -259,6 +263,7 @@ namespace Kargono::Assets
 			SerializeInputMapRegistry();
 			SerializeEmitterConfigRegistry();
 			SerializeGameStateRegistry();
+			SerializeGlobalStateRegistry();
 			SerializeUserInterfaceRegistry();
 			SerializeAIStateRegistry();
 			SerializeSceneRegistry();
@@ -276,6 +281,7 @@ namespace Kargono::Assets
 			ClearProjectEnumRegistry();
 			ClearInputMapRegistry();
 			ClearGameStateRegistry();
+			ClearGlobalStateRegistry();
 			ClearUserInterfaceRegistry();
 			ClearEmitterConfigRegistry();
 			ClearAIStateRegistry();
@@ -290,6 +296,7 @@ namespace Kargono::Assets
 			case AssetType::Audio: return GetAudioBufferRegistry().at(handle);
 			case AssetType::Font: return GetFontRegistry().at(handle);
 			case AssetType::GameState: return GetGameStateRegistry().at(handle);
+			case AssetType::GlobalState: return GetGlobalStateRegistry().at(handle);
 			case AssetType::InputMap: return GetInputMapRegistry().at(handle);
 			case AssetType::Scene: return GetSceneRegistry().at(handle);
 			case AssetType::Script: return GetScriptRegistry().at(handle);

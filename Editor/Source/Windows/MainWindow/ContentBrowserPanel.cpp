@@ -172,6 +172,15 @@ namespace Kargono::Panels
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openGameStateTooltipEntry);
 		}
+		else if (fileType == BrowserFileType::GlobalState)
+		{
+			EditorUI::TooltipEntry openGlobalStateTooltipEntry{ "Open Global State", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				UNREFERENCED_PARAMETER(currentEntry);
+				s_MainWindow->m_GlobalStatePanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openGlobalStateTooltipEntry);
+		}
 		else if (fileType == BrowserFileType::EmitterConfig)
 		{
 			EditorUI::TooltipEntry openEmitterConfigTooltipEntry{ "Open Emitter Config", [&](EditorUI::TooltipEntry& currentEntry)
@@ -362,6 +371,29 @@ namespace Kargono::Panels
 				else
 				{
 					KG_WARN("Could not update game state location in registry");
+				}
+			}
+		}
+		else if (fileExtension == ".kggstate")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetGlobalStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If global state in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a global state, however, no global state could be found in registry. Moving the indicated file without updating registry.");
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetGlobalStateFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of global state asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update global state location in registry");
 				}
 			}
 		}
@@ -650,7 +682,20 @@ namespace Kargono::Panels
 
 			Assets::AssetService::DeleteGameState(resultHandle);
 		}
+		else if (currentExtension == ".kggstate")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetGlobalStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If global state in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a global state, however, no global state could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
 
+			Assets::AssetService::DeleteGlobalState(resultHandle);
+		}
 		else if (currentExtension == ".kgaistate")
 		{
 			// Search registry for asset with identical file location
@@ -906,11 +951,18 @@ namespace Kargono::Panels
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Font, fontArch);
 
 		EditorUI::GridEntryArchetype gameStateArch;
-		gameStateArch.m_Icon = EditorUI::EditorUIService::s_IconGameState;
+		gameStateArch.m_Icon = EditorUI::EditorUIService::s_IconGlobalState;
 		gameStateArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
 		gameStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		gameStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GameState, gameStateArch);
+
+		EditorUI::GridEntryArchetype globalStateArch;
+		globalStateArch.m_Icon = EditorUI::EditorUIService::s_IconGlobalState;
+		globalStateArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		globalStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		globalStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GlobalState, globalStateArch);
 
 		EditorUI::GridEntryArchetype emitterConfigArch;
 		emitterConfigArch.m_Icon = EditorUI::EditorUIService::s_IconEmitterConfig;
@@ -1086,12 +1138,21 @@ namespace Kargono::Panels
 				// Open create ai state dialog
 				s_MainWindow->m_AIStatePanel->OpenCreateDialog(m_CurrentDirectory);
 			});
+
 			// Add create game state
 			createFileOptions.emplace_back("Game State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				UNREFERENCED_PARAMETER(currentEntry);
 				// TODO: Add code to add Game State
 				s_MainWindow->m_GameStatePanel->OpenCreateDialog(m_CurrentDirectory);
+			});
+
+			// Add create Global State
+			createFileOptions.emplace_back("Global State", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				UNREFERENCED_PARAMETER(currentEntry);
+				// TODO: Add code to add Global State
+				s_MainWindow->m_GlobalStatePanel->OpenCreateDialog(m_CurrentDirectory);
 			});
 
 			// Add create Input Map

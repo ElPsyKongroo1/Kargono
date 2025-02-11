@@ -27,6 +27,7 @@ namespace Kargono::Panels
 		EmitterConfig,
 		Font,
 		GameState,
+		GlobalState,
 		ProjectComponent,
 		ProjectEnum,
 		InputMap,
@@ -194,6 +195,7 @@ namespace Kargono::Utility
 		if (currentFileExtension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
 		if (currentFileExtension == ".kgscript") { return Panels::BrowserFileType::Script; }
 		if (currentFileExtension == ".kgstate") { return Panels::BrowserFileType::GameState; }
+		if (currentFileExtension == ".kggstate") { return Panels::BrowserFileType::GlobalState; }
 		if (currentFileExtension == ".kgparticle") { return Panels::BrowserFileType::EmitterConfig; }
 		if (currentFileExtension == ".kgscene") { return Panels::BrowserFileType::Scene; }
 		if (currentFileExtension == ".kgtexture") { return Panels::BrowserFileType::Texture; }
@@ -224,6 +226,7 @@ namespace Kargono::Utility
 		case Panels::BrowserFileType::EmitterConfig: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Font: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::GameState: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::GlobalState: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::ProjectComponent: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::ProjectEnum: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::InputMap: { return "CONTENT_BROWSER_ITEM"; }

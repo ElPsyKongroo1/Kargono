@@ -636,7 +636,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGameState;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGlobalState;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -1392,7 +1392,7 @@ namespace Kargono::Scripting
 			{"AudioBuffers", {{}, EditorUI::EditorUIService::s_IconAudio}},
 			{"EmitterConfigs", {{}, EditorUI::EditorUIService::s_IconParticles}},
 			{"Fonts", {{}, EditorUI::EditorUIService::s_IconFont}},
-			{"GameStates", {{}, EditorUI::EditorUIService::s_IconGameState}},
+			{"GameStates", {{}, EditorUI::EditorUIService::s_IconGlobalState}},
 			{"InputMaps", {{}, EditorUI::EditorUIService::s_IconInput}},
 			{"ProjectComponents", {{}, EditorUI::EditorUIService::s_IconProjectComponent}},
 			{"Enums", {{}, EditorUI::EditorUIService::s_IconEnum}},

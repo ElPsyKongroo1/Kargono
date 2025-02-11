@@ -38,7 +38,8 @@ namespace Kargono::Assets
 		ProjectComponent,
 		AIState,
 		EmitterConfig,
-		ProjectEnum
+		ProjectEnum,
+		GlobalState
 	};
 
 	//==============================
@@ -188,6 +189,11 @@ namespace Kargono::Assets
 		std::string Name{};
 	};
 
+	struct GlobalStateMetaData
+	{
+		std::string Name{};
+	};
+
 	struct ScriptMetaData
 	{
 		std::string m_Name{};
@@ -244,6 +250,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::AIState: return "AIState";
 		case Assets::AssetType::EmitterConfig: return "EmitterConfig";
 		case Assets::AssetType::ProjectEnum: return "ProjectEnum";
+		case Assets::AssetType::GlobalState: return "GlobalState";
 		case Assets::AssetType::None: return "None";
 		}
 		KG_ERROR("Unknown Type of AssetType.");
@@ -265,6 +272,7 @@ namespace Kargono::Utility
 		if (type == "AIState") { return Assets::AssetType::AIState; }
 		if (type == "EmitterConfig") { return Assets::AssetType::EmitterConfig; }
 		if (type == "ProjectEnum") { return Assets::AssetType::ProjectEnum; }
+		if (type == "GlobalState") { return Assets::AssetType::GlobalState; }
 		if (type == "None") { return Assets::AssetType::None; }
 
 		KG_ERROR("Unknown Type of AssetType String.");
