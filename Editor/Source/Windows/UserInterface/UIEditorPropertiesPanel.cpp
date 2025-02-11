@@ -26,6 +26,7 @@ namespace Kargono::Panels
 		InitializeCheckboxWidgetOptions();
 		InitializeInputTextWidgetOptions();
 		InitializeSliderWidgetOptions();
+		InitializeDropDownWidgetOptions();
 		InitializeWidgetLocationOptions();
 	}
 	void UIEditorPropertiesPanel::OnEditorUIRender()
@@ -534,6 +535,61 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::DrawDropDownWidgetOptions()
 	{
+		// Draw main header for input text widget options
+		EditorUI::EditorUIService::CollapsingHeader(m_DropDownWidgetHeader);
+		if (m_DropDownWidgetHeader.m_Expanded)
+		{
+			// Draw options to edit selected DropDown widget
+			RuntimeUI::DropDownWidget& activeDropDownWidget = *(RuntimeUI::DropDownWidget*)m_ActiveWidget;
+			
+			// Display all drop-down options
+			EditorUI::EditorUIService::List(m_DropDownWidgetOptionsList);
+
+			// Edit selected text widget's wrapped alignment
+			m_DropDownWidgetSelectable.m_CurrentBoolean = activeDropDownWidget.m_SelectionData.m_Selectable;
+			EditorUI::EditorUIService::Checkbox(m_DropDownWidgetSelectable);
+
+#if 0 // TODO: COME BACK AND FIX PLEASE
+			// Edit selected DropDown widget's text size relative to its window
+			m_DropDownWidgetTextSize.m_CurrentFloat = activeDropDownWidget.m_TextData.m_TextSize;
+			EditorUI::EditorUIService::EditFloat(m_DropDownWidgetTextSize);
+
+			// Edit selected DropDown widget's text color
+			m_DropDownWidgetTextColor.m_CurrentVec4 = activeDropDownWidget.m_TextData.m_TextColor;
+			EditorUI::EditorUIService::EditVec4(m_DropDownWidgetTextColor);
+
+			// Edit selected DropDown widget's text alignment
+			m_DropDownWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeDropDownWidget.m_TextData.m_TextAlignment) , (uint64_t)activeDropDownWidget.m_TextData.m_TextAlignment };
+			EditorUI::EditorUIService::SelectOption(m_DropDownWidgetTextAlignment);
+#endif
+
+			// Edit selected widget's background color
+			m_DropDownWidgetBackgroundColor.m_CurrentVec4 = activeDropDownWidget.m_SelectionData.m_DefaultBackgroundColor;
+			EditorUI::EditorUIService::EditVec4(m_DropDownWidgetBackgroundColor);
+
+			// Edit selected widget's background color
+			m_DropDownWidgetOptionBackgroundColor.m_CurrentVec4 = activeDropDownWidget.m_DropDownBackground;
+			EditorUI::EditorUIService::EditVec4(m_DropDownWidgetOptionBackgroundColor);
+
+			// Edit selected widget's on press script
+			Assets::AssetHandle onPressHandle = activeDropDownWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
+			m_DropDownWidgetOnPress.m_CurrentOption =
+			{
+				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName,
+				onPressHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_DropDownWidgetOnPress);
+
+			// Edit selected widget's on select option script
+			Assets::AssetHandle OnSelectOptionHandle = activeDropDownWidget.m_OnSelectOptionHandle;
+			m_DropDownWidgetOnSelectOption.m_CurrentOption =
+			{
+				OnSelectOptionHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(OnSelectOptionHandle)->m_ScriptName,
+				OnSelectOptionHandle
+			};
+			EditorUI::EditorUIService::SelectOption(m_DropDownWidgetOnSelectOption);
+		}
+		EditorUI::EditorUIService::EditText(m_DropDownWidgetOptionsListAddEntry);
 	}
 
 	void UIEditorPropertiesPanel::DrawSpecificWidgetOptions()
@@ -567,6 +623,19 @@ namespace Kargono::Panels
 		default:
 			KG_ERROR("Invalid widget type attempted to be drawn");
 			break;
+		}
+	}
+
+	void UIEditorPropertiesPanel::OnSelectWidget()
+	{
+		// Ensure active window and widget are valid
+		KG_ASSERT(ValidateActiveWindowAndWidget());
+
+		// Handle refreshing specific widget data
+		if (m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::DropDownWidget)
+		{
+			KG_ASSERT(m_DropDownWidgetOptionsList.m_OnRefresh);
+			m_DropDownWidgetOptionsList.m_OnRefresh();
 		}
 	}
 
@@ -1359,6 +1428,74 @@ namespace Kargono::Panels
 
 	void UIEditorPropertiesPanel::InitializeDropDownWidgetOptions()
 	{
+		// Set up header for Drop-Down widget options
+		m_DropDownWidgetHeader.m_Label = "Drop-Down Widget Options";
+		m_DropDownWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_DropDownWidgetHeader.m_Expanded = true;
+
+		// Set up widget to modify the text widget's text alignment
+		m_DropDownWidgetSelectable.m_Label = "Selectable";
+		m_DropDownWidgetSelectable.m_Flags |= EditorUI::Checkbox_Indented;
+		m_DropDownWidgetSelectable.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataSelectable);
+
+		// Set up widget to modify the DropDown widget's text size
+		m_DropDownWidgetTextSize.m_Label = "Text Size";
+		m_DropDownWidgetTextSize.m_Flags |= EditorUI::EditFloat_Indented;
+		m_DropDownWidgetTextSize.m_Bounds = { 0.0f, 10'000.0f };
+		m_DropDownWidgetTextSize.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyDropDownTextSize);
+
+		// Set up widget to modify the DropDown widget's text color
+		m_DropDownWidgetTextColor.m_Label = "Text Color";
+		m_DropDownWidgetTextColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_DropDownWidgetTextColor.m_Bounds = { 0.0f, 1.0f };
+		m_DropDownWidgetTextColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyDropDownTextColor);
+
+		// Set up widget to modify the DropDown widget's text alignment
+		m_DropDownWidgetTextAlignment.m_Label = "Text Alignment";
+		m_DropDownWidgetTextAlignment.m_Flags |= EditorUI::SelectOption_Indented;
+		m_DropDownWidgetTextAlignment.m_PopupAction = KG_BIND_CLASS_FN(OnOpenTextDataAlignmentPopup);
+		m_DropDownWidgetTextAlignment.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyDropDownAlignment);
+
+		// Set up widget to modify the DropDown widget's background color
+		m_DropDownWidgetBackgroundColor.m_Label = "Current Option Color";
+		m_DropDownWidgetBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_DropDownWidgetBackgroundColor.m_Bounds = { 0.0f, 1.0f };
+		m_DropDownWidgetBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataBackgroundColor);
+
+		// Set up widget to modify the DropDown widget's background color
+		m_DropDownWidgetOptionBackgroundColor.m_Label = "Drop Down Color";
+		m_DropDownWidgetOptionBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_DropDownWidgetOptionBackgroundColor.m_Bounds = { 0.0f, 1.0f };
+		m_DropDownWidgetOptionBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataBackgroundColor);
+
+		// Set up widget to modify the DropDown widget's on press script
+		m_DropDownWidgetOnPress.m_Label = "On Press";
+		m_DropDownWidgetOnPress.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_DropDownWidgetOnPress.m_ProvidedData = CreateRef<WrappedFuncType>(WrappedFuncType::Void_None);
+		m_DropDownWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
+		m_DropDownWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
+		m_DropDownWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForSelectionDataOnPress);
+
+		// Set up widget to modify the DropDown widget's on press script
+		m_DropDownWidgetOnSelectOption.m_Label = "On Select Option";
+		m_DropDownWidgetOnSelectOption.m_Flags |= EditorUI::SelectOption_Indented | EditorUI::SelectOption_HandleEditButtonExternally;
+		m_DropDownWidgetOnSelectOption.m_PopupAction = KG_BIND_CLASS_FN(OnOpenDropDownWidgetOnSelectOptionPopup);
+		m_DropDownWidgetOnSelectOption.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyDropDownWidgetOnSelectOption);
+		m_DropDownWidgetOnSelectOption.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForDropDownWidgetOnSelectOption);
+
+		// Set up editorUI widget to view the DropDown widget's options list
+		m_DropDownWidgetOptionsList.m_Label = "Drop-Down Options";
+		m_DropDownWidgetOptionsList.m_Column1Title = "Option Name";
+		m_DropDownWidgetOptionsList.m_Expanded = true;
+		m_DropDownWidgetOptionsList.m_Flags |= EditorUI::List_Indented | EditorUI::List_RegularSizeTitle;
+		m_DropDownWidgetOptionsList.m_OnRefresh = KG_BIND_CLASS_FN(OnRefreshDropDownWidgetOptionsList);
+		m_DropDownWidgetOptionsList.AddToSelectionList("Add Option", KG_BIND_CLASS_FN(OnDropDownWidgetAddEntryDialog));
+
+		m_DropDownWidgetOptionsListAddEntry.m_Label = "Add New Entry";
+		m_DropDownWidgetOptionsListAddEntry.m_Flags |= EditorUI::EditText_PopupOnly;
+		m_DropDownWidgetOptionsListAddEntry.m_CurrentOption = "New Entry";
+		m_DropDownWidgetOptionsListAddEntry.m_ConfirmAction = KG_BIND_CLASS_FN(OnDropDownWidgetAddEntry);
+
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWindowTag(EditorUI::EditTextSpec& spec)
@@ -2277,6 +2414,288 @@ namespace Kargono::Panels
 
 		// Open tooltip
 		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyDropDownTextSize(EditorUI::EditFloatSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure we have the correct widget type
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::DropDownWidget);
+
+		// Get the underlying widget type
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+		KG_ASSERT(activeDropDownWidget);
+
+		// Update the text size for all options
+		for (RuntimeUI::SingleLineTextData& currentTextData : activeDropDownWidget->m_DropDownOptions)
+		{
+			currentTextData.m_TextSize = spec.m_CurrentFloat;
+		}
+
+		// Update the text widget text size based on the editorUI widget's value
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyDropDownTextColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure we have the correct widget type
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::DropDownWidget);
+
+		// Get the underlying widget type
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+		KG_ASSERT(activeDropDownWidget);
+
+		// Update the text color for all options
+		for (RuntimeUI::SingleLineTextData& currentTextData : activeDropDownWidget->m_DropDownOptions)
+		{
+			currentTextData.m_TextColor = spec.m_CurrentVec4;
+		}
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyDropDownAlignment(const EditorUI::OptionEntry& entry)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure we have the correct widget type
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::DropDownWidget);
+
+		// Get the underlying widget type
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+		KG_ASSERT(activeDropDownWidget);
+
+		// Update the text color for all options
+		for (RuntimeUI::SingleLineTextData& currentTextData : activeDropDownWidget->m_DropDownOptions)
+		{
+			currentTextData.m_TextAlignment = (RuntimeUI::Constraint)(uint64_t)entry.m_Handle;
+		}
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyDropDownWidgetOptionBackgroundColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure we have the correct widget type
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::DropDownWidget);
+
+		// Get the underlying widget type
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+		KG_ASSERT(activeDropDownWidget);
+
+		// Update the widget's drop down background color
+		activeDropDownWidget->m_DropDownBackground = spec.m_CurrentVec4;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyDropDownWidgetOnSelectOption(const EditorUI::OptionEntry& entry)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure this is the correct widget type
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::DropDownWidget)
+		{
+			KG_WARN("Invalid widget type provided when modifying widget");
+			return;
+		}
+
+		// Get the underlying widget
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+
+		// Clear the widget's script if the provided handle is empty
+		if (entry.m_Handle == Assets::EmptyHandle)
+		{
+			activeDropDownWidget->m_OnSelectOption = nullptr;
+			activeDropDownWidget->m_OnSelectOptionHandle = Assets::EmptyHandle;
+
+			// Set the active editor UI as edited
+			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+			return;
+		}
+
+		// Set the script for the widget
+		activeDropDownWidget->m_OnSelectOptionHandle = entry.m_Handle;
+		activeDropDownWidget->m_OnSelectOption = Assets::AssetService::GetScript(entry.m_Handle);
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnOpenDropDownWidgetOnSelectOptionPopup(EditorUI::SelectOptionSpec& spec)
+	{
+		// Clear existing options
+		spec.ClearOptions();
+		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+
+		// Add all compatible scripts to the select options
+		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
+		{
+			// Get script from handle
+			Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+
+			// Ensure script is compatible with the widget
+			if (script->m_FuncType != WrappedFuncType::Void_String)
+			{
+				continue;
+			}
+
+			// Add script to the select options
+			spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
+		}
+	}
+
+	void UIEditorPropertiesPanel::OnOpenTooltipForDropDownWidgetOnSelectOption(EditorUI::SelectOptionSpec& spec)
+	{
+		UNREFERENCED_PARAMETER(spec);
+		// Clear existing options
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+
+		// Add option to opening an existing script
+		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+		{
+			UNREFERENCED_PARAMETER(entry);
+			m_DropDownWidgetOnSelectOption.m_OpenPopup = true;
+		} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+
+		// Add option or creating a new script from this usage point
+		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
+		{
+				UNREFERENCED_PARAMETER(entry);
+				// Open create script dialog in script editor
+				s_MainWindow->m_ScriptEditorPanel->OpenCreateScriptDialogFromUsagePoint(WrappedFuncType::Void_String, [&](Assets::AssetHandle scriptHandle)
+				{
+						// Ensure handle provides a script in the registry
+						if (!Assets::AssetService::HasScript(scriptHandle))
+						{
+							KG_WARN("Could not find script");
+							return;
+						}
+
+						// Ensure function type matches definition
+						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+						if (script->m_FuncType != WrappedFuncType::Void_String)
+						{
+							KG_WARN("Incorrect function type returned when linking script to usage point");
+							return;
+						}
+
+						// Get the active widget as its underlying widget type
+						KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::DropDownWidget);
+						RuntimeUI::DropDownWidget& activeDropDownWidget = *(RuntimeUI::DropDownWidget*)m_ActiveWidget;
+
+						// Fill the new script handle
+						activeDropDownWidget.m_OnSelectOptionHandle = scriptHandle;
+						activeDropDownWidget.m_OnSelectOption = Assets::AssetService::GetScript(scriptHandle);
+						m_DropDownWidgetOnSelectOption.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+
+						// Set the active editor UI as edited
+						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+					}, {"selectedOption"});
+				} };
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+
+		// Open tooltip
+		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnRefreshDropDownWidgetOptionsList()
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure we have the correct widget type
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::DropDownWidget);
+
+		// Get the underlying widget type
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+		KG_ASSERT(activeDropDownWidget);
+
+		// Ensure the list starts off as empty
+		m_DropDownWidgetOptionsList.ClearList();
+
+		// Add all the options to the list
+		size_t iteration{ 0 };
+		for (RuntimeUI::SingleLineTextData& textData : activeDropDownWidget->m_DropDownOptions)
+		{
+			m_DropDownWidgetOptionsList.InsertListEntry(textData.m_Text, "", nullptr, iteration);
+			iteration++;
+		}
+	}
+
+	void UIEditorPropertiesPanel::OnDropDownWidgetAddEntryDialog()
+	{
+		// Open the add entry dialog
+		m_DropDownWidgetOptionsListAddEntry.m_CurrentOption = "New Entry";
+		m_DropDownWidgetOptionsListAddEntry.m_StartPopup = true;
+		
+	}
+
+	void UIEditorPropertiesPanel::OnDropDownWidgetAddEntry(EditorUI::EditTextSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure this is the correct widget type
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::DropDownWidget)
+		{
+			KG_WARN("Invalid widget type provided when modifying widget");
+			return;
+		}
+
+		// Get the underlying widget
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+		// Add the entry to the underlying runtime UI widget
+		RuntimeUI::SingleLineTextData& newDropDown = activeDropDownWidget->m_DropDownOptions.emplace_back();
+		newDropDown.m_Text = spec.m_CurrentOption;
+
+		// Revalidate the text data
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+		// Refresh the table
+		KG_ASSERT(m_DropDownWidgetOptionsList.m_OnRefresh);
+		m_DropDownWidgetOptionsList.m_OnRefresh();
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 	
 	void UIEditorPropertiesPanel::OnModifySingleLineDataText(EditorUI::EditTextSpec& spec)

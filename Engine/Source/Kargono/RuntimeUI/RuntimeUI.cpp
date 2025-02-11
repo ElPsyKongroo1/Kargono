@@ -1313,8 +1313,6 @@ namespace Kargono::RuntimeUI
 			return &((ButtonWidget*)currentWidget)->m_TextData;
 		case WidgetTypes::InputTextWidget:
 			return &((InputTextWidget*)currentWidget)->m_TextData;
-		case WidgetTypes::DropDownWidget:
-			return &((DropDownWidget*)currentWidget)->m_DropDownOptions.at(((DropDownWidget*)currentWidget)->m_CurrentOption);
 		default:
 			return nullptr;
 		}
@@ -1941,11 +1939,13 @@ namespace Kargono::RuntimeUI
 		case WidgetTypes::InputTextWidget:
 			(*(InputTextWidget*)widget).CalculateTextSize();
 			break;
+		case WidgetTypes::DropDownWidget:
+			(*(DropDownWidget*)widget).CalculateTextSize();
+			break;
 		case WidgetTypes::ImageWidget:
 		case WidgetTypes::ImageButtonWidget:
 		case WidgetTypes::CheckboxWidget:
 		case WidgetTypes::SliderWidget:
-		case WidgetTypes::DropDownWidget:
 			break;
 		default:
 			KG_ERROR("Invalid widget type provided when revalidating widget text size");
@@ -2767,6 +2767,15 @@ namespace Kargono::RuntimeUI
 		UNREFERENCED_PARAMETER(windowTranslation);
 		UNREFERENCED_PARAMETER(windowSize);
 		UNREFERENCED_PARAMETER(viewportWidth);
+	}
+
+	void DropDownWidget::CalculateTextSize()
+	{
+		// Calculate text size for all the current options
+		for (SingleLineTextData& textData : m_DropDownOptions)
+		{
+			RuntimeUIService::CalculateSingleLineText(textData);
+		}
 	}
 
 }

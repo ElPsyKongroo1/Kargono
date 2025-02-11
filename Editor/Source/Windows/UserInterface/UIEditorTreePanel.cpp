@@ -371,6 +371,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_PropertiesPanel->m_ActiveWindow = &s_UIWindow->m_EditorUI->m_Windows.at(*(uint32_t*)entry.m_ProvidedData.get());
 		s_UIWindow->m_PropertiesPanel->m_ActiveWidget = s_UIWindow->m_PropertiesPanel->m_ActiveWindow->m_Widgets.at(entry.m_Handle).get();
 		s_UIWindow->m_PropertiesPanel->m_CurrentDisplay = UIPropertiesDisplay::Widget;
+		s_UIWindow->m_PropertiesPanel->OnSelectWidget();
 
 		// TODO: Deal with local properties panel
 		//EditorUI::EditorUIService::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);

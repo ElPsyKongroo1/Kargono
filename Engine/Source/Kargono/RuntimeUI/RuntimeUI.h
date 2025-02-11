@@ -384,12 +384,17 @@ namespace Kargono::RuntimeUI
 		{
 			return m_SelectionData.m_Selectable;
 		}
+
+		//============================
+		// Re-validation Methods
+		//============================
+		void CalculateTextSize();
 	public:
 		//============================
 		// Public Fields
 		//============================
-		SelectionData m_SelectionData;
-		std::vector<SingleLineTextData> m_DropDownOptions;
+		SelectionData m_SelectionData{};
+		std::vector<SingleLineTextData> m_DropDownOptions{};
 		Math::vec4 m_DropDownBackground{ 1.0f };
 		Assets::AssetHandle m_OnSelectOptionHandle{ Assets::EmptyHandle };
 		Ref<Scripting::Script> m_OnSelectOption{ nullptr };

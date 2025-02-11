@@ -70,6 +70,7 @@ namespace Kargono::Panels
 		//=========================
 		// Modify Panel Data
 		//=========================
+		void OnSelectWidget();
 		void ClearPanelData();
 
 	private:
@@ -181,6 +182,28 @@ namespace Kargono::Panels
 		void OnModifySliderWidgetOnMoveSlider(const EditorUI::OptionEntry& entry);
 		void OnOpenSliderWidgetOnMoveSliderPopup(EditorUI::SelectOptionSpec& spec);
 		void OnOpenTooltipForSliderWidgetOnMoveSlider(EditorUI::SelectOptionSpec& spec);
+
+		//=========================
+		// Change Drop-Down Widget Data
+		//=========================
+
+		// Modify all of the drop-down widget's text
+		void OnModifyDropDownTextSize(EditorUI::EditFloatSpec& spec);
+		void OnModifyDropDownTextColor(EditorUI::EditVec4Spec& spec);
+		void OnModifyDropDownAlignment(const EditorUI::OptionEntry& entry);
+
+		// Modify widget's drop down background color
+		void OnModifyDropDownWidgetOptionBackgroundColor(EditorUI::EditVec4Spec& spec);
+
+		// Modify widget on select option DropDown
+		void OnModifyDropDownWidgetOnSelectOption(const EditorUI::OptionEntry& entry);
+		void OnOpenDropDownWidgetOnSelectOptionPopup(EditorUI::SelectOptionSpec& spec);
+		void OnOpenTooltipForDropDownWidgetOnSelectOption(EditorUI::SelectOptionSpec& spec);
+
+		// Modify widget's options list
+		void OnRefreshDropDownWidgetOptionsList();
+		void OnDropDownWidgetAddEntryDialog();
+		void OnDropDownWidgetAddEntry(EditorUI::EditTextSpec& spec);
 
 		//=========================
 		// Modify UI Component Structs (Common data between widgets)
@@ -318,5 +341,18 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec m_SliderWidgetSliderColor{};
 		EditorUI::EditVec4Spec m_SliderWidgetLineColor{};
 		EditorUI::SelectOptionSpec m_SliderWidgetOnMoveSlider{};
+
+		// Edit DropDown Widget Options
+		EditorUI::CollapsingHeaderSpec m_DropDownWidgetHeader{};
+		EditorUI::EditVec4Spec m_DropDownWidgetBackgroundColor{};
+		EditorUI::EditFloatSpec m_DropDownWidgetTextSize{};
+		EditorUI::EditVec4Spec m_DropDownWidgetTextColor{};
+		EditorUI::SelectOptionSpec m_DropDownWidgetTextAlignment{};
+		EditorUI::SelectOptionSpec m_DropDownWidgetOnPress{};
+		EditorUI::CheckboxSpec m_DropDownWidgetSelectable{};
+		EditorUI::EditVec4Spec m_DropDownWidgetOptionBackgroundColor{};
+		EditorUI::SelectOptionSpec m_DropDownWidgetOnSelectOption{};
+		EditorUI::ListSpec m_DropDownWidgetOptionsList{};
+		EditorUI::EditTextSpec m_DropDownWidgetOptionsListAddEntry{};
 	};
 }
