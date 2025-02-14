@@ -28,7 +28,7 @@ namespace Kargono::Assets
 		out << YAML::Key << "Name" << YAML::Value << assetReference->m_Name;
 
 		// Save size information
-		out << YAML::Key << "BufferSize" << YAML::Value << assetReference->m_BufferSize;
+		out << YAML::Key << "BufferSize" << YAML::Value << assetReference->m_DataBuffer.Size;
 
 		// Save data types
 		out << YAML::Key << "DataTypes" << YAML::Value;
@@ -57,6 +57,21 @@ namespace Kargono::Assets
 		}
 		out << YAML::EndSeq; // End of Data Names Sequence
 
+		out << YAML::Key << "Data" << YAML::BeginMap; // Start data map
+		size_t iteration{ 0 };
+		for (WrappedVarType type : assetReference->m_DataTypes)
+		{
+			Utility::SerializeWrappedVarType
+			(
+				out, 
+				type, 
+				assetReference->m_DataNames.at(iteration),
+				assetReference->m_DataBuffer.Data + assetReference->m_DataLocations.at(iteration)
+			);
+			iteration++;
+		}
+		out << YAML::EndMap; // End data map
+
 		out << YAML::EndMap; // Start of File Map
 
 		std::ofstream fout(assetPath);
@@ -83,8 +98,9 @@ namespace Kargono::Assets
 		newGlobalState->m_Name = data["Name"].as<std::string>();
 
 		// Get component size information
-		newGlobalState->m_BufferSize = data["BufferSize"].as<uint64_t>();
+		newGlobalState->m_DataBuffer.Size = data["BufferSize"].as<uint64_t>();
 
+		size_t dataSize{ 0 };
 		// Get Data Types
 		YAML::Node dataTypesNode = data["DataTypes"];
 		if (dataTypesNode)
@@ -92,7 +108,8 @@ namespace Kargono::Assets
 			std::vector<WrappedVarType>& newTypesList = newGlobalState->m_DataTypes;
 			for (const YAML::Node& dataTypeNode : dataTypesNode)
 			{
-				newTypesList.push_back(Utility::StringToWrappedVarType(dataTypeNode.as<std::string>()));
+				WrappedVarType type = newTypesList.emplace_back(Utility::StringToWrappedVarType(dataTypeNode.as<std::string>()));
+				dataSize += Utility::WrappedVarTypeToDataSizeBytes(type);
 			}
 		}
 
@@ -115,6 +132,30 @@ namespace Kargono::Assets
 			for (const YAML::Node& dataNameNode : dataNamesNode)
 			{
 				newNamesList.push_back(dataNameNode.as<std::string>().c_str());
+			}
+		}
+
+		// Allocate buffer for new data
+		if (dataSize > 0)
+		{
+			newGlobalState->m_DataBuffer.Allocate(dataSize);
+		}
+
+		// Get data
+		YAML::Node dataNode = data["Data"];
+		if (dataNamesNode)
+		{
+			size_t iteration{ 0 };
+			for (FixedString32& name : newGlobalState->m_DataNames)
+			{
+				Utility::DeserializeWrappedVarType
+				(
+					dataNode,
+					newGlobalState->m_DataTypes.at(iteration),
+					name.CString(),
+					newGlobalState->m_DataBuffer.Data + newGlobalState->m_DataLocations.at(iteration)
+				);
+				iteration++;
 			}
 		}
 

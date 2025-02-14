@@ -44,6 +44,8 @@ namespace Kargono::EditorUI
 	struct InlineButtonSpec;
 	struct EditIntegerSpec;
 	struct EditIVec2Spec;
+	struct EditIVec3Spec;
+	struct EditIVec4Spec;
 	struct EditFloatSpec;
 	struct EditVec2Spec;
 	struct EditVec3Spec;
@@ -151,6 +153,8 @@ namespace Kargono::EditorUI
 
 		static void EditInteger(EditIntegerSpec& spec);
 		static void EditIVec2(EditIVec2Spec& spec);
+		static void EditIVec3(EditIVec3Spec& spec);
+		static void EditIVec4(EditIVec4Spec& spec);
 		static void EditFloat(EditFloatSpec& spec);
 		static void EditVec2(EditVec2Spec& spec);
 		static void EditVec3(EditVec3Spec& spec);
@@ -475,7 +479,7 @@ namespace Kargono::EditorUI
 		std::string m_Label{};
 		WidgetFlags m_Flags{ EditIVec2_None };
 		Math::ivec2 m_CurrentIVec2{};
-		std::array<int32_t, 2> m_Bounds{ 0, 0 };
+		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
 		int32_t m_ScrollSpeed{ 1 };
 		std::function<void(EditIVec2Spec&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };
@@ -484,6 +488,62 @@ namespace Kargono::EditorUI
 		WidgetID m_WidgetID;
 	private:
 		friend void EditorUIService::EditIVec2(EditIVec2Spec& spec);
+	};
+
+	enum EditIVec3Flags
+	{
+		EditIVec3_None = 0,
+		EditIVec3_Indented = BIT(0)
+	};
+
+	struct EditIVec3Spec
+	{
+	public:
+		EditIVec3Spec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string m_Label{};
+		WidgetFlags m_Flags{ EditIVec3_None };
+		Math::ivec3 m_CurrentIVec3{};
+		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
+		int32_t m_ScrollSpeed{ 1 };
+		std::function<void(EditIVec3Spec&)> m_ConfirmAction{ nullptr };
+		Ref<void> m_ProvidedData{ nullptr };
+	private:
+		bool m_Editing{ false };
+		WidgetID m_WidgetID;
+	private:
+		friend void EditorUIService::EditIVec3(EditIVec3Spec& spec);
+	};
+
+	enum EditIVec4Flags
+	{
+		EditIVec4_None = 0,
+		EditIVec4_Indented = BIT(0)
+	};
+
+	struct EditIVec4Spec
+	{
+	public:
+		EditIVec4Spec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		std::string m_Label{};
+		WidgetFlags m_Flags{ EditIVec4_None };
+		Math::ivec4 m_CurrentIVec4{};
+		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
+		int32_t m_ScrollSpeed{ 1 };
+		std::function<void(EditIVec4Spec&)> m_ConfirmAction{ nullptr };
+		Ref<void> m_ProvidedData{ nullptr };
+	private:
+		bool m_Editing{ false };
+		WidgetID m_WidgetID;
+	private:
+		friend void EditorUIService::EditIVec4(EditIVec4Spec& spec);
 	};
 
 	enum EditFloatFlags

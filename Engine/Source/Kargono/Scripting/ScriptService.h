@@ -177,9 +177,34 @@ namespace Kargono::Utility
 					outputStream << "\"\";\n";
 					break;
 				}
+				case WrappedVarType::Vector2:
+				{
+					outputStream << "Math::vec2(0.0f, 0.0f);\n";
+					break;
+				}
 				case WrappedVarType::Vector3:
 				{
 					outputStream << "Math::vec3(0.0f, 0.0f, 0.0f);\n";
+					break;
+				}
+				case WrappedVarType::Vector4:
+				{
+					outputStream << "Math::vec4(0.0f, 0.0f, 0.0f, 0.0f);\n";
+					break;
+				}
+				case WrappedVarType::IVector2:
+				{
+					outputStream << "Math::ivec2(0.0f, 0.0f);\n";
+					break;
+				}
+				case WrappedVarType::IVector3:
+				{
+					outputStream << "Math::ivec3(0.0f, 0.0f, 0.0f);\n";
+					break;
+				}
+				case WrappedVarType::IVector4:
+				{
+					outputStream << "Math::ivec4(0.0f, 0.0f, 0.0f, 0.0f);\n";
 					break;
 				}
 				case WrappedVarType::Float:
@@ -187,9 +212,11 @@ namespace Kargono::Utility
 					outputStream << "0.0f;\n";
 					break;
 				}
+				case WrappedVarType::Integer16:
+				case WrappedVarType::Integer32:
+				case WrappedVarType::Integer64:
 				case WrappedVarType::UInteger16:
 				case WrappedVarType::UInteger32:
-				case WrappedVarType::Integer32:
 				case WrappedVarType::UInteger64:
 				{
 					outputStream << "0;\n";

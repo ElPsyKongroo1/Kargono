@@ -22,22 +22,36 @@ namespace Kargono
 		Void,
 		Bool,
 		Float,
+		Integer16,
 		Integer32,
+		Integer64,
 		UInteger16,
 		UInteger32,
 		UInteger64,
+		Vector2,
 		Vector3,
+		Vector4,
+		IVector2,
+		IVector3,
+		IVector4,
 		String,
 		Entity
 	};
 
 	inline WrappedVarType s_AllWrappedVarTypes[] =
 	{
+		WrappedVarType::Integer16,
 		WrappedVarType::Integer32,
+		WrappedVarType::Integer64,
 		WrappedVarType::UInteger16,
 		WrappedVarType::UInteger32,
 		WrappedVarType::UInteger64,
+		WrappedVarType::Vector2,
 		WrappedVarType::Vector3,
+		WrappedVarType::Vector4,
+		WrappedVarType::IVector2,
+		WrappedVarType::IVector3,
+		WrappedVarType::IVector4,
 		WrappedVarType::String,
 		WrappedVarType::Void,
 		WrappedVarType::Bool,
@@ -509,17 +523,57 @@ namespace Kargono
 		{
 			switch (type)
 			{
+			case WrappedVarType::Integer16: return "Integer16";
 			case WrappedVarType::Integer32: return "Integer32";
+			case WrappedVarType::Integer64: return "Integer64";
 			case WrappedVarType::UInteger16: return "UInteger16";
 			case WrappedVarType::UInteger32: return "UInteger32";
 			case WrappedVarType::UInteger64: return "UInteger64";
+			case WrappedVarType::Vector2: return "Vector2";
 			case WrappedVarType::Vector3: return "Vector3";
+			case WrappedVarType::Vector4: return "Vector4";
+			case WrappedVarType::IVector2: return "IVector2";
+			case WrappedVarType::IVector3: return "IVector3";
+			case WrappedVarType::IVector4: return "IVector4";
 			case WrappedVarType::String: return "String";
 			case WrappedVarType::Void: return "Void";
 			case WrappedVarType::Bool: return "Bool";
 			case WrappedVarType::Float: return "Float";
 			case WrappedVarType::Entity: return "Entity";
 			case WrappedVarType::None: return "None";
+			}
+			KG_ERROR("Unknown Type of WrappedVariableType.");
+			return "";
+		}
+
+		inline const char* WrappedVarTypeToCategory(WrappedVarType type)
+		{
+			switch (type)
+			{
+			case WrappedVarType::Integer16:
+			case WrappedVarType::Integer32:
+			case WrappedVarType::Integer64:
+			case WrappedVarType::UInteger16:
+			case WrappedVarType::UInteger32:
+			case WrappedVarType::UInteger64:
+			case WrappedVarType::IVector2:
+			case WrappedVarType::IVector3:
+			case WrappedVarType::IVector4:
+				return "Integer Type";
+			case WrappedVarType::Float:
+			case WrappedVarType::Vector2:
+			case WrappedVarType::Vector3:
+			case WrappedVarType::Vector4:
+				return "Float Type";
+			case WrappedVarType::String:
+				return "String Type";
+			case WrappedVarType::Bool:
+				return "Bool Type";
+			case WrappedVarType::Entity:
+				return "Other Type";
+			case WrappedVarType::Void:
+			case WrappedVarType::None:
+				return "Clear Type";
 			}
 			KG_ERROR("Unknown Type of WrappedVariableType.");
 			return "";
@@ -550,11 +604,18 @@ namespace Kargono
 		{
 			switch (type)
 			{
+			case WrappedVarType::Integer16: return "int16_t";
 			case WrappedVarType::Integer32: return "int32_t";
+			case WrappedVarType::Integer64: return "int64_t";
 			case WrappedVarType::UInteger16: return "uint16_t";
 			case WrappedVarType::UInteger32: return "uint32_t";
 			case WrappedVarType::UInteger64: return "uint64_t";
+			case WrappedVarType::Vector2: return "Math::vec2";
 			case WrappedVarType::Vector3: return "Math::vec3";
+			case WrappedVarType::Vector4: return "Math::vec4";
+			case WrappedVarType::IVector2: return "Math::ivec2";
+			case WrappedVarType::IVector3: return "Math::ivec3";
+			case WrappedVarType::IVector4: return "Math::ivec4";
 			case WrappedVarType::String: return "std::string";
 			case WrappedVarType::Void: return "void";
 			case WrappedVarType::Bool: return "bool";
@@ -570,11 +631,18 @@ namespace Kargono
 		{
 			switch (type)
 			{
+			case WrappedVarType::Integer16: return "int16_t";
 			case WrappedVarType::Integer32: return "int32_t";
+			case WrappedVarType::Integer64: return "int64_t";
 			case WrappedVarType::UInteger16: return "uint16_t";
 			case WrappedVarType::UInteger32: return "uint32_t";
 			case WrappedVarType::UInteger64: return "uint64_t";
+			case WrappedVarType::Vector2: return "Math::vec2";
 			case WrappedVarType::Vector3: return "Math::vec3";
+			case WrappedVarType::Vector4: return "Math::vec4";
+			case WrappedVarType::IVector2: return "Math::ivec2";
+			case WrappedVarType::IVector3: return "Math::ivec3";
+			case WrappedVarType::IVector4: return "Math::ivec4";
 			case WrappedVarType::String: return "const std::string&";
 			case WrappedVarType::Void: return "void";
 			case WrappedVarType::Bool: return "bool";
@@ -590,11 +658,18 @@ namespace Kargono
 		{
 			switch (type)
 			{
+			case WrappedVarType::Integer16: return sizeof(int16_t);
 			case WrappedVarType::Integer32: return sizeof(int32_t);
+			case WrappedVarType::Integer64: return sizeof(int64_t);
 			case WrappedVarType::UInteger16: return sizeof(uint16_t);
 			case WrappedVarType::UInteger32: return sizeof(uint32_t);
 			case WrappedVarType::UInteger64: return sizeof(uint64_t);
+			case WrappedVarType::Vector2: return sizeof(Math::vec2);
 			case WrappedVarType::Vector3: return sizeof(Math::vec3);
+			case WrappedVarType::Vector4: return sizeof(Math::vec4);
+			case WrappedVarType::IVector2: return sizeof(Math::ivec2);
+			case WrappedVarType::IVector3: return sizeof(Math::ivec3);
+			case WrappedVarType::IVector4: return sizeof(Math::ivec4);
 			case WrappedVarType::String: return sizeof(std::string);
 			case WrappedVarType::Bool: return sizeof(bool);
 			case WrappedVarType::Float: return sizeof(float);
@@ -611,11 +686,18 @@ namespace Kargono
 		{
 			switch (type)
 			{
+			case WrappedVarType::Integer16: return "int16";
 			case WrappedVarType::Integer32: return "int32";
+			case WrappedVarType::Integer64: return "int64";
 			case WrappedVarType::UInteger16: return "uint16";
 			case WrappedVarType::UInteger32: return "uint32";
 			case WrappedVarType::UInteger64: return "uint64";
+			case WrappedVarType::Vector2: return "vector2";
 			case WrappedVarType::Vector3: return "vector3";
+			case WrappedVarType::Vector4: return "vector4";
+			case WrappedVarType::IVector2: return "ivector2";
+			case WrappedVarType::IVector3: return "ivector3";
+			case WrappedVarType::IVector4: return "ivector4";
 			case WrappedVarType::String: return "string";
 			case WrappedVarType::Void: return "void";
 			case WrappedVarType::Bool: return "bool";
@@ -630,11 +712,18 @@ namespace Kargono
 		inline WrappedVarType KGScriptToWrappedVarType(const std::string& scriptType)
 		{
 
+			if (scriptType == "int16") { return WrappedVarType::Integer16; }
 			if (scriptType == "int32") { return WrappedVarType::Integer32; }
+			if (scriptType == "int64") { return WrappedVarType::Integer64; }
 			if (scriptType == "uint16") { return WrappedVarType::UInteger16; }
 			if (scriptType == "uint32") { return WrappedVarType::UInteger32; }
 			if (scriptType == "uint64") { return WrappedVarType::UInteger64; }
+			if (scriptType == "vector2") { return WrappedVarType::Vector2; }
 			if (scriptType == "vector3") { return WrappedVarType::Vector3; }
+			if (scriptType == "vector4") { return WrappedVarType::Vector4; }
+			if (scriptType == "ivector2") { return WrappedVarType::IVector2; }
+			if (scriptType == "ivector3") { return WrappedVarType::IVector3; }
+			if (scriptType == "ivector4") { return WrappedVarType::IVector4; }
 			if (scriptType == "string") { return WrappedVarType::String; }
 			if (scriptType == "float") { return WrappedVarType::Float; }
 			if (scriptType == "bool") { return WrappedVarType::Bool; }
@@ -647,11 +736,18 @@ namespace Kargono
 
 		inline WrappedVarType StringToWrappedVarType(std::string type)
 		{
+			if (type == "Integer16") { return WrappedVarType::Integer16; }
 			if (type == "Integer32") { return WrappedVarType::Integer32; }
+			if (type == "Integer64") { return WrappedVarType::Integer64; }
 			if (type == "UInteger16") { return WrappedVarType::UInteger16; }
 			if (type == "UInteger32") { return WrappedVarType::UInteger32; }
 			if (type == "UInteger64") { return WrappedVarType::UInteger64; }
+			if (type == "Vector2") { return WrappedVarType::Vector2; }
 			if (type == "Vector3") { return WrappedVarType::Vector3; }
+			if (type == "Vector4") { return WrappedVarType::Vector4; }
+			if (type == "IVector2") { return WrappedVarType::IVector2; }
+			if (type == "IVector3") { return WrappedVarType::IVector3; }
+			if (type == "IVector4") { return WrappedVarType::IVector4; }
 			if (type == "String") { return WrappedVarType::String; }
 			if (type == "Void") { return WrappedVarType::Void; }
 			if (type == "Bool") { return WrappedVarType::Bool; }
@@ -667,8 +763,14 @@ namespace Kargono
 		{
 			switch (type)
 			{
+			case WrappedVarType::Integer16:
+				*(int16_t*)buffer = 0;
+				return;
 			case WrappedVarType::Integer32:
 				*(int32_t*)buffer = 0;
+				return;
+			case WrappedVarType::Integer64:
+				*(int64_t*)buffer = 0;
 				return;
 			case WrappedVarType::UInteger16:
 				*(uint16_t*)buffer = 0;
@@ -680,8 +782,23 @@ namespace Kargono
 			case WrappedVarType::Entity:
 				*(uint64_t*)buffer = 0;
 				return;
+			case WrappedVarType::Vector2:
+				*(Math::vec2*)buffer = { 0.0f, 0.0f };
+				return;
 			case WrappedVarType::Vector3:
 				*(Math::vec3*)buffer = { 0.0f, 0.0f, 0.0f };
+				return;
+			case WrappedVarType::Vector4:
+				*(Math::vec4*)buffer = { 0.0f, 0.0f, 0.0f, 0.0f };
+				return;
+			case WrappedVarType::IVector2:
+				*(Math::ivec2*)buffer = { 0, 0 };
+				return;
+			case WrappedVarType::IVector3:
+				*(Math::ivec3*)buffer = { 0, 0, 0 };
+				return;
+			case WrappedVarType::IVector4:
+				*(Math::ivec4*)buffer = { 0, 0, 0, 0 };
 				return;
 			case WrappedVarType::String:
 				*(std::string*)buffer = std::string();
@@ -703,8 +820,14 @@ namespace Kargono
 		{
 			switch (type)
 			{
+			case WrappedVarType::Integer16:
+				*(int16_t*)destination = *(int16_t*)source;
+				return;
 			case WrappedVarType::Integer32: 
 				*(int32_t*)destination = *(int32_t*)source;
+				return;
+			case WrappedVarType::Integer64:
+				*(int64_t*)destination = *(int64_t*)source;
 				return;
 			case WrappedVarType::UInteger16:
 				*(uint16_t*)destination = *(uint16_t*)source;
@@ -718,8 +841,23 @@ namespace Kargono
 			case WrappedVarType::Entity:
 				*(uint64_t*)destination = *(uint64_t*)source;
 				return;
+			case WrappedVarType::Vector2:
+				*(Math::vec2*)destination = *(Math::vec2*)source;
+				return;
 			case WrappedVarType::Vector3:
 				*(Math::vec3*)destination = *(Math::vec3*)source;
+				return;
+			case WrappedVarType::Vector4:
+				*(Math::vec4*)destination = *(Math::vec4*)source;
+				return;
+			case WrappedVarType::IVector2:
+				*(Math::ivec2*)destination = *(Math::ivec2*)source;
+				return;
+			case WrappedVarType::IVector3:
+				*(Math::ivec3*)destination = *(Math::ivec3*)source;
+				return;
+			case WrappedVarType::IVector4:
+				*(Math::ivec4*)destination = *(Math::ivec4*)source;
 				return;
 			case WrappedVarType::String:
 				*(std::string*)destination = *(std::string*)source;

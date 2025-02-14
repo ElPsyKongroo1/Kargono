@@ -239,51 +239,95 @@ namespace Kargono::Utility
 	//==============================
 	// Extra Conversions
 	//==============================
+	inline void SerializeWrappedVarType(YAML::Emitter& out, WrappedVarType type, const char* name, void* dataSource)
+	{
+		#define SerializeCase(wrappedType, cType) case WrappedVarType::wrappedType: \
+		out << YAML::Key << name << YAML::Value << *(cType*)dataSource; return;
+
+		switch (type)
+		{
+		SerializeCase(Integer16, int16_t)
+		SerializeCase(Integer32, int32_t)
+		SerializeCase(Integer64, int64_t)
+		SerializeCase(UInteger16, uint16_t)
+		SerializeCase(UInteger32, uint32_t)
+		SerializeCase(UInteger64, uint64_t)
+		SerializeCase(Entity, uint64_t)
+		SerializeCase(Float, float)
+		SerializeCase(Vector2, Math::vec2)
+		SerializeCase(Vector3, Math::vec3)
+		SerializeCase(Vector4, Math::vec4)
+		SerializeCase(IVector2, Math::ivec2)
+		SerializeCase(IVector3, Math::ivec3)
+		SerializeCase(IVector4, Math::ivec4)
+		SerializeCase(String, std::string)
+		SerializeCase(Bool, bool)
+		case WrappedVarType::None:
+		case WrappedVarType::Void:
+			KG_ERROR("Invalid type provided while serializing data");
+			return;
+		}
+		KG_ERROR("Unknown Type of WrappedVariableType.");
+		return;
+	}
+
+	inline void DeserializeWrappedVarType(YAML::Node& componentNode, WrappedVarType type, const char* name, void* destination)
+	{
+		#define DeserializeCase(wrappedType, cType) case WrappedVarType::wrappedType: \
+		*(cType*)destination = componentNode[name].as<cType>(); return;
+
+		switch (type)
+		{
+		DeserializeCase(Integer16, int16_t)
+		DeserializeCase(Integer32, int32_t)
+		DeserializeCase(Integer64, int64_t)
+		DeserializeCase(UInteger16, uint16_t)
+		DeserializeCase(UInteger32, uint32_t)
+		DeserializeCase(UInteger64, uint64_t)
+		DeserializeCase(Float, float)
+		DeserializeCase(Vector2, Math::vec2)
+		DeserializeCase(Vector3, Math::vec3)
+		DeserializeCase(Vector4, Math::vec4)
+		DeserializeCase(IVector2, Math::ivec2)
+		DeserializeCase(IVector3, Math::ivec3)
+		DeserializeCase(IVector4, Math::ivec4)
+		DeserializeCase(String, std::string)
+		DeserializeCase(Bool, bool)
+		case WrappedVarType::None:
+		case WrappedVarType::Void:
+			KG_ERROR("Invalid type provided while serializing data");
+			return;
+		}
+		KG_ERROR("Unknown Type of WrappedVariableType.");
+		return;
+	}
+	
 	// API for Serializing and Deserializing Wrapped Variable Data
 	inline void SerializeWrappedVariableData(Ref<WrappedVariable> variable, YAML::Emitter& out)
 	{
+#define SerializeWrappedCase(wrappedType, type) case WrappedVarType::wrappedType:\
+		{\
+			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<type>();\
+			return;\
+		}
+
 		switch (variable->Type())
 		{
-		case WrappedVarType::Integer32:
-		{
-			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<int32_t>();
-			return;
-		}
-		case WrappedVarType::UInteger16:
-		{
-			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<uint16_t>();
-			return;
-		}
-		case WrappedVarType::UInteger32:
-		{
-			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<uint32_t>();
-			return;
-		}
-		case WrappedVarType::UInteger64:
-		{
-			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<int64_t>();
-			return;
-		}
-		case WrappedVarType::Vector3:
-		{
-			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<Math::vec3>();
-			return;
-		}
-		case WrappedVarType::String:
-		{
-			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<std::string>();
-			return;
-		}
-		case WrappedVarType::Float:
-		{
-			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<float>();
-			return;
-		}
-		case WrappedVarType::Bool:
-		{
-			out << YAML::Key << "Value" << YAML::Value << variable->GetWrappedValue<bool>();
-			return;
-		}
+		SerializeWrappedCase(Integer16, int16_t)
+		SerializeWrappedCase(Integer32, int32_t)
+		SerializeWrappedCase(Integer64, int64_t)
+		SerializeWrappedCase(UInteger16, uint16_t)
+		SerializeWrappedCase(UInteger32, uint32_t)
+		SerializeWrappedCase(UInteger64, uint64_t)
+		SerializeWrappedCase(Vector2, Math::vec2)
+		SerializeWrappedCase(Vector3, Math::vec3)
+		SerializeWrappedCase(Vector4, Math::vec4)
+		SerializeWrappedCase(IVector2, Math::ivec2)
+		SerializeWrappedCase(IVector3, Math::ivec3)
+		SerializeWrappedCase(IVector4, Math::ivec4)
+		SerializeWrappedCase(String, std::string)
+		SerializeWrappedCase(Float, float)
+		SerializeWrappedCase(Bool, bool)
 		case WrappedVarType::Void:
 		case WrappedVarType::None:
 		{

@@ -23,11 +23,18 @@ namespace Kargono::Utility
 	{
 		switch (type)
 		{
+		case WrappedVarType::Integer16: return { Scripting::ScriptTokenType::PrimitiveType, "int16" };
 		case WrappedVarType::Integer32: return { Scripting::ScriptTokenType::PrimitiveType, "int32" };
+		case WrappedVarType::Integer64: return { Scripting::ScriptTokenType::PrimitiveType, "int64" };
 		case WrappedVarType::UInteger16: return { Scripting::ScriptTokenType::PrimitiveType, "uint16" };
 		case WrappedVarType::UInteger32: return { Scripting::ScriptTokenType::PrimitiveType, "uint32" };
 		case WrappedVarType::UInteger64: return { Scripting::ScriptTokenType::PrimitiveType, "uint64" };
+		case WrappedVarType::Vector2: return { Scripting::ScriptTokenType::PrimitiveType, "vector2" };
 		case WrappedVarType::Vector3: return { Scripting::ScriptTokenType::PrimitiveType, "vector3" };
+		case WrappedVarType::Vector4: return { Scripting::ScriptTokenType::PrimitiveType, "vector4" };
+		case WrappedVarType::IVector2: return { Scripting::ScriptTokenType::PrimitiveType, "ivector2" };
+		case WrappedVarType::IVector3: return { Scripting::ScriptTokenType::PrimitiveType, "ivector3" };
+		case WrappedVarType::IVector4: return { Scripting::ScriptTokenType::PrimitiveType, "ivector4" };
 		case WrappedVarType::String: return { Scripting::ScriptTokenType::PrimitiveType, "string" };
 		case WrappedVarType::Bool: return { Scripting::ScriptTokenType::PrimitiveType, "bool" };
 		case WrappedVarType::Float: return { Scripting::ScriptTokenType::PrimitiveType, "float" };
