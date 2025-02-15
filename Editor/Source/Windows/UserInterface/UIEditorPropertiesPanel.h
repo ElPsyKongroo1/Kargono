@@ -186,7 +186,6 @@ namespace Kargono::Panels
 		//=========================
 		// Change Drop-Down Widget Data
 		//=========================
-
 		// Modify all of the drop-down widget's text
 		void OnModifyDropDownTextSize(EditorUI::EditFloatSpec& spec);
 		void OnModifyDropDownTextColor(EditorUI::EditVec4Spec& spec);
@@ -203,7 +202,12 @@ namespace Kargono::Panels
 		// Modify widget's options list
 		void OnRefreshDropDownWidgetOptionsList();
 		void OnDropDownWidgetAddEntryDialog();
+		void OnDropDownWidgetEditEntryTooltip(EditorUI::ListEntry& entry, size_t iteration);
+		void OnDropDownWidgetEditEntryDialog(EditorUI::TooltipEntry& entry);
+		void OnDropDownWidgetDeleteEntryDialog(EditorUI::TooltipEntry& entry);
 		void OnDropDownWidgetAddEntry(EditorUI::EditTextSpec& spec);
+		void OnDropDownWidgetEditEntry(EditorUI::EditTextSpec& spec);
+		void OnDropDownWidgetDeleteEntry();
 
 		//=========================
 		// Modify UI Component Structs (Common data between widgets)
@@ -354,5 +358,8 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_DropDownWidgetOnSelectOption{};
 		EditorUI::ListSpec m_DropDownWidgetOptionsList{};
 		EditorUI::EditTextSpec m_DropDownWidgetOptionsListAddEntry{};
+		EditorUI::GenericPopupSpec m_DropDownWidgetDeleteEntryWarning{};
+		EditorUI::EditTextSpec m_DropDownWidgetEditEntry{};
+		size_t m_ActiveDropDownOption{ 0 };
 	};
 }

@@ -1227,6 +1227,7 @@ namespace Kargono::EditorUI
 		FixedString32 m_Label;
 		UUID m_EntryID;
 		bool m_IsVisible{ true };
+		UUID m_UserHandle;
 	private:
 		std::variant<std::vector<TooltipEntry>, std::function<void(TooltipEntry&)>, TooltipSeperatorData> m_EntryData;
 		friend void ProcessTooltipEntries(TooltipSpec& spec, std::vector<TooltipEntry>& entryList);

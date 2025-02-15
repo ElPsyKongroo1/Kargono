@@ -590,6 +590,8 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::SelectOption(m_DropDownWidgetOnSelectOption);
 		}
 		EditorUI::EditorUIService::EditText(m_DropDownWidgetOptionsListAddEntry);
+		EditorUI::EditorUIService::EditText(m_DropDownWidgetEditEntry);
+		EditorUI::EditorUIService::GenericPopup(m_DropDownWidgetDeleteEntryWarning);
 	}
 
 	void UIEditorPropertiesPanel::DrawSpecificWidgetOptions()
@@ -734,7 +736,7 @@ namespace Kargono::Panels
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+		s_UIWindow->m_TreePanel->m_SelectTooltip.ClearEntries();
 
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
@@ -742,7 +744,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(entry);
 			m_UIOnMove.m_OpenPopup = true;
 		} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(openScriptOptions);
 
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
@@ -775,10 +777,10 @@ namespace Kargono::Panels
 				}, {});
 			} 
 		};
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(createScriptOptions);
 
 		// Open tooltip
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyUIOnHover(const EditorUI::OptionEntry& entry)
@@ -831,7 +833,7 @@ namespace Kargono::Panels
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+		s_UIWindow->m_TreePanel->m_SelectTooltip.ClearEntries();
 
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
@@ -839,7 +841,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(entry);
 			m_UIOnHover.m_OpenPopup = true;
 		} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(openScriptOptions);
 
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
@@ -872,10 +874,10 @@ namespace Kargono::Panels
 					}, {});
 				}
 		};
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(createScriptOptions);
 
 		// Open tooltip
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyUISelectionColor(EditorUI::EditVec4Spec& spec)
@@ -1495,6 +1497,18 @@ namespace Kargono::Panels
 		m_DropDownWidgetOptionsListAddEntry.m_Flags |= EditorUI::EditText_PopupOnly;
 		m_DropDownWidgetOptionsListAddEntry.m_CurrentOption = "New Entry";
 		m_DropDownWidgetOptionsListAddEntry.m_ConfirmAction = KG_BIND_CLASS_FN(OnDropDownWidgetAddEntry);
+
+		m_DropDownWidgetDeleteEntryWarning.m_Label = "Delete Drop-Down Option";
+		m_DropDownWidgetDeleteEntryWarning.m_PopupContents = []() 
+		{
+			EditorUI::EditorUIService::Text("Are you sure you want to delete this option?");
+		};
+		m_DropDownWidgetDeleteEntryWarning.m_ConfirmAction = KG_BIND_CLASS_FN(OnDropDownWidgetDeleteEntry);
+
+		m_DropDownWidgetEditEntry.m_Label = "Edit Entry";
+		m_DropDownWidgetEditEntry.m_Flags |= EditorUI::EditText_PopupOnly;
+		m_DropDownWidgetEditEntry.m_CurrentOption = "New Entry";
+		m_DropDownWidgetEditEntry.m_ConfirmAction = KG_BIND_CLASS_FN(OnDropDownWidgetEditEntry);
 
 	}
 
@@ -2187,7 +2201,7 @@ namespace Kargono::Panels
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+		s_UIWindow->m_TreePanel->m_SelectTooltip.ClearEntries();
 
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
@@ -2195,7 +2209,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(entry);
 			m_InputTextWidgetOnMoveCursor.m_OpenPopup = true;
 		} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(openScriptOptions);
 
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
@@ -2232,10 +2246,10 @@ namespace Kargono::Panels
 						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 					}, {});
 				} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(createScriptOptions);
 
 		// Open tooltip
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifySliderWidgetBounds(EditorUI::EditVec2Spec& spec)
@@ -2365,7 +2379,7 @@ namespace Kargono::Panels
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+		s_UIWindow->m_TreePanel->m_SelectTooltip.ClearEntries();
 
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
@@ -2373,7 +2387,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(entry);
 			m_SliderWidgetOnMoveSlider.m_OpenPopup = true;
 		} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(openScriptOptions);
 
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
@@ -2410,10 +2424,10 @@ namespace Kargono::Panels
 						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 					}, {"sliderValue"});
 				} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(createScriptOptions);
 
 		// Open tooltip
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyDropDownTextSize(EditorUI::EditFloatSpec& spec)
@@ -2580,7 +2594,7 @@ namespace Kargono::Panels
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+		s_UIWindow->m_TreePanel->m_SelectTooltip.ClearEntries();
 
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
@@ -2588,7 +2602,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(entry);
 			m_DropDownWidgetOnSelectOption.m_OpenPopup = true;
 		} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(openScriptOptions);
 
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
@@ -2625,10 +2639,10 @@ namespace Kargono::Panels
 						s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 					}, {"selectedOption"});
 				} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(createScriptOptions);
 
 		// Open tooltip
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
 
 	void UIEditorPropertiesPanel::OnRefreshDropDownWidgetOptionsList()
@@ -2653,7 +2667,7 @@ namespace Kargono::Panels
 		size_t iteration{ 0 };
 		for (RuntimeUI::SingleLineTextData& textData : activeDropDownWidget->m_DropDownOptions)
 		{
-			m_DropDownWidgetOptionsList.InsertListEntry(textData.m_Text, "", nullptr, iteration);
+			m_DropDownWidgetOptionsList.InsertListEntry(textData.m_Text, "", KG_BIND_CLASS_FN(OnDropDownWidgetEditEntryTooltip), iteration);
 			iteration++;
 		}
 	}
@@ -2664,6 +2678,77 @@ namespace Kargono::Panels
 		m_DropDownWidgetOptionsListAddEntry.m_CurrentOption = "New Entry";
 		m_DropDownWidgetOptionsListAddEntry.m_StartPopup = true;
 		
+	}
+
+	void UIEditorPropertiesPanel::OnDropDownWidgetEditEntryTooltip(EditorUI::ListEntry& entry, size_t iteration)
+	{
+		UNREFERENCED_PARAMETER(entry);
+		UNREFERENCED_PARAMETER(iteration);
+		// Clear existing options
+		s_UIWindow->m_TreePanel->m_SelectTooltip.ClearEntries();
+
+		// Add option to opening an existing script
+		EditorUI::TooltipEntry editOptionTooltip{ "Edit Option", KG_BIND_CLASS_FN(OnDropDownWidgetEditEntryDialog) };
+		editOptionTooltip.m_UserHandle = iteration;
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(editOptionTooltip);
+
+		// Add option to opening an existing script
+		EditorUI::TooltipEntry deleteOptionTooltip{ "Delete Option", 
+			KG_BIND_CLASS_FN(OnDropDownWidgetDeleteEntryDialog) };
+		deleteOptionTooltip.m_UserHandle = iteration;
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(deleteOptionTooltip);
+
+		// Open tooltip
+		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnDropDownWidgetEditEntryDialog(EditorUI::TooltipEntry& entry)
+	{
+		// TODO: This hurts me. Need some refactoring here
+
+		// Open an on-edit popup
+		m_DropDownWidgetEditEntry.m_StartPopup = true;
+
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure this is the correct widget type
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::DropDownWidget)
+		{
+			KG_WARN("Invalid widget type provided when modifying widget");
+			return;
+		}
+
+		// Get the underlying widget and optionsList
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+		KG_ASSERT(activeDropDownWidget);
+		std::vector<RuntimeUI::SingleLineTextData>& optionsList = activeDropDownWidget->m_DropDownOptions;
+
+		// Ensure that the index is valid
+		if (m_ActiveDropDownOption >= optionsList.size())
+		{
+			KG_WARN("Active index is out of bounds for the drop-down widget's options");
+			return;
+		}
+		// Modify the name to match the current entry
+		RuntimeUI::SingleLineTextData& textData = optionsList.at(m_ActiveDropDownOption);
+		m_DropDownWidgetEditEntry.m_CurrentOption = textData.m_Text;
+		//textData.m_Text = spec.m_CurrentOption;
+
+		// Store the indicated entry
+		m_ActiveDropDownOption = entry.m_UserHandle;
+	}
+
+	void UIEditorPropertiesPanel::OnDropDownWidgetDeleteEntryDialog(EditorUI::TooltipEntry& entry)
+	{
+		// Open an on-delete popup
+		m_DropDownWidgetDeleteEntryWarning.m_OpenPopup = true;
+
+		// Store the indicated entry
+		m_ActiveDropDownOption = entry.m_UserHandle;
 	}
 
 	void UIEditorPropertiesPanel::OnDropDownWidgetAddEntry(EditorUI::EditTextSpec& spec)
@@ -2686,6 +2771,89 @@ namespace Kargono::Panels
 		// Add the entry to the underlying runtime UI widget
 		RuntimeUI::SingleLineTextData& newDropDown = activeDropDownWidget->m_DropDownOptions.emplace_back();
 		newDropDown.m_Text = spec.m_CurrentOption;
+
+		// Revalidate the text data
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+		// Refresh the table
+		KG_ASSERT(m_DropDownWidgetOptionsList.m_OnRefresh);
+		m_DropDownWidgetOptionsList.m_OnRefresh();
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnDropDownWidgetEditEntry(EditorUI::EditTextSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure this is the correct widget type
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::DropDownWidget)
+		{
+			KG_WARN("Invalid widget type provided when modifying widget");
+			return;
+		}
+
+		// Get the underlying widget and optionsList
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+		KG_ASSERT(activeDropDownWidget);
+		std::vector<RuntimeUI::SingleLineTextData>& optionsList = activeDropDownWidget->m_DropDownOptions;
+
+		// Ensure that the index is valid
+		if (m_ActiveDropDownOption >= optionsList.size())
+		{
+			KG_WARN("Active index is out of bounds for the drop-down widget's options");
+			return;
+		}
+
+		// Get the indicated single line text
+		RuntimeUI::SingleLineTextData& textData = optionsList.at(m_ActiveDropDownOption);
+		textData.m_Text = spec.m_CurrentOption;
+
+		// Revalidate the text data
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+		// Refresh the table
+		KG_ASSERT(m_DropDownWidgetOptionsList.m_OnRefresh);
+		m_DropDownWidgetOptionsList.m_OnRefresh();
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnDropDownWidgetDeleteEntry()
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure this is the correct widget type
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::DropDownWidget)
+		{
+			KG_WARN("Invalid widget type provided when modifying widget");
+			return;
+		}
+
+		// Get the underlying widget and optionsList
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+		KG_ASSERT(activeDropDownWidget);
+		std::vector<RuntimeUI::SingleLineTextData>& optionsList = activeDropDownWidget->m_DropDownOptions;
+
+		// Ensure that the index is valid
+		if (m_ActiveDropDownOption >= optionsList.size())
+		{
+			KG_WARN("Active index is out of bounds for the drop-down widget's options");
+			return;
+		}
+
+		// Delete the indicated entry
+		optionsList.erase(optionsList.begin() + m_ActiveDropDownOption);
 
 		// Revalidate the text data
 		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
@@ -3002,7 +3170,7 @@ namespace Kargono::Panels
 		}
 
 		// Clear existing options
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.ClearEntries();
+		s_UIWindow->m_TreePanel->m_SelectTooltip.ClearEntries();
 
 		// Add option to opening an existing script
 		EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
@@ -3010,7 +3178,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(entry);
 			s_CurrentSpec->m_OpenPopup = true;
 		} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(openScriptOptions);
 
 		// Add option or creating a new script from this usage point
 		EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
@@ -3049,10 +3217,10 @@ namespace Kargono::Panels
 					s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 				}, s_ParameterNames);
 			} };
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+		s_UIWindow->m_TreePanel->m_SelectTooltip.AddTooltipEntry(createScriptOptions);
 
 		// Open tooltip
-		s_UIWindow->m_TreePanel->m_SelectScriptTooltip.m_TooltipActive = true;
+		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
 	void UIEditorPropertiesPanel::OnModifySelectionDataBackgroundColor(EditorUI::EditVec4Spec& spec)
 	{

@@ -48,7 +48,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::GenericPopup(m_DeleteUIWarning);
 			EditorUI::EditorUIService::GenericPopup(m_CloseUIWarning);
 			EditorUI::EditorUIService::Tree(m_UITree);
-			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
+			EditorUI::EditorUIService::Tooltip(m_SelectTooltip);
 		}
 
 		// End the window

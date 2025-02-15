@@ -102,7 +102,7 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_CreateUIPopupSpec{};
 		EditorUI::EditTextSpec m_SelectUINameSpec{};
 		EditorUI::ChooseDirectorySpec m_SelectUILocationSpec{};
-		EditorUI::TooltipSpec m_SelectScriptTooltip{};
+		EditorUI::TooltipSpec m_SelectTooltip{};
 
 		// User Interface Header
 		EditorUI::PanelHeaderSpec m_MainHeader{};

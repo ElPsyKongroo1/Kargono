@@ -964,9 +964,10 @@ namespace Kargono::EditorUI
 			EditorUI::EditorUIService::TitleText(spec.m_Label);
 
 			ImGui::PushFont(EditorUI::EditorUIService::s_FontAntaRegular);
+
+			// Optional Delete Tool Bar Button
 			if (spec.m_DeleteAction)
 			{
-				// Optional Delete Tool Bar Button
 				ImGui::SameLine();
 				CreateButton(spec.m_WidgetID + WidgetIterator(widgetCount), [&]()
 				{
@@ -1001,6 +1002,8 @@ namespace Kargono::EditorUI
 			}, s_LargeConfirmButton, false, s_PrimaryTextColor);
 
 			ImGui::Separator();
+
+			Spacing(SpacingAmount::Small);
 
 			if (spec.m_PopupContents)
 			{
@@ -1043,6 +1046,8 @@ namespace Kargono::EditorUI
 			}, s_LargeConfirmButton, false, s_PrimaryTextColor);
 
 			ImGui::Separator();
+
+			Spacing(SpacingAmount::Small);
 
 			if (spec.m_PopupContents)
 			{
@@ -1242,6 +1247,8 @@ namespace Kargono::EditorUI
 			}, s_LargeConfirmButton, false, s_PrimaryTextColor);
 
 			ImGui::Separator();
+
+			Spacing(SpacingAmount::Small);
 
 			ImGui::BeginChildEx("##", spec.m_WidgetID + WidgetIterator(widgetCount), 
 				{ 0.0f, 0.0f }, false, 0);
