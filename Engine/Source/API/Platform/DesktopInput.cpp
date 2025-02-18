@@ -27,7 +27,7 @@ namespace Kargono::Input
 		int state = glfwGetMouseButton(window, static_cast<int32_t>(button));
 		return state == GLFW_PRESS;
 	}
-	Math::vec2 InputService::GetMousePosition()
+	Math::vec2 InputService::GetAbsoluteMousePosition()
 	{
 		GLFWwindow* window = (GLFWwindow*)EngineService::GetActiveWindow().GetNativeWindow();
 		double xpos;
@@ -36,14 +36,22 @@ namespace Kargono::Input
 
 		return { (float)xpos, (float)ypos };
 	}
-	float InputService::GetMouseX()
+	float InputService::GetAbsoluteMouseX()
 	{
-		return GetMousePosition().x;
+		return GetAbsoluteMousePosition().x;
 	}
 
-	float InputService::GetMouseY()
+	float InputService::GetAbsoluteMouseY()
 	{
-		return GetMousePosition().y;
+		return GetAbsoluteMousePosition().y;
+	}
+
+	Math::vec2 InputService::GetViewportMousePosition()
+	{
+		Application* currentApp = EngineService::GetActiveApplication();
+		KG_ASSERT(currentApp);
+
+		return currentApp->GetMouseViewportPosition();
 	}
 
 }

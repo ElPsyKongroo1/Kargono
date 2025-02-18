@@ -1468,7 +1468,7 @@ namespace Kargono::Panels
 		m_DropDownWidgetOptionBackgroundColor.m_Label = "Drop Down Color";
 		m_DropDownWidgetOptionBackgroundColor.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_DropDownWidgetOptionBackgroundColor.m_Bounds = { 0.0f, 1.0f };
-		m_DropDownWidgetOptionBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataBackgroundColor);
+		m_DropDownWidgetOptionBackgroundColor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyDropDownWidgetOptionBackgroundColor);
 
 		// Set up widget to modify the DropDown widget's on press script
 		m_DropDownWidgetOnPress.m_Label = "On Press";

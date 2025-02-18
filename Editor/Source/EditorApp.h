@@ -57,10 +57,18 @@ namespace Kargono
 		virtual bool OnEditorEvent(Events::Event* event) override;
 		virtual bool OnAssetEvent(Events::Event* event) override;
 		virtual bool OnLogEvent(Events::Event* event) override;
+
 	private:
 		// This function responds to application collision events.
 		bool OnPhysicsCollisionStart(Events::PhysicsCollisionStart event);
 		bool OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event);
+
+	public:
+		//==========================
+		// Query Application State
+		//==========================
+		virtual Math::vec2 GetMouseViewportPosition() override;
+		virtual ViewportData* GetViewportData() override;
 
 	public:
 		//=========================

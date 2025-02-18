@@ -12,6 +12,7 @@
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Math/Interpolation.h"
 #include "Kargono/EditorUI/EditorUI.h"
+#include "Kargono/Input/InputService.h"
 
 namespace Kargono::Utility
 {
@@ -126,7 +127,7 @@ namespace Kargono::RuntimeUI
 		KG_VERIFY(true, "Runtime UI Engine Terminate");
 	}
 
-	void RuntimeUIService::OnUpdate(Timestep ts, Math::vec2 mousePosition, ViewportData* viewportData)
+	void RuntimeUIService::OnUpdate(Timestep ts)
 	{
 		// Ensure a valid user interface is active and get it
 		if (!s_RuntimeUIContext->m_ActiveUI)
@@ -135,6 +136,9 @@ namespace Kargono::RuntimeUI
 		}
 		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
 
+		// Get mouse position and active viewport
+		Math::vec2 mousePosition = Input::InputService::GetViewportMousePosition();
+		ViewportData* viewportData = EngineService::GetActiveApplication()->GetViewportData();
 
 		// Handle IBeam flipping for input text widgets
 		if (activeUI->m_EditingWidget)
@@ -331,9 +335,13 @@ namespace Kargono::RuntimeUI
 		return false;
 	}
 
-	void RuntimeUIService::OnLeftMouseButtonPressed(Math::vec2 mousePosition, ViewportData* viewportData)
+	void RuntimeUIService::OnMouseButtonPressedEvent(const Events::MouseButtonPressedEvent& event)
 	{
 		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+
+		// Get mouse position and active viewport
+		Math::vec2 mousePosition = Input::InputService::GetViewportMousePosition();
+		ViewportData* viewportData = EngineService::GetActiveApplication()->GetViewportData();
 
 		// Handle mouse click for the editing widget
 		if (activeUI->m_EditingWidget)
@@ -2764,9 +2772,113 @@ namespace Kargono::RuntimeUI
 
 	void DropDownWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
-		UNREFERENCED_PARAMETER(windowTranslation);
-		UNREFERENCED_PARAMETER(windowSize);
-		UNREFERENCED_PARAMETER(viewportWidth);
+		KG_PROFILE_FUNCTION();
+
+		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
+
+		// Get mouse position and active viewport
+		Math::vec2 mousePosition = Input::InputService::GetViewportMousePosition();
+		ViewportData* viewportData = EngineService::GetActiveApplication()->GetViewportData();
+
+		// Calculate the widget's rendering data
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
+		// Get widget translation
+		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
+
+		// Check if the mouse position is within bounds of the current option
+		if (activeUI->m_HoveredWidget && 
+			mousePosition.x > widgetTranslation.x && mousePosition.x < (widgetTranslation.x + widgetSize.x) &&
+			mousePosition.y > widgetTranslation.y && mousePosition.y < (widgetTranslation.y + widgetSize.y))
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
+		}
+		else if (activeUI->m_SelectedWidget == this)
+		{
+			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
+		}
+		else
+		{
+			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
+		}
+
+		// Ensure that current option is within bounds
+		if (m_CurrentOption < m_DropDownOptions.size())
+		{
+			// Get the active option data
+			SingleLineTextData& textData = m_DropDownOptions.at(m_CurrentOption);
+
+			// Calculate text starting point
+			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+			float textScalingFactor{ (viewportWidth * 0.15f * textData.m_TextSize) * (resolution.y / resolution.x) };
+			Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(textData, widgetTranslation, widgetSize, textScalingFactor);
+
+			// Create the widget's text rendering data
+			textStartingPoint.z += 0.001f;
+
+			// Draw current option's text
+			RuntimeUIService::RenderSingleLineText(textData, textStartingPoint, textScalingFactor);
+		}
+
+		// Draw drop-down options
+		if (m_DropDownOpen)
+		{
+			// This variable represents the *visible* drop-down position/index
+			// Note: IT IS NOT THE INDEX INTO THE DROPDOWNOPTIONS VECTOR
+			size_t visibleDropDownOffset{ 0 }; 
+			for (size_t iteration{0}; iteration < m_DropDownOptions.size(); iteration++)
+			{
+				// Exclude the current option
+				if (m_CurrentOption == iteration)
+				{
+					continue;
+				}
+
+				// Increment z-location
+				widgetTranslation.z += 0.001f;
+
+				// Create transform for the current drop-down option
+				Math::vec3 currentOptionTranslation{ 
+					widgetTranslation.x, 
+					widgetTranslation.y - widgetSize.y * (float)(visibleDropDownOffset + 1), 
+					widgetTranslation.z };
+
+				// Check if the mouse position is within bounds of the current option
+				if (activeUI->m_HoveredWidget &&
+					mousePosition.x > currentOptionTranslation.x && 
+					mousePosition.x < (currentOptionTranslation.x + widgetSize.x) &&
+					mousePosition.y > currentOptionTranslation.y && 
+					mousePosition.y < (currentOptionTranslation.y + widgetSize.y))
+				{
+					// Draw the background for the current option
+					RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, currentOptionTranslation, widgetSize);
+				}
+				else
+				{
+					// Draw the background for the current option
+					RuntimeUIService::RenderBackground(m_DropDownBackground, currentOptionTranslation, widgetSize);
+				}
+				
+				
+				// Draw the current option label
+				// Get the active option data
+				SingleLineTextData& textData = m_DropDownOptions.at(iteration);
+
+				// Calculate text starting point
+				Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+				float textScalingFactor{ (viewportWidth * 0.15f * textData.m_TextSize) * (resolution.y / resolution.x) };
+				Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(textData, currentOptionTranslation, widgetSize, textScalingFactor);
+
+				// Create the widget's text rendering data
+				textStartingPoint.z += 0.001f;
+
+				// Draw current option's text
+				RuntimeUIService::RenderSingleLineText(textData, textStartingPoint, textScalingFactor);
+
+				visibleDropDownOffset++;
+			}
+		}
+
+		
 	}
 
 	void DropDownWidget::CalculateTextSize()

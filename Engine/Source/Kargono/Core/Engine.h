@@ -153,6 +153,7 @@ namespace Kargono
 
 		}
 		static Window& GetActiveWindow() { return s_ActiveEngine->GetWindow(); }
+		static Application* GetActiveApplication() { return s_ActiveEngine->m_CurrentApp; }
 	private:
 		//==============================
 		// Internal Functionality

@@ -90,6 +90,19 @@ namespace Kargono
 		return false;
 	}
 
+	Math::vec2 LauncherApp::GetMouseViewportPosition()
+	{
+		KG_WARN("Attempt to retrieve mouse location from unimplemented function in Launcher Application");
+		return Math::vec2();
+	}
+
+	ViewportData* LauncherApp::GetViewportData()
+	{
+		KG_WARN("Attempt to retrieve mouse location from unimplemented function in Launcher Application");
+		return nullptr;
+	}
+
+
 	void LauncherApp::OnUpdate(Timestep ts)
 	{
 		UNREFERENCED_PARAMETER(ts);

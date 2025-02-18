@@ -88,8 +88,12 @@ namespace Kargono
 
 		void HandleUIMouseHovering();
 
+		//==========================
+		// Query Application State
+		//==========================
+		virtual Math::vec2 GetMouseViewportPosition() override;
+		virtual ViewportData* GetViewportData() override;
 
-		// Logic to open the project and its main scene
 		//==========================
 		// Project Management
 		//==========================

@@ -13,13 +13,18 @@ namespace Kargono::Input
 	{
 	public:
 		//==============================
-		// Poll Input from Platform Dependent Code
+		// Poll Input from Platform Dependent Backend
 		//==============================
 		static bool IsKeyPressed(KeyCode key);
 		static bool IsMouseButtonPressed(MouseCode button);
-		static Math::vec2 GetMousePosition();
-		static float GetMouseX();
-		static float GetMouseY();
+		static Math::vec2 GetAbsoluteMousePosition();
+		static float GetAbsoluteMouseX();
+		static float GetAbsoluteMouseY();
+
+		//==============================
+		// Poll Input from Application
+		//==============================
+		static Math::vec2 GetViewportMousePosition();
 	};
 
 }

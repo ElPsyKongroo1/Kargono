@@ -401,6 +401,7 @@ namespace Kargono::RuntimeUI
 		
 		// Runtime Values
 		size_t m_CurrentOption{ 0 };
+		bool m_DropDownOpen{ true };
 	};
 
 	//============================
@@ -658,10 +659,10 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// On Event Functions
 		//==============================
-		static void OnUpdate(Timestep ts, Math::vec2 mousePosition, ViewportData* viewportData);
+		static void OnUpdate(Timestep ts);
 		static bool OnKeyTypedEvent(Events::KeyTypedEvent event);
 		static bool OnKeyPressedEvent(Events::KeyPressedEvent event);
-		static void OnLeftMouseButtonPressed(Math::vec2 mousePosition, ViewportData* viewportData);
+		static void OnMouseButtonPressedEvent(const Events::MouseButtonPressedEvent& event);
 		static void OnMouseButtonReleasedEvent(const Events::MouseButtonReleasedEvent& mouseEvent);
 
 		//==============================

@@ -152,12 +152,7 @@ namespace Kargono::Panels
 
 			// Render RuntimeUI directory to viewport bounds
 			// Handle specific widget on click's
-			ImVec2 mousePos = ImGui::GetMousePos();
-			mousePos.x -= m_ScreenViewportBounds[0].x;
-			mousePos.y -= m_ScreenViewportBounds[0].y;
-			Math::vec2 viewportSize = m_ScreenViewportBounds[1] - m_ScreenViewportBounds[0];
-			mousePos.y = viewportSize.y - mousePos.y;
-			RuntimeUI::RuntimeUIService::OnUpdate(ts, { mousePos.x, mousePos.y }, & m_ViewportData);
+			RuntimeUI::RuntimeUIService::OnUpdate(ts);
 			RuntimeUI::RuntimeUIService::OnRender(m_ViewportData.m_Width, m_ViewportData.m_Height);
 
 			// Use mouse picking buffer to handle runtime UI mouse picking
@@ -267,13 +262,9 @@ namespace Kargono::Panels
 						RuntimeUI::RuntimeUIService::SetEditingWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 							m_HoveredWindowID, m_HoveredWidgetID });
 
-						// Handle specific widget on click's
-						ImVec2 mousePos = ImGui::GetMousePos();
-						mousePos.x -= m_ScreenViewportBounds[0].x;
-						mousePos.y -= m_ScreenViewportBounds[0].y;
-						Math::vec2 viewportSize = m_ScreenViewportBounds[1] - m_ScreenViewportBounds[0];
-						mousePos.y = viewportSize.y - mousePos.y;
-						RuntimeUI::RuntimeUIService::OnLeftMouseButtonPressed({ mousePos.x, mousePos.y }, &m_ViewportData);
+						// Throw a mouse pressed event
+						Events::MouseButtonPressedEvent mousePressedEvent{ Mouse::ButtonLeft };
+						RuntimeUI::RuntimeUIService::OnMouseButtonPressedEvent(mousePressedEvent);
 					}
 				}
 			}
@@ -672,6 +663,21 @@ namespace Kargono::Panels
 	void ViewportPanel::SetViewportAspectRatio(const Math::uvec2& newAspectRatio)
 	{
 		m_ViewportAspectRatio = newAspectRatio;
+	}
+
+	Math::vec2 ViewportPanel::GetMouseViewportPosition()
+	{
+		ImVec2 mousePos = ImGui::GetMousePos();
+		mousePos.x -= m_ScreenViewportBounds[0].x;
+		mousePos.y -= m_ScreenViewportBounds[0].y;
+		Math::vec2 viewportSize = m_ScreenViewportBounds[1] - m_ScreenViewportBounds[0];
+		mousePos.y = viewportSize.y - mousePos.y;
+		return { mousePos.x, mousePos.y };
+	}
+
+	ViewportData* ViewportPanel::GetViewportData()
+	{
+		return &m_ViewportData;
 	}
 
 	void ViewportPanel::OnOverlayRender()

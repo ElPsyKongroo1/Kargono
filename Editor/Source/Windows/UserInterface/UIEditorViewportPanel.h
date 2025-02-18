@@ -53,6 +53,8 @@ namespace Kargono::Panels
 		// External Functionality
 		//=========================
 		void OnOpenUI();
+		Math::vec2 GetMouseViewportPosition();
+		ViewportData* GetViewportData();
 	private:
 		//=========================
 		// Supporting Functions

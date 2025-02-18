@@ -28,6 +28,12 @@ namespace Kargono
 		virtual void OnUpdate(Timestep ts) override;
 		virtual bool OnLogEvent(Events::Event* event) override;
 
+		//==========================
+		// Query Application State
+		//==========================
+		virtual Math::vec2 GetMouseViewportPosition() override;
+		virtual ViewportData* GetViewportData() override;
+
 	private:
 		//=========================
 		// Manage Projects

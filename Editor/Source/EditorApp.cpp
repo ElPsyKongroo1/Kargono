@@ -284,6 +284,34 @@ namespace Kargono
 		return false;
 	}
 
+	Math::vec2 EditorApp::GetMouseViewportPosition()
+	{
+		switch (m_ActiveEditorWindow)
+		{
+		case ActiveEditorUIWindow::MainWindow: 
+			return m_MainWindow->m_ViewportPanel->GetMouseViewportPosition();
+		case ActiveEditorUIWindow::UIEditorWindow:
+			return m_UIEditorWindow->m_ViewportPanel->GetMouseViewportPosition();
+		default:
+			KG_WARN("Getting mouse position when no active viewport is available");
+			return { 0.0f, 0.0f };
+		}
+	}
+
+	ViewportData* EditorApp::GetViewportData()
+	{
+		switch (m_ActiveEditorWindow)
+		{
+		case ActiveEditorUIWindow::MainWindow:
+			return m_MainWindow->m_ViewportPanel->GetViewportData();
+		case ActiveEditorUIWindow::UIEditorWindow:
+			return m_UIEditorWindow->m_ViewportPanel->GetViewportData();
+		default:
+			KG_WARN("Getting viewport data when no active viewport is available");
+			return nullptr;
+		}
+	}
+
 
 	bool EditorApp::OpenProject()
 	{

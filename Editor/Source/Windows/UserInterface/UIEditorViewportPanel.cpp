@@ -85,12 +85,7 @@ namespace Kargono::Panels
 		m_ViewportFramebuffer->SetAttachment(1, -1);
 
 		// Handle specific widget on click's
-		ImVec2 mousePos = ImGui::GetMousePos();
-		mousePos.x -= m_ScreenViewportBounds[0].x;
-		mousePos.y -= m_ScreenViewportBounds[0].y;
-		Math::vec2 viewportSize = m_ScreenViewportBounds[1] - m_ScreenViewportBounds[0];
-		mousePos.y = viewportSize.y - mousePos.y;
-		RuntimeUI::RuntimeUIService::OnUpdate(ts, { mousePos.x, mousePos.y}, &m_ViewportData);
+		RuntimeUI::RuntimeUIService::OnUpdate(ts);
 		RuntimeUI::RuntimeUIService::OnRender(m_EditorCamera.GetViewProjection(), m_ViewportData.m_Width, m_ViewportData.m_Height);
 
 		HandleMouseHovering();
@@ -315,11 +310,8 @@ namespace Kargono::Panels
 	}
 	void UIEditorViewportPanel::HandleMouseHovering()
 	{
-		ImVec2 mousePos = ImGui::GetMousePos();
-		mousePos.x -= m_ScreenViewportBounds[0].x;
-		mousePos.y -= m_ScreenViewportBounds[0].y;
+		Math::vec2 mousePos = GetMouseViewportPosition();
 		Math::vec2 viewportSize = m_ScreenViewportBounds[1] - m_ScreenViewportBounds[0];
-		mousePos.y = viewportSize.y - mousePos.y;
 
 		if ((int)mousePos.x >= 0 && (int)mousePos.y >= 0 && (int)mousePos.x < (int)viewportSize.x && (int)mousePos.y < (int)viewportSize.y)
 		{
@@ -726,6 +718,19 @@ namespace Kargono::Panels
 	void UIEditorViewportPanel::OnOpenUI()
 	{
 		ResetCamera();
+	}
+	Math::vec2 UIEditorViewportPanel::GetMouseViewportPosition()
+	{
+		ImVec2 mousePos = ImGui::GetMousePos();
+		mousePos.x -= m_ScreenViewportBounds[0].x;
+		mousePos.y -= m_ScreenViewportBounds[0].y;
+		Math::vec2 viewportSize = m_ScreenViewportBounds[1] - m_ScreenViewportBounds[0];
+		mousePos.y = viewportSize.y - mousePos.y;
+		return { mousePos.x, mousePos.y };
+	}
+	ViewportData* UIEditorViewportPanel::GetViewportData()
+	{
+		return &m_ViewportData;
 	}
 	void UIEditorViewportPanel::DrawDebugLines()
 	{

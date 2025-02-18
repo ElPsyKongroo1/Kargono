@@ -155,10 +155,10 @@ namespace Kargono
 
 			// Handle runtime UI's OnUpdate()
 			Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
-			Math::vec2 mousePos = Input::InputService::GetMousePosition();
+			Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
-			RuntimeUI::RuntimeUIService::OnUpdate(ts, { mousePos.x, mousePos.y }, &activeViewport);
+			RuntimeUI::RuntimeUIService::OnUpdate(ts);
 
 			// Draw runtimeUI
 			RuntimeUI::RuntimeUIService::OnRender(EngineService::GetActiveWindow().GetWidth(), 
@@ -404,10 +404,11 @@ namespace Kargono
 
 			// Handle specific widget on click's
 			Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
-			Math::vec2 mousePos = Input::InputService::GetMousePosition();
+			Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
-			RuntimeUI::RuntimeUIService::OnLeftMouseButtonPressed({ mousePos.x, mousePos.y }, &activeViewport);
+			Events::MouseButtonPressedEvent mouseEvent{ Mouse::ButtonLeft };
+			RuntimeUI::RuntimeUIService::OnMouseButtonPressedEvent(mouseEvent);
 		}
 		return false;
 	}
@@ -542,7 +543,7 @@ namespace Kargono
 	{
 		// Get the active viewport bounds and mouse position
 		Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
-		Math::vec2 mousePos = Input::InputService::GetMousePosition();
+		Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 
 		// Make sure the mouse position is within bounds
 		if ((int)mousePos.x < 0 || 
@@ -574,6 +575,20 @@ namespace Kargono
 		RuntimeUI::RuntimeUIService::SetHoveredWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 			m_HoveredWindowID, m_HoveredWidgetID });
 
+	}
+
+	Math::vec2 RuntimeApp::GetMouseViewportPosition()
+	{
+		Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+		Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
+		// Make sure the y-position is oriented correctly
+		mousePos.y = (float)activeViewport.m_Height - mousePos.y;
+		return mousePos;
+	}
+
+	ViewportData* RuntimeApp::GetViewportData()
+	{
+		return &EngineService::GetActiveWindow().GetActiveViewport();
 	}
 
 

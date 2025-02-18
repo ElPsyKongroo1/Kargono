@@ -86,4 +86,16 @@ namespace Kargono
 		Network::ServerService::Run();
 	}
 
+	Math::vec2 ServerApp::GetMouseViewportPosition()
+	{
+		KG_WARN("Attempt to retrieve mouse location from unimplemented function in Server Application");
+		return Math::vec2();
+	}
+
+	ViewportData* ServerApp::GetViewportData()
+	{
+		KG_WARN("Attempt to retrieve mouse location from unimplemented function in Server Application");
+		return nullptr;
+	}
+
 }

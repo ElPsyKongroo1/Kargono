@@ -84,6 +84,9 @@ namespace Kargono::Panels
 
 		void SetViewportAspectRatio(const Math::uvec2& newAspectRatio);
 
+		Math::vec2 GetMouseViewportPosition();
+		ViewportData* GetViewportData();
+
 
 	private:
 		//=========================

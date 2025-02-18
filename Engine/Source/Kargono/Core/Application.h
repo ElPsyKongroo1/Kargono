@@ -2,6 +2,7 @@
 
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Events/Event.h"
+#include "Kargono/Core/Window.h"
 
 namespace Kargono 
 {
@@ -72,6 +73,12 @@ namespace Kargono
 			UNREFERENCED_PARAMETER(event);
 			return false; 
 		}
+
+		//==============================
+		// Query Application State
+		//==============================
+		virtual Math::vec2 GetMouseViewportPosition() = 0;
+		virtual ViewportData* GetViewportData() = 0;
 
 		//==============================
 		// Getter/Setter

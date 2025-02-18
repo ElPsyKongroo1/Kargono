@@ -88,7 +88,7 @@ namespace Kargono::Rendering
 
 		if (Input::InputService::IsKeyPressed(Key::LeftAlt))
 		{
-			const Math::vec2& mouse{ Input::InputService::GetMouseX(), Input::InputService::GetMouseY() };
+			const Math::vec2& mouse{ Input::InputService::GetAbsoluteMouseX(), Input::InputService::GetAbsoluteMouseY() };
 			Math::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 			m_InitialMousePosition = mouse;
 
@@ -117,7 +117,7 @@ namespace Kargono::Rendering
 
 	void EditorPerspectiveCamera::MouseMovement()
 	{
-		const Math::vec2& mouse{ Input::InputService::GetMouseX(), Input::InputService::GetMouseY() };
+		const Math::vec2& mouse{ Input::InputService::GetAbsoluteMouseX(), Input::InputService::GetAbsoluteMouseY() };
 		Math::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 		m_InitialMousePosition = mouse;
 		if (m_MousePaused)
