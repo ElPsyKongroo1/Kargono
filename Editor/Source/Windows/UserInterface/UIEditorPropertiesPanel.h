@@ -199,6 +199,13 @@ namespace Kargono::Panels
 		void OnOpenDropDownWidgetOnSelectOptionPopup(EditorUI::SelectOptionSpec& spec);
 		void OnOpenTooltipForDropDownWidgetOnSelectOption(EditorUI::SelectOptionSpec& spec);
 
+		// Modify widget open
+		void OnModifyDropDownWidgetOpen(EditorUI::CheckboxSpec& spec);
+
+		// Modify widget's current option
+		void OnModifyDropDownWidgetCurrentOption(const EditorUI::OptionEntry& entry);
+		void OnOpenDropDownWidgetCurrentOptionPopup(EditorUI::SelectOptionSpec& spec);
+
 		// Modify widget's options list
 		void OnRefreshDropDownWidgetOptionsList();
 		void OnDropDownWidgetAddEntryDialog();
@@ -361,5 +368,7 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_DropDownWidgetDeleteEntryWarning{};
 		EditorUI::EditTextSpec m_DropDownWidgetEditEntry{};
 		size_t m_ActiveDropDownOption{ 0 };
+		EditorUI::CheckboxSpec m_DropDownWidgetDropdownOpen{};
+		EditorUI::SelectOptionSpec m_DropDownWidgetCurrentOption{};
 	};
 }

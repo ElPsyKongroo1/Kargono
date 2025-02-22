@@ -542,10 +542,28 @@ namespace Kargono::Panels
 			// Draw options to edit selected DropDown widget
 			RuntimeUI::DropDownWidget& activeDropDownWidget = *(RuntimeUI::DropDownWidget*)m_ActiveWidget;
 			
+			// Edit the drop-down open boolean
+			m_DropDownWidgetDropdownOpen.m_CurrentBoolean = activeDropDownWidget.m_DropDownOpen;
+			EditorUI::EditorUIService::Checkbox(m_DropDownWidgetDropdownOpen);
+
+			// Only display the current option if an options list exists
+			if (activeDropDownWidget.m_DropDownOptions.size() > 0)
+			{
+				// Edit the drop-down's current option
+				size_t currentOption = activeDropDownWidget.m_CurrentOption;
+				bool validOption{ currentOption < activeDropDownWidget.m_DropDownOptions.size() };
+				m_DropDownWidgetCurrentOption.m_CurrentOption =
+				{
+					validOption ? activeDropDownWidget.m_DropDownOptions[currentOption].m_Text : "",
+					currentOption
+				};
+				EditorUI::EditorUIService::SelectOption(m_DropDownWidgetCurrentOption);
+			}
+
 			// Display all drop-down options
 			EditorUI::EditorUIService::List(m_DropDownWidgetOptionsList);
 
-			// Edit selected text widget's wrapped alignment
+			// Edit selected drop-down's wrapped alignment
 			m_DropDownWidgetSelectable.m_CurrentBoolean = activeDropDownWidget.m_SelectionData.m_Selectable;
 			EditorUI::EditorUIService::Checkbox(m_DropDownWidgetSelectable);
 
@@ -1484,6 +1502,17 @@ namespace Kargono::Panels
 		m_DropDownWidgetOnSelectOption.m_PopupAction = KG_BIND_CLASS_FN(OnOpenDropDownWidgetOnSelectOptionPopup);
 		m_DropDownWidgetOnSelectOption.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyDropDownWidgetOnSelectOption);
 		m_DropDownWidgetOnSelectOption.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForDropDownWidgetOnSelectOption);
+
+		// Set up editorUI widget to modify the DropDown widget's open boolean
+		m_DropDownWidgetDropdownOpen.m_Label = "Drop-Down Open";
+		m_DropDownWidgetDropdownOpen.m_Flags |= EditorUI::Checkbox_Indented;
+		m_DropDownWidgetDropdownOpen.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyDropDownWidgetOpen);
+
+		// Set up widget to modify the DropDown widget's current option
+		m_DropDownWidgetCurrentOption.m_Label = "Current Option";
+		m_DropDownWidgetCurrentOption.m_Flags |= EditorUI::SelectOption_Indented;
+		m_DropDownWidgetCurrentOption.m_PopupAction = KG_BIND_CLASS_FN(OnOpenDropDownWidgetCurrentOptionPopup);
+		m_DropDownWidgetCurrentOption.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyDropDownWidgetCurrentOption);
 
 		// Set up editorUI widget to view the DropDown widget's options list
 		m_DropDownWidgetOptionsList.m_Label = "Drop-Down Options";
@@ -2645,6 +2674,90 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
 
+	void UIEditorPropertiesPanel::OnModifyDropDownWidgetOpen(EditorUI::CheckboxSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure we have the correct widget type
+		KG_ASSERT(m_ActiveWidget->m_WidgetType == RuntimeUI::WidgetTypes::DropDownWidget);
+
+		// Get the underlying widget type
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+		KG_ASSERT(activeDropDownWidget);
+
+		// Update the widget's open boolean
+		activeDropDownWidget->m_DropDownOpen = spec.m_CurrentBoolean;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyDropDownWidgetCurrentOption(const EditorUI::OptionEntry& entry)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure this is the correct widget type
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::DropDownWidget)
+		{
+			KG_WARN("Invalid widget type provided when modifying widget");
+			return;
+		}
+
+		// Get the underlying widget
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+
+		// Ensure the widget is valid and is within correct bounds
+		KG_ASSERT(activeDropDownWidget);
+		KG_ASSERT(entry.m_Handle < activeDropDownWidget->m_DropDownOptions.size());
+
+		// Modify the current option
+		activeDropDownWidget->m_CurrentOption = entry.m_Handle;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnOpenDropDownWidgetCurrentOptionPopup(EditorUI::SelectOptionSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Ensure this is the correct widget type
+		if (m_ActiveWidget->m_WidgetType != RuntimeUI::WidgetTypes::DropDownWidget)
+		{
+			KG_WARN("Invalid widget type provided when modifying widget");
+			return;
+		}
+
+		// Get the underlying widget
+		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
+		KG_ASSERT(activeDropDownWidget);
+
+		// Clear existing options
+		spec.ClearOptions();
+
+		// Add all compatible scripts to the select options
+		size_t iteration{ 0 };
+		for (const RuntimeUI::SingleLineTextData& textData : activeDropDownWidget->m_DropDownOptions)
+		{
+
+			// Add script to the select options
+			spec.AddToOptions("All Options", textData.m_Text, iteration);
+			iteration++;
+		}
+	}
+
 	void UIEditorPropertiesPanel::OnRefreshDropDownWidgetOptionsList()
 	{
 		// Ensure active window and widget are valid
@@ -2857,6 +2970,12 @@ namespace Kargono::Panels
 
 		// Revalidate the text data
 		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+
+		// Revalidate the current option
+		if (activeDropDownWidget->m_CurrentOption >= optionsList.size())
+		{
+			activeDropDownWidget->m_CurrentOption = 0;
+		}
 
 		// Refresh the table
 		KG_ASSERT(m_DropDownWidgetOptionsList.m_OnRefresh);

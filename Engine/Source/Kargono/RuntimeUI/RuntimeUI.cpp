@@ -396,8 +396,75 @@ namespace Kargono::RuntimeUI
 			{
 				activeUI->m_PressedWidget = activeUI->m_SelectedWidget;
 			}
-
 		}
+
+		else if (activeUI->m_SelectedWidget && activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::DropDownWidget)
+		{
+			// Get the underlying widget type
+			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::DropDownWidget);
+			DropDownWidget& activeDropDown = *(DropDownWidget*)activeUI->m_SelectedWidget;
+
+			// Get the widget's translation and size
+			Math::vec3 widgetTranslation;
+			Math::vec3 widgetSize;
+			GetWidgetLocationAndSize(activeUI->m_ActiveWindow, activeUI->m_SelectedWidget, viewportData,
+				widgetTranslation, widgetSize);
+
+			//==============================//
+			// Check if the mouse position is within bounds of the current option
+			if (mousePosition.x > widgetTranslation.x && mousePosition.x < (widgetTranslation.x + widgetSize.x) &&
+				mousePosition.y > widgetTranslation.y && mousePosition.y < (widgetTranslation.y + widgetSize.y))
+			{
+				// Toggle the drop down begin open if we click the current option
+				Utility::Operations::ToggleBoolean(activeDropDown.m_DropDownOpen);
+				return;
+			}
+
+			// Draw drop-down options
+			if (activeDropDown.m_DropDownOpen)
+			{
+				// This variable represents the *visible* drop-down position/index
+				// Note: IT IS NOT THE INDEX INTO THE DROPDOWNOPTIONS VECTOR
+				size_t visibleDropDownOffset{ 0 };
+				for (size_t iteration{ 0 }; iteration < activeDropDown.m_DropDownOptions.size(); iteration++)
+				{
+					// Exclude the current option
+					if (activeDropDown.m_CurrentOption == iteration)
+					{
+						continue;
+					}
+
+					// Create translation for the current option
+					Math::vec2 currentOptionTranslation
+					{
+						widgetTranslation.x,
+						widgetTranslation.y - widgetSize.y * (float)(visibleDropDownOffset + 1)
+					};
+
+					// Check if the mouse position is within bounds of the current option
+					if (mousePosition.x > currentOptionTranslation.x &&
+						mousePosition.x < (currentOptionTranslation.x + widgetSize.x) &&
+						mousePosition.y > currentOptionTranslation.y &&
+						mousePosition.y < (currentOptionTranslation.y + widgetSize.y))
+					{
+						// Turn off the drop-down open boolean and set the current option to this iteration
+						activeDropDown.m_DropDownOpen = false;
+						activeDropDown.m_CurrentOption = iteration;
+						// Call the select option function if applicable
+						if (activeDropDown.m_OnSelectOption)
+						{
+							const SingleLineTextData& currentTextData = activeDropDown.m_DropDownOptions.at(iteration);
+							Utility::CallWrappedVoidString(activeDropDown.m_OnSelectOption->m_Function, currentTextData.m_Text);
+						}
+						return;
+					}
+
+					visibleDropDownOffset++;
+				}
+			}
+		}
+
+		
 	}
 
 	void RuntimeUIService::OnMouseButtonReleasedEvent(const Events::MouseButtonReleasedEvent& mouseEvent)
@@ -2837,10 +2904,12 @@ namespace Kargono::RuntimeUI
 				widgetTranslation.z += 0.001f;
 
 				// Create transform for the current drop-down option
-				Math::vec3 currentOptionTranslation{ 
+				Math::vec3 currentOptionTranslation
+				{ 
 					widgetTranslation.x, 
 					widgetTranslation.y - widgetSize.y * (float)(visibleDropDownOffset + 1), 
-					widgetTranslation.z };
+					widgetTranslation.z 
+				};
 
 				// Check if the mouse position is within bounds of the current option
 				if (activeUI->m_HoveredWidget &&

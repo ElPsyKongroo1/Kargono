@@ -401,7 +401,7 @@ namespace Kargono::RuntimeUI
 		
 		// Runtime Values
 		size_t m_CurrentOption{ 0 };
-		bool m_DropDownOpen{ true };
+		bool m_DropDownOpen{ false };
 	};
 
 	//============================
