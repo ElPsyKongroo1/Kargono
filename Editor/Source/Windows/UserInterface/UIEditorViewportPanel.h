@@ -79,8 +79,8 @@ namespace Kargono::Panels
 		bool m_ViewportFocused{ false };
 		bool m_ViewportHovered{ false };
 		Math::vec2 m_ScreenViewportBounds[2];
-		uint16_t m_HoveredWindowID{ Kargono::RuntimeUI::k_InvalidWindowID };
-		uint16_t m_HoveredWidgetID{ Kargono::RuntimeUI::k_InvalidWidgetID };
+		uint16_t m_HoveredWindowID{ Kargono::RuntimeUI::k_InvalidWindowIndex };
+		uint16_t m_HoveredWidgetID{ Kargono::RuntimeUI::k_InvalidWidgetIndex };
 
 		// Debug overlay data
 		bool m_ToolbarEnabled{ true };

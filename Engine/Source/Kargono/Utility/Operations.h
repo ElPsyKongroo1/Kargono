@@ -18,6 +18,9 @@ namespace Kargono::Utility
 			boolToToggle = !boolToToggle;
 		}
 
+		//==============================
+		// String Operations
+		//==============================
 		static void RemoveCharacterFromString(std::string& string, char character)
 		{
 			std::erase(string, character);
@@ -37,7 +40,8 @@ namespace Kargono::Utility
 			size_t position = inputString.find(queryCharacter);
 
 			// If the character is not found, return the entire string
-			if (position == std::string::npos) {
+			if (position == std::string::npos) 
+			{
 				return std::string_view(inputString);
 			}
 
@@ -45,6 +49,9 @@ namespace Kargono::Utility
 			return std::string_view(inputString.data(), position);
 		}
 
+		//==============================
+		// Integer Operations
+		//==============================
 		template <typename T>
 		static T RoundDown(T valueToRound, T multipleOf)
 		{

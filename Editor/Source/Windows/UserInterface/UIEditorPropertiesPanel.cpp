@@ -1577,7 +1577,7 @@ namespace Kargono::Panels
 	{
 		// Clear existing options
 		spec.ClearOptions();
-		spec.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::k_InvalidWidgetIndex);
+		spec.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::k_InvalidWidgetID);
 
 		// Add all text widgets to the options
 		std::size_t iteration{ 0 };
@@ -1666,9 +1666,9 @@ namespace Kargono::Panels
 		}
 
 		// Clear the default active widget if the provided index is invalid
-		if (entry.m_Handle == (uint64_t)RuntimeUI::k_InvalidWidgetIndex)
+		if (entry.m_Handle == (uint64_t)RuntimeUI::k_InvalidWidgetID)
 		{
-			m_ActiveWindow->m_DefaultActiveWidget = RuntimeUI::k_InvalidWidgetIndex;
+			m_ActiveWindow->m_DefaultActiveWidget = RuntimeUI::k_InvalidWidgetID;
 			m_ActiveWindow->m_DefaultActiveWidgetRef = nullptr;
 			return;
 		}

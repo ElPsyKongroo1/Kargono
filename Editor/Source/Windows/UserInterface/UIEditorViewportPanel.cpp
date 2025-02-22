@@ -123,7 +123,7 @@ namespace Kargono::Panels
 			{
 				s_UIWindow->m_TreePanel->SelectTreeNode(m_HoveredWindowID, m_HoveredWidgetID);
 
-				if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowID && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetID)
+				if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowIndex && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetIndex)
 				{
 					// Set widget as selected manually
 					Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidget(m_HoveredWindowID, m_HoveredWidgetID);
@@ -325,7 +325,7 @@ namespace Kargono::Panels
 		}
 
 		// Exit early if no valid widget/window is available
-		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetID || m_HoveredWindowID == RuntimeUI::k_InvalidWindowID)
+		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetIndex || m_HoveredWindowID == RuntimeUI::k_InvalidWindowIndex)
 		{
 			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
 			return;

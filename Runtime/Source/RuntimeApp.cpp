@@ -394,7 +394,7 @@ namespace Kargono
 		}
 
 		// Handle on press for the active user interface if applicable
-		if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowID && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetID)
+		if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowIndex && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetIndex)
 		{
 			RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 				m_HoveredWindowID, m_HoveredWidgetID });
@@ -565,7 +565,7 @@ namespace Kargono
 		m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
 
 		// Exit early if no valid widget/window is available
-		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetID || m_HoveredWindowID == RuntimeUI::k_InvalidWindowID)
+		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetIndex || m_HoveredWindowID == RuntimeUI::k_InvalidWindowIndex)
 		{
 			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
 			return;

@@ -59,17 +59,15 @@ namespace Kargono::RuntimeUI
 		InputTextWidget, SliderWidget
 	};
 
-	constexpr std::size_t k_InvalidWidgetIndex{ std::numeric_limits<std::size_t>().max() };
-
 	//============================
 	// Navigation Links Struct
 	//============================
 	struct NavigationLinks
 	{
-		std::size_t m_LeftWidgetIndex { k_InvalidWidgetIndex };
-		std::size_t m_RightWidgetIndex { k_InvalidWidgetIndex };
-		std::size_t m_UpWidgetIndex{ k_InvalidWidgetIndex };
-		std::size_t m_DownWidgetIndex { k_InvalidWidgetIndex };
+		uint64_t m_LeftWidgetID { k_InvalidWidgetID };
+		uint64_t m_RightWidgetID { k_InvalidWidgetID };
+		uint64_t m_UpWidgetID{ k_InvalidWidgetID };
+		uint64_t m_DownWidgetID { k_InvalidWidgetID };
 	};
 	
 	enum class RelativeOrAbsolute
@@ -602,10 +600,10 @@ namespace Kargono::RuntimeUI
 		Math::vec3 m_ScreenPosition{};
 		Math::vec2 m_Size{1.0f, 1.0f};
 		Math::vec4 m_BackgroundColor{ 0.3f };
-		std::size_t m_ParentIndex{ k_InvalidWidgetIndex };
-		std::size_t m_ChildBufferIndex{ k_InvalidWidgetIndex };
+		std::size_t m_ParentIndex{ k_InvalidWidgetID };
+		std::size_t m_ChildBufferIndex{ k_InvalidWidgetID };
 		std::size_t m_ChildBufferSize{ 0 };
-		std::size_t m_DefaultActiveWidget{ k_InvalidWidgetIndex };
+		std::size_t m_DefaultActiveWidget{ k_InvalidWidgetID };
 		Ref<Widget> m_DefaultActiveWidgetRef{ nullptr };
 		std::vector<Ref<Widget>> m_Widgets{};
 

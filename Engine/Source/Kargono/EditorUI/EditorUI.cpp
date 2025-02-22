@@ -563,7 +563,16 @@ namespace Kargono::EditorUI
 	{
 		RenderImGuiNotify();
 		
+		ImGuiContext& g = *GImGui; 
 		ImGuiIO& io = ImGui::GetIO();
+
+		// Handle ensuring invalid mouse icons are not held
+		static bool overlapActive = false;
+		if (overlapActive && !g.HoveredIdAllowOverlap)
+		{
+			EngineService::GetActiveWindow().SetMouseCursorIcon(CursorIconType::Standard);
+		}
+		overlapActive = g.HoveredIdAllowOverlap;
 		
 		Engine& app = EngineService::GetActiveEngine();
 		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));

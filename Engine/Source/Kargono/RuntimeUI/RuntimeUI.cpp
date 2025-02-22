@@ -653,7 +653,7 @@ namespace Kargono::RuntimeUI
 		// Clear default active widget if necessary
 		if (widgetIndex == indicatedWindow.m_DefaultActiveWidget)
 		{
-			indicatedWindow.m_DefaultActiveWidget = k_InvalidWidgetIndex;
+			indicatedWindow.m_DefaultActiveWidget = k_InvalidWidgetID;
 			indicatedWindow.m_DefaultActiveWidgetRef = nullptr;
 		}
 
@@ -1794,10 +1794,10 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(originalSelectionData);
 
 		// Move to the right
-		if (originalSelectionData->m_NavigationLinks.m_RightWidgetIndex != k_InvalidWidgetIndex)
+		if (originalSelectionData->m_NavigationLinks.m_RightWidgetID != k_InvalidWidgetID)
 		{
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_RightWidgetIndex).get();
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_RightWidgetID).get();
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -1829,11 +1829,11 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(originalSelectionData);
 
 		// Move to the left
-		if (originalSelectionData->m_NavigationLinks.m_LeftWidgetIndex != k_InvalidWidgetIndex)
+		if (originalSelectionData->m_NavigationLinks.m_LeftWidgetID != k_InvalidWidgetID)
 		{
 
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_LeftWidgetIndex).get();
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_LeftWidgetID).get();
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -1865,10 +1865,10 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(originalSelectionData);
 
 		// Move up
-		if (originalSelectionData->m_NavigationLinks.m_UpWidgetIndex != k_InvalidWidgetIndex)
+		if (originalSelectionData->m_NavigationLinks.m_UpWidgetID != k_InvalidWidgetID)
 		{
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_UpWidgetIndex).get();
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_UpWidgetID).get();
 
 			// Get the new widget's selection data
 			SelectionData* newSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
@@ -1904,10 +1904,10 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(originalSelectionData);
 
 		// Move down
-		if (originalSelectionData->m_NavigationLinks.m_DownWidgetIndex != k_InvalidWidgetIndex)
+		if (originalSelectionData->m_NavigationLinks.m_DownWidgetID != k_InvalidWidgetID)
 		{
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_DownWidgetIndex).get();
+			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_DownWidgetID).get();
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -1985,13 +1985,13 @@ namespace Kargono::RuntimeUI
 				}
 
 				// Calculate navigation links for the current widget
-				selectionData->m_NavigationLinks.m_RightWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget, 
+				selectionData->m_NavigationLinks.m_RightWidgetID = CalculateNavigationLink(currentWindow, currentWidget, 
 					Direction::Right, windowPosition, windowScale);
-				selectionData->m_NavigationLinks.m_LeftWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget,
+				selectionData->m_NavigationLinks.m_LeftWidgetID = CalculateNavigationLink(currentWindow, currentWidget,
 					Direction::Left, windowPosition, windowScale);
-				selectionData->m_NavigationLinks.m_UpWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget,
+				selectionData->m_NavigationLinks.m_UpWidgetID = CalculateNavigationLink(currentWindow, currentWidget,
 					Direction::Up, windowPosition, windowScale);
-				selectionData->m_NavigationLinks.m_DownWidgetIndex = CalculateNavigationLink(currentWindow, currentWidget,
+				selectionData->m_NavigationLinks.m_DownWidgetID = CalculateNavigationLink(currentWindow, currentWidget,
 					Direction::Down, windowPosition, windowScale);
 			}
 		}
@@ -2222,7 +2222,7 @@ namespace Kargono::RuntimeUI
 		}
 		else
 		{
-			return k_InvalidWidgetIndex;
+			return k_InvalidWidgetID;
 		}
 	}
 

@@ -536,11 +536,6 @@ namespace Kargono::Panels
 			});
 		windowEntry.m_OnRightClickSelection.push_back
 		({
-			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ImageButtonWidget),
-			KG_BIND_CLASS_FN(AddImageButtonWidget)
-			});
-		windowEntry.m_OnRightClickSelection.push_back
-		({
 			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::CheckboxWidget),
 			KG_BIND_CLASS_FN(AddCheckboxWidget)
 			});
@@ -612,7 +607,7 @@ namespace Kargono::Panels
 	}
 	void UIEditorTreePanel::SelectTreeNode(uint16_t windowID, uint16_t widgetID)
 	{
-		if (windowID == RuntimeUI::k_InvalidWindowID)
+		if (windowID == RuntimeUI::k_InvalidWindowIndex)
 		{
 			return;
 		}
@@ -626,7 +621,7 @@ namespace Kargono::Panels
 		// Add window node
 		path.AddNode(windowID);
 
-		if (widgetID == RuntimeUI::k_InvalidWidgetID)
+		if (widgetID == RuntimeUI::k_InvalidWidgetIndex)
 		{
 			m_UITree.ExpandFirstLayer();
 			success = m_UITree.SelectEntry(path);

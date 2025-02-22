@@ -345,7 +345,7 @@ namespace API::Platform
 	}
 	void DesktopWindow::SetMouseCursorVisible(bool choice)
 	{
-		auto cursorVisibility = choice ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;
+		int cursorVisibility = choice ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED;
 		glfwSetInputMode(m_Window, GLFW_CURSOR, cursorVisibility);
 	}
 	void DesktopWindow::SetMouseCursorIcon(Kargono::CursorIconType iconType)
