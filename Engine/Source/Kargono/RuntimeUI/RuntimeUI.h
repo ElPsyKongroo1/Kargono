@@ -9,6 +9,7 @@
 #include "Kargono/Core/Directions.h"
 #include "Kargono/RuntimeUI/RuntimeUICommon.h"
 #include "Kargono/Core/Window.h"
+#include "Kargono/Utility/Random.h"
 
 #include <vector>
 #include <string>
@@ -64,10 +65,10 @@ namespace Kargono::RuntimeUI
 	//============================
 	struct NavigationLinks
 	{
-		uint64_t m_LeftWidgetID { k_InvalidWidgetID };
-		uint64_t m_RightWidgetID { k_InvalidWidgetID };
-		uint64_t m_UpWidgetID{ k_InvalidWidgetID };
-		uint64_t m_DownWidgetID { k_InvalidWidgetID };
+		int32_t m_LeftWidgetID { k_InvalidWidgetID };
+		int32_t m_RightWidgetID { k_InvalidWidgetID };
+		int32_t m_UpWidgetID{ k_InvalidWidgetID };
+		int32_t m_DownWidgetID { k_InvalidWidgetID };
 	};
 	
 	enum class RelativeOrAbsolute
@@ -142,6 +143,10 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Constructors/Destructors
 		//============================
+		Widget()
+		{
+			m_ID = Utility::RandomService::GenerateRandomInteger((int32_t)0, k_InvalidWidgetID - 1);
+		}
 		virtual ~Widget() = default;
 	public:
 		//============================
@@ -161,6 +166,7 @@ namespace Kargono::RuntimeUI
 		// Widget Data
 		//============================
 		std::string m_Tag{ "None" };
+		int32_t m_ID{ k_InvalidWidgetID };
 		PixelOrPercent m_SizeType{ PixelOrPercent::Percent };
 		PixelOrPercent m_XPositionType{ PixelOrPercent::Percent };
 		PixelOrPercent m_YPositionType{ PixelOrPercent::Percent };
@@ -567,6 +573,15 @@ namespace Kargono::RuntimeUI
 	{
 	public:
 		//============================
+		// Constructors/Destructors
+		//============================
+		Window()
+		{
+			m_ID = Utility::RandomService::GenerateRandomInteger((int32_t)0, k_InvalidWindowID - 1);
+		}
+
+	public:
+		//============================
 		// Interact w/ Window
 		//============================
 		void DisplayWindow();
@@ -597,6 +612,7 @@ namespace Kargono::RuntimeUI
 		// Public Fields
 		//============================
 		std::string m_Tag{ "None" };
+		int32_t m_ID{ k_InvalidWindowID };
 		Math::vec3 m_ScreenPosition{};
 		Math::vec2 m_Size{1.0f, 1.0f};
 		Math::vec4 m_BackgroundColor{ 0.3f };
@@ -640,6 +656,7 @@ namespace Kargono::RuntimeUI
 		Widget* m_EditingWidget{ nullptr };
 		Widget* m_PressedWidget{ nullptr };
 		Window* m_ActiveWindow{ nullptr };
+		std::unordered_map<int32_t, std::vector<uint16_t>> m_IDToLocation{};
 	};
 
 	//============================
@@ -689,13 +706,13 @@ namespace Kargono::RuntimeUI
 		static void SetDisplayWindowByIndex(WindowID widgetID, bool display);
 		static void AddActiveWindow(Window& window);
 		static bool DeleteActiveUIWindow(std::size_t windowLocation);
-		static bool DeleteActiveUIWidget(std::size_t windowIndex, std::size_t widgetIndex);
+		static bool DeleteActiveUIWidget(int32_t widgetID);
 
 		//==============================
 		// Modify Indicated UI
 		//==============================
 		static bool DeleteUIWindow(Ref<UserInterface> userInterface, std::size_t windowLocation);
-		static bool DeleteUIWidget(Ref<UserInterface> userInterface, std::size_t windowIndex, std::size_t widgetIndex);
+		static bool DeleteUIWidget(Ref<UserInterface> userInterface, int32_t widgetID);
 
 		//==============================
 		// Query Active UI
@@ -739,9 +756,11 @@ namespace Kargono::RuntimeUI
 		static Assets::AssetHandle GetActiveUIHandle();
 		static void ClearActiveUI();
 		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
-		static Ref<Widget> GetWidget(uint16_t windowIndex, uint16_t widgetIndex);
+		static Ref<Widget> GetWidget(int32_t widgetID);
+		static IDType CheckIDType(int32_t windowOrWidgetID);
+		static std::vector<uint16_t>* GetLocationFromID(int32_t windowOrWidgetID);
 		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag);
-		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(uint16_t windowIndex, uint16_t widgetIndex);
+		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(int32_t widgetID);
 
 	public:
 		//==============================
@@ -753,8 +772,9 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Revalidate UI Context (Internal)
 		//==============================
-		static std::size_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
+		static int32_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
 		static void RevalidateDisplayedWindows();
+		static void RevalidateWidgetIDToLocationMap();
 		static void CalculateSingleLineText(SingleLineTextData& textData);
 		static Math::vec2 CalculateSingleLineText(std::string_view textData);
 		static size_t CalculateCursorIndexFromMousePosition(SingleLineTextData& textData, float textStartingPosition, float mouseXPosition, float textScalingFactor);

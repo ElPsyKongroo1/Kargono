@@ -40,7 +40,7 @@ namespace Kargono::Panels
 		void OnRefreshData();
 		void OnRefreshUITree();
 		void RecalculateTreeIndexData();
-		void SelectTreeNode(uint16_t windowID, uint16_t widgetID);
+		void SelectTreeNode(RuntimeUI::IDType idType, int32_t id);
 
 		//=========================
 		// On Action Functions

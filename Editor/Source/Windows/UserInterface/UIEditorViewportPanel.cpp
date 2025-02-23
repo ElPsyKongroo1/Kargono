@@ -121,20 +121,28 @@ namespace Kargono::Panels
 		{
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 			{
-				s_UIWindow->m_TreePanel->SelectTreeNode(m_HoveredWindowID, m_HoveredWidgetID);
+				RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWindowWidgetID);
 
-				if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowIndex && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetIndex)
+				if (idType != RuntimeUI::IDType::None)
 				{
-					// Set widget as selected manually
-					Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidget(m_HoveredWindowID, m_HoveredWidgetID);
-					if (hoveredWidget && hoveredWidget->Selectable())
+					s_UIWindow->m_TreePanel->SelectTreeNode(idType, m_HoveredWindowWidgetID);
+
+					if (idType == RuntimeUI::IDType::Widget)
 					{
-						Ref<RuntimeUI::UserInterface> userInterface = RuntimeUI::RuntimeUIService::GetActiveUI();
-						KG_ASSERT(userInterface);
-						userInterface->m_SelectedWidget = hoveredWidget.get();
+						// Set widget as selected manually
+						Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidget(m_HoveredWindowWidgetID);
+						if (hoveredWidget && hoveredWidget->Selectable())
+						{
+							Ref<RuntimeUI::UserInterface> userInterface = RuntimeUI::RuntimeUIService::GetActiveUI();
+							KG_ASSERT(userInterface);
+							userInterface->m_SelectedWidget = hoveredWidget.get();
+						}
+
 					}
-					
 				}
+
+
+				
 			}
 		}
 
@@ -315,24 +323,20 @@ namespace Kargono::Panels
 
 		if ((int)mousePos.x >= 0 && (int)mousePos.y >= 0 && (int)mousePos.x < (int)viewportSize.x && (int)mousePos.y < (int)viewportSize.y)
 		{
-			int pixelData = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
-
-			// Extract lower 16 bits
-			m_HoveredWidgetID = (uint16_t)(pixelData & 0xFFFF);
-
-			// Extract upper 16 bits
-			m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
+			m_HoveredWindowWidgetID = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
 		}
 
+		RuntimeUI::IDType type = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWindowWidgetID);
+
 		// Exit early if no valid widget/window is available
-		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetIndex || m_HoveredWindowID == RuntimeUI::k_InvalidWindowIndex)
+		if (type == RuntimeUI::IDType::None || type == RuntimeUI::IDType::Window)
 		{
 			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
 			return;
 		}
 		
 		// Set widget as hovered manually
-		Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidget(m_HoveredWindowID, m_HoveredWidgetID);
+		Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidget(m_HoveredWindowWidgetID);
 		
 		if (!hoveredWidget || !hoveredWidget->Selectable())
 		{

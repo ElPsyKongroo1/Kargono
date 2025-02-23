@@ -1590,7 +1590,6 @@ namespace Kargono::Scripting
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			size_t windowIteration{ 0 };
 			for (RuntimeUI::Window& currentWindow : currentUI->m_Windows)
 			{
 				// Create the basic window literal
@@ -1601,10 +1600,9 @@ namespace Kargono::Scripting
 				// Add text replacement values for this window
 				newWindowLiteral->m_OutputText = std::format("RuntimeUI::WindowID({}, {})",
 					std::to_string(configHandle),
-					std::to_string(windowIteration));
+					std::to_string(currentWindow.m_ID));
 				newWindowLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_window" };
 				
-				size_t widgetIteration{ 0 };
 				for (Ref<RuntimeUI::Widget> currentWidget : currentWindow.m_Widgets)
 				{
 					// Create the basic widget literal
@@ -1613,10 +1611,9 @@ namespace Kargono::Scripting
 					Utility::Operations::RemoveWhitespaceFromString(currentWidgetLabel);
 
 					// Add text replacement values for this widget
-					newWidgetLiteral->m_OutputText = std::format("RuntimeUI::WidgetID({}, {}, {})",
+					newWidgetLiteral->m_OutputText = std::format("RuntimeUI::WidgetID({}, {})",
 						std::to_string(configHandle),
-						std::to_string(windowIteration),
-						std::to_string(widgetIteration));
+						std::to_string(currentWidget->m_ID));
 
 					// Set the widget's primitive type
 					switch (currentWidget->m_WidgetType)
@@ -1652,12 +1649,10 @@ namespace Kargono::Scripting
 					
 					// Add the widget literal into the window literal
 					newWindowLiteral->m_Members.insert_or_assign(currentWidgetLabel, newWidgetLiteral);
-					widgetIteration++;
 				}
 
 				// Add the window literal to the asset literal
 				newMember.m_Members.insert_or_assign(currentWindowLabel, newWindowLiteral);
-				windowIteration++;
 			}
 
 			std::string fileName = configInfo.Data.FileLocation.stem().string();

@@ -41,7 +41,6 @@ namespace Kargono::Utility
 			return nullptr;
 		}
 	}
-	
 }
 
 namespace Kargono::RuntimeUI
@@ -447,7 +446,7 @@ namespace Kargono::RuntimeUI
 						mousePosition.y > currentOptionTranslation.y &&
 						mousePosition.y < (currentOptionTranslation.y + widgetSize.y))
 					{
-						// Turn off the drop-down open boolean and set the current option to this iteration
+						// Turn off the drop-down open boolean and set the current option to this windowIteration
 						activeDropDown.m_DropDownOpen = false;
 						activeDropDown.m_CurrentOption = iteration;
 						// Call the select option function if applicable
@@ -497,6 +496,7 @@ namespace Kargono::RuntimeUI
 
 		// Revalidate UI Context
 		RevalidateDisplayedWindows();
+		RevalidateWidgetIDToLocationMap();
 
 		// Load default font if necessary
 		if (!userInterface->m_Font)
@@ -579,13 +579,14 @@ namespace Kargono::RuntimeUI
 
 		// Ensure correct windows are displayed
 		RevalidateDisplayedWindows();
+		RevalidateWidgetIDToLocationMap();
 		return true;
 	}
 
-	bool RuntimeUIService::DeleteActiveUIWidget(std::size_t windowIndex, std::size_t widgetIndex)
+	bool RuntimeUIService::DeleteActiveUIWidget(int32_t widgetID)
 	{
 		// Attempt to delete the widget from the active user interface
-		bool success = DeleteUIWidget(s_RuntimeUIContext->m_ActiveUI, windowIndex, widgetIndex);
+		bool success = DeleteUIWidget(s_RuntimeUIContext->m_ActiveUI, widgetID);
 
 		// Ensure deletion was successful
 		if (!success)
@@ -624,13 +625,25 @@ namespace Kargono::RuntimeUI
 		return true;
 	}
 
-	bool RuntimeUIService::DeleteUIWidget(Ref<UserInterface> userInterface, std::size_t windowIndex, std::size_t widgetIndex)
+	bool RuntimeUIService::DeleteUIWidget(Ref<UserInterface> userInterface, int32_t widgetID)
 	{
 		if (!userInterface)
 		{
 			KG_WARN("Attempt to delete widget from invalid user interface reference");
 			return false;
 		}
+
+		// Get the ID -> Widget Location map and location directions
+		std::unordered_map<int32_t, std::vector<uint16_t>>& IDToLocationMap = s_RuntimeUIContext->
+			m_ActiveUI->m_IDToLocation;
+		KG_ASSERT(IDToLocationMap.contains(widgetID));
+		std::vector<uint16_t>& locationDirections = IDToLocationMap.at(widgetID);
+
+		// Get widget using location directions
+		// TODO: This currently assumes the window -> widget structure
+		KG_ASSERT(locationDirections.size() == 2); // TODO: Remove this later
+		size_t windowIndex = locationDirections.at(0);
+		size_t widgetIndex = locationDirections.at(1);
 
 		// Ensure window index is valid
 		if (windowIndex >= s_RuntimeUIContext->m_ActiveUI->m_Windows.size())
@@ -716,7 +729,7 @@ namespace Kargono::RuntimeUI
 					s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 
 				// Push window ID and invalid widgetID
-				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)0xFFFF, 
+				Rendering::Shader::SetDataAtInputLocation<int32_t>(window->m_ID, 
 					Utility::FileSystem::CRCFromString("a_EntityID"),
 					s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
 
@@ -732,13 +745,10 @@ namespace Kargono::RuntimeUI
 			{
 				// TODO: Seperate these into multiple functions
 				// Push window ID and widget ID
-				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration, 
+				Rendering::Shader::SetDataAtInputLocation<int32_t>(widgetRef->m_ID, 
 					Utility::FileSystem::CRCFromString("a_EntityID"),
 					s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
-				Rendering::Shader::SetDataAtInputLocation<uint32_t>(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration, 
-					Utility::FileSystem::CRCFromString("a_EntityID"),
-					s_RuntimeUIContext->m_ImageInputSpec.m_Buffer, s_RuntimeUIContext->m_ImageInputSpec.m_Shader);
-				RuntimeUI::FontService::SetID(((uint32_t)windowIndices[windowIteration] << 16) | (uint32_t)widgetIteration);
+				RuntimeUI::FontService::SetID((uint32_t)widgetRef->m_ID);
 				// Call the widget's rendering function
 				widgetRef->OnRender(initialTranslation, scale, (float)viewportWidth);
 				widgetIteration++;
@@ -825,6 +835,32 @@ namespace Kargono::RuntimeUI
 				s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindowIndices.push_back(iteration);
 			}
 			iteration++;
+		}
+	}
+
+	void RuntimeUI::RuntimeUIService::RevalidateWidgetIDToLocationMap()
+	{
+		std::unordered_map<int32_t, std::vector<uint16_t>>& locationMap = s_RuntimeUIContext->m_ActiveUI->m_IDToLocation;
+		locationMap.clear();
+
+		size_t windowIteration{ 0 };
+		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
+		{
+			// Add window to map
+			std::vector<uint16_t> windowLocation{ (uint16_t)windowIteration };
+			auto [iter, success] = locationMap.insert_or_assign(window.m_ID, std::move(windowLocation));
+			KG_ASSERT(success);
+
+			size_t widgetIteration{ 0 };
+			for (Ref<Widget> currentWidget : window.m_Widgets)
+			{
+				// Add widget to map
+				std::vector<uint16_t> widgetLocation{ (uint16_t)windowIteration, (uint16_t)widgetIteration };
+				auto [iter, success] = locationMap.insert_or_assign(currentWidget->m_ID, std::move(widgetLocation));
+				KG_ASSERT(success);
+				widgetIteration++;
+			}
+			windowIteration++;
 		}
 	}
 
@@ -1450,7 +1486,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Search for the indicated widget
-		Ref<Widget> widget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		Ref<Widget> widget = GetWidget(widgetID.m_WidgetID);
 
 		KG_ASSERT(widget);
 
@@ -1488,7 +1524,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Get the current widget
-		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WidgetID);
 
 		return IsWidgetSelectedInternal(currentWidget);
 	}
@@ -1511,7 +1547,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Search for the indicated widget
-		auto [currentWidget, currentWindow] = GetWidgetAndWindow(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		auto [currentWidget, currentWindow] = GetWidgetAndWindow(widgetID.m_WidgetID);
 		SetWidgetTextInternal(currentWindow, currentWidget, newText);
 	}
 
@@ -1525,7 +1561,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WidgetID);
 
 		// Ensure the widget is valid
 		if (!currentWidget)
@@ -1572,7 +1608,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WidgetID);
 
 		SetSelectedWidgetInternal(currentWidget);
 	}
@@ -1587,7 +1623,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WidgetID);
 
 		// Ensure the widget is valid
 		if (!currentWidget)
@@ -1631,7 +1667,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WidgetID);
 
 		SetHoveredWidgetInternal(currentWidget);
 	}
@@ -1654,7 +1690,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WidgetID);
 
 		SetWidgetTextColorInternal(currentWidget, color);
 	}
@@ -1677,7 +1713,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WidgetID);
 
 		SetWidgetBackgroundColorInternal(currentWidget, color);
 	}
@@ -1700,7 +1736,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Search for the indicated widget
-		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WidgetID);
 
 		SetWidgetSelectableInternal(currentWidget, selectable);
 	}
@@ -1757,15 +1793,26 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		std::vector<Window>& activeWindows{ s_RuntimeUIContext->m_ActiveUI->m_Windows };
+		// Get the ID -> Widget Location map and location directions
+		std::unordered_map<int32_t, std::vector<uint16_t>>& IDToLocationMap = s_RuntimeUIContext->
+			m_ActiveUI->m_IDToLocation;
+		KG_ASSERT(IDToLocationMap.contains(windowID.m_WindowID));
+		std::vector<uint16_t>& locationDirections = IDToLocationMap.at(windowID.m_WindowID);
 
-		if (windowID.m_WindowIndex > (activeWindows.size() - 1))
+		// Get widget using location directions
+		// TODO: This currently assumes the window -> widget structure
+		KG_ASSERT(locationDirections.size() == 1); // TODO: Remove this later
+		size_t windowIndex = locationDirections.at(0);
+
+		std::vector<Window>& activeWindows = s_RuntimeUIContext->m_ActiveUI->m_Windows;
+
+		if (windowIndex > (activeWindows.size() - 1))
 		{
 			KG_WARN("Provided window ID is out of bounds for the UI's windows");
 			return;
 		}
 
-		Window& window = activeWindows.at((size_t)windowID.m_WindowIndex);
+		Window& window = activeWindows.at(windowIndex);
 		
 		// Display or hide the window
 		if (display)
@@ -1946,7 +1993,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Get the current widget
-		Ref<Widget> currentWidget = GetWidget(widgetID.m_WindowIndex, widgetID.m_WidgetIndex);
+		Ref<Widget> currentWidget = GetWidget(widgetID.m_WidgetID);
 
 		if (!currentWidget)
 		{
@@ -2093,7 +2140,7 @@ namespace Kargono::RuntimeUI
 		
 	}
 
-	std::size_t RuntimeUIService::CalculateNavigationLink(Window& currentWindow, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize)
+	int32_t RuntimeUIService::CalculateNavigationLink(Window& currentWindow, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize)
 	{
 		// Initialize variables for navigation link calculation
 		Ref<Widget> currentBestChoice{ nullptr };
@@ -2218,7 +2265,7 @@ namespace Kargono::RuntimeUI
 		// Return the index of the best widget choice if it exists
 		if (currentBestChoice)
 		{
-			return currentChoiceLocation;
+			return (int32_t)currentChoiceLocation;
 		}
 		else
 		{
@@ -2253,7 +2300,7 @@ namespace Kargono::RuntimeUI
 		return nullptr;
 	}
 
-	Ref<Widget> RuntimeUIService::GetWidget(uint16_t windowIndex, uint16_t widgetIndex)
+	Ref<Widget> RuntimeUIService::GetWidget(int32_t widgetID)
 	{
 		// Ensure a user interface is active
 		if (!s_RuntimeUIContext->m_ActiveUI)
@@ -2261,6 +2308,25 @@ namespace Kargono::RuntimeUI
 			KG_WARN("Attempt to get a widget from the active user interface, however, no UI is active!");
 			return nullptr;
 		}
+
+		// Get the ID -> Widget Location map and location directions
+		std::unordered_map<int32_t, std::vector<uint16_t>>& IDToLocationMap = s_RuntimeUIContext->
+			m_ActiveUI->m_IDToLocation;
+		KG_ASSERT(IDToLocationMap.contains(widgetID));
+		std::vector<uint16_t>& locationDirections = IDToLocationMap.at(widgetID);
+
+		// Check for a window ID
+		if (locationDirections.size() == 1)
+		{
+			KG_WARN("Attempt to retrieve a widget, however, found a window ID");
+			return nullptr;
+		}
+
+		// Get widget using location directions
+		// TODO: This currently assumes the window -> widget structure
+		KG_ASSERT(locationDirections.size() == 2); // TODO: Remove this later
+		size_t windowIndex = locationDirections.at(0);
+		size_t widgetIndex = locationDirections.at(1);
 
 		// Ensure window index is within bounds
 		if (windowIndex > (s_RuntimeUIContext->m_ActiveUI->m_Windows.size() - 1))
@@ -2280,6 +2346,50 @@ namespace Kargono::RuntimeUI
 
 		// Return the indicated widget and window
 		return currentWindow.m_Widgets.at(widgetIndex);
+	}
+
+	IDType RuntimeUI::RuntimeUIService::CheckIDType(int32_t windowOrWidgetID)
+	{
+		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
+
+		// Get the ID -> Widget Location map and location directions
+		std::unordered_map<int32_t, std::vector<uint16_t>>& idToLocationMap = s_RuntimeUIContext->
+			m_ActiveUI->m_IDToLocation;
+
+		// Check for invalid ID
+		if (!idToLocationMap.contains(windowOrWidgetID) || windowOrWidgetID == k_InvalidWidgetID)
+		{
+			return IDType::None;
+		}
+
+		std::vector<uint16_t>& locationDirections = idToLocationMap.at(windowOrWidgetID);
+
+		// Discern whether the ID is a window or widget type
+		if (locationDirections.size() > 1)
+		{
+			return IDType::Widget;
+		}
+		else
+		{
+			return IDType::Window;
+		}
+	}
+
+	std::vector<uint16_t>* RuntimeUI::RuntimeUIService::GetLocationFromID(int32_t windowOrWidgetID)
+	{
+		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
+
+		// Get the ID -> Widget Location map and location directions
+		std::unordered_map<int32_t, std::vector<uint16_t>>& idToLocationMap = s_RuntimeUIContext->
+			m_ActiveUI->m_IDToLocation;
+
+		// Check for invalid ID
+		if (!idToLocationMap.contains(windowOrWidgetID) || windowOrWidgetID == k_InvalidWidgetID)
+		{
+			return nullptr;
+		}
+
+		return &(idToLocationMap.at(windowOrWidgetID));
 	}
 
 	std::tuple<Ref<Widget>, Window*> RuntimeUIService::GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag)
@@ -2303,12 +2413,38 @@ namespace Kargono::RuntimeUI
 		return { nullptr, nullptr };
 	}
 
-	std::tuple<Ref<Widget>, Window*> RuntimeUIService::GetWidgetAndWindow(uint16_t windowIndex, uint16_t widgetIndex)
+	std::tuple<Ref<Widget>, Window*> RuntimeUIService::GetWidgetAndWindow(int32_t widgetID)
 	{
+		// Ensure a user interface is active
+		if (!s_RuntimeUIContext->m_ActiveUI)
+		{
+			KG_WARN("Attempt to get a widget from the active user interface, however, no UI is active!");
+			return {nullptr, nullptr};
+		}
+
+		// Get the ID -> Widget Location map and location directions
+		std::unordered_map<int32_t, std::vector<uint16_t>>& IDToLocationMap = s_RuntimeUIContext->
+			m_ActiveUI->m_IDToLocation;
+		KG_ASSERT(IDToLocationMap.contains(widgetID));
+		std::vector<uint16_t>& locationDirections = IDToLocationMap.at(widgetID);
+
+		// Check for a window ID
+		if (locationDirections.size() == 1)
+		{
+			KG_WARN("Attempt to retrieve a window and widget, however, found only a window ID");
+			return { nullptr, nullptr };
+		}
+
+		// Get widget using location directions
+		// TODO: This currently assumes the window -> widget structure
+		KG_ASSERT(locationDirections.size() == 2); // TODO: Remove this later
+		size_t windowIndex = locationDirections.at(0);
+		size_t widgetIndex = locationDirections.at(1);
+
 		// Ensure window index is within bounds
 		if (windowIndex > (s_RuntimeUIContext->m_ActiveUI->m_Windows.size() - 1))
 		{
-			KG_WARN("Attempt to retrieve a window/widget but the window index was out of bounds");
+			KG_WARN("Attempt to retrieve a widget but the window index was out of bounds");
 			return { nullptr, nullptr };
 		}
 		// Get the indiciated window
@@ -2317,7 +2453,7 @@ namespace Kargono::RuntimeUI
 		// Ensure widget index is within bounds
 		if (widgetIndex > (currentWindow.m_Widgets.size() - 1))
 		{
-			KG_WARN("Attempt to retrieve a window/widget but the widget index was out of bounds");
+			KG_WARN("Attempt to retrieve a widget but the widget index was out of bounds");
 			return { nullptr, nullptr };
 		}
 
@@ -2379,6 +2515,7 @@ namespace Kargono::RuntimeUI
 		// Add new widget to buffer
 		m_Widgets.push_back(newWidget);
 
+		RuntimeUI::RuntimeUIService::RevalidateWidgetIDToLocationMap();
 		RuntimeUIService::RecalculateTextData(this, newWidget.get());
 	}
 
@@ -2393,6 +2530,8 @@ namespace Kargono::RuntimeUI
 
 		// Delete the widget
 		m_Widgets.erase(m_Widgets.begin() + widgetLocation);
+
+		RuntimeUI::RuntimeUIService::RevalidateWidgetIDToLocationMap();
 	}
 
 	void TextWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)

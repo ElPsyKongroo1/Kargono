@@ -45,6 +45,7 @@ namespace Kargono::Panels
 		void OnInputEvent(Events::Event* event);
 		void OnEditorEvent(Events::Event* event);
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
+		void OnMouseButtonPressedEvent(const Events::MouseButtonPressedEvent& event);
 
 
 		//=========================
@@ -106,8 +107,7 @@ namespace Kargono::Panels
 		int m_GizmoType{ -1 };
 		ViewportData m_ViewportData;
 		Math::uvec2 m_ViewportAspectRatio{ 1, 1 };
-		uint16_t m_HoveredWindowID{ Kargono::RuntimeUI::k_InvalidWindowIndex };
-		uint16_t m_HoveredWidgetID{ Kargono::RuntimeUI::k_InvalidWidgetIndex };
+		int32_t m_HoveredWindowWidgetID{ Kargono::RuntimeUI::k_InvalidWidgetIndex };
 	private:
 		// Viewport resources
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;

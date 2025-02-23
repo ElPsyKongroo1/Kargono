@@ -75,6 +75,7 @@ namespace Kargono::Assets
 			out << YAML::BeginMap; // Start Window Map
 
 			out << YAML::Key << "Tag" << YAML::Value << window.m_Tag;
+			out << YAML::Key << "ID" << YAML::Value << window.m_ID;
 			out << YAML::Key << "ScreenPosition" << YAML::Value << window.m_ScreenPosition;
 			out << YAML::Key << "Size" << YAML::Value << window.m_Size;
 			out << YAML::Key << "BackgroundColor" << YAML::Value << window.m_BackgroundColor;
@@ -91,6 +92,7 @@ namespace Kargono::Assets
 				out << YAML::BeginMap; // Begin Widget Map
 
 				out << YAML::Key << "Tag" << YAML::Value << widget->m_Tag;
+				out << YAML::Key << "ID" << YAML::Value << widget->m_ID;
 				out << YAML::Key << "XRelativeOrAbsolute" << YAML::Value << Utility::RelativeOrAbsoluteToString(widget->m_XRelativeOrAbsolute);
 				out << YAML::Key << "YRelativeOrAbsolute" << YAML::Value << Utility::RelativeOrAbsoluteToString(widget->m_YRelativeOrAbsolute);
 				out << YAML::Key << "XConstraint" << YAML::Value << Utility::ConstraintToString(widget->m_XConstraint);
@@ -373,6 +375,7 @@ namespace Kargono::Assets
 			{
 				RuntimeUI::Window newWindow{};
 				newWindow.m_Tag = window["Tag"].as<std::string>();
+				newWindow.m_ID = window["ID"].as<int32_t>();
 				newWindow.m_ScreenPosition = window["ScreenPosition"].as<Math::vec3>();
 				newWindow.m_Size = window["Size"].as<Math::vec2>();
 				newWindow.m_BackgroundColor = window["BackgroundColor"].as<Math::vec4>();
@@ -563,6 +566,7 @@ namespace Kargono::Assets
 						}
 
 						newWidget->m_Tag = widget["Tag"].as<std::string>();
+						newWidget->m_ID = widget["ID"].as<int32_t>();
 						newWidget->m_PercentPosition = widget["PercentPosition"].as<Math::vec2>();
 						newWidget->m_PixelPosition = widget["PixelPosition"].as<Math::ivec2>();
 						newWidget->m_XPositionType = Utility::StringToPixelOrPercent(widget["XPositionType"].as<std::string>());

@@ -110,7 +110,7 @@ namespace Kargono::Panels
 
 				// Provide widget/window ID's
 				widgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)windowIterator);
-				widgetEntry.m_Handle = widgetIterator;
+				widgetEntry.m_Handle = widget->m_ID;
 
 				// Add functions to call when interacting with widget entry
 				widgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
@@ -369,7 +369,8 @@ namespace Kargono::Panels
 	void UIEditorTreePanel::SelectWidget(EditorUI::TreeEntry& entry)
 	{
 		s_UIWindow->m_PropertiesPanel->m_ActiveWindow = &s_UIWindow->m_EditorUI->m_Windows.at(*(uint32_t*)entry.m_ProvidedData.get());
-		s_UIWindow->m_PropertiesPanel->m_ActiveWidget = s_UIWindow->m_PropertiesPanel->m_ActiveWindow->m_Widgets.at(entry.m_Handle).get();
+		s_UIWindow->m_PropertiesPanel->m_ActiveWidget = RuntimeUI::RuntimeUIService::GetWidget((int32_t)entry.m_Handle).get();
+
 		s_UIWindow->m_PropertiesPanel->m_CurrentDisplay = UIPropertiesDisplay::Widget;
 		s_UIWindow->m_PropertiesPanel->OnSelectWidget();
 
@@ -459,7 +460,7 @@ namespace Kargono::Panels
 		}
 
 		// Remove widget from RuntimeUI 
-		bool success = RuntimeUI::RuntimeUIService::DeleteActiveUIWidget((size_t) * (uint32_t*)entry.m_ProvidedData.get(), entry.m_Handle);
+		bool success = RuntimeUI::RuntimeUIService::DeleteActiveUIWidget((int32_t)entry.m_Handle);
 
 		// Check if widget was successfully deleted
 		if (!success)
@@ -495,8 +496,8 @@ namespace Kargono::Panels
 		EditorUI::TreeEntry newWidgetEntry{};
 		newWidgetEntry.m_Label = newWidget->m_Tag;
 		newWidgetEntry.m_IconHandle = widgetIcon;
-		newWidgetEntry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)entry.m_Handle); ;
-		newWidgetEntry.m_Handle = window.m_Widgets.size();
+		newWidgetEntry.m_ProvidedData = CreateRef<int32_t>((int32_t)entry.m_Handle);
+		newWidgetEntry.m_Handle = (uint64_t)newWidget->m_ID;
 
 		// Add handlers for interacting with the tree entry
 		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
@@ -600,18 +601,24 @@ namespace Kargono::Panels
 			uint16_t currentWindow = entryPath.GetBack();
 
 			// Update the handle and provided data for the widget entry
-			entry.m_Handle = (uint64_t)currentWidget;
 			entry.m_ProvidedData = CreateRef<uint32_t>((uint32_t)currentWindow);
 
 		}, 2);
 	}
-	void UIEditorTreePanel::SelectTreeNode(uint16_t windowID, uint16_t widgetID)
+	void UIEditorTreePanel::SelectTreeNode(RuntimeUI::IDType idType, int32_t windowOrWidgetID)
 	{
-		if (windowID == RuntimeUI::k_InvalidWindowIndex)
+		// Ensure the id type provided is not invalid
+		if (idType == RuntimeUI::IDType::None)
 		{
 			return;
 		}
-		
+
+		// Get the location of the indicated widget/window inside the active UI
+		std::vector<uint16_t>* location = RuntimeUI::RuntimeUIService::GetLocationFromID(windowOrWidgetID);
+		KG_ASSERT(location);
+		KG_ASSERT(location->size() > 0);
+
+		uint16_t windowIndex = location->at(0);
 		EditorUI::TreePath path;
 		bool success{ false };
 
@@ -619,24 +626,25 @@ namespace Kargono::Panels
 		path.AddNode(0);
 
 		// Add window node
-		path.AddNode(windowID);
+		path.AddNode(windowIndex);
 
-		if (widgetID == RuntimeUI::k_InvalidWidgetIndex)
+		if (idType == RuntimeUI::IDType::Window)
 		{
 			m_UITree.ExpandFirstLayer();
 			success = m_UITree.SelectEntry(path);
 		}
 		else
 		{
+			uint16_t widgetIndex = location->at(1);
 			m_UITree.ExpandFirstLayer();
 			m_UITree.ExpandNodePath(path);
-			path.AddNode(widgetID);
+			path.AddNode(widgetIndex);
 			success = m_UITree.SelectEntry(path);
 		}
 
 		if (!success)
 		{
-			KG_WARN("Failed to select window/widget with ID {} and {}", windowID, widgetID);
+			KG_WARN("Failed to select window/widget with ID {}", windowOrWidgetID);
 		}
 	}
 }

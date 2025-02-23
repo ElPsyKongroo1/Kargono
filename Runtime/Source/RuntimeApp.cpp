@@ -393,14 +393,23 @@ namespace Kargono
 			return false;
 		}
 
+		Assets::AssetHandle currentUI = RuntimeUI::RuntimeUIService::GetActiveUIHandle();
+
 		// Handle on press for the active user interface if applicable
-		if (m_HoveredWindowID != RuntimeUI::k_InvalidWindowIndex && m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetIndex)
+		if (m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetIndex)
 		{
 			RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
-				m_HoveredWindowID, m_HoveredWidgetID });
+				m_HoveredWidgetID });
+
+			// Handle case where active UI is changed
+			if (currentUI != RuntimeUI::RuntimeUIService::GetActiveUIHandle())
+			{
+				return;
+			}
+
 			// Handle start editing
 			RuntimeUI::RuntimeUIService::SetEditingWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
-				m_HoveredWindowID, m_HoveredWidgetID });
+				m_HoveredWidgetID });
 
 			// Handle specific widget on click's
 			Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
@@ -409,6 +418,12 @@ namespace Kargono
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
 			Events::MouseButtonPressedEvent mouseEvent{ Mouse::ButtonLeft };
 			RuntimeUI::RuntimeUIService::OnMouseButtonPressedEvent(mouseEvent);
+
+			// Handle case where active UI is changed
+			if (currentUI != RuntimeUI::RuntimeUIService::GetActiveUIHandle())
+			{
+				return;
+			}
 		}
 		return false;
 	}
@@ -558,14 +573,12 @@ namespace Kargono
 		mousePos.y = (float)activeViewport.m_Height - mousePos.y;
 
 		// Extract mouse picking information from the active framebuffer
-		int pixelData = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
-		// Extract lower 16 bits
-		m_HoveredWidgetID = (uint16_t)(pixelData & 0xFFFF);
-		// Extract upper 16 bits
-		m_HoveredWindowID = (uint16_t)((pixelData >> 16) & 0xFFFF);
+		m_HoveredWidgetID = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
 
-		// Exit early if no valid widget/window is available
-		if (m_HoveredWidgetID == RuntimeUI::k_InvalidWidgetIndex || m_HoveredWindowID == RuntimeUI::k_InvalidWindowIndex)
+		RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWidgetID);
+
+		// Exit early if no valid widget is available
+		if (idType == RuntimeUI::IDType::None || idType == RuntimeUI::IDType::Window)
 		{
 			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
 			return;
@@ -573,7 +586,7 @@ namespace Kargono
 
 		// Select the widget if applicable
 		RuntimeUI::RuntimeUIService::SetHoveredWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
-			m_HoveredWindowID, m_HoveredWidgetID });
+			m_HoveredWidgetID });
 
 	}
 

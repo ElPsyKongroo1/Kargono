@@ -118,8 +118,7 @@ namespace Kargono
 
 	private:
 		Ref<Rendering::Framebuffer> m_ViewportFramebuffer;
-		uint16_t m_HoveredWindowID{ Kargono::RuntimeUI::k_InvalidWindowIndex };
-		uint16_t m_HoveredWidgetID{ Kargono::RuntimeUI::k_InvalidWidgetIndex };
+		int32_t m_HoveredWidgetID{ Kargono::RuntimeUI::k_InvalidWidgetID };
 		bool m_Headless{ false };
 		std::filesystem::path m_ProjectPath;
 	};
