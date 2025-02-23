@@ -32,6 +32,7 @@ namespace Kargono::RuntimeUI
 	class RuntimeUIService;
 	struct RuntimeUIContext;
 	class Window;
+	class Widget;
 
 	//============================
 	// Function Callbacks Struct
@@ -55,8 +56,8 @@ namespace Kargono::RuntimeUI
 	//============================
 	enum class WidgetTypes
 	{
-		None = 0, TextWidget, ButtonWidget, CheckboxWidget, 
-		DropDownWidget, PopupWidget, ImageWidget, ImageButtonWidget,
+		None = 0, TextWidget, ButtonWidget, CheckboxWidget, ContainerWidget,
+		DropDownWidget, ImageWidget, ImageButtonWidget,
 		InputTextWidget, SliderWidget
 	};
 
@@ -101,6 +102,12 @@ namespace Kargono::RuntimeUI
 
 		// Runtime calculated data
 		NavigationLinks m_NavigationLinks;
+	};
+
+	struct ContainerData
+	{
+		std::vector<Ref<Widget>> m_ContainedWidgets;
+		Math::vec4 m_BackgroundColor{ 0.5f };
 	};
 
 	struct ImageData
@@ -361,6 +368,41 @@ namespace Kargono::RuntimeUI
 	};
 
 	//============================
+	// Container Widget Class (Derived)
+	//============================
+	class ContainerWidget : public Widget
+	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		ContainerWidget()
+			: Widget()
+		{
+			m_WidgetType = WidgetTypes::ContainerWidget;
+		}
+		virtual ~ContainerWidget() override = default;
+	public:
+		//============================
+		// Rendering Methods
+		//============================
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+
+		//============================
+		// Query State
+		//============================
+		virtual bool Selectable() override
+		{
+			return false;
+		}
+
+		//============================
+		// Public Fields
+		//============================
+		ContainerData m_ContainerData;
+	};
+
+	//============================
 	// Drop Down Widget Class (Derived)
 	//============================
 	class DropDownWidget : public Widget
@@ -406,28 +448,6 @@ namespace Kargono::RuntimeUI
 		// Runtime Values
 		size_t m_CurrentOption{ 0 };
 		bool m_DropDownOpen{ false };
-	};
-
-	//============================
-	// Popup Widget Class (Derived)
-	//============================
-	class PopupWidget : public Widget
-	{
-	public:
-		//============================
-		// Constructors/Destructors
-		//============================
-		PopupWidget()
-			: Widget()
-		{
-			m_WidgetType = WidgetTypes::PopupWidget;
-		}
-		virtual ~PopupWidget() override = default;
-	public:
-		//============================
-		// Rendering Methods
-		//============================
-		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	};
 
 	//============================
@@ -825,6 +845,7 @@ namespace Kargono::RuntimeUI
 		friend class InputTextWidget;
 		friend class SliderWidget;
 		friend class DropDownWidget;
+		friend class ContainerWidget;
 		friend class Window;
 	};
 }
@@ -838,8 +859,8 @@ namespace Kargono::Utility
 			case RuntimeUI::WidgetTypes::TextWidget: return "TextWidget";
 			case RuntimeUI::WidgetTypes::ButtonWidget: return "ButtonWidget";
 			case RuntimeUI::WidgetTypes::CheckboxWidget: return "CheckboxWidget";
+			case RuntimeUI::WidgetTypes::ContainerWidget: return "ContainerWidget";
 			case RuntimeUI::WidgetTypes::DropDownWidget: return "DropDownWidget";
-			case RuntimeUI::WidgetTypes::PopupWidget: return "PopupWidget";
 			case RuntimeUI::WidgetTypes::ImageWidget: return "ImageWidget";
 			case RuntimeUI::WidgetTypes::ImageButtonWidget: return "ImageButtonWidget";
 			case RuntimeUI::WidgetTypes::InputTextWidget: return "InputTextWidget";
@@ -860,8 +881,8 @@ namespace Kargono::Utility
 		case RuntimeUI::WidgetTypes::TextWidget: return "Text Widget";
 		case RuntimeUI::WidgetTypes::ButtonWidget: return "Button Widget";
 		case RuntimeUI::WidgetTypes::CheckboxWidget: return "Checkbox Widget";
+		case RuntimeUI::WidgetTypes::ContainerWidget: return "Container Widget";
 		case RuntimeUI::WidgetTypes::DropDownWidget: return "Drop-Down Widget";
-		case RuntimeUI::WidgetTypes::PopupWidget: return "Popup Widget";
 		case RuntimeUI::WidgetTypes::ImageWidget: return "Image Widget";
 		case RuntimeUI::WidgetTypes::ImageButtonWidget: return "Image-Button Widget";
 		case RuntimeUI::WidgetTypes::InputTextWidget: return "Input Text Widget";
@@ -882,8 +903,8 @@ namespace Kargono::Utility
 		if (widgetName == "TextWidget") { return RuntimeUI::WidgetTypes::TextWidget; }
 		if (widgetName == "ButtonWidget") { return RuntimeUI::WidgetTypes::ButtonWidget; }
 		if (widgetName == "CheckboxWidget") { return RuntimeUI::WidgetTypes::CheckboxWidget; }
+		if (widgetName == "ContainerWidget") { return RuntimeUI::WidgetTypes::ContainerWidget; }
 		if (widgetName == "DropDownWidget") { return RuntimeUI::WidgetTypes::DropDownWidget; }
-		if (widgetName == "PopupWidget") { return RuntimeUI::WidgetTypes::PopupWidget; }
 		if (widgetName == "ImageWidget") { return RuntimeUI::WidgetTypes::ImageWidget; }
 		if (widgetName == "ImageButtonWidget") { return RuntimeUI::WidgetTypes::ImageButtonWidget; }
 		if (widgetName == "InputTextWidget") { return RuntimeUI::WidgetTypes::InputTextWidget; }

@@ -3098,4 +3098,16 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
+	void RuntimeUI::ContainerWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	{
+		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
+
+		// Calculate the widget's rendering data
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
+		// Get widget translation
+		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
+		// Draw the background
+		RuntimeUIService::RenderBackground(m_ContainerData.m_BackgroundColor, widgetTranslation, widgetSize);
+	}
+
 }
