@@ -395,8 +395,10 @@ namespace Kargono
 
 		Assets::AssetHandle currentUI = RuntimeUI::RuntimeUIService::GetActiveUIHandle();
 
+		RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWidgetID);
+
 		// Handle on press for the active user interface if applicable
-		if (m_HoveredWidgetID != RuntimeUI::k_InvalidWidgetIndex)
+		if (idType == RuntimeUI::IDType::Widget)
 		{
 			RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
 				m_HoveredWidgetID });
@@ -404,7 +406,7 @@ namespace Kargono
 			// Handle case where active UI is changed
 			if (currentUI != RuntimeUI::RuntimeUIService::GetActiveUIHandle())
 			{
-				return;
+				return false;
 			}
 
 			// Handle start editing
@@ -422,7 +424,7 @@ namespace Kargono
 			// Handle case where active UI is changed
 			if (currentUI != RuntimeUI::RuntimeUIService::GetActiveUIHandle())
 			{
-				return;
+				return false;
 			}
 		}
 		return false;
