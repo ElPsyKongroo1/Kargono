@@ -650,6 +650,8 @@ namespace Kargono::RuntimeUI
 		bool m_WindowDisplayed{ false };
 	};
 
+	using IDToLocationMap = std::unordered_map<int32_t, std::vector<uint16_t>>;
+
 	//============================
 	// User Interface Class
 	//============================
@@ -676,7 +678,7 @@ namespace Kargono::RuntimeUI
 		Widget* m_EditingWidget{ nullptr };
 		Widget* m_PressedWidget{ nullptr };
 		Window* m_ActiveWindow{ nullptr };
-		std::unordered_map<int32_t, std::vector<uint16_t>> m_IDToLocation{};
+		IDToLocationMap m_IDToLocation{};
 	};
 
 	//============================
@@ -725,8 +727,9 @@ namespace Kargono::RuntimeUI
 		static void SetDisplayWindowByTag(const std::string& windowTag, bool display);
 		static void SetDisplayWindowByIndex(WindowID widgetID, bool display);
 		static void AddActiveWindow(Window& window);
-		static bool DeleteActiveUIWindow(std::size_t windowLocation);
+		static bool DeleteActiveUIWindow(int32_t windowID);
 		static bool DeleteActiveUIWidget(int32_t widgetID);
+		static void AddWidgetToContainer(ContainerData* container, Ref<Widget> newWidget);
 
 		//==============================
 		// Modify Indicated UI
@@ -762,6 +765,7 @@ namespace Kargono::RuntimeUI
 		static void CalculateFixedAspectRatioSize(Window* parentWindow, Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight,
 			bool useXValueAsBase);
 		static SelectionData* GetSelectionDataFromWidget(Widget* currentWidget);
+		static ContainerData* GetContainerDataFromWidget(Widget* currentWidget);
 		static ImageData* GetImageDataFromWidget(Widget* currentWidget);
 		static SingleLineTextData* GetSingleLineTextDataFromWidget(Widget* currentWidget);
 		static MultiLineTextData* GetMultiLineTextDataFromWidget(Widget* currentWidget);
@@ -775,9 +779,13 @@ namespace Kargono::RuntimeUI
 		static Ref<UserInterface> GetActiveUI();
 		static Assets::AssetHandle GetActiveUIHandle();
 		static void ClearActiveUI();
-		static Ref<Widget> GetWidget(const std::string& windowTag, const std::string& widgetTag);
-		static Ref<Widget> GetWidget(int32_t widgetID);
+		static Ref<Widget> GetWidgetFromTag(const std::string& windowTag, const std::string& widgetTag);
+		static Ref<Widget> GetWidgetFromID(int32_t widgetID);
+		static Ref<Widget> GetWidgetFromDirections(const std::vector<uint16_t>& locationDirections);
 		static IDType CheckIDType(int32_t windowOrWidgetID);
+		static Window& GetWindowFromID(int32_t windowID);
+		static Window& GetParentWindowFromWidgetID(int32_t widgetID);
+		static Ref<Widget> GetParentWidgetFromID(int32_t widgetID);
 		static std::vector<uint16_t>* GetLocationFromID(int32_t windowOrWidgetID);
 		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag);
 		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(int32_t widgetID);
@@ -795,6 +803,7 @@ namespace Kargono::RuntimeUI
 		static int32_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
 		static void RevalidateDisplayedWindows();
 		static void RevalidateWidgetIDToLocationMap();
+		static void RevalidateContainerInLocationMap(IDToLocationMap& locationMap, ContainerData* container, std::vector<uint16_t>& parentLocation);
 		static void CalculateSingleLineText(SingleLineTextData& textData);
 		static Math::vec2 CalculateSingleLineText(std::string_view textData);
 		static size_t CalculateCursorIndexFromMousePosition(SingleLineTextData& textData, float textStartingPosition, float mouseXPosition, float textScalingFactor);

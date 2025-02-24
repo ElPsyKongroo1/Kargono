@@ -24,6 +24,7 @@ namespace Kargono::Panels
 		InitializeImageButtonWidgetOptions();
 		InitializeImageWidgetOptions();
 		InitializeCheckboxWidgetOptions();
+		InitializeContainerWidgetOptions();
 		InitializeInputTextWidgetOptions();
 		InitializeSliderWidgetOptions();
 		InitializeDropDownWidgetOptions();
@@ -431,6 +432,21 @@ namespace Kargono::Panels
 		}
 	}
 
+	void UIEditorPropertiesPanel::DrawContainerWidgetOptions()
+	{
+		// Draw main header for container widget options
+		EditorUI::EditorUIService::CollapsingHeader(m_ContainerWidgetHeader);
+		if (m_ContainerWidgetHeader.m_Expanded)
+		{
+			// Draw options to edit selected container widget
+			RuntimeUI::ContainerWidget& activeContainerWidget = *(RuntimeUI::ContainerWidget*)m_ActiveWidget;
+
+			// Edit selected widget's container background color
+			m_ContainerWidgetBackground.m_CurrentVec4 = activeContainerWidget.m_ContainerData.m_BackgroundColor;
+			EditorUI::EditorUIService::EditVec4(m_ContainerWidgetBackground);
+		}
+	}
+
 	void UIEditorPropertiesPanel::DrawInputTextWidgetOptions()
 	{
 		// Draw main header for input text widget options
@@ -630,6 +646,9 @@ namespace Kargono::Panels
 			break;
 		case RuntimeUI::WidgetTypes::CheckboxWidget:
 			DrawCheckboxWidgetOptions();
+			break;
+		case RuntimeUI::WidgetTypes::ContainerWidget:
+			DrawContainerWidgetOptions();
 			break;
 		case RuntimeUI::WidgetTypes::InputTextWidget:
 			DrawInputTextWidgetOptions();
@@ -1335,6 +1354,20 @@ namespace Kargono::Panels
 		m_CheckboxWidgetOnPress.m_PopupAction = KG_BIND_CLASS_FN(OnOpenSelectionDataOnPressPopup);
 		m_CheckboxWidgetOnPress.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifySelectionDataOnPress);
 		m_CheckboxWidgetOnPress.m_OnEdit = KG_BIND_CLASS_FN(OnOpenTooltipForSelectionDataOnPress);
+	}
+
+	void UIEditorPropertiesPanel::InitializeContainerWidgetOptions()
+	{
+		// Set up header for Container widget options
+		m_ContainerWidgetHeader.m_Label = "Container Widget Options";
+		m_ContainerWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_ContainerWidgetHeader.m_Expanded = true;
+
+		// Set up widget to modify the containers background color
+		m_ContainerWidgetBackground.m_Label = "Background Color";
+		m_ContainerWidgetBackground.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_ContainerWidgetBackground.m_Bounds = { 0.0f, 1.0f };
+		m_ContainerWidgetBackground.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyContainerDataBackgroundColor);
 	}
 
 	void UIEditorPropertiesPanel::InitializeInputTextWidgetOptions()
@@ -3457,6 +3490,28 @@ namespace Kargono::Panels
 				true
 			);
 		}
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+	void UIEditorPropertiesPanel::OnModifyContainerDataBackgroundColor(EditorUI::EditVec4Spec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the widget's container data
+		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(m_ActiveWidget);
+		if (!containerData)
+		{
+			KG_WARN("Attempt to modify widget's container data, but none could be found.");
+			return;
+		}
+
+		// Update the widget background color based on the editorUI widget value
+		containerData->m_BackgroundColor = spec.m_CurrentVec4;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;

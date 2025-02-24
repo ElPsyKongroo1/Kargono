@@ -69,6 +69,7 @@ namespace Kargono::Panels
 		void AddImageWidget(EditorUI::TreeEntry& entry);
 		void AddImageButtonWidget(EditorUI::TreeEntry& entry);
 		void AddCheckboxWidget(EditorUI::TreeEntry& entry);
+		void AddContainerWidget(EditorUI::TreeEntry& entry);
 		void AddInputTextWidget(EditorUI::TreeEntry& entry);
 		void AddSliderWidget(EditorUI::TreeEntry& entry);
 		void AddDropDownWidget(EditorUI::TreeEntry& entry);
@@ -79,12 +80,13 @@ namespace Kargono::Panels
 		//=========================
 		// Manage Widgets (Internal)
 		//=========================
-		void AddWidgetInternal(EditorUI::TreeEntry& entry, Ref<RuntimeUI::Widget> newWidget, Ref<Rendering::Texture2D> widgetIcon);
+		EditorUI::TreeEntry* AddWidgetInternal(EditorUI::TreeEntry& parentEntry, Ref<RuntimeUI::Widget> newWidget, Ref<Rendering::Texture2D> widgetIcon);
 
 		//=========================
 		// Manage Tree (Internal)
 		//=========================
 		void CreateWindowSelectionOptions(EditorUI::TreeEntry& windowEntry);
+		void CreateAddWidgetsSelectionOptions(EditorUI::TreeEntry& entry);
 	public:
 		//=========================
 		// Core Panel Data

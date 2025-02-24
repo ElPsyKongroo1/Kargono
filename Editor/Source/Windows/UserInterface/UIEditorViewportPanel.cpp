@@ -130,7 +130,7 @@ namespace Kargono::Panels
 					if (idType == RuntimeUI::IDType::Widget)
 					{
 						// Set widget as selected manually
-						Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidget(m_HoveredWindowWidgetID);
+						Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidgetFromID(m_HoveredWindowWidgetID);
 						if (hoveredWidget && hoveredWidget->Selectable())
 						{
 							Ref<RuntimeUI::UserInterface> userInterface = RuntimeUI::RuntimeUIService::GetActiveUI();
@@ -336,7 +336,7 @@ namespace Kargono::Panels
 		}
 		
 		// Set widget as hovered manually
-		Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidget(m_HoveredWindowWidgetID);
+		Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidgetFromID(m_HoveredWindowWidgetID);
 		
 		if (!hoveredWidget || !hoveredWidget->Selectable())
 		{

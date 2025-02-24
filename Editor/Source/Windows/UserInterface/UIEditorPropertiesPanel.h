@@ -39,6 +39,7 @@ namespace Kargono::Panels
 		void InitializeImageWidgetOptions();
 		void InitializeImageButtonWidgetOptions();
 		void InitializeCheckboxWidgetOptions();
+		void InitializeContainerWidgetOptions();
 		void InitializeInputTextWidgetOptions();
 		void InitializeSliderWidgetOptions();
 		void InitializeDropDownWidgetOptions();
@@ -62,6 +63,7 @@ namespace Kargono::Panels
 		void DrawImageWidgetOptions();
 		void DrawImageButtonWidgetOptions();
 		void DrawCheckboxWidgetOptions();
+		void DrawContainerWidgetOptions();
 		void DrawInputTextWidgetOptions();
 		void DrawSliderWidgetOptions();
 		void DrawDropDownWidgetOptions();
@@ -239,7 +241,8 @@ namespace Kargono::Panels
 		void OnModifyImageDataImage(const EditorUI::OptionEntry& entry);
 		void OnOpenImageDataImagePopup(EditorUI::SelectOptionSpec& spec);
 		void OnModifyImageDataFixedAspectRatio(EditorUI::CheckboxSpec& spec);
-
+		// Container data
+		void OnModifyContainerDataBackgroundColor(EditorUI::EditVec4Spec& spec);
 	public:
 		//=========================
 		// Core Panel Data
@@ -370,5 +373,9 @@ namespace Kargono::Panels
 		size_t m_ActiveDropDownOption{ 0 };
 		EditorUI::CheckboxSpec m_DropDownWidgetDropdownOpen{};
 		EditorUI::SelectOptionSpec m_DropDownWidgetCurrentOption{};
+
+		// Edit Container Widget Options
+		EditorUI::CollapsingHeaderSpec m_ContainerWidgetHeader{};
+		EditorUI::EditVec4Spec m_ContainerWidgetBackground{};
 	};
 }
