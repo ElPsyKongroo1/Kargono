@@ -87,6 +87,9 @@ namespace Kargono::Panels
 		//=========================
 		void CreateWindowSelectionOptions(EditorUI::TreeEntry& windowEntry);
 		void CreateAddWidgetsSelectionOptions(EditorUI::TreeEntry& entry);
+		void CreateWidgetSpecificSelectionOptions(EditorUI::TreeEntry& widgetEntry, RuntimeUI::WidgetTypes widgetType);
+		void CreateContainerDataWidgets(EditorUI::TreeEntry& parentEntry, RuntimeUI::ContainerData* container);
+		void CreateWidgetTreeEntry(EditorUI::TreeEntry& parentEntry, Ref<RuntimeUI::Widget> currentWidget);
 	public:
 		//=========================
 		// Core Panel Data

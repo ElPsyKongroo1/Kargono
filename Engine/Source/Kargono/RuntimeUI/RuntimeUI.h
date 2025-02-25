@@ -681,6 +681,12 @@ namespace Kargono::RuntimeUI
 		IDToLocationMap m_IDToLocation{};
 	};
 
+	struct WidgetDimensions
+	{
+		Math::vec3 m_Translation;
+		Math::vec3 m_Size;
+	};
+
 	//============================
 	// Runtime UI Service Class
 	//============================
@@ -746,6 +752,7 @@ namespace Kargono::RuntimeUI
 		static Ref<Scripting::Script> GetActiveOnMove();
 		static Assets::AssetHandle GetActiveOnMoveHandle();
 		static std::vector<Window>& GetAllActiveWindows();
+		static WidgetDimensions GetParentDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight);
 
 		//==============================
 		// Interact With Active UI

@@ -742,6 +742,8 @@ namespace Kargono::Panels
 		RuntimeUI::Widget* widget{ s_UIWindow->m_PropertiesPanel->m_ActiveWidget };
 		RuntimeUI::Window* window{ s_UIWindow->m_PropertiesPanel->m_ActiveWindow };
 
+		// TODO: Use parent dimensions instead of window dimensions
+
 		// Get position data for rendering window
 		Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
 		Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);

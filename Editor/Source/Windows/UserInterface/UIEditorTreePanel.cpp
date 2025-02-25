@@ -99,20 +99,7 @@ namespace Kargono::Panels
 			// Add widgets to window entry
 			for (Ref<RuntimeUI::Widget> widget : window.m_Widgets)
 			{
-				// Create new widget entry
-				EditorUI::TreeEntry widgetEntry{};
-				widgetEntry.m_Label = widget->m_Tag;
-				widgetEntry.m_IconHandle = Utility::WidgetTypeToIcon(widget->m_WidgetType);
-
-				// Provide widget/window ID's
-				widgetEntry.m_Handle = widget->m_ID;
-
-				// Add functions to call when interacting with widget entry
-				widgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
-				widgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
-
-				// Add widget entry to window entry
-				windowEntry.m_SubEntries.push_back(widgetEntry);
+				CreateWidgetTreeEntry(windowEntry, widget);
 			}
 
 			// Add window entry to the user interface tree
@@ -345,8 +332,8 @@ namespace Kargono::Panels
 		EditorUI::TreeEntry* newEntry = AddWidgetInternal(entry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ContainerWidget));
 		KG_ASSERT(newEntry);
 
-		// Add container widget options
-		CreateAddWidgetsSelectionOptions(*newEntry);
+		// Handle widget specific selection options
+		CreateWidgetSpecificSelectionOptions(*newEntry, RuntimeUI::WidgetTypes::ContainerWidget);
 	}
 
 	void UIEditorTreePanel::AddInputTextWidget(EditorUI::TreeEntry& entry)
@@ -605,6 +592,50 @@ namespace Kargono::Panels
 			});
 	}
 
+	void UIEditorTreePanel::CreateWidgetSpecificSelectionOptions(EditorUI::TreeEntry& widgetEntry, RuntimeUI::WidgetTypes widgetType)
+	{
+		if (widgetType == RuntimeUI::WidgetTypes::ContainerWidget)
+		{
+			// Add container widget options
+			CreateAddWidgetsSelectionOptions(widgetEntry);
+		}
+	}
+
+	void UIEditorTreePanel::CreateContainerDataWidgets(EditorUI::TreeEntry& parentEntry, RuntimeUI::ContainerData* container)
+	{
+		KG_ASSERT(container);
+
+		// Add all of the widgets
+		for (Ref<RuntimeUI::Widget> childWidget : container->m_ContainedWidgets)
+		{
+			// Add the widget to the parent entry
+			CreateWidgetTreeEntry(parentEntry, childWidget);
+		}
+	}
+
+	void UIEditorTreePanel::CreateWidgetTreeEntry(EditorUI::TreeEntry& parentEntry, Ref<RuntimeUI::Widget> currentWidget)
+	{
+		// Create new widget entry and add it to the parent's sub entries list
+		EditorUI::TreeEntry& widgetEntry = parentEntry.m_SubEntries.emplace_back();
+		
+		// Add base widget information
+		widgetEntry.m_Label = currentWidget->m_Tag;
+		widgetEntry.m_IconHandle = Utility::WidgetTypeToIcon(currentWidget->m_WidgetType);
+		widgetEntry.m_Handle = currentWidget->m_ID;
+
+		// Add functions to call when interacting with widget entry
+		widgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
+		CreateWidgetSpecificSelectionOptions(widgetEntry, currentWidget->m_WidgetType);
+		widgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
+
+		// Check for a container widget
+		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(currentWidget.get());
+		if (containerData)
+		{
+			CreateContainerDataWidgets(widgetEntry, containerData);
+		}
+	}
+
 	void UIEditorTreePanel::RecalculateTreeIndexData()
 	{
 #if 0
@@ -663,37 +694,42 @@ namespace Kargono::Panels
 		}
 
 		// Get the location of the indicated widget/window inside the active UI
-		std::vector<uint16_t>* location = RuntimeUI::RuntimeUIService::GetLocationFromID(windowOrWidgetID);
-		KG_ASSERT(location);
-		KG_ASSERT(location->size() > 0);
+		std::vector<uint16_t>* locationInRuntimeUI = RuntimeUI::RuntimeUIService::GetLocationFromID(windowOrWidgetID);
+		KG_ASSERT(locationInRuntimeUI);
+		KG_ASSERT(locationInRuntimeUI->size() > 0);
 
-		uint16_t windowIndex = location->at(0);
-		EditorUI::TreePath path;
-		bool success{ false };
+		uint16_t windowIndex = locationInRuntimeUI->at(0);
+		EditorUI::TreePath newTreePath;
 
 		// Add UI node
-		path.AddNode(0);
+		newTreePath.AddNode(0);
 
 		// Add window node
-		path.AddNode(windowIndex);
+		newTreePath.AddNode(windowIndex);
 
+		// Handle selecting a window node
 		if (idType == RuntimeUI::IDType::Window)
 		{
 			m_UITree.ExpandFirstLayer();
-			success = m_UITree.SelectEntry(path);
-		}
-		else
-		{
-			uint16_t widgetIndex = location->at(1);
-			m_UITree.ExpandFirstLayer();
-			m_UITree.ExpandNodePath(path);
-			path.AddNode(widgetIndex);
-			success = m_UITree.SelectEntry(path);
+			bool success = m_UITree.SelectEntry(newTreePath);
+			KG_ASSERT(success);
+			return;
 		}
 
-		if (!success)
+		// Expand the UI Node Layer
+		m_UITree.ExpandFirstLayer();
+
+		// Loop through all remaining widget indices
+		for (size_t uiLocationIndex{ 1 }; uiLocationIndex < locationInRuntimeUI->size(); uiLocationIndex++)
 		{
-			KG_WARN("Failed to select window/widget with ID {}", windowOrWidgetID);
+			// Add the indicated widget index to the tree path
+			uint16_t widgetIndex = locationInRuntimeUI->at(uiLocationIndex);
+			newTreePath.AddNode(widgetIndex);
 		}
+
+		// Expand the newly created path and select the widget
+		m_UITree.ExpandNodePath(newTreePath);
+		bool success = m_UITree.SelectEntry(newTreePath);
+		KG_ASSERT(success);
 	}
 }

@@ -773,6 +773,14 @@ namespace Kargono::Scripting
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::DropDownWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "container_widget";
+		newPrimitiveType.Description = "Reference to a user interface container widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ContainerWidget);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
 		if (s_ActiveLanguageDefinition.AllLiteralTypes.contains("Enums"))
 		{
 			// Load custom enum types
@@ -1641,6 +1649,9 @@ namespace Kargono::Scripting
 						break;
 					case RuntimeUI::WidgetTypes::DropDownWidget:
 						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "drop_down_widget" };
+						break;
+					case RuntimeUI::WidgetTypes::ContainerWidget:
+						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "container_widget" };
 						break;
 					default:
 						KG_ERROR("Invalid widget type provided when loading widget information into kgscript language");

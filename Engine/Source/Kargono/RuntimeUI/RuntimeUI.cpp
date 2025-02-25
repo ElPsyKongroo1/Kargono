@@ -772,7 +772,7 @@ namespace Kargono::RuntimeUI
 			for (Ref<Widget> widgetRef : window->m_Widgets)
 			{
 				// TODO: Seperate these into multiple functions
-				// Push window ID and widget ID
+				// Push widget ID
 				Rendering::Shader::SetDataAtInputLocation<int32_t>(widgetRef->m_ID, 
 					Utility::FileSystem::CRCFromString("a_EntityID"),
 					s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
@@ -847,6 +847,73 @@ namespace Kargono::RuntimeUI
 	{
 		return s_RuntimeUIContext->m_ActiveUI->m_Windows;
 	}
+
+	WidgetDimensions RuntimeUIService::GetParentDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight)
+	{
+		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+
+		// Get the ID -> Widget Location map and location directions
+		IDToLocationMap& idToLocationMap = s_RuntimeUIContext->
+			m_ActiveUI->m_IDToLocation;
+		KG_ASSERT(idToLocationMap.contains(widgetID));
+		std::vector<uint16_t>& locationDirections = idToLocationMap.at(widgetID);
+
+		// Ensure directions to a widget a presented
+		KG_ASSERT(locationDirections.size() > 1);
+
+		// Get the first two entries (Window -> Widget)
+		size_t windowIndex = locationDirections.at(0);
+		size_t firstWidgetIndex = locationDirections.at(1);
+
+		// Get the widget's parent window
+		KG_ASSERT(windowIndex < activeUI->m_Windows.size());
+		Window& parentWindow = activeUI->m_Windows.at(windowIndex);
+
+		// Calculate the parent window's dimensions
+		WidgetDimensions returnDimensions;
+		returnDimensions.m_Translation = parentWindow.CalculateWorldPosition(
+			viewportWidth, viewportHeight);
+		returnDimensions.m_Size = parentWindow.CalculateSize(
+			viewportWidth, viewportHeight);
+
+		// Return the parent dimensions if the location only involves a single widget (Ex: Window -> Widget)
+		if (locationDirections.size() == 2) 
+		{
+			return returnDimensions;
+		}
+
+		// Get the first widget
+		KG_ASSERT(firstWidgetIndex < parentWindow.m_Widgets.size());
+		Ref<Widget> currentWidget = parentWindow.m_Widgets.at(firstWidgetIndex);
+
+		// Continue to calculate the dimensions for a longer widget chain (Ex: Window -> Widget -> ...)
+		for (size_t iteration{ 2 }; iteration < locationDirections.size(); iteration++)
+		{
+			// Update the dimensions based on the current widget and it's parent's dimensions
+			returnDimensions.m_Translation = currentWidget->CalculateWorldPosition(returnDimensions.m_Translation, returnDimensions.m_Size);
+			returnDimensions.m_Size = currentWidget->CalculateWidgetSize(returnDimensions.m_Size);
+
+			// Exit early if we reach the final valid location direction
+			if (iteration == locationDirections.size() - 1)
+			{
+				break;
+			}
+
+			// Get the container data from the active widget
+			ContainerData* currentData = GetContainerDataFromWidget(currentWidget.get());
+			KG_ASSERT(currentData);
+
+			// Get the current widget index and set the next parent widget
+			uint16_t currentContainerIndex = locationDirections.at(iteration);
+			KG_ASSERT(currentContainerIndex < currentData->m_ContainedWidgets.size());
+			currentWidget = currentData->m_ContainedWidgets.at(currentContainerIndex);
+		}
+
+		// Return the dimensions
+		return returnDimensions;
+	}
+
 
 	void RuntimeUIService::RevalidateDisplayedWindows()
 	{
@@ -2403,27 +2470,42 @@ namespace Kargono::RuntimeUI
 		}
 		// Get the indiciated window
 		Window& currentWindow = s_RuntimeUIContext->m_ActiveUI->m_Windows.at((size_t)windowIndex);
+		
+		// Ensure widget index is within bounds
+		if (firstWidgetIndex > (currentWindow.m_Widgets.size() - 1))
+		{
+			KG_WARN("Attempt to retrieve a widget but the widget index was out of bounds");
+			return nullptr;
+		}
 
-		KG_ASSERT(locationDirections.size() == 2); // TODO: remove this
+		// Get the first widget
+		Ref<RuntimeUI::Widget> currentWidget = currentWindow.m_Widgets.at(firstWidgetIndex);
 
 		// Handle the case where this only one window and one widget (Window -> Widget)
 		if (locationDirections.size() == 2)
 		{
-			// Ensure widget index is within bounds
-			if (firstWidgetIndex > (currentWindow.m_Widgets.size() - 1))
-			{
-				KG_WARN("Attempt to retrieve a widget but the widget index was out of bounds");
-				return nullptr;
-			}
-
 			// Return the indicated widget
-			return currentWindow.m_Widgets.at(firstWidgetIndex);
+			return currentWidget;
 		}
 
+		// Window -> Widget -> Widget (Container Data) -> Widget (Container Data)
 		// Handle the case where there is more nesting
-		return nullptr;
+		for (size_t iteration{ 2 }; iteration < locationDirections.size(); iteration++)
+		{
+			// Get the container data for this widget
+			ContainerData* data = GetContainerDataFromWidget(currentWidget.get());
+			KG_ASSERT(data);
 
-		
+			// Ensure the widget directions fall within the bounds of the widget array
+			size_t currentIndex = locationDirections.at(iteration);
+			KG_ASSERT(currentIndex < data->m_ContainedWidgets.size());
+
+			// Set the current widget to the indicated container widget (Window -> Widget -> [Widget])
+			currentWidget = data->m_ContainedWidgets.at(currentIndex);
+		}
+
+		// Return the nested widget
+		return currentWidget;
 	}
 
 	Ref<Widget> RuntimeUI::RuntimeUIService::GetWidgetFromDirections(const std::vector<uint16_t>& locationDirections)
@@ -3277,7 +3359,7 @@ namespace Kargono::RuntimeUI
 
 	void RuntimeUI::ContainerWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
-		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
+		Rendering::RendererInputSpec& backgroundSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
@@ -3285,6 +3367,24 @@ namespace Kargono::RuntimeUI
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 		// Draw the background
 		RuntimeUIService::RenderBackground(m_ContainerData.m_BackgroundColor, widgetTranslation, widgetSize);
+
+		widgetTranslation.z += 0.001f;
+
+		// NOTE: This code needs to be at the end of this function!
+		// Updating the render input locations causes further render calls to
+		// associate its mouse picking with an incorrect widget
+		// Render the child widgets
+		for (Ref<Widget> containedWidget : m_ContainerData.m_ContainedWidgets)
+		{
+			// Push widget ID
+			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
+				Utility::FileSystem::CRCFromString("a_EntityID"),
+				backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
+			RuntimeUI::FontService::SetID((uint32_t)containedWidget->m_ID);
+
+			// Render the indicated widget
+			containedWidget->OnRender(widgetTranslation, widgetSize, viewportWidth);
+		}
 	}
 
 }
