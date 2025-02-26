@@ -128,11 +128,11 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::EditText(m_WindowTag);
 
 			// Edit default active widget
-			std::size_t activeWidget = m_ActiveWindow->m_DefaultActiveWidget;
+			Ref<RuntimeUI::Widget> activeWidget = m_ActiveWindow->m_DefaultActiveWidgetRef;
 			m_WindowDefaultWidget.m_CurrentOption =
 			{
-				activeWidget == -1 ? "None" : m_ActiveWindow->m_Widgets.at(activeWidget)->m_Tag,
-				(uint64_t)activeWidget
+				activeWidget ? "None" : activeWidget->m_Tag,
+				(uint64_t)m_ActiveWindow->m_DefaultActiveWidget
 			};
 			EditorUI::EditorUIService::SelectOption(m_WindowDefaultWidget);
 
@@ -1614,13 +1614,13 @@ namespace Kargono::Panels
 
 		// Add all text widgets to the options
 		std::size_t iteration{ 0 };
-		for (Ref<RuntimeUI::Widget> widget : m_ActiveWindow->m_Widgets)
+		for (Ref<RuntimeUI::Widget> widget : m_ActiveWindow->GetAllChildWidgets())
 		{
 			if (!widget->Selectable())
 			{
 				continue;
 			}
-			spec.AddToOptions(Utility::WidgetTypeToDisplayString(widget->m_WidgetType), widget->m_Tag, iteration);
+			spec.AddToOptions(Utility::WidgetTypeToDisplayString(widget->m_WidgetType), widget->m_Tag, (uint64_t)widget->m_ID);
 
 			iteration++;
 		}
@@ -1705,16 +1705,14 @@ namespace Kargono::Panels
 			m_ActiveWindow->m_DefaultActiveWidgetRef = nullptr;
 			return;
 		}
-		// Ensure provided widget ID is valid
-		if (entry.m_Handle >= m_ActiveWindow->m_Widgets.size())
-		{
-			KG_WARN("Invalid widget location provided when updating default active widget in window");
-			return;
-		}
+
+		// Get the new default widget
+		Ref<RuntimeUI::Widget> newDefaultWidget = RuntimeUI::RuntimeUIService::GetWidgetFromID((int32_t)entry.m_Handle);
+		KG_ASSERT(newDefaultWidget);
 
 		// Update the default active widget for the window
-		m_ActiveWindow->m_DefaultActiveWidget = (std::size_t)entry.m_Handle;
-		m_ActiveWindow->m_DefaultActiveWidgetRef = m_ActiveWindow->m_Widgets.at(entry.m_Handle);
+		m_ActiveWindow->m_DefaultActiveWidget = (int32_t)entry.m_Handle;
+		m_ActiveWindow->m_DefaultActiveWidgetRef = newDefaultWidget;
 	}
 
 	void UIEditorPropertiesPanel::OnModifyWidgetTag(EditorUI::EditTextSpec& spec)
@@ -1904,7 +1902,7 @@ namespace Kargono::Panels
 
 		// Update the widget location metric based on the radio selector value
 		m_ActiveWidget->m_SizeType = (RuntimeUI::PixelOrPercent)m_WidgetPixelOrPercentSize.m_SelectedOption;
-		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWidget);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -1923,7 +1921,7 @@ namespace Kargono::Panels
 
 		// Update the widget size based on the editorUI widget value
 		m_ActiveWidget->m_PercentSize = m_WidgetPercentSize.m_CurrentVec2;
-		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+		RuntimeUI::RuntimeUIService::RecalculateTextData( m_ActiveWidget);
 
 		// Revalidate widget size if fixed aspect ratio is specified
 		RuntimeUI::ImageData* imageData = RuntimeUI::RuntimeUIService::GetImageDataFromWidget(m_ActiveWidget);
@@ -1932,7 +1930,6 @@ namespace Kargono::Panels
 			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
 			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
 			(
-				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
 				currentViewport.m_Height,
@@ -1957,7 +1954,7 @@ namespace Kargono::Panels
 
 		// Update the widget size based on the editorUI widget value
 		m_ActiveWidget->m_PixelSize = spec.m_CurrentIVec2;
-		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWidget);
 
 		// Revalidate widget size if fixed aspect ratio is specified
 		RuntimeUI::ImageData* imageData = RuntimeUI::RuntimeUIService::GetImageDataFromWidget(m_ActiveWidget);
@@ -1966,7 +1963,6 @@ namespace Kargono::Panels
 			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
 			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
 			(
-				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
 				currentViewport.m_Height,
@@ -2031,7 +2027,6 @@ namespace Kargono::Panels
 			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
 			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
 			(
-				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
 				currentViewport.m_Height,
@@ -2075,7 +2070,6 @@ namespace Kargono::Panels
 			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
 			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
 			(
-				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
 				currentViewport.m_Height,
@@ -2135,7 +2129,6 @@ namespace Kargono::Panels
 			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
 			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
 			(
-				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
 				currentViewport.m_Height,
@@ -2181,13 +2174,17 @@ namespace Kargono::Panels
 		// Update the text widget text alignment based on the editorUI widget's value
 		CheckboxWidget.m_ImageChecked.m_FixedAspectRatio = spec.m_CurrentBoolean;
 		CheckboxWidget.m_ImageUnChecked.m_FixedAspectRatio = spec.m_CurrentBoolean;
-		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
+
+		// Calculate navigation links
+		RuntimeUI::NavigationLinksCalculator newCalculator;
+		newCalculator.CalculateNavigationLinks(RuntimeUI::RuntimeUIService::GetActiveUI(),
+			EngineService::GetActiveWindow().GetActiveViewport());
+
 		if (spec.m_CurrentBoolean)
 		{
 			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
 			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
 			(
-				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
 				currentViewport.m_Height,
@@ -2514,7 +2511,7 @@ namespace Kargono::Panels
 		}
 
 		// Update the text widget text size based on the editorUI widget's value
-		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+		RuntimeUI::RuntimeUIService::RecalculateTextData( m_ActiveWidget);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -2919,7 +2916,7 @@ namespace Kargono::Panels
 		newDropDown.m_Text = spec.m_CurrentOption;
 
 		// Revalidate the text data
-		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+		RuntimeUI::RuntimeUIService::RecalculateTextData( m_ActiveWidget);
 
 		// Refresh the table
 		KG_ASSERT(m_DropDownWidgetOptionsList.m_OnRefresh);
@@ -2961,7 +2958,7 @@ namespace Kargono::Panels
 		textData.m_Text = spec.m_CurrentOption;
 
 		// Revalidate the text data
-		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+		RuntimeUI::RuntimeUIService::RecalculateTextData( m_ActiveWidget);
 
 		// Refresh the table
 		KG_ASSERT(m_DropDownWidgetOptionsList.m_OnRefresh);
@@ -3002,7 +2999,7 @@ namespace Kargono::Panels
 		optionsList.erase(optionsList.begin() + m_ActiveDropDownOption);
 
 		// Revalidate the text data
-		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+		RuntimeUI::RuntimeUIService::RecalculateTextData( m_ActiveWidget);
 
 		// Revalidate the current option
 		if (activeDropDownWidget->m_CurrentOption >= optionsList.size())
@@ -3036,7 +3033,7 @@ namespace Kargono::Panels
 
 		// Update text data and recalculate text metrics
 		textData->m_Text = spec.m_CurrentOption;
-		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+		RuntimeUI::RuntimeUIService::RecalculateTextData( m_ActiveWidget);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -3055,7 +3052,7 @@ namespace Kargono::Panels
 		{
 			// Update the text widget text size based on the editorUI widget's value
 			singleLineData->m_TextSize = spec.m_CurrentFloat;
-			RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+			RuntimeUI::RuntimeUIService::RecalculateTextData( m_ActiveWidget);
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -3068,7 +3065,7 @@ namespace Kargono::Panels
 		{
 			// Update the text widget text size based on the editorUI widget's value
 			multiLineData->m_TextSize = spec.m_CurrentFloat;
-			RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+			RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWidget);
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -3191,7 +3188,7 @@ namespace Kargono::Panels
 
 		// Update text data and recalculate text metrics
 		textData->m_Text = spec.m_CurrentOption;
-		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWidget);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -3214,7 +3211,7 @@ namespace Kargono::Panels
 
 		// Update text data and recalculate text metrics
 		textData->m_TextWrapped = spec.m_CurrentBoolean;
-		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWindow, m_ActiveWidget);
+		RuntimeUI::RuntimeUIService::RecalculateTextData(m_ActiveWidget);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -3237,7 +3234,11 @@ namespace Kargono::Panels
 
 		// Update the text widget text alignment based on the editorUI widget's value
 		selectionData->m_Selectable = spec.m_CurrentBoolean;
-		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
+
+		// Calculate navigation links
+		RuntimeUI::NavigationLinksCalculator newCalculator;
+		newCalculator.CalculateNavigationLinks(RuntimeUI::RuntimeUIService::GetActiveUI(),
+			EngineService::GetActiveWindow().GetActiveViewport());
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -3432,7 +3433,6 @@ namespace Kargono::Panels
 			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
 			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
 			(
-				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
 				currentViewport.m_Height,
@@ -3477,13 +3477,16 @@ namespace Kargono::Panels
 
 		// Update the text widget text alignment based on the editorUI widget's value
 		imageData->m_FixedAspectRatio = spec.m_CurrentBoolean;
-		RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
+
+		// Calculate navigation links
+		RuntimeUI::NavigationLinksCalculator newCalculator;
+		newCalculator.CalculateNavigationLinks(RuntimeUI::RuntimeUIService::GetActiveUI(),
+			EngineService::GetActiveWindow().GetActiveViewport());
 		if (spec.m_CurrentBoolean)
 		{
 			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;
 			RuntimeUI::RuntimeUIService::CalculateFixedAspectRatioSize
 			(
-				m_ActiveWindow,
 				m_ActiveWidget,
 				currentViewport.m_Width,
 				currentViewport.m_Height,

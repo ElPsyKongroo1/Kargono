@@ -212,7 +212,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Modify State
 		//============================
-		void SetText(const std::string& newText, Window* parentWindow);
+		void SetText(const std::string& newText);
 
 		//============================
 		// Query State
@@ -226,7 +226,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Re-validation Methods
 		//============================
-		void CalculateTextSize(Window* parentWindow);
+		void CalculateTextSize();
 	public:
 		//============================
 		// Public Fields
@@ -619,6 +619,10 @@ namespace Kargono::RuntimeUI
 		// Query Window State
 		//============================
 		bool GetWindowDisplayed();
+		std::vector<Ref<Widget>> GetAllChildWidgets();
+
+	private:
+		void GetChildWidget(std::vector<Ref<Widget>>& returnVector, Ref<Widget> currentWidget);
 
 	public:
 		//============================
@@ -636,10 +640,7 @@ namespace Kargono::RuntimeUI
 		Math::vec3 m_ScreenPosition{};
 		Math::vec2 m_Size{1.0f, 1.0f};
 		Math::vec4 m_BackgroundColor{ 0.3f };
-		std::size_t m_ParentIndex{ k_InvalidWidgetID };
-		std::size_t m_ChildBufferIndex{ k_InvalidWidgetID };
-		std::size_t m_ChildBufferSize{ 0 };
-		std::size_t m_DefaultActiveWidget{ k_InvalidWidgetID };
+		int32_t m_DefaultActiveWidget{ k_InvalidWidgetID };
 		Ref<Widget> m_DefaultActiveWidgetRef{ nullptr };
 		std::vector<Ref<Widget>> m_Widgets{};
 
@@ -681,10 +682,40 @@ namespace Kargono::RuntimeUI
 		IDToLocationMap m_IDToLocation{};
 	};
 
-	struct WidgetDimensions
+	struct BoundingBoxTransform
 	{
 		Math::vec3 m_Translation;
 		Math::vec3 m_Size;
+	};
+
+	class NavigationLinksCalculator
+	{
+	public:
+		void CalculateNavigationLinks(Ref<UserInterface> userInterface, ViewportData& viewportData);
+	private:
+		void CalculateWidgetNavigationLinks(Ref<Widget> currentWidget);
+		int32_t CalculateNavigationLink(Direction direction);
+		void CompareCurrentAndPotentialWidget(Ref<Widget> potentialWidget);
+	private:
+		// General state
+		Ref<UserInterface> m_UserInterface{ nullptr };
+		ViewportData m_ViewportData{};
+		// Current window state
+		Window* m_CurrentWindow{ nullptr };
+		BoundingBoxTransform m_CurrentWindowTransform{};
+		// Current widget state
+		Ref<Widget> m_CurrentWidget{ nullptr };
+		BoundingBoxTransform m_CurrentWidgetParentTransform{};
+		Math::vec2 m_CurrentWidgetPosition{};
+		Math::vec2 m_CurrentWidgetSize{};
+		Math::vec2 m_CurrentWidgetCenterPosition{};
+		// Current potential widget info
+		BoundingBoxTransform m_PotentialWidgetParentTransform{};
+
+		// Nav-link calculation fields
+		int32_t m_CurrentBestChoiceID{ k_InvalidWidgetID };
+		float m_CurrentBestDistance{ std::numeric_limits<float>::max() };
+		Direction m_CurrentDirection{ Direction::None };
 	};
 
 	//============================
@@ -752,7 +783,8 @@ namespace Kargono::RuntimeUI
 		static Ref<Scripting::Script> GetActiveOnMove();
 		static Assets::AssetHandle GetActiveOnMoveHandle();
 		static std::vector<Window>& GetAllActiveWindows();
-		static WidgetDimensions GetParentDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight);
+		static BoundingBoxTransform GetParentDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight);
+		static BoundingBoxTransform GetWidgetDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight);
 
 		//==============================
 		// Interact With Active UI
@@ -767,9 +799,8 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Revalidate UI Context
 		//==============================
-		static void CalculateWindowNavigationLinks();
-		static void RecalculateTextData(Window* parentWindow, Widget* widget);
-		static void CalculateFixedAspectRatioSize(Window* parentWindow, Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight,
+		static void RecalculateTextData(Widget* widget);
+		static void CalculateFixedAspectRatioSize(Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight,
 			bool useXValueAsBase);
 		static SelectionData* GetSelectionDataFromWidget(Widget* currentWidget);
 		static ContainerData* GetContainerDataFromWidget(Widget* currentWidget);
@@ -807,7 +838,6 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Revalidate UI Context (Internal)
 		//==============================
-		static int32_t CalculateNavigationLink(Window& window, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize);
 		static void RevalidateDisplayedWindows();
 		static void RevalidateWidgetIDToLocationMap();
 		static void RevalidateContainerInLocationMap(IDToLocationMap& locationMap, ContainerData* container, std::vector<uint16_t>& parentLocation);
@@ -819,14 +849,13 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Manage Active UI (Internal)
 		//==============================
-		static void SetWidgetTextInternal(Window* currentWindow, Ref<Widget> currentWidget, const std::string& newText);
+		static void SetWidgetTextInternal(Ref<Widget> currentWidget, const std::string& newText);
 		static void SetSelectedWidgetInternal(Ref<Widget> newSelectedWidget);
 		static void SetHoveredWidgetInternal(Ref<Widget> newSelectedWidget);
 		static void SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
 		static void SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable);
 		static bool IsWidgetSelectedInternal(Ref<Widget> currentWidget);
 		static void SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
-		static void GetWidgetLocationAndSize(Window* window, Widget* widget, ViewportData* viewportData, Math::vec3& translationOut, Math::vec3& sizeOut);
 		
 
 		//==============================

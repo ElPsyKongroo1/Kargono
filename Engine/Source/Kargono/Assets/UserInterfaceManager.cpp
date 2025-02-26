@@ -316,9 +316,6 @@ namespace Kargono::Assets
 			out << YAML::Key << "ScreenPosition" << YAML::Value << window.m_ScreenPosition;
 			out << YAML::Key << "Size" << YAML::Value << window.m_Size;
 			out << YAML::Key << "BackgroundColor" << YAML::Value << window.m_BackgroundColor;
-			out << YAML::Key << "ParentIndex" << YAML::Value << window.m_ParentIndex;
-			out << YAML::Key << "ChildBufferIndex" << YAML::Value << window.m_ChildBufferIndex;
-			out << YAML::Key << "ChildBufferSize" << YAML::Value << window.m_ChildBufferSize;
 			out << YAML::Key << "DefaultActiveWidget" << YAML::Value << window.m_DefaultActiveWidget;
 
 			out << YAML::Key << "Widgets" << YAML::Value;
@@ -755,10 +752,7 @@ namespace Kargono::Assets
 				newWindow.m_ScreenPosition = window["ScreenPosition"].as<Math::vec3>();
 				newWindow.m_Size = window["Size"].as<Math::vec2>();
 				newWindow.m_BackgroundColor = window["BackgroundColor"].as<Math::vec4>();
-				newWindow.m_ParentIndex = window["ParentIndex"].as<size_t>();
-				newWindow.m_ChildBufferIndex = window["ChildBufferIndex"].as<size_t>();
-				newWindow.m_ChildBufferSize = window["ChildBufferSize"].as<size_t>();
-				newWindow.m_DefaultActiveWidget = window["DefaultActiveWidget"].as<size_t>();
+				newWindow.m_DefaultActiveWidget = window["DefaultActiveWidget"].as<int32_t>();
 
 				YAML::Node widgetNodes = window["Widgets"];
 
@@ -769,10 +763,6 @@ namespace Kargono::Assets
 					{
 						Ref<RuntimeUI::Widget> newWidget = DeserializeWidget(widgetNode);
 						newWidgetsList.push_back(newWidget);
-					}
-					if (newWindow.m_DefaultActiveWidget != -1) 
-					{
-						newWindow.m_DefaultActiveWidgetRef = newWidgetsList.at(newWindow.m_DefaultActiveWidget); 
 					}
 				}
 

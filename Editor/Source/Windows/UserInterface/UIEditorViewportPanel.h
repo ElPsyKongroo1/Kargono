@@ -60,7 +60,7 @@ namespace Kargono::Panels
 		// Supporting Functions
 		//=========================
 		void DrawDebugLines();
-		void DrawWidgetConstraintDistanceLines(RuntimeUI::Window* window, RuntimeUI::Widget* widget, const Math::mat4& widgetTransform, const Math::vec3& widgetTranslation);
+		void DrawWidgetConstraintDistanceLines(RuntimeUI::Widget* widget, const Math::mat4& widgetTransform, const Math::vec3& widgetTranslation);
 		void DrawWindowConstraintDistanceLines(RuntimeUI::Window* window);
 		void ResetCamera();
 		

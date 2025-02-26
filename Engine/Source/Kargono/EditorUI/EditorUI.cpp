@@ -3478,9 +3478,17 @@ namespace Kargono::EditorUI
 
 	void TreeSpec::ExpandNodePath(TreePath& path)
 	{
+		// Ensure the path is valid
 		if (GetEntryFromPath(path))
 		{
-			m_ExpandedNodes.insert(path);
+			// Add every node to the expanded path list
+			TreePath expandingPath;
+			for (uint16_t node : path.GetPath())
+			{
+				// Add every entry 
+				expandingPath.AddNode(node);
+				m_ExpandedNodes.insert(expandingPath);
+			}
 		}
 	}
 

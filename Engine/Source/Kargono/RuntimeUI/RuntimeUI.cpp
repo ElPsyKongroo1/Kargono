@@ -154,19 +154,18 @@ namespace Kargono::RuntimeUI
 
 		if (activeUI->m_PressedWidget)
 		{
-			// Get the widget's translation and size
-			Math::vec3 widgetTranslation;
-			Math::vec3 widgetSize;
-			GetWidgetLocationAndSize(activeUI->m_ActiveWindow, activeUI->m_PressedWidget, viewportData,
-				widgetTranslation, widgetSize);
+			// Get the widget's transform
+			BoundingBoxTransform widgetTransform = GetWidgetDimensionsFromID(
+				activeUI->m_PressedWidget->m_ID,
+				viewportData->m_Width, viewportData->m_Height);
 
 			// Get the underlying widget type
 			KG_ASSERT(activeUI->m_PressedWidget->m_WidgetType == WidgetTypes::SliderWidget);
 			SliderWidget& activeSlider = *(SliderWidget*)activeUI->m_PressedWidget;
 
 			// Get the line dimensions
-			float sliderLineLowerBound{ widgetTranslation.x };
-			float sliderLineUpperBound{ widgetTranslation.x + widgetSize.x };
+			float sliderLineLowerBound{ widgetTransform.m_Translation.x };
+			float sliderLineUpperBound{ widgetTransform.m_Translation.x + widgetTransform.m_Size.x };
 
 			// Check if the mouse click falls within the bounds of the slider
 			if (mousePosition.x < sliderLineLowerBound)
@@ -238,8 +237,7 @@ namespace Kargono::RuntimeUI
 				textData->m_CursorIndex++;
 
 				// Revalidate text dimensions
-				RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_ActiveWindow,
-					s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+				RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
 
 				// Run on move cursor if necessary
 				OnMoveCursorInternal(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
@@ -278,8 +276,7 @@ namespace Kargono::RuntimeUI
 						textData->m_Text.erase(textData->m_CursorIndex - 1, 1);
 						textData->m_CursorIndex--;
 						// Revalidate text dimensions
-						RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_ActiveWindow,
-							s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+						RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
 
 						// Run on move cursor if necessary
 						OnMoveCursorInternal(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
@@ -350,16 +347,15 @@ namespace Kargono::RuntimeUI
 			SingleLineTextData* textData = GetSingleLineTextDataFromWidget(activeUI->m_EditingWidget);
 			KG_ASSERT(textData);
 
-			// Get the widget's translation and size
-			Math::vec3 widgetTranslation;
-			Math::vec3 widgetSize;
-			GetWidgetLocationAndSize(activeUI->m_ActiveWindow, activeUI->m_EditingWidget, viewportData,
-				widgetTranslation, widgetSize);
+			// Get the widget's transform
+			BoundingBoxTransform widgetTransform = GetWidgetDimensionsFromID(
+				activeUI->m_EditingWidget->m_ID, 
+				viewportData->m_Width, viewportData->m_Height);
 
 			// Get the widget's text's starting position
 			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 			float textScalingFactor{ (viewportData->m_Width * 0.15f * textData->m_TextSize) * (resolution.y / resolution.x) };
-			Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(*textData, widgetTranslation, widgetSize, textScalingFactor);
+			Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(*textData, widgetTransform.m_Translation, widgetTransform.m_Size, textScalingFactor);
 
 			// Find new cursor location
 			size_t newCursorIndex = CalculateCursorIndexFromMousePosition(*textData, textStartingPoint.x, mousePosition.x, textScalingFactor);
@@ -377,19 +373,18 @@ namespace Kargono::RuntimeUI
 			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::SliderWidget);
 			SliderWidget& activeSlider = *(SliderWidget*)activeUI->m_SelectedWidget;
 
-			// Get the widget's translation and size
-			Math::vec3 widgetTranslation;
-			Math::vec3 widgetSize;
-			GetWidgetLocationAndSize(activeUI->m_ActiveWindow, activeUI->m_SelectedWidget, viewportData,
-				widgetTranslation, widgetSize);
+			// Get the widget's transform
+			BoundingBoxTransform widgetTransform = GetWidgetDimensionsFromID(
+				activeUI->m_SelectedWidget->m_ID,
+				viewportData->m_Width, viewportData->m_Height);
 
 			// Get the slider's current normalized location based on the bounds and currentValue
 			float normalizedSliderLocation = (activeSlider.m_CurrentValue - activeSlider.m_Bounds.x) /
 				(activeSlider.m_Bounds.y - activeSlider.m_Bounds.x);
 
 			// Get slider bounding box
-			Math::vec3 sliderSize { 0.04f * widgetSize.x , 0.35f * widgetSize.y  , widgetSize.z };
-			Math::vec3 sliderLocation{ widgetTranslation.x + widgetSize.x * normalizedSliderLocation - (sliderSize.x / 2.0f), widgetTranslation.y + (widgetSize.y / 2.0f) - (sliderSize.y / 2.0f), widgetTranslation.z};
+			Math::vec3 sliderSize { 0.04f * widgetTransform.m_Size.x , 0.35f * widgetTransform.m_Size.y  , widgetTransform.m_Size.z };
+			Math::vec3 sliderLocation{ widgetTransform.m_Translation.x + widgetTransform.m_Size.x * normalizedSliderLocation - (sliderSize.x / 2.0f), widgetTransform.m_Translation.y + (widgetTransform.m_Size.y / 2.0f) - (sliderSize.y / 2.0f), widgetTransform.m_Translation.z};
 
 			// Check if the mouse click falls within the bounds of the slider
 			if (mousePosition.x > (sliderLocation.x) && mousePosition.x < (sliderLocation.x + sliderSize.x) &&
@@ -405,16 +400,15 @@ namespace Kargono::RuntimeUI
 			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::DropDownWidget);
 			DropDownWidget& activeDropDown = *(DropDownWidget*)activeUI->m_SelectedWidget;
 
-			// Get the widget's translation and size
-			Math::vec3 widgetTranslation;
-			Math::vec3 widgetSize;
-			GetWidgetLocationAndSize(activeUI->m_ActiveWindow, activeUI->m_SelectedWidget, viewportData,
-				widgetTranslation, widgetSize);
+			// Get the widget's transform
+			BoundingBoxTransform widgetTransform = GetWidgetDimensionsFromID(
+				activeUI->m_SelectedWidget->m_ID,
+				viewportData->m_Width, viewportData->m_Height);
 
 			//==============================//
 			// Check if the mouse position is within bounds of the current option
-			if (mousePosition.x > widgetTranslation.x && mousePosition.x < (widgetTranslation.x + widgetSize.x) &&
-				mousePosition.y > widgetTranslation.y && mousePosition.y < (widgetTranslation.y + widgetSize.y))
+			if (mousePosition.x > widgetTransform.m_Translation.x && mousePosition.x < (widgetTransform.m_Translation.x + widgetTransform.m_Size.x) &&
+				mousePosition.y > widgetTransform.m_Translation.y && mousePosition.y < (widgetTransform.m_Translation.y + widgetTransform.m_Size.y))
 			{
 				// Toggle the drop down begin open if we click the current option
 				Utility::Operations::ToggleBoolean(activeDropDown.m_DropDownOpen);
@@ -438,15 +432,15 @@ namespace Kargono::RuntimeUI
 					// Create translation for the current option
 					Math::vec2 currentOptionTranslation
 					{
-						widgetTranslation.x,
-						widgetTranslation.y - widgetSize.y * (float)(visibleDropDownOffset + 1)
+						widgetTransform.m_Translation.x,
+						widgetTransform.m_Translation.y - widgetTransform.m_Size.y * (float)(visibleDropDownOffset + 1)
 					};
 
 					// Check if the mouse position is within bounds of the current option
 					if (mousePosition.x > currentOptionTranslation.x &&
-						mousePosition.x < (currentOptionTranslation.x + widgetSize.x) &&
+						mousePosition.x < (currentOptionTranslation.x + widgetTransform.m_Size.x) &&
 						mousePosition.y > currentOptionTranslation.y &&
-						mousePosition.y < (currentOptionTranslation.y + widgetSize.y))
+						mousePosition.y < (currentOptionTranslation.y + widgetTransform.m_Size.y))
 					{
 						// Turn off the drop-down open boolean and set the current option to this windowIteration
 						activeDropDown.m_DropDownOpen = false;
@@ -515,6 +509,31 @@ namespace Kargono::RuntimeUI
 			activeUI->m_Windows.at(0).DisplayWindow();
 			activeUI->m_ActiveWindow = &activeUI->m_Windows.at(0);
 
+			// Handle window specific set-up
+			for (Window& window : activeUI->m_Windows)
+			{
+				// Set the default widget for each window
+				if (window.m_DefaultActiveWidget != RuntimeUI::k_InvalidWidgetID)
+				{
+					Ref<RuntimeUI::Widget> newDefaultWidget = RuntimeUI::RuntimeUIService::GetWidgetFromID(window.m_DefaultActiveWidget);
+					KG_ASSERT(newDefaultWidget);
+					window.m_DefaultActiveWidgetRef = newDefaultWidget;
+				}
+
+				// Calculate Text Sizes for all windows
+				for (Ref<Widget> widget : window.m_Widgets)
+				{
+					RecalculateTextData(widget.get());
+
+					// Ensure the default cursor position is at the end of the text
+					SingleLineTextData* textData = GetSingleLineTextDataFromWidget(widget.get());
+					if (textData)
+					{
+						textData->m_CursorIndex = textData->m_Text.size();
+					}
+				}
+			}
+			
 			// Set default widget as the selected widget if it exists
 			if (activeUI->m_ActiveWindow->m_DefaultActiveWidgetRef)
 			{
@@ -529,26 +548,12 @@ namespace Kargono::RuntimeUI
 				activeUI->m_SelectedWidget = nullptr;
 			}
 
-
-			// Calculate Text Sizes for all windows
-			for (Window& window : activeUI->m_Windows)
-			{
-				for (Ref<Widget> widget : window.m_Widgets)
-				{
-					RecalculateTextData(&window, widget.get());
-
-					// Ensure the default cursor position is at the end of the text
-					SingleLineTextData* textData = GetSingleLineTextDataFromWidget(widget.get());
-					if (textData)
-					{
-						textData->m_CursorIndex = textData->m_Text.size();
-					}
-				}
-			}
 		}
 
 		// Create widget navigation links for all windows
-		CalculateWindowNavigationLinks();
+		NavigationLinksCalculator newCalculator;
+		newCalculator.CalculateNavigationLinks(s_RuntimeUIContext->m_ActiveUI,
+			EngineService::GetActiveWindow().GetActiveViewport());
 	}
 
 	void RuntimeUIService::SetActiveUIFromHandle(Assets::AssetHandle uiHandle)
@@ -606,7 +611,9 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Revalidate navigation links
-		CalculateWindowNavigationLinks();
+		NavigationLinksCalculator newCalculator;
+		newCalculator.CalculateNavigationLinks(s_RuntimeUIContext->m_ActiveUI,
+			EngineService::GetActiveWindow().GetActiveViewport());
 
 		return true;
 	}
@@ -622,11 +629,9 @@ namespace Kargono::RuntimeUI
 		// Ensure ID -> Location map is valid
 		RuntimeUI::RuntimeUIService::RevalidateWidgetIDToLocationMap();
 
-		// Get the parent window
-		Window& parentWindow = GetParentWindowFromWidgetID(newWidget->m_ID);
 
 		// Ensure the new widget is validated
-		RuntimeUIService::RecalculateTextData(&parentWindow, newWidget.get());
+		RuntimeUIService::RecalculateTextData(newWidget.get());
 	}
 
 	bool RuntimeUIService::DeleteUIWindow(Ref<UserInterface> userInterface, std::size_t windowLocation)
@@ -667,11 +672,13 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(idToLocationMap.contains(widgetID));
 		std::vector<uint16_t>& locationDirections = idToLocationMap.at(widgetID);
 
+		// Ensure the directions map to a widget
+		KG_ASSERT(locationDirections.size() > 1);
+
 		// Get widget using location directions
 		// TODO: This currently assumes the window -> widget structure
-		KG_ASSERT(locationDirections.size() == 2); // TODO: Remove this later
 		size_t windowIndex = locationDirections.at(0);
-		size_t widgetIndex = locationDirections.at(1);
+		size_t firstWidgetIndex = locationDirections.at(1);
 
 		// Ensure window index is valid
 		if (windowIndex >= s_RuntimeUIContext->m_ActiveUI->m_Windows.size())
@@ -685,36 +692,53 @@ namespace Kargono::RuntimeUI
 		RuntimeUI::Window& indicatedWindow = uiWindows.at(windowIndex);
 
 		// Ensure widget index is valid
-		if (widgetIndex >= indicatedWindow.m_Widgets.size())
+		if (firstWidgetIndex >= indicatedWindow.m_Widgets.size())
 		{
 			KG_WARN("Attempt to delete widget with out of bounds index");
 			return false;
 		}
 
 		// Clear default active widget if necessary
-		if (widgetIndex == indicatedWindow.m_DefaultActiveWidget)
+		if (widgetID == indicatedWindow.m_DefaultActiveWidget)
 		{
 			indicatedWindow.m_DefaultActiveWidget = k_InvalidWidgetID;
 			indicatedWindow.m_DefaultActiveWidgetRef = nullptr;
 		}
 
-		// Delete the widget
-		indicatedWindow.m_Widgets.erase(indicatedWindow.m_Widgets.begin() + widgetIndex);
-
-		// Revalidate the default active widget for this window
-		if (indicatedWindow.m_DefaultActiveWidgetRef)
+		// Handle the case where the location directions only uses one widget (Ex: Window -> Widget)
+		if (locationDirections.size() == 2)
 		{
-			// Find the indicated default active widget
-			size_t iteration{ 0 };
-			for (Ref<Widget> widget : indicatedWindow.m_Widgets)
+			// Delete the widget
+			indicatedWindow.m_Widgets.erase(indicatedWindow.m_Widgets.begin() + firstWidgetIndex);
+			return true;
+		}
+
+		// Get the first widget (Ex: Window -> [Widget])
+		Ref<Widget> currentWidget = indicatedWindow.m_Widgets.at(firstWidgetIndex);
+		KG_ASSERT(currentWidget);
+
+		// Handle all other cases where the location direction uses two or more widgets (Ex: Window -> Widget -> Widget..)
+		for (size_t iteration{ 2 }; iteration < locationDirections.size(); iteration++)
+		{
+			// Get the container data for the current widget
+			ContainerData* data = GetContainerDataFromWidget(currentWidget.get());
+			KG_ASSERT(data);
+
+			// Ensure the widget directions fall within the bounds of the widget array
+			size_t currentIndex = locationDirections.at(iteration);
+			KG_ASSERT(currentIndex < data->m_ContainedWidgets.size());
+
+			// Exit early if we reach the final valid index of locationDirections (Ex: Window -> Widget -> (Final)[Widget])
+			if (iteration == locationDirections.size() - 1)
 			{
-				if (indicatedWindow.m_DefaultActiveWidgetRef == widget)
-				{
-					indicatedWindow.m_DefaultActiveWidget = iteration;
-					break;
-				}
-				iteration++;
+				// Remove the indicated widget
+				data->m_ContainedWidgets.erase(data->m_ContainedWidgets.begin() + currentIndex);
+				break;
 			}
+
+			// Set the current widget to the indicated container widget (Window -> ... -> (Current)Widget -> [Widget])
+			currentWidget = data->m_ContainedWidgets.at(currentIndex);
+			KG_ASSERT(currentWidget);
 		}
 
 		return true;
@@ -838,7 +862,7 @@ namespace Kargono::RuntimeUI
 		{
 			for (Ref<Widget> widget : window.m_Widgets)
 			{
-				RecalculateTextData(&window, widget.get());
+				RecalculateTextData(widget.get());
 			}
 		}
 	}
@@ -848,7 +872,7 @@ namespace Kargono::RuntimeUI
 		return s_RuntimeUIContext->m_ActiveUI->m_Windows;
 	}
 
-	WidgetDimensions RuntimeUIService::GetParentDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight)
+	BoundingBoxTransform RuntimeUIService::GetParentDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight)
 	{
 		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
 		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
@@ -871,7 +895,7 @@ namespace Kargono::RuntimeUI
 		Window& parentWindow = activeUI->m_Windows.at(windowIndex);
 
 		// Calculate the parent window's dimensions
-		WidgetDimensions returnDimensions;
+		BoundingBoxTransform returnDimensions;
 		returnDimensions.m_Translation = parentWindow.CalculateWorldPosition(
 			viewportWidth, viewportHeight);
 		returnDimensions.m_Size = parentWindow.CalculateSize(
@@ -909,6 +933,72 @@ namespace Kargono::RuntimeUI
 			KG_ASSERT(currentContainerIndex < currentData->m_ContainedWidgets.size());
 			currentWidget = currentData->m_ContainedWidgets.at(currentContainerIndex);
 		}
+
+		// Return the dimensions
+		return returnDimensions;
+	}
+
+	BoundingBoxTransform RuntimeUI::RuntimeUIService::GetWidgetDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight)
+	{
+		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+
+		// Get the ID -> Widget Location map and location directions
+		IDToLocationMap& idToLocationMap = s_RuntimeUIContext->
+			m_ActiveUI->m_IDToLocation;
+		KG_ASSERT(idToLocationMap.contains(widgetID));
+		std::vector<uint16_t>& locationDirections = idToLocationMap.at(widgetID);
+
+		// Ensure directions to a widget a presented
+		KG_ASSERT(locationDirections.size() > 1);
+
+		// Get the first two entries (Window -> Widget)
+		size_t windowIndex = locationDirections.at(0);
+		size_t firstWidgetIndex = locationDirections.at(1);
+
+		// Get the widget's parent window
+		KG_ASSERT(windowIndex < activeUI->m_Windows.size());
+		Window& parentWindow = activeUI->m_Windows.at(windowIndex);
+
+		// Calculate the parent window's dimensions
+		BoundingBoxTransform returnDimensions;
+		returnDimensions.m_Translation = parentWindow.CalculateWorldPosition(
+			viewportWidth, viewportHeight);
+		returnDimensions.m_Size = parentWindow.CalculateSize(
+			viewportWidth, viewportHeight);
+
+		// Get the first widget
+		KG_ASSERT(firstWidgetIndex < parentWindow.m_Widgets.size());
+		Ref<Widget> currentWidget = parentWindow.m_Widgets.at(firstWidgetIndex);
+
+		// Return the first widget's dimensions if the location only involves a single widget (Ex: Window -> Widget)
+		if (locationDirections.size() == 2)
+		{
+			returnDimensions.m_Translation = currentWidget->CalculateWorldPosition(returnDimensions.m_Translation, returnDimensions.m_Size);
+			returnDimensions.m_Size = currentWidget->CalculateWidgetSize(returnDimensions.m_Size);
+			return  returnDimensions;
+		}
+
+		// Continue to calculate the dimensions for a longer widget chain (Ex: Window -> Widget -> ...)
+		for (size_t iteration{ 2 }; iteration < locationDirections.size(); iteration++)
+		{
+			// Update the dimensions based on the current widget and it's parent's dimensions
+			returnDimensions.m_Translation = currentWidget->CalculateWorldPosition(returnDimensions.m_Translation, returnDimensions.m_Size);
+			returnDimensions.m_Size = currentWidget->CalculateWidgetSize(returnDimensions.m_Size);
+
+			// Get the container data from the active widget
+			ContainerData* currentData = GetContainerDataFromWidget(currentWidget.get());
+			KG_ASSERT(currentData);
+
+			// Get the current widget index and set the next parent widget
+			uint16_t currentContainerIndex = locationDirections.at(iteration);
+			KG_ASSERT(currentContainerIndex < currentData->m_ContainedWidgets.size());
+			currentWidget = currentData->m_ContainedWidgets.at(currentContainerIndex);
+		}
+
+		// Do the final calculation
+		returnDimensions.m_Translation = currentWidget->CalculateWorldPosition(returnDimensions.m_Translation, returnDimensions.m_Size);
+		returnDimensions.m_Size = currentWidget->CalculateWidgetSize(returnDimensions.m_Size);
 
 		// Return the dimensions
 		return returnDimensions;
@@ -1063,10 +1153,8 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::SetWidgetTextInternal(Window* currentWindow, Ref<Widget> currentWidget, const std::string& newText)
+	void RuntimeUIService::SetWidgetTextInternal(Ref<Widget> currentWidget, const std::string& newText)
 	{
-		KG_ASSERT(currentWindow);
-
 		// Ensure the widget is valid
 		if (!currentWidget)
 		{
@@ -1080,7 +1168,7 @@ namespace Kargono::RuntimeUI
 		{
 			// Set the text of the widget
 			multiLineData->m_Text = newText;
-			RecalculateTextData(currentWindow, currentWidget.get());
+			RecalculateTextData(currentWidget.get());
 			return;
 		}
 
@@ -1228,19 +1316,6 @@ namespace Kargono::RuntimeUI
 		selectionData->m_DefaultBackgroundColor = newColor;
 	}
 
-	void RuntimeUIService::GetWidgetLocationAndSize(Window* window, Widget* widget, ViewportData* viewportData, Math::vec3& translationOut, Math::vec3& sizeOut)
-	{
-		// Get window size and translation
-		Math::vec3 windowTranslation = window->CalculateWorldPosition(
-			viewportData->m_Width, viewportData->m_Height);
-		Math::vec3 windowSize = window->CalculateSize(
-			viewportData->m_Width, viewportData->m_Height);
-
-		// Get the widget size and translation
-		translationOut = widget->CalculateWorldPosition(
-			windowTranslation, windowSize);
-		sizeOut = widget->CalculateWidgetSize(windowSize);
-	}
 
 	void RuntimeUIService::OnPressInternal(Widget* currentWidget)
 	{
@@ -1329,7 +1404,11 @@ namespace Kargono::RuntimeUI
 
 		// Set the widget as selectable
 		selectionData->m_Selectable = selectable;
-		CalculateWindowNavigationLinks();
+
+		// Calculate navigation links
+		NavigationLinksCalculator newCalculator;
+		newCalculator.CalculateNavigationLinks(s_RuntimeUIContext->m_ActiveUI, 
+			EngineService::GetActiveWindow().GetActiveViewport());
 	}
 
 	bool RuntimeUIService::IsWidgetSelectedInternal(Ref<Widget> currentWidget)
@@ -1678,7 +1757,7 @@ namespace Kargono::RuntimeUI
 	{
 		// Search for the indicated widget
 		auto [currentWidget, currentWindow] = GetWidgetAndWindow(windowTag, widgetTag);
-		SetWidgetTextInternal(currentWindow, currentWidget, newText);
+		SetWidgetTextInternal(currentWidget, newText);
 		
 	}
 
@@ -1693,7 +1772,7 @@ namespace Kargono::RuntimeUI
 
 		// Search for the indicated widget
 		auto [currentWidget, currentWindow] = GetWidgetAndWindow(widgetID.m_WidgetID);
-		SetWidgetTextInternal(currentWindow, currentWidget, newText);
+		SetWidgetTextInternal(currentWidget, newText);
 	}
 
 	void RuntimeUIService::SetWidgetImageByIndex(WidgetID widgetID, Assets::AssetHandle textureHandle)
@@ -1989,7 +2068,7 @@ namespace Kargono::RuntimeUI
 		if (originalSelectionData->m_NavigationLinks.m_RightWidgetID != k_InvalidWidgetID)
 		{
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_RightWidgetID).get();
+			activeUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_RightWidgetID).get();
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -2025,7 +2104,7 @@ namespace Kargono::RuntimeUI
 		{
 
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_LeftWidgetID).get();
+			activeUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_LeftWidgetID).get();
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -2060,7 +2139,7 @@ namespace Kargono::RuntimeUI
 		if (originalSelectionData->m_NavigationLinks.m_UpWidgetID != k_InvalidWidgetID)
 		{
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_UpWidgetID).get();
+			activeUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_UpWidgetID).get();
 
 			// Get the new widget's selection data
 			SelectionData* newSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
@@ -2099,7 +2178,8 @@ namespace Kargono::RuntimeUI
 		if (originalSelectionData->m_NavigationLinks.m_DownWidgetID != k_InvalidWidgetID)
 		{
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = activeUI->m_ActiveWindow->m_Widgets.at(originalSelectionData->m_NavigationLinks.m_DownWidgetID).get();
+			
+			activeUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_DownWidgetID).get();
 
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
@@ -2148,57 +2228,17 @@ namespace Kargono::RuntimeUI
 		OnPressInternal(currentWidget.get());
 	}
 
-	void RuntimeUIService::CalculateWindowNavigationLinks()
+	
+
+	void RuntimeUIService::RecalculateTextData(Widget* widget)
 	{
-		ViewportData& viewportData = EngineService::GetActiveWindow().GetActiveViewport();
-
-		// Iterate through all windows 
-		for (Window& currentWindow : s_RuntimeUIContext->m_ActiveUI->m_Windows)
-		{
-			// Calculate window scale and position
-			Math::vec3 windowScale = currentWindow.CalculateSize(viewportData.m_Width, viewportData.m_Height);
-			Math::vec3 windowPosition = currentWindow.CalculateWorldPosition(viewportData.m_Width, viewportData.m_Height);
-
-			// Iterate through all widgets in the window
-			for (Ref<Widget> currentWidget : currentWindow.m_Widgets)
-			{
-				// Ensure the widget is selectable
-				if (!currentWidget->Selectable())
-				{
-					continue;
-				}
-
-				// Get the selection specific data from the widget
-				SelectionData* selectionData = GetSelectionDataFromWidget(currentWidget.get());
-				if (!selectionData)
-				{
-					KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
-					return;
-				}
-
-				// Calculate navigation links for the current widget
-				selectionData->m_NavigationLinks.m_RightWidgetID = CalculateNavigationLink(currentWindow, currentWidget, 
-					Direction::Right, windowPosition, windowScale);
-				selectionData->m_NavigationLinks.m_LeftWidgetID = CalculateNavigationLink(currentWindow, currentWidget,
-					Direction::Left, windowPosition, windowScale);
-				selectionData->m_NavigationLinks.m_UpWidgetID = CalculateNavigationLink(currentWindow, currentWidget,
-					Direction::Up, windowPosition, windowScale);
-				selectionData->m_NavigationLinks.m_DownWidgetID = CalculateNavigationLink(currentWindow, currentWidget,
-					Direction::Down, windowPosition, windowScale);
-			}
-		}
-	}
-
-	void RuntimeUIService::RecalculateTextData(Window* parentWindow, Widget* widget)
-	{
-		KG_ASSERT(parentWindow);
 		KG_ASSERT(widget);
 
 		// Revalidate text dimensions for widget
 		switch (widget->m_WidgetType)
 		{
 		case WidgetTypes::TextWidget:
-			(*(TextWidget*)widget).CalculateTextSize(parentWindow);
+			(*(TextWidget*)widget).CalculateTextSize();
 			break;
 		case WidgetTypes::ButtonWidget:
 			(*(ButtonWidget*)widget).CalculateTextSize();
@@ -2209,24 +2249,26 @@ namespace Kargono::RuntimeUI
 		case WidgetTypes::DropDownWidget:
 			(*(DropDownWidget*)widget).CalculateTextSize();
 			break;
-		case WidgetTypes::ImageWidget:
-		case WidgetTypes::ImageButtonWidget:
-		case WidgetTypes::CheckboxWidget:
-		case WidgetTypes::SliderWidget:
 		case WidgetTypes::ContainerWidget:
+		{
+			ContainerData* containerData = GetContainerDataFromWidget(widget);
+			KG_ASSERT(containerData);
+			for (Ref<Widget> widget : containerData->m_ContainedWidgets)
+			{
+				RecalculateTextData(widget.get());
+			}
 			break;
+		}
 		default:
-			KG_ERROR("Invalid widget type provided when revalidating widget text size");
 			break;
 		}
 	}
 
-	void RuntimeUIService::CalculateFixedAspectRatioSize(Window* parentWindow, Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight, bool useXValueAsBase)
+	void RuntimeUIService::CalculateFixedAspectRatioSize(Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight, bool useXValueAsBase)
 	{
-		KG_ASSERT(parentWindow);
 		KG_ASSERT(widget);
 
-		Math::vec2 windowSize = parentWindow->CalculateSize(viewportWidth, viewportHeight);
+		BoundingBoxTransform parentTransform = GetParentDimensionsFromID(widget->m_ID, viewportWidth, viewportHeight);
 		
 		// Get the image data from the provided widget
 		ImageData* currentImageData = GetImageDataFromWidget(widget);
@@ -2267,7 +2309,7 @@ namespace Kargono::RuntimeUI
 			widget->m_PixelSize.y = (int)((float)widget->m_PixelSize.x * textureAspectRatio.y);
 
 			// And for the percentage dimensions
-			widget->m_PercentSize.y = ((windowSize.x * widget->m_PercentSize.x) * textureAspectRatio.y) / windowSize.y;
+			widget->m_PercentSize.y = ((parentTransform.m_Size.x * widget->m_PercentSize.x) * textureAspectRatio.y) / parentTransform.m_Size.y;
 		}
 		else
 		{
@@ -2281,142 +2323,9 @@ namespace Kargono::RuntimeUI
 			widget->m_PixelSize.x = (int)((float)widget->m_PixelSize.y * textureAspectRatio.x);
 
 			// And for the percentage dimensions
-			widget->m_PercentSize.x = ((windowSize.y * widget->m_PercentSize.y) * textureAspectRatio.x) / windowSize.x;
+			widget->m_PercentSize.x = ((parentTransform.m_Size.y * widget->m_PercentSize.y) * textureAspectRatio.x) / parentTransform.m_Size.x;
 		}
 		
-	}
-
-	int32_t RuntimeUIService::CalculateNavigationLink(Window& currentWindow, Ref<Widget> currentWidget, Direction direction, const Math::vec3& windowPosition, const Math::vec3& windowSize)
-	{
-		// Initialize variables for navigation link calculation
-		Ref<Widget> currentBestChoice{ nullptr };
-		std::size_t currentChoiceLocation{ 0 };
-		float currentBestDistance{ std::numeric_limits<float>::max() };
-		std::size_t iteration{ 0 };
-
-		// Calculate the position and size of the current widget
-		Math::vec2 currentWidgetPosition = currentWidget->CalculateWorldPosition(windowPosition, windowSize);
-		Math::vec2 currentWidgetSize = currentWidget->CalculateWidgetSize(windowSize);
-		Math::vec2 currentWidgetCenterPosition = { currentWidgetPosition.x + (currentWidgetSize.x * 0.5f), currentWidgetPosition.y + (currentWidgetSize.y * 0.5f) };
-
-		// Iterate through each potential widget and decide which widget makes sense to navigate to
-		for (Ref<Widget> potentialChoice : currentWindow.m_Widgets)
-		{
-			// Skip the current widget and any non-selectable widgets
-			if (potentialChoice == currentWidget || !potentialChoice->Selectable())
-			{
-				iteration++;
-				continue;
-			}
-			// Calculate the position and size of the potential widget
-			Math::vec2 potentialChoicePosition = potentialChoice->CalculateWorldPosition(windowPosition, windowSize);
-			Math::vec2 potentialChoiceSize = potentialChoice->CalculateWidgetSize(windowSize);
-			Math::vec2 potentialWidgetCenterPosition = { potentialChoicePosition.x + (potentialChoiceSize.x * 0.5f), potentialChoicePosition.y + (potentialChoiceSize.y * 0.5f) };
-
-			// Check if the potential widget is within the constraints of the current widget
-			float extentDistance{ 0.0f };
-			float singleDimensionDistance{ 0.0f };
-			float currentWidgetExtent{ 0.0f };
-			float potentialWidgetExtent{ 0.0f };
-
-			switch (direction)
-			{
-			case Direction::Right:
-				// Ensure the current widget's left extent does not overlap with the potential widget's right extent
-				currentWidgetExtent = currentWidgetPosition.x + currentWidgetSize.x;
-				potentialWidgetExtent = potentialChoicePosition.x;
-				if (currentWidgetExtent >= potentialWidgetExtent)
-				{
-					iteration++;
-					continue;
-				}
-				// Calculate the distance between the extents
-				extentDistance = glm::distance(Math::vec2( currentWidgetExtent, currentWidgetCenterPosition.y ), Math::vec2(potentialWidgetExtent, potentialWidgetCenterPosition.y));
-				singleDimensionDistance = glm::distance(currentWidgetCenterPosition.y, potentialWidgetCenterPosition.y);
-				break;
-			case Direction::Left:
-				// Ensure the current widget's right extent does not overlap with the potential widget's left extent
-				currentWidgetExtent = currentWidgetPosition.x;
-				potentialWidgetExtent = potentialChoicePosition.x + potentialChoiceSize.x;
-				if (currentWidgetExtent <= potentialWidgetExtent)
-				{
-					iteration++;
-					continue;
-				}
-				// Calculate the distance between the extents
-				extentDistance = glm::distance(Math::vec2(currentWidgetExtent, currentWidgetCenterPosition.y), Math::vec2(potentialWidgetExtent, potentialWidgetCenterPosition.y));
-				singleDimensionDistance = glm::distance(currentWidgetCenterPosition.y, potentialWidgetCenterPosition.y);
-				break;
-			case Direction::Up:
-				// Ensure the current widget's top extent does not overlap with the potential widget's bottom extent
-				currentWidgetExtent = currentWidgetPosition.y + currentWidgetSize.y;
-				potentialWidgetExtent = potentialChoicePosition.y;
-				if (currentWidgetExtent >= potentialWidgetExtent)
-				{
-					iteration++;
-					continue;
-				}
-				// Calculate the distance between the extents
-				extentDistance = glm::distance(Math::vec2(currentWidgetCenterPosition.x, currentWidgetExtent), Math::vec2(potentialWidgetCenterPosition.x, potentialWidgetExtent));
-				singleDimensionDistance = glm::distance(currentWidgetCenterPosition.x, potentialWidgetCenterPosition.x);
-				break;
-			case Direction::Down:
-				// Ensure the current widget's bottom extent does not overlap with the potential widget's top extent
-				currentWidgetExtent = currentWidgetPosition.y;
-				potentialWidgetExtent = potentialChoicePosition.y + potentialChoiceSize.y;
-				if (currentWidgetExtent <= potentialWidgetExtent)
-				{
-					iteration++;
-					continue;
-				}
-				// Calculate the distance between the extents
-				extentDistance = glm::distance(Math::vec2(currentWidgetCenterPosition.x, currentWidgetExtent), Math::vec2(potentialWidgetCenterPosition.x, potentialWidgetExtent));
-				singleDimensionDistance = glm::distance(currentWidgetCenterPosition.x, potentialWidgetCenterPosition.x);
-				break;
-			default:
-				KG_ERROR("Invalid direction provided when calculating navigation links for active user interface");
-				break;
-			}
-
-			// Magic number found by tinkering with settings until it felt right...
-			constexpr float singleDimensionAdjustment{ 0.65f };
-
-			// Calculate final distance factor
-			float finalDistanceFactor = extentDistance + singleDimensionAdjustment * singleDimensionDistance; 
-
-			// Save current best choice if it is the first choice
-			if (currentBestChoice == nullptr)
-			{
-				currentBestChoice = potentialChoice;
-				currentChoiceLocation = iteration;
-				currentBestDistance = finalDistanceFactor;
-				iteration++;
-				continue;
-			}
-
-
-			// Replace current best choice with the potential choice if it is closer
-			if (finalDistanceFactor < currentBestDistance)
-			{
-				currentBestChoice = potentialChoice;
-				currentChoiceLocation = iteration;
-				currentBestDistance = finalDistanceFactor;
-				iteration++;
-				continue;
-			}
-
-			iteration++;
-		}
-
-		// Return the index of the best widget choice if it exists
-		if (currentBestChoice)
-		{
-			return (int32_t)currentChoiceLocation;
-		}
-		else
-		{
-			return k_InvalidWidgetID;
-		}
 	}
 
 	Ref<Widget> RuntimeUIService::GetWidgetFromTag(const std::string& windowTag, const std::string& widgetTag)
@@ -2747,6 +2656,32 @@ namespace Kargono::RuntimeUI
 		RuntimeUIService::RevalidateDisplayedWindows();
 	}
 
+	std::vector<Ref<Widget>> RuntimeUI::Window::GetAllChildWidgets()
+	{
+		std::vector<Ref<Widget>> returnVector{ m_Widgets };
+
+		for (Ref<Widget> currentWidget : m_Widgets)
+		{
+			GetChildWidget(returnVector, currentWidget);
+		}
+
+		return returnVector;
+	}
+
+	void RuntimeUI::Window::GetChildWidget(std::vector<Ref<Widget>>& returnVector, Ref<Widget> currentWidget)
+	{
+		returnVector.push_back(currentWidget);
+
+		ContainerData* data = RuntimeUIService::GetContainerDataFromWidget(currentWidget.get());
+		if (data)
+		{
+			for (Ref<Widget> containedWidget : data->m_ContainedWidgets)
+			{
+				GetChildWidget(returnVector, containedWidget);
+			}
+		}
+	}
+
 	bool Window::GetWindowDisplayed()
 	{
 		return m_WindowDisplayed;
@@ -2775,7 +2710,7 @@ namespace Kargono::RuntimeUI
 		m_Widgets.push_back(newWidget);
 
 		RuntimeUI::RuntimeUIService::RevalidateWidgetIDToLocationMap();
-		RuntimeUIService::RecalculateTextData(this, newWidget.get());
+		RuntimeUIService::RecalculateTextData(newWidget.get());
 	}
 
 	void Window::DeleteWidget(std::size_t widgetLocation)
@@ -2865,10 +2800,8 @@ namespace Kargono::RuntimeUI
 
 	}
 
-	void TextWidget::CalculateTextSize(Window* parentWindow)
+	void TextWidget::CalculateTextSize()
 	{
-		KG_ASSERT(parentWindow);
-
 		// Get the resolution of the screen and the viewport
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
 		ViewportData& viewportData = EngineService::GetActiveWindow().GetActiveViewport();
@@ -2876,18 +2809,21 @@ namespace Kargono::RuntimeUI
 		// Calculate the text size used by the rendering calls
 		float textSize{ (viewportData.m_Width * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
 
+		// Get parent transform
+		BoundingBoxTransform parentTransform = RuntimeUI::RuntimeUIService::GetParentDimensionsFromID(m_ID, viewportData.m_Width, viewportData.m_Height);
+
 		// Get widget width
-		Math::vec3 widgetSize = CalculateWidgetSize(parentWindow->CalculateSize(viewportData.m_Width, viewportData.m_Height));
+		Math::vec3 widgetSize = CalculateWidgetSize(parentTransform.m_Size);
 		RuntimeUIService::CalculateMultiLineText(m_TextData, widgetSize, textSize);
 	}
 
-	void TextWidget::SetText(const std::string& newText, Window* parentWindow)
+	void TextWidget::SetText(const std::string& newText)
 	{
 		// Set the text of the widget
 		m_TextData.m_Text = newText;
 
 		// Calculate the new text size
-		CalculateTextSize(parentWindow);
+		CalculateTextSize();
 	}
 
 	void ButtonWidget::SetText(const std::string& newText)
@@ -3384,6 +3320,218 @@ namespace Kargono::RuntimeUI
 
 			// Render the indicated widget
 			containedWidget->OnRender(widgetTranslation, widgetSize, viewportWidth);
+		}
+	}
+
+	void RuntimeUI::NavigationLinksCalculator::CalculateNavigationLinks(Ref<UserInterface> userInterface, ViewportData& viewportData)
+	{
+		// Store the user interface and viewport data
+		KG_ASSERT(userInterface);
+		m_UserInterface = userInterface;
+		m_ViewportData = EngineService::GetActiveWindow().GetActiveViewport();
+
+		// Iterate through all windows 
+		for (Window& currentWindow : m_UserInterface->m_Windows)
+		{
+			// Store the current window
+			m_CurrentWindow = &currentWindow;
+
+			// Calculate window scale and position
+			m_CurrentWindowTransform.m_Translation = currentWindow.CalculateWorldPosition(viewportData.m_Width, viewportData.m_Height);
+			m_CurrentWindowTransform.m_Size = currentWindow.CalculateSize(viewportData.m_Width, viewportData.m_Height);
+
+
+			// Iterate through all widgets in the window
+			m_CurrentWidgetParentTransform = m_CurrentWindowTransform;
+			for (Ref<Widget> currentWidget : currentWindow.m_Widgets)
+			{
+				CalculateWidgetNavigationLinks(currentWidget);
+			}
+		}
+	}
+
+	void RuntimeUI::NavigationLinksCalculator::CalculateWidgetNavigationLinks(Ref<Widget> currentWidget)
+	{
+		// Handle container widgets
+		ContainerData* containerData = RuntimeUIService::GetContainerDataFromWidget(currentWidget.get());
+		if (containerData)
+		{
+			// Calculate the current widget's transform information
+			m_CurrentWidgetParentTransform.m_Translation = currentWidget->CalculateWorldPosition(
+				m_CurrentWidgetParentTransform.m_Translation, m_CurrentWidgetParentTransform.m_Size);
+			m_CurrentWidgetParentTransform.m_Size = currentWidget->CalculateWidgetSize(m_CurrentWidgetParentTransform.m_Size);
+			for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
+			{
+				// Calculate the navigation links for each contained widget
+				CalculateWidgetNavigationLinks(containedWidget);
+			}
+		}
+
+		// Ensure the widget is selectable
+		if (!currentWidget->Selectable())
+		{
+			return;
+		}
+
+		// Get the selection specific data from the widget
+		SelectionData* selectionData = RuntimeUIService::GetSelectionDataFromWidget(currentWidget.get());
+		if (!selectionData)
+		{
+			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
+			return;
+		}
+
+		// Calculate the position and size of the current widget
+		m_CurrentWidget = currentWidget;
+		m_CurrentWidgetPosition = m_CurrentWidget->CalculateWorldPosition
+		(
+			m_CurrentWidgetParentTransform.m_Translation, 
+			m_CurrentWidgetParentTransform.m_Size
+		);
+		m_CurrentWidgetSize = m_CurrentWidget->CalculateWidgetSize(m_CurrentWidgetParentTransform.m_Size);
+		m_CurrentWidgetCenterPosition = 
+		{ 
+			m_CurrentWidgetPosition.x + (m_CurrentWidgetSize.x * 0.5f), 
+			m_CurrentWidgetPosition.y + (m_CurrentWidgetSize.y * 0.5f) 
+		};
+
+		// Calculate navigation links for the current widget
+		selectionData->m_NavigationLinks.m_RightWidgetID = CalculateNavigationLink(Direction::Right);
+		selectionData->m_NavigationLinks.m_LeftWidgetID = CalculateNavigationLink(Direction::Left);
+		selectionData->m_NavigationLinks.m_UpWidgetID = CalculateNavigationLink(Direction::Up);
+		selectionData->m_NavigationLinks.m_DownWidgetID = CalculateNavigationLink(Direction::Down);
+	}
+
+	int32_t RuntimeUI::NavigationLinksCalculator::CalculateNavigationLink(Direction direction)
+	{
+		// Initialize calculation variables
+		m_CurrentBestChoiceID = k_InvalidWidgetID;
+		m_CurrentBestDistance = std::numeric_limits<float>::max();
+		m_CurrentDirection = direction;
+
+		// Iterate through each potential widget and decide which widget makes sense to navigate to
+		for (Ref<Widget> potentialChoice : m_CurrentWindow->m_Widgets)
+		{
+			m_PotentialWidgetParentTransform = m_CurrentWindowTransform;
+			CompareCurrentAndPotentialWidget(potentialChoice);
+		}
+
+		// Return the index of the best widget choice if it exists
+		return m_CurrentBestChoiceID;
+	}
+
+	void RuntimeUI::NavigationLinksCalculator::CompareCurrentAndPotentialWidget(Ref<Widget> potentialWidget)
+	{
+		// Calculate the position and size of the potential widget
+		Math::vec3 potentialWidgetPosition = potentialWidget->CalculateWorldPosition
+		(
+			m_PotentialWidgetParentTransform.m_Translation,
+			m_PotentialWidgetParentTransform.m_Size
+		);
+		Math::vec3 potentialWidgetSize = potentialWidget->CalculateWidgetSize(m_PotentialWidgetParentTransform.m_Size);
+		Math::vec2 potentialWidgetCenterPosition = { potentialWidgetPosition.x + (potentialWidgetSize.x * 0.5f), potentialWidgetPosition.y + (potentialWidgetSize.y * 0.5f) };
+
+		// Check if the widget has nested widgets
+		ContainerData* containerData = RuntimeUIService::GetContainerDataFromWidget(potentialWidget.get());
+		m_PotentialWidgetParentTransform.m_Translation = potentialWidgetPosition;
+		m_PotentialWidgetParentTransform.m_Size = potentialWidgetSize;
+		if (containerData)
+		{
+			for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
+			{
+				CompareCurrentAndPotentialWidget(containedWidget);
+			}
+		}
+
+		// Skip the current widget and any non-selectable widgets
+		if (potentialWidget == m_CurrentWidget || !potentialWidget->Selectable())
+		{
+			return;
+		}
+
+
+		// Check if the potential widget is within the constraints of the current widget
+		float extentDistance{ 0.0f };
+		float singleDimensionDistance{ 0.0f };
+		float currentWidgetExtent{ 0.0f };
+		float potentialWidgetExtent{ 0.0f };
+
+		switch (m_CurrentDirection)
+		{
+		case Direction::Right:
+			// Ensure the current widget's left extent does not overlap with the potential widget's right extent
+			currentWidgetExtent = m_CurrentWidgetPosition.x + m_CurrentWidgetSize.x;
+			potentialWidgetExtent = potentialWidgetPosition.x;
+			if (currentWidgetExtent >= potentialWidgetExtent)
+			{
+				return;
+			}
+			// Calculate the distance between the extents
+			extentDistance = glm::distance(Math::vec2(currentWidgetExtent, m_CurrentWidgetCenterPosition.y), Math::vec2(potentialWidgetExtent, potentialWidgetCenterPosition.y));
+			singleDimensionDistance = glm::distance(m_CurrentWidgetCenterPosition.y, potentialWidgetCenterPosition.y);
+			break;
+		case Direction::Left:
+			// Ensure the current widget's right extent does not overlap with the potential widget's left extent
+			currentWidgetExtent = m_CurrentWidgetPosition.x;
+			potentialWidgetExtent = potentialWidgetPosition.x + potentialWidgetSize.x;
+			if (currentWidgetExtent <= potentialWidgetExtent)
+			{
+				return;
+			}
+			// Calculate the distance between the extents
+			extentDistance = glm::distance(Math::vec2(currentWidgetExtent, m_CurrentWidgetCenterPosition.y), Math::vec2(potentialWidgetExtent, potentialWidgetCenterPosition.y));
+			singleDimensionDistance = glm::distance(m_CurrentWidgetCenterPosition.y, potentialWidgetCenterPosition.y);
+			break;
+		case Direction::Up:
+			// Ensure the current widget's top extent does not overlap with the potential widget's bottom extent
+			currentWidgetExtent = m_CurrentWidgetPosition.y + m_CurrentWidgetSize.y;
+			potentialWidgetExtent = potentialWidgetPosition.y;
+			if (currentWidgetExtent >= potentialWidgetExtent)
+			{
+				return;
+			}
+			// Calculate the distance between the extents
+			extentDistance = glm::distance(Math::vec2(m_CurrentWidgetCenterPosition.x, currentWidgetExtent), Math::vec2(potentialWidgetCenterPosition.x, potentialWidgetExtent));
+			singleDimensionDistance = glm::distance(m_CurrentWidgetCenterPosition.x, potentialWidgetCenterPosition.x);
+			break;
+		case Direction::Down:
+			// Ensure the current widget's bottom extent does not overlap with the potential widget's top extent
+			currentWidgetExtent = m_CurrentWidgetPosition.y;
+			potentialWidgetExtent = potentialWidgetPosition.y + potentialWidgetSize.y;
+			if (currentWidgetExtent <= potentialWidgetExtent)
+			{
+				return;
+			}
+			// Calculate the distance between the extents
+			extentDistance = glm::distance(Math::vec2(m_CurrentWidgetCenterPosition.x, currentWidgetExtent), Math::vec2(potentialWidgetCenterPosition.x, potentialWidgetExtent));
+			singleDimensionDistance = glm::distance(m_CurrentWidgetCenterPosition.x, potentialWidgetCenterPosition.x);
+			break;
+		default:
+			KG_ERROR("Invalid direction provided when calculating navigation links for active user interface");
+			break;
+		}
+
+		// Magic number found by tinkering with settings until it felt right...
+		constexpr float singleDimensionAdjustment{ 0.65f };
+
+		// Calculate final distance factor
+		float finalDistanceFactor = extentDistance + singleDimensionAdjustment * singleDimensionDistance;
+
+		// Save current best choice if it is the first choice
+		if (m_CurrentBestChoiceID == k_InvalidWidgetID)
+		{
+			m_CurrentBestChoiceID = potentialWidget->m_ID;
+			m_CurrentBestDistance = finalDistanceFactor;
+			return;
+		}
+
+
+		// Replace current best choice with the potential choice if it is closer
+		if (finalDistanceFactor < m_CurrentBestDistance)
+		{
+			m_CurrentBestChoiceID = potentialWidget->m_ID;
+			m_CurrentBestDistance = finalDistanceFactor;
+			return;
 		}
 	}
 

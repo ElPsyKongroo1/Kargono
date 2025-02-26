@@ -665,10 +665,11 @@ namespace Kargono::Panels
 			const Math::mat4& cameraProjection = m_EditorCamera.GetProjection();
 			Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
-			// Get widget transform
-			Math::vec3 windowPosition = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
-			Math::vec3 windowSize = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
-			Math::vec3 widgetPosition = widget->CalculateWorldPosition(windowPosition, windowSize);
+			// Get position/size data for the parent widget/window
+			RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+
+			// Calculate widget transform
+			Math::vec3 widgetPosition = widget->CalculateWorldPosition(parentDimensions.m_Translation, parentDimensions.m_Size);
 			Math::mat4 transform{ glm::translate(Math::mat4(1.0), widgetPosition) };
 
 			// Snapping
@@ -691,8 +692,8 @@ namespace Kargono::Panels
 				// Update the widget's position
 				Math::vec3 screenPosition = widget->CalculateWindowPosition(
 					Math::vec2(translation.x, translation.y),
-					windowPosition,
-					windowSize);
+					parentDimensions.m_Translation,
+					parentDimensions.m_Size);
 
 				// Update the widget's x position
 				if (widget->m_XPositionType == RuntimeUI::PixelOrPercent::Percent)
@@ -742,19 +743,17 @@ namespace Kargono::Panels
 		RuntimeUI::Widget* widget{ s_UIWindow->m_PropertiesPanel->m_ActiveWidget };
 		RuntimeUI::Window* window{ s_UIWindow->m_PropertiesPanel->m_ActiveWindow };
 
-		// TODO: Use parent dimensions instead of window dimensions
-
-		// Get position data for rendering window
-		Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 finalWindowTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x / 2), initialWindowTranslation.y + (windowScale.y / 2), initialWindowTranslation.z);
-
 		// Handle either active widget specific debug lines or active window debug lines
 		if (widget)
 		{
+			// Get position/size data for the parent widget/window
+			RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+
+			Math::vec3 finalParentTranslation = Math::vec3(parentDimensions.m_Translation.x + (parentDimensions.m_Size.x / 2), parentDimensions.m_Translation.y + (parentDimensions.m_Size.y / 2), parentDimensions.m_Translation.z);
+
 			// Calculate the widget's rendering data
-			Math::vec3 widgetSize = widget->CalculateWidgetSize(windowScale);
-			Math::vec3 widgetTranslation = widget->CalculateWorldPosition(initialWindowTranslation, windowScale);
+			Math::vec3 widgetSize = widget->CalculateWidgetSize(parentDimensions.m_Size);
+			Math::vec3 widgetTranslation = widget->CalculateWorldPosition(parentDimensions.m_Translation, parentDimensions.m_Size);
 			Math::vec3 modifiedOriginTranslation = Math::vec3(
 				widgetTranslation.x + (widgetSize.x / 2), 
 				widgetTranslation.y + (widgetSize.y / 2), 
@@ -793,11 +792,16 @@ namespace Kargono::Panels
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 
-			DrawWidgetConstraintDistanceLines(window, widget, widgetTransform, modifiedOriginTranslation);
+			DrawWidgetConstraintDistanceLines(widget, widgetTransform, modifiedOriginTranslation);
 
 		}
 		if (window)
 		{
+			// Get position data for rendering window
+			Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
+			Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
+			Math::vec3 finalWindowTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x / 2), initialWindowTranslation.y + (windowScale.y / 2), initialWindowTranslation.z);
+
 			// Create background rendering data
 			Math::mat4 windowTransform = glm::translate(Math::mat4(1.0f), finalWindowTranslation)
 				* glm::scale(Math::mat4(1.0f), windowScale);
@@ -838,15 +842,15 @@ namespace Kargono::Panels
 		}
 
 	}
-	void UIEditorViewportPanel::DrawWidgetConstraintDistanceLines(RuntimeUI::Window* window, RuntimeUI::Widget* widget, const Math::mat4& widgetTransform, const Math::vec3& widgetTranslation)
+	void UIEditorViewportPanel::DrawWidgetConstraintDistanceLines(RuntimeUI::Widget* widget, const Math::mat4& widgetTransform, const Math::vec3& widgetTranslation)
 	{
 		Math::vec3 constraintDistanceVerts[6];
 		constexpr float k_ConstraintPadding{ 5.0f };
 		constexpr float k_VanityPaddingSize{ 15.0f };
 
-		Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 widgetSize = widget->CalculateWidgetSize(windowScale);
+		// Get position/size data for the parent widget/window
+		RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+		Math::vec3 widgetSize = widget->CalculateWidgetSize(parentDimensions.m_Size);
 
 
 		if (widget->m_XRelativeOrAbsolute == RuntimeUI::RelativeOrAbsolute::Absolute ||
@@ -855,11 +859,11 @@ namespace Kargono::Panels
 			widget->m_XConstraint == RuntimeUI::Constraint::Center)
 		{
 			// Create widget's constraint distance lines
-			constraintDistanceVerts[0] = { initialWindowTranslation.x, widgetTranslation.y, widgetTranslation.z };
+			constraintDistanceVerts[0] = { parentDimensions.m_Translation.x, widgetTranslation.y, widgetTranslation.z };
 			constraintDistanceVerts[1] = widgetTransform * Math::vec4(-0.5f, 0.0f, 0.0f, 1.0f); // Transform center of widget to world space
 
 			float widgetLeftEdge = widgetTranslation.x - (widgetSize.x / 2.0f);
-			float windowLeftEdge = initialWindowTranslation.x;
+			float windowLeftEdge = parentDimensions.m_Translation.x;
 
 			// Check if the widget's edge is outside the window
 			if (widgetLeftEdge > windowLeftEdge + k_ConstraintPadding)
@@ -906,12 +910,12 @@ namespace Kargono::Panels
 		{
 			// Create widget's constraint distance lines
 			constraintDistanceVerts[0] = widgetTransform * Math::vec4(0.5f, 0.0f, 0.0f, 1.0f); // Transform center of widget to world space
-			constraintDistanceVerts[1] = { initialWindowTranslation.x + windowScale.x, widgetTranslation.y, widgetTranslation.z };
+			constraintDistanceVerts[1] = { parentDimensions.m_Translation.x + parentDimensions.m_Size.x, widgetTranslation.y, widgetTranslation.z };
 
 			// Apply padding to distance lines
 			
 			float widgetRightEdge = widgetTranslation.x + (widgetSize.x / 2.0f);
-			float windowRightEdge = initialWindowTranslation.x + windowScale.x;
+			float windowRightEdge = parentDimensions.m_Translation.x + parentDimensions.m_Size.x;
 
 			// Check if the widget's edge is outside the window
 			if (widgetRightEdge > windowRightEdge + k_ConstraintPadding)
@@ -963,11 +967,11 @@ namespace Kargono::Panels
 			widget->m_YConstraint == RuntimeUI::Constraint::Center)
 		{
 			// Create widget's constraint distance lines
-			constraintDistanceVerts[0] = { widgetTranslation.x , initialWindowTranslation.y, widgetTranslation.z };
+			constraintDistanceVerts[0] = { widgetTranslation.x , parentDimensions.m_Translation.y, widgetTranslation.z };
 			constraintDistanceVerts[1] = widgetTransform * Math::vec4(0.0f, -0.5f, 0.0f, 1.0f); // Transform center of widget to world space
 
 			float widgetBottomEdge = widgetTranslation.y - (widgetSize.y / 2.0f);
-			float windowBottomEdge = initialWindowTranslation.y;
+			float windowBottomEdge = parentDimensions.m_Translation.y;
 
 			// Check if the widget's edge is outside the window
 			if (widgetBottomEdge > windowBottomEdge + k_ConstraintPadding)
@@ -1015,11 +1019,11 @@ namespace Kargono::Panels
 		{
 			// Create widget's constraint distance lines
 			constraintDistanceVerts[0] = widgetTransform * Math::vec4(0.0f, 0.5f, 0.0f, 1.0f); // Transform center of widget to world space
-			constraintDistanceVerts[1] = { widgetTranslation.x, initialWindowTranslation.y + windowScale.y, widgetTranslation.z };
+			constraintDistanceVerts[1] = { widgetTranslation.x, parentDimensions.m_Translation.y + parentDimensions.m_Size.y, widgetTranslation.z };
 
 			// Apply padding to distance lines
 			float widgetTopEdge = widgetTranslation.y + (widgetSize.y / 2.0f);
-			float windowTopEdge = initialWindowTranslation.y + windowScale.y;
+			float windowTopEdge = parentDimensions.m_Translation.y + parentDimensions.m_Size.y;
 
 			// Check if the widget's edge is outside the window
 			if (widgetTopEdge > windowTopEdge + k_ConstraintPadding)

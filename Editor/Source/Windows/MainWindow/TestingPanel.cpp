@@ -406,10 +406,6 @@ namespace Kargono::Panels
 	}
 	void TestingPanel::DrawGeneralTestingWidgets()
 	{
-		if (ImGui::Button("Calculate Navigation Links"))
-		{
-			RuntimeUI::RuntimeUIService::CalculateWindowNavigationLinks();
-		}
 
 		if (ImGui::Button("Crit Log"))
 		{

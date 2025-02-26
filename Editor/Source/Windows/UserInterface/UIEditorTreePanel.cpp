@@ -370,6 +370,8 @@ namespace Kargono::Panels
 		// Set the properties panel to display a widget
 		s_UIWindow->m_PropertiesPanel->m_CurrentDisplay = UIPropertiesDisplay::Widget;
 		s_UIWindow->m_PropertiesPanel->OnSelectWidget();
+		EditorUI::TreePath entryPath = m_UITree.GetPathFromEntryReference(&entry);
+		m_UITree.ExpandNodePath(entryPath);
 
 		// TODO: Deal with local properties panel
 		//EditorUI::EditorUIService::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
@@ -715,9 +717,6 @@ namespace Kargono::Panels
 			KG_ASSERT(success);
 			return;
 		}
-
-		// Expand the UI Node Layer
-		m_UITree.ExpandFirstLayer();
 
 		// Loop through all remaining widget indices
 		for (size_t uiLocationIndex{ 1 }; uiLocationIndex < locationInRuntimeUI->size(); uiLocationIndex++)
