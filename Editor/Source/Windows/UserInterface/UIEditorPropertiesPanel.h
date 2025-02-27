@@ -40,6 +40,7 @@ namespace Kargono::Panels
 		void InitializeImageButtonWidgetOptions();
 		void InitializeCheckboxWidgetOptions();
 		void InitializeContainerWidgetOptions();
+		void InitializeHorizontalContainerWidgetOptions();
 		void InitializeVerticalContainerWidgetOptions();
 		void InitializeInputTextWidgetOptions();
 		void InitializeSliderWidgetOptions();
@@ -65,6 +66,7 @@ namespace Kargono::Panels
 		void DrawImageButtonWidgetOptions();
 		void DrawCheckboxWidgetOptions();
 		void DrawContainerWidgetOptions();
+		void DrawHorizontalContainerWidgetOptions();
 		void DrawVerticalContainerWidgetOptions();
 		void DrawInputTextWidgetOptions();
 		void DrawSliderWidgetOptions();
@@ -221,6 +223,12 @@ namespace Kargono::Panels
 		void OnDropDownWidgetAddEntry(EditorUI::EditTextSpec& spec);
 		void OnDropDownWidgetEditEntry(EditorUI::EditTextSpec& spec);
 		void OnDropDownWidgetDeleteEntry();
+
+		//=========================
+		// Change Horizontal Container Widget Data
+		//=========================
+		void OnModifyHorizontalContainerWidgetColumnWidth(EditorUI::EditFloatSpec& spec);
+		void OnModifyHorizontalContainerWidgetColumnSpacing(EditorUI::EditFloatSpec& spec);
 
 		//=========================
 		// Change Vertical Container Widget Data
@@ -393,5 +401,11 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec m_VerticalContainerWidgetBackground{};
 		EditorUI::EditFloatSpec m_VerticalContainerRowHeight{};
 		EditorUI::EditFloatSpec m_VerticalContainerRowSpacing{};
+
+		// Edit Horizontal Container Widget Options
+		EditorUI::CollapsingHeaderSpec m_HorizontalContainerWidgetHeader{};
+		EditorUI::EditVec4Spec m_HorizontalContainerWidgetBackground{};
+		EditorUI::EditFloatSpec m_HorizontalContainerColumnWidth{};
+		EditorUI::EditFloatSpec m_HorizontalContainerColumnSpacing{};
 	};
 }

@@ -782,6 +782,14 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
+		newPrimitiveType.Name = "horizontal_container_widget";
+		newPrimitiveType.Description = "Reference to a user interface horizontal container widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::HorizontalContainerWidget);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
+		newPrimitiveType = {};
 		newPrimitiveType.Name = "vertical_container_widget";
 		newPrimitiveType.Description = "Reference to a user interface vertical container widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
 		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
@@ -1447,6 +1455,9 @@ namespace Kargono::Scripting
 				break;
 			case RuntimeUI::WidgetTypes::ContainerWidget:
 				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "container_widget" };
+				break;
+			case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
+				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "horizontal_container_widget" };
 				break;
 			case RuntimeUI::WidgetTypes::VerticalContainerWidget:
 				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "vertical_container_widget" };

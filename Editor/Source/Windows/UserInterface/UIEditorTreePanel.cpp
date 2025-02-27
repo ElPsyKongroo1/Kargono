@@ -400,6 +400,18 @@ namespace Kargono::Panels
 		KG_ASSERT(newEntry);
 	}
 
+	void UIEditorTreePanel::AddHorizontalContainerWidget(EditorUI::TooltipEntry& entry)
+	{
+		// Get the widget entry
+		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(parentEntry);
+
+		// Create new widget
+		Ref<RuntimeUI::HorizontalContainerWidget> newWidget = CreateRef<RuntimeUI::HorizontalContainerWidget>();
+		EditorUI::TreeEntry* newEntry = AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::HorizontalContainerWidget));
+		KG_ASSERT(newEntry);
+	}
+
 	void UIEditorTreePanel::AddVerticalContainerWidget(EditorUI::TooltipEntry& entry)
 	{
 		// Get the widget entry
@@ -711,7 +723,8 @@ namespace Kargono::Panels
 			RuntimeUI::ContainerData* data = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(parentWidget.get());
 			KG_ASSERT(data);
 
-			if (parentWidget->m_WidgetType == RuntimeUI::WidgetTypes::VerticalContainerWidget)
+			if (parentWidget->m_WidgetType == RuntimeUI::WidgetTypes::VerticalContainerWidget ||
+				parentWidget->m_WidgetType == RuntimeUI::WidgetTypes::HorizontalContainerWidget)
 			{
 				// Set appropriate default values
 				newWidget->m_PercentSize = { 1.0f, 1.0f };
@@ -889,6 +902,20 @@ namespace Kargono::Panels
 			addItems.push_back(addWidget);
 		}
 
+		// Add the Horizontal Container widget tooltip entry
+		{
+			// Create the tooltip entry
+			EditorUI::TooltipEntry addWidget
+			{
+				Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::HorizontalContainerWidget),
+				KG_BIND_CLASS_FN(AddHorizontalContainerWidget)
+			};
+			addWidget.m_ProvidedData = &entry;
+
+			// Add the entry to the tooltip menu
+			addItems.push_back(addWidget);
+		}
+
 		// Add the Vertical Container widget tooltip entry
 		{
 			// Create the tooltip entry
@@ -953,7 +980,9 @@ namespace Kargono::Panels
 
 	void UIEditorTreePanel::CreateWidgetSpecificSelectionOptions(EditorUI::TreeEntry& widgetEntry, RuntimeUI::WidgetTypes widgetType)
 	{
-		if (widgetType == RuntimeUI::WidgetTypes::ContainerWidget || widgetType == RuntimeUI::WidgetTypes::VerticalContainerWidget)
+		if (widgetType == RuntimeUI::WidgetTypes::ContainerWidget || 
+			widgetType == RuntimeUI::WidgetTypes::HorizontalContainerWidget ||
+			widgetType == RuntimeUI::WidgetTypes::VerticalContainerWidget)
 		{
 			// Add container widget options
 			CreateAddWidgetsSelectionOptions(widgetEntry);

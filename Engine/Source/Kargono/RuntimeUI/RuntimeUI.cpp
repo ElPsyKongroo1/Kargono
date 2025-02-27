@@ -32,6 +32,8 @@ namespace Kargono::Utility
 			return EditorUI::EditorUIService::s_IconCheckbox_Enabled;
 		case RuntimeUI::WidgetTypes::ContainerWidget:
 			return EditorUI::EditorUIService::s_IconBoxCollider;
+		case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
+			return EditorUI::EditorUIService::s_IconHorizontalContainer;
 		case RuntimeUI::WidgetTypes::VerticalContainerWidget:
 			return EditorUI::EditorUIService::s_IconVerticalContainer;
 		case RuntimeUI::WidgetTypes::InputTextWidget:
@@ -927,8 +929,19 @@ namespace Kargono::RuntimeUI
 			returnDimensions.m_Translation = currentWidget->CalculateWorldPosition(returnDimensions.m_Translation, returnDimensions.m_Size);
 			returnDimensions.m_Size = currentWidget->CalculateWidgetSize(returnDimensions.m_Size);
 
+			// Handle the horizontal container case
+			if (currentWidget->m_WidgetType == WidgetTypes::HorizontalContainerWidget)
+			{
+				HorizontalContainerWidget* horContainer = (HorizontalContainerWidget*)currentWidget.get();
+				KG_ASSERT(horContainer);
+				returnDimensions.m_Translation.x += 
+					(returnDimensions.m_Size.x * horContainer->m_ColumnWidth) * locationDirections.at(iteration) +
+					(returnDimensions.m_Size.x * horContainer->m_ColumnSpacing) * locationDirections.at(iteration);
+				returnDimensions.m_Size.x *= horContainer->m_ColumnWidth;
+			}
+
 			// Handle the vertical container case
-			if (currentWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
+			else if (currentWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
 			{
 				VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)currentWidget.get();
 				KG_ASSERT(vertContainer);
@@ -1006,8 +1019,19 @@ namespace Kargono::RuntimeUI
 			returnDimensions.m_Translation = currentWidget->CalculateWorldPosition(returnDimensions.m_Translation, returnDimensions.m_Size);
 			returnDimensions.m_Size = currentWidget->CalculateWidgetSize(returnDimensions.m_Size);
 
+
+			// Handle the Horizontal container case
+			if (currentWidget->m_WidgetType == WidgetTypes::HorizontalContainerWidget)
+			{
+				HorizontalContainerWidget* horizContainer = (HorizontalContainerWidget*)currentWidget.get();
+				KG_ASSERT(horizContainer);
+				returnDimensions.m_Translation.x += 
+					returnDimensions.m_Size.x * horizContainer->m_ColumnWidth * locationDirections.at(iteration) +
+					returnDimensions.m_Size.x * horizContainer->m_ColumnSpacing * locationDirections.at(iteration);
+				returnDimensions.m_Size.x *= horizContainer->m_ColumnWidth;
+			}
 			// Handle the vertical container case
-			if (currentWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
+			else if (currentWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
 			{
 				VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)currentWidget.get();
 				KG_ASSERT(vertContainer);
@@ -1639,6 +1663,8 @@ namespace Kargono::RuntimeUI
 		{
 		case WidgetTypes::ContainerWidget:
 			return &((ContainerWidget*)currentWidget)->m_ContainerData;
+		case WidgetTypes::HorizontalContainerWidget:
+			return &((HorizontalContainerWidget*)currentWidget)->m_ContainerData;
 		case WidgetTypes::VerticalContainerWidget:
 			return &((VerticalContainerWidget*)currentWidget)->m_ContainerData;
 		default:
@@ -2283,6 +2309,7 @@ namespace Kargono::RuntimeUI
 			(*(DropDownWidget*)widget).CalculateTextSize();
 			break;
 		case WidgetTypes::ContainerWidget:
+		case WidgetTypes::HorizontalContainerWidget:
 		case WidgetTypes::VerticalContainerWidget:
 		{
 			ContainerData* containerData = GetContainerDataFromWidget(widget);
@@ -3401,7 +3428,23 @@ namespace Kargono::RuntimeUI
 			cachedTransform.m_Size = currentWidget->CalculateWidgetSize(m_CurrentWidgetParentTransform.m_Size);
 			m_CurrentWidgetParentTransform = cachedTransform;
 
-			if (currentWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
+			if (currentWidget->m_WidgetType == WidgetTypes::HorizontalContainerWidget)
+			{
+				// Handle the verical container case
+				HorizontalContainerWidget* horizContainer = (HorizontalContainerWidget*)currentWidget.get();
+				KG_ASSERT(horizContainer);
+				size_t iteration{ 0 };
+				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
+				{
+					m_CurrentWidgetParentTransform.m_Translation.x = cachedTransform.m_Translation.x +
+						cachedTransform.m_Size.x * horizContainer->m_ColumnWidth * iteration +
+						cachedTransform.m_Size.x * horizContainer->m_ColumnSpacing * iteration;
+					m_CurrentWidgetParentTransform.m_Size.x = cachedTransform.m_Size.x * horizContainer->m_ColumnWidth;
+					CalculateWidgetNavigationLinks(containedWidget);
+					iteration++;
+				}
+			}
+			else if (currentWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
 			{
 				// Handle the verical container case
 				VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)currentWidget.get();
@@ -3412,7 +3455,7 @@ namespace Kargono::RuntimeUI
 					m_CurrentWidgetParentTransform.m_Translation.y = cachedTransform.m_Translation.y + cachedTransform.m_Size.y -
 						cachedTransform.m_Size.y * vertContainer->m_RowHeight * (iteration + 1) - 
 						cachedTransform.m_Size.y * vertContainer->m_RowSpacing * iteration;
-					m_CurrentWidgetParentTransform.m_Size.y = cachedTransform.m_Translation.y * vertContainer->m_RowHeight;
+					m_CurrentWidgetParentTransform.m_Size.y = cachedTransform.m_Size.y * vertContainer->m_RowHeight;
 					CalculateWidgetNavigationLinks(containedWidget);
 					iteration++;
 				}
@@ -3500,7 +3543,23 @@ namespace Kargono::RuntimeUI
 
 		if (containerData)
 		{
-			if (potentialWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
+			if (potentialWidget->m_WidgetType == WidgetTypes::HorizontalContainerWidget)
+			{
+				// Handle the verical container case
+				size_t iteration{ 0 };
+				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
+				{
+					HorizontalContainerWidget* horizContainer = (HorizontalContainerWidget*)potentialWidget.get();
+					KG_ASSERT(horizContainer);
+					m_PotentialWidgetParentTransform.m_Translation.x = potentialWidgetPosition.x + 
+						potentialWidgetSize.x * horizContainer->m_ColumnWidth * iteration +
+						potentialWidgetSize.x * horizContainer->m_ColumnSpacing * iteration;
+					m_PotentialWidgetParentTransform.m_Size.x = potentialWidgetSize.x * horizContainer->m_ColumnWidth;
+					CompareCurrentAndPotentialWidget(containedWidget);
+					iteration++;
+				}
+			}
+			else if (potentialWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
 			{
 				// Handle the verical container case
 				size_t iteration{ 0 };
@@ -3648,6 +3707,46 @@ namespace Kargono::RuntimeUI
 			{ 
 				widgetTranslation.x, 
 				widgetTranslation.y + widgetSize.y - outputSize.y * (iteration + 1) - widgetSize.y * m_RowSpacing * iteration, 
+				widgetTranslation.z };
+
+			// Render the indicated widget
+			//containedWidget->OnRender(widgetTranslation, widgetSize, viewportWidth);
+			containedWidget->OnRender(outputTranslation, outputSize, viewportWidth);
+			iteration++;
+		}
+	}
+
+	void RuntimeUI::HorizontalContainerWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	{
+		Rendering::RendererInputSpec& backgroundSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
+
+		// Calculate the widget's rendering data
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
+		// Get widget translation
+		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
+		// Draw the background
+		RuntimeUIService::RenderBackground(m_ContainerData.m_BackgroundColor, widgetTranslation, widgetSize);
+
+		widgetTranslation.z += 0.001f;
+
+		// NOTE: This code needs to be at the end of this function!
+		// Updating the render input locations causes further render calls to
+		// associate its mouse picking with an incorrect widget
+		// Render the child widgets
+		size_t iteration{ 0 };
+		for (Ref<Widget> containedWidget : m_ContainerData.m_ContainedWidgets)
+		{
+			// Push widget ID
+			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
+				Utility::FileSystem::CRCFromString("a_EntityID"),
+				backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
+			RuntimeUI::FontService::SetID((uint32_t)containedWidget->m_ID);
+
+			Math::vec3 outputSize{ widgetSize.x * m_ColumnWidth, widgetSize.y, widgetSize.z };
+			Math::vec3 outputTranslation
+			{
+				widgetTranslation.x + outputSize.x * iteration + widgetSize.x * m_ColumnSpacing * iteration,
+				widgetTranslation.y,
 				widgetTranslation.z };
 
 			// Render the indicated widget

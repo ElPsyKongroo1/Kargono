@@ -25,6 +25,7 @@ namespace Kargono::Panels
 		InitializeImageWidgetOptions();
 		InitializeCheckboxWidgetOptions();
 		InitializeContainerWidgetOptions();
+		InitializeHorizontalContainerWidgetOptions();
 		InitializeVerticalContainerWidgetOptions();
 		InitializeInputTextWidgetOptions();
 		InitializeSliderWidgetOptions();
@@ -448,6 +449,29 @@ namespace Kargono::Panels
 		}
 	}
 
+	void UIEditorPropertiesPanel::DrawHorizontalContainerWidgetOptions()
+	{
+		// Draw main header for HorizontalContainer widget options
+		EditorUI::EditorUIService::CollapsingHeader(m_HorizontalContainerWidgetHeader);
+		if (m_HorizontalContainerWidgetHeader.m_Expanded)
+		{
+			// Draw options to edit selected HorizontalContainer widget
+			RuntimeUI::HorizontalContainerWidget& activeHorizontalContainerWidget = *(RuntimeUI::HorizontalContainerWidget*)m_ActiveWidget;
+
+			// Edit selected widget's HorizontalContainer background color
+			m_HorizontalContainerWidgetBackground.m_CurrentVec4 = activeHorizontalContainerWidget.m_ContainerData.m_BackgroundColor;
+			EditorUI::EditorUIService::EditVec4(m_HorizontalContainerWidgetBackground);
+
+			// Edit selected Horizontal container's Column width
+			m_HorizontalContainerColumnWidth.m_CurrentFloat = activeHorizontalContainerWidget.m_ColumnWidth;
+			EditorUI::EditorUIService::EditFloat(m_HorizontalContainerColumnWidth);
+
+			// Edit selected Horizontal container's Column spacing
+			m_HorizontalContainerColumnSpacing.m_CurrentFloat = activeHorizontalContainerWidget.m_ColumnSpacing;
+			EditorUI::EditorUIService::EditFloat(m_HorizontalContainerColumnSpacing);
+		}
+	}
+
 	void UIEditorPropertiesPanel::DrawVerticalContainerWidgetOptions()
 	{
 		// Draw main header for VerticalContainer widget options
@@ -673,6 +697,9 @@ namespace Kargono::Panels
 			break;
 		case RuntimeUI::WidgetTypes::ContainerWidget:
 			DrawContainerWidgetOptions();
+			break;
+		case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
+			DrawHorizontalContainerWidgetOptions();
 			break;
 		case RuntimeUI::WidgetTypes::VerticalContainerWidget:
 			DrawVerticalContainerWidgetOptions();
@@ -1405,6 +1432,32 @@ namespace Kargono::Panels
 		m_ContainerWidgetBackground.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_ContainerWidgetBackground.m_Bounds = { 0.0f, 1.0f };
 		m_ContainerWidgetBackground.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyContainerDataBackgroundColor);
+	}
+
+	void UIEditorPropertiesPanel::InitializeHorizontalContainerWidgetOptions()
+	{
+		// Set up header for Container widget options
+		m_HorizontalContainerWidgetHeader.m_Label = "Horizontal Container Widget Options";
+		m_HorizontalContainerWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_HorizontalContainerWidgetHeader.m_Expanded = true;
+
+		// Set up widget to modify the containers background color
+		m_HorizontalContainerWidgetBackground.m_Label = "Background Color";
+		m_HorizontalContainerWidgetBackground.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_HorizontalContainerWidgetBackground.m_Bounds = { 0.0f, 1.0f };
+		m_HorizontalContainerWidgetBackground.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyContainerDataBackgroundColor);
+
+		// Set up widget to modify the container's Column width
+		m_HorizontalContainerColumnWidth.m_Label = "Column Width";
+		m_HorizontalContainerColumnWidth.m_Flags |= EditorUI::EditFloat_Indented;
+		m_HorizontalContainerColumnWidth.m_Bounds = { 0.0f, 10'000.0f };
+		m_HorizontalContainerColumnWidth.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyHorizontalContainerWidgetColumnWidth);
+
+		// Set up widget to modify the container's Column Spacing
+		m_HorizontalContainerColumnSpacing.m_Label = "Column Spacing";
+		m_HorizontalContainerColumnSpacing.m_Flags |= EditorUI::EditFloat_Indented;
+		m_HorizontalContainerColumnSpacing.m_Bounds = { 0.0f, 10'000.0f };
+		m_HorizontalContainerColumnSpacing.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyHorizontalContainerWidgetColumnSpacing);
 	}
 
 	void UIEditorPropertiesPanel::InitializeVerticalContainerWidgetOptions()
@@ -3073,6 +3126,44 @@ namespace Kargono::Panels
 		// Refresh the table
 		KG_ASSERT(m_DropDownWidgetOptionsList.m_OnRefresh);
 		m_DropDownWidgetOptionsList.m_OnRefresh();
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyHorizontalContainerWidgetColumnWidth(EditorUI::EditFloatSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the underlying widget and optionsList
+		RuntimeUI::HorizontalContainerWidget* activeHorizontalContainerWidget = (RuntimeUI::HorizontalContainerWidget*)m_ActiveWidget;
+		KG_ASSERT(activeHorizontalContainerWidget);
+
+		// Update the row height
+		activeHorizontalContainerWidget->m_ColumnWidth = spec.m_CurrentFloat;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyHorizontalContainerWidgetColumnSpacing(EditorUI::EditFloatSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the underlying widget and optionsList
+		RuntimeUI::HorizontalContainerWidget* activeHorizontalContainerWidget = (RuntimeUI::HorizontalContainerWidget*)m_ActiveWidget;
+		KG_ASSERT(activeHorizontalContainerWidget);
+
+		// Update the row spacing
+		activeHorizontalContainerWidget->m_ColumnSpacing = spec.m_CurrentFloat;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;

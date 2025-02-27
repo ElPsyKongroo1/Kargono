@@ -34,6 +34,8 @@ namespace Kargono::Assets
 	static void SerializeImageButtonWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget);
 	static void SerializeCheckboxWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget);
 	static void SerializeContainerWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget);
+	static void SerializeHorizontalContainerWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget);
+	static void SerializeVerticalContainerWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget);
 	static void SerializeInputTextWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget);
 	static void SerializeSliderWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget);
 	static void SerializeDropDownWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget);
@@ -150,6 +152,22 @@ namespace Kargono::Assets
 		out << YAML::Key << "ContainerWidget" << YAML::Value;
 		// Container fields
 		out << YAML::BeginMap; // Begin Container Map
+		// Save container data
+		SerializeContainerData(out, containerWidget->m_ContainerData);
+		out << YAML::EndMap; // End Container Map
+	}
+
+	void SerializeHorizontalContainerWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget)
+	{
+		RuntimeUI::HorizontalContainerWidget* containerWidget = static_cast<RuntimeUI::HorizontalContainerWidget*>(widget.get());
+		out << YAML::Key << "HorizontalContainerWidget" << YAML::Value;
+		// Container fields
+		out << YAML::BeginMap; // Begin Container Map
+
+		// Save unique fields
+		out << YAML::Key << "ColumnWidth" << YAML::Value << containerWidget->m_ColumnWidth;
+		out << YAML::Key << "ColumnSpacing" << YAML::Value << containerWidget->m_ColumnSpacing;
+
 		// Save container data
 		SerializeContainerData(out, containerWidget->m_ContainerData);
 		out << YAML::EndMap; // End Container Map
@@ -280,6 +298,12 @@ namespace Kargono::Assets
 		case RuntimeUI::WidgetTypes::ContainerWidget:
 		{
 			SerializeContainerWidget(out, widget);
+			break;
+		}
+
+		case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
+		{
+			SerializeHorizontalContainerWidget(out, widget);
 			break;
 		}
 
@@ -528,6 +552,20 @@ namespace Kargono::Assets
 		return widget;
 	}
 
+	Ref<RuntimeUI::Widget> DeserializeHorizontalContainerWidget(const YAML::Node& node)
+	{
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::HorizontalContainerWidget>();
+		YAML::Node specificWidget = node["HorizontalContainerWidget"];
+		widget->m_WidgetType = RuntimeUI::WidgetTypes::HorizontalContainerWidget;
+		RuntimeUI::HorizontalContainerWidget* HorizontalContainerWidget = static_cast<RuntimeUI::HorizontalContainerWidget*>(widget.get());
+		// Get unique data
+		HorizontalContainerWidget->m_ColumnWidth = specificWidget["ColumnWidth"].as<float>();
+		HorizontalContainerWidget->m_ColumnSpacing = specificWidget["ColumnSpacing"].as<float>();
+		// Get container data
+		DeserializeContainerData(HorizontalContainerWidget->m_ContainerData, specificWidget);
+		return widget;
+	}
+
 	Ref<RuntimeUI::Widget> DeserializeVerticalContainerWidget(const YAML::Node& node)
 	{
 		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::VerticalContainerWidget>();
@@ -677,6 +715,11 @@ namespace Kargono::Assets
 		case RuntimeUI::WidgetTypes::ContainerWidget:
 		{
 			widget = DeserializeContainerWidget(node);
+			break;
+		}
+		case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
+		{
+			widget = DeserializeHorizontalContainerWidget(node);
 			break;
 		}
 		case RuntimeUI::WidgetTypes::VerticalContainerWidget:

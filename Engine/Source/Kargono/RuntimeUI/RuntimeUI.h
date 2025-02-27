@@ -58,7 +58,7 @@ namespace Kargono::RuntimeUI
 	{
 		None = 0, TextWidget, ButtonWidget, CheckboxWidget, ContainerWidget,
 		DropDownWidget, ImageWidget, ImageButtonWidget,
-		InputTextWidget, SliderWidget, VerticalContainerWidget
+		InputTextWidget, SliderWidget, VerticalContainerWidget, HorizontalContainerWidget
 	};
 
 	//============================
@@ -405,6 +405,44 @@ namespace Kargono::RuntimeUI
 		// Public Fields
 		//============================
 		ContainerData m_ContainerData;
+	};
+
+	//============================
+	// HorizontalContainer Widget Class (Derived)
+	//============================
+	class HorizontalContainerWidget : public Widget
+	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		HorizontalContainerWidget()
+			: Widget()
+		{
+			m_WidgetType = WidgetTypes::HorizontalContainerWidget;
+			m_Tag = "HorizontalContainerWidget";
+		}
+		virtual ~HorizontalContainerWidget() override = default;
+	public:
+		//============================
+		// Rendering Methods
+		//============================
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+
+		//============================
+		// Query State
+		//============================
+		virtual bool Selectable() override
+		{
+			return false;
+		}
+
+		//============================
+		// Public Fields
+		//============================
+		ContainerData m_ContainerData;
+		float m_ColumnWidth{ 0.25f };
+		float m_ColumnSpacing{ 0.0f };
 	};
 
 	//============================
@@ -939,6 +977,7 @@ namespace Kargono::RuntimeUI
 		friend class DropDownWidget;
 		friend class ContainerWidget;
 		friend class VerticalContainerWidget;
+		friend class HorizontalContainerWidget;
 		friend class Window;
 	};
 }
@@ -953,6 +992,7 @@ namespace Kargono::Utility
 			case RuntimeUI::WidgetTypes::ButtonWidget: return "ButtonWidget";
 			case RuntimeUI::WidgetTypes::CheckboxWidget: return "CheckboxWidget";
 			case RuntimeUI::WidgetTypes::ContainerWidget: return "ContainerWidget";
+			case RuntimeUI::WidgetTypes::HorizontalContainerWidget: return "HorizontalContainerWidget";
 			case RuntimeUI::WidgetTypes::VerticalContainerWidget: return "VerticalContainerWidget";
 			case RuntimeUI::WidgetTypes::DropDownWidget: return "DropDownWidget";
 			case RuntimeUI::WidgetTypes::ImageWidget: return "ImageWidget";
@@ -976,6 +1016,7 @@ namespace Kargono::Utility
 		case RuntimeUI::WidgetTypes::ButtonWidget: return "Button";
 		case RuntimeUI::WidgetTypes::CheckboxWidget: return "Checkbox";
 		case RuntimeUI::WidgetTypes::ContainerWidget: return "Frame Container";
+		case RuntimeUI::WidgetTypes::HorizontalContainerWidget: return "Horizontal Container";
 		case RuntimeUI::WidgetTypes::VerticalContainerWidget: return "Vertical Container";
 		case RuntimeUI::WidgetTypes::DropDownWidget: return "Drop-Down";
 		case RuntimeUI::WidgetTypes::ImageWidget: return "Image";
@@ -999,6 +1040,7 @@ namespace Kargono::Utility
 		if (widgetName == "ButtonWidget") { return RuntimeUI::WidgetTypes::ButtonWidget; }
 		if (widgetName == "CheckboxWidget") { return RuntimeUI::WidgetTypes::CheckboxWidget; }
 		if (widgetName == "ContainerWidget") { return RuntimeUI::WidgetTypes::ContainerWidget; }
+		if (widgetName == "HorizontalContainerWidget") { return RuntimeUI::WidgetTypes::HorizontalContainerWidget; }
 		if (widgetName == "VerticalContainerWidget") { return RuntimeUI::WidgetTypes::VerticalContainerWidget; }
 		if (widgetName == "DropDownWidget") { return RuntimeUI::WidgetTypes::DropDownWidget; }
 		if (widgetName == "ImageWidget") { return RuntimeUI::WidgetTypes::ImageWidget; }
