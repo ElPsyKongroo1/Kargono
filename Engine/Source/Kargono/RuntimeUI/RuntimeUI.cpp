@@ -826,6 +826,8 @@ namespace Kargono::RuntimeUI
 		// Store the window in the active user interface
 		s_RuntimeUIContext->m_ActiveUI->m_Windows.push_back(window);
 
+		RevalidateWidgetIDToLocationMap();
+
 		// Display the window
 		window.DisplayWindow();
 	}

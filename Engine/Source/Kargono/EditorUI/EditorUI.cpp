@@ -2729,10 +2729,9 @@ namespace Kargono::EditorUI
 
 			if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
 			{
-				if (treeEntry.m_OnRightClickSelection.size() > 0)
+				if (treeEntry.m_OnRightClick)
 				{
-					ImGui::OpenPopup(("##" + std::to_string(spec.m_WidgetID)).c_str());
-					spec.m_CurrentRightClick = &treeEntry;
+					treeEntry.m_OnRightClick(treeEntry);
 				}
 			}
 
@@ -2845,7 +2844,7 @@ namespace Kargono::EditorUI
 
 		if (ImGui::BeginPopup(("##" + std::to_string(spec.m_WidgetID)).c_str()))
 		{
-			if (spec.m_CurrentRightClick)
+			/*if (spec.m_CurrentRightClick)
 			{
 				for (auto& [label, func] : spec.m_CurrentRightClick->m_OnRightClickSelection)
 				{
@@ -2855,7 +2854,7 @@ namespace Kargono::EditorUI
 						func(*spec.m_CurrentRightClick);
 					}
 				}
-			}
+			}*/
 			ImGui::EndPopup();
 		}
 	}
@@ -3152,17 +3151,16 @@ namespace Kargono::EditorUI
 		id.AppendInteger(spec.m_WidgetID);
 		std::string popUpLabel = spec.m_Label;
 
-		if (spec.m_Flags & EditText_PopupOnly)
+		// Allow opening the edit text popup externally
+		if (spec.m_StartPopup)
 		{
-			if (spec.m_StartPopup)
-			{
-				ImGui::OpenPopup(id);
-				spec.m_StartPopup = false;
-				memset(stringBuffer, 0, sizeof(stringBuffer));
-				memcpy(stringBuffer, spec.m_CurrentOption.data(), sizeof(stringBuffer));
-			}
+			ImGui::OpenPopup(id);
+			spec.m_StartPopup = false;
+			memset(stringBuffer, 0, sizeof(stringBuffer));
+			memcpy(stringBuffer, spec.m_CurrentOption.data(), sizeof(stringBuffer));
 		}
-		else
+		
+		if (!(spec.m_Flags & EditText_PopupOnly))
 		{
 			if (spec.m_Flags & EditText_Indented)
 			{
@@ -3346,7 +3344,6 @@ namespace Kargono::EditorUI
 		EditorUIService::s_SmallEditButton, false, s_DisabledColor);
 
 	}
-
 
 	void ProcessTooltipEntries(TooltipSpec& spec, std::vector<TooltipEntry>& entryList)
 	{
@@ -3856,11 +3853,11 @@ namespace Kargono::EditorUI
 
 		uint32_t locationCurrentList = path.GetPath().at(iteration - 1);
 
-		// Handle Right Click
-		if (m_CurrentRightClick == currentEntry)
-		{
-			m_CurrentRightClick = nullptr;
-		}
+		//// Handle Right Click
+		//if (m_CurrentRightClick == currentEntry)
+		//{
+		//	m_CurrentRightClick = nullptr;
+		//}
 
 		// Clear SelectedEntry field if path is the same
 		if (m_SelectedEntry == path)

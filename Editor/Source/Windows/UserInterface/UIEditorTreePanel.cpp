@@ -82,7 +82,7 @@ namespace Kargono::Panels
 
 		// Add functions to call when interacting with window entry
 		uiEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectUI);
-		uiEntry.m_OnRightClickSelection.push_back({ "Add Window", KG_BIND_CLASS_FN(AddWindow) });
+		uiEntry.m_OnRightClick = KG_BIND_CLASS_FN(RightClickUIEntry);
 
 		// Add all windows and widgets from the editor UI to the tree
 		for (RuntimeUI::Window& window : s_UIWindow->m_EditorUI->m_Windows)
@@ -290,71 +290,145 @@ namespace Kargono::Panels
 		s_UIWindow->m_PropertiesPanel->m_CurrentDisplay = UIPropertiesDisplay::UserInterface;
 	}
 
-	void UIEditorTreePanel::AddTextWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::RightClickUIEntry(EditorUI::TreeEntry& entry)
 	{
+		// Reset the tooltip
+		m_SelectTooltip.ClearEntries();
+
+		// Create the add window entry
+		EditorUI::TooltipEntry addWindowEntry{ "Window", KG_BIND_CLASS_FN(AddWindow) };
+		addWindowEntry.m_ProvidedData = &entry;
+
+		// Create the add menu and add it the the top-level tooltip
+		EditorUI::TooltipEntry addMenu{ "Add", { addWindowEntry } };
+		m_SelectTooltip.AddTooltipEntry(addMenu);
+
+		// Active the tooltip
+		m_SelectTooltip.m_TooltipActive = true;
+	}
+
+	void UIEditorTreePanel::RightClickWidgetEntry(EditorUI::TreeEntry& entry)
+	{
+		// Reset the tooltip
+		m_SelectTooltip.ClearEntries();
+
+		// Create the rename widget entry
+		EditorUI::TooltipEntry renameWidgetEntry{ "Rename", KG_BIND_CLASS_FN(RenameWidget) };
+		renameWidgetEntry.m_ProvidedData = &entry;
+
+		// Create the delete widget entry
+		EditorUI::TooltipEntry deleteWidgetEntry{ "Delete", KG_BIND_CLASS_FN(DeleteWidget) };
+		deleteWidgetEntry.m_ProvidedData = &entry;
+
+		// Create the edit menu and add it the the top-level tooltip
+		EditorUI::TooltipEntry editMenu{ "Edit", { renameWidgetEntry, deleteWidgetEntry } };
+		m_SelectTooltip.AddTooltipEntry(editMenu);
+
+		// Create add options
+		CreateAddWidgetsSelectionOptions(entry);
+
+		// Active the tooltip
+		m_SelectTooltip.m_TooltipActive = true;
+	}
+
+	void UIEditorTreePanel::AddTextWidget(EditorUI::TooltipEntry& entry)
+	{
+		// Get the widget entry
+		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(parentEntry);
+
 		// Create new widget
 		Ref<RuntimeUI::TextWidget> newWidget = CreateRef<RuntimeUI::TextWidget>();
-		AddWidgetInternal(entry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::TextWidget));
+		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::TextWidget));
 	}
 
-	void UIEditorTreePanel::AddButtonWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::AddButtonWidget(EditorUI::TooltipEntry& entry)
 	{
+		// Get the widget entry
+		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(parentEntry);
+
 		// Create new widget
 		Ref<RuntimeUI::ButtonWidget> newWidget = CreateRef<RuntimeUI::ButtonWidget>();
-		AddWidgetInternal(entry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ButtonWidget));
+		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ButtonWidget));
 	}
 
-	void UIEditorTreePanel::AddImageWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::AddImageWidget(EditorUI::TooltipEntry& entry)
 	{
+		// Get the widget entry
+		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(parentEntry);
+
 		// Create new widget
 		Ref<RuntimeUI::ImageWidget> newWidget = CreateRef<RuntimeUI::ImageWidget>();
-		AddWidgetInternal(entry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ImageWidget));
+		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ImageWidget));
 	}
 
-	void UIEditorTreePanel::AddImageButtonWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::AddImageButtonWidget(EditorUI::TooltipEntry& entry)
 	{
+		// Get the widget entry
+		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(parentEntry);
+
 		// Create new widget
 		Ref<RuntimeUI::ImageButtonWidget> newWidget = CreateRef<RuntimeUI::ImageButtonWidget>();
-		AddWidgetInternal(entry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ImageButtonWidget));
+		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ImageButtonWidget));
 	}
 
-	void UIEditorTreePanel::AddCheckboxWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::AddCheckboxWidget(EditorUI::TooltipEntry& entry)
 	{
+		// Get the widget entry
+		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(parentEntry);
+
 		// Create new widget
 		Ref<RuntimeUI::CheckboxWidget> newWidget = CreateRef<RuntimeUI::CheckboxWidget>();
-		AddWidgetInternal(entry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::CheckboxWidget));
+		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::CheckboxWidget));
 	}
 
-	void UIEditorTreePanel::AddContainerWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::AddContainerWidget(EditorUI::TooltipEntry& entry)
 	{
+		// Get the widget entry
+		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(parentEntry);
+
 		// Create new widget
 		Ref<RuntimeUI::ContainerWidget> newWidget = CreateRef<RuntimeUI::ContainerWidget>();
-		EditorUI::TreeEntry* newEntry = AddWidgetInternal(entry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ContainerWidget));
+		EditorUI::TreeEntry* newEntry = AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ContainerWidget));
 		KG_ASSERT(newEntry);
-
-		// Handle widget specific selection options
-		CreateWidgetSpecificSelectionOptions(*newEntry, RuntimeUI::WidgetTypes::ContainerWidget);
 	}
 
-	void UIEditorTreePanel::AddInputTextWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::AddInputTextWidget(EditorUI::TooltipEntry& entry)
 	{
+		// Get the widget entry
+		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(parentEntry);
+
 		// Create new widget
 		Ref<RuntimeUI::InputTextWidget> newWidget = CreateRef<RuntimeUI::InputTextWidget>();
-		AddWidgetInternal(entry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::InputTextWidget));
+		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::InputTextWidget));
 	}
 
-	void UIEditorTreePanel::AddSliderWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::AddSliderWidget(EditorUI::TooltipEntry& entry)
 	{
+		// Get the widget entry
+		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(parentEntry);
+
 		// Create new widget
 		Ref<RuntimeUI::SliderWidget> newWidget = CreateRef<RuntimeUI::SliderWidget>();
-		AddWidgetInternal(entry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::SliderWidget));
+		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::SliderWidget));
 	}
 
-	void UIEditorTreePanel::AddDropDownWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::AddDropDownWidget(EditorUI::TooltipEntry& entry)
 	{
+		// Get the widget entry
+		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(parentEntry);
+
 		// Create new widget
 		Ref<RuntimeUI::DropDownWidget> newWidget = CreateRef<RuntimeUI::DropDownWidget>();
-		AddWidgetInternal(entry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::DropDownWidget));
+		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::DropDownWidget));
 	}
 
 	void UIEditorTreePanel::SelectWidget(EditorUI::TreeEntry& entry)
@@ -378,10 +452,35 @@ namespace Kargono::Panels
 		//s_MainWindow->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 	}
 
-	void UIEditorTreePanel::DeleteWindow(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::RenameWidget(EditorUI::TooltipEntry& entry)
 	{
+		// Get the tree entry
+		EditorUI::TreeEntry* widgetTreeEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(widgetTreeEntry);
+
 		// Get tree path from provided entry
-		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(&entry);
+		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(widgetTreeEntry);
+		if (!path)
+		{
+			KG_WARN("Could not locate widget path inside m_UITree");
+			return;
+		}
+
+		// Select the tree entry
+		SelectWidget(*widgetTreeEntry);
+
+		// Open the rename dialog
+		s_UIWindow->m_PropertiesPanel->OpenWidgetTagDialog();
+	}
+
+	void UIEditorTreePanel::DeleteWindow(EditorUI::TooltipEntry& entry)
+	{
+		// Get the tree entry
+		EditorUI::TreeEntry* windowTreeEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(windowTreeEntry);
+
+		// Get tree path from provided entry
+		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(windowTreeEntry);
 		if (!path)
 		{
 			KG_WARN("Could not locate window path inside m_UITree");
@@ -389,7 +488,7 @@ namespace Kargono::Panels
 		}
 
 		// Remove window from active runtime UI and this panel's tree
-		RuntimeUI::RuntimeUIService::DeleteActiveUIWindow((int32_t)entry.m_Handle);
+		RuntimeUI::RuntimeUIService::DeleteActiveUIWindow((int32_t)windowTreeEntry->m_Handle);
 		m_UITree.RemoveEntry(path);
 
 		// Reset properties panel and ensure tree index data is valid
@@ -399,6 +498,34 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		m_MainHeader.m_EditColorActive = true;
 
+	}
+
+	void UIEditorTreePanel::RightClickWindowEntry(EditorUI::TreeEntry& entry)
+	{
+		// Reset the tooltip
+		m_SelectTooltip.ClearEntries();
+
+		// Create the toggle-visibility window entry
+		EditorUI::TooltipEntry isVisibleWindowEntry{ "Toggle Visible", KG_BIND_CLASS_FN(ToggleWindowVisibility) };
+		isVisibleWindowEntry.m_ProvidedData = &entry;
+
+		// Create the rename window entry
+		EditorUI::TooltipEntry renameWindowEntry{ "Rename", KG_BIND_CLASS_FN(RenameWindow) };
+		renameWindowEntry.m_ProvidedData = &entry;
+
+		// Create the delete window entry
+		EditorUI::TooltipEntry deleteWindowEntry{ "Delete", KG_BIND_CLASS_FN(DeleteWindow) };
+		deleteWindowEntry.m_ProvidedData = &entry;
+
+		// Create the edit menu and edit it the the top-level tooltip
+		EditorUI::TooltipEntry editMenu{ "Edit", { isVisibleWindowEntry, renameWindowEntry, deleteWindowEntry } };
+		m_SelectTooltip.AddTooltipEntry(editMenu);
+
+		// Create the add menu
+		CreateAddWidgetsSelectionOptions(entry);
+
+		// Active the tooltip
+		m_SelectTooltip.m_TooltipActive = true;
 	}
 
 	void UIEditorTreePanel::SelectWindow(EditorUI::TreeEntry& entry)
@@ -420,10 +547,67 @@ namespace Kargono::Panels
 		//EditorUI::EditorUIService::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
 	}
 
-	void UIEditorTreePanel::AddWindow(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::ToggleWindowVisibility(EditorUI::TooltipEntry& entry)
 	{
+		// Get the tree entry
+		EditorUI::TreeEntry* windowTreeEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(windowTreeEntry);
+
 		// Get tree path from provided entry
-		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(&entry);
+		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(windowTreeEntry);
+		if (!path)
+		{
+			KG_WARN("Could not locate window path inside m_UITree");
+			return;
+		}
+
+		// Get the underlying window
+		RuntimeUI::Window& window = RuntimeUI::RuntimeUIService::GetWindowFromID((int32_t)windowTreeEntry->m_Handle);
+
+		// Select the tree entry
+		SelectWindow(*windowTreeEntry);
+
+		// Toggle window visibility
+		if (window.GetWindowDisplayed())
+		{
+			window.HideWindow();
+		}
+		else
+		{
+			window.DisplayWindow();
+		}
+
+	}
+
+	void UIEditorTreePanel::RenameWindow(EditorUI::TooltipEntry& entry)
+	{
+		// Get the tree entry
+		EditorUI::TreeEntry* windowTreeEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(windowTreeEntry);
+
+		// Get tree path from provided entry
+		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(windowTreeEntry);
+		if (!path)
+		{
+			KG_WARN("Could not locate window path inside m_UITree");
+			return;
+		}
+
+		// Select the tree entry
+		SelectWindow(*windowTreeEntry);
+
+		// Open the rename dialog
+		s_UIWindow->m_PropertiesPanel->OpenWindowTagDialog();
+	}
+
+	void UIEditorTreePanel::AddWindow(EditorUI::TooltipEntry& entry)
+	{
+		// Get the tree entry
+		EditorUI::TreeEntry* uiTreeEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(uiTreeEntry);
+
+		// Get tree path from provided entry
+		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(uiTreeEntry);
 		if (!path)
 		{
 			KG_WARN("Could not locate UI path inside m_UITree");
@@ -431,7 +615,7 @@ namespace Kargono::Panels
 		}
 
 		// Create new window entry for m_UITree
-		EditorUI::TreeEntry newEntry{};
+		EditorUI::TreeEntry& newEntry = uiTreeEntry->m_SubEntries.emplace_back();
 		newEntry.m_Label = "None";
 		newEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;
 		
@@ -440,7 +624,6 @@ namespace Kargono::Panels
 		CreateWindowSelectionOptions(newEntry);
 
 		// Add new window to RuntimeUI and this panel's tree
-		entry.m_SubEntries.push_back(newEntry);
 		RuntimeUI::Window newWindow{};
 		RuntimeUI::RuntimeUIService::AddActiveWindow(newWindow);
 		newEntry.m_Handle = newWindow.m_ID;
@@ -452,10 +635,14 @@ namespace Kargono::Panels
 		m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorTreePanel::DeleteWidget(EditorUI::TreeEntry& entry)
+	void UIEditorTreePanel::DeleteWidget(EditorUI::TooltipEntry& entry)
 	{
+		// Get the widget entry
+		EditorUI::TreeEntry* widgetEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(widgetEntry);
+
 		// Getpath from provided entry
-		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(&entry);
+		EditorUI::TreePath path = m_UITree.GetPathFromEntryReference(widgetEntry);
 		if (!path)
 		{
 			KG_WARN("Could not locate widget path inside m_UITree");
@@ -463,7 +650,7 @@ namespace Kargono::Panels
 		}
 
 		// Remove widget from RuntimeUI 
-		bool success = RuntimeUI::RuntimeUIService::DeleteActiveUIWidget((int32_t)entry.m_Handle);
+		bool success = RuntimeUI::RuntimeUIService::DeleteActiveUIWidget((int32_t)widgetEntry->m_Handle);
 
 		// Check if widget was successfully deleted
 		if (!success)
@@ -528,7 +715,7 @@ namespace Kargono::Panels
 
 		// Add handlers for interacting with the tree entry
 		newWidgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
-		newWidgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
+		newWidgetEntry.m_OnRightClick = KG_BIND_CLASS_FN(RightClickWidgetEntry);
 
 		// Set the active editor UI as edited
 		m_MainHeader.m_EditColorActive = true;
@@ -540,58 +727,193 @@ namespace Kargono::Panels
 	{
 		// Add functions to call when interacting with window entry
 		windowEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWindow);
-		CreateAddWidgetsSelectionOptions(windowEntry);
-		
-		windowEntry.m_OnRightClickSelection.push_back({ "Delete Window", KG_BIND_CLASS_FN(DeleteWindow) });
+		windowEntry.m_OnRightClick = KG_BIND_CLASS_FN(RightClickWindowEntry);
 	}
 
 	void UIEditorTreePanel::CreateAddWidgetsSelectionOptions(EditorUI::TreeEntry& entry)
 	{
-		entry.m_OnRightClickSelection.push_back
-		({
-			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::TextWidget),
-			KG_BIND_CLASS_FN(AddTextWidget)
-			});
-		entry.m_OnRightClickSelection.push_back
-		({
-			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ButtonWidget),
-			KG_BIND_CLASS_FN(AddButtonWidget)
-			});
-		entry.m_OnRightClickSelection.push_back
-		({
-			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ImageWidget),
-			KG_BIND_CLASS_FN(AddImageWidget)
-			});
-		entry.m_OnRightClickSelection.push_back
-		({
-			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ImageButtonWidget),
-			KG_BIND_CLASS_FN(AddImageButtonWidget)
-			});
-		entry.m_OnRightClickSelection.push_back
-		({
-			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::CheckboxWidget),
-			KG_BIND_CLASS_FN(AddCheckboxWidget)
-			});
-		entry.m_OnRightClickSelection.push_back
-		({
-			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ContainerWidget),
-			KG_BIND_CLASS_FN(AddContainerWidget)
-			});
-		entry.m_OnRightClickSelection.push_back
-		({
-			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::InputTextWidget),
-			KG_BIND_CLASS_FN(AddInputTextWidget)
-			});
-		entry.m_OnRightClickSelection.push_back
-		({
-			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::SliderWidget),
-			KG_BIND_CLASS_FN(AddSliderWidget)
-			});
-		entry.m_OnRightClickSelection.push_back
-		({
-			std::string("Add ") + Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::DropDownWidget),
-			KG_BIND_CLASS_FN(AddDropDownWidget)
-			});
+		RuntimeUI::IDType type = RuntimeUI::RuntimeUIService::CheckIDType((int32_t)entry.m_Handle);
+
+		KG_ASSERT(type != RuntimeUI::IDType::None);
+
+		// Main vector of items
+		std::vector<EditorUI::TooltipEntry> addItems;
+		std::vector<EditorUI::TooltipEntry> subMenus;
+
+		// Ensure the underlying widget is a container
+		if (type == RuntimeUI::IDType::Widget)
+		{
+			Ref<RuntimeUI::Widget> widget = RuntimeUI::RuntimeUIService::GetWidgetFromID((int32_t)entry.m_Handle);
+			KG_ASSERT(widget);
+
+			RuntimeUI::ContainerData* container = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(widget.get());
+
+			if (!container)
+			{
+				return;
+			}
+		}
+		// Implicitly allowing windows to work
+
+		// Add the text widget tooltip entry
+		{
+			// Create the tooltip entry
+			EditorUI::TooltipEntry addWidget
+			{
+				Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::TextWidget),
+				KG_BIND_CLASS_FN(AddTextWidget)
+			};
+			addWidget.m_ProvidedData = &entry;
+
+			// Add the entry to the tooltip menu
+			addItems.push_back(addWidget);
+		}
+
+		// Add the InputText widget tooltip entry
+		{
+			// Create the tooltip entry
+			EditorUI::TooltipEntry addWidget
+			{
+				Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::InputTextWidget),
+				KG_BIND_CLASS_FN(AddInputTextWidget)
+			};
+			addWidget.m_ProvidedData = &entry;
+
+			// Add the entry to the tooltip menu
+			addItems.push_back(addWidget);
+		}
+
+		// Create a sub-menu and add it to the main add items menu
+		EditorUI::TooltipEntry textMenu{ "Text", addItems };
+		subMenus.push_back(textMenu);
+		addItems.clear();
+
+		// Add the button widget tooltip entry
+		{
+			// Create the tooltip entry
+			EditorUI::TooltipEntry addWidget
+			{
+				Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ButtonWidget),
+				KG_BIND_CLASS_FN(AddButtonWidget)
+			};
+			addWidget.m_ProvidedData = &entry;
+
+			// Add the entry to the tooltip menu
+			addItems.push_back(addWidget);
+		}
+
+		// Add the ImageButton widget tooltip entry
+		{
+			// Create the tooltip entry
+			EditorUI::TooltipEntry addWidget
+			{
+				Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ImageButtonWidget),
+				KG_BIND_CLASS_FN(AddImageButtonWidget)
+			};
+			addWidget.m_ProvidedData = &entry;
+
+			// Add the entry to the tooltip menu
+			addItems.push_back(addWidget);
+		}
+
+		// Add the Checkbox widget tooltip entry
+		{
+			// Create the tooltip entry
+			EditorUI::TooltipEntry addWidget
+			{
+				Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::CheckboxWidget),
+				KG_BIND_CLASS_FN(AddCheckboxWidget)
+			};
+			addWidget.m_ProvidedData = &entry;
+
+			// Add the entry to the tooltip menu
+			addItems.push_back(addWidget);
+		}
+
+		// Create a sub-menu and add it to the main add items menu
+		EditorUI::TooltipEntry buttonMenu{ "Button", addItems };
+		subMenus.push_back(buttonMenu);
+		addItems.clear();
+
+		// Add the Image widget tooltip entry
+		{
+			// Create the tooltip entry
+			EditorUI::TooltipEntry addWidget
+			{
+				Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ImageWidget),
+				KG_BIND_CLASS_FN(AddImageWidget)
+			};
+			addWidget.m_ProvidedData = &entry;
+
+			// Add the entry to the tooltip menu
+			addItems.push_back(addWidget);
+		}
+		
+		// Create a sub-menu and add it to the main add items menu
+		EditorUI::TooltipEntry imageMenu{ "Image", addItems };
+		subMenus.push_back(imageMenu);
+		addItems.clear();
+
+		// Add the Container widget tooltip entry
+		{
+			// Create the tooltip entry
+			EditorUI::TooltipEntry addWidget
+			{
+				Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::ContainerWidget),
+				KG_BIND_CLASS_FN(AddContainerWidget)
+			};
+			addWidget.m_ProvidedData = &entry;
+
+			// Add the entry to the tooltip menu
+			addItems.push_back(addWidget);
+		}
+
+		// Create a sub-menu and add it to the main add items menu
+		EditorUI::TooltipEntry containerMenu{ "Container", addItems };
+		subMenus.push_back(containerMenu);
+		addItems.clear();
+
+		// Add the Slider widget tooltip entry
+		{
+			// Create the tooltip entry
+			EditorUI::TooltipEntry addWidget
+			{
+				Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::SliderWidget),
+				KG_BIND_CLASS_FN(AddSliderWidget)
+			};
+			addWidget.m_ProvidedData = &entry;
+
+			// Add the entry to the tooltip menu
+			addItems.push_back(addWidget);
+		}
+
+		// Create a sub-menu and add it to the main add items menu
+		EditorUI::TooltipEntry scrollMenu{ "Scroll", addItems };
+		subMenus.push_back(scrollMenu);
+		addItems.clear();
+
+		// Add the DropDown widget tooltip entry
+		{
+			// Create the tooltip entry
+			EditorUI::TooltipEntry addWidget
+			{
+				Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::DropDownWidget),
+				KG_BIND_CLASS_FN(AddDropDownWidget)
+			};
+			addWidget.m_ProvidedData = &entry;
+
+			// Add the entry to the tooltip menu
+			addItems.push_back(addWidget);
+		}
+
+		// Create a sub-menu and add it to the main add items menu
+		EditorUI::TooltipEntry selectMenu{ "Select", addItems };
+		subMenus.push_back(selectMenu);
+		addItems.clear();
+
+		// Create the add menu and add it the the top-level tooltip
+		EditorUI::TooltipEntry addMenu{ "Add", subMenus};
+		m_SelectTooltip.AddTooltipEntry(addMenu);
 	}
 
 	void UIEditorTreePanel::CreateWidgetSpecificSelectionOptions(EditorUI::TreeEntry& widgetEntry, RuntimeUI::WidgetTypes widgetType)
@@ -627,8 +949,7 @@ namespace Kargono::Panels
 
 		// Add functions to call when interacting with widget entry
 		widgetEntry.m_OnLeftClick = KG_BIND_CLASS_FN(SelectWidget);
-		CreateWidgetSpecificSelectionOptions(widgetEntry, currentWidget->m_WidgetType);
-		widgetEntry.m_OnRightClickSelection.push_back({ "Delete Widget", KG_BIND_CLASS_FN(DeleteWidget) });
+		widgetEntry.m_OnRightClick = KG_BIND_CLASS_FN(RightClickWidgetEntry);
 
 		// Check for a container widget
 		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(currentWidget.get());

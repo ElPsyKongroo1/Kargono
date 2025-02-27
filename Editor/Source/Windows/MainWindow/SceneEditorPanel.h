@@ -144,7 +144,7 @@ namespace Kargono::Panels
 		EditorUI::TreeSpec m_SceneHierarchyTree {};
 		int32_t m_AddComponentEntity {};
 		EditorUI::SelectOptionSpec m_AddComponent{};
-		EditorUI::TooltipSpec m_SelectScriptTooltip{};
+		EditorUI::TooltipSpec m_SelectTooltip{};
 
 		// Scene Options
 		EditorUI::EditVec4Spec m_BackgroundColorSpec;

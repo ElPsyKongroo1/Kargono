@@ -60,14 +60,25 @@ namespace Kargono::Panels
 					s_MainWindow->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 				};
 
-				sceneEntry.m_OnRightClickSelection.push_back({ "Add Entity", [&](EditorUI::TreeEntry& entry)
+				sceneEntry.m_OnRightClick = [&](EditorUI::TreeEntry& entry)
 				{
-					UNREFERENCED_PARAMETER(entry);
-					EngineService::SubmitToMainThread([]() 
+					m_SelectTooltip.ClearEntries();
+
+					// Create add component entry
+					EditorUI::TooltipEntry addEntityEntry{ "Add Entity", [&](EditorUI::TooltipEntry& tooltipEntry)
 					{
-						Scenes::SceneService::GetActiveScene()->CreateEntity("Empty Entity");
-					});
-				}});
+						UNREFERENCED_PARAMETER(entry);
+						EngineService::SubmitToMainThread([]()
+						{
+							Scenes::SceneService::GetActiveScene()->CreateEntity("Empty Entity");
+						});
+					} };
+					// Add the new entry
+					m_SelectTooltip.AddTooltipEntry(addEntityEntry);
+
+					// Active the tooltip
+					m_SelectTooltip.m_TooltipActive = true;
+				};
 
 				// Add all entities from the scene into the tree UI
 				Scenes::SceneService::GetActiveScene()->m_EntityRegistry.m_EnTTRegistry.each([&](entt::entity enttID)
@@ -594,13 +605,13 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			// Initialize tooltip with options
-			m_SelectScriptTooltip.ClearEntries();
+			m_SelectTooltip.ClearEntries();
 			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
 				UNREFERENCED_PARAMETER(entry);
 				m_SelectRigidBody2DCollisionStartScript.m_OpenPopup = true;
 			} };
-			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+			m_SelectTooltip.AddTooltipEntry(openScriptOptions);
 
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
@@ -638,10 +649,10 @@ namespace Kargono::Panels
 					}, {"activeEntity", "collidedEntity"});
 
 				} };
-			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+			m_SelectTooltip.AddTooltipEntry(createScriptOptions);
 
 			// Open tooltip
-			m_SelectScriptTooltip.m_TooltipActive = true;
+			m_SelectTooltip.m_TooltipActive = true;
 
 		};
 
@@ -690,13 +701,13 @@ namespace Kargono::Panels
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
-				m_SelectScriptTooltip.ClearEntries();
+				m_SelectTooltip.ClearEntries();
 				EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 				{
 					UNREFERENCED_PARAMETER(entry);
 					m_SelectRigidBody2DCollisionEndScript.m_OpenPopup = true;
 				} };
-				m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+				m_SelectTooltip.AddTooltipEntry(openScriptOptions);
 
 				EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 				{
@@ -734,10 +745,10 @@ namespace Kargono::Panels
 					}, {"activeEntity", "collidedEntity"});
 
 			}		};
-				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+				m_SelectTooltip.AddTooltipEntry(createScriptOptions);
 
 				// Open tooltip
-				m_SelectScriptTooltip.m_TooltipActive = true;
+				m_SelectTooltip.m_TooltipActive = true;
 
 			};
 
@@ -1374,13 +1385,13 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			// Initialize tooltip with options
-			m_SelectScriptTooltip.ClearEntries();
+			m_SelectTooltip.ClearEntries();
 			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
 				UNREFERENCED_PARAMETER(entry);
 				m_SelectOnUpdateScript.m_OpenPopup = true;
 			}};
-			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+			m_SelectTooltip.AddTooltipEntry(openScriptOptions);
 
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
@@ -1418,10 +1429,10 @@ namespace Kargono::Panels
 				}, {"activeEntity", "deltaTime"});
 
 				} };
-			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+			m_SelectTooltip.AddTooltipEntry(createScriptOptions);
 
 			// Open tooltip
-			m_SelectScriptTooltip.m_TooltipActive = true;
+			m_SelectTooltip.m_TooltipActive = true;
 
 		};
 	}
@@ -1514,13 +1525,13 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			// Initialize tooltip with options
-			m_SelectScriptTooltip.ClearEntries();
+			m_SelectTooltip.ClearEntries();
 			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
 			{
 				UNREFERENCED_PARAMETER(entry);
 				m_SelectOnCreateScript.m_OpenPopup = true;
 			} };
-			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);
+			m_SelectTooltip.AddTooltipEntry(openScriptOptions);
 
 			EditorUI::TooltipEntry createScriptOptions{ "Create Script", [&](EditorUI::TooltipEntry& entry)
 			{
@@ -1558,10 +1569,10 @@ namespace Kargono::Panels
 				}, {"activeEntity"});
 
 				}};
-			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
+			m_SelectTooltip.AddTooltipEntry(createScriptOptions);
 
 			// Open tooltip
-			m_SelectScriptTooltip.m_TooltipActive = true;
+			m_SelectTooltip.m_TooltipActive = true;
 
 		};
 	}
@@ -2359,7 +2370,7 @@ namespace Kargono::Panels
 
 			EditorUI::EditorUIService::SelectOption(m_AddComponent);
 
-			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
+			EditorUI::EditorUIService::Tooltip(m_SelectTooltip);
 		}
 		EditorUI::EditorUIService::EndWindow();
 	}
@@ -3297,29 +3308,46 @@ namespace Kargono::Panels
 				editorCamera.SetMovementType(Rendering::EditorPerspectiveCamera::MovementType::ModelView);
 			};
 
-		newEntry.m_OnRightClickSelection.push_back({ "Add Component", [&](EditorUI::TreeEntry& entry)
+		newEntry.m_OnRightClick = [&](EditorUI::TreeEntry& entry) 
 		{
-			m_AddComponent.m_OpenPopup = true;
-			m_AddComponentEntity = (int32_t)entry.m_Handle;
-		} });
+			m_SelectTooltip.ClearEntries();
 
-		newEntry.m_OnRightClickSelection.push_back({ "Delete Entity", [](EditorUI::TreeEntry& entry)
-		{
-			static ECS::Entity entityToDelete;
-			entityToDelete = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
-
-			EngineService::SubmitToMainThread([&]()
+			// Create add component entry
+			EditorUI::TooltipEntry addComponentEntry{ "Add Component", [&](EditorUI::TooltipEntry& tooltipEntry) 
 			{
-				if (!entityToDelete)
-				{
-					KG_WARN("Attempt to delete entity that does not exist");
-					return;
-				}
-				Scenes::SceneService::GetActiveScene()->DestroyEntity(entityToDelete);
-				s_MainWindow->LoadSceneParticleEmitters();
-			});
+				m_AddComponent.m_OpenPopup = true;
+				m_AddComponentEntity = (int32_t)tooltipEntry.m_UserHandle;
+			}};
+			addComponentEntry.m_UserHandle = entry.m_Handle;
 
-		} });
+			// Add the new entry
+			m_SelectTooltip.AddTooltipEntry(addComponentEntry);
+
+			// Create delete entity entry
+			EditorUI::TooltipEntry deleteEntityEntry{ "Delete Entity", [&](EditorUI::TooltipEntry& tooltipEntry)
+			{
+				static ECS::Entity entityToDelete;
+				entityToDelete = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
+
+				EngineService::SubmitToMainThread([&]()
+				{
+					if (!entityToDelete)
+					{
+						KG_WARN("Attempt to delete entity that does not exist");
+						return;
+					}
+					Scenes::SceneService::GetActiveScene()->DestroyEntity(entityToDelete);
+					s_MainWindow->LoadSceneParticleEmitters();
+				});
+			}};
+			deleteEntityEntry.m_UserHandle = entry.m_Handle;
+
+			// Add the new entry
+			m_SelectTooltip.AddTooltipEntry(deleteEntityEntry);
+
+			// Active the tooltip
+			m_SelectTooltip.m_TooltipActive = true;
+		};
 
 		EditorUI::TreeEntry componentEntry{};
 		componentEntry.m_Handle = (uint64_t)entity;

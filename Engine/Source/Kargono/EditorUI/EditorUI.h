@@ -1130,9 +1130,9 @@ namespace Kargono::EditorUI
 		Ref<Rendering::Texture2D> m_IconHandle{ nullptr };
 		std::function<void(TreeEntry& entry)> m_OnLeftClick { nullptr };
 		std::function<void(TreeEntry& entry)> m_OnDoubleLeftClick { nullptr };
+		std::function<void(TreeEntry& entry)> m_OnRightClick { nullptr };
 		Ref<void> m_ProvidedData { nullptr };
 		std::vector<TreeEntry> m_SubEntries{};
-		std::vector<SelectionEntry> m_OnRightClickSelection {};
 	};
 
 	struct TreeSpec
@@ -1196,7 +1196,6 @@ namespace Kargono::EditorUI
 		WidgetID m_WidgetID;
 		std::vector<TreeEntry> m_TreeEntries{};
 		std::unordered_set<TreePath> m_ExpandedNodes{};
-		TreeEntry* m_CurrentRightClick{ nullptr };
 		bool m_SelectionChanged{ false };
 	private:
 		friend void EditorUIService::Tree(TreeSpec& spec);
@@ -1228,6 +1227,7 @@ namespace Kargono::EditorUI
 		UUID m_EntryID;
 		bool m_IsVisible{ true };
 		UUID m_UserHandle;
+		void* m_ProvidedData;
 	private:
 		std::variant<std::vector<TooltipEntry>, std::function<void(TooltipEntry&)>, TooltipSeperatorData> m_EntryData;
 		friend void ProcessTooltipEntries(TooltipSpec& spec, std::vector<TooltipEntry>& entryList);

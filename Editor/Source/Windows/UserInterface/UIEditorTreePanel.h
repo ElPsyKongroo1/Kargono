@@ -53,28 +53,34 @@ namespace Kargono::Panels
 		// Manage UserInterface
 		//=========================
 		void SelectUI(EditorUI::TreeEntry& entry);
+		void RightClickUIEntry(EditorUI::TreeEntry& entry);
 
 		//=========================
 		// Manage Windows
 		//=========================
-		void AddWindow(EditorUI::TreeEntry& entry);
+		void AddWindow(EditorUI::TooltipEntry& entry);
 		void SelectWindow(EditorUI::TreeEntry& entry);
-		void DeleteWindow(EditorUI::TreeEntry& entry);
+		void ToggleWindowVisibility(EditorUI::TooltipEntry& entry);
+		void RenameWindow(EditorUI::TooltipEntry& entry);
+		void DeleteWindow(EditorUI::TooltipEntry& entry);
+		void RightClickWindowEntry(EditorUI::TreeEntry& entry);
 
 		//=========================
 		// Manage Widgets
 		//=========================
-		void AddTextWidget(EditorUI::TreeEntry& entry);
-		void AddButtonWidget(EditorUI::TreeEntry& entry);
-		void AddImageWidget(EditorUI::TreeEntry& entry);
-		void AddImageButtonWidget(EditorUI::TreeEntry& entry);
-		void AddCheckboxWidget(EditorUI::TreeEntry& entry);
-		void AddContainerWidget(EditorUI::TreeEntry& entry);
-		void AddInputTextWidget(EditorUI::TreeEntry& entry);
-		void AddSliderWidget(EditorUI::TreeEntry& entry);
-		void AddDropDownWidget(EditorUI::TreeEntry& entry);
+		void RightClickWidgetEntry(EditorUI::TreeEntry& entry);
+		void AddTextWidget(EditorUI::TooltipEntry& entry);
+		void AddButtonWidget(EditorUI::TooltipEntry& entry);
+		void AddImageWidget(EditorUI::TooltipEntry& entry);
+		void AddImageButtonWidget(EditorUI::TooltipEntry& entry);
+		void AddCheckboxWidget(EditorUI::TooltipEntry& entry);
+		void AddContainerWidget(EditorUI::TooltipEntry& entry);
+		void AddInputTextWidget(EditorUI::TooltipEntry& entry);
+		void AddSliderWidget(EditorUI::TooltipEntry& entry);
+		void AddDropDownWidget(EditorUI::TooltipEntry& entry);
 		void SelectWidget(EditorUI::TreeEntry& entry);
-		void DeleteWidget(EditorUI::TreeEntry& entry);
+		void RenameWidget(EditorUI::TooltipEntry& entry);
+		void DeleteWidget(EditorUI::TooltipEntry& entry);
 
 	private:
 		//=========================

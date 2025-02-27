@@ -73,6 +73,8 @@ namespace Kargono::Panels
 		// Modify Panel Data
 		//=========================
 		void OnSelectWidget();
+		void OpenWidgetTagDialog();
+		void OpenWindowTagDialog();
 		void ClearPanelData();
 
 	private:

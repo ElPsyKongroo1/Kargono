@@ -131,7 +131,7 @@ namespace Kargono::Panels
 			Ref<RuntimeUI::Widget> activeWidget = m_ActiveWindow->m_DefaultActiveWidgetRef;
 			m_WindowDefaultWidget.m_CurrentOption =
 			{
-				activeWidget ? "None" : activeWidget->m_Tag,
+				activeWidget ? activeWidget->m_Tag : "None",
 				(uint64_t)m_ActiveWindow->m_DefaultActiveWidget
 			};
 			EditorUI::EditorUIService::SelectOption(m_WindowDefaultWidget);
@@ -676,6 +676,16 @@ namespace Kargono::Panels
 			KG_ASSERT(m_DropDownWidgetOptionsList.m_OnRefresh);
 			m_DropDownWidgetOptionsList.m_OnRefresh();
 		}
+	}
+
+	void UIEditorPropertiesPanel::OpenWidgetTagDialog()
+	{
+		m_WidgetTag.m_StartPopup = true;
+	}
+
+	void UIEditorPropertiesPanel::OpenWindowTagDialog()
+	{
+		m_WindowTag.m_StartPopup = true;
 	}
 
 	void UIEditorPropertiesPanel::ClearPanelData()
