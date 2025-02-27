@@ -119,7 +119,7 @@ namespace Kargono::RuntimeUI
 
 	struct SingleLineTextData
 	{
-		std::string m_Text{ "New Widget" };
+		std::string m_Text{ "..." };
 		float m_TextSize{ 0.3f };
 		Math::vec4 m_TextColor{ 1.0f };
 		Constraint m_TextAlignment{ Constraint::Center };
@@ -442,7 +442,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		ContainerData m_ContainerData;
 		float m_RowHeight{ 0.25f };
-		float m_RowSpacing{ 0.01f };
+		float m_RowSpacing{ 0.0f };
 	};
 
 	//============================

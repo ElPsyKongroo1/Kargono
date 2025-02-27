@@ -932,8 +932,9 @@ namespace Kargono::RuntimeUI
 			{
 				VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)currentWidget.get();
 				KG_ASSERT(vertContainer);
-				returnDimensions.m_Translation.y += returnDimensions.m_Size.y - (returnDimensions.m_Size.y *
-					vertContainer->m_RowHeight) * (locationDirections.at(iteration) + 1);
+				returnDimensions.m_Translation.y += returnDimensions.m_Size.y - 
+					(returnDimensions.m_Size.y * vertContainer->m_RowHeight) * (locationDirections.at(iteration) + 1) - 
+					(returnDimensions.m_Size.y * vertContainer->m_RowSpacing) * locationDirections.at(iteration);
 				returnDimensions.m_Size.y *= vertContainer->m_RowHeight;
 			}
 
@@ -1010,8 +1011,9 @@ namespace Kargono::RuntimeUI
 			{
 				VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)currentWidget.get();
 				KG_ASSERT(vertContainer);
-				returnDimensions.m_Translation.y += returnDimensions.m_Size.y - (returnDimensions.m_Size.y *
-					vertContainer->m_RowHeight) * (locationDirections.at(iteration) + 1);
+				returnDimensions.m_Translation.y += returnDimensions.m_Size.y - 
+					returnDimensions.m_Size.y * vertContainer->m_RowHeight * (locationDirections.at(iteration) + 1) - 
+					returnDimensions.m_Size.y * vertContainer->m_RowSpacing * locationDirections.at(iteration);
 				returnDimensions.m_Size.y *= vertContainer->m_RowHeight;
 			}
 
@@ -3404,12 +3406,12 @@ namespace Kargono::RuntimeUI
 				// Handle the verical container case
 				VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)currentWidget.get();
 				KG_ASSERT(vertContainer);
-				size_t iteration{ 1 };
+				size_t iteration{ 0 };
 				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
 				{
 					m_CurrentWidgetParentTransform.m_Translation.y = cachedTransform.m_Translation.y + cachedTransform.m_Size.y -
-						(cachedTransform.m_Size.y *
-							vertContainer->m_RowHeight) * iteration;
+						cachedTransform.m_Size.y * vertContainer->m_RowHeight * (iteration + 1) - 
+						cachedTransform.m_Size.y * vertContainer->m_RowSpacing * iteration;
 					m_CurrentWidgetParentTransform.m_Size.y = cachedTransform.m_Translation.y * vertContainer->m_RowHeight;
 					CalculateWidgetNavigationLinks(containedWidget);
 					iteration++;
@@ -3501,12 +3503,13 @@ namespace Kargono::RuntimeUI
 			if (potentialWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
 			{
 				// Handle the verical container case
-				size_t iteration{ 1 };
+				size_t iteration{ 0 };
 				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
 				{
 					VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)potentialWidget.get();
 					KG_ASSERT(vertContainer);
-					m_PotentialWidgetParentTransform.m_Translation.y = potentialWidgetPosition.y + potentialWidgetSize.y - (potentialWidgetSize.y * vertContainer->m_RowHeight) * iteration;
+					m_PotentialWidgetParentTransform.m_Translation.y = potentialWidgetPosition.y + potentialWidgetSize.y - potentialWidgetSize.y * vertContainer->m_RowHeight * (iteration + 1) - 
+						potentialWidgetSize.y * vertContainer->m_RowSpacing * iteration;
 					m_PotentialWidgetParentTransform.m_Size.y = potentialWidgetSize.y * vertContainer->m_RowHeight;
 					CompareCurrentAndPotentialWidget(containedWidget);
 					iteration++;
@@ -3631,7 +3634,7 @@ namespace Kargono::RuntimeUI
 		// Updating the render input locations causes further render calls to
 		// associate its mouse picking with an incorrect widget
 		// Render the child widgets
-		size_t iteration{ 1 };
+		size_t iteration{ 0 };
 		for (Ref<Widget> containedWidget : m_ContainerData.m_ContainedWidgets)
 		{
 			// Push widget ID
@@ -3641,7 +3644,11 @@ namespace Kargono::RuntimeUI
 			RuntimeUI::FontService::SetID((uint32_t)containedWidget->m_ID);
 
 			Math::vec3 outputSize{ widgetSize.x, widgetSize.y * m_RowHeight, widgetSize.z };
-			Math::vec3 outputTranslation{ widgetTranslation.x, widgetTranslation.y + widgetSize.y - outputSize.y * iteration, widgetTranslation.z };
+			Math::vec3 outputTranslation
+			{ 
+				widgetTranslation.x, 
+				widgetTranslation.y + widgetSize.y - outputSize.y * (iteration + 1) - widgetSize.y * m_RowSpacing * iteration, 
+				widgetTranslation.z };
 
 			// Render the indicated widget
 			//containedWidget->OnRender(widgetTranslation, widgetSize, viewportWidth);

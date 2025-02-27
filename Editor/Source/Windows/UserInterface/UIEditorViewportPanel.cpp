@@ -793,7 +793,14 @@ namespace Kargono::Panels
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 
+			// Handle distance lines
 			DrawWidgetConstraintDistanceLines(widget, widgetTransform, modifiedOriginTranslation);
+
+			// Handle specific widget debug lines
+			if (widget->m_WidgetType == RuntimeUI::WidgetTypes::VerticalContainerWidget)
+			{
+				DrawVerticalContainerElementOutline(widget, widgetTranslation, widgetSize);
+			}
 
 		}
 		if (window)
@@ -1069,6 +1076,94 @@ namespace Kargono::Panels
 			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
+	}
+
+	void UIEditorViewportPanel::DrawVerticalContainerElementOutline(RuntimeUI::Widget* widget, const Math::vec3& widgetTranslation, const Math::vec3& widgetSize)
+	{
+		// Get the vertical container reference
+		RuntimeUI::VerticalContainerWidget* verticalContainer = (RuntimeUI::VerticalContainerWidget*)widget;
+		KG_ASSERT(verticalContainer);
+
+		Math::vec3 constraintDistanceVerts[8];
+
+		// Increment z-position to display in front
+		float modifiedZPosition = widgetTranslation.z + 0.1f;
+		float rowItemHeight = widgetSize.y * verticalContainer->m_RowHeight;
+		float rowItemSpacing = widgetSize.y * verticalContainer->m_RowSpacing;
+		// Create each base vertex
+		//Math::vec3 bottomLeft{ widgetTranslation.x, widgetTranslation.y, modifiedZPosition };
+		//Math::vec3 bottomRight{ widgetTranslation.x + widgetSize.x, widgetTranslation.y, modifiedZPosition };
+		//Math::vec3 topLeft{ widgetTranslation.x, widgetTranslation.y + widgetSize.y, modifiedZPosition };
+		//Math::vec3 topRight{ widgetTranslation.x + widgetSize.x, widgetTranslation.y + widgetSize.y, modifiedZPosition };
+		
+		for (size_t iteration{ 0 }; iteration < verticalContainer->m_ContainerData.m_ContainedWidgets.size(); iteration++)
+		{
+			Math::vec3 topLeft
+			{
+				widgetTranslation.x,
+				widgetTranslation.y + widgetSize.y - rowItemHeight * iteration - rowItemSpacing * iteration,
+				modifiedZPosition
+			};
+			Math::vec3 bottomLeft
+			{
+				widgetTranslation.x,
+				widgetTranslation.y + widgetSize.y - rowItemHeight * (iteration + 1) - rowItemSpacing * iteration,
+				modifiedZPosition
+			};
+			Math::vec3 topRight
+			{
+				widgetTranslation.x + widgetSize.x,
+				widgetTranslation.y + widgetSize.y - rowItemHeight * iteration - rowItemSpacing * iteration,
+				modifiedZPosition
+			};
+			Math::vec3 bottomRight
+			{
+				widgetTranslation.x + widgetSize.x,
+				widgetTranslation.y + widgetSize.y - rowItemHeight * (iteration + 1) - rowItemSpacing * iteration,
+				modifiedZPosition
+			};
+
+			// Create widget's constraint distance lines
+			// Bottom line
+			constraintDistanceVerts[0] = bottomLeft;
+			constraintDistanceVerts[1] = bottomRight;
+			// Right line
+			constraintDistanceVerts[2] = bottomRight;
+			constraintDistanceVerts[3] = topRight;
+			// Left line
+			constraintDistanceVerts[4] = bottomLeft;
+			constraintDistanceVerts[5] = topLeft;
+			// Top line
+			constraintDistanceVerts[6] = topLeft;
+			constraintDistanceVerts[7] = topRight;
+
+			// Draw the box
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor3),
+				Utility::FileSystem::CRCFromString("a_Color"),
+				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
+			s_OutputVector->clear();
+			s_OutputVector->push_back(constraintDistanceVerts[0]);
+			s_OutputVector->push_back(constraintDistanceVerts[1]);
+			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+			s_OutputVector->clear();
+			s_OutputVector->push_back(constraintDistanceVerts[2]);
+			s_OutputVector->push_back(constraintDistanceVerts[3]);
+			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+			s_OutputVector->clear();
+			s_OutputVector->push_back(constraintDistanceVerts[4]);
+			s_OutputVector->push_back(constraintDistanceVerts[5]);
+			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+			s_OutputVector->clear();
+			s_OutputVector->push_back(constraintDistanceVerts[6]);
+			s_OutputVector->push_back(constraintDistanceVerts[7]);
+			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
+		}
+		
+		
 	}
 
 	void UIEditorViewportPanel::DrawWindowConstraintDistanceLines(RuntimeUI::Window* window)
