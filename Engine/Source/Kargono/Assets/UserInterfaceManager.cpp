@@ -155,6 +155,22 @@ namespace Kargono::Assets
 		out << YAML::EndMap; // End Container Map
 	}
 
+	void SerializeVerticalContainerWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget)
+	{
+		RuntimeUI::VerticalContainerWidget* containerWidget = static_cast<RuntimeUI::VerticalContainerWidget*>(widget.get());
+		out << YAML::Key << "VerticalContainerWidget" << YAML::Value;
+		// Container fields
+		out << YAML::BeginMap; // Begin Container Map
+		
+		// Save unique fields
+		out << YAML::Key << "RowHeight" << YAML::Value << containerWidget->m_RowHeight;
+		out << YAML::Key << "RowSpacing" << YAML::Value << containerWidget->m_RowSpacing;
+
+		// Save container data
+		SerializeContainerData(out, containerWidget->m_ContainerData);
+		out << YAML::EndMap; // End Container Map
+	}
+
 	void SerializeInputTextWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget)
 	{
 		RuntimeUI::InputTextWidget* inputTextWidget = static_cast<RuntimeUI::InputTextWidget*>(widget.get());
@@ -264,6 +280,12 @@ namespace Kargono::Assets
 		case RuntimeUI::WidgetTypes::ContainerWidget:
 		{
 			SerializeContainerWidget(out, widget);
+			break;
+		}
+
+		case RuntimeUI::WidgetTypes::VerticalContainerWidget:
+		{
+			SerializeVerticalContainerWidget(out, widget);
 			break;
 		}
 
@@ -506,6 +528,20 @@ namespace Kargono::Assets
 		return widget;
 	}
 
+	Ref<RuntimeUI::Widget> DeserializeVerticalContainerWidget(const YAML::Node& node)
+	{
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::VerticalContainerWidget>();
+		YAML::Node specificWidget = node["VerticalContainerWidget"];
+		widget->m_WidgetType = RuntimeUI::WidgetTypes::VerticalContainerWidget;
+		RuntimeUI::VerticalContainerWidget* verticalContainerWidget = static_cast<RuntimeUI::VerticalContainerWidget*>(widget.get());
+		// Get unique data
+		verticalContainerWidget->m_RowHeight = specificWidget["RowHeight"].as<float>();
+		verticalContainerWidget->m_RowSpacing = specificWidget["RowSpacing"].as<float>();
+		// Get container data
+		DeserializeContainerData(verticalContainerWidget->m_ContainerData, specificWidget);
+		return widget;
+	}
+
 	Ref<RuntimeUI::Widget> DeserializeInputTextWidget(const YAML::Node& node)
 	{
 		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::InputTextWidget>();
@@ -641,6 +677,11 @@ namespace Kargono::Assets
 		case RuntimeUI::WidgetTypes::ContainerWidget:
 		{
 			widget = DeserializeContainerWidget(node);
+			break;
+		}
+		case RuntimeUI::WidgetTypes::VerticalContainerWidget:
+		{
+			widget = DeserializeVerticalContainerWidget(node);
 			break;
 		}
 		case RuntimeUI::WidgetTypes::InputTextWidget:
@@ -811,11 +852,10 @@ namespace Kargono::Assets
 			}
 		}
 
-		if (widgetRef->m_WidgetType == RuntimeUI::WidgetTypes::ContainerWidget)
+		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(widgetRef.get());
+		if (containerData)
 		{
-			RuntimeUI::ContainerWidget& containerWidget = *(RuntimeUI::ContainerWidget*)widgetRef.get();
-
-			for (Ref<RuntimeUI::Widget> currentWidget : containerWidget.m_ContainerData.m_ContainedWidgets)
+			for (Ref<RuntimeUI::Widget> currentWidget : containerData->m_ContainedWidgets)
 			{
 				bool modified = RemoveScriptFromWidget(currentWidget, scriptHandle);
 				if (modified)
@@ -924,11 +964,11 @@ namespace Kargono::Assets
 				uiModified = true;
 			}
 		}
-		if (widgetRef->m_WidgetType != RuntimeUI::WidgetTypes::ContainerWidget)
+
+		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(widgetRef.get());
+		if (containerData)
 		{
-			// Remove texture reference from widget if necessary
-			RuntimeUI::ContainerWidget& containerWidget = *(RuntimeUI::ContainerWidget*)widgetRef.get();
-			for (Ref<RuntimeUI::Widget> currentWidget : containerWidget.m_ContainerData.m_ContainedWidgets)
+			for (Ref<RuntimeUI::Widget> currentWidget : containerData->m_ContainedWidgets)
 			{
 				bool modified = RemoveTextureFromWidget(currentWidget, textureHandle);
 				if (modified)

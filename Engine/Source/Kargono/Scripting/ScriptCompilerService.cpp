@@ -781,6 +781,14 @@ namespace Kargono::Scripting
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ContainerWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
+		newPrimitiveType = {};
+		newPrimitiveType.Name = "vertical_container_widget";
+		newPrimitiveType.Description = "Reference to a user interface vertical container widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::VerticalContainerWidget);
+		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+
 		if (s_ActiveLanguageDefinition.AllLiteralTypes.contains("Enums"))
 		{
 			// Load custom enum types
@@ -1397,6 +1405,70 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 	}
 
+	static void CreateWidgetLiteralMember (Assets::AssetHandle configHandle,
+		Ref<RuntimeUI::Widget> currentWidget, Ref<CustomLiteralMember> parentLiteralMember)
+		{
+			// Create the basic widget literal
+			Ref<CustomLiteralMember> newWidgetLiteral = CreateRef<CustomLiteralMember>();
+			std::string currentWidgetLabel{ currentWidget->m_Tag };
+			Utility::Operations::RemoveWhitespaceFromString(currentWidgetLabel);
+
+			// Add text replacement values for this widget
+			newWidgetLiteral->m_OutputText = std::format("RuntimeUI::WidgetID({}, {})",
+				std::to_string(configHandle),
+				std::to_string(currentWidget->m_ID));
+
+			// Set the widget's primitive type
+			switch (currentWidget->m_WidgetType)
+			{
+			case RuntimeUI::WidgetTypes::TextWidget:
+				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "text_widget" };
+				break;
+			case RuntimeUI::WidgetTypes::ButtonWidget:
+				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "button_widget" };
+				break;
+			case RuntimeUI::WidgetTypes::ImageWidget:
+				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "image_widget" };
+				break;
+			case RuntimeUI::WidgetTypes::ImageButtonWidget:
+				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "image_button_widget" };
+				break;
+			case RuntimeUI::WidgetTypes::CheckboxWidget:
+				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "checkbox_widget" };
+				break;
+			case RuntimeUI::WidgetTypes::InputTextWidget:
+				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "input_text_widget" };
+				break;
+			case RuntimeUI::WidgetTypes::SliderWidget:
+				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "slider_widget" };
+				break;
+			case RuntimeUI::WidgetTypes::DropDownWidget:
+				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "drop_down_widget" };
+				break;
+			case RuntimeUI::WidgetTypes::ContainerWidget:
+				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "container_widget" };
+				break;
+			case RuntimeUI::WidgetTypes::VerticalContainerWidget:
+				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "vertical_container_widget" };
+				break;
+			default:
+				KG_ERROR("Invalid widget type provided when loading widget information into kgscript language");
+				break;
+			}
+
+			RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(currentWidget.get());
+			if (containerData)
+			{
+				for (Ref<RuntimeUI::Widget> containedWidget : containerData->m_ContainedWidgets)
+				{
+					CreateWidgetLiteralMember(configHandle, containedWidget, newWidgetLiteral);
+				}
+			}
+
+			// Add the widget literal into the window literal
+			parentLiteralMember->m_Members.insert_or_assign(currentWidgetLabel, newWidgetLiteral);
+		};
+
 	void ScriptCompilerService::CreateKGScriptCustomLiterals()
 	{
 		// Load all asset type declarations
@@ -1613,53 +1685,7 @@ namespace Kargono::Scripting
 				
 				for (Ref<RuntimeUI::Widget> currentWidget : currentWindow.m_Widgets)
 				{
-					// Create the basic widget literal
-					Ref<CustomLiteralMember> newWidgetLiteral = CreateRef<CustomLiteralMember>();
-					std::string currentWidgetLabel{ currentWidget->m_Tag };
-					Utility::Operations::RemoveWhitespaceFromString(currentWidgetLabel);
-
-					// Add text replacement values for this widget
-					newWidgetLiteral->m_OutputText = std::format("RuntimeUI::WidgetID({}, {})",
-						std::to_string(configHandle),
-						std::to_string(currentWidget->m_ID));
-
-					// Set the widget's primitive type
-					switch (currentWidget->m_WidgetType)
-					{
-					case RuntimeUI::WidgetTypes::TextWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "text_widget" };
-						break;
-					case RuntimeUI::WidgetTypes::ButtonWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "button_widget" };
-						break;
-					case RuntimeUI::WidgetTypes::ImageWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "image_widget" };
-						break;
-					case RuntimeUI::WidgetTypes::ImageButtonWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "image_button_widget" };
-						break;
-					case RuntimeUI::WidgetTypes::CheckboxWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "checkbox_widget" };
-						break;
-					case RuntimeUI::WidgetTypes::InputTextWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "input_text_widget" };
-						break;
-					case RuntimeUI::WidgetTypes::SliderWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "slider_widget" };
-						break;
-					case RuntimeUI::WidgetTypes::DropDownWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "drop_down_widget" };
-						break;
-					case RuntimeUI::WidgetTypes::ContainerWidget:
-						newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "container_widget" };
-						break;
-					default:
-						KG_ERROR("Invalid widget type provided when loading widget information into kgscript language");
-						break;
-					}
-					
-					// Add the widget literal into the window literal
-					newWindowLiteral->m_Members.insert_or_assign(currentWidgetLabel, newWidgetLiteral);
+					CreateWidgetLiteralMember(configHandle, currentWidget, newWindowLiteral);
 				}
 
 				// Add the window literal to the asset literal

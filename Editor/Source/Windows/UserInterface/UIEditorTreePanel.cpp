@@ -339,6 +339,8 @@ namespace Kargono::Panels
 
 		// Create new widget
 		Ref<RuntimeUI::TextWidget> newWidget = CreateRef<RuntimeUI::TextWidget>();
+
+		// Add widget to tree and runtime UI
 		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::TextWidget));
 	}
 
@@ -398,6 +400,18 @@ namespace Kargono::Panels
 		KG_ASSERT(newEntry);
 	}
 
+	void UIEditorTreePanel::AddVerticalContainerWidget(EditorUI::TooltipEntry& entry)
+	{
+		// Get the widget entry
+		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
+		KG_ASSERT(parentEntry);
+
+		// Create new widget
+		Ref<RuntimeUI::VerticalContainerWidget> newWidget = CreateRef<RuntimeUI::VerticalContainerWidget>();
+		EditorUI::TreeEntry* newEntry = AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::VerticalContainerWidget));
+		KG_ASSERT(newEntry);
+	}
+
 	void UIEditorTreePanel::AddInputTextWidget(EditorUI::TooltipEntry& entry)
 	{
 		// Get the widget entry
@@ -436,6 +450,7 @@ namespace Kargono::Panels
 		// Get the current widget and its parent window
 		RuntimeUI::Window& parentWindow = RuntimeUI::RuntimeUIService::GetParentWindowFromWidgetID((int32_t)entry.m_Handle);
 		Ref<RuntimeUI::Widget> currentWidget = RuntimeUI::RuntimeUIService::GetWidgetFromID((int32_t)entry.m_Handle);
+		KG_ASSERT(currentWidget);
 
 		// Set the active window/widget
 		s_UIWindow->m_PropertiesPanel->m_ActiveWindow = &parentWindow;
@@ -689,12 +704,18 @@ namespace Kargono::Panels
 		case RuntimeUI::IDType::Widget:
 		{
 			// Get the parent widget
-			Ref<RuntimeUI::Widget> widget = RuntimeUI::RuntimeUIService::GetWidgetFromID((int32_t)parentEntry.m_Handle);
-			KG_ASSERT(widget);
+			Ref<RuntimeUI::Widget> parentWidget = RuntimeUI::RuntimeUIService::GetWidgetFromID((int32_t)parentEntry.m_Handle);
+			KG_ASSERT(parentWidget);
 
 			// Get the parent widget's container data
-			RuntimeUI::ContainerData* data = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(widget.get());
+			RuntimeUI::ContainerData* data = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(parentWidget.get());
 			KG_ASSERT(data);
+
+			if (parentWidget->m_WidgetType == RuntimeUI::WidgetTypes::VerticalContainerWidget)
+			{
+				// Set appropriate default values
+				newWidget->m_PercentSize = { 1.0f, 1.0f };
+			}
 			
 			// Add the new widget to the container data
 			RuntimeUI::RuntimeUIService::AddWidgetToContainer(data, newWidget);
@@ -868,6 +889,20 @@ namespace Kargono::Panels
 			addItems.push_back(addWidget);
 		}
 
+		// Add the Vertical Container widget tooltip entry
+		{
+			// Create the tooltip entry
+			EditorUI::TooltipEntry addWidget
+			{
+				Utility::WidgetTypeToDisplayString(RuntimeUI::WidgetTypes::VerticalContainerWidget),
+				KG_BIND_CLASS_FN(AddVerticalContainerWidget)
+			};
+			addWidget.m_ProvidedData = &entry;
+
+			// Add the entry to the tooltip menu
+			addItems.push_back(addWidget);
+		}
+
 		// Create a sub-menu and add it to the main add items menu
 		EditorUI::TooltipEntry containerMenu{ "Container", addItems };
 		subMenus.push_back(containerMenu);
@@ -918,7 +953,7 @@ namespace Kargono::Panels
 
 	void UIEditorTreePanel::CreateWidgetSpecificSelectionOptions(EditorUI::TreeEntry& widgetEntry, RuntimeUI::WidgetTypes widgetType)
 	{
-		if (widgetType == RuntimeUI::WidgetTypes::ContainerWidget)
+		if (widgetType == RuntimeUI::WidgetTypes::ContainerWidget || widgetType == RuntimeUI::WidgetTypes::VerticalContainerWidget)
 		{
 			// Add container widget options
 			CreateAddWidgetsSelectionOptions(widgetEntry);

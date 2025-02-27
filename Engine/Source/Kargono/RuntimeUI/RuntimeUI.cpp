@@ -32,6 +32,8 @@ namespace Kargono::Utility
 			return EditorUI::EditorUIService::s_IconCheckbox_Enabled;
 		case RuntimeUI::WidgetTypes::ContainerWidget:
 			return EditorUI::EditorUIService::s_IconBoxCollider;
+		case RuntimeUI::WidgetTypes::VerticalContainerWidget:
+			return EditorUI::EditorUIService::s_IconVerticalContainer;
 		case RuntimeUI::WidgetTypes::InputTextWidget:
 			return EditorUI::EditorUIService::s_IconInputTextWidget;
 		case RuntimeUI::WidgetTypes::DropDownWidget:
@@ -610,6 +612,8 @@ namespace Kargono::RuntimeUI
 			return false;
 		}
 
+		RevalidateWidgetIDToLocationMap();
+
 		// Revalidate navigation links
 		NavigationLinksCalculator newCalculator;
 		newCalculator.CalculateNavigationLinks(s_RuntimeUIContext->m_ActiveUI,
@@ -800,6 +804,9 @@ namespace Kargono::RuntimeUI
 				Rendering::Shader::SetDataAtInputLocation<int32_t>(widgetRef->m_ID, 
 					Utility::FileSystem::CRCFromString("a_EntityID"),
 					s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+				Rendering::Shader::SetDataAtInputLocation<int32_t>(widgetRef->m_ID,
+					Utility::FileSystem::CRCFromString("a_EntityID"),
+					s_RuntimeUIContext->m_ImageInputSpec.m_Buffer, s_RuntimeUIContext->m_ImageInputSpec.m_Shader);
 				RuntimeUI::FontService::SetID((uint32_t)widgetRef->m_ID);
 				// Call the widget's rendering function
 				widgetRef->OnRender(initialTranslation, scale, (float)viewportWidth);
@@ -920,6 +927,16 @@ namespace Kargono::RuntimeUI
 			returnDimensions.m_Translation = currentWidget->CalculateWorldPosition(returnDimensions.m_Translation, returnDimensions.m_Size);
 			returnDimensions.m_Size = currentWidget->CalculateWidgetSize(returnDimensions.m_Size);
 
+			// Handle the vertical container case
+			if (currentWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
+			{
+				VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)currentWidget.get();
+				KG_ASSERT(vertContainer);
+				returnDimensions.m_Translation.y += returnDimensions.m_Size.y - (returnDimensions.m_Size.y *
+					vertContainer->m_RowHeight) * (locationDirections.at(iteration) + 1);
+				returnDimensions.m_Size.y *= vertContainer->m_RowHeight;
+			}
+
 			// Exit early if we reach the final valid location direction
 			if (iteration == locationDirections.size() - 1)
 			{
@@ -987,6 +1004,16 @@ namespace Kargono::RuntimeUI
 			// Update the dimensions based on the current widget and it's parent's dimensions
 			returnDimensions.m_Translation = currentWidget->CalculateWorldPosition(returnDimensions.m_Translation, returnDimensions.m_Size);
 			returnDimensions.m_Size = currentWidget->CalculateWidgetSize(returnDimensions.m_Size);
+
+			// Handle the vertical container case
+			if (currentWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
+			{
+				VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)currentWidget.get();
+				KG_ASSERT(vertContainer);
+				returnDimensions.m_Translation.y += returnDimensions.m_Size.y - (returnDimensions.m_Size.y *
+					vertContainer->m_RowHeight) * (locationDirections.at(iteration) + 1);
+				returnDimensions.m_Size.y *= vertContainer->m_RowHeight;
+			}
 
 			// Get the container data from the active widget
 			ContainerData* currentData = GetContainerDataFromWidget(currentWidget.get());
@@ -1610,6 +1637,8 @@ namespace Kargono::RuntimeUI
 		{
 		case WidgetTypes::ContainerWidget:
 			return &((ContainerWidget*)currentWidget)->m_ContainerData;
+		case WidgetTypes::VerticalContainerWidget:
+			return &((VerticalContainerWidget*)currentWidget)->m_ContainerData;
 		default:
 			return nullptr;
 		}
@@ -2252,6 +2281,7 @@ namespace Kargono::RuntimeUI
 			(*(DropDownWidget*)widget).CalculateTextSize();
 			break;
 		case WidgetTypes::ContainerWidget:
+		case WidgetTypes::VerticalContainerWidget:
 		{
 			ContainerData* containerData = GetContainerDataFromWidget(widget);
 			KG_ASSERT(containerData);
@@ -3298,6 +3328,7 @@ namespace Kargono::RuntimeUI
 	void RuntimeUI::ContainerWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
 		Rendering::RendererInputSpec& backgroundSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
+		Rendering::RendererInputSpec& imageSpec = RuntimeUIService::s_RuntimeUIContext->m_ImageInputSpec;
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
@@ -3318,6 +3349,9 @@ namespace Kargono::RuntimeUI
 			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
 				Utility::FileSystem::CRCFromString("a_EntityID"),
 				backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
+			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
+				Utility::FileSystem::CRCFromString("a_EntityID"),
+				imageSpec.m_Buffer, imageSpec.m_Shader);
 			RuntimeUI::FontService::SetID((uint32_t)containedWidget->m_ID);
 
 			// Render the indicated widget
@@ -3359,14 +3393,38 @@ namespace Kargono::RuntimeUI
 		if (containerData)
 		{
 			// Calculate the current widget's transform information
-			m_CurrentWidgetParentTransform.m_Translation = currentWidget->CalculateWorldPosition(
+			BoundingBoxTransform cachedTransform;
+			cachedTransform.m_Translation = currentWidget->CalculateWorldPosition(
 				m_CurrentWidgetParentTransform.m_Translation, m_CurrentWidgetParentTransform.m_Size);
-			m_CurrentWidgetParentTransform.m_Size = currentWidget->CalculateWidgetSize(m_CurrentWidgetParentTransform.m_Size);
-			for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
+			cachedTransform.m_Size = currentWidget->CalculateWidgetSize(m_CurrentWidgetParentTransform.m_Size);
+			m_CurrentWidgetParentTransform = cachedTransform;
+
+			if (currentWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
 			{
-				// Calculate the navigation links for each contained widget
-				CalculateWidgetNavigationLinks(containedWidget);
+				// Handle the verical container case
+				VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)currentWidget.get();
+				KG_ASSERT(vertContainer);
+				size_t iteration{ 1 };
+				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
+				{
+					m_CurrentWidgetParentTransform.m_Translation.y = cachedTransform.m_Translation.y + cachedTransform.m_Size.y -
+						(cachedTransform.m_Size.y *
+							vertContainer->m_RowHeight) * iteration;
+					m_CurrentWidgetParentTransform.m_Size.y = cachedTransform.m_Translation.y * vertContainer->m_RowHeight;
+					CalculateWidgetNavigationLinks(containedWidget);
+					iteration++;
+				}
 			}
+			else
+			{
+				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
+				{
+					// Calculate the navigation links for each contained widget
+					CalculateWidgetNavigationLinks(containedWidget);
+				}
+			}
+
+			
 		}
 
 		// Ensure the widget is selectable
@@ -3437,11 +3495,30 @@ namespace Kargono::RuntimeUI
 		ContainerData* containerData = RuntimeUIService::GetContainerDataFromWidget(potentialWidget.get());
 		m_PotentialWidgetParentTransform.m_Translation = potentialWidgetPosition;
 		m_PotentialWidgetParentTransform.m_Size = potentialWidgetSize;
+
 		if (containerData)
 		{
-			for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
+			if (potentialWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
 			{
-				CompareCurrentAndPotentialWidget(containedWidget);
+				// Handle the verical container case
+				size_t iteration{ 1 };
+				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
+				{
+					VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)potentialWidget.get();
+					KG_ASSERT(vertContainer);
+					m_PotentialWidgetParentTransform.m_Translation.y = potentialWidgetPosition.y + potentialWidgetSize.y - (potentialWidgetSize.y * vertContainer->m_RowHeight) * iteration;
+					m_PotentialWidgetParentTransform.m_Size.y = potentialWidgetSize.y * vertContainer->m_RowHeight;
+					CompareCurrentAndPotentialWidget(containedWidget);
+					iteration++;
+				}
+			}
+			else
+			{
+				// Handle the regular frame container case
+				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
+				{
+					CompareCurrentAndPotentialWidget(containedWidget);
+				}
 			}
 		}
 
@@ -3534,6 +3611,42 @@ namespace Kargono::RuntimeUI
 			m_CurrentBestChoiceID = potentialWidget->m_ID;
 			m_CurrentBestDistance = finalDistanceFactor;
 			return;
+		}
+	}
+
+	void RuntimeUI::VerticalContainerWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	{
+		Rendering::RendererInputSpec& backgroundSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
+
+		// Calculate the widget's rendering data
+		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
+		// Get widget translation
+		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
+		// Draw the background
+		RuntimeUIService::RenderBackground(m_ContainerData.m_BackgroundColor, widgetTranslation, widgetSize);
+
+		widgetTranslation.z += 0.001f;
+
+		// NOTE: This code needs to be at the end of this function!
+		// Updating the render input locations causes further render calls to
+		// associate its mouse picking with an incorrect widget
+		// Render the child widgets
+		size_t iteration{ 1 };
+		for (Ref<Widget> containedWidget : m_ContainerData.m_ContainedWidgets)
+		{
+			// Push widget ID
+			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
+				Utility::FileSystem::CRCFromString("a_EntityID"),
+				backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
+			RuntimeUI::FontService::SetID((uint32_t)containedWidget->m_ID);
+
+			Math::vec3 outputSize{ widgetSize.x, widgetSize.y * m_RowHeight, widgetSize.z };
+			Math::vec3 outputTranslation{ widgetTranslation.x, widgetTranslation.y + widgetSize.y - outputSize.y * iteration, widgetTranslation.z };
+
+			// Render the indicated widget
+			//containedWidget->OnRender(widgetTranslation, widgetSize, viewportWidth);
+			containedWidget->OnRender(outputTranslation, outputSize, viewportWidth);
+			iteration++;
 		}
 	}
 

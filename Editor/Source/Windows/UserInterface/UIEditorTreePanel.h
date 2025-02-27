@@ -75,6 +75,7 @@ namespace Kargono::Panels
 		void AddImageButtonWidget(EditorUI::TooltipEntry& entry);
 		void AddCheckboxWidget(EditorUI::TooltipEntry& entry);
 		void AddContainerWidget(EditorUI::TooltipEntry& entry);
+		void AddVerticalContainerWidget(EditorUI::TooltipEntry& entry);
 		void AddInputTextWidget(EditorUI::TooltipEntry& entry);
 		void AddSliderWidget(EditorUI::TooltipEntry& entry);
 		void AddDropDownWidget(EditorUI::TooltipEntry& entry);

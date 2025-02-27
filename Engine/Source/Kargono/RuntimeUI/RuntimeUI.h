@@ -58,7 +58,7 @@ namespace Kargono::RuntimeUI
 	{
 		None = 0, TextWidget, ButtonWidget, CheckboxWidget, ContainerWidget,
 		DropDownWidget, ImageWidget, ImageButtonWidget,
-		InputTextWidget, SliderWidget
+		InputTextWidget, SliderWidget, VerticalContainerWidget
 	};
 
 	//============================
@@ -181,9 +181,9 @@ namespace Kargono::RuntimeUI
 		RelativeOrAbsolute m_YRelativeOrAbsolute{ RelativeOrAbsolute::Absolute };
 		Constraint m_XConstraint{ Constraint::None };
 		Constraint m_YConstraint{ Constraint::None };
-		Math::vec2 m_PercentPosition{ 0.4f };
+		Math::vec2 m_PercentPosition{ 0.0f };
 		Math::ivec2 m_PixelPosition{ 0 };
-		Math::vec2 m_PercentSize  { 0.3f, 0.1f };
+		Math::vec2 m_PercentSize  { 0.2f, 0.2f };
 		Math::ivec2 m_PixelSize  { 50 };
 		WidgetTypes m_WidgetType{ WidgetTypes::None };
 	};
@@ -201,6 +201,7 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::TextWidget;
+			m_Tag = "TextWidget";
 		}
 		virtual ~TextWidget() override = default;
 	public:
@@ -250,6 +251,7 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::ButtonWidget;
+			m_Tag = "ButtonWidget";
 		}
 		virtual ~ButtonWidget() override = default;
 	public:
@@ -301,6 +303,7 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::ImageButtonWidget;
+			m_Tag = "ImageButtonWidget";
 		}
 		virtual ~ImageButtonWidget() override = default;
 	public:
@@ -342,6 +345,7 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::CheckboxWidget;
+			m_Tag = "CheckboxWidget";
 		}
 		virtual ~CheckboxWidget() override = default;
 	public:
@@ -380,6 +384,7 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::ContainerWidget;
+			m_Tag = "FrameContainerWidget";
 		}
 		virtual ~ContainerWidget() override = default;
 	public:
@@ -403,6 +408,44 @@ namespace Kargono::RuntimeUI
 	};
 
 	//============================
+	// VerticalContainer Widget Class (Derived)
+	//============================
+	class VerticalContainerWidget : public Widget
+	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		VerticalContainerWidget()
+			: Widget()
+		{
+			m_WidgetType = WidgetTypes::VerticalContainerWidget;
+			m_Tag = "VerticalContainerWidget";
+		}
+		virtual ~VerticalContainerWidget() override = default;
+	public:
+		//============================
+		// Rendering Methods
+		//============================
+		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+
+		//============================
+		// Query State
+		//============================
+		virtual bool Selectable() override
+		{
+			return false;
+		}
+
+		//============================
+		// Public Fields
+		//============================
+		ContainerData m_ContainerData;
+		float m_RowHeight{ 0.25f };
+		float m_RowSpacing{ 0.01f };
+	};
+
+	//============================
 	// Drop Down Widget Class (Derived)
 	//============================
 	class DropDownWidget : public Widget
@@ -415,6 +458,7 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::DropDownWidget;
+			m_Tag = "DropDownWidget";
 		}
 		virtual ~DropDownWidget() override = default;
 	public:
@@ -463,6 +507,7 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::ImageWidget;
+			m_Tag = "ImageWidget";
 		}
 		virtual ~ImageWidget() override = default;
 
@@ -501,6 +546,7 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::InputTextWidget;
+			m_Tag = "InputTextWidget";
 		}
 		virtual ~InputTextWidget() override = default;
 
@@ -552,6 +598,7 @@ namespace Kargono::RuntimeUI
 			: Widget()
 		{
 			m_WidgetType = WidgetTypes::SliderWidget;
+			m_Tag = "SliderWidget";
 		}
 		virtual ~SliderWidget() override = default;
 
@@ -891,6 +938,7 @@ namespace Kargono::RuntimeUI
 		friend class SliderWidget;
 		friend class DropDownWidget;
 		friend class ContainerWidget;
+		friend class VerticalContainerWidget;
 		friend class Window;
 	};
 }
@@ -905,6 +953,7 @@ namespace Kargono::Utility
 			case RuntimeUI::WidgetTypes::ButtonWidget: return "ButtonWidget";
 			case RuntimeUI::WidgetTypes::CheckboxWidget: return "CheckboxWidget";
 			case RuntimeUI::WidgetTypes::ContainerWidget: return "ContainerWidget";
+			case RuntimeUI::WidgetTypes::VerticalContainerWidget: return "VerticalContainerWidget";
 			case RuntimeUI::WidgetTypes::DropDownWidget: return "DropDownWidget";
 			case RuntimeUI::WidgetTypes::ImageWidget: return "ImageWidget";
 			case RuntimeUI::WidgetTypes::ImageButtonWidget: return "ImageButtonWidget";
@@ -923,15 +972,16 @@ namespace Kargono::Utility
 	{
 		switch (widgetType)
 		{
-		case RuntimeUI::WidgetTypes::TextWidget: return "Text Widget";
-		case RuntimeUI::WidgetTypes::ButtonWidget: return "Button Widget";
-		case RuntimeUI::WidgetTypes::CheckboxWidget: return "Checkbox Widget";
-		case RuntimeUI::WidgetTypes::ContainerWidget: return "Container Widget";
-		case RuntimeUI::WidgetTypes::DropDownWidget: return "Drop-Down Widget";
-		case RuntimeUI::WidgetTypes::ImageWidget: return "Image Widget";
-		case RuntimeUI::WidgetTypes::ImageButtonWidget: return "Image-Button Widget";
-		case RuntimeUI::WidgetTypes::InputTextWidget: return "Input Text Widget";
-		case RuntimeUI::WidgetTypes::SliderWidget: return "Slider Widget";
+		case RuntimeUI::WidgetTypes::TextWidget: return "Multi-line Text";
+		case RuntimeUI::WidgetTypes::ButtonWidget: return "Button";
+		case RuntimeUI::WidgetTypes::CheckboxWidget: return "Checkbox";
+		case RuntimeUI::WidgetTypes::ContainerWidget: return "Frame Container";
+		case RuntimeUI::WidgetTypes::VerticalContainerWidget: return "Vertical Container";
+		case RuntimeUI::WidgetTypes::DropDownWidget: return "Drop-Down";
+		case RuntimeUI::WidgetTypes::ImageWidget: return "Image";
+		case RuntimeUI::WidgetTypes::ImageButtonWidget: return "Image-Button";
+		case RuntimeUI::WidgetTypes::InputTextWidget: return "Input Text";
+		case RuntimeUI::WidgetTypes::SliderWidget: return "Slider";
 		case RuntimeUI::WidgetTypes::None: return "None";
 		default:
 		{
@@ -949,6 +999,7 @@ namespace Kargono::Utility
 		if (widgetName == "ButtonWidget") { return RuntimeUI::WidgetTypes::ButtonWidget; }
 		if (widgetName == "CheckboxWidget") { return RuntimeUI::WidgetTypes::CheckboxWidget; }
 		if (widgetName == "ContainerWidget") { return RuntimeUI::WidgetTypes::ContainerWidget; }
+		if (widgetName == "VerticalContainerWidget") { return RuntimeUI::WidgetTypes::VerticalContainerWidget; }
 		if (widgetName == "DropDownWidget") { return RuntimeUI::WidgetTypes::DropDownWidget; }
 		if (widgetName == "ImageWidget") { return RuntimeUI::WidgetTypes::ImageWidget; }
 		if (widgetName == "ImageButtonWidget") { return RuntimeUI::WidgetTypes::ImageButtonWidget; }

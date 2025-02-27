@@ -303,7 +303,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	struct DrawProjectComponentFieldsVisitor
+	struct DrawGlobalStateFieldsVisitor
 	{
 		void operator()(EditorUI::CheckboxSpec& spec)
 		{
@@ -468,7 +468,7 @@ namespace Kargono::Panels
 			// Call the draw functions (on the visitor struct) for each field
 			for (size_t iteration{ 0 }; iteration < m_Fields.m_Fields.size(); iteration++)
 			{
-				std::visit(DrawProjectComponentFieldsVisitor{}, m_Fields.m_Fields.at(iteration));
+				std::visit(DrawGlobalStateFieldsVisitor{}, m_Fields.m_Fields.at(iteration));
 			}
 		}
 		

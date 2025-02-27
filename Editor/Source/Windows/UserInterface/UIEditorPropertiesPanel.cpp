@@ -25,6 +25,7 @@ namespace Kargono::Panels
 		InitializeImageWidgetOptions();
 		InitializeCheckboxWidgetOptions();
 		InitializeContainerWidgetOptions();
+		InitializeVerticalContainerWidgetOptions();
 		InitializeInputTextWidgetOptions();
 		InitializeSliderWidgetOptions();
 		InitializeDropDownWidgetOptions();
@@ -447,6 +448,29 @@ namespace Kargono::Panels
 		}
 	}
 
+	void UIEditorPropertiesPanel::DrawVerticalContainerWidgetOptions()
+	{
+		// Draw main header for VerticalContainer widget options
+		EditorUI::EditorUIService::CollapsingHeader(m_VerticalContainerWidgetHeader);
+		if (m_VerticalContainerWidgetHeader.m_Expanded)
+		{
+			// Draw options to edit selected VerticalContainer widget
+			RuntimeUI::VerticalContainerWidget& activeVerticalContainerWidget = *(RuntimeUI::VerticalContainerWidget*)m_ActiveWidget;
+
+			// Edit selected widget's VerticalContainer background color
+			m_VerticalContainerWidgetBackground.m_CurrentVec4 = activeVerticalContainerWidget.m_ContainerData.m_BackgroundColor;
+			EditorUI::EditorUIService::EditVec4(m_VerticalContainerWidgetBackground);
+
+			// Edit selected vertical container's row height
+			m_VerticalContainerRowHeight.m_CurrentFloat = activeVerticalContainerWidget.m_RowHeight;
+			EditorUI::EditorUIService::EditFloat(m_VerticalContainerRowHeight);
+
+			// Edit selected vertical container's row spacing
+			m_VerticalContainerRowSpacing.m_CurrentFloat = activeVerticalContainerWidget.m_RowSpacing;
+			EditorUI::EditorUIService::EditFloat(m_VerticalContainerRowSpacing);
+		}
+	}
+
 	void UIEditorPropertiesPanel::DrawInputTextWidgetOptions()
 	{
 		// Draw main header for input text widget options
@@ -649,6 +673,9 @@ namespace Kargono::Panels
 			break;
 		case RuntimeUI::WidgetTypes::ContainerWidget:
 			DrawContainerWidgetOptions();
+			break;
+		case RuntimeUI::WidgetTypes::VerticalContainerWidget:
+			DrawVerticalContainerWidgetOptions();
 			break;
 		case RuntimeUI::WidgetTypes::InputTextWidget:
 			DrawInputTextWidgetOptions();
@@ -1378,6 +1405,32 @@ namespace Kargono::Panels
 		m_ContainerWidgetBackground.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
 		m_ContainerWidgetBackground.m_Bounds = { 0.0f, 1.0f };
 		m_ContainerWidgetBackground.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyContainerDataBackgroundColor);
+	}
+
+	void UIEditorPropertiesPanel::InitializeVerticalContainerWidgetOptions()
+	{
+		// Set up header for Container widget options
+		m_VerticalContainerWidgetHeader.m_Label = "Vertical Container Widget Options";
+		m_VerticalContainerWidgetHeader.m_Flags |= EditorUI::CollapsingHeaderFlags::CollapsingHeader_UnderlineTitle;
+		m_VerticalContainerWidgetHeader.m_Expanded = true;
+
+		// Set up widget to modify the containers background color
+		m_VerticalContainerWidgetBackground.m_Label = "Background Color";
+		m_VerticalContainerWidgetBackground.m_Flags |= EditorUI::EditVec4_Indented | EditorUI::EditVec4_RGBA;
+		m_VerticalContainerWidgetBackground.m_Bounds = { 0.0f, 1.0f };
+		m_VerticalContainerWidgetBackground.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyContainerDataBackgroundColor);
+
+		// Set up widget to modify the container's row height
+		m_VerticalContainerRowHeight.m_Label = "Row Height";
+		m_VerticalContainerRowHeight.m_Flags |= EditorUI::EditFloat_Indented;
+		m_VerticalContainerRowHeight.m_Bounds = { 0.0f, 10'000.0f };
+		m_VerticalContainerRowHeight.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyVerticalContainerWidgetRowHeight);
+
+		// Set up widget to modify the container's row Spacing
+		m_VerticalContainerRowSpacing.m_Label = "Row Spacing";
+		m_VerticalContainerRowSpacing.m_Flags |= EditorUI::EditFloat_Indented;
+		m_VerticalContainerRowSpacing.m_Bounds = { 0.0f, 10'000.0f };
+		m_VerticalContainerRowSpacing.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyVerticalContainerWidgetRowSpacing);
 	}
 
 	void UIEditorPropertiesPanel::InitializeInputTextWidgetOptions()
@@ -3020,6 +3073,44 @@ namespace Kargono::Panels
 		// Refresh the table
 		KG_ASSERT(m_DropDownWidgetOptionsList.m_OnRefresh);
 		m_DropDownWidgetOptionsList.m_OnRefresh();
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyVerticalContainerWidgetRowHeight(EditorUI::EditFloatSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the underlying widget and optionsList
+		RuntimeUI::VerticalContainerWidget* activeVerticalContainerWidget = (RuntimeUI::VerticalContainerWidget*)m_ActiveWidget;
+		KG_ASSERT(activeVerticalContainerWidget);
+
+		// Update the row height
+		activeVerticalContainerWidget->m_RowHeight = spec.m_CurrentFloat;
+
+		// Set the active editor UI as edited
+		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
+	}
+
+	void UIEditorPropertiesPanel::OnModifyVerticalContainerWidgetRowSpacing(EditorUI::EditFloatSpec& spec)
+	{
+		// Ensure active window and widget are valid
+		if (!ValidateActiveWindowAndWidget())
+		{
+			return;
+		}
+
+		// Get the underlying widget and optionsList
+		RuntimeUI::VerticalContainerWidget* activeVerticalContainerWidget = (RuntimeUI::VerticalContainerWidget*)m_ActiveWidget;
+		KG_ASSERT(activeVerticalContainerWidget);
+
+		// Update the row spacing
+		activeVerticalContainerWidget->m_RowSpacing = spec.m_CurrentFloat;
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
