@@ -8,6 +8,7 @@
 
 #include <filesystem>
 #include <vector>
+#include <array>
 #include <utility>
 
 
@@ -39,7 +40,27 @@ namespace Kargono::Assets
 		AIState,
 		EmitterConfig,
 		ProjectEnum,
-		GlobalState
+		GlobalState,
+		ColorPalette
+	};
+
+	constexpr std::array<AssetType, 15> s_AllAssetTypes
+	{
+		AssetType::AIState,
+		AssetType::Audio,
+		AssetType::ColorPalette,
+		AssetType::EmitterConfig,
+		AssetType::Font,
+		AssetType::GameState,
+		AssetType::GlobalState,
+		AssetType::InputMap,
+		AssetType::ProjectComponent,
+		AssetType::ProjectEnum,
+		AssetType::Scene,
+		AssetType::Script,
+		AssetType::Shader,
+		AssetType::Texture,
+		AssetType::UserInterface
 	};
 
 	//==============================
@@ -194,6 +215,11 @@ namespace Kargono::Assets
 		std::string Name{};
 	};
 
+	struct ColorPaletteMetaData
+	{
+		std::string Name{};
+	};
+
 	struct ScriptMetaData
 	{
 		std::string m_Name{};
@@ -251,6 +277,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::EmitterConfig: return "EmitterConfig";
 		case Assets::AssetType::ProjectEnum: return "ProjectEnum";
 		case Assets::AssetType::GlobalState: return "GlobalState";
+		case Assets::AssetType::ColorPalette: return "ColorPalette";
 		case Assets::AssetType::None: return "None";
 		}
 		KG_ERROR("Unknown Type of AssetType.");
@@ -272,6 +299,7 @@ namespace Kargono::Utility
 		if (type == "AIState") { return Assets::AssetType::AIState; }
 		if (type == "EmitterConfig") { return Assets::AssetType::EmitterConfig; }
 		if (type == "ProjectEnum") { return Assets::AssetType::ProjectEnum; }
+		if (type == "ColorPalette") { return Assets::AssetType::ColorPalette; }
 		if (type == "GlobalState") { return Assets::AssetType::GlobalState; }
 		if (type == "None") { return Assets::AssetType::None; }
 

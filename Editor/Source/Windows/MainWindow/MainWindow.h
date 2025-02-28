@@ -8,6 +8,7 @@
 #include "Windows/MainWindow/AssetViewerPanel.h"
 #include "Windows/MainWindow/AIStateEditorPanel.h"
 #include "Windows/MainWindow/ContentBrowserPanel.h"
+#include "Windows/MainWindow/ColorPalettePanel.h"
 #include "Windows/MainWindow/GameStatePanel.h"
 #include "Windows/MainWindow/GlobalStatePanel.h"
 #include "Windows/MainWindow/InputMapPanel.h"
@@ -150,6 +151,7 @@ namespace Kargono::Windows
 		Scope<Panels::AssetViewerPanel> m_AssetViewerPanel;
 		Scope<Panels::AIStateEditorPanel>  m_AIStatePanel;
 		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
+		Scope<Panels::ColorPalettePanel>  m_ColorPalettePanel;
 		Scope<Panels::GameStatePanel>  m_GameStatePanel;
 		Scope<Panels::GlobalStatePanel>  m_GlobalStatePanel;
 		Scope<Panels::InputMapPanel>  m_InputMapPanel;
@@ -215,6 +217,7 @@ namespace Kargono::Windows
 		bool m_ShowAssetViewer = false;
 		bool m_ShowSceneHierarchy = true;
 		bool m_ShowProperties = true;
+		bool m_ShowColorPalette = false;
 		bool m_ShowContentBrowser = true;
 		bool m_ShowLog = false;
 		bool m_ShowStats = false;
@@ -244,6 +247,7 @@ namespace Kargono::Windows
 		//=========================
 		friend Panels::AIStateEditorPanel;
 		friend Panels::AssetViewerPanel;
+		friend Panels::ColorPalettePanel;
 		friend Panels::GameStatePanel;
 		friend Panels::GlobalStatePanel;
 		friend Panels::ContentBrowserPanel;

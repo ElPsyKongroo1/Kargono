@@ -4,6 +4,7 @@
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Assets/AudioManager.h"
 #include "Kargono/Assets/AIStateManager.h"
+#include "Kargono/Assets/ColorPaletteManager.h"
 #include "Kargono/Assets/FontManager.h"
 #include "Kargono/Assets/GameStateManager.h"
 #include "Kargono/Assets/GlobalStateManager.h"
@@ -114,6 +115,7 @@ namespace Kargono::Assets
 	{
 		AIStateManager m_AIStateManager;
 		AudioBufferManager m_AudioBufferManager;
+		ColorPaletteManager m_ColorPaletteManager;
 		FontManager m_FontManager;
 		GameStateManager m_GameStateManager;
 		GlobalStateManager m_GlobalStateManager;
@@ -134,6 +136,7 @@ namespace Kargono::Assets
 		// Define common functionality of each asset manager type
 		DEFINE_MANAGER(AI, AIState)
 		DEFINE_MANAGER(Audio, AudioBuffer)
+		DEFINE_MANAGER(ProjectData, ColorPalette)
 		DEFINE_MANAGER(RuntimeUI, Font)
 		DEFINE_MANAGER(Scenes, GameState)
 		DEFINE_MANAGER(ProjectData, GlobalState)
@@ -241,6 +244,7 @@ namespace Kargono::Assets
 			DeserializeScriptRegistry();
 			DeserializeProjectComponentRegistry();
 			DeserializeProjectEnumRegistry();
+			DeserializeColorPaletteRegistry();
 			DeserializeInputMapRegistry();
 			DeserializeEmitterConfigRegistry();
 			DeserializeGameStateRegistry();
@@ -260,6 +264,7 @@ namespace Kargono::Assets
 			SerializeScriptRegistry();
 			SerializeProjectComponentRegistry();
 			SerializeProjectEnumRegistry();
+			SerializeColorPaletteRegistry();
 			SerializeInputMapRegistry();
 			SerializeEmitterConfigRegistry();
 			SerializeGameStateRegistry();
@@ -279,6 +284,7 @@ namespace Kargono::Assets
 			ClearScriptRegistry();
 			ClearProjectComponentRegistry();
 			ClearProjectEnumRegistry();
+			ClearColorPaletteRegistry();
 			ClearInputMapRegistry();
 			ClearGameStateRegistry();
 			ClearGlobalStateRegistry();
@@ -294,6 +300,7 @@ namespace Kargono::Assets
 			{
 			case AssetType::AIState: return GetAIStateRegistry().at(handle);
 			case AssetType::Audio: return GetAudioBufferRegistry().at(handle);
+			case AssetType::ColorPalette: return GetColorPaletteRegistry().at(handle);
 			case AssetType::Font: return GetFontRegistry().at(handle);
 			case AssetType::GameState: return GetGameStateRegistry().at(handle);
 			case AssetType::GlobalState: return GetGlobalStateRegistry().at(handle);
@@ -310,7 +317,32 @@ namespace Kargono::Assets
 			default:
 				KG_ERROR("Invalid asset type provided to GetAssetFromAllRegistries function");
 				return {};
-			
+			}
+		}
+
+		static AssetRegistry* GetAssetRegistry(AssetType type)
+		{
+			switch (type)
+			{
+			case AssetType::AIState: return &GetAIStateRegistry();
+			case AssetType::Audio: return &GetAudioBufferRegistry();
+			case AssetType::ColorPalette: return &GetColorPaletteRegistry();
+			case AssetType::Font: return &GetFontRegistry();
+			case AssetType::GameState: return &GetGameStateRegistry();
+			case AssetType::GlobalState: return &GetGlobalStateRegistry();
+			case AssetType::InputMap: return &GetInputMapRegistry();
+			case AssetType::Scene: return &GetSceneRegistry();
+			case AssetType::Script: return &GetScriptRegistry();
+			case AssetType::Shader: return &GetShaderRegistry();
+			case AssetType::Texture: return &GetTexture2DRegistry();
+			case AssetType::UserInterface: return &GetUserInterfaceRegistry();
+			case AssetType::ProjectComponent: return &GetProjectComponentRegistry();
+			case AssetType::ProjectEnum: return &GetProjectEnumRegistry();
+			case AssetType::EmitterConfig: return &GetEmitterConfigRegistry();
+			case AssetType::None:
+			default:
+				KG_ERROR("Invalid asset type provided to GetAssetRegistry function");
+				return nullptr;
 			}
 		}
 

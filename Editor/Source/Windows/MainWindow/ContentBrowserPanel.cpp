@@ -73,7 +73,7 @@ namespace Kargono::Panels
 		UNREFERENCED_PARAMETER(payloadName);
 		UNREFERENCED_PARAMETER(dataSize);
 		// Get original file path from payload
-		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
+		const char* payloadPathPointer = (const char*)dataPointer;
 		std::filesystem::path payloadPath(payloadPathPointer);
 
 		// Handle updating internal registry for assets if necessary
@@ -88,7 +88,7 @@ namespace Kargono::Panels
 		UNREFERENCED_PARAMETER(dataSize);
 		UNREFERENCED_PARAMETER(payloadName);
 
-		const wchar_t* payloadPathPointer = (const wchar_t*)dataPointer;
+		const char* payloadPathPointer = (const char*)dataPointer;
 		std::filesystem::path payloadPath(payloadPathPointer);
 		std::filesystem::path currentIterationPath{ m_LongestRecentPath };
 		std::filesystem::path recentIterationPath{ m_LongestRecentPath };
@@ -189,6 +189,24 @@ namespace Kargono::Panels
 				s_EditorApp->m_EmitterConfigEditorWindow->OpenAssetInEditor(m_CurrentFileToModifyCache);
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openEmitterConfigTooltipEntry);
+		}
+		else if (fileType == BrowserFileType::ColorPalette)
+		{
+			EditorUI::TooltipEntry openColorPaletteTooltipEntry{ "Open Color Palette", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				UNREFERENCED_PARAMETER(currentEntry);
+				s_EditorApp->m_MainWindow->m_ColorPalettePanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openColorPaletteTooltipEntry);
+		}
+		else if (fileType == BrowserFileType::ColorPalette)
+		{
+			EditorUI::TooltipEntry openColorPaletteTooltipEntry{ "Open Color Palette", [&](EditorUI::TooltipEntry& currentEntry)
+			{
+				UNREFERENCED_PARAMETER(currentEntry);
+				s_EditorApp->m_MainWindow->m_ColorPalettePanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+			} };
+			m_RightClickTooltip.AddTooltipEntry(openColorPaletteTooltipEntry);
 		}
 		else if (fileType == BrowserFileType::InputMap)
 		{
@@ -468,6 +486,29 @@ namespace Kargono::Panels
 				}
 			}
 		}
+		else if (fileExtension == ".kgpalette")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetColorPaletteHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If ColorPalette in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a ColorPalette, however, no ColorPalette could be found in registry. Moving the indicated file without updating registry.");
+			}
+			else
+			{
+				// Handle revalidating internal registry
+				bool success = Assets::AssetService::SetColorPaletteFileLocation(resultHandle, newRelativePath);
+				if (success)
+				{
+					KG_INFO("Updated location of ColorPalette asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+				}
+				else
+				{
+					KG_WARN("Could not update ColorPalette location in registry");
+				}
+			}
+		}
 		else if (fileExtension == ".kgfont")
 		{
 			// Search registry for asset with identical file location
@@ -739,6 +780,21 @@ namespace Kargono::Panels
 			Assets::AssetService::DeleteEmitterConfig(resultHandle);
 		}
 
+		else if (currentExtension == ".kgpalette")
+		{
+			// Search registry for asset with identical file location
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetColorPaletteHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If ColorPalette in registry is not found, simply delete the file
+			if (resultHandle == Assets::EmptyHandle)
+			{
+				KG_WARN("File extension recognized as a ColorPalette asset, however, no ColorPalette asset could be found in registry. Deleting the file provided.");
+				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
+				return;
+			}
+
+			Assets::AssetService::DeleteColorPalette(resultHandle);
+		}
+
 		else if (currentExtension == ".kgfont")
 		{
 			// Search registry for asset with identical file location
@@ -970,6 +1026,13 @@ namespace Kargono::Panels
 		emitterConfigArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		emitterConfigArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::EmitterConfig, emitterConfigArch);
+
+		EditorUI::GridEntryArchetype colorPaletteArch;
+		colorPaletteArch.m_Icon = EditorUI::EditorUIService::s_IconColorPalette;
+		colorPaletteArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		colorPaletteArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
+		colorPaletteArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::ColorPalette, colorPaletteArch);
 
 		EditorUI::GridEntryArchetype inputMapArch;
 		inputMapArch.m_Icon = EditorUI::EditorUIService::s_IconInput;

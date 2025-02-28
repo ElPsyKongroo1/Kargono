@@ -122,6 +122,7 @@ namespace Kargono::Windows
 		// Initialize all editor panels
 		m_SceneEditorPanel = CreateScope<Panels::SceneEditorPanel>();
 		m_AssetViewerPanel = CreateScope<Panels::AssetViewerPanel>();
+		m_ColorPalettePanel = CreateScope<Panels::ColorPalettePanel > ();
 		m_LogPanel = CreateScope<Panels::LogPanel>();
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();
 		m_ProjectPanel = CreateScope<Panels::ProjectPanel>();
@@ -318,6 +319,7 @@ namespace Kargono::Windows
 
 		}
 
+		m_ColorPalettePanel->OnAssetEvent(event);
 		m_SceneEditorPanel->OnAssetEvent(event);
 		m_AssetViewerPanel->OnAssetEvent(event);
 		m_AIStatePanel->OnAssetEvent(event);
@@ -1193,6 +1195,7 @@ namespace Kargono::Windows
 				if (ImGui::BeginMenu("Project Data"))
 				{
 					ImGui::MenuItem("Component Editor", NULL, &m_ShowProjectComponent);
+					ImGui::MenuItem("Color Palette Editor", NULL, &m_ShowColorPalette);
 					ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
 					ImGui::MenuItem("Global State Editor", NULL, &m_ShowGlobalStateEditor);
 					ImGui::MenuItem("Enum Editor", NULL, &m_ShowProjectEnum);
@@ -1254,6 +1257,7 @@ namespace Kargono::Windows
 		// Display all main window panels
 		if (m_ShowAssetViewer) { m_AssetViewerPanel->OnEditorUIRender(); }
 		if (m_ShowSceneHierarchy) { m_SceneEditorPanel->OnEditorUIRender(); }
+		if (m_ShowColorPalette) { m_ColorPalettePanel->OnEditorUIRender(); }
 		if (m_ShowContentBrowser) { m_ContentBrowserPanel->OnEditorUIRender(); }
 		if (m_ShowLog) { m_LogPanel->OnEditorUIRender(); }
 		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }

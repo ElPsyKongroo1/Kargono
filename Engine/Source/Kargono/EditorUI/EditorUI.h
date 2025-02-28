@@ -250,7 +250,7 @@ namespace Kargono::EditorUI
 			s_IconScene, s_IconScene_KG, s_IconRegistry,
 			s_IconUserInterface, s_IconFont, s_IconInput, s_IconAI_KG,
 			s_IconAudio_KG, s_IconFont_KG, s_IconGlobalState, s_IconProjectComponent,
-			s_IconScript, s_IconTexture_KG, s_IconEmitterConfig, s_IconEnum;
+			s_IconScript, s_IconTexture_KG, s_IconEmitterConfig, s_IconEnum, s_IconColorPalette;
 
 	public:
 		//==============================

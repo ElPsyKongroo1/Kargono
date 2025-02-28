@@ -83,173 +83,38 @@ namespace Kargono::Panels
 		m_AllAssetsTable.m_OnRefresh = [&]()
 		{
 			m_AllAssetsTable.ClearList();
-			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
-			{
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
-			for (auto& [handle, asset] : Assets::AssetService::GetAudioBufferRegistry())
-			{
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
 
-			for (auto& [handle, asset] : Assets::AssetService::GetEmitterConfigRegistry())
+			// Access the asset registry for every asset type
+			for (Assets::AssetType type : Assets::s_AllAssetTypes)
 			{
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
-
-			for (auto& [handle, asset] : Assets::AssetService::GetFontRegistry())
-			{
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
-
-			for (auto& [handle, asset] : Assets::AssetService::GetGameStateRegistry())
-			{
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
-
-			for (auto& [handle, asset] : Assets::AssetService::GetGlobalStateRegistry())
-			{
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
-
-			for (auto& [handle, asset] : Assets::AssetService::GetInputMapRegistry())
-			{
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
-
-			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
-			{
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
-
-			for (auto& [handle, asset] : Assets::AssetService::GetProjectEnumRegistry())
-			{
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
-
-			for (auto& [handle, asset] : Assets::AssetService::GetSceneRegistry())
-			{
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
-
-			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
-			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
-				if (!script)
-				{
-					KG_WARN("Obtained invalid script when reading all assets");
-					continue;
-				}
-
-				if (script->m_ScriptType == Scripting::ScriptType::Engine)
+				if (type == Assets::AssetType::Shader)
 				{
 					continue;
 				}
 
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
+				// Get the relevant asset registry and ensure it is valid
+				Assets::AssetRegistry* currentRegistryRef = Assets::AssetService::GetAssetRegistry(type);
+				KG_ASSERT(currentRegistryRef);
 
-			for (auto& [handle, asset] : Assets::AssetService::GetTexture2DRegistry())
-			{
-				EditorUI::ListEntry newEntry
+				// Add each asset from the found registry to the asset list
+				for (auto& [handle, asset] : *currentRegistryRef)
 				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
-			}
+					if (type == Assets::AssetType::Script && 
+						asset.Data.GetSpecificMetaData<Assets::ScriptMetaData>()->m_ScriptType == Scripting::ScriptType::Engine)
+					{
+						continue;
+					}
 
-			for (auto& [handle, asset] : Assets::AssetService::GetUserInterfaceRegistry())
-			{
-				EditorUI::ListEntry newEntry
-				{
-					Utility::AssetTypeToString(asset.Data.Type),
-						asset.Data.FileLocation.filename().string(),
-						handle,
-						KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
-				};
-				m_AllAssetsTable.InsertListEntry(newEntry);
+					EditorUI::ListEntry newEntry
+					{
+						Utility::AssetTypeToString(type),
+							asset.Data.FileLocation.filename().string(),
+							handle,
+							KG_BIND_CLASS_FN(AssetViewerPanel::ViewAssetInformation)
+					};
+					m_AllAssetsTable.InsertListEntry(newEntry);
+				}
 			}
-
 		};
 		m_AllAssetsTable.m_OnRefresh();
 	}

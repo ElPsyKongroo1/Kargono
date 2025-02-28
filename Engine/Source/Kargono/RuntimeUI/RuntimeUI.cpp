@@ -3719,6 +3719,7 @@ namespace Kargono::RuntimeUI
 	void RuntimeUI::HorizontalContainerWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
 		Rendering::RendererInputSpec& backgroundSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
+		Rendering::RendererInputSpec& imageSpec = RuntimeUIService::s_RuntimeUIContext->m_ImageInputSpec;
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
@@ -3741,6 +3742,9 @@ namespace Kargono::RuntimeUI
 				Utility::FileSystem::CRCFromString("a_EntityID"),
 				backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
 			RuntimeUI::FontService::SetID((uint32_t)containedWidget->m_ID);
+			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
+				Utility::FileSystem::CRCFromString("a_EntityID"),
+				imageSpec.m_Buffer, imageSpec.m_Shader);
 
 			Math::vec3 outputSize{ widgetSize.x * m_ColumnWidth, widgetSize.y, widgetSize.z };
 			Math::vec3 outputTranslation

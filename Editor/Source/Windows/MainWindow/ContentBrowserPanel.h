@@ -24,6 +24,7 @@ namespace Kargono::Panels
 		AIState,
 		Audio,
 		Binary,
+		ColorPalette,
 		EmitterConfig,
 		Font,
 		GameState,
@@ -189,6 +190,7 @@ namespace Kargono::Utility
 		if (currentFileExtension == ".kgaistate") { return Panels::BrowserFileType::AIState; }
 		if (currentFileExtension == ".kgaudio") { return Panels::BrowserFileType::Audio; }
 		if (currentFileExtension == ".kgfont") { return Panels::BrowserFileType::Font; }
+		if (currentFileExtension == ".kgpalette") { return Panels::BrowserFileType::ColorPalette; }
 		if (currentFileExtension == ".kgcomponent") { return Panels::BrowserFileType::ProjectComponent; }
 		if (currentFileExtension == ".kgenum") { return Panels::BrowserFileType::ProjectEnum; }
 		if (currentFileExtension == ".kgreg") { return Panels::BrowserFileType::Registry; }
@@ -224,6 +226,7 @@ namespace Kargono::Utility
 		case Panels::BrowserFileType::Audio: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::EmitterConfig: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::ColorPalette: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Font: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::GameState: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::GlobalState: { return "CONTENT_BROWSER_ITEM"; }
