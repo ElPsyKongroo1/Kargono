@@ -61,7 +61,7 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec s_EditTestVec4_2;
 		EditorUI::EditVec4Spec s_EditTestVec4_3;
 
-		EditorUI::CollapsingHeaderSpec s_TestingWorkspaceHeader;
 #endif
+		EditorUI::CollapsingHeaderSpec s_TestingWorkspaceHeader;
 	};
 }

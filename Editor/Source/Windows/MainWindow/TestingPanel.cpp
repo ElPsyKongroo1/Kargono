@@ -255,11 +255,10 @@ namespace Kargono::Panels
 	}
 	void TestingPanel::InitializeGeneralTestingWidgets()
 	{
-#if defined(KG_DEBUG)
+
 		s_TestingWorkspaceHeader.m_Label = "Testing Workspace";
 		s_TestingWorkspaceHeader.m_Expanded = true;
 		s_TestingWorkspaceHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
-#endif
 
 		s_TestText.m_Label = "File to Compile";
 		s_TestText.m_CurrentOption = "test.kgscript";
@@ -418,7 +417,6 @@ namespace Kargono::Panels
 	{
 
 		EditorUI::EditorUIService::CollapsingHeader(s_TestingWorkspaceHeader);
-
 		if (s_TestingWorkspaceHeader.m_Expanded)
 		{
 			if (ImGui::Button("Crit Log"))
