@@ -910,7 +910,7 @@ namespace Kargono
 			return "";
 		}
 
-		inline WrappedFuncType StringToWrappedFuncType(std::string type)
+		inline WrappedFuncType StringToWrappedFuncType(std::string_view type)
 		{
 			if (type == "Void_None") { return WrappedFuncType::Void_None; }
 			if (type == "Void_String") { return WrappedFuncType::Void_String; }

@@ -3,7 +3,7 @@
 
 namespace Kargono::Network
 {
-	std::string Kargono::Network::NetworkTools::CreateServerVariablesConfigFile(Math::u8vec4 serverIP, uint16_t portNumber, const char* serverLocation, const Math::u64vec4& secrets)
+	std::string Kargono::Network::NetworkTools::CreateServerVariablesConfigFile(const Network::ServerConfig& config)
 	{
 		// Intialize string stream
 		std::stringstream outputStream;
@@ -29,21 +29,21 @@ namespace Kargono::Network
 		outputStream << "  # This is your public gateway ip address. This can be found in the public" << '\n';
 		outputStream << "  # info section on your router's portal. This should be a IPV4 address." << '\n';
 		outputStream << "  # ##.##.##.##" << '\n';
-		outputStream << "  ServerIP: " <<
-			std::to_string(serverIP.x) << '.' <<
-			std::to_string(serverIP.y) << '.' <<
-			std::to_string(serverIP.z) << '.' <<
-			std::to_string(serverIP.w) <<
+		outputStream << "  ServerIP: " << '[' <<
+			std::to_string(config.m_IPv4.x) << ',' <<
+			std::to_string(config.m_IPv4.y) << ',' <<
+			std::to_string(config.m_IPv4.z) << ',' <<
+			std::to_string(config.m_IPv4.w) << ']' <<
 			'\n';
 
 		// Server port number
 		outputStream << "  # Choose any port.I recommend something larger than 10, 000 but must be less than 63655" << '\n';
-		outputStream << "  ServerPort: " << std::to_string(portNumber) << '\n';
+		outputStream << "  ServerPort: " << std::to_string(config.m_Port) << '\n';
 
 		// Server location
 		outputStream << "  # This variable decides whether to use your local machine or the ServerIP you specified earlier." << '\n';
 		outputStream << "  # \"LocalMachine\" only allows clients to connect on the same computer. \"Internet\" allows online connections" << '\n';
-		outputStream << "  ServerLocation: " << serverLocation << '\n';
+		outputStream << "  ServerLocation: " << Utility::ServerLocationToString(config.m_ServerLocation) << '\n';
 
 		// Client validation secrets
 		outputStream << "  # The secrets can be any number you want that is a 64 bit unsigned integer.These are used for basic security." << '\n';
@@ -53,10 +53,10 @@ namespace Kargono::Network
 		outputStream.setf(std::ios::uppercase);
 
 		// Write out client validation secrets
-		outputStream << "  SecretOne: " << "0x" << secrets.x << '\n';
-		outputStream << "  SecretTwo: " << "0x" << secrets.y << '\n';
-		outputStream << "  SecretThree: " << "0x" << secrets.z << '\n';
-		outputStream << "  SecretFour: " << "0x" << secrets.w << '\n';
+		outputStream << "  SecretOne: " << "0x" << config.m_ValidationSecrets.x << '\n';
+		outputStream << "  SecretTwo: " << "0x" << config.m_ValidationSecrets.y << '\n';
+		outputStream << "  SecretThree: " << "0x" << config.m_ValidationSecrets.z << '\n';
+		outputStream << "  SecretFour: " << "0x" << config.m_ValidationSecrets.w << '\n';
 
 		// Revert to original formatting
 		outputStream.flags(originalFlags);

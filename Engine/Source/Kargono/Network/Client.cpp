@@ -524,13 +524,13 @@ namespace Kargono::Network
 	{
 		// Decide whether to connect using the local network or through the internet
 		bool remoteConnection = false;
-		if (Projects::ProjectService::GetActiveServerLocation() != "LocalMachine")
+		if (Projects::ProjectService::GetActiveServerLocation() != ServerLocation::LocalMachine)
 		{
 			remoteConnection = true;
 		}
 
 		// Start connection to server
-		if (!s_Client->ConnectToServer(Projects::ProjectService::GetActiveServerIP(), Projects::ProjectService::GetActiveServerPort(), remoteConnection)) 
+		if (!s_Client->ConnectToServer(Utility::IPv4ToString(Projects::ProjectService::GetActiveServerIP()), Projects::ProjectService::GetActiveServerPort(), remoteConnection)) 
 		{ 
 			s_Client->m_NetworkContext.Quit = true; 
 		}

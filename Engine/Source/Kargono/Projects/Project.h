@@ -4,6 +4,7 @@
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/Resolution.h"
+#include "Kargono/Network/NetworkCommon.h"
 
 #include <string>
 #include <filesystem>
@@ -85,15 +86,7 @@ namespace Kargono::Projects
 		bool AppIsNetworked { false };
 
 		// Networking Variables
-
-		std::string ServerIP{"192.168.1.2"};
-		uint16_t ServerPort{20000};
-		// LocalMachine or Remote are only options currently
-		std::string ServerLocation{"LocalMachine"};
-		uint64_t SecretOne{1};
-		uint64_t SecretTwo{2};
-		uint64_t SecretThree{3};
-		uint64_t SecretFour{4};
+		Network::ServerConfig m_ServerConfig;
 
 	private:
 		friend class ProjectService;
@@ -132,7 +125,7 @@ namespace Kargono::Projects
 		// Exporting API
 		//=========================
 	public:
-		static void ExportProject(const std::filesystem::path& exportLocation, bool createServer);
+		static void ExportProject(const std::filesystem::path& exportLocation, Network::ServerConfig* serverConfig, bool createServer);
 	private:
 		static bool BuildExecutableMSVC(const std::filesystem::path& projectDirectory, bool createServer);
 		static bool BuildExecutableGCC(const std::filesystem::path& projectDirectory, bool createServer);
@@ -403,92 +396,98 @@ namespace Kargono::Projects
 			s_ActiveProject->OnReceiveSignal = id;
 		}
 
-		static std::string GetActiveServerIP()
+		static Math::u8vec4 GetActiveServerIP()
 		{
 			KG_ASSERT(s_ActiveProject);
-			if (s_ActiveProject->ServerLocation == "LocalMachine")
+			if (s_ActiveProject->m_ServerConfig.m_ServerLocation == Network::ServerLocation::LocalMachine)
 			{
-				return "127.0.0.1";
+				return {127, 0, 0, 1};
 			}
-			return s_ActiveProject->ServerIP;
+			return s_ActiveProject->m_ServerConfig.m_IPv4;
 		}
 
-		static void SetActiveServerIP(const std::string& name)
+		static void SetActiveServerIP(Math::u8vec4 ip)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->ServerIP = name;
+			s_ActiveProject->m_ServerConfig.m_IPv4 = ip;
 		}
 
 		static uint16_t GetActiveServerPort()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->ServerPort;
+			return s_ActiveProject->m_ServerConfig.m_Port;
 		}
 
 		static void SetActiveServerPort(uint16_t newPort)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->ServerPort = newPort;
+			s_ActiveProject->m_ServerConfig.m_Port = newPort;
 		}
 
-		static const std::string& GetActiveServerLocation()
+		static Network::ServerLocation GetActiveServerLocation()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->ServerLocation;
+			return s_ActiveProject->m_ServerConfig.m_ServerLocation;
 		}
 
-		static void SetActiveServerLocation(const std::string& location)
+		static void SetActiveServerLocation(Network::ServerLocation location)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->ServerLocation = location;
+			s_ActiveProject->m_ServerConfig.m_ServerLocation = location;
+		}
+
+		static Math::u64vec4 GetActiveSecrets()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_ServerConfig.m_ValidationSecrets;
 		}
 
 		static uint64_t GetActiveSecretOne()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->SecretOne;
+			return s_ActiveProject->m_ServerConfig.m_ValidationSecrets.x;
 		}
 
 		static void SetActiveSecretOne(uint64_t newSecret)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->SecretOne = newSecret;
+			s_ActiveProject->m_ServerConfig.m_ValidationSecrets.x = newSecret;
 		}
 
 		static uint64_t GetActiveSecretTwo()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->SecretTwo;
+			return s_ActiveProject->m_ServerConfig.m_ValidationSecrets.y;
 		}
 
 		static void SetActiveSecretTwo(uint64_t newSecret)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->SecretTwo = newSecret;
+			s_ActiveProject->m_ServerConfig.m_ValidationSecrets.y = newSecret;
 		}
 
 		static uint64_t GetActiveSecretThree()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->SecretThree;
+			return s_ActiveProject->m_ServerConfig.m_ValidationSecrets.z;
 		}
 
 		static void SetActiveSecretThree(uint64_t newSecret)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->SecretThree = newSecret;
+			s_ActiveProject->m_ServerConfig.m_ValidationSecrets.z = newSecret;
 		}
 
 		static uint64_t GetActiveSecretFour()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->SecretFour;
+			return s_ActiveProject->m_ServerConfig.m_ValidationSecrets.w;
 		}
 
 		static void SetActiveSecretFour(uint64_t newSecret)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->SecretFour = newSecret;
+			s_ActiveProject->m_ServerConfig.m_ValidationSecrets.w = newSecret;
 		}
 
 		// This function returns the currently active project held in s_ActiveProject.

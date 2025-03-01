@@ -3,6 +3,7 @@
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Assets/Asset.h"
+#include "Kargono/Network/NetworkTools.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 
@@ -14,12 +15,37 @@
 
 namespace Kargono::Projects
 {
-	void ProjectService::ExportProject(const std::filesystem::path& exportLocation, bool createServer)
+	void ProjectService::ExportProject(const std::filesystem::path& exportLocation, Network::ServerConfig* serverConfig, bool createServer)
 	{
 		KG_INFO("Beginning export project process");
 
-		KG_ASSERT(s_ActiveProject, "Failed to export project since no active project is open!")
+		KG_ASSERT(s_ActiveProject, "Failed to export project since no active project is open!");
 
+		// Create/overwrite the server config file if specified
+		bool writeConfigError{ false };
+		if (serverConfig)
+		{
+			// Create the config file path
+			std::filesystem::path configFilePath = GetActiveProjectDirectory() / "ServerConfig.env";
+			KG_INFO("Creating server config file at {}", configFilePath.string());
+
+			// Write the config file path out to disk (project location)
+			std::string newConfigFile = Network::NetworkTools::CreateServerVariablesConfigFile(*serverConfig);
+			writeConfigError = !Utility::FileSystem::WriteFileString(configFilePath, newConfigFile);
+		}
+		else
+		{
+			KG_INFO("No server config specified for creation");
+		}
+
+		// Ensure config file creation does not throw errors
+		if (writeConfigError)
+		{
+			KG_WARN("Error occurred while writing config file to disk. Cancelling the project export");
+			return;
+		}
+
+		// Create full path to the export directories of the runtime and server
 		std::filesystem::path exportDirectory = exportLocation / s_ActiveProject->Name;
 		std::filesystem::path serverExportDirectory = exportLocation / (s_ActiveProject->Name + "Server");
 
@@ -329,11 +355,11 @@ namespace Kargono::Projects
 
 	bool ProjectService::DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& projectPath)
 	{
-		std::filesystem::path filepath = (projectPath.parent_path() / "server_variables.env");
+		std::filesystem::path filepath = (projectPath.parent_path() / "ServerConfig.env");
 
 		if (!Utility::FileSystem::PathExists(filepath))
 		{
-			KG_WARN("No server_variables.env file found. Default settings applied.");
+			KG_WARN("No ServerConfig.env file found. Default settings applied.");
 			return false;
 		}
 
@@ -350,14 +376,14 @@ namespace Kargono::Projects
 		auto rootNode = data["ServerVariables"];
 		if (!rootNode) { return false; }
 
-		project->ServerIP = rootNode["ServerIP"].as<std::string>();
-		project->ServerPort = static_cast<uint16_t>(rootNode["ServerPort"].as<uint32_t>());
-		project->ServerLocation = rootNode["ServerLocation"].as<std::string>();
-		project->SecretOne = rootNode["SecretOne"].as<uint64_t>();
-		project->SecretTwo = rootNode["SecretTwo"].as<uint64_t>();
-		project->SecretThree = rootNode["SecretThree"].as<uint64_t>();
-		project->SecretFour = rootNode["SecretFour"].as<uint64_t>();
+		project->m_ServerConfig.m_IPv4 = (Math::u8vec4)rootNode["ServerIP"].as<Math::ivec4>();
+		project->m_ServerConfig.m_Port = static_cast<uint16_t>(rootNode["ServerPort"].as<uint32_t>());
+		project->m_ServerConfig.m_ServerLocation = Utility::StringToServerLocation(rootNode["ServerLocation"].as<std::string>());
 
+		project->m_ServerConfig.m_ValidationSecrets.x = rootNode["SecretOne"].as<uint64_t>();
+		project->m_ServerConfig.m_ValidationSecrets.y = rootNode["SecretTwo"].as<uint64_t>();
+		project->m_ServerConfig.m_ValidationSecrets.z = rootNode["SecretThree"].as<uint64_t>();
+		project->m_ServerConfig.m_ValidationSecrets.w = rootNode["SecretFour"].as<uint64_t>();
 		return true;
 	}
 

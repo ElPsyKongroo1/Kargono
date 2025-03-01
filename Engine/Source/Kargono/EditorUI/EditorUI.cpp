@@ -1015,17 +1015,21 @@ namespace Kargono::EditorUI
 				}
 				ImGui::CloseCurrentPopup();
 			}, s_LargeConfirmButton, false, s_PrimaryTextColor);
+			ImGui::PopFont();
 
 			ImGui::Separator();
 
 			Spacing(SpacingAmount::Small);
+
+			ImVec4 cachedBackgroundColor{ s_DarkBackgroundColor };
+			s_DarkBackgroundColor = s_BackgroundColor;
 
 			if (spec.m_PopupContents)
 			{
 				spec.m_PopupContents();
 			}
 
-			ImGui::PopFont();
+			s_DarkBackgroundColor = cachedBackgroundColor;
 			ImGui::EndPopup();
 			RecalculateWindowDimensions();
 		}
@@ -1064,10 +1068,15 @@ namespace Kargono::EditorUI
 
 			Spacing(SpacingAmount::Small);
 
+			ImVec4 cachedBackgroundColor{ s_DarkBackgroundColor };
+			s_DarkBackgroundColor = s_BackgroundColor;
+
 			if (spec.m_PopupContents)
 			{
 				spec.m_PopupContents();
 			}
+
+			s_DarkBackgroundColor = cachedBackgroundColor;
 
 			ImGui::PopFont();
 			ImGui::EndPopup();
@@ -2848,21 +2857,21 @@ namespace Kargono::EditorUI
 		TreePath treePath{};
 		DrawEntries(spec, spec.m_TreeEntries, widgetCount, treePath, {});
 
-		if (ImGui::BeginPopup(("##" + std::to_string(spec.m_WidgetID)).c_str()))
-		{
-			/*if (spec.m_CurrentRightClick)
-			{
-				for (auto& [label, func] : spec.m_CurrentRightClick->m_OnRightClickSelection)
-				{
-					if (!spec.m_CurrentRightClick) { break; }
-					if (ImGui::Selectable((label + "##" + std::to_string(spec.m_WidgetID)).c_str()))
-					{
-						func(*spec.m_CurrentRightClick);
-					}
-				}
-			}*/
-			ImGui::EndPopup();
-		}
+		//if (ImGui::BeginPopup(("##" + std::to_string(spec.m_WidgetID)).c_str()))
+		//{
+		//	/*if (spec.m_CurrentRightClick)
+		//	{
+		//		for (auto& [label, func] : spec.m_CurrentRightClick->m_OnRightClickSelection)
+		//		{
+		//			if (!spec.m_CurrentRightClick) { break; }
+		//			if (ImGui::Selectable((label + "##" + std::to_string(spec.m_WidgetID)).c_str()))
+		//			{
+		//				func(*spec.m_CurrentRightClick);
+		//			}
+		//		}
+		//	}*/
+		//	ImGui::EndPopup();
+		//}
 	}
 
 	void EditorUIService::PanelHeader(PanelHeaderSpec& spec)
@@ -3321,6 +3330,12 @@ namespace Kargono::EditorUI
 		// Local Variables
 		uint32_t widgetCount{ 0 };
 		std::string popUpLabel = spec.m_Label;
+
+		// Display Menu Item
+		if (spec.m_Flags & ChooseDirectory_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
 
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.m_Label.c_str(), s_PrimaryTextWidth);

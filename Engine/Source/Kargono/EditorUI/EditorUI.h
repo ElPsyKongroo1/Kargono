@@ -742,6 +742,12 @@ namespace Kargono::EditorUI
 		friend void EditorUIService::EditMultiLineText(EditMultiLineTextSpec& spec);
 	};
 
+	enum ChooseDirectoryFlags
+	{
+		ChooseDirectory_None = 0,
+		ChooseDirectory_Indented = BIT(0) // Display indented
+	};
+
 	struct ChooseDirectorySpec
 	{
 	public:
@@ -751,6 +757,7 @@ namespace Kargono::EditorUI
 		}
 	public:
 		std::string m_Label;
+		WidgetFlags m_Flags{ ChooseDirectoryFlags::ChooseDirectory_None };
 		std::filesystem::path m_CurrentOption{};
 		std::function<void(const std::string&)> m_ConfirmAction{ nullptr };
 	private:
