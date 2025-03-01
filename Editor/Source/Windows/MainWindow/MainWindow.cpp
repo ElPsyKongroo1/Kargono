@@ -15,13 +15,32 @@ namespace Kargono::Windows
 {
 	void MainWindow::InitializeExportProjectWidgets()
 	{
+		m_ExportConfigHeader.m_Label = "General Export Options";
+		m_ExportConfigHeader.m_Expanded = true;
+
 		m_ExportProjectSpec.m_Label = "Export Project";
-		m_ExportProjectSpec.m_PopupWidth = 420.0f;
+		m_ExportProjectSpec.m_PopupWidth = 700.0f;
 		m_ExportProjectSpec.m_PopupContents = [&]()
+		{
+			EditorUI::EditorUIService::ChooseDirectory(m_ExportProjectLocation);
+			EditorUI::EditorUIService::Checkbox(m_ExportProjectServer);
+			EditorUI::EditorUIService::Checkbox(m_ExportConfigFile);
+
+			// Do not display config settings if not specified
+			if (!m_ExportConfigFile.m_CurrentBoolean)
 			{
-				EditorUI::EditorUIService::ChooseDirectory(m_ExportProjectLocation);
-				EditorUI::EditorUIService::Checkbox(m_ExportProjectServer);
-			};
+				return;
+			}
+
+			EditorUI::EditorUIService::CollapsingHeader(m_ExportConfigHeader);
+			if (m_ExportConfigHeader.m_Expanded)
+			{
+				EditorUI::EditorUIService::EditIVec4(m_ExportConfigServerIP);
+				EditorUI::EditorUIService::EditInteger(m_ExportConfigPort);
+				EditorUI::EditorUIService::Checkbox(m_ExportConfigLocation);
+				EditorUI::EditorUIService::EditIVec4(m_ExportConfigSecrets);
+			}
+		};
 		m_ExportProjectSpec.m_ConfirmAction = [&]()
 			{
 				Projects::ProjectService::ExportProject(m_ExportProjectLocation.m_CurrentOption, m_ExportProjectServer.m_CurrentBoolean);
@@ -32,6 +51,32 @@ namespace Kargono::Windows
 
 		m_ExportProjectServer.m_Label = "Export Server";
 		m_ExportProjectServer.m_CurrentBoolean = true;
+
+		// Config file options
+		m_ExportConfigFile.m_Label = "Create Network Config?";
+		m_ExportConfigFile.m_CurrentBoolean = false;
+
+		m_ExportConfigHeader.m_Label = "Network Config Options";
+		m_ExportConfigHeader.m_Expanded = true;
+
+		m_ExportConfigServerIP.m_Label = "Remote Server IPv4";
+		m_ExportConfigServerIP.m_Flags |= EditorUI::EditIVec4_Indented;
+		m_ExportConfigServerIP.m_CurrentIVec4 = {127, 0, 0, 1};
+		m_ExportConfigServerIP.m_Bounds = { 0, 255 };
+
+		m_ExportConfigPort.m_Label = "Remote Server Port";
+		m_ExportConfigPort.m_Flags |= EditorUI::EditInteger_Indented;
+		m_ExportConfigPort.m_CurrentInteger = 60'000;
+		m_ExportConfigPort.m_Bounds = { 0, 255 };
+
+		m_ExportConfigLocation.m_Label = "Use Local Machine?";
+		m_ExportConfigLocation.m_Flags |= EditorUI::Checkbox_Indented;
+		m_ExportConfigLocation.m_CurrentBoolean = true;
+
+		m_ExportConfigSecrets.m_Label = "Validation Secrets";
+		m_ExportConfigSecrets.m_Flags |= EditorUI::EditIVec4_Indented;
+		m_ExportConfigSecrets.m_CurrentIVec4 = { 0xFF'FF'FF'FF, 0xFF'FF'FF'FF, 0xFF'FF'FF'FF, 0xFF'FF'FF'FF };
+		m_ExportConfigSecrets.m_Bounds = { 0, 255 };
 	}
 
 	void MainWindow::InitializeImportAssetWidgets()

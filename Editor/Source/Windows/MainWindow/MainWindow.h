@@ -200,9 +200,18 @@ namespace Kargono::Windows
 		FixedString256 m_GeneralWarningMessage{};
 
 		// Project export popup widgets
+		EditorUI::CollapsingHeaderSpec m_ExportProjectHeader{};
 		EditorUI::GenericPopupSpec m_ExportProjectSpec{};
 		EditorUI::ChooseDirectorySpec m_ExportProjectLocation{};
 		EditorUI::CheckboxSpec m_ExportProjectServer{};
+
+		// Config file generation widgets
+		EditorUI::CheckboxSpec m_ExportConfigFile{};
+		EditorUI::CollapsingHeaderSpec m_ExportConfigHeader{};
+		EditorUI::EditIVec4Spec m_ExportConfigServerIP{};
+		EditorUI::EditIntegerSpec m_ExportConfigPort{};
+		EditorUI::CheckboxSpec m_ExportConfigLocation{};
+		EditorUI::EditIVec4Spec m_ExportConfigSecrets{};
 
 		// Import asset widgets
 		EditorUI::GenericPopupSpec m_ImportAssetPopup{};

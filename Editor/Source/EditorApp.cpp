@@ -353,6 +353,7 @@ namespace Kargono
 			}
 			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveStartSceneHandle();
 
+			// Load in the script shared library
 			Scripting::ScriptService::LoadActiveScriptModule();
 
 			if (m_MainWindow->m_EditorScene)
@@ -361,6 +362,10 @@ namespace Kargono
 			}
 			Assets::AssetService::ClearAll();
 			Assets::AssetService::DeserializeAll();
+
+			// Ensure all script assets are properly loaded in
+			Assets::AssetService::LoadAllScriptIntoCache();
+
 			if (startSceneHandle == Assets::EmptyHandle)
 			{
 				m_MainWindow->NewScene("NewScene");

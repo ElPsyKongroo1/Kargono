@@ -18,6 +18,22 @@ namespace Kargono::Math
 	using uvec3 = glm::uvec3;
 	using uvec4 = glm::uvec4;
 
+	using u8vec2 = glm::u8vec2;
+	using u8vec3 = glm::u8vec3;
+	using u8vec4 = glm::u8vec4;
+
+	using u16vec2 = glm::u16vec2;
+	using u16vec3 = glm::u16vec3;
+	using u16vec4 = glm::u16vec4;
+
+	using u32vec2 = glm::u32vec2;
+	using u32vec3 = glm::u32vec3;
+	using u32vec4 = glm::u32vec4;
+
+	using u64vec2 = glm::u64vec2;
+	using u64vec3 = glm::u64vec3;
+	using u64vec4 = glm::u64vec4;
+
 	using ivec2 = glm::ivec2;
 	using ivec3 = glm::ivec3;
 	using ivec4 = glm::ivec4;

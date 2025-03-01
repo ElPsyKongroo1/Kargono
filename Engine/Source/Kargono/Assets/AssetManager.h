@@ -593,10 +593,10 @@ namespace Kargono::Assets
 			DeserializeRegistrySpecificData(data);
 
 			// Opening all assets 
-			auto assets = data["Assets"];
+			YAML::Node assets = data["Assets"];
 			if (assets)
 			{
-				for (auto asset : assets)
+				for (const YAML::Node& asset : assets)
 				{
 					Assets::AssetInfo newAsset{};
 					newAsset.m_Handle = asset["AssetHandle"].as<uint64_t>();
@@ -621,6 +621,36 @@ namespace Kargono::Assets
 					m_AssetRegistry.insert({ newAsset.m_Handle, newAsset });
 
 				}
+			}
+		}
+
+		void LoadAllAssetIntoCache()
+		{
+			// Ensure the current asset type supports caching
+			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasAssetCache));
+
+			// Revalidate active registry
+			DeserializeAssetRegistry();
+
+			// Load every asset into memory
+			for (auto [assetHandle, assetInfo] : m_AssetRegistry)
+			{
+				// TODO: Skip already loaded assets. Maybe add an option for clearing the asset cache first
+				if (m_AssetCache.contains(assetHandle))
+				{
+					continue;
+				}
+
+				// Get the path to the underlying file
+				std::filesystem::path assetPath =
+					(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
+						Projects::ProjectService::GetActiveIntermediateDirectory() / assetInfo.Data.IntermediateLocation :
+						Projects::ProjectService::GetActiveAssetDirectory() / assetInfo.Data.FileLocation);
+				Ref<AssetValue> newAsset = DeserializeAsset(assetInfo, assetPath);
+
+				// Insert the asset into the cache
+				m_AssetCache.insert({ assetInfo.m_Handle, newAsset });
+				
 			}
 		}
 

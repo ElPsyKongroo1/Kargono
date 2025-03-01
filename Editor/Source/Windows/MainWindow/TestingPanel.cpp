@@ -6,6 +6,9 @@
 #include "Kargono/Utility/Timers.h"
 #include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Utility/Random.h"
+#include "Kargono/Utility/FileSystem.h"
+
+#include <sstream>
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
@@ -21,6 +24,7 @@ namespace Kargono::Panels
 #if 0
 	static std::vector<EditorUI::EditVec3Spec> s_ControlPointWidgets;
 #endif
+
 
 	static FixedString256 newString;
 	static EditorUI::TooltipSpec testTooltip{};
@@ -251,6 +255,12 @@ namespace Kargono::Panels
 	}
 	void TestingPanel::InitializeGeneralTestingWidgets()
 	{
+#if defined(KG_DEBUG)
+		s_TestingWorkspaceHeader.m_Label = "Testing Workspace";
+		s_TestingWorkspaceHeader.m_Expanded = true;
+		s_TestingWorkspaceHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+#endif
+
 		s_TestText.m_Label = "File to Compile";
 		s_TestText.m_CurrentOption = "test.kgscript";
 
@@ -407,150 +417,132 @@ namespace Kargono::Panels
 	void TestingPanel::DrawGeneralTestingWidgets()
 	{
 
-		if (ImGui::Button("Crit Log"))
+		EditorUI::EditorUIService::CollapsingHeader(s_TestingWorkspaceHeader);
+
+		if (s_TestingWorkspaceHeader.m_Expanded)
 		{
-			KG_CRITICAL("Hey we in this bihh {}", Utility::RandomService::GenerateRandomInteger(0, 20));
-		}
-
-		if (ImGui::Button("Warn Log"))
-		{
-			KG_WARN("Hey we in this bihh {}", Utility::RandomService::GenerateRandomInteger(0, 20));
-		}
-
-
-		EditorUI::EditorUIService::EditText(s_TestText);
-
-		if (ImGui::Button("Compile File"))
-		{
-			KG_TRACE_CRITICAL(Scripting::ScriptCompilerService::CompileScriptFile("./../Projects/Pong/Assets/" + s_TestText.m_CurrentOption));
-		}
-
-		if (ImGui::Button("Test Popup"))
-		{
-			ImGui::OpenPopup("The Test Popup");
-		}
-
-		EditorUI::EditorUIService::EditFloat(s_TimerTime);
-		EditorUI::EditorUIService::EditInteger(s_RandomTestInteger);
-
-		if (ImGui::Button("Start Timer"))
-		{
-			Utility::PassiveTimer::CreateTimer(s_TimerTime.m_CurrentFloat, []()
-				{
-					KG_WARN("The timer has gone off");
-				});
-		}
-
-		ImGuiWindowFlags popupFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing;
-
-		bool closePopup = false;
-		if (ImGui::Button("HSDHASDJ"))
-		{
-			closePopup = true;
-		}
-
-		if (ImGui::BeginPopup("The Test Popup", popupFlags))
-		{
-			EditorUI::EditorUIService::BringCurrentWindowToFront();
-
-			ImGui::Text("Ayooo, the popup is open");
-			if (closePopup)
+			if (ImGui::Button("Crit Log"))
 			{
-				ImGui::CloseCurrentPopup();
+				KG_CRITICAL("Hey we in this bihh {}", Utility::RandomService::GenerateRandomInteger(0, 20));
 			}
-			ImGui::EndPopup();
-		}
 
-		EditorUI::EditorUIService::EditMultiLineText(s_MultiLineText);
+			if (ImGui::Button("Warn Log"))
+			{
+				KG_WARN("Hey we in this bihh {}", Utility::RandomService::GenerateRandomInteger(0, 20));
+			}
 
-		// TODO: Testing Splines
+
+			EditorUI::EditorUIService::EditText(s_TestText);
+
+			if (ImGui::Button("Compile File"))
+			{
+				KG_TRACE_CRITICAL(Scripting::ScriptCompilerService::CompileScriptFile("./../Projects/Pong/Assets/" + s_TestText.m_CurrentOption));
+			}
+
+			if (ImGui::Button("Test Popup"))
+			{
+				ImGui::OpenPopup("The Test Popup");
+			}
+
+			EditorUI::EditorUIService::EditFloat(s_TimerTime);
+			EditorUI::EditorUIService::EditInteger(s_RandomTestInteger);
+
+			if (ImGui::Button("Start Timer"))
+			{
+				Utility::PassiveTimer::CreateTimer(s_TimerTime.m_CurrentFloat, []()
+					{
+						KG_WARN("The timer has gone off");
+					});
+			}
+
+			ImGuiWindowFlags popupFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing;
+
+			bool closePopup = false;
+			if (ImGui::Button("HSDHASDJ"))
+			{
+				closePopup = true;
+			}
+
+			if (ImGui::BeginPopup("The Test Popup", popupFlags))
+			{
+				EditorUI::EditorUIService::BringCurrentWindowToFront();
+
+				ImGui::Text("Ayooo, the popup is open");
+				if (closePopup)
+				{
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
+
+			EditorUI::EditorUIService::EditMultiLineText(s_MultiLineText);
+
+			// TODO: Testing Splines
 #if 0 
-		Math::Spline& spline = s_EditorApp->m_MainWindow->m_ViewportPanel->m_DebugSplines.at(0);
-		size_t iteration{ 0 };
-		for (Math::vec3& point : spline.m_Points)
-		{
-			EditorUI::EditVec3Spec& spec = s_ControlPointWidgets.at(iteration);
-			spec.m_CurrentVec3 = spline.m_Points.at(iteration);
-			EditorUI::EditorUIService::EditVec3(spec);
-			iteration++;
-		}
+			Math::Spline& spline = s_EditorApp->m_MainWindow->m_ViewportPanel->m_DebugSplines.at(0);
+			size_t iteration{ 0 };
+			for (Math::vec3& point : spline.m_Points)
+			{
+				EditorUI::EditVec3Spec& spec = s_ControlPointWidgets.at(iteration);
+				spec.m_CurrentVec3 = spline.m_Points.at(iteration);
+				EditorUI::EditorUIService::EditVec3(spec);
+				iteration++;
+			}
 #endif
 
 #if 0
-		bool backActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (!backActive)
-		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
-		}
-		// Draw icon for moving a directory back
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconBack->GetRendererID(),
-			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
-			-1, ImVec4(0, 0, 0, 0),
-			backActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
-		{
-			if (backActive)
+			bool backActive = m_CurrentDirectory != std::filesystem::path(m_BaseDirectory);
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+			if (!backActive)
 			{
-				UpdateCurrentDirectory(m_CurrentDirectory.parent_path());
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 			}
-		}
-		if (!backActive)
-		{
-			ImGui::PopStyleColor(2);
-		}
-		if (backActive && ImGui::BeginDragDropTarget())
-		{
-			for (auto& payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
+			// Draw icon for moving a directory back
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconBack->GetRendererID(),
+				{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
+				-1, ImVec4(0, 0, 0, 0),
+				backActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
+				if (backActive)
 				{
-					const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
-					std::filesystem::path payloadPath(payloadPathPointer);
-					Utility::FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
-					break;
+					UpdateCurrentDirectory(m_CurrentDirectory.parent_path());
 				}
 			}
-			ImGui::EndDragDropTarget();
-		}
+			if (!backActive)
+			{
+				ImGui::PopStyleColor(2);
+			}
+			if (backActive && ImGui::BeginDragDropTarget())
+			{
+				for (auto& payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
+					{
+						const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
+						std::filesystem::path payloadPath(payloadPathPointer);
+						Utility::FileSystem::MoveFileToDirectory(payloadPath, m_CurrentDirectory.parent_path());
+						break;
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
 
-		// Draw icon for moving a directory forward
-		bool forwardActive = m_CurrentDirectory != m_LongestRecentPath && !m_LongestRecentPath.empty();
-		ImGui::SameLine();
-		if (!forwardActive)
-		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
-		}
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconForward->GetRendererID(),
-			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
-			-1, ImVec4(0, 0, 0, 0),
-			forwardActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
-		{
-			if (forwardActive && Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, m_LongestRecentPath))
+			// Draw icon for moving a directory forward
+			bool forwardActive = m_CurrentDirectory != m_LongestRecentPath && !m_LongestRecentPath.empty();
+			ImGui::SameLine();
+			if (!forwardActive)
 			{
-				std::filesystem::path currentIterationPath{ m_LongestRecentPath };
-				std::filesystem::path recentIterationPath{ m_LongestRecentPath };
-				while (currentIterationPath != m_CurrentDirectory)
-				{
-					recentIterationPath = currentIterationPath;
-					currentIterationPath = currentIterationPath.parent_path();
-				}
-				UpdateCurrentDirectory(recentIterationPath);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 			}
-		}
-		if (!forwardActive)
-		{
-			ImGui::PopStyleColor(2);
-		}
-		if (forwardActive && ImGui::BeginDragDropTarget())
-		{
-			for (auto& payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconForward->GetRendererID(),
+				{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
+				-1, ImVec4(0, 0, 0, 0),
+				forwardActive ? EditorUI::EditorUIService::s_PrimaryTextColor : EditorUI::EditorUIService::s_DisabledColor))
 			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
+				if (forwardActive && Utility::FileSystem::DoesPathContainSubPath(m_CurrentDirectory, m_LongestRecentPath))
 				{
-					const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
-					std::filesystem::path payloadPath(payloadPathPointer);
 					std::filesystem::path currentIterationPath{ m_LongestRecentPath };
 					std::filesystem::path recentIterationPath{ m_LongestRecentPath };
 					while (currentIterationPath != m_CurrentDirectory)
@@ -558,46 +550,71 @@ namespace Kargono::Panels
 						recentIterationPath = currentIterationPath;
 						currentIterationPath = currentIterationPath.parent_path();
 					}
-					Utility::FileSystem::MoveFileToDirectory(payloadPath, recentIterationPath);
-					break;
+					UpdateCurrentDirectory(recentIterationPath);
 				}
 			}
-			ImGui::EndDragDropTarget();
-		}
-		ImGui::PopStyleColor();
+			if (!forwardActive)
+			{
+				ImGui::PopStyleColor(2);
+			}
+			if (forwardActive && ImGui::BeginDragDropTarget())
+			{
+				for (auto& payloadName : EditorUI::EditorUIService::s_AllPayloadTypes)
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadName.c_str()))
+					{
+						const wchar_t* payloadPathPointer = (const wchar_t*)payload->Data;
+						std::filesystem::path payloadPath(payloadPathPointer);
+						std::filesystem::path currentIterationPath{ m_LongestRecentPath };
+						std::filesystem::path recentIterationPath{ m_LongestRecentPath };
+						while (currentIterationPath != m_CurrentDirectory)
+						{
+							recentIterationPath = currentIterationPath;
+							currentIterationPath = currentIterationPath.parent_path();
+						}
+						Utility::FileSystem::MoveFileToDirectory(payloadPath, recentIterationPath);
+						break;
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+			ImGui::PopStyleColor();
 
-		// Current directory title
-		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveProjectDirectory(), m_CurrentDirectory);
+			// Current directory title
+			std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveProjectDirectory(), m_CurrentDirectory);
 
-		std::vector<std::string> tokenizedDirectoryPath{};
+			std::vector<std::string> tokenizedDirectoryPath{};
 
-		while (activeDirectory.filename() != "Assets")
-		{
-			tokenizedDirectoryPath.push_back(activeDirectory.filename().string());
-			activeDirectory = activeDirectory.parent_path();
-		}
-		tokenizedDirectoryPath.push_back("Assets");
+			while (activeDirectory.filename() != "Assets")
+			{
+				tokenizedDirectoryPath.push_back(activeDirectory.filename().string());
+				activeDirectory = activeDirectory.parent_path();
+			}
+			tokenizedDirectoryPath.push_back("Assets");
 
-		ImGui::PushFont(EditorUI::EditorUIService::s_FontPlexBold);
-		for (int32_t i = (int32_t)(tokenizedDirectoryPath.size()) - 1; i >= 0; --i)
-		{
-			ImGui::SameLine();
-			ImGui::Text(tokenizedDirectoryPath.at(i).c_str());
-			if (i != 0)
+			ImGui::PushFont(EditorUI::EditorUIService::s_FontPlexBold);
+			for (int32_t i = (int32_t)(tokenizedDirectoryPath.size()) - 1; i >= 0; --i)
 			{
 				ImGui::SameLine();
-				ImGui::Text("/");
-			}
+				ImGui::Text(tokenizedDirectoryPath.at(i).c_str());
+				if (i != 0)
+				{
+					ImGui::SameLine();
+					ImGui::Text("/");
 		}
-		ImGui::PopFont();
-		ImGui::Separator();
+	}
+			ImGui::PopFont();
+			ImGui::Separator();
 #endif
 
 #if 0
-		EditorUI::EditorUIService::NavigationHeader(m_TestHeader);
+			EditorUI::EditorUIService::NavigationHeader(m_TestHeader);
 
-		EditorUI::EditorUIService::Tooltip(testTooltip);
+			EditorUI::EditorUIService::Tooltip(testTooltip);
 #endif
+		}
+
+		
 	}
 	bool TestingPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

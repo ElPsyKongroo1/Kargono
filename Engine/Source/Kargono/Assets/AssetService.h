@@ -79,6 +79,10 @@
 		{\
 			s_AssetsContext.m_##typeName##Manager.ClearAssetRegistry(); \
 		}\
+		static void LoadAll##typeName##IntoCache() \
+		{\
+			s_AssetsContext.m_##typeName##Manager.LoadAllAssetIntoCache(); \
+		}\
 		static std::unordered_map<AssetHandle, AssetInfo>& Get##typeName##Registry() \
 		{\
 			return s_AssetsContext.m_##typeName##Manager.GetAssetRegistry(); \

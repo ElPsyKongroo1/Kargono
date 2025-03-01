@@ -203,6 +203,7 @@ namespace Kargono::Scripting
 
 	void ScriptService::LoadActiveScriptModule()
 	{
+		// Get the path to the script dll
 #if defined(KG_PLATFORM_WINDOWS)
 	#if defined(KG_DEBUG) 
 			std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script\\ExportBodyDebug.dll" };
