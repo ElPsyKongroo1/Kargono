@@ -11,15 +11,15 @@ namespace Kargono::Utility
 		inline static bool s_TestBool_2{ false };
 		inline static bool s_TestBool_3{ false };
 
-		inline static float s_TestFloat_1{ 0.0f };
-		inline static float s_TestFloat_2{ 0.0f };
+		inline static float s_TestFloat_1{ 60.0f };
+		inline static float s_TestFloat_2{ 15.0f };
 		inline static float s_TestFloat_3{ 0.0f };
 
 		inline static int s_TestInt_1{ 0 };
 		inline static int s_TestInt_2{ 0 };
 		inline static int s_TestInt_3{ 0 };
 
-		inline static unsigned int s_TestUInt_1{ 0 };
+		inline static unsigned int s_TestUInt_1{ 15 };
 		inline static unsigned int s_TestUInt_2{ 0 };
 		inline static unsigned int s_TestUInt_3{ 0 };
 

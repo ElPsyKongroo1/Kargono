@@ -177,7 +177,16 @@ namespace Kargono::EditorUI
 		static void EndTabBar();
 		static bool BeginTabItem(const std::string& title);
 		static void EndTabItem();
-		
+
+		//==============================
+		// Draw Functions Used By Widgets
+		//==============================
+		static bool DrawColorPickerButton(const char* name, ImVec4& mainColor);
+
+	private:
+		// Internal button rendering
+		static bool DrawColorPickerButtonInternal(const char* desc_id, const ImVec4& col, const ImVec2& size_arg);
+		static bool DrawColorPickerPopupContents(const char* label, float col[4], const float* ref_col);
 
 	public:
 		//==============================
@@ -292,6 +301,9 @@ namespace Kargono::EditorUI
 
 		inline static ImVec4 s_GridMajor{ 0.735f, 0.720f, 0.690f, 1.0f };
 		inline static ImVec4 s_GridMinor{ 0.347f, 0.347f, 0.347f, 1.0f };
+
+		// Cached colors (Meant to be modifed at runtime)
+		inline static ImVec4 s_ActiveBackgroundColor{ s_DarkBackgroundColor };
 	public:
 		//==============================
 		// UI Button Presets

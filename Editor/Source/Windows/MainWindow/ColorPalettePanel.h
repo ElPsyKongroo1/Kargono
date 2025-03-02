@@ -9,11 +9,7 @@
 namespace Kargono::Panels
 {
 
-	struct ColorWidgets
-	{
-		std::vector<EditorUI::EditVec4Spec> m_ColorWidget;
-	};
-
+	using ColorEditorWidgets = std::vector<EditorUI::EditVec4Spec>;
 
 	class ColorPalettePanel
 	{
@@ -87,6 +83,6 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_CloseColorPaletteWarning{};
 		// Modify fields widgets
 		EditorUI::CollapsingHeaderSpec m_ColorsHeader{};
-		ColorWidgets m_ColorWidgets{};
+		ColorEditorWidgets m_ColorEditorWidgets{};
 	};
 }

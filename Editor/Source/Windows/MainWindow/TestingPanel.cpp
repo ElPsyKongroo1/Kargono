@@ -419,6 +419,7 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::CollapsingHeader(s_TestingWorkspaceHeader);
 		if (s_TestingWorkspaceHeader.m_Expanded)
 		{
+
 			if (ImGui::Button("Crit Log"))
 			{
 				KG_CRITICAL("Hey we in this bihh {}", Utility::RandomService::GenerateRandomInteger(0, 20));

@@ -30,7 +30,7 @@ namespace Kargono::Assets
 		{
 			out << YAML::BeginMap; // Start color map
 			out << YAML::Key << "Name" << YAML::Value << color.m_Name;
-			out << YAML::Key << "HexCode" << YAML::Value << color.m_Name;
+			out << YAML::Key << "HexCode" << YAML::Value << color.m_HexCode;
 			out << YAML::EndMap; // End color map
 		}
 		out << YAML::EndSeq; // End of Color Sequence
@@ -62,7 +62,7 @@ namespace Kargono::Assets
 		YAML::Node colorNodes = data["Colors"];
 		if (colorNodes)
 		{
-			std::vector<ProjectData::Color> colorList = newColorPalette->m_Colors;
+			std::vector<ProjectData::Color>& colorList = newColorPalette->m_Colors;
 			for (const YAML::Node& colorNode : colorNodes)
 			{
 				ProjectData::Color& newColor = colorList.emplace_back();

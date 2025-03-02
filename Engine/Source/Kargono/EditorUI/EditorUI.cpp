@@ -9,12 +9,15 @@
 #include "Kargono/Utility/FileDialogs.h"
 #include "Kargono/Rendering/Texture.h"
 #include "Kargono/Projects/Project.h"
+#include "Kargono/ProjectData/ColorPalette.h"
+#include "Kargono/Assets/AssetService.h"
+
+#include "Kargono/Utility/DebugGlobals.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
 #include "API/Platform/GlfwAPI.h"
 #include "API/Platform/gladAPI.h"
 #include "API/EditorUI/ImGuiNotifyAPI.h"
-
 
 namespace Kargono::EditorUI
 {
@@ -293,6 +296,445 @@ namespace Kargono::EditorUI
 		ImGui::PopStyleVar(2);
 		// Argument MUST match the amount of ImGui::PushStyleColor() calls 
 		ImGui::PopStyleColor(1);
+	}
+
+	bool EditorUIService::DrawColorPickerButton(const char* name, ImVec4& mainColor)
+	{
+		bool returnValue{ false };
+		ImGuiContext& g = *GImGui;
+		const ImGuiStyle& style = g.Style;
+		const float square_sz = ImGui::GetFrameHeight();
+		constexpr size_t k_InvalidPaletteID{ std::numeric_limits<size_t>().max() };
+
+		static std::vector<std::pair<std::string, ProjectData::ColorPalette>> s_ActivePalettes;
+		static std::string s_ActivePaletteLabel;
+		static size_t s_ActivePaletteID;
+		
+		if (DrawColorPickerButtonInternal(name, mainColor, ImVec2(18.0f, 18.0f)))
+		{
+			// Store current color and open a picker
+			g.ColorPickerRef = mainColor;
+			ImGui::OpenPopup("##ColorPickerPopup");
+			ImGui::SetNextWindowPos(g.LastItemData.Rect.GetBL() + ImVec2(0.0f, style.ItemSpacing.y));
+
+			// Reset active palette
+			s_ActivePaletteLabel = "None";
+			s_ActivePaletteID = k_InvalidPaletteID;
+
+			// Revalidate the active color palettes
+			s_ActivePalettes.clear();
+
+			// Add all color palettes from the active registry
+			for (auto [handle, assetInfo] : Assets::AssetService::GetColorPaletteRegistry())
+			{
+				Ref<ProjectData::ColorPalette> palette = Assets::AssetService::GetColorPalette(handle);
+				KG_ASSERT(palette);
+				s_ActivePalettes.push_back
+				({
+					assetInfo.Data.GetSpecificMetaData<Assets::ColorPaletteMetaData>()->Name,
+					*palette
+				});
+			}
+		}
+
+		ImGui::SetNextWindowSize(ImVec2(290.0f, 260.0f));
+		if (ImGui::BeginPopup("##ColorPickerPopup", ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
+		{
+			if (g.CurrentWindow->BeginCount == 1)
+			{
+				BeginTabBar("##ColorPickerTabBar");
+
+				if (BeginTabItem("Picker"))
+				{
+					ImGui::SetNextItemWidth(square_sz * 12.0f); // Use 256 + bar sizes?
+					returnValue = DrawColorPickerPopupContents("##picker", (float*)&mainColor, &g.ColorPickerRef.x);
+					EndTabItem();
+				}
+				if (BeginTabItem("Palette"))
+				{
+					ImGui::PushStyleColor(ImGuiCol_FrameBg, EditorUI::EditorUIService::s_BackgroundColor);
+					ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, EditorUI::EditorUIService::s_HoveredColor);
+					ImGui::PushStyleColor(ImGuiCol_FrameBgActive, EditorUI::EditorUIService::s_ActiveColor);
+
+					if (ImGui::BeginCombo("##ChoosePalette", s_ActivePaletteLabel.c_str(), ImGuiComboFlags_NoArrowButton))
+					{
+						if (ImGui::Selectable("None"))
+						{
+							s_ActivePaletteLabel = "None";
+							s_ActivePaletteID = k_InvalidPaletteID;
+						}
+						size_t iteration{ 0 };
+						for (auto& [name, palette] : s_ActivePalettes)
+						{
+							if (ImGui::Selectable(name.c_str()))
+							{
+								s_ActivePaletteLabel = name;
+								s_ActivePaletteID = iteration;
+								break;
+							}
+							iteration++;
+						}
+						ImGui::EndCombo();
+					}
+
+					ImGui::PopStyleColor(3);
+
+					// Get the current palette
+					if (s_ActivePaletteID != k_InvalidPaletteID)
+					{
+						KG_ASSERT(s_ActivePaletteID < s_ActivePalettes.size());
+
+						ImGui::BeginChild("##ChoosePaletteGrid", ImVec2(0, 0), false,
+							ImGuiWindowFlags_AlwaysVerticalScrollbar);
+						uint32_t widgetCount{ 0 };
+						static WidgetID persistantID{ IncrementWidgetCounter() };
+						FixedString<16> id{ "##" };
+						id.AppendInteger(persistantID);
+
+						float iconSize = 60.0f;
+						float cellPadding = 15.0f;
+
+						// Calculate grid cell count using provided spec sizes
+						float cellSize = iconSize + cellPadding;
+						float panelWidth = ImGui::GetContentRegionAvail().x;
+						int32_t columnCount = (int32_t)(panelWidth / cellSize);
+						columnCount = columnCount > 0 ? columnCount : 1;
+
+						// Get the active color palette
+						ProjectData::ColorPalette& activePalette = s_ActivePalettes[s_ActivePaletteID].second;
+						Spacing(SpacingAmount::Small);
+						// Start drawing columns
+						ImGui::Columns(columnCount, id.CString(), false);
+						ImGui::PushStyleColor(ImGuiCol_Button, s_PureEmpty);
+						size_t colorIteration{ 0 };
+						for (auto& [name, color] : activePalette.m_Colors)
+						{
+							// Display grid icon
+							ImGui::PushID(std::to_string(colorIteration).c_str());
+
+							ImVec4 colorPickerValue{ Utility::MathVec4ToImVec4(Utility::HexToRGBA(color))};
+							ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_NoInputs |
+								ImGuiColorEditFlags_NoLabel |
+								ImGuiColorEditFlags_AlphaPreviewHalf |
+								ImGuiColorEditFlags_NoSidePreview |
+								ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoTooltip;
+							if (ImGui::ColorButton(("##" + std::to_string(colorIteration)).c_str(),
+								colorPickerValue,
+								misc_flags, ImVec2(cellSize, cellSize)))
+							{
+								mainColor = colorPickerValue;
+								returnValue = true;
+							}
+
+							// Draw label for each cell
+							ImGui::TextWrapped(name.CString());
+
+							// Reset cell data for next call
+							ImGui::NextColumn();
+							ImGui::PopID();
+							colorIteration++;
+						}
+
+						// End drawing columns
+						ImGui::PopStyleColor();
+						ImGui::Columns(1);
+
+						ImGui::EndChild();
+					}
+					EndTabItem();
+				}
+				EndTabBar();
+			}
+			ImGui::EndPopup();
+		}
+		return returnValue;
+	}
+
+	bool EditorUIService::DrawColorPickerButtonInternal(const char* desc_id, const ImVec4& col, const ImVec2& size_arg)
+	{
+		// Get the current window context and skip if indicated
+		ImGuiWindow* window = ImGui::GetCurrentWindow();
+		if (window->SkipItems)
+			return false;
+
+		// Get relevant dimensions information from context
+		ImGuiContext& g = *GImGui;
+		const ImGuiID id = window->GetID(desc_id);
+		const float default_size = ImGui::GetFrameHeight();
+		const ImVec2 size(size_arg.x == 0.0f ? default_size : size_arg.x, size_arg.y == 0.0f ? default_size : size_arg.y);
+		const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + size);
+		ImGui::ItemSize(bb, (size.y >= default_size) ? g.Style.FramePadding.y : 0.0f);
+		if (!ImGui::ItemAdd(bb, id))
+			return false;
+
+		// Query the state of interaction with the button
+		bool hovered, held;
+		bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held);
+
+		// Convert from HSV to RGBA if necessary
+		ImVec4 col_rgb = col;
+
+		ImVec4 col_rgb_without_alpha(col_rgb.x, col_rgb.y, col_rgb.z, 1.0f);
+		float grid_step = ImMin(size.x, size.y) / 2.99f;
+		float rounding = ImMin(g.Style.FrameRounding, grid_step * 0.5f);
+		ImRect bb_inner = bb;
+		float off = 0.0f;
+		off = -0.75f; // The border (using Col_FrameBg) tends to look off when color is near-opaque and rounding is enabled. This offset seemed like a good middle ground to reduce those artifacts.
+		bb_inner.Expand(off);
+		
+
+		// Draw the actual color display
+		if (col_rgb.w < 1.0f)
+		{
+			float mid_x = IM_ROUND((bb_inner.Min.x + bb_inner.Max.x) * 0.5f);
+			ImGui::RenderColorRectWithAlphaCheckerboard(window->DrawList, ImVec2(bb_inner.Min.x + grid_step, bb_inner.Min.y), bb_inner.Max, ImGui::GetColorU32(col_rgb), grid_step, ImVec2(-grid_step + off, off), rounding, ImDrawFlags_RoundCornersRight);
+			window->DrawList->AddRectFilled(bb_inner.Min, ImVec2(mid_x, bb_inner.Max.y), ImGui::GetColorU32(col_rgb_without_alpha), rounding, ImDrawFlags_RoundCornersLeft);
+		}
+		else
+		{
+			// Because GetColorU32() multiplies by the global style Alpha and we don't want to display a checkerboard if the source code had no alpha
+			ImVec4 col_source =  col_rgb;
+			if (col_source.w < 1.0f)
+				ImGui::RenderColorRectWithAlphaCheckerboard(window->DrawList, bb_inner.Min, bb_inner.Max, ImGui::GetColorU32(col_source), grid_step, ImVec2(off, off), rounding);
+			else
+				window->DrawList->AddRectFilled(bb_inner.Min, bb_inner.Max, ImGui::GetColorU32(col_source), rounding);
+		}
+
+		// Draw a frame border
+		ImGui::RenderNavHighlight(bb, id);
+		if (g.Style.FrameBorderSize > 0.0f)
+			ImGui::RenderFrameBorder(bb.Min, bb.Max, rounding);
+		else
+			window->DrawList->AddRect(bb.Min, bb.Max, ImGui::GetColorU32(ImGuiCol_FrameBg), rounding); // Color button are often in need of some sort of border
+		
+
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Open Color Picker");
+			ImGui::EndTooltip();
+		}
+
+		return pressed;
+	}
+
+	bool EditorUIService::DrawColorPickerPopupContents(const char* label, float col[4], const float* ref_col)
+	{
+		ImGuiContext& g = *GImGui;
+		ImGuiWindow* window = ImGui::GetCurrentWindow();
+		ImGuiColorEditFlags flags = ImGuiColorEditFlags_DisplayMask_ | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_AlphaPreviewHalf;
+		if (window->SkipItems)
+			return false;
+
+		ImDrawList* draw_list = window->DrawList;
+		ImGuiStyle& style = g.Style;
+		ImGuiIO& io = g.IO;
+
+		const float width = ImGui::CalcItemWidth();
+		g.NextItemData.ClearFlags();
+
+		ImGui::PushID(label);
+		ImGui::BeginGroup();
+
+		if (!(flags & ImGuiColorEditFlags_NoSidePreview))
+			flags |= ImGuiColorEditFlags_NoSmallPreview;
+
+		// Context menu: display and store options.
+		if (!(flags & ImGuiColorEditFlags_NoOptions))
+			ImGui::ColorPickerOptionsPopup(col, flags);
+
+		// Read stored options
+		if (!(flags & ImGuiColorEditFlags_PickerMask_))
+			flags |= ((g.ColorEditOptions & ImGuiColorEditFlags_PickerMask_) ? g.ColorEditOptions : ImGuiColorEditFlags_DefaultOptions_) & ImGuiColorEditFlags_PickerMask_;
+		if (!(flags & ImGuiColorEditFlags_InputMask_))
+			flags |= ((g.ColorEditOptions & ImGuiColorEditFlags_InputMask_) ? g.ColorEditOptions : ImGuiColorEditFlags_DefaultOptions_) & ImGuiColorEditFlags_InputMask_;
+		IM_ASSERT(ImIsPowerOfTwo(flags & ImGuiColorEditFlags_PickerMask_)); // Check that only 1 is selected
+		IM_ASSERT(ImIsPowerOfTwo(flags & ImGuiColorEditFlags_InputMask_));  // Check that only 1 is selected
+		if (!(flags & ImGuiColorEditFlags_NoOptions))
+			flags |= (g.ColorEditOptions & ImGuiColorEditFlags_AlphaBar);
+
+		// Setup
+		int components = (flags & ImGuiColorEditFlags_NoAlpha) ? 3 : 4;
+		bool alpha_bar = (flags & ImGuiColorEditFlags_AlphaBar) && !(flags & ImGuiColorEditFlags_NoAlpha);
+		ImVec2 picker_pos = window->DC.CursorPos;
+		float square_sz = ImGui::GetFrameHeight();
+		float bars_width = square_sz; // Arbitrary smallish width of Hue/Alpha picking bars
+		float sv_picker_size = ImMax(bars_width * 1, width - (alpha_bar ? 2 : 1) * (bars_width + style.ItemInnerSpacing.x)); // Saturation/Value picking box
+		float bar0_pos_x = picker_pos.x + sv_picker_size + style.ItemInnerSpacing.x;
+		float bar1_pos_x = bar0_pos_x + bars_width + style.ItemInnerSpacing.x;
+		float bars_triangles_half_sz = IM_FLOOR(bars_width * 0.20f);
+
+		float backup_initial_col[4];
+		memcpy(backup_initial_col, col, components * sizeof(float));
+
+		float wheel_thickness = sv_picker_size * 0.08f;
+		float wheel_r_outer = sv_picker_size * 0.50f;
+		float wheel_r_inner = wheel_r_outer - wheel_thickness;
+		ImVec2 wheel_center(picker_pos.x + (sv_picker_size + bars_width) * 0.5f, picker_pos.y + sv_picker_size * 0.5f);
+
+		// Note: the triangle is displayed rotated with triangle_pa pointing to Hue, but most coordinates stays unrotated for logic.
+		float triangle_r = wheel_r_inner - (int)(sv_picker_size * 0.027f);
+		ImVec2 triangle_pa = ImVec2(triangle_r, 0.0f); // Hue point.
+		ImVec2 triangle_pb = ImVec2(triangle_r * -0.5f, triangle_r * -0.866025f); // Black point.
+		ImVec2 triangle_pc = ImVec2(triangle_r * -0.5f, triangle_r * +0.866025f); // White point.
+
+		float H = col[0], S = col[1], V = col[2];
+		float R = col[0], G = col[1], B = col[2];
+		
+		// Hue is lost when converting from greyscale rgb (saturation=0). Restore it.
+		ImGui::ColorConvertRGBtoHSV(R, G, B, H, S, V);
+		ImGui::ColorEditRestoreHS(col, &H, &S, &V);
+		
+
+		bool value_changed = false, value_changed_h = false, value_changed_sv = false;
+
+		ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
+		// Draw color hue bar
+		ImGui::InvisibleButton("sv", ImVec2(sv_picker_size, sv_picker_size));
+		if (ImGui::IsItemActive())
+		{
+			S = ImSaturate((io.MousePos.x - picker_pos.x) / (sv_picker_size - 1));
+			V = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size - 1));
+
+			// Greatly reduces hue jitter and reset to 0 when hue == 255 and color is rapidly modified using SV square.
+			if (g.ColorEditLastColor == ImGui::ColorConvertFloat4ToU32(ImVec4(col[0], col[1], col[2], 0)))
+				H = g.ColorEditLastHue;
+			value_changed = value_changed_sv = true;
+		}
+		if (!(flags & ImGuiColorEditFlags_NoOptions))
+			ImGui::OpenPopupOnItemClick("context", ImGuiPopupFlags_MouseButtonRight);
+
+		// Hue bar logic
+		ImGui::SetCursorScreenPos(ImVec2(bar0_pos_x, picker_pos.y));
+		ImGui::InvisibleButton("hue", ImVec2(bars_width, sv_picker_size));
+		if (ImGui::IsItemActive())
+		{
+			H = ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size - 1));
+			value_changed = value_changed_h = true;
+		}
+
+		// Alpha bar logic
+		if (alpha_bar)
+		{
+			ImGui::SetCursorScreenPos(ImVec2(bar1_pos_x, picker_pos.y));
+			ImGui::InvisibleButton("alpha", ImVec2(bars_width, sv_picker_size));
+			if (ImGui::IsItemActive())
+			{
+				col[3] = 1.0f - ImSaturate((io.MousePos.y - picker_pos.y) / (sv_picker_size - 1));
+				value_changed = true;
+			}
+		}
+		ImGui::PopItemFlag(); // ImGuiItemFlags_NoNav
+
+		// Convert back color to RGB
+		if (value_changed_h || value_changed_sv)
+		{
+			ImGui::ColorConvertHSVtoRGB(H, S, V, col[0], col[1], col[2]);
+			g.ColorEditLastHue = H;
+			g.ColorEditLastSat = S;
+			g.ColorEditLastColor = ImGui::ColorConvertFloat4ToU32(ImVec4(col[0], col[1], col[2], 0));
+		}
+
+		// R,G,B and H,S,V slider color editor
+		bool value_changed_fix_hue_wrap = false;
+		if ((flags & ImGuiColorEditFlags_NoInputs) == 0)
+		{
+			ImGui::PushItemWidth((alpha_bar ? bar1_pos_x : bar0_pos_x) + bars_width - picker_pos.x);
+			ImGuiColorEditFlags sub_flags_to_forward = ImGuiColorEditFlags_DataTypeMask_ | ImGuiColorEditFlags_InputMask_ | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoOptions | ImGuiColorEditFlags_NoSmallPreview | ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_AlphaPreviewHalf;
+			ImGuiColorEditFlags sub_flags = (flags & sub_flags_to_forward) | ImGuiColorEditFlags_NoPicker;
+			if (flags & ImGuiColorEditFlags_DisplayRGB || (flags & ImGuiColorEditFlags_DisplayMask_) == 0)
+				if (ImGui::ColorEdit4("##rgb", col, sub_flags | ImGuiColorEditFlags_DisplayRGB))
+				{
+					// FIXME: Hackily differentiating using the DragInt (ActiveId != 0 && !ActiveIdAllowOverlap) vs. using the InputText or DropTarget.
+					// For the later we don't want to run the hue-wrap canceling code. If you are well versed in HSV picker please provide your input! (See #2050)
+					value_changed_fix_hue_wrap = (g.ActiveId != 0 && !g.ActiveIdAllowOverlap);
+					value_changed = true;
+				}
+			if (flags & ImGuiColorEditFlags_DisplayHSV || (flags & ImGuiColorEditFlags_DisplayMask_) == 0)
+				value_changed |= ImGui::ColorEdit4("##hsv", col, sub_flags | ImGuiColorEditFlags_DisplayHSV);
+			if (flags & ImGuiColorEditFlags_DisplayHex || (flags & ImGuiColorEditFlags_DisplayMask_) == 0)
+				value_changed |= ImGui::ColorEdit4("##hex", col, sub_flags | ImGuiColorEditFlags_DisplayHex);
+			ImGui::PopItemWidth();
+		}
+
+
+		// Try to cancel hue wrap (after ColorEdit4 call), if any
+		if (value_changed_fix_hue_wrap && (flags & ImGuiColorEditFlags_InputRGB))
+		{
+			float new_H, new_S, new_V;
+			ImGui::ColorConvertRGBtoHSV(col[0], col[1], col[2], new_H, new_S, new_V);
+			if (new_H <= 0 && H > 0)
+			{
+				if (new_V <= 0 && V != new_V)
+					ImGui::ColorConvertHSVtoRGB(H, S, new_V <= 0 ? V * 0.5f : new_V, col[0], col[1], col[2]);
+				else if (new_S <= 0)
+					ImGui::ColorConvertHSVtoRGB(H, new_S <= 0 ? S * 0.5f : new_S, new_V, col[0], col[1], col[2]);
+			}
+		}
+
+		if (value_changed)
+		{
+			R = col[0];
+			G = col[1];
+			B = col[2];
+			ImGui::ColorConvertRGBtoHSV(R, G, B, H, S, V);
+			ImGui::ColorEditRestoreHS(col, &H, &S, &V);   // Fix local Hue as display below will use it immediately.
+		}
+
+		const int style_alpha8 = IM_F32_TO_INT8_SAT(style.Alpha);
+		const ImU32 col_black = IM_COL32(0, 0, 0, style_alpha8);
+		const ImU32 col_white = IM_COL32(255, 255, 255, style_alpha8);
+		const ImU32 col_midgrey = IM_COL32(128, 128, 128, style_alpha8);
+		const ImU32 col_hues[6 + 1] = { IM_COL32(255,0,0,style_alpha8), IM_COL32(255,255,0,style_alpha8), IM_COL32(0,255,0,style_alpha8), IM_COL32(0,255,255,style_alpha8), IM_COL32(0,0,255,style_alpha8), IM_COL32(255,0,255,style_alpha8), IM_COL32(255,0,0,style_alpha8) };
+
+		ImVec4 hue_color_f(1, 1, 1, style.Alpha); ImGui::ColorConvertHSVtoRGB(H, 1, 1, hue_color_f.x, hue_color_f.y, hue_color_f.z);
+		ImU32 hue_color32 = ImGui::ColorConvertFloat4ToU32(hue_color_f);
+		ImU32 user_col32_striped_of_alpha = ImGui::ColorConvertFloat4ToU32(ImVec4(R, G, B, style.Alpha)); // Important: this is still including the main rendering/style alpha!!
+
+		ImVec2 sv_cursor_pos;
+		// Render SV Square
+		draw_list->AddRectFilledMultiColor(picker_pos, picker_pos + ImVec2(sv_picker_size, sv_picker_size), col_white, hue_color32, hue_color32, col_white);
+		draw_list->AddRectFilledMultiColor(picker_pos, picker_pos + ImVec2(sv_picker_size, sv_picker_size), 0, 0, col_black, col_black);
+		ImGui::RenderFrameBorder(picker_pos, picker_pos + ImVec2(sv_picker_size, sv_picker_size), 0.0f);
+		sv_cursor_pos.x = ImClamp(IM_ROUND(picker_pos.x + ImSaturate(S) * sv_picker_size), picker_pos.x + 2, picker_pos.x + sv_picker_size - 2); // Sneakily prevent the circle to stick out too much
+		sv_cursor_pos.y = ImClamp(IM_ROUND(picker_pos.y + ImSaturate(1 - V) * sv_picker_size), picker_pos.y + 2, picker_pos.y + sv_picker_size - 2);
+
+		// Render Hue Bar
+		for (int i = 0; i < 6; ++i)
+			draw_list->AddRectFilledMultiColor(ImVec2(bar0_pos_x, picker_pos.y + i * (sv_picker_size / 6)), ImVec2(bar0_pos_x + bars_width, picker_pos.y + (i + 1) * (sv_picker_size / 6)), col_hues[i], col_hues[i], col_hues[i + 1], col_hues[i + 1]);
+		float bar0_line_y = IM_ROUND(picker_pos.y + H * sv_picker_size);
+		ImGui::RenderFrameBorder(ImVec2(bar0_pos_x, picker_pos.y), ImVec2(bar0_pos_x + bars_width, picker_pos.y + sv_picker_size), 0.0f);
+		ImGui::RenderArrowsForVerticalBar(draw_list, ImVec2(bar0_pos_x - 1, bar0_line_y), ImVec2(bars_triangles_half_sz + 1, bars_triangles_half_sz), bars_width + 2.0f, style.Alpha);
+		
+
+		// Render cursor/preview circle (clamp S/V within 0..1 range because floating points colors may lead HSV values to be out of range)
+		float sv_cursor_rad = value_changed_sv ? 10.0f : 6.0f;
+		draw_list->AddCircleFilled(sv_cursor_pos, sv_cursor_rad, user_col32_striped_of_alpha, 12);
+		draw_list->AddCircle(sv_cursor_pos, sv_cursor_rad + 1, col_midgrey, 12);
+		draw_list->AddCircle(sv_cursor_pos, sv_cursor_rad, col_white, 12);
+
+		// Render alpha bar
+		if (alpha_bar)
+		{
+			float alpha = ImSaturate(col[3]);
+			ImRect bar1_bb(bar1_pos_x, picker_pos.y, bar1_pos_x + bars_width, picker_pos.y + sv_picker_size);
+			ImGui::RenderColorRectWithAlphaCheckerboard(draw_list, bar1_bb.Min, bar1_bb.Max, 0, bar1_bb.GetWidth() / 2.0f, ImVec2(0.0f, 0.0f));
+			draw_list->AddRectFilledMultiColor(bar1_bb.Min, bar1_bb.Max, user_col32_striped_of_alpha, user_col32_striped_of_alpha, user_col32_striped_of_alpha & ~IM_COL32_A_MASK, user_col32_striped_of_alpha & ~IM_COL32_A_MASK);
+			float bar1_line_y = IM_ROUND(picker_pos.y + (1.0f - alpha) * sv_picker_size);
+			ImGui::RenderFrameBorder(bar1_bb.Min, bar1_bb.Max, 0.0f);
+			ImGui::RenderArrowsForVerticalBar(draw_list, ImVec2(bar1_pos_x - 1, bar1_line_y), ImVec2(bars_triangles_half_sz + 1, bars_triangles_half_sz), bars_width + 2.0f, style.Alpha);
+		}
+
+		ImGui::EndGroup();
+
+		if (value_changed && memcmp(backup_initial_col, col, components * sizeof(float)) == 0)
+			value_changed = false;
+		if (value_changed && g.LastItemData.ID != 0) // In case of ID collision, the second EndGroup() won't catch g.ActiveId
+			ImGui::MarkItemEdited(g.LastItemData.ID);
+
+		ImGui::PopID();
+
+		return value_changed;
 	}
 
 	void EditorUIService::Init()
@@ -903,7 +1345,7 @@ namespace Kargono::EditorUI
 				ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 				draw_list->AddRectFilled(ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 					ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne + EditorUI::EditorUIService::s_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-					ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersAll: ImDrawFlags_RoundCornersBottom);
+					ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersAll: ImDrawFlags_RoundCornersBottom);
 				
 				// Draw the text
 				ImGui::TextUnformatted(previewRemainder.c_str());
@@ -914,7 +1356,7 @@ namespace Kargono::EditorUI
 				ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 				draw_list->AddRectFilled(ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 					ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne + EditorUI::EditorUIService::s_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-					ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersTop: ImDrawFlags_RoundCornersNone);
+					ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersTop: ImDrawFlags_RoundCornersNone);
 
 
 				previewOutput = previewRemainder.substr(0, lineEndPosition);
@@ -1021,15 +1463,17 @@ namespace Kargono::EditorUI
 
 			Spacing(SpacingAmount::Small);
 
-			ImVec4 cachedBackgroundColor{ s_DarkBackgroundColor };
-			s_DarkBackgroundColor = s_BackgroundColor;
+			ImVec4 cachedBackgroundColor{ s_ActiveBackgroundColor };
+			s_ActiveBackgroundColor = s_BackgroundColor;
 
 			if (spec.m_PopupContents)
 			{
 				spec.m_PopupContents();
 			}
 
-			s_DarkBackgroundColor = cachedBackgroundColor;
+			Spacing(SpacingAmount::Small);
+
+			s_ActiveBackgroundColor = cachedBackgroundColor;
 			ImGui::EndPopup();
 			RecalculateWindowDimensions();
 		}
@@ -1068,15 +1512,17 @@ namespace Kargono::EditorUI
 
 			Spacing(SpacingAmount::Small);
 
-			ImVec4 cachedBackgroundColor{ s_DarkBackgroundColor };
-			s_DarkBackgroundColor = s_BackgroundColor;
+			ImVec4 cachedBackgroundColor{ s_ActiveBackgroundColor };
+			s_ActiveBackgroundColor = s_BackgroundColor;
 
 			if (spec.m_PopupContents)
 			{
 				spec.m_PopupContents();
 			}
+			
+			Spacing(SpacingAmount::Small);
 
-			s_DarkBackgroundColor = cachedBackgroundColor;
+			s_ActiveBackgroundColor = cachedBackgroundColor;
 
 			ImGui::PopFont();
 			ImGui::EndPopup();
@@ -1158,7 +1604,7 @@ namespace Kargono::EditorUI
 			ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 			draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 				ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+				ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 			// Display Menu Item
 			if (spec.m_Flags & SelectOption_Indented)
@@ -1432,7 +1878,7 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + 21.0f, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		if (spec.m_Flags & Checkbox_Indented)
 		{
@@ -1514,7 +1960,7 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 
 		// Display Item
@@ -1589,10 +2035,10 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display Item
 		if (spec.m_Flags & EditIVec2_Indented)
@@ -1692,13 +2138,13 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display Item
 		if (spec.m_Flags & EditIVec3_Indented)
@@ -1824,16 +2270,16 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display Item
 		if (spec.m_Flags & EditIVec4_Indented)
@@ -1984,7 +2430,7 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 
 		// Display Item
@@ -2059,10 +2505,10 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display Item
 		if (spec.m_Flags & EditVec2_Indented)
@@ -2163,13 +2609,13 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display Item
 		if (spec.m_Flags & EditVec3_Indented)
@@ -2295,23 +2741,23 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosTwo + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosThree + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour + ((spec.m_Flags & EditVec4_RGBA) ?
 				s_SecondaryTextSmallWidth - 25.0f : s_SecondaryTextSmallWidth), screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		if (spec.m_Flags & EditVec4_RGBA)
 		{
 			draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour + s_SecondaryTextSmallWidth - 23.0f, screenPosition.y),
 				ImVec2(s_WindowPosition.x + s_SecondaryTextPosFour + s_SecondaryTextSmallWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+				ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		}
 		
 
@@ -2424,14 +2870,10 @@ namespace Kargono::EditorUI
 			if (spec.m_Flags & EditVec4_RGBA)
 			{
 				ImVec4 colorPickerValue{ Utility::MathVec4ToImVec4(spec.m_CurrentVec4) };
-				ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_NoInputs |
-					ImGuiColorEditFlags_NoLabel |
-					ImGuiColorEditFlags_AlphaPreviewHalf |
-					ImGuiColorEditFlags_NoSidePreview;
 				ImGui::SetCursorPos({ s_SecondaryTextPosFour + s_SecondaryTextSmallWidth - 21.0f, yPosition + 1.0f });
-				if (ImGui::ColorEdit4(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
-					(float*)&colorPickerValue, 
-					misc_flags))
+				
+				if (DrawColorPickerButton(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
+					colorPickerValue))
 				{
 					spec.m_CurrentVec4 = Utility::ImVec4ToMathVec4(colorPickerValue);
 					if (spec.m_ConfirmAction)
@@ -2504,10 +2946,10 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextMediumWidth + 19.0f, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosMiddle - 5.0f, screenPosition.y),
 			ImVec2(s_WindowPosition.x + s_SecondaryTextPosMiddle + s_SecondaryTextMediumWidth + 19.0f, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		if (spec.m_Flags & RadioSelector_Indented)
 		{
