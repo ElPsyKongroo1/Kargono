@@ -957,6 +957,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileThreeParameters(Scenes_GetProjectComponentField, void*, uint64_t, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileFourParameters(Scenes_SetProjectComponentField, void, uint64_t, uint64_t, uint64_t, void*)
 		// User Interface
+		AddEngineFunctionToCPPFileNoParameters(RuntimeUI_ClearSelectedWidget, void)
+		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_IsUserInterfaceActiveFromHandle, bool, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_LoadUserInterfaceFromHandle, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_GetWidgetText, const std::string&, RuntimeUI::WidgetID
 		)
@@ -980,6 +982,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileEnd(ClearDebugLines)
 		AddEngineFunctionToCPPFileEnd(ClearDebugPoints)
 		AddEngineFunctionToCPPFileEnd(Application_Close)
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_ClearSelectedWidget)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt16, void, uint16_t)
 		outputStream << "{\n";
@@ -1153,6 +1156,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(BoolUInt64, bool, uint64_t)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Scenes_IsSceneActive)
+		AddEngineFunctionToCPPFileEnd(RuntimeUI_IsUserInterfaceActiveFromHandle)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolUInt16UInt16, bool, uint16_t, uint16_t)
 		outputStream << "{\n";
@@ -1491,9 +1495,11 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(GenerateRandomFloat, Utility::RandomService::GenerateRandomFloat, FloatFloatFloat)
 		// Runtime User Interface
 		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetText, RuntimeUI::RuntimeUIService::SetActiveWidgetTextByIndex, VoidUIWidgetString)
+		AddEngineFunctionPointerToDll(RuntimeUI_IsUserInterfaceActiveFromHandle, RuntimeUI::RuntimeUIService::IsUIActiveFromHandle, BoolUInt64)
 		AddEngineFunctionPointerToDll(RuntimeUI_LoadUserInterfaceFromHandle, RuntimeUI::RuntimeUIService::SetActiveUIFromHandle, VoidUInt64)
 		AddEngineFunctionPointerToDll(RuntimeUI_SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindowByIndex, VoidUIWindowBool)
 		AddEngineFunctionPointerToDll(RuntimeUI_SetSelectedWidget, RuntimeUI::RuntimeUIService::SetSelectedWidgetByIndex, VoidUIWidget)
+		AddEngineFunctionPointerToDll(RuntimeUI_ClearSelectedWidget, RuntimeUI::RuntimeUIService::ClearSelectedWidget, VoidNone)
 		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetTextColor, RuntimeUI::RuntimeUIService::SetWidgetTextColorByIndex, VoidUIWidgetVec4)
 		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColorByIndex, VoidUIWidgetVec4)
 		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectableByIndex, VoidUIWidgetBool)

@@ -838,6 +838,7 @@ namespace Kargono::RuntimeUI
 		static void SetWidgetTextColorByIndex(WidgetID widgetID, const Math::vec4& color);
 		static void SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag);
 		static void SetSelectedWidgetByIndex(WidgetID widgetID);
+		static void ClearSelectedWidget();
 		static void SetEditingWidgetByIndex(WidgetID widgetID);
 		static void SetHoveredWidgetByIndex(WidgetID widgetID);
 		static void ClearHoveredWidget();
@@ -899,6 +900,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		static void SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle);
 		static void SetActiveUIFromHandle(Assets::AssetHandle uiHandle);
+		static bool IsUIActiveFromHandle(Assets::AssetHandle uiHandle);
 		static Ref<UserInterface> GetActiveUI();
 		static Assets::AssetHandle GetActiveUIHandle();
 		static void ClearActiveUI();

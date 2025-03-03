@@ -14,6 +14,8 @@ namespace Kargono::Panels
 {
 	void ProjectPanel::InitializeStaticResources()
 	{
+		m_ProjectSettingsHeader.m_Label = Projects::ProjectService::GetActiveProjectName();
+
 		// Resolution Specification
 		m_SelectStartSceneSpec.m_Label = "Starting Scene";
 		//m_SelectStartSceneSpec.WidgetID = 0x75ebbc8750034f81;
@@ -1014,197 +1016,105 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::EndWindow();
 			return;
 		}
-		// Project Name
-		EditorUI::EditorUIService::LabeledText("Project Name", Projects::ProjectService::GetActiveProjectName());
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		// Project Settings Header
+		EditorUI::EditorUIService::PanelHeader(m_ProjectSettingsHeader);
 
-		// Project Directory
-		EditorUI::EditorUIService::LabeledText("Project Directory", Projects::ProjectService::GetActiveProjectDirectory().string());
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIService::BeginTabBar("ProjectSettingsBar");
 
-		// Select Starting Scene
-		EditorUI::EditorUIService::SelectOption(m_SelectStartSceneSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Default Fullscreen
-		m_DefaultFullscreenSpec.m_CurrentBoolean = Projects::ProjectService::GetActiveIsFullscreen();
-		EditorUI::EditorUIService::Checkbox(m_DefaultFullscreenSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Networking Checkbox
-		m_ToggleNetworkSpec.m_CurrentBoolean = Projects::ProjectService::GetActiveAppIsNetworked();
-		EditorUI::EditorUIService::Checkbox(m_ToggleNetworkSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Select Starting Game State
-		EditorUI::EditorUIService::SelectOption(m_SelectStartGameStateSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Resolution Select Option
-		EditorUI::EditorUIService::SelectOption(m_SelectResolutionSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Select On Runtime Start
-		EditorUI::EditorUIService::SelectOption(m_SelectRuntimeStartSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Select On Update User Count
-		EditorUI::EditorUIService::SelectOption(m_SelectUpdateUserCountSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Select On Approve Join Session
-		EditorUI::EditorUIService::SelectOption(m_SelectApproveJoinSessionSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Select On User Left Session
-		EditorUI::EditorUIService::SelectOption(m_SelectUserLeftSessionSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Select On Current Session Start
-		EditorUI::EditorUIService::SelectOption(m_SelectSessionInitSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Select On Connection Terminated
-		EditorUI::EditorUIService::SelectOption(m_SelectConnectionTerminatedSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Select On Update Session User Slot
-		EditorUI::EditorUIService::SelectOption(m_SelectUpdateSessionSlotSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Select On Start Session
-		EditorUI::EditorUIService::SelectOption(m_SelectStartSessionSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Select On Session Ready Check
-		EditorUI::EditorUIService::SelectOption(m_SelectSessionReadyCheckSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-		// Select On Receive Signal Function
-		EditorUI::EditorUIService::SelectOption(m_SelectReceiveSignalSpec);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
-
-
-		ImGui::TextUnformatted("App Tick Generators:");
-		ImGui::Separator();
-		// Enable Delete Option
-		static bool deleteMenuToggle = false;
-		bool deleteGenerator = false;
-		bool openGeneratorPopup = false;
-		uint64_t generatorToDelete{};
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 126.0f);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 20.0f);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconSettings->GetRendererID(), ImVec2(17, 17), 
-			ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, 0, 
-			ImVec4(0.0f, 0.0f, 0.0f, 0.0f), EditorUI::EditorUIService::s_DisabledColor))
+		if (EditorUI::EditorUIService::BeginTabItem("General"))
 		{
-			ImGui::OpenPopup("AppTickGeneratorSettings");
+			// Project Directory
+			EditorUI::EditorUIService::LabeledText("Project Directory", Projects::ProjectService::GetActiveProjectDirectory().string());
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Select Starting Scene
+			EditorUI::EditorUIService::SelectOption(m_SelectStartSceneSpec);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Networking Checkbox
+			m_ToggleNetworkSpec.m_CurrentBoolean = Projects::ProjectService::GetActiveAppIsNetworked();
+			EditorUI::EditorUIService::Checkbox(m_ToggleNetworkSpec);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Default Fullscreen
+			m_DefaultFullscreenSpec.m_CurrentBoolean = Projects::ProjectService::GetActiveIsFullscreen();
+			EditorUI::EditorUIService::Checkbox(m_DefaultFullscreenSpec);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Select Starting Game State
+			EditorUI::EditorUIService::SelectOption(m_SelectStartGameStateSpec);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Resolution Select Option
+			EditorUI::EditorUIService::SelectOption(m_SelectResolutionSpec);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			// Select On Runtime Start
+			EditorUI::EditorUIService::SelectOption(m_SelectRuntimeStartSpec);
+			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+			EditorUI::EditorUIService::EndTabItem();
 		}
-		ImGui::PopStyleColor();
 
-		if (ImGui::BeginPopup("AppTickGeneratorSettings"))
+		if (EditorUI::EditorUIService::BeginTabItem("Network"))
 		{
-			if (ImGui::Selectable("Add New Generator"))
+			EditorUI::EditorUIService::BeginTabBar("ProjectNetworkBar");
+
+			if (EditorUI::EditorUIService::BeginTabItem("Client"))
 			{
-				openGeneratorPopup = true;
-				ImGui::CloseCurrentPopup();
+				// Select On Update User Count
+				EditorUI::EditorUIService::SelectOption(m_SelectUpdateUserCountSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+				// Select On Approve Join Session
+				EditorUI::EditorUIService::SelectOption(m_SelectApproveJoinSessionSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+				// Select On User Left Session
+				EditorUI::EditorUIService::SelectOption(m_SelectUserLeftSessionSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+				// Select On Current Session Start
+				EditorUI::EditorUIService::SelectOption(m_SelectSessionInitSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+				// Select On Connection Terminated
+				EditorUI::EditorUIService::SelectOption(m_SelectConnectionTerminatedSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+				// Select On Update Session User Slot
+				EditorUI::EditorUIService::SelectOption(m_SelectUpdateSessionSlotSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+				// Select On Start Session
+				EditorUI::EditorUIService::SelectOption(m_SelectStartSessionSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+				// Select On Session Ready Check
+				EditorUI::EditorUIService::SelectOption(m_SelectSessionReadyCheckSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+				// Select On Receive Signal Function
+				EditorUI::EditorUIService::SelectOption(m_SelectReceiveSignalSpec);
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+
+				EditorUI::EditorUIService::EndTabItem();
 			}
-			if (ImGui::Selectable("Toggle Delete Option", deleteMenuToggle))
+
+			if (EditorUI::EditorUIService::BeginTabItem("Server"))
 			{
-				deleteMenuToggle = deleteMenuToggle ? false : true; // Conditional Toggles Boolean
-				ImGui::CloseCurrentPopup();
+
+				EditorUI::EditorUIService::EndTabItem();
 			}
-			ImGui::EndPopup();
+
+			EditorUI::EditorUIService::EndTabBar();
+
+
+			EditorUI::EditorUIService::EndTabItem();
 		}
 
-		static int32_t newHours {0};
-		static int32_t newMinutes {0};
-		static int32_t newSeconds {0};
-		static int32_t newMilliseconds {0};
-		if (openGeneratorPopup)
-		{
-			ImGui::OpenPopup("New App Tick Generator");
-			newHours = 0;
-			newMinutes = 0;
-			newSeconds = 0;
-			newMilliseconds = 0;
-		}
+		EditorUI::EditorUIService::EndTabBar();
 
-		if (ImGui::BeginPopup("New App Tick Generator"))
-		{
-			ImGui::DragInt("Hours", &newHours, 1, 0, 2'000'000'000);
-			ImGui::DragInt("Minutes", &newMinutes, 1, 0, 59);
-			ImGui::DragInt("Seconds", &newSeconds, 1, 0, 59);
-			ImGui::DragInt("Milliseconds", &newMilliseconds, 1, 0, 999);
-			if (ImGui::Button("Cancel"))
-			{
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Submit"))
-			{
-				auto& generators = Projects::ProjectService::GetActiveAppTickGenerators();
-
-				if (newSeconds < 0) { newSeconds = 0; }
-				if (newMinutes < 0) { newMinutes = 0; }
-				if (newHours < 0) { newHours = 0; }
-				if (newMilliseconds < 0) { newMilliseconds = 0; }
-
-				uint64_t finalMilliseconds = newMilliseconds +
-					static_cast<uint64_t>(newSeconds * 1000) +
-					static_cast<uint64_t>(newMinutes * 60'000) +
-					static_cast<uint64_t>(newHours * 3'600'000);
-
-				generators.insert(finalMilliseconds);
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}
-
-		static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-		if (ImGui::BeginTable("AppTickGeneratorTable", deleteMenuToggle ? 2 : 1, flags))
-		{
-			ImGui::TableSetupColumn("All Active Generators", ImGuiTableColumnFlags_WidthStretch);
-			if (deleteMenuToggle) { ImGui::TableSetupColumn("##", ImGuiTableColumnFlags_WidthFixed, 20.0f); }
-			ImGui::TableHeadersRow();
-
-			for (auto& generatorValue : Projects::ProjectService::GetActiveAppTickGenerators())
-			{
-				ImGui::TableNextRow();
-				ImGui::TableSetColumnIndex(0);
-				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x + 6.0f);
-				ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
-
-				std::string textOutput = "Every " + Utility::Time::GetStringFromMilliseconds(generatorValue);
-
-				ImGui::Text(textOutput.c_str());
-				if (deleteMenuToggle)
-				{
-					ImGui::SameLine();
-					ImGui::TableSetColumnIndex(1);
-					ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 3.0f);
-					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-					if (ImGui::ImageButton(("Delete Generator##AppTickGeneratorDelete" + std::to_string(generatorValue)).c_str(), (ImTextureID)(uint64_t)EditorUI::EditorUIService::s_IconDelete->GetRendererID(),
-						ImVec2(17.0f, 17.0f), ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)))
-					{
-						deleteGenerator = true;
-						generatorToDelete = generatorValue;
-					}
-					ImGui::PopStyleColor();
-				}
-
-			}
-			ImGui::EndTable();
-		}
-		if (deleteGenerator)
-		{
-			auto& generators = Projects::ProjectService::GetActiveAppTickGenerators();
-			generators.erase(generatorToDelete);
-		}
-
-		EditorUI::EditorUIService::EditText(m_CreateMessageTypePopup);
 		EditorUI::EditorUIService::GenericPopup(m_EditMessageTypePopup);
 		EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
 		

@@ -66,6 +66,9 @@ namespace Kargono::Windows
 					Network::ServerLocation::LocalMachine : Network::ServerLocation::Remote;
 				configFile.m_ValidationSecrets = (Math::u64vec4)m_ExportConfigSecrets.m_CurrentIVec4;
 
+				// Update the project config
+				Projects::ProjectService::SetServerConfig(configFile);
+
 				// Start the export process
 				Projects::ProjectService::ExportProject(m_ExportProjectLocation.m_CurrentOption, &configFile, m_ExportProjectServer.m_CurrentBoolean);
 			}
@@ -101,7 +104,7 @@ namespace Kargono::Windows
 		m_ExportConfigPort.m_Label = "Server Port";
 		m_ExportConfigPort.m_Flags |= EditorUI::EditInteger_Indented;
 		m_ExportConfigPort.m_CurrentInteger = 60'000;
-		m_ExportConfigPort.m_Bounds = { 0, 65'535 };
+		m_ExportConfigPort.m_Bounds = { 101, 65'535 };
 
 		m_ExportConfigLocation.m_Label = "Local Machine";
 		m_ExportConfigLocation.m_Flags |= EditorUI::Checkbox_Indented;

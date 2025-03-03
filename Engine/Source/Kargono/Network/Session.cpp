@@ -11,7 +11,7 @@ namespace Kargono::Network
 	{
 		KG_INFO("[SERVER]: Initializing Session...");
 
-		// Notify Clients that session initialization has started
+		// Notify clients that session initialization has started
 		Kargono::Network::Message newMessage;
 		newMessage.Header.ID = static_cast<uint32_t>(MessageType::CurrentSessionInit);
 		for (auto& [clientID, connection] : m_ConnectedClients)
@@ -19,18 +19,18 @@ namespace Kargono::Network
 			connection->SendTCPMessage(newMessage);
 		}
 
-		// Clear/Ready Cache used to hold temporary initialization data
-		m_InitCache = SessionInitCache();
+		// Clear session init state
+		m_InitState = SessionInitState();
 
 		KG_INFO("[SERVER]: Starting to determine connection latencies");
 
-		// Record Current Time for each connection and send a ping to each client
+		// Record current time for each connection and send a ping to each client
 		newMessage.Header.ID = static_cast<uint32_t>(MessageType::InitSyncPing);
 		for (auto& [clientID, connection] : m_ConnectedClients)
 		{
-			m_InitCache.LatencyCache.insert({ clientID, {} });
-			m_InitCache.LatencyCacheFilled.insert({ clientID, false });
-			m_InitCache.RecentTimePoints.insert_or_assign(clientID, std::chrono::high_resolution_clock::now());
+			m_InitState.m_LatencyCache.insert({ clientID, {} });
+			m_InitState.m_LatencyCacheFilled.insert({ clientID, false });
+			m_InitState.m_RecentTimePoints.insert_or_assign(clientID, std::chrono::high_resolution_clock::now());
 			connection->SendTCPMessage(newMessage);
 		}
 	}
@@ -39,25 +39,25 @@ namespace Kargono::Network
 	{
 		// Record Current TimePoint
 		std::chrono::steady_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
-		float durationSeconds = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - m_InitCache.RecentTimePoints.at(clientID)).count() * 0.001f * 0.001f * 0.001f;
+		float durationSeconds = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - m_InitState.m_RecentTimePoints.at(clientID)).count() * 0.001f * 0.001f * 0.001f;
 		float singleDirectionLatency = durationSeconds / 2.0f;
 
 		// Check if cache is already filled
-		if (m_InitCache.LatencyCacheFilled.at(clientID) == true)
+		if (m_InitState.m_LatencyCacheFilled.at(clientID) == true)
 		{
 			KG_ERROR("Received sync ping when cache has already been filled!");
 		}
 
 		// Insert duration into latency cache
-		m_InitCache.LatencyCache.at(clientID).push_back(singleDirectionLatency);
+		m_InitState.m_LatencyCache.at(clientID).push_back(singleDirectionLatency);
 
 		// Check if latency cache for current client is full
-		if (m_InitCache.LatencyCache.at(clientID).size() >= k_MaxSyncPings)
+		if (m_InitState.m_LatencyCache.at(clientID).size() >= k_MaxSyncPings)
 		{
-			m_InitCache.LatencyCacheFilled.insert_or_assign(clientID, true);
+			m_InitState.m_LatencyCacheFilled.insert_or_assign(clientID, true);
 
 			// Check if we are done with ping aggregation
-			for (auto& [currentClientID, isCacheFilled] : m_InitCache.LatencyCacheFilled)
+			for (auto& [currentClientID, isCacheFilled] : m_InitState.m_LatencyCacheFilled)
 			{
 				UNREFERENCED_PARAMETER(currentClientID);
 				if (isCacheFilled == false) 
@@ -74,7 +74,7 @@ namespace Kargono::Network
 		// If Cache is not filled yet, send another sync ping
 		Kargono::Network::Message newMessage;
 		newMessage.Header.ID = static_cast<uint32_t>(MessageType::InitSyncPing);
-		m_InitCache.RecentTimePoints.insert_or_assign(clientID, std::chrono::high_resolution_clock::now());
+		m_InitState.m_RecentTimePoints.insert_or_assign(clientID, std::chrono::high_resolution_clock::now());
 		m_ConnectedClients.at(clientID)->SendTCPMessage(newMessage);
 	}
 
@@ -83,7 +83,7 @@ namespace Kargono::Network
 		// Used for ending calculations
 		std::vector<float> allLatencies{};
 
-		for (auto& [clientID, latencies] : m_InitCache.LatencyCache)
+		for (auto& [clientID, latencies] : m_InitState.m_LatencyCache)
 		{
 			// Calculate current mean
 			float meanLatency{ 0 };
@@ -215,7 +215,7 @@ namespace Kargono::Network
 		// Session already contains client, this is an error
 		if (m_ConnectedClients.contains(newClient->GetID()))
 		{
-			KG_ERROR("Attempt to add client to session that already contains client ID!");
+			KG_WARN("Attempt to add client to session that already contains client ID!");
 			return 0xFFFF;
 		}
 

@@ -15,11 +15,11 @@ namespace Kargono::Network
 	class Server;
 	class ServerTCPConnection;
 
-	struct SessionInitCache
+	struct SessionInitState
 	{
-		std::unordered_map<uint32_t, std::vector<float>> LatencyCache {};
-		std::unordered_map<uint32_t, bool> LatencyCacheFilled {};
-		std::unordered_map<uint32_t, std::chrono::time_point<std::chrono::high_resolution_clock>> RecentTimePoints {};
+		std::unordered_map<uint32_t, std::vector<float>> m_LatencyCache {};
+		std::unordered_map<uint32_t, bool> m_LatencyCacheFilled {};
+		std::unordered_map<uint32_t, std::chrono::time_point<std::chrono::high_resolution_clock>> m_RecentTimePoints {};
 	};
 
 	//==============================
@@ -68,7 +68,7 @@ namespace Kargono::Network
 		std::unordered_set<uint32_t> m_ReadyCheck{};
 		bool m_UseReadyCheck{false};
 		std::vector<uint16_t> m_EmptySlots{};
-		SessionInitCache m_InitCache {};
+		SessionInitState m_InitState {};
 		uint64_t m_SessionStartFrame{ 0 };
 	};
 }

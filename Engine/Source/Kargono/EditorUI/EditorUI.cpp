@@ -3326,22 +3326,25 @@ namespace Kargono::EditorUI
 		ImGui::PopStyleColor();
 		ImGui::PopFont();
 
-		ImGui::SameLine();
-		CreateButton(spec.m_WidgetID, [&]()
+		if (spec.m_SelectionsList.size() > 0)
 		{
-			ImGui::OpenPopup(id);
-		}, s_MediumOptionsButton, false, s_DisabledColor);
-		
-		if (ImGui::BeginPopup(id))
-		{
-			for (auto& [label, func] : spec.GetSelectionList())
-			{
-				if (ImGui::Selectable((label.c_str() + id).c_str()))
+			ImGui::SameLine();
+			CreateButton(spec.m_WidgetID, [&]()
 				{
-					func();
+					ImGui::OpenPopup(id);
+				}, s_MediumOptionsButton, false, s_DisabledColor);
+
+			if (ImGui::BeginPopup(id))
+			{
+				for (auto& [label, func] : spec.GetSelectionList())
+				{
+					if (ImGui::Selectable((label.c_str() + id).c_str()))
+					{
+						func();
+					}
 				}
+				ImGui::EndPopup();
 			}
-			ImGui::EndPopup();
 		}
 		ImGui::Separator(1.0f, s_HighlightColor1_Thin);
 		Spacing(0.2f);

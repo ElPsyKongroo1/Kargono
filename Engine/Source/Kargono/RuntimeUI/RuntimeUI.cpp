@@ -576,6 +576,17 @@ namespace Kargono::RuntimeUI
 		SetActiveUI(uiReference, uiHandle);
 	}
 
+	bool RuntimeUI::RuntimeUIService::IsUIActiveFromHandle(Assets::AssetHandle uiHandle)
+	{
+		// Ensure an invalid state is not presented
+		if (uiHandle == Assets::EmptyHandle || !s_RuntimeUIContext->m_ActiveUI)
+		{
+			return false;
+		}
+
+		return s_RuntimeUIContext->m_ActiveUIHandle == uiHandle;
+	}
+
 	bool RuntimeUIService::DeleteActiveUIWindow(int32_t windowID)
 	{
 		// Get the window location
@@ -1894,6 +1905,15 @@ namespace Kargono::RuntimeUI
 		Ref<Widget> currentWidget = GetWidgetFromID(widgetID.m_WidgetID);
 
 		SetSelectedWidgetInternal(currentWidget);
+	}
+
+	void RuntimeUI::RuntimeUIService::ClearSelectedWidget()
+	{
+		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		KG_ASSERT(activeUI);
+
+		// Set the new widget as selected and set it's color to the active color
+		activeUI->m_SelectedWidget = nullptr;
 	}
 
 	void RuntimeUIService::SetEditingWidgetByIndex(WidgetID widgetID)

@@ -150,6 +150,7 @@ namespace Kargono::Utility
 		case Scripting::ScriptTokenType::LessThanOrEqual: return "Less Than Or Equal";
 		case Scripting::ScriptTokenType::ConditionalOperator: return "Conditional Operator";
 		case Scripting::ScriptTokenType::PrecedenceOperator: return "Precedence Operator";
+		case Scripting::ScriptTokenType::NegationOperator: return "Negation Operator";
 
 		case Scripting::ScriptTokenType::SingleLineComment: return "Single Line Comment";
 		case Scripting::ScriptTokenType::MultiLineComment: return "Multi Line Comment";
@@ -158,7 +159,7 @@ namespace Kargono::Utility
 		default:
 		{
 			KG_CRITICAL("Unknown Type of ScriptTokenType.");
-			return {};
+			return "";
 
 		}
 		}
@@ -249,7 +250,7 @@ namespace Kargono::Scripting
 	{
 		ScriptToken Operator{};
 		ScriptToken ReturnType{};
-		ScriptToken Operand{};
+		Ref<Expression> Operand{};
 	};
 
 	struct BinaryOperationNode

@@ -490,6 +490,17 @@ namespace Kargono::Projects
 			s_ActiveProject->m_ServerConfig.m_ValidationSecrets.w = newSecret;
 		}
 
+		static Network::ServerConfig GetServerConfig()
+		{
+			KG_ASSERT(s_ActiveProject);
+			return s_ActiveProject->m_ServerConfig;
+		}
+		static void SetServerConfig(const Network::ServerConfig& config)
+		{
+			KG_ASSERT(s_ActiveProject);
+			s_ActiveProject->m_ServerConfig = config;
+		}
+
 		// This function returns the currently active project held in s_ActiveProject.
 		static Ref<Project> GetActive()
 		{

@@ -1993,7 +1993,25 @@ namespace Kargono::Scripting
 		};
 
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
 
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "IsUIActive" };
+		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
+		newParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "user_interface" });
+		newParameter.Identifier = { ScriptTokenType::Identifier, "userInterface" };
+		newFunctionNode.Parameters.push_back(newParameter);
+		newParameter = {};
+		newFunctionNode.Description = "This function indicates whether the provided UI is currently active. This function takes a reference to the UI and returns a bool.";
+		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
+		{
+			UNREFERENCED_PARAMETER(generator);
+			node.Namespace = {};
+			node.Identifier.Value = "RuntimeUI_IsUserInterfaceActiveFromHandle";
+
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2119,6 +2137,20 @@ namespace Kargono::Scripting
 			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
 			node.Identifier.Value = "RuntimeUI_SetWidgetBackgroundColor";
+		};
+		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		newFunctionNode = {};
+		newParameter = {};
+
+		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
+		newFunctionNode.Name = { ScriptTokenType::Identifier, "ClearSelectedWidget" };
+		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
+		newFunctionNode.Description = "Clear the active UI's selected widget";
+		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
+		{
+			UNREFERENCED_PARAMETER(generator);
+			node.Namespace = {};
+			node.Identifier.Value = "RuntimeUI_ClearSelectedWidget";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};

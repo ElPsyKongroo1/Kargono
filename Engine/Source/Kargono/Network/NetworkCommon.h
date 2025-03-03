@@ -175,7 +175,7 @@ namespace Kargono::Network
 		TSQueue<owned_message> IncomingMessagesQueue;
 	};
 
-	static inline constexpr uint64_t k_KeepAliveDelay{ 10'000 };
+	inline static constexpr uint64_t k_KeepAliveDelay{ 10'000 };
 	inline static constexpr uint16_t k_MaxSyncPings = 10;
 	inline static constexpr uint16_t k_InvalidSessionSlot = std::numeric_limits<uint16_t>::max();
 	// TODO: VERY TEMPORARY. Only for pong!!!!
@@ -192,8 +192,8 @@ namespace Kargono::Network
 	struct ServerConfig
 	{
 		Math::u8vec4 m_IPv4{0};
-		uint16_t m_Port{ 0 };
-		ServerLocation m_ServerLocation{ServerLocation::None};
+		uint16_t m_Port{ 101 };
+		ServerLocation m_ServerLocation{ServerLocation::LocalMachine};
 		Math::u64vec4 m_ValidationSecrets{0};
 	};
 }

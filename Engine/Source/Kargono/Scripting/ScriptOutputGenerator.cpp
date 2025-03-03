@@ -285,7 +285,8 @@ namespace Kargono::Scripting
 		}
 		else if (UnaryOperationNode* unaryOperationNode = std::get_if<UnaryOperationNode>(&expression->Value))
 		{
-			m_OutputText << unaryOperationNode->Operator.Value << unaryOperationNode->Operand.Value;
+			m_OutputText << unaryOperationNode->Operator.Value;
+			GenerateExpression(unaryOperationNode->Operand);
 		}
 		else if (BinaryOperationNode* binaryOperationNode = std::get_if<BinaryOperationNode>(&expression->Value))
 		{

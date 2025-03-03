@@ -100,7 +100,7 @@ namespace Kargono::Utility
 		{
 			KG_INFO("{}Expression Unary Operation", GetIndentation(indentation));
 			KG_INFO("{}Operand", GetIndentation(indentation + 1));
-			PrintToken(unaryOperationExpression->Operand, indentation + 2);
+			PrintExpression(unaryOperationExpression->Operand, indentation + 2);
 			KG_INFO("{}Operator", GetIndentation(indentation + 1));
 			PrintToken(unaryOperationExpression->Operator, indentation + 2);
 			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
@@ -1384,6 +1384,7 @@ namespace Kargono::Scripting
 	{
 		Ref<Expression> newExpression{ CreateRef<Expression>() };
 		UnaryOperationNode newUnaryOperation{};
+		uint32_t currentLocation = parentExpressionSize;
 
 		// Check for operator
 		if (!ScriptCompilerService::IsUnaryOperator(GetCurrentToken(parentExpressionSize)))
@@ -1392,31 +1393,55 @@ namespace Kargono::Scripting
 		}
 		newUnaryOperation.Operator = GetCurrentToken(parentExpressionSize);
 
+		currentLocation++;
+
 		// Check for operand
 		if (!ScriptCompilerService::IsLiteralOrIdentifier(GetCurrentToken(parentExpressionSize + 1)))
 		{
 			return { false, {} };
 		}
-		newUnaryOperation.Operand = GetCurrentToken(parentExpressionSize + 1);
+
+		// Parse for operand expression
+		auto [success, expression] = ParseExpressionNode(currentLocation);
+		if (success)
+		{
+			newUnaryOperation.Operand = expression;
+			if (IsContextProbe(expression))
+			{
+				// Store context probe for argument
+				CursorContext newContext;
+				newContext.StackVariables = m_StackVariables;
+				newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
+				m_CursorContext = newContext;
+				StoreParseError(ParseErrorType::ContextProbe, "Found context probe when parsing a unary operator expression", GetCurrentToken(newUnaryOperation.Operator));
+				return { false, {} };
+			}
+		}
+
+		if (CheckForErrors())
+		{
+			StoreParseError(ParseErrorType::Expression, "Could not locate a unary expression operand", GetCurrentToken(currentLocation));
+			return { false, {} };
+		}
 
 		// Fill return value
 		if (newUnaryOperation.Operator.Type == ScriptTokenType::NegationOperator)
 		{
-			if (GetPrimitiveTypeFromToken(newUnaryOperation.Operand).Value != "bool")
+			if (GetPrimitiveTypeFromToken(newUnaryOperation.Operand->GetReturnType()).Value != "bool")
 			{
-				StoreParseError(ParseErrorType::Expression, "Expecting a bool type for negation operator", newUnaryOperation.Operand);
+				StoreParseError(ParseErrorType::Expression, "Expecting a bool type for negation operator", newUnaryOperation.Operand->GetReturnType());
 				return { false, {} };
 			}
 			newUnaryOperation.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		}
 		else
 		{
-			newUnaryOperation.ReturnType = GetPrimitiveTypeFromToken(newUnaryOperation.Operand);
+			newUnaryOperation.ReturnType = GetPrimitiveTypeFromToken(newUnaryOperation.Operand->GetReturnType());
 		}
 
 		// Fill the expression buffer and exit
 		newExpression->Value = newUnaryOperation;
-		parentExpressionSize += 2;
+		parentExpressionSize = currentLocation;
 		return { true, newExpression };
 	}
 	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionInitializationList(uint32_t& parentExpressionSize)
