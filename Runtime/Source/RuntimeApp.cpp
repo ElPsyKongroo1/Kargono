@@ -198,8 +198,8 @@ namespace Kargono
 		bool handled = false;
 		switch (event->GetEventType())
 		{
-		case Events::EventType::UpdateOnlineUsers:
-			handled = OnUpdateUserCount(*(Events::UpdateOnlineUsers*)event);
+		case Events::EventType::ReceiveOnlineUsers:
+			handled = OnUpdateUserCount(*(Events::ReceiveOnlineUsers*)event);
 			break;
 		case Events::EventType::ApproveJoinSession:
 			handled = OnApproveJoinSession(*(Events::ApproveJoinSession*)event);
@@ -466,7 +466,7 @@ namespace Kargono
 		}
 	}
 
-	bool RuntimeApp::OnUpdateUserCount(Events::UpdateOnlineUsers event)
+	bool RuntimeApp::OnUpdateUserCount(Events::ReceiveOnlineUsers event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCountHandle();
 		if (scriptHandle != Assets::EmptyHandle)

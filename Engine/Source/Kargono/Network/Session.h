@@ -22,6 +22,12 @@ namespace Kargono::Network
 		std::unordered_map<uint32_t, std::chrono::time_point<std::chrono::high_resolution_clock>> m_RecentTimePoints {};
 	};
 
+	struct ReadyCheckData
+	{
+		bool m_Active{ false };
+		std::unordered_set<uint32_t> m_ReadyClients{};
+	};
+
 	//==============================
 	// Session Class
 	//==============================
@@ -40,11 +46,17 @@ namespace Kargono::Network
 		//==============================
 		void ReceiveSyncPing(uint32_t clientID);
 
+		
+	public:
 		//==============================
 		// Ready Check Process
 		//==============================
 		void StoreClientReadyCheck(uint32_t clientID);
-
+		float CalculateLongestLatency();
+	private:
+		void ResetReadyCheck();
+		
+	public:
 		//==============================
 		// Manage Clients
 		//==============================
@@ -54,8 +66,8 @@ namespace Kargono::Network
 		//==============================
 		// Getter/Setters
 		//==============================
-		uint32_t GetClientCount() const { return static_cast<uint32_t>(m_ConnectedClients.size()); }
-		void EnableReadyCheck() { m_UseReadyCheck = true; }
+		uint32_t GetClientCount() const { return (uint32_t)m_ConnectedClients.size(); }
+		void EnableReadyCheck() { m_ReadyCheckData.m_Active = true; }
 		void SetSessionStartFrame(uint64_t frame) { m_SessionStartFrame = frame; }
 		uint64_t GetSessionStartFrame() const { return m_SessionStartFrame; }
 		std::unordered_map<uint32_t, ServerTCPConnection*>& GetAllClients() { return m_ConnectedClients; }
@@ -65,9 +77,8 @@ namespace Kargono::Network
 		uint16_t m_SlotMax{0};
 		std::unordered_map<uint32_t, ServerTCPConnection*> m_ConnectedClients {};
 		std::unordered_map<uint16_t, uint32_t> m_SessionSlots{};
-		std::unordered_set<uint32_t> m_ReadyCheck{};
-		bool m_UseReadyCheck{false};
 		std::vector<uint16_t> m_EmptySlots{};
+		ReadyCheckData m_ReadyCheckData;
 		SessionInitState m_InitState {};
 		uint64_t m_SessionStartFrame{ 0 };
 	};

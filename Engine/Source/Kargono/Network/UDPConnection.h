@@ -19,7 +19,7 @@ namespace Kargono::Network
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		void Start();
+		void StartReadingMessages();
 		void Stop();
 
 		//==============================

@@ -8,8 +8,7 @@
 
 namespace Kargono::Network
 {
-	constexpr uint64_t k_MaxBufferSize{ sizeof(uint8_t) * 1024 * 1024 * 10 }; // 5MB
-
+	constexpr uint64_t k_MaxBufferSize{ sizeof(uint8_t) * 1024 * 1024 * 10 }; // 10MB
 
 	TCPConnection::TCPConnection(NetworkContext* networkContext, asio::ip::tcp::socket&& socket)
 		: m_NetworkContextPtr(networkContext), m_TCPSocket(std::move(socket))
@@ -17,21 +16,21 @@ namespace Kargono::Network
 	}
 	void TCPConnection::NetworkThreadWakeUp()
 	{
-		std::unique_lock<std::mutex> lock(m_NetworkContextPtr->BlockThreadMutex);
-		m_NetworkContextPtr->BlockThreadCondVar.notify_one();
+		std::unique_lock<std::mutex> lock(m_NetworkContextPtr->m_BlockNetworkThreadMutex);
+		m_NetworkContextPtr->m_BlockNetworkThreadCondVar.notify_one();
 	}
 	void TCPConnection::NetworkThreadSleep()
 	{
-		std::unique_lock<std::mutex> lock(m_NetworkContextPtr->BlockThreadMutex);
-		m_NetworkContextPtr->BlockThreadCondVar.wait(lock);
+		std::unique_lock<std::mutex> lock(m_NetworkContextPtr->m_BlockNetworkThreadMutex);
+		m_NetworkContextPtr->m_BlockNetworkThreadCondVar.wait(lock);
 	}
 	void TCPConnection::SendTCPMessage(const Message& msg)
 	{
-		asio::post(m_NetworkContextPtr->AsioContext, [this, msg]()
+		asio::post(m_NetworkContextPtr->m_AsioContext, [this, msg]()
 		{
-			bool bWritingMessage = !m_OutgoingMessageQueue.IsEmpty();
+			bool writingMessage = !m_OutgoingMessageQueue.IsEmpty();
 			m_OutgoingMessageQueue.PushBack(msg);
-			if (!bWritingMessage)
+			if (!writingMessage)
 			{
 				WriteMessageHeaderAsync();
 			}
@@ -39,7 +38,7 @@ namespace Kargono::Network
 	}
 	void TCPConnection::ReadMessageHeaderAsync()
 	{
-		asio::async_read(m_TCPSocket, asio::buffer(&m_MessageCache.Header, sizeof(MessageHeader)),
+		asio::async_read(m_TCPSocket, asio::buffer(&m_MessageCache.m_Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
 			{
 				UNREFERENCED_PARAMETER(length);
@@ -50,15 +49,15 @@ namespace Kargono::Network
 					return;
 				}
 
-				if (m_MessageCache.Header.PayloadSize > 0)
+				if (m_MessageCache.m_Header.m_PayloadSize > 0)
 				{
-					if (m_MessageCache.Header.PayloadSize > k_MaxBufferSize)
+					if (m_MessageCache.m_Header.m_PayloadSize > k_MaxBufferSize)
 					{
 						KG_WARN("Payload sent that is too large. Malformed message!");
 						Disconnect();
 						return;
 					}
-					m_MessageCache.Payload.resize(m_MessageCache.Header.PayloadSize);
+					m_MessageCache.m_PayloadData.resize(m_MessageCache.m_Header.m_PayloadSize);
 					ReadMessagePayloadAsync();
 				}
 				else
@@ -69,7 +68,7 @@ namespace Kargono::Network
 	}
 	void TCPConnection::ReadMessagePayloadAsync()
 	{
-		asio::async_read(m_TCPSocket, asio::buffer(m_MessageCache.Payload.data(), m_MessageCache.Payload.size()),
+		asio::async_read(m_TCPSocket, asio::buffer(m_MessageCache.m_PayloadData.data(), m_MessageCache.m_PayloadData.size()),
 			[this](std::error_code ec, std::size_t length)
 			{
 				UNREFERENCED_PARAMETER(length);
@@ -85,7 +84,7 @@ namespace Kargono::Network
 	}
 	void TCPConnection::WriteMessageHeaderAsync()
 	{
-		asio::async_write(m_TCPSocket, asio::buffer(&m_OutgoingMessageQueue.GetFront().Header, sizeof(MessageHeader)),
+		asio::async_write(m_TCPSocket, asio::buffer(&m_OutgoingMessageQueue.GetFront().m_Header, sizeof(MessageHeader)),
 			[this](std::error_code ec, std::size_t length)
 			{
 				UNREFERENCED_PARAMETER(length);
@@ -96,9 +95,9 @@ namespace Kargono::Network
 					return;
 				}
 
-				if (m_OutgoingMessageQueue.GetFront().Payload.size() > 0)
+				if (m_OutgoingMessageQueue.GetFront().m_PayloadData.size() > 0)
 				{
-					if (m_OutgoingMessageQueue.GetFront().Payload.size() > k_MaxBufferSize)
+					if (m_OutgoingMessageQueue.GetFront().m_PayloadData.size() > k_MaxBufferSize)
 					{
 						KG_WARN("Attempt to send message that is larger than maximum buffer size!");
 						Disconnect();
@@ -120,7 +119,7 @@ namespace Kargono::Network
 	}
 	void TCPConnection::WriteMessagePayloadAsync()
 	{
-		asio::async_write(m_TCPSocket, asio::buffer(m_OutgoingMessageQueue.GetFront().Payload.data(), m_OutgoingMessageQueue.GetFront().Payload.size()),
+		asio::async_write(m_TCPSocket, asio::buffer(m_OutgoingMessageQueue.GetFront().m_PayloadData.data(), m_OutgoingMessageQueue.GetFront().m_PayloadData.size()),
 			[this](std::error_code ec, std::size_t length)
 			{
 				UNREFERENCED_PARAMETER(length);

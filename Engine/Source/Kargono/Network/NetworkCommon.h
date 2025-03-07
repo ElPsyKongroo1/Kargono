@@ -15,45 +15,52 @@
 
 namespace Kargono::Network
 {
+
 	//==============================
 	// Message Type
 	//==============================
 	enum class MessageType : uint32_t
 	{
-		AcceptConnection = 0,
-		DenyConnection,
-		ServerPing,
-		MessageAll,
-		ServerMessage,
-		ClientChat,
-		ServerChat,
-		KeepAlive,
-		UDPInit,
+		// Manage client <-> server connnection
+		ManageConnection_AcceptConnection = 0,
+		ManageConnection_DenyConnection,
+		ManageConnection_CheckUDPConnection,
+		ManageConnection_KeepAlive,
+		ManageConnection_ServerPing,
 
-		RequestUserCount,
-		UpdateUserCount,
-		UpdateSessionUserSlot,
-		LeaveCurrentSession,
-		UserLeftSession,
+		// Generic messaging API
+		GenericMessage_MessageAllClients,
+		GenericMessage_ServerMessage,
+		GenericMessage_ClientChat,
+		GenericMessage_ServerChat,
 
-		// Session Messages
-		RequestJoinSession,
-		ApproveJoinSession,
-		DenyJoinSession,
-		CurrentSessionInit,
-		StartSession,
-		InitSyncPing,
-		SessionReadyCheck,
-		SessionReadyCheckConfirm,
-		EnableReadyCheck,
+		// Query the active server state
+		ServerQuery_RequestClientCount,
+		ServerQuery_ReceiveClientCount,
 
-		// Entity Updates
-		SendAllEntityLocation,
-		UpdateEntityLocation,
-		SendAllEntityPhysics,
-		UpdateEntityPhysics,
-		SignalAll,
-		ReceiveSignal
+		// Session messages
+		ManageSession_UpdateClientSlot,
+		ManageSession_NotifyAllLeave,
+		ManageSession_ClientLeft,
+		ManageSession_RequestClientJoin,
+		ManageSession_ApproveClientJoin,
+		ManageSession_DenyClientJoin,
+		ManageSession_StartSession,
+		ManageSession_Init,
+		ManageSession_SyncPing,
+		ManageSession_StartReadyCheck,
+		ManageSession_ConfirmReadyCheck,
+		ManageSession_EnableReadyCheck,
+
+		// Entity updates
+		ManageSceneEntity_SendAllClientsLocation,
+		ManageSceneEntity_UpdateLocation,
+		ManageSceneEntity_SendAllClientsPhysics,
+		ManageSceneEntity_UpdatePhysics,
+
+		// Script communication
+		ScriptMessaging_SendAllClientsSignal,
+		ScriptMessaging_ReceiveSignal
 	};
 
 	class ServerTCPConnection;
@@ -63,8 +70,8 @@ namespace Kargono::Network
 	//==============================
 	struct MessageHeader
 	{
-		uint32_t ID{};
-		uint64_t PayloadSize{ 0 };
+		MessageType m_MessageType{};
+		uint64_t m_PayloadSize{ 0 };
 	};
 
 	//==============================
@@ -72,14 +79,17 @@ namespace Kargono::Network
 	//==============================
 	struct Message
 	{
-		MessageHeader Header{};
-		std::vector<uint8_t> Payload;
+		//==============================
+		// Fields
+		//==============================
+		MessageHeader m_Header{};
+		std::vector<uint8_t> m_PayloadData;
 
 		//==============================
 		// Modify Message Data
 		//==============================
 		// Replace payload data with provided buffer data
-		void StorePayload(void* buffer, uint64_t size);
+		void AppendPayload(void* buffer, uint64_t size);
 		// Push provided data onto the end of the message's payload
 		template <typename DataType>
 		friend Message& operator << (Message& msg, const DataType& data);
@@ -93,9 +103,9 @@ namespace Kargono::Network
 		// Return size of Payload + Header
 		size_t GetEntireMessageSize() const;
 		// Returns pointer to start of payload
-		void* GetPayloadPointer() { return (void*)Payload.data(); }
+		void* GetPayloadPointer() { return (void*)m_PayloadData.data(); }
 		// Returns size of payload in bytes
-		uint64_t GetPayloadSize() { return Header.PayloadSize; }
+		uint64_t GetPayloadSize() { return m_Header.m_PayloadSize; }
 		// Return copy internal buffer
 		std::vector<uint8_t> GetPayloadCopy(uint64_t size);
 
@@ -104,16 +114,16 @@ namespace Kargono::Network
 	//============================================================
 	// Owned Message Struct
 	//============================================================
-	struct owned_message
+	struct OwnedMessage
 	{
-		ServerTCPConnection* remote = nullptr;
-		Message msg;
+		ServerTCPConnection* m_RemoteConnection{ nullptr };
+		Message m_Message;
 	};
 
 	struct LabeledMessage
 	{
-		asio::ip::udp::endpoint& endpoint;
-		Message msg;
+		asio::ip::udp::endpoint& m_OutgoingEndpoint;
+		Message m_Message;
 	};
 
 	//==============================
@@ -126,16 +136,16 @@ namespace Kargono::Network
 		static_assert(std::is_standard_layout_v<DataType>, "Data is too complex");
 
 		// Cache current size of vector, as this will be the point we insert the data
-		size_t currentBufferSize = msg.Payload.size();
+		size_t currentBufferSize = msg.m_PayloadData.size();
 
 		// Resize the vector to contain the new data being added
-		msg.Payload.resize(msg.Payload.size() + sizeof(DataType));
+		msg.m_PayloadData.resize(msg.m_PayloadData.size() + sizeof(DataType));
 
 		// Copy the data over
-		std::memcpy(msg.Payload.data() + currentBufferSize, &data, sizeof(DataType));
+		std::memcpy(msg.m_PayloadData.data() + currentBufferSize, &data, sizeof(DataType));
 
 		// Update message header size
-		msg.Header.PayloadSize = static_cast<uint32_t>(msg.Payload.size());
+		msg.m_Header.m_PayloadSize = static_cast<uint32_t>(msg.m_PayloadData.size());
 
 		return msg;
 	}
@@ -147,16 +157,16 @@ namespace Kargono::Network
 		static_assert(std::is_standard_layout<DataType>::value, "Data is too complex");
 
 		// Cache current size of vector, as this will be the point we insert the data
-		size_t bufferSizeAfterRemoval = msg.Payload.size() - sizeof(DataType);
+		size_t bufferSizeAfterRemoval = msg.m_PayloadData.size() - sizeof(DataType);
 
 		// Copy the data over
-		std::memcpy((void*)&data, msg.Payload.data() + bufferSizeAfterRemoval, sizeof(DataType));
+		std::memcpy((void*)&data, msg.m_PayloadData.data() + bufferSizeAfterRemoval, sizeof(DataType));
 
 		// Shrink the vector to remove the read bytes
-		msg.Payload.resize(bufferSizeAfterRemoval);
+		msg.m_PayloadData.resize(bufferSizeAfterRemoval);
 
 		// Update message header size
-		msg.Header.PayloadSize = static_cast<uint32_t>(msg.GetEntireMessageSize());
+		msg.m_Header.m_PayloadSize = static_cast<uint32_t>(msg.GetEntireMessageSize());
 
 		return msg;
 	}
@@ -164,22 +174,23 @@ namespace Kargono::Network
 	struct NetworkContext
 	{
 		// Asio context and accompanying thread
-		asio::io_context AsioContext;
-		std::thread AsioThread;
+		asio::io_context m_AsioContext;
+		std::thread m_AsioThread;
 		// Network thread and supporting mutex/condition_variable
-		Ref<std::thread> NetworkThread { nullptr };
-		std::condition_variable BlockThreadCondVar {};
-		std::mutex BlockThreadMutex {};
-		std::atomic<bool> Quit { false };
-		// Only incoming message queue
-		TSQueue<owned_message> IncomingMessagesQueue;
+		Ref<std::thread> m_NetworkThread { nullptr };
+		std::condition_variable m_BlockNetworkThreadCondVar {};
+		std::mutex m_BlockNetworkThreadMutex {};
+		std::atomic<bool> m_QuitNetworkThread { false };
+		// Singular incoming message queue
+		TSQueue<OwnedMessage> m_IncomingMessageQueue;
 	};
 
-	inline static constexpr uint64_t k_KeepAliveDelay{ 10'000 };
-	inline static constexpr uint16_t k_MaxSyncPings = 10;
-	inline static constexpr uint16_t k_InvalidSessionSlot = std::numeric_limits<uint16_t>::max();
+	constexpr uint64_t k_KeepAliveDelay{ 10'000 };
+	constexpr uint16_t k_MaxSyncPings = 10;
+	constexpr uint16_t k_InvalidSessionSlot = std::numeric_limits<uint16_t>::max();
+	constexpr size_t k_MaxMessageCount = std::numeric_limits<size_t>::max();
 	// TODO: VERY TEMPORARY. Only for pong!!!!
-	inline static constexpr uint32_t k_MaxSessionClients {2};
+	constexpr uint32_t k_MaxSessionClients {2};
 
 	enum class ServerLocation
 	{
@@ -209,7 +220,7 @@ namespace Kargono::Utility
 		case Network::ServerLocation::Remote: return "Remote";
 		case Network::ServerLocation::None: return "None";
 		}
-		KG_ERROR("Unknown Type of Server Location.");
+		KG_ERROR("Unknown type of server-location enum");
 		return "";
 	}
 
@@ -220,7 +231,7 @@ namespace Kargono::Utility
 		if (type == "Remote") { return Network::ServerLocation::Remote; }
 		if (type == "None") { return Network::ServerLocation::None; }
 
-		KG_ERROR("Unknown Type of Server Location String.");
+		KG_ERROR("Unknown type of server-location string");
 		return Network::ServerLocation::None;
 	}
 

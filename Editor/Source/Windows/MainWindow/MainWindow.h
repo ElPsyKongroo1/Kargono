@@ -66,7 +66,7 @@ namespace Kargono::Windows
 		void OnEditorUIRender();
 		bool OnApplicationResize(Events::ApplicationResizeEvent event);
 		bool OnApplicationClose(Events::ApplicationCloseEvent event);
-		bool OnUpdateUserCount(Events::UpdateOnlineUsers event);
+		bool OnUpdateUserCount(Events::ReceiveOnlineUsers event);
 		bool OnApproveJoinSession(Events::ApproveJoinSession event);
 		bool OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event);
 		bool OnUserLeftSession(Events::UserLeftSession event);

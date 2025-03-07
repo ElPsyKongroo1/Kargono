@@ -11,6 +11,9 @@ namespace Kargono::Network
 	class NetworkTools
 	{
 	public:
+		//==============================
+		// Manage Config File
+		//==============================
 		static std::string CreateServerVariablesConfigFile(const Network::ServerConfig& config);
 	};
 }

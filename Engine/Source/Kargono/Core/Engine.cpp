@@ -340,7 +340,7 @@ namespace Kargono
 
 	bool EngineService::OnAppTickEvent(Events::AppTickEvent& e)
 	{
-		Network::ClientService::SubmitToEventQueue(CreateRef<Events::AppTickEvent>(e));
+		Network::ClientService::SubmitToNetworkEventQueue(CreateRef<Events::AppTickEvent>(e));
 		return false;
 	}
 

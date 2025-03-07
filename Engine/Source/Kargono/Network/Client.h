@@ -90,26 +90,61 @@ namespace Kargono::Network
 		//==============================
 		// Manage Connection to Server
 		//==============================
-		bool ConnectToServer(const std::string& serverIP, const uint16_t serverPort, bool remote = false);
+		bool ConnectToServer(const std::string& serverIP, uint16_t serverPort, bool remote = false);
 		void DisconnectFromServer();
-		bool IsConnected();
+		bool IsConnectedToServer();
 
+	private:
+		bool ResolveLocalTCPEndpoint(asio::ip::tcp::socket& localSocket, uint16_t serverPort);
+	public:
 		//==============================
 		// Receive Messages from Server
 		//==============================
-		void CheckForMessages(size_t nMaxMessages = -1);
-		void OpenMessageFromServer(Kargono::Network::Message& msg);
+		// Get messages from the server
+		void CheckMessagesFromServer(size_t maxMessages = k_MaxMessageCount);
+		void OpenMessageFromServer(Message& msg);
+		// All specific message type handlers
+		void OpenAcceptConnectionMessage(Message& msg);
+		void OpenReceiveUserCountMessage(Message& msg);
+		void OpenServerChatMessage(Message& msg);
+		void OpenApproveJoinSessionMessage(Message& msg);
+		void OpenUpdateSessionUserSlotMessage(Message& msg);
+		void OpenUserLeftSessionMessage(Message& msg);
+		void OpenDenyJoinSessionMessage(Message& msg);
+		void OpenCurrentSessionInitMessage(Message& msg);
+		void OpenInitSyncPingMessage(Message& msg);
+		void OpenStartSessionMessage(Message& msg);
+		void OpenSessionReadyCheckConfirmMessage(Message& msg);
+		void OpenUpdateEntityLocationMessage(Message& msg);
+		void OpenUpdateEntityPhysicsMessage(Message& msg);
+		void OpenReceiveSignalMessage(Message& msg);
+		void OpenKeepAliveMessage(Message& msg);
+		void OpenUDPInitMessage(Message& msg);
 
 		//==============================
 		// Send Messages to Server
 		//==============================
-		void SendTCP(const Message& msg);
-		void SendUDP(Message& msg);
-		void SendChat(const std::string& text);
+		// Send message to the server
+		void SendTCPToServer(const Message& msg);
+		void SendUDPToServer(Message& msg);
+		void SendChatToServer(const std::string& text);
+		// All specific message handlers
+		void SendRequestUserCountMessage();
+		void SendAllEntityLocation(Events::SendAllEntityLocation& event);
+		void SendInitSyncPingMessage();
+		void SendRequestJoinSessionMessage();
+		void SendEnableReadyCheckMessage();
+		void SendSessionReadyCheckMessage();
+		void SendAllClientsSignalMessage(Events::SignalAll& event);
+		void SendKeepAliveMessage();
+		void SendAllEntityPhysicsMessage(Events::SendAllEntityPhysics& event);
+		void SendLeaveCurrentSessionMessage();
+		void SendCheckUDPConnectionMessage();
 
 		//==============================
-		// Manage Main Network Thread
+		// Manage Network Thread
 		//==============================
+		// Set thread to sleep/wake
 		void NetworkThreadSleep();
 		void NetworkThreadWakeUp();
 
@@ -164,14 +199,16 @@ namespace Kargono::Network
 		//==============================
 		// Submit Client Events & Functions
 		//==============================
-		static void SubmitToFunctionQueue(const std::function<void()>& function);
-		static void SubmitToEventQueue(Ref<Events::Event> e);
+		static void SubmitToNetworkFunctionQueue(const std::function<void()>& function);
+		static void SubmitToNetworkEventQueue(Ref<Events::Event> e);
 
 	private:
 		//==============================
-		// Process Events
+		// Handle Events as the Network Thread
 		//==============================
+		// Receive events and pass them along to event handlers
 		static void OnEvent(Events::Event* e);
+		// Specific event type handlers
 		static bool OnRequestUserCount(Events::RequestUserCount event);
 		static bool OnStartSession(Events::StartSession event);
 		static bool OnConnectionTerminated(Events::ConnectionTerminated event);
@@ -188,6 +225,7 @@ namespace Kargono::Network
 		//==============================
 		// Internal Functionality
 		//==============================
+		// Call to process events or functions in queue's
 		static void ProcessFunctionQueue();
 		static void ProcessEventQueue();
 

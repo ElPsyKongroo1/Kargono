@@ -52,15 +52,15 @@ namespace Kargono
 	#define KG_ERROR(...)		SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK_MSG("[KG_ERROR]: " KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));
 
 	// Used for Debugging
-	#define KG_TRACE_INFO(...)		SPDLOG_LOGGER_TRACE(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
+	#define KG_TRACE_INFO(...)		SPDLOG_LOGGER_TRACE(::Kargono::Log::GetCoreLogger(), __VA_ARGS__);
 	#define KG_TRACE_CRITICAL(...)		SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__);\
 		Kargono::Log::GenerateLogEvent(KG_WARNING_LOG_EVENT, __VA_ARGS__);
 	#define KG_TRACE_ERROR(...)		SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK_MSG("[KG_ERROR]: " KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));
 #else
 	// Core Log Macros
 	#define KG_INFO(...)		
-	#define KG_WARN(...)		SPDLOG_LOGGER_WARN(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
-	#define KG_CRITICAL(...)	SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__)
+	#define KG_WARN(...)		SPDLOG_LOGGER_WARN(::Kargono::Log::GetCoreLogger(), __VA_ARGS__);
+	#define KG_CRITICAL(...)	SPDLOG_LOGGER_CRITICAL(::Kargono::Log::GetCoreLogger(), __VA_ARGS__);
 	#define KG_ERROR(...)		SPDLOG_LOGGER_ERROR(::Kargono::Log::GetCoreLogger(), __VA_ARGS__); KG_DEBUGBREAK_MSG("[KG_ERROR]: " KG_EXPAND_AND_STRINGIFY(__VA_ARGS__));
 
 	// Used for Debugging

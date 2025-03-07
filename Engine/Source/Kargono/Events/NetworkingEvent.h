@@ -13,14 +13,14 @@ namespace Kargono::Events
 	// Update Online Users Class
 	//============================================================
 	
-	class UpdateOnlineUsers : public Event
+	class ReceiveOnlineUsers : public Event
 	{
 	public:
 		//==============================
 		// Constructors and Destructors
 		//==============================
 		
-		UpdateOnlineUsers(uint32_t newUserCount)
+		ReceiveOnlineUsers(uint32_t newUserCount)
 			: m_UserCount(newUserCount) {}
 
 		//==============================
@@ -29,7 +29,7 @@ namespace Kargono::Events
 
 		uint32_t GetUserCount() const { return m_UserCount; }
 
-		virtual EventType GetEventType() const override { return EventType::UpdateOnlineUsers; }
+		virtual EventType GetEventType() const override { return EventType::ReceiveOnlineUsers; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Network; }
 	private:
 		uint32_t m_UserCount;

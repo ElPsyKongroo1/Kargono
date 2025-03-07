@@ -13,7 +13,7 @@ namespace Kargono::Network
 
 		// Notify clients that session initialization has started
 		Kargono::Network::Message newMessage;
-		newMessage.Header.ID = static_cast<uint32_t>(MessageType::CurrentSessionInit);
+		newMessage.m_Header.m_MessageType = MessageType::ManageSession_Init;
 		for (auto& [clientID, connection] : m_ConnectedClients)
 		{
 			connection->SendTCPMessage(newMessage);
@@ -25,7 +25,7 @@ namespace Kargono::Network
 		KG_INFO("[SERVER]: Starting to determine connection latencies");
 
 		// Record current time for each connection and send a ping to each client
-		newMessage.Header.ID = static_cast<uint32_t>(MessageType::InitSyncPing);
+		newMessage.m_Header.m_MessageType = MessageType::ManageSession_SyncPing;
 		for (auto& [clientID, connection] : m_ConnectedClients)
 		{
 			m_InitState.m_LatencyCache.insert({ clientID, {} });
@@ -37,15 +37,20 @@ namespace Kargono::Network
 
 	void Session::ReceiveSyncPing(uint32_t clientID)
 	{
+		// Ensure the client ID exists
+		KG_ASSERT(m_InitState.m_RecentTimePoints.contains(clientID));
+		KG_ASSERT(m_InitState.m_LatencyCacheFilled.contains(clientID));
+
 		// Record Current TimePoint
 		std::chrono::steady_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
 		float durationSeconds = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - m_InitState.m_RecentTimePoints.at(clientID)).count() * 0.001f * 0.001f * 0.001f;
 		float singleDirectionLatency = durationSeconds / 2.0f;
 
 		// Check if cache is already filled
-		if (m_InitState.m_LatencyCacheFilled.at(clientID) == true)
+		if (m_InitState.m_LatencyCacheFilled.at(clientID))
 		{
-			KG_ERROR("Received sync ping when cache has already been filled!");
+			KG_WARN("Received sync ping when cache has already been filled!");
+			return;
 		}
 
 		// Insert duration into latency cache
@@ -70,12 +75,14 @@ namespace Kargono::Network
 			CompleteSessionInit();
 			return;
 		}
+		
+		// Store the current time to compare with round-trip time
+		m_InitState.m_RecentTimePoints.insert_or_assign(clientID, std::chrono::high_resolution_clock::now());
+
+		KG_ASSERT(ServerService::GetActiveServer());
 
 		// If Cache is not filled yet, send another sync ping
-		Kargono::Network::Message newMessage;
-		newMessage.Header.ID = static_cast<uint32_t>(MessageType::InitSyncPing);
-		m_InitState.m_RecentTimePoints.insert_or_assign(clientID, std::chrono::high_resolution_clock::now());
-		m_ConnectedClients.at(clientID)->SendTCPMessage(newMessage);
+		ServerService::GetActiveServer()->SendSyncPingMessage(m_ConnectedClients.at(clientID));
 	}
 
 	void Session::CompleteSessionInit()
@@ -88,7 +95,7 @@ namespace Kargono::Network
 			// Calculate current mean
 			float meanLatency{ 0 };
 			float latencySum{ 0 };
-			for (auto latency : latencies)
+			for (float latency : latencies)
 			{
 				latencySum += latency;
 			}
@@ -98,14 +105,12 @@ namespace Kargono::Network
 			// Calculate Standard Deviation
 			float varianceSum{ 0 };
 
-			for (auto latency : latencies)
+			for (float latency : latencies)
 			{
 				varianceSum += static_cast<float>(std::pow(latency - meanLatency, 2));
 			}
 
-			float standardDeviation = sqrt(varianceSum / static_cast<float>(latencies.size()));
-
-			
+			float standardDeviation = sqrt(varianceSum / (float)latencies.size());
 
 			// Remove outliers
 			latencies.erase(std::remove_if(latencies.begin(), latencies.end(), [&](float latency)
@@ -124,11 +129,11 @@ namespace Kargono::Network
 			// Recalculate Mean Latency
 			meanLatency = 0;
 			latencySum = 0;
-			for (auto latency : latencies)
+			for (float latency : latencies)
 			{
 				latencySum += latency;
 			}
-			meanLatency = latencySum / static_cast<float>(latencies.size());
+			meanLatency = latencySum / (float)latencies.size();
 
 			// Store new Latency inside connection member
 			m_ConnectedClients.at(clientID)->SetTCPLatency(meanLatency);
@@ -138,15 +143,15 @@ namespace Kargono::Network
 		KG_INFO("[SERVER]: Completed Calculating Connection Latencies");
 
 		// Find highest latency
-		auto maxLatencyIterator = std::max_element(allLatencies.begin(), allLatencies.end());
+		std::vector<float>::iterator maxLatencyIterator = std::max_element(allLatencies.begin(), allLatencies.end());
 		KG_ASSERT(maxLatencyIterator != allLatencies.end(), "No largest element was found, probably an implementation error!");
 		float longestLatency = *maxLatencyIterator;
 
 		// Send start message to each client
 		float waitTime{ 0 };
 		Kargono::Network::Message newMessage;
-		newMessage.Header.ID = static_cast<uint32_t>(MessageType::StartSession);
-		for (auto& [clientID, connection] : m_ConnectedClients)
+		newMessage.m_Header.m_MessageType = MessageType::ManageSession_StartSession;
+		for (auto [clientID, connection] : m_ConnectedClients)
 		{
 			// Calculate wait time
 			waitTime = longestLatency - connection->GetTCPLatency();
@@ -161,7 +166,7 @@ namespace Kargono::Network
 		Utility::AsyncBusyTimer::CreateTimer(longestLatency, [&]()
 		{
 			// Start Thread
-			ServerService::SubmitToEventQueue(CreateRef<Events::StartSession>());
+			ServerService::SubmitToNetworkEventQueue(CreateRef<Events::StartSession>());
 		});
 
 	}
@@ -171,44 +176,60 @@ namespace Kargono::Network
 	}
 	void Session::StoreClientReadyCheck(uint32_t clientID)
 	{
-		if (m_ReadyCheck.contains(clientID) || !m_UseReadyCheck)
+		// Ensure a ready check is active and this client is participating
+		if (m_ReadyCheckData.m_ReadyClients.contains(clientID) || !m_ReadyCheckData.m_Active)
 		{ 
 			return; 
 		}
-		m_ReadyCheck.insert(clientID);
 
-		if (m_ReadyCheck.size() >= m_ConnectedClients.size())
+		// Set the client as having the ready check enabled
+		m_ReadyCheckData.m_ReadyClients.insert(clientID);
+
+		// Check if all the clients have enabled their ready check
+		if (m_ReadyCheckData.m_ReadyClients.size() >= m_ConnectedClients.size())
 		{
-			//KG_ERROR("Entered Ready Check Resolver");
-			// Find highest latency
-			std::vector<float> allLatencies{};
-			for (auto& [currentClientID, connection] : m_ConnectedClients)
-			{
-				allLatencies.push_back(connection->GetTCPLatency());
-			}
-			auto maxLatencyIterator = std::max_element(allLatencies.begin(), allLatencies.end());
-			KG_ASSERT(maxLatencyIterator != allLatencies.end(), "No largest element was found, probably an implementation error!");
-			float longestLatency = *maxLatencyIterator;
+			// Handle completing the ready check
+			float longestLatency = CalculateLongestLatency();
 
-			// Send start message to each client
+			// Send ready check confirm messages
 			float waitTime{ 0 };
-			Kargono::Network::Message newMessage;
-			newMessage.Header.ID = static_cast<uint32_t>(MessageType::SessionReadyCheckConfirm);
-			for (auto& [currentClientID, connection] : m_ConnectedClients)
+			for (auto [currentClientID, connection] : m_ConnectedClients)
 			{
-				// Calculate wait time
+				// Calculate wait time for each client
 				waitTime = longestLatency - connection->GetTCPLatency();
-				if (waitTime < 0) { waitTime = 0; }
+				if (waitTime < 0) 
+				{ 
+					waitTime = 0; 
+				}
 
-				// Send Message
-				newMessage << waitTime;
-				m_ConnectedClients.at(currentClientID)->SendTCPMessage(newMessage);
+				// Ensure the server is active
+				KG_ASSERT(ServerService::GetActiveServer());
+
+				// Send the ready check confirm message
+				ServerService::GetActiveServer()->SendConfirmReadyCheckMessage(
+					m_ConnectedClients.at(currentClientID), waitTime);
 			}
-
-			// Reset Ready Check
-			m_UseReadyCheck = false;
-			m_ReadyCheck.clear();
+			
+			// Reset the ready check context
+			ResetReadyCheck();
 		}
+	}
+	float Session::CalculateLongestLatency()
+	{
+		// Find highest latency
+		std::vector<float> allLatencies{};
+		for (auto [currentClientID, connection] : m_ConnectedClients)
+		{
+			allLatencies.push_back(connection->GetTCPLatency());
+		}
+		std::vector<float>::iterator maxLatencyIterator = std::max_element(allLatencies.begin(), allLatencies.end());
+		KG_ASSERT(maxLatencyIterator != allLatencies.end(), "No largest element was found, probably an implementation error!");
+		return *maxLatencyIterator;
+	}
+	void Session::ResetReadyCheck()
+	{
+		m_ReadyCheckData.m_Active = false;
+		m_ReadyCheckData.m_ReadyClients.clear();
 	}
 	uint16_t Session::AddClient(ServerTCPConnection* newClient)
 	{
@@ -216,50 +237,89 @@ namespace Kargono::Network
 		if (m_ConnectedClients.contains(newClient->GetID()))
 		{
 			KG_WARN("Attempt to add client to session that already contains client ID!");
-			return 0xFFFF;
+			return k_InvalidSessionSlot;
 		}
 
+		// Check for any gap slots
 		if (!m_EmptySlots.empty())
 		{
+			// Get the last empty slot
 			uint16_t slotToFill = m_EmptySlots.back();
-			m_ConnectedClients.insert({ newClient->GetID(), newClient });
-			m_SessionSlots.insert({ slotToFill , newClient->GetID() });
 
+			// Insert the client at the last slot to fill
+			auto [clientsIter, addClientSuccess] = m_ConnectedClients.insert({ newClient->GetID(), newClient });
+			auto [sessionIter, addSlotSuccess] = m_SessionSlots.insert({ slotToFill , newClient->GetID() });
+
+			// Check if any insertion fails
+			if (!addClientSuccess || !addSlotSuccess)
+			{
+				KG_WARN("Attempt to add client to session, however, failed to insert the client!");
+				return k_InvalidSessionSlot;
+			}
+
+			// Remove the empty slot entry
 			m_EmptySlots.pop_back();
 
 			return slotToFill;
 		}
 
-		m_ConnectedClients.insert({ newClient->GetID(), newClient });
-		m_SessionSlots.insert({ m_SlotMax , newClient->GetID()});
+		// If not gap slots are found, increase the client list size
+		auto [clientsIter, addClientSuccess] = m_ConnectedClients.insert({newClient->GetID(), newClient});
+		auto [sessionIter, addSlotSuccess] = m_SessionSlots.insert({m_SlotMax , newClient->GetID()});
+
+		// Check if any insertion fails
+		if (!addClientSuccess || !addSlotSuccess)
+		{
+			KG_WARN("Attempt to add client to session, however, failed to insert the client!");
+			return k_InvalidSessionSlot;
+		}
 
 		return m_SlotMax++;
 	}
-	uint16_t Session::RemoveClient(uint32_t clientID)
+	uint16_t Session::RemoveClient(uint32_t queryID)
 	{
 		// Session already contains client, this is an error
-		if (!m_ConnectedClients.contains(clientID))
+		if (!m_ConnectedClients.contains(queryID))
 		{
-			KG_ERROR("Attempt to remove client to session that does not contain client ID!");
-			return 0xFFFF;
+			KG_WARN("Attempt to remove client to session that does not contain client ID!");
+			return k_InvalidSessionSlot;
 		}
 
-		// Erase client from connections list
-		m_ConnectedClients.erase(clientID);
+		// Erase client from connected list
+		size_t numClientsRemoved = m_ConnectedClients.erase(queryID);
+
+		if (numClientsRemoved == 0)
+		{
+			KG_WARN("Failed to remove client from session slot. Erase operation failed for the client {}", queryID);
+			return k_InvalidSessionSlot;
+		}
 
 		// Erase from slots list
-		for (auto it = m_SessionSlots.begin(); it != m_SessionSlots.end(); ++it)
+		for (auto [currentSlot, currentClientID] : m_SessionSlots)
 		{
-			if (it->second == clientID)
+			// Check if the slot index matches
+			if (currentClientID == queryID)
 			{
-				uint16_t slot = it->first;
-				m_EmptySlots.push_back(slot);
+				// Add new entry to the vacant slots vector and sort it
+				m_EmptySlots.emplace_back(currentSlot);
 				std::ranges::sort(m_EmptySlots.begin(), m_EmptySlots.end(), std::greater <uint16_t>());
-				m_SessionSlots.erase(it);
-				return slot;
+
+				// Erase the slot from the list
+				size_t numElementsRemoved = m_SessionSlots.erase(currentSlot);
+
+				// Handle the case of erase failure
+				if (numElementsRemoved == 0)
+				{
+					KG_WARN("Failed to remove client from session slots. Erase operation failed for the client {}", queryID);
+					return k_InvalidSessionSlot;
+				}
+
+				// Return the removed slot
+				return currentSlot;
 			}
 		}
 
-		return 0xFFFF;
+		KG_WARN("Failed to remove client from session slots. Could not locate client {}", queryID);
+		return k_InvalidSessionSlot;
 	}
 }

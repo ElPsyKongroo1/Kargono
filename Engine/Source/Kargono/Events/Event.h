@@ -48,7 +48,7 @@ namespace Kargono::Events
 		// Mouse Button
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
 		// Network
-		UpdateOnlineUsers, RequestJoinSession, ApproveJoinSession, DenyJoinSession, RequestUserCount,
+		ReceiveOnlineUsers, RequestJoinSession, ApproveJoinSession, DenyJoinSession, RequestUserCount,
 		LeaveCurrentSession, UserLeftSession, CurrentSessionInit, ConnectionTerminated, StartSession,
 		UpdateSessionUserSlot, EnableReadyCheck, SendReadyCheck, SendReadyCheckConfirm, SendAllEntityLocation,
 		UpdateEntityLocation, SendAllEntityPhysics, UpdateEntityPhysics, SignalAll, ReceiveSignal,

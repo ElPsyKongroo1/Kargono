@@ -68,7 +68,7 @@ namespace Kargono
 
 		bool OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event);
 
-		bool OnUpdateUserCount(Events::UpdateOnlineUsers event);
+		bool OnUpdateUserCount(Events::ReceiveOnlineUsers event);
 
 		bool OnApproveJoinSession(Events::ApproveJoinSession event);
 
