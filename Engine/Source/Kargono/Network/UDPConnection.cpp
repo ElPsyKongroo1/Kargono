@@ -14,26 +14,29 @@ namespace Kargono::Network
 	UDPConnection::UDPConnection(NetworkContext* networkContext, asio::ip::udp::socket socket)
 		: m_NetworkContextPtr(networkContext), m_Socket(std::move(socket))
 	{
+		// Initalize data buffers
+		InitalizeAsyncDataBuffers();
+	}
+
+	void UDPConnection::InitalizeAsyncDataBuffers()
+	{
+		// Initalize read and write buffers
 		s_SocketReceiveBuffer.resize(k_MaxBufferSize);
 		s_SocketSendBuffer.resize(k_MaxBufferSize);
 	}
 
-	void UDPConnection::NetworkThreadWakeUp()
-	{
-		std::unique_lock<std::mutex> lock(m_NetworkContextPtr->m_BlockNetworkThreadMutex);
-		m_NetworkContextPtr->m_BlockNetworkThreadCondVar.notify_one();
-	}
-
-	void UDPConnection::NetworkThreadSleep()
-	{
-	}
-
 	void UDPConnection::SendUDPMessage(const LabeledMessage& msg)
 	{
+		// Invoke an asynchronous function to send the message in pieces
 		asio::post(m_NetworkContextPtr->m_AsioContext, [this, msg]()
 		{
+			// Check if the queue is already writing messages
 			bool writingMessage = !m_OutgoingMessagesQueue.IsEmpty();
+
+			// Add the new message to the outgoing queue
 			m_OutgoingMessagesQueue.PushBack(msg);
+
+			// Start writing messages if we are not already
 			if (!writingMessage)
 			{
 				WriteMessageAsync();
@@ -57,7 +60,9 @@ namespace Kargono::Network
 		m_Socket.async_receive_from(asio::buffer(s_SocketReceiveBuffer.data(), k_MaxBufferSize), m_CurrentEndpoint,
 			[this](std::error_code ec, std::size_t length)
 			{
-				// Check if an error present in the asio context
+				// This lambda is called upon completion of the read operation
+
+				// Check if error occurred after attempting a read operation
 				if (ec)
 				{
 					KG_WARN("Error occurred while attempting read a UDP Message. Error Code: [{}] Message: {}", ec.value(), ec.message());
@@ -65,19 +70,20 @@ namespace Kargono::Network
 					{
 						return;
 					}
+					// TODO: why?
 					//Disconnect(m_CurrentEndpoint);
 					ReadMessageAsync();
 					return;
 				}
 
-				// Make sure CRC and Header can be read. Packet might have been broken apart.
+				// Make sure CRC (validation hash) and Header can be read. Packet might have been broken apart.
 				if (length < (sizeof(uint32_t) + sizeof(MessageHeader)))
 				{
 					ReadMessageAsync();
 					return;
 				}
 
-				// Load in Message header from buffer
+				// Load in message header from buffer
 				memcpy(&m_MessageCache.m_Header, s_SocketReceiveBuffer.data() + sizeof(uint32_t), sizeof(MessageHeader));
 
 				// Get Payload Size
@@ -94,6 +100,7 @@ namespace Kargono::Network
 				// If cyclic redundency check fails, move on! It happens...
 				if (currentCRC != receivedCRC)
 				{
+					// TODO: Could be a good thing to log!
 					ReadMessageAsync();
 					return;
 				}
@@ -115,7 +122,11 @@ namespace Kargono::Network
 						payloadSize);
 				}
 				
+				// Store the message based on derived class (Server/Client)
 				AddMessageToIncomingMessageQueue();
+
+				// Prime the UDP context to accept more messages
+				ReadMessageAsync();
 				
 			});
 	}
@@ -124,8 +135,10 @@ namespace Kargono::Network
 	{
 		uint64_t payloadSize = m_OutgoingMessagesQueue.GetFront().m_Message.m_Header.m_PayloadSize;
 
+		// Ensure the new message to write is within the max buffer size
 		if (m_OutgoingMessagesQueue.GetFront().m_Message.GetEntireMessageSize() > k_MaxBufferSize)
 		{
+			// Disconnect the client if message if oversized
 			KG_WARN("Attempt to write UDP message that is larger than the max buffer size!");
 			Disconnect(m_CurrentEndpoint);
 			return;
@@ -151,20 +164,28 @@ namespace Kargono::Network
 		// Fill CRC location
 		memcpy(s_SocketSendBuffer.data(), &hash, sizeof(uint32_t));
 
-		/*KG_TRACE("The local endpoint address/port are {} {} and remote is {} {}", m_Socket.local_endpoint().address().to_string(), m_Socket.local_endpoint().port(),
-			m_qMessagesOut.front().endpoint.address().to_string(), m_qMessagesOut.front().endpoint.port());*/
-
+		// Write out the entire UDP packet
 		m_Socket.async_send_to(asio::buffer(s_SocketSendBuffer.data(), sizeof(uint32_t) + sizeof(MessageHeader) + payloadSize), m_OutgoingMessagesQueue.GetFront().m_OutgoingEndpoint, [this](std::error_code ec, std::size_t length)
 		{
+			// This lambda is called upon completion of the write operation
+
 			UNREFERENCED_PARAMETER(length);
+
+			// Handle the case where the write operation fails
 			if (ec)
 			{
+				// Close the TCP & UDP connecetion
 				KG_WARN("Error occurred while attempting write a UDP Message. Error Code: [{}] Message: {}", ec.value(), ec.message());
 				Disconnect(m_CurrentEndpoint);
 				return;
 			}
 
+			// Assuming the message has been written successfully
+
+			// Remove the message that has already been processed
 			m_OutgoingMessagesQueue.PopFront();
+
+			// Determine if another message should be processed
 			if (!m_OutgoingMessagesQueue.IsEmpty())
 			{
 				WriteMessageAsync();

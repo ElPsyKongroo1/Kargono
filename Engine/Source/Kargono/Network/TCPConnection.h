@@ -15,11 +15,6 @@ namespace Kargono::Network
 		virtual ~TCPConnection() = default;
 
 	public:
-		//==============================
-		// Manage Global Network Thread
-		//==============================
-		void NetworkThreadWakeUp();
-		void NetworkThreadSleep();
 
 		//==============================
 		// Receive Messages

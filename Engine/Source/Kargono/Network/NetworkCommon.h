@@ -173,6 +173,9 @@ namespace Kargono::Network
 
 	struct NetworkContext
 	{
+		//==============================
+		// Fields
+		//==============================
 		// Asio context and accompanying thread
 		asio::io_context m_AsioContext;
 		std::thread m_AsioThread;
@@ -183,6 +186,12 @@ namespace Kargono::Network
 		std::atomic<bool> m_QuitNetworkThread { false };
 		// Singular incoming message queue
 		TSQueue<OwnedMessage> m_IncomingMessageQueue;
+
+		//==============================
+		// Manage Network Thread
+		//==============================
+		void NetworkThreadSleep();
+		void NetworkThreadWakeUp();
 	};
 
 	constexpr uint64_t k_KeepAliveDelay{ 10'000 };

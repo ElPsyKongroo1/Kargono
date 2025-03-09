@@ -27,8 +27,7 @@ namespace Kargono::Network
 	{
 		// Add message to NetworkContext's incoming queue, alert thread to wake up and continue reading messages asynchronously
 		m_NetworkContextPtr->m_IncomingMessageQueue.PushBack({ nullptr, m_MessageCache });
-		NetworkThreadWakeUp();
-		ReadMessageAsync();
+		m_NetworkContextPtr->NetworkThreadWakeUp();
 	}
 		
 	bool ClientTCPConnection::Connect(const asio::ip::tcp::resolver::results_type& endpoints)
@@ -54,7 +53,7 @@ namespace Kargono::Network
 
 				// Assume once we return from the ReadValidationAsync function, a determination has been made
 				connectionSuccessful = true;
-				NetworkThreadWakeUp();
+				m_NetworkContextPtr->NetworkThreadWakeUp();
 			}
 		});
 		
@@ -64,7 +63,7 @@ namespace Kargono::Network
 		// Block this thread until a validation determination is made
 		while (!m_NetworkContextPtr->m_QuitNetworkThread && !connectionSuccessful)
 		{
-			NetworkThreadSleep();
+			m_NetworkContextPtr->NetworkThreadSleep();
 		}
 
 		// Check for failure to connect
@@ -118,10 +117,7 @@ namespace Kargono::Network
 		m_NetworkContextPtr->m_IncomingMessageQueue.PushBack({ nullptr, m_MessageCache });
 
 		// Wake up the network thread to handle the new message
-		NetworkThreadWakeUp();
-
-		// Prompt the asio context to continue reading messages
-		ReadMessageHeaderAsync();
+		m_NetworkContextPtr->NetworkThreadWakeUp();
 	}
 
 	void ClientTCPConnection::WriteValidationAsync()
@@ -244,7 +240,7 @@ namespace Kargono::Network
 			});
 
 			// Wake up the network thread so it can process the function queue
-			NetworkThreadWakeUp();
+			m_NetworkContext.NetworkThreadWakeUp();
 		}, [&]()
 		{
 			// Final check to ensure the UDP connection test was successful
@@ -260,7 +256,7 @@ namespace Kargono::Network
 			});
 
 			// Wake up the network thread so it can process the function queue
-			NetworkThreadWakeUp();
+			m_NetworkContext.NetworkThreadWakeUp();
 		});
 
 		return true;
@@ -350,7 +346,7 @@ namespace Kargono::Network
 		// Sleep the network thread if there is no messages to process
 		if (m_NetworkContext.m_IncomingMessageQueue.IsEmpty())
 		{ 
-			NetworkThreadSleep(); 
+			m_NetworkContext.NetworkThreadSleep();
 		}
 
 		// Process messages until the message queue is empty or the maximum process amount is reached
@@ -384,24 +380,6 @@ namespace Kargono::Network
 			LabeledMessage labeled{ m_ClientTCPConnection->GetUDPRemoteSendEndpoint(), msg };
 			m_ClientUDPConnection->SendUDPMessage(labeled);
 		}
-	}
-
-	void Client::NetworkThreadSleep()
-	{
-		// Obtain the main thread lock
-		std::unique_lock<std::mutex> lock(m_NetworkContext.m_BlockNetworkThreadMutex);
-
-		// Set the network thread to sleep here
-		m_NetworkContext.m_BlockNetworkThreadCondVar.wait(lock);
-	}
-
-	void Client::NetworkThreadWakeUp()
-	{
-		// Obtain the main thread lock
-		std::unique_lock<std::mutex> lock(m_NetworkContext.m_BlockNetworkThreadMutex);
-
-		// Set the network thread conditional variable, to wake up
-		m_NetworkContext.m_BlockNetworkThreadCondVar.notify_one();
 	}
 
 	void Client::SendChatToServer(const std::string& text)
@@ -884,7 +862,7 @@ namespace Kargono::Network
 		s_Client->m_NetworkContext.m_QuitNetworkThread = true;
 
 		// Wake up the network thread, so it can close
-		s_Client->NetworkThreadWakeUp();
+		s_Client->m_NetworkContext.NetworkThreadWakeUp();
 		KG_INFO("Notified client network thread to close");
 	}
 
@@ -1016,7 +994,7 @@ namespace Kargono::Network
 
 		// Add the indicated function and alert the network thread to wake up
 		s_Client->m_FunctionQueue.emplace_back(function);
-		s_Client->NetworkThreadWakeUp();
+		s_Client->m_NetworkContext.NetworkThreadWakeUp();
 	}
 	void ClientService::SubmitToNetworkEventQueue(Ref<Events::Event> e)
 	{
@@ -1032,7 +1010,7 @@ namespace Kargono::Network
 
 		// Add the indicated event and alert the network thread to wake up
 		s_Client->m_EventQueue.emplace_back(e);
-		s_Client->NetworkThreadWakeUp();
+		s_Client->m_NetworkContext.NetworkThreadWakeUp();
 	}
 	void ClientService::OnEvent(Events::Event* e)
 	{

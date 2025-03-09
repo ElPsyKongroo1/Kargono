@@ -36,7 +36,6 @@ namespace Kargono
 		{
 			std::scoped_lock lock(muxQueue);
 			deqQueue.emplace_back(std::move(item));
-
 		}
 
 		// Returns true if Queue has no items

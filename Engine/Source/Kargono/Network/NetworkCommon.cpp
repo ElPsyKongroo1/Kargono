@@ -54,4 +54,20 @@ namespace Kargono::Network
 		os << msg.m_Message;
 		return os;
 	}
+	void NetworkContext::NetworkThreadSleep()
+	{
+		// Obtain the network thread's lock
+		std::unique_lock<std::mutex> lock(m_BlockNetworkThreadMutex);
+
+		// Wake up the thread if its sleeping
+		m_BlockNetworkThreadCondVar.notify_one();
+	}
+	void NetworkContext::NetworkThreadWakeUp()
+	{
+		// Obtain the network thread's lock
+		std::unique_lock<std::mutex> lock(m_BlockNetworkThreadMutex);
+
+		// Allow the thread to sleep here until the conditional variable is woken
+		m_BlockNetworkThreadCondVar.wait(lock);
+	}
 }

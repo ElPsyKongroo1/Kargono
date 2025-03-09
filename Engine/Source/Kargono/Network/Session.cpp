@@ -11,27 +11,27 @@ namespace Kargono::Network
 	{
 		KG_INFO("[SERVER]: Initializing Session...");
 
+		Ref<Server> activeServer = ServerService::GetActiveServer();
+		KG_ASSERT(activeServer);
+
 		// Notify clients that session initialization has started
-		Kargono::Network::Message newMessage;
-		newMessage.m_Header.m_MessageType = MessageType::ManageSession_Init;
 		for (auto& [clientID, connection] : m_ConnectedClients)
 		{
-			connection->SendTCPMessage(newMessage);
+			activeServer->SendSessionInitMessage(connection);
 		}
-
+		
 		// Clear session init state
 		m_InitState = SessionInitState();
 
 		KG_INFO("[SERVER]: Starting to determine connection latencies");
 
 		// Record current time for each connection and send a ping to each client
-		newMessage.m_Header.m_MessageType = MessageType::ManageSession_SyncPing;
 		for (auto& [clientID, connection] : m_ConnectedClients)
 		{
 			m_InitState.m_LatencyCache.insert({ clientID, {} });
 			m_InitState.m_LatencyCacheFilled.insert({ clientID, false });
 			m_InitState.m_RecentTimePoints.insert_or_assign(clientID, std::chrono::high_resolution_clock::now());
-			connection->SendTCPMessage(newMessage);
+			activeServer->SendSyncPingMessage(connection);
 		}
 	}
 

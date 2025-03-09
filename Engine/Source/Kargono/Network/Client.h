@@ -141,13 +141,6 @@ namespace Kargono::Network
 		void SendLeaveCurrentSessionMessage();
 		void SendCheckUDPConnectionMessage();
 
-		//==============================
-		// Manage Network Thread
-		//==============================
-		// Set thread to sleep/wake
-		void NetworkThreadSleep();
-		void NetworkThreadWakeUp();
-
 	private:
 		// Asio Thread and Context. This thread handles asynchronous calls from Asio itself
 		NetworkContext m_NetworkContext{};

@@ -35,6 +35,7 @@ namespace Kargono::Network
 				return;
 			}
 
+			// Replace the old UDP endpoint with the newly found endpoint
 			clientConnect->SetUDPRemoteReceiveEndpoint(m_CurrentEndpoint);
 			clientConnect->SetUDPRemoteSendEndpoint(m_CurrentEndpoint);
 			m_IPAddressToConnection.erase(foundEndpoint);
@@ -42,13 +43,15 @@ namespace Kargono::Network
 
 		}
 
+		// Add UDP message to the queue
 		m_NetworkContextPtr->m_IncomingMessageQueue.PushBack({ m_IPAddressToConnection.at(m_CurrentEndpoint).get(), m_MessageCache});
-		NetworkThreadWakeUp();
-		ReadMessageAsync();
+
+		// Wake up the network thread to handle the message
+		m_NetworkContextPtr->NetworkThreadWakeUp();
 	}
 	void ServerUDPConnection::Disconnect(asio::ip::udp::endpoint key)
 	{
-
+		// Obtain the connection associated with the endpoint
 		if (!m_IPAddressToConnection.contains(key))
 		{
 			KG_WARN("Address does not resolve to a connection pointer in UDPServer Disconnect()");
@@ -61,29 +64,32 @@ namespace Kargono::Network
 			return;
 		}
 
+		// Disconnect the connection
 		connection->Disconnect();
 	}
 
 	ServerTCPConnection::ServerTCPConnection(NetworkContext* networkContext, asio::ip::tcp::socket&& socket)
 		: TCPConnection(networkContext, std::move(socket))
 	{
-
 		// Construct validation check data
-
+		CalculateValidationData();
+	}
+	void ServerTCPConnection::CalculateValidationData()
+	{
 		// Connection is Server -> Client, construct random data for the client to transform and send back for validation
 		m_ValidationOutput = uint64_t(std::chrono::system_clock::now().time_since_epoch().count());
 
 		// Pre-calculate the result for checking when the client responds
 		m_ValidationCache = GenerateValidationToken(m_ValidationOutput);
-
-
 	}
 	void ServerTCPConnection::Connect(uint32_t uid)
 	{
+		// Initialize UDP information and start validation process
 		if (m_TCPSocket.is_open())
 		{
 			m_ID = uid;
 
+			// Create the UDP endpoint information from the active TCP socket
 			m_UDPLocalEndpoint = asio::ip::udp::endpoint(m_TCPSocket.local_endpoint().address(),
 				m_TCPSocket.local_endpoint().port());
 			m_UDPRemoteSendEndpoint = asio::ip::udp::endpoint(m_TCPSocket.remote_endpoint().address(),
@@ -101,16 +107,24 @@ namespace Kargono::Network
 			ReadValidationAsync();
 
 		}
+		else
+		{
+			KG_WARN("Attempt to create a TCP connection, however, the socket is invalid");
+		}
 	}
 
 	void ServerTCPConnection::Disconnect()
 	{
 		if (IsConnected())
 		{
+			// Post a blocking request to close the connection
 			asio::post(m_NetworkContextPtr->m_AsioContext, [this]()
 			{
+				// Close the TCP socket and wait for a response
 				m_TCPSocket.close();
-				NetworkThreadWakeUp();
+
+				// Wake up the network thread to handle the response
+				m_NetworkContextPtr->NetworkThreadWakeUp();
 			});
 		}
 		KG_INFO("Connection to a client has been terminated");
@@ -118,31 +132,39 @@ namespace Kargono::Network
 
 	void ServerTCPConnection::AddMessageToIncomingMessageQueue()
 	{
+		// Add the message to the queue
 		m_NetworkContextPtr->m_IncomingMessageQueue.PushBack({ this, m_MessageCache });
-		NetworkThreadWakeUp();
-		ReadMessageHeaderAsync();
+
+		// Wake up the network thread to handle the message
+		m_NetworkContextPtr->NetworkThreadWakeUp();
 	}
 
 	void ServerTCPConnection::WriteValidationAsync()
 	{
+		// Write a validation message to the client. The client should respond with an appropriately transformed
+		// message to complete validation
 		asio::async_write(m_TCPSocket, asio::buffer(&m_ValidationOutput, sizeof(uint64_t)),
-			[this](std::error_code ec, std::size_t length)
+		[this](std::error_code ec, std::size_t length)
+		{
+			UNREFERENCED_PARAMETER(length);
+
+			// Simply close the connection if we could not provide the validation message to the client
+			if (ec)
 			{
-				UNREFERENCED_PARAMETER(length);
-				if (ec)
-				{
-					KG_WARN("Error occurred while attempting to write a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());
-					m_TCPSocket.close();
-				}
-			});
+				KG_WARN("Error occurred while attempting to write a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());
+				m_TCPSocket.close();
+			}
+		});
 	}
 	void ServerTCPConnection::ReadValidationAsync()
 	{
+		// Handle validating the client message and ensuring the server & client know the same secrets
 		asio::async_read(m_TCPSocket, asio::buffer(&m_ValidationInput, sizeof(uint64_t)),
 			[&](std::error_code ec, std::size_t length)
 			{
 				UNREFERENCED_PARAMETER(length);
 
+				// Close connection if error occurs during validation
 				if (ec)
 				{
 					KG_WARN("Error occurred while attempting to read a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());
@@ -150,6 +172,7 @@ namespace Kargono::Network
 					return;
 				}
 
+				// Check if client validation is successful
 				if (m_ValidationInput == m_ValidationCache)
 				{
 					// Client has provided valid solution, so allow it to connect properly
@@ -162,51 +185,27 @@ namespace Kargono::Network
 				}
 				else
 				{
+					// Close the connection if validation fails
 					KG_WARN("Client failed validation");
 					Disconnect();
 				}
 			});
 	}
 
-	Server::Server(uint16_t nPort, bool isLocal)
+	Server::Server(uint16_t nPort)
 		: m_TCPAcceptor(m_NetworkContext.m_AsioContext, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), nPort))
 	{
-		// Create a resolver
-		asio::ip::tcp::resolver resolver(m_NetworkContext.m_AsioContext);
-
-		// Query for the local host entry
-		asio::ip::tcp::resolver::query query(asio::ip::host_name(), "");
-
-		// Perform the resolution and get the endpoint iterator
-		asio::ip::tcp::resolver::iterator iter = resolver.resolve(query);
-		while (iter != asio::ip::tcp::resolver::iterator())
-		{
-			if (iter->endpoint().address().is_v4()) { break; }
-			++iter;
-		}
-		KG_ASSERT(iter != asio::ip::tcp::resolver::iterator(), "Could not get local host ip address!");
-
-		// Local udp socket
-		asio::ip::udp::socket serverUDPSocket {m_NetworkContext.m_AsioContext};
-		// Create Server UDP socket
-		asio::ip::tcp::endpoint localTCPEndpoint = m_TCPAcceptor.local_endpoint();
-		asio::ip::udp::endpoint localUDPEndpoint;
-		if (isLocal)
-		{
-			localUDPEndpoint = asio::ip::udp::endpoint(asio::ip::udp::v4(), localTCPEndpoint.port());
-		}
-		else
-		{
-			localUDPEndpoint = asio::ip::udp::endpoint(iter->endpoint().address(), localTCPEndpoint.port());
-		}
-
-		serverUDPSocket.open(localUDPEndpoint.protocol());
-		serverUDPSocket.bind(localUDPEndpoint);
-		m_UDPServer = CreateRef<ServerUDPConnection>(&m_NetworkContext, std::move(serverUDPSocket), m_IPAddressToConnection);
 	}
 
-	bool Server::StartServer()
+	bool Server::StartServer(bool isLocal)
 	{
+		// Start the UDP server
+		if (!StartUDPServer(isLocal))
+		{
+			KG_WARN("Failed to start server. UDP service failed to start.");
+			return false;
+		}
+
 		// Prime the TCP context to listen for connections
 		WaitForClientConnectionAsync();
 
@@ -245,7 +244,7 @@ namespace Kargono::Network
 		// Allow the server main thread to sleep when no work is provided
 		if (m_NetworkContext.m_IncomingMessageQueue.IsEmpty())
 		{ 
-			NetworkThreadSleep(); 
+			m_NetworkContext.NetworkThreadWakeUp();
 		}
 
 		// Handle all messages until message queue is empty or maxMessages limit is reached
@@ -329,7 +328,6 @@ namespace Kargono::Network
 	}
 	void Server::OpenRequestClientJoinMessage(ServerTCPConnection* client, Kargono::Network::Message& msg)
 	{
-
 		// Deny client join if session slots are full
 		if (m_OnlySession.GetClientCount() >= k_MaxSessionClients)
 		{
@@ -474,19 +472,6 @@ namespace Kargono::Network
 	{
 		SendCheckUDPConnectionMessage(client);
 	}
-	void Server::NetworkThreadSleep()
-	{
-		// Obtain network thread lock
-		std::unique_lock<std::mutex> lock(m_NetworkContext.m_BlockNetworkThreadMutex);
-
-		// Sleep the thread until the conditional variable is notified (zzzz zzz)
-		m_NetworkContext.m_BlockNetworkThreadCondVar.wait(lock);
-	}
-	void Server::NetworkThreadWakeUp()
-	{
-		std::unique_lock<std::mutex> lock(m_NetworkContext.m_BlockNetworkThreadMutex);
-		m_NetworkContext.m_BlockNetworkThreadCondVar.notify_one();
-	}
 	void Server::CheckConnectionsValid()
 	{
 		bool invalidClientExists = false;
@@ -553,14 +538,6 @@ namespace Kargono::Network
 			}
 
 		}
-	}
-	void Server::SendClientCountMessageToAll(uint32_t clientCount, 
-		Ref<ServerTCPConnection> ignoredClient)
-	{
-		Message msg;
-		msg.m_Header.m_MessageType = MessageType::ServerQuery_ReceiveClientCount;
-		msg << clientCount;
-		SendTCPMessageAll(msg, ignoredClient.get());
 	}
 	void Server::SendClientLeftMessageToAll(uint16_t removedClientSlot)
 	{
@@ -637,6 +614,16 @@ namespace Kargono::Network
 
 		// Send message reliably with TCP
 		receivingClient->SendTCPMessage(clientCountMessage);
+	}
+	void Server::SendReceiveClientCountToAllMessage(ServerTCPConnection* ignoredClient, uint32_t clientCount)
+	{
+		// Send simple message to update the client count for all clients (except the ignored one)
+		Message clientCountMessage;
+		clientCountMessage.m_Header.m_MessageType = MessageType::ServerQuery_ReceiveClientCount;
+		clientCountMessage << clientCount;
+
+		// Send message reliably with TCP to *all clients
+		SendTCPMessageAll(clientCountMessage, ignoredClient);
 	}
 	void Server::SendClientLeftMessage(ServerTCPConnection* receivingClient, uint16_t removedClientSlot)
 	{
@@ -716,6 +703,26 @@ namespace Kargono::Network
 		// Send message quickly using UDP
 		SendUDPMessage(receivingClient, checkConnection);
 	}
+	void Server::SendAcceptConnectionMessage(ServerTCPConnection* receivingClient, uint32_t clientCount)
+	{
+		// Return a message to the client indicating the connection was successful
+		Kargono::Network::Message msg;
+		msg.m_Header.m_MessageType = MessageType::ManageConnection_AcceptConnection;
+		msg << clientCount;
+
+		// Send message reliably using TCP
+		receivingClient->SendTCPMessage(msg);
+	}
+	void Server::SendSessionInitMessage(ServerTCPConnection* receivingClient)
+	{
+		// Create a message that indicates the start of the session. 
+		// Server expects sync pings soon...
+		Kargono::Network::Message newMessage;
+		newMessage.m_Header.m_MessageType = MessageType::ManageSession_Init;
+
+		// Send message reliably using TCP
+		receivingClient->SendTCPMessage(newMessage);
+	}
 	void Server::StopServer()
 	{
 		// Close the UDP "connection" context
@@ -749,6 +756,67 @@ namespace Kargono::Network
 				connection.reset();
 			}
 		}
+	}
+	bool Server::StartUDPServer(bool isLocal)
+	{
+		asio::error_code errorCode;
+
+		// Create a resolver
+		asio::ip::tcp::resolver resolver(m_NetworkContext.m_AsioContext);
+
+		// Query for the local host entry
+		asio::ip::tcp::resolver::query query(asio::ip::host_name(), "");
+
+		// Perform the resolution and get the endpoint iterator
+		asio::ip::tcp::resolver::iterator iter = resolver.resolve(query);
+
+		// Handle endpoint resolution errors
+		if (errorCode)
+		{
+			KG_WARN("Failed to resolve local server endpoint. Error Code: [{}] Message: {}", errorCode.value(),
+				errorCode.message());
+			return false;
+		}
+
+		while (iter != asio::ip::tcp::resolver::iterator())
+		{
+			if (iter->endpoint().address().is_v4())
+			{
+				break;
+			}
+			++iter;
+		}
+		KG_ASSERT(iter != asio::ip::tcp::resolver::iterator(), "Could not get local host ip address!");
+
+		// Local udp socket
+		asio::ip::udp::socket serverUDPSocket{ m_NetworkContext.m_AsioContext };
+		// Create Server UDP socket
+		asio::ip::tcp::endpoint localTCPEndpoint = m_TCPAcceptor.local_endpoint();
+		asio::ip::udp::endpoint localUDPEndpoint;
+		if (isLocal)
+		{
+			localUDPEndpoint = asio::ip::udp::endpoint(asio::ip::udp::v4(), localTCPEndpoint.port());
+		}
+		else
+		{
+			localUDPEndpoint = asio::ip::udp::endpoint(iter->endpoint().address(), localTCPEndpoint.port());
+		}
+
+		serverUDPSocket.open(localUDPEndpoint.protocol());
+		serverUDPSocket.bind(localUDPEndpoint);
+
+		// Handle UDP socket errors
+		if (errorCode)
+		{
+			KG_WARN("Failed to create UDP socket. Error Code: [{}] Message: {}", errorCode.value(),
+				errorCode.message());
+			return false;
+		}
+
+		// Create the UDP server
+		m_UDPServer = CreateRef<ServerUDPConnection>(&m_NetworkContext, std::move(serverUDPSocket), m_IPAddressToConnection);
+
+		return true;
 	}
 	void Server::SessionClock()
 	{
@@ -784,16 +852,37 @@ namespace Kargono::Network
 			m_UpdateCount++;
 		}
 	}
+	void Server::StartSession()
+	{
+		// Set the starting frame for the session
+		if (!m_TimingThread)
+		{
+			// Start the timing thread and open the session at frame 0
+			m_OnlySession.SetSessionStartFrame(0);
+			m_TimingThread = CreateScope<std::thread>(&Server::SessionClock, this);
+		}
+		else
+		{
+			// Use the current frame count
+			m_OnlySession.SetSessionStartFrame(m_UpdateCount);
+		}
+	}
+	void Server::OnClientValidated(Ref<ServerTCPConnection> client)
+	{
+		UNREFERENCED_PARAMETER(client);
+	}
 	bool Server::OnClientConnect(Ref<Kargono::Network::ServerTCPConnection> client)
 	{
 		KG_INFO("Client successfully connected [{}]", client->GetID());
-		Kargono::Network::Message msg;
-		msg.m_Header.m_MessageType = MessageType::ManageConnection_AcceptConnection;
-		uint32_t numberOfUsers = static_cast<uint32_t>(m_AllClientConnections.size() + 1);
-		msg << numberOfUsers;
-		client->SendTCPMessage(msg);
-		msg.m_Header.m_MessageType = MessageType::ServerQuery_ReceiveClientCount;
-		SendTCPMessageAll(msg, client.get());
+
+		uint32_t clientCount = (uint32_t)(m_AllClientConnections.size() + 1);
+
+		// Let the new client know it has been connected
+		SendAcceptConnectionMessage(client.get(), clientCount);
+
+		// Update the client count for all other clients
+		SendReceiveClientCountToAllMessage(client.get(), clientCount);
+
 		return true;
 	}
 	void Server::OnClientDisconnect(Ref<Kargono::Network::ServerTCPConnection> client)
@@ -801,7 +890,7 @@ namespace Kargono::Network
 		KG_INFO("Removing client [{}]", client->GetID());
 
 		// Send a client count update indicating a client left
-		SendClientCountMessageToAll((uint32_t)(m_AllClientConnections.size() - 1), client);
+		SendReceiveClientCountToAllMessage(client.get(), (uint32_t)(m_AllClientConnections.size() - 1));
 
 		if (m_OnlySession.GetAllClients().contains(client->GetID()))
 		{
@@ -818,50 +907,55 @@ namespace Kargono::Network
 			// Notify all other clients which client was removed
 			SendClientLeftMessageToAll(removedClientSlot);
 		}
-
-
 	}
 
 	void Server::WaitForClientConnectionAsync()
 	{
-		m_TCPAcceptor.async_accept([this](std::error_code ec, asio::ip::tcp::socket socket)
+		m_TCPAcceptor.async_accept([this](std::error_code errorCode, asio::ip::tcp::socket socket)
+		{
+			if (errorCode)
 			{
-				if (ec)
-				{
-					KG_INFO("New Connection Error: {}", ec.message());
-					WaitForClientConnectionAsync();
-					return;
-				}
-
-				KG_INFO("New Connection: {}", socket.remote_endpoint());
-
-
-				Ref<ServerTCPConnection> newConnection = CreateRef<ServerTCPConnection>(&m_NetworkContext, std::move(socket));
-
-				// Give the user server a chance to deny connection
-				if (!OnClientConnect(newConnection))
-				{
-					KG_WARN("[-----] Connection Denied");
-					WaitForClientConnectionAsync();
-					return;
-				}
-
-				m_AllClientConnections.push_back(std::move(newConnection));
-
-				m_AllClientConnections.back()->Connect(m_ClientIDCounter++);
-
-				// Connection allowed, so add to container of new connections
-
-				m_IPAddressToConnection.insert_or_assign(m_AllClientConnections.back()->GetUDPRemoteReceiveEndpoint(), m_AllClientConnections.back());
-
-				KG_INFO("[{}]: Connection Approved", m_AllClientConnections.back()->GetID());
-
-
-
-				// Prime the asio context with more work - again simply wait for
-				//		another connection...
+				KG_WARN("New connection error. Error Code: [{}] Message: {}", errorCode.value(),
+					errorCode.message());
 				WaitForClientConnectionAsync();
-			});
+				return;
+			}
+
+			// Create the new TCP connection
+			KG_INFO("New Connection: {}", socket.remote_endpoint());
+			Ref<ServerTCPConnection> newConnection = CreateRef<ServerTCPConnection>(&m_NetworkContext, std::move(socket));
+
+			// Ensure the socket is not malformed
+			if (errorCode)
+			{
+				KG_WARN("New TCP connection creation error. Error Code: [{}] Message: {}", errorCode.value(),
+					errorCode.message());
+				WaitForClientConnectionAsync();
+				return;
+			}
+
+			// Give the server a chance to deny connection
+			if (!OnClientConnect(newConnection))
+			{
+				KG_WARN("Connection Denied");
+				WaitForClientConnectionAsync();
+				return;
+			}
+
+			// Add the connection to the server context and connect
+			m_AllClientConnections.push_back(std::move(newConnection));
+			m_AllClientConnections.back()->Connect(m_ClientIDCounter);
+			m_ClientIDCounter++;
+
+			// Connection allowed, so add to IP -> Client Map
+			m_IPAddressToConnection.insert_or_assign(m_AllClientConnections.back()->GetUDPRemoteReceiveEndpoint(), m_AllClientConnections.back());
+
+			KG_INFO("[{}]: Connection Approved", m_AllClientConnections.back()->GetID());
+
+			// Prime the asio context with more work - again simply wait for
+			//		another connection...
+			WaitForClientConnectionAsync();
+		});
 	}
 
 	bool ServerService::Init()
@@ -870,8 +964,8 @@ namespace Kargono::Network
 		bool isLocal = Projects::ProjectService::GetActiveServerLocation() == ServerLocation::LocalMachine;
 
 		// Create the new server context and initialize the server
-		s_Server = CreateRef<Network::Server>(Projects::ProjectService::GetActiveServerPort(), isLocal);
-		if (!s_Server->StartServer())
+		s_Server = CreateRef<Network::Server>(Projects::ProjectService::GetActiveServerPort());
+		if (!s_Server->StartServer(isLocal))
 		{
 			// Clean up network resources
 			KG_WARN("Failed to start server");
@@ -917,12 +1011,14 @@ namespace Kargono::Network
 	}
 	void ServerService::SubmitToNetworkEventQueue(Ref<Events::Event> e)
 	{
+		// Obtain the event queue lock
 		std::scoped_lock<std::mutex> lock(s_Server->m_EventQueueMutex);
 
+		// Add the event
 		s_Server->m_EventQueue.emplace_back(e);
 
 		// Alert thread to wake up and process event
-		s_Server->NetworkThreadWakeUp();
+		s_Server->m_NetworkContext.NetworkThreadWakeUp();
 	}
 	void ServerService::OnEvent(Events::Event* e)
 	{
@@ -933,15 +1029,10 @@ namespace Kargono::Network
 	}
 	bool ServerService::OnStartSession(Events::StartSession event)
 	{
-		if (!s_Server->m_TimingThread)
-		{
-			s_Server->m_OnlySession.SetSessionStartFrame(0);
-			s_Server->m_TimingThread = CreateScope<std::thread>(&Server::SessionClock, s_Server.get());
-		}
-		else
-		{
-			s_Server->m_OnlySession.SetSessionStartFrame(s_Server->m_UpdateCount);
-		}
+		KG_ASSERT(s_Server);
+
+		// Handle starting the session runtime
+		s_Server->StartSession();
 
 		return true;
 	}
@@ -949,12 +1040,22 @@ namespace Kargono::Network
 	{
 		KG_PROFILE_FUNCTION();
 
-		std::scoped_lock<std::mutex> lock(s_Server->m_EventQueueMutex);
+		std::vector<Ref<Events::Event>> cachedEvents;
 
-		for (Ref<Events::Event> event : s_Server->m_EventQueue)
+		// Cache a copy of the event queue to prevent loop invalidation
+		{
+			// Obtain the event queue lock
+			std::scoped_lock<std::mutex> lock(s_Server->m_EventQueueMutex);
+			
+			// Store the events in the cache
+			cachedEvents = std::move(s_Server->m_EventQueue);
+			s_Server->m_EventQueue.clear();
+		}
+
+		// Handle the event queue
+		for (Ref<Events::Event> event : cachedEvents)
 		{
 			OnEvent(event.get());
 		}
-		s_Server->m_EventQueue.clear();
 	}
 }

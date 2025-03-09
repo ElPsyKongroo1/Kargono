@@ -15,6 +15,9 @@ namespace Kargono::Network
 		//==============================
 		UDPConnection(NetworkContext* networkContext, asio::ip::udp::socket socket);
 		virtual ~UDPConnection() = default;
+
+	private:
+		void InitalizeAsyncDataBuffers();
 	public:
 		//==============================
 		// Lifecycle Functions
@@ -32,12 +35,6 @@ namespace Kargono::Network
 		//==============================
 		void SendUDPMessage(const LabeledMessage& msg);
 		void WriteMessageAsync();
-
-		//==============================
-		// Manage Global Network Thread
-		//==============================
-		void NetworkThreadWakeUp();
-		void NetworkThreadSleep();
 
 		//==============================
 		// Client/Server Specific Functionality

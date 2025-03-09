@@ -50,9 +50,12 @@ namespace Kargono::Network
 		ServerTCPConnection(NetworkContext* networkContext, asio::ip::tcp::socket&& socket);
 		virtual ~ServerTCPConnection() override {}
 
+	private:
+		void CalculateValidationData();
 		//==============================
 		// LifeCycle Functions
 		//==============================
+	public:
 		void Connect(uint32_t uid = 0);
 		virtual void Disconnect() override;
 		bool IsConnected() const 
@@ -104,15 +107,17 @@ namespace Kargono::Network
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		Server(uint16_t nPort, bool isLocal = false);
+		Server(uint16_t nPort);
 		~Server() = default;
 
 		//==============================
 		// LifeCycle Functions
 		//==============================
-		bool StartServer();
+		bool StartServer(bool isLocal);
 		void StopServer();
 
+	private:
+		bool StartUDPServer(bool isLocal);
 	public:
 		//==============================
 		// Receive Messages
@@ -144,7 +149,6 @@ namespace Kargono::Network
 		void SendUDPMessage(ServerTCPConnection* client, Message& msg);
 		void SendTCPMessageAll(const Message& msg, ServerTCPConnection* ignoreClient = nullptr);
 		// Handle specific message types
-		void SendClientCountMessageToAll(uint32_t clientCount, Ref<ServerTCPConnection> ignoredClient);
 		void SendClientLeftMessageToAll(uint16_t removedClientSlot);
 		void SendServerPingMessage(ServerTCPConnection* client, Message& msg);
 		void SendGenericMessageAllClients(ServerTCPConnection* sendingClient, Message& msg);
@@ -153,6 +157,7 @@ namespace Kargono::Network
 		void SendApproveClientJoinMessage(ServerTCPConnection* receivingClient, uint16_t clientSlot);
 		void SendUpdateClientSlotMessage(ServerTCPConnection* receivingClient, uint16_t clientSlot);
 		void SendReceiveClientCountMessage(ServerTCPConnection* receivingClient, uint32_t clientCount);
+		void SendReceiveClientCountToAllMessage(ServerTCPConnection* receivingClient, uint32_t clientCount);
 		void SendClientLeftMessage(ServerTCPConnection* receivingClient, uint16_t removedClientSlot);
 		void SendSyncPingMessage(ServerTCPConnection* receivingClient);
 		void SendConfirmReadyCheckMessage(ServerTCPConnection* receivingClient, float waitTime);
@@ -161,23 +166,20 @@ namespace Kargono::Network
 		void SendSignalMessage(ServerTCPConnection* receivingClient, Message& msg);
 		void SendKeepAliveMessage(ServerTCPConnection* receivingClient);
 		void SendCheckUDPConnectionMessage(ServerTCPConnection* receivingClient);
+		void SendAcceptConnectionMessage(ServerTCPConnection* receivingClient, uint32_t clientCount);
+		void SendSessionInitMessage(ServerTCPConnection* receivingClient);
 
 		//==============================
 		// Manage Session
 		//==============================
 		void SessionClock();
-
-		//==============================
-		// Manage Server Network Thread
-		//==============================
-		void NetworkThreadSleep();
-		void NetworkThreadWakeUp();
+		void StartSession();
 
 	private:
 		//==============================
 		// Manage Clients Connections
 		//==============================
-		void OnClientValidated(Ref<ServerTCPConnection> client) {}
+		void OnClientValidated(Ref<ServerTCPConnection> client);
 		bool OnClientConnect(Ref<Kargono::Network::ServerTCPConnection> client);
 		void OnClientDisconnect(Ref<Kargono::Network::ServerTCPConnection> client);
 		void CheckConnectionsValid();
