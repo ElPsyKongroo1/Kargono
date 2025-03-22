@@ -325,7 +325,7 @@ namespace Kargono::EditorUI
 			s_ActivePalettes.clear();
 
 			// Add all color palettes from the active registry
-			for (auto [handle, assetInfo] : Assets::AssetService::GetColorPaletteRegistry())
+			for (auto& [handle, assetInfo] : Assets::AssetService::GetColorPaletteRegistry())
 			{
 				Ref<ProjectData::ColorPalette> palette = Assets::AssetService::GetColorPalette(handle);
 				KG_ASSERT(palette);
@@ -2816,16 +2816,29 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
 			ImGui::PushStyleColor(ImGuiCol_Text, (spec.m_Flags & EditVec4_RGBA) ? s_Red : s_HighlightColor1);
+			static bool s_ModifyingX{ false };
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.x), spec.m_ScrollSpeed,
 				spec.m_Bounds[0], spec.m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
-				StoreUndoMemento(memento);
+				if (!s_ModifyingX)
+				{
+					StoreUndoMemento(memento);
+					s_ModifyingX = true;
+				}
+				
 				if (spec.m_ConfirmAction)
 				{
 					spec.m_ConfirmAction(spec);
+				}
+			}
+			else
+			{
+				if (!ImGui::IsItemActive())
+				{
+					s_ModifyingX = false;
 				}
 			}
 			ImGui::PopStyleColor();
@@ -2836,19 +2849,31 @@ namespace Kargono::EditorUI
 					spec.m_Flags & EditVec4_RGBA ? "Red Channel" : "X-Value");
 				ImGui::EndTooltip();
 			}
-			
+
 			// y value
 			ImGui::PushStyleColor(ImGuiCol_Text, (spec.m_Flags & EditVec4_RGBA) ? s_Green : s_HighlightColor2);
+			static bool s_ModifyingY{ false };
 			ImGui::SetCursorPos({ s_SecondaryTextPosTwo, yPosition });
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.y), spec.m_ScrollSpeed,
 				spec.m_Bounds[0], spec.m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
-				StoreUndoMemento(memento);
+				if (!s_ModifyingY)
+				{
+					StoreUndoMemento(memento);
+					s_ModifyingY = true;
+				}
 				if (spec.m_ConfirmAction)
 				{
 					spec.m_ConfirmAction(spec);
+				}
+			}
+			else
+			{
+				if (!ImGui::IsItemActive())
+				{
+					s_ModifyingY = false;
 				}
 			}
 			ImGui::PopStyleColor();
@@ -2862,16 +2887,28 @@ namespace Kargono::EditorUI
 
 			// z value
 			ImGui::PushStyleColor(ImGuiCol_Text, (spec.m_Flags & EditVec4_RGBA) ? s_Blue : s_HighlightColor3);
+			static bool s_ModifyingZ{ false };
 			ImGui::SetCursorPos({ s_SecondaryTextPosThree, yPosition });
 			ImGui::SetNextItemWidth(s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.z), spec.m_ScrollSpeed,
 				spec.m_Bounds[0], spec.m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
-				StoreUndoMemento(memento);
+				if (!s_ModifyingZ)
+				{
+					StoreUndoMemento(memento);
+					s_ModifyingZ = true;
+				}
 				if (spec.m_ConfirmAction)
 				{
 					spec.m_ConfirmAction(spec);
+				}
+			}
+			else
+			{
+				if (!ImGui::IsItemActive())
+				{
+					s_ModifyingZ = false;
 				}
 			}
 			ImGui::PopStyleColor();
@@ -2883,18 +2920,31 @@ namespace Kargono::EditorUI
 				ImGui::EndTooltip();
 			}
 
+
 			// w value
 			ImGui::PushStyleColor(ImGuiCol_Text, (spec.m_Flags & EditVec4_RGBA) ? s_Alpha : s_HighlightColor4);
+			static bool s_ModifyingW{ false };
 			ImGui::SetCursorPos({ s_SecondaryTextPosFour, yPosition });
 			ImGui::SetNextItemWidth((spec.m_Flags & EditVec4_RGBA) ? s_SecondaryTextSmallWidth - 28.0f : s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(), &(spec.m_CurrentVec4.w), spec.m_ScrollSpeed,
 				spec.m_Bounds[0], spec.m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
-				StoreUndoMemento(memento);
+				if (!s_ModifyingW)
+				{
+					StoreUndoMemento(memento);
+					s_ModifyingW = true;
+				}
 				if (spec.m_ConfirmAction)
 				{
 					spec.m_ConfirmAction(spec);
+				}
+			}
+			else
+			{
+				if (!ImGui::IsItemActive())
+				{
+					s_ModifyingW = false;
 				}
 			}
 			ImGui::PopStyleColor();
@@ -2911,16 +2961,28 @@ namespace Kargono::EditorUI
 			if (spec.m_Flags & EditVec4_RGBA)
 			{
 				ImVec4 colorPickerValue{ Utility::MathVec4ToImVec4(spec.m_CurrentVec4) };
+				static bool s_ModifyingColorButton{ false };
 				ImGui::SetCursorPos({ s_SecondaryTextPosFour + s_SecondaryTextSmallWidth - 21.0f, yPosition + 1.0f });
 				
 				if (DrawColorPickerButton(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
 					colorPickerValue))
 				{
-					StoreUndoMemento(memento);
+					if (!s_ModifyingColorButton)
+					{
+						StoreUndoMemento(memento);
+						s_ModifyingColorButton = true;
+					}
 					spec.m_CurrentVec4 = Utility::ImVec4ToMathVec4(colorPickerValue);
 					if (spec.m_ConfirmAction)
 					{
 						spec.m_ConfirmAction(spec);
+					}
+				}
+				else
+				{
+					if (!ImGui::IsItemActive())
+					{
+						s_ModifyingColorButton = false;
 					}
 				}
 			}

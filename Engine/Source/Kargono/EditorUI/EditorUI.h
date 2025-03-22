@@ -699,7 +699,6 @@ namespace Kargono::EditorUI
 		bool m_Editing{ false };
 	private:
 		WidgetID m_WidgetID;
-		// Only used if HandleEditButtonExternally is true
 	private:
 		friend void EditorUIService::EditVec4(EditVec4Spec& spec);
 	};
