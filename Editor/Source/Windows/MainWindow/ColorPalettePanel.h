@@ -43,17 +43,20 @@ namespace Kargono::Panels
 
 	private:
 		//=========================
-		// Manage Global State Asset (Internal)
+		// Manage Color Palette Asset (Internal)
 		//=========================
 		void OnOpenColorPaletteDialog();
 		void OnCreateColorPaletteDialog();
 		void OnOpenColorPalette(Assets::AssetHandle newHandle);
 
 		//=========================
-		// Manage Global State Fields (Internal)
+		// Manage Color Palette Fields (Internal)
 		//=========================
 		// Modify field callback functions
 		void OnModifyColor(EditorUI::EditVec4Spec& spec);
+		void OnModifyColorName(EditorUI::EditTextSpec& spec);
+		void OnOpenEditTooltip(EditorUI::EditVec4Spec& spec);
+		void OnAddWhite();
 
 		//=========================
 		// Other Internal Functionality
@@ -83,6 +86,9 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_CloseColorPaletteWarning{};
 		// Modify fields widgets
 		EditorUI::CollapsingHeaderSpec m_ColorsHeader{};
+		EditorUI::EditTextSpec m_EditColorName{};
 		ColorEditorWidgets m_ColorEditorWidgets{};
+		// General widgets
+		EditorUI::TooltipSpec m_LocalTooltip{};
 	};
 }

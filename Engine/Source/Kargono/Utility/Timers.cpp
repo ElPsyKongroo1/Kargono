@@ -40,12 +40,12 @@ namespace Kargono::Utility
 	{
 		std::scoped_lock lock(s_BusyTimerMutex);
 
-		for (auto& timer : s_AllBusyTimers)
+		for (Ref<AsyncBusyTimer> timer : s_AllBusyTimers)
 		{
 			timer->ForceStop();
 		}
 
-		for(auto& timer : s_AllBusyTimers)
+		for(Ref<AsyncBusyTimer> timer : s_AllBusyTimers)
 		{
 			if (timer->m_TimerThread.joinable())
 			{
@@ -160,7 +160,7 @@ namespace Kargono::Utility
 	{
 		std::vector<uint32_t> timersToRemove{};
 		uint32_t iteration{ 0 };
-		for (auto& timer : s_AllPassiveTimers)
+		for (PassiveTimer& timer : s_AllPassiveTimers)
 		{
 			timer.m_ElapsedTime += step;
 			if (timer.m_ElapsedTime > timer.m_WaitTime)

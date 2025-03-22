@@ -62,6 +62,7 @@ namespace Kargono
 		// This function responds to application collision events.
 		bool OnPhysicsCollisionStart(Events::PhysicsCollisionStart event);
 		bool OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event);
+		bool OnKeyPressedEvent(Events::KeyPressedEvent event);
 
 	public:
 		//==========================

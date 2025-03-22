@@ -14,6 +14,7 @@
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Particles/ParticleService.h"
+#include "Kargono/Input/InputService.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
 
@@ -129,11 +130,25 @@ namespace Kargono
 	{
 		// Handle editor UI input events
 		bool handled = false;
+
+		// Handle editor UI mouse capture
 		handled = EditorUI::EditorUIService::OnInputEvent(event);
 		if (handled)
 		{
 			return true;
 		}
+		
+		// Handle application-wide key pressed
+		if (event->GetEventType() == Events::EventType::KeyPressed)
+		{
+			handled = OnKeyPressedEvent(*(Events::KeyPressedEvent*)event);
+		}
+
+		if (handled)
+		{
+			return true;
+		}
+
 		// Handle main window specific input events
 		switch (m_ActiveEditorWindow)
 		{
@@ -281,6 +296,20 @@ namespace Kargono
 			 	collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
+		return false;
+	}
+
+	bool EditorApp::OnKeyPressedEvent(Events::KeyPressedEvent event)
+	{
+		// Handle general keyboard input chords
+		bool control = Input::InputService::IsKeyPressed(Key::LeftControl) || Input::InputService::IsKeyPressed(Key::RightControl);
+
+		if (event.GetKeyCode() == Key::Z && control)
+		{
+			EditorUI::EditorUIService::Undo();
+			return true;
+		}
+
 		return false;
 	}
 

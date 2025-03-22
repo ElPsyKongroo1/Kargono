@@ -16,6 +16,8 @@
 #include <unordered_set>
 #include <variant>
 #include <array>
+#include <stack>
+#include <optional>
 
 
 namespace Kargono::Rendering { class Texture2D; }
@@ -54,6 +56,26 @@ namespace Kargono::EditorUI
 	//==============================
 	// Type Defines
 	//==============================
+
+	struct EditorMemento
+	{
+	public:
+		EditorMemento(Math::vec4 value, EditVec4Spec* widget) : m_Value(value), m_Widget(widget) {}
+	private:
+		EditorMemento() = default;
+	public:
+		Math::vec4 m_Value;
+		EditVec4Spec* m_Widget;
+	};
+
+	class MementoStack
+	{
+	public:
+		void AddMemento(const EditorMemento& memento);
+		std::optional<EditorMemento> PopMemento();
+	private:
+		std::stack<EditorMemento> m_Stack;
+	};
 
 	struct DragDropPayload
 	{
@@ -133,6 +155,12 @@ namespace Kargono::EditorUI
 		//==============================
 		static bool OnInputEvent(Events::Event* e);
 
+	public:
+		//==============================
+		// Interact with EditorUIService context
+		//==============================
+		static bool Undo();
+		static void StoreUndoMemento(const EditorMemento& memento);
 	public:
 		//==============================
 		// Modify Visuals Functions
@@ -365,6 +393,8 @@ namespace Kargono::EditorUI
 		inline static bool s_Running{ false };
 		inline static bool s_DisableLeftClick{ false };
 		inline static bool s_BlockMouseIconChange{ false };
+
+		inline static MementoStack s_UndoStack;
 	};
 
 	//==============================
@@ -646,7 +676,8 @@ namespace Kargono::EditorUI
 	{
 		EditVec4_None =		0,
 		EditVec4_Indented = BIT(0),
-		EditVec4_RGBA =		BIT(1)
+		EditVec4_RGBA =		BIT(1),
+		EditVec4_HandleEditButtonExternally = BIT(2)
 	};
 
 	struct EditVec4Spec
@@ -661,12 +692,14 @@ namespace Kargono::EditorUI
 		WidgetFlags m_Flags{ EditVec4_None };
 		Math::vec4 m_CurrentVec4{};
 		std::function<void(EditVec4Spec&)> m_ConfirmAction{ nullptr };
+		std::function<void(EditVec4Spec&)> m_OnEdit{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
 		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
 		float m_ScrollSpeed{ 0.01f };
-	private:
 		bool m_Editing{ false };
+	private:
 		WidgetID m_WidgetID;
+		// Only used if HandleEditButtonExternally is true
 	private:
 		friend void EditorUIService::EditVec4(EditVec4Spec& spec);
 	};

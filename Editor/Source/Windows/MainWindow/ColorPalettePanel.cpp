@@ -1,5 +1,7 @@
 #include "Windows/MainWindow/ColorPalettePanel.h"
 
+#include "Kargono/Utility/Operations.h"
+
 #include "EditorApp.h"
 
 static Kargono::EditorApp* s_EditorApp{ nullptr };
@@ -107,21 +109,7 @@ namespace Kargono::Panels
 				EditorUI::EditorUIService::Text("Are you sure you want to close this Color Palette object without saving?");
 			};
 
-		m_MainHeader.AddToSelectionList("Add White", [&]()
-		{
-			KG_ASSERT(m_EditorColorPalette);
-
-			// Add the new blank color
-			m_EditorColorPalette->m_Colors.emplace_back("White", 0xFF'FF'FF'FF);
-
-			// Refresh the widgets
-			OnRefreshData();
-
-			// Set the palette as modified
-			m_MainHeader.m_EditColorActive = true;
-
-
-		});
+		m_MainHeader.AddToSelectionList("Add White", KG_BIND_CLASS_FN(OnAddWhite));
 		m_MainHeader.AddToSelectionList("Save", [&]()
 			{
 				Assets::AssetService::SaveColorPalette(m_EditorColorPaletteHandle, m_EditorColorPalette);
@@ -142,6 +130,10 @@ namespace Kargono::Panels
 			{
 				m_DeleteColorPaletteWarning.m_OpenPopup = true;
 			});
+		m_EditColorName.m_Label = "Edit Color Name";
+		m_EditColorName.m_Flags |= EditorUI::EditText_PopupOnly;
+		m_EditColorName.m_CurrentOption = "None";
+		m_EditColorName.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyColorName);
 	}
 
 	ColorPalettePanel::ColorPalettePanel()
@@ -176,8 +168,10 @@ namespace Kargono::Panels
 		{
 			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
 			DrawColorPaletteColors();
+			EditorUI::EditorUIService::EditText(m_EditColorName);
 			EditorUI::EditorUIService::GenericPopup(m_DeleteColorPaletteWarning);
 			EditorUI::EditorUIService::GenericPopup(m_CloseColorPaletteWarning);
+			EditorUI::EditorUIService::Tooltip(m_LocalTooltip);
 		}
 
 		EditorUI::EditorUIService::EndWindow();
@@ -328,6 +322,104 @@ namespace Kargono::Panels
 
 		// Modify the color value
 		indicatedColor.m_HexCode = Utility::RGBAToHex(spec.m_CurrentVec4);
+
+		m_MainHeader.m_EditColorActive = true;
+	}
+	void ColorPalettePanel::OnModifyColorName(EditorUI::EditTextSpec& spec)
+	{
+		// Ensure the correct requirements are provided
+		KG_ASSERT(m_EditorColorPalette);
+		KG_ASSERT(spec.m_ProvidedData);
+
+		// Get the color index
+		size_t colorIndex = *(size_t*)spec.m_ProvidedData.get();
+
+		// Ensure the index is valid
+		KG_ASSERT(colorIndex < m_EditorColorPalette->m_Colors.size());
+
+		// Get the indicated color object
+		ProjectData::Color& indicatedColor = m_EditorColorPalette->m_Colors.at(colorIndex);
+
+		// Modify the color value
+		indicatedColor.m_Name = spec.m_CurrentOption;
+
+		// Update the table data
+		OnRefreshData();
+		m_MainHeader.m_EditColorActive = true;
+	}
+	void ColorPalettePanel::OnOpenEditTooltip(EditorUI::EditVec4Spec& spec)
+	{
+		m_LocalTooltip.ClearEntries();
+
+		// Add entry to open an edit color name dialog
+		EditorUI::TooltipEntry editColorName{ "Edit Name", [&](EditorUI::TooltipEntry& entry) 
+		{
+			// Get the location of the color in the color palette
+			size_t colorLocation = entry.m_UserHandle;
+
+			// Get the indicated color
+			KG_ASSERT(colorLocation < m_EditorColorPalette->m_Colors.size());
+			ProjectData::Color& color = m_EditorColorPalette->m_Colors[colorLocation];
+			
+			// Set-up the edit color text pop-up
+			m_EditColorName.m_CurrentOption = color.m_Name;
+			m_EditColorName.m_ProvidedData = CreateRef<size_t>(colorLocation);
+			m_EditColorName.m_StartPopup = true;
+		}};
+
+		KG_ASSERT(spec.m_ProvidedData);
+		editColorName.m_UserHandle = *(size_t*)spec.m_ProvidedData.get();
+		m_LocalTooltip.AddTooltipEntry(editColorName);
+
+		// Add entry to open modification of the color
+		EditorUI::TooltipEntry editColor{ spec.m_Editing ? "Cancel Edit Color" : "Edit Color",
+			[&](EditorUI::TooltipEntry& entry)
+		{
+			// Get the indicated color editing widget
+			KG_ASSERT(entry.m_UserHandle < m_ColorEditorWidgets.size());
+			EditorUI::EditVec4Spec& colorEditWidget = m_ColorEditorWidgets[entry.m_UserHandle];
+			// Toggle the widget to allow/disallow editing of the vec4
+			Utility::Operations::ToggleBoolean(colorEditWidget.m_Editing);
+		} };
+		KG_ASSERT(spec.m_ProvidedData);
+		editColor.m_UserHandle = *(size_t*)spec.m_ProvidedData.get();
+		m_LocalTooltip.AddTooltipEntry(editColor);
+
+		// Add entry to delete a color
+		EditorUI::TooltipEntry deleteColor{ "Delete Color",
+			[&](EditorUI::TooltipEntry& entry)
+		{
+				// Get the indicated color editing widget
+				KG_ASSERT(entry.m_UserHandle < m_ColorEditorWidgets.size());
+				
+				// Delete the color from the palette
+				m_EditorColorPalette->m_Colors.erase(m_EditorColorPalette->m_Colors.begin() + entry.m_UserHandle);
+
+				// Update the table data
+				OnRefreshData();
+				m_MainHeader.m_EditColorActive = true;
+				
+		}};
+		KG_ASSERT(spec.m_ProvidedData);
+		deleteColor.m_UserHandle = *(size_t*)spec.m_ProvidedData.get();
+		m_LocalTooltip.AddTooltipEntry(deleteColor);
+
+
+		// Activate the tooltip!
+		m_LocalTooltip.m_TooltipActive = true;
+	}
+	void ColorPalettePanel::OnAddWhite()
+	{
+		KG_ASSERT(m_EditorColorPalette);
+
+		// Add the new blank color
+		m_EditorColorPalette->m_Colors.emplace_back("White", 0xFF'FF'FF'FF);
+
+		// Refresh the widgets
+		OnRefreshData();
+
+		// Set the palette as modified
+		m_MainHeader.m_EditColorActive = true;
 	}
 	void ColorPalettePanel::OnRefreshData()
 	{
@@ -347,7 +439,9 @@ namespace Kargono::Panels
 			newColorEditor.m_Label = color.m_Name;
 			newColorEditor.m_Bounds = {0.0f, 1.0f};
 			newColorEditor.m_CurrentVec4 = Utility::HexToRGBA(color.m_HexCode);
-			newColorEditor.m_Flags |= EditorUI::EditVec4_RGBA;
+			newColorEditor.m_OnEdit = KG_BIND_CLASS_FN(OnOpenEditTooltip);
+			newColorEditor.m_Flags |= EditorUI::EditVec4_RGBA | 
+				EditorUI::EditVec4_HandleEditButtonExternally;
 			newColorEditor.m_ProvidedData = CreateRef<size_t>(iteration); // Use iteration to identify this color
 			newColorEditor.m_ConfirmAction = KG_BIND_CLASS_FN(OnModifyColor);
 

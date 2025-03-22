@@ -1187,6 +1187,40 @@ namespace Kargono::EditorUI
 		return ++count;
 	}
 
+	bool EditorUIService::Undo()
+	{
+		// Get the top memento
+		std::optional<EditorMemento> mementoReturn = s_UndoStack.PopMemento();
+
+		// Check for empty undo stack
+		if (!mementoReturn.has_value())
+		{
+			return false;
+		}
+
+		// Handle the undo
+		EditorMemento& memento = mementoReturn.value();
+		KG_ASSERT(memento.m_Widget);
+		EditVec4Spec& widget = *memento.m_Widget;
+
+		// Revert the indicated widget's value
+		widget.m_CurrentVec4 = memento.m_Value;
+
+		// Call the on-confirm function if necessary
+		if (widget.m_ConfirmAction)
+		{
+			widget.m_ConfirmAction(widget);
+		}
+
+		return true;
+	}
+
+	void EditorUIService::StoreUndoMemento(const EditorMemento& memento)
+	{
+		// Store the new memento
+		s_UndoStack.AddMemento(memento);
+	}
+
 	void EditorUIService::Spacing(float space)
 	{
 		ImGui::Dummy(ImVec2(0.0f, space));
@@ -2736,6 +2770,9 @@ namespace Kargono::EditorUI
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
+		// Store the memento
+		EditorMemento memento{ spec.m_CurrentVec4, &spec };
+
 		// Draw backgrounds
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
@@ -2785,6 +2822,7 @@ namespace Kargono::EditorUI
 				spec.m_Bounds[0], spec.m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
+				StoreUndoMemento(memento);
 				if (spec.m_ConfirmAction)
 				{
 					spec.m_ConfirmAction(spec);
@@ -2807,6 +2845,7 @@ namespace Kargono::EditorUI
 				spec.m_Bounds[0], spec.m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
+				StoreUndoMemento(memento);
 				if (spec.m_ConfirmAction)
 				{
 					spec.m_ConfirmAction(spec);
@@ -2829,6 +2868,7 @@ namespace Kargono::EditorUI
 				spec.m_Bounds[0], spec.m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
+				StoreUndoMemento(memento);
 				if (spec.m_ConfirmAction)
 				{
 					spec.m_ConfirmAction(spec);
@@ -2851,6 +2891,7 @@ namespace Kargono::EditorUI
 				spec.m_Bounds[0], spec.m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
+				StoreUndoMemento(memento);
 				if (spec.m_ConfirmAction)
 				{
 					spec.m_ConfirmAction(spec);
@@ -2875,6 +2916,7 @@ namespace Kargono::EditorUI
 				if (DrawColorPickerButton(("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
 					colorPickerValue))
 				{
+					StoreUndoMemento(memento);
 					spec.m_CurrentVec4 = Utility::ImVec4ToMathVec4(colorPickerValue);
 					if (spec.m_ConfirmAction)
 					{
@@ -2928,7 +2970,17 @@ namespace Kargono::EditorUI
 		ImGui::SameLine();
 		CreateButton(spec.m_WidgetID + WidgetIterator(widgetCount), [&]()
 		{
-			Utility::Operations::ToggleBoolean(spec.m_Editing);
+			if (spec.m_Flags & EditorUI::EditVec4_HandleEditButtonExternally)
+			{
+				if (spec.m_OnEdit)
+				{
+					spec.m_OnEdit(spec);
+				}
+			}
+			else
+			{
+				Utility::Operations::ToggleBoolean(spec.m_Editing);
+			}
 		},
 		EditorUIService::s_SmallEditButton,
 		spec.m_Editing, spec.m_Editing ? s_PrimaryTextColor : s_DisabledColor);
@@ -4500,5 +4552,24 @@ namespace Kargono::EditorUI
 
 		// Return true, if no duplicates are found
 		return false;
+	}
+	void MementoStack::AddMemento(const EditorMemento& memento)
+	{
+		m_Stack.push(memento);
+	}
+	std::optional<EditorMemento> MementoStack::PopMemento()
+	{
+		// Handle case where stack is empty
+		if (m_Stack.size() == 0)
+		{
+			return {};
+		}
+		
+		// Get the top memento to return
+		EditorMemento returnMemento = m_Stack.top();
+
+		// Remove the top memento from the stack
+		m_Stack.pop();
+		return returnMemento;
 	}
 }
