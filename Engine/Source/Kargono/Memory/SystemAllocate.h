@@ -20,4 +20,7 @@ namespace Kargono::Memory
 	}
 }
 
+#undef ALIGN_PREV
+#undef ALIGN_NEXT
+
 

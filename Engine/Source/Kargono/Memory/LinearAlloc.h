@@ -26,20 +26,26 @@ namespace Kargono::Memory
 		// Allocate uninitialized bytes
 		uint8_t* AllocRaw(size_t dataSize, size_t alignment);
 
-		// Return a type
+		// Allocate memory for specified type
 		template<typename Type, size_t Count = 1, size_t Align = alignof(Type)>
 		Type* Alloc(auto&&... args)
 		{
+			// Resource for placement new: https://www.geeksforgeeks.org/placement-new-operator-cpp/
+
+			// Allocate memory for one or more objects of the specified type
 			Type* returnPtr = new (AllocRaw(sizeof(Type) * Count, Align)) Type(std::forward<decltype(args)>(args)...);
+
+			// Return pointer to memory (AllocRaw could return nullptr)
 			return returnPtr;
 		}
 
-		/*template<typename T, size_t N>
-		T* Alloc(size_t size = sizeof(T) * N, size_t align = alignof(T))
-		{
-			return new (Alloc(size, align)) T();
-		}*/
+		// TODO: Optionally add resize allocation method here: https://www.gingerbill.org/article/2019/02/08/memory-allocation-strategies-002/
 
+	private:
+		bool IsPowerOfTwo(uintptr_t x);
+		uintptr_t AlignForward(uintptr_t pointer, size_t alignment);
+
+	public:
 		//==============================
 		// Manage Allocator
 		//==============================
