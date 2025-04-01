@@ -8,7 +8,7 @@
 #include "Kargono/Utility/Random.h"
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Memory/ObjectPool.h"
-#include "Kargono/Memory/LinearAlloc.h"
+#include "Kargono/Memory/StackAlloc.h"
 #include "Kargono/Memory/SystemAllocate.h"
 
 #include <sstream>
@@ -16,36 +16,23 @@
 
 namespace Kargono::Panels
 {
-	struct TestStruct
-	{
-		FixedString32 testString{ "This is a string" };
-		float val{ 3.0f };
-	};
-
 	static EditorApp* s_EditorApp{ nullptr };
 	static Windows::MainWindow* s_MainWindow{ nullptr };
-	static Memory::LinearAlloc s_RandomAlloc;
-	static std::array<TestStruct*, 5> s_AllTests;
 
-	static EditorUI::EditTextSpec s_TestText {};
-	static EditorUI::EditFloatSpec s_TimerTime{};
-	static EditorUI::EditIntegerSpec s_RandomTestInteger{};
-	static EditorUI::EditMultiLineTextSpec s_MultiLineText{};
+	static EditorUI::EditTextSpec s_CompilePath {};
+
+	struct DataStruct
+	{
+		float ahaha{ 1.0f };
+		FixedString32 m_Text{ "aba" };
+	};
+	static DataStruct* s_DataStructs[5];
+	static Memory::StackAlloc s_DataAllocator{};
 
 // TODO: Testing Splines
 #if 0
 	static std::vector<EditorUI::EditVec3Spec> s_ControlPointWidgets;
 #endif
-
-
-	static FixedString256 newString;
-	static EditorUI::TooltipSpec testTooltip{};
-
-	enum class TestTypes : uint32_t
-	{
-		None = 0,
-		Display
-	};
 
 	
 	TestingPanel::TestingPanel()
@@ -267,62 +254,26 @@ namespace Kargono::Panels
 	}
 	void TestingPanel::InitializeGeneralTestingWidgets()
 	{
-
 		s_TestingWorkspaceHeader.m_Label = "Testing Workspace";
 		s_TestingWorkspaceHeader.m_Expanded = true;
 		s_TestingWorkspaceHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 
-		s_TestText.m_Label = "File to Compile";
-		s_TestText.m_CurrentOption = "test.kgscript";
+		s_CompilePath.m_Label = "File to Compile";
+		s_CompilePath.m_CurrentOption = "test.kgscript";
 
-		s_TimerTime.m_Label = "Timer Time";
-		s_TimerTime.m_CurrentFloat = 3.0f;
+		size_t bufferSize{ sizeof(DataStruct) * 10 };
+		s_DataAllocator.Init(Memory::SystemAlloc(bufferSize, alignof(DataStruct)), bufferSize);
+		s_DataStructs[0] = s_DataAllocator.Alloc<DataStruct>();
+		s_DataStructs[1] = s_DataAllocator.Alloc<DataStruct>();
+		s_DataStructs[2] = s_DataAllocator.Alloc<DataStruct>();
+		s_DataStructs[3] = s_DataAllocator.Alloc<DataStruct>();
 
-		s_RandomTestInteger.m_Label = "Intenger Time";
-		s_RandomTestInteger.m_CurrentInteger = 5;
-
-		m_TestHeader.m_Label = "directory/directory/file.txt";
-		newString = "Hahahaha";
-
-		// Test tooltip api
-		testTooltip.m_Label = "Test Tooltip";
-		// Create menu items
-		EditorUI::TooltipEntry newEntry{ "First Test Entry", [](EditorUI::TooltipEntry& entry)
-		{
-			UNREFERENCED_PARAMETER(entry);
-			KG_WARN("Meow");
-		} };
+		s_DataStructs[0]->m_Text = "This is the first data struct";
+		s_DataStructs[1]->m_Text = "This is the second data struct";
+		s_DataStructs[2]->m_Text = "This is the third data struct";
+		s_DataStructs[3]->m_Text = "This is the fourth data struct";
 
 
-		size_t bufferSize{ sizeof(TestStruct) * 3 };
-		s_RandomAlloc.Init(Memory::Allocate(bufferSize, alignof(TestStruct)), bufferSize);
-
-		s_AllTests[0] = s_RandomAlloc.Alloc<TestStruct, 3>();
-		
-		s_AllTests[0]->testString = "Here is a random string to test!";
-		s_AllTests[0]->val = 3.0f;
-
-		s_AllTests[0][1].testString = "This is string two";
-		s_AllTests[0][1].val = 5.0f;
-
-		s_AllTests[0][2].testString = "This is string three";
-		s_AllTests[0][2].val = 7.0f;
-
-		printf("===================\n");
-		TestStruct& test = s_AllTests[0][0];
-		printf("The current value is: %s %f %p\n", test.testString.CString(), test.val, s_AllTests[0]);
-
-
-		TestStruct& test2 = s_AllTests[0][1];
-		printf("The current value is: %s %f %p\n", test2.testString.CString(), test2.val, s_AllTests[0] + 1);
-
-		TestStruct& test3 = s_AllTests[0][2];
-		printf("The current value is: %s %f %p\n", test3.testString.CString(), test3.val, s_AllTests[0] + 2);
-
-		printf("===================\n");
-
-
-		testTooltip.AddTooltipEntry(std::move(newEntry));
 		// TODO Testing Splines
 #if 0
 		// TODO: Please Remove
@@ -356,9 +307,6 @@ namespace Kargono::Panels
 			iteration++;
 		}
 #endif
-
-		s_MultiLineText.m_Label = "Test Multi Line";
-		s_MultiLineText.m_CurrentOption = "This is a paragraph of text bahahahahahahahahahahahaha";
 	}
 	void TestingPanel::DrawDebugGlobalWidgets()
 	{
@@ -460,27 +408,19 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::CollapsingHeader(s_TestingWorkspaceHeader);
 		if (s_TestingWorkspaceHeader.m_Expanded)
 		{
-			EditorUI::EditorUIService::EditText(s_TestText);
+			EditorUI::EditorUIService::EditText(s_CompilePath);
 
 			if (ImGui::Button("Compile File"))
 			{
-				KG_TRACE_CRITICAL(Scripting::ScriptCompilerService::CompileScriptFile("./../Projects/Pong/Assets/" + s_TestText.m_CurrentOption));
+				KG_TRACE_CRITICAL(Scripting::ScriptCompilerService::CompileScriptFile("./../Projects/Pong/Assets/" + s_CompilePath.m_CurrentOption));
 			}
 
+			static size_t s_Count{ 4 };
 
-			printf("===================\n");
-			TestStruct& test = s_AllTests[0][0];
-			printf("The current value is: %s %f %p\n", test.testString.CString(), test.val, s_AllTests[0]);
-
-
-			TestStruct& test2 = s_AllTests[0][1];
-			printf("The current value is: %s %f %p\n", test2.testString.CString(), test2.val, s_AllTests[0] + 1);
-
-			TestStruct& test3 = s_AllTests[0][2];
-			printf("The current value is: %s %f %p\n", test3.testString.CString(), test3.val, s_AllTests[0] + 2);
-
-			printf("===================\n");
-
+			for (size_t i{ 0 }; i < s_Count; i++)
+			{
+				EditorUI::EditorUIService::Text(s_DataStructs[i]->m_Text.CString());
+			}
 
 
 			// TODO: Testing Splines
@@ -503,9 +443,8 @@ namespace Kargono::Panels
 	{
 		return false;
 	}
-	bool TestingPanel::OnInputEvent(Events::Event* event)
+	bool TestingPanel::OnInputEvent(Events::Event* /*event*/)
 	{
-		UNREFERENCED_PARAMETER(event);
 		return false;
 	}
 }

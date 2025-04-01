@@ -10,15 +10,28 @@ namespace Kargono::Panels
 	class TestingPanel
 	{
 	public:
+		//=========================
+		// Constructor/Destructor
+		//=========================
 		TestingPanel();
 
-		void OnEditorUIRender();
+		//=========================
+		// Lifecycle Functions
+		//=========================
 		void InitializeDebugGlobalsWidgets();
 		void InitializeGeneralTestingWidgets();
+
+		//=========================
+		// On Event
+		//=========================
+		void OnEditorUIRender();
+		bool OnInputEvent(Events::Event* event);
+		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
+
+	private:
+		// Helper functions
 		void DrawDebugGlobalWidgets();
 		void DrawGeneralTestingWidgets();
-		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
-		bool OnInputEvent(Events::Event* event);
 	private:
 		FixedString32 m_PanelName{ "Testing" };
 
@@ -26,8 +39,6 @@ namespace Kargono::Panels
 		// Content browser widget test
 		//==================================
 	public:
-
-		EditorUI::NavigationHeaderSpec m_TestHeader{};
 
 #if defined(KG_DEBUG)
 		// Debug global widgets

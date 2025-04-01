@@ -1,6 +1,8 @@
 #include "kgpch.h"
 #include "LinearAlloc.h"
 
+#include "Kargono/Memory/MemoryCommon.h"
+
 namespace Kargono::Memory
 {
 	void LinearAlloc::Init(uint8_t* backingBuffer, size_t bufferSize)
@@ -12,6 +14,9 @@ namespace Kargono::Memory
 
 	void LinearAlloc::Terminate()
 	{
+		m_Buffer = nullptr;
+		m_BufferSize = 0;
+		m_Offset = 0;
 	}
 
 	uint8_t* LinearAlloc::AllocRaw(size_t dataSize, size_t alignment)
@@ -31,7 +36,6 @@ namespace Kargono::Memory
 			m_Offset = offset + dataSize;
 
 			// Note that this allocator does not zero out the memory buffer per-allocation
-
 			return returnVal;
 		}
 
@@ -39,10 +43,7 @@ namespace Kargono::Memory
 		return nullptr;
 	}
 
-	bool LinearAlloc::IsPowerOfTwo(uintptr_t x)
-	{
-		return (x & (x-1)) == 0;
-	}
+	
 
 	uintptr_t LinearAlloc::AlignForward(uintptr_t pointer, size_t alignment)
 	{
@@ -51,7 +52,7 @@ namespace Kargono::Memory
 		uintptr_t modulo;
 
 		// Most/all architectures use power-of-two alignment
-		KG_ASSERT(IsPowerOfTwo((uintptr_t)alignment));
+		KG_ASSERT(Utility::IsPowerOfTwo((uintptr_t)alignment));
 
 		returnPtr = pointer;
 		alignmentInt = alignment;

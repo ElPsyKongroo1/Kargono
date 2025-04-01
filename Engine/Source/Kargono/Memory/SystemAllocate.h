@@ -8,7 +8,7 @@
 
 namespace Kargono::Memory
 {
-	inline uint8_t* Allocate(size_t dataSize, size_t alignment)
+	inline uint8_t* SystemAlloc(size_t dataSize, size_t alignment)
 	{
 		// TODO: We are not using alli
 		// TODO: Look into VirtualAlloc() and mmap() for bigger allocations

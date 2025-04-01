@@ -5,14 +5,20 @@
 
 namespace Kargono::Memory
 {
-	class LinearAlloc
+	struct StackAllocHeader
+	{
+		size_t m_PreviousOffset;
+		size_t m_Padding;
+	};
+
+	class StackAlloc
 	{
 	public:
 		//==============================
 		// Constuctors/Destructors
 		//==============================
-		LinearAlloc() = default;
-		~LinearAlloc() = default;
+		StackAlloc() = default;
+		~StackAlloc() = default;
 	public:
 		//==============================
 		// Lifecycle Functions
@@ -39,12 +45,15 @@ namespace Kargono::Memory
 			return returnPtr;
 		}
 
-		// TODO: Optionally add resize allocation method here: https://www.gingerbill.org/article/2019/02/08/memory-allocation-strategies-002/
-
 	private:
 		// Allocation helper functions
-		uintptr_t AlignForward(uintptr_t pointer, size_t alignment);
+		uintptr_t AlignHeaderPadding(uintptr_t pointer, size_t alignment, size_t headerSize);
 
+	public:
+		//==============================
+		// De-Allocate Memory
+		//==============================
+		void Free(uint8_t* dataPtr);
 	public:
 		//==============================
 		// Manage Allocator
@@ -54,6 +63,7 @@ namespace Kargono::Memory
 	private:
 		uint8_t* m_Buffer{ nullptr };
 		size_t m_BufferSize{ 0 };
-		size_t m_Offset{ 0 };
+		size_t m_CurrentOffset{ 0 };
+		size_t m_PreviousOffset{ 0 };
 	};
 }
