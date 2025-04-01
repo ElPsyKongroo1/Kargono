@@ -59,7 +59,7 @@ namespace Kargono::Memory
 	}
 	uintptr_t StackAlloc::AlignHeaderPadding(uintptr_t pointer, size_t alignment, size_t headerSize)
 	{
-#define PowerOfTwoModulo(dividend, divisor) dividend & (divisor - 1)
+		#define PowerOfTwoModulo(dividend, divisor) dividend & (divisor - 1)
 
 		uintptr_t pointerInt;
 		uintptr_t alignmentInt;
@@ -95,7 +95,7 @@ namespace Kargono::Memory
 			neededSpace -= returnPadding;
 			
 			// Add the needed space to the padding
-			if (PowerOfTwoModulo(neededSpace, alignmentInt) == 0)
+			if ((PowerOfTwoModulo(neededSpace, alignmentInt)) == 0)
 			{
 				// Truncate the needed space based on the alignment
 				returnPadding += alignmentInt * (neededSpace / alignmentInt);
@@ -110,7 +110,7 @@ namespace Kargono::Memory
 
 		return (size_t)returnPadding;
 
-#undef PowerOfTwoModulo
+		#undef PowerOfTwoModulo
 	}
 	void StackAlloc::Free(uint8_t* dataPtr)
 	{

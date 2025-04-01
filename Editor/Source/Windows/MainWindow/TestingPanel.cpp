@@ -7,9 +7,8 @@
 #include "Kargono/Scripting/ScriptCompilerService.h"
 #include "Kargono/Utility/Random.h"
 #include "Kargono/Utility/FileSystem.h"
-#include "Kargono/Memory/ObjectPool.h"
 #include "Kargono/Memory/StackAlloc.h"
-#include "Kargono/Memory/SystemAllocate.h"
+#include "Kargono/Memory/SystemAlloc.h"
 
 #include <sstream>
 #include <cstdio>
@@ -262,7 +261,7 @@ namespace Kargono::Panels
 		s_CompilePath.m_CurrentOption = "test.kgscript";
 
 		size_t bufferSize{ sizeof(DataStruct) * 10 };
-		s_DataAllocator.Init(Memory::SystemAlloc(bufferSize, alignof(DataStruct)), bufferSize);
+		s_DataAllocator.Init(Memory::System::GenAlloc(bufferSize, alignof(DataStruct)), bufferSize);
 		s_DataStructs[0] = s_DataAllocator.Alloc<DataStruct>();
 		s_DataStructs[1] = s_DataAllocator.Alloc<DataStruct>();
 		s_DataStructs[2] = s_DataAllocator.Alloc<DataStruct>();
