@@ -32,7 +32,7 @@ namespace Kargono::Memory
 		if (offset + dataSize <= m_BufferSize)
 		{
 			// Allocate the memory!
-			uint8_t* returnVal = m_Buffer + m_Offset;
+			uint8_t* returnVal = m_Buffer + offset;
 			m_Offset = offset + dataSize;
 
 			// Note that this allocator does not zero out the memory buffer per-allocation
