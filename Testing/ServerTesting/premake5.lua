@@ -34,7 +34,6 @@ project "ServerTesting"
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Server/Source",
         "%{IncludeDir.optick}",
-        "%{IncludeDir.asio}",
         "%{IncludeDir.doctest}",
         "%{IncludeDir.ImGuiColorTextEdit}"
     }

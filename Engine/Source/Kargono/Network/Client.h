@@ -2,11 +2,9 @@
 
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Events/ApplicationEvent.h"
-#include "Kargono/Network/UDPConnection.h"
-#include "Kargono/Network/TCPConnection.h"
 #include "Kargono/Core/Base.h"
 
-#include "API/Network/AsioAPI.h"
+#include "Kargono/Network/NetworkCommon.h"
 
 #include <string>
 #include <atomic>
@@ -19,65 +17,6 @@
 
 namespace Kargono::Network
 {
-
-	class ClientTCPConnection;
-
-	class ClientUDPConnection : public UDPConnection
-	{
-	public:
-		//==============================
-		// Constructors/Destructors
-		//==============================
-		ClientUDPConnection(NetworkContext* networkContext, asio::ip::udp::socket&& socket, Ref<ClientTCPConnection> connection)
-			: UDPConnection(networkContext, std::move(socket)), m_ActiveTCPConnection(connection) {}
-		virtual ~ClientUDPConnection() override = default;
-	public:
-		//==============================
-		// Client Connection Specific Functionality
-		//==============================
-		virtual void Disconnect(asio::ip::udp::endpoint key) override;
-		virtual void AddMessageToIncomingMessageQueue() override;
-	private:
-		Ref<ClientTCPConnection> m_ActiveTCPConnection{ nullptr };
-	};
-
-	//============================================================
-	// TCP Client Connection Class
-	//============================================================
-
-	class ClientTCPConnection : public TCPConnection
-	{
-	public:
-		//==============================
-		// Constructors/Destructors
-		//==============================
-		ClientTCPConnection(NetworkContext* networkContext, asio::ip::tcp::socket&& socket) : TCPConnection(networkContext, std::move(socket)) {}
-		virtual ~ClientTCPConnection() override {}
-
-		//==============================
-		// LifeCycle Functions
-		//==============================
-		bool Connect(const asio::ip::tcp::resolver::results_type& endpoints);
-		virtual void Disconnect() override;
-		bool IsConnected() const 
-		{ 
-			return m_TCPSocket.is_open(); 
-		}
-
-	private:
-		//==============================
-		// Client Connection Specific Functionality
-		//==============================
-		virtual void AddMessageToIncomingMessageQueue() override;
-
-		//==============================
-		// Client Validation Functions
-		//==============================
-		void WriteValidationAsync();
-		void ReadValidationAsync();
-
-	};
-
 	class Client
 	{
 	public:
@@ -93,9 +32,6 @@ namespace Kargono::Network
 		bool ConnectToServer(const std::string& serverIP, uint16_t serverPort, bool remote = false);
 		void DisconnectFromServer();
 		bool IsConnectedToServer();
-
-	private:
-		bool ResolveLocalTCPEndpoint(asio::ip::tcp::socket& localSocket, uint16_t serverPort);
 	public:
 		//==============================
 		// Receive Messages from Server
@@ -125,7 +61,6 @@ namespace Kargono::Network
 		// Send Messages to Server
 		//==============================
 		// Send message to the server
-		void SendTCPToServer(const Message& msg);
 		void SendUDPToServer(Message& msg);
 		void SendChatToServer(const std::string& text);
 		// All specific message handlers
@@ -143,7 +78,6 @@ namespace Kargono::Network
 
 	private:
 		// Asio Thread and Context. This thread handles asynchronous calls from Asio itself
-		NetworkContext m_NetworkContext{};
 
 		// Function and Event Queue for m_NetworkThread to handle
 		std::vector<std::function<void()>> m_FunctionQueue;
@@ -154,11 +88,6 @@ namespace Kargono::Network
 		// Cached active session information
 		uint64_t m_SessionStartFrame{ 0 };
 		std::atomic<uint16_t> m_SessionSlot{std::numeric_limits<uint16_t>::max()};
-
-		// TCP and UDP connection objects, which handles reliable and unreliable data transfer
-		Ref<ClientTCPConnection> m_ClientTCPConnection { nullptr };
-		Ref<ClientUDPConnection> m_ClientUDPConnection { nullptr };
-		std::atomic<bool> m_UDPConnectionSuccessful;
 
 	private:
 		friend class ClientService;

@@ -31,8 +31,7 @@ project "Runtime"
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Runtime/Source",
-        "%{IncludeDir.optick}",
-        "%{IncludeDir.asio}"
+        "%{IncludeDir.optick}"
 
     }
 

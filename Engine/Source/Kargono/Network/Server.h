@@ -3,104 +3,12 @@
 #include "Kargono/Network/Session.h"
 #include "Kargono/Events/Event.h"
 #include "Kargono/Events/NetworkingEvent.h"
-#include "Kargono/Network/UDPConnection.h"
-#include "Kargono/Network/TCPConnection.h"
 #include "Kargono/Core/Base.h"
 
 #include <unordered_map>
 
-
 namespace Kargono::Network
 {
-	class ServerTCPConnection;
-
-	class ServerUDPConnection : public UDPConnection
-	{
-	public:
-		//==============================
-		// Constructors/Destructors
-		//==============================
-		ServerUDPConnection(NetworkContext* networkContext, asio::ip::udp::socket&& socket,
-			std::unordered_map<asio::ip::udp::endpoint, Ref<ServerTCPConnection>>& ipMap)
-			: UDPConnection(networkContext, std::move(socket)), m_IPAddressToConnection(ipMap) {}
-		virtual ~ServerUDPConnection() override = default;
-	public:
-		//==============================
-		// Server Connection Specific Functionality
-		//==============================
-		virtual void AddMessageToIncomingMessageQueue() override;
-		virtual void Disconnect(asio::ip::udp::endpoint key) override;
-
-	protected:
-		std::unordered_map<asio::ip::udp::endpoint, Ref<ServerTCPConnection>>& m_IPAddressToConnection;
-	};
-
-
-	//============================================================
-	// TCP Server Connection Class
-	//============================================================
-
-	class ServerTCPConnection : public TCPConnection
-	{
-	public:
-
-		//==============================
-		// Constructors/Destructors
-		//==============================
-		ServerTCPConnection(NetworkContext* networkContext, asio::ip::tcp::socket&& socket);
-		virtual ~ServerTCPConnection() override {}
-
-	private:
-		void CalculateValidationData();
-		//==============================
-		// LifeCycle Functions
-		//==============================
-	public:
-		void Connect(uint32_t uid = 0);
-		virtual void Disconnect() override;
-		bool IsConnected() const 
-		{ 
-			return m_TCPSocket.is_open(); 
-		}
-
-		//==============================
-		// Server Connection Specific Functionality
-		//==============================
-		virtual void AddMessageToIncomingMessageQueue() override;
-
-		//==============================
-		// Getter/Setters
-		//==============================
-		float GetTCPLatency() const 
-		{ 
-			return m_TCPLatency; 
-		}
-		void SetTCPLatency(float newLatency) 
-		{ 
-			m_TCPLatency = newLatency; 
-		}
-		uint32_t GetID() const 
-		{ 
-			return m_ID;
-		}
-
-	private:
-		//==============================
-		// Client Validation Functions
-		//==============================
-		void WriteValidationAsync();
-		void ReadValidationAsync();
-
-	protected:
-		// Uniquely identify connection
-		uint32_t m_ID { 0 };
-		// Handshake Validation
-		uint64_t m_ValidationCache { 0 };
-		// Latency Variables
-		float m_TCPLatency { 0.0f };
-
-	};
-
 	class Server
 	{
 	public:
@@ -115,9 +23,6 @@ namespace Kargono::Network
 		//==============================
 		bool StartServer(bool isLocal);
 		void StopServer();
-
-	private:
-		bool StartUDPServer(bool isLocal);
 	public:
 		//==============================
 		// Receive Messages
@@ -145,9 +50,8 @@ namespace Kargono::Network
 		// Send Messages
 		//==============================
 		// Send message to client(s)
-		void SendTCPMessage(ServerTCPConnection* client, const Message& msg);
 		void SendUDPMessage(ServerTCPConnection* client, Message& msg);
-		void SendTCPMessageAll(const Message& msg, ServerTCPConnection* ignoreClient = nullptr);
+		void SendUDPMessageAll(const Message& msg, ServerTCPConnection* ignoreClient = nullptr);
 		// Handle specific message types
 		void SendClientLeftMessageToAll(uint16_t removedClientSlot);
 		void SendServerPingMessage(ServerTCPConnection* client, Message& msg);
@@ -183,11 +87,9 @@ namespace Kargono::Network
 		bool OnClientConnect(Ref<Kargono::Network::ServerTCPConnection> client);
 		void OnClientDisconnect(Ref<Kargono::Network::ServerTCPConnection> client);
 		void CheckConnectionsValid();
-		void WaitForClientConnectionAsync();
 
 	private:
 		// Main server network context
-		NetworkContext m_NetworkContext{};
 
 		// Session Data
 		Session m_OnlySession{};
@@ -198,13 +100,6 @@ namespace Kargono::Network
 		// Event queue
 		std::vector<Ref<Events::Event>> m_EventQueue {};
 		std::mutex m_EventQueueMutex {};
-
-		// Storage for all connections and ancillary data
-		std::deque<Ref<ServerTCPConnection>> m_AllClientConnections {};
-		Ref<ServerUDPConnection> m_UDPServer { nullptr };
-		std::unordered_map<asio::ip::udp::endpoint, Ref<ServerTCPConnection>> m_IPAddressToConnection {};
-		uint32_t m_ClientIDCounter = 10000;
-		asio::ip::tcp::acceptor m_TCPAcceptor;
 	private:
 		friend class ServerService;
 	};

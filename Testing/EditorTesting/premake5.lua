@@ -34,7 +34,6 @@ project "EditorTesting"
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Editor/Source",
         "%{IncludeDir.optick}",
-        "%{IncludeDir.asio}",
         "%{IncludeDir.doctest}",
         "%{IncludeDir.ImGuiColorTextEdit}"
     }

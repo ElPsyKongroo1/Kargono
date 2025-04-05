@@ -4,8 +4,6 @@
 #include "Kargono/Core/DataStructures.h"
 #include "Kargono/Math/MathAliases.h"
 
-#include "API/Network/AsioAPI.h"
-
 #include <thread>
 #include <atomic>
 #include <mutex>
@@ -15,7 +13,6 @@
 
 namespace Kargono::Network
 {
-
 	//==============================
 	// Message Type
 	//==============================
@@ -63,8 +60,6 @@ namespace Kargono::Network
 		ScriptMessaging_ReceiveSignal
 	};
 
-	class ServerTCPConnection;
-
 	//==============================
 	// Message Header Struct
 	//==============================
@@ -89,110 +84,39 @@ namespace Kargono::Network
 		// Modify Message Data
 		//==============================
 		// Replace payload data with provided buffer data
-		void AppendPayload(void* buffer, uint64_t size);
+		void AppendPayload(void* buffer, uint64_t size) {}
 		// Push provided data onto the end of the message's payload
 		template <typename DataType>
-		friend Message& operator << (Message& msg, const DataType& data);
+		friend Message& operator << (Message& msg, const DataType& data) { return msg; }
 		// Remove provided data type from the end of the message and place the data into the indicated location
 		template <typename DataType>
-		friend Message& operator >> (Message& msg, const DataType& data);
+		friend Message& operator >> (Message& msg, const DataType& data) { return msg; }
 
 		//==============================
 		// Getters/Setters
 		//==============================
 		// Return size of Payload + Header
-		size_t GetEntireMessageSize() const;
+		size_t GetEntireMessageSize() const { return 0; }
 		// Returns pointer to start of payload
 		void* GetPayloadPointer() { return (void*)m_PayloadData.data(); }
 		// Returns size of payload in bytes
 		uint64_t GetPayloadSize() { return m_Header.m_PayloadSize; }
 		// Return copy internal buffer
-		std::vector<uint8_t> GetPayloadCopy(uint64_t size);
+		std::vector<uint8_t> GetPayloadCopy(uint64_t size) { return {}; }
 
 	};
 
-	//============================================================
-	// Owned Message Struct
-	//============================================================
-	struct OwnedMessage
+	class ServerTCPConnection
 	{
-		ServerTCPConnection* m_RemoteConnection{ nullptr };
-		Message m_Message;
+	public:
+		uint32_t GetID() const { return data; }
+		void SendUDPMessage(Message& msg) {}
+	private:
+		uint32_t data{0};
 	};
 
-	struct LabeledMessage
-	{
-		asio::ip::udp::endpoint& m_OutgoingEndpoint;
-		Message m_Message;
-	};
 
-	//==============================
-	// Operator Overload Definitions
-	//==============================
-	template<typename DataType>
-	Message& operator<<(Message& msg, const DataType& data)
-	{
-		// Check that the type of the data being pushed is trivially copyable
-		static_assert(std::is_standard_layout_v<DataType>, "Data is too complex");
 
-		// Cache current size of vector, as this will be the point we insert the data
-		size_t currentBufferSize = msg.m_PayloadData.size();
-
-		// Resize the vector to contain the new data being added
-		msg.m_PayloadData.resize(msg.m_PayloadData.size() + sizeof(DataType));
-
-		// Copy the data over
-		std::memcpy(msg.m_PayloadData.data() + currentBufferSize, &data, sizeof(DataType));
-
-		// Update message header size
-		msg.m_Header.m_PayloadSize = static_cast<uint32_t>(msg.m_PayloadData.size());
-
-		return msg;
-	}
-
-	template<typename DataType>
-	Message& operator>>(Message& msg, const DataType& data)
-	{
-		// Check that the type of the data being pushed is trivially copyable
-		static_assert(std::is_standard_layout<DataType>::value, "Data is too complex");
-
-		// Cache current size of vector, as this will be the point we insert the data
-		size_t bufferSizeAfterRemoval = msg.m_PayloadData.size() - sizeof(DataType);
-
-		// Copy the data over
-		std::memcpy((void*)&data, msg.m_PayloadData.data() + bufferSizeAfterRemoval, sizeof(DataType));
-
-		// Shrink the vector to remove the read bytes
-		msg.m_PayloadData.resize(bufferSizeAfterRemoval);
-
-		// Update message header size
-		msg.m_Header.m_PayloadSize = static_cast<uint32_t>(msg.GetEntireMessageSize());
-
-		return msg;
-	}
-
-	struct NetworkContext
-	{
-		//==============================
-		// Fields
-		//==============================
-		// Asio context and accompanying thread
-		asio::io_context m_AsioContext;
-		std::thread m_AsioThread;
-		// Network thread and supporting mutex/condition_variable
-		Ref<std::thread> m_NetworkThread { nullptr };
-		std::condition_variable m_BlockNetworkThreadCondVar {};
-		std::mutex m_BlockNetworkThreadMutex {};
-		std::atomic<bool> m_QuitNetworkThread { false };
-		// Singular incoming message queue
-		TSQueue<OwnedMessage> m_IncomingMessageQueue;
-
-		//==============================
-		// Manage Network Thread
-		//==============================
-		void NetworkThreadSleep();
-		void NetworkThreadWakeUp();
-	};
 
 	constexpr uint64_t k_KeepAliveDelay{ 10'000 };
 	constexpr uint16_t k_MaxSyncPings = 10;
