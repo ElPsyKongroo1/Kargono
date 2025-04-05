@@ -3,6 +3,7 @@
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Core/Base.h"
+#include "Kargono/Events/EventQueue.h"
 
 #include "Kargono/Network/NetworkCommon.h"
 
@@ -26,6 +27,7 @@ namespace Kargono::Network
 		Client() = default;
 		~Client() = default;
 	public:
+
 		//==============================
 		// Manage Connection to Server
 		//==============================
@@ -82,8 +84,7 @@ namespace Kargono::Network
 		// Function and Event Queue for m_NetworkThread to handle
 		std::vector<std::function<void()>> m_FunctionQueue;
 		std::mutex m_FunctionQueueMutex;
-		std::vector<Ref<Events::Event>> m_EventQueue {};
-		std::mutex m_EventQueueMutex {};
+		Events::EventQueue m_EventQueue;
 
 		// Cached active session information
 		uint64_t m_SessionStartFrame{ 0 };

@@ -426,6 +426,10 @@ namespace Kargono::Network
 	void ClientService::Init()
 	{
 		// TODO: Create new client
+		s_Client = CreateRef<Client>();
+
+		// TODO: Connect the event/function queues
+		s_Client->m_EventQueue.Init(OnEvent);
 
 		// TODO: Start the network thread in the client and call the Run function
 
@@ -652,11 +656,7 @@ namespace Kargono::Network
 			return;
 		}
 
-		// Obtain a lock on the network thread's event mutex
-		std::scoped_lock<std::mutex> lock(s_Client->m_EventQueueMutex);
-
-		// TODO: Add the indicated event and alert the network thread to wake up
-		s_Client->m_EventQueue.emplace_back(e);
+		s_Client->m_EventQueue.SubmitEvent(e);
 	}
 	void ClientService::OnEvent(Events::Event* e)
 	{
@@ -788,24 +788,6 @@ namespace Kargono::Network
 	}
 	void ClientService::ProcessEventQueue()
 	{
-		KG_PROFILE_FUNCTION();
-		std::vector<Ref<Events::Event>> localEventCache;
-
-		// Ensure the event queue doesn't become invalidated if one of the events modifies the queue
-		// inside the loop
-		{
-			// Obtain the event queue lock for this small scope
-			std::scoped_lock<std::mutex> lock(s_Client->m_EventQueueMutex);
-
-			// Move the event queue into a local variable and reset the queue
-			localEventCache = std::move(s_Client->m_EventQueue);
-			s_Client->m_EventQueue.clear();
-		}
-
-		// Process all of the events in the event queue
-		for (Ref<Kargono::Events::Event> event : localEventCache)
-		{
-			OnEvent(event.get());
-		}
+		s_Client->m_EventQueue.ProcessQueue();
 	}
 }
