@@ -9,6 +9,8 @@
 #include "Kargono/Core/AppTick.h"
 #include "Kargono/Input/InputService.h"
 
+#include "API/EditorUI/ImPlotAPI.h"
+
 static Kargono::EditorApp* s_EditorApp{ nullptr };
 
 namespace Kargono::Windows
@@ -1315,6 +1317,7 @@ namespace Kargono::Windows
 						ImGui::SaveIniSettingsToDisk("./Resources/EditorConfig.ini");
 					}
 					ImGui::MenuItem("ImGui Demo", NULL, &m_ShowDemoWindow);
+					ImGui::MenuItem("ImPlot Demo", NULL, &m_ShowImPlotWindow);
 					ImGui::EndMenu();
 				}
 
@@ -1365,6 +1368,7 @@ namespace Kargono::Windows
 		if (m_ShowInputMapEditor) { m_InputMapPanel->OnEditorUIRender(); }
 		if (m_ShowProperties) { m_PropertiesPanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
+		if (m_ShowImPlotWindow) { ImPlot::ShowDemoWindow(&m_ShowImPlotWindow); }
 		if (m_ShowTesting) { m_TestingPanel->OnEditorUIRender(); }
 		if (m_ShowAIStateEditor) { m_AIStatePanel->OnEditorUIRender(); }
 	}

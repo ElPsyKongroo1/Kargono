@@ -27,6 +27,8 @@ namespace Kargono::Panels
 	};
 	static DataStruct* s_DataStructs[5];
 	static Memory::StackAlloc s_DataAllocator{};
+	static EditorUI::ButtonSpec s_TestButton{};
+	static EditorUI::PlotSpec s_TestPlot{};
 
 // TODO: Testing Splines
 #if 0
@@ -272,6 +274,17 @@ namespace Kargono::Panels
 		s_DataStructs[2]->m_Text = "This is the third data struct";
 		s_DataStructs[3]->m_Text = "This is the fourth data struct";
 
+		s_TestButton.m_Label = "Issa Button";
+		s_TestButton.m_Flags |= EditorUI::Button_Indented;
+		s_TestButton.m_OnPress = [](EditorUI::ButtonSpec& spec) 
+		{
+				KG_WARN("We pressed a button!");
+		};
+
+		s_TestPlot.m_Label = "Test Plot";
+		s_TestPlot.m_Flags |= EditorUI::Plot_Indented;
+		s_TestPlot.SetBufferSize(50);
+
 
 		// TODO Testing Splines
 #if 0
@@ -421,6 +434,12 @@ namespace Kargono::Panels
 				EditorUI::EditorUIService::Text(s_DataStructs[i]->m_Text.CString());
 			}
 
+			if (EditorUI::EditorUIService::Button(s_TestButton))
+			{
+				s_TestPlot.AddValue(Utility::RandomService::GenerateRandomFloat(0.0f, 30.0f));
+			}
+
+			EditorUI::EditorUIService::Plot(s_TestPlot);
 
 			// TODO: Testing Splines
 #if 0 

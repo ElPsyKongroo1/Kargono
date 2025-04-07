@@ -18,6 +18,7 @@
 #include "API/Platform/GlfwAPI.h"
 #include "API/Platform/gladAPI.h"
 #include "API/EditorUI/ImGuiNotifyAPI.h"
+#include "API/EditorUI/ImPlotAPI.h"
 
 namespace Kargono::EditorUI
 {
@@ -742,6 +743,7 @@ namespace Kargono::EditorUI
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
+		API::InitImPlot();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.IniFilename = NULL;
 		ImGui::LoadIniSettingsFromDisk("./Resources/EditorConfig.ini");
@@ -891,6 +893,7 @@ namespace Kargono::EditorUI
 	{
 		if (s_Running)
 		{
+			API::TerminateImPlot();
 			ImGui_ImplOpenGL3_Shutdown();
 			ImGui_ImplGlfw_Shutdown();
 			ImGui::DestroyContext();
@@ -1608,6 +1611,84 @@ namespace Kargono::EditorUI
 			}
 		}
 		ImGui::PopFont();
+	}
+
+	bool EditorUIService::Button(ButtonSpec& spec)
+	{
+		// Local Variables
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.m_WidgetID);
+		uint32_t widgetCount{ 0 };
+
+		if (spec.m_Flags & Button_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
+		// Display Primary Label
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.m_Label.CString(),
+			spec.m_Flags & Button_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
+		TruncateText(spec.m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
+
+		// Shift button to secondary text position one
+		ImGui::SameLine(s_SecondaryTextPosOne - 2.5f);
+		
+		if (ImGui::Button(spec.m_ButtonText.CString()))
+		{
+			if (spec.m_OnPress)
+			{
+				spec.m_OnPress(spec);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	void EditorUIService::Plot(PlotSpec& spec)
+	{
+		// Local Variables
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.m_WidgetID);
+
+		static float s_PlotHeight{ 140.0f };
+
+		// Draw background
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextLargeWidth, screenPosition.y + s_PlotHeight),
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+
+		if (spec.m_Flags & Button_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
+		// Display Primary Label
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.m_Label.CString(),
+			spec.m_Flags & Button_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
+		TruncateText(spec.m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
+
+		// Shift button to secondary text position one
+		ImGui::SameLine(s_SecondaryTextPosOne - 2.5f);
+
+		ImPlotFlags flags = ImPlotFlags_NoMouseText | ImPlotFlags_NoLegend | ImPlotFlags_NoInputs;
+		ImPlotAxisFlags axisFlags = ImPlotAxisFlags_NoTickLabels;
+
+		if (ImPlot::BeginPlot(id, ImVec2(s_SecondaryTextLargeWidth, s_PlotHeight), flags))
+		{
+			ImPlot::SetupAxes("##", spec.m_YAxisLabel.CString(), axisFlags, 0);
+			ImPlot::SetupAxesLimits((double)spec.m_Offset - (double)spec.m_BufferSize, (double)spec.m_Offset - 1.0, 0, spec.m_MaxYVal, ImPlotCond_Always);
+			ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
+			ImPlot::PlotShaded("##", &spec.m_XValues[0], &spec.m_YValues[0], (int)spec.m_BufferSize, 0, 0, (int)spec.m_Offset);
+			ImPlot::PopStyleVar();
+			
+			ImPlot::PlotLine("##", &spec.m_XValues[0], &spec.m_YValues[0], (int)spec.m_BufferSize, 0, (int)spec.m_Offset);
+			
+			ImPlot::EndPlot();
+		}
 	}
 
 

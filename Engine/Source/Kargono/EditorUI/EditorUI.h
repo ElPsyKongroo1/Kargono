@@ -31,10 +31,12 @@ namespace Kargono::EditorUI
 	struct RadioSelectorSpec;
 	struct CollapsingHeaderSpec;
 	struct EditTextSpec;
+	struct ButtonSpec;
 	struct EditMultiLineTextSpec;
 	struct PanelHeaderSpec;
 	struct NavigationHeaderSpec;
 	struct CheckboxSpec;
+	struct PlotSpec;
 	struct GenericPopupSpec;
 	struct WarningPopupSpec;
 	struct GridSpec;
@@ -177,6 +179,8 @@ namespace Kargono::EditorUI
 		static void SelectOption(SelectOptionSpec& spec);
 		static void EditVariable(EditVariableSpec& spec);
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
+		static bool Button(ButtonSpec& spec);
+		static void Plot(PlotSpec& spec);
 		static void Checkbox(CheckboxSpec& spec);
 
 		static void EditInteger(EditIntegerSpec& spec);
@@ -448,13 +452,108 @@ namespace Kargono::EditorUI
 		friend void EditorUIService::GenericPopup(GenericPopupSpec& spec);
 	};
 
+	enum ButtonFlags
+	{
+		Button_None = 0,
+		Button_Indented = BIT(0)
+	};
+
+
+	struct ButtonSpec
+	{
+	public:
+		ButtonSpec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		FixedString16 m_Label;
+		FixedString16 m_ButtonText{"Click Me"};
+		WidgetFlags m_Flags{ ButtonFlags::Button_None };
+		std::function<void(ButtonSpec&)> m_OnPress;
+		Ref<void> m_ProvidedData{ nullptr };
+	private:
+		WidgetID m_WidgetID;
+	private:
+		friend bool EditorUIService::Button(ButtonSpec& spec);
+	};
+
+	enum PlotFlags
+	{
+		Plot_None = 0,
+		Plot_Indented = BIT(0)
+	};
+
+
+	struct PlotSpec
+	{
+	public:
+		PlotSpec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		void SetBufferSize(size_t newSize)
+		{
+			// Update the buffer size
+			m_BufferSize = newSize;
+
+			// Update the X/Y container values
+			m_XValues.resize(newSize);
+			m_YValues.resize(newSize);
+
+			for (size_t i{ 0 }; i < m_BufferSize; i++)
+			{
+				m_XValues[i] = 0.0f;
+				m_YValues[i] = 0.0f;
+			}
+			m_Offset = m_BufferSize;
+		}
+
+		void AddValue(float yValue)
+		{
+			// Add the coordinate
+			m_XValues[m_Offset % m_BufferSize] = (float)m_Offset;
+			m_YValues[m_Offset % m_BufferSize] = yValue;
+
+			// Update the offset index
+			m_Offset++;
+		}
+
+		void SetYAxisLabel(std::string_view text)
+		{
+			if (text.size() == 0)
+			{
+				m_YAxisLabel = "##";
+				return;
+			}
+
+			m_YAxisLabel = text;
+		}
+
+	public:
+		FixedString16 m_Label;
+		WidgetFlags m_Flags{ PlotFlags::Plot_None };
+		float m_MaxYVal{ 50.0f };
+		Ref<void> m_ProvidedData{ nullptr };
+	private:
+		WidgetID m_WidgetID;
+		FixedString16 m_YAxisLabel{ "##" };
+		std::vector<float> m_XValues;
+		std::vector<float> m_YValues;
+		size_t m_BufferSize{0};
+		size_t m_Offset{ 0 };
+	private:
+		friend void EditorUIService::Plot(PlotSpec& spec);
+	};
+
+
 	enum CheckboxFlags
 	{
 		Checkbox_None = 0,
 		Checkbox_LeftLean = BIT(0), // Check box aligns to the left
 		Checkbox_Indented = BIT(1)
 	};
-
 
 	struct CheckboxSpec
 	{
@@ -1598,6 +1697,8 @@ namespace Kargono::EditorUI
 	private:
 		friend void EditorUIService::EditVariable(EditVariableSpec&);
 	};
+
+
 }
 
 namespace Kargono::Utility

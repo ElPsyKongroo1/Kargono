@@ -235,6 +235,7 @@ namespace Kargono::Windows
 		bool m_ShowProjectComponent = false;
 		bool m_ShowProjectEnum = false;
 		bool m_ShowDemoWindow = false;
+		bool m_ShowImPlotWindow = false;
 		bool m_ShowTesting = false;
 		bool m_ShowScriptEditor = false;
 		bool m_ShowTextEditor = false;

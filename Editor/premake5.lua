@@ -12,6 +12,8 @@ project "Editor"
         "%{wks.location}/Dependencies/hash_library/sha256.h",
         "%{wks.location}/Dependencies/hash_library/crc32.cpp",
         "%{wks.location}/Dependencies/hash_library/crc32.h",
+		"%{wks.location}/Dependencies/implot/**.h",
+        "%{wks.location}/Dependencies/implot/**.cpp",
         "Source/**.h",
         "Source/**.cpp"
     }
@@ -32,6 +34,7 @@ project "Editor"
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Editor/Source",
         "%{IncludeDir.optick}",
+		"%{IncludeDir.implot}",
         "%{IncludeDir.ImGuiColorTextEdit}",
     }
     
