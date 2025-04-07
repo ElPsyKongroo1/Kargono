@@ -32,6 +32,7 @@ namespace Kargono::EditorUI
 	struct CollapsingHeaderSpec;
 	struct EditTextSpec;
 	struct ButtonSpec;
+	struct ButtonBarSpec;
 	struct EditMultiLineTextSpec;
 	struct PanelHeaderSpec;
 	struct NavigationHeaderSpec;
@@ -180,6 +181,7 @@ namespace Kargono::EditorUI
 		static void EditVariable(EditVariableSpec& spec);
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
 		static bool Button(ButtonSpec& spec);
+		static void ButtonBar(ButtonBarSpec& spec);
 		static void Plot(PlotSpec& spec);
 		static void Checkbox(CheckboxSpec& spec);
 
@@ -317,8 +319,10 @@ namespace Kargono::EditorUI
 
 		inline static ImVec4 s_HighlightColor1{ 247.6f / 255.0f, 188.2f / 255.0f, 140.7f / 255.0f, 1.0f };
 		inline static ImVec4 s_HighlightColor1_Thin { s_HighlightColor1.x, s_HighlightColor1.y, s_HighlightColor1.z, s_HighlightColor1.w * 0.75f };
+		inline static ImVec4 s_HighlightColor1_UltraThin { s_HighlightColor1.x, s_HighlightColor1.y, s_HighlightColor1.z, s_HighlightColor1.w * 0.3f };
 		inline static ImVec4 s_HighlightColor2{ 147.0f / 255.0f, 247.0f / 255.0f, 141.4f / 255.0f, 1.0f };
 		inline static ImVec4 s_HighlightColor2_Thin{ s_HighlightColor2.x, s_HighlightColor2.y, s_HighlightColor2.z, s_HighlightColor2.w * 0.75f };
+		inline static ImVec4 s_HighlightColor2_UltraThin{ s_HighlightColor2.x, s_HighlightColor2.y, s_HighlightColor2.z, s_HighlightColor2.w * 0.3f };
 		inline static ImVec4 s_HighlightColor3{ 241.0f / 255.0f, 141.0f / 255.0f, 247.4f / 255.0f, 1.0f };
 		inline static ImVec4 s_HighlightColor3_Thin { s_HighlightColor3.x, s_HighlightColor3.y, s_HighlightColor3.z, s_HighlightColor3.w * 0.75f };
 		inline static ImVec4 s_HighlightColor3_UltraThin { s_HighlightColor3.x, s_HighlightColor3.y, s_HighlightColor3.z, s_HighlightColor3.w * 0.3f };
@@ -452,6 +456,13 @@ namespace Kargono::EditorUI
 		friend void EditorUIService::GenericPopup(GenericPopupSpec& spec);
 	};
 
+	struct Button
+	{
+		FixedString16 m_Label{ "Click Me" };
+		std::function<void(Button&)> m_OnPress{ nullptr };
+		Ref<void> m_ProvidedData{ nullptr };
+	};
+
 	enum ButtonFlags
 	{
 		Button_None = 0,
@@ -468,14 +479,44 @@ namespace Kargono::EditorUI
 		}
 	public:
 		FixedString16 m_Label;
-		FixedString16 m_ButtonText{"Click Me"};
 		WidgetFlags m_Flags{ ButtonFlags::Button_None };
-		std::function<void(ButtonSpec&)> m_OnPress;
-		Ref<void> m_ProvidedData{ nullptr };
+		Button m_Button;
 	private:
 		WidgetID m_WidgetID;
 	private:
 		friend bool EditorUIService::Button(ButtonSpec& spec);
+	};
+
+	constexpr size_t k_MaxButtonBarSize{ 4 };
+
+	enum ButtonBarFlags
+	{
+		ButtonBar_None = 0,
+		ButtonBar_Indented = BIT(0)
+	};
+
+	struct ButtonBarSpec
+	{
+	public:
+		ButtonBarSpec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		bool AddButton(Button& button);
+		bool AddButton(std::string_view label, std::function<void(Button&)> onClick, Ref<void> providedData = nullptr);
+		void ClearButtons();
+
+		Button* GetButton(size_t index);
+	public:
+		FixedString16 m_Label;
+		WidgetFlags m_Flags{ ButtonBarFlags::ButtonBar_None };
+	private:
+		std::array<Button, k_MaxButtonBarSize> m_Buttons;
+		size_t m_ButtonCount{ 0 };
+		WidgetID m_WidgetID;
+	private:
+		friend void EditorUIService::ButtonBar(ButtonBarSpec& spec);
 	};
 
 	enum PlotFlags
@@ -925,7 +966,7 @@ namespace Kargono::EditorUI
 			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string m_Label;
+		FixedString32 m_Label;
 		WidgetFlags m_Flags{ CollapsingHeader_None };
 		bool m_Expanded{ false };
 		std::function<void()> m_OnExpand{ nullptr };

@@ -276,9 +276,9 @@ namespace Kargono::Panels
 
 		s_TestButton.m_Label = "Issa Button";
 		s_TestButton.m_Flags |= EditorUI::Button_Indented;
-		s_TestButton.m_OnPress = [](EditorUI::ButtonSpec& spec) 
+		s_TestButton.m_Button.m_OnPress = [](EditorUI::Button& spec) 
 		{
-				KG_WARN("We pressed a button!");
+			KG_WARN("We pressed a button!");
 		};
 
 		s_TestPlot.m_Label = "Test Plot";

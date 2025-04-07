@@ -14,8 +14,6 @@ namespace Kargono::Panels
 {
 	void ProjectPanel::InitializeStaticResources()
 	{
-		m_ProjectSettingsHeader.m_Label = Projects::ProjectService::GetActiveProjectName();
-
 		// Resolution Specification
 		m_SelectStartSceneSpec.m_Label = "Starting Scene";
 		//m_SelectStartSceneSpec.WidgetID = 0x75ebbc8750034f81;
@@ -1004,7 +1002,9 @@ namespace Kargono::Panels
 		s_MainWindow = s_EditorApp->m_MainWindow.get();
 		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
 			KG_BIND_CLASS_FN(ProjectPanel::OnKeyPressedEditor));
+
 		InitializeStaticResources();
+		m_ServerOptions.InitWidgets();
 	}
 	void ProjectPanel::OnEditorUIRender()
 	{
@@ -1017,8 +1017,6 @@ namespace Kargono::Panels
 			return;
 		}
 		// Project Settings Header
-		EditorUI::EditorUIService::PanelHeader(m_ProjectSettingsHeader);
-
 		EditorUI::EditorUIService::BeginTabBar("ProjectSettingsBar");
 
 		if (EditorUI::EditorUIService::BeginTabItem("General"))
@@ -1103,7 +1101,7 @@ namespace Kargono::Panels
 
 			if (EditorUI::EditorUIService::BeginTabItem("Server"))
 			{
-
+				m_ServerOptions.OnEditorUIRender();
 				EditorUI::EditorUIService::EndTabItem();
 			}
 
@@ -1115,7 +1113,6 @@ namespace Kargono::Panels
 
 		EditorUI::EditorUIService::EndTabBar();
 
-		EditorUI::EditorUIService::GenericPopup(m_EditMessageTypePopup);
 		EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
 		
 
@@ -1183,5 +1180,44 @@ namespace Kargono::Panels
 	void ProjectPanel::OnRefresh()
 	{
 		
+	}
+	void ServerOptions::InitWidgets()
+	{
+		// Commands section
+		m_GeneralCommandsHeader.m_Label = "General Commands";
+		m_GeneralCommandsHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
+		m_GeneralCommandsHeader.m_Expanded = true;
+
+		m_LifecycleOptions.m_Label = "Lifecycle";
+		m_LifecycleOptions.m_Flags |= EditorUI::ButtonBar_Indented;
+		m_LifecycleOptions.AddButton("Start", nullptr);
+		m_LifecycleOptions.AddButton("Close", nullptr);
+		m_LifecycleOptions.AddButton("Restart", nullptr);
+	}
+	void ServerOptions::OnEditorUIRender()
+	{
+		EditorUI::EditorUIService::BeginTabBar("ServerOptionsBar");
+
+		if (EditorUI::EditorUIService::BeginTabItem("Status"))
+		{
+			EditorUI::EditorUIService::EndTabItem();
+		}
+
+		if (EditorUI::EditorUIService::BeginTabItem("Commands"))
+		{
+			EditorUI::EditorUIService::CollapsingHeader(m_GeneralCommandsHeader);
+
+			if (m_GeneralCommandsHeader.m_Expanded)
+			{
+				EditorUI::EditorUIService::ButtonBar(m_LifecycleOptions);
+			}
+			EditorUI::EditorUIService::EndTabItem();
+		}
+		if (EditorUI::EditorUIService::BeginTabItem("Scripts"))
+		{
+			EditorUI::EditorUIService::EndTabItem();
+		}
+
+		EditorUI::EditorUIService::EndTabBar();
 	}
 }
