@@ -60,7 +60,7 @@ namespace Kargono::Network
 		//==============================
 		// Manage Clients
 		//==============================
-		uint16_t AddClient(ServerTCPConnection* newClient);
+		uint16_t AddClient(ClientIndex newClient);
 		uint16_t RemoveClient(uint32_t clientID);
 
 		//==============================
@@ -70,12 +70,12 @@ namespace Kargono::Network
 		void EnableReadyCheck() { m_ReadyCheckData.m_Active = true; }
 		void SetSessionStartFrame(uint64_t frame) { m_SessionStartFrame = frame; }
 		uint64_t GetSessionStartFrame() const { return m_SessionStartFrame; }
-		std::unordered_map<uint32_t, ServerTCPConnection*>& GetAllClients() { return m_ConnectedClients; }
+		std::unordered_map<uint32_t, ClientIndex>& GetAllClients() { return m_ConnectedClients; }
 		std::unordered_map<uint16_t, uint32_t>& GetAllSlots() { return m_SessionSlots; }
 
 	private:
 		uint16_t m_SlotMax{0};
-		std::unordered_map<uint32_t, ServerTCPConnection*> m_ConnectedClients {};
+		std::unordered_map<uint32_t, ClientIndex> m_ConnectedClients {};
 		std::unordered_map<uint16_t, uint32_t> m_SessionSlots{};
 		std::vector<uint16_t> m_EmptySlots{};
 		ReadyCheckData m_ReadyCheckData;

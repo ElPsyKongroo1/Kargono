@@ -244,7 +244,7 @@ namespace Kargono::Network
 		m_ReadyCheckData.m_ReadyClients.clear();
 #endif
 	}
-	uint16_t Session::AddClient(ServerTCPConnection* newClient)
+	uint16_t Session::AddClient(ClientIndex newClient)
 	{
 		return k_InvalidSessionSlot;
 #if 0

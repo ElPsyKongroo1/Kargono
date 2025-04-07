@@ -401,14 +401,12 @@ namespace Kargono::Panels
 			m_EditorAIState->OnUpdate = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnUpdateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectOnUpdateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& /*spec*/)
 		{
-			UNREFERENCED_PARAMETER(spec);
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
-			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& entry)
+			EditorUI::TooltipEntry openScriptOptions{ "Open Script", [&](EditorUI::TooltipEntry& /*entry*/)
 			{
-				UNREFERENCED_PARAMETER(entry);
 				m_SelectOnUpdateScript.m_OpenPopup = true;
 			} };
 			m_SelectScriptTooltip.AddTooltipEntry(openScriptOptions);

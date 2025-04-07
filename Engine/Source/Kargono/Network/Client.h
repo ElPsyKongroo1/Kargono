@@ -4,8 +4,19 @@
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Events/EventQueue.h"
+#include "Kargono/Core/FunctionQueue.h"
 
 #include "Kargono/Network/NetworkCommon.h"
+#include "Kargono/Network/Socket.h"
+#include "Kargono/Network/NetworkConfig.h"
+#include "Kargono/Network/Connection.h"
+
+#include "Kargono/Utility/LoopTimer.h"
+#include "Kargono/Utility/PassiveLoopTimer.h"
+#include "Kargono/Core/Thread.h"
+#include "Kargono/Events/EventQueue.h"
+#include "Kargono/Events/KeyEvent.h"
+#include "Kargono/Events/NetworkingEvent.h"
 
 #include <string>
 #include <atomic>
@@ -18,6 +29,7 @@
 
 namespace Kargono::Network
 {
+#if 0
 	class Client
 	{
 	public:
@@ -27,19 +39,103 @@ namespace Kargono::Network
 		Client() = default;
 		~Client() = default;
 	public:
-
 		//==============================
 		// Manage Connection to Server
 		//==============================
 		bool ConnectToServer(const std::string& serverIP, uint16_t serverPort, bool remote = false);
 		void DisconnectFromServer();
 		bool IsConnectedToServer();
+
 	public:
+
+	private:
+		// Asio Thread and Context. This thread handles asynchronous calls from Asio itself
+
+		// Function and Event Queue for m_NetworkThread to handle
+		FunctionQueue m_WorkQueue;
+		Events::EventQueue m_EventQueue;
+
+	private:
+		friend class ClientService;
+	};
+#endif
+
+	
+	enum ConnectionStatus : uint8_t
+	{
+		Disconnected,
+		Connecting,
+		Connected
+	};
+
+	class ConnectionToServer
+	{
+	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		void Init(const NetworkConfig& config);
+		void Terminate();
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		Connection m_Connection{};
+		ClientIndex m_ClientIndex{};
+		ConnectionStatus m_Status{ Disconnected };
+	};
+
+	class Client
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		Client() = default;
+		~Client() = default;
+
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		bool InitClient(const NetworkConfig& initConfig);
+		bool TerminateClient();
+
+		// Allows other threads to wait on the client to close
+		void WaitOnClientTerminate();
+
+		//==============================
+		// On Event
+		//==============================
+		void OnEvent(Events::Event* event);
+
+		//==============================
+		// Manage Events
+		//==============================
+		void SubmitEvent(Ref<Events::Event> event);
+	private:
+		// Manage the server connection
+		void RequestConnection();
+	public:
+		//==============================
+		// Run Threads
+		//==============================
+		// Run socket/packet handling thread
+		void RunNetworkThread();
+		void RunNetworkEventThread();
+
+	private:
+		// Helper functions
+		bool HandleConsoleInput(Events::KeyPressedEvent event);
+	public:
+		//==============================
+		// Send Packets
+		//==============================
+		bool SendToServer(Message& msg);
+
 		//==============================
 		// Receive Messages from Server
 		//==============================
 		// Get messages from the server
-		void CheckMessagesFromServer(size_t maxMessages = k_MaxMessageCount);
 		void OpenMessageFromServer(Message& msg);
 		// All specific message type handlers
 		void OpenAcceptConnectionMessage(Message& msg);
@@ -63,8 +159,7 @@ namespace Kargono::Network
 		// Send Messages to Server
 		//==============================
 		// Send message to the server
-		void SendUDPToServer(Message& msg);
-		void SendChatToServer(const std::string& text);
+
 		// All specific message handlers
 		void SendRequestUserCountMessage();
 		void SendAllEntityLocation(Events::SendAllEntityLocation& event);
@@ -79,20 +174,30 @@ namespace Kargono::Network
 		void SendCheckUDPConnectionMessage();
 
 	private:
-		// Asio Thread and Context. This thread handles asynchronous calls from Asio itself
+		//==============================
+		// Internal Data
+		//==============================
+		Socket m_ClientSocket;
+		KGThread m_NetworkThread;
+		KGThread m_NetworkEventThread;
+		NetworkConfig m_Config;
+		Utility::LoopTimer m_NetworkThreadTimer;
+		Utility::PassiveLoopTimer m_RequestConnectionTimer;
+		Utility::PassiveLoopTimer m_KeepAliveTimer;
+		Events::EventQueue m_NetworkEventQueue;
+		FunctionQueue m_WorkQueue;
 
-		// Function and Event Queue for m_NetworkThread to handle
-		std::vector<std::function<void()>> m_FunctionQueue;
-		std::mutex m_FunctionQueueMutex;
-		Events::EventQueue m_EventQueue;
+		// Server connection
+		ConnectionToServer m_ServerConnection;
 
 		// Cached active session information
 		uint64_t m_SessionStartFrame{ 0 };
-		std::atomic<uint16_t> m_SessionSlot{std::numeric_limits<uint16_t>::max()};
-
+		std::atomic<uint16_t> m_SessionSlot{ std::numeric_limits<uint16_t>::max() };
 	private:
 		friend class ClientService;
 	};
+	
+
 
 	class ClientService
 	{
@@ -140,7 +245,6 @@ namespace Kargono::Network
 		static bool OnSessionReadyCheck(Events::SessionReadyCheck event);
 		static bool OnSendAllEntityLocation(Events::SendAllEntityLocation event);
 		static bool OnSignalAll(Events::SignalAll event);
-		static bool OnAppTickEvent(Events::AppTickEvent event);
 		static bool OnSendAllEntityPhysics(Events::SendAllEntityPhysics event);
 		static bool OnLeaveCurrentSession(Events::LeaveCurrentSession event);
 

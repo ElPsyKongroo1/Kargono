@@ -1,5 +1,5 @@
 #include "kgpch.h"
-#include "NetworkTools.h"
+#include "Kargono/Network/NetworkTools.h"
 
 namespace Kargono::Network
 {

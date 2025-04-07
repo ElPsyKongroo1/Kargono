@@ -6,59 +6,444 @@
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/Timers.h"
 
+#include "Kargono/Utility/Operations.h"
+#include "Kargono/Core/Engine.h"
+#include "Kargono/Utility/Timers.h"
+
+#include <conio.h>
+#include <queue>
+
+static HANDLE hNetworkEvent;
+static HANDLE hInputEvent;
+static HANDLE allEvents[2];
+static std::string text;
 
 namespace Kargono::Network
 {
-	bool Client::ConnectToServer(const std::string& serverIP, uint16_t serverPort, bool remote)
+	bool Client::InitClient(const NetworkConfig& initConfig)
 	{
+		// Set config
+		m_Config = initConfig;
 
-		// TODO: Maybe resolve the local IP
+		// Initialize the OS specific socket context
+		if (!SocketContext::InitializeSockets())
+		{
+			KG_WARN("Failed to initialize platform socket context");
+			return false;
+		}
 
-		// TODO: Start UDP Connection
+		// Open the Client socket
+		if (!m_ClientSocket.Open(initConfig.m_ServerAddress.GetPort() + 1))
+		{
+			KG_WARN("Failed to create socket!");
+			SocketContext::ShutdownSockets();
+			return false;
+		}
 
-		// TODO: Send message if failure to connect
+		// Initialize server connection
+		m_ServerConnection.Init(initConfig);
+
+		m_NetworkEventQueue.Init(KG_BIND_CLASS_FN(OnEvent));
+
+		// TODO: Move this please for the love of god
+		// Create network event
+		hNetworkEvent = WSACreateEvent();
+		if (WSAEventSelect(m_ClientSocket.GetHandle(), hNetworkEvent, FD_READ) != 0)
+		{
+			KG_WARN("Failed to create the network event handle");
+			return false;
+		}
+
+		// Get console input handle
+		hInputEvent = GetStdHandle(STD_INPUT_HANDLE);
+		SetConsoleMode(hInputEvent, 0);
+
+		// Wait for both events
+		allEvents[0] = hNetworkEvent;
+		allEvents[1] = hInputEvent;
+
+		// Initialize local timers
+		m_NetworkThreadTimer.InitializeTimer();
+		m_RequestConnectionTimer.InitializeTimer(m_Config.m_RequestConnectionFrequency);
+
+		// Send initial connection request
+		m_ServerConnection.m_Status = ConnectionStatus::Connecting;
+
+		Message msg;
+		msg.m_Header.m_MessageType = MessageType::ManageConnection_RequestConnection;
+		SendToServer(msg);
+
+		// Start request connection
+		m_NetworkThread.StartThread(KG_BIND_CLASS_FN(RequestConnection));
+
+		// Wait for request connection to complete
+		m_NetworkThread.WaitOnThread();
+
+		// Ensure the connection was successful
+		if (m_ServerConnection.m_Status != ConnectionStatus::Connected)
+		{
+			KG_WARN("Failed to connect to the server");
+			return false;
+		}
+
+		// Start network thread
+		m_NetworkThreadTimer.InitializeTimer();
+		m_KeepAliveTimer.InitializeTimer(m_Config.m_SyncPingFrequency);
+		m_NetworkThread.StartThread(KG_BIND_CLASS_FN(RunNetworkThread));
+		m_NetworkEventThread.StartThread(KG_BIND_CLASS_FN(RunNetworkEventThread));
 
 		return true;
 	}
 
-	void Client::DisconnectFromServer()
+	bool Client::TerminateClient()
 	{
-		// TODO: Close server connection
+		// Join the network thread
+		m_NetworkThread.StopThread();
 
-		// TODO: Close network/event threads
+		// Clean up socket resources
+		SocketContext::ShutdownSockets();
+
+		return true;
 	}
 
-	bool Client::IsConnectedToServer()
+	void Client::WaitOnClientTerminate()
 	{
-		// TODO: Query connected status
-		return false;
+		m_NetworkThread.WaitOnThread();
+		m_NetworkEventThread.WaitOnThread();
 	}
 
-	void Client::CheckMessagesFromServer(size_t maxMessages)
+	void Client::RunNetworkThread()
 	{
-		// TODO: Sleep the network thread if there is no messages to process
+		// Process the network event queue
+		m_NetworkEventQueue.ProcessQueue();
 
-		// TODO: Process messages until the message queue is empty or the maximum process amount is reached
+		Address sender;
+		unsigned char buffer[k_MaxPacketSize];
+		int bytes_read{ 0 };
+
+		do
+		{
+			bytes_read = m_ClientSocket.Receive(sender, buffer, sizeof(buffer));
+			if (bytes_read >= k_PacketHeaderSize)
+			{
+				// Check for a valid app ID
+				if (*(AppID*)&buffer != m_Config.m_AppProtocolID)
+				{
+					KG_WARN("Failed to validate the app ID from packet");
+					continue;
+				}
+
+				MessageType type = (MessageType)buffer[sizeof(AppID)];
+
+				if (IsConnectionManagementPacket(type))
+				{
+					continue;
+				}
+
+				// TODO: Verify this message is for the correct client
+				ClientIndex index = (ClientIndex)buffer[sizeof(AppID) + sizeof(MessageType)];
+
+				// Process reliability segment
+				m_ServerConnection.m_Connection.m_ReliabilityContext.ProcessReliabilitySegmentFromPacket(&buffer[sizeof(AppID) + sizeof(MessageType) + sizeof(ClientIndex)]);
+
+
+				switch (type)
+				{
+				case MessageType::ManageConnection_KeepAlive:
+					continue;
+				case MessageType::GenericMessage_ServerChat:
+				{
+					bool valid = Utility::Operations::IsValidCString((char*)buffer + k_PacketHeaderSize);
+					if (!valid)
+					{
+						KG_WARN("Buffer could not be converted into a c-string");
+						continue;
+					}
+
+					KG_WARN("[{}.{}.{}.{}:{}]: ", sender.GetA(), sender.GetB(),
+						sender.GetC(), sender.GetD(), sender.GetPort());
+					KG_WARN("");
+					break;
+				}
+				default:
+					KG_WARN("Invalid packet ID obtained");
+					continue;;
+				}
+			}
+		} while (bytes_read > 0);
+
+		// Suspend the thread until an event occurs
+		m_NetworkThread.SuspendThread(true);
+
+		// process packet
 	}
 
-	void Client::SendUDPToServer(Message& msg)
+	void Client::RunNetworkEventThread()
 	{
-		// TODO: Send the message
+		DWORD waitResult = WaitForMultipleObjects(2, allEvents, FALSE, INFINITE);
+
+		if (waitResult == WAIT_OBJECT_0)  // Network event
+		{
+			WSANETWORKEVENTS netEvents;
+			WSAEnumNetworkEvents(m_ClientSocket.GetHandle(), hNetworkEvent, &netEvents);
+
+			if (netEvents.lNetworkEvents & FD_READ)
+			{
+				m_NetworkThread.ResumeThread();
+			}
+		}
+		else if (waitResult == WAIT_OBJECT_0 + 1)  // Console input event
+		{
+			INPUT_RECORD inputRecord;
+			DWORD eventsRead;
+
+			while (true)
+			{
+				DWORD numEvents;
+				if (!GetNumberOfConsoleInputEvents(hInputEvent, &numEvents) || numEvents == 0)
+					break;  // No more events, exit the loop
+
+				if (ReadConsoleInput(hInputEvent, &inputRecord, 1, &eventsRead))
+				{
+					if (inputRecord.EventType == KEY_EVENT && inputRecord.Event.KeyEvent.bKeyDown)
+					{
+						char key = inputRecord.Event.KeyEvent.uChar.AsciiChar;
+						m_NetworkEventQueue.SubmitEvent(CreateRef<Events::KeyPressedEvent>(key));
+						m_NetworkThread.ResumeThread();
+					}
+				}
+			}
+		}
 	}
 
-	void Client::SendChatToServer(const std::string& text)
+	bool Client::HandleConsoleInput(Events::KeyPressedEvent event)
 	{
-		Kargono::Network::Message msg;
-		msg.m_Header.m_MessageType = MessageType::GenericMessage_ClientChat;
-		msg.AppendPayload((void*)text.data(), text.size());
-		SendUDPToServer(msg);
+		char key = (char)event.GetKeyCode();
+		if (key >= 32 && key < 127)
+		{
+			text += key;
+			KG_WARN("{}", key);
+		}
+		if (key == 127 && text.size() > 0)
+		{
+			KG_WARN("\b \b");
+			text.pop_back();
+		}
+		if (key == 27) // Escape key
+		{
+			return false;
+		}
+		if (key == 13)
+		{
+			Message msg;
+			msg.m_Header.m_MessageType = MessageType::GenericMessage_ServerChat;
+			msg.AppendPayload(text.data(), (int)strlen(text.data()) + 1);
+			SendToServer(msg);
+			text.clear();
+		}
+
+		return true;
+	}
+
+	void Client::OnEvent(Events::Event* event)
+	{
+		Connection& connection = m_ServerConnection.m_Connection;
+		ReliabilityContext& reliableContext = connection.m_ReliabilityContext;
+
+		if (event->GetEventType() == Events::EventType::AppUpdate)
+		{
+			// Handle sync pings
+			if (m_KeepAliveTimer.CheckForUpdate(m_NetworkThreadTimer.GetConstantFrameTime()))
+			{
+				if (connection.m_ReliabilityContext.m_CongestionContext.IsCongested())
+				{
+					static uint32_t s_CongestionCounter{ 0 };
+					if (s_CongestionCounter % 3 == 0)
+					{
+						// Send synchronization pings
+						Message msg;
+						msg.m_Header.m_MessageType = MessageType::ManageConnection_KeepAlive;
+						SendToServer(msg);
+					}
+					s_CongestionCounter++;
+				}
+				else
+				{
+					Message msg;
+					msg.m_Header.m_MessageType = MessageType::ManageConnection_KeepAlive;
+					SendToServer(msg);
+				}
+			}
+
+			// Increment time since last sync ping for server connection
+			reliableContext.OnUpdate(m_NetworkThreadTimer.GetConstantFrameTimeFloat());
+
+			if (reliableContext.m_LastPacketReceived > m_Config.m_ConnectionTimeout)
+			{
+				m_ServerConnection.Terminate();
+				m_NetworkThread.StopThread(true);
+				KG_WARN("Connection closed");
+				return;
+			}
+
+
+		}
+		else if (event->GetEventType() == Events::EventType::KeyPressed)
+		{
+			// Handle any input events from the console
+			HandleConsoleInput(*(Events::KeyPressedEvent*)event);
+			return;
+		}
+
+
+	}
+
+	void Client::SubmitEvent(Ref<Events::Event> event)
+	{
+		m_NetworkEventQueue.SubmitEvent(event);
+
+		m_NetworkEventThread.ResumeThread();
+	}
+
+	void Client::RequestConnection()
+	{
+		ReliabilityContext& reliabilityContext = m_ServerConnection.m_Connection.m_ReliabilityContext;
+
+		// Check for a network update
+		if (!m_NetworkThreadTimer.CheckForUpdate())
+		{
+			return;
+		}
+
+		// Handle sending connection requests
+		if (m_RequestConnectionTimer.CheckForUpdate(m_NetworkThreadTimer.GetConstantFrameTime()))
+		{
+			// Send connection request
+			Message msg;
+			msg.m_Header.m_MessageType = MessageType::ManageConnection_RequestConnection;
+			SendToServer(msg);
+		}
+
+		// Increment time since start of connection attempt
+		reliabilityContext.m_LastPacketReceived += m_NetworkThreadTimer.GetConstantFrameTimeFloat();
+		if (reliabilityContext.m_LastPacketReceived > m_Config.m_ConnectionTimeout)
+		{
+			m_ServerConnection.m_Status = ConnectionStatus::Disconnected;
+			m_NetworkThread.StopThread(true);
+			return;
+		}
+
+		Address sender;
+		unsigned char buffer[k_MaxPacketSize];
+		int bytes_read{ 0 };
+
+		do
+		{
+			bytes_read = m_ClientSocket.Receive(sender, buffer, sizeof(buffer));
+			if (bytes_read >= k_PacketHeaderSize)
+			{
+				// Check for a valid app ID
+				if (*(AppID*)&buffer != m_Config.m_AppProtocolID)
+				{
+					KG_WARN("Failed to validate the app ID from packet");
+					continue;
+				}
+
+				// Get packet type
+				MessageType type = (MessageType)buffer[sizeof(AppID)];
+
+				ClientIndex index = (ClientIndex)buffer[sizeof(AppID) + sizeof(MessageType)];
+
+				if (!IsConnectionManagementPacket(type))
+				{
+					continue;
+				}
+
+				if (type == MessageType::ManageConnection_AcceptConnection)
+				{
+					m_ServerConnection.m_Status = ConnectionStatus::Connected;
+					m_ServerConnection.m_ClientIndex = index;
+					KG_WARN("Connection successful!");
+					m_NetworkThread.StopThread(true);
+					return;
+				}
+				else if (type == MessageType::ManageConnection_DenyConnection)
+				{
+					m_ServerConnection.m_Status = ConnectionStatus::Disconnected;
+					KG_WARN("Connection denied!");
+					m_NetworkThread.StopThread(true);
+					return;
+				}
+			}
+		} while (bytes_read > 0);
+
+	}
+
+	bool Client::SendToServer(Message& msg)
+	{
+		Connection& connection = m_ServerConnection.m_Connection;
+
+		if (msg.m_Header.m_PayloadSize >= k_MaxPayloadSize)
+		{
+			KG_WARN("Failed to send packet. Payload exceeds maximum size limit");
+			return false;
+		}
+
+		// Prepare the final data buffer
+		uint8_t buffer[k_MaxPacketSize];
+
+		// Set the app ID
+		AppID& appIDLocation = *(AppID*)&buffer[0];
+		appIDLocation = m_Config.m_AppProtocolID;
+
+		// Set the packet type
+		MessageType& packetTypeLocation = *(MessageType*)&buffer[sizeof(AppID)];
+		packetTypeLocation = msg.m_Header.m_MessageType;
+
+		// Send the client connection Index
+		ClientIndex& clientIndexLocation = *(ClientIndex*)&buffer[sizeof(AppID) + sizeof(MessageType)];
+		clientIndexLocation = m_ServerConnection.m_ClientIndex;
+
+		if (!IsConnectionManagementPacket(msg.m_Header.m_MessageType))
+		{
+			// Set reliability segment
+			connection.m_ReliabilityContext.InsertReliabilitySegmentIntoPacket(&buffer[sizeof(AppID) + sizeof(MessageType) + sizeof(ClientIndex)]);
+		}
+
+		if (msg.m_Header.m_PayloadSize > 0)
+		{
+			// Set the payload data
+			memcpy(&buffer[k_PacketHeaderSize], msg.m_PayloadData.data(), msg.m_Header.m_PayloadSize);
+		}
+
+		// Send the message
+		bool sendSuccess{ false };
+		sendSuccess = m_ClientSocket.Send(connection.m_Address, buffer, msg.m_Header.m_PayloadSize + k_PacketHeaderSize);
+
+		return sendSuccess;
+	}
+
+	void ConnectionToServer::Init(const NetworkConfig& config)
+	{
+		m_Connection.m_Address = config.m_ServerAddress;
+		m_Connection.m_ReliabilityContext.m_LastPacketReceived = 0.0f;
+		m_Status = ConnectionStatus::Disconnected;
+		m_ClientIndex = k_InvalidClientIndex;
+	}
+
+	void ConnectionToServer::Terminate()
+	{
+		m_Connection.m_Address = Address();
+		m_Connection.m_ReliabilityContext.m_LastPacketReceived = 0.0f;
+		m_Status = ConnectionStatus::Disconnected;
+		m_ClientIndex = k_InvalidClientIndex;
 	}
 
 	void Client::SendRequestUserCountMessage()
 	{
-		Kargono::Network::Message msg;
+		Message msg;
 		msg.m_Header.m_MessageType = MessageType::ServerQuery_RequestClientCount;
-		SendUDPToServer(msg);
+		SendToServer(msg);
 	}
 
 	void Client::SendAllEntityLocation(Events::SendAllEntityLocation& event)
@@ -74,7 +459,7 @@ namespace Kargono::Network
 		msg << translation.z;
 
 		// Send the message quickly with UDP
-		SendUDPToServer(msg);
+		SendToServer(msg);
 	}
 
 	void Client::SendInitSyncPingMessage()
@@ -83,7 +468,7 @@ namespace Kargono::Network
 		Kargono::Network::Message newMessage;
 		newMessage.m_Header.m_MessageType = MessageType::ManageSession_SyncPing;
 		// Send the message reliably with TCP
-		SendUDPToServer(newMessage);
+		SendToServer(newMessage);
 	}
 
 	void Client::SendRequestJoinSessionMessage()
@@ -94,7 +479,7 @@ namespace Kargono::Network
 		msg.m_Header.m_MessageType = MessageType::ManageSession_RequestClientJoin;
 
 		// Send the message reliably with TCP
-		SendUDPToServer(msg);
+		SendToServer(msg);
 	}
 
 	void Client::SendEnableReadyCheckMessage()
@@ -104,7 +489,7 @@ namespace Kargono::Network
 		msg.m_Header.m_MessageType = MessageType::ManageSession_EnableReadyCheck;
 
 		// Send the message reliably with TCP
-		SendUDPToServer(msg);
+		SendToServer(msg);
 	}
 
 	void Client::SendSessionReadyCheckMessage()
@@ -114,7 +499,7 @@ namespace Kargono::Network
 		msg.m_Header.m_MessageType = MessageType::ManageSession_StartReadyCheck;
 
 		// Send the message reliably with TCP
-		SendUDPToServer(msg);
+		SendToServer(msg);
 	}
 
 	void Client::SendAllClientsSignalMessage(Events::SignalAll& event)
@@ -125,7 +510,7 @@ namespace Kargono::Network
 		msg << event.GetSignal();
 
 		// Send the message reliably with TCP
-		SendUDPToServer(msg);
+		SendToServer(msg);
 	}
 
 	void Client::SendKeepAliveMessage()
@@ -135,7 +520,7 @@ namespace Kargono::Network
 		msg.m_Header.m_MessageType = MessageType::ManageConnection_KeepAlive;
 
 		// Send the message quickly with UDP
-		SendUDPToServer(msg);
+		SendToServer(msg);
 	}
 
 	void Client::SendAllEntityPhysicsMessage(Events::SendAllEntityPhysics& event)
@@ -154,7 +539,7 @@ namespace Kargono::Network
 		msg << linearVelocity.y;
 
 		// Send the message quickly with UDP
-		SendUDPToServer(msg);
+		SendToServer(msg);
 	}
 
 	void Client::SendLeaveCurrentSessionMessage()
@@ -164,7 +549,7 @@ namespace Kargono::Network
 		msg.m_Header.m_MessageType = MessageType::ManageSession_NotifyAllLeave;
 
 		// Send the message reliably with TCP
-		SendUDPToServer(msg);
+		SendToServer(msg);
 
 		// Ensure current application/client is aware our session is invalid
 		m_SessionSlot = std::numeric_limits<uint16_t>::max();
@@ -178,7 +563,7 @@ namespace Kargono::Network
 		newMessage.m_Header.m_MessageType = MessageType::ManageConnection_CheckUDPConnection;
 
 		// Send the message using UDP
-		SendUDPToServer(newMessage);
+		SendToServer(newMessage);
 	}
 
 	void Client::OpenMessageFromServer(Kargono::Network::Message& msg)
@@ -341,13 +726,13 @@ namespace Kargono::Network
 		// Wait for the time indicated by the server start the session.
 		// This is meant to keep all clients in sync at the start of the session.
 		Utility::AsyncBusyTimer::CreateTimer(waitTime, [&]()
-		{
-			// Ensure the active network context is aware of the session starting
-			Network::ClientService::SubmitToNetworkEventQueue(CreateRef<Events::StartSession>());
+			{
+				// Ensure the active network context is aware of the session starting
+				m_NetworkEventQueue.SubmitEvent(CreateRef<Events::StartSession>());
 
-			// Pass the event along to the main thread
-			EngineService::SubmitToEventQueue(CreateRef<Events::StartSession>());
-		});
+				// Pass the event along to the main thread
+				EngineService::SubmitToEventQueue(CreateRef<Events::StartSession>());
+			});
 	}
 
 	void Client::OpenSessionReadyCheckConfirmMessage(Message& msg)
@@ -359,10 +744,10 @@ namespace Kargono::Network
 		// Wait for the time indicated by the server to handle the ready check.
 		// This keeps the confirm events in sync between clients.
 		Utility::AsyncBusyTimer::CreateTimer(waitTime, [&]()
-		{
-			// Pass the event along to the main thread
-			EngineService::SubmitToEventQueue(CreateRef<Events::SessionReadyCheckConfirm>());
-		});
+			{
+				// Pass the event along to the main thread
+				EngineService::SubmitToEventQueue(CreateRef<Events::SessionReadyCheckConfirm>());
+			});
 	}
 
 	void Client::OpenUpdateEntityLocationMessage(Message& msg)
@@ -423,13 +808,39 @@ namespace Kargono::Network
 		// TODO: Indicate that UDP connection was successful
 	}
 
+#if 0
+	bool Client::ConnectToServer(const std::string& serverIP, uint16_t serverPort, bool remote)
+	{
+
+		// TODO: Maybe resolve the local IP
+
+		// TODO: Start UDP Connection
+
+		// TODO: Send message if failure to connect
+
+		return true;
+	}
+
+	void Client::DisconnectFromServer()
+	{
+		// TODO: Close server connection
+
+		// TODO: Close network/event threads
+	}
+
+	bool Client::IsConnectedToServer()
+	{
+		// TODO: Query connected status
+		return false;
+	}
+#endif
+
 	void ClientService::Init()
 	{
 		// TODO: Create new client
 		s_Client = CreateRef<Client>();
 
 		// TODO: Connect the event/function queues
-		s_Client->m_EventQueue.Init(OnEvent);
 
 		// TODO: Start the network thread in the client and call the Run function
 
@@ -457,6 +868,7 @@ namespace Kargono::Network
 			remoteConnection = true;
 		}
 
+#if 0
 		// Start connection to server
 		bool connectionSuccess = s_Client->ConnectToServer
 		(
@@ -465,6 +877,7 @@ namespace Kargono::Network
 			remoteConnection
 		);
 
+
 		// Ensure the connection has started
 		if (!connectionSuccess) 
 		{ 
@@ -472,6 +885,8 @@ namespace Kargono::Network
 
 			// TODO: Ensure the run loop never starts
 		}
+#endif
+		//s_Client->InitClient();
 
 		KG_INFO("Started client networking thread");
 
@@ -500,7 +915,7 @@ namespace Kargono::Network
 #endif
 
 		// Close connection to server
-		s_Client->DisconnectFromServer();
+		s_Client->TerminateClient();
 
 		KG_INFO("Closed client networking thread");
 	}
@@ -641,11 +1056,10 @@ namespace Kargono::Network
 			KG_WARN("Attempt to interact with the client network context, but it is not valid");
 			return;
 		}
-		// Obtain the function queue lock
-		std::scoped_lock<std::mutex> lock(s_Client->m_FunctionQueueMutex);
+
+		s_Client->m_WorkQueue.SubmitFunction(function);
 
 		// TODO: Add the indicated function and alert the network thread to wake up
-		s_Client->m_FunctionQueue.emplace_back(function);
 	}
 	void ClientService::SubmitToNetworkEventQueue(Ref<Events::Event> e)
 	{
@@ -656,7 +1070,9 @@ namespace Kargono::Network
 			return;
 		}
 
-		s_Client->m_EventQueue.SubmitEvent(e);
+		s_Client->m_NetworkEventQueue.SubmitEvent(e);
+
+		// TODO: Add the indicated event and alert the network thread to wake up
 	}
 	void ClientService::OnEvent(Events::Event* e)
 	{
@@ -692,9 +1108,6 @@ namespace Kargono::Network
 			break;
 		case Events::EventType::SignalAll:
 			OnSignalAll(*(Events::SignalAll*)e);
-			break;
-		case Events::EventType::AppTick:
-			OnAppTickEvent(*(Events::AppTickEvent*)e);
 			break;
 		}
 	}
@@ -740,16 +1153,6 @@ namespace Kargono::Network
 		s_Client->SendAllClientsSignalMessage(event);
 		return true;
 	}
-	bool ClientService::OnAppTickEvent(Events::AppTickEvent event)
-	{
-		// Only send the keep alive message if it matches the delay time
-		if (event.GetDelayMilliseconds() == k_KeepAliveDelay)
-		{
-			s_Client->SendKeepAliveMessage();
-			return true;
-		}
-		return false;
-	}
 	bool ClientService::OnSendAllEntityPhysics(Events::SendAllEntityPhysics event)
 	{
 		s_Client->SendAllEntityPhysicsMessage(event);
@@ -764,30 +1167,10 @@ namespace Kargono::Network
 	{
 		KG_PROFILE_FUNCTION();
 
-		std::vector<std::function<void()>> localFunctionCache;
-
-		// Ensure the function queue doesn't become invalidated if one of the functions modifies the queue
-		// inside the loop
-		{
-			// Obtain the function queue lock
-			std::scoped_lock<std::mutex> lock(s_Client->m_FunctionQueueMutex);
-			
-			// Move the event queue into a local variable and reset the queue
-			localFunctionCache = std::move(s_Client->m_FunctionQueue);
-
-			// Reset the queue
-			s_Client->m_FunctionQueue.clear();
-		}
-
-
-		// Call all of the functions in the queue
-		for (std::function<void()>& func : localFunctionCache) 
-		{ 
-			func(); 
-		}
+		s_Client->m_WorkQueue.ProcessQueue();
 	}
 	void ClientService::ProcessEventQueue()
 	{
-		s_Client->m_EventQueue.ProcessQueue();
+		s_Client->m_NetworkEventQueue.ProcessQueue();
 	}
 }

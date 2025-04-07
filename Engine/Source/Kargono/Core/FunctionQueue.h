@@ -1,7 +1,8 @@
 #pragma once
 
 #include <vector>
-#if 0
+#include <functional>
+
 class FunctionQueue
 {
 public:
@@ -10,17 +11,11 @@ public:
 	//=========================
 	FunctionQueue() = default;
 	~FunctionQueue() = default;
-
-public:
-	//=========================
-	// Lifecycle Functions
-	//=========================
-	void Init(EventCallbackFn processQueueFunc);
 public:
 	//=========================
 	// Modify Queue
 	//=========================
-	void SubmitEvent(Ref<Event> event);
+	void SubmitFunction(const std::function<void()>& function);
 	void ClearQueue();
 
 	//=========================
@@ -31,9 +26,6 @@ private:
 	//=========================
 	// Internal Fields
 	//=========================
-	std::vector<Ref<Event>> m_FunctionQueue{};
+	std::vector<std::function<void()>> m_FunctionQueue{};
 	std::mutex m_FunctionQueueMutex{};
-	EventCallbackFn m_ProcessQueueFunc{ nullptr };
 };
-
-#endif

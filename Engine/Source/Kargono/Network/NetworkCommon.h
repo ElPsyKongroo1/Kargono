@@ -4,6 +4,7 @@
 #include "Kargono/Core/DataStructures.h"
 #include "Kargono/Math/MathAliases.h"
 
+#include <limits>
 #include <thread>
 #include <atomic>
 #include <mutex>
@@ -16,11 +17,12 @@ namespace Kargono::Network
 	//==============================
 	// Message Type
 	//==============================
-	enum class MessageType : uint32_t
+	enum class MessageType : uint8_t
 	{
 		// Manage client <-> server connnection
 		ManageConnection_AcceptConnection = 0,
 		ManageConnection_DenyConnection,
+		ManageConnection_RequestConnection,
 		ManageConnection_CheckUDPConnection,
 		ManageConnection_KeepAlive,
 		ManageConnection_ServerPing,
@@ -60,6 +62,40 @@ namespace Kargono::Network
 		ScriptMessaging_ReceiveSignal
 	};
 
+	using AppID = uint8_t;
+	using ClientIndex = uint8_t;
+
+	constexpr ClientIndex k_InvalidClientIndex{ std::numeric_limits<ClientIndex>::max() };
+
+	constexpr size_t k_ReliabilitySegmentSize
+	{
+		sizeof(uint16_t) /*packetSequenceNum*/ +
+		sizeof(uint16_t) /*ackSequenceNum*/ +
+		sizeof(uint32_t) /*ackBitfield*/
+	};
+	constexpr size_t k_PacketHeaderSize
+	{
+		sizeof(AppID) /*appID*/ +
+		sizeof(MessageType) /*messageType*/ +
+		sizeof(ClientIndex) + /*clientIndex*/
+		k_ReliabilitySegmentSize /*packetAckSegment*/
+	};
+	constexpr size_t k_MaxPacketSize{ 256 };
+	constexpr size_t k_MaxPayloadSize{ k_MaxPacketSize - k_PacketHeaderSize };
+
+	inline bool IsConnectionManagementPacket(MessageType type)
+	{
+		switch (type)
+		{
+		case MessageType::ManageConnection_AcceptConnection:
+		case MessageType::ManageConnection_DenyConnection:
+		case MessageType::ManageConnection_RequestConnection:
+			return true;
+		default:
+			return false;
+		}
+	}
+
 	//==============================
 	// Message Header Struct
 	//==============================
@@ -84,44 +120,74 @@ namespace Kargono::Network
 		// Modify Message Data
 		//==============================
 		// Replace payload data with provided buffer data
-		void AppendPayload(void* buffer, uint64_t size) {}
+		void AppendPayload(void* buffer, uint64_t size);
 		// Push provided data onto the end of the message's payload
 		template <typename DataType>
-		friend Message& operator << (Message& msg, const DataType& data) { return msg; }
+		friend Message& operator << (Message& msg, const DataType& data);
 		// Remove provided data type from the end of the message and place the data into the indicated location
 		template <typename DataType>
-		friend Message& operator >> (Message& msg, const DataType& data) { return msg; }
+		friend Message& operator >> (Message& msg, const DataType& data);
 
 		//==============================
 		// Getters/Setters
 		//==============================
 		// Return size of Payload + Header
-		size_t GetEntireMessageSize() const { return 0; }
+		size_t GetEntireMessageSize() const;
 		// Returns pointer to start of payload
 		void* GetPayloadPointer() { return (void*)m_PayloadData.data(); }
 		// Returns size of payload in bytes
 		uint64_t GetPayloadSize() { return m_Header.m_PayloadSize; }
 		// Return copy internal buffer
-		std::vector<uint8_t> GetPayloadCopy(uint64_t size) { return {}; }
+		std::vector<uint8_t> GetPayloadCopy(uint64_t size);
 
 	};
 
-	class ServerTCPConnection
+	//==============================
+	// Operator Overload Definitions
+	//==============================
+	template<typename DataType>
+	Message& operator<<(Message& msg, const DataType& data)
 	{
-	public:
-		uint32_t GetID() const { return data; }
-		void SendUDPMessage(Message& msg) {}
-	private:
-		uint32_t data{0};
-	};
+		// Check that the type of the data being pushed is trivially copyable
+		static_assert(std::is_standard_layout_v<DataType>, "Data is too complex");
 
+		// Cache current size of vector, as this will be the point we insert the data
+		size_t currentBufferSize = msg.m_PayloadData.size();
 
+		// Resize the vector to contain the new data being added
+		msg.m_PayloadData.resize(msg.m_PayloadData.size() + sizeof(DataType));
 
+		// Copy the data over
+		std::memcpy(msg.m_PayloadData.data() + currentBufferSize, &data, sizeof(DataType));
 
-	constexpr uint64_t k_KeepAliveDelay{ 10'000 };
-	constexpr uint16_t k_MaxSyncPings = 10;
+		// Update message header size
+		msg.m_Header.m_PayloadSize = (uint32_t)msg.m_PayloadData.size();
+
+		return msg;
+	}
+
+	template<typename DataType>
+	Message& operator>>(Message& msg, const DataType& data)
+	{
+		// Check that the type of the data being pushed is trivially copyable
+		static_assert(std::is_standard_layout<DataType>::value, "Data is too complex");
+
+		// Cache current size of vector, as this will be the point we insert the data
+		size_t bufferSizeAfterRemoval = msg.m_PayloadData.size() - sizeof(DataType);
+
+		// Copy the data over
+		std::memcpy((void*)&data, msg.m_PayloadData.data() + bufferSizeAfterRemoval, sizeof(DataType));
+
+		// Shrink the vector to remove the read bytes
+		msg.m_PayloadData.resize(bufferSizeAfterRemoval);
+
+		// Update message header size
+		msg.m_Header.m_PayloadSize = (uint32_t)msg.GetEntireMessageSize();
+
+		return msg;
+	}
+
 	constexpr uint16_t k_InvalidSessionSlot = std::numeric_limits<uint16_t>::max();
-	constexpr size_t k_MaxMessageCount = std::numeric_limits<size_t>::max();
 	// TODO: VERY TEMPORARY. Only for pong!!!!
 	constexpr uint32_t k_MaxSessionClients {2};
 
@@ -178,5 +244,3 @@ namespace Kargono::Utility
 		return returnString;
 	}
 }
-
-

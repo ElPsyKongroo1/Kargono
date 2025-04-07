@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Connection.h"
+#include "Kargono/Network/Connection.h"
 
 namespace Kargono::Network
 {

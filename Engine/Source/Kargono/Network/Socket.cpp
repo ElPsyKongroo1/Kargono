@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
-#include "Socket.h"
+#include "Kargono/Network/Socket.h"
+
 #include "stdio.h"
 
 namespace Kargono::Network

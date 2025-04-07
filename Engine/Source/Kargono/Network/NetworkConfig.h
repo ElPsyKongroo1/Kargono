@@ -1,6 +1,6 @@
 #pragma once
-#include "Address.h"
-#include "NetworkCommon.h"
+#include "Kargono/Network/NetworkCommon.h"
+#include "Kargono/Network/Address.h"
 
 namespace Kargono::Network
 {

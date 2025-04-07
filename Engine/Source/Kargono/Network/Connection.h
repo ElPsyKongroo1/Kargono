@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Address.h"
-#include "NetworkCommon.h"
-#include "ReliabilityContext.h"
+#include "Kargono/Network/Address.h"
+#include "Kargono/Network/NetworkCommon.h"
+#include "Kargono/Network/ReliabilityContext.h"
 
 #include <vector>
 
