@@ -83,7 +83,7 @@ namespace Kargono
 
 	void ServerApp::OnUpdate(Timestep ts)
 	{
-		Network::ServerService::Run();
+		//Network::ServerService::Run();
 	}
 
 	Math::vec2 ServerApp::GetMouseViewportPosition()
