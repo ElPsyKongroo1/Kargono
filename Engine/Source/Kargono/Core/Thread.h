@@ -23,7 +23,7 @@ namespace Kargono
 		void SuspendThread(bool withinThread = false);
 		void ResumeThread(bool withinThread = false);
 		void WaitOnThread();
-		void ChangeWorkFunction(std::function<void()> workFunction);
+		void ChangeWorkFunction(std::function<void()> workFunction, bool withinThread = false);
 
 		//==============================
 		// Query Thread
@@ -36,6 +36,7 @@ namespace Kargono
 		// Thread and running function
 		std::thread* m_Thread{ nullptr };
 		std::function<void()> m_WorkFunction{ nullptr };
+		std::function<void()> m_NewWorkFunc{ nullptr };
 		// Management fields
 		std::atomic<bool> m_ThreadRunning{ false };
 		std::mutex m_BlockThreadMutex{};

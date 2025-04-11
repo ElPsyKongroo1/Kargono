@@ -6,6 +6,55 @@
 
 namespace Kargono::Panels
 {
+	class ClientOptions
+	{
+	public:
+		//=========================
+		// Constructor/Destructor
+		//=========================
+		ClientOptions() = default;
+		~ClientOptions() = default;
+
+		//=========================
+		// Lifecycle Functions
+		//=========================
+		void InitWidgets(EditorUI::TooltipSpec* parentTooltipSpec);
+
+		//=========================
+		// On Event
+		//=========================
+		void OnEditorUIRender();
+		bool OnAssetEvent(Events::Event* event);
+
+	private:
+		//=========================
+		// Widgets
+		//=========================
+		// Command Widgets
+		EditorUI::CollapsingHeaderSpec m_GeneralCommandsHeader;
+
+		// Status Widgets
+		EditorUI::CollapsingHeaderSpec m_GeneralStatusHeader;
+
+		// Scripts Widgets
+		EditorUI::CollapsingHeaderSpec m_GeneralScriptsHeader{};
+		EditorUI::CollapsingHeaderSpec m_SessionScriptsHeader{};
+		EditorUI::CollapsingHeaderSpec m_ConnectionScriptsHeader{};
+		EditorUI::CollapsingHeaderSpec m_QueryServerScriptsHeader{};
+		EditorUI::SelectOptionSpec m_SelectSessionInitSpec{};
+		EditorUI::SelectOptionSpec m_SelectStartSessionSpec{};
+		EditorUI::SelectOptionSpec m_SelectSessionReadyCheckSpec{};
+		EditorUI::SelectOptionSpec m_SelectApproveJoinSessionSpec{};
+		EditorUI::SelectOptionSpec m_SelectUpdateSessionSlotSpec{};
+		EditorUI::SelectOptionSpec m_SelectUpdateUserCountSpec{};
+		EditorUI::SelectOptionSpec m_SelectUserLeftSessionSpec{};
+		EditorUI::SelectOptionSpec m_SelectReceiveSignalSpec{};
+		EditorUI::SelectOptionSpec m_SelectConnectionTerminatedSpec{};
+
+		// Parent Panel Widgets
+		EditorUI::TooltipSpec* m_ParentTooltip{ nullptr };
+	};
+
 	class ServerOptions
 	{
 	public:
@@ -31,6 +80,16 @@ namespace Kargono::Panels
 		// Command Widgets
 		EditorUI::CollapsingHeaderSpec m_GeneralCommandsHeader;
 		EditorUI::ButtonBarSpec m_LifecycleOptions;
+
+		// Status Widgets
+		EditorUI::CollapsingHeaderSpec m_GeneralStatusHeader;
+
+		// Config Widgets
+		EditorUI::CollapsingHeaderSpec m_GeneralConfigHeader;
+		EditorUI::EditIVec4Spec m_ServerIP{};
+		EditorUI::EditIntegerSpec m_ServerPort{};
+		EditorUI::CheckboxSpec m_ServerLocation{};
+		EditorUI::EditIVec4Spec m_ServerSecrets{};
 	};
 
 	class ProjectPanel
@@ -83,26 +142,10 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_SelectRuntimeStartSpec{};
 		EditorUI::TooltipSpec m_SelectScriptTooltip{};
 
-		// Session init
-		EditorUI::SelectOptionSpec m_SelectSessionInitSpec{};
-		EditorUI::SelectOptionSpec m_SelectStartSessionSpec{};
-		EditorUI::SelectOptionSpec m_SelectSessionReadyCheckSpec{};
-
-		// Session users
-		EditorUI::SelectOptionSpec m_SelectApproveJoinSessionSpec{};
-		EditorUI::SelectOptionSpec m_SelectUpdateSessionSlotSpec{};
-		EditorUI::SelectOptionSpec m_SelectUpdateUserCountSpec{};
-		EditorUI::SelectOptionSpec m_SelectUserLeftSessionSpec{};
-
-		// Handle signals
-		EditorUI::SelectOptionSpec m_SelectReceiveSignalSpec{};
-
-		// Handle server connections
-		EditorUI::SelectOptionSpec m_SelectConnectionTerminatedSpec{};
-
 		//=========================
 		// Sub Panels
 		//=========================
 		ServerOptions m_ServerOptions{};
+		ClientOptions m_ClientOptions{};
 	};
 }

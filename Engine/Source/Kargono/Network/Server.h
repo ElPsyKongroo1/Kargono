@@ -8,7 +8,7 @@
 #include "Kargono/Network/Socket.h"
 #include "Kargono/Network/Connection.h"
 #include "Kargono/Network/Session.h"
-#include "Kargono/Network/NetworkConfig.h"
+#include "Kargono/Network/ServerConfig.h"
 
 #include "Kargono/Utility/PassiveLoopTimer.h"
 #include "Kargono/Utility/LoopTimer.h"
@@ -20,24 +20,6 @@
 
 namespace Kargono::Network
 {
-#if 0
-	class Server
-	{
-	public:
-		//==============================
-		// Constructors/Destructors
-		//==============================
-		Server(uint16_t nPort);
-		~Server() = default;
-
-		//==============================
-		// LifeCycle Functions
-		//==============================
-		bool StartServer(bool isLocal);
-		void StopServer();
-	};
-#endif
-
 	class Server
 	{
 	public:
@@ -50,7 +32,7 @@ namespace Kargono::Network
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		bool InitServer(const NetworkConfig& initConfig);
+		bool InitServer(const ServerConfig& initConfig);
 		bool TerminateServer(bool withinNetworkThread = false);
 
 		// Allows other threads to wait on the server to close
@@ -150,27 +132,28 @@ namespace Kargono::Network
 
 	private:
 		// Main server network context
-
-		// Session Data
-		Session m_OnlySession{};
-		Scope<std::thread> m_TimingThread{ nullptr };
-		bool m_StopTimingThread = false;
-		std::atomic<uint64_t> m_UpdateCount{ 0 };
-	private:
-		friend class ServerService;
-	private:
 		//==============================
 		// Internal Data
 		//==============================
-		bool m_ManageConnections{ false };
+		std::atomic<bool> m_ServerActive{ false };
 		Socket m_ServerSocket;
-		NetworkConfig m_Config;
+		ServerConfig m_Config;
 		KGThread m_NetworkThread;
 		KGThread m_NetworkEventThread;
 		Utility::LoopTimer m_ManageConnectionTimer;
 		Utility::PassiveLoopTimer m_KeepAliveTimer;
 		ConnectionList m_AllConnections;
 		Events::EventQueue m_NetworkEventQueue;
+
+		// Session Data
+		Session m_OnlySession{};
+		Scope<std::thread> m_TimingThread{ nullptr };
+		bool m_StopTimingThread = false;
+		std::atomic<uint64_t> m_UpdateCount{ 0 };
+		bool m_ManageConnections{ false };
+
+	private:
+		friend class ServerService;
 	};
 
 	class ServerService
@@ -180,13 +163,13 @@ namespace Kargono::Network
 		// LifeCycle Functions
 		//==============================
 		static bool Init();
-		static void Terminate();
-		static void Run();
+		static bool Terminate();
+		static bool IsServerActive();
 
 		//==============================
 		// Getters/Setters
 		//==============================
-		static Ref<Server> GetActiveServer();
+		static Server& GetActiveServer();
 
 		//==============================
 		// Submit Server Events 
@@ -211,6 +194,6 @@ namespace Kargono::Network
 		//==============================
 		// Internal Fields
 		//==============================
-		static inline Ref<Network::Server> s_Server{ nullptr };
+		static inline Network::Server s_Server{};
 	};
 }

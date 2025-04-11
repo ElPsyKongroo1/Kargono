@@ -3,20 +3,16 @@
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Events/ApplicationEvent.h"
 #include "Kargono/Core/Base.h"
-#include "Kargono/Events/EventQueue.h"
 #include "Kargono/Core/FunctionQueue.h"
-
 #include "Kargono/Network/NetworkCommon.h"
 #include "Kargono/Network/Socket.h"
-#include "Kargono/Network/NetworkConfig.h"
+#include "Kargono/Network/ServerConfig.h"
 #include "Kargono/Network/Connection.h"
-
 #include "Kargono/Utility/LoopTimer.h"
 #include "Kargono/Utility/PassiveLoopTimer.h"
 #include "Kargono/Core/Thread.h"
-#include "Kargono/Events/EventQueue.h"
 #include "Kargono/Events/KeyEvent.h"
-#include "Kargono/Events/NetworkingEvent.h"
+#include "Kargono/Events/EventQueue.h"
 
 #include <string>
 #include <atomic>
@@ -74,7 +70,7 @@ namespace Kargono::Network
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		void Init(const NetworkConfig& config);
+		void Init(const ServerConfig& config);
 		void Terminate();
 	public:
 		//==============================
@@ -97,8 +93,9 @@ namespace Kargono::Network
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		bool InitClient(const NetworkConfig& initConfig);
-		bool TerminateClient();
+		bool InitClient(const ServerConfig& initConfig);
+		bool StartConnection(bool withinNetworkThread = false);
+		bool TerminateClient(bool withinNetworkThread = false);
 
 		// Allows other threads to wait on the client to close
 		void WaitOnClientTerminate();
@@ -177,10 +174,11 @@ namespace Kargono::Network
 		//==============================
 		// Internal Data
 		//==============================
-		Socket m_ClientSocket;
+		std::atomic<bool> s_ClientActive{ false };
+		Socket m_ClientSocket{};
 		KGThread m_NetworkThread;
 		KGThread m_NetworkEventThread;
-		NetworkConfig m_Config;
+		ServerConfig m_Config;
 		Utility::LoopTimer m_NetworkThreadTimer;
 		Utility::PassiveLoopTimer m_RequestConnectionTimer;
 		Utility::PassiveLoopTimer m_KeepAliveTimer;
@@ -197,16 +195,15 @@ namespace Kargono::Network
 		friend class ClientService;
 	};
 	
-
-
 	class ClientService
 	{
 	public:
 		//==============================
 		// LifeCycle Functions
 		//==============================
-		static void Init();
-		static void Terminate();
+		static bool Init();
+		static bool Terminate();
+		static bool IsClientActive();
 	private:
 		static void Run();
 		static void EndRun();
@@ -260,7 +257,7 @@ namespace Kargono::Network
 		//==============================
 		// Internal Fields
 		//==============================
-		static inline Ref<Network::Client> s_Client{ nullptr };
+		static inline Network::Client s_Client{};
 	};
 	
 }

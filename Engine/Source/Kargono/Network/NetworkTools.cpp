@@ -30,15 +30,15 @@ namespace Kargono::Network
 		outputStream << "  # info section on your router's portal. This should be a IPV4 address." << '\n';
 		outputStream << "  # ##.##.##.##" << '\n';
 		outputStream << "  ServerIP: " << '[' <<
-			std::to_string(config.m_IPv4.x) << ',' <<
-			std::to_string(config.m_IPv4.y) << ',' <<
-			std::to_string(config.m_IPv4.z) << ',' <<
-			std::to_string(config.m_IPv4.w) << ']' <<
+			std::to_string(config.m_ServerAddress.GetA()) << ',' <<
+			std::to_string(config.m_ServerAddress.GetB()) << ',' <<
+			std::to_string(config.m_ServerAddress.GetC()) << ',' <<
+			std::to_string(config.m_ServerAddress.GetD()) << ']' <<
 			'\n';
 
 		// Server port number
 		outputStream << "  # Choose any port.I recommend something larger than 10, 000 but must be less than 63655" << '\n';
-		outputStream << "  ServerPort: " << std::to_string(config.m_Port) << '\n';
+		outputStream << "  ServerPort: " << std::to_string(config.m_ServerAddress.GetPort()) << '\n';
 
 		// Server location
 		outputStream << "  # This variable decides whether to use your local machine or the ServerIP you specified earlier." << '\n';

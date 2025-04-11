@@ -38,7 +38,7 @@ namespace Kargono::Network
 		//==============================
 		// Internal Fields
 		//==============================
-		int m_Handle;
+		int m_Handle{0};
 	};
 
 	//===========================
@@ -53,5 +53,8 @@ namespace Kargono::Network
 		//==============================
 		static bool InitializeSockets();
 		static void ShutdownSockets();
+
+	private:
+		inline static size_t s_SocketsUsageCount{ 0 };
 	};
 }

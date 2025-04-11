@@ -1266,15 +1266,15 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	static OptionList GenerateSearchCache(OptionList& originalList, const std::string& searchQuery)
+	static OptionMap GenerateSearchCache(OptionMap& originalList, const std::string& searchQuery)
 	{
-		OptionList returnList{};
+		OptionMap returnList{};
 		for (auto& [title, options] : originalList)
 		{
 			std::vector<OptionEntry> returnOptions {};
 			for (auto& option : options)
 			{
-				if (!Utility::Regex::GetMatchSuccess(option.m_Label, searchQuery, false))
+				if (!Utility::Regex::GetMatchSuccess(option.m_Label.CString(), searchQuery, false))
 				{
 					continue;
 				}
@@ -1649,10 +1649,24 @@ namespace Kargono::EditorUI
 			returnValue = true;
 		}
 
+		ImVec4 buttonColor;
+
+		if (ImGui::IsItemActive())
+		{
+			buttonColor = s_ActiveColor;
+		}
+		else if (ImGui::IsItemHovered())
+		{
+			buttonColor = s_HoveredColor;
+		}
+		else
+		{
+			buttonColor = s_HighlightColor1_UltraThin;
+		}
+
 		// Draw the relevant background
 		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y - s_TextBackgroundHeight),
-			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y),
-			ImGui::IsItemHovered() ? ImColor(s_HoveredColor) : ImColor(s_HighlightColor1_UltraThin),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y),ImColor(buttonColor),
 			4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display entry text
@@ -1839,7 +1853,7 @@ namespace Kargono::EditorUI
 			ImGui::PopStyleColor();
 
 			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-			WriteMultilineText(spec.m_CurrentOption.m_Label,s_SecondaryTextLargeWidth,  s_SecondaryTextPosOne);
+			WriteMultilineText(spec.m_CurrentOption.m_Label.CString(), s_SecondaryTextLargeWidth, s_SecondaryTextPosOne);
 			ImGui::PopStyleColor();
 
 			ImGui::SameLine();
@@ -1962,7 +1976,7 @@ namespace Kargono::EditorUI
 						ImGui::PushStyleColor(ImGuiCol_Button, s_SelectedColor);
 					}
 
-					if (ImGui::Button((option.m_Label.c_str() + id + std::string(option.m_Handle)).c_str()))
+					if (ImGui::Button((option.m_Label.CString() + id + std::string(option.m_Handle)).c_str()))
 					{
 						spec.m_CachedSelection = option;
 					}
@@ -2167,6 +2181,140 @@ namespace Kargono::EditorUI
 		},
 		EditorUIService::s_SmallEditButton,
 		spec.m_Editing, spec.m_Editing ? s_PrimaryTextColor : s_DisabledColor);
+	}
+
+	void EditorUIService::DropDown(DropDownSpec& spec)
+	{
+		// Local Variables
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.m_WidgetID);
+		uint32_t widgetCount{ 0 };
+
+		if (spec.m_Flags & Button_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
+		// Display Primary Label
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.m_Label.CString(),
+			spec.m_Flags & Button_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
+		TruncateText(spec.m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
+
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, EditorUI::EditorUIService::s_ActiveBackgroundColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, EditorUI::EditorUIService::s_HoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, EditorUI::EditorUIService::s_ActiveColor);
+
+		ImGui::SetNextItemWidth(s_SecondaryTextLargeWidth + 5.0f);
+		ImGui::SameLine(s_SecondaryTextPosOne - 5.0f);
+
+		// Shift button to secondary text position one
+		ImGui::SameLine(s_SecondaryTextPosOne - 2.5f);
+		if (ImGui::InvisibleButton(
+			("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
+			ImVec2(s_SecondaryTextLargeWidth, s_TextBackgroundHeight)))
+		{
+			ImGui::OpenPopupEx(spec.m_WidgetID, ImGuiPopupFlags_None);
+		}
+
+		ImVec4 dropdownColor;
+
+		if (ImGui::IsItemActive())
+		{
+			dropdownColor = s_ActiveColor;
+		}
+		else if (ImGui::IsItemHovered())
+		{
+			dropdownColor = s_HoveredColor;
+		}
+		else
+		{
+			dropdownColor = s_ActiveBackgroundColor;
+		}
+
+		// Draw the relevant background
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y - s_TextBackgroundHeight),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextLargeWidth, screenPosition.y), ImColor(dropdownColor),
+			4.0f, ImDrawFlags_RoundCornersAll);
+
+		// Get the selected entry
+		OptionEntry* selectedEntry{ spec.m_OptionsList.GetOption(spec.m_CurrentOption) };
+		const char* selectedText = selectedEntry ? selectedEntry->m_Label.CString() : "";
+
+		// Display selected text
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::SameLine(s_SecondaryTextPosOne);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
+		int floatPosition = ImGui::FindPositionAfterLength(selectedText, s_SecondaryTextLargeWidth);
+		TruncateText(selectedText,
+			floatPosition == -1 ? std::numeric_limits<int32_t>::max() : floatPosition);
+		ImGui::PopStyleColor();
+
+		if (ImGui::IsPopupOpen(spec.m_WidgetID, ImGuiPopupFlags_None))
+		{
+			const ImRect popupBoundingBox
+			(
+				ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne, screenPosition.y), 
+				ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextLargeWidth, screenPosition.y)
+			);
+			ImGui::BeginComboPopup(spec.m_WidgetID, popupBoundingBox, 0);
+
+			OptionIndex entryIndex{ 0 };
+			for (OptionEntry& entry : spec.m_OptionsList)
+			{
+				if (entry.m_Label.IsEmpty()) 
+				{ 
+					entryIndex++;
+					continue; 
+				}
+				if (ImGui::Selectable(entry.m_Label.CString()))
+				{
+					// Set entry as selected
+					spec.m_CurrentOption = entryIndex;
+
+					// Handle the newly selected entry
+					if (spec.m_ConfirmAction)
+					{
+						spec.m_ConfirmAction(entry);
+					}
+
+					break;
+				}
+				entryIndex++;
+			}
+			ImGui::EndCombo();
+		}
+
+#if 0
+		if (ImGui::BeginCombo(id, selectedEntry ? selectedEntry->m_Label.CString() : "",
+			ImGuiComboFlags_NoArrowButton))
+		{
+			OptionIndex entryIndex{ 0 };
+			for (OptionEntry& entry : spec.m_OptionsList)
+			{
+				if (ImGui::Selectable(entry.m_Label.CString()))
+				{
+					// Set entry as selected
+					spec.m_CurrentOption = entryIndex;
+					
+					// Handle the newly selected entry
+					if (spec.m_ConfirmAction)
+					{
+						spec.m_ConfirmAction(entry);
+					}
+
+					break;
+				}
+				entryIndex++;
+			}
+			ImGui::EndCombo();
+		}
+#endif
+
+		ImGui::PopStyleColor(3);
 	}
 
 	void EditorUIService::EditInteger(EditIntegerSpec& spec)
@@ -3871,9 +4019,13 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void EditorUIService::LabeledText(const std::string& label, const std::string& text)
+	void EditorUIService::LabeledText(const std::string& label, const std::string& text, LabeledTextFlags flags)
 	{
 		// Display Menu Item
+		if (flags & LabeledText_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(label.c_str(), s_PrimaryTextWidth);
 		TruncateText(label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);

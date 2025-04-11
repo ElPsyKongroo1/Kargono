@@ -33,14 +33,14 @@ namespace Kargono::Network
 		}
 
 		// Set socket to non-blocking mode
-#if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
+#if defined(KG_PLATFORM_LINUX) || defined(KG_PLATFORM_MAC)
 		int nonBlocking = 1;
 		if (fcntl(m_Handle, F_SETFL, O_NONBLOCK, nonBlocking) == -1)
 		{
 			KG_WARN("Failed to set non-blocking");
 			return false;
 		}
-#elif PLATFORM == PLATFORM_WINDOWS
+#elif defined(KG_PLATFORM_WINDOWS)
 		DWORD nonBlocking = 1;
 		if (ioctlsocket(m_Handle, FIONBIO, &nonBlocking) != 0)
 		{
@@ -55,9 +55,9 @@ namespace Kargono::Network
 	void Socket::Close()
 	{
 		// Destroy a socket
-#if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
+#if defined(KG_PLATFORM_LINUX) || defined(KG_PLATFORM_MAC)
 		close(m_Handle);
-#elif PLATFORM == PLATFORM_WINDOWS
+#elif defined(KG_PLATFORM_WINDOWS)
 		closesocket(m_Handle);
 #endif
 	}
@@ -96,7 +96,7 @@ namespace Kargono::Network
 	int Socket::Receive(Address& sender, void* data, int size)
 	{
 
-#if PLATFORM == PLATFORM_WINDOWS
+#if defined(KG_PLATFORM_WINDOWS)
 		typedef int socklen_t;
 #endif
 
@@ -118,18 +118,40 @@ namespace Kargono::Network
 
 	bool SocketContext::InitializeSockets()
 	{
-#if PLATFORM == PLATFORM_WINDOWS
+		if (s_SocketsUsageCount > 0)
+		{
+			s_SocketsUsageCount++;
+			return true;
+		}
+
+		bool success{ false };
+#if defined(KG_PLATFORM_WINDOWS)
 		WSADATA WsaData;
-		return WSAStartup(MAKEWORD(2, 2), &WsaData) == NO_ERROR;
+		success = WSAStartup(MAKEWORD(2, 2), &WsaData) == NO_ERROR;
 #else
-		return true;
+		success = true;
 #endif
+		if (success)
+		{
+			s_SocketsUsageCount++;
+		}
+		return success;
 	}
 
 	void SocketContext::ShutdownSockets()
 	{
-#if PLATFORM == PLATFORM_WINDOWS
+		if (s_SocketsUsageCount > 0)
+		{
+			s_SocketsUsageCount--;
+		}
+
+		if (s_SocketsUsageCount > 0)
+		{
+			return;
+		}
+
+		#if defined(KG_PLATFORM_WINDOWS)
 		WSACleanup();
-#endif
+		#endif
 	}
 }

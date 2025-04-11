@@ -15,6 +15,7 @@
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Particles/ParticleService.h"
 #include "Kargono/Input/InputService.h"
+#include "Kargono/Network/Client.h"
 
 #include "API/EditorUI/ImGuiBackendAPI.h"
 
@@ -92,7 +93,6 @@ namespace Kargono
 		KG_PROFILE_FUNCTION();
 
 		// Call on update for all windows
-		
 
 		// Handle rendering editor UI
 		switch (m_ActiveEditorWindow)

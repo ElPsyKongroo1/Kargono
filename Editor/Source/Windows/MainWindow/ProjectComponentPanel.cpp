@@ -246,7 +246,7 @@ namespace Kargono::Panels
 			// Ensure input string does not use whitespace
 			Utility::Operations::RemoveWhitespaceFromString(m_AddFieldName.m_CurrentOption);
 			bool success = ECS::ProjectComponentService::AddFieldToProjectComponent(m_EditorProjectComponent, 
-				Utility::StringToWrappedVarType(m_AddFieldType.m_CurrentOption.m_Label),
+				Utility::StringToWrappedVarType(m_AddFieldType.m_CurrentOption.m_Label.CString()),
 				m_AddFieldName.m_CurrentOption);
 			if (!success)
 			{
@@ -301,7 +301,7 @@ namespace Kargono::Panels
 			// Ensure input string does not use whitespace
 			Utility::Operations::RemoveWhitespaceFromString(m_EditFieldName.m_CurrentOption);
 			bool success = ECS::ProjectComponentService::EditFieldInProjectComponent(m_EditorProjectComponent, m_ActiveField,
-				m_EditFieldName.m_CurrentOption, Utility::StringToWrappedVarType(m_EditFieldType.m_CurrentOption.m_Label));
+				m_EditFieldName.m_CurrentOption, Utility::StringToWrappedVarType(m_EditFieldType.m_CurrentOption.m_Label.CString()));
 			if (!success)
 			{
 				KG_WARN("Edit field failed. Returning to previous window.");

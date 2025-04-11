@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Kargono/Network/NetworkCommon.h"
 #include "Kargono/Math/MathAliases.h"
+#include "Kargono/Network/ServerConfig.h"
 
 #include <string>
 #include <cstdint>

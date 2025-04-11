@@ -4,8 +4,6 @@
 
 namespace Kargono
 {
-
-
 	void KGThread::StartThread(std::function<void()> workFunction)
 	{
 		m_ThreadRunning = true;
@@ -23,7 +21,7 @@ namespace Kargono
 
 		{
 			std::lock_guard<std::mutex> lock(m_BlockThreadMutex);
-			m_ThreadSuspended = false;
+			m_ThreadRunning = false;
 			m_BlockThreadCV.notify_one();
 		}
 
@@ -37,6 +35,13 @@ namespace Kargono
 		{
 			{
 				std::unique_lock<std::mutex> lock(m_BlockThreadMutex);
+
+				// Change to the new work function
+				if (m_NewWorkFunc)
+				{
+					m_WorkFunction = m_NewWorkFunc;
+					m_NewWorkFunc = nullptr;
+				}
 
 				// Handle blocking the thread if necessary
 				if (m_ThreadSuspended)
@@ -79,15 +84,19 @@ namespace Kargono
 		m_Thread->join();
 	}
 
-	void KGThread::ChangeWorkFunction(std::function<void()> workFunction)
+	void KGThread::ChangeWorkFunction(std::function<void()> workFunction, bool withinThread)
 	{
-		if (m_ThreadRunning)
+		if (withinThread)
 		{
-			KG_WARN("Failed to change work function. Cannot change function while thread is running.");
+			// Set a new work function to be added
+			m_NewWorkFunc = workFunction;
 			return;
 		}
 
-		m_WorkFunction = workFunction;
+		// Block the thread and swap the new thread function
+		std::lock_guard<std::mutex> lock(m_BlockThreadMutex);
+		m_NewWorkFunc = workFunction;
+		m_BlockThreadCV.notify_one();
 	}
 
 	bool KGThread::IsRunning()

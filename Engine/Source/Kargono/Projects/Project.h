@@ -4,7 +4,7 @@
 #include "Kargono/Assets/Asset.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/Resolution.h"
-#include "Kargono/Network/NetworkCommon.h"
+#include "Kargono/Network/ServerConfig.h"
 
 #include <string>
 #include <filesystem>
@@ -81,8 +81,6 @@ namespace Kargono::Projects
 
 		Assets::AssetHandle OnReceiveSignal {Assets::EmptyHandle};
 
-		std::unordered_set<uint64_t> AppTickGenerators{};
-
 		bool AppIsNetworked { false };
 
 		// Networking Variables
@@ -119,13 +117,14 @@ namespace Kargono::Projects
 		static bool RemoveScriptFromActiveProject(Assets::AssetHandle scriptHandle);
 
 	private:
+		static bool SerializeServerConfig();
 		static bool DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& filepath);
 
 		//=========================
 		// Exporting API
 		//=========================
 	public:
-		static void ExportProject(const std::filesystem::path& exportLocation, Network::ServerConfig* serverConfig, bool createServer);
+		static void ExportProject(const std::filesystem::path& exportLocation, bool createServer);
 	private:
 		static bool BuildExecutableMSVC(const std::filesystem::path& projectDirectory, bool createServer);
 		static bool BuildExecutableGCC(const std::filesystem::path& projectDirectory, bool createServer);
@@ -242,12 +241,6 @@ namespace Kargono::Projects
 		{
 			KG_ASSERT(s_ActiveProject);
 			s_ActiveProject->Name = name;
-		}
-
-		static std::unordered_set<uint64_t>& GetActiveAppTickGenerators()
-		{
-			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->AppTickGenerators;
 		}
 
 		static bool GetActiveAppIsNetworked()
@@ -403,25 +396,29 @@ namespace Kargono::Projects
 			{
 				return {127, 0, 0, 1};
 			}
-			return s_ActiveProject->m_ServerConfig.m_IPv4;
+
+			Network::Address& address = s_ActiveProject->m_ServerConfig.m_ServerAddress;
+
+			return { address.GetA(), address.GetB(), address.GetC(), address.GetD() };
 		}
 
 		static void SetActiveServerIP(Math::u8vec4 ip)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_ServerConfig.m_IPv4 = ip;
+
+			s_ActiveProject->m_ServerConfig.m_ServerAddress.SetAddress(ip);
 		}
 
 		static uint16_t GetActiveServerPort()
 		{
 			KG_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_ServerConfig.m_Port;
+			return s_ActiveProject->m_ServerConfig.m_ServerAddress.GetPort();
 		}
 
 		static void SetActiveServerPort(uint16_t newPort)
 		{
 			KG_ASSERT(s_ActiveProject);
-			s_ActiveProject->m_ServerConfig.m_Port = newPort;
+			s_ActiveProject->m_ServerConfig.m_ServerAddress.SetNewPort(newPort);
 		}
 
 		static Network::ServerLocation GetActiveServerLocation()
@@ -490,7 +487,7 @@ namespace Kargono::Projects
 			s_ActiveProject->m_ServerConfig.m_ValidationSecrets.w = newSecret;
 		}
 
-		static Network::ServerConfig GetServerConfig()
+		static Network::ServerConfig& GetServerConfig()
 		{
 			KG_ASSERT(s_ActiveProject);
 			return s_ActiveProject->m_ServerConfig;

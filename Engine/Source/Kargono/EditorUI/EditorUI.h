@@ -34,6 +34,7 @@ namespace Kargono::EditorUI
 	struct ButtonSpec;
 	struct ButtonBarSpec;
 	struct EditMultiLineTextSpec;
+	struct DropDownSpec;
 	struct PanelHeaderSpec;
 	struct NavigationHeaderSpec;
 	struct CheckboxSpec;
@@ -121,6 +122,12 @@ namespace Kargono::EditorUI
 		bool m_Disabled{ false };
 	};
 
+	enum LabeledTextFlags
+	{
+		LabeledText_None = 0,
+		LabeledText_Indented = BIT(0)
+	};
+
 	//==============================
 	// Widget Count Management
 	//==============================
@@ -184,6 +191,7 @@ namespace Kargono::EditorUI
 		static void ButtonBar(ButtonBarSpec& spec);
 		static void Plot(PlotSpec& spec);
 		static void Checkbox(CheckboxSpec& spec);
+		static void DropDown(DropDownSpec& spec);
 
 		static void EditInteger(EditIntegerSpec& spec);
 		static void EditIVec2(EditIVec2Spec& spec);
@@ -201,7 +209,7 @@ namespace Kargono::EditorUI
 		static void NavigationHeader(NavigationHeaderSpec& spec);
 		static void Grid(GridSpec& spec);
 		static void CollapsingHeader(CollapsingHeaderSpec& spec);
-		static void LabeledText(const std::string& m_Label, const std::string& Text);
+		static void LabeledText(const std::string& m_Label, const std::string& Text, LabeledTextFlags flags = LabeledText_None);
 		static void Text(const char* text);
 		static void EditText(EditTextSpec& spec);
 		static void EditMultiLineText(EditMultiLineTextSpec& spec);
@@ -468,7 +476,6 @@ namespace Kargono::EditorUI
 		Button_None = 0,
 		Button_Indented = BIT(0)
 	};
-
 
 	struct ButtonSpec
 	{
@@ -1640,8 +1647,8 @@ namespace Kargono::EditorUI
 	struct OptionEntry
 	{
 	public:
-		std::string m_Label{};
-		Assets::AssetHandle m_Handle { Assets::EmptyHandle };
+		FixedString32 m_Label{};
+		UUID m_Handle { k_EmptyUUID };
 	public:
 		bool operator==(const OptionEntry& other) const
 		{
@@ -1652,6 +1659,104 @@ namespace Kargono::EditorUI
 			return false;
 		}
 	};
+	
+	// Supporting OptionList types/data
+	using OptionIndex = size_t;
+	constexpr OptionIndex k_InvalidEntryIndex{ std::numeric_limits<OptionIndex>().max() };
+
+	class OptionList
+	{
+	public:
+
+		//==============================
+		// Modify List
+		//==============================
+		OptionEntry* CreateOption()
+		{
+			return &m_Options.emplace_back();
+		}
+
+		void Clear()
+		{
+			m_Options.clear();
+		}
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		OptionEntry* GetOption(OptionIndex index)
+		{
+			if (index >= m_Options.size())
+			{
+				return nullptr;
+			}
+
+			return &m_Options[index];
+		}
+	public:
+		//==============================
+		// Forward Iterator Begin/End (allow for-loops and other algs)
+		//==============================
+		std::vector<OptionEntry>::iterator begin()
+		{ 
+			return m_Options.begin(); 
+		}
+		std::vector<OptionEntry>::iterator end()
+		{ 
+			return m_Options.end();
+		}
+
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		std::vector<OptionEntry> m_Options{};
+	};
+
+	enum DropDownFlags
+	{
+		DropDown_None = 0,
+		DropDown_Indented = BIT(0), // Indents the text (used in collapsing headers usually)
+	};
+
+	struct DropDownSpec
+	{
+	public:
+		DropDownSpec() : m_WidgetID(IncrementWidgetCounter()) {}
+	public:
+		OptionEntry* CreateOption()
+		{
+			return m_OptionsList.CreateOption();
+		}
+		bool SetCurrentOption(UUID handle)
+		{
+			OptionIndex index{ 0 };
+			for (OptionEntry& entry : m_OptionsList)
+			{
+				// Use the first-found option entry
+				if (entry.m_Handle == handle)
+				{
+					m_CurrentOption = index;
+					return true;
+				}
+				index++;
+			}
+
+			return false;
+		}
+	public:
+		FixedString16 m_Label{};
+		WidgetFlags m_Flags{ DropDown_None };
+		std::function<void(const OptionEntry&)> m_ConfirmAction{ nullptr };
+		Ref<void> m_ProvidedData{ nullptr };
+	private:
+		WidgetID m_WidgetID{};
+		OptionIndex m_CurrentOption{ k_InvalidEntryIndex };
+		OptionList m_OptionsList{};
+	private:
+		friend void EditorUIService::DropDown(DropDownSpec&);
+	};
+
 
 	enum SelectOptionFlags
 	{
@@ -1661,7 +1766,7 @@ namespace Kargono::EditorUI
 		SelectOption_HandleEditButtonExternally = BIT(2) // Allows calling a custom function for edit button
 	};
 
-	using OptionList = std::unordered_map<std::string, std::vector<OptionEntry>>;
+	using OptionMap = std::unordered_map<std::string, std::vector<OptionEntry>>; // TODO: Bruh what is this heap garbage
 
 	struct SelectOptionSpec
 	{
@@ -1691,7 +1796,7 @@ namespace Kargono::EditorUI
 		}
 		void AddToOptions(const std::string& group, const std::string& optionLabel, UUID optionIdentifier)
 		{
-			const OptionEntry newEntry{ optionLabel, optionIdentifier };
+			const OptionEntry newEntry{ optionLabel.c_str(), optionIdentifier};
 			if (!m_ActiveOptions.contains(group))
 			{
 				std::vector<OptionEntry> newVector {};
@@ -1702,16 +1807,16 @@ namespace Kargono::EditorUI
 
 			m_ActiveOptions.at(group).push_back(newEntry);
 		}
-		OptionList& GetAllOptions()
+		OptionMap& GetAllOptions()
 		{
 			return m_ActiveOptions;
 		}
 	private:
 		WidgetID m_WidgetID;
-		OptionList m_ActiveOptions{};
+		OptionMap m_ActiveOptions{};
 		bool m_Searching { false };
 		OptionEntry m_CachedSelection {};
-		OptionList m_CachedSearchResults{};
+		OptionMap m_CachedSearchResults{};
 	private:
 		friend void EditorUIService::SelectOption(SelectOptionSpec&);
 	};

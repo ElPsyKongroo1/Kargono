@@ -20,7 +20,7 @@ static std::string text;
 
 namespace Kargono::Network
 {
-	bool Client::InitClient(const NetworkConfig& initConfig)
+	bool Client::InitClient(const ServerConfig& initConfig)
 	{
 		// Set config
 		m_Config = initConfig;
@@ -54,6 +54,9 @@ namespace Kargono::Network
 			return false;
 		}
 
+		// Set client as active (inter-thread and network operations are now allowed)
+		s_ClientActive = true;
+
 		// Get console input handle
 		hInputEvent = GetStdHandle(STD_INPUT_HANDLE);
 		SetConsoleMode(hInputEvent, 0);
@@ -74,34 +77,32 @@ namespace Kargono::Network
 		SendToServer(msg);
 
 		// Start request connection
-		m_NetworkThread.StartThread(KG_BIND_CLASS_FN(RequestConnection));
-
-		// Wait for request connection to complete
-		m_NetworkThread.WaitOnThread();
-
-		// Ensure the connection was successful
-		if (m_ServerConnection.m_Status != ConnectionStatus::Connected)
-		{
-			KG_WARN("Failed to connect to the server");
-			return false;
-		}
-
-		// Start network thread
-		m_NetworkThreadTimer.InitializeTimer();
-		m_KeepAliveTimer.InitializeTimer(m_Config.m_SyncPingFrequency);
-		m_NetworkThread.StartThread(KG_BIND_CLASS_FN(RunNetworkThread));
 		m_NetworkEventThread.StartThread(KG_BIND_CLASS_FN(RunNetworkEventThread));
-
+		m_NetworkThread.StartThread(KG_BIND_CLASS_FN(RequestConnection));
 		return true;
 	}
 
-	bool Client::TerminateClient()
+	bool Client::StartConnection(bool withinNetworkThread)
+	{
+		// Start network thread
+		m_NetworkThreadTimer.InitializeTimer();
+		m_KeepAliveTimer.InitializeTimer(m_Config.m_SyncPingFrequency);
+		m_NetworkThread.ChangeWorkFunction(KG_BIND_CLASS_FN(RunNetworkThread), withinNetworkThread);
+		return true;
+	}
+
+	bool Client::TerminateClient(bool withinNetworkThread)
 	{
 		// Join the network thread
-		m_NetworkThread.StopThread();
+		m_NetworkThread.StopThread(withinNetworkThread);
+		m_NetworkEventThread.StopThread(false);
+
+		// Shutdown client socket
+		m_ClientSocket.Close();
 
 		// Clean up socket resources
 		SocketContext::ShutdownSockets();
+		s_ClientActive = false;
 
 		return true;
 	}
@@ -180,7 +181,7 @@ namespace Kargono::Network
 
 	void Client::RunNetworkEventThread()
 	{
-		DWORD waitResult = WaitForMultipleObjects(2, allEvents, FALSE, INFINITE);
+		DWORD waitResult = WaitForMultipleObjects(2, allEvents, FALSE, 1'000);
 
 		if (waitResult == WAIT_OBJECT_0)  // Network event
 		{
@@ -329,7 +330,7 @@ namespace Kargono::Network
 		if (reliabilityContext.m_LastPacketReceived > m_Config.m_ConnectionTimeout)
 		{
 			m_ServerConnection.m_Status = ConnectionStatus::Disconnected;
-			m_NetworkThread.StopThread(true);
+			TerminateClient(true);
 			return;
 		}
 
@@ -364,14 +365,14 @@ namespace Kargono::Network
 					m_ServerConnection.m_Status = ConnectionStatus::Connected;
 					m_ServerConnection.m_ClientIndex = index;
 					KG_WARN("Connection successful!");
-					m_NetworkThread.StopThread(true);
+					StartConnection(true);
 					return;
 				}
 				else if (type == MessageType::ManageConnection_DenyConnection)
 				{
 					m_ServerConnection.m_Status = ConnectionStatus::Disconnected;
 					KG_WARN("Connection denied!");
-					m_NetworkThread.StopThread(true);
+					TerminateClient(true);
 					return;
 				}
 			}
@@ -423,7 +424,7 @@ namespace Kargono::Network
 		return sendSuccess;
 	}
 
-	void ConnectionToServer::Init(const NetworkConfig& config)
+	void ConnectionToServer::Init(const ServerConfig& config)
 	{
 		m_Connection.m_Address = config.m_ServerAddress;
 		m_Connection.m_ReliabilityContext.m_LastPacketReceived = 0.0f;
@@ -835,10 +836,19 @@ namespace Kargono::Network
 	}
 #endif
 
-	void ClientService::Init()
+	bool ClientService::Init()
 	{
-		// TODO: Create new client
-		s_Client = CreateRef<Client>();
+		if (s_Client.s_ClientActive)
+		{
+			KG_WARN("Failed to initialize client. A client context already exists.")
+			return false;
+		}
+
+		if (!s_Client.InitClient(Projects::ProjectService::GetServerConfig()))
+		{
+			KG_WARN("Failed to initialize client. Client initialization failed.")
+			return false;
+		}
 
 		// TODO: Connect the event/function queues
 
@@ -846,17 +856,26 @@ namespace Kargono::Network
 
 		// TODO: Exit out immediately (the network thread is now running separately from the main thread)
 
-		KG_VERIFY(s_Client, "Client connection init");
+		KG_VERIFY(s_Client.s_ClientActive, "Client connection init");
+		return true;
 	}
 
-	void ClientService::Terminate()
+	bool ClientService::Terminate()
 	{
-		// Request for the current client's network thread to stop
-		EndRun();
+		if (!s_Client.s_ClientActive)
+		{
+			KG_WARN("Failed to terminate client. No client context is active.")
+			return false;
+		}
 
-		// TODO: Wait for the network thread to stop and close the client
+		if (!s_Client.TerminateClient(false))
+		{
+			KG_WARN("Failed to terminate client. Terminate function failed.");
+			return false;
+		}
 
-		KG_VERIFY(!s_Client, "Closed client connection");
+		KG_VERIFY(!s_Client.s_ClientActive, "Closed client connection");
+		return true;
 	}
 
 	void ClientService::Run()
@@ -915,7 +934,7 @@ namespace Kargono::Network
 #endif
 
 		// Close connection to server
-		s_Client->TerminateClient();
+		//s_Client->TerminateClient();
 
 		KG_INFO("Closed client networking thread");
 	}
@@ -933,13 +952,14 @@ namespace Kargono::Network
 		KG_INFO("Notified client network thread to close");
 	}
 
+	bool ClientService::IsClientActive()
+	{
+		return s_Client.s_ClientActive;
+	}
+
 	uint16_t ClientService::GetActiveSessionSlot()
 	{
-		// Simply return the session slot if the client context lives
-		if (s_Client)
-		{
-			return s_Client->m_SessionSlot;
-		}
+		KG_ASSERT(s_Client.s_ClientActive);
 
 		// Client is unavailable so send error response
 		return k_InvalidSessionSlot;
@@ -947,12 +967,7 @@ namespace Kargono::Network
 
 	void ClientService::SendAllEntityLocation(UUID entityID, Math::vec3 location)
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.s_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::SendAllEntityLocation>(entityID, location));
@@ -960,12 +975,7 @@ namespace Kargono::Network
 
 	void ClientService::SendAllEntityPhysics(UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity)
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.s_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::SendAllEntityPhysics>(entityID, translation, linearVelocity));
@@ -973,12 +983,7 @@ namespace Kargono::Network
 
 	void ClientService::EnableReadyCheck()
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.s_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::EnableReadyCheck>());
@@ -986,12 +991,7 @@ namespace Kargono::Network
 
 	void ClientService::SessionReadyCheck()
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.s_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::SessionReadyCheck>());
@@ -999,12 +999,7 @@ namespace Kargono::Network
 
 	void ClientService::RequestUserCount()
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.s_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::RequestUserCount>());
@@ -1012,12 +1007,7 @@ namespace Kargono::Network
 
 	void ClientService::RequestJoinSession()
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.s_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::RequestJoinSession>());
@@ -1025,12 +1015,7 @@ namespace Kargono::Network
 
 	void ClientService::LeaveCurrentSession()
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.s_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::LeaveCurrentSession>());
@@ -1038,39 +1023,24 @@ namespace Kargono::Network
 
 	void ClientService::SignalAll(uint16_t signal)
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.s_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::SignalAll>(signal));
 	}
 	void ClientService::SubmitToNetworkFunctionQueue(const std::function<void()>& function)
 	{
-		// Ensure the network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.s_ClientActive);
 
-		s_Client->m_WorkQueue.SubmitFunction(function);
+		s_Client.m_WorkQueue.SubmitFunction(function);
 
 		// TODO: Add the indicated function and alert the network thread to wake up
 	}
 	void ClientService::SubmitToNetworkEventQueue(Ref<Events::Event> e)
 	{
-		// Ensure the active client is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to submit an event to the network thread, however, the client context is invalid");
-			return;
-		}
+		KG_ASSERT(s_Client.s_ClientActive);
 
-		s_Client->m_NetworkEventQueue.SubmitEvent(e);
+		s_Client.m_NetworkEventQueue.SubmitEvent(e);
 
 		// TODO: Add the indicated event and alert the network thread to wake up
 	}
@@ -1113,64 +1083,64 @@ namespace Kargono::Network
 	}
 	bool ClientService::OnRequestUserCount(Events::RequestUserCount event)
 	{
-		s_Client->SendRequestUserCountMessage();
+		s_Client.SendRequestUserCountMessage();
 		return true;
 	}
 	bool ClientService::OnStartSession(Events::StartSession event)
 	{
-		s_Client->m_SessionStartFrame = EngineService::GetActiveEngine().GetUpdateCount();
+		s_Client.m_SessionStartFrame = EngineService::GetActiveEngine().GetUpdateCount();
 		return true;
 	}
 	bool ClientService::OnConnectionTerminated(Events::ConnectionTerminated event)
 	{
 		// Essentially clear all session information from this client context
-		s_Client->m_SessionSlot = k_InvalidSessionSlot;
-		s_Client->m_SessionStartFrame = 0;
+		s_Client.m_SessionSlot = k_InvalidSessionSlot;
+		s_Client.m_SessionStartFrame = 0;
 		return true;
 	}
 	bool ClientService::OnRequestJoinSession(Events::RequestJoinSession event)
 	{
-		s_Client->SendRequestJoinSessionMessage();
+		s_Client.SendRequestJoinSessionMessage();
 		return true;
 	}
 	bool ClientService::OnEnableReadyCheck(Events::EnableReadyCheck event)
 	{
-		s_Client->SendEnableReadyCheckMessage();
+		s_Client.SendEnableReadyCheckMessage();
 		return true;
 	}
 	bool ClientService::OnSessionReadyCheck(Events::SessionReadyCheck event)
 	{
-		s_Client->SendSessionReadyCheckMessage();
+		s_Client.SendSessionReadyCheckMessage();
 		return true;
 	}
 	bool ClientService::OnSendAllEntityLocation(Events::SendAllEntityLocation event)
 	{
-		s_Client->SendAllEntityLocation(event);
+		s_Client.SendAllEntityLocation(event);
 		return true;
 	}
 	bool ClientService::OnSignalAll(Events::SignalAll event)
 	{
-		s_Client->SendAllClientsSignalMessage(event);
+		s_Client.SendAllClientsSignalMessage(event);
 		return true;
 	}
 	bool ClientService::OnSendAllEntityPhysics(Events::SendAllEntityPhysics event)
 	{
-		s_Client->SendAllEntityPhysicsMessage(event);
+		s_Client.SendAllEntityPhysicsMessage(event);
 		return true;
 	}
 	bool ClientService::OnLeaveCurrentSession(Events::LeaveCurrentSession event)
 	{
-		s_Client->SendLeaveCurrentSessionMessage();
+		s_Client.SendLeaveCurrentSessionMessage();
 		return true;
 	}
 	void ClientService::ProcessFunctionQueue()
 	{
 		KG_PROFILE_FUNCTION();
 
-		s_Client->m_WorkQueue.ProcessQueue();
+		s_Client.m_WorkQueue.ProcessQueue();
 	}
 	void ClientService::ProcessEventQueue()
 	{
-		s_Client->m_NetworkEventQueue.ProcessQueue();
+		s_Client.m_NetworkEventQueue.ProcessQueue();
 	}
 }

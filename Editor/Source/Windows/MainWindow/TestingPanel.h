@@ -42,8 +42,6 @@ namespace Kargono::Panels
 
 #if defined(KG_DEBUG)
 		// Debug global widgets
-		EditorUI::CollapsingHeaderSpec s_DebugGlobalsHeader;
-
 		EditorUI::CheckboxSpec s_EditTestBool_1;
 		EditorUI::CheckboxSpec s_EditTestBool_2;
 		EditorUI::CheckboxSpec s_EditTestBool_3;
@@ -73,6 +71,5 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec s_EditTestVec4_3;
 
 #endif
-		EditorUI::CollapsingHeaderSpec s_TestingWorkspaceHeader;
 	};
 }

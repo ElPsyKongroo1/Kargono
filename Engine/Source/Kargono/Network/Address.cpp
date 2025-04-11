@@ -22,9 +22,20 @@ namespace Kargono::Network
 		m_Port = m_Port;
 	}
 
+	Address::Address(Math::u8vec4 address, unsigned short port)
+	{
+		SetAddress(address);
+		m_Port = port;
+	}
+
 	unsigned int Address::GetAddress() const
 	{
 		return m_Address;
+	}
+
+	Math::u8vec4 Address::GetAddressUVec4() const
+	{
+		return Math::u8vec4(GetA(), GetB(), GetC(), GetD());
 	}
 
 	unsigned char Address::GetA() const
@@ -55,6 +66,11 @@ namespace Kargono::Network
 	void Address::SetAddress(unsigned int newAddress)
 	{
 		m_Address = newAddress;
+	}
+
+	void Address::SetAddress(Math::u8vec4 address)
+	{
+		SetAddress(address.x, address.y, address.z, address.w);
 	}
 
 	void Address::SetAddress(unsigned char a, unsigned char b, unsigned char c, unsigned char d)

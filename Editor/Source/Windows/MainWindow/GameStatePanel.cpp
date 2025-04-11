@@ -266,7 +266,7 @@ namespace Kargono::Panels
 				m_FieldsTable.m_OnRefresh();
 			}
 
-			switch (Utility::StringToWrappedVarType(m_EditFieldType.m_CurrentOption.m_Label))
+			switch (Utility::StringToWrappedVarType(m_EditFieldType.m_CurrentOption.m_Label.CString()))
 			{
 				case WrappedVarType::UInteger16:
 				{

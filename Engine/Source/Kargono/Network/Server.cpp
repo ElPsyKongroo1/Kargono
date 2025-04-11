@@ -571,7 +571,7 @@ namespace Kargono::Network
 	}
 
 
-	bool Server::InitServer(const NetworkConfig& initConfig)
+	bool Server::InitServer(const ServerConfig& initConfig)
 	{
 		// Set config
 		m_Config = initConfig;
@@ -599,6 +599,8 @@ namespace Kargono::Network
 		if (WSAEventSelect(m_ServerSocket.GetHandle(), hNetworkEvent, FD_READ) != 0)
 		{
 			KG_WARN("Failed to create the network event handle");
+			SocketContext::ShutdownSockets();
+			m_ServerSocket.Close();
 			return false;
 		}
 
@@ -614,12 +616,13 @@ namespace Kargono::Network
 
 		m_ManageConnections = false;
 
+		m_ServerActive = true;
+
 		// Start network thread
 		m_ManageConnectionTimer.InitializeTimer();
 		m_KeepAliveTimer.InitializeTimer(m_Config.m_SyncPingFrequency);
 		m_NetworkThread.StartThread(KG_BIND_CLASS_FN(RunNetworkThread));
 		m_NetworkEventThread.StartThread(KG_BIND_CLASS_FN(RunNetworkEventThread));
-
 		return true;
 	}
 
@@ -627,12 +630,16 @@ namespace Kargono::Network
 	{
 		// Join the network thread
 		m_NetworkThread.StopThread(withinNetworkThread);
-		m_NetworkEventThread.StopThread(withinNetworkThread);
+		m_NetworkEventThread.StopThread(false);
 
 		m_ManageConnections = false;
 
+		m_ServerSocket.Close();
+
 		// Clean up socket resources
 		SocketContext::ShutdownSockets();
+
+		m_ServerActive = false;
 
 		return true;
 	}
@@ -765,7 +772,7 @@ namespace Kargono::Network
 
 	void Server::RunNetworkEventThread()
 	{
-		DWORD waitResult = WaitForMultipleObjects(2, allEvents, FALSE, INFINITE);
+		DWORD waitResult = WaitForMultipleObjects(2, allEvents, FALSE, 1'000);
 
 		if (waitResult == WAIT_OBJECT_0)  // Network event
 		{
@@ -1026,63 +1033,59 @@ namespace Kargono::Network
 
 	bool ServerService::Init()
 	{
+		if (s_Server.m_ServerActive)
+		{
+			KG_WARN("Failed server initialization. A server context already exists.");
+			return false;
+		}
+
 		// Get the server location type from the network config
 		bool isLocal = Projects::ProjectService::GetActiveServerLocation() == ServerLocation::LocalMachine;
 
-		// Create the new server context and initialize the server
-		s_Server = CreateRef<Network::Server>();
+		ServerConfig startConfig = Projects::ProjectService::GetServerConfig();
 
 		// Begin the server
-#if 0
-		if (!s_Server->StartServer(isLocal))
+		if (!s_Server.InitServer(startConfig))
 		{
 			// Clean up network resources
 			KG_WARN("Failed to start server");
-			Terminate();
 			return false;
 		}
-#endif
 
-		KG_VERIFY(s_Server, "Server connection init");
+		KG_VERIFY(s_Server.m_ServerActive, "Server connection init");
 		return true;
 	}
 
-	void ServerService::Terminate()
+	bool ServerService::Terminate()
 	{
 		// Ensure the server context exists
-		if (!s_Server)
+		if (!s_Server.m_ServerActive)
 		{
-			KG_WARN("Attempt to terminate the active server context when none exists");
-			return;
+			KG_WARN("Failed to terminate server. No active server context exists.");
+			return false;
 		}
 
 		// Close the server connections and reset its context
-		//s_Server->StopServer();
-		s_Server.reset();
-		s_Server = nullptr;
+		s_Server.TerminateServer(false);
 
-		KG_VERIFY(!s_Server, "Closed server connection");
+		KG_VERIFY(!s_Server.m_ServerActive, "Closed server connection");
+		return true;
 	}
-	void ServerService::Run()
+
+	bool ServerService::IsServerActive()
 	{
-		// TODO: Find method for stopping the server. Currently I just close the application abruptly.
-		while (true)
-		{
-			// Poll the message queue
-			//s_Server->CheckForMessages();
-
-			// Handle any events in the event queue
-			ProcessEventQueue();
-		}
+		return s_Server.m_ServerActive;
 	}
-	Ref<Server> ServerService::GetActiveServer()
+
+	Server& ServerService::GetActiveServer()
 	{
 		return s_Server;
 	}
 	void ServerService::SubmitToNetworkEventQueue(Ref<Events::Event> e)
 	{
+		KG_ASSERT(s_Server.m_ServerActive);
 
-		s_Server->m_NetworkEventQueue.SubmitEvent(e);
+		s_Server.m_NetworkEventQueue.SubmitEvent(e);
 
 		// TODO: Alert thread to wake up and process event
 	}
@@ -1095,17 +1098,17 @@ namespace Kargono::Network
 	}
 	bool ServerService::OnStartSession(Events::StartSession event)
 	{
-		KG_ASSERT(s_Server);
+		KG_ASSERT(s_Server.m_ServerActive);
 
 		// Handle starting the session runtime
-		s_Server->StartSession();
+		s_Server.StartSession();
 
 		return true;
 	}
 	void ServerService::ProcessEventQueue()
 	{
-		KG_PROFILE_FUNCTION();
+		KG_ASSERT(s_Server.m_ServerActive);
 
-		s_Server->m_NetworkEventQueue.ProcessQueue();
+		s_Server.m_NetworkEventQueue.ProcessQueue();
 	}
 }
