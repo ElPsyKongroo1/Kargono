@@ -318,6 +318,7 @@ namespace Kargono::Panels
 	}
 	void TestingPanel::DrawDebugGlobalWidgets()
 	{
+#if defined(KG_DEBUG)
 		// Bool initialization
 		s_EditTestBool_1.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_1;
 		EditorUI::EditorUIService::Checkbox(s_EditTestBool_1);
@@ -401,6 +402,7 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::EditVec4(s_EditTestVec4_3);
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+#endif
 	}
 	void TestingPanel::DrawGeneralTestingWidgets()
 	{

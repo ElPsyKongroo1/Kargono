@@ -329,17 +329,17 @@ namespace Kargono::Projects
 		return true;
 	}
 
-	bool ProjectService::SerializeServerConfig()
+	bool ProjectService::SerializeServerConfig(Ref<Projects::Project> project)
 	{
 		// Create/overwrite the server config file if specified
 		bool writeConfigError{ false };
 
 		// Create the config file path
-		std::filesystem::path configFilePath = GetActiveProjectDirectory() / "ServerConfig.env";
+		std::filesystem::path configFilePath = project->m_ProjectDirectory / "ServerConfig.env";
 		KG_INFO("Creating server config file at {}", configFilePath.string());
 
 		// Write the config file path out to disk (project location)
-		std::string newConfigFile = Network::NetworkTools::CreateServerVariablesConfigFile(s_ActiveProject->m_ServerConfig);
+		std::string newConfigFile = Network::NetworkTools::CreateServerVariablesConfigFile(project->m_ServerConfig);
 		writeConfigError = !Utility::FileSystem::WriteFileString(configFilePath, newConfigFile);
 
 		// Ensure config file creation does not throw errors
@@ -501,7 +501,7 @@ namespace Kargono::Projects
 
 		KG_INFO("Successfully serialized project file {}", project->Name);
 
-		if (SerializeServerConfig())
+		if (SerializeServerConfig(project))
 		{
 			KG_INFO("Successfully serialized server config file");
 			return true;

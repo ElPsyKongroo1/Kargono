@@ -117,7 +117,7 @@ namespace Kargono::Projects
 		static bool RemoveScriptFromActiveProject(Assets::AssetHandle scriptHandle);
 
 	private:
-		static bool SerializeServerConfig();
+		static bool SerializeServerConfig(Ref<Projects::Project> project);
 		static bool DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& filepath);
 
 		//=========================
