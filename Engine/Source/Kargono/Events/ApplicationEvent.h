@@ -85,6 +85,31 @@ namespace Kargono::Events
 		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
 	};
 
+#if 0
+	class AppUpdateEvent : public Event
+	{
+	public:
+		//==============================
+		// Constructors and Destructors
+		//==============================
+		AppUpdateEvent(float deltaTime)
+			: m_DeltaTime(deltaTime) {}
+
+		AppUpdateEvent(size_t deltaTimeMs) : m_DeltaTime()
+
+		//==============================
+		// Getters/Setters
+		//==============================
+
+		float GetDeltaTime() const { return m_DeltaTime; }
+
+		virtual EventType GetEventType() const override { return EventType::AppUpdate; }
+		virtual int GetCategoryFlags() const override { return EventCategory::Application; }
+	private:
+		float m_DeltaTime;
+	};
+#endif
+
 	//============================================================
 	// Clean Up Timers Event Class
 	//============================================================

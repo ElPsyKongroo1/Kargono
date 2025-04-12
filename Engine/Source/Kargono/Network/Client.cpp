@@ -77,8 +77,8 @@ namespace Kargono::Network
 		SendToServer(msg);
 
 		// Start request connection
-		m_NetworkEventThread.StartThread(KG_BIND_CLASS_FN(RunNetworkEventThread));
 		m_NetworkThread.StartThread(KG_BIND_CLASS_FN(RequestConnection));
+		m_NetworkEventThread.StartThread(KG_BIND_CLASS_FN(RunNetworkEventThread));
 		return true;
 	}
 
@@ -181,7 +181,7 @@ namespace Kargono::Network
 
 	void Client::RunNetworkEventThread()
 	{
-		DWORD waitResult = WaitForMultipleObjects(2, allEvents, FALSE, 1'000);
+		DWORD waitResult = WaitForMultipleObjects(2, allEvents, FALSE, m_Config.m_SyncPingFrequencyMs);
 
 		if (waitResult == WAIT_OBJECT_0)  // Network event
 		{
@@ -214,6 +214,10 @@ namespace Kargono::Network
 					}
 				}
 			}
+		}
+		else
+		{
+			//m_NetworkEventQueue.SubmitEvent(CreateRef<Events::Up>());
 		}
 	}
 
@@ -286,8 +290,6 @@ namespace Kargono::Network
 				KG_WARN("Connection closed");
 				return;
 			}
-
-
 		}
 		else if (event->GetEventType() == Events::EventType::KeyPressed)
 		{

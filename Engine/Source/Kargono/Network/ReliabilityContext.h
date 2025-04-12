@@ -84,7 +84,7 @@ namespace Kargono::Network
 		//==============================
 		// Interact with Packet
 		//==============================
-		void InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation);
+		uint16_t InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation);
 		void ProcessReliabilitySegmentFromPacket(uint8_t* segmentLocation);
 
 	private:

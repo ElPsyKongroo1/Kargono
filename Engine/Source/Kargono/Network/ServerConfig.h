@@ -21,6 +21,7 @@ namespace Kargono::Network
 		// Operation
 		float m_ConnectionTimeout{ 10.0f };
 		float m_SyncPingFrequency{ 0.05f };
+		size_t m_SyncPingFrequencyMs{ 50 }; // TODO: Please remove this
 		float m_RequestConnectionFrequency{ 1.0f };
 		// Validation
 		Math::u64vec4 m_ValidationSecrets{ 0 };

@@ -31,7 +31,7 @@ namespace Kargono::Network
 		m_CongestionContext.OnUpdate(deltaTime, m_RoundTripContext.GetAverageRoundTrip());
 	}
 
-	void ReliabilityContext::InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation)
+	uint16_t ReliabilityContext::InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation)
 	{
 		// Initialize the locations of the seq, ack, and ack-bitfield
 		uint16_t& sequenceLocation = *(uint16_t*)segmentLocation;
@@ -39,8 +39,8 @@ namespace Kargono::Network
 		uint32_t& bitFieldLocation = *(uint32_t*)(segmentLocation +
 			sizeof(sequenceLocation) + sizeof(ackLocation));
 
-		//KG_WARN("Sent the packet %d. It has the ack %d. It also has the bit field: ", m_LocalSequence, m_RemoteSequence);
-		//std::cout << std::format("{:032b}\n", m_RemoteAckField.GetRawBitfield());
+		// Get this packet's sequence number
+		uint16_t returnSequence{ m_LocalSequence };
 
 		// Insert the sequence number (appID|[sequenceNum]|ackNum|ackBitField|...)
 		InsertLocalSequenceNumber(sequenceLocation);
@@ -50,6 +50,8 @@ namespace Kargono::Network
 
 		// Insert the recent ack's bitfield (appID|sequenceNum|ackNum|[ackBitField]|...)
 		InsertRemoteSequenceBitField(bitFieldLocation);
+
+		return returnSequence;
 	}
 
 	void ReliabilityContext::ProcessReliabilitySegmentFromPacket(uint8_t* segmentLocation)
@@ -172,6 +174,20 @@ namespace Kargono::Network
 
 		// Use logical implication to reveal modified packets
 		uint32_t newlyAcknowledgedField = (~m_LocalAckField.GetRawBitfield()) & ackBitField;
+
+#if 0
+		// TODO: Integrate this code
+		for (uint16_t field = newlyAcknowledgedField; field != 0; field &= field - 1)
+		{
+			// Get the next index
+			uint16_t index = std::countr_zero(field);
+
+			// Acknowledge the packet
+			uint16_t ackPacketSeq = m_LocalSequence - 1 - index;
+			float packetRTT = GetTime() - m_RoundTripContext.GetTimePoint(ackPacketSeq);
+			ProcessRoundTrip(packetRTT);
+		}
+#endif
 
 		// Scan the newly-acknowledged-field and acknowledge the packets
 		// TODO: Add meaningful acknowledgement method here

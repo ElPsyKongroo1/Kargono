@@ -128,3 +128,5 @@ namespace Kargono
 #include "Kargono/Core/Profiler.h"
 #include "Kargono/Core/FixedString.h"
 
+#include <filesystem>
+

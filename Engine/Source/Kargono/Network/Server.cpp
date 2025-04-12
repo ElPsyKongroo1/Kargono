@@ -966,8 +966,14 @@ namespace Kargono::Network
 		if (!IsConnectionManagementPacket(msg.m_Header.m_MessageType))
 		{
 			// Insert the sequence number + ack + ack_bitfield
-			connection->m_ReliabilityContext.InsertReliabilitySegmentIntoPacket(&buffer[sizeof(AppID) + sizeof(MessageType)]);
+			uint16_t sentPacketSeq = connection->m_ReliabilityContext.InsertReliabilitySegmentIntoPacket(&buffer[sizeof(AppID) + sizeof(MessageType)]);
+
+			// TODO: Add the observer for this connection here
+
 		}
+
+		
+
 
 		// Optionally insert the payload
 		if (msg.m_Header.m_PayloadSize > 0)
