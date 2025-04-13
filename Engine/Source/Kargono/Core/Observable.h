@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Kargono/Core/BitField.h"
 #include "Kargono/Core/Base.h"
 
 #include <vector>
@@ -21,13 +20,13 @@ namespace Kargono
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		Observable() = default;
+		Observable() = default; 
 		~Observable() = default;
 	public:
 		//==============================
 		// Send Notifications
 		//==============================
-		void Notify(Args&&... args)
+		void Notify(Args... args)
 		{
 			// Loop through all observers
 			for (size_t field{ m_BitField }; field != 0; field &= field - 1)
@@ -45,12 +44,10 @@ namespace Kargono
 		//==============================
 		// Manage Observers
 		//==============================
-		ObserverIndex AddObserver(std::function<void(Args&&... args)> func)
+		ObserverIndex AddObserver(std::function<void(Args... args)> func)
 		{
-			// Expose the empty spaces as 1 bits ([0]100-1000) -> ([1]011-0111)
-			size_t emptyBitField = ~m_BitField;
-
-			size_t emptyIndex = std::countr_zero(field);
+			// Get the index of the first empty space
+			size_t emptyIndex = std::countr_zero(~m_BitField);
 
 			// Handle case where no empty slots are found
 			if (emptyIndex >= sizeof(size_t) * 8)
@@ -61,12 +58,14 @@ namespace Kargono
 			// Resize the buffer if necessary
 			if (emptyIndex >= m_Observers.size())
 			{
-				m_Observers.resize(m_Observers + 1); // TODO: May cause excessive allocations
+				m_Observers.resize(emptyIndex + 1); // TODO: May cause excessive allocations
 			}
 
 			// Add the functor and update the bit
 			m_Observers[emptyIndex] = std::move(func);
 			m_BitField |= m_BitField + 1;
+
+			return emptyIndex;
 		}
 
 		bool RemoveObserver(ObserverIndex index)
@@ -102,7 +101,7 @@ namespace Kargono
 		//==============================
 		// Internal Fields
 		//==============================
-		std::vector<std::function<void(Args&&... args)>> m_Observers{};
+		std::vector<std::function<void(Args... args)>> m_Observers{};
 		size_t m_BitField{0};
 	};
 }

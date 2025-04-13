@@ -15,6 +15,8 @@
 #include "Kargono/Core/Thread.h"
 #include "Kargono/Events/EventQueue.h"
 #include "Kargono/Events/KeyEvent.h"
+#include "Kargono/Core/Observable.h"
+#include "Kargono/Core/FunctionQueue.h"
 
 #include <unordered_map>
 
@@ -121,6 +123,12 @@ namespace Kargono::Network
 		void SessionClock();
 		void StartSession();
 
+		//==============================
+		// Manage Observer(s)
+		//==============================
+		ObserverIndex AddSendPacketObserver(std::function<void(ClientIndex, PacketSequence)> func);
+		bool RemoveSendPacketObserver(ObserverIndex index);
+
 	private:
 		//==============================
 		// Manage Clients Connections
@@ -130,11 +138,12 @@ namespace Kargono::Network
 		void OnClientDisconnect(ClientIndex client);
 		void CheckConnectionsValid();
 
+
 	private:
-		// Main server network context
 		//==============================
 		// Internal Data
 		//==============================
+		// Main server network context
 		std::atomic<bool> m_ServerActive{ false };
 		Socket m_ServerSocket;
 		ServerConfig m_Config;
@@ -144,6 +153,7 @@ namespace Kargono::Network
 		Utility::PassiveLoopTimer m_KeepAliveTimer;
 		ConnectionList m_AllConnections;
 		Events::EventQueue m_NetworkEventQueue;
+		FunctionQueue m_NetworkFunctionQueue;
 
 		// Session Data
 		Session m_OnlySession{};
@@ -151,6 +161,9 @@ namespace Kargono::Network
 		bool m_StopTimingThread = false;
 		std::atomic<uint64_t> m_UpdateCount{ 0 };
 		bool m_ManageConnections{ false };
+
+		// Observable contexts
+		Observable<ClientIndex, PacketSequence> m_SendPacketNotifier{};
 
 	private:
 		friend class ServerService;
@@ -175,6 +188,7 @@ namespace Kargono::Network
 		// Submit Server Events 
 		//==============================
 		static void SubmitToNetworkEventQueue(Ref<Events::Event> e);
+		static void SubmitToNetworkFunctionQueue(const std::function<void()>& func);
 
 	private:
 		//==============================
@@ -184,11 +198,6 @@ namespace Kargono::Network
 		static void OnEvent(Events::Event* e);
 		// Handle specific events
 		static bool OnStartSession(Events::StartSession event);
-
-		//==============================
-		// Internal Functionality
-		//==============================
-		static void ProcessEventQueue();
 
 	private:
 		//==============================

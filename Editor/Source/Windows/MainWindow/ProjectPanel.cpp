@@ -438,6 +438,10 @@ namespace Kargono::Panels
 			Network::ServerConfig& serverConfig = Projects::ProjectService::GetServerConfig();
 			serverConfig.m_ValidationSecrets = (Math::u64vec4)spec.m_CurrentIVec4;
 		};
+
+		// Register notification observers
+		Network::Server& server{ Network::ServerService::GetActiveServer() };
+		server.AddSendPacketObserver(KG_BIND_CLASS_FN(OnNotifySendServerPacket));
 	}
 	void ServerOptions::OnEditorUIRender()
 	{
@@ -489,6 +493,10 @@ namespace Kargono::Panels
 		}
 
 		EditorUI::EditorUIService::EndTabBar();
+	}
+	void ServerOptions::OnNotifySendServerPacket(Network::ClientIndex index, Network::PacketSequence seq)
+	{
+		KG_TRACE_INFO("Send a server packet from client {} with sequence num {}", index, seq);
 	}
 	void ClientOptions::InitWidgets(EditorUI::TooltipSpec* parentTooltipSpec)
 	{

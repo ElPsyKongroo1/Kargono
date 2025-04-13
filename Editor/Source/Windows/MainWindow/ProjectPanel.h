@@ -2,6 +2,8 @@
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/EditorUI/EditorUI.h"
 
+#include "Kargono/Network/Server.h"
+
 #include <string>
 
 namespace Kargono::Panels
@@ -73,6 +75,11 @@ namespace Kargono::Panels
 		// On Event
 		//=========================
 		void OnEditorUIRender();
+
+		//=========================
+		// On Observer Notification
+		//=========================
+		void OnNotifySendServerPacket(Network::ClientIndex index, Network::PacketSequence seq);
 	private:
 		//=========================
 		// Widgets

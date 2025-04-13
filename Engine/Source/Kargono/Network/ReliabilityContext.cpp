@@ -16,12 +16,12 @@ namespace Kargono::Network
 		return duration<float>(steady_clock::now().time_since_epoch()).count();
 	}
 
-	static bool SequenceGreaterThan(uint16_t sequence1, uint16_t sequence2)
+	static bool SequenceGreaterThan(PacketSequence sequence1, PacketSequence sequence2)
 	{
-		constexpr uint16_t k_HalfShort{ 32768 };
+		constexpr PacketSequence k_HalfSequence{ std::numeric_limits<PacketSequence>::max() / 2 };
 
-		return ((sequence1 > sequence2) && (sequence1 - sequence2 <= k_HalfShort)) ||
-			((sequence1 < sequence2) && (sequence2 - sequence1 > k_HalfShort));
+		return ((sequence1 > sequence2) && (sequence1 - sequence2 <= k_HalfSequence)) ||
+			((sequence1 < sequence2) && (sequence2 - sequence1 > k_HalfSequence));
 	}
 
 	void ReliabilityContext::OnUpdate(float deltaTime)
@@ -34,21 +34,21 @@ namespace Kargono::Network
 	uint16_t ReliabilityContext::InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation)
 	{
 		// Initialize the locations of the seq, ack, and ack-bitfield
-		uint16_t& sequenceLocation = *(uint16_t*)segmentLocation;
-		uint16_t& ackLocation = *(uint16_t*)(segmentLocation + sizeof(sequenceLocation));
-		uint32_t& bitFieldLocation = *(uint32_t*)(segmentLocation +
+		PacketSequence& sequenceLocation = *(PacketSequence*)segmentLocation;
+		PacketSequence& ackLocation = *(PacketSequence*)(segmentLocation + sizeof(sequenceLocation));
+		AckBitField& bitFieldLocation = *(AckBitField*)(segmentLocation +
 			sizeof(sequenceLocation) + sizeof(ackLocation));
 
 		// Get this packet's sequence number
-		uint16_t returnSequence{ m_LocalSequence };
+		PacketSequence returnSequence{ m_LocalSequence };
 
-		// Insert the sequence number (appID|[sequenceNum]|ackNum|ackBitField|...)
+		// Insert the sequence number (appID...|[sequenceNum]|ackNum|ackBitField|...)
 		InsertLocalSequenceNumber(sequenceLocation);
 
-		// Insert the recent ack number (appID|sequenceNum|[ackNum]|ackBitField|...) 
+		// Insert the recent ack number (appID...|sequenceNum|[ackNum]|ackBitField|...) 
 		InsertRemoteSequenceNumber(ackLocation);
 
-		// Insert the recent ack's bitfield (appID|sequenceNum|ackNum|[ackBitField]|...)
+		// Insert the recent ack's bitfield (appID...|sequenceNum|ackNum|[ackBitField]|...)
 		InsertRemoteSequenceBitField(bitFieldLocation);
 
 		return returnSequence;
@@ -57,9 +57,9 @@ namespace Kargono::Network
 	void ReliabilityContext::ProcessReliabilitySegmentFromPacket(uint8_t* segmentLocation)
 	{
 		// Initialize the locations of the seq, ack, and ack-bitfield
-		uint16_t packetSequence = *(uint16_t*)segmentLocation;
-		uint16_t packetAck = *(uint16_t*)(segmentLocation + sizeof(packetSequence));
-		uint32_t packetAckBitfield = *(uint32_t*)(segmentLocation +
+		PacketSequence packetSequence = *(PacketSequence*)segmentLocation;
+		PacketSequence packetAck = *(PacketSequence*)(segmentLocation + sizeof(packetSequence));
+		AckBitField packetAckBitfield = *(AckBitField*)(segmentLocation +
 			sizeof(packetSequence) + sizeof(packetAck));
 
 		// Update the remote data based on the received sequence number
@@ -78,15 +78,17 @@ namespace Kargono::Network
 		m_LastPacketReceived = 0.0f;
 	}
 
-	void ReliabilityContext::InsertLocalSequenceNumber(uint16_t& sequenceLocation)
+	void ReliabilityContext::InsertLocalSequenceNumber(PacketSequence& sequenceLocation)
 	{
 		// Insert the current local sequence number the into packet location
 		sequenceLocation = m_LocalSequence;
 
+		constexpr uint8_t k_AckFieldFinalElement{ sizeof(AckBitField) * 8 - 1 };
+
 		// Check for drop packet at the 32 bit boundary of the bitfield!
-		if (!m_LocalAckField.IsFlagSet(31))
+		if (!m_LocalAckField.IsFlagSet(k_AckFieldFinalElement))
 		{
-			uint16_t droppedPacketSeq = sequenceLocation - 31;
+			PacketSequence droppedPacketSeq = sequenceLocation - k_AckFieldFinalElement;
 			float packetRTT = GetTime() - m_RoundTripContext.GetTimePoint(droppedPacketSeq);
 			ProcessRoundTrip(packetRTT);
 		}
@@ -101,22 +103,25 @@ namespace Kargono::Network
 		m_LocalAckField.SetRawBitfield(m_LocalAckField.GetRawBitfield() << 1); // I want it to overflow!
 	}
 
-	void ReliabilityContext::InsertRemoteSequenceNumber(uint16_t& ackLocation)
+	void ReliabilityContext::InsertRemoteSequenceNumber(PacketSequence& ackLocation)
 	{
 		// Insert the current remote sequence number into the packet
 		ackLocation = m_RemoteSequence;
 	}
 
-	void ReliabilityContext::InsertRemoteSequenceBitField(uint32_t& bitFieldLocation)
+	void ReliabilityContext::InsertRemoteSequenceBitField(AckBitField& bitFieldLocation)
 	{
 		// Insert the bitfield
-		bitFieldLocation = (uint32_t)m_RemoteAckField.GetRawBitfield(); // Truncate the bitfield
+		bitFieldLocation = (AckBitField)m_RemoteAckField.GetRawBitfield(); // Truncate the bitfield
 	}
 
-	bool ReliabilityContext::ProcessReceivedSequenceNumber(uint16_t receivedSequenceNumber)
+	bool ReliabilityContext::ProcessReceivedSequenceNumber(PacketSequence receivedSequenceNumber)
 	{
-		uint16_t distance = std::abs((int16_t)receivedSequenceNumber - (int16_t)m_RemoteSequence);
-		bool excessiveDistance = distance > 31;
+		PacketSequence distance = (PacketSequence)std::abs((int)receivedSequenceNumber - (int)m_RemoteSequence);
+
+		constexpr PacketSequence k_EndAckFieldDistance{ sizeof(AckBitField) * 8 - 1 };
+
+		bool excessiveDistance = distance > k_EndAckFieldDistance;
 
 		// Check if the current sequence number is newer
 		if (SequenceGreaterThan(receivedSequenceNumber, m_RemoteSequence))
@@ -155,9 +160,9 @@ namespace Kargono::Network
 		return true;
 	}
 
-	bool ReliabilityContext::ProcessReceivedAck(uint16_t ackNumber, uint32_t ackBitField)
+	bool ReliabilityContext::ProcessReceivedAck(PacketSequence ackNumber, AckBitField ackBitField)
 	{
-		uint16_t distance = std::abs((int16_t)m_LocalSequence - (int16_t)ackNumber);
+		PacketSequence distance = std::abs((int32_t)m_LocalSequence - (int32_t)ackNumber);
 		bool excessiveDistance = distance > 32;
 
 		// The ack number should never be greater than the local sequence value
@@ -173,36 +178,22 @@ namespace Kargono::Network
 		ackBitField = (ackBitField << (distance - 1));
 
 		// Use logical implication to reveal modified packets
-		uint32_t newlyAcknowledgedField = (~m_LocalAckField.GetRawBitfield()) & ackBitField;
+		AckBitField newlyAcknowledgedField = (~m_LocalAckField.GetRawBitfield()) & ackBitField;
 
-#if 0
-		// TODO: Integrate this code
-		for (uint16_t field = newlyAcknowledgedField; field != 0; field &= field - 1)
-		{
-			// Get the next index
-			uint16_t index = std::countr_zero(field);
-
-			// Acknowledge the packet
-			uint16_t ackPacketSeq = m_LocalSequence - 1 - index;
-			float packetRTT = GetTime() - m_RoundTripContext.GetTimePoint(ackPacketSeq);
-			ProcessRoundTrip(packetRTT);
-		}
-#endif
 
 		// Scan the newly-acknowledged-field and acknowledge the packets
-		// TODO: Add meaningful acknowledgement method here
-		for (uint16_t iteration{ 0 }; iteration < 32; iteration++)
+		for (AckBitField field = newlyAcknowledgedField; field != 0; field &= field - 1)
 		{
-			// Check this specific bit
-			bool isSet = (newlyAcknowledgedField >> iteration) & 1;
+			// Get the next index
+			AckBitField index = std::countr_zero(field);
 
-			// Acknowledged a packet
-			if (isSet)
-			{
-				uint16_t ackPacketSeq = m_LocalSequence - 1 - iteration;
-				float packetRTT = GetTime() - m_RoundTripContext.GetTimePoint(ackPacketSeq);
-				ProcessRoundTrip(packetRTT);
-			}
+			// Acknowledge the packet RTT
+			PacketSequence ackPacketSeq = m_LocalSequence - 1 - index;
+			float packetRTT = GetTime() - m_RoundTripContext.GetTimePoint(ackPacketSeq);
+			ProcessRoundTrip(packetRTT);
+
+			// TODO: Meaningfully acknowledge received packets here!
+
 		}
 
 		// Finally, update the local bitfield with new acknowledgements
@@ -219,14 +210,14 @@ namespace Kargono::Network
 	}
 
 
-	void RoundTripContext::AddTimePoint(uint16_t sequenceNumber)
+	void RoundTripContext::AddTimePoint(PacketSequence sequenceNumber)
 	{
-		m_SendTimepoints[sequenceNumber % 32] = GetTime();
+		m_SendTimepoints[sequenceNumber % k_AckBitFieldSize] = GetTime();
 	}
 
-	float RoundTripContext::GetTimePoint(uint16_t sequenceNumber)
+	float RoundTripContext::GetTimePoint(PacketSequence sequenceNumber)
 	{
-		return m_SendTimepoints[sequenceNumber % 32];
+		return m_SendTimepoints[sequenceNumber % k_AckBitFieldSize];
 	}
 
 	void RoundTripContext::UpdateAverageRoundTrip(float roundTrip)

@@ -7,6 +7,10 @@
 
 namespace Kargono::Network
 {
+	using PacketSequence = uint16_t;
+	using AckBitField = uint32_t;
+	constexpr PacketSequence k_AckBitFieldSize{ (PacketSequence)sizeof(AckBitField) * (PacketSequence)8 };
+
 	struct CongestionConfig
 	{
 		float m_CongestedRTTThreshold{ 250.0f / 1000.0f }; // Quarter of a second round-trip
@@ -50,8 +54,8 @@ namespace Kargono::Network
 		//==============================
 		// Interact with Timepoints
 		//==============================
-		void AddTimePoint(uint16_t sequenceNumber);
-		float GetTimePoint(uint16_t sequenceNumber);
+		void AddTimePoint(PacketSequence sequenceNumber);
+		float GetTimePoint(PacketSequence sequenceNumber);
 
 		//==============================
 		// Interact with Average Round Trip
@@ -64,7 +68,7 @@ namespace Kargono::Network
 		// Internal Fields
 		//==============================
 		float m_AverageRoundTrip{ 0.0f };
-		std::array<float, 32> m_SendTimepoints;
+		std::array<float, (size_t)k_AckBitFieldSize> m_SendTimepoints;
 	};
 
 	class ReliabilityContext
@@ -84,17 +88,17 @@ namespace Kargono::Network
 		//==============================
 		// Interact with Packet
 		//==============================
-		uint16_t InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation);
+		PacketSequence InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation);
 		void ProcessReliabilitySegmentFromPacket(uint8_t* segmentLocation);
 
 	private:
 		// Insert-segment helpers
-		void InsertLocalSequenceNumber(uint16_t& sequenceLocation);
-		void InsertRemoteSequenceNumber(uint16_t& ackLocation);
-		void InsertRemoteSequenceBitField(uint32_t& bitFieldLocation);
+		void InsertLocalSequenceNumber(PacketSequence& sequenceLocation);
+		void InsertRemoteSequenceNumber(PacketSequence& ackLocation);
+		void InsertRemoteSequenceBitField(AckBitField& bitFieldLocation);
 		// Process-segment helpers
-		bool ProcessReceivedSequenceNumber(uint16_t receivedSequenceNumber);
-		bool ProcessReceivedAck(uint16_t ackNumber, uint32_t ackBitField);
+		bool ProcessReceivedSequenceNumber(PacketSequence receivedSequenceNumber);
+		bool ProcessReceivedAck(PacketSequence ackNumber, AckBitField ackBitField);
 	private:
 		// Update state based on new round trip entry
 		void ProcessRoundTrip(float packetRoundTrip);
@@ -115,9 +119,9 @@ namespace Kargono::Network
 		// Internal Fields
 		//==============================
 		// Sequencing data
-		uint16_t m_LocalSequence{ 0 };
-		uint16_t m_RemoteSequence{ 0 };
-		BitField<uint32_t> m_LocalAckField{ 0b1111'1111'1111'1111'1111'1111'1111'1111 };
-		BitField<uint32_t> m_RemoteAckField{ 0b1111'1111'1111'1111'1111'1111'1111'1110 };
+		PacketSequence m_LocalSequence{ 0 };
+		PacketSequence m_RemoteSequence{ 0 };
+		BitField<AckBitField> m_LocalAckField{ 0b1111'1111'1111'1111'1111'1111'1111'1111 };
+		BitField<AckBitField> m_RemoteAckField{ 0b1111'1111'1111'1111'1111'1111'1111'1110 };
 	};
 }

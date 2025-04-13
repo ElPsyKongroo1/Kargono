@@ -527,6 +527,18 @@ namespace Kargono::Network
 			m_OnlySession.SetSessionStartFrame(m_UpdateCount);
 		}
 	}
+	ObserverIndex Server::AddSendPacketObserver(std::function<void(ClientIndex, PacketSequence)> func)
+	{
+		KG_ASSERT(!m_ServerActive);
+
+		return m_SendPacketNotifier.AddObserver(func);
+	}
+	bool Server::RemoveSendPacketObserver(ObserverIndex index)
+	{
+		KG_ASSERT(!m_ServerActive);
+
+		return m_SendPacketNotifier.RemoveObserver(index);
+	}
 	void Server::OnClientValidated(ClientIndex client)
 	{
 		UNREFERENCED_PARAMETER(client);
@@ -659,6 +671,7 @@ namespace Kargono::Network
 			return;
 		}
 
+		m_NetworkFunctionQueue.ProcessQueue();
 		m_NetworkEventQueue.ProcessQueue();
 
 		Address sender;
@@ -968,12 +981,9 @@ namespace Kargono::Network
 			// Insert the sequence number + ack + ack_bitfield
 			uint16_t sentPacketSeq = connection->m_ReliabilityContext.InsertReliabilitySegmentIntoPacket(&buffer[sizeof(AppID) + sizeof(MessageType)]);
 
-			// TODO: Add the observer for this connection here
-
+			// Use send packet notifier
+			m_SendPacketNotifier.Notify(clientIndex, sentPacketSeq);
 		}
-
-		
-
 
 		// Optionally insert the payload
 		if (msg.m_Header.m_PayloadSize > 0)
@@ -1093,7 +1103,15 @@ namespace Kargono::Network
 
 		s_Server.m_NetworkEventQueue.SubmitEvent(e);
 
-		// TODO: Alert thread to wake up and process event
+		s_Server.m_NetworkThread.ResumeThread(false);
+	}
+	void ServerService::SubmitToNetworkFunctionQueue(const std::function<void()>& func)
+	{
+		KG_ASSERT(s_Server.m_ServerActive);
+
+		s_Server.m_NetworkFunctionQueue.SubmitFunction(func);
+
+		s_Server.m_NetworkThread.ResumeThread(false);
 	}
 	void ServerService::OnEvent(Events::Event* e)
 	{
@@ -1110,11 +1128,5 @@ namespace Kargono::Network
 		s_Server.StartSession();
 
 		return true;
-	}
-	void ServerService::ProcessEventQueue()
-	{
-		KG_ASSERT(s_Server.m_ServerActive);
-
-		s_Server.m_NetworkEventQueue.ProcessQueue();
 	}
 }
