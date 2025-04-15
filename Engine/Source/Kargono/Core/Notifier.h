@@ -14,14 +14,14 @@ namespace Kargono
 	constexpr ObserverIndex k_InvalidObserverIndex{ std::numeric_limits<ObserverIndex>::max() };
 
 	template <typename... Args>
-	class Observable
+	class Notifier
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		Observable() = default; 
-		~Observable() = default;
+		Notifier() = default; 
+		~Notifier() = default;
 	public:
 		//==============================
 		// Send Notifications

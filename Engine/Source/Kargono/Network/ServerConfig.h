@@ -19,10 +19,10 @@ namespace Kargono::Network
 		Address m_ServerAddress{};
 		ServerLocation m_ServerLocation{ ServerLocation::LocalMachine };
 		// Operation
-		float m_ConnectionTimeout{ 10.0f };
-		float m_SyncPingFrequency{ 0.05f };
-		size_t m_SyncPingFrequencyMs{ 50 }; // TODO: Please remove this
-		float m_RequestConnectionFrequency{ 1.0f };
+		float m_ConnectionTimeout{ 10.0f /*10s*/ };
+		size_t m_ServerActiveRefresh{ 50 /*50ms*/ };
+		size_t m_ServerPassiveRefresh{ 1'000 /*1s*/ };
+		float m_RequestConnectionFrequency{ 1.0f /*1s*/ };
 		// Validation
 		Math::u64vec4 m_ValidationSecrets{ 0 };
 	};

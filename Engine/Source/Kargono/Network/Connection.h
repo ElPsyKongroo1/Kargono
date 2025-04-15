@@ -37,7 +37,7 @@ namespace Kargono::Network
 		//==============================
 		// Getters/Setters
 		//==============================
-		Connection* GetConnection(ClientIndex clientIndex);
+		Connection& GetConnection(ClientIndex clientIndex);
 		ClientIndex GetNumberOfClients();
 		std::vector<Connection>& GetAllConnections();
 	private:

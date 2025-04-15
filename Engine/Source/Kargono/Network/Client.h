@@ -47,7 +47,7 @@ namespace Kargono::Network
 	private:
 		// Asio Thread and Context. This thread handles asynchronous calls from Asio itself
 
-		// Function and Event Queue for m_NetworkThread to handle
+		// Function and Event Queue for m_Thread to handle
 		FunctionQueue m_WorkQueue;
 		Events::EventQueue m_EventQueue;
 

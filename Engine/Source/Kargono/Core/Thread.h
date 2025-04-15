@@ -14,16 +14,16 @@ namespace Kargono
 		// Lifecycle Functions
 		//==============================
 		void StartThread(std::function<void()> workFunction);
-		void StopThread(bool withinThread = false);
+		void StopThread(bool withinThread);
 		void RunThread();
 
 		//==============================
 		// Manage Thread
 		//==============================
-		void SuspendThread(bool withinThread = false);
-		void ResumeThread(bool withinThread = false);
+		void SuspendThread(bool withinThread);
+		void ResumeThread(bool withinThread);
 		void WaitOnThread();
-		void ChangeWorkFunction(std::function<void()> workFunction, bool withinThread = false);
+		void ChangeWorkFunction(std::function<void()> workFunction, bool withinThread);
 
 		//==============================
 		// Query Thread

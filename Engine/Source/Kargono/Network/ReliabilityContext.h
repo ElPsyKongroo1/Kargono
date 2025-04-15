@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <array>
+#include <span>
 
 namespace Kargono::Network
 {
@@ -71,6 +72,12 @@ namespace Kargono::Network
 		std::array<float, (size_t)k_AckBitFieldSize> m_SendTimepoints;
 	};
 
+	struct AckData
+	{
+		PacketSequence m_Sequence{ 0 };
+		float m_RTT{ 0.0f };
+	};
+
 	class ReliabilityContext
 	{
 	public:
@@ -89,7 +96,7 @@ namespace Kargono::Network
 		// Interact with Packet
 		//==============================
 		PacketSequence InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation);
-		void ProcessReliabilitySegmentFromPacket(uint8_t* segmentLocation);
+		bool ProcessReliabilitySegmentFromPacket(uint8_t* segmentLocation);
 
 	private:
 		// Insert-segment helpers
@@ -104,6 +111,15 @@ namespace Kargono::Network
 		void ProcessRoundTrip(float packetRoundTrip);
 
 	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		std::span<AckData> GetRecentAcks()
+		{
+			KG_ASSERT(m_RecentAckCount <= m_RecentAcks.size());
+
+			return { m_RecentAcks.data(), m_RecentAckCount };
+		}
 
 		//==============================
 		// External Fields
@@ -123,5 +139,7 @@ namespace Kargono::Network
 		PacketSequence m_RemoteSequence{ 0 };
 		BitField<AckBitField> m_LocalAckField{ 0b1111'1111'1111'1111'1111'1111'1111'1111 };
 		BitField<AckBitField> m_RemoteAckField{ 0b1111'1111'1111'1111'1111'1111'1111'1110 };
+		std::array<AckData, k_AckBitFieldSize> m_RecentAcks{};
+		size_t m_RecentAckCount{ 0 };
 	};
 }

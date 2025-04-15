@@ -54,7 +54,7 @@ namespace Kargono::Network
 		return returnSequence;
 	}
 
-	void ReliabilityContext::ProcessReliabilitySegmentFromPacket(uint8_t* segmentLocation)
+	bool ReliabilityContext::ProcessReliabilitySegmentFromPacket(uint8_t* segmentLocation)
 	{
 		// Initialize the locations of the seq, ack, and ack-bitfield
 		PacketSequence packetSequence = *(PacketSequence*)segmentLocation;
@@ -65,17 +65,19 @@ namespace Kargono::Network
 		// Update the remote data based on the received sequence number
 		if (!ProcessReceivedSequenceNumber(packetSequence))
 		{
-			return;
+			return false;
 		}
 
 		// Check the ack context
 		if (!ProcessReceivedAck(packetAck, packetAckBitfield))
 		{
-			return;
+			return false;
 		}
 
 		// Packet received successfully
 		m_LastPacketReceived = 0.0f;
+
+		return true;
 	}
 
 	void ReliabilityContext::InsertLocalSequenceNumber(PacketSequence& sequenceLocation)
@@ -180,21 +182,26 @@ namespace Kargono::Network
 		// Use logical implication to reveal modified packets
 		AckBitField newlyAcknowledgedField = (~m_LocalAckField.GetRawBitfield()) & ackBitField;
 
-
 		// Scan the newly-acknowledged-field and acknowledge the packets
+		size_t i{ 0 };
 		for (AckBitField field = newlyAcknowledgedField; field != 0; field &= field - 1)
 		{
 			// Get the next index
 			AckBitField index = std::countr_zero(field);
 
-			// Acknowledge the packet RTT
+			// Update round trip time
 			PacketSequence ackPacketSeq = m_LocalSequence - 1 - index;
 			float packetRTT = GetTime() - m_RoundTripContext.GetTimePoint(ackPacketSeq);
 			ProcessRoundTrip(packetRTT);
 
-			// TODO: Meaningfully acknowledge received packets here!
+			// Store recent ack
+			m_RecentAcks[i].m_Sequence = ackPacketSeq;
+			m_RecentAcks[i].m_RTT = packetRTT;
 
+			i++;
 		}
+
+		m_RecentAckCount = i;
 
 		// Finally, update the local bitfield with new acknowledgements
 		m_LocalAckField.SetRawBitfield(m_LocalAckField.GetRawBitfield() | ackBitField);

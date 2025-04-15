@@ -15,61 +15,157 @@
 #include "Kargono/Core/Thread.h"
 #include "Kargono/Events/EventQueue.h"
 #include "Kargono/Events/KeyEvent.h"
-#include "Kargono/Core/Observable.h"
+#include "Kargono/Core/Notifier.h"
 #include "Kargono/Core/FunctionQueue.h"
-
-#include <unordered_map>
 
 namespace Kargono::Network
 {
-	class Server
+	// Forward declarations
+	class ServerEventThread;
+
+	class ServerNotifiers
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		Server() = default;
-		~Server() = default;
+		ServerNotifiers() = default;
+		~ServerNotifiers() = default;
+	private:
+		void Init(std::atomic<bool>* serverActive);
+	public:
+		// Server state observers
+		ObserverIndex AddServerInitObserver(std::function<void()> func);
+		bool RemoveServerInitObserver(ObserverIndex index);
+		ObserverIndex AddServerTerminateObserver(std::function<void()> func);
+		bool RemoveServerTerminateObserver(ObserverIndex index);
 
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		Notifier<> m_ServerInitNotifier{};
+		Notifier<> m_ServerTerminateNotifier{};
+
+		//==============================
+		// Injected Dependencies
+		//==============================
+		std::atomic<bool>* i_ServerActive{ nullptr };
+	private:
+		friend class Server;
+	};
+
+	class NetworkThreadNotifiers
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		NetworkThreadNotifiers() = default;
+		~NetworkThreadNotifiers() = default;
+	private:
+		void Init(std::atomic<bool>* serverActive);
+	public:
+		// Client connection observers
+		ObserverIndex AddClientConnectObserver(std::function<void(ClientIndex)> func);
+		bool RemoveClientConnectObserver(ObserverIndex index);
+		ObserverIndex AddClientDisconnectObserver(std::function<void(ClientIndex)> func);
+		bool RemoveClientDisconnectObserver(ObserverIndex index);
+		// Packet sent observers
+		ObserverIndex AddSendPacketObserver(std::function<void(ClientIndex, PacketSequence)> func);
+		bool RemoveSendPacketObserver(ObserverIndex index);
+		ObserverIndex AddAckPacketObserver(std::function<void(ClientIndex, PacketSequence, float)> func);
+		bool RemoveAckPacketObserver(ObserverIndex index);
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Client notifiers
+		Notifier<ClientIndex> m_ClientConnectNotifier{};
+		Notifier<ClientIndex> m_ClientDisconnectNotifier{};
+		// Packet notifiers
+		Notifier<ClientIndex, PacketSequence> m_SendPacketNotifier{};
+		Notifier<ClientIndex, PacketSequence, float> m_AckPacketNotifier{};
+
+		//==============================
+		// Injected Dependencies
+		//==============================
+		std::atomic<bool>* i_ServerActive{ nullptr };
+	private:
+		friend class ServerNetworkThread;
+	};
+
+	class ServerNetworkThread
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		ServerNetworkThread() = default;
+		~ServerNetworkThread() = default;
+	public:
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		bool InitServer(const ServerConfig& initConfig);
-		bool TerminateServer(bool withinNetworkThread = false);
-
-		// Allows other threads to wait on the server to close
-		void WaitOnServerTerminate();
+		bool Init
+		(
+			ServerConfig* serverConfig, 
+			Socket* serverSocket, 
+			std::atomic<bool>* serverActive,
+			ServerEventThread* eventThread
+		);
+		void Terminate();
+		void WaitOnThread();
 	public:
 		//==============================
-		// Run Threads
+		// Job Queue
 		//==============================
-		// Run socket/packet handling thread
-		void RunNetworkThread();
-		void RunNetworkEventThread();
+		void SubmitFunction(const std::function<void()>& workFunction);
+
+	public:
+		//==============================
+		// Manage Thread
+		//==============================
+		void ResumeThread(bool withinThread);
+		void SuspendThread(bool withinThread);
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		NetworkThreadNotifiers& GetNotifiers()
+		{
+			return m_Notifiers;
+		}
+	private:
+		//==============================
+		// Thread Work Functions
+		//==============================
+		void RunThread();
+
+		//==============================
+		// Manage Session
+		//==============================
+		void SessionClock();
+		void StartSession();
+
+		//==============================
+		// Manage Clients Connections
+		//==============================
+		void OnClientValidated(ClientIndex client);
+		bool OnClientConnect(ClientIndex client);
+		void OnClientDisconnect(ClientIndex client);
+		void CheckConnectionsValid();
+		void HandleConnectionKeepAlive();
+		void HandleConnectionTimeouts(float deltaTime);
 
 	private:
-		// Helper functions
-		bool ManageConnections();
-		void HandleConsoleInput(Events::KeyPressedEvent event);
-
-	public:
-		//==============================
-		// On Event
-		//==============================
-		void OnEvent(Events::Event* event);
-
-		//==============================
-		// Manage Events
-		//==============================
-		void SubmitEvent(Ref<Events::Event> event);
-
 		//==============================
 		// Send Packets
 		//==============================
 		bool SendToConnection(ClientIndex clientIndex, Message& msg);
 		bool SendToAllConnections(Message& msg, ClientIndex ignoreClient = k_InvalidClientIndex);
 
-	public:
+	private:
 		//==============================
 		// Receive Messages
 		//==============================
@@ -116,28 +212,109 @@ namespace Kargono::Network
 		void SendCheckUDPConnectionMessage(ClientIndex receivingClient);
 		void SendAcceptConnectionMessage(ClientIndex receivingClient, uint32_t clientCount);
 		void SendSessionInitMessage(ClientIndex receivingClient);
-
-		//==============================
-		// Manage Session
-		//==============================
-		void SessionClock();
-		void StartSession();
-
-		//==============================
-		// Manage Observer(s)
-		//==============================
-		ObserverIndex AddSendPacketObserver(std::function<void(ClientIndex, PacketSequence)> func);
-		bool RemoveSendPacketObserver(ObserverIndex index);
-
 	private:
 		//==============================
-		// Manage Clients Connections
+		// Internal Fields
 		//==============================
-		void OnClientValidated(ClientIndex client);
-		bool OnClientConnect(ClientIndex client);
-		void OnClientDisconnect(ClientIndex client);
-		void CheckConnectionsValid();
+		// Thread
+		KGThread m_Thread;
+		// Thread queues
+		FunctionQueue m_FunctionQueue;
+		// Notifiers
+		NetworkThreadNotifiers m_Notifiers{};
+		// Connections
+		ConnectionList m_AllConnections{};
+		// Timers
+		Utility::LoopTimer m_ManageConnectionTimer{};
+		uint32_t m_CongestionCounter{ 0 };
+		// Sessions
+		Session m_OnlySession{};
+		Scope<std::thread> m_TimingThread{ nullptr };
+		bool m_StopTimingThread{ false };
+		std::atomic<uint64_t> m_UpdateCount{ 0 };
+		
+		//==============================
+		// Injected Dependencies
+		//==============================
+		std::atomic<bool>* i_ServerActive{ nullptr };
+		ServerConfig* i_ServerConfig{ nullptr };
+		Socket* i_ServerSocket{ nullptr };
+		ServerEventThread* i_EventThread{ nullptr };
+	};
 
+	class ServerEventThread
+	{
+	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		bool Init(Socket* serverSocket, ServerNetworkThread* networkThread);
+		void Terminate();
+		void WaitOnThread();
+
+		//==============================
+		// Manage Server-Event Config
+		//==============================
+		void SetSyncPingFreq(size_t frequency /*ms*/);
+
+		//==============================
+		// Thread Work Functions
+		//==============================
+		void RunThread();
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Thread context and queues
+		KGThread m_Thread{};
+		FunctionQueue m_WorkQueue{};
+		// OS handles
+		HANDLE m_NetworkEventHandle{};
+		// Config
+		size_t m_ActiveSyncPingFreq{ 1'000 /*1 sec*/};
+
+		//==============================
+		// Injected Dependencies
+		//==============================
+		Socket* i_ServerSocket{ nullptr };
+		ServerNetworkThread* i_NetworkThread{ nullptr };
+	};
+
+	class Server
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		Server() = default;
+		~Server() = default;
+
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		bool Init(const ServerConfig& initConfig);
+		bool Terminate(bool withinNetworkThread);
+	private:
+		// Allows other threads to wait on the server to close
+		void WaitOnServerThreads();
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		ServerNotifiers& GetServerNotifiers()
+		{
+			return m_Notifiers;
+		}
+
+		ServerNetworkThread& GetNetworkThread()
+		{
+			return m_NetworkThread;
+		}
+
+		ServerEventThread& GetEventThread()
+		{
+			return m_EventThread;
+		}
 
 	private:
 		//==============================
@@ -145,26 +322,15 @@ namespace Kargono::Network
 		//==============================
 		// Main server network context
 		std::atomic<bool> m_ServerActive{ false };
-		Socket m_ServerSocket;
-		ServerConfig m_Config;
-		KGThread m_NetworkThread;
-		KGThread m_NetworkEventThread;
-		Utility::LoopTimer m_ManageConnectionTimer;
-		Utility::PassiveLoopTimer m_KeepAliveTimer;
-		ConnectionList m_AllConnections;
-		Events::EventQueue m_NetworkEventQueue;
-		FunctionQueue m_NetworkFunctionQueue;
+		Socket m_ServerSocket{};
+		ServerConfig m_Config{};
 
-		// Session Data
-		Session m_OnlySession{};
-		Scope<std::thread> m_TimingThread{ nullptr };
-		bool m_StopTimingThread = false;
-		std::atomic<uint64_t> m_UpdateCount{ 0 };
-		bool m_ManageConnections{ false };
+		// Server thread contexts
+		ServerNetworkThread m_NetworkThread{};
+		ServerEventThread m_EventThread{};
 
-		// Observable contexts
-		Observable<ClientIndex, PacketSequence> m_SendPacketNotifier{};
-
+		// Server state notifiers
+		ServerNotifiers m_Notifiers{};
 	private:
 		friend class ServerService;
 	};

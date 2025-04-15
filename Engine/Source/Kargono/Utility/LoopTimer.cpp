@@ -19,6 +19,13 @@ namespace Kargono::Utility
 		m_UpdateCount = 0;
 	}
 
+	void LoopTimer::ResetAccumulator()
+	{
+		// Use chrono literals within this function scope
+		using namespace std::chrono_literals;
+		m_Accumulator = 0ns;
+	}
+
 	bool LoopTimer::CheckForUpdate()
 	{
 		// Update the timestep and accumulation

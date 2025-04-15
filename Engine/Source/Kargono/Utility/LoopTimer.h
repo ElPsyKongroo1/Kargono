@@ -17,6 +17,7 @@ namespace Kargono::Utility
 		//==============================
 		// Reset the timer
 		void InitializeTimer();
+		void ResetAccumulator();
 		// Move the timer context forward
 		bool CheckForUpdate();
 

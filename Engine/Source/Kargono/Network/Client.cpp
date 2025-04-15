@@ -86,7 +86,7 @@ namespace Kargono::Network
 	{
 		// Start network thread
 		m_NetworkThreadTimer.InitializeTimer();
-		m_KeepAliveTimer.InitializeTimer(m_Config.m_SyncPingFrequency);
+		m_KeepAliveTimer.InitializeTimer(m_Config.m_ServerActiveRefresh);
 		m_NetworkThread.ChangeWorkFunction(KG_BIND_CLASS_FN(RunNetworkThread), withinNetworkThread);
 		return true;
 	}
@@ -181,7 +181,7 @@ namespace Kargono::Network
 
 	void Client::RunNetworkEventThread()
 	{
-		DWORD waitResult = WaitForMultipleObjects(2, allEvents, FALSE, m_Config.m_SyncPingFrequencyMs);
+		DWORD waitResult = WaitForMultipleObjects(2, allEvents, FALSE, m_Config.m_ServerActiveRefresh);
 
 		if (waitResult == WAIT_OBJECT_0)  // Network event
 		{
@@ -190,7 +190,7 @@ namespace Kargono::Network
 
 			if (netEvents.lNetworkEvents & FD_READ)
 			{
-				m_NetworkThread.ResumeThread();
+				m_NetworkThread.ResumeThread(false);
 			}
 		}
 		else if (waitResult == WAIT_OBJECT_0 + 1)  // Console input event
@@ -210,14 +210,14 @@ namespace Kargono::Network
 					{
 						char key = inputRecord.Event.KeyEvent.uChar.AsciiChar;
 						m_NetworkEventQueue.SubmitEvent(CreateRef<Events::KeyPressedEvent>(key));
-						m_NetworkThread.ResumeThread();
+						m_NetworkThread.ResumeThread(false);
 					}
 				}
 			}
 		}
 		else
 		{
-			//m_NetworkEventQueue.SubmitEvent(CreateRef<Events::Up>());
+			//m_EventQueue.SubmitEvent(CreateRef<Events::Up>());
 		}
 	}
 
@@ -305,7 +305,7 @@ namespace Kargono::Network
 	{
 		m_NetworkEventQueue.SubmitEvent(event);
 
-		m_NetworkEventThread.ResumeThread();
+		m_NetworkEventThread.ResumeThread(false);
 	}
 
 	void Client::RequestConnection()

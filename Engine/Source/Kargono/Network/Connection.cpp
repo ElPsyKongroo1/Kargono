@@ -71,13 +71,10 @@ namespace Kargono::Network
 		return true;
 	}
 
-	Connection* ConnectionList::GetConnection(ClientIndex clientIndex)
+	Connection& ConnectionList::GetConnection(ClientIndex clientIndex)
 	{
-		if (clientIndex >= m_AllConnections.size() || !m_ClientsConnected[clientIndex])
-		{
-			return nullptr;
-		}
-		return &m_AllConnections[clientIndex];
+		KG_ASSERT(clientIndex < m_AllConnections.size() && m_ClientsConnected[clientIndex]);
+		return m_AllConnections[clientIndex];
 	}
 
 	ClientIndex ConnectionList::GetNumberOfClients()

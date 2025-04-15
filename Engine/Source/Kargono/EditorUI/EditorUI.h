@@ -550,12 +550,8 @@ namespace Kargono::EditorUI
 			m_XValues.resize(newSize);
 			m_YValues.resize(newSize);
 
-			for (size_t i{ 0 }; i < m_BufferSize; i++)
-			{
-				m_XValues[i] = 0.0f;
-				m_YValues[i] = 0.0f;
-			}
-			m_Offset = m_BufferSize;
+			// Reset the buffer
+			Clear();
 		}
 
 		void AddValue(float yValue)
@@ -568,6 +564,13 @@ namespace Kargono::EditorUI
 			m_Offset++;
 		}
 
+		void UpdateValue(float yValue, size_t offset = 0)
+		{
+			KG_ASSERT(offset < m_BufferSize);
+
+			m_YValues[(m_Offset - offset) % m_BufferSize] = yValue;
+		}
+
 		void SetYAxisLabel(std::string_view text)
 		{
 			if (text.size() == 0)
@@ -577,6 +580,19 @@ namespace Kargono::EditorUI
 			}
 
 			m_YAxisLabel = text;
+		}
+
+		void Clear()
+		{
+			// Reset all values in buffer
+			for (size_t i{ 0 }; i < m_BufferSize; i++)
+			{
+				m_XValues[i] = 0.0f;
+				m_YValues[i] = 0.0f;
+			}
+
+			// Reset the offset
+			m_Offset = m_BufferSize;
 		}
 
 	public:

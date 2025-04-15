@@ -251,8 +251,8 @@ namespace Kargono::Panels
 			KG_BIND_CLASS_FN(ProjectPanel::OnKeyPressedEditor));
 
 		InitializeStaticResources();
-		m_ClientOptions.InitWidgets(&m_SelectScriptTooltip);
-		m_ServerOptions.InitWidgets();
+		m_ClientOptions.Init(&m_SelectScriptTooltip);
+		m_ServerOptions.Init();
 	}
 	void ProjectPanel::OnEditorUIRender()
 	{
@@ -359,12 +359,18 @@ namespace Kargono::Panels
 	{
 		
 	}
+	void ServerOptions::Init()
+	{
+		InitWidgets();
+
+		RegisterObservers();
+	}
 	void ServerOptions::InitWidgets()
 	{
 		// Commands section
-		m_GeneralCommandsHeader.m_Label = "General";
-		m_GeneralCommandsHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
-		m_GeneralCommandsHeader.m_Expanded = true;
+		m_CommandsHeader.m_Label = "Commands";
+		m_CommandsHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
+		m_CommandsHeader.m_Expanded = true;
 
 		m_LifecycleOptions.m_Label = "Lifecycle";
 		m_LifecycleOptions.m_Flags |= EditorUI::ButtonBar_Indented;
@@ -390,9 +396,9 @@ namespace Kargono::Panels
 		});
 
 		// Status section
-		m_GeneralStatusHeader.m_Label = "General";
-		m_GeneralStatusHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
-		m_GeneralStatusHeader.m_Expanded = true;
+		m_StatusHeader.m_Label = "Status";
+		m_StatusHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
+		m_StatusHeader.m_Expanded = true;
 
 		// Config section
 		m_GeneralConfigHeader.m_Label = "General";
@@ -400,7 +406,6 @@ namespace Kargono::Panels
 		m_GeneralConfigHeader.m_Expanded = true;
 
 		m_ServerIP.m_Label = "Server IPv4";
-		m_ServerIP.m_Flags |= EditorUI::EditIVec4_Indented;
 		m_ServerIP.m_CurrentIVec4 = { 127, 0, 0, 1 };
 		m_ServerIP.m_Bounds = { 0, 255 };
 		m_ServerIP.m_ConfirmAction = [](EditorUI::EditIVec4Spec& spec) 
@@ -409,7 +414,6 @@ namespace Kargono::Panels
 		};
 
 		m_ServerPort.m_Label = "Server Port";
-		m_ServerPort.m_Flags |= EditorUI::EditInteger_Indented;
 		m_ServerPort.m_CurrentInteger = 60'000;
 		m_ServerPort.m_Bounds = { 101, 65'535 };
 		m_ServerPort.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec) 
@@ -418,7 +422,6 @@ namespace Kargono::Panels
 		};
 
 		m_ServerLocation.m_Label = "Local Machine";
-		m_ServerLocation.m_Flags |= EditorUI::Checkbox_Indented;
 		m_ServerLocation.m_CurrentBoolean = true;
 		m_ServerLocation.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec) 
 		{
@@ -430,7 +433,6 @@ namespace Kargono::Panels
 		};
 
 		m_ServerSecrets.m_Label = "Validation Secrets";
-		m_ServerSecrets.m_Flags |= EditorUI::EditIVec4_Indented;
 		m_ServerSecrets.m_CurrentIVec4 = { 0, 0, 0, 0 };
 		m_ServerSecrets.m_Bounds = { 0, 2'147'483'647 };
 		m_ServerSecrets.m_ConfirmAction = [](EditorUI::EditIVec4Spec& spec) 
@@ -439,9 +441,26 @@ namespace Kargono::Panels
 			serverConfig.m_ValidationSecrets = (Math::u64vec4)spec.m_CurrentIVec4;
 		};
 
-		// Register notification observers
+		
+	}
+	void ServerOptions::RegisterObservers()
+	{
 		Network::Server& server{ Network::ServerService::GetActiveServer() };
-		server.AddSendPacketObserver(KG_BIND_CLASS_FN(OnNotifySendServerPacket));
+
+		Network::ServerNotifiers& serverNotifiers{ server.GetServerNotifiers() };
+
+		// Server status observers
+		serverNotifiers.AddServerInitObserver(KG_BIND_CLASS_FN(OnNotifyServerInit));
+		serverNotifiers.AddServerTerminateObserver(KG_BIND_CLASS_FN(OnNotifyServerTerminate));
+
+		Network::NetworkThreadNotifiers& netThreadNotifiers{ server.GetNetworkThread().GetNotifiers() };
+
+		// Server packet observer(s)
+		netThreadNotifiers.AddSendPacketObserver(KG_BIND_CLASS_FN(OnNotifySendServerPacket));
+		// Server connection observers
+		netThreadNotifiers.AddClientConnectObserver(KG_BIND_CLASS_FN(OnNotifyClientConnect));
+		netThreadNotifiers.AddClientDisconnectObserver(KG_BIND_CLASS_FN(OnNotifyClientDisconnect));
+
 	}
 	void ServerOptions::OnEditorUIRender()
 	{
@@ -449,27 +468,18 @@ namespace Kargono::Panels
 
 		if (EditorUI::EditorUIService::BeginTabItem("Status"))
 		{
-			EditorUI::EditorUIService::CollapsingHeader(m_GeneralStatusHeader);
-			if (m_GeneralStatusHeader.m_Expanded)
+			EditorUI::EditorUIService::CollapsingHeader(m_StatusHeader);
+			if (m_StatusHeader.m_Expanded)
 			{
-				EditorUI::EditorUIService::LabeledText("Status", Network::ServerService::IsServerActive() ? "Active" : "In-Active",
+				EditorUI::EditorUIService::LabeledText("Status", m_ActiveState ? "Active" : "In-Active",
 					EditorUI::LabeledText_Indented);
 			}
-			EditorUI::EditorUIService::EndTabItem();
-		}
+			EditorUI::EditorUIService::CollapsingHeader(m_CommandsHeader);
 
-		if (EditorUI::EditorUIService::BeginTabItem("Commands"))
-		{
-			EditorUI::EditorUIService::CollapsingHeader(m_GeneralCommandsHeader);
-
-			if (m_GeneralCommandsHeader.m_Expanded)
+			if (m_CommandsHeader.m_Expanded)
 			{
 				EditorUI::EditorUIService::ButtonBar(m_LifecycleOptions);
 			}
-			EditorUI::EditorUIService::EndTabItem();
-		}
-		if (EditorUI::EditorUIService::BeginTabItem("Scripts"))
-		{
 			EditorUI::EditorUIService::EndTabItem();
 		}
 		if (EditorUI::EditorUIService::BeginTabItem("Config"))
@@ -491,32 +501,121 @@ namespace Kargono::Panels
 			}
 			EditorUI::EditorUIService::EndTabItem();
 		}
+		if (EditorUI::EditorUIService::BeginTabItem("Connections"))
+		{
+			for (ConnectionUI& connection : m_ConnectionUIs)
+			{
+				connection.OnEditorUIRender();
+				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Medium);
+			}
+			EditorUI::EditorUIService::EndTabItem();
+		}
 
 		EditorUI::EditorUIService::EndTabBar();
 	}
-	void ServerOptions::OnNotifySendServerPacket(Network::ClientIndex index, Network::PacketSequence seq)
+	void ServerOptions::OnNotifySendServerPacket(Network::ClientIndex clientIndex, Network::PacketSequence seq)
 	{
-		KG_TRACE_INFO("Send a server packet from client {} with sequence num {}", index, seq);
+		EngineService::SubmitToMainThread([&, clientIndex, seq]()
+		{
+			for (ConnectionUI& connection : m_ConnectionUIs)
+			{
+				if (clientIndex == connection.GetClientIndex())
+				{
+					connection.OnNotifySendServerPacket(clientIndex, seq);
+					break;
+				}
+			}
+		});
 	}
-	void ClientOptions::InitWidgets(EditorUI::TooltipSpec* parentTooltipSpec)
+	void ServerOptions::OnNotifyAckServerPacket(Network::ClientIndex clientIndex, Network::PacketSequence seq, float rtt)
 	{
+		EngineService::SubmitToMainThread([&, clientIndex, seq, rtt]()
+		{
+			for (ConnectionUI& connection : m_ConnectionUIs)
+			{
+				if (clientIndex == connection.GetClientIndex())
+				{
+					connection.OnNotifyAckServerPacket(clientIndex, seq, rtt);
+					break;
+				}
+			}
+		});
+	}
+	void ServerOptions::OnNotifyClientConnect(Network::ClientIndex clientIndex)
+	{
+		EngineService::SubmitToMainThread([&, clientIndex]()
+		{
+			m_ConnectionUIs.emplace_back(clientIndex, (size_t)Network::k_AckBitFieldSize);
+		});
+	}
+	void ServerOptions::OnNotifyClientDisconnect(Network::ClientIndex clientIndex)
+	{
+		EngineService::SubmitToMainThread([&, clientIndex]()
+		{
+			// Search for connectionUI corresponding to clientIndex
+			size_t i{ 0 };
+			for (ConnectionUI& connectionUI : m_ConnectionUIs)
+			{
+				if (connectionUI.GetClientIndex() == clientIndex)
+				{
+					// Found the corresponding UI for clientIndex
+					break;
+				}
+				i++;
+			}
+
+			KG_ASSERT(i < m_ConnectionUIs.size());
+			
+			// Remove the connection UI
+			m_ConnectionUIs.erase(m_ConnectionUIs.begin() + i);
+		});
+	}
+	void ServerOptions::OnNotifyServerInit()
+	{
+		EngineService::SubmitToMainThread([&]() 
+		{
+			m_ActiveState = true;
+
+			// Reset all visible connections
+			m_ConnectionUIs.clear();
+		});
+	}
+	void ServerOptions::OnNotifyServerTerminate()
+	{
+		EngineService::SubmitToMainThread([&]()
+		{
+			m_ActiveState = false;
+
+			// Reset all visible connections
+			m_ConnectionUIs.clear();
+		});
+	}
+	void ClientOptions::Init(EditorUI::TooltipSpec* parentTooltipSpec)
+	{
+		// Set up tooltip dependency
 		KG_ASSERT(parentTooltipSpec);
 		m_ParentTooltip = parentTooltipSpec;
+		m_ParentTooltip->m_Label = "Script Tooltip";
 
-		// Commands section
-		m_GeneralCommandsHeader.m_Label = "General";
-		m_GeneralCommandsHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
-		m_GeneralCommandsHeader.m_Expanded = true;
-
+		// Set up widgets
+		InitWidgets();
+		
+	}
+	void ClientOptions::InitWidgets()
+	{
 		// Status section
-		m_GeneralStatusHeader.m_Label = "General";
-		m_GeneralStatusHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
-		m_GeneralStatusHeader.m_Expanded = true;
+		m_CommandsHeader.m_Label = "Commands";
+		m_CommandsHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
+		m_CommandsHeader.m_Expanded = true;
 
-		// Scripts section
-		m_GeneralScriptsHeader.m_Label = "General";
-		m_GeneralScriptsHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
-		m_GeneralScriptsHeader.m_Expanded = true;
+		m_StatusHeader.m_Label = "Status";
+		m_StatusHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
+		m_StatusHeader.m_Expanded = true;
+
+		// Config section
+		m_AppScriptsHeader.m_Label = "App Data Handlers";
+		m_AppScriptsHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
+		m_AppScriptsHeader.m_Expanded = true;
 
 		m_SessionScriptsHeader.m_Label = "Session Management";
 		m_SessionScriptsHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
@@ -617,7 +716,7 @@ namespace Kargono::Panels
 
 		// Approve Join Session Spec
 		m_SelectApproveJoinSessionSpec.m_Label = "Approve Join Session";
-		m_SelectApproveJoinSessionSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally 
+		m_SelectApproveJoinSessionSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally
 			| EditorUI::SelectOption_Indented;
 		m_SelectApproveJoinSessionSpec.m_LineCount = 3;
 		m_SelectApproveJoinSessionSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() ?
@@ -869,7 +968,7 @@ namespace Kargono::Panels
 
 		// Connection Terminated Spec
 		m_SelectConnectionTerminatedSpec.m_Label = "Connection Terminated";
-		m_SelectConnectionTerminatedSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally 
+		m_SelectConnectionTerminatedSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally
 			| EditorUI::SelectOption_Indented;
 		m_SelectConnectionTerminatedSpec.m_LineCount = 3;
 		m_SelectConnectionTerminatedSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() ?
@@ -1035,7 +1134,7 @@ namespace Kargono::Panels
 
 		// Start Session Spec
 		m_SelectStartSessionSpec.m_Label = "Start Session";
-		m_SelectStartSessionSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally | 
+		m_SelectStartSessionSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally |
 			EditorUI::SelectOption_Indented;
 		m_SelectStartSessionSpec.m_LineCount = 3;
 		m_SelectStartSessionSpec.m_CurrentOption = { Projects::ProjectService::GetActiveOnStartSessionHandle() ?
@@ -1282,8 +1381,6 @@ namespace Kargono::Panels
 				// Open tooltip
 				m_ParentTooltip->m_TooltipActive = true;
 			};
-
-		m_ParentTooltip->m_Label = "Script Tooltip";
 	}
 	void ClientOptions::OnEditorUIRender()
 	{
@@ -1291,28 +1388,24 @@ namespace Kargono::Panels
 
 		if (EditorUI::EditorUIService::BeginTabItem("Status"))
 		{
-			EditorUI::EditorUIService::CollapsingHeader(m_GeneralStatusHeader);
-			if (m_GeneralStatusHeader.m_Expanded)
+			EditorUI::EditorUIService::CollapsingHeader(m_StatusHeader);
+			if (m_StatusHeader.m_Expanded)
 			{
 				
 			}
-			EditorUI::EditorUIService::EndTabItem();
-		}
 
-		if (EditorUI::EditorUIService::BeginTabItem("Commands"))
-		{
-			EditorUI::EditorUIService::CollapsingHeader(m_GeneralCommandsHeader);
+			EditorUI::EditorUIService::CollapsingHeader(m_CommandsHeader);
 
-			if (m_GeneralCommandsHeader.m_Expanded)
+			if (m_CommandsHeader.m_Expanded)
 			{
-				
+
 			}
 			EditorUI::EditorUIService::EndTabItem();
 		}
-		if (EditorUI::EditorUIService::BeginTabItem("Scripts"))
+		if (EditorUI::EditorUIService::BeginTabItem("Config"))
 		{
-			EditorUI::EditorUIService::CollapsingHeader(m_GeneralScriptsHeader);
-			if (m_GeneralScriptsHeader.m_Expanded)
+			EditorUI::EditorUIService::CollapsingHeader(m_AppScriptsHeader);
+			if (m_AppScriptsHeader.m_Expanded)
 			{
 				// Select On Receive Signal Function
 				EditorUI::EditorUIService::SelectOption(m_SelectReceiveSignalSpec);
@@ -1399,5 +1492,41 @@ namespace Kargono::Panels
 			m_SelectReceiveSignalSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		}
 		return false;
+	}
+	ConnectionUI::ConnectionUI(Network::ClientIndex index, size_t bufferSize) : m_ClientIndex(index)
+	{
+		KG_ASSERT(bufferSize > 0);
+
+		m_PacketRTTPlot.SetBufferSize(bufferSize);
+
+		InitWidgets();
+	}
+
+	ConnectionUI::ConnectionUI()
+	{
+		InitWidgets();
+	}
+	
+	void ConnectionUI::InitWidgets()
+	{
+		m_PacketRTTPlot.m_Label = "Round Trip";
+		m_PacketRTTPlot.m_MaxYVal = k_MaxRoundTripTime;
+		m_PacketRTTPlot.SetYAxisLabel("Time (ms)");
+	}
+	void ConnectionUI::OnEditorUIRender()
+	{
+		EditorUI::EditorUIService::LabeledText("Client Index", std::to_string(m_ClientIndex).c_str());
+		EditorUI::EditorUIService::Plot(m_PacketRTTPlot);
+	}
+	void ConnectionUI::OnNotifySendServerPacket(Network::ClientIndex clientIndex, Network::PacketSequence seq)
+	{
+		m_LastSequence = seq;
+		m_PacketRTTPlot.AddValue(k_MaxRoundTripTime);
+	}
+	void ConnectionUI::OnNotifyAckServerPacket(Network::ClientIndex clientIndex, Network::PacketSequence seq, float rtt)
+	{
+		KG_ASSERT(m_LastSequence >= seq);
+
+		m_PacketRTTPlot.UpdateValue(rtt, m_LastSequence - seq);
 	}
 }
