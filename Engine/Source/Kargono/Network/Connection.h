@@ -33,6 +33,7 @@ namespace Kargono::Network
 		// Query Context
 		//==============================
 		bool IsConnectionActive(ClientIndex clientIndex);
+		bool IsAddressActive(Address clientAddress);
 
 		//==============================
 		// Getters/Setters

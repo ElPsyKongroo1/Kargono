@@ -2,6 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Network/NetworkCommon.h"
+#include "Kargono/Network/Connection.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -14,13 +15,6 @@ namespace Kargono::Network
 {
 	class Server;
 	class ServerTCPConnection;
-
-	struct SessionInitState
-	{
-		std::unordered_map<uint32_t, std::vector<float>> m_LatencyCache {};
-		std::unordered_map<uint32_t, bool> m_LatencyCacheFilled {};
-		std::unordered_map<uint32_t, std::chrono::time_point<std::chrono::high_resolution_clock>> m_RecentTimePoints {};
-	};
 
 	struct ReadyCheckData
 	{
@@ -38,21 +32,14 @@ namespace Kargono::Network
 		// LifeCycle Functions
 		//==============================
 		void InitSession();
-		void CompleteSessionInit();
 		void EndSession();
-
-		//==============================
-		// Client Synchronization
-		//==============================
-		void ReceiveSyncPing(uint32_t clientID);
 
 		
 	public:
 		//==============================
 		// Ready Check Process
 		//==============================
-		void StoreClientReadyCheck(uint32_t clientID);
-		float CalculateLongestLatency();
+		void StoreClientReadyCheck(ClientIndex clientID);
 	private:
 		void ResetReadyCheck();
 		
@@ -60,26 +47,25 @@ namespace Kargono::Network
 		//==============================
 		// Manage Clients
 		//==============================
-		uint16_t AddClient(ClientIndex newClient);
-		uint16_t RemoveClient(uint32_t clientID);
+		SessionIndex AddClient(ClientIndex newClient);
+		SessionIndex RemoveClient(ClientIndex clientID);
 
 		//==============================
 		// Getter/Setters
 		//==============================
-		uint32_t GetClientCount() const { return (uint32_t)m_ConnectedClients.size(); }
+		size_t GetClientCount() const { return m_ConnectedClients.size(); }
 		void EnableReadyCheck() { m_ReadyCheckData.m_Active = true; }
 		void SetSessionStartFrame(uint64_t frame) { m_SessionStartFrame = frame; }
 		uint64_t GetSessionStartFrame() const { return m_SessionStartFrame; }
-		std::unordered_map<uint32_t, ClientIndex>& GetAllClients() { return m_ConnectedClients; }
-		std::unordered_map<uint16_t, uint32_t>& GetAllSlots() { return m_SessionSlots; }
+		std::unordered_map<ClientIndex, Connection*>& GetAllClients() { return m_ConnectedClients; }
+		std::unordered_map<SessionIndex, ClientIndex>& GetAllSlots() { return m_SessionSlots; }
 
 	private:
-		uint16_t m_SlotMax{0};
-		std::unordered_map<uint32_t, ClientIndex> m_ConnectedClients {};
-		std::unordered_map<uint16_t, uint32_t> m_SessionSlots{};
-		std::vector<uint16_t> m_EmptySlots{};
+		SessionIndex m_SlotMax{0};
+		std::unordered_map<ClientIndex, Connection*> m_ConnectedClients {};
+		std::unordered_map<SessionIndex, ClientIndex> m_SessionSlots{};
+		std::vector<SessionIndex> m_EmptySlots{};
 		ReadyCheckData m_ReadyCheckData;
-		SessionInitState m_InitState {};
 		uint64_t m_SessionStartFrame{ 0 };
 	};
 }

@@ -23,15 +23,7 @@ namespace Kargono::Network
 		ManageConnection_AcceptConnection = 0,
 		ManageConnection_DenyConnection,
 		ManageConnection_RequestConnection,
-		ManageConnection_CheckUDPConnection,
 		ManageConnection_KeepAlive,
-		ManageConnection_ServerPing,
-
-		// Generic messaging API
-		GenericMessage_MessageAllClients,
-		GenericMessage_ServerMessage,
-		GenericMessage_ClientChat,
-		GenericMessage_ServerChat,
 
 		// Query the active server state
 		ServerQuery_RequestClientCount,
@@ -46,7 +38,6 @@ namespace Kargono::Network
 		ManageSession_DenyClientJoin,
 		ManageSession_StartSession,
 		ManageSession_Init,
-		ManageSession_SyncPing,
 		ManageSession_StartReadyCheck,
 		ManageSession_ConfirmReadyCheck,
 		ManageSession_EnableReadyCheck,
@@ -62,16 +53,22 @@ namespace Kargono::Network
 		ScriptMessaging_ReceiveSignal
 	};
 
+	// Packet Header Types
 	using AppID = uint8_t;
 	using ClientIndex = uint8_t;
+
+	// Reliability Types
+	using PacketSequence = uint16_t;
+	using AckBitField = uint32_t;
+	constexpr PacketSequence k_AckBitFieldSize{ (PacketSequence)sizeof(AckBitField) * (PacketSequence)8 };
 
 	constexpr ClientIndex k_InvalidClientIndex{ std::numeric_limits<ClientIndex>::max() };
 
 	constexpr size_t k_ReliabilitySegmentSize
 	{
-		sizeof(uint16_t) /*packetSequenceNum*/ +
-		sizeof(uint16_t) /*ackSequenceNum*/ +
-		sizeof(uint32_t) /*ackBitfield*/
+		sizeof(PacketSequence) /*packetSequenceNum*/ +
+		sizeof(PacketSequence) /*ackSequenceNum*/ +
+		sizeof(AckBitField) /*ackBitfield*/
 	};
 	constexpr size_t k_PacketHeaderSize
 	{
@@ -186,9 +183,9 @@ namespace Kargono::Network
 
 		return msg;
 	}
-
-	constexpr uint16_t k_InvalidSessionSlot = std::numeric_limits<uint16_t>::max();
+	using SessionIndex = uint8_t;
+	constexpr SessionIndex k_InvalidSessionSlot = std::numeric_limits<SessionIndex>::max();
 	// TODO: VERY TEMPORARY. Only for pong!!!!
-	constexpr uint32_t k_MaxSessionClients{ 2 };
+	constexpr size_t k_MaxSessionClients{ 2 };
 
 }

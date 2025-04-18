@@ -9,6 +9,8 @@
 #include "Kargono/Physics/Physics2D.h"
 #include "Kargono/Audio/Audio.h"
 #include "Kargono/Events/NetworkingEvent.h"
+#include "Kargono/Events/EventQueue.h"
+#include "Kargono/Core/FunctionQueue.h"
 
 #include <functional>
 #include <mutex>
@@ -85,10 +87,8 @@ namespace Kargono
 		std::chrono::nanoseconds m_Accumulator{0};
 		std::atomic<uint64_t> m_UpdateCount {0};
 		// Event/Function Queues
-		std::vector<std::function<void()>> m_MainThreadQueue;
-		std::mutex m_MainThreadQueueMutex;
-		std::vector<Ref<Events::Event>> m_EventQueue {};
-		std::mutex m_EventQueueMutex;
+		FunctionQueue m_WorkQueue{};
+		Events::EventQueue m_EventQueue{};
 		
 	private:
 		friend EngineService;

@@ -1767,6 +1767,8 @@ namespace Kargono::EditorUI
 
 	void EditorUIService::Plot(PlotSpec& spec)
 	{
+		KG_ASSERT(spec.m_BufferSize > 0);
+
 		// Local Variables
 		FixedString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);

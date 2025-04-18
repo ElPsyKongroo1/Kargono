@@ -35,17 +35,14 @@ namespace Kargono::Network
 		void Init(std::atomic<bool>* serverActive);
 	public:
 		// Server state observers
-		ObserverIndex AddServerInitObserver(std::function<void()> func);
-		bool RemoveServerInitObserver(ObserverIndex index);
-		ObserverIndex AddServerTerminateObserver(std::function<void()> func);
-		bool RemoveServerTerminateObserver(ObserverIndex index);
+		ObserverIndex AddServerActiveObserver(std::function<void(bool)> func);
+		bool RemoveServerActiveObserver(ObserverIndex index);
 
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		Notifier<> m_ServerInitNotifier{};
-		Notifier<> m_ServerTerminateNotifier{};
+		Notifier<bool> m_ServerActiveNotifier{};
 
 		//==============================
 		// Injected Dependencies
@@ -55,37 +52,29 @@ namespace Kargono::Network
 		friend class Server;
 	};
 
-	class NetworkThreadNotifiers
+	class ServerNetworkNotifiers
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		NetworkThreadNotifiers() = default;
-		~NetworkThreadNotifiers() = default;
+		ServerNetworkNotifiers() = default;
+		~ServerNetworkNotifiers() = default;
 	private:
 		void Init(std::atomic<bool>* serverActive);
 	public:
 		// Client connection observers
-		ObserverIndex AddClientConnectObserver(std::function<void(ClientIndex)> func);
-		bool RemoveClientConnectObserver(ObserverIndex index);
-		ObserverIndex AddClientDisconnectObserver(std::function<void(ClientIndex)> func);
-		bool RemoveClientDisconnectObserver(ObserverIndex index);
-		// Packet sent observers
-		ObserverIndex AddSendPacketObserver(std::function<void(ClientIndex, PacketSequence)> func);
-		bool RemoveSendPacketObserver(ObserverIndex index);
-		ObserverIndex AddAckPacketObserver(std::function<void(ClientIndex, PacketSequence, float)> func);
-		bool RemoveAckPacketObserver(ObserverIndex index);
+		ObserverIndex AddConnectObserver(std::function<void(ClientIndex)> func);
+		bool RemoveConnectObserver(ObserverIndex index);
+		ObserverIndex AddDisconnectObserver(std::function<void(ClientIndex)> func);
+		bool RemoveDisconnectObserver(ObserverIndex index);
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		// Client notifiers
-		Notifier<ClientIndex> m_ClientConnectNotifier{};
-		Notifier<ClientIndex> m_ClientDisconnectNotifier{};
-		// Packet notifiers
-		Notifier<ClientIndex, PacketSequence> m_SendPacketNotifier{};
-		Notifier<ClientIndex, PacketSequence, float> m_AckPacketNotifier{};
+		// Connection notifiers
+		Notifier<ClientIndex> m_ConnectNotifier{};
+		Notifier<ClientIndex> m_DisconnectNotifier{};
 
 		//==============================
 		// Injected Dependencies
@@ -132,10 +121,20 @@ namespace Kargono::Network
 		//==============================
 		// Getters/Setters
 		//==============================
-		NetworkThreadNotifiers& GetNotifiers()
+		ServerNetworkNotifiers& GetNotifiers()
 		{
 			return m_Notifiers;
 		}
+		ReliabilityContextNotifiers& GetReliabilityNotifiers()
+		{
+			return m_ReliabilityNotifiers;
+		}
+
+		//==============================
+		// Manage Session
+		//==============================
+		void SessionClock();
+		void StartSession();
 	private:
 		//==============================
 		// Thread Work Functions
@@ -143,27 +142,14 @@ namespace Kargono::Network
 		void RunThread();
 
 		//==============================
-		// Manage Session
-		//==============================
-		void SessionClock();
-		void StartSession();
-
-		//==============================
 		// Manage Clients Connections
 		//==============================
 		void OnClientValidated(ClientIndex client);
 		bool OnClientConnect(ClientIndex client);
 		void OnClientDisconnect(ClientIndex client);
-		void CheckConnectionsValid();
 		void HandleConnectionKeepAlive();
+		void HandleNewConnectionPacket(MessageType type, Address address);
 		void HandleConnectionTimeouts(float deltaTime);
-
-	private:
-		//==============================
-		// Send Packets
-		//==============================
-		bool SendToConnection(ClientIndex clientIndex, Message& msg);
-		bool SendToAllConnections(Message& msg, ClientIndex ignoreClient = k_InvalidClientIndex);
 
 	private:
 		//==============================
@@ -172,45 +158,37 @@ namespace Kargono::Network
 		// Receive messages from client(s)
 		void OpenMessageFromClient(ClientIndex client, Message& incomingMessage);
 		// Handle specific message types
-		void OpenServerPingMessage(ClientIndex client, Message& msg);
-		void OpenMessageAllClientsMessage(ClientIndex client, Message& msg);
-		void OpenMessageClientChatMessage(ClientIndex client, Message& msg);
 		void OpenRequestClientJoinMessage(ClientIndex client, Message& msg);
 		void OpenRequestClientCountMessage(ClientIndex client);
 		void OpenNotifyAllLeaveMessage(ClientIndex client);
-		void OpenSyncPingMessage(ClientIndex client);
 		void OpenStartReadyCheckMessage(ClientIndex client);
 		void OpenEnableReadyCheckMessage();
 		void OpenSendAllClientsLocationMessage(ClientIndex client, Message& msg);
 		void OpenSendAllClientsPhysicsMessage(ClientIndex client, Message& msg);
 		void OpenSendAllClientsSignalMessage(ClientIndex client, Message& msg);
-		void OpenKeepAliveMessage(ClientIndex client);
-		void OpenCheckUDPConnectionMessage(ClientIndex client);
 
 		//==============================
 		// Send Messages
 		//==============================
 		// Send message to client(s)
+		bool SendToConnection(ClientIndex clientIndex, Message& msg);
+		bool SendToAllConnections(Message& msg, ClientIndex ignoreClient = k_InvalidClientIndex);
 
 		// Handle specific message types
-		void SendClientLeftMessageToAll(uint16_t removedClientSlot);
+		void SendClientLeftMessageToAll(SessionIndex removedClientSlot);
 		void SendServerPingMessage(ClientIndex client, Message& msg);
-		void SendGenericMessageAllClients(ClientIndex sendingClient, Message& msg);
-		void SendServerChatMessageAllClients(ClientIndex sendingClient, Message& msg);
 		void SendDenyClientJoinMessage(ClientIndex receivingClient);
-		void SendApproveClientJoinMessage(ClientIndex receivingClient, uint16_t clientSlot);
-		void SendUpdateClientSlotMessage(ClientIndex receivingClient, uint16_t clientSlot);
-		void SendReceiveClientCountMessage(ClientIndex receivingClient, uint32_t clientCount);
-		void SendReceiveClientCountToAllMessage(ClientIndex receivingClient, uint32_t clientCount);
-		void SendClientLeftMessage(ClientIndex receivingClient, uint16_t removedClientSlot);
-		void SendSyncPingMessage(ClientIndex receivingClient);
+		void SendApproveClientJoinMessage(ClientIndex receivingClient, SessionIndex clientSlot);
+		void SendUpdateClientSlotMessage(ClientIndex receivingClient, SessionIndex clientSlot);
+		void SendReceiveClientCountMessage(ClientIndex receivingClient, size_t clientCount);
+		void SendReceiveClientCountToAllMessage(ClientIndex receivingClient, size_t clientCount);
+		void SendClientLeftMessage(ClientIndex receivingClient, SessionIndex removedClientSlot);
 		void SendConfirmReadyCheckMessage(ClientIndex receivingClient, float waitTime);
 		void SendUpdateLocationMessage(ClientIndex receivingClient, Message& msg);
 		void SendUpdatePhysicsMessage(ClientIndex receivingClient, Message& msg);
 		void SendSignalMessage(ClientIndex receivingClient, Message& msg);
 		void SendKeepAliveMessage(ClientIndex receivingClient);
-		void SendCheckUDPConnectionMessage(ClientIndex receivingClient);
-		void SendAcceptConnectionMessage(ClientIndex receivingClient, uint32_t clientCount);
+		void SendAcceptConnectionMessage(ClientIndex receivingClient, size_t clientCount);
 		void SendSessionInitMessage(ClientIndex receivingClient);
 	private:
 		//==============================
@@ -221,7 +199,8 @@ namespace Kargono::Network
 		// Thread queues
 		FunctionQueue m_FunctionQueue;
 		// Notifiers
-		NetworkThreadNotifiers m_Notifiers{};
+		ServerNetworkNotifiers m_Notifiers{};
+		ReliabilityContextNotifiers m_ReliabilityNotifiers{};
 		// Connections
 		ConnectionList m_AllConnections{};
 		// Timers
@@ -296,12 +275,12 @@ namespace Kargono::Network
 		bool Terminate(bool withinNetworkThread);
 	private:
 		// Allows other threads to wait on the server to close
-		void WaitOnServerThreads();
+		void WaitOnThreads();
 	public:
 		//==============================
 		// Getters/Setters
 		//==============================
-		ServerNotifiers& GetServerNotifiers()
+		ServerNotifiers& GetNotifiers()
 		{
 			return m_Notifiers;
 		}
@@ -353,7 +332,6 @@ namespace Kargono::Network
 		//==============================
 		// Submit Server Events 
 		//==============================
-		static void SubmitToNetworkEventQueue(Ref<Events::Event> e);
 		static void SubmitToNetworkFunctionQueue(const std::function<void()>& func);
 
 	private:

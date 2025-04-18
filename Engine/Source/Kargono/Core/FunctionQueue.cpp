@@ -25,6 +25,8 @@ void FunctionQueue::ProcessQueue()
 	// Ensure the function queue doesn't become invalidated if one of the functions modifies the queue
 	// inside the loop
 	{
+		localFunctionCache.resize(m_FunctionQueue.size());
+
 		// Obtain the function queue lock
 		std::scoped_lock<std::mutex> lock(m_FunctionQueueMutex);
 

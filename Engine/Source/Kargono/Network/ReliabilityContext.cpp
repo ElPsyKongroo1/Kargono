@@ -31,7 +31,7 @@ namespace Kargono::Network
 		m_CongestionContext.OnUpdate(deltaTime, m_RoundTripContext.GetAverageRoundTrip());
 	}
 
-	uint16_t ReliabilityContext::InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation)
+	void ReliabilityContext::InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation)
 	{
 		// Initialize the locations of the seq, ack, and ack-bitfield
 		PacketSequence& sequenceLocation = *(PacketSequence*)segmentLocation;
@@ -50,12 +50,11 @@ namespace Kargono::Network
 
 		// Insert the recent ack's bitfield (appID...|sequenceNum|ackNum|[ackBitField]|...)
 		InsertRemoteSequenceBitField(bitFieldLocation);
-
-		return returnSequence;
 	}
 
 	bool ReliabilityContext::ProcessReliabilitySegmentFromPacket(uint8_t* segmentLocation)
 	{
+
 		// Initialize the locations of the seq, ack, and ack-bitfield
 		PacketSequence packetSequence = *(PacketSequence*)segmentLocation;
 		PacketSequence packetAck = *(PacketSequence*)(segmentLocation + sizeof(packetSequence));
@@ -146,7 +145,6 @@ namespace Kargono::Network
 		}
 		else
 		{
-
 			// The received packet is 'older' than the current sequence number's packet
 
 			// Early out if we are shifting too much or packet is already ack'd
@@ -271,5 +269,32 @@ namespace Kargono::Network
 	bool CongestionContext::IsCongested()
 	{
 		return m_IsCongested;
+	}
+
+	void ReliabilityContextNotifiers::Init(std::atomic<bool>* contextActive)
+	{
+		KG_ASSERT(contextActive);
+
+		i_ContextActive = contextActive;
+	}
+
+	ObserverIndex ReliabilityContextNotifiers::AddReliabilityStateObserver(std::function<void(ClientIndex, bool, float)> func)
+	{
+		KG_ASSERT(!i_ContextActive || !*i_ContextActive);
+
+		return m_ReliabilityStateNotifier.AddObserver(func);
+	}
+
+	ObserverIndex ReliabilityContextNotifiers::AddSendPacketObserver(std::function<void(ClientIndex, PacketSequence)> func)
+	{
+		KG_ASSERT(!i_ContextActive || !*i_ContextActive);
+
+		return m_SendPacketNotifier.AddObserver(func);
+	}
+	ObserverIndex ReliabilityContextNotifiers::AddAckPacketObserver(std::function<void(ClientIndex, PacketSequence, float)> func)
+	{
+		KG_ASSERT(!i_ContextActive || !*i_ContextActive);
+
+		return m_AckPacketNotifier.AddObserver(func);
 	}
 }

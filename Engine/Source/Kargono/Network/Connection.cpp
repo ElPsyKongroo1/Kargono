@@ -99,6 +99,18 @@ namespace Kargono::Network
 		return m_ClientsConnected[clientIndex];
 	}
 
+	bool ConnectionList::IsAddressActive(Address clientAddress)
+	{
+		for (size_t i{ 0 }; i < m_AllConnections.size(); i++)
+		{
+			if (m_ClientsConnected[i] && clientAddress == m_AllConnections[i].m_Address)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	std::vector<Connection>& ConnectionList::GetAllConnections()
 	{
 		return m_AllConnections;

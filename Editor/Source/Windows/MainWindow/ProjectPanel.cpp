@@ -395,10 +395,15 @@ namespace Kargono::Panels
 			Network::ServerService::Init();
 		});
 
+
 		// Status section
 		m_StatusHeader.m_Label = "Status";
 		m_StatusHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
 		m_StatusHeader.m_Expanded = true;
+
+		m_ConnectionsHeader.m_Label = "All Connections";
+		m_ConnectionsHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
+		m_ConnectionsHeader.m_Expanded = true;
 
 		// Config section
 		m_GeneralConfigHeader.m_Label = "General";
@@ -447,19 +452,21 @@ namespace Kargono::Panels
 	{
 		Network::Server& server{ Network::ServerService::GetActiveServer() };
 
-		Network::ServerNotifiers& serverNotifiers{ server.GetServerNotifiers() };
+		Network::ServerNotifiers& serverNotifiers{ server.GetNotifiers() };
 
 		// Server status observers
-		serverNotifiers.AddServerInitObserver(KG_BIND_CLASS_FN(OnNotifyServerInit));
-		serverNotifiers.AddServerTerminateObserver(KG_BIND_CLASS_FN(OnNotifyServerTerminate));
+		serverNotifiers.AddServerActiveObserver(KG_BIND_CLASS_FN(OnNotifyServerActive));
 
-		Network::NetworkThreadNotifiers& netThreadNotifiers{ server.GetNetworkThread().GetNotifiers() };
 
 		// Server packet observer(s)
-		netThreadNotifiers.AddSendPacketObserver(KG_BIND_CLASS_FN(OnNotifySendServerPacket));
+		Network::ReliabilityContextNotifiers& reliabilityNotif{ server.GetNetworkThread().GetReliabilityNotifiers() };
+		reliabilityNotif.AddReliabilityStateObserver(KG_BIND_CLASS_FN(OnNotifyReliabilityState));
+		reliabilityNotif.AddSendPacketObserver(KG_BIND_CLASS_FN(OnNotifySendServerPacket));
+		reliabilityNotif.AddAckPacketObserver(KG_BIND_CLASS_FN(OnNotifyAckServerPacket));
 		// Server connection observers
-		netThreadNotifiers.AddClientConnectObserver(KG_BIND_CLASS_FN(OnNotifyClientConnect));
-		netThreadNotifiers.AddClientDisconnectObserver(KG_BIND_CLASS_FN(OnNotifyClientDisconnect));
+		Network::ServerNetworkNotifiers& netThreadNotifiers{ server.GetNetworkThread().GetNotifiers() };
+		netThreadNotifiers.AddConnectObserver(KG_BIND_CLASS_FN(OnNotifyClientConnect));
+		netThreadNotifiers.AddDisconnectObserver(KG_BIND_CLASS_FN(OnNotifyClientDisconnect));
 
 	}
 	void ServerOptions::OnEditorUIRender()
@@ -479,6 +486,16 @@ namespace Kargono::Panels
 			if (m_CommandsHeader.m_Expanded)
 			{
 				EditorUI::EditorUIService::ButtonBar(m_LifecycleOptions);
+			}
+
+			EditorUI::EditorUIService::CollapsingHeader(m_ConnectionsHeader);
+			if (m_ConnectionsHeader.m_Expanded)
+			{
+				for (ConnectionUI& connection : m_ConnectionUIs)
+				{
+					connection.OnEditorUIRender();
+					EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Medium);
+				}
 			}
 			EditorUI::EditorUIService::EndTabItem();
 		}
@@ -501,15 +518,6 @@ namespace Kargono::Panels
 			}
 			EditorUI::EditorUIService::EndTabItem();
 		}
-		if (EditorUI::EditorUIService::BeginTabItem("Connections"))
-		{
-			for (ConnectionUI& connection : m_ConnectionUIs)
-			{
-				connection.OnEditorUIRender();
-				EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Medium);
-			}
-			EditorUI::EditorUIService::EndTabItem();
-		}
 
 		EditorUI::EditorUIService::EndTabBar();
 	}
@@ -519,9 +527,9 @@ namespace Kargono::Panels
 		{
 			for (ConnectionUI& connection : m_ConnectionUIs)
 			{
-				if (clientIndex == connection.GetClientIndex())
+				if (clientIndex == connection.m_ClientIndex)
 				{
-					connection.OnNotifySendServerPacket(clientIndex, seq);
+					connection.OnNotifySendPacket(seq);
 					break;
 				}
 			}
@@ -533,9 +541,24 @@ namespace Kargono::Panels
 		{
 			for (ConnectionUI& connection : m_ConnectionUIs)
 			{
-				if (clientIndex == connection.GetClientIndex())
+				if (clientIndex == connection.m_ClientIndex)
 				{
-					connection.OnNotifyAckServerPacket(clientIndex, seq, rtt);
+					connection.OnNotifyAckPacket(seq, rtt);
+					break;
+				}
+			}
+		});
+	}
+	void ServerOptions::OnNotifyReliabilityState(Network::ClientIndex index, bool congested, float rtt)
+	{
+		EngineService::SubmitToMainThread([&, index, congested, rtt]()
+		{
+			for (ConnectionUI& connection : m_ConnectionUIs)
+			{
+				if (index == connection.m_ClientIndex)
+				{
+					connection.m_AverageRTT = rtt;
+					connection.m_IsCongested = congested;
 					break;
 				}
 			}
@@ -545,7 +568,8 @@ namespace Kargono::Panels
 	{
 		EngineService::SubmitToMainThread([&, clientIndex]()
 		{
-			m_ConnectionUIs.emplace_back(clientIndex, (size_t)Network::k_AckBitFieldSize);
+			ConnectionUI& connection = m_ConnectionUIs.emplace_back(clientIndex, (size_t)Network::k_AckBitFieldSize);
+			connection.m_ConnectionStatus = Network::ConnectionStatus::Connected;
 		});
 	}
 	void ServerOptions::OnNotifyClientDisconnect(Network::ClientIndex clientIndex)
@@ -556,7 +580,7 @@ namespace Kargono::Panels
 			size_t i{ 0 };
 			for (ConnectionUI& connectionUI : m_ConnectionUIs)
 			{
-				if (connectionUI.GetClientIndex() == clientIndex)
+				if (connectionUI.m_ClientIndex == clientIndex)
 				{
 					// Found the corresponding UI for clientIndex
 					break;
@@ -570,21 +594,11 @@ namespace Kargono::Panels
 			m_ConnectionUIs.erase(m_ConnectionUIs.begin() + i);
 		});
 	}
-	void ServerOptions::OnNotifyServerInit()
+	void ServerOptions::OnNotifyServerActive(bool active)
 	{
-		EngineService::SubmitToMainThread([&]() 
+		EngineService::SubmitToMainThread([&, active]() 
 		{
-			m_ActiveState = true;
-
-			// Reset all visible connections
-			m_ConnectionUIs.clear();
-		});
-	}
-	void ServerOptions::OnNotifyServerTerminate()
-	{
-		EngineService::SubmitToMainThread([&]()
-		{
-			m_ActiveState = false;
+			m_ActiveState = active;
 
 			// Reset all visible connections
 			m_ConnectionUIs.clear();
@@ -599,6 +613,7 @@ namespace Kargono::Panels
 
 		// Set up widgets
 		InitWidgets();
+		RegisterObservers();
 		
 	}
 	void ClientOptions::InitWidgets()
@@ -608,9 +623,37 @@ namespace Kargono::Panels
 		m_CommandsHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
 		m_CommandsHeader.m_Expanded = true;
 
+		m_LifecycleOptions.m_Label = "Lifecycle";
+		m_LifecycleOptions.m_Flags |= EditorUI::ButtonBar_Indented;
+		m_LifecycleOptions.AddButton("Start",
+			[](EditorUI::Button& button)
+			{
+				Network::ClientService::Init();
+			});
+		m_LifecycleOptions.AddButton("Close",
+			[](EditorUI::Button& button)
+			{
+				Network::ClientService::Terminate();
+			});
+		m_LifecycleOptions.AddButton("Restart",
+			[](EditorUI::Button& button)
+			{
+				if (Network::ClientService::IsClientActive())
+				{
+					Network::ClientService::Terminate();
+				}
+
+				Network::ClientService::Init();
+			});
+
 		m_StatusHeader.m_Label = "Status";
 		m_StatusHeader.m_Flags = EditorUI::CollapsingHeader_UnderlineTitle;
 		m_StatusHeader.m_Expanded = true;
+
+		m_ConnectionHeader.m_Label = "Connection";
+		m_ConnectionHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		m_ConnectionHeader.m_Expanded = true;
+		m_ClientConnectionUI = ConnectionUI(Network::k_InvalidClientIndex, (size_t)Network::k_AckBitFieldSize);
 
 		// Config section
 		m_AppScriptsHeader.m_Label = "App Data Handlers";
@@ -1382,6 +1425,25 @@ namespace Kargono::Panels
 				m_ParentTooltip->m_TooltipActive = true;
 			};
 	}
+	void ClientOptions::RegisterObservers()
+	{
+		Network::Client& client{ Network::ClientService::GetActiveClient() };
+
+		Network::ClientNotifiers& clientNotifiers{ client.GetNotifiers() };
+
+		// Client status obclients
+		clientNotifiers.AddClientActiveObserver(KG_BIND_CLASS_FN(OnNotifyClientActive));
+
+
+		// Client packet obclient(s)
+		Network::ReliabilityContextNotifiers& reliabilityNotif{ client.GetNetworkThread().GetReliabilityNotifiers() };
+		reliabilityNotif.AddSendPacketObserver(KG_BIND_CLASS_FN(OnNotifySendClientPacket));
+		reliabilityNotif.AddAckPacketObserver(KG_BIND_CLASS_FN(OnNotifyAckClientPacket));
+		reliabilityNotif.AddReliabilityStateObserver(KG_BIND_CLASS_FN(OnNotifyReliabilityState));
+		// Client connection obclients
+		Network::ClientNetworkNotifiers& netThreadNotifiers{ client.GetNetworkThread().GetNotifiers() };
+		netThreadNotifiers.AddConnectStatusObserver(KG_BIND_CLASS_FN(OnNotifyConnectStatus));
+	}
 	void ClientOptions::OnEditorUIRender()
 	{
 		EditorUI::EditorUIService::BeginTabBar("ClientOptionsBar");
@@ -1391,15 +1453,23 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::CollapsingHeader(m_StatusHeader);
 			if (m_StatusHeader.m_Expanded)
 			{
-				
+				EditorUI::EditorUIService::LabeledText("Status", m_ActiveState ? "Active" : "In-Active",
+					EditorUI::LabeledText_Indented);
 			}
 
 			EditorUI::EditorUIService::CollapsingHeader(m_CommandsHeader);
 
 			if (m_CommandsHeader.m_Expanded)
 			{
-
+				EditorUI::EditorUIService::ButtonBar(m_LifecycleOptions);
 			}
+
+			EditorUI::EditorUIService::CollapsingHeader(m_ConnectionHeader);
+			if (m_ConnectionHeader.m_Expanded)
+			{
+				m_ClientConnectionUI.OnEditorUIRender();
+			}
+
 			EditorUI::EditorUIService::EndTabItem();
 		}
 		if (EditorUI::EditorUIService::BeginTabItem("Config"))
@@ -1493,6 +1563,43 @@ namespace Kargono::Panels
 		}
 		return false;
 	}
+	void ClientOptions::OnNotifySendClientPacket(Network::ClientIndex /*index*/, Network::PacketSequence seq)
+	{
+		EngineService::SubmitToMainThread([&, seq]()
+		{
+			m_ClientConnectionUI.OnNotifySendPacket(seq);
+		});
+	}
+	void ClientOptions::OnNotifyAckClientPacket(Network::ClientIndex /*index*/, Network::PacketSequence seq, float rtt)
+	{
+		EngineService::SubmitToMainThread([&, seq, rtt]()
+		{
+			m_ClientConnectionUI.OnNotifyAckPacket(seq, rtt);
+		});
+	}
+	void ClientOptions::OnNotifyReliabilityState(Network::ClientIndex /*index*/, bool congested, float rtt)
+	{
+		EngineService::SubmitToMainThread([&, congested, rtt]()
+		{
+			m_ClientConnectionUI.m_IsCongested = congested;
+			m_ClientConnectionUI.m_AverageRTT = rtt;
+		});
+	}
+	void ClientOptions::OnNotifyConnectStatus(Network::ConnectionStatus status, Network::ClientIndex clientIndex)
+	{
+		EngineService::SubmitToMainThread([&, status, clientIndex]()
+		{
+			m_ClientConnectionUI.m_ConnectionStatus = status;
+			m_ClientConnectionUI.m_ClientIndex = clientIndex;
+		});
+	}
+	void ClientOptions::OnNotifyClientActive(bool active)
+	{
+		EngineService::SubmitToMainThread([&, active]()
+		{
+			m_ActiveState = active;
+		});
+	}
 	ConnectionUI::ConnectionUI(Network::ClientIndex index, size_t bufferSize) : m_ClientIndex(index)
 	{
 		KG_ASSERT(bufferSize > 0);
@@ -1510,23 +1617,40 @@ namespace Kargono::Panels
 	void ConnectionUI::InitWidgets()
 	{
 		m_PacketRTTPlot.m_Label = "Round Trip";
+		m_PacketRTTPlot.m_Flags |= EditorUI::Plot_Indented;
 		m_PacketRTTPlot.m_MaxYVal = k_MaxRoundTripTime;
 		m_PacketRTTPlot.SetYAxisLabel("Time (ms)");
 	}
 	void ConnectionUI::OnEditorUIRender()
 	{
-		EditorUI::EditorUIService::LabeledText("Client Index", std::to_string(m_ClientIndex).c_str());
+		FixedString16 indexText( m_ClientIndex == Network::k_InvalidClientIndex ?
+			"Invalid" : std::to_string(m_ClientIndex).c_str());
+		EditorUI::EditorUIService::LabeledText
+		(
+			"Client Index", 
+			indexText.CString(), 
+			EditorUI::LabeledText_Indented
+		);
+		EditorUI::EditorUIService::LabeledText("Congested",
+			m_IsCongested ? "Yes" : "No",
+			EditorUI::LabeledText_Indented);
+		EditorUI::EditorUIService::LabeledText("Average RTT (ms)",
+			std::to_string(m_AverageRTT * 1'000.0f).c_str(),
+			EditorUI::LabeledText_Indented);
+		const char* status{ Utility::ConnectionStatusToString(m_ConnectionStatus) };
+		EditorUI::EditorUIService::LabeledText("Connection Status", status,
+			EditorUI::LabeledText_Indented);
 		EditorUI::EditorUIService::Plot(m_PacketRTTPlot);
 	}
-	void ConnectionUI::OnNotifySendServerPacket(Network::ClientIndex clientIndex, Network::PacketSequence seq)
+	void ConnectionUI::OnNotifySendPacket(Network::PacketSequence seq)
 	{
 		m_LastSequence = seq;
 		m_PacketRTTPlot.AddValue(k_MaxRoundTripTime);
 	}
-	void ConnectionUI::OnNotifyAckServerPacket(Network::ClientIndex clientIndex, Network::PacketSequence seq, float rtt)
+	void ConnectionUI::OnNotifyAckPacket(Network::PacketSequence seq, float rtt)
 	{
 		KG_ASSERT(m_LastSequence >= seq);
 
-		m_PacketRTTPlot.UpdateValue(rtt, m_LastSequence - seq);
+		m_PacketRTTPlot.UpdateValue(rtt * 1'000, m_LastSequence - seq);
 	}
 }

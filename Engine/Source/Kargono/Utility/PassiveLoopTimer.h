@@ -33,9 +33,8 @@ namespace Kargono::Utility
 		// Internal Fields
 		//==============================
 		// Accumulation data
-		std::chrono::nanoseconds m_Accumulator;
-
+		std::chrono::nanoseconds m_Accumulator{};
 		// Configuration data
-		std::chrono::nanoseconds m_UpdateDelta{ 1'000 * 1'000 * 1'000 / 60 };
+		std::chrono::nanoseconds m_UpdateDelta{ 1'000 * 1'000 * 1'000 / 60 /*1/60th sec*/};
 	};
 }

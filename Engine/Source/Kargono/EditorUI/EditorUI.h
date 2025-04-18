@@ -568,7 +568,7 @@ namespace Kargono::EditorUI
 		{
 			KG_ASSERT(offset < m_BufferSize);
 
-			m_YValues[(m_Offset - offset) % m_BufferSize] = yValue;
+			m_YValues[(m_Offset - offset - 1) % m_BufferSize] = yValue;
 		}
 
 		void SetYAxisLabel(std::string_view text)

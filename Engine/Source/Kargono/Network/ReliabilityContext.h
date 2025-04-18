@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Kargono/Core/BitField.h"
+#include "Kargono/Network/NetworkCommon.h"
+#include "Kargono/Core/Notifier.h"
 
 #include <cstdint>
 #include <array>
@@ -8,9 +10,49 @@
 
 namespace Kargono::Network
 {
-	using PacketSequence = uint16_t;
-	using AckBitField = uint32_t;
-	constexpr PacketSequence k_AckBitFieldSize{ (PacketSequence)sizeof(AckBitField) * (PacketSequence)8 };
+	class ServerNetworkThread;
+	class ClientNetworkThread;
+
+	class ReliabilityContextNotifiers
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		ReliabilityContextNotifiers() = default;
+		~ReliabilityContextNotifiers() = default;
+
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		void Init(std::atomic<bool>* contextActive);
+
+	public:
+		// Reliability state
+		ObserverIndex AddReliabilityStateObserver(std::function<void(ClientIndex, bool, float)> func);
+		// Packet sent observers
+		ObserverIndex AddSendPacketObserver(std::function<void(ClientIndex, PacketSequence)> func);
+		ObserverIndex AddAckPacketObserver(std::function<void(ClientIndex, PacketSequence, float)> func);
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// General reliability state
+		Notifier<ClientIndex, bool, float> m_ReliabilityStateNotifier{};
+		// Packet notifiers
+		Notifier<ClientIndex, PacketSequence> m_SendPacketNotifier{};
+		Notifier<ClientIndex, PacketSequence, float> m_AckPacketNotifier{};
+
+		//==============================
+		// Injected Dependencies
+		//==============================
+		std::atomic<bool>* i_ContextActive{ nullptr };
+
+	private:
+		friend class ServerNetworkThread;
+		friend class ClientNetworkThread;
+	};
+
 
 	struct CongestionConfig
 	{
@@ -95,7 +137,7 @@ namespace Kargono::Network
 		//==============================
 		// Interact with Packet
 		//==============================
-		PacketSequence InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation);
+		void InsertReliabilitySegmentIntoPacket(uint8_t* segmentLocation);
 		bool ProcessReliabilitySegmentFromPacket(uint8_t* segmentLocation);
 
 	private:

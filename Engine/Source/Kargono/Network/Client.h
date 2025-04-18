@@ -13,6 +13,7 @@
 #include "Kargono/Core/Thread.h"
 #include "Kargono/Events/KeyEvent.h"
 #include "Kargono/Events/EventQueue.h"
+#include "Kargono/Core/Notifier.h"
 
 #include <string>
 #include <atomic>
@@ -56,12 +57,71 @@ namespace Kargono::Network
 	};
 #endif
 
-	
+	class ClientEventThread;
+	class Client;
+
 	enum ConnectionStatus : uint8_t
 	{
 		Disconnected,
 		Connecting,
 		Connected
+	};
+
+	class ClientNotifiers
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		ClientNotifiers() = default;
+		~ClientNotifiers() = default;
+	private:
+		void Init(std::atomic<bool>* clientActive);
+	public:
+		// Client state observers
+		ObserverIndex AddClientActiveObserver(std::function<void(bool)> func);
+		bool RemoveClientActiveObserver(ObserverIndex index);
+
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		Notifier<bool> m_ClientStatusNotifier{};
+
+		//==============================
+		// Injected Dependencies
+		//==============================
+		std::atomic<bool>* i_ClientActive{ nullptr };
+	private:
+		friend class Client;
+	};
+
+	class ClientNetworkNotifiers
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		ClientNetworkNotifiers() = default;
+		~ClientNetworkNotifiers() = default;
+	private:
+		void Init(std::atomic<bool>* clientActive);
+	public:
+		// Client connection observers
+		ObserverIndex AddConnectStatusObserver(std::function<void(ConnectionStatus, ClientIndex)> func);
+		// Packet sent observers
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Connection notifiers
+		Notifier<ConnectionStatus, ClientIndex> m_ConnectStatusNotifier{};
+		//==============================
+		// Injected Dependencies
+		//==============================
+		std::atomic<bool>* i_ClientActive{ nullptr };
+	private:
+		friend class ClientNetworkThread;
 	};
 
 	class ConnectionToServer
@@ -81,6 +141,187 @@ namespace Kargono::Network
 		ConnectionStatus m_Status{ Disconnected };
 	};
 
+	class ClientNetworkThread
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		ClientNetworkThread() = default;
+		~ClientNetworkThread() = default;
+	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		bool Init
+		(
+			ServerConfig* serverConfig,
+			Socket* clientSocket,
+			std::atomic<bool>* clientActive,
+			ClientEventThread* eventThread,
+			Client* client
+		);
+		void Terminate(bool withinNetworkThread);
+		void WaitOnThread();
+
+	private:
+		//==============================
+		// Run Thread
+		//==============================
+		void RunThread();
+		void RequestConnection();
+
+	public:
+		//==============================
+		// Manage Thread
+		//==============================
+		void ResumeThread(bool withinThread);
+		void SuspendThread(bool withinThread);
+
+	private:
+		//==============================
+		// Manage Connection
+		//==============================
+		bool StartConnection(ClientIndex index, bool withinNetworkThread);
+		void HandleConnectionKeepAlive();
+		bool HandleConnectionTimeout(float deltaTime);
+
+	public:
+		//==============================
+		// Work Queues
+		//==============================
+		void SubmitFunction(const std::function<void()> workFunction);
+		void SubmitEvent(Ref<Events::Event> event);
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		ClientNetworkNotifiers& GetNotifiers()
+		{
+			return m_Notifiers;
+		}
+
+		ReliabilityContextNotifiers& GetReliabilityNotifiers()
+		{
+			return m_ReliabilityNotifiers;
+		}
+
+	public:
+		//==============================
+		// Receive Messages from Server
+		//==============================
+		// Get messages from the server
+		bool OpenManagementPacket(MessageType type, ClientIndex index);
+		void OpenMessageFromServer(Message& msg);
+		// All specific message type handlers
+		void OpenAcceptConnectionMessage(Message& msg);
+		void OpenReceiveUserCountMessage(Message& msg);
+		void OpenApproveJoinSessionMessage(Message& msg);
+		void OpenUpdateSessionUserSlotMessage(Message& msg);
+		void OpenUserLeftSessionMessage(Message& msg);
+		void OpenDenyJoinSessionMessage(Message& msg);
+		void OpenCurrentSessionInitMessage(Message& msg);
+		void OpenStartSessionMessage(Message& msg);
+		void OpenSessionReadyCheckConfirmMessage(Message& msg);
+		void OpenUpdateEntityLocationMessage(Message& msg);
+		void OpenUpdateEntityPhysicsMessage(Message& msg);
+		void OpenReceiveSignalMessage(Message& msg);
+
+		//==============================
+		// Send Messages to Server
+		//==============================
+		// Send message to the server
+		bool SendToServer(Message& msg);
+
+		// All specific message handlers
+		void SendRequestUserCountMessage();
+		void SendAllEntityLocation(Events::SendAllEntityLocation& event);
+		void SendRequestJoinSessionMessage();
+		void SendEnableReadyCheckMessage();
+		void SendSessionReadyCheckMessage();
+		void SendAllClientsSignalMessage(Events::SignalAll& event);
+		void SendAllEntityPhysicsMessage(Events::SendAllEntityPhysics& event);
+		void SendLeaveCurrentSessionMessage();
+		void SendRequestConnectionMessage();
+		void SendKeepAliveMessage();
+
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Thread
+		KGThread m_Thread;
+		// Thread queues
+		FunctionQueue m_WorkQueue;
+		Events::EventQueue m_EventQueue;
+		// Timers
+		Utility::LoopTimer m_ManageConnectionTimer{};
+		Utility::PassiveLoopTimer m_RequestConnectionTimer{};
+		uint32_t m_CongestionCounter{ 0 };
+		// Server connection
+		ConnectionToServer m_ServerConnection;
+		// Session
+		uint64_t m_SessionStartFrame{ 0 };
+		std::atomic<uint16_t> m_SessionSlot{ std::numeric_limits<uint16_t>::max() };
+		// Notifiers
+		ClientNetworkNotifiers m_Notifiers{};
+		ReliabilityContextNotifiers m_ReliabilityNotifiers{};
+
+		//==============================
+		// Injected Dependencies
+		//==============================
+		std::atomic<bool>* i_ClientActive{ nullptr };
+		ServerConfig* i_ServerConfig{ nullptr };
+		Socket* i_ClientSocket{ nullptr };
+		ClientEventThread* i_EventThread{ nullptr };
+		Client* i_Client{ nullptr };
+	};
+
+	class ClientEventThread
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		ClientEventThread() = default;
+		~ClientEventThread() = default;
+	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		bool Init(Socket* clientSocket, ClientNetworkThread* networkThread);
+		void Terminate(bool withinEventThread);
+		void WaitOnThread();
+
+		//==============================
+		// Manage Server-Event Config
+		//==============================
+		void SetSyncPingFreq(size_t frequency /*ms*/);
+
+	private:
+		//==============================
+		// Run Thread
+		//==============================
+		void RunThread();
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Thread context and queues
+		KGThread m_Thread{};
+		FunctionQueue m_WorkQueue{};
+		// OS handles
+		HANDLE m_NetworkEventHandle{};
+		// Config
+		size_t m_ActiveSyncPingFreq{ 1'000 /*1 sec*/ };
+
+		//==============================
+		// Injected Dependencies
+		//==============================
+		Socket* i_ClientSocket{ nullptr };
+		ClientNetworkThread* i_NetworkThread{ nullptr };
+	};
+
 	class Client
 	{
 	public:
@@ -93,104 +334,39 @@ namespace Kargono::Network
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		bool InitClient(const ServerConfig& initConfig);
-		bool StartConnection(bool withinNetworkThread = false);
-		bool TerminateClient(bool withinNetworkThread = false);
+		bool Init(const ServerConfig& initConfig);
+		bool Terminate(bool withinNetworkThread);
 
 		// Allows other threads to wait on the client to close
-		void WaitOnClientTerminate();
+		void WaitOnThreads();
 
 		//==============================
-		// On Event
+		// Getters/Setters
 		//==============================
-		void OnEvent(Events::Event* event);
-
-		//==============================
-		// Manage Events
-		//==============================
-		void SubmitEvent(Ref<Events::Event> event);
-	private:
-		// Manage the server connection
-		void RequestConnection();
-	public:
-		//==============================
-		// Run Threads
-		//==============================
-		// Run socket/packet handling thread
-		void RunNetworkThread();
-		void RunNetworkEventThread();
-
-	private:
-		// Helper functions
-		bool HandleConsoleInput(Events::KeyPressedEvent event);
-	public:
-		//==============================
-		// Send Packets
-		//==============================
-		bool SendToServer(Message& msg);
-
-		//==============================
-		// Receive Messages from Server
-		//==============================
-		// Get messages from the server
-		void OpenMessageFromServer(Message& msg);
-		// All specific message type handlers
-		void OpenAcceptConnectionMessage(Message& msg);
-		void OpenReceiveUserCountMessage(Message& msg);
-		void OpenServerChatMessage(Message& msg);
-		void OpenApproveJoinSessionMessage(Message& msg);
-		void OpenUpdateSessionUserSlotMessage(Message& msg);
-		void OpenUserLeftSessionMessage(Message& msg);
-		void OpenDenyJoinSessionMessage(Message& msg);
-		void OpenCurrentSessionInitMessage(Message& msg);
-		void OpenInitSyncPingMessage(Message& msg);
-		void OpenStartSessionMessage(Message& msg);
-		void OpenSessionReadyCheckConfirmMessage(Message& msg);
-		void OpenUpdateEntityLocationMessage(Message& msg);
-		void OpenUpdateEntityPhysicsMessage(Message& msg);
-		void OpenReceiveSignalMessage(Message& msg);
-		void OpenKeepAliveMessage(Message& msg);
-		void OpenUDPInitMessage(Message& msg);
-
-		//==============================
-		// Send Messages to Server
-		//==============================
-		// Send message to the server
-
-		// All specific message handlers
-		void SendRequestUserCountMessage();
-		void SendAllEntityLocation(Events::SendAllEntityLocation& event);
-		void SendInitSyncPingMessage();
-		void SendRequestJoinSessionMessage();
-		void SendEnableReadyCheckMessage();
-		void SendSessionReadyCheckMessage();
-		void SendAllClientsSignalMessage(Events::SignalAll& event);
-		void SendKeepAliveMessage();
-		void SendAllEntityPhysicsMessage(Events::SendAllEntityPhysics& event);
-		void SendLeaveCurrentSessionMessage();
-		void SendCheckUDPConnectionMessage();
-
+		ClientNotifiers& GetNotifiers()
+		{
+			return m_Notifiers;
+		}
+		ClientNetworkThread& GetNetworkThread()
+		{
+			return m_NetworkThread;
+		}
+		ClientEventThread& GetEventThread()
+		{
+			return m_EventThread;
+		}
 	private:
 		//==============================
 		// Internal Data
 		//==============================
-		std::atomic<bool> s_ClientActive{ false };
+		std::atomic<bool> m_ClientActive{ false };
 		Socket m_ClientSocket{};
-		KGThread m_NetworkThread;
-		KGThread m_NetworkEventThread;
 		ServerConfig m_Config;
-		Utility::LoopTimer m_NetworkThreadTimer;
-		Utility::PassiveLoopTimer m_RequestConnectionTimer;
-		Utility::PassiveLoopTimer m_KeepAliveTimer;
-		Events::EventQueue m_NetworkEventQueue;
-		FunctionQueue m_WorkQueue;
-
-		// Server connection
-		ConnectionToServer m_ServerConnection;
-
-		// Cached active session information
-		uint64_t m_SessionStartFrame{ 0 };
-		std::atomic<uint16_t> m_SessionSlot{ std::numeric_limits<uint16_t>::max() };
+		// Notifier(s)
+		ClientNotifiers m_Notifiers{};
+		// Threads
+		ClientNetworkThread m_NetworkThread{};
+		ClientEventThread m_EventThread{};
 	private:
 		friend class ClientService;
 	};
@@ -204,6 +380,15 @@ namespace Kargono::Network
 		static bool Init();
 		static bool Terminate();
 		static bool IsClientActive();
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		static Client& GetActiveClient()
+		{
+			return s_Client;
+		}
+
 	private:
 		static void Run();
 		static void EndRun();
@@ -244,15 +429,6 @@ namespace Kargono::Network
 		static bool OnSignalAll(Events::SignalAll event);
 		static bool OnSendAllEntityPhysics(Events::SendAllEntityPhysics event);
 		static bool OnLeaveCurrentSession(Events::LeaveCurrentSession event);
-
-	private:
-		//==============================
-		// Internal Functionality
-		//==============================
-		// Call to process events or functions in queue's
-		static void ProcessFunctionQueue();
-		static void ProcessEventQueue();
-
 	private:
 		//==============================
 		// Internal Fields
@@ -263,3 +439,20 @@ namespace Kargono::Network
 }
 
 
+namespace Kargono::Utility
+{
+	//==============================
+	// AssetType <-> String Conversions
+	//==============================
+	inline const char* ConnectionStatusToString(Network::ConnectionStatus type)
+	{
+		switch (type)
+		{
+		case Network::ConnectionStatus::Disconnected: return "Disconnected";
+		case Network::ConnectionStatus::Connecting: return "Connecting";
+		case Network::ConnectionStatus::Connected: return "Connected";
+		}
+		KG_ERROR("Unknown connection status type {}", (int)type);
+		return "";
+	}
+}
