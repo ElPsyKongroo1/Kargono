@@ -26,37 +26,6 @@
 
 namespace Kargono::Network
 {
-#if 0
-	class Client
-	{
-	public:
-		//==============================
-		// Constructors/Destructors
-		//==============================
-		Client() = default;
-		~Client() = default;
-	public:
-		//==============================
-		// Manage Connection to Server
-		//==============================
-		bool ConnectToServer(const std::string& serverIP, uint16_t serverPort, bool remote = false);
-		void DisconnectFromServer();
-		bool IsConnectedToServer();
-
-	public:
-
-	private:
-		// Asio Thread and Context. This thread handles asynchronous calls from Asio itself
-
-		// Function and Event Queue for m_Thread to handle
-		FunctionQueue m_WorkQueue;
-		Events::EventQueue m_EventQueue;
-
-	private:
-		friend class ClientService;
-	};
-#endif
-
 	class ClientEventThread;
 	class Client;
 
@@ -193,6 +162,9 @@ namespace Kargono::Network
 		void SubmitFunction(const std::function<void()> workFunction);
 		void SubmitEvent(Ref<Events::Event> event);
 
+	private:
+		void OnEvent(Events::Event* event);
+	public:
 		//==============================
 		// Getters/Setters
 		//==============================
@@ -275,6 +247,9 @@ namespace Kargono::Network
 		Socket* i_ClientSocket{ nullptr };
 		ClientEventThread* i_EventThread{ nullptr };
 		Client* i_Client{ nullptr };
+
+	private:
+		friend class ClientService;
 	};
 
 	class ClientEventThread
@@ -389,9 +364,6 @@ namespace Kargono::Network
 			return s_Client;
 		}
 
-	private:
-		static void Run();
-		static void EndRun();
 	public:
 		//==============================
 		// External API
@@ -411,24 +383,6 @@ namespace Kargono::Network
 		//==============================
 		static void SubmitToNetworkFunctionQueue(const std::function<void()>& function);
 		static void SubmitToNetworkEventQueue(Ref<Events::Event> e);
-
-	private:
-		//==============================
-		// Handle Events as the Network Thread
-		//==============================
-		// Receive events and pass them along to event handlers
-		static void OnEvent(Events::Event* e);
-		// Specific event type handlers
-		static bool OnRequestUserCount(Events::RequestUserCount event);
-		static bool OnStartSession(Events::StartSession event);
-		static bool OnConnectionTerminated(Events::ConnectionTerminated event);
-		static bool OnRequestJoinSession(Events::RequestJoinSession event);
-		static bool OnEnableReadyCheck(Events::EnableReadyCheck event);
-		static bool OnSessionReadyCheck(Events::SessionReadyCheck event);
-		static bool OnSendAllEntityLocation(Events::SendAllEntityLocation event);
-		static bool OnSignalAll(Events::SignalAll event);
-		static bool OnSendAllEntityPhysics(Events::SendAllEntityPhysics event);
-		static bool OnLeaveCurrentSession(Events::LeaveCurrentSession event);
 	private:
 		//==============================
 		// Internal Fields

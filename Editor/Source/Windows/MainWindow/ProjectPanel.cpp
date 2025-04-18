@@ -1623,6 +1623,12 @@ namespace Kargono::Panels
 	}
 	void ConnectionUI::OnEditorUIRender()
 	{
+		// Display connection status
+		const char* status{ Utility::ConnectionStatusToString(m_ConnectionStatus) };
+		EditorUI::EditorUIService::LabeledText("Connection Status", status,
+			EditorUI::LabeledText_Indented);
+
+		// Display client index
 		FixedString16 indexText( m_ClientIndex == Network::k_InvalidClientIndex ?
 			"Invalid" : std::to_string(m_ClientIndex).c_str());
 		EditorUI::EditorUIService::LabeledText
@@ -1631,14 +1637,15 @@ namespace Kargono::Panels
 			indexText.CString(), 
 			EditorUI::LabeledText_Indented
 		);
+
+		// Display congested status
 		EditorUI::EditorUIService::LabeledText("Congested",
 			m_IsCongested ? "Yes" : "No",
 			EditorUI::LabeledText_Indented);
+
+		// Display the round trip time
 		EditorUI::EditorUIService::LabeledText("Average RTT (ms)",
 			std::to_string(m_AverageRTT * 1'000.0f).c_str(),
-			EditorUI::LabeledText_Indented);
-		const char* status{ Utility::ConnectionStatusToString(m_ConnectionStatus) };
-		EditorUI::EditorUIService::LabeledText("Connection Status", status,
 			EditorUI::LabeledText_Indented);
 		EditorUI::EditorUIService::Plot(m_PacketRTTPlot);
 	}

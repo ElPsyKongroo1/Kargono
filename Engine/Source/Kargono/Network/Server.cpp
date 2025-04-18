@@ -12,35 +12,6 @@
 
 namespace Kargono::Network
 {
-#if 0
-	Server::Server(uint16_t nPort)
-	{
-		// TODO: Store the port
-
-		// TODO: Initialize the server context maybe?
-	}
-
-	bool Server::StartServer(bool isLocal)
-	{
-
-		// TODO: Start the network-event thread so it can wait for the above message types
-		
-		// The network thread should be running
-
-		KG_INFO("[SERVER] Started!");
-		return true;
-	}
-	void Server::StopServer()
-	{
-		// TODO: Close every TCP connection to all clients
-
-		// TODO: Close the network/network-event threads and join its thread
-
-		// TODO: Clean up all TCP connection objects ??????
-
-	}
-#endif
-
 	void ServerNetworkThread::OpenMessageFromClient(ClientIndex client, Kargono::Network::Message& incomingMessage)
 	{
 		// Handle messages based on their type
@@ -571,8 +542,6 @@ namespace Kargono::Network
 				std::chrono::nanoseconds(i_ServerConfig->m_ServerPassiveRefresh * 1'000'000));
 		}
 
-
-		// TODO: Send a client count update indicating a client left
 		SendReceiveClientCountToAllMessage(client, m_AllConnections.GetNumberOfClients());
 
 		if (m_OnlySession.GetAllClients().contains(client))
@@ -682,6 +651,7 @@ namespace Kargono::Network
 		
 		// Process queues
 		m_FunctionQueue.ProcessQueue();
+		m_EventQueue.ProcessQueue();
 
 		Address sender;
 		unsigned char buffer[k_MaxPacketSize];
@@ -896,6 +866,9 @@ namespace Kargono::Network
 		m_Notifiers.Init(i_ServerActive);
 		m_ReliabilityNotifiers.Init(i_ServerActive);
 
+		// Set up work queues
+		m_EventQueue.Init(KG_BIND_CLASS_FN(OnEvent));
+
 		// Init connections
 		m_AllConnections = ConnectionList(64);
 
@@ -925,6 +898,21 @@ namespace Kargono::Network
 		m_FunctionQueue.SubmitFunction(workFunction);
 
 		m_Thread.ResumeThread(false);
+	}
+
+	void ServerNetworkThread::SubmitEvent(Ref<Events::Event> event)
+	{
+		m_EventQueue.SubmitEvent(event);
+
+		m_Thread.ResumeThread(false);
+	}
+
+	void ServerNetworkThread::OnEvent(Events::Event* event)
+	{
+		if (event->GetEventType() == Events::EventType::StartSession)
+		{
+			StartSession();
+		}
 	}
 
 	bool ServerNetworkThread::SendToConnection(ClientIndex clientIndex, Message& msg)
@@ -1052,23 +1040,10 @@ namespace Kargono::Network
 
 		s_Server.GetNetworkThread().SubmitFunction(func);	
 	}
-	void ServerService::OnEvent(Events::Event* e)
-	{
-#if 0 // TODO: Get sessions to work again
-		if (e->GetEventType() == Events::EventType::StartSession)
-		{
-			OnStartSession(*(Events::StartSession*)e);
-		}
-#endif
-	}
-	bool ServerService::OnStartSession(Events::StartSession event)
+	void ServerService::SubmitToNetworkEventQueue(Ref<Events::Event> event)
 	{
 		KG_ASSERT(s_Server.m_ServerActive);
 
-		// TODO: Get start session to work again
-		// Handle starting the session runtime
-		s_Server.GetNetworkThread().StartSession();
-
-		return true;
+		s_Server.GetNetworkThread().SubmitEvent(event);
 	}
 }

@@ -85,7 +85,7 @@ namespace Kargono::Network
 		m_ServerConnection.Init(*i_ServerConfig);
 		m_Notifiers.m_ConnectStatusNotifier.Notify(m_ServerConnection.m_Status, m_ServerConnection.m_ClientIndex);
 
-		//m_EventQueue.Init(KG_BIND_CLASS_FN(OnEvent));
+		m_EventQueue.Init(KG_BIND_CLASS_FN(OnEvent));
 
 		// Init request timers
 		m_ManageConnectionTimer.InitializeTimer();
@@ -330,9 +330,49 @@ namespace Kargono::Network
 
 	void ClientNetworkThread::SubmitEvent(Ref<Events::Event> event)
 	{
-		//m_EventQueue.SubmitEvent(event);
+		m_EventQueue.SubmitEvent(event);
 
-		//m_Thread.ResumeThread(false);
+		m_Thread.ResumeThread(false);
+	}
+
+	void ClientNetworkThread::OnEvent(Events::Event* event)
+	{
+		// Process events based on their type
+		switch (event->GetEventType())
+		{
+		case Events::EventType::RequestJoinSession:
+			SendRequestJoinSessionMessage();
+			break;
+		case Events::EventType::RequestUserCount:
+			SendRequestUserCountMessage();
+			break;
+		case Events::EventType::LeaveCurrentSession:
+			SendLeaveCurrentSessionMessage();
+			break;
+		case Events::EventType::StartSession:
+			m_SessionStartFrame = EngineService::GetActiveEngine().GetUpdateCount();
+			break;
+		case Events::EventType::ConnectionTerminated:
+			// Essentially clear all session information from this client context
+			m_SessionSlot = k_InvalidSessionSlot;
+			m_SessionStartFrame = 0;
+			break;
+		case Events::EventType::EnableReadyCheck:
+			SendEnableReadyCheckMessage();
+			break;
+		case Events::EventType::SendReadyCheck:
+			SendSessionReadyCheckMessage();
+			break;
+		case Events::EventType::SendAllEntityLocation:
+			SendAllEntityLocation(*(Events::SendAllEntityLocation*)event);
+			break;
+		case Events::EventType::SendAllEntityPhysics:
+			SendAllEntityPhysicsMessage(*(Events::SendAllEntityPhysics*)event);
+			break;
+		case Events::EventType::SignalAll:
+			SendAllClientsSignalMessage(*(Events::SignalAll*)event);
+			break;
+		}
 	}
 
 	void ClientNetworkThread::RequestConnection()
@@ -799,33 +839,6 @@ namespace Kargono::Network
 		EngineService::SubmitToEventQueue(CreateRef<Events::ReceiveSignal>(signal));
 	}
 
-#if 0
-	bool Client::ConnectToServer(const std::string& serverIP, uint16_t serverPort, bool remote)
-	{
-
-		// TODO: Maybe resolve the local IP
-
-		// TODO: Start UDP Connection
-
-		// TODO: Send message if failure to connect
-
-		return true;
-	}
-
-	void Client::DisconnectFromServer()
-	{
-		// TODO: Close server connection
-
-		// TODO: Close network/event threads
-	}
-
-	bool Client::IsConnectedToServer()
-	{
-		// TODO: Query connected status
-		return false;
-	}
-#endif
-
 	bool ClientService::Init()
 	{
 		if (s_Client.m_ClientActive)
@@ -839,12 +852,6 @@ namespace Kargono::Network
 			KG_WARN("Failed to initialize client. Client initialization failed.")
 			return false;
 		}
-
-		// TODO: Connect the event/function queues
-
-		// TODO: Start the network thread in the client and call the Run function
-
-		// TODO: Exit out immediately (the network thread is now running separately from the main thread)
 
 		KG_VERIFY(s_Client.m_ClientActive, "Client connection init");
 		return true;
@@ -866,80 +873,6 @@ namespace Kargono::Network
 
 		KG_VERIFY(!s_Client.m_ClientActive, "Closed client connection");
 		return true;
-	}
-
-	void ClientService::Run()
-	{
-		// Decide whether to connect using the local network or through the internet
-		bool remoteConnection = false;
-		if (Projects::ProjectService::GetActiveServerLocation() != ServerLocation::LocalMachine)
-		{
-			remoteConnection = true;
-		}
-
-#if 0
-		// Start connection to server
-		bool connectionSuccess = s_Client->ConnectToServer
-		(
-			Utility::IPv4ToString(Projects::ProjectService::GetActiveServerIP()),
-			Projects::ProjectService::GetActiveServerPort(), 
-			remoteConnection
-		);
-
-
-		// Ensure the connection has started
-		if (!connectionSuccess) 
-		{ 
-			KG_WARN("Failed to connect to the server");
-
-			// TODO: Ensure the run loop never starts
-		}
-#endif
-		//s_Client->Init();
-
-		KG_INFO("Started client networking thread");
-
-		// TODO: Run network thread
-
-#if 0
-		// Main NetworkContext::NetworkThread loop
-		while (!s_Client->m_NetworkContext.m_QuitNetworkThread)
-		{
-			// Validate the client is still connected
-			if (s_Client->IsConnectedToServer())
-			{
-				// Process any new events/functions for the network thread
-				ClientService::ProcessEventQueue();
-				ClientService::ProcessFunctionQueue();
-
-				// Check for a maximum of 5 messages and run another loop iteration if message queue is not empty
-				s_Client->CheckMessagesFromServer(5);
-			}
-			else
-			{
-				// Exit the network loop
-				s_Client->m_NetworkContext.m_QuitNetworkThread = true;
-			}
-		}
-#endif
-
-		// Close connection to server
-		//s_Client->Terminate();
-
-		KG_INFO("Closed client networking thread");
-	}
-
-	void ClientService::EndRun()
-	{
-		// TODO: This could be a location of an error. I am not sure though.
-		// There may be a chance that the network thread could be notified while its running
-		// and it goes to sleep without closing the thread. I will check this later.
-
-		// Set run loop to close
-		// TODO: Ensure the run loop never starts
-
-		// TODO: Wake up the network thread, so it can close
-		KG_INFO("Notified client network thread to close");
 	}
 
 	bool ClientService::IsClientActive()
@@ -1029,97 +962,6 @@ namespace Kargono::Network
 		KG_ASSERT(s_Client.m_ClientActive);
 
 		s_Client.GetNetworkThread().SubmitEvent(e);
-
-		// TODO: Add the indicated event and alert the network thread to wake up
-	}
-	void ClientService::OnEvent(Events::Event* e)
-	{
-		// Process events based on their type
-		switch (e->GetEventType())
-		{
-		case Events::EventType::RequestJoinSession:
-			OnRequestJoinSession(*(Events::RequestJoinSession*)e);
-			break;
-		case Events::EventType::RequestUserCount:
-			OnRequestUserCount(*(Events::RequestUserCount*)e);
-			break;
-		case Events::EventType::LeaveCurrentSession:
-			OnLeaveCurrentSession(*(Events::LeaveCurrentSession*)e);
-			break;
-		case Events::EventType::StartSession:
-			OnStartSession(*(Events::StartSession*)e);
-			break;
-		case Events::EventType::ConnectionTerminated:
-			OnConnectionTerminated(*(Events::ConnectionTerminated*)e);
-			break;
-		case Events::EventType::EnableReadyCheck:
-			OnEnableReadyCheck(*(Events::EnableReadyCheck*)e);
-			break;
-		case Events::EventType::SendReadyCheck:
-			OnSessionReadyCheck(*(Events::SessionReadyCheck*)e);
-			break;
-		case Events::EventType::SendAllEntityLocation:
-			OnSendAllEntityLocation(*(Events::SendAllEntityLocation*)e);
-			break;
-		case Events::EventType::SendAllEntityPhysics:
-			OnSendAllEntityPhysics(*(Events::SendAllEntityPhysics*)e);
-			break;
-		case Events::EventType::SignalAll:
-			OnSignalAll(*(Events::SignalAll*)e);
-			break;
-		}
-	}
-	bool ClientService::OnRequestUserCount(Events::RequestUserCount event)
-	{
-		s_Client.GetNetworkThread().SendRequestUserCountMessage();
-		return true;
-	}
-	bool ClientService::OnStartSession(Events::StartSession event)
-	{
-		//s_Client.m_SessionStartFrame = EngineService::GetActiveEngine().GetUpdateCount();
-		return true;
-	}
-	bool ClientService::OnConnectionTerminated(Events::ConnectionTerminated event)
-	{
-		// Essentially clear all session information from this client context
-		//s_Client.m_SessionSlot = k_InvalidSessionSlot;
-		//s_Client.m_SessionStartFrame = 0;
-		return true;
-	}
-	bool ClientService::OnRequestJoinSession(Events::RequestJoinSession event)
-	{
-		s_Client.GetNetworkThread().SendRequestJoinSessionMessage();
-		return true;
-	}
-	bool ClientService::OnEnableReadyCheck(Events::EnableReadyCheck event)
-	{
-		s_Client.GetNetworkThread().SendEnableReadyCheckMessage();
-		return true;
-	}
-	bool ClientService::OnSessionReadyCheck(Events::SessionReadyCheck event)
-	{
-		s_Client.GetNetworkThread().SendSessionReadyCheckMessage();
-		return true;
-	}
-	bool ClientService::OnSendAllEntityLocation(Events::SendAllEntityLocation event)
-	{
-		s_Client.GetNetworkThread().SendAllEntityLocation(event);
-		return true;
-	}
-	bool ClientService::OnSignalAll(Events::SignalAll event)
-	{
-		s_Client.GetNetworkThread().SendAllClientsSignalMessage(event);
-		return true;
-	}
-	bool ClientService::OnSendAllEntityPhysics(Events::SendAllEntityPhysics event)
-	{
-		s_Client.GetNetworkThread().SendAllEntityPhysicsMessage(event);
-		return true;
-	}
-	bool ClientService::OnLeaveCurrentSession(Events::LeaveCurrentSession event)
-	{
-		s_Client.GetNetworkThread().SendLeaveCurrentSessionMessage();
-		return true;
 	}
 	bool ClientEventThread::Init(Socket* clientSocket, ClientNetworkThread* networkThread)
 	{

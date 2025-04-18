@@ -70,6 +70,17 @@ namespace Kargono
 
 	void EditorApp::Terminate()
 	{
+		// Close all network threads
+		if (Network::ClientService::IsClientActive())
+		{
+			Network::ClientService::Terminate();
+		}
+
+		if (Network::ServerService::IsServerActive())
+		{
+			Network::ServerService::Terminate();
+		}
+
 		// Terminate engine services
 		EditorUI::EditorUIService::Terminate();
 		RuntimeUI::RuntimeUIService::Terminate();

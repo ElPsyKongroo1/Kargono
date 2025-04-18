@@ -19,7 +19,7 @@ namespace Kargono::Network
 	struct ReadyCheckData
 	{
 		bool m_Active{ false };
-		std::unordered_set<uint32_t> m_ReadyClients{};
+		std::unordered_set<ClientIndex> m_ReadyClients{};
 	};
 
 	//==============================

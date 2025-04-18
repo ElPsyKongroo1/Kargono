@@ -110,6 +110,10 @@ namespace Kargono::Network
 		// Job Queue
 		//==============================
 		void SubmitFunction(const std::function<void()>& workFunction);
+		void SubmitEvent(Ref<Events::Event> event);
+
+	private:
+		void OnEvent(Events::Event* event);
 
 	public:
 		//==============================
@@ -130,12 +134,13 @@ namespace Kargono::Network
 			return m_ReliabilityNotifiers;
 		}
 
+	private:
 		//==============================
 		// Manage Session
 		//==============================
 		void SessionClock();
 		void StartSession();
-	private:
+
 		//==============================
 		// Thread Work Functions
 		//==============================
@@ -198,6 +203,7 @@ namespace Kargono::Network
 		KGThread m_Thread;
 		// Thread queues
 		FunctionQueue m_FunctionQueue;
+		Events::EventQueue m_EventQueue;
 		// Notifiers
 		ServerNetworkNotifiers m_Notifiers{};
 		ReliabilityContextNotifiers m_ReliabilityNotifiers{};
@@ -333,15 +339,7 @@ namespace Kargono::Network
 		// Submit Server Events 
 		//==============================
 		static void SubmitToNetworkFunctionQueue(const std::function<void()>& func);
-
-	private:
-		//==============================
-		// Process Events
-		//==============================
-		// Handle generic events
-		static void OnEvent(Events::Event* e);
-		// Handle specific events
-		static bool OnStartSession(Events::StartSession event);
+		static void SubmitToNetworkEventQueue(Ref<Events::Event> event);
 
 	private:
 		//==============================
