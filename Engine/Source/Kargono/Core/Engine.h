@@ -11,6 +11,7 @@
 #include "Kargono/Events/NetworkingEvent.h"
 #include "Kargono/Events/EventQueue.h"
 #include "Kargono/Core/FunctionQueue.h"
+#include "Kargono/Utility/Timers.h"
 
 #include <functional>
 #include <mutex>
@@ -67,7 +68,7 @@ namespace Kargono
 		Window& GetWindow() { return *m_Window; }
 		const std::filesystem::path& GetWorkingDirectory() const { return m_Specification.WorkingDirectory; }
 		double GetAppStartTime() const { return m_AppStartTime; }
-		uint64_t GetUpdateCount() const { return m_UpdateCount; }
+		UpdateCount GetUpdateCount() const { return m_UpdateCount; }
 		float GetInApplicationTime() const;
 		void UpdateAppStartTime();
 
@@ -85,7 +86,7 @@ namespace Kargono
 		bool m_Minimized { false };
 		double m_AppStartTime = 0.0f;
 		std::chrono::nanoseconds m_Accumulator{0};
-		std::atomic<uint64_t> m_UpdateCount {0};
+		std::atomic<UpdateCount> m_UpdateCount {0};
 		// Event/Function Queues
 		FunctionQueue m_WorkQueue{};
 		Events::EventQueue m_EventQueue{};

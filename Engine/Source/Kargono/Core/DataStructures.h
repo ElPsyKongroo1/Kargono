@@ -2,6 +2,14 @@
 
 #include <deque>
 #include <mutex>
+#include <vector>
+#include <optional>
+#include <cstdint>
+#include <type_traits>
+#include <concepts>
+
+#include <Kargono/Core/Iterator.h>
+#include "Kargono/Core/Base.h"
 
 namespace Kargono
 {
@@ -75,4 +83,157 @@ namespace Kargono
 		std::condition_variable cvBlocking;
 		std::mutex muxBlocking;
 	};
+
+	// TODO: Maybe use a data buffer along w/ placement new to avoid unnecessary constructor calls
+	// Note that this data structure does not manage the destruction of objects
+	template<typename T, std::unsigned_integral IndexType = size_t>
+	class SparseArray
+	{
+
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		SparseArray() = default;
+		SparseArray(IndexType arraySize)
+		{
+			SetMaxSize(arraySize);
+		}
+		~SparseArray() = default;
+	public:
+		//==============================
+		// Query State
+		//==============================
+		IndexType GetCount() const
+		{
+			return m_Count;
+		}
+
+		IndexType GetCapacity() const
+		{
+			return m_Capacity;
+		}
+
+		//==============================
+		// Modify State
+		//==============================
+		struct EmplaceResult
+		{
+			IndexType m_ArrayIndex{ 0 };
+			T& m_Value;
+		};
+
+		std::optional<EmplaceResult> EmplaceLowest()
+		{
+			IndexType index{ 0 };
+
+			// Check for empty slot
+			for (bool active : m_ActiveArray)
+			{
+				if (!active)
+				{
+					break;
+				}
+				index++;
+			}
+
+			// Check for failure to find slot
+			if (index >= m_Capacity)
+			{
+				return {};
+			}
+
+			// Return the found object
+			m_Count++;
+			m_ActiveArray[index] = true;
+
+			return EmplaceResult(index, m_Array[index]);
+		}
+
+		bool Remove(IndexType index)
+		{
+			KG_ASSERT(index < m_Capacity);
+
+			// Ensure the index is active
+			if (!m_ActiveArray[index])
+			{
+				return false;
+			}
+
+			KG_ASSERT(m_Count > 0);
+
+			// Clear the index
+			m_Count--;
+			m_ActiveArray[index] = false;
+			return true;
+		}
+
+		void SetMaxSize(IndexType newSize)
+		{
+
+			m_Capacity = newSize;
+			m_Array.resize(m_Capacity);
+			m_ActiveArray.resize(m_Capacity);
+		}
+
+		void Clear()
+		{
+			// TODO: Find a better way 
+			for (IndexType i{ 0 }; i < m_Capacity; i++)
+			{
+				m_ActiveArray[i] = false;
+			}
+		}
+		//==============================
+		// Operator Overloads
+		//==============================
+		T& operator[](IndexType index) const
+		{
+			KG_ASSERT(index < m_Capacity);
+			KG_ASSERT(m_ActiveArray[index]);
+
+			return m_Array[index];
+		}
+
+		//==============================
+		// Iterators
+		//==============================
+		struct SparseArrayIterator : public Iterator<SparseArrayIterator, SparseArray<T>, T>
+		{
+			bool Compare(T* dataPtr)
+			{
+				// Get the index using the distance to the beginning buffer
+				KG_ASSERT((uintptr_t)dataPtr >= (uintptr_t)m_Array.data());
+				size_t index{ dataPtr - (T*)m_Array.data()};
+
+				// Check if the active iterator is valid
+				return this->m_ContainerPtr->m_ActiveArray[index];
+			}
+		};
+
+		SparseArrayIterator begin()
+		{
+			return SparseArrayIterator(this, m_Array.data());
+		}
+
+		SparseArrayIterator end()
+		{
+			return SparseArrayIterator(this, (T*)m_Array.data() + m_Capacity);
+		}
+
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		IndexType m_Capacity{ 0 };
+		IndexType m_Count{ 0 };
+		std::vector<T> m_Array{};
+		std::vector<bool> m_ActiveArray{};
+
+	private:
+		friend struct SparseArrayIterator;
+	};
+
+	// TODO: Add SparseSet
+	
 }

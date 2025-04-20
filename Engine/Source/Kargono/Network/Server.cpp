@@ -67,7 +67,7 @@ namespace Kargono::Network
 
 		// Send approval message to the new client
 		SendApproveClientJoinMessage(client, clientSlot);
-
+#if 0 // TODO:
 		// Notify all other session clients that new client has been added
 		for (auto [clientID, connection] : m_OnlySession.GetAllClients())
 		{
@@ -92,6 +92,7 @@ namespace Kargono::Network
 			// Send update message
 			SendUpdateClientSlotMessage(client, slot);
 		}
+#endif
 
 		// If enough clients are connected, start the session
 		if (m_OnlySession.GetClientCount() == k_MaxSessionClients)
@@ -120,12 +121,13 @@ namespace Kargono::Network
 			KG_WARN("Failed to remove client from the active session");
 			return;
 		}
-
+#if 0 // TODO:
 		// Notify all users in the same session that a client left
 		for (auto [clientID, connection] : m_OnlySession.GetAllClients())
 		{
 			SendClientLeftMessage(clientID, removedClient);
 		}
+#endif
 
 		// Notify the removed client it is removed 
 		// (note this is necessary since the client no longer exists in the session list)
@@ -141,6 +143,7 @@ namespace Kargono::Network
 	}
 	void ServerNetworkThread::OpenSendAllClientsLocationMessage(ClientIndex client, Message& msg)
 	{
+#if 0 // TODO:
 		// Forward entity location to all other clients
 		for (auto [clientID, connection] : m_OnlySession.GetAllClients())
 		{
@@ -152,10 +155,11 @@ namespace Kargono::Network
 
 			SendUpdateLocationMessage(clientID, msg);
 		}
+#endif
 	}
 	void ServerNetworkThread::OpenSendAllClientsPhysicsMessage(ClientIndex client, Message& msg)
 	{
-
+#if 0 // TODO:
 		// Forward entity Physics to all other clients
 		for (auto [clientID, connection] : m_OnlySession.GetAllClients())
 		{
@@ -167,9 +171,11 @@ namespace Kargono::Network
 
 			SendUpdatePhysicsMessage(clientID, msg);
 		}
+#endif
 	}
 	void ServerNetworkThread::OpenSendAllClientsSignalMessage(ClientIndex client, Message& msg)
 	{
+#if 0 // TODO:
 		// Forward signal to all other session clients
 		for (auto [clientID, connection] : m_OnlySession.GetAllClients())
 		{
@@ -181,6 +187,7 @@ namespace Kargono::Network
 
 			SendSignalMessage(clientID, msg);
 		}
+#endif
 	}
 
 	void ServerNetworkThread::HandleConnectionKeepAlive()
@@ -245,12 +252,13 @@ namespace Kargono::Network
 		Message newMessage;
 		newMessage.m_Header.m_MessageType = MessageType::ManageSession_ClientLeft;
 		newMessage << removedClientSlot;
-
+#if 0 // TODO:
 		// Notify all users in the same session that a client left
 		for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
 		{
 			SendToConnection(clientID, newMessage);
 		}
+#endif
 	}
 	void ServerNetworkThread::SendServerPingMessage(ClientIndex client, Kargono::Network::Message& msg)
 	{
@@ -544,6 +552,7 @@ namespace Kargono::Network
 
 		SendReceiveClientCountToAllMessage(client, m_AllConnections.GetNumberOfClients());
 
+#if 0 // TODO:
 		if (m_OnlySession.GetAllClients().contains(client))
 		{
 			// Remove the client from the session
@@ -559,6 +568,7 @@ namespace Kargono::Network
 			// Notify all other clients which client was removed
 			SendClientLeftMessageToAll(removedClientSlot);
 		}
+#endif
 	}
 
 	bool Server::Init(const ServerConfig& initConfig)

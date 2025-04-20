@@ -3,6 +3,8 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Network/NetworkCommon.h"
 #include "Kargono/Network/Connection.h"
+#include "Kargono/Utility/Timers.h"
+#include "Kargono/Core/DataStructures.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -53,19 +55,23 @@ namespace Kargono::Network
 		//==============================
 		// Getter/Setters
 		//==============================
-		size_t GetClientCount() const { return m_ConnectedClients.size(); }
+		size_t GetClientCount() const { return m_SessionClients.GetCount(); }
 		void EnableReadyCheck() { m_ReadyCheckData.m_Active = true; }
 		void SetSessionStartFrame(uint64_t frame) { m_SessionStartFrame = frame; }
-		uint64_t GetSessionStartFrame() const { return m_SessionStartFrame; }
-		std::unordered_map<ClientIndex, Connection*>& GetAllClients() { return m_ConnectedClients; }
-		std::unordered_map<SessionIndex, ClientIndex>& GetAllSlots() { return m_SessionSlots; }
+		UpdateCount GetSessionStartFrame() const { return m_SessionStartFrame; }
+		SparseArray<ClientIndex>& GetSessionClients()
+		{
+			return m_SessionClients;
+		}
 
 	private:
-		SessionIndex m_SlotMax{0};
-		std::unordered_map<ClientIndex, Connection*> m_ConnectedClients {};
-		std::unordered_map<SessionIndex, ClientIndex> m_SessionSlots{};
-		std::vector<SessionIndex> m_EmptySlots{};
+		SparseArray<ClientIndex> m_SessionClients{};
 		ReadyCheckData m_ReadyCheckData;
-		uint64_t m_SessionStartFrame{ 0 };
+		UpdateCount m_SessionStartFrame{ 0 };
+	};
+
+	class SessionList
+	{
+
 	};
 }

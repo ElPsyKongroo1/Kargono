@@ -106,6 +106,8 @@ namespace Kargono::Network
 	}
 	SessionIndex Session::AddClient(ClientIndex newClient)
 	{
+		return 0;
+#if 0
 		// TODO: No insertion of the connection* actually occurs
 		// Session already contains client, this is an error
 		if (m_ConnectedClients.contains(newClient))
@@ -149,9 +151,13 @@ namespace Kargono::Network
 		}
 
 		return m_SlotMax++;
+#endif
 	}
 	SessionIndex Session::RemoveClient(ClientIndex queryID)
 	{
+		return 0;
+
+#if 0
 		// Session already contains client, this is an error
 		if (!m_ConnectedClients.contains(queryID))
 		{
@@ -195,5 +201,6 @@ namespace Kargono::Network
 
 		KG_WARN("Failed to remove client from session slots. Could not locate client {}", queryID);
 		return k_InvalidSessionSlot;
+#endif
 	}
 }

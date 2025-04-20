@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iterator>
 #include <type_traits>
 #include <concepts>
@@ -24,14 +26,14 @@ concept HasCompareFunc = requires(Derived & derived, DataType * ptr)
 //};
 //==============================
 
-template<typename Derived, typename DataType>
+template<typename Derived, typename ContainerType, typename DataType>
 struct Iterator
 {
 public:
 	//==============================
 	// Constructor/Destructors
 	//==============================
-	Iterator(DataType* pointer) : m_Ptr(pointer) {}
+	Iterator(ContainerType* container, DataType* data) : m_ContainerPtr(container), m_Ptr(data)  {}
 
 public:
 	//==============================
@@ -92,9 +94,10 @@ public:
 	{
 		return iterA.m_Ptr != iterB.m_Ptr;
 	};
-private:
+protected:
 	//==============================
 	// Internal Fields
 	//==============================
 	DataType* m_Ptr{ nullptr };
+	ContainerType* m_ContainerPtr{ nullptr };
 };

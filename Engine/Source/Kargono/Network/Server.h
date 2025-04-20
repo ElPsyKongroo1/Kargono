@@ -10,8 +10,7 @@
 #include "Kargono/Network/Session.h"
 #include "Kargono/Network/ServerConfig.h"
 
-#include "Kargono/Utility/PassiveLoopTimer.h"
-#include "Kargono/Utility/LoopTimer.h"
+#include "Kargono/Utility/Timers.h"
 #include "Kargono/Core/Thread.h"
 #include "Kargono/Events/EventQueue.h"
 #include "Kargono/Events/KeyEvent.h"

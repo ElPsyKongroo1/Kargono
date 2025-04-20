@@ -700,7 +700,7 @@ namespace Kargono::Network
 		KG_INFO("Connection to the server has been accepted!");
 
 		// Pass the event along to the main thread
-		size_t userCount{};
+		ClientIndex userCount{};
 		msg >> userCount;
 		EngineService::SubmitToEventQueue(CreateRef<Events::ReceiveOnlineUsers>(userCount));
 	}
@@ -708,7 +708,7 @@ namespace Kargono::Network
 	void ClientNetworkThread::OpenReceiveUserCountMessage(Message& msg)
 	{
 		// Pass the event along to the main thread
-		size_t userCount{};
+		ClientIndex userCount{};
 		msg >> userCount;
 		EngineService::SubmitToEventQueue(CreateRef<Events::ReceiveOnlineUsers>(userCount));
 	}

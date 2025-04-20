@@ -5,12 +5,17 @@
 #include "Kargono/Core/Base.h"
 
 #include <chrono>
+#include <cstdint>
 #include <thread>
 #include <functional>
 #include <vector>
 #include <mutex>
 #include <atomic>
 
+namespace Kargono
+{
+	using UpdateCount = uint64_t;
+}
 
 namespace Kargono::Utility
 {
@@ -98,6 +103,86 @@ namespace Kargono::Utility
 		std::function<void()> m_Function {nullptr};
 	private:
 		static std::vector<PassiveTimer> s_AllPassiveTimers;
+	};
+
+	class LoopTimer
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		LoopTimer() = default;
+		~LoopTimer() = default;
+
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		// Reset the timer
+		void InitializeTimer();
+		void ResetAccumulator();
+		// Move the timer context forward
+		bool CheckForUpdate();
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		// Manage constant frame time
+		void SetConstantFrameTime(std::chrono::nanoseconds newFrameTime);
+		std::chrono::nanoseconds GetConstantFrameTime();
+		void SetConstantFrameTimeFloat(float newFrameTimeSeconds);
+		float GetConstantFrameTimeFloat();
+
+		uint64_t GetUpdateCount();
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Timepoints (for calculating time-step)
+		std::chrono::time_point<std::chrono::high_resolution_clock> m_CurrentTime;
+		std::chrono::time_point<std::chrono::high_resolution_clock> m_LastLoopTime;
+
+		// Accumulating data
+		std::chrono::nanoseconds m_Timestep{ 0 };
+		std::chrono::nanoseconds m_Accumulator{ 0 };
+		uint64_t m_UpdateCount{ 0 };
+
+		// Configuration data
+		std::chrono::nanoseconds m_ConstantFrameTime{ 1'000 * 1'000 * 1'000 / 60 }; // 1/60th of a second
+	};
+
+	class PassiveLoopTimer
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		PassiveLoopTimer() = default;
+		~PassiveLoopTimer() = default;
+
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		// Reset the timer
+		void InitializeTimer(std::chrono::nanoseconds updateDelta);
+		void InitializeTimer(float updateDeltaSeconds);
+		void InitializeTimer();
+		// Move the timer forward
+		bool CheckForUpdate(std::chrono::nanoseconds timestep);
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		// Manage constant frame time
+		void SetUpdateDelta(std::chrono::nanoseconds newFrameTime);
+		void SetUpdateDeltaFloat(float newFrameTimeSeconds);
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Accumulation data
+		std::chrono::nanoseconds m_Accumulator{};
+		// Configuration data
+		std::chrono::nanoseconds m_UpdateDelta{ 1'000 * 1'000 * 1'000 / 60 /*1/60th sec*/ };
 	};
 
 }
