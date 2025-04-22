@@ -1,5 +1,5 @@
 -- include "./Dependencies/premake/premake_customization/solution_items.lua"
-include "Dependencies.lua"
+include "dependencies.lua"
 workspace "Kargono"
     startproject "Editor"
     architecture "x86_64"

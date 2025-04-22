@@ -645,7 +645,7 @@ namespace Kargono::Panels
 						// Check for a valid entry, and Update if applicable
 						component.OnCollisionStartScriptHandle = scriptHandle;
 						component.OnCollisionStartScript = script;
-						m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+						m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 					}, {"activeEntity", "collidedEntity"});
 
 				} };
@@ -741,7 +741,7 @@ namespace Kargono::Panels
 						// Check for a valid entry, and Update if applicable
 						component.OnCollisionEndScriptHandle = scriptHandle;
 						component.OnCollisionEndScript = script;
-						m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+						m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 					}, {"activeEntity", "collidedEntity"});
 
 			}		};
@@ -1425,7 +1425,7 @@ namespace Kargono::Panels
 					// Update component's data
 					component.OnUpdateScriptHandle = scriptHandle;
 					component.OnUpdateScript = script;
-					m_SelectOnUpdateScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+					m_SelectOnUpdateScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 				}, {"activeEntity", "deltaTime"});
 
 				} };
@@ -1565,7 +1565,7 @@ namespace Kargono::Panels
 					// Update component's data
 					component.OnCreateScriptHandle = scriptHandle;
 					component.OnCreateScript = script;
-					m_SelectOnCreateScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+					m_SelectOnCreateScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 				}, {"activeEntity"});
 
 				}};
@@ -2759,13 +2759,13 @@ namespace Kargono::Panels
 			Ref<Scripting::Script> collisionStartScript = Assets::AssetService::GetScript(component.OnCollisionStartScriptHandle);
 			m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = component.OnCollisionStartScriptHandle == Assets::EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
-				EditorUI::OptionEntry(Utility::ScriptToString(collisionStartScript), component.OnCollisionStartScriptHandle);
+				EditorUI::OptionEntry(Utility::ScriptToString(collisionStartScript).c_str(), component.OnCollisionStartScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectRigidBody2DCollisionStartScript);
 
 			Ref<Scripting::Script> collisionEndScript = Assets::AssetService::GetScript(component.OnCollisionEndScriptHandle);
 			m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = component.OnCollisionEndScriptHandle == Assets::EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
-				EditorUI::OptionEntry(Utility::ScriptToString(collisionEndScript), component.OnCollisionEndScriptHandle);
+				EditorUI::OptionEntry(Utility::ScriptToString(collisionEndScript).c_str(), component.OnCollisionEndScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectRigidBody2DCollisionEndScript);
 		}
 	}
@@ -2875,7 +2875,7 @@ namespace Kargono::Panels
 			Assets::AssetInfo emitterInfo = Assets::AssetService::GetEmitterConfigInfo(component.m_EmitterConfigHandle);
 			m_SelectParticleEmitter.m_CurrentOption = component.m_EmitterConfigHandle == Assets::EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
-				EditorUI::OptionEntry(emitterInfo.Data.FileLocation.filename().string(), component.m_EmitterConfigHandle);
+				EditorUI::OptionEntry(emitterInfo.Data.FileLocation.filename().string().c_str(), component.m_EmitterConfigHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectParticleEmitter);
 		}
 	}
@@ -2892,7 +2892,7 @@ namespace Kargono::Panels
 			Ref<Scripting::Script> script = Assets::AssetService::GetScript(component.OnUpdateScriptHandle);
 			m_SelectOnUpdateScript.m_CurrentOption = component.OnUpdateScriptHandle == Assets::EmptyHandle ? 
 				EditorUI::OptionEntry( "None", Assets::EmptyHandle ) :
-				EditorUI::OptionEntry(Utility::ScriptToString(script), component.OnUpdateScriptHandle);
+				EditorUI::OptionEntry(Utility::ScriptToString(script).c_str(), component.OnUpdateScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectOnUpdateScript);
 		}
 	}
@@ -2911,7 +2911,7 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& globalAsset = Assets::AssetService::GetAIStateRegistry().at(component.GlobalStateHandle);
-				m_SelectGlobalState.m_CurrentOption = { globalAsset.Data.FileLocation.filename().string(), component.GlobalStateHandle };
+				m_SelectGlobalState.m_CurrentOption = { globalAsset.Data.FileLocation.filename().string().c_str(), component.GlobalStateHandle };
 			}
 			else
 			{
@@ -2924,7 +2924,7 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& currentAsset = Assets::AssetService::GetAIStateRegistry().at(component.CurrentStateHandle);
-				m_SelectCurrentState.m_CurrentOption = { currentAsset.Data.FileLocation.filename().string(), component.CurrentStateHandle };
+				m_SelectCurrentState.m_CurrentOption = { currentAsset.Data.FileLocation.filename().string().c_str(), component.CurrentStateHandle };
 			}
 			else
 			{
@@ -2937,7 +2937,7 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& previousAsset = Assets::AssetService::GetAIStateRegistry().at(component.PreviousStateHandle);
-				m_SelectPreviousState.m_CurrentOption = { previousAsset.Data.FileLocation.filename().string(), component.PreviousStateHandle };
+				m_SelectPreviousState.m_CurrentOption = { previousAsset.Data.FileLocation.filename().string().c_str(), component.PreviousStateHandle };
 			}
 			else
 			{
@@ -2959,7 +2959,7 @@ namespace Kargono::Panels
 			Ref<Scripting::Script> script = Assets::AssetService::GetScript(component.OnCreateScriptHandle);
 			m_SelectOnCreateScript.m_CurrentOption = component.OnCreateScriptHandle == Assets::EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
-				EditorUI::OptionEntry(Utility::ScriptToString(script), component.OnCreateScriptHandle);
+				EditorUI::OptionEntry(Utility::ScriptToString(script).c_str(), component.OnCreateScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectOnCreateScript);
 		}
 	}
@@ -3241,7 +3241,7 @@ namespace Kargono::Panels
 			{
 				m_ShapeSetTexture.m_CurrentOption =
 				{
-					Assets::AssetService::GetTexture2DRegistry().at(component.TextureHandle).Data.FileLocation.filename().string(),
+					Assets::AssetService::GetTexture2DRegistry().at(component.TextureHandle).Data.FileLocation.filename().string().c_str(),
 					component.TextureHandle
 				};
 			}

@@ -63,9 +63,8 @@ namespace Kargono
 		EditorUI::EditorUIService::Terminate();
 	}
 
-	bool LauncherApp::OnLogEvent(Events::Event* event)
+	bool LauncherApp::OnLogEvent(Events::Event* /*event*/)
 	{
-		UNREFERENCED_PARAMETER(event);
 
 		// TODO: Figure out better solution. This currently looks super wonkyyyyy
 		//Events::LogEvent* logEvent = (Events::LogEvent*)event;
@@ -103,9 +102,8 @@ namespace Kargono
 	}
 
 
-	void LauncherApp::OnUpdate(Timestep ts)
+	void LauncherApp::OnUpdate(Timestep /*ts*/)
 	{
-		UNREFERENCED_PARAMETER(ts);
 
 		EditorUI::EditorUIService::StartRendering();
 

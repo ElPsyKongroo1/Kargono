@@ -34,7 +34,6 @@ project "RuntimeTesting"
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Runtime/Source",
         "%{IncludeDir.optick}",
-        "%{IncludeDir.asio}",
         "%{IncludeDir.doctest}",
         "%{IncludeDir.ImGuiColorTextEdit}"
     }

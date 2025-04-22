@@ -706,7 +706,7 @@ namespace Kargono
 		Physics::Physics2DService::Terminate();
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
-		if (Projects::ProjectService::GetActiveAppIsNetworked())
+		if (Projects::ProjectService::GetActive() && Projects::ProjectService::GetActiveAppIsNetworked())
 		{
 			Network::ClientService::Terminate();
 		}

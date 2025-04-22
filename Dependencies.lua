@@ -24,8 +24,8 @@ IncludeDir["msdfgen"] = "%{wks.location}/Dependencies/msdf_atlas_gen/msdfgen"
 IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Dependencies/msdf_atlas_gen"
 IncludeDir["dr_wav"] = "%{wks.location}/Dependencies/dr_wav/include"
 IncludeDir["optick"] = "%{wks.location}/Dependencies/optick/include"
-IncludeDir["asio"] = "%{wks.location}/Dependencies/asio/include"
 IncludeDir["doctest"] = "%{wks.location}/Dependencies/doctest"
+IncludeDir["implot"] = "%{wks.location}/Dependencies/implot"
 IncludeDir["ImGuiColorTextEdit"] = "%{wks.location}/Dependencies/ImGuiColorTextEdit"
 
 -- Include Directories: Points to a directory with a variable number if library files.

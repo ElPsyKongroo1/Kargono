@@ -52,6 +52,9 @@ namespace Kargono
 		RegisterWindowOnEventCallback();
 		RegisterAppTickOnEventCallback();
 
+		// Set up event queue
+		s_ActiveEngine->m_EventQueue.Init(OnEvent);
+
 		// Initialize current app (editor, runtime, server, etc...)
 		app->Init();
 	}
@@ -299,8 +302,9 @@ namespace Kargono
 
 		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			auto& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
+			ECS::Rigidbody2DComponent& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			KG_ASSERT(body);
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 			body->SetLinearVelocity(b2Vec2(linearVelocity.x, linearVelocity.y));
 		}
@@ -361,16 +365,12 @@ namespace Kargono
 
 	void EngineService::SubmitToMainThread(const std::function<void()>& function)
 	{
-		std::scoped_lock<std::mutex> lock(s_ActiveEngine->m_MainThreadQueueMutex);
-
-		s_ActiveEngine->m_MainThreadQueue.emplace_back(function);
+		s_ActiveEngine->m_WorkQueue.SubmitFunction(function);
 	}
 
 	void EngineService::SubmitToEventQueue(Ref<Events::Event> e)
 	{
-		std::scoped_lock<std::mutex> lock(s_ActiveEngine->m_EventQueueMutex);
-
-		s_ActiveEngine->m_EventQueue.emplace_back(e);
+		s_ActiveEngine->m_EventQueue.SubmitEvent(e);
 	}
 
 	void EngineService::SubmitApplicationCloseEvent()
@@ -386,29 +386,13 @@ namespace Kargono
 	void EngineService::ProcessFunctionQueue()
 	{
 		KG_PROFILE_FUNCTION();
-		std::scoped_lock<std::mutex> lock(s_ActiveEngine->m_MainThreadQueueMutex);
-
-		for (auto& func : s_ActiveEngine->m_MainThreadQueue) 
-		{ 
-			func(); 
-		}
-		s_ActiveEngine->m_MainThreadQueue.clear();
+		s_ActiveEngine->m_WorkQueue.ProcessQueue();
 	}
 
 	void EngineService::ProcessEventQueue()
 	{
 		KG_PROFILE_FUNCTION();
-		std::vector<Ref<Events::Event>> localEventCache;
-		{
-			std::scoped_lock<std::mutex> lock(s_ActiveEngine->m_EventQueueMutex);
-			localEventCache = std::move(s_ActiveEngine->m_EventQueue);
-			s_ActiveEngine->m_EventQueue.clear();
-		}
-
-		for (auto& event : localEventCache)
-		{
-			OnEvent(event.get());
-		}
+		s_ActiveEngine->m_EventQueue.ProcessQueue();
 	}
 
 }

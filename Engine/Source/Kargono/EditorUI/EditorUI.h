@@ -31,10 +31,14 @@ namespace Kargono::EditorUI
 	struct RadioSelectorSpec;
 	struct CollapsingHeaderSpec;
 	struct EditTextSpec;
+	struct ButtonSpec;
+	struct ButtonBarSpec;
 	struct EditMultiLineTextSpec;
+	struct DropDownSpec;
 	struct PanelHeaderSpec;
 	struct NavigationHeaderSpec;
 	struct CheckboxSpec;
+	struct PlotSpec;
 	struct GenericPopupSpec;
 	struct WarningPopupSpec;
 	struct GridSpec;
@@ -72,7 +76,7 @@ namespace Kargono::EditorUI
 	{
 	public:
 		void AddMemento(const EditorMemento& memento);
-		std::optional<EditorMemento> PopMemento();
+		Optional<EditorMemento> PopMemento();
 	private:
 		std::stack<EditorMemento> m_Stack;
 	};
@@ -116,6 +120,12 @@ namespace Kargono::EditorUI
 		std::string m_InactiveTooltip{};
 		PositionType m_XPositionType{ PositionType::Inline };
 		bool m_Disabled{ false };
+	};
+
+	enum LabeledTextFlags
+	{
+		LabeledText_None = 0,
+		LabeledText_Indented = BIT(0)
 	};
 
 	//==============================
@@ -177,7 +187,11 @@ namespace Kargono::EditorUI
 		static void SelectOption(SelectOptionSpec& spec);
 		static void EditVariable(EditVariableSpec& spec);
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
+		static bool Button(ButtonSpec& spec);
+		static void ButtonBar(ButtonBarSpec& spec);
+		static void Plot(PlotSpec& spec);
 		static void Checkbox(CheckboxSpec& spec);
+		static void DropDown(DropDownSpec& spec);
 
 		static void EditInteger(EditIntegerSpec& spec);
 		static void EditIVec2(EditIVec2Spec& spec);
@@ -195,7 +209,7 @@ namespace Kargono::EditorUI
 		static void NavigationHeader(NavigationHeaderSpec& spec);
 		static void Grid(GridSpec& spec);
 		static void CollapsingHeader(CollapsingHeaderSpec& spec);
-		static void LabeledText(const std::string& m_Label, const std::string& Text);
+		static void LabeledText(const std::string& m_Label, const std::string& Text, LabeledTextFlags flags = LabeledText_None);
 		static void Text(const char* text);
 		static void EditText(EditTextSpec& spec);
 		static void EditMultiLineText(EditMultiLineTextSpec& spec);
@@ -313,8 +327,10 @@ namespace Kargono::EditorUI
 
 		inline static ImVec4 s_HighlightColor1{ 247.6f / 255.0f, 188.2f / 255.0f, 140.7f / 255.0f, 1.0f };
 		inline static ImVec4 s_HighlightColor1_Thin { s_HighlightColor1.x, s_HighlightColor1.y, s_HighlightColor1.z, s_HighlightColor1.w * 0.75f };
+		inline static ImVec4 s_HighlightColor1_UltraThin { s_HighlightColor1.x, s_HighlightColor1.y, s_HighlightColor1.z, s_HighlightColor1.w * 0.3f };
 		inline static ImVec4 s_HighlightColor2{ 147.0f / 255.0f, 247.0f / 255.0f, 141.4f / 255.0f, 1.0f };
 		inline static ImVec4 s_HighlightColor2_Thin{ s_HighlightColor2.x, s_HighlightColor2.y, s_HighlightColor2.z, s_HighlightColor2.w * 0.75f };
+		inline static ImVec4 s_HighlightColor2_UltraThin{ s_HighlightColor2.x, s_HighlightColor2.y, s_HighlightColor2.z, s_HighlightColor2.w * 0.3f };
 		inline static ImVec4 s_HighlightColor3{ 241.0f / 255.0f, 141.0f / 255.0f, 247.4f / 255.0f, 1.0f };
 		inline static ImVec4 s_HighlightColor3_Thin { s_HighlightColor3.x, s_HighlightColor3.y, s_HighlightColor3.z, s_HighlightColor3.w * 0.75f };
 		inline static ImVec4 s_HighlightColor3_UltraThin { s_HighlightColor3.x, s_HighlightColor3.y, s_HighlightColor3.z, s_HighlightColor3.w * 0.3f };
@@ -448,13 +464,160 @@ namespace Kargono::EditorUI
 		friend void EditorUIService::GenericPopup(GenericPopupSpec& spec);
 	};
 
+	struct Button
+	{
+		FixedString16 m_Label{ "Click Me" };
+		std::function<void(Button&)> m_OnPress{ nullptr };
+		Ref<void> m_ProvidedData{ nullptr };
+	};
+
+	enum ButtonFlags
+	{
+		Button_None = 0,
+		Button_Indented = BIT(0)
+	};
+
+	struct ButtonSpec
+	{
+	public:
+		ButtonSpec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		FixedString16 m_Label;
+		WidgetFlags m_Flags{ ButtonFlags::Button_None };
+		Button m_Button;
+	private:
+		WidgetID m_WidgetID;
+	private:
+		friend bool EditorUIService::Button(ButtonSpec& spec);
+	};
+
+	constexpr size_t k_MaxButtonBarSize{ 4 };
+
+	enum ButtonBarFlags
+	{
+		ButtonBar_None = 0,
+		ButtonBar_Indented = BIT(0)
+	};
+
+	struct ButtonBarSpec
+	{
+	public:
+		ButtonBarSpec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		bool AddButton(Button& button);
+		bool AddButton(std::string_view label, std::function<void(Button&)> onClick, Ref<void> providedData = nullptr);
+		void ClearButtons();
+
+		Button* GetButton(size_t index);
+	public:
+		FixedString16 m_Label;
+		WidgetFlags m_Flags{ ButtonBarFlags::ButtonBar_None };
+	private:
+		std::array<Button, k_MaxButtonBarSize> m_Buttons;
+		size_t m_ButtonCount{ 0 };
+		WidgetID m_WidgetID;
+	private:
+		friend void EditorUIService::ButtonBar(ButtonBarSpec& spec);
+	};
+
+	enum PlotFlags
+	{
+		Plot_None = 0,
+		Plot_Indented = BIT(0)
+	};
+
+
+	struct PlotSpec
+	{
+	public:
+		PlotSpec()
+		{
+			m_WidgetID = IncrementWidgetCounter();
+		}
+	public:
+		void SetBufferSize(size_t newSize)
+		{
+			// Update the buffer size
+			m_BufferSize = newSize;
+
+			// Update the X/Y container values
+			m_XValues.resize(newSize);
+			m_YValues.resize(newSize);
+
+			// Clear the buffer
+			Clear();
+		}
+
+		void AddValue(float yValue)
+		{
+			// Add the coordinate
+			m_XValues[m_Offset % m_BufferSize] = (float)m_Offset;
+			m_YValues[m_Offset % m_BufferSize] = yValue;
+
+			// Update the offset index
+			m_Offset++;
+		}
+
+		void UpdateValue(float yValue, size_t offset = 0)
+		{
+			KG_ASSERT(offset < m_BufferSize);
+
+			m_YValues[(m_Offset - offset - 1) % m_BufferSize] = yValue;
+		}
+
+		void SetYAxisLabel(std::string_view text)
+		{
+			if (text.size() == 0)
+			{
+				m_YAxisLabel = "##";
+				return;
+			}
+
+			m_YAxisLabel = text;
+		}
+
+		void Clear()
+		{
+			// Clear all values in buffer
+			for (size_t i{ 0 }; i < m_BufferSize; i++)
+			{
+				m_XValues[i] = 0.0f;
+				m_YValues[i] = 0.0f;
+			}
+
+			// Clear the offset
+			m_Offset = m_BufferSize;
+		}
+
+	public:
+		FixedString16 m_Label;
+		WidgetFlags m_Flags{ PlotFlags::Plot_None };
+		float m_MaxYVal{ 50.0f };
+		Ref<void> m_ProvidedData{ nullptr };
+	private:
+		WidgetID m_WidgetID;
+		FixedString16 m_YAxisLabel{ "##" };
+		std::vector<float> m_XValues;
+		std::vector<float> m_YValues;
+		size_t m_BufferSize{0};
+		size_t m_Offset{ 0 };
+	private:
+		friend void EditorUIService::Plot(PlotSpec& spec);
+	};
+
+
 	enum CheckboxFlags
 	{
 		Checkbox_None = 0,
 		Checkbox_LeftLean = BIT(0), // Check box aligns to the left
 		Checkbox_Indented = BIT(1)
 	};
-
 
 	struct CheckboxSpec
 	{
@@ -826,7 +989,7 @@ namespace Kargono::EditorUI
 			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		std::string m_Label;
+		FixedString32 m_Label;
 		WidgetFlags m_Flags{ CollapsingHeader_None };
 		bool m_Expanded{ false };
 		std::function<void()> m_OnExpand{ nullptr };
@@ -1500,8 +1663,8 @@ namespace Kargono::EditorUI
 	struct OptionEntry
 	{
 	public:
-		std::string m_Label{};
-		Assets::AssetHandle m_Handle { Assets::EmptyHandle };
+		FixedString32 m_Label{};
+		UUID m_Handle { k_EmptyUUID };
 	public:
 		bool operator==(const OptionEntry& other) const
 		{
@@ -1512,6 +1675,104 @@ namespace Kargono::EditorUI
 			return false;
 		}
 	};
+	
+	// Supporting OptionList types/data
+	using OptionIndex = size_t;
+	constexpr OptionIndex k_InvalidEntryIndex{ std::numeric_limits<OptionIndex>().max() };
+
+	class OptionList
+	{
+	public:
+
+		//==============================
+		// Modify List
+		//==============================
+		OptionEntry* CreateOption()
+		{
+			return &m_Options.emplace_back();
+		}
+
+		void Clear()
+		{
+			m_Options.clear();
+		}
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		OptionEntry* GetOption(OptionIndex index)
+		{
+			if (index >= m_Options.size())
+			{
+				return nullptr;
+			}
+
+			return &m_Options[index];
+		}
+	public:
+		//==============================
+		// Forward Iterator Begin/End (allow for-loops and other algs)
+		//==============================
+		std::vector<OptionEntry>::iterator begin()
+		{ 
+			return m_Options.begin(); 
+		}
+		std::vector<OptionEntry>::iterator end()
+		{ 
+			return m_Options.end();
+		}
+
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		std::vector<OptionEntry> m_Options{};
+	};
+
+	enum DropDownFlags
+	{
+		DropDown_None = 0,
+		DropDown_Indented = BIT(0), // Indents the text (used in collapsing headers usually)
+	};
+
+	struct DropDownSpec
+	{
+	public:
+		DropDownSpec() : m_WidgetID(IncrementWidgetCounter()) {}
+	public:
+		OptionEntry* CreateOption()
+		{
+			return m_OptionsList.CreateOption();
+		}
+		bool SetCurrentOption(UUID handle)
+		{
+			OptionIndex index{ 0 };
+			for (OptionEntry& entry : m_OptionsList)
+			{
+				// Use the first-found option entry
+				if (entry.m_Handle == handle)
+				{
+					m_CurrentOption = index;
+					return true;
+				}
+				index++;
+			}
+
+			return false;
+		}
+	public:
+		FixedString16 m_Label{};
+		WidgetFlags m_Flags{ DropDown_None };
+		std::function<void(const OptionEntry&)> m_ConfirmAction{ nullptr };
+		Ref<void> m_ProvidedData{ nullptr };
+	private:
+		WidgetID m_WidgetID{};
+		OptionIndex m_CurrentOption{ k_InvalidEntryIndex };
+		OptionList m_OptionsList{};
+	private:
+		friend void EditorUIService::DropDown(DropDownSpec&);
+	};
+
 
 	enum SelectOptionFlags
 	{
@@ -1521,7 +1782,7 @@ namespace Kargono::EditorUI
 		SelectOption_HandleEditButtonExternally = BIT(2) // Allows calling a custom function for edit button
 	};
 
-	using OptionList = std::unordered_map<std::string, std::vector<OptionEntry>>;
+	using OptionMap = std::unordered_map<std::string, std::vector<OptionEntry>>; // TODO: Bruh what is this heap garbage
 
 	struct SelectOptionSpec
 	{
@@ -1551,7 +1812,7 @@ namespace Kargono::EditorUI
 		}
 		void AddToOptions(const std::string& group, const std::string& optionLabel, UUID optionIdentifier)
 		{
-			const OptionEntry newEntry{ optionLabel, optionIdentifier };
+			const OptionEntry newEntry{ optionLabel.c_str(), optionIdentifier};
 			if (!m_ActiveOptions.contains(group))
 			{
 				std::vector<OptionEntry> newVector {};
@@ -1562,16 +1823,16 @@ namespace Kargono::EditorUI
 
 			m_ActiveOptions.at(group).push_back(newEntry);
 		}
-		OptionList& GetAllOptions()
+		OptionMap& GetAllOptions()
 		{
 			return m_ActiveOptions;
 		}
 	private:
 		WidgetID m_WidgetID;
-		OptionList m_ActiveOptions{};
+		OptionMap m_ActiveOptions{};
 		bool m_Searching { false };
 		OptionEntry m_CachedSelection {};
-		OptionList m_CachedSearchResults{};
+		OptionMap m_CachedSearchResults{};
 	private:
 		friend void EditorUIService::SelectOption(SelectOptionSpec&);
 	};
@@ -1598,6 +1859,8 @@ namespace Kargono::EditorUI
 	private:
 		friend void EditorUIService::EditVariable(EditVariableSpec&);
 	};
+
+
 }
 
 namespace Kargono::Utility

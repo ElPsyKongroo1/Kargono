@@ -3,102 +3,265 @@
 #include "Kargono/Network/Session.h"
 #include "Kargono/Events/Event.h"
 #include "Kargono/Events/NetworkingEvent.h"
-#include "Kargono/Network/UDPConnection.h"
-#include "Kargono/Network/TCPConnection.h"
 #include "Kargono/Core/Base.h"
 
-#include <unordered_map>
+#include "Kargono/Network/Socket.h"
+#include "Kargono/Network/Connection.h"
+#include "Kargono/Network/Session.h"
+#include "Kargono/Network/ServerConfig.h"
 
+#include "Kargono/Utility/Timers.h"
+#include "Kargono/Core/Thread.h"
+#include "Kargono/Events/EventQueue.h"
+#include "Kargono/Events/KeyEvent.h"
+#include "Kargono/Core/Notifier.h"
+#include "Kargono/Core/FunctionQueue.h"
 
 namespace Kargono::Network
 {
-	class ServerTCPConnection;
+	// Forward declarations
+	class ServerEventThread;
+	class Session;
 
-	class ServerUDPConnection : public UDPConnection
+	class ServerNotifiers
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		ServerUDPConnection(NetworkContext* networkContext, asio::ip::udp::socket&& socket,
-			std::unordered_map<asio::ip::udp::endpoint, Ref<ServerTCPConnection>>& ipMap)
-			: UDPConnection(networkContext, std::move(socket)), m_IPAddressToConnection(ipMap) {}
-		virtual ~ServerUDPConnection() override = default;
+		ServerNotifiers() = default;
+		~ServerNotifiers() = default;
+	private:
+		void Init(std::atomic<bool>* serverActive);
 	public:
-		//==============================
-		// Server Connection Specific Functionality
-		//==============================
-		virtual void AddMessageToIncomingMessageQueue() override;
-		virtual void Disconnect(asio::ip::udp::endpoint key) override;
+		// Server state observers
+		ObserverIndex AddServerActiveObserver(std::function<void(bool)> func);
+		bool RemoveServerActiveObserver(ObserverIndex index);
 
-	protected:
-		std::unordered_map<asio::ip::udp::endpoint, Ref<ServerTCPConnection>>& m_IPAddressToConnection;
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		Notifier<bool> m_ServerActiveNotifier{};
+
+		//==============================
+		// Injected Dependencies
+		//==============================
+		std::atomic<bool>* i_ServerActive{ nullptr };
+	private:
+		friend class Server;
 	};
 
-
-	//============================================================
-	// TCP Server Connection Class
-	//============================================================
-
-	class ServerTCPConnection : public TCPConnection
+	class ServerNetworkNotifiers
 	{
 	public:
-
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		ServerTCPConnection(NetworkContext* networkContext, asio::ip::tcp::socket&& socket);
-		virtual ~ServerTCPConnection() override {}
-
+		ServerNetworkNotifiers() = default;
+		~ServerNetworkNotifiers() = default;
 	private:
-		void CalculateValidationData();
-		//==============================
-		// LifeCycle Functions
-		//==============================
+		void Init(std::atomic<bool>* serverActive);
 	public:
-		void Connect(uint32_t uid = 0);
-		virtual void Disconnect() override;
-		bool IsConnected() const 
-		{ 
-			return m_TCPSocket.is_open(); 
-		}
+		// Client connection observers
+		ObserverIndex AddConnectObserver(std::function<void(ClientIndex)> func);
+		bool RemoveConnectObserver(ObserverIndex index);
+		ObserverIndex AddDisconnectObserver(std::function<void(ClientIndex)> func);
+		bool RemoveDisconnectObserver(ObserverIndex index);
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Connection notifiers
+		Notifier<ClientIndex> m_ConnectNotifier{};
+		Notifier<ClientIndex> m_DisconnectNotifier{};
 
 		//==============================
-		// Server Connection Specific Functionality
+		// Injected Dependencies
 		//==============================
-		virtual void AddMessageToIncomingMessageQueue() override;
+		std::atomic<bool>* i_ServerActive{ nullptr };
+	private:
+		friend class ServerNetworkThread;
+	};
+
+	class ServerNetworkThread
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		ServerNetworkThread() = default;
+		~ServerNetworkThread() = default;
+	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		bool Init
+		(
+			ServerConfig* serverConfig, 
+			Socket* serverSocket, 
+			std::atomic<bool>* serverActive,
+			ServerEventThread* eventThread
+		);
+		void Terminate();
+		void WaitOnThread();
+	public:
+		//==============================
+		// Job Queue
+		//==============================
+		void SubmitFunction(const std::function<void()>& workFunction);
+		void SubmitEvent(Ref<Events::Event> event);
+
+	private:
+		void OnEvent(Events::Event* event);
+
+	public:
+		//==============================
+		// Manage Thread
+		//==============================
+		void ResumeThread(bool withinThread);
+		void SuspendThread(bool withinThread);
 
 		//==============================
-		// Getter/Setters
+		// Getters/Setters
 		//==============================
-		float GetTCPLatency() const 
-		{ 
-			return m_TCPLatency; 
+		ServerNetworkNotifiers& GetNotifiers()
+		{
+			return m_Notifiers;
 		}
-		void SetTCPLatency(float newLatency) 
-		{ 
-			m_TCPLatency = newLatency; 
-		}
-		uint32_t GetID() const 
-		{ 
-			return m_ID;
+		ReliabilityContextNotifiers& GetReliabilityNotifiers()
+		{
+			return m_ReliabilityNotifiers;
 		}
 
 	private:
 		//==============================
-		// Client Validation Functions
+		// Manage Session
 		//==============================
-		void WriteValidationAsync();
-		void ReadValidationAsync();
+		void StartSession();
 
-	protected:
-		// Uniquely identify connection
-		uint32_t m_ID { 0 };
-		// Handshake Validation
-		uint64_t m_ValidationCache { 0 };
-		// Latency Variables
-		float m_TCPLatency { 0.0f };
+		//==============================
+		// Thread Work Functions
+		//==============================
+		void RunThread();
 
+		//==============================
+		// Manage Clients Connections
+		//==============================
+		void OnClientValidated(ClientIndex client);
+		bool OnClientConnect(ClientIndex client);
+		void OnClientDisconnect(ClientIndex client);
+		void HandleConnectionKeepAlive();
+		void HandleNewConnectionPacket(MessageType type, Address address);
+		void HandleConnectionTimeouts(float deltaTime);
+
+	private:
+		//==============================
+		// Receive Messages
+		//==============================
+		// Receive messages from client(s)
+		void OpenMessageFromClient(ClientIndex client, Message& incomingMessage);
+		// Handle specific message types
+		void OpenRequestClientJoinMessage(ClientIndex client, Message& msg);
+		void OpenRequestClientCountMessage(ClientIndex client);
+		void OpenNotifyAllLeaveMessage(ClientIndex client);
+		void OpenStartReadyCheckMessage(ClientIndex client);
+		void OpenEnableReadyCheckMessage();
+		void OpenSendAllClientsLocationMessage(ClientIndex client, Message& msg);
+		void OpenSendAllClientsPhysicsMessage(ClientIndex client, Message& msg);
+		void OpenSendAllClientsSignalMessage(ClientIndex client, Message& msg);
+
+		//==============================
+		// Send Messages
+		//==============================
+		// Send message to client(s)
+		bool SendToConnection(ClientIndex clientIndex, Message& msg);
+		bool SendToAllConnections(Message& msg, ClientIndex ignoreClient = k_InvalidClientIndex);
+
+		// Handle specific message types
+		void SendClientLeftMessageToAll(SessionIndex removedClientSlot);
+		void SendServerPingMessage(ClientIndex client, Message& msg);
+		void SendDenyClientJoinMessage(ClientIndex receivingClient);
+		void SendApproveClientJoinMessage(ClientIndex receivingClient, SessionIndex clientSlot);
+		void SendUpdateClientSlotMessage(ClientIndex receivingClient, SessionIndex clientSlot);
+		void SendReceiveClientCountMessage(ClientIndex receivingClient, size_t clientCount);
+		void SendReceiveClientCountToAllMessage(ClientIndex receivingClient, size_t clientCount);
+		void SendClientLeftMessage(ClientIndex receivingClient, SessionIndex removedClientSlot);
+		void SendConfirmReadyCheckMessage(ClientIndex receivingClient, float waitTime);
+		void SendUpdateLocationMessage(ClientIndex receivingClient, Message& msg);
+		void SendUpdatePhysicsMessage(ClientIndex receivingClient, Message& msg);
+		void SendSignalMessage(ClientIndex receivingClient, Message& msg);
+		void SendKeepAliveMessage(ClientIndex receivingClient);
+		void SendAcceptConnectionMessage(ClientIndex receivingClient, size_t clientCount);
+		void SendSessionInitMessage(ClientIndex receivingClient);
+		void SendStartSessionMessage(ClientIndex receivingClient, float waitTime);
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Thread
+		KGThread m_Thread;
+		// Thread queues
+		FunctionQueue m_FunctionQueue;
+		Events::EventQueue m_EventQueue;
+		// Notifiers
+		ServerNetworkNotifiers m_Notifiers{};
+		ReliabilityContextNotifiers m_ReliabilityNotifiers{};
+		// Connections
+		ConnectionList m_AllConnections{};
+		// Timers
+		Utility::LoopTimer m_ManageConnectionTimer{};
+		uint32_t m_CongestionCounter{ 0 };
+		// Sessions
+		Session m_OnlySession{};
+		
+		//==============================
+		// Injected Dependencies
+		//==============================
+		std::atomic<bool>* i_ServerActive{ nullptr };
+		ServerConfig* i_ServerConfig{ nullptr };
+		Socket* i_ServerSocket{ nullptr };
+		ServerEventThread* i_EventThread{ nullptr };
+	private:
+		friend class Session;
+	};
+
+	class ServerEventThread
+	{
+	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		bool Init(Socket* serverSocket, ServerNetworkThread* networkThread);
+		void Terminate();
+		void WaitOnThread();
+
+		//==============================
+		// Manage Server-Event Config
+		//==============================
+		void SetSyncPingFreq(size_t frequency /*ms*/);
+
+		//==============================
+		// Thread Work Functions
+		//==============================
+		void RunThread();
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Thread context and queues
+		KGThread m_Thread{};
+		FunctionQueue m_WorkQueue{};
+		// OS handles
+		HANDLE m_NetworkEventHandle{};
+		// Config
+		size_t m_ActiveSyncPingFreq{ 1'000 /*1 sec*/};
+
+		//==============================
+		// Injected Dependencies
+		//==============================
+		Socket* i_ServerSocket{ nullptr };
+		ServerNetworkThread* i_NetworkThread{ nullptr };
 	};
 
 	class Server
@@ -107,104 +270,51 @@ namespace Kargono::Network
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		Server(uint16_t nPort);
+		Server() = default;
 		~Server() = default;
 
 		//==============================
-		// LifeCycle Functions
+		// Lifecycle Functions
 		//==============================
-		bool StartServer(bool isLocal);
-		void StopServer();
-
+		bool Init(const ServerConfig& initConfig);
+		bool Terminate(bool withinNetworkThread);
 	private:
-		bool StartUDPServer(bool isLocal);
+		// Allows other threads to wait on the server to close
+		void WaitOnThreads();
 	public:
 		//==============================
-		// Receive Messages
+		// Getters/Setters
 		//==============================
-		// Receive messages from client(s)
-		void CheckForMessages(size_t maxMessages = k_MaxMessageCount);
-		void OpenMessageFromClient(ServerTCPConnection* client, Message& incomingMessage);
-		// Handle specific message types
-		void OpenServerPingMessage(ServerTCPConnection* client, Message& msg);
-		void OpenMessageAllClientsMessage(ServerTCPConnection* client, Message& msg);
-		void OpenMessageClientChatMessage(ServerTCPConnection* client, Message& msg);
-		void OpenRequestClientJoinMessage(ServerTCPConnection* client, Message& msg);
-		void OpenRequestClientCountMessage(ServerTCPConnection* client);
-		void OpenNotifyAllLeaveMessage(ServerTCPConnection* client);
-		void OpenSyncPingMessage(ServerTCPConnection* client);
-		void OpenStartReadyCheckMessage(ServerTCPConnection* client);
-		void OpenEnableReadyCheckMessage();
-		void OpenSendAllClientsLocationMessage(ServerTCPConnection* client, Message& msg);
-		void OpenSendAllClientsPhysicsMessage(ServerTCPConnection* client, Message& msg);
-		void OpenSendAllClientsSignalMessage(ServerTCPConnection* client, Message& msg);
-		void OpenKeepAliveMessage(ServerTCPConnection* client);
-		void OpenCheckUDPConnectionMessage(ServerTCPConnection* client);
+		ServerNotifiers& GetNotifiers()
+		{
+			return m_Notifiers;
+		}
 
-		//==============================
-		// Send Messages
-		//==============================
-		// Send message to client(s)
-		void SendTCPMessage(ServerTCPConnection* client, const Message& msg);
-		void SendUDPMessage(ServerTCPConnection* client, Message& msg);
-		void SendTCPMessageAll(const Message& msg, ServerTCPConnection* ignoreClient = nullptr);
-		// Handle specific message types
-		void SendClientLeftMessageToAll(uint16_t removedClientSlot);
-		void SendServerPingMessage(ServerTCPConnection* client, Message& msg);
-		void SendGenericMessageAllClients(ServerTCPConnection* sendingClient, Message& msg);
-		void SendServerChatMessageAllClients(ServerTCPConnection* sendingClient, Message& msg);
-		void SendDenyClientJoinMessage(ServerTCPConnection* receivingClient);
-		void SendApproveClientJoinMessage(ServerTCPConnection* receivingClient, uint16_t clientSlot);
-		void SendUpdateClientSlotMessage(ServerTCPConnection* receivingClient, uint16_t clientSlot);
-		void SendReceiveClientCountMessage(ServerTCPConnection* receivingClient, uint32_t clientCount);
-		void SendReceiveClientCountToAllMessage(ServerTCPConnection* receivingClient, uint32_t clientCount);
-		void SendClientLeftMessage(ServerTCPConnection* receivingClient, uint16_t removedClientSlot);
-		void SendSyncPingMessage(ServerTCPConnection* receivingClient);
-		void SendConfirmReadyCheckMessage(ServerTCPConnection* receivingClient, float waitTime);
-		void SendUpdateLocationMessage(ServerTCPConnection* receivingClient, Message& msg);
-		void SendUpdatePhysicsMessage(ServerTCPConnection* receivingClient, Message& msg);
-		void SendSignalMessage(ServerTCPConnection* receivingClient, Message& msg);
-		void SendKeepAliveMessage(ServerTCPConnection* receivingClient);
-		void SendCheckUDPConnectionMessage(ServerTCPConnection* receivingClient);
-		void SendAcceptConnectionMessage(ServerTCPConnection* receivingClient, uint32_t clientCount);
-		void SendSessionInitMessage(ServerTCPConnection* receivingClient);
+		ServerNetworkThread& GetNetworkThread()
+		{
+			return m_NetworkThread;
+		}
 
-		//==============================
-		// Manage Session
-		//==============================
-		void SessionClock();
-		void StartSession();
+		ServerEventThread& GetEventThread()
+		{
+			return m_EventThread;
+		}
 
 	private:
 		//==============================
-		// Manage Clients Connections
+		// Internal Data
 		//==============================
-		void OnClientValidated(Ref<ServerTCPConnection> client);
-		bool OnClientConnect(Ref<Kargono::Network::ServerTCPConnection> client);
-		void OnClientDisconnect(Ref<Kargono::Network::ServerTCPConnection> client);
-		void CheckConnectionsValid();
-		void WaitForClientConnectionAsync();
-
-	private:
 		// Main server network context
-		NetworkContext m_NetworkContext{};
+		std::atomic<bool> m_ServerActive{ false };
+		Socket m_ServerSocket{};
+		ServerConfig m_Config{};
 
-		// Session Data
-		Session m_OnlySession{};
-		Scope<std::thread> m_TimingThread { nullptr };
-		bool m_StopTimingThread = false;
-		std::atomic<uint64_t> m_UpdateCount{ 0 };
+		// Server thread contexts
+		ServerNetworkThread m_NetworkThread{};
+		ServerEventThread m_EventThread{};
 
-		// Event queue
-		std::vector<Ref<Events::Event>> m_EventQueue {};
-		std::mutex m_EventQueueMutex {};
-
-		// Storage for all connections and ancillary data
-		std::deque<Ref<ServerTCPConnection>> m_AllClientConnections {};
-		Ref<ServerUDPConnection> m_UDPServer { nullptr };
-		std::unordered_map<asio::ip::udp::endpoint, Ref<ServerTCPConnection>> m_IPAddressToConnection {};
-		uint32_t m_ClientIDCounter = 10000;
-		asio::ip::tcp::acceptor m_TCPAcceptor;
+		// Server state notifiers
+		ServerNotifiers m_Notifiers{};
 	private:
 		friend class ServerService;
 	};
@@ -216,37 +326,24 @@ namespace Kargono::Network
 		// LifeCycle Functions
 		//==============================
 		static bool Init();
-		static void Terminate();
-		static void Run();
+		static bool Terminate();
+		static bool IsServerActive();
 
 		//==============================
 		// Getters/Setters
 		//==============================
-		static Ref<Server> GetActiveServer();
+		static Server& GetActiveServer();
 
 		//==============================
 		// Submit Server Events 
 		//==============================
-		static void SubmitToNetworkEventQueue(Ref<Events::Event> e);
-
-	private:
-		//==============================
-		// Process Events
-		//==============================
-		// Handle generic events
-		static void OnEvent(Events::Event* e);
-		// Handle specific events
-		static bool OnStartSession(Events::StartSession event);
-
-		//==============================
-		// Internal Functionality
-		//==============================
-		static void ProcessEventQueue();
+		static void SubmitToNetworkFunctionQueue(const std::function<void()>& func);
+		static void SubmitToNetworkEventQueue(Ref<Events::Event> event);
 
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		static inline Ref<Network::Server> s_Server{ nullptr };
+		static inline Network::Server s_Server{};
 	};
 }

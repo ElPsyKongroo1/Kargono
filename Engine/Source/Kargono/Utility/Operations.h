@@ -34,6 +34,12 @@ namespace Kargono::Utility
 			});
 		}
 
+		static bool IsValidCString(const char* str)
+		{
+			// Check if the string is not NULL and has at least one character
+			return str != nullptr && strlen(str) > 0 && str[strlen(str)] == '\0';
+		}
+
 		static std::string_view GetSubstringToCharacter(const std::string& inputString, char queryCharacter)
 		{
 			// Find the position of the first occurrence of queryCharacter

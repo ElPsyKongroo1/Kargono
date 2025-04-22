@@ -10,16 +10,6 @@ namespace Kargono
 	std::vector<AppTickGenerator> AppTickService::s_AppTickGenerators;
 	Events::EventCallbackFn AppTickService::s_AppTickCallback;
 
-	void AppTickService::LoadGeneratorsFromProject()
-	{
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		AppTickService::ClearGenerators();
-		for (auto generatorValue : Projects::ProjectService::GetActiveAppTickGenerators())
-		{
-			AppTickService::AddNewGenerator(generatorValue);
-		}
-	}
-
 	void AppTickService::SetAppTickEventCallback(const Events::EventCallbackFn& callback)
 	{
 		s_AppTickCallback = callback;
@@ -27,7 +17,7 @@ namespace Kargono
 
 	void AppTickService::OnUpdate(Timestep ts)
 	{
-		for (auto& generator : s_AppTickGenerators)
+		for (AppTickGenerator& generator : s_AppTickGenerators)
 		{
 			generator.Accumulator += ts;
 
@@ -47,7 +37,7 @@ namespace Kargono
 
 	void AppTickService::ResetAllAccumulators()
 	{
-		for (auto& generator : s_AppTickGenerators)
+		for (AppTickGenerator& generator : s_AppTickGenerators)
 		{
 			generator.Accumulator = 0;
 		}
@@ -56,7 +46,7 @@ namespace Kargono
 	void AppTickService::AddNewGenerator(uint64_t delayMilliseconds)
 	{
 		// Check if a similar generator already exists
-		for (auto& generator : s_AppTickGenerators)
+		for (AppTickGenerator& generator : s_AppTickGenerators)
 		{
 			if (delayMilliseconds == generator.DelayMilliSeconds)
 			{
@@ -78,7 +68,7 @@ namespace Kargono
 	void AppTickService::RemoveGenerator(uint64_t delayMilliseconds)
 	{
 		// Decrease usage count if there is a match
-		for (auto& generator : s_AppTickGenerators)
+		for (AppTickGenerator& generator : s_AppTickGenerators)
 		{
 			if (delayMilliseconds == generator.DelayMilliSeconds)
 			{

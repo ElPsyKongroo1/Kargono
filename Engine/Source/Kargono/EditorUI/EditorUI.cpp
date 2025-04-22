@@ -18,6 +18,7 @@
 #include "API/Platform/GlfwAPI.h"
 #include "API/Platform/gladAPI.h"
 #include "API/EditorUI/ImGuiNotifyAPI.h"
+#include "API/EditorUI/ImPlotAPI.h"
 
 namespace Kargono::EditorUI
 {
@@ -742,6 +743,7 @@ namespace Kargono::EditorUI
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
+		API::InitImPlot();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.IniFilename = NULL;
 		ImGui::LoadIniSettingsFromDisk("./Resources/EditorConfig.ini");
@@ -891,6 +893,7 @@ namespace Kargono::EditorUI
 	{
 		if (s_Running)
 		{
+			API::TerminateImPlot();
 			ImGui_ImplOpenGL3_Shutdown();
 			ImGui_ImplGlfw_Shutdown();
 			ImGui::DestroyContext();
@@ -1190,7 +1193,7 @@ namespace Kargono::EditorUI
 	bool EditorUIService::Undo()
 	{
 		// Get the top memento
-		std::optional<EditorMemento> mementoReturn = s_UndoStack.PopMemento();
+		Optional<EditorMemento> mementoReturn = s_UndoStack.PopMemento();
 
 		// Check for empty undo stack
 		if (!mementoReturn.has_value())
@@ -1263,15 +1266,15 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	static OptionList GenerateSearchCache(OptionList& originalList, const std::string& searchQuery)
+	static OptionMap GenerateSearchCache(OptionMap& originalList, const std::string& searchQuery)
 	{
-		OptionList returnList{};
+		OptionMap returnList{};
 		for (auto& [title, options] : originalList)
 		{
 			std::vector<OptionEntry> returnOptions {};
 			for (auto& option : options)
 			{
-				if (!Utility::Regex::GetMatchSuccess(option.m_Label, searchQuery, false))
+				if (!Utility::Regex::GetMatchSuccess(option.m_Label.CString(), searchQuery, false))
 				{
 					continue;
 				}
@@ -1610,6 +1613,206 @@ namespace Kargono::EditorUI
 		ImGui::PopFont();
 	}
 
+	bool EditorUIService::Button(ButtonSpec& spec)
+	{
+		// Local Variables
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.m_WidgetID);
+		uint32_t widgetCount{ 0 };
+		bool returnValue{ false };
+
+		if (spec.m_Flags & Button_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
+		// Display Primary Label
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.m_Label.CString(),
+			spec.m_Flags & Button_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
+		TruncateText(spec.m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
+
+		// Setup background drawlist
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		
+		// Shift button to secondary text position one
+		ImGui::SameLine(s_SecondaryTextPosOne - 2.5f);
+		if (ImGui::InvisibleButton(
+			("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
+			ImVec2(s_SecondaryTextSmallWidth, s_TextBackgroundHeight)))
+		{
+			if (spec.m_Button.m_OnPress)
+			{
+				spec.m_Button.m_OnPress(spec.m_Button);
+			}
+			returnValue = true;
+		}
+
+		ImVec4 buttonColor;
+
+		if (ImGui::IsItemActive())
+		{
+			buttonColor = s_ActiveColor;
+		}
+		else if (ImGui::IsItemHovered())
+		{
+			buttonColor = s_HoveredColor;
+		}
+		else
+		{
+			buttonColor = s_HighlightColor1_UltraThin;
+		}
+
+		// Draw the relevant background
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y - s_TextBackgroundHeight),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextSmallWidth, screenPosition.y),ImColor(buttonColor),
+			4.0f, ImDrawFlags_RoundCornersAll);
+
+		// Display entry text
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::SameLine(s_SecondaryTextPosOne);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
+		int floatPosition = ImGui::FindPositionAfterLength(spec.m_Button.m_Label.CString(), s_SecondaryTextSmallWidth);
+		TruncateText(spec.m_Button.m_Label.CString(),
+			floatPosition == -1 ? std::numeric_limits<int32_t>::max() : floatPosition);
+		ImGui::PopStyleColor();
+		
+		// Indicate if button is pressed
+		return returnValue;
+	}
+
+	void EditorUIService::ButtonBar(ButtonBarSpec& spec)
+	{
+		// Local Variables
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.m_WidgetID);
+		uint32_t widgetCount{ 0 };
+
+		std::array<float, 4> buttonPositions
+		{
+			s_SecondaryTextPosOne,
+			s_SecondaryTextPosTwo,
+			s_SecondaryTextPosThree,
+			s_SecondaryTextPosFour
+		};
+
+		std::array<ImVec4, 4> buttonColors
+		{
+			s_HighlightColor1_UltraThin,
+			s_HighlightColor2_UltraThin,
+			s_HighlightColor3_UltraThin,
+			s_HighlightColor4_UltraThin,
+		};
+
+		if (spec.m_Flags & Button_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
+		// Display Primary Label
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.m_Label.CString(),
+			spec.m_Flags & Button_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
+		TruncateText(spec.m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
+
+		// Setup background drawlist
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		for (size_t i{ 0 }; i < spec.m_ButtonCount; i++)
+		{
+			// Shift button to secondary text position one
+			ImGui::SameLine(buttonPositions[i] - 2.5f);
+			EditorUI::Button& currentButton = spec.m_Buttons[i];
+			if (ImGui::InvisibleButton(
+				("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
+				ImVec2(s_SecondaryTextSmallWidth, s_TextBackgroundHeight)))
+			{
+				if (currentButton.m_OnPress)
+				{
+					currentButton.m_OnPress(currentButton);
+				}
+			}
+
+			ImVec4 buttonColor;
+
+			if (ImGui::IsItemActive())
+			{
+				buttonColor = s_ActiveColor;
+			}
+			else if (ImGui::IsItemHovered())
+			{
+				buttonColor = s_HoveredColor;
+			}
+			else
+			{
+				buttonColor = buttonColors[i];
+			}
+
+			// Draw the relevant background
+			draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + buttonPositions[i] - 5.0f, screenPosition.y - s_TextBackgroundHeight),
+				ImVec2(s_WindowPosition.x + buttonPositions[i] + s_SecondaryTextSmallWidth, screenPosition.y), ImColor(buttonColor),
+				4.0f, ImDrawFlags_RoundCornersAll);
+
+			// Display entry text
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+			ImGui::SameLine(buttonPositions[i]);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
+			int floatPosition = ImGui::FindPositionAfterLength(currentButton.m_Label.CString(), s_SecondaryTextSmallWidth);
+			TruncateText(currentButton.m_Label.CString(),
+				floatPosition == -1 ? std::numeric_limits<int32_t>::max() : floatPosition);
+			ImGui::PopStyleColor();
+		}
+	}
+
+	void EditorUIService::Plot(PlotSpec& spec)
+	{
+		KG_ASSERT(spec.m_BufferSize > 0);
+
+		// Local Variables
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.m_WidgetID);
+
+		static float s_PlotHeight{ 140.0f };
+
+		// Draw background
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextLargeWidth, screenPosition.y + s_PlotHeight),
+			ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+
+		if (spec.m_Flags & Button_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
+		// Display Primary Label
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.m_Label.CString(),
+			spec.m_Flags & Button_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
+		TruncateText(spec.m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
+
+		// Shift button to secondary text position one
+		ImGui::SameLine(s_SecondaryTextPosOne - 2.5f);
+
+		ImPlotFlags flags = ImPlotFlags_NoMouseText | ImPlotFlags_NoLegend | ImPlotFlags_NoInputs;
+		ImPlotAxisFlags axisFlags = ImPlotAxisFlags_NoTickLabels;
+
+		if (ImPlot::BeginPlot(id, ImVec2(s_SecondaryTextLargeWidth, s_PlotHeight), flags))
+		{
+			ImPlot::SetupAxes("##", spec.m_YAxisLabel.CString(), axisFlags, 0);
+			ImPlot::SetupAxesLimits((double)spec.m_Offset - (double)spec.m_BufferSize, (double)spec.m_Offset - 1.0, 0, spec.m_MaxYVal, ImPlotCond_Always);
+			ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
+			ImPlot::PlotShaded("##", &spec.m_XValues[0], &spec.m_YValues[0], (int)spec.m_BufferSize, 0, 0, (int)spec.m_Offset);
+			ImPlot::PopStyleVar();
+			
+			ImPlot::PlotLine("##", &spec.m_XValues[0], &spec.m_YValues[0], (int)spec.m_BufferSize, 0, (int)spec.m_Offset);
+			
+			ImPlot::EndPlot();
+		}
+	}
+
 
 	void EditorUIService::SelectOption(SelectOptionSpec& spec)
 	{
@@ -1652,7 +1855,7 @@ namespace Kargono::EditorUI
 			ImGui::PopStyleColor();
 
 			ImGui::PushStyleColor(ImGuiCol_Text, s_SecondaryTextColor);
-			WriteMultilineText(spec.m_CurrentOption.m_Label,s_SecondaryTextLargeWidth,  s_SecondaryTextPosOne);
+			WriteMultilineText(spec.m_CurrentOption.m_Label.CString(), s_SecondaryTextLargeWidth, s_SecondaryTextPosOne);
 			ImGui::PopStyleColor();
 
 			ImGui::SameLine();
@@ -1775,7 +1978,7 @@ namespace Kargono::EditorUI
 						ImGui::PushStyleColor(ImGuiCol_Button, s_SelectedColor);
 					}
 
-					if (ImGui::Button((option.m_Label.c_str() + id + std::string(option.m_Handle)).c_str()))
+					if (ImGui::Button((option.m_Label.CString() + id + std::string(option.m_Handle)).c_str()))
 					{
 						spec.m_CachedSelection = option;
 					}
@@ -1980,6 +2183,140 @@ namespace Kargono::EditorUI
 		},
 		EditorUIService::s_SmallEditButton,
 		spec.m_Editing, spec.m_Editing ? s_PrimaryTextColor : s_DisabledColor);
+	}
+
+	void EditorUIService::DropDown(DropDownSpec& spec)
+	{
+		// Local Variables
+		FixedString<16> id{ "##" };
+		id.AppendInteger(spec.m_WidgetID);
+		uint32_t widgetCount{ 0 };
+
+		if (spec.m_Flags & Button_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
+		// Display Primary Label
+		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(spec.m_Label.CString(),
+			spec.m_Flags & Button_Indented ? s_PrimaryTextIndentedWidth : s_PrimaryTextWidth);
+		TruncateText(spec.m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PopStyleColor();
+
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
+
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, EditorUI::EditorUIService::s_ActiveBackgroundColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, EditorUI::EditorUIService::s_HoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, EditorUI::EditorUIService::s_ActiveColor);
+
+		ImGui::SetNextItemWidth(s_SecondaryTextLargeWidth + 5.0f);
+		ImGui::SameLine(s_SecondaryTextPosOne - 5.0f);
+
+		// Shift button to secondary text position one
+		ImGui::SameLine(s_SecondaryTextPosOne - 2.5f);
+		if (ImGui::InvisibleButton(
+			("##" + std::to_string(spec.m_WidgetID + WidgetIterator(widgetCount))).c_str(),
+			ImVec2(s_SecondaryTextLargeWidth, s_TextBackgroundHeight)))
+		{
+			ImGui::OpenPopupEx(spec.m_WidgetID, ImGuiPopupFlags_None);
+		}
+
+		ImVec4 dropdownColor;
+
+		if (ImGui::IsItemActive())
+		{
+			dropdownColor = s_ActiveColor;
+		}
+		else if (ImGui::IsItemHovered())
+		{
+			dropdownColor = s_HoveredColor;
+		}
+		else
+		{
+			dropdownColor = s_ActiveBackgroundColor;
+		}
+
+		// Draw the relevant background
+		draw_list->AddRectFilled(ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne - 5.0f, screenPosition.y - s_TextBackgroundHeight),
+			ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextLargeWidth, screenPosition.y), ImColor(dropdownColor),
+			4.0f, ImDrawFlags_RoundCornersAll);
+
+		// Get the selected entry
+		OptionEntry* selectedEntry{ spec.m_OptionsList.GetOption(spec.m_CurrentOption) };
+		const char* selectedText = selectedEntry ? selectedEntry->m_Label.CString() : "";
+
+		// Display selected text
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::SameLine(s_SecondaryTextPosOne);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
+		int floatPosition = ImGui::FindPositionAfterLength(selectedText, s_SecondaryTextLargeWidth);
+		TruncateText(selectedText,
+			floatPosition == -1 ? std::numeric_limits<int32_t>::max() : floatPosition);
+		ImGui::PopStyleColor();
+
+		if (ImGui::IsPopupOpen(spec.m_WidgetID, ImGuiPopupFlags_None))
+		{
+			const ImRect popupBoundingBox
+			(
+				ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne, screenPosition.y), 
+				ImVec2(s_WindowPosition.x + s_SecondaryTextPosOne + s_SecondaryTextLargeWidth, screenPosition.y)
+			);
+			ImGui::BeginComboPopup(spec.m_WidgetID, popupBoundingBox, 0);
+
+			OptionIndex entryIndex{ 0 };
+			for (OptionEntry& entry : spec.m_OptionsList)
+			{
+				if (entry.m_Label.IsEmpty()) 
+				{ 
+					entryIndex++;
+					continue; 
+				}
+				if (ImGui::Selectable(entry.m_Label.CString()))
+				{
+					// Set entry as selected
+					spec.m_CurrentOption = entryIndex;
+
+					// Handle the newly selected entry
+					if (spec.m_ConfirmAction)
+					{
+						spec.m_ConfirmAction(entry);
+					}
+
+					break;
+				}
+				entryIndex++;
+			}
+			ImGui::EndCombo();
+		}
+
+#if 0
+		if (ImGui::BeginCombo(id, selectedEntry ? selectedEntry->m_Label.CString() : "",
+			ImGuiComboFlags_NoArrowButton))
+		{
+			OptionIndex entryIndex{ 0 };
+			for (OptionEntry& entry : spec.m_OptionsList)
+			{
+				if (ImGui::Selectable(entry.m_Label.CString()))
+				{
+					// Set entry as selected
+					spec.m_CurrentOption = entryIndex;
+					
+					// Handle the newly selected entry
+					if (spec.m_ConfirmAction)
+					{
+						spec.m_ConfirmAction(entry);
+					}
+
+					break;
+				}
+				entryIndex++;
+			}
+			ImGui::EndCombo();
+		}
+#endif
+
+		ImGui::PopStyleColor(3);
 	}
 
 	void EditorUIService::EditInteger(EditIntegerSpec& spec)
@@ -3412,22 +3749,6 @@ namespace Kargono::EditorUI
 		uint32_t widgetCount{ 0 };
 		TreePath treePath{};
 		DrawEntries(spec, spec.m_TreeEntries, widgetCount, treePath, {});
-
-		//if (ImGui::BeginPopup(("##" + std::to_string(spec.m_WidgetID)).c_str()))
-		//{
-		//	/*if (spec.m_CurrentRightClick)
-		//	{
-		//		for (auto& [label, func] : spec.m_CurrentRightClick->m_OnRightClickSelection)
-		//		{
-		//			if (!spec.m_CurrentRightClick) { break; }
-		//			if (ImGui::Selectable((label + "##" + std::to_string(spec.m_WidgetID)).c_str()))
-		//			{
-		//				func(*spec.m_CurrentRightClick);
-		//			}
-		//		}
-		//	}*/
-		//	ImGui::EndPopup();
-		//}
 	}
 
 	void EditorUIService::PanelHeader(PanelHeaderSpec& spec)
@@ -3658,7 +3979,7 @@ namespace Kargono::EditorUI
 		id.AppendInteger(spec.m_WidgetID);
 		ImGui::PushFont(EditorUIService::s_FontAntaLarge);
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
-		ImGui::TextUnformatted(spec.m_Label.c_str());
+		ImGui::TextUnformatted(spec.m_Label.CString());
 		ImGui::PopStyleColor();
 		ImGui::PopFont();
 		ImGui::SameLine();
@@ -3700,9 +4021,13 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void EditorUIService::LabeledText(const std::string& label, const std::string& text)
+	void EditorUIService::LabeledText(const std::string& label, const std::string& text, LabeledTextFlags flags)
 	{
 		// Display Menu Item
+		if (flags & LabeledText_Indented)
+		{
+			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+		}
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(label.c_str(), s_PrimaryTextWidth);
 		TruncateText(label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
@@ -4619,7 +4944,7 @@ namespace Kargono::EditorUI
 	{
 		m_Stack.push(memento);
 	}
-	std::optional<EditorMemento> MementoStack::PopMemento()
+	Optional<EditorMemento> MementoStack::PopMemento()
 	{
 		// Handle case where stack is empty
 		if (m_Stack.size() == 0)
@@ -4633,5 +4958,58 @@ namespace Kargono::EditorUI
 		// Remove the top memento from the stack
 		m_Stack.pop();
 		return returnMemento;
+	}
+	bool ButtonBarSpec::AddButton(Button& button)
+	{
+		// Ensure the maximum button bar count is not reached
+		if (m_ButtonCount >= k_MaxButtonBarSize)
+		{
+			KG_WARN("Failed to add button to button bar. Button capacity reached.");
+			return false;
+		}
+
+		// Add the button to the button bar
+		m_Buttons[m_ButtonCount] = button;
+		m_ButtonCount++;
+
+		return true;
+	}
+	bool ButtonBarSpec::AddButton(std::string_view label, std::function<void(Button&)> onClick, Ref<void> providedData)
+	{
+		// Ensure the maximum button bar count is not reached
+		if (m_ButtonCount >= k_MaxButtonBarSize)
+		{
+			KG_WARN("Failed to add button to button bar. Button capacity reached.");
+			return false;
+		}
+
+		// Add the button to the button bar
+		m_Buttons[m_ButtonCount].m_Label = label;
+		m_Buttons[m_ButtonCount].m_OnPress = onClick;
+		m_Buttons[m_ButtonCount].m_ProvidedData = providedData;
+		m_ButtonCount++;
+
+		return true;
+	}
+	void ButtonBarSpec::ClearButtons()
+	{
+		// Reset button count
+		m_ButtonCount = 0;
+
+		// Reset all button fields (I mainly do this because of the shared pointers)
+		for (Button& button : m_Buttons)
+		{
+			button = Button();
+		}
+	}
+	Button* ButtonBarSpec::GetButton(size_t index)
+	{
+		if (index >= m_ButtonCount)
+		{
+			KG_WARN("Failed to retrieve button. Provided index is out of bounds.")
+			return nullptr;
+		}
+
+		return &m_Buttons[index];
 	}
 }

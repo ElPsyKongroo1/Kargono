@@ -4,8 +4,7 @@
 #include "Kargono/Core/DataStructures.h"
 #include "Kargono/Math/MathAliases.h"
 
-#include "API/Network/AsioAPI.h"
-
+#include <limits>
 #include <thread>
 #include <atomic>
 #include <mutex>
@@ -15,24 +14,16 @@
 
 namespace Kargono::Network
 {
-
 	//==============================
 	// Message Type
 	//==============================
-	enum class MessageType : uint32_t
+	enum class MessageType : uint8_t
 	{
 		// Manage client <-> server connnection
 		ManageConnection_AcceptConnection = 0,
 		ManageConnection_DenyConnection,
-		ManageConnection_CheckUDPConnection,
+		ManageConnection_RequestConnection,
 		ManageConnection_KeepAlive,
-		ManageConnection_ServerPing,
-
-		// Generic messaging API
-		GenericMessage_MessageAllClients,
-		GenericMessage_ServerMessage,
-		GenericMessage_ClientChat,
-		GenericMessage_ServerChat,
 
 		// Query the active server state
 		ServerQuery_RequestClientCount,
@@ -47,7 +38,6 @@ namespace Kargono::Network
 		ManageSession_DenyClientJoin,
 		ManageSession_StartSession,
 		ManageSession_Init,
-		ManageSession_SyncPing,
 		ManageSession_StartReadyCheck,
 		ManageSession_ConfirmReadyCheck,
 		ManageSession_EnableReadyCheck,
@@ -63,7 +53,45 @@ namespace Kargono::Network
 		ScriptMessaging_ReceiveSignal
 	};
 
-	class ServerTCPConnection;
+	// Packet Header Types
+	using AppID = uint8_t;
+	using ClientIndex = uint8_t;
+
+	// Reliability Types
+	using PacketSequence = uint16_t;
+	using AckBitField = uint32_t;
+	constexpr PacketSequence k_AckBitFieldSize{ (PacketSequence)sizeof(AckBitField) * (PacketSequence)8 };
+
+	constexpr ClientIndex k_InvalidClientIndex{ std::numeric_limits<ClientIndex>::max() };
+
+	constexpr size_t k_ReliabilitySegmentSize
+	{
+		sizeof(PacketSequence) /*packetSequenceNum*/ +
+		sizeof(PacketSequence) /*ackSequenceNum*/ +
+		sizeof(AckBitField) /*ackBitfield*/
+	};
+	constexpr size_t k_PacketHeaderSize
+	{
+		sizeof(AppID) /*appID*/ +
+		sizeof(MessageType) /*messageType*/ +
+		sizeof(ClientIndex) + /*clientIndex*/
+		k_ReliabilitySegmentSize /*packetAckSegment*/
+	};
+	constexpr size_t k_MaxPacketSize{ 256 };
+	constexpr size_t k_MaxPayloadSize{ k_MaxPacketSize - k_PacketHeaderSize };
+
+	inline bool IsConnectionManagementPacket(MessageType type)
+	{
+		switch (type)
+		{
+		case MessageType::ManageConnection_AcceptConnection:
+		case MessageType::ManageConnection_DenyConnection:
+		case MessageType::ManageConnection_RequestConnection:
+			return true;
+		default:
+			return false;
+		}
+	}
 
 	//==============================
 	// Message Header Struct
@@ -111,21 +139,6 @@ namespace Kargono::Network
 
 	};
 
-	//============================================================
-	// Owned Message Struct
-	//============================================================
-	struct OwnedMessage
-	{
-		ServerTCPConnection* m_RemoteConnection{ nullptr };
-		Message m_Message;
-	};
-
-	struct LabeledMessage
-	{
-		asio::ip::udp::endpoint& m_OutgoingEndpoint;
-		Message m_Message;
-	};
-
 	//==============================
 	// Operator Overload Definitions
 	//==============================
@@ -145,7 +158,7 @@ namespace Kargono::Network
 		std::memcpy(msg.m_PayloadData.data() + currentBufferSize, &data, sizeof(DataType));
 
 		// Update message header size
-		msg.m_Header.m_PayloadSize = static_cast<uint32_t>(msg.m_PayloadData.size());
+		msg.m_Header.m_PayloadSize = (uint32_t)msg.m_PayloadData.size();
 
 		return msg;
 	}
@@ -155,6 +168,7 @@ namespace Kargono::Network
 	{
 		// Check that the type of the data being pushed is trivially copyable
 		static_assert(std::is_standard_layout<DataType>::value, "Data is too complex");
+		KG_ASSERT((int)msg.m_PayloadData.size() - (int)sizeof(DataType) >= 0);
 
 		// Cache current size of vector, as this will be the point we insert the data
 		size_t bufferSizeAfterRemoval = msg.m_PayloadData.size() - sizeof(DataType);
@@ -166,93 +180,13 @@ namespace Kargono::Network
 		msg.m_PayloadData.resize(bufferSizeAfterRemoval);
 
 		// Update message header size
-		msg.m_Header.m_PayloadSize = static_cast<uint32_t>(msg.GetEntireMessageSize());
+		msg.m_Header.m_PayloadSize = (uint32_t)msg.GetEntireMessageSize();
 
 		return msg;
 	}
-
-	struct NetworkContext
-	{
-		//==============================
-		// Fields
-		//==============================
-		// Asio context and accompanying thread
-		asio::io_context m_AsioContext;
-		std::thread m_AsioThread;
-		// Network thread and supporting mutex/condition_variable
-		Ref<std::thread> m_NetworkThread { nullptr };
-		std::condition_variable m_BlockNetworkThreadCondVar {};
-		std::mutex m_BlockNetworkThreadMutex {};
-		std::atomic<bool> m_QuitNetworkThread { false };
-		// Singular incoming message queue
-		TSQueue<OwnedMessage> m_IncomingMessageQueue;
-
-		//==============================
-		// Manage Network Thread
-		//==============================
-		void NetworkThreadSleep();
-		void NetworkThreadWakeUp();
-	};
-
-	constexpr uint64_t k_KeepAliveDelay{ 10'000 };
-	constexpr uint16_t k_MaxSyncPings = 10;
-	constexpr uint16_t k_InvalidSessionSlot = std::numeric_limits<uint16_t>::max();
-	constexpr size_t k_MaxMessageCount = std::numeric_limits<size_t>::max();
+	using SessionIndex = uint8_t;
+	constexpr SessionIndex k_InvalidSessionIndex = std::numeric_limits<SessionIndex>::max();
 	// TODO: VERY TEMPORARY. Only for pong!!!!
-	constexpr uint32_t k_MaxSessionClients {2};
+	constexpr size_t k_MaxSessionClients{ 2 };
 
-	enum class ServerLocation
-	{
-		None = 0,
-		LocalMachine,
-		LocalNetwork,
-		Remote
-	};
-
-	struct ServerConfig
-	{
-		Math::u8vec4 m_IPv4{0};
-		uint16_t m_Port{ 101 };
-		ServerLocation m_ServerLocation{ServerLocation::LocalMachine};
-		Math::u64vec4 m_ValidationSecrets{0};
-	};
 }
-
-namespace Kargono::Utility
-{
-	inline const char* ServerLocationToString(Network::ServerLocation type)
-	{
-		switch (type)
-		{
-		case Network::ServerLocation::LocalMachine: return "LocalMachine";
-		case Network::ServerLocation::LocalNetwork: return "LocalNetwork";
-		case Network::ServerLocation::Remote: return "Remote";
-		case Network::ServerLocation::None: return "None";
-		}
-		KG_ERROR("Unknown type of server-location enum");
-		return "";
-	}
-
-	inline Network::ServerLocation StringToServerLocation(std::string_view type)
-	{
-		if (type == "LocalMachine") { return Network::ServerLocation::LocalMachine; }
-		if (type == "LocalNetwork") { return Network::ServerLocation::LocalNetwork; }
-		if (type == "Remote") { return Network::ServerLocation::Remote; }
-		if (type == "None") { return Network::ServerLocation::None; }
-
-		KG_ERROR("Unknown type of server-location string");
-		return Network::ServerLocation::None;
-	}
-
-	inline std::string IPv4ToString(Math::u8vec4 ip)
-	{
-		std::string returnString(16, '\0'); 
-		int length = std::snprintf(returnString.data(), returnString.capacity(), "%u.%u.%u.%u",
-			ip.x, ip.y, ip.z, ip.w);
-
-		returnString.resize(length);
-		return returnString;
-	}
-}
-
-

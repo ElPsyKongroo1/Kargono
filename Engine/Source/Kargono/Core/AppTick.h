@@ -25,11 +25,6 @@ namespace Kargono
 	{
 	public:
 		//==============================
-		// Load Generators From File
-		//==============================
-		static void LoadGeneratorsFromProject();
-
-		//==============================
 		// Manage Events
 		//==============================
 		static void SetAppTickEventCallback(const Events::EventCallbackFn& callback);

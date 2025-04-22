@@ -64,9 +64,6 @@ This documentation for the engine is fairly minimal at this point. I intend to a
 - Dungeon Crawler
 
 # Third-Party Dependencies
-## Asio (Non-Boost Version) ([Docs](https://think-async.com/Asio/))
-- Framework that allows TCP/UDP network communication within the engine. 
-- A cross-platform C++ library for asynchronous network and low-level I/O programming.
 ## Box2D ([Docs](https://box2d.org/documentation/))
 - Used as the main backend 2D physics library. 
 - A lightweight 2D physics engine for games, offering fast and realistic simulations of rigid body dynamics.
@@ -112,6 +109,9 @@ This documentation for the engine is fairly minimal at this point. I intend to a
 ## ImGuiNotify ([Docs](https://github.com/TyomaVader/ImGuiNotify)) ([Commit](https://github.com/TyomaVader/ImGuiNotify/commit/c29457070e7b3092df538823e406a19672e9abd7))
 - Used in editor to display toast notifications of warnings/errors.
 - Tool that produces notification toasts inside of ImGui.
+## ImPlot ([Docs](https://github.com/epezent/implot)) ([Commit](https://github.com/epezent/implot/commit/3da8bd34299965d3b0ab124df743fe3e076fa222))
+- Used in the editor to display visualization of engine data.
+- A tool for producing various 2D plots and graphics.
 ## MSDF-Gen ([Docs](https://github.com/Chlumsky/msdfgen))
 - Generate msdf fonts for use in RuntimeUI.
 - A tool for generating multi-channel signed distance fields (MSDFs) for crisp text and shape rendering.

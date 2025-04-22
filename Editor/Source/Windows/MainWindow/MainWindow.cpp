@@ -9,6 +9,8 @@
 #include "Kargono/Core/AppTick.h"
 #include "Kargono/Input/InputService.h"
 
+#include "API/EditorUI/ImPlotAPI.h"
+
 static Kargono::EditorApp* s_EditorApp{ nullptr };
 
 namespace Kargono::Windows
@@ -20,15 +22,6 @@ namespace Kargono::Windows
 
 		m_ExportProjectSpec.m_Label = "Export Project";
 		m_ExportProjectSpec.m_PopupWidth = 700.0f;
-		m_ExportProjectSpec.m_PopupAction = [&]() 
-		{
-			KG_ASSERT(Projects::ProjectService::GetActive());
-			m_ExportConfigServerIP.m_CurrentIVec4 = (Math::ivec4)Projects::ProjectService::GetActiveServerIP();
-			m_ExportConfigPort.m_CurrentInteger = Projects::ProjectService::GetActiveServerPort();
-			m_ExportConfigLocation.m_CurrentBoolean = Projects::ProjectService::GetActiveServerLocation() ==
-				Network::ServerLocation::LocalMachine;
-			m_ExportConfigSecrets.m_CurrentIVec4 = (Math::ivec4)Projects::ProjectService::GetActiveSecrets();
-		};
 		m_ExportProjectSpec.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::CollapsingHeader(m_ExportProjectHeader);
@@ -36,48 +29,12 @@ namespace Kargono::Windows
 			{
 				EditorUI::EditorUIService::ChooseDirectory(m_ExportProjectLocation);
 				EditorUI::EditorUIService::Checkbox(m_ExportProjectServer);
-				EditorUI::EditorUIService::Checkbox(m_ExportConfigFile);
 			}	
-
-			// Do not display config settings if not specified
-			if (!m_ExportConfigFile.m_CurrentBoolean)
-			{
-				return;
-			}
-
-			EditorUI::EditorUIService::CollapsingHeader(m_ExportConfigHeader);
-			if (m_ExportConfigHeader.m_Expanded)
-			{
-				EditorUI::EditorUIService::EditIVec4(m_ExportConfigServerIP);
-				EditorUI::EditorUIService::EditInteger(m_ExportConfigPort);
-				EditorUI::EditorUIService::Checkbox(m_ExportConfigLocation);
-				EditorUI::EditorUIService::EditIVec4(m_ExportConfigSecrets);
-			}
 		};
 		m_ExportProjectSpec.m_ConfirmAction = [&]()
 		{
-			if (m_ExportConfigFile.m_CurrentBoolean)
-			{
-				// Load in data from the UI into a server config struct
-				Network::ServerConfig configFile;
-				configFile.m_IPv4 = (Math::u8vec4)m_ExportConfigServerIP.m_CurrentIVec4;
-				configFile.m_Port = (uint16_t)m_ExportConfigPort.m_CurrentInteger;
-				configFile.m_ServerLocation = m_ExportConfigLocation.m_CurrentBoolean ?
-					Network::ServerLocation::LocalMachine : Network::ServerLocation::Remote;
-				configFile.m_ValidationSecrets = (Math::u64vec4)m_ExportConfigSecrets.m_CurrentIVec4;
-
-				// Update the project config
-				Projects::ProjectService::SetServerConfig(configFile);
-
-				// Start the export process
-				Projects::ProjectService::ExportProject(m_ExportProjectLocation.m_CurrentOption, &configFile, m_ExportProjectServer.m_CurrentBoolean);
-			}
-			else
-			{
-				// Start the export process
-				Projects::ProjectService::ExportProject(m_ExportProjectLocation.m_CurrentOption, nullptr, m_ExportProjectServer.m_CurrentBoolean);
-			}
-			
+			// Start the export process
+			Projects::ProjectService::ExportProject(m_ExportProjectLocation.m_CurrentOption, m_ExportProjectServer.m_CurrentBoolean);
 		};
 
 		m_ExportProjectLocation.m_Label = "Export Location";
@@ -87,33 +44,6 @@ namespace Kargono::Windows
 		m_ExportProjectServer.m_Label = "Export Server";
 		m_ExportProjectServer.m_Flags |= EditorUI::Checkbox_Indented;
 		m_ExportProjectServer.m_CurrentBoolean = true;
-
-		// Config file options
-		m_ExportConfigFile.m_Label = "Server Config";
-		m_ExportConfigFile.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ExportConfigFile.m_CurrentBoolean = false;
-
-		m_ExportConfigHeader.m_Label = "Server Config Options";
-		m_ExportConfigHeader.m_Expanded = true;
-
-		m_ExportConfigServerIP.m_Label = "Server IPv4";
-		m_ExportConfigServerIP.m_Flags |= EditorUI::EditIVec4_Indented;
-		m_ExportConfigServerIP.m_CurrentIVec4 = {127, 0, 0, 1};
-		m_ExportConfigServerIP.m_Bounds = { 0, 255 };
-
-		m_ExportConfigPort.m_Label = "Server Port";
-		m_ExportConfigPort.m_Flags |= EditorUI::EditInteger_Indented;
-		m_ExportConfigPort.m_CurrentInteger = 60'000;
-		m_ExportConfigPort.m_Bounds = { 101, 65'535 };
-
-		m_ExportConfigLocation.m_Label = "Local Machine";
-		m_ExportConfigLocation.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ExportConfigLocation.m_CurrentBoolean = true;
-
-		m_ExportConfigSecrets.m_Label = "Validation Secrets";
-		m_ExportConfigSecrets.m_Flags |= EditorUI::EditIVec4_Indented;
-		m_ExportConfigSecrets.m_CurrentIVec4 = { 0, 0, 0, 0 };
-		m_ExportConfigSecrets.m_Bounds = { 0, 2'147'483'647 };
 	}
 
 	void MainWindow::InitializeImportAssetWidgets()
@@ -712,21 +642,23 @@ namespace Kargono::Windows
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
 		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
+
+		// Start up client networking
+		if (Projects::ProjectService::GetActiveAppIsNetworked())
+		{
+			Network::ClientService::Init();
+		}
+
+		// Call the runtime start function
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
 		if (scriptHandle != 0)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 
-		if (Projects::ProjectService::GetActiveAppIsNetworked())
-		{
-			Network::ClientService::Init();
-		}
-
 		// Load particle emitters
 		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 
-		AppTickService::LoadGeneratorsFromProject();
 		EngineService::GetActiveEngine().UpdateAppStartTime();
 		EditorUI::EditorUIService::SetFocusedWindow(m_ViewportPanel->m_PanelName);
 	}
@@ -1315,6 +1247,7 @@ namespace Kargono::Windows
 						ImGui::SaveIniSettingsToDisk("./Resources/EditorConfig.ini");
 					}
 					ImGui::MenuItem("ImGui Demo", NULL, &m_ShowDemoWindow);
+					ImGui::MenuItem("ImPlot Demo", NULL, &m_ShowImPlotWindow);
 					ImGui::EndMenu();
 				}
 
@@ -1365,6 +1298,7 @@ namespace Kargono::Windows
 		if (m_ShowInputMapEditor) { m_InputMapPanel->OnEditorUIRender(); }
 		if (m_ShowProperties) { m_PropertiesPanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
+		if (m_ShowImPlotWindow) { ImPlot::ShowDemoWindow(&m_ShowImPlotWindow); }
 		if (m_ShowTesting) { m_TestingPanel->OnEditorUIRender(); }
 		if (m_ShowAIStateEditor) { m_AIStatePanel->OnEditorUIRender(); }
 	}

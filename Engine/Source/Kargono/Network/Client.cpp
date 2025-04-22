@@ -6,398 +6,535 @@
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/Timers.h"
 
+#include "Kargono/Utility/Operations.h"
+#include "Kargono/Core/Engine.h"
+#include "Kargono/Utility/Timers.h"
+
+#include <conio.h>
+#include <queue>
 
 namespace Kargono::Network
 {
-	void ClientUDPConnection::Disconnect(asio::ip::udp::endpoint key)
+	bool Client::Init(const ServerConfig& initConfig)
 	{
-		UNREFERENCED_PARAMETER(key);
+		// Set config
+		m_Config = initConfig;
 
-		// Check if TCP connection is valid since it is the connection we are trying to stop
-		if (!m_ActiveTCPConnection)
+		// Initialize the OS specific socket context
+		if (!SocketContext::InitializeSockets())
 		{
-			KG_ERROR("Invalid connection in UDP Disconnect()");
-			return;
-		}
-
-		// Disconnect TCP connection
-		m_ActiveTCPConnection->Disconnect();
-	}
-	void ClientUDPConnection::AddMessageToIncomingMessageQueue()
-	{
-		// Add message to NetworkContext's incoming queue, alert thread to wake up and continue reading messages asynchronously
-		m_NetworkContextPtr->m_IncomingMessageQueue.PushBack({ nullptr, m_MessageCache });
-		m_NetworkContextPtr->NetworkThreadWakeUp();
-	}
-		
-	bool ClientTCPConnection::Connect(const asio::ip::tcp::resolver::results_type& endpoints)
-	{
-		std::atomic<bool> connectionSuccessful = false;
-		asio::error_code errorCode;
-
-		// Start async connection (Prime the network context/thread with work to do)
-		asio::async_connect(m_TCPSocket, endpoints, [&](std::error_code ec, const asio::ip::tcp::endpoint& endpoint)
-		{
-			UNREFERENCED_PARAMETER(endpoint);
-
-			if (ec)
-			{
-				// Handle async_connect failure
-				KG_WARN("Error while attempting to connect to server. Error Code: [{}] Message: {}", ec.value(), ec.message());
-				Disconnect();
-			}
-			else
-			{
-				// Start waiting for server to send the validation sequence
-				ReadValidationAsync();
-
-				// Assume once we return from the ReadValidationAsync function, a determination has been made
-				connectionSuccessful = true;
-				m_NetworkContextPtr->NetworkThreadWakeUp();
-			}
-		});
-		
-		// Start Context Thread (Start immediately handling the async_connect function from above)
-		m_NetworkContextPtr->m_AsioThread = std::thread([this]() { m_NetworkContextPtr->m_AsioContext.run(); });
-
-		// Block this thread until a validation determination is made
-		while (!m_NetworkContextPtr->m_QuitNetworkThread && !connectionSuccessful)
-		{
-			m_NetworkContextPtr->NetworkThreadSleep();
-		}
-
-		// Check for failure to connect
-		if (!connectionSuccessful || m_NetworkContextPtr->m_QuitNetworkThread)
-		{
-			KG_WARN("Failed to create ClientTCPConnection connection.");
+			KG_WARN("Failed to initialize platform socket context");
 			return false;
 		}
 
-		// Initialize UDP endpoints for new UDP connnection
-		m_UDPLocalEndpoint = asio::ip::udp::endpoint(m_TCPSocket.local_endpoint(errorCode).address(),
-			m_TCPSocket.local_endpoint(errorCode).port());
-		m_UDPRemoteSendEndpoint = asio::ip::udp::endpoint(m_TCPSocket.remote_endpoint().address(),
-			m_TCPSocket.remote_endpoint().port());
-		m_UDPRemoteReceiveEndpoint = asio::ip::udp::endpoint(m_TCPSocket.remote_endpoint().address(),
-			m_TCPSocket.remote_endpoint().port());
+		// Establish socket connection
+		constexpr uint16_t k_MaxMachineSockets{ 8 };
+		uint16_t currentPort{ (uint16_t)(initConfig.m_ServerAddress.GetPort() + 1) };
+		const uint16_t maximumPort{ (uint16_t)(currentPort + k_MaxMachineSockets) };
+		SocketErrorCode openSocketResult{ SocketErrorCode::None };
 
-		// Handle endpoint creation failures
-		if (errorCode)
+		do
 		{
-			KG_WARN("Failed to create ClientTCPConnection connection. Error Code: [{}] Message: {}", errorCode.value(),
-				errorCode.message());
+			openSocketResult = m_ClientSocket.Open(currentPort);
+
+			if (openSocketResult == SocketErrorCode::OtherFailure || currentPort >= maximumPort)
+			{
+				KG_WARN("Failed to create socket!");
+				SocketContext::ShutdownSockets();
+				return false;
+			}
+			currentPort++;
+		} while (openSocketResult == SocketErrorCode::AddressInUse);
+
+
+		// Initialize notifiers
+		m_Notifiers.Init(&m_ClientActive);
+
+		// Set client as active (inter-thread and network operations are now allowed)
+		m_ClientActive = true;
+		m_Notifiers.m_ClientStatusNotifier.Notify(true);
+
+		// Initialize event thread
+		if (!m_EventThread.Init(&m_ClientSocket, &m_NetworkThread))
+		{
+			KG_WARN("Failed to initialize the client's event thread!");
+			Terminate(false);
 			return false;
 		}
 
-		// TCP Connection successful!
+		// Initialize network thread
+		if (!m_NetworkThread.Init(&m_Config, &m_ClientSocket, &m_ClientActive, &m_EventThread, this))
+		{
+			KG_WARN("Failed to initialize the client's network thread!");
+			Terminate(false);
+			return false;
+		}
+
+		m_EventThread.SetSyncPingFreq(m_Config.m_ServerPassiveRefresh);
+
 		return true;
 	}
-	void ClientTCPConnection::Disconnect()
+
+	bool ClientNetworkThread::Init(ServerConfig* serverConfig, Socket* clientSocket, std::atomic<bool>* clientActive, ClientEventThread* eventThread, Client* client)
 	{
-		// Close the connection
-		if (IsConnected())
+		KG_ASSERT(serverConfig);
+		KG_ASSERT(clientSocket);
+		KG_ASSERT(clientActive);
+		KG_ASSERT(eventThread);
+		KG_ASSERT(client);
+
+		// Store dependencies
+		i_ServerConfig = serverConfig;
+		i_ClientSocket = clientSocket;
+		i_ClientActive = clientActive;
+		i_EventThread = eventThread;
+		i_Client = client;
+
+		// Initialize notifiers
+		m_Notifiers.Init(clientActive);
+		m_ReliabilityNotifiers.Init(clientActive);
+
+		// Initialize server connection
+		m_ServerConnection.Init(*i_ServerConfig);
+		m_Notifiers.m_ConnectStatusNotifier.Notify(m_ServerConnection.m_Status, m_ServerConnection.m_ClientIndex);
+
+		m_EventQueue.Init(KG_BIND_CLASS_FN(OnEvent));
+
+		// Init request timers
+		m_ManageConnectionTimer.InitializeTimer();
+		m_ManageConnectionTimer.SetConstantFrameTime(
+			std::chrono::nanoseconds(i_ServerConfig->m_ServerActiveRefresh * 1'000'000));
+		m_RequestConnectionTimer.InitializeTimer(i_ServerConfig->m_RequestConnectionFrequency);
+
+		// Send initial connection request
+		m_ServerConnection.m_Status = ConnectionStatus::Connecting;
+		m_Notifiers.m_ConnectStatusNotifier.Notify(m_ServerConnection.m_Status, m_ServerConnection.m_ClientIndex);
+
+		SendRequestConnectionMessage();
+
+		// Start request connection
+		m_Thread.StartThread(KG_BIND_CLASS_FN(RequestConnection));
+		return true;
+	}
+
+	void ClientNetworkThread::Terminate(bool withinNetworkThread)
+	{
+		m_Thread.StopThread(withinNetworkThread);
+		m_ServerConnection.Terminate();
+		m_Notifiers.m_ConnectStatusNotifier.Notify(m_ServerConnection.m_Status,
+			m_ServerConnection.m_ClientIndex);
+	}
+
+	void ClientNetworkThread::WaitOnThread()
+	{
+		m_Thread.WaitOnThread();
+	}
+
+	bool ClientNetworkThread::StartConnection(ClientIndex index, bool withinNetworkThread)
+	{
+		KG_ASSERT(index != k_InvalidClientIndex);
+
+		m_ServerConnection.m_Status = ConnectionStatus::Connected;
+		m_ServerConnection.m_ClientIndex = index;
+		m_Notifiers.m_ConnectStatusNotifier.Notify(m_ServerConnection.m_Status,
+			m_ServerConnection.m_ClientIndex);
+
+		// Ensure event thread is running quickly
+		i_EventThread->SetSyncPingFreq(i_ServerConfig->m_ServerActiveRefresh);
+
+		// Start network thread
+		m_Thread.ChangeWorkFunction(KG_BIND_CLASS_FN(RunThread), withinNetworkThread);
+		return true;
+	}
+
+	void ClientNetworkThread::HandleConnectionKeepAlive()
+	{
+		Connection& connection = m_ServerConnection.m_Connection;
+		ReliabilityContext& reliableContext = connection.m_ReliabilityContext;
+
+		// Handle sync pings
+		if (connection.m_ReliabilityContext.m_CongestionContext.IsCongested())
 		{
-			// Close the tcp connection TODO: Maybe do this inside TCPConnection
-			asio::post(m_NetworkContextPtr->m_AsioContext, [this]()
+			if (m_CongestionCounter % 3 == 0)
 			{
-				m_TCPSocket.close();
-			});
+				// Send synchronization pings
+				SendKeepAliveMessage();
+			}
+			m_CongestionCounter++;
 		}
-		KG_INFO("Connection to server has been terminated");
-
-		// Notify the main thread and the network thread of the disconnect
-		EngineService::SubmitToEventQueue(CreateRef<Events::ConnectionTerminated>());
-		ClientService::SubmitToNetworkEventQueue(CreateRef<Events::ConnectionTerminated>());
-
-	}
-
-	void ClientTCPConnection::AddMessageToIncomingMessageQueue()
-	{
-		// Add the new message (added to the message cache asynchronously) to the incoming message queue
-		m_NetworkContextPtr->m_IncomingMessageQueue.PushBack({ nullptr, m_MessageCache });
-
-		// Wake up the network thread to handle the new message
-		m_NetworkContextPtr->NetworkThreadWakeUp();
-	}
-
-	void ClientTCPConnection::WriteValidationAsync()
-	{
-		asio::async_write(m_TCPSocket, asio::buffer(&m_ValidationOutput, sizeof(uint64_t)),
-			[this](std::error_code ec, std::size_t length)
+		else
 		{
-			UNREFERENCED_PARAMETER(length);
+			SendKeepAliveMessage();
+		}
+	}
 
-			// Check for async_write error
-			if (ec)
+	bool ClientNetworkThread::HandleConnectionTimeout(float deltaTime)
+	{
+		Connection& connection = m_ServerConnection.m_Connection;
+		ReliabilityContext& reliableContext = connection.m_ReliabilityContext;
+
+		// Increment time since last sync ping for server connection
+		reliableContext.OnUpdate(deltaTime);
+
+		// Check for connection timeout
+		if (reliableContext.m_LastPacketReceived > i_ServerConfig->m_ConnectionTimeout)
+		{
+			KG_WARN("Connection to server timed out");
+			i_Client->Terminate(true);
+			return false;
+		}
+		return true;
+	}
+
+	bool Client::Terminate(bool withinNetworkThread)
+	{
+		// Join the network thread
+		m_NetworkThread.Terminate(withinNetworkThread);
+		m_EventThread.Terminate(false);
+
+		// Shutdown client socket
+		m_ClientSocket.Close();
+		SocketContext::ShutdownSockets();
+
+		// Set client in-active
+		m_ClientActive = false;
+		m_Notifiers.m_ClientStatusNotifier.Notify(false);
+
+		return true;
+	}
+
+	void Client::WaitOnThreads()
+	{
+		m_NetworkThread.WaitOnThread();
+		m_EventThread.WaitOnThread();
+	}
+
+	void ClientNetworkThread::RunThread()
+	{
+		if (m_ManageConnectionTimer.CheckForSingleUpdate())
+		{
+			// Update reliability observers
+			ReliabilityContext& relContext{ m_ServerConnection.m_Connection.m_ReliabilityContext };
+			m_ReliabilityNotifiers.m_ReliabilityStateNotifier.Notify(
+				m_ServerConnection.m_ClientIndex,
+				relContext.m_CongestionContext.IsCongested(), 
+				relContext.m_RoundTripContext.GetAverageRoundTrip()
+			);
+
+			// Send keep-alive packets
+			HandleConnectionKeepAlive();
+
+			// Handle connection timeout
+			if (!HandleConnectionTimeout(m_ManageConnectionTimer.GetConstantFrameTimeFloat()))
 			{
-				KG_WARN("Error occurred while attempting to write a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());
-				m_TCPSocket.close();
+				return;
+			}
+		}
+
+		// Process the network event queue
+		m_EventQueue.ProcessQueue();
+		m_WorkQueue.ProcessQueue();
+
+		Address sender;
+		unsigned char buffer[k_MaxPacketSize];
+		int bytesRead{ 0 };
+
+		do
+		{
+			bytesRead = i_ClientSocket->Receive(sender, buffer, sizeof(buffer));
+
+			// Packet cannot be smaller than header
+			if (bytesRead < k_PacketHeaderSize)
+			{
+				continue;
+			}
+			
+			// Start forming incoming message
+			Message msg;
+
+			// Check for a valid app ID
+			uint8_t* headerIterator{ buffer };
+			AppID appID{ *(AppID*)buffer };
+			if (appID != i_ServerConfig->m_AppProtocolID)
+			{
+				KG_WARN("Failed to validate the app ID from packet");
+				continue;
+			}
+			headerIterator += sizeof(AppID);
+
+			// Get the message type
+			msg.m_Header.m_MessageType = *(MessageType*)headerIterator;
+			if (IsConnectionManagementPacket(msg.m_Header.m_MessageType))
+			{
+				continue;
+			}
+			headerIterator += sizeof(MessageType);
+			
+
+			// Get the client index
+			ClientIndex index = *(ClientIndex*)headerIterator;
+			if (index != m_ServerConnection.m_ClientIndex)
+			{
+				KG_WARN("Failed to process packet. Invalid client index found {}. Active index is {}", 
+					index, m_ServerConnection.m_ClientIndex);
+				continue;
+			}
+			headerIterator += sizeof(ClientIndex);
+
+			// Process reliability segment
+			ReliabilityContext& relContext{ m_ServerConnection.m_Connection.m_ReliabilityContext };
+			bool packetAccepted = relContext.ProcessReliabilitySegmentFromPacket(headerIterator);
+
+			if (!packetAccepted)
+			{
+				continue;
+			}
+
+			// Process all ack's
+			for (AckData data : relContext.GetRecentAcks())
+			{
+				m_ReliabilityNotifiers.m_AckPacketNotifier.Notify(index, data.m_Sequence, data.m_RTT);
+			}
+
+			// Load the packet payload into message
+			if (bytesRead > k_PacketHeaderSize)
+			{
+				msg.m_Header.m_PayloadSize = bytesRead - k_PacketHeaderSize;
+				msg.m_PayloadData.resize(msg.m_Header.m_PayloadSize);
+				memcpy(msg.m_PayloadData.data(), (uint8_t*)buffer + k_PacketHeaderSize, msg.m_Header.m_PayloadSize);
+			}
+
+			OpenMessageFromServer(msg);
+			
+		} while (bytesRead > 0);
+
+		// Suspend the thread until an event occurs
+		m_Thread.SuspendThread(true);
+	}
+
+	void ClientEventThread::RunThread()
+	{
+		m_WorkQueue.ProcessQueue();
+
+		DWORD waitResult = WaitForMultipleObjects(1, &m_NetworkEventHandle, FALSE, (DWORD)m_ActiveSyncPingFreq);
+
+		if (waitResult == WAIT_OBJECT_0)  // Network event
+		{
+			WSANETWORKEVENTS netEvents;
+			WSAEnumNetworkEvents(i_ClientSocket->GetHandle(), m_NetworkEventHandle, &netEvents);
+
+			if (netEvents.lNetworkEvents & FD_READ)
+			{
+				i_NetworkThread->ResumeThread(false);
+			}
+		}
+		else
+		{
+			i_NetworkThread->ResumeThread(false);
+		}
+	}
+
+	void ClientNetworkThread::SubmitFunction(const std::function<void()> workFunction)
+	{
+		m_WorkQueue.SubmitFunction(workFunction);
+
+		m_Thread.ResumeThread(false);
+	}
+
+	void ClientNetworkThread::SubmitEvent(Ref<Events::Event> event)
+	{
+		m_EventQueue.SubmitEvent(event);
+
+		m_Thread.ResumeThread(false);
+	}
+
+	void ClientNetworkThread::OnEvent(Events::Event* event)
+	{
+		// Process events based on their type
+		switch (event->GetEventType())
+		{
+		case Events::EventType::RequestJoinSession:
+			SendRequestJoinSessionMessage();
+			break;
+		case Events::EventType::RequestUserCount:
+			SendRequestUserCountMessage();
+			break;
+		case Events::EventType::LeaveCurrentSession:
+			SendLeaveCurrentSessionMessage();
+			break;
+		case Events::EventType::StartSession:
+			m_SessionStartFrame = EngineService::GetActiveEngine().GetUpdateCount();
+			break;
+		case Events::EventType::ConnectionTerminated:
+			// Essentially clear all session information from this client context
+			m_SessionIndex = k_InvalidSessionIndex;
+			m_SessionStartFrame = 0;
+			break;
+		case Events::EventType::EnableReadyCheck:
+			SendEnableReadyCheckMessage();
+			break;
+		case Events::EventType::SendReadyCheck:
+			SendSessionReadyCheckMessage();
+			break;
+		case Events::EventType::SendAllEntityLocation:
+			SendAllEntityLocation(*(Events::SendAllEntityLocation*)event);
+			break;
+		case Events::EventType::SendAllEntityPhysics:
+			SendAllEntityPhysicsMessage(*(Events::SendAllEntityPhysics*)event);
+			break;
+		case Events::EventType::SignalAll:
+			SendAllClientsSignalMessage(*(Events::SignalAll*)event);
+			break;
+		}
+	}
+
+	void ClientNetworkThread::RequestConnection()
+	{
+		// Check for a network update
+		while (m_ManageConnectionTimer.CheckForSingleUpdate())
+		{
+			// Handle sending connection requests
+			if (m_RequestConnectionTimer.CheckForUpdate(m_ManageConnectionTimer.GetConstantFrameTime()))
+			{
+				// Send connection request
+				SendRequestConnectionMessage();
+			}
+
+			// Handle the case of a timeout
+			if (!HandleConnectionTimeout(m_ManageConnectionTimer.GetConstantFrameTimeFloat()))
+			{
+				return;
+			}
+		}
+
+		Address sender;
+		unsigned char buffer[k_MaxPacketSize];
+		int bytes_read{ 0 };
+
+		do
+		{
+			bytes_read = i_ClientSocket->Receive(sender, buffer, sizeof(buffer));
+
+			if (bytes_read < k_PacketHeaderSize)
+			{
+				continue;
+			}
+			uint8_t* headerIterator{ buffer };
+
+			// Check for a valid app ID
+			AppID appID{ *(AppID*)headerIterator };
+			if (appID != i_ServerConfig->m_AppProtocolID)
+			{
+				KG_WARN("Failed to validate the app ID from packet");
+				continue;
+			}
+			headerIterator += sizeof(AppID);
+
+			// Get packet type
+			MessageType type = *(MessageType*)headerIterator;
+			headerIterator += sizeof(MessageType);
+
+			ClientIndex index = *(ClientIndex*)headerIterator;
+			headerIterator += sizeof(ClientIndex);
+
+			if (!IsConnectionManagementPacket(type))
+			{
+				continue;
+			}
+
+			if (!OpenManagementPacket(type, index))
+			{
 				return;
 			}
 			
-			ReadMessageHeaderAsync();
-		});
-	}
-	void ClientTCPConnection::ReadValidationAsync()
-	{
-		asio::async_read(m_TCPSocket, asio::buffer(&m_ValidationInput, sizeof(uint64_t)),
-			[&](std::error_code ec, std::size_t length)
-		{
-			UNREFERENCED_PARAMETER(length);
+		} while (bytes_read > 0);
 
-			// Check for async_read error
-			if (ec)
-			{
-				KG_WARN("Error occurred while attempting to read a TCP validation message. Error Code: [{}] Message: {}", ec.value(), ec.message());
-				Disconnect();
-				return;
-			}
-				
-			// Connection is a client, so solve puzzle
-			m_ValidationOutput = GenerateValidationToken(m_ValidationInput);
-			// Write the result
-			WriteValidationAsync();
-		});
+		// Suspend the thread until an event occurs
+		m_Thread.SuspendThread(true);
+
 	}
 
-
-	bool Client::ConnectToServer(const std::string& serverIP, uint16_t serverPort, bool remote)
+	void ClientNetworkThread::ResumeThread(bool withinThread)
 	{
-		// Use this error code a lot
-		asio::error_code errorCode;
-
-		// Create TCP Socket for this new connection
-		asio::ip::tcp::socket localSocket{m_NetworkContext.m_AsioContext};
-
-		// Create proper local endpoint if a remote connection is desired
-		if (remote)
-		{
-			// Resolve this computer's TCP endpoint
-			bool success = ResolveLocalTCPEndpoint(localSocket, serverPort);
-			if (!success)
-			{
-				KG_WARN("Failed to connect to server. Local endpoint determination failed.");
-				return false;
-			}
-		}
-
-		// Now we are looking for the server...
-
-		// Resolve provided host/port into a TCP endpoint list for the server
-		asio::ip::tcp::resolver resolver(m_NetworkContext.m_AsioContext);
-		asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(serverIP, std::to_string(serverPort));
-
-		// Create a new TCP connection object
-		m_ClientTCPConnection = CreateRef<ClientTCPConnection>(&m_NetworkContext, std::move(localSocket));
-
-		// Initialize connection to remote, server endpoint
-		KG_INFO("Attempting TCP connection to server");
-		if (!m_ClientTCPConnection->Connect(endpoints)) 
-		{ 
-			KG_INFO("Failed to initiate TCP connection to server");
-			return false; 
-		}
-		KG_INFO("Successful TCP connection to server");
-
-		// Create Local UDP Socket
-		KG_INFO("Attempting UDP connection to server");
-		asio::ip::udp::socket serverUDPSocket {m_NetworkContext.m_AsioContext};
-
-		// Get Local UDP Endpoint created from Connect Function
-		//	and bind it to the socket
-		asio::ip::udp::endpoint& localEndpoint = m_ClientTCPConnection->GetUDPLocalEndpoint();
-		serverUDPSocket.open(localEndpoint.protocol());
-		if (errorCode)
-		{
-			// Handle .open failure
-			KG_WARN("Connection to server failed. Error Code: [{}] Message: {}", errorCode.value(),
-				errorCode.message());
-			return false;
-		}
-		serverUDPSocket.bind(localEndpoint);
-		if (errorCode)
-		{
-			// Handle .bind failure
-			KG_WARN("Connection to server failed. Error Code: [{}] Message: {}", errorCode.value(),
-				errorCode.message());
-			return false;
-		}
-
-		// Create the UDP connection object and initiate the connection
-		m_ClientUDPConnection = CreateRef<ClientUDPConnection>(&m_NetworkContext, std::move(serverUDPSocket), m_ClientTCPConnection);
-		m_ClientUDPConnection->StartReadingMessages();
-
-		// Send multiple UDP connection checks to ensure UDP "connection" is valid
-		// (BTW, this function call exits immediately. This is handled asynchronously.)
-		// As long as the TCP connection is valid, the connection will start. The connection
-		// is withdrawn if these UDP checks fail
-		Utility::AsyncBusyTimer::CreateRecurringTimer(0.3f, 10, [&]()
-		{
-			// Submit a message check to the network thread
-			ClientService::SubmitToNetworkFunctionQueue([&]()
-			{
-				SendCheckUDPConnectionMessage();
-			});
-
-			// Wake up the network thread so it can process the function queue
-			m_NetworkContext.NetworkThreadWakeUp();
-		}, [&]()
-		{
-			// Final check to ensure the UDP connection test was successful
-			ClientService::SubmitToNetworkFunctionQueue([&]()
-			{
-				if (!m_UDPConnectionSuccessful)
-				{
-					KG_WARN("UDP Connection Unsuccessful!");
-					DisconnectFromServer();
-					return;
-				}
-				KG_INFO("UDP Connection Successful!");
-			});
-
-			// Wake up the network thread so it can process the function queue
-			m_NetworkContext.NetworkThreadWakeUp();
-		});
-
-		return true;
+		m_Thread.ResumeThread(withinThread);
 	}
 
-	void Client::DisconnectFromServer()
+	void ClientNetworkThread::SuspendThread(bool withinThread)
 	{
-		// Check if already connected
-		if (IsConnectedToServer())
-		{
-			m_ClientTCPConnection->Disconnect();
-		}
-
-		// Close asio context, thread, and TCP connection
-		m_NetworkContext.m_AsioContext.stop();
-		if (m_NetworkContext.m_AsioThread.joinable())
-		{
-			m_NetworkContext.m_AsioThread.join();
-		}
-		m_ClientTCPConnection.reset();
+		m_Thread.SuspendThread(withinThread);
 	}
 
-	bool Client::IsConnectedToServer()
+	bool ClientNetworkThread::SendToServer(Message& msg)
 	{
-		// Check if TCP is valid. UDP is not necessary. (Not really a "connection" anyways)
-		if (m_ClientTCPConnection) 
-		{ 
-			return m_ClientTCPConnection->IsConnected();
+		KG_ASSERT(msg.m_Header.m_PayloadSize < k_MaxPayloadSize);
+
+		Connection& connection = m_ServerConnection.m_Connection;
+
+		// Prepare the final data buffer
+		uint8_t buffer[k_MaxPacketSize];
+		uint8_t* headerIterator{ buffer };
+
+		// Set the app ID
+		AppID& appIDLocation = *(AppID*)headerIterator;
+		appIDLocation = i_ServerConfig->m_AppProtocolID;
+		headerIterator += sizeof(AppID);
+
+		// Set the packet type
+		MessageType& packetTypeLocation = *(MessageType*)headerIterator;
+		packetTypeLocation = msg.m_Header.m_MessageType;
+		headerIterator += sizeof(MessageType);
+
+		// Send the client connection Index
+		ClientIndex& clientIndexLocation = *(ClientIndex*)headerIterator;
+		clientIndexLocation = m_ServerConnection.m_ClientIndex;
+		headerIterator += sizeof(ClientIndex);
+
+		if (!IsConnectionManagementPacket(msg.m_Header.m_MessageType))
+		{
+			// Set reliability segment
+			connection.m_ReliabilityContext.InsertReliabilitySegmentIntoPacket(headerIterator);
+
+			PacketSequence sentPacket{ *(PacketSequence*)headerIterator };
+			m_ReliabilityNotifiers.m_SendPacketNotifier.Notify(m_ServerConnection.m_ClientIndex, sentPacket);
 		}
-		return false;
+
+		if (msg.m_Header.m_PayloadSize > 0)
+		{
+			// Set the payload data
+			memcpy(&buffer[k_PacketHeaderSize], msg.m_PayloadData.data(), msg.m_Header.m_PayloadSize);
+		}
+
+		// Send the message
+		bool sendSuccess{ false };
+		sendSuccess = i_ClientSocket->Send(connection.m_Address, buffer, msg.m_Header.m_PayloadSize + k_PacketHeaderSize);
+
+		return sendSuccess;
 	}
 
-	bool Client::ResolveLocalTCPEndpoint(asio::ip::tcp::socket& localSocket, uint16_t serverPort)
+	void ConnectionToServer::Init(const ServerConfig& config)
 	{
-		asio::error_code errorCode;
-
-		// Get local TCP address and port from localhost
-		asio::ip::tcp::resolver resolver(m_NetworkContext.m_AsioContext);
-		asio::ip::tcp::resolver::query query(asio::ip::host_name(errorCode), "");
-		asio::ip::tcp::resolver::iterator iter = resolver.resolve(query, errorCode);
-
-		// Handle resolving failures
-		if (errorCode)
-		{
-			// Handle .resolve failure
-			KG_WARN("Failed to resolve local TCP endpoint. Error Code: [{}] Message: {}", errorCode.value(),
-				errorCode.message());
-			return false;
-		}
-
-		// Search for IPV4 address
-		while (iter != asio::ip::tcp::resolver::iterator())
-		{
-			if (iter->endpoint().address().is_v4())
-			{
-				break;
-			}
-			iter++;
-		}
-
-		// Create local endpoint, bind IPV4 address to new socket,
-		// and assign the local endpoint with (serverPort - 100)
-		KG_ASSERT(serverPort > 100, "Port must be greater than 100! We need to use multiple ports below in indicated port.");
-
-		asio::ip::tcp::endpoint localTCPEndpoint = asio::ip::tcp::endpoint
-		(
-			iter->endpoint().address(),
-			serverPort - 100
-		);
-
-		// Bind the endpoint
-		localSocket.open(localTCPEndpoint.protocol(), errorCode);
-		localSocket.bind(localTCPEndpoint);
-		// Handle binding failures
-		if (errorCode)
-		{
-			KG_WARN("Failed to resolve local TCP endpoint. Error Code: [{}] Message: {}", errorCode.value(),
-				errorCode.message());
-			return false;
-		}
-
-		return true;
+		m_Connection.m_Address = config.m_ServerAddress;
+		m_Connection.m_ReliabilityContext = ReliabilityContext();
+		m_Status = ConnectionStatus::Disconnected;
+		m_ClientIndex = k_InvalidClientIndex;
 	}
 
-	void Client::CheckMessagesFromServer(size_t maxMessages)
+	void ConnectionToServer::Terminate()
 	{
-		// Sleep the network thread if there is no messages to process
-		if (m_NetworkContext.m_IncomingMessageQueue.IsEmpty())
-		{ 
-			m_NetworkContext.NetworkThreadSleep();
-		}
-
-		// Process messages until the message queue is empty or the maximum process amount is reached
-		// (By-the-way, the max message count ensures the other network thread functions have a chance to be processed)
-		size_t messageCount = 0;
-		while (messageCount < maxMessages && !m_NetworkContext.m_IncomingMessageQueue.IsEmpty())
-		{
-			// Grab the front message
-			Network::OwnedMessage msg = m_NetworkContext.m_IncomingMessageQueue.PopFront();
-
-			// Pass to message handler
-			OpenMessageFromServer(msg.m_Message);
-
-			// Continue
-			messageCount++;
-		}
+		m_Connection.m_Address = Address();
+		m_Connection.m_ReliabilityContext = ReliabilityContext();
+		m_Status = ConnectionStatus::Disconnected;
+		m_ClientIndex = k_InvalidClientIndex;
 	}
 
-	void Client::SendTCPToServer(const Message& msg)
+	void ClientNetworkThread::SendRequestUserCountMessage()
 	{
-		if (IsConnectedToServer())
-		{
-			m_ClientTCPConnection->SendTCPMessage(msg);
-		}
-	}
-
-	void Client::SendUDPToServer(Message& msg)
-	{
-		if (IsConnectedToServer())
-		{
-			LabeledMessage labeled{ m_ClientTCPConnection->GetUDPRemoteSendEndpoint(), msg };
-			m_ClientUDPConnection->SendUDPMessage(labeled);
-		}
-	}
-
-	void Client::SendChatToServer(const std::string& text)
-	{
-		Kargono::Network::Message msg;
-		msg.m_Header.m_MessageType = MessageType::GenericMessage_ClientChat;
-		msg.AppendPayload((void*)text.data(), text.size());
-		SendTCPToServer(msg);
-	}
-
-	void Client::SendRequestUserCountMessage()
-	{
-		Kargono::Network::Message msg;
+		Message msg;
 		msg.m_Header.m_MessageType = MessageType::ServerQuery_RequestClientCount;
-		SendTCPToServer(msg);
+		SendToServer(msg);
 	}
 
-	void Client::SendAllEntityLocation(Events::SendAllEntityLocation& event)
+	void ClientNetworkThread::SendAllEntityLocation(Events::SendAllEntityLocation& event)
 	{
 		Kargono::Network::Message msg;
 
@@ -410,75 +547,66 @@ namespace Kargono::Network
 		msg << translation.z;
 
 		// Send the message quickly with UDP
-		SendUDPToServer(msg);
+		SendToServer(msg);
 	}
 
-	void Client::SendInitSyncPingMessage()
-	{
-		// Send a simple init sync ping message
-		Kargono::Network::Message newMessage;
-		newMessage.m_Header.m_MessageType = MessageType::ManageSession_SyncPing;
-		// Send the message reliably with TCP
-		SendTCPToServer(newMessage);
-	}
-
-	void Client::SendRequestJoinSessionMessage()
+	void ClientNetworkThread::SendRequestJoinSessionMessage()
 	{
 		// Send a message that prompts the server to allow the client to join.
 		// Should receive either an accept or deny message back.
-		Kargono::Network::Message msg;
+		Message msg;
 		msg.m_Header.m_MessageType = MessageType::ManageSession_RequestClientJoin;
 
 		// Send the message reliably with TCP
-		SendTCPToServer(msg);
+		SendToServer(msg);
 	}
 
-	void Client::SendEnableReadyCheckMessage()
+	void ClientNetworkThread::SendEnableReadyCheckMessage()
 	{
 		// Send the message to signify this client is ready
-		Kargono::Network::Message msg;
+		Message msg;
 		msg.m_Header.m_MessageType = MessageType::ManageSession_EnableReadyCheck;
 
 		// Send the message reliably with TCP
-		SendTCPToServer(msg);
+		SendToServer(msg);
 	}
 
-	void Client::SendSessionReadyCheckMessage()
+	void ClientNetworkThread::SendSessionReadyCheckMessage()
 	{
 		// Send a message to the server initiating a ready check
-		Kargono::Network::Message msg;
+		Message msg;
 		msg.m_Header.m_MessageType = MessageType::ManageSession_StartReadyCheck;
 
 		// Send the message reliably with TCP
-		SendTCPToServer(msg);
+		SendToServer(msg);
 	}
 
-	void Client::SendAllClientsSignalMessage(Events::SignalAll& event)
+	void ClientNetworkThread::SendAllClientsSignalMessage(Events::SignalAll& event)
 	{
 		// Send a scripting specific signal to all other clients
-		Kargono::Network::Message msg;
+		Message msg;
 		msg.m_Header.m_MessageType = MessageType::ScriptMessaging_SendAllClientsSignal;
 		msg << event.GetSignal();
 
 		// Send the message reliably with TCP
-		SendTCPToServer(msg);
+		SendToServer(msg);
 	}
 
-	void Client::SendKeepAliveMessage()
+	void ClientNetworkThread::SendKeepAliveMessage()
 	{
 		// Send a simple message that keeps the UDP "connection" alive
-		Kargono::Network::Message msg;
+		Message msg;
 		msg.m_Header.m_MessageType = MessageType::ManageConnection_KeepAlive;
 
 		// Send the message quickly with UDP
-		SendUDPToServer(msg);
+		SendToServer(msg);
 	}
 
-	void Client::SendAllEntityPhysicsMessage(Events::SendAllEntityPhysics& event)
+	void ClientNetworkThread::SendAllEntityPhysicsMessage(Events::SendAllEntityPhysics& event)
 	{
 		// Create/send a message that updates all other clients with a particular entity's 
 		// ID, location, and velocity.
-		Kargono::Network::Message msg;
+		Message msg;
 		msg.m_Header.m_MessageType = MessageType::ManageSceneEntity_SendAllClientsPhysics;
 		msg << event.GetEntityID();
 		Math::vec3 translation = event.GetTranslation();
@@ -490,34 +618,48 @@ namespace Kargono::Network
 		msg << linearVelocity.y;
 
 		// Send the message quickly with UDP
-		SendUDPToServer(msg);
+		SendToServer(msg);
 	}
 
-	void Client::SendLeaveCurrentSessionMessage()
+	void ClientNetworkThread::SendLeaveCurrentSessionMessage()
 	{
 		// Send a message notifying the server and all other clients that this client is leaving
-		Kargono::Network::Message msg;
+		Message msg;
 		msg.m_Header.m_MessageType = MessageType::ManageSession_NotifyAllLeave;
 
 		// Send the message reliably with TCP
-		SendTCPToServer(msg);
+		SendToServer(msg);
 
 		// Ensure current application/client is aware our session is invalid
-		m_SessionSlot = std::numeric_limits<uint16_t>::max();
+		m_SessionIndex = k_InvalidSessionIndex;
 	}
 
-	void Client::SendCheckUDPConnectionMessage()
+	void ClientNetworkThread::SendRequestConnectionMessage()
 	{
-		// Create/send a message to the server that ensures the UDP connection is valid
-		// Expecting a message back from the server
-		Message newMessage{};
-		newMessage.m_Header.m_MessageType = MessageType::ManageConnection_CheckUDPConnection;
-
-		// Send the message using UDP
-		SendUDPToServer(newMessage);
+		Message msg;
+		msg.m_Header.m_MessageType = MessageType::ManageConnection_RequestConnection;
+		SendToServer(msg);
 	}
 
-	void Client::OpenMessageFromServer(Kargono::Network::Message& msg)
+	bool ClientNetworkThread::OpenManagementPacket(MessageType type, ClientIndex index)
+	{
+		if (type == MessageType::ManageConnection_AcceptConnection)
+		{
+			KG_WARN("Connection successful!");
+			StartConnection(index, true);
+			return false;
+		}
+		else if (type == MessageType::ManageConnection_DenyConnection)
+		{
+			KG_WARN("Connection to server denied");
+			i_Client->Terminate(true);
+			return false;
+		}
+
+		return true;
+	}
+
+	void ClientNetworkThread::OpenMessageFromServer(Kargono::Network::Message& msg)
 	{
 		// Process message from server based on type
 		switch (msg.m_Header.m_MessageType)
@@ -527,9 +669,6 @@ namespace Kargono::Network
 			break;
 		case MessageType::ServerQuery_ReceiveClientCount:
 			OpenReceiveUserCountMessage(msg);
-			break;
-		case MessageType::GenericMessage_ServerChat:
-			OpenServerChatMessage(msg);
 			break;
 		case MessageType::ManageSession_ApproveClientJoin:
 			OpenApproveJoinSessionMessage(msg);
@@ -545,9 +684,6 @@ namespace Kargono::Network
 			break;
 		case MessageType::ManageSession_Init:
 			OpenCurrentSessionInitMessage(msg);
-			break;
-		case MessageType::ManageSession_SyncPing:
-			OpenInitSyncPingMessage(msg);
 			break;
 		case MessageType::ManageSession_StartSession:
 			OpenStartSessionMessage(msg);
@@ -565,10 +701,6 @@ namespace Kargono::Network
 			OpenReceiveSignalMessage(msg);
 			break;
 		case MessageType::ManageConnection_KeepAlive:
-			OpenKeepAliveMessage(msg);
-			break;
-		case MessageType::ManageConnection_CheckUDPConnection:
-			OpenUDPInitMessage(msg);
 			break;
 		default:
 			KG_ERROR("Invalid message type received from the server!");
@@ -576,82 +708,65 @@ namespace Kargono::Network
 		}
 	}
 
-	void Client::OpenAcceptConnectionMessage(Kargono::Network::Message& msg)
+	void ClientNetworkThread::OpenAcceptConnectionMessage(Kargono::Network::Message& msg)
 	{
 		KG_INFO("Connection to the server has been accepted!");
 
 		// Pass the event along to the main thread
-		uint32_t userCount{};
+		ClientIndex userCount{};
 		msg >> userCount;
 		EngineService::SubmitToEventQueue(CreateRef<Events::ReceiveOnlineUsers>(userCount));
 	}
 
-	void Client::OpenReceiveUserCountMessage(Message& msg)
+	void ClientNetworkThread::OpenReceiveUserCountMessage(Message& msg)
 	{
 		// Pass the event along to the main thread
-		uint32_t userCount{};
+		ClientIndex userCount{};
 		msg >> userCount;
 		EngineService::SubmitToEventQueue(CreateRef<Events::ReceiveOnlineUsers>(userCount));
 	}
 
-	void Client::OpenServerChatMessage(Message& msg)
-	{
-		// Parse the string from the message
-		uint32_t clientID{};
-		std::vector<uint8_t> data{};
-		uint64_t dataSize{};
-		msg >> clientID;
-		msg >> dataSize;
-		data = msg.GetPayloadCopy(dataSize);
-		std::string text((char*)(data.data()), dataSize);
-
-		// Simply log the message
-		// TODO: Maybe there something else we can do here?
-		KG_INFO("[{}]: {}", clientID, text);
-	}
-
-	void Client::OpenApproveJoinSessionMessage(Message& msg)
+	void ClientNetworkThread::OpenApproveJoinSessionMessage(Message& msg)
 	{
 		KG_INFO("Approved joining session");
 
 		// Get the indicated user slot
-		uint16_t userSlot{};
+		SessionIndex userSlot{};
 		msg >> userSlot;
-		m_SessionSlot = userSlot;
+		m_SessionIndex = userSlot;
 
 		// Pass the event along to the main thread
 		EngineService::SubmitToEventQueue(CreateRef<Events::ApproveJoinSession>(userSlot));
 	}
 
-	void Client::OpenUpdateSessionUserSlotMessage(Message& msg)
+	void ClientNetworkThread::OpenUpdateSessionUserSlotMessage(Message& msg)
 	{
 		// Get the indicated user slot
-		uint16_t userSlot{};
+		SessionIndex userSlot{};
 		msg >> userSlot;
 
 		// Pass the event along to the main thread
 		EngineService::SubmitToEventQueue(CreateRef<Events::UpdateSessionUserSlot>(userSlot));
 	}
 
-	void Client::OpenUserLeftSessionMessage(Message& msg)
+	void ClientNetworkThread::OpenUserLeftSessionMessage(Message& msg)
 	{
 		KG_INFO("A User Left the Current Session");
 
 		// Get the indicated user slot
-		uint16_t userSlot{};
+		SessionIndex userSlot{};
 		msg >> userSlot;
 
 		// Pass the event along to the main thread
 		EngineService::SubmitToEventQueue(CreateRef<Events::UserLeftSession>(userSlot));
 	}
 
-	void Client::OpenDenyJoinSessionMessage(Message& msg)
+	void ClientNetworkThread::OpenDenyJoinSessionMessage(Message& msg)
 	{
 		KG_INFO("Denied joining session");
-		// TODO: Maybe log this?
 	}
 
-	void Client::OpenCurrentSessionInitMessage(Message& msg)
+	void ClientNetworkThread::OpenCurrentSessionInitMessage(Message& msg)
 	{
 		KG_INFO("Active Session is initializing");
 
@@ -659,14 +774,7 @@ namespace Kargono::Network
 		EngineService::SubmitToEventQueue(CreateRef<Events::CurrentSessionInit>());
 	}
 
-	void Client::OpenInitSyncPingMessage(Message& msg)
-	{
-		// Continue to pass the sync ping back to the server until the server
-		// determines the connection is stable
-		SendInitSyncPingMessage();
-	}
-
-	void Client::OpenStartSessionMessage(Message& msg)
+	void ClientNetworkThread::OpenStartSessionMessage(Message& msg)
 	{
 		KG_INFO("Session Started");
 
@@ -679,14 +787,14 @@ namespace Kargono::Network
 		Utility::AsyncBusyTimer::CreateTimer(waitTime, [&]()
 		{
 			// Ensure the active network context is aware of the session starting
-			Network::ClientService::SubmitToNetworkEventQueue(CreateRef<Events::StartSession>());
+			m_EventQueue.SubmitEvent(CreateRef<Events::StartSession>());
 
 			// Pass the event along to the main thread
 			EngineService::SubmitToEventQueue(CreateRef<Events::StartSession>());
 		});
 	}
 
-	void Client::OpenSessionReadyCheckConfirmMessage(Message& msg)
+	void ClientNetworkThread::OpenSessionReadyCheckConfirmMessage(Message& msg)
 	{
 		// Get the wait time indicated by the server
 		float waitTime{};
@@ -701,7 +809,7 @@ namespace Kargono::Network
 		});
 	}
 
-	void Client::OpenUpdateEntityLocationMessage(Message& msg)
+	void ClientNetworkThread::OpenUpdateEntityLocationMessage(Message& msg)
 	{
 		// Get the entity ID and its location information
 		uint64_t id;
@@ -716,7 +824,7 @@ namespace Kargono::Network
 		EngineService::SubmitToEventQueue(CreateRef<Events::UpdateEntityLocation>(id, trans));
 	}
 
-	void Client::OpenUpdateEntityPhysicsMessage(Message& msg)
+	void ClientNetworkThread::OpenUpdateEntityPhysicsMessage(Message& msg)
 	{
 		// Get the entity ID, location information, and physics velocity
 		uint64_t id;
@@ -734,7 +842,7 @@ namespace Kargono::Network
 		EngineService::SubmitToEventQueue(CreateRef<Events::UpdateEntityPhysics>(id, trans, linearV));
 	}
 
-	void Client::OpenReceiveSignalMessage(Message& msg)
+	void ClientNetworkThread::OpenReceiveSignalMessage(Message& msg)
 	{
 		// Get the indicated signal (depends on the application)
 		uint16_t signal{};
@@ -744,148 +852,58 @@ namespace Kargono::Network
 		EngineService::SubmitToEventQueue(CreateRef<Events::ReceiveSignal>(signal));
 	}
 
-	void Client::OpenKeepAliveMessage(Message& msg)
+	bool ClientService::Init()
 	{
-		UNREFERENCED_PARAMETER(msg);
-
-		// Nothing to do here...
-	}
-
-	void Client::OpenUDPInitMessage(Message& msg)
-	{
-		UNREFERENCED_PARAMETER(msg);
-
-		// Receive final message from server indicated UDP connection was successful
-		// The initialization context will check this value
-		m_UDPConnectionSuccessful = true;
-	}
-
-	void ClientService::Init()
-	{
-		// Create new client
-		s_Client = CreateRef<Network::Client>();
-
-		// Start the network thread in the client and call the Run function
-		s_Client->m_NetworkContext.m_NetworkThread = CreateRef<std::thread>(&Network::ClientService::Run);
-
-		// Exit out immediately (the network thread is now running separately from the main thread)
-		KG_VERIFY(s_Client, "Client connection init");
-	}
-
-	void ClientService::Terminate()
-	{
-		// Request for the current client's network thread to stop
-		EndRun();
-
-		// Wait for the network thread to stop and close the client
-		s_Client->m_NetworkContext.m_NetworkThread->join();
-		s_Client->m_NetworkContext.m_NetworkThread.reset();
-		s_Client.reset();
-
-		KG_VERIFY(!s_Client, "Closed client connection");
-	}
-
-	void ClientService::Run()
-	{
-		// Decide whether to connect using the local network or through the internet
-		bool remoteConnection = false;
-		if (Projects::ProjectService::GetActiveServerLocation() != ServerLocation::LocalMachine)
+		if (s_Client.m_ClientActive)
 		{
-			remoteConnection = true;
+			KG_WARN("Failed to initialize client. A client context already exists.")
+			return false;
 		}
 
-		// Start connection to server
-		bool connectionSuccess = s_Client->ConnectToServer
-		(
-			Utility::IPv4ToString(Projects::ProjectService::GetActiveServerIP()),
-			Projects::ProjectService::GetActiveServerPort(), 
-			remoteConnection
-		);
-
-		// Ensure the connection has started
-		if (!connectionSuccess) 
-		{ 
-			KG_WARN("Failed to connect to the server");
-
-			// Ensure the run loop never starts
-			s_Client->m_NetworkContext.m_QuitNetworkThread = true; 
-		}
-
-		// Ensure UDP connection is valid
-		if (s_Client->m_ClientUDPConnection && s_Client->IsConnectedToServer())
+		if (!s_Client.Init(Projects::ProjectService::GetServerConfig()))
 		{
-			// Start timer for keep alive packets
-			EngineService::SubmitToEventQueue(CreateRef<Events::AddTickGeneratorUsage>(k_KeepAliveDelay));
+			KG_WARN("Failed to initialize client. Client initialization failed.")
+			return false;
 		}
 
-		KG_INFO("Started client networking thread");
-
-		// Main NetworkContext::NetworkThread loop
-		while (!s_Client->m_NetworkContext.m_QuitNetworkThread)
-		{
-			// Validate the client is still connected
-			if (s_Client->IsConnectedToServer())
-			{
-				// Process any new events/functions for the network thread
-				ClientService::ProcessEventQueue();
-				ClientService::ProcessFunctionQueue();
-
-				// Check for a maximum of 5 messages and run another loop iteration if message queue is not empty
-				s_Client->CheckMessagesFromServer(5);
-			}
-			else
-			{
-				// Exit the network loop
-				s_Client->m_NetworkContext.m_QuitNetworkThread = true;
-			}
-		}
-
-		// Close connection to server
-		s_Client->DisconnectFromServer();
-
-		// Ensure the UDP tick generator is removed
-		if (s_Client->m_ClientUDPConnection)
-		{
-			KG_INFO("UDP connection tick generator has been removed.");
-			EngineService::SubmitToEventQueue(CreateRef<Events::RemoveTickGeneratorUsage>(k_KeepAliveDelay));
-		}
-		KG_INFO("Closed client networking thread");
+		KG_VERIFY(s_Client.m_ClientActive, "Client connection init");
+		return true;
 	}
 
-	void ClientService::EndRun()
+	bool ClientService::Terminate()
 	{
-		// TODO: This could be a location of an error. I am not sure though.
-		// There may be a chance that the network thread could be notified while its running
-		// and it goes to sleep without closing the thread. I will check this later.
+		if (!s_Client.m_ClientActive)
+		{
+			KG_WARN("Failed to terminate client. No client context is active.")
+			return false;
+		}
 
-		// Set run loop to close
-		s_Client->m_NetworkContext.m_QuitNetworkThread = true;
+		if (!s_Client.Terminate(false))
+		{
+			KG_WARN("Failed to terminate client. Terminate function failed.");
+			return false;
+		}
 
-		// Wake up the network thread, so it can close
-		s_Client->m_NetworkContext.NetworkThreadWakeUp();
-		KG_INFO("Notified client network thread to close");
+		KG_VERIFY(!s_Client.m_ClientActive, "Closed client connection");
+		return true;
+	}
+
+	bool ClientService::IsClientActive()
+	{
+		return s_Client.m_ClientActive;
 	}
 
 	uint16_t ClientService::GetActiveSessionSlot()
 	{
-		// Simply return the session slot if the client context lives
-		if (s_Client)
-		{
-			return s_Client->m_SessionSlot;
-		}
+		KG_ASSERT(s_Client.m_ClientActive);
 
 		// Client is unavailable so send error response
-		return k_InvalidSessionSlot;
+		return s_Client.GetNetworkThread().GetSessionIndex();
 	}
 
 	void ClientService::SendAllEntityLocation(UUID entityID, Math::vec3 location)
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.m_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::SendAllEntityLocation>(entityID, location));
@@ -893,12 +911,7 @@ namespace Kargono::Network
 
 	void ClientService::SendAllEntityPhysics(UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity)
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.m_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::SendAllEntityPhysics>(entityID, translation, linearVelocity));
@@ -906,12 +919,7 @@ namespace Kargono::Network
 
 	void ClientService::EnableReadyCheck()
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.m_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::EnableReadyCheck>());
@@ -919,12 +927,7 @@ namespace Kargono::Network
 
 	void ClientService::SessionReadyCheck()
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.m_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::SessionReadyCheck>());
@@ -932,12 +935,7 @@ namespace Kargono::Network
 
 	void ClientService::RequestUserCount()
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.m_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::RequestUserCount>());
@@ -945,12 +943,7 @@ namespace Kargono::Network
 
 	void ClientService::RequestJoinSession()
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.m_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::RequestJoinSession>());
@@ -958,12 +951,7 @@ namespace Kargono::Network
 
 	void ClientService::LeaveCurrentSession()
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.m_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::LeaveCurrentSession>());
@@ -971,197 +959,87 @@ namespace Kargono::Network
 
 	void ClientService::SignalAll(uint16_t signal)
 	{
-		// Ensure network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
+		KG_ASSERT(s_Client.m_ClientActive);
 
 		// Allow the network thread to handle this on its run loop
 		SubmitToNetworkEventQueue(CreateRef<Events::SignalAll>(signal));
 	}
 	void ClientService::SubmitToNetworkFunctionQueue(const std::function<void()>& function)
 	{
-		// Ensure the network context is valid
-		if (!s_Client)
-		{
-			KG_WARN("Attempt to interact with the client network context, but it is not valid");
-			return;
-		}
-		// Obtain the function queue lock
-		std::scoped_lock<std::mutex> lock(s_Client->m_FunctionQueueMutex);
+		KG_ASSERT(s_Client.m_ClientActive);
 
-		// Add the indicated function and alert the network thread to wake up
-		s_Client->m_FunctionQueue.emplace_back(function);
-		s_Client->m_NetworkContext.NetworkThreadWakeUp();
+		s_Client.GetNetworkThread().SubmitFunction(function);
 	}
 	void ClientService::SubmitToNetworkEventQueue(Ref<Events::Event> e)
 	{
-		// Ensure the active client is valid
-		if (!s_Client)
+		KG_ASSERT(s_Client.m_ClientActive);
+
+		s_Client.GetNetworkThread().SubmitEvent(e);
+	}
+	bool ClientEventThread::Init(Socket* clientSocket, ClientNetworkThread* networkThread)
+	{
+		KG_ASSERT(clientSocket);
+		KG_ASSERT(networkThread);
+
+		// Store dependencies
+		i_ClientSocket = clientSocket;
+		i_NetworkThread = networkThread;
+
+		// Create network event
+		m_NetworkEventHandle = WSACreateEvent();
+		if (WSAEventSelect(i_ClientSocket->GetHandle(), m_NetworkEventHandle, FD_READ) != 0)
 		{
-			KG_WARN("Attempt to submit an event to the network thread, however, the client context is invalid");
-			return;
+			KG_WARN("Failed to create the network event handle");
+			return false;
 		}
 
-		// Obtain a lock on the network thread's event mutex
-		std::scoped_lock<std::mutex> lock(s_Client->m_EventQueueMutex);
+		m_Thread.StartThread(KG_BIND_CLASS_FN(RunThread));
 
-		// Add the indicated event and alert the network thread to wake up
-		s_Client->m_EventQueue.emplace_back(e);
-		s_Client->m_NetworkContext.NetworkThreadWakeUp();
+		return true;
 	}
-	void ClientService::OnEvent(Events::Event* e)
+	void ClientEventThread::Terminate(bool withinEventThread)
 	{
-		// Process events based on their type
-		switch (e->GetEventType())
+		m_Thread.StopThread(withinEventThread);
+	}
+	void ClientEventThread::WaitOnThread()
+	{
+		m_Thread.StopThread(false);
+	}
+	void ClientEventThread::SetSyncPingFreq(size_t frequency)
+	{
+		m_WorkQueue.SubmitFunction([&, frequency]()
 		{
-		case Events::EventType::RequestJoinSession:
-			OnRequestJoinSession(*(Events::RequestJoinSession*)e);
-			break;
-		case Events::EventType::RequestUserCount:
-			OnRequestUserCount(*(Events::RequestUserCount*)e);
-			break;
-		case Events::EventType::LeaveCurrentSession:
-			OnLeaveCurrentSession(*(Events::LeaveCurrentSession*)e);
-			break;
-		case Events::EventType::StartSession:
-			OnStartSession(*(Events::StartSession*)e);
-			break;
-		case Events::EventType::ConnectionTerminated:
-			OnConnectionTerminated(*(Events::ConnectionTerminated*)e);
-			break;
-		case Events::EventType::EnableReadyCheck:
-			OnEnableReadyCheck(*(Events::EnableReadyCheck*)e);
-			break;
-		case Events::EventType::SendReadyCheck:
-			OnSessionReadyCheck(*(Events::SessionReadyCheck*)e);
-			break;
-		case Events::EventType::SendAllEntityLocation:
-			OnSendAllEntityLocation(*(Events::SendAllEntityLocation*)e);
-			break;
-		case Events::EventType::SendAllEntityPhysics:
-			OnSendAllEntityPhysics(*(Events::SendAllEntityPhysics*)e);
-			break;
-		case Events::EventType::SignalAll:
-			OnSignalAll(*(Events::SignalAll*)e);
-			break;
-		case Events::EventType::AppTick:
-			OnAppTickEvent(*(Events::AppTickEvent*)e);
-			break;
-		}
+			m_ActiveSyncPingFreq = frequency;
+		});
 	}
-	bool ClientService::OnRequestUserCount(Events::RequestUserCount event)
+	void ClientNotifiers::Init(std::atomic<bool>* clientActive)
 	{
-		s_Client->SendRequestUserCountMessage();
-		return true;
-	}
-	bool ClientService::OnStartSession(Events::StartSession event)
-	{
-		s_Client->m_SessionStartFrame = EngineService::GetActiveEngine().GetUpdateCount();
-		return true;
-	}
-	bool ClientService::OnConnectionTerminated(Events::ConnectionTerminated event)
-	{
-		// Essentially clear all session information from this client context
-		s_Client->m_SessionSlot = k_InvalidSessionSlot;
-		s_Client->m_SessionStartFrame = 0;
-		return true;
-	}
-	bool ClientService::OnRequestJoinSession(Events::RequestJoinSession event)
-	{
-		s_Client->SendRequestJoinSessionMessage();
-		return true;
-	}
-	bool ClientService::OnEnableReadyCheck(Events::EnableReadyCheck event)
-	{
-		s_Client->SendEnableReadyCheckMessage();
-		return true;
-	}
-	bool ClientService::OnSessionReadyCheck(Events::SessionReadyCheck event)
-	{
-		s_Client->SendSessionReadyCheckMessage();
-		return true;
-	}
-	bool ClientService::OnSendAllEntityLocation(Events::SendAllEntityLocation event)
-	{
-		s_Client->SendAllEntityLocation(event);
-		return true;
-	}
-	bool ClientService::OnSignalAll(Events::SignalAll event)
-	{
-		s_Client->SendAllClientsSignalMessage(event);
-		return true;
-	}
-	bool ClientService::OnAppTickEvent(Events::AppTickEvent event)
-	{
-		// Only send the keep alive message if it matches the delay time
-		if (event.GetDelayMilliseconds() == k_KeepAliveDelay)
-		{
-			s_Client->SendKeepAliveMessage();
-			return true;
-		}
-		return false;
-	}
-	bool ClientService::OnSendAllEntityPhysics(Events::SendAllEntityPhysics event)
-	{
-		s_Client->SendAllEntityPhysicsMessage(event);
-		return true;
-	}
-	bool ClientService::OnLeaveCurrentSession(Events::LeaveCurrentSession event)
-	{
-		s_Client->SendLeaveCurrentSessionMessage();
-		return true;
-	}
-	void ClientService::ProcessFunctionQueue()
-	{
-		KG_PROFILE_FUNCTION();
+		KG_ASSERT(clientActive);
 
-		std::vector<std::function<void()>> localFunctionCache;
-
-		// Ensure the function queue doesn't become invalidated if one of the functions modifies the queue
-		// inside the loop
-		{
-			// Obtain the function queue lock
-			std::scoped_lock<std::mutex> lock(s_Client->m_FunctionQueueMutex);
-			
-			// Move the event queue into a local variable and reset the queue
-			localFunctionCache = std::move(s_Client->m_FunctionQueue);
-
-			// Reset the queue
-			s_Client->m_FunctionQueue.clear();
-		}
-
-
-		// Call all of the functions in the queue
-		for (std::function<void()>& func : localFunctionCache) 
-		{ 
-			func(); 
-		}
-
-		
+		i_ClientActive = clientActive;
 	}
-	void ClientService::ProcessEventQueue()
+	ObserverIndex ClientNotifiers::AddClientActiveObserver(std::function<void(bool)> func)
 	{
-		KG_PROFILE_FUNCTION();
-		std::vector<Ref<Events::Event>> localEventCache;
+		KG_ASSERT(!i_ClientActive || !*i_ClientActive);
 
-		// Ensure the event queue doesn't become invalidated if one of the events modifies the queue
-		// inside the loop
-		{
-			// Obtain the event queue lock for this small scope
-			std::scoped_lock<std::mutex> lock(s_Client->m_EventQueueMutex);
+		return m_ClientStatusNotifier.AddObserver(func);
+	}
+	bool ClientNotifiers::RemoveClientActiveObserver(ObserverIndex index)
+	{
+		KG_ASSERT(!i_ClientActive || !*i_ClientActive);
 
-			// Move the event queue into a local variable and reset the queue
-			localEventCache = std::move(s_Client->m_EventQueue);
-			s_Client->m_EventQueue.clear();
-		}
+		return m_ClientStatusNotifier.RemoveObserver(index);
+	}
+	void ClientNetworkNotifiers::Init(std::atomic<bool>* clientActive)
+	{
+		KG_ASSERT(clientActive);
 
-		// Process all of the events in the event queue
-		for (Ref<Kargono::Events::Event> event : localEventCache)
-		{
-			OnEvent(event.get());
-		}
+		i_ClientActive = clientActive;
+	}
+	ObserverIndex ClientNetworkNotifiers::AddConnectStatusObserver(std::function<void(ConnectionStatus, ClientIndex)> func)
+	{
+		KG_ASSERT(!i_ClientActive || !*i_ClientActive);
+
+		return m_ConnectStatusNotifier.AddObserver(func);
 	}
 }

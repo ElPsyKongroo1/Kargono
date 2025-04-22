@@ -2,84 +2,121 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Network/NetworkCommon.h"
+#include "Kargono/Network/Connection.h"
+#include "Kargono/Utility/Timers.h"
+#include "Kargono/Core/DataStructures.h"
+#include "Kargono/Network/Connection.h"
 
-#include <unordered_map>
 #include <unordered_set>
-#include <vector>
-#include <thread>
-#include <chrono>
 
 
 namespace Kargono::Network
 {
-	class Server;
-	class ServerTCPConnection;
+	class ServerNetworkThread;
 
-	struct SessionInitState
+	class ReadyCheckContext
 	{
-		std::unordered_map<uint32_t, std::vector<float>> m_LatencyCache {};
-		std::unordered_map<uint32_t, bool> m_LatencyCacheFilled {};
-		std::unordered_map<uint32_t, std::chrono::time_point<std::chrono::high_resolution_clock>> m_RecentTimePoints {};
-	};
+	public:
+		//==============================
+		// LifeCycle Functions
+		//==============================
+		void Init(size_t requiredCount);
+		void Clear();
 
-	struct ReadyCheckData
-	{
+		//==============================
+		// Manage Ready Clients
+		//==============================
+		bool AddClient(ClientIndex index);
+
+		//==============================
+		// Query State
+		//==============================
+		bool IsActive() const
+		{
+			return m_Active;
+		}
+		bool IsReady() const
+		{
+			return m_ReadyClients.size() >= m_RequiredCount;
+		}
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
 		bool m_Active{ false };
-		std::unordered_set<uint32_t> m_ReadyClients{};
+		size_t m_RequiredCount{ 0 };
+		std::unordered_set<ClientIndex> m_ReadyClients{};
 	};
 
-	//==============================
-	// Session Class
-	//==============================
 	class Session
 	{
 	public:
 		//==============================
 		// LifeCycle Functions
 		//==============================
-		void InitSession();
-		void CompleteSessionInit();
-		void EndSession();
+		// General session build-up/tear-down
+		void CreateSession();
+		void Init(ServerNetworkThread* networkThread, ConnectionList* parentConnectionList);
+		void Terminate();
+	private:
+		// Helper functions
+		float GetLongestRTT();
+	public:
 
-		//==============================
-		// Client Synchronization
-		//==============================
-		void ReceiveSyncPing(uint32_t clientID);
-
-		
+		// Gameplay set-up/tear-down
+		void StartGameplay(UpdateCount startFrame);
+		void EndGameplay();
 	public:
 		//==============================
-		// Ready Check Process
+		// Manage Ready Check
 		//==============================
-		void StoreClientReadyCheck(uint32_t clientID);
-		float CalculateLongestLatency();
-	private:
-		void ResetReadyCheck();
+		void StoreClientReady(ClientIndex clientID);
+		void StartReadyCheck();
 		
 	public:
 		//==============================
 		// Manage Clients
 		//==============================
-		uint16_t AddClient(ServerTCPConnection* newClient);
-		uint16_t RemoveClient(uint32_t clientID);
+		SessionIndex AddClient(ClientIndex newClient);
+		SessionIndex RemoveClient(ClientIndex clientID);
 
 		//==============================
 		// Getter/Setters
 		//==============================
-		uint32_t GetClientCount() const { return (uint32_t)m_ConnectedClients.size(); }
-		void EnableReadyCheck() { m_ReadyCheckData.m_Active = true; }
-		void SetSessionStartFrame(uint64_t frame) { m_SessionStartFrame = frame; }
-		uint64_t GetSessionStartFrame() const { return m_SessionStartFrame; }
-		std::unordered_map<uint32_t, ServerTCPConnection*>& GetAllClients() { return m_ConnectedClients; }
-		std::unordered_map<uint16_t, uint32_t>& GetAllSlots() { return m_SessionSlots; }
+		SessionIndex GetClientCount() const 
+		{ 
+			return m_ActiveClients.GetCount(); 
+		}
+		ClientIndex GetClient(SessionIndex index)
+		{
+			return m_ActiveClients[index];
+		}
+		UpdateCount GetSessionStartFrame() const 
+		{ 
+			return m_GameplayStartFrame; 
+		}
+		SparseArray<ClientIndex, SessionIndex>& GetSessionClients()
+		{
+			return m_ActiveClients;
+		}
 
 	private:
-		uint16_t m_SlotMax{0};
-		std::unordered_map<uint32_t, ServerTCPConnection*> m_ConnectedClients {};
-		std::unordered_map<uint16_t, uint32_t> m_SessionSlots{};
-		std::vector<uint16_t> m_EmptySlots{};
-		ReadyCheckData m_ReadyCheckData;
-		SessionInitState m_InitState {};
-		uint64_t m_SessionStartFrame{ 0 };
+		//==============================
+		// Internal Fields
+		//==============================
+		// State data
+		bool m_Active{ false };
+		// Client data
+		SparseArray<ClientIndex, SessionIndex> m_ActiveClients{k_MaxSessionClients};
+		// Ready check data
+		ReadyCheckContext m_ReadyCheckContext{};
+		// Gameplay data
+		UpdateCount m_GameplayStartFrame{ 0 };
+
+		//==============================
+		// Injected Dependencies
+		//==============================
+		ConnectionList* i_ConnectionList{ nullptr };
+		ServerNetworkThread* i_NetworkThread{ nullptr };
 	};
 }
