@@ -9,12 +9,16 @@
 #include "Kargono/Utility/FileSystem.h"
 #include "Kargono/Memory/StackAlloc.h"
 #include "Kargono/Memory/SystemAlloc.h"
+#include "Kargono/Core/DataStructures.h"
 
 #include <sstream>
 #include <cstdio>
 
+
 namespace Kargono::Panels
 {
+	static SparseArray<uint64_t> s_SparseArray{64};
+
 	static EditorApp* s_EditorApp{ nullptr };
 	static Windows::MainWindow* s_MainWindow{ nullptr };
 
@@ -429,6 +433,59 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::DropDown(s_TestDropdown);
 
 		EditorUI::EditorUIService::Plot(s_TestPlot);
+
+
+		if (ImGui::Button("Add random to sparse list"))
+		{
+			auto result = s_SparseArray.EmplaceLowest();
+			if (!result)
+			{
+				KG_TRACE_INFO("Aye, we failed to add");
+			}
+			else
+			{
+				result->m_Value = (uint64_t)Utility::RandomService::GenerateRandomInteger(0, 500);
+				KG_TRACE_INFO("Aye, we added one at {}, its value is {}", result->m_ArrayIndex, result->m_Value);
+			}
+		}
+
+		if (ImGui::Button("List out all indices"))
+		{
+			KG_TRACE_INFO("==========");
+			for (size_t index : s_SparseArray.GetActiveIndices())
+			{
+				KG_TRACE_INFO("We got an index at {} with a value of {}", index, s_SparseArray[index]);
+			}
+			KG_TRACE_INFO("==========");
+		}
+
+		if (ImGui::Button("List out values"))
+		{
+			KG_TRACE_INFO("==========");
+			for (uint64_t value : s_SparseArray)
+			{
+				KG_TRACE_INFO("We got a value of {}", value);
+			}
+			KG_TRACE_INFO("==========");
+		}
+
+		if (ImGui::Button("Remove Random"))
+		{
+			std::vector<size_t> allIndices{ s_SparseArray.GetActiveIndices()};
+
+			if (allIndices.size() > 0)
+			{
+				size_t randomChoice = (size_t)Utility::RandomService::GenerateRandomInteger(0, (int32_t)allIndices.size() - 1);
+
+				KG_TRACE_INFO("Removing value {} and index {}", s_SparseArray[allIndices[randomChoice]], allIndices[randomChoice]);
+				s_SparseArray.Remove(allIndices[randomChoice]);
+			}
+			else 
+			{
+				KG_TRACE_INFO("Failed to remove. No elements in sparse array");
+			}
+			
+		}
 
 		// TODO: Testing Splines
 #if 0 

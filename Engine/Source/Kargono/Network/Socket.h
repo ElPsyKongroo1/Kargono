@@ -4,6 +4,13 @@
 
 namespace Kargono::Network
 {
+	enum class SocketErrorCode
+	{
+		None = 0,
+		AddressInUse,
+		OtherFailure,
+	};
+
 	class Socket
 	{
 	public:
@@ -16,7 +23,7 @@ namespace Kargono::Network
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		bool Open(unsigned short m_Port);
+		SocketErrorCode Open(unsigned short m_Port);
 		void Close();
 
 		//==============================

@@ -48,57 +48,49 @@ namespace Kargono::Network
 			break;
 		}
 	}
-	void ServerNetworkThread::OpenRequestClientJoinMessage(ClientIndex client, Kargono::Network::Message& msg)
+	void ServerNetworkThread::OpenRequestClientJoinMessage(ClientIndex newClient, Kargono::Network::Message& msg)
 	{
 		// Deny client join if session slots are full
 		if (m_OnlySession.GetClientCount() >= k_MaxSessionClients)
 		{
-			SendDenyClientJoinMessage(client);
+			SendDenyClientJoinMessage(newClient);
 			return;
 		}
 
 		// Add client to session and ensure slot is valid
-		SessionIndex clientSlot = m_OnlySession.AddClient(client);
-		if (clientSlot == k_InvalidSessionSlot)
+		SessionIndex clientSlot = m_OnlySession.AddClient(newClient);
+		if (clientSlot == k_InvalidSessionIndex)
 		{
-			SendDenyClientJoinMessage(client);
+			SendDenyClientJoinMessage(newClient);
 			return;
 		}
 
 		// Send approval message to the new client
-		SendApproveClientJoinMessage(client, clientSlot);
-#if 0 // TODO:
+		SendApproveClientJoinMessage(newClient, clientSlot);
+
 		// Notify all other session clients that new client has been added
-		for (auto [clientID, connection] : m_OnlySession.GetAllClients())
+		for (SessionIndex sessionIndex : m_OnlySession.GetSessionClients().GetActiveIndices())
 		{
+			ClientIndex sessionClient{ m_OnlySession.GetClient(sessionIndex)};
+
 			// Skip the current client (it already knows from approval)
-			if (clientID == client)
+			if (newClient == sessionClient)
 			{
 				continue;
 			}
 
-			// Send update message
-			SendUpdateClientSlotMessage(clientID, clientSlot);
-		}
+			// Update existing client about new addition
+			SendUpdateClientSlotMessage(sessionClient, clientSlot);
 
-		// Updated new client with all other client data
-		for (auto [slot, clientID] : m_OnlySession.GetAllSlots())
-		{
-			if (clientID == client)
-			{
-				continue;
-			}
-
-			// Send update message
-			SendUpdateClientSlotMessage(client, slot);
+			// Update new client about other session clients
+			SendUpdateClientSlotMessage(newClient, sessionIndex);
 		}
-#endif
 
 		// If enough clients are connected, start the session
 		if (m_OnlySession.GetClientCount() == k_MaxSessionClients)
 		{
 			// TODO: Probably should expose this to the scripts instead of automatically starting the session
-			m_OnlySession.InitSession();
+			m_OnlySession.CreateSession();
 		}
 	}
 	void ServerNetworkThread::OpenRequestClientCountMessage(ClientIndex client)
@@ -116,18 +108,17 @@ namespace Kargono::Network
 		SessionIndex removedClient = m_OnlySession.RemoveClient(client);
 
 		// Ensure the client removal was successful
-		if (removedClient == k_InvalidSessionSlot)
+		if (removedClient == k_InvalidSessionIndex)
 		{
 			KG_WARN("Failed to remove client from the active session");
 			return;
 		}
-#if 0 // TODO:
+
 		// Notify all users in the same session that a client left
-		for (auto [clientID, connection] : m_OnlySession.GetAllClients())
+		for (ClientIndex sessionClient : m_OnlySession.GetSessionClients())
 		{
-			SendClientLeftMessage(clientID, removedClient);
+			SendClientLeftMessage(sessionClient, removedClient);
 		}
-#endif
 
 		// Notify the removed client it is removed 
 		// (note this is necessary since the client no longer exists in the session list)
@@ -135,59 +126,55 @@ namespace Kargono::Network
 	}
 	void ServerNetworkThread::OpenStartReadyCheckMessage(ClientIndex client)
 	{
-		m_OnlySession.StoreClientReadyCheck(client);
+		m_OnlySession.StoreClientReady(client);
 	}
 	void ServerNetworkThread::OpenEnableReadyCheckMessage()
 	{
-		m_OnlySession.EnableReadyCheck();
+		m_OnlySession.StartReadyCheck();
 	}
 	void ServerNetworkThread::OpenSendAllClientsLocationMessage(ClientIndex client, Message& msg)
 	{
-#if 0 // TODO:
 		// Forward entity location to all other clients
-		for (auto [clientID, connection] : m_OnlySession.GetAllClients())
+		for (ClientIndex sessionClient : m_OnlySession.GetSessionClients())
 		{
 			// Do not forward the message back to the original client
-			if (clientID == client)
+			if (client == sessionClient)
 			{
 				continue;
 			}
 
-			SendUpdateLocationMessage(clientID, msg);
+			SendUpdateLocationMessage(sessionClient, msg);
 		}
-#endif
 	}
 	void ServerNetworkThread::OpenSendAllClientsPhysicsMessage(ClientIndex client, Message& msg)
 	{
-#if 0 // TODO:
+
 		// Forward entity Physics to all other clients
-		for (auto [clientID, connection] : m_OnlySession.GetAllClients())
+		for (ClientIndex sessionClient : m_OnlySession.GetSessionClients())
 		{
 			// Do not forward the message back to the original client
-			if (clientID == client)
+			if (client == sessionClient)
 			{
 				continue;
 			}
 
-			SendUpdatePhysicsMessage(clientID, msg);
+			SendUpdatePhysicsMessage(sessionClient, msg);
 		}
-#endif
+
 	}
 	void ServerNetworkThread::OpenSendAllClientsSignalMessage(ClientIndex client, Message& msg)
 	{
-#if 0 // TODO:
 		// Forward signal to all other session clients
-		for (auto [clientID, connection] : m_OnlySession.GetAllClients())
+		for (ClientIndex sessionClient : m_OnlySession.GetSessionClients())
 		{
 			// Do not forward the message back to the original client
-			if (clientID == client)
+			if (client == sessionClient)
 			{
 				continue;
 			}
 
-			SendSignalMessage(clientID, msg);
+			SendSignalMessage(sessionClient, msg);
 		}
-#endif
 	}
 
 	void ServerNetworkThread::HandleConnectionKeepAlive()
@@ -252,13 +239,13 @@ namespace Kargono::Network
 		Message newMessage;
 		newMessage.m_Header.m_MessageType = MessageType::ManageSession_ClientLeft;
 		newMessage << removedClientSlot;
-#if 0 // TODO:
+
 		// Notify all users in the same session that a client left
-		for (auto& [clientID, connection] : m_OnlySession.GetAllClients())
+		for (ClientIndex clientIndex : m_OnlySession.GetSessionClients())
 		{
-			SendToConnection(clientID, newMessage);
+			SendToConnection(clientIndex, newMessage);
 		}
-#endif
+
 	}
 	void ServerNetworkThread::SendServerPingMessage(ClientIndex client, Kargono::Network::Message& msg)
 	{
@@ -382,6 +369,7 @@ namespace Kargono::Network
 		msg.m_Header.m_MessageType = MessageType::ManageConnection_AcceptConnection;
 		msg << clientCount;
 
+		// Send the message
 		SendToConnection(receivingClient, msg);
 	}
 	void ServerNetworkThread::SendSessionInitMessage(ClientIndex receivingClient)
@@ -391,58 +379,27 @@ namespace Kargono::Network
 		Kargono::Network::Message newMessage;
 		newMessage.m_Header.m_MessageType = MessageType::ManageSession_Init;
 
-		// Send message reliably using TCP
+		// Send the message
 		SendToConnection(receivingClient, newMessage);
 	}
 
-	void ServerNetworkThread::SessionClock()
+	void ServerNetworkThread::SendStartSessionMessage(ClientIndex receivingClient, float waitTime)
 	{
-		using namespace std::chrono_literals;
+		// Create a message that indicates the start of the session. 
+		// Server expects sync pings soon...
+		Kargono::Network::Message newMessage;
+		newMessage.m_Header.m_MessageType = MessageType::ManageSession_StartSession;
 
-		// Set up the timer variables
-		constexpr std::chrono::nanoseconds k_FrameTime{ 1'000 * 1'000 * 1'000 / 60 }; // 1/60th of a second
-		std::chrono::nanoseconds accumulator{ 0 };
-		std::chrono::nanoseconds timeStep{ 0 };
+		newMessage << waitTime;
 
-		// Initialize the currentTime and lastCycleTime with now()
-		std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
-		std::chrono::time_point<std::chrono::high_resolution_clock> lastCycleTime = currentTime;
-
-		while (!m_StopTimingThread)
-		{
-			// Calculate timestep
-			currentTime = std::chrono::high_resolution_clock::now();
-			timeStep = currentTime - lastCycleTime;
-			lastCycleTime = currentTime;
-
-			// Update accumulator
-			accumulator += timeStep;
-
-			// Only proceed to an update when accumulator reaches the frametime
-			if (accumulator < k_FrameTime)
-			{
-				continue;
-			}
-
-			// Handle adding an update
-			accumulator -= k_FrameTime;
-			m_UpdateCount++;
-		}
+		// Send the message
+		SendToConnection(receivingClient, newMessage);
 	}
+
 	void ServerNetworkThread::StartSession()
 	{
-		// Set the starting frame for the session
-		if (!m_TimingThread)
-		{
-			// Start the timing thread and open the session at frame 0
-			m_OnlySession.SetSessionStartFrame(0);
-			m_TimingThread = CreateScope<std::thread>(&ServerNetworkThread::SessionClock, this);
-		}
-		else
-		{
-			// Use the current frame count
-			m_OnlySession.SetSessionStartFrame(m_UpdateCount);
-		}
+		// Use the current frame count
+		m_OnlySession.StartGameplay(m_ManageConnectionTimer.GetUpdateCount());
 	}
 	void ServerNotifiers::Init(std::atomic<bool>* serverActive)
 	{
@@ -552,23 +509,26 @@ namespace Kargono::Network
 
 		SendReceiveClientCountToAllMessage(client, m_AllConnections.GetNumberOfClients());
 
-#if 0 // TODO:
-		if (m_OnlySession.GetAllClients().contains(client))
+		for (ClientIndex sessionClient : m_OnlySession.GetSessionClients())
 		{
-			// Remove the client from the session
-			SessionIndex removedClientSlot = m_OnlySession.RemoveClient(client);
-
-			// Check if client removal failed
-			if (removedClientSlot == k_InvalidSessionSlot)
+			if (sessionClient == client)
 			{
-				KG_WARN("Client disconnect failed. Could not remove a client from a session.");
-				return;
-			}
+				// Remove the client from the session
+				SessionIndex removedClientSlot = m_OnlySession.RemoveClient(client);
 
-			// Notify all other clients which client was removed
-			SendClientLeftMessageToAll(removedClientSlot);
+				// Check if client removal failed
+				if (removedClientSlot == k_InvalidSessionIndex)
+				{
+					KG_WARN("Client disconnect failed. Could not remove a client from a session.");
+					return;
+				}
+
+				// Notify all other clients which client was removed
+				SendClientLeftMessageToAll(removedClientSlot);
+				break;
+			}
 		}
-#endif
+
 	}
 
 	bool Server::Init(const ServerConfig& initConfig)
@@ -584,7 +544,7 @@ namespace Kargono::Network
 		}
 
 		// Open the server socket
-		if (!m_ServerSocket.Open(initConfig.m_ServerAddress.GetPort()))
+		if (m_ServerSocket.Open(initConfig.m_ServerAddress.GetPort()) != SocketErrorCode::None)
 		{
 			KG_WARN("Failed to create socket!");
 			SocketContext::ShutdownSockets();
@@ -652,7 +612,7 @@ namespace Kargono::Network
 
 	void ServerNetworkThread::RunThread()
 	{
-		while (m_ManageConnectionTimer.CheckForUpdate())
+		if (m_ManageConnectionTimer.CheckForMultipleUpdates() > 0)
 		{
 			// Handle connection(s)
 			HandleConnectionKeepAlive();
@@ -716,6 +676,7 @@ namespace Kargono::Network
 					m_ReliabilityNotifiers.m_AckPacketNotifier.Notify(clientIndex, data.m_Sequence, data.m_RTT);
 				}
 
+
 				// Set up message
 				Message msg;
 				msg.m_Header.m_MessageType = type;
@@ -725,22 +686,11 @@ namespace Kargono::Network
 				// Load in the payload
 				if (msg.m_Header.m_PayloadSize > 0)
 				{
-					msg.m_PayloadData.reserve(msg.m_Header.m_PayloadSize);
+					msg.m_PayloadData.resize(msg.m_Header.m_PayloadSize);
 					memcpy(msg.m_PayloadData.data(), buffer + k_PacketHeaderSize, msg.m_Header.m_PayloadSize);
 				}
 
 				OpenMessageFromClient(clientIndex, msg);
-
-				switch (type)
-				{
-				case MessageType::ManageConnection_KeepAlive:
-				{
-					continue;
-				}
-				default:
-					KG_WARN("Invalid packet ID obtained");
-					continue;
-				}
 			}
 			else
 			{
@@ -881,6 +831,9 @@ namespace Kargono::Network
 
 		// Init connections
 		m_AllConnections = ConnectionList(64);
+
+		// Init session
+		m_OnlySession.Init(this, &m_AllConnections);
 
 		// Init timers
 		m_ManageConnectionTimer.InitializeTimer();

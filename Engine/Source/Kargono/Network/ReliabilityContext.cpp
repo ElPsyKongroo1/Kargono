@@ -67,14 +67,11 @@ namespace Kargono::Network
 			return false;
 		}
 
-		// Check the ack context
-		if (!ProcessReceivedAck(packetAck, packetAckBitfield))
-		{
-			return false;
-		}
-
 		// Packet received successfully
 		m_LastPacketReceived = 0.0f;
+
+		// Check the ack context
+		ProcessReceivedAck(packetAck, packetAckBitfield);
 
 		return true;
 	}

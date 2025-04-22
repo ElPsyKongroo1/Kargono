@@ -6,7 +6,20 @@
 
 namespace Kargono::Network
 {
-	bool Socket::Open(unsigned short m_Port)
+	static SocketErrorCode GetSocketError(int windowsError)
+	{
+		switch (windowsError)
+		{
+		case 0:
+			return SocketErrorCode::None;
+		case 10'048:
+			return SocketErrorCode::AddressInUse;
+		default:
+			return SocketErrorCode::OtherFailure;
+		}
+	}
+
+	SocketErrorCode Socket::Open(unsigned short m_Port)
 	{
 		// Create the UDP socket
 		m_Handle = (int)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -16,7 +29,7 @@ namespace Kargono::Network
 		{
 			// TODO: This call is windows specific
 			KG_WARN("Failed to create a socket: {}", WSAGetLastError());
-			return false;
+			return GetSocketError(WSAGetLastError());
 		}
 
 		// Create the socket's address
@@ -28,8 +41,8 @@ namespace Kargono::Network
 		// Bind the address to the socket
 		if (bind(m_Handle, (const sockaddr*)&m_Address, sizeof(sockaddr_in)) < 0)
 		{
-			KG_WARN("Failed to bind socket");
-			return false;
+			KG_WARN("Failed to bind socket {}", WSAGetLastError());
+			return GetSocketError(WSAGetLastError());
 		}
 
 		// Set socket to non-blocking mode
@@ -37,19 +50,19 @@ namespace Kargono::Network
 		int nonBlocking = 1;
 		if (fcntl(m_Handle, F_SETFL, O_NONBLOCK, nonBlocking) == -1)
 		{
-			KG_WARN("Failed to set non-blocking");
-			return false;
+			KG_WARN("Failed to set non-blocking {}", WSAGetLastError());
+			return GetSocketError(WSAGetLastError());
 		}
 #elif defined(KG_PLATFORM_WINDOWS)
 		DWORD nonBlocking = 1;
 		if (ioctlsocket(m_Handle, FIONBIO, &nonBlocking) != 0)
 		{
-			KG_WARN("Failed to set non-blocking");
-			return false;
+			KG_WARN("Failed to set non-blocking {}", WSAGetLastError());
+			return GetSocketError(WSAGetLastError());
 		}
 #endif
 
-		return true;
+		return SocketErrorCode::None;
 	}
 
 	void Socket::Close()

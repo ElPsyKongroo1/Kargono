@@ -302,8 +302,9 @@ namespace Kargono
 
 		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			auto& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
+			ECS::Rigidbody2DComponent& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			KG_ASSERT(body);
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 			body->SetLinearVelocity(b2Vec2(linearVelocity.x, linearVelocity.y));
 		}

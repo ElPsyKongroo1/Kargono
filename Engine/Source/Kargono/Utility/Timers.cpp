@@ -199,7 +199,7 @@ namespace Kargono::Utility
 		m_Accumulator = 0ns;
 	}
 
-	bool LoopTimer::CheckForUpdate()
+	bool LoopTimer::CheckForSingleUpdate()
 	{
 		// Update the timestep and accumulation
 		m_CurrentTime = std::chrono::high_resolution_clock::now();
@@ -217,6 +217,23 @@ namespace Kargono::Utility
 		m_Accumulator -= m_ConstantFrameTime;
 		m_UpdateCount++;
 		return true;
+	}
+
+	UpdateCount LoopTimer::CheckForMultipleUpdates()
+	{
+		// Update the timestep and accumulation
+		m_CurrentTime = std::chrono::high_resolution_clock::now();
+		m_Timestep = m_CurrentTime - m_LastLoopTime;
+		m_LastLoopTime = m_CurrentTime;
+		m_Accumulator += m_Timestep;
+
+		UpdateCount numUpdates{(UpdateCount)(m_Accumulator / m_ConstantFrameTime) };
+
+		// Handle the update(s)
+		m_Accumulator -= m_ConstantFrameTime * numUpdates;
+		m_UpdateCount += numUpdates;
+
+		return numUpdates;
 	}
 
 	void LoopTimer::SetConstantFrameTime(std::chrono::nanoseconds newFrameTime)
@@ -239,7 +256,7 @@ namespace Kargono::Utility
 		return std::chrono::duration<float>(m_ConstantFrameTime).count();
 	}
 
-	uint64_t LoopTimer::GetUpdateCount()
+	UpdateCount LoopTimer::GetUpdateCount()
 	{
 		return m_UpdateCount;
 	}

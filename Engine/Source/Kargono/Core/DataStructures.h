@@ -84,6 +84,14 @@ namespace Kargono
 		std::mutex muxBlocking;
 	};
 
+
+	template<typename T, std::unsigned_integral IndexType = size_t>
+	struct EmplaceResult
+	{
+		IndexType m_ArrayIndex{ 0 };
+		T& m_Value;
+	};
+
 	// TODO: Maybe use a data buffer along w/ placement new to avoid unnecessary constructor calls
 	// Note that this data structure does not manage the destruction of objects
 	template<typename T, std::unsigned_integral IndexType = size_t>
@@ -114,16 +122,30 @@ namespace Kargono
 			return m_Capacity;
 		}
 
+		std::vector<IndexType> GetActiveIndices()
+		{
+			// TODO: Note that this function is quite expensive
+			std::vector<IndexType> returnIndices{};
+			returnIndices.reserve(m_Count);
+			
+			// Store all active indices
+			IndexType i{ 0 };
+			for (bool active : m_ActiveArray)
+			{
+				if (active)
+				{
+					returnIndices.push_back(i);
+				}
+				i++;
+			}
+
+			return returnIndices;
+		}
+
 		//==============================
 		// Modify State
 		//==============================
-		struct EmplaceResult
-		{
-			IndexType m_ArrayIndex{ 0 };
-			T& m_Value;
-		};
-
-		std::optional<EmplaceResult> EmplaceLowest()
+		Expected<EmplaceResult<T, IndexType>> EmplaceLowest()
 		{
 			IndexType index{ 0 };
 
@@ -170,7 +192,6 @@ namespace Kargono
 
 		void SetMaxSize(IndexType newSize)
 		{
-
 			m_Capacity = newSize;
 			m_Array.resize(m_Capacity);
 			m_ActiveArray.resize(m_Capacity);
@@ -187,7 +208,7 @@ namespace Kargono
 		//==============================
 		// Operator Overloads
 		//==============================
-		T& operator[](IndexType index) const
+		T& operator[](IndexType index)
 		{
 			KG_ASSERT(index < m_Capacity);
 			KG_ASSERT(m_ActiveArray[index]);
@@ -196,29 +217,50 @@ namespace Kargono
 		}
 
 		//==============================
-		// Iterators
+		// Iterators API
 		//==============================
-		struct SparseArrayIterator : public Iterator<SparseArrayIterator, SparseArray<T>, T>
+		struct SparseArrayIterator : public Iterator<SparseArrayIterator, SparseArray<T, IndexType>, T>
 		{
+			// Constructor to initialize the iterator
+			SparseArrayIterator(SparseArray* container, T* dataPtr)
+				: Iterator<SparseArrayIterator, SparseArray<T, IndexType>, T>(container, dataPtr) {}
+
 			bool Compare(T* dataPtr)
 			{
-				// Get the index using the distance to the beginning buffer
-				KG_ASSERT((uintptr_t)dataPtr >= (uintptr_t)m_Array.data());
-				size_t index{ dataPtr - (T*)m_Array.data()};
+				// Ensure the pointer is within the bounds of the array
+				if ((uintptr_t)dataPtr < (uintptr_t)this->m_ContainerPtr->m_Array.data() ||
+					(uintptr_t)dataPtr >= (uintptr_t)this->m_ContainerPtr->m_Array.data() + this->m_ContainerPtr->m_Capacity * sizeof(T))
+				{
+					return false;
+				}
 
-				// Check if the active iterator is valid
-				return this->m_ContainerPtr->m_ActiveArray[index];
+				// Calculate the index from the pointer
+				size_t index{ (size_t)(dataPtr - (T*)this->m_ContainerPtr->m_Array.data()) };
+				// Check if the index is active
+				return !this->m_ContainerPtr->m_ActiveArray[index];
 			}
 		};
 
 		SparseArrayIterator begin()
 		{
-			return SparseArrayIterator(this, m_Array.data());
+			// Find the first valid index or the end
+			size_t i{0};
+			while (i < m_Capacity)
+			{
+				if (m_ActiveArray[i])
+				{
+					break;
+				}
+				i++;
+			}
+
+			// Return the first valid index
+			return { this, (T*)m_Array.data() + i };
 		}
 
 		SparseArrayIterator end()
 		{
-			return SparseArrayIterator(this, (T*)m_Array.data() + m_Capacity);
+			return { this, (T*)m_Array.data() + m_Capacity };
 		}
 
 	private:

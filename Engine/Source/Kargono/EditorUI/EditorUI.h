@@ -76,7 +76,7 @@ namespace Kargono::EditorUI
 	{
 	public:
 		void AddMemento(const EditorMemento& memento);
-		std::optional<EditorMemento> PopMemento();
+		Optional<EditorMemento> PopMemento();
 	private:
 		std::stack<EditorMemento> m_Stack;
 	};
@@ -550,7 +550,7 @@ namespace Kargono::EditorUI
 			m_XValues.resize(newSize);
 			m_YValues.resize(newSize);
 
-			// Reset the buffer
+			// Clear the buffer
 			Clear();
 		}
 
@@ -584,14 +584,14 @@ namespace Kargono::EditorUI
 
 		void Clear()
 		{
-			// Reset all values in buffer
+			// Clear all values in buffer
 			for (size_t i{ 0 }; i < m_BufferSize; i++)
 			{
 				m_XValues[i] = 0.0f;
 				m_YValues[i] = 0.0f;
 			}
 
-			// Reset the offset
+			// Clear the offset
 			m_Offset = m_BufferSize;
 		}
 

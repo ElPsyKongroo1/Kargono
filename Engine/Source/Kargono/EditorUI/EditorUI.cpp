@@ -1193,7 +1193,7 @@ namespace Kargono::EditorUI
 	bool EditorUIService::Undo()
 	{
 		// Get the top memento
-		std::optional<EditorMemento> mementoReturn = s_UndoStack.PopMemento();
+		Optional<EditorMemento> mementoReturn = s_UndoStack.PopMemento();
 
 		// Check for empty undo stack
 		if (!mementoReturn.has_value())
@@ -4944,7 +4944,7 @@ namespace Kargono::EditorUI
 	{
 		m_Stack.push(memento);
 	}
-	std::optional<EditorMemento> MementoStack::PopMemento()
+	Optional<EditorMemento> MementoStack::PopMemento()
 	{
 		// Handle case where stack is empty
 		if (m_Stack.size() == 0)

@@ -177,6 +177,11 @@ namespace Kargono::Network
 			return m_ReliabilityNotifiers;
 		}
 
+		SessionIndex GetSessionIndex() const
+		{
+			return m_SessionIndex;
+		}
+
 	public:
 		//==============================
 		// Receive Messages from Server
@@ -232,8 +237,8 @@ namespace Kargono::Network
 		// Server connection
 		ConnectionToServer m_ServerConnection;
 		// Session
-		uint64_t m_SessionStartFrame{ 0 };
-		std::atomic<uint16_t> m_SessionSlot{ std::numeric_limits<uint16_t>::max() };
+		UpdateCount m_SessionStartFrame{ 0 };
+		std::atomic<SessionIndex> m_SessionIndex{ k_InvalidSessionIndex };
 		// Notifiers
 		ClientNetworkNotifiers m_Notifiers{};
 		ReliabilityContextNotifiers m_ReliabilityNotifiers{};

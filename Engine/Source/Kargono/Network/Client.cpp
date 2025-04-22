@@ -27,13 +27,26 @@ namespace Kargono::Network
 			return false;
 		}
 
-		// Open the Client socket
-		if (!m_ClientSocket.Open(initConfig.m_ServerAddress.GetPort() + 1))
+		// Establish socket connection
+		constexpr uint16_t k_MaxMachineSockets{ 8 };
+		uint16_t currentPort{ (uint16_t)(initConfig.m_ServerAddress.GetPort() + 1) };
+		const uint16_t maximumPort{ (uint16_t)(currentPort + k_MaxMachineSockets) };
+		SocketErrorCode openSocketResult{ SocketErrorCode::None };
+
+		do
 		{
-			KG_WARN("Failed to create socket!");
-			SocketContext::ShutdownSockets();
-			return false;
-		}
+			openSocketResult = m_ClientSocket.Open(currentPort);
+
+			if (openSocketResult == SocketErrorCode::OtherFailure || currentPort >= maximumPort)
+			{
+				KG_WARN("Failed to create socket!");
+				SocketContext::ShutdownSockets();
+				return false;
+			}
+			currentPort++;
+		} while (openSocketResult == SocketErrorCode::AddressInUse);
+
+
 		// Initialize notifiers
 		m_Notifiers.Init(&m_ClientActive);
 
@@ -198,7 +211,7 @@ namespace Kargono::Network
 
 	void ClientNetworkThread::RunThread()
 	{
-		if (m_ManageConnectionTimer.CheckForUpdate())
+		if (m_ManageConnectionTimer.CheckForSingleUpdate())
 		{
 			// Update reliability observers
 			ReliabilityContext& relContext{ m_ServerConnection.m_Connection.m_ReliabilityContext };
@@ -219,7 +232,7 @@ namespace Kargono::Network
 		}
 
 		// Process the network event queue
-		//m_EventQueue.ProcessQueue();
+		m_EventQueue.ProcessQueue();
 		m_WorkQueue.ProcessQueue();
 
 		Address sender;
@@ -287,8 +300,8 @@ namespace Kargono::Network
 			if (bytesRead > k_PacketHeaderSize)
 			{
 				msg.m_Header.m_PayloadSize = bytesRead - k_PacketHeaderSize;
-				msg.m_PayloadData.reserve(msg.m_Header.m_PayloadSize);
-				memcpy(msg.m_PayloadData.data(), buffer + k_PacketHeaderSize, msg.m_Header.m_PayloadSize);
+				msg.m_PayloadData.resize(msg.m_Header.m_PayloadSize);
+				memcpy(msg.m_PayloadData.data(), (uint8_t*)buffer + k_PacketHeaderSize, msg.m_Header.m_PayloadSize);
 			}
 
 			OpenMessageFromServer(msg);
@@ -354,7 +367,7 @@ namespace Kargono::Network
 			break;
 		case Events::EventType::ConnectionTerminated:
 			// Essentially clear all session information from this client context
-			m_SessionSlot = k_InvalidSessionSlot;
+			m_SessionIndex = k_InvalidSessionIndex;
 			m_SessionStartFrame = 0;
 			break;
 		case Events::EventType::EnableReadyCheck:
@@ -378,7 +391,7 @@ namespace Kargono::Network
 	void ClientNetworkThread::RequestConnection()
 	{
 		// Check for a network update
-		while (m_ManageConnectionTimer.CheckForUpdate())
+		while (m_ManageConnectionTimer.CheckForSingleUpdate())
 		{
 			// Handle sending connection requests
 			if (m_RequestConnectionTimer.CheckForUpdate(m_ManageConnectionTimer.GetConstantFrameTime()))
@@ -618,7 +631,7 @@ namespace Kargono::Network
 		SendToServer(msg);
 
 		// Ensure current application/client is aware our session is invalid
-		m_SessionSlot = std::numeric_limits<uint16_t>::max();
+		m_SessionIndex = k_InvalidSessionIndex;
 	}
 
 	void ClientNetworkThread::SendRequestConnectionMessage()
@@ -720,7 +733,7 @@ namespace Kargono::Network
 		// Get the indicated user slot
 		SessionIndex userSlot{};
 		msg >> userSlot;
-		m_SessionSlot = userSlot;
+		m_SessionIndex = userSlot;
 
 		// Pass the event along to the main thread
 		EngineService::SubmitToEventQueue(CreateRef<Events::ApproveJoinSession>(userSlot));
@@ -885,7 +898,7 @@ namespace Kargono::Network
 		KG_ASSERT(s_Client.m_ClientActive);
 
 		// Client is unavailable so send error response
-		return k_InvalidSessionSlot;
+		return s_Client.GetNetworkThread().GetSessionIndex();
 	}
 
 	void ClientService::SendAllEntityLocation(UUID entityID, Math::vec3 location)

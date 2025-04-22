@@ -21,6 +21,7 @@ namespace Kargono::Network
 {
 	// Forward declarations
 	class ServerEventThread;
+	class Session;
 
 	class ServerNotifiers
 	{
@@ -137,7 +138,6 @@ namespace Kargono::Network
 		//==============================
 		// Manage Session
 		//==============================
-		void SessionClock();
 		void StartSession();
 
 		//==============================
@@ -194,6 +194,7 @@ namespace Kargono::Network
 		void SendKeepAliveMessage(ClientIndex receivingClient);
 		void SendAcceptConnectionMessage(ClientIndex receivingClient, size_t clientCount);
 		void SendSessionInitMessage(ClientIndex receivingClient);
+		void SendStartSessionMessage(ClientIndex receivingClient, float waitTime);
 	private:
 		//==============================
 		// Internal Fields
@@ -213,9 +214,6 @@ namespace Kargono::Network
 		uint32_t m_CongestionCounter{ 0 };
 		// Sessions
 		Session m_OnlySession{};
-		Scope<std::thread> m_TimingThread{ nullptr };
-		bool m_StopTimingThread{ false };
-		std::atomic<uint64_t> m_UpdateCount{ 0 };
 		
 		//==============================
 		// Injected Dependencies
@@ -224,6 +222,8 @@ namespace Kargono::Network
 		ServerConfig* i_ServerConfig{ nullptr };
 		Socket* i_ServerSocket{ nullptr };
 		ServerEventThread* i_EventThread{ nullptr };
+	private:
+		friend class Session;
 	};
 
 	class ServerEventThread

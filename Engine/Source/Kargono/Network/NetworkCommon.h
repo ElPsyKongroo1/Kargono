@@ -168,6 +168,7 @@ namespace Kargono::Network
 	{
 		// Check that the type of the data being pushed is trivially copyable
 		static_assert(std::is_standard_layout<DataType>::value, "Data is too complex");
+		KG_ASSERT((int)msg.m_PayloadData.size() - (int)sizeof(DataType) >= 0);
 
 		// Cache current size of vector, as this will be the point we insert the data
 		size_t bufferSizeAfterRemoval = msg.m_PayloadData.size() - sizeof(DataType);
@@ -184,7 +185,7 @@ namespace Kargono::Network
 		return msg;
 	}
 	using SessionIndex = uint8_t;
-	constexpr SessionIndex k_InvalidSessionSlot = std::numeric_limits<SessionIndex>::max();
+	constexpr SessionIndex k_InvalidSessionIndex = std::numeric_limits<SessionIndex>::max();
 	// TODO: VERY TEMPORARY. Only for pong!!!!
 	constexpr size_t k_MaxSessionClients{ 2 };
 

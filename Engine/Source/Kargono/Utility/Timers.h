@@ -93,10 +93,15 @@ namespace Kargono::Utility
 	class PassiveTimer
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		PassiveTimer(float waitTime, std::function<void()> function) : m_WaitTime{ waitTime }, m_Function{ function } {}
+		~PassiveTimer() = default;
+	public:
 		static void CreateTimer(float waitTime, std::function<void()> function);
 		static void OnUpdate(Timestep step);
-	public:
-		PassiveTimer(float waitTime, std::function<void()> function) : m_WaitTime{ waitTime }, m_Function {function} {}
+	
 	private:
 		float m_WaitTime {0.0f};
 		float m_ElapsedTime{0.0f};
@@ -121,18 +126,19 @@ namespace Kargono::Utility
 		void InitializeTimer();
 		void ResetAccumulator();
 		// Move the timer context forward
-		bool CheckForUpdate();
+		bool CheckForSingleUpdate();
+		UpdateCount CheckForMultipleUpdates();
 
 		//==============================
 		// Getters/Setters
 		//==============================
-		// Manage constant frame time
+		// Config fields
 		void SetConstantFrameTime(std::chrono::nanoseconds newFrameTime);
 		std::chrono::nanoseconds GetConstantFrameTime();
 		void SetConstantFrameTimeFloat(float newFrameTimeSeconds);
 		float GetConstantFrameTimeFloat();
-
-		uint64_t GetUpdateCount();
+		// Accumulation fields
+		UpdateCount GetUpdateCount();
 	private:
 		//==============================
 		// Internal Fields
@@ -144,7 +150,7 @@ namespace Kargono::Utility
 		// Accumulating data
 		std::chrono::nanoseconds m_Timestep{ 0 };
 		std::chrono::nanoseconds m_Accumulator{ 0 };
-		uint64_t m_UpdateCount{ 0 };
+		UpdateCount m_UpdateCount{ 0 };
 
 		// Configuration data
 		std::chrono::nanoseconds m_ConstantFrameTime{ 1'000 * 1'000 * 1'000 / 60 }; // 1/60th of a second
