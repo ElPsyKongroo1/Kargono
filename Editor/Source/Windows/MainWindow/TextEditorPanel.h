@@ -1,8 +1,8 @@
 #pragma once
-#include "Kargono/Events/KeyEvent.h"
-#include "Kargono/EditorUI/EditorUI.h"
+#include "EventsPlugin/KeyEvent.h"
+#include "EditorUIPlugin/EditorUI.h"
 
-#include "API/EditorUI/ImGuiColorTextEditorAPI.h"
+#include "EditorUIPlugin/ExternalAPI/ImGuiColorTextEditorAPI.h"
 
 #include <filesystem>
 #include <string>

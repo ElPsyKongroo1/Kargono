@@ -1,10 +1,10 @@
 
 
 #pragma once
-#include "Kargono/Events/KeyEvent.h"
-#include "Kargono/Assets/Asset.h"
-#include "Kargono/EditorUI/EditorUI.h"
-#include "Kargono/Particles/ParticleService.h"
+#include "EventsPlugin/KeyEvent.h"
+#include "AssetsPlugin/Asset.h"
+#include "EditorUIPlugin/EditorUI.h"
+#include "ParticlesPlugin/ParticleService.h"
 #include "Kargono/Core/Base.h"
 
 #include "Windows/EmitterConfig/EmitterConfigViewportPanel.h"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Events/Event.h"
+#include "EventsPlugin/Event.h"
 #include "Kargono/Math/Math.h"
 
 #include <filesystem>

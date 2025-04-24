@@ -18,6 +18,23 @@ project "Runtime"
 
     includedirs 
     {
+        "%{wks.location}/Runtime/Source",
+        "%{wks.location}/Engine/Source",
+        "%{wks.location}/Engine/Plugins/AI/Source",
+        "%{wks.location}/Engine/Plugins/Assets/Source",
+        "%{wks.location}/Engine/Plugins/Audio/Source",
+        "%{wks.location}/Engine/Plugins/ECS/Source",
+        "%{wks.location}/Engine/Plugins/EditorUI/Source",
+        "%{wks.location}/Engine/Plugins/Events/Source",
+        "%{wks.location}/Engine/Plugins/FileSystem/Source",
+        "%{wks.location}/Engine/Plugins/Input/Source",
+        "%{wks.location}/Engine/Plugins/InputMap/Source",
+        "%{wks.location}/Engine/Plugins/Network/Source",
+        "%{wks.location}/Engine/Plugins/Particles/Source",
+        "%{wks.location}/Engine/Plugins/Physics2D/Source",
+        "%{wks.location}/Engine/Plugins/Rendering/Source",
+        "%{wks.location}/Engine/Plugins/RuntimeUI/Source",
+        "%{wks.location}/Engine/Plugins/Scripting/Source",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
@@ -29,8 +46,6 @@ project "Runtime"
 		"%{IncludeDir.hash_library}",
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
-        "%{wks.location}/Engine/Source",
-        "%{wks.location}/Runtime/Source",
         "%{IncludeDir.optick}"
 
     }

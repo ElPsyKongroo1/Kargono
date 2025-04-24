@@ -1,8 +1,8 @@
 #pragma once
-#include "Kargono/Events/KeyEvent.h"
-#include "Kargono/Assets/Asset.h"
-#include "Kargono/EditorUI/EditorUI.h"
-#include "Kargono/RuntimeUI/RuntimeUI.h"
+#include "EventsPlugin/KeyEvent.h"
+#include "AssetsPlugin/Asset.h"
+#include "EditorUIPlugin/EditorUI.h"
+#include "RuntimeUIPlugin/RuntimeUI.h"
 #include "Kargono/Core/Base.h"
 
 #include "Windows/UserInterface/UIEditorViewportPanel.h"

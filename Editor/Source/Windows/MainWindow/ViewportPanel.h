@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Kargono/Events/Event.h"
-#include "Kargono/Events/KeyEvent.h"
+#include "EventsPlugin/Event.h"
+#include "EventsPlugin/KeyEvent.h"
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/FixedString.h"
-#include "Kargono/ECS/Entity.h"
-#include "Kargono/Rendering/EditorPerspectiveCamera.h"
-#include "Kargono/Rendering/Framebuffer.h"
+#include "ECSPlugin/Entity.h"
+#include "RenderingPlugin/EditorPerspectiveCamera.h"
+#include "RenderingPlugin/Framebuffer.h"
 #include "Kargono/Math/Spline.h"
-#include "Kargono/RuntimeUI/RuntimeUICommon.h"
+#include "RuntimeUIPlugin/RuntimeUICommon.h"
 
 #include <vector>
 

@@ -1,8 +1,8 @@
 #pragma once
-#include "Kargono/Assets/Asset.h"
-#include "Kargono/Events/KeyEvent.h"
-#include "Kargono/Input/InputMap.h"
-#include "Kargono/EditorUI/EditorUI.h"
+#include "AssetsPlugin/Asset.h"
+#include "EventsPlugin/KeyEvent.h"
+#include "InputMapPlugin/InputMap.h"
+#include "EditorUIPlugin/EditorUI.h"
 
 #include <string>
 

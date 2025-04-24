@@ -2,14 +2,14 @@
 
 #include "EditorApp.h"
 
-#include "Kargono/Rendering/RenderingService.h"
-#include "Kargono/Rendering/Texture.h"
+#include "RenderingPlugin/RenderingService.h"
+#include "RenderingPlugin/Texture.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Input/InputService.h"
+#include "InputPlugin/InputService.h"
 #include "Kargono/Utility/Time.h"
-#include "Kargono/Events/EditorEvent.h"
+#include "EventsPlugin/EditorEvent.h"
 #include "Kargono/Utility/Operations.h"
-#include "Kargono/Particles/ParticleService.h"
+#include "ParticlesPlugin/ParticleService.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };

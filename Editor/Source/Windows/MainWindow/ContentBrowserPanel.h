@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Kargono/Events/KeyEvent.h"
-#include "Kargono/Events/MouseEvent.h"
-#include "Kargono/EditorUI/EditorUI.h"
-#include "Kargono/Assets/AssetService.h"
+#include "EventsPlugin/KeyEvent.h"
+#include "EventsPlugin/MouseEvent.h"
+#include "EditorUIPlugin/EditorUI.h"
+#include "AssetsPlugin/AssetService.h"
 
 #include "API/FileWatch/FileWatchAPI.h"
 

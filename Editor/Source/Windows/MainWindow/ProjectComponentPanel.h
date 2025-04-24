@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Kargono/Events/KeyEvent.h"
-#include "Kargono/Assets/Asset.h"
-#include "Kargono/EditorUI/EditorUI.h"
-#include "Kargono/ECS/ProjectComponent.h"
+#include "EventsPlugin/KeyEvent.h"
+#include "AssetsPlugin/Asset.h"
+#include "EditorUIPlugin/EditorUI.h"
+#include "ECSPlugin/ProjectComponent.h"
 
 #include <filesystem>
 

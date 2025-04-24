@@ -3,7 +3,7 @@
 #include "Kargono/Core/Buffer.h"
 #include "Kargono/Utility/Conversions.h"
 #include "Kargono/Math/Math.h"
-#include "Kargono/Utility/FileSystem.h"
+#include "FileSystemPlugin/FileSystem.h"
 
 #include <cstdint>
 #include <functional>

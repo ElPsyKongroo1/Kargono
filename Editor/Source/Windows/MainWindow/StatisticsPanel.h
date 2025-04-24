@@ -1,5 +1,5 @@
 #pragma once
-#include "Kargono/Events/KeyEvent.h"
+#include "EventsPlugin/KeyEvent.h"
 
 #include <string>
 

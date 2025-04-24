@@ -1,8 +1,8 @@
 #include "Windows/UserInterface/UIEditorViewportPanel.h"
 
-#include "Kargono/Rendering/RenderingService.h"
-#include "Kargono/Input/InputService.h"
-#include "Kargono/Rendering/Texture.h"
+#include "RenderingPlugin/RenderingService.h"
+#include "InputPlugin/InputService.h"
+#include "RenderingPlugin/Texture.h"
 #include "Kargono/Utility/Operations.h"
 
 #include "EditorApp.h"

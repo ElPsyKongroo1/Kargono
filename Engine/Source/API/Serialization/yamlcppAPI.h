@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Kargono/ECS/EngineComponents.h"
+#include "ECSPlugin/EngineComponents.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/WrappedData.h"
 
-#include "API/Physics/Box2DAPI.h"
+#include "Physics2DPlugin/ExternalAPI/Box2DAPI.h"
 
 #include <yaml-cpp/yaml.h>
 
