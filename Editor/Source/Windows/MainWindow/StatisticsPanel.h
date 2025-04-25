@@ -1,5 +1,5 @@
 #pragma once
-#include "EventsPlugin/KeyEvent.h"
+#include "EventModule/KeyEvent.h"
 
 #include <string>
 

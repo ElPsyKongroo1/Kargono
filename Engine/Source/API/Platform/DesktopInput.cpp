@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "InputPlugin/InputService.h"
+#include "InputModule/InputService.h"
 #include "Kargono/Core/Engine.h"
 #include "Kargono/Math/Math.h"
 

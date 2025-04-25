@@ -1,8 +1,8 @@
 #pragma once
-#include "AssetsPlugin/Asset.h"
-#include "EventsPlugin/KeyEvent.h"
-#include "AIPlugin/AIService.h"
-#include "EditorUIPlugin/EditorUI.h"
+#include "AssetModule/Asset.h"
+#include "EventModule/KeyEvent.h"
+#include "AIModule/AIService.h"
+#include "EditorUIModule/EditorUI.h"
 
 #include <string>
 

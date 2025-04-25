@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/WrappedData.h"
-#include "AssetsPlugin/Asset.h"
+#include "AssetModule/Asset.h"
 
 #include <unordered_map>
 #include <string>

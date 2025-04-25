@@ -1,6 +1,6 @@
 #include "kgpch.h"
 #include "FileWatchAPI.h"
-#include "FileSystemPlugin/FileSystem.h"
+#include "FileSystemModule/FileSystem.h"
 
 namespace API::FileWatch
 {

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "EventsPlugin/KeyEvent.h"
-#include "EventsPlugin/MouseEvent.h"
-#include "EditorUIPlugin/EditorUI.h"
-#include "AssetsPlugin/AssetService.h"
+#include "EventModule/KeyEvent.h"
+#include "EventModule/MouseEvent.h"
+#include "EditorUIModule/EditorUI.h"
+#include "AssetModule/AssetService.h"
 
 #include "API/FileWatch/FileWatchAPI.h"
 

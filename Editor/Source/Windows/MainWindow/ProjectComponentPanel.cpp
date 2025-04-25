@@ -2,7 +2,7 @@
 
 #include "EditorApp.h"
 
-#include "ScriptingPlugin/ScriptCompilerService.h"
+#include "ScriptModule/ScriptCompilerService.h"
 #include "Kargono/Utility/Operations.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };

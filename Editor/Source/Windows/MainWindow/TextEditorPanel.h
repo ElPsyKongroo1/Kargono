@@ -1,8 +1,8 @@
 #pragma once
-#include "EventsPlugin/KeyEvent.h"
-#include "EditorUIPlugin/EditorUI.h"
+#include "EventModule/KeyEvent.h"
+#include "EditorUIModule/EditorUI.h"
 
-#include "EditorUIPlugin/ExternalAPI/ImGuiColorTextEditorAPI.h"
+#include "EditorUIModule/ExternalAPI/ImGuiColorTextEditorAPI.h"
 
 #include <filesystem>
 #include <string>

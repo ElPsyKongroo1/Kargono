@@ -3,7 +3,7 @@
 #include "EditorApp.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "RenderingPlugin/RenderingService.h"
+#include "RenderModule/RenderingService.h"
 #include "Kargono/Utility/Time.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };

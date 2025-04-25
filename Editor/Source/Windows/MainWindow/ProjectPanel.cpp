@@ -3,10 +3,10 @@
 #include "EditorApp.h"
 
 #include "Kargono/Utility/Operations.h"
-#include "RenderingPlugin/Texture.h"
+#include "RenderModule/Texture.h"
 #include "Kargono/Utility/Time.h"
 #include "Kargono/Scenes/Scene.h"
-#include "NetworkPlugin/Server.h"
+#include "NetworkModule/Server.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "EventsPlugin/KeyEvent.h"
-#include "AssetsPlugin/Asset.h"
-#include "EditorUIPlugin/EditorUI.h"
-#include "ECSPlugin/ProjectComponent.h"
+#include "EventModule/KeyEvent.h"
+#include "AssetModule/Asset.h"
+#include "EditorUIModule/EditorUI.h"
+#include "ECSModule/ProjectComponent.h"
 
 #include <filesystem>
 

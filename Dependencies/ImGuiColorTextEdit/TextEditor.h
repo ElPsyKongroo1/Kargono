@@ -11,7 +11,7 @@
 #include <functional>
 #include "imgui.h"
 
-#include "EditorUIPlugin/EditorUI.h"
+#include "EditorUIModule/EditorUI.h"
 namespace API::EditorUI
 {
 	class TextEditorSpec;

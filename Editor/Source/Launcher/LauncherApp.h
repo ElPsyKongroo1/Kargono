@@ -3,7 +3,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Application.h"
 #include "Kargono/Core/Timestep.h"
-#include "EventsPlugin/Event.h"
+#include "EventModule/Event.h"
 
 #include <filesystem>
 

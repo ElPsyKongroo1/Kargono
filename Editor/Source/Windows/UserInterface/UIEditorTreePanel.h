@@ -1,10 +1,10 @@
 #pragma once
 
-#include "EventsPlugin/KeyEvent.h"
-#include "AssetsPlugin/Asset.h"
-#include "EditorUIPlugin/EditorUI.h"
-#include "RenderingPlugin/Texture.h"
-#include "RuntimeUIPlugin/RuntimeUI.h"
+#include "EventModule/KeyEvent.h"
+#include "AssetModule/Asset.h"
+#include "EditorUIModule/EditorUI.h"
+#include "RenderModule/Texture.h"
+#include "RuntimeUIModule/RuntimeUI.h"
 
 
 #include <string>

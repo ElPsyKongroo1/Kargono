@@ -1,9 +1,9 @@
 #pragma once
-#include "EventsPlugin/KeyEvent.h"
-#include "EditorUIPlugin/EditorUI.h"
+#include "EventModule/KeyEvent.h"
+#include "EditorUIModule/EditorUI.h"
 
-#include "NetworkPlugin/Server.h"
-#include "NetworkPlugin/Client.h"
+#include "NetworkModule/Server.h"
+#include "NetworkModule/Client.h"
 
 #include <string>
 

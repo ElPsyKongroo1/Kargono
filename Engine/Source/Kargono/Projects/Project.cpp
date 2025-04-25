@@ -2,8 +2,8 @@
 
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Core/Engine.h"
-#include "AssetsPlugin/Asset.h"
-#include "NetworkPlugin/NetworkTools.h"
+#include "AssetModule/Asset.h"
+#include "NetworkModule/NetworkTools.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 

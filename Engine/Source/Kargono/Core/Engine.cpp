@@ -4,16 +4,16 @@
 
 #include "Kargono/Core/AppTick.h"
 #include "Kargono/Utility/Time.h"
-#include "Physics2DPlugin/Physics2D.h"
-#include "RenderingPlugin/RenderingService.h"
+#include "Physics2DModule/Physics2D.h"
+#include "RenderModule/RenderingService.h"
 #include "Kargono/Core/Profiler.h"
 #include "Kargono/Utility/Timers.h"
-#include "EventsPlugin/NetworkingEvent.h"
-#include "ECSPlugin/Entity.h"
+#include "EventModule/NetworkingEvent.h"
+#include "ECSModule/Entity.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Physics2DPlugin/Physics2D.h"
-#include "NetworkPlugin/Client.h"
-#include "ScriptingPlugin/ScriptService.h"
+#include "Physics2DModule/Physics2D.h"
+#include "NetworkModule/Client.h"
+#include "ScriptModule/ScriptService.h"
 
 
 namespace Kargono

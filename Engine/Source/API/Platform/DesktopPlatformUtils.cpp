@@ -3,7 +3,7 @@
 #include "Kargono/Utility/Time.h"
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
-#include "FileSystemPlugin/FileSystem.h"
+#include "FileSystemModule/FileSystem.h"
 #include "Kargono/Core/Engine.h"
 
 #if defined(KG_PLATFORM_WINDOWS) || defined(KG_PLATFORM_LINUX) 
