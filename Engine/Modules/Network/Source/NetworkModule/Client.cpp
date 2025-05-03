@@ -1018,13 +1018,13 @@ namespace Kargono::Network
 
 		i_ClientActive = clientActive;
 	}
-	ObserverIndex ClientNotifiers::AddClientActiveObserver(std::function<void(bool)> func)
+	ListenerIndex ClientNotifiers::AddClientActiveObserver(std::function<void(bool)> func)
 	{
 		KG_ASSERT(!i_ClientActive || !*i_ClientActive);
 
 		return m_ClientStatusNotifier.AddObserver(func);
 	}
-	bool ClientNotifiers::RemoveClientActiveObserver(ObserverIndex index)
+	bool ClientNotifiers::RemoveClientActiveObserver(ListenerIndex index)
 	{
 		KG_ASSERT(!i_ClientActive || !*i_ClientActive);
 
@@ -1036,7 +1036,7 @@ namespace Kargono::Network
 
 		i_ClientActive = clientActive;
 	}
-	ObserverIndex ClientNetworkNotifiers::AddConnectStatusObserver(std::function<void(ConnectionStatus, ClientIndex)> func)
+	ListenerIndex ClientNetworkNotifiers::AddConnectStatusObserver(std::function<void(ConnectionStatus, ClientIndex)> func)
 	{
 		KG_ASSERT(!i_ClientActive || !*i_ClientActive);
 

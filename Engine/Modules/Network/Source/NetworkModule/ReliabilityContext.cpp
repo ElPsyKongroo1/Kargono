@@ -275,20 +275,20 @@ namespace Kargono::Network
 		i_ContextActive = contextActive;
 	}
 
-	ObserverIndex ReliabilityContextNotifiers::AddReliabilityStateObserver(std::function<void(ClientIndex, bool, float)> func)
+	ListenerIndex ReliabilityContextNotifiers::AddReliabilityStateObserver(std::function<void(ClientIndex, bool, float)> func)
 	{
 		KG_ASSERT(!i_ContextActive || !*i_ContextActive);
 
 		return m_ReliabilityStateNotifier.AddObserver(func);
 	}
 
-	ObserverIndex ReliabilityContextNotifiers::AddSendPacketObserver(std::function<void(ClientIndex, PacketSequence)> func)
+	ListenerIndex ReliabilityContextNotifiers::AddSendPacketObserver(std::function<void(ClientIndex, PacketSequence)> func)
 	{
 		KG_ASSERT(!i_ContextActive || !*i_ContextActive);
 
 		return m_SendPacketNotifier.AddObserver(func);
 	}
-	ObserverIndex ReliabilityContextNotifiers::AddAckPacketObserver(std::function<void(ClientIndex, PacketSequence, float)> func)
+	ListenerIndex ReliabilityContextNotifiers::AddAckPacketObserver(std::function<void(ClientIndex, PacketSequence, float)> func)
 	{
 		KG_ASSERT(!i_ContextActive || !*i_ContextActive);
 

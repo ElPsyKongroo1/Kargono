@@ -29,19 +29,19 @@ namespace Kargono::Network
 
 	public:
 		// Reliability state
-		ObserverIndex AddReliabilityStateObserver(std::function<void(ClientIndex, bool, float)> func);
+		ListenerIndex AddReliabilityStateObserver(std::function<void(ClientIndex, bool, float)> func);
 		// Packet sent observers
-		ObserverIndex AddSendPacketObserver(std::function<void(ClientIndex, PacketSequence)> func);
-		ObserverIndex AddAckPacketObserver(std::function<void(ClientIndex, PacketSequence, float)> func);
+		ListenerIndex AddSendPacketObserver(std::function<void(ClientIndex, PacketSequence)> func);
+		ListenerIndex AddAckPacketObserver(std::function<void(ClientIndex, PacketSequence, float)> func);
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
 		// General reliability state
-		Notifier<ClientIndex, bool, float> m_ReliabilityStateNotifier{};
+		MultiNotifier<ClientIndex, bool, float> m_ReliabilityStateNotifier{};
 		// Packet notifiers
-		Notifier<ClientIndex, PacketSequence> m_SendPacketNotifier{};
-		Notifier<ClientIndex, PacketSequence, float> m_AckPacketNotifier{};
+		MultiNotifier<ClientIndex, PacketSequence> m_SendPacketNotifier{};
+		MultiNotifier<ClientIndex, PacketSequence, float> m_AckPacketNotifier{};
 
 		//==============================
 		// Injected Dependencies

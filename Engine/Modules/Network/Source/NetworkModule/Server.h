@@ -35,14 +35,14 @@ namespace Kargono::Network
 		void Init(std::atomic<bool>* serverActive);
 	public:
 		// Server state observers
-		ObserverIndex AddServerActiveObserver(std::function<void(bool)> func);
-		bool RemoveServerActiveObserver(ObserverIndex index);
+		ListenerIndex AddServerActiveObserver(std::function<void(bool)> func);
+		bool RemoveServerActiveObserver(ListenerIndex index);
 
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		Notifier<bool> m_ServerActiveNotifier{};
+		MultiNotifier<bool> m_ServerActiveNotifier{};
 
 		//==============================
 		// Injected Dependencies
@@ -64,17 +64,17 @@ namespace Kargono::Network
 		void Init(std::atomic<bool>* serverActive);
 	public:
 		// Client connection observers
-		ObserverIndex AddConnectObserver(std::function<void(ClientIndex)> func);
-		bool RemoveConnectObserver(ObserverIndex index);
-		ObserverIndex AddDisconnectObserver(std::function<void(ClientIndex)> func);
-		bool RemoveDisconnectObserver(ObserverIndex index);
+		ListenerIndex AddConnectObserver(std::function<void(ClientIndex)> func);
+		bool RemoveConnectObserver(ListenerIndex index);
+		ListenerIndex AddDisconnectObserver(std::function<void(ClientIndex)> func);
+		bool RemoveDisconnectObserver(ListenerIndex index);
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
 		// Connection notifiers
-		Notifier<ClientIndex> m_ConnectNotifier{};
-		Notifier<ClientIndex> m_DisconnectNotifier{};
+		MultiNotifier<ClientIndex> m_ConnectNotifier{};
+		MultiNotifier<ClientIndex> m_DisconnectNotifier{};
 
 		//==============================
 		// Injected Dependencies

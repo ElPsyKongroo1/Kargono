@@ -47,14 +47,14 @@ namespace Kargono::Network
 		void Init(std::atomic<bool>* clientActive);
 	public:
 		// Client state observers
-		ObserverIndex AddClientActiveObserver(std::function<void(bool)> func);
-		bool RemoveClientActiveObserver(ObserverIndex index);
+		ListenerIndex AddClientActiveObserver(std::function<void(bool)> func);
+		bool RemoveClientActiveObserver(ListenerIndex index);
 
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		Notifier<bool> m_ClientStatusNotifier{};
+		MultiNotifier<bool> m_ClientStatusNotifier{};
 
 		//==============================
 		// Injected Dependencies
@@ -76,14 +76,14 @@ namespace Kargono::Network
 		void Init(std::atomic<bool>* clientActive);
 	public:
 		// Client connection observers
-		ObserverIndex AddConnectStatusObserver(std::function<void(ConnectionStatus, ClientIndex)> func);
+		ListenerIndex AddConnectStatusObserver(std::function<void(ConnectionStatus, ClientIndex)> func);
 		// Packet sent observers
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
 		// Connection notifiers
-		Notifier<ConnectionStatus, ClientIndex> m_ConnectStatusNotifier{};
+		MultiNotifier<ConnectionStatus, ClientIndex> m_ConnectStatusNotifier{};
 		//==============================
 		// Injected Dependencies
 		//==============================

@@ -407,13 +407,13 @@ namespace Kargono::Network
 
 		i_ServerActive = serverActive;
 	}
-	ObserverIndex ServerNotifiers::AddServerActiveObserver(std::function<void(bool)> func)
+	ListenerIndex ServerNotifiers::AddServerActiveObserver(std::function<void(bool)> func)
 	{
 		KG_ASSERT(!i_ServerActive || !*i_ServerActive);
 
 		return m_ServerActiveNotifier.AddObserver(func);
 	}
-	bool ServerNotifiers::RemoveServerActiveObserver(ObserverIndex index)
+	bool ServerNotifiers::RemoveServerActiveObserver(ListenerIndex index)
 	{
 		KG_ASSERT(!i_ServerActive || !*i_ServerActive);
 
@@ -425,25 +425,25 @@ namespace Kargono::Network
 
 		i_ServerActive = serverActive;
 	}
-	ObserverIndex ServerNetworkNotifiers::AddConnectObserver(std::function<void(ClientIndex)> func)
+	ListenerIndex ServerNetworkNotifiers::AddConnectObserver(std::function<void(ClientIndex)> func)
 	{
 		KG_ASSERT(!i_ServerActive || !*i_ServerActive);
 
 		return m_ConnectNotifier.AddObserver(func);
 	}
-	bool ServerNetworkNotifiers::RemoveConnectObserver(ObserverIndex index)
+	bool ServerNetworkNotifiers::RemoveConnectObserver(ListenerIndex index)
 	{
 		KG_ASSERT(!i_ServerActive || !*i_ServerActive);
 
 		return m_ConnectNotifier.RemoveObserver(index);
 	}
-	ObserverIndex ServerNetworkNotifiers::AddDisconnectObserver(std::function<void(ClientIndex)> func)
+	ListenerIndex ServerNetworkNotifiers::AddDisconnectObserver(std::function<void(ClientIndex)> func)
 	{
 		KG_ASSERT(!i_ServerActive || !*i_ServerActive);
 
 		return m_DisconnectNotifier.AddObserver(func);
 	}
-	bool ServerNetworkNotifiers::RemoveDisconnectObserver(ObserverIndex index)
+	bool ServerNetworkNotifiers::RemoveDisconnectObserver(ListenerIndex index)
 	{
 		KG_ASSERT(!i_ServerActive || !*i_ServerActive);
 
