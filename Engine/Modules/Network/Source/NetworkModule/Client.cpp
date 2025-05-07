@@ -363,7 +363,8 @@ namespace Kargono::Network
 			SendLeaveCurrentSessionMessage();
 			break;
 		case Events::EventType::StartSession:
-			m_SessionStartFrame = EngineService::GetActiveEngine().GetUpdateCount();
+			// TODO: THIS IS A RACE CONDITION AHHHHHHHHHHHH
+			m_SessionStartFrame = EngineService::GetActiveEngine().GetThread().GetUpdateCount();
 			break;
 		case Events::EventType::ConnectionTerminated:
 			// Essentially clear all session information from this client context
@@ -715,7 +716,7 @@ namespace Kargono::Network
 		// Pass the event along to the main thread
 		ClientIndex userCount{};
 		msg >> userCount;
-		EngineService::SubmitToEventQueue(CreateRef<Events::ReceiveOnlineUsers>(userCount));
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::ReceiveOnlineUsers>(userCount));
 	}
 
 	void ClientNetworkThread::OpenReceiveUserCountMessage(Message& msg)
@@ -723,7 +724,7 @@ namespace Kargono::Network
 		// Pass the event along to the main thread
 		ClientIndex userCount{};
 		msg >> userCount;
-		EngineService::SubmitToEventQueue(CreateRef<Events::ReceiveOnlineUsers>(userCount));
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::ReceiveOnlineUsers>(userCount));
 	}
 
 	void ClientNetworkThread::OpenApproveJoinSessionMessage(Message& msg)
@@ -736,7 +737,7 @@ namespace Kargono::Network
 		m_SessionIndex = userSlot;
 
 		// Pass the event along to the main thread
-		EngineService::SubmitToEventQueue(CreateRef<Events::ApproveJoinSession>(userSlot));
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::ApproveJoinSession>(userSlot));
 	}
 
 	void ClientNetworkThread::OpenUpdateSessionUserSlotMessage(Message& msg)
@@ -746,7 +747,7 @@ namespace Kargono::Network
 		msg >> userSlot;
 
 		// Pass the event along to the main thread
-		EngineService::SubmitToEventQueue(CreateRef<Events::UpdateSessionUserSlot>(userSlot));
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::UpdateSessionUserSlot>(userSlot));
 	}
 
 	void ClientNetworkThread::OpenUserLeftSessionMessage(Message& msg)
@@ -758,7 +759,7 @@ namespace Kargono::Network
 		msg >> userSlot;
 
 		// Pass the event along to the main thread
-		EngineService::SubmitToEventQueue(CreateRef<Events::UserLeftSession>(userSlot));
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::UserLeftSession>(userSlot));
 	}
 
 	void ClientNetworkThread::OpenDenyJoinSessionMessage(Message& msg)
@@ -771,7 +772,7 @@ namespace Kargono::Network
 		KG_INFO("Active Session is initializing");
 
 		// Pass the event along to the main thread
-		EngineService::SubmitToEventQueue(CreateRef<Events::CurrentSessionInit>());
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::CurrentSessionInit>());
 	}
 
 	void ClientNetworkThread::OpenStartSessionMessage(Message& msg)
@@ -790,7 +791,7 @@ namespace Kargono::Network
 			m_EventQueue.SubmitEvent(CreateRef<Events::StartSession>());
 
 			// Pass the event along to the main thread
-			EngineService::SubmitToEventQueue(CreateRef<Events::StartSession>());
+			EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::StartSession>());
 		});
 	}
 
@@ -805,7 +806,7 @@ namespace Kargono::Network
 		Utility::AsyncBusyTimer::CreateTimer(waitTime, [&]()
 		{
 			// Pass the event along to the main thread
-			EngineService::SubmitToEventQueue(CreateRef<Events::SessionReadyCheckConfirm>());
+			EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::SessionReadyCheckConfirm>());
 		});
 	}
 
@@ -821,7 +822,7 @@ namespace Kargono::Network
 		Math::vec3 trans{ x, y, z };
 
 		// Pass the event along to the main thread
-		EngineService::SubmitToEventQueue(CreateRef<Events::UpdateEntityLocation>(id, trans));
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::UpdateEntityLocation>(id, trans));
 	}
 
 	void ClientNetworkThread::OpenUpdateEntityPhysicsMessage(Message& msg)
@@ -839,7 +840,7 @@ namespace Kargono::Network
 		Math::vec2 linearV{ linx, liny };
 
 		// Pass the event along to the main thread
-		EngineService::SubmitToEventQueue(CreateRef<Events::UpdateEntityPhysics>(id, trans, linearV));
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::UpdateEntityPhysics>(id, trans, linearV));
 	}
 
 	void ClientNetworkThread::OpenReceiveSignalMessage(Message& msg)
@@ -849,7 +850,7 @@ namespace Kargono::Network
 		msg >> signal;
 
 		// Pass the event along to the main thread
-		EngineService::SubmitToEventQueue(CreateRef<Events::ReceiveSignal>(signal));
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::ReceiveSignal>(signal));
 	}
 
 	bool ClientService::Init()

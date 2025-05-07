@@ -98,7 +98,7 @@ namespace Kargono::Windows
 		{
 			if (ImGui::MenuItem("Back to Main Window"))
 			{
-				EngineService::SubmitToMainThread([]()
+				EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 				{
 					s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::MainWindow);
 				});
@@ -259,7 +259,7 @@ namespace Kargono::Windows
 		if (m_EditorUIHandle == assetHandle)
 		{
 			// Open the user interface window in the editor
-			EngineService::SubmitToMainThread([]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 			{
 				s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
 			});
@@ -273,7 +273,7 @@ namespace Kargono::Windows
 			m_TreePanel->OnOpenUI(assetHandle);
 
 			// Open the user interface window in the editor
-			EngineService::SubmitToMainThread([]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 			{
 				s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
 			});

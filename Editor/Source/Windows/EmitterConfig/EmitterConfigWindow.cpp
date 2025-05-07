@@ -304,7 +304,7 @@ namespace Kargono::Windows
 		{
 			if (ImGui::MenuItem("Back to Main Window"))
 			{
-				EngineService::SubmitToMainThread([]()
+				EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 				{
 					s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::MainWindow);
 					s_EditorApp->m_MainWindow->LoadSceneParticleEmitters();
@@ -461,7 +461,7 @@ namespace Kargono::Windows
 		if (m_EditorEmitterConfigHandle == assetHandle)
 		{
 			// Open the emitter config window in the editor
-			EngineService::SubmitToMainThread([]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 			{
 				s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
 				s_EditorApp->m_EmitterConfigEditorWindow->LoadEditorEmitterIntoParticleService();
@@ -476,7 +476,7 @@ namespace Kargono::Windows
 			OnOpenEmitterConfig(assetHandle);
 
 			// Open the emitter config window in the editor
-			EngineService::SubmitToMainThread([]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 			{
 				s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
 			});

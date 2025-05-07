@@ -143,7 +143,7 @@ namespace Kargono::RuntimeUI
 
 		// Get mouse position and active viewport
 		Math::vec2 mousePosition = Input::InputService::GetViewportMousePosition();
-		ViewportData* viewportData = EngineService::GetActiveApplication()->GetViewportData();
+		ViewportData* viewportData = EngineService::GetActiveEngine().GetApp().GetViewportData();
 
 		// Handle IBeam flipping for input text widgets
 		if (activeUI->m_EditingWidget)
@@ -343,7 +343,7 @@ namespace Kargono::RuntimeUI
 
 		// Get mouse position and active viewport
 		Math::vec2 mousePosition = Input::InputService::GetViewportMousePosition();
-		ViewportData* viewportData = EngineService::GetActiveApplication()->GetViewportData();
+		ViewportData* viewportData = EngineService::GetActiveEngine().GetApp().GetViewportData();
 
 		// Handle mouse click for the editing widget
 		if (activeUI->m_EditingWidget)
@@ -557,7 +557,7 @@ namespace Kargono::RuntimeUI
 		// Create widget navigation links for all windows
 		NavigationLinksCalculator newCalculator;
 		newCalculator.CalculateNavigationLinks(s_RuntimeUIContext->m_ActiveUI,
-			EngineService::GetActiveWindow().GetActiveViewport());
+			EngineService::GetActiveEngine().GetWindow().GetActiveViewport());
 	}
 
 	void RuntimeUIService::SetActiveUIFromHandle(Assets::AssetHandle uiHandle)
@@ -630,7 +630,7 @@ namespace Kargono::RuntimeUI
 		// Revalidate navigation links
 		NavigationLinksCalculator newCalculator;
 		newCalculator.CalculateNavigationLinks(s_RuntimeUIContext->m_ActiveUI,
-			EngineService::GetActiveWindow().GetActiveViewport());
+			EngineService::GetActiveEngine().GetWindow().GetActiveViewport());
 
 		return true;
 	}
@@ -864,7 +864,7 @@ namespace Kargono::RuntimeUI
 		s_RuntimeUIContext->m_ActiveUI->m_HoveredWidget = nullptr;
 
 		// Reset the cursor icon
-		EngineService::GetActiveWindow().SetMouseCursorIcon(CursorIconType::Standard);
+		EngineService::GetActiveEngine().GetWindow().SetMouseCursorIcon(CursorIconType::Standard);
 	}
 
 	void RuntimeUIService::ClearEditingWidget()
@@ -1314,7 +1314,7 @@ namespace Kargono::RuntimeUI
 		if (newHoveredWidget->m_WidgetType == WidgetTypes::InputTextWidget)
 		{
 			// Reset the cursor icon
-			EngineService::GetActiveWindow().SetMouseCursorIcon(CursorIconType::IBeam);
+			EngineService::GetActiveEngine().GetWindow().SetMouseCursorIcon(CursorIconType::IBeam);
 		}
 
 		// Do not handle the on move function if the widget is a slider
@@ -1474,7 +1474,7 @@ namespace Kargono::RuntimeUI
 		// Calculate navigation links
 		NavigationLinksCalculator newCalculator;
 		newCalculator.CalculateNavigationLinks(s_RuntimeUIContext->m_ActiveUI, 
-			EngineService::GetActiveWindow().GetActiveViewport());
+			EngineService::GetActiveEngine().GetWindow().GetActiveViewport());
 	}
 
 	bool RuntimeUIService::IsWidgetSelectedInternal(Ref<Widget> currentWidget)
@@ -2885,7 +2885,7 @@ namespace Kargono::RuntimeUI
 	{
 		// Get the resolution of the screen and the viewport
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
-		ViewportData& viewportData = EngineService::GetActiveWindow().GetActiveViewport();
+		ViewportData& viewportData = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		
 		// Calculate the text size used by the rendering calls
 		float textSize{ (viewportData.m_Width * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
@@ -3260,7 +3260,7 @@ namespace Kargono::RuntimeUI
 
 		// Get mouse position and active viewport
 		Math::vec2 mousePosition = Input::InputService::GetViewportMousePosition();
-		ViewportData* viewportData = EngineService::GetActiveApplication()->GetViewportData();
+		ViewportData* viewportData = EngineService::GetActiveEngine().GetApp().GetViewportData();
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
@@ -3413,7 +3413,7 @@ namespace Kargono::RuntimeUI
 		// Store the user interface and viewport data
 		KG_ASSERT(userInterface);
 		m_UserInterface = userInterface;
-		m_ViewportData = EngineService::GetActiveWindow().GetActiveViewport();
+		m_ViewportData = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 
 		// Iterate through all windows 
 		for (Window& currentWindow : m_UserInterface->m_Windows)

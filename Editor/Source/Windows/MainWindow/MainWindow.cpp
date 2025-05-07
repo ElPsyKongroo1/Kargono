@@ -369,7 +369,7 @@ namespace Kargono::Windows
 		EditorUI::EditorUIService::StartDockspaceWindow();
 
 		// Set the active viewport for the window
-		EngineService::GetActiveWindow().SetActiveViewport(&m_ViewportPanel->m_ViewportData);
+		EngineService::GetActiveEngine().GetWindow().SetActiveViewport(&m_ViewportPanel->m_ViewportData);
 
 		// Display the menu bar at the top of the window
 		DrawWindowMenuBar();
@@ -550,7 +550,7 @@ namespace Kargono::Windows
 		m_EditorScene = newScene;
 		m_EditorSceneHandle = sceneHandle;
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
-		EngineService::SubmitToMainThread([&]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			LoadSceneParticleEmitters();
 		});
@@ -571,7 +571,7 @@ namespace Kargono::Windows
 		m_EditorSceneHandle = sceneHandle;
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 
-		EngineService::SubmitToMainThread([&]() 
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			LoadSceneParticleEmitters();
 		});
@@ -659,7 +659,7 @@ namespace Kargono::Windows
 		// Load particle emitters
 		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 
-		EngineService::GetActiveEngine().UpdateAppStartTime();
+		EngineService::GetActiveEngine().GetThread().UpdateAppStartTime();
 		EditorUI::EditorUIService::SetFocusedWindow(m_ViewportPanel->m_PanelName);
 	}
 
@@ -956,7 +956,7 @@ namespace Kargono::Windows
 		}
 		case Key::F11:
 		{
-			EngineService::GetActiveWindow().ToggleMaximized();
+			EngineService::GetActiveEngine().GetWindow().ToggleMaximized();
 			break;
 		}
 
@@ -1168,7 +1168,7 @@ namespace Kargono::Windows
 
 				if (ImGui::MenuItem("Exit"))
 				{
-					EngineService::EndRun();
+					EngineService::GetActiveEngine().GetThread().EndThread();
 				}
 				ImGui::EndMenu();
 
@@ -1178,14 +1178,14 @@ namespace Kargono::Windows
 			{
 				if (ImGui::MenuItem("User Interface Editor"))
 				{
-					EngineService::SubmitToMainThread([]()
+					EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 						{
 							s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
 						});
 				}
 				if (ImGui::MenuItem("Particle Emitter Editor"))
 				{
-					EngineService::SubmitToMainThread([]()
+					EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 						{
 							s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
 							s_EditorApp->m_EmitterConfigEditorWindow->LoadEditorEmitterIntoParticleService();

@@ -7,19 +7,16 @@
 #include "API/Platform/WindowsBackendAPI.h"
 #endif
 
-extern void Kargono::InitEngineAndCreateApp(CommandLineArguments args);
+extern void Kargono::ExecutableEntryPoint(Kargono::Engine& engine, CommandLineArguments args);
 //==============================
 // General Entry Point
 //==============================
 void EntryPoint (int argc, char** argv)
 {
 	Kargono::Log::Init();
-	KG_INFO("Starting Application");
-	Kargono::InitEngineAndCreateApp({ argc, argv });
-	Kargono::EngineService::Run();
-	Kargono::Utility::AsyncBusyTimer::CloseAllTimers();
-	Kargono::EngineService::Terminate();
-		
+	Kargono::Engine engine;
+	Kargono::EngineService::SetActiveEngine(&engine);
+	Kargono::ExecutableEntryPoint(engine, Kargono::CommandLineArguments(argc, argv));
 }
 
 //==============================
@@ -28,19 +25,15 @@ void EntryPoint (int argc, char** argv)
 int main(int argc, char** argv)
 {
 	EntryPoint(argc, argv);
-	KG_INFO("Application Shut Down Successfully!");
 	return 0;
 }
 //==============================
 // Main without console
 //==============================
 #if defined(KG_PLATFORM_WINDOWS)
-int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
+int APIENTRY WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hInstPrev*/ , 
+	PSTR /*cmdline*/ , int /*cmdshow*/ )
 {
-	UNREFERENCED_PARAMETER(cmdshow);
-	UNREFERENCED_PARAMETER(cmdline);
-	UNREFERENCED_PARAMETER(hInstPrev);
-	UNREFERENCED_PARAMETER(hInst);
 	// Get Command Line Arguments in the form of argc and argv line int main(char**, int)
 	LPWSTR* argv;
 	int argc;

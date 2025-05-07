@@ -202,7 +202,7 @@ namespace Kargono::Assets
 				Events::ManageAssetAction::UpdateAsset,
 				providedData
 			);
-			EngineService::SubmitToEventQueue(event);
+			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 		}
 
 		bool DeleteAsset(AssetHandle assetHandle)
@@ -224,7 +224,9 @@ namespace Kargono::Assets
 				Events::ManageAssetAction::PreDelete
 			);
 			DeleteAssetValidation(assetHandle);
-			EngineService::OnEvent(event.get());
+
+			
+			EngineService::GetActiveEngine().GetThread().OnEvent(event.get());
 
 			// Delete the asset's data on-disk
 			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
@@ -257,7 +259,7 @@ namespace Kargono::Assets
 				asset.Data.Type,
 				Events::ManageAssetAction::PostDelete
 			);
-			EngineService::OnEvent(postEvent.get());
+			EngineService::GetActiveEngine().GetThread().OnEvent(postEvent.get());
 
 			return true;
 		}
@@ -348,7 +350,7 @@ namespace Kargono::Assets
 				newAsset.Data.Type, 
 				Events::ManageAssetAction::Create
 			);
-			EngineService::SubmitToEventQueue(event);
+			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 			return newHandle;
 		}
 
@@ -504,7 +506,7 @@ namespace Kargono::Assets
 				newAsset.Data.Type, 
 				Events::ManageAssetAction::Create
 			);
-			EngineService::SubmitToEventQueue(event);
+			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 			return newHandle;
 		}
 		void SerializeAssetRegistry()
@@ -713,7 +715,7 @@ namespace Kargono::Assets
 				currentAsset.Data.Type, 
 				Events::ManageAssetAction::UpdateAssetInfo
 			);
-			EngineService::SubmitToEventQueue(event);
+			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 			return true;
 		}
 

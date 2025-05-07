@@ -236,9 +236,25 @@ namespace Kargono::Utility
 		return numUpdates;
 	}
 
+	void LoopTimer::SkipUpdates(UpdateCount count)
+	{
+		// TODO: Maybe check for excessive decriment below zero
+		m_Accumulator -= count * m_ConstantFrameTime;
+	}
+
+	void LoopTimer::AddUpdates(UpdateCount count)
+	{
+		m_Accumulator += count * m_ConstantFrameTime;
+	}
+
 	void LoopTimer::SetConstantFrameTime(std::chrono::nanoseconds newFrameTime)
 	{
 		m_ConstantFrameTime = newFrameTime;
+	}
+
+	void LoopTimer::SetConstantFrameTime(uint64_t newFrameTime)
+	{
+		m_ConstantFrameTime = static_cast<std::chrono::nanoseconds>(newFrameTime);
 	}
 
 	void LoopTimer::SetConstantFrameTimeFloat(float newFrameTimeSeconds)
@@ -251,12 +267,12 @@ namespace Kargono::Utility
 		return m_ConstantFrameTime;
 	}
 
-	float LoopTimer::GetConstantFrameTimeFloat()
+	float LoopTimer::GetConstantFrameTimeFloat() const
 	{
 		return std::chrono::duration<float>(m_ConstantFrameTime).count();
 	}
 
-	UpdateCount LoopTimer::GetUpdateCount()
+	UpdateCount LoopTimer::GetUpdateCount() const
 	{
 		return m_UpdateCount;
 	}

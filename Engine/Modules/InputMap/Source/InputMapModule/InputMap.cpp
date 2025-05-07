@@ -36,7 +36,7 @@ namespace Kargono::Input
 			return;
 		}
 
-		EngineService::SubmitToMainThread([&]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			SetActiveInputMap(s_InputRef, s_InputHandle);
 		});

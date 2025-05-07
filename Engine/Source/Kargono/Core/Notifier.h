@@ -9,7 +9,6 @@
 
 namespace Kargono
 {
-
 	template <typename... Args>
 	class SingleNotifier
 	{

@@ -60,7 +60,7 @@ namespace Kargono::Assets
 			newAsset.Data.Type, 
 			Events::ManageAssetAction::Create
 		);
-		EngineService::SubmitToEventQueue(event);
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 		return std::make_tuple(newHandle, true);
 	}
 
@@ -100,7 +100,7 @@ namespace Kargono::Assets
 			asset.Data.Type, 
 			Events::ManageAssetAction::UpdateAsset
 		);
-		EngineService::SubmitToEventQueue(event);
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 		return true;
 	}
 
@@ -165,7 +165,7 @@ namespace Kargono::Assets
 			AssetType::Script, 
 			Events::ManageAssetAction::UpdateAsset
 		);
-		EngineService::SubmitToEventQueue(event);
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 		return true;
 	}
 
@@ -204,7 +204,7 @@ namespace Kargono::Assets
 			AssetType::Script, 
 			Events::ManageAssetAction::UpdateAsset
 		);
-		EngineService::SubmitToEventQueue(event); 
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(event); 
 		return true;
 	}
 

@@ -68,7 +68,7 @@ namespace Kargono::Panels
 					EditorUI::TooltipEntry addEntityEntry{ "Add Entity", [&](EditorUI::TooltipEntry& tooltipEntry)
 					{
 						UNREFERENCED_PARAMETER(entry);
-						EngineService::SubmitToMainThread([]()
+						EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 						{
 							Scenes::SceneService::GetActiveScene()->CreateEntity("Empty Entity");
 						});
@@ -487,7 +487,7 @@ namespace Kargono::Panels
 		m_Rigidbody2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<ECS::Rigidbody2DComponent>())
@@ -762,7 +762,7 @@ namespace Kargono::Panels
 		m_BoxCollider2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<ECS::BoxCollider2DComponent>())
@@ -904,7 +904,7 @@ namespace Kargono::Panels
 		m_CircleCollider2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<ECS::CircleCollider2DComponent>())
@@ -1047,7 +1047,7 @@ namespace Kargono::Panels
 		m_CameraHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<ECS::CameraComponent>())
@@ -1218,7 +1218,7 @@ namespace Kargono::Panels
 		m_ParticleEmitterHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
@@ -1305,7 +1305,7 @@ namespace Kargono::Panels
 		m_OnUpdateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
@@ -1445,7 +1445,7 @@ namespace Kargono::Panels
 		m_OnCreateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
@@ -1586,7 +1586,7 @@ namespace Kargono::Panels
 		m_AIStateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
@@ -1745,7 +1745,7 @@ namespace Kargono::Panels
 		m_ShapeHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<ECS::ShapeComponent>())
@@ -2103,7 +2103,7 @@ namespace Kargono::Panels
 		newWidgetData.m_Header.m_ProvidedData = CreateRef<Assets::AssetHandle>(projectComponentHandle);
 		newWidgetData.m_Header.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				Assets::AssetHandle projectComponentHandle = *(Assets::AssetHandle*)spec.m_ProvidedData.get();
@@ -3329,7 +3329,7 @@ namespace Kargono::Panels
 				static ECS::Entity entityToDelete;
 				entityToDelete = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 
-				EngineService::SubmitToMainThread([&]()
+				EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 				{
 					if (!entityToDelete)
 					{

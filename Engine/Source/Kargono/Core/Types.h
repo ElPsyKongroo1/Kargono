@@ -2,6 +2,7 @@
 
 #include <optional>
 #include <memory>
+#include <type_traits>
 
 namespace Kargono
 {
@@ -61,6 +62,12 @@ namespace Kargono
 	using Expected = std::optional<T>;
 
 	template<typename T>
+	using ExpectedRef = std::optional<std::reference_wrapper<T>>;
+
+	template<typename T>
 	using Optional = std::optional<T>;
+
+	template<typename T>
+	using OptionalRef = std::optional<std::reference_wrapper<T>>;
 
 }

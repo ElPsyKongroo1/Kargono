@@ -17,7 +17,7 @@ namespace Kargono
 	{
 	}
 
-	void RuntimeApp::Init()
+	bool RuntimeApp::Init()
 	{
 		Scripting::ScriptService::Init();
 		Audio::AudioService::Init();
@@ -28,7 +28,7 @@ namespace Kargono
 			Audio::AudioService::SetMute(true);
 		}
 
-		Window& currentWindow = EngineService::GetActiveWindow();
+		Window& currentWindow = EngineService::GetActiveEngine().GetWindow();
 
 		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
 
@@ -41,23 +41,29 @@ namespace Kargono
 		if (pathToProject.empty())
 		{
 			KG_CRITICAL("Could not locate a .kproj file in local directory!");
-			EngineService::EndRun();
-			return;
+			Scripting::ScriptService::Terminate();
+			Audio::AudioService::Terminate();
+			Scenes::SceneService::Terminate();
+			return false;
 		}
 		OpenProject(pathToProject);
 		if (!Projects::ProjectService::GetActive())
 		{
 			KG_CRITICAL("Failed to open project!");
-			EngineService::EndRun();
-			return;
+			Scripting::ScriptService::Terminate();
+			Audio::AudioService::Terminate();
+			Scenes::SceneService::Terminate();
+			return false;
 		}
 #else
 		if (m_ProjectPath.empty())
 		{
 			if (!OpenProject())
 			{
-				EngineService::EndRun();
-				return;
+				Scripting::ScriptService::Terminate();
+				Audio::AudioService::Terminate();
+				Scenes::SceneService::Terminate();
+				return false;
 			}
 		}
 		else
@@ -88,11 +94,12 @@ namespace Kargono
 
 		OnPlay();
 		currentWindow.SetVisible(true);
+
+		return true;
 	}
 
-	void RuntimeApp::Terminate()
+	bool RuntimeApp::Terminate()
 	{
-
 		OnStop();
 
 		// Terminate engine services
@@ -105,6 +112,8 @@ namespace Kargono
 		RuntimeUI::FontService::Terminate();
 		Scenes::SceneService::Terminate();
 		Rendering::RenderingService::Shutdown();
+
+		return true;
 	}
 
 	void RuntimeApp::InitializeFrameBuffer()
@@ -116,8 +125,8 @@ namespace Kargono
 			Rendering::FramebufferDataFormat::RED_INTEGER, 
 			Rendering::FramebufferDataFormat::Depth 
 		};
-		fbSpec.Width = EngineService::GetActiveWindow().GetWidth();
-		fbSpec.Height = EngineService::GetActiveWindow().GetHeight();
+		fbSpec.Width = EngineService::GetActiveEngine().GetWindow().GetWidth();
+		fbSpec.Height = EngineService::GetActiveEngine().GetWindow().GetHeight();
 		m_ViewportFramebuffer = Rendering::Framebuffer::Create(fbSpec);
 		m_ViewportFramebuffer->Bind();
 	}
@@ -144,6 +153,8 @@ namespace Kargono
 		// Only handle UI and particles if a main camera exists
 		if (mainCamera)
 		{
+			Window& engineWindow{ EngineService::GetActiveEngine().GetWindow()};
+
 			// Get camera transform
 			Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
 
@@ -154,15 +165,15 @@ namespace Kargono
 			m_ViewportFramebuffer->SetAttachment(1, -1);
 
 			// Handle runtime UI's OnUpdate()
-			Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+			Kargono::ViewportData& activeViewport = engineWindow.GetActiveViewport();
 			Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
 			RuntimeUI::RuntimeUIService::OnUpdate(ts);
 
 			// Draw runtimeUI
-			RuntimeUI::RuntimeUIService::OnRender(EngineService::GetActiveWindow().GetWidth(), 
-				EngineService::GetActiveWindow().GetHeight());
+			RuntimeUI::RuntimeUIService::OnRender(engineWindow.GetWidth(), 
+				engineWindow.GetHeight());
 
 			// Handle mouse picking for the UI
 			HandleUIMouseHovering();
@@ -272,7 +283,7 @@ namespace Kargono
 	bool RuntimeApp::OnApplicationClose(Events::ApplicationCloseEvent event)
 	{
 		Events::WindowCloseEvent windowEvent {};
-		Events::EventCallbackFn eventCallback = EngineService::GetActiveWindow().GetEventCallback();
+		Events::EventCallbackFn eventCallback = EngineService::GetActiveEngine().GetWindow().GetEventCallback();
 		eventCallback(&windowEvent);
 		return false;
 	}
@@ -280,14 +291,14 @@ namespace Kargono
 	bool RuntimeApp::OnApplicationResize(Events::ApplicationResizeEvent event)
 	{
 		// Resize the window
-		EngineService::GetActiveWindow().ResizeWindow({ event.GetWidth(), event.GetHeight() });
+		EngineService::GetActiveEngine().GetWindow().ResizeWindow({ event.GetWidth(), event.GetHeight() });
 		m_ViewportFramebuffer->Resize(event.GetWidth(), event.GetHeight());
 		return false;
 	}
 
 	bool RuntimeApp::OnWindowResize(Events::WindowResizeEvent event)
 	{
-		ViewportData& viewportData = EngineService::GetActiveWindow().GetActiveViewport();
+		ViewportData& viewportData = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		viewportData.m_Width = event.GetWidth();
 		viewportData.m_Height = event.GetHeight();
 		Scenes::SceneService::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
@@ -414,7 +425,7 @@ namespace Kargono
 				m_HoveredWidgetID });
 
 			// Handle specific widget on click's
-			Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+			Kargono::ViewportData& activeViewport = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 			Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
@@ -559,7 +570,7 @@ namespace Kargono
 	void RuntimeApp::HandleUIMouseHovering()
 	{
 		// Get the active viewport bounds and mouse position
-		Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+		Kargono::ViewportData& activeViewport = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 
 		// Make sure the mouse position is within bounds
@@ -594,7 +605,7 @@ namespace Kargono
 
 	Math::vec2 RuntimeApp::GetMouseViewportPosition()
 	{
-		Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+		Kargono::ViewportData& activeViewport = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 		// Make sure the y-position is oriented correctly
 		mousePos.y = (float)activeViewport.m_Height - mousePos.y;
@@ -603,7 +614,7 @@ namespace Kargono
 
 	ViewportData* RuntimeApp::GetViewportData()
 	{
-		return &EngineService::GetActiveWindow().GetActiveViewport();
+		return &EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 	}
 
 
@@ -625,22 +636,22 @@ namespace Kargono
 	{
 		if (Projects::ProjectService::OpenProject(path))
 		{
-			if (!EngineService::GetActiveWindow().GetNativeWindow())
+			if (!EngineService::GetActiveEngine().GetWindow().GetNativeWindow())
 			{
 				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveTargetResolution());
 				WindowProps projectProps =
 				{
-					Projects::ProjectService::GetActiveProjectName(),
+					Projects::ProjectService::GetActiveProjectName().c_str(),
 					static_cast<uint32_t>(screenSize.x),
 					static_cast<uint32_t>(screenSize.y)
 				};
 				if (Utility::FileSystem::PathExists(logoPath))
 				{
-					EngineService::GetActiveWindow().Init(projectProps, logoPath);
+					EngineService::GetActiveEngine().GetWindow().Init(projectProps, logoPath);
 				}
 				else
 				{
-					EngineService::GetActiveWindow().Init(projectProps);
+					EngineService::GetActiveEngine().GetWindow().Init(projectProps);
 				}
 				Rendering::RendererAPI::Init();
 			}

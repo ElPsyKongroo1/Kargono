@@ -74,7 +74,7 @@ namespace Kargono::Rendering
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
-			EngineService::GetActiveWindow().SetMouseCursorVisible(true);
+			EngineService::GetActiveEngine().GetWindow().SetMouseCursorVisible(true);
 		}
 		return false;
 	}
@@ -83,7 +83,7 @@ namespace Kargono::Rendering
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
-			EngineService::GetActiveWindow().SetMouseCursorVisible(false);
+			EngineService::GetActiveEngine().GetWindow().SetMouseCursorVisible(false);
 		}
 		return false;
 	}
@@ -175,7 +175,7 @@ namespace Kargono::Rendering
 	}
 	void EditorOrthographicCamera::RecalculateProjection()
 	{
-		ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+		ViewportData& activeViewport = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		if (m_CameraSizeType == CameraSizeType::AspectRatio)
 		{
 			float aspectRatio = (float)activeViewport.m_Width / (float)activeViewport.m_Height;

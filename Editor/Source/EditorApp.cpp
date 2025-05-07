@@ -34,7 +34,7 @@ namespace Kargono
 	}
 
 
-	void EditorApp::Init()
+	bool EditorApp::Init()
 	{
 		// Initialize engine services
 		Scripting::ScriptService::Init();
@@ -65,10 +65,12 @@ namespace Kargono
 		m_EmitterConfigEditorWindow->InitPanels();
 
 		// Open operating system window
-		EngineService::GetActiveWindow().SetVisible(true);
+		EngineService::GetActiveEngine().GetWindow().SetVisible(true);
+
+		return true;
 	}
 
-	void EditorApp::Terminate()
+	bool EditorApp::Terminate()
 	{
 		// Close all network threads
 		if (Network::ClientService::IsClientActive())
@@ -97,6 +99,8 @@ namespace Kargono
 		m_MainWindow.reset();
 		m_UIEditorWindow.reset();
 		m_EmitterConfigEditorWindow.reset();
+
+		return true;
 	}
 
 	void EditorApp::OnUpdate(Timestep ts)
@@ -386,9 +390,9 @@ namespace Kargono
 	{
 		if (Projects::ProjectService::OpenProject(path))
 		{
-			if (!EngineService::GetActiveWindow().GetNativeWindow())
+			if (!EngineService::GetActiveEngine().GetWindow().GetNativeWindow())
 			{
-				EngineService::GetActiveWindow().Init();
+				EngineService::GetActiveEngine().GetWindow().Init();
 				Rendering::RendererAPI::Init();
 			}
 			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveStartSceneHandle();

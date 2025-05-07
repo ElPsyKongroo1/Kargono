@@ -15,7 +15,7 @@ namespace Kargono
 
 	}
 
-	void ServerApp::Init()
+	bool ServerApp::Init()
 	{
 		Scenes::SceneService::Init();
 #if defined(KG_EXPORT_RUNTIME) || defined (KG_EXPORT_SERVER)
@@ -25,15 +25,15 @@ namespace Kargono
 		if (pathToProject.empty())
 		{
 			KG_CRITICAL("Could not locate a .kproj file in local directory!");
-			EngineService::EndRun();
-			return;
+			Scenes::SceneService::Terminate();
+			return false;
 	}
 		OpenProject(pathToProject);
 		if (!Projects::ProjectService::GetActive())
 		{
 			KG_CRITICAL("Failed to open project!");
-			EngineService::EndRun();
-			return;
+			Scenes::SceneService::Terminate();
+			return false;
 		}
 #else
 
@@ -41,8 +41,8 @@ namespace Kargono
 		{
 			if (!OpenProject())
 			{
-				EngineService::EndRun();
-				return;
+				Scenes::SceneService::Terminate();
+				return false;
 			}
 		}
 		else
@@ -52,9 +52,11 @@ namespace Kargono
 #endif
 		if (!Network::ServerService::Init())
 		{
-			EngineService::EndRun();
-			return;
+			Scenes::SceneService::Terminate();
+			return false;
 		}
+
+		return true;
 	}
 
 	bool ServerApp::OpenProject()
@@ -73,12 +75,13 @@ namespace Kargono
 
 	void ServerApp::OpenProject(const std::filesystem::path& path)
 	{
-		if (Projects::ProjectService::OpenProject(path)) {}
+		Projects::ProjectService::OpenProject(path);
 	}
 
-	void ServerApp::Terminate()
+	bool ServerApp::Terminate()
 	{
 		Network::ServerService::Terminate();
+		return true;
 	}
 
 	void ServerApp::OnUpdate(Timestep ts)

@@ -82,7 +82,7 @@ namespace Kargono::Particles
 		KG_ASSERT(s_ParticleContext);
 
 		// Get current time
-		float currentTime{ EngineService::GetActiveEngine().GetInApplicationTime() };
+		float currentTime{ EngineService::GetActiveEngine().GetThread().GetInApplicationTime() };
 
 		size_t iteration{ 0 };
 		for (auto& [uuid, emitter] : s_ParticleContext->m_AllEmitters)
@@ -114,7 +114,7 @@ namespace Kargono::Particles
 				{
 					// Submit job to main thread that removes indicated emitters from the s_ParticleContext
 					s_EmittersToRemove.emplace_back(uuid);
-					EngineService::SubmitToMainThread([]()
+					EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 					{
 						for (UUID id : s_EmittersToRemove)
 						{
@@ -213,7 +213,7 @@ namespace Kargono::Particles
 		Rendering::RenderingService::BeginScene(viewProjection);
 
 		// Get current time
-		float currentTime{ EngineService::GetActiveEngine().GetInApplicationTime() };
+		float currentTime{ EngineService::GetActiveEngine().GetThread().GetInApplicationTime() };
 
 		for (auto& [uuid, emitter] : s_ParticleContext->m_AllEmitters)
 		{
@@ -321,7 +321,7 @@ namespace Kargono::Particles
 		KG_ASSERT(config->m_BufferSize > 0);
 
 		// Get current time
-		float currentTime{ EngineService::GetActiveEngine().GetInApplicationTime() };
+		float currentTime{ EngineService::GetActiveEngine().GetThread().GetInApplicationTime() };
 
 		// Create emitter instance
 		UUID returnID{};
@@ -365,7 +365,7 @@ namespace Kargono::Particles
 		KG_ASSERT(config->m_BufferSize > 0);
 
 		// Get current time
-		float currentTime{ EngineService::GetActiveEngine().GetInApplicationTime() };
+		float currentTime{ EngineService::GetActiveEngine().GetThread().GetInApplicationTime() };
 
 		// Create emitter instance
 		UUID returnID{};

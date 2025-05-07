@@ -66,6 +66,10 @@ namespace Kargono
 { \
 	return this->fn(std::forward<decltype(args)>(args)...); \
 }
+#define KG_BIND_CLASS_FN_EXPLICIT(objPtr, fn) [objPtr](auto&&... args) -> decltype(auto) \
+{ \
+	return objPtr->fn(std::forward<decltype(args)>(args)...); \
+}
 
 #include "Kargono/Core/Types.h"
 #include "Kargono/Core/Log.h"

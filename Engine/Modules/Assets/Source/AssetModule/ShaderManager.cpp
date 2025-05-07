@@ -186,7 +186,8 @@ namespace Kargono::Assets
 			AssetType::Shader, 
 			Events::ManageAssetAction::Create
 		);
-		EngineService::SubmitToEventQueue(event);
+		
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 
 		return newHandle;
 	}

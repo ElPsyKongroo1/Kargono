@@ -57,23 +57,23 @@ namespace Kargono::Scripting
 	{
 		Events::DebugLineData lineData{ startPoint, endPoint };
 		Events::ManageEditor newEvent = Events::ManageEditor(lineData);
-		EngineService::OnEvent(&newEvent);
+		EngineService::GetActiveEngine().GetThread().OnEvent(&newEvent);
 	}
 	static void AddDebugPoint(Math::vec3 point)
 	{
 		Events::DebugPointData pointData{ point };
 		Events::ManageEditor newEvent = Events::ManageEditor(pointData);
-		EngineService::OnEvent(&newEvent);
+		EngineService::GetActiveEngine().GetThread().OnEvent(&newEvent);
 	}
 	static void ClearDebugPoints()
 	{
 		Events::ManageEditor newEvent = Events::ManageEditor(Events::ManageEditorAction::ClearDebugPoints);
-		EngineService::OnEvent(&newEvent);
+		EngineService::GetActiveEngine().GetThread().OnEvent(&newEvent);
 	}
 	static void ClearDebugLines()
 	{
 		Events::ManageEditor newEvent = Events::ManageEditor(Events::ManageEditorAction::ClearDebugLines);
-		EngineService::OnEvent(&newEvent);
+		EngineService::GetActiveEngine().GetThread().OnEvent(&newEvent);
 	}
 
 	static void ApplicationResize(uint16_t resolution)
@@ -81,12 +81,12 @@ namespace Kargono::Scripting
 		static ScreenResolution s_NewResolution;
 		s_NewResolution = (ScreenResolution)resolution;
 
-		EngineService::SubmitToMainThread([&]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			// Send app resize event to either the runtime or the editor
 			Math::uvec2 resolution= Utility::ScreenResolutionToVec2(s_NewResolution);
 			Events::ApplicationResizeEvent newEvent = Events::ApplicationResizeEvent(resolution.x, resolution.y);
-			EngineService::OnEvent(&newEvent);
+			EngineService::GetActiveEngine().GetThread().OnEvent(&newEvent);
 		});
 	}
 
@@ -148,7 +148,11 @@ namespace Kargono::Scripting
 		EngineCore_CloseApplication->m_ScriptType = ScriptType::Engine;
 		EngineCore_CloseApplication->m_FuncType = WrappedFuncType::Void_None;
 		EngineCore_CloseApplication->m_SectionLabel = "Engine";
-		EngineCore_CloseApplication->m_Function = CreateRef<WrappedVoidNone>(EngineService::SubmitApplicationCloseEvent);
+		EngineCore_CloseApplication->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{  
+			Ref<Events::ApplicationCloseEvent> event{ CreateRef<Events::ApplicationCloseEvent>() };
+			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
+		});
 		engineScripts.push_back(EngineCore_CloseApplication);
 
 		Ref<Script> Client_SessionReadyCheck = CreateRef<Script>();
@@ -756,8 +760,8 @@ namespace Kargono::Scripting
 		outputStream << "#include <sstream>\n";
 		outputStream << "#include <limits>\n";
 		outputStream << "#include \"" << "Kargono/Math/MathAliases.h" << "\"\n"; // Include Math Library
-		outputStream << "#include \"" << "Kargono/RuntimeUI/RuntimeUICommon.h" << "\"\n"; // Include Runtime UI Common
-		outputStream << "#include \"" << "Kargono/Physics/Physics2DCommon.h" << "\"\n"; // Include Physics Common
+		outputStream << "#include \"" << "RuntimeUI/Source/RuntimeUIModule/RuntimeUICommon.h" << "\"\n"; // Include Runtime UI Common
+		outputStream << "#include \"" << "Physics2D/Source/Physics2DModule/Physics2DCommon.h" << "\"\n"; // Include Physics Common
 
 		// Conversion Function from RValueToLValue
 		outputStream << "template<typename T>\n";
@@ -1268,6 +1272,7 @@ namespace Kargono::Scripting
 		outputStream << "/std:c++20 "; // Specify Language Version
 		outputStream << "/I../Dependencies/glm "; // Include GLM
 		outputStream << "/I../Engine/Source "; // Include Kargono as Include Directory
+		outputStream << "/I../Engine/Modules "; // Include Kargono as Include Directory
 		outputStream << "/EHsc "; // Specifies the handling of exceptions and call stack unwinding. Uses the commands /EH, /EHs, and /EHc together
 		outputStream << "/DKARGONO_EXPORTS "; // Define Macros for Exporting DLL Functions
 
@@ -1346,6 +1351,7 @@ namespace Kargono::Scripting
 		outputStream << "-std=c++20 "; // Specify language version (C++20)
 		outputStream << "-I../Dependencies/glm "; // Include GLM headers
 		outputStream << "-I../Engine/Source ";  // Include Kargono headers
+		outputStream << "-I../Engine/Modules ";  // Include Kargono headers
 		outputStream << "-fexceptions ";  // Handle exceptions
 		outputStream << "-D KARGONO_EXPORTS ";  // Define macros for exporting DLL functions
 
@@ -1448,7 +1454,11 @@ namespace Kargono::Scripting
 
 		// Application
 		AddEngineFunctionPointerToDll(Application_Resize, ApplicationResize, VoidUInt16)
-		AddEngineFunctionPointerToDll(Application_Close, EngineService::SubmitApplicationCloseEvent, VoidNone)
+		AddEngineFunctionPointerToDll(Application_Close, []()
+		{
+			Ref<Events::ApplicationCloseEvent> event{ CreateRef<Events::ApplicationCloseEvent>() };
+			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
+		}, VoidNone)
 		// Artificial Intelligence
 		AddEngineFunctionPointerToDll(AI_ChangeGlobalState, AI::AIService::ChangeGlobalState, VoidUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_ChangeCurrentState, AI::AIService::ChangeCurrentState, VoidUInt64UInt64)

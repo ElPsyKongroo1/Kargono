@@ -181,7 +181,7 @@ namespace Kargono::Scenes
 		m_EntityRegistry.m_EntityMap[uuid] = entity;
 
 		Events::ManageEntity event = { entity.GetUUID(), this, Events::ManageEntityAction::Create };
-		EngineService::OnEvent(&event);
+		EngineService::GetActiveEngine().GetThread().OnEvent(&event);
 
 		return entity;
 	}
@@ -189,7 +189,7 @@ namespace Kargono::Scenes
 	void Scene::DestroyEntity(ECS::Entity entity)
 	{
 		Events::ManageEntity event = {entity.GetUUID(), this , Events::ManageEntityAction::Delete};
-		EngineService::OnEvent(&event);
+		EngineService::GetActiveEngine().GetThread().OnEvent(&event);
 
 		m_EntityRegistry.m_EntityMap.erase(entity.GetUUID());
 		if (m_EntityRegistry.m_EnTTRegistry.valid(entity))
@@ -527,7 +527,7 @@ namespace Kargono::Scenes
 		TransitionScene(newScene);
 		s_ActiveSceneHandle = newSceneHandle;
 		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(newSceneHandle, Events::ManageSceneAction::Open);
-		EngineService::SubmitToEventQueue(event);
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 		
 	}
 
@@ -559,7 +559,7 @@ namespace Kargono::Scenes
 
 			s_ActiveSceneHandle = sceneID;
 			Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(sceneID, Events::ManageSceneAction::Open);
-			EngineService::SubmitToEventQueue(event);
+			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 
 			Particles::ParticleService::LoadSceneEmitters(sceneReference);
 		}
@@ -575,7 +575,7 @@ namespace Kargono::Scenes
 		s_ActiveSceneHandle = newHandle;
 
 		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(newHandle, Events::ManageSceneAction::Open);
-		EngineService::SubmitToEventQueue(event);
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 	}
 }
 

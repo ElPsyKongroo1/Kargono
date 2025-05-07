@@ -233,7 +233,7 @@ namespace Kargono::Panels
 	}
 	void GlobalStatePanel::ResetPanelResources()
 	{
-		EngineService::SubmitToMainThread([&]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			m_EditorGlobalState = nullptr;
 			m_EditorGlobalStateHandle = Assets::EmptyHandle;

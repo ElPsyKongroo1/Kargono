@@ -278,7 +278,7 @@ namespace Kargono::Network
 		//==============================
 		bool Init(const ServerConfig& initConfig);
 		bool Terminate(bool withinNetworkThread);
-	private:
+
 		// Allows other threads to wait on the server to close
 		void WaitOnThreads();
 	public:

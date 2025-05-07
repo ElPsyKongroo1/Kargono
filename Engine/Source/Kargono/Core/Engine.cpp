@@ -18,130 +18,107 @@
 
 namespace Kargono
 {
-//#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
-
-	std::chrono::nanoseconds k_ConstantFrameTime { 1'000 * 1'000 * 1'000 / 60 };
-	Timestep k_ConstantFrameTimeStep { 1.0f / 60.0f };
-
-	float Engine::GetInApplicationTime() const
+	float EngineThread::GetInApplicationTime() const
 	{
-		return (float)m_UpdateCount * k_ConstantFrameTimeStep;
+		return (float)m_RunTimer.GetUpdateCount()* m_RunTimer.GetConstantFrameTimeFloat();
 	}
 
-	void Engine::UpdateAppStartTime()
+	void EngineThread::UpdateAppStartTime()
 	{
-		m_AppStartTime = Utility::Time::GetTime();
-	}
-	
-	void EngineService::Init(const EngineSpec& specification, Application* app)
-	{
-		// Ensure Engine is a Singleton
-		KG_ASSERT(!s_ActiveEngine, "Application already exists!")
-
-		// Initialize engine
-		s_ActiveEngine = new Engine();
-		KG_VERIFY(s_ActiveEngine, "Engine Initialized");
-		s_ActiveEngine->m_Specification = specification;
-		s_ActiveEngine->m_CurrentApp = app;
-
-		// Initialize main window
-		s_ActiveEngine->m_Window = Window::Create(WindowProps(s_ActiveEngine->m_Specification.Name, 
-			s_ActiveEngine->m_Specification.DefaultWindowWidth, 
-			s_ActiveEngine->m_Specification.DefaultWindowHeight));
-		KG_VERIFY(s_ActiveEngine->m_Window, "Create Window");
-		RegisterWindowOnEventCallback();
-		RegisterAppTickOnEventCallback();
-
-		// Set up event queue
-		s_ActiveEngine->m_EventQueue.Init(OnEvent);
-
-		// Initialize current app (editor, runtime, server, etc...)
-		app->Init();
+		m_EngineStartTime = Utility::Time::GetTime();
 	}
 
-	bool EngineService::Terminate()
+	bool EngineThread::Init(Application* currentApp, Window* currentWindow)
 	{
-		if (!s_ActiveEngine)
-		{
-			KG_WARN("Attempt to terminate engine service when s_ActiveEngine is already closed");
-			return true;
-		}
+		KG_ASSERT(currentApp);
+		KG_ASSERT(currentWindow);
 
-		if (s_ActiveEngine->m_CurrentApp)
-		{
-			s_ActiveEngine->m_CurrentApp->Terminate();
-			delete s_ActiveEngine->m_CurrentApp;
-			s_ActiveEngine->m_CurrentApp = nullptr;
-		}
-		KG_VERIFY(!s_ActiveEngine->m_CurrentApp, "Application Terminated");
+		i_EngineApp = currentApp;
+		i_EngineWindow = currentWindow;
 
-		delete s_ActiveEngine;
-		s_ActiveEngine = nullptr;
-		KG_VERIFY(!s_ActiveEngine, "Active Engine Terminated");
+		m_EventQueue.Init(KG_BIND_CLASS_FN(OnEvent));
+
+		m_Active = true;
+
 		return true;
-		
 	}
 
-	void EngineService::Run()
+	bool EngineThread::Terminate(bool withinThread)
 	{
-		KG_INFO("Starting Run Function");
+		if (withinThread)
+		{
+			ClearThreadResources();
+		}
+		else
+		{
+			m_WorkQueue.SubmitFunction([this]()
+			{
+				ClearThreadResources();
+			});
+		}
+		
+		return true;
+	}
 
-		if (!s_ActiveEngine)
+	void EngineThread::ClearThreadResources()
+	{
+		i_EngineApp = nullptr;
+		i_EngineWindow = nullptr;
+
+		m_Active = false;
+	}
+
+	void EngineThread::RunThread()
+	{
+		if (!m_Active)
 		{
 			return;
 		}
 
-		using namespace std::chrono_literals;
+		constexpr float k_ConstantFrameTimeFloat{ 1.0f / 60.0f };
+		constexpr uint64_t k_ConstantFrameTimeUInt{ 1'000 * 1'000 * 1'000 / 60 };
+		KG_INFO("Starting Run Function");
 
-		std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
-		std::chrono::time_point<std::chrono::high_resolution_clock> lastCycleTime = currentTime;
-		std::chrono::nanoseconds timestep{ 0 };
+		m_RunTimer.SetConstantFrameTime(k_ConstantFrameTimeUInt);
+		m_RunTimer.InitializeTimer();
 
-		while (s_ActiveEngine->m_Running)
+		while (m_Active)
 		{
-			currentTime = std::chrono::high_resolution_clock::now();
-			timestep = currentTime - lastCycleTime;
-			lastCycleTime = currentTime;
-			s_ActiveEngine->m_Accumulator += timestep;
-			if (s_ActiveEngine->m_Accumulator < k_ConstantFrameTime)
-			{
-				continue;
-			}
-			s_ActiveEngine->m_Accumulator -= k_ConstantFrameTime;
-
+			if (m_RunTimer.CheckForSingleUpdate())
 			{
 				KG_PROFILE_FRAME_DESC("Main Thread");
 
-				s_ActiveEngine->m_UpdateCount++;
-				AppTickService::OnUpdate(k_ConstantFrameTimeStep);
-				Utility::PassiveTimer::OnUpdate(k_ConstantFrameTimeStep);
+				AppTickService::OnUpdate(k_ConstantFrameTimeFloat);
+				Utility::PassiveTimer::OnUpdate(k_ConstantFrameTimeFloat);
 
-				ProcessFunctionQueue();
-				if (!s_ActiveEngine->m_Minimized)
-				{
-					s_ActiveEngine->m_CurrentApp->OnUpdate(k_ConstantFrameTimeStep);
-				}
-				ProcessEventQueue();
-				s_ActiveEngine->m_Window->OnUpdate();
+				m_WorkQueue.ProcessQueue();
+
+				i_EngineApp->OnUpdate(k_ConstantFrameTimeFloat);
+				
+				m_EventQueue.ProcessQueue();
+				i_EngineWindow->OnUpdate();
 			}
 		}
 		KG_INFO("Ending Run Function");
 	}
 
-	void EngineService::EndRun()
+	void EngineThread::EndThread()
 	{
-		s_ActiveEngine->m_Running = false;
+		m_WorkQueue.SubmitFunction([this]() 
+		{
+			m_Active = false;
+		});
 	}
 
-	void EngineService::OnEvent(Events::Event* e)
+	void EngineThread::OnEvent(Events::Event* e)
 	{
 		bool handled = false;
 		// Process Input Events
 		if (e->IsInCategory(Events::Input))
 		{
-			if (s_ActiveEngine->m_CurrentApp)
+			if (i_EngineApp)
 			{
-				s_ActiveEngine->m_CurrentApp->OnInputEvent(e);
+				i_EngineApp->OnInputEvent(e);
 			}
 			return;
 		}
@@ -149,9 +126,9 @@ namespace Kargono
 		// Process Physics Events
 		if (e->IsInCategory(Events::Physics))
 		{
-			if (s_ActiveEngine->m_CurrentApp)
+			if (i_EngineApp)
 			{
-				s_ActiveEngine->m_CurrentApp->OnPhysicsEvent(e);
+				i_EngineApp->OnPhysicsEvent(e);
 			}
 			return;
 		}
@@ -173,27 +150,27 @@ namespace Kargono
 			{
 				return;
 			}
-			if (s_ActiveEngine->m_CurrentApp)
+			if (i_EngineApp)
 			{
-				s_ActiveEngine->m_CurrentApp->OnNetworkEvent(e);
+				i_EngineApp->OnNetworkEvent(e);
 			}
 			return;
 		}
 
 		if (e->IsInCategory(Events::Scene))
 		{
-			if (s_ActiveEngine->m_CurrentApp)
+			if (i_EngineApp)
 			{
-				s_ActiveEngine->m_CurrentApp->OnSceneEvent(e);
+				i_EngineApp->OnSceneEvent(e);
 			}
 			return;
 		}
 
 		if (e->IsInCategory(Events::Asset))
 		{
-			if (s_ActiveEngine->m_CurrentApp)
+			if (i_EngineApp)
 			{
-				s_ActiveEngine->m_CurrentApp->OnAssetEvent(e);
+				i_EngineApp->OnAssetEvent(e);
 			}
 			return;
 		}
@@ -204,7 +181,10 @@ namespace Kargono
 			switch (e->GetEventType())
 			{
 			case Events::EventType::LogEvent:
-				handled = s_ActiveEngine->m_CurrentApp->OnLogEvent(e);
+				if (i_EngineApp)
+				{
+					handled = i_EngineApp->OnLogEvent(e);
+				}
 				break;
 			case Events::EventType::WindowClose:
 				handled = OnWindowClose(*(Events::WindowCloseEvent*)e);
@@ -231,9 +211,9 @@ namespace Kargono
 				return;
 			}
 
-			if (s_ActiveEngine->m_CurrentApp)
+			if (i_EngineApp)
 			{
-				s_ActiveEngine->m_CurrentApp->OnApplicationEvent(e);
+				i_EngineApp->OnApplicationEvent(e);
 			}
 
 			return;
@@ -241,38 +221,32 @@ namespace Kargono
 
 		if (e->IsInCategory(Events::Editor))
 		{
-			if (s_ActiveEngine->m_CurrentApp)
+			if (i_EngineApp)
 			{
-				s_ActiveEngine->m_CurrentApp->OnEditorEvent(e);
+				i_EngineApp->OnEditorEvent(e);
 			}
 			return;
 		}
-
 	}
 
-	bool EngineService::OnWindowClose(Events::WindowCloseEvent& e)
+	bool EngineThread::OnWindowClose(Events::WindowCloseEvent& /*event*/)
 	{
-		UNREFERENCED_PARAMETER(e);
-
-		s_ActiveEngine->m_Running = false;
+		EndThread();
 		return true;
 	}
 
-	bool EngineService::OnWindowResize(Events::WindowResizeEvent& e)
+	bool EngineThread::OnWindowResize(Events::WindowResizeEvent& event)
 	{
-		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		if (event.GetWidth() == 0 || event.GetHeight() == 0)
 		{
-			s_ActiveEngine->m_Minimized = true;
 			return false;
 		}
 
-		s_ActiveEngine->m_Minimized = false;
-		Rendering::RenderingService::OnWindowResize(e.GetWidth(), e.GetHeight());
-
+		Rendering::RenderingService::OnWindowResize(event.GetWidth(), event.GetHeight());
 		return false;
 	}
 
-	bool EngineService::OnUpdateEntityLocation(Events::UpdateEntityLocation& e)
+	bool EngineThread::OnUpdateEntityLocation(Events::UpdateEntityLocation& e)
 	{
 		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveScene();
 		if (!scene) { return false; }
@@ -283,14 +257,14 @@ namespace Kargono
 
 		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
 		{
-			auto& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
+			ECS::Rigidbody2DComponent& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 		}
 		return false;
 	}
 
-	bool EngineService::OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e)
+	bool EngineThread::OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e)
 	{
 		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveScene();
 		if (!scene) { return false; }
@@ -312,17 +286,17 @@ namespace Kargono
 		return false;
 	}
 
-	void EngineService::OnSkipUpdate(Events::SkipUpdateEvent event)
+	void EngineThread::OnSkipUpdate(Events::SkipUpdateEvent event)
 	{
-		s_ActiveEngine->m_Accumulator -= event.GetSkipCount() * k_ConstantFrameTime;
+		m_RunTimer.SkipUpdates(event.GetSkipCount());
 	}
 
-	void EngineService::OnAddExtraUpdate(Events::AddExtraUpdateEvent event)
+	void EngineThread::OnAddExtraUpdate(Events::AddExtraUpdateEvent event)
 	{
-		s_ActiveEngine->m_Accumulator += event.GetExtraUpdateCount() * k_ConstantFrameTime;
+		m_RunTimer.AddUpdates(event.GetExtraUpdateCount());
 	}
 
-	bool EngineService::OnCleanUpTimers(Events::CleanUpTimersEvent& e)
+	bool EngineThread::OnCleanUpTimers(Events::CleanUpTimersEvent& e)
 	{
 		UNREFERENCED_PARAMETER(e);
 
@@ -330,69 +304,113 @@ namespace Kargono
 		return false;
 	}
 
-	bool EngineService::OnAddTickGeneratorUsage(Events::AddTickGeneratorUsage& e)
+	bool EngineThread::OnAddTickGeneratorUsage(Events::AddTickGeneratorUsage& e)
 	{
 		AppTickService::AddNewGenerator(e.GetDelayMilliseconds());
 		return false;
 	}
 
-	bool EngineService::OnRemoveTickGeneratorUsage(Events::RemoveTickGeneratorUsage& e)
+	bool EngineThread::OnRemoveTickGeneratorUsage(Events::RemoveTickGeneratorUsage& e)
 	{
 		AppTickService::RemoveGenerator(e.GetDelayMilliseconds());
 		return false;
 	}
 
-	bool EngineService::OnAppTickEvent(Events::AppTickEvent& e)
+	bool EngineThread::OnAppTickEvent(Events::AppTickEvent& e)
 	{
 		Network::ClientService::SubmitToNetworkEventQueue(CreateRef<Events::AppTickEvent>(e));
 		return false;
 	}
 
-	void EngineService::RegisterWindowOnEventCallback()
+	void EngineThread::OnApplicationCloseEvent(Events::ApplicationCloseEvent& e)
 	{
-		s_ActiveEngine->m_Window->SetEventCallback(EngineService::OnEvent);
+		Events::EventCallbackFn eventCallback = i_EngineWindow->GetEventCallback();
+		eventCallback(&e);
 	}
 
-	void EngineService::RegisterAppTickOnEventCallback()
+	void EngineThread::SubmitFunction(const std::function<void()> workFunction)
 	{
-		AppTickService::SetAppTickEventCallback(EngineService::OnEvent);
+		m_WorkQueue.SubmitFunction(workFunction);
 	}
 
-	void EngineService::RegisterCollisionEventListener(Physics::ContactListener& contactListener)
+	void EngineThread::SubmitEvent(Ref<Events::Event> event)
 	{
-		contactListener.SetEventCallback(EngineService::OnEvent);
+		m_EventQueue.SubmitEvent(event);
 	}
-
-	void EngineService::SubmitToMainThread(const std::function<void()>& function)
+	bool Engine::Init(const EngineConfig& config, Application* app)
 	{
-		s_ActiveEngine->m_WorkQueue.SubmitFunction(function);
-	}
+		KG_ASSERT(!m_Active);
 
-	void EngineService::SubmitToEventQueue(Ref<Events::Event> e)
-	{
-		s_ActiveEngine->m_EventQueue.SubmitEvent(e);
-	}
+		// Initialize data
+		m_Config = config;
+		m_CurrentApp = app;
 
-	void EngineService::SubmitApplicationCloseEvent()
-	{
-		EngineService::SubmitToMainThread([&]()
+		// Initialize main window
+		m_Window = Window::Create(WindowProps(config.m_ExecutableName,
+			config.m_DefaultWindowDimensions.x,
+			config.m_DefaultWindowDimensions.y));
+		KG_VERIFY(m_Window, "Created Engine Window");
+
+		// Register callbacks
+		RegisterWindowOnEventCallback();
+		RegisterAppTickOnEventCallback();
+
+		// Initialize engine thread
+		if (!m_Thread.Init(app, m_Window.get()))
 		{
-			Events::ApplicationCloseEvent event{};
-			Events::EventCallbackFn eventCallback = EngineService::GetActiveWindow().GetEventCallback();
-			eventCallback(&event);
-		});
-	}
+			KG_WARN("Engine Init Failed. Main thread init failed");
+			return false;
+		}
 
-	void EngineService::ProcessFunctionQueue()
+		// Initialize current app (editor, runtime, server, etc...)
+		if (!app->Init())
+		{
+			KG_WARN("Engine Init Failed. Application creation failed");
+			return false;
+		}
+
+		m_Active = true;
+		KG_VERIFY(m_Active, "Engine Initialized");
+		return true;
+	}
+	bool Engine::Terminate()
 	{
-		KG_PROFILE_FUNCTION();
-		s_ActiveEngine->m_WorkQueue.ProcessQueue();
-	}
+		if (!m_Active)
+		{
+			KG_WARN("Attempt to terminate engine service when s_ActiveEngine is already closed");
+			return true;
+		}
 
-	void EngineService::ProcessEventQueue()
+		if (m_CurrentApp)
+		{
+			m_CurrentApp->Terminate();
+			delete m_CurrentApp;
+			m_CurrentApp = nullptr;
+		}
+		KG_VERIFY(!m_CurrentApp, "Application Terminated");
+
+		if (m_Window)
+		{
+			m_Window.reset();
+		}
+
+		m_Active = false;
+		KG_VERIFY(!m_Active, "Active Engine Terminated");
+		return true;
+	}
+	void Engine::RegisterWindowOnEventCallback()
 	{
-		KG_PROFILE_FUNCTION();
-		s_ActiveEngine->m_EventQueue.ProcessQueue();
+		EngineThread* threadPtr{ &m_Thread };
+		m_Window->SetEventCallback(KG_BIND_CLASS_FN_EXPLICIT(threadPtr, OnEvent));
 	}
-
+	void Engine::RegisterAppTickOnEventCallback()
+	{
+		EngineThread* threadPtr{ &m_Thread };
+		AppTickService::SetAppTickEventCallback(KG_BIND_CLASS_FN_EXPLICIT(threadPtr, OnEvent));
+	}
+	void Engine::RegisterCollisionEventListener(Physics::ContactListener& contactListener)
+	{
+		EngineThread* threadPtr{ &m_Thread };
+		contactListener.SetEventCallback(KG_BIND_CLASS_FN_EXPLICIT(threadPtr, OnEvent));
+	}
 }

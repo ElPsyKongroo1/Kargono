@@ -61,7 +61,7 @@ namespace Kargono::Assets
 			AssetType::Texture, 
 			Events::ManageAssetAction::Create
 		);
-		EngineService::SubmitToEventQueue(event);
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 		return newHandle;
 
 	}

@@ -23,8 +23,8 @@ namespace Kargono
 		//=========================
 		// LifeCycle Functions
 		//=========================
-		virtual void Init() override;
-		virtual void Terminate() override;
+		[[nodiscard]] virtual bool Init() override;
+		[[nodiscard]] virtual bool Terminate() override;
 		virtual void OnUpdate(Timestep ts) override;
 		virtual bool OnLogEvent(Events::Event* event) override;
 

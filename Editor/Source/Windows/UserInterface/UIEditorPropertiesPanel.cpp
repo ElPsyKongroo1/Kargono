@@ -2294,7 +2294,7 @@ namespace Kargono::Panels
 		// Calculate navigation links
 		RuntimeUI::NavigationLinksCalculator newCalculator;
 		newCalculator.CalculateNavigationLinks(RuntimeUI::RuntimeUIService::GetActiveUI(),
-			EngineService::GetActiveWindow().GetActiveViewport());
+			EngineService::GetActiveEngine().GetWindow().GetActiveViewport());
 
 		if (spec.m_CurrentBoolean)
 		{
@@ -3430,7 +3430,7 @@ namespace Kargono::Panels
 		// Calculate navigation links
 		RuntimeUI::NavigationLinksCalculator newCalculator;
 		newCalculator.CalculateNavigationLinks(RuntimeUI::RuntimeUIService::GetActiveUI(),
-			EngineService::GetActiveWindow().GetActiveViewport());
+			EngineService::GetActiveEngine().GetWindow().GetActiveViewport());
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -3673,7 +3673,7 @@ namespace Kargono::Panels
 		// Calculate navigation links
 		RuntimeUI::NavigationLinksCalculator newCalculator;
 		newCalculator.CalculateNavigationLinks(RuntimeUI::RuntimeUIService::GetActiveUI(),
-			EngineService::GetActiveWindow().GetActiveViewport());
+			EngineService::GetActiveEngine().GetWindow().GetActiveViewport());
 		if (spec.m_CurrentBoolean)
 		{
 			ViewportData& currentViewport = s_UIWindow->m_ViewportPanel->m_ViewportData;

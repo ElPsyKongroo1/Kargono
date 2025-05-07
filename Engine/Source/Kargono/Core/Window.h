@@ -14,13 +14,13 @@ namespace Kargono
 	//==============================
 	struct WindowProps 
 	{
-		std::string Title {"No Title"};
+		FixedString32 Title {"No Title"};
 		uint32_t Width{ 0 };
 		uint32_t Height{ 0 };
 
 		WindowProps() {}
 
-		WindowProps(const std::string& title, uint32_t width, uint32_t height)
+		WindowProps(const char* title, uint32_t width, uint32_t height)
 			: Title(title), Width(width), Height(height) {}
 	};
 

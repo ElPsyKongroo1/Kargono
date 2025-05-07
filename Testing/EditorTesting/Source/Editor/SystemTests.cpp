@@ -6,7 +6,7 @@
 #include "EditorApp.h"
 
 
-bool InitializeEngine()
+bool InitializeEngine(Kargono::Engine& engine)
 {
 	std::filesystem::path projectPath{};
 	
@@ -17,21 +17,22 @@ bool InitializeEngine()
 	}
 	projectPath = "../Projects/TestProject/TestProject.kproj";
 
-	Kargono::EngineSpec editorSpec;
-	editorSpec.Name = "Kargono Editor";
-	editorSpec.CommandLineArgs = { 0, nullptr };
-	editorSpec.WorkingDirectory = std::filesystem::current_path();
-	editorSpec.DefaultWindowWidth = 1600;
-	editorSpec.DefaultWindowHeight = 900;
+	Kargono::EngineConfig editorSpec;
+	editorSpec.m_ExecutableName = "Kargono Editor";
+	editorSpec.m_CmlArgs = { 0, nullptr };
+	editorSpec.m_WorkingDirectory = std::filesystem::current_path();
+	editorSpec.m_DefaultWindowDimensions = { 1600, 900};
 	Kargono::Application* editorApp = new Kargono::EditorApp(projectPath);
-	Kargono::EngineService::Init(editorSpec, editorApp);
+	engine.Init(editorSpec, editorApp);
 	KG_VERIFY(editorApp, "Editor App Init");
 	return true;
 }
 
 TEST_CASE("Initialization and Termination")
 {
-	CHECK(InitializeEngine());
+	Kargono::Engine engine;
+	Kargono::EngineService::SetActiveEngine(&engine);
+	CHECK(InitializeEngine(engine));
 	CHECK(Kargono::Utility::AsyncBusyTimer::CloseAllTimers());
-	CHECK(Kargono::EngineService::Terminate());
+	CHECK(engine.Terminate());
 }

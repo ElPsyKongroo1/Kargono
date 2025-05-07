@@ -799,87 +799,92 @@ namespace Kargono::EditorUI
 		io.Fonts->AddFontFromMemoryCompressedTTF(fa_solid_900_compressed_data, fa_solid_900_compressed_size, iconFontSize, &iconsConfig, iconsRanges);
 		ImGui::InitNotificationSystem();
 
+		const std::filesystem::path& workingDir
+		{ 
+			EngineService::GetActiveEngine().GetConfig().m_WorkingDirectory 
+		};
+
 		// Set Up Editor Resources
-		s_IconCamera = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Camera.png").string());
-		s_IconSettings = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Settings.png").string());
-		s_IconDelete = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Delete.png").string());
-		s_IconEdit = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Edit.png").string());
-		s_IconCancel = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Cancel.png").string());
-		s_IconCancel2 = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Cancel2.png").string());
-		s_IconConfirm = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Confirm.png").string());
-		s_IconSearch = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Search.png").string());
-		s_IconOptions = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Options.png").string());
-		s_IconDown = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Down.png").string());
-		s_IconRight = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Right.png").string());
-		s_IconCheckbox_Enabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/CheckboxEnabled.png").string());
-		s_IconCheckbox_Disabled = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/CheckboxDisabled.png").string());
-		s_IconDash = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Dash.png").string());
-		s_IconAI = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/AI.png").string());
-		s_IconNotification = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Notification.png").string());
+		s_IconCamera = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Camera.png").string());
+		s_IconSettings = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Settings.png").string());
+		s_IconDelete = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Delete.png").string());
+		s_IconEdit = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Edit.png").string());
+		s_IconCancel = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Cancel.png").string());
+		s_IconCancel2 = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Cancel2.png").string());
+		s_IconConfirm = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Confirm.png").string());
+		s_IconSearch = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Search.png").string());
+		s_IconOptions = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Options.png").string());
+		s_IconDown = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Down.png").string());
+		s_IconRight = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Right.png").string());
+		s_IconCheckbox_Enabled = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/CheckboxEnabled.png").string());
+		s_IconCheckbox_Disabled = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/CheckboxDisabled.png").string());
+		s_IconDash = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Dash.png").string());
+		s_IconAI = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/AI.png").string());
+		s_IconNotification = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Notification.png").string());
 		
 
 		// Viewport icons
-		s_IconGrid = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Viewport/Grid.png").string());
-		s_IconDisplay = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Viewport/Display.png").string());
-		s_IconPlay = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Viewport/Play.png").string());
-		s_IconStop = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Viewport/Stop.png").string());
-		s_IconPause = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Viewport/Pause.png").string());
-		s_IconStep = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Viewport/Step.png").string());
-		s_IconSimulate = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/Viewport/Simulate.png").string());
+		s_IconGrid = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Viewport/Grid.png").string());
+		s_IconDisplay = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Viewport/Display.png").string());
+		s_IconPlay = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Viewport/Play.png").string());
+		s_IconStop = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Viewport/Stop.png").string());
+		s_IconPause = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Viewport/Pause.png").string());
+		s_IconStep = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Viewport/Step.png").string());
+		s_IconSimulate = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/Viewport/Simulate.png").string());
 
 		// Scene icons
-		s_IconEntity = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Entity.png").string());
-		s_IconBoxCollider = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/BoxCollider.png").string());
-		s_IconTag = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Tag.png").string());
-		s_IconCircleCollider = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/CircleCollider.png").string());
-		s_IconClassInstance = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/ClassInstance.png").string());
-		s_IconRigidBody = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Rigidbody.png").string());
-		s_IconTransform = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Transform.png").string());
-		s_IconParticles = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/SceneEditor/Particles.png").string());
+		s_IconEntity = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/SceneEditor/Entity.png").string());
+		s_IconBoxCollider = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/SceneEditor/BoxCollider.png").string());
+		s_IconTag = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/SceneEditor/Tag.png").string());
+		s_IconCircleCollider = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/SceneEditor/CircleCollider.png").string());
+		s_IconClassInstance = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/SceneEditor/ClassInstance.png").string());
+		s_IconRigidBody = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/SceneEditor/Rigidbody.png").string());
+		s_IconTransform = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/SceneEditor/Transform.png").string());
+		s_IconParticles = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/SceneEditor/Particles.png").string());
 
 		// Runtime UI icons
-		s_IconWindow = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/Window.png").string());
-		s_IconTextWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/TextWidget.png").string());
-		s_IconButtonWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/ButtonWidget.png").string());
-		s_IconInputTextWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/InputText.png").string());
-		s_IconUserInterface2 = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/UserInterface2.png").string());
-		s_IconImageButtonWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/ImageButtonWidget.png").string());
-		s_IconSliderWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/SliderWidget.png").string());
-		s_IconDropDownWidget = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/DropDownWidget.png").string());
-		s_IconHorizontalContainer = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/HorizontalContainer.png").string());
-		s_IconVerticalContainer = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/UIEditor/VerticalContainer.png").string());
+		s_IconWindow = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/UIEditor/Window.png").string());
+		s_IconTextWidget = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/UIEditor/TextWidget.png").string());
+		s_IconButtonWidget = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/UIEditor/ButtonWidget.png").string());
+		s_IconInputTextWidget = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/UIEditor/InputText.png").string());
+		s_IconUserInterface2 = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/UIEditor/UserInterface2.png").string());
+		s_IconImageButtonWidget = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/UIEditor/ImageButtonWidget.png").string());
+		s_IconSliderWidget = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/UIEditor/SliderWidget.png").string());
+		s_IconDropDownWidget = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/UIEditor/DropDownWidget.png").string());
+		s_IconHorizontalContainer = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/UIEditor/HorizontalContainer.png").string());
+		s_IconVerticalContainer = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/UIEditor/VerticalContainer.png").string());
 		
 		// Scripting UI icons
-		s_IconNumber = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Number.png").string());
-		s_IconVariable = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Variable.png").string());
-		s_IconFunction = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Function.png").string());
-		s_IconBoolean = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Boolean.png").string());
-		s_IconDecimal = Rendering::Texture2D::CreateEditorTexture((EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/TextEditor/Decimal.png").string());
+		s_IconNumber = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/TextEditor/Number.png").string());
+		s_IconVariable = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/TextEditor/Variable.png").string());
+		s_IconFunction = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/TextEditor/Function.png").string());
+		s_IconBoolean = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/TextEditor/Boolean.png").string());
+		s_IconDecimal = Rendering::Texture2D::CreateEditorTexture((workingDir / "Resources/Icons/TextEditor/Decimal.png").string());
 
 		// Content Browser icons
-		s_IconDirectory = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Directory.png");
-		s_IconGenericFile = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/GenericFile.png");
-		s_IconBack = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Back.png");
-		s_IconForward = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Forward.png");
-		s_IconAudio = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Audio.png");
-		s_IconTexture = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Texture.png");
-		s_IconBinary = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Binary.png");
-		s_IconScene = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Scene.png");
-		s_IconScene_KG = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Scene_KG.png");
-		s_IconRegistry = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Registry.png");
-		s_IconFont = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Font.png");
-		s_IconUserInterface = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/UserInterface.png");
-		s_IconInput = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Input.png");
-		s_IconAI_KG = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/AI_KG.png");
-		s_IconAudio_KG = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Audio_KG.png");
-		s_IconFont_KG = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Font_KG.png");
-		s_IconGlobalState = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/GameState.png");
-		s_IconProjectComponent = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/ProjectComponent.png");
-		s_IconScript = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Script.png");
-		s_IconTexture_KG = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Texture_KG.png");
-		s_IconEmitterConfig = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/EmitterConfig.png");
-		s_IconEnum = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/Enum.png");
-		s_IconColorPalette = Rendering::Texture2D::CreateEditorTexture(EngineService::GetActiveEngine().GetWorkingDirectory() / "Resources/Icons/ContentBrowser/ColorPalette.png");
+		s_IconDirectory = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Directory.png");
+		s_IconGenericFile = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/GenericFile.png");
+		s_IconBack = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Back.png");
+		s_IconForward = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Forward.png");
+		s_IconAudio = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Audio.png");
+		s_IconTexture = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Texture.png");
+		s_IconBinary = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Binary.png");
+		s_IconScene = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Scene.png");
+		s_IconScene_KG = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Scene_KG.png");
+		s_IconRegistry = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Registry.png");
+		s_IconFont = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Font.png");
+		s_IconUserInterface = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/UserInterface.png");
+		s_IconInput = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Input.png");
+		s_IconAI_KG = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/AI_KG.png");
+		s_IconAudio_KG = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Audio_KG.png");
+		s_IconFont_KG = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Font_KG.png");
+		s_IconGlobalState = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/GameState.png");
+		s_IconProjectComponent = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/ProjectComponent.png");
+		s_IconScript = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Script.png");
+		s_IconTexture_KG = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Texture_KG.png");
+		s_IconEmitterConfig = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/EmitterConfig.png");
+		s_IconEnum = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Enum.png");
+		s_IconColorPalette = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/ColorPalette.png");
 		
 
 		SetButtonDefaults();
@@ -1021,7 +1026,8 @@ namespace Kargono::EditorUI
 		static bool overlapActive = false;
 		if (overlapActive && !g.HoveredIdAllowOverlap)
 		{
-			EngineService::GetActiveWindow().SetMouseCursorIcon(CursorIconType::Standard);
+			
+			EngineService::GetActiveEngine().GetWindow().SetMouseCursorIcon(CursorIconType::Standard);
 		}
 		overlapActive = g.HoveredIdAllowOverlap;
 		

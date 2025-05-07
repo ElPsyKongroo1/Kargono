@@ -159,7 +159,7 @@ namespace Kargono::Rendering
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
-			EngineService::GetActiveWindow().SetMouseCursorVisible(true);
+			EngineService::GetActiveEngine().GetWindow().SetMouseCursorVisible(true);
 			m_MousePaused = true;
 		}
 		return false;
@@ -169,7 +169,7 @@ namespace Kargono::Rendering
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
-			EngineService::GetActiveWindow().SetMouseCursorVisible(false);
+			EngineService::GetActiveEngine().GetWindow().SetMouseCursorVisible(false);
 			m_MousePaused = true;
 		}
 		return false;
