@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Resolution.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 
 namespace Kargono::Utility
 {

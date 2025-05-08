@@ -2,7 +2,7 @@
 
 #include "Kargono/Utility/Timers.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "RuntimeApp.h"
 
 bool InitializeEngine(Kargono::Engine& engine)

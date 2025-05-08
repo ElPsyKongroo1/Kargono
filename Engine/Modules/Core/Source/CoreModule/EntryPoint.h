@@ -1,6 +1,6 @@
 #pragma once
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "Kargono/Utility/Timers.h"
 
 #ifdef KG_PLATFORM_WINDOWS

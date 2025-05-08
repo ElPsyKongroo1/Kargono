@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "InputModule/InputService.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "Kargono/Math/Math.h"
 
 #if defined(KG_PLATFORM_WINDOWS) || defined(KG_PLATFORM_LINUX) 

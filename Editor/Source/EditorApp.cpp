@@ -7,7 +7,7 @@
 #include "EditorUIModule/EditorUI.h"
 #include "RuntimeUIModule/Font.h"
 #include "RuntimeUIModule/RuntimeUI.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "AIModule/AIService.h"
 #include "RenderModule/RenderingService.h"
 #include "EventModule/PhysicsEvent.h"

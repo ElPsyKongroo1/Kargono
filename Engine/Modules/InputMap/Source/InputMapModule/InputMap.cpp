@@ -4,7 +4,7 @@
 #include "Kargono/Scenes/Scene.h"
 
 #include "InputModule/InputService.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "AssetModule/AssetService.h"
 
 namespace Kargono::Input

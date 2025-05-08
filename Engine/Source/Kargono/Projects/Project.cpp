@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "AssetModule/Asset.h"
 #include "NetworkModule/NetworkTools.h"
 

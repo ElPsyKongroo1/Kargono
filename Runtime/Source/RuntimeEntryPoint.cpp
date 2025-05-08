@@ -1,6 +1,6 @@
 #include <Kargono.h>
 #ifndef KG_TESTING
-#include "Kargono/Core/EntryPoint.h"
+#include "CoreModule/EntryPoint.h"
 #endif
 
 #include "RuntimeApp.h"

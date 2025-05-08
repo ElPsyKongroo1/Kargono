@@ -50,6 +50,7 @@
         "%{wks.location}/Engine/Modules/AI/Source",
         "%{wks.location}/Engine/Modules/Assets/Source",
         "%{wks.location}/Engine/Modules/Audio/Source",
+        "%{wks.location}/Engine/Modules/Core/Source",
         "%{wks.location}/Engine/Modules/ECS/Source",
         "%{wks.location}/Engine/Modules/EditorUI/Source",
         "%{wks.location}/Engine/Modules/Events/Source",

@@ -1,6 +1,6 @@
 #pragma once
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "AssetModule/Asset.h"
 #include "Kargono/Projects/Project.h"
 #include "FileSystemModule/FileSystem.h"

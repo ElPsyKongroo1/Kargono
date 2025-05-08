@@ -5,7 +5,7 @@
 #include "RenderModule/Shader.h"
 #include "RenderModule/RenderingService.h"
 #include "AssetModule/AssetService.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "Kargono/Utility/Random.h"
 #include "Kargono/Scenes/Scene.h"
 #include "ECSModule/Entity.h"

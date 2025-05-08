@@ -2,7 +2,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
 #include "EventModule/ApplicationEvent.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 
 #include "API/Logger/SpdlogBackend.h"
 

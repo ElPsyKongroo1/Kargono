@@ -3,7 +3,7 @@
 
 #include "EditorUIModule/EditorUI.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "RenderModule/Texture.h"

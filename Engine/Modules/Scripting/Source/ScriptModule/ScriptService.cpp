@@ -2,7 +2,7 @@
 
 #include "ScriptModule/ScriptService.h"
 
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "ScriptModule/ScriptModuleBuilder.h"
 #include "AssetModule/AssetService.h"
 #include "Kargono/Scenes/Scene.h"

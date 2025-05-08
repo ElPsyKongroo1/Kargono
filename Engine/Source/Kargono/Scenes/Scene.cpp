@@ -6,7 +6,7 @@
 #include "ECSModule/Entity.h"
 #include "Physics2DModule/Physics2D.h"
 #include "RenderModule/RenderingService.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "InputModule/InputService.h"
 #include "InputMapModule/InputMap.h"
 #include "RenderModule/Shader.h"

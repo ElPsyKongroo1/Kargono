@@ -1,8 +1,8 @@
 
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 
 #ifndef KG_TESTING
-#include "Kargono/Core/EntryPoint.h"
+#include "CoreModule/EntryPoint.h"
 #endif
 
 #include "EditorApp.h"

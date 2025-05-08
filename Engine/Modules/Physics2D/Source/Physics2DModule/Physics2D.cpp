@@ -2,7 +2,7 @@
 
 #include "Physics2DModule/Physics2D.h"
 
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "Kargono/Scenes/Scene.h"
 #include "ECSModule/Entity.h"
 

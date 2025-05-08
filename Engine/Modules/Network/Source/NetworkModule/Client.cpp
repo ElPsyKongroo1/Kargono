@@ -2,12 +2,12 @@
 
 #include "NetworkModule/Client.h"
 
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/Timers.h"
 
 #include "Kargono/Utility/Operations.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "Kargono/Utility/Timers.h"
 
 #include <conio.h>

@@ -3,7 +3,7 @@
 #include "RuntimeUIModule/Font.h"
 #include "AssetModule/AssetService.h"
 #include "RenderModule/RenderingService.h"
-#include "Kargono/Core/Engine.h"
+#include "CoreModule/Engine.h"
 #include "ECSModule/EngineComponents.h"
 #include "RenderModule/Shader.h"
 #include "FileSystemModule/FileSystem.h"
