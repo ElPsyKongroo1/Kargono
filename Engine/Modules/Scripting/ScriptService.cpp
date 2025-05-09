@@ -737,7 +737,6 @@ namespace Kargono::Scripting
 	}
 	void ScriptModuleBuilder::CreateModuleHeaderFile()
 	{
-
 		// Write out return value and function name
 		std::stringstream outputStream {};
 		outputStream << "#pragma once\n";
@@ -760,8 +759,8 @@ namespace Kargono::Scripting
 		outputStream << "#include <sstream>\n";
 		outputStream << "#include <limits>\n";
 		outputStream << "#include \"" << "Kargono/Math/MathAliases.h" << "\"\n"; // Include Math Library
-		outputStream << "#include \"" << "RuntimeUI/Source/RuntimeUIModule/RuntimeUICommon.h" << "\"\n"; // Include Runtime UI Common
-		outputStream << "#include \"" << "Physics2D/Source/Physics2DModule/Physics2DCommon.h" << "\"\n"; // Include Physics Common
+		outputStream << "#include \"" << "Modules/Physics2D/Physics2DCommon.h" << "\"\n"; // Include 
+		outputStream << "#include \"" << "Modules/RuntimeUI/RuntimeUICommon.h" << "\"\n"; // Include Runtime UI Common
 
 		// Conversion Function from RValueToLValue
 		outputStream << "template<typename T>\n";
@@ -1272,7 +1271,7 @@ namespace Kargono::Scripting
 		outputStream << "/std:c++20 "; // Specify Language Version
 		outputStream << "/I../Dependencies/glm "; // Include GLM
 		outputStream << "/I../Engine/Source "; // Include Kargono as Include Directory
-		outputStream << "/I../Engine/Modules "; // Include Kargono as Include Directory
+		outputStream << "/I../Engine "; // Include Kargono as Include Directory
 		outputStream << "/EHsc "; // Specifies the handling of exceptions and call stack unwinding. Uses the commands /EH, /EHs, and /EHc together
 		outputStream << "/DKARGONO_EXPORTS "; // Define Macros for Exporting DLL Functions
 
@@ -1351,7 +1350,7 @@ namespace Kargono::Scripting
 		outputStream << "-std=c++20 "; // Specify language version (C++20)
 		outputStream << "-I../Dependencies/glm "; // Include GLM headers
 		outputStream << "-I../Engine/Source ";  // Include Kargono headers
-		outputStream << "-I../Engine/Modules ";  // Include Kargono headers
+		outputStream << "-I../Engine ";  // Include Kargono headers
 		outputStream << "-fexceptions ";  // Handle exceptions
 		outputStream << "-D KARGONO_EXPORTS ";  // Define macros for exporting DLL functions
 
@@ -1451,7 +1450,6 @@ namespace Kargono::Scripting
 		ImportInsertFunction(StringUIWidget)
 		// Other return types
 		ImportInsertFunction(RaycastResultVec2Vec2)
-
 		// Application
 		AddEngineFunctionPointerToDll(Application_Resize, ApplicationResize, VoidUInt16)
 		AddEngineFunctionPointerToDll(Application_Close, []()
@@ -1460,17 +1458,55 @@ namespace Kargono::Scripting
 			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 		}, VoidNone)
 		// Artificial Intelligence
-		AddEngineFunctionPointerToDll(AI_ChangeGlobalState, AI::AIService::ChangeGlobalState, VoidUInt64UInt64)
-		AddEngineFunctionPointerToDll(AI_ChangeCurrentState, AI::AIService::ChangeCurrentState, VoidUInt64UInt64)
-		AddEngineFunctionPointerToDll(AI_RevertPreviousState, AI::AIService::RevertPreviousState, VoidUInt64)
-		AddEngineFunctionPointerToDll(AI_SendMessage, AI::AIService::SendAIMessage, VoidUInt32UInt64UInt64Float)
-		AddEngineFunctionPointerToDll(AI_ClearGlobalState, AI::AIService::ClearGlobalState, VoidUInt64)
-		AddEngineFunctionPointerToDll(AI_ClearCurrentState, AI::AIService::ClearCurrentState, VoidUInt64)
-		AddEngineFunctionPointerToDll(AI_ClearPreviousState, AI::AIService::ClearPreviousState, VoidUInt64)
-		AddEngineFunctionPointerToDll(AI_ClearAllStates, AI::AIService::ClearAllStates, VoidUInt64)
-		AddEngineFunctionPointerToDll(AI_IsGlobalState, AI::AIService::IsGlobalState, BoolUInt64UInt64)
-		AddEngineFunctionPointerToDll(AI_IsCurrentState, AI::AIService::IsCurrentState, BoolUInt64UInt64)
-		AddEngineFunctionPointerToDll(AI_IsPreviousState, AI::AIService::IsPreviousState, BoolUInt64UInt64)
+		AddEngineFunctionPointerToDll(AI_ChangeGlobalState, [](UUID entityID, Assets::AssetHandle newAIStateHandle)
+		{
+			AI::AIService::GetActiveContext().ChangeGlobalState(entityID, newAIStateHandle);
+		}, VoidUInt64UInt64)
+		AddEngineFunctionPointerToDll(AI_ChangeCurrentState, [](UUID entityID, Assets::AssetHandle newAIStateHandle)
+		{
+			AI::AIService::GetActiveContext().ChangeCurrentState(entityID, newAIStateHandle);
+		}, VoidUInt64UInt64)
+		AddEngineFunctionPointerToDll(AI_RevertPreviousState, [](UUID entityID) 
+		{
+			AI::AIService::GetActiveContext().RevertPreviousState(entityID);
+		}, VoidUInt64)
+		AddEngineFunctionPointerToDll(AI_SendMessage, [](uint32_t messageType, UUID senderEntity, UUID receiverEntity, float delayTime)
+		{
+			AI::AIService::GetActiveContext().SendAIMessage(messageType, senderEntity, receiverEntity, delayTime);
+		}, VoidUInt32UInt64UInt64Float)
+		AddEngineFunctionPointerToDll(AI_ClearGlobalState, [](UUID entityID)
+		{
+			AI::AIService::GetActiveContext().ClearGlobalState(entityID);
+		}, VoidUInt64)
+		AddEngineFunctionPointerToDll(AI_ClearCurrentState, [](UUID entityID)
+		{
+			AI::AIService::GetActiveContext().ClearCurrentState(entityID);
+		}, VoidUInt64)
+
+		AddEngineFunctionPointerToDll(AI_ClearPreviousState, [](UUID entityID)
+		{
+			AI::AIService::GetActiveContext().ClearPreviousState(entityID);
+		}, VoidUInt64)
+
+		AddEngineFunctionPointerToDll(AI_ClearAllStates, [](UUID entityID)
+		{
+			AI::AIService::GetActiveContext().ClearAllStates(entityID);
+		}, VoidUInt64)
+
+		AddEngineFunctionPointerToDll(AI_IsGlobalState, [](UUID entityID, Assets::AssetHandle stateHandle)
+		{
+			return AI::AIService::GetActiveContext().IsGlobalState(entityID, stateHandle);
+		}, BoolUInt64UInt64)
+
+		AddEngineFunctionPointerToDll(AI_IsCurrentState, [](UUID entityID, Assets::AssetHandle stateHandle)
+		{
+			return AI::AIService::GetActiveContext().IsCurrentState(entityID, stateHandle);
+		}, BoolUInt64UInt64)
+
+		AddEngineFunctionPointerToDll(AI_IsPreviousState, [](UUID entityID, Assets::AssetHandle stateHandle)
+		{
+			return AI::AIService::GetActiveContext().IsPreviousState(entityID, stateHandle);
+		}, BoolUInt64UInt64)
 		// Audio
 		AddEngineFunctionPointerToDll(PlaySoundFromHandle, Audio::AudioService::PlaySoundFromHandle, VoidUInt64)
 		AddEngineFunctionPointerToDll(PlayStereoSoundFromHandle, Audio::AudioService::PlayStereoSoundFromHandle, VoidUInt64)
@@ -1497,7 +1533,10 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::ClientService::GetActiveSessionSlot, UInt16None)
 		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::ClientService::SendAllEntityLocation, VoidUInt64Vec3)
 		// Particles
-		AddEngineFunctionPointerToDll(Particles_AddEmitterByHandle, Particles::ParticleService::AddEmitterByHandle, VoidUInt64Vec3)
+		AddEngineFunctionPointerToDll(Particles_AddEmitterByHandle, [](Assets::AssetHandle emitterHandle, const Math::vec3& position)
+		{
+			Particles::ParticleService::GetActiveContext().AddEmitterByHandle(emitterHandle, position);
+		}, VoidUInt64Vec3)
 		// Physics 2D
 		AddEngineFunctionPointerToDll(Physics_Raycast, Physics::Physics2DService::Raycast, RaycastResultVec2Vec2)
 		// Random

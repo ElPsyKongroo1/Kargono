@@ -108,9 +108,11 @@ namespace Kargono::Windows
 			return;
 		}
 
+		Particles::ParticleContext& context{ Particles::ParticleService::GetActiveContext()};
+
 		// Load the emitters for the editor scene
-		Particles::ParticleService::ClearEmitters();
-		Particles::ParticleService::LoadSceneEmitters(m_EditorScene);
+		context.ClearEmitters();
+		context.LoadSceneEmitters(m_EditorScene);
 	}
 
 	MainWindow::MainWindow()
@@ -636,7 +638,7 @@ namespace Kargono::Windows
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		if (m_SceneState == SceneState::Simulate) { OnStop(); }
 
-		Particles::ParticleService::ClearEmitters();
+		Particles::ParticleService::GetActiveContext().ClearEmitters();
 
 		m_SceneState = SceneState::Play;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
@@ -657,7 +659,7 @@ namespace Kargono::Windows
 		}
 
 		// Load particle emitters
-		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
+		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 
 		EngineService::GetActiveEngine().GetThread().UpdateAppStartTime();
 		EditorUI::EditorUIService::SetFocusedWindow(m_ViewportPanel->m_PanelName);
@@ -723,8 +725,8 @@ namespace Kargono::Windows
 		}
 
 		// Revalidate particles for editor scene
-		Particles::ParticleService::ClearEmitters();
-		Particles::ParticleService::LoadSceneEmitters(m_EditorScene);
+		Particles::ParticleService::GetActiveContext().ClearEmitters();
+		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(m_EditorScene);
 
 		// Bring back the old UI
 		if (s_EditorApp->m_UIEditorWindow->m_EditorUI)

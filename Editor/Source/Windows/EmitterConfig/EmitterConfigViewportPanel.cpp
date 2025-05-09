@@ -86,9 +86,8 @@ namespace Kargono::Panels
 		}
 
 		// Draw emitters
-		Particles::ParticleService::OnUpdate(ts);
-		Particles::ParticleService::OnRender(m_EditorCamera.GetViewProjection());
-
+		Particles::ParticleService::GetActiveContext().OnUpdate(ts);
+		Particles::ParticleService::GetActiveContext().OnRender(m_EditorCamera.GetViewProjection());
 
 		HandleMouseHovering();
 

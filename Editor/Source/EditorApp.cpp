@@ -49,9 +49,11 @@ namespace Kargono
 		OpenProject(m_InitProjectPath);
 		
 		// Initialize other various engine services
-		Particles::ParticleService::Init();
+		Particles::ParticleService::CreateParticleContext();
+		Particles::ParticleService::GetActiveContext().Init();
 		EditorUI::EditorUIService::Init();
-		AI::AIService::Init();
+		AI::AIService::CreateAIContext();
+		AI::AIService::GetActiveContext().Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(1.0f);
 		RuntimeUI::FontService::Init();
@@ -86,10 +88,12 @@ namespace Kargono
 		// Terminate engine services
 		EditorUI::EditorUIService::Terminate();
 		RuntimeUI::RuntimeUIService::Terminate();
-		Particles::ParticleService::Terminate();
+		Particles::ParticleService::GetActiveContext().Terminate();
+		Particles::ParticleService::RemoveParticleContext();
 		Audio::AudioService::Terminate();
 		Scripting::ScriptService::Terminate();
-		AI::AIService::Terminate();
+		AI::AIService::GetActiveContext().Terminate();
+		AI::AIService::RemoveAIContext();
 		Scripting::ScriptCompilerService::Terminate();
 		Assets::AssetService::ClearAll();
 		RuntimeUI::FontService::Terminate();
@@ -199,7 +203,7 @@ namespace Kargono
 
 	bool EditorApp::OnSceneEvent(Events::Event* event)
 	{
-		Particles::ParticleService::OnSceneEvent(event);
+		Particles::ParticleService::GetActiveContext().OnSceneEvent(event);
 		m_MainWindow->OnSceneEvent(event);
 		return false;
 	}

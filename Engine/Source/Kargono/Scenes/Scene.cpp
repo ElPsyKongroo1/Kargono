@@ -554,14 +554,14 @@ namespace Kargono::Scenes
 		Ref<Scenes::Scene> sceneReference = Assets::AssetService::GetScene(sceneID);
 		if (sceneReference)
 		{
-			Particles::ParticleService::ClearEmitters();
+			Particles::ParticleService::GetActiveContext().ClearEmitters();
 			TransitionScene(sceneReference);
 
 			s_ActiveSceneHandle = sceneID;
 			Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(sceneID, Events::ManageSceneAction::Open);
 			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 
-			Particles::ParticleService::LoadSceneEmitters(sceneReference);
+			Particles::ParticleService::GetActiveContext().LoadSceneEmitters(sceneReference);
 		}
 		else
 		{

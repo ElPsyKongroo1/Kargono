@@ -98,7 +98,7 @@ namespace Kargono::Panels
 			if (!s_MainWindow->m_IsPaused || s_MainWindow->m_StepFrames-- > 0)
 			{
 				// Process AI
-				AI::AIService::OnUpdate(ts);
+				AI::AIService::GetActiveContext().OnUpdate(ts);
 				// Process Input Mode
 				Input::InputMapService::OnUpdate(ts);
 				// Process entity OnUpdate
@@ -112,7 +112,7 @@ namespace Kargono::Panels
 		}
 
 		// Process Particles
-		Particles::ParticleService::OnUpdate(ts);
+		Particles::ParticleService::GetActiveContext().OnUpdate(ts);
 
 		// Use mouse picking buffer to handle scene mouse picking
 		HandleSceneMouseHovering();
@@ -134,7 +134,7 @@ namespace Kargono::Panels
 					Math::mat4 cameraViewProjection = mainCamera->GetProjection() * glm::inverse(cameraTransform);
 
 					// Render particles
-					Particles::ParticleService::OnRender(cameraViewProjection);
+					Particles::ParticleService::GetActiveContext().OnRender(cameraViewProjection);
 
 				}
 			}
@@ -142,7 +142,7 @@ namespace Kargono::Panels
 		else
 		{
 			// Render particles
-			Particles::ParticleService::OnRender(m_EditorCamera.GetViewProjection());
+			Particles::ParticleService::GetActiveContext().OnRender(m_EditorCamera.GetViewProjection());
 		}
 
 		if (s_MainWindow->m_SceneState == SceneState::Play)

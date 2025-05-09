@@ -2,11 +2,9 @@
 
 #include "Modules/Particles/ParticleService.h"
 
-#include "Modules/Rendering/Shader.h"
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Assets/AssetService.h"
 #include "Modules/Core/Engine.h"
-#include "Kargono/Utility/Random.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/ECS/Entity.h"
 #include "Modules/ECS/EngineComponents.h"
@@ -15,26 +13,11 @@
 
 namespace Kargono::Particles
 {
-    struct ParticleContext
+    bool ParticleContext::Init()
     {
-        // All emitters being managed
-		std::unordered_map<UUID, EmitterInstance> m_AllEmitters;
-        Rendering::RendererInputSpec m_ParticleRenderSpec;
-		Utility::PseudoGenerator m_RandomGenerator{ 37427394 };
-    };
-
-    static Ref<ParticleContext> s_ParticleContext {nullptr};
-
-    void ParticleService::Init()
-    {
-		KG_ASSERT(!s_ParticleContext);
-
-		// Initialize basic particle context
-		s_ParticleContext = CreateRef<ParticleContext>();
-
 		// Initialize rendering data for particles
 		{
-			s_ParticleContext->m_ParticleRenderSpec.ClearData();
+			m_ParticleRenderSpec.ClearData();
 				// Create shader for UI background/quad rendering
 			Rendering::ShaderSpecification shaderSpec{ Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawIndex, false };
 			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
@@ -53,39 +36,28 @@ namespace Kargono::Particles
 			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
 
 
-			s_ParticleContext->m_ParticleRenderSpec.m_Shader = localShader;
-			s_ParticleContext->m_ParticleRenderSpec.m_Buffer = localBuffer;
-			s_ParticleContext->m_ParticleRenderSpec.m_ShapeComponent = shapeComp;
+			m_ParticleRenderSpec.m_Shader = localShader;
+			m_ParticleRenderSpec.m_Buffer = localBuffer;
+			m_ParticleRenderSpec.m_ShapeComponent = shapeComp;
 		}
 		
-		KG_VERIFY(s_ParticleContext, "Particle System Init");
+		return true;
     }
 
-    void ParticleService::Terminate()
+    bool ParticleContext::Terminate()
     {
-		KG_ASSERT(s_ParticleContext);
-
-		// Clear input spec data
-		s_ParticleContext->m_ParticleRenderSpec.ClearData();
-
-		// Terminate Static Variables
-		s_ParticleContext.reset();
-
-		// Verify Termination
-		KG_VERIFY(!s_ParticleContext, "Particle System Terminate");
+		return true;
     }
 
 
 
-    void ParticleService::OnUpdate(Timestep ts)
+    void ParticleContext::OnUpdate(Timestep ts)
     {
-		KG_ASSERT(s_ParticleContext);
-
 		// Get current time
 		float currentTime{ EngineService::GetActiveEngine().GetThread().GetInApplicationTime() };
 
 		size_t iteration{ 0 };
-		for (auto& [uuid, emitter] : s_ParticleContext->m_AllEmitters)
+		for (auto& [uuid, emitter] : m_AllEmitters)
 		{
 			// TODO: If a parent entity exists, maybe just set to inactive
 
@@ -114,11 +86,11 @@ namespace Kargono::Particles
 				{
 					// Submit job to main thread that removes indicated emitters from the s_ParticleContext
 					s_EmittersToRemove.emplace_back(uuid);
-					EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
+					EngineService::GetActiveEngine().GetThread().SubmitFunction([this]()
 					{
 						for (UUID id : s_EmittersToRemove)
 						{
-							s_ParticleContext->m_AllEmitters.erase(id);
+							m_AllEmitters.erase(id);
 						}
 						s_EmittersToRemove.clear();
 					});
@@ -143,19 +115,19 @@ namespace Kargono::Particles
 				// Set x,y,z position based on the bounds provide in the emitter's config
 				currentParticle.m_Position.x = emitter.m_Position.x + Utility::PseudoRandomService::GenerateFloatBounds
 				(
-					s_ParticleContext->m_RandomGenerator, 
+					m_RandomGenerator, 
 					emitter.m_Config->m_SpawningBounds[0].x,
 					emitter.m_Config->m_SpawningBounds[1].x
 				);
 				currentParticle.m_Position.y = emitter.m_Position.y + Utility::PseudoRandomService::GenerateFloatBounds
 				(
-					s_ParticleContext->m_RandomGenerator,
+					m_RandomGenerator,
 					emitter.m_Config->m_SpawningBounds[0].y,
 					emitter.m_Config->m_SpawningBounds[1].y
 				);
 				currentParticle.m_Position.z = emitter.m_Position.z + Utility::PseudoRandomService::GenerateFloatBounds
 				(
-					s_ParticleContext->m_RandomGenerator,
+					m_RandomGenerator,
 					emitter.m_Config->m_SpawningBounds[0].z,
 					emitter.m_Config->m_SpawningBounds[1].z
 				);
@@ -165,8 +137,8 @@ namespace Kargono::Particles
 				currentParticle.m_Size = emitter.m_Config->m_SizeBegin;
 
 				//TODO: Generate random velocity TODO: CHANGE THIS
-				currentParticle.m_Velocity.x = Utility::PseudoRandomService::GenerateFloatBounds(s_ParticleContext->m_RandomGenerator, -1.0f, 1.0f);
-				currentParticle.m_Velocity.y = Utility::PseudoRandomService::GenerateFloatBounds(s_ParticleContext->m_RandomGenerator, -1.0f, 1.0f);
+				currentParticle.m_Velocity.x = Utility::PseudoRandomService::GenerateFloatBounds(m_RandomGenerator, -1.0f, 1.0f);
+				currentParticle.m_Velocity.y = Utility::PseudoRandomService::GenerateFloatBounds(m_RandomGenerator, -1.0f, 1.0f);
 				currentParticle.m_Velocity.z = 0.0f;
 
 				// Move iterator down
@@ -205,17 +177,15 @@ namespace Kargono::Particles
 
     }
 
-	void ParticleService::OnRender(const Math::mat4& viewProjection)
+	void ParticleContext::OnRender(const Math::mat4& viewProjection)
 	{
-		KG_ASSERT(s_ParticleContext);
-
 		// Start rendering context
 		Rendering::RenderingService::BeginScene(viewProjection);
 
 		// Get current time
 		float currentTime{ EngineService::GetActiveEngine().GetThread().GetInApplicationTime() };
 
-		for (auto& [uuid, emitter] : s_ParticleContext->m_AllEmitters)
+		for (auto& [uuid, emitter] : m_AllEmitters)
 		{
 			// Get color/size interpolation functions
 			Math::EaseVec3Function sizeEaseFunc
@@ -247,7 +217,7 @@ namespace Kargono::Particles
 				);
 
 				// Create background rendering data
-				s_ParticleContext->m_ParticleRenderSpec.m_TransformMatrix = 
+				m_ParticleRenderSpec.m_TransformMatrix = 
 					glm::translate(Math::mat4(1.0f), particle.m_Position) * 
 					glm::scale(glm::mat4(1.0f), { size.x, size.y, size.z });
 
@@ -261,19 +231,19 @@ namespace Kargono::Particles
 						progress
 					),
 					Utility::FileSystem::CRCFromString("a_Color"),
-					s_ParticleContext->m_ParticleRenderSpec.m_Buffer, 
-					s_ParticleContext->m_ParticleRenderSpec.m_Shader
+					m_ParticleRenderSpec.m_Buffer, 
+					m_ParticleRenderSpec.m_Shader
 				);
 
 				// Render the particle
-				Rendering::RenderingService::SubmitDataToRenderer(s_ParticleContext->m_ParticleRenderSpec);
+				Rendering::RenderingService::SubmitDataToRenderer(m_ParticleRenderSpec);
 			}
 		}
 
 		// End rendering context and submit rendering data to GPU
 		Rendering::RenderingService::EndScene();
 	}
-	bool ParticleService::OnSceneEvent(Events::Event* event)
+	bool ParticleContext::OnSceneEvent(Events::Event* event)
 	{
 		if (event->GetEventType() == Events::EventType::ManageEntity)
 		{
@@ -293,7 +263,7 @@ namespace Kargono::Particles
 
 				// Search for entity to delete
 				UUID emitterToRemove{ k_EmptyUUID };
-				for (auto& [handle, emitter] : s_ParticleContext->m_AllEmitters)
+				for (auto& [handle, emitter] : m_AllEmitters)
 				{
 					if (emitter.m_ParentEntityID == manageEntity->GetEntityID())
 					{
@@ -305,7 +275,7 @@ namespace Kargono::Particles
 				// Remove indicated entity
 				if (emitterToRemove != k_EmptyUUID)
 				{
-					s_ParticleContext->m_AllEmitters.erase(emitterToRemove);
+					m_AllEmitters.erase(emitterToRemove);
 					return true;
 				}
 
@@ -314,9 +284,8 @@ namespace Kargono::Particles
 
 		return false;
 	}
-	UUID ParticleService::AddEmitter(EmitterConfig* config, const Math::vec3& position)
+	UUID ParticleContext::AddEmitter(EmitterConfig* config, const Math::vec3& position)
 	{
-		KG_ASSERT(s_ParticleContext);
 		KG_ASSERT(config);
 		KG_ASSERT(config->m_BufferSize > 0);
 
@@ -334,7 +303,7 @@ namespace Kargono::Particles
 		newEmitterInstance.m_EndTime = currentTime + config->m_EmitterLifetime;
 
 		// Attempt to insert new emitter
-		auto [iter, success] = s_ParticleContext->m_AllEmitters.insert_or_assign(returnID, newEmitterInstance);
+		auto [iter, success] = m_AllEmitters.insert_or_assign(returnID, newEmitterInstance);
 
 		// Ensure insertion of emitter was successful
 		if (!success)
@@ -345,7 +314,7 @@ namespace Kargono::Particles
 		return returnID;
 	}
 
-	void ParticleService::AddEmitterByHandle(Assets::AssetHandle emitterHandle, const Math::vec3& position)
+	void ParticleContext::AddEmitterByHandle(Assets::AssetHandle emitterHandle, const Math::vec3& position)
 	{
 		KG_ASSERT(emitterHandle != Assets::EmptyHandle);
 
@@ -358,9 +327,8 @@ namespace Kargono::Particles
 		AddEmitter(emitter.get(), position);
 	}
 
-	UUID ParticleService::AddEmitter(EmitterConfig* config, Scenes::Scene* parentScene, UUID entityID)
+	UUID ParticleContext::AddEmitter(EmitterConfig* config, Scenes::Scene* parentScene, UUID entityID)
 	{
-		KG_ASSERT(s_ParticleContext);
 		KG_ASSERT(config);
 		KG_ASSERT(config->m_BufferSize > 0);
 
@@ -379,7 +347,7 @@ namespace Kargono::Particles
 		newEmitterInstance.m_EndTime = currentTime + config->m_EmitterLifetime;
 
 		// Attempt to insert new emitter
-		auto [iter, success] = s_ParticleContext->m_AllEmitters.insert_or_assign(returnID, newEmitterInstance);
+		auto [iter, success] = m_AllEmitters.insert_or_assign(returnID, newEmitterInstance);
 
 		// Ensure insertion of emitter was successful
 		if (!success)
@@ -390,26 +358,24 @@ namespace Kargono::Particles
 		return returnID;
 	}
 
-	bool ParticleService::RemoveEmitter(UUID emitterID)
+	bool ParticleContext::RemoveEmitter(UUID emitterID)
 	{
-		KG_ASSERT(s_ParticleContext);
-
 		// Attempt to erase emitter from context
-		size_t erased = s_ParticleContext->m_AllEmitters.erase(emitterID);
+		size_t erased = m_AllEmitters.erase(emitterID);
 
 		// Return success of erase operation
 		return erased > 0;
 	}
-	void ParticleService::ClearEmitters()
+	void ParticleContext::ClearEmitters()
 	{
-		s_ParticleContext->m_AllEmitters.clear();
+		m_AllEmitters.clear();
 	}
-	void ParticleService::ClearSceneEmitters()
+	void ParticleContext::ClearSceneEmitters()
 	{
 		std::vector<UUID> emittersToRemove;
 
 		// Get ID's for all scene emitters
-		for (auto& [emitterHandle, emitterInstance] : s_ParticleContext->m_AllEmitters)
+		for (auto& [emitterHandle, emitterInstance] : m_AllEmitters)
 		{
 			if (emitterInstance.m_ParentScene)
 			{
@@ -420,14 +386,14 @@ namespace Kargono::Particles
 		// Remove all of the scene emitters
 		for (UUID emitterID : emittersToRemove)
 		{
-			s_ParticleContext->m_AllEmitters.erase(emitterID);
+			m_AllEmitters.erase(emitterID);
 		}
 	}
-	std::unordered_map<UUID, EmitterInstance>& ParticleService::GetAllEmitters()
+	std::unordered_map<UUID, EmitterInstance>& ParticleContext::GetAllEmitters()
 	{
-		return s_ParticleContext->m_AllEmitters;
+		return m_AllEmitters;
 	}
-	void ParticleService::LoadSceneEmitters(Ref<Scenes::Scene> scene)
+	void ParticleContext::LoadSceneEmitters(Ref<Scenes::Scene> scene)
 	{
 		for (entt::entity enttID : scene->GetAllEntitiesWith<ECS::ParticleEmitterComponent>())
 		{

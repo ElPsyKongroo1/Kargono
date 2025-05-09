@@ -11,27 +11,15 @@
 
 namespace Kargono::AI
 {
-	void AIService::Init()
+	bool AIContext::Init()
 	{
-		// Initialize AIContext
-		if (!s_AIContext)
-		{
-			s_AIContext = CreateRef<AI::AIContext>();
-		}
-		
-		// Verify init is successful
-		KG_VERIFY(s_AIContext, "AI Service System Initiated");
+		return true;
 	}
-	void AIService::Terminate()
+	bool AIContext::Terminate()
 	{
-		// Clear AIContext
-		s_AIContext.reset();
-		s_AIContext = nullptr;
-		
-		// Verify terminate is successful
-		KG_VERIFY(!s_AIContext, "AI Service System Initiated");
+		return true;
 	}
-	void AIService::OnUpdate(Timestep timeStep)
+	void AIContext::OnUpdate(Timestep timeStep)
 	{
 		// Ensure a valid scene is active
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -60,7 +48,7 @@ namespace Kargono::AI
 		// Check/Handle AIContext's delayed messages queue
 		HandleDelayedMessages();
 	}
-	bool AIService::IsGlobalState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	bool AIContext::IsGlobalState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -74,7 +62,7 @@ namespace Kargono::AI
 		// Return whether the component aiState is the same as query aiState
 		return aiComponent.GlobalStateHandle == queryAIStateHandle;
 	}
-	bool AIService::IsCurrentState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	bool AIContext::IsCurrentState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -88,7 +76,7 @@ namespace Kargono::AI
 		// Return whether the component aiState is the same as query aiState
 		return aiComponent.CurrentStateHandle == queryAIStateHandle;
 	}
-	bool AIService::IsPreviousState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	bool AIContext::IsPreviousState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -102,7 +90,7 @@ namespace Kargono::AI
 		// Return whether the component aiState is the same as query aiState
 		return aiComponent.PreviousStateHandle == queryAIStateHandle;
 	}
-	void AIService::ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle)
+	void AIContext::ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -134,7 +122,7 @@ namespace Kargono::AI
 		}
 
 	}
-	void AIService::ChangeCurrentState(UUID entityID, Assets::AssetHandle newAIStateHandle)
+	void AIContext::ChangeCurrentState(UUID entityID, Assets::AssetHandle newAIStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -169,7 +157,7 @@ namespace Kargono::AI
 			Utility::CallWrappedVoidEntity(aiComponent.CurrentStateReference->OnEnterState->m_Function, entityID);
 		}
 	}
-	void AIService::RevertPreviousState(UUID entityID)
+	void AIContext::RevertPreviousState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -209,7 +197,7 @@ namespace Kargono::AI
 		aiComponent.PreviousStateReference = nullptr;
 	}
 
-	void AIService::ClearGlobalState(UUID entityID)
+	void AIContext::ClearGlobalState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -224,7 +212,7 @@ namespace Kargono::AI
 		aiComponent.GlobalStateHandle = Assets::EmptyHandle;
 		aiComponent.GlobalStateReference = nullptr;
 	}
-	void AIService::ClearCurrentState(UUID entityID)
+	void AIContext::ClearCurrentState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -239,7 +227,7 @@ namespace Kargono::AI
 		aiComponent.CurrentStateHandle = Assets::EmptyHandle;
 		aiComponent.CurrentStateReference = nullptr;
 	}
-	void AIService::ClearPreviousState(UUID entityID)
+	void AIContext::ClearPreviousState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -254,7 +242,7 @@ namespace Kargono::AI
 		aiComponent.PreviousStateHandle = Assets::EmptyHandle;
 		aiComponent.PreviousStateReference = nullptr;
 	}
-	void AIService::ClearAllStates(UUID entityID)
+	void AIContext::ClearAllStates(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -279,18 +267,15 @@ namespace Kargono::AI
 	}
 
 
-	void AIService::SendAIMessage(uint32_t messageType, UUID senderEntity, UUID receiverEntity, float delayTime)
+	void AIContext::SendAIMessage(uint32_t messageType, UUID senderEntity, UUID receiverEntity, float delayTime)
 	{
-		// Initialize message
-		KG_ASSERT(s_AIContext);
-
 		AIMessage newMessage{ messageType, senderEntity, receiverEntity, Utility::Time::GetTime() + delayTime };
 
 		// Check if message should be handled immediately or placed into delay queue
 		if (delayTime > 0.001f)
 		{
 			// Insert message into delay queue. If unsuccessful, increment delay time and retry until successful
-			s_AIContext->m_MessageQueue.push({std::move(newMessage)});
+			m_MessageQueue.push({std::move(newMessage)});
 		}
 		else
 		{
@@ -298,7 +283,7 @@ namespace Kargono::AI
 			HandleAIMessage(std::move(newMessage));
 		}
 	}
-	void AIService::HandleAIMessage(const AIMessage& messageToHandle)
+	void AIContext::HandleAIMessage(const AIMessage& messageToHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
@@ -322,10 +307,10 @@ namespace Kargono::AI
 			Utility::CallWrappedVoidUInt32EntityEntityFloat(receiverAIComponent.CurrentStateReference->OnMessage->m_Function, messageToHandle.MessageType, messageToHandle.SenderEntity, messageToHandle.ReceiverEntity, messageToHandle.DispatchTime);
 		}
 	}
-	void AIService::HandleDelayedMessages()
+	void AIContext::HandleDelayedMessages()
 	{
 		float currentTime = Utility::Time::GetTime();
-		auto& messageQueue = s_AIContext->m_MessageQueue;
+		auto& messageQueue = m_MessageQueue;
 
 		// Loop through messageQueue and process messages if they are due for dispatch
 		while (!messageQueue.empty())

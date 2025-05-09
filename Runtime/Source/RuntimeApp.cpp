@@ -80,12 +80,14 @@ namespace Kargono
 			currentWindow.SetResizable(false);
 		}
 
-		AI::AIService::Init();
+		AI::AIService::CreateAIContext();
+		AI::AIService::GetActiveContext().Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(4.0f);
 		RuntimeUI::FontService::Init();
 		RuntimeUI::RuntimeUIService::Init();
-		Particles::ParticleService::Init();
+		Particles::ParticleService::CreateParticleContext();
+		Particles::ParticleService::GetActiveContext().Init();
 
 		if (!m_Headless)
 		{
@@ -104,10 +106,12 @@ namespace Kargono
 
 		// Terminate engine services
 		RuntimeUI::RuntimeUIService::Terminate();
-		Particles::ParticleService::Terminate();
+		Particles::ParticleService::GetActiveContext().Terminate();
+		Particles::ParticleService::RemoveParticleContext();
 		Audio::AudioService::Terminate();
 		Scripting::ScriptService::Terminate();
-		AI::AIService::Terminate();
+		AI::AIService::GetActiveContext().Terminate();
+		AI::AIService::RemoveAIContext();
 		Assets::AssetService::ClearAll();
 		RuntimeUI::FontService::Terminate();
 		Scenes::SceneService::Terminate();
@@ -159,7 +163,7 @@ namespace Kargono
 			Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
 
 			// Draw particles
-			Particles::ParticleService::OnRender(mainCamera->GetProjection() * glm::inverse(cameraTransform));
+			Particles::ParticleService::GetActiveContext().OnRender(mainCamera->GetProjection() * glm::inverse(cameraTransform));
 
 			// Clear mouse picking buffer
 			m_ViewportFramebuffer->SetAttachment(1, -1);
@@ -453,8 +457,8 @@ namespace Kargono
 	void RuntimeApp::OnUpdateRuntime(Timestep ts)
 	{
 		// Process AI
-		AI::AIService::OnUpdate(ts);
-		Particles::ParticleService::OnUpdate(ts);
+		AI::AIService::GetActiveContext().OnUpdate(ts);
+		Particles::ParticleService::GetActiveContext().OnUpdate(ts);
 
 		// Update
 		Input::InputMapService::OnUpdate(ts);
@@ -682,7 +686,7 @@ namespace Kargono
 	void RuntimeApp::OnPlay()
 	{
 		// Handle initializing core services
-		Particles::ParticleService::ClearEmitters();
+		Particles::ParticleService::GetActiveContext().ClearEmitters();
 		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
@@ -709,7 +713,7 @@ namespace Kargono
 		}
 
 		// Load particle emitters
-		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
+		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 	}
 
 	void RuntimeApp::OnStop()
