@@ -3,8 +3,8 @@
 #include "Kargono/Utility/Time.h"
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
-#include "FileSystemModule/FileSystem.h"
-#include "CoreModule/Engine.h"
+#include "Modules/FileSystem/FileSystem.h"
+#include "Modules/Core/Engine.h"
 
 
 #if defined(KG_PLATFORM_WINDOWS) 

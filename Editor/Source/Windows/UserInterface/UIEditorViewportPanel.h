@@ -1,10 +1,10 @@
 #pragma once
-#include "EventModule/KeyEvent.h"
+#include "Modules/Events/KeyEvent.h"
 #include "Kargono/Core/Timestep.h"
-#include "RenderModule/EditorOrthographicCamera.h"
-#include "RenderModule/Framebuffer.h"
+#include "Modules/Rendering/EditorOrthographicCamera.h"
+#include "Modules/Rendering/Framebuffer.h"
 #include "Kargono/Core/Window.h"
-#include "RuntimeUIModule/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUI.h"
 
 #include <string>
 #include <limits>

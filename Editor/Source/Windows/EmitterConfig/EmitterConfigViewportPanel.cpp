@@ -2,9 +2,9 @@
 
 #include "Windows/EmitterConfig/EmitterConfigViewportPanel.h"
 
-#include "RenderModule/RenderingService.h"
-#include "InputModule/InputService.h"
-#include "RenderModule/Texture.h"
+#include "Modules/Rendering/RenderingService.h"
+#include "Modules/Input/InputService.h"
+#include "Modules/Rendering/Texture.h"
 #include "Kargono/Utility/Operations.h"
 
 #include "EditorApp.h"

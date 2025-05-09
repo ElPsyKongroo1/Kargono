@@ -1,8 +1,8 @@
 #pragma once
-#include "EventModule/KeyEvent.h"
+#include "Modules/Events/KeyEvent.h"
 #include "Kargono/Core/Timestep.h"
-#include "RenderModule/EditorPerspectiveCamera.h"
-#include "RenderModule/Framebuffer.h"
+#include "Modules/Rendering/EditorPerspectiveCamera.h"
+#include "Modules/Rendering/Framebuffer.h"
 #include "Kargono/Core/Window.h"
 
 #include <string>

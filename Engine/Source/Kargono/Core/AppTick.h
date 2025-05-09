@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Kargono/Core/Timestep.h"
-#include "EventModule/Event.h"
-#include "EventModule/ApplicationEvent.h"
+#include "Modules/Events/Event.h"
+#include "Modules/Events/ApplicationEvent.h"
 
 #include <vector>
 

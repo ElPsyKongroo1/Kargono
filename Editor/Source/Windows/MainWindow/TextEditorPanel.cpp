@@ -2,13 +2,13 @@
 
 #include "EditorApp.h"
 
-#include "ScriptModule/ScriptCompilerService.h"
-#include "InputModule/InputService.h"
+#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Input/InputService.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Utility/Timers.h"
 
-#include "EditorUIModule/ExternalAPI/ImGuiBackendAPI.h"
+#include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };

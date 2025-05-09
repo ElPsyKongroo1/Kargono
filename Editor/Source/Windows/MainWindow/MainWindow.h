@@ -1,8 +1,8 @@
 #pragma once
 
-#include "AssetModule/Asset.h"
-#include "EventModule/KeyEvent.h"
-#include "EditorUIModule/EditorUI.h"
+#include "Modules/Assets/Asset.h"
+#include "Modules/Events/KeyEvent.h"
+#include "Modules/EditorUI/EditorUI.h"
 #include "Kargono/Core/FixedString.h"
 
 #include "Windows/MainWindow/AssetViewerPanel.h"

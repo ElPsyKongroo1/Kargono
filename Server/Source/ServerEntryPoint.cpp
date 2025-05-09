@@ -1,10 +1,10 @@
 #include <Kargono.h>
 #ifndef KG_TESTING
-#include "CoreModule/EntryPoint.h"
+#include "Modules/Core/EntryPoint.h"
 #endif
 
 #include "ServerApp.h"
-#include "NetworkModule/Server.h"
+#include "Modules/Network/Server.h"
 
 namespace Kargono
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RenderModule/Camera.h"
+#include "Modules/Rendering/Camera.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/Window.h"
 

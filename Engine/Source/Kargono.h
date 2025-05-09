@@ -5,18 +5,18 @@
 //		the core engine functionality.
 
 //-----------------AI-----------------//
-#include "AIModule/AIService.h"
+#include "Modules/AI/AIService.h"
 
 //-----------------Assets-----------------//
-#include "AssetModule/Asset.h"
-#include "AssetModule/AssetService.h"
+#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetService.h"
 
 //-----------------Audio-----------------//
-#include "AudioModule/Audio.h"
+#include "Modules/Audio/Audio.h"
 
 //-----------------Core-----------------//
 #include "Kargono/Core/Base.h"
-#include "CoreModule/Engine.h"
+#include "Modules/Core/Engine.h"
 #include "Kargono/Core/Log.h"
 #include "Kargono/Core/Assert.h"
 #include "Kargono/Core/Timestep.h"
@@ -27,59 +27,59 @@
 #include "Kargono/Core/AppTick.h"
 
 //-----------------ECS-----------------//
-#include "ECSModule/Entity.h"
-#include "ECSModule/EngineComponents.h"
-#include "ECSModule/ProjectComponent.h"
+#include "Modules/ECS/Entity.h"
+#include "Modules/ECS/EngineComponents.h"
+#include "Modules/ECS/ProjectComponent.h"
 
 //-----------------Events-----------------//
-#include "EventModule/KeyEvent.h"
-#include "EventModule/MouseEvent.h"
-#include "EventModule/NetworkingEvent.h"
-#include "EventModule/SceneEvent.h"
-#include "EventModule/PhysicsEvent.h"
-#include "EventModule/EditorEvent.h"
+#include "Modules/Events/KeyEvent.h"
+#include "Modules/Events/MouseEvent.h"
+#include "Modules/Events/NetworkingEvent.h"
+#include "Modules/Events/SceneEvent.h"
+#include "Modules/Events/PhysicsEvent.h"
+#include "Modules/Events/EditorEvent.h"
 
 //-----------------Input-----------------//
-#include "InputModule/InputService.h"
-#include "InputMapModule/InputMap.h"
+#include "Modules/Input/InputService.h"
+#include "Modules/InputMap/InputMap.h"
 
 //-----------------Math-----------------//
 #include "Kargono/Math/Math.h"
 
 //-----------------Network-----------------//
-#include "NetworkModule/Client.h"
-#include "NetworkModule/Server.h"
+#include "Modules/Network/Client.h"
+#include "Modules/Network/Server.h"
 
 //-----------------Particles-----------------//
-#include "ParticleModule/ParticleService.h"
+#include "Modules/Particles/ParticleService.h"
 
 //-----------------Project-----------------//
 #include "Kargono/Projects/Project.h"
 
 //-----------------Rendering-----------------//
-#include "RenderModule/RenderingService.h"
-#include "RenderModule/InputBuffer.h"
-#include "RenderModule/Shader.h"
-#include "RenderModule/Shape.h"
-#include "RenderModule/Framebuffer.h"
-#include "RenderModule/Texture.h"
-#include "RenderModule/VertexArray.h"
-#include "RenderModule/EditorPerspectiveCamera.h"
+#include "Modules/Rendering/RenderingService.h"
+#include "Modules/Rendering/InputBuffer.h"
+#include "Modules/Rendering/Shader.h"
+#include "Modules/Rendering/Shape.h"
+#include "Modules/Rendering/Framebuffer.h"
+#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/VertexArray.h"
+#include "Modules/Rendering/EditorPerspectiveCamera.h"
 
 //-----------------Scene-----------------//
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/Scenes/GameState.h"
 
 //-----------------Scripting-----------------//
-#include "ScriptModule/ScriptService.h"
-#include "ScriptModule/ScriptModuleBuilder.h"
+#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBuilder.h"
 
 //-----------------Runtime-UserInterface-----------------//
-#include "RuntimeUIModule/RuntimeUI.h"
-#include "RuntimeUIModule/Font.h"
+#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/Font.h"
 
 //-----------------Editor-UserInterface-----------------//
-#include "EditorUIModule/EditorUI.h"
+#include "Modules/EditorUI/EditorUI.h"
 
 //-----------------Utilities-----------------//
 #include "Kargono/Utility/Time.h"
@@ -89,4 +89,4 @@
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Utility/Conversions.h"
 #include "Kargono/Utility/Random.h"
-#include "FileSystemModule/FileSystem.h"
+#include "Modules/FileSystem/FileSystem.h"

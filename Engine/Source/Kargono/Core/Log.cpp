@@ -1,8 +1,8 @@
 #include "kgpch.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
-#include "EventModule/ApplicationEvent.h"
-#include "CoreModule/Engine.h"
+#include "Modules/Events/ApplicationEvent.h"
+#include "Modules/Core/Engine.h"
 
 #include "API/Logger/SpdlogBackend.h"
 

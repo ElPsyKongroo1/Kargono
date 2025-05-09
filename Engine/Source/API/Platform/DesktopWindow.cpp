@@ -1,11 +1,11 @@
 #include "kgpch.h"
 
-#include "EventModule/ApplicationEvent.h"
-#include "EventModule/KeyEvent.h"
-#include "EventModule/MouseEvent.h"
-#include "RenderModule/RenderingService.h"
+#include "Modules/Events/ApplicationEvent.h"
+#include "Modules/Events/KeyEvent.h"
+#include "Modules/Events/MouseEvent.h"
+#include "Modules/Rendering/RenderingService.h"
 #include "Kargono/Projects/Project.h"
-#include "FileSystemModule/FileSystem.h"
+#include "Modules/FileSystem/FileSystem.h"
 
 
 #if defined(KG_PLATFORM_WINDOWS) || defined(KG_PLATFORM_LINUX)

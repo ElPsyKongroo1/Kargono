@@ -2,7 +2,7 @@
 
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Utility/Timers.h"
-#include "CoreModule/Engine.h"
+#include "Modules/Core/Engine.h"
 #include "EditorApp.h"
 
 

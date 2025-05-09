@@ -2,14 +2,14 @@
 #include "EditorApp.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "ScriptModule/ScriptModuleBuilder.h"
+#include "Modules/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
-#include "NetworkModule/Client.h"
+#include "Modules/Network/Client.h"
 #include "Kargono/Core/AppTick.h"
-#include "InputModule/InputService.h"
+#include "Modules/Input/InputService.h"
 
-#include "EditorUIModule/ExternalAPI/ImPlotAPI.h"
+#include "Modules/EditorUI/ExternalAPI/ImPlotAPI.h"
 
 static Kargono::EditorApp* s_EditorApp{ nullptr };
 

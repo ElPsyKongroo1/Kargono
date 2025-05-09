@@ -1,8 +1,8 @@
 
-#include "CoreModule/Engine.h"
+#include "Modules/Core/Engine.h"
 
 #ifndef KG_TESTING
-#include "CoreModule/EntryPoint.h"
+#include "Modules/Core/EntryPoint.h"
 #endif
 
 #include "EditorApp.h"

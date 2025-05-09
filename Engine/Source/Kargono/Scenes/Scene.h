@@ -2,12 +2,12 @@
 
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/UUID.h"
-#include "RenderModule/EditorPerspectiveCamera.h"
-#include "Physics2DModule/Physics2D.h"
+#include "Modules/Rendering/EditorPerspectiveCamera.h"
+#include "Modules/Physics2D/Physics2D.h"
 #include "Kargono/Math/Math.h"
-#include "AssetModule/Asset.h"
-#include "ECSModule/EntityRegistry.h"
-#include "ECSModule/ExternalAPI/enttAPI.h"
+#include "Modules/Assets/Asset.h"
+#include "Modules/ECS/EntityRegistry.h"
+#include "Modules/ECS/ExternalAPI/enttAPI.h"
 
 #include <vector>
 #include <unordered_map>

@@ -1,7 +1,7 @@
 #include "doctest.h"
 
 #include "Kargono/Utility/Timers.h"
-#include "CoreModule/Engine.h"
+#include "Modules/Core/Engine.h"
 #include "Kargono/Projects/Project.h"
 #include "ServerApp.h"
 

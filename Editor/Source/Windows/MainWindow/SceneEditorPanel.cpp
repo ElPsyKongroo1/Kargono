@@ -5,9 +5,9 @@
 #include "EditorApp.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "EventModule/SceneEvent.h"
+#include "Modules/Events/SceneEvent.h"
 
-#include "EditorUIModule/ExternalAPI/ImGuiBackendAPI.h"
+#include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };

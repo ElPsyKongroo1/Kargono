@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/Timestep.h"
-#include "EventModule/ApplicationEvent.h"
+#include "Modules/Events/ApplicationEvent.h"
 #include "Kargono/Core/Base.h"
 
 #include <chrono>

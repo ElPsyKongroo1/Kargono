@@ -2,7 +2,7 @@
 
 #include "Kargono.h"
 
-#include "RenderModule/Framebuffer.h"
+#include "Modules/Rendering/Framebuffer.h"
 
 #include <filesystem>
 
