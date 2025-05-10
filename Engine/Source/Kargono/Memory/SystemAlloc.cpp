@@ -24,10 +24,75 @@ namespace {
 
 		return (uint8_t*) ptr;
 	}
+
+	Kargono::Memory::System::MirrorAllocResult Win32MirrorAlloc(size_t size, size_t mirrors)
+	{
+		KG_ASSERT(Kargono::Utility::IsAlignedTo(size, Kargono::Memory::MEM_ALIGN_4_KIB));
+
+		/* TODO: double-check error handling w.r.t. UnmapViewOfFile(), CloseHandle(), and VirtualFree()
+		 * ---
+		 *  see: https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createfilemappinga
+		 *  see: https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualalloc2
+		 *  see: https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-mapviewoffile3
+		 *  see: https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-unmapviewoffile
+		 *  see: https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle
+		 */
+
+		Kargono::Memory::System::MirrorAllocResult result{};
+
+		result.len = size;
+		result.cap = size * mirrors;
+
+		result.memfd = CreateFileMapping(INVALID_HANDLE_VALUE, 0,
+						 PAGE_READWRITE,
+						 (DWORD) (result.len >> 32),
+						 (DWORD) (result.len & 0xffffffff),
+						 0);
+
+		if (result.memfd == INVALID_HANDLE_VALUE)
+			goto error;
+
+		result.ptr = VirtualAlloc2(nullptr, nullptr, result.cap,
+					   MEM_RESERVE | MEM_RESERVE_PLACEHOLDER,
+					   PAGE_NOACCESS, nullptr, 0);
+
+		if (result.ptr == nullptr) {
+			CloseHandle(result.memfd);
+			goto error;
+		}
+
+		for (size_t i = 0; i < mirrors; i++) {
+			uint8_t *base = result.ptr + (result.len * i);
+
+			VirtualFree(base, result.len, MEM_RELEASE | MEM_PRESERVE_PLACEHOLDER);
+
+			PVOID res = MapViewOfFile3(result.memfd, 0,
+						   base, 0, result.len,
+						   MEM_REPLACE_PLACEHOLDER,
+						   PAGE_READWRITE,
+						   nullptr, 0);
+			if (res == nullptr) {
+				VirtualFree(result.ptr, result.cap, MEM_RELEASE);
+				CloseHandle(result.memfd);
+				goto error;
+			}
+		}
+
+		return result;
+
+error:
+		result.memfd = INVALID_HANDLE_VALUE;
+		result.ptr = nullptr;
+		result.len = result.cap = 0;
+
+		return result;
+	}
 }
 
 #elif defined(__linux__)
+# define _GNU_SOURCE 1
 # include <sys/mman.h>
+# include <unistd.h>
 namespace {
 	uint8_t* LinuxPageAlloc(size_t size, size_t alignment)
 	{
@@ -70,6 +135,64 @@ namespace {
 
 		return (uint8_t*) aligned_ptr;
 	}
+
+	Kargono::Memory::System::MirrorAllocResult LinuxMirrorAlloc(size_t size, size_t mirrors)
+	{
+		KG_ASSERT(Kargono::Utility::IsAlignedTo(size, Kargono::Memory::MEM_ALIGN_4_KIB));
+
+		/* mirrored alloc:
+		 *  1. create a memory-backed file to represent the shared
+		 *     buffer to be mirrored, and truncate it to the correct
+		 *     size
+		 *
+		 *  2. map a memory region with PROT_NONE pages, large enough
+		 *     to contain every mirrored region
+		 *
+		 *  3. create each mirrored region, at offset (i * size) in the
+		 *     large memory region, and set it to map the same view of
+		 *     the shared buffer
+		 */
+
+		int prot = PROT_READ | PROT_WRITE;
+		int buffer_flags = MAP_PRIVATE | MAP_ANONYMOUS;
+		int mirror_falgs = MAP_SHARED | MAP_FIXED;
+
+		Kargono::Memory::System::MirrorAllocResult result{};
+
+		result.len = size;
+		result.cap = size * mirrors;
+
+		result.memfd = memfd_create("linux mirror alloc", MFD_CLOEXEC);
+		if (result.memfd < 0)
+			goto error;
+
+		ftruncate(result.memfd, result.len);
+
+		result.ptr = (uint8_t*) mmap(nullptr, result.cap, PROT_NONE, buffer_flags, -1, 0);
+		if (result.ptr == MAP_FAILED) {
+			close(result.memfd);
+			goto error;
+		}
+
+		for (size_t i = 0; i < mirrors; i++) {
+			uint8_t* base = result.ptr + (result.len * i);
+			void* res = mmap(base, result.len, prot, mirror_flags, result.memfd, 0);
+			if (res == MAP_FAILED) {
+				unmap(result.ptr, result.cap);
+				close(result.memfd);
+				goto error;
+			}
+		}
+
+		return result;
+
+error:
+		result.memfd = -1;
+		result.ptr = nullptr;
+		result.len = result.cap = 0;
+
+		return result;
+	}
 }
 
 #else
@@ -101,6 +224,18 @@ namespace Kargono::Memory
 		return LinuxPageAlloc(dataSize, alignment);
 #else
 		return nullptr;
+#endif
+	}
+
+	System::MirrorAllocResult System::MirrorAlloc(size_t dataSize, size_t mirrors)
+	{
+#if defined(_WIN32)
+		return Win32MirrorAlloc(dataSize, mirrors);
+#elif defined(__linux__)
+		return LinuxMirrorAlloc(dataSize, mirrors);
+#else
+		System::MirrorAllocResult result{};
+		return result;
 #endif
 	}
 }

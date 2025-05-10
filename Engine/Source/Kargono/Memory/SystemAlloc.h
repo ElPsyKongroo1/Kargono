@@ -14,6 +14,21 @@ namespace Kargono::Memory
 	public:
 		static uint8_t* GenAlloc(size_t dataSize, size_t alignment);
 		static uint8_t* PageAlloc(size_t dataSize, size_t alignment);
+
+		struct MirrorAllocResult {
+#if defined(_WIN32)
+# include <windows.h>
+			HANDLE memfd;
+#elif defined(__linux__)
+			int memfd;
+#else
+# error "Unknown platform, must be one of: windows linux"
+#endif
+			uint8_t* ptr;
+			size_t len, cap;
+		};
+
+		static MirrorAllocResult MirrorAlloc(size_t dataSize, size_t mirrors);
 	};
 }
 
