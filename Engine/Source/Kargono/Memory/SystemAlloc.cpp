@@ -1,22 +1,20 @@
 #include "kgpch.h"
 
+#include "Kargono/Memory/MemoryCommon.h"
 #include "Kargono/Memory/SystemAlloc.h"
-
-#define ALIGN_PREV(v, align) ((v) & ~((align) - 1))
-#define ALIGN_NEXT(v, align) ALIGN_PREV((v) + ((align) - 1), (align))
 
 namespace Kargono::Memory
 {
 	uint8_t* System::GenAlloc(size_t dataSize, size_t alignment)
 	{
+		KG_ASSERT(Utility::IsPowerOfTwo(alignment));
+
+		size_t upper_bound = dataSize + (alignment - 1);
+
 		// TODO: Look into VirtualAlloc() and mmap() for bigger allocations
-		uintptr_t returnPtr = (uintptr_t)malloc(dataSize + alignment);
+		uintptr_t ptr = (uintptr_t) malloc(upper_bound);
+		uintptr_t res = Utility::AlignForward(ptr, alignment);
 
-		returnPtr = ALIGN_NEXT(returnPtr, alignment);
-
-		return (uint8_t*)returnPtr;
+		return (uint8_t*) res;
 	}
 }
-
-#undef ALIGN_PREV
-#undef ALIGN_NEXT
