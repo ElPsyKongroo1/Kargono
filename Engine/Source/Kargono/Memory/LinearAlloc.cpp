@@ -1,6 +1,6 @@
 #include "kgpch.h"
-#include "Kargono/Memory/LinearAlloc.h"
 
+#include "Kargono/Memory/LinearAlloc.h"
 #include "Kargono/Memory/MemoryCommon.h"
 
 namespace Kargono::Memory
@@ -21,26 +21,21 @@ namespace Kargono::Memory
 
 	uint8_t* LinearAlloc::AllocRaw(size_t dataSize, size_t alignment)
 	{
-		uintptr_t currentPtr = (uintptr_t)m_Buffer + (uintptr_t)m_Offset;
+		uintptr_t currentPtr = (uintptr_t) m_Buffer + m_Offset;
+		uintptr_t endPtr = (uintptr_t) m_Buffer + m_BufferSize;
 
 		// Get the pointer to the newly aligned memory
-		uintptr_t offset = Utility::AlignForward(currentPtr, alignment);
+		uintptr_t alignedPtr = Utility::AlignForward(currentPtr, alignment);
 
-		// Calculate the relative offset for the alignment pointer
-		offset -= (uintptr_t)m_Buffer;
+		// If any part of the (alignedPtr + dataSize) overruns endPtr
+		if (endPtr < alignedPtr + dataSize)
+			return nullptr; // Failed to find enough memory in buffer
 
-		if (offset + dataSize <= m_BufferSize)
-		{
-			// Allocate the memory!
-			uint8_t* returnVal = m_Buffer + m_Offset;
-			m_Offset = offset + dataSize;
+		// Otherwise: `this->length = (alignedPtr + dataSize) - this->ptr;`
+		m_Offset = (alignedPtr + dataSize) - (uintptr_t) m_Buffer;
 
-			// Note that this allocator does not zero out the memory buffer per-allocation
-			return returnVal;
-		}
-
-		// Failed to find enough memory in buffer
-		return nullptr;
+		// Note that this allocator does not zero out the memory buffer per-allocation
+		return (uint8_t*) alignedPtr;
 	}
 
 	void LinearAlloc::Reset()

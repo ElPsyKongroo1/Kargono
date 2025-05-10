@@ -1,7 +1,9 @@
 #pragma once
 
-#include <utility>
 #include <cstdint>
+
+#include <new>
+#include <utility>
 
 namespace Kargono::Memory
 {
@@ -33,19 +35,21 @@ namespace Kargono::Memory
 			// Resource for placement new: https://www.geeksforgeeks.org/placement-new-operator-cpp/
 
 			// Allocate memory for one or more objects of the specified type
-			Type* returnPtr = new (AllocRaw(sizeof(Type) * Count, Align)) Type(std::forward<decltype(args)>(args)...);
+			uint8_t* buffer = AllocRaw(sizeof(Type) * Count, Align);
+			if (buffer == nullptr)
+				return nullptr;
 
-			// Return pointer to memory (AllocRaw could return nullptr)
-			return returnPtr;
+			// Construct objects in-place with the given args
+			return new (buffer) Type(std::forward<decltype(args)>(args)...);
 		}
-
-		// TODO: Optionally add resize allocation method here: https://www.gingerbill.org/article/2019/02/08/memory-allocation-strategies-002/
 
 	public:
 		//==============================
 		// Manage Allocator
 		//==============================
 		void Reset();
+
+		// TODO: Optionally add resize allocation method here: https://www.gingerbill.org/article/2019/02/08/memory-allocation-strategies-002/
 
 	private:
 		uint8_t* m_Buffer{ nullptr };
