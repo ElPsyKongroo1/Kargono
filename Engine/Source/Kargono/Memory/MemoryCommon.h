@@ -13,6 +13,16 @@ namespace Kargono::Utility
 		return (x & (x - 1)) == 0;
 	}
 
+	inline bool IsAlignedTo(uintptr_t pointer, size_t alignment)
+	{
+		KG_ASSERT(IsPowerOfTwo(alignment));
+
+		uintptr_t mask = (alignment - 1);
+		uintptr_t res = pointer & mask;
+
+		return res == 0;
+	}
+
 	inline uintptr_t AlignBackward(uintptr_t pointer, size_t alignment)
 	{
 		KG_ASSERT(IsPowerOfTwo(alignment));
