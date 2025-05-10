@@ -104,7 +104,7 @@ namespace Kargono::Panels
 				// Process entity OnUpdate
 				Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
 				// Process physics
-				Physics::Physics2DService::OnUpdate(ts);
+				Physics::Physics2DService::GetActiveContext().OnUpdate(ts);
 			}
 			OnUpdateRuntime(ts);
 			break;
@@ -521,7 +521,7 @@ namespace Kargono::Panels
 
 		if (!s_MainWindow->m_IsPaused || s_MainWindow->m_StepFrames-- > 0)
 		{
-			Physics::Physics2DService::OnUpdate(ts); 
+			Physics::Physics2DService().GetActiveContext().OnUpdate(ts);
 		}
 
 		// Render

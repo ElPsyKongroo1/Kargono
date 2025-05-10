@@ -11,11 +11,11 @@ namespace Kargono::Audio
 	static AudioSourceSpecification s_DefaultSourceSpec =
 	{
 		{},
-			{},
-			1.0f,
-			1.0f,
-			false,
-			nullptr
+		{},
+		1.0f,
+		1.0f,
+		false,
+		nullptr
 	};
 
 	AudioSource::AudioSource()
@@ -30,14 +30,6 @@ namespace Kargono::Audio
 	}
 
 
-	//void AudioSource::SetGain(float gain)
-	//{
-	//	KG_CORE_ASSERT(gain >= 0.0f && gain <= 100.0f, "Gain is outside of correct range. Range should be 0.0 - 100.0");
-	//	m_Gain = (gain / 100) * 2.0f; // Max Range of Volume 
-	//	alec(alSourcef(m_SourceID, AL_GAIN, m_Gain));
-	//}
-
-
 	AudioBuffer::AudioBuffer()
 	{
 		CallAndCheckALError(alGenBuffers(1, &m_BufferID));
@@ -48,9 +40,9 @@ namespace Kargono::Audio
 		CallAndCheckALError(alDeleteBuffers(1, &(m_BufferID)));
 	}
 
-	void AudioService::PlayStereoSound(Ref<AudioBuffer> audioBuffer)
+	void AudioContext::PlayStereoSound(Ref<AudioBuffer> audioBuffer)
 	{
-		if (s_AudioContext->Mute)
+		if (m_Mute)
 		{
 			return;
 		}
@@ -60,7 +52,7 @@ namespace Kargono::Audio
 			0, 1, 0   // Up Vectors
 		};
 
-		auto audioSource = s_AudioContext->StereoMusicSource.get();
+		auto audioSource = m_StereoMusicSource.get();
 		uint32_t sourceID = audioSource->GetSourceID();
 
 		CallAndCheckALError(alSourceStop(sourceID));
@@ -71,7 +63,7 @@ namespace Kargono::Audio
 		CallAndCheckALError(alListenerfv(AL_ORIENTATION, forwardAndUpVectors));
 		CallAndCheckALError(alSourcePlay(sourceID));
 	}
-	void AudioService::PlayStereoSoundFromHandle(Assets::AssetHandle audioHandle)
+	void AudioContext::PlayStereoSoundFromHandle(Assets::AssetHandle audioHandle)
 	{
 		Ref<Audio::AudioBuffer> audioBuffer = Assets::AssetService::GetAudioBuffer(audioHandle);
 		if (audioBuffer)
@@ -83,17 +75,17 @@ namespace Kargono::Audio
 			KG_WARN("Could not find an audio buffer with the provided handle {}", audioHandle);
 		}
 	}
-	void AudioService::PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec)
+	void AudioContext::PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec)
 	{
-		if (s_AudioContext->Mute)
+		if (m_Mute)
 		{
 			return;
 		}
-		auto audioSource = s_AudioContext->AudioSourceQueue.front();
+		auto audioSource = m_AudioSourceQueue.front();
 		uint32_t sourceID = audioSource->GetSourceID();
 
 		CallAndCheckALError(alSourceStop(sourceID));
-		s_AudioContext->AudioSourceQueue.pop();
+		m_AudioSourceQueue.pop();
 		CallAndCheckALError(alSource3f(sourceID, AL_POSITION, sourceSpec.Position.x, sourceSpec.Position.y, sourceSpec.Position.z));
 		CallAndCheckALError(alSource3f(sourceID, AL_VELOCITY, sourceSpec.Velocity.x, sourceSpec.Velocity.y, sourceSpec.Velocity.z));
 		CallAndCheckALError(alSourcef(sourceID, AL_PITCH, sourceSpec.Pitch));
@@ -113,114 +105,113 @@ namespace Kargono::Audio
 
 		CallAndCheckALError(alSourcePlay(sourceID));
 
-		s_AudioContext->AudioSourceQueue.push(audioSource);
+		m_AudioSourceQueue.push(audioSource);
 		
 	}
 
-	void AudioService::PlaySound(Ref<AudioBuffer> audioBuffer)
+	void AudioContext::PlaySound(Ref<AudioBuffer> audioBuffer)
 	{
 		s_DefaultSourceSpec.CurrentBuffer = audioBuffer;
 		PlaySound(s_DefaultSourceSpec);
 	}
 
-	void AudioService::PlaySoundFromHandle(Assets::AssetHandle audioHandle)
+	void AudioContext::PlaySoundFromHandle(Assets::AssetHandle audioHandle)
 	{
 		Ref<Audio::AudioBuffer> audioBuffer = Assets::AssetService::GetAudioBuffer(audioHandle);
 		if (audioBuffer)
 		{
-			Audio::AudioService::PlaySound(audioBuffer);
+			Audio::AudioContext::PlaySound(audioBuffer);
 		}
 		else
 		{
 			KG_WARN("Could not find an audio buffer with the provided handle {}", audioHandle);
 		}
 	}
-	void AudioService::SetMute(bool isMute)
+	void AudioContext::SetMute(bool isMute)
 	{
 		if (isMute)
 		{
 			StopAllAudio();
-			s_AudioContext->Mute = true;
+			m_Mute = true;
 		}
 		else
 		{
-			s_AudioContext->Mute = false;
+			m_Mute = false;
 		}
 	}
-	void AudioService::StopAllAudio()
+	void AudioContext::StopAllAudio()
 	{
-		for (uint32_t iterator{0}; iterator < s_AudioContext->AudioSourceQueue.size(); iterator++)
+		for (uint32_t iterator{0}; iterator < m_AudioSourceQueue.size(); iterator++)
 		{
-			Ref<AudioSource> audioSource = s_AudioContext->AudioSourceQueue.front();
+			Ref<AudioSource> audioSource = m_AudioSourceQueue.front();
 			CallAndCheckALError(alSourceStop(audioSource->GetSourceID()));
-			s_AudioContext->AudioSourceQueue.pop();
-			s_AudioContext->AudioSourceQueue.push(audioSource);
+			m_AudioSourceQueue.pop();
+			m_AudioSourceQueue.push(audioSource);
 		}
 
-		CallAndCheckALError(alSourceStop(s_AudioContext->StereoMusicSource->GetSourceID()));
+		CallAndCheckALError(alSourceStop(m_StereoMusicSource->GetSourceID()));
 	}
-	void AudioService::Init()
+	bool AudioContext::Init()
 	{
 		// Find default audio device
-		s_AudioContext->CurrentDeviceName = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
-		s_AudioContext->CurrentDeviceID = alcOpenDevice(s_AudioContext->CurrentDeviceName.c_str());
-		if (!s_AudioContext->CurrentDeviceID)
+		m_CurrentDeviceName = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
+		m_CurrentDeviceID = alcOpenDevice(m_CurrentDeviceName.c_str());
+		if (!m_CurrentDeviceID)
 		{
 			KG_ERROR("Failed to get the default device for OpenAL");
-			return;
+			return false;
 		}
-		//KG_INFO("OpenAL Device: {}", alcGetString(s_AudioContext->m_CurrentDeviceID, ALC_DEVICE_SPECIFIER));
+		//KG_INFO("OpenAL Device: {}", alcGetString(m_CurrentDeviceID, ALC_DEVICE_SPECIFIER));
 
 		// Create an OpenAL audio context from the device
-		s_AudioContext->ContextID = alcCreateContext(s_AudioContext->CurrentDeviceID, nullptr);
+		m_ContextID = alcCreateContext(m_CurrentDeviceID, nullptr);
 		//OpenAL_ErrorCheck(context);
 
 		// Activate this context so that OpenAL state modifications are applied to the context
-		if (!alcMakeContextCurrent(s_AudioContext->ContextID))
+		if (!alcMakeContextCurrent(m_ContextID))
 		{
 			KG_ERROR("Failed to make the OpenAL context the current context");
-			return;
+			return false;
 		}
 
 		// Create a listener in 3D space
-		s_AudioContext->DefaultListener = CreateScope<AudioListener>();
+		m_DefaultListener = CreateScope<AudioListener>();
 
 		// Initialize all Sound Sources
-		s_AudioContext->StereoMusicSource = CreateScope<AudioSource>();
-		CallAndCheckALError(alSource3f(s_AudioContext->StereoMusicSource->GetSourceID(), AL_POSITION, 0, 0, 0));
-		CallAndCheckALError(alSource3f(s_AudioContext->StereoMusicSource->GetSourceID(), AL_VELOCITY, 0, 0, 0));
-		CallAndCheckALError(alSourcef(s_AudioContext->StereoMusicSource->GetSourceID(), AL_PITCH, 1.0f));
-		CallAndCheckALError(alSourcef(s_AudioContext->StereoMusicSource->GetSourceID(), AL_GAIN, 1.0f));
-		CallAndCheckALError(alSourcei(s_AudioContext->StereoMusicSource->GetSourceID(), AL_LOOPING, true));
+		m_StereoMusicSource = CreateScope<AudioSource>();
+		CallAndCheckALError(alSource3f(m_StereoMusicSource->GetSourceID(), AL_POSITION, 0, 0, 0));
+		CallAndCheckALError(alSource3f(m_StereoMusicSource->GetSourceID(), AL_VELOCITY, 0, 0, 0));
+		CallAndCheckALError(alSourcef(m_StereoMusicSource->GetSourceID(), AL_PITCH, 1.0f));
+		CallAndCheckALError(alSourcef(m_StereoMusicSource->GetSourceID(), AL_GAIN, 1.0f));
+		CallAndCheckALError(alSourcei(m_StereoMusicSource->GetSourceID(), AL_LOOPING, true));
 
 		for (uint32_t iterator{0}; iterator < 15; iterator++)
 		{
-			s_AudioContext->AudioSourceQueue.push(CreateRef<AudioSource>());
+			m_AudioSourceQueue.push(CreateRef<AudioSource>());
 		}
-		KG_VERIFY(s_AudioContext, "Audio Engine Init");
+		return true;
 	}
 
-	void AudioService::Terminate()
+	bool AudioContext::Terminate()
 	{
 		s_DefaultSourceSpec.CurrentBuffer.reset();
-		s_AudioContext->StereoMusicSource.reset();
-		while (!s_AudioContext->AudioSourceQueue.empty())
+		m_StereoMusicSource.reset();
+		while (!m_AudioSourceQueue.empty())
 		{
-			KG_ASSERT(s_AudioContext->AudioSourceQueue.front().use_count() == 1, "Not all Audio Resources have been cleared!");
-			s_AudioContext->AudioSourceQueue.front().reset();
-			s_AudioContext->AudioSourceQueue.pop();
+			KG_ASSERT(m_AudioSourceQueue.front().use_count() == 1, "Not all Audio Resources have been cleared!");
+			m_AudioSourceQueue.front().reset();
+			m_AudioSourceQueue.pop();
 		}
 		Assets::AssetService::ClearAudioBufferRegistry();
 
 		// Close OpenAL Context
-		alcDestroyContext(s_AudioContext->ContextID);
+		alcDestroyContext(m_ContextID);
 		alcMakeContextCurrent(nullptr);
-		alcCloseDevice(s_AudioContext->CurrentDeviceID);
-		s_AudioContext->CurrentDeviceName = "";
-		s_AudioContext->CurrentDeviceID = nullptr;
-		s_AudioContext->ContextID = nullptr;
-		s_AudioContext = nullptr;
-		KG_VERIFY(!s_AudioContext, "Close Audio Engine");
+		alcCloseDevice(m_CurrentDeviceID);
+		m_CurrentDeviceName = "";
+		m_CurrentDeviceID = nullptr;
+		m_ContextID = nullptr;
+		return true;
 	}
 }
 

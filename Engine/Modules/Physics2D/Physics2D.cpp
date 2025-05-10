@@ -32,12 +32,15 @@ namespace Kargono::Physics
 		m_CallbackFunc(&event);
 	}
 
-	
-	Physics2DWorld::Physics2DWorld(Scenes::Scene* scene, const Math::vec2& gravity)
+
+
+	bool Physics2DWorld::Init(Scenes::Scene* scene, PhysicsSpecification& physicsSpec)
 	{
+		KG_ASSERT(scene);
+
 		// Initialize Physics2DWorld with selected settings.
-		m_Scene = scene;
-		m_PhysicsWorld = CreateScope<b2World>(b2Vec2(gravity.x, gravity.y));
+		i_Scene = scene;
+		m_PhysicsWorld = CreateScope<b2World>(b2Vec2(physicsSpec.Gravity.x, physicsSpec.Gravity.y));
 		m_PhysicsWorld->SetAllowSleeping(false);
 		m_ContactListener = CreateScope<ContactListener>();
 		EngineService::GetActiveEngine().RegisterCollisionEventListener(*m_ContactListener);
@@ -68,7 +71,7 @@ namespace Kargono::Physics
 				b2Vec2 offsets{ boxColliderComp.Offset.y, -boxColliderComp.Offset.x };
 				b2PolygonShape boxShape;
 				boxShape.SetAsBox(boxColliderComp.Size.x * transform.Scale.x, boxColliderComp.Size.y * transform.Scale.y,
-									offsets, 0);
+					offsets, 0);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
@@ -98,39 +101,29 @@ namespace Kargono::Physics
 				body->CreateFixture(&fixtureDef);
 			}
 		}
+
+		return true;
 	}
 
-	Physics2DWorld::~Physics2DWorld()
+	bool Physics2DWorld::Terminate()
 	{
 		m_ContactListener = {};
-		m_PhysicsWorld.reset();
 		m_PhysicsWorld = nullptr;
+
+		return true;
 	}
 
-	void Physics2DService::Init(Scenes::Scene* scene, PhysicsSpecification& physicsSpec)
-	{
-		KG_ASSERT(!s_ActivePhysicsWorld, "Attempt to initialize the physics 2D service, however, the service is already active.");
-		s_ActivePhysicsWorld = CreateRef<Physics2DWorld>(scene, physicsSpec.Gravity);
-	}
-
-	void Physics2DService::Terminate()
-	{
-		KG_ASSERT(s_ActivePhysicsWorld, "Attempt to terminate the active physics 2D service, however, the service is not currently active.");
-		s_ActivePhysicsWorld.reset();
-		s_ActivePhysicsWorld = nullptr;
-	}
-
-	void Physics2DService::OnUpdate(Timestep ts)
+	void Physics2DWorld::OnUpdate(Timestep ts)
 	{
 		const int32_t velocityIterations = 6;
 		const int32_t positionIterations = 2;
-		s_ActivePhysicsWorld->m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+		m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
 		// Retrieve transform from Box2D
-		auto view = s_ActivePhysicsWorld->m_Scene->GetAllEntitiesWith<ECS::Rigidbody2DComponent>();
+		auto view = i_Scene->GetAllEntitiesWith<ECS::Rigidbody2DComponent>();
 		for (auto enttID : view)
 		{
-			ECS::Entity entity = s_ActivePhysicsWorld->m_Scene->GetEntityByEnttID(enttID);
+			ECS::Entity entity = i_Scene->GetEntityByEnttID(enttID);
 			auto& transform = entity.GetComponent<ECS::TransformComponent>();
 			auto& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
 
@@ -144,7 +137,7 @@ namespace Kargono::Physics
 		}
 	}
 
-	RaycastResult Physics2DService::Raycast(Math::vec2 startPoint, Math::vec2 endPoint)
+	RaycastResult Physics2DWorld::Raycast(Math::vec2 startPoint, Math::vec2 endPoint)
 	{
 		RayCastCallback newCallback;
 
@@ -154,7 +147,7 @@ namespace Kargono::Physics
 			return RaycastResult(false, Assets::EmptyHandle);
 		}
 
-		s_ActivePhysicsWorld->m_PhysicsWorld->RayCast(&newCallback, b2Vec2(startPoint.x, startPoint.y), b2Vec2(endPoint.x, endPoint.y));
+		m_PhysicsWorld->RayCast(&newCallback, b2Vec2(startPoint.x, startPoint.y), b2Vec2(endPoint.x, endPoint.y));
 		if (newCallback.m_Fixture)
 		{
 			return RaycastResult(true,
@@ -168,9 +161,9 @@ namespace Kargono::Physics
 		}
 	}
 
-	void Physics2DService::SetActiveGravity(const Math::vec2& gravity)
+	void Physics2DWorld::SetActiveGravity(const Math::vec2& gravity)
 	{
-		s_ActivePhysicsWorld->m_PhysicsWorld->SetGravity(b2Vec2(gravity.x, gravity.y));
+		m_PhysicsWorld->SetGravity(b2Vec2(gravity.x, gravity.y));
 	}
 
 	float RayCastCallback::ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction)

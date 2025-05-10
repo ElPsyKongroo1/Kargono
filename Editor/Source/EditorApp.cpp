@@ -38,7 +38,8 @@ namespace Kargono
 	{
 		// Initialize engine services
 		Scripting::ScriptService::Init();
-		Audio::AudioService::Init();
+		Audio::AudioService::CreateAudioContext();
+		Audio::AudioService::GetActiveContext().Init();
 		Scenes::SceneService::Init();
 
 		// Create editor app windows
@@ -90,7 +91,8 @@ namespace Kargono
 		RuntimeUI::RuntimeUIService::Terminate();
 		Particles::ParticleService::GetActiveContext().Terminate();
 		Particles::ParticleService::RemoveParticleContext();
-		Audio::AudioService::Terminate();
+		Audio::AudioService::GetActiveContext().Terminate();
+		Audio::AudioService::RemoveAudioContext();
 		Scripting::ScriptService::Terminate();
 		AI::AIService::GetActiveContext().Terminate();
 		AI::AIService::RemoveAIContext();

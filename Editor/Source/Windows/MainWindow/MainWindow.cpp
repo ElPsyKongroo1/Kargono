@@ -642,7 +642,8 @@ namespace Kargono::Windows
 
 		m_SceneState = SceneState::Play;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
-		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
+		Physics::Physics2DService::CreatePhysics2DWorld();
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
 
 		// Start up client networking
@@ -672,7 +673,8 @@ namespace Kargono::Windows
 
 		m_SceneState = SceneState::Simulate;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
-		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
+		Physics::Physics2DService::CreatePhysics2DWorld();
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 	}
 	void MainWindow::OnStop()
 	{
@@ -682,19 +684,21 @@ namespace Kargono::Windows
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		KG_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
 
-			if (m_SceneState == SceneState::Play)
-			{
-				Physics::Physics2DService::Terminate();
-				Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
-			}
-			else if (m_SceneState == SceneState::Simulate)
-			{
-				Physics::Physics2DService::Terminate();
-			}
+		if (m_SceneState == SceneState::Play)
+		{
+			Physics::Physics2DService::GetActiveContext().Terminate();
+			Physics::Physics2DService::RemovePhysics2DWorld();
+			Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
+		}
+		else if (m_SceneState == SceneState::Simulate)
+		{
+			Physics::Physics2DService::GetActiveContext().Terminate();
+			Physics::Physics2DService::RemovePhysics2DWorld();
+		}
 
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
-		Audio::AudioService::StopAllAudio();
+		Audio::AudioService::GetActiveContext().StopAllAudio();
 
 		// TODO: DEAL WITH THIS
 		//// Clear UIObjects during runtime.

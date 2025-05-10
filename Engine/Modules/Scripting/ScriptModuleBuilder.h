@@ -17,12 +17,18 @@ namespace Kargono::Scripting
 
 	private:
 		//==============================
-		// Internal Functionality to Support Creation
+		// Generate Module Code
 		//==============================
 		static void CreateModuleHeaderFile();
 		static bool CreateModuleCPPFile();
+		//==============================
+		// Compile Module
+		//==============================
 		static bool CompileModuleCodeMSVC(bool createDebug);
 		static bool CompileModuleCodeGCC(bool createDebug);
+		//==============================
+		// Connect Engine To Module
+		//==============================
 		static void AttachEngineFunctionsToModule();
 	public:
 		friend ScriptService;

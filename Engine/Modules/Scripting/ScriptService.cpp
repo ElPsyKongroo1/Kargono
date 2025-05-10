@@ -1508,8 +1508,14 @@ namespace Kargono::Scripting
 			return AI::AIService::GetActiveContext().IsPreviousState(entityID, stateHandle);
 		}, BoolUInt64UInt64)
 		// Audio
-		AddEngineFunctionPointerToDll(PlaySoundFromHandle, Audio::AudioService::PlaySoundFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(PlayStereoSoundFromHandle, Audio::AudioService::PlayStereoSoundFromHandle, VoidUInt64)
+		AddEngineFunctionPointerToDll(PlaySoundFromHandle, [](Assets::AssetHandle audioHandle)
+		{
+			Audio::AudioService::GetActiveContext().PlaySoundFromHandle(audioHandle);
+		}, VoidUInt64)
+		AddEngineFunctionPointerToDll(PlayStereoSoundFromHandle, [](Assets::AssetHandle audioHandle)
+		{
+			Audio::AudioService::GetActiveContext().PlayStereoSoundFromHandle(audioHandle);
+		}, VoidUInt64)
 		AddEngineFunctionPointerToDll(SignalAll, Network::ClientService::SignalAll, VoidUInt16)
 		// Debug
 		AddEngineFunctionPointerToDll(Log, Scripting::Log, VoidStringStringString)
@@ -1538,7 +1544,10 @@ namespace Kargono::Scripting
 			Particles::ParticleService::GetActiveContext().AddEmitterByHandle(emitterHandle, position);
 		}, VoidUInt64Vec3)
 		// Physics 2D
-		AddEngineFunctionPointerToDll(Physics_Raycast, Physics::Physics2DService::Raycast, RaycastResultVec2Vec2)
+		AddEngineFunctionPointerToDll(Physics_Raycast, [](Math::vec2 startPoint, Math::vec2 endPoint)
+		{
+			return Physics::Physics2DService().GetActiveContext().Raycast(startPoint, endPoint);
+		}, RaycastResultVec2Vec2)
 		// Random
 		AddEngineFunctionPointerToDll(GenerateRandomInteger, Utility::RandomService::GenerateRandomInteger, Int32Int32Int32)
 		AddEngineFunctionPointerToDll(GenerateRandomFloat, Utility::RandomService::GenerateRandomFloat, FloatFloatFloat)

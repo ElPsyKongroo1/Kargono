@@ -20,12 +20,13 @@ namespace Kargono
 	bool RuntimeApp::Init()
 	{
 		Scripting::ScriptService::Init();
-		Audio::AudioService::Init();
+		Audio::AudioService::CreateAudioContext();
+		Audio::AudioService::GetActiveContext().Init();
 		Scenes::SceneService::Init();
 
 		if (m_Headless)
 		{
-			Audio::AudioService::SetMute(true);
+			Audio::AudioService::GetActiveContext().SetMute(true);
 		}
 
 		Window& currentWindow = EngineService::GetActiveEngine().GetWindow();
@@ -61,7 +62,7 @@ namespace Kargono
 			if (!OpenProject())
 			{
 				Scripting::ScriptService::Terminate();
-				Audio::AudioService::Terminate();
+				Audio::AudioService::GetActiveContext().Terminate();
 				Scenes::SceneService::Terminate();
 				return false;
 			}
@@ -108,7 +109,8 @@ namespace Kargono
 		RuntimeUI::RuntimeUIService::Terminate();
 		Particles::ParticleService::GetActiveContext().Terminate();
 		Particles::ParticleService::RemoveParticleContext();
-		Audio::AudioService::Terminate();
+		Audio::AudioService::GetActiveContext().Terminate();
+		Audio::AudioService::RemoveAudioContext();
 		Scripting::ScriptService::Terminate();
 		AI::AIService::GetActiveContext().Terminate();
 		AI::AIService::RemoveAIContext();
@@ -463,7 +465,7 @@ namespace Kargono
 		// Update
 		Input::InputMapService::OnUpdate(ts);
 		Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
-		Physics::Physics2DService::OnUpdate(ts);
+		Physics::Physics2DService::GetActiveContext().OnUpdate(ts);
 
 		// Render 2D
 		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
@@ -687,7 +689,8 @@ namespace Kargono
 	{
 		// Handle initializing core services
 		Particles::ParticleService::GetActiveContext().ClearEmitters();
-		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
+		Physics::Physics2DService::CreatePhysics2DWorld();
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
 		if (scriptHandle != 0)
@@ -718,7 +721,8 @@ namespace Kargono
 
 	void RuntimeApp::OnStop()
 	{
-		Physics::Physics2DService::Terminate();
+		Physics::Physics2DService::GetActiveContext().Terminate();
+		Physics::Physics2DService::RemovePhysics2DWorld();
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
 		if (Projects::ProjectService::GetActive() && Projects::ProjectService::GetActiveAppIsNetworked())

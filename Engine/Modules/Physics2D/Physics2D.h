@@ -87,63 +87,82 @@ namespace Kargono::Physics
 		//=========================
 		// Constructors and Destructors
 		//=========================
-		// This constructor calls Box2D to initialize the underlying
-		//		physics world and associates the context with m_PhysicsWorld.
-		//		This constructor takes a few more steps including:
-		//		1. Set the gravity settings, connect the m_ContactListener to
-		//		its callback function, and create the physics world
-		//		2. Find all entities in the active scene and register their
-		//		default settings and their box/circle colliders.
-		Physics2DWorld(Scenes::Scene* scene, const Math::vec2& gravity);
-		// This destructor simply removes the current reference to the
-		//		underlying physics world in m_PhysicsWorld
-		~Physics2DWorld();
-
-	private:
-		// Underlying physics world implementation
-		Scope<b2World> m_PhysicsWorld = nullptr;
-		// This is a pointer to the active scene for use in the constructor and OnUpdate
-		//		functions.
-		Scenes::Scene* m_Scene = nullptr;
-		// This contact listener moves physics collision events into the event pipeline
-		//		for further processing.
-		Scope<ContactListener> m_ContactListener = nullptr;
-	private:
-		friend class Physics2DService;
-	};
-
-	class Physics2DService
-	{
+		Physics2DWorld() = default;
+		~Physics2DWorld() = default;
 	public:
 		//=========================
 		// Lifecycle Functions
 		//=========================
-		static void Init(Scenes::Scene* scene, PhysicsSpecification& physicsSpec);
-		static void Terminate();
+		[[nodiscard]] bool Init(Scenes::Scene* scene, PhysicsSpecification& physicsSpec);
+		[[nodiscard]] bool Terminate();
 
 		//=========================
 		// On Event Functionality
 		//=========================
-		static void OnUpdate(Timestep ts);
+		void OnUpdate(Timestep ts);
 
 		//=========================
 		// Interact with Physics2DWorld
 		//=========================
-		static RaycastResult Raycast(Math::vec2 startPoint, Math::vec2 endPoint);
+		RaycastResult Raycast(Math::vec2 startPoint, Math::vec2 endPoint);
 
 		//=========================
 		// Manage Active Physics2DWorld
 		//=========================
-		static void SetActiveGravity(const Math::vec2& gravity);
+		void SetActiveGravity(const Math::vec2& gravity);
+
+	private:
+		//=========================
+		// Internal Fields
+		//=========================
+		// Box2D world reference
+		Scope<b2World> m_PhysicsWorld{ nullptr };
+		// Callback API
+		Scope<ContactListener> m_ContactListener{ nullptr };
 
 		//=========================
-		// Getters/Setters
+		// Dependency Injection(s)
 		//=========================
-		static Ref<Physics2DWorld> GetActivePhysics2DWorld()
-		{
-			return s_ActivePhysicsWorld;
-		}
+		Scenes::Scene* i_Scene{ nullptr };
 	private:
-		static inline Ref<Physics2DWorld> s_ActivePhysicsWorld { nullptr };
+		friend class Physics2DService;
+	};
+
+	class Physics2DService // TODO: REMOVE EWWWWWWW
+	{
+	public:
+		//==============================
+		// Create Physics2D Context
+		//==============================
+		static void CreatePhysics2DWorld()
+		{
+			// Initialize Physics2DWorld
+			if (!s_Physics2DWorld)
+			{
+				s_Physics2DWorld = CreateRef<Physics::Physics2DWorld>();
+			}
+
+			// Verify init is successful
+			KG_VERIFY(s_Physics2DWorld, "Physics2D Service System Initiated");
+		}
+		static void RemovePhysics2DWorld()
+		{
+			// Clear Physics2DWorld
+			s_Physics2DWorld.reset();
+			s_Physics2DWorld = nullptr;
+
+			// Verify terminate is successful
+			KG_VERIFY(!s_Physics2DWorld, "Physics2D Service System Initiated");
+		}
+		//==============================
+		// Getters/Setters
+		//==============================
+		static Physics2DWorld& GetActiveContext() { return *s_Physics2DWorld; }
+		static bool IsContextActive() { return (bool)s_Physics2DWorld; }
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		static inline Ref<Physics2DWorld> s_Physics2DWorld{ nullptr };
 	};
 }

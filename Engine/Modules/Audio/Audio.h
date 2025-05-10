@@ -3,6 +3,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Math/Math.h"
 #include "Modules/Assets/Asset.h"
+
 #include <queue>
 #include <string>
 
@@ -142,98 +143,87 @@ namespace Kargono::Audio
 	//==============================
 	// Audio Context Struct
 	//==============================
-	struct AudioContext
-	{
-		// This name currently only exists for debugging purposes. It could be used
-		//		for switching audio devices in future iterations.
-		std::string CurrentDeviceName{};
-		// m_CurrentDeviceID holds a reference to the OpenAL device struct that references
-		//		a physical audio device on your hardware such as a headset.
-		ALCdevice* CurrentDeviceID = nullptr;
-		// m_ContextID holds a reference to the current OpenAL 'world'. This context is
-		//		created around the selected audio device.
-		ALCcontext* ContextID = nullptr;
-		// This default listener is the regular listener for the newly created context.
-		//		This is the listener all audio uses currently.
-		Scope<AudioListener> DefaultListener = nullptr;
-		// This queue holds all of the available audio source other than the stereo source.
-		//		Audio is played by selected the source at the top of the queue, stopping any
-		//		previous audio, playing the new audio, and pushing the source to the back
-		//		of the queue. This allows sources to be cycled continuously.
-		std::queue<Ref<AudioSource>> AudioSourceQueue{};
-		// This is the default stereo source that plays continuous music. It is not interrupted
-		//		by the other sources.
-		Scope<AudioSource> StereoMusicSource = nullptr;
-		bool Mute = false;
-	};
-
-
-	//============================================================
-	// Audio Service Class
-	//============================================================
-	// This class represents the underlying context and lifecycle of the
-	//		audio engine. Starting and closing the audio engine is tied
-	//		to this class's lifetime. Most other actions involving audio
-	//		are taken through this class including playing audio and
-	//		stopping audio.
-	class AudioService
+	class AudioContext
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		AudioContext() = default;
+		~AudioContext() = default;
+
 		//==============================
 		// LifeCycle Functions
 		//==============================
-		// This function serves as the initiator for the OpenAL context.
-		//		This function should only be called once when the application
-		//		begins. Steps taken in this function include:
-		//		1. Find and save current audio device (Think Primary Speakers)
-		//		2. Create OpenAL context surrounding Audio Device
-		//		3. Initialize the default listener.
-		//		4. Initialize the audio source queue along with the stereo source.
-		static void Init();
-		// This function closes the OpenAL context. NOTE: Please close all open buffers
-		//		before calling this function. Most if not all buffers should be managed
-		//		by the asset system. This function takes the following actions:
-		//		1. It closes the s_DefaultSourceSpec buffer
-		//		2. It closes all of the audio sources including the queue and the stereo
-		//		sources.
-		//		3. The buffers inside the AssetManager are cleared.
-		//		4. Finally the audio context and current device are cleared/destroyed.
-		static void Terminate();
+		[[nodiscard]] bool Init();
+		[[nodiscard]] bool Terminate();
 
 		//==============================
-		// External Functionality
+		// Sound Playback
 		//==============================
-		// This function is currently unimplemented! This function should play requested
-		//		stereo audio and take in a buffer.
-		static void PlayStereoSound(Ref<AudioBuffer> audioBuffer);
-		static void PlayStereoSoundFromHandle(Assets::AssetHandle audioHandle);
-		// This function is the main API for playing sound effects. The sourceSpec and
-		//		listenerSpec allow for customization of concepts such as source/listener
-		//		distance, source volume, source pitch, relative velocities (doppler effect),
-		//		etc... This function takes these values into account and plays a sound.
-		static void PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec = {});
-		// This function provides an easy API for playing sound where the source/listener
-		//		are at an identical location and uses default values for other parameters.
-		//		The API simply needs to know what audio should be played! This function
-		//		calls the other PlaySound function with default values btw.
-		static void PlaySound(Ref<AudioBuffer> audioBuffer);
-		static void PlaySoundFromHandle(Assets::AssetHandle audioHandle);
-		static void SetMute(bool isMute);
-		// This function provides a method to stop all audio from playing. This function
-		//		function simply iterates through the audio source queue and stops any
-		//		audio currently playing.
-		static void StopAllAudio();
+		void PlayStereoSound(Ref<AudioBuffer> audioBuffer);
+		void PlayStereoSoundFromHandle(Assets::AssetHandle audioHandle);
+		void PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec = {});
+		void PlaySound(Ref<AudioBuffer> audioBuffer);
+		void PlaySoundFromHandle(Assets::AssetHandle audioHandle);
+		void StopAllAudio();
+		//==============================
+		// Manage Sound State
+		//==============================
+		void SetMute(bool isMute);
+		
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Debug information
+		std::string m_CurrentDeviceName{};
+		// Audio context information
+		ALCdevice* m_CurrentDeviceID{ nullptr };
+		ALCcontext* m_ContextID{ nullptr };
+		// Listeners and sources
+		Scope<AudioListener> m_DefaultListener{ nullptr };
+		std::queue<Ref<AudioSource>> m_AudioSourceQueue{};
+		Scope<AudioSource> m_StereoMusicSource{ nullptr };
+		// Local state
+		bool m_Mute{ false };
+	};
+
+	class AudioService // TODO: REMOVE EWWWWWWW
+	{
 	public:
 		//==============================
-		// Constructors and Destructors
+		// Create Audio Context
 		//==============================
-		// This is just the default constructor. The audio engine is a singleton
-		//		that is static for the program.
-		AudioService() = default;
+		static void CreateAudioContext()
+		{
+			// Initialize AudioContext
+			if (!s_AudioContext)
+			{
+				s_AudioContext = CreateRef<Audio::AudioContext>();
+			}
+
+			// Verify init is successful
+			KG_VERIFY(s_AudioContext, "Audio Service System Initiated");
+		}
+		static void RemoveAudioContext()
+		{
+			// Clear AudioContext
+			s_AudioContext.reset();
+			s_AudioContext = nullptr;
+
+			// Verify terminate is successful
+			KG_VERIFY(!s_AudioContext, "Audio Service System Initiated");
+		}
+		//==============================
+		// Getters/Setters
+		//==============================
+		static AudioContext& GetActiveContext() { return *s_AudioContext; }
+		static bool IsContextActive() { return (bool)s_AudioContext; }
 	private:
-		// This is the actual AudioEngine which is staticly created in the AudioEngine.cpp file
-		//		and is active through the lifetime of the application. Init() and Terminate()
-		//		dictate if OpenAL is active.
-		static inline AudioContext* s_AudioContext{ new AudioContext() };
+		//==============================
+		// Internal Fields
+		//==============================
+		static inline Ref<AudioContext> s_AudioContext{ nullptr };
 	};
 }

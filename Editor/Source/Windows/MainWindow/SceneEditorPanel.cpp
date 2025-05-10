@@ -376,10 +376,10 @@ namespace Kargono::Panels
 			editorScene->GetPhysicsSpecification().Gravity = spec.m_CurrentVec2;
 
 			// If the simulation is running, modify the gravity value inside the simulation
-			if (Physics::Physics2DService::GetActivePhysics2DWorld())
+			if (Physics::Physics2DService::IsContextActive())
 			{
 				Scenes::SceneService::GetActiveScene()->GetPhysicsSpecification().Gravity = s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity;
-				Physics::Physics2DService::SetActiveGravity(s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity);
+				Physics::Physics2DService::GetActiveContext().SetActiveGravity(s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity);
 			}
 		};
 	}

@@ -535,7 +535,8 @@ namespace Kargono::Scenes
 	{
 		if (!newScene) { return; }
 
-		Physics::Physics2DService::Terminate();
+		Physics::Physics2DService().GetActiveContext().Terminate();
+		Physics::Physics2DService().RemovePhysics2DWorld();
 		s_ActiveScene->OnRuntimeStop();
 		s_ActiveScene->DestroyAllEntities();
 		s_ActiveScene.reset();
@@ -545,7 +546,13 @@ namespace Kargono::Scenes
 		*s_ActiveScene->m_HoveredEntity = {};
 		*s_ActiveScene->m_SelectedEntity = {};
 
-		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
+		Physics::Physics2DService::CreatePhysics2DWorld();
+		Physics::Physics2DService::GetActiveContext().Init
+		(
+			Scenes::SceneService::GetActiveScene().get(), 
+			Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification
+		);
+		
 		s_ActiveScene->OnRuntimeStart();
 	}
 
