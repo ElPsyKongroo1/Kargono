@@ -17,11 +17,17 @@ namespace Kargono::Network
 {
 	bool Client::Init(const ServerConfig& initConfig)
 	{
+		if (m_ClientActive)
+		{
+			KG_WARN("Failed to initialize client. A client context already exists.");
+			return false;
+		}
+
 		// Set config
 		m_Config = initConfig;
 
 		// Initialize the OS specific socket context
-		if (!SocketContext::InitializeSockets())
+		if (!SocketService::GetActiveContext().AddUsage())
 		{
 			KG_WARN("Failed to initialize platform socket context");
 			return false;
@@ -40,7 +46,7 @@ namespace Kargono::Network
 			if (openSocketResult == SocketErrorCode::OtherFailure || currentPort >= maximumPort)
 			{
 				KG_WARN("Failed to create socket!");
-				SocketContext::ShutdownSockets();
+				SocketService::GetActiveContext().RemoveUsage();
 				return false;
 			}
 			currentPort++;
@@ -72,6 +78,7 @@ namespace Kargono::Network
 
 		m_EventThread.SetSyncPingFreq(m_Config.m_ServerPassiveRefresh);
 
+		KG_VERIFY(m_ClientActive, "Client connection init");
 		return true;
 	}
 
@@ -188,18 +195,25 @@ namespace Kargono::Network
 
 	bool Client::Terminate(bool withinNetworkThread)
 	{
+		if (!m_ClientActive)
+		{
+			KG_WARN("Failed to terminate client. No client context is active.")
+				return false;
+		}
+
 		// Join the network thread
 		m_NetworkThread.Terminate(withinNetworkThread);
 		m_EventThread.Terminate(false);
 
 		// Shutdown client socket
 		m_ClientSocket.Close();
-		SocketContext::ShutdownSockets();
+		SocketService::GetActiveContext().RemoveUsage();
 
 		// Set client in-active
 		m_ClientActive = false;
 		m_Notifiers.m_ClientStatusNotifier.Notify(false);
 
+		KG_VERIFY(!m_ClientActive, "Closed client connection");
 		return true;
 	}
 
@@ -853,47 +867,7 @@ namespace Kargono::Network
 		EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::ReceiveSignal>(signal));
 	}
 
-	bool ClientService::Init()
-	{
-		if (s_Client.m_ClientActive)
-		{
-			KG_WARN("Failed to initialize client. A client context already exists.")
-			return false;
-		}
-
-		if (!s_Client.Init(Projects::ProjectService::GetServerConfig()))
-		{
-			KG_WARN("Failed to initialize client. Client initialization failed.")
-			return false;
-		}
-
-		KG_VERIFY(s_Client.m_ClientActive, "Client connection init");
-		return true;
-	}
-
-	bool ClientService::Terminate()
-	{
-		if (!s_Client.m_ClientActive)
-		{
-			KG_WARN("Failed to terminate client. No client context is active.")
-			return false;
-		}
-
-		if (!s_Client.Terminate(false))
-		{
-			KG_WARN("Failed to terminate client. Terminate function failed.");
-			return false;
-		}
-
-		KG_VERIFY(!s_Client.m_ClientActive, "Closed client connection");
-		return true;
-	}
-
-	bool ClientService::IsClientActive()
-	{
-		return s_Client.m_ClientActive;
-	}
-
+	/*
 	uint16_t ClientService::GetActiveSessionSlot()
 	{
 		KG_ASSERT(s_Client.m_ClientActive);
@@ -977,6 +951,7 @@ namespace Kargono::Network
 
 		s_Client.GetNetworkThread().SubmitEvent(e);
 	}
+	*/
 	bool ClientEventThread::Init(Socket* clientSocket, ClientNetworkThread* networkThread)
 	{
 		KG_ASSERT(clientSocket);

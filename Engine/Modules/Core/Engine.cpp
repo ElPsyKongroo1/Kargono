@@ -318,7 +318,7 @@ namespace Kargono
 
 	bool EngineThread::OnAppTickEvent(Events::AppTickEvent& e)
 	{
-		Network::ClientService::SubmitToNetworkEventQueue(CreateRef<Events::AppTickEvent>(e));
+		Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(CreateRef<Events::AppTickEvent>(e));
 		return false;
 	}
 

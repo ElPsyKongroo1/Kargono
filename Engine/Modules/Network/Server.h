@@ -276,8 +276,8 @@ namespace Kargono::Network
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		bool Init(const ServerConfig& initConfig);
-		bool Terminate(bool withinNetworkThread);
+		[[nodiscard]] bool Init(const ServerConfig& initConfig);
+		[[nodiscard]] bool Terminate(bool withinNetworkThread);
 
 		// Allows other threads to wait on the server to close
 		void WaitOnThreads();
@@ -319,27 +319,15 @@ namespace Kargono::Network
 		friend class ServerService;
 	};
 
-	class ServerService
+
+	class ServerService // TODO: REMOVE EWWWWWWW
 	{
 	public:
 		//==============================
-		// LifeCycle Functions
-		//==============================
-		static bool Init();
-		static bool Terminate();
-		static bool IsServerActive();
-
-		//==============================
 		// Getters/Setters
 		//==============================
-		static Server& GetActiveServer();
-
-		//==============================
-		// Submit Server Events 
-		//==============================
-		static void SubmitToNetworkFunctionQueue(const std::function<void()>& func);
-		static void SubmitToNetworkEventQueue(Ref<Events::Event> event);
-
+		static Server& GetActiveContext() { return s_Server; }
+		static bool IsContextActive() { return s_Server.m_ServerActive; }
 	private:
 		//==============================
 		// Internal Fields

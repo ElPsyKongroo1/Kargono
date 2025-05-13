@@ -129,11 +129,11 @@ namespace Kargono::Network
 		return bytes;
 	}
 
-	bool SocketContext::InitializeSockets()
+	bool SocketContext::AddUsage()
 	{
-		if (s_SocketsUsageCount > 0)
+		if (m_SocketsReferenceCount > 0)
 		{
-			s_SocketsUsageCount++;
+			m_SocketsReferenceCount++;
 			return true;
 		}
 
@@ -142,29 +142,31 @@ namespace Kargono::Network
 		WSADATA WsaData;
 		success = WSAStartup(MAKEWORD(2, 2), &WsaData) == NO_ERROR;
 #else
-		success = true;
+	#error "Platform not supported"
 #endif
 		if (success)
 		{
-			s_SocketsUsageCount++;
+			m_SocketsReferenceCount++;
 		}
 		return success;
 	}
 
-	void SocketContext::ShutdownSockets()
+	bool SocketContext::RemoveUsage()
 	{
-		if (s_SocketsUsageCount > 0)
+		if (m_SocketsReferenceCount > 0)
 		{
-			s_SocketsUsageCount--;
+			m_SocketsReferenceCount--;
 		}
 
-		if (s_SocketsUsageCount > 0)
+		if (m_SocketsReferenceCount > 0)
 		{
-			return;
+			return true;
 		}
 
 		#if defined(KG_PLATFORM_WINDOWS)
 		WSACleanup();
 		#endif
+
+		return true;
 	}
 }

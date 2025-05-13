@@ -59,6 +59,8 @@ namespace Kargono
 		Rendering::RenderingService::SetLineWidth(1.0f);
 		RuntimeUI::FontService::Init();
 		RuntimeUI::RuntimeUIService::Init();
+		Input::InputMapService::CreateInputMapContext();
+		Input::InputMapService::GetActiveContext().Init();
 
 		// Initialize panels
 		m_MainWindow->InitPanels();
@@ -76,18 +78,20 @@ namespace Kargono
 	bool EditorApp::Terminate()
 	{
 		// Close all network threads
-		if (Network::ClientService::IsClientActive())
+		if (Network::ClientService::IsContextActive())
 		{
-			Network::ClientService::Terminate();
+			Network::ClientService::GetActiveContext().Terminate(false);
 		}
 
-		if (Network::ServerService::IsServerActive())
+		if (Network::ServerService::IsContextActive())
 		{
-			Network::ServerService::Terminate();
+			Network::ServerService::GetActiveContext().Terminate(false);
 		}
 
 		// Terminate engine services
 		EditorUI::EditorUIService::Terminate();
+		Input::InputMapService::GetActiveContext().Terminate();
+		Input::InputMapService::RemoveInputMapContext();
 		RuntimeUI::RuntimeUIService::Terminate();
 		Particles::ParticleService::GetActiveContext().Terminate();
 		Particles::ParticleService::RemoveParticleContext();
@@ -387,7 +391,7 @@ namespace Kargono
 		m_MainWindow->m_ScriptEditorPanel->ResetPanelResources();
 		m_MainWindow->m_ProjectPanel->ResetPanelResources();
 		Scenes::GameStateService::ClearActiveGameState();
-		Input::InputMapService::ClearActiveInputMap();
+		Input::InputMapService::GetActiveContext().ClearActiveInputMap();
 
 		return true;
 	}

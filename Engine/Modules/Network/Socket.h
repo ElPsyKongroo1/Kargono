@@ -52,16 +52,29 @@ namespace Kargono::Network
 	// Socket Context
 	//===========================
 
+	using SocketsReferenceCount = size_t;
+
 	class SocketContext
 	{
 	public:
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		static bool InitializeSockets();
-		static void ShutdownSockets();
+		[[nodiscard]] bool AddUsage();
+		[[nodiscard]] bool RemoveUsage();
 
 	private:
-		inline static size_t s_SocketsUsageCount{ 0 };
+		SocketsReferenceCount m_SocketsReferenceCount{ 0 };
+	};
+
+	class SocketService
+	{
+	public:
+		static SocketContext& GetActiveContext()
+		{
+			return s_SocketContext;
+		}
+	private:
+		inline static SocketContext s_SocketContext{};
 	};
 }

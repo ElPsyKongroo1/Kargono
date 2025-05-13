@@ -43,7 +43,8 @@ namespace Kargono
 		{
 			KG_CRITICAL("Could not locate a .kproj file in local directory!");
 			Scripting::ScriptService::Terminate();
-			Audio::AudioService::Terminate();
+			Audio::AudioService::GetActiveContext().Terminate();
+			Audio::AudioService::RemoveAudioContext();
 			Scenes::SceneService::Terminate();
 			return false;
 		}
@@ -52,7 +53,8 @@ namespace Kargono
 		{
 			KG_CRITICAL("Failed to open project!");
 			Scripting::ScriptService::Terminate();
-			Audio::AudioService::Terminate();
+			Audio::AudioService::GetActiveContext().Terminate();
+			Audio::AudioService::RemoveAudioContext();
 			Scenes::SceneService::Terminate();
 			return false;
 		}
@@ -63,6 +65,7 @@ namespace Kargono
 			{
 				Scripting::ScriptService::Terminate();
 				Audio::AudioService::GetActiveContext().Terminate();
+				Audio::AudioService::RemoveAudioContext();
 				Scenes::SceneService::Terminate();
 				return false;
 			}
@@ -89,6 +92,8 @@ namespace Kargono
 		RuntimeUI::RuntimeUIService::Init();
 		Particles::ParticleService::CreateParticleContext();
 		Particles::ParticleService::GetActiveContext().Init();
+		Input::InputMapService::CreateInputMapContext();
+		Input::InputMapService::GetActiveContext().Init();
 
 		if (!m_Headless)
 		{
@@ -107,6 +112,8 @@ namespace Kargono
 
 		// Terminate engine services
 		RuntimeUI::RuntimeUIService::Terminate();
+		Input::InputMapService::GetActiveContext().Terminate();
+		Input::InputMapService::RemoveInputMapContext();
 		Particles::ParticleService::GetActiveContext().Terminate();
 		Particles::ParticleService::RemoveParticleContext();
 		Audio::AudioService::GetActiveContext().Terminate();
@@ -396,7 +403,7 @@ namespace Kargono
 
 		if (!handled)
 		{
-			Input::InputMapService::OnKeyPressed(event);
+			Input::InputMapService::GetActiveContext().OnKeyPressed(event);
 		}
 
 		return handled;
@@ -463,7 +470,7 @@ namespace Kargono
 		Particles::ParticleService::GetActiveContext().OnUpdate(ts);
 
 		// Update
-		Input::InputMapService::OnUpdate(ts);
+		Input::InputMapService::GetActiveContext().OnUpdate(ts);
 		Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
 		Physics::Physics2DService::GetActiveContext().OnUpdate(ts);
 
@@ -712,7 +719,7 @@ namespace Kargono
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked())
 		{
-			Network::ClientService::Init();
+			Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 		}
 
 		// Load particle emitters
@@ -727,7 +734,7 @@ namespace Kargono
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
 		if (Projects::ProjectService::GetActive() && Projects::ProjectService::GetActiveAppIsNetworked())
 		{
-			Network::ClientService::Terminate();
+			Network::ClientService::GetActiveContext().Terminate(false);
 		}
 	}
 

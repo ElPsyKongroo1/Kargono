@@ -50,7 +50,7 @@ namespace Kargono
 			OpenProject(m_ProjectPath);
 		}
 #endif
-		if (!Network::ServerService::Init())
+		if (!Network::ServerService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig()))
 		{
 			Scenes::SceneService::Terminate();
 			return false;
@@ -80,7 +80,7 @@ namespace Kargono
 
 	bool ServerApp::Terminate()
 	{
-		Network::ServerService::Terminate();
+		Network::ServerService::GetActiveContext().Terminate(false);
 		return true;
 	}
 

@@ -313,8 +313,8 @@ namespace Kargono::Network
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		bool Init(const ServerConfig& initConfig);
-		bool Terminate(bool withinNetworkThread);
+		[[nodiscard]] bool Init(const ServerConfig& initConfig);
+		[[nodiscard]] bool Terminate(bool withinNetworkThread);
 
 		// Allows other threads to wait on the client to close
 		void WaitOnThreads();
@@ -349,51 +349,21 @@ namespace Kargono::Network
 	private:
 		friend class ClientService;
 	};
-	
-	class ClientService
+
+	class ClientService // TODO: REMOVE EWWWWWWW
 	{
 	public:
 		//==============================
-		// LifeCycle Functions
-		//==============================
-		static bool Init();
-		static bool Terminate();
-		static bool IsClientActive();
-
-		//==============================
 		// Getters/Setters
 		//==============================
-		static Client& GetActiveClient()
-		{
-			return s_Client;
-		}
-
-	public:
-		//==============================
-		// External API
-		//==============================
-		static uint16_t GetActiveSessionSlot();
-		static void SendAllEntityLocation(UUID entityID, Math::vec3 location);
-		static void SendAllEntityPhysics(UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity);
-		static void EnableReadyCheck();
-		static void SessionReadyCheck();
-		static void RequestUserCount();
-		static void RequestJoinSession();
-		static void LeaveCurrentSession();
-		static void SignalAll(uint16_t signal);
-
-		//==============================
-		// Submit Client Events & Functions
-		//==============================
-		static void SubmitToNetworkFunctionQueue(const std::function<void()>& function);
-		static void SubmitToNetworkEventQueue(Ref<Events::Event> e);
+		static Client& GetActiveContext() { return s_Client; }
+		static bool IsContextActive() { return s_Client.m_ClientActive; }
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
 		static inline Network::Client s_Client{};
 	};
-	
 }
 
 

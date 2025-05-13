@@ -533,11 +533,17 @@ namespace Kargono::Network
 
 	bool Server::Init(const ServerConfig& initConfig)
 	{
+		if (m_ServerActive)
+		{
+			KG_WARN("Failed server initialization. A server context already exists.");
+			return false;
+		}
+
 		// Set config
 		m_Config = initConfig;
 
 		// Initialize the OS specific socket context
-		if (!SocketContext::InitializeSockets())
+		if (!SocketService::GetActiveContext().AddUsage())
 		{
 			KG_WARN("Failed to initialize platform socket context");
 			return false;
@@ -547,14 +553,14 @@ namespace Kargono::Network
 		if (m_ServerSocket.Open(initConfig.m_ServerAddress.GetPort()) != SocketErrorCode::None)
 		{
 			KG_WARN("Failed to create socket!");
-			SocketContext::ShutdownSockets();
+			SocketService::GetActiveContext().RemoveUsage();
 			return false;
 		}
 
 		// Start event thread
 		if (!m_EventThread.Init(&m_ServerSocket, &m_NetworkThread))
 		{
-			SocketContext::ShutdownSockets();
+			SocketService::GetActiveContext().RemoveUsage();
 			m_ServerSocket.Close();
 			return false;
 		}
@@ -574,23 +580,32 @@ namespace Kargono::Network
 		m_ServerActive = true;
 		m_Notifiers.m_ServerActiveNotifier.Notify(true);
 
+		KG_VERIFY(m_ServerActive, "Server connection init");
 		return true;
 	}
 
 	bool Server::Terminate(bool withinNetworkThread)
 	{
+		// Ensure the server context exists
+		if (!m_ServerActive)
+		{
+			KG_WARN("Failed to terminate server. No active server context exists.");
+			return false;
+		}
+
 		// Stop threads
 		m_NetworkThread.Terminate();
 		m_EventThread.Terminate();
 
 		// Clean up socket resources
 		m_ServerSocket.Close();
-		SocketContext::ShutdownSockets();
+		SocketService::GetActiveContext().RemoveUsage();
 
 		// Set server in-active and notify observers
 		m_ServerActive = false;
 		m_Notifiers.m_ServerActiveNotifier.Notify(false);
 
+		KG_VERIFY(!m_ServerActive, "Closed server");
 		return true;
 	}
 
@@ -945,68 +960,5 @@ namespace Kargono::Network
 		}
 
 		return true;
-	}
-
-	bool ServerService::Init()
-	{
-		if (s_Server.m_ServerActive)
-		{
-			KG_WARN("Failed server initialization. A server context already exists.");
-			return false;
-		}
-
-		// Get the server location type from the network config
-		bool isLocal = Projects::ProjectService::GetActiveServerLocation() == ServerLocation::LocalMachine;
-
-		ServerConfig startConfig = Projects::ProjectService::GetServerConfig();
-
-		// Begin the server
-		if (!s_Server.Init(startConfig))
-		{
-			// Clean up network resources
-			KG_WARN("Failed to start server");
-			return false;
-		}
-
-		KG_VERIFY(s_Server.m_ServerActive, "Server connection init");
-		return true;
-	}
-
-	bool ServerService::Terminate()
-	{
-		// Ensure the server context exists
-		if (!s_Server.m_ServerActive)
-		{
-			KG_WARN("Failed to terminate server. No active server context exists.");
-			return false;
-		}
-
-		// Close the server connections and reset its context
-		s_Server.Terminate(false);
-
-		KG_VERIFY(!s_Server.m_ServerActive, "Closed server connection");
-		return true;
-	}
-
-	bool ServerService::IsServerActive()
-	{
-		return s_Server.m_ServerActive;
-	}
-
-	Server& ServerService::GetActiveServer()
-	{
-		return s_Server;
-	}
-	void ServerService::SubmitToNetworkFunctionQueue(const std::function<void()>& func)
-	{
-		KG_ASSERT(s_Server.m_ServerActive);
-
-		s_Server.GetNetworkThread().SubmitFunction(func);	
-	}
-	void ServerService::SubmitToNetworkEventQueue(Ref<Events::Event> event)
-	{
-		KG_ASSERT(s_Server.m_ServerActive);
-
-		s_Server.GetNetworkThread().SubmitEvent(event);
 	}
 }

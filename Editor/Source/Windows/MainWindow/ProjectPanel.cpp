@@ -377,22 +377,22 @@ namespace Kargono::Panels
 		m_LifecycleOptions.AddButton("Start", 
 		[](EditorUI::Button& button)
 		{  
-			Network::ServerService::Init();
+			Network::ServerService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 		});
 		m_LifecycleOptions.AddButton("Close", 
 		[](EditorUI::Button& button)
 		{
-			Network::ServerService::Terminate();
+			Network::ServerService::GetActiveContext().Terminate(false);
 		});
 		m_LifecycleOptions.AddButton("Restart", 
 		[](EditorUI::Button& button)
 		{
-			if (Network::ServerService::IsServerActive())
+			if (Network::ServerService::IsContextActive())
 			{
-				Network::ServerService::Terminate();
+				Network::ServerService::GetActiveContext().Terminate(false);
 			}
 
-			Network::ServerService::Init();
+			Network::ServerService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 		});
 
 
@@ -450,7 +450,7 @@ namespace Kargono::Panels
 	}
 	void ServerOptions::RegisterObservers()
 	{
-		Network::Server& server{ Network::ServerService::GetActiveServer() };
+		Network::Server& server{ Network::ServerService::GetActiveContext() };
 
 		Network::ServerNotifiers& serverNotifiers{ server.GetNotifiers() };
 
@@ -628,22 +628,22 @@ namespace Kargono::Panels
 		m_LifecycleOptions.AddButton("Start",
 			[](EditorUI::Button& button)
 			{
-				Network::ClientService::Init();
+				Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 			});
 		m_LifecycleOptions.AddButton("Close",
 			[](EditorUI::Button& button)
 			{
-				Network::ClientService::Terminate();
+				Network::ClientService::GetActiveContext().Terminate(false);
 			});
 		m_LifecycleOptions.AddButton("Restart",
 			[](EditorUI::Button& button)
 			{
-				if (Network::ClientService::IsClientActive())
+				if (Network::ClientService::IsContextActive())
 				{
-					Network::ClientService::Terminate();
+					Network::ClientService::GetActiveContext().Terminate(false);
 				}
 
-				Network::ClientService::Init();
+				Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 			});
 
 		m_StatusHeader.m_Label = "Status";
@@ -1427,7 +1427,7 @@ namespace Kargono::Panels
 	}
 	void ClientOptions::RegisterObservers()
 	{
-		Network::Client& client{ Network::ClientService::GetActiveClient() };
+		Network::Client& client{ Network::ClientService::GetActiveContext()};
 
 		Network::ClientNotifiers& clientNotifiers{ client.GetNotifiers() };
 

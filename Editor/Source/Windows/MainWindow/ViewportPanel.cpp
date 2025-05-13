@@ -100,7 +100,7 @@ namespace Kargono::Panels
 				// Process AI
 				AI::AIService::GetActiveContext().OnUpdate(ts);
 				// Process Input Mode
-				Input::InputMapService::OnUpdate(ts);
+				Input::InputMapService::GetActiveContext().OnUpdate(ts);
 				// Process entity OnUpdate
 				Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
 				// Process physics

@@ -612,15 +612,18 @@ namespace Kargono::Windows
 		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
 
 		RuntimeUI::RuntimeUIService::ClearActiveUI();
+
+		Input::InputMapContext& context = Input::InputMapService::GetActiveContext();
+
 		// Cache Current InputMap in editor
-		if (!Input::InputMapService::GetActiveInputMap())
+		if (!context.GetActiveInputMap())
 		{
 			m_EditorInputMap = nullptr;
 		}
 		else
 		{
-			m_EditorInputMap = Input::InputMapService::GetActiveInputMap();
-			m_EditorInputMapHandle = Input::InputMapService::GetActiveInputMapHandle();
+			m_EditorInputMap = context.GetActiveInputMap();
+			m_EditorInputMapHandle = context.GetActiveInputMapHandle();
 		}
 
 		// Load Default Game State
@@ -649,7 +652,7 @@ namespace Kargono::Windows
 		// Start up client networking
 		if (Projects::ProjectService::GetActiveAppIsNetworked())
 		{
-			Network::ClientService::Init();
+			Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 		}
 
 		// Call the runtime start function
@@ -714,18 +717,18 @@ namespace Kargono::Windows
 		// Clear InputMaps during runtime.
 		if (m_EditorInputMap)
 		{
-			Input::InputMapService::SetActiveInputMap(m_EditorInputMap, m_EditorInputMapHandle);
+			Input::InputMapService::GetActiveContext().SetActiveInputMap(m_EditorInputMap, m_EditorInputMapHandle);
 		}
 		else
 		{
-			Input::InputMapService::SetActiveInputMap(nullptr, Assets::EmptyHandle);
+			Input::InputMapService::GetActiveContext().SetActiveInputMap(nullptr, Assets::EmptyHandle);
 		}
 
 		Scenes::GameStateService::ClearActiveGameState();
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked() && m_SceneState == SceneState::Play)
 		{
-			Network::ClientService::Terminate();
+			Network::ClientService::GetActiveContext().Terminate(false);
 		}
 
 		// Revalidate particles for editor scene
@@ -904,7 +907,7 @@ namespace Kargono::Windows
 
 		if (!handled)
 		{
-			Input::InputMapService::OnKeyPressed(event);
+			Input::InputMapService::GetActiveContext().OnKeyPressed(event);
 		}
 		
 		return handled;

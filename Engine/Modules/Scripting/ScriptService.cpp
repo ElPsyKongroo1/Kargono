@@ -161,7 +161,11 @@ namespace Kargono::Scripting
 		Client_SessionReadyCheck->m_ScriptType = ScriptType::Engine;
 		Client_SessionReadyCheck->m_FuncType = WrappedFuncType::Void_None;
 		Client_SessionReadyCheck->m_SectionLabel = "Network";
-		Client_SessionReadyCheck->m_Function = CreateRef<WrappedVoidNone>(Network::ClientService::SessionReadyCheck);
+		Client_SessionReadyCheck->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{
+			Ref<Events::SessionReadyCheck> event{CreateRef<Events::SessionReadyCheck>()};
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		});
 		engineScripts.push_back(Client_SessionReadyCheck);
 
 		Ref<Script> Client_RequestUserCount = CreateRef<Script>();
@@ -170,7 +174,11 @@ namespace Kargono::Scripting
 		Client_RequestUserCount->m_ScriptType = ScriptType::Engine;
 		Client_RequestUserCount->m_FuncType = WrappedFuncType::Void_None;
 		Client_RequestUserCount->m_SectionLabel = "Network";
-		Client_RequestUserCount->m_Function = CreateRef<WrappedVoidNone>(Network::ClientService::RequestUserCount);
+		Client_RequestUserCount->m_Function = CreateRef<WrappedVoidNone>([]()
+		{
+			Ref<Events::RequestUserCount> event{ CreateRef<Events::RequestUserCount>() };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		});
 		engineScripts.push_back(Client_RequestUserCount);
 
 		Ref<Script> Client_RequestJoinSession = CreateRef<Script>();
@@ -179,7 +187,11 @@ namespace Kargono::Scripting
 		Client_RequestJoinSession->m_ScriptType = ScriptType::Engine;
 		Client_RequestJoinSession->m_FuncType = WrappedFuncType::Void_None;
 		Client_RequestJoinSession->m_SectionLabel = "Network";
-		Client_RequestJoinSession->m_Function = CreateRef<WrappedVoidNone>(Network::ClientService::RequestJoinSession);
+		Client_RequestJoinSession->m_Function = CreateRef<WrappedVoidNone>([]()
+		{
+			Ref<Events::RequestJoinSession> event{ CreateRef<Events::RequestJoinSession>() };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		});
 		engineScripts.push_back(Client_RequestJoinSession);
 	}
 
@@ -1516,7 +1528,6 @@ namespace Kargono::Scripting
 		{
 			Audio::AudioService::GetActiveContext().PlayStereoSoundFromHandle(audioHandle);
 		}, VoidUInt64)
-		AddEngineFunctionPointerToDll(SignalAll, Network::ClientService::SignalAll, VoidUInt16)
 		// Debug
 		AddEngineFunctionPointerToDll(Log, Scripting::Log, VoidStringStringString)
 		AddEngineFunctionPointerToDll(ClearDebugLines, Scripting::ClearDebugLines, VoidNone)
@@ -1528,16 +1539,60 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(GetGameStateField, Scenes::GameStateService::GetActiveGameStateField, VoidPtrString)
 		// Input
 		AddEngineFunctionPointerToDll(Input_IsKeyPressed, Input::InputService::IsKeyPressed, BoolUInt16)
-		AddEngineFunctionPointerToDll(InputMap_LoadInputMapFromHandle, Input::InputMapService::SetActiveInputMapFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(InputMap_IsPollingSlotPressed, Input::InputMapService::IsPollingSlotPressed, BoolUInt16)
+		AddEngineFunctionPointerToDll(InputMap_LoadInputMapFromHandle, [](Assets::AssetHandle handle)
+		{
+			Input::InputMapService::GetActiveContext().SetActiveInputMapFromHandle(handle);
+		}, VoidUInt64)
+		AddEngineFunctionPointerToDll(InputMap_IsPollingSlotPressed, [](uint16_t slot) 
+		{
+			return Input::InputMapService::GetActiveContext().IsPollingSlotPressed(slot);
+		}, BoolUInt16)
 		// Networking
-		AddEngineFunctionPointerToDll(LeaveCurrentSession, Network::ClientService::LeaveCurrentSession, VoidNone)
-		AddEngineFunctionPointerToDll(EnableReadyCheck, Network::ClientService::EnableReadyCheck, VoidNone)
-		AddEngineFunctionPointerToDll(RequestJoinSession, Network::ClientService::RequestJoinSession, VoidNone)
-		AddEngineFunctionPointerToDll(SendAllEntityPhysics, Network::ClientService::SendAllEntityPhysics, VoidUInt64Vec3Vec2)
-		AddEngineFunctionPointerToDll(RequestUserCount, Network::ClientService::RequestUserCount, VoidNone)
-		AddEngineFunctionPointerToDll(GetActiveSessionSlot, Network::ClientService::GetActiveSessionSlot, UInt16None)
-		AddEngineFunctionPointerToDll(SendAllEntityLocation, Network::ClientService::SendAllEntityLocation, VoidUInt64Vec3)
+		AddEngineFunctionPointerToDll(SignalAll, [](uint16_t signal) 
+		{
+			Ref<Events::SignalAll> event{ CreateRef<Events::SignalAll>(signal) };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		}, VoidUInt16)
+		AddEngineFunctionPointerToDll(LeaveCurrentSession, []() 
+		{
+			Ref<Events::LeaveCurrentSession> event{ CreateRef<Events::LeaveCurrentSession>() };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		}, VoidNone)
+		AddEngineFunctionPointerToDll(EnableReadyCheck, []() 
+		{
+			Ref<Events::EnableReadyCheck> event{ CreateRef<Events::EnableReadyCheck>() };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		}, VoidNone)
+		AddEngineFunctionPointerToDll(RequestJoinSession, []() 
+		{
+			Ref<Events::RequestJoinSession> event{ CreateRef<Events::RequestJoinSession>() };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		}, VoidNone)
+		AddEngineFunctionPointerToDll(SendAllEntityPhysics, [](UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity)
+		{
+			Ref<Events::SendAllEntityPhysics> event{ CreateRef<Events::SendAllEntityPhysics>
+			(
+				entityID, translation, linearVelocity	
+			) };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		}, VoidUInt64Vec3Vec2)
+		AddEngineFunctionPointerToDll(RequestUserCount, []() 
+		{
+			Ref<Events::RequestUserCount> event{ CreateRef<Events::RequestUserCount>() };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		}, VoidNone)
+		AddEngineFunctionPointerToDll(GetActiveSessionSlot, []() 
+		{
+			return Network::ClientService::GetActiveContext().GetNetworkThread().GetSessionIndex();
+		}, UInt16None)
+		AddEngineFunctionPointerToDll(SendAllEntityLocation, [](UUID entityID, Math::vec3 translation)
+		{
+			Ref<Events::SendAllEntityLocation> event{ CreateRef<Events::SendAllEntityLocation>
+			(
+				entityID, translation
+			) };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		}, VoidUInt64Vec3)
 		// Particles
 		AddEngineFunctionPointerToDll(Particles_AddEmitterByHandle, [](Assets::AssetHandle emitterHandle, const Math::vec3& position)
 		{

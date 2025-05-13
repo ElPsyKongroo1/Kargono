@@ -120,42 +120,85 @@ namespace Kargono::Input
 		std::vector<Ref<InputActionBinding>> m_OnKeyPressedBindings{};
 	};
 
-	class InputMapService
+	class InputMapContext
 	{
 	public:
 		//=========================
+		// Lifecycle Functions
+		//=========================
+		[[nodiscard]] bool Init();
+		[[nodiscard]] bool Terminate();
+		//=========================
 		// On Event Functionality
 		//=========================
-		static void OnUpdate(Timestep ts);
-		static bool OnKeyPressed(Events::KeyPressedEvent event);
+		void OnUpdate(Timestep ts);
+		bool OnKeyPressed(Events::KeyPressedEvent event);
 
 		//=========================
 		// Active Input Map API
 		//=========================
-		static bool IsPollingSlotPressed(uint16_t slot);
-		static std::vector<Ref<InputActionBinding>>& GetActiveOnUpdate();
-		static std::vector<Ref<InputActionBinding>>& GetActiveOnKeyPressed();
+		bool IsPollingSlotPressed(uint16_t slot);
+		std::vector<Ref<InputActionBinding>>& GetActiveOnUpdate();
+		std::vector<Ref<InputActionBinding>>& GetActiveOnKeyPressed();
 
 		//=========================
 		// Getter/Setter
 		//=========================
-		static void ClearActiveInputMap();
-		static void SetActiveInputMap(Ref<InputMap> newInput, Assets::AssetHandle newHandle);
-		static void SetActiveInputMapFromHandle(Assets::AssetHandle inputMapHandle);
-		static Ref<InputMap> GetActiveInputMap()
+		void ClearActiveInputMap();
+		void SetActiveInputMap(Ref<InputMap> newInput, Assets::AssetHandle newHandle);
+		void SetActiveInputMapFromHandle(Assets::AssetHandle inputMapHandle);
+		Ref<InputMap> GetActiveInputMap()
 		{
-			return s_ActiveInputMap;
+			return m_ActiveInputMap;
 		}
-		static Assets::AssetHandle GetActiveInputMapHandle()
+		Assets::AssetHandle GetActiveInputMapHandle()
 		{
-			return s_ActiveInputMapHandle;
+			return m_ActiveInputMapHandle;
 		}
 	private:
 		//=========================
 		// Current Input Mode
 		//=========================
-		static inline Ref<InputMap> s_ActiveInputMap{ nullptr };
-		static inline Assets::AssetHandle s_ActiveInputMapHandle{ Assets::EmptyHandle };
+		Ref<InputMap> m_ActiveInputMap{ nullptr };
+		Assets::AssetHandle m_ActiveInputMapHandle{ Assets::EmptyHandle };
+	};
+
+	class InputMapService // TODO: REMOVE EWWWWWWW
+	{
+	public:
+		//==============================
+		// Create InputMap Context
+		//==============================
+		static void CreateInputMapContext()
+		{
+			// Initialize InputMapContext
+			if (!s_InputMapContext)
+			{
+				s_InputMapContext = CreateRef<Input::InputMapContext>();
+			}
+
+			// Verify init is successful
+			KG_VERIFY(s_InputMapContext, "InputMap Service System Initiated");
+		}
+		static void RemoveInputMapContext()
+		{
+			// Clear InputMapContext
+			s_InputMapContext.reset();
+			s_InputMapContext = nullptr;
+
+			// Verify terminate is successful
+			KG_VERIFY(!s_InputMapContext, "InputMap Service System Initiated");
+		}
+		//==============================
+		// Getters/Setters
+		//==============================
+		static InputMapContext& GetActiveContext() { return *s_InputMapContext; }
+		static bool IsContextActive() { return (bool)s_InputMapContext; }
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		static inline Ref<InputMapContext> s_InputMapContext{ nullptr };
 	};
 }
 

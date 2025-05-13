@@ -9,19 +9,19 @@
 
 namespace Kargono::Input
 {
-	void InputMapService::ClearActiveInputMap()
+	void InputMapContext::ClearActiveInputMap()
 	{
-		s_ActiveInputMap = { nullptr };
-		s_ActiveInputMapHandle = {0};
+		m_ActiveInputMap = { nullptr };
+		m_ActiveInputMapHandle = {0};
 	}
 
-	void InputMapService::SetActiveInputMap(Ref<InputMap> newInput, Assets::AssetHandle newHandle)
+	void InputMapContext::SetActiveInputMap(Ref<InputMap> newInput, Assets::AssetHandle newHandle)
 	{
-		s_ActiveInputMap = newInput;
-		s_ActiveInputMapHandle = newHandle;
+		m_ActiveInputMap = newInput;
+		m_ActiveInputMapHandle = newHandle;
 	}
 
-	void InputMapService::SetActiveInputMapFromHandle(Assets::AssetHandle inputMapHandle)
+	void InputMapContext::SetActiveInputMapFromHandle(Assets::AssetHandle inputMapHandle)
 	{
 		static Ref<InputMap> s_InputRef {nullptr};
 		static Assets::AssetHandle s_InputHandle {0};
@@ -43,11 +43,21 @@ namespace Kargono::Input
 		
 	}
 
-	void InputMapService::OnUpdate(Timestep ts)
+	bool InputMapContext::Init()
 	{
-		if (Input::InputMapService::GetActiveInputMap())
+		return true;
+	}
+
+	bool InputMapContext::Terminate()
+	{
+		return true;
+	}
+
+	void InputMapContext::OnUpdate(Timestep ts)
+	{
+		if (Input::InputMapContext::GetActiveInputMap())
 		{
-			for (Ref<InputActionBinding> inputBinding : Input::InputMapService::GetActiveOnUpdate())
+			for (Ref<InputActionBinding> inputBinding : Input::InputMapContext::GetActiveOnUpdate())
 			{
 				
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
@@ -69,12 +79,12 @@ namespace Kargono::Input
 			}
 		}
 	}
-	bool InputMapService::OnKeyPressed(Events::KeyPressedEvent event)
+	bool InputMapContext::OnKeyPressed(Events::KeyPressedEvent event)
 	{
 		if (event.IsRepeat()) { return false; }
-		if (Input::InputMapService::GetActiveInputMap())
+		if (Input::InputMapContext::GetActiveInputMap())
 		{
-			for (Ref<InputActionBinding> inputBinding : Input::InputMapService::GetActiveOnKeyPressed())
+			for (Ref<InputActionBinding> inputBinding : Input::InputMapContext::GetActiveOnKeyPressed())
 			{
 				
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
@@ -90,14 +100,14 @@ namespace Kargono::Input
 		return false;
 	}
 
-	bool InputMapService::IsPollingSlotPressed(uint16_t slot)
+	bool InputMapContext::IsPollingSlotPressed(uint16_t slot)
 	{
-		if (!s_ActiveInputMap)
+		if (!m_ActiveInputMap)
 		{
 			KG_WARN("Attempt to query keyboard slot from active input map, however, no active input map exists");
 			return false;
 		}
-		std::vector<KeyCode>& keyboardPolling = s_ActiveInputMap->GetKeyboardPolling();
+		std::vector<KeyCode>& keyboardPolling = m_ActiveInputMap->GetKeyboardPolling();
 		if (slot >= (uint16_t)keyboardPolling.size())
 		{
 			return false;
@@ -105,15 +115,15 @@ namespace Kargono::Input
 
 		return InputService::IsKeyPressed(keyboardPolling.at(slot));
 	}
-	std::vector<Ref<InputActionBinding>>& InputMapService::GetActiveOnUpdate()
+	std::vector<Ref<InputActionBinding>>& InputMapContext::GetActiveOnUpdate()
 	{
-		KG_ASSERT(s_ActiveInputMap);
-		return s_ActiveInputMap->GetOnUpdateBindings();
+		KG_ASSERT(m_ActiveInputMap);
+		return m_ActiveInputMap->GetOnUpdateBindings();
 	}
-	std::vector<Ref<InputActionBinding>>& InputMapService::GetActiveOnKeyPressed()
+	std::vector<Ref<InputActionBinding>>& InputMapContext::GetActiveOnKeyPressed()
 	{
-		KG_ASSERT(s_ActiveInputMap);
-		return s_ActiveInputMap->GetOnKeyPressedBindings();
+		KG_ASSERT(m_ActiveInputMap);
+		return m_ActiveInputMap->GetOnKeyPressedBindings();
 	}
 	void InputActionBinding::SetScript(Assets::AssetHandle handle)
 	{

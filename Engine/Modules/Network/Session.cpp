@@ -46,7 +46,7 @@ namespace Kargono::Network
 		Utility::AsyncBusyTimer::CreateTimer(longestRTT, [&]()
 		{
 			// Start Thread
-			ServerService::SubmitToNetworkEventQueue(CreateRef<Events::StartSession>());
+			ServerService::GetActiveContext().GetNetworkThread().SubmitEvent(CreateRef<Events::StartSession>());
 		});
 	}
 
