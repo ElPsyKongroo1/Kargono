@@ -32,7 +32,7 @@ namespace Kargono
 		}
 
 		// Wait on the server to close
-		Network::Server& server = Network::ServerService::GetActiveServer();
+		Network::Server& server = Network::ServerService::GetActiveContext();
 		server.WaitOnThreads();
 
 		// Close server
