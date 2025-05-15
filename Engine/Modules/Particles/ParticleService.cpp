@@ -113,21 +113,18 @@ namespace Kargono::Particles
 				currentParticle.m_Active = true;
 
 				// Set x,y,z position based on the bounds provide in the emitter's config
-				currentParticle.m_Position.x = emitter.m_Position.x + Utility::PseudoRandomService::GenerateFloatBounds
-				(
-					m_RandomGenerator, 
+				currentParticle.m_Position.x = emitter.m_Position.x + m_RandomGenerator.GenerateFloatBounds
+				( 
 					emitter.m_Config->m_SpawningBounds[0].x,
 					emitter.m_Config->m_SpawningBounds[1].x
 				);
-				currentParticle.m_Position.y = emitter.m_Position.y + Utility::PseudoRandomService::GenerateFloatBounds
+				currentParticle.m_Position.y = emitter.m_Position.y + m_RandomGenerator.GenerateFloatBounds
 				(
-					m_RandomGenerator,
 					emitter.m_Config->m_SpawningBounds[0].y,
 					emitter.m_Config->m_SpawningBounds[1].y
 				);
-				currentParticle.m_Position.z = emitter.m_Position.z + Utility::PseudoRandomService::GenerateFloatBounds
+				currentParticle.m_Position.z = emitter.m_Position.z + m_RandomGenerator.GenerateFloatBounds
 				(
-					m_RandomGenerator,
 					emitter.m_Config->m_SpawningBounds[0].z,
 					emitter.m_Config->m_SpawningBounds[1].z
 				);
@@ -137,8 +134,8 @@ namespace Kargono::Particles
 				currentParticle.m_Size = emitter.m_Config->m_SizeBegin;
 
 				//TODO: Generate random velocity TODO: CHANGE THIS
-				currentParticle.m_Velocity.x = Utility::PseudoRandomService::GenerateFloatBounds(m_RandomGenerator, -1.0f, 1.0f);
-				currentParticle.m_Velocity.y = Utility::PseudoRandomService::GenerateFloatBounds(m_RandomGenerator, -1.0f, 1.0f);
+				currentParticle.m_Velocity.x = m_RandomGenerator.GenerateFloatBounds(-1.0f, 1.0f);
+				currentParticle.m_Velocity.y = m_RandomGenerator.GenerateFloatBounds(-1.0f, 1.0f);
 				currentParticle.m_Velocity.z = 0.0f;
 
 				// Move iterator down

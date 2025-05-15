@@ -6,18 +6,20 @@ namespace Kargono::Utility
 	//============================================================
 	// Time Class
 	//============================================================
-	// This class provides static functions dealing with time such as
-	//		getting the current time values in seconds since the application
-	//		started.
+	// TODO: NOTE THAT THIS SHOULD DEPEND ON THE WINDOWING CONTEXT
 	class Time
 	{
 	public:
 		//==============================
-		// Get Time from Underlying Platform
+		// Get Time
 		//==============================
-		// This function returns the time since that application has started
-		//		in seconds (Technically, the time since GLFW was initialized).
 		static float GetTime();
+		
+	};
+
+	class TimeConversions
+	{
+	public:
 		//==============================
 		// Convert Milliseconds -> Hours/Minutes/Seconds/Milli
 		//==============================

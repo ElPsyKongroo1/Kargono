@@ -6,6 +6,7 @@
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Modules/Scripting/ScriptingCommon.h"
+#include "Kargono/Utility/Random.h"
 
 #include <filesystem>
 #include <functional>
@@ -27,6 +28,10 @@ namespace Kargono::Scripting
 		//==============================
 		static void Init();
 		static void Terminate();
+
+	private:
+		// Helper functions
+		static void GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts);
 	public:
 		//==============================
 		// Manage Active Script Module
@@ -47,7 +52,8 @@ namespace Kargono::Scripting
 			return s_AllEngineScripts;
 		}
 	private:
-		static std::vector<Ref<Script>> s_AllEngineScripts;
+		static inline std::vector<Ref<Script>> s_AllEngineScripts;
+		static inline Utility::PseudoGenerator s_IDGenerator{ 0xc3bc4ead8efa4c3a };
 	};
 
 	//==============================

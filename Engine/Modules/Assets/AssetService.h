@@ -156,7 +156,7 @@ namespace Kargono::Assets
 
 		// Expose unique functionality of each class
 	public:
-
+		 
 		static std::tuple<AssetHandle, bool> CreateNewScript(ScriptSpec& spec)
 		{
 			return s_AssetsContext.m_ScriptManager.CreateNewScript(spec);

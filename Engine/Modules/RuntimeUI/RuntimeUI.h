@@ -152,7 +152,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		Widget()
 		{
-			m_ID = Utility::RandomService::GenerateRandomInteger((int32_t)0, k_InvalidWidgetID - 1);
+			m_ID = Utility::STLRandomService::GetActiveRandom().GenerateRandomInteger((int32_t)0, k_InvalidWidgetID - 1);
 		}
 		virtual ~Widget() = default;
 	public:
@@ -682,7 +682,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		Window()
 		{
-			m_ID = Utility::RandomService::GenerateRandomInteger((int32_t)0, k_InvalidWindowID - 1);
+			
+			m_ID = Utility::STLRandomService::GetActiveRandom().GenerateRandomInteger((int32_t)0, k_InvalidWindowID - 1);
 		}
 
 	public:

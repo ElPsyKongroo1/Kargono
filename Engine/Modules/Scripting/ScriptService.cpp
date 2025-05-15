@@ -15,7 +15,6 @@
 #include "Modules/Network/Client.h"
 #include "Kargono/Scenes/GameState.h"
 #include "Kargono/Utility/Operations.h"
-#include "Kargono/Utility/Random.h"
 #include "Modules/AI/AIService.h"
 #include "Modules/Scripting/ScriptCompilerService.h"
 #include "Modules/Events/EditorEvent.h"
@@ -32,14 +31,12 @@
 
 namespace Kargono::Scripting
 {
-	static Utility::PseudoGenerator s_IDGenerator{ 0xc3bc4ead8efa4c3a };
-
 	struct ScriptingData
 	{
 #if defined(KG_PLATFORM_WINDOWS)
-		HINSTANCE* DLLInstance = nullptr;
+		HINSTANCE* m_SharedLibInst = nullptr;
 #elif defined(KG_PLATFORM_LINUX)
-		void* DLLInstance = nullptr;
+		void* m_SharedLibInst = nullptr;
 #endif
 	};
 
@@ -90,111 +87,6 @@ namespace Kargono::Scripting
 		});
 	}
 
-	std::vector<Ref<Script>> ScriptService::s_AllEngineScripts {};
-
-	static void GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts)
-	{
-		Utility::PseudoRandomService::ResetState(s_IDGenerator);
-		engineScripts.clear();
-		// RuntimeUI
-		Ref<Script> RuntimeUI_MoveUp = CreateRef<Script>();
-		RuntimeUI_MoveUp->m_ScriptName = "MoveUp";
-		RuntimeUI_MoveUp->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
-		RuntimeUI_MoveUp->m_ScriptType = ScriptType::Engine;
-		RuntimeUI_MoveUp->m_FuncType = WrappedFuncType::Void_None;
-		RuntimeUI_MoveUp->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveUp->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveUp);
-		engineScripts.push_back(RuntimeUI_MoveUp);
-
-		Ref<Script> RuntimeUI_MoveDown = CreateRef<Script>();
-		RuntimeUI_MoveDown->m_ScriptName = "MoveDown";
-		RuntimeUI_MoveDown->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
-		RuntimeUI_MoveDown->m_ScriptType = ScriptType::Engine;
-		RuntimeUI_MoveDown->m_FuncType = WrappedFuncType::Void_None;
-		RuntimeUI_MoveDown->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveDown->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveDown);
-		engineScripts.push_back(RuntimeUI_MoveDown);
-
-		Ref<Script> RuntimeUI_MoveLeft = CreateRef<Script>();
-		RuntimeUI_MoveLeft->m_ScriptName = "MoveLeft";
-		RuntimeUI_MoveLeft->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
-		RuntimeUI_MoveLeft->m_ScriptType = ScriptType::Engine;
-		RuntimeUI_MoveLeft->m_FuncType = WrappedFuncType::Void_None;
-		RuntimeUI_MoveLeft->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveLeft->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveLeft);
-		engineScripts.push_back(RuntimeUI_MoveLeft);
-
-		Ref<Script> RuntimeUI_MoveRight = CreateRef<Script>();
-		RuntimeUI_MoveRight->m_ScriptName = "MoveRight";
-		RuntimeUI_MoveRight->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
-		RuntimeUI_MoveRight->m_ScriptType = ScriptType::Engine;
-		RuntimeUI_MoveRight->m_FuncType = WrappedFuncType::Void_None;
-		RuntimeUI_MoveRight->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveRight);
-		engineScripts.push_back(RuntimeUI_MoveRight);
-
-		Ref<Script> RuntimeUI_OnPress = CreateRef<Script>();
-		RuntimeUI_OnPress->m_ScriptName = "OnPress";
-		RuntimeUI_OnPress->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
-		RuntimeUI_OnPress->m_ScriptType = ScriptType::Engine;
-		RuntimeUI_OnPress->m_FuncType = WrappedFuncType::Void_None;
-		RuntimeUI_OnPress->m_SectionLabel = "UserInterface";
-		RuntimeUI_OnPress->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::OnPress);
-		engineScripts.push_back(RuntimeUI_OnPress);
-
-		Ref<Script> EngineCore_CloseApplication = CreateRef<Script>();
-		EngineCore_CloseApplication->m_ScriptName = "CloseApplication";
-		EngineCore_CloseApplication->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
-		EngineCore_CloseApplication->m_ScriptType = ScriptType::Engine;
-		EngineCore_CloseApplication->m_FuncType = WrappedFuncType::Void_None;
-		EngineCore_CloseApplication->m_SectionLabel = "Engine";
-		EngineCore_CloseApplication->m_Function = CreateRef<WrappedVoidNone>([]() 
-		{  
-			Ref<Events::ApplicationCloseEvent> event{ CreateRef<Events::ApplicationCloseEvent>() };
-			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
-		});
-		engineScripts.push_back(EngineCore_CloseApplication);
-
-		Ref<Script> Client_SessionReadyCheck = CreateRef<Script>();
-		Client_SessionReadyCheck->m_ScriptName = "SessionReadyCheck";
-		Client_SessionReadyCheck->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
-		Client_SessionReadyCheck->m_ScriptType = ScriptType::Engine;
-		Client_SessionReadyCheck->m_FuncType = WrappedFuncType::Void_None;
-		Client_SessionReadyCheck->m_SectionLabel = "Network";
-		Client_SessionReadyCheck->m_Function = CreateRef<WrappedVoidNone>([]() 
-		{
-			Ref<Events::SessionReadyCheck> event{CreateRef<Events::SessionReadyCheck>()};
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		});
-		engineScripts.push_back(Client_SessionReadyCheck);
-
-		Ref<Script> Client_RequestUserCount = CreateRef<Script>();
-		Client_RequestUserCount->m_ScriptName = "RequestUserCount";
-		Client_RequestUserCount->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
-		Client_RequestUserCount->m_ScriptType = ScriptType::Engine;
-		Client_RequestUserCount->m_FuncType = WrappedFuncType::Void_None;
-		Client_RequestUserCount->m_SectionLabel = "Network";
-		Client_RequestUserCount->m_Function = CreateRef<WrappedVoidNone>([]()
-		{
-			Ref<Events::RequestUserCount> event{ CreateRef<Events::RequestUserCount>() };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		});
-		engineScripts.push_back(Client_RequestUserCount);
-
-		Ref<Script> Client_RequestJoinSession = CreateRef<Script>();
-		Client_RequestJoinSession->m_ScriptName = "RequestJoinSession";
-		Client_RequestJoinSession->m_ID = Utility::PseudoRandomService::GenerateNumber(s_IDGenerator);
-		Client_RequestJoinSession->m_ScriptType = ScriptType::Engine;
-		Client_RequestJoinSession->m_FuncType = WrappedFuncType::Void_None;
-		Client_RequestJoinSession->m_SectionLabel = "Network";
-		Client_RequestJoinSession->m_Function = CreateRef<WrappedVoidNone>([]()
-		{
-			Ref<Events::RequestJoinSession> event{ CreateRef<Events::RequestJoinSession>() };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		});
-		engineScripts.push_back(Client_RequestJoinSession);
-	}
-
 	void ScriptService::Init()
 	{
 		s_ScriptingData = new ScriptingData();
@@ -206,7 +98,7 @@ namespace Kargono::Scripting
 	{
 		if (!s_ScriptingData) { return; }
 
-		if (s_ScriptingData->DLLInstance)
+		if (s_ScriptingData->m_SharedLibInst)
 		{
 			CloseActiveScriptModule();
 		}
@@ -215,6 +107,109 @@ namespace Kargono::Scripting
 		s_ScriptingData = nullptr;
 
 		KG_VERIFY(!s_ScriptingData, "Close Scripting System")
+	}
+
+	void ScriptService::GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts)
+	{
+		s_IDGenerator.ResetState();
+		engineScripts.clear();
+		// RuntimeUI
+		Ref<Script> RuntimeUI_MoveUp = CreateRef<Script>();
+		RuntimeUI_MoveUp->m_ScriptName = "MoveUp";
+		RuntimeUI_MoveUp->m_ID = s_IDGenerator.GenerateNumber();
+		RuntimeUI_MoveUp->m_ScriptType = ScriptType::Engine;
+		RuntimeUI_MoveUp->m_FuncType = WrappedFuncType::Void_None;
+		RuntimeUI_MoveUp->m_SectionLabel = "UserInterface";
+		RuntimeUI_MoveUp->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveUp);
+		engineScripts.push_back(RuntimeUI_MoveUp);
+
+		Ref<Script> RuntimeUI_MoveDown = CreateRef<Script>();
+		RuntimeUI_MoveDown->m_ScriptName = "MoveDown";
+		RuntimeUI_MoveDown->m_ID = s_IDGenerator.GenerateNumber();
+		RuntimeUI_MoveDown->m_ScriptType = ScriptType::Engine;
+		RuntimeUI_MoveDown->m_FuncType = WrappedFuncType::Void_None;
+		RuntimeUI_MoveDown->m_SectionLabel = "UserInterface";
+		RuntimeUI_MoveDown->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveDown);
+		engineScripts.push_back(RuntimeUI_MoveDown);
+
+		Ref<Script> RuntimeUI_MoveLeft = CreateRef<Script>();
+		RuntimeUI_MoveLeft->m_ScriptName = "MoveLeft";
+		RuntimeUI_MoveLeft->m_ID = s_IDGenerator.GenerateNumber();
+		RuntimeUI_MoveLeft->m_ScriptType = ScriptType::Engine;
+		RuntimeUI_MoveLeft->m_FuncType = WrappedFuncType::Void_None;
+		RuntimeUI_MoveLeft->m_SectionLabel = "UserInterface";
+		RuntimeUI_MoveLeft->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveLeft);
+		engineScripts.push_back(RuntimeUI_MoveLeft);
+
+		Ref<Script> RuntimeUI_MoveRight = CreateRef<Script>();
+		RuntimeUI_MoveRight->m_ScriptName = "MoveRight";
+		RuntimeUI_MoveRight->m_ID = s_IDGenerator.GenerateNumber();
+		RuntimeUI_MoveRight->m_ScriptType = ScriptType::Engine;
+		RuntimeUI_MoveRight->m_FuncType = WrappedFuncType::Void_None;
+		RuntimeUI_MoveRight->m_SectionLabel = "UserInterface";
+		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveRight);
+		engineScripts.push_back(RuntimeUI_MoveRight);
+
+		Ref<Script> RuntimeUI_OnPress = CreateRef<Script>();
+		RuntimeUI_OnPress->m_ScriptName = "OnPress";
+		RuntimeUI_OnPress->m_ID = s_IDGenerator.GenerateNumber();
+		RuntimeUI_OnPress->m_ScriptType = ScriptType::Engine;
+		RuntimeUI_OnPress->m_FuncType = WrappedFuncType::Void_None;
+		RuntimeUI_OnPress->m_SectionLabel = "UserInterface";
+		RuntimeUI_OnPress->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::OnPress);
+		engineScripts.push_back(RuntimeUI_OnPress);
+
+		Ref<Script> EngineCore_CloseApplication = CreateRef<Script>();
+		EngineCore_CloseApplication->m_ScriptName = "CloseApplication";
+		EngineCore_CloseApplication->m_ID = s_IDGenerator.GenerateNumber();
+		EngineCore_CloseApplication->m_ScriptType = ScriptType::Engine;
+		EngineCore_CloseApplication->m_FuncType = WrappedFuncType::Void_None;
+		EngineCore_CloseApplication->m_SectionLabel = "Engine";
+		EngineCore_CloseApplication->m_Function = CreateRef<WrappedVoidNone>([]()
+			{
+				Ref<Events::ApplicationCloseEvent> event{ CreateRef<Events::ApplicationCloseEvent>() };
+				EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
+			});
+		engineScripts.push_back(EngineCore_CloseApplication);
+
+		Ref<Script> Client_SessionReadyCheck = CreateRef<Script>();
+		Client_SessionReadyCheck->m_ScriptName = "SessionReadyCheck";
+		Client_SessionReadyCheck->m_ID = s_IDGenerator.GenerateNumber();
+		Client_SessionReadyCheck->m_ScriptType = ScriptType::Engine;
+		Client_SessionReadyCheck->m_FuncType = WrappedFuncType::Void_None;
+		Client_SessionReadyCheck->m_SectionLabel = "Network";
+		Client_SessionReadyCheck->m_Function = CreateRef<WrappedVoidNone>([]()
+			{
+				Ref<Events::SessionReadyCheck> event{ CreateRef<Events::SessionReadyCheck>() };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			});
+		engineScripts.push_back(Client_SessionReadyCheck);
+
+		Ref<Script> Client_RequestUserCount = CreateRef<Script>();
+		Client_RequestUserCount->m_ScriptName = "RequestUserCount";
+		Client_RequestUserCount->m_ID = s_IDGenerator.GenerateNumber();
+		Client_RequestUserCount->m_ScriptType = ScriptType::Engine;
+		Client_RequestUserCount->m_FuncType = WrappedFuncType::Void_None;
+		Client_RequestUserCount->m_SectionLabel = "Network";
+		Client_RequestUserCount->m_Function = CreateRef<WrappedVoidNone>([]()
+			{
+				Ref<Events::RequestUserCount> event{ CreateRef<Events::RequestUserCount>() };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			});
+		engineScripts.push_back(Client_RequestUserCount);
+
+		Ref<Script> Client_RequestJoinSession = CreateRef<Script>();
+		Client_RequestJoinSession->m_ScriptName = "RequestJoinSession";
+		Client_RequestJoinSession->m_ID = s_IDGenerator.GenerateNumber();
+		Client_RequestJoinSession->m_ScriptType = ScriptType::Engine;
+		Client_RequestJoinSession->m_FuncType = WrappedFuncType::Void_None;
+		Client_RequestJoinSession->m_SectionLabel = "Network";
+		Client_RequestJoinSession->m_Function = CreateRef<WrappedVoidNone>([]()
+			{
+				Ref<Events::RequestJoinSession> event{ CreateRef<Events::RequestJoinSession>() };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			});
+		engineScripts.push_back(Client_RequestJoinSession);
 	}
 
 	void ScriptService::LoadActiveScriptModule()
@@ -258,23 +253,23 @@ namespace Kargono::Scripting
 			return;
 		}
 
-		if (s_ScriptingData->DLLInstance)
+		if (s_ScriptingData->m_SharedLibInst)
 		{
 			KG_INFO("Closing existing script module");
 			CloseActiveScriptModule();
 		}
 #if defined(KG_PLATFORM_WINDOWS)
-		s_ScriptingData->DLLInstance = new HINSTANCE();
-		*(s_ScriptingData->DLLInstance) = LoadLibrary(dllLocation.c_str());
-		if (*s_ScriptingData->DLLInstance == NULL)
+		s_ScriptingData->m_SharedLibInst = new HINSTANCE();
+		*(s_ScriptingData->m_SharedLibInst) = LoadLibrary(dllLocation.c_str());
+		if (*s_ScriptingData->m_SharedLibInst == NULL)
 		{
 			KG_CRITICAL("Failed to open dll with path {} with an error code of {}", dllLocation.string(), GetLastError());
 			CloseActiveScriptModule();
 			return;
 	}
 #elif defined(KG_PLATFORM_LINUX)
-		s_ScriptingData->DLLInstance = dlopen(dllLocation.c_str(), RTLD_LAZY);
-		if (s_ScriptingData->DLLInstance == NULL)
+		s_ScriptingData->m_SharedLibInst = dlopen(dllLocation.c_str(), RTLD_LAZY);
+		if (s_ScriptingData->m_SharedLibInst == NULL)
 		{
 			KG_CRITICAL("Failed to open dll with path {}", dllLocation.string());
 			CloseActiveScriptModule();
@@ -284,7 +279,7 @@ namespace Kargono::Scripting
 
 		ScriptModuleBuilder::AttachEngineFunctionsToModule();
 
-		KG_VERIFY(s_ScriptingData->DLLInstance, "Scripting Module Opened");
+		KG_VERIFY(s_ScriptingData->m_SharedLibInst, "Scripting Module Opened");
 
 	}
 	void ScriptService::CloseActiveScriptModule()
@@ -295,35 +290,35 @@ namespace Kargono::Scripting
 			return;
 		}
 
-		if (!s_ScriptingData->DLLInstance)
+		if (!s_ScriptingData->m_SharedLibInst)
 		{
-			KG_WARN("Attempt to close scripting dll, however, DLLInstance is a nullptr");
+			KG_WARN("Attempt to close scripting dll, however, m_SharedLibInst is a nullptr");
 			return;
 		}
 
 		
 #if defined(KG_PLATFORM_WINDOWS)
-		if (*s_ScriptingData->DLLInstance == NULL)
+		if (*s_ScriptingData->m_SharedLibInst == NULL)
 		{
-			KG_WARN("Attempt to close scripting dll, however, DLLInstance value is 0 (NULL)");
-			s_ScriptingData->DLLInstance = nullptr;
+			KG_WARN("Attempt to close scripting dll, however, m_SharedLibInst value is 0 (NULL)");
+			s_ScriptingData->m_SharedLibInst = nullptr;
 			return;
 		}
-		FreeLibrary(*s_ScriptingData->DLLInstance);
-		delete s_ScriptingData->DLLInstance;
+		FreeLibrary(*s_ScriptingData->m_SharedLibInst);
+		delete s_ScriptingData->m_SharedLibInst;
 #elif defined(KG_PLATFORM_LINUX)
-		if (s_ScriptingData->DLLInstance == NULL)
+		if (s_ScriptingData->m_SharedLibInst == NULL)
 		{
-			KG_WARN("Attempt to close scripting dll, however, DLLInstance value is 0 (NULL)");
-			s_ScriptingData->DLLInstance = nullptr;
+			KG_WARN("Attempt to close scripting dll, however, m_SharedLibInst value is 0 (NULL)");
+			s_ScriptingData->m_SharedLibInst = nullptr;
 			return;
 		}
-		dlclose(s_ScriptingData->DLLInstance);
+		dlclose(s_ScriptingData->m_SharedLibInst);
 #endif
 
-		s_ScriptingData->DLLInstance = nullptr;
+		s_ScriptingData->m_SharedLibInst = nullptr;
 
-		KG_VERIFY(!s_ScriptingData->DLLInstance, "Close Scripting DLL");
+		KG_VERIFY(!s_ScriptingData->m_SharedLibInst, "Close Scripting DLL");
 	}
 
 	void ScriptService::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
@@ -334,13 +329,13 @@ namespace Kargono::Scripting
 			KG_CRITICAL("Attempt to load a scripting function, however, ScriptEngine is not valid");
 			return;
 		}
-		if (!s_ScriptingData->DLLInstance)
+		if (!s_ScriptingData->m_SharedLibInst)
 		{
 			return;
 		}
 
 #if defined(KG_PLATFORM_WINDOWS)
-		if (*s_ScriptingData->DLLInstance == NULL)
+		if (*s_ScriptingData->m_SharedLibInst == NULL)
 		{
 			return;
 		}
@@ -363,10 +358,10 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedVoidNone>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 #if defined(KG_PLATFORM_LINUX)
-			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -375,9 +370,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedVoidString>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidString*)script->m_Function.get())->m_Value = reinterpret_cast<void_string>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidString*)script->m_Function.get())->m_Value = reinterpret_cast<void_string>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidString*)script->m_Function.get())->m_Value = reinterpret_cast<void_string>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidString*)script->m_Function.get())->m_Value = reinterpret_cast<void_string>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -386,9 +381,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedVoidFloat>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_float>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_float>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_float>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_float>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -397,9 +392,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt16>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -407,9 +402,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -417,9 +412,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32UInt32>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint32>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint32>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint32>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint32>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -428,9 +423,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedVoidEntity>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidEntity*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidEntity*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidEntity*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidEntity*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -439,9 +434,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedVoidBool>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidBool*)script->m_Function.get())->m_Value = reinterpret_cast<void_bool>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidBool*)script->m_Function.get())->m_Value = reinterpret_cast<void_bool>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidBool*)script->m_Function.get())->m_Value = reinterpret_cast<void_bool>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidBool*)script->m_Function.get())->m_Value = reinterpret_cast<void_bool>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -450,9 +445,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedVoidEntityFloat>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -461,9 +456,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32EntityEntityFloat>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint64uint64float>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint64uint64float>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint64uint64float>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint64uint64float>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -471,9 +466,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedBoolNone>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -482,9 +477,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedBoolEntity>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedBoolEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedBoolEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedBoolEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedBoolEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -492,9 +487,9 @@ namespace Kargono::Scripting
 		{
 			script->m_Function = CreateRef<WrappedBoolEntityEntity>();
 #if defined(KG_PLATFORM_WINDOWS)
-			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(GetProcAddress(*s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #elif defined(KG_PLATFORM_LINUX)
-			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(dlsym(s_ScriptingData->DLLInstance, script->m_ScriptName.c_str()));
+			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
 #endif
 			break;
 		}
@@ -516,7 +511,7 @@ namespace Kargono::Utility
 
 #if defined(KG_PLATFORM_WINDOWS)
 #define ImportInsertFunction(name) \
-	s_Add##name = reinterpret_cast<Void_String_Func##name>(GetProcAddress(*s_ScriptingData->DLLInstance, "Add"#name ));\
+	s_Add##name = reinterpret_cast<Void_String_Func##name>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, "Add"#name ));\
 	if (!s_Add##name)\
 	{\
 		KG_CRITICAL("Could not load {} function from scripting dll", "" #name);\
@@ -525,7 +520,7 @@ namespace Kargono::Utility
 
 #elif defined(KG_PLATFORM_LINUX)
 #define ImportInsertFunction(name) \
-	s_Add##name = reinterpret_cast<Void_String_Func##name>(dlsym(s_ScriptingData->DLLInstance, "Add"#name ));\
+	s_Add##name = reinterpret_cast<Void_String_Func##name>(dlsym(s_ScriptingData->m_SharedLibInst, "Add"#name ));\
 	if (!s_Add##name)\
 	{\
 		KG_CRITICAL("Could not load {} function from scripting dll", "" #name);\
@@ -1604,8 +1599,14 @@ namespace Kargono::Scripting
 			return Physics::Physics2DService().GetActiveContext().Raycast(startPoint, endPoint);
 		}, RaycastResultVec2Vec2)
 		// Random
-		AddEngineFunctionPointerToDll(GenerateRandomInteger, Utility::RandomService::GenerateRandomInteger, Int32Int32Int32)
-		AddEngineFunctionPointerToDll(GenerateRandomFloat, Utility::RandomService::GenerateRandomFloat, FloatFloatFloat)
+		AddEngineFunctionPointerToDll(GenerateRandomInteger, [](int32_t lower, int32_t upper) 
+		{
+			return Utility::STLRandomService::GetActiveRandom().GenerateRandomInteger(lower, upper);
+		}, Int32Int32Int32)
+		AddEngineFunctionPointerToDll(GenerateRandomFloat, [](float lower, float upper) 
+		{
+			return Utility::STLRandomService::GetActiveRandom().GenerateRandomFloat(lower, upper);
+		}, FloatFloatFloat)
 		// Runtime User Interface
 		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetText, RuntimeUI::RuntimeUIService::SetActiveWidgetTextByIndex, VoidUIWidgetString)
 		AddEngineFunctionPointerToDll(RuntimeUI_IsUserInterfaceActiveFromHandle, RuntimeUI::RuntimeUIService::IsUIActiveFromHandle, BoolUInt64)

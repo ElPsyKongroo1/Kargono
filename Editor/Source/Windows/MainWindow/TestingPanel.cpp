@@ -88,163 +88,185 @@ namespace Kargono::Panels
 	{
 #if defined(KG_DEBUG)
 
+		Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals()};
 		// Checkbox initialization
 		s_EditTestBool_1.m_Label = "Test Bool 1";
-		s_EditTestBool_1.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_1;
-		s_EditTestBool_1.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec) 
+		s_EditTestBool_1.m_CurrentBoolean = globals.m_TestBool_1;
+		s_EditTestBool_1.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec) 
 		{
-				Utility::DebugGlobals::s_TestBool_1 = spec.m_CurrentBoolean;
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestBool_1 = spec.m_CurrentBoolean;
 		};
 
 		s_EditTestBool_2.m_Label = "Test Bool 2";
-		s_EditTestBool_2.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_2;
-		s_EditTestBool_2.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
-			{
-				Utility::DebugGlobals::s_TestBool_2 = spec.m_CurrentBoolean;
-			};
+		s_EditTestBool_2.m_CurrentBoolean = globals.m_TestBool_2;
+		s_EditTestBool_2.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestBool_2 = spec.m_CurrentBoolean;
+		};
 
 		s_EditTestBool_3.m_Label = "Test Bool 3";
-		s_EditTestBool_3.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_3;
-		s_EditTestBool_3.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
-			{
-				Utility::DebugGlobals::s_TestBool_3 = spec.m_CurrentBoolean;
-			};
+		s_EditTestBool_3.m_CurrentBoolean = globals.m_TestBool_3;
+		s_EditTestBool_3.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestBool_3 = spec.m_CurrentBoolean;
+		};
 
 
 		// Float initialization
 		s_EditTestFloat_1.m_Label = "Test Float 1";
-		s_EditTestFloat_1.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_1;
-		s_EditTestFloat_1.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
-			{
-				Utility::DebugGlobals::s_TestFloat_1 = spec.m_CurrentFloat;
-			};
+		s_EditTestFloat_1.m_CurrentFloat = globals.m_TestFloat_1;
+		s_EditTestFloat_1.m_ConfirmAction = [](EditorUI::EditFloatSpec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestFloat_1 = spec.m_CurrentFloat;
+		};
 
 		s_EditTestFloat_2.m_Label = "Test Float 2";
-		s_EditTestFloat_2.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_2;
-		s_EditTestFloat_2.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
-			{
-				Utility::DebugGlobals::s_TestFloat_2 = spec.m_CurrentFloat;
-			};
+		s_EditTestFloat_2.m_CurrentFloat = globals.m_TestFloat_2;
+		s_EditTestFloat_2.m_ConfirmAction = [](EditorUI::EditFloatSpec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestFloat_2 = spec.m_CurrentFloat;
+		};
 
 		s_EditTestFloat_3.m_Label = "Test Float 3";
-		s_EditTestFloat_3.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_3;
-		s_EditTestFloat_3.m_ConfirmAction = [&](EditorUI::EditFloatSpec& spec)
-			{
-				Utility::DebugGlobals::s_TestFloat_3 = spec.m_CurrentFloat;
-			};
+		s_EditTestFloat_3.m_CurrentFloat = globals.m_TestFloat_3;
+		s_EditTestFloat_3.m_ConfirmAction = [](EditorUI::EditFloatSpec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestFloat_3 = spec.m_CurrentFloat;
+		};
 
 		// Integer initialization
 		s_EditTestInt_1.m_Label = "Test Int 1";
-		s_EditTestInt_1.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_1;
-		s_EditTestInt_1.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
-			{
-				Utility::DebugGlobals::s_TestInt_1 = spec.m_CurrentInteger;
-			};
+		s_EditTestInt_1.m_CurrentInteger = globals.m_TestInt_1;
+		s_EditTestInt_1.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestInt_1 = spec.m_CurrentInteger;
+		};
 
 		s_EditTestInt_2.m_Label = "Test Int 2";
-		s_EditTestInt_2.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_2;
-		s_EditTestInt_2.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
-			{
-				Utility::DebugGlobals::s_TestInt_2 = spec.m_CurrentInteger;
-			};
+		s_EditTestInt_2.m_CurrentInteger = globals.m_TestInt_2;
+		s_EditTestInt_2.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestInt_2 = spec.m_CurrentInteger;
+		};
 
 		s_EditTestInt_3.m_Label = "Test Int 3";
-		s_EditTestInt_3.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_3;
-		s_EditTestInt_3.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
-			{
-				Utility::DebugGlobals::s_TestInt_3 = spec.m_CurrentInteger;
-			};
+		s_EditTestInt_3.m_CurrentInteger = globals.m_TestInt_3;
+		s_EditTestInt_3.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestInt_3 = spec.m_CurrentInteger;
+		};
 
 		// Unsigned Integer initialization
 		s_EditTestUInt_1.m_Label = "Test UInt 1";
-		s_EditTestUInt_1.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_1;
+		s_EditTestUInt_1.m_CurrentInteger = globals.m_TestUInt_1;
 		s_EditTestUInt_1.m_Bounds = { 0, 10'000 };
-		s_EditTestUInt_1.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
-			{
-				Utility::DebugGlobals::s_TestUInt_1 = spec.m_CurrentInteger;
-			};
+		s_EditTestUInt_1.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestUInt_1 = spec.m_CurrentInteger;
+		};
 
 		s_EditTestUInt_2.m_Label = "Test UInt 2";
-		s_EditTestUInt_2.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_2;
+		s_EditTestUInt_2.m_CurrentInteger = globals.m_TestUInt_2;
 		s_EditTestUInt_2.m_Bounds = { 0, 10'000 };
-		s_EditTestUInt_2.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
-			{
-				Utility::DebugGlobals::s_TestUInt_2 = spec.m_CurrentInteger;
-			};
+		s_EditTestUInt_2.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestUInt_2 = spec.m_CurrentInteger;
+		};
 
 		s_EditTestUInt_3.m_Label = "Test UInt 3";
-		s_EditTestUInt_3.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_3;
+		s_EditTestUInt_3.m_CurrentInteger = globals.m_TestUInt_3;
 		s_EditTestUInt_3.m_Bounds = { 0, 10'000 };
-		s_EditTestUInt_3.m_ConfirmAction = [&](EditorUI::EditIntegerSpec& spec)
-			{
-				Utility::DebugGlobals::s_TestUInt_3 = spec.m_CurrentInteger;
-			};
+		s_EditTestUInt_3.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestUInt_3 = spec.m_CurrentInteger;
+		};
 
 		// Vec2 initialization
 		s_EditTestVec2_1.m_Label = "Test Vec2 1";
-		s_EditTestVec2_1.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_1;
-		s_EditTestVec2_1.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
-			{
-				Utility::DebugGlobals::s_TestVec2_1 = spec.m_CurrentVec2;
-			};
+		s_EditTestVec2_1.m_CurrentVec2 = globals.m_TestVec2_1;
+		s_EditTestVec2_1.m_ConfirmAction = [](EditorUI::EditVec2Spec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestVec2_1 = spec.m_CurrentVec2;
+		};
 
 		s_EditTestVec2_2.m_Label = "Test Vec2 2";
-		s_EditTestVec2_2.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_2;
-		s_EditTestVec2_2.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
-			{
-				Utility::DebugGlobals::s_TestVec2_2 = spec.m_CurrentVec2;
-			};
+		s_EditTestVec2_2.m_CurrentVec2 = globals.m_TestVec2_2;
+		s_EditTestVec2_2.m_ConfirmAction = [](EditorUI::EditVec2Spec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestVec2_2 = spec.m_CurrentVec2;
+		};
 
 		s_EditTestVec2_3.m_Label = "Test Vec2 3";
-		s_EditTestVec2_3.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_3;
-		s_EditTestVec2_3.m_ConfirmAction = [&](EditorUI::EditVec2Spec& spec)
-			{
-				Utility::DebugGlobals::s_TestVec2_3 = spec.m_CurrentVec2;
-			};
+		s_EditTestVec2_3.m_CurrentVec2 = globals.m_TestVec2_3;
+		s_EditTestVec2_3.m_ConfirmAction = [](EditorUI::EditVec2Spec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestVec2_3 = spec.m_CurrentVec2;
+		};
 
 		// Vec3 initialization
 		s_EditTestVec3_1.m_Label = "Test Vec3 1";
-		s_EditTestVec3_1.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_1;
-		s_EditTestVec3_1.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
-			{
-				Utility::DebugGlobals::s_TestVec3_1 = spec.m_CurrentVec3;
-			};
+		s_EditTestVec3_1.m_CurrentVec3 = globals.m_TestVec3_1;
+		s_EditTestVec3_1.m_ConfirmAction = [](EditorUI::EditVec3Spec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestVec3_1 = spec.m_CurrentVec3;
+		};
 
 		s_EditTestVec3_2.m_Label = "Test Vec3 2";
-		s_EditTestVec3_2.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_2;
-		s_EditTestVec3_2.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
-			{
-				Utility::DebugGlobals::s_TestVec3_2 = spec.m_CurrentVec3;
-			};
+		s_EditTestVec3_2.m_CurrentVec3 = globals.m_TestVec3_2;
+		s_EditTestVec3_2.m_ConfirmAction = [](EditorUI::EditVec3Spec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestVec3_2 = spec.m_CurrentVec3;
+		};
 
 		s_EditTestVec3_3.m_Label = "Test Vec3 3";
-		s_EditTestVec3_3.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_3;
-		s_EditTestVec3_3.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
-			{
-				Utility::DebugGlobals::s_TestVec3_3 = spec.m_CurrentVec3;
-			};
+		s_EditTestVec3_3.m_CurrentVec3 = globals.m_TestVec3_3;
+		s_EditTestVec3_3.m_ConfirmAction = [](EditorUI::EditVec3Spec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestVec3_3 = spec.m_CurrentVec3;
+		};
 
 		// Vec4 initialization
 		s_EditTestVec4_1.m_Label = "Test Vec4 1";
-		s_EditTestVec4_1.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_1;
-		s_EditTestVec4_1.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
-			{
-				Utility::DebugGlobals::s_TestVec4_1 = spec.m_CurrentVec4;
-			};
+		s_EditTestVec4_1.m_CurrentVec4 = globals.m_TestVec4_1;
+		s_EditTestVec4_1.m_ConfirmAction = [](EditorUI::EditVec4Spec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestVec4_1 = spec.m_CurrentVec4;
+		};
 
 		s_EditTestVec4_2.m_Label = "Test Vec4 2";
-		s_EditTestVec4_2.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_2;
-		s_EditTestVec4_2.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
-			{
-				Utility::DebugGlobals::s_TestVec4_2 = spec.m_CurrentVec4;
-			};
+		s_EditTestVec4_2.m_CurrentVec4 = globals.m_TestVec4_2;
+		s_EditTestVec4_2.m_ConfirmAction = [](EditorUI::EditVec4Spec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestVec4_2 = spec.m_CurrentVec4;
+		};
 
 		s_EditTestVec4_3.m_Label = "Test Vec4 3";
-		s_EditTestVec4_3.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_3;
-		s_EditTestVec4_3.m_ConfirmAction = [&](EditorUI::EditVec4Spec& spec)
-			{
-				Utility::DebugGlobals::s_TestVec4_3 = spec.m_CurrentVec4;
-			};
+		s_EditTestVec4_3.m_CurrentVec4 = globals.m_TestVec4_3;
+		s_EditTestVec4_3.m_ConfirmAction = [](EditorUI::EditVec4Spec& spec)
+		{
+			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+			globals.m_TestVec4_3 = spec.m_CurrentVec4;
+		};
 #endif
 
 	}
@@ -323,86 +345,88 @@ namespace Kargono::Panels
 	void TestingPanel::DrawDebugGlobalWidgets()
 	{
 #if defined(KG_DEBUG)
+		Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
+
 		// Bool initialization
-		s_EditTestBool_1.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_1;
+		s_EditTestBool_1.m_CurrentBoolean = globals.m_TestBool_1;
 		EditorUI::EditorUIService::Checkbox(s_EditTestBool_1);
 
-		s_EditTestBool_2.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_2;
+		s_EditTestBool_2.m_CurrentBoolean = globals.m_TestBool_2;
 		EditorUI::EditorUIService::Checkbox(s_EditTestBool_2);
 
-		s_EditTestBool_3.m_CurrentBoolean = Utility::DebugGlobals::s_TestBool_3;
+		s_EditTestBool_3.m_CurrentBoolean = globals.m_TestBool_3;
 		EditorUI::EditorUIService::Checkbox(s_EditTestBool_3);
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Float initialization
-		s_EditTestFloat_1.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_1;
+		s_EditTestFloat_1.m_CurrentFloat = globals.m_TestFloat_1;
 		EditorUI::EditorUIService::EditFloat(s_EditTestFloat_1);
 
-		s_EditTestFloat_2.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_2;
+		s_EditTestFloat_2.m_CurrentFloat = globals.m_TestFloat_2;
 		EditorUI::EditorUIService::EditFloat(s_EditTestFloat_2);
 
-		s_EditTestFloat_3.m_CurrentFloat = Utility::DebugGlobals::s_TestFloat_3;
+		s_EditTestFloat_3.m_CurrentFloat = globals.m_TestFloat_3;
 		EditorUI::EditorUIService::EditFloat(s_EditTestFloat_3);
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Integer initialization
-		s_EditTestInt_1.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_1;
+		s_EditTestInt_1.m_CurrentInteger = globals.m_TestInt_1;
 		EditorUI::EditorUIService::EditInteger(s_EditTestInt_1);
 
-		s_EditTestInt_2.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_2;
+		s_EditTestInt_2.m_CurrentInteger = globals.m_TestInt_2;
 		EditorUI::EditorUIService::EditInteger(s_EditTestInt_2);
 
-		s_EditTestInt_3.m_CurrentInteger = Utility::DebugGlobals::s_TestInt_3;
+		s_EditTestInt_3.m_CurrentInteger = globals.m_TestInt_3;
 		EditorUI::EditorUIService::EditInteger(s_EditTestInt_3);
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Unsigned Integer initialization
-		s_EditTestUInt_1.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_1;
+		s_EditTestUInt_1.m_CurrentInteger = globals.m_TestUInt_1;
 		EditorUI::EditorUIService::EditInteger(s_EditTestUInt_1);
 
-		s_EditTestUInt_2.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_2;
+		s_EditTestUInt_2.m_CurrentInteger = globals.m_TestUInt_2;
 		EditorUI::EditorUIService::EditInteger(s_EditTestUInt_2);
 
-		s_EditTestUInt_3.m_CurrentInteger = Utility::DebugGlobals::s_TestUInt_3;
+		s_EditTestUInt_3.m_CurrentInteger = globals.m_TestUInt_3;
 		EditorUI::EditorUIService::EditInteger(s_EditTestUInt_3);
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Vec2 initialization
-		s_EditTestVec2_1.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_1;
+		s_EditTestVec2_1.m_CurrentVec2 = globals.m_TestVec2_1;
 		EditorUI::EditorUIService::EditVec2(s_EditTestVec2_1);
 
-		s_EditTestVec2_2.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_2;
+		s_EditTestVec2_2.m_CurrentVec2 = globals.m_TestVec2_2;
 		EditorUI::EditorUIService::EditVec2(s_EditTestVec2_2);
 
-		s_EditTestVec2_3.m_CurrentVec2 = Utility::DebugGlobals::s_TestVec2_3;
+		s_EditTestVec2_3.m_CurrentVec2 = globals.m_TestVec2_3;
 		EditorUI::EditorUIService::EditVec2(s_EditTestVec2_3);
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Vec3 initialization
-		s_EditTestVec3_1.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_1;
+		s_EditTestVec3_1.m_CurrentVec3 = globals.m_TestVec3_1;
 		EditorUI::EditorUIService::EditVec3(s_EditTestVec3_1);
 
-		s_EditTestVec3_2.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_2;
+		s_EditTestVec3_2.m_CurrentVec3 = globals.m_TestVec3_2;
 		EditorUI::EditorUIService::EditVec3(s_EditTestVec3_2);
 
-		s_EditTestVec3_3.m_CurrentVec3 = Utility::DebugGlobals::s_TestVec3_3;
+		s_EditTestVec3_3.m_CurrentVec3 = globals.m_TestVec3_3;
 		EditorUI::EditorUIService::EditVec3(s_EditTestVec3_3);
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Vec4 initialization
-		s_EditTestVec4_1.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_1;
+		s_EditTestVec4_1.m_CurrentVec4 = globals.m_TestVec4_1;
 		EditorUI::EditorUIService::EditVec4(s_EditTestVec4_1);
 
-		s_EditTestVec4_2.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_2;
+		s_EditTestVec4_2.m_CurrentVec4 = globals.m_TestVec4_2;
 		EditorUI::EditorUIService::EditVec4(s_EditTestVec4_2);
 
-		s_EditTestVec4_3.m_CurrentVec4 = Utility::DebugGlobals::s_TestVec4_3;
+		s_EditTestVec4_3.m_CurrentVec4 = globals.m_TestVec4_3;
 		EditorUI::EditorUIService::EditVec4(s_EditTestVec4_3);
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
@@ -427,7 +451,7 @@ namespace Kargono::Panels
 
 		if (EditorUI::EditorUIService::Button(s_TestButton))
 		{
-			s_TestPlot.AddValue(Utility::RandomService::GenerateRandomFloat(0.0f, 30.0f));
+			s_TestPlot.AddValue(Utility::STLRandomService::GetActiveRandom().GenerateRandomFloat(0.0f, 30.0f));
 		}
 
 		EditorUI::EditorUIService::DropDown(s_TestDropdown);
@@ -444,7 +468,7 @@ namespace Kargono::Panels
 			}
 			else
 			{
-				result->m_Value = (uint64_t)Utility::RandomService::GenerateRandomInteger(0, 500);
+				result->m_Value = (uint64_t)Utility::STLRandomService::GetActiveRandom().GenerateRandomInteger(0, 500);
 				KG_TRACE_INFO("Aye, we added one at {}, its value is {}", result->m_ArrayIndex, result->m_Value);
 			}
 		}
@@ -475,7 +499,7 @@ namespace Kargono::Panels
 
 			if (allIndices.size() > 0)
 			{
-				size_t randomChoice = (size_t)Utility::RandomService::GenerateRandomInteger(0, (int32_t)allIndices.size() - 1);
+				size_t randomChoice = (size_t)Utility::STLRandomService::GetActiveRandom().GenerateRandomInteger(0, (int32_t)allIndices.size() - 1);
 
 				KG_TRACE_INFO("Removing value {} and index {}", s_SparseArray[allIndices[randomChoice]], allIndices[randomChoice]);
 				s_SparseArray.Remove(allIndices[randomChoice]);

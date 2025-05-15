@@ -26,7 +26,7 @@ namespace Kargono::Assets
 {
 	using AssetRegistry = std::unordered_map<AssetHandle, Assets::AssetInfo>;
 
-	template <typename AssetValue>
+	template <typename t_AssetValue>
 	class AssetManager
 	{
 	public:
@@ -41,7 +41,7 @@ namespace Kargono::Assets
 			return m_AssetRegistry.at(handle);
 		}
 
-		Ref<AssetValue> GetAsset(AssetHandle handle)
+		Ref<t_AssetValue> GetAsset(AssetHandle handle)
 		{
 			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retrieving asset!");
 
@@ -60,7 +60,7 @@ namespace Kargono::Assets
 					(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ? 
 						Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation : 
 						Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
-				Ref<AssetValue> newAsset = DeserializeAsset(asset, assetPath);
+				Ref<t_AssetValue> newAsset = DeserializeAsset(asset, assetPath);
 				if (m_Flags.test(AssetManagerOptions::HasAssetCache))
 				{
 					m_AssetCache.insert({ asset.m_Handle, newAsset });
@@ -73,7 +73,7 @@ namespace Kargono::Assets
 			return nullptr;
 		}
 
-		std::tuple<AssetHandle, Ref<AssetValue>> GetAsset(const std::filesystem::path& fileLocation)
+		std::tuple<AssetHandle, Ref<t_AssetValue>> GetAsset(const std::filesystem::path& fileLocation)
 		{
 			KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
 			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileLocation), 
@@ -146,7 +146,7 @@ namespace Kargono::Assets
 			return false;
 		}
 
-		void SaveAsset(AssetHandle assetHandle, Ref<AssetValue> assetReference)
+		void SaveAsset(AssetHandle assetHandle, Ref<t_AssetValue> assetReference)
 		{
 			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasAssetSaving), "Attempt to save an asset who's type does not support data modification");
 
@@ -648,7 +648,7 @@ namespace Kargono::Assets
 					(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
 						Projects::ProjectService::GetActiveIntermediateDirectory() / assetInfo.Data.IntermediateLocation :
 						Projects::ProjectService::GetActiveAssetDirectory() / assetInfo.Data.FileLocation);
-				Ref<AssetValue> newAsset = DeserializeAsset(assetInfo, assetPath);
+				Ref<t_AssetValue> newAsset = DeserializeAsset(assetInfo, assetPath);
 
 				// Insert the asset into the cache
 				m_AssetCache.insert({ assetInfo.m_Handle, newAsset });
@@ -724,7 +724,7 @@ namespace Kargono::Assets
 			return m_AssetRegistry;
 		}
 
-		std::unordered_map<AssetHandle, Ref<AssetValue>>& GetAssetCache()
+		std::unordered_map<AssetHandle, Ref<t_AssetValue>>& GetAssetCache()
 		{
 			return m_AssetCache;
 		}
@@ -756,7 +756,7 @@ namespace Kargono::Assets
 			return m_ValidImportFileExtensions;
 		}
 
-		virtual void SerializeAsset(Ref<AssetValue> assetReference, const std::filesystem::path& assetPath) 
+		virtual void SerializeAsset(Ref<t_AssetValue> assetReference, const std::filesystem::path& assetPath) 
 		{ 
 			UNREFERENCED_PARAMETER(assetReference);
 			UNREFERENCED_PARAMETER(assetPath);
@@ -771,7 +771,7 @@ namespace Kargono::Assets
 			KG_ERROR("Attempt to create an asset from a name that does not override the base class's implmentation of CreateAssetFileFromName()");
 		}
 
-		virtual Ref<void> SaveAssetValidation(Ref<AssetValue> newAsset, AssetHandle assetHandle) 
+		virtual Ref<void> SaveAssetValidation(Ref<t_AssetValue> newAsset, AssetHandle assetHandle) 
 		{
 			UNREFERENCED_PARAMETER(newAsset);
 			UNREFERENCED_PARAMETER(assetHandle);
@@ -781,7 +781,7 @@ namespace Kargono::Assets
 		{
 			UNREFERENCED_PARAMETER(assetHandle);
 		};
-		virtual Ref<AssetValue> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) = 0;
+		virtual Ref<t_AssetValue> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) = 0;
 		virtual void SerializeRegistrySpecificData(YAML::Emitter& serializer) 
 		{
 			UNREFERENCED_PARAMETER(serializer);
@@ -815,7 +815,7 @@ namespace Kargono::Assets
 		std::filesystem::path m_RegistryLocation{""};
 		std::vector<std::string> m_ValidImportFileExtensions{};
 		std::unordered_map<AssetHandle, Assets::AssetInfo> m_AssetRegistry{};
-		std::unordered_map<AssetHandle, Ref<AssetValue>> m_AssetCache{};
+		std::unordered_map<AssetHandle, Ref<t_AssetValue>> m_AssetCache{};
 		std::bitset<8> m_Flags {0b00000000};
 	};
 }

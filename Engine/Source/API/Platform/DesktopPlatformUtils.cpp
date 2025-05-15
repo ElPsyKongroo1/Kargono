@@ -17,7 +17,7 @@ namespace Kargono::Utility
 		return (float)glfwGetTime();
 	}
 
-	void Time::GetTimeFromMilliseconds(uint64_t initialMilliseconds, uint64_t& hours, uint64_t& minutes, uint64_t& seconds, uint64_t& milliseconds)
+	void TimeConversions::GetTimeFromMilliseconds(uint64_t initialMilliseconds, uint64_t& hours, uint64_t& minutes, uint64_t& seconds, uint64_t& milliseconds)
 	{
 		// Conversion Values
 		constexpr uint64_t hoursToMilliseconds{ 3'600'000 };
@@ -34,7 +34,7 @@ namespace Kargono::Utility
 		milliseconds %= secondsToMilliseconds;
 	}
 
-	std::string Time::GetStringFromMilliseconds(uint64_t initialMilliseconds)
+	std::string TimeConversions::GetStringFromMilliseconds(uint64_t initialMilliseconds)
 	{
 		// Conversion Values
 		constexpr uint64_t hoursToMilliseconds{ 3'600'000 };
@@ -81,7 +81,7 @@ namespace Kargono::Utility
 		return timeOutput.str();
 	}
 
-	std::string Time::GetStringFromSeconds(uint64_t initialSeconds)
+	std::string TimeConversions::GetStringFromSeconds(uint64_t initialSeconds)
 	{
 		// Conversion Values
 		constexpr uint64_t hoursToSeconds{ 3600 };
