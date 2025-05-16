@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Kargono/Events/KeyEvent.h"
-#include "Kargono/Assets/Asset.h"
-#include "Kargono/EditorUI/EditorUI.h"
-#include "Kargono/Rendering/Texture.h"
-#include "Kargono/RuntimeUI/RuntimeUI.h"
+#include "Modules/Events/KeyEvent.h"
+#include "Modules/Assets/Asset.h"
+#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/Rendering/Texture.h"
+#include "Modules/RuntimeUI/RuntimeUI.h"
 
 
 #include <string>

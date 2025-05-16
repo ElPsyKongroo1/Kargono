@@ -18,6 +18,9 @@ project "Runtime"
 
     includedirs 
     {
+        "%{wks.location}/Runtime/Source",
+        "%{wks.location}/Engine/Source",
+        "%{wks.location}/Engine",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
@@ -29,8 +32,6 @@ project "Runtime"
 		"%{IncludeDir.hash_library}",
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
-        "%{wks.location}/Engine/Source",
-        "%{wks.location}/Runtime/Source",
         "%{IncludeDir.optick}"
 
     }

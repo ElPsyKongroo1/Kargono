@@ -33,6 +33,7 @@ project "RuntimeTesting"
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Runtime/Source",
+        "%{wks.location}/Engine",
         "%{IncludeDir.optick}",
         "%{IncludeDir.doctest}",
         "%{IncludeDir.ImGuiColorTextEdit}"

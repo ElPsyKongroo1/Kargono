@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/Timestep.h"
-#include "Kargono/Events/Event.h"
+#include "Modules/Events/Event.h"
 #include "Kargono/Core/Window.h"
 
 namespace Kargono 
@@ -16,14 +16,14 @@ namespace Kargono
 		//==============================
 		// Constructor/Destructor
 		//==============================
-		Application(const std::string& name = "Layer");
+		Application(const char* name = "Layer");
 		virtual ~Application() = default;
 
 		//==============================
 		// LifeCycle Functions
 		//==============================
-		virtual void Init() {}
-		virtual void Terminate() {}
+		[[nodiscard]] virtual bool Init() = 0;
+		[[nodiscard]] virtual bool Terminate() = 0;
 
 		//==============================
 		// Event Functions
@@ -83,9 +83,9 @@ namespace Kargono
 		//==============================
 		// Getter/Setter
 		//==============================
-		const std::string& GetName() const { return m_DebugName; }
+		const char* GetName() const { return m_DebugName; }
 	protected:
-		std::string m_DebugName;
+		FixedString32 m_DebugName;
 
 	};
 }

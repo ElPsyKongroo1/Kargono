@@ -35,6 +35,7 @@ project "EditorTesting"
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Editor/Source",
+        "%{wks.location}/Engine",
         "%{IncludeDir.optick}",
         "%{IncludeDir.doctest}",
         "%{IncludeDir.implot}",

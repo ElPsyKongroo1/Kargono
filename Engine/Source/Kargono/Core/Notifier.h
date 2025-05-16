@@ -7,21 +7,60 @@
 #include <limits.h>
 #include <bit>
 
-
 namespace Kargono
 {
-	using ObserverIndex = size_t;
-	constexpr ObserverIndex k_InvalidObserverIndex{ std::numeric_limits<ObserverIndex>::max() };
-
 	template <typename... Args>
-	class Notifier
+	class SingleNotifier
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		Notifier() = default; 
-		~Notifier() = default;
+		SingleNotifier() = default;
+		~SingleNotifier() = default;
+	public:
+		//==============================
+		// Send Notifications
+		//==============================
+		void Notify(Args... args)
+		{
+			KG_ASSERT(m_Callback);
+			m_Callback(std::forward<Args>(args)...);
+		}
+
+		//==============================
+		// Manage Callback
+		//==============================
+		void SetCallback(std::function<void(Args... args)> func)
+		{
+			// Add the functor and update the bit
+			m_Callback = std::move(func);
+		}
+
+		void ClearCallback()
+		{
+			m_Callback = nullptr;
+		}
+
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		std::function<void(Args... args)> m_Callback;
+	};
+
+	using ListenerIndex = size_t;
+	constexpr ListenerIndex k_InvalidListenerIndex{ std::numeric_limits<ListenerIndex>::max() };
+
+	template <typename... Args>
+	class MultiNotifier
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		MultiNotifier() = default; 
+		~MultiNotifier() = default;
 	public:
 		//==============================
 		// Send Notifications
@@ -34,17 +73,17 @@ namespace Kargono
 				// Get the next index
 				size_t index = std::countr_zero(field);
 
-				KG_ASSERT(m_Observers[index]);
+				KG_ASSERT(m_Listeners[index]);
 
 				// Notify this observer index!
-				m_Observers[index](std::forward<Args>(args)...);
+				m_Listeners[index](std::forward<Args>(args)...);
 			}
 		}
 
 		//==============================
 		// Manage Observers
 		//==============================
-		ObserverIndex AddObserver(std::function<void(Args... args)> func)
+		ListenerIndex AddObserver(std::function<void(Args... args)> func)
 		{
 			// Get the index of the first empty space
 			size_t emptyIndex = std::countr_zero(~m_BitField);
@@ -52,28 +91,28 @@ namespace Kargono
 			// Handle case where no empty slots are found
 			if (emptyIndex >= sizeof(size_t) * 8)
 			{
-				return k_InvalidObserverIndex;
+				return k_InvalidListenerIndex;
 			}
 
 			// Resize the buffer if necessary
-			if (emptyIndex >= m_Observers.size())
+			if (emptyIndex >= m_Listeners.size())
 			{
-				m_Observers.resize(emptyIndex + 1); // TODO: May cause excessive allocations
+				m_Listeners.resize(emptyIndex + 1); // TODO: May cause excessive allocations
 			}
 
 			// Add the functor and update the bit
-			m_Observers[emptyIndex] = std::move(func);
+			m_Listeners[emptyIndex] = std::move(func);
 			m_BitField |= m_BitField + 1;
 
 			return emptyIndex;
 		}
 
-		bool RemoveObserver(ObserverIndex index)
+		bool RemoveObserver(ListenerIndex index)
 		{
 			// Check for invalid index
-			KG_ASSERT(index < m_Observers.size());
+			KG_ASSERT(index < m_Listeners.size());
 
-			size_t indexMask{ ((ObserverIndex)1 << index) };
+			size_t indexMask{ ((ListenerIndex)1 << index) };
 
 			// Ensure bit is already set
 			if (!(m_BitField & indexMask))
@@ -83,7 +122,7 @@ namespace Kargono
 			}
 
 			// Clear the functor
-			m_Observers[index] = nullptr;
+			m_Listeners[index] = nullptr;
 
 			// Set the indicated bit index to 0
 			m_BitField &= ~indexMask;
@@ -94,14 +133,14 @@ namespace Kargono
 		void Clear()
 		{
 			m_BitField = 0;
-			m_Observers.clear();
+			m_Listeners.clear();
 		}
 	
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		std::vector<std::function<void(Args... args)>> m_Observers{};
+		std::vector<std::function<void(Args... args)>> m_Listeners{};
 		size_t m_BitField{0};
 	};
 }

@@ -2,7 +2,7 @@
 
 #include "Kargono.h"
 
-#include "Kargono/Rendering/Framebuffer.h"
+#include "Modules/Rendering/Framebuffer.h"
 
 #include <filesystem>
 
@@ -30,9 +30,9 @@ namespace Kargono
 		// LifeCycle Functions
 		//==========================
 		// Starts Audio System and askes the user what project to open(TEMPORARY TODO).
-		virtual void Init() override;
+		[[nodiscard]] virtual bool Init() override;
 		// Closes Audio System and calls OnSceneStop()
-		virtual void Terminate() override;
+		[[nodiscard]] virtual bool Terminate() override;
 
 		void InitializeFrameBuffer();
 

@@ -1,8 +1,8 @@
 #include "Windows/UserInterface/UIEditorViewportPanel.h"
 
-#include "Kargono/Rendering/RenderingService.h"
-#include "Kargono/Input/InputService.h"
-#include "Kargono/Rendering/Texture.h"
+#include "Modules/Rendering/RenderingService.h"
+#include "Modules/Input/InputService.h"
+#include "Modules/Rendering/Texture.h"
 #include "Kargono/Utility/Operations.h"
 
 #include "EditorApp.h"
@@ -41,8 +41,8 @@ namespace Kargono::Panels
 	{
 		Rendering::FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { Rendering::FramebufferDataFormat::RGBA8, Rendering::FramebufferDataFormat::RED_INTEGER, Rendering::FramebufferDataFormat::Depth };
-		fbSpec.Width = EngineService::GetActiveWindow().GetWidth();
-		fbSpec.Height = EngineService::GetActiveWindow().GetHeight();
+		fbSpec.Width = EngineService::GetActiveEngine().GetWindow().GetWidth();
+		fbSpec.Height = EngineService::GetActiveEngine().GetWindow().GetHeight();
 		m_ViewportFramebuffer = Rendering::Framebuffer::Create(fbSpec);
 	}
 
@@ -58,7 +58,7 @@ namespace Kargono::Panels
 		}
 
 		// Adjust framebuffer & camera viewport size if necessary
-		Window& currentWindow = EngineService::GetActiveWindow();
+		Window& currentWindow = EngineService::GetActiveEngine().GetWindow();
 		currentWindow.SetActiveViewport(&m_ViewportData);
 		if (Rendering::FramebufferSpecification spec = m_ViewportFramebuffer->GetSpecification();
 			(float)m_ViewportData.m_Width > 0.0f && (float)m_ViewportData.m_Height > 0.0f &&

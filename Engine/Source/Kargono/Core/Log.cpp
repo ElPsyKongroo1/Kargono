@@ -1,8 +1,8 @@
 #include "kgpch.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Log.h"
-#include "Kargono/Events/ApplicationEvent.h"
-#include "Kargono/Core/Engine.h"
+#include "Modules/Events/ApplicationEvent.h"
+#include "Modules/Core/Engine.h"
 
 #include "API/Logger/SpdlogBackend.h"
 
@@ -39,22 +39,22 @@ namespace Kargono
 
 	void Log::GenerateLogEventImpl(int logType, const char* text)
 	{
-		if (EngineService::IsApplicationActive())
+		if (EngineService::IsEngineActive() && EngineService::GetActiveEngine().IsApplicationActive())
 		{
 			if (logType == KG_INFO_LOG_EVENT)
 			{
 				Events::LogEvent logEvent{ text, Events::LogEventLevel::Info };
-				EngineService::OnEvent(&logEvent);
+				EngineService::GetActiveEngine().GetThread().OnEvent(&logEvent);
 			}
 			else if (logType == KG_WARNING_LOG_EVENT)
 			{
 				Events::LogEvent logEvent{ text, Events::LogEventLevel::Warning };
-				EngineService::OnEvent(&logEvent);
+				EngineService::GetActiveEngine().GetThread().OnEvent(&logEvent);
 			}
 			else if (logType == KG_CRITICAL_LOG_EVENT)
 			{
 				Events::LogEvent logEvent{ text, Events::LogEventLevel::Critical };
-				EngineService::OnEvent(&logEvent);
+				EngineService::GetActiveEngine().GetThread().OnEvent(&logEvent);
 			}
 			
 		}

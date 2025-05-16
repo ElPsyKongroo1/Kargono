@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Resolution.h"
-#include "Kargono/Core/Engine.h"
+#include "Modules/Core/Engine.h"
 
 namespace Kargono::Utility
 {
@@ -109,7 +109,7 @@ namespace Kargono::Utility
 
 		// Automatic
 		case ScreenResolution::None: return Math::uvec2(400, 400);
-		case ScreenResolution::MatchDevice: return EngineService::GetActiveWindow().GetMonitorDimensions();
+		case ScreenResolution::MatchDevice: return EngineService::GetActiveEngine().GetWindow().GetMonitorDimensions();
 		}
 
 		KG_ERROR("Invalid ScreenResolution enum provided to ScreenResolutionToVec2 function");
@@ -247,7 +247,7 @@ namespace Kargono::Utility
 		case ScreenResolution::R5120x4096:
 			return Math::uvec2(5, 4);
 			// Automatic
-		case ScreenResolution::MatchDevice: return GetClosestAspectRatio(EngineService::GetActiveWindow().GetMonitorDimensions());
+		case ScreenResolution::MatchDevice: return GetClosestAspectRatio(EngineService::GetActiveEngine().GetWindow().GetMonitorDimensions());
 		case ScreenResolution::None: return Math::uvec2(1, 1);
 		}
 		KG_ERROR("Invalid ScreenResolution enum provided to ScreenResolutionToString function");

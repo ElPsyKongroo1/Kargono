@@ -1,19 +1,19 @@
 #include "kgpch.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/ECS/EngineComponents.h"
-#include "Kargono/ECS/ProjectComponent.h"
-#include "Kargono/ECS/Entity.h"
-#include "Kargono/Physics/Physics2D.h"
-#include "Kargono/Rendering/RenderingService.h"
-#include "Kargono/Core/Engine.h"
-#include "Kargono/Input/InputService.h"
-#include "Kargono/Input/InputMap.h"
-#include "Kargono/Rendering/Shader.h"
-#include "Kargono/Events/SceneEvent.h"
+#include "Modules/ECS/EngineComponents.h"
+#include "Modules/ECS/ProjectComponent.h"
+#include "Modules/ECS/Entity.h"
+#include "Modules/Physics2D/Physics2D.h"
+#include "Modules/Rendering/RenderingService.h"
+#include "Modules/Core/Engine.h"
+#include "Modules/Input/InputService.h"
+#include "Modules/InputMap/InputMap.h"
+#include "Modules/Rendering/Shader.h"
+#include "Modules/Events/SceneEvent.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Assets/AssetService.h"
-#include "Kargono/Particles/ParticleService.h"
+#include "Modules/Assets/AssetService.h"
+#include "Modules/Particles/ParticleService.h"
 
 namespace Kargono::Scenes
 {
@@ -181,7 +181,7 @@ namespace Kargono::Scenes
 		m_EntityRegistry.m_EntityMap[uuid] = entity;
 
 		Events::ManageEntity event = { entity.GetUUID(), this, Events::ManageEntityAction::Create };
-		EngineService::OnEvent(&event);
+		EngineService::GetActiveEngine().GetThread().OnEvent(&event);
 
 		return entity;
 	}
@@ -189,7 +189,7 @@ namespace Kargono::Scenes
 	void Scene::DestroyEntity(ECS::Entity entity)
 	{
 		Events::ManageEntity event = {entity.GetUUID(), this , Events::ManageEntityAction::Delete};
-		EngineService::OnEvent(&event);
+		EngineService::GetActiveEngine().GetThread().OnEvent(&event);
 
 		m_EntityRegistry.m_EntityMap.erase(entity.GetUUID());
 		if (m_EntityRegistry.m_EnTTRegistry.valid(entity))
@@ -527,7 +527,7 @@ namespace Kargono::Scenes
 		TransitionScene(newScene);
 		s_ActiveSceneHandle = newSceneHandle;
 		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(newSceneHandle, Events::ManageSceneAction::Open);
-		EngineService::SubmitToEventQueue(event);
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 		
 	}
 
@@ -535,7 +535,8 @@ namespace Kargono::Scenes
 	{
 		if (!newScene) { return; }
 
-		Physics::Physics2DService::Terminate();
+		Physics::Physics2DService().GetActiveContext().Terminate();
+		Physics::Physics2DService().RemovePhysics2DWorld();
 		s_ActiveScene->OnRuntimeStop();
 		s_ActiveScene->DestroyAllEntities();
 		s_ActiveScene.reset();
@@ -545,7 +546,13 @@ namespace Kargono::Scenes
 		*s_ActiveScene->m_HoveredEntity = {};
 		*s_ActiveScene->m_SelectedEntity = {};
 
-		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
+		Physics::Physics2DService::CreatePhysics2DWorld();
+		Physics::Physics2DService::GetActiveContext().Init
+		(
+			Scenes::SceneService::GetActiveScene().get(), 
+			Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification
+		);
+		
 		s_ActiveScene->OnRuntimeStart();
 	}
 
@@ -554,14 +561,14 @@ namespace Kargono::Scenes
 		Ref<Scenes::Scene> sceneReference = Assets::AssetService::GetScene(sceneID);
 		if (sceneReference)
 		{
-			Particles::ParticleService::ClearEmitters();
+			Particles::ParticleService::GetActiveContext().ClearEmitters();
 			TransitionScene(sceneReference);
 
 			s_ActiveSceneHandle = sceneID;
 			Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(sceneID, Events::ManageSceneAction::Open);
-			EngineService::SubmitToEventQueue(event);
+			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 
-			Particles::ParticleService::LoadSceneEmitters(sceneReference);
+			Particles::ParticleService::GetActiveContext().LoadSceneEmitters(sceneReference);
 		}
 		else
 		{
@@ -575,7 +582,7 @@ namespace Kargono::Scenes
 		s_ActiveSceneHandle = newHandle;
 
 		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(newHandle, Events::ManageSceneAction::Open);
-		EngineService::SubmitToEventQueue(event);
+		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 	}
 }
 

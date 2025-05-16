@@ -16,7 +16,7 @@ namespace Kargono::Panels
 	{
 		UNREFERENCED_PARAMETER(name);
 		UNREFERENCED_PARAMETER(change_type);
-		EngineService::SubmitToMainThread([&]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			s_MainWindow->m_ContentBrowserPanel->RefreshCachedDirectoryEntries();
 		});
@@ -28,7 +28,7 @@ namespace Kargono::Panels
 		// Create function to 
 		static std::filesystem::path currentPath;
 		currentPath = newPath;
-		EngineService::SubmitToMainThread([&]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 				
 			API::FileWatch::EndWatch(m_CurrentDirectory);

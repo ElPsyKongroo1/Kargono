@@ -18,6 +18,8 @@
         "Source/kgpch.cpp",
         "Source/Kargono/**.h",
         "Source/Kargono/**.cpp",
+        "%{wks.location}/Engine/Modules/**.cpp",
+        "%{wks.location}/Engine/Modules/**.h",
         "%{wks.location}/Dependencies/stb_image/**.cpp",
         "%{wks.location}/Dependencies/stb_image/**.h",
         "%{wks.location}/Dependencies/ImGuizmo/ImGuizmo.h",
@@ -45,6 +47,7 @@
     includedirs 
     {
         "Source",
+        "%{wks.location}/Engine",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.filewatch}",

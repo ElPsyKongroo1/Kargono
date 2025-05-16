@@ -31,7 +31,7 @@ namespace Kargono::Windows
 		m_EditorEmitterConfigHandle = 0;
 		m_EditorEmitterConfig = nullptr;
 
-		Particles::ParticleService::ClearEmitters();
+		Particles::ParticleService::GetActiveContext().ClearEmitters();
 
 		// Reset properties panel data
 		m_PropertiesPanel->ClearPanelData();
@@ -88,18 +88,13 @@ namespace Kargono::Windows
 
 	void EmitterConfigWindow::LoadEditorEmitterIntoParticleService()
 	{
-		if (!m_EditorEmitterConfig)
+		Particles::ParticleContext& context { Particles::ParticleService::GetActiveContext() };
+		context.ClearEmitters();
+
+		if (m_EditorEmitterConfig)
 		{
-			// Just clear the emitters if switching
-			Particles::ParticleService::ClearEmitters();
+			context.AddEmitter(m_EditorEmitterConfig.get(), { 0.0f, 0.0f, 0.0f });
 		}
-		else
-		{
-			// Open single emitter in editor
-			Particles::ParticleService::ClearEmitters();
-			Particles::ParticleService::AddEmitter(m_EditorEmitterConfig.get(), { 0.0f, 0.0f, 0.0f });
-		}
-		
 	}
 
 	EmitterConfigWindow::EmitterConfigWindow()
@@ -304,7 +299,7 @@ namespace Kargono::Windows
 		{
 			if (ImGui::MenuItem("Back to Main Window"))
 			{
-				EngineService::SubmitToMainThread([]()
+				EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 				{
 					s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::MainWindow);
 					s_EditorApp->m_MainWindow->LoadSceneParticleEmitters();
@@ -461,7 +456,7 @@ namespace Kargono::Windows
 		if (m_EditorEmitterConfigHandle == assetHandle)
 		{
 			// Open the emitter config window in the editor
-			EngineService::SubmitToMainThread([]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 			{
 				s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
 				s_EditorApp->m_EmitterConfigEditorWindow->LoadEditorEmitterIntoParticleService();
@@ -476,7 +471,7 @@ namespace Kargono::Windows
 			OnOpenEmitterConfig(assetHandle);
 
 			// Open the emitter config window in the editor
-			EngineService::SubmitToMainThread([]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 			{
 				s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
 			});

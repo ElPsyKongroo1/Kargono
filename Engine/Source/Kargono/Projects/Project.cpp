@@ -1,9 +1,9 @@
 #include "kgpch.h"
 
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Core/Engine.h"
-#include "Kargono/Assets/Asset.h"
-#include "Kargono/Network/NetworkTools.h"
+#include "Modules/Core/Engine.h"
+#include "Modules/Assets/Asset.h"
+#include "Modules/Network/NetworkTools.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 

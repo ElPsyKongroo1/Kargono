@@ -11,7 +11,7 @@
 #include <functional>
 #include "imgui.h"
 
-#include "Kargono/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUI.h"
 namespace API::EditorUI
 {
 	class TextEditorSpec;

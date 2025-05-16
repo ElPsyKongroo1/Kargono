@@ -1,9 +1,9 @@
 #pragma once
-#include "Kargono/Events/KeyEvent.h"
-#include "Kargono/EditorUI/EditorUI.h"
+#include "Modules/Events/KeyEvent.h"
+#include "Modules/EditorUI/EditorUI.h"
 
-#include "Kargono/Network/Server.h"
-#include "Kargono/Network/Client.h"
+#include "Modules/Network/Server.h"
+#include "Modules/Network/Client.h"
 
 #include <string>
 

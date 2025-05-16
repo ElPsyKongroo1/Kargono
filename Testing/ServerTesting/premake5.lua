@@ -33,6 +33,7 @@ project "ServerTesting"
         "%{IncludeDir.OpenALSoft}",
         "%{wks.location}/Engine/Source",
         "%{wks.location}/Server/Source",
+        "%{wks.location}/Engine",
         "%{IncludeDir.optick}",
         "%{IncludeDir.doctest}",
         "%{IncludeDir.ImGuiColorTextEdit}"

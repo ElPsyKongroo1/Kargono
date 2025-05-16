@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/Timestep.h"
-#include "Kargono/Events/ApplicationEvent.h"
+#include "Modules/Events/ApplicationEvent.h"
 #include "Kargono/Core/Base.h"
 
 #include <chrono>
@@ -122,23 +122,31 @@ namespace Kargono::Utility
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		// Reset the timer
-		void InitializeTimer();
-		void ResetAccumulator();
 		// Move the timer context forward
 		bool CheckForSingleUpdate();
 		UpdateCount CheckForMultipleUpdates();
+
+		//==============================
+		// Modify Timer State
+		//==============================
+		// Reset the timer values
+		void InitializeTimer();
+		void ResetAccumulator();
+		// Adjust accumulator
+		void SkipUpdates(UpdateCount count);
+		void AddUpdates(UpdateCount count);
 
 		//==============================
 		// Getters/Setters
 		//==============================
 		// Config fields
 		void SetConstantFrameTime(std::chrono::nanoseconds newFrameTime);
+		void SetConstantFrameTime(uint64_t newFrameTime);
 		std::chrono::nanoseconds GetConstantFrameTime();
 		void SetConstantFrameTimeFloat(float newFrameTimeSeconds);
-		float GetConstantFrameTimeFloat();
+		float GetConstantFrameTimeFloat() const;
 		// Accumulation fields
-		UpdateCount GetUpdateCount();
+		UpdateCount GetUpdateCount() const;
 	private:
 		//==============================
 		// Internal Fields

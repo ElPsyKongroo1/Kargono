@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Assets/Asset.h"
+#include "Modules/Assets/Asset.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/Resolution.h"
-#include "Kargono/Network/ServerConfig.h"
+#include "Modules/Network/ServerConfig.h"
 
 #include <string>
 #include <filesystem>

@@ -3,10 +3,10 @@
 #include "EditorApp.h"
 
 #include "Kargono/Utility/Operations.h"
-#include "Kargono/Rendering/Texture.h"
+#include "Modules/Rendering/Texture.h"
 #include "Kargono/Utility/Time.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Network/Server.h"
+#include "Modules/Network/Server.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
@@ -377,22 +377,22 @@ namespace Kargono::Panels
 		m_LifecycleOptions.AddButton("Start", 
 		[](EditorUI::Button& button)
 		{  
-			Network::ServerService::Init();
+			Network::ServerService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 		});
 		m_LifecycleOptions.AddButton("Close", 
 		[](EditorUI::Button& button)
 		{
-			Network::ServerService::Terminate();
+			Network::ServerService::GetActiveContext().Terminate(false);
 		});
 		m_LifecycleOptions.AddButton("Restart", 
 		[](EditorUI::Button& button)
 		{
-			if (Network::ServerService::IsServerActive())
+			if (Network::ServerService::IsContextActive())
 			{
-				Network::ServerService::Terminate();
+				Network::ServerService::GetActiveContext().Terminate(false);
 			}
 
-			Network::ServerService::Init();
+			Network::ServerService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 		});
 
 
@@ -450,7 +450,7 @@ namespace Kargono::Panels
 	}
 	void ServerOptions::RegisterObservers()
 	{
-		Network::Server& server{ Network::ServerService::GetActiveServer() };
+		Network::Server& server{ Network::ServerService::GetActiveContext() };
 
 		Network::ServerNotifiers& serverNotifiers{ server.GetNotifiers() };
 
@@ -523,7 +523,7 @@ namespace Kargono::Panels
 	}
 	void ServerOptions::OnNotifySendServerPacket(Network::ClientIndex clientIndex, Network::PacketSequence seq)
 	{
-		EngineService::SubmitToMainThread([&, clientIndex, seq]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&, clientIndex, seq]()
 		{
 			for (ConnectionUI& connection : m_ConnectionUIs)
 			{
@@ -537,7 +537,7 @@ namespace Kargono::Panels
 	}
 	void ServerOptions::OnNotifyAckServerPacket(Network::ClientIndex clientIndex, Network::PacketSequence seq, float rtt)
 	{
-		EngineService::SubmitToMainThread([&, clientIndex, seq, rtt]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&, clientIndex, seq, rtt]()
 		{
 			for (ConnectionUI& connection : m_ConnectionUIs)
 			{
@@ -551,7 +551,7 @@ namespace Kargono::Panels
 	}
 	void ServerOptions::OnNotifyReliabilityState(Network::ClientIndex index, bool congested, float rtt)
 	{
-		EngineService::SubmitToMainThread([&, index, congested, rtt]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&, index, congested, rtt]()
 		{
 			for (ConnectionUI& connection : m_ConnectionUIs)
 			{
@@ -566,7 +566,7 @@ namespace Kargono::Panels
 	}
 	void ServerOptions::OnNotifyClientConnect(Network::ClientIndex clientIndex)
 	{
-		EngineService::SubmitToMainThread([&, clientIndex]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&, clientIndex]()
 		{
 			ConnectionUI& connection = m_ConnectionUIs.emplace_back(clientIndex, (size_t)Network::k_AckBitFieldSize);
 			connection.m_ConnectionStatus = Network::ConnectionStatus::Connected;
@@ -574,7 +574,7 @@ namespace Kargono::Panels
 	}
 	void ServerOptions::OnNotifyClientDisconnect(Network::ClientIndex clientIndex)
 	{
-		EngineService::SubmitToMainThread([&, clientIndex]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&, clientIndex]()
 		{
 			// Search for connectionUI corresponding to clientIndex
 			size_t i{ 0 };
@@ -596,7 +596,7 @@ namespace Kargono::Panels
 	}
 	void ServerOptions::OnNotifyServerActive(bool active)
 	{
-		EngineService::SubmitToMainThread([&, active]() 
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&, active]()
 		{
 			m_ActiveState = active;
 
@@ -628,22 +628,22 @@ namespace Kargono::Panels
 		m_LifecycleOptions.AddButton("Start",
 			[](EditorUI::Button& button)
 			{
-				Network::ClientService::Init();
+				Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 			});
 		m_LifecycleOptions.AddButton("Close",
 			[](EditorUI::Button& button)
 			{
-				Network::ClientService::Terminate();
+				Network::ClientService::GetActiveContext().Terminate(false);
 			});
 		m_LifecycleOptions.AddButton("Restart",
 			[](EditorUI::Button& button)
 			{
-				if (Network::ClientService::IsClientActive())
+				if (Network::ClientService::IsContextActive())
 				{
-					Network::ClientService::Terminate();
+					Network::ClientService::GetActiveContext().Terminate(false);
 				}
 
-				Network::ClientService::Init();
+				Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 			});
 
 		m_StatusHeader.m_Label = "Status";
@@ -1427,7 +1427,7 @@ namespace Kargono::Panels
 	}
 	void ClientOptions::RegisterObservers()
 	{
-		Network::Client& client{ Network::ClientService::GetActiveClient() };
+		Network::Client& client{ Network::ClientService::GetActiveContext()};
 
 		Network::ClientNotifiers& clientNotifiers{ client.GetNotifiers() };
 
@@ -1565,21 +1565,21 @@ namespace Kargono::Panels
 	}
 	void ClientOptions::OnNotifySendClientPacket(Network::ClientIndex /*index*/, Network::PacketSequence seq)
 	{
-		EngineService::SubmitToMainThread([&, seq]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&, seq]()
 		{
 			m_ClientConnectionUI.OnNotifySendPacket(seq);
 		});
 	}
 	void ClientOptions::OnNotifyAckClientPacket(Network::ClientIndex /*index*/, Network::PacketSequence seq, float rtt)
 	{
-		EngineService::SubmitToMainThread([&, seq, rtt]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&, seq, rtt]()
 		{
 			m_ClientConnectionUI.OnNotifyAckPacket(seq, rtt);
 		});
 	}
 	void ClientOptions::OnNotifyReliabilityState(Network::ClientIndex /*index*/, bool congested, float rtt)
 	{
-		EngineService::SubmitToMainThread([&, congested, rtt]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&, congested, rtt]()
 		{
 			m_ClientConnectionUI.m_IsCongested = congested;
 			m_ClientConnectionUI.m_AverageRTT = rtt;
@@ -1587,7 +1587,7 @@ namespace Kargono::Panels
 	}
 	void ClientOptions::OnNotifyConnectStatus(Network::ConnectionStatus status, Network::ClientIndex clientIndex)
 	{
-		EngineService::SubmitToMainThread([&, status, clientIndex]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&, status, clientIndex]()
 		{
 			m_ClientConnectionUI.m_ConnectionStatus = status;
 			m_ClientConnectionUI.m_ClientIndex = clientIndex;
@@ -1595,7 +1595,7 @@ namespace Kargono::Panels
 	}
 	void ClientOptions::OnNotifyClientActive(bool active)
 	{
-		EngineService::SubmitToMainThread([&, active]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&, active]()
 		{
 			m_ActiveState = active;
 		});

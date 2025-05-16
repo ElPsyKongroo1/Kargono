@@ -2,14 +2,14 @@
 #include "EditorApp.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Scripting/ScriptModuleBuilder.h"
+#include "Modules/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
-#include "Kargono/Network/Client.h"
+#include "Modules/Network/Client.h"
 #include "Kargono/Core/AppTick.h"
-#include "Kargono/Input/InputService.h"
+#include "Modules/Input/InputService.h"
 
-#include "API/EditorUI/ImPlotAPI.h"
+#include "Modules/EditorUI/ExternalAPI/ImPlotAPI.h"
 
 static Kargono::EditorApp* s_EditorApp{ nullptr };
 
@@ -108,9 +108,11 @@ namespace Kargono::Windows
 			return;
 		}
 
+		Particles::ParticleContext& context{ Particles::ParticleService::GetActiveContext()};
+
 		// Load the emitters for the editor scene
-		Particles::ParticleService::ClearEmitters();
-		Particles::ParticleService::LoadSceneEmitters(m_EditorScene);
+		context.ClearEmitters();
+		context.LoadSceneEmitters(m_EditorScene);
 	}
 
 	MainWindow::MainWindow()
@@ -369,7 +371,7 @@ namespace Kargono::Windows
 		EditorUI::EditorUIService::StartDockspaceWindow();
 
 		// Set the active viewport for the window
-		EngineService::GetActiveWindow().SetActiveViewport(&m_ViewportPanel->m_ViewportData);
+		EngineService::GetActiveEngine().GetWindow().SetActiveViewport(&m_ViewportPanel->m_ViewportData);
 
 		// Display the menu bar at the top of the window
 		DrawWindowMenuBar();
@@ -550,7 +552,7 @@ namespace Kargono::Windows
 		m_EditorScene = newScene;
 		m_EditorSceneHandle = sceneHandle;
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
-		EngineService::SubmitToMainThread([&]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			LoadSceneParticleEmitters();
 		});
@@ -571,7 +573,7 @@ namespace Kargono::Windows
 		m_EditorSceneHandle = sceneHandle;
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 
-		EngineService::SubmitToMainThread([&]() 
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			LoadSceneParticleEmitters();
 		});
@@ -610,15 +612,18 @@ namespace Kargono::Windows
 		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
 
 		RuntimeUI::RuntimeUIService::ClearActiveUI();
+
+		Input::InputMapContext& context = Input::InputMapService::GetActiveContext();
+
 		// Cache Current InputMap in editor
-		if (!Input::InputMapService::GetActiveInputMap())
+		if (!context.GetActiveInputMap())
 		{
 			m_EditorInputMap = nullptr;
 		}
 		else
 		{
-			m_EditorInputMap = Input::InputMapService::GetActiveInputMap();
-			m_EditorInputMapHandle = Input::InputMapService::GetActiveInputMapHandle();
+			m_EditorInputMap = context.GetActiveInputMap();
+			m_EditorInputMapHandle = context.GetActiveInputMapHandle();
 		}
 
 		// Load Default Game State
@@ -636,17 +641,18 @@ namespace Kargono::Windows
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		if (m_SceneState == SceneState::Simulate) { OnStop(); }
 
-		Particles::ParticleService::ClearEmitters();
+		Particles::ParticleService::GetActiveContext().ClearEmitters();
 
 		m_SceneState = SceneState::Play;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
-		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
+		Physics::Physics2DService::CreatePhysics2DWorld();
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
 
 		// Start up client networking
 		if (Projects::ProjectService::GetActiveAppIsNetworked())
 		{
-			Network::ClientService::Init();
+			Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 		}
 
 		// Call the runtime start function
@@ -657,9 +663,9 @@ namespace Kargono::Windows
 		}
 
 		// Load particle emitters
-		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
+		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 
-		EngineService::GetActiveEngine().UpdateAppStartTime();
+		EngineService::GetActiveEngine().GetThread().UpdateAppStartTime();
 		EditorUI::EditorUIService::SetFocusedWindow(m_ViewportPanel->m_PanelName);
 	}
 
@@ -670,7 +676,8 @@ namespace Kargono::Windows
 
 		m_SceneState = SceneState::Simulate;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
-		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
+		Physics::Physics2DService::CreatePhysics2DWorld();
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 	}
 	void MainWindow::OnStop()
 	{
@@ -680,19 +687,21 @@ namespace Kargono::Windows
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		KG_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
 
-			if (m_SceneState == SceneState::Play)
-			{
-				Physics::Physics2DService::Terminate();
-				Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
-			}
-			else if (m_SceneState == SceneState::Simulate)
-			{
-				Physics::Physics2DService::Terminate();
-			}
+		if (m_SceneState == SceneState::Play)
+		{
+			Physics::Physics2DService::GetActiveContext().Terminate();
+			Physics::Physics2DService::RemovePhysics2DWorld();
+			Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
+		}
+		else if (m_SceneState == SceneState::Simulate)
+		{
+			Physics::Physics2DService::GetActiveContext().Terminate();
+			Physics::Physics2DService::RemovePhysics2DWorld();
+		}
 
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
-		Audio::AudioService::StopAllAudio();
+		Audio::AudioService::GetActiveContext().StopAllAudio();
 
 		// TODO: DEAL WITH THIS
 		//// Clear UIObjects during runtime.
@@ -708,23 +717,23 @@ namespace Kargono::Windows
 		// Clear InputMaps during runtime.
 		if (m_EditorInputMap)
 		{
-			Input::InputMapService::SetActiveInputMap(m_EditorInputMap, m_EditorInputMapHandle);
+			Input::InputMapService::GetActiveContext().SetActiveInputMap(m_EditorInputMap, m_EditorInputMapHandle);
 		}
 		else
 		{
-			Input::InputMapService::SetActiveInputMap(nullptr, Assets::EmptyHandle);
+			Input::InputMapService::GetActiveContext().SetActiveInputMap(nullptr, Assets::EmptyHandle);
 		}
 
 		Scenes::GameStateService::ClearActiveGameState();
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked() && m_SceneState == SceneState::Play)
 		{
-			Network::ClientService::Terminate();
+			Network::ClientService::GetActiveContext().Terminate(false);
 		}
 
 		// Revalidate particles for editor scene
-		Particles::ParticleService::ClearEmitters();
-		Particles::ParticleService::LoadSceneEmitters(m_EditorScene);
+		Particles::ParticleService::GetActiveContext().ClearEmitters();
+		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(m_EditorScene);
 
 		// Bring back the old UI
 		if (s_EditorApp->m_UIEditorWindow->m_EditorUI)
@@ -898,7 +907,7 @@ namespace Kargono::Windows
 
 		if (!handled)
 		{
-			Input::InputMapService::OnKeyPressed(event);
+			Input::InputMapService::GetActiveContext().OnKeyPressed(event);
 		}
 		
 		return handled;
@@ -956,7 +965,7 @@ namespace Kargono::Windows
 		}
 		case Key::F11:
 		{
-			EngineService::GetActiveWindow().ToggleMaximized();
+			EngineService::GetActiveEngine().GetWindow().ToggleMaximized();
 			break;
 		}
 
@@ -1168,7 +1177,7 @@ namespace Kargono::Windows
 
 				if (ImGui::MenuItem("Exit"))
 				{
-					EngineService::EndRun();
+					EngineService::GetActiveEngine().GetThread().EndThread();
 				}
 				ImGui::EndMenu();
 
@@ -1178,14 +1187,14 @@ namespace Kargono::Windows
 			{
 				if (ImGui::MenuItem("User Interface Editor"))
 				{
-					EngineService::SubmitToMainThread([]()
+					EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 						{
 							s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
 						});
 				}
 				if (ImGui::MenuItem("Particle Emitter Editor"))
 				{
-					EngineService::SubmitToMainThread([]()
+					EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 						{
 							s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
 							s_EditorApp->m_EmitterConfigEditorWindow->LoadEditorEmitterIntoParticleService();

@@ -217,7 +217,7 @@ namespace Kargono::Panels
 	}
 	void ColorPalettePanel::ResetPanelResources()
 	{
-		EngineService::SubmitToMainThread([&]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			m_EditorColorPalette = nullptr;
 			m_EditorColorPaletteHandle = Assets::EmptyHandle;
