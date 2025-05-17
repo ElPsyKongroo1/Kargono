@@ -89,7 +89,7 @@ namespace Kargono
 				KG_PROFILE_FRAME_DESC("Main Thread");
 
 				AppTickService::OnUpdate(k_ConstantFrameTimeFloat);
-				Utility::PassiveTimer::OnUpdate(k_ConstantFrameTimeFloat);
+				Utility::PassiveTimerService::GetActiveBusyTimerContext().OnUpdate(k_ConstantFrameTimeFloat);
 
 				m_WorkQueue.ProcessQueue();
 
@@ -300,7 +300,7 @@ namespace Kargono
 	{
 		UNREFERENCED_PARAMETER(e);
 
-		Utility::AsyncBusyTimer::CleanUpClosedTimers();
+		Utility::AsyncBusyTimerService::GetActiveBusyTimerContext().CleanUpClosedTimers();
 		return false;
 	}
 

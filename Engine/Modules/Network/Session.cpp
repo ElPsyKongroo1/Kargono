@@ -43,7 +43,7 @@ namespace Kargono::Network
 		}
 
 		// Set up timer to start session gameplay
-		Utility::AsyncBusyTimer::CreateTimer(longestRTT, [&]()
+		Utility::AsyncBusyTimerService::GetActiveBusyTimerContext().CreateTimer(longestRTT, [&]()
 		{
 			// Start Thread
 			ServerService::GetActiveContext().GetNetworkThread().SubmitEvent(CreateRef<Events::StartSession>());
