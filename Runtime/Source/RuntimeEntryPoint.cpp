@@ -26,7 +26,7 @@ namespace Kargono
 		if (!engine.Init(spec, runtimeApp))
 		{
 			// Close runtime
-			Kargono::Utility::AsyncBusyTimer::CloseAllTimers();
+			Kargono::Utility::AsyncBusyTimerService::GetActiveBusyTimerContext().CloseAllTimers();
 			engine.Terminate();
 			return;
 		}
@@ -35,7 +35,7 @@ namespace Kargono
 		engine.GetThread().RunThread();
 
 		// Close runtime
-		Kargono::Utility::AsyncBusyTimer::CloseAllTimers();
+		Kargono::Utility::AsyncBusyTimerService::GetActiveBusyTimerContext().CloseAllTimers();
 		engine.Terminate();
 	}
 }
