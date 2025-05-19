@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Kargono/Assets/Asset.h"
-#include "Kargono/Events/KeyEvent.h"
-#include "Kargono/EditorUI/EditorUI.h"
+#include "Modules/Assets/Asset.h"
+#include "Modules/Events/KeyEvent.h"
+#include "Modules/EditorUI/EditorUI.h"
 #include "Kargono/Core/FixedString.h"
 
 #include "Windows/MainWindow/AssetViewerPanel.h"
@@ -205,14 +205,6 @@ namespace Kargono::Windows
 		EditorUI::ChooseDirectorySpec m_ExportProjectLocation{};
 		EditorUI::CheckboxSpec m_ExportProjectServer{};
 
-		// Config file generation widgets
-		EditorUI::CheckboxSpec m_ExportConfigFile{};
-		EditorUI::CollapsingHeaderSpec m_ExportConfigHeader{};
-		EditorUI::EditIVec4Spec m_ExportConfigServerIP{};
-		EditorUI::EditIntegerSpec m_ExportConfigPort{};
-		EditorUI::CheckboxSpec m_ExportConfigLocation{};
-		EditorUI::EditIVec4Spec m_ExportConfigSecrets{};
-
 		// Import asset widgets
 		EditorUI::GenericPopupSpec m_ImportAssetPopup{};
 		EditorUI::EditTextSpec m_ImportNewAssetName{};
@@ -235,6 +227,7 @@ namespace Kargono::Windows
 		bool m_ShowProjectComponent = false;
 		bool m_ShowProjectEnum = false;
 		bool m_ShowDemoWindow = false;
+		bool m_ShowImPlotWindow = false;
 		bool m_ShowTesting = false;
 		bool m_ShowScriptEditor = false;
 		bool m_ShowTextEditor = false;

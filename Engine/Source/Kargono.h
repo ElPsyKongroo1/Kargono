@@ -5,18 +5,18 @@
 //		the core engine functionality.
 
 //-----------------AI-----------------//
-#include "Kargono/AI/AIService.h"
+#include "Modules/AI/AIService.h"
 
 //-----------------Assets-----------------//
-#include "Kargono/Assets/Asset.h"
-#include "Kargono/Assets/AssetService.h"
+#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetService.h"
 
 //-----------------Audio-----------------//
-#include "Kargono/Audio/Audio.h"
+#include "Modules/Audio/Audio.h"
 
 //-----------------Core-----------------//
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/Engine.h"
+#include "Modules/Core/Engine.h"
 #include "Kargono/Core/Log.h"
 #include "Kargono/Core/Assert.h"
 #include "Kargono/Core/Timestep.h"
@@ -27,59 +27,59 @@
 #include "Kargono/Core/AppTick.h"
 
 //-----------------ECS-----------------//
-#include "Kargono/ECS/Entity.h"
-#include "Kargono/ECS/EngineComponents.h"
-#include "Kargono/ECS/ProjectComponent.h"
+#include "Modules/ECS/Entity.h"
+#include "Modules/ECS/EngineComponents.h"
+#include "Modules/ECS/ProjectComponent.h"
 
 //-----------------Events-----------------//
-#include "Kargono/Events/KeyEvent.h"
-#include "Kargono/Events/MouseEvent.h"
-#include "Kargono/Events/NetworkingEvent.h"
-#include "Kargono/Events/SceneEvent.h"
-#include "Kargono/Events/PhysicsEvent.h"
-#include "Kargono/Events/EditorEvent.h"
+#include "Modules/Events/KeyEvent.h"
+#include "Modules/Events/MouseEvent.h"
+#include "Modules/Events/NetworkingEvent.h"
+#include "Modules/Events/SceneEvent.h"
+#include "Modules/Events/PhysicsEvent.h"
+#include "Modules/Events/EditorEvent.h"
 
 //-----------------Input-----------------//
-#include "Kargono/Input/InputService.h"
-#include "Kargono/Input/InputMap.h"
+#include "Modules/Input/InputService.h"
+#include "Modules/InputMap/InputMap.h"
 
 //-----------------Math-----------------//
 #include "Kargono/Math/Math.h"
 
 //-----------------Network-----------------//
-#include "Kargono/Network/Client.h"
-#include "Kargono/Network/Server.h"
+#include "Modules/Network/Client.h"
+#include "Modules/Network/Server.h"
 
 //-----------------Particles-----------------//
-#include "Kargono/Particles/ParticleService.h"
+#include "Modules/Particles/ParticleService.h"
 
 //-----------------Project-----------------//
 #include "Kargono/Projects/Project.h"
 
 //-----------------Rendering-----------------//
-#include "Kargono/Rendering/RenderingService.h"
-#include "Kargono/Rendering/InputBuffer.h"
-#include "Kargono/Rendering/Shader.h"
-#include "Kargono/Rendering/Shape.h"
-#include "Kargono/Rendering/Framebuffer.h"
-#include "Kargono/Rendering/Texture.h"
-#include "Kargono/Rendering/VertexArray.h"
-#include "Kargono/Rendering/EditorPerspectiveCamera.h"
+#include "Modules/Rendering/RenderingService.h"
+#include "Modules/Rendering/InputBuffer.h"
+#include "Modules/Rendering/Shader.h"
+#include "Modules/Rendering/Shape.h"
+#include "Modules/Rendering/Framebuffer.h"
+#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/VertexArray.h"
+#include "Modules/Rendering/EditorPerspectiveCamera.h"
 
 //-----------------Scene-----------------//
 #include "Kargono/Scenes/Scene.h"
 #include "Kargono/Scenes/GameState.h"
 
 //-----------------Scripting-----------------//
-#include "Kargono/Scripting/ScriptService.h"
-#include "Kargono/Scripting/ScriptModuleBuilder.h"
+#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBuilder.h"
 
 //-----------------Runtime-UserInterface-----------------//
-#include "Kargono/RuntimeUI/RuntimeUI.h"
-#include "Kargono/RuntimeUI/Font.h"
+#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/Font.h"
 
 //-----------------Editor-UserInterface-----------------//
-#include "Kargono/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUI.h"
 
 //-----------------Utilities-----------------//
 #include "Kargono/Utility/Time.h"
@@ -89,4 +89,4 @@
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Utility/Conversions.h"
 #include "Kargono/Utility/Random.h"
-#include "Kargono/Utility/FileSystem.h"
+#include "Modules/FileSystem/FileSystem.h"

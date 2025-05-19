@@ -1,8 +1,8 @@
 #pragma once
-#include "Kargono/Events/KeyEvent.h"
-#include "Kargono/EditorUI/EditorUI.h"
+#include "Modules/Events/KeyEvent.h"
+#include "Modules/EditorUI/EditorUI.h"
 #include "Kargono/Core/FixedString.h"
-#include "Kargono/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUI.h"
 
 #include <string>
 

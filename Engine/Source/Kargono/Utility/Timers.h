@@ -1,16 +1,21 @@
 #pragma once
 
 #include "Kargono/Core/Timestep.h"
-#include "Kargono/Events/ApplicationEvent.h"
+#include "Modules/Events/ApplicationEvent.h"
 #include "Kargono/Core/Base.h"
 
 #include <chrono>
+#include <cstdint>
 #include <thread>
 #include <functional>
 #include <vector>
 #include <mutex>
 #include <atomic>
 
+namespace Kargono
+{
+	using UpdateCount = uint64_t;
+}
 
 namespace Kargono::Utility
 {
@@ -49,55 +54,216 @@ namespace Kargono::Utility
 	class AsyncBusyTimer
 	{
 	public:
-		static void CreateTimer(float waitTime, std::function<void()> function);
-
-		static void CreateRecurringTimer(float waitTime, uint32_t reoccurCount, std::function<void()> reoccurFunction,
-			std::function<void()> terminationFunction = nullptr);
-
-		static void CleanUpClosedTimers();
-
-		static bool CloseAllTimers();
-
-	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		AsyncBusyTimer(float waitTime, std::function<void()> function);
-
 		AsyncBusyTimer(float waitTime, uint32_t reoccurCount, std::function<void()> reoccurFunction,
 			std::function<void()> terminationFunction);
-
 		~AsyncBusyTimer();
 
 	public:
-		void ForceStop() { m_ForceStop = true; }
+		//==============================
+		// Manage Timer State
+		//==============================
+		void ForceStop() 
+		{ 
+			m_ForceStop = true; 
+		}
 	private:
+		//==============================
+		// Run Timer
+		//==============================
 		void Wait();
 		void ReoccurWait();
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Thread
+		std::thread m_TimerThread;
+		// Injected functions
 		std::function<void()> m_TerminationFunction { nullptr };
 		std::function<void()> m_ReoccurFunction { nullptr };
+		// Timer state
 		float m_WaitTime;
 		float m_ElapsedTime;
 		uint32_t m_ReoccurCount{ 0 };
-		std::thread m_TimerThread;
 		bool m_Done {false};
 		std::atomic<bool> m_ForceStop {false};
 	private:
-		static std::vector<Ref<AsyncBusyTimer>> s_AllBusyTimers;
-		static std::mutex s_BusyTimerMutex;
+		friend class AsyncBusyTimerContext;
+	};
+
+	class AsyncBusyTimerContext
+	{
+	public:
+		//==============================
+		// Create Timers
+		//==============================
+		void CreateTimer(float waitTime, std::function<void()> function);
+		void CreateRecurringTimer(float waitTime, uint32_t reoccurCount, std::function<void()> reoccurFunction,
+			std::function<void()> terminationFunction = nullptr);
+
+		//==============================
+		// Close Timers
+		//==============================
+		void CleanUpClosedTimers();
+		bool CloseAllTimers();
+
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		std::vector<Ref<AsyncBusyTimer>> m_AllBusyTimers;
+		std::mutex m_BusyTimerMutex;
+	};
+
+	class AsyncBusyTimerService
+	{
+	public:
+		static AsyncBusyTimerContext& GetActiveBusyTimerContext()
+		{
+			return m_Context;
+		}
+	private:
+		static inline AsyncBusyTimerContext m_Context;
 	};
 
 	class PassiveTimer
 	{
 	public:
-		static void CreateTimer(float waitTime, std::function<void()> function);
-		static void OnUpdate(Timestep step);
-	public:
-		PassiveTimer(float waitTime, std::function<void()> function) : m_WaitTime{ waitTime }, m_Function {function} {}
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		PassiveTimer(float waitTime, std::function<void()> function) : m_WaitTime{ waitTime }, m_Function{ function } {}
+		~PassiveTimer() = default;
+	
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
 		float m_WaitTime {0.0f};
 		float m_ElapsedTime{0.0f};
 		std::function<void()> m_Function {nullptr};
 	private:
-		static std::vector<PassiveTimer> s_AllPassiveTimers;
+		friend class PassiveTimerContext;
+	};
+
+	class PassiveTimerContext
+	{
+	public:
+		//==============================
+		// Create Timers
+		//==============================
+		void CreateTimer(float waitTime, std::function<void()> function);
+		void OnUpdate(Timestep step);
+
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		std::vector<PassiveTimer> m_AllPassiveTimers;
+	};
+
+	class PassiveTimerService
+	{
+	public:
+		static PassiveTimerContext& GetActiveBusyTimerContext()
+		{
+			return m_Context;
+		}
+	private:
+		static inline PassiveTimerContext m_Context;
+	};
+
+	class LoopTimer
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		LoopTimer() = default;
+		~LoopTimer() = default;
+
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		// Move the timer context forward
+		bool CheckForSingleUpdate();
+		UpdateCount CheckForMultipleUpdates();
+
+		//==============================
+		// Modify Timer State
+		//==============================
+		// Reset the timer values
+		void InitializeTimer();
+		void ResetAccumulator();
+		// Adjust accumulator
+		void SkipUpdates(UpdateCount count);
+		void AddUpdates(UpdateCount count);
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		// Config fields
+		void SetConstantFrameTime(std::chrono::nanoseconds newFrameTime);
+		void SetConstantFrameTime(uint64_t newFrameTime);
+		std::chrono::nanoseconds GetConstantFrameTime();
+		void SetConstantFrameTimeFloat(float newFrameTimeSeconds);
+		float GetConstantFrameTimeFloat() const;
+		// Accumulation fields
+		UpdateCount GetUpdateCount() const;
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Timepoints (for calculating time-step)
+		std::chrono::time_point<std::chrono::high_resolution_clock> m_CurrentTime;
+		std::chrono::time_point<std::chrono::high_resolution_clock> m_LastLoopTime;
+
+		// Accumulating data
+		std::chrono::nanoseconds m_Timestep{ 0 };
+		std::chrono::nanoseconds m_Accumulator{ 0 };
+		UpdateCount m_UpdateCount{ 0 };
+
+		// Configuration data
+		std::chrono::nanoseconds m_ConstantFrameTime{ 1'000 * 1'000 * 1'000 / 60 }; // 1/60th of a second
+	};
+
+	class PassiveLoopTimer
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		PassiveLoopTimer() = default;
+		~PassiveLoopTimer() = default;
+
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		// Reset the timer
+		void InitializeTimer(std::chrono::nanoseconds updateDelta);
+		void InitializeTimer(float updateDeltaSeconds);
+		void InitializeTimer();
+		// Move the timer forward
+		bool CheckForUpdate(std::chrono::nanoseconds timestep);
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		// Manage constant frame time
+		void SetUpdateDelta(std::chrono::nanoseconds newFrameTime);
+		void SetUpdateDeltaFloat(float newFrameTimeSeconds);
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Accumulation data
+		std::chrono::nanoseconds m_Accumulator{};
+		// Configuration data
+		std::chrono::nanoseconds m_UpdateDelta{ 1'000 * 1'000 * 1'000 / 60 /*1/60th sec*/ };
 	};
 
 }

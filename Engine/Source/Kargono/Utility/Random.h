@@ -5,32 +5,48 @@
 
 namespace Kargono::Utility
 {
-	class RandomService
+	class STLRandom
 	{
 	public:
 		//==============================
-		// Service API
+		// Constructors/Destructors
 		//==============================
-		static int32_t GenerateRandomInteger(int32_t lowerBound, int32_t upperBound)
+		STLRandom();
+		~STLRandom() = default;
+	public:
+		//==============================
+		// Generate Random
+		//==============================
+		int32_t GenerateRandomInteger(int32_t lowerBound, int32_t upperBound)
 		{
-			return std::uniform_int_distribution<int32_t>{lowerBound, upperBound}(randomGenerator);
+			return std::uniform_int_distribution<int32_t>{lowerBound, upperBound}(m_RandomGenerator);
 		}
 
-		static float GenerateRandomFloat(float lowerBound, float upperBound)
+		float GenerateRandomFloat(float lowerBound, float upperBound)
 		{
-			return std::uniform_real_distribution<float>{lowerBound, upperBound}(randomGenerator);
+			return std::uniform_real_distribution<float>{lowerBound, upperBound}(m_RandomGenerator);
 		}
-	private:
-		//==============================
-		// Initializez Static Resources
-		//==============================
-		static std::mt19937 CreateRandomNumberGenerator();
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		static std::mt19937 randomGenerator;
+		std::mt19937 m_RandomGenerator;
 	};
+
+
+	class STLRandomService
+	{
+	public:
+		static STLRandom& GetActiveRandom()
+		{
+			return m_Random;
+		}
+	private:
+		static inline STLRandom m_Random;
+	};
+
+	constexpr uint64_t k_PseudoMultiplier{ 6364136223846793005ULL };
+	constexpr uint64_t k_PseudoModulus{ std::numeric_limits<uint64_t>::max() };
 
 	//==============================
 	// PseudoGenerator Class
@@ -43,34 +59,23 @@ namespace Kargono::Utility
 		//==============================
 		PseudoGenerator(uint64_t seed);
 
+		//==============================
+		// Generate Numbers
+		//==============================
+		uint64_t GenerateNumber();
+		float GenerateFloatBounds(float lowerBound, float upperBound);
+
+		//==============================
+		// Modify Generators
+		//==============================
+		void ResetState();
 	private:
 		//==============================
-		// Internal Fields to hold state
+		// Internal Fields
 		//==============================
 		uint64_t m_Seed{0};
 		uint64_t m_State{0};
 	private:
 		friend class PseudoRandomService;
-	};
-
-	constexpr inline uint64_t s_Multiplier { 6364136223846793005ULL };
-	constexpr inline uint64_t s_Modulus { std::numeric_limits<uint64_t>::max() };
-
-	//==============================
-	// PseudoRandomService Class
-	//==============================
-	class PseudoRandomService
-	{
-	public:
-		//==============================
-		// Service API
-		//==============================
-		static uint64_t GenerateNumber(PseudoGenerator& state);
-		static float GenerateFloatBounds(PseudoGenerator& gen, float lowerBound, float upperBound);
-
-		//==============================
-		// Modify Generators
-		//==============================
-		static void ResetState(PseudoGenerator& state);
 	};
 }

@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
-#include "Kargono/Input/InputService.h"
-#include "Kargono/Core/Engine.h"
+#include "Modules/Input/InputService.h"
+#include "Modules/Core/Engine.h"
 #include "Kargono/Math/Math.h"
 
 #if defined(KG_PLATFORM_WINDOWS) || defined(KG_PLATFORM_LINUX) 
@@ -16,20 +16,20 @@ namespace Kargono::Input
 		{
 			return false;
 		}
-		GLFWwindow* window = (GLFWwindow*)EngineService::GetActiveWindow().GetNativeWindow();
+		GLFWwindow* window = (GLFWwindow*)EngineService::GetActiveEngine().GetWindow().GetNativeWindow();
 		int state = glfwGetKey(window, static_cast<int32_t>(key));
 		return state == GLFW_PRESS;
 
 	}
 	bool InputService::IsMouseButtonPressed(const MouseCode button)
 	{
-		GLFWwindow* window = (GLFWwindow*)EngineService::GetActiveWindow().GetNativeWindow();
+		GLFWwindow* window = (GLFWwindow*)EngineService::GetActiveEngine().GetWindow().GetNativeWindow();
 		int state = glfwGetMouseButton(window, static_cast<int32_t>(button));
 		return state == GLFW_PRESS;
 	}
 	Math::vec2 InputService::GetAbsoluteMousePosition()
 	{
-		GLFWwindow* window = (GLFWwindow*)EngineService::GetActiveWindow().GetNativeWindow();
+		GLFWwindow* window = (GLFWwindow*)EngineService::GetActiveEngine().GetWindow().GetNativeWindow();
 		double xpos;
 		double ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
@@ -48,10 +48,9 @@ namespace Kargono::Input
 
 	Math::vec2 InputService::GetViewportMousePosition()
 	{
-		Application* currentApp = EngineService::GetActiveApplication();
-		KG_ASSERT(currentApp);
+		Application& currentApp = EngineService::GetActiveEngine().GetApp();
 
-		return currentApp->GetMouseViewportPosition();
+		return currentApp.GetMouseViewportPosition();
 	}
 
 }

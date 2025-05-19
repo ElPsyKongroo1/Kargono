@@ -32,7 +32,7 @@
 #include <malloc.h>
 #endif
 
-#include "Kargono/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUI.h"
 
 // includes patches for multiview from
 // https://github.com/CedricGuillemet/ImGuizmo/issues/15

@@ -1,14 +1,14 @@
 
 #include "Launcher/LauncherApp.h"
 
-#include "Kargono/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUI.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Core/Engine.h"
+#include "Modules/Core/Engine.h"
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
-#include "Kargono/Rendering/Texture.h"
+#include "Modules/Rendering/Texture.h"
 
-#include "API/EditorUI/ImGuiBackendAPI.h"
+#include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 
 namespace Kargono
 {
@@ -33,7 +33,7 @@ namespace Kargono
 			s_LauncherApp->SetSelectedProject(Projects::ProjectService::CreateNewProject(s_CreateProjectName.m_CurrentOption, s_CreateProjectLocation.m_CurrentOption));
 			if (!s_LauncherApp->GetSelectedProject().empty())
 			{
-				EngineService::EndRun();
+				EngineService::GetActiveEngine().GetThread().EndThread();
 			}
 		};
 
@@ -44,28 +44,32 @@ namespace Kargono
 		s_CreateProjectLocation.m_CurrentOption = std::filesystem::current_path().parent_path() / "Projects";
 	}
 
-	void LauncherApp::Init()
+	bool LauncherApp::Init()
 	{
 		s_LauncherApp = this;
 		InitializeStaticResources();
 
-		EngineService::GetActiveWindow().Init();
+		Engine& engine = EngineService::GetActiveEngine();
+
+		engine.GetWindow().Init();
 
 		EditorUI::EditorUIService::Init();
 
-		EngineService::GetActiveWindow().SetResizable(false);
-		EngineService::GetActiveWindow().CenterWindow();
+		engine.GetWindow().SetResizable(false);
+		engine.GetWindow().CenterWindow();
 
-		EngineService::GetActiveWindow().SetVisible(true);
+		engine.GetWindow().SetVisible(true);
+		return true;
 	}
-	void LauncherApp::Terminate()
+	bool LauncherApp::Terminate()
 	{
 		EditorUI::EditorUIService::Terminate();
+
+		return true;
 	}
 
-	bool LauncherApp::OnLogEvent(Events::Event* event)
+	bool LauncherApp::OnLogEvent(Events::Event* /*event*/)
 	{
-		UNREFERENCED_PARAMETER(event);
 
 		// TODO: Figure out better solution. This currently looks super wonkyyyyy
 		//Events::LogEvent* logEvent = (Events::LogEvent*)event;
@@ -103,9 +107,8 @@ namespace Kargono
 	}
 
 
-	void LauncherApp::OnUpdate(Timestep ts)
+	void LauncherApp::OnUpdate(Timestep /*ts*/)
 	{
-		UNREFERENCED_PARAMETER(ts);
 
 		EditorUI::EditorUIService::StartRendering();
 
@@ -138,7 +141,7 @@ namespace Kargono
 			SelectProject();
 			if (!m_SelectedProject.empty())
 			{
-				EngineService::EndRun();
+				EngineService::GetActiveEngine().GetThread().EndThread();
 			}
 		}, 
 		"Create New Project", [&]()

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Kargono/Core/Timestep.h"
-#include "Kargono/Events/Event.h"
-#include "Kargono/Events/ApplicationEvent.h"
+#include "Modules/Events/Event.h"
+#include "Modules/Events/ApplicationEvent.h"
 
 #include <vector>
 
@@ -24,11 +24,6 @@ namespace Kargono
 	class AppTickService
 	{
 	public:
-		//==============================
-		// Load Generators From File
-		//==============================
-		static void LoadGeneratorsFromProject();
-
 		//==============================
 		// Manage Events
 		//==============================

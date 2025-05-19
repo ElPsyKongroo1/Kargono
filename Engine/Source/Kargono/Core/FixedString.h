@@ -60,15 +60,15 @@ namespace Kargono
 		}
 
 		
-		template<typename... VariadicArgs>
-		bool SetFormat(const char* formatString, VariadicArgs&&... args)
+		template<typename... Args>
+		bool SetFormat(const char* formatString, Args&&... args)
 		{
 			// Note that this function may truncate resulting formatted string if the buffer is too small
 			// Note that snprintf deals with null termination automatically
 
 			// Replace data inside buffer with formatted string and get resultant size of buffer
 			
-			int32_t newStringSize = std::snprintf(m_DataBuffer.data(), BufferSize, formatString, std::forward<VariadicArgs>(args)...);
+			int32_t newStringSize = std::snprintf(m_DataBuffer.data(), BufferSize, formatString, std::forward<Args>(args)...);
 
 			// If snprintf fails, return false
 			if (newStringSize < 0) 
@@ -81,15 +81,15 @@ namespace Kargono
 			return true;
 		}
 
-		template<typename... VariadicArgs>
-		bool AppendFormat(const char* formatString, VariadicArgs&&... args)
+		template<typename... Args>
+		bool AppendFormat(const char* formatString, Args&&... args)
 		{
 			// Note that this function may truncate resulting formatted string if the buffer is too small
 			// Note that snprintf deals with null termination automatically
 
 			// Replace data inside buffer with formatted string and get resultant size of buffer
 
-			int32_t newStringSize = std::snprintf(m_DataBuffer.data() + m_StringLength, BufferSize - m_StringLength, formatString, std::forward<VariadicArgs>(args)...);
+			int32_t newStringSize = std::snprintf(m_DataBuffer.data() + m_StringLength, BufferSize - m_StringLength, formatString, std::forward<Args>(args)...);
 
 			// If snprintf fails, return false
 			if (newStringSize < 0)
@@ -173,7 +173,8 @@ namespace Kargono
 		}
 
 		template <std::size_t OtherBufferSize>
-		bool operator==(const FixedString<OtherBufferSize>& other) const {
+		bool operator==(const FixedString<OtherBufferSize>& other) const 
+		{
 			// Check if lengths are different
 			if (m_StringLength != other.m_StringLength)
 			{
@@ -181,6 +182,17 @@ namespace Kargono
 			}
 			// Compare content up to m_Length
 			return std::memcmp(m_DataBuffer.data(), other.m_DataBuffer.data(), m_StringLength) == 0;
+		}
+
+		bool operator==(const char* other) const
+		{
+			size_t otherLength = strlen(other);
+			if (m_StringLength != otherLength)
+			{
+				return false;
+			}
+
+			return std::memcmp(m_DataBuffer.data(), other, m_StringLength) == 0;
 		}
 
 		std::string operator+(const char* otherCString)
@@ -283,13 +295,14 @@ namespace Kargono
 		return returnString;
 	}
 
+	using FixedString8 = FixedString<8>; // Really small. For limited text sizes.
 	using FixedString16 = FixedString<16>; // Generally for small status codes, short labels, etc...
 	using FixedString32 = FixedString<32>; // Generally for status codes, small integers, etc...
 	using FixedString64 = FixedString<64>; // Generally for usernames, uuid's, small formatted strings... 
 	using FixedString256 = FixedString<256>; // Generally for usernames, short log messages, etc... 
 	using FixedString1024 = FixedString<1024>; // Generally for long file paths, full log messages, etc...
 	using FixedString8192 = FixedString<8192>; // Generally for http headers, small socket payloads, etc...
-	using FixedString64KB = FixedString<64000>; // Generally for large large data streams or file io...
+	using FixedString64KB = FixedString<64'000>; // Generally for large large data streams or file io...
 }
 
 namespace std

@@ -527,7 +527,7 @@ namespace Kargono::Panels
 								}
 
 								// Fill the new script handle
-								m_KeyboardOnUpdateAddFunction.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_KeyboardOnUpdateAddFunction.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 						},{}, false);
 					}};
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -550,7 +550,7 @@ namespace Kargono::Panels
 			else
 			{
 				KG_ASSERT(activeBinding->GetScript());
-				m_KeyboardOnUpdateEditFunction.m_CurrentOption = { activeBinding->GetScript()->m_ScriptName, activeBinding->GetScriptHandle()};
+				m_KeyboardOnUpdateEditFunction.m_CurrentOption = { activeBinding->GetScript()->m_ScriptName.c_str(), activeBinding->GetScriptHandle()};
 			}
 		};
 		m_KeyboardOnUpdateEditPopup.m_PopupContents = [&]()
@@ -650,7 +650,7 @@ namespace Kargono::Panels
 							}
 
 							// Fill the new script handle
-							m_KeyboardOnUpdateEditFunction.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+							m_KeyboardOnUpdateEditFunction.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 					},{}, false);
 				} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -812,7 +812,7 @@ namespace Kargono::Panels
 								}
 
 								// Fill the new script handle
-								m_KeyboardOnKeyPressedAddFunction.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+								m_KeyboardOnKeyPressedAddFunction.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 							},{},  false);
 						} };
 				m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);
@@ -835,7 +835,7 @@ namespace Kargono::Panels
 			else
 			{
 				KG_ASSERT(activeBinding->GetScript());
-				m_KeyboardOnKeyPressedEditFunction.m_CurrentOption = { activeBinding->GetScript()->m_ScriptName, activeBinding->GetScriptHandle() };
+				m_KeyboardOnKeyPressedEditFunction.m_CurrentOption = { activeBinding->GetScript()->m_ScriptName.c_str(), activeBinding->GetScriptHandle()};
 			}
 		};
 		m_KeyboardOnKeyPressedEditPopup.m_PopupContents = [&]()
@@ -934,7 +934,7 @@ namespace Kargono::Panels
 							}
 
 							// Fill the new script handle
-							m_KeyboardOnKeyPressedEditFunction.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+							m_KeyboardOnKeyPressedEditFunction.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 						},{}, false);
 					} };
 			m_SelectScriptTooltip.AddTooltipEntry(createScriptOptions);

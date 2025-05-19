@@ -64,7 +64,7 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(entry);
 			// Delete current selected entry
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				m_CreateWidgets.m_ParameterList.RemoveEntry(m_ActiveParameterLocation);
 			});
@@ -342,7 +342,7 @@ namespace Kargono::Panels
 					{
 							UNREFERENCED_PARAMETER(entry);
 							// Delete current selected entry
-							EngineService::SubmitToMainThread([&]()
+							EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 							{
 								m_CreateWidgets.m_ParameterList.RemoveEntry(m_ActiveParameterLocation);
 							});

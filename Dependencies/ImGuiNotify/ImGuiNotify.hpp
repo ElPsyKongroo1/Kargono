@@ -23,7 +23,7 @@
 #include "imgui_internal.h"
 
 #include "IconsFontAwesome6.h"
-#include "Kargono/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUI.h"
 
 /**
  * CONFIGURATION SECTION Start

@@ -18,6 +18,8 @@
         "Source/kgpch.cpp",
         "Source/Kargono/**.h",
         "Source/Kargono/**.cpp",
+        "%{wks.location}/Engine/Modules/**.cpp",
+        "%{wks.location}/Engine/Modules/**.h",
         "%{wks.location}/Dependencies/stb_image/**.cpp",
         "%{wks.location}/Dependencies/stb_image/**.h",
         "%{wks.location}/Dependencies/ImGuizmo/ImGuizmo.h",
@@ -30,6 +32,8 @@
         "%{wks.location}/Dependencies/optick/src/**.h",
         "%{wks.location}/Dependencies/ImGuiColorTextEdit/TextEditor.cpp",
         "%{wks.location}/Dependencies/ImGuiColorTextEdit/TextEditor.h",
+        "%{wks.location}/Dependencies/implot/**.h",
+        "%{wks.location}/Dependencies/implot/**.cpp",
         "Source/API/**.h",
         "Source/API/**.cpp"
     }
@@ -43,6 +47,7 @@
     includedirs 
     {
         "Source",
+        "%{wks.location}/Engine",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.filewatch}",
@@ -62,7 +67,7 @@
         "%{IncludeDir.msdf_atlas_gen}",
         "%{IncludeDir.msdfgen}",
         "%{IncludeDir.optick}",
-        "%{IncludeDir.asio}",
+        "%{IncludeDir.implot}",
         "%{IncludeDir.ImGuiColorTextEdit}"
     }
 
@@ -78,15 +83,7 @@
         "freetype"
     }
 
-    filter "files:../Dependencies/ImGuizmo/**.cpp"
-        flags{ "NoPCH" }
-
-    filter "files:../Dependencies/hash_library/**.cpp"
-        flags{ "NoPCH" }
-
-    filter "files:../Dependencies/optick/src/**.cpp"
-        flags{ "NoPCH" }
-    filter "files:../Dependencies/ImGuiColorTextEdit/**.cpp"
+    filter "files:../Dependencies/**.cpp"
         flags{ "NoPCH" }
 
     filter "system:windows"

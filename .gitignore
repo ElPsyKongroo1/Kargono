@@ -29,6 +29,10 @@ bin-int/**
 **.sln.metaproj.tmp
 **/Makefile
 
+# Files
+.editorconfig
+.gitattributes
+
 
 # Specific Directories from Root
 /Binary/**

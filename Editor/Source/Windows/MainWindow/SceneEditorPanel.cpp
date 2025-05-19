@@ -5,9 +5,9 @@
 #include "EditorApp.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Events/SceneEvent.h"
+#include "Modules/Events/SceneEvent.h"
 
-#include "API/EditorUI/ImGuiBackendAPI.h"
+#include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
@@ -68,7 +68,7 @@ namespace Kargono::Panels
 					EditorUI::TooltipEntry addEntityEntry{ "Add Entity", [&](EditorUI::TooltipEntry& tooltipEntry)
 					{
 						UNREFERENCED_PARAMETER(entry);
-						EngineService::SubmitToMainThread([]()
+						EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 						{
 							Scenes::SceneService::GetActiveScene()->CreateEntity("Empty Entity");
 						});
@@ -376,10 +376,10 @@ namespace Kargono::Panels
 			editorScene->GetPhysicsSpecification().Gravity = spec.m_CurrentVec2;
 
 			// If the simulation is running, modify the gravity value inside the simulation
-			if (Physics::Physics2DService::GetActivePhysics2DWorld())
+			if (Physics::Physics2DService::IsContextActive())
 			{
 				Scenes::SceneService::GetActiveScene()->GetPhysicsSpecification().Gravity = s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity;
-				Physics::Physics2DService::SetActiveGravity(s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity);
+				Physics::Physics2DService::GetActiveContext().SetActiveGravity(s_MainWindow->m_EditorScene->GetPhysicsSpecification().Gravity);
 			}
 		};
 	}
@@ -487,7 +487,7 @@ namespace Kargono::Panels
 		m_Rigidbody2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<ECS::Rigidbody2DComponent>())
@@ -645,7 +645,7 @@ namespace Kargono::Panels
 						// Check for a valid entry, and Update if applicable
 						component.OnCollisionStartScriptHandle = scriptHandle;
 						component.OnCollisionStartScript = script;
-						m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+						m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 					}, {"activeEntity", "collidedEntity"});
 
 				} };
@@ -741,7 +741,7 @@ namespace Kargono::Panels
 						// Check for a valid entry, and Update if applicable
 						component.OnCollisionEndScriptHandle = scriptHandle;
 						component.OnCollisionEndScript = script;
-						m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+						m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 					}, {"activeEntity", "collidedEntity"});
 
 			}		};
@@ -762,7 +762,7 @@ namespace Kargono::Panels
 		m_BoxCollider2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<ECS::BoxCollider2DComponent>())
@@ -904,7 +904,7 @@ namespace Kargono::Panels
 		m_CircleCollider2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<ECS::CircleCollider2DComponent>())
@@ -1047,7 +1047,7 @@ namespace Kargono::Panels
 		m_CameraHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<ECS::CameraComponent>())
@@ -1218,7 +1218,7 @@ namespace Kargono::Panels
 		m_ParticleEmitterHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
@@ -1305,7 +1305,7 @@ namespace Kargono::Panels
 		m_OnUpdateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
@@ -1425,7 +1425,7 @@ namespace Kargono::Panels
 					// Update component's data
 					component.OnUpdateScriptHandle = scriptHandle;
 					component.OnUpdateScript = script;
-					m_SelectOnUpdateScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+					m_SelectOnUpdateScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 				}, {"activeEntity", "deltaTime"});
 
 				} };
@@ -1445,7 +1445,7 @@ namespace Kargono::Panels
 		m_OnCreateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
@@ -1565,7 +1565,7 @@ namespace Kargono::Panels
 					// Update component's data
 					component.OnCreateScriptHandle = scriptHandle;
 					component.OnCreateScript = script;
-					m_SelectOnCreateScript.m_CurrentOption = { script->m_ScriptName, scriptHandle };
+					m_SelectOnCreateScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 				}, {"activeEntity"});
 
 				}};
@@ -1586,7 +1586,7 @@ namespace Kargono::Panels
 		m_AIStateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
@@ -1745,7 +1745,7 @@ namespace Kargono::Panels
 		m_ShapeHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<ECS::ShapeComponent>())
@@ -2103,7 +2103,7 @@ namespace Kargono::Panels
 		newWidgetData.m_Header.m_ProvidedData = CreateRef<Assets::AssetHandle>(projectComponentHandle);
 		newWidgetData.m_Header.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderSpec& spec)
 		{
-			EngineService::SubmitToMainThread([&]()
+			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				Assets::AssetHandle projectComponentHandle = *(Assets::AssetHandle*)spec.m_ProvidedData.get();
@@ -2759,13 +2759,13 @@ namespace Kargono::Panels
 			Ref<Scripting::Script> collisionStartScript = Assets::AssetService::GetScript(component.OnCollisionStartScriptHandle);
 			m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = component.OnCollisionStartScriptHandle == Assets::EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
-				EditorUI::OptionEntry(Utility::ScriptToString(collisionStartScript), component.OnCollisionStartScriptHandle);
+				EditorUI::OptionEntry(Utility::ScriptToString(collisionStartScript).c_str(), component.OnCollisionStartScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectRigidBody2DCollisionStartScript);
 
 			Ref<Scripting::Script> collisionEndScript = Assets::AssetService::GetScript(component.OnCollisionEndScriptHandle);
 			m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = component.OnCollisionEndScriptHandle == Assets::EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
-				EditorUI::OptionEntry(Utility::ScriptToString(collisionEndScript), component.OnCollisionEndScriptHandle);
+				EditorUI::OptionEntry(Utility::ScriptToString(collisionEndScript).c_str(), component.OnCollisionEndScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectRigidBody2DCollisionEndScript);
 		}
 	}
@@ -2875,7 +2875,7 @@ namespace Kargono::Panels
 			Assets::AssetInfo emitterInfo = Assets::AssetService::GetEmitterConfigInfo(component.m_EmitterConfigHandle);
 			m_SelectParticleEmitter.m_CurrentOption = component.m_EmitterConfigHandle == Assets::EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
-				EditorUI::OptionEntry(emitterInfo.Data.FileLocation.filename().string(), component.m_EmitterConfigHandle);
+				EditorUI::OptionEntry(emitterInfo.Data.FileLocation.filename().string().c_str(), component.m_EmitterConfigHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectParticleEmitter);
 		}
 	}
@@ -2892,7 +2892,7 @@ namespace Kargono::Panels
 			Ref<Scripting::Script> script = Assets::AssetService::GetScript(component.OnUpdateScriptHandle);
 			m_SelectOnUpdateScript.m_CurrentOption = component.OnUpdateScriptHandle == Assets::EmptyHandle ? 
 				EditorUI::OptionEntry( "None", Assets::EmptyHandle ) :
-				EditorUI::OptionEntry(Utility::ScriptToString(script), component.OnUpdateScriptHandle);
+				EditorUI::OptionEntry(Utility::ScriptToString(script).c_str(), component.OnUpdateScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectOnUpdateScript);
 		}
 	}
@@ -2911,7 +2911,7 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& globalAsset = Assets::AssetService::GetAIStateRegistry().at(component.GlobalStateHandle);
-				m_SelectGlobalState.m_CurrentOption = { globalAsset.Data.FileLocation.filename().string(), component.GlobalStateHandle };
+				m_SelectGlobalState.m_CurrentOption = { globalAsset.Data.FileLocation.filename().string().c_str(), component.GlobalStateHandle };
 			}
 			else
 			{
@@ -2924,7 +2924,7 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& currentAsset = Assets::AssetService::GetAIStateRegistry().at(component.CurrentStateHandle);
-				m_SelectCurrentState.m_CurrentOption = { currentAsset.Data.FileLocation.filename().string(), component.CurrentStateHandle };
+				m_SelectCurrentState.m_CurrentOption = { currentAsset.Data.FileLocation.filename().string().c_str(), component.CurrentStateHandle };
 			}
 			else
 			{
@@ -2937,7 +2937,7 @@ namespace Kargono::Panels
 			if (optionValid)
 			{
 				Assets::AssetInfo& previousAsset = Assets::AssetService::GetAIStateRegistry().at(component.PreviousStateHandle);
-				m_SelectPreviousState.m_CurrentOption = { previousAsset.Data.FileLocation.filename().string(), component.PreviousStateHandle };
+				m_SelectPreviousState.m_CurrentOption = { previousAsset.Data.FileLocation.filename().string().c_str(), component.PreviousStateHandle };
 			}
 			else
 			{
@@ -2959,7 +2959,7 @@ namespace Kargono::Panels
 			Ref<Scripting::Script> script = Assets::AssetService::GetScript(component.OnCreateScriptHandle);
 			m_SelectOnCreateScript.m_CurrentOption = component.OnCreateScriptHandle == Assets::EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::EmptyHandle) :
-				EditorUI::OptionEntry(Utility::ScriptToString(script), component.OnCreateScriptHandle);
+				EditorUI::OptionEntry(Utility::ScriptToString(script).c_str(), component.OnCreateScriptHandle);
 			EditorUI::EditorUIService::SelectOption(m_SelectOnCreateScript);
 		}
 	}
@@ -3241,7 +3241,7 @@ namespace Kargono::Panels
 			{
 				m_ShapeSetTexture.m_CurrentOption =
 				{
-					Assets::AssetService::GetTexture2DRegistry().at(component.TextureHandle).Data.FileLocation.filename().string(),
+					Assets::AssetService::GetTexture2DRegistry().at(component.TextureHandle).Data.FileLocation.filename().string().c_str(),
 					component.TextureHandle
 				};
 			}
@@ -3329,7 +3329,7 @@ namespace Kargono::Panels
 				static ECS::Entity entityToDelete;
 				entityToDelete = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(entt::entity((int)entry.m_Handle));
 
-				EngineService::SubmitToMainThread([&]()
+				EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 				{
 					if (!entityToDelete)
 					{

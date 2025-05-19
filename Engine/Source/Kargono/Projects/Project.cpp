@@ -1,9 +1,9 @@
 #include "kgpch.h"
 
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Core/Engine.h"
-#include "Kargono/Assets/Asset.h"
-#include "Kargono/Network/NetworkTools.h"
+#include "Modules/Core/Engine.h"
+#include "Modules/Assets/Asset.h"
+#include "Modules/Network/NetworkTools.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 
@@ -15,35 +15,11 @@
 
 namespace Kargono::Projects
 {
-	void ProjectService::ExportProject(const std::filesystem::path& exportLocation, Network::ServerConfig* serverConfig, bool createServer)
+	void ProjectService::ExportProject(const std::filesystem::path& exportLocation, bool createServer)
 	{
 		KG_INFO("Beginning export project process");
 
 		KG_ASSERT(s_ActiveProject, "Failed to export project since no active project is open!");
-
-		// Create/overwrite the server config file if specified
-		bool writeConfigError{ false };
-		if (serverConfig)
-		{
-			// Create the config file path
-			std::filesystem::path configFilePath = GetActiveProjectDirectory() / "ServerConfig.env";
-			KG_INFO("Creating server config file at {}", configFilePath.string());
-
-			// Write the config file path out to disk (project location)
-			std::string newConfigFile = Network::NetworkTools::CreateServerVariablesConfigFile(*serverConfig);
-			writeConfigError = !Utility::FileSystem::WriteFileString(configFilePath, newConfigFile);
-		}
-		else
-		{
-			KG_INFO("No server config specified for creation");
-		}
-
-		// Ensure config file creation does not throw errors
-		if (writeConfigError)
-		{
-			KG_WARN("Error occurred while writing config file to disk. Cancelling the project export");
-			return;
-		}
 
 		// Create full path to the export directories of the runtime and server
 		std::filesystem::path exportDirectory = exportLocation / s_ActiveProject->Name;
@@ -353,6 +329,29 @@ namespace Kargono::Projects
 		return true;
 	}
 
+	bool ProjectService::SerializeServerConfig(Ref<Projects::Project> project)
+	{
+		// Create/overwrite the server config file if specified
+		bool writeConfigError{ false };
+
+		// Create the config file path
+		std::filesystem::path configFilePath = project->m_ProjectDirectory / "ServerConfig.env";
+		KG_INFO("Creating server config file at {}", configFilePath.string());
+
+		// Write the config file path out to disk (project location)
+		std::string newConfigFile = Network::NetworkTools::CreateServerVariablesConfigFile(project->m_ServerConfig);
+		writeConfigError = !Utility::FileSystem::WriteFileString(configFilePath, newConfigFile);
+
+		// Ensure config file creation does not throw errors
+		if (writeConfigError)
+		{
+			KG_WARN("Error occurred while writing config file to disk.");
+			return false;
+		}
+
+		return true;
+	}
+
 	bool ProjectService::DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& projectPath)
 	{
 		std::filesystem::path filepath = (projectPath.parent_path() / "ServerConfig.env");
@@ -373,11 +372,12 @@ namespace Kargono::Projects
 			KG_ERROR("Failed to load server variables '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
-		auto rootNode = data["ServerVariables"];
+		YAML::Node rootNode = data["ServerVariables"];
 		if (!rootNode) { return false; }
 
-		project->m_ServerConfig.m_IPv4 = (Math::u8vec4)rootNode["ServerIP"].as<Math::ivec4>();
-		project->m_ServerConfig.m_Port = static_cast<uint16_t>(rootNode["ServerPort"].as<uint32_t>());
+		Math::u8vec4 ipv4 = (Math::u8vec4)rootNode["ServerIP"].as<Math::ivec4>();
+		project->m_ServerConfig.m_ServerAddress.SetAddress(ipv4.x, ipv4.y, ipv4.z, ipv4.w);
+		project->m_ServerConfig.m_ServerAddress.SetNewPort(static_cast<uint16_t>(rootNode["ServerPort"].as<uint32_t>()));
 		project->m_ServerConfig.m_ServerLocation = Utility::StringToServerLocation(rootNode["ServerLocation"].as<std::string>());
 
 		project->m_ServerConfig.m_ValidationSecrets.x = rootNode["SecretOne"].as<uint64_t>();
@@ -490,18 +490,6 @@ namespace Kargono::Projects
 				out << YAML::Key << "OnReceiveSignal" << YAML::Value << (uint64_t)project->OnReceiveSignal;
 				out << YAML::Key << "AppIsNetworked" << YAML::Value << project->AppIsNetworked;
 
-				// TODO: Remove App Tick Generators
-				// Serialize App Tick Generators
-				if (project->AppTickGenerators.size() > 0)
-				{
-					out << YAML::Key << "AppTickGenerators" << YAML::BeginSeq;
-					for (auto generatorValue : project->AppTickGenerators)
-					{
-						out << YAML::Value << generatorValue;
-					}
-					out << YAML::EndSeq;
-				}
-
 				out << YAML::EndMap; // Close Project
 			}
 
@@ -510,8 +498,19 @@ namespace Kargono::Projects
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
-		KG_INFO("Successfully Serialized Project {}", project->Name);
-		return true;
+
+		KG_INFO("Successfully serialized project file {}", project->Name);
+
+		if (SerializeServerConfig(project))
+		{
+			KG_INFO("Successfully serialized server config file");
+			return true;
+		}
+		else
+		{
+			KG_WARN("Failed to serialize server config file");
+			return false;
+		}
 	}
 
 	bool ProjectService::DeserializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath)
@@ -550,17 +549,6 @@ namespace Kargono::Projects
 		project->OnSessionReadyCheckConfirm = static_cast<Assets::AssetHandle>(projectNode["OnSessionReadyCheckConfirm"].as<uint64_t>());
 		project->OnReceiveSignal = static_cast<Assets::AssetHandle>(projectNode["OnReceiveSignal"].as<uint64_t>());
 		project->AppIsNetworked = static_cast<Assets::AssetHandle>(projectNode["AppIsNetworked"].as<bool>());
-
-		YAML::Node tickGenerators = projectNode["AppTickGenerators"];
-
-		if (tickGenerators)
-		{
-			for (const YAML::Node& generator : tickGenerators)
-			{
-				uint64_t value = generator.as<uint64_t>();
-				project->AppTickGenerators.insert(value);
-			}
-		}
 		
 		DeserializeServerVariables(project, filepath);
 

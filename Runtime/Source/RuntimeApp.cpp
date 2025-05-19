@@ -17,18 +17,19 @@ namespace Kargono
 	{
 	}
 
-	void RuntimeApp::Init()
+	bool RuntimeApp::Init()
 	{
 		Scripting::ScriptService::Init();
-		Audio::AudioService::Init();
+		Audio::AudioService::CreateAudioContext();
+		Audio::AudioService::GetActiveContext().Init();
 		Scenes::SceneService::Init();
 
 		if (m_Headless)
 		{
-			Audio::AudioService::SetMute(true);
+			Audio::AudioService::GetActiveContext().SetMute(true);
 		}
 
-		Window& currentWindow = EngineService::GetActiveWindow();
+		Window& currentWindow = EngineService::GetActiveEngine().GetWindow();
 
 		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
 
@@ -41,23 +42,32 @@ namespace Kargono
 		if (pathToProject.empty())
 		{
 			KG_CRITICAL("Could not locate a .kproj file in local directory!");
-			EngineService::EndRun();
-			return;
+			Scripting::ScriptService::Terminate();
+			Audio::AudioService::GetActiveContext().Terminate();
+			Audio::AudioService::RemoveAudioContext();
+			Scenes::SceneService::Terminate();
+			return false;
 		}
 		OpenProject(pathToProject);
 		if (!Projects::ProjectService::GetActive())
 		{
 			KG_CRITICAL("Failed to open project!");
-			EngineService::EndRun();
-			return;
+			Scripting::ScriptService::Terminate();
+			Audio::AudioService::GetActiveContext().Terminate();
+			Audio::AudioService::RemoveAudioContext();
+			Scenes::SceneService::Terminate();
+			return false;
 		}
 #else
 		if (m_ProjectPath.empty())
 		{
 			if (!OpenProject())
 			{
-				EngineService::EndRun();
-				return;
+				Scripting::ScriptService::Terminate();
+				Audio::AudioService::GetActiveContext().Terminate();
+				Audio::AudioService::RemoveAudioContext();
+				Scenes::SceneService::Terminate();
+				return false;
 			}
 		}
 		else
@@ -74,12 +84,16 @@ namespace Kargono
 			currentWindow.SetResizable(false);
 		}
 
-		AI::AIService::Init();
+		AI::AIService::CreateAIContext();
+		AI::AIService::GetActiveContext().Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(4.0f);
 		RuntimeUI::FontService::Init();
 		RuntimeUI::RuntimeUIService::Init();
-		Particles::ParticleService::Init();
+		Particles::ParticleService::CreateParticleContext();
+		Particles::ParticleService::GetActiveContext().Init();
+		Input::InputMapService::CreateInputMapContext();
+		Input::InputMapService::GetActiveContext().Init();
 
 		if (!m_Headless)
 		{
@@ -88,23 +102,31 @@ namespace Kargono
 
 		OnPlay();
 		currentWindow.SetVisible(true);
+
+		return true;
 	}
 
-	void RuntimeApp::Terminate()
+	bool RuntimeApp::Terminate()
 	{
-
 		OnStop();
 
 		// Terminate engine services
 		RuntimeUI::RuntimeUIService::Terminate();
-		Particles::ParticleService::Terminate();
-		Audio::AudioService::Terminate();
+		Input::InputMapService::GetActiveContext().Terminate();
+		Input::InputMapService::RemoveInputMapContext();
+		Particles::ParticleService::GetActiveContext().Terminate();
+		Particles::ParticleService::RemoveParticleContext();
+		Audio::AudioService::GetActiveContext().Terminate();
+		Audio::AudioService::RemoveAudioContext();
 		Scripting::ScriptService::Terminate();
-		AI::AIService::Terminate();
+		AI::AIService::GetActiveContext().Terminate();
+		AI::AIService::RemoveAIContext();
 		Assets::AssetService::ClearAll();
 		RuntimeUI::FontService::Terminate();
 		Scenes::SceneService::Terminate();
 		Rendering::RenderingService::Shutdown();
+
+		return true;
 	}
 
 	void RuntimeApp::InitializeFrameBuffer()
@@ -116,8 +138,8 @@ namespace Kargono
 			Rendering::FramebufferDataFormat::RED_INTEGER, 
 			Rendering::FramebufferDataFormat::Depth 
 		};
-		fbSpec.Width = EngineService::GetActiveWindow().GetWidth();
-		fbSpec.Height = EngineService::GetActiveWindow().GetHeight();
+		fbSpec.Width = EngineService::GetActiveEngine().GetWindow().GetWidth();
+		fbSpec.Height = EngineService::GetActiveEngine().GetWindow().GetHeight();
 		m_ViewportFramebuffer = Rendering::Framebuffer::Create(fbSpec);
 		m_ViewportFramebuffer->Bind();
 	}
@@ -144,25 +166,27 @@ namespace Kargono
 		// Only handle UI and particles if a main camera exists
 		if (mainCamera)
 		{
+			Window& engineWindow{ EngineService::GetActiveEngine().GetWindow()};
+
 			// Get camera transform
 			Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
 
 			// Draw particles
-			Particles::ParticleService::OnRender(mainCamera->GetProjection() * glm::inverse(cameraTransform));
+			Particles::ParticleService::GetActiveContext().OnRender(mainCamera->GetProjection() * glm::inverse(cameraTransform));
 
 			// Clear mouse picking buffer
 			m_ViewportFramebuffer->SetAttachment(1, -1);
 
 			// Handle runtime UI's OnUpdate()
-			Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+			Kargono::ViewportData& activeViewport = engineWindow.GetActiveViewport();
 			Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
 			RuntimeUI::RuntimeUIService::OnUpdate(ts);
 
 			// Draw runtimeUI
-			RuntimeUI::RuntimeUIService::OnRender(EngineService::GetActiveWindow().GetWidth(), 
-				EngineService::GetActiveWindow().GetHeight());
+			RuntimeUI::RuntimeUIService::OnRender(engineWindow.GetWidth(), 
+				engineWindow.GetHeight());
 
 			// Handle mouse picking for the UI
 			HandleUIMouseHovering();
@@ -272,7 +296,7 @@ namespace Kargono
 	bool RuntimeApp::OnApplicationClose(Events::ApplicationCloseEvent event)
 	{
 		Events::WindowCloseEvent windowEvent {};
-		Events::EventCallbackFn eventCallback = EngineService::GetActiveWindow().GetEventCallback();
+		Events::EventCallbackFn eventCallback = EngineService::GetActiveEngine().GetWindow().GetEventCallback();
 		eventCallback(&windowEvent);
 		return false;
 	}
@@ -280,14 +304,14 @@ namespace Kargono
 	bool RuntimeApp::OnApplicationResize(Events::ApplicationResizeEvent event)
 	{
 		// Resize the window
-		EngineService::GetActiveWindow().ResizeWindow({ event.GetWidth(), event.GetHeight() });
+		EngineService::GetActiveEngine().GetWindow().ResizeWindow({ event.GetWidth(), event.GetHeight() });
 		m_ViewportFramebuffer->Resize(event.GetWidth(), event.GetHeight());
 		return false;
 	}
 
 	bool RuntimeApp::OnWindowResize(Events::WindowResizeEvent event)
 	{
-		ViewportData& viewportData = EngineService::GetActiveWindow().GetActiveViewport();
+		ViewportData& viewportData = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		viewportData.m_Width = event.GetWidth();
 		viewportData.m_Height = event.GetHeight();
 		Scenes::SceneService::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
@@ -379,7 +403,7 @@ namespace Kargono
 
 		if (!handled)
 		{
-			Input::InputMapService::OnKeyPressed(event);
+			Input::InputMapService::GetActiveContext().OnKeyPressed(event);
 		}
 
 		return handled;
@@ -414,7 +438,7 @@ namespace Kargono
 				m_HoveredWidgetID });
 
 			// Handle specific widget on click's
-			Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+			Kargono::ViewportData& activeViewport = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 			Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
@@ -442,13 +466,13 @@ namespace Kargono
 	void RuntimeApp::OnUpdateRuntime(Timestep ts)
 	{
 		// Process AI
-		AI::AIService::OnUpdate(ts);
-		Particles::ParticleService::OnUpdate(ts);
+		AI::AIService::GetActiveContext().OnUpdate(ts);
+		Particles::ParticleService::GetActiveContext().OnUpdate(ts);
 
 		// Update
-		Input::InputMapService::OnUpdate(ts);
+		Input::InputMapService::GetActiveContext().OnUpdate(ts);
 		Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
-		Physics::Physics2DService::OnUpdate(ts);
+		Physics::Physics2DService::GetActiveContext().OnUpdate(ts);
 
 		// Render 2D
 		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
@@ -559,7 +583,7 @@ namespace Kargono
 	void RuntimeApp::HandleUIMouseHovering()
 	{
 		// Get the active viewport bounds and mouse position
-		Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+		Kargono::ViewportData& activeViewport = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 
 		// Make sure the mouse position is within bounds
@@ -594,7 +618,7 @@ namespace Kargono
 
 	Math::vec2 RuntimeApp::GetMouseViewportPosition()
 	{
-		Kargono::ViewportData& activeViewport = EngineService::GetActiveWindow().GetActiveViewport();
+		Kargono::ViewportData& activeViewport = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 		// Make sure the y-position is oriented correctly
 		mousePos.y = (float)activeViewport.m_Height - mousePos.y;
@@ -603,7 +627,7 @@ namespace Kargono
 
 	ViewportData* RuntimeApp::GetViewportData()
 	{
-		return &EngineService::GetActiveWindow().GetActiveViewport();
+		return &EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 	}
 
 
@@ -625,22 +649,22 @@ namespace Kargono
 	{
 		if (Projects::ProjectService::OpenProject(path))
 		{
-			if (!EngineService::GetActiveWindow().GetNativeWindow())
+			if (!EngineService::GetActiveEngine().GetWindow().GetNativeWindow())
 			{
 				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveTargetResolution());
 				WindowProps projectProps =
 				{
-					Projects::ProjectService::GetActiveProjectName(),
+					Projects::ProjectService::GetActiveProjectName().c_str(),
 					static_cast<uint32_t>(screenSize.x),
 					static_cast<uint32_t>(screenSize.y)
 				};
 				if (Utility::FileSystem::PathExists(logoPath))
 				{
-					EngineService::GetActiveWindow().Init(projectProps, logoPath);
+					EngineService::GetActiveEngine().GetWindow().Init(projectProps, logoPath);
 				}
 				else
 				{
-					EngineService::GetActiveWindow().Init(projectProps);
+					EngineService::GetActiveEngine().GetWindow().Init(projectProps);
 				}
 				Rendering::RendererAPI::Init();
 			}
@@ -671,8 +695,9 @@ namespace Kargono
 	void RuntimeApp::OnPlay()
 	{
 		// Handle initializing core services
-		Particles::ParticleService::ClearEmitters();
-		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
+		Particles::ParticleService::GetActiveContext().ClearEmitters();
+		Physics::Physics2DService::CreatePhysics2DWorld();
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
 		if (scriptHandle != 0)
@@ -694,21 +719,22 @@ namespace Kargono
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked())
 		{
-			Network::ClientService::Init();
+			Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
 		}
 
 		// Load particle emitters
-		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
+		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 	}
 
 	void RuntimeApp::OnStop()
 	{
-		Physics::Physics2DService::Terminate();
+		Physics::Physics2DService::GetActiveContext().Terminate();
+		Physics::Physics2DService::RemovePhysics2DWorld();
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
-		if (Projects::ProjectService::GetActiveAppIsNetworked())
+		if (Projects::ProjectService::GetActive() && Projects::ProjectService::GetActiveAppIsNetworked())
 		{
-			Network::ClientService::Terminate();
+			Network::ClientService::GetActiveContext().Terminate(false);
 		}
 	}
 

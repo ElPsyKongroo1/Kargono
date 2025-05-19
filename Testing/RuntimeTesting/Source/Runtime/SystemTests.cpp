@@ -2,31 +2,32 @@
 
 #include "Kargono/Utility/Timers.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Core/Engine.h"
+#include "Modules/Core/Engine.h"
 #include "RuntimeApp.h"
 
-bool InitializeEngine()
+bool InitializeEngine(Kargono::Engine& engine)
 {
-	Kargono::EngineSpec spec;
-	spec.Name = "Runtime";
-	spec.CommandLineArgs = { 0, nullptr };
-	spec.WorkingDirectory = std::filesystem::current_path();
-	spec.DefaultWindowWidth = 1600;
-	spec.DefaultWindowHeight = 900;
+	Kargono::EngineConfig spec;
+	spec.m_ExecutableName = "Runtime";
+	spec.m_CmlArgs = { 0, nullptr };
+	spec.m_WorkingDirectory = std::filesystem::current_path();
+	spec.m_DefaultWindowDimensions = {1600, 900};
 
 	Kargono::Application* runtimeApp = new Kargono::RuntimeApp("../Projects/TestProject/TestProject.kproj", true);
 	if (!runtimeApp)
 	{
 		return false;
 	}
-	Kargono::EngineService::Init(spec, runtimeApp);
+	engine.Init(spec, runtimeApp);
 	return true;
 }
 
 
 TEST_CASE("Initialization and Termination")
 {
-	CHECK(InitializeEngine());
-	CHECK(Kargono::Utility::AsyncBusyTimer::CloseAllTimers());
-	CHECK(Kargono::EngineService::Terminate());
+	Kargono::Engine engine;
+	Kargono::EngineService::SetActiveEngine(&engine);
+	CHECK(InitializeEngine(engine));
+	CHECK(Kargono::Utility::AsyncBusyTimerService::GetActiveBusyTimerContext().CloseAllTimers());
+	CHECK(engine.Terminate());
 }

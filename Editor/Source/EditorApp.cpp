@@ -1,22 +1,23 @@
 #include "EditorApp.h"
 
-#include "Kargono/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompilerService.h"
 #include "Kargono/Utility/FileDialogs.h"
-#include "Kargono/Audio/Audio.h"
+#include "Modules/Audio/Audio.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/EditorUI/EditorUI.h"
-#include "Kargono/RuntimeUI/Font.h"
-#include "Kargono/RuntimeUI/RuntimeUI.h"
-#include "Kargono/Core/Engine.h"
-#include "Kargono/AI/AIService.h"
-#include "Kargono/Rendering/RenderingService.h"
-#include "Kargono/Events/PhysicsEvent.h"
-#include "Kargono/Events/ApplicationEvent.h"
+#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/RuntimeUI/Font.h"
+#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/Core/Engine.h"
+#include "Modules/AI/AIService.h"
+#include "Modules/Rendering/RenderingService.h"
+#include "Modules/Events/PhysicsEvent.h"
+#include "Modules/Events/ApplicationEvent.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Particles/ParticleService.h"
-#include "Kargono/Input/InputService.h"
+#include "Modules/Particles/ParticleService.h"
+#include "Modules/Input/InputService.h"
+#include "Modules/Network/Client.h"
 
-#include "API/EditorUI/ImGuiBackendAPI.h"
+#include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 
 namespace Kargono
 {
@@ -33,11 +34,12 @@ namespace Kargono
 	}
 
 
-	void EditorApp::Init()
+	bool EditorApp::Init()
 	{
 		// Initialize engine services
 		Scripting::ScriptService::Init();
-		Audio::AudioService::Init();
+		Audio::AudioService::CreateAudioContext();
+		Audio::AudioService::GetActiveContext().Init();
 		Scenes::SceneService::Init();
 
 		// Create editor app windows
@@ -48,13 +50,17 @@ namespace Kargono
 		OpenProject(m_InitProjectPath);
 		
 		// Initialize other various engine services
-		Particles::ParticleService::Init();
+		Particles::ParticleService::CreateParticleContext();
+		Particles::ParticleService::GetActiveContext().Init();
 		EditorUI::EditorUIService::Init();
-		AI::AIService::Init();
+		AI::AIService::CreateAIContext();
+		AI::AIService::GetActiveContext().Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(1.0f);
 		RuntimeUI::FontService::Init();
 		RuntimeUI::RuntimeUIService::Init();
+		Input::InputMapService::CreateInputMapContext();
+		Input::InputMapService::GetActiveContext().Init();
 
 		// Initialize panels
 		m_MainWindow->InitPanels();
@@ -64,18 +70,36 @@ namespace Kargono
 		m_EmitterConfigEditorWindow->InitPanels();
 
 		// Open operating system window
-		EngineService::GetActiveWindow().SetVisible(true);
+		EngineService::GetActiveEngine().GetWindow().SetVisible(true);
+
+		return true;
 	}
 
-	void EditorApp::Terminate()
+	bool EditorApp::Terminate()
 	{
+		// Close all network threads
+		if (Network::ClientService::IsContextActive())
+		{
+			Network::ClientService::GetActiveContext().Terminate(false);
+		}
+
+		if (Network::ServerService::IsContextActive())
+		{
+			Network::ServerService::GetActiveContext().Terminate(false);
+		}
+
 		// Terminate engine services
 		EditorUI::EditorUIService::Terminate();
+		Input::InputMapService::GetActiveContext().Terminate();
+		Input::InputMapService::RemoveInputMapContext();
 		RuntimeUI::RuntimeUIService::Terminate();
-		Particles::ParticleService::Terminate();
-		Audio::AudioService::Terminate();
+		Particles::ParticleService::GetActiveContext().Terminate();
+		Particles::ParticleService::RemoveParticleContext();
+		Audio::AudioService::GetActiveContext().Terminate();
+		Audio::AudioService::RemoveAudioContext();
 		Scripting::ScriptService::Terminate();
-		AI::AIService::Terminate();
+		AI::AIService::GetActiveContext().Terminate();
+		AI::AIService::RemoveAIContext();
 		Scripting::ScriptCompilerService::Terminate();
 		Assets::AssetService::ClearAll();
 		RuntimeUI::FontService::Terminate();
@@ -85,6 +109,8 @@ namespace Kargono
 		m_MainWindow.reset();
 		m_UIEditorWindow.reset();
 		m_EmitterConfigEditorWindow.reset();
+
+		return true;
 	}
 
 	void EditorApp::OnUpdate(Timestep ts)
@@ -92,7 +118,6 @@ namespace Kargono
 		KG_PROFILE_FUNCTION();
 
 		// Call on update for all windows
-		
 
 		// Handle rendering editor UI
 		switch (m_ActiveEditorWindow)
@@ -184,7 +209,7 @@ namespace Kargono
 
 	bool EditorApp::OnSceneEvent(Events::Event* event)
 	{
-		Particles::ParticleService::OnSceneEvent(event);
+		Particles::ParticleService::GetActiveContext().OnSceneEvent(event);
 		m_MainWindow->OnSceneEvent(event);
 		return false;
 	}
@@ -366,7 +391,7 @@ namespace Kargono
 		m_MainWindow->m_ScriptEditorPanel->ResetPanelResources();
 		m_MainWindow->m_ProjectPanel->ResetPanelResources();
 		Scenes::GameStateService::ClearActiveGameState();
-		Input::InputMapService::ClearActiveInputMap();
+		Input::InputMapService::GetActiveContext().ClearActiveInputMap();
 
 		return true;
 	}
@@ -375,9 +400,9 @@ namespace Kargono
 	{
 		if (Projects::ProjectService::OpenProject(path))
 		{
-			if (!EngineService::GetActiveWindow().GetNativeWindow())
+			if (!EngineService::GetActiveEngine().GetWindow().GetNativeWindow())
 			{
-				EngineService::GetActiveWindow().Init();
+				EngineService::GetActiveEngine().GetWindow().Init();
 				Rendering::RendererAPI::Init();
 			}
 			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveStartSceneHandle();

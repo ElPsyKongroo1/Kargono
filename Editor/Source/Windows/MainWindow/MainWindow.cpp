@@ -2,12 +2,14 @@
 #include "EditorApp.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Scripting/ScriptModuleBuilder.h"
+#include "Modules/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
-#include "Kargono/Network/Client.h"
+#include "Modules/Network/Client.h"
 #include "Kargono/Core/AppTick.h"
-#include "Kargono/Input/InputService.h"
+#include "Modules/Input/InputService.h"
+
+#include "Modules/EditorUI/ExternalAPI/ImPlotAPI.h"
 
 static Kargono::EditorApp* s_EditorApp{ nullptr };
 
@@ -20,15 +22,6 @@ namespace Kargono::Windows
 
 		m_ExportProjectSpec.m_Label = "Export Project";
 		m_ExportProjectSpec.m_PopupWidth = 700.0f;
-		m_ExportProjectSpec.m_PopupAction = [&]() 
-		{
-			KG_ASSERT(Projects::ProjectService::GetActive());
-			m_ExportConfigServerIP.m_CurrentIVec4 = (Math::ivec4)Projects::ProjectService::GetActiveServerIP();
-			m_ExportConfigPort.m_CurrentInteger = Projects::ProjectService::GetActiveServerPort();
-			m_ExportConfigLocation.m_CurrentBoolean = Projects::ProjectService::GetActiveServerLocation() ==
-				Network::ServerLocation::LocalMachine;
-			m_ExportConfigSecrets.m_CurrentIVec4 = (Math::ivec4)Projects::ProjectService::GetActiveSecrets();
-		};
 		m_ExportProjectSpec.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIService::CollapsingHeader(m_ExportProjectHeader);
@@ -36,48 +29,12 @@ namespace Kargono::Windows
 			{
 				EditorUI::EditorUIService::ChooseDirectory(m_ExportProjectLocation);
 				EditorUI::EditorUIService::Checkbox(m_ExportProjectServer);
-				EditorUI::EditorUIService::Checkbox(m_ExportConfigFile);
 			}	
-
-			// Do not display config settings if not specified
-			if (!m_ExportConfigFile.m_CurrentBoolean)
-			{
-				return;
-			}
-
-			EditorUI::EditorUIService::CollapsingHeader(m_ExportConfigHeader);
-			if (m_ExportConfigHeader.m_Expanded)
-			{
-				EditorUI::EditorUIService::EditIVec4(m_ExportConfigServerIP);
-				EditorUI::EditorUIService::EditInteger(m_ExportConfigPort);
-				EditorUI::EditorUIService::Checkbox(m_ExportConfigLocation);
-				EditorUI::EditorUIService::EditIVec4(m_ExportConfigSecrets);
-			}
 		};
 		m_ExportProjectSpec.m_ConfirmAction = [&]()
 		{
-			if (m_ExportConfigFile.m_CurrentBoolean)
-			{
-				// Load in data from the UI into a server config struct
-				Network::ServerConfig configFile;
-				configFile.m_IPv4 = (Math::u8vec4)m_ExportConfigServerIP.m_CurrentIVec4;
-				configFile.m_Port = (uint16_t)m_ExportConfigPort.m_CurrentInteger;
-				configFile.m_ServerLocation = m_ExportConfigLocation.m_CurrentBoolean ?
-					Network::ServerLocation::LocalMachine : Network::ServerLocation::Remote;
-				configFile.m_ValidationSecrets = (Math::u64vec4)m_ExportConfigSecrets.m_CurrentIVec4;
-
-				// Update the project config
-				Projects::ProjectService::SetServerConfig(configFile);
-
-				// Start the export process
-				Projects::ProjectService::ExportProject(m_ExportProjectLocation.m_CurrentOption, &configFile, m_ExportProjectServer.m_CurrentBoolean);
-			}
-			else
-			{
-				// Start the export process
-				Projects::ProjectService::ExportProject(m_ExportProjectLocation.m_CurrentOption, nullptr, m_ExportProjectServer.m_CurrentBoolean);
-			}
-			
+			// Start the export process
+			Projects::ProjectService::ExportProject(m_ExportProjectLocation.m_CurrentOption, m_ExportProjectServer.m_CurrentBoolean);
 		};
 
 		m_ExportProjectLocation.m_Label = "Export Location";
@@ -87,33 +44,6 @@ namespace Kargono::Windows
 		m_ExportProjectServer.m_Label = "Export Server";
 		m_ExportProjectServer.m_Flags |= EditorUI::Checkbox_Indented;
 		m_ExportProjectServer.m_CurrentBoolean = true;
-
-		// Config file options
-		m_ExportConfigFile.m_Label = "Server Config";
-		m_ExportConfigFile.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ExportConfigFile.m_CurrentBoolean = false;
-
-		m_ExportConfigHeader.m_Label = "Server Config Options";
-		m_ExportConfigHeader.m_Expanded = true;
-
-		m_ExportConfigServerIP.m_Label = "Server IPv4";
-		m_ExportConfigServerIP.m_Flags |= EditorUI::EditIVec4_Indented;
-		m_ExportConfigServerIP.m_CurrentIVec4 = {127, 0, 0, 1};
-		m_ExportConfigServerIP.m_Bounds = { 0, 255 };
-
-		m_ExportConfigPort.m_Label = "Server Port";
-		m_ExportConfigPort.m_Flags |= EditorUI::EditInteger_Indented;
-		m_ExportConfigPort.m_CurrentInteger = 60'000;
-		m_ExportConfigPort.m_Bounds = { 101, 65'535 };
-
-		m_ExportConfigLocation.m_Label = "Local Machine";
-		m_ExportConfigLocation.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ExportConfigLocation.m_CurrentBoolean = true;
-
-		m_ExportConfigSecrets.m_Label = "Validation Secrets";
-		m_ExportConfigSecrets.m_Flags |= EditorUI::EditIVec4_Indented;
-		m_ExportConfigSecrets.m_CurrentIVec4 = { 0, 0, 0, 0 };
-		m_ExportConfigSecrets.m_Bounds = { 0, 2'147'483'647 };
 	}
 
 	void MainWindow::InitializeImportAssetWidgets()
@@ -178,9 +108,11 @@ namespace Kargono::Windows
 			return;
 		}
 
+		Particles::ParticleContext& context{ Particles::ParticleService::GetActiveContext()};
+
 		// Load the emitters for the editor scene
-		Particles::ParticleService::ClearEmitters();
-		Particles::ParticleService::LoadSceneEmitters(m_EditorScene);
+		context.ClearEmitters();
+		context.LoadSceneEmitters(m_EditorScene);
 	}
 
 	MainWindow::MainWindow()
@@ -439,7 +371,7 @@ namespace Kargono::Windows
 		EditorUI::EditorUIService::StartDockspaceWindow();
 
 		// Set the active viewport for the window
-		EngineService::GetActiveWindow().SetActiveViewport(&m_ViewportPanel->m_ViewportData);
+		EngineService::GetActiveEngine().GetWindow().SetActiveViewport(&m_ViewportPanel->m_ViewportData);
 
 		// Display the menu bar at the top of the window
 		DrawWindowMenuBar();
@@ -620,7 +552,7 @@ namespace Kargono::Windows
 		m_EditorScene = newScene;
 		m_EditorSceneHandle = sceneHandle;
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
-		EngineService::SubmitToMainThread([&]()
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			LoadSceneParticleEmitters();
 		});
@@ -641,7 +573,7 @@ namespace Kargono::Windows
 		m_EditorSceneHandle = sceneHandle;
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 
-		EngineService::SubmitToMainThread([&]() 
+		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			LoadSceneParticleEmitters();
 		});
@@ -680,15 +612,18 @@ namespace Kargono::Windows
 		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
 
 		RuntimeUI::RuntimeUIService::ClearActiveUI();
+
+		Input::InputMapContext& context = Input::InputMapService::GetActiveContext();
+
 		// Cache Current InputMap in editor
-		if (!Input::InputMapService::GetActiveInputMap())
+		if (!context.GetActiveInputMap())
 		{
 			m_EditorInputMap = nullptr;
 		}
 		else
 		{
-			m_EditorInputMap = Input::InputMapService::GetActiveInputMap();
-			m_EditorInputMapHandle = Input::InputMapService::GetActiveInputMapHandle();
+			m_EditorInputMap = context.GetActiveInputMap();
+			m_EditorInputMapHandle = context.GetActiveInputMapHandle();
 		}
 
 		// Load Default Game State
@@ -706,28 +641,31 @@ namespace Kargono::Windows
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		if (m_SceneState == SceneState::Simulate) { OnStop(); }
 
-		Particles::ParticleService::ClearEmitters();
+		Particles::ParticleService::GetActiveContext().ClearEmitters();
 
 		m_SceneState = SceneState::Play;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
-		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
+		Physics::Physics2DService::CreatePhysics2DWorld();
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
+
+		// Start up client networking
+		if (Projects::ProjectService::GetActiveAppIsNetworked())
+		{
+			Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
+		}
+
+		// Call the runtime start function
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
 		if (scriptHandle != 0)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 
-		if (Projects::ProjectService::GetActiveAppIsNetworked())
-		{
-			Network::ClientService::Init();
-		}
-
 		// Load particle emitters
-		Particles::ParticleService::LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
+		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 
-		AppTickService::LoadGeneratorsFromProject();
-		EngineService::GetActiveEngine().UpdateAppStartTime();
+		EngineService::GetActiveEngine().GetThread().UpdateAppStartTime();
 		EditorUI::EditorUIService::SetFocusedWindow(m_ViewportPanel->m_PanelName);
 	}
 
@@ -738,7 +676,8 @@ namespace Kargono::Windows
 
 		m_SceneState = SceneState::Simulate;
 		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
-		Physics::Physics2DService::Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
+		Physics::Physics2DService::CreatePhysics2DWorld();
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 	}
 	void MainWindow::OnStop()
 	{
@@ -748,19 +687,21 @@ namespace Kargono::Windows
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		KG_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
 
-			if (m_SceneState == SceneState::Play)
-			{
-				Physics::Physics2DService::Terminate();
-				Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
-			}
-			else if (m_SceneState == SceneState::Simulate)
-			{
-				Physics::Physics2DService::Terminate();
-			}
+		if (m_SceneState == SceneState::Play)
+		{
+			Physics::Physics2DService::GetActiveContext().Terminate();
+			Physics::Physics2DService::RemovePhysics2DWorld();
+			Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
+		}
+		else if (m_SceneState == SceneState::Simulate)
+		{
+			Physics::Physics2DService::GetActiveContext().Terminate();
+			Physics::Physics2DService::RemovePhysics2DWorld();
+		}
 
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
 		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
-		Audio::AudioService::StopAllAudio();
+		Audio::AudioService::GetActiveContext().StopAllAudio();
 
 		// TODO: DEAL WITH THIS
 		//// Clear UIObjects during runtime.
@@ -776,23 +717,23 @@ namespace Kargono::Windows
 		// Clear InputMaps during runtime.
 		if (m_EditorInputMap)
 		{
-			Input::InputMapService::SetActiveInputMap(m_EditorInputMap, m_EditorInputMapHandle);
+			Input::InputMapService::GetActiveContext().SetActiveInputMap(m_EditorInputMap, m_EditorInputMapHandle);
 		}
 		else
 		{
-			Input::InputMapService::SetActiveInputMap(nullptr, Assets::EmptyHandle);
+			Input::InputMapService::GetActiveContext().SetActiveInputMap(nullptr, Assets::EmptyHandle);
 		}
 
 		Scenes::GameStateService::ClearActiveGameState();
 
 		if (Projects::ProjectService::GetActiveAppIsNetworked() && m_SceneState == SceneState::Play)
 		{
-			Network::ClientService::Terminate();
+			Network::ClientService::GetActiveContext().Terminate(false);
 		}
 
 		// Revalidate particles for editor scene
-		Particles::ParticleService::ClearEmitters();
-		Particles::ParticleService::LoadSceneEmitters(m_EditorScene);
+		Particles::ParticleService::GetActiveContext().ClearEmitters();
+		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(m_EditorScene);
 
 		// Bring back the old UI
 		if (s_EditorApp->m_UIEditorWindow->m_EditorUI)
@@ -966,7 +907,7 @@ namespace Kargono::Windows
 
 		if (!handled)
 		{
-			Input::InputMapService::OnKeyPressed(event);
+			Input::InputMapService::GetActiveContext().OnKeyPressed(event);
 		}
 		
 		return handled;
@@ -1024,7 +965,7 @@ namespace Kargono::Windows
 		}
 		case Key::F11:
 		{
-			EngineService::GetActiveWindow().ToggleMaximized();
+			EngineService::GetActiveEngine().GetWindow().ToggleMaximized();
 			break;
 		}
 
@@ -1236,7 +1177,7 @@ namespace Kargono::Windows
 
 				if (ImGui::MenuItem("Exit"))
 				{
-					EngineService::EndRun();
+					EngineService::GetActiveEngine().GetThread().EndThread();
 				}
 				ImGui::EndMenu();
 
@@ -1246,14 +1187,14 @@ namespace Kargono::Windows
 			{
 				if (ImGui::MenuItem("User Interface Editor"))
 				{
-					EngineService::SubmitToMainThread([]()
+					EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 						{
 							s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
 						});
 				}
 				if (ImGui::MenuItem("Particle Emitter Editor"))
 				{
-					EngineService::SubmitToMainThread([]()
+					EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
 						{
 							s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::EmitterConfigWindow);
 							s_EditorApp->m_EmitterConfigEditorWindow->LoadEditorEmitterIntoParticleService();
@@ -1315,6 +1256,7 @@ namespace Kargono::Windows
 						ImGui::SaveIniSettingsToDisk("./Resources/EditorConfig.ini");
 					}
 					ImGui::MenuItem("ImGui Demo", NULL, &m_ShowDemoWindow);
+					ImGui::MenuItem("ImPlot Demo", NULL, &m_ShowImPlotWindow);
 					ImGui::EndMenu();
 				}
 
@@ -1365,6 +1307,7 @@ namespace Kargono::Windows
 		if (m_ShowInputMapEditor) { m_InputMapPanel->OnEditorUIRender(); }
 		if (m_ShowProperties) { m_PropertiesPanel->OnEditorUIRender(); }
 		if (m_ShowDemoWindow) { ImGui::ShowDemoWindow(&m_ShowDemoWindow); }
+		if (m_ShowImPlotWindow) { ImPlot::ShowDemoWindow(&m_ShowImPlotWindow); }
 		if (m_ShowTesting) { m_TestingPanel->OnEditorUIRender(); }
 		if (m_ShowAIStateEditor) { m_AIStatePanel->OnEditorUIRender(); }
 	}

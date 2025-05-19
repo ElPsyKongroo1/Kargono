@@ -3,7 +3,7 @@
 #include "EditorApp.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Rendering/RenderingService.h"
+#include "Modules/Rendering/RenderingService.h"
 #include "Kargono/Utility/Time.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
@@ -47,11 +47,11 @@ namespace Kargono::Panels
 
 		ImGui::Text("Time");
 		ImGui::Separator();
-		ImGui::Text("Editor Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime())).c_str());
-		ImGui::Text("Total Frame Count: %d", static_cast<int32_t>(EngineService::GetActiveEngine().GetUpdateCount()));
+		ImGui::Text("Editor Runtime: %s", Utility::TimeConversions::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime())).c_str());
+		ImGui::Text("Total Frame Count: %d", static_cast<int32_t>(EngineService::GetActiveEngine().GetThread().GetUpdateCount()));
 		if (Scenes::SceneService::GetActiveScene()->IsRunning())
 		{
-			ImGui::Text("Application Runtime: %s", Utility::Time::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime() - EngineService::GetActiveEngine().GetAppStartTime())).c_str());
+			ImGui::Text("Application Runtime: %s", Utility::TimeConversions::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime() - EngineService::GetActiveEngine().GetThread().GetAppStartTime())).c_str());
 		}
 		else
 		{
