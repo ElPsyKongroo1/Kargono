@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ECSCommonTest.h"
+#include "Kargono/Memory/IAllocator.h"
 
 #include <array>
 #include <unordered_map>

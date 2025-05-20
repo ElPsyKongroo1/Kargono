@@ -1,10 +1,11 @@
 #pragma once
 
 #include "ECSComponentArrayTest.h"
+
 #include "Kargono/Core/Base.h"
+#include "Kargono/Memory/IAllocator.h"
 
 #include <unordered_map>
-
 #include <memory>
 
 namespace Kargono::ECS
@@ -18,6 +19,17 @@ namespace Kargono::ECS
 		ComponentRegistry() = default;
 		~ComponentRegistry() = default;
 
+	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		[[nodiscard]] bool Init(Memory::IAllocator* parentAlloc)
+		{
+			KG_ASSERT(parentAlloc);
+			i_RegistryAlloc = parentAlloc;
+
+			return true;
+		}
 	public:
 		//==============================
 		// Manage Component(s)
@@ -118,6 +130,10 @@ namespace Kargono::ECS
 		// Iterator for adding new components
 		ComponentType m_NextComponentType{0};
 
+		//==============================
+		// Injected Fields
+		//==============================
+		Memory::IAllocator* i_RegistryAlloc{ nullptr };
 	private:
 		//==============================
 		// Owning Class(s)

@@ -3,6 +3,8 @@
 #include "ECSComponentRegistryTest.h"
 #include "ECSEntityRegistryTest.h"
 
+#include "Kargono/Memory/IAllocator.h"
+
 namespace Kargono::ECS
 {
 	class Registry
@@ -17,9 +19,23 @@ namespace Kargono::ECS
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init()
+		[[nodiscard]] bool Init(Memory::IAllocator* backingAlloc)
 		{
-			return m_EntityRegistry.Init();
+			KG_ASSERT(backingAlloc);
+
+			i_Allocator = backingAlloc;
+
+			if (!m_EntityRegistry.Init())
+			{
+				return false;
+			}
+
+			if (!m_ComponentRegistry.Init(i_Allocator))
+			{
+				return false;
+			}
+
+			return true;
 		}
 
 		//==============================
@@ -103,5 +119,11 @@ namespace Kargono::ECS
 		//==============================
 		EntityRegistry m_EntityRegistry;
 		ComponentRegistry m_ComponentRegistry;
+
+		//==============================
+		// Injected Dependencies
+		//==============================
+		// Allocator for all pools
+		Memory::IAllocator* i_Allocator{ nullptr };
 	};
 }
