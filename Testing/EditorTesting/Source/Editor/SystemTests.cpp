@@ -33,6 +33,6 @@ TEST_CASE("Initialization and Termination")
 	Kargono::Engine engine;
 	Kargono::EngineService::SetActiveEngine(&engine);
 	CHECK(InitializeEngine(engine));
-	CHECK(Kargono::Utility::AsyncBusyTimer::CloseAllTimers());
+	CHECK(Kargono::Utility::AsyncBusyTimerService::GetActiveBusyTimerContext().CloseAllTimers());
 	CHECK(engine.Terminate());
 }

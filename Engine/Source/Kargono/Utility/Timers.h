@@ -54,40 +54,80 @@ namespace Kargono::Utility
 	class AsyncBusyTimer
 	{
 	public:
-		static void CreateTimer(float waitTime, std::function<void()> function);
-
-		static void CreateRecurringTimer(float waitTime, uint32_t reoccurCount, std::function<void()> reoccurFunction,
-			std::function<void()> terminationFunction = nullptr);
-
-		static void CleanUpClosedTimers();
-
-		static bool CloseAllTimers();
-
-	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		AsyncBusyTimer(float waitTime, std::function<void()> function);
-
 		AsyncBusyTimer(float waitTime, uint32_t reoccurCount, std::function<void()> reoccurFunction,
 			std::function<void()> terminationFunction);
-
 		~AsyncBusyTimer();
 
 	public:
-		void ForceStop() { m_ForceStop = true; }
+		//==============================
+		// Manage Timer State
+		//==============================
+		void ForceStop() 
+		{ 
+			m_ForceStop = true; 
+		}
 	private:
+		//==============================
+		// Run Timer
+		//==============================
 		void Wait();
 		void ReoccurWait();
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		// Thread
+		std::thread m_TimerThread;
+		// Injected functions
 		std::function<void()> m_TerminationFunction { nullptr };
 		std::function<void()> m_ReoccurFunction { nullptr };
+		// Timer state
 		float m_WaitTime;
 		float m_ElapsedTime;
 		uint32_t m_ReoccurCount{ 0 };
-		std::thread m_TimerThread;
 		bool m_Done {false};
 		std::atomic<bool> m_ForceStop {false};
 	private:
-		static std::vector<Ref<AsyncBusyTimer>> s_AllBusyTimers;
-		static std::mutex s_BusyTimerMutex;
+		friend class AsyncBusyTimerContext;
+	};
+
+	class AsyncBusyTimerContext
+	{
+	public:
+		//==============================
+		// Create Timers
+		//==============================
+		void CreateTimer(float waitTime, std::function<void()> function);
+		void CreateRecurringTimer(float waitTime, uint32_t reoccurCount, std::function<void()> reoccurFunction,
+			std::function<void()> terminationFunction = nullptr);
+
+		//==============================
+		// Close Timers
+		//==============================
+		void CleanUpClosedTimers();
+		bool CloseAllTimers();
+
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		std::vector<Ref<AsyncBusyTimer>> m_AllBusyTimers;
+		std::mutex m_BusyTimerMutex;
+	};
+
+	class AsyncBusyTimerService
+	{
+	public:
+		static AsyncBusyTimerContext& GetActiveBusyTimerContext()
+		{
+			return m_Context;
+		}
+	private:
+		static inline AsyncBusyTimerContext m_Context;
 	};
 
 	class PassiveTimer
@@ -98,16 +138,43 @@ namespace Kargono::Utility
 		//==============================
 		PassiveTimer(float waitTime, std::function<void()> function) : m_WaitTime{ waitTime }, m_Function{ function } {}
 		~PassiveTimer() = default;
-	public:
-		static void CreateTimer(float waitTime, std::function<void()> function);
-		static void OnUpdate(Timestep step);
 	
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
 		float m_WaitTime {0.0f};
 		float m_ElapsedTime{0.0f};
 		std::function<void()> m_Function {nullptr};
 	private:
-		static std::vector<PassiveTimer> s_AllPassiveTimers;
+		friend class PassiveTimerContext;
+	};
+
+	class PassiveTimerContext
+	{
+	public:
+		//==============================
+		// Create Timers
+		//==============================
+		void CreateTimer(float waitTime, std::function<void()> function);
+		void OnUpdate(Timestep step);
+
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		std::vector<PassiveTimer> m_AllPassiveTimers;
+	};
+
+	class PassiveTimerService
+	{
+	public:
+		static PassiveTimerContext& GetActiveBusyTimerContext()
+		{
+			return m_Context;
+		}
+	private:
+		static inline PassiveTimerContext m_Context;
 	};
 
 	class LoopTimer

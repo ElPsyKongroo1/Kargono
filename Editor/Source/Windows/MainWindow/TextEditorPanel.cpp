@@ -268,14 +268,14 @@ namespace Kargono::Panels
 		static int32_t countOfTimers{0};
 		countOfTimers++;
 		m_TextEditor.ClearErrorMarkers();
-		Utility::PassiveTimer::CreateTimer(1.2f, [&]()
+		Utility::PassiveTimerService::GetActiveBusyTimerContext().CreateTimer(1.2f, [&]()
 		{
 			countOfTimers--;
 			if (countOfTimers > 0)
 			{
 				return;
 			}
-			
+
 			if (m_AllDocuments.size() <= 0)
 			{
 				return;

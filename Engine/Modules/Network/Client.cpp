@@ -799,8 +799,9 @@ namespace Kargono::Network
 
 		// Wait for the time indicated by the server start the session.
 		// This is meant to keep all clients in sync at the start of the session.
-		Utility::AsyncBusyTimer::CreateTimer(waitTime, [&]()
+		Utility::AsyncBusyTimerService::GetActiveBusyTimerContext().CreateTimer(waitTime, [this]()
 		{
+			// TODO: FIX THESE DAMN OWNERSHIP SEMANTICS FOR m_EventQueue
 			// Ensure the active network context is aware of the session starting
 			m_EventQueue.SubmitEvent(CreateRef<Events::StartSession>());
 
@@ -817,7 +818,7 @@ namespace Kargono::Network
 
 		// Wait for the time indicated by the server to handle the ready check.
 		// This keeps the confirm events in sync between clients.
-		Utility::AsyncBusyTimer::CreateTimer(waitTime, [&]()
+		Kargono::Utility::AsyncBusyTimerService::GetActiveBusyTimerContext().CreateTimer(waitTime, [&]()
 		{
 			// Pass the event along to the main thread
 			EngineService::GetActiveEngine().GetThread().SubmitEvent(CreateRef<Events::SessionReadyCheckConfirm>());
