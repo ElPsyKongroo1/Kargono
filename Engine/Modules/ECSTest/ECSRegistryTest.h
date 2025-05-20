@@ -38,6 +38,13 @@ namespace Kargono::ECS
 			return true;
 		}
 
+		[[nodiscard]] bool Terminate()
+		{
+			i_Allocator->Reset();
+
+			return true;
+		}
+
 		//==============================
 		// Manage Entities
 		//==============================

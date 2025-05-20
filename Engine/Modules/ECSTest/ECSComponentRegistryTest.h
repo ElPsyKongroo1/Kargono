@@ -6,7 +6,6 @@
 #include "Kargono/Memory/IAllocator.h"
 
 #include <unordered_map>
-#include <memory>
 
 namespace Kargono::ECS
 {
@@ -48,10 +47,11 @@ namespace Kargono::ECS
 			// Add the component type and its array
 			m_ComponentTypes.insert({typeName, m_NextComponentType});
 
-			std::shared_ptr<ComponentArray<t_Component>> newArray 
+			t_Component* newArray = i_RegistryAlloc->Alloc<ComponentArray<t_Component>>();
+			if (!newArray)
 			{
-				std::make_shared<ComponentArray<t_Component>>()
-			};
+				return false;
+			}
 
 			m_ComponentArrays.insert({typeName, newArray});
 
@@ -96,7 +96,7 @@ namespace Kargono::ECS
 		}
 
 		template<typename t_Component>
-		std::shared_ptr<ComponentArray<t_Component>> GetComponentArray()
+		ComponentArray<t_Component>* GetComponentArray()
 		{
 			const char* typeName = typeid(t_Component).name();
 
@@ -105,7 +105,7 @@ namespace Kargono::ECS
 				return nullptr;
 			}
 
-			return std::static_pointer_cast<ComponentArray<t_Component>>(m_ComponentArrays[typeName]);
+			return m_ComponentArrays[typeName];
 		}
 
 		//==============================
@@ -126,7 +126,7 @@ namespace Kargono::ECS
 		//==============================
 		// Component data/info
 		std::unordered_map<const char*, ComponentType> m_ComponentTypes{};
-		std::unordered_map<const char*, std::shared_ptr<IComponentArray>> m_ComponentArrays{};
+		std::unordered_map<const char*, IComponentArray*> m_ComponentArrays{};
 		// Iterator for adding new components
 		ComponentType m_NextComponentType{0};
 
