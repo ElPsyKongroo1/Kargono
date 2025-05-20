@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-namespace Kargono
+namespace Kargono::Memory
 {
 	class IAllocator
 	{
@@ -16,8 +16,8 @@ namespace Kargono
 		//==============================
 		// Raw Allocation API (No In-Place Construction)
 		//==============================
-		virtual uint8_t* AllocRaw(size_t dataSize, size_t alignment) = 0;
-		virtual bool DeallocRaw(uint8_t* dataPtr, size_t alignment) = 0;
+		[[nodiscard]] virtual uint8_t* AllocRaw(size_t dataSize, size_t alignment) = 0;
+		[[nodiscard]] virtual bool DeallocRaw(uint8_t* dataPtr, size_t alignment) = 0;
 
 		//==============================
 		// Type Allocation & Construction API
@@ -53,5 +53,10 @@ namespace Kargono
 			// Free the underlying memory
 			return DeallocRaw(static_cast<uint8_t*>(dataPtr), t_Align);
 		}
+
+		//==============================
+		// Reset Allocator
+		//==============================
+		virtual void Reset() = 0;
 	};
 }

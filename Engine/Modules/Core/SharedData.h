@@ -79,7 +79,7 @@ namespace Kargono
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(IAllocator* backingAllocator)
+		[[nodiscard]] bool Init(Memory::IAllocator* backingAllocator)
 		{
 			KG_ASSERT(!m_Active);
 
@@ -220,7 +220,7 @@ namespace Kargono
 		//==============================
 		// Injected Dependencies
 		//==============================
-		IAllocator* i_Allocator{ nullptr };
+		Memory::IAllocator* i_Allocator{ nullptr };
 	};
 }
 
