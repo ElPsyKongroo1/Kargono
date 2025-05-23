@@ -69,11 +69,11 @@ namespace Kargono::Input
 				}
 				if (keyboardBinding->GetScript()->m_FuncType == WrappedFuncType::Void_None)
 				{
-					Utility::CallWrappedVoidNone(keyboardBinding->GetScript()->m_Function);
+					Utility::CallWrapped<WrappedVoidNone>(keyboardBinding->GetScript()->m_Function);
 				}
 				else
 				{
-					Utility::CallWrappedVoidFloat(keyboardBinding->GetScript()->m_Function, ts);
+					Utility::CallWrapped<WrappedVoidFloat>(keyboardBinding->GetScript()->m_Function, ts);
 				}
 				
 			}
@@ -93,7 +93,7 @@ namespace Kargono::Input
 				{ 
 					continue; 
 				}
-				Utility::CallWrappedVoidNone(keyboardBinding->GetScript()->m_Function);
+				Utility::CallWrapped<WrappedVoidNone>(keyboardBinding->GetScript()->m_Function);
 			}
 		}
 

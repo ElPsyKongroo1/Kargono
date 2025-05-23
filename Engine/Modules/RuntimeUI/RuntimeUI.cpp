@@ -179,7 +179,7 @@ namespace Kargono::RuntimeUI
 				// Call the on move slider function if applicable
 				if (activeSlider.m_OnMoveSlider)
 				{
-					Utility::CallWrappedVoidFloat(activeSlider.m_OnMoveSlider->m_Function, activeSlider.m_CurrentValue);
+					Utility::CallWrapped<WrappedVoidFloat>(activeSlider.m_OnMoveSlider->m_Function, activeSlider.m_CurrentValue);
 				}
 
 			}
@@ -190,7 +190,7 @@ namespace Kargono::RuntimeUI
 				// Call the on move slider function if applicable
 				if (activeSlider.m_OnMoveSlider)
 				{
-					Utility::CallWrappedVoidFloat(activeSlider.m_OnMoveSlider->m_Function, activeSlider.m_CurrentValue);
+					Utility::CallWrapped<WrappedVoidFloat>(activeSlider.m_OnMoveSlider->m_Function, activeSlider.m_CurrentValue);
 				}
 			}
 			else
@@ -210,7 +210,7 @@ namespace Kargono::RuntimeUI
 				// Call the on move slider function if applicable
 				if (activeSlider.m_OnMoveSlider)
 				{
-					Utility::CallWrappedVoidFloat(activeSlider.m_OnMoveSlider->m_Function, activeSlider.m_CurrentValue);
+					Utility::CallWrapped<WrappedVoidFloat>(activeSlider.m_OnMoveSlider->m_Function, activeSlider.m_CurrentValue);
 				}
 			}
 
@@ -453,7 +453,11 @@ namespace Kargono::RuntimeUI
 						if (activeDropDown.m_OnSelectOption)
 						{
 							const SingleLineTextData& currentTextData = activeDropDown.m_DropDownOptions.at(iteration);
-							Utility::CallWrappedVoidString(activeDropDown.m_OnSelectOption->m_Function, currentTextData.m_Text);
+							Utility::CallWrapped<WrappedVoidString>
+							(
+								activeDropDown.m_OnSelectOption->m_Function, 
+								currentTextData.m_Text
+							);
 						}
 						return;
 					}
@@ -1281,7 +1285,7 @@ namespace Kargono::RuntimeUI
 		// Call the on move function if applicable
 		if (activeUI->m_FunctionPointers.m_OnMove)
 		{
-			Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+			Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 		}
 	}
 
@@ -1326,7 +1330,7 @@ namespace Kargono::RuntimeUI
 		// Call the on move function if applicable
 		if (activeUI->m_FunctionPointers.m_OnHover)
 		{
-			Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnHover->m_Function);
+			Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnHover->m_Function);
 		}
 	}
 
@@ -1411,9 +1415,7 @@ namespace Kargono::RuntimeUI
 
 			if (selectionData->m_FunctionPointers.m_OnPress)
 			{
-				Utility::CallWrappedVoidBool(
-					selectionData->m_FunctionPointers.m_OnPress->m_Function,
-					checkboxWidget.m_Checked);
+				Utility::CallWrapped<WrappedVoidBool>(selectionData->m_FunctionPointers.m_OnPress->m_Function, checkboxWidget.m_Checked);
 			}
 		}
 		else if (currentWidget->m_WidgetType == WidgetTypes::InputTextWidget)
@@ -1421,7 +1423,7 @@ namespace Kargono::RuntimeUI
 			// Handle the input text widget
 			if (selectionData->m_FunctionPointers.m_OnPress)
 			{
-				Utility::CallWrappedVoidNone(selectionData->m_FunctionPointers.m_OnPress->m_Function);
+				Utility::CallWrapped<WrappedVoidNone>(selectionData->m_FunctionPointers.m_OnPress->m_Function);
 			}
 
 			// Set the current widget as the editing widget
@@ -1434,7 +1436,7 @@ namespace Kargono::RuntimeUI
 			{
 				return;
 			}
-			Utility::CallWrappedVoidNone(selectionData->m_FunctionPointers.m_OnPress->m_Function);
+			Utility::CallWrapped<WrappedVoidNone>(selectionData->m_FunctionPointers.m_OnPress->m_Function);
 		}
 	}
 
@@ -1447,7 +1449,7 @@ namespace Kargono::RuntimeUI
 		// Call on move cursor if available
 		if (inputTextWidget->m_OnMoveCursor)
 		{
-			Utility::CallWrappedVoidNone(inputTextWidget->m_OnMoveCursor->m_Function);
+			Utility::CallWrapped<WrappedVoidNone>(inputTextWidget->m_OnMoveCursor->m_Function);
 		}
 	}
 
@@ -2152,7 +2154,7 @@ namespace Kargono::RuntimeUI
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
 
 			// Handle modifying the editing widget
@@ -2188,7 +2190,7 @@ namespace Kargono::RuntimeUI
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
 
 			// Handle modifying the editing widget
@@ -2227,7 +2229,7 @@ namespace Kargono::RuntimeUI
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
 
 			// Handle modifying the editing widget
@@ -2263,7 +2265,7 @@ namespace Kargono::RuntimeUI
 			// Call the on move function if applicable
 			if (activeUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrappedVoidNone(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
 
 			// Handle modifying the editing widget
