@@ -44,8 +44,7 @@ namespace Kargono::Windows
 	void EmitterConfigWindow::OnCreateEmitterConfigDialog()
 	{
 		// Set default values for new emitter config creation location
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 
 		// Set dialog popup to open on next frame
 		m_CreateEmitterConfigPopupSpec.m_OpenPopup = true;
@@ -182,13 +181,13 @@ namespace Kargono::Windows
 
 		// Initialize widget for selecting Emitter Config location
 		m_SelectEmitterConfigLocationSpec.m_Label = "Location";
-		m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		m_SelectEmitterConfigLocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
-			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+				m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 			}
 		};
 	}
@@ -434,7 +433,7 @@ namespace Kargono::Windows
 	void EmitterConfigWindow::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
 		// Ensure provided path is within the active asset directory
-		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
 		{
 			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");

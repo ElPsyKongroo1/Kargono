@@ -44,13 +44,13 @@ namespace Kargono::Panels
 		m_SelectProjectEnumNameSpec.m_CurrentOption = "Empty";
 
 		m_SelectProjectEnumLocationSpec.m_Label = "Location";
-		m_SelectProjectEnumLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectProjectEnumLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		m_SelectProjectEnumLocationSpec.m_ConfirmAction = [&](std::string_view path)
 			{
-				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory(), path))
 				{
 					KG_WARN("Cannot create an asset outside of the project's asset directory.");
-					m_SelectProjectEnumLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+					m_SelectProjectEnumLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 				}
 			};
 
@@ -361,7 +361,7 @@ namespace Kargono::Panels
 	void ProjectEnumPanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
 		// Ensure provided path is within the active asset directory
-		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
 		{
 			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
@@ -408,8 +408,8 @@ namespace Kargono::Panels
 	}
 	void ProjectEnumPanel::OnCreateProjectEnumDialog()
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectProjectEnumLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+		m_SelectProjectEnumLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_CreateProjectEnumPopupSpec.m_OpenPopup = true;
 	}
 	void ProjectEnumPanel::OnRefreshData()

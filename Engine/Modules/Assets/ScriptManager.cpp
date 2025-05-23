@@ -52,7 +52,9 @@ namespace Kargono::Assets
 		m_AssetRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
 		SerializeAssetRegistry(); // Update Registry File on Disk
 
-		m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation) });
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, projectPaths.GetAssetDirectory() / newAsset.Data.FileLocation) });
 
 		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
 		(
@@ -210,8 +212,10 @@ namespace Kargono::Assets
 
 	void ScriptManager::FillScriptMetadata(ScriptSpec& spec, Assets::AssetInfo& newAsset)
 	{
+
 		// Create script file
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation;
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+		std::filesystem::path fullPath = projectPaths.GetAssetDirectory() / newAsset.Data.FileLocation;
 
 		Utility::FileSystem::WriteFileString(fullPath, Utility::GenerateFunctionStub(spec.m_FunctionType, spec.Name, spec.m_ExplicitFuncType));
 
@@ -435,11 +439,13 @@ namespace Kargono::Assets
 			}
 		}
 
+		Projects::Project& activeProject{ Projects::ProjectService::GetActiveContext()};
+
 		// Check active project for scripts
-		bool projectModified = Projects::ProjectService::RemoveScriptFromActiveProject(scriptHandle);
+		bool projectModified = activeProject.RemoveScriptFromActiveProject(scriptHandle);
 		if (projectModified)
 		{
-			Projects::ProjectService::SaveActiveProject();
+			activeProject.SaveProject();
 		}
 	}
 }

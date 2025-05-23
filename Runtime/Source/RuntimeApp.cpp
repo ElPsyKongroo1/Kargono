@@ -49,7 +49,7 @@ namespace Kargono
 			return false;
 		}
 		OpenProject(pathToProject);
-		if (!Projects::ProjectService::GetActive())
+		if (!Projects::ProjectService::IsActive())
 		{
 			KG_CRITICAL("Failed to open project!");
 			Scripting::ScriptService::Terminate();
@@ -79,8 +79,8 @@ namespace Kargono
 		
 		if (!m_Headless)
 		{
-			Projects::ProjectService::GetActiveIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
-			currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveTargetResolution()));
+			Projects::ProjectService::GetActiveContext().GetIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
+			currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveContext().GetTargetResolution()));
 			currentWindow.SetResizable(false);
 		}
 
@@ -492,7 +492,9 @@ namespace Kargono
 
 	bool RuntimeApp::OnUpdateUserCount(Events::ReceiveOnlineUsers event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCountHandle();
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts()};
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnUpdateUserCount;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt32(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserCount());
@@ -502,7 +504,9 @@ namespace Kargono
 
 	bool RuntimeApp::OnApproveJoinSession(Events::ApproveJoinSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnApproveJoinSessionHandle();
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle{ clientScripts.m_OnApproveJoinSession };
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
@@ -512,7 +516,9 @@ namespace Kargono
 
 	bool RuntimeApp::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle();
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnUpdateSessionUserSlot;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
@@ -522,7 +528,9 @@ namespace Kargono
 
 	bool RuntimeApp::OnUserLeftSession(Events::UserLeftSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUserLeftSessionHandle();
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnUserLeftSession;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
@@ -532,7 +540,9 @@ namespace Kargono
 
 	bool RuntimeApp::OnCurrentSessionInit(Events::CurrentSessionInit event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnCurrentSessionInitHandle();
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnCurrentSessionInit;
 		if (scriptHandle != 0)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -542,7 +552,9 @@ namespace Kargono
 
 	bool RuntimeApp::OnConnectionTerminated(Events::ConnectionTerminated event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnConnectionTerminatedHandle();
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnConnectionTerminated;
 		if (scriptHandle != 0)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -552,7 +564,9 @@ namespace Kargono
 
 	bool RuntimeApp::OnStartSession(Events::StartSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnStartSessionHandle();
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnStartSession;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -562,7 +576,9 @@ namespace Kargono
 
 	bool RuntimeApp::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle();
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnSessionReadyCheckConfirm;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -572,7 +588,9 @@ namespace Kargono
 
 	bool RuntimeApp::OnReceiveSignal(Events::ReceiveSignal event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnReceiveSignalHandle();
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnReceiveSignal;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetSignal());
@@ -647,14 +665,14 @@ namespace Kargono
 
 	void RuntimeApp::OpenProject(const std::filesystem::path& path)
 	{
-		if (Projects::ProjectService::OpenProject(path))
+		if (Projects::ProjectService::GetActiveContext().OpenProject(path))
 		{
 			if (!EngineService::GetActiveEngine().GetWindow().GetNativeWindow())
 			{
-				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveTargetResolution());
+				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 				WindowProps projectProps =
 				{
-					Projects::ProjectService::GetActiveProjectName().c_str(),
+					Projects::ProjectService::GetActiveContext().GetProjectName().c_str(),
 					static_cast<uint32_t>(screenSize.x),
 					static_cast<uint32_t>(screenSize.y)
 				};
@@ -669,7 +687,7 @@ namespace Kargono
 				Rendering::RendererAPI::Init();
 			}
 
-			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveStartSceneHandle();
+			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveContext().GetStartSceneHandle();
 			Scripting::ScriptService::LoadActiveScriptModule();
 
 			if (Scenes::SceneService::GetActiveScene())
@@ -694,32 +712,34 @@ namespace Kargono
 
 	void RuntimeApp::OnPlay()
 	{
+		Projects::Project& activeProject{ Projects::ProjectService::GetActiveContext()};
+
 		// Handle initializing core services
 		Particles::ParticleService::GetActiveContext().ClearEmitters();
 		Physics::Physics2DService::CreatePhysics2DWorld();
 		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetOnRuntimeStartHandle();
 		if (scriptHandle != 0)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 
 		// Load Default Game State
-		if (Projects::ProjectService::GetActiveStartGameStateHandle() == 0)
+		if (activeProject.GetStartGameStateHandle() == 0)
 		{
 			Scenes::GameStateService::ClearActiveGameState();
 		}
 		else
 		{
 			Scenes::GameStateService::SetActiveGameState(Assets::AssetService::GetGameState(
-				Projects::ProjectService::GetActiveStartGameStateHandle()), 
-				Projects::ProjectService::GetActiveStartGameStateHandle());
+				activeProject.GetStartGameStateHandle()),
+				activeProject.GetStartGameStateHandle());
 		}
 
-		if (Projects::ProjectService::GetActiveAppIsNetworked())
+		if (activeProject.GetAppIsNetworked())
 		{
-			Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
+			Network::ClientService::GetActiveContext().Init(activeProject.GetServerConfig());
 		}
 
 		// Load particle emitters
@@ -732,7 +752,7 @@ namespace Kargono
 		Physics::Physics2DService::RemovePhysics2DWorld();
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
 		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
-		if (Projects::ProjectService::GetActive() && Projects::ProjectService::GetActiveAppIsNetworked())
+		if (Projects::ProjectService::GetActiveContext().GetAppIsNetworked())
 		{
 			Network::ClientService::GetActiveContext().Terminate(false);
 		}

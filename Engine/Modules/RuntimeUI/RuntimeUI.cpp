@@ -357,7 +357,7 @@ namespace Kargono::RuntimeUI
 				viewportData->m_Width, viewportData->m_Height);
 
 			// Get the widget's text's starting position
-			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 			float textScalingFactor{ (viewportData->m_Width * 0.15f * textData->m_TextSize) * (resolution.y / resolution.x) };
 			Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(*textData, widgetTransform.m_Translation, widgetTransform.m_Size, textScalingFactor);
 
@@ -2821,7 +2821,7 @@ namespace Kargono::RuntimeUI
 
 		// Create the widget's text rendering data
 		widgetTranslation.z += 0.001f;
-		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 		float textSize{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
 		float yAdvance = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_LineHeight;
 		float allLineAdvanceHeight{ 0.0f };
@@ -2884,7 +2884,7 @@ namespace Kargono::RuntimeUI
 	void TextWidget::CalculateTextSize()
 	{
 		// Get the resolution of the screen and the viewport
-		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 		ViewportData& viewportData = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		
 		// Calculate the text size used by the rendering calls
@@ -3055,7 +3055,7 @@ namespace Kargono::RuntimeUI
 		}
 		
 		// Calculate text starting point
-		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 		float textScalingFactor{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
 		Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(m_TextData, widgetTranslation, widgetSize, textScalingFactor);
 
@@ -3198,7 +3198,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Calculate text starting point
-		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 		float textScalingFactor{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
 		Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(m_TextData, widgetTranslation, widgetSize, textScalingFactor);
 
@@ -3290,7 +3290,7 @@ namespace Kargono::RuntimeUI
 			SingleLineTextData& textData = m_DropDownOptions.at(m_CurrentOption);
 
 			// Calculate text starting point
-			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 			float textScalingFactor{ (viewportWidth * 0.15f * textData.m_TextSize) * (resolution.y / resolution.x) };
 			Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(textData, widgetTranslation, widgetSize, textScalingFactor);
 
@@ -3348,7 +3348,7 @@ namespace Kargono::RuntimeUI
 				SingleLineTextData& textData = m_DropDownOptions.at(iteration);
 
 				// Calculate text starting point
-				Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+				Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 				float textScalingFactor{ (viewportWidth * 0.15f * textData.m_TextSize) * (resolution.y / resolution.x) };
 				Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(textData, currentOptionTranslation, widgetSize, textScalingFactor);
 

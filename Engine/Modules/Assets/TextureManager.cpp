@@ -48,10 +48,12 @@ namespace Kargono::Assets
 		m_AssetRegistry.insert({ newHandle, newAsset });
 		SerializeAssetRegistry(); // Update Registry File on Disk
 
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Fill in-memory cache if appropriate
 		if (m_Flags.test(AssetManagerOptions::HasAssetCache))
 		{
-			std::filesystem::path assetPath = Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation;
+			std::filesystem::path assetPath = projectPaths.GetIntermediateDirectory() / newAsset.Data.IntermediateLocation;
 			m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, assetPath) });
 		}
 
@@ -69,7 +71,8 @@ namespace Kargono::Assets
 	void Texture2DManager::CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, int32_t height, int32_t channels, Assets::AssetInfo& newAsset)
 	{
 		// Save Binary Intermediate into File
-		std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation;
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+		std::filesystem::path intermediateFullPath = projectPaths.GetIntermediateDirectory() / newAsset.Data.IntermediateLocation;
 		Utility::FileSystem::WriteFileBinary(intermediateFullPath, buffer);
 
 		// Load data into In-Memory Metadata object

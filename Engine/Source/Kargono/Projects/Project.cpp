@@ -15,17 +15,15 @@
 
 namespace Kargono::Projects
 {
-	void ProjectService::ExportProject(const std::filesystem::path& exportLocation, bool createServer)
+	void Project::ExportProject(const std::filesystem::path& exportLocation, bool createServer)
 	{
 		KG_INFO("Beginning export project process");
 
-		KG_ASSERT(s_ActiveProject, "Failed to export project since no active project is open!");
-
 		// Create full path to the export directories of the runtime and server
-		std::filesystem::path exportDirectory = exportLocation / s_ActiveProject->Name;
-		std::filesystem::path serverExportDirectory = exportLocation / (s_ActiveProject->Name + "Server");
+		std::filesystem::path exportDirectory = exportLocation / m_Name;
+		std::filesystem::path serverExportDirectory = exportLocation / (m_Name + "Server");
 
-		KG_INFO("Creating {} Project Directory", s_ActiveProject->Name);
+		KG_INFO("Creating {} Project Directory", m_Name);
 		Utility::FileSystem::CreateNewDirectory(exportDirectory);
 
 		KG_INFO("Copying Runtime resources into export directory");
@@ -40,9 +38,9 @@ namespace Kargono::Projects
 			return;
 		}
 
-		KG_INFO("Copying {} project files into export directory", s_ActiveProject->Name);
+		KG_INFO("Copying {} project files into export directory", m_Name);
 		success = Utility::FileSystem::CopyDirectory(
-			GetActiveProjectDirectory(), 
+			GetProjectPaths().m_ProjectDirectory,
 			exportDirectory);
 		if (!success)
 		{
@@ -122,16 +120,15 @@ namespace Kargono::Projects
 			}
 		}
 
-		KG_INFO("Successfully exported {} project to {}", s_ActiveProject->Name, exportDirectory.string());
+		KG_INFO("Successfully exported {} project to {}", m_Name, exportDirectory.string());
 		if (createServer)
 		{
-			KG_INFO("Successfully exported {} project server to {}", s_ActiveProject->Name, serverExportDirectory.string());
+			KG_INFO("Successfully exported {} project server to {}", m_Name, serverExportDirectory.string());
 		}
 	}
 
-	bool ProjectService::BuildExecutableGCC(const std::filesystem::path& exportDirectory, bool createServer)
+	bool Project::BuildExecutableGCC(const std::filesystem::path& exportDirectory, bool createServer)
 	{
-		KG_ASSERT(s_ActiveProject, "Failed to build runtime executable since no active project exists");
 		std::filesystem::path projectPath { std::filesystem::current_path().parent_path()};
 		std::filesystem::path intermediatesPath { exportDirectory / "Temp/" };
 
@@ -206,11 +203,11 @@ namespace Kargono::Projects
 		// Move Executable into main directory
 		if (createServer) 
 		{
-			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Server", exportDirectory / (s_ActiveProject->Name + "Server"));
+			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Server", exportDirectory / (m_Name + "Server"));
 		} 
 		else 
 		{
-			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Runtime", exportDirectory / (s_ActiveProject->Name));
+			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Runtime", exportDirectory / (m_Name));
 		}
 
 		if (!success) 
@@ -225,9 +222,8 @@ namespace Kargono::Projects
 		return true;
 	}
 
-	bool ProjectService::BuildExecutableMSVC(const std::filesystem::path& exportDirectory, bool createServer)
+	bool Project::BuildExecutableMSVC(const std::filesystem::path& exportDirectory, bool createServer)
 	{
-		KG_ASSERT(s_ActiveProject, "Failed to build runtime executable since no active project exists");
 		std::filesystem::path solutionPath { std::filesystem::current_path().parent_path() / "Kargono.sln" };
 		std::filesystem::path intermediatesPath { exportDirectory / "Temp/" };
 
@@ -310,11 +306,11 @@ namespace Kargono::Projects
 		// Move Executable into main directory
 		if (createServer)
 		{
-			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Server.exe", exportDirectory / (s_ActiveProject->Name + "Server.exe"));
+			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Server.exe", exportDirectory / (m_Name + "Server.exe"));
 		}
 		else
 		{
-			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Runtime.exe", exportDirectory / (s_ActiveProject->Name + ".exe"));
+			success = Utility::FileSystem::CopySingleFile(intermediatesPath / "Runtime.exe", exportDirectory / (m_Name + ".exe"));
 		}
 
 		if (!success)
@@ -329,17 +325,17 @@ namespace Kargono::Projects
 		return true;
 	}
 
-	bool ProjectService::SerializeServerConfig(Ref<Projects::Project> project)
+	bool Project::SerializeServerConfig()
 	{
 		// Create/overwrite the server config file if specified
 		bool writeConfigError{ false };
 
 		// Create the config file path
-		std::filesystem::path configFilePath = project->m_ProjectDirectory / "ServerConfig.env";
+		std::filesystem::path configFilePath = m_ProjectPaths.m_ProjectDirectory / "ServerConfig.env";
 		KG_INFO("Creating server config file at {}", configFilePath.string());
 
 		// Write the config file path out to disk (project location)
-		std::string newConfigFile = Network::NetworkTools::CreateServerVariablesConfigFile(project->m_ServerConfig);
+		std::string newConfigFile = Network::NetworkTools::CreateServerVariablesConfigFile(m_ServerConfig);
 		writeConfigError = !Utility::FileSystem::WriteFileString(configFilePath, newConfigFile);
 
 		// Ensure config file creation does not throw errors
@@ -352,7 +348,7 @@ namespace Kargono::Projects
 		return true;
 	}
 
-	bool ProjectService::DeserializeServerVariables(Ref<Projects::Project> project, const std::filesystem::path& projectPath)
+	bool Project::DeserializeServerConfig(const std::filesystem::path& projectPath)
 	{
 		std::filesystem::path filepath = (projectPath.parent_path() / "ServerConfig.env");
 
@@ -376,91 +372,86 @@ namespace Kargono::Projects
 		if (!rootNode) { return false; }
 
 		Math::u8vec4 ipv4 = (Math::u8vec4)rootNode["ServerIP"].as<Math::ivec4>();
-		project->m_ServerConfig.m_ServerAddress.SetAddress(ipv4.x, ipv4.y, ipv4.z, ipv4.w);
-		project->m_ServerConfig.m_ServerAddress.SetNewPort(static_cast<uint16_t>(rootNode["ServerPort"].as<uint32_t>()));
-		project->m_ServerConfig.m_ServerLocation = Utility::StringToServerLocation(rootNode["ServerLocation"].as<std::string>());
+		m_ServerConfig.m_ServerAddress.SetAddress(ipv4.x, ipv4.y, ipv4.z, ipv4.w);
+		m_ServerConfig.m_ServerAddress.SetNewPort(static_cast<uint16_t>(rootNode["ServerPort"].as<uint32_t>()));
+		m_ServerConfig.m_ServerLocation = Utility::StringToServerLocation(rootNode["ServerLocation"].as<std::string>());
 
-		project->m_ServerConfig.m_ValidationSecrets.x = rootNode["SecretOne"].as<uint64_t>();
-		project->m_ServerConfig.m_ValidationSecrets.y = rootNode["SecretTwo"].as<uint64_t>();
-		project->m_ServerConfig.m_ValidationSecrets.z = rootNode["SecretThree"].as<uint64_t>();
-		project->m_ServerConfig.m_ValidationSecrets.w = rootNode["SecretFour"].as<uint64_t>();
+		m_ServerConfig.m_ValidationSecrets.x = rootNode["SecretOne"].as<uint64_t>();
+		m_ServerConfig.m_ValidationSecrets.y = rootNode["SecretTwo"].as<uint64_t>();
+		m_ServerConfig.m_ValidationSecrets.z = rootNode["SecretThree"].as<uint64_t>();
+		m_ServerConfig.m_ValidationSecrets.w = rootNode["SecretFour"].as<uint64_t>();
 		return true;
 	}
 
 
-	std::filesystem::path ProjectService::CreateNewProject(const std::string& projectName, const std::filesystem::path& projectLocation)
+	bool Project::CreateNewProject(const std::string& projectName, const std::filesystem::path& projectLocation)
 	{
+		m_Active = true;
+		m_Name = projectName;
+		m_ProjectPaths.m_ProjectDirectory = projectLocation / projectName;
 
-		Ref<Projects::Project> newProject = CreateRef<Projects::Project>();
-		newProject->Name = projectName;
-		newProject->m_ProjectDirectory = projectLocation / projectName;
-		newProject->AssetDirectory = "Assets";
-		newProject->IntermediateDirectory = "Intermediates";
-
-		if (exists(newProject->m_ProjectDirectory))
+		if (std::filesystem::exists(m_ProjectPaths.m_ProjectDirectory))
 		{
 			KG_WARN("Attempt to create new project when same named directory already exists");
-			return {};
+			return false;
 		}
 		// Create Project Directory
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory);
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.m_ProjectDirectory);
 
-		std::filesystem::path projectFileLocation = newProject->m_ProjectDirectory / (projectName + ".kproj");
-		bool success = SerializeProject(newProject, projectFileLocation);
-		if (!success)
+		std::filesystem::path projectFileLocation = m_ProjectPaths.m_ProjectDirectory / (projectName + ".kproj");
+
+		if (!SerializeProject(projectFileLocation))
 		{
 			KG_WARN("Failed to serialize project file");
-			Utility::FileSystem::DeleteSelectedDirectory(newProject->m_ProjectDirectory);
-			return {};
+			Utility::FileSystem::DeleteSelectedDirectory(m_ProjectPaths.m_ProjectDirectory);
+			return false;
 		}
 
 		// Create all asset folders
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->AssetDirectory);
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory);
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "AudioBuffer");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "EntityClass");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Font");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "GameState");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Input");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Scene");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Script");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Shader");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "Texture2D");
-		Utility::FileSystem::CreateNewDirectory(newProject->m_ProjectDirectory / newProject->IntermediateDirectory / "UserInterface");
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetAssetDirectory());
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetIntermediateDirectory());
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetIntermediateDirectory() / "AudioBuffer");
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetIntermediateDirectory() / "EntityClass");
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetIntermediateDirectory() / "Font");
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetIntermediateDirectory() / "GameState");
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetIntermediateDirectory() / "Input");
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetIntermediateDirectory() / "Scene");
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetIntermediateDirectory() / "Script");
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetIntermediateDirectory() / "Shader");
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetIntermediateDirectory() / "Texture2D");
+		Utility::FileSystem::CreateNewDirectory(m_ProjectPaths.GetIntermediateDirectory() / "UserInterface");
 
-		return projectFileLocation;
+		return true;
 
 	}
-	Ref<Projects::Project> ProjectService::OpenProject(const std::filesystem::path& path)
+	bool Project::OpenProject(const std::filesystem::path& path)
 	{
-		Ref<Projects::Project> project = CreateRef<Projects::Project>();
-		if (DeserializeProject(project, path))
+		if (!DeserializeProject(path))
 		{
-			project->m_ProjectDirectory = path.parent_path();
-			s_ActiveProject = project;
-			return s_ActiveProject;
+			return false;
 		}
-
-		return nullptr;
-
+		
+		m_ProjectPaths.m_ProjectDirectory = path.parent_path();
+		m_Active = true;
+		return true;
 	}
 
-	bool ProjectService::SaveActiveProject()
+	bool Project::SaveProject()
 	{
-		return Projects::ProjectService::SaveActiveProject((Projects::ProjectService::GetActiveProjectDirectory() / Projects::ProjectService::GetActiveProjectName()).replace_extension(".kproj"));
+		return Projects::Project::SaveProject((GetProjectPaths().m_ProjectDirectory / GetProjectName()).replace_extension(".kproj"));
 	}
 
-	bool ProjectService::SaveActiveProject(const std::filesystem::path& path)
+	bool Project::SaveProject(const std::filesystem::path& path)
 	{
-		if (SerializeProject(s_ActiveProject, path))
+		if (SerializeProject(path))
 		{
-			s_ActiveProject->m_ProjectDirectory = path.parent_path();
+			m_ProjectPaths.m_ProjectDirectory = path.parent_path();
 			return true;
 		}
 		return false;
 	}
 
-	bool ProjectService::SerializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath)
+	bool Project::SerializeProject(const std::filesystem::path& filepath)
 	{
 		YAML::Emitter out;
 
@@ -469,26 +460,22 @@ namespace Kargono::Projects
 			out << YAML::Key << "Project" << YAML::Value;
 			{
 				out << YAML::BeginMap; // Project
-				out << YAML::Key << "Name" << YAML::Value << project->Name;
-				out << YAML::Key << "StartSceneHandle" << YAML::Value << static_cast<uint64_t>(project->StartSceneHandle);
-				out << YAML::Key << "StartGameState" << YAML::Value << static_cast<uint64_t>(project->StartGameState);
-				out << YAML::Key << "AssetDirectory" << YAML::Value << project->AssetDirectory.string();
-				out << YAML::Key << "IntermediateDirectory" << YAML::Value << project->IntermediateDirectory.string();
-				out << YAML::Key << "ScriptModulePath" << YAML::Value << project->ScriptModulePath.string();
-				out << YAML::Key << "ScriptDLLPath" << YAML::Value << project->ScriptDLLPath.string();
-				out << YAML::Key << "DefaultFullscreen" << YAML::Value << project->DefaultFullscreen;
-				out << YAML::Key << "TargetResolution" << YAML::Value << Utility::ScreenResolutionToString(project->TargetResolution);
-				out << YAML::Key << "OnRuntimeStart" << YAML::Value << static_cast<uint64_t>(project->OnRuntimeStart);
-				out << YAML::Key << "OnUpdateUserCount" << YAML::Value << static_cast<uint64_t>(project->OnUpdateUserCount);
-				out << YAML::Key << "OnApproveJoinSession" << YAML::Value << static_cast<uint64_t>(project->OnApproveJoinSession);
-				out << YAML::Key << "OnUserLeftSession" << YAML::Value << static_cast<uint64_t>(project->OnUserLeftSession);
-				out << YAML::Key << "OnCurrentSessionInit" << YAML::Value << static_cast<uint64_t>(project->OnCurrentSessionInit);
-				out << YAML::Key << "OnConnectionTerminated" << YAML::Value << static_cast<uint64_t>(project->OnConnectionTerminated);
-				out << YAML::Key << "OnUpdateSessionUserSlot" << YAML::Value << static_cast<uint64_t>(project->OnUpdateSessionUserSlot);
-				out << YAML::Key << "OnStartSession" << YAML::Value << static_cast<uint64_t>(project->OnStartSession);
-				out << YAML::Key << "OnSessionReadyCheckConfirm" << YAML::Value << (uint64_t)project->OnSessionReadyCheckConfirm;
-				out << YAML::Key << "OnReceiveSignal" << YAML::Value << (uint64_t)project->OnReceiveSignal;
-				out << YAML::Key << "AppIsNetworked" << YAML::Value << project->AppIsNetworked;
+				out << YAML::Key << "Name" << YAML::Value << m_Name;
+				out << YAML::Key << "StartSceneHandle" << YAML::Value << static_cast<uint64_t>(m_StartSceneHandle);
+				out << YAML::Key << "StartGameState" << YAML::Value << static_cast<uint64_t>(m_StartGameState);
+				out << YAML::Key << "DefaultFullscreen" << YAML::Value << m_DefaultFullscreen;
+				out << YAML::Key << "TargetResolution" << YAML::Value << Utility::ScreenResolutionToString(m_TargetResolution);
+				out << YAML::Key << "OnRuntimeStart" << YAML::Value << static_cast<uint64_t>(m_OnRuntimeStart);
+				out << YAML::Key << "OnUpdateUserCount" << YAML::Value << static_cast<uint64_t>(GetClientScripts().m_OnUpdateUserCount);
+				out << YAML::Key << "OnApproveJoinSession" << YAML::Value << static_cast<uint64_t>(GetClientScripts().m_OnApproveJoinSession);
+				out << YAML::Key << "OnUserLeftSession" << YAML::Value << static_cast<uint64_t>(GetClientScripts().m_OnUserLeftSession);
+				out << YAML::Key << "OnCurrentSessionInit" << YAML::Value << static_cast<uint64_t>(GetClientScripts().m_OnCurrentSessionInit);
+				out << YAML::Key << "OnConnectionTerminated" << YAML::Value << static_cast<uint64_t>(GetClientScripts().m_OnConnectionTerminated);
+				out << YAML::Key << "OnUpdateSessionUserSlot" << YAML::Value << static_cast<uint64_t>(GetClientScripts().m_OnUpdateSessionUserSlot);
+				out << YAML::Key << "OnStartSession" << YAML::Value << static_cast<uint64_t>(GetClientScripts().m_OnStartSession);
+				out << YAML::Key << "OnSessionReadyCheckConfirm" << YAML::Value << (uint64_t)GetClientScripts().m_OnSessionReadyCheckConfirm;
+				out << YAML::Key << "OnReceiveSignal" << YAML::Value << (uint64_t)GetClientScripts().m_OnReceiveSignal;
+				out << YAML::Key << "AppIsNetworked" << YAML::Value << m_AppIsNetworked;
 
 				out << YAML::EndMap; // Close Project
 			}
@@ -499,9 +486,9 @@ namespace Kargono::Projects
 		std::ofstream fout(filepath);
 		fout << out.c_str();
 
-		KG_INFO("Successfully serialized project file {}", project->Name);
+		KG_INFO("Successfully serialized project file {}", m_Name);
 
-		if (SerializeServerConfig(project))
+		if (SerializeServerConfig())
 		{
 			KG_INFO("Successfully serialized server config file");
 			return true;
@@ -513,7 +500,7 @@ namespace Kargono::Projects
 		}
 	}
 
-	bool ProjectService::DeserializeProject(Ref<Projects::Project> project, const std::filesystem::path& filepath)
+	bool Project::DeserializeProject(const std::filesystem::path& filepath)
 	{
 
 		YAML::Node data;
@@ -529,91 +516,88 @@ namespace Kargono::Projects
 		YAML::Node projectNode = data["Project"];
 		if (!projectNode) { return false; }
 
-		project->Name = projectNode["Name"].as<std::string>();
-		project->StartSceneHandle = static_cast<Assets::AssetHandle>(projectNode["StartSceneHandle"].as<uint64_t>());
-		project->StartGameState = static_cast<Assets::AssetHandle>(projectNode["StartGameState"].as<uint64_t>());
-		project->AssetDirectory = projectNode["AssetDirectory"].as<std::string>();
-		project->IntermediateDirectory = projectNode["IntermediateDirectory"].as<std::string>();
-		project->ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();
-		project->ScriptDLLPath = projectNode["ScriptDLLPath"].as<std::string>();
-		project->DefaultFullscreen = projectNode["DefaultFullscreen"].as<bool>();
-		project->TargetResolution = Utility::StringToScreenResolution(projectNode["TargetResolution"].as<std::string>());
-		project->OnRuntimeStart = static_cast<Assets::AssetHandle>(projectNode["OnRuntimeStart"].as<uint64_t>());
-		project->OnUpdateUserCount = static_cast<Assets::AssetHandle>(projectNode["OnUpdateUserCount"].as<uint64_t>());
-		project->OnApproveJoinSession = static_cast<Assets::AssetHandle>(projectNode["OnApproveJoinSession"].as<uint64_t>());
-		project->OnUserLeftSession = static_cast<Assets::AssetHandle>(projectNode["OnUserLeftSession"].as<uint64_t>());
-		project->OnCurrentSessionInit = static_cast<Assets::AssetHandle>(projectNode["OnCurrentSessionInit"].as<uint64_t>());
-		project->OnConnectionTerminated = static_cast<Assets::AssetHandle>(projectNode["OnConnectionTerminated"].as<uint64_t>());
-		project->OnUpdateSessionUserSlot = static_cast<Assets::AssetHandle>(projectNode["OnUpdateSessionUserSlot"].as<uint64_t>());
-		project->OnStartSession = static_cast<Assets::AssetHandle>(projectNode["OnStartSession"].as<uint64_t>());
-		project->OnSessionReadyCheckConfirm = static_cast<Assets::AssetHandle>(projectNode["OnSessionReadyCheckConfirm"].as<uint64_t>());
-		project->OnReceiveSignal = static_cast<Assets::AssetHandle>(projectNode["OnReceiveSignal"].as<uint64_t>());
-		project->AppIsNetworked = static_cast<Assets::AssetHandle>(projectNode["AppIsNetworked"].as<bool>());
+		m_Name = projectNode["Name"].as<std::string>();
+		m_StartSceneHandle = static_cast<Assets::AssetHandle>(projectNode["StartSceneHandle"].as<uint64_t>());
+		m_StartGameState = static_cast<Assets::AssetHandle>(projectNode["StartGameState"].as<uint64_t>());
+		m_DefaultFullscreen = projectNode["DefaultFullscreen"].as<bool>();
+		m_TargetResolution = Utility::StringToScreenResolution(projectNode["TargetResolution"].as<std::string>());
+		m_OnRuntimeStart = static_cast<Assets::AssetHandle>(projectNode["OnRuntimeStart"].as<uint64_t>());
+		GetClientScripts().m_OnUpdateUserCount = static_cast<Assets::AssetHandle>(projectNode["OnUpdateUserCount"].as<uint64_t>());
+		GetClientScripts().m_OnApproveJoinSession = static_cast<Assets::AssetHandle>(projectNode["OnApproveJoinSession"].as<uint64_t>());
+		GetClientScripts().m_OnUserLeftSession = static_cast<Assets::AssetHandle>(projectNode["OnUserLeftSession"].as<uint64_t>());
+		GetClientScripts().m_OnCurrentSessionInit = static_cast<Assets::AssetHandle>(projectNode["OnCurrentSessionInit"].as<uint64_t>());
+		GetClientScripts().m_OnConnectionTerminated = static_cast<Assets::AssetHandle>(projectNode["OnConnectionTerminated"].as<uint64_t>());
+		GetClientScripts().m_OnUpdateSessionUserSlot = static_cast<Assets::AssetHandle>(projectNode["OnUpdateSessionUserSlot"].as<uint64_t>());
+		GetClientScripts().m_OnStartSession = static_cast<Assets::AssetHandle>(projectNode["OnStartSession"].as<uint64_t>());
+		GetClientScripts().m_OnSessionReadyCheckConfirm = static_cast<Assets::AssetHandle>(projectNode["OnSessionReadyCheckConfirm"].as<uint64_t>());
+		GetClientScripts().m_OnReceiveSignal = static_cast<Assets::AssetHandle>(projectNode["OnReceiveSignal"].as<uint64_t>());
+		m_AppIsNetworked = static_cast<Assets::AssetHandle>(projectNode["AppIsNetworked"].as<bool>());
 		
-		DeserializeServerVariables(project, filepath);
+		DeserializeServerConfig(filepath);
 
 		return true;
 	}
 
-	bool ProjectService::RemoveScriptFromActiveProject(Assets::AssetHandle scriptHandle)
+	bool Project::RemoveScriptFromActiveProject(Assets::AssetHandle scriptHandle)
 	{
 		bool projectModified{ false };
 		// Check active project for scripts
-		if (Projects::ProjectService::GetActiveOnRuntimeStartHandle() == scriptHandle)
+		if (GetOnRuntimeStartHandle() == scriptHandle)
 		{
-			Projects::ProjectService::SetActiveOnRuntimeStartHandle(Assets::EmptyHandle);
+			SetOnRuntimeStartHandle(Assets::EmptyHandle);
 			projectModified = true;
 		}
-		if (Projects::ProjectService::GetActiveOnUpdateUserCountHandle() == scriptHandle)
+
+		// Handle removing client scripts
+		Network::ClientScripts& clientScripts{ GetClientScripts() };
+		if (clientScripts.m_OnUpdateUserCount == scriptHandle)
 		{
-			Projects::ProjectService::SetActiveOnUpdateUserCountHandle(Assets::EmptyHandle);
+			clientScripts.m_OnUpdateUserCount = Assets::EmptyHandle;
 			projectModified = true;
 		}
-		if (Projects::ProjectService::GetActiveOnApproveJoinSessionHandle() == scriptHandle)
+		if (clientScripts.m_OnApproveJoinSession == scriptHandle)
 		{
-			Projects::ProjectService::SetActiveOnApproveJoinSessionHandle(Assets::EmptyHandle);
+			clientScripts.m_OnApproveJoinSession = Assets::EmptyHandle;
 			projectModified = true;
 		}
-		if (Projects::ProjectService::GetActiveOnUserLeftSessionHandle() == scriptHandle)
+		if (clientScripts.m_OnUserLeftSession == scriptHandle)
 		{
-			Projects::ProjectService::SetActiveOnUserLeftSessionHandle(Assets::EmptyHandle);
+			clientScripts.m_OnUserLeftSession = Assets::EmptyHandle;
 			projectModified = true;
 		}
-		if (Projects::ProjectService::GetActiveOnCurrentSessionInitHandle() == scriptHandle)
+		if (clientScripts.m_OnCurrentSessionInit == scriptHandle)
 		{
-			Projects::ProjectService::SetActiveOnCurrentSessionInitHandle(Assets::EmptyHandle);
+			clientScripts.m_OnCurrentSessionInit = Assets::EmptyHandle;
 			projectModified = true;
 		}
-		if (Projects::ProjectService::GetActiveOnConnectionTerminatedHandle() == scriptHandle)
+		if (clientScripts.m_OnConnectionTerminated == scriptHandle)
 		{
-			Projects::ProjectService::SetActiveOnConnectionTerminatedHandle(Assets::EmptyHandle);
+			clientScripts.m_OnConnectionTerminated = Assets::EmptyHandle;
 			projectModified = true;
 		}
-		if (Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle() == scriptHandle)
+		if (clientScripts.m_OnUpdateSessionUserSlot == scriptHandle)
 		{
-			Projects::ProjectService::SetActiveOnUpdateSessionUserSlotHandle(Assets::EmptyHandle);
+			clientScripts.m_OnUpdateSessionUserSlot = Assets::EmptyHandle;
 			projectModified = true;
 		}
-		if (Projects::ProjectService::GetActiveOnStartSessionHandle() == scriptHandle)
+		if (clientScripts.m_OnStartSession == scriptHandle)
 		{
-			Projects::ProjectService::SetActiveOnStartSessionHandle(Assets::EmptyHandle);
+			clientScripts.m_OnStartSession = Assets::EmptyHandle;
 			projectModified = true;
 		}
-		if (Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle() == scriptHandle)
+		if (clientScripts.m_OnSessionReadyCheckConfirm == scriptHandle)
 		{
-			Projects::ProjectService::SetActiveOnSessionReadyCheckConfirmHandle(Assets::EmptyHandle);
+			clientScripts.m_OnSessionReadyCheckConfirm = Assets::EmptyHandle;
 			projectModified = true;
 		}
-		if (Projects::ProjectService::GetActiveOnReceiveSignalHandle() == scriptHandle)
+		if (clientScripts.m_OnReceiveSignal == scriptHandle)
 		{
-			Projects::ProjectService::SetActiveOnReceiveSignalHandle(Assets::EmptyHandle);
+			clientScripts.m_OnReceiveSignal = Assets::EmptyHandle;
 			projectModified = true;
 		}
 
 		return projectModified;
 	}
-
-	
 }
 
 

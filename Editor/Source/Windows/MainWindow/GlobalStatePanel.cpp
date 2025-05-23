@@ -44,13 +44,13 @@ namespace Kargono::Panels
 		m_SelectGlobalStateNameSpec.m_CurrentOption = "Empty";
 
 		m_SelectGlobalStateLocationSpec.m_Label = "Location";
-		m_SelectGlobalStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectGlobalStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		m_SelectGlobalStateLocationSpec.m_ConfirmAction = [&](std::string_view path)
 			{
-				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory(), path))
 				{
 					KG_WARN("Cannot create an asset outside of the project's asset directory.");
-					m_SelectGlobalStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+					m_SelectGlobalStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 				}
 			};
 
@@ -262,7 +262,7 @@ namespace Kargono::Panels
 	void GlobalStatePanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
 		// Ensure provided path is within the active asset directory
-		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
 		{
 			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
@@ -480,8 +480,9 @@ namespace Kargono::Panels
 	}
 	void GlobalStatePanel::OnCreateGlobalStateDialog()
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectGlobalStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		m_SelectGlobalStateLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_CreateGlobalStatePopup.m_OpenPopup = true;
 	}
 	void GlobalStatePanel::OnRefreshData()

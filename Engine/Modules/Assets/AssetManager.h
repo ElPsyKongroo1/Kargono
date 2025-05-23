@@ -43,7 +43,7 @@ namespace Kargono::Assets
 
 		Ref<t_AssetValue> GetAsset(AssetHandle handle)
 		{
-			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retrieving asset!");
+			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths()};
 
 			if (m_Flags.test(AssetManagerOptions::HasAssetCache))
 			{
@@ -58,8 +58,8 @@ namespace Kargono::Assets
 				AssetInfo& asset = m_AssetRegistry[handle];
 				std::filesystem::path assetPath = 
 					(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ? 
-						Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation : 
-						Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
+						projectPaths.GetIntermediateDirectory() / asset.Data.IntermediateLocation : 
+						projectPaths.GetAssetDirectory() / asset.Data.FileLocation);
 				Ref<t_AssetValue> newAsset = DeserializeAsset(asset, assetPath);
 				if (m_Flags.test(AssetManagerOptions::HasAssetCache))
 				{
@@ -75,15 +75,16 @@ namespace Kargono::Assets
 
 		std::tuple<AssetHandle, Ref<t_AssetValue>> GetAsset(const std::filesystem::path& fileLocation)
 		{
-			KG_ASSERT(Projects::ProjectService::GetActive(), "Attempt to use Project Field without active project!");
 			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileLocation), 
 				"Attempt to retrieve a asset using a file location when this asset type does not support storing file locations");
+
+			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
 			std::filesystem::path assetPath = fileLocation;
 
 			if (fileLocation.is_absolute())
 			{
-				assetPath = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), fileLocation);
+				assetPath = Utility::FileSystem::GetRelativePath(paths.GetAssetDirectory(), fileLocation);
 			}
 
 			for (auto& [assetHandle, asset] : m_AssetRegistry)
@@ -150,6 +151,8 @@ namespace Kargono::Assets
 		{
 			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasAssetSaving), "Attempt to save an asset who's type does not support data modification");
 
+			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 			// Ensure handle exists inside registry
 			if (!m_AssetRegistry.contains(assetHandle))
 			{
@@ -165,11 +168,11 @@ namespace Kargono::Assets
 			std::filesystem::path dataLocation {};
 			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
 			{
-				dataLocation = Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation;
+				dataLocation = paths.GetIntermediateDirectory() / asset.Data.IntermediateLocation;
 			}
 			else if (m_Flags.test(AssetManagerOptions::HasFileLocation))
 			{
-				dataLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation;
+				dataLocation = paths.GetAssetDirectory() / asset.Data.FileLocation;
 			}
 			else
 			{
@@ -213,6 +216,8 @@ namespace Kargono::Assets
 				return false;
 			}
 
+			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 			// Find location of asset's data
 			Assets::AssetInfo& asset = m_AssetRegistry[assetHandle];
 			
@@ -231,12 +236,12 @@ namespace Kargono::Assets
 			// Delete the asset's data on-disk
 			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
 			{
-				std::filesystem::path intermediateLocation = Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation;
+				std::filesystem::path intermediateLocation = paths.GetIntermediateDirectory() / asset.Data.IntermediateLocation;
 				Utility::FileSystem::DeleteSelectedFile(intermediateLocation);
 			}
 			if (m_Flags.test(AssetManagerOptions::HasFileLocation))
 			{
-				std::filesystem::path fileLocation = Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation;
+				std::filesystem::path fileLocation = paths.GetAssetDirectory() / asset.Data.FileLocation;
 				Utility::FileSystem::DeleteSelectedFile(fileLocation);
 			}
 			
@@ -276,9 +281,11 @@ namespace Kargono::Assets
 		AssetHandle CreateAsset(const char* assetName, const std::filesystem::path& creationPath)
 		{
 			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasAssetCreationFromName), "Attempt to save an asset who's type does not support data creation");
+
+			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 			
 			bool usingBaseAssetDir{true};
-			if (creationPath == Projects::ProjectService::GetActiveAssetDirectory())
+			if (creationPath == paths.m_ProjectDirectory)
 			{
 				usingBaseAssetDir = true;
 			}
@@ -286,7 +293,7 @@ namespace Kargono::Assets
 			{
 				usingBaseAssetDir = false;
 				// Ensure provided path is within the assets directory
-				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), creationPath))
+				if (!Utility::FileSystem::DoesPathContainSubPath(paths.GetAssetDirectory(), creationPath))
 				{
 					KG_WARN("Provided path for new asset creation is not within asset directory");
 					return Assets::EmptyHandle;
@@ -314,17 +321,17 @@ namespace Kargono::Assets
 			}
 			else
 			{
-				newAsset.Data.FileLocation = Utility::FileSystem::ConvertToUnixStylePath(Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), creationPath) / (assetName + m_FileExtension));
+				newAsset.Data.FileLocation = Utility::FileSystem::ConvertToUnixStylePath(Utility::FileSystem::GetRelativePath(paths.GetAssetDirectory(), creationPath) / (assetName + m_FileExtension));
 			}
 
 			// TODO: Fixme, this is temporary since a code path that uses an intermediate location is not yet necessary
 			KG_ASSERT(!m_Flags.test(AssetManagerOptions::HasIntermediateLocation), "Code path for intermediates is not yet supported");
 
 			// Create File
-			CreateAssetFileFromName(assetName, newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation);
+			CreateAssetFileFromName(assetName, newAsset, paths.GetAssetDirectory() / newAsset.Data.FileLocation);
 
 			// Create Checksum
-			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation);
+			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(paths.GetAssetDirectory() / newAsset.Data.FileLocation);
 
 			// Ensure checksum is valid
 			if (currentCheckSum.empty())
@@ -341,7 +348,7 @@ namespace Kargono::Assets
 			// Fill in-memory cache if appropriate
 			if (m_Flags.test(AssetManagerOptions::HasAssetCache))
 			{
-				m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation) });
+				m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, paths.GetAssetDirectory() / newAsset.Data.FileLocation) });
 			}
 
 			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
@@ -356,7 +363,8 @@ namespace Kargono::Assets
 
 		AssetHandle CreateAsset(const char* assetName)
 		{
-			return CreateAsset(assetName, Projects::ProjectService::GetActiveAssetDirectory());
+			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+			return CreateAsset(assetName, paths.GetAssetDirectory());
 		}
 
 		AssetHandle ImportAssetFromFile(const std::filesystem::path& sourcePath)
@@ -373,6 +381,8 @@ namespace Kargono::Assets
 		AssetHandle ImportAssetFromFile(const std::filesystem::path& sourcePath, const char* newFileName, const std::filesystem::path& destinationPath)
 		{
 			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasFileImporting), "Attempt to import an asset for a file type that does not support importing");
+
+			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
 			// Ensure provided name is valid
 			if (!newFileName || newFileName[0] == '\0')
@@ -412,7 +422,7 @@ namespace Kargono::Assets
 
 			// Validate provided paths
 			bool exportingToBaseAssetDir{ true };
-			if (destinationPath == Projects::ProjectService::GetActiveAssetDirectory())
+			if (destinationPath == paths.GetAssetDirectory())
 			{
 				exportingToBaseAssetDir = true;
 			}
@@ -420,7 +430,7 @@ namespace Kargono::Assets
 			{
 				exportingToBaseAssetDir = false;
 				// Ensure provided path is within the assets directory
-				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), destinationPath))
+				if (!Utility::FileSystem::DoesPathContainSubPath(paths.GetAssetDirectory(), destinationPath))
 				{
 					KG_WARN("Provided path for new asset importation is not within asset directory");
 					return Assets::EmptyHandle;
@@ -468,15 +478,15 @@ namespace Kargono::Assets
 			// Create asset file inside asset manager
 			if (m_Flags.test(AssetManagerOptions::HasFileLocation))
 			{
-				newAsset.Data.FileLocation = Utility::FileSystem::ConvertToUnixStylePath(Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), destinationPath / (newFileName + m_FileExtension)));
-				CreateAssetFileFromName(newFileName, newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation);
+				newAsset.Data.FileLocation = Utility::FileSystem::ConvertToUnixStylePath(Utility::FileSystem::GetRelativePath(paths.GetAssetDirectory(), destinationPath / (newFileName + m_FileExtension)));
+				CreateAssetFileFromName(newFileName, newAsset, paths.GetAssetDirectory() / newAsset.Data.FileLocation);
 			}
 
 			// Check if intermediates are used. If so, generate the intermediate.
 			if (m_Flags.test(AssetManagerOptions::HasIntermediateLocation))
 			{
 				newAsset.Data.IntermediateLocation = Utility::FileSystem::ConvertToUnixStylePath(m_RegistryLocation.parent_path() / ((std::string)newAsset.m_Handle + m_IntermediateExtension.CString()));
-				CreateAssetIntermediateFromFile(newAsset, sourcePath, Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation);
+				CreateAssetIntermediateFromFile(newAsset, sourcePath, paths.GetIntermediateDirectory() / newAsset.Data.IntermediateLocation);
 				newAsset.Data.CheckSum = currentCheckSum;
 			}
 			else
@@ -487,8 +497,8 @@ namespace Kargono::Assets
 			// TODO: Make sure to modify the code below if fixing the asset above
 			std::filesystem::path assetPath =
 				(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
-					Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation :
-					Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation);
+					paths.GetIntermediateDirectory() / newAsset.Data.IntermediateLocation :
+					paths.GetAssetDirectory() / newAsset.Data.FileLocation);
 
 			// Add new asset into asset registry
 			m_AssetRegistry.insert({ newHandle, newAsset });
@@ -512,8 +522,9 @@ namespace Kargono::Assets
 		void SerializeAssetRegistry()
 		{
 			// Get registry path
-			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project when attempting to serialize an asset");
-			const std::filesystem::path registryPath = Projects::ProjectService::GetActiveIntermediateDirectory() / m_RegistryLocation;
+			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+			const std::filesystem::path registryPath = paths.GetIntermediateDirectory() / m_RegistryLocation;
 			
 			// Set up serializer
 			YAML::Emitter serializer;
@@ -562,9 +573,9 @@ namespace Kargono::Assets
 			// Clear current registry
 			m_AssetRegistry.clear();
 
-			// Get on-disk registry path
-			KG_ASSERT(Projects::ProjectService::GetActive(), "There is no currently loaded project when attempting to serialize an asset");
-			const std::filesystem::path registryPath = Projects::ProjectService::GetActiveIntermediateDirectory() / m_RegistryLocation;
+			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+			const std::filesystem::path registryPath = paths.GetIntermediateDirectory() / m_RegistryLocation;
 
 			if (!Utility::FileSystem::PathExists(registryPath))
 			{
@@ -631,6 +642,8 @@ namespace Kargono::Assets
 			// Ensure the current asset type supports caching
 			KG_ASSERT(m_Flags.test(AssetManagerOptions::HasAssetCache));
 
+			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 			// Revalidate active registry
 			DeserializeAssetRegistry();
 
@@ -646,8 +659,8 @@ namespace Kargono::Assets
 				// Get the path to the underlying file
 				std::filesystem::path assetPath =
 					(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
-						Projects::ProjectService::GetActiveIntermediateDirectory() / assetInfo.Data.IntermediateLocation :
-						Projects::ProjectService::GetActiveAssetDirectory() / assetInfo.Data.FileLocation);
+						paths.GetIntermediateDirectory() / assetInfo.Data.IntermediateLocation :
+						paths.GetAssetDirectory() / assetInfo.Data.FileLocation);
 				Ref<t_AssetValue> newAsset = DeserializeAsset(assetInfo, assetPath);
 
 				// Insert the asset into the cache

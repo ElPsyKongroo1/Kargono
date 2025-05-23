@@ -11,12 +11,14 @@ namespace Kargono::Assets
 	Ref<void> ProjectComponentManager::SaveAssetValidation(Ref<ECS::ProjectComponent> newAssetRef, AssetHandle assetHandle)
 	{
 
+		Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Get old assetInfo reference
 		AssetInfo assetInfo = GetAssetRegistry().at(assetHandle);
 		std::filesystem::path assetPath =
 			(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
-				Projects::ProjectService::GetActiveIntermediateDirectory() / assetInfo.Data.IntermediateLocation :
-				Projects::ProjectService::GetActiveAssetDirectory() / assetInfo.Data.FileLocation);
+				paths.GetIntermediateDirectory() / assetInfo.Data.IntermediateLocation :
+				paths.GetAssetDirectory() / assetInfo.Data.FileLocation);
 		Ref<ECS::ProjectComponent> oldAssetRef = DeserializeAsset(assetInfo, assetPath);
 
 		// Create reallocation instructions which stores information for transferring data from old entity components to new entity components

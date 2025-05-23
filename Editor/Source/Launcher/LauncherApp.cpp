@@ -30,7 +30,10 @@ namespace Kargono
 		};
 		s_CreateProjectSpec.m_ConfirmAction = [&]()
 		{
-			s_LauncherApp->SetSelectedProject(Projects::ProjectService::CreateNewProject(s_CreateProjectName.m_CurrentOption, s_CreateProjectLocation.m_CurrentOption));
+			Projects::Project& activeProject{Projects::ProjectService::GetActiveContext()};
+			activeProject.CreateNewProject(s_CreateProjectName.m_CurrentOption, s_CreateProjectLocation.m_CurrentOption);
+
+			s_LauncherApp->SetSelectedProject(activeProject.GetProjectPaths().m_ProjectDirectory);
 			if (!s_LauncherApp->GetSelectedProject().empty())
 			{
 				EngineService::GetActiveEngine().GetThread().EndThread();

@@ -365,10 +365,12 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::OnHandleMoveAssetLocation(const std::filesystem::path& originalFilePath, const std::filesystem::path& newDirectory)
 	{
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Get file extension and relative path for payload file
 		std::filesystem::path fileExtension = originalFilePath.extension();
-		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), originalFilePath) };
-		std::filesystem::path newRelativePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), newDirectory / originalFilePath.filename()) };
+		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(projectPaths.GetAssetDirectory(), originalFilePath) };
+		std::filesystem::path newRelativePath{ Utility::FileSystem::GetRelativePath(projectPaths.GetAssetDirectory(), newDirectory / originalFilePath.filename()) };
 		if (fileExtension == ".kgstate")
 		{
 			// Search registry for asset with identical file location
@@ -706,9 +708,11 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::OnHandleDeleteFile()
 	{
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// TODO: Fix this implementation. Probably should use a switch
 		std::filesystem::path currentExtension = m_CurrentFileToModifyCache.extension();
-		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), m_CurrentFileToModifyCache) };
+		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(projectPaths.GetAssetDirectory(), m_CurrentFileToModifyCache) };
 		if (currentExtension == ".kgstate")
 		{
 			// Search registry for asset with identical file location
@@ -909,7 +913,7 @@ namespace Kargono::Panels
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel()
-		: m_BaseDirectory(Projects::ProjectService::GetActiveAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
+		: m_BaseDirectory(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
 
 		s_EditorApp = EditorApp::GetCurrentApp();
@@ -1334,8 +1338,10 @@ namespace Kargono::Panels
 			m_FileFolderViewer.AddEntry(newEntry);
 		}
 
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Generate current title for navigation header
-		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveProjectDirectory(), m_CurrentDirectory);
+		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(projectPaths.m_ProjectDirectory, m_CurrentDirectory);
 		std::vector<std::string> tokenizedDirectoryPath{};
 		while (activeDirectory.filename() != "Assets")
 		{
@@ -1362,8 +1368,11 @@ namespace Kargono::Panels
 	void ContentBrowserPanel::ResetPanelResources()
 	{
 		API::FileWatch::EndWatch(m_CurrentDirectory);
-		m_BaseDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+		m_BaseDirectory = projectPaths.GetAssetDirectory();
 		m_CurrentDirectory = m_BaseDirectory;
+
 		m_LongestRecentPath.clear();
 		m_NavigateAssetsHeader.m_Label = "Assets";
 		m_FileFolderViewer.ClearEntries();

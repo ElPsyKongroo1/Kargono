@@ -398,14 +398,15 @@ namespace Kargono
 
 	void EditorApp::OpenProject(const std::filesystem::path& path)
 	{
-		if (Projects::ProjectService::OpenProject(path))
+		Projects::Project& activeProject{ Projects::ProjectService::GetActiveContext()};
+		if (activeProject.OpenProject(path))
 		{
 			if (!EngineService::GetActiveEngine().GetWindow().GetNativeWindow())
 			{
 				EngineService::GetActiveEngine().GetWindow().Init();
 				Rendering::RendererAPI::Init();
 			}
-			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveStartSceneHandle();
+			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveContext().GetStartSceneHandle();
 
 			// Load in the script shared library
 			Scripting::ScriptService::LoadActiveScriptModule();
@@ -423,7 +424,7 @@ namespace Kargono
 			if (startSceneHandle == Assets::EmptyHandle)
 			{
 				m_MainWindow->NewScene("NewScene");
-				Projects::ProjectService::SetActiveStartingSceneHandle(m_MainWindow->m_EditorSceneHandle);
+				Projects::ProjectService::GetActiveContext().SetStartingSceneHandle(m_MainWindow->m_EditorSceneHandle);
 				SaveProject();
 			}
 			else
@@ -435,7 +436,8 @@ namespace Kargono
 
 	void EditorApp::SaveProject()
 	{
-		Projects::ProjectService::SaveActiveProject();
+		Projects::Project& activeProject{ Projects::ProjectService::GetActiveContext() };
+		activeProject.SaveProject();
 	}
 
 }

@@ -34,9 +34,7 @@ namespace Kargono::Panels
 
 		InitializeOverlayData();
 
-		KG_ASSERT(Projects::ProjectService::GetActive());
-
-		SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
+		SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution()));
 		
 	}
 

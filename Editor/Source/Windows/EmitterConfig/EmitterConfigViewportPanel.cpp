@@ -24,9 +24,6 @@ namespace Kargono::Panels
 
 		m_EditorCamera = Rendering::EditorPerspectiveCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		ResetCamera();
-
-		KG_ASSERT(Projects::ProjectService::GetActive());
-
 	}
 
 	EmitterConfigViewportPanel::~EmitterConfigViewportPanel()
@@ -110,7 +107,7 @@ namespace Kargono::Panels
 		}
 
 		EditorUI::EditorUIService::AutoCalcViewportSize(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered,
-			Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
+			Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution()));
 
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((ImTextureID)textureID, ImVec2{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height }, ImVec2{ 0, 1 },

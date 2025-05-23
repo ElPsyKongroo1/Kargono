@@ -34,7 +34,8 @@ namespace Kargono::Windows
 		m_ExportProjectSpec.m_ConfirmAction = [&]()
 		{
 			// Start the export process
-			Projects::ProjectService::ExportProject(m_ExportProjectLocation.m_CurrentOption, m_ExportProjectServer.m_CurrentBoolean);
+			Projects::Project& activeProject{ Projects::ProjectService::GetActiveContext() };
+			activeProject.ExportProject(m_ExportProjectLocation.m_CurrentOption, m_ExportProjectServer.m_CurrentBoolean);
 		};
 
 		m_ExportProjectLocation.m_Label = "Export Location";
@@ -84,10 +85,10 @@ namespace Kargono::Windows
 		m_ImportNewFileLocation.m_Label = "Destination Folder:";
 		m_ImportNewFileLocation.m_ConfirmAction = [&](std::string_view path)
 			{
-				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory(), path))
 				{
 					KG_WARN("Cannot create an asset outside of the project's asset directory.");
-					m_ImportNewFileLocation.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+					m_ImportNewFileLocation.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 				}
 			};
 	}
@@ -434,13 +435,13 @@ namespace Kargono::Windows
 
 	void MainWindow::NewSceneDialog()
 	{
-		NewSceneDialog(Projects::ProjectService::GetActiveAssetDirectory());
+		NewSceneDialog(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory());
 	}
 
 	bool MainWindow::NewScene(std::string_view sceneName)
 	{
 		// Ensure scene does not already exist
-		std::filesystem::path filepath = Projects::ProjectService::GetActiveAssetDirectory() / ("Scenes/" + std::string(sceneName) + ".kgscene");
+		std::filesystem::path filepath = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory() / ("Scenes/" + std::string(sceneName) + ".kgscene");
 		if (Assets::AssetService::HasScene(filepath.stem().string()))
 		{
 			KG_WARN("Attempt to create scene with duplicate name!");
@@ -493,7 +494,7 @@ namespace Kargono::Windows
 
 	void MainWindow::DuplicateEditorScene()
 	{
-		DuplicateEditorScene(Projects::ProjectService::GetActiveAssetDirectory());
+		DuplicateEditorScene(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory());
 	}
 
 	void MainWindow::DuplicateEditorScene(const std::filesystem::path& initialDirectory)
@@ -526,7 +527,7 @@ namespace Kargono::Windows
 
 	void MainWindow::OpenSceneDialog()
 	{
-		std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		std::filesystem::path filepath = Utility::FileDialogs::OpenFile("Kargono Scene (*.kgscene)\0*.kgscene\0", initialDirectory.string().c_str());
 
 		if (!filepath.empty())
@@ -609,7 +610,7 @@ namespace Kargono::Windows
 	void MainWindow::OnPlay()
 	{
 		// Resize the window to the project's viewport settings
-		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
+		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution()));
 
 		RuntimeUI::RuntimeUIService::ClearActiveUI();
 
@@ -627,15 +628,15 @@ namespace Kargono::Windows
 		}
 
 		// Load Default Game State
-		if (Projects::ProjectService::GetActiveStartGameStateHandle() == 0)
+		if (Projects::ProjectService::GetActiveContext().GetStartGameStateHandle() == 0)
 		{
 			Scenes::GameStateService::ClearActiveGameState();
 		}
 		else
 		{
 			Scenes::GameStateService::SetActiveGameState(
-				Assets::AssetService::GetGameState(Projects::ProjectService::GetActiveStartGameStateHandle()),
-				Projects::ProjectService::GetActiveStartGameStateHandle());
+				Assets::AssetService::GetGameState(Projects::ProjectService::GetActiveContext().GetStartGameStateHandle()),
+				Projects::ProjectService::GetActiveContext().GetStartGameStateHandle());
 		}
 
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
@@ -650,13 +651,13 @@ namespace Kargono::Windows
 		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
 
 		// Start up client networking
-		if (Projects::ProjectService::GetActiveAppIsNetworked())
+		if (Projects::ProjectService::GetActiveContext().GetAppIsNetworked())
 		{
-			Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
+			Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetActiveContext().GetServerConfig());
 		}
 
 		// Call the runtime start function
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetOnRuntimeStartHandle();
 		if (scriptHandle != 0)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -682,7 +683,7 @@ namespace Kargono::Windows
 	void MainWindow::OnStop()
 	{
 		// Resize the window to the project's viewport settings
-		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution()));
+		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution()));
 
 		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
 		KG_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
@@ -726,7 +727,7 @@ namespace Kargono::Windows
 
 		Scenes::GameStateService::ClearActiveGameState();
 
-		if (Projects::ProjectService::GetActiveAppIsNetworked() && m_SceneState == SceneState::Play)
+		if (Projects::ProjectService::GetActiveContext().GetAppIsNetworked() && m_SceneState == SceneState::Play)
 		{
 			Network::ClientService::GetActiveContext().Terminate(false);
 		}
@@ -809,7 +810,7 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnUpdateUserCount(Events::ReceiveOnlineUsers event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCountHandle();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnUpdateUserCount;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt32(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserCount());
@@ -820,7 +821,7 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnApproveJoinSession(Events::ApproveJoinSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnApproveJoinSessionHandle();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnApproveJoinSession;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
@@ -831,7 +832,7 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnUpdateSessionUserSlot;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
@@ -842,7 +843,7 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnUserLeftSession(Events::UserLeftSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUserLeftSessionHandle();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnUserLeftSession;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
@@ -852,7 +853,7 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnCurrentSessionInit(Events::CurrentSessionInit event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnCurrentSessionInitHandle();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnCurrentSessionInit;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -862,7 +863,7 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnConnectionTerminated(Events::ConnectionTerminated event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnConnectionTerminatedHandle();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnConnectionTerminated;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -872,7 +873,7 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnStartSession(Events::StartSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnStartSessionHandle();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnStartSession;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -882,7 +883,7 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnSessionReadyCheckConfirm;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
@@ -892,7 +893,7 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnReceiveSignal(Events::ReceiveSignal event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnReceiveSignalHandle();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnReceiveSignal;
 		if (scriptHandle != Assets::EmptyHandle)
 		{
 			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetSignal());

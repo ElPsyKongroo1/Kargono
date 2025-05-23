@@ -40,17 +40,19 @@ namespace Kargono::Panels
 			OnOpenGameState(selection.m_Handle);
 		};
 
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		m_SelectGameStateNameSpec.m_Label = "New Name";
 		m_SelectGameStateNameSpec.m_CurrentOption = "Empty";
 
 		m_SelectGameStateLocationSpec.m_Label = "Location";
-		m_SelectGameStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectGameStateLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_SelectGameStateLocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
-			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			if (!Utility::FileSystem::DoesPathContainSubPath(projectPaths.GetAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_SelectGameStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+				m_SelectGameStateLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 			}
 		};
 
@@ -410,8 +412,10 @@ namespace Kargono::Panels
 
 	void GameStatePanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Ensure provided path is within the active asset directory
-		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path activeAssetDirectory = projectPaths.GetAssetDirectory();
 		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
 		{
 			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
@@ -458,8 +462,9 @@ namespace Kargono::Panels
 	}
 	void GameStatePanel::OnCreateGameStateDialog()
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectGameStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		m_SelectGameStateLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_CreateGameStatePopupSpec.m_OpenPopup = true;
 	}
 	void GameStatePanel::OnRefreshData()

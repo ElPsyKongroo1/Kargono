@@ -29,7 +29,7 @@ namespace Kargono
 			return false;
 	}
 		OpenProject(pathToProject);
-		if (!Projects::ProjectService::GetActive())
+		if (!Projects::ProjectService::IsActive())
 		{
 			KG_CRITICAL("Failed to open project!");
 			Scenes::SceneService::Terminate();
@@ -50,7 +50,7 @@ namespace Kargono
 			OpenProject(m_ProjectPath);
 		}
 #endif
-		if (!Network::ServerService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig()))
+		if (!Network::ServerService::GetActiveContext().Init(Projects::ProjectService::GetActiveContext().GetServerConfig()))
 		{
 			Scenes::SceneService::Terminate();
 			return false;
@@ -75,7 +75,7 @@ namespace Kargono
 
 	void ServerApp::OpenProject(const std::filesystem::path& path)
 	{
-		Projects::ProjectService::OpenProject(path);
+		Projects::ProjectService::GetActiveContext().OpenProject(path);
 	}
 
 	bool ServerApp::Terminate()

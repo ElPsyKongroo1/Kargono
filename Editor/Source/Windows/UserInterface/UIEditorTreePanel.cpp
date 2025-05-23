@@ -230,19 +230,21 @@ namespace Kargono::Panels
 				EditorUI::EditorUIService::ChooseDirectory(m_SelectUILocationSpec);
 			};
 
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Initialize widget for selecting user interface name
 		m_SelectUINameSpec.m_Label = "New Name";
 		m_SelectUINameSpec.m_CurrentOption = "Empty";
 
 		// Initialize widget for selecting user interface location
 		m_SelectUILocationSpec.m_Label = "Location";
-		m_SelectUILocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectUILocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_SelectUILocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
-			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			if (!Utility::FileSystem::DoesPathContainSubPath(projectPaths.GetAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_SelectUILocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+				m_SelectUILocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 			}
 		};
 
@@ -255,9 +257,10 @@ namespace Kargono::Panels
 	}
 	void UIEditorTreePanel::OnCreateUIDialog()
 	{
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Set default values for new user interface creation location
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectUILocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectUILocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 
 		// Set dialog popup to open on next frame
 		m_CreateUIPopupSpec.m_OpenPopup = true;

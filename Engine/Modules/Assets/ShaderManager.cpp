@@ -177,7 +177,9 @@ namespace Kargono::Assets
 		// Register New Asset and Create Shader
 		m_AssetRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
 		SerializeAssetRegistry(); // Update Registry File on Disk
-		Ref<Kargono::Rendering::Shader> newShader = DeserializeAsset(newAsset, Projects::ProjectService::GetActiveIntermediateDirectory() / newAsset.Data.IntermediateLocation);
+
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths()};
+		Ref<Kargono::Rendering::Shader> newShader = DeserializeAsset(newAsset, projectPaths.GetIntermediateDirectory() / newAsset.Data.IntermediateLocation);
 		m_AssetCache.insert({ newHandle, newShader });
 
 		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
@@ -194,8 +196,6 @@ namespace Kargono::Assets
 
 	std::tuple<AssetHandle, Ref<Kargono::Rendering::Shader>> ShaderManager::GetShader(const Rendering::ShaderSpecification& shaderSpec)
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive(), "There is no active project when retrieving shader!");
-
 		for (const auto& [assetHandle, shaderRef] : m_AssetCache)
 		{
 			if (shaderRef->GetSpecification() == shaderSpec)
@@ -204,13 +204,15 @@ namespace Kargono::Assets
 			}
 		}
 
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		for (auto& [assetHandle, asset] : m_AssetRegistry)
 		{
 			Assets::ShaderMetaData metadata = *static_cast<Assets::ShaderMetaData*>(asset.Data.SpecificFileData.get());
 			if (metadata.ShaderSpec == shaderSpec)
 			{
 				Ref<Kargono::Rendering::Shader> newShader = DeserializeAsset(asset, 
-					Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation);
+					projectPaths.GetIntermediateDirectory() / asset.Data.IntermediateLocation);
 				m_AssetCache.insert({ asset.m_Handle, newShader });
 				return std::make_tuple(assetHandle, newShader);
 			}
@@ -235,12 +237,13 @@ namespace Kargono::Assets
 #if !defined(KG_EXPORT_SERVER) && !defined(KG_EXPORT_RUNTIME)
 		Utility::CompileBinaries(newAsset.m_Handle, shaderSources, openGLSPIRV);
 #endif
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
 		// Save binary intermediates for all shader stages!
 		for (const auto& [stage, source] : openGLSPIRV)
 		{
 			std::string intermediatePathWithExtension = newAsset.Data.IntermediateLocation.string() + Utility::ShaderBinaryFileExtension(stage);
-			std::filesystem::path intermediateFullPath = Projects::ProjectService::GetActiveIntermediateDirectory() / intermediatePathWithExtension;
+			std::filesystem::path intermediateFullPath = projectPaths.GetIntermediateDirectory() / intermediatePathWithExtension;
 
 			Utility::FileSystem::CreateNewDirectory(intermediateFullPath.parent_path());
 			std::ofstream out(intermediateFullPath, std::ios::out | std::ios::binary);
@@ -256,7 +259,7 @@ namespace Kargono::Assets
 
 		// File Location
 		std::string debugString = shaderSource;
-		std::filesystem::path shaderTextFile = Projects::ProjectService::GetActiveIntermediateDirectory() / (newAsset.Data.IntermediateLocation.string() + ".source");
+		std::filesystem::path shaderTextFile = projectPaths.GetIntermediateDirectory() / (newAsset.Data.IntermediateLocation.string() + ".source");
 		Utility::FileSystem::WriteFileString(shaderTextFile, debugString);
 
 		// Load In-Memory Metadata Object
@@ -273,9 +276,11 @@ namespace Kargono::Assets
 	{
 		UNREFERENCED_PARAMETER(assetPath);
 
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		Assets::ShaderMetaData metadata = *asset.Data.GetSpecificMetaData<ShaderMetaData>();
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
-		std::filesystem::path intermediatePath = Projects::ProjectService::GetActiveIntermediateDirectory() / asset.Data.IntermediateLocation;
+		std::filesystem::path intermediatePath = projectPaths.GetIntermediateDirectory() / asset.Data.IntermediateLocation;
 		static std::array<std::string, 2> stageTypes = { "vertex", "fragment" };
 
 		for (const auto& stage : stageTypes)

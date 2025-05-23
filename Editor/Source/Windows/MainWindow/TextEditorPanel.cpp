@@ -327,13 +327,17 @@ namespace Kargono::Panels
 	}
 	void TextEditorPanel::OnOpenFileDialog()
 	{
-		const std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		const std::filesystem::path initialDirectory = projectPaths.GetAssetDirectory();
 		const std::filesystem::path filepath = Utility::FileDialogs::OpenFile("All Files\0*.*\0", initialDirectory.string().c_str());
 		OpenFile(filepath);
 	}
 	void TextEditorPanel::OnCreateFileDialog()
 	{
-		OnCreateFileDialog(Projects::ProjectService::GetActiveAssetDirectory());
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		OnCreateFileDialog(projectPaths.GetAssetDirectory());
 	}
 	void TextEditorPanel::OnCreateFileDialog(const std::filesystem::path& initialDirectory)
 	{

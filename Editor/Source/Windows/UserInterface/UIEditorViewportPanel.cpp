@@ -27,8 +27,7 @@ namespace Kargono::Panels
 		m_EditorCamera.SetKeyboardMinSpeed(50.0f);
 		m_EditorCamera.SetKeyboardMaxSpeed(500.0f);
 
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_ViewportAspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		m_ViewportAspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 
 	}
 
@@ -480,7 +479,7 @@ namespace Kargono::Panels
 					if (ImGui::MenuItem("Set to Project Resolution"))
 					{
 						m_ViewportAspectRatio = Utility::ScreenResolutionToAspectRatio(
-							Projects::ProjectService::GetActiveTargetResolution());
+							Projects::ProjectService::GetActiveContext().GetTargetResolution());
 					}
 
 					ImGui::EndMenu();

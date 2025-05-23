@@ -95,15 +95,9 @@ namespace Kargono
 		[[nodiscard]] bool Terminate()
 		{
 			KG_ASSERT(m_Active);
-
+			
 			// Clean up allocated memory
-			for (auto [dataID, sharedData] : m_DataRegistry)
-			{
-				KG_ASSERT(sharedData);
-
-				i_Allocator->DeallocRaw(sharedData.m_Data, sharedData.m_Alignment);
-			}
-
+			i_Allocator->Reset();
 			m_DataRegistry.clear();
 
 			// Clear injected resources

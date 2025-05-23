@@ -42,17 +42,19 @@ namespace Kargono::Panels
 			OnOpenColorPalette(selection.m_Handle);
 		};
 
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		m_SelectColorPaletteNameSpec.m_Label = "New Name";
 		m_SelectColorPaletteNameSpec.m_CurrentOption = "Empty";
 
 		m_SelectColorPaletteLocationSpec.m_Label = "Location";
-		m_SelectColorPaletteLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectColorPaletteLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_SelectColorPaletteLocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
-			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			if (!Utility::FileSystem::DoesPathContainSubPath(projectPaths.GetAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_SelectColorPaletteLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+				m_SelectColorPaletteLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 			}
 		};
 
@@ -245,8 +247,10 @@ namespace Kargono::Panels
 
 	void ColorPalettePanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Ensure provided path is within the active asset directory
-		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path activeAssetDirectory = projectPaths.GetAssetDirectory();
 		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
 		{
 			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
@@ -301,8 +305,9 @@ namespace Kargono::Panels
 	}
 	void ColorPalettePanel::OnCreateColorPaletteDialog()
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectColorPaletteLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		m_SelectColorPaletteLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_CreateColorPalettePopup.m_OpenPopup = true;
 	}
 	void ColorPalettePanel::OnModifyColor(EditorUI::EditVec4Spec& spec)
