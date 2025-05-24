@@ -51,15 +51,6 @@ namespace Kargono::Utility
 
 namespace Kargono::RuntimeUI
 {
-	struct RuntimeUIContext
-	{
-		Ref<UserInterface> m_ActiveUI{ nullptr };
-		Assets::AssetHandle m_ActiveUIHandle{ Assets::EmptyHandle };
-		Ref<Font> m_DefaultFont{ nullptr };
-		Rendering::RendererInputSpec m_BackgroundInputSpec{};
-		Rendering::RendererInputSpec m_ImageInputSpec{};
-	};
-
 	void RuntimeUIService::Init()
 	{
 		// Initialize Runtime UI Context
