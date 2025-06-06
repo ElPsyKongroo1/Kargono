@@ -3,6 +3,7 @@
 #include "Modules/Assets/Asset.h"
 #include "Modules/Scripting/ScriptService.h"
 #include "Modules/Rendering/Texture.h"
+#include "Modules/RuntimeUI/RuntimeUICommon.h"
 
 #include <cstdint>
 #include <vector>

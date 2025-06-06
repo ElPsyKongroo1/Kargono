@@ -58,7 +58,8 @@ namespace Kargono
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(1.0f);
 		RuntimeUI::FontService::Init();
-		RuntimeUI::RuntimeUIService::Init();
+		RuntimeUI::RuntimeUIService::CreateRuntimeUIContext();
+		RuntimeUI::RuntimeUIService::GetActiveContext().Init();
 		Input::InputMapService::CreateInputMapContext();
 		Input::InputMapService::GetActiveContext().Init();
 
@@ -92,7 +93,8 @@ namespace Kargono
 		EditorUI::EditorUIService::Terminate();
 		Input::InputMapService::GetActiveContext().Terminate();
 		Input::InputMapService::RemoveInputMapContext();
-		RuntimeUI::RuntimeUIService::Terminate();
+		RuntimeUI::RuntimeUIService::GetActiveContext().Terminate();
+		RuntimeUI::RuntimeUIService::RemoveRuntimeUIContext();
 		Particles::ParticleService::GetActiveContext().Terminate();
 		Particles::ParticleService::RemoveParticleContext();
 		Audio::AudioService::GetActiveContext().Terminate();

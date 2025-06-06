@@ -51,13 +51,12 @@ namespace Kargono::Utility
 
 namespace Kargono::RuntimeUI
 {
-	void RuntimeUIService::Init()
+	void RuntimeUIContext::Init()
 	{
 		// Initialize Runtime UI Context
-		s_RuntimeUIContext = CreateRef<RuntimeUIContext>();
-		s_RuntimeUIContext->m_ActiveUI = nullptr;
-		s_RuntimeUIContext->m_ActiveUIHandle = Assets::EmptyHandle;
-		s_RuntimeUIContext->m_DefaultFont = FontService::InstantiateEditorFont("Resources/Fonts/arial.ttf");
+		m_ActiveUI = nullptr;
+		m_ActiveUIHandle = Assets::EmptyHandle;
+		m_DefaultFont = FontService::InstantiateEditorFont("Resources/Fonts/arial.ttf");
 
 		// Initialize Window/Widget background Rendering Data
 		{
@@ -75,9 +74,9 @@ namespace Kargono::RuntimeUI
 			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
 			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
 
-			s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader = localShader;
-			s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer = localBuffer;
-			s_RuntimeUIContext->m_BackgroundInputSpec.m_ShapeComponent = shapeComp;
+			m_BackgroundInputSpec.m_Shader = localShader;
+			m_BackgroundInputSpec.m_Buffer = localBuffer;
+			m_BackgroundInputSpec.m_ShapeComponent = shapeComp;
 		}
 
 		// Initialize texture rendering data
@@ -101,36 +100,34 @@ namespace Kargono::RuntimeUI
 				localBuffer, localShader);
 			*tilingFactor = 1.0f;
 
-			s_RuntimeUIContext->m_ImageInputSpec.m_Shader = localShader;
-			s_RuntimeUIContext->m_ImageInputSpec.m_Buffer = localBuffer;
-			s_RuntimeUIContext->m_ImageInputSpec.m_ShapeComponent = shapeComp;
+			m_ImageInputSpec.m_Shader = localShader;
+			m_ImageInputSpec.m_Buffer = localBuffer;
+			m_ImageInputSpec.m_ShapeComponent = shapeComp;
 		}
 
 		// Verify Initialization
 		KG_VERIFY(true, "Runtime UI Engine Init");
 	}
 
-	void RuntimeUIService::Terminate()
+	void RuntimeUIContext::Terminate()
 	{
 		// Clear input spec data
-		s_RuntimeUIContext->m_BackgroundInputSpec.ClearData();
-		s_RuntimeUIContext->m_ImageInputSpec.ClearData();
-
-		// Terminate Static Variables
-		s_RuntimeUIContext = nullptr;
+		m_BackgroundInputSpec.ClearData();
+		m_ImageInputSpec.ClearData();
 
 		// Verify Termination
 		KG_VERIFY(true, "Runtime UI Engine Terminate");
 	}
 
-	void RuntimeUIService::OnUpdate(Timestep ts)
+	void RuntimeUIContext::OnUpdate(Timestep ts)
 	{
 		// Ensure a valid user interface is active and get it
-		if (!s_RuntimeUIContext->m_ActiveUI)
+		if (!m_ActiveUI)
 		{
 			return;
 		}
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+
+		Ref<UserInterface> activeUI = m_ActiveUI;
 
 		// Get mouse position and active viewport
 		Math::vec2 mousePosition = Input::InputService::GetViewportMousePosition();
@@ -204,23 +201,22 @@ namespace Kargono::RuntimeUI
 					Utility::CallWrapped<WrappedVoidFloat>(activeSlider.m_OnMoveSlider->m_Function, activeSlider.m_CurrentValue);
 				}
 			}
-
 		}
 	}
 
-	bool RuntimeUIService::OnKeyTypedEvent(Events::KeyTypedEvent event)
+	bool RuntimeUIContext::OnKeyTypedEvent(Events::KeyTypedEvent event)
 	{
 		// Ensure a valid user interface is active
-		if (!s_RuntimeUIContext->m_ActiveUI)
+		if (!m_ActiveUI)
 		{
 			return false;
 		}
 
 		// Pass in key typed events for the current widget to be edited
-		if (s_RuntimeUIContext->m_ActiveUI->m_EditingWidget)
+		if (m_ActiveUI->m_EditingWidget)
 		{
 			// Get the text data
-			SingleLineTextData* textData = RuntimeUIService::GetSingleLineTextDataFromWidget(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+			SingleLineTextData* textData = GetSingleLineTextDataFromWidget(m_ActiveUI->m_EditingWidget);
 			KG_ASSERT(textData);
 
 			// Ensure the cursor index is within the correct text bounds
@@ -232,23 +228,23 @@ namespace Kargono::RuntimeUI
 				textData->m_CursorIndex++;
 
 				// Revalidate text dimensions
-				RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+				RecalculateTextData(m_ActiveUI->m_EditingWidget);
 
 				// Run on move cursor if necessary
-				OnMoveCursorInternal(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+				OnMoveCursorInternal(m_ActiveUI->m_EditingWidget);
 
 				// Ensure the IBeam is visible when moving
-				s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible = true;
-				s_RuntimeUIContext->m_ActiveUI->m_IBeamAccumulator = 0.0f;
+				m_ActiveUI->m_IBeamVisible = true;
+				m_ActiveUI->m_IBeamAccumulator = 0.0f;
 			}
 		}
 		return false;
 	}
 
-	bool RuntimeUIService::OnKeyPressedEvent(Events::KeyPressedEvent event)
+	bool RuntimeUIContext::OnKeyPressedEvent(Events::KeyPressedEvent event)
 	{
 		// Ensure a valid user interface is active
-		if (!s_RuntimeUIContext->m_ActiveUI)
+		if (!m_ActiveUI)
 		{
 			return false;
 		}
@@ -256,10 +252,10 @@ namespace Kargono::RuntimeUI
 		KeyCode key = event.GetKeyCode();
 
 		// Handle key pressed events for the currently editing widget
-		if (s_RuntimeUIContext->m_ActiveUI->m_EditingWidget)
+		if (m_ActiveUI->m_EditingWidget)
 		{
 			// Get the text data
-			SingleLineTextData* textData = RuntimeUIService::GetSingleLineTextDataFromWidget(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+			SingleLineTextData* textData = GetSingleLineTextDataFromWidget(m_ActiveUI->m_EditingWidget);
 			KG_ASSERT(textData);
 
 			if (key == Key::Backspace)
@@ -271,10 +267,10 @@ namespace Kargono::RuntimeUI
 						textData->m_Text.erase(textData->m_CursorIndex - 1, 1);
 						textData->m_CursorIndex--;
 						// Revalidate text dimensions
-						RecalculateTextData(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+						RecalculateTextData(m_ActiveUI->m_EditingWidget);
 
 						// Run on move cursor if necessary
-						OnMoveCursorInternal(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+						OnMoveCursorInternal(m_ActiveUI->m_EditingWidget);
 
 					}
 					
@@ -298,11 +294,11 @@ namespace Kargono::RuntimeUI
 					textData->m_CursorIndex--;
 
 					// Ensure the IBeam is visible when moving
-					s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible = true;
-					s_RuntimeUIContext->m_ActiveUI->m_IBeamAccumulator = 0.0f;
+					m_ActiveUI->m_IBeamVisible = true;
+					m_ActiveUI->m_IBeamAccumulator = 0.0f;
 
 					// Run on move cursor if necessary
-					OnMoveCursorInternal(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+					OnMoveCursorInternal(m_ActiveUI->m_EditingWidget);
 
 				}
 				return true;
@@ -315,11 +311,11 @@ namespace Kargono::RuntimeUI
 					textData->m_CursorIndex++;
 
 					// Ensure the IBeam is visible when moving
-					s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible = true;
-					s_RuntimeUIContext->m_ActiveUI->m_IBeamAccumulator = 0.0f;
+					m_ActiveUI->m_IBeamVisible = true;
+					m_ActiveUI->m_IBeamAccumulator = 0.0f;
 
 					// Run on move cursor if necessary
-					OnMoveCursorInternal(s_RuntimeUIContext->m_ActiveUI->m_EditingWidget);
+					OnMoveCursorInternal(m_ActiveUI->m_EditingWidget);
 				}
 				return true;
 			}
@@ -328,29 +324,27 @@ namespace Kargono::RuntimeUI
 		return false;
 	}
 
-	void RuntimeUIService::OnMouseButtonPressedEvent(const Events::MouseButtonPressedEvent& event)
+	void RuntimeUIContext::OnMouseButtonPressedEvent(const Events::MouseButtonPressedEvent& event)
 	{
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
-
 		// Get mouse position and active viewport
 		Math::vec2 mousePosition = Input::InputService::GetViewportMousePosition();
 		ViewportData* viewportData = EngineService::GetActiveEngine().GetApp().GetViewportData();
 
 		// Handle mouse click for the editing widget
-		if (activeUI->m_EditingWidget)
+		if (m_ActiveUI->m_EditingWidget)
 		{
-			SingleLineTextData* textData = GetSingleLineTextDataFromWidget(activeUI->m_EditingWidget);
+			SingleLineTextData* textData = GetSingleLineTextDataFromWidget(m_ActiveUI->m_EditingWidget);
 			KG_ASSERT(textData);
 
 			// Get the widget's transform
 			BoundingBoxTransform widgetTransform = GetWidgetDimensionsFromID(
-				activeUI->m_EditingWidget->m_ID, 
+				m_ActiveUI->m_EditingWidget->m_ID, 
 				viewportData->m_Width, viewportData->m_Height);
 
 			// Get the widget's text's starting position
 			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 			float textScalingFactor{ (viewportData->m_Width * 0.15f * textData->m_TextSize) * (resolution.y / resolution.x) };
-			Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(*textData, widgetTransform.m_Translation, widgetTransform.m_Size, textScalingFactor);
+			Math::vec3 textStartingPoint = GetSingleLineTextStartingPosition(*textData, widgetTransform.m_Translation, widgetTransform.m_Size, textScalingFactor);
 
 			// Find new cursor location
 			size_t newCursorIndex = CalculateCursorIndexFromMousePosition(*textData, textStartingPoint.x, mousePosition.x, textScalingFactor);
@@ -359,18 +353,18 @@ namespace Kargono::RuntimeUI
 			textData->m_CursorIndex = newCursorIndex;
 
 			// Ensure the IBeam is visible when moving
-			s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible = true;
-			s_RuntimeUIContext->m_ActiveUI->m_IBeamAccumulator = 0.0f;
+			m_ActiveUI->m_IBeamVisible = true;
+			m_ActiveUI->m_IBeamAccumulator = 0.0f;
 		}
-		else if (activeUI->m_SelectedWidget && activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::SliderWidget)
+		else if (m_ActiveUI->m_SelectedWidget && m_ActiveUI->m_SelectedWidget->m_WidgetType == WidgetTypes::SliderWidget)
 		{
 			// Get the underlying widget type
-			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::SliderWidget);
-			SliderWidget& activeSlider = *(SliderWidget*)activeUI->m_SelectedWidget;
+			KG_ASSERT(m_ActiveUI->m_SelectedWidget->m_WidgetType == WidgetTypes::SliderWidget);
+			SliderWidget& activeSlider = *(SliderWidget*)m_ActiveUI->m_SelectedWidget;
 
 			// Get the widget's transform
 			BoundingBoxTransform widgetTransform = GetWidgetDimensionsFromID(
-				activeUI->m_SelectedWidget->m_ID,
+				m_ActiveUI->m_SelectedWidget->m_ID,
 				viewportData->m_Width, viewportData->m_Height);
 
 			// Get the slider's current normalized location based on the bounds and currentValue
@@ -385,22 +379,21 @@ namespace Kargono::RuntimeUI
 			if (mousePosition.x > (sliderLocation.x) && mousePosition.x < (sliderLocation.x + sliderSize.x) &&
 				mousePosition.y >(sliderLocation.y) && mousePosition.y < (sliderLocation.y + sliderSize.y))
 			{
-				activeUI->m_PressedWidget = activeUI->m_SelectedWidget;
+				m_ActiveUI->m_PressedWidget = m_ActiveUI->m_SelectedWidget;
 			}
 		}
 
-		else if (activeUI->m_SelectedWidget && activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::DropDownWidget)
+		else if (m_ActiveUI->m_SelectedWidget && m_ActiveUI->m_SelectedWidget->m_WidgetType == WidgetTypes::DropDownWidget)
 		{
 			// Get the underlying widget type
-			KG_ASSERT(activeUI->m_SelectedWidget->m_WidgetType == WidgetTypes::DropDownWidget);
-			DropDownWidget& activeDropDown = *(DropDownWidget*)activeUI->m_SelectedWidget;
+			KG_ASSERT(m_ActiveUI->m_SelectedWidget->m_WidgetType == WidgetTypes::DropDownWidget);
+			DropDownWidget& activeDropDown = *(DropDownWidget*)m_ActiveUI->m_SelectedWidget;
 
 			// Get the widget's transform
 			BoundingBoxTransform widgetTransform = GetWidgetDimensionsFromID(
-				activeUI->m_SelectedWidget->m_ID,
+				m_ActiveUI->m_SelectedWidget->m_ID,
 				viewportData->m_Width, viewportData->m_Height);
 
-			//==============================//
 			// Check if the mouse position is within bounds of the current option
 			if (mousePosition.x > widgetTransform.m_Translation.x && mousePosition.x < (widgetTransform.m_Translation.x + widgetTransform.m_Size.x) &&
 				mousePosition.y > widgetTransform.m_Translation.y && mousePosition.y < (widgetTransform.m_Translation.y + widgetTransform.m_Size.y))
@@ -461,20 +454,18 @@ namespace Kargono::RuntimeUI
 		
 	}
 
-	void RuntimeUIService::OnMouseButtonReleasedEvent(const Events::MouseButtonReleasedEvent& mouseEvent)
+	void RuntimeUIContext::OnMouseButtonReleasedEvent(const Events::MouseButtonReleasedEvent& mouseEvent)
 	{
 		UNREFERENCED_PARAMETER(mouseEvent);
 
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
-
-		if (activeUI->m_PressedWidget)
+		if (m_ActiveUI->m_PressedWidget)
 		{
 			// Clear the pressed widget
-			activeUI->m_PressedWidget = nullptr;
+			m_ActiveUI->m_PressedWidget = nullptr;
 		}
 	}
 
-	void RuntimeUIService::SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle)
+	void RuntimeUIContext::SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle)
 	{
 		if (!userInterface || uiHandle == Assets::EmptyHandle)
 		{
@@ -486,8 +477,8 @@ namespace Kargono::RuntimeUI
 		ClearActiveUI();
 
 		// Set new active UI
-		s_RuntimeUIContext->m_ActiveUI = userInterface;
-		s_RuntimeUIContext->m_ActiveUIHandle = uiHandle;
+		m_ActiveUI = userInterface;
+		m_ActiveUIHandle = uiHandle;
 
 		// Revalidate UI Context
 		RevalidateDisplayedWindows();
@@ -496,12 +487,12 @@ namespace Kargono::RuntimeUI
 		// Load default font if necessary
 		if (!userInterface->m_Font)
 		{
-			userInterface->m_Font = s_RuntimeUIContext->m_DefaultFont;
+			userInterface->m_Font = m_DefaultFont;
 			userInterface->m_FontHandle = Assets::EmptyHandle;
 		}
 
 		// Set the first window as active if applicable
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		Ref<UserInterface> activeUI = m_ActiveUI;
 		if (activeUI->m_Windows.size() > 0)
 		{
 			// Display the first window
@@ -514,7 +505,7 @@ namespace Kargono::RuntimeUI
 				// Set the default widget for each window
 				if (window.m_DefaultActiveWidget != RuntimeUI::k_InvalidWidgetID)
 				{
-					Ref<RuntimeUI::Widget> newDefaultWidget = RuntimeUI::RuntimeUIService::GetWidgetFromID(window.m_DefaultActiveWidget);
+					Ref<RuntimeUI::Widget> newDefaultWidget = GetWidgetFromID(window.m_DefaultActiveWidget);
 					KG_ASSERT(newDefaultWidget);
 					window.m_DefaultActiveWidgetRef = newDefaultWidget;
 				}
@@ -550,12 +541,15 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Create widget navigation links for all windows
-		NavigationLinksCalculator newCalculator;
-		newCalculator.CalculateNavigationLinks(s_RuntimeUIContext->m_ActiveUI,
-			EngineService::GetActiveEngine().GetWindow().GetActiveViewport());
+		NavigationLinksCalculator newCalculator
+		{
+			m_ActiveUI.get(),
+			EngineService::GetActiveEngine().GetWindow().GetActiveViewport()
+		};
+		newCalculator.CalculateNavigationLinks();
 	}
 
-	void RuntimeUIService::SetActiveUIFromHandle(Assets::AssetHandle uiHandle)
+	void RuntimeUIContext::SetActiveUIFromHandle(Assets::AssetHandle uiHandle)
 	{
 		// Get user interface from asset service system
 		Ref<RuntimeUI::UserInterface> uiReference = Assets::AssetService::GetUserInterface(uiHandle);
@@ -571,18 +565,18 @@ namespace Kargono::RuntimeUI
 		SetActiveUI(uiReference, uiHandle);
 	}
 
-	bool RuntimeUI::RuntimeUIService::IsUIActiveFromHandle(Assets::AssetHandle uiHandle)
+	bool RuntimeUIContext::IsUIActiveFromHandle(Assets::AssetHandle uiHandle)
 	{
 		// Ensure an invalid state is not presented
-		if (uiHandle == Assets::EmptyHandle || !s_RuntimeUIContext->m_ActiveUI)
+		if (uiHandle == Assets::EmptyHandle || !m_ActiveUI)
 		{
 			return false;
 		}
 
-		return s_RuntimeUIContext->m_ActiveUIHandle == uiHandle;
+		return m_ActiveUIHandle == uiHandle;
 	}
 
-	bool RuntimeUIService::DeleteActiveUIWindow(int32_t windowID)
+	bool RuntimeUIContext::DeleteActiveUIWindow(int32_t windowID)
 	{
 		// Get the window location
 		std::vector<uint16_t>* locationDir = GetLocationFromID(windowID);
@@ -593,7 +587,7 @@ namespace Kargono::RuntimeUI
 		uint16_t windowLocation{ locationDir->at(0) };
 
 		// Attempt to delete the window from the active user interface
-		bool success = DeleteUIWindow(s_RuntimeUIContext->m_ActiveUI, windowLocation);
+		bool success = DeleteUIWindow(m_ActiveUI, windowLocation);
 
 		// Ensure deletion was successful
 		if (!success)
@@ -608,10 +602,10 @@ namespace Kargono::RuntimeUI
 		return true;
 	}
 
-	bool RuntimeUIService::DeleteActiveUIWidget(int32_t widgetID)
+	bool RuntimeUIContext::DeleteActiveUIWidget(int32_t widgetID)
 	{
 		// Attempt to delete the widget from the active user interface
-		bool success = DeleteUIWidget(s_RuntimeUIContext->m_ActiveUI, widgetID);
+		bool success = DeleteUIWidget(m_ActiveUI, widgetID);
 
 		// Ensure deletion was successful
 		if (!success)
@@ -623,14 +617,17 @@ namespace Kargono::RuntimeUI
 		RevalidateWidgetIDToLocationMap();
 
 		// Revalidate navigation links
-		NavigationLinksCalculator newCalculator;
-		newCalculator.CalculateNavigationLinks(s_RuntimeUIContext->m_ActiveUI,
-			EngineService::GetActiveEngine().GetWindow().GetActiveViewport());
+		NavigationLinksCalculator newCalculator
+		{
+			m_ActiveUI.get(),
+			EngineService::GetActiveEngine().GetWindow().GetActiveViewport()
+		};
+		newCalculator.CalculateNavigationLinks();
 
 		return true;
 	}
 
-	void RuntimeUIService::AddWidgetToContainer(ContainerData* container, Ref<Widget> newWidget)
+	void RuntimeUIContext::AddWidgetToContainer(ContainerData* container, Ref<Widget> newWidget)
 	{
 		KG_ASSERT(newWidget);
 		KG_ASSERT(container);
@@ -639,14 +636,14 @@ namespace Kargono::RuntimeUI
 		container->m_ContainedWidgets.push_back(newWidget);
 
 		// Ensure ID -> Location map is valid
-		RuntimeUI::RuntimeUIService::RevalidateWidgetIDToLocationMap();
+		RevalidateWidgetIDToLocationMap();
 
 
 		// Ensure the new widget is validated
-		RuntimeUIService::RecalculateTextData(newWidget.get());
+		RecalculateTextData(newWidget.get());
 	}
 
-	bool RuntimeUIService::DeleteUIWindow(Ref<UserInterface> userInterface, std::size_t windowLocation)
+	bool RuntimeUIContext::DeleteUIWindow(Ref<UserInterface> userInterface, std::size_t windowLocation)
 	{
 		// Ensure user interface is valid
 		if (!userInterface)
@@ -670,7 +667,7 @@ namespace Kargono::RuntimeUI
 		return true;
 	}
 
-	bool RuntimeUIService::DeleteUIWidget(Ref<UserInterface> userInterface, int32_t widgetID)
+	bool RuntimeUIContext::DeleteUIWidget(Ref<UserInterface> userInterface, int32_t widgetID)
 	{
 		if (!userInterface)
 		{
@@ -679,8 +676,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Get the ID -> Widget Location map and location directions
-		IDToLocationMap& idToLocationMap = s_RuntimeUIContext->
-			m_ActiveUI->m_IDToLocation;
+		IDToLocationMap& idToLocationMap = m_ActiveUI->m_IDToLocation;
 		KG_ASSERT(idToLocationMap.contains(widgetID));
 		std::vector<uint16_t>& locationDirections = idToLocationMap.at(widgetID);
 
@@ -693,7 +689,7 @@ namespace Kargono::RuntimeUI
 		size_t firstWidgetIndex = locationDirections.at(1);
 
 		// Ensure window index is valid
-		if (windowIndex >= s_RuntimeUIContext->m_ActiveUI->m_Windows.size())
+		if (windowIndex >= m_ActiveUI->m_Windows.size())
 		{
 			KG_WARN("Attempt to delete widget from window with out of bounds index");
 			return false;
@@ -757,11 +753,11 @@ namespace Kargono::RuntimeUI
 	}
 
 
-	void RuntimeUIService::OnRender(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight)
+	void RuntimeUIContext::OnRender(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight)
 	{
 		KG_PROFILE_FUNCTION()
 		// Ensure active user interface is valid
-		if (!s_RuntimeUIContext->m_ActiveUI)
+		if (!m_ActiveUI)
 		{
 			return;
 		}
@@ -774,8 +770,8 @@ namespace Kargono::RuntimeUI
 
 		// Submit rendering data from all windows
 		uint16_t windowIteration{ 0 };
-		std::vector<size_t>& windowIndices = s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindowIndices;
-		for (Window* window : s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows)
+		std::vector<size_t>& windowIndices = m_ActiveUI->m_DisplayedWindowIndices;
+		for (Window* window : m_ActiveUI->m_DisplayedWindows)
 		{
 			// Get position data for rendering window
 			Math::vec3 scale = window->CalculateSize(viewportWidth, viewportHeight);
@@ -786,19 +782,19 @@ namespace Kargono::RuntimeUI
 			if (window->m_BackgroundColor.w > 0.001f)
 			{
 				// Create background rendering data
-				s_RuntimeUIContext->m_BackgroundInputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), bottomLeftTranslation)
+				m_BackgroundInputSpec.m_TransformMatrix = glm::translate(Math::mat4(1.0f), bottomLeftTranslation)
 					* glm::scale(Math::mat4(1.0f), scale);
 				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor, 
 					Utility::FileSystem::CRCFromString("a_Color"),
-					s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+					m_BackgroundInputSpec.m_Buffer, m_BackgroundInputSpec.m_Shader);
 
 				// Push window ID and invalid widgetID
 				Rendering::Shader::SetDataAtInputLocation<int32_t>(window->m_ID, 
 					Utility::FileSystem::CRCFromString("a_EntityID"),
-					s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+					m_BackgroundInputSpec.m_Buffer, m_BackgroundInputSpec.m_Shader);
 
 				// Submit background data to GPU
-				Rendering::RenderingService::SubmitDataToRenderer(s_RuntimeUIContext->m_BackgroundInputSpec);
+				Rendering::RenderingService::SubmitDataToRenderer(m_BackgroundInputSpec);
 			}
 			
 
@@ -811,10 +807,10 @@ namespace Kargono::RuntimeUI
 				// Push widget ID
 				Rendering::Shader::SetDataAtInputLocation<int32_t>(widgetRef->m_ID, 
 					Utility::FileSystem::CRCFromString("a_EntityID"),
-					s_RuntimeUIContext->m_BackgroundInputSpec.m_Buffer, s_RuntimeUIContext->m_BackgroundInputSpec.m_Shader);
+					m_BackgroundInputSpec.m_Buffer, m_BackgroundInputSpec.m_Shader);
 				Rendering::Shader::SetDataAtInputLocation<int32_t>(widgetRef->m_ID,
 					Utility::FileSystem::CRCFromString("a_EntityID"),
-					s_RuntimeUIContext->m_ImageInputSpec.m_Buffer, s_RuntimeUIContext->m_ImageInputSpec.m_Shader);
+					m_ImageInputSpec.m_Buffer, m_ImageInputSpec.m_Shader);
 				RuntimeUI::FontService::SetID((uint32_t)widgetRef->m_ID);
 				// Call the widget's rendering function
 				widgetRef->OnRender(initialTranslation, scale, (float)viewportWidth);
@@ -828,7 +824,7 @@ namespace Kargono::RuntimeUI
 
 	}
 
-	void RuntimeUIService::OnRender(uint32_t viewportWidth, uint32_t viewportHeight)
+	void RuntimeUIContext::OnRender(uint32_t viewportWidth, uint32_t viewportHeight)
 	{
 		// Calculate orthographic projection matrix for user interface
 		Math::mat4 orthographicProjection = glm::ortho(0.0f, (float)viewportWidth,
@@ -836,10 +832,10 @@ namespace Kargono::RuntimeUI
 		OnRender(orthographicProjection, viewportWidth, viewportHeight);
 	}
 
-	void RuntimeUIService::AddActiveWindow(Window& window)
+	void RuntimeUIContext::AddActiveWindow(Window& window)
 	{
 		// Store the window in the active user interface
-		s_RuntimeUIContext->m_ActiveUI->m_Windows.push_back(window);
+		m_ActiveUI->m_Windows.push_back(window);
 
 		RevalidateWidgetIDToLocationMap();
 
@@ -847,35 +843,35 @@ namespace Kargono::RuntimeUI
 		window.DisplayWindow();
 	}
 
-	void RuntimeUIService::ClearHoveredWidget()
+	void RuntimeUIContext::ClearHoveredWidget()
 	{
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
+		KG_ASSERT(m_ActiveUI);
 
-		if (!s_RuntimeUIContext->m_ActiveUI->m_HoveredWidget)
+		if (!m_ActiveUI->m_HoveredWidget)
 		{
 			return;
 		}
 
-		s_RuntimeUIContext->m_ActiveUI->m_HoveredWidget = nullptr;
+		m_ActiveUI->m_HoveredWidget = nullptr;
 
 		// Reset the cursor icon
 		EngineService::GetActiveEngine().GetWindow().SetMouseCursorIcon(CursorIconType::Standard);
 	}
 
-	void RuntimeUIService::ClearEditingWidget()
+	void RuntimeUIContext::ClearEditingWidget()
 	{
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
-		s_RuntimeUIContext->m_ActiveUI->m_EditingWidget = nullptr;
+		KG_ASSERT(m_ActiveUI);
+		m_ActiveUI->m_EditingWidget = nullptr;
 	}
 
-	void RuntimeUIService::SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle)
+	void RuntimeUIContext::SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle)
 	{
 		// Set the active font for the active user interface
-		s_RuntimeUIContext->m_ActiveUI->m_Font = newFont;
-		s_RuntimeUIContext->m_ActiveUI->m_FontHandle = fontHandle;
+		m_ActiveUI->m_Font = newFont;
+		m_ActiveUI->m_FontHandle = fontHandle;
 
 		// Revalidate/calculate text sizes for all windows
-		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
+		for (Window& window : m_ActiveUI->m_Windows)
 		{
 			for (Ref<Widget> widget : window.m_Widgets)
 			{
@@ -884,18 +880,17 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	std::vector<Window>& RuntimeUIService::GetAllActiveWindows()
+	std::vector<Window>& RuntimeUIContext::GetAllActiveWindows()
 	{
-		return s_RuntimeUIContext->m_ActiveUI->m_Windows;
+		return m_ActiveUI->m_Windows;
 	}
 
-	BoundingBoxTransform RuntimeUIService::GetParentDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight)
+	BoundingBoxTransform RuntimeUIContext::GetParentDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight)
 	{
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		KG_ASSERT(m_ActiveUI);
 
 		// Get the ID -> Widget Location map and location directions
-		IDToLocationMap& idToLocationMap = s_RuntimeUIContext->
+		IDToLocationMap& idToLocationMap = 
 			m_ActiveUI->m_IDToLocation;
 		KG_ASSERT(idToLocationMap.contains(widgetID));
 		std::vector<uint16_t>& locationDirections = idToLocationMap.at(widgetID);
@@ -908,8 +903,8 @@ namespace Kargono::RuntimeUI
 		size_t firstWidgetIndex = locationDirections.at(1);
 
 		// Get the widget's parent window
-		KG_ASSERT(windowIndex < activeUI->m_Windows.size());
-		Window& parentWindow = activeUI->m_Windows.at(windowIndex);
+		KG_ASSERT(windowIndex < m_ActiveUI->m_Windows.size());
+		Window& parentWindow = m_ActiveUI->m_Windows.at(windowIndex);
 
 		// Calculate the parent window's dimensions
 		BoundingBoxTransform returnDimensions;
@@ -977,13 +972,10 @@ namespace Kargono::RuntimeUI
 		return returnDimensions;
 	}
 
-	BoundingBoxTransform RuntimeUI::RuntimeUIService::GetWidgetDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight)
+	BoundingBoxTransform RuntimeUIContext::GetWidgetDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight)
 	{
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
-
 		// Get the ID -> Widget Location map and location directions
-		IDToLocationMap& idToLocationMap = s_RuntimeUIContext->
+		IDToLocationMap& idToLocationMap = 
 			m_ActiveUI->m_IDToLocation;
 		KG_ASSERT(idToLocationMap.contains(widgetID));
 		std::vector<uint16_t>& locationDirections = idToLocationMap.at(widgetID);
@@ -996,8 +988,8 @@ namespace Kargono::RuntimeUI
 		size_t firstWidgetIndex = locationDirections.at(1);
 
 		// Get the widget's parent window
-		KG_ASSERT(windowIndex < activeUI->m_Windows.size());
-		Window& parentWindow = activeUI->m_Windows.at(windowIndex);
+		KG_ASSERT(windowIndex < m_ActiveUI->m_Windows.size());
+		Window& parentWindow = m_ActiveUI->m_Windows.at(windowIndex);
 
 		// Calculate the parent window's dimensions
 		BoundingBoxTransform returnDimensions;
@@ -1066,32 +1058,32 @@ namespace Kargono::RuntimeUI
 	}
 
 
-	void RuntimeUIService::RevalidateDisplayedWindows()
+	void RuntimeUIContext::RevalidateDisplayedWindows()
 	{
 		// Ensure/validate that the correct window is being displayed
-		s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows.clear();
-		s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindowIndices.clear();
+		m_ActiveUI->m_DisplayedWindows.clear();
+		m_ActiveUI->m_DisplayedWindowIndices.clear();
 		size_t iteration{ 0 };
 		for (Window& window : GetAllActiveWindows())
 		{
 			// Add the window to the displayed windows if it is flagged to do so
 			if (window.GetWindowDisplayed()) 
 			{ 
-				s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindows.push_back(&window);
-				s_RuntimeUIContext->m_ActiveUI->m_DisplayedWindowIndices.push_back(iteration);
+				m_ActiveUI->m_DisplayedWindows.push_back(&window);
+				m_ActiveUI->m_DisplayedWindowIndices.push_back(iteration);
 			}
 			iteration++;
 		}
 	}
 
-	void RuntimeUI::RuntimeUIService::RevalidateWidgetIDToLocationMap()
+	void RuntimeUIContext::RevalidateWidgetIDToLocationMap()
 	{
-		IDToLocationMap& locationMap = s_RuntimeUIContext->m_ActiveUI->m_IDToLocation;
+		IDToLocationMap& locationMap = m_ActiveUI->m_IDToLocation;
 		locationMap.clear();
 
 		// Parse through each window
 		size_t windowIteration{ 0 };
-		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
+		for (Window& window : m_ActiveUI->m_Windows)
 		{
 			// Create the window's location and add it to the locationMap
 			std::vector<uint16_t> windowLocation{ (uint16_t)windowIteration };
@@ -1120,7 +1112,7 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUI::RuntimeUIService::RevalidateContainerInLocationMap(IDToLocationMap& locationMap, ContainerData* container, std::vector<uint16_t>& parentLocation)
+	void RuntimeUIContext::RevalidateContainerInLocationMap(IDToLocationMap& locationMap, ContainerData* container, std::vector<uint16_t>& parentLocation)
 	{
 		KG_ASSERT(container);
 		KG_ASSERT(parentLocation.size() > 1);
@@ -1147,57 +1139,57 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::CalculateSingleLineText(SingleLineTextData& textData)
+	void RuntimeUIContext::CalculateSingleLineText(SingleLineTextData& textData)
 	{
 		// Calculate the text size of the widget using the default font if the active user interface is not set
-		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
+		if (!m_ActiveUI)
 		{
-			textData.m_CachedTextDimensions = RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateSingleLineTextSize(textData.m_Text);
+			textData.m_CachedTextDimensions = m_DefaultFont->CalculateSingleLineTextSize(textData.m_Text);
 			return;
 		}
 
 		// Calculate the text size of the widget using the active user interface font
-		textData.m_CachedTextDimensions= RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateSingleLineTextSize(textData.m_Text);
+		textData.m_CachedTextDimensions= m_ActiveUI->m_Font->CalculateSingleLineTextSize(textData.m_Text);
 	}
 
-	Math::vec2 RuntimeUIService::CalculateSingleLineText(std::string_view text)
+	Math::vec2 RuntimeUIContext::CalculateSingleLineText(std::string_view text)
 	{
 		// Calculate the text size of the widget using the default font if the active user interface is not set
-		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
+		if (!m_ActiveUI)
 		{
-			return RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateSingleLineTextSize(text);
+			return m_DefaultFont->CalculateSingleLineTextSize(text);
 		}
 
 		// Calculate the text size of the widget using the active user interface font
-		return RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateSingleLineTextSize(text);
+		return m_ActiveUI->m_Font->CalculateSingleLineTextSize(text);
 	}
 
-	size_t RuntimeUIService::CalculateCursorIndexFromMousePosition(SingleLineTextData& textData, float textStartingPosition, float mouseXPosition, float textScalingFactor)
+	size_t RuntimeUIContext::CalculateCursorIndexFromMousePosition(SingleLineTextData& textData, float textStartingPosition, float mouseXPosition, float textScalingFactor)
 	{
 		// Calculate the text size of the widget using the default font if the active user interface is not set
-		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
+		if (!m_ActiveUI)
 		{
-			return RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateIndexFromMousePosition(
+			return m_DefaultFont->CalculateIndexFromMousePosition(
 				textData.m_Text, textStartingPosition, mouseXPosition, textScalingFactor);
 		}
 
 		// Calculate the text size of the widget using the active user interface font
-		return RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateIndexFromMousePosition(
+		return m_ActiveUI->m_Font->CalculateIndexFromMousePosition(
 			textData.m_Text, textStartingPosition, mouseXPosition, textScalingFactor);
 	}
 
-	void RuntimeUIService::CalculateMultiLineText(MultiLineTextData& textData, const Math::vec3& widgetSize, float textSize)
+	void RuntimeUIContext::CalculateMultiLineText(MultiLineTextData& textData, const Math::vec3& widgetSize, float textSize)
 	{
 		// Calculate the text size of the widget using the default font if the active user interface is not set
-		if (!RuntimeUIService::s_RuntimeUIContext->m_ActiveUI)
+		if (!m_ActiveUI)
 		{
 			if (textData.m_TextWrapped)
 			{
-				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize, (int)widgetSize.x);
+				m_DefaultFont->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize, (int)widgetSize.x);
 			}
 			else
 			{
-				RuntimeUIService::s_RuntimeUIContext->m_DefaultFont->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize);
+				m_DefaultFont->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize);
 			}
 
 			return;
@@ -1206,15 +1198,15 @@ namespace Kargono::RuntimeUI
 		// Calculate the text size of the widget using the active user interface font
 		if (textData.m_TextWrapped)
 		{
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize, (int)widgetSize.x);
+			m_ActiveUI->m_Font->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize, (int)widgetSize.x);
 		}
 		else
 		{
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize);
+			m_ActiveUI->m_Font->CalculateMultiLineTextMetadata(textData.m_Text, textData.m_CachedTextDimensions, textSize);
 		}
 	}
 
-	void RuntimeUIService::SetWidgetTextInternal(Ref<Widget> currentWidget, const std::string& newText)
+	void RuntimeUIContext::SetWidgetTextInternal(Ref<Widget> currentWidget, const std::string& newText)
 	{
 		// Ensure the widget is valid
 		if (!currentWidget)
@@ -1248,7 +1240,7 @@ namespace Kargono::RuntimeUI
 		
 	}
 
-	void RuntimeUIService::SetSelectedWidgetInternal(Ref<Widget> newSelectedWidget)
+	void RuntimeUIContext::SetSelectedWidgetInternal(Ref<Widget> newSelectedWidget)
 	{
 		// Ensure the widget is valid
 		if (!newSelectedWidget)
@@ -1262,25 +1254,24 @@ namespace Kargono::RuntimeUI
 		{
 			return;
 		}
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
 
 		// If the selected widget is the same as the new selected widget, just exit
-		if (newSelectedWidget.get() == activeUI->m_SelectedWidget)
+		if (newSelectedWidget.get() == m_ActiveUI->m_SelectedWidget)
 		{
 			return;
 		}
 
 		// Set the new widget as selected and set it's color to the active color
-		activeUI->m_SelectedWidget = newSelectedWidget.get();
+		m_ActiveUI->m_SelectedWidget = newSelectedWidget.get();
 
 		// Call the on move function if applicable
-		if (activeUI->m_FunctionPointers.m_OnMove)
+		if (m_ActiveUI->m_FunctionPointers.m_OnMove)
 		{
-			Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+			Utility::CallWrapped<WrappedVoidNone>(m_ActiveUI->m_FunctionPointers.m_OnMove->m_Function);
 		}
 	}
 
-	void RuntimeUIService::SetHoveredWidgetInternal(Ref<Widget> newHoveredWidget)
+	void RuntimeUIContext::SetHoveredWidgetInternal(Ref<Widget> newHoveredWidget)
 	{
 		// Ensure the widget is valid
 		if (!newHoveredWidget)
@@ -1294,16 +1285,15 @@ namespace Kargono::RuntimeUI
 		{
 			return;
 		}
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
 
 		// If the selected widget is the same as the new selected widget, just exit
-		if (newHoveredWidget.get() == activeUI->m_HoveredWidget)
+		if (newHoveredWidget.get() == m_ActiveUI->m_HoveredWidget)
 		{
 			return;
 		}
 
 		// Set the new widget as selected and set it's color to the active color
-		activeUI->m_HoveredWidget = newHoveredWidget.get();
+		m_ActiveUI->m_HoveredWidget = newHoveredWidget.get();
 
 		// Set the cursor to IBeam
 		if (newHoveredWidget->m_WidgetType == WidgetTypes::InputTextWidget)
@@ -1319,13 +1309,13 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Call the on move function if applicable
-		if (activeUI->m_FunctionPointers.m_OnHover)
+		if (m_ActiveUI->m_FunctionPointers.m_OnHover)
 		{
-			Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnHover->m_Function);
+			Utility::CallWrapped<WrappedVoidNone>(m_ActiveUI->m_FunctionPointers.m_OnHover->m_Function);
 		}
 	}
 
-	void RuntimeUIService::SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor)
+	void RuntimeUIContext::SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor)
 	{
 		// Ensure the widget is valid
 		if (!currentWidget)
@@ -1356,7 +1346,7 @@ namespace Kargono::RuntimeUI
 		return;
 	}
 
-	void RuntimeUIService::SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor)
+	void RuntimeUIContext::SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor)
 	{
 		// Ensure the widget is valid
 		if (!currentWidget)
@@ -1378,7 +1368,7 @@ namespace Kargono::RuntimeUI
 	}
 
 
-	void RuntimeUIService::OnPressInternal(Widget* currentWidget)
+	void RuntimeUIContext::OnPressInternal(Widget* currentWidget)
 	{
 		// Get the selection specific data from the widget
 		SelectionData* selectionData = GetSelectionDataFromWidget(currentWidget);
@@ -1395,7 +1385,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Set the pressed widget to be selected
-		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget = currentWidget;
+		m_ActiveUI->m_SelectedWidget = currentWidget;
 
 		// Call the on press function if applicable
 		if (currentWidget->m_WidgetType == WidgetTypes::CheckboxWidget)
@@ -1418,7 +1408,7 @@ namespace Kargono::RuntimeUI
 			}
 
 			// Set the current widget as the editing widget
-			s_RuntimeUIContext->m_ActiveUI->m_EditingWidget = currentWidget;
+			m_ActiveUI->m_EditingWidget = currentWidget;
 		}
 		else
 		{
@@ -1431,7 +1421,7 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::OnMoveCursorInternal(Widget* currentWidget)
+	void RuntimeUIContext::OnMoveCursorInternal(Widget* currentWidget)
 	{
 		// Ensure the widget is the correct type and get it
 		KG_ASSERT(currentWidget->m_WidgetType == WidgetTypes::InputTextWidget);
@@ -1444,7 +1434,7 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable)
+	void RuntimeUIContext::SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable)
 	{
 		// Ensure the widget is valid
 		if (!currentWidget)
@@ -1465,12 +1455,15 @@ namespace Kargono::RuntimeUI
 		selectionData->m_Selectable = selectable;
 
 		// Calculate navigation links
-		NavigationLinksCalculator newCalculator;
-		newCalculator.CalculateNavigationLinks(s_RuntimeUIContext->m_ActiveUI, 
-			EngineService::GetActiveEngine().GetWindow().GetActiveViewport());
+		NavigationLinksCalculator newCalculator
+		{
+			m_ActiveUI.get(),
+			EngineService::GetActiveEngine().GetWindow().GetActiveViewport()
+		};
+		newCalculator.CalculateNavigationLinks();
 	}
 
-	bool RuntimeUIService::IsWidgetSelectedInternal(Ref<Widget> currentWidget)
+	bool RuntimeUIContext::IsWidgetSelectedInternal(Ref<Widget> currentWidget)
 	{
 		// Check if the widget is valid
 		if (!currentWidget)
@@ -1480,12 +1473,12 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Return if the widget is selected
-		return s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget == currentWidget.get();
+		return m_ActiveUI->m_SelectedWidget == currentWidget.get();
 	}
 
-	void RuntimeUIService::RenderBackground(const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size)
+	void RuntimeUIContext::RenderBackground(const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size)
 	{
-		Rendering::RendererInputSpec& renderSpec = s_RuntimeUIContext->m_BackgroundInputSpec;
+		Rendering::RendererInputSpec& renderSpec = m_BackgroundInputSpec;
 
 		if (color.w > 0.001f)
 		{
@@ -1502,9 +1495,9 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::RenderImage(const ImageData& imageData, const Math::vec3& translation, const Math::vec3 size)
+	void RuntimeUIContext::RenderImage(const ImageData& imageData, const Math::vec3& translation, const Math::vec3 size)
 	{
-		Rendering::RendererInputSpec& renderSpec = RuntimeUIService::s_RuntimeUIContext->m_ImageInputSpec;
+		Rendering::RendererInputSpec& renderSpec = m_ImageInputSpec;
 
 		if (imageData.m_ImageRef)
 		{
@@ -1521,29 +1514,29 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& textStartingPoint, float textScalingFactor)
+	void RuntimeUIContext::RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& textStartingPoint, float textScalingFactor)
 	{
 		// Call the text's rendering function
-		RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->OnRenderSingleLineText(textData.m_Text, textStartingPoint, textData.m_TextColor, textScalingFactor);
+		m_ActiveUI->m_Font->OnRenderSingleLineText(textData.m_Text, textStartingPoint, textData.m_TextColor, textScalingFactor);
 	}
 
-	void RuntimeUIService::RenderTextCursor(const SingleLineTextData& textData, const Math::vec3& textStartingPoint, float textScalingFactor)
+	void RuntimeUIContext::RenderTextCursor(const SingleLineTextData& textData, const Math::vec3& textStartingPoint, float textScalingFactor)
 	{
-		Rendering::RendererInputSpec& renderSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
+		Rendering::RendererInputSpec& renderSpec = m_BackgroundInputSpec;
 
 		// Start the cursor's translation at the text's origin
 		Math::vec3 cursorTranslation{ textStartingPoint };
 
 		// Get the cursor offset relative to the text's starting point
 		Math::vec2 cursorOffset;
-		float ascender = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_Ascender;
+		float ascender = m_ActiveUI->m_Font->m_Ascender;
 		if (textData.m_Text.size() == 0 || textData.m_CachedTextDimensions.y < 0.001f)
 		{
 			cursorOffset = textData.m_CachedTextDimensions;
 		}
 		else
 		{
-			cursorOffset = RuntimeUIService::CalculateSingleLineText(std::string_view(textData.m_Text.data(), textData.m_CursorIndex));
+			cursorOffset = CalculateSingleLineText(std::string_view(textData.m_Text.data(), textData.m_CursorIndex));
 			// Move the cursor back down by a half-extent
 			cursorTranslation.y += textScalingFactor * 0.5f * ascender;
 		}
@@ -1563,9 +1556,9 @@ namespace Kargono::RuntimeUI
 		Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
 	}
 
-	void RuntimeUIService::RenderSliderLine(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size)
+	void RuntimeUIContext::RenderSliderLine(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size)
 	{
-		Rendering::RendererInputSpec& renderSpec = s_RuntimeUIContext->m_BackgroundInputSpec;
+		Rendering::RendererInputSpec& renderSpec = m_BackgroundInputSpec;
 
 		Math::vec3 sliderSize = { size.x , 0.1f * size.y , size.z};
 
@@ -1584,9 +1577,9 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::RenderSlider(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size)
+	void RuntimeUIContext::RenderSlider(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size)
 	{
-		Rendering::RendererInputSpec& renderSpec = s_RuntimeUIContext->m_BackgroundInputSpec;
+		Rendering::RendererInputSpec& renderSpec = m_BackgroundInputSpec;
 
 		Math::vec3 sliderSize = { 0.04f * size.x , 0.35f * size.y , size.z };
 
@@ -1605,7 +1598,7 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	Math::vec3 RuntimeUIService::GetSingleLineTextStartingPosition(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float textScalingFactor)
+	Math::vec3 RuntimeUIContext::GetSingleLineTextStartingPosition(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float textScalingFactor)
 	{
 		Math::vec3 translationOutput = translation;
 		constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
@@ -1636,7 +1629,7 @@ namespace Kargono::RuntimeUI
 		return translationOutput;
 	}
 
-	SelectionData* RuntimeUIService::GetSelectionDataFromWidget(Widget* currentWidget)
+	SelectionData* RuntimeUIContext::GetSelectionDataFromWidget(Widget* currentWidget)
 	{
 		KG_ASSERT(currentWidget);
 
@@ -1659,7 +1652,7 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	ContainerData* RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(Widget* currentWidget)
+	ContainerData* RuntimeUIContext::GetContainerDataFromWidget(Widget* currentWidget)
 	{
 		KG_ASSERT(currentWidget);
 
@@ -1676,7 +1669,7 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	ImageData* RuntimeUIService::GetImageDataFromWidget(Widget* currentWidget)
+	ImageData* RuntimeUIContext::GetImageDataFromWidget(Widget* currentWidget)
 	{
 		KG_ASSERT(currentWidget);
 
@@ -1701,7 +1694,7 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	SingleLineTextData* RuntimeUIService::GetSingleLineTextDataFromWidget(Widget* currentWidget)
+	SingleLineTextData* RuntimeUIContext::GetSingleLineTextDataFromWidget(Widget* currentWidget)
 	{
 		KG_ASSERT(currentWidget);
 
@@ -1716,7 +1709,7 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	MultiLineTextData* RuntimeUIService::GetMultiLineTextDataFromWidget(Widget* currentWidget)
+	MultiLineTextData* RuntimeUIContext::GetMultiLineTextDataFromWidget(Widget* currentWidget)
 	{
 		KG_ASSERT(currentWidget);
 
@@ -1727,31 +1720,31 @@ namespace Kargono::RuntimeUI
 		return nullptr;
 	}
 
-	void RuntimeUIService::ClearActiveUI()
+	void RuntimeUIContext::ClearActiveUI()
 	{
-		s_RuntimeUIContext->m_ActiveUI = nullptr;
-		s_RuntimeUIContext->m_ActiveUIHandle = Assets::EmptyHandle;
+		m_ActiveUI = nullptr;
+		m_ActiveUIHandle = Assets::EmptyHandle;
 	}
 
-	Ref<UserInterface> RuntimeUIService::GetActiveUI()
+	Ref<UserInterface> RuntimeUIContext::GetActiveUI()
 	{
-		return s_RuntimeUIContext->m_ActiveUI;
+		return m_ActiveUI;
 	}
 
-	Assets::AssetHandle RuntimeUIService::GetActiveUIHandle()
+	Assets::AssetHandle RuntimeUIContext::GetActiveUIHandle()
 	{
-		return s_RuntimeUIContext->m_ActiveUIHandle;
+		return m_ActiveUIHandle;
 	}
 
-	void RuntimeUIService::SetSelectedWidgetColor(const Math::vec4& color)
+	void RuntimeUIContext::SetSelectedWidgetColor(const Math::vec4& color)
 	{
-		if (!s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget)
+		if (!m_ActiveUI->m_SelectedWidget)
 		{
 			return;
 		}
 
 		// Get the selection specific data from the widget
-		SelectionData* selectionData = GetSelectionDataFromWidget(s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget);
+		SelectionData* selectionData = GetSelectionDataFromWidget(m_ActiveUI->m_SelectedWidget);
 		if (!selectionData)
 		{
 			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
@@ -1762,11 +1755,11 @@ namespace Kargono::RuntimeUI
 		selectionData->m_DefaultBackgroundColor = color;
 	}
 
-	const std::string& RuntimeUIService::GetWidgetTextByIndex(WidgetID widgetID)
+	const std::string& RuntimeUIContext::GetWidgetTextByIndex(WidgetID widgetID)
 	{
 		static std::string nullString{ "" };
 		// Ensure the correct user interface is active
-		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (widgetID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return nullString;
@@ -1793,7 +1786,7 @@ namespace Kargono::RuntimeUI
 		return nullString;
 	}
 
-	bool RuntimeUIService::IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag)
+	bool RuntimeUIContext::IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag)
 	{
 		// Get the current widget
 		Ref<Widget> currentWidget = GetWidgetFromTag(windowTag, widgetTag);
@@ -1801,10 +1794,10 @@ namespace Kargono::RuntimeUI
 		return IsWidgetSelectedInternal(currentWidget);
 	}
 
-	bool RuntimeUIService::IsWidgetSelectedByIndex(WidgetID widgetID)
+	bool RuntimeUIContext::IsWidgetSelectedByIndex(WidgetID widgetID)
 	{
 		// Ensure the correct user interface is active
-		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (widgetID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return false;
@@ -1816,7 +1809,7 @@ namespace Kargono::RuntimeUI
 		return IsWidgetSelectedInternal(currentWidget);
 	}
 
-	void RuntimeUIService::SetActiveWidgetTextByTag(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
+	void RuntimeUIContext::SetActiveWidgetTextByTag(const std::string& windowTag, const std::string& widgetTag, const std::string& newText)
 	{
 		// Search for the indicated widget
 		auto [currentWidget, currentWindow] = GetWidgetAndWindow(windowTag, widgetTag);
@@ -1824,10 +1817,10 @@ namespace Kargono::RuntimeUI
 		
 	}
 
-	void RuntimeUIService::SetActiveWidgetTextByIndex(WidgetID widgetID, const std::string& newText)
+	void RuntimeUIContext::SetActiveWidgetTextByIndex(WidgetID widgetID, const std::string& newText)
 	{
 		// Ensure the correct user interface is active
-		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (widgetID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return;
@@ -1838,10 +1831,10 @@ namespace Kargono::RuntimeUI
 		SetWidgetTextInternal(currentWidget, newText);
 	}
 
-	void RuntimeUIService::SetWidgetImageByIndex(WidgetID widgetID, Assets::AssetHandle textureHandle)
+	void RuntimeUIContext::SetWidgetImageByIndex(WidgetID widgetID, Assets::AssetHandle textureHandle)
 	{
 		// Ensure the correct user interface is active
-		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (widgetID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return;
@@ -1866,7 +1859,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Get the selection specific data from the widget
-		ImageData* imageData = GetImageDataFromWidget(s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget);
+		ImageData* imageData = GetImageDataFromWidget(m_ActiveUI->m_SelectedWidget);
 		if (!imageData)
 		{
 			KG_WARN("Unable to retrieve image data. May be invalid widget type!");
@@ -1877,7 +1870,7 @@ namespace Kargono::RuntimeUI
 		imageData->m_ImageRef = textureRef;
 	}
 
-	void RuntimeUIService::SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag)
+	void RuntimeUIContext::SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag)
 	{
 		// Search for the indicated widget
 		Ref<Widget> currentWidget = GetWidgetFromTag(windowTag, widgetTag);
@@ -1885,10 +1878,10 @@ namespace Kargono::RuntimeUI
 		SetSelectedWidgetInternal(currentWidget);
 	}
 
-	void RuntimeUIService::SetSelectedWidgetByIndex(WidgetID widgetID)
+	void RuntimeUIContext::SetSelectedWidgetByIndex(WidgetID widgetID)
 	{
 		// Ensure the correct user interface is active
-		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (widgetID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return;
@@ -1900,19 +1893,16 @@ namespace Kargono::RuntimeUI
 		SetSelectedWidgetInternal(currentWidget);
 	}
 
-	void RuntimeUI::RuntimeUIService::ClearSelectedWidget()
+	void RuntimeUIContext::ClearSelectedWidget()
 	{
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
-		KG_ASSERT(activeUI);
-
 		// Set the new widget as selected and set it's color to the active color
-		activeUI->m_SelectedWidget = nullptr;
+		m_ActiveUI->m_SelectedWidget = nullptr;
 	}
 
-	void RuntimeUIService::SetEditingWidgetByIndex(WidgetID widgetID)
+	void RuntimeUIContext::SetEditingWidgetByIndex(WidgetID widgetID)
 	{
 		// Ensure the correct user interface is active
-		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (widgetID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return;
@@ -1941,7 +1931,7 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		Ref<UserInterface> activeUI = m_ActiveUI;
 
 		// If the indicated widget is the same as the current editing widget, just exit
 		if (currentWidget.get() == activeUI->m_EditingWidget)
@@ -1953,10 +1943,10 @@ namespace Kargono::RuntimeUI
 		activeUI->m_EditingWidget = currentWidget.get();
 	}
 
-	void RuntimeUIService::SetHoveredWidgetByIndex(WidgetID widgetID)
+	void RuntimeUIContext::SetHoveredWidgetByIndex(WidgetID widgetID)
 	{
 		// Ensure the correct user interface is active
-		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (widgetID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return;
@@ -1968,7 +1958,7 @@ namespace Kargono::RuntimeUI
 		SetHoveredWidgetInternal(currentWidget);
 	}
 
-	void RuntimeUIService::SetWidgetTextColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
+	void RuntimeUIContext::SetWidgetTextColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
 	{
 		// Search for the indicated widget
 		Ref<Widget> currentWidget = GetWidgetFromTag(windowTag, widgetTag);
@@ -1976,10 +1966,10 @@ namespace Kargono::RuntimeUI
 		SetWidgetTextColorInternal(currentWidget, color);
 	}
 
-	void RuntimeUIService::SetWidgetTextColorByIndex(WidgetID widgetID, const Math::vec4& color)
+	void RuntimeUIContext::SetWidgetTextColorByIndex(WidgetID widgetID, const Math::vec4& color)
 	{
 		// Ensure the correct user interface is active
-		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (widgetID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return;
@@ -1991,7 +1981,7 @@ namespace Kargono::RuntimeUI
 		SetWidgetTextColorInternal(currentWidget, color);
 	}
 
-	void RuntimeUIService::SetWidgetBackgroundColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
+	void RuntimeUIContext::SetWidgetBackgroundColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color)
 	{
 		// Search for the indicated widget
 		Ref<Widget> currentWidget = GetWidgetFromTag(windowTag, widgetTag);
@@ -1999,10 +1989,10 @@ namespace Kargono::RuntimeUI
 		SetWidgetBackgroundColorInternal(currentWidget, color);
 	}
 
-	void RuntimeUIService::SetWidgetBackgroundColorByIndex(WidgetID widgetID, const Math::vec4& color)
+	void RuntimeUIContext::SetWidgetBackgroundColorByIndex(WidgetID widgetID, const Math::vec4& color)
 	{
 		// Ensure the correct user interface is active
-		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (widgetID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return;
@@ -2014,7 +2004,7 @@ namespace Kargono::RuntimeUI
 		SetWidgetBackgroundColorInternal(currentWidget, color);
 	}
 
-	void RuntimeUIService::SetWidgetSelectableByTag(const std::string& windowTag, const std::string& widgetTag, bool selectable)
+	void RuntimeUIContext::SetWidgetSelectableByTag(const std::string& windowTag, const std::string& widgetTag, bool selectable)
 	{
 		// Search for the indicated widget
 		Ref<Widget> currentWidget = GetWidgetFromTag(windowTag, widgetTag);
@@ -2022,10 +2012,10 @@ namespace Kargono::RuntimeUI
 		SetWidgetSelectableInternal(currentWidget, selectable);
 	}
 
-	void RuntimeUIService::SetWidgetSelectableByIndex(WidgetID widgetID, bool selectable)
+	void RuntimeUIContext::SetWidgetSelectableByIndex(WidgetID widgetID, bool selectable)
 	{
 		// Ensure the correct user interface is active
-		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (widgetID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return;
@@ -2037,32 +2027,32 @@ namespace Kargono::RuntimeUI
 		SetWidgetSelectableInternal(currentWidget, selectable);
 	}
 
-	void RuntimeUIService::SetActiveOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function)
+	void RuntimeUIContext::SetActiveOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function)
 	{
-		s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnMove = function;
-		s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnMoveHandle = functionHandle;
+		m_ActiveUI->m_FunctionPointers.m_OnMove = function;
+		m_ActiveUI->m_FunctionPointers.m_OnMoveHandle = functionHandle;
 	}
 
-	void RuntimeUIService::SetActiveOnHover(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function)
+	void RuntimeUIContext::SetActiveOnHover(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function)
 	{
-		s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnHover = function;
-		s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnHoverHandle = functionHandle;
+		m_ActiveUI->m_FunctionPointers.m_OnHover = function;
+		m_ActiveUI->m_FunctionPointers.m_OnHoverHandle = functionHandle;
 	}
 
-	Ref<Scripting::Script> RuntimeUIService::GetActiveOnMove()
+	Ref<Scripting::Script> RuntimeUIContext::GetActiveOnMove()
 	{
-		return s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnMove;
+		return m_ActiveUI->m_FunctionPointers.m_OnMove;
 	}
 
-	Assets::AssetHandle RuntimeUIService::GetActiveOnMoveHandle()
+	Assets::AssetHandle RuntimeUIContext::GetActiveOnMoveHandle()
 	{
-		return s_RuntimeUIContext->m_ActiveUI->m_FunctionPointers.m_OnMoveHandle;
+		return m_ActiveUI->m_FunctionPointers.m_OnMoveHandle;
 	}
 
-	void RuntimeUIService::SetDisplayWindowByTag(const std::string& windowTag, bool display)
+	void RuntimeUIContext::SetDisplayWindowByTag(const std::string& windowTag, bool display)
 	{
 		// Search for the indicated window
-		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
+		for (Window& window : m_ActiveUI->m_Windows)
 		{
 			if (window.m_Tag == windowTag)
 			{
@@ -2080,18 +2070,17 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::SetDisplayWindowByIndex(WindowID windowID, bool display)
+	void RuntimeUIContext::SetDisplayWindowByIndex(WindowID windowID, bool display)
 	{
 		// Ensure the correct user interface is active
-		if (windowID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (windowID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return;
 		}
 
 		// Get the ID -> Widget Location map and location directions
-		IDToLocationMap& idToLocationMap = s_RuntimeUIContext->
-			m_ActiveUI->m_IDToLocation;
+		IDToLocationMap& idToLocationMap = m_ActiveUI->m_IDToLocation;
 		KG_ASSERT(idToLocationMap.contains(windowID.m_WindowID));
 		std::vector<uint16_t>& locationDirections = idToLocationMap.at(windowID.m_WindowID);
 
@@ -2100,7 +2089,7 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(locationDirections.size() == 1); // TODO: Remove this later
 		size_t windowIndex = locationDirections.at(0);
 
-		std::vector<Window>& activeWindows = s_RuntimeUIContext->m_ActiveUI->m_Windows;
+		std::vector<Window>& activeWindows = m_ActiveUI->m_Windows;
 
 		if (windowIndex > (activeWindows.size() - 1))
 		{
@@ -2121,54 +2110,48 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::MoveRight()
+	void RuntimeUIContext::MoveRight()
 	{
-		// Ensure the user interface context is valid and the navigation link is valid
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
-
 		// Ensure the selected widget is valid
-		if (!activeUI || !activeUI->m_SelectedWidget || !activeUI->m_ActiveWindow)
+		if (!m_ActiveUI || !m_ActiveUI->m_SelectedWidget || !m_ActiveUI->m_ActiveWindow)
 		{
 			return;
 		}
 
 		// Get the selected widget's selection data
-		SelectionData* originalSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+		SelectionData* originalSelectionData = GetSelectionDataFromWidget(m_ActiveUI->m_SelectedWidget);
 		KG_ASSERT(originalSelectionData);
 
 		// Move to the right
 		if (originalSelectionData->m_NavigationLinks.m_RightWidgetID != k_InvalidWidgetID)
 		{
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_RightWidgetID).get();
+			m_ActiveUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_RightWidgetID).get();
 
 			// Call the on move function if applicable
-			if (activeUI->m_FunctionPointers.m_OnMove)
+			if (m_ActiveUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrapped<WrappedVoidNone>(m_ActiveUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
 
 			// Handle modifying the editing widget
-			if (activeUI->m_EditingWidget != activeUI->m_SelectedWidget)
+			if (m_ActiveUI->m_EditingWidget != m_ActiveUI->m_SelectedWidget)
 			{
 				ClearEditingWidget();
 			}
 		}
 	}
 
-	void RuntimeUIService::MoveLeft()
+	void RuntimeUIContext::MoveLeft()
 	{
-		// Ensure the user interface context is valid and the navigation link is valid
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
-
 		// Ensure the selected widget is valid
-		if (!activeUI || !activeUI->m_SelectedWidget || !activeUI->m_ActiveWindow)
+		if (!m_ActiveUI || !m_ActiveUI->m_SelectedWidget || !m_ActiveUI->m_ActiveWindow)
 		{
 			return;
 		}
 
 		// Get the selected widget's selection data
-		SelectionData* originalSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+		SelectionData* originalSelectionData = GetSelectionDataFromWidget(m_ActiveUI->m_SelectedWidget);
 		KG_ASSERT(originalSelectionData);
 
 		// Move to the left
@@ -2176,74 +2159,68 @@ namespace Kargono::RuntimeUI
 		{
 
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_LeftWidgetID).get();
+			m_ActiveUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_LeftWidgetID).get();
 
 			// Call the on move function if applicable
-			if (activeUI->m_FunctionPointers.m_OnMove)
+			if (m_ActiveUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrapped<WrappedVoidNone>(m_ActiveUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
 
 			// Handle modifying the editing widget
-			if (activeUI->m_EditingWidget != activeUI->m_SelectedWidget)
+			if (m_ActiveUI->m_EditingWidget != m_ActiveUI->m_SelectedWidget)
 			{
 				ClearEditingWidget();
 			}
 		}
 	}
 
-	void RuntimeUIService::MoveUp()
+	void RuntimeUIContext::MoveUp()
 	{
-		// Ensure the user interface context is valid and the navigation link is valid
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
-
 		// Ensure the selected widget is valid
-		if (!activeUI || !activeUI->m_SelectedWidget || !activeUI->m_ActiveWindow)
+		if (!m_ActiveUI || !m_ActiveUI->m_SelectedWidget || !m_ActiveUI->m_ActiveWindow)
 		{
 			return;
 		}
 
 		// Get the selected widget's selection data
-		SelectionData* originalSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+		SelectionData* originalSelectionData = GetSelectionDataFromWidget(m_ActiveUI->m_SelectedWidget);
 		KG_ASSERT(originalSelectionData);
 
 		// Move up
 		if (originalSelectionData->m_NavigationLinks.m_UpWidgetID != k_InvalidWidgetID)
 		{
 			// Set the new selected widget
-			activeUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_UpWidgetID).get();
+			m_ActiveUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_UpWidgetID).get();
 
 			// Get the new widget's selection data
-			SelectionData* newSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+			SelectionData* newSelectionData = GetSelectionDataFromWidget(m_ActiveUI->m_SelectedWidget);
 			KG_ASSERT(newSelectionData);
 
 			// Call the on move function if applicable
-			if (activeUI->m_FunctionPointers.m_OnMove)
+			if (m_ActiveUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrapped<WrappedVoidNone>(m_ActiveUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
 
 			// Handle modifying the editing widget
-			if (activeUI->m_EditingWidget != activeUI->m_SelectedWidget)
+			if (m_ActiveUI->m_EditingWidget != m_ActiveUI->m_SelectedWidget)
 			{
 				ClearEditingWidget();
 			}
 		}
 	}
 
-	void RuntimeUIService::MoveDown()
+	void RuntimeUIContext::MoveDown()
 	{
-		// Ensure the user interface context is valid and the navigation link is valid
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
-
 		// Ensure the selected widget is valid
-		if (!activeUI || !activeUI->m_SelectedWidget || !activeUI->m_ActiveWindow)
+		if (!m_ActiveUI || !m_ActiveUI->m_SelectedWidget || !m_ActiveUI->m_ActiveWindow)
 		{
 			return;
 		}
 
 		// Get the selected widget's selection data
-		SelectionData* originalSelectionData = GetSelectionDataFromWidget(activeUI->m_SelectedWidget);
+		SelectionData* originalSelectionData = GetSelectionDataFromWidget(m_ActiveUI->m_SelectedWidget);
 		KG_ASSERT(originalSelectionData);
 
 		// Move down
@@ -2251,25 +2228,25 @@ namespace Kargono::RuntimeUI
 		{
 			// Set the new selected widget
 			
-			activeUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_DownWidgetID).get();
+			m_ActiveUI->m_SelectedWidget = GetWidgetFromID(originalSelectionData->m_NavigationLinks.m_DownWidgetID).get();
 
 			// Call the on move function if applicable
-			if (activeUI->m_FunctionPointers.m_OnMove)
+			if (m_ActiveUI->m_FunctionPointers.m_OnMove)
 			{
-				Utility::CallWrapped<WrappedVoidNone>(activeUI->m_FunctionPointers.m_OnMove->m_Function);
+				Utility::CallWrapped<WrappedVoidNone>(m_ActiveUI->m_FunctionPointers.m_OnMove->m_Function);
 			}
 
 			// Handle modifying the editing widget
-			if (activeUI->m_EditingWidget != activeUI->m_SelectedWidget)
+			if (m_ActiveUI->m_EditingWidget != m_ActiveUI->m_SelectedWidget)
 			{
 				ClearEditingWidget();
 			}
 		}
 	}
 
-	void RuntimeUIService::OnPress()
+	void RuntimeUIContext::OnPress()
 	{
-		Widget* currentWidget = s_RuntimeUIContext->m_ActiveUI->m_SelectedWidget;
+		Widget* currentWidget = m_ActiveUI->m_SelectedWidget;
 
 		// Ensure selected widget is valid
 		if (!currentWidget) 
@@ -2280,10 +2257,10 @@ namespace Kargono::RuntimeUI
 		OnPressInternal(currentWidget);
 	}
 
-	void RuntimeUIService::OnPressByIndex(WidgetID widgetID)
+	void RuntimeUIContext::OnPressByIndex(WidgetID widgetID)
 	{
 		// Ensure the correct user interface is active
-		if (widgetID.m_UserInterfaceID != s_RuntimeUIContext->m_ActiveUIHandle)
+		if (widgetID.m_UserInterfaceID != m_ActiveUIHandle)
 		{
 			KG_WARN("Incorrect user interface provided when attempting to modify the active runtime user interface");
 			return;
@@ -2302,7 +2279,7 @@ namespace Kargono::RuntimeUI
 
 	
 
-	void RuntimeUIService::RecalculateTextData(Widget* widget)
+	void RuntimeUIContext::RecalculateTextData(Widget* widget)
 	{
 		KG_ASSERT(widget);
 
@@ -2338,7 +2315,7 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void RuntimeUIService::CalculateFixedAspectRatioSize(Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight, bool useXValueAsBase)
+	void RuntimeUIContext::CalculateFixedAspectRatioSize(Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight, bool useXValueAsBase)
 	{
 		KG_ASSERT(widget);
 
@@ -2402,16 +2379,16 @@ namespace Kargono::RuntimeUI
 		
 	}
 
-	Ref<Widget> RuntimeUIService::GetWidgetFromTag(const std::string& windowTag, const std::string& widgetTag)
+	Ref<Widget> RuntimeUIContext::GetWidgetFromTag(const std::string& windowTag, const std::string& widgetTag)
 	{
-		if (!s_RuntimeUIContext->m_ActiveUI)
+		if (!m_ActiveUI)
 		{
 			KG_WARN("Attempt to get a widget from the active user interface, however, no UI is active!");
 			return nullptr;
 		}
 
 		// Get widget using its parent window tag and its widget tag
-		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
+		for (Window& window : m_ActiveUI->m_Windows)
 		{
 			// Ensure window tag matches
 			if (window.m_Tag == windowTag)
@@ -2429,12 +2406,12 @@ namespace Kargono::RuntimeUI
 		return nullptr;
 	}
 
-	Ref<Widget> RuntimeUIService::GetWidgetFromID(int32_t widgetID)
+	Ref<Widget> RuntimeUIContext::GetWidgetFromID(int32_t widgetID)
 	{
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
+		KG_ASSERT(m_ActiveUI);
 
 		// Get the ID -> Widget Location map and location directions
-		IDToLocationMap& idToLocationMap = s_RuntimeUIContext->
+		IDToLocationMap& idToLocationMap = 
 			m_ActiveUI->m_IDToLocation;
 		KG_ASSERT(idToLocationMap.contains(widgetID));
 		std::vector<uint16_t>& locationDirections = idToLocationMap.at(widgetID);
@@ -2446,13 +2423,13 @@ namespace Kargono::RuntimeUI
 		size_t firstWidgetIndex = locationDirections.at(1);
 
 		// Ensure window index is within bounds
-		if (windowIndex > (s_RuntimeUIContext->m_ActiveUI->m_Windows.size() - 1))
+		if (windowIndex > (m_ActiveUI->m_Windows.size() - 1))
 		{
 			KG_WARN("Attempt to retrieve a widget but the window index was out of bounds");
 			return nullptr;
 		}
 		// Get the indiciated window
-		Window& currentWindow = s_RuntimeUIContext->m_ActiveUI->m_Windows.at((size_t)windowIndex);
+		Window& currentWindow = m_ActiveUI->m_Windows.at((size_t)windowIndex);
 		
 		// Ensure widget index is within bounds
 		if (firstWidgetIndex > (currentWindow.m_Widgets.size() - 1))
@@ -2491,9 +2468,9 @@ namespace Kargono::RuntimeUI
 		return currentWidget;
 	}
 
-	Ref<Widget> RuntimeUI::RuntimeUIService::GetWidgetFromDirections(const std::vector<uint16_t>& locationDirections)
+	Ref<Widget> RuntimeUIContext::GetWidgetFromDirections(const std::vector<uint16_t>& locationDirections)
 	{
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
+		KG_ASSERT(m_ActiveUI);
 
 		// Ensure directions to a widget a presented
 		KG_ASSERT(locationDirections.size() > 1);
@@ -2504,14 +2481,14 @@ namespace Kargono::RuntimeUI
 		size_t widgetIndex = locationDirections.at(1);
 
 		// Ensure window index is within bounds
-		if (windowIndex > (s_RuntimeUIContext->m_ActiveUI->m_Windows.size() - 1))
+		if (windowIndex > (m_ActiveUI->m_Windows.size() - 1))
 		{
 			KG_WARN("Attempt to retrieve a widget but the window index was out of bounds");
 			return nullptr;
 		}
 
 		// Get the indicated window
-		Window& currentWindow = s_RuntimeUIContext->m_ActiveUI->m_Windows.at((size_t)windowIndex);
+		Window& currentWindow = m_ActiveUI->m_Windows.at((size_t)windowIndex);
 
 		// Ensure widget index is within bounds
 		if (widgetIndex > (currentWindow.m_Widgets.size() - 1))
@@ -2524,12 +2501,12 @@ namespace Kargono::RuntimeUI
 		return currentWindow.m_Widgets.at(widgetIndex);
 	}
 
-	IDType RuntimeUI::RuntimeUIService::CheckIDType(int32_t windowOrWidgetID)
+	IDType RuntimeUIContext::CheckIDType(int32_t windowOrWidgetID)
 	{
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
+		KG_ASSERT(m_ActiveUI);
 
 		// Get the ID -> Widget Location map and location directions
-		IDToLocationMap& idToLocationMap = s_RuntimeUIContext->
+		IDToLocationMap& idToLocationMap = 
 			m_ActiveUI->m_IDToLocation;
 
 		// Check for invalid ID
@@ -2551,10 +2528,9 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	Window& RuntimeUI::RuntimeUIService::GetWindowFromID(int32_t windowID)
+	Window& RuntimeUIContext::GetWindowFromID(int32_t windowID)
 	{
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		KG_ASSERT(m_ActiveUI);
 
 		// Get the window location
 		std::vector<uint16_t>* locationDir = GetLocationFromID(windowID);
@@ -2565,16 +2541,15 @@ namespace Kargono::RuntimeUI
 		uint16_t windowLocation{ locationDir->at(0) };
 
 		// Ensure the window location leads to a valid window instance
-		KG_ASSERT(windowLocation < activeUI->m_Windows.size());
+		KG_ASSERT(windowLocation < m_ActiveUI->m_Windows.size());
 
 		// Return the window
-		return activeUI->m_Windows.at(windowLocation);
+		return m_ActiveUI->m_Windows.at(windowLocation);
 	}
 
-	Window& RuntimeUI::RuntimeUIService::GetParentWindowFromWidgetID(int32_t widgetID)
+	Window& RuntimeUIContext::GetParentWindowFromWidgetID(int32_t widgetID)
 	{
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
+		KG_ASSERT(m_ActiveUI);
 
 		// Get the widget location
 		std::vector<uint16_t>* locationDir = GetLocationFromID(widgetID);
@@ -2585,17 +2560,14 @@ namespace Kargono::RuntimeUI
 		uint16_t windowLocation{ locationDir->at(0) };
 
 		// Ensure the window location leads to a valid window instance
-		KG_ASSERT(windowLocation < activeUI->m_Windows.size());
+		KG_ASSERT(windowLocation < m_ActiveUI->m_Windows.size());
 
 		// Return the window
-		return activeUI->m_Windows.at(windowLocation);
+		return m_ActiveUI->m_Windows.at(windowLocation);
 	}
 
-	Ref<Widget> RuntimeUI::RuntimeUIService::GetParentWidgetFromID(int32_t widgetID)
+	Ref<Widget> RuntimeUIContext::GetParentWidgetFromID(int32_t widgetID)
 	{
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
-		Ref<UserInterface> activeUI = s_RuntimeUIContext->m_ActiveUI;
-
 		// Get the widget location
 		std::vector<uint16_t>* locationDir = GetLocationFromID(widgetID);
 
@@ -2617,12 +2589,10 @@ namespace Kargono::RuntimeUI
 		return GetWidgetFromDirections(parentLocationDir);
 	}
 
-	std::vector<uint16_t>* RuntimeUI::RuntimeUIService::GetLocationFromID(int32_t windowOrWidgetID)
+	std::vector<uint16_t>* RuntimeUIContext::GetLocationFromID(int32_t windowOrWidgetID)
 	{
-		KG_ASSERT(s_RuntimeUIContext->m_ActiveUI);
-
 		// Get the ID -> Widget Location map and location directions
-		IDToLocationMap& idToLocationMap = s_RuntimeUIContext->
+		IDToLocationMap& idToLocationMap = 
 			m_ActiveUI->m_IDToLocation;
 
 		// Check for invalid ID
@@ -2634,10 +2604,10 @@ namespace Kargono::RuntimeUI
 		return &(idToLocationMap.at(windowOrWidgetID));
 	}
 
-	std::tuple<Ref<Widget>, Window*> RuntimeUIService::GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag)
+	std::tuple<Ref<Widget>, Window*> RuntimeUIContext::GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag)
 	{
 		// Get widget using its parent window tag and its widget tag
-		for (Window& window : s_RuntimeUIContext->m_ActiveUI->m_Windows)
+		for (Window& window : m_ActiveUI->m_Windows)
 		{
 			// Ensure window tag matches
 			if (window.m_Tag == windowTag)
@@ -2655,17 +2625,17 @@ namespace Kargono::RuntimeUI
 		return { nullptr, nullptr };
 	}
 
-	std::tuple<Ref<Widget>, Window*> RuntimeUIService::GetWidgetAndWindow(int32_t widgetID)
+	std::tuple<Ref<Widget>, Window*> RuntimeUIContext::GetWidgetAndWindow(int32_t widgetID)
 	{
 		// Ensure a user interface is active
-		if (!s_RuntimeUIContext->m_ActiveUI)
+		if (!m_ActiveUI)
 		{
 			KG_WARN("Attempt to get a widget from the active user interface, however, no UI is active!");
 			return {nullptr, nullptr};
 		}
 
 		// Get the ID -> Widget Location map and location directions
-		IDToLocationMap& idToLocationMap = s_RuntimeUIContext->
+		IDToLocationMap& idToLocationMap = 
 			m_ActiveUI->m_IDToLocation;
 		KG_ASSERT(idToLocationMap.contains(widgetID));
 		std::vector<uint16_t>& locationDirections = idToLocationMap.at(widgetID);
@@ -2684,13 +2654,13 @@ namespace Kargono::RuntimeUI
 		size_t widgetIndex = locationDirections.at(1);
 
 		// Ensure window index is within bounds
-		if (windowIndex > (s_RuntimeUIContext->m_ActiveUI->m_Windows.size() - 1))
+		if (windowIndex > (m_ActiveUI->m_Windows.size() - 1))
 		{
 			KG_WARN("Attempt to retrieve a widget but the window index was out of bounds");
 			return { nullptr, nullptr };
 		}
 		// Get the indiciated window
-		Window& currentWindow = s_RuntimeUIContext->m_ActiveUI->m_Windows.at((size_t)windowIndex);
+		Window& currentWindow = m_ActiveUI->m_Windows.at((size_t)windowIndex);
 
 		// Ensure widget index is within bounds
 		if (widgetIndex > (currentWindow.m_Widgets.size() - 1))
@@ -2703,735 +2673,31 @@ namespace Kargono::RuntimeUI
 		return { currentWindow.m_Widgets.at(widgetIndex), &currentWindow };
 	}
 
-	void Window::DisplayWindow()
+	void NavigationLinksCalculator::CalculateNavigationLinks()
 	{
-		// Return if the window is already displayed
-		if (m_WindowDisplayed) 
-		{ 
-			return; 
-		}
-
-		// Set window as displayed and revalidate displayed windows for current user interface
-		m_WindowDisplayed = true;
-		RuntimeUIService::RevalidateDisplayedWindows();
-
-	}
-
-	void Window::HideWindow()
-	{
-		// Return if the window is not displayed
-		if (!m_WindowDisplayed) 
-		{ 
-			return; 
-		}
-
-		// Set window as hidden and revalidate displayed windows for current user interface
-		m_WindowDisplayed = false;
-		RuntimeUIService::RevalidateDisplayedWindows();
-	}
-
-	std::vector<Ref<Widget>> RuntimeUI::Window::GetAllChildWidgets()
-	{
-		std::vector<Ref<Widget>> returnVector{ m_Widgets };
-
-		for (Ref<Widget> currentWidget : m_Widgets)
-		{
-			GetChildWidget(returnVector, currentWidget);
-		}
-
-		return returnVector;
-	}
-
-	void RuntimeUI::Window::GetChildWidget(std::vector<Ref<Widget>>& returnVector, Ref<Widget> currentWidget)
-	{
-		returnVector.push_back(currentWidget);
-
-		ContainerData* data = RuntimeUIService::GetContainerDataFromWidget(currentWidget.get());
-		if (data)
-		{
-			for (Ref<Widget> containedWidget : data->m_ContainedWidgets)
-			{
-				GetChildWidget(returnVector, containedWidget);
-			}
-		}
-	}
-
-	bool Window::GetWindowDisplayed()
-	{
-		return m_WindowDisplayed;
-	}
-
-	Math::vec3 Window::CalculateSize(uint32_t viewportWidth, uint32_t viewportHeight)
-	{
-		return Math::vec3(viewportWidth * m_Size.x, viewportHeight * m_Size.y, 1.0f);
-	}
-
-	Math::vec3 Window::CalculateWorldPosition(uint32_t viewportWidth, uint32_t viewportHeight)
-	{
-		return Math::vec3((viewportWidth * m_ScreenPosition.x), (viewportHeight * m_ScreenPosition.y), m_ScreenPosition.z);
-	}
-
-	Math::vec3 Window::CalculateScreenPosition(Math::vec2 worldPosition, uint32_t viewportWidth, uint32_t viewportHeight)
-	{
-		return Math::vec3(worldPosition.x / viewportWidth, worldPosition.y / viewportHeight, m_ScreenPosition.z);
-	}
-
-	void Window::AddWidget(Ref<Widget> newWidget)
-	{
-		KG_ASSERT(newWidget);
-
-		// Add new widget to buffer
-		m_Widgets.push_back(newWidget);
-
-		RuntimeUI::RuntimeUIService::RevalidateWidgetIDToLocationMap();
-		RuntimeUIService::RecalculateTextData(newWidget.get());
-	}
-
-	void Window::DeleteWidget(std::size_t widgetLocation)
-	{
-		// Return if the widget location is out of bounds
-		if (widgetLocation >= m_Widgets.size())
-		{
-			KG_WARN("Attempt to delete a widget, however, the provided index is out of bounds");
-			return;
-		}
-
-		// Delete the widget
-		m_Widgets.erase(m_Widgets.begin() + widgetLocation);
-
-		RuntimeUI::RuntimeUIService::RevalidateWidgetIDToLocationMap();
-	}
-
-	void TextWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
-	{
-		KG_PROFILE_FUNCTION();
-
-		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-
-		// Get widget translation
-		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
-
-		// Create the widget's text rendering data
-		widgetTranslation.z += 0.001f;
-		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
-		float textSize{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
-		float yAdvance = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->m_LineHeight;
-		float allLineAdvanceHeight{ 0.0f };
-		// Calculate entire text's height
-		if (m_TextData.m_CachedTextDimensions.m_LineSize.size() > 0)
-		{
-			//// Add the first line's dimensions
-			//allLineAdvanceHeight += m_TextMetadata.m_LineSize[0].y;
-
-			// Add the line advance for the remaining lines
-			allLineAdvanceHeight += yAdvance * (float)(m_TextData.m_CachedTextDimensions.m_LineSize.size() - 1);
-		}
-
-		// Call the text's rendering function
-		for (size_t iteration{ 0 }; iteration < m_TextData.m_CachedTextDimensions.m_LineSize.size(); iteration++)
-		{
-
-			Math::vec3 finalTranslation;
-			Math::vec2 lineDimensions{ m_TextData.m_CachedTextDimensions.m_LineSize[iteration] };
-			Math::ivec2 currentBreaks{ m_TextData.m_CachedTextDimensions.m_LineBreaks[iteration] };
-
-			constexpr float k_CenterAdjustmentSize{ 2.6f }; // Magic number for adjusting the height of a line TODO: Find better solution
-
-			// Place the starting x-location of the text widget based on the provided alignment option
-			switch (m_TextData.m_TextAlignment)
-			{
-			case Constraint::Left:
-				finalTranslation.x = widgetTranslation.x;
-				break;
-			case Constraint::Right:
-				finalTranslation.x = widgetTranslation.x + (widgetSize.x) - ((lineDimensions.x) * textSize);
-				break;
-			case Constraint::Center:
-				// Adjust current line translation to be centered
-				finalTranslation.x = widgetTranslation.x + (widgetSize.x * 0.5f) - ((lineDimensions.x * 0.5f) * textSize);
-				break;
-			case Constraint::Bottom:
-			case Constraint::Top:
-			case Constraint::None:
-				KG_ERROR("Invalid constraint type for aligning text {}", Utility::ConstraintToString(m_TextData.m_TextAlignment));
-				break;
-			}
-
-			// Set the starting y/z locations
-			finalTranslation.y = widgetTranslation.y + (widgetSize.y * 0.5f) - ((m_TextData.m_CachedTextDimensions.m_LineSize[0].y * 0.5f - (allLineAdvanceHeight * 0.5f)) * textSize) + k_CenterAdjustmentSize;
-			finalTranslation.z = widgetTranslation.z;
-
-			// Move the line down in the y-axis to it's correct location
-			finalTranslation.y -= iteration * textSize * yAdvance;
-
-			// Render the single line of text
-			std::string_view outputText{ m_TextData.m_Text.data() + currentBreaks.x, (size_t)(currentBreaks.y - currentBreaks.x) };
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_Font->OnRenderSingleLineText(
-				outputText,
-				finalTranslation, m_TextData.m_TextColor, textSize);
-		}
-
-	}
-
-	void TextWidget::CalculateTextSize()
-	{
-		// Get the resolution of the screen and the viewport
-		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
-		ViewportData& viewportData = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
-		
-		// Calculate the text size used by the rendering calls
-		float textSize{ (viewportData.m_Width * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
-
-		// Get parent transform
-		BoundingBoxTransform parentTransform = RuntimeUI::RuntimeUIService::GetParentDimensionsFromID(m_ID, viewportData.m_Width, viewportData.m_Height);
-
-		// Get widget width
-		Math::vec3 widgetSize = CalculateWidgetSize(parentTransform.m_Size);
-		RuntimeUIService::CalculateMultiLineText(m_TextData, widgetSize, textSize);
-	}
-
-	void TextWidget::SetText(const std::string& newText)
-	{
-		// Set the text of the widget
-		m_TextData.m_Text = newText;
-
-		// Calculate the new text size
-		CalculateTextSize();
-	}
-
-	void ButtonWidget::SetText(const std::string& newText)
-	{
-		// Set the text of the widget
-		m_TextData.m_Text = newText;
-
-		// Calculate the new text size
-		CalculateTextSize();
-	}
-
-	void ButtonWidget::CalculateTextSize()
-	{
-		RuntimeUIService::CalculateSingleLineText(m_TextData);
-	}
-
-	Math::vec3 Widget::CalculateWidgetSize(const Math::vec3& windowSize)
-	{
-		return Math::vec3
-		(
-			m_SizeType == PixelOrPercent::Percent ? windowSize.x * m_PercentSize.x : m_PixelSize.x, 
-			m_SizeType == PixelOrPercent::Percent ? windowSize.y * m_PercentSize.y : m_PixelSize.y,
-			1.0f
-		);
-	}
-
-	Math::vec3 Widget::CalculateWorldPosition(const Math::vec3& windowTranslation, const Math::vec3& windowSize)
-	{
-		float widgetXPos{ m_XPositionType == PixelOrPercent::Percent ? windowSize.x * m_PercentPosition.x : (float)m_PixelPosition.x };
-		float widgetYPos{ m_YPositionType == PixelOrPercent::Percent ? windowSize.y * m_PercentPosition.y : (float)m_PixelPosition.y };
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-		if (m_XRelativeOrAbsolute == RelativeOrAbsolute::Relative && m_XConstraint != Constraint::None)
-		{
-			// Handle relative code
-			switch (m_XConstraint)
-			{
-			case Constraint::Center:
-				widgetXPos = (windowSize.x * 0.5f) + widgetXPos - (widgetSize.x / 2.0f);
-				break;
-			case Constraint::Right:
-				widgetXPos = windowSize.x + widgetXPos - (widgetSize.x);
-				break;
-			case Constraint::Left:
-				break;
-			default:
-				KG_ERROR("Invalid constraint {} provided while calculating widget's position", (uint16_t)m_XConstraint);
-				break;
-			}
-		}
-
-		if (m_YRelativeOrAbsolute == RelativeOrAbsolute::Relative && m_YConstraint != Constraint::None)
-		{
-			// Handle relative code
-			switch (m_YConstraint)
-			{
-			case Constraint::Center:
-				widgetYPos = (windowSize.y * 0.5f) + widgetYPos - (widgetSize.y / 2.0f);;
-				break;
-			case Constraint::Top:
-				widgetYPos = windowSize.y + widgetYPos - widgetSize.y;
-				break;
-			case Constraint::Bottom:
-				break;
-			default:
-				KG_ERROR("Invalid constraint {} provided while calculating widget's position", (uint16_t)m_YConstraint);
-				break;
-			}
-		}
-
-
-		// Calculate final widget position on screen
-		return Math::vec3(windowTranslation.x + widgetXPos, windowTranslation.y + widgetYPos, windowTranslation.z);
-	}
-
-	Math::vec3 Widget::CalculateWindowPosition(Math::vec2 worldPosition, const Math::vec3& windowTranslation, const Math::vec3& windowSize)
-	{
-		float widgetXPos{ worldPosition.x - windowTranslation.x };
-		float widgetYPos{ worldPosition.y - windowTranslation.y };
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-
-		if (m_XRelativeOrAbsolute == RelativeOrAbsolute::Relative && m_XConstraint != Constraint::None)
-		{
-			// Handle relative code
-			switch (m_XConstraint)
-			{
-			case Constraint::Center:
-				widgetXPos = widgetXPos - (windowSize.x * 0.5f) + (widgetSize.x / 2.0f);
-				break;
-			case Constraint::Right:
-				widgetXPos = widgetXPos - windowSize.x + (widgetSize.x);
-				break;
-			case Constraint::Left:
-				break;
-			default:
-				KG_ERROR("Invalid constraint {} provided while calculating widget's position", (uint16_t)m_XConstraint);
-				break;
-			}
-		}
-
-		if (m_YRelativeOrAbsolute == RelativeOrAbsolute::Relative && m_YConstraint != Constraint::None)
-		{
-			// Handle relative code
-			switch (m_YConstraint)
-			{
-			case Constraint::Center:
-				widgetYPos = widgetYPos - (windowSize.y * 0.5f) + (widgetSize.y / 2.0f);
-				break;
-			case Constraint::Top:
-				widgetYPos = widgetYPos - windowSize.y + (widgetSize.y);
-				break;
-			case Constraint::Bottom:
-				break;
-			default:
-				KG_ERROR("Invalid constraint {} provided while calculating widget's position", (uint16_t)m_YConstraint);
-				break;
-			}
-		}
-		// Calculate final widget position on screen
-		widgetXPos = m_XPositionType == PixelOrPercent::Percent ? widgetXPos / windowSize.x : widgetXPos;
-		widgetYPos = m_YPositionType == PixelOrPercent::Percent ? widgetYPos / windowSize.y : widgetYPos;
-		return Math::vec3(widgetXPos, widgetYPos, 0.0f);
-	}
-
-	void ButtonWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
-	{
-		KG_PROFILE_FUNCTION();
-
-		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
-
-		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-
-		// Get widget translation
-		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
-
-		// Draw background
-		if (activeUI->m_HoveredWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
-		}
-		else if (activeUI->m_SelectedWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
-		}
-		else
-		{
-			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
-		}
-		
-		// Calculate text starting point
-		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
-		float textScalingFactor{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
-		Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(m_TextData, widgetTranslation, widgetSize, textScalingFactor);
-
-		// Create the widget's text rendering data
-		textStartingPoint.z += 0.001f;
-
-		RuntimeUIService::RenderSingleLineText(m_TextData, textStartingPoint, textScalingFactor);
-		
-	}
-
-	void ImageWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
-	{
-		UNREFERENCED_PARAMETER(viewportWidth);
-		KG_PROFILE_FUNCTION();
-
-		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-
-		// Get widget translation
-		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
-
-		// Draw image
-		RuntimeUIService::RenderImage(m_ImageData, widgetTranslation, widgetSize);
-	}
-
-	void ImageButtonWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
-	{
-		UNREFERENCED_PARAMETER(viewportWidth);
-		KG_PROFILE_FUNCTION();
-
-		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
-
-		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-
-		// Get widget translation
-		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
-
-		// Draw background
-		if (activeUI->m_HoveredWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
-		}
-		else if (activeUI->m_SelectedWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
-		}
-		else
-		{
-			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
-		}
-
-		widgetTranslation.z += 0.001f;
-
-		// Draw image
-		RuntimeUIService::RenderImage(m_ImageData, widgetTranslation, widgetSize);
-	}
-
-	void CheckboxWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
-	{
-		UNREFERENCED_PARAMETER(viewportWidth);
-		KG_PROFILE_FUNCTION();
-
-		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
-
-		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-
-		// Get widget translation
-		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
-
-		// Draw background
-		if (activeUI->m_HoveredWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
-		}
-		else if (activeUI->m_SelectedWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
-		}
-		else
-		{
-			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
-		}
-
-		widgetTranslation.z += 0.001f;
-
-		if (m_Checked)
-		{
-			RuntimeUIService::RenderImage(m_ImageChecked, widgetTranslation, widgetSize);
-		}
-		else
-		{
-			RuntimeUIService::RenderImage(m_ImageUnChecked, widgetTranslation, widgetSize);
-		}
-	}
-
-	void InputTextWidget::SetText(const std::string& newText)
-	{
-		// Set the text of the widget
-		m_TextData.m_Text = newText;
-
-		// Calculate the new text size
-		CalculateTextSize();
-	}
-
-	void InputTextWidget::CalculateTextSize()
-	{
-		RuntimeUIService::CalculateSingleLineText(m_TextData);
-	}
-
-	void InputTextWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
-	{
-		KG_PROFILE_FUNCTION();
-
-		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
-
-		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-
-		// Get widget translation
-		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
-
-		// Draw background
-		if (activeUI->m_EditingWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_EditingColor, widgetTranslation, widgetSize);
-		}
-		else if (activeUI->m_HoveredWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
-		}
-		else if (activeUI->m_SelectedWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
-		}
-		else
-		{
-			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
-		}
-
-		// Calculate text starting point
-		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
-		float textScalingFactor{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
-		Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(m_TextData, widgetTranslation, widgetSize, textScalingFactor);
-
-		// Render the widget's text
-		textStartingPoint.z += 0.001f;
-		RuntimeUIService::RenderSingleLineText(m_TextData, textStartingPoint, textScalingFactor);
-		
-		// Render the IBeam icon/cursor if necessary
-		textStartingPoint.z += 0.001f;
-		if (RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_EditingWidget == this && 
-			RuntimeUIService::s_RuntimeUIContext->m_ActiveUI->m_IBeamVisible)
-		{
-			RuntimeUIService::RenderTextCursor(m_TextData, textStartingPoint, textScalingFactor);
-		}
-		
-	}
-
-	void SliderWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
-	{
-		UNREFERENCED_PARAMETER(viewportWidth);
-		KG_PROFILE_FUNCTION();
-
-		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
-
-		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-
-		// Get widget translation
-		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
-
-		// Render the slider
-		RuntimeUIService::RenderSliderLine(m_LineColor, widgetTranslation, widgetSize);
-
-		widgetTranslation.z += 0.001f;
-
-		// Get the slider's current normalized location based on the bounds and currentValue
-		float normalizedSliderLocation = (m_CurrentValue - m_Bounds.x) / (m_Bounds.y - m_Bounds.x);
-
-		if (activeUI->m_SelectedWidget == this)
-		{
-			RuntimeUIService::RenderSlider(activeUI->m_SelectColor, 
-				{ widgetTranslation.x + widgetSize.x * normalizedSliderLocation, widgetTranslation.y, widgetTranslation.z },
-				widgetSize);
-		}
-		else
-		{
-			RuntimeUIService::RenderSlider(m_SliderColor,
-				{ widgetTranslation.x + widgetSize.x * normalizedSliderLocation, widgetTranslation.y, widgetTranslation.z },
-				widgetSize);
-		}
-		
-	}
-
-	void DropDownWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
-	{
-		KG_PROFILE_FUNCTION();
-
-		Ref<UserInterface> activeUI = RuntimeUIService::s_RuntimeUIContext->m_ActiveUI;
-
-		// Get mouse position and active viewport
-		Math::vec2 mousePosition = Input::InputService::GetViewportMousePosition();
-		ViewportData* viewportData = EngineService::GetActiveEngine().GetApp().GetViewportData();
-
-		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-		// Get widget translation
-		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
-
-		// Check if the mouse position is within bounds of the current option
-		if (activeUI->m_HoveredWidget && 
-			mousePosition.x > widgetTranslation.x && mousePosition.x < (widgetTranslation.x + widgetSize.x) &&
-			mousePosition.y > widgetTranslation.y && mousePosition.y < (widgetTranslation.y + widgetSize.y))
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
-		}
-		else if (activeUI->m_SelectedWidget == this)
-		{
-			RuntimeUIService::RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
-		}
-		else
-		{
-			RuntimeUIService::RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
-		}
-
-		// Ensure that current option is within bounds
-		if (m_CurrentOption < m_DropDownOptions.size())
-		{
-			// Get the active option data
-			SingleLineTextData& textData = m_DropDownOptions.at(m_CurrentOption);
-
-			// Calculate text starting point
-			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
-			float textScalingFactor{ (viewportWidth * 0.15f * textData.m_TextSize) * (resolution.y / resolution.x) };
-			Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(textData, widgetTranslation, widgetSize, textScalingFactor);
-
-			// Create the widget's text rendering data
-			textStartingPoint.z += 0.001f;
-
-			// Draw current option's text
-			RuntimeUIService::RenderSingleLineText(textData, textStartingPoint, textScalingFactor);
-		}
-
-		// Draw drop-down options
-		if (m_DropDownOpen)
-		{
-			// This variable represents the *visible* drop-down position/index
-			// Note: IT IS NOT THE INDEX INTO THE DROPDOWNOPTIONS VECTOR
-			size_t visibleDropDownOffset{ 0 }; 
-			for (size_t iteration{0}; iteration < m_DropDownOptions.size(); iteration++)
-			{
-				// Exclude the current option
-				if (m_CurrentOption == iteration)
-				{
-					continue;
-				}
-
-				// Increment z-location
-				widgetTranslation.z += 0.001f;
-
-				// Create transform for the current drop-down option
-				Math::vec3 currentOptionTranslation
-				{ 
-					widgetTranslation.x, 
-					widgetTranslation.y - widgetSize.y * (float)(visibleDropDownOffset + 1), 
-					widgetTranslation.z 
-				};
-
-				// Check if the mouse position is within bounds of the current option
-				if (activeUI->m_HoveredWidget &&
-					mousePosition.x > currentOptionTranslation.x && 
-					mousePosition.x < (currentOptionTranslation.x + widgetSize.x) &&
-					mousePosition.y > currentOptionTranslation.y && 
-					mousePosition.y < (currentOptionTranslation.y + widgetSize.y))
-				{
-					// Draw the background for the current option
-					RuntimeUIService::RenderBackground(activeUI->m_HoveredColor, currentOptionTranslation, widgetSize);
-				}
-				else
-				{
-					// Draw the background for the current option
-					RuntimeUIService::RenderBackground(m_DropDownBackground, currentOptionTranslation, widgetSize);
-				}
-				
-				
-				// Draw the current option label
-				// Get the active option data
-				SingleLineTextData& textData = m_DropDownOptions.at(iteration);
-
-				// Calculate text starting point
-				Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
-				float textScalingFactor{ (viewportWidth * 0.15f * textData.m_TextSize) * (resolution.y / resolution.x) };
-				Math::vec3 textStartingPoint = RuntimeUIService::GetSingleLineTextStartingPosition(textData, currentOptionTranslation, widgetSize, textScalingFactor);
-
-				// Create the widget's text rendering data
-				textStartingPoint.z += 0.001f;
-
-				// Draw current option's text
-				RuntimeUIService::RenderSingleLineText(textData, textStartingPoint, textScalingFactor);
-
-				visibleDropDownOffset++;
-			}
-		}
-
-		
-	}
-
-	void DropDownWidget::CalculateTextSize()
-	{
-		// Calculate text size for all the current options
-		for (SingleLineTextData& textData : m_DropDownOptions)
-		{
-			RuntimeUIService::CalculateSingleLineText(textData);
-		}
-	}
-
-	void RuntimeUI::ContainerWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
-	{
-		Rendering::RendererInputSpec& backgroundSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
-		Rendering::RendererInputSpec& imageSpec = RuntimeUIService::s_RuntimeUIContext->m_ImageInputSpec;
-
-		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-		// Get widget translation
-		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
-		// Draw the background
-		RuntimeUIService::RenderBackground(m_ContainerData.m_BackgroundColor, widgetTranslation, widgetSize);
-
-		widgetTranslation.z += 0.001f;
-
-		// NOTE: This code needs to be at the end of this function!
-		// Updating the render input locations causes further render calls to
-		// associate its mouse picking with an incorrect widget
-		// Render the child widgets
-		for (Ref<Widget> containedWidget : m_ContainerData.m_ContainedWidgets)
-		{
-			// Push widget ID
-			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
-				Utility::FileSystem::CRCFromString("a_EntityID"),
-				backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
-			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
-				Utility::FileSystem::CRCFromString("a_EntityID"),
-				imageSpec.m_Buffer, imageSpec.m_Shader);
-			RuntimeUI::FontService::SetID((uint32_t)containedWidget->m_ID);
-
-			// Render the indicated widget
-			containedWidget->OnRender(widgetTranslation, widgetSize, viewportWidth);
-		}
-	}
-
-	void RuntimeUI::NavigationLinksCalculator::CalculateNavigationLinks(Ref<UserInterface> userInterface, ViewportData& viewportData)
-	{
-		// Store the user interface and viewport data
-		KG_ASSERT(userInterface);
-		m_UserInterface = userInterface;
-		m_ViewportData = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
-
 		// Iterate through all windows 
-		for (Window& currentWindow : m_UserInterface->m_Windows)
+		for (Window& currentWindow : i_UserInterface->m_Windows)
 		{
 			// Store the current window
 			m_CurrentWindow = &currentWindow;
 
 			// Calculate window scale and position
-			m_CurrentWindowTransform.m_Translation = currentWindow.CalculateWorldPosition(viewportData.m_Width, viewportData.m_Height);
-			m_CurrentWindowTransform.m_Size = currentWindow.CalculateSize(viewportData.m_Width, viewportData.m_Height);
-
+			m_CurrentWindowTransform.m_Translation = currentWindow.CalculateWorldPosition(i_ViewportData.m_Width, i_ViewportData.m_Height);
+			m_CurrentWindowTransform.m_Size = currentWindow.CalculateSize(i_ViewportData.m_Width, i_ViewportData.m_Height);
 
 			// Iterate through all widgets in the window
 			m_CurrentWidgetParentTransform = m_CurrentWindowTransform;
 			for (Ref<Widget> currentWidget : currentWindow.m_Widgets)
 			{
-				CalculateWidgetNavigationLinks(currentWidget);
+				CalculateWidgetNavigationLinks(currentWidget.get());
 			}
 		}
 	}
 
-	void RuntimeUI::NavigationLinksCalculator::CalculateWidgetNavigationLinks(Ref<Widget> currentWidget)
+	void NavigationLinksCalculator::CalculateWidgetNavigationLinks(Widget* currentWidget)
 	{
 		// Handle container widgets
-		ContainerData* containerData = RuntimeUIService::GetContainerDataFromWidget(currentWidget.get());
+		ContainerData* containerData = RuntimeUIService::GetActiveContext().GetContainerDataFromWidget(currentWidget);
 		if (containerData)
 		{
 			// Calculate the current widget's transform information
@@ -3444,7 +2710,7 @@ namespace Kargono::RuntimeUI
 			if (currentWidget->m_WidgetType == WidgetTypes::HorizontalContainerWidget)
 			{
 				// Handle the verical container case
-				HorizontalContainerWidget* horizContainer = (HorizontalContainerWidget*)currentWidget.get();
+				HorizontalContainerWidget* horizContainer = (HorizontalContainerWidget*)currentWidget;
 				KG_ASSERT(horizContainer);
 				size_t iteration{ 0 };
 				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
@@ -3453,14 +2719,14 @@ namespace Kargono::RuntimeUI
 						cachedTransform.m_Size.x * horizContainer->m_ColumnWidth * iteration +
 						cachedTransform.m_Size.x * horizContainer->m_ColumnSpacing * iteration;
 					m_CurrentWidgetParentTransform.m_Size.x = cachedTransform.m_Size.x * horizContainer->m_ColumnWidth;
-					CalculateWidgetNavigationLinks(containedWidget);
+					CalculateWidgetNavigationLinks(containedWidget.get());
 					iteration++;
 				}
 			}
 			else if (currentWidget->m_WidgetType == WidgetTypes::VerticalContainerWidget)
 			{
 				// Handle the verical container case
-				VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)currentWidget.get();
+				VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)currentWidget;
 				KG_ASSERT(vertContainer);
 				size_t iteration{ 0 };
 				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
@@ -3469,7 +2735,7 @@ namespace Kargono::RuntimeUI
 						cachedTransform.m_Size.y * vertContainer->m_RowHeight * (iteration + 1) - 
 						cachedTransform.m_Size.y * vertContainer->m_RowSpacing * iteration;
 					m_CurrentWidgetParentTransform.m_Size.y = cachedTransform.m_Size.y * vertContainer->m_RowHeight;
-					CalculateWidgetNavigationLinks(containedWidget);
+					CalculateWidgetNavigationLinks(containedWidget.get());
 					iteration++;
 				}
 			}
@@ -3478,11 +2744,9 @@ namespace Kargono::RuntimeUI
 				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
 				{
 					// Calculate the navigation links for each contained widget
-					CalculateWidgetNavigationLinks(containedWidget);
+					CalculateWidgetNavigationLinks(containedWidget.get());
 				}
 			}
-
-			
 		}
 
 		// Ensure the widget is selectable
@@ -3492,7 +2756,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Get the selection specific data from the widget
-		SelectionData* selectionData = RuntimeUIService::GetSelectionDataFromWidget(currentWidget.get());
+		SelectionData* selectionData = RuntimeUIService::GetActiveContext().GetSelectionDataFromWidget(currentWidget);
 		if (!selectionData)
 		{
 			KG_WARN("Unable to retrieve selection data. May be invalid widget type!");
@@ -3520,7 +2784,7 @@ namespace Kargono::RuntimeUI
 		selectionData->m_NavigationLinks.m_DownWidgetID = CalculateNavigationLink(Direction::Down);
 	}
 
-	int32_t RuntimeUI::NavigationLinksCalculator::CalculateNavigationLink(Direction direction)
+	int32_t NavigationLinksCalculator::CalculateNavigationLink(Direction direction)
 	{
 		// Initialize calculation variables
 		m_CurrentBestChoiceID = k_InvalidWidgetID;
@@ -3531,14 +2795,14 @@ namespace Kargono::RuntimeUI
 		for (Ref<Widget> potentialChoice : m_CurrentWindow->m_Widgets)
 		{
 			m_PotentialWidgetParentTransform = m_CurrentWindowTransform;
-			CompareCurrentAndPotentialWidget(potentialChoice);
+			CompareCurrentAndPotentialWidget(potentialChoice.get());
 		}
 
 		// Return the index of the best widget choice if it exists
 		return m_CurrentBestChoiceID;
 	}
 
-	void RuntimeUI::NavigationLinksCalculator::CompareCurrentAndPotentialWidget(Ref<Widget> potentialWidget)
+	void NavigationLinksCalculator::CompareCurrentAndPotentialWidget(Widget* potentialWidget)
 	{
 		// Calculate the position and size of the potential widget
 		Math::vec3 potentialWidgetPosition = potentialWidget->CalculateWorldPosition
@@ -3550,7 +2814,7 @@ namespace Kargono::RuntimeUI
 		Math::vec2 potentialWidgetCenterPosition = { potentialWidgetPosition.x + (potentialWidgetSize.x * 0.5f), potentialWidgetPosition.y + (potentialWidgetSize.y * 0.5f) };
 
 		// Check if the widget has nested widgets
-		ContainerData* containerData = RuntimeUIService::GetContainerDataFromWidget(potentialWidget.get());
+		ContainerData* containerData = RuntimeUIService::GetActiveContext().GetContainerDataFromWidget(potentialWidget);
 		m_PotentialWidgetParentTransform.m_Translation = potentialWidgetPosition;
 		m_PotentialWidgetParentTransform.m_Size = potentialWidgetSize;
 
@@ -3562,13 +2826,13 @@ namespace Kargono::RuntimeUI
 				size_t iteration{ 0 };
 				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
 				{
-					HorizontalContainerWidget* horizContainer = (HorizontalContainerWidget*)potentialWidget.get();
+					HorizontalContainerWidget* horizContainer = (HorizontalContainerWidget*)potentialWidget;
 					KG_ASSERT(horizContainer);
 					m_PotentialWidgetParentTransform.m_Translation.x = potentialWidgetPosition.x + 
 						potentialWidgetSize.x * horizContainer->m_ColumnWidth * iteration +
 						potentialWidgetSize.x * horizContainer->m_ColumnSpacing * iteration;
 					m_PotentialWidgetParentTransform.m_Size.x = potentialWidgetSize.x * horizContainer->m_ColumnWidth;
-					CompareCurrentAndPotentialWidget(containedWidget);
+					CompareCurrentAndPotentialWidget(containedWidget.get());
 					iteration++;
 				}
 			}
@@ -3578,12 +2842,12 @@ namespace Kargono::RuntimeUI
 				size_t iteration{ 0 };
 				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
 				{
-					VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)potentialWidget.get();
+					VerticalContainerWidget* vertContainer = (VerticalContainerWidget*)potentialWidget;
 					KG_ASSERT(vertContainer);
 					m_PotentialWidgetParentTransform.m_Translation.y = potentialWidgetPosition.y + potentialWidgetSize.y - potentialWidgetSize.y * vertContainer->m_RowHeight * (iteration + 1) - 
 						potentialWidgetSize.y * vertContainer->m_RowSpacing * iteration;
 					m_PotentialWidgetParentTransform.m_Size.y = potentialWidgetSize.y * vertContainer->m_RowHeight;
-					CompareCurrentAndPotentialWidget(containedWidget);
+					CompareCurrentAndPotentialWidget(containedWidget.get());
 					iteration++;
 				}
 			}
@@ -3592,7 +2856,7 @@ namespace Kargono::RuntimeUI
 				// Handle the regular frame container case
 				for (Ref<Widget> containedWidget : containerData->m_ContainedWidgets)
 				{
-					CompareCurrentAndPotentialWidget(containedWidget);
+					CompareCurrentAndPotentialWidget(containedWidget.get());
 				}
 			}
 		}
@@ -3688,89 +2952,4 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 	}
-
-	void RuntimeUI::VerticalContainerWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
-	{
-		Rendering::RendererInputSpec& backgroundSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
-
-		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-		// Get widget translation
-		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
-		// Draw the background
-		RuntimeUIService::RenderBackground(m_ContainerData.m_BackgroundColor, widgetTranslation, widgetSize);
-
-		widgetTranslation.z += 0.001f;
-
-		// NOTE: This code needs to be at the end of this function!
-		// Updating the render input locations causes further render calls to
-		// associate its mouse picking with an incorrect widget
-		// Render the child widgets
-		size_t iteration{ 0 };
-		for (Ref<Widget> containedWidget : m_ContainerData.m_ContainedWidgets)
-		{
-			// Push widget ID
-			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
-				Utility::FileSystem::CRCFromString("a_EntityID"),
-				backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
-			RuntimeUI::FontService::SetID((uint32_t)containedWidget->m_ID);
-
-			Math::vec3 outputSize{ widgetSize.x, widgetSize.y * m_RowHeight, widgetSize.z };
-			Math::vec3 outputTranslation
-			{ 
-				widgetTranslation.x, 
-				widgetTranslation.y + widgetSize.y - outputSize.y * (iteration + 1) - widgetSize.y * m_RowSpacing * iteration, 
-				widgetTranslation.z };
-
-			// Render the indicated widget
-			//containedWidget->OnRender(widgetTranslation, widgetSize, viewportWidth);
-			containedWidget->OnRender(outputTranslation, outputSize, viewportWidth);
-			iteration++;
-		}
-	}
-
-	void RuntimeUI::HorizontalContainerWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
-	{
-		Rendering::RendererInputSpec& backgroundSpec = RuntimeUIService::s_RuntimeUIContext->m_BackgroundInputSpec;
-		Rendering::RendererInputSpec& imageSpec = RuntimeUIService::s_RuntimeUIContext->m_ImageInputSpec;
-
-		// Calculate the widget's rendering data
-		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
-		// Get widget translation
-		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
-		// Draw the background
-		RuntimeUIService::RenderBackground(m_ContainerData.m_BackgroundColor, widgetTranslation, widgetSize);
-
-		widgetTranslation.z += 0.001f;
-
-		// NOTE: This code needs to be at the end of this function!
-		// Updating the render input locations causes further render calls to
-		// associate its mouse picking with an incorrect widget
-		// Render the child widgets
-		size_t iteration{ 0 };
-		for (Ref<Widget> containedWidget : m_ContainerData.m_ContainedWidgets)
-		{
-			// Push widget ID
-			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
-				Utility::FileSystem::CRCFromString("a_EntityID"),
-				backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
-			RuntimeUI::FontService::SetID((uint32_t)containedWidget->m_ID);
-			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
-				Utility::FileSystem::CRCFromString("a_EntityID"),
-				imageSpec.m_Buffer, imageSpec.m_Shader);
-
-			Math::vec3 outputSize{ widgetSize.x * m_ColumnWidth, widgetSize.y, widgetSize.z };
-			Math::vec3 outputTranslation
-			{
-				widgetTranslation.x + outputSize.x * iteration + widgetSize.x * m_ColumnSpacing * iteration,
-				widgetTranslation.y,
-				widgetTranslation.z };
-
-			// Render the indicated widget
-			//containedWidget->OnRender(widgetTranslation, widgetSize, viewportWidth);
-			containedWidget->OnRender(outputTranslation, outputSize, viewportWidth);
-			iteration++;
-		}
-	}
-
 }

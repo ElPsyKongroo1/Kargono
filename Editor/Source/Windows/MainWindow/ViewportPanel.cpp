@@ -150,8 +150,8 @@ namespace Kargono::Panels
 
 			// Render RuntimeUI directory to viewport bounds
 			// Handle specific widget on click's
-			RuntimeUI::RuntimeUIService::OnUpdate(ts);
-			RuntimeUI::RuntimeUIService::OnRender(m_ViewportData.m_Width, m_ViewportData.m_Height);
+			RuntimeUI::RuntimeUIService::GetActiveContext().OnUpdate(ts);
+			RuntimeUI::RuntimeUIService::GetActiveContext().OnRender(m_ViewportData.m_Width, m_ViewportData.m_Height);
 
 			// Use mouse picking buffer to handle runtime UI mouse picking
 			HandleUIMouseHovering();
@@ -412,31 +412,32 @@ namespace Kargono::Panels
 	}
 	void ViewportPanel::OnMouseButtonPressedEvent(const Events::MouseButtonPressedEvent& event)
 	{
-		RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWindowWidgetID);
-		Assets::AssetHandle currentUI = RuntimeUI::RuntimeUIService::GetActiveUIHandle();
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext()};
+		RuntimeUI::IDType idType = uiContext.CheckIDType(m_HoveredWindowWidgetID);
+		Assets::AssetHandle currentUI = uiContext.GetActiveUIHandle();
 
 		if (idType == RuntimeUI::IDType::Widget)
 		{
 			// Handle on press
-			RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+			uiContext.OnPressByIndex({ uiContext.GetActiveUIHandle(),
 				m_HoveredWindowWidgetID });
 
 			// Handle case where active UI is changed
-			if (currentUI != RuntimeUI::RuntimeUIService::GetActiveUIHandle())
+			if (currentUI != uiContext.GetActiveUIHandle())
 			{
 				return;
 			}
 
 			// Handle start editing
-			RuntimeUI::RuntimeUIService::SetEditingWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+			uiContext.SetEditingWidgetByIndex({ uiContext.GetActiveUIHandle(),
 				m_HoveredWindowWidgetID });
 
 			// Throw a mouse pressed event
 			Events::MouseButtonPressedEvent mousePressedEvent{ Mouse::ButtonLeft };
-			RuntimeUI::RuntimeUIService::OnMouseButtonPressedEvent(mousePressedEvent);
+			uiContext.OnMouseButtonPressedEvent(mousePressedEvent);
 
 			// Handle case where active UI is changed
-			if (currentUI != RuntimeUI::RuntimeUIService::GetActiveUIHandle())
+			if (currentUI != uiContext.GetActiveUIHandle())
 			{
 				return;
 			}
@@ -473,19 +474,19 @@ namespace Kargono::Panels
 			m_HoveredWindowWidgetID = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
 		}
 
-		RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWindowWidgetID);
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext() };
+
+		RuntimeUI::IDType idType = uiContext.CheckIDType(m_HoveredWindowWidgetID);
 
 		// Exit early if no valid widget/window is available
 		if (idType == RuntimeUI::IDType::None || idType == RuntimeUI::IDType::Window)
 		{
-			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
+			uiContext.ClearHoveredWidget();
 			return;
 		}
 
 		// Set the widget as hovered
-		RuntimeUI::RuntimeUIService::SetHoveredWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
-			m_HoveredWindowWidgetID });
-
+		uiContext.SetHoveredWidgetByIndex({ uiContext.GetActiveUIHandle(),m_HoveredWindowWidgetID });
 	}
 
 	void ViewportPanel::OnUpdateEditor(Timestep ts, Rendering::EditorPerspectiveCamera& camera)

@@ -20,7 +20,7 @@
 #include "Modules/RuntimeUI/Widgets/RuntimeUIHorizontalContainerWidget.h"
 #include "Modules/RuntimeUI/Widgets/RuntimeUIVerticalContainerWidget.h"
 #include "Modules/RuntimeUI/Widgets/RuntimeUIImageButtonWidget.h"
-#include "Modules/RuntimeUI/Widgets/RuntimeUImageWidget.h"
+#include "Modules/RuntimeUI/Widgets/RuntimeUIImageWidget.h"
 #include "Modules/RuntimeUI/Widgets/RuntimeUISliderWidget.h"
 #include "Modules/RuntimeUI/Widgets/RuntimeUITextWidget.h"
 #include "Modules/RuntimeUI/Widgets/RuntimeUIInputTextWidget.h"
@@ -37,27 +37,24 @@ namespace Kargono::RuntimeUI
 {
 	using IDToLocationMap = std::unordered_map<int32_t, std::vector<uint16_t>>;
 
-	//============================
-	// User Interface Class
-	//============================
 	class UserInterface
 	{
 	public:
 		// Config data
-		std::vector<Window> m_Windows {};
 		Ref<Font> m_Font{ nullptr };
+		Assets::AssetHandle m_FontHandle {Assets::EmptyHandle};
 		Math::vec4 m_SelectColor {1.0f};
 		Math::vec4 m_HoveredColor{ 0.5f };
 		Math::vec4 m_EditingColor{ 0.15f, 0.15f, 0.15f, 1.0f };
-		Assets::AssetHandle m_FontHandle {0};
 		UserInterfaceCallbacks m_FunctionPointers{};
 
 		// Runtime Data
+		std::vector<Window> m_Windows {};
+		std::vector<Window*> m_DisplayedWindows{};
+		std::vector<size_t> m_DisplayedWindowIndices{};
 		bool m_IBeamVisible{ true };
 		float m_IBeamAccumulator{ 0.0f };
 		float m_IBeamVisiblilityInterval{ 0.75f };
-		std::vector<Window*> m_DisplayedWindows{};
-		std::vector<size_t> m_DisplayedWindowIndices{};
 		Widget* m_SelectedWidget{ nullptr };
 		Widget* m_HoveredWidget{ nullptr };
 		Widget* m_EditingWidget{ nullptr };
@@ -75,35 +72,233 @@ namespace Kargono::RuntimeUI
 	class NavigationLinksCalculator
 	{
 	public:
-		void CalculateNavigationLinks(Ref<UserInterface> userInterface, ViewportData& viewportData);
+		//============================
+		// Constructors/Destructors
+		//============================
+		NavigationLinksCalculator(UserInterface* parentInterface, ViewportData viewportData)
+		{
+			// Store the user interface and viewport data
+			KG_ASSERT(parentInterface);
+			i_UserInterface = parentInterface;
+			i_ViewportData = viewportData;
+		}
+		~NavigationLinksCalculator() = default;
+	public:
+		//============================
+		// Calculate Links
+		//============================
+		void CalculateNavigationLinks();
 	private:
-		void CalculateWidgetNavigationLinks(Ref<Widget> currentWidget);
+		// Helper functions
+		void CalculateWidgetNavigationLinks(Widget* currentWidget);
 		int32_t CalculateNavigationLink(Direction direction);
-		void CompareCurrentAndPotentialWidget(Ref<Widget> potentialWidget);
+		void CompareCurrentAndPotentialWidget(Widget* potentialWidget);
 	private:
-		// General state
-		Ref<UserInterface> m_UserInterface{ nullptr };
-		ViewportData m_ViewportData{};
+		//============================
+		// Internal Fields
+		//============================
 		// Current window state
 		Window* m_CurrentWindow{ nullptr };
 		BoundingBoxTransform m_CurrentWindowTransform{};
 		// Current widget state
-		Ref<Widget> m_CurrentWidget{ nullptr };
+		Widget* m_CurrentWidget{ nullptr };
 		BoundingBoxTransform m_CurrentWidgetParentTransform{};
 		Math::vec2 m_CurrentWidgetPosition{};
 		Math::vec2 m_CurrentWidgetSize{};
 		Math::vec2 m_CurrentWidgetCenterPosition{};
 		// Current potential widget info
 		BoundingBoxTransform m_PotentialWidgetParentTransform{};
-
 		// Nav-link calculation fields
 		int32_t m_CurrentBestChoiceID{ k_InvalidWidgetID };
 		float m_CurrentBestDistance{ std::numeric_limits<float>::max() };
 		Direction m_CurrentDirection{ Direction::None };
+
+		//============================
+		// Injected Data
+		//============================
+		UserInterface* i_UserInterface{ nullptr };
+		ViewportData i_ViewportData{};
 	};
 
 	struct RuntimeUIContext
 	{
+	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		void Init();
+		void Terminate();
+		void OnUpdate(Timestep ts);
+
+	public:
+		//==============================
+		// On Event Functions
+		//==============================
+		bool OnKeyTypedEvent(Events::KeyTypedEvent event);
+		bool OnKeyPressedEvent(Events::KeyPressedEvent event);
+		void OnMouseButtonPressedEvent(const Events::MouseButtonPressedEvent& event);
+		void OnMouseButtonReleasedEvent(const Events::MouseButtonReleasedEvent& mouseEvent);
+
+	public:
+		//==============================
+		// Modify Active UI
+		//==============================
+		void SetSelectedWidgetColor(const Math::vec4& color);
+		void SetActiveWidgetTextByTag(const std::string& windowTag, const std::string& widgetTag, const std::string& newText);
+		void SetActiveWidgetTextByIndex(WidgetID widgetID, const std::string& newText);
+		void SetWidgetImageByIndex(WidgetID widgetID, Assets::AssetHandle textureHandle);
+		void SetActiveOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
+		void SetActiveOnHover(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
+		void SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle);
+		void SetWidgetTextColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
+		void SetWidgetTextColorByIndex(WidgetID widgetID, const Math::vec4& color);
+		void SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag);
+		void SetSelectedWidgetByIndex(WidgetID widgetID);
+		void ClearSelectedWidget();
+		void SetEditingWidgetByIndex(WidgetID widgetID);
+		void SetHoveredWidgetByIndex(WidgetID widgetID);
+		void ClearHoveredWidget();
+		void ClearEditingWidget();
+		void SetWidgetBackgroundColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
+		void SetWidgetBackgroundColorByIndex(WidgetID widgetID, const Math::vec4& color);
+		void SetWidgetSelectableByTag(const std::string& windowTag, const std::string& widgetTag, bool selectable);
+		void SetWidgetSelectableByIndex(WidgetID widgetID, bool selectable);
+		void SetDisplayWindowByTag(const std::string& windowTag, bool display);
+		void SetDisplayWindowByIndex(WindowID widgetID, bool display);
+		void AddActiveWindow(Window& window);
+		bool DeleteActiveUIWindow(int32_t windowID);
+		bool DeleteActiveUIWidget(int32_t widgetID);
+		void AddWidgetToContainer(ContainerData* container, Ref<Widget> newWidget);
+
+	public:
+		//==============================
+		// Rendering API
+		//==============================
+		void OnRender(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight);
+		void OnRender(uint32_t viewportWidth, uint32_t viewportHeight);
+
+	public:
+		//==============================
+		// Modify Indicated UI
+		//==============================
+		bool DeleteUIWindow(Ref<UserInterface> userInterface, std::size_t windowLocation);
+		bool DeleteUIWidget(Ref<UserInterface> userInterface, int32_t widgetID);
+
+		//==============================
+		// Query Active UI
+		//==============================
+		const std::string& GetWidgetTextByIndex(WidgetID widgetID);
+		bool IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag);
+		bool IsWidgetSelectedByIndex(WidgetID widgetID);
+		Ref<Scripting::Script> GetActiveOnMove();
+		Assets::AssetHandle GetActiveOnMoveHandle();
+		std::vector<Window>& GetAllActiveWindows();
+		BoundingBoxTransform GetParentDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight);
+		BoundingBoxTransform GetWidgetDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight);
+
+		//==============================
+		// Interact With Active UI
+		//==============================
+		void MoveRight();
+		void MoveLeft();
+		void MoveUp();
+		void MoveDown();
+		void OnPress();
+		void OnPressByIndex(WidgetID widgetID);
+
+		//==============================
+		// Revalidate UI Context
+		//==============================
+		void RecalculateTextData(Widget* widget);
+		void CalculateFixedAspectRatioSize(Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight,
+			bool useXValueAsBase);
+		SelectionData* GetSelectionDataFromWidget(Widget* currentWidget);
+		ContainerData* GetContainerDataFromWidget(Widget* currentWidget);
+		ImageData* GetImageDataFromWidget(Widget* currentWidget);
+		SingleLineTextData* GetSingleLineTextDataFromWidget(Widget* currentWidget);
+		MultiLineTextData* GetMultiLineTextDataFromWidget(Widget* currentWidget);
+
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		void SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle);
+		void SetActiveUIFromHandle(Assets::AssetHandle uiHandle);
+		bool IsUIActiveFromHandle(Assets::AssetHandle uiHandle);
+		Ref<UserInterface> GetActiveUI();
+		Assets::AssetHandle GetActiveUIHandle();
+		void ClearActiveUI();
+		Ref<Widget> GetWidgetFromTag(const std::string& windowTag, const std::string& widgetTag);
+		Ref<Widget> GetWidgetFromID(int32_t widgetID);
+		Ref<Widget> GetWidgetFromDirections(const std::vector<uint16_t>& locationDirections);
+		IDType CheckIDType(int32_t windowOrWidgetID);
+		Window& GetWindowFromID(int32_t windowID);
+		Window& GetParentWindowFromWidgetID(int32_t widgetID);
+		Ref<Widget> GetParentWidgetFromID(int32_t widgetID);
+		std::vector<uint16_t>* GetLocationFromID(int32_t windowOrWidgetID);
+		std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag);
+		std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(int32_t widgetID);
+
+	private:
+		//==============================
+		// Revalidate UI Context (Internal)
+		//==============================
+		void RevalidateDisplayedWindows();
+		void RevalidateWidgetIDToLocationMap();
+		void RevalidateContainerInLocationMap(IDToLocationMap& locationMap, ContainerData* container, std::vector<uint16_t>& parentLocation);
+		void CalculateSingleLineText(SingleLineTextData& textData);
+		Math::vec2 CalculateSingleLineText(std::string_view textData);
+		size_t CalculateCursorIndexFromMousePosition(SingleLineTextData& textData, float textStartingPosition, float mouseXPosition, float textScalingFactor);
+		void CalculateMultiLineText(MultiLineTextData& textData, const Math::vec3& widgetSize, float textSize);
+
+		//==============================
+		// Manage Active UI (Internal)
+		//==============================
+		void SetWidgetTextInternal(Ref<Widget> currentWidget, const std::string& newText);
+		void SetSelectedWidgetInternal(Ref<Widget> newSelectedWidget);
+		void SetHoveredWidgetInternal(Ref<Widget> newSelectedWidget);
+		void SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
+		void SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable);
+		bool IsWidgetSelectedInternal(Ref<Widget> currentWidget);
+		void SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
+
+
+		//==============================
+		// Interact With Active UI (Internal)
+		//==============================
+		void OnPressInternal(Widget* currentWidget);
+		void OnMoveCursorInternal(Widget* currentWidget);
+
+		//==============================
+		// Rendering API (Internal)
+		//==============================
+		void RenderBackground(const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size);
+		void RenderImage(const ImageData& imageData, const Math::vec3& translation, const Math::vec3 size);
+		void RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& textStartingPoint, float textScalingFactor);
+		void RenderTextCursor(const SingleLineTextData& textData, const Math::vec3& renderLocation, float textScalingFactor);
+		void RenderSliderLine(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size);
+		void RenderSlider(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size);
+		Math::vec3 GetSingleLineTextStartingPosition(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float textScalingFactor);
+	private:
+		friend class TextWidget;
+		friend class ButtonWidget;
+		friend class ImageWidget;
+		friend class ImageButtonWidget;
+		friend class CheckboxWidget;
+		friend class InputTextWidget;
+		friend class SliderWidget;
+		friend class DropDownWidget;
+		friend class ContainerWidget;
+		friend class VerticalContainerWidget;
+		friend class HorizontalContainerWidget;
+		friend class Window;
+		friend struct RuntimeUIContext;
+
+	public:
+		// TODO: Make these private
+		//==============================
+		// Public Fields
+		//==============================
 		Ref<UserInterface> m_ActiveUI{ nullptr };
 		Assets::AssetHandle m_ActiveUIHandle{ Assets::EmptyHandle };
 		Ref<Font> m_DefaultFont{ nullptr };
@@ -118,177 +313,38 @@ namespace Kargono::RuntimeUI
 	{
 	public:
 		//==============================
-		// Lifecycle Functions
+		// Create RuntimeUI Context
 		//==============================
-		static void Init();
-		static void Terminate();
-		static void OnUpdate(Timestep ts);
+		static void CreateRuntimeUIContext()
+		{
+			// Initialize RuntimeUIWorld
+			if (!s_RuntimeUIContext)
+			{
+				s_RuntimeUIContext = CreateRef<RuntimeUIContext>();
+			}
 
-		//==============================
-		// On Event Functions
-		//==============================
-		static bool OnKeyTypedEvent(Events::KeyTypedEvent event);
-		static bool OnKeyPressedEvent(Events::KeyPressedEvent event);
-		static void OnMouseButtonPressedEvent(const Events::MouseButtonPressedEvent& event);
-		static void OnMouseButtonReleasedEvent(const Events::MouseButtonReleasedEvent& mouseEvent);
+			// Verify init is successful
+			KG_VERIFY(s_RuntimeUIContext, "RuntimeUI Service System Initiated");
+		}
+		static void RemoveRuntimeUIContext()
+		{
+			// Clear RuntimeUIWorld
+			s_RuntimeUIContext.reset();
+			s_RuntimeUIContext = nullptr;
 
-	public:
-		//==============================
-		// Rendering API
-		//==============================
-		static void OnRender(const Math::mat4& cameraViewMatrix, uint32_t viewportWidth, uint32_t viewportHeight);
-		static void OnRender(uint32_t viewportWidth, uint32_t viewportHeight);
-
-		//==============================
-		// Modify Active UI
-		//==============================
-		static void SetSelectedWidgetColor(const Math::vec4& color);
-		static void SetActiveWidgetTextByTag(const std::string& windowTag, const std::string& widgetTag, const std::string& newText);
-		static void SetActiveWidgetTextByIndex(WidgetID widgetID, const std::string& newText);
-		static void SetWidgetImageByIndex(WidgetID widgetID, Assets::AssetHandle textureHandle);
-		static void SetActiveOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
-		static void SetActiveOnHover(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
-		static void SetActiveFont(Ref<Font> newFont, Assets::AssetHandle fontHandle);
-		static void SetWidgetTextColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
-		static void SetWidgetTextColorByIndex(WidgetID widgetID, const Math::vec4& color);
-		static void SetSelectedWidgetByTag(const std::string& windowTag, const std::string& widgetTag);
-		static void SetSelectedWidgetByIndex(WidgetID widgetID);
-		static void ClearSelectedWidget();
-		static void SetEditingWidgetByIndex(WidgetID widgetID);
-		static void SetHoveredWidgetByIndex(WidgetID widgetID);
-		static void ClearHoveredWidget();
-		static void ClearEditingWidget();
-		static void SetWidgetBackgroundColorByTag(const std::string& windowTag, const std::string& widgetTag, const Math::vec4& color);
-		static void SetWidgetBackgroundColorByIndex(WidgetID widgetID, const Math::vec4& color);
-		static void SetWidgetSelectableByTag(const std::string& windowTag, const std::string& widgetTag, bool selectable);
-		static void SetWidgetSelectableByIndex(WidgetID widgetID, bool selectable);
-		static void SetDisplayWindowByTag(const std::string& windowTag, bool display);
-		static void SetDisplayWindowByIndex(WindowID widgetID, bool display);
-		static void AddActiveWindow(Window& window);
-		static bool DeleteActiveUIWindow(int32_t windowID);
-		static bool DeleteActiveUIWidget(int32_t widgetID);
-		static void AddWidgetToContainer(ContainerData* container, Ref<Widget> newWidget);
-
-		//==============================
-		// Modify Indicated UI
-		//==============================
-		static bool DeleteUIWindow(Ref<UserInterface> userInterface, std::size_t windowLocation);
-		static bool DeleteUIWidget(Ref<UserInterface> userInterface, int32_t widgetID);
-
-		//==============================
-		// Query Active UI
-		//==============================
-		static const std::string& GetWidgetTextByIndex(WidgetID widgetID);
-		static bool IsWidgetSelectedByTag(const std::string& windowTag, const std::string& widgetTag);
-		static bool IsWidgetSelectedByIndex(WidgetID widgetID);
-		static Ref<Scripting::Script> GetActiveOnMove();
-		static Assets::AssetHandle GetActiveOnMoveHandle();
-		static std::vector<Window>& GetAllActiveWindows();
-		static BoundingBoxTransform GetParentDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight);
-		static BoundingBoxTransform GetWidgetDimensionsFromID(int32_t widgetID, uint32_t viewportWidth, uint32_t viewportHeight);
-
-		//==============================
-		// Interact With Active UI
-		//==============================
-		static void MoveRight();
-		static void MoveLeft();
-		static void MoveUp();
-		static void MoveDown();
-		static void OnPress();
-		static void OnPressByIndex(WidgetID widgetID);
-
-		//==============================
-		// Revalidate UI Context
-		//==============================
-		static void RecalculateTextData(Widget* widget);
-		static void CalculateFixedAspectRatioSize(Widget* widget, uint32_t viewportWidth, uint32_t viewportHeight,
-			bool useXValueAsBase);
-		static SelectionData* GetSelectionDataFromWidget(Widget* currentWidget);
-		static ContainerData* GetContainerDataFromWidget(Widget* currentWidget);
-		static ImageData* GetImageDataFromWidget(Widget* currentWidget);
-		static SingleLineTextData* GetSingleLineTextDataFromWidget(Widget* currentWidget);
-		static MultiLineTextData* GetMultiLineTextDataFromWidget(Widget* currentWidget);
-
-	public:
+			// Verify terminate is successful
+			KG_VERIFY(!s_RuntimeUIContext, "RuntimeUI Service System Initiated");
+		}
 		//==============================
 		// Getters/Setters
 		//==============================
-		static void SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle);
-		static void SetActiveUIFromHandle(Assets::AssetHandle uiHandle);
-		static bool IsUIActiveFromHandle(Assets::AssetHandle uiHandle);
-		static Ref<UserInterface> GetActiveUI();
-		static Assets::AssetHandle GetActiveUIHandle();
-		static void ClearActiveUI();
-		static Ref<Widget> GetWidgetFromTag(const std::string& windowTag, const std::string& widgetTag);
-		static Ref<Widget> GetWidgetFromID(int32_t widgetID);
-		static Ref<Widget> GetWidgetFromDirections(const std::vector<uint16_t>& locationDirections);
-		static IDType CheckIDType(int32_t windowOrWidgetID);
-		static Window& GetWindowFromID(int32_t windowID);
-		static Window& GetParentWindowFromWidgetID(int32_t widgetID);
-		static Ref<Widget> GetParentWidgetFromID(int32_t widgetID);
-		static std::vector<uint16_t>* GetLocationFromID(int32_t windowOrWidgetID);
-		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(const std::string& windowTag, const std::string& widgetTag);
-		static std::tuple<Ref<Widget>, Window*> GetWidgetAndWindow(int32_t widgetID);
-	private:
-		//==============================
-		// Revalidate UI Context (Internal)
-		//==============================
-		static void RevalidateDisplayedWindows();
-		static void RevalidateWidgetIDToLocationMap();
-		static void RevalidateContainerInLocationMap(IDToLocationMap& locationMap, ContainerData* container, std::vector<uint16_t>& parentLocation);
-		static void CalculateSingleLineText(SingleLineTextData& textData);
-		static Math::vec2 CalculateSingleLineText(std::string_view textData);
-		static size_t CalculateCursorIndexFromMousePosition(SingleLineTextData& textData, float textStartingPosition, float mouseXPosition, float textScalingFactor);
-		static void CalculateMultiLineText(MultiLineTextData& textData, const Math::vec3& widgetSize, float textSize);
-
-		//==============================
-		// Manage Active UI (Internal)
-		//==============================
-		static void SetWidgetTextInternal(Ref<Widget> currentWidget, const std::string& newText);
-		static void SetSelectedWidgetInternal(Ref<Widget> newSelectedWidget);
-		static void SetHoveredWidgetInternal(Ref<Widget> newSelectedWidget);
-		static void SetWidgetTextColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
-		static void SetWidgetSelectableInternal(Ref<Widget> currentWidget, bool selectable);
-		static bool IsWidgetSelectedInternal(Ref<Widget> currentWidget);
-		static void SetWidgetBackgroundColorInternal(Ref<Widget> currentWidget, const Math::vec4& newColor);
-		
-
-		//==============================
-		// Interact With Active UI (Internal)
-		//==============================
-		static void OnPressInternal(Widget* currentWidget);
-		static void OnMoveCursorInternal(Widget* currentWidget);
-
-		//==============================
-		// Rendering API (Internal)
-		//==============================
-		static void RenderBackground(const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size);
-		static void RenderImage(const ImageData& imageData, const Math::vec3& translation, const Math::vec3 size);
-		static void RenderSingleLineText(const SingleLineTextData& textData, const Math::vec3& textStartingPoint, float textScalingFactor);
-		static void RenderTextCursor(const SingleLineTextData& textData, const Math::vec3& renderLocation, float textScalingFactor);
-		static void RenderSliderLine(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size);
-		static void RenderSlider(const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size);
-		static Math::vec3 GetSingleLineTextStartingPosition(const SingleLineTextData& textData, const Math::vec3& translation, const Math::vec3 size, float textScalingFactor);
-
-
+		static RuntimeUIContext& GetActiveContext() { return *s_RuntimeUIContext; }
+		static bool IsContextActive() { return (bool)s_RuntimeUIContext; }
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
 		static inline Ref<RuntimeUIContext> s_RuntimeUIContext{ nullptr };
-	private:
-		friend class TextWidget;
-		friend class ButtonWidget;
-		friend class ImageWidget;
-		friend class ImageButtonWidget;
-		friend class CheckboxWidget;
-		friend class InputTextWidget;
-		friend class SliderWidget;
-		friend class DropDownWidget;
-		friend class ContainerWidget;
-		friend class VerticalContainerWidget;
-		friend class HorizontalContainerWidget;
-		friend class Window;
 	};
 }
 

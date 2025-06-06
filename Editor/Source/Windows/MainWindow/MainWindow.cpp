@@ -612,7 +612,7 @@ namespace Kargono::Windows
 		// Resize the window to the project's viewport settings
 		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution()));
 
-		RuntimeUI::RuntimeUIService::ClearActiveUI();
+		RuntimeUI::RuntimeUIService::GetActiveContext().ClearActiveUI();
 
 		Input::InputMapContext& context = Input::InputMapService::GetActiveContext();
 
@@ -739,7 +739,7 @@ namespace Kargono::Windows
 		// Bring back the old UI
 		if (s_EditorApp->m_UIEditorWindow->m_EditorUI)
 		{
-			RuntimeUI::RuntimeUIService::SetActiveUI(s_EditorApp->m_UIEditorWindow->m_EditorUI,
+			RuntimeUI::RuntimeUIService::GetActiveContext().SetActiveUI(s_EditorApp->m_UIEditorWindow->m_EditorUI,
 				s_EditorApp->m_UIEditorWindow->m_EditorUIHandle);
 		}
 		
@@ -904,7 +904,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnKeyPressedRuntime(Events::KeyPressedEvent event)
 	{
 		KG_PROFILE_FUNCTION();
-		bool handled = RuntimeUI::RuntimeUIService::OnKeyPressedEvent(event);
+		bool handled = RuntimeUI::RuntimeUIService::GetActiveContext().OnKeyPressedEvent(event);
 
 		if (!handled)
 		{
@@ -916,7 +916,7 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnKeyTypedRuntime(Events::KeyTypedEvent event)
 	{
-		RuntimeUI::RuntimeUIService::OnKeyTypedEvent(event);
+		RuntimeUI::RuntimeUIService::GetActiveContext().OnKeyTypedEvent(event);
 		return false;
 	}
 
@@ -1032,9 +1032,9 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnMouseButtonReleasedRuntime(const Events::MouseButtonReleasedEvent& event)
 	{
-		if (RuntimeUI::RuntimeUIService::GetActiveUI())
+		if (RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI())
 		{
-			RuntimeUI::RuntimeUIService::OnMouseButtonReleasedEvent(event);
+			RuntimeUI::RuntimeUIService::GetActiveContext().OnMouseButtonReleasedEvent(event);
 		}
 		return false;
 	}

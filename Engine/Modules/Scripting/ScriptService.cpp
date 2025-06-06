@@ -120,7 +120,10 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveUp->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveUp->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveUp->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveUp->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveUp);
+		RuntimeUI_MoveUp->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().MoveDown();
+		});
 		engineScripts.push_back(RuntimeUI_MoveUp);
 
 		Ref<Script> RuntimeUI_MoveDown = CreateRef<Script>();
@@ -129,7 +132,10 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveDown->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveDown->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveDown->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveDown->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveDown);
+		RuntimeUI_MoveDown->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().MoveDown();
+		});
 		engineScripts.push_back(RuntimeUI_MoveDown);
 
 		Ref<Script> RuntimeUI_MoveLeft = CreateRef<Script>();
@@ -138,7 +144,10 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveLeft->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveLeft->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveLeft->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveLeft->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveLeft);
+		RuntimeUI_MoveLeft->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().MoveLeft();
+		});
 		engineScripts.push_back(RuntimeUI_MoveLeft);
 
 		Ref<Script> RuntimeUI_MoveRight = CreateRef<Script>();
@@ -147,7 +156,10 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveRight->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveRight->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveRight->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveRight);
+		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().MoveRight();
+		});
 		engineScripts.push_back(RuntimeUI_MoveRight);
 
 		Ref<Script> RuntimeUI_OnPress = CreateRef<Script>();
@@ -156,7 +168,10 @@ namespace Kargono::Scripting
 		RuntimeUI_OnPress->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_OnPress->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_OnPress->m_SectionLabel = "UserInterface";
-		RuntimeUI_OnPress->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::OnPress);
+		RuntimeUI_OnPress->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().OnPress();
+		});
 		engineScripts.push_back(RuntimeUI_OnPress);
 
 		Ref<Script> EngineCore_CloseApplication = CreateRef<Script>();
@@ -1545,91 +1560,127 @@ namespace Kargono::Scripting
 		// Input
 		AddEngineFunctionPointerToDll(Input_IsKeyPressed, Input::InputService::IsKeyPressed, BoolUInt16)
 		AddEngineFunctionPointerToDll(InputMap_LoadInputMapFromHandle, [](Assets::AssetHandle handle)
-		{
-			Input::InputMapService::GetActiveContext().SetActiveInputMapFromHandle(handle);
-		}, VoidUInt64)
-		AddEngineFunctionPointerToDll(InputMap_IsPollingSlotPressed, [](uint16_t slot) 
-		{
-			return Input::InputMapService::GetActiveContext().IsPollingSlotPressed(slot);
-		}, BoolUInt16)
+			{
+				Input::InputMapService::GetActiveContext().SetActiveInputMapFromHandle(handle);
+			}, VoidUInt64)
+		AddEngineFunctionPointerToDll(InputMap_IsPollingSlotPressed, [](uint16_t slot)
+			{
+				return Input::InputMapService::GetActiveContext().IsPollingSlotPressed(slot);
+			}, BoolUInt16)
 		// Networking
-		AddEngineFunctionPointerToDll(SignalAll, [](uint16_t signal) 
-		{
-			Ref<Events::SignalAll> event{ CreateRef<Events::SignalAll>(signal) };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		}, VoidUInt16)
-		AddEngineFunctionPointerToDll(LeaveCurrentSession, []() 
-		{
-			Ref<Events::LeaveCurrentSession> event{ CreateRef<Events::LeaveCurrentSession>() };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		}, VoidNone)
-		AddEngineFunctionPointerToDll(EnableReadyCheck, []() 
-		{
-			Ref<Events::EnableReadyCheck> event{ CreateRef<Events::EnableReadyCheck>() };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		}, VoidNone)
-		AddEngineFunctionPointerToDll(RequestJoinSession, []() 
-		{
-			Ref<Events::RequestJoinSession> event{ CreateRef<Events::RequestJoinSession>() };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		}, VoidNone)
+		AddEngineFunctionPointerToDll(SignalAll, [](uint16_t signal)
+			{
+				Ref<Events::SignalAll> event{ CreateRef<Events::SignalAll>(signal) };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			}, VoidUInt16)
+		AddEngineFunctionPointerToDll(LeaveCurrentSession, []()
+			{
+				Ref<Events::LeaveCurrentSession> event{ CreateRef<Events::LeaveCurrentSession>() };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			}, VoidNone)
+		AddEngineFunctionPointerToDll(EnableReadyCheck, []()
+			{
+				Ref<Events::EnableReadyCheck> event{ CreateRef<Events::EnableReadyCheck>() };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			}, VoidNone)
+		AddEngineFunctionPointerToDll(RequestJoinSession, []()
+			{
+				Ref<Events::RequestJoinSession> event{ CreateRef<Events::RequestJoinSession>() };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			}, VoidNone)
 		AddEngineFunctionPointerToDll(SendAllEntityPhysics, [](UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity)
-		{
-			Ref<Events::SendAllEntityPhysics> event{ CreateRef<Events::SendAllEntityPhysics>
-			(
-				entityID, translation, linearVelocity	
-			) };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		}, VoidUInt64Vec3Vec2)
-		AddEngineFunctionPointerToDll(RequestUserCount, []() 
-		{
-			Ref<Events::RequestUserCount> event{ CreateRef<Events::RequestUserCount>() };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		}, VoidNone)
-		AddEngineFunctionPointerToDll(GetActiveSessionSlot, []() 
-		{
-			return Network::ClientService::GetActiveContext().GetNetworkThread().GetSessionIndex();
-		}, UInt16None)
+			{
+				Ref<Events::SendAllEntityPhysics> event{ CreateRef<Events::SendAllEntityPhysics>
+				(
+					entityID, translation, linearVelocity
+				) };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			}, VoidUInt64Vec3Vec2)
+		AddEngineFunctionPointerToDll(RequestUserCount, []()
+			{
+				Ref<Events::RequestUserCount> event{ CreateRef<Events::RequestUserCount>() };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			}, VoidNone)
+		AddEngineFunctionPointerToDll(GetActiveSessionSlot, []()
+			{
+				return Network::ClientService::GetActiveContext().GetNetworkThread().GetSessionIndex();
+			}, UInt16None)
 		AddEngineFunctionPointerToDll(SendAllEntityLocation, [](UUID entityID, Math::vec3 translation)
-		{
-			Ref<Events::SendAllEntityLocation> event{ CreateRef<Events::SendAllEntityLocation>
-			(
-				entityID, translation
-			) };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		}, VoidUInt64Vec3)
+			{
+				Ref<Events::SendAllEntityLocation> event{ CreateRef<Events::SendAllEntityLocation>
+				(
+					entityID, translation
+				) };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			}, VoidUInt64Vec3)
 		// Particles
 		AddEngineFunctionPointerToDll(Particles_AddEmitterByHandle, [](Assets::AssetHandle emitterHandle, const Math::vec3& position)
-		{
-			Particles::ParticleService::GetActiveContext().AddEmitterByHandle(emitterHandle, position);
-		}, VoidUInt64Vec3)
+			{
+				Particles::ParticleService::GetActiveContext().AddEmitterByHandle(emitterHandle, position);
+			}, VoidUInt64Vec3)
 		// Physics 2D
 		AddEngineFunctionPointerToDll(Physics_Raycast, [](Math::vec2 startPoint, Math::vec2 endPoint)
-		{
-			return Physics::Physics2DService().GetActiveContext().Raycast(startPoint, endPoint);
-		}, RaycastResultVec2Vec2)
+			{
+				return Physics::Physics2DService().GetActiveContext().Raycast(startPoint, endPoint);
+			}, RaycastResultVec2Vec2)
 		// Random
-		AddEngineFunctionPointerToDll(GenerateRandomInteger, [](int32_t lower, int32_t upper) 
-		{
-			return Utility::STLRandomService::GetActiveRandom().GenerateRandomInteger(lower, upper);
-		}, Int32Int32Int32)
-		AddEngineFunctionPointerToDll(GenerateRandomFloat, [](float lower, float upper) 
-		{
-			return Utility::STLRandomService::GetActiveRandom().GenerateRandomFloat(lower, upper);
-		}, FloatFloatFloat)
+		AddEngineFunctionPointerToDll(GenerateRandomInteger, [](int32_t lower, int32_t upper)
+			{
+				return Utility::STLRandomService::GetActiveRandom().GenerateRandomInteger(lower, upper);
+			}, Int32Int32Int32)
+		AddEngineFunctionPointerToDll(GenerateRandomFloat, [](float lower, float upper)
+			{
+				return Utility::STLRandomService::GetActiveRandom().GenerateRandomFloat(lower, upper);
+			}, FloatFloatFloat)
 		// Runtime User Interface
-		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetText, RuntimeUI::RuntimeUIService::SetActiveWidgetTextByIndex, VoidUIWidgetString)
-		AddEngineFunctionPointerToDll(RuntimeUI_IsUserInterfaceActiveFromHandle, RuntimeUI::RuntimeUIService::IsUIActiveFromHandle, BoolUInt64)
-		AddEngineFunctionPointerToDll(RuntimeUI_LoadUserInterfaceFromHandle, RuntimeUI::RuntimeUIService::SetActiveUIFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindowByIndex, VoidUIWindowBool)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetSelectedWidget, RuntimeUI::RuntimeUIService::SetSelectedWidgetByIndex, VoidUIWidget)
-		AddEngineFunctionPointerToDll(RuntimeUI_ClearSelectedWidget, RuntimeUI::RuntimeUIService::ClearSelectedWidget, VoidNone)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetTextColor, RuntimeUI::RuntimeUIService::SetWidgetTextColorByIndex, VoidUIWidgetVec4)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColorByIndex, VoidUIWidgetVec4)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectableByIndex, VoidUIWidgetBool)
-		AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, RuntimeUI::RuntimeUIService::IsWidgetSelectedByIndex, BoolUIWidget)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetImage, RuntimeUI::RuntimeUIService::SetWidgetImageByIndex, VoidUIWidgetUInt64)
-		AddEngineFunctionPointerToDll(RuntimeUI_GetWidgetText, RuntimeUI::RuntimeUIService::GetWidgetTextByIndex, StringUIWidget)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetText, [](RuntimeUI::WidgetID widgetID, const std::string& newText)
+			{
+				RuntimeUI::RuntimeUIService::GetActiveContext().SetActiveWidgetTextByIndex(widgetID, newText);
+			}, VoidUIWidgetString)
+		AddEngineFunctionPointerToDll(RuntimeUI_IsUserInterfaceActiveFromHandle, [](Assets::AssetHandle uiHandle)
+		{
+				return RuntimeUI::RuntimeUIService::GetActiveContext().IsUIActiveFromHandle(uiHandle);
+		}, BoolUInt64)
+		AddEngineFunctionPointerToDll(RuntimeUI_LoadUserInterfaceFromHandle, [](Assets::AssetHandle uiHandle)
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().SetActiveUIFromHandle(uiHandle);
+		}, VoidUInt64)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetDisplayWindow, [](RuntimeUI::WindowID windowID, bool display)
+			{
+				RuntimeUI::RuntimeUIService::GetActiveContext().SetDisplayWindowByIndex(windowID, display);
+			}, VoidUIWindowBool)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetSelectedWidget, [](RuntimeUI::WidgetID widgetID)
+			{
+				RuntimeUI::RuntimeUIService::GetActiveContext().SetSelectedWidgetByIndex(widgetID);
+			}, VoidUIWidget)
+		AddEngineFunctionPointerToDll(RuntimeUI_ClearSelectedWidget, []()
+			{
+				RuntimeUI::RuntimeUIService::GetActiveContext().ClearSelectedWidget();
+			}, VoidNone)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetTextColor, [](RuntimeUI::WidgetID widgetID, const Math::vec4& color)
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().SetWidgetTextColorByIndex(widgetID, color);
+		}, VoidUIWidgetVec4)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetBackgroundColor, [](RuntimeUI::WidgetID widgetID, const Math::vec4& color)
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().SetWidgetBackgroundColorByIndex(widgetID, color);
+		}, VoidUIWidgetVec4)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetSelectable, [](RuntimeUI::WidgetID widgetID, bool selectable)
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().SetWidgetSelectableByIndex(widgetID, selectable);
+		}, VoidUIWidgetBool)
+		AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, [](RuntimeUI::WidgetID widgetID)
+		{
+			return RuntimeUI::RuntimeUIService::GetActiveContext().IsWidgetSelectedByIndex(widgetID);
+		}, BoolUIWidget)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetImage, [](RuntimeUI::WidgetID widgetID, Assets::AssetHandle textureHandle)
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().SetWidgetImageByIndex(widgetID, textureHandle);
+		}, VoidUIWidgetUInt64)
+		AddEngineFunctionPointerToDll(RuntimeUI_GetWidgetText, [](RuntimeUI::WidgetID widgetID)
+		{
+			return RuntimeUI::RuntimeUIService::GetActiveContext().GetWidgetTextByIndex(widgetID);
+		}, StringUIWidget)
 		// Scenes
 		AddEngineFunctionPointerToDll(TransitionSceneFromHandle, Scenes::SceneService::TransitionSceneFromHandle, VoidUInt64)
 		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)

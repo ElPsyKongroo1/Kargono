@@ -895,7 +895,7 @@ namespace Kargono::Assets
 			}
 		}
 
-		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(widgetRef.get());
+		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetActiveContext().GetContainerDataFromWidget(widgetRef.get());
 		if (containerData)
 		{
 			for (Ref<RuntimeUI::Widget> currentWidget : containerData->m_ContainedWidgets)
@@ -909,7 +909,7 @@ namespace Kargono::Assets
 		}
 
 		// Check if this widget has a selection data
-		RuntimeUI::SelectionData* selectionData = RuntimeUI::RuntimeUIService::GetSelectionDataFromWidget(widgetRef.get());
+		RuntimeUI::SelectionData* selectionData = RuntimeUI::RuntimeUIService::GetActiveContext().GetSelectionDataFromWidget(widgetRef.get());
 		if (!selectionData)
 		{
 			return uiModified;
@@ -1008,7 +1008,7 @@ namespace Kargono::Assets
 			}
 		}
 
-		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(widgetRef.get());
+		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetActiveContext().GetContainerDataFromWidget(widgetRef.get());
 		if (containerData)
 		{
 			for (Ref<RuntimeUI::Widget> currentWidget : containerData->m_ContainedWidgets)

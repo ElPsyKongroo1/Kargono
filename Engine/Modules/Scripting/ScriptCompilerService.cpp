@@ -1467,7 +1467,7 @@ namespace Kargono::Scripting
 				break;
 			}
 
-			RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(currentWidget.get());
+			RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetActiveContext().GetContainerDataFromWidget(currentWidget.get());
 			if (containerData)
 			{
 				for (Ref<RuntimeUI::Widget> containedWidget : containerData->m_ContainedWidgets)

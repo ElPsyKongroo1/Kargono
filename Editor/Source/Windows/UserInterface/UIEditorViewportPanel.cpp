@@ -75,8 +75,6 @@ namespace Kargono::Panels
 		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Rendering::RendererAPI::Clear();
 
-		
-
 		// TODO: Add background image to viewport
 		DrawUnderlay();
 
@@ -84,8 +82,8 @@ namespace Kargono::Panels
 		m_ViewportFramebuffer->SetAttachment(1, -1);
 
 		// Handle specific widget on click's
-		RuntimeUI::RuntimeUIService::OnUpdate(ts);
-		RuntimeUI::RuntimeUIService::OnRender(m_EditorCamera.GetViewProjection(), m_ViewportData.m_Width, m_ViewportData.m_Height);
+		RuntimeUI::RuntimeUIService::GetActiveContext().OnUpdate(ts);
+		RuntimeUI::RuntimeUIService::GetActiveContext().OnRender(m_EditorCamera.GetViewProjection(), m_ViewportData.m_Width, m_ViewportData.m_Height);
 
 		HandleMouseHovering();
 
@@ -113,6 +111,8 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::AutoCalcViewportSize(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered,
 			m_ViewportAspectRatio);
 
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext() };
+
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((ImTextureID)textureID, ImVec2{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height }, ImVec2{ 0, 1 },
 			ImVec2{ 1, 0 });
@@ -120,7 +120,7 @@ namespace Kargono::Panels
 		{
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 			{
-				RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWindowWidgetID);
+				RuntimeUI::IDType idType = uiContext.CheckIDType(m_HoveredWindowWidgetID);
 
 				if (idType != RuntimeUI::IDType::None)
 				{
@@ -129,19 +129,16 @@ namespace Kargono::Panels
 					if (idType == RuntimeUI::IDType::Widget)
 					{
 						// Set widget as selected manually
-						Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidgetFromID(m_HoveredWindowWidgetID);
+						Ref<RuntimeUI::Widget> hoveredWidget = uiContext.GetWidgetFromID(m_HoveredWindowWidgetID);
 						if (hoveredWidget && hoveredWidget->Selectable())
 						{
-							Ref<RuntimeUI::UserInterface> userInterface = RuntimeUI::RuntimeUIService::GetActiveUI();
+							Ref<RuntimeUI::UserInterface> userInterface{ uiContext.GetActiveUI() };
 							KG_ASSERT(userInterface);
 							userInterface->m_SelectedWidget = hoveredWidget.get();
 						}
 
 					}
 				}
-
-
-				
 			}
 		}
 
@@ -325,24 +322,25 @@ namespace Kargono::Panels
 			m_HoveredWindowWidgetID = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
 		}
 
-		RuntimeUI::IDType type = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWindowWidgetID);
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext() };
+		RuntimeUI::IDType type = uiContext.CheckIDType(m_HoveredWindowWidgetID);
 
 		// Exit early if no valid widget/window is available
 		if (type == RuntimeUI::IDType::None || type == RuntimeUI::IDType::Window)
 		{
-			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
+			RuntimeUI::RuntimeUIService::GetActiveContext().ClearHoveredWidget();
 			return;
 		}
 		
 		// Set widget as hovered manually
-		Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidgetFromID(m_HoveredWindowWidgetID);
+		Ref<RuntimeUI::Widget> hoveredWidget = uiContext.GetWidgetFromID(m_HoveredWindowWidgetID);
 		
 		if (!hoveredWidget || !hoveredWidget->Selectable())
 		{
-			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
+			RuntimeUI::RuntimeUIService::GetActiveContext().ClearHoveredWidget();
 			return;
 		}
-		Ref<RuntimeUI::UserInterface> userInterface = RuntimeUI::RuntimeUIService::GetActiveUI();
+		Ref<RuntimeUI::UserInterface> userInterface = uiContext.GetActiveUI();
 		KG_ASSERT(userInterface);
 		userInterface->m_HoveredWidget = hoveredWidget.get();
 	}
@@ -665,7 +663,7 @@ namespace Kargono::Panels
 			Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 			// Get position/size data for the parent widget/window
-			RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+			RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
 
 			// Calculate widget transform
 			Math::vec3 widgetPosition = widget->CalculateWorldPosition(parentDimensions.m_Translation, parentDimensions.m_Size);
@@ -747,7 +745,7 @@ namespace Kargono::Panels
 		if (widget)
 		{
 			// Get position/size data for the parent widget/window
-			RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+			RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
 
 			Math::vec3 finalParentTranslation = Math::vec3(parentDimensions.m_Translation.x + (parentDimensions.m_Size.x / 2), parentDimensions.m_Translation.y + (parentDimensions.m_Size.y / 2), parentDimensions.m_Translation.z);
 
@@ -860,7 +858,7 @@ namespace Kargono::Panels
 		constexpr float k_VanityPaddingSize{ 15.0f };
 
 		// Get position/size data for the parent widget/window
-		RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+		RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
 		Math::vec3 widgetSize = widget->CalculateWidgetSize(parentDimensions.m_Size);
 
 

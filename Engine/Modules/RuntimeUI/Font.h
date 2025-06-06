@@ -8,12 +8,6 @@
 
 namespace Kargono::Rendering { class Texture2D; }
 
-//============================================================
-// UI (User Interface) Namespace
-//============================================================
-// This namespace holds all of the classes that enable the usage of the runtime
-//		user interface, accessory classes for the Editor user interface, and
-//		the font class to enable text rendering.
 namespace Kargono::RuntimeUI
 {
 	class Font;
@@ -23,12 +17,6 @@ namespace Kargono::RuntimeUI
 		std::vector<Math::vec2> m_LineSize;
 		std::vector<Math::ivec2> m_LineBreaks;
 	};
-
-	//============================================================
-	// Text Class
-	//============================================================
-	// This class provides static functions to manage the creation of an unmanaged
-	//		font (Editor Font) and initialize the rendering pipeline for all text.
 
 	class FontService
 	{
@@ -96,9 +84,5 @@ namespace Kargono::RuntimeUI
 		std::unordered_map<unsigned char, Character> m_Characters{};
 		float m_Ascender{ 0.0f };
 		float m_Descender{ 0.0f };
-
 	};
-
-
-
 }

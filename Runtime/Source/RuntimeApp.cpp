@@ -89,7 +89,8 @@ namespace Kargono
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(4.0f);
 		RuntimeUI::FontService::Init();
-		RuntimeUI::RuntimeUIService::Init();
+		RuntimeUI::RuntimeUIService::CreateRuntimeUIContext();
+		RuntimeUI::RuntimeUIService::GetActiveContext().Init();
 		Particles::ParticleService::CreateParticleContext();
 		Particles::ParticleService::GetActiveContext().Init();
 		Input::InputMapService::CreateInputMapContext();
@@ -111,7 +112,8 @@ namespace Kargono
 		OnStop();
 
 		// Terminate engine services
-		RuntimeUI::RuntimeUIService::Terminate();
+		RuntimeUI::RuntimeUIService::GetActiveContext().Terminate();
+		RuntimeUI::RuntimeUIService::RemoveRuntimeUIContext();
 		Input::InputMapService::GetActiveContext().Terminate();
 		Input::InputMapService::RemoveInputMapContext();
 		Particles::ParticleService::GetActiveContext().Terminate();
@@ -182,10 +184,10 @@ namespace Kargono
 			Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
-			RuntimeUI::RuntimeUIService::OnUpdate(ts);
+			RuntimeUI::RuntimeUIService::GetActiveContext().OnUpdate(ts);
 
 			// Draw runtimeUI
-			RuntimeUI::RuntimeUIService::OnRender(engineWindow.GetWidth(), 
+			RuntimeUI::RuntimeUIService::GetActiveContext().OnRender(engineWindow.GetWidth(),
 				engineWindow.GetHeight());
 
 			// Handle mouse picking for the UI
@@ -392,14 +394,14 @@ namespace Kargono
 
 	bool RuntimeApp::OnKeyTyped(Events::KeyTypedEvent event)
 	{
-		RuntimeUI::RuntimeUIService::OnKeyTypedEvent(event);
+		RuntimeUI::RuntimeUIService::GetActiveContext().OnKeyTypedEvent(event);
 		return false;
 	}
 
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
 		KG_PROFILE_FUNCTION();
-		bool handled = RuntimeUI::RuntimeUIService::OnKeyPressedEvent(event);
+		bool handled = RuntimeUI::RuntimeUIService::GetActiveContext().OnKeyPressedEvent(event);
 
 		if (!handled)
 		{
@@ -416,25 +418,25 @@ namespace Kargono
 		{
 			return false;
 		}
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext()};
+		Assets::AssetHandle currentUI = uiContext.GetActiveUIHandle();
 
-		Assets::AssetHandle currentUI = RuntimeUI::RuntimeUIService::GetActiveUIHandle();
-
-		RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWidgetID);
+		RuntimeUI::IDType idType = uiContext.CheckIDType(m_HoveredWidgetID);
 
 		// Handle on press for the active user interface if applicable
 		if (idType == RuntimeUI::IDType::Widget)
 		{
-			RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+			uiContext.OnPressByIndex({ uiContext.GetActiveUIHandle(),
 				m_HoveredWidgetID });
 
 			// Handle case where active UI is changed
-			if (currentUI != RuntimeUI::RuntimeUIService::GetActiveUIHandle())
+			if (currentUI != uiContext.GetActiveUIHandle())
 			{
 				return false;
 			}
 
 			// Handle start editing
-			RuntimeUI::RuntimeUIService::SetEditingWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+			uiContext.SetEditingWidgetByIndex({ uiContext.GetActiveUIHandle(),
 				m_HoveredWidgetID });
 
 			// Handle specific widget on click's
@@ -443,10 +445,10 @@ namespace Kargono
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
 			Events::MouseButtonPressedEvent mouseEvent{ Mouse::ButtonLeft };
-			RuntimeUI::RuntimeUIService::OnMouseButtonPressedEvent(mouseEvent);
+			uiContext.OnMouseButtonPressedEvent(mouseEvent);
 
 			// Handle case where active UI is changed
-			if (currentUI != RuntimeUI::RuntimeUIService::GetActiveUIHandle())
+			if (currentUI != uiContext.GetActiveUIHandle())
 			{
 				return false;
 			}
@@ -456,9 +458,11 @@ namespace Kargono
 
 	bool RuntimeApp::OnMouseButtonReleased(const Events::MouseButtonReleasedEvent& event)
 	{
-		if (RuntimeUI::RuntimeUIService::GetActiveUI())
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext() };
+
+		if (uiContext.GetActiveUI())
 		{
-			RuntimeUI::RuntimeUIService::OnMouseButtonReleasedEvent(event);
+			uiContext.OnMouseButtonReleasedEvent(event);
 		}
 		return false;
 	}
@@ -613,23 +617,25 @@ namespace Kargono
 			return;
 		}
 
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext() };
+
 		// Make sure the y-position is oriented correctly
 		mousePos.y = (float)activeViewport.m_Height - mousePos.y;
 
 		// Extract mouse picking information from the active framebuffer
 		m_HoveredWidgetID = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
 
-		RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWidgetID);
+		RuntimeUI::IDType idType = uiContext.CheckIDType(m_HoveredWidgetID);
 
 		// Exit early if no valid widget is available
 		if (idType == RuntimeUI::IDType::None || idType == RuntimeUI::IDType::Window)
 		{
-			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
+			uiContext.ClearHoveredWidget();
 			return;
 		}
 
 		// Select the widget if applicable
-		RuntimeUI::RuntimeUIService::SetHoveredWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+		uiContext.SetHoveredWidgetByIndex({ uiContext.GetActiveUIHandle(),
 			m_HoveredWidgetID });
 
 	}
