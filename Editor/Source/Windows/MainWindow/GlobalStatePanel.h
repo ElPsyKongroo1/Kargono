@@ -9,7 +9,7 @@
 namespace Kargono::Panels
 {
 	using EditorWidget = std::variant<EditorUI::EditFloatSpec, EditorUI::EditTextSpec,
-		EditorUI::CheckboxSpec, EditorUI::EditIntegerSpec,
+		EditorUI::CheckboxWidget, EditorUI::EditIntegerSpec,
 		EditorUI::EditVec2Spec, EditorUI::EditVec3Spec, EditorUI::EditVec4Spec,
 		EditorUI::EditIVec2Spec, EditorUI::EditIVec3Spec, EditorUI::EditIVec4Spec>;
 
@@ -67,7 +67,7 @@ namespace Kargono::Panels
 		// Manage create-field popup's type widget
 		void OnOpenCreateFieldType(EditorUI::SelectOptionSpec& spec);
 		// Modify field callback functions
-		void OnModifyFieldCheckbox(EditorUI::CheckboxSpec& spec);
+		void OnModifyFieldCheckbox(EditorUI::CheckboxWidget& spec);
 		void OnModifyFieldEditFloat(EditorUI::EditFloatSpec& spec);
 		void OnModifyFieldEditInteger(EditorUI::EditIntegerSpec& spec);
 		void OnModifyFieldEditVec2(EditorUI::EditVec2Spec& spec);

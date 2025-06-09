@@ -180,7 +180,7 @@ namespace Kargono::Panels
 		EditorUI::CollapsingHeaderSpec m_GeneralConfigHeader;
 		EditorUI::EditIVec4Spec m_ServerIP{};
 		EditorUI::EditIntegerSpec m_ServerPort{};
-		EditorUI::CheckboxSpec m_ServerLocation{};
+		EditorUI::CheckboxWidget m_ServerLocation{};
 		EditorUI::EditIVec4Spec m_ServerSecrets{};
 
 	};
@@ -228,8 +228,8 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		EditorUI::SelectOptionSpec m_SelectStartSceneSpec{};
-		EditorUI::CheckboxSpec m_DefaultFullscreenSpec{};
-		EditorUI::CheckboxSpec m_ToggleNetworkSpec{};
+		EditorUI::CheckboxWidget m_DefaultFullscreenSpec{};
+		EditorUI::CheckboxWidget m_ToggleNetworkSpec{};
 		EditorUI::SelectOptionSpec m_SelectResolutionSpec{};
 		EditorUI::SelectOptionSpec m_SelectStartGameStateSpec{};
 		EditorUI::SelectOptionSpec m_SelectRuntimeStartSpec{};

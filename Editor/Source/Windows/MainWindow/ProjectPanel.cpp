@@ -63,14 +63,14 @@ namespace Kargono::Panels
 
 		// Default Full Screen
 		m_DefaultFullscreenSpec.m_Label = "Default Fullscreen";
-		m_DefaultFullscreenSpec.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec)
+		m_DefaultFullscreenSpec.m_ConfirmAction = [](EditorUI::CheckboxWidget& spec)
 		{
 			Projects::ProjectService::GetActiveContext().SetIsFullscreen(spec.m_CurrentBoolean);
 		};
 
 		// Set Networking Specification
 		m_ToggleNetworkSpec.m_Label = "Networking";
-		m_ToggleNetworkSpec.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec)
+		m_ToggleNetworkSpec.m_ConfirmAction = [](EditorUI::CheckboxWidget& spec)
 		{
 			Projects::ProjectService::GetActiveContext().SetAppIsNetworked(spec.m_CurrentBoolean);
 		};
@@ -279,12 +279,12 @@ namespace Kargono::Panels
 
 			// Networking Checkbox
 			m_ToggleNetworkSpec.m_CurrentBoolean = Projects::ProjectService::GetActiveContext().GetAppIsNetworked();
-			EditorUI::EditorUIService::Checkbox(m_ToggleNetworkSpec);
+			m_ToggleNetworkSpec.RenderCheckbox();
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Default Fullscreen
 			m_DefaultFullscreenSpec.m_CurrentBoolean = Projects::ProjectService::GetActiveContext().GetIsFullscreen();
-			EditorUI::EditorUIService::Checkbox(m_DefaultFullscreenSpec);
+			m_DefaultFullscreenSpec.RenderCheckbox();
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Select Starting Game State
@@ -428,7 +428,7 @@ namespace Kargono::Panels
 
 		m_ServerLocation.m_Label = "Local Machine";
 		m_ServerLocation.m_CurrentBoolean = true;
-		m_ServerLocation.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec) 
+		m_ServerLocation.m_ConfirmAction = [](EditorUI::CheckboxWidget& spec) 
 		{
 			Network::ServerLocation newLoc = spec.m_CurrentBoolean ?
 					Network::ServerLocation::LocalMachine :
@@ -512,7 +512,7 @@ namespace Kargono::Panels
 				m_ServerPort.m_CurrentInteger = (int32_t)config.m_ServerAddress.GetPort();
 				EditorUI::EditorUIService::EditInteger(m_ServerPort);
 				m_ServerLocation.m_CurrentBoolean = config.m_ServerLocation == Network::ServerLocation::LocalMachine;
-				EditorUI::EditorUIService::Checkbox(m_ServerLocation);
+				m_ServerLocation.RenderCheckbox();
 				m_ServerSecrets.m_CurrentIVec4 = (Math::ivec4)config.m_ValidationSecrets;
 				EditorUI::EditorUIService::EditIVec4(m_ServerSecrets);
 			}

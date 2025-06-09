@@ -55,7 +55,7 @@ namespace Kargono::Panels
 		void OnModifyEmitterLifecycleType();
 		void OnModifyEmitterLifetime(EditorUI::EditFloatSpec& spec);
 		void OnModifyParticleLifetime(EditorUI::EditFloatSpec& spec);
-		void OnModifyUseGravity(EditorUI::CheckboxSpec& spec);
+		void OnModifyUseGravity(EditorUI::CheckboxWidget& spec);
 		void OnModifyGravityAcceleration(EditorUI::EditVec3Spec& spec);
 		// Spawning options modification
 		void OnModifySpawnRate(EditorUI::EditIntegerSpec& spec);
@@ -85,7 +85,7 @@ namespace Kargono::Panels
 		EditorUI::EditIntegerSpec m_SpawnPerSecSpec;
 		EditorUI::EditFloatSpec m_ParticleLifetimeSpec;
 		EditorUI::EditFloatSpec m_EmitterLifetimeSpec;
-		EditorUI::CheckboxSpec m_UseGravitySpec;
+		EditorUI::CheckboxWidget m_UseGravitySpec;
 		EditorUI::EditVec3Spec m_GravityAccelerationSpec;
 		EditorUI::RadioSelectorSpec m_EmitterLifecycleSpec;
 		// Particle spawning options widgets

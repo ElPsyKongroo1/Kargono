@@ -42,9 +42,9 @@ namespace Kargono::Panels
 
 #if defined(KG_DEBUG)
 		// Debug global widgets
-		EditorUI::CheckboxSpec s_EditTestBool_1;
-		EditorUI::CheckboxSpec s_EditTestBool_2;
-		EditorUI::CheckboxSpec s_EditTestBool_3;
+		EditorUI::CheckboxWidget s_EditTestBool_1;
+		EditorUI::CheckboxWidget s_EditTestBool_2;
+		EditorUI::CheckboxWidget s_EditTestBool_3;
 
 		EditorUI::EditFloatSpec s_EditTestFloat_1;
 		EditorUI::EditFloatSpec s_EditTestFloat_2;

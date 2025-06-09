@@ -18,7 +18,7 @@ namespace Kargono::Panels
 		EditorUI::CollapsingHeaderSpec m_Header;
 		std::vector<std::variant<EditorUI::EditFloatSpec, EditorUI::EditVec4Spec,
 			EditorUI::EditVec2Spec, EditorUI::EditVec3Spec, EditorUI::EditTextSpec,
-			EditorUI::CheckboxSpec, EditorUI::EditIntegerSpec>> m_Fields;
+			EditorUI::CheckboxWidget, EditorUI::EditIntegerSpec>> m_Fields;
 	};
 
 	struct SceneEditorTreeEntryData
@@ -173,7 +173,7 @@ namespace Kargono::Panels
 		// Rigid Body 2D Component
 		EditorUI::CollapsingHeaderSpec m_Rigidbody2DHeader{};
 		EditorUI::RadioSelectorSpec m_Rigidbody2DType {};
-		EditorUI::CheckboxSpec m_RigidBody2DFixedRotation {};
+		EditorUI::CheckboxWidget m_RigidBody2DFixedRotation {};
 		EditorUI::SelectOptionSpec m_SelectRigidBody2DCollisionStartScript{};
 		EditorUI::SelectOptionSpec m_SelectRigidBody2DCollisionEndScript{};
 		
@@ -185,7 +185,7 @@ namespace Kargono::Panels
 		EditorUI::EditFloatSpec m_BoxColliderFriction{};
 		EditorUI::EditFloatSpec m_BoxColliderRestitution{};
 		EditorUI::EditFloatSpec m_BoxColliderRestitutionThreshold{};
-		EditorUI::CheckboxSpec m_BoxColliderIsSensor{};
+		EditorUI::CheckboxWidget m_BoxColliderIsSensor{};
 
 		// Circle Collider 2D Component
 		EditorUI::CollapsingHeaderSpec m_CircleCollider2DHeader{};
@@ -195,7 +195,7 @@ namespace Kargono::Panels
 		EditorUI::EditFloatSpec m_CircleColliderFriction{};
 		EditorUI::EditFloatSpec m_CircleColliderRestitution{};
 		EditorUI::EditFloatSpec m_CircleColliderRestitutionThreshold{};
-		EditorUI::CheckboxSpec m_CircleColliderIsSensor{};
+		EditorUI::CheckboxWidget m_CircleColliderIsSensor{};
 
 		// OnUpdate Component
 		EditorUI::CollapsingHeaderSpec m_OnUpdateHeader{};
@@ -213,7 +213,7 @@ namespace Kargono::Panels
 
 		// Camera Component
 		EditorUI::CollapsingHeaderSpec m_CameraHeader{};
-		EditorUI::CheckboxSpec m_CameraPrimary {};
+		EditorUI::CheckboxWidget m_CameraPrimary {};
 		EditorUI::RadioSelectorSpec m_CameraProjection {};
 		EditorUI::EditFloatSpec m_CameraPerspectiveFOV{};
 		EditorUI::EditFloatSpec m_CameraPerspectiveNearPlane{};
@@ -231,14 +231,14 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_ShapeSelect {};
 		EditorUI::SelectOptionSpec m_ShapeColorType {};
 		EditorUI::EditVec4Spec m_ShapeColor {};
-		EditorUI::CheckboxSpec m_ShapeAddTexture {};
+		EditorUI::CheckboxWidget m_ShapeAddTexture {};
 		EditorUI::SelectOptionSpec m_ShapeSetTexture {};
 		EditorUI::EditFloatSpec m_ShapeTilingFactor{};
-		EditorUI::CheckboxSpec m_ShapeAddCircle {};
+		EditorUI::CheckboxWidget m_ShapeAddCircle {};
 		EditorUI::EditFloatSpec m_ShapeCircleThickness{};
 		EditorUI::EditFloatSpec m_ShapeCircleFade{};
-		EditorUI::CheckboxSpec m_ShapeAddProjection {};
-		EditorUI::CheckboxSpec m_ShapeAddEntityID {};
+		EditorUI::CheckboxWidget m_ShapeAddProjection {};
+		EditorUI::CheckboxWidget m_ShapeAddEntityID {};
 	private:
 		friend class PropertiesPanel;
 	};

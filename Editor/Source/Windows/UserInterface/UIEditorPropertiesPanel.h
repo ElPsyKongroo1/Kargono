@@ -117,7 +117,7 @@ namespace Kargono::Panels
 		void OnModifyWindowDefaultWidget(const EditorUI::OptionEntry& entry);
 		void OnOpenWindowDefaultWidgetPopup(EditorUI::SelectOptionSpec& spec);
 		// Modify if window is displayed
-		void OnModifyWindowDisplay(EditorUI::CheckboxSpec& spec);
+		void OnModifyWindowDisplay(EditorUI::CheckboxWidget& spec);
 		// Modify window location
 		void OnModifyWindowLocation(EditorUI::EditVec3Spec& spec);
 		// Modify window size
@@ -160,7 +160,7 @@ namespace Kargono::Panels
 		// Change Checkbox Data
 		//=========================
 		// Modify if button widget is selectable
-		void OnModifyCheckboxWidgetChecked(EditorUI::CheckboxSpec& spec);
+		void OnModifyCheckboxWidgetChecked(EditorUI::CheckboxWidget& spec);
 		// Modify checkbox widget's checked image
 		void OnModifyCheckboxWidgetCheckedImage(const EditorUI::OptionEntry& entry);
 		void OnOpenCheckboxWidgetCheckedImagePopup(EditorUI::SelectOptionSpec& spec);
@@ -168,7 +168,7 @@ namespace Kargono::Panels
 		void OnModifyCheckboxWidgetUnCheckedImage(const EditorUI::OptionEntry& entry);
 		void OnOpenCheckboxWidgetUnCheckedImagePopup(EditorUI::SelectOptionSpec& spec);
 		// Modify checkbox widget's fixed aspect ratio option
-		void OnModifyCheckboxWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec);
+		void OnModifyCheckboxWidgetFixedAspectRatio(EditorUI::CheckboxWidget& spec);
 
 		//=========================
 		// Change Input Text Widget Data
@@ -208,7 +208,7 @@ namespace Kargono::Panels
 		void OnOpenTooltipForDropDownWidgetOnSelectOption(EditorUI::SelectOptionSpec& spec);
 
 		// Modify widget open
-		void OnModifyDropDownWidgetOpen(EditorUI::CheckboxSpec& spec);
+		void OnModifyDropDownWidgetOpen(EditorUI::CheckboxWidget& spec);
 
 		// Modify widget's current option
 		void OnModifyDropDownWidgetCurrentOption(const EditorUI::OptionEntry& entry);
@@ -248,9 +248,9 @@ namespace Kargono::Panels
 		void OnModifySingleLineDataText(EditorUI::EditTextSpec& spec);
 		// Multi line text data
 		void OnModifyMultiLineDataText(EditorUI::EditMultiLineTextSpec& spec);
-		void OnModifyTextDataWrapped(EditorUI::CheckboxSpec& spec);
+		void OnModifyTextDataWrapped(EditorUI::CheckboxWidget& spec);
 		// Selection data
-		void OnModifySelectionDataSelectable(EditorUI::CheckboxSpec& spec);
+		void OnModifySelectionDataSelectable(EditorUI::CheckboxWidget& spec);
 		void OnModifySelectionDataOnPress(const EditorUI::OptionEntry& entry);
 		void OnOpenSelectionDataOnPressPopup(EditorUI::SelectOptionSpec& spec);
 		void OnOpenTooltipForSelectionDataOnPress(EditorUI::SelectOptionSpec& spec);
@@ -258,7 +258,7 @@ namespace Kargono::Panels
 		// Image data
 		void OnModifyImageDataImage(const EditorUI::OptionEntry& entry);
 		void OnOpenImageDataImagePopup(EditorUI::SelectOptionSpec& spec);
-		void OnModifyImageDataFixedAspectRatio(EditorUI::CheckboxSpec& spec);
+		void OnModifyImageDataFixedAspectRatio(EditorUI::CheckboxWidget& spec);
 		// Container data
 		void OnModifyContainerDataBackgroundColor(EditorUI::EditVec4Spec& spec);
 	public:
@@ -287,7 +287,7 @@ namespace Kargono::Panels
 		EditorUI::CollapsingHeaderSpec m_WindowHeader{};
 		EditorUI::EditTextSpec m_WindowTag{};
 		EditorUI::SelectOptionSpec m_WindowDefaultWidget{};
-		EditorUI::CheckboxSpec m_WindowDisplay{};
+		EditorUI::CheckboxWidget m_WindowDisplay{};
 		EditorUI::EditVec3Spec m_WindowLocation{};
 		EditorUI::EditVec2Spec m_WindowSize{};
 		EditorUI::EditVec4Spec m_WindowBackgroundColor{};
@@ -318,7 +318,7 @@ namespace Kargono::Panels
 		EditorUI::EditFloatSpec m_TextWidgetTextSize{};
 		EditorUI::EditVec4Spec m_TextWidgetTextColor{};
 		EditorUI::SelectOptionSpec m_TextWidgetTextAlignment{};
-		EditorUI::CheckboxSpec m_TextWidgetTextWrapped{};
+		EditorUI::CheckboxWidget m_TextWidgetTextWrapped{};
 
 		// Edit Button Widget Options
 		EditorUI::CollapsingHeaderSpec m_ButtonWidgetHeader{};
@@ -328,30 +328,30 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_ButtonWidgetTextAlignment{};
 		EditorUI::EditVec4Spec m_ButtonWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_ButtonWidgetOnPress{};
-		EditorUI::CheckboxSpec m_ButtonWidgetSelectable{};
+		EditorUI::CheckboxWidget m_ButtonWidgetSelectable{};
 
 		// Edit Image Widget Options
 		EditorUI::CollapsingHeaderSpec m_ImageWidgetHeader{};
 		EditorUI::SelectOptionSpec m_ImageWidgetImage{};
-		EditorUI::CheckboxSpec m_ImageWidgetFixedAspectRatio{};
+		EditorUI::CheckboxWidget m_ImageWidgetFixedAspectRatio{};
 
 		// Edit Image Button Widget Options
 		EditorUI::CollapsingHeaderSpec m_ImageButtonWidgetHeader{};
 		EditorUI::SelectOptionSpec m_ImageButtonWidgetImage{};
-		EditorUI::CheckboxSpec m_ImageButtonWidgetFixedAspectRatio{};
+		EditorUI::CheckboxWidget m_ImageButtonWidgetFixedAspectRatio{};
 		EditorUI::EditVec4Spec m_ImageButtonWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_ImageButtonWidgetOnPress{};
-		EditorUI::CheckboxSpec m_ImageButtonWidgetSelectable{};
+		EditorUI::CheckboxWidget m_ImageButtonWidgetSelectable{};
 
 		// Edit Checkbox Widget Options
 		EditorUI::CollapsingHeaderSpec m_CheckboxWidgetHeader{};
-		EditorUI::CheckboxSpec m_CheckboxWidgetChecked{};
+		EditorUI::CheckboxWidget m_CheckboxWidgetChecked{};
 		EditorUI::SelectOptionSpec m_CheckboxWidgetCheckedImage{};
 		EditorUI::SelectOptionSpec m_CheckboxWidgetUnCheckedImage{};
-		EditorUI::CheckboxSpec m_CheckboxWidgetFixedAspectRatio{};
+		EditorUI::CheckboxWidget m_CheckboxWidgetFixedAspectRatio{};
 		EditorUI::EditVec4Spec m_CheckboxWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_CheckboxWidgetOnPress{};
-		EditorUI::CheckboxSpec m_CheckboxWidgetSelectable{};
+		EditorUI::CheckboxWidget m_CheckboxWidgetSelectable{};
 
 		// Edit InputText Widget Options
 		EditorUI::CollapsingHeaderSpec m_InputTextWidgetHeader{};
@@ -361,14 +361,14 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionSpec m_InputTextWidgetTextAlignment{};
 		EditorUI::EditVec4Spec m_InputTextWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_InputTextWidgetOnPress{};
-		EditorUI::CheckboxSpec m_InputTextWidgetSelectable{};
+		EditorUI::CheckboxWidget m_InputTextWidgetSelectable{};
 		EditorUI::SelectOptionSpec m_InputTextWidgetOnMoveCursor{};
 
 		// Edit Slider Widget Options
 		EditorUI::CollapsingHeaderSpec m_SliderWidgetHeader{};
 		EditorUI::EditVec4Spec m_SliderWidgetBackgroundColor{};
 		EditorUI::SelectOptionSpec m_SliderWidgetOnPress{};
-		EditorUI::CheckboxSpec m_SliderWidgetSelectable{};
+		EditorUI::CheckboxWidget m_SliderWidgetSelectable{};
 		EditorUI::EditVec2Spec m_SliderWidgetBounds{};
 		EditorUI::EditVec4Spec m_SliderWidgetSliderColor{};
 		EditorUI::EditVec4Spec m_SliderWidgetLineColor{};
@@ -381,7 +381,7 @@ namespace Kargono::Panels
 		EditorUI::EditVec4Spec m_DropDownWidgetTextColor{};
 		EditorUI::SelectOptionSpec m_DropDownWidgetTextAlignment{};
 		EditorUI::SelectOptionSpec m_DropDownWidgetOnPress{};
-		EditorUI::CheckboxSpec m_DropDownWidgetSelectable{};
+		EditorUI::CheckboxWidget m_DropDownWidgetSelectable{};
 		EditorUI::EditVec4Spec m_DropDownWidgetOptionBackgroundColor{};
 		EditorUI::SelectOptionSpec m_DropDownWidgetOnSelectOption{};
 		EditorUI::ListSpec m_DropDownWidgetOptionsList{};
@@ -389,7 +389,7 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_DropDownWidgetDeleteEntryWarning{};
 		EditorUI::EditTextSpec m_DropDownWidgetEditEntry{};
 		size_t m_ActiveDropDownOption{ 0 };
-		EditorUI::CheckboxSpec m_DropDownWidgetDropdownOpen{};
+		EditorUI::CheckboxWidget m_DropDownWidgetDropdownOpen{};
 		EditorUI::SelectOptionSpec m_DropDownWidgetCurrentOption{};
 
 		// Edit Container Widget Options

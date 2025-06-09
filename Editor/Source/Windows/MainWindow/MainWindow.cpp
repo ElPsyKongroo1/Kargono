@@ -28,7 +28,7 @@ namespace Kargono::Windows
 			if (m_ExportProjectHeader.m_Expanded)
 			{
 				EditorUI::EditorUIService::ChooseDirectory(m_ExportProjectLocation);
-				EditorUI::EditorUIService::Checkbox(m_ExportProjectServer);
+				m_ExportProjectServer.RenderCheckbox();
 			}	
 		};
 		m_ExportProjectSpec.m_ConfirmAction = [&]()

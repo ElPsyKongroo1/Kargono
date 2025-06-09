@@ -92,7 +92,7 @@ namespace Kargono::Panels
 		// Checkbox initialization
 		s_EditTestBool_1.m_Label = "Test Bool 1";
 		s_EditTestBool_1.m_CurrentBoolean = globals.m_TestBool_1;
-		s_EditTestBool_1.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec) 
+		s_EditTestBool_1.m_ConfirmAction = [](EditorUI::CheckboxWidget& spec) 
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestBool_1 = spec.m_CurrentBoolean;
@@ -100,7 +100,7 @@ namespace Kargono::Panels
 
 		s_EditTestBool_2.m_Label = "Test Bool 2";
 		s_EditTestBool_2.m_CurrentBoolean = globals.m_TestBool_2;
-		s_EditTestBool_2.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec)
+		s_EditTestBool_2.m_ConfirmAction = [](EditorUI::CheckboxWidget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestBool_2 = spec.m_CurrentBoolean;
@@ -108,7 +108,7 @@ namespace Kargono::Panels
 
 		s_EditTestBool_3.m_Label = "Test Bool 3";
 		s_EditTestBool_3.m_CurrentBoolean = globals.m_TestBool_3;
-		s_EditTestBool_3.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec)
+		s_EditTestBool_3.m_ConfirmAction = [](EditorUI::CheckboxWidget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestBool_3 = spec.m_CurrentBoolean;
@@ -349,13 +349,13 @@ namespace Kargono::Panels
 
 		// Bool initialization
 		s_EditTestBool_1.m_CurrentBoolean = globals.m_TestBool_1;
-		EditorUI::EditorUIService::Checkbox(s_EditTestBool_1);
+		s_EditTestBool_1.RenderCheckbox();
 
 		s_EditTestBool_2.m_CurrentBoolean = globals.m_TestBool_2;
-		EditorUI::EditorUIService::Checkbox(s_EditTestBool_2);
+		s_EditTestBool_2.RenderCheckbox();
 
 		s_EditTestBool_3.m_CurrentBoolean = globals.m_TestBool_3;
-		EditorUI::EditorUIService::Checkbox(s_EditTestBool_3);
+		s_EditTestBool_3.RenderCheckbox();
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 

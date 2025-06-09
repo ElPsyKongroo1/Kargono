@@ -140,7 +140,7 @@ namespace Kargono::Panels
 
 			// Edit whether window is displayed
 			m_WindowDisplay.m_CurrentBoolean = m_ActiveWindow->GetWindowDisplayed();
-			EditorUI::EditorUIService::Checkbox(m_WindowDisplay);
+			m_WindowDisplay.RenderCheckbox();
 
 			// Edit window location relative to screen
 			m_WindowLocation.m_CurrentVec3 = m_ActiveWindow->m_ScreenPosition;
@@ -263,7 +263,7 @@ namespace Kargono::Panels
 
 			// Edit selected text widget's wrapped alignment
 			m_TextWidgetTextWrapped.m_CurrentBoolean = activeTextWidget.m_TextData.m_TextWrapped;
-			EditorUI::EditorUIService::Checkbox(m_TextWidgetTextWrapped);
+			m_TextWidgetTextWrapped.RenderCheckbox();
 		}
 	}
 
@@ -278,7 +278,7 @@ namespace Kargono::Panels
 
 			// Edit selected text widget's wrapped alignment
 			m_ButtonWidgetSelectable.m_CurrentBoolean = activeButtonWidget.m_SelectionData.m_Selectable;
-			EditorUI::EditorUIService::Checkbox(m_ButtonWidgetSelectable);
+			m_ButtonWidgetSelectable.RenderCheckbox();
 
 			// Edit selected button widget's text
 			m_ButtonWidgetText.m_CurrentOption = activeButtonWidget.m_TextData.m_Text;
@@ -332,7 +332,7 @@ namespace Kargono::Panels
 
 			// Edit selected widget's fixed aspect ratio usage
 			m_ImageWidgetFixedAspectRatio.m_CurrentBoolean = activeImageWidget.m_ImageData.m_FixedAspectRatio;
-			EditorUI::EditorUIService::Checkbox(m_ImageWidgetFixedAspectRatio);
+			m_ImageWidgetFixedAspectRatio.RenderCheckbox();
 		}
 	}
 
@@ -357,11 +357,11 @@ namespace Kargono::Panels
 
 			// Edit selected widget's fixed aspect ratio usage
 			m_ImageButtonWidgetFixedAspectRatio.m_CurrentBoolean = activeImageButtonWidget.m_ImageData.m_FixedAspectRatio;
-			EditorUI::EditorUIService::Checkbox(m_ImageButtonWidgetFixedAspectRatio);
+			m_ImageButtonWidgetFixedAspectRatio.RenderCheckbox();
 
 			// Edit selected text widget's wrapped alignment
 			m_ImageButtonWidgetSelectable.m_CurrentBoolean = activeImageButtonWidget.m_SelectionData.m_Selectable;
-			EditorUI::EditorUIService::Checkbox(m_ImageButtonWidgetSelectable);
+			m_ImageButtonWidgetSelectable.RenderCheckbox();
 
 			// Edit selected widget's background color
 			m_ImageButtonWidgetBackgroundColor.m_CurrentVec4 = activeImageButtonWidget.m_SelectionData.m_DefaultBackgroundColor;
@@ -389,7 +389,7 @@ namespace Kargono::Panels
 
 			// Edit widgets's checked status
 			m_CheckboxWidgetChecked.m_CurrentBoolean = activeCheckboxWidget.m_Checked;
-			EditorUI::EditorUIService::Checkbox(m_CheckboxWidgetChecked);
+			m_CheckboxWidgetChecked.RenderCheckbox();
 
 			// Edit selected widget's image handle
 			Assets::AssetHandle checkedImage = activeCheckboxWidget.m_ImageChecked.m_ImageHandle;
@@ -413,11 +413,11 @@ namespace Kargono::Panels
 
 			// Edit selected widget's fixed aspect ratio usage
 			m_CheckboxWidgetFixedAspectRatio.m_CurrentBoolean = activeCheckboxWidget.m_ImageChecked.m_FixedAspectRatio;
-			EditorUI::EditorUIService::Checkbox(m_CheckboxWidgetFixedAspectRatio);
+			m_CheckboxWidgetFixedAspectRatio.RenderCheckbox();
 
 			// Edit selected text widget's wrapped alignment
 			m_CheckboxWidgetSelectable.m_CurrentBoolean = activeCheckboxWidget.m_SelectionData.m_Selectable;
-			EditorUI::EditorUIService::Checkbox(m_CheckboxWidgetSelectable);
+			m_CheckboxWidgetSelectable.RenderCheckbox();
 
 			// Edit selected widget's background color
 			m_CheckboxWidgetBackgroundColor.m_CurrentVec4 = activeCheckboxWidget.m_SelectionData.m_DefaultBackgroundColor;
@@ -506,7 +506,7 @@ namespace Kargono::Panels
 
 			// Edit selected text widget's wrapped alignment
 			m_InputTextWidgetSelectable.m_CurrentBoolean = activeInputTextWidget.m_SelectionData.m_Selectable;
-			EditorUI::EditorUIService::Checkbox(m_InputTextWidgetSelectable);
+			m_InputTextWidgetSelectable.RenderCheckbox();
 
 			// Edit selected InputText widget's text
 			m_InputTextWidgetText.m_CurrentOption = activeInputTextWidget.m_TextData.m_Text;
@@ -559,7 +559,7 @@ namespace Kargono::Panels
 
 			// Edit selected text widget's wrapped alignment
 			m_SliderWidgetSelectable.m_CurrentBoolean = activeSliderWidget.m_SelectionData.m_Selectable;
-			EditorUI::EditorUIService::Checkbox(m_SliderWidgetSelectable);
+			m_SliderWidgetSelectable.RenderCheckbox();
 
 			// Edit selected widget's size relative to its window
 			m_SliderWidgetBounds.m_CurrentVec2 = activeSliderWidget.m_Bounds;
@@ -608,7 +608,7 @@ namespace Kargono::Panels
 			
 			// Edit the drop-down open boolean
 			m_DropDownWidgetDropdownOpen.m_CurrentBoolean = activeDropDownWidget.m_DropDownOpen;
-			EditorUI::EditorUIService::Checkbox(m_DropDownWidgetDropdownOpen);
+			m_DropDownWidgetDropdownOpen.RenderCheckbox();
 
 			// Only display the current option if an options list exists
 			if (activeDropDownWidget.m_DropDownOptions.size() > 0)
@@ -629,7 +629,7 @@ namespace Kargono::Panels
 
 			// Edit selected drop-down's wrapped alignment
 			m_DropDownWidgetSelectable.m_CurrentBoolean = activeDropDownWidget.m_SelectionData.m_Selectable;
-			EditorUI::EditorUIService::Checkbox(m_DropDownWidgetSelectable);
+			m_DropDownWidgetSelectable.RenderCheckbox();
 
 #if 0 // TODO: COME BACK AND FIX PLEASE
 			// Edit selected DropDown widget's text size relative to its window
@@ -1742,7 +1742,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWindowDisplay(EditorUI::CheckboxSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyWindowDisplay(EditorUI::CheckboxWidget& spec)
 	{
 		// Ensure active window is valid
 		if (!ValidateActiveWindow())
@@ -2116,7 +2116,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 	
-	void UIEditorPropertiesPanel::OnModifyCheckboxWidgetChecked(EditorUI::CheckboxSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyCheckboxWidgetChecked(EditorUI::CheckboxWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -2249,7 +2249,7 @@ namespace Kargono::Panels
 			spec.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
 		}
 	}
-	void UIEditorPropertiesPanel::OnModifyCheckboxWidgetFixedAspectRatio(EditorUI::CheckboxSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyCheckboxWidgetFixedAspectRatio(EditorUI::CheckboxWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -2790,7 +2790,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyDropDownWidgetOpen(EditorUI::CheckboxSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyDropDownWidgetOpen(EditorUI::CheckboxWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3365,7 +3365,7 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	void UIEditorPropertiesPanel::OnModifyTextDataWrapped(EditorUI::CheckboxSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyTextDataWrapped(EditorUI::CheckboxWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3390,7 +3390,7 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	void UIEditorPropertiesPanel::OnModifySelectionDataSelectable(EditorUI::CheckboxSpec& spec)
+	void UIEditorPropertiesPanel::OnModifySelectionDataSelectable(EditorUI::CheckboxWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3633,7 +3633,7 @@ namespace Kargono::Panels
 			spec.AddToOptions("All Options", assetInfo.Data.FileLocation.stem().string(), handle);
 		}
 	}
-	void UIEditorPropertiesPanel::OnModifyImageDataFixedAspectRatio(EditorUI::CheckboxSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyImageDataFixedAspectRatio(EditorUI::CheckboxWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())

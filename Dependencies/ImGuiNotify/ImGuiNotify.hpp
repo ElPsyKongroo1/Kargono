@@ -461,7 +461,7 @@ namespace ImGui
 	
 	void InitNotificationSystem()
 	{
-		s_NotificationsID = Kargono::EditorUI::IncrementWidgetCounter();
+        s_NotificationsID = Kargono::EditorUI::WidgetCounterService::GetActiveContext().GetID();
 	}
 
     /**

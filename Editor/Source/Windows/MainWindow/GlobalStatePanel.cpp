@@ -305,7 +305,7 @@ namespace Kargono::Panels
 
 	struct DrawGlobalStateFieldsVisitor
 	{
-		void operator()(EditorUI::CheckboxSpec& spec)
+		void operator()(EditorUI::CheckboxWidget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -319,7 +319,7 @@ namespace Kargono::Panels
 				);
 
 			// Draw the field
-			EditorUI::EditorUIService::Checkbox(spec);
+			spec.RenderCheckbox();
 		}
 		void operator()(EditorUI::EditTextSpec& spec)
 		{
@@ -496,8 +496,8 @@ namespace Kargono::Panels
 			{
 			case WrappedVarType::Bool:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::CheckboxSpec());
-				EditorUI::CheckboxSpec& checkboxWidget = *std::get_if<EditorUI::CheckboxSpec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::CheckboxWidget());
+				EditorUI::CheckboxWidget& checkboxWidget = *std::get_if<EditorUI::CheckboxWidget>(&widget);
 				checkboxWidget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				checkboxWidget.m_Flags |= EditorUI::Checkbox_Indented;
 				checkboxWidget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -668,7 +668,7 @@ namespace Kargono::Panels
 				Utility::WrappedVarTypeToString(type), (uint64_t)type);
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldCheckbox(EditorUI::CheckboxSpec& spec)
+	void GlobalStatePanel::OnModifyFieldCheckbox(EditorUI::CheckboxWidget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();

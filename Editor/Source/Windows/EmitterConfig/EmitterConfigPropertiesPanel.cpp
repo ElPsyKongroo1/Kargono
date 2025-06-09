@@ -238,7 +238,7 @@ namespace Kargono::Panels
 
 			// Draw (use gravity) widget
 			m_UseGravitySpec.m_CurrentBoolean= s_EmitterConfigWindow->m_EditorEmitterConfig->m_UseGravity;
-			EditorUI::EditorUIService::Checkbox(m_UseGravitySpec);
+			m_UseGravitySpec.RenderCheckbox();
 
 			// Draw gravity acceleration widget
 			m_GravityAccelerationSpec.m_CurrentVec3 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_GravityAcceleration;
@@ -453,7 +453,7 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
-	void EmitterConfigPropertiesPanel::OnModifyUseGravity(EditorUI::CheckboxSpec& spec)
+	void EmitterConfigPropertiesPanel::OnModifyUseGravity(EditorUI::CheckboxWidget& spec)
 	{
 		// Update the use gravity for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_UseGravity = spec.m_CurrentBoolean;

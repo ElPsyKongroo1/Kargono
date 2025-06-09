@@ -548,7 +548,7 @@ namespace Kargono::Panels
 		// Set Shape Add Fixed Rotation Option
 		m_RigidBody2DFixedRotation.m_Label = "Use Fixed Rotation";
 		m_RigidBody2DFixedRotation.m_Flags |= EditorUI::Checkbox_Indented;
-		m_RigidBody2DFixedRotation.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		m_RigidBody2DFixedRotation.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::Rigidbody2DComponent>())
@@ -884,7 +884,7 @@ namespace Kargono::Panels
 		// Set whether box collider is treated as a sensor
 		m_BoxColliderIsSensor.m_Label = "Is Sensor";
 		m_BoxColliderIsSensor.m_Flags |= EditorUI::Checkbox_Indented;
-		m_BoxColliderIsSensor.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		m_BoxColliderIsSensor.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::BoxCollider2DComponent>())
@@ -1026,7 +1026,7 @@ namespace Kargono::Panels
 		// Set whether circle collider is treated as a sensor
 		m_CircleColliderIsSensor.m_Label = "Is Sensor";
 		m_CircleColliderIsSensor.m_Flags |= EditorUI::Checkbox_Indented;
-		m_CircleColliderIsSensor.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		m_CircleColliderIsSensor.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CircleCollider2DComponent>())
@@ -1079,7 +1079,7 @@ namespace Kargono::Panels
 		// Set Primary Camera Checkbox
 		m_CameraPrimary.m_Label = "Primary Camera";
 		m_CameraPrimary.m_Flags |= EditorUI::Checkbox_Indented;
-		m_CameraPrimary.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		m_CameraPrimary.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<ECS::CameraComponent>())
@@ -1908,7 +1908,7 @@ namespace Kargono::Panels
 		// Set Shape Add Texture Checkbox
 		m_ShapeAddTexture.m_Label = "Use Texture";
 		m_ShapeAddTexture.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ShapeAddTexture.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		m_ShapeAddTexture.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
@@ -1999,7 +1999,7 @@ namespace Kargono::Panels
 		// Set Shape Circle Option
 		m_ShapeAddCircle.m_Label = "Use Circle Shape";
 		m_ShapeAddCircle.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ShapeAddCircle.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		m_ShapeAddCircle.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
@@ -2055,7 +2055,7 @@ namespace Kargono::Panels
 		// Set Shape Add Projection Option
 		m_ShapeAddProjection.m_Label = "Use Projection Matrix";
 		m_ShapeAddProjection.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ShapeAddProjection.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		m_ShapeAddProjection.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
@@ -2066,7 +2066,7 @@ namespace Kargono::Panels
 		// Set Shape Add Entity ID Option
 		m_ShapeAddEntityID.m_Label = "Use Entity ID";
 		m_ShapeAddEntityID.m_Flags |= EditorUI::Checkbox_Indented;
-		m_ShapeAddEntityID.m_ConfirmAction = [&](EditorUI::CheckboxSpec& spec)
+		m_ShapeAddEntityID.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
 			ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 			ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
@@ -2140,7 +2140,7 @@ namespace Kargono::Panels
 			static EditorUI::EditFloatSpec newFloatSpec;
 			static EditorUI::EditVec3Spec newVector3Spec;
 			static EditorUI::EditTextSpec newStringSpec;
-			static EditorUI::CheckboxSpec newBoolSpec;
+			static EditorUI::CheckboxWidget newBoolSpec;
 			static EditorUI::EditIntegerSpec newIntegerSpec;
 
 			WrappedVarType currentType = component->m_DataTypes.at(iteration);
@@ -2195,7 +2195,7 @@ namespace Kargono::Panels
 				newBoolSpec.m_Label = currentName;
 				newBoolSpec.m_Flags |= EditorUI::Checkbox_Indented;
 				newBoolSpec.m_ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
-				newBoolSpec.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec)
+				newBoolSpec.m_ConfirmAction = [](EditorUI::CheckboxWidget& spec)
 				{
 					// Get component data pointer
 					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
@@ -2753,7 +2753,7 @@ namespace Kargono::Panels
 				0 : 1;
 			EditorUI::EditorUIService::RadioSelector(m_Rigidbody2DType);
 			m_RigidBody2DFixedRotation.m_CurrentBoolean = component.FixedRotation;
-			EditorUI::EditorUIService::Checkbox(m_RigidBody2DFixedRotation);
+			m_RigidBody2DFixedRotation.RenderCheckbox();
 
 			// Display collision script functions
 			Ref<Scripting::Script> collisionStartScript = Assets::AssetService::GetScript(component.OnCollisionStartScriptHandle);
@@ -2792,7 +2792,7 @@ namespace Kargono::Panels
 			m_BoxColliderRestitutionThreshold.m_CurrentFloat = component.RestitutionThreshold;
 			EditorUI::EditorUIService::EditFloat(m_BoxColliderRestitutionThreshold);
 			m_BoxColliderIsSensor.m_CurrentBoolean = component.IsSensor;
-			EditorUI::EditorUIService::Checkbox(m_BoxColliderIsSensor);
+			m_BoxColliderIsSensor.RenderCheckbox();
 
 		}
 		
@@ -2820,7 +2820,7 @@ namespace Kargono::Panels
 			m_CircleColliderRestitutionThreshold.m_CurrentFloat = component.RestitutionThreshold;
 			EditorUI::EditorUIService::EditFloat(m_CircleColliderRestitutionThreshold);
 			m_CircleColliderIsSensor.m_CurrentBoolean = component.IsSensor;
-			EditorUI::EditorUIService::Checkbox(m_CircleColliderIsSensor);
+			m_CircleColliderIsSensor.RenderCheckbox();
 		}
 		
 	}
@@ -2835,7 +2835,7 @@ namespace Kargono::Panels
 		if (m_CameraHeader.m_Expanded)
 		{
 			m_CameraPrimary.m_CurrentBoolean = component.Primary;
-			EditorUI::EditorUIService::Checkbox(m_CameraPrimary);
+			m_CameraPrimary.RenderCheckbox();
 			m_CameraProjection.m_SelectedOption = component.Camera.GetProjectionType() ==
 				Scenes::SceneCamera::ProjectionType::Perspective ? 0 : 1;
 			EditorUI::EditorUIService::RadioSelector(m_CameraProjection);
@@ -3002,7 +3002,7 @@ namespace Kargono::Panels
 
 	struct DrawProjectComponentFieldsVisitor
 	{
-		void operator()(EditorUI::CheckboxSpec& spec)
+		void operator()(EditorUI::CheckboxWidget& spec)
 		{
 			// Get component data pointer
 			ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
@@ -3017,7 +3017,7 @@ namespace Kargono::Panels
 			spec.m_CurrentBoolean = *(bool*)fieldDataRef;
 			
 			// Display Checkbox
-			EditorUI::EditorUIService::Checkbox(spec);
+			spec.RenderCheckbox();
 		}
 		void operator()(EditorUI::EditTextSpec& spec)
 		{
@@ -3230,7 +3230,7 @@ namespace Kargono::Panels
 		ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
 		m_ShapeAddTexture.m_CurrentBoolean = component.ShaderSpecification.TextureInput == Rendering::TextureInputType::ColorTexture ? true : false;
-		EditorUI::EditorUIService::Checkbox(m_ShapeAddTexture);
+		m_ShapeAddTexture.RenderCheckbox();
 		if (m_ShapeAddTexture.m_CurrentBoolean)
 		{
 			if (component.TextureHandle == Assets::EmptyHandle)
@@ -3258,7 +3258,7 @@ namespace Kargono::Panels
 		ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
 		m_ShapeAddCircle.m_CurrentBoolean = component.ShaderSpecification.AddCircleShape;
-		EditorUI::EditorUIService::Checkbox(m_ShapeAddCircle);
+		m_ShapeAddCircle.RenderCheckbox();
 		if (component.ShaderSpecification.AddCircleShape)
 		{
 			m_ShapeCircleThickness.m_CurrentFloat = *Rendering::Shader::GetInputLocation<float>(
@@ -3277,14 +3277,14 @@ namespace Kargono::Panels
 		ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
 		m_ShapeAddProjection.m_CurrentBoolean = component.ShaderSpecification.AddProjectionMatrix;
-		EditorUI::EditorUIService::Checkbox(m_ShapeAddProjection);
+		m_ShapeAddProjection.RenderCheckbox();
 	}
 	void SceneEditorPanel::DrawShapeComponentEntityID()
 	{
 		ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 		ECS::ShapeComponent& component = entity.GetComponent<ECS::ShapeComponent>();
 		m_ShapeAddEntityID.m_CurrentBoolean = component.ShaderSpecification.AddEntityID;
-		EditorUI::EditorUIService::Checkbox(m_ShapeAddEntityID);
+		m_ShapeAddEntityID.RenderCheckbox();
 	}
 	void SceneEditorPanel::CreateSceneEntityInTree(ECS::Entity entity, EditorUI::TreeEntry& sceneEntry)
 	{

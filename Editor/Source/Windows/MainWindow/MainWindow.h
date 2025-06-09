@@ -203,7 +203,7 @@ namespace Kargono::Windows
 		EditorUI::CollapsingHeaderSpec m_ExportProjectHeader{};
 		EditorUI::GenericPopupSpec m_ExportProjectSpec{};
 		EditorUI::ChooseDirectorySpec m_ExportProjectLocation{};
-		EditorUI::CheckboxSpec m_ExportProjectServer{};
+		EditorUI::CheckboxWidget m_ExportProjectServer{};
 
 		// Import asset widgets
 		EditorUI::GenericPopupSpec m_ImportAssetPopup{};
