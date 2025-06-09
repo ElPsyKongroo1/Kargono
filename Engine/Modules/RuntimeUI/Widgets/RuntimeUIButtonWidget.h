@@ -10,8 +10,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Constructors/Destructors
 		//============================
-		ButtonWidget()
-			: Widget()
+		ButtonWidget(UserInterface* parentInterface)
+			: Widget(parentInterface)
 		{
 			m_WidgetType = WidgetTypes::ButtonWidget;
 			m_Tag = "ButtonWidget";
@@ -21,7 +21,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Rendering Methods
 		//============================
-		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual void OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize,
+			float viewportWidth) override;
 
 	public:
 		//============================
@@ -29,6 +30,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		void SetText(const std::string& newText);
 
+	public:
 		//============================
 		// Query State
 		//============================
@@ -39,17 +41,21 @@ namespace Kargono::RuntimeUI
 
 	public:
 		//============================
+		// Getters/Setters
+		//============================
+		virtual SelectionData* GetSelectionData() override { return &m_SelectionData; }
+		virtual SingleLineTextData* GetSingleLineTextData() override { return &m_TextData; }
+
+	public:
+		//============================
 		// Re-validation Methods
 		//============================
-		void CalculateTextSize();
+		virtual void RevalidateTextDimensions() override;
 	public:
 		//============================
 		// Public Fields
 		//============================
 		SingleLineTextData m_TextData;
 		SelectionData m_SelectionData;
-	private:
-		friend class RuntimeUIService;
-		friend class Assets::UserInterfaceManager;
 	};
 }

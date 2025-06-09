@@ -75,7 +75,7 @@
 #include "Modules/Scripting/ScriptModuleBuilder.h"
 
 //-----------------Runtime-UserInterface-----------------//
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Modules/RuntimeUI/Font.h"
 
 //-----------------Editor-UserInterface-----------------//

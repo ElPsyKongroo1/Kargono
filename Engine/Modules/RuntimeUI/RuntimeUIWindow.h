@@ -2,8 +2,12 @@
 
 #include "Modules/RuntimeUI/Widgets/RuntimeUIWidget.h"
 
+#include "Kargono/Core/Window.h"
+
 namespace Kargono::RuntimeUI
 {
+	class UserInterface;
+
 	class Window
 	{
 	public:
@@ -12,6 +16,11 @@ namespace Kargono::RuntimeUI
 		//============================
 		Window()
 		{
+			KG_ERROR("Should not be default constructing windows"); // TODO: Maybe use an Init() function for default creation/injection
+		}
+		Window(UserInterface* parentUI) : i_ParentUI(parentUI)
+		{
+			KG_ASSERT(parentUI);
 
 			m_ID = Utility::STLRandomService::GetActiveRandom().GenerateRandomInteger((int32_t)0, k_InvalidWindowID - 1);
 		}
@@ -44,19 +53,20 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Supporting Methods
 		//============================
-		Math::vec3 CalculateSize(uint32_t viewportWidth, uint32_t viewportHeight);
-		Math::vec3 CalculateWorldPosition(uint32_t viewportWidth, uint32_t viewportHeight);
-		Math::vec3 CalculateScreenPosition(Math::vec2 worldPosition, uint32_t viewportWidth, uint32_t viewportHeight);
+		Math::vec3 GetSize(ViewportData viewportData);
+		Math::vec3 GetLowerCornerPosition(ViewportData viewportData);
+		Math::vec3 GetCenterPosition(Math::vec3 lowerCorner, Math::vec3 size);
+		Math::vec3 GetRelativeViewportPosition(Math::vec2 worldPosition, ViewportData viewportData);
 	public:
 		//============================
 		// Public Fields
 		//============================
 		std::string m_Tag{ "None" };
-		int32_t m_ID{ k_InvalidWindowID };
+		WindowID m_ID{ k_InvalidWindowID };
 		Math::vec3 m_ScreenPosition{};
 		Math::vec2 m_Size{ 1.0f, 1.0f };
 		Math::vec4 m_BackgroundColor{ 0.3f };
-		int32_t m_DefaultActiveWidget{ k_InvalidWidgetID };
+		WidgetID m_DefaultActiveWidget{ k_InvalidWidgetID };
 		Ref<Widget> m_DefaultActiveWidgetRef{ nullptr };
 		std::vector<Ref<Widget>> m_Widgets{};
 
@@ -65,5 +75,10 @@ namespace Kargono::RuntimeUI
 		// Internal Fields
 		//============================
 		bool m_WindowDisplayed{ false };
+	private:
+		//============================
+		// Injected Dependencies
+		//============================
+		UserInterface* i_ParentUI{ nullptr };
 	};
 }

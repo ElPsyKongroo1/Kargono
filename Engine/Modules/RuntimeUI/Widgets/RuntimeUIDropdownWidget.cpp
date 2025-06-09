@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/RuntimeUI/Widgets/RuntimeUIDropdownWidget.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 
 #include "Kargono/Core/Resolution.h"
 #include "Kargono/Projects/Project.h"
@@ -10,12 +10,11 @@
 
 namespace Kargono::RuntimeUI
 {
-	void DropDownWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	void DropDownWidget::OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
 		KG_PROFILE_FUNCTION();
 
-		RuntimeUIContext& uiContext{ RuntimeUIService::GetActiveContext() };
-		Ref<UserInterface> activeUI = uiContext.m_ActiveUI;
+		Ref<UserInterface> activeUI = uiContext->m_ActiveUI;
 
 		// Get mouse position and active viewport
 		Math::vec2 mousePosition = Input::InputService::GetViewportMousePosition();
@@ -27,19 +26,19 @@ namespace Kargono::RuntimeUI
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
 		// Check if the mouse position is within bounds of the current option
-		if (activeUI->m_HoveredWidget &&
+		if (activeUI->m_InteractState.m_HoveredWidget &&
 			mousePosition.x > widgetTranslation.x && mousePosition.x < (widgetTranslation.x + widgetSize.x) &&
 			mousePosition.y > widgetTranslation.y && mousePosition.y < (widgetTranslation.y + widgetSize.y))
 		{
-			uiContext.RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
+			RenderBackground(uiContext, activeUI->m_Config.m_HoveredColor, widgetTranslation, widgetSize);
 		}
-		else if (activeUI->m_SelectedWidget == this)
+		else if (activeUI->m_InteractState.m_SelectedWidget == this)
 		{
-			uiContext.RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
+			RenderBackground(uiContext, activeUI->m_Config.m_SelectColor, widgetTranslation, widgetSize);
 		}
 		else
 		{
-			uiContext.RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
+			RenderBackground(uiContext, m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
 		}
 
 		// Ensure that current option is within bounds
@@ -51,13 +50,13 @@ namespace Kargono::RuntimeUI
 			// Calculate text starting point
 			Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 			float textScalingFactor{ (viewportWidth * 0.15f * textData.m_TextSize) * (resolution.y / resolution.x) };
-			Math::vec3 textStartingPoint = uiContext.GetSingleLineTextStartingPosition(textData, widgetTranslation, widgetSize, textScalingFactor);
+			Math::vec3 textStartingPoint = textData.GetTextStartingPosition(widgetTranslation, widgetSize, textScalingFactor);
 
 			// Create the widget's text rendering data
 			textStartingPoint.z += 0.001f;
 
 			// Draw current option's text
-			uiContext.RenderSingleLineText(textData, textStartingPoint, textScalingFactor);
+			textData.OnRender(uiContext, textStartingPoint, textScalingFactor);
 		}
 
 		// Draw drop-down options
@@ -86,19 +85,19 @@ namespace Kargono::RuntimeUI
 				};
 
 				// Check if the mouse position is within bounds of the current option
-				if (activeUI->m_HoveredWidget &&
+				if (activeUI->m_InteractState.m_HoveredWidget &&
 					mousePosition.x > currentOptionTranslation.x &&
 					mousePosition.x < (currentOptionTranslation.x + widgetSize.x) &&
 					mousePosition.y > currentOptionTranslation.y &&
 					mousePosition.y < (currentOptionTranslation.y + widgetSize.y))
 				{
 					// Draw the background for the current option
-					uiContext.RenderBackground(activeUI->m_HoveredColor, currentOptionTranslation, widgetSize);
+					RenderBackground(uiContext, activeUI->m_Config.m_HoveredColor, currentOptionTranslation, widgetSize);
 				}
 				else
 				{
 					// Draw the background for the current option
-					uiContext.RenderBackground(m_DropDownBackground, currentOptionTranslation, widgetSize);
+					RenderBackground(uiContext, m_DropDownBackground, currentOptionTranslation, widgetSize);
 				}
 
 
@@ -109,13 +108,13 @@ namespace Kargono::RuntimeUI
 				// Calculate text starting point
 				Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 				float textScalingFactor{ (viewportWidth * 0.15f * textData.m_TextSize) * (resolution.y / resolution.x) };
-				Math::vec3 textStartingPoint = uiContext.GetSingleLineTextStartingPosition(textData, currentOptionTranslation, widgetSize, textScalingFactor);
+				Math::vec3 textStartingPoint = textData.GetTextStartingPosition(currentOptionTranslation, widgetSize, textScalingFactor);
 
 				// Create the widget's text rendering data
 				textStartingPoint.z += 0.001f;
 
 				// Draw current option's text
-				uiContext.RenderSingleLineText(textData, textStartingPoint, textScalingFactor);
+				textData.OnRender(uiContext, textStartingPoint, textScalingFactor);
 
 				visibleDropDownOffset++;
 			}
@@ -124,14 +123,12 @@ namespace Kargono::RuntimeUI
 
 	}
 
-	void DropDownWidget::CalculateTextSize()
+	void DropDownWidget::RevalidateTextDimensions()
 	{
-		RuntimeUIContext& uiContext{ RuntimeUIService::GetActiveContext() };
-
 		// Calculate text size for all the current options
 		for (SingleLineTextData& textData : m_DropDownOptions)
 		{
-			uiContext.CalculateSingleLineText(textData);
+			textData.RevalidateTextDimensions(i_ParentUI);
 		}
 	}
 }

@@ -904,7 +904,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnKeyPressedRuntime(Events::KeyPressedEvent event)
 	{
 		KG_PROFILE_FUNCTION();
-		bool handled = RuntimeUI::RuntimeUIService::GetActiveContext().OnKeyPressedEvent(event);
+		bool handled = RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->OnKeyPressedEvent(event);
 
 		if (!handled)
 		{
@@ -916,7 +916,7 @@ namespace Kargono::Windows
 
 	bool MainWindow::OnKeyTypedRuntime(Events::KeyTypedEvent event)
 	{
-		RuntimeUI::RuntimeUIService::GetActiveContext().OnKeyTypedEvent(event);
+		RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->OnKeyTypedEvent(event);
 		return false;
 	}
 
@@ -1034,7 +1034,7 @@ namespace Kargono::Windows
 	{
 		if (RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI())
 		{
-			RuntimeUI::RuntimeUIService::GetActiveContext().OnMouseButtonReleasedEvent(event);
+			RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->OnMouseButtonReleasedEvent(event);
 		}
 		return false;
 	}

@@ -409,7 +409,7 @@ namespace Kargono::Scenes
 			body->SetTransform({ newTranslation.x, newTranslation.y }, body->GetAngle());
 		}
 	}
-	const std::string& SceneService::TagComponentGetTag(UUID entityID)
+	std::string_view SceneService::TagComponentGetTag(UUID entityID)
 	{
 		KG_ASSERT(s_ActiveScene);
 		ECS::Entity entity = s_ActiveScene->GetEntityByUUID(entityID);
@@ -480,7 +480,7 @@ namespace Kargono::Scenes
 		return fieldDataRef;
 	}
 
-	Assets::AssetHandle SceneService::FindEntityHandleByName(const std::string& name)
+	Assets::AssetHandle SceneService::FindEntityHandleByName(std::string_view name)
 	{
 		for (auto& [handle, enttID] : s_ActiveScene->m_EntityRegistry.m_EntityMap)
 		{
@@ -498,9 +498,10 @@ namespace Kargono::Scenes
 		return Assets::EmptyHandle;
 	}
 
-	bool SceneService::CheckActiveHasComponent(UUID entityID, const std::string& componentName)
+	bool SceneService::CheckActiveHasComponent(UUID entityID, std::string_view componentName)
 	{
-		if (!Utility::s_EntityHasComponentFunc.contains(componentName))
+		std::string componentNameString{ componentName }; // TODO: UGHHHH, extra string copy
+		if (!Utility::s_EntityHasComponentFunc.contains(componentNameString))
 		{
 			KG_ERROR("Invalid Component name provided.")
 				return false;
@@ -508,7 +509,7 @@ namespace Kargono::Scenes
 		KG_ASSERT(s_ActiveScene);
 		ECS::Entity activeEntity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(activeEntity);
-		return Utility::s_EntityHasComponentFunc.at(componentName)(activeEntity);
+		return Utility::s_EntityHasComponentFunc.at(componentNameString)(activeEntity);
 	}
 	bool SceneService::IsSceneActive(UUID sceneID)
 	{

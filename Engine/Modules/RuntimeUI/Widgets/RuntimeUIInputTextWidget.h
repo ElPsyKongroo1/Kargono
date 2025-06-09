@@ -10,8 +10,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Constructors/Destructors
 		//============================
-		InputTextWidget()
-			: Widget()
+		InputTextWidget(UserInterface* parentInterface)
+			: Widget(parentInterface)
 		{
 			m_WidgetType = WidgetTypes::InputTextWidget;
 			m_Tag = "InputTextWidget";
@@ -26,6 +26,8 @@ namespace Kargono::RuntimeUI
 		{
 			return m_SelectionData.m_Selectable;
 		}
+
+	public:
 		//============================
 		// Modify State
 		//============================
@@ -33,14 +35,21 @@ namespace Kargono::RuntimeUI
 
 	public:
 		//============================
-		// Re-validation Methods
+		// Revalidation Methods
 		//============================
-		void CalculateTextSize();
+		virtual void RevalidateTextDimensions() override;
 	public:
 		//============================
 		// Rendering Methods
 		//============================
-		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual void OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+
+	public:
+		//============================
+		// Getters/Setters
+		//============================
+		virtual SelectionData* GetSelectionData() override { return &m_SelectionData; }
+		virtual SingleLineTextData* GetSingleLineTextData() override { return &m_TextData; }
 
 	public:
 		//============================

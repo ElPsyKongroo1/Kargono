@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/RuntimeUI/Widgets/RuntimeUITextWidget.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 
 #include "Kargono/Core/Resolution.h"
 #include "Kargono/Projects/Project.h"
@@ -9,11 +9,9 @@
 
 namespace Kargono::RuntimeUI
 {
-	void TextWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	void TextWidget::OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
 		KG_PROFILE_FUNCTION();
-
-		RuntimeUIContext& uiContext{ RuntimeUIService::GetActiveContext() };
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
@@ -25,7 +23,7 @@ namespace Kargono::RuntimeUI
 		widgetTranslation.z += 0.001f;
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 		float textSize{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
-		float yAdvance = uiContext.m_ActiveUI->m_Font->m_LineHeight;
+		float yAdvance = uiContext->m_ActiveUI->m_Config.m_Font->m_LineHeight;
 		float allLineAdvanceHeight{ 0.0f };
 		// Calculate entire text's height
 		if (m_TextData.m_CachedTextDimensions.m_LineSize.size() > 0)
@@ -76,17 +74,15 @@ namespace Kargono::RuntimeUI
 
 			// Render the single line of text
 			std::string_view outputText{ m_TextData.m_Text.data() + currentBreaks.x, (size_t)(currentBreaks.y - currentBreaks.x) };
-			uiContext.m_ActiveUI->m_Font->OnRenderSingleLineText(
+			uiContext->m_ActiveUI->m_Config.m_Font->OnRenderSingleLineText(
 				outputText,
 				finalTranslation, m_TextData.m_TextColor, textSize);
 		}
 
 	}
 
-	void TextWidget::CalculateTextSize()
+	void TextWidget::RevalidateTextDimensions()
 	{
-		RuntimeUIContext& uiContext{ RuntimeUIService::GetActiveContext() };
-
 		// Get the resolution of the screen and the viewport
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 		ViewportData& viewportData = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
@@ -95,11 +91,11 @@ namespace Kargono::RuntimeUI
 		float textSize{ (viewportData.m_Width * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
 
 		// Get parent transform
-		BoundingBoxTransform parentTransform = uiContext.GetParentDimensionsFromID(m_ID, viewportData.m_Width, viewportData.m_Height);
+		Bounds parentTransform = i_ParentUI->m_WindowsState.GetParentBoundsFromID(m_ID, viewportData);
 
 		// Get widget width
 		Math::vec3 widgetSize = CalculateWidgetSize(parentTransform.m_Size);
-		uiContext.CalculateMultiLineText(m_TextData, widgetSize, textSize);
+		m_TextData.RevalidateTextDimensions(i_ParentUI, widgetSize, textSize);
 	}
 
 	void TextWidget::SetText(const std::string& newText)
@@ -108,6 +104,6 @@ namespace Kargono::RuntimeUI
 		m_TextData.m_Text = newText;
 
 		// Calculate the new text size
-		CalculateTextSize();
+		RevalidateTextDimensions();
 	}
 }

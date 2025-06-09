@@ -3,7 +3,7 @@
 #include "Modules/Assets/AssetService.h"
 #include "Modules/Assets/UserInterfaceManager.h"
 
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 
 namespace Kargono::Assets
 {
@@ -340,20 +340,20 @@ namespace Kargono::Assets
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
 		// Select Color
-		out << YAML::Key << "SelectColor" << YAML::Value << assetReference->m_SelectColor;
-		out << YAML::Key << "HoveredColor" << YAML::Value << assetReference->m_HoveredColor;
-		out << YAML::Key << "EditingColor" << YAML::Value << assetReference->m_EditingColor;
+		out << YAML::Key << "SelectColor" << YAML::Value << assetReference->m_Config.m_SelectColor;
+		out << YAML::Key << "HoveredColor" << YAML::Value << assetReference->m_Config.m_HoveredColor;
+		out << YAML::Key << "EditingColor" << YAML::Value << assetReference->m_Config.m_EditingColor;
 
 		// Function Pointers
-		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << (uint64_t)assetReference->m_FunctionPointers.m_OnMoveHandle;
-		out << YAML::Key << "FunctionPointerOnHover" << YAML::Value << (uint64_t)assetReference->m_FunctionPointers.m_OnHoverHandle;
+		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << (uint64_t)assetReference->m_Config.m_FunctionPointers.m_OnMoveHandle;
+		out << YAML::Key << "FunctionPointerOnHover" << YAML::Value << (uint64_t)assetReference->m_Config.m_FunctionPointers.m_OnHoverHandle;
 		// Font
-		out << YAML::Key << "Font" << YAML::Value << static_cast<uint64_t>(assetReference->m_FontHandle);
+		out << YAML::Key << "Font" << YAML::Value << static_cast<uint64_t>(assetReference->m_Config.m_FontHandle);
 		// Windows
 		out << YAML::Key << "Windows" << YAML::Value;
 		out << YAML::BeginSeq; // Start of Windows Seq
 
-		for (RuntimeUI::Window& window : assetReference->m_Windows)
+		for (RuntimeUI::Window& window : assetReference->m_WindowsState.m_Windows)
 		{
 			out << YAML::BeginMap; // Start Window Map
 
@@ -387,20 +387,20 @@ namespace Kargono::Assets
 
 	static void DeserializeMultiLineTextData(RuntimeUI::MultiLineTextData& textData, YAML::Node& node);
 	static void DeserializeSingleLineTextData(RuntimeUI::SingleLineTextData& textData, const YAML::Node& node);
-	static void DeserializeContainerData(RuntimeUI::ContainerData& containerData, const YAML::Node& node);
+	static void DeserializeContainerData(RuntimeUI::ContainerData& containerData, const YAML::Node& node, RuntimeUI::UserInterface* ui);
 	static void DeserializeSelectionData(RuntimeUI::SelectionData& selectionData, YAML::Node& node);
 	static void DeserializeImageData(RuntimeUI::ImageData& imageData, YAML::Node& node, const std::string& title);
 
-	static Ref<RuntimeUI::Widget> DeserializeTextWidget(const YAML::Node& node);
-	static Ref<RuntimeUI::Widget> DeserializeButtonWidget(const YAML::Node& node);
-	static Ref<RuntimeUI::Widget> DeserializeImageWidget(const YAML::Node& node);
-	static Ref<RuntimeUI::Widget> DeserializeImageButtonWidget(const YAML::Node& node);
-	static Ref<RuntimeUI::Widget> DeserializeCheckboxWidget(const YAML::Node& node);
-	static Ref<RuntimeUI::Widget> DeserializeContainerWidget(const YAML::Node& node);
-	static Ref<RuntimeUI::Widget> DeserializeInputTextWidget(const YAML::Node& node);
-	static Ref<RuntimeUI::Widget> DeserializeSliderWidget(const YAML::Node& node);
-	static Ref<RuntimeUI::Widget> DeserializeDropDownWidget(const YAML::Node& node);
-	static Ref<RuntimeUI::Widget> DeserializeWidget(const YAML::Node& node);
+	static Ref<RuntimeUI::Widget> DeserializeTextWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui);
+	static Ref<RuntimeUI::Widget> DeserializeButtonWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui);
+	static Ref<RuntimeUI::Widget> DeserializeImageWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui);
+	static Ref<RuntimeUI::Widget> DeserializeImageButtonWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui);
+	static Ref<RuntimeUI::Widget> DeserializeCheckboxWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui);
+	static Ref<RuntimeUI::Widget> DeserializeContainerWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui);
+	static Ref<RuntimeUI::Widget> DeserializeInputTextWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui);
+	static Ref<RuntimeUI::Widget> DeserializeSliderWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui);
+	static Ref<RuntimeUI::Widget> DeserializeDropDownWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui);
+	static Ref<RuntimeUI::Widget> DeserializeWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui);
 
 	void DeserializeMultiLineTextData(RuntimeUI::MultiLineTextData& textData, YAML::Node& node)
 	{
@@ -419,7 +419,7 @@ namespace Kargono::Assets
 		textData.m_TextAlignment = Utility::StringToConstraint(node["TextAlignment"].as<std::string>());
 	}
 
-	void DeserializeContainerData(RuntimeUI::ContainerData& containerData, const YAML::Node& node)
+	void DeserializeContainerData(RuntimeUI::ContainerData& containerData, const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
 		// Deserialize background color
 		containerData.m_BackgroundColor = node["BackgroundColor"].as<Math::vec4>();
@@ -428,7 +428,7 @@ namespace Kargono::Assets
 		YAML::Node containerWidgetNodes = node["ContainerWidgets"];
 		for (YAML::Node containerWidgetNode : containerWidgetNodes)
 		{
-			Ref<RuntimeUI::Widget> newWidget = DeserializeWidget(containerWidgetNode);
+			Ref<RuntimeUI::Widget> newWidget = DeserializeWidget(containerWidgetNode, ui);
 			containerData.m_ContainedWidgets.push_back(newWidget);
 		}
 	}
@@ -476,9 +476,9 @@ namespace Kargono::Assets
 		imageData.m_FixedAspectRatio = node[(title + "FixedAspectRatio")].as<bool>();
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeTextWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeTextWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{	
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::TextWidget>();
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::TextWidget>(ui);
 		YAML::Node specificWidget = node["TextWidget"];
 		widget->m_WidgetType = RuntimeUI::WidgetTypes::TextWidget;
 		RuntimeUI::TextWidget* textWidget = static_cast<RuntimeUI::TextWidget*>(widget.get());
@@ -487,9 +487,9 @@ namespace Kargono::Assets
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeButtonWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeButtonWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::ButtonWidget>();
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::ButtonWidget>(ui);
 		YAML::Node specificWidget = node["ButtonWidget"];
 		widget->m_WidgetType = RuntimeUI::WidgetTypes::ButtonWidget;
 		RuntimeUI::ButtonWidget* buttonWidget = static_cast<RuntimeUI::ButtonWidget*>(widget.get());
@@ -500,9 +500,9 @@ namespace Kargono::Assets
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeImageWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeImageWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::ImageWidget>();
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::ImageWidget>(ui);
 		YAML::Node specificWidget = node["ImageWidget"];
 		widget->m_WidgetType = RuntimeUI::WidgetTypes::ImageWidget;
 		RuntimeUI::ImageWidget* imageWidget = static_cast<RuntimeUI::ImageWidget*>(widget.get());
@@ -511,9 +511,9 @@ namespace Kargono::Assets
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeImageButtonWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeImageButtonWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::ImageButtonWidget>();
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::ImageButtonWidget>(ui);
 		YAML::Node specificWidget = node["ImageButtonWidget"];
 		widget->m_WidgetType = RuntimeUI::WidgetTypes::ImageButtonWidget;
 		RuntimeUI::ImageButtonWidget* imageButtonWidget = static_cast<RuntimeUI::ImageButtonWidget*>(widget.get());
@@ -524,9 +524,9 @@ namespace Kargono::Assets
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeCheckboxWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeCheckboxWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::CheckboxWidget>();
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::CheckboxWidget>(ui);
 		widget->m_WidgetType = RuntimeUI::WidgetTypes::CheckboxWidget;
 		YAML::Node specificWidget = node["CheckboxWidget"];
 		RuntimeUI::CheckboxWidget* checkboxWidget = static_cast<RuntimeUI::CheckboxWidget*>(widget.get());
@@ -541,20 +541,20 @@ namespace Kargono::Assets
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeContainerWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeContainerWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::ContainerWidget>();
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::ContainerWidget>(ui);
 		YAML::Node specificWidget = node["ContainerWidget"];
 		widget->m_WidgetType = RuntimeUI::WidgetTypes::ContainerWidget;
 		RuntimeUI::ContainerWidget* containerWidget = static_cast<RuntimeUI::ContainerWidget*>(widget.get());
 		// Get selection data
-		DeserializeContainerData(containerWidget->m_ContainerData, specificWidget);
+		DeserializeContainerData(containerWidget->m_ContainerData, specificWidget, ui);
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeHorizontalContainerWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeHorizontalContainerWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::HorizontalContainerWidget>();
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::HorizontalContainerWidget>(ui);
 		YAML::Node specificWidget = node["HorizontalContainerWidget"];
 		widget->m_WidgetType = RuntimeUI::WidgetTypes::HorizontalContainerWidget;
 		RuntimeUI::HorizontalContainerWidget* HorizontalContainerWidget = static_cast<RuntimeUI::HorizontalContainerWidget*>(widget.get());
@@ -562,13 +562,13 @@ namespace Kargono::Assets
 		HorizontalContainerWidget->m_ColumnWidth = specificWidget["ColumnWidth"].as<float>();
 		HorizontalContainerWidget->m_ColumnSpacing = specificWidget["ColumnSpacing"].as<float>();
 		// Get container data
-		DeserializeContainerData(HorizontalContainerWidget->m_ContainerData, specificWidget);
+		DeserializeContainerData(HorizontalContainerWidget->m_ContainerData, specificWidget, ui);
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeVerticalContainerWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeVerticalContainerWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::VerticalContainerWidget>();
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::VerticalContainerWidget>(ui);
 		YAML::Node specificWidget = node["VerticalContainerWidget"];
 		widget->m_WidgetType = RuntimeUI::WidgetTypes::VerticalContainerWidget;
 		RuntimeUI::VerticalContainerWidget* verticalContainerWidget = static_cast<RuntimeUI::VerticalContainerWidget*>(widget.get());
@@ -576,13 +576,13 @@ namespace Kargono::Assets
 		verticalContainerWidget->m_RowHeight = specificWidget["RowHeight"].as<float>();
 		verticalContainerWidget->m_RowSpacing = specificWidget["RowSpacing"].as<float>();
 		// Get container data
-		DeserializeContainerData(verticalContainerWidget->m_ContainerData, specificWidget);
+		DeserializeContainerData(verticalContainerWidget->m_ContainerData, specificWidget, ui);
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeInputTextWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeInputTextWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::InputTextWidget>();
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::InputTextWidget>(ui);
 		YAML::Node specificWidget = node["InputTextWidget"];
 		widget->m_WidgetType = RuntimeUI::WidgetTypes::InputTextWidget;
 		RuntimeUI::InputTextWidget* inputTextWidget = static_cast<RuntimeUI::InputTextWidget*>(widget.get());
@@ -609,9 +609,9 @@ namespace Kargono::Assets
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeSliderWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeSliderWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::SliderWidget>();
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::SliderWidget>(ui);
 		YAML::Node specificWidget = node["SliderWidget"];
 		widget->m_WidgetType = RuntimeUI::WidgetTypes::SliderWidget;
 		RuntimeUI::SliderWidget* sliderWidget = static_cast<RuntimeUI::SliderWidget*>(widget.get());
@@ -642,9 +642,9 @@ namespace Kargono::Assets
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeDropDownWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeDropDownWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::DropDownWidget>();
+		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::DropDownWidget>(ui);
 		YAML::Node specificWidget = node["DropDownWidget"];
 		widget->m_WidgetType = RuntimeUI::WidgetTypes::DropDownWidget;
 		RuntimeUI::DropDownWidget* dropDownWidget = static_cast<RuntimeUI::DropDownWidget*>(widget.get());
@@ -681,7 +681,7 @@ namespace Kargono::Assets
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeWidget(const YAML::Node& node)
+	Ref<RuntimeUI::Widget> DeserializeWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
 		Ref<RuntimeUI::Widget> widget;
 		RuntimeUI::WidgetTypes widgetType = Utility::StringToWidgetType(node["WidgetType"].as<std::string>());
@@ -689,59 +689,59 @@ namespace Kargono::Assets
 		{
 		case RuntimeUI::WidgetTypes::TextWidget:
 		{
-			widget = DeserializeTextWidget(node);
+			widget = DeserializeTextWidget(node, ui);
 			break;
 		}
 		case RuntimeUI::WidgetTypes::ButtonWidget:
 		{
-			widget = DeserializeButtonWidget(node);
+			widget = DeserializeButtonWidget(node, ui);
 			break;
 		}
 		case RuntimeUI::WidgetTypes::ImageWidget:
 		{
-			widget = DeserializeImageWidget(node);
+			widget = DeserializeImageWidget(node, ui);
 			break;
 		}
 		case RuntimeUI::WidgetTypes::ImageButtonWidget:
 		{
-			widget = DeserializeImageButtonWidget(node);
+			widget = DeserializeImageButtonWidget(node, ui);
 			break;
 		}
 		case RuntimeUI::WidgetTypes::CheckboxWidget:
 		{
-			widget = DeserializeCheckboxWidget(node);
+			widget = DeserializeCheckboxWidget(node, ui);
 			break;
 		}
 		case RuntimeUI::WidgetTypes::ContainerWidget:
 		{
-			widget = DeserializeContainerWidget(node);
+			widget = DeserializeContainerWidget(node, ui);
 			break;
 		}
 		case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
 		{
-			widget = DeserializeHorizontalContainerWidget(node);
+			widget = DeserializeHorizontalContainerWidget(node, ui);
 			break;
 		}
 		case RuntimeUI::WidgetTypes::VerticalContainerWidget:
 		{
-			widget = DeserializeVerticalContainerWidget(node);
+			widget = DeserializeVerticalContainerWidget(node, ui);
 			break;
 		}
 		case RuntimeUI::WidgetTypes::InputTextWidget:
 		{
-			widget = DeserializeInputTextWidget(node);
+			widget = DeserializeInputTextWidget(node, ui);
 			break;
 		}
 
 		case RuntimeUI::WidgetTypes::SliderWidget:
 		{
-			widget = DeserializeSliderWidget(node);
+			widget = DeserializeSliderWidget(node, ui);
 			break;
 		}
 
 		case RuntimeUI::WidgetTypes::DropDownWidget:
 		{
-			widget = DeserializeDropDownWidget(node);
+			widget = DeserializeDropDownWidget(node, ui);
 			break;
 		}
 		default:
@@ -785,52 +785,52 @@ namespace Kargono::Assets
 		}
 
 		// Get SelectColor
-		newUserInterface->m_SelectColor = data["SelectColor"].as<Math::vec4>();
-		newUserInterface->m_HoveredColor = data["HoveredColor"].as<Math::vec4>();
-		newUserInterface->m_EditingColor = data["EditingColor"].as<Math::vec4>();
+		newUserInterface->m_Config.m_SelectColor = data["SelectColor"].as<Math::vec4>();
+		newUserInterface->m_Config.m_HoveredColor = data["HoveredColor"].as<Math::vec4>();
+		newUserInterface->m_Config.m_EditingColor = data["EditingColor"].as<Math::vec4>();
 		// Function Pointers
-		newUserInterface->m_FunctionPointers.m_OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
-		if (newUserInterface->m_FunctionPointers.m_OnMoveHandle == Assets::EmptyHandle)
+		newUserInterface->m_Config.m_FunctionPointers.m_OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
+		if (newUserInterface->m_Config.m_FunctionPointers.m_OnMoveHandle == Assets::EmptyHandle)
 		{
-			newUserInterface->m_FunctionPointers.m_OnMove = nullptr;
+			newUserInterface->m_Config.m_FunctionPointers.m_OnMove = nullptr;
 		}
 		else
 		{
-			Ref<Scripting::Script> onMoveScript = AssetService::GetScript(newUserInterface->m_FunctionPointers.m_OnMoveHandle);
+			Ref<Scripting::Script> onMoveScript = AssetService::GetScript(newUserInterface->m_Config.m_FunctionPointers.m_OnMoveHandle);
 			if (!onMoveScript)
 			{
 				KG_WARN("Unable to locate OnMove Script!");
 				return nullptr;
 			}
-			newUserInterface->m_FunctionPointers.m_OnMove = onMoveScript;
+			newUserInterface->m_Config.m_FunctionPointers.m_OnMove = onMoveScript;
 		}
-		newUserInterface->m_FunctionPointers.m_OnHoverHandle = data["FunctionPointerOnHover"].as<uint64_t>();
-		if (newUserInterface->m_FunctionPointers.m_OnHoverHandle == Assets::EmptyHandle)
+		newUserInterface->m_Config.m_FunctionPointers.m_OnHoverHandle = data["FunctionPointerOnHover"].as<uint64_t>();
+		if (newUserInterface->m_Config.m_FunctionPointers.m_OnHoverHandle == Assets::EmptyHandle)
 		{
-			newUserInterface->m_FunctionPointers.m_OnHover = nullptr;
+			newUserInterface->m_Config.m_FunctionPointers.m_OnHover = nullptr;
 		}
 		else
 		{
-			Ref<Scripting::Script> onHoverScript = AssetService::GetScript(newUserInterface->m_FunctionPointers.m_OnHoverHandle);
+			Ref<Scripting::Script> onHoverScript = AssetService::GetScript(newUserInterface->m_Config.m_FunctionPointers.m_OnHoverHandle);
 			if (!onHoverScript)
 			{
 				KG_WARN("Unable to locate OnHover Script!");
 				return nullptr;
 			}
-			newUserInterface->m_FunctionPointers.m_OnHover = onHoverScript;
+			newUserInterface->m_Config.m_FunctionPointers.m_OnHover = onHoverScript;
 		}
 
 		// Get Font
-		newUserInterface->m_FontHandle = data["Font"].as<uint64_t>();
-		newUserInterface->m_Font = AssetService::GetFont(newUserInterface->m_FontHandle);
+		newUserInterface->m_Config.m_FontHandle = data["Font"].as<uint64_t>();
+		newUserInterface->m_Config.m_Font = AssetService::GetFont(newUserInterface->m_Config.m_FontHandle);
 		// Get Windows
 		YAML::Node windows = data["Windows"];
 		if (windows)
 		{
-			std::vector<RuntimeUI::Window>& newWindowsList = newUserInterface->m_Windows;
+			std::vector<RuntimeUI::Window>& newWindowsList = newUserInterface->m_WindowsState.m_Windows;
 			for (YAML::detail::iterator_value window : windows)
 			{
-				RuntimeUI::Window newWindow{};
+				RuntimeUI::Window newWindow{newUserInterface.get()};
 				newWindow.m_Tag = window["Tag"].as<std::string>();
 				newWindow.m_ID = window["ID"].as<int32_t>();
 				newWindow.m_ScreenPosition = window["ScreenPosition"].as<Math::vec3>();
@@ -845,7 +845,7 @@ namespace Kargono::Assets
 					std::vector<Ref<RuntimeUI::Widget>>& newWidgetsList = newWindow.m_Widgets;
 					for (const YAML::Node& widgetNode : widgetNodes)
 					{
-						Ref<RuntimeUI::Widget> newWidget = DeserializeWidget(widgetNode);
+						Ref<RuntimeUI::Widget> newWidget = DeserializeWidget(widgetNode, newUserInterface.get());
 						newWidgetsList.push_back(newWidget);
 					}
 				}
@@ -895,7 +895,7 @@ namespace Kargono::Assets
 			}
 		}
 
-		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetActiveContext().GetContainerDataFromWidget(widgetRef.get());
+		RuntimeUI::ContainerData* containerData = widgetRef->GetContainerData();
 		if (containerData)
 		{
 			for (Ref<RuntimeUI::Widget> currentWidget : containerData->m_ContainedWidgets)
@@ -909,7 +909,7 @@ namespace Kargono::Assets
 		}
 
 		// Check if this widget has a selection data
-		RuntimeUI::SelectionData* selectionData = RuntimeUI::RuntimeUIService::GetActiveContext().GetSelectionDataFromWidget(widgetRef.get());
+		RuntimeUI::SelectionData* selectionData = widgetRef->GetSelectionData();
 		if (!selectionData)
 		{
 			return uiModified;
@@ -930,21 +930,21 @@ namespace Kargono::Assets
 	{
 		// Handle UI level function pointers
 		bool uiModified{ false };
-		if (userInterfaceRef->m_FunctionPointers.m_OnMoveHandle == scriptHandle)
+		if (userInterfaceRef->m_Config.m_FunctionPointers.m_OnMoveHandle == scriptHandle)
 		{
-			userInterfaceRef->m_FunctionPointers.m_OnMoveHandle = Assets::EmptyHandle;
-			userInterfaceRef->m_FunctionPointers.m_OnMove = nullptr;
+			userInterfaceRef->m_Config.m_FunctionPointers.m_OnMoveHandle = Assets::EmptyHandle;
+			userInterfaceRef->m_Config.m_FunctionPointers.m_OnMove = nullptr;
 			uiModified = true;
 		}
-		if (userInterfaceRef->m_FunctionPointers.m_OnHoverHandle == scriptHandle)
+		if (userInterfaceRef->m_Config.m_FunctionPointers.m_OnHoverHandle == scriptHandle)
 		{
-			userInterfaceRef->m_FunctionPointers.m_OnHoverHandle = Assets::EmptyHandle;
-			userInterfaceRef->m_FunctionPointers.m_OnHover = nullptr;
+			userInterfaceRef->m_Config.m_FunctionPointers.m_OnHoverHandle = Assets::EmptyHandle;
+			userInterfaceRef->m_Config.m_FunctionPointers.m_OnHover = nullptr;
 			uiModified = true;
 		}
 
 		// Handle all widgets in all windows
-		for (RuntimeUI::Window& currentWindow : userInterfaceRef->m_Windows)
+		for (RuntimeUI::Window& currentWindow : userInterfaceRef->m_WindowsState.m_Windows)
 		{
 			for (Ref<RuntimeUI::Widget> widgetRef : currentWindow.m_Widgets)
 			{
@@ -1008,7 +1008,7 @@ namespace Kargono::Assets
 			}
 		}
 
-		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetActiveContext().GetContainerDataFromWidget(widgetRef.get());
+		RuntimeUI::ContainerData* containerData = widgetRef->GetContainerData();
 		if (containerData)
 		{
 			for (Ref<RuntimeUI::Widget> currentWidget : containerData->m_ContainedWidgets)
@@ -1029,7 +1029,7 @@ namespace Kargono::Assets
 		bool uiModified{ false };
 
 		// Handle all widgets in all windows
-		for (RuntimeUI::Window& currentWindow : userInterfaceRef->m_Windows)
+		for (RuntimeUI::Window& currentWindow : userInterfaceRef->m_WindowsState.m_Windows)
 		{
 			for (Ref<RuntimeUI::Widget> widgetRef : currentWindow.m_Widgets)
 			{

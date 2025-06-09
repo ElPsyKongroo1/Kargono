@@ -10,13 +10,22 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Constructors/Destructors
 		//============================
-		SliderWidget()
-			: Widget()
+		SliderWidget(UserInterface* parentInterface)
+			: Widget(parentInterface)
 		{
 			m_WidgetType = WidgetTypes::SliderWidget;
 			m_Tag = "SliderWidget";
 		}
 		virtual ~SliderWidget() override = default;
+	public:
+		//============================
+		// Rendering Methods
+		//============================
+		virtual void OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+	private:
+		// Rendering helper functions
+		void RenderSliderLine(RuntimeUIContext* uiContext, const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size);
+		void RenderSlider(RuntimeUIContext* uiContext, const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size);
 
 	public:
 		//============================
@@ -26,13 +35,11 @@ namespace Kargono::RuntimeUI
 		{
 			return m_SelectionData.m_Selectable;
 		}
-
 	public:
 		//============================
-		// Rendering Methods
+		// Getters/Setters
 		//============================
-		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
-
+		virtual SelectionData* GetSelectionData() override { return &m_SelectionData; }
 	public:
 		//============================
 		// Public Fields

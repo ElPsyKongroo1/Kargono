@@ -88,7 +88,7 @@ namespace Kargono
 		AI::AIService::GetActiveContext().Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(4.0f);
-		RuntimeUI::FontService::Init();
+		RuntimeUI::FontService::GetActiveContext().Init();
 		RuntimeUI::RuntimeUIService::CreateRuntimeUIContext();
 		RuntimeUI::RuntimeUIService::GetActiveContext().Init();
 		Particles::ParticleService::CreateParticleContext();
@@ -124,7 +124,7 @@ namespace Kargono
 		AI::AIService::GetActiveContext().Terminate();
 		AI::AIService::RemoveAIContext();
 		Assets::AssetService::ClearAll();
-		RuntimeUI::FontService::Terminate();
+		RuntimeUI::FontService::GetActiveContext().Terminate();
 		Scenes::SceneService::Terminate();
 		Rendering::RenderingService::Shutdown();
 
@@ -184,11 +184,10 @@ namespace Kargono
 			Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
-			RuntimeUI::RuntimeUIService::GetActiveContext().OnUpdate(ts);
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->OnUpdate(ts);
 
 			// Draw runtimeUI
-			RuntimeUI::RuntimeUIService::GetActiveContext().OnRender(engineWindow.GetWidth(),
-				engineWindow.GetHeight());
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->OnRenderViewport(engineWindow.GetActiveViewport()); // TODO: Maybe get width and height
 
 			// Handle mouse picking for the UI
 			HandleUIMouseHovering();
@@ -394,14 +393,14 @@ namespace Kargono
 
 	bool RuntimeApp::OnKeyTyped(Events::KeyTypedEvent event)
 	{
-		RuntimeUI::RuntimeUIService::GetActiveContext().OnKeyTypedEvent(event);
+		RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->OnKeyTypedEvent(event);
 		return false;
 	}
 
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
 		KG_PROFILE_FUNCTION();
-		bool handled = RuntimeUI::RuntimeUIService::GetActiveContext().OnKeyPressedEvent(event);
+		bool handled = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->OnKeyPressedEvent(event);
 
 		if (!handled)
 		{
@@ -421,12 +420,12 @@ namespace Kargono
 		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext()};
 		Assets::AssetHandle currentUI = uiContext.GetActiveUIHandle();
 
-		RuntimeUI::IDType idType = uiContext.CheckIDType(m_HoveredWidgetID);
+		RuntimeUI::IDType idType = uiContext.m_ActiveUI->m_WindowsState.CheckIDType(m_HoveredWidgetID);
 
 		// Handle on press for the active user interface if applicable
 		if (idType == RuntimeUI::IDType::Widget)
 		{
-			uiContext.OnPressByIndex({ uiContext.GetActiveUIHandle(),
+			uiContext.m_ActiveUI->OnPressByIndex({ uiContext.GetActiveUIHandle(),
 				m_HoveredWidgetID });
 
 			// Handle case where active UI is changed
@@ -436,7 +435,7 @@ namespace Kargono
 			}
 
 			// Handle start editing
-			uiContext.SetEditingWidgetByIndex({ uiContext.GetActiveUIHandle(),
+			uiContext.m_ActiveUI->GetInteractState().SetEditingWidgetByHandle({ uiContext.GetActiveUIHandle(),
 				m_HoveredWidgetID });
 
 			// Handle specific widget on click's
@@ -445,7 +444,7 @@ namespace Kargono
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
 			Events::MouseButtonPressedEvent mouseEvent{ Mouse::ButtonLeft };
-			uiContext.OnMouseButtonPressedEvent(mouseEvent);
+			uiContext.m_ActiveUI->OnMouseButtonPressedEvent(mouseEvent);
 
 			// Handle case where active UI is changed
 			if (currentUI != uiContext.GetActiveUIHandle())
@@ -462,7 +461,7 @@ namespace Kargono
 
 		if (uiContext.GetActiveUI())
 		{
-			uiContext.OnMouseButtonReleasedEvent(event);
+			uiContext.m_ActiveUI->OnMouseButtonReleasedEvent(event);
 		}
 		return false;
 	}
@@ -625,17 +624,17 @@ namespace Kargono
 		// Extract mouse picking information from the active framebuffer
 		m_HoveredWidgetID = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
 
-		RuntimeUI::IDType idType = uiContext.CheckIDType(m_HoveredWidgetID);
+		RuntimeUI::IDType idType = uiContext.m_ActiveUI->m_WindowsState.CheckIDType(m_HoveredWidgetID);
 
 		// Exit early if no valid widget is available
 		if (idType == RuntimeUI::IDType::None || idType == RuntimeUI::IDType::Window)
 		{
-			uiContext.ClearHoveredWidget();
+			uiContext.m_ActiveUI->GetInteractState().ClearHoveredWidget();
 			return;
 		}
 
 		// Select the widget if applicable
-		uiContext.SetHoveredWidgetByIndex({ uiContext.GetActiveUIHandle(),
+		uiContext.m_ActiveUI->GetInteractState().SetHoveredWidgetByHandle({ uiContext.GetActiveUIHandle(),
 			m_HoveredWidgetID });
 
 	}

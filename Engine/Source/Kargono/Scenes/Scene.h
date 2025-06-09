@@ -160,11 +160,11 @@ namespace Kargono::Scenes
 		//====================
 		// Get Entity Components
 		//====================
-		static bool CheckActiveHasComponent(UUID entityID, const std::string& componentName);
+		static bool CheckActiveHasComponent(UUID entityID, std::string_view componentName);
 
 		static Math::vec3 TransformComponentGetTranslation(UUID entityID);
 		static void TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation);
-		static const std::string& TagComponentGetTag(UUID entityID);
+		static std::string_view TagComponentGetTag(UUID entityID);
 		static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
 		static Math::vec2 Rigidbody2DComponent_GetLinearVelocity(UUID entityID);
 		static void SetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value);
@@ -174,7 +174,7 @@ namespace Kargono::Scenes
 		//====================
 		// Manage Active Scene Entities
 		//====================
-		static Assets::AssetHandle FindEntityHandleByName(const std::string& name);
+		static Assets::AssetHandle FindEntityHandleByName(std::string_view name);
 
 		//====================
 		// Manage Active Scene

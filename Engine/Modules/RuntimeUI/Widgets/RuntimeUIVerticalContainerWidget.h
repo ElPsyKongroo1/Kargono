@@ -10,8 +10,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Constructors/Destructors
 		//============================
-		VerticalContainerWidget()
-			: Widget()
+		VerticalContainerWidget(UserInterface* parentInterface)
+			: Widget(parentInterface)
 		{
 			m_WidgetType = WidgetTypes::VerticalContainerWidget;
 			m_Tag = "VerticalContainerWidget";
@@ -21,16 +21,15 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Rendering Methods
 		//============================
-		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual void OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 
+	public:
 		//============================
-		// Query State
+		// Getters/Setters
 		//============================
-		virtual bool Selectable() override
-		{
-			return false;
-		}
+		virtual ContainerData* GetContainerData() override { return &m_ContainerData; }
 
+	public:
 		//============================
 		// Public Fields
 		//============================

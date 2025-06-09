@@ -9,8 +9,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Constructors/Destructors
 		//============================
-		TextWidget()
-			: Widget()
+		TextWidget(UserInterface* parentInterface)
+			: Widget(parentInterface)
 		{
 			m_WidgetType = WidgetTypes::TextWidget;
 			m_Tag = "TextWidget";
@@ -20,33 +20,28 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Rendering Methods
 		//============================
-		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual void OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 	public:
 		//============================
 		// Modify State
 		//============================
 		void SetText(const std::string& newText);
 
+	public:
 		//============================
-		// Query State
+		// Getters/Setters
 		//============================
-		virtual bool Selectable() override
-		{
-			return false;
-		}
+		virtual MultiLineTextData* GetMultiLineTextData() override { return &m_TextData; }
 
 	public:
 		//============================
-		// Re-validation Methods
+		// Revalidation Methods
 		//============================
-		void CalculateTextSize();
+		virtual void RevalidateTextDimensions() override;
 	public:
 		//============================
 		// Public Fields
 		//============================
 		MultiLineTextData m_TextData;
-	private:
-		friend class RuntimeUIService;
-		friend class Assets::UserInterfaceManager;
 	};
 }

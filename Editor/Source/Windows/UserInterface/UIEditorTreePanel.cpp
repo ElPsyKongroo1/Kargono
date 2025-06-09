@@ -85,7 +85,7 @@ namespace Kargono::Panels
 		uiEntry.m_OnRightClick = KG_BIND_CLASS_FN(RightClickUIEntry);
 
 		// Add all windows and widgets from the editor UI to the tree
-		for (RuntimeUI::Window& window : s_UIWindow->m_EditorUI->m_Windows)
+		for (RuntimeUI::Window& window : s_UIWindow->m_EditorUI->m_WindowsState.m_Windows)
 		{
 			// Create new window entry
 			EditorUI::TreeEntry windowEntry{};
@@ -339,9 +339,9 @@ namespace Kargono::Panels
 		// Get the widget entry
 		EditorUI::TreeEntry* parentEntry = (EditorUI::TreeEntry*)entry.m_ProvidedData;
 		KG_ASSERT(parentEntry);
-
+		
 		// Create new widget
-		Ref<RuntimeUI::TextWidget> newWidget = CreateRef<RuntimeUI::TextWidget>();
+		Ref<RuntimeUI::TextWidget> newWidget = CreateRef<RuntimeUI::TextWidget>(s_UIWindow->m_EditorUI.get());
 
 		// Add widget to tree and runtime UI
 		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::TextWidget));
@@ -354,7 +354,7 @@ namespace Kargono::Panels
 		KG_ASSERT(parentEntry);
 
 		// Create new widget
-		Ref<RuntimeUI::ButtonWidget> newWidget = CreateRef<RuntimeUI::ButtonWidget>();
+		Ref<RuntimeUI::ButtonWidget> newWidget = CreateRef<RuntimeUI::ButtonWidget>(s_UIWindow->m_EditorUI.get());
 		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ButtonWidget));
 	}
 
@@ -365,7 +365,7 @@ namespace Kargono::Panels
 		KG_ASSERT(parentEntry);
 
 		// Create new widget
-		Ref<RuntimeUI::ImageWidget> newWidget = CreateRef<RuntimeUI::ImageWidget>();
+		Ref<RuntimeUI::ImageWidget> newWidget = CreateRef<RuntimeUI::ImageWidget>(s_UIWindow->m_EditorUI.get());
 		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ImageWidget));
 	}
 
@@ -376,7 +376,7 @@ namespace Kargono::Panels
 		KG_ASSERT(parentEntry);
 
 		// Create new widget
-		Ref<RuntimeUI::ImageButtonWidget> newWidget = CreateRef<RuntimeUI::ImageButtonWidget>();
+		Ref<RuntimeUI::ImageButtonWidget> newWidget = CreateRef<RuntimeUI::ImageButtonWidget>(s_UIWindow->m_EditorUI.get());
 		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ImageButtonWidget));
 	}
 
@@ -387,7 +387,7 @@ namespace Kargono::Panels
 		KG_ASSERT(parentEntry);
 
 		// Create new widget
-		Ref<RuntimeUI::CheckboxWidget> newWidget = CreateRef<RuntimeUI::CheckboxWidget>();
+		Ref<RuntimeUI::CheckboxWidget> newWidget = CreateRef<RuntimeUI::CheckboxWidget>(s_UIWindow->m_EditorUI.get());
 		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::CheckboxWidget));
 	}
 
@@ -398,7 +398,7 @@ namespace Kargono::Panels
 		KG_ASSERT(parentEntry);
 
 		// Create new widget
-		Ref<RuntimeUI::ContainerWidget> newWidget = CreateRef<RuntimeUI::ContainerWidget>();
+		Ref<RuntimeUI::ContainerWidget> newWidget = CreateRef<RuntimeUI::ContainerWidget>(s_UIWindow->m_EditorUI.get());
 		EditorUI::TreeEntry* newEntry = AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ContainerWidget));
 		KG_ASSERT(newEntry);
 	}
@@ -410,7 +410,7 @@ namespace Kargono::Panels
 		KG_ASSERT(parentEntry);
 
 		// Create new widget
-		Ref<RuntimeUI::HorizontalContainerWidget> newWidget = CreateRef<RuntimeUI::HorizontalContainerWidget>();
+		Ref<RuntimeUI::HorizontalContainerWidget> newWidget = CreateRef<RuntimeUI::HorizontalContainerWidget>(s_UIWindow->m_EditorUI.get());
 		EditorUI::TreeEntry* newEntry = AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::HorizontalContainerWidget));
 		KG_ASSERT(newEntry);
 	}
@@ -422,7 +422,7 @@ namespace Kargono::Panels
 		KG_ASSERT(parentEntry);
 
 		// Create new widget
-		Ref<RuntimeUI::VerticalContainerWidget> newWidget = CreateRef<RuntimeUI::VerticalContainerWidget>();
+		Ref<RuntimeUI::VerticalContainerWidget> newWidget = CreateRef<RuntimeUI::VerticalContainerWidget>(s_UIWindow->m_EditorUI.get());
 		EditorUI::TreeEntry* newEntry = AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::VerticalContainerWidget));
 		KG_ASSERT(newEntry);
 	}
@@ -434,7 +434,7 @@ namespace Kargono::Panels
 		KG_ASSERT(parentEntry);
 
 		// Create new widget
-		Ref<RuntimeUI::InputTextWidget> newWidget = CreateRef<RuntimeUI::InputTextWidget>();
+		Ref<RuntimeUI::InputTextWidget> newWidget = CreateRef<RuntimeUI::InputTextWidget>(s_UIWindow->m_EditorUI.get());
 		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::InputTextWidget));
 	}
 
@@ -445,7 +445,7 @@ namespace Kargono::Panels
 		KG_ASSERT(parentEntry);
 
 		// Create new widget
-		Ref<RuntimeUI::SliderWidget> newWidget = CreateRef<RuntimeUI::SliderWidget>();
+		Ref<RuntimeUI::SliderWidget> newWidget = CreateRef<RuntimeUI::SliderWidget>(s_UIWindow->m_EditorUI.get());
 		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::SliderWidget));
 	}
 
@@ -456,15 +456,15 @@ namespace Kargono::Panels
 		KG_ASSERT(parentEntry);
 
 		// Create new widget
-		Ref<RuntimeUI::DropDownWidget> newWidget = CreateRef<RuntimeUI::DropDownWidget>();
+		Ref<RuntimeUI::DropDownWidget> newWidget = CreateRef<RuntimeUI::DropDownWidget>(s_UIWindow->m_EditorUI.get());
 		AddWidgetInternal(*parentEntry, newWidget, Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::DropDownWidget));
 	}
 
 	void UIEditorTreePanel::SelectWidget(EditorUI::TreeEntry& entry)
 	{
 		// Get the current widget and its parent window
-		RuntimeUI::Window& parentWindow = RuntimeUI::RuntimeUIService::GetActiveContext().GetParentWindowFromWidgetID((int32_t)entry.m_Handle);
-		Ref<RuntimeUI::Widget> currentWidget = RuntimeUI::RuntimeUIService::GetActiveContext().GetWidgetFromID((int32_t)entry.m_Handle);
+		RuntimeUI::Window& parentWindow = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetParentWindowFromWidgetID((int32_t)entry.m_Handle);
+		Ref<RuntimeUI::Widget> currentWidget = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetWidgetFromID((int32_t)entry.m_Handle);
 		KG_ASSERT(currentWidget);
 
 		// Set the active window/widget
@@ -518,7 +518,7 @@ namespace Kargono::Panels
 		}
 
 		// Remove window from active runtime UI and this panel's tree
-		RuntimeUI::RuntimeUIService::GetActiveContext().DeleteActiveUIWindow((int32_t)windowTreeEntry->m_Handle);
+		RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->GetWindowsState().DeleteWindow((int32_t)windowTreeEntry->m_Handle);
 		m_UITree.RemoveEntry(path);
 
 		// Reset properties panel and ensure tree index data is valid
@@ -561,7 +561,7 @@ namespace Kargono::Panels
 	void UIEditorTreePanel::SelectWindow(EditorUI::TreeEntry& entry)
 	{
 		// Get the runtimeUI window reference
-		RuntimeUI::Window& currentWindow = RuntimeUI::RuntimeUIService::GetActiveContext().GetWindowFromID((int32_t)entry.m_Handle);
+		RuntimeUI::Window& currentWindow = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetWindowFromID((int32_t)entry.m_Handle);
 
 		// Set current window as active and reset properties panel data
 		s_UIWindow->m_PropertiesPanel->ClearPanelData();
@@ -592,7 +592,7 @@ namespace Kargono::Panels
 		}
 
 		// Get the underlying window
-		RuntimeUI::Window& window = RuntimeUI::RuntimeUIService::GetActiveContext().GetWindowFromID((int32_t)windowTreeEntry->m_Handle);
+		RuntimeUI::Window& window = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetWindowFromID((int32_t)windowTreeEntry->m_Handle);
 
 		// Select the tree entry
 		SelectWindow(*windowTreeEntry);
@@ -654,8 +654,8 @@ namespace Kargono::Panels
 		CreateWindowSelectionOptions(newEntry);
 
 		// Add new window to RuntimeUI and this panel's tree
-		RuntimeUI::Window newWindow{};
-		RuntimeUI::RuntimeUIService::GetActiveContext().AddActiveWindow(newWindow);
+		RuntimeUI::Window newWindow{s_UIWindow->m_EditorUI.get()};
+		RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.AddWindow(newWindow);
 		newEntry.m_Handle = newWindow.m_ID;
 
 		// Select the newly created window
@@ -680,7 +680,7 @@ namespace Kargono::Panels
 		}
 
 		// Remove widget from RuntimeUI 
-		bool success = RuntimeUI::RuntimeUIService::GetActiveContext().DeleteActiveUIWidget((int32_t)widgetEntry->m_Handle);
+		bool success = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.DeleteWidget((int32_t)widgetEntry->m_Handle);
 
 		// Check if widget was successfully deleted
 		if (!success)
@@ -704,14 +704,14 @@ namespace Kargono::Panels
 	EditorUI::TreeEntry* UIEditorTreePanel::AddWidgetInternal(EditorUI::TreeEntry& parentEntry, Ref<RuntimeUI::Widget> newWidget, Ref<Rendering::Texture2D> widgetIcon)
 	{
 		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext()};
-		RuntimeUI::IDType parentType = uiContext.CheckIDType((int32_t)parentEntry.m_Handle);
+		RuntimeUI::IDType parentType = uiContext.m_ActiveUI->m_WindowsState.CheckIDType((int32_t)parentEntry.m_Handle);
 
 		switch (parentType)
 		{
 		case RuntimeUI::IDType::Window:
 		{
 			// Get the parent window
-			RuntimeUI::Window& window = uiContext.GetWindowFromID((int32_t)parentEntry.m_Handle);
+			RuntimeUI::Window& window = uiContext.m_ActiveUI->m_WindowsState.GetWindowFromID((int32_t)parentEntry.m_Handle);
 
 			// Add the newWidget to the parent window
 			window.AddWidget(newWidget);
@@ -720,11 +720,11 @@ namespace Kargono::Panels
 		case RuntimeUI::IDType::Widget:
 		{
 			// Get the parent widget
-			Ref<RuntimeUI::Widget> parentWidget = uiContext.GetWidgetFromID((int32_t)parentEntry.m_Handle);
+			Ref<RuntimeUI::Widget> parentWidget = uiContext.m_ActiveUI->m_WindowsState.GetWidgetFromID((int32_t)parentEntry.m_Handle);
 			KG_ASSERT(parentWidget);
 
 			// Get the parent widget's container data
-			RuntimeUI::ContainerData* data = uiContext.GetContainerDataFromWidget(parentWidget.get());
+			RuntimeUI::ContainerData* data = parentWidget->GetContainerData();
 			KG_ASSERT(data);
 
 			if (parentWidget->m_WidgetType == RuntimeUI::WidgetTypes::VerticalContainerWidget ||
@@ -735,7 +735,7 @@ namespace Kargono::Panels
 			}
 			
 			// Add the new widget to the container data
-			RuntimeUI::RuntimeUIService::GetActiveContext().AddWidgetToContainer(data, newWidget);
+			data->AddWidget(newWidget);
 			break;
 		}
 		case RuntimeUI::IDType::None:
@@ -771,7 +771,7 @@ namespace Kargono::Panels
 	void UIEditorTreePanel::CreateAddWidgetsSelectionOptions(EditorUI::TreeEntry& entry)
 	{
 		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext() };
-		RuntimeUI::IDType type = uiContext.CheckIDType((int32_t)entry.m_Handle);
+		RuntimeUI::IDType type = uiContext.m_ActiveUI->m_WindowsState.CheckIDType((int32_t)entry.m_Handle);
 
 		KG_ASSERT(type != RuntimeUI::IDType::None);
 
@@ -782,10 +782,10 @@ namespace Kargono::Panels
 		// Ensure the underlying widget is a container
 		if (type == RuntimeUI::IDType::Widget)
 		{
-			Ref<RuntimeUI::Widget> widget = uiContext.GetWidgetFromID((int32_t)entry.m_Handle);
+			Ref<RuntimeUI::Widget> widget = uiContext.m_ActiveUI->m_WindowsState.GetWidgetFromID((int32_t)entry.m_Handle);
 			KG_ASSERT(widget);
 
-			RuntimeUI::ContainerData* container = uiContext.GetContainerDataFromWidget(widget.get());
+			RuntimeUI::ContainerData* container = widget->GetContainerData();
 
 			if (!container)
 			{
@@ -1021,7 +1021,7 @@ namespace Kargono::Panels
 		widgetEntry.m_OnRightClick = KG_BIND_CLASS_FN(RightClickWidgetEntry);
 
 		// Check for a container widget
-		RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetActiveContext().GetContainerDataFromWidget(currentWidget.get());
+		RuntimeUI::ContainerData* containerData = currentWidget->GetContainerData();
 		if (containerData)
 		{
 			CreateContainerDataWidgets(widgetEntry, containerData);
@@ -1086,7 +1086,7 @@ namespace Kargono::Panels
 		}
 
 		// Get the location of the indicated widget/window inside the active UI
-		std::vector<uint16_t>* locationInRuntimeUI = RuntimeUI::RuntimeUIService::GetActiveContext().GetLocationFromID(windowOrWidgetID);
+		std::vector<uint16_t>* locationInRuntimeUI = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetLocationFromID(windowOrWidgetID);
 		KG_ASSERT(locationInRuntimeUI);
 		KG_ASSERT(locationInRuntimeUI->size() > 0);
 

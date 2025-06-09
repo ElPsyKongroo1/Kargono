@@ -10,8 +10,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Constructors/Destructors
 		//============================
-		ImageWidget()
-			: Widget()
+		ImageWidget(UserInterface* parentInterface)
+			: Widget(parentInterface)
 		{
 			m_WidgetType = WidgetTypes::ImageWidget;
 			m_Tag = "ImageWidget";
@@ -20,18 +20,15 @@ namespace Kargono::RuntimeUI
 
 	public:
 		//============================
-		// Query State
+		// Rendering Methods
 		//============================
-		virtual bool Selectable() override
-		{
-			return false;
-		}
+		virtual void OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 
 	public:
 		//============================
-		// Rendering Methods
+		// Getters/Setters
 		//============================
-		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual ImageData* GetImageData() override { return &m_ImageData; }
 
 	public:
 		//============================

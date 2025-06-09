@@ -23,25 +23,29 @@ namespace Kargono::Scenes
 			return m_Fields.at(fieldName)->GetWrappedValue<T>();
 		}
 
-		Ref<WrappedVariable> GetField(const std::string& fieldName)
+		Ref<WrappedVariable> GetField(std::string_view fieldName)
 		{
-			if (!m_Fields.contains(fieldName))
+			// TODO: This is horrendous. We shouldn't be using this in production anyways, but still... ughh
+			std::string fieldNameString{ fieldName };
+			if (!m_Fields.contains(fieldNameString))
 			{
 				KG_CRITICAL("Could not get field from game state {}", fieldName);
 				return nullptr;
 			}
-			return m_Fields.at(fieldName);
+			return m_Fields.at(fieldNameString);
 		}
 
-		void SetField(const std::string& fieldName, void* value)
+		void SetField(std::string_view fieldName, void* value)
 		{
-			if (!m_Fields.contains(fieldName))
+			// TODO: This is horrendous. We shouldn't be using this in production anyways, but still... ughh
+			std::string fieldNameString{ fieldName };
+			if (!m_Fields.contains(fieldNameString))
 			{
 				KG_CRITICAL("Could not get field from game state {}", fieldName);
 				return;
 			}
 
-			m_Fields.at(fieldName)->SetValue(value);
+			m_Fields.at(fieldNameString)->SetValue(value);
 		}
 
 		bool AddField(const std::string& fieldName, WrappedVarType fieldType)
@@ -107,7 +111,7 @@ namespace Kargono::Scenes
 		//=========================
 		// Active Game State API
 		//=========================
-		static void SetActiveGameStateField(const std::string& fieldName, void* value)
+		static void SetActiveGameStateField(std::string_view fieldName, void* value)
 		{
 			if (!s_ActiveGameState)
 			{
@@ -117,7 +121,7 @@ namespace Kargono::Scenes
 
 			s_ActiveGameState->SetField(fieldName, value);
 		}
-		static void* GetActiveGameStateField(const std::string& fieldName)
+		static void* GetActiveGameStateField(std::string_view fieldName)
 		{
 			if (!s_ActiveGameState)
 			{

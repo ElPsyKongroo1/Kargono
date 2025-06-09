@@ -1,22 +1,20 @@
 #include "kgpch.h"
 
 #include "Modules/RuntimeUI/Widgets/RuntimeUIVerticalContainerWidget.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 
 namespace Kargono::RuntimeUI
 {
-	void VerticalContainerWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	void VerticalContainerWidget::OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
-		RuntimeUIContext& uiContext{ RuntimeUIService::GetActiveContext() };
-
-		Rendering::RendererInputSpec& backgroundSpec = uiContext.m_BackgroundInputSpec;
+		Rendering::RendererInputSpec& backgroundSpec = uiContext->m_BackgroundInputSpec;
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
 		// Get widget translation
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 		// Draw the background
-		uiContext.RenderBackground(m_ContainerData.m_BackgroundColor, widgetTranslation, widgetSize);
+		RenderBackground(uiContext, m_ContainerData.m_BackgroundColor, widgetTranslation, widgetSize);
 
 		widgetTranslation.z += 0.001f;
 
@@ -31,7 +29,7 @@ namespace Kargono::RuntimeUI
 			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
 				Utility::FileSystem::CRCFromString("a_EntityID"),
 				backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
-			RuntimeUI::FontService::SetID((uint32_t)containedWidget->m_ID);
+			RuntimeUI::FontService::GetActiveContext().SetID((uint32_t)containedWidget->m_ID);
 
 			Math::vec3 outputSize{ widgetSize.x, widgetSize.y * m_RowHeight, widgetSize.z };
 			Math::vec3 outputTranslation
@@ -42,7 +40,7 @@ namespace Kargono::RuntimeUI
 
 			// Render the indicated widget
 			//containedWidget->OnRender(widgetTranslation, widgetSize, viewportWidth);
-			containedWidget->OnRender(outputTranslation, outputSize, viewportWidth);
+			containedWidget->OnRender(uiContext, outputTranslation, outputSize, viewportWidth);
 			iteration++;
 		}
 	}

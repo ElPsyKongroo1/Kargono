@@ -1,16 +1,14 @@
 #include "kgpch.h"
 
 #include "Modules/RuntimeUI/Widgets/RuntimeUIImageWidget.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 
 namespace Kargono::RuntimeUI
 {
-	void ImageWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	void ImageWidget::OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
 		UNREFERENCED_PARAMETER(viewportWidth);
 		KG_PROFILE_FUNCTION();
-
-		RuntimeUIContext& uiContext{ RuntimeUIService::GetActiveContext() };
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
@@ -19,6 +17,6 @@ namespace Kargono::RuntimeUI
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
 		// Draw image
-		uiContext.RenderImage(m_ImageData, widgetTranslation, widgetSize);
+		m_ImageData.RenderImage(uiContext, widgetTranslation, widgetSize);
 	}
 }

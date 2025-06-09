@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Kargono/Math/Math.h"
+#include "Modules/Rendering/RenderingService.h"
 
 #include <string>
 #include <string_view>
 #include <filesystem>
+#include <vector>
 
 namespace Kargono::Rendering { class Texture2D; }
 
@@ -18,37 +20,46 @@ namespace Kargono::RuntimeUI
 		std::vector<Math::ivec2> m_LineBreaks;
 	};
 
-	class FontService
+	class FontContext
 	{
 	public:
 		//==============================
 		// LifeCycle Functions
 		//==============================
-		// This function initializes the TextRenderingSpec inside the TextEngine.cpp
-		//		file that enables draw call data for the text to be submitted to the
-		//		renderer.
-		static void Init();
-		static void Terminate();
+		void Init();
+		void Terminate();
 
+	public:
 		//==============================
 		// Create Unmanaged Font
 		//==============================
-		// This function allows font to be initialized outside the management of the
-		//		AssetManager. This font will persist inside the application until the
-		//		application is closed. This is primarily useful for editor only assets.
-		static Ref<Font> InstantiateEditorFont(const std::filesystem::path& filepath);
-
-		static void SetID(uint32_t id);
+		Ref<Font> InstantiateEditorFont(const std::filesystem::path& filepath);
+		void SetID(uint32_t id);
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		Rendering::RendererInputSpec m_TextInputSpec{};
+		Ref<std::vector<Math::vec3>> m_Vertices;
+		Ref<std::vector<Math::vec2>> m_TexCoordinates;
 	};
 
-	//==============================
-	// MSDFCharacter Struct
-	//==============================
-	// This struct holds all of the data necessary to render a specific character including
-	//		its image and its dimensions.
+	class FontService // TODO: REMOVE EWWWWWWW
+	{
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		static FontContext& GetActiveContext() { return s_Font; }
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		static inline RuntimeUI::FontContext s_Font{};
+	};
+
 	struct Character
 	{
-		// This is the size of the Glyph in pixels (Width/Height).
 		Math::vec2	Size;
 		Math::vec2 TexCoordinateMin;
 		Math::vec2 TexCoordinateMax;
@@ -61,23 +72,20 @@ namespace Kargono::RuntimeUI
 	{
 	public:
 		//==============================
-		// Font API
+		// Rendering
 		//==============================
 		void OnRenderMultiLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f, int maxLineWidth = 0);
 		void OnRenderSingleLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale = 1.0f);
-		Math::vec2 CalculateSingleLineTextSize(std::string_view text);
-		size_t CalculateIndexFromMousePosition(std::string_view text, float textStartPoint, float mouseXPosition, float textScalingFactor);
-		void CalculateMultiLineTextMetadata(const std::string& text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth = 0);
-
 	public:
 		//==============================
-		// Getters/Setters
+		// Query Values
 		//==============================
-		std::unordered_map<unsigned char, Character>& GetCharacters() { return m_Characters; }
-
+		Math::vec2 GetSingleLineTextSize(std::string_view text);
+		size_t GetIndexFromMousePosition(std::string_view text, float textStartPoint, float mouseXPosition, float textScalingFactor);
+		void GetMultiLineTextMetadata(std::string_view text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth = 0);
 	public:
 		//==============================
-		// Internal Fields
+		// Public Fields
 		//==============================
 		Ref<Rendering::Texture2D> m_AtlasTexture = nullptr;
 		float m_LineHeight {0.0f};

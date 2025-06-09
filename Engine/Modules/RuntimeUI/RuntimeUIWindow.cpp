@@ -2,7 +2,7 @@
 
 #include "Modules/RuntimeUI/RuntimeUIWindow.h"
 
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 
 namespace Kargono::RuntimeUI
 {
@@ -16,7 +16,7 @@ namespace Kargono::RuntimeUI
 
 		// Set window as displayed and revalidate displayed windows for current user interface
 		m_WindowDisplayed = true;
-		RuntimeUIService::GetActiveContext().RevalidateDisplayedWindows();
+		i_ParentUI->m_WindowsState.RevalidateDisplayedWindows();
 
 	}
 
@@ -30,7 +30,7 @@ namespace Kargono::RuntimeUI
 
 		// Set window as hidden and revalidate displayed windows for current user interface
 		m_WindowDisplayed = false;
-		RuntimeUIService::GetActiveContext().RevalidateDisplayedWindows();
+		i_ParentUI->m_WindowsState.RevalidateDisplayedWindows();
 	}
 
 	std::vector<Ref<Widget>> RuntimeUI::Window::GetAllChildWidgets()
@@ -49,7 +49,7 @@ namespace Kargono::RuntimeUI
 	{
 		returnVector.push_back(currentWidget);
 
-		ContainerData* data = RuntimeUIService::GetActiveContext().GetContainerDataFromWidget(currentWidget.get());
+		ContainerData* data = currentWidget->GetContainerData();
 		if (data)
 		{
 			for (Ref<Widget> containedWidget : data->m_ContainedWidgets)
@@ -64,19 +64,44 @@ namespace Kargono::RuntimeUI
 		return m_WindowDisplayed;
 	}
 
-	Math::vec3 Window::CalculateSize(uint32_t viewportWidth, uint32_t viewportHeight)
+	Math::vec3 Window::GetSize(ViewportData viewportData)
 	{
-		return Math::vec3(viewportWidth * m_Size.x, viewportHeight * m_Size.y, 1.0f);
+		return Math::vec3
+		(
+			viewportData.m_Width * m_Size.x, 
+			viewportData.m_Height * m_Size.y, 
+			1.0f
+		);
 	}
 
-	Math::vec3 Window::CalculateWorldPosition(uint32_t viewportWidth, uint32_t viewportHeight)
+	Math::vec3 Window::GetLowerCornerPosition(ViewportData viewportData)
 	{
-		return Math::vec3((viewportWidth * m_ScreenPosition.x), (viewportHeight * m_ScreenPosition.y), m_ScreenPosition.z);
+		return Math::vec3
+		(
+			viewportData.m_Width * m_ScreenPosition.x, 
+			viewportData.m_Height * m_ScreenPosition.y, 
+			m_ScreenPosition.z
+		);
 	}
 
-	Math::vec3 Window::CalculateScreenPosition(Math::vec2 worldPosition, uint32_t viewportWidth, uint32_t viewportHeight)
+	Math::vec3 Window::GetCenterPosition(Math::vec3 lowerCorner, Math::vec3 size)
 	{
-		return Math::vec3(worldPosition.x / viewportWidth, worldPosition.y / viewportHeight, m_ScreenPosition.z);
+		return Math::vec3
+		(
+			lowerCorner.x + (size.x / 2),
+			lowerCorner.y + (size.y / 2),
+			lowerCorner.z
+		);
+	}
+
+	Math::vec3 Window::GetRelativeViewportPosition(Math::vec2 worldPosition, ViewportData viewportData)
+	{
+		return Math::vec3
+		(
+			worldPosition.x / viewportData.m_Width, 
+			worldPosition.y / viewportData.m_Height, 
+			m_ScreenPosition.z
+		);
 	}
 
 	void Window::AddWidget(Ref<Widget> newWidget)
@@ -86,8 +111,8 @@ namespace Kargono::RuntimeUI
 		// Add new widget to buffer
 		m_Widgets.push_back(newWidget);
 
-		RuntimeUI::RuntimeUIService::GetActiveContext().RevalidateWidgetIDToLocationMap();
-		RuntimeUIService::GetActiveContext().RecalculateTextData(newWidget.get());
+		i_ParentUI->m_WindowsState.RevalidateIDToLocationMap();
+		newWidget->RevalidateTextDimensions();
 	}
 
 	void Window::DeleteWidget(std::size_t widgetLocation)
@@ -102,6 +127,6 @@ namespace Kargono::RuntimeUI
 		// Delete the widget
 		m_Widgets.erase(m_Widgets.begin() + widgetLocation);
 
-		RuntimeUI::RuntimeUIService::GetActiveContext().RevalidateWidgetIDToLocationMap();
+		i_ParentUI->m_WindowsState.RevalidateIDToLocationMap();
 	}
 }

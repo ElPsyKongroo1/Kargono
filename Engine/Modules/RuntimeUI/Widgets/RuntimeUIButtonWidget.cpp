@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/RuntimeUI/Widgets/RuntimeUIButtonWidget.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 
 #include "Kargono/Core/Resolution.h"
 #include "Kargono/Projects/Project.h"
@@ -14,20 +14,18 @@ namespace Kargono::RuntimeUI
 		m_TextData.m_Text = newText;
 
 		// Calculate the new text size
-		CalculateTextSize();
+		RevalidateTextDimensions();
 	}
 
-	void ButtonWidget::CalculateTextSize()
+	void ButtonWidget::RevalidateTextDimensions()
 	{
-		RuntimeUIService::GetActiveContext().CalculateSingleLineText(m_TextData);
+		m_TextData.RevalidateTextDimensions(i_ParentUI);
 	}
 
-	void ButtonWidget::OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
+	void ButtonWidget::OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
 		KG_PROFILE_FUNCTION();
-
-		RuntimeUIContext& uiContext{ RuntimeUIService::GetActiveContext() };
-		Ref<UserInterface> activeUI = uiContext.m_ActiveUI;
+		Ref<UserInterface> activeUI = uiContext->m_ActiveUI;
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
@@ -36,27 +34,28 @@ namespace Kargono::RuntimeUI
 		Math::vec3 widgetTranslation = CalculateWorldPosition(windowTranslation, windowSize);
 
 		// Draw background
-		if (activeUI->m_HoveredWidget == this)
+		if (activeUI->m_InteractState.m_HoveredWidget == this)
 		{
-			uiContext.RenderBackground(activeUI->m_HoveredColor, widgetTranslation, widgetSize);
+			RenderBackground(uiContext, activeUI->m_Config.m_HoveredColor, widgetTranslation, widgetSize);
 		}
-		else if (activeUI->m_SelectedWidget == this)
+		else if (activeUI->m_InteractState.m_SelectedWidget == this)
 		{
-			uiContext.RenderBackground(activeUI->m_SelectColor, widgetTranslation, widgetSize);
+			RenderBackground(uiContext, activeUI->m_Config.m_SelectColor, widgetTranslation, widgetSize);
 		}
 		else
 		{
-			uiContext.RenderBackground(m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
+			RenderBackground(uiContext, m_SelectionData.m_DefaultBackgroundColor, widgetTranslation, widgetSize);
 		}
 
 		// Calculate text starting point
 		Math::vec2 resolution = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 		float textScalingFactor{ (viewportWidth * 0.15f * m_TextData.m_TextSize) * (resolution.y / resolution.x) };
-		Math::vec3 textStartingPoint = uiContext.GetSingleLineTextStartingPosition(m_TextData, widgetTranslation, widgetSize, textScalingFactor);
+		
+		Math::vec3 textStartingPoint = m_TextData.GetTextStartingPosition(widgetTranslation, widgetSize, textScalingFactor);
 
 		// Create the widget's text rendering data
 		textStartingPoint.z += 0.001f;
 
-		uiContext.RenderSingleLineText(m_TextData, textStartingPoint, textScalingFactor);
+		m_TextData.OnRender(uiContext, textStartingPoint, textScalingFactor);
 	}
 }

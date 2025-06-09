@@ -6,7 +6,7 @@
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/EditorUI/EditorUI.h"
 #include "Modules/RuntimeUI/Font.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Modules/Core/Engine.h"
 #include "Modules/AI/AIService.h"
 #include "Modules/Rendering/RenderingService.h"
@@ -57,7 +57,7 @@ namespace Kargono
 		AI::AIService::GetActiveContext().Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(1.0f);
-		RuntimeUI::FontService::Init();
+		RuntimeUI::FontService::GetActiveContext().Init();
 		RuntimeUI::RuntimeUIService::CreateRuntimeUIContext();
 		RuntimeUI::RuntimeUIService::GetActiveContext().Init();
 		Input::InputMapService::CreateInputMapContext();
@@ -104,7 +104,7 @@ namespace Kargono
 		AI::AIService::RemoveAIContext();
 		Scripting::ScriptCompilerService::Terminate();
 		Assets::AssetService::ClearAll();
-		RuntimeUI::FontService::Terminate();
+		RuntimeUI::FontService::GetActiveContext().Terminate();
 		Scenes::SceneService::Terminate();
 		Rendering::RenderingService::Shutdown();
 
@@ -410,15 +410,15 @@ namespace Kargono
 			}
 			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveContext().GetStartSceneHandle();
 
-			// Load in the script shared library
-			Scripting::ScriptService::LoadActiveScriptModule();
-
 			if (m_MainWindow->m_EditorScene)
 			{
 				m_MainWindow->m_EditorScene->DestroyAllEntities();
 			}
 			Assets::AssetService::ClearAll();
 			Assets::AssetService::DeserializeAll();
+
+			// Load in the script shared library
+			Scripting::ScriptService::LoadActiveScriptModule();
 
 			// Ensure all script assets are properly loaded in
 			Assets::AssetService::LoadAllScriptIntoCache();

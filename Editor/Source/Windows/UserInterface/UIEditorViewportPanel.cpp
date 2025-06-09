@@ -82,8 +82,8 @@ namespace Kargono::Panels
 		m_ViewportFramebuffer->SetAttachment(1, -1);
 
 		// Handle specific widget on click's
-		RuntimeUI::RuntimeUIService::GetActiveContext().OnUpdate(ts);
-		RuntimeUI::RuntimeUIService::GetActiveContext().OnRender(m_EditorCamera.GetViewProjection(), m_ViewportData.m_Width, m_ViewportData.m_Height);
+		RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->OnUpdate(ts);
+		RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->OnRenderCamera(m_EditorCamera.GetViewProjection(), m_ViewportData);
 
 		HandleMouseHovering();
 
@@ -120,7 +120,7 @@ namespace Kargono::Panels
 		{
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 			{
-				RuntimeUI::IDType idType = uiContext.CheckIDType(m_HoveredWindowWidgetID);
+				RuntimeUI::IDType idType = uiContext.m_ActiveUI->m_WindowsState.CheckIDType(m_HoveredWindowWidgetID);
 
 				if (idType != RuntimeUI::IDType::None)
 				{
@@ -129,12 +129,12 @@ namespace Kargono::Panels
 					if (idType == RuntimeUI::IDType::Widget)
 					{
 						// Set widget as selected manually
-						Ref<RuntimeUI::Widget> hoveredWidget = uiContext.GetWidgetFromID(m_HoveredWindowWidgetID);
+						Ref<RuntimeUI::Widget> hoveredWidget = uiContext.m_ActiveUI->m_WindowsState.GetWidgetFromID(m_HoveredWindowWidgetID);
 						if (hoveredWidget && hoveredWidget->Selectable())
 						{
 							Ref<RuntimeUI::UserInterface> userInterface{ uiContext.GetActiveUI() };
 							KG_ASSERT(userInterface);
-							userInterface->m_SelectedWidget = hoveredWidget.get();
+							userInterface->m_InteractState.m_SelectedWidget = hoveredWidget.get();
 						}
 
 					}
@@ -323,26 +323,26 @@ namespace Kargono::Panels
 		}
 
 		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext() };
-		RuntimeUI::IDType type = uiContext.CheckIDType(m_HoveredWindowWidgetID);
+		RuntimeUI::IDType type = uiContext.m_ActiveUI->m_WindowsState.CheckIDType(m_HoveredWindowWidgetID);
 
 		// Exit early if no valid widget/window is available
 		if (type == RuntimeUI::IDType::None || type == RuntimeUI::IDType::Window)
 		{
-			RuntimeUI::RuntimeUIService::GetActiveContext().ClearHoveredWidget();
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_InteractState.ClearHoveredWidget();
 			return;
 		}
 		
 		// Set widget as hovered manually
-		Ref<RuntimeUI::Widget> hoveredWidget = uiContext.GetWidgetFromID(m_HoveredWindowWidgetID);
+		Ref<RuntimeUI::Widget> hoveredWidget = uiContext.m_ActiveUI->m_WindowsState.GetWidgetFromID(m_HoveredWindowWidgetID);
 		
 		if (!hoveredWidget || !hoveredWidget->Selectable())
 		{
-			RuntimeUI::RuntimeUIService::GetActiveContext().ClearHoveredWidget();
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_InteractState.ClearHoveredWidget();
 			return;
 		}
 		Ref<RuntimeUI::UserInterface> userInterface = uiContext.GetActiveUI();
 		KG_ASSERT(userInterface);
-		userInterface->m_HoveredWidget = hoveredWidget.get();
+		userInterface->m_InteractState.m_HoveredWidget = hoveredWidget.get();
 	}
 	void UIEditorViewportPanel::DrawToolbarOverlay()
 	{
@@ -620,8 +620,8 @@ namespace Kargono::Panels
 			Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 			// Get window transform
-			Math::vec3 windowPosition = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
-			Math::mat4 transform{ glm::translate(Math::mat4(1.0), windowPosition)};
+			Math::vec3 windowCornerPos = window->GetLowerCornerPosition(m_ViewportData);
+			Math::mat4 transform{ glm::translate(Math::mat4(1.0), windowCornerPos)};
 
 			// Snapping
 			bool snap = Input::InputService::IsKeyPressed(Key::LeftControl);
@@ -641,10 +641,11 @@ namespace Kargono::Panels
 				Math::DecomposeTransform(transform, translation, rotation, scale);
 
 				// Update the window's position
-				window->m_ScreenPosition = window->CalculateScreenPosition(
+				window->m_ScreenPosition = window->GetRelativeViewportPosition
+				(
 					Math::vec2(translation.x, translation.y), 
-					m_ViewportData.m_Width, 
-					m_ViewportData.m_Height);
+					m_ViewportData
+				);
 
 				// Set the active editor UI as edited
 				s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -654,16 +655,19 @@ namespace Kargono::Panels
 		{
 			ImGuizmo::SetOrthographic(true);
 			ImGuizmo::SetDrawlist();
-			ImGuizmo::SetRect(m_ScreenViewportBounds[0].x, m_ScreenViewportBounds[0].y,
+			ImGuizmo::SetRect
+			(
+				m_ScreenViewportBounds[0].x, m_ScreenViewportBounds[0].y,
 				m_ScreenViewportBounds[1].x - m_ScreenViewportBounds[0].x,
-				m_ScreenViewportBounds[1].y - m_ScreenViewportBounds[0].y);
+				m_ScreenViewportBounds[1].y - m_ScreenViewportBounds[0].y
+			);
 
 			// Editor Camera
 			const Math::mat4& cameraProjection = m_EditorCamera.GetProjection();
 			Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 			// Get position/size data for the parent widget/window
-			RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+			RuntimeUI::Bounds parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetParentBoundsFromID(widget->m_ID, m_ViewportData);
 
 			// Calculate widget transform
 			Math::vec3 widgetPosition = widget->CalculateWorldPosition(parentDimensions.m_Translation, parentDimensions.m_Size);
@@ -745,7 +749,7 @@ namespace Kargono::Panels
 		if (widget)
 		{
 			// Get position/size data for the parent widget/window
-			RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+			RuntimeUI::Bounds parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetParentBoundsFromID(widget->m_ID, m_ViewportData);
 
 			Math::vec3 finalParentTranslation = Math::vec3(parentDimensions.m_Translation.x + (parentDimensions.m_Size.x / 2), parentDimensions.m_Translation.y + (parentDimensions.m_Size.y / 2), parentDimensions.m_Translation.z);
 
@@ -807,13 +811,13 @@ namespace Kargono::Panels
 		if (window)
 		{
 			// Get position data for rendering window
-			Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
-			Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
-			Math::vec3 finalWindowTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x / 2), initialWindowTranslation.y + (windowScale.y / 2), initialWindowTranslation.z);
+			Math::vec3 windowSize = window->GetSize(m_ViewportData);
+			Math::vec3 windowCornerPos = window->GetLowerCornerPosition(m_ViewportData);
+			Math::vec3 windowCenterPos = window->GetCenterPosition(windowCornerPos, windowSize);
 
 			// Create background rendering data
-			Math::mat4 windowTransform = glm::translate(Math::mat4(1.0f), finalWindowTranslation)
-				* glm::scale(Math::mat4(1.0f), windowScale);
+			Math::mat4 windowTransform = glm::translate(Math::mat4(1.0f), windowCenterPos)
+				* glm::scale(Math::mat4(1.0f), windowSize);
 
 			Math::vec3 selectionBoxVertices[4];
 			for (size_t i = 0; i < 4; i++)
@@ -858,7 +862,7 @@ namespace Kargono::Panels
 		constexpr float k_VanityPaddingSize{ 15.0f };
 
 		// Get position/size data for the parent widget/window
-		RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+		RuntimeUI::Bounds parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetParentBoundsFromID(widget->m_ID, m_ViewportData);
 		Math::vec3 widgetSize = widget->CalculateWidgetSize(parentDimensions.m_Size);
 
 
@@ -1245,15 +1249,15 @@ namespace Kargono::Panels
 		constexpr float k_ConstraintPadding{ 5.0f };
 		constexpr float k_VanityPaddingSize{ 15.0f };
 
-		Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 finalWindowTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x / 2), initialWindowTranslation.y + (windowScale.y / 2), initialWindowTranslation.z);
+		Math::vec3 windowSize = window->GetSize(m_ViewportData);
+		Math::vec3 windowCornerPos = window->GetLowerCornerPosition(m_ViewportData);
+		Math::vec3 windowCenterPos = window->GetCenterPosition(windowCornerPos, windowSize);
 
 		// Create window's constraint distance lines
-		constraintDistanceVerts[0] = { 0.0f, finalWindowTranslation.y, finalWindowTranslation.z };
-		constraintDistanceVerts[1] = { finalWindowTranslation.x - windowScale.x / 2.0f, finalWindowTranslation.y, finalWindowTranslation.z }; 
+		constraintDistanceVerts[0] = { 0.0f, windowCenterPos.y, windowCenterPos.z };
+		constraintDistanceVerts[1] = { windowCenterPos.x - windowSize.x / 2.0f, windowCenterPos.y, windowCenterPos.z }; 
 
-		float windowLeftEdge = finalWindowTranslation.x - (windowScale.x / 2.0f);
+		float windowLeftEdge = windowCenterPos.x - (windowSize.x / 2.0f);
 		float viewportLeftEdge = 0.0f;
 
 		// Check if the window's edge is outside the viewport
@@ -1272,10 +1276,10 @@ namespace Kargono::Panels
 		// Note, otherwise just leave the lines as is
 
 		// Add vanity lines
-		constraintDistanceVerts[2] = { constraintDistanceVerts[0].x, constraintDistanceVerts[0].y - k_VanityPaddingSize, finalWindowTranslation.z };
-		constraintDistanceVerts[3] = { constraintDistanceVerts[0].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, finalWindowTranslation.z };
-		constraintDistanceVerts[4] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y - k_VanityPaddingSize, finalWindowTranslation.z };
-		constraintDistanceVerts[5] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, finalWindowTranslation.z };
+		constraintDistanceVerts[2] = { constraintDistanceVerts[0].x, constraintDistanceVerts[0].y - k_VanityPaddingSize, windowCenterPos.z };
+		constraintDistanceVerts[3] = { constraintDistanceVerts[0].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, windowCenterPos.z };
+		constraintDistanceVerts[4] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y - k_VanityPaddingSize, windowCenterPos.z };
+		constraintDistanceVerts[5] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, windowCenterPos.z };
 
 		// Draw the x-axis constraint distance lines
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), 
@@ -1298,9 +1302,9 @@ namespace Kargono::Panels
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		
 		// Create window's constraint distance lines
-		constraintDistanceVerts[0] = { finalWindowTranslation.x, 0.0f, finalWindowTranslation.z };
-		constraintDistanceVerts[1] = { finalWindowTranslation.x, finalWindowTranslation.y - windowScale.y / 2.0f , finalWindowTranslation.z };
-		float windowBottomEdge = finalWindowTranslation.y - (windowScale.y / 2.0f);
+		constraintDistanceVerts[0] = { windowCenterPos.x, 0.0f, windowCenterPos.z };
+		constraintDistanceVerts[1] = { windowCenterPos.x, windowCenterPos.y - windowSize.y / 2.0f , windowCenterPos.z };
+		float windowBottomEdge = windowCenterPos.y - (windowSize.y / 2.0f);
 		float viewportBottomEdge = 0.0f;
 
 		// Check if the window's edge is outside the viewport
@@ -1319,10 +1323,10 @@ namespace Kargono::Panels
 		// Note, otherwise just leave the lines as is
 
 		// Add vanity lines
-		constraintDistanceVerts[2] = { constraintDistanceVerts[0].x - k_VanityPaddingSize, constraintDistanceVerts[0].y, finalWindowTranslation.z };
-		constraintDistanceVerts[3] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[0].y, finalWindowTranslation.z };
-		constraintDistanceVerts[4] = { constraintDistanceVerts[0].x - k_VanityPaddingSize, constraintDistanceVerts[1].y, finalWindowTranslation.z };
-		constraintDistanceVerts[5] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[1].y, finalWindowTranslation.z };
+		constraintDistanceVerts[2] = { constraintDistanceVerts[0].x - k_VanityPaddingSize, constraintDistanceVerts[0].y, windowCenterPos.z };
+		constraintDistanceVerts[3] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[0].y, windowCenterPos.z };
+		constraintDistanceVerts[4] = { constraintDistanceVerts[0].x - k_VanityPaddingSize, constraintDistanceVerts[1].y, windowCenterPos.z };
+		constraintDistanceVerts[5] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[1].y, windowCenterPos.z };
 
 		// Draw the x-axis constraint distance lines
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2), 

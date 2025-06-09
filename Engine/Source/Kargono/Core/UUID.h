@@ -5,9 +5,6 @@
 
 namespace Kargono
 {
-	//==============================
-	// Universal Identifier Class
-	//==============================
 	class UUID
 	{
 	public:
@@ -15,7 +12,7 @@ namespace Kargono
 		// Constructors/Destructors
 		//==============================
 		UUID();
-		UUID(uint64_t uuid);
+		UUID(uint64_t uuid) : m_UUID(uuid) {}
 		UUID(const UUID&) = default;
 		//==============================
 		// Getters/Setters

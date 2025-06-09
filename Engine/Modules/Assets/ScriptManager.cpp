@@ -6,7 +6,7 @@
 #include "Modules/Scripting/ScriptService.h"
 #include "Modules/AI/AIService.h"
 #include "Modules/InputMap/InputMap.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/ECS/Entity.h"
 #include "Kargono/Projects/Project.h"

@@ -9,5 +9,4 @@ namespace Kargono
 	static std::uniform_int_distribution<uint64_t> s_UniformDistribution(1, std::numeric_limits<uint64_t>::max());
 
 	UUID::UUID() : m_UUID(s_UniformDistribution(s_Engine)) {}
-	UUID::UUID(uint64_t uuid) : m_UUID(uuid) {}
 }

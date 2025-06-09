@@ -10,8 +10,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Constructors/Destructors
 		//============================
-		DropDownWidget()
-			: Widget()
+		DropDownWidget(UserInterface* parentInterface)
+			: Widget(parentInterface)
 		{
 			m_WidgetType = WidgetTypes::DropDownWidget;
 			m_Tag = "DropDownWidget";
@@ -21,8 +21,9 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Rendering Methods
 		//============================
-		virtual void OnRender(Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
+		virtual void OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
 
+	public:
 		//============================
 		// Query State
 		//============================
@@ -31,10 +32,16 @@ namespace Kargono::RuntimeUI
 			return m_SelectionData.m_Selectable;
 		}
 
+	public:
+		//============================
+		// Getters/Setters
+		//============================
+		virtual SelectionData* GetSelectionData() override { return &m_SelectionData; }
+
 		//============================
 		// Re-validation Methods
 		//============================
-		void CalculateTextSize();
+		virtual void RevalidateTextDimensions() override;
 	public:
 		//============================
 		// Public Fields

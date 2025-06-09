@@ -14,7 +14,7 @@
 #include "Kargono/ProjectData/ProjectEnum.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Core/KeyCodes.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Kargono/Scenes/Scene.h"
 
 namespace Kargono::Utility
@@ -561,7 +561,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.Description = "Basic type representing a list of ASCII characters. Ex: \"Hello World\", \"This is a sample sentence\"";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::StringLiteral;
 		newPrimitiveType.EmittedDeclaration = "std::string";
-		newPrimitiveType.EmittedParameter = "const std::string&";
+		newPrimitiveType.EmittedParameter = "std::string_view";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTextWidget;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
@@ -704,96 +704,96 @@ namespace Kargono::Scripting
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "user_interface_window";
 		newPrimitiveType.Description = "Reference to a user interface window. This object is a reference to a window that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WindowID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WindowID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WindowHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WindowHandle";
 		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconWindow;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "text_widget";
 		newPrimitiveType.Description = "Reference to a user interface text widget. This object is a reference to a text widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::TextWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "button_widget";
 		newPrimitiveType.Description = "Reference to a user interface button widget. This object is a reference to a button widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ButtonWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "image_widget";
 		newPrimitiveType.Description = "Reference to a user interface image widget. This object is a reference to a image widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ImageWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "image_button_widget";
 		newPrimitiveType.Description = "Reference to a user interface image button widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ImageButtonWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "checkbox_widget";
 		newPrimitiveType.Description = "Reference to a user interface checkbox widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::CheckboxWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "input_text_widget";
 		newPrimitiveType.Description = "Reference to a user interface input text widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::InputTextWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "slider_widget";
 		newPrimitiveType.Description = "Reference to a user interface slider widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::SliderWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "drop_down_widget";
 		newPrimitiveType.Description = "Reference to a user interface drop-down widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::DropDownWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "container_widget";
 		newPrimitiveType.Description = "Reference to a user interface container widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ContainerWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "horizontal_container_widget";
 		newPrimitiveType.Description = "Reference to a user interface horizontal container widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::HorizontalContainerWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "vertical_container_widget";
 		newPrimitiveType.Description = "Reference to a user interface vertical container widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::VerticalContainerWidget);
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
@@ -1260,6 +1260,7 @@ namespace Kargono::Scripting
 		newFunctionMember.Description = "This functions gets the current tag of the entity as a string.";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 		{
+			generator.m_OutputText << "(std::string)";
 			generator.m_OutputText << "TagComponent_GetTag(";
 			generator.GenerateExpression(member.CurrentNodeExpression);
 			generator.m_OutputText << ")";
@@ -1422,7 +1423,7 @@ namespace Kargono::Scripting
 			Utility::Operations::RemoveWhitespaceFromString(currentWidgetLabel);
 
 			// Add text replacement values for this widget
-			newWidgetLiteral->m_OutputText = std::format("RuntimeUI::WidgetID({}, {})",
+			newWidgetLiteral->m_OutputText = std::format("RuntimeUI::WidgetHandle({}, {})",
 				std::to_string(configHandle),
 				std::to_string(currentWidget->m_ID));
 
@@ -1467,7 +1468,7 @@ namespace Kargono::Scripting
 				break;
 			}
 
-			RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetActiveContext().GetContainerDataFromWidget(currentWidget.get());
+			RuntimeUI::ContainerData* containerData = currentWidget->GetContainerData();
 			if (containerData)
 			{
 				for (Ref<RuntimeUI::Widget> containedWidget : containerData->m_ContainedWidgets)
@@ -1681,7 +1682,7 @@ namespace Kargono::Scripting
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			for (RuntimeUI::Window& currentWindow : currentUI->m_Windows)
+			for (RuntimeUI::Window& currentWindow : currentUI->m_WindowsState.m_Windows)
 			{
 				// Create the basic window literal
 				Ref<CustomLiteralMember> newWindowLiteral = CreateRef<CustomLiteralMember>();
@@ -1689,7 +1690,7 @@ namespace Kargono::Scripting
 				Utility::Operations::RemoveWhitespaceFromString(currentWindowLabel);
 
 				// Add text replacement values for this window
-				newWindowLiteral->m_OutputText = std::format("RuntimeUI::WindowID({}, {})",
+				newWindowLiteral->m_OutputText = std::format("RuntimeUI::WindowHandle({}, {})",
 					std::to_string(configHandle),
 					std::to_string(currentWindow.m_ID));
 				newWindowLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_window" };
@@ -1971,7 +1972,7 @@ namespace Kargono::Scripting
 		{
 			UNREFERENCED_PARAMETER(generator);
 			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_GetWidgetText";
+			node.Identifier.Value = "(std::string)RuntimeUI_GetWidgetText";
 		};
 		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};

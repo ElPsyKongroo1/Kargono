@@ -305,7 +305,7 @@ namespace Kargono::Panels
 				Ref<RuntimeUI::Font> font = Assets::AssetService::GetFont(currentHandle);
 				if (font)
 				{
-					RuntimeUI::RuntimeUIService::GetActiveContext().SetActiveFont(font, currentHandle);
+					RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_Config.SetFont(font, currentHandle);
 				}
 				else 
 				{ 
