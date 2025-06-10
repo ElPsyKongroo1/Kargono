@@ -10,6 +10,7 @@
 #include "Modules/EditorUI/EditorUICommon.h"
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 #include "Modules/EditorUI/Widgets/EditorUISelectOptionWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIFloatWidget.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiAPI.h"
 #include "Modules/EditorUI/ExternalAPI/ImGuizmoAPI.h"
@@ -28,18 +29,6 @@ namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono::EditorUI
 {
-	struct TreeWidget;
-	struct InlineButtonWidget;
-	struct EditVariableWidget;
-	struct EditIntegerWidget;
-	struct EditIVec2Widget;
-	struct EditIVec3Widget;
-	struct EditIVec4Widget;
-	struct EditFloatWidget;
-	struct EditVec2Widget;
-	struct EditVec3Widget;
-	struct EditVec4Widget;
-
 	enum LabeledTextFlags : WidgetFlags
 	{
 		LabeledText_None = 0,
@@ -109,7 +98,7 @@ namespace Kargono::EditorUI
 		static void TruncateText(const std::string& text, uint32_t maxTextSize);
 		static void WriteMultilineText(const std::string& text, float lineWidth, float xOffset = 0, float yOffset = 0);
 		static void CreateButton(ImGuiID widgetID, std::function<void()> onPress,
-			const InlineButtonWidget& spec, bool active = false, ImVec4 tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
+			const InlineButton& spec, bool active = false, ImVec4 tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
 		static uint32_t WidgetIterator(uint32_t& count);
 
 	public:
@@ -117,24 +106,13 @@ namespace Kargono::EditorUI
 		// Create/Display Widget Functions
 		//==============================
 		static void TitleText(const std::string& text);
-		static void EditVariable(EditVariableWidget& spec);
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
 
-		static void EditInteger(EditIntegerWidget& spec);
-		static void EditIVec2(EditIVec2Widget& spec);
-		static void EditIVec3(EditIVec3Widget& spec);
-		static void EditIVec4(EditIVec4Widget& spec);
-		static void EditFloat(EditFloatWidget& spec);
-		static void EditVec2(EditVec2Widget& spec);
-		static void EditVec3(EditVec3Widget& spec);
-		static void EditVec4(EditVec4Widget& spec);
-
-		static void Tree(TreeWidget& spec);
-		static void LabeledText(const std::string& m_Label, const std::string& Text, LabeledTextFlags flags = LabeledText_None);
+		static void LabeledText(const char* m_Label, const char* Text, LabeledTextFlags flags = LabeledText_None);
 		static void Text(const char* text);
-		static void BeginTabBar(const std::string& title);
+		static void BeginTabBar(const char* title);
 		static void EndTabBar();
-		static bool BeginTabItem(const std::string& title);
+		static bool BeginTabItem(const char* title);
 		static void EndTabItem();
 
 	public:
@@ -185,9 +163,9 @@ namespace Kargono::EditorUI
 		inline static ImFont* s_FontRobotoMono {nullptr};
 
 		// Buttons
-		inline static InlineButtonWidget s_TableEditButton{};
-		inline static InlineButtonWidget s_TableLinkButton{};
-		inline static InlineButtonWidget s_ListExpandButton{};
+		inline static InlineButton s_TableEditButton{};
+		inline static InlineButton s_TableLinkButton{};
+		inline static InlineButton s_ListExpandButton{};
 
 	public:
 		//==============================
@@ -275,16 +253,16 @@ namespace Kargono::EditorUI
 		//==============================
 		// UI Button Presets
 		//==============================
-		inline static InlineButtonWidget s_SmallEditButton;
-		inline static InlineButtonWidget s_SmallExpandButton;
-		inline static InlineButtonWidget s_MediumOptionsButton;
-		inline static InlineButtonWidget s_SmallCheckboxButton;
-		inline static InlineButtonWidget s_SmallCheckboxDisabledButton;
-		inline static InlineButtonWidget s_SmallLinkButton;
-		inline static InlineButtonWidget s_LargeDeleteButton;
-		inline static InlineButtonWidget s_LargeCancelButton;
-		inline static InlineButtonWidget s_LargeConfirmButton;
-		inline static InlineButtonWidget s_LargeSearchButton;
+		inline static InlineButton s_SmallEditButton;
+		inline static InlineButton s_SmallExpandButton;
+		inline static InlineButton s_MediumOptionsButton;
+		inline static InlineButton s_SmallCheckboxButton;
+		inline static InlineButton s_SmallCheckboxDisabledButton;
+		inline static InlineButton s_SmallLinkButton;
+		inline static InlineButton s_LargeDeleteButton;
+		inline static InlineButton s_LargeCancelButton;
+		inline static InlineButton s_LargeConfirmButton;
+		inline static InlineButton s_LargeSearchButton;
 
 	public:
 		//==============================
@@ -335,409 +313,6 @@ namespace Kargono::EditorUI
 
 		inline static MementoStack s_UndoStack;
 	};
-
-	enum EditIntegerFlags : WidgetFlags
-	{
-		EditInteger_None = 0,
-		EditInteger_Indented = BIT(0)
-	};
-
-	struct EditIntegerWidget : public Widget
-	{
-	public:
-		EditIntegerWidget() : Widget() {}
-	public:
-		FixedString32 m_Label{};
-		WidgetFlags m_Flags{ EditInteger_None };
-		int32_t m_CurrentInteger{};
-		std::array<int32_t, 2> m_Bounds{ 0, 0 };
-		int32_t m_ScrollSpeed{ 1 };
-		std::function<void(EditIntegerWidget&)> m_ConfirmAction{ nullptr };
-		Ref<void> m_ProvidedData { nullptr };
-	private:
-		bool m_Editing{ false };
-	private:
-		friend void EditorUIService::EditInteger(EditIntegerWidget& spec);
-	};
-
-	enum EditIVec2Flags : WidgetFlags
-	{
-		EditIVec2_None = 0,
-		EditIVec2_Indented = BIT(0)
-	};
-
-	struct EditIVec2Widget : public Widget
-	{
-	public:
-		EditIVec2Widget() : Widget() {}
-	public:
-		FixedString32 m_Label{};
-		WidgetFlags m_Flags{ EditIVec2_None };
-		Math::ivec2 m_CurrentIVec2{};
-		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
-		int32_t m_ScrollSpeed{ 1 };
-		std::function<void(EditIVec2Widget&)> m_ConfirmAction{ nullptr };
-		Ref<void> m_ProvidedData{ nullptr };
-	private:
-		bool m_Editing{ false };
-	private:
-		friend void EditorUIService::EditIVec2(EditIVec2Widget& spec);
-	};
-
-	enum EditIVec3Flags : WidgetFlags
-	{
-		EditIVec3_None = 0,
-		EditIVec3_Indented = BIT(0)
-	};
-
-	struct EditIVec3Widget : public Widget
-	{
-	public:
-		EditIVec3Widget() : Widget() {}
-	public:
-		FixedString32 m_Label{};
-		WidgetFlags m_Flags{ EditIVec3_None };
-		Math::ivec3 m_CurrentIVec3{};
-		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
-		int32_t m_ScrollSpeed{ 1 };
-		std::function<void(EditIVec3Widget&)> m_ConfirmAction{ nullptr };
-		Ref<void> m_ProvidedData{ nullptr };
-	private:
-		bool m_Editing{ false };
-	private:
-		friend void EditorUIService::EditIVec3(EditIVec3Widget& spec);
-	};
-
-	enum EditIVec4Flags : WidgetFlags
-	{
-		EditIVec4_None = 0,
-		EditIVec4_Indented = BIT(0)
-	};
-
-	struct EditIVec4Widget : public Widget
-	{
-	public:
-		EditIVec4Widget() : Widget() {}
-	public:
-		FixedString32 m_Label{};
-		WidgetFlags m_Flags{ EditIVec4_None };
-		Math::ivec4 m_CurrentIVec4{};
-		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
-		int32_t m_ScrollSpeed{ 1 };
-		std::function<void(EditIVec4Widget&)> m_ConfirmAction{ nullptr };
-		Ref<void> m_ProvidedData{ nullptr };
-	private:
-		bool m_Editing{ false };
-	private:
-		friend void EditorUIService::EditIVec4(EditIVec4Widget& spec);
-	};
-
-	enum EditFloatFlags : WidgetFlags
-	{
-		EditFloat_None = 0,
-		EditFloat_Indented = BIT(0)
-	};
-
-	struct EditFloatWidget : public Widget
-	{
-	public:
-		EditFloatWidget() : Widget() {}
-	public:
-		FixedString32 m_Label{};
-		WidgetFlags m_Flags{ EditFloat_None };
-		float m_CurrentFloat{};
-		std::function<void(EditFloatWidget&)> m_ConfirmAction{ nullptr };
-		Ref<void> m_ProvidedData { nullptr };
-		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
-		float m_ScrollSpeed{ 0.01f };
-	private:
-		bool m_Editing{ false };
-	private:
-		friend void EditorUIService::EditFloat(EditFloatWidget& spec);
-	};
-
-	enum EditVec2Flags : WidgetFlags
-	{
-		EditVec2_None = 0,
-		EditVec2_Indented = BIT(0)
-	};
-
-	struct EditVec2Widget : public Widget
-	{
-	public:
-		EditVec2Widget() : Widget() {}
-	public:
-		FixedString32 m_Label{};
-		WidgetFlags m_Flags{ EditVec2_None };
-		Math::vec2 m_CurrentVec2{};
-		std::function<void(EditVec2Widget&)> m_ConfirmAction{ nullptr };
-		Ref<void> m_ProvidedData { nullptr };
-		std::array<float, 2> m_Bounds{ 0.0f,0.0f };
-		float m_ScrollSpeed{ 0.01f };
-	private:
-		bool m_Editing{ false };
-	private:
-		friend void EditorUIService::EditVec2(EditVec2Widget& spec);
-	};
-
-	enum EditVec3Flags : WidgetFlags
-	{
-		EditVec3_None = 0,
-		EditVec3_Indented = BIT(0)
-	};
-
-	struct EditVec3Widget : public Widget
-	{
-	public:
-		EditVec3Widget() : Widget() {}
-	public:
-		FixedString32 m_Label{};
-		WidgetFlags m_Flags{ EditVec3_None };
-		Math::vec3 m_CurrentVec3{};
-		std::function<void(EditVec3Widget&)> m_ConfirmAction{ nullptr };
-		Ref<void> m_ProvidedData { nullptr };
-		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
-		float m_ScrollSpeed{ 0.01f };
-	private:
-		bool m_Editing{ false };
-	private:
-		friend void EditorUIService::EditVec3(EditVec3Widget& spec);
-	};
-
-	enum EditVec4Flags : WidgetFlags
-	{
-		EditVec4_None =		0,
-		EditVec4_Indented = BIT(0),
-		EditVec4_RGBA =		BIT(1),
-		EditVec4_HandleEditButtonExternally = BIT(2)
-	};
-
-	struct EditVec4Widget : public Widget
-	{
-	public:
-		EditVec4Widget() : Widget() {}
-	public:
-		FixedString32 m_Label{};
-		WidgetFlags m_Flags{ EditVec4_None };
-		Math::vec4 m_CurrentVec4{};
-		std::function<void(EditVec4Widget&)> m_ConfirmAction{ nullptr };
-		std::function<void(EditVec4Widget&)> m_OnEdit{ nullptr };
-		Ref<void> m_ProvidedData { nullptr };
-		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
-		float m_ScrollSpeed{ 0.01f };
-		bool m_Editing{ false };
-	private:
-		friend void EditorUIService::EditVec4(EditVec4Widget& spec);
-	};
-
-	class TreePath
-	{
-	public:
-		void AddNode(uint16_t newNode)
-		{
-			m_Path.push_back(newNode);
-		}
-
-		void SetNode(uint16_t newValue, size_t location)
-		{
-			if (location >= m_Path.size())
-			{
-				KG_WARN("Invalid location provided. Cannot update TreePath node");
-				return;
-			}
-
-			m_Path.at(location) = newValue;
-		}
-
-		void PopBack()
-		{
-			m_Path.pop_back();
-		}
-
-		uint16_t GetBack()
-		{
-			return m_Path.back();
-		}
-
-		void SetBack(uint16_t newNode)
-		{
-			PopBack();
-			m_Path.push_back(newNode);
-		}
-
-		std::size_t GetDepth()
-		{
-			return m_Path.size();
-		}
-
-		const std::vector<uint16_t>& GetPath() const
-		{
-			return m_Path;
-		}
-
-		bool operator==(const TreePath& other) const
-		{
-			return m_Path == other.m_Path;
-		}
-
-		bool SameParentPath(const TreePath& other) const
-		{
-			// Parent path cannot be equal if sizes do not match
-			if (m_Path.size() != other.m_Path.size())
-			{
-				return false;
-			}
-
-			for (size_t iteration{ 0 }; iteration < m_Path.size(); iteration++)
-			{
-				// Check if nodes differ
-				if (m_Path.at(iteration) != other.m_Path.at(iteration))
-				{
-					if (iteration == m_Path.size() - 1)
-					{
-						return true;
-					}
-					else
-					{
-						return false;
-					}
-				}
-			}
-
-			// If paths are equivalent, return true
-			return true;
-		}
-
-		operator bool() const
-		{
-			return (bool)m_Path.size();
-		}
-	private:
-		std::vector<uint16_t> m_Path{};
-	};
-}
-
-namespace std
-{
-	template<>
-	struct hash<Kargono::EditorUI::TreePath>
-	{
-		std::size_t operator()(const Kargono::EditorUI::TreePath& path) const
-		{
-			std::size_t seed = 0;
-			for (uint16_t node : path.GetPath()) 
-			{
-				seed ^= std::hash<uint16_t>()(node) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-			}
-			return seed;
-		}
-	};
-}
-
-namespace Kargono::EditorUI 
-{
-	struct TreeEntry;
-
-	struct SelectionEntry
-	{
-		std::string m_Label{};
-		std::function<void(TreeEntry&)> m_OnClick { nullptr };
-	};
-
-	struct TreeEntry
-	{
-		std::string m_Label {};
-		UUID m_Handle {};
-		Ref<Rendering::Texture2D> m_IconHandle{ nullptr };
-		std::function<void(TreeEntry& entry)> m_OnLeftClick { nullptr };
-		std::function<void(TreeEntry& entry)> m_OnDoubleLeftClick { nullptr };
-		std::function<void(TreeEntry& entry)> m_OnRightClick { nullptr };
-		Ref<void> m_ProvidedData { nullptr };
-		std::vector<TreeEntry> m_SubEntries{};
-	};
-
-	struct TreeWidget : public Widget
-	{
-	public:
-		TreeWidget() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		TreePath m_SelectedEntry{};
-		std::function<void()> m_OnRefresh { nullptr };
-	public:
-
-		void MoveUp();
-		void MoveDown();
-		void MoveLeft();
-		void MoveRight();
-
-		void SelectFirstEntry();
-		bool SelectEntry(TreePath& path);
-		TreeEntry* SearchFirstLayer(UUID queryHandle);
-		TreeEntry* SearchDepth(UUID queryHandle, size_t terminalDepth = 0);
-		std::vector<TreePath> SearchDepth(std::function<bool(TreeEntry& entry)> searchFunction, size_t depth = 0);
-		void EditDepth(std::function<void(TreeEntry& entry)> editFunction, size_t depth = 0);
-
-		void InsertEntry(const TreeEntry& entry)
-		{
-			m_TreeEntries.push_back(entry);
-		}
-
-		void RemoveEntry(TreePath& path);
-		void ClearTree()
-		{
-			m_TreeEntries.clear();
-			m_ExpandedNodes.clear();
-			m_SelectedEntry = {};
-		}
-		std::vector<TreeEntry>& GetTreeEntries()
-		{
-			return m_TreeEntries;
-		}
-
-		void ClearExpandedNodes()
-		{
-			m_ExpandedNodes.clear();
-		}
-
-		void ExpandFirstLayer();
-
-		void ExpandNodePath(TreePath& path);
-
-		TreeEntry* GetEntryFromPath(TreePath& path);
-		TreePath GetPathFromEntryReference(TreeEntry* entryQuery);
-	private:
-		void SearchDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, std::function<bool(TreeEntry& entry)> searchFunction, std::vector<TreePath>& allPaths);
-		TreeEntry* SearchDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, UUID queryID);
-		void EditDepthRecursive(TreeEntry& currentEntry, size_t currentDepth, size_t terminalDepth, std::function<void(TreeEntry& entry)> editFunction);
-	private:
-		std::vector<TreeEntry> m_TreeEntries{};
-		std::unordered_set<TreePath> m_ExpandedNodes{};
-		bool m_SelectionChanged{ false };
-	private:
-		friend void EditorUIService::Tree(TreeWidget& spec);
-		friend void DrawEntries(TreeWidget& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath , ImVec2 rootPosition);
-	};
-
-	struct EditVariableWidget : public Widget
-	{
-	public:
-		EditVariableWidget() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		Buffer FieldBuffer {};
-		WrappedVarType VariableType{ WrappedVarType::Integer32 };
-	public:
-		void AllocateBuffer()
-		{
-			FieldBuffer.Allocate(400);
-			FieldBuffer.SetDataToByte(0);
-		}
-	private:
-		friend void EditorUIService::EditVariable(EditVariableWidget&);
-	};
-
-
 }
 
 namespace Kargono::Utility

@@ -226,15 +226,15 @@ namespace Kargono::Panels
 
 			// Draw emitter lifetime widget
 			m_EmitterLifetimeSpec.m_CurrentFloat = s_EmitterConfigWindow->m_EditorEmitterConfig->m_EmitterLifetime;
-			EditorUI::EditorUIService::EditFloat(m_EmitterLifetimeSpec);
+			m_EmitterLifetimeSpec.RenderFloat();
 
 			// Draw particle lifetime widget
 			m_ParticleLifetimeSpec.m_CurrentFloat = s_EmitterConfigWindow->m_EditorEmitterConfig->m_ParticleLifetime;
-			EditorUI::EditorUIService::EditFloat(m_ParticleLifetimeSpec);
+			m_ParticleLifetimeSpec.RenderFloat();
 
 			// Draw buffer size widget
 			m_BufferSizeSpec.m_CurrentInteger = (int32_t)s_EmitterConfigWindow->m_EditorEmitterConfig->m_BufferSize;
-			EditorUI::EditorUIService::EditInteger(m_BufferSizeSpec);
+			m_BufferSizeSpec.RenderInteger();
 
 			// Draw (use gravity) widget
 			m_UseGravitySpec.m_CurrentBoolean= s_EmitterConfigWindow->m_EditorEmitterConfig->m_UseGravity;
@@ -242,7 +242,7 @@ namespace Kargono::Panels
 
 			// Draw gravity acceleration widget
 			m_GravityAccelerationSpec.m_CurrentVec3 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_GravityAcceleration;
-			EditorUI::EditorUIService::EditVec3(m_GravityAccelerationSpec);
+			m_GravityAccelerationSpec.RenderVec3();
 		}
 
 	}
@@ -255,15 +255,15 @@ namespace Kargono::Panels
 		{
 			// Draw spawn rate widget
 			m_SpawnPerSecSpec.m_CurrentInteger = (int32_t)s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawnRatePerSec;
-			EditorUI::EditorUIService::EditInteger(m_SpawnPerSecSpec);
+			m_SpawnPerSecSpec.RenderInteger();
 
 			// Draw lower spawning bounds widget
 			m_SpawningLowerBounds.m_CurrentVec3 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawningBounds[0];
-			EditorUI::EditorUIService::EditVec3(m_SpawningLowerBounds);
+			m_SpawningLowerBounds.RenderVec3();
 
 			// Draw upper spawning bounds widget
 			m_SpawningUpperBounds.m_CurrentVec3 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawningBounds[1];
-			EditorUI::EditorUIService::EditVec3(m_SpawningUpperBounds);
+			m_SpawningUpperBounds.RenderVec3();
 		}
 	}
 
@@ -275,9 +275,9 @@ namespace Kargono::Panels
 		{
 			// Draw color begin/end specs
 			m_ColorBeginSpec.m_CurrentVec4 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_ColorBegin;
-			EditorUI::EditorUIService::EditVec4(m_ColorBeginSpec);
+			m_ColorBeginSpec.RenderVec4();
 			m_ColorEndSpec.m_CurrentVec4 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_ColorEnd;
-			EditorUI::EditorUIService::EditVec4(m_ColorEndSpec);
+			m_ColorEndSpec.RenderVec4();
 
 			// Draw option to select color interpolation curve
 			Math::InterpolationType currentColorInterp{ s_EmitterConfigWindow->m_EditorEmitterConfig->m_ColorInterpolationType };
@@ -299,9 +299,9 @@ namespace Kargono::Panels
 		{
 			// Draw size begin/end specs
 			m_SizeBeginSpec.m_CurrentVec3 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_SizeBegin;
-			EditorUI::EditorUIService::EditVec3(m_SizeBeginSpec);
+			m_SizeBeginSpec.RenderVec3();
 			m_SizeEndSpec.m_CurrentVec3 = s_EmitterConfigWindow->m_EditorEmitterConfig->m_SizeEnd;
-			EditorUI::EditorUIService::EditVec3(m_SizeEndSpec);
+			m_SizeEndSpec.RenderVec3();
 
 			// Draw option to select size interpolation curve
 			Math::InterpolationType currentSizeInterp{ s_EmitterConfigWindow->m_EditorEmitterConfig->m_SizeInterpolationType };

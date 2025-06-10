@@ -47,7 +47,7 @@ namespace Kargono::Panels
 			m_MainHeader.RenderHeader();
 			m_DeleteUIWarning.RenderPopup();
 			m_CloseUIWarning.RenderPopup();
-			EditorUI::EditorUIService::Tree(m_UITree);
+			m_UITree.RenderTree();
 			m_SelectTooltip.RenderTooltip();
 		}
 
@@ -1094,10 +1094,10 @@ namespace Kargono::Panels
 		EditorUI::TreePath newTreePath;
 
 		// Add UI node
-		newTreePath.AddNode(0);
+		newTreePath.PushBackNode(0);
 
 		// Add window node
-		newTreePath.AddNode(windowIndex);
+		newTreePath.PushBackNode(windowIndex);
 
 		// Handle selecting a window node
 		if (idType == RuntimeUI::IDType::Window)
@@ -1113,7 +1113,7 @@ namespace Kargono::Panels
 		{
 			// Add the indicated widget index to the tree path
 			uint16_t widgetIndex = locationInRuntimeUI->at(uiLocationIndex);
-			newTreePath.AddNode(widgetIndex);
+			newTreePath.PushBackNode(widgetIndex);
 		}
 
 		// Expand the newly created path and select the widget

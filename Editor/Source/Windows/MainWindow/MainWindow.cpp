@@ -54,7 +54,7 @@ namespace Kargono::Windows
 		m_ImportAssetPopup.m_Label = "Import Asset";
 		m_ImportAssetPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::LabeledText("Source File:", m_ImportSourceFilePath.string());
+			EditorUI::EditorUIService::LabeledText("Source File:", m_ImportSourceFilePath.string().c_str());
 			m_ImportNewFileLocation.RenderChooseDir();
 			m_ImportNewAssetName.RenderText();
 		};

@@ -270,7 +270,7 @@ namespace Kargono::Panels
 		if (EditorUI::EditorUIService::BeginTabItem("General"))
 		{
 			// Project Directory
-			EditorUI::EditorUIService::LabeledText("Project Directory", Projects::ProjectService::GetActiveContext().GetProjectPaths().m_ProjectDirectory.string());
+			EditorUI::EditorUIService::LabeledText("Project Directory", Projects::ProjectService::GetActiveContext().GetProjectPaths().m_ProjectDirectory.string().c_str());
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Select Starting Scene
@@ -508,13 +508,13 @@ namespace Kargono::Panels
 				Network::ServerConfig config = Projects::ProjectService::GetActiveContext().GetServerConfig();
 
 				m_ServerIP.m_CurrentIVec4 = (Math::ivec4)config.m_ServerAddress.GetAddressUVec4();
-				EditorUI::EditorUIService::EditIVec4(m_ServerIP);
+				m_ServerIP.RenderIVec4();
 				m_ServerPort.m_CurrentInteger = (int32_t)config.m_ServerAddress.GetPort();
-				EditorUI::EditorUIService::EditInteger(m_ServerPort);
+				m_ServerPort.RenderInteger();
 				m_ServerLocation.m_CurrentBoolean = config.m_ServerLocation == Network::ServerLocation::LocalMachine;
 				m_ServerLocation.RenderCheckbox();
 				m_ServerSecrets.m_CurrentIVec4 = (Math::ivec4)config.m_ValidationSecrets;
-				EditorUI::EditorUIService::EditIVec4(m_ServerSecrets);
+				m_ServerSecrets.RenderIVec4();
 			}
 			EditorUI::EditorUIService::EndTabItem();
 		}

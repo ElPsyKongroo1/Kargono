@@ -35,7 +35,7 @@ namespace Kargono::EditorUI
 		Inline
 	};
 
-	struct InlineButtonWidget
+	struct InlineButton
 	{
 	public:
 		float m_XPosition{ 0.0f };

@@ -299,7 +299,7 @@ namespace Kargono::Panels
 		{
 			m_EditFieldName.RenderText();
 			m_EditFieldType.RenderOptions();
-			EditorUI::EditorUIService::EditVariable(m_EditFieldValue);
+			m_EditFieldValue.RenderVariable();
 		};
 		
 	}

@@ -35,7 +35,7 @@ namespace Kargono::EditorUI
 		UUID m_EntryID;
 		bool m_IsVisible{ true };
 		UUID m_UserHandle;
-		void* m_ProvidedData;
+		void* m_ProvidedData{ nullptr };
 	private:
 		//==============================
 		// Internal Fields

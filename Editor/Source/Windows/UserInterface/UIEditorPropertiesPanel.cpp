@@ -105,15 +105,15 @@ namespace Kargono::Panels
 
 			// Edit UI's selection color
 			m_UISelectionColor.m_CurrentVec4 = s_UIWindow->m_EditorUI->m_Config.m_SelectColor;
-			EditorUI::EditorUIService::EditVec4(m_UISelectionColor);
+			m_UISelectionColor.RenderVec4();
 
 			// Edit UI's hovered color
 			m_UIHoveredColor.m_CurrentVec4 = s_UIWindow->m_EditorUI->m_Config.m_HoveredColor;
-			EditorUI::EditorUIService::EditVec4(m_UIHoveredColor);
+			m_UIHoveredColor.RenderVec4();
 
 			// Edit UI's editing color
 			m_UIEditingColor.m_CurrentVec4 = s_UIWindow->m_EditorUI->m_Config.m_EditingColor;
-			EditorUI::EditorUIService::EditVec4(m_UIEditingColor);
+			m_UIEditingColor.RenderVec4();
 		}
 	}
 
@@ -144,15 +144,15 @@ namespace Kargono::Panels
 
 			// Edit window location relative to screen
 			m_WindowLocation.m_CurrentVec3 = m_ActiveWindow->m_ScreenPosition;
-			EditorUI::EditorUIService::EditVec3(m_WindowLocation);
+			m_WindowLocation.RenderVec3();
 
 			// Edit window size relative to screen
 			m_WindowSize.m_CurrentVec2 = m_ActiveWindow->m_Size;
-			EditorUI::EditorUIService::EditVec2(m_WindowSize);
+			m_WindowSize.RenderVec2();
 
 			// Edit window background color
 			m_WindowBackgroundColor.m_CurrentVec4 = m_ActiveWindow->m_BackgroundColor;
-			EditorUI::EditorUIService::EditVec4(m_WindowBackgroundColor);
+			m_WindowBackgroundColor.RenderVec4();
 		}
 	}
 
@@ -175,12 +175,12 @@ namespace Kargono::Panels
 			if (m_WidgetXPixelOrPercentLocation.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
 			{
 				m_WidgetXPixelLocation.m_CurrentInteger = m_ActiveWidget->m_PixelPosition.x;
-				EditorUI::EditorUIService::EditInteger(m_WidgetXPixelLocation);
+				m_WidgetXPixelLocation.RenderInteger();
 			}
 			else
 			{
 				m_WidgetXPercentLocation.m_CurrentFloat = m_ActiveWidget->m_PercentPosition.x;
-				EditorUI::EditorUIService::EditFloat(m_WidgetXPercentLocation);
+				m_WidgetXPercentLocation.RenderFloat();
 			}
 			
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
@@ -198,12 +198,12 @@ namespace Kargono::Panels
 			if (m_WidgetYPixelOrPercentLocation.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
 			{
 				m_WidgetYPixelLocation.m_CurrentInteger = m_ActiveWidget->m_PixelPosition.y;
-				EditorUI::EditorUIService::EditInteger(m_WidgetYPixelLocation);
+				m_WidgetYPixelLocation.RenderInteger();
 			}
 			else
 			{
 				m_WidgetYPercentLocation.m_CurrentFloat = m_ActiveWidget->m_PercentPosition.y;
-				EditorUI::EditorUIService::EditFloat(m_WidgetYPercentLocation);
+				m_WidgetYPercentLocation.RenderFloat();
 			}
 		}
 	}
@@ -225,13 +225,13 @@ namespace Kargono::Panels
 			{
 				// Edit selected widget's size in pixels
 				m_WidgetPixelSize.m_CurrentIVec2 = m_ActiveWidget->m_PixelSize;
-				EditorUI::EditorUIService::EditIVec2(m_WidgetPixelSize);
+				m_WidgetPixelSize.RenderIVec2();
 			}
 			else
 			{
 				// Edit selected widget's size relative to its window
 				m_WidgetPercentSize.m_CurrentVec2 = m_ActiveWidget->m_PercentSize;
-				EditorUI::EditorUIService::EditVec2(m_WidgetPercentSize);
+				m_WidgetPercentSize.RenderVec2();
 			}
 		}
 	}
@@ -251,11 +251,11 @@ namespace Kargono::Panels
 
 			// Edit selected text widget's text size relative to its window
 			m_TextWidgetTextSize.m_CurrentFloat = activeTextWidget.m_TextData.m_TextSize;
-			EditorUI::EditorUIService::EditFloat(m_TextWidgetTextSize);
+			m_TextWidgetTextSize.RenderFloat();
 
 			// Edit selected text widget's text color
 			m_TextWidgetTextColor.m_CurrentVec4 = activeTextWidget.m_TextData.m_TextColor;
-			EditorUI::EditorUIService::EditVec4(m_TextWidgetTextColor);
+			m_TextWidgetTextColor.RenderVec4();
 
 			// Edit selected text widget's text alignment
 			m_TextWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeTextWidget.m_TextData.m_TextAlignment) , (uint64_t)activeTextWidget.m_TextData.m_TextAlignment };
@@ -286,11 +286,11 @@ namespace Kargono::Panels
 
 			// Edit selected button widget's text size relative to its window
 			m_ButtonWidgetTextSize.m_CurrentFloat = activeButtonWidget.m_TextData.m_TextSize;
-			EditorUI::EditorUIService::EditFloat(m_ButtonWidgetTextSize);
+			m_ButtonWidgetTextSize.RenderFloat();
 
 			// Edit selected button widget's text color
 			m_ButtonWidgetTextColor.m_CurrentVec4 = activeButtonWidget.m_TextData.m_TextColor;
-			EditorUI::EditorUIService::EditVec4(m_ButtonWidgetTextColor);
+			m_ButtonWidgetTextColor.RenderVec4();
 
 			// Edit selected button widget's text alignment
 			m_ButtonWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeButtonWidget.m_TextData.m_TextAlignment) , (uint64_t)activeButtonWidget.m_TextData.m_TextAlignment };
@@ -298,7 +298,7 @@ namespace Kargono::Panels
 
 			// Edit selected widget's background color
 			m_ButtonWidgetBackgroundColor.m_CurrentVec4 = activeButtonWidget.m_SelectionData.m_DefaultBackgroundColor;
-			EditorUI::EditorUIService::EditVec4(m_ButtonWidgetBackgroundColor);
+			m_ButtonWidgetBackgroundColor.RenderVec4();
 
 			// Edit selected widget's on press script
 			Assets::AssetHandle onPressHandle = activeButtonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
@@ -365,7 +365,7 @@ namespace Kargono::Panels
 
 			// Edit selected widget's background color
 			m_ImageButtonWidgetBackgroundColor.m_CurrentVec4 = activeImageButtonWidget.m_SelectionData.m_DefaultBackgroundColor;
-			EditorUI::EditorUIService::EditVec4(m_ImageButtonWidgetBackgroundColor);
+			m_ImageButtonWidgetBackgroundColor.RenderVec4();
 
 			// Edit selected widget's on press script
 			Assets::AssetHandle onPressHandle = activeImageButtonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
@@ -421,7 +421,7 @@ namespace Kargono::Panels
 
 			// Edit selected widget's background color
 			m_CheckboxWidgetBackgroundColor.m_CurrentVec4 = activeCheckboxWidget.m_SelectionData.m_DefaultBackgroundColor;
-			EditorUI::EditorUIService::EditVec4(m_CheckboxWidgetBackgroundColor);
+			m_CheckboxWidgetBackgroundColor.RenderVec4();
 
 			// Edit selected widget's on press script
 			Assets::AssetHandle onPressHandle = activeCheckboxWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
@@ -445,7 +445,7 @@ namespace Kargono::Panels
 
 			// Edit selected widget's container background color
 			m_ContainerWidgetBackground.m_CurrentVec4 = activeContainerWidget.m_ContainerData.m_BackgroundColor;
-			EditorUI::EditorUIService::EditVec4(m_ContainerWidgetBackground);
+			m_ContainerWidgetBackground.RenderVec4();
 		}
 	}
 
@@ -460,15 +460,15 @@ namespace Kargono::Panels
 
 			// Edit selected widget's HorizontalContainer background color
 			m_HorizontalContainerWidgetBackground.m_CurrentVec4 = activeHorizontalContainerWidget.m_ContainerData.m_BackgroundColor;
-			EditorUI::EditorUIService::EditVec4(m_HorizontalContainerWidgetBackground);
+			m_HorizontalContainerWidgetBackground.RenderVec4();
 
 			// Edit selected Horizontal container's Column width
 			m_HorizontalContainerColumnWidth.m_CurrentFloat = activeHorizontalContainerWidget.m_ColumnWidth;
-			EditorUI::EditorUIService::EditFloat(m_HorizontalContainerColumnWidth);
+			m_HorizontalContainerColumnWidth.RenderFloat();
 
 			// Edit selected Horizontal container's Column spacing
 			m_HorizontalContainerColumnSpacing.m_CurrentFloat = activeHorizontalContainerWidget.m_ColumnSpacing;
-			EditorUI::EditorUIService::EditFloat(m_HorizontalContainerColumnSpacing);
+			m_HorizontalContainerColumnSpacing.RenderFloat();
 		}
 	}
 
@@ -483,15 +483,15 @@ namespace Kargono::Panels
 
 			// Edit selected widget's VerticalContainer background color
 			m_VerticalContainerWidgetBackground.m_CurrentVec4 = activeVerticalContainerWidget.m_ContainerData.m_BackgroundColor;
-			EditorUI::EditorUIService::EditVec4(m_VerticalContainerWidgetBackground);
+			m_VerticalContainerWidgetBackground.RenderVec4();
 
 			// Edit selected vertical container's row height
 			m_VerticalContainerRowHeight.m_CurrentFloat = activeVerticalContainerWidget.m_RowHeight;
-			EditorUI::EditorUIService::EditFloat(m_VerticalContainerRowHeight);
+			m_VerticalContainerRowHeight.RenderFloat();
 
 			// Edit selected vertical container's row spacing
 			m_VerticalContainerRowSpacing.m_CurrentFloat = activeVerticalContainerWidget.m_RowSpacing;
-			EditorUI::EditorUIService::EditFloat(m_VerticalContainerRowSpacing);
+			m_VerticalContainerRowSpacing.RenderFloat();
 		}
 	}
 
@@ -514,11 +514,11 @@ namespace Kargono::Panels
 
 			// Edit selected InputText widget's text size relative to its window
 			m_InputTextWidgetTextSize.m_CurrentFloat = activeInputTextWidget.m_TextData.m_TextSize;
-			EditorUI::EditorUIService::EditFloat(m_InputTextWidgetTextSize);
+			m_InputTextWidgetTextSize.RenderFloat();
 
 			// Edit selected InputText widget's text color
 			m_InputTextWidgetTextColor.m_CurrentVec4 = activeInputTextWidget.m_TextData.m_TextColor;
-			EditorUI::EditorUIService::EditVec4(m_InputTextWidgetTextColor);
+			m_InputTextWidgetTextColor.RenderVec4();
 
 			// Edit selected InputText widget's text alignment
 			m_InputTextWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeInputTextWidget.m_TextData.m_TextAlignment) , (uint64_t)activeInputTextWidget.m_TextData.m_TextAlignment };
@@ -526,7 +526,7 @@ namespace Kargono::Panels
 
 			// Edit selected widget's background color
 			m_InputTextWidgetBackgroundColor.m_CurrentVec4 = activeInputTextWidget.m_SelectionData.m_DefaultBackgroundColor;
-			EditorUI::EditorUIService::EditVec4(m_InputTextWidgetBackgroundColor);
+			m_InputTextWidgetBackgroundColor.RenderVec4();
 
 			// Edit selected widget's on press script
 			Assets::AssetHandle onPressHandle = activeInputTextWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
@@ -563,15 +563,15 @@ namespace Kargono::Panels
 
 			// Edit selected widget's size relative to its window
 			m_SliderWidgetBounds.m_CurrentVec2 = activeSliderWidget.m_Bounds;
-			EditorUI::EditorUIService::EditVec2(m_SliderWidgetBounds);
+			m_SliderWidgetBounds.RenderVec2();
 
 			// Edit selected widget's Slider color
 			m_SliderWidgetSliderColor.m_CurrentVec4 = activeSliderWidget.m_SliderColor;
-			EditorUI::EditorUIService::EditVec4(m_SliderWidgetSliderColor);
+			m_SliderWidgetSliderColor.RenderVec4();
 
 			// Edit selected widget's Line color
 			m_SliderWidgetLineColor.m_CurrentVec4 = activeSliderWidget.m_LineColor;
-			EditorUI::EditorUIService::EditVec4(m_SliderWidgetLineColor);
+			m_SliderWidgetLineColor.RenderVec4();
 
 			//// Edit selected widget's background color
 			//m_SliderWidgetBackgroundColor.m_CurrentVec4 = activeSliderWidget.m_SelectionData.m_DefaultBackgroundColor;
@@ -647,11 +647,11 @@ namespace Kargono::Panels
 
 			// Edit selected widget's background color
 			m_DropDownWidgetBackgroundColor.m_CurrentVec4 = activeDropDownWidget.m_SelectionData.m_DefaultBackgroundColor;
-			EditorUI::EditorUIService::EditVec4(m_DropDownWidgetBackgroundColor);
+			m_DropDownWidgetBackgroundColor.RenderVec4();
 
 			// Edit selected widget's background color
 			m_DropDownWidgetOptionBackgroundColor.m_CurrentVec4 = activeDropDownWidget.m_DropDownBackground;
-			EditorUI::EditorUIService::EditVec4(m_DropDownWidgetOptionBackgroundColor);
+			m_DropDownWidgetOptionBackgroundColor.RenderVec4();
 
 			// Edit selected widget's on press script
 			Assets::AssetHandle onPressHandle = activeDropDownWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;

@@ -19,5 +19,9 @@
 #include "Modules/EditorUI/Widgets/EditorUIGridWidget.h"
 #include "Modules/EditorUI/Widgets/EditorUITooltipWidget.h"
 #include "Modules/EditorUI/Widgets/EditorUIListWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUITreeWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIVariableWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIIntegerWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIFloatWidget.h"
 
 #include "Modules/EditorUI/EditorUI.h"

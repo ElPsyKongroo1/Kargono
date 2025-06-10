@@ -295,7 +295,7 @@ namespace Kargono::Panels
 	{
 		for (EditorUI::EditVec4Widget& colorEditor : m_ColorEditorWidgets)
 		{
-			EditorUI::EditorUIService::EditVec4(colorEditor);
+			colorEditor.RenderVec4();
 		}
 	}
 

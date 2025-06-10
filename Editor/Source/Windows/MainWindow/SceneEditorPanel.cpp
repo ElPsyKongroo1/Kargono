@@ -40,7 +40,7 @@ namespace Kargono::Panels
 				m_SceneHierarchyTree.ClearTree();
 
 				EditorUI::TreePath sceneEntryPath;
-				sceneEntryPath.AddNode(0);
+				sceneEntryPath.PushBackNode(0);
 				EditorUI::TreeEntry sceneEntry{};
 				sceneEntry.m_Label = Assets::AssetService::GetSceneRegistry().at
 				(
@@ -2366,7 +2366,7 @@ namespace Kargono::Panels
 			
 			m_MainSceneHeader.RenderHeader();
 
-			EditorUI::EditorUIService::Tree(m_SceneHierarchyTree);
+			m_SceneHierarchyTree.RenderTree();
 
 			m_AddComponent.RenderOptions();
 
@@ -2433,7 +2433,7 @@ namespace Kargono::Panels
 				}
 
 				EditorUI::TreePath sceneEntryPath;
-				sceneEntryPath.AddNode(0);
+				sceneEntryPath.PushBackNode(0);
 				EditorUI::TreeEntry* sceneEntryRef{ m_SceneHierarchyTree.GetEntryFromPath(sceneEntryPath) };
 				KG_ASSERT(sceneEntryRef);
 
@@ -2732,11 +2732,11 @@ namespace Kargono::Panels
 		if (m_TransformHeader.m_Expanded)
 		{
 			m_TransformEditTranslation.m_CurrentVec3 = component.Translation;
-			EditorUI::EditorUIService::EditVec3(m_TransformEditTranslation);
+			m_TransformEditTranslation.RenderVec3();
 			m_TransformEditScale.m_CurrentVec3 = component.Scale;
-			EditorUI::EditorUIService::EditVec3(m_TransformEditScale);
+			m_TransformEditScale.RenderVec3();
 			m_TransformEditRotation.m_CurrentVec3 = component.Rotation;
-			EditorUI::EditorUIService::EditVec3(m_TransformEditRotation);
+			m_TransformEditRotation.RenderVec3();
 		}
 	}
 	void SceneEditorPanel::DrawRigidbody2DComponent(ECS::Entity entity)
@@ -2780,17 +2780,17 @@ namespace Kargono::Panels
 		if (m_BoxCollider2DHeader.m_Expanded)
 		{
 			m_BoxColliderOffset.m_CurrentVec2 = component.Offset;
-			EditorUI::EditorUIService::EditVec2(m_BoxColliderOffset);
+			m_BoxColliderOffset.RenderVec2();
 			m_BoxColliderSize.m_CurrentVec2 = component.Size;
-			EditorUI::EditorUIService::EditVec2(m_BoxColliderSize);
+			m_BoxColliderSize.RenderVec2();
 			m_BoxColliderDensity.m_CurrentFloat = component.Density;
-			EditorUI::EditorUIService::EditFloat(m_BoxColliderDensity);
+			m_BoxColliderDensity.RenderFloat();
 			m_BoxColliderFriction.m_CurrentFloat = component.Friction;
-			EditorUI::EditorUIService::EditFloat(m_BoxColliderFriction);
+			m_BoxColliderFriction.RenderFloat();
 			m_BoxColliderRestitution.m_CurrentFloat = component.Restitution;
-			EditorUI::EditorUIService::EditFloat(m_BoxColliderRestitution);
+			m_BoxColliderRestitution.RenderFloat();
 			m_BoxColliderRestitutionThreshold.m_CurrentFloat = component.RestitutionThreshold;
-			EditorUI::EditorUIService::EditFloat(m_BoxColliderRestitutionThreshold);
+			m_BoxColliderRestitutionThreshold.RenderFloat();
 			m_BoxColliderIsSensor.m_CurrentBoolean = component.IsSensor;
 			m_BoxColliderIsSensor.RenderCheckbox();
 
@@ -2808,17 +2808,17 @@ namespace Kargono::Panels
 		if (m_CircleCollider2DHeader.m_Expanded)
 		{
 			m_CircleColliderOffset.m_CurrentVec2 = component.Offset;
-			EditorUI::EditorUIService::EditVec2(m_CircleColliderOffset);
+			m_CircleColliderOffset.RenderVec2();
 			m_CircleColliderRadius.m_CurrentFloat = component.Radius;
-			EditorUI::EditorUIService::EditFloat(m_CircleColliderRadius);
+			m_CircleColliderRadius.RenderFloat();
 			m_CircleColliderDensity.m_CurrentFloat = component.Density;
-			EditorUI::EditorUIService::EditFloat(m_CircleColliderDensity);
+			m_CircleColliderDensity.RenderFloat();
 			m_CircleColliderFriction.m_CurrentFloat = component.Friction;
-			EditorUI::EditorUIService::EditFloat(m_CircleColliderFriction);
+			m_CircleColliderFriction.RenderFloat();
 			m_CircleColliderRestitution.m_CurrentFloat = component.Restitution;
-			EditorUI::EditorUIService::EditFloat(m_CircleColliderRestitution);
+			m_CircleColliderRestitution.RenderFloat();
 			m_CircleColliderRestitutionThreshold.m_CurrentFloat = component.RestitutionThreshold;
-			EditorUI::EditorUIService::EditFloat(m_CircleColliderRestitutionThreshold);
+			m_CircleColliderRestitutionThreshold.RenderFloat();
 			m_CircleColliderIsSensor.m_CurrentBoolean = component.IsSensor;
 			m_CircleColliderIsSensor.RenderCheckbox();
 		}
@@ -2843,20 +2843,20 @@ namespace Kargono::Panels
 			if (component.Camera.GetProjectionType() == Scenes::SceneCamera::ProjectionType::Perspective)
 			{
 				m_CameraPerspectiveFOV.m_CurrentFloat = component.Camera.GetPerspectiveVerticalFOV();
-				EditorUI::EditorUIService::EditFloat(m_CameraPerspectiveFOV);
+				m_CameraPerspectiveFOV.RenderFloat();
 				m_CameraPerspectiveNearPlane.m_CurrentFloat = component.Camera.GetPerspectiveNearClip();
-				EditorUI::EditorUIService::EditFloat(m_CameraPerspectiveNearPlane);
+				m_CameraPerspectiveNearPlane.RenderFloat();
 				m_CameraPerspectiveFarPlane.m_CurrentFloat = component.Camera.GetPerspectiveFarClip();
-				EditorUI::EditorUIService::EditFloat(m_CameraPerspectiveFarPlane);
+				m_CameraPerspectiveFarPlane.RenderFloat();
 			}
 			else
 			{
 				m_CameraOrthographicSize.m_CurrentFloat = component.Camera.GetOrthographicSize();
-				EditorUI::EditorUIService::EditFloat(m_CameraOrthographicSize);
+				m_CameraOrthographicSize.RenderFloat();
 				m_CameraOrthographicNearPlane.m_CurrentFloat = component.Camera.GetOrthographicNearClip();
-				EditorUI::EditorUIService::EditFloat(m_CameraOrthographicNearPlane);
+				m_CameraOrthographicNearPlane.RenderFloat();
 				m_CameraOrthographicFarPlane.m_CurrentFloat = component.Camera.GetOrthographicFarClip();
-				EditorUI::EditorUIService::EditFloat(m_CameraOrthographicFarPlane);
+				m_CameraOrthographicFarPlane.RenderFloat();
 			}
 		}
 		
@@ -3070,7 +3070,7 @@ namespace Kargono::Panels
 				break;
 			}
 		
-			EditorUI::EditorUIService::EditInteger(spec);
+			spec.RenderInteger();
 		}
 		void operator()(EditorUI::EditFloatWidget& spec)
 		{
@@ -3087,12 +3087,12 @@ namespace Kargono::Panels
 			spec.m_CurrentFloat = *(float*)fieldDataRef;
 
 			// Dispaly float
-			EditorUI::EditorUIService::EditFloat(spec);
+			spec.RenderFloat();
 		}
 		void operator()(EditorUI::EditVec2Widget& spec)
 		{
 			// TODO: Add support
-			EditorUI::EditorUIService::EditVec2(spec);
+			spec.RenderVec2();
 		}
 		void operator()(EditorUI::EditVec3Widget& spec)
 		{
@@ -3109,12 +3109,12 @@ namespace Kargono::Panels
 			spec.m_CurrentVec3 = *(Math::vec3*)fieldDataRef;
 
 			// Display vector 3
-			EditorUI::EditorUIService::EditVec3(spec);
+			spec.RenderVec3();
 		}
 		void operator()(EditorUI::EditVec4Widget& spec)
 		{
 			// TODO: Add support
-			EditorUI::EditorUIService::EditVec4(spec);
+			spec.RenderVec4();
 		}
 	};
 
@@ -3143,10 +3143,10 @@ namespace Kargono::Panels
 		KG_ASSERT(editorScene);
 		// Draw background color option
 		m_BackgroundColorSpec.m_CurrentVec4 = editorScene->m_BackgroundColor;
-		EditorUI::EditorUIService::EditVec4(m_BackgroundColorSpec);
+		m_BackgroundColorSpec.RenderVec4();
 		// Draw gravity option
 		m_Gravity2DSpec.m_CurrentVec2 = editorScene->GetPhysicsSpecification().Gravity;
-		EditorUI::EditorUIService::EditVec2(m_Gravity2DSpec);
+		m_Gravity2DSpec.RenderVec2();
 	}
 	void SceneEditorPanel::UpdateShapeComponent()
 	{
@@ -3212,7 +3212,7 @@ namespace Kargono::Panels
 			m_ShapeColor.m_CurrentVec4 = *(Rendering::Shader::GetInputLocation<Math::vec4>(
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				component.ShaderData, component.Shader));
-			EditorUI::EditorUIService::EditVec4(m_ShapeColor);
+			m_ShapeColor.RenderVec4();
 		}
 		if (component.ShaderSpecification.ColorInput == Rendering::ColorInputType::VertexColor)
 		{
@@ -3250,7 +3250,7 @@ namespace Kargono::Panels
 			m_ShapeTilingFactor.m_CurrentFloat = *Rendering::Shader::GetInputLocation<float>(
 				Utility::FileSystem::CRCFromString("a_TilingFactor"), 
 				component.ShaderData, component.Shader);
-			EditorUI::EditorUIService::EditFloat(m_ShapeTilingFactor);
+			m_ShapeTilingFactor.RenderFloat();
 		}
 	}
 	void SceneEditorPanel::DrawShapeComponentCircle()
@@ -3264,12 +3264,12 @@ namespace Kargono::Panels
 			m_ShapeCircleThickness.m_CurrentFloat = *Rendering::Shader::GetInputLocation<float>(
 				Utility::FileSystem::CRCFromString("a_Thickness"), 
 				component.ShaderData, component.Shader);
-			EditorUI::EditorUIService::EditFloat(m_ShapeCircleThickness);
+			m_ShapeCircleThickness.RenderFloat();
 
 			m_ShapeCircleFade.m_CurrentFloat = *Rendering::Shader::GetInputLocation<float>(\
 				Utility::FileSystem::CRCFromString("a_Fade"), 
 				component.ShaderData, component.Shader);
-			EditorUI::EditorUIService::EditFloat(m_ShapeCircleFade);
+			m_ShapeCircleFade.RenderFloat();
 		}
 	}
 	void SceneEditorPanel::DrawShapeComponentProjection()

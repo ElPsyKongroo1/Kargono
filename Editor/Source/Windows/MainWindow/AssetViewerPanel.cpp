@@ -124,18 +124,18 @@ namespace Kargono::Panels
 		m_ViewAssetPopup.m_PopupContents = [&]() 
 		{
 			Assets::AssetInfo asset = Assets::AssetService::GetAssetFromAllRegistries(m_ActiveAsset, m_ActiveAssetType);
-			EditorUI::EditorUIService::LabeledText("Asset Handle", m_ActiveAsset);
+			EditorUI::EditorUIService::LabeledText("Asset Handle", static_cast<std::string>(m_ActiveAsset).c_str());
 			EditorUI::EditorUIService::LabeledText("Asset Type", Utility::AssetTypeToString(asset.Data.Type));
 			if (!asset.Data.FileLocation.empty())
 			{
-				EditorUI::EditorUIService::LabeledText("File Location", asset.Data.FileLocation.string());
+				EditorUI::EditorUIService::LabeledText("File Location", asset.Data.FileLocation.string().c_str());
 			}
 			if (!asset.Data.IntermediateLocation.empty())
 			{
-				EditorUI::EditorUIService::LabeledText("Intermediate Location", asset.Data.IntermediateLocation.string());
+				EditorUI::EditorUIService::LabeledText("Intermediate Location", asset.Data.IntermediateLocation.string().c_str());
 			}
 			
-			EditorUI::EditorUIService::LabeledText("Checksum", asset.Data.CheckSum);
+			EditorUI::EditorUIService::LabeledText("Checksum", asset.Data.CheckSum.c_str());
 		};
 	}
 	void AssetViewerPanel::OnEditorUIRender()

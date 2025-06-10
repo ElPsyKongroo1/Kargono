@@ -361,73 +361,73 @@ namespace Kargono::Panels
 
 		// Float initialization
 		s_EditTestFloat_1.m_CurrentFloat = globals.m_TestFloat_1;
-		EditorUI::EditorUIService::EditFloat(s_EditTestFloat_1);
+		s_EditTestFloat_1.RenderFloat();
 
 		s_EditTestFloat_2.m_CurrentFloat = globals.m_TestFloat_2;
-		EditorUI::EditorUIService::EditFloat(s_EditTestFloat_2);
+		s_EditTestFloat_2.RenderFloat();
 
 		s_EditTestFloat_3.m_CurrentFloat = globals.m_TestFloat_3;
-		EditorUI::EditorUIService::EditFloat(s_EditTestFloat_3);
+		s_EditTestFloat_3.RenderFloat();
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Integer initialization
 		s_EditTestInt_1.m_CurrentInteger = globals.m_TestInt_1;
-		EditorUI::EditorUIService::EditInteger(s_EditTestInt_1);
+		s_EditTestInt_1.RenderInteger();
 
 		s_EditTestInt_2.m_CurrentInteger = globals.m_TestInt_2;
-		EditorUI::EditorUIService::EditInteger(s_EditTestInt_2);
+		s_EditTestInt_2.RenderInteger();
 
 		s_EditTestInt_3.m_CurrentInteger = globals.m_TestInt_3;
-		EditorUI::EditorUIService::EditInteger(s_EditTestInt_3);
+		s_EditTestInt_3.RenderInteger();
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Unsigned Integer initialization
 		s_EditTestUInt_1.m_CurrentInteger = globals.m_TestUInt_1;
-		EditorUI::EditorUIService::EditInteger(s_EditTestUInt_1);
+		s_EditTestUInt_1.RenderInteger();
 
 		s_EditTestUInt_2.m_CurrentInteger = globals.m_TestUInt_2;
-		EditorUI::EditorUIService::EditInteger(s_EditTestUInt_2);
+		s_EditTestUInt_2.RenderInteger();
 
 		s_EditTestUInt_3.m_CurrentInteger = globals.m_TestUInt_3;
-		EditorUI::EditorUIService::EditInteger(s_EditTestUInt_3);
+		s_EditTestUInt_3.RenderInteger();
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Vec2 initialization
 		s_EditTestVec2_1.m_CurrentVec2 = globals.m_TestVec2_1;
-		EditorUI::EditorUIService::EditVec2(s_EditTestVec2_1);
+		s_EditTestVec2_1.RenderVec2();
 
 		s_EditTestVec2_2.m_CurrentVec2 = globals.m_TestVec2_2;
-		EditorUI::EditorUIService::EditVec2(s_EditTestVec2_2);
+		s_EditTestVec2_2.RenderVec2();
 
 		s_EditTestVec2_3.m_CurrentVec2 = globals.m_TestVec2_3;
-		EditorUI::EditorUIService::EditVec2(s_EditTestVec2_3);
+		s_EditTestVec2_3.RenderVec2();
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Vec3 initialization
 		s_EditTestVec3_1.m_CurrentVec3 = globals.m_TestVec3_1;
-		EditorUI::EditorUIService::EditVec3(s_EditTestVec3_1);
+		s_EditTestVec3_1.RenderVec3();
 
 		s_EditTestVec3_2.m_CurrentVec3 = globals.m_TestVec3_2;
-		EditorUI::EditorUIService::EditVec3(s_EditTestVec3_2);
+		s_EditTestVec3_2.RenderVec3();
 
 		s_EditTestVec3_3.m_CurrentVec3 = globals.m_TestVec3_3;
-		EditorUI::EditorUIService::EditVec3(s_EditTestVec3_3);
+		s_EditTestVec3_3.RenderVec3();
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Vec4 initialization
 		s_EditTestVec4_1.m_CurrentVec4 = globals.m_TestVec4_1;
-		EditorUI::EditorUIService::EditVec4(s_EditTestVec4_1);
+		s_EditTestVec4_1.RenderVec4();
 
 		s_EditTestVec4_2.m_CurrentVec4 = globals.m_TestVec4_2;
-		EditorUI::EditorUIService::EditVec4(s_EditTestVec4_2);
+		s_EditTestVec4_2.RenderVec4();
 
 		s_EditTestVec4_3.m_CurrentVec4 = globals.m_TestVec4_3;
-		EditorUI::EditorUIService::EditVec4(s_EditTestVec4_3);
+		s_EditTestVec4_3.RenderVec4();
 
 		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 #endif

@@ -815,7 +815,7 @@ namespace API::EditorUI
 	
 		// Select the first available option
 		Kargono::EditorUI::TreePath selectPath {};
-		selectPath.AddNode(0);
+		selectPath.PushBackNode(0);
 		m_SuggestionTree.m_SelectedEntry = selectPath;
 	}
 
@@ -1389,7 +1389,7 @@ namespace API::EditorUI
 					Kargono::EditorUI::EditorUIService::BringCurrentWindowToFront();
 
 					ImGui::PopStyleVar();
-					Kargono::EditorUI::EditorUIService::Tree(m_SuggestionTree);
+					m_SuggestionTree.RenderTree();
 					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
 					if (m_CloseTextSuggestions)
 					{

@@ -370,7 +370,7 @@ namespace Kargono::Panels
 			}
 
 			// Draw the field
-			EditorUI::EditorUIService::EditInteger(spec);
+			spec.RenderInteger();
 		}
 		void operator()(EditorUI::EditFloatWidget& spec)
 		{
@@ -382,7 +382,7 @@ namespace Kargono::Panels
 			spec.m_CurrentFloat = *ProjectData::GlobalStateService::GetGlobalStateField<float>(editorState.get(), iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditFloat(spec);
+			spec.RenderFloat();
 		}
 		void operator()(EditorUI::EditVec2Widget& spec)
 		{
@@ -394,7 +394,7 @@ namespace Kargono::Panels
 			spec.m_CurrentVec2 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::vec2>(editorState.get(), iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditVec2(spec);
+			spec.RenderVec2();
 		}
 		void operator()(EditorUI::EditVec3Widget& spec)
 		{
@@ -406,7 +406,7 @@ namespace Kargono::Panels
 			spec.m_CurrentVec3 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::vec3>(editorState.get(), iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditVec3(spec);
+			spec.RenderVec3();
 		}
 		void operator()(EditorUI::EditVec4Widget& spec)
 		{
@@ -418,7 +418,7 @@ namespace Kargono::Panels
 			spec.m_CurrentVec4 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::vec4>(editorState.get(), iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditVec4(spec);
+			spec.RenderVec4();
 		}
 		void operator()(EditorUI::EditIVec2Widget& spec)
 		{
@@ -430,7 +430,7 @@ namespace Kargono::Panels
 			spec.m_CurrentIVec2 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::ivec2>(editorState.get(), iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditIVec2(spec);
+			spec.RenderIVec2();
 		}
 		void operator()(EditorUI::EditIVec3Widget& spec)
 		{
@@ -442,7 +442,7 @@ namespace Kargono::Panels
 			spec.m_CurrentIVec3 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::ivec3>(editorState.get(), iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditIVec3(spec);
+			spec.RenderIVec3();
 		}
 		void operator()(EditorUI::EditIVec4Widget& spec)
 		{
@@ -454,7 +454,7 @@ namespace Kargono::Panels
 			spec.m_CurrentIVec4 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::ivec4>(editorState.get(), iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditIVec4(spec);
+			spec.RenderIVec4();
 		}
 	};
 
