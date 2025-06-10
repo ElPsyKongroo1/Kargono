@@ -50,8 +50,15 @@ namespace Kargono::EditorUI
 	class Widget
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		Widget() : m_WidgetID(WidgetCounterService::GetActiveContext().GetID())  {}
+		virtual ~Widget() = default;
 	protected:
+		//==============================
+		// Internal Fields
+		//==============================
 		WidgetID m_WidgetID{};
 	};
 }

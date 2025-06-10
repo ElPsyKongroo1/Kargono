@@ -12,7 +12,7 @@ namespace Kargono::Panels
 		m_OpenGameStatePopupSpec.m_Label = "Open Game State";
 		m_OpenGameStatePopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenGameStatePopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenGameStatePopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenGameStatePopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
@@ -80,8 +80,8 @@ namespace Kargono::Panels
 		};
 		m_CreateGameStatePopupSpec.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_SelectGameStateNameSpec);
-			EditorUI::EditorUIService::ChooseDirectory(m_SelectGameStateLocationSpec);
+			m_SelectGameStateNameSpec.RenderText();
+			m_SelectGameStateLocationSpec.RenderChooseDir();
 		};
 	}
 
@@ -180,7 +180,7 @@ namespace Kargono::Panels
 		m_AddFieldPopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_AddFieldPopup.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_AddFieldPopup.m_LineCount = 2;
-		m_AddFieldPopup.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_AddFieldPopup.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
@@ -212,7 +212,7 @@ namespace Kargono::Panels
 		m_EditFieldType.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_EditFieldType.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_EditFieldType.m_LineCount = 2;
-		m_EditFieldType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_EditFieldType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
@@ -297,8 +297,8 @@ namespace Kargono::Panels
 		};
 		m_EditFieldPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_EditFieldName);
-			EditorUI::EditorUIService::SelectOption(m_EditFieldType);
+			m_EditFieldName.RenderText();
+			m_EditFieldType.RenderOptions();
 			EditorUI::EditorUIService::EditVariable(m_EditFieldValue);
 		};
 		
@@ -330,17 +330,17 @@ namespace Kargono::Panels
 		{
 			
 			EditorUI::EditorUIService::NewItemScreen("Open Existing Game State", KG_BIND_CLASS_FN(OnOpenGameStateDialog), "Create New Game State", KG_BIND_CLASS_FN(OnCreateGameStateDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateGameStatePopupSpec);
-			EditorUI::EditorUIService::SelectOption(m_OpenGameStatePopupSpec);
+			m_CreateGameStatePopupSpec.RenderPopup();
+			m_OpenGameStatePopupSpec.RenderOptions();
 		}
 		else
 		{
-			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteGameStateWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseGameStateWarning);
-			EditorUI::EditorUIService::List(m_FieldsTable);
-			EditorUI::EditorUIService::SelectOption(m_AddFieldPopup);
-			EditorUI::EditorUIService::GenericPopup(m_EditFieldPopup);
+			m_MainHeader.RenderHeader();
+			m_DeleteGameStateWarning.RenderPopup();
+			m_CloseGameStateWarning.RenderPopup();
+			m_FieldsTable.RenderList();
+			m_AddFieldPopup.RenderOptions();
+			m_EditFieldPopup.RenderPopup();
 		}
 
 		EditorUI::EditorUIService::EndWindow();

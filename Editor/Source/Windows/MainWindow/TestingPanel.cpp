@@ -32,12 +32,12 @@ namespace Kargono::Panels
 	static DataStruct* s_DataStructs[5];
 	static Memory::StackAlloc s_DataAllocator{};
 	static EditorUI::ButtonSpec s_TestButton{};
-	static EditorUI::PlotSpec s_TestPlot{};
-	static EditorUI::DropDownSpec s_TestDropdown{};
+	static EditorUI::PlotWidget s_TestPlot{};
+	static EditorUI::DropDownWidget s_TestDropdown{};
 
 // TODO: Testing Splines
 #if 0
-	static std::vector<EditorUI::EditVec3Spec> s_ControlPointWidgets;
+	static std::vector<EditorUI::EditVec3Widget> s_ControlPointWidgets;
 #endif
 
 	
@@ -118,7 +118,7 @@ namespace Kargono::Panels
 		// Float initialization
 		s_EditTestFloat_1.m_Label = "Test Float 1";
 		s_EditTestFloat_1.m_CurrentFloat = globals.m_TestFloat_1;
-		s_EditTestFloat_1.m_ConfirmAction = [](EditorUI::EditFloatSpec& spec)
+		s_EditTestFloat_1.m_ConfirmAction = [](EditorUI::EditFloatWidget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestFloat_1 = spec.m_CurrentFloat;
@@ -126,7 +126,7 @@ namespace Kargono::Panels
 
 		s_EditTestFloat_2.m_Label = "Test Float 2";
 		s_EditTestFloat_2.m_CurrentFloat = globals.m_TestFloat_2;
-		s_EditTestFloat_2.m_ConfirmAction = [](EditorUI::EditFloatSpec& spec)
+		s_EditTestFloat_2.m_ConfirmAction = [](EditorUI::EditFloatWidget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestFloat_2 = spec.m_CurrentFloat;
@@ -134,7 +134,7 @@ namespace Kargono::Panels
 
 		s_EditTestFloat_3.m_Label = "Test Float 3";
 		s_EditTestFloat_3.m_CurrentFloat = globals.m_TestFloat_3;
-		s_EditTestFloat_3.m_ConfirmAction = [](EditorUI::EditFloatSpec& spec)
+		s_EditTestFloat_3.m_ConfirmAction = [](EditorUI::EditFloatWidget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestFloat_3 = spec.m_CurrentFloat;
@@ -143,7 +143,7 @@ namespace Kargono::Panels
 		// Integer initialization
 		s_EditTestInt_1.m_Label = "Test Int 1";
 		s_EditTestInt_1.m_CurrentInteger = globals.m_TestInt_1;
-		s_EditTestInt_1.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		s_EditTestInt_1.m_ConfirmAction = [](EditorUI::EditIntegerWidget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestInt_1 = spec.m_CurrentInteger;
@@ -151,7 +151,7 @@ namespace Kargono::Panels
 
 		s_EditTestInt_2.m_Label = "Test Int 2";
 		s_EditTestInt_2.m_CurrentInteger = globals.m_TestInt_2;
-		s_EditTestInt_2.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		s_EditTestInt_2.m_ConfirmAction = [](EditorUI::EditIntegerWidget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestInt_2 = spec.m_CurrentInteger;
@@ -159,7 +159,7 @@ namespace Kargono::Panels
 
 		s_EditTestInt_3.m_Label = "Test Int 3";
 		s_EditTestInt_3.m_CurrentInteger = globals.m_TestInt_3;
-		s_EditTestInt_3.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		s_EditTestInt_3.m_ConfirmAction = [](EditorUI::EditIntegerWidget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestInt_3 = spec.m_CurrentInteger;
@@ -169,7 +169,7 @@ namespace Kargono::Panels
 		s_EditTestUInt_1.m_Label = "Test UInt 1";
 		s_EditTestUInt_1.m_CurrentInteger = globals.m_TestUInt_1;
 		s_EditTestUInt_1.m_Bounds = { 0, 10'000 };
-		s_EditTestUInt_1.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		s_EditTestUInt_1.m_ConfirmAction = [](EditorUI::EditIntegerWidget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestUInt_1 = spec.m_CurrentInteger;
@@ -178,7 +178,7 @@ namespace Kargono::Panels
 		s_EditTestUInt_2.m_Label = "Test UInt 2";
 		s_EditTestUInt_2.m_CurrentInteger = globals.m_TestUInt_2;
 		s_EditTestUInt_2.m_Bounds = { 0, 10'000 };
-		s_EditTestUInt_2.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		s_EditTestUInt_2.m_ConfirmAction = [](EditorUI::EditIntegerWidget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestUInt_2 = spec.m_CurrentInteger;
@@ -187,7 +187,7 @@ namespace Kargono::Panels
 		s_EditTestUInt_3.m_Label = "Test UInt 3";
 		s_EditTestUInt_3.m_CurrentInteger = globals.m_TestUInt_3;
 		s_EditTestUInt_3.m_Bounds = { 0, 10'000 };
-		s_EditTestUInt_3.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
+		s_EditTestUInt_3.m_ConfirmAction = [](EditorUI::EditIntegerWidget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestUInt_3 = spec.m_CurrentInteger;
@@ -196,7 +196,7 @@ namespace Kargono::Panels
 		// Vec2 initialization
 		s_EditTestVec2_1.m_Label = "Test Vec2 1";
 		s_EditTestVec2_1.m_CurrentVec2 = globals.m_TestVec2_1;
-		s_EditTestVec2_1.m_ConfirmAction = [](EditorUI::EditVec2Spec& spec)
+		s_EditTestVec2_1.m_ConfirmAction = [](EditorUI::EditVec2Widget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestVec2_1 = spec.m_CurrentVec2;
@@ -204,7 +204,7 @@ namespace Kargono::Panels
 
 		s_EditTestVec2_2.m_Label = "Test Vec2 2";
 		s_EditTestVec2_2.m_CurrentVec2 = globals.m_TestVec2_2;
-		s_EditTestVec2_2.m_ConfirmAction = [](EditorUI::EditVec2Spec& spec)
+		s_EditTestVec2_2.m_ConfirmAction = [](EditorUI::EditVec2Widget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestVec2_2 = spec.m_CurrentVec2;
@@ -212,7 +212,7 @@ namespace Kargono::Panels
 
 		s_EditTestVec2_3.m_Label = "Test Vec2 3";
 		s_EditTestVec2_3.m_CurrentVec2 = globals.m_TestVec2_3;
-		s_EditTestVec2_3.m_ConfirmAction = [](EditorUI::EditVec2Spec& spec)
+		s_EditTestVec2_3.m_ConfirmAction = [](EditorUI::EditVec2Widget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestVec2_3 = spec.m_CurrentVec2;
@@ -221,7 +221,7 @@ namespace Kargono::Panels
 		// Vec3 initialization
 		s_EditTestVec3_1.m_Label = "Test Vec3 1";
 		s_EditTestVec3_1.m_CurrentVec3 = globals.m_TestVec3_1;
-		s_EditTestVec3_1.m_ConfirmAction = [](EditorUI::EditVec3Spec& spec)
+		s_EditTestVec3_1.m_ConfirmAction = [](EditorUI::EditVec3Widget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestVec3_1 = spec.m_CurrentVec3;
@@ -229,7 +229,7 @@ namespace Kargono::Panels
 
 		s_EditTestVec3_2.m_Label = "Test Vec3 2";
 		s_EditTestVec3_2.m_CurrentVec3 = globals.m_TestVec3_2;
-		s_EditTestVec3_2.m_ConfirmAction = [](EditorUI::EditVec3Spec& spec)
+		s_EditTestVec3_2.m_ConfirmAction = [](EditorUI::EditVec3Widget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestVec3_2 = spec.m_CurrentVec3;
@@ -237,7 +237,7 @@ namespace Kargono::Panels
 
 		s_EditTestVec3_3.m_Label = "Test Vec3 3";
 		s_EditTestVec3_3.m_CurrentVec3 = globals.m_TestVec3_3;
-		s_EditTestVec3_3.m_ConfirmAction = [](EditorUI::EditVec3Spec& spec)
+		s_EditTestVec3_3.m_ConfirmAction = [](EditorUI::EditVec3Widget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestVec3_3 = spec.m_CurrentVec3;
@@ -246,7 +246,7 @@ namespace Kargono::Panels
 		// Vec4 initialization
 		s_EditTestVec4_1.m_Label = "Test Vec4 1";
 		s_EditTestVec4_1.m_CurrentVec4 = globals.m_TestVec4_1;
-		s_EditTestVec4_1.m_ConfirmAction = [](EditorUI::EditVec4Spec& spec)
+		s_EditTestVec4_1.m_ConfirmAction = [](EditorUI::EditVec4Widget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestVec4_1 = spec.m_CurrentVec4;
@@ -254,7 +254,7 @@ namespace Kargono::Panels
 
 		s_EditTestVec4_2.m_Label = "Test Vec4 2";
 		s_EditTestVec4_2.m_CurrentVec4 = globals.m_TestVec4_2;
-		s_EditTestVec4_2.m_ConfirmAction = [](EditorUI::EditVec4Spec& spec)
+		s_EditTestVec4_2.m_ConfirmAction = [](EditorUI::EditVec4Widget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestVec4_2 = spec.m_CurrentVec4;
@@ -262,7 +262,7 @@ namespace Kargono::Panels
 
 		s_EditTestVec4_3.m_Label = "Test Vec4 3";
 		s_EditTestVec4_3.m_CurrentVec4 = globals.m_TestVec4_3;
-		s_EditTestVec4_3.m_ConfirmAction = [](EditorUI::EditVec4Spec& spec)
+		s_EditTestVec4_3.m_ConfirmAction = [](EditorUI::EditVec4Widget& spec)
 		{
 			Utility::DebugGlobals& globals{ Utility::DebugGlobalsService::GetDebugGlobals() };
 			globals.m_TestVec4_3 = spec.m_CurrentVec4;
@@ -326,11 +326,11 @@ namespace Kargono::Panels
 		s_ControlPointWidgets.resize(allPoints.size());
 		for (Math::vec3& point : allPoints)
 		{
-			EditorUI::EditVec3Spec& currentSpec = s_ControlPointWidgets.at(iteration);
+			EditorUI::EditVec3Widget& currentSpec = s_ControlPointWidgets.at(iteration);
 			currentSpec.m_Label = "Control" + std::to_string(iteration);
 			currentSpec.m_ScrollSpeed = 0.5f;
 			currentSpec.m_ProvidedData = CreateRef<size_t>(iteration);
-			currentSpec.m_ConfirmAction = [&](EditorUI::EditVec3Spec& spec)
+			currentSpec.m_ConfirmAction = [&](EditorUI::EditVec3Widget& spec)
 				{
 					// Get provided data
 					size_t iteration = *(size_t*)spec.m_ProvidedData.get();
@@ -435,7 +435,7 @@ namespace Kargono::Panels
 	void TestingPanel::DrawGeneralTestingWidgets()
 	{
 		
-		EditorUI::EditorUIService::EditText(s_CompilePath);
+		s_CompilePath.RenderText();
 
 		if (ImGui::Button("Compile File"))
 		{
@@ -449,14 +449,14 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Text(s_DataStructs[i]->m_Text.CString());
 		}
 
-		if (EditorUI::EditorUIService::Button(s_TestButton))
+		if (s_TestButton.RenderButton())
 		{
 			s_TestPlot.AddValue(Utility::STLRandomService::GetActiveRandom().GenerateRandomFloat(0.0f, 30.0f));
 		}
 
-		EditorUI::EditorUIService::DropDown(s_TestDropdown);
+		s_TestDropdown.RenderDropDown();
 
-		EditorUI::EditorUIService::Plot(s_TestPlot);
+		s_TestPlot.RenderPlot();
 
 
 		if (ImGui::Button("Add random to sparse list"))
@@ -517,7 +517,7 @@ namespace Kargono::Panels
 		size_t iteration{ 0 };
 		for (Math::vec3& point : spline.m_Points)
 		{
-			EditorUI::EditVec3Spec& spec = s_ControlPointWidgets.at(iteration);
+			EditorUI::EditVec3Widget& spec = s_ControlPointWidgets.at(iteration);
 			spec.m_CurrentVec3 = spline.m_Points.at(iteration);
 			EditorUI::EditorUIService::EditVec3(spec);
 			iteration++;

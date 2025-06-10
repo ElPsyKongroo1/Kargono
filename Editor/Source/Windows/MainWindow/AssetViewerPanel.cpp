@@ -149,8 +149,8 @@ namespace Kargono::Panels
 			return;
 		}
 
-		EditorUI::EditorUIService::List(m_AllAssetsTable);
-		EditorUI::EditorUIService::GenericPopup(m_ViewAssetPopup);
+		m_AllAssetsTable.RenderList();
+		m_ViewAssetPopup.RenderPopup();
 
 
 		EditorUI::EditorUIService::EndWindow();

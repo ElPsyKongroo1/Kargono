@@ -71,7 +71,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::DrawUIOptions()
 	{
 		// Draw main header for UI options
-		EditorUI::EditorUIService::CollapsingHeader(m_UIHeader);
+		m_UIHeader.RenderHeader();
 
 		// Draw options for UI
 		if (m_UIHeader.m_Expanded)
@@ -83,7 +83,7 @@ namespace Kargono::Panels
 				fontHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetFontInfo(fontHandle).Data.FileLocation.stem().string().c_str(),
 				fontHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_UISelectFont);
+			m_UISelectFont.RenderOptions();
 
 			// Edit on move for current UI
 			Assets::AssetHandle onMoveHandle = s_UIWindow->m_EditorUI->m_Config.m_FunctionPointers.m_OnMoveHandle;
@@ -92,7 +92,7 @@ namespace Kargono::Panels
 				onMoveHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScriptInfo(onMoveHandle).Data.FileLocation.stem().string().c_str(),
 				onMoveHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_UIOnMove);
+			m_UIOnMove.RenderOptions();
 
 			// Edit on Hover for current UI
 			Assets::AssetHandle onHoverHandle = s_UIWindow->m_EditorUI->m_Config.m_FunctionPointers.m_OnHoverHandle;
@@ -101,7 +101,7 @@ namespace Kargono::Panels
 				onHoverHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScriptInfo(onHoverHandle).Data.FileLocation.stem().string().c_str(),
 				onHoverHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_UIOnHover);
+			m_UIOnHover.RenderOptions();
 
 			// Edit UI's selection color
 			m_UISelectionColor.m_CurrentVec4 = s_UIWindow->m_EditorUI->m_Config.m_SelectColor;
@@ -120,14 +120,14 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::DrawWindowOptions()
 	{
 		// Draw main header for window options
-		EditorUI::EditorUIService::CollapsingHeader(m_WindowHeader);
+		m_WindowHeader.RenderHeader();
 
 		// Draw options to edit selected window
 		if (m_WindowHeader.m_Expanded)
 		{
 			// Edit window tag
 			m_WindowTag.m_CurrentOption = m_ActiveWindow->m_Tag;
-			EditorUI::EditorUIService::EditText(m_WindowTag);
+			m_WindowTag.RenderText();
 
 			// Edit default active widget
 			Ref<RuntimeUI::Widget> activeWidget = m_ActiveWindow->m_DefaultActiveWidgetRef;
@@ -136,7 +136,7 @@ namespace Kargono::Panels
 				activeWidget ? activeWidget->m_Tag.c_str() : "None",
 				(uint64_t)m_ActiveWindow->m_DefaultActiveWidget
 			};
-			EditorUI::EditorUIService::SelectOption(m_WindowDefaultWidget);
+			m_WindowDefaultWidget.RenderOptions();
 
 			// Edit whether window is displayed
 			m_WindowDisplay.m_CurrentBoolean = m_ActiveWindow->GetWindowDisplayed();
@@ -159,19 +159,19 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::DrawWidgetOptions()
 	{
 		// Draw location header for widget options and display options to edit selected widget's location
-		EditorUI::EditorUIService::CollapsingHeader(m_WidgetLocationHeader);
+		m_WidgetLocationHeader.RenderHeader();
 		if (m_WidgetLocationHeader.m_Expanded)
 		{
 			// Modify the X location metric
 			m_WidgetXRelOrAbsLocation.m_SelectedOption = (uint16_t)m_ActiveWidget->m_XRelativeOrAbsolute;
-			EditorUI::EditorUIService::RadioSelector(m_WidgetXRelOrAbsLocation);
+			m_WidgetXRelOrAbsLocation.RenderRadio();
 			if (m_WidgetXRelOrAbsLocation.m_SelectedOption == (uint16_t)RuntimeUI::RelativeOrAbsolute::Relative)
 			{
 				m_WidgetXConstraintLocation.m_CurrentOption = { Utility::ConstraintToString(m_ActiveWidget->m_XConstraint) , (uint16_t)m_ActiveWidget->m_XConstraint};
-				EditorUI::EditorUIService::SelectOption(m_WidgetXConstraintLocation);
+				m_WidgetXConstraintLocation.RenderOptions();
 			}
 			m_WidgetXPixelOrPercentLocation.m_SelectedOption = (uint16_t)m_ActiveWidget->m_XPositionType;
-			EditorUI::EditorUIService::RadioSelector(m_WidgetXPixelOrPercentLocation);
+			m_WidgetXPixelOrPercentLocation.RenderRadio();
 			if (m_WidgetXPixelOrPercentLocation.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
 			{
 				m_WidgetXPixelLocation.m_CurrentInteger = m_ActiveWidget->m_PixelPosition.x;
@@ -187,14 +187,14 @@ namespace Kargono::Panels
 
 			// Modify the Y location metric
 			m_WidgetYRelOrAbsLocation.m_SelectedOption = (uint16_t)m_ActiveWidget->m_YRelativeOrAbsolute;
-			EditorUI::EditorUIService::RadioSelector(m_WidgetYRelOrAbsLocation);
+			m_WidgetYRelOrAbsLocation.RenderRadio();
 			if (m_WidgetYRelOrAbsLocation.m_SelectedOption == (uint16_t)RuntimeUI::RelativeOrAbsolute::Relative)
 			{
 				m_WidgetYConstraintLocation.m_CurrentOption = { Utility::ConstraintToString(m_ActiveWidget->m_YConstraint) , (uint16_t)m_ActiveWidget->m_YConstraint };
-				EditorUI::EditorUIService::SelectOption(m_WidgetYConstraintLocation);
+				m_WidgetYConstraintLocation.RenderOptions();
 			}
 			m_WidgetYPixelOrPercentLocation.m_SelectedOption = (uint16_t)m_ActiveWidget->m_YPositionType;
-			EditorUI::EditorUIService::RadioSelector(m_WidgetYPixelOrPercentLocation);
+			m_WidgetYPixelOrPercentLocation.RenderRadio();
 			if (m_WidgetYPixelOrPercentLocation.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
 			{
 				m_WidgetYPixelLocation.m_CurrentInteger = m_ActiveWidget->m_PixelPosition.y;
@@ -211,16 +211,16 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::DrawGeneralWidgetOptions()
 	{
 		// Draw main header for widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_WidgetGeneralHeader);
+		m_WidgetGeneralHeader.RenderHeader();
 		// Draw options to edit selected widget
 		if (m_WidgetGeneralHeader.m_Expanded)
 		{
 			// Edit selected widget's tag
 			m_WidgetTag.m_CurrentOption = m_ActiveWidget->m_Tag;
-			EditorUI::EditorUIService::EditText(m_WidgetTag);
+			m_WidgetTag.RenderText();
 
 			m_WidgetPixelOrPercentSize.m_SelectedOption = (uint16_t)m_ActiveWidget->m_SizeType;
-			EditorUI::EditorUIService::RadioSelector(m_WidgetPixelOrPercentSize);
+			m_WidgetPixelOrPercentSize.RenderRadio();
 			if (m_WidgetPixelOrPercentSize.m_SelectedOption == (uint16_t)RuntimeUI::PixelOrPercent::Pixel)
 			{
 				// Edit selected widget's size in pixels
@@ -239,7 +239,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::DrawTextWidgetOptions()
 	{
 		// Draw main header for text widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_TextWidgetHeader);
+		m_TextWidgetHeader.RenderHeader();
 		if (m_TextWidgetHeader.m_Expanded)
 		{
 			// Draw options to edit selected text widget
@@ -247,7 +247,7 @@ namespace Kargono::Panels
 
 			// Edit selected text widget's text
 			m_TextWidgetText.m_CurrentOption = activeTextWidget.m_TextData.m_Text;
-			EditorUI::EditorUIService::EditMultiLineText(m_TextWidgetText);
+			m_TextWidgetText.RenderText();
 
 			// Edit selected text widget's text size relative to its window
 			m_TextWidgetTextSize.m_CurrentFloat = activeTextWidget.m_TextData.m_TextSize;
@@ -259,7 +259,7 @@ namespace Kargono::Panels
 
 			// Edit selected text widget's text alignment
 			m_TextWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeTextWidget.m_TextData.m_TextAlignment) , (uint64_t)activeTextWidget.m_TextData.m_TextAlignment };
-			EditorUI::EditorUIService::SelectOption(m_TextWidgetTextAlignment);
+			m_TextWidgetTextAlignment.RenderOptions();
 
 			// Edit selected text widget's wrapped alignment
 			m_TextWidgetTextWrapped.m_CurrentBoolean = activeTextWidget.m_TextData.m_TextWrapped;
@@ -270,7 +270,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::DrawButtonWidgetOptions()
 	{
 		// Draw main header for button widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_ButtonWidgetHeader);
+		m_ButtonWidgetHeader.RenderHeader();
 		if (m_ButtonWidgetHeader.m_Expanded)
 		{
 			// Draw options to edit selected button widget
@@ -282,7 +282,7 @@ namespace Kargono::Panels
 
 			// Edit selected button widget's text
 			m_ButtonWidgetText.m_CurrentOption = activeButtonWidget.m_TextData.m_Text;
-			EditorUI::EditorUIService::EditText(m_ButtonWidgetText);
+			m_ButtonWidgetText.RenderText();
 
 			// Edit selected button widget's text size relative to its window
 			m_ButtonWidgetTextSize.m_CurrentFloat = activeButtonWidget.m_TextData.m_TextSize;
@@ -294,7 +294,7 @@ namespace Kargono::Panels
 
 			// Edit selected button widget's text alignment
 			m_ButtonWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeButtonWidget.m_TextData.m_TextAlignment) , (uint64_t)activeButtonWidget.m_TextData.m_TextAlignment };
-			EditorUI::EditorUIService::SelectOption(m_ButtonWidgetTextAlignment);
+			m_ButtonWidgetTextAlignment.RenderOptions();
 
 			// Edit selected widget's background color
 			m_ButtonWidgetBackgroundColor.m_CurrentVec4 = activeButtonWidget.m_SelectionData.m_DefaultBackgroundColor;
@@ -307,14 +307,14 @@ namespace Kargono::Panels
 				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_ButtonWidgetOnPress);
+			m_ButtonWidgetOnPress.RenderOptions();
 		}
 	}
 
 	void UIEditorPropertiesPanel::DrawImageWidgetOptions()
 	{
 		// Draw main header for Image widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_ImageWidgetHeader);
+		m_ImageWidgetHeader.RenderHeader();
 		if (m_ImageWidgetHeader.m_Expanded)
 		{
 			// Draw options to edit selected Image widget
@@ -328,7 +328,7 @@ namespace Kargono::Panels
 				Assets::AssetService::GetTexture2DInfo(imageHandle).Data.FileLocation.stem().string().c_str(),
 				imageHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_ImageWidgetImage);
+			m_ImageWidgetImage.RenderOptions();
 
 			// Edit selected widget's fixed aspect ratio usage
 			m_ImageWidgetFixedAspectRatio.m_CurrentBoolean = activeImageWidget.m_ImageData.m_FixedAspectRatio;
@@ -339,7 +339,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::DrawImageButtonWidgetOptions()
 	{
 		// Draw main header for image button widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_ImageButtonWidgetHeader);
+		m_ImageButtonWidgetHeader.RenderHeader();
 		if (m_ImageButtonWidgetHeader.m_Expanded)
 		{
 			// Draw options to edit selected Image widget
@@ -353,7 +353,7 @@ namespace Kargono::Panels
 				Assets::AssetService::GetTexture2DInfo(imageHandle).Data.FileLocation.stem().string().c_str(),
 				imageHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_ImageButtonWidgetImage);
+			m_ImageButtonWidgetImage.RenderOptions();
 
 			// Edit selected widget's fixed aspect ratio usage
 			m_ImageButtonWidgetFixedAspectRatio.m_CurrentBoolean = activeImageButtonWidget.m_ImageData.m_FixedAspectRatio;
@@ -374,14 +374,14 @@ namespace Kargono::Panels
 				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_ImageButtonWidgetOnPress);
+			m_ImageButtonWidgetOnPress.RenderOptions();
 		}
 	}
 
 	void UIEditorPropertiesPanel::DrawCheckboxWidgetOptions()
 	{
 		// Draw main header for checkbox widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_CheckboxWidgetHeader);
+		m_CheckboxWidgetHeader.RenderHeader();
 		if (m_CheckboxWidgetHeader.m_Expanded)
 		{
 			// Draw options to edit selected checkbox widget
@@ -399,7 +399,7 @@ namespace Kargono::Panels
 				Assets::AssetService::GetTexture2DInfo(checkedImage).Data.FileLocation.stem().string().c_str(),
 				checkedImage
 			};
-			EditorUI::EditorUIService::SelectOption(m_CheckboxWidgetCheckedImage);
+			m_CheckboxWidgetCheckedImage.RenderOptions();
 
 			// Edit selected widget's image handle
 			Assets::AssetHandle unCheckedImage = activeCheckboxWidget.m_ImageUnChecked.m_ImageHandle;
@@ -409,7 +409,7 @@ namespace Kargono::Panels
 				Assets::AssetService::GetTexture2DInfo(unCheckedImage).Data.FileLocation.stem().string().c_str(),
 				unCheckedImage
 			};
-			EditorUI::EditorUIService::SelectOption(m_CheckboxWidgetUnCheckedImage);
+			m_CheckboxWidgetUnCheckedImage.RenderOptions();
 
 			// Edit selected widget's fixed aspect ratio usage
 			m_CheckboxWidgetFixedAspectRatio.m_CurrentBoolean = activeCheckboxWidget.m_ImageChecked.m_FixedAspectRatio;
@@ -430,14 +430,14 @@ namespace Kargono::Panels
 				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_CheckboxWidgetOnPress);
+			m_CheckboxWidgetOnPress.RenderOptions();
 		}
 	}
 
 	void UIEditorPropertiesPanel::DrawContainerWidgetOptions()
 	{
 		// Draw main header for container widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_ContainerWidgetHeader);
+		m_ContainerWidgetHeader.RenderHeader();
 		if (m_ContainerWidgetHeader.m_Expanded)
 		{
 			// Draw options to edit selected container widget
@@ -452,7 +452,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::DrawHorizontalContainerWidgetOptions()
 	{
 		// Draw main header for HorizontalContainer widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_HorizontalContainerWidgetHeader);
+		m_HorizontalContainerWidgetHeader.RenderHeader();
 		if (m_HorizontalContainerWidgetHeader.m_Expanded)
 		{
 			// Draw options to edit selected HorizontalContainer widget
@@ -475,7 +475,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::DrawVerticalContainerWidgetOptions()
 	{
 		// Draw main header for VerticalContainer widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_VerticalContainerWidgetHeader);
+		m_VerticalContainerWidgetHeader.RenderHeader();
 		if (m_VerticalContainerWidgetHeader.m_Expanded)
 		{
 			// Draw options to edit selected VerticalContainer widget
@@ -498,7 +498,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::DrawInputTextWidgetOptions()
 	{
 		// Draw main header for input text widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_InputTextWidgetHeader);
+		m_InputTextWidgetHeader.RenderHeader();
 		if (m_InputTextWidgetHeader.m_Expanded)
 		{
 			// Draw options to edit selected InputText widget
@@ -510,7 +510,7 @@ namespace Kargono::Panels
 
 			// Edit selected InputText widget's text
 			m_InputTextWidgetText.m_CurrentOption = activeInputTextWidget.m_TextData.m_Text;
-			EditorUI::EditorUIService::EditText(m_InputTextWidgetText);
+			m_InputTextWidgetText.RenderText();
 
 			// Edit selected InputText widget's text size relative to its window
 			m_InputTextWidgetTextSize.m_CurrentFloat = activeInputTextWidget.m_TextData.m_TextSize;
@@ -522,7 +522,7 @@ namespace Kargono::Panels
 
 			// Edit selected InputText widget's text alignment
 			m_InputTextWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeInputTextWidget.m_TextData.m_TextAlignment) , (uint64_t)activeInputTextWidget.m_TextData.m_TextAlignment };
-			EditorUI::EditorUIService::SelectOption(m_InputTextWidgetTextAlignment);
+			m_InputTextWidgetTextAlignment.RenderOptions();
 
 			// Edit selected widget's background color
 			m_InputTextWidgetBackgroundColor.m_CurrentVec4 = activeInputTextWidget.m_SelectionData.m_DefaultBackgroundColor;
@@ -535,7 +535,7 @@ namespace Kargono::Panels
 				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_InputTextWidgetOnPress);
+			m_InputTextWidgetOnPress.RenderOptions();
 
 			// Edit selected widget's on move cursor script
 			Assets::AssetHandle onMoveCursorHandle = activeInputTextWidget.m_OnMoveCursorHandle;
@@ -544,14 +544,14 @@ namespace Kargono::Panels
 				onMoveCursorHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onMoveCursorHandle)->m_ScriptName.c_str(),
 				onMoveCursorHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_InputTextWidgetOnMoveCursor);
+			m_InputTextWidgetOnMoveCursor.RenderOptions();
 		}
 	}
 
 	void UIEditorPropertiesPanel::DrawSliderWidgetOptions()
 	{
 		// Draw main header for Slider widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_SliderWidgetHeader);
+		m_SliderWidgetHeader.RenderHeader();
 		if (m_SliderWidgetHeader.m_Expanded)
 		{
 			// Draw options to edit selected Slider widget
@@ -584,7 +584,7 @@ namespace Kargono::Panels
 				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_SliderWidgetOnPress);
+			m_SliderWidgetOnPress.RenderOptions();
 
 			// Edit selected widget's on move slider script
 			Assets::AssetHandle onMoveSliderHandle = activeSliderWidget.m_OnMoveSliderHandle;
@@ -593,14 +593,14 @@ namespace Kargono::Panels
 				onMoveSliderHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onMoveSliderHandle)->m_ScriptName.c_str(),
 				onMoveSliderHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_SliderWidgetOnMoveSlider);
+			m_SliderWidgetOnMoveSlider.RenderOptions();
 		}
 	}
 
 	void UIEditorPropertiesPanel::DrawDropDownWidgetOptions()
 	{
 		// Draw main header for input text widget options
-		EditorUI::EditorUIService::CollapsingHeader(m_DropDownWidgetHeader);
+		m_DropDownWidgetHeader.RenderHeader();
 		if (m_DropDownWidgetHeader.m_Expanded)
 		{
 			// Draw options to edit selected DropDown widget
@@ -621,11 +621,11 @@ namespace Kargono::Panels
 					validOption ? activeDropDownWidget.m_DropDownOptions[currentOption].m_Text.c_str() : "",
 					currentOption
 				};
-				EditorUI::EditorUIService::SelectOption(m_DropDownWidgetCurrentOption);
+				m_DropDownWidgetCurrentOption.RenderOptions();
 			}
 
 			// Display all drop-down options
-			EditorUI::EditorUIService::List(m_DropDownWidgetOptionsList);
+			m_DropDownWidgetOptionsList.RenderList();
 
 			// Edit selected drop-down's wrapped alignment
 			m_DropDownWidgetSelectable.m_CurrentBoolean = activeDropDownWidget.m_SelectionData.m_Selectable;
@@ -660,7 +660,7 @@ namespace Kargono::Panels
 				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_DropDownWidgetOnPress);
+			m_DropDownWidgetOnPress.RenderOptions();
 
 			// Edit selected widget's on select option script
 			Assets::AssetHandle OnSelectOptionHandle = activeDropDownWidget.m_OnSelectOptionHandle;
@@ -669,11 +669,11 @@ namespace Kargono::Panels
 				OnSelectOptionHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(OnSelectOptionHandle)->m_ScriptName.c_str(),
 				OnSelectOptionHandle
 			};
-			EditorUI::EditorUIService::SelectOption(m_DropDownWidgetOnSelectOption);
+			m_DropDownWidgetOnSelectOption.RenderOptions();
 		}
-		EditorUI::EditorUIService::EditText(m_DropDownWidgetOptionsListAddEntry);
-		EditorUI::EditorUIService::EditText(m_DropDownWidgetEditEntry);
-		EditorUI::EditorUIService::GenericPopup(m_DropDownWidgetDeleteEntryWarning);
+		m_DropDownWidgetOptionsListAddEntry.RenderText();
+		m_DropDownWidgetEditEntry.RenderText();
+		m_DropDownWidgetDeleteEntryWarning.RenderPopup();
 	}
 
 	void UIEditorPropertiesPanel::DrawSpecificWidgetOptions()
@@ -774,7 +774,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenUIFontPopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenUIFontPopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear existing options
 		spec.ClearOptions();
@@ -810,7 +810,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenUIOnMovePopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenUIOnMovePopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear existing options
 		spec.ClearOptions();
@@ -833,7 +833,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	void UIEditorPropertiesPanel::OnOpenTooltipForUIOnMove(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenTooltipForUIOnMove(EditorUI::SelectOptionWidget& spec)
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
@@ -907,7 +907,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenUIOnHoverPopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenUIOnHoverPopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear existing options
 		spec.ClearOptions();
@@ -930,7 +930,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	void UIEditorPropertiesPanel::OnOpenTooltipForUIOnHover(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenTooltipForUIOnHover(EditorUI::SelectOptionWidget& spec)
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
@@ -981,7 +981,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyUISelectionColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyUISelectionColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Update the UI's selection color
 		s_UIWindow->m_EditorUI->m_Config.m_SelectColor = spec.m_CurrentVec4;
@@ -991,7 +991,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyUIHoveredColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyUIHoveredColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Update the UI's selection color
 		s_UIWindow->m_EditorUI->m_Config.m_HoveredColor = spec.m_CurrentVec4;
@@ -1000,7 +1000,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyUIEditingColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyUIEditingColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Update the UI's selection color
 		s_UIWindow->m_EditorUI->m_Config.m_EditingColor = spec.m_CurrentVec4;
@@ -1722,7 +1722,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenWindowDefaultWidgetPopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenWindowDefaultWidgetPopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear existing options
 		spec.ClearOptions();
@@ -1758,7 +1758,7 @@ namespace Kargono::Panels
 
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWindowLocation(EditorUI::EditVec3Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyWindowLocation(EditorUI::EditVec3Widget& spec)
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Ensure active window is valid
@@ -1774,7 +1774,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWindowSize(EditorUI::EditVec2Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyWindowSize(EditorUI::EditVec2Widget& spec)
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Ensure active window is valid
@@ -1790,7 +1790,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWindowBackgroundColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyWindowBackgroundColor(EditorUI::EditVec4Widget& spec)
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Ensure active window is valid
@@ -1930,7 +1930,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenWidgetXConstraint(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenWidgetXConstraint(EditorUI::SelectOptionWidget& spec)
 	{
 		spec.ClearOptions();
 		spec.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
@@ -1939,7 +1939,7 @@ namespace Kargono::Panels
 		spec.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
 	}
 
-	void UIEditorPropertiesPanel::OnOpenWidgetYConstraint(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenWidgetYConstraint(EditorUI::SelectOptionWidget& spec)
 	{
 		spec.ClearOptions();
 		spec.AddToOptions("Clear", "None", (uint64_t)RuntimeUI::Constraint::None);
@@ -1948,7 +1948,7 @@ namespace Kargono::Panels
 		spec.AddToOptions("All Options", "Center", (uint64_t)RuntimeUI::Constraint::Center);
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWidgetXPixelLocation(EditorUI::EditIntegerSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyWidgetXPixelLocation(EditorUI::EditIntegerWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -1963,7 +1963,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWidgetYPixelLocation(EditorUI::EditIntegerSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyWidgetYPixelLocation(EditorUI::EditIntegerWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -1978,7 +1978,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWidgetXPercentLocation(EditorUI::EditFloatSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyWidgetXPercentLocation(EditorUI::EditFloatWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -1993,7 +1993,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWidgetYPercentLocation(EditorUI::EditFloatSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyWidgetYPercentLocation(EditorUI::EditFloatWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -2024,7 +2024,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWidgetPercentSize(EditorUI::EditVec2Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyWidgetPercentSize(EditorUI::EditVec2Widget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -2057,7 +2057,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyWidgetPixelSize(EditorUI::EditIVec2Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyWidgetPixelSize(EditorUI::EditIVec2Widget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -2180,7 +2180,7 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	void UIEditorPropertiesPanel::OnOpenCheckboxWidgetCheckedImagePopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenCheckboxWidgetCheckedImagePopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear existing options
 		spec.ClearOptions();
@@ -2233,7 +2233,7 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	void UIEditorPropertiesPanel::OnOpenCheckboxWidgetUnCheckedImagePopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenCheckboxWidgetUnCheckedImagePopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear existing options
 		spec.ClearOptions();
@@ -2319,7 +2319,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenInputTextOnMoveCursorPopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenInputTextOnMoveCursorPopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear existing options
 		spec.ClearOptions();
@@ -2342,7 +2342,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	void UIEditorPropertiesPanel::OnOpenTooltipForInputTextWidgetOnMoveCursor(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenTooltipForInputTextWidgetOnMoveCursor(EditorUI::SelectOptionWidget& spec)
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
@@ -2397,7 +2397,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifySliderWidgetBounds(EditorUI::EditVec2Spec& spec)
+	void UIEditorPropertiesPanel::OnModifySliderWidgetBounds(EditorUI::EditVec2Widget& spec)
 	{
 		// Ensure active window is valid
 		if (!ValidateActiveWindow())
@@ -2418,7 +2418,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifySliderWidgetSliderColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifySliderWidgetSliderColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Ensure active window is valid
 		if (!ValidateActiveWindow())
@@ -2439,7 +2439,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifySliderWidgetLineColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifySliderWidgetLineColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Ensure active window is valid
 		if (!ValidateActiveWindow())
@@ -2497,7 +2497,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenSliderWidgetOnMoveSliderPopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenSliderWidgetOnMoveSliderPopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear existing options
 		spec.ClearOptions();
@@ -2520,7 +2520,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	void UIEditorPropertiesPanel::OnOpenTooltipForSliderWidgetOnMoveSlider(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenTooltipForSliderWidgetOnMoveSlider(EditorUI::SelectOptionWidget& spec)
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
@@ -2575,7 +2575,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyDropDownTextSize(EditorUI::EditFloatSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyDropDownTextSize(EditorUI::EditFloatWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -2603,7 +2603,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyDropDownTextColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyDropDownTextColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -2653,7 +2653,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyDropDownWidgetOptionBackgroundColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyDropDownWidgetOptionBackgroundColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -2712,7 +2712,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenDropDownWidgetOnSelectOptionPopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenDropDownWidgetOnSelectOptionPopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear existing options
 		spec.ClearOptions();
@@ -2735,7 +2735,7 @@ namespace Kargono::Panels
 		}
 	}
 
-	void UIEditorPropertiesPanel::OnOpenTooltipForDropDownWidgetOnSelectOption(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenTooltipForDropDownWidgetOnSelectOption(EditorUI::SelectOptionWidget& spec)
 	{
 		UNREFERENCED_PARAMETER(spec);
 		// Clear existing options
@@ -2841,7 +2841,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnOpenDropDownWidgetCurrentOptionPopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenDropDownWidgetCurrentOptionPopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3101,7 +3101,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyHorizontalContainerWidgetColumnWidth(EditorUI::EditFloatSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyHorizontalContainerWidgetColumnWidth(EditorUI::EditFloatWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3120,7 +3120,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyHorizontalContainerWidgetColumnSpacing(EditorUI::EditFloatSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyHorizontalContainerWidgetColumnSpacing(EditorUI::EditFloatWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3139,7 +3139,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyVerticalContainerWidgetRowHeight(EditorUI::EditFloatSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyVerticalContainerWidgetRowHeight(EditorUI::EditFloatWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3158,7 +3158,7 @@ namespace Kargono::Panels
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
 
-	void UIEditorPropertiesPanel::OnModifyVerticalContainerWidgetRowSpacing(EditorUI::EditFloatSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyVerticalContainerWidgetRowSpacing(EditorUI::EditFloatWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3202,7 +3202,7 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	void UIEditorPropertiesPanel::OnModifyTextDataTextSize(EditorUI::EditFloatSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyTextDataTextSize(EditorUI::EditFloatWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3240,7 +3240,7 @@ namespace Kargono::Panels
 
 		KG_WARN("Attempt to modify widget's text data, but none could be found.");
 	}
-	void UIEditorPropertiesPanel::OnModifyTextDataTextColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyTextDataTextColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3314,7 +3314,7 @@ namespace Kargono::Panels
 
 
 	}
-	void UIEditorPropertiesPanel::OnOpenTextDataAlignmentPopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenTextDataAlignmentPopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear existing options
 		spec.ClearOptions();
@@ -3340,7 +3340,7 @@ namespace Kargono::Panels
 			(uint64_t)RuntimeUI::Constraint::Center
 		);
 	}
-	void UIEditorPropertiesPanel::OnModifyMultiLineDataText(EditorUI::EditMultiLineTextSpec& spec)
+	void UIEditorPropertiesPanel::OnModifyMultiLineDataText(EditorUI::EditMultiLineTextWidget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3453,7 +3453,7 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	void UIEditorPropertiesPanel::OnOpenSelectionDataOnPressPopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenSelectionDataOnPressPopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Get the current func type
 		WrappedFuncType currentFuncType{ *(WrappedFuncType*)spec.m_ProvidedData.get() };
@@ -3477,10 +3477,10 @@ namespace Kargono::Panels
 			spec.AddToOptions(Utility::ScriptToEditorUIGroup(script), script->m_ScriptName, handle);
 		}
 	}
-	void UIEditorPropertiesPanel::OnOpenTooltipForSelectionDataOnPress(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenTooltipForSelectionDataOnPress(EditorUI::SelectOptionWidget& spec)
 	{
 		// Store the current select option spec, function type, and parameter names
-		static EditorUI::SelectOptionSpec* s_CurrentSpec{ nullptr };
+		static EditorUI::SelectOptionWidget* s_CurrentSpec{ nullptr };
 		static WrappedFuncType s_CurrentFuncType{ WrappedFuncType::None };
 		static std::vector<FixedString32> s_ParameterNames;
 		s_CurrentSpec = &spec;
@@ -3551,7 +3551,7 @@ namespace Kargono::Panels
 		// Open tooltip
 		s_UIWindow->m_TreePanel->m_SelectTooltip.m_TooltipActive = true;
 	}
-	void UIEditorPropertiesPanel::OnModifySelectionDataBackgroundColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifySelectionDataBackgroundColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())
@@ -3617,7 +3617,7 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	void UIEditorPropertiesPanel::OnOpenImageDataImagePopup(EditorUI::SelectOptionSpec& spec)
+	void UIEditorPropertiesPanel::OnOpenImageDataImagePopup(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear existing options
 		spec.ClearOptions();
@@ -3666,7 +3666,7 @@ namespace Kargono::Panels
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
 	}
-	void UIEditorPropertiesPanel::OnModifyContainerDataBackgroundColor(EditorUI::EditVec4Spec& spec)
+	void UIEditorPropertiesPanel::OnModifyContainerDataBackgroundColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Ensure active window and widget are valid
 		if (!ValidateActiveWindowAndWidget())

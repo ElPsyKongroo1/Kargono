@@ -2,7 +2,7 @@
 #include "Modules/Assets/Asset.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Kargono/Scenes/GameState.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>
 
@@ -58,21 +58,21 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		// Opening menu
-		EditorUI::GenericPopupSpec m_CreateGameStatePopupSpec {};
-		EditorUI::SelectOptionSpec m_OpenGameStatePopupSpec {};
-		EditorUI::ChooseDirectorySpec m_SelectGameStateLocationSpec{};
+		EditorUI::GenericPopupWidget m_CreateGameStatePopupSpec {};
+		EditorUI::SelectOptionWidget m_OpenGameStatePopupSpec {};
+		EditorUI::ChooseDirectoryWidget m_SelectGameStateLocationSpec{};
 		// Header
 		EditorUI::EditTextSpec m_SelectGameStateNameSpec {};
-		EditorUI::PanelHeaderSpec m_MainHeader {};
-		EditorUI::GenericPopupSpec m_DeleteGameStateWarning {};
-		EditorUI::GenericPopupSpec m_CloseGameStateWarning {};
+		EditorUI::PanelHeaderWidget m_MainHeader {};
+		EditorUI::GenericPopupWidget m_DeleteGameStateWarning {};
+		EditorUI::GenericPopupWidget m_CloseGameStateWarning {};
 		// Fields Panel
-		EditorUI::ListSpec m_FieldsTable {};
-		EditorUI::SelectOptionSpec m_AddFieldPopup {};
-		EditorUI::GenericPopupSpec m_EditFieldPopup {};
+		EditorUI::ListWidget m_FieldsTable {};
+		EditorUI::SelectOptionWidget m_AddFieldPopup {};
+		EditorUI::GenericPopupWidget m_EditFieldPopup {};
 		EditorUI::EditTextSpec m_EditFieldName {};
-		EditorUI::SelectOptionSpec m_EditFieldType {};
-		EditorUI::EditVariableSpec m_EditFieldValue {};
+		EditorUI::SelectOptionWidget m_EditFieldType {};
+		EditorUI::EditVariableWidget m_EditFieldValue {};
 
 	};
 }

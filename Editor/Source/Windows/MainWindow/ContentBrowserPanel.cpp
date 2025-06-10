@@ -1137,7 +1137,7 @@ namespace Kargono::Panels
 		};
 		m_CreateDirectoryPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_CreateDirectoryEditName);
+			m_CreateDirectoryEditName.RenderText();
 		};
 		m_CreateDirectoryPopup.m_ConfirmAction = [&]()
 		{
@@ -1162,18 +1162,18 @@ namespace Kargono::Panels
 		}
 
 		// Draw navigation header draw header
-		EditorUI::EditorUIService::NavigationHeader(m_NavigateAssetsHeader);
+		m_NavigateAssetsHeader.RenderHeader();
 
 		// Draw content browser file grid
-		EditorUI::EditorUIService::Grid(m_FileFolderViewer);
+		m_FileFolderViewer.RenderGrid();
 
 		// Handle tooltip
-		EditorUI::EditorUIService::Tooltip(m_RightClickTooltip);
+		m_RightClickTooltip.RenderTooltip();
 
 		// Handle popups
-		EditorUI::EditorUIService::GenericPopup(m_DeleteDirectoryPopup);
-		EditorUI::EditorUIService::GenericPopup(m_DeleteFilePopup);
-		EditorUI::EditorUIService::GenericPopup(m_CreateDirectoryPopup);
+		m_DeleteDirectoryPopup.RenderPopup();
+		m_DeleteFilePopup.RenderPopup();
+		m_CreateDirectoryPopup.RenderPopup();
 
 		EditorUI::EditorUIService::EndWindow();
 

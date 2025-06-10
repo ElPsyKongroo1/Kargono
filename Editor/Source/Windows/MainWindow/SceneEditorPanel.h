@@ -6,7 +6,7 @@
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Assets/Asset.h"
 #include "Kargono/Core/FixedString.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <unordered_map>
 #include <variant>
@@ -15,10 +15,10 @@ namespace Kargono::Panels
 {
 	struct ProjectComponentWidgetData
 	{
-		EditorUI::CollapsingHeaderSpec m_Header;
-		std::vector<std::variant<EditorUI::EditFloatSpec, EditorUI::EditVec4Spec,
-			EditorUI::EditVec2Spec, EditorUI::EditVec3Spec, EditorUI::EditTextSpec,
-			EditorUI::CheckboxWidget, EditorUI::EditIntegerSpec>> m_Fields;
+		EditorUI::CollapsingHeaderWidget m_Header;
+		std::vector<std::variant<EditorUI::EditFloatWidget, EditorUI::EditVec4Widget,
+			EditorUI::EditVec2Widget, EditorUI::EditVec3Widget, EditorUI::EditTextSpec,
+			EditorUI::CheckboxWidget, EditorUI::EditIntegerWidget>> m_Fields;
 	};
 
 	struct SceneEditorTreeEntryData
@@ -140,103 +140,103 @@ namespace Kargono::Panels
 		//=========================
 		
 		// Scene Hierarchy Tree
-		EditorUI::PanelHeaderSpec m_MainSceneHeader{};
-		EditorUI::TreeSpec m_SceneHierarchyTree {};
+		EditorUI::PanelHeaderWidget m_MainSceneHeader{};
+		EditorUI::TreeWidget m_SceneHierarchyTree {};
 		int32_t m_AddComponentEntity {};
-		EditorUI::SelectOptionSpec m_AddComponent{};
-		EditorUI::TooltipSpec m_SelectTooltip{};
+		EditorUI::SelectOptionWidget m_AddComponent{};
+		EditorUI::TooltipWidget m_SelectTooltip{};
 
 		// Scene Options
-		EditorUI::EditVec4Spec m_BackgroundColorSpec;
-		EditorUI::EditVec2Spec m_Gravity2DSpec;
+		EditorUI::EditVec4Widget m_BackgroundColorSpec;
+		EditorUI::EditVec2Widget m_Gravity2DSpec;
 
 		// Tag Component
-		EditorUI::CollapsingHeaderSpec m_TagHeader{};
+		EditorUI::CollapsingHeaderWidget m_TagHeader{};
 		EditorUI::EditTextSpec m_TagEdit{};
 		EditorUI::EditTextSpec m_TagGroupEdit{};
 
 		// Transform Component
-		EditorUI::CollapsingHeaderSpec m_TransformHeader{};
-		EditorUI::EditVec3Spec m_TransformEditTranslation{};
-		EditorUI::EditVec3Spec m_TransformEditScale{};
-		EditorUI::EditVec3Spec m_TransformEditRotation{};
+		EditorUI::CollapsingHeaderWidget m_TransformHeader{};
+		EditorUI::EditVec3Widget m_TransformEditTranslation{};
+		EditorUI::EditVec3Widget m_TransformEditScale{};
+		EditorUI::EditVec3Widget m_TransformEditRotation{};
 
 		// Class Instance Component
-		EditorUI::CollapsingHeaderSpec m_ClassInstanceHeader{};
-		EditorUI::SelectOptionSpec m_SelectClassOption{};
-		EditorUI::ListSpec m_InstanceFieldsTable{};
+		EditorUI::CollapsingHeaderWidget m_ClassInstanceHeader{};
+		EditorUI::SelectOptionWidget m_SelectClassOption{};
+		EditorUI::ListWidget m_InstanceFieldsTable{};
 		std::string m_CurrentClassField {};
 		int32_t m_CurrentClassFieldLocation {};
-		EditorUI::GenericPopupSpec m_EditClassFieldPopup{};
-		EditorUI::EditVariableSpec m_EditFieldValue {};
+		EditorUI::GenericPopupWidget m_EditClassFieldPopup{};
+		EditorUI::EditVariableWidget m_EditFieldValue {};
 
 		// Rigid Body 2D Component
-		EditorUI::CollapsingHeaderSpec m_Rigidbody2DHeader{};
-		EditorUI::RadioSelectorSpec m_Rigidbody2DType {};
+		EditorUI::CollapsingHeaderWidget m_Rigidbody2DHeader{};
+		EditorUI::RadioSelectWidget m_Rigidbody2DType {};
 		EditorUI::CheckboxWidget m_RigidBody2DFixedRotation {};
-		EditorUI::SelectOptionSpec m_SelectRigidBody2DCollisionStartScript{};
-		EditorUI::SelectOptionSpec m_SelectRigidBody2DCollisionEndScript{};
+		EditorUI::SelectOptionWidget m_SelectRigidBody2DCollisionStartScript{};
+		EditorUI::SelectOptionWidget m_SelectRigidBody2DCollisionEndScript{};
 		
 		// Box Collider 2D Component
-		EditorUI::CollapsingHeaderSpec m_BoxCollider2DHeader{};
-		EditorUI::EditVec2Spec m_BoxColliderOffset{};
-		EditorUI::EditVec2Spec m_BoxColliderSize{};
-		EditorUI::EditFloatSpec m_BoxColliderDensity{};
-		EditorUI::EditFloatSpec m_BoxColliderFriction{};
-		EditorUI::EditFloatSpec m_BoxColliderRestitution{};
-		EditorUI::EditFloatSpec m_BoxColliderRestitutionThreshold{};
+		EditorUI::CollapsingHeaderWidget m_BoxCollider2DHeader{};
+		EditorUI::EditVec2Widget m_BoxColliderOffset{};
+		EditorUI::EditVec2Widget m_BoxColliderSize{};
+		EditorUI::EditFloatWidget m_BoxColliderDensity{};
+		EditorUI::EditFloatWidget m_BoxColliderFriction{};
+		EditorUI::EditFloatWidget m_BoxColliderRestitution{};
+		EditorUI::EditFloatWidget m_BoxColliderRestitutionThreshold{};
 		EditorUI::CheckboxWidget m_BoxColliderIsSensor{};
 
 		// Circle Collider 2D Component
-		EditorUI::CollapsingHeaderSpec m_CircleCollider2DHeader{};
-		EditorUI::EditVec2Spec m_CircleColliderOffset{};
-		EditorUI::EditFloatSpec m_CircleColliderRadius{};
-		EditorUI::EditFloatSpec m_CircleColliderDensity{};
-		EditorUI::EditFloatSpec m_CircleColliderFriction{};
-		EditorUI::EditFloatSpec m_CircleColliderRestitution{};
-		EditorUI::EditFloatSpec m_CircleColliderRestitutionThreshold{};
+		EditorUI::CollapsingHeaderWidget m_CircleCollider2DHeader{};
+		EditorUI::EditVec2Widget m_CircleColliderOffset{};
+		EditorUI::EditFloatWidget m_CircleColliderRadius{};
+		EditorUI::EditFloatWidget m_CircleColliderDensity{};
+		EditorUI::EditFloatWidget m_CircleColliderFriction{};
+		EditorUI::EditFloatWidget m_CircleColliderRestitution{};
+		EditorUI::EditFloatWidget m_CircleColliderRestitutionThreshold{};
 		EditorUI::CheckboxWidget m_CircleColliderIsSensor{};
 
 		// OnUpdate Component
-		EditorUI::CollapsingHeaderSpec m_OnUpdateHeader{};
-		EditorUI::SelectOptionSpec m_SelectOnUpdateScript{};
+		EditorUI::CollapsingHeaderWidget m_OnUpdateHeader{};
+		EditorUI::SelectOptionWidget m_SelectOnUpdateScript{};
 
 		// AI State Component
-		EditorUI::CollapsingHeaderSpec m_AIStateHeader{};
-		EditorUI::SelectOptionSpec m_SelectCurrentState{};
-		EditorUI::SelectOptionSpec m_SelectPreviousState{};
-		EditorUI::SelectOptionSpec m_SelectGlobalState{};
+		EditorUI::CollapsingHeaderWidget m_AIStateHeader{};
+		EditorUI::SelectOptionWidget m_SelectCurrentState{};
+		EditorUI::SelectOptionWidget m_SelectPreviousState{};
+		EditorUI::SelectOptionWidget m_SelectGlobalState{};
 
 		// OnCreate Component
-		EditorUI::CollapsingHeaderSpec m_OnCreateHeader{};
-		EditorUI::SelectOptionSpec m_SelectOnCreateScript{};
+		EditorUI::CollapsingHeaderWidget m_OnCreateHeader{};
+		EditorUI::SelectOptionWidget m_SelectOnCreateScript{};
 
 		// Camera Component
-		EditorUI::CollapsingHeaderSpec m_CameraHeader{};
+		EditorUI::CollapsingHeaderWidget m_CameraHeader{};
 		EditorUI::CheckboxWidget m_CameraPrimary {};
-		EditorUI::RadioSelectorSpec m_CameraProjection {};
-		EditorUI::EditFloatSpec m_CameraPerspectiveFOV{};
-		EditorUI::EditFloatSpec m_CameraPerspectiveNearPlane{};
-		EditorUI::EditFloatSpec m_CameraPerspectiveFarPlane{};
-		EditorUI::EditFloatSpec m_CameraOrthographicSize{};
-		EditorUI::EditFloatSpec m_CameraOrthographicNearPlane{};
-		EditorUI::EditFloatSpec m_CameraOrthographicFarPlane{};
+		EditorUI::RadioSelectWidget m_CameraProjection {};
+		EditorUI::EditFloatWidget m_CameraPerspectiveFOV{};
+		EditorUI::EditFloatWidget m_CameraPerspectiveNearPlane{};
+		EditorUI::EditFloatWidget m_CameraPerspectiveFarPlane{};
+		EditorUI::EditFloatWidget m_CameraOrthographicSize{};
+		EditorUI::EditFloatWidget m_CameraOrthographicNearPlane{};
+		EditorUI::EditFloatWidget m_CameraOrthographicFarPlane{};
 
 		// Particle Emitter Component
-		EditorUI::CollapsingHeaderSpec m_ParticleEmitterHeader{};
-		EditorUI::SelectOptionSpec m_SelectParticleEmitter{};
+		EditorUI::CollapsingHeaderWidget m_ParticleEmitterHeader{};
+		EditorUI::SelectOptionWidget m_SelectParticleEmitter{};
 
 		// Shape Component
-		EditorUI::CollapsingHeaderSpec m_ShapeHeader{};
-		EditorUI::SelectOptionSpec m_ShapeSelect {};
-		EditorUI::SelectOptionSpec m_ShapeColorType {};
-		EditorUI::EditVec4Spec m_ShapeColor {};
+		EditorUI::CollapsingHeaderWidget m_ShapeHeader{};
+		EditorUI::SelectOptionWidget m_ShapeSelect {};
+		EditorUI::SelectOptionWidget m_ShapeColorType {};
+		EditorUI::EditVec4Widget m_ShapeColor {};
 		EditorUI::CheckboxWidget m_ShapeAddTexture {};
-		EditorUI::SelectOptionSpec m_ShapeSetTexture {};
-		EditorUI::EditFloatSpec m_ShapeTilingFactor{};
+		EditorUI::SelectOptionWidget m_ShapeSetTexture {};
+		EditorUI::EditFloatWidget m_ShapeTilingFactor{};
 		EditorUI::CheckboxWidget m_ShapeAddCircle {};
-		EditorUI::EditFloatSpec m_ShapeCircleThickness{};
-		EditorUI::EditFloatSpec m_ShapeCircleFade{};
+		EditorUI::EditFloatWidget m_ShapeCircleThickness{};
+		EditorUI::EditFloatWidget m_ShapeCircleFade{};
 		EditorUI::CheckboxWidget m_ShapeAddProjection {};
 		EditorUI::CheckboxWidget m_ShapeAddEntityID {};
 	private:

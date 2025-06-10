@@ -1,7 +1,7 @@
 
 #include "Launcher/LauncherApp.h"
 
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Kargono/Projects/Project.h"
 #include "Modules/Core/Engine.h"
 #include "Kargono/Utility/OSCommands.h"
@@ -15,9 +15,9 @@ namespace Kargono
 	static LauncherApp* s_LauncherApp { nullptr };
 
 	// Create Project Panel
-	static EditorUI::GenericPopupSpec s_CreateProjectSpec {};
+	static EditorUI::GenericPopupWidget s_CreateProjectSpec {};
 	static EditorUI::EditTextSpec s_CreateProjectName {};
-	static EditorUI::ChooseDirectorySpec s_CreateProjectLocation {};
+	static EditorUI::ChooseDirectoryWidget s_CreateProjectLocation {};
 
 	static void InitializeStaticResources()
 	{
@@ -25,8 +25,8 @@ namespace Kargono
 		s_CreateProjectSpec.m_PopupWidth = 420.0f;
 		s_CreateProjectSpec.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(s_CreateProjectName);
-			EditorUI::EditorUIService::ChooseDirectory(s_CreateProjectLocation);
+			s_CreateProjectName.RenderText();
+			s_CreateProjectLocation.RenderChooseDir();
 		};
 		s_CreateProjectSpec.m_ConfirmAction = [&]()
 		{
@@ -152,7 +152,7 @@ namespace Kargono
 			s_CreateProjectSpec.m_OpenPopup = true;
 		});
 
-		EditorUI::EditorUIService::GenericPopup(s_CreateProjectSpec);
+		s_CreateProjectSpec.RenderPopup();
 
 
 

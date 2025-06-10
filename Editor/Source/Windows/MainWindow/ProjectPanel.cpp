@@ -38,7 +38,7 @@ namespace Kargono::Panels
 		m_SelectStartSceneSpec.m_CurrentOption = {
 			 Assets::AssetService::GetSceneRegistry().at(startSceneHandle).Data.FileLocation.filename().string().c_str(),
 			startSceneHandle};
-		m_SelectStartSceneSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectStartSceneSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 			for (auto& [handle, asset] : Assets::AssetService::GetSceneRegistry())
@@ -89,7 +89,7 @@ namespace Kargono::Panels
 			// Revalidate the editor's viewport
 			s_MainWindow->m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio((ScreenResolution)(uint64_t)selection.m_Handle));
 		};
-		m_SelectResolutionSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectResolutionSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.m_CurrentOption = 
 			{
@@ -126,7 +126,7 @@ namespace Kargono::Panels
 		{
 			m_SelectStartGameStateSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		}
-		m_SelectStartGameStateSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectStartGameStateSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
@@ -166,7 +166,7 @@ namespace Kargono::Panels
 		m_SelectRuntimeStartSpec.m_CurrentOption = { Projects::ProjectService::GetActiveContext().GetOnRuntimeStartHandle() ?
 			Assets::AssetService::GetScript(Projects::ProjectService::GetActiveContext().GetOnRuntimeStartHandle())->m_ScriptName.c_str() : "None",
 			Projects::ProjectService::GetActiveContext().GetOnRuntimeStartHandle()};
-		m_SelectRuntimeStartSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectRuntimeStartSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 
@@ -196,7 +196,7 @@ namespace Kargono::Panels
 			}
 			Projects::ProjectService::GetActiveContext().SetOnRuntimeStartHandle(selection.m_Handle);
 		};
-		m_SelectRuntimeStartSpec.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectRuntimeStartSpec.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
 			// Initialize tooltip with options
@@ -274,7 +274,7 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Select Starting Scene
-			EditorUI::EditorUIService::SelectOption(m_SelectStartSceneSpec);
+			m_SelectStartSceneSpec.RenderOptions();
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Networking Checkbox
@@ -288,15 +288,15 @@ namespace Kargono::Panels
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Select Starting Game State
-			EditorUI::EditorUIService::SelectOption(m_SelectStartGameStateSpec);
+			m_SelectStartGameStateSpec.RenderOptions();
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Resolution Select Option
-			EditorUI::EditorUIService::SelectOption(m_SelectResolutionSpec);
+			m_SelectResolutionSpec.RenderOptions();
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Select On Runtime Start
-			EditorUI::EditorUIService::SelectOption(m_SelectRuntimeStartSpec);
+			m_SelectRuntimeStartSpec.RenderOptions();
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			EditorUI::EditorUIService::EndTabItem();
@@ -326,7 +326,7 @@ namespace Kargono::Panels
 
 		EditorUI::EditorUIService::EndTabBar();
 
-		EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
+		m_SelectScriptTooltip.RenderTooltip();
 		
 
 		EditorUI::EditorUIService::EndWindow();
@@ -413,7 +413,7 @@ namespace Kargono::Panels
 		m_ServerIP.m_Label = "Server IPv4";
 		m_ServerIP.m_CurrentIVec4 = { 127, 0, 0, 1 };
 		m_ServerIP.m_Bounds = { 0, 255 };
-		m_ServerIP.m_ConfirmAction = [](EditorUI::EditIVec4Spec& spec) 
+		m_ServerIP.m_ConfirmAction = [](EditorUI::EditIVec4Widget& spec) 
 		{
 			Projects::ProjectService::GetActiveContext().GetServerConfig().m_ServerAddress.SetAddress((Math::u8vec4)spec.m_CurrentIVec4);
 		};
@@ -421,7 +421,7 @@ namespace Kargono::Panels
 		m_ServerPort.m_Label = "Server Port";
 		m_ServerPort.m_CurrentInteger = 60'000;
 		m_ServerPort.m_Bounds = { 101, 65'535 };
-		m_ServerPort.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec) 
+		m_ServerPort.m_ConfirmAction = [](EditorUI::EditIntegerWidget& spec) 
 		{
 			Projects::ProjectService::GetActiveContext().GetServerConfig().m_ServerAddress.SetNewPort((uint16_t)spec.m_CurrentInteger);
 		};
@@ -440,7 +440,7 @@ namespace Kargono::Panels
 		m_ServerSecrets.m_Label = "Validation Secrets";
 		m_ServerSecrets.m_CurrentIVec4 = { 0, 0, 0, 0 };
 		m_ServerSecrets.m_Bounds = { 0, 2'147'483'647 };
-		m_ServerSecrets.m_ConfirmAction = [](EditorUI::EditIVec4Spec& spec) 
+		m_ServerSecrets.m_ConfirmAction = [](EditorUI::EditIVec4Widget& spec) 
 		{
 			Network::ServerConfig& serverConfig = Projects::ProjectService::GetActiveContext().GetServerConfig();
 			serverConfig.m_ValidationSecrets = (Math::u64vec4)spec.m_CurrentIVec4;
@@ -475,20 +475,20 @@ namespace Kargono::Panels
 
 		if (EditorUI::EditorUIService::BeginTabItem("Status"))
 		{
-			EditorUI::EditorUIService::CollapsingHeader(m_StatusHeader);
+			m_StatusHeader.RenderHeader();
 			if (m_StatusHeader.m_Expanded)
 			{
 				EditorUI::EditorUIService::LabeledText("Status", m_ActiveState ? "Active" : "In-Active",
 					EditorUI::LabeledText_Indented);
 			}
-			EditorUI::EditorUIService::CollapsingHeader(m_CommandsHeader);
+			m_CommandsHeader.RenderHeader();
 
 			if (m_CommandsHeader.m_Expanded)
 			{
-				EditorUI::EditorUIService::ButtonBar(m_LifecycleOptions);
+				m_LifecycleOptions.RenderBar();
 			}
 
-			EditorUI::EditorUIService::CollapsingHeader(m_ConnectionsHeader);
+			m_ConnectionsHeader.RenderHeader();
 			if (m_ConnectionsHeader.m_Expanded)
 			{
 				for (ConnectionUI& connection : m_ConnectionUIs)
@@ -501,7 +501,7 @@ namespace Kargono::Panels
 		}
 		if (EditorUI::EditorUIService::BeginTabItem("Config"))
 		{
-			EditorUI::EditorUIService::CollapsingHeader(m_GeneralConfigHeader);
+			m_GeneralConfigHeader.RenderHeader();
 
 			if (m_GeneralConfigHeader.m_Expanded)
 			{
@@ -604,7 +604,7 @@ namespace Kargono::Panels
 			m_ConnectionUIs.clear();
 		});
 	}
-	void ClientOptions::Init(EditorUI::TooltipSpec* parentTooltipSpec)
+	void ClientOptions::Init(EditorUI::TooltipWidget* parentTooltipSpec)
 	{
 		// Set up tooltip dependency
 		KG_ASSERT(parentTooltipSpec);
@@ -681,7 +681,7 @@ namespace Kargono::Panels
 		m_SelectUpdateUserCountSpec.m_LineCount = 3;
 		m_SelectUpdateUserCountSpec.m_CurrentOption = { clientScripts.m_OnUpdateUserCount ?
 			Assets::AssetService::GetScript(clientScripts.m_OnUpdateUserCount)->m_ScriptName.c_str() : "None", clientScripts.m_OnUpdateUserCount };
-		m_SelectUpdateUserCountSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectUpdateUserCountSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
@@ -714,7 +714,7 @@ namespace Kargono::Panels
 			}
 			clientScripts.m_OnUpdateUserCount = selection.m_Handle;
 		};
-		m_SelectUpdateUserCountSpec.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectUpdateUserCountSpec.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
@@ -772,7 +772,7 @@ namespace Kargono::Panels
 		m_SelectApproveJoinSessionSpec.m_CurrentOption = { clientScripts.m_OnApproveJoinSession ?
 			Assets::AssetService::GetScript(clientScripts.m_OnApproveJoinSession)->m_ScriptName.c_str() : "None",
 			clientScripts.m_OnApproveJoinSession };
-		m_SelectApproveJoinSessionSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectApproveJoinSessionSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
@@ -806,7 +806,7 @@ namespace Kargono::Panels
 
 				clientScripts.m_OnApproveJoinSession = selection.m_Handle;
 			};
-		m_SelectApproveJoinSessionSpec.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectApproveJoinSessionSpec.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
@@ -861,7 +861,7 @@ namespace Kargono::Panels
 		m_SelectUserLeftSessionSpec.m_LineCount = 3;
 		m_SelectUserLeftSessionSpec.m_CurrentOption = { clientScripts.m_OnUserLeftSession ?
 			Assets::AssetService::GetScript(clientScripts.m_OnUserLeftSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnUserLeftSession };
-		m_SelectUserLeftSessionSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectUserLeftSessionSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
@@ -894,7 +894,7 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 				clientScripts.m_OnUserLeftSession = selection.m_Handle;
 			};
-		m_SelectUserLeftSessionSpec.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectUserLeftSessionSpec.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
@@ -949,7 +949,7 @@ namespace Kargono::Panels
 		m_SelectSessionInitSpec.m_CurrentOption = { clientScripts.m_OnCurrentSessionInit ?
 			Assets::AssetService::GetScript(clientScripts.m_OnCurrentSessionInit)->m_ScriptName.c_str() : "None",
 			clientScripts.m_OnCurrentSessionInit };
-		m_SelectSessionInitSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectSessionInitSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
@@ -982,7 +982,7 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 				clientScripts.m_OnCurrentSessionInit = selection.m_Handle;
 			};
-		m_SelectSessionInitSpec.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectSessionInitSpec.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
@@ -1038,7 +1038,7 @@ namespace Kargono::Panels
 		m_SelectConnectionTerminatedSpec.m_CurrentOption = { clientScripts.m_OnConnectionTerminated ?
 			Assets::AssetService::GetScript(clientScripts.m_OnConnectionTerminated)->m_ScriptName.c_str() : "None",
 			clientScripts.m_OnConnectionTerminated };
-		m_SelectConnectionTerminatedSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectConnectionTerminatedSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
@@ -1070,7 +1070,7 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 				clientScripts.m_OnConnectionTerminated = selection.m_Handle;
 			};
-		m_SelectConnectionTerminatedSpec.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectConnectionTerminatedSpec.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
@@ -1123,7 +1123,7 @@ namespace Kargono::Panels
 		m_SelectUpdateSessionSlotSpec.m_CurrentOption = { clientScripts.m_OnUpdateSessionUserSlot ?
 			Assets::AssetService::GetScript(clientScripts.m_OnUpdateSessionUserSlot)->m_ScriptName.c_str() : "None",
 			clientScripts.m_OnUpdateSessionUserSlot };
-		m_SelectUpdateSessionSlotSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectUpdateSessionSlotSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
@@ -1156,7 +1156,7 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 				clientScripts.m_OnUpdateSessionUserSlot = selection.m_Handle;
 			};
-		m_SelectUpdateSessionSlotSpec.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectUpdateSessionSlotSpec.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
@@ -1211,7 +1211,7 @@ namespace Kargono::Panels
 		m_SelectStartSessionSpec.m_LineCount = 3;
 		m_SelectStartSessionSpec.m_CurrentOption = { clientScripts.m_OnStartSession ?
 			Assets::AssetService::GetScript(clientScripts.m_OnStartSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnStartSession };
-		m_SelectStartSessionSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectStartSessionSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
@@ -1243,7 +1243,7 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 				clientScripts.m_OnStartSession = selection.m_Handle;
 			};
-		m_SelectStartSessionSpec.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectStartSessionSpec.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
@@ -1296,7 +1296,7 @@ namespace Kargono::Panels
 		m_SelectSessionReadyCheckSpec.m_LineCount = 3;
 		m_SelectSessionReadyCheckSpec.m_CurrentOption = { clientScripts.m_OnSessionReadyCheckConfirm ?
 			Assets::AssetService::GetScript(clientScripts.m_OnSessionReadyCheckConfirm)->m_ScriptName.c_str() : "None", clientScripts.m_OnSessionReadyCheckConfirm };
-		m_SelectSessionReadyCheckSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectSessionReadyCheckSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
@@ -1329,7 +1329,7 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 				clientScripts.m_OnSessionReadyCheckConfirm = selection.m_Handle;
 			};
-		m_SelectSessionReadyCheckSpec.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectSessionReadyCheckSpec.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
@@ -1383,7 +1383,7 @@ namespace Kargono::Panels
 		m_SelectReceiveSignalSpec.m_LineCount = 3;
 		m_SelectReceiveSignalSpec.m_CurrentOption = { clientScripts.m_OnReceiveSignal ?
 			Assets::AssetService::GetScript(clientScripts.m_OnReceiveSignal)->m_ScriptName.c_str() : "None", clientScripts.m_OnReceiveSignal };
-		m_SelectReceiveSignalSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectReceiveSignalSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
@@ -1416,7 +1416,7 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 				clientScripts.m_OnReceiveSignal = selection.m_Handle;
 			};
-		m_SelectReceiveSignalSpec.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectReceiveSignalSpec.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
@@ -1487,21 +1487,21 @@ namespace Kargono::Panels
 
 		if (EditorUI::EditorUIService::BeginTabItem("Status"))
 		{
-			EditorUI::EditorUIService::CollapsingHeader(m_StatusHeader);
+			m_StatusHeader.RenderHeader();
 			if (m_StatusHeader.m_Expanded)
 			{
 				EditorUI::EditorUIService::LabeledText("Status", m_ActiveState ? "Active" : "In-Active",
 					EditorUI::LabeledText_Indented);
 			}
 
-			EditorUI::EditorUIService::CollapsingHeader(m_CommandsHeader);
+			m_CommandsHeader.RenderHeader();
 
 			if (m_CommandsHeader.m_Expanded)
 			{
-				EditorUI::EditorUIService::ButtonBar(m_LifecycleOptions);
+				m_LifecycleOptions.RenderBar();
 			}
 
-			EditorUI::EditorUIService::CollapsingHeader(m_ConnectionHeader);
+			m_ConnectionHeader.RenderHeader();
 			if (m_ConnectionHeader.m_Expanded)
 			{
 				m_ClientConnectionUI.OnEditorUIRender();
@@ -1511,47 +1511,47 @@ namespace Kargono::Panels
 		}
 		if (EditorUI::EditorUIService::BeginTabItem("Config"))
 		{
-			EditorUI::EditorUIService::CollapsingHeader(m_AppScriptsHeader);
+			m_AppScriptsHeader.RenderHeader();
 			if (m_AppScriptsHeader.m_Expanded)
 			{
 				// Select On Receive Signal Function
-				EditorUI::EditorUIService::SelectOption(m_SelectReceiveSignalSpec);
+				m_SelectReceiveSignalSpec.RenderOptions();
 			}
 
-			EditorUI::EditorUIService::CollapsingHeader(m_ConnectionScriptsHeader);
+			m_ConnectionScriptsHeader.RenderHeader();
 			if (m_ConnectionScriptsHeader.m_Expanded)
 			{
 				// Select On Connection Terminated
-				EditorUI::EditorUIService::SelectOption(m_SelectConnectionTerminatedSpec);
+				m_SelectConnectionTerminatedSpec.RenderOptions();
 			}
 
-			EditorUI::EditorUIService::CollapsingHeader(m_SessionScriptsHeader);
+			m_SessionScriptsHeader.RenderHeader();
 			if (m_SessionScriptsHeader.m_Expanded)
 			{
 				// Select On Current Session Init
-				EditorUI::EditorUIService::SelectOption(m_SelectSessionInitSpec);
+				m_SelectSessionInitSpec.RenderOptions();
 
 				// Select On Update Session User Slot
-				EditorUI::EditorUIService::SelectOption(m_SelectUpdateSessionSlotSpec);
+				m_SelectUpdateSessionSlotSpec.RenderOptions();
 
 				// Select On Start Session
-				EditorUI::EditorUIService::SelectOption(m_SelectStartSessionSpec);
+				m_SelectStartSessionSpec.RenderOptions();
 
 				// Select On Session Ready Check
-				EditorUI::EditorUIService::SelectOption(m_SelectSessionReadyCheckSpec);
+				m_SelectSessionReadyCheckSpec.RenderOptions();
 
 				// Select On Approve Join Session
-				EditorUI::EditorUIService::SelectOption(m_SelectApproveJoinSessionSpec);
+				m_SelectApproveJoinSessionSpec.RenderOptions();
 
 				// Select On User Left Session
-				EditorUI::EditorUIService::SelectOption(m_SelectUserLeftSessionSpec);
+				m_SelectUserLeftSessionSpec.RenderOptions();
 			}
 
-			EditorUI::EditorUIService::CollapsingHeader(m_QueryServerScriptsHeader);
+			m_QueryServerScriptsHeader.RenderHeader();
 			if (m_QueryServerScriptsHeader.m_Expanded)
 			{
 				// Select On Update User Count
-				EditorUI::EditorUIService::SelectOption(m_SelectUpdateUserCountSpec);
+				m_SelectUpdateUserCountSpec.RenderOptions();
 			}
 			EditorUI::EditorUIService::EndTabItem();
 		}
@@ -1684,7 +1684,7 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::LabeledText("Average RTT (ms)",
 			std::to_string(m_AverageRTT * 1'000.0f).c_str(),
 			EditorUI::LabeledText_Indented);
-		EditorUI::EditorUIService::Plot(m_PacketRTTPlot);
+		m_PacketRTTPlot.RenderPlot();
 	}
 	void ConnectionUI::OnNotifySendPacket(Network::PacketSequence seq)
 	{

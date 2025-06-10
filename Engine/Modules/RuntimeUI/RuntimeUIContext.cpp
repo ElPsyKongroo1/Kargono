@@ -11,7 +11,7 @@
 #include "Modules/ECS/EngineComponents.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Math/Interpolation.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/Input/InputService.h"
 
 namespace Kargono::RuntimeUI

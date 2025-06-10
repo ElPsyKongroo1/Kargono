@@ -6,7 +6,7 @@
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/ECS/EngineComponents.h"
 #include "Modules/Assets/AssetService.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 namespace Kargono::Utility
 {

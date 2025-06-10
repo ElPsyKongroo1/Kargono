@@ -12,7 +12,7 @@ namespace Kargono::Panels
 		m_OpenProjectEnumPopupSpec.m_Label = "Open Enum";
 		m_OpenProjectEnumPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenProjectEnumPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenProjectEnumPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenProjectEnumPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
@@ -78,8 +78,8 @@ namespace Kargono::Panels
 			};
 		m_CreateProjectEnumPopupSpec.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::EditText(m_SelectProjectEnumNameSpec);
-				EditorUI::EditorUIService::ChooseDirectory(m_SelectProjectEnumLocationSpec);
+				m_SelectProjectEnumNameSpec.RenderText();
+				m_SelectProjectEnumLocationSpec.RenderChooseDir();
 			};
 	}
 
@@ -276,19 +276,19 @@ namespace Kargono::Panels
 		{
 
 			EditorUI::EditorUIService::NewItemScreen("Open Existing Enum", KG_BIND_CLASS_FN(OnOpenProjectEnumDialog), "Create New Enum", KG_BIND_CLASS_FN(OnCreateProjectEnumDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateProjectEnumPopupSpec);
-			EditorUI::EditorUIService::SelectOption(m_OpenProjectEnumPopupSpec);
+			m_CreateProjectEnumPopupSpec.RenderPopup();
+			m_OpenProjectEnumPopupSpec.RenderOptions();
 		}
 		else
 		{
-			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteProjectEnumWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseProjectEnumWarning);
-			EditorUI::EditorUIService::List(m_EnumDataTable);
-			EditorUI::EditorUIService::EditText(m_AddIdentifierSpec);
-			EditorUI::EditorUIService::EditText(m_EditIdentifierSpec);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteIdentifierWarning);
-			EditorUI::EditorUIService::Tooltip(m_EnumTooltip);
+			m_MainHeader.RenderHeader();
+			m_DeleteProjectEnumWarning.RenderPopup();
+			m_CloseProjectEnumWarning.RenderPopup();
+			m_EnumDataTable.RenderList();
+			m_AddIdentifierSpec.RenderText();
+			m_EditIdentifierSpec.RenderText();
+			m_DeleteIdentifierWarning.RenderPopup();
+			m_EnumTooltip.RenderTooltip();
 		}
 
 		EditorUI::EditorUIService::EndWindow();

@@ -33,25 +33,25 @@ namespace Kargono::Panels
 		if (!m_EditorProjectComponent)
 		{
 			EditorUI::EditorUIService::NewItemScreen("Open Existing Component", KG_BIND_CLASS_FN(OpenComponentDialog), "Create New Component", KG_BIND_CLASS_FN(CreateComponentDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateComponentPopup);
-			EditorUI::EditorUIService::SelectOption(m_OpenComponentPopup);
+			m_CreateComponentPopup.RenderPopup();
+			m_OpenComponentPopup.RenderOptions();
 		}
 		else
 		{
 			// Header
-			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
+			m_MainHeader.RenderHeader();
 			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Header Popups
-			EditorUI::EditorUIService::GenericPopup(m_DeleteComponentWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseComponentWarning);
+			m_DeleteComponentWarning.RenderPopup();
+			m_CloseComponentWarning.RenderPopup();
 
 			// List
-			EditorUI::EditorUIService::List(m_FieldsTable);
+			m_FieldsTable.RenderList();
 
 			// List Popups
-			EditorUI::EditorUIService::GenericPopup(m_AddFieldPopup);
-			EditorUI::EditorUIService::GenericPopup(m_EditFieldPopup);
+			m_AddFieldPopup.RenderPopup();
+			m_EditFieldPopup.RenderPopup();
 
 		}
 
@@ -63,7 +63,7 @@ namespace Kargono::Panels
 		m_OpenComponentPopup.m_Label = "Open Component";
 		m_OpenComponentPopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_OpenComponentPopup.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_OpenComponentPopup.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenComponentPopup.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
@@ -133,8 +133,8 @@ namespace Kargono::Panels
 		};
 		m_CreateComponentPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_SelectComponentName);
-			EditorUI::EditorUIService::ChooseDirectory(m_SelectProjectComponentLocationSpec);
+			m_SelectComponentName.RenderText();
+			m_SelectProjectComponentLocationSpec.RenderChooseDir();
 		};
 	}
 	void ProjectComponentPanel::InitializeComponentFieldsSection()
@@ -221,7 +221,7 @@ namespace Kargono::Panels
 		m_AddFieldType.m_Label = "Field Type";
 		m_AddFieldType.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_AddFieldType.m_LineCount = 2;
-		m_AddFieldType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_AddFieldType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 			for (WrappedVarType type : Kargono::s_AllWrappedVarTypes)
@@ -258,8 +258,8 @@ namespace Kargono::Panels
 		};
 		m_AddFieldPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_AddFieldName);
-			EditorUI::EditorUIService::SelectOption(m_AddFieldType);
+			m_AddFieldName.RenderText();
+			m_AddFieldType.RenderOptions();
 		};
 
 		m_EditFieldName.m_Label = "Field Name";
@@ -268,7 +268,7 @@ namespace Kargono::Panels
 		m_EditFieldType.m_Label = "Field Type";
 		m_EditFieldType.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_EditFieldType.m_LineCount = 2;
-		m_EditFieldType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_EditFieldType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 			for (WrappedVarType type : Kargono::s_AllWrappedVarTypes)
@@ -312,8 +312,8 @@ namespace Kargono::Panels
 		};
 		m_EditFieldPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_EditFieldName);
-			EditorUI::EditorUIService::SelectOption(m_EditFieldType);
+			m_EditFieldName.RenderText();
+			m_EditFieldType.RenderOptions();
 		};
 	}
 	bool ProjectComponentPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)

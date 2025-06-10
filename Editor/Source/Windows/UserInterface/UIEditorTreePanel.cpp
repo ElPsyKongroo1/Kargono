@@ -38,17 +38,17 @@ namespace Kargono::Panels
 		{
 			// Display opening screen for user interface editor
 			EditorUI::EditorUIService::NewItemScreen("Open Existing User Interface", KG_BIND_CLASS_FN(OnOpenUIDialog), "Create New User Interface", KG_BIND_CLASS_FN(OnCreateUIDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateUIPopupSpec);
-			EditorUI::EditorUIService::SelectOption(m_OpenUIPopupSpec);
+			m_CreateUIPopupSpec.RenderPopup();
+			m_OpenUIPopupSpec.RenderOptions();
 		}
 		else
 		{
 			// Display user interface editor panel main content
-			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteUIWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseUIWarning);
+			m_MainHeader.RenderHeader();
+			m_DeleteUIWarning.RenderPopup();
+			m_CloseUIWarning.RenderPopup();
 			EditorUI::EditorUIService::Tree(m_UITree);
-			EditorUI::EditorUIService::Tooltip(m_SelectTooltip);
+			m_SelectTooltip.RenderTooltip();
 		}
 
 		// End the window
@@ -175,7 +175,7 @@ namespace Kargono::Panels
 		m_OpenUIPopupSpec.m_LineCount = 2;
 		m_OpenUIPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenUIPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenUIPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenUIPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
@@ -226,8 +226,8 @@ namespace Kargono::Panels
 			};
 		m_CreateUIPopupSpec.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::EditText(m_SelectUINameSpec);
-				EditorUI::EditorUIService::ChooseDirectory(m_SelectUILocationSpec);
+				m_SelectUINameSpec.RenderText();
+				m_SelectUILocationSpec.RenderChooseDir();
 			};
 
 		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };

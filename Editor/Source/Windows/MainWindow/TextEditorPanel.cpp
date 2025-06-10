@@ -92,8 +92,8 @@ namespace Kargono::Panels
 				}
 				ImGui::EndMenuBar();
 			}
-			EditorUI::EditorUIService::GenericPopup(m_DeleteWarningSpec);
-			EditorUI::EditorUIService::GenericPopup(m_DiscardChangesWarningSpec);
+			m_DeleteWarningSpec.RenderPopup();
+			m_DiscardChangesWarningSpec.RenderPopup();
 
 			ImGui::BeginTabBar("##TextTabBar", ImGuiTabBarFlags_AutoSelectNewTabs);
 			uint32_t iteration{ 0 };

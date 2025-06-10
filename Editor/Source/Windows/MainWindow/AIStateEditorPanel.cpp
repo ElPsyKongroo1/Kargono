@@ -74,21 +74,21 @@ namespace Kargono::Panels
 		{
 			// Opening/Null State Screen
 			EditorUI::EditorUIService::NewItemScreen("Open Existing AI State", KG_BIND_CLASS_FN(OnOpenAIStateDialog), "Create New AI State", KG_BIND_CLASS_FN(OnCreateAIStateDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateAIStatePopupSpec);
-			EditorUI::EditorUIService::SelectOption(m_OpenAIStatePopupSpec);
+			m_CreateAIStatePopupSpec.RenderPopup();
+			m_OpenAIStatePopupSpec.RenderOptions();
 		}
 		else
 		{
 			// Header
-			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteAIStateWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseAIStateWarning);
+			m_MainHeader.RenderHeader();
+			m_DeleteAIStateWarning.RenderPopup();
+			m_CloseAIStateWarning.RenderPopup();
 
-			EditorUI::EditorUIService::SelectOption(m_SelectOnUpdateScript);
-			EditorUI::EditorUIService::SelectOption(m_SelectOnEnterStateScript);
-			EditorUI::EditorUIService::SelectOption(m_SelectOnExitStateScript);
-			EditorUI::EditorUIService::SelectOption(m_SelectOnAIMessageScript);
-			EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
+			m_SelectOnUpdateScript.RenderOptions();
+			m_SelectOnEnterStateScript.RenderOptions();
+			m_SelectOnExitStateScript.RenderOptions();
+			m_SelectOnAIMessageScript.RenderOptions();
+			m_SelectScriptTooltip.RenderTooltip();
 
 		}
 
@@ -240,7 +240,7 @@ namespace Kargono::Panels
 		m_OpenAIStatePopupSpec.m_LineCount = 2;
 		m_OpenAIStatePopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenAIStatePopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenAIStatePopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenAIStatePopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
@@ -304,8 +304,8 @@ namespace Kargono::Panels
 		};
 		m_CreateAIStatePopupSpec.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_SelectAIStateNameSpec);
-			EditorUI::EditorUIService::ChooseDirectory(m_SelectAIStateLocationSpec);
+			m_SelectAIStateNameSpec.RenderText();
+			m_SelectAIStateLocationSpec.RenderChooseDir();
 		};
 	}
 
@@ -365,7 +365,7 @@ namespace Kargono::Panels
 		m_SelectOnUpdateScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnUpdateScript.m_LineCount = 3;
 		m_SelectOnUpdateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectOnUpdateScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectOnUpdateScript.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 
@@ -400,7 +400,7 @@ namespace Kargono::Panels
 			m_EditorAIState->OnUpdate = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnUpdateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& /*spec*/)
+		m_SelectOnUpdateScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& /*spec*/)
 		{
 			// Initialize tooltip with options
 			m_SelectScriptTooltip.ClearEntries();
@@ -450,7 +450,7 @@ namespace Kargono::Panels
 		m_SelectOnEnterStateScript.m_LineCount = 3;
 		m_SelectOnEnterStateScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnEnterStateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectOnEnterStateScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectOnEnterStateScript.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 
@@ -485,7 +485,7 @@ namespace Kargono::Panels
 			m_EditorAIState->OnEnterState = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnEnterStateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectOnEnterStateScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
@@ -537,7 +537,7 @@ namespace Kargono::Panels
 		m_SelectOnExitStateScript.m_LineCount = 3;
 		m_SelectOnExitStateScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnExitStateScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectOnExitStateScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectOnExitStateScript.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 
@@ -572,7 +572,7 @@ namespace Kargono::Panels
 			m_EditorAIState->OnExitState = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnExitStateScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectOnExitStateScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options
@@ -624,7 +624,7 @@ namespace Kargono::Panels
 		m_SelectOnAIMessageScript.m_LineCount = 3;
 		m_SelectOnAIMessageScript.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally;
 		m_SelectOnAIMessageScript.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_SelectOnAIMessageScript.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectOnAIMessageScript.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 
@@ -659,7 +659,7 @@ namespace Kargono::Panels
 			m_EditorAIState->OnMessage = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
-		m_SelectOnAIMessageScript.m_OnEdit = [&](EditorUI::SelectOptionSpec& spec)
+		m_SelectOnAIMessageScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				UNREFERENCED_PARAMETER(spec);
 				// Initialize tooltip with options

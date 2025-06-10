@@ -18,16 +18,29 @@ namespace Kargono::EditorUI
 	struct CheckboxWidget : public Widget
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		CheckboxWidget() : Widget() {};
+		~CheckboxWidget() = default;
 	public:
+		//==============================
+		// Rendering
+		//==============================
 		void RenderCheckbox();
 	public:
+		//==============================
+		// Public Fields
+		//==============================
 		FixedString16 m_Label;
 		WidgetFlags m_Flags{ Checkbox_LeftLean };
 		bool m_CurrentBoolean{ false };
 		std::function<void(CheckboxWidget&)> m_ConfirmAction;
 		Ref<void> m_ProvidedData{ nullptr };
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
 		bool m_Editing{ false };
 	};
 }

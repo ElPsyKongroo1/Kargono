@@ -4,7 +4,7 @@
 
 #include "Modules/FileSystem/FileSystem.h"
 #include "Kargono/Utility/Regex.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/Scripting/ScriptTokenizer.h"
 #include "Modules/Scripting/ScriptTokenParser.h"
 #include "Modules/Scripting/ScriptOutputGenerator.h"

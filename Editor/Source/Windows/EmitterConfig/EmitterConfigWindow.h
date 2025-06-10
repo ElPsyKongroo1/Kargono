@@ -3,7 +3,7 @@
 #pragma once
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Assets/Asset.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/Particles/ParticleService.h"
 #include "Kargono/Core/Base.h"
 
@@ -90,16 +90,16 @@ namespace Kargono::Windows
 		// Widgets
 		//=========================
 		// Opening Panel w/ Popups
-		EditorUI::SelectOptionSpec m_OpenEmitterConfigPopupSpec{};
-		EditorUI::GenericPopupSpec m_CreateEmitterConfigPopupSpec{};
+		EditorUI::SelectOptionWidget m_OpenEmitterConfigPopupSpec{};
+		EditorUI::GenericPopupWidget m_CreateEmitterConfigPopupSpec{};
 		EditorUI::EditTextSpec m_SelectEmitterConfigNameSpec{};
-		EditorUI::ChooseDirectorySpec m_SelectEmitterConfigLocationSpec{};
-		EditorUI::TooltipSpec m_SelectScriptTooltip{};
+		EditorUI::ChooseDirectoryWidget m_SelectEmitterConfigLocationSpec{};
+		EditorUI::TooltipWidget m_SelectScriptTooltip{};
 
 		// User Interface Header
-		EditorUI::PanelHeaderSpec m_MainHeader{};
-		EditorUI::GenericPopupSpec m_DeleteEmitterConfigWarning{};
-		EditorUI::GenericPopupSpec m_CloseEmitterConfigWarning{};
+		EditorUI::PanelHeaderWidget m_MainHeader{};
+		EditorUI::GenericPopupWidget m_DeleteEmitterConfigWarning{};
+		EditorUI::GenericPopupWidget m_CloseEmitterConfigWarning{};
 
 	private:
 		friend Kargono::EditorApp;

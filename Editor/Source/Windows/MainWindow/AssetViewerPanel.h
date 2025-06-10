@@ -1,6 +1,6 @@
 #pragma once
 #include "Modules/Events/KeyEvent.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>
 
@@ -25,8 +25,8 @@ namespace Kargono::Panels
 		bool OnKeyPressedEditor(Events::KeyPressedEvent event);
 	private:
 		FixedString32 m_PanelName{ "Asset Viewer" };
-		EditorUI::ListSpec m_AllAssetsTable {};
-		EditorUI::GenericPopupSpec m_ViewAssetPopup {};
+		EditorUI::ListWidget m_AllAssetsTable {};
+		EditorUI::GenericPopupWidget m_ViewAssetPopup {};
 
 		Assets::AssetHandle m_ActiveAsset {Assets::EmptyHandle};
 		Assets::AssetType m_ActiveAssetType {Assets::AssetType::None};

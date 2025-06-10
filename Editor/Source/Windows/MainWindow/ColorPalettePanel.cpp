@@ -14,7 +14,7 @@ namespace Kargono::Panels
 		m_OpenColorPalettePopup.m_Label = "Open Color Palette";
 		m_OpenColorPalettePopup.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenColorPalettePopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenColorPalettePopup.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenColorPalettePopup.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
@@ -81,8 +81,8 @@ namespace Kargono::Panels
 		};
 		m_CreateColorPalettePopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_SelectColorPaletteNameSpec);
-			EditorUI::EditorUIService::ChooseDirectory(m_SelectColorPaletteLocationSpec);
+			m_SelectColorPaletteNameSpec.RenderText();
+			m_SelectColorPaletteLocationSpec.RenderChooseDir();
 		};
 	}
 
@@ -163,17 +163,17 @@ namespace Kargono::Panels
 		{
 
 			EditorUI::EditorUIService::NewItemScreen("Open Existing Color Palette", KG_BIND_CLASS_FN(OnOpenColorPaletteDialog), "Create New Color Palette", KG_BIND_CLASS_FN(OnCreateColorPaletteDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateColorPalettePopup);
-			EditorUI::EditorUIService::SelectOption(m_OpenColorPalettePopup);
+			m_CreateColorPalettePopup.RenderPopup();
+			m_OpenColorPalettePopup.RenderOptions();
 		}
 		else
 		{
-			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
+			m_MainHeader.RenderHeader();
 			DrawColorPaletteColors();
-			EditorUI::EditorUIService::EditText(m_EditColorName);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteColorPaletteWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseColorPaletteWarning);
-			EditorUI::EditorUIService::Tooltip(m_LocalTooltip);
+			m_EditColorName.RenderText();
+			m_DeleteColorPaletteWarning.RenderPopup();
+			m_CloseColorPaletteWarning.RenderPopup();
+			m_LocalTooltip.RenderTooltip();
 		}
 
 		EditorUI::EditorUIService::EndWindow();
@@ -293,7 +293,7 @@ namespace Kargono::Panels
 
 	void ColorPalettePanel::DrawColorPaletteColors()
 	{
-		for (EditorUI::EditVec4Spec& colorEditor : m_ColorEditorWidgets)
+		for (EditorUI::EditVec4Widget& colorEditor : m_ColorEditorWidgets)
 		{
 			EditorUI::EditorUIService::EditVec4(colorEditor);
 		}
@@ -310,7 +310,7 @@ namespace Kargono::Panels
 		m_SelectColorPaletteLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_CreateColorPalettePopup.m_OpenPopup = true;
 	}
-	void ColorPalettePanel::OnModifyColor(EditorUI::EditVec4Spec& spec)
+	void ColorPalettePanel::OnModifyColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Ensure the correct requirements are provided
 		KG_ASSERT(m_EditorColorPalette);
@@ -352,7 +352,7 @@ namespace Kargono::Panels
 		OnRefreshData();
 		m_MainHeader.m_EditColorActive = true;
 	}
-	void ColorPalettePanel::OnOpenEditTooltip(EditorUI::EditVec4Spec& spec)
+	void ColorPalettePanel::OnOpenEditTooltip(EditorUI::EditVec4Widget& spec)
 	{
 		m_LocalTooltip.ClearEntries();
 
@@ -382,7 +382,7 @@ namespace Kargono::Panels
 		{
 			// Get the indicated color editing widget
 			KG_ASSERT(entry.m_UserHandle < m_ColorEditorWidgets.size());
-			EditorUI::EditVec4Spec& colorEditWidget = m_ColorEditorWidgets[entry.m_UserHandle];
+			EditorUI::EditVec4Widget& colorEditWidget = m_ColorEditorWidgets[entry.m_UserHandle];
 			// Toggle the widget to allow/disallow editing of the vec4
 			Utility::Operations::ToggleBoolean(colorEditWidget.m_Editing);
 		} };
@@ -438,7 +438,7 @@ namespace Kargono::Panels
 		for (const ProjectData::Color& color : m_EditorColorPalette->m_Colors)
 		{
 			// Create the new color editor
-			EditorUI::EditVec4Spec& newColorEditor = m_ColorEditorWidgets.emplace_back();
+			EditorUI::EditVec4Widget& newColorEditor = m_ColorEditorWidgets.emplace_back();
 
 			// Set up the color editor's values
 			newColorEditor.m_Label = color.m_Name;

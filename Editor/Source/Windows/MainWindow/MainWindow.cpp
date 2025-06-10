@@ -24,10 +24,10 @@ namespace Kargono::Windows
 		m_ExportProjectSpec.m_PopupWidth = 700.0f;
 		m_ExportProjectSpec.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::CollapsingHeader(m_ExportProjectHeader);
+			m_ExportProjectHeader.RenderHeader();
 			if (m_ExportProjectHeader.m_Expanded)
 			{
-				EditorUI::EditorUIService::ChooseDirectory(m_ExportProjectLocation);
+				m_ExportProjectLocation.RenderChooseDir();
 				m_ExportProjectServer.RenderCheckbox();
 			}	
 		};
@@ -53,11 +53,11 @@ namespace Kargono::Windows
 		// Initialize import asset popup data
 		m_ImportAssetPopup.m_Label = "Import Asset";
 		m_ImportAssetPopup.m_PopupContents = [&]()
-			{
-				EditorUI::EditorUIService::LabeledText("Source File:", m_ImportSourceFilePath.string());
-				EditorUI::EditorUIService::ChooseDirectory(m_ImportNewFileLocation);
-				EditorUI::EditorUIService::EditText(m_ImportNewAssetName);
-			};
+		{
+			EditorUI::EditorUIService::LabeledText("Source File:", m_ImportSourceFilePath.string());
+			m_ImportNewFileLocation.RenderChooseDir();
+			m_ImportNewAssetName.RenderText();
+		};
 		m_ImportAssetPopup.m_ConfirmAction = [&]()
 			{
 				// Actually import the asset
@@ -400,9 +400,9 @@ namespace Kargono::Windows
 		DrawPanels();
 
 		// Handle displaying popups if necessary
-		EditorUI::EditorUIService::GenericPopup(m_ExportProjectSpec);
-		EditorUI::EditorUIService::GenericPopup(m_ImportAssetPopup);
-		EditorUI::EditorUIService::WarningPopup(m_GeneralWarningSpec);
+		m_ExportProjectSpec.RenderPopup();
+		m_ImportAssetPopup.RenderPopup();
+		m_GeneralWarningSpec.RenderPopup();
 
 		// Clean up dockspace window
 		EditorUI::EditorUIService::EndDockspaceWindow();

@@ -3,7 +3,7 @@
 #include "Modules/Scripting/ScriptCompilerService.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/Resolution.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 namespace Kargono::Utility
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include "Modules/Events/KeyEvent.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Kargono/Core/FixedString.h"
 #include "Modules/Particles/ParticleService.h"
 
@@ -51,23 +51,23 @@ namespace Kargono::Panels
 		//=========================
 		
 		// General options modification
-		void OnModifyBufferSize(EditorUI::EditIntegerSpec& spec);
+		void OnModifyBufferSize(EditorUI::EditIntegerWidget& spec);
 		void OnModifyEmitterLifecycleType();
-		void OnModifyEmitterLifetime(EditorUI::EditFloatSpec& spec);
-		void OnModifyParticleLifetime(EditorUI::EditFloatSpec& spec);
+		void OnModifyEmitterLifetime(EditorUI::EditFloatWidget& spec);
+		void OnModifyParticleLifetime(EditorUI::EditFloatWidget& spec);
 		void OnModifyUseGravity(EditorUI::CheckboxWidget& spec);
-		void OnModifyGravityAcceleration(EditorUI::EditVec3Spec& spec);
+		void OnModifyGravityAcceleration(EditorUI::EditVec3Widget& spec);
 		// Spawning options modification
-		void OnModifySpawnRate(EditorUI::EditIntegerSpec& spec);
-		void OnModifyLowerSpawningBounds(EditorUI::EditVec3Spec& spec);
-		void OnModifyUpperSpawningBounds(EditorUI::EditVec3Spec& spec);
+		void OnModifySpawnRate(EditorUI::EditIntegerWidget& spec);
+		void OnModifyLowerSpawningBounds(EditorUI::EditVec3Widget& spec);
+		void OnModifyUpperSpawningBounds(EditorUI::EditVec3Widget& spec);
 		// Color modification
-		void OnModifyColorBegin(EditorUI::EditVec4Spec& spec);
-		void OnModifyColorEnd(EditorUI::EditVec4Spec& spec);
+		void OnModifyColorBegin(EditorUI::EditVec4Widget& spec);
+		void OnModifyColorEnd(EditorUI::EditVec4Widget& spec);
 		void OnModifyColorCurve(const EditorUI::OptionEntry& entry);
 		// Size modification
-		void OnModifySizeBegin(EditorUI::EditVec3Spec& spec);
-		void OnModifySizeEnd(EditorUI::EditVec3Spec& spec);
+		void OnModifySizeBegin(EditorUI::EditVec3Widget& spec);
+		void OnModifySizeEnd(EditorUI::EditVec3Widget& spec);
 		void OnModifySizeCurve(const EditorUI::OptionEntry& entry);
 	public:
 		//=========================
@@ -80,28 +80,28 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		// General options widgets
-		EditorUI::CollapsingHeaderSpec m_GeneralOptionsHeaderSpec;
-		EditorUI::EditIntegerSpec m_BufferSizeSpec;
-		EditorUI::EditIntegerSpec m_SpawnPerSecSpec;
-		EditorUI::EditFloatSpec m_ParticleLifetimeSpec;
-		EditorUI::EditFloatSpec m_EmitterLifetimeSpec;
+		EditorUI::CollapsingHeaderWidget m_GeneralOptionsHeaderSpec;
+		EditorUI::EditIntegerWidget m_BufferSizeSpec;
+		EditorUI::EditIntegerWidget m_SpawnPerSecSpec;
+		EditorUI::EditFloatWidget m_ParticleLifetimeSpec;
+		EditorUI::EditFloatWidget m_EmitterLifetimeSpec;
 		EditorUI::CheckboxWidget m_UseGravitySpec;
-		EditorUI::EditVec3Spec m_GravityAccelerationSpec;
-		EditorUI::RadioSelectorSpec m_EmitterLifecycleSpec;
+		EditorUI::EditVec3Widget m_GravityAccelerationSpec;
+		EditorUI::RadioSelectWidget m_EmitterLifecycleSpec;
 		// Particle spawning options widgets
-		EditorUI::CollapsingHeaderSpec m_SpawningOptionsHeaderSpec;
-		EditorUI::EditVec3Spec m_SpawningLowerBounds;
-		EditorUI::EditVec3Spec m_SpawningUpperBounds;
+		EditorUI::CollapsingHeaderWidget m_SpawningOptionsHeaderSpec;
+		EditorUI::EditVec3Widget m_SpawningLowerBounds;
+		EditorUI::EditVec3Widget m_SpawningUpperBounds;
 		// Particle color options widgets
-		EditorUI::CollapsingHeaderSpec m_ColorOptionsHeaderSpec;
-		EditorUI::SelectOptionSpec m_SelectColorInterpSpec;
-		EditorUI::EditVec4Spec m_ColorBeginSpec;
-		EditorUI::EditVec4Spec m_ColorEndSpec;
+		EditorUI::CollapsingHeaderWidget m_ColorOptionsHeaderSpec;
+		EditorUI::SelectOptionWidget m_SelectColorInterpSpec;
+		EditorUI::EditVec4Widget m_ColorBeginSpec;
+		EditorUI::EditVec4Widget m_ColorEndSpec;
 		// Particle size options widgets
-		EditorUI::CollapsingHeaderSpec m_SizeOptionsHeaderSpec;
-		EditorUI::SelectOptionSpec m_SelectSizeInterpSpec;
-		EditorUI::EditVec3Spec m_SizeBeginSpec;
-		EditorUI::EditVec3Spec m_SizeEndSpec;
+		EditorUI::CollapsingHeaderWidget m_SizeOptionsHeaderSpec;
+		EditorUI::SelectOptionWidget m_SelectSizeInterpSpec;
+		EditorUI::EditVec3Widget m_SizeBeginSpec;
+		EditorUI::EditVec3Widget m_SizeEndSpec;
 
 	};
 }

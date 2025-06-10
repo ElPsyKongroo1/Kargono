@@ -10,7 +10,7 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h" // for imGui::GetCurrentWindow()
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/Scripting/ScriptCompilerService.h"
 #include "Modules/Scripting/ScriptTokenizer.h"
 #include "Kargono/Utility/Regex.h"

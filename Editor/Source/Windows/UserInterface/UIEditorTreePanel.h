@@ -2,7 +2,7 @@
 
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Assets/Asset.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/Rendering/Texture.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
 
@@ -108,18 +108,18 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		// Main Content
-		EditorUI::TreeSpec m_UITree{};
+		EditorUI::TreeWidget m_UITree{};
 
 		// Opening Panel w/ Popups
-		EditorUI::SelectOptionSpec m_OpenUIPopupSpec{};
-		EditorUI::GenericPopupSpec m_CreateUIPopupSpec{};
+		EditorUI::SelectOptionWidget m_OpenUIPopupSpec{};
+		EditorUI::GenericPopupWidget m_CreateUIPopupSpec{};
 		EditorUI::EditTextSpec m_SelectUINameSpec{};
-		EditorUI::ChooseDirectorySpec m_SelectUILocationSpec{};
-		EditorUI::TooltipSpec m_SelectTooltip{};
+		EditorUI::ChooseDirectoryWidget m_SelectUILocationSpec{};
+		EditorUI::TooltipWidget m_SelectTooltip{};
 
 		// User Interface Header
-		EditorUI::PanelHeaderSpec m_MainHeader{};
-		EditorUI::GenericPopupSpec m_DeleteUIWarning{};
-		EditorUI::GenericPopupSpec m_CloseUIWarning{};
+		EditorUI::PanelHeaderWidget m_MainHeader{};
+		EditorUI::GenericPopupWidget m_DeleteUIWarning{};
+		EditorUI::GenericPopupWidget m_CloseUIWarning{};
 	};
 }

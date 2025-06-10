@@ -34,7 +34,7 @@ namespace Kargono::Panels
 
 		// Set up widget to modify the emitter's lifecycle type
 		m_EmitterLifecycleSpec.m_Label = "Emitter Lifecycle Type";
-		m_EmitterLifecycleSpec.m_Flags |= EditorUI::RadioSelector_Indented;
+		m_EmitterLifecycleSpec.m_Flags |= EditorUI::RadioSelect_Indented;
 		m_EmitterLifecycleSpec.m_FirstOptionLabel = "Immortal";
 		m_EmitterLifecycleSpec.m_SecondOptionLabel = "Fixed Time";
 		m_EmitterLifecycleSpec.m_SelectAction = KG_BIND_CLASS_FN(OnModifyEmitterLifecycleType);
@@ -183,7 +183,7 @@ namespace Kargono::Panels
 			return;
 		}
 		// Draw header
-		EditorUI::EditorUIService::PanelHeader(s_EmitterConfigWindow->m_MainHeader);
+		s_EmitterConfigWindow->m_MainHeader.RenderHeader();
 
 		// Early out if no emitter config is selected
 		if (!s_EmitterConfigWindow->m_EditorEmitterConfig)
@@ -205,7 +205,7 @@ namespace Kargono::Panels
 	void EmitterConfigPropertiesPanel::DrawGeneralEmitterConfigOptions()
 	{
 		// General emitter/particle options section
-		EditorUI::EditorUIService::CollapsingHeader(m_GeneralOptionsHeaderSpec);
+		m_GeneralOptionsHeaderSpec.RenderHeader();
 		if (m_GeneralOptionsHeaderSpec.m_Expanded)
 		{
 			// Draw buffer size widget
@@ -222,7 +222,7 @@ namespace Kargono::Panels
 			{
 				KG_WARN("Invalid lifecycle type provided when rendering emitter config UI");
 			}
-			EditorUI::EditorUIService::RadioSelector(m_EmitterLifecycleSpec);
+			m_EmitterLifecycleSpec.RenderRadio();
 
 			// Draw emitter lifetime widget
 			m_EmitterLifetimeSpec.m_CurrentFloat = s_EmitterConfigWindow->m_EditorEmitterConfig->m_EmitterLifetime;
@@ -250,7 +250,7 @@ namespace Kargono::Panels
 	void EmitterConfigPropertiesPanel::DrawSpawningOptions()
 	{
 		// General emitter/particle options section
-		EditorUI::EditorUIService::CollapsingHeader(m_SpawningOptionsHeaderSpec);
+		m_SpawningOptionsHeaderSpec.RenderHeader();
 		if (m_SpawningOptionsHeaderSpec.m_Expanded)
 		{
 			// Draw spawn rate widget
@@ -270,7 +270,7 @@ namespace Kargono::Panels
 	void EmitterConfigPropertiesPanel::DrawParticleColorOptions()
 	{
 		// Particle color section
-		EditorUI::EditorUIService::CollapsingHeader(m_ColorOptionsHeaderSpec);
+		m_ColorOptionsHeaderSpec.RenderHeader();
 		if (m_ColorOptionsHeaderSpec.m_Expanded)
 		{
 			// Draw color begin/end specs
@@ -286,7 +286,7 @@ namespace Kargono::Panels
 				Utility::InterpolationTypeToString(currentColorInterp),
 				(uint64_t)currentColorInterp
 			};
-			EditorUI::EditorUIService::SelectOption(m_SelectColorInterpSpec);
+			m_SelectColorInterpSpec.RenderOptions();
 
 		}
 	}
@@ -294,7 +294,7 @@ namespace Kargono::Panels
 	void EmitterConfigPropertiesPanel::DrawParticleSizeOptions()
 	{
 		// Particle size section
-		EditorUI::EditorUIService::CollapsingHeader(m_SizeOptionsHeaderSpec);
+		m_SizeOptionsHeaderSpec.RenderHeader();
 		if (m_SizeOptionsHeaderSpec.m_Expanded)
 		{
 			// Draw size begin/end specs
@@ -310,14 +310,14 @@ namespace Kargono::Panels
 				Utility::InterpolationTypeToString(currentSizeInterp),
 				(uint64_t)currentSizeInterp
 			};
-			EditorUI::EditorUIService::SelectOption(m_SelectSizeInterpSpec);
+			m_SelectSizeInterpSpec.RenderOptions();
 		}
 	}
 
 	void EmitterConfigPropertiesPanel::ClearPanelData()
 	{
 	}
-	void EmitterConfigPropertiesPanel::OnModifyColorBegin(EditorUI::EditVec4Spec& spec)
+	void EmitterConfigPropertiesPanel::OnModifyColorBegin(EditorUI::EditVec4Widget& spec)
 	{
 		// Update the starting color for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_ColorBegin = spec.m_CurrentVec4;
@@ -327,7 +327,7 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 
 	}
-	void EmitterConfigPropertiesPanel::OnModifyColorEnd(EditorUI::EditVec4Spec& spec)
+	void EmitterConfigPropertiesPanel::OnModifyColorEnd(EditorUI::EditVec4Widget& spec)
 	{
 		// Update the ending color for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_ColorEnd = spec.m_CurrentVec4;
@@ -336,7 +336,7 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
-	void EmitterConfigPropertiesPanel::OnModifySizeBegin(EditorUI::EditVec3Spec& spec)
+	void EmitterConfigPropertiesPanel::OnModifySizeBegin(EditorUI::EditVec3Widget& spec)
 	{
 		// Update the starting size for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SizeBegin = spec.m_CurrentVec3;
@@ -345,7 +345,7 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
-	void EmitterConfigPropertiesPanel::OnModifySizeEnd(EditorUI::EditVec3Spec& spec)
+	void EmitterConfigPropertiesPanel::OnModifySizeEnd(EditorUI::EditVec3Widget& spec)
 	{
 		// Update the ending size for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SizeEnd = spec.m_CurrentVec3;
@@ -376,7 +376,7 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
-	void EmitterConfigPropertiesPanel::OnModifyParticleLifetime(EditorUI::EditFloatSpec& spec)
+	void EmitterConfigPropertiesPanel::OnModifyParticleLifetime(EditorUI::EditFloatWidget& spec)
 	{
 		// Update the particle lifetime for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_ParticleLifetime = spec.m_CurrentFloat;
@@ -385,7 +385,7 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
-	void EmitterConfigPropertiesPanel::OnModifySpawnRate(EditorUI::EditIntegerSpec& spec)
+	void EmitterConfigPropertiesPanel::OnModifySpawnRate(EditorUI::EditIntegerWidget& spec)
 	{
 		// Update the spawn rate for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawnRatePerSec = (size_t)spec.m_CurrentInteger;
@@ -394,7 +394,7 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
-	void EmitterConfigPropertiesPanel::OnModifyLowerSpawningBounds(EditorUI::EditVec3Spec& spec)
+	void EmitterConfigPropertiesPanel::OnModifyLowerSpawningBounds(EditorUI::EditVec3Widget& spec)
 	{
 		// Update the lower spawning bounds for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawningBounds[0] = spec.m_CurrentVec3;
@@ -403,7 +403,7 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
-	void EmitterConfigPropertiesPanel::OnModifyUpperSpawningBounds(EditorUI::EditVec3Spec& spec)
+	void EmitterConfigPropertiesPanel::OnModifyUpperSpawningBounds(EditorUI::EditVec3Widget& spec)
 	{
 		// Update the upper spawning bounds for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SpawningBounds[1] = spec.m_CurrentVec3;
@@ -412,7 +412,7 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
-	void EmitterConfigPropertiesPanel::OnModifyBufferSize(EditorUI::EditIntegerSpec& spec)
+	void EmitterConfigPropertiesPanel::OnModifyBufferSize(EditorUI::EditIntegerWidget& spec)
 	{
 		// Update the buffer size for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_BufferSize = (size_t)spec.m_CurrentInteger;
@@ -444,7 +444,7 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
-	void EmitterConfigPropertiesPanel::OnModifyEmitterLifetime(EditorUI::EditFloatSpec& spec)
+	void EmitterConfigPropertiesPanel::OnModifyEmitterLifetime(EditorUI::EditFloatWidget& spec)
 	{
 		// Update the emitter lifetime for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_EmitterLifetime = spec.m_CurrentFloat;
@@ -462,7 +462,7 @@ namespace Kargono::Panels
 		s_EmitterConfigWindow->m_MainHeader.m_EditColorActive = true;
 		s_EmitterConfigWindow->LoadEditorEmitterIntoParticleService();
 	}
-	void EmitterConfigPropertiesPanel::OnModifyGravityAcceleration(EditorUI::EditVec3Spec& spec)
+	void EmitterConfigPropertiesPanel::OnModifyGravityAcceleration(EditorUI::EditVec3Widget& spec)
 	{
 		// Update the gravity acceleration for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_GravityAcceleration = spec.m_CurrentVec3;

@@ -2,7 +2,7 @@
 #include "Modules/Assets/Asset.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/InputMap/InputMap.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>
 
@@ -63,42 +63,42 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		// Opening Panel w/ Popups
-		EditorUI::SelectOptionSpec m_OpenInputMapPopupSpec {};
-		EditorUI::GenericPopupSpec m_CreateInputMapPopupSpec {};
+		EditorUI::SelectOptionWidget m_OpenInputMapPopupSpec {};
+		EditorUI::GenericPopupWidget m_CreateInputMapPopupSpec {};
 		EditorUI::EditTextSpec m_SelectInputMapNameSpec {};
-		EditorUI::ChooseDirectorySpec m_SelectInputMapLocationSpec{};
+		EditorUI::ChooseDirectoryWidget m_SelectInputMapLocationSpec{};
 
 		// Input Map Header
-		EditorUI::PanelHeaderSpec m_MainHeader {};
-		EditorUI::GenericPopupSpec m_DeleteInputMapWarning {};
-		EditorUI::GenericPopupSpec m_CloseInputMapWarning {};
+		EditorUI::PanelHeaderWidget m_MainHeader {};
+		EditorUI::GenericPopupWidget m_DeleteInputMapWarning {};
+		EditorUI::GenericPopupWidget m_CloseInputMapWarning {};
 
 		// Keyboard Panel
 		//	OnUpdate
-		EditorUI::ListSpec m_KeyboardOnUpdateTable {};
-		EditorUI::TooltipSpec m_SelectScriptTooltip{};
-		EditorUI::GenericPopupSpec m_KeyboardOnUpdateAddPopup {};
-		EditorUI::SelectOptionSpec m_KeyboardOnUpdateAddKeyCode {};
-		EditorUI::SelectOptionSpec m_KeyboardOnUpdateAddFunction {};
-		EditorUI::GenericPopupSpec m_KeyboardOnUpdateEditPopup {};
-		EditorUI::SelectOptionSpec m_KeyboardOnUpdateEditKeyCode {};
-		EditorUI::SelectOptionSpec m_KeyboardOnUpdateEditFunction {};
+		EditorUI::ListWidget m_KeyboardOnUpdateTable {};
+		EditorUI::TooltipWidget m_SelectScriptTooltip{};
+		EditorUI::GenericPopupWidget m_KeyboardOnUpdateAddPopup {};
+		EditorUI::SelectOptionWidget m_KeyboardOnUpdateAddKeyCode {};
+		EditorUI::SelectOptionWidget m_KeyboardOnUpdateAddFunction {};
+		EditorUI::GenericPopupWidget m_KeyboardOnUpdateEditPopup {};
+		EditorUI::SelectOptionWidget m_KeyboardOnUpdateEditKeyCode {};
+		EditorUI::SelectOptionWidget m_KeyboardOnUpdateEditFunction {};
 
 		//	OnKeyPressed
-		EditorUI::ListSpec m_KeyboardOnKeyPressedTable {};
-		EditorUI::GenericPopupSpec m_KeyboardOnKeyPressedAddPopup {};
-		EditorUI::SelectOptionSpec m_KeyboardOnKeyPressedAddKeyCode {};
-		EditorUI::SelectOptionSpec m_KeyboardOnKeyPressedAddFunction {};
-		EditorUI::GenericPopupSpec m_KeyboardOnKeyPressedEditPopup {};
-		EditorUI::SelectOptionSpec m_KeyboardOnKeyPressedEditKeyCode {};
-		EditorUI::SelectOptionSpec m_KeyboardOnKeyPressedEditFunction {};
+		EditorUI::ListWidget m_KeyboardOnKeyPressedTable {};
+		EditorUI::GenericPopupWidget m_KeyboardOnKeyPressedAddPopup {};
+		EditorUI::SelectOptionWidget m_KeyboardOnKeyPressedAddKeyCode {};
+		EditorUI::SelectOptionWidget m_KeyboardOnKeyPressedAddFunction {};
+		EditorUI::GenericPopupWidget m_KeyboardOnKeyPressedEditPopup {};
+		EditorUI::SelectOptionWidget m_KeyboardOnKeyPressedEditKeyCode {};
+		EditorUI::SelectOptionWidget m_KeyboardOnKeyPressedEditFunction {};
 
 		//  Polling
-		EditorUI::ListSpec m_KeyboardPollingTable {};
-		EditorUI::GenericPopupSpec m_KeyboardPollingAddSlot {};
-		EditorUI::SelectOptionSpec m_KeyboardPollingAddKeyCode {};
-		EditorUI::GenericPopupSpec m_KeyboardPollingEditSlot {};
-		EditorUI::SelectOptionSpec m_KeyboardPollingEditKeyCode {};
+		EditorUI::ListWidget m_KeyboardPollingTable {};
+		EditorUI::GenericPopupWidget m_KeyboardPollingAddSlot {};
+		EditorUI::SelectOptionWidget m_KeyboardPollingAddKeyCode {};
+		EditorUI::GenericPopupWidget m_KeyboardPollingEditSlot {};
+		EditorUI::SelectOptionWidget m_KeyboardPollingEditKeyCode {};
 
 	};
 }

@@ -110,7 +110,7 @@ namespace Kargono::Windows
 		m_OpenEmitterConfigPopupSpec.m_LineCount = 2;
 		m_OpenEmitterConfigPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenEmitterConfigPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenEmitterConfigPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenEmitterConfigPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
@@ -171,8 +171,8 @@ namespace Kargono::Windows
 		};
 		m_CreateEmitterConfigPopupSpec.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_SelectEmitterConfigNameSpec);
-			EditorUI::EditorUIService::ChooseDirectory(m_SelectEmitterConfigLocationSpec);
+			m_SelectEmitterConfigNameSpec.RenderText();
+			m_SelectEmitterConfigLocationSpec.RenderChooseDir();
 		};
 
 		// Initialize widget for selecting Emitter Config name
@@ -332,8 +332,8 @@ namespace Kargono::Windows
 
 			// Display opening screen for Emitter Config editor
 			EditorUI::EditorUIService::NewItemScreen("Open Existing Emitter Config", KG_BIND_CLASS_FN(OnOpenEmitterConfigDialog), "Create New Emitter Config", KG_BIND_CLASS_FN(OnCreateEmitterConfigDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateEmitterConfigPopupSpec);
-			EditorUI::EditorUIService::SelectOption(m_OpenEmitterConfigPopupSpec);
+			m_CreateEmitterConfigPopupSpec.RenderPopup();
+			m_OpenEmitterConfigPopupSpec.RenderOptions();
 
 			// End main window
 			EditorUI::EditorUIService::EndWindow();
@@ -352,9 +352,9 @@ namespace Kargono::Windows
 		}
 
 		// Display Emitter Config editor panel main content
-		EditorUI::EditorUIService::GenericPopup(m_DeleteEmitterConfigWarning);
-		EditorUI::EditorUIService::GenericPopup(m_CloseEmitterConfigWarning);
-		EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
+		m_DeleteEmitterConfigWarning.RenderPopup();
+		m_CloseEmitterConfigWarning.RenderPopup();
+		m_SelectScriptTooltip.RenderTooltip();
 
 		// Clean up dockspace window
 		EditorUI::EditorUIService::EndDockspaceWindow();

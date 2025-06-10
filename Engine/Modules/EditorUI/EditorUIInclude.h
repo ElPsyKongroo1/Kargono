@@ -1,0 +1,23 @@
+#pragma once
+
+#include "Modules/EditorUI/Widgets/EditorUIWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUICheckbox.h"
+#include "Modules/EditorUI/Widgets/EditorUIButtonWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIButtonBarWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIRadioSelectWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIChooseDirectoryWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUICollapsingHeaderWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIEditTextWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIEditMultiLineTextWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIDropDownWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUISelectOptionWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIPanelHeaderWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUINavigationHeaderWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIPlotWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIGenericPopupWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIWarningPopupWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIGridWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUITooltipWidget.h"
+#include "Modules/EditorUI/Widgets/EditorUIListWidget.h"
+
+#include "Modules/EditorUI/EditorUI.h"

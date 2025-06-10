@@ -12,7 +12,7 @@ namespace Kargono::Panels
 		m_OpenGlobalStatePopup.m_Label = "Open Global State";
 		m_OpenGlobalStatePopup.m_CurrentOption = { "None", Assets::EmptyHandle };
 		m_OpenGlobalStatePopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenGlobalStatePopup.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenGlobalStatePopup.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.GetAllOptions().clear();
 				spec.m_CurrentOption = { "None", Assets::EmptyHandle };
@@ -77,8 +77,8 @@ namespace Kargono::Panels
 			};
 		m_CreateGlobalStatePopup.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::EditText(m_SelectGlobalStateNameSpec);
-				EditorUI::EditorUIService::ChooseDirectory(m_SelectGlobalStateLocationSpec);
+				m_SelectGlobalStateNameSpec.RenderText();
+				m_SelectGlobalStateLocationSpec.RenderChooseDir();
 			};
 	}
 
@@ -139,8 +139,8 @@ namespace Kargono::Panels
 		m_CreateFieldPopup.m_Label = "Create Field";
 		m_CreateFieldPopup.m_PopupContents = [&]() 
 		{
-			EditorUI::EditorUIService::EditText(m_CreateFieldName);
-			EditorUI::EditorUIService::SelectOption(m_CreateFieldType);
+			m_CreateFieldName.RenderText();
+			m_CreateFieldType.RenderOptions();
 		};
 		m_CreateFieldPopup.m_ConfirmAction = KG_BIND_CLASS_FN(OnConfirmCreateField);
 
@@ -178,16 +178,16 @@ namespace Kargono::Panels
 		{
 
 			EditorUI::EditorUIService::NewItemScreen("Open Existing Global State", KG_BIND_CLASS_FN(OnOpenGlobalStateDialog), "Create New Global State", KG_BIND_CLASS_FN(OnCreateGlobalStateDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateGlobalStatePopup);
-			EditorUI::EditorUIService::SelectOption(m_OpenGlobalStatePopup);
+			m_CreateGlobalStatePopup.RenderPopup();
+			m_OpenGlobalStatePopup.RenderOptions();
 		}
 		else
 		{
-			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
+			m_MainHeader.RenderHeader();
 			DrawGlobalStateFields();
-			EditorUI::EditorUIService::GenericPopup(m_CreateFieldPopup);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteGlobalStateWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseGlobalStateWarning);
+			m_CreateFieldPopup.RenderPopup();
+			m_DeleteGlobalStateWarning.RenderPopup();
+			m_CloseGlobalStateWarning.RenderPopup();
 		}
 
 		EditorUI::EditorUIService::EndWindow();
@@ -335,9 +335,9 @@ namespace Kargono::Panels
 			);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditText(spec);
+			spec.RenderText();
 		}
-		void operator()(EditorUI::EditIntegerSpec& spec)
+		void operator()(EditorUI::EditIntegerWidget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -372,7 +372,7 @@ namespace Kargono::Panels
 			// Draw the field
 			EditorUI::EditorUIService::EditInteger(spec);
 		}
-		void operator()(EditorUI::EditFloatSpec& spec)
+		void operator()(EditorUI::EditFloatWidget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -384,7 +384,7 @@ namespace Kargono::Panels
 			// Draw the field
 			EditorUI::EditorUIService::EditFloat(spec);
 		}
-		void operator()(EditorUI::EditVec2Spec& spec)
+		void operator()(EditorUI::EditVec2Widget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -396,7 +396,7 @@ namespace Kargono::Panels
 			// Draw the field
 			EditorUI::EditorUIService::EditVec2(spec);
 		}
-		void operator()(EditorUI::EditVec3Spec& spec)
+		void operator()(EditorUI::EditVec3Widget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -408,7 +408,7 @@ namespace Kargono::Panels
 			// Draw the field
 			EditorUI::EditorUIService::EditVec3(spec);
 		}
-		void operator()(EditorUI::EditVec4Spec& spec)
+		void operator()(EditorUI::EditVec4Widget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -420,7 +420,7 @@ namespace Kargono::Panels
 			// Draw the field
 			EditorUI::EditorUIService::EditVec4(spec);
 		}
-		void operator()(EditorUI::EditIVec2Spec& spec)
+		void operator()(EditorUI::EditIVec2Widget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -432,7 +432,7 @@ namespace Kargono::Panels
 			// Draw the field
 			EditorUI::EditorUIService::EditIVec2(spec);
 		}
-		void operator()(EditorUI::EditIVec3Spec& spec)
+		void operator()(EditorUI::EditIVec3Widget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -444,7 +444,7 @@ namespace Kargono::Panels
 			// Draw the field
 			EditorUI::EditorUIService::EditIVec3(spec);
 		}
-		void operator()(EditorUI::EditIVec4Spec& spec)
+		void operator()(EditorUI::EditIVec4Widget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -461,7 +461,7 @@ namespace Kargono::Panels
 	void GlobalStatePanel::DrawGlobalStateFields()
 	{
 		// Draw header for fields
-		EditorUI::EditorUIService::CollapsingHeader(m_FieldsHeader);
+		m_FieldsHeader.RenderHeader();
 
 		if (m_FieldsHeader.m_Expanded)
 		{
@@ -506,8 +506,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::Float:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditFloatSpec());
-				EditorUI::EditFloatSpec& editFloatSpec = *std::get_if<EditorUI::EditFloatSpec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditFloatWidget());
+				EditorUI::EditFloatWidget& editFloatSpec = *std::get_if<EditorUI::EditFloatWidget>(&widget);
 				editFloatSpec.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editFloatSpec.m_Flags |= EditorUI::EditFloat_Indented;
 				editFloatSpec.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -518,8 +518,8 @@ namespace Kargono::Panels
 			case WrappedVarType::Integer32:
 			case WrappedVarType::Integer64:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIntegerSpec());
-				EditorUI::EditIntegerSpec& editIntSpec = *std::get_if<EditorUI::EditIntegerSpec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIntegerWidget());
+				EditorUI::EditIntegerWidget& editIntSpec = *std::get_if<EditorUI::EditIntegerWidget>(&widget);
 				editIntSpec.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editIntSpec.m_Flags |= EditorUI::EditInteger_Indented;
 				editIntSpec.m_Bounds = { -10'000, 10'000 };
@@ -531,8 +531,8 @@ namespace Kargono::Panels
 			case WrappedVarType::UInteger32:
 			case WrappedVarType::UInteger64:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIntegerSpec());
-				EditorUI::EditIntegerSpec& editIntSpec = *std::get_if<EditorUI::EditIntegerSpec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIntegerWidget());
+				EditorUI::EditIntegerWidget& editIntSpec = *std::get_if<EditorUI::EditIntegerWidget>(&widget);
 				editIntSpec.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editIntSpec.m_Flags |= EditorUI::EditInteger_Indented;
 				editIntSpec.m_Bounds = { 0, 10'000 };
@@ -543,8 +543,8 @@ namespace Kargono::Panels
 
 			case WrappedVarType::Vector2:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec2Spec());
-				EditorUI::EditVec2Spec& editVec2Widget = *std::get_if<EditorUI::EditVec2Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec2Widget());
+				EditorUI::EditVec2Widget& editVec2Widget = *std::get_if<EditorUI::EditVec2Widget>(&widget);
 				editVec2Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec2Widget.m_Flags |= EditorUI::EditVec2_Indented;
 				editVec2Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -553,8 +553,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::Vector3:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec3Spec());
-				EditorUI::EditVec3Spec& editVec3Widget = *std::get_if<EditorUI::EditVec3Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec3Widget());
+				EditorUI::EditVec3Widget& editVec3Widget = *std::get_if<EditorUI::EditVec3Widget>(&widget);
 				editVec3Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec3Widget.m_Flags |= EditorUI::EditVec3_Indented;
 				editVec3Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -563,8 +563,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::Vector4:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec4Spec());
-				EditorUI::EditVec4Spec& editVec4Widget = *std::get_if<EditorUI::EditVec4Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec4Widget());
+				EditorUI::EditVec4Widget& editVec4Widget = *std::get_if<EditorUI::EditVec4Widget>(&widget);
 				editVec4Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec4Widget.m_Flags |= EditorUI::EditVec4_Indented;
 				editVec4Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -573,8 +573,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::IVector2:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec2Spec());
-				EditorUI::EditIVec2Spec& editVec2Widget = *std::get_if<EditorUI::EditIVec2Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec2Widget());
+				EditorUI::EditIVec2Widget& editVec2Widget = *std::get_if<EditorUI::EditIVec2Widget>(&widget);
 				editVec2Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec2Widget.m_Flags |= EditorUI::EditIVec2_Indented;
 				editVec2Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -583,8 +583,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::IVector3:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec3Spec());
-				EditorUI::EditIVec3Spec& editVec3Widget = *std::get_if<EditorUI::EditIVec3Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec3Widget());
+				EditorUI::EditIVec3Widget& editVec3Widget = *std::get_if<EditorUI::EditIVec3Widget>(&widget);
 				editVec3Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec3Widget.m_Flags |= EditorUI::EditIVec3_Indented;
 				editVec3Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -593,8 +593,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::IVector4:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec4Spec());
-				EditorUI::EditIVec4Spec& editVec4Widget = *std::get_if<EditorUI::EditIVec4Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec4Widget());
+				EditorUI::EditIVec4Widget& editVec4Widget = *std::get_if<EditorUI::EditIVec4Widget>(&widget);
 				editVec4Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec4Widget.m_Flags |= EditorUI::EditIVec4_Indented;
 				editVec4Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -614,7 +614,7 @@ namespace Kargono::Panels
 			m_EditorGlobalStateHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}
-	void GlobalStatePanel::OnOpenCreateFieldDialog(EditorUI::CollapsingHeaderSpec& spec)
+	void GlobalStatePanel::OnOpenCreateFieldDialog(EditorUI::CollapsingHeaderWidget& spec)
 	{
 		m_CreateFieldPopup.m_OpenPopup = true;
 		m_CreateFieldName.m_CurrentOption = "NewField";
@@ -652,7 +652,7 @@ namespace Kargono::Panels
 
 
 	}
-	void GlobalStatePanel::OnOpenCreateFieldType(EditorUI::SelectOptionSpec& spec)
+	void GlobalStatePanel::OnOpenCreateFieldType(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear options widget
 		m_CreateFieldType.ClearOptions();
@@ -683,7 +683,7 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditFloat(EditorUI::EditFloatSpec& spec)
+	void GlobalStatePanel::OnModifyFieldEditFloat(EditorUI::EditFloatWidget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -698,7 +698,7 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditInteger(EditorUI::EditIntegerSpec& spec)
+	void GlobalStatePanel::OnModifyFieldEditInteger(EditorUI::EditIntegerWidget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -761,7 +761,7 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditVec2(EditorUI::EditVec2Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditVec2(EditorUI::EditVec2Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -776,7 +776,7 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditVec3(EditorUI::EditVec3Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditVec3(EditorUI::EditVec3Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -791,7 +791,7 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditVec4(EditorUI::EditVec4Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditVec4(EditorUI::EditVec4Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -806,7 +806,7 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditIVec2(EditorUI::EditIVec2Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditIVec2(EditorUI::EditIVec2Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -821,7 +821,7 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditIVec3(EditorUI::EditIVec3Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditIVec3(EditorUI::EditIVec3Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -836,7 +836,7 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditIVec4(EditorUI::EditIVec4Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditIVec4(EditorUI::EditIVec4Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();

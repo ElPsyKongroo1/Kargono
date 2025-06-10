@@ -1,7 +1,7 @@
 #pragma once
 #include "Modules/Events/KeyEvent.h"
 #include "Kargono/Core/FixedString.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>
 
@@ -46,29 +46,29 @@ namespace Kargono::Panels
 		EditorUI::CheckboxWidget s_EditTestBool_2;
 		EditorUI::CheckboxWidget s_EditTestBool_3;
 
-		EditorUI::EditFloatSpec s_EditTestFloat_1;
-		EditorUI::EditFloatSpec s_EditTestFloat_2;
-		EditorUI::EditFloatSpec s_EditTestFloat_3;
+		EditorUI::EditFloatWidget s_EditTestFloat_1;
+		EditorUI::EditFloatWidget s_EditTestFloat_2;
+		EditorUI::EditFloatWidget s_EditTestFloat_3;
 
-		EditorUI::EditIntegerSpec s_EditTestInt_1;
-		EditorUI::EditIntegerSpec s_EditTestInt_2;
-		EditorUI::EditIntegerSpec s_EditTestInt_3;
+		EditorUI::EditIntegerWidget s_EditTestInt_1;
+		EditorUI::EditIntegerWidget s_EditTestInt_2;
+		EditorUI::EditIntegerWidget s_EditTestInt_3;
 
-		EditorUI::EditIntegerSpec s_EditTestUInt_1;
-		EditorUI::EditIntegerSpec s_EditTestUInt_2;
-		EditorUI::EditIntegerSpec s_EditTestUInt_3;
+		EditorUI::EditIntegerWidget s_EditTestUInt_1;
+		EditorUI::EditIntegerWidget s_EditTestUInt_2;
+		EditorUI::EditIntegerWidget s_EditTestUInt_3;
 
-		EditorUI::EditVec2Spec s_EditTestVec2_1;
-		EditorUI::EditVec2Spec s_EditTestVec2_2;
-		EditorUI::EditVec2Spec s_EditTestVec2_3;
+		EditorUI::EditVec2Widget s_EditTestVec2_1;
+		EditorUI::EditVec2Widget s_EditTestVec2_2;
+		EditorUI::EditVec2Widget s_EditTestVec2_3;
 
-		EditorUI::EditVec3Spec s_EditTestVec3_1;
-		EditorUI::EditVec3Spec s_EditTestVec3_2;
-		EditorUI::EditVec3Spec s_EditTestVec3_3;
+		EditorUI::EditVec3Widget s_EditTestVec3_1;
+		EditorUI::EditVec3Widget s_EditTestVec3_2;
+		EditorUI::EditVec3Widget s_EditTestVec3_3;
 
-		EditorUI::EditVec4Spec s_EditTestVec4_1;
-		EditorUI::EditVec4Spec s_EditTestVec4_2;
-		EditorUI::EditVec4Spec s_EditTestVec4_3;
+		EditorUI::EditVec4Widget s_EditTestVec4_1;
+		EditorUI::EditVec4Widget s_EditTestVec4_2;
+		EditorUI::EditVec4Widget s_EditTestVec4_3;
 
 #endif
 	};

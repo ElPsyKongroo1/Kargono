@@ -1,6 +1,6 @@
 #pragma once
 #include "Modules/Events/KeyEvent.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 #include "Modules/Network/Server.h"
 #include "Modules/Network/Client.h"
@@ -50,7 +50,7 @@ namespace Kargono::Panels
 		// State
 		Network::PacketSequence m_LastSequence{ 0 };
 		// Widgets
-		EditorUI::PlotSpec m_PacketRTTPlot{};
+		EditorUI::PlotWidget m_PacketRTTPlot{};
 	};
 
 	class ClientOptions
@@ -65,7 +65,7 @@ namespace Kargono::Panels
 		//=========================
 		// Lifecycle Functions
 		//=========================
-		void Init(EditorUI::TooltipSpec* parentTooltipSpec);
+		void Init(EditorUI::TooltipWidget* parentTooltipSpec);
 	private:
 		void InitWidgets();
 		void RegisterObservers();
@@ -96,30 +96,30 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		// Command Widgets
-		EditorUI::CollapsingHeaderSpec m_CommandsHeader;
-		EditorUI::ButtonBarSpec m_LifecycleOptions;
+		EditorUI::CollapsingHeaderWidget m_CommandsHeader;
+		EditorUI::ButtonBarWidget m_LifecycleOptions;
 		// Status Widgets
-		EditorUI::CollapsingHeaderSpec m_StatusHeader;
-		EditorUI::CollapsingHeaderSpec m_ConnectionHeader;
+		EditorUI::CollapsingHeaderWidget m_StatusHeader;
+		EditorUI::CollapsingHeaderWidget m_ConnectionHeader;
 		ConnectionUI m_ClientConnectionUI{};
 
 		// Scripts Widgets
-		EditorUI::CollapsingHeaderSpec m_AppScriptsHeader{};
-		EditorUI::CollapsingHeaderSpec m_SessionScriptsHeader{};
-		EditorUI::CollapsingHeaderSpec m_ConnectionScriptsHeader{};
-		EditorUI::CollapsingHeaderSpec m_QueryServerScriptsHeader{};
-		EditorUI::SelectOptionSpec m_SelectSessionInitSpec{};
-		EditorUI::SelectOptionSpec m_SelectStartSessionSpec{};
-		EditorUI::SelectOptionSpec m_SelectSessionReadyCheckSpec{};
-		EditorUI::SelectOptionSpec m_SelectApproveJoinSessionSpec{};
-		EditorUI::SelectOptionSpec m_SelectUpdateSessionSlotSpec{};
-		EditorUI::SelectOptionSpec m_SelectUpdateUserCountSpec{};
-		EditorUI::SelectOptionSpec m_SelectUserLeftSessionSpec{};
-		EditorUI::SelectOptionSpec m_SelectReceiveSignalSpec{};
-		EditorUI::SelectOptionSpec m_SelectConnectionTerminatedSpec{};
+		EditorUI::CollapsingHeaderWidget m_AppScriptsHeader{};
+		EditorUI::CollapsingHeaderWidget m_SessionScriptsHeader{};
+		EditorUI::CollapsingHeaderWidget m_ConnectionScriptsHeader{};
+		EditorUI::CollapsingHeaderWidget m_QueryServerScriptsHeader{};
+		EditorUI::SelectOptionWidget m_SelectSessionInitSpec{};
+		EditorUI::SelectOptionWidget m_SelectStartSessionSpec{};
+		EditorUI::SelectOptionWidget m_SelectSessionReadyCheckSpec{};
+		EditorUI::SelectOptionWidget m_SelectApproveJoinSessionSpec{};
+		EditorUI::SelectOptionWidget m_SelectUpdateSessionSlotSpec{};
+		EditorUI::SelectOptionWidget m_SelectUpdateUserCountSpec{};
+		EditorUI::SelectOptionWidget m_SelectUserLeftSessionSpec{};
+		EditorUI::SelectOptionWidget m_SelectReceiveSignalSpec{};
+		EditorUI::SelectOptionWidget m_SelectConnectionTerminatedSpec{};
 
 		// Parent Panel Widgets
-		EditorUI::TooltipSpec* m_ParentTooltip{ nullptr };
+		EditorUI::TooltipWidget* m_ParentTooltip{ nullptr };
 	};
 
 	class ServerOptions
@@ -166,22 +166,22 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		// Status section
-		EditorUI::CollapsingHeaderSpec m_StatusHeader;
+		EditorUI::CollapsingHeaderWidget m_StatusHeader;
 
 		// Command widgets
-		EditorUI::CollapsingHeaderSpec m_CommandsHeader;
-		EditorUI::ButtonBarSpec m_LifecycleOptions;
+		EditorUI::CollapsingHeaderWidget m_CommandsHeader;
+		EditorUI::ButtonBarWidget m_LifecycleOptions;
 
 		// Connection widgets
-		EditorUI::CollapsingHeaderSpec m_ConnectionsHeader;
+		EditorUI::CollapsingHeaderWidget m_ConnectionsHeader;
 		std::vector<ConnectionUI> m_ConnectionUIs{};
 
 		// Config section
-		EditorUI::CollapsingHeaderSpec m_GeneralConfigHeader;
-		EditorUI::EditIVec4Spec m_ServerIP{};
-		EditorUI::EditIntegerSpec m_ServerPort{};
+		EditorUI::CollapsingHeaderWidget m_GeneralConfigHeader;
+		EditorUI::EditIVec4Widget m_ServerIP{};
+		EditorUI::EditIntegerWidget m_ServerPort{};
 		EditorUI::CheckboxWidget m_ServerLocation{};
-		EditorUI::EditIVec4Spec m_ServerSecrets{};
+		EditorUI::EditIVec4Widget m_ServerSecrets{};
 
 	};
 
@@ -227,13 +227,13 @@ namespace Kargono::Panels
 		//=========================
 		// Widgets
 		//=========================
-		EditorUI::SelectOptionSpec m_SelectStartSceneSpec{};
+		EditorUI::SelectOptionWidget m_SelectStartSceneSpec{};
 		EditorUI::CheckboxWidget m_DefaultFullscreenSpec{};
 		EditorUI::CheckboxWidget m_ToggleNetworkSpec{};
-		EditorUI::SelectOptionSpec m_SelectResolutionSpec{};
-		EditorUI::SelectOptionSpec m_SelectStartGameStateSpec{};
-		EditorUI::SelectOptionSpec m_SelectRuntimeStartSpec{};
-		EditorUI::TooltipSpec m_SelectScriptTooltip{};
+		EditorUI::SelectOptionWidget m_SelectResolutionSpec{};
+		EditorUI::SelectOptionWidget m_SelectStartGameStateSpec{};
+		EditorUI::SelectOptionWidget m_SelectRuntimeStartSpec{};
+		EditorUI::TooltipWidget m_SelectScriptTooltip{};
 
 		//=========================
 		// Sub Panels

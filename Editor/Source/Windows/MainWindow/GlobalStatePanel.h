@@ -2,16 +2,16 @@
 #include "Modules/Assets/Asset.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Kargono/ProjectData/GlobalState.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>
 
 namespace Kargono::Panels
 {
-	using EditorWidget = std::variant<EditorUI::EditFloatSpec, EditorUI::EditTextSpec,
-		EditorUI::CheckboxWidget, EditorUI::EditIntegerSpec,
-		EditorUI::EditVec2Spec, EditorUI::EditVec3Spec, EditorUI::EditVec4Spec,
-		EditorUI::EditIVec2Spec, EditorUI::EditIVec3Spec, EditorUI::EditIVec4Spec>;
+	using EditorWidget = std::variant<EditorUI::EditFloatWidget, EditorUI::EditTextSpec,
+		EditorUI::CheckboxWidget, EditorUI::EditIntegerWidget,
+		EditorUI::EditVec2Widget, EditorUI::EditVec3Widget, EditorUI::EditVec4Widget,
+		EditorUI::EditIVec2Widget, EditorUI::EditIVec3Widget, EditorUI::EditIVec4Widget>;
 
 	struct GlobalStateWidgetData
 	{
@@ -62,20 +62,20 @@ namespace Kargono::Panels
 		// Manage Global State Fields (Internal)
 		//=========================
 		// Manage create-field popup
-		void OnOpenCreateFieldDialog(EditorUI::CollapsingHeaderSpec& spec);
+		void OnOpenCreateFieldDialog(EditorUI::CollapsingHeaderWidget& spec);
 		void OnConfirmCreateField();
 		// Manage create-field popup's type widget
-		void OnOpenCreateFieldType(EditorUI::SelectOptionSpec& spec);
+		void OnOpenCreateFieldType(EditorUI::SelectOptionWidget& spec);
 		// Modify field callback functions
 		void OnModifyFieldCheckbox(EditorUI::CheckboxWidget& spec);
-		void OnModifyFieldEditFloat(EditorUI::EditFloatSpec& spec);
-		void OnModifyFieldEditInteger(EditorUI::EditIntegerSpec& spec);
-		void OnModifyFieldEditVec2(EditorUI::EditVec2Spec& spec);
-		void OnModifyFieldEditVec3(EditorUI::EditVec3Spec& spec);
-		void OnModifyFieldEditVec4(EditorUI::EditVec4Spec& spec);
-		void OnModifyFieldEditIVec2(EditorUI::EditIVec2Spec& spec);
-		void OnModifyFieldEditIVec3(EditorUI::EditIVec3Spec& spec);
-		void OnModifyFieldEditIVec4(EditorUI::EditIVec4Spec& spec);
+		void OnModifyFieldEditFloat(EditorUI::EditFloatWidget& spec);
+		void OnModifyFieldEditInteger(EditorUI::EditIntegerWidget& spec);
+		void OnModifyFieldEditVec2(EditorUI::EditVec2Widget& spec);
+		void OnModifyFieldEditVec3(EditorUI::EditVec3Widget& spec);
+		void OnModifyFieldEditVec4(EditorUI::EditVec4Widget& spec);
+		void OnModifyFieldEditIVec2(EditorUI::EditIVec2Widget& spec);
+		void OnModifyFieldEditIVec3(EditorUI::EditIVec3Widget& spec);
+		void OnModifyFieldEditIVec4(EditorUI::EditIVec4Widget& spec);
 
 		//=========================
 		// Other Internal Functionality
@@ -95,19 +95,19 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		// Opening menu
-		EditorUI::GenericPopupSpec m_CreateGlobalStatePopup{};
-		EditorUI::SelectOptionSpec m_OpenGlobalStatePopup{};
-		EditorUI::ChooseDirectorySpec m_SelectGlobalStateLocationSpec{};
+		EditorUI::GenericPopupWidget m_CreateGlobalStatePopup{};
+		EditorUI::SelectOptionWidget m_OpenGlobalStatePopup{};
+		EditorUI::ChooseDirectoryWidget m_SelectGlobalStateLocationSpec{};
 		// Header
 		EditorUI::EditTextSpec m_SelectGlobalStateNameSpec{};
-		EditorUI::PanelHeaderSpec m_MainHeader{};
-		EditorUI::GenericPopupSpec m_DeleteGlobalStateWarning{};
-		EditorUI::GenericPopupSpec m_CloseGlobalStateWarning{};
+		EditorUI::PanelHeaderWidget m_MainHeader{};
+		EditorUI::GenericPopupWidget m_DeleteGlobalStateWarning{};
+		EditorUI::GenericPopupWidget m_CloseGlobalStateWarning{};
 		// Modify fields widgets
-		EditorUI::CollapsingHeaderSpec m_FieldsHeader{};
-		EditorUI::GenericPopupSpec m_CreateFieldPopup{};
+		EditorUI::CollapsingHeaderWidget m_FieldsHeader{};
+		EditorUI::GenericPopupWidget m_CreateFieldPopup{};
 		EditorUI::EditTextSpec m_CreateFieldName{};
-		EditorUI::SelectOptionSpec m_CreateFieldType{};
+		EditorUI::SelectOptionWidget m_CreateFieldType{};
 		GlobalStateWidgetData m_Fields{};
 
 

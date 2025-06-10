@@ -2,14 +2,14 @@
 #include "Modules/Assets/Asset.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Kargono/ProjectData/ColorPalette.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>
 
 namespace Kargono::Panels
 {
 
-	using ColorEditorWidgets = std::vector<EditorUI::EditVec4Spec>;
+	using ColorEditorWidgets = std::vector<EditorUI::EditVec4Widget>;
 
 	class ColorPalettePanel
 	{
@@ -53,9 +53,9 @@ namespace Kargono::Panels
 		// Manage Color Palette Fields (Internal)
 		//=========================
 		// Modify field callback functions
-		void OnModifyColor(EditorUI::EditVec4Spec& spec);
+		void OnModifyColor(EditorUI::EditVec4Widget& spec);
 		void OnModifyColorName(EditorUI::EditTextSpec& spec);
-		void OnOpenEditTooltip(EditorUI::EditVec4Spec& spec);
+		void OnOpenEditTooltip(EditorUI::EditVec4Widget& spec);
 		void OnAddWhite();
 
 		//=========================
@@ -76,19 +76,19 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		// Opening menu
-		EditorUI::GenericPopupSpec m_CreateColorPalettePopup{};
-		EditorUI::SelectOptionSpec m_OpenColorPalettePopup{};
-		EditorUI::ChooseDirectorySpec m_SelectColorPaletteLocationSpec{};
+		EditorUI::GenericPopupWidget m_CreateColorPalettePopup{};
+		EditorUI::SelectOptionWidget m_OpenColorPalettePopup{};
+		EditorUI::ChooseDirectoryWidget m_SelectColorPaletteLocationSpec{};
 		// Header
 		EditorUI::EditTextSpec m_SelectColorPaletteNameSpec{};
-		EditorUI::PanelHeaderSpec m_MainHeader{};
-		EditorUI::GenericPopupSpec m_DeleteColorPaletteWarning{};
-		EditorUI::GenericPopupSpec m_CloseColorPaletteWarning{};
+		EditorUI::PanelHeaderWidget m_MainHeader{};
+		EditorUI::GenericPopupWidget m_DeleteColorPaletteWarning{};
+		EditorUI::GenericPopupWidget m_CloseColorPaletteWarning{};
 		// Modify fields widgets
-		EditorUI::CollapsingHeaderSpec m_ColorsHeader{};
+		EditorUI::CollapsingHeaderWidget m_ColorsHeader{};
 		EditorUI::EditTextSpec m_EditColorName{};
 		ColorEditorWidgets m_ColorEditorWidgets{};
 		// General widgets
-		EditorUI::TooltipSpec m_LocalTooltip{};
+		EditorUI::TooltipWidget m_LocalTooltip{};
 	};
 }

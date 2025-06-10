@@ -23,7 +23,7 @@
 #include "imgui_internal.h"
 
 #include "IconsFontAwesome6.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 /**
  * CONFIGURATION SECTION Start

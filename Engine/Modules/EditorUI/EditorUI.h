@@ -7,8 +7,9 @@
 #include "Kargono/Core/WrappedData.h"
 #include "Kargono/Core/Window.h"
 
+#include "Modules/EditorUI/EditorUICommon.h"
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
-#include "Modules/EditorUI/Widgets/EditorUICheckbox.h"
+#include "Modules/EditorUI/Widgets/EditorUISelectOptionWidget.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiAPI.h"
 #include "Modules/EditorUI/ExternalAPI/ImGuizmoAPI.h"
@@ -27,52 +28,33 @@ namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono::EditorUI
 {
-	struct ChooseDirectorySpec;
-	//==============================
-	// Widget Forward Declarations
-	//==============================
-	struct RadioSelectorSpec;
-	struct CollapsingHeaderSpec;
-	struct EditTextSpec;
-	struct ButtonSpec;
-	struct ButtonBarSpec;
-	struct EditMultiLineTextSpec;
-	struct DropDownSpec;
-	struct PanelHeaderSpec;
-	struct NavigationHeaderSpec;
-	struct CheckboxWidget;
-	struct PlotSpec;
-	struct GenericPopupSpec;
-	struct WarningPopupSpec;
-	struct GridSpec;
-	struct SelectOptionSpec;
-	struct EditVariableSpec;
-	struct TooltipSpec;
-	struct ListSpec;
-	struct TreeSpec;
-	struct InlineButtonSpec;
-	struct EditIntegerSpec;
-	struct EditIVec2Spec;
-	struct EditIVec3Spec;
-	struct EditIVec4Spec;
-	struct EditFloatSpec;
-	struct EditVec2Spec;
-	struct EditVec3Spec;
-	struct EditVec4Spec;
+	struct TreeWidget;
+	struct InlineButtonWidget;
+	struct EditVariableWidget;
+	struct EditIntegerWidget;
+	struct EditIVec2Widget;
+	struct EditIVec3Widget;
+	struct EditIVec4Widget;
+	struct EditFloatWidget;
+	struct EditVec2Widget;
+	struct EditVec3Widget;
+	struct EditVec4Widget;
 
-	//==============================
-	// Type Defines
-	//==============================
+	enum LabeledTextFlags : WidgetFlags
+	{
+		LabeledText_None = 0,
+		LabeledText_Indented = BIT(0)
+	};
 
 	struct EditorMemento
 	{
 	public:
-		EditorMemento(Math::vec4 value, EditVec4Spec* widget) : m_Value(value), m_Widget(widget) {}
+		EditorMemento(Math::vec4 value, EditVec4Widget* widget) : m_Value(value), m_Widget(widget) {}
 	private:
 		EditorMemento() = default;
 	public:
 		Math::vec4 m_Value;
-		EditVec4Spec* m_Widget;
+		EditVec4Widget* m_Widget;
 	};
 
 	class MementoStack
@@ -82,50 +64,6 @@ namespace Kargono::EditorUI
 		Optional<EditorMemento> PopMemento();
 	private:
 		std::stack<EditorMemento> m_Stack;
-	};
-
-	struct DragDropPayload
-	{
-		FixedString32 m_Label;
-		void* m_DataPointer;
-		std::size_t m_DataSize;
-	};
-
-	using SelectionList = std::unordered_map<std::string, std::function<void()>>;
-	enum class SpacingAmount : uint8_t
-	{
-		None = 0,
-		Small,
-		Medium,
-		Large
-	};
-
-	enum class PositionType : uint8_t
-	{
-		None = 0,
-		Absolute,
-		Relative,
-		Inline
-	};
-
-	struct InlineButtonSpec
-	{
-	public:
-		float m_XPosition{ 0.0f };
-		float m_YPosition{ 0.0f };
-		float m_IconSize{ 0.0f };
-		Ref<Rendering::Texture2D> m_ActiveIcon{ nullptr };
-		Ref<Rendering::Texture2D> m_InactiveIcon{ nullptr };
-		std::string m_ActiveTooltip{};
-		std::string m_InactiveTooltip{};
-		PositionType m_XPositionType{ PositionType::Inline };
-		bool m_Disabled{ false };
-	};
-
-	enum LabeledTextFlags : WidgetFlags
-	{
-		LabeledText_None = 0,
-		LabeledText_Indented = BIT(0)
 	};
 
 	class EditorUIService
@@ -164,9 +102,14 @@ namespace Kargono::EditorUI
 		static void Spacing(float space);
 		static void Spacing(SpacingAmount space);
 
+		static void CreateImage(Ref<Rendering::Texture2D> image, float size, ImVec4 tint = { 1.0f ,1.0f, 1.0f, 1.0f });
+		static float SmallButtonRelativeLocation(uint32_t slot);
+		static void RecalculateWindowDimensions();
+		static OptionMap GenerateSearchCache(OptionMap& originalList, const std::string& searchQuery);
 		static void TruncateText(const std::string& text, uint32_t maxTextSize);
+		static void WriteMultilineText(const std::string& text, float lineWidth, float xOffset = 0, float yOffset = 0);
 		static void CreateButton(ImGuiID widgetID, std::function<void()> onPress,
-			const InlineButtonSpec& spec, bool active = false, ImVec4 tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
+			const InlineButtonWidget& spec, bool active = false, ImVec4 tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
 		static uint32_t WidgetIterator(uint32_t& count);
 
 	public:
@@ -174,38 +117,21 @@ namespace Kargono::EditorUI
 		// Create/Display Widget Functions
 		//==============================
 		static void TitleText(const std::string& text);
-		static void GenericPopup(GenericPopupSpec& spec);
-		static void WarningPopup(WarningPopupSpec& spec);
-		static void SelectOption(SelectOptionSpec& spec);
-		static void EditVariable(EditVariableSpec& spec);
+		static void EditVariable(EditVariableWidget& spec);
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
-		static bool Button(ButtonSpec& spec);
-		static void ButtonBar(ButtonBarSpec& spec);
-		static void Plot(PlotSpec& spec);
-		static void DropDown(DropDownSpec& spec);
 
-		static void EditInteger(EditIntegerSpec& spec);
-		static void EditIVec2(EditIVec2Spec& spec);
-		static void EditIVec3(EditIVec3Spec& spec);
-		static void EditIVec4(EditIVec4Spec& spec);
-		static void EditFloat(EditFloatSpec& spec);
-		static void EditVec2(EditVec2Spec& spec);
-		static void EditVec3(EditVec3Spec& spec);
-		static void EditVec4(EditVec4Spec& spec);
+		static void EditInteger(EditIntegerWidget& spec);
+		static void EditIVec2(EditIVec2Widget& spec);
+		static void EditIVec3(EditIVec3Widget& spec);
+		static void EditIVec4(EditIVec4Widget& spec);
+		static void EditFloat(EditFloatWidget& spec);
+		static void EditVec2(EditVec2Widget& spec);
+		static void EditVec3(EditVec3Widget& spec);
+		static void EditVec4(EditVec4Widget& spec);
 
-		static void RadioSelector(RadioSelectorSpec& spec);
-		static void List(ListSpec& spec);
-		static void Tree(TreeSpec& spec);
-		static void PanelHeader(PanelHeaderSpec& spec);
-		static void NavigationHeader(NavigationHeaderSpec& spec);
-		static void Grid(GridSpec& spec);
-		static void CollapsingHeader(CollapsingHeaderSpec& spec);
+		static void Tree(TreeWidget& spec);
 		static void LabeledText(const std::string& m_Label, const std::string& Text, LabeledTextFlags flags = LabeledText_None);
 		static void Text(const char* text);
-		static void EditText(EditTextSpec& spec);
-		static void EditMultiLineText(EditMultiLineTextSpec& spec);
-		static void ChooseDirectory(ChooseDirectorySpec& spec);
-		static void Tooltip(TooltipSpec& spec);
 		static void BeginTabBar(const std::string& title);
 		static void EndTabBar();
 		static bool BeginTabItem(const std::string& title);
@@ -257,6 +183,11 @@ namespace Kargono::EditorUI
 		inline static ImFont* s_FontAntaRegular {nullptr};
 		inline static ImFont* s_FontPlexBold {nullptr};
 		inline static ImFont* s_FontRobotoMono {nullptr};
+
+		// Buttons
+		inline static InlineButtonWidget s_TableEditButton{};
+		inline static InlineButtonWidget s_TableLinkButton{};
+		inline static InlineButtonWidget s_ListExpandButton{};
 
 	public:
 		//==============================
@@ -344,16 +275,16 @@ namespace Kargono::EditorUI
 		//==============================
 		// UI Button Presets
 		//==============================
-		inline static InlineButtonSpec s_SmallEditButton;
-		inline static InlineButtonSpec s_SmallExpandButton;
-		inline static InlineButtonSpec s_MediumOptionsButton;
-		inline static InlineButtonSpec s_SmallCheckboxButton;
-		inline static InlineButtonSpec s_SmallCheckboxDisabledButton;
-		inline static InlineButtonSpec s_SmallLinkButton;
-		inline static InlineButtonSpec s_LargeDeleteButton;
-		inline static InlineButtonSpec s_LargeCancelButton;
-		inline static InlineButtonSpec s_LargeConfirmButton;
-		inline static InlineButtonSpec s_LargeSearchButton;
+		inline static InlineButtonWidget s_SmallEditButton;
+		inline static InlineButtonWidget s_SmallExpandButton;
+		inline static InlineButtonWidget s_MediumOptionsButton;
+		inline static InlineButtonWidget s_SmallCheckboxButton;
+		inline static InlineButtonWidget s_SmallCheckboxDisabledButton;
+		inline static InlineButtonWidget s_SmallLinkButton;
+		inline static InlineButtonWidget s_LargeDeleteButton;
+		inline static InlineButtonWidget s_LargeCancelButton;
+		inline static InlineButtonWidget s_LargeConfirmButton;
+		inline static InlineButtonWidget s_LargeSearchButton;
 
 	public:
 		//==============================
@@ -405,204 +336,28 @@ namespace Kargono::EditorUI
 		inline static MementoStack s_UndoStack;
 	};
 
-	//==============================
-	// Widget Specifications
-	//==============================
-
-	struct WarningPopupSpec : public Widget
-	{
-	public:
-		WarningPopupSpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		float m_PopupWidth{ 700.0f };
-		std::function<void()> m_PopupContents{ nullptr };
-		bool m_OpenPopup{ false };
-	private:
-		friend void EditorUIService::WarningPopup(WarningPopupSpec& spec);
-	};
-
-
-	struct GenericPopupSpec : public Widget
-	{
-	public:
-		GenericPopupSpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		float m_PopupWidth{ 700.0f };
-		std::function<void()> m_PopupContents{ nullptr };
-		std::function<void()> m_ConfirmAction{ nullptr };
-		std::function<void()> m_DeleteAction{ nullptr };
-		std::function<void()> m_PopupAction{ nullptr };
-		std::function<void()> m_CancelAction{ nullptr };
-		bool m_OpenPopup{ false };
-	public:
-		void CloseActivePopup()
-		{
-			m_CloseActivePopup = true;
-		}
-	private:
-		bool m_CloseActivePopup{ false };
-	private:
-		friend void EditorUIService::GenericPopup(GenericPopupSpec& spec);
-	};
-
-	struct Button
-	{
-		FixedString32 m_Label{ "Click Me" };
-		std::function<void(Button&)> m_OnPress{ nullptr };
-		Ref<void> m_ProvidedData{ nullptr };
-	};
-
-	enum ButtonFlags : WidgetFlags
-	{
-		Button_None = 0,
-		Button_Indented = BIT(0)
-	};
-
-	struct ButtonSpec : public Widget
-	{
-	public:
-		ButtonSpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		WidgetFlags m_Flags{ ButtonFlags::Button_None };
-		Button m_Button;
-	private:
-		friend bool EditorUIService::Button(ButtonSpec& spec);
-	};
-
-	constexpr size_t k_MaxButtonBarSize{ 4 };
-
-	enum ButtonBarFlags : WidgetFlags
-	{
-		ButtonBar_None = 0,
-		ButtonBar_Indented = BIT(0)
-	};
-
-	struct ButtonBarSpec : public Widget
-	{
-	public:
-		ButtonBarSpec() : Widget() {}
-	public:
-		bool AddButton(Button& button);
-		bool AddButton(std::string_view label, std::function<void(Button&)> onClick, Ref<void> providedData = nullptr);
-		void ClearButtons();
-
-		Button* GetButton(size_t index);
-	public:
-		FixedString32 m_Label;
-		WidgetFlags m_Flags{ ButtonBarFlags::ButtonBar_None };
-	private:
-		std::array<Button, k_MaxButtonBarSize> m_Buttons;
-		size_t m_ButtonCount{ 0 };
-		WidgetID m_WidgetID;
-	private:
-		friend void EditorUIService::ButtonBar(ButtonBarSpec& spec);
-	};
-
-	enum PlotFlags : WidgetFlags
-	{
-		Plot_None = 0,
-		Plot_Indented = BIT(0)
-	};
-
-	struct PlotSpec : public Widget
-	{
-	public:
-		PlotSpec() : Widget() {}
-	public:
-		void SetBufferSize(size_t newSize)
-		{
-			// Update the buffer size
-			m_BufferSize = newSize;
-
-			// Update the X/Y container values
-			m_XValues.resize(newSize);
-			m_YValues.resize(newSize);
-
-			// Clear the buffer
-			Clear();
-		}
-
-		void AddValue(float yValue)
-		{
-			// Add the coordinate
-			m_XValues[m_Offset % m_BufferSize] = (float)m_Offset;
-			m_YValues[m_Offset % m_BufferSize] = yValue;
-
-			// Update the offset index
-			m_Offset++;
-		}
-
-		void UpdateValue(float yValue, size_t offset = 0)
-		{
-			KG_ASSERT(offset < m_BufferSize);
-
-			m_YValues[(m_Offset - offset - 1) % m_BufferSize] = yValue;
-		}
-
-		void SetYAxisLabel(std::string_view text)
-		{
-			if (text.size() == 0)
-			{
-				m_YAxisLabel = "##";
-				return;
-			}
-
-			m_YAxisLabel = text;
-		}
-
-		void Clear()
-		{
-			// Clear all values in buffer
-			for (size_t i{ 0 }; i < m_BufferSize; i++)
-			{
-				m_XValues[i] = 0.0f;
-				m_YValues[i] = 0.0f;
-			}
-
-			// Clear the offset
-			m_Offset = m_BufferSize;
-		}
-
-	public:
-		FixedString32 m_Label;
-		WidgetFlags m_Flags{ PlotFlags::Plot_None };
-		float m_MaxYVal{ 50.0f };
-		Ref<void> m_ProvidedData{ nullptr };
-	private:
-		FixedString16 m_YAxisLabel{ "##" };
-		std::vector<float> m_XValues;
-		std::vector<float> m_YValues;
-		size_t m_BufferSize{0};
-		size_t m_Offset{ 0 };
-	private:
-		friend void EditorUIService::Plot(PlotSpec& spec);
-	};
-
 	enum EditIntegerFlags : WidgetFlags
 	{
 		EditInteger_None = 0,
 		EditInteger_Indented = BIT(0)
 	};
 
-	struct EditIntegerSpec : public Widget
+	struct EditIntegerWidget : public Widget
 	{
 	public:
-		EditIntegerSpec() : Widget() {}
+		EditIntegerWidget() : Widget() {}
 	public:
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditInteger_None };
 		int32_t m_CurrentInteger{};
 		std::array<int32_t, 2> m_Bounds{ 0, 0 };
 		int32_t m_ScrollSpeed{ 1 };
-		std::function<void(EditIntegerSpec&)> m_ConfirmAction{ nullptr };
+		std::function<void(EditIntegerWidget&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
 	private:
 		bool m_Editing{ false };
 	private:
-		friend void EditorUIService::EditInteger(EditIntegerSpec& spec);
+		friend void EditorUIService::EditInteger(EditIntegerWidget& spec);
 	};
 
 	enum EditIVec2Flags : WidgetFlags
@@ -611,22 +366,22 @@ namespace Kargono::EditorUI
 		EditIVec2_Indented = BIT(0)
 	};
 
-	struct EditIVec2Spec : public Widget
+	struct EditIVec2Widget : public Widget
 	{
 	public:
-		EditIVec2Spec() : Widget() {}
+		EditIVec2Widget() : Widget() {}
 	public:
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditIVec2_None };
 		Math::ivec2 m_CurrentIVec2{};
 		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
 		int32_t m_ScrollSpeed{ 1 };
-		std::function<void(EditIVec2Spec&)> m_ConfirmAction{ nullptr };
+		std::function<void(EditIVec2Widget&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };
 	private:
 		bool m_Editing{ false };
 	private:
-		friend void EditorUIService::EditIVec2(EditIVec2Spec& spec);
+		friend void EditorUIService::EditIVec2(EditIVec2Widget& spec);
 	};
 
 	enum EditIVec3Flags : WidgetFlags
@@ -635,22 +390,22 @@ namespace Kargono::EditorUI
 		EditIVec3_Indented = BIT(0)
 	};
 
-	struct EditIVec3Spec : public Widget
+	struct EditIVec3Widget : public Widget
 	{
 	public:
-		EditIVec3Spec() : Widget() {}
+		EditIVec3Widget() : Widget() {}
 	public:
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditIVec3_None };
 		Math::ivec3 m_CurrentIVec3{};
 		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
 		int32_t m_ScrollSpeed{ 1 };
-		std::function<void(EditIVec3Spec&)> m_ConfirmAction{ nullptr };
+		std::function<void(EditIVec3Widget&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };
 	private:
 		bool m_Editing{ false };
 	private:
-		friend void EditorUIService::EditIVec3(EditIVec3Spec& spec);
+		friend void EditorUIService::EditIVec3(EditIVec3Widget& spec);
 	};
 
 	enum EditIVec4Flags : WidgetFlags
@@ -659,22 +414,22 @@ namespace Kargono::EditorUI
 		EditIVec4_Indented = BIT(0)
 	};
 
-	struct EditIVec4Spec : public Widget
+	struct EditIVec4Widget : public Widget
 	{
 	public:
-		EditIVec4Spec() : Widget() {}
+		EditIVec4Widget() : Widget() {}
 	public:
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditIVec4_None };
 		Math::ivec4 m_CurrentIVec4{};
 		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
 		int32_t m_ScrollSpeed{ 1 };
-		std::function<void(EditIVec4Spec&)> m_ConfirmAction{ nullptr };
+		std::function<void(EditIVec4Widget&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };
 	private:
 		bool m_Editing{ false };
 	private:
-		friend void EditorUIService::EditIVec4(EditIVec4Spec& spec);
+		friend void EditorUIService::EditIVec4(EditIVec4Widget& spec);
 	};
 
 	enum EditFloatFlags : WidgetFlags
@@ -683,22 +438,22 @@ namespace Kargono::EditorUI
 		EditFloat_Indented = BIT(0)
 	};
 
-	struct EditFloatSpec : public Widget
+	struct EditFloatWidget : public Widget
 	{
 	public:
-		EditFloatSpec() : Widget() {}
+		EditFloatWidget() : Widget() {}
 	public:
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditFloat_None };
 		float m_CurrentFloat{};
-		std::function<void(EditFloatSpec&)> m_ConfirmAction{ nullptr };
+		std::function<void(EditFloatWidget&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
 		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
 		float m_ScrollSpeed{ 0.01f };
 	private:
 		bool m_Editing{ false };
 	private:
-		friend void EditorUIService::EditFloat(EditFloatSpec& spec);
+		friend void EditorUIService::EditFloat(EditFloatWidget& spec);
 	};
 
 	enum EditVec2Flags : WidgetFlags
@@ -707,22 +462,22 @@ namespace Kargono::EditorUI
 		EditVec2_Indented = BIT(0)
 	};
 
-	struct EditVec2Spec : public Widget
+	struct EditVec2Widget : public Widget
 	{
 	public:
-		EditVec2Spec() : Widget() {}
+		EditVec2Widget() : Widget() {}
 	public:
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditVec2_None };
 		Math::vec2 m_CurrentVec2{};
-		std::function<void(EditVec2Spec&)> m_ConfirmAction{ nullptr };
+		std::function<void(EditVec2Widget&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
 		std::array<float, 2> m_Bounds{ 0.0f,0.0f };
 		float m_ScrollSpeed{ 0.01f };
 	private:
 		bool m_Editing{ false };
 	private:
-		friend void EditorUIService::EditVec2(EditVec2Spec& spec);
+		friend void EditorUIService::EditVec2(EditVec2Widget& spec);
 	};
 
 	enum EditVec3Flags : WidgetFlags
@@ -731,22 +486,22 @@ namespace Kargono::EditorUI
 		EditVec3_Indented = BIT(0)
 	};
 
-	struct EditVec3Spec : public Widget
+	struct EditVec3Widget : public Widget
 	{
 	public:
-		EditVec3Spec() : Widget() {}
+		EditVec3Widget() : Widget() {}
 	public:
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditVec3_None };
 		Math::vec3 m_CurrentVec3{};
-		std::function<void(EditVec3Spec&)> m_ConfirmAction{ nullptr };
+		std::function<void(EditVec3Widget&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
 		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
 		float m_ScrollSpeed{ 0.01f };
 	private:
 		bool m_Editing{ false };
 	private:
-		friend void EditorUIService::EditVec3(EditVec3Spec& spec);
+		friend void EditorUIService::EditVec3(EditVec3Widget& spec);
 	};
 
 	enum EditVec4Flags : WidgetFlags
@@ -757,342 +512,22 @@ namespace Kargono::EditorUI
 		EditVec4_HandleEditButtonExternally = BIT(2)
 	};
 
-	struct EditVec4Spec : public Widget
+	struct EditVec4Widget : public Widget
 	{
 	public:
-		EditVec4Spec() : Widget() {}
+		EditVec4Widget() : Widget() {}
 	public:
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditVec4_None };
 		Math::vec4 m_CurrentVec4{};
-		std::function<void(EditVec4Spec&)> m_ConfirmAction{ nullptr };
-		std::function<void(EditVec4Spec&)> m_OnEdit{ nullptr };
+		std::function<void(EditVec4Widget&)> m_ConfirmAction{ nullptr };
+		std::function<void(EditVec4Widget&)> m_OnEdit{ nullptr };
 		Ref<void> m_ProvidedData { nullptr };
 		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
 		float m_ScrollSpeed{ 0.01f };
 		bool m_Editing{ false };
 	private:
-		friend void EditorUIService::EditVec4(EditVec4Spec& spec);
-	};
-
-
-
-	enum RadioSelectorFlags : WidgetFlags
-	{
-		RadioSelector_None = 0,
-		RadioSelector_Indented = BIT(0)
-	};
-
-	struct RadioSelectorSpec : public Widget
-	{
-	public:
-		RadioSelectorSpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		WidgetFlags m_Flags{ RadioSelector_None };
-		uint16_t m_SelectedOption{ 0 };
-		std::string m_FirstOptionLabel{ "None" };
-		std::string m_SecondOptionLabel{ "None" };
-		bool m_Editing{ false };
-		std::function<void()> m_SelectAction{ nullptr };
-	private:
-		friend void EditorUIService::RadioSelector(RadioSelectorSpec& spec);
-	};
-
-	enum EditTextFlags : WidgetFlags
-	{
-		EditText_None = 0,
-		EditText_PopupOnly = BIT(0), // Only use a popup and remove inline text
-		EditText_Indented = BIT(1) // Display indented
-	};
-
-	struct EditTextSpec : public Widget
-	{
-	public:
-		EditTextSpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		WidgetFlags m_Flags{ EditText_None };
-		std::string m_CurrentOption{};
-		std::function<void(EditTextSpec&)> m_ConfirmAction;
-		bool m_StartPopup{ false };
-		Ref<void> m_ProvidedData { nullptr };
-	private:
-		friend void EditorUIService::EditText(EditTextSpec& spec);
-	};
-
-	enum EditMultiLineTextFlags : WidgetFlags
-	{
-		EditMultiLineText_None = 0,
-		EditMultiLineText_PopupOnly = BIT(0), // Only use a popup and remove inline text
-		EditMultiLineText_Indented = BIT(1) // Display indented
-	};
-
-	struct EditMultiLineTextSpec : public Widget
-	{
-	public:
-		EditMultiLineTextSpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		WidgetFlags m_Flags{ EditMultiLineText_None };
-		std::string m_CurrentOption{};
-		std::function<void(EditMultiLineTextSpec&)> m_ConfirmAction;
-		bool m_StartPopup{ false };
-		Ref<void> m_ProvidedData{ nullptr };
-	private:
-		friend void EditorUIService::EditMultiLineText(EditMultiLineTextSpec& spec);
-	};
-
-	enum ChooseDirectoryFlags : WidgetFlags
-	{
-		ChooseDirectory_None = 0,
-		ChooseDirectory_Indented = BIT(0) // Display indented
-	};
-
-	struct ChooseDirectorySpec : public Widget
-	{
-	public:
-		ChooseDirectorySpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		WidgetFlags m_Flags{ ChooseDirectoryFlags::ChooseDirectory_None };
-		std::filesystem::path m_CurrentOption{};
-		std::function<void(const std::string&)> m_ConfirmAction{ nullptr };
-	private:
-		friend void EditorUIService::ChooseDirectory(ChooseDirectorySpec& spec);
-	};
-
-	enum CollapsingHeaderFlags : WidgetFlags
-	{
-		CollapsingHeader_None = 0,
-		CollapsingHeader_UnderlineTitle = BIT(0), // Underlines the title text
-	};
-
-
-	struct CollapsingHeaderSpec : public Widget
-	{
-	using CollapsingHeaderSelectionList = std::unordered_map<std::string, std::function<void(EditorUI::CollapsingHeaderSpec& spec)>>;
-	public:
-		CollapsingHeaderSpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		WidgetFlags m_Flags{ CollapsingHeader_None };
-		bool m_Expanded{ false };
-		std::function<void()> m_OnExpand{ nullptr };
-		Ref<void> m_ProvidedData { nullptr };
-	public:
-		void ClearSelectionList()
-		{
-			m_SelectionList.clear();
-		}
-		void AddToSelectionList(const std::string& label, std::function<void(CollapsingHeaderSpec&)> function)
-		{
-			if (!m_SelectionList.contains(label))
-			{
-				m_SelectionList.insert_or_assign(label, function);
-				return;
-			}
-		}
-		CollapsingHeaderSelectionList& GetSelectionList()
-		{
-			return m_SelectionList;
-		}
-	private:
-		CollapsingHeaderSelectionList m_SelectionList{};
-	private:
-		friend void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec);
-	};
-
-
-	struct PanelHeaderSpec : public Widget
-	{
-	using PanelHeaderSelectionList = std::unordered_map<std::string, std::function<void(EditorUI::PanelHeaderSpec& spec)>>;
-	public:
-		PanelHeaderSpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		bool m_EditColorActive{ false };
-
-	public:
-		void ClearSelectionList()
-		{
-			m_SelectionsList.clear();
-		}
-		void AddToSelectionList(const std::string& label, std::function<void()> function)
-		{
-			if (!m_SelectionsList.contains(label))
-			{
-				m_SelectionsList.insert_or_assign(label, function);
-				return;
-			}
-		}
-		SelectionList& GetSelectionList()
-		{
-			return m_SelectionsList;
-		}
-
-	private:
-		SelectionList m_SelectionsList{};
-	private:
-		friend void EditorUIService::PanelHeader(PanelHeaderSpec& spec);
-	};
-
-	enum NavigationHeaderFlags : WidgetFlags
-	{
-		NavigationHeader_None = 0,
-		NavigationHeader_AllowDragDrop = BIT(0) 
-	};
-
-	struct NavigationHeaderSpec : public Widget
-	{
-	public:
-		NavigationHeaderSpec() : Widget() {}
-	public:
-		FixedString64 m_Label;
-		std::function<void()> m_OnNavigateBack{};
-		std::function<void()> m_OnNavigateForward{};
-		std::function<void(const char*, void*, std::size_t)> m_OnReceivePayloadBack{};
-		std::function<void(const char*, void*, std::size_t)> m_OnReceivePayloadForward{};
-		std::vector<FixedString32> m_AcceptableOnReceivePayloads;
-		WidgetFlags m_Flags{ 0 };
-		bool m_IsBackActive{ false };
-		bool m_IsForwardActive{ false };
-	private:
-		friend void EditorUIService::NavigationHeader(NavigationHeaderSpec& spec);
-	};
-
-	enum GridFlags : WidgetFlags
-	{
-		Grid_None = 0,
-		Grid_AllowDragDrop = BIT(0)
-	};
-
-	static inline uint32_t k_InvalidArchetypeID{ 0 };
-
-	struct GridEntry
-	{
-		FixedString64 m_Label;
-		uint32_t m_ArchetypeID { k_InvalidArchetypeID };
-		UUID m_EntryID;
-	};
-
-	struct GridEntryArchetype
-	{
-		// Display metadata
-		Ref<Rendering::Texture2D> m_Icon;
-		ImVec4 m_IconColor{ EditorUI::EditorUIService::s_DisabledColor };
-
-		// Handle key input
-		std::function<void(GridEntry& currentEntry)> m_OnDoubleLeftClick;
-		std::function<void(GridEntry& currentEntry)> m_OnLeftClick;
-		std::function<void(GridEntry& currentEntry)> m_OnRightClick;
-
-		// Handle create/receive payload
-		std::function<void(GridEntry& currentEntry, DragDropPayload& newPayload)> m_OnCreatePayload;
-		std::function<void(GridEntry& currentEntry, const char*, void*, std::size_t)> m_OnReceivePayload;
-		std::vector<FixedString32> m_AcceptableOnReceivePayloads;
-	};
-
-
-	struct GridSpec : public Widget
-	{
-	public:
-		GridSpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		float m_CellPadding{ 25.0f };
-		float m_CellIconSize { 140.0f };
-		WidgetFlags m_Flags{ 0 };
-
-	public:
-		bool AddEntry(GridEntry& newEntry) 
-		{
-			// Ensure a valid archetype id is provided
-			if (newEntry.m_ArchetypeID == k_InvalidArchetypeID)
-			{
-				return false;
-			}
-
-			// Ensure UUID is unique inside entry
-			while (!ValidateEntryID(newEntry.m_EntryID))
-			{
-				newEntry.m_EntryID = {};
-			}
-
-			// Insert new entry
-			m_Entries.push_back(newEntry);
-			return true;
-		}
-		bool AddEntry(GridEntry&& newEntry)
-		{
-			// Ensure a valid archetype id is provided
-			if (newEntry.m_ArchetypeID == k_InvalidArchetypeID)
-			{
-				return false;
-			}
-
-			// Ensure UUID is unique inside entry
-			while (!ValidateEntryID(newEntry.m_EntryID))
-			{
-				newEntry.m_EntryID = {};
-			}
-
-			// Insert new entry
-			m_Entries.push_back(std::move(newEntry));
-			return true;
-		}
-
-		void ClearEntries()
-		{
-			m_Entries.clear();
-			ClearSelectedEntry();
-		}
-
-		void ClearSelectedEntry()
-		{
-			m_SelectedEntry = k_EmptyUUID;
-		}
-
-		bool AddEntryArchetype(uint32_t key, const GridEntryArchetype& newArchetype)
-		{
-			auto [iterator, success] = m_EntryArchetypes.insert({key, newArchetype});
-			return success;
-		}
-
-		bool AddEntryArchetype(uint32_t key, GridEntryArchetype&& newArchetype)
-		{
-			auto [iterator, success] = m_EntryArchetypes.insert({ key, std::move(newArchetype) });
-			return success;
-		}
-
-	private:
-		bool ValidateEntryID(UUID queryID)
-		{
-			// Ensure empty id is not provided
-			if (queryID == k_EmptyUUID)
-			{
-				return false;
-			}
-
-			// Ensure that no match id is found in internal entries list
-			for (GridEntry& entry : m_Entries)
-			{
-				if (entry.m_EntryID == queryID)
-				{
-					return false;
-				}
-			}
-
-			// Return true if no duplicate is found
-			return true;
-		}
-
-	private:
-		UUID m_SelectedEntry { k_EmptyUUID };
-		std::vector<GridEntry> m_Entries{};
-		std::unordered_map<uint32_t, GridEntryArchetype> m_EntryArchetypes;
-	private:
-		friend void EditorUIService::Grid(GridSpec& spec);
+		friend void EditorUIService::EditVec4(EditVec4Widget& spec);
 	};
 
 	class TreePath
@@ -1221,10 +656,10 @@ namespace Kargono::EditorUI
 		std::vector<TreeEntry> m_SubEntries{};
 	};
 
-	struct TreeSpec : public Widget
+	struct TreeWidget : public Widget
 	{
 	public:
-		TreeSpec() : Widget() {}
+		TreeWidget() : Widget() {}
 	public:
 		FixedString32 m_Label;
 		TreePath m_SelectedEntry{};
@@ -1280,422 +715,14 @@ namespace Kargono::EditorUI
 		std::unordered_set<TreePath> m_ExpandedNodes{};
 		bool m_SelectionChanged{ false };
 	private:
-		friend void EditorUIService::Tree(TreeSpec& spec);
-		friend void DrawEntries(TreeSpec& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath , ImVec2 rootPosition);
+		friend void EditorUIService::Tree(TreeWidget& spec);
+		friend void DrawEntries(TreeWidget& spec, std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath , ImVec2 rootPosition);
 	};
 
-	struct TooltipSeperatorData
-	{
-		ImVec4 m_SeperatorColor{ EditorUI::EditorUIService::s_DisabledColor };
-	};
-
-	struct TooltipEntry
+	struct EditVariableWidget : public Widget
 	{
 	public:
-		TooltipEntry(const char* itemLabel, std::function<void(TooltipEntry&)> onClick) : m_Label(itemLabel), m_EntryData(onClick)
-		{
-		}
-		TooltipEntry(const char* itemLabel, const std::vector<TooltipEntry>& subEntryList) : m_Label(itemLabel), m_EntryData(subEntryList)
-		{
-		}
-		TooltipEntry(const char* itemLabel, std::vector<TooltipEntry>&& subEntryList) : m_Label(itemLabel), m_EntryData(std::move(subEntryList))
-		{
-		}
-	private:
-		TooltipEntry() {};
-
-	public:
-		FixedString32 m_Label;
-		UUID m_EntryID;
-		bool m_IsVisible{ true };
-		UUID m_UserHandle;
-		void* m_ProvidedData;
-	private:
-		std::variant<std::vector<TooltipEntry>, std::function<void(TooltipEntry&)>, TooltipSeperatorData> m_EntryData;
-		friend void ProcessTooltipEntries(TooltipSpec& spec, std::vector<TooltipEntry>& entryList);
-		friend struct TooltipSpec;
-	};
-
-	struct TooltipSpec : public Widget
-	{
-	public:
-		TooltipSpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		bool m_TooltipActive{ false };
-
-	public:
-		void AddSeperator(ImVec4 seperatorColor)
-		{
-			TooltipSeperatorData seperatorData{ seperatorColor };
-			TooltipEntry newSeperatorEntry;
-			newSeperatorEntry.m_EntryData = seperatorData;
-
-			// Ensure UUID is unique inside entry
-			while (!ValidateEntryID(newSeperatorEntry.m_EntryID))
-			{
-				newSeperatorEntry.m_EntryID = {};
-			}
-
-			// Add new entry if valid
-			m_Entries.push_back(newSeperatorEntry);
-		}
-
-		UUID AddTooltipEntry(TooltipEntry& newEntry)
-		{
-			// Ensure valid label is provided
-			if (newEntry.m_Label.IsEmpty())
-			{
-				return k_EmptyUUID;
-			}
-
-			// Ensure UUID is unique inside entry
-			while (!ValidateEntryID(newEntry.m_EntryID))
-			{
-				newEntry.m_EntryID = {};
-			}
-
-			// Add new entry if valid
-			m_Entries.push_back(newEntry);
-			return newEntry.m_EntryID;
-		}
-		UUID AddTooltipEntry(TooltipEntry&& newEntry)
-		{
-			// Ensure valid label is provided
-			if (newEntry.m_Label.IsEmpty())
-			{
-				return k_EmptyUUID;
-			}
-
-			// Ensure UUID is unique inside entry
-			while (!ValidateEntryID(newEntry.m_EntryID))
-			{
-				newEntry.m_EntryID = {};
-			}
-
-			// Add new entry if valid
-			UUID cacheID = newEntry.m_EntryID;
-			m_Entries.push_back(std::move(newEntry));
-			return cacheID;
-		}
-
-		bool SetIsVisible(UUID entry, bool isVisible);
-		bool SetAllChildrenIsVisible(UUID entry, bool isVisible);
-		void ClearEntries()
-		{
-			m_Entries.clear();
-		}
-
-	private:
-		bool ValidateEntryID(UUID queryID);
-		bool ValidateEntryIDRecursive(std::vector<TooltipEntry>& entries, UUID queryID);
-		bool SetIsVisibleRecursive(std::vector<TooltipEntry>& entries, UUID queryID, bool isVisible);
-		bool SetAllChildrenIsVisibleRecursive(std::vector<TooltipEntry>& entries, UUID queryID, bool isVisible);
-	private:
-		std::vector<TooltipEntry> m_Entries{};
-	private:
-		friend void EditorUIService::Tooltip(TooltipSpec& spec);
-		friend void ProcessTooltipEntries(TooltipSpec& spec, std::vector<TooltipEntry>& entryList);
-	};
-
-
-	enum ListFlags : WidgetFlags
-	{
-		List_None = 0,
-		List_UnderlineTitle = BIT(0), // Adds an underline to the title
-		List_RegularSizeTitle = BIT(1), // Ensures title uses normally sized font
-		List_Indented = BIT(2) // Indents the list over once
-	};
-
-	struct ListEntry
-	{
-		std::string m_Label;
-		std::string m_Value;
-		UUID m_Handle;
-		std::function<void(ListEntry& entry, std::size_t iteration)> m_OnEdit { nullptr };
-	};
-
-	static inline std::size_t k_ListSearchIndex{ std::numeric_limits<std::size_t>::max() };
-	static inline std::size_t k_ListIndex{ std::numeric_limits<std::size_t>::max() };
-
-	struct ListSpec : public Widget
-	{
-	public:
-		ListSpec() : Widget() {}
-	public:
-		FixedString32 m_Label;
-		WidgetFlags m_Flags{ List_None };
-		std::string m_Column1Title {};
-		std::string m_Column2Title {};
-		bool m_Expanded{ false };
-		std::function<void()> m_OnRefresh { nullptr };
-	public:
-		void InsertListEntry(const std::string& label, const std::string& value, 
-			std::function<void(ListEntry& entry, std::size_t iteration)> onEdit, Assets::AssetHandle handle = 0)
-		{
-			ListEntry newEntry{label, value, handle, onEdit};
-			m_ListEntries.push_back(newEntry);
-		}
-
-		void InsertListEntry(const ListEntry& entry)
-		{
-			m_ListEntries.push_back(entry);
-		}
-
-		bool RemoveEntry(std::size_t entryIndex)
-		{
-			if (entryIndex >= m_ListEntries.size()) 
-			{
-				return false;
-			}
-			m_ListEntries.erase(m_ListEntries.begin() + entryIndex);
-			return true;
-		}
-
-		std::size_t SearchEntries(std::function<bool(const ListEntry& currentEntry)> searchFunction)
-		{
-			// Run search function on entry
-			std::size_t iteration{ 0 };
-			for (const ListEntry& currentEntry : m_ListEntries)
-			{
-				if (searchFunction(currentEntry))
-				{
-					return iteration;
-				}
-				iteration++;
-			}
-			
-			// Return invalid index if none is found
-			return k_ListSearchIndex;
-		}
-
-		void EditEntries(std::function<void(ListEntry& currentEntry)> editFunction)
-		{
-			// Run edit function on every entry
-			for (ListEntry& currentEntry : m_ListEntries)
-			{
-				if (editFunction)
-				{
-					editFunction(currentEntry);
-				}
-			}
-		}
-
-		void ClearList()
-		{
-			m_ListEntries.clear();
-		}
-		void ClearEditListSelectionList()
-		{
-			m_EditListSelectionList.clear();
-		}
-		void AddToSelectionList(const std::string& label, std::function<void()> function)
-		{
-			if (!m_EditListSelectionList.contains(label))
-			{
-				m_EditListSelectionList.insert_or_assign(label, function);
-				return;
-			}
-		}
-		SelectionList& GetEditSelectionList()
-		{
-			return m_EditListSelectionList;
-		}
-
-		std::size_t GetEntriesListSize()
-		{
-			return m_ListEntries.size();
-		}
-
-		ListEntry& GetEntry(std::size_t index)
-		{
-			KG_ASSERT(index < m_ListEntries.size());
-			return m_ListEntries.at(index);
-		}
-
-	private:
-		std::vector<ListEntry> m_ListEntries{};
-		SelectionList m_EditListSelectionList{};
-	private:
-		friend void EditorUIService::List(ListSpec& spec);
-	};
-
-	struct OptionEntry
-	{
-	public:
-		FixedString32 m_Label{};
-		UUID m_Handle { k_EmptyUUID };
-	public:
-		bool operator==(const OptionEntry& other) const
-		{
-			if (this->m_Label == other.m_Label && this->m_Handle == other.m_Handle)
-			{
-				return true;
-			}
-			return false;
-		}
-	};
-	
-	// Supporting OptionList types/data
-	using OptionIndex = size_t;
-	constexpr OptionIndex k_InvalidEntryIndex{ std::numeric_limits<OptionIndex>().max() };
-
-	class OptionList
-	{
-	public:
-
-		//==============================
-		// Modify List
-		//==============================
-		OptionEntry* CreateOption()
-		{
-			return &m_Options.emplace_back();
-		}
-
-		void Clear()
-		{
-			m_Options.clear();
-		}
-
-		//==============================
-		// Getters/Setters
-		//==============================
-		OptionEntry* GetOption(OptionIndex index)
-		{
-			if (index >= m_Options.size())
-			{
-				return nullptr;
-			}
-
-			return &m_Options[index];
-		}
-	public:
-		//==============================
-		// Forward Iterator Begin/End (allow for-loops and other algs)
-		//==============================
-		std::vector<OptionEntry>::iterator begin()
-		{ 
-			return m_Options.begin(); 
-		}
-		std::vector<OptionEntry>::iterator end()
-		{ 
-			return m_Options.end();
-		}
-
-	private:
-		//==============================
-		// Internal Fields
-		//==============================
-		std::vector<OptionEntry> m_Options{};
-	};
-
-	enum DropDownFlags : WidgetFlags
-	{
-		DropDown_None = 0,
-		DropDown_Indented = BIT(0), // Indents the text (used in collapsing headers usually)
-	};
-
-	struct DropDownSpec : public Widget
-	{
-	public:
-		DropDownSpec() : Widget() {}
-	public:
-		OptionEntry* CreateOption()
-		{
-			return m_OptionsList.CreateOption();
-		}
-		bool SetCurrentOption(UUID handle)
-		{
-			OptionIndex index{ 0 };
-			for (OptionEntry& entry : m_OptionsList)
-			{
-				// Use the first-found option entry
-				if (entry.m_Handle == handle)
-				{
-					m_CurrentOption = index;
-					return true;
-				}
-				index++;
-			}
-
-			return false;
-		}
-	public:
-		FixedString32 m_Label{};
-		WidgetFlags m_Flags{ DropDown_None };
-		std::function<void(const OptionEntry&)> m_ConfirmAction{ nullptr };
-		Ref<void> m_ProvidedData{ nullptr };
-	private:
-		OptionIndex m_CurrentOption{ k_InvalidEntryIndex };
-		OptionList m_OptionsList{};
-	private:
-		friend void EditorUIService::DropDown(DropDownSpec&);
-	};
-
-
-	enum SelectOptionFlags : WidgetFlags
-	{
-		SelectOption_None = 0,
-		SelectOption_Indented = BIT(0), // Indents the text (used in collapsing headers usually)
-		SelectOption_PopupOnly = BIT(1), // Determines if line of text is generated for options
-		SelectOption_HandleEditButtonExternally = BIT(2) // Allows calling a custom function for edit button
-	};
-
-	using OptionMap = std::unordered_map<std::string, std::vector<OptionEntry>>; // TODO: Bruh what is this heap garbage
-
-	struct SelectOptionSpec : public Widget
-	{
-	public:
-		SelectOptionSpec() : Widget() {}
-	public:
-		FixedString32 m_Label{};
-		OptionEntry m_CurrentOption{};
-		uint32_t m_LineCount{ 3 };
-		std::function<void(SelectOptionSpec&)> m_PopupAction {nullptr};
-		std::function<void(const OptionEntry&)> m_ConfirmAction {nullptr};
-		WidgetFlags m_Flags{ SelectOption_None };
-		Ref<void> m_ProvidedData{ nullptr };
-	public:
-		// Only used if PopupOnly is true
-		bool m_OpenPopup{ false };
-		// Only used if HandleEditButtonExternally is true
-		std::function<void(SelectOptionSpec&)> m_OnEdit{ nullptr };
-
-	public:
-		void ClearOptions()
-		{
-			m_ActiveOptions.clear();
-		}
-		void AddToOptions(const std::string& group, const std::string& optionLabel, UUID optionIdentifier)
-		{
-			const OptionEntry newEntry{ optionLabel.c_str(), optionIdentifier};
-			if (!m_ActiveOptions.contains(group))
-			{
-				std::vector<OptionEntry> newVector {};
-				newVector.push_back(newEntry);
-				m_ActiveOptions.insert_or_assign(group, newVector);
-				return;
-			}
-
-			m_ActiveOptions.at(group).push_back(newEntry);
-		}
-		OptionMap& GetAllOptions()
-		{
-			return m_ActiveOptions;
-		}
-	private:
-		OptionMap m_ActiveOptions{};
-		bool m_Searching { false };
-		OptionEntry m_CachedSelection {};
-		OptionMap m_CachedSearchResults{};
-	private:
-		friend void EditorUIService::SelectOption(SelectOptionSpec&);
-	};
-
-	struct EditVariableSpec : public Widget
-	{
-	public:
-		EditVariableSpec() : Widget() {}
+		EditVariableWidget() : Widget() {}
 	public:
 		FixedString32 m_Label;
 		Buffer FieldBuffer {};
@@ -1707,7 +734,7 @@ namespace Kargono::EditorUI
 			FieldBuffer.SetDataToByte(0);
 		}
 	private:
-		friend void EditorUIService::EditVariable(EditVariableSpec&);
+		friend void EditorUIService::EditVariable(EditVariableWidget&);
 	};
 
 
@@ -1730,6 +757,4 @@ namespace Kargono::Utility
 	{
 		return { color.x, color.y, color.z, color.w };
 	}
-
-
 }

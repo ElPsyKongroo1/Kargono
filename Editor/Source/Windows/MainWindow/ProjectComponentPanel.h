@@ -2,7 +2,7 @@
 
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Assets/Asset.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/ECS/ProjectComponent.h"
 
 #include <filesystem>
@@ -64,22 +64,22 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		// Opening Panel Widgets
-		EditorUI::GenericPopupSpec m_CreateComponentPopup {};
-		EditorUI::SelectOptionSpec m_OpenComponentPopup {};
+		EditorUI::GenericPopupWidget m_CreateComponentPopup {};
+		EditorUI::SelectOptionWidget m_OpenComponentPopup {};
 		EditorUI::EditTextSpec m_SelectComponentName {};
-		EditorUI::ChooseDirectorySpec m_SelectProjectComponentLocationSpec{};
+		EditorUI::ChooseDirectoryWidget m_SelectProjectComponentLocationSpec{};
 		// Header
-		EditorUI::PanelHeaderSpec m_MainHeader {};
-		EditorUI::GenericPopupSpec m_DeleteComponentWarning {};
-		EditorUI::GenericPopupSpec m_CloseComponentWarning {};
+		EditorUI::PanelHeaderWidget m_MainHeader {};
+		EditorUI::GenericPopupWidget m_DeleteComponentWarning {};
+		EditorUI::GenericPopupWidget m_CloseComponentWarning {};
 		// Fields List
-		EditorUI::ListSpec m_FieldsTable {};
-		EditorUI::GenericPopupSpec m_AddFieldPopup {};
+		EditorUI::ListWidget m_FieldsTable {};
+		EditorUI::GenericPopupWidget m_AddFieldPopup {};
 		EditorUI::EditTextSpec m_AddFieldName {};
-		EditorUI::SelectOptionSpec m_AddFieldType {};
-		EditorUI::GenericPopupSpec m_EditFieldPopup {};
+		EditorUI::SelectOptionWidget m_AddFieldType {};
+		EditorUI::GenericPopupWidget m_EditFieldPopup {};
 		EditorUI::EditTextSpec m_EditFieldName {};
-		EditorUI::SelectOptionSpec m_EditFieldType {};
+		EditorUI::SelectOptionWidget m_EditFieldType {};
 	};
 }
 

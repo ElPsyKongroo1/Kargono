@@ -4,7 +4,7 @@
 #include "Kargono/Utility/FileDialogs.h"
 #include "Modules/Audio/Audio.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/RuntimeUI/Font.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Modules/Core/Engine.h"

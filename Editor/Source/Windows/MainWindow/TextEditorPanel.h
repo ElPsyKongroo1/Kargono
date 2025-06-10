@@ -1,6 +1,6 @@
 #pragma once
 #include "Modules/Events/KeyEvent.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiColorTextEditorAPI.h"
 
@@ -73,7 +73,7 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		API::EditorUI::TextEditorSpec m_TextEditor;
-		EditorUI::GenericPopupSpec m_DeleteWarningSpec {};
-		EditorUI::GenericPopupSpec m_DiscardChangesWarningSpec {};
+		EditorUI::GenericPopupWidget m_DeleteWarningSpec {};
+		EditorUI::GenericPopupWidget m_DiscardChangesWarningSpec {};
 	};
 }
