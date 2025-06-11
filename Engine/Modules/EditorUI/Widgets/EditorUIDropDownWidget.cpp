@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUIDropDownWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 
@@ -19,7 +19,7 @@ namespace Kargono::EditorUI
 			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
 		}
 		// Display Primary Label
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
 			m_Flags & DropDown_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
 		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
@@ -29,8 +29,8 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, EditorUIService::s_ActiveBackgroundColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, EditorUIService::s_HoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, EditorUIService::s_ActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, EditorUIService::m_ConfigColors.s_HoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, EditorUIService::m_ConfigColors.s_ActiveColor);
 
 		ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextLargeWidth + 5.0f);
 		ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne - 5.0f);
@@ -48,11 +48,11 @@ namespace Kargono::EditorUI
 
 		if (ImGui::IsItemActive())
 		{
-			dropdownColor = EditorUIService::s_ActiveColor;
+			dropdownColor = EditorUIService::m_ConfigColors.s_ActiveColor;
 		}
 		else if (ImGui::IsItemHovered())
 		{
-			dropdownColor = EditorUIService::s_HoveredColor;
+			dropdownColor = EditorUIService::m_ConfigColors.s_HoveredColor;
 		}
 		else
 		{
@@ -69,7 +69,7 @@ namespace Kargono::EditorUI
 		const char* selectedText = selectedEntry ? selectedEntry->m_Label.CString() : "";
 
 		// Display selected text
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 		ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
 		int floatPosition = ImGui::FindPositionAfterLength(selectedText, EditorUIService::s_SecondaryTextLargeWidth);

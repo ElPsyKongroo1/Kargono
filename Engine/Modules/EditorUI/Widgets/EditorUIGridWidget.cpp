@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUIGridWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Modules/Rendering/Texture.h"
 
@@ -21,7 +21,7 @@ namespace Kargono::EditorUI
 
 		// Start drawing columns
 		ImGui::Columns(columnCount, id.CString(), false);
-		ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
+		ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
 		for (GridEntry& currentEntry : m_Entries)
 		{
 			// Check if entry is selected
@@ -37,7 +37,7 @@ namespace Kargono::EditorUI
 			ImGui::PushID(entryID.CString());
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)entryArchetype->m_Icon->GetRendererID(), { m_CellIconSize, m_CellIconSize },
 				{ 0, 1 }, { 1, 0 },
-				-1, entryIsSelected ? EditorUIService::s_ActiveColor : EditorUIService::s_PureEmpty,
+				-1, entryIsSelected ? EditorUIService::m_ConfigColors.s_ActiveColor : k_PureEmpty,
 				entryArchetype->m_IconColor))
 			{
 				// Handle on left-click

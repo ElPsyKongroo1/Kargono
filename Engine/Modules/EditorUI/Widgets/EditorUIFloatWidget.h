@@ -19,10 +19,20 @@ namespace Kargono::EditorUI
 	struct EditFloatWidget : public Widget
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		EditFloatWidget() : Widget() {}
+		~EditFloatWidget() = default;
 	public:
+		//==============================
+		// Rendering
+		//==============================
 		void RenderFloat();
 	public:
+		//==============================
+		// Public Fields
+		//==============================
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditFloat_None };
 		float m_CurrentFloat{};
@@ -30,7 +40,6 @@ namespace Kargono::EditorUI
 		Ref<void> m_ProvidedData{ nullptr };
 		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
 		float m_ScrollSpeed{ 0.01f };
-	private:
 		bool m_Editing{ false };
 	};
 
@@ -43,10 +52,20 @@ namespace Kargono::EditorUI
 	struct EditVec2Widget : public Widget
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		EditVec2Widget() : Widget() {}
+		~EditVec2Widget() = default;
 	public:
+		//==============================
+		// Rendering
+		//==============================
 		void RenderVec2();
 	public:
+		//==============================
+		// Public Fields
+		//==============================
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditVec2_None };
 		Math::vec2 m_CurrentVec2{};
@@ -54,7 +73,6 @@ namespace Kargono::EditorUI
 		Ref<void> m_ProvidedData{ nullptr };
 		std::array<float, 2> m_Bounds{ 0.0f,0.0f };
 		float m_ScrollSpeed{ 0.01f };
-	private:
 		bool m_Editing{ false };
 	};
 
@@ -67,10 +85,20 @@ namespace Kargono::EditorUI
 	struct EditVec3Widget : public Widget
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		EditVec3Widget() : Widget() {}
+		~EditVec3Widget() = default;
 	public:
+		//==============================
+		// Rendering
+		//==============================
 		void RenderVec3();
 	public:
+		//==============================
+		// Public Fields
+		//==============================
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditVec3_None };
 		Math::vec3 m_CurrentVec3{};
@@ -78,7 +106,6 @@ namespace Kargono::EditorUI
 		Ref<void> m_ProvidedData{ nullptr };
 		std::array<float, 2> m_Bounds{ 0.0f, 0.0f };
 		float m_ScrollSpeed{ 0.01f };
-	private:
 		bool m_Editing{ false };
 	};
 
@@ -93,10 +120,20 @@ namespace Kargono::EditorUI
 	struct EditVec4Widget : public Widget
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		EditVec4Widget() : Widget() {}
+		~EditVec4Widget() = default;
 	public:
+		//==============================
+		// Rendering
+		//==============================
 		void RenderVec4();
 	public:
+		//==============================
+		// Public Fields
+		//==============================
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditVec4_None };
 		Math::vec4 m_CurrentVec4{};

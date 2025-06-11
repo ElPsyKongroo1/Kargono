@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUITreeWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 
@@ -45,7 +45,7 @@ namespace Kargono::EditorUI
 				// Draw SelectedEntry background
 				draw_list->AddRectFilled(screenPosition,
 					ImVec2(screenPosition.x + buttonDimensions.x, screenPosition.y + buttonDimensions.y),
-					ImColor(EditorUIService::s_HoveredColor), 4, ImDrawFlags_RoundCornersAll);
+					ImColor(EditorUIService::m_ConfigColors.s_HoveredColor), 4, ImDrawFlags_RoundCornersAll);
 
 				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && treeEntry.m_OnDoubleLeftClick)
 				{
@@ -60,7 +60,7 @@ namespace Kargono::EditorUI
 				// Draw SelectedEntry background
 				draw_list->AddRectFilled(screenPosition,
 					ImVec2(screenPosition.x + buttonDimensions.x, screenPosition.y + buttonDimensions.y),
-					ImColor(EditorUIService::s_ActiveColor), 4, ImDrawFlags_RoundCornersAll);
+					ImColor(EditorUIService::m_ConfigColors.s_ActiveColor), 4, ImDrawFlags_RoundCornersAll);
 				if (m_SelectionChanged)
 				{
 					ImGui::SetScrollHereY();
@@ -71,12 +71,12 @@ namespace Kargono::EditorUI
 			// Display entry icon
 			if (treeEntry.m_IconHandle)
 			{
-				EditorUIService::CreateImage(treeEntry.m_IconHandle, 14, EditorUIService::s_HighlightColor1);
+				EditorUIService::CreateImage(treeEntry.m_IconHandle, 14, EditorUIService::m_ConfigColors.s_HighlightColor1);
 				ImGui::SameLine();
 			}
 
 			// Display entry text
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 1.5f);
 			ImGui::TextUnformatted(treeEntry.m_Label.c_str());
 			ImGui::PopStyleColor();
@@ -88,13 +88,13 @@ namespace Kargono::EditorUI
 				// Draw expand icon
 				ImGui::SameLine();
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.5f);
-				ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
-				const Ref<Rendering::Texture2D> icon = m_ExpandedNodes.contains(currentPath) ? EditorUIService::s_IconDown : EditorUIService::s_IconRight;
+				ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
+				const Ref<Rendering::Texture2D> icon = m_ExpandedNodes.contains(currentPath) ? EditorUIService::m_GenIcons.m_Down : EditorUIService::m_GenIcons.m_Right;
 				if (ImGui::ImageButtonEx(m_WidgetID + EditorUIService::WidgetIterator(widgetCount),
 					(ImTextureID)(uint64_t)icon->GetRendererID(),
 					ImVec2(13, 13), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-					EditorUIService::s_PureEmpty,
-					m_ExpandedNodes.contains(currentPath) ? EditorUIService::s_HighlightColor1 : EditorUIService::s_DisabledColor, 0))
+					k_PureEmpty,
+					m_ExpandedNodes.contains(currentPath) ? EditorUIService::m_ConfigColors.s_HighlightColor1 : EditorUIService::m_ConfigColors.s_DisabledColor, 0))
 				{
 					if (m_ExpandedNodes.contains(currentPath))
 					{
@@ -110,7 +110,7 @@ namespace Kargono::EditorUI
 				if (ImGui::IsItemHovered())
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, m_ExpandedNodes.contains(currentPath) ? "Collapse" : "Expand");
+					ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, m_ExpandedNodes.contains(currentPath) ? "Collapse" : "Expand");
 					ImGui::EndTooltip();
 				}
 
@@ -126,7 +126,7 @@ namespace Kargono::EditorUI
 			{
 				draw_list->AddLine(ImVec2(rootPosition.x + 10.0f, screenPosition.y + 10.0f),
 					ImVec2(screenPosition.x, screenPosition.y + 10.0f),
-					ImColor(EditorUIService::s_PrimaryTextColor));
+					ImColor(EditorUIService::m_ConfigColors.s_PrimaryTextColor));
 			}
 			currentPath.PopBack();
 			entryIndex++;
@@ -137,7 +137,7 @@ namespace Kargono::EditorUI
 		{
 			draw_list->AddLine(ImVec2(rootPosition.x + 10.0f, rootPosition.y + 21.0f),
 				ImVec2(rootPosition.x + 10.0f, screenPosition.y + 10.0f),
-				ImColor(EditorUIService::s_PrimaryTextColor));
+				ImColor(EditorUIService::m_ConfigColors.s_PrimaryTextColor));
 		}
 	}
 

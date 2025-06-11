@@ -1410,7 +1410,7 @@ namespace API::EditorUI
 					if (it != m_LanguageDefinition.m_Identifiers.end() && !it->second.m_Declaration.empty())
 					{
 						ImGui::SetNextWindowSize({ 400.0f, 0.0f });
-						ImGui::PushStyleColor(ImGuiCol_Text, Kargono::EditorUI::EditorUIService::s_HighlightColor1);
+						ImGui::PushStyleColor(ImGuiCol_Text, Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1);
 						ImGui::BeginTooltip();
 						ImGui::TextWrapped(it->second.m_Declaration.c_str());
 						ImGui::PopStyleColor();
@@ -2722,28 +2722,28 @@ namespace API::EditorUI
 		s_CurrentPalette = 
 		{
 			{
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_SecondaryTextColor),	// Default
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3),	// Keyword	
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2),	// Number
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2),	// String
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2), // Char literal
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_SecondaryTextColor), // Punctuation
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor),	// Preprocessor
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PrimaryTextColor), // Identifier
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1), // Known identifier
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_SecondaryTextColor),	// Default
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3),	// Keyword	
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2),	// Number
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2),	// String
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2), // Char literal
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_SecondaryTextColor), // Punctuation
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_DisabledColor),	// Preprocessor
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_PrimaryTextColor), // Identifier
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1), // Known identifier
 					0xffc040a0, // Preproc identifier
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Comment (single line)
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Comment (multi line)
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_BackgroundColor), // Background
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PrimaryTextColor), // Cursor
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_DisabledColor), // Comment (single line)
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_DisabledColor), // Comment (multi line)
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_BackgroundColor), // Background
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_PrimaryTextColor), // Cursor
 					0x80a06020, // Selection
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3_UltraThin), // Error Background
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1), // Breakpoint
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Line number
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DarkBackgroundColor), // Current line fill
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PureEmpty), // Current line fill (inactive)
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PureEmpty), // Current line edge
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3), // Error Text
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3_UltraThin), // Error Background
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1), // Breakpoint
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_DisabledColor), // Line number
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_DarkBackgroundColor), // Current line fill
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::k_PureEmpty), // Current line fill (inactive)
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::k_PureEmpty), // Current line edge
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3), // Error Text
 			}
 		};
 

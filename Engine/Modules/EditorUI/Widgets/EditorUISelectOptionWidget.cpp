@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUISelectOptionWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 
@@ -45,13 +45,13 @@ namespace Kargono::EditorUI
 			{
 				ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
 			}
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 			int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
 				m_Flags & SelectOption_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
 			EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 			ImGui::PopStyleColor();
 
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_SecondaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 			EditorUIService::WriteMultilineText(m_CurrentOption.m_Label.CString(), EditorUIService::s_SecondaryTextLargeWidth, EditorUIService::s_SecondaryTextPosOne);
 			ImGui::PopStyleColor();
 
@@ -77,7 +77,7 @@ namespace Kargono::EditorUI
 						m_CachedSelection = m_CurrentOption;
 					}
 				},
-				EditorUIService::s_SmallEditButton, false, EditorUIService::s_DisabledColor);
+				EditorUIService::s_SmallEditButton, false, EditorUIService::m_ConfigColors.s_DisabledColor);
 		}
 
 		// Display Popup
@@ -88,7 +88,7 @@ namespace Kargono::EditorUI
 
 			// Set up the header for the popup
 			EditorUIService::TitleText(m_Label.CString());
-			ImGui::PushFont(EditorUIService::s_FontAntaRegular);
+			ImGui::PushFont(EditorUIService::m_ConfigFonts.m_HeaderRegular);
 			if (m_Searching)
 			{
 				ImGui::SameLine(ImGui::GetWindowWidth() - 124.0f - 200.0f);
@@ -103,9 +103,9 @@ namespace Kargono::EditorUI
 						return 0;
 					};
 
-				ImGui::PushStyleColor(ImGuiCol_FrameBg, EditorUIService::s_ActiveColor);
-				ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, EditorUIService::s_ActiveColor);
-				ImGui::PushStyleColor(ImGuiCol_FrameBgActive, EditorUIService::s_ActiveColor);
+				ImGui::PushStyleColor(ImGuiCol_FrameBg, EditorUIService::m_ConfigColors.s_ActiveColor);
+				ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, EditorUIService::m_ConfigColors.s_ActiveColor);
+				ImGui::PushStyleColor(ImGuiCol_FrameBgActive, EditorUIService::m_ConfigColors.s_ActiveColor);
 
 				ImGui::InputText((id + "InputText").c_str(), searchBuffer, sizeof(searchBuffer), ImGuiInputTextFlags_CallbackEdit, callback, (void*)this);
 				ImGui::PopStyleColor(3);
@@ -124,7 +124,7 @@ namespace Kargono::EditorUI
 						m_Searching = true;
 						m_CachedSearchResults = EditorUIService::GenerateSearchCache(m_ActiveOptions, searchBuffer);
 					}
-				}, EditorUIService::s_LargeSearchButton, m_Searching, EditorUIService::s_PrimaryTextColor);
+				}, EditorUIService::s_LargeSearchButton, m_Searching, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 
 			// Cancel Tool Bar Button
 			ImGui::SameLine();
@@ -133,7 +133,7 @@ namespace Kargono::EditorUI
 					m_Searching = false;
 					memset(searchBuffer, 0, sizeof(searchBuffer));
 					ImGui::CloseCurrentPopup();
-				}, EditorUIService::s_LargeCancelButton, false, EditorUIService::s_PrimaryTextColor);
+				}, EditorUIService::s_LargeCancelButton, false, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
@@ -148,7 +148,7 @@ namespace Kargono::EditorUI
 					m_Searching = false;
 					memset(searchBuffer, 0, sizeof(searchBuffer));
 					ImGui::CloseCurrentPopup();
-				}, EditorUIService::s_LargeConfirmButton, false, EditorUIService::s_PrimaryTextColor);
+				}, EditorUIService::s_LargeConfirmButton, false, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 
 			ImGui::Separator();
 
@@ -172,7 +172,7 @@ namespace Kargono::EditorUI
 
 					if (selectedButton)
 					{
-						ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_SelectedColor);
+						ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::m_ConfigColors.s_SelectedColor);
 					}
 
 					if (ImGui::Button((option.m_Label.CString() + id + std::string(option.m_Handle)).c_str()))

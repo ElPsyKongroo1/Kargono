@@ -156,7 +156,7 @@ namespace Kargono
 
 
 
-		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
+		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::k_PureEmpty);
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();
 		ImVec2 initialCursorPos = ImGui::GetCursorStartPos();
@@ -167,23 +167,23 @@ namespace Kargono
 		Ref<Rendering::Texture2D> icon {nullptr};
 		draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 30.0f, initialScreenCursorPos.y),
 			ImVec2(initialScreenCursorPos.x + (windowSize.x), initialScreenCursorPos.y + 30.0f),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
+			ImColor(EditorUI::EditorUIService::m_ConfigColors.s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
 
 		// Generate Download Image
-		icon = EditorUI::EditorUIService::s_IconDown;
+		icon = EditorUI::EditorUIService::m_GenIcons.m_Down;
 		ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 25, initialCursorPos.y + 4));
 		if (ImGui::ImageButton("Download Samples Button",
 			(ImTextureID)(uint64_t)icon->GetRendererID(),
 			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-			EditorUI::EditorUIService::s_PureEmpty,
-			EditorUI::EditorUIService::s_HighlightColor1))
+			EditorUI::k_PureEmpty,
+			EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1))
 		{
 			ImGui::OpenPopup("Download Samples Popup");
 		}
 		if (ImGui::IsItemHovered())
 		{
 			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Get Sample Projects");
+			ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, "Get Sample Projects");
 			ImGui::EndTooltip();
 		}
 

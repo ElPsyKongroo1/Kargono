@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUIButtonBarWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Kargono/Utility/Operations.h"
 
@@ -24,10 +24,10 @@ namespace Kargono::EditorUI
 
 		std::array<ImVec4, 4> buttonColors
 		{
-			EditorUIService::s_HighlightColor1_UltraThin,
-			EditorUIService::s_HighlightColor2_UltraThin,
-			EditorUIService::s_HighlightColor3_UltraThin,
-			EditorUIService::s_HighlightColor4_UltraThin,
+			EditorUIService::m_ConfigColors.s_HighlightColor1_UltraThin,
+			EditorUIService::m_ConfigColors.s_HighlightColor2_UltraThin,
+			EditorUIService::m_ConfigColors.s_HighlightColor3_UltraThin,
+			EditorUIService::m_ConfigColors.s_HighlightColor4_UltraThin,
 		};
 
 		if (m_Flags & Button_Indented)
@@ -35,7 +35,7 @@ namespace Kargono::EditorUI
 			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
 		}
 		// Display Primary Label
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
 			m_Flags & Button_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
 		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
@@ -63,11 +63,11 @@ namespace Kargono::EditorUI
 
 			if (ImGui::IsItemActive())
 			{
-				buttonColor = EditorUIService::s_ActiveColor;
+				buttonColor = EditorUIService::m_ConfigColors.s_ActiveColor;
 			}
 			else if (ImGui::IsItemHovered())
 			{
-				buttonColor = EditorUIService::s_HoveredColor;
+				buttonColor = EditorUIService::m_ConfigColors.s_HoveredColor;
 			}
 			else
 			{
@@ -80,7 +80,7 @@ namespace Kargono::EditorUI
 				4.0f, ImDrawFlags_RoundCornersAll);
 
 			// Display entry text
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 			ImGui::SameLine(buttonPositions[i]);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
 			int floatPosition = ImGui::FindPositionAfterLength(currentButton.m_Label.CString(), EditorUIService::s_SecondaryTextSmallWidth);

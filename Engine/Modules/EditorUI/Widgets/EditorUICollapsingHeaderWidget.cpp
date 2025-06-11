@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUICollapsingHeaderWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 #include "Kargono/Utility/Operations.h"
@@ -13,8 +13,8 @@ namespace Kargono::EditorUI
 		uint32_t widgetCount{ 0 };
 		FixedString<16> id{ "##" };
 		id.AppendInteger(m_WidgetID);
-		ImGui::PushFont(EditorUIService::s_FontAntaLarge);
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::PushFont(EditorUIService::m_ConfigFonts.m_HeaderLarge);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 		ImGui::TextUnformatted(m_Label.CString());
 		ImGui::PopStyleColor();
 		ImGui::PopFont();
@@ -23,7 +23,7 @@ namespace Kargono::EditorUI
 			{
 				Utility::Operations::ToggleBoolean(m_Expanded);
 			},
-			EditorUIService::s_SmallExpandButton, m_Expanded, m_Expanded ? EditorUIService::s_HighlightColor1 : EditorUIService::s_DisabledColor);
+			EditorUIService::s_SmallExpandButton, m_Expanded, m_Expanded ? EditorUIService::m_ConfigColors.s_HighlightColor1 : EditorUIService::m_ConfigColors.s_DisabledColor);
 
 		if (m_Expanded && !m_SelectionList.empty())
 		{
@@ -31,7 +31,7 @@ namespace Kargono::EditorUI
 			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
 				{
 					ImGui::OpenPopup(m_WidgetID - 1);
-				}, EditorUIService::s_MediumOptionsButton, false, EditorUIService::s_DisabledColor);
+				}, EditorUIService::s_MediumOptionsButton, false, EditorUIService::m_ConfigColors.s_DisabledColor);
 
 			if (ImGui::BeginPopupEx(m_WidgetID - 1, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
 			{

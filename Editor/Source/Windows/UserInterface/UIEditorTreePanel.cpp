@@ -77,7 +77,7 @@ namespace Kargono::Panels
 		EditorUI::TreeEntry uiEntry{};
 		uiEntry.m_Label = Assets::AssetService::GetUserInterfaceRegistry().at(
 			s_UIWindow->m_EditorUIHandle).Data.FileLocation.stem().string();
-		uiEntry.m_IconHandle = EditorUI::EditorUIService::s_IconUserInterface2;
+		uiEntry.m_IconHandle = EditorUI::EditorUIService::m_RuntimeUIIcons.m_UserInterface2;
 		uiEntry.m_Handle = s_UIWindow->m_EditorUIHandle;
 
 		// Add functions to call when interacting with window entry
@@ -90,7 +90,7 @@ namespace Kargono::Panels
 			// Create new window entry
 			EditorUI::TreeEntry windowEntry{};
 			windowEntry.m_Label = window.m_Tag;
-			windowEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;
+			windowEntry.m_IconHandle = EditorUI::EditorUIService::m_RuntimeUIIcons.m_Window;
 			windowEntry.m_Handle = window.m_ID;
 
 			// Add window selection options
@@ -647,7 +647,7 @@ namespace Kargono::Panels
 		// Create new window entry for m_UITree
 		EditorUI::TreeEntry& newEntry = uiTreeEntry->m_SubEntries.emplace_back();
 		newEntry.m_Label = "None";
-		newEntry.m_IconHandle = EditorUI::EditorUIService::s_IconWindow;
+		newEntry.m_IconHandle = EditorUI::EditorUIService::m_RuntimeUIIcons.m_Window;
 		
 
 		// Add window selection options

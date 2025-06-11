@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUICheckbox.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Kargono/Utility/Operations.h"
 #include "EditorUIEditTextWidget.h"
@@ -31,13 +31,13 @@ namespace Kargono::EditorUI
 			{
 				ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
 			}
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 			int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
 				m_Flags & EditText_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
 			EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 			ImGui::PopStyleColor();
 
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_SecondaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 			EditorUIService::WriteMultilineText(m_CurrentOption, EditorUIService::s_SecondaryTextLargeWidth, EditorUIService::s_SecondaryTextPosOne);
 			ImGui::PopStyleColor();
 
@@ -48,7 +48,7 @@ namespace Kargono::EditorUI
 					memset(m_Buffer.Data(), 0, m_Buffer.BufferSize());
 					memcpy(m_Buffer.Data(), m_CurrentOption.data(), m_CurrentOption.size());
 				},
-			EditorUIService::s_SmallEditButton, false, EditorUIService::s_DisabledColor);
+			EditorUIService::s_SmallEditButton, false, EditorUIService::m_ConfigColors.s_DisabledColor);
 		}
 
 		ImGui::SetNextWindowSize(ImVec2(600.0f, 0.0f));
@@ -56,7 +56,7 @@ namespace Kargono::EditorUI
 		{
 			EditorUI::EditorUIService::TitleText(popUpLabel);
 
-			ImGui::PushFont(EditorUI::EditorUIService::s_FontAntaRegular);
+			ImGui::PushFont(EditorUI::EditorUIService::m_ConfigFonts.m_HeaderRegular);
 
 			// Cancel Tool Bar Button
 			ImGui::SameLine();

@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUIGenericPopupWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 namespace Kargono::EditorUI
 {
@@ -37,7 +37,7 @@ namespace Kargono::EditorUI
 			EditorUIService::RecalculateWindowDimensions();
 			EditorUIService::TitleText(m_Label.CString());
 
-			ImGui::PushFont(EditorUIService::s_FontAntaRegular);
+			ImGui::PushFont(EditorUIService::m_ConfigFonts.m_HeaderRegular);
 
 			// Optional Delete Tool Bar Button
 			if (m_DeleteAction)
@@ -50,7 +50,7 @@ namespace Kargono::EditorUI
 							m_DeleteAction();
 						}
 						ImGui::CloseCurrentPopup();
-					}, EditorUIService::s_LargeDeleteButton, false, EditorUIService::s_PrimaryTextColor);
+					}, EditorUIService::s_LargeDeleteButton, false, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 			}
 
 			// Cancel Tool Bar Button
@@ -62,7 +62,7 @@ namespace Kargono::EditorUI
 						m_CancelAction();
 					}
 					ImGui::CloseCurrentPopup();
-				}, EditorUIService::s_LargeCancelButton, false, EditorUIService::s_PrimaryTextColor);
+				}, EditorUIService::s_LargeCancelButton, false, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
@@ -73,7 +73,7 @@ namespace Kargono::EditorUI
 						m_ConfirmAction();
 					}
 					ImGui::CloseCurrentPopup();
-				}, EditorUIService::s_LargeConfirmButton, false, EditorUIService::s_PrimaryTextColor);
+				}, EditorUIService::s_LargeConfirmButton, false, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 			ImGui::PopFont();
 
 			ImGui::Separator();
@@ -81,7 +81,7 @@ namespace Kargono::EditorUI
 			EditorUIService::Spacing(SpacingAmount::Small);
 
 			ImVec4 cachedBackgroundColor{ EditorUIService::s_ActiveBackgroundColor };
-			EditorUIService::s_ActiveBackgroundColor = EditorUIService::s_BackgroundColor;
+			EditorUIService::s_ActiveBackgroundColor = EditorUIService::m_ConfigColors.s_BackgroundColor;
 
 			if (m_PopupContents)
 			{

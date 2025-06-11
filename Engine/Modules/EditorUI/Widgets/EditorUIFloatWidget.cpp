@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUIFloatWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Kargono/Utility/Operations.h"
 
@@ -29,7 +29,7 @@ namespace Kargono::EditorUI
 		}
 
 
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
 			m_Flags & EditFloat_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
 		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
@@ -41,7 +41,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_HighlightColor1);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor1);
 			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentFloat), m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
@@ -56,7 +56,7 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::s_HighlightColor1, "X-Value");
+				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor1, "X-Value");
 				ImGui::EndTooltip();
 			}
 			ImGui::PopStyleVar();
@@ -66,7 +66,7 @@ namespace Kargono::EditorUI
 		{
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosOne, yPosition });
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_SecondaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 			int32_t floatPosition = ImGui::FindPositionAfterLength(Utility::Conversions::FloatToString(m_CurrentFloat).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
 			EditorUIService::TruncateText(Utility::Conversions::FloatToString(m_CurrentFloat),
 				floatPosition == -1 ? std::numeric_limits<int32_t>::max() : floatPosition);
@@ -79,7 +79,7 @@ namespace Kargono::EditorUI
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
 			EditorUIService::s_SmallEditButton,
-			m_Editing, m_Editing ? EditorUIService::s_PrimaryTextColor : EditorUIService::s_DisabledColor);
+			m_Editing, m_Editing ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor);
 	}
 	void EditVec2Widget::RenderVec2()
 	{
@@ -103,7 +103,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
 			m_Flags & EditVec2_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
@@ -116,7 +116,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_HighlightColor1);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentVec2.x), m_ScrollSpeed,
@@ -132,12 +132,12 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::s_HighlightColor1, "X-Value");
+				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor1, "X-Value");
 				ImGui::EndTooltip();
 			}
 
 			// y value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_HighlightColor2);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor2);
 			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosTwo, yPosition });
 			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentVec2.y), m_ScrollSpeed,
@@ -153,7 +153,7 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::s_HighlightColor2, "Y-Value");
+				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor2, "Y-Value");
 				ImGui::EndTooltip();
 			}
 			ImGui::PopStyleVar();
@@ -163,7 +163,7 @@ namespace Kargono::EditorUI
 		{
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosOne, yPosition });
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_SecondaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 			int32_t floatPosition = ImGui::FindPositionAfterLength(
 				Utility::Conversions::FloatToString(m_CurrentVec2.x).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
 			EditorUIService::TruncateText(Utility::Conversions::FloatToString(m_CurrentVec2.x),
@@ -182,7 +182,7 @@ namespace Kargono::EditorUI
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
 			EditorUIService::s_SmallEditButton,
-			m_Editing, m_Editing ? EditorUIService::s_PrimaryTextColor : EditorUIService::s_DisabledColor);
+			m_Editing, m_Editing ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor);
 	}
 	void EditVec3Widget::RenderVec3()
 	{
@@ -209,7 +209,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
 			m_Flags & EditVec3_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
 		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
@@ -221,7 +221,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_HighlightColor1);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentVec3.x), m_ScrollSpeed,
@@ -237,12 +237,12 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::s_HighlightColor1, "X-Value");
+				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor1, "X-Value");
 				ImGui::EndTooltip();
 			}
 
 			// y value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_HighlightColor2);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor2);
 			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosTwo, yPosition });
 			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentVec3.y), m_ScrollSpeed,
@@ -258,12 +258,12 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::s_HighlightColor2, "Y-Value");
+				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor2, "Y-Value");
 				ImGui::EndTooltip();
 			}
 
 			// z value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_HighlightColor3);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor3);
 			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosThree, yPosition });
 			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
 			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentVec3.z), m_ScrollSpeed,
@@ -279,7 +279,7 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::s_HighlightColor3, "Z-Value");
+				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor3, "Z-Value");
 				ImGui::EndTooltip();
 			}
 			ImGui::PopStyleVar();
@@ -288,7 +288,7 @@ namespace Kargono::EditorUI
 		else
 		{
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_SecondaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosOne, yPosition });
 			int32_t floatPosition = ImGui::FindPositionAfterLength(
 				Utility::Conversions::FloatToString(m_CurrentVec3.x).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
@@ -313,7 +313,7 @@ namespace Kargono::EditorUI
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
 			EditorUIService::s_SmallEditButton,
-			m_Editing, m_Editing ? EditorUIService::s_PrimaryTextColor : EditorUIService::s_DisabledColor);
+			m_Editing, m_Editing ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor);
 	}
 	void EditVec4Widget::RenderVec4()
 	{
@@ -355,7 +355,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
 			m_Flags & EditVec4_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
 		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
@@ -367,7 +367,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
-			ImGui::PushStyleColor(ImGuiCol_Text, (m_Flags & EditVec4_RGBA) ? EditorUIService::s_Red : EditorUIService::s_HighlightColor1);
+			ImGui::PushStyleColor(ImGuiCol_Text, (m_Flags & EditVec4_RGBA) ? k_Red : EditorUIService::m_ConfigColors.s_HighlightColor1);
 			static bool s_ModifyingX{ false };
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
@@ -397,13 +397,13 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(m_Flags & EditVec4_RGBA ? EditorUIService::s_Red : EditorUIService::s_HighlightColor1,
+				ImGui::TextColored(m_Flags & EditVec4_RGBA ? k_Red : EditorUIService::m_ConfigColors.s_HighlightColor1,
 					m_Flags & EditVec4_RGBA ? "Red Channel" : "X-Value");
 				ImGui::EndTooltip();
 			}
 
 			// y value
-			ImGui::PushStyleColor(ImGuiCol_Text, (m_Flags & EditVec4_RGBA) ? EditorUIService::s_Green : EditorUIService::s_HighlightColor2);
+			ImGui::PushStyleColor(ImGuiCol_Text, (m_Flags & EditVec4_RGBA) ? k_Green : EditorUIService::m_ConfigColors.s_HighlightColor2);
 			static bool s_ModifyingY{ false };
 			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosTwo, yPosition });
 			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
@@ -432,13 +432,13 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(m_Flags & EditVec4_RGBA ? EditorUIService::s_Green : EditorUIService::s_HighlightColor2,
+				ImGui::TextColored(m_Flags & EditVec4_RGBA ? k_Green : EditorUIService::m_ConfigColors.s_HighlightColor2,
 					m_Flags & EditVec4_RGBA ? "Green Channel" : "Y-Value");
 				ImGui::EndTooltip();
 			}
 
 			// z value
-			ImGui::PushStyleColor(ImGuiCol_Text, (m_Flags & EditVec4_RGBA) ? EditorUIService::s_Blue : EditorUIService::s_HighlightColor3);
+			ImGui::PushStyleColor(ImGuiCol_Text, (m_Flags & EditVec4_RGBA) ? k_Blue : EditorUIService::m_ConfigColors.s_HighlightColor3);
 			static bool s_ModifyingZ{ false };
 			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosThree, yPosition });
 			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
@@ -467,14 +467,14 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(m_Flags & EditVec4_RGBA ? EditorUIService::s_Blue : EditorUIService::s_HighlightColor3,
+				ImGui::TextColored(m_Flags & EditVec4_RGBA ? k_Blue : EditorUIService::m_ConfigColors.s_HighlightColor3,
 					m_Flags & EditVec4_RGBA ? "Blue Channel" : "Z-Value");
 				ImGui::EndTooltip();
 			}
 
 
 			// w value
-			ImGui::PushStyleColor(ImGuiCol_Text, (m_Flags & EditVec4_RGBA) ? EditorUIService::s_Alpha : EditorUIService::s_HighlightColor4);
+			ImGui::PushStyleColor(ImGuiCol_Text, (m_Flags & EditVec4_RGBA) ? k_Alpha : EditorUIService::m_ConfigColors.s_HighlightColor4);
 			static bool s_ModifyingW{ false };
 			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosFour, yPosition });
 			ImGui::SetNextItemWidth((m_Flags & EditVec4_RGBA) ? EditorUIService::s_SecondaryTextSmallWidth - 28.0f : EditorUIService::s_SecondaryTextSmallWidth);
@@ -503,7 +503,7 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(m_Flags & EditVec4_RGBA ? EditorUIService::s_Alpha : EditorUIService::s_HighlightColor4,
+				ImGui::TextColored(m_Flags & EditVec4_RGBA ? k_Alpha : EditorUIService::m_ConfigColors.s_HighlightColor4,
 					m_Flags & EditVec4_RGBA ? "Alpha Channel" : "W-Value");
 				ImGui::EndTooltip();
 			}
@@ -542,7 +542,7 @@ namespace Kargono::EditorUI
 		else
 		{
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_SecondaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosOne, yPosition });
 			int32_t floatPosition = ImGui::FindPositionAfterLength(
 				Utility::Conversions::FloatToString(m_CurrentVec4.x).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
@@ -597,6 +597,6 @@ namespace Kargono::EditorUI
 				}
 			},
 			EditorUIService::s_SmallEditButton,
-			m_Editing, m_Editing ? EditorUIService::s_PrimaryTextColor : EditorUIService::s_DisabledColor);
+			m_Editing, m_Editing ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor);
 	}
 }

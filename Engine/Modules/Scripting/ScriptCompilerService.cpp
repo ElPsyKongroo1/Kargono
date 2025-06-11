@@ -257,7 +257,7 @@ namespace Kargono::Scripting
 				SuggestionSpec newSuggestion;
 				newSuggestion.m_Label = label;
 				newSuggestion.m_ReplacementText = funcNode.Name.Value + "()";
-				newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
+				newSuggestion.m_Icon = EditorUI::EditorUIService::m_ScriptingIcons.m_Function;
 				newSuggestion.m_ShiftValue = -1;
 				allSuggestions.push_back(newSuggestion);
 			}
@@ -300,7 +300,7 @@ namespace Kargono::Scripting
 				SuggestionSpec newSuggestion;
 				newSuggestion.m_Label = primitiveType.Name;
 				newSuggestion.m_ReplacementText = primitiveType.Name;
-				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
+				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::m_SceneIcons.m_Entity;
 				allSuggestions.push_back(newSuggestion);
 			}
 		}
@@ -318,7 +318,7 @@ namespace Kargono::Scripting
 					SuggestionSpec newSuggestion;
 					newSuggestion.m_Label = dataMember->Name;
 					newSuggestion.m_ReplacementText = dataMember->Name;
-					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
+					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::m_SceneIcons.m_Entity;
 					allSuggestions.push_back(newSuggestion);
 				}	
 			}
@@ -329,7 +329,7 @@ namespace Kargono::Scripting
 					SuggestionSpec newSuggestion;
 					newSuggestion.m_Label = funcNode->Name.Value;
 					newSuggestion.m_ReplacementText = funcNode->Name.Value + "()";
-					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconFunction;
+					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::m_ScriptingIcons.m_Function;
 					newSuggestion.m_ShiftValue = -1;
 					allSuggestions.push_back(newSuggestion);
 				}
@@ -362,7 +362,7 @@ namespace Kargono::Scripting
 						SuggestionSpec newSuggestion;
 						newSuggestion.m_Label = variable.Identifier.Value;
 						newSuggestion.m_ReplacementText = variable.Identifier.Value;
-						newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
+						newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::m_SceneIcons.m_Entity;
 						allSuggestions.push_back(newSuggestion);
 					}
 				}
@@ -377,7 +377,7 @@ namespace Kargono::Scripting
 				SuggestionSpec newSuggestion;
 				newSuggestion.m_Label = name;
 				newSuggestion.m_ReplacementText = name + "::";
-				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconDirectory;
+				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::m_ContentBrowserIcons.m_Directory;
 				allSuggestions.push_back(newSuggestion);
 			}
 		}
@@ -402,7 +402,7 @@ namespace Kargono::Scripting
 					SuggestionSpec newSuggestion;
 					newSuggestion.m_Label = label;
 					newSuggestion.m_ReplacementText = funcNode.Name.Value + "()";
-					newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
+					newSuggestion.m_Icon = EditorUI::EditorUIService::m_ScriptingIcons.m_Function;
 					newSuggestion.m_ShiftValue = -1;
 					allSuggestions.push_back(newSuggestion);
 				}
@@ -419,7 +419,7 @@ namespace Kargono::Scripting
 					SuggestionSpec newSuggestion;
 					newSuggestion.m_Label = primitiveType.Name;
 					newSuggestion.m_ReplacementText = primitiveType.Name;
-					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
+					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::m_SceneIcons.m_Entity;
 					allSuggestions.push_back(newSuggestion);
 				}
 			}
@@ -537,7 +537,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::BooleanLiteral;
 		newPrimitiveType.EmittedDeclaration = "bool";
 		newPrimitiveType.EmittedParameter = "bool";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconBoolean;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ScriptingIcons.m_Boolean;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType.Name = "keycode";
@@ -545,7 +545,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint16_t";
 		newPrimitiveType.EmittedParameter = "uint16_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Input;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType.Name = "screen_resolution";
@@ -553,7 +553,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint16_t";
 		newPrimitiveType.EmittedParameter = "uint16_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGrid;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ViewportIcons.m_Grid;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -562,7 +562,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::StringLiteral;
 		newPrimitiveType.EmittedDeclaration = "std::string";
 		newPrimitiveType.EmittedParameter = "std::string_view";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTextWidget;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_RuntimeUIIcons.m_TextWidget;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -571,7 +571,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
 		newPrimitiveType.EmittedDeclaration = "int32_t";
 		newPrimitiveType.EmittedParameter = "int32_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ScriptingIcons.m_Number;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -580,7 +580,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint16_t";
 		newPrimitiveType.EmittedParameter = "uint16_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ScriptingIcons.m_Number;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -589,7 +589,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint32_t";
 		newPrimitiveType.EmittedParameter = "uint32_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ScriptingIcons.m_Number;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -598,7 +598,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ScriptingIcons.m_Number;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -607,7 +607,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconAI;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_GenIcons.m_AI;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -616,7 +616,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconAudio;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Audio;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -625,7 +625,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEmitterConfig;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_EmitterConfig;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -634,7 +634,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconFont;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Font;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -643,7 +643,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGlobalState;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_GlobalState;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -652,7 +652,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Input;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -661,7 +661,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEntity;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_SceneIcons.m_Entity;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -670,7 +670,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEnum;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Enum;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -679,7 +679,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconScene;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Scene;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -688,7 +688,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTexture;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Texture;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -697,7 +697,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconUserInterface2;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_RuntimeUIIcons.m_UserInterface2;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		// User interface widgets
@@ -706,7 +706,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.Description = "Reference to a user interface window. This object is a reference to a window that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.";
 		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WindowHandle";
 		newPrimitiveType.EmittedParameter = "RuntimeUI::WindowHandle";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconWindow;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_RuntimeUIIcons.m_Window;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -809,7 +809,7 @@ namespace Kargono::Scripting
 				newPrimitiveType.Description = "Reference to a custom enum.";
 				newPrimitiveType.EmittedDeclaration = "uint16_t";
 				newPrimitiveType.EmittedParameter = "uint16_t";
-				newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEnum;
+				newPrimitiveType.Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Enum;
 				s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 			}
 		}
@@ -820,7 +820,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEntity;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_SceneIcons.m_Entity;
 
 		newFunctionMember.Name = { ScriptTokenType::Identifier, "HasComponent" };
 		newFunctionMember.Namespace = {};
@@ -1279,7 +1279,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::FloatLiteral;
 		newPrimitiveType.EmittedDeclaration = "float";
 		newPrimitiveType.EmittedParameter = "float";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ScriptingIcons.m_Decimal;
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
@@ -1288,7 +1288,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "Math::vec2";
 		newPrimitiveType.EmittedParameter = "Math::vec2";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ScriptingIcons.m_Decimal;
 		newDataMember.Name = "x";
 		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
 		dataMemberPrimitiveType.Value = "float";
@@ -1314,7 +1314,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "Math::vec3";
 		newPrimitiveType.EmittedParameter = "Math::vec3";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ScriptingIcons.m_Decimal;
 		newDataMember.Name = "x";
 		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
 		dataMemberPrimitiveType.Value = "float";
@@ -1347,7 +1347,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "Math::vec4";
 		newPrimitiveType.EmittedParameter = "Math::vec4";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_ScriptingIcons.m_Decimal;
 		newPrimitiveType.AcceptableArithmetic.insert("float");
 		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
@@ -1358,7 +1358,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "Physics::RaycastResult";
 		newPrimitiveType.EmittedParameter = "Physics::RaycastResult";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconRigidBody;
+		newPrimitiveType.Icon = EditorUI::EditorUIService::m_SceneIcons.m_RigidBody;
 		newDataMember.Name = "collisionSuccess";
 		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
 		dataMemberPrimitiveType.Value = "bool";
@@ -1487,19 +1487,19 @@ namespace Kargono::Scripting
 		s_ActiveLanguageDefinition.AllLiteralTypes.clear();
 		s_ActiveLanguageDefinition.AllLiteralTypes =
 		{
-			{"AIStates", {{}, EditorUI::EditorUIService::s_IconAI}},
-			{"AudioBuffers", {{}, EditorUI::EditorUIService::s_IconAudio}},
-			{"EmitterConfigs", {{}, EditorUI::EditorUIService::s_IconParticles}},
-			{"Fonts", {{}, EditorUI::EditorUIService::s_IconFont}},
-			{"GameStates", {{}, EditorUI::EditorUIService::s_IconGlobalState}},
-			{"InputMaps", {{}, EditorUI::EditorUIService::s_IconInput}},
-			{"ProjectComponents", {{}, EditorUI::EditorUIService::s_IconProjectComponent}},
-			{"Enums", {{}, EditorUI::EditorUIService::s_IconEnum}},
-			{"Scenes", {{}, EditorUI::EditorUIService::s_IconScene}},
-			{"Textures", {{}, EditorUI::EditorUIService::s_IconTexture}},
-			{"UserInterfaces", {{}, EditorUI::EditorUIService::s_IconUserInterface2}},
-			{"ScreenResolution", {{}, EditorUI::EditorUIService::s_IconGrid}},
-			{"Key", {{}, EditorUI::EditorUIService::s_IconInput}}
+			{"AIStates", {{}, EditorUI::EditorUIService::m_GenIcons.m_AI}},
+			{"AudioBuffers", {{}, EditorUI::EditorUIService::m_ContentBrowserIcons.m_Audio}},
+			{"EmitterConfigs", {{}, EditorUI::EditorUIService::m_SceneIcons.m_Particles}},
+			{"Fonts", {{}, EditorUI::EditorUIService::m_ContentBrowserIcons.m_Font}},
+			{"GameStates", {{}, EditorUI::EditorUIService::m_ContentBrowserIcons.m_GlobalState}},
+			{"InputMaps", {{}, EditorUI::EditorUIService::m_ContentBrowserIcons.m_Input}},
+			{"ProjectComponents", {{}, EditorUI::EditorUIService::m_ContentBrowserIcons.m_ProjectComponent}},
+			{"Enums", {{}, EditorUI::EditorUIService::m_ContentBrowserIcons.m_Enum}},
+			{"Scenes", {{}, EditorUI::EditorUIService::m_ContentBrowserIcons.m_Scene}},
+			{"Textures", {{}, EditorUI::EditorUIService::m_ContentBrowserIcons.m_Texture}},
+			{"UserInterfaces", {{}, EditorUI::EditorUIService::m_RuntimeUIIcons.m_UserInterface2}},
+			{"ScreenResolution", {{}, EditorUI::EditorUIService::m_ViewportIcons.m_Grid}},
+			{"Key", {{}, EditorUI::EditorUIService::m_ContentBrowserIcons.m_Input}}
 		};
 
 		// Load in names of all AI States

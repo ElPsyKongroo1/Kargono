@@ -1,6 +1,6 @@
 #pragma once
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/FixedString.h"
@@ -36,7 +36,7 @@ namespace Kargono::EditorUI
 	{
 		// Display metadata
 		Ref<Rendering::Texture2D> m_Icon;
-		ImVec4 m_IconColor{ EditorUI::EditorUIService::s_DisabledColor };
+		ImVec4 m_IconColor{ EditorUI::EditorUIService::m_ConfigColors.s_DisabledColor };
 
 		// Handle key input
 		std::function<void(GridEntry& currentEntry)> m_OnDoubleLeftClick;

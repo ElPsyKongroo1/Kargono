@@ -24,4 +24,4 @@
 #include "Modules/EditorUI/Widgets/EditorUIIntegerWidget.h"
 #include "Modules/EditorUI/Widgets/EditorUIFloatWidget.h"
 
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"

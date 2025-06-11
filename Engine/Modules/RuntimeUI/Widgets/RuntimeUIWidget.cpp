@@ -15,27 +15,27 @@ namespace Kargono::Utility
 		switch (widgetType)
 		{
 		case RuntimeUI::WidgetTypes::TextWidget:
-			return EditorUI::EditorUIService::s_IconTextWidget;
+			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_TextWidget;
 		case RuntimeUI::WidgetTypes::ButtonWidget:
-			return EditorUI::EditorUIService::s_IconButtonWidget;
+			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_ButtonWidget;
 		case RuntimeUI::WidgetTypes::ImageWidget:
-			return EditorUI::EditorUIService::s_IconTexture;
+			return EditorUI::EditorUIService::m_ContentBrowserIcons.m_Texture;
 		case RuntimeUI::WidgetTypes::ImageButtonWidget:
-			return EditorUI::EditorUIService::s_IconImageButtonWidget;
+			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_ImageButtonWidget;
 		case RuntimeUI::WidgetTypes::CheckboxWidget:
-			return EditorUI::EditorUIService::s_IconCheckbox_Enabled;
+			return EditorUI::EditorUIService::m_GenIcons.m_Checkbox_Enabled;
 		case RuntimeUI::WidgetTypes::ContainerWidget:
-			return EditorUI::EditorUIService::s_IconBoxCollider;
+			return EditorUI::EditorUIService::m_SceneIcons.m_BoxCollider;
 		case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
-			return EditorUI::EditorUIService::s_IconHorizontalContainer;
+			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_HorizontalContainer;
 		case RuntimeUI::WidgetTypes::VerticalContainerWidget:
-			return EditorUI::EditorUIService::s_IconVerticalContainer;
+			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_VerticalContainer;
 		case RuntimeUI::WidgetTypes::InputTextWidget:
-			return EditorUI::EditorUIService::s_IconInputTextWidget;
+			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_InputTextWidget;
 		case RuntimeUI::WidgetTypes::DropDownWidget:
-			return EditorUI::EditorUIService::s_IconDropDownWidget;
+			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_DropDownWidget;
 		case RuntimeUI::WidgetTypes::SliderWidget:
-			return EditorUI::EditorUIService::s_IconSliderWidget;
+			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_SliderWidget;
 		default:
 			KG_ERROR("Invalid widget type provided");
 			return nullptr;

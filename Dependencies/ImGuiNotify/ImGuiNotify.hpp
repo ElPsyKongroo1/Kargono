@@ -14,10 +14,10 @@
 
 #pragma once
 
-#include <vector>			// Vector for storing notifications list
+#include <vector>
 #include <string>
-#include <chrono>			// For the notifications timed dissmiss
-#include <functional>		// For storing the code, which executest on the button click in the notification
+#include <chrono>
+#include <functional>
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -47,13 +47,6 @@
  * CONFIGURATION SECTION End
 */
 
-
-
-
-
-
-
-
 static const ImGuiWindowFlags NOTIFY_DEFAULT_TOAST_FLAGS = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing;
 
 #define NOTIFY_NULL_OR_EMPTY(str)		(!str || !strlen(str))
@@ -61,7 +54,7 @@ static const ImGuiWindowFlags NOTIFY_DEFAULT_TOAST_FLAGS = ImGuiWindowFlags_Alwa
 
 enum class ImGuiToastType : uint8_t
 {
-    None,
+    None = 0,
     Success,
     Warning,
     Error,
@@ -71,7 +64,7 @@ enum class ImGuiToastType : uint8_t
 
 enum class ImGuiToastPhase : uint8_t
 {
-    FadeIn,
+    FadeIn = 0,
     Wait,
     FadeOut,
     Expired,
@@ -80,7 +73,7 @@ enum class ImGuiToastPhase : uint8_t
 
 enum class ImGuiToastPos : uint8_t
 {
-    TopLeft,
+    TopLeft = 0,
     TopCenter,
     TopRight,
     BottomLeft,
@@ -258,11 +251,11 @@ public:
         case ImGuiToastType::Success:
             return { 0, 157, 255, 255 }; // Blue
         case ImGuiToastType::Warning:
-            return Kargono::EditorUI::EditorUIService::s_HighlightColor1; // Yellow
+            return Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1; // Yellow
         case ImGuiToastType::Error:
-            return Kargono::EditorUI::EditorUIService::s_Red; // Red
+            return Kargono::EditorUI::k_Red; // Red
         case ImGuiToastType::Info:
-            return Kargono::EditorUI::EditorUIService::s_Green; // Green
+            return Kargono::EditorUI::k_Green; // Green
         default:
             return {255, 255, 255, 255}; // White
         }
@@ -569,17 +562,17 @@ namespace ImGui
 
 
 				// Draw Notification Icon
-				ImGui::PushStyleColor(ImGuiCol_Button, Kargono::EditorUI::EditorUIService::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Kargono::EditorUI::EditorUIService::s_PureEmpty);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Kargono::EditorUI::EditorUIService::s_PureEmpty);
-				ImGui::ImageButton((ImTextureID)(uint64_t)Kargono::EditorUI::EditorUIService::s_IconNotification->GetRendererID(),
+				ImGui::PushStyleColor(ImGuiCol_Button, Kargono::EditorUI::k_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Kargono::EditorUI::k_PureEmpty);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Kargono::EditorUI::k_PureEmpty);
+				ImGui::ImageButton((ImTextureID)(uint64_t)Kargono::EditorUI::EditorUIService::m_GenIcons.m_Notification->GetRendererID(),
 					ImVec2(14.0f, 14.0f),
-					ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, -1, Kargono::EditorUI::EditorUIService::s_PureEmpty,
+					ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, -1, Kargono::EditorUI::k_PureEmpty,
 					textColor);
 
 				ImGui::PopStyleColor(3);
 
-				ImGui::PushFont(Kargono::EditorUI::EditorUIService::s_FontAntaRegular);
+				ImGui::PushFont(Kargono::EditorUI::EditorUIService::m_ConfigFonts.m_HeaderRegular);
 				ImGui::PushStyleColor(ImGuiCol_Text, textColor);
 
                 // If a title is set
@@ -623,8 +616,8 @@ namespace ImGui
                     SetCursorPosX(GetCursorPosX() + (GetWindowSize().x - GetCursorPosX()) * scale);
 
 					// Draw dismiss button
-					ImGui::PushStyleColor(ImGuiCol_Button, Kargono::EditorUI::EditorUIService::s_PureEmpty);
-					if (ImGui::ImageButton((ImTextureID)(uint64_t)Kargono::EditorUI::EditorUIService::s_IconCancel->GetRendererID(), 
+					ImGui::PushStyleColor(ImGuiCol_Button, Kargono::EditorUI::k_PureEmpty);
+					if (ImGui::ImageButton((ImTextureID)(uint64_t)Kargono::EditorUI::EditorUIService::m_GenIcons.m_Cancel->GetRendererID(),
 						ImVec2(18.0f, 18.0f),
 						ImVec2{ 0, 1 }, ImVec2{ 1, 0 }))
 					{
@@ -636,7 +629,7 @@ namespace ImGui
 					if (ImGui::IsItemHovered())
 					{
 						ImGui::BeginTooltip();
-						ImGui::TextColored(Kargono::EditorUI::EditorUIService::s_HighlightColor1, "Close");
+						ImGui::TextColored(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, "Close");
 						ImGui::EndTooltip();
 					}
                 }

@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUICheckbox.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 #include "EditorUIVariableWidget.h"
 
 namespace Kargono::EditorUI
@@ -14,12 +14,12 @@ namespace Kargono::EditorUI
 		id.AppendInteger(m_WidgetID);
 		static ImGuiInputTextFlags inputFlags{};
 
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(), EditorUIService::s_PrimaryTextWidth);
 		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_SecondaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 		switch (VariableType)
 		{
 		case WrappedVarType::None:
@@ -32,8 +32,8 @@ namespace Kargono::EditorUI
 		case WrappedVarType::Bool:
 		{
 			ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne);
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUIService::s_PureEmpty);
-			ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, k_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
 			EditorUIService::TruncateText("True", 12);
 			ImGui::SameLine();
 			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
@@ -46,7 +46,7 @@ namespace Kargono::EditorUI
 					{
 						FieldBuffer.SetString("True");
 					}
-				}, EditorUIService::s_SmallCheckboxButton, std::string(FieldBuffer.As<char>()) == std::string("True"), EditorUIService::s_HighlightColor1);
+				}, EditorUIService::s_SmallCheckboxButton, std::string(FieldBuffer.As<char>()) == std::string("True"), EditorUIService::m_ConfigColors.s_HighlightColor1);
 
 			ImGui::SameLine(300.0f);
 			EditorUIService::TruncateText("False", 12);
@@ -61,7 +61,7 @@ namespace Kargono::EditorUI
 					{
 						FieldBuffer.SetString("False");
 					}
-				}, EditorUIService::s_SmallCheckboxButton, std::string(FieldBuffer.As<char>()) == std::string("False"), EditorUIService::s_HighlightColor1);
+				}, EditorUIService::s_SmallCheckboxButton, std::string(FieldBuffer.As<char>()) == std::string("False"), EditorUIService::m_ConfigColors.s_HighlightColor1);
 			ImGui::PopStyleColor(2);
 			break;
 		}

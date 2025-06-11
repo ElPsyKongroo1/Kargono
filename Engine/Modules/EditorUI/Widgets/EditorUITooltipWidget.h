@@ -5,7 +5,7 @@
 #include "Kargono/Core/FixedString.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiAPI.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include <functional>
 
@@ -13,7 +13,7 @@ namespace Kargono::EditorUI
 {
 	struct TooltipSeperatorData
 	{
-		ImVec4 m_SeperatorColor{ EditorUIService::s_DisabledColor };
+		ImVec4 m_SeperatorColor{ EditorUIService::m_ConfigColors.s_DisabledColor };
 	};
 
 	struct TooltipEntry

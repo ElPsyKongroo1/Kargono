@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUIWarningPopupWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 namespace Kargono::EditorUI
 {
@@ -25,21 +25,21 @@ namespace Kargono::EditorUI
 			EditorUIService::RecalculateWindowDimensions();
 			EditorUIService::TitleText(m_Label.CString());
 
-			ImGui::PushFont(EditorUIService::s_FontAntaRegular);
+			ImGui::PushFont(EditorUIService::m_ConfigFonts.m_HeaderRegular);
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
 			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
 				{
 					ImGui::CloseCurrentPopup();
-				}, EditorUIService::s_LargeConfirmButton, false, EditorUIService::s_PrimaryTextColor);
+				}, EditorUIService::s_LargeConfirmButton, false, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 
 			ImGui::Separator();
 
 			EditorUIService::Spacing(SpacingAmount::Small);
 
 			ImVec4 cachedBackgroundColor{ EditorUIService::s_ActiveBackgroundColor };
-			EditorUIService::s_ActiveBackgroundColor = EditorUIService::s_BackgroundColor;
+			EditorUIService::s_ActiveBackgroundColor = EditorUIService::m_ConfigColors.s_BackgroundColor;
 
 			if (m_PopupContents)
 			{

@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUIListWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 #include "Kargono/Utility/Operations.h"
@@ -21,9 +21,9 @@ namespace Kargono::EditorUI
 		}
 		if (!(m_Flags & (List_RegularSizeTitle | List_Indented)))
 		{
-			ImGui::PushFont(EditorUIService::s_FontAntaLarge);
+			ImGui::PushFont(EditorUIService::m_ConfigFonts.m_HeaderLarge);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
 			m_Flags & List_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
 		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
@@ -40,7 +40,7 @@ namespace Kargono::EditorUI
 			{
 				Utility::Operations::ToggleBoolean(m_Expanded);
 			},
-			EditorUIService::s_ListExpandButton, m_Expanded, m_Expanded ? EditorUIService::s_HighlightColor1 : EditorUIService::s_DisabledColor);
+			EditorUIService::s_ListExpandButton, m_Expanded, m_Expanded ? EditorUIService::m_ConfigColors.s_HighlightColor1 : EditorUIService::m_ConfigColors.s_DisabledColor);
 
 		if (m_Expanded && !m_EditListSelectionList.empty())
 		{
@@ -48,7 +48,7 @@ namespace Kargono::EditorUI
 			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
 				{
 					ImGui::OpenPopup(m_WidgetID - 1);
-				}, EditorUIService::s_MediumOptionsButton, false, EditorUIService::s_DisabledColor);
+				}, EditorUIService::s_MediumOptionsButton, false, EditorUIService::m_ConfigColors.s_DisabledColor);
 
 			if (ImGui::BeginPopupEx(m_WidgetID - 1, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
 			{
@@ -73,7 +73,7 @@ namespace Kargono::EditorUI
 			if (!m_ListEntries.empty())
 			{
 				// Column Titles
-				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_HighlightColor1);
+				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor1);
 				ImGui::SetCursorPosX(m_Flags & List_Indented ? 61.0f : EditorUIService::s_TextLeftIndentOffset);
 				if (m_Flags & (List_Indented | List_RegularSizeTitle))
 				{
@@ -101,12 +101,12 @@ namespace Kargono::EditorUI
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
 				}
 				ImGui::SetCursorPosX(m_Flags & List_Indented ? 42.5f : 12.0f);
-				EditorUIService::CreateImage(EditorUIService::s_IconDash, 8, EditorUIService::s_DisabledColor);
+				EditorUIService::CreateImage(EditorUIService::m_GenIcons.m_Dash, 8, EditorUIService::m_ConfigColors.s_DisabledColor);
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(m_Flags & List_Indented ? 61.0f : EditorUIService::s_TextLeftIndentOffset);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5.2f);
 				EditorUIService::TruncateText(listEntry.m_Label, 16);
-				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_SecondaryTextColor);
+				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 				if (!listEntry.m_Value.empty())
 				{
 					EditorUIService::WriteMultilineText(listEntry.m_Value, EditorUIService::s_SecondaryTextLargeWidth, EditorUIService::s_SecondaryTextPosOne, -5.2f);
@@ -123,7 +123,7 @@ namespace Kargono::EditorUI
 							{
 								listEntry.m_OnEdit(listEntry, entryIndex);
 							}
-						}, EditorUIService::s_TableEditButton, false, EditorUIService::s_DisabledColor);
+						}, EditorUIService::s_TableEditButton, false, EditorUIService::m_ConfigColors.s_DisabledColor);
 				}
 				entryIndex++;
 			}

@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUINavigationHeaderWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Modules/Rendering/Texture.h"
 
@@ -17,10 +17,10 @@ namespace Kargono::EditorUI
 		}
 
 		// Draw icon for moving a directory back
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUIService::s_IconBack->GetRendererID(),
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUIService::m_ContentBrowserIcons.m_Back->GetRendererID(),
 			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
 			-1, ImVec4(0, 0, 0, 0),
-			m_IsBackActive ? EditorUIService::s_PrimaryTextColor : EditorUIService::s_DisabledColor))
+			m_IsBackActive ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor))
 		{
 			if (m_IsBackActive && m_OnNavigateBack)
 			{
@@ -56,10 +56,10 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 		}
-		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUIService::s_IconForward->GetRendererID(),
+		if (ImGui::ImageButton((ImTextureID)(uint64_t)EditorUIService::m_ContentBrowserIcons.m_Forward->GetRendererID(),
 			{ 24.0f, 24.0f }, { 0, 1 }, { 1, 0 },
 			-1, ImVec4(0, 0, 0, 0),
-			m_IsForwardActive ? EditorUIService::s_PrimaryTextColor : EditorUIService::s_DisabledColor))
+			m_IsForwardActive ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor))
 		{
 			if (m_IsForwardActive && m_OnNavigateForward)
 			{
@@ -87,7 +87,7 @@ namespace Kargono::EditorUI
 		}
 		ImGui::PopStyleColor();
 
-		ImGui::PushFont(EditorUIService::s_FontPlexBold);
+		ImGui::PushFont(EditorUIService::m_ConfigFonts.m_Title);
 		ImGui::SameLine();
 		ImGui::TextUnformatted(m_Label);
 		ImGui::PopFont();

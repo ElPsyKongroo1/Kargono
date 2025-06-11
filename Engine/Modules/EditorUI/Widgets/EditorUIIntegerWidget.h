@@ -18,10 +18,20 @@ namespace Kargono::EditorUI
 	struct EditIntegerWidget : public Widget
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		EditIntegerWidget() : Widget() {}
+		~EditIntegerWidget() = default;
 	public:
+		//==============================
+		// Rendering
+		//==============================
 		void RenderInteger();
 	public:
+		//==============================
+		// Public Fields
+		//==============================
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditInteger_None };
 		int32_t m_CurrentInteger{};
@@ -29,7 +39,6 @@ namespace Kargono::EditorUI
 		int32_t m_ScrollSpeed{ 1 };
 		std::function<void(EditIntegerWidget&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };
-	private:
 		bool m_Editing{ false };
 	};
 
@@ -42,10 +51,20 @@ namespace Kargono::EditorUI
 	struct EditIVec2Widget : public Widget
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		EditIVec2Widget() : Widget() {}
+		~EditIVec2Widget() = default;
 	public:
+		//==============================
+		// Rendering
+		//==============================
 		void RenderIVec2();
 	public:
+		//==============================
+		// Public Fields
+		//==============================
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditIVec2_None };
 		Math::ivec2 m_CurrentIVec2{};
@@ -53,7 +72,6 @@ namespace Kargono::EditorUI
 		int32_t m_ScrollSpeed{ 1 };
 		std::function<void(EditIVec2Widget&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };
-	private:
 		bool m_Editing{ false };
 	};
 
@@ -66,10 +84,20 @@ namespace Kargono::EditorUI
 	struct EditIVec3Widget : public Widget
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		EditIVec3Widget() : Widget() {}
+		~EditIVec3Widget() = default;
 	public:
+		//==============================
+		// Rendering
+		//==============================
 		void RenderIVec3();
 	public:
+		//==============================
+		// Public Fields
+		//==============================
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditIVec3_None };
 		Math::ivec3 m_CurrentIVec3{};
@@ -77,7 +105,6 @@ namespace Kargono::EditorUI
 		int32_t m_ScrollSpeed{ 1 };
 		std::function<void(EditIVec3Widget&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };
-	private:
 		bool m_Editing{ false };
 	};
 
@@ -90,10 +117,20 @@ namespace Kargono::EditorUI
 	struct EditIVec4Widget : public Widget
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		EditIVec4Widget() : Widget() {}
+		~EditIVec4Widget() = default;
 	public:
+		//==============================
+		// Rendering
+		//==============================
 		void RenderIVec4();
 	public:
+		//==============================
+		// Public Fields
+		//==============================
 		FixedString32 m_Label{};
 		WidgetFlags m_Flags{ EditIVec4_None };
 		Math::ivec4 m_CurrentIVec4{};
@@ -101,7 +138,6 @@ namespace Kargono::EditorUI
 		int32_t m_ScrollSpeed{ 1 };
 		std::function<void(EditIVec4Widget&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };
-	private:
 		bool m_Editing{ false };
 	};
 }

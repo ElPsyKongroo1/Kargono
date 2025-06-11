@@ -8,6 +8,7 @@
 #include "Kargono/Core/Window.h"
 
 #include "Modules/EditorUI/EditorUICommon.h"
+#include "Modules/EditorUI/EditorUIResources.h"
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 #include "Modules/EditorUI/Widgets/EditorUISelectOptionWidget.h"
 #include "Modules/EditorUI/Widgets/EditorUIFloatWidget.h"
@@ -23,9 +24,6 @@
 #include <array>
 #include <stack>
 #include <optional>
-
-
-namespace Kargono::Rendering { class Texture2D; }
 
 namespace Kargono::EditorUI
 {
@@ -151,104 +149,25 @@ namespace Kargono::EditorUI
 		static void SkipMouseIconChange();
 
 	private:
-		static void RenderImGuiNotify();
+		static void RenderNotifications();
 
 	public:
-		//==============================
-		// UI Fonts
-		//==============================
-		inline static ImFont* s_FontAntaLarge{nullptr};
-		inline static ImFont* s_FontAntaRegular {nullptr};
-		inline static ImFont* s_FontPlexBold {nullptr};
-		inline static ImFont* s_FontRobotoMono {nullptr};
+		// Icons
+		inline static GeneralIcons m_GenIcons{};
+		inline static SceneGraphIcons m_SceneIcons{};
+		inline static ViewportIcons m_ViewportIcons{};
+		inline static RuntimeUIIcons m_RuntimeUIIcons{};
+		inline static ScriptingIcons m_ScriptingIcons{};
+		inline static ContentBrowserIcons m_ContentBrowserIcons{};
 
-		// Buttons
-		inline static InlineButton s_TableEditButton{};
-		inline static InlineButton s_TableLinkButton{};
-		inline static InlineButton s_ListExpandButton{};
+		// Colors
+		inline static ConfigColors m_ConfigColors{};
 
-	public:
-		//==============================
-		// UI Images/Textures
-		//==============================
+		// Spacing
 
-		// General Icons
-		inline static Ref<Rendering::Texture2D> s_IconCamera,
-			s_IconSettings, s_IconDelete, s_IconEdit, s_IconCancel, s_IconCancel2,
-			s_IconConfirm, s_IconSearch,
-			s_IconCheckbox_Disabled, s_IconCheckbox_Enabled, s_IconNotification,
-			s_IconOptions, s_IconDown, s_IconRight, s_IconDash, s_IconAI;
+		// Fonts
+		inline static ConfigFonts m_ConfigFonts{};
 
-		// Scene graph icons
-		inline static Ref<Rendering::Texture2D> s_IconBoxCollider, s_IconCircleCollider, s_IconEntity, s_IconParticles,
-			s_IconClassInstance, s_IconRigidBody, s_IconTag, s_IconTransform;
-
-		// Viewport icons
-		inline static Ref<Rendering::Texture2D> s_IconDisplay, s_IconSimulate, s_IconStep, s_IconPlay,
-			s_IconPause, s_IconStop, s_IconGrid;
-
-		// Runtime UI icons
-		inline static Ref<Rendering::Texture2D> s_IconWindow, s_IconTextWidget, s_IconImageButtonWidget,
-			s_IconButtonWidget, s_IconInputTextWidget, s_IconUserInterface2, s_IconSliderWidget,
-			s_IconDropDownWidget, s_IconHorizontalContainer, s_IconVerticalContainer;
-
-		// Scripting icons
-		inline static Ref<Rendering::Texture2D> s_IconNumber, s_IconVariable, s_IconFunction, s_IconBoolean, s_IconDecimal;
-
-		// Content browser icons
-		inline static Ref<Rendering::Texture2D> s_IconDirectory, s_IconGenericFile,
-			s_IconBack, s_IconForward,
-			s_IconAudio, s_IconTexture, s_IconBinary,
-			s_IconScene, s_IconScene_KG, s_IconRegistry,
-			s_IconUserInterface, s_IconFont, s_IconInput, s_IconAI_KG,
-			s_IconAudio_KG, s_IconFont_KG, s_IconGlobalState, s_IconProjectComponent,
-			s_IconScript, s_IconTexture_KG, s_IconEmitterConfig, s_IconEnum, s_IconColorPalette;
-
-	public:
-		//==============================
-		// UI Colors
-		//==============================
-		inline static ImVec4 s_PureWhite{ 1.0f, 1.0f, 1.0f, 1.0f };
-		inline static ImVec4 s_PureEmpty{ 0.0f, 0.0f, 0.0f, 0.0f };
-		inline static ImVec4 s_PureBlack{ 0.0f, 0.0f, 0.0f, 1.0f };
-
-		
-		// Editor Colors
-		inline static ImVec4 s_PrimaryTextColor{ 242.0f / 255.0f, 236.5f / 255.0f, 221.1f / 255.0f, 1.0f };
-		inline static ImVec4 s_SecondaryTextColor{ 220.0f / 255.0f, 215.0f / 255.0f, 201.0f / 255.0f, 1.0f };
-		inline static ImVec4 s_HoveredColor{ 91.4f / 255.0f, 113.3f / 255.0f, 114.7f / 255.0f, 1.0f };
-		inline static ImVec4 s_ActiveColor{ 76.2f / 255.0f, 94.4f / 255.0f, 95.6f / 255.0f, 1.0f };
-		inline static ImVec4 s_SelectedColor{ 162.0f / 255.0f, 123.0f / 255.0f, 92.0f / 255.0f, 1.0f };
-		inline static ImVec4 s_DisabledColor{ 0.5f, 0.5f, 0.5f, 1.0f };
-
-		inline static ImVec4 s_BackgroundColor { 44.0f / 255.0f, 54.0f / 255.0f, 57.0f / 255.0f, 1.0f  };
-		inline static ImVec4 s_DarkBackgroundColor { 35.2f / 255.0f, 43.2f / 255.0f, 45.6f / 255.0f, 1.0f  };
-		inline static ImVec4 s_AccentColor { 63.0f / 255.0f, 78.0f / 255.0f, 79.0f / 255.0f, 1.0f  };
-		inline static ImVec4 s_DarkAccentColor { 50.4f / 255.0f, 62.4f / 255.0f, 63.2f / 255.0f, 1.0f  };
-
-		inline static ImVec4 s_HighlightColor1{ 247.6f / 255.0f, 188.2f / 255.0f, 140.7f / 255.0f, 1.0f };
-		inline static ImVec4 s_HighlightColor1_Thin { s_HighlightColor1.x, s_HighlightColor1.y, s_HighlightColor1.z, s_HighlightColor1.w * 0.75f };
-		inline static ImVec4 s_HighlightColor1_UltraThin { s_HighlightColor1.x, s_HighlightColor1.y, s_HighlightColor1.z, s_HighlightColor1.w * 0.3f };
-		inline static ImVec4 s_HighlightColor2{ 147.0f / 255.0f, 247.0f / 255.0f, 141.4f / 255.0f, 1.0f };
-		inline static ImVec4 s_HighlightColor2_Thin{ s_HighlightColor2.x, s_HighlightColor2.y, s_HighlightColor2.z, s_HighlightColor2.w * 0.75f };
-		inline static ImVec4 s_HighlightColor2_UltraThin{ s_HighlightColor2.x, s_HighlightColor2.y, s_HighlightColor2.z, s_HighlightColor2.w * 0.3f };
-		inline static ImVec4 s_HighlightColor3{ 241.0f / 255.0f, 141.0f / 255.0f, 247.4f / 255.0f, 1.0f };
-		inline static ImVec4 s_HighlightColor3_Thin { s_HighlightColor3.x, s_HighlightColor3.y, s_HighlightColor3.z, s_HighlightColor3.w * 0.75f };
-		inline static ImVec4 s_HighlightColor3_UltraThin { s_HighlightColor3.x, s_HighlightColor3.y, s_HighlightColor3.z, s_HighlightColor3.w * 0.3f };
-		inline static ImVec4 s_HighlightColor4{ 141.0f / 255.0f, 200.0f / 255.0f, 247.0f / 255.0f, 1.0f };
-		inline static ImVec4 s_HighlightColor4_Thin { s_HighlightColor4.x, s_HighlightColor4.y, s_HighlightColor4.z, s_HighlightColor4.w * 0.75f };
-		inline static ImVec4 s_HighlightColor4_UltraThin { s_HighlightColor4.x, s_HighlightColor4.y, s_HighlightColor4.z, s_HighlightColor4.w * 0.3f };
-
-		inline static ImVec4 s_Red { 255.0f / 255.0f, 40.0f / 255.0f, 73.0f / 255.0f, 1.0f };
-		inline static ImVec4 s_Green { 147.0f / 255.0f, 247.0f / 255.0f, 141.4f / 255.0f, 1.0f };
-		inline static ImVec4 s_Blue { 141.0f / 255.0f, 200.0f / 255.0f, 247.0f / 255.0f, 1.0f };
-		inline static ImVec4 s_Alpha { 247.6f / 255.0f, 188.2f / 255.0f, 140.7f / 255.0f, 1.0f };
-
-		inline static ImVec4 s_GridMajor{ 0.735f, 0.720f, 0.690f, 1.0f };
-		inline static ImVec4 s_GridMinor{ 0.347f, 0.347f, 0.347f, 1.0f };
-
-		// Cached colors (Meant to be modifed at runtime)
-		inline static ImVec4 s_ActiveBackgroundColor{ s_DarkBackgroundColor };
 	public:
 		//==============================
 		// UI Button Presets
@@ -263,6 +182,11 @@ namespace Kargono::EditorUI
 		inline static InlineButton s_LargeCancelButton;
 		inline static InlineButton s_LargeConfirmButton;
 		inline static InlineButton s_LargeSearchButton;
+
+		// Buttons
+		inline static InlineButton s_TableEditButton{};
+		inline static InlineButton s_TableLinkButton{};
+		inline static InlineButton s_ListExpandButton{};
 
 	public:
 		//==============================
@@ -284,14 +208,16 @@ namespace Kargono::EditorUI
 		inline static float s_SecondaryTextFourthPercentage = 0.82f;
 		inline static float s_SecondaryTextMiddlePercentage = 0.655f;
 
-
 	public:
 		//==============================
 		// Active Window Fields
 		//==============================
+		// Window Info
 		inline static ImVec2 s_WindowPosition{ 0.0f, 0.0f };
+		// Primary Text
 		inline static float s_PrimaryTextWidth{ 0.0f };
 		inline static float s_PrimaryTextIndentedWidth{ 0.0f };
+		// Secondary Text
 		inline static float s_SecondaryTextSmallWidth{ 0.0f };
 		inline static float s_SecondaryTextMediumWidth{ 0.0f };
 		inline static float s_SecondaryTextLargeWidth{ 0.0f };
@@ -300,8 +226,8 @@ namespace Kargono::EditorUI
 		inline static float s_SecondaryTextPosThree{ 0.0f };
 		inline static float s_SecondaryTextPosFour{ 0.0f };
 		inline static float s_SecondaryTextPosMiddle{ 0.0f };
-
-
+		// Color
+		inline static ImVec4 s_ActiveBackgroundColor{ m_ConfigColors.s_DarkBackgroundColor };
 	private:
 		//==============================
 		// Internal Fields

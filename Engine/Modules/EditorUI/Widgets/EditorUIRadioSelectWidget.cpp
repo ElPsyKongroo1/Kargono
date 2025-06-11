@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/EditorUI/Widgets/EditorUIRadioSelectWidget.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Kargono/Utility/Operations.h"
 
@@ -30,7 +30,7 @@ namespace Kargono::EditorUI
 		}
 
 		// Display Item
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
 			m_Flags & RadioSelect_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
 		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
@@ -40,9 +40,9 @@ namespace Kargono::EditorUI
 
 		if (m_Editing)
 		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUIService::s_PureEmpty);
-			ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_SecondaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, k_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
 				{
 					if (m_SelectedOption == 0)
@@ -54,7 +54,7 @@ namespace Kargono::EditorUI
 						m_SelectedOption = 0;
 					}
 					m_SelectAction();
-				}, EditorUIService::s_SmallCheckboxButton, m_SelectedOption == 0, EditorUIService::s_HighlightColor1);
+				}, EditorUIService::s_SmallCheckboxButton, m_SelectedOption == 0, EditorUIService::m_ConfigColors.s_HighlightColor1);
 			ImGui::SameLine();
 
 			int32_t position = ImGui::FindPositionAfterLength(m_FirstOptionLabel.c_str(), EditorUIService::s_SecondaryTextMediumWidth - 18.0f);
@@ -72,7 +72,7 @@ namespace Kargono::EditorUI
 						m_SelectedOption = 1;
 					}
 					m_SelectAction();
-				}, EditorUIService::s_SmallCheckboxButton, m_SelectedOption == 1, EditorUIService::s_HighlightColor2);
+				}, EditorUIService::s_SmallCheckboxButton, m_SelectedOption == 1, EditorUIService::m_ConfigColors.s_HighlightColor2);
 			ImGui::SameLine();
 			position = ImGui::FindPositionAfterLength(m_SecondOptionLabel.c_str(), EditorUIService::s_SecondaryTextMediumWidth - 18.0f);
 			EditorUIService::TruncateText(m_SecondOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
@@ -81,12 +81,12 @@ namespace Kargono::EditorUI
 		}
 		else
 		{
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUIService::s_PureEmpty);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUIService::s_PureEmpty);
-			ImGui::PushStyleColor(ImGuiCol_Button, EditorUIService::s_PureEmpty);
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::s_SecondaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, k_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, k_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), nullptr,
-				EditorUIService::s_SmallCheckboxDisabledButton, m_SelectedOption == 0, EditorUIService::s_SecondaryTextColor);
+				EditorUIService::s_SmallCheckboxDisabledButton, m_SelectedOption == 0, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 			ImGui::SameLine();
 
 			int32_t position = ImGui::FindPositionAfterLength(m_FirstOptionLabel.c_str(), EditorUIService::s_SecondaryTextMediumWidth - 18.0f);
@@ -94,7 +94,7 @@ namespace Kargono::EditorUI
 
 			ImGui::SameLine(EditorUIService::s_SecondaryTextPosMiddle - 2.5f);
 			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), nullptr,
-				EditorUIService::s_SmallCheckboxDisabledButton, m_SelectedOption == 1, EditorUIService::s_SecondaryTextColor);
+				EditorUIService::s_SmallCheckboxDisabledButton, m_SelectedOption == 1, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
 			ImGui::SameLine();
 			position = ImGui::FindPositionAfterLength(m_SecondOptionLabel.c_str(), EditorUIService::s_SecondaryTextMediumWidth - 18.0f);
 			EditorUIService::TruncateText(m_SecondOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
@@ -107,6 +107,6 @@ namespace Kargono::EditorUI
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
 			EditorUIService::s_SmallEditButton,
-			m_Editing, m_Editing ? EditorUIService::s_PrimaryTextColor : EditorUIService::s_DisabledColor);
+			m_Editing, m_Editing ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor);
 	}
 }
