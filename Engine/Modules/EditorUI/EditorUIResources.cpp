@@ -169,4 +169,8 @@ namespace Kargono::EditorUI
 		// Menu Bar
 		colors[ImGuiCol_MenuBarBg] = m_DarkBackgroundColor;
 	}
+	float ConfigSpacing::SmallButtonRelativeLocation(size_t slot)
+	{
+		return -m_SmallButtonRightOffset - (m_SmallButtonSpacing * slot);
+	}
 }

@@ -9,10 +9,7 @@ namespace Kargono::EditorUI
 {
 	void EditFloatWidget::RenderFloat()
 	{
-		// Local Variables
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-		uint32_t widgetCount{ 0 };
+		ResetChildID();
 
 		// Draw background
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -43,7 +40,7 @@ namespace Kargono::EditorUI
 			// x value
 			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor1);
 			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentFloat), m_ScrollSpeed,
+			if (ImGui::DragFloat(("##" + std::to_string(GetNextChildID())).c_str(), &(m_CurrentFloat), m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -74,7 +71,7 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SameLine();
-		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
@@ -83,10 +80,7 @@ namespace Kargono::EditorUI
 	}
 	void EditVec2Widget::RenderVec2()
 	{
-		// Local Variables
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-		uint32_t widgetCount{ 0 };
+		ResetChildID();
 
 		// Draw backgrounds
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -119,7 +113,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentVec2.x), m_ScrollSpeed,
+			if (ImGui::DragFloat(("##" + std::to_string(GetNextChildID())).c_str(), &(m_CurrentVec2.x), m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -140,7 +134,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor2);
 			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo, yPosition });
 			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentVec2.y), m_ScrollSpeed,
+			if (ImGui::DragFloat(("##" + std::to_string(GetNextChildID())).c_str(), &(m_CurrentVec2.y), m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -177,7 +171,7 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SameLine();
-		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
@@ -186,10 +180,7 @@ namespace Kargono::EditorUI
 	}
 	void EditVec3Widget::RenderVec3()
 	{
-		// Local Variables
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-		uint32_t widgetCount{ 0 };
+		ResetChildID();
 
 		// Draw backgrounds
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -224,7 +215,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentVec3.x), m_ScrollSpeed,
+			if (ImGui::DragFloat(("##" + std::to_string(GetNextChildID())).c_str(), &(m_CurrentVec3.x), m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -245,7 +236,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor2);
 			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo, yPosition });
 			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentVec3.y), m_ScrollSpeed,
+			if (ImGui::DragFloat(("##" + std::to_string(GetNextChildID())).c_str(), &(m_CurrentVec3.y), m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -266,7 +257,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor3);
 			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosThree, yPosition });
 			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentVec3.z), m_ScrollSpeed,
+			if (ImGui::DragFloat(("##" + std::to_string(GetNextChildID())).c_str(), &(m_CurrentVec3.z), m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -308,7 +299,7 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SameLine();
-		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
@@ -317,10 +308,7 @@ namespace Kargono::EditorUI
 	}
 	void EditVec4Widget::RenderVec4()
 	{
-		// Local Variables
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-		uint32_t widgetCount{ 0 };
+		ResetChildID();
 
 		// Store the memento
 		UndoMemento memento{ m_CurrentVec4, &*this };
@@ -371,7 +359,7 @@ namespace Kargono::EditorUI
 			static bool s_ModifyingX{ false };
 			float yPosition = ImGui::GetCursorPosY();
 			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentVec4.x), m_ScrollSpeed,
+			if (ImGui::DragFloat(("##" + std::to_string(GetNextChildID())).c_str(), &(m_CurrentVec4.x), m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -407,7 +395,7 @@ namespace Kargono::EditorUI
 			static bool s_ModifyingY{ false };
 			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo, yPosition });
 			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentVec4.y), m_ScrollSpeed,
+			if (ImGui::DragFloat(("##" + std::to_string(GetNextChildID())).c_str(), &(m_CurrentVec4.y), m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -442,7 +430,7 @@ namespace Kargono::EditorUI
 			static bool s_ModifyingZ{ false };
 			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosThree, yPosition });
 			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentVec4.z), m_ScrollSpeed,
+			if (ImGui::DragFloat(("##" + std::to_string(GetNextChildID())).c_str(), &(m_CurrentVec4.z), m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -478,7 +466,7 @@ namespace Kargono::EditorUI
 			static bool s_ModifyingW{ false };
 			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosFour, yPosition });
 			ImGui::SetNextItemWidth((m_Flags & EditVec4_RGBA) ? EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth - 28.0f : EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
-			if (ImGui::DragFloat(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentVec4.w), m_ScrollSpeed,
+			if (ImGui::DragFloat(("##" + std::to_string(GetNextChildID())).c_str(), &(m_CurrentVec4.w), m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%.2f", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -516,7 +504,7 @@ namespace Kargono::EditorUI
 				static bool s_ModifyingColorButton{ false };
 				ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosFour + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth - 21.0f, yPosition + 1.0f });
 
-				if (EditorUIContext::RenderColorPicker(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(),
+				if (EditorUIContext::RenderColorPicker(("##" + std::to_string(GetNextChildID())).c_str(),
 					colorPickerValue))
 				{
 					if (!s_ModifyingColorButton)
@@ -575,14 +563,14 @@ namespace Kargono::EditorUI
 					ImGuiColorEditFlags_NoSidePreview |
 					ImGuiColorEditFlags_NoPicker;
 				ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosFour + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth - 21.0f, yPosition + 1.0f });
-				ImGui::ColorButton(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(),
+				ImGui::ColorButton(("##" + std::to_string(GetNextChildID())).c_str(),
 					colorPickerValue,
 					misc_flags, ImVec2(18.0f, 18.0f));
 			}
 		}
 
 		ImGui::SameLine();
-		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 			{
 				if (m_Flags & EditorUI::EditVec4_HandleEditButtonExternally)
 				{

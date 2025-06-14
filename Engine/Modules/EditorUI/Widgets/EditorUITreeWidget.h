@@ -121,7 +121,7 @@ namespace Kargono::EditorUI
 		void RenderTree();
 	private:
 		// Rendering helper
-		void DrawEntryList(std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath, ImVec2 rootPosition);
+		void DrawEntryList(std::vector<TreeEntry>& entries, TreePath& currentPath, ImVec2 rootPosition);
 	public:
 		//==============================
 		// Interact w/ Tree

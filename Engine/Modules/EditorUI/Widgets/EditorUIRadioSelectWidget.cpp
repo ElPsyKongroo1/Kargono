@@ -9,10 +9,7 @@ namespace Kargono::EditorUI
 {
 	void RadioSelectWidget::RenderRadio()
 	{
-		// Local Variables
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-		uint32_t widgetCount{ 0 };
+		ResetChildID();
 
 		// Draw backgrounds
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -43,7 +40,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
 					if (m_SelectedOption == 0)
 					{
@@ -61,7 +58,7 @@ namespace Kargono::EditorUI
 			EditorUIContext::RenderTruncatedText(m_FirstOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
 
 			ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosMiddle - 2.5f);
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
 					if (m_SelectedOption == 1)
 					{
@@ -85,7 +82,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), nullptr,
+			EditorUIContext::RenderInlineButton(GetNextChildID(), nullptr,
 				EditorUIContext::m_UIPresets.m_SmallCheckboxDisabledButton, m_SelectedOption == 0, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
 			ImGui::SameLine();
 
@@ -93,7 +90,7 @@ namespace Kargono::EditorUI
 			EditorUIContext::RenderTruncatedText(m_FirstOptionLabel, position == -1 ? std::numeric_limits<int32_t>::max() : position);
 
 			ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosMiddle - 2.5f);
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), nullptr,
+			EditorUIContext::RenderInlineButton(GetNextChildID(), nullptr,
 				EditorUIContext::m_UIPresets.m_SmallCheckboxDisabledButton, m_SelectedOption == 1, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
 			ImGui::SameLine();
 			position = ImGui::FindPositionAfterLength(m_SecondOptionLabel.c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextMediumWidth - 18.0f);
@@ -102,7 +99,7 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SameLine();
-		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},

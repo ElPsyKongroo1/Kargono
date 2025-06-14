@@ -385,7 +385,6 @@ namespace Kargono::RuntimeUI
 		//============================
 		UserInterface() = default;
 		~UserInterface() = default;
-
 	public:
 		//============================
 		// Lifecycle Functions
@@ -401,14 +400,12 @@ namespace Kargono::RuntimeUI
 		bool OnKeyPressedEvent(Events::KeyPressedEvent event);
 		void OnMouseButtonPressedEvent(const Events::MouseButtonPressedEvent& event);
 		void OnMouseButtonReleasedEvent(const Events::MouseButtonReleasedEvent& mouseEvent);
-
 	public:
 		//==============================
 		// Rendering API
 		//==============================
 		void OnRenderCamera(const Math::mat4& cameraViewMatrix, ViewportData viewportData);
 		void OnRenderViewport(ViewportData viewportData);
-
 	public:
 		//==============================
 		// Interact With UI
@@ -423,7 +420,6 @@ namespace Kargono::RuntimeUI
 		// Interaction helpers
 		void OnPressInternal(Widget* currentWidget);
 		void OnMoveCursorInternal(Widget* currentWidget);
-
 	public:
 		//============================
 		// Getters/Setters
@@ -432,24 +428,22 @@ namespace Kargono::RuntimeUI
 		UIInteractionState& GetInteractState() { return m_InteractState; }
 		UIWindowsState& GetWindowsState() { return m_WindowsState; }
 		UITextCaretState& GetTextCaretState() { return m_CaretState; }
-
 	public:
 		//============================
 		// Public Fields
 		//============================
 		// Config data
 		UIConfig m_Config{};
-
 		// Runtime data
 		UIInteractionState m_InteractState{};
 		UIWindowsState m_WindowsState{};
 		UITextCaretState m_CaretState{};
-
+	private:
 		//============================
 		// Internal Fields
 		//============================
 		bool m_Active{ false };
-
+	private:
 		//============================
 		// Injected Dependencies
 		//============================

@@ -10,16 +10,15 @@ namespace Kargono::EditorUI
 {
 	void Kargono::EditorUI::CollapsingHeaderWidget::RenderHeader()
 	{
-		uint32_t widgetCount{ 0 };
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
+		ResetChildID();
+
 		ImGui::PushFont(EditorUIContext::m_ConfigFonts.m_HeaderLarge);
 		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		ImGui::TextUnformatted(m_Label.CString());
 		ImGui::PopStyleColor();
 		ImGui::PopFont();
 		ImGui::SameLine();
-		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Expanded);
 			},
@@ -28,7 +27,7 @@ namespace Kargono::EditorUI
 		if (m_Expanded && !m_SelectionList.empty())
 		{
 			ImGui::SameLine();
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
 					ImGui::OpenPopup(m_WidgetID - 1);
 				}, EditorUIContext::m_UIPresets.m_MediumOptionsButton, false, EditorUIContext::m_ConfigColors.m_DisabledColor);
@@ -37,7 +36,7 @@ namespace Kargono::EditorUI
 			{
 				for (auto& [label, func] : m_SelectionList)
 				{
-					if (ImGui::Selectable((label.c_str() + id).c_str()))
+					if (ImGui::Selectable((label.c_str() + m_WidgetIDString).c_str()))
 					{
 						func(*this);
 					}

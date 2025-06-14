@@ -9,10 +9,7 @@ namespace Kargono::EditorUI
 {
 	void DropDownWidget::RenderDropDown()
 	{
-		// Local Variables
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-		uint32_t widgetCount{ 0 };
+		ResetChildID();
 
 		if (m_Flags & DropDown_Indented)
 		{
@@ -38,7 +35,7 @@ namespace Kargono::EditorUI
 		// Shift button to secondary text position one
 		ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 2.5f);
 		if (ImGui::InvisibleButton(
-			("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(),
+			("##" + std::to_string(GetNextChildID())).c_str(),
 			ImVec2(EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth, EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight)))
 		{
 			ImGui::OpenPopupEx(m_WidgetID, ImGuiPopupFlags_None);

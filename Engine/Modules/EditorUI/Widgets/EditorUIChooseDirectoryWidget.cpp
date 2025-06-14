@@ -9,9 +9,7 @@ namespace Kargono::EditorUI
 {
 	void ChooseDirectoryWidget::RenderChooseDir()
 	{
-		// Local Variables
-		uint32_t widgetCount{ 0 };
-		std::string popUpLabel = m_Label.CString();
+		ResetChildID();
 
 		// Display Menu Item
 		if (m_Flags & ChooseDirectory_Indented)
@@ -29,7 +27,7 @@ namespace Kargono::EditorUI
 		ImGui::PopStyleColor();
 
 		ImGui::SameLine();
-		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 			{
 				const std::filesystem::path initialDirectory = m_CurrentOption.empty() ? std::filesystem::current_path() : m_CurrentOption;
 				std::filesystem::path outputDirectory = Utility::FileDialogs::ChooseDirectory(initialDirectory);

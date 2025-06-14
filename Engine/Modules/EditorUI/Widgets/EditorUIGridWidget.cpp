@@ -9,9 +9,7 @@ namespace Kargono::EditorUI
 {
 	void Kargono::EditorUI::GridWidget::RenderGrid()
 	{
-		uint32_t widgetCount{ 0 };
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
+		ResetChildID();
 
 		// Calculate grid cell count using provided spec sizes
 		float cellSize = m_CellIconSize + m_CellPadding;
@@ -20,7 +18,7 @@ namespace Kargono::EditorUI
 		columnCount = columnCount > 0 ? columnCount : 1;
 
 		// Start drawing columns
-		ImGui::Columns(columnCount, id.CString(), false);
+		ImGui::Columns(columnCount, m_WidgetIDString.CString(), false);
 		ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
 		for (GridEntry& currentEntry : m_Entries)
 		{
@@ -28,9 +26,10 @@ namespace Kargono::EditorUI
 			bool entryIsSelected = currentEntry.m_EntryID == m_SelectedEntry;
 
 			// Get entry archetype and grid element ID
-			FixedString<16> entryID{ id };
+			FixedString<16> entryID{ m_WidgetIDString };
+			size_t widgetCount{ 0 };
 			GridEntryArchetype* entryArchetype = &(m_EntryArchetypes.at(currentEntry.m_ArchetypeID));
-			entryID.AppendInteger(EditorUIContext::GetNextChildID(widgetCount));
+			entryID.AppendInteger(++widgetCount);
 			KG_ASSERT(entryArchetype);
 
 			// Display grid icon

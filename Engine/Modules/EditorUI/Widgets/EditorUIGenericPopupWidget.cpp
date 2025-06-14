@@ -7,14 +7,11 @@ namespace Kargono::EditorUI
 {
 	void GenericPopupWidget::RenderPopup()
 	{
-		// Local Variables
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-		uint32_t widgetCount{ 0 };
+		ResetChildID();
 
 		if (m_OpenPopup)
 		{
-			ImGui::OpenPopup(id);
+			ImGui::OpenPopup(m_WidgetIDString);
 			m_OpenPopup = false;
 			m_CloseActivePopup = false;
 
@@ -26,7 +23,7 @@ namespace Kargono::EditorUI
 
 		// Display Popup
 		ImGui::SetNextWindowSize(ImVec2(m_PopupWidth, 0.0f));
-		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar))
+		if (ImGui::BeginPopupModal(m_WidgetIDString, NULL, ImGuiWindowFlags_NoTitleBar))
 		{
 			// Close popup externally
 			if (m_CloseActivePopup)
@@ -43,7 +40,7 @@ namespace Kargono::EditorUI
 			if (m_DeleteAction)
 			{
 				ImGui::SameLine();
-				EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+				EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 					{
 						if (m_DeleteAction)
 						{
@@ -55,7 +52,7 @@ namespace Kargono::EditorUI
 
 			// Cancel Tool Bar Button
 			ImGui::SameLine();
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
 					if (m_CancelAction)
 					{
@@ -66,7 +63,7 @@ namespace Kargono::EditorUI
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
 					if (m_ConfirmAction)
 					{

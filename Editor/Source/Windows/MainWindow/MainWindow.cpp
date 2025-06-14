@@ -986,7 +986,7 @@ namespace Kargono::Windows
 		}
 		case Key::Delete:
 		{
-			if (EditorUI::EditorUIContext::GetActiveWidgetID() == 0)
+			if (EditorUI::EditorUIContext::IsActiveWidgetNull())
 			{
 				ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (selectedEntity)

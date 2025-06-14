@@ -9,8 +9,8 @@ namespace Kargono::EditorUI
 {
 	void PanelHeaderWidget::RenderHeader()
 	{
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
+		ResetChildID();
+
 		ImGui::PushFont(EditorUIContext::m_ConfigFonts.m_HeaderLarge);
 		ImGui::PushStyleColor(ImGuiCol_Text, m_EditColorActive ? EditorUIContext::m_ConfigColors.m_HighlightColor2 : EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		ImGui::TextUnformatted(m_Label.CString());
@@ -22,14 +22,14 @@ namespace Kargono::EditorUI
 			ImGui::SameLine();
 			EditorUIContext::RenderInlineButton(m_WidgetID, [&]()
 				{
-					ImGui::OpenPopup(id);
+					ImGui::OpenPopup(m_WidgetIDString);
 				}, EditorUIContext::m_UIPresets.m_MediumOptionsButton, false, EditorUIContext::m_ConfigColors.m_DisabledColor);
 
-			if (ImGui::BeginPopup(id))
+			if (ImGui::BeginPopup(m_WidgetIDString))
 			{
 				for (auto& [label, func] : GetSelectionList())
 				{
-					if (ImGui::Selectable((label.c_str() + id).c_str()))
+					if (ImGui::Selectable((label.c_str() + m_WidgetIDString).c_str()))
 					{
 						func();
 					}

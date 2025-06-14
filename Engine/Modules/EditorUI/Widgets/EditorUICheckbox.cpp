@@ -9,10 +9,7 @@ namespace Kargono::EditorUI
 {
 	void CheckboxWidget::RenderCheckbox()
 	{
-		// Local Variables
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-		uint32_t widgetCount{ 0 };
+		ResetChildID();
 
 		// Draw background
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -45,7 +42,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
 
 					if (m_CurrentBoolean)
@@ -74,14 +71,14 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), nullptr,
+			EditorUIContext::RenderInlineButton(GetNextChildID(), nullptr,
 				EditorUIContext::m_UIPresets.m_SmallCheckboxDisabledButton,
 				m_CurrentBoolean, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
 			ImGui::PopStyleColor(3);
 		}
 
 		ImGui::SameLine();
-		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},

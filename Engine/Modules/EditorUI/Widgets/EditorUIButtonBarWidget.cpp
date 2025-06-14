@@ -9,10 +9,7 @@ namespace Kargono::EditorUI
 {
 	void ButtonBarWidget::RenderBar()
 	{
-		// Local Variables
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-		uint32_t widgetCount{ 0 };
+		ResetChildID();
 
 		std::array<float, 4> buttonPositions
 		{
@@ -50,7 +47,7 @@ namespace Kargono::EditorUI
 			ImGui::SameLine(buttonPositions[i] - 2.5f);
 			EditorUI::Button& currentButton = m_Buttons[i];
 			if (ImGui::InvisibleButton(
-				("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(),
+				("##" + std::to_string(GetNextChildID())).c_str(),
 				ImVec2(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight)))
 			{
 				if (currentButton.m_OnPress)

@@ -11,9 +11,7 @@ namespace Kargono::EditorUI
 	{
 		KG_ASSERT(m_BufferSize > 0);
 
-		// Local Variables
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
+		ResetChildID();
 
 		constexpr float k_PlotHeight{ 140.0f };
 
@@ -41,7 +39,7 @@ namespace Kargono::EditorUI
 		ImPlotFlags flags = ImPlotFlags_NoMouseText | ImPlotFlags_NoLegend | ImPlotFlags_NoInputs;
 		ImPlotAxisFlags axisFlags = ImPlotAxisFlags_NoTickLabels;
 
-		if (ImPlot::BeginPlot(id, ImVec2(EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth, k_PlotHeight), flags))
+		if (ImPlot::BeginPlot(m_WidgetIDString, ImVec2(EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth, k_PlotHeight), flags))
 		{
 			ImPlot::SetupAxes("##", m_YAxisLabel.CString(), axisFlags, 0);
 			ImPlot::SetupAxesLimits((double)m_Offset - (double)m_BufferSize, (double)m_Offset - 1.0, 0, m_MaxYVal, ImPlotCond_Always);

@@ -9,6 +9,8 @@ namespace Kargono::EditorUI
 {
 	void NavigationHeaderWidget::RenderHeader()
 	{
+		ResetChildID();
+
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 		if (!m_IsBackActive)
 		{

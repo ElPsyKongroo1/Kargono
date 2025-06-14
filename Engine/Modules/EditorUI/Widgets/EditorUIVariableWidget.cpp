@@ -8,10 +8,8 @@ namespace Kargono::EditorUI
 {
 	void EditVariableWidget::RenderVariable()
 	{
-		// Local Variables
-		uint32_t widgetCount{ 0 };
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
+		ResetChildID();
+
 		static ImGuiInputTextFlags inputFlags{};
 
 		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
@@ -36,7 +34,7 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
 			EditorUIContext::RenderTruncatedText("True", 12);
 			ImGui::SameLine();
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
 					if (FieldBuffer.As<char>() == "True")
 					{
@@ -51,7 +49,7 @@ namespace Kargono::EditorUI
 			ImGui::SameLine(300.0f);
 			EditorUIContext::RenderTruncatedText("False", 12);
 			ImGui::SameLine();
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
 					if (FieldBuffer.As<char>() == "False")
 					{
@@ -76,7 +74,7 @@ namespace Kargono::EditorUI
 					UNREFERENCED_PARAMETER(data);
 					return 0;
 				};
-			ImGui::InputText(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(),
+			ImGui::InputText(("##" + std::to_string(GetNextChildID())).c_str(),
 				FieldBuffer.As<char>(), FieldBuffer.Size, inputFlags, typeCallback);
 			break;
 		}
@@ -96,7 +94,7 @@ namespace Kargono::EditorUI
 					UNREFERENCED_PARAMETER(data);
 					return 0;
 				};
-			ImGui::InputText(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(),
+			ImGui::InputText(("##" + std::to_string(GetNextChildID())).c_str(),
 				FieldBuffer.As<char>(), FieldBuffer.Size, inputFlags, typeCallback);
 			break;
 		}

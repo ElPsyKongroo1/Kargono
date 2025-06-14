@@ -760,11 +760,6 @@ namespace Kargono::EditorUI
 		ImGui::End();
 	}
 
-	uint32_t EditorUIContext::GetActiveWidgetID()
-	{
-		return GImGui->ActiveId;
-	}
-
 	const char* EditorUIContext::GetFocusedWindowName()
 	{
 		if (GImGui->NavWindow)
@@ -817,6 +812,11 @@ namespace Kargono::EditorUI
 		return ImGui::IsAnyItemHovered();
 	}
 
+	bool EditorUIContext::IsActiveWidgetNull()
+	{
+		return GImGui->ActiveId == 0;
+	}
+
 	void EditorUIContext::SetDisableLeftClick(bool option)
 	{
 		s_DisableLeftClick = option;
@@ -838,21 +838,17 @@ namespace Kargono::EditorUI
 		return e->IsInCategory(Events::Keyboard) && io.WantCaptureKeyboard;
 	}
 
-	WidgetID EditorUIContext::GetNextChildID(WidgetID& currentID)
-	{
-		return ++currentID;
-	}
 
 	void EditorUIContext::Spacing(float space)
 	{
 		ImGui::Dummy(ImVec2(0.0f, space));
 	}
 
-	void EditorUIContext::TitleText(const std::string& text)
+	void EditorUIContext::TitleText(const char* text)
 	{
 		ImGui::PushFont(EditorUI::EditorUIContext::m_ConfigFonts.m_Title);
 		ImGui::PushStyleColor(ImGuiCol_Text, m_ConfigColors.m_HighlightColor1);
-		ImGui::TextUnformatted(text.c_str());
+		ImGui::TextUnformatted(text);
 		ImGui::PopStyleColor();
 		ImGui::PopFont();
 	}
@@ -892,11 +888,6 @@ namespace Kargono::EditorUI
 		ImGui::Image((ImTextureID)(uint64_t)image->GetRendererID(), ImVec2(size, size),
 			ImVec2{ 0, 1 }, ImVec2(1, 0), tint,
 			k_PureEmpty);
-	}
-
-	float EditorUIContext::SmallButtonRelativeLocation(uint32_t slot)
-	{
-		return -EditorUIContext::m_ConfigSpacing.m_SmallButtonRightOffset - (EditorUIContext::m_ConfigSpacing.m_SmallButtonSpacing * slot);
 	}
 
 	void EditorUIContext::RenderInlineButton(ImGuiID widgetID, std::function<void()> onPress, 

@@ -10,16 +10,12 @@ namespace Kargono::EditorUI
 {
 	void EditTextSpec::RenderText()
 	{
-		// Local Variables
-		uint32_t widgetCount{ 0 };
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-		std::string popUpLabel = m_Label.CString();
+		ResetChildID();
 
 		// Allow opening the edit text popup externally
 		if (m_StartPopup)
 		{
-			ImGui::OpenPopup(id);
+			ImGui::OpenPopup(m_WidgetIDString);
 			m_StartPopup = false;
 			memset(m_Buffer.Data(), 0, m_Buffer.BufferSize());
 			memcpy(m_Buffer.Data(), m_CurrentOption.data(), m_CurrentOption.size());
@@ -42,9 +38,9 @@ namespace Kargono::EditorUI
 			ImGui::PopStyleColor();
 
 			ImGui::SameLine();
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
-					ImGui::OpenPopup(id);
+					ImGui::OpenPopup(m_WidgetIDString);
 					memset(m_Buffer.Data(), 0, m_Buffer.BufferSize());
 					memcpy(m_Buffer.Data(), m_CurrentOption.data(), m_CurrentOption.size());
 				},
@@ -52,15 +48,15 @@ namespace Kargono::EditorUI
 		}
 
 		ImGui::SetNextWindowSize(ImVec2(600.0f, 0.0f));
-		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar))
+		if (ImGui::BeginPopupModal(m_WidgetIDString, NULL, ImGuiWindowFlags_NoTitleBar))
 		{
-			EditorUI::EditorUIContext::TitleText(popUpLabel);
+			EditorUI::EditorUIContext::TitleText(m_Label.CString());
 
 			ImGui::PushFont(EditorUI::EditorUIContext::m_ConfigFonts.m_HeaderRegular);
 
 			// Cancel Tool Bar Button
 			ImGui::SameLine();
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
 					memset(m_Buffer.Data(), 0, m_Buffer.BufferSize());
 					ImGui::CloseCurrentPopup();
@@ -68,7 +64,7 @@ namespace Kargono::EditorUI
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
 					m_CurrentOption = m_Buffer;
 					if (m_ConfirmAction)
@@ -82,7 +78,7 @@ namespace Kargono::EditorUI
 			ImGui::Separator();
 
 			ImGui::SetNextItemWidth(583.0f);
-			ImGui::InputText((id + "InputText").c_str(), (char*)m_Buffer.Data(), m_Buffer.BufferSize());
+			ImGui::InputText((m_WidgetIDString + "InputText").c_str(), (char*)m_Buffer.Data(), m_Buffer.BufferSize());
 			ImGui::PopFont();
 			ImGui::EndPopup();
 		}

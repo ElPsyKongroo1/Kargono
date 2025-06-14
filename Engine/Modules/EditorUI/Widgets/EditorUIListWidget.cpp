@@ -10,10 +10,7 @@ namespace Kargono::EditorUI
 {
 	void ListWidget::RenderList()
 	{
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-		uint32_t widgetCount{ 0 };
-		uint32_t smallButtonCount{ 0 };
+		ResetChildID();
 
 		if (m_Flags & List_Indented)
 		{
@@ -36,7 +33,7 @@ namespace Kargono::EditorUI
 		EditorUIContext::m_UIPresets.m_ListExpandButton.m_IconSize = 14.0f;
 		EditorUIContext::m_UIPresets.m_ListExpandButton.m_YPosition = m_Flags & List_Indented ? 0.0f : 3.0f;
 		ImGui::SameLine();
-		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Expanded);
 			},
@@ -45,7 +42,7 @@ namespace Kargono::EditorUI
 		if (m_Expanded && !m_EditListSelectionList.empty())
 		{
 			ImGui::SameLine();
-			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 				{
 					ImGui::OpenPopup(m_WidgetID - 1);
 				}, EditorUIContext::m_UIPresets.m_MediumOptionsButton, false, EditorUIContext::m_ConfigColors.m_DisabledColor);
@@ -54,7 +51,7 @@ namespace Kargono::EditorUI
 			{
 				for (auto& [label, func] : m_EditListSelectionList)
 				{
-					if (ImGui::Selectable((label.c_str() + id).c_str()))
+					if (ImGui::Selectable((label.c_str() + m_WidgetIDString).c_str()))
 					{
 						func();
 					}
@@ -93,6 +90,7 @@ namespace Kargono::EditorUI
 
 			}
 			ListEntryIndex entryIndex{ 0 };
+			uint32_t smallButtonCount{ 0 };
 			for (ListEntry& listEntry : m_ListEntries)
 			{
 				smallButtonCount = 0;
@@ -115,9 +113,9 @@ namespace Kargono::EditorUI
 
 				if (listEntry.m_OnEdit)
 				{
-					EditorUIContext::m_UIPresets.m_TableEditButton.m_XPosition = EditorUIContext::SmallButtonRelativeLocation(smallButtonCount++);
+					EditorUIContext::m_UIPresets.m_TableEditButton.m_XPosition = EditorUIContext::m_ConfigSpacing.SmallButtonRelativeLocation(smallButtonCount++);
 					ImGui::SameLine();
-					EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
+					EditorUIContext::RenderInlineButton(GetNextChildID(), [&]()
 						{
 							if (listEntry.m_OnEdit)
 							{

@@ -7,7 +7,7 @@
 
 namespace Kargono::EditorUI
 {
-	void TreeWidget::DrawEntryList(std::vector<TreeEntry>& entries, uint32_t& widgetCount, TreePath& currentPath, ImVec2 rootPosition)
+	void TreeWidget::DrawEntryList(std::vector<TreeEntry>& entries, TreePath& currentPath, ImVec2 rootPosition)
 	{
 		// Get initial positions and common resources
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -23,7 +23,7 @@ namespace Kargono::EditorUI
 			ImVec2 buttonDimensions{ ImGui::CalcTextSize(treeEntry.m_Label.c_str()).x + 34.0f, EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight };
 
 			// Create Invisible Button for Interation with current node
-			if (ImGui::InvisibleButton(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), buttonDimensions))
+			if (ImGui::InvisibleButton(("##" + std::to_string(GetNextChildID())).c_str(), buttonDimensions))
 			{
 				if (treeEntry.m_OnLeftClick)
 				{
@@ -90,7 +90,7 @@ namespace Kargono::EditorUI
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.5f);
 				ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
 				const Ref<Rendering::Texture2D> icon = m_ExpandedNodes.contains(currentPath) ? EditorUIContext::m_GenIcons.m_Down : EditorUIContext::m_GenIcons.m_Right;
-				if (ImGui::ImageButtonEx(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount),
+				if (ImGui::ImageButtonEx(GetNextChildID(),
 					(ImTextureID)(uint64_t)icon->GetRendererID(),
 					ImVec2(13, 13), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 					k_PureEmpty,
@@ -117,7 +117,7 @@ namespace Kargono::EditorUI
 				// Draw all sub-entries
 				if (m_ExpandedNodes.contains(currentPath))
 				{
-					DrawEntryList(treeEntry.m_SubEntries, widgetCount, currentPath, screenPosition);
+					DrawEntryList(treeEntry.m_SubEntries, currentPath, screenPosition);
 				}
 			}
 
@@ -143,9 +143,10 @@ namespace Kargono::EditorUI
 
 	void TreeWidget::RenderTree()
 	{
-		uint32_t widgetCount{ 0 };
+		ResetChildID();
+
 		TreePath treePath{};
-		DrawEntryList(m_TreeEntries, widgetCount, treePath, {});
+		DrawEntryList(m_TreeEntries, treePath, {});
 	}
 
 	static bool RecursiveGetPathFromEntry(TreePath& outputPath, TreeEntry* entryQuery, const std::vector<TreeEntry>& entries)

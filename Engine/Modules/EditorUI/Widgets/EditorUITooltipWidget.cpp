@@ -58,22 +58,19 @@ namespace Kargono::EditorUI
 
 	void TooltipWidget::RenderTooltip()
 	{
-		FixedString<16> id{ "##" };
-		id.AppendInteger(m_WidgetID);
-
 		// Handle turning on the tooltip
 		if (m_TooltipActive)
 		{
 			// Only open tooltip if menu items are present
 			if (m_Entries.size() != 0)
 			{
-				ImGui::OpenPopup(id);
+				ImGui::OpenPopup(m_WidgetIDString);
 			}
 			m_TooltipActive = false;
 		}
 
 		// Draw tooltip if active
-		if (ImGui::BeginPopup(id))
+		if (ImGui::BeginPopup(m_WidgetIDString))
 		{
 			// Recursively handle tooltip items and sub-menus
 			RenderTooltipEntryList(m_Entries);

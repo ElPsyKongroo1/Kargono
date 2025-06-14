@@ -329,6 +329,11 @@ namespace Kargono::EditorUI
 		~ConfigSpacing() = default;
 	public:
 		//==============================
+		// Calculate Spacing
+		//==============================
+		float SmallButtonRelativeLocation(size_t slot);
+	public:
+		//==============================
 		// Public Fields
 		//==============================
 		// Button spacing

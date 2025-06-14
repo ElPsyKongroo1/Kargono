@@ -214,7 +214,7 @@ namespace Kargono::EditorUI
 		static void Spacing(float space);
 		static void Spacing(SpacingAmount space);
 
-		static void TitleText(const std::string& text);
+		static void TitleText(const char* text);
 		static void NewItemScreen(const std::string& label1, std::function<void()> func1, const std::string& label2, std::function<void()> func2);
 
 		static void LabeledText(const char* m_Label, const char* Text, LabeledTextFlags flags = LabeledText_None);
@@ -244,25 +244,25 @@ namespace Kargono::EditorUI
 		static bool DrawColorPickerPopupContents(const char* label, float col[4], const float* ref_col);
 	public:
 		//==============================
-		// Query UI State
+		// Modify/Query UI State
 		//==============================
-		static WidgetID GetNextChildID(WidgetID& id);
-		static uint32_t GetActiveWidgetID();
-		static bool IsAnyItemHovered();
-		static const char* GetFocusedWindowName();
+		// Interact w/ Window
 		static void SetFocusedWindow(const char* windowName);
+		static const char* GetFocusedWindowName();
 		static void BringWindowToFront(const char* windowName);
 		static void BringCurrentWindowToFront();
-		static void ClearWindowFocus();
-		static bool IsCurrentWindowVisible();
 		static void HighlightFocusedWindow();
-		static void SetDisableLeftClick(bool option);
-		static void BlockMouseEvents(bool block);
+		static void ClearWindowFocus();
 		static const char* GetHoveredWindowName();
-		static void CalculateViewportDimensions(Math::vec2 screenViewportBounds[2], ViewportData& viewportData, bool& viewportFocused, bool& viewportHovered, const Math::uvec2& aspectRatio);
+		static bool IsCurrentWindowVisible();
+		static bool IsAnyItemHovered();
+		static bool IsActiveWidgetNull();
+		// Change local state
+		static void BlockMouseEvents(bool block);
+		static void SetDisableLeftClick(bool option);
 		static void SkipMouseIconChange();
-		static float SmallButtonRelativeLocation(uint32_t slot);
-
+		// Other
+		static void CalculateViewportDimensions(Math::vec2 screenViewportBounds[2], ViewportData& viewportData, bool& viewportFocused, bool& viewportHovered, const Math::uvec2& aspectRatio);
 	public:
 		// Icons
 		inline static GeneralIcons m_GenIcons{};
