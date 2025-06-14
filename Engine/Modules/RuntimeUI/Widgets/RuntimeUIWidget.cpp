@@ -15,27 +15,27 @@ namespace Kargono::Utility
 		switch (widgetType)
 		{
 		case RuntimeUI::WidgetTypes::TextWidget:
-			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_TextWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_TextWidget;
 		case RuntimeUI::WidgetTypes::ButtonWidget:
-			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_ButtonWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_ButtonWidget;
 		case RuntimeUI::WidgetTypes::ImageWidget:
-			return EditorUI::EditorUIService::m_ContentBrowserIcons.m_Texture;
+			return EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture;
 		case RuntimeUI::WidgetTypes::ImageButtonWidget:
-			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_ImageButtonWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_ImageButtonWidget;
 		case RuntimeUI::WidgetTypes::CheckboxWidget:
-			return EditorUI::EditorUIService::m_GenIcons.m_Checkbox_Enabled;
+			return EditorUI::EditorUIContext::m_GenIcons.m_Checkbox_Enabled;
 		case RuntimeUI::WidgetTypes::ContainerWidget:
-			return EditorUI::EditorUIService::m_SceneIcons.m_BoxCollider;
+			return EditorUI::EditorUIContext::m_SceneIcons.m_BoxCollider;
 		case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
-			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_HorizontalContainer;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_HorizontalContainer;
 		case RuntimeUI::WidgetTypes::VerticalContainerWidget:
-			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_VerticalContainer;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_VerticalContainer;
 		case RuntimeUI::WidgetTypes::InputTextWidget:
-			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_InputTextWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_InputTextWidget;
 		case RuntimeUI::WidgetTypes::DropDownWidget:
-			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_DropDownWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_DropDownWidget;
 		case RuntimeUI::WidgetTypes::SliderWidget:
-			return EditorUI::EditorUIService::m_RuntimeUIIcons.m_SliderWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_SliderWidget;
 		default:
 			KG_ERROR("Invalid widget type provided");
 			return nullptr;

@@ -688,17 +688,17 @@ namespace ImGuizmo
    static const vec_t directionUnary[3] = { makeVect(1.f, 0.f, 0.f), makeVect(0.f, 1.f, 0.f), makeVect(0.f, 0.f, 1.f) };
    //static const ImU32 directionColor[3] =
    //{
-   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2),
-   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1),
-   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3)
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2),
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1),
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3)
    //};
 
    //// Alpha: 100%: FF, 87%: DE, 70%: B3, 54%: 8A, 50%: 80, 38%: 61, 12%: 1F
    //static const ImU32 planeColor[3] =
    //{
-   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2),
-   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1),
-   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3)
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2),
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1),
+   //   ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3)
    //};
    static const ImU32 selectionColor = 0xFF20AACC;
    static const ImU32 inactiveColor = 0x99999999;
@@ -983,31 +983,31 @@ namespace ImGuizmo
          case TRANSLATE:
             colors[0] = (type == MOVE_SCREEN) ? selectionColor : 0xFFFFFFFF;
 
-            colors[1] = (type == (int)(MOVE_X)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1) ;
-            colors[4] = (type == (int)(MOVE_YZ)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1);
+            colors[1] = (type == (int)(MOVE_X)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1) ;
+            colors[4] = (type == (int)(MOVE_YZ)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1);
             colors[4] = (type == MOVE_SCREEN) ? selectionColor : colors[4];
 
-            colors[2] = (type == (int)(MOVE_Y)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2);
-            colors[5] = (type == (int)(MOVE_ZX)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2);
+            colors[2] = (type == (int)(MOVE_Y)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2);
+            colors[5] = (type == (int)(MOVE_ZX)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2);
             colors[5] = (type == MOVE_SCREEN) ? selectionColor : colors[5];
 
-            colors[3] = (type == (int)(MOVE_Z)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3);
-            colors[6] = (type == (int)(MOVE_XY)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3);
+            colors[3] = (type == (int)(MOVE_Z)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3);
+            colors[6] = (type == (int)(MOVE_XY)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3);
             colors[6] = (type == MOVE_SCREEN) ? selectionColor : colors[6];
             
             break;
          case ROTATE:
             colors[0] = (type == ROTATE_SCREEN) ? selectionColor : 0xFFFFFFFF;
-            colors[1] = (type == (int)(ROTATE_X)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1);
-            colors[2] = (type == (int)(ROTATE_Y)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2);
-            colors[3] = (type == (int)(ROTATE_Z)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3);
+            colors[1] = (type == (int)(ROTATE_X)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1);
+            colors[2] = (type == (int)(ROTATE_Y)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2);
+            colors[3] = (type == (int)(ROTATE_Z)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3);
 
             break;
          case SCALE:
             colors[0] = (type == SCALE_XYZ) ? selectionColor : 0xFFFFFFFF;
-            colors[1] = (type == (int)(SCALE_X)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1);
-            colors[2] = (type == (int)(SCALE_Y)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2);
-            colors[3] = (type == (int)(SCALE_Z)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3);
+            colors[1] = (type == (int)(SCALE_X)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1);
+            colors[2] = (type == (int)(SCALE_Y)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2);
+            colors[3] = (type == (int)(SCALE_Z)) ? selectionColor : ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3);
             break;
          case BOUNDS:
             break;
@@ -1332,19 +1332,19 @@ namespace ImGuizmo
             {
                case 0:
                {
-                  directionColor = Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2;
+                  directionColor = Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2;
                   break;
                }
                   
                case 1:
                {
-                  directionColor = Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1;
+                  directionColor = Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1;
                   break;
                }
                   
                case 2:
                {
-                  directionColor = Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3;
+                  directionColor = Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3;
                   break;
                }
 
@@ -2346,19 +2346,19 @@ namespace ImGuizmo
             {
                case 0:
                {
-                  directionColor = Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2;
+                  directionColor = Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2;
                   break;
                }
 
                case 1:
                {
-                  directionColor = Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1;
+                  directionColor = Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1;
                   break;
                }
 
                case 2:
                {
-                  directionColor = Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3;
+                  directionColor = Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3;
                   break;
                }
 
@@ -2573,19 +2573,19 @@ namespace ImGuizmo
                   {
                   case 0:
                   {
-                     directionColor = Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2;
+                     directionColor = Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2;
                      break;
                   }
 
                   case 1:
                   {
-                     directionColor = Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1;
+                     directionColor = Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1;
                      break;
                   }
 
                   case 2:
                   {
-                     directionColor = Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3;
+                     directionColor = Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3;
                      break;
                   }
 

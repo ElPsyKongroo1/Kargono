@@ -124,28 +124,28 @@ namespace Kargono::Panels
 		m_ViewAssetPopup.m_PopupContents = [&]() 
 		{
 			Assets::AssetInfo asset = Assets::AssetService::GetAssetFromAllRegistries(m_ActiveAsset, m_ActiveAssetType);
-			EditorUI::EditorUIService::LabeledText("Asset Handle", static_cast<std::string>(m_ActiveAsset).c_str());
-			EditorUI::EditorUIService::LabeledText("Asset Type", Utility::AssetTypeToString(asset.Data.Type));
+			EditorUI::EditorUIContext::LabeledText("Asset Handle", static_cast<std::string>(m_ActiveAsset).c_str());
+			EditorUI::EditorUIContext::LabeledText("Asset Type", Utility::AssetTypeToString(asset.Data.Type));
 			if (!asset.Data.FileLocation.empty())
 			{
-				EditorUI::EditorUIService::LabeledText("File Location", asset.Data.FileLocation.string().c_str());
+				EditorUI::EditorUIContext::LabeledText("File Location", asset.Data.FileLocation.string().c_str());
 			}
 			if (!asset.Data.IntermediateLocation.empty())
 			{
-				EditorUI::EditorUIService::LabeledText("Intermediate Location", asset.Data.IntermediateLocation.string().c_str());
+				EditorUI::EditorUIContext::LabeledText("Intermediate Location", asset.Data.IntermediateLocation.string().c_str());
 			}
 			
-			EditorUI::EditorUIService::LabeledText("Checksum", asset.Data.CheckSum.c_str());
+			EditorUI::EditorUIContext::LabeledText("Checksum", asset.Data.CheckSum.c_str());
 		};
 	}
 	void AssetViewerPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowAssetViewer);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowAssetViewer);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
@@ -153,7 +153,7 @@ namespace Kargono::Panels
 		m_ViewAssetPopup.RenderPopup();
 
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool AssetViewerPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

@@ -68,7 +68,7 @@ namespace Kargono::Panels
 
 		// Clear mouse picking buffer
 		m_ViewportFramebuffer->SetAttachment(1, -1);
-		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
+		FixedString32 focusedWindow{ EditorUI::EditorUIContext::GetFocusedWindowName() };
 
 		// Update Scene
 		switch (s_MainWindow->m_SceneState)
@@ -189,17 +189,17 @@ namespace Kargono::Panels
 
 		// Create Window
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		EditorUI::EditorUIService::StartWindow(m_PanelName.CString(), &s_MainWindow->m_ShowViewport, NULL);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName.CString(), &s_MainWindow->m_ShowViewport, NULL);
 		ImGui::PopStyleVar();
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 		Math::uvec2 oldViewportSize = { m_ViewportData.m_Width, m_ViewportData.m_Height };
 
-		EditorUI::EditorUIService::AutoCalcViewportSize(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered,
+		EditorUI::EditorUIContext::CalculateViewportDimensions(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered,
 			m_ViewportAspectRatio);
 		
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
@@ -209,7 +209,7 @@ namespace Kargono::Panels
 
 		if (isHovered)
 		{
-			EditorUI::EditorUIService::SkipMouseIconChange();
+			EditorUI::EditorUIContext::SkipMouseIconChange();
 		}
 
 		if ((s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate) ||
@@ -316,7 +316,7 @@ namespace Kargono::Panels
 
 		DrawToolbarOverlay();
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	void ViewportPanel::OnInputEvent(Events::Event* event)
 	{
@@ -921,7 +921,7 @@ namespace Kargono::Panels
 		// Start Grids
 		int32_t currentLine;
 		s_OutputVector->clear();
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::m_ConfigColors.s_GridMajor),
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_GridMajor),
 			Utility::FileSystem::CRCFromString("a_Color"), 
 			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 		// X-Y Grid
@@ -1039,7 +1039,7 @@ namespace Kargono::Panels
 		}
 
 		// Set Color for minor grid lines
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::m_ConfigColors.s_GridMinor),
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_GridMinor),
 			Utility::FileSystem::CRCFromString("a_Color"), 
 			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 
@@ -1158,7 +1158,7 @@ namespace Kargono::Panels
 		{
 			// X Axis
 			s_OutputVector->clear();
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1),
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1),
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->push_back({ minimumValues.x, 0.0f, 0.0f });
@@ -1169,7 +1169,7 @@ namespace Kargono::Panels
 
 			// Y Axis
 			s_OutputVector->clear();
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2),
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2),
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->push_back({ 0.0f, minimumValues.y, 0.0f });
@@ -1180,7 +1180,7 @@ namespace Kargono::Panels
 
 			// Z Axis
 			s_OutputVector->clear();
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3),
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3),
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->push_back({ 0.0f, 0.0f, minimumValues.z });
@@ -1272,27 +1272,27 @@ namespace Kargono::Panels
 			// Draw Play/Simulate/Step Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + (windowSize.x / 2) - 90.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x / 2) + 90.0f, initialScreenCursorPos.y + 43.0f),
-				ImColor(EditorUI::EditorUIService::m_ConfigColors.s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+				ImColor(EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Display Options Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 80.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 48.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::m_ConfigColors.s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+				ImColor(EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Grid Options Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 257.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 187.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::m_ConfigColors.s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+				ImColor(EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Camera Options Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 170.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 100.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::m_ConfigColors.s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+				ImColor(EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Toggle Top Bar Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 30.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x), initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::m_ConfigColors.s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
+				ImColor(EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
 
 			bool hasPlayButton = s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate;
 			bool hasSimulateButton = s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Play;
@@ -1306,11 +1306,11 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::k_PureEmpty);
 			}
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) - 77.0f, initialCursorPos.y + 4));
-			icon = hasPlayButton ? EditorUI::EditorUIService::m_ViewportIcons.m_Play : EditorUI::EditorUIService::m_ViewportIcons.m_Stop;
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasSimulateButton ? icon : EditorUI::EditorUIService::m_ViewportIcons.m_Play)->GetRendererID(),
+			icon = hasPlayButton ? EditorUI::EditorUIContext::m_ViewportIcons.m_Play : EditorUI::EditorUIContext::m_ViewportIcons.m_Stop;
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasSimulateButton ? icon : EditorUI::EditorUIContext::m_ViewportIcons.m_Play)->GetRendererID(),
 				ImVec2(k_IconSize, k_IconSize), ImVec2(0, 0),
 				ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1)
+				EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1)
 				&& m_ToolbarEnabled)
 			{
 				if (hasSimulateButton)
@@ -1332,7 +1332,7 @@ namespace Kargono::Panels
 				if (hasSimulateButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, hasPlayButton ?
+					ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, hasPlayButton ?
 						"Run Application" : "Stop Application");
 					ImGui::EndTooltip();
 				}
@@ -1348,12 +1348,12 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::k_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::k_PureEmpty);
 			}
-			icon = hasSimulateButton ? EditorUI::EditorUIService::m_ViewportIcons.m_Simulate : EditorUI::EditorUIService::m_ViewportIcons.m_Stop;
+			icon = hasSimulateButton ? EditorUI::EditorUIContext::m_ViewportIcons.m_Simulate : EditorUI::EditorUIContext::m_ViewportIcons.m_Stop;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) - 37.0f, initialCursorPos.y + 4));
-			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasPlayButton ? icon : EditorUI::EditorUIService::m_ViewportIcons.m_Simulate)->GetRendererID(),
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)(hasPlayButton ? icon : EditorUI::EditorUIContext::m_ViewportIcons.m_Simulate)->GetRendererID(),
 				ImVec2(k_IconSize, k_IconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1)
+				EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1)
 				&& m_ToolbarEnabled)
 			{
 				if (hasPlayButton)
@@ -1374,7 +1374,7 @@ namespace Kargono::Panels
 				if (hasPlayButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, hasSimulateButton ?
+					ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, hasSimulateButton ?
 						"Simulate Physics" : "Stop Physics Simulation");
 					ImGui::EndTooltip();
 				}
@@ -1390,12 +1390,12 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::k_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::k_PureEmpty);
 			}
-			icon = EditorUI::EditorUIService::m_ViewportIcons.m_Pause;
+			icon = EditorUI::EditorUIContext::m_ViewportIcons.m_Pause;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) + 3.0f, initialCursorPos.y + 4));
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(k_IconSize, k_IconSize),
 				ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				hasPauseButton ? EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1 : EditorUI::EditorUIService::m_ConfigColors.s_DisabledColor)
+				hasPauseButton ? EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1 : EditorUI::EditorUIContext::m_ConfigColors.m_DisabledColor)
 				&& m_ToolbarEnabled)
 			{
 				if (hasPauseButton)
@@ -1409,7 +1409,7 @@ namespace Kargono::Panels
 				if (hasPauseButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, s_MainWindow->m_IsPaused ? "Resume Application" : "Pause Application");
+					ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, s_MainWindow->m_IsPaused ? "Resume Application" : "Pause Application");
 					ImGui::EndTooltip();
 				}
 			}
@@ -1423,13 +1423,13 @@ namespace Kargono::Panels
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, EditorUI::k_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, EditorUI::k_PureEmpty);
 			}
-			icon = EditorUI::EditorUIService::m_ViewportIcons.m_Step;
+			icon = EditorUI::EditorUIContext::m_ViewportIcons.m_Step;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + (windowSize.x / 2) + 43.0f, initialCursorPos.y + 4));
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(k_IconSize, k_IconSize), ImVec2{ 0, 1 },
 				ImVec2{ 1, 0 }, 0,
 				ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-				hasStepButton ? EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1 : EditorUI::EditorUIService::m_ConfigColors.s_DisabledColor)
+				hasStepButton ? EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1 : EditorUI::EditorUIContext::m_ConfigColors.m_DisabledColor)
 				&& m_ToolbarEnabled)
 			{
 				if (hasStepButton)
@@ -1443,7 +1443,7 @@ namespace Kargono::Panels
 				if (hasStepButton)
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, "Step Application");
+					ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Step Application");
 					ImGui::EndTooltip();
 				}
 			}
@@ -1453,13 +1453,13 @@ namespace Kargono::Panels
 			}
 
 			// Camera Options Button
-			icon = EditorUI::EditorUIService::m_GenIcons.m_Camera;
+			icon = EditorUI::EditorUIContext::m_GenIcons.m_Camera;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 163, initialCursorPos.y + 5));
 			if (ImGui::ImageButton("Camera Options",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				EditorUI::k_PureEmpty,
-				EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1))
+				EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1))
 			{
 				ImGui::OpenPopup("Toggle Viewport Camera Options");
 			}
@@ -1467,7 +1467,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, "Camera Movement Types");
+				ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Camera Movement Types");
 				ImGui::EndTooltip();
 			}
 
@@ -1496,18 +1496,18 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, "Camera Speed");
+				ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Camera Speed");
 				ImGui::EndTooltip();
 			}
 
 			// Viewport Display Options Button
-			icon = EditorUI::EditorUIService::m_ViewportIcons.m_Display;
+			icon = EditorUI::EditorUIContext::m_ViewportIcons.m_Display;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 75, initialCursorPos.y + 4));
 			if (ImGui::ImageButton("Display Toggle",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				EditorUI::k_PureEmpty,
-				EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1))
+				EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1))
 			{
 				ImGui::OpenPopup("Toggle Display Options");
 			}
@@ -1515,7 +1515,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, "Display Options");
+				ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Display Options");
 				ImGui::EndTooltip();
 			}
 
@@ -1537,13 +1537,13 @@ namespace Kargono::Panels
 			}
 
 			// Grid Options Button
-			icon = EditorUI::EditorUIService::m_ViewportIcons.m_Grid;
+			icon = EditorUI::EditorUIContext::m_ViewportIcons.m_Grid;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 252, initialCursorPos.y + 4));
 			if (ImGui::ImageButton("Grid Toggle",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 				EditorUI::k_PureEmpty,
-				EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1))
+				EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1))
 			{
 				ImGui::OpenPopup("Grid Options");
 			}
@@ -1551,7 +1551,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, "Grid Options");
+				ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Grid Options");
 				ImGui::EndTooltip();
 			}
 
@@ -1635,20 +1635,20 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, "Local Grid Spacing");
+				ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Local Grid Spacing");
 				ImGui::EndTooltip();
 			}
 		}
 
 		// Toggle Top Bar Button
-		icon = m_ToolbarEnabled ? EditorUI::EditorUIService::m_GenIcons.m_Checkbox_Enabled :
-			EditorUI::EditorUIService::m_GenIcons.m_Checkbox_Disabled;
+		icon = m_ToolbarEnabled ? EditorUI::EditorUIContext::m_GenIcons.m_Checkbox_Enabled :
+			EditorUI::EditorUIContext::m_GenIcons.m_Checkbox_Disabled;
 		ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 25, initialCursorPos.y + 4));
 		if (ImGui::ImageButton("Toggle Top Bar",
 			(ImTextureID)(uint64_t)icon->GetRendererID(),
 			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 			EditorUI::k_PureEmpty,
-			m_ToolbarEnabled ? EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1 : EditorUI::EditorUIService::m_ConfigColors.s_DisabledColor))
+			m_ToolbarEnabled ? EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1 : EditorUI::EditorUIContext::m_ConfigColors.m_DisabledColor))
 		{
 			Utility::Operations::ToggleBoolean(m_ToolbarEnabled);
 		}
@@ -1656,7 +1656,7 @@ namespace Kargono::Panels
 		{
 			ImGui::SetNextFrameWantCaptureMouse(false);
 			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, m_ToolbarEnabled ? "Close Toolbar" : "Open Toolbar");
+			ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, m_ToolbarEnabled ? "Close Toolbar" : "Open Toolbar");
 			ImGui::EndTooltip();
 		}
 
@@ -1664,7 +1664,7 @@ namespace Kargono::Panels
 
 		if (Scenes::SceneService::GetActiveScene()->IsRunning() && !Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity())
 		{
-			ImGui::PushFont(EditorUI::EditorUIService::m_ConfigFonts.m_HeaderLarge);
+			ImGui::PushFont(EditorUI::EditorUIContext::m_ConfigFonts.m_HeaderLarge);
 			ImVec2 cursorStart = ImGui::GetCursorStartPos();
 			windowSize = ImGui::GetContentRegionAvail();
 			ImVec2 textSize = ImGui::CalcTextSize("No Primary Camera Set");

@@ -52,7 +52,7 @@ namespace Kargono
 		// Initialize other various engine services
 		Particles::ParticleService::CreateParticleContext();
 		Particles::ParticleService::GetActiveContext().Init();
-		EditorUI::EditorUIService::Init();
+		EditorUI::EditorUIContext::Init();
 		AI::AIService::CreateAIContext();
 		AI::AIService::GetActiveContext().Init();
 		Rendering::RenderingService::Init();
@@ -90,7 +90,7 @@ namespace Kargono
 		}
 
 		// Terminate engine services
-		EditorUI::EditorUIService::Terminate();
+		EditorUI::EditorUIContext::Terminate();
 		Input::InputMapService::GetActiveContext().Terminate();
 		Input::InputMapService::RemoveInputMapContext();
 		RuntimeUI::RuntimeUIService::GetActiveContext().Terminate();
@@ -159,7 +159,7 @@ namespace Kargono
 		bool handled = false;
 
 		// Handle editor UI mouse capture
-		handled = EditorUI::EditorUIService::OnInputEvent(event);
+		handled = EditorUI::EditorUIContext::OnInputEvent(event);
 		if (handled)
 		{
 			return true;
@@ -236,13 +236,13 @@ namespace Kargono
 		switch (logEvent->GetEventLevel())
 		{
 		case Events::LogEventLevel::Info:
-			EditorUI::EditorUIService::CreateInfoNotification(logEvent->GetEventText().c_str(), 7000);
+			EditorUI::EditorUIContext::RenderInfoNotification(logEvent->GetEventText().c_str(), 7000);
 			break;
 		case Events::LogEventLevel::Warning:
-			EditorUI::EditorUIService::CreateWarningNotification(logEvent->GetEventText().c_str(), 7000);
+			EditorUI::EditorUIContext::RenderWarningNotification(logEvent->GetEventText().c_str(), 7000);
 			break;
 		case Events::LogEventLevel::Critical:
-			EditorUI::EditorUIService::CreateCriticalNotification(logEvent->GetEventText().c_str(), 7000);
+			EditorUI::EditorUIContext::RenderCriticalNotification(logEvent->GetEventText().c_str(), 7000);
 			break;
 		case Events::LogEventLevel::None:
 		default:
@@ -333,7 +333,7 @@ namespace Kargono
 
 		if (event.GetKeyCode() == Key::Z && control)
 		{
-			EditorUI::EditorUIService::Undo();
+			EditorUI::EditorUIContext::s_UndoStack.Undo();
 			return true;
 		}
 

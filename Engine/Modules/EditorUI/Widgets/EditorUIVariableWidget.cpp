@@ -14,12 +14,12 @@ namespace Kargono::EditorUI
 		id.AppendInteger(m_WidgetID);
 		static ImGuiInputTextFlags inputFlags{};
 
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
-		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(), EditorUIService::s_PrimaryTextWidth);
-		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(), EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+		EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
 		switch (VariableType)
 		{
 		case WrappedVarType::None:
@@ -31,12 +31,12 @@ namespace Kargono::EditorUI
 
 		case WrappedVarType::Bool:
 		{
-			ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne);
+			ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
-			EditorUIService::TruncateText("True", 12);
+			EditorUIContext::RenderTruncatedText("True", 12);
 			ImGui::SameLine();
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 				{
 					if (FieldBuffer.As<char>() == "True")
 					{
@@ -46,12 +46,12 @@ namespace Kargono::EditorUI
 					{
 						FieldBuffer.SetString("True");
 					}
-				}, EditorUIService::s_SmallCheckboxButton, std::string(FieldBuffer.As<char>()) == std::string("True"), EditorUIService::m_ConfigColors.s_HighlightColor1);
+				}, EditorUIContext::m_UIPresets.m_SmallCheckboxButton, std::string(FieldBuffer.As<char>()) == std::string("True"), EditorUIContext::m_ConfigColors.m_HighlightColor1);
 
 			ImGui::SameLine(300.0f);
-			EditorUIService::TruncateText("False", 12);
+			EditorUIContext::RenderTruncatedText("False", 12);
 			ImGui::SameLine();
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 				{
 					if (FieldBuffer.As<char>() == "False")
 					{
@@ -61,7 +61,7 @@ namespace Kargono::EditorUI
 					{
 						FieldBuffer.SetString("False");
 					}
-				}, EditorUIService::s_SmallCheckboxButton, std::string(FieldBuffer.As<char>()) == std::string("False"), EditorUIService::m_ConfigColors.s_HighlightColor1);
+				}, EditorUIContext::m_UIPresets.m_SmallCheckboxButton, std::string(FieldBuffer.As<char>()) == std::string("False"), EditorUIContext::m_ConfigColors.m_HighlightColor1);
 			ImGui::PopStyleColor(2);
 			break;
 		}
@@ -69,14 +69,14 @@ namespace Kargono::EditorUI
 		{
 			inputFlags = ImGuiInputTextFlags_CallbackEdit;
 			ImGui::SameLine();
-			ImGui::SetCursorPosX(EditorUIService::s_SecondaryTextPosOne);
+			ImGui::SetCursorPosX(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
 			ImGui::SetNextItemWidth(170.0f);
 			ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
 				{
 					UNREFERENCED_PARAMETER(data);
 					return 0;
 				};
-			ImGui::InputText(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(),
+			ImGui::InputText(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(),
 				FieldBuffer.As<char>(), FieldBuffer.Size, inputFlags, typeCallback);
 			break;
 		}
@@ -89,14 +89,14 @@ namespace Kargono::EditorUI
 		{
 			inputFlags = ImGuiInputTextFlags_CallbackEdit | ImGuiInputTextFlags_CharsDecimal;
 			ImGui::SameLine();
-			ImGui::SetCursorPosX(EditorUIService::s_SecondaryTextPosOne);
+			ImGui::SetCursorPosX(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
 			ImGui::SetNextItemWidth(170.0f);
 			ImGuiInputTextCallback typeCallback = [](ImGuiInputTextCallbackData* data)
 				{
 					UNREFERENCED_PARAMETER(data);
 					return 0;
 				};
-			ImGui::InputText(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(),
+			ImGui::InputText(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(),
 				FieldBuffer.As<char>(), FieldBuffer.Size, inputFlags, typeCallback);
 			break;
 		}

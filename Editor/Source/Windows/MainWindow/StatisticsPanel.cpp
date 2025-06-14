@@ -21,11 +21,11 @@ namespace Kargono::Panels
 	void StatisticsPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowStats);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowStats);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
@@ -58,7 +58,7 @@ namespace Kargono::Panels
 			ImGui::Text("Application Runtime: %s", "Application is not running");
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool StatisticsPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{

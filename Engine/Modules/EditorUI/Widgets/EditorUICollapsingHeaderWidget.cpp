@@ -13,25 +13,25 @@ namespace Kargono::EditorUI
 		uint32_t widgetCount{ 0 };
 		FixedString<16> id{ "##" };
 		id.AppendInteger(m_WidgetID);
-		ImGui::PushFont(EditorUIService::m_ConfigFonts.m_HeaderLarge);
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+		ImGui::PushFont(EditorUIContext::m_ConfigFonts.m_HeaderLarge);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		ImGui::TextUnformatted(m_Label.CString());
 		ImGui::PopStyleColor();
 		ImGui::PopFont();
 		ImGui::SameLine();
-		EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Expanded);
 			},
-			EditorUIService::s_SmallExpandButton, m_Expanded, m_Expanded ? EditorUIService::m_ConfigColors.s_HighlightColor1 : EditorUIService::m_ConfigColors.s_DisabledColor);
+			EditorUIContext::m_UIPresets.m_SmallExpandButton, m_Expanded, m_Expanded ? EditorUIContext::m_ConfigColors.m_HighlightColor1 : EditorUIContext::m_ConfigColors.m_DisabledColor);
 
 		if (m_Expanded && !m_SelectionList.empty())
 		{
 			ImGui::SameLine();
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 				{
 					ImGui::OpenPopup(m_WidgetID - 1);
-				}, EditorUIService::s_MediumOptionsButton, false, EditorUIService::m_ConfigColors.s_DisabledColor);
+				}, EditorUIContext::m_UIPresets.m_MediumOptionsButton, false, EditorUIContext::m_ConfigColors.m_DisabledColor);
 
 			if (ImGui::BeginPopupEx(m_WidgetID - 1, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
 			{

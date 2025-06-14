@@ -64,7 +64,7 @@ namespace Kargono::Rendering
 	{
 		if (Input::InputService::IsKeyPressed(Key::LeftAlt) || Input::InputService::IsKeyPressed(Key::RightAlt))
 		{
-			EditorUI::EditorUIService::SetDisableLeftClick(true);
+			EditorUI::EditorUIContext::SetDisableLeftClick(true);
 		}
 
 		switch (m_MovementType)

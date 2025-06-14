@@ -34,65 +34,65 @@ namespace Kargono::EditorUI
 				ImGui::CloseCurrentPopup();
 			}
 
-			EditorUIService::RecalculateWindowDimensions();
-			EditorUIService::TitleText(m_Label.CString());
+			EditorUIContext::m_ActiveWindowData.RecalculateDimensions();
+			EditorUIContext::TitleText(m_Label.CString());
 
-			ImGui::PushFont(EditorUIService::m_ConfigFonts.m_HeaderRegular);
+			ImGui::PushFont(EditorUIContext::m_ConfigFonts.m_HeaderRegular);
 
 			// Optional Delete Tool Bar Button
 			if (m_DeleteAction)
 			{
 				ImGui::SameLine();
-				EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+				EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 					{
 						if (m_DeleteAction)
 						{
 							m_DeleteAction();
 						}
 						ImGui::CloseCurrentPopup();
-					}, EditorUIService::s_LargeDeleteButton, false, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+					}, EditorUIContext::m_UIPresets.m_LargeDeleteButton, false, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 			}
 
 			// Cancel Tool Bar Button
 			ImGui::SameLine();
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 				{
 					if (m_CancelAction)
 					{
 						m_CancelAction();
 					}
 					ImGui::CloseCurrentPopup();
-				}, EditorUIService::s_LargeCancelButton, false, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+				}, EditorUIContext::m_UIPresets.m_LargeCancelButton, false, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 				{
 					if (m_ConfirmAction)
 					{
 						m_ConfirmAction();
 					}
 					ImGui::CloseCurrentPopup();
-				}, EditorUIService::s_LargeConfirmButton, false, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+				}, EditorUIContext::m_UIPresets.m_LargeConfirmButton, false, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 			ImGui::PopFont();
 
 			ImGui::Separator();
 
-			EditorUIService::Spacing(SpacingAmount::Small);
+			EditorUIContext::Spacing(SpacingAmount::Small);
 
-			ImVec4 cachedBackgroundColor{ EditorUIService::s_ActiveBackgroundColor };
-			EditorUIService::s_ActiveBackgroundColor = EditorUIService::m_ConfigColors.s_BackgroundColor;
+			ImVec4 cachedBackgroundColor{ EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor };
+			EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor = EditorUIContext::m_ConfigColors.m_BackgroundColor;
 
 			if (m_PopupContents)
 			{
 				m_PopupContents();
 			}
 
-			EditorUIService::Spacing(SpacingAmount::Small);
+			EditorUIContext::Spacing(SpacingAmount::Small);
 
-			EditorUIService::s_ActiveBackgroundColor = cachedBackgroundColor;
+			EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor = cachedBackgroundColor;
 			ImGui::EndPopup();
-			EditorUIService::RecalculateWindowDimensions();
+			EditorUIContext::m_ActiveWindowData.RecalculateDimensions();
 		}
 	}
 	void GenericPopupWidget::CloseActivePopup()

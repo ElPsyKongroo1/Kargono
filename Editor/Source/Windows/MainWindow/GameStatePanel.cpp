@@ -98,7 +98,7 @@ namespace Kargono::Panels
 		};
 		m_DeleteGameStateWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this game state object?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to delete this game state object?");
 		};
 
 		m_CloseGameStateWarning.m_Label = "Close Game State";
@@ -109,7 +109,7 @@ namespace Kargono::Panels
 		};
 		m_CloseGameStateWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to close this game state object without saving?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to close this game state object without saving?");
 		};
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
@@ -318,18 +318,18 @@ namespace Kargono::Panels
 	void GameStatePanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowGameStateEditor);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowGameStateEditor);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (!m_EditorGameState)
 		{
 			
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Game State", KG_BIND_CLASS_FN(OnOpenGameStateDialog), "Create New Game State", KG_BIND_CLASS_FN(OnCreateGameStateDialog));
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing Game State", KG_BIND_CLASS_FN(OnOpenGameStateDialog), "Create New Game State", KG_BIND_CLASS_FN(OnCreateGameStateDialog));
 			m_CreateGameStatePopupSpec.RenderPopup();
 			m_OpenGameStatePopupSpec.RenderOptions();
 		}
@@ -343,7 +343,7 @@ namespace Kargono::Panels
 			m_EditFieldPopup.RenderPopup();
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool GameStatePanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -394,8 +394,8 @@ namespace Kargono::Panels
 		
 		// Open game state Window
 		s_MainWindow->m_ShowGameStateEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorGameState)
 		{
@@ -435,8 +435,8 @@ namespace Kargono::Panels
 
 		// Open the editor panel to be visible
 		s_MainWindow->m_ShowGameStateEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorGameStateHandle == assetHandle)

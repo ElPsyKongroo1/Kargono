@@ -36,7 +36,7 @@ namespace Kargono::EditorUI
 	{
 		// Display metadata
 		Ref<Rendering::Texture2D> m_Icon;
-		ImVec4 m_IconColor{ EditorUI::EditorUIService::m_ConfigColors.s_DisabledColor };
+		ImVec4 m_IconColor{ EditorUI::EditorUIContext::m_ConfigColors.m_DisabledColor };
 
 		// Handle key input
 		std::function<void(GridEntry& currentEntry)> m_OnDoubleLeftClick;

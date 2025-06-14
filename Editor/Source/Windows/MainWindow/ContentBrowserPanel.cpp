@@ -954,7 +954,7 @@ namespace Kargono::Panels
 
 		// Initialize grid archetypes
 		EditorUI::GridEntryArchetype directoryArch;
-		directoryArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Directory;
+		directoryArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Directory;
 		directoryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		directoryArch.m_OnDoubleLeftClick = KG_BIND_CLASS_FN(OnGridDirectoryDoubleClick);
 		directoryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
@@ -965,137 +965,137 @@ namespace Kargono::Panels
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Directory, directoryArch);
 
 		EditorUI::GridEntryArchetype rawTextureArch;
-		rawTextureArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Texture;
+		rawTextureArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture;
 		rawTextureArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		rawTextureArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawTexture, rawTextureArch);
 
 		EditorUI::GridEntryArchetype rawAudioArch;
-		rawAudioArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Audio;
+		rawAudioArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Audio;
 		rawAudioArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		rawAudioArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawAudio, rawAudioArch);
 
 		EditorUI::GridEntryArchetype rawFontArch;
-		rawFontArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Font;
+		rawFontArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Font;
 		rawFontArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		rawFontArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawFont, rawFontArch);
 
 		EditorUI::GridEntryArchetype aiStateArch;
-		aiStateArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_AI_KG;
-		aiStateArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
+		aiStateArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_AI_KG;
+		aiStateArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		aiStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		aiStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::AIState, aiStateArch);
 
 		EditorUI::GridEntryArchetype audioArch;
-		audioArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Audio_KG;
-		audioArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
+		audioArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Audio_KG;
+		audioArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		audioArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		audioArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Audio, audioArch);
 
 		EditorUI::GridEntryArchetype binaryArch;
-		binaryArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Binary;
-		binaryArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor4_Thin;
+		binaryArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Binary;
+		binaryArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor4_Thin;
 		binaryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		binaryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Binary, binaryArch);
 
 		EditorUI::GridEntryArchetype fontArch;
-		fontArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Font_KG;
-		fontArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
+		fontArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Font_KG;
+		fontArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		fontArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		fontArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Font, fontArch);
 
 		EditorUI::GridEntryArchetype gameStateArch;
-		gameStateArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_GlobalState;
-		gameStateArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
+		gameStateArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_GlobalState;
+		gameStateArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		gameStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		gameStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GameState, gameStateArch);
 
 		EditorUI::GridEntryArchetype globalStateArch;
-		globalStateArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_GlobalState;
-		globalStateArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
+		globalStateArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_GlobalState;
+		globalStateArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		globalStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		globalStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GlobalState, globalStateArch);
 
 		EditorUI::GridEntryArchetype emitterConfigArch;
-		emitterConfigArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_EmitterConfig;
-		emitterConfigArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
+		emitterConfigArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_EmitterConfig;
+		emitterConfigArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		emitterConfigArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		emitterConfigArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::EmitterConfig, emitterConfigArch);
 
 		EditorUI::GridEntryArchetype colorPaletteArch;
-		colorPaletteArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_ColorPalette;
-		colorPaletteArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
+		colorPaletteArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_ColorPalette;
+		colorPaletteArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		colorPaletteArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		colorPaletteArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::ColorPalette, colorPaletteArch);
 
 		EditorUI::GridEntryArchetype inputMapArch;
-		inputMapArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Input;
-		inputMapArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
+		inputMapArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input;
+		inputMapArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		inputMapArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		inputMapArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::InputMap, inputMapArch);
 
 		EditorUI::GridEntryArchetype projectComponentArch;
-		projectComponentArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_ProjectComponent;
-		projectComponentArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
+		projectComponentArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_ProjectComponent;
+		projectComponentArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		projectComponentArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		projectComponentArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::ProjectComponent, projectComponentArch);
 		
 		EditorUI::GridEntryArchetype registryArch;
-		registryArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Registry;
-		registryArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor4_Thin;
+		registryArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Registry;
+		registryArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor4_Thin;
 		registryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		registryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Registry, registryArch);
 
 		EditorUI::GridEntryArchetype sceneArch;
-		sceneArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Scene_KG;
-		sceneArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor3_Thin;
+		sceneArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Scene_KG;
+		sceneArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3_Thin;
 		sceneArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		sceneArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Scene, sceneArch);
 
 		EditorUI::GridEntryArchetype scriptArch;
-		scriptArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Script;
-		scriptArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2_Thin;
+		scriptArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Script;
+		scriptArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2_Thin;
 		scriptArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		scriptArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Script, scriptArch);
 
 		EditorUI::GridEntryArchetype projectEnumArch;
-		projectEnumArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Enum;
-		projectEnumArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2_Thin;
+		projectEnumArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Enum;
+		projectEnumArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2_Thin;
 		projectEnumArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		projectEnumArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::ProjectEnum, projectEnumArch);
 
 		EditorUI::GridEntryArchetype textureArch;
-		textureArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_Texture_KG;
-		textureArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
+		textureArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture_KG;
+		textureArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		textureArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		textureArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Texture, textureArch);
 
 		EditorUI::GridEntryArchetype userInterfaceArch;
-		userInterfaceArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_UserInterface;
-		userInterfaceArch.m_IconColor = EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
+		userInterfaceArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_UserInterface;
+		userInterfaceArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		userInterfaceArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		userInterfaceArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::UserInterface, userInterfaceArch);
 
 		EditorUI::GridEntryArchetype genericFileArch;
-		genericFileArch.m_Icon = EditorUI::EditorUIService::m_ContentBrowserIcons.m_GenericFile;
+		genericFileArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_GenericFile;
 		genericFileArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		genericFileArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GenericFile, genericFileArch);
@@ -1114,7 +1114,7 @@ namespace Kargono::Panels
 		m_DeleteDirectoryPopup.m_Label = "Delete Directory";
 		m_DeleteDirectoryPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::LabeledText("Directory Name:", m_CurrentFileToModifyCache.string().c_str());
+			EditorUI::EditorUIContext::LabeledText("Directory Name:", m_CurrentFileToModifyCache.string().c_str());
 		};
 		m_DeleteDirectoryPopup.m_ConfirmAction = [&]()
 		{
@@ -1125,7 +1125,7 @@ namespace Kargono::Panels
 		m_DeleteFilePopup.m_Label = "Delete File";
 		m_DeleteFilePopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::LabeledText("File Name:", m_CurrentFileToModifyCache.string().c_str());
+			EditorUI::EditorUIContext::LabeledText("File Name:", m_CurrentFileToModifyCache.string().c_str());
 		};
 		m_DeleteFilePopup.m_ConfirmAction = KG_BIND_CLASS_FN(OnHandleDeleteFile);
 
@@ -1152,12 +1152,12 @@ namespace Kargono::Panels
 	void ContentBrowserPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowContentBrowser);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowContentBrowser);
 
 		// Early out of window if not visible
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
@@ -1175,7 +1175,7 @@ namespace Kargono::Panels
 		m_DeleteFilePopup.RenderPopup();
 		m_CreateDirectoryPopup.RenderPopup();
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 
 	}
 	bool ContentBrowserPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
@@ -1190,7 +1190,7 @@ namespace Kargono::Panels
 	bool ContentBrowserPanel::OnMouseButton(Events::MouseButtonPressedEvent event)
 	{
 		// Ensure right click is applicable
-		if (!EditorUI::EditorUIService::IsAnyItemHovered() && event.GetMouseButton() == Mouse::ButtonRight)
+		if (!EditorUI::EditorUIContext::IsAnyItemHovered() && event.GetMouseButton() == Mouse::ButtonRight)
 		{
 			m_RightClickTooltip.ClearEntries();
 
@@ -1289,7 +1289,7 @@ namespace Kargono::Panels
 			m_RightClickTooltip.AddTooltipEntry(createDirectoryTooltipEntry);
 
 			// Add seperator
-			m_RightClickTooltip.AddSeperator(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1_Thin);
+			m_RightClickTooltip.AddSeperator(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin);
 
 			// Add open current directory in file explorer
 			EditorUI::TooltipEntry openCurrentDirectoryTooltipEntry{ "Open File Explorer", [&](EditorUI::TooltipEntry& currentEntry)

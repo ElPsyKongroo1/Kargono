@@ -16,29 +16,29 @@ namespace Kargono::EditorUI
 
 		std::array<float, 4> buttonPositions
 		{
-			EditorUIService::s_SecondaryTextPosOne,
-			EditorUIService::s_SecondaryTextPosTwo,
-			EditorUIService::s_SecondaryTextPosThree,
-			EditorUIService::s_SecondaryTextPosFour
+			EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne,
+			EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo,
+			EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosThree,
+			EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosFour
 		};
 
 		std::array<ImVec4, 4> buttonColors
 		{
-			EditorUIService::m_ConfigColors.s_HighlightColor1_UltraThin,
-			EditorUIService::m_ConfigColors.s_HighlightColor2_UltraThin,
-			EditorUIService::m_ConfigColors.s_HighlightColor3_UltraThin,
-			EditorUIService::m_ConfigColors.s_HighlightColor4_UltraThin,
+			EditorUIContext::m_ConfigColors.m_HighlightColor1_UltraThin,
+			EditorUIContext::m_ConfigColors.m_HighlightColor2_UltraThin,
+			EditorUIContext::m_ConfigColors.m_HighlightColor3_UltraThin,
+			EditorUIContext::m_ConfigColors.m_HighlightColor4_UltraThin,
 		};
 
 		if (m_Flags & Button_Indented)
 		{
-			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
+			ImGui::SetCursorPosX(EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 		}
 		// Display Primary Label
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
-			m_Flags & Button_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
-		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+			m_Flags & Button_Indented ? EditorUIContext::m_ActiveWindowData.m_PrimaryTextIndentedWidth : EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+		EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
 		// Setup background drawlist
@@ -50,8 +50,8 @@ namespace Kargono::EditorUI
 			ImGui::SameLine(buttonPositions[i] - 2.5f);
 			EditorUI::Button& currentButton = m_Buttons[i];
 			if (ImGui::InvisibleButton(
-				("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(),
-				ImVec2(EditorUIService::s_SecondaryTextSmallWidth, EditorUIService::s_TextBackgroundHeight)))
+				("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(),
+				ImVec2(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight)))
 			{
 				if (currentButton.m_OnPress)
 				{
@@ -63,11 +63,11 @@ namespace Kargono::EditorUI
 
 			if (ImGui::IsItemActive())
 			{
-				buttonColor = EditorUIService::m_ConfigColors.s_ActiveColor;
+				buttonColor = EditorUIContext::m_ConfigColors.m_ActiveColor;
 			}
 			else if (ImGui::IsItemHovered())
 			{
-				buttonColor = EditorUIService::m_ConfigColors.s_HoveredColor;
+				buttonColor = EditorUIContext::m_ConfigColors.m_HoveredColor;
 			}
 			else
 			{
@@ -75,16 +75,16 @@ namespace Kargono::EditorUI
 			}
 
 			// Draw the relevant background
-			draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + buttonPositions[i] - 5.0f, screenPosition.y - EditorUIService::s_TextBackgroundHeight),
-				ImVec2(EditorUIService::s_WindowPosition.x + buttonPositions[i] + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y), ImColor(buttonColor),
+			draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + buttonPositions[i] - 5.0f, screenPosition.y - EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+				ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + buttonPositions[i] + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y), ImColor(buttonColor),
 				4.0f, ImDrawFlags_RoundCornersAll);
 
 			// Display entry text
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 			ImGui::SameLine(buttonPositions[i]);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
-			int floatPosition = ImGui::FindPositionAfterLength(currentButton.m_Label.CString(), EditorUIService::s_SecondaryTextSmallWidth);
-			EditorUIService::TruncateText(currentButton.m_Label.CString(),
+			int floatPosition = ImGui::FindPositionAfterLength(currentButton.m_Label.CString(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			EditorUIContext::RenderTruncatedText(currentButton.m_Label.CString(),
 				floatPosition == -1 ? std::numeric_limits<int32_t>::max() : floatPosition);
 			ImGui::PopStyleColor();
 		}

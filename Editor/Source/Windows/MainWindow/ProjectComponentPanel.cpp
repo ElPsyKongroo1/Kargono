@@ -22,17 +22,17 @@ namespace Kargono::Panels
 	void ProjectComponentPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowProjectComponent);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowProjectComponent);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (!m_EditorProjectComponent)
 		{
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Component", KG_BIND_CLASS_FN(OpenComponentDialog), "Create New Component", KG_BIND_CLASS_FN(CreateComponentDialog));
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing Component", KG_BIND_CLASS_FN(OpenComponentDialog), "Create New Component", KG_BIND_CLASS_FN(CreateComponentDialog));
 			m_CreateComponentPopup.RenderPopup();
 			m_OpenComponentPopup.RenderOptions();
 		}
@@ -40,7 +40,7 @@ namespace Kargono::Panels
 		{
 			// Header
 			m_MainHeader.RenderHeader();
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Header Popups
 			m_DeleteComponentWarning.RenderPopup();
@@ -56,7 +56,7 @@ namespace Kargono::Panels
 		}
 
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	void ProjectComponentPanel::InitializeOpeningPanel()
 	{
@@ -150,7 +150,7 @@ namespace Kargono::Panels
 		};
 		m_DeleteComponentWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this component object?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to delete this component object?");
 		};
 
 		m_CloseComponentWarning.m_Label = "Close Component";
@@ -161,7 +161,7 @@ namespace Kargono::Panels
 		};
 		m_CloseComponentWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to close this component object without saving?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to close this component object without saving?");
 		};
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
@@ -364,8 +364,8 @@ namespace Kargono::Panels
 	{
 		// Open project component Window
 		s_MainWindow->m_ShowProjectComponent = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorProjectComponent)
 		{
@@ -402,8 +402,8 @@ namespace Kargono::Panels
 
 		// Open the editor panel to be visible
 		s_MainWindow->m_ShowProjectComponent = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorProjectComponentHandle == assetHandle)

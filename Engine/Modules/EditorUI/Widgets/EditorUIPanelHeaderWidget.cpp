@@ -11,8 +11,8 @@ namespace Kargono::EditorUI
 	{
 		FixedString<16> id{ "##" };
 		id.AppendInteger(m_WidgetID);
-		ImGui::PushFont(EditorUIService::m_ConfigFonts.m_HeaderLarge);
-		ImGui::PushStyleColor(ImGuiCol_Text, m_EditColorActive ? EditorUIService::m_ConfigColors.s_HighlightColor2 : EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+		ImGui::PushFont(EditorUIContext::m_ConfigFonts.m_HeaderLarge);
+		ImGui::PushStyleColor(ImGuiCol_Text, m_EditColorActive ? EditorUIContext::m_ConfigColors.m_HighlightColor2 : EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		ImGui::TextUnformatted(m_Label.CString());
 		ImGui::PopStyleColor();
 		ImGui::PopFont();
@@ -20,10 +20,10 @@ namespace Kargono::EditorUI
 		if (m_SelectionsList.size() > 0)
 		{
 			ImGui::SameLine();
-			EditorUIService::CreateButton(m_WidgetID, [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID, [&]()
 				{
 					ImGui::OpenPopup(id);
-				}, EditorUIService::s_MediumOptionsButton, false, EditorUIService::m_ConfigColors.s_DisabledColor);
+				}, EditorUIContext::m_UIPresets.m_MediumOptionsButton, false, EditorUIContext::m_ConfigColors.m_DisabledColor);
 
 			if (ImGui::BeginPopup(id))
 			{
@@ -37,8 +37,8 @@ namespace Kargono::EditorUI
 				ImGui::EndPopup();
 			}
 		}
-		ImGui::Separator(1.0f, EditorUIService::m_ConfigColors.s_HighlightColor1_Thin);
-		EditorUIService::Spacing(0.2f);
+		ImGui::Separator(1.0f, EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin);
+		EditorUIContext::Spacing(0.2f);
 	}
 	void PanelHeaderWidget::ClearSelectionList()
 	{

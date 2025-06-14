@@ -95,7 +95,7 @@ namespace Kargono::Panels
 		};
 		m_DeleteGlobalStateWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to delete this global state object?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to delete this global state object?");
 			};
 
 		m_CloseGlobalStateWarning.m_Label = "Close Global State";
@@ -105,7 +105,7 @@ namespace Kargono::Panels
 		};
 		m_CloseGlobalStateWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to close this Global State object without saving?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to close this Global State object without saving?");
 		};
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
@@ -166,18 +166,18 @@ namespace Kargono::Panels
 	void GlobalStatePanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowGlobalStateEditor);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowGlobalStateEditor);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (!m_EditorGlobalState)
 		{
 
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Global State", KG_BIND_CLASS_FN(OnOpenGlobalStateDialog), "Create New Global State", KG_BIND_CLASS_FN(OnCreateGlobalStateDialog));
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing Global State", KG_BIND_CLASS_FN(OnOpenGlobalStateDialog), "Create New Global State", KG_BIND_CLASS_FN(OnCreateGlobalStateDialog));
 			m_CreateGlobalStatePopup.RenderPopup();
 			m_OpenGlobalStatePopup.RenderOptions();
 		}
@@ -190,7 +190,7 @@ namespace Kargono::Panels
 			m_CloseGlobalStateWarning.RenderPopup();
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool GlobalStatePanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -243,8 +243,8 @@ namespace Kargono::Panels
 	{
 		// Open global state Window
 		s_MainWindow->m_ShowGlobalStateEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorGlobalState)
 		{
@@ -282,8 +282,8 @@ namespace Kargono::Panels
 
 		// Open the editor panel to be visible
 		s_MainWindow->m_ShowGlobalStateEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorGlobalStateHandle == assetHandle)

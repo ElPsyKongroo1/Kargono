@@ -24,12 +24,12 @@ namespace Kargono::Panels
 	void UIEditorTreePanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_UIWindow->m_ShowTree);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_UIWindow->m_ShowTree);
 
 		// Early out if the window is not visible
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
@@ -37,7 +37,7 @@ namespace Kargono::Panels
 		if (!s_UIWindow->m_EditorUI)
 		{
 			// Display opening screen for user interface editor
-			EditorUI::EditorUIService::NewItemScreen("Open Existing User Interface", KG_BIND_CLASS_FN(OnOpenUIDialog), "Create New User Interface", KG_BIND_CLASS_FN(OnCreateUIDialog));
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing User Interface", KG_BIND_CLASS_FN(OnOpenUIDialog), "Create New User Interface", KG_BIND_CLASS_FN(OnCreateUIDialog));
 			m_CreateUIPopupSpec.RenderPopup();
 			m_OpenUIPopupSpec.RenderOptions();
 		}
@@ -52,7 +52,7 @@ namespace Kargono::Panels
 		}
 
 		// End the window
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 
 	void UIEditorTreePanel::OnRefreshData()
@@ -77,7 +77,7 @@ namespace Kargono::Panels
 		EditorUI::TreeEntry uiEntry{};
 		uiEntry.m_Label = Assets::AssetService::GetUserInterfaceRegistry().at(
 			s_UIWindow->m_EditorUIHandle).Data.FileLocation.stem().string();
-		uiEntry.m_IconHandle = EditorUI::EditorUIService::m_RuntimeUIIcons.m_UserInterface2;
+		uiEntry.m_IconHandle = EditorUI::EditorUIContext::m_RuntimeUIIcons.m_UserInterface2;
 		uiEntry.m_Handle = s_UIWindow->m_EditorUIHandle;
 
 		// Add functions to call when interacting with window entry
@@ -90,7 +90,7 @@ namespace Kargono::Panels
 			// Create new window entry
 			EditorUI::TreeEntry windowEntry{};
 			windowEntry.m_Label = window.m_Tag;
-			windowEntry.m_IconHandle = EditorUI::EditorUIService::m_RuntimeUIIcons.m_Window;
+			windowEntry.m_IconHandle = EditorUI::EditorUIContext::m_RuntimeUIIcons.m_Window;
 			windowEntry.m_Handle = window.m_ID;
 
 			// Add window selection options
@@ -123,7 +123,7 @@ namespace Kargono::Panels
 			};
 		m_DeleteUIWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to delete this user interface object?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to delete this user interface object?");
 			};
 
 		// Intialize widget data for closing the user interface warning popup
@@ -135,7 +135,7 @@ namespace Kargono::Panels
 			};
 		m_CloseUIWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to close this user interface object without saving?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to close this user interface object without saving?");
 			};
 
 		// Set up main header for user interface editor panel
@@ -478,7 +478,7 @@ namespace Kargono::Panels
 		m_UITree.ExpandNodePath(entryPath);
 
 		// TODO: Deal with local properties panel
-		//EditorUI::EditorUIService::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
+		//EditorUI::EditorUIContext::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
 		//s_MainWindow->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 	}
 
@@ -574,7 +574,7 @@ namespace Kargono::Panels
 		//s_MainWindow->m_PropertiesPanel->m_ActiveParent = m_PanelName;
 
 		// Bring properties panel to front
-		//EditorUI::EditorUIService::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
+		//EditorUI::EditorUIContext::BringWindowToFront(s_MainWindow->m_PropertiesPanel->m_PanelName);
 	}
 
 	void UIEditorTreePanel::ToggleWindowVisibility(EditorUI::TooltipEntry& entry)
@@ -647,7 +647,7 @@ namespace Kargono::Panels
 		// Create new window entry for m_UITree
 		EditorUI::TreeEntry& newEntry = uiTreeEntry->m_SubEntries.emplace_back();
 		newEntry.m_Label = "None";
-		newEntry.m_IconHandle = EditorUI::EditorUIService::m_RuntimeUIIcons.m_Window;
+		newEntry.m_IconHandle = EditorUI::EditorUIContext::m_RuntimeUIIcons.m_Window;
 		
 
 		// Add window selection options

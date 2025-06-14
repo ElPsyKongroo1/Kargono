@@ -16,20 +16,20 @@ namespace Kargono::EditorUI
 		// Display Menu Item
 		if (m_Flags & ChooseDirectory_Indented)
 		{
-			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
+			ImGui::SetCursorPosX(EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 		}
 
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
-		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(), EditorUIService::s_PrimaryTextWidth);
-		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(), EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+		EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
-		EditorUIService::WriteMultilineText(m_CurrentOption.string(), EditorUIService::s_SecondaryTextLargeWidth, EditorUIService::s_SecondaryTextPosOne);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
+		EditorUIContext::RenderMultiLineText(m_CurrentOption.string(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth, EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
 		ImGui::PopStyleColor();
 
 		ImGui::SameLine();
-		EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 			{
 				const std::filesystem::path initialDirectory = m_CurrentOption.empty() ? std::filesystem::current_path() : m_CurrentOption;
 				std::filesystem::path outputDirectory = Utility::FileDialogs::ChooseDirectory(initialDirectory);
@@ -44,6 +44,6 @@ namespace Kargono::EditorUI
 					m_ConfirmAction(outputDirectory.string());
 				}
 			},
-			EditorUIService::s_SmallEditButton, false, EditorUIService::m_ConfigColors.s_DisabledColor);
+			EditorUIContext::m_UIPresets.m_SmallEditButton, false, EditorUIContext::m_ConfigColors.m_DisabledColor);
 	}
 }

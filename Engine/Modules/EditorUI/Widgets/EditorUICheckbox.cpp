@@ -17,24 +17,24 @@ namespace Kargono::EditorUI
 		// Draw background
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne + 21.0f, screenPosition.y + EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne + 21.0f, screenPosition.y + EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImColor(EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		if (m_Flags & Checkbox_Indented)
 		{
-			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
+			ImGui::SetCursorPosX(EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 		}
 		// Display Primary Label
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
-			m_Flags & Checkbox_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
-		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+			m_Flags & Checkbox_Indented ? EditorUIContext::m_ActiveWindowData.m_PrimaryTextIndentedWidth : EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+		EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
 		if (m_Flags & Checkbox_LeftLean)
 		{
-			ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne - 2.5f);
+			ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 2.5f);
 		}
 		else
 		{
@@ -45,7 +45,7 @@ namespace Kargono::EditorUI
 		{
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 				{
 
 					if (m_CurrentBoolean)
@@ -66,7 +66,7 @@ namespace Kargono::EditorUI
 						}
 						m_ConfirmAction(*this);
 					}
-				}, EditorUIService::s_SmallCheckboxButton, m_CurrentBoolean, EditorUIService::m_ConfigColors.s_HighlightColor1);
+				}, EditorUIContext::m_UIPresets.m_SmallCheckboxButton, m_CurrentBoolean, EditorUIContext::m_ConfigColors.m_HighlightColor1);
 			ImGui::PopStyleColor(2);
 		}
 		else
@@ -74,18 +74,18 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), nullptr,
-				EditorUIService::s_SmallCheckboxDisabledButton,
-				m_CurrentBoolean, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), nullptr,
+				EditorUIContext::m_UIPresets.m_SmallCheckboxDisabledButton,
+				m_CurrentBoolean, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
 			ImGui::PopStyleColor(3);
 		}
 
 		ImGui::SameLine();
-		EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
-			EditorUIService::s_SmallEditButton,
-			m_Editing, m_Editing ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor);
+			EditorUIContext::m_UIPresets.m_SmallEditButton,
+			m_Editing, m_Editing ? EditorUIContext::m_ConfigColors.m_PrimaryTextColor : EditorUIContext::m_ConfigColors.m_DisabledColor);
 	}
 }

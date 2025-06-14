@@ -53,18 +53,18 @@ namespace Kargono::Panels
 	void InputMapPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION()
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowInputMapEditor);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowInputMapEditor);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (!m_EditorInputMap)
 		{
 			// Opening/Null State Screen
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Input Map", KG_BIND_CLASS_FN(OnOpenInputMapDialog), "Create New Input Map", KG_BIND_CLASS_FN(OnCreateInputMapDialog));
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing Input Map", KG_BIND_CLASS_FN(OnOpenInputMapDialog), "Create New Input Map", KG_BIND_CLASS_FN(OnCreateInputMapDialog));
 			m_CreateInputMapPopupSpec.RenderPopup();
 			m_OpenInputMapPopupSpec.RenderOptions();
 		}
@@ -76,9 +76,9 @@ namespace Kargono::Panels
 			m_CloseInputMapWarning.RenderPopup();
 
 			// Main Content
-			EditorUI::EditorUIService::BeginTabBar("InputMapPanelTabBar");
+			EditorUI::EditorUIContext::BeginTabBar("InputMapPanelTabBar");
 			// Keyboard Panel
-			if (EditorUI::EditorUIService::BeginTabItem("Keyboard"))
+			if (EditorUI::EditorUIContext::BeginTabItem("Keyboard"))
 			{
 				// On Update
 				m_KeyboardOnUpdateTable.RenderList();
@@ -95,19 +95,19 @@ namespace Kargono::Panels
 				m_KeyboardPollingAddSlot.RenderPopup();
 				m_KeyboardPollingEditSlot.RenderPopup();
 
-				EditorUI::EditorUIService::EndTabItem();
+				EditorUI::EditorUIContext::EndTabItem();
 			}
 			// Mouse Panel
-			if (EditorUI::EditorUIService::BeginTabItem("Mouse"))
+			if (EditorUI::EditorUIContext::BeginTabItem("Mouse"))
 			{
-				EditorUI::EditorUIService::Text("Unimplemented Yet????");
-				EditorUI::EditorUIService::EndTabItem();
+				EditorUI::EditorUIContext::Text("Unimplemented Yet????");
+				EditorUI::EditorUIContext::EndTabItem();
 			}
-			EditorUI::EditorUIService::EndTabBar();
+			EditorUI::EditorUIContext::EndTabBar();
 			
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool InputMapPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -190,8 +190,8 @@ namespace Kargono::Panels
 	{
 		// Open input map Window
 		s_MainWindow->m_ShowInputMapEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorInputMap)
 		{
@@ -229,8 +229,8 @@ namespace Kargono::Panels
 
 		// Open the editor panel to be visible
 		s_MainWindow->m_ShowInputMapEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorInputMapHandle == assetHandle)
@@ -337,7 +337,7 @@ namespace Kargono::Panels
 		};
 		m_DeleteInputMapWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this input map object?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to delete this input map object?");
 		};
 
 		m_CloseInputMapWarning.m_Label = "Close Input Map";
@@ -348,7 +348,7 @@ namespace Kargono::Panels
 		};
 		m_CloseInputMapWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to close this input map object without saving?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to close this input map object without saving?");
 		};
 
 		m_MainHeader.AddToSelectionList("Save", [&]()

@@ -257,79 +257,79 @@ namespace Kargono::Panels
 	void ProjectPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowProject);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowProject);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 		// Project Settings Header
-		EditorUI::EditorUIService::BeginTabBar("ProjectSettingsBar");
+		EditorUI::EditorUIContext::BeginTabBar("ProjectSettingsBar");
 
-		if (EditorUI::EditorUIService::BeginTabItem("General"))
+		if (EditorUI::EditorUIContext::BeginTabItem("General"))
 		{
 			// Project Directory
-			EditorUI::EditorUIService::LabeledText("Project Directory", Projects::ProjectService::GetActiveContext().GetProjectPaths().m_ProjectDirectory.string().c_str());
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIContext::LabeledText("Project Directory", Projects::ProjectService::GetActiveContext().GetProjectPaths().m_ProjectDirectory.string().c_str());
+			EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Select Starting Scene
 			m_SelectStartSceneSpec.RenderOptions();
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Networking Checkbox
 			m_ToggleNetworkSpec.m_CurrentBoolean = Projects::ProjectService::GetActiveContext().GetAppIsNetworked();
 			m_ToggleNetworkSpec.RenderCheckbox();
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Default Fullscreen
 			m_DefaultFullscreenSpec.m_CurrentBoolean = Projects::ProjectService::GetActiveContext().GetIsFullscreen();
 			m_DefaultFullscreenSpec.RenderCheckbox();
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Select Starting Game State
 			m_SelectStartGameStateSpec.RenderOptions();
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Resolution Select Option
 			m_SelectResolutionSpec.RenderOptions();
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Select On Runtime Start
 			m_SelectRuntimeStartSpec.RenderOptions();
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
-			EditorUI::EditorUIService::EndTabItem();
+			EditorUI::EditorUIContext::EndTabItem();
 		}
 
-		if (EditorUI::EditorUIService::BeginTabItem("Network"))
+		if (EditorUI::EditorUIContext::BeginTabItem("Network"))
 		{
-			EditorUI::EditorUIService::BeginTabBar("ProjectNetworkBar");
+			EditorUI::EditorUIContext::BeginTabBar("ProjectNetworkBar");
 
-			if (EditorUI::EditorUIService::BeginTabItem("Client"))
+			if (EditorUI::EditorUIContext::BeginTabItem("Client"))
 			{
 				m_ClientOptions.OnEditorUIRender();
-				EditorUI::EditorUIService::EndTabItem();
+				EditorUI::EditorUIContext::EndTabItem();
 			}
 
-			if (EditorUI::EditorUIService::BeginTabItem("Server"))
+			if (EditorUI::EditorUIContext::BeginTabItem("Server"))
 			{
 				m_ServerOptions.OnEditorUIRender();
-				EditorUI::EditorUIService::EndTabItem();
+				EditorUI::EditorUIContext::EndTabItem();
 			}
 
-			EditorUI::EditorUIService::EndTabBar();
+			EditorUI::EditorUIContext::EndTabBar();
 
 
-			EditorUI::EditorUIService::EndTabItem();
+			EditorUI::EditorUIContext::EndTabItem();
 		}
 
-		EditorUI::EditorUIService::EndTabBar();
+		EditorUI::EditorUIContext::EndTabBar();
 
 		m_SelectScriptTooltip.RenderTooltip();
 		
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool ProjectPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -471,14 +471,14 @@ namespace Kargono::Panels
 	}
 	void ServerOptions::OnEditorUIRender()
 	{
-		EditorUI::EditorUIService::BeginTabBar("ServerOptionsBar");
+		EditorUI::EditorUIContext::BeginTabBar("ServerOptionsBar");
 
-		if (EditorUI::EditorUIService::BeginTabItem("Status"))
+		if (EditorUI::EditorUIContext::BeginTabItem("Status"))
 		{
 			m_StatusHeader.RenderHeader();
 			if (m_StatusHeader.m_Expanded)
 			{
-				EditorUI::EditorUIService::LabeledText("Status", m_ActiveState ? "Active" : "In-Active",
+				EditorUI::EditorUIContext::LabeledText("Status", m_ActiveState ? "Active" : "In-Active",
 					EditorUI::LabeledText_Indented);
 			}
 			m_CommandsHeader.RenderHeader();
@@ -494,12 +494,12 @@ namespace Kargono::Panels
 				for (ConnectionUI& connection : m_ConnectionUIs)
 				{
 					connection.OnEditorUIRender();
-					EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Medium);
+					EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Medium);
 				}
 			}
-			EditorUI::EditorUIService::EndTabItem();
+			EditorUI::EditorUIContext::EndTabItem();
 		}
-		if (EditorUI::EditorUIService::BeginTabItem("Config"))
+		if (EditorUI::EditorUIContext::BeginTabItem("Config"))
 		{
 			m_GeneralConfigHeader.RenderHeader();
 
@@ -516,10 +516,10 @@ namespace Kargono::Panels
 				m_ServerSecrets.m_CurrentIVec4 = (Math::ivec4)config.m_ValidationSecrets;
 				m_ServerSecrets.RenderIVec4();
 			}
-			EditorUI::EditorUIService::EndTabItem();
+			EditorUI::EditorUIContext::EndTabItem();
 		}
 
-		EditorUI::EditorUIService::EndTabBar();
+		EditorUI::EditorUIContext::EndTabBar();
 	}
 	void ServerOptions::OnNotifySendServerPacket(Network::ClientIndex clientIndex, Network::PacketSequence seq)
 	{
@@ -1483,14 +1483,14 @@ namespace Kargono::Panels
 	}
 	void ClientOptions::OnEditorUIRender()
 	{
-		EditorUI::EditorUIService::BeginTabBar("ClientOptionsBar");
+		EditorUI::EditorUIContext::BeginTabBar("ClientOptionsBar");
 
-		if (EditorUI::EditorUIService::BeginTabItem("Status"))
+		if (EditorUI::EditorUIContext::BeginTabItem("Status"))
 		{
 			m_StatusHeader.RenderHeader();
 			if (m_StatusHeader.m_Expanded)
 			{
-				EditorUI::EditorUIService::LabeledText("Status", m_ActiveState ? "Active" : "In-Active",
+				EditorUI::EditorUIContext::LabeledText("Status", m_ActiveState ? "Active" : "In-Active",
 					EditorUI::LabeledText_Indented);
 			}
 
@@ -1507,9 +1507,9 @@ namespace Kargono::Panels
 				m_ClientConnectionUI.OnEditorUIRender();
 			}
 
-			EditorUI::EditorUIService::EndTabItem();
+			EditorUI::EditorUIContext::EndTabItem();
 		}
-		if (EditorUI::EditorUIService::BeginTabItem("Config"))
+		if (EditorUI::EditorUIContext::BeginTabItem("Config"))
 		{
 			m_AppScriptsHeader.RenderHeader();
 			if (m_AppScriptsHeader.m_Expanded)
@@ -1553,10 +1553,10 @@ namespace Kargono::Panels
 				// Select On Update User Count
 				m_SelectUpdateUserCountSpec.RenderOptions();
 			}
-			EditorUI::EditorUIService::EndTabItem();
+			EditorUI::EditorUIContext::EndTabItem();
 		}
 
-		EditorUI::EditorUIService::EndTabBar();
+		EditorUI::EditorUIContext::EndTabBar();
 	}
 	bool ClientOptions::OnAssetEvent(Events::Event* event)
 	{
@@ -1662,13 +1662,13 @@ namespace Kargono::Panels
 	{
 		// Display connection status
 		const char* status{ Utility::ConnectionStatusToString(m_ConnectionStatus) };
-		EditorUI::EditorUIService::LabeledText("Connection Status", status,
+		EditorUI::EditorUIContext::LabeledText("Connection Status", status,
 			EditorUI::LabeledText_Indented);
 
 		// Display client index
 		FixedString16 indexText( m_ClientIndex == Network::k_InvalidClientIndex ?
 			"Invalid" : std::to_string(m_ClientIndex).c_str());
-		EditorUI::EditorUIService::LabeledText
+		EditorUI::EditorUIContext::LabeledText
 		(
 			"Client Index", 
 			indexText.CString(), 
@@ -1676,12 +1676,12 @@ namespace Kargono::Panels
 		);
 
 		// Display congested status
-		EditorUI::EditorUIService::LabeledText("Congested",
+		EditorUI::EditorUIContext::LabeledText("Congested",
 			m_IsCongested ? "Yes" : "No",
 			EditorUI::LabeledText_Indented);
 
 		// Display the round trip time
-		EditorUI::EditorUIService::LabeledText("Average RTT (ms)",
+		EditorUI::EditorUIContext::LabeledText("Average RTT (ms)",
 			std::to_string(m_AverageRTT * 1'000.0f).c_str(),
 			EditorUI::LabeledText_Indented);
 		m_PacketRTTPlot.RenderPlot();

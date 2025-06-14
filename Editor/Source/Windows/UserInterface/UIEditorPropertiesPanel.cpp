@@ -35,12 +35,12 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_UIWindow->m_ShowProperties);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_UIWindow->m_ShowProperties);
 
 		// Early out if the window is not visible
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
@@ -65,7 +65,7 @@ namespace Kargono::Panels
 		s_EditorApp->m_MainWindow->m_ScriptEditorPanel->DrawOnCreatePopup();
 
 		// End the window
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 
 	void UIEditorPropertiesPanel::DrawUIOptions()
@@ -183,7 +183,7 @@ namespace Kargono::Panels
 				m_WidgetXPercentLocation.RenderFloat();
 			}
 			
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Modify the Y location metric
 			m_WidgetYRelOrAbsLocation.m_SelectedOption = (uint16_t)m_ActiveWidget->m_YRelativeOrAbsolute;
@@ -575,7 +575,7 @@ namespace Kargono::Panels
 
 			//// Edit selected widget's background color
 			//m_SliderWidgetBackgroundColor.m_CurrentVec4 = activeSliderWidget.m_SelectionData.m_DefaultBackgroundColor;
-			//EditorUI::EditorUIService::EditVec4(m_SliderWidgetBackgroundColor);
+			//EditorUI::EditorUIContext::EditVec4(m_SliderWidgetBackgroundColor);
 
 			// Edit selected widget's on press script
 			Assets::AssetHandle onPressHandle = activeSliderWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
@@ -634,15 +634,15 @@ namespace Kargono::Panels
 #if 0 // TODO: COME BACK AND FIX PLEASE
 			// Edit selected DropDown widget's text size relative to its window
 			m_DropDownWidgetTextSize.m_CurrentFloat = activeDropDownWidget.m_TextData.m_TextSize;
-			EditorUI::EditorUIService::EditFloat(m_DropDownWidgetTextSize);
+			EditorUI::EditorUIContext::EditFloat(m_DropDownWidgetTextSize);
 
 			// Edit selected DropDown widget's text color
 			m_DropDownWidgetTextColor.m_CurrentVec4 = activeDropDownWidget.m_TextData.m_TextColor;
-			EditorUI::EditorUIService::EditVec4(m_DropDownWidgetTextColor);
+			EditorUI::EditorUIContext::EditVec4(m_DropDownWidgetTextColor);
 
 			// Edit selected DropDown widget's text alignment
 			m_DropDownWidgetTextAlignment.m_CurrentOption = { Utility::ConstraintToString(activeDropDownWidget.m_TextData.m_TextAlignment) , (uint64_t)activeDropDownWidget.m_TextData.m_TextAlignment };
-			EditorUI::EditorUIService::SelectOption(m_DropDownWidgetTextAlignment);
+			EditorUI::EditorUIContext::SelectOption(m_DropDownWidgetTextAlignment);
 #endif
 
 			// Edit selected widget's background color
@@ -1679,7 +1679,7 @@ namespace Kargono::Panels
 		m_DropDownWidgetDeleteEntryWarning.m_Label = "Delete Drop-Down Option";
 		m_DropDownWidgetDeleteEntryWarning.m_PopupContents = []() 
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this option?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to delete this option?");
 		};
 		m_DropDownWidgetDeleteEntryWarning.m_ConfirmAction = KG_BIND_CLASS_FN(OnDropDownWidgetDeleteEntry);
 

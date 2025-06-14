@@ -174,12 +174,12 @@ namespace Kargono::Panels
 	void EmitterConfigPropertiesPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_EmitterConfigWindow->m_ShowProperties);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_EmitterConfigWindow->m_ShowProperties);
 
 		// Early out if the window is not visible
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 		// Draw header
@@ -188,7 +188,7 @@ namespace Kargono::Panels
 		// Early out if no emitter config is selected
 		if (!s_EmitterConfigWindow->m_EditorEmitterConfig)
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
@@ -199,7 +199,7 @@ namespace Kargono::Panels
 		DrawParticleSizeOptions();
 
 		// End the window
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 
 	void EmitterConfigPropertiesPanel::DrawGeneralEmitterConfigOptions()

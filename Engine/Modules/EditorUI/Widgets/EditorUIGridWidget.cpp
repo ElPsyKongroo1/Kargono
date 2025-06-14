@@ -30,14 +30,14 @@ namespace Kargono::EditorUI
 			// Get entry archetype and grid element ID
 			FixedString<16> entryID{ id };
 			GridEntryArchetype* entryArchetype = &(m_EntryArchetypes.at(currentEntry.m_ArchetypeID));
-			entryID.AppendInteger(EditorUIService::WidgetIterator(widgetCount));
+			entryID.AppendInteger(EditorUIContext::GetNextChildID(widgetCount));
 			KG_ASSERT(entryArchetype);
 
 			// Display grid icon
 			ImGui::PushID(entryID.CString());
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)entryArchetype->m_Icon->GetRendererID(), { m_CellIconSize, m_CellIconSize },
 				{ 0, 1 }, { 1, 0 },
-				-1, entryIsSelected ? EditorUIService::m_ConfigColors.s_ActiveColor : k_PureEmpty,
+				-1, entryIsSelected ? EditorUIContext::m_ConfigColors.m_ActiveColor : k_PureEmpty,
 				entryArchetype->m_IconColor))
 			{
 				// Handle on left-click

@@ -112,4 +112,61 @@ namespace Kargono::EditorUI
 		m_Default = io.Fonts->AddFontFromFileTTF("Resources/Fonts/RobotoMono-SemiBold.ttf", 17.0f);
 		io.FontDefault = m_Default;
 	}
+	void ConfigColors::SetColors()
+	{
+		auto& colors = ImGui::GetStyle().Colors;
+		colors[ImGuiCol_WindowBg] = m_BackgroundColor;
+		colors[ImGuiCol_PopupBg] = m_DarkBackgroundColor;
+
+		// TextColor
+		colors[ImGuiCol_Text] = m_PrimaryTextColor;
+
+		// Separator
+		colors[ImGuiCol_Separator] = m_AccentColor;
+		colors[ImGuiCol_SeparatorActive] = m_HighlightColor1_Thin;
+		colors[ImGuiCol_SeparatorHovered] = m_HighlightColor1_Thin;
+
+		// Drag Drop
+		colors[ImGuiCol_DragDropTarget] = m_HighlightColor1_Thin;
+
+		// Scroll Bar
+		colors[ImGuiCol_ScrollbarBg] = m_DarkBackgroundColor;
+		colors[ImGuiCol_ScrollbarGrab] = m_DisabledColor;
+		colors[ImGuiCol_ScrollbarGrabActive] = m_SelectedColor;
+		colors[ImGuiCol_ScrollbarGrabHovered] = m_SelectedColor;
+
+		// Headers
+		colors[ImGuiCol_Header] = m_AccentColor;
+		colors[ImGuiCol_HeaderHovered] = m_HoveredColor;
+		colors[ImGuiCol_HeaderActive] = m_ActiveColor;
+
+		// Buttons
+		colors[ImGuiCol_Button] = m_AccentColor;
+		colors[ImGuiCol_ButtonHovered] = m_HoveredColor;
+		colors[ImGuiCol_ButtonActive] = m_ActiveColor;
+
+		// Border
+		colors[ImGuiCol_Border] = k_PureEmpty;
+		colors[ImGuiCol_BorderShadow] = k_PureEmpty;
+
+		// Frame BG
+		colors[ImGuiCol_FrameBg] = k_PureEmpty;
+		colors[ImGuiCol_FrameBgHovered] = k_PureEmpty;
+		colors[ImGuiCol_FrameBgActive] = k_PureEmpty;
+
+		// Tabs
+		colors[ImGuiCol_Tab] = m_DarkAccentColor;
+		colors[ImGuiCol_TabActive] = m_SelectedColor;
+		colors[ImGuiCol_TabUnfocused] = m_DarkAccentColor;
+		colors[ImGuiCol_TabUnfocusedActive] = m_ActiveColor;
+		colors[ImGuiCol_TabHovered] = m_HoveredColor;
+
+		// Title
+		colors[ImGuiCol_TitleBg] = m_DarkBackgroundColor;
+		colors[ImGuiCol_TitleBgActive] = m_DarkBackgroundColor;
+		colors[ImGuiCol_TitleBgCollapsed] = m_DarkBackgroundColor;
+
+		// Menu Bar
+		colors[ImGuiCol_MenuBarBg] = m_DarkBackgroundColor;
+	}
 }

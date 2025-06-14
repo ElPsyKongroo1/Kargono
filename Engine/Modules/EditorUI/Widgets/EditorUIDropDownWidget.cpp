@@ -16,30 +16,30 @@ namespace Kargono::EditorUI
 
 		if (m_Flags & DropDown_Indented)
 		{
-			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
+			ImGui::SetCursorPosX(EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 		}
 		// Display Primary Label
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
-			m_Flags & DropDown_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
-		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+			m_Flags & DropDown_Indented ? EditorUIContext::m_ActiveWindowData.m_PrimaryTextIndentedWidth : EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+		EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, EditorUIService::s_ActiveBackgroundColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, EditorUIService::m_ConfigColors.s_HoveredColor);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, EditorUIService::m_ConfigColors.s_ActiveColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, EditorUIContext::m_ConfigColors.m_HoveredColor);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, EditorUIContext::m_ConfigColors.m_ActiveColor);
 
-		ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextLargeWidth + 5.0f);
-		ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne - 5.0f);
+		ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth + 5.0f);
+		ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 5.0f);
 
 		// Shift button to secondary text position one
-		ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne - 2.5f);
+		ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 2.5f);
 		if (ImGui::InvisibleButton(
-			("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(),
-			ImVec2(EditorUIService::s_SecondaryTextLargeWidth, EditorUIService::s_TextBackgroundHeight)))
+			("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth, EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight)))
 		{
 			ImGui::OpenPopupEx(m_WidgetID, ImGuiPopupFlags_None);
 		}
@@ -48,20 +48,20 @@ namespace Kargono::EditorUI
 
 		if (ImGui::IsItemActive())
 		{
-			dropdownColor = EditorUIService::m_ConfigColors.s_ActiveColor;
+			dropdownColor = EditorUIContext::m_ConfigColors.m_ActiveColor;
 		}
 		else if (ImGui::IsItemHovered())
 		{
-			dropdownColor = EditorUIService::m_ConfigColors.s_HoveredColor;
+			dropdownColor = EditorUIContext::m_ConfigColors.m_HoveredColor;
 		}
 		else
 		{
-			dropdownColor = EditorUIService::s_ActiveBackgroundColor;
+			dropdownColor = EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor;
 		}
 
 		// Draw the relevant background
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y - EditorUIService::s_TextBackgroundHeight),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne + EditorUIService::s_SecondaryTextLargeWidth, screenPosition.y), ImColor(dropdownColor),
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 5.0f, screenPosition.y - EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne + EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth, screenPosition.y), ImColor(dropdownColor),
 			4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Get the selected entry
@@ -69,11 +69,11 @@ namespace Kargono::EditorUI
 		const char* selectedText = selectedEntry ? selectedEntry->m_Label.CString() : "";
 
 		// Display selected text
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
-		ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
+		ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
-		int floatPosition = ImGui::FindPositionAfterLength(selectedText, EditorUIService::s_SecondaryTextLargeWidth);
-		EditorUIService::TruncateText(selectedText,
+		int floatPosition = ImGui::FindPositionAfterLength(selectedText, EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth);
+		EditorUIContext::RenderTruncatedText(selectedText,
 			floatPosition == -1 ? std::numeric_limits<int32_t>::max() : floatPosition);
 		ImGui::PopStyleColor();
 
@@ -81,8 +81,8 @@ namespace Kargono::EditorUI
 		{
 			const ImRect popupBoundingBox
 			(
-				ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne, screenPosition.y),
-				ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne + EditorUIService::s_SecondaryTextLargeWidth, screenPosition.y)
+				ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne, screenPosition.y),
+				ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne + EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth, screenPosition.y)
 			);
 			ImGui::BeginComboPopup(m_WidgetID, popupBoundingBox, 0);
 

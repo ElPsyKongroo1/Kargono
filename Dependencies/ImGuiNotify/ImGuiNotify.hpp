@@ -251,7 +251,7 @@ public:
         case ImGuiToastType::Success:
             return { 0, 157, 255, 255 }; // Blue
         case ImGuiToastType::Warning:
-            return Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1; // Yellow
+            return Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1; // Yellow
         case ImGuiToastType::Error:
             return Kargono::EditorUI::k_Red; // Red
         case ImGuiToastType::Info:
@@ -565,14 +565,14 @@ namespace ImGui
 				ImGui::PushStyleColor(ImGuiCol_Button, Kargono::EditorUI::k_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, Kargono::EditorUI::k_PureEmpty);
 				ImGui::PushStyleColor(ImGuiCol_ButtonActive, Kargono::EditorUI::k_PureEmpty);
-				ImGui::ImageButton((ImTextureID)(uint64_t)Kargono::EditorUI::EditorUIService::m_GenIcons.m_Notification->GetRendererID(),
+				ImGui::ImageButton((ImTextureID)(uint64_t)Kargono::EditorUI::EditorUIContext::m_GenIcons.m_Notification->GetRendererID(),
 					ImVec2(14.0f, 14.0f),
 					ImVec2{ 0, 1 }, ImVec2{ 1, 0 }, -1, Kargono::EditorUI::k_PureEmpty,
 					textColor);
 
 				ImGui::PopStyleColor(3);
 
-				ImGui::PushFont(Kargono::EditorUI::EditorUIService::m_ConfigFonts.m_HeaderRegular);
+				ImGui::PushFont(Kargono::EditorUI::EditorUIContext::m_ConfigFonts.m_HeaderRegular);
 				ImGui::PushStyleColor(ImGuiCol_Text, textColor);
 
                 // If a title is set
@@ -617,7 +617,7 @@ namespace ImGui
 
 					// Draw dismiss button
 					ImGui::PushStyleColor(ImGuiCol_Button, Kargono::EditorUI::k_PureEmpty);
-					if (ImGui::ImageButton((ImTextureID)(uint64_t)Kargono::EditorUI::EditorUIService::m_GenIcons.m_Cancel->GetRendererID(),
+					if (ImGui::ImageButton((ImTextureID)(uint64_t)Kargono::EditorUI::EditorUIContext::m_GenIcons.m_Cancel->GetRendererID(),
 						ImVec2(18.0f, 18.0f),
 						ImVec2{ 0, 1 }, ImVec2{ 1, 0 }))
 					{
@@ -629,7 +629,7 @@ namespace ImGui
 					if (ImGui::IsItemHovered())
 					{
 						ImGui::BeginTooltip();
-						ImGui::TextColored(Kargono::EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, "Close");
+						ImGui::TextColored(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Close");
 						ImGui::EndTooltip();
 					}
                 }

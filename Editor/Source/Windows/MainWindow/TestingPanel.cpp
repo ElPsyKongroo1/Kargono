@@ -56,33 +56,33 @@ namespace Kargono::Panels
 	void TestingPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowTesting);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowTesting);
 		// Exit window early if window is not visible
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
-		EditorUI::EditorUIService::TitleText("Welcome to the Testing Panel! Stay a while...");
+		EditorUI::EditorUIContext::TitleText("Welcome to the Testing Panel! Stay a while...");
 
-		EditorUI::EditorUIService::BeginTabBar("##TestingPanelTabBar");
-		if (EditorUI::EditorUIService::BeginTabItem("General Testing"))
+		EditorUI::EditorUIContext::BeginTabBar("##TestingPanelTabBar");
+		if (EditorUI::EditorUIContext::BeginTabItem("General Testing"))
 		{
 			DrawGeneralTestingWidgets();
-			EditorUI::EditorUIService::EndTabItem();
+			EditorUI::EditorUIContext::EndTabItem();
 		}
 #if defined(KG_DEBUG)
-		if (EditorUI::EditorUIService::BeginTabItem("Debug Globals"))
+		if (EditorUI::EditorUIContext::BeginTabItem("Debug Globals"))
 		{
 			DrawDebugGlobalWidgets();
-			EditorUI::EditorUIService::EndTabItem();
+			EditorUI::EditorUIContext::EndTabItem();
 		}
 #endif
-		EditorUI::EditorUIService::EndTabBar();
+		EditorUI::EditorUIContext::EndTabBar();
 
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	void TestingPanel::InitializeDebugGlobalsWidgets()
 	{
@@ -357,7 +357,7 @@ namespace Kargono::Panels
 		s_EditTestBool_3.m_CurrentBoolean = globals.m_TestBool_3;
 		s_EditTestBool_3.RenderCheckbox();
 
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Float initialization
 		s_EditTestFloat_1.m_CurrentFloat = globals.m_TestFloat_1;
@@ -369,7 +369,7 @@ namespace Kargono::Panels
 		s_EditTestFloat_3.m_CurrentFloat = globals.m_TestFloat_3;
 		s_EditTestFloat_3.RenderFloat();
 
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Integer initialization
 		s_EditTestInt_1.m_CurrentInteger = globals.m_TestInt_1;
@@ -381,7 +381,7 @@ namespace Kargono::Panels
 		s_EditTestInt_3.m_CurrentInteger = globals.m_TestInt_3;
 		s_EditTestInt_3.RenderInteger();
 
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Unsigned Integer initialization
 		s_EditTestUInt_1.m_CurrentInteger = globals.m_TestUInt_1;
@@ -393,7 +393,7 @@ namespace Kargono::Panels
 		s_EditTestUInt_3.m_CurrentInteger = globals.m_TestUInt_3;
 		s_EditTestUInt_3.RenderInteger();
 
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Vec2 initialization
 		s_EditTestVec2_1.m_CurrentVec2 = globals.m_TestVec2_1;
@@ -405,7 +405,7 @@ namespace Kargono::Panels
 		s_EditTestVec2_3.m_CurrentVec2 = globals.m_TestVec2_3;
 		s_EditTestVec2_3.RenderVec2();
 
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Vec3 initialization
 		s_EditTestVec3_1.m_CurrentVec3 = globals.m_TestVec3_1;
@@ -417,7 +417,7 @@ namespace Kargono::Panels
 		s_EditTestVec3_3.m_CurrentVec3 = globals.m_TestVec3_3;
 		s_EditTestVec3_3.RenderVec3();
 
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Vec4 initialization
 		s_EditTestVec4_1.m_CurrentVec4 = globals.m_TestVec4_1;
@@ -429,7 +429,7 @@ namespace Kargono::Panels
 		s_EditTestVec4_3.m_CurrentVec4 = globals.m_TestVec4_3;
 		s_EditTestVec4_3.RenderVec4();
 
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 #endif
 	}
 	void TestingPanel::DrawGeneralTestingWidgets()
@@ -446,7 +446,7 @@ namespace Kargono::Panels
 
 		for (size_t i{ 0 }; i < s_Count; i++)
 		{
-			EditorUI::EditorUIService::Text(s_DataStructs[i]->m_Text.CString());
+			EditorUI::EditorUIContext::Text(s_DataStructs[i]->m_Text.CString());
 		}
 
 		if (s_TestButton.RenderButton())
@@ -519,7 +519,7 @@ namespace Kargono::Panels
 		{
 			EditorUI::EditVec3Widget& spec = s_ControlPointWidgets.at(iteration);
 			spec.m_CurrentVec3 = spline.m_Points.at(iteration);
-			EditorUI::EditorUIService::EditVec3(spec);
+			EditorUI::EditorUIContext::EditVec3(spec);
 			iteration++;
 		}
 #endif

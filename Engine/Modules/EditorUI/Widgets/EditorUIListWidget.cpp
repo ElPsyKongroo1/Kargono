@@ -17,38 +17,38 @@ namespace Kargono::EditorUI
 
 		if (m_Flags & List_Indented)
 		{
-			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
+			ImGui::SetCursorPosX(EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 		}
 		if (!(m_Flags & (List_RegularSizeTitle | List_Indented)))
 		{
-			ImGui::PushFont(EditorUIService::m_ConfigFonts.m_HeaderLarge);
+			ImGui::PushFont(EditorUIContext::m_ConfigFonts.m_HeaderLarge);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
-			m_Flags & List_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
-		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+			m_Flags & List_Indented ? EditorUIContext::m_ActiveWindowData.m_PrimaryTextIndentedWidth : EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+		EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
 		if (!(m_Flags & (List_RegularSizeTitle | List_Indented)))
 		{
 			ImGui::PopFont();
 		}
-		EditorUIService::s_ListExpandButton.m_IconSize = 14.0f;
-		EditorUIService::s_ListExpandButton.m_YPosition = m_Flags & List_Indented ? 0.0f : 3.0f;
+		EditorUIContext::m_UIPresets.m_ListExpandButton.m_IconSize = 14.0f;
+		EditorUIContext::m_UIPresets.m_ListExpandButton.m_YPosition = m_Flags & List_Indented ? 0.0f : 3.0f;
 		ImGui::SameLine();
-		EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Expanded);
 			},
-			EditorUIService::s_ListExpandButton, m_Expanded, m_Expanded ? EditorUIService::m_ConfigColors.s_HighlightColor1 : EditorUIService::m_ConfigColors.s_DisabledColor);
+			EditorUIContext::m_UIPresets.m_ListExpandButton, m_Expanded, m_Expanded ? EditorUIContext::m_ConfigColors.m_HighlightColor1 : EditorUIContext::m_ConfigColors.m_DisabledColor);
 
 		if (m_Expanded && !m_EditListSelectionList.empty())
 		{
 			ImGui::SameLine();
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 				{
 					ImGui::OpenPopup(m_WidgetID - 1);
-				}, EditorUIService::s_MediumOptionsButton, false, EditorUIService::m_ConfigColors.s_DisabledColor);
+				}, EditorUIContext::m_UIPresets.m_MediumOptionsButton, false, EditorUIContext::m_ConfigColors.m_DisabledColor);
 
 			if (ImGui::BeginPopupEx(m_WidgetID - 1, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
 			{
@@ -73,22 +73,22 @@ namespace Kargono::EditorUI
 			if (!m_ListEntries.empty())
 			{
 				// Column Titles
-				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor1);
-				ImGui::SetCursorPosX(m_Flags & List_Indented ? 61.0f : EditorUIService::s_TextLeftIndentOffset);
+				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor1);
+				ImGui::SetCursorPosX(m_Flags & List_Indented ? 61.0f : EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 				if (m_Flags & (List_Indented | List_RegularSizeTitle))
 				{
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 7.0f);
 				}
-				labelPosition = ImGui::FindPositionAfterLength(m_Column1Title.c_str(), EditorUIService::s_SecondaryTextLargeWidth);
-				EditorUIService::TruncateText(m_Column1Title, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+				labelPosition = ImGui::FindPositionAfterLength(m_Column1Title.c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth);
+				EditorUIContext::RenderTruncatedText(m_Column1Title, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 				ImGui::SameLine();
-				ImGui::SetCursorPosX(EditorUIService::s_SecondaryTextPosOne);
-				labelPosition = ImGui::FindPositionAfterLength(m_Column2Title.c_str(), EditorUIService::s_SecondaryTextLargeWidth);
-				EditorUIService::TruncateText(m_Column2Title, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+				ImGui::SetCursorPosX(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
+				labelPosition = ImGui::FindPositionAfterLength(m_Column2Title.c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth);
+				EditorUIContext::RenderTruncatedText(m_Column2Title, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 				ImGui::PopStyleColor();
 				if (!(m_Flags & (List_Indented | List_RegularSizeTitle)))
 				{
-					EditorUIService::Spacing(SpacingAmount::Small);
+					EditorUIContext::Spacing(SpacingAmount::Small);
 				}
 
 			}
@@ -101,29 +101,29 @@ namespace Kargono::EditorUI
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
 				}
 				ImGui::SetCursorPosX(m_Flags & List_Indented ? 42.5f : 12.0f);
-				EditorUIService::CreateImage(EditorUIService::m_GenIcons.m_Dash, 8, EditorUIService::m_ConfigColors.s_DisabledColor);
+				EditorUIContext::RenderImage(EditorUIContext::m_GenIcons.m_Dash, 8, EditorUIContext::m_ConfigColors.m_DisabledColor);
 				ImGui::SameLine();
-				ImGui::SetCursorPosX(m_Flags & List_Indented ? 61.0f : EditorUIService::s_TextLeftIndentOffset);
+				ImGui::SetCursorPosX(m_Flags & List_Indented ? 61.0f : EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5.2f);
-				EditorUIService::TruncateText(listEntry.m_Label, 16);
-				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
+				EditorUIContext::RenderTruncatedText(listEntry.m_Label, 16);
+				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
 				if (!listEntry.m_Value.empty())
 				{
-					EditorUIService::WriteMultilineText(listEntry.m_Value, EditorUIService::s_SecondaryTextLargeWidth, EditorUIService::s_SecondaryTextPosOne, -5.2f);
+					EditorUIContext::RenderMultiLineText(listEntry.m_Value, EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth, EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne, -5.2f);
 				}
 				ImGui::PopStyleColor();
 
 				if (listEntry.m_OnEdit)
 				{
-					EditorUIService::s_TableEditButton.m_XPosition = EditorUIService::SmallButtonRelativeLocation(smallButtonCount++);
+					EditorUIContext::m_UIPresets.m_TableEditButton.m_XPosition = EditorUIContext::SmallButtonRelativeLocation(smallButtonCount++);
 					ImGui::SameLine();
-					EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+					EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 						{
 							if (listEntry.m_OnEdit)
 							{
 								listEntry.m_OnEdit(listEntry, entryIndex);
 							}
-						}, EditorUIService::s_TableEditButton, false, EditorUIService::m_ConfigColors.s_DisabledColor);
+						}, EditorUIContext::m_UIPresets.m_TableEditButton, false, EditorUIContext::m_ConfigColors.m_DisabledColor);
 				}
 				entryIndex++;
 			}

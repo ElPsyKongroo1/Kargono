@@ -28,44 +28,50 @@ namespace Kargono::EditorUI
 		//==============================
 		ConfigColors() = default;
 		~ConfigColors() = default;
+
+	private:
+		//==============================
+		// Set Config
+		//==============================
+		void SetColors();
 	public:
 		//==============================
 		// Public Fields
 		//==============================
 		// Text Color(s)
-		ImVec4 s_PrimaryTextColor{ 242.0f / 255.0f, 236.5f / 255.0f, 221.1f / 255.0f, 1.0f };
-		ImVec4 s_SecondaryTextColor{ 220.0f / 255.0f, 215.0f / 255.0f, 201.0f / 255.0f, 1.0f };
+		ImVec4 m_PrimaryTextColor{ 242.0f / 255.0f, 236.5f / 255.0f, 221.1f / 255.0f, 1.0f };
+		ImVec4 m_SecondaryTextColor{ 220.0f / 255.0f, 215.0f / 255.0f, 201.0f / 255.0f, 1.0f };
 		// Interaction Color(s)
-		ImVec4 s_HoveredColor{ 91.4f / 255.0f, 113.3f / 255.0f, 114.7f / 255.0f, 1.0f };
-		ImVec4 s_ActiveColor{ 76.2f / 255.0f, 94.4f / 255.0f, 95.6f / 255.0f, 1.0f };
-		ImVec4 s_SelectedColor{ 162.0f / 255.0f, 123.0f / 255.0f, 92.0f / 255.0f, 1.0f };
-		ImVec4 s_DisabledColor{ 0.5f, 0.5f, 0.5f, 1.0f };
+		ImVec4 m_HoveredColor{ 91.4f / 255.0f, 113.3f / 255.0f, 114.7f / 255.0f, 1.0f };
+		ImVec4 m_ActiveColor{ 76.2f / 255.0f, 94.4f / 255.0f, 95.6f / 255.0f, 1.0f };
+		ImVec4 m_SelectedColor{ 162.0f / 255.0f, 123.0f / 255.0f, 92.0f / 255.0f, 1.0f };
+		ImVec4 m_DisabledColor{ 0.5f, 0.5f, 0.5f, 1.0f };
 		// Background Color(s)
-		ImVec4 s_BackgroundColor{ 44.0f / 255.0f, 54.0f / 255.0f, 57.0f / 255.0f, 1.0f };
-		ImVec4 s_DarkBackgroundColor{ 35.2f / 255.0f, 43.2f / 255.0f, 45.6f / 255.0f, 1.0f };
-		ImVec4 s_AccentColor{ 63.0f / 255.0f, 78.0f / 255.0f, 79.0f / 255.0f, 1.0f };
-		ImVec4 s_DarkAccentColor{ 50.4f / 255.0f, 62.4f / 255.0f, 63.2f / 255.0f, 1.0f };
+		ImVec4 m_BackgroundColor{ 44.0f / 255.0f, 54.0f / 255.0f, 57.0f / 255.0f, 1.0f };
+		ImVec4 m_DarkBackgroundColor{ 35.2f / 255.0f, 43.2f / 255.0f, 45.6f / 255.0f, 1.0f };
+		ImVec4 m_AccentColor{ 63.0f / 255.0f, 78.0f / 255.0f, 79.0f / 255.0f, 1.0f };
+		ImVec4 m_DarkAccentColor{ 50.4f / 255.0f, 62.4f / 255.0f, 63.2f / 255.0f, 1.0f };
 		// Highlight Color(s)
-		ImVec4 s_HighlightColor1{ 247.6f / 255.0f, 188.2f / 255.0f, 140.7f / 255.0f, 1.0f };
-		ImVec4 s_HighlightColor1_Thin{ s_HighlightColor1.x, s_HighlightColor1.y, s_HighlightColor1.z, s_HighlightColor1.w * 0.75f };
-		ImVec4 s_HighlightColor1_UltraThin{ s_HighlightColor1.x, s_HighlightColor1.y, s_HighlightColor1.z, s_HighlightColor1.w * 0.3f };
-		ImVec4 s_HighlightColor2{ 147.0f / 255.0f, 247.0f / 255.0f, 141.4f / 255.0f, 1.0f };
-		ImVec4 s_HighlightColor2_Thin{ s_HighlightColor2.x, s_HighlightColor2.y, s_HighlightColor2.z, s_HighlightColor2.w * 0.75f };
-		ImVec4 s_HighlightColor2_UltraThin{ s_HighlightColor2.x, s_HighlightColor2.y, s_HighlightColor2.z, s_HighlightColor2.w * 0.3f };
-		ImVec4 s_HighlightColor3{ 241.0f / 255.0f, 141.0f / 255.0f, 247.4f / 255.0f, 1.0f };
-		ImVec4 s_HighlightColor3_Thin{ s_HighlightColor3.x, s_HighlightColor3.y, s_HighlightColor3.z, s_HighlightColor3.w * 0.75f };
-		ImVec4 s_HighlightColor3_UltraThin{ s_HighlightColor3.x, s_HighlightColor3.y, s_HighlightColor3.z, s_HighlightColor3.w * 0.3f };
-		ImVec4 s_HighlightColor4{ 141.0f / 255.0f, 200.0f / 255.0f, 247.0f / 255.0f, 1.0f };
-		ImVec4 s_HighlightColor4_Thin{ s_HighlightColor4.x, s_HighlightColor4.y, s_HighlightColor4.z, s_HighlightColor4.w * 0.75f };
-		ImVec4 s_HighlightColor4_UltraThin{ s_HighlightColor4.x, s_HighlightColor4.y, s_HighlightColor4.z, s_HighlightColor4.w * 0.3f };
+		ImVec4 m_HighlightColor1{ 247.6f / 255.0f, 188.2f / 255.0f, 140.7f / 255.0f, 1.0f };
+		ImVec4 m_HighlightColor1_Thin{ m_HighlightColor1.x, m_HighlightColor1.y, m_HighlightColor1.z, m_HighlightColor1.w * 0.75f };
+		ImVec4 m_HighlightColor1_UltraThin{ m_HighlightColor1.x, m_HighlightColor1.y, m_HighlightColor1.z, m_HighlightColor1.w * 0.3f };
+		ImVec4 m_HighlightColor2{ 147.0f / 255.0f, 247.0f / 255.0f, 141.4f / 255.0f, 1.0f };
+		ImVec4 m_HighlightColor2_Thin{ m_HighlightColor2.x, m_HighlightColor2.y, m_HighlightColor2.z, m_HighlightColor2.w * 0.75f };
+		ImVec4 m_HighlightColor2_UltraThin{ m_HighlightColor2.x, m_HighlightColor2.y, m_HighlightColor2.z, m_HighlightColor2.w * 0.3f };
+		ImVec4 m_HighlightColor3{ 241.0f / 255.0f, 141.0f / 255.0f, 247.4f / 255.0f, 1.0f };
+		ImVec4 m_HighlightColor3_Thin{ m_HighlightColor3.x, m_HighlightColor3.y, m_HighlightColor3.z, m_HighlightColor3.w * 0.75f };
+		ImVec4 m_HighlightColor3_UltraThin{ m_HighlightColor3.x, m_HighlightColor3.y, m_HighlightColor3.z, m_HighlightColor3.w * 0.3f };
+		ImVec4 m_HighlightColor4{ 141.0f / 255.0f, 200.0f / 255.0f, 247.0f / 255.0f, 1.0f };
+		ImVec4 m_HighlightColor4_Thin{ m_HighlightColor4.x, m_HighlightColor4.y, m_HighlightColor4.z, m_HighlightColor4.w * 0.75f };
+		ImVec4 m_HighlightColor4_UltraThin{ m_HighlightColor4.x, m_HighlightColor4.y, m_HighlightColor4.z, m_HighlightColor4.w * 0.3f };
 		// Grid Color(s)
-		ImVec4 s_GridMajor{ 0.735f, 0.720f, 0.690f, 1.0f };
-		ImVec4 s_GridMinor{ 0.347f, 0.347f, 0.347f, 1.0f };
+		ImVec4 m_GridMajor{ 0.735f, 0.720f, 0.690f, 1.0f };
+		ImVec4 m_GridMinor{ 0.347f, 0.347f, 0.347f, 1.0f };
 	private:
 		//==============================
 		// Owning Class
 		//==============================
-		friend class EditorUIService;
+		friend class EditorUIContext;
 	};
 
 
@@ -109,7 +115,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Owning Class
 		//==============================
-		friend class EditorUIService;
+		friend class EditorUIContext;
 	};
 
 	struct SceneGraphIcons
@@ -141,7 +147,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Owning Class
 		//==============================
-		friend class EditorUIService;
+		friend class EditorUIContext;
 	};
 
 	struct ViewportIcons
@@ -172,7 +178,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Owning Class
 		//==============================
-		friend class EditorUIService;
+		friend class EditorUIContext;
 	};
 
 	struct RuntimeUIIcons
@@ -206,7 +212,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Owning Class
 		//==============================
-		friend class EditorUIService;
+		friend class EditorUIContext;
 	};
 
 	struct ScriptingIcons
@@ -235,7 +241,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Owning Class
 		//==============================
-		friend class EditorUIService;
+		friend class EditorUIContext;
 	};
 
 	struct ContentBrowserIcons
@@ -282,7 +288,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Owning Class
 		//==============================
-		friend class EditorUIService;
+		friend class EditorUIContext;
 	};
 
 	struct ConfigFonts
@@ -310,8 +316,39 @@ namespace Kargono::EditorUI
 		//==============================
 		// Owning Class
 		//==============================
-		friend class EditorUIService;
+		friend class EditorUIContext;
 	};
 
-
+	struct ConfigSpacing
+	{
+	private:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		ConfigSpacing() = default;
+		~ConfigSpacing() = default;
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		// Button spacing
+		float m_SmallButtonRightOffset{ 24.0f /* Absolute Distance */ };
+		float m_SmallButtonSpacing {22.0f /* Absolute Distance */ };
+		float m_MediumButtonRightOffset {28.0f /* Absolute Distance */ };
+		// Text height
+		float m_TextBackgroundHeight {21.0f /* Absolute Size */ };
+		// Primary text spacing
+		float m_PrimaryTextIndent {30.5f  /* Absolute Loc */ };
+		// Secondary text spacing
+		float m_SecondaryTextPosOne {0.43f  /* Percent % */ };
+		float m_SecondaryTextPosTwo {0.56f  /* Percent % */ };
+		float m_SecondaryTextPosThree {0.69f  /* Percent % */ };
+		float m_SecondaryTextPosFour {0.82f  /* Percent % */ };
+		float m_SecondaryTextPosMiddle {0.655f  /* Percent % */ };
+	private:
+		//==============================
+		// Owning Class
+		//==============================
+		friend class EditorUIContext;
+	};
 }

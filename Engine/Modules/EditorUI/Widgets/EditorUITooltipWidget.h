@@ -13,7 +13,7 @@ namespace Kargono::EditorUI
 {
 	struct TooltipSeperatorData
 	{
-		ImVec4 m_SeperatorColor{ EditorUIService::m_ConfigColors.s_DisabledColor };
+		ImVec4 m_SeperatorColor{ EditorUIContext::m_ConfigColors.m_DisabledColor };
 	};
 
 	struct TooltipEntry

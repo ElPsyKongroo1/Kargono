@@ -22,37 +22,37 @@ namespace Kargono::EditorUI
 		ImGui::SetNextWindowSize(ImVec2(m_PopupWidth, 0.0f));
 		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar))
 		{
-			EditorUIService::RecalculateWindowDimensions();
-			EditorUIService::TitleText(m_Label.CString());
+			EditorUIContext::m_ActiveWindowData.RecalculateDimensions();
+			EditorUIContext::TitleText(m_Label.CString());
 
-			ImGui::PushFont(EditorUIService::m_ConfigFonts.m_HeaderRegular);
+			ImGui::PushFont(EditorUIContext::m_ConfigFonts.m_HeaderRegular);
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 				{
 					ImGui::CloseCurrentPopup();
-				}, EditorUIService::s_LargeConfirmButton, false, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+				}, EditorUIContext::m_UIPresets.m_LargeConfirmButton, false, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 
 			ImGui::Separator();
 
-			EditorUIService::Spacing(SpacingAmount::Small);
+			EditorUIContext::Spacing(SpacingAmount::Small);
 
-			ImVec4 cachedBackgroundColor{ EditorUIService::s_ActiveBackgroundColor };
-			EditorUIService::s_ActiveBackgroundColor = EditorUIService::m_ConfigColors.s_BackgroundColor;
+			ImVec4 cachedBackgroundColor{ EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor };
+			EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor = EditorUIContext::m_ConfigColors.m_BackgroundColor;
 
 			if (m_PopupContents)
 			{
 				m_PopupContents();
 			}
 
-			EditorUIService::Spacing(SpacingAmount::Small);
+			EditorUIContext::Spacing(SpacingAmount::Small);
 
-			EditorUIService::s_ActiveBackgroundColor = cachedBackgroundColor;
+			EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor = cachedBackgroundColor;
 
 			ImGui::PopFont();
 			ImGui::EndPopup();
-			EditorUIService::RecalculateWindowDimensions();
+			EditorUIContext::m_ActiveWindowData.RecalculateDimensions();
 		}
 	}
 }

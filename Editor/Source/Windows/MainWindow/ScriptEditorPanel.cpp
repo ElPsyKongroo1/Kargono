@@ -414,7 +414,7 @@ namespace Kargono::Panels
 		m_EditWidgets.m_DeleteWarning.m_Label = "Delete Script";
 		m_EditWidgets.m_DeleteWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this script?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to delete this script?");
 		};
 		m_EditWidgets.m_DeleteWarning.m_ConfirmAction = [&]()
 		{
@@ -434,7 +434,7 @@ namespace Kargono::Panels
 		m_EditWidgets.m_EditWarning.m_Label = "Edit Script";
 		m_EditWidgets.m_EditWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Modifying the function's information can cause compilation issues in your project. Are you sure you want to modify the function?");
+			EditorUI::EditorUIContext::Text("Modifying the function's information can cause compilation issues in your project. Are you sure you want to modify the function?");
 		};
 		m_EditWidgets.m_EditWarning.m_ConfirmAction = [&]()
 		{
@@ -555,19 +555,19 @@ namespace Kargono::Panels
 	void ScriptEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowScriptEditor);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowScriptEditor);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		m_AllScriptsList.RenderList();
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 		m_GroupLabelsTable.RenderList();
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Popups
 		m_CreateWidgets.m_MainPopup.RenderPopup();
@@ -577,7 +577,7 @@ namespace Kargono::Panels
 		m_EditWidgets.m_DeleteWarning.RenderPopup();
 		m_EditWidgets.m_EditWarning.RenderPopup();
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool ScriptEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -643,8 +643,8 @@ namespace Kargono::Panels
 		{
 			// Open the editor panel to be visible
 			s_MainWindow->m_ShowScriptEditor = true;
-			EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-			EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+			EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+			EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 		}
 		
 		// Open the create dialog

@@ -51,17 +51,17 @@ namespace Kargono::Panels
 		{
 			flags |= ImGuiWindowFlags_MenuBar;
 		}
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowTextEditor, flags);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowTextEditor, flags);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (m_AllDocuments.size() == 0)
 		{
-			EditorUI::EditorUIService::NewItemScreen("Open Existing File", KG_BIND_CLASS_FN(OnOpenFileDialog), "Create New File", KG_BIND_CLASS_FN(OnCreateFileDialog));
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing File", KG_BIND_CLASS_FN(OnOpenFileDialog), "Create New File", KG_BIND_CLASS_FN(OnCreateFileDialog));
 		}
 		else
 		{
@@ -108,7 +108,7 @@ namespace Kargono::Panels
 				bool setColorHighlight = false;
 				if (currentDocument.Edited)
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor2);
+					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2);
 					setColorHighlight = true;
 				}
 				// Handle case 
@@ -165,7 +165,7 @@ namespace Kargono::Panels
 			
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 
 	void TextEditorPanel::RefreshKGScriptEditor()
@@ -224,9 +224,9 @@ namespace Kargono::Panels
 				s_MainWindow->m_ShowTextEditor = true;
 			}
 
-			if (EditorUI::EditorUIService::GetFocusedWindowName() != m_PanelName)
+			if (EditorUI::EditorUIContext::GetFocusedWindowName() != m_PanelName)
 			{
-				EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+				EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 			}
 
 			for (Document& document : m_AllDocuments)
@@ -321,8 +321,8 @@ namespace Kargono::Panels
 	{
 		// Open project component Window
 		s_MainWindow->m_ShowTextEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 		OnCreateFileDialog(path);
 	}
 	void TextEditorPanel::OnOpenFileDialog()

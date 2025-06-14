@@ -54,7 +54,7 @@ namespace Kargono::Windows
 		m_ImportAssetPopup.m_Label = "Import Asset";
 		m_ImportAssetPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::LabeledText("Source File:", m_ImportSourceFilePath.string().c_str());
+			EditorUI::EditorUIContext::LabeledText("Source File:", m_ImportSourceFilePath.string().c_str());
 			m_ImportNewFileLocation.RenderChooseDir();
 			m_ImportNewAssetName.RenderText();
 		};
@@ -98,7 +98,7 @@ namespace Kargono::Windows
 		m_GeneralWarningSpec.m_Label = "Warning";
 		m_GeneralWarningSpec.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::LabeledText("Warning Message:", m_GeneralWarningMessage.CString());
+			EditorUI::EditorUIContext::LabeledText("Warning Message:", m_GeneralWarningMessage.CString());
 		};
 	}
 
@@ -207,7 +207,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnInputEvent(Events::Event* event)
 	{
 		bool handled{ false };
-		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedString32 focusedWindow = EditorUI::EditorUIContext::GetFocusedWindowName();
 		if (focusedWindow == m_ViewportPanel->m_PanelName)
 		{
 			m_ViewportPanel->OnInputEvent(event);
@@ -367,9 +367,9 @@ namespace Kargono::Windows
 	void MainWindow::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartRendering();
+		EditorUI::EditorUIContext::StartRendering();
 
-		EditorUI::EditorUIService::StartDockspaceWindow();
+		EditorUI::EditorUIContext::StartDockspaceWindow();
 
 		// Set the active viewport for the window
 		EngineService::GetActiveEngine().GetWindow().SetActiveViewport(&m_ViewportPanel->m_ViewportData);
@@ -381,8 +381,8 @@ namespace Kargono::Windows
 		if (m_RuntimeFullscreen && (m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate) && !m_IsPaused)
 		{
 			if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
-			EditorUI::EditorUIService::EndWindow();
-			EditorUI::EditorUIService::EndRendering();
+			EditorUI::EditorUIContext::EndRenderWindow();
+			EditorUI::EditorUIContext::EndRendering();
 			return;
 		}
 
@@ -390,8 +390,8 @@ namespace Kargono::Windows
 		/*if (m_ContentBrowserFullscreen)
 		{
 			m_ContentBrowserPanel->OnEditorUIRender();
-			EditorUI::EditorUIService::EndWindow();
-			EditorUI::EditorUIService::EndRendering();
+			EditorUI::EditorUIContext::EndRenderWindow();
+			EditorUI::EditorUIContext::EndRendering();
 			return;
 		}*/
 #endif
@@ -405,13 +405,13 @@ namespace Kargono::Windows
 		m_GeneralWarningSpec.RenderPopup();
 
 		// Clean up dockspace window
-		EditorUI::EditorUIService::EndDockspaceWindow();
+		EditorUI::EditorUIContext::EndDockspaceWindow();
 
 		// Add highlighting around the focused window
-		EditorUI::EditorUIService::HighlightFocusedWindow();
+		EditorUI::EditorUIContext::HighlightFocusedWindow();
 
 		// End Editor UI Rendering
-		EditorUI::EditorUIService::EndRendering();
+		EditorUI::EditorUIContext::EndRendering();
 	}
 
 	bool MainWindow::OnApplicationResize(Events::ApplicationResizeEvent event)
@@ -667,7 +667,7 @@ namespace Kargono::Windows
 		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
 
 		EngineService::GetActiveEngine().GetThread().UpdateAppStartTime();
-		EditorUI::EditorUIService::SetFocusedWindow(m_ViewportPanel->m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_ViewportPanel->m_PanelName);
 	}
 
 	void MainWindow::OnSimulate()
@@ -925,7 +925,7 @@ namespace Kargono::Windows
 		if (event.IsRepeat()) { return false; }
 
 		// Handle panel specific key pressed events
-		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedString32 focusedWindow = EditorUI::EditorUIContext::GetFocusedWindowName();
 		if (m_PanelToKeyboardInput.contains(focusedWindow.CString()))
 		{
 			if (m_PanelToKeyboardInput.at(focusedWindow.CString())(event))
@@ -986,7 +986,7 @@ namespace Kargono::Windows
 		}
 		case Key::Delete:
 		{
-			if (EditorUI::EditorUIService::GetActiveWidgetID() == 0)
+			if (EditorUI::EditorUIContext::GetActiveWidgetID() == 0)
 			{
 				ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				if (selectedEntity)
@@ -1009,12 +1009,12 @@ namespace Kargono::Windows
 	bool MainWindow::OnMouseButtonPressed(Events::MouseButtonPressedEvent event)
 	{
 		// Refocus window if right click is used
-		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedString32 focusedWindow = EditorUI::EditorUIContext::GetFocusedWindowName();
 		if (event.GetMouseButton() == Mouse::ButtonRight)
 		{
-			if (const char* hoveredName = EditorUI::EditorUIService::GetHoveredWindowName())
+			if (const char* hoveredName = EditorUI::EditorUIContext::GetHoveredWindowName())
 			{
-				EditorUI::EditorUIService::SetFocusedWindow(hoveredName);
+				EditorUI::EditorUIContext::SetFocusedWindow(hoveredName);
 				focusedWindow = hoveredName;
 			}
 		}

@@ -98,7 +98,7 @@ namespace Kargono::Panels
 			};
 		m_DeleteColorPaletteWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to delete this Color Palette object?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to delete this Color Palette object?");
 			};
 
 		m_CloseColorPaletteWarning.m_Label = "Close Color Palette";
@@ -108,7 +108,7 @@ namespace Kargono::Panels
 			};
 		m_CloseColorPaletteWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to close this Color Palette object without saving?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to close this Color Palette object without saving?");
 			};
 
 		m_MainHeader.AddToSelectionList("Add White", KG_BIND_CLASS_FN(OnAddWhite));
@@ -151,18 +151,18 @@ namespace Kargono::Panels
 	void ColorPalettePanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowColorPalette);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowColorPalette);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (!m_EditorColorPalette)
 		{
 
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Color Palette", KG_BIND_CLASS_FN(OnOpenColorPaletteDialog), "Create New Color Palette", KG_BIND_CLASS_FN(OnCreateColorPaletteDialog));
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing Color Palette", KG_BIND_CLASS_FN(OnOpenColorPaletteDialog), "Create New Color Palette", KG_BIND_CLASS_FN(OnCreateColorPaletteDialog));
 			m_CreateColorPalettePopup.RenderPopup();
 			m_OpenColorPalettePopup.RenderOptions();
 		}
@@ -176,7 +176,7 @@ namespace Kargono::Panels
 			m_LocalTooltip.RenderTooltip();
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool ColorPalettePanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -229,8 +229,8 @@ namespace Kargono::Panels
 	{
 		// Open Color Palette Window
 		s_MainWindow->m_ShowColorPalette = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorColorPalette)
 		{
@@ -270,8 +270,8 @@ namespace Kargono::Panels
 
 		// Open the editor panel to be visible
 		s_MainWindow->m_ShowColorPalette = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorColorPaletteHandle == assetHandle)

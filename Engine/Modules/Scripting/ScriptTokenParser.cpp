@@ -1334,7 +1334,7 @@ namespace Kargono::Scripting
 					else
 					{
 						// Default icon
-						primitiveTypeIcon = EditorUI::EditorUIService::m_SceneIcons.m_Entity;
+						primitiveTypeIcon = EditorUI::EditorUIContext::m_SceneIcons.m_Entity;
 					}
 					// Get the icon texture from the primitive type
 					

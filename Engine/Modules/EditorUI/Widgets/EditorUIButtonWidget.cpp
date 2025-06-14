@@ -17,13 +17,13 @@ namespace Kargono::EditorUI
 
 		if (m_Flags & Button_Indented)
 		{
-			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
+			ImGui::SetCursorPosX(EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 		}
 		// Display Primary Label
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
-			m_Flags & Button_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
-		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+			m_Flags & Button_Indented ? EditorUIContext::m_ActiveWindowData.m_PrimaryTextIndentedWidth : EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+		EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
 		// Setup background drawlist
@@ -31,10 +31,10 @@ namespace Kargono::EditorUI
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
 
 		// Shift button to secondary text position one
-		ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne - 2.5f);
+		ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 2.5f);
 		if (ImGui::InvisibleButton(
-			("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(),
-			ImVec2(EditorUIService::s_SecondaryTextSmallWidth, EditorUIService::s_TextBackgroundHeight)))
+			("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight)))
 		{
 			if (m_Button.m_OnPress)
 			{
@@ -47,28 +47,28 @@ namespace Kargono::EditorUI
 
 		if (ImGui::IsItemActive())
 		{
-			buttonColor = EditorUIService::m_ConfigColors.s_ActiveColor;
+			buttonColor = EditorUIContext::m_ConfigColors.m_ActiveColor;
 		}
 		else if (ImGui::IsItemHovered())
 		{
-			buttonColor = EditorUIService::m_ConfigColors.s_HoveredColor;
+			buttonColor = EditorUIContext::m_ConfigColors.m_HoveredColor;
 		}
 		else
 		{
-			buttonColor = EditorUIService::m_ConfigColors.s_HighlightColor1_UltraThin;
+			buttonColor = EditorUIContext::m_ConfigColors.m_HighlightColor1_UltraThin;
 		}
 
 		// Draw the relevant background
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y - EditorUIService::s_TextBackgroundHeight),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y), ImColor(buttonColor),
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 5.0f, screenPosition.y - EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y), ImColor(buttonColor),
 			4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display entry text
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
-		ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
+		ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
-		int floatPosition = ImGui::FindPositionAfterLength(m_Button.m_Label.CString(), EditorUIService::s_SecondaryTextSmallWidth);
-		EditorUIService::TruncateText(m_Button.m_Label.CString(),
+		int floatPosition = ImGui::FindPositionAfterLength(m_Button.m_Label.CString(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+		EditorUIContext::RenderTruncatedText(m_Button.m_Label.CString(),
 			floatPosition == -1 ? std::numeric_limits<int32_t>::max() : floatPosition);
 		ImGui::PopStyleColor();
 

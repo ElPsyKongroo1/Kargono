@@ -20,10 +20,10 @@ namespace Kargono::EditorUI
 			// Set x-position based on current tree depth
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (depth * 30.0f));
 			screenPosition = ImGui::GetCursorScreenPos();
-			ImVec2 buttonDimensions{ ImGui::CalcTextSize(treeEntry.m_Label.c_str()).x + 34.0f, EditorUIService::s_TextBackgroundHeight };
+			ImVec2 buttonDimensions{ ImGui::CalcTextSize(treeEntry.m_Label.c_str()).x + 34.0f, EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight };
 
 			// Create Invisible Button for Interation with current node
-			if (ImGui::InvisibleButton(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), buttonDimensions))
+			if (ImGui::InvisibleButton(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), buttonDimensions))
 			{
 				if (treeEntry.m_OnLeftClick)
 				{
@@ -45,7 +45,7 @@ namespace Kargono::EditorUI
 				// Draw SelectedEntry background
 				draw_list->AddRectFilled(screenPosition,
 					ImVec2(screenPosition.x + buttonDimensions.x, screenPosition.y + buttonDimensions.y),
-					ImColor(EditorUIService::m_ConfigColors.s_HoveredColor), 4, ImDrawFlags_RoundCornersAll);
+					ImColor(EditorUIContext::m_ConfigColors.m_HoveredColor), 4, ImDrawFlags_RoundCornersAll);
 
 				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && treeEntry.m_OnDoubleLeftClick)
 				{
@@ -60,7 +60,7 @@ namespace Kargono::EditorUI
 				// Draw SelectedEntry background
 				draw_list->AddRectFilled(screenPosition,
 					ImVec2(screenPosition.x + buttonDimensions.x, screenPosition.y + buttonDimensions.y),
-					ImColor(EditorUIService::m_ConfigColors.s_ActiveColor), 4, ImDrawFlags_RoundCornersAll);
+					ImColor(EditorUIContext::m_ConfigColors.m_ActiveColor), 4, ImDrawFlags_RoundCornersAll);
 				if (m_SelectionChanged)
 				{
 					ImGui::SetScrollHereY();
@@ -71,12 +71,12 @@ namespace Kargono::EditorUI
 			// Display entry icon
 			if (treeEntry.m_IconHandle)
 			{
-				EditorUIService::CreateImage(treeEntry.m_IconHandle, 14, EditorUIService::m_ConfigColors.s_HighlightColor1);
+				EditorUIContext::RenderImage(treeEntry.m_IconHandle, 14, EditorUIContext::m_ConfigColors.m_HighlightColor1);
 				ImGui::SameLine();
 			}
 
 			// Display entry text
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 1.5f);
 			ImGui::TextUnformatted(treeEntry.m_Label.c_str());
 			ImGui::PopStyleColor();
@@ -89,12 +89,12 @@ namespace Kargono::EditorUI
 				ImGui::SameLine();
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.5f);
 				ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
-				const Ref<Rendering::Texture2D> icon = m_ExpandedNodes.contains(currentPath) ? EditorUIService::m_GenIcons.m_Down : EditorUIService::m_GenIcons.m_Right;
-				if (ImGui::ImageButtonEx(m_WidgetID + EditorUIService::WidgetIterator(widgetCount),
+				const Ref<Rendering::Texture2D> icon = m_ExpandedNodes.contains(currentPath) ? EditorUIContext::m_GenIcons.m_Down : EditorUIContext::m_GenIcons.m_Right;
+				if (ImGui::ImageButtonEx(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount),
 					(ImTextureID)(uint64_t)icon->GetRendererID(),
 					ImVec2(13, 13), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
 					k_PureEmpty,
-					m_ExpandedNodes.contains(currentPath) ? EditorUIService::m_ConfigColors.s_HighlightColor1 : EditorUIService::m_ConfigColors.s_DisabledColor, 0))
+					m_ExpandedNodes.contains(currentPath) ? EditorUIContext::m_ConfigColors.m_HighlightColor1 : EditorUIContext::m_ConfigColors.m_DisabledColor, 0))
 				{
 					if (m_ExpandedNodes.contains(currentPath))
 					{
@@ -110,7 +110,7 @@ namespace Kargono::EditorUI
 				if (ImGui::IsItemHovered())
 				{
 					ImGui::BeginTooltip();
-					ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, m_ExpandedNodes.contains(currentPath) ? "Collapse" : "Expand");
+					ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, m_ExpandedNodes.contains(currentPath) ? "Collapse" : "Expand");
 					ImGui::EndTooltip();
 				}
 
@@ -126,7 +126,7 @@ namespace Kargono::EditorUI
 			{
 				draw_list->AddLine(ImVec2(rootPosition.x + 10.0f, screenPosition.y + 10.0f),
 					ImVec2(screenPosition.x, screenPosition.y + 10.0f),
-					ImColor(EditorUIService::m_ConfigColors.s_PrimaryTextColor));
+					ImColor(EditorUIContext::m_ConfigColors.m_PrimaryTextColor));
 			}
 			currentPath.PopBack();
 			entryIndex++;
@@ -137,7 +137,7 @@ namespace Kargono::EditorUI
 		{
 			draw_list->AddLine(ImVec2(rootPosition.x + 10.0f, rootPosition.y + 21.0f),
 				ImVec2(rootPosition.x + 10.0f, screenPosition.y + 10.0f),
-				ImColor(EditorUIService::m_ConfigColors.s_PrimaryTextColor));
+				ImColor(EditorUIContext::m_ConfigColors.m_PrimaryTextColor));
 		}
 	}
 

@@ -22,192 +22,8 @@
 
 namespace Kargono::EditorUI
 {
-	void EditorUIService::SetColorDefaults()
-	{
-		auto& colors = ImGui::GetStyle().Colors;
-		colors[ImGuiCol_WindowBg] = EditorUIService::m_ConfigColors.s_BackgroundColor;
-		colors[ImGuiCol_PopupBg] = EditorUIService::m_ConfigColors.s_DarkBackgroundColor;
 
-		// TextColor
-		colors[ImGuiCol_Text] = EditorUIService::m_ConfigColors.s_PrimaryTextColor;
-
-		// Separator
-		colors[ImGuiCol_Separator] = EditorUIService::m_ConfigColors.s_AccentColor;
-		colors[ImGuiCol_SeparatorActive] = EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
-		colors[ImGuiCol_SeparatorHovered] = EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
-
-		// Drag Drop
-		colors[ImGuiCol_DragDropTarget] = EditorUIService::m_ConfigColors.s_HighlightColor1_Thin;
-
-		// Scroll Bar
-		colors[ImGuiCol_ScrollbarBg] = EditorUIService::m_ConfigColors.s_DarkBackgroundColor;
-		colors[ImGuiCol_ScrollbarGrab] = EditorUIService::m_ConfigColors.s_DisabledColor;
-		colors[ImGuiCol_ScrollbarGrabActive] = EditorUIService::m_ConfigColors.s_SelectedColor;
-		colors[ImGuiCol_ScrollbarGrabHovered] = EditorUIService::m_ConfigColors.s_SelectedColor;
-
-		// Headers
-		colors[ImGuiCol_Header] = EditorUIService::m_ConfigColors.s_AccentColor;
-		colors[ImGuiCol_HeaderHovered] = EditorUIService::m_ConfigColors.s_HoveredColor;
-		colors[ImGuiCol_HeaderActive] = EditorUIService::m_ConfigColors.s_ActiveColor;
-
-		// Buttons
-		colors[ImGuiCol_Button] = EditorUIService::m_ConfigColors.s_AccentColor;
-		colors[ImGuiCol_ButtonHovered] = EditorUIService::m_ConfigColors.s_HoveredColor;
-		colors[ImGuiCol_ButtonActive] = EditorUIService::m_ConfigColors.s_ActiveColor;
-
-		// Border
-		colors[ImGuiCol_Border] = k_PureEmpty;
-		colors[ImGuiCol_BorderShadow] = k_PureEmpty;
-
-		// Frame BG
-		colors[ImGuiCol_FrameBg] = k_PureEmpty;
-		colors[ImGuiCol_FrameBgHovered] = k_PureEmpty;
-		colors[ImGuiCol_FrameBgActive] = k_PureEmpty;
-
-		// Tabs
-		colors[ImGuiCol_Tab] = EditorUIService::m_ConfigColors.s_DarkAccentColor;
-		colors[ImGuiCol_TabActive] = EditorUIService::m_ConfigColors.s_SelectedColor;
-		colors[ImGuiCol_TabUnfocused] = EditorUIService::m_ConfigColors.s_DarkAccentColor;
-		colors[ImGuiCol_TabUnfocusedActive] = EditorUIService::m_ConfigColors.s_ActiveColor;
-		colors[ImGuiCol_TabHovered] = EditorUIService::m_ConfigColors.s_HoveredColor;
-
-		// Title
-		colors[ImGuiCol_TitleBg] = EditorUIService::m_ConfigColors.s_DarkBackgroundColor;
-		colors[ImGuiCol_TitleBgActive] = EditorUIService::m_ConfigColors.s_DarkBackgroundColor;
-		colors[ImGuiCol_TitleBgCollapsed] = EditorUIService::m_ConfigColors.s_DarkBackgroundColor;
-
-		// Menu Bar
-		colors[ImGuiCol_MenuBarBg] = EditorUIService::m_ConfigColors.s_DarkBackgroundColor;
-	}
-
-	void EditorUIService::SetButtonDefaults()
-	{
-		s_SmallEditButton =
-		{
-				-s_SmallButtonRightOffset,
-				0.0f,
-				13.0f,
-				m_GenIcons.m_Edit,
-				m_GenIcons.m_Edit,
-				"Cancel Editing",
-				"Edit",
-				PositionType::Relative
-		};
-
-		s_SmallExpandButton =
-		{
-				-1.2f,
-				4.0f,
-				14.0f,
-				EditorUI::EditorUIService::m_GenIcons.m_Down,
-				EditorUI::EditorUIService::m_GenIcons.m_Right,
-				"Collapse",
-				"Expand",
-				PositionType::Inline
-		};
-
-		s_MediumOptionsButton =
-		{
-				-s_MediumButtonRightOffset,
-				1.0f,
-				19.0f,
-				EditorUI::EditorUIService::m_GenIcons.m_Options,
-				EditorUI::EditorUIService::m_GenIcons.m_Options,
-				"Options",
-				"Options",
-				PositionType::Relative
-		};
-
-		s_SmallCheckboxButton = {
-				0.0f,
-				0.0f,
-				14.0f,
-				EditorUI::EditorUIService::m_GenIcons.m_Checkbox_Enabled,
-				EditorUI::EditorUIService::m_GenIcons.m_Checkbox_Disabled,
-				"Uncheck",
-				"Check",
-				PositionType::Inline
-		};
-
-		s_SmallCheckboxDisabledButton = {
-				0.0f,
-				0.0f,
-				14.0f,
-				EditorUI::EditorUIService::m_GenIcons.m_Checkbox_Enabled,
-				EditorUI::EditorUIService::m_GenIcons.m_Checkbox_Disabled,
-				"",
-				"",
-				PositionType::Inline,
-				true
-		};
-
-		s_SmallLinkButton = {
-				-s_SmallButtonRightOffset,
-				0.0f,
-				14.0f,
-				EditorUI::EditorUIService::m_ContentBrowserIcons.m_Forward,
-				EditorUI::EditorUIService::m_ContentBrowserIcons.m_Forward,
-				"Open",
-				"Open",
-				PositionType::Relative
-		};
-
-		s_LargeDeleteButton = {
-				-112.0f,
-				-0.6f,
-				28.0f,
-				EditorUI::EditorUIService::m_GenIcons.m_Delete,
-				EditorUI::EditorUIService::m_GenIcons.m_Delete,
-				"Delete",
-				"Delete",
-				PositionType::Relative
-		};
-
-		s_LargeCancelButton = {
-				-75.0f,
-				-0.6f,
-				28.0f,
-				EditorUI::EditorUIService::m_GenIcons.m_Cancel,
-				EditorUI::EditorUIService::m_GenIcons.m_Cancel,
-				"Cancel",
-				"Cancel",
-				PositionType::Relative
-		};
-
-		s_LargeConfirmButton = {
-				-38.0f,
-				-0.6f,
-				28.0f,
-				EditorUI::EditorUIService::m_GenIcons.m_Confirm,
-				EditorUI::EditorUIService::m_GenIcons.m_Confirm,
-				"Confirm",
-				"Confirm",
-				PositionType::Relative
-		};
-
-		s_LargeSearchButton = {
-				-112.0f,
-				-0.6f,
-				28.0f,
-				EditorUI::EditorUIService::m_GenIcons.m_Cancel2,
-				EditorUI::EditorUIService::m_GenIcons.m_Search,
-				"Cancel Search",
-				"Search",
-				PositionType::Relative
-		};
-
-		s_TableEditButton = EditorUIService::s_SmallEditButton;
-		s_TableEditButton.m_YPosition = -5.5f;
-
-		s_TableLinkButton = EditorUIService::s_SmallLinkButton;
-		s_TableLinkButton.m_YPosition = -5.5f;
-
-		s_ListExpandButton = EditorUIService::s_SmallExpandButton;
-
-		
-	}
-
-	const char* EditorUIService::GetHoveredWindowName()
+	const char* EditorUIContext::GetHoveredWindowName()
 	{
 		ImGuiContext* context = ImGui::GetCurrentContext();
 		if (context != nullptr)
@@ -222,27 +38,27 @@ namespace Kargono::EditorUI
 		}
 		return nullptr;
 	}
-	void EditorUIService::CreateInfoNotification(const char* text, int delayMS)
+	void EditorUIContext::RenderInfoNotification(const char* text, int delayMS)
 	{
 		ImGuiToast toast{ ImGuiToastType::Info, delayMS, text };
 		toast.setTitle("Kargono Editor Information");
 		ImGui::InsertNotification(toast);
 	}
-	void EditorUIService::CreateWarningNotification(const char* text, int delayMS)
+	void EditorUIContext::RenderWarningNotification(const char* text, int delayMS)
 	{
 		ImGuiToast toast{ ImGuiToastType::Warning, delayMS, text };
 		toast.setTitle("Kargono Editor Warning");
 		ImGui::InsertNotification(toast);
 	}
 
-	void EditorUIService::CreateCriticalNotification(const char* text, int delayMS)
+	void EditorUIContext::RenderCriticalNotification(const char* text, int delayMS)
 	{
 		ImGuiToast toast{ ImGuiToastType::Error, delayMS, text };
 		toast.setTitle("Kargono Editor Critical");
 		ImGui::InsertNotification(toast);
 	}
 
-	void EditorUIService::AutoCalcViewportSize(Math::vec2 screenViewportBounds[2], ViewportData& viewportData, bool& viewportFocused, bool& viewportHovered, const Math::uvec2& aspectRatio)
+	void EditorUIContext::CalculateViewportDimensions(Math::vec2 screenViewportBounds[2], ViewportData& viewportData, bool& viewportFocused, bool& viewportHovered, const Math::uvec2& aspectRatio)
 	{
 		// Get current cursor position and GLFW viewport size
 		ImVec2 windowScreenOffset = ImGui::GetWindowPos();
@@ -271,19 +87,19 @@ namespace Kargono::EditorUI
 		ImGui::SetCursorPos(ImVec2(localViewportBounds[0].x, localViewportBounds[0].y));
 	}
 
-	void EditorUIService::SkipMouseIconChange()
+	void EditorUIContext::SkipMouseIconChange()
 	{
 		s_BlockMouseIconChange = true;
 	}
 
-	void EditorUIService::RenderNotifications()
+	void EditorUIContext::RenderNotifications()
 	{
 		// Notifications style setup
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.f); // Disable round borders
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f); // Disable borders
 
 		// Notifications color setup
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, m_ConfigColors.s_DarkBackgroundColor); // Background color
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, m_ConfigColors.m_DarkBackgroundColor); // Background color
 
 		// Main rendering function
 		ImGui::RenderNotifications();
@@ -292,7 +108,7 @@ namespace Kargono::EditorUI
 		ImGui::PopStyleColor(1);
 	}
 
-	bool EditorUIService::DrawColorPickerButton(const char* name, ImVec4& mainColor)
+	bool EditorUIContext::RenderColorPicker(const char* name, ImVec4& mainColor)
 	{
 		bool returnValue{ false };
 		ImGuiContext& g = *GImGui;
@@ -346,9 +162,9 @@ namespace Kargono::EditorUI
 				}
 				if (BeginTabItem("Palette"))
 				{
-					ImGui::PushStyleColor(ImGuiCol_FrameBg, EditorUI::EditorUIService::m_ConfigColors.s_BackgroundColor);
-					ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, EditorUI::EditorUIService::m_ConfigColors.s_HoveredColor);
-					ImGui::PushStyleColor(ImGuiCol_FrameBgActive, EditorUI::EditorUIService::m_ConfigColors.s_ActiveColor);
+					ImGui::PushStyleColor(ImGuiCol_FrameBg, EditorUI::EditorUIContext::m_ConfigColors.m_BackgroundColor);
+					ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, EditorUI::EditorUIContext::m_ConfigColors.m_HoveredColor);
+					ImGui::PushStyleColor(ImGuiCol_FrameBgActive, EditorUI::EditorUIContext::m_ConfigColors.m_ActiveColor);
 
 					if (ImGui::BeginCombo("##ChoosePalette", s_ActivePaletteLabel.c_str(), ImGuiComboFlags_NoArrowButton))
 					{
@@ -444,7 +260,7 @@ namespace Kargono::EditorUI
 		return returnValue;
 	}
 
-	bool EditorUIService::DrawColorPickerButtonInternal(const char* desc_id, const ImVec4& col, const ImVec2& size_arg)
+	bool EditorUIContext::DrawColorPickerButtonInternal(const char* desc_id, const ImVec4& col, const ImVec2& size_arg)
 	{
 		// Get the current window context and skip if indicated
 		ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -505,14 +321,14 @@ namespace Kargono::EditorUI
 		if (ImGui::IsItemHovered())
 		{
 			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::EditorUIService::m_ConfigColors.s_HighlightColor1, "Open Color Picker");
+			ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Open Color Picker");
 			ImGui::EndTooltip();
 		}
 
 		return pressed;
 	}
 
-	bool EditorUIService::DrawColorPickerPopupContents(const char* label, float col[4], const float* ref_col)
+	bool EditorUIContext::DrawColorPickerPopupContents(const char* label, float col[4], const float* ref_col)
 	{
 		ImGuiContext& g = *GImGui;
 		ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -731,7 +547,7 @@ namespace Kargono::EditorUI
 		return value_changed;
 	}
 
-	void EditorUIService::Init()
+	void EditorUIContext::Init()
 	{
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
@@ -767,7 +583,7 @@ namespace Kargono::EditorUI
 			ImGuiColorEditFlags_NoSidePreview |
 			ImGuiColorEditFlags_AlphaBar);
 
-		SetColorDefaults();
+		m_ConfigColors.SetColors();
 
 		// Setup Platform/Renderer backends
 		Engine& core = EngineService::GetActiveEngine();
@@ -800,14 +616,14 @@ namespace Kargono::EditorUI
 		m_ScriptingIcons.LoadIcons(workingDir);
 		m_ContentBrowserIcons.LoadIcons(workingDir);
 
-		SetButtonDefaults();
+		m_UIPresets.CreatePresets();
 
 		s_Running = true;
 
 		KG_VERIFY(s_Running && ImGui::GetCurrentContext(), "Editor UI Initiated")
 	}
 
-	void EditorUIService::Terminate()
+	void EditorUIContext::Terminate()
 	{
 		if (s_Running)
 		{
@@ -826,25 +642,25 @@ namespace Kargono::EditorUI
 		m_SceneIcons = {};
 		m_ContentBrowserIcons = {};
 
-		s_SmallEditButton = {};
-		s_SmallExpandButton = {};
-		s_MediumOptionsButton = {};
-		s_SmallCheckboxButton = {};
-		s_SmallCheckboxDisabledButton = {};
-		s_SmallLinkButton = {};
-		s_LargeDeleteButton = {};
-		s_LargeCancelButton = {};
-		s_LargeConfirmButton = {};
-		s_LargeSearchButton = {};
+		m_UIPresets.m_SmallEditButton = {};
+		m_UIPresets.m_SmallExpandButton = {};
+		m_UIPresets.m_MediumOptionsButton = {};
+		m_UIPresets.m_SmallCheckboxButton = {};
+		m_UIPresets.m_SmallCheckboxDisabledButton = {};
+		m_UIPresets.m_SmallLinkButton = {};
+		m_UIPresets.m_LargeDeleteButton = {};
+		m_UIPresets.m_LargeCancelButton = {};
+		m_UIPresets.m_LargeConfirmButton = {};
+		m_UIPresets.m_LargeSearchButton = {};
 
-		s_TableEditButton = {};
-		s_TableLinkButton = {};
-		s_ListExpandButton = {};
+		m_UIPresets.m_TableEditButton = {};
+		m_UIPresets.m_TableLinkButton = {};
+		m_UIPresets.m_ListExpandButton = {};
 
 		KG_VERIFY(!s_Running && !ImGui::GetCurrentContext(), "Editor UI Terminated")
 	}
 
-	void EditorUIService::StartRendering()
+	void EditorUIContext::StartRendering()
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		if (s_BlockMouseIconChange)
@@ -863,7 +679,7 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void EditorUIService::EndRendering()
+	void EditorUIContext::EndRendering()
 	{
 		RenderNotifications();
 		
@@ -898,36 +714,19 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void EditorUIService::RecalculateWindowDimensions()
-	{
-		// Calculate Widget Spacing Values
-		s_WindowPosition = ImGui::GetWindowPos();
-		s_PrimaryTextWidth = (s_SecondaryTextFirstPercentage * ImGui::GetContentRegionMax().x) - 20.0f;
-		s_PrimaryTextIndentedWidth = (s_SecondaryTextFirstPercentage * ImGui::GetContentRegionMax().x) - 20.0f - s_TextLeftIndentOffset;
-		s_SecondaryTextSmallWidth = ((s_SecondaryTextSecondPercentage - s_SecondaryTextFirstPercentage) * ImGui::GetContentRegionMax().x) - 10.0f;
-		s_SecondaryTextMediumWidth = ((s_SecondaryTextMiddlePercentage - s_SecondaryTextFirstPercentage) * ImGui::GetContentRegionMax().x) - 30.0f;
-		s_SecondaryTextLargeWidth = ((s_SecondaryTextFourthPercentage - s_SecondaryTextFirstPercentage) * ImGui::GetContentRegionMax().x) + s_SecondaryTextSmallWidth;
-
-		s_SecondaryTextPosOne = ImGui::GetContentRegionMax().x * s_SecondaryTextFirstPercentage;
-		s_SecondaryTextPosTwo = ImGui::GetContentRegionMax().x * s_SecondaryTextSecondPercentage;
-		s_SecondaryTextPosThree = ImGui::GetContentRegionMax().x * s_SecondaryTextThirdPercentage;
-		s_SecondaryTextPosFour = ImGui::GetContentRegionMax().x * s_SecondaryTextFourthPercentage;
-		s_SecondaryTextPosMiddle = ImGui::GetContentRegionMax().x * s_SecondaryTextMiddlePercentage;
-	}
-
-	void EditorUIService::StartWindow(const char* label, bool* closeWindow, int32_t flags)
+	void EditorUIContext::StartRenderWindow(const char* label, bool* closeWindow, int32_t flags)
 	{
 		// Start Window
 		ImGui::Begin(label, closeWindow, flags);
-		RecalculateWindowDimensions();
+		m_ActiveWindowData.RecalculateDimensions();
 	}
 
-	void EditorUIService::EndWindow()
+	void EditorUIContext::EndRenderWindow()
 	{
 		ImGui::End();
 	}
 
-	void EditorUIService::StartDockspaceWindow()
+	void EditorUIContext::StartDockspaceWindow()
 	{
 		// Set dockspace as main viewport window
 		const ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -946,7 +745,7 @@ namespace Kargono::EditorUI
 			ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
 		// Create the dockspace window
-		EditorUI::EditorUIService::StartWindow("DockSpace", nullptr, window_flags);
+		EditorUI::EditorUIContext::StartRenderWindow("DockSpace", nullptr, window_flags);
 
 		// Clear the window padding and rounding settings
 		ImGui::PopStyleVar(3);
@@ -956,17 +755,17 @@ namespace Kargono::EditorUI
 		ImGui::DockSpace(ImGui::GetID("MyDockSpace"), ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
 
-	void EditorUIService::EndDockspaceWindow()
+	void EditorUIContext::EndDockspaceWindow()
 	{
 		ImGui::End();
 	}
 
-	uint32_t EditorUIService::GetActiveWidgetID()
+	uint32_t EditorUIContext::GetActiveWidgetID()
 	{
 		return GImGui->ActiveId;
 	}
 
-	const char* EditorUIService::GetFocusedWindowName()
+	const char* EditorUIContext::GetFocusedWindowName()
 	{
 		if (GImGui->NavWindow)
 		{
@@ -975,33 +774,33 @@ namespace Kargono::EditorUI
 		return nullptr;
 	}
 
-	void EditorUIService::SetFocusedWindow(const char* windowName)
+	void EditorUIContext::SetFocusedWindow(const char* windowName)
 	{
 		ImGui::SetWindowFocus(windowName);
 	}
 
-	void EditorUIService::BringWindowToFront(const char* windowName)
+	void EditorUIContext::BringWindowToFront(const char* windowName)
 	{
 		ImGui::BringWindowToFront(windowName);
 	}
 
-	void EditorUIService::BringCurrentWindowToFront()
+	void EditorUIContext::BringCurrentWindowToFront()
 	{
 		if (ImGui::IsWindowAppearing())
 			ImGui::BringWindowToDisplayFront(ImGui::GetCurrentWindow());
 	}
 
-	void EditorUIService::ClearWindowFocus()
+	void EditorUIContext::ClearWindowFocus()
 	{
 		ImGui::FocusWindow(NULL);
 	}
 
-	bool EditorUIService::IsCurrentWindowVisible()
+	bool EditorUIContext::IsCurrentWindowVisible()
 	{
 		return ImGui::IsWindowVisible();
 	}
 
-	void EditorUIService::HighlightFocusedWindow()
+	void EditorUIContext::HighlightFocusedWindow()
 	{
 		ImGuiWindow* window = GImGui->NavWindow;
 		if (window)
@@ -1009,26 +808,26 @@ namespace Kargono::EditorUI
 			ImVec2 windowPos = window->Pos;
 			ImVec2 windowSize = window->Size;
 			ImGui::GetForegroundDrawList(window)->AddRect(windowPos,
-				ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y), ImGui::ColorConvertFloat4ToU32(m_ConfigColors.s_HighlightColor1_Thin));
+				ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y), ImGui::ColorConvertFloat4ToU32(m_ConfigColors.m_HighlightColor1_Thin));
 		}
 	}
 
-	bool EditorUIService::IsAnyItemHovered()
+	bool EditorUIContext::IsAnyItemHovered()
 	{
 		return ImGui::IsAnyItemHovered();
 	}
 
-	void EditorUIService::SetDisableLeftClick(bool option)
+	void EditorUIContext::SetDisableLeftClick(bool option)
 	{
 		s_DisableLeftClick = option;
 	}
 
-	void EditorUIService::BlockMouseEvents(bool block)
+	void EditorUIContext::BlockMouseEvents(bool block)
 	{
 		s_BlockMouseEvents = block;
 	}
 
-	bool EditorUIService::OnInputEvent(Events::Event* e)
+	bool EditorUIContext::OnInputEvent(Events::Event* e)
 	{
 		KG_PROFILE_FUNCTION();
 		ImGuiIO& io = ImGui::GetIO();
@@ -1039,60 +838,26 @@ namespace Kargono::EditorUI
 		return e->IsInCategory(Events::Keyboard) && io.WantCaptureKeyboard;
 	}
 
-	uint32_t EditorUIService::WidgetIterator(uint32_t& count)
+	WidgetID EditorUIContext::GetNextChildID(WidgetID& currentID)
 	{
-		return ++count;
+		return ++currentID;
 	}
 
-	bool EditorUIService::Undo()
-	{
-		// Get the top memento
-		Optional<EditorMemento> mementoReturn = s_UndoStack.PopMemento();
-
-		// Check for empty undo stack
-		if (!mementoReturn.has_value())
-		{
-			return false;
-		}
-
-		// Handle the undo
-		EditorMemento& memento = mementoReturn.value();
-		KG_ASSERT(memento.m_Widget);
-		EditVec4Widget& widget = *memento.m_Widget;
-
-		// Revert the indicated widget's value
-		widget.m_CurrentVec4 = memento.m_Value;
-
-		// Call the on-confirm function if necessary
-		if (widget.m_ConfirmAction)
-		{
-			widget.m_ConfirmAction(widget);
-		}
-
-		return true;
-	}
-
-	void EditorUIService::StoreUndoMemento(const EditorMemento& memento)
-	{
-		// Store the new memento
-		s_UndoStack.AddMemento(memento);
-	}
-
-	void EditorUIService::Spacing(float space)
+	void EditorUIContext::Spacing(float space)
 	{
 		ImGui::Dummy(ImVec2(0.0f, space));
 	}
 
-	void EditorUIService::TitleText(const std::string& text)
+	void EditorUIContext::TitleText(const std::string& text)
 	{
-		ImGui::PushFont(EditorUI::EditorUIService::m_ConfigFonts.m_Title);
-		ImGui::PushStyleColor(ImGuiCol_Text, m_ConfigColors.s_HighlightColor1);
+		ImGui::PushFont(EditorUI::EditorUIContext::m_ConfigFonts.m_Title);
+		ImGui::PushStyleColor(ImGuiCol_Text, m_ConfigColors.m_HighlightColor1);
 		ImGui::TextUnformatted(text.c_str());
 		ImGui::PopStyleColor();
 		ImGui::PopFont();
 	}
 
-	void EditorUIService::Spacing(SpacingAmount space)
+	void EditorUIContext::Spacing(SpacingAmount space)
 	{
 		switch (space)
 		{
@@ -1120,29 +885,7 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	OptionMap EditorUIService::GenerateSearchCache(OptionMap& originalList, const std::string& searchQuery)
-	{
-		OptionMap returnList{};
-		for (auto& [title, options] : originalList)
-		{
-			std::vector<OptionEntry> returnOptions {};
-			for (auto& option : options)
-			{
-				if (!Utility::Regex::GetMatchSuccess(option.m_Label.CString(), searchQuery, false))
-				{
-					continue;
-				}
-				returnOptions.push_back(option);
-			}
-			if (!returnOptions.empty())
-			{
-				returnList.insert_or_assign(title, returnOptions);
-			}
-		}
-		return returnList;
-	}
-
-	void EditorUIService::CreateImage(Ref<Rendering::Texture2D> image, float size, ImVec4 tint)
+	void EditorUIContext::RenderImage(Ref<Rendering::Texture2D> image, float size, ImVec4 tint)
 	{
 		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 4.0f, ImGui::GetCursorPosY() + 3.2f));
 
@@ -1151,12 +894,12 @@ namespace Kargono::EditorUI
 			k_PureEmpty);
 	}
 
-	float EditorUIService::SmallButtonRelativeLocation(uint32_t slot)
+	float EditorUIContext::SmallButtonRelativeLocation(uint32_t slot)
 	{
-		return -EditorUIService::s_SmallButtonRightOffset - (EditorUIService::s_SmallButtonSpacing * slot);
+		return -EditorUIContext::m_ConfigSpacing.m_SmallButtonRightOffset - (EditorUIContext::m_ConfigSpacing.m_SmallButtonSpacing * slot);
 	}
 
-	void EditorUIService::CreateButton(ImGuiID widgetID, std::function<void()> onPress, 
+	void EditorUIContext::RenderInlineButton(ImGuiID widgetID, std::function<void()> onPress, 
 		const InlineButton& spec, bool active, ImVec4 tintColor)
 	{
 		switch (spec.m_XPositionType)
@@ -1208,7 +951,7 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor1);
+				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor1);
 				ImGui::TextUnformatted(active ? spec.m_ActiveTooltip.c_str() : spec.m_InactiveTooltip.c_str());
 				ImGui::PopStyleColor();
 				ImGui::EndTooltip();
@@ -1217,7 +960,7 @@ namespace Kargono::EditorUI
 
 	}
 
-	void EditorUIService::WriteMultilineText(const std::string& text, float lineWidth, float xOffset, float yOffset)
+	void EditorUIContext::RenderMultiLineText(const std::string& text, float lineWidth, float xOffset, float yOffset)
 	{
 		std::string previewOutput{};
 		std::string previewRemainder{ text };
@@ -1234,9 +977,9 @@ namespace Kargono::EditorUI
 			{
 				// Draw backgrounds
 				ImVec2 screenPosition = ImGui::GetCursorScreenPos();
-				draw_list->AddRectFilled(ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
-					ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne + EditorUI::EditorUIService::s_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-					ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersAll: ImDrawFlags_RoundCornersBottom);
+				draw_list->AddRectFilled(ImVec2(EditorUI::EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUI::EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 5.0f, screenPosition.y),
+					ImVec2(EditorUI::EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUI::EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne + EditorUI::EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+					ImColor(EditorUI::EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersAll: ImDrawFlags_RoundCornersBottom);
 				
 				// Draw the text
 				ImGui::TextUnformatted(previewRemainder.c_str());
@@ -1245,9 +988,9 @@ namespace Kargono::EditorUI
 			{
 				// Draw backgrounds
 				ImVec2 screenPosition = ImGui::GetCursorScreenPos();
-				draw_list->AddRectFilled(ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
-					ImVec2(EditorUI::EditorUIService::s_WindowPosition.x + EditorUI::EditorUIService::s_SecondaryTextPosOne + EditorUI::EditorUIService::s_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIService::s_TextBackgroundHeight),
-					ImColor(EditorUI::EditorUIService::s_ActiveBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersTop: ImDrawFlags_RoundCornersNone);
+				draw_list->AddRectFilled(ImVec2(EditorUI::EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUI::EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 5.0f, screenPosition.y),
+					ImVec2(EditorUI::EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUI::EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne + EditorUI::EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth, screenPosition.y + EditorUI::EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+					ImColor(EditorUI::EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, iteration == 0 ? ImDrawFlags_RoundCornersTop: ImDrawFlags_RoundCornersNone);
 
 
 				previewOutput = previewRemainder.substr(0, lineEndPosition);
@@ -1258,7 +1001,7 @@ namespace Kargono::EditorUI
 		} while (lineEndPosition != -1);
 	}
 
-	void EditorUIService::TruncateText(const std::string& text, uint32_t maxTextSize)
+	void EditorUIContext::RenderTruncatedText(const std::string& text, uint32_t maxTextSize)
 	{
 		if (text.size() > maxTextSize)
 		{
@@ -1267,7 +1010,7 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor1);
+				ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor1);
 				ImGui::TextUnformatted(text.c_str());
 				ImGui::PopStyleColor();
 				ImGui::EndTooltip();
@@ -1279,9 +1022,9 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void EditorUIService::NewItemScreen(const std::string& label1, std::function<void()> onPress1, const std::string& label2, std::function<void()> onPress2)
+	void EditorUIContext::NewItemScreen(const std::string& label1, std::function<void()> onPress1, const std::string& label2, std::function<void()> onPress2)
 	{
-		ImGui::PushFont(EditorUI::EditorUIService::m_ConfigFonts.m_HeaderLarge);
+		ImGui::PushFont(EditorUI::EditorUIContext::m_ConfigFonts.m_HeaderLarge);
 		ImVec2 screenDimensions = ImGui::GetContentRegionAvail();
 		ImVec2 originalLocation = ImGui::GetCursorScreenPos();
 		if (screenDimensions.x > 700.0f)
@@ -1315,7 +1058,7 @@ namespace Kargono::EditorUI
 			{
 				onPress1();
 			}
-			EditorUIService::Spacing(SpacingAmount::Small);
+			EditorUIContext::Spacing(SpacingAmount::Small);
 			ImGui::SetCursorScreenPos(ImVec2(screenLocation.x, ImGui::GetCursorScreenPos().y));
 			if (ImGui::Button(label2.c_str(), ImVec2(screenDimensions.x / buttonDimensions.x, screenDimensions.y / buttonDimensions.y)))
 			{
@@ -1325,61 +1068,223 @@ namespace Kargono::EditorUI
 		ImGui::PopFont();
 	}
 
-	void EditorUIService::LabeledText(const char* label, const char* text, LabeledTextFlags flags)
+	void EditorUIContext::LabeledText(const char* label, const char* text, LabeledTextFlags flags)
 	{
 		// Display Menu Item
 		if (flags & LabeledText_Indented)
 		{
-			ImGui::SetCursorPosX(s_TextLeftIndentOffset);
+			ImGui::SetCursorPosX(m_ConfigSpacing.m_PrimaryTextIndent);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, m_ConfigColors.s_PrimaryTextColor);
-		int32_t labelPosition = ImGui::FindPositionAfterLength(label, s_PrimaryTextWidth);
-		TruncateText(label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+		ImGui::PushStyleColor(ImGuiCol_Text, m_ConfigColors.m_PrimaryTextColor);
+		int32_t labelPosition = ImGui::FindPositionAfterLength(label, m_ActiveWindowData.m_PrimaryTextWidth);
+		RenderTruncatedText(label, labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
-		ImGui::PushStyleColor(ImGuiCol_Text, m_ConfigColors.s_SecondaryTextColor);
-		WriteMultilineText(text, s_SecondaryTextLargeWidth, s_SecondaryTextPosOne);
+		ImGui::PushStyleColor(ImGuiCol_Text, m_ConfigColors.m_SecondaryTextColor);
+		RenderMultiLineText(text, m_ActiveWindowData.m_SecondaryTextLargeWidth, m_ActiveWindowData.m_SecondaryTextPosOne);
 		ImGui::PopStyleColor();
 	}
-	void EditorUIService::Text(const char* text)
+	void EditorUIContext::Text(const char* text)
 	{
 		ImGui::TextUnformatted(text);
 	}
 
-	void EditorUIService::BeginTabBar(const char* title)
+	void EditorUIContext::BeginTabBar(const char* title)
 	{
 		ImGui::BeginTabBar(title);
 	}
-	void EditorUIService::EndTabBar()
+	void EditorUIContext::EndTabBar()
 	{
 		ImGui::EndTabBar();
 	}
-	bool EditorUIService::BeginTabItem(const char* title)
+	bool EditorUIContext::BeginTabItem(const char* title)
 	{
 		return ImGui::BeginTabItem(title);
 	}
-	void EditorUIService::EndTabItem()
+	void EditorUIContext::EndTabItem()
 	{
 		ImGui::EndTabItem();
 	}
 
-	
-	void MementoStack::AddMemento(const EditorMemento& memento)
+	void UndoStack::StoreUndo(const UndoMemento& memento)
 	{
 		m_Stack.push(memento);
 	}
-	Optional<EditorMemento> MementoStack::PopMemento()
+	bool UndoStack::Undo()
 	{
 		// Handle case where stack is empty
 		if (m_Stack.size() == 0)
 		{
-			return {};
+			return false;
 		}
-		
+
 		// Get the top memento to return
-		EditorMemento returnMemento = m_Stack.top();
+		UndoMemento topMemento = m_Stack.top();
 
 		// Remove the top memento from the stack
 		m_Stack.pop();
-		return returnMemento;
+
+		// Handle the undo
+		KG_ASSERT(topMemento.m_Widget);
+		EditVec4Widget& widget = *topMemento.m_Widget;
+
+		// Revert the indicated widget's value
+		widget.m_CurrentVec4 = topMemento.m_Value;
+
+		// Call the on-confirm function if necessary
+		if (widget.m_ConfirmAction)
+		{
+			widget.m_ConfirmAction(widget);
+		}
+
+		return true;
+	}
+	void ActiveWindowData::RecalculateDimensions()
+	{
+		float contentRegionX{ ImGui::GetContentRegionMax().x };
+
+		// Calculate Widget Spacing Values
+		m_WindowPosition = ImGui::GetWindowPos();
+		m_PrimaryTextWidth = (i_ConfigSpacing->m_SecondaryTextPosOne * contentRegionX) - 20.0f;
+		m_PrimaryTextIndentedWidth = (i_ConfigSpacing->m_SecondaryTextPosOne * contentRegionX) - 20.0f - i_ConfigSpacing->m_PrimaryTextIndent;
+		m_SecondaryTextSmallWidth = ((i_ConfigSpacing->m_SecondaryTextPosTwo - i_ConfigSpacing->m_SecondaryTextPosOne) * contentRegionX) - 10.0f;
+		m_SecondaryTextMediumWidth = ((i_ConfigSpacing->m_SecondaryTextPosMiddle - i_ConfigSpacing->m_SecondaryTextPosOne) * contentRegionX) - 30.0f;
+		m_SecondaryTextLargeWidth = ((i_ConfigSpacing->m_SecondaryTextPosFour - i_ConfigSpacing->m_SecondaryTextPosOne) * contentRegionX) + m_SecondaryTextSmallWidth;
+
+		m_SecondaryTextPosOne = contentRegionX * i_ConfigSpacing->m_SecondaryTextPosOne;
+		m_SecondaryTextPosTwo = contentRegionX * i_ConfigSpacing->m_SecondaryTextPosTwo;
+		m_SecondaryTextPosThree = contentRegionX * i_ConfigSpacing->m_SecondaryTextPosThree;
+		m_SecondaryTextPosFour = contentRegionX * i_ConfigSpacing->m_SecondaryTextPosFour;
+		m_SecondaryTextPosMiddle = contentRegionX * i_ConfigSpacing->m_SecondaryTextPosMiddle;
+	}
+	void UIPresets::CreatePresets()
+	{
+		m_SmallEditButton =
+		{
+			-i_ConfigSpacing->m_SmallButtonRightOffset,
+			0.0f,
+			13.0f,
+			i_GenIcons->m_Edit,
+			i_GenIcons->m_Edit,
+			"Cancel Editing",
+			"Edit",
+			PositionType::Relative
+		};
+
+		m_SmallExpandButton =
+		{
+			-1.2f,
+			4.0f,
+			14.0f,
+			i_GenIcons->m_Down,
+			i_GenIcons->m_Right,
+			"Collapse",
+			"Expand",
+			PositionType::Inline
+		};
+
+		m_MediumOptionsButton =
+		{
+			-i_ConfigSpacing->m_MediumButtonRightOffset,
+			1.0f,
+			19.0f,
+			i_GenIcons->m_Options,
+			i_GenIcons->m_Options,
+			"Options",
+			"Options",
+			PositionType::Relative
+		};
+
+		m_SmallCheckboxButton = 
+		{
+			0.0f,
+			0.0f,
+			14.0f,
+			i_GenIcons->m_Checkbox_Enabled,
+			i_GenIcons->m_Checkbox_Disabled,
+			"Uncheck",
+			"Check",
+			PositionType::Inline
+		};
+
+		m_SmallCheckboxDisabledButton = 
+		{
+			0.0f,
+			0.0f,
+			14.0f,
+			i_GenIcons->m_Checkbox_Enabled,
+			i_GenIcons->m_Checkbox_Disabled,
+			"",
+			"",
+			PositionType::Inline,
+			true
+		};
+
+		m_SmallLinkButton = 
+		{
+			-i_ConfigSpacing->m_SmallButtonRightOffset,
+			0.0f,
+			14.0f,
+			i_BrowserIcons->m_Forward,
+			i_BrowserIcons->m_Forward,
+			"Open",
+			"Open",
+			PositionType::Relative
+		};
+
+		m_LargeDeleteButton = 
+		{
+			-112.0f,
+			-0.6f,
+			28.0f,
+			i_GenIcons->m_Delete,
+			i_GenIcons->m_Delete,
+			"Delete",
+			"Delete",
+			PositionType::Relative
+		};
+
+		m_LargeCancelButton = 
+		{
+			-75.0f,
+			-0.6f,
+			28.0f,
+			i_GenIcons->m_Cancel,
+			i_GenIcons->m_Cancel,
+			"Cancel",
+			"Cancel",
+			PositionType::Relative
+		};
+
+		m_LargeConfirmButton = 
+		{
+			-38.0f,
+			-0.6f,
+			28.0f,
+			i_GenIcons->m_Confirm,
+			i_GenIcons->m_Confirm,
+			"Confirm",
+			"Confirm",
+			PositionType::Relative
+		};
+
+		m_LargeSearchButton = 
+		{
+			-112.0f,
+			-0.6f,
+			28.0f,
+			i_GenIcons->m_Cancel2,
+			i_GenIcons->m_Search,
+			"Cancel Search",
+			"Search",
+			PositionType::Relative
+		};
+
+		m_TableEditButton = m_SmallEditButton;
+		m_TableEditButton.m_YPosition = -5.5f;
+
+		m_TableLinkButton = m_SmallLinkButton;
+		m_TableLinkButton.m_YPosition = -5.5f;
+
+		m_ListExpandButton = m_SmallExpandButton;
 	}
 }

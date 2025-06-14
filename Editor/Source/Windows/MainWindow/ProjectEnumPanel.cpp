@@ -96,7 +96,7 @@ namespace Kargono::Panels
 			};
 		m_DeleteProjectEnumWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to delete this Project Enum object?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to delete this Project Enum object?");
 			};
 
 		m_CloseProjectEnumWarning.m_Label = "Close Enum";
@@ -107,7 +107,7 @@ namespace Kargono::Panels
 			};
 		m_CloseProjectEnumWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to close this enum object without saving?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to close this enum object without saving?");
 			};
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
@@ -247,7 +247,7 @@ namespace Kargono::Panels
 		};
 		m_DeleteIdentifierWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this identifier?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to delete this identifier?");
 		};
 	}
 
@@ -264,18 +264,18 @@ namespace Kargono::Panels
 	void ProjectEnumPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowProjectEnum);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowProjectEnum);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (!m_EditorProjectEnum)
 		{
 
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Enum", KG_BIND_CLASS_FN(OnOpenProjectEnumDialog), "Create New Enum", KG_BIND_CLASS_FN(OnCreateProjectEnumDialog));
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing Enum", KG_BIND_CLASS_FN(OnOpenProjectEnumDialog), "Create New Enum", KG_BIND_CLASS_FN(OnCreateProjectEnumDialog));
 			m_CreateProjectEnumPopupSpec.RenderPopup();
 			m_OpenProjectEnumPopupSpec.RenderOptions();
 		}
@@ -291,7 +291,7 @@ namespace Kargono::Panels
 			m_EnumTooltip.RenderTooltip();
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool ProjectEnumPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -342,8 +342,8 @@ namespace Kargono::Panels
 
 		// Open Project Enum Window
 		s_MainWindow->m_ShowProjectEnum = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorProjectEnum)
 		{
@@ -381,8 +381,8 @@ namespace Kargono::Panels
 
 		// Open the editor panel to be visible
 		s_MainWindow->m_ShowProjectEnum = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorProjectEnumHandle == assetHandle)

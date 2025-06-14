@@ -97,6 +97,10 @@ namespace Kargono::EditorUI
 		// Rendering
 		//==============================
 		void RenderOptions();
+
+	private:
+		// Helper functions
+		OptionMap GenerateSearchCache(OptionMap& originalList, const char* searchQuery);
 	public:
 		//==============================
 		// Modify Options

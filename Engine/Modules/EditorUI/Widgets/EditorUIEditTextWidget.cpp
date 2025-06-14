@@ -29,46 +29,46 @@ namespace Kargono::EditorUI
 		{
 			if (m_Flags & EditText_Indented)
 			{
-				ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
+				ImGui::SetCursorPosX(EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 			}
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 			int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
-				m_Flags & EditText_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
-			EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+				m_Flags & EditText_Indented ? EditorUIContext::m_ActiveWindowData.m_PrimaryTextIndentedWidth : EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+			EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 			ImGui::PopStyleColor();
 
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
-			EditorUIService::WriteMultilineText(m_CurrentOption, EditorUIService::s_SecondaryTextLargeWidth, EditorUIService::s_SecondaryTextPosOne);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
+			EditorUIContext::RenderMultiLineText(m_CurrentOption, EditorUIContext::m_ActiveWindowData.m_SecondaryTextLargeWidth, EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
 			ImGui::PopStyleColor();
 
 			ImGui::SameLine();
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 				{
 					ImGui::OpenPopup(id);
 					memset(m_Buffer.Data(), 0, m_Buffer.BufferSize());
 					memcpy(m_Buffer.Data(), m_CurrentOption.data(), m_CurrentOption.size());
 				},
-			EditorUIService::s_SmallEditButton, false, EditorUIService::m_ConfigColors.s_DisabledColor);
+			EditorUIContext::m_UIPresets.m_SmallEditButton, false, EditorUIContext::m_ConfigColors.m_DisabledColor);
 		}
 
 		ImGui::SetNextWindowSize(ImVec2(600.0f, 0.0f));
 		if (ImGui::BeginPopupModal(id, NULL, ImGuiWindowFlags_NoTitleBar))
 		{
-			EditorUI::EditorUIService::TitleText(popUpLabel);
+			EditorUI::EditorUIContext::TitleText(popUpLabel);
 
-			ImGui::PushFont(EditorUI::EditorUIService::m_ConfigFonts.m_HeaderRegular);
+			ImGui::PushFont(EditorUI::EditorUIContext::m_ConfigFonts.m_HeaderRegular);
 
 			// Cancel Tool Bar Button
 			ImGui::SameLine();
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 				{
 					memset(m_Buffer.Data(), 0, m_Buffer.BufferSize());
 					ImGui::CloseCurrentPopup();
-				}, EditorUIService::s_LargeCancelButton);
+				}, EditorUIContext::m_UIPresets.m_LargeCancelButton);
 
 			// Confirm Tool Bar Button
 			ImGui::SameLine();
-			EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+			EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 				{
 					m_CurrentOption = m_Buffer;
 					if (m_ConfirmAction)
@@ -77,7 +77,7 @@ namespace Kargono::EditorUI
 					}
 					memset(m_Buffer.Data(), 0, m_Buffer.BufferSize());
 					ImGui::CloseCurrentPopup();
-				}, EditorUIService::s_LargeConfirmButton);
+				}, EditorUIContext::m_UIPresets.m_LargeConfirmButton);
 
 			ImGui::Separator();
 

@@ -17,31 +17,31 @@ namespace Kargono::EditorUI
 		// Draw background
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y + EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y + EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImColor(EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display Item
 		if (m_Flags & EditInteger_Indented)
 		{
-			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
+			ImGui::SetCursorPosX(EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 		}
 
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
-			m_Flags & EditInteger_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
-		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+			m_Flags & EditInteger_Indented ? EditorUIContext::m_ActiveWindowData.m_PrimaryTextIndentedWidth : EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+		EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 		ImGui::PopStyleColor();
 
-		ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne);
+		ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
 
 		if (m_Editing)
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor1);
-			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
-			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentInteger), (float)m_ScrollSpeed,
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor1);
+			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentInteger), (float)m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%d", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -54,7 +54,7 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor1, "X-Value");
+				ImGui::TextColored(EditorUIContext::m_ConfigColors.m_HighlightColor1, "X-Value");
 				ImGui::EndTooltip();
 			}
 			ImGui::PopStyleVar();
@@ -63,21 +63,21 @@ namespace Kargono::EditorUI
 		else
 		{
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosOne, yPosition });
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
-			int32_t integerPosition = ImGui::FindPositionAfterLength(std::to_string(m_CurrentInteger).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
-			EditorUIService::TruncateText(std::to_string(m_CurrentInteger),
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne, yPosition });
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
+			int32_t integerPosition = ImGui::FindPositionAfterLength(std::to_string(m_CurrentInteger).c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			EditorUIContext::RenderTruncatedText(std::to_string(m_CurrentInteger),
 				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
 			ImGui::PopStyleColor();
 		}
 
 		ImGui::SameLine();
-		EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
-			EditorUIService::s_SmallEditButton,
-			m_Editing, m_Editing ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor);
+			EditorUIContext::m_UIPresets.m_SmallEditButton,
+			m_Editing, m_Editing ? EditorUIContext::m_ConfigColors.m_PrimaryTextColor : EditorUIContext::m_ConfigColors.m_DisabledColor);
 	}
 	void EditIVec2Widget::RenderIVec2()
 	{
@@ -89,34 +89,34 @@ namespace Kargono::EditorUI
 		// Draw backgrounds
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y + EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosTwo + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y + EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y + EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImColor(EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo - 5.0f, screenPosition.y),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y + EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImColor(EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display Item
 		if (m_Flags & EditIVec2_Indented)
 		{
-			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
+			ImGui::SetCursorPosX(EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
-			m_Flags & EditIVec2_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
-		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+			m_Flags & EditIVec2_Indented ? EditorUIContext::m_ActiveWindowData.m_PrimaryTextIndentedWidth : EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+		EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 
 		ImGui::PopStyleColor();
-		ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne);
+		ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
 
 		if (m_Editing)
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor1);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
-			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentIVec2.x), (float)m_ScrollSpeed,
+			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentIVec2.x), (float)m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%d", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -129,15 +129,15 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor1, "X-Value");
+				ImGui::TextColored(EditorUIContext::m_ConfigColors.m_HighlightColor1, "X-Value");
 				ImGui::EndTooltip();
 			}
 
 			// y value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor2);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosTwo, yPosition });
-			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
-			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentIVec2.y), (float)m_ScrollSpeed,
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor2);
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo, yPosition });
+			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentIVec2.y), (float)m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%d", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -150,7 +150,7 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor2, "Y-Value");
+				ImGui::TextColored(EditorUIContext::m_ConfigColors.m_HighlightColor2, "Y-Value");
 				ImGui::EndTooltip();
 			}
 			ImGui::PopStyleVar();
@@ -159,27 +159,27 @@ namespace Kargono::EditorUI
 		else
 		{
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosOne, yPosition });
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne, yPosition });
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
 			int32_t integerPosition = ImGui::FindPositionAfterLength(
-				std::to_string(m_CurrentIVec2.x).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
-			EditorUIService::TruncateText(std::to_string(m_CurrentIVec2.x),
+				std::to_string(m_CurrentIVec2.x).c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			EditorUIContext::RenderTruncatedText(std::to_string(m_CurrentIVec2.x),
 				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosTwo, yPosition });
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo, yPosition });
 			integerPosition = ImGui::FindPositionAfterLength(
-				std::to_string(m_CurrentIVec2.y).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
-			EditorUIService::TruncateText(std::to_string(m_CurrentIVec2.y),
+				std::to_string(m_CurrentIVec2.y).c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			EditorUIContext::RenderTruncatedText(std::to_string(m_CurrentIVec2.y),
 				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
 			ImGui::PopStyleColor();
 		}
 
 		ImGui::SameLine();
-		EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
-			EditorUIService::s_SmallEditButton,
-			m_Editing, m_Editing ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor);
+			EditorUIContext::m_UIPresets.m_SmallEditButton,
+			m_Editing, m_Editing ? EditorUIContext::m_ConfigColors.m_PrimaryTextColor : EditorUIContext::m_ConfigColors.m_DisabledColor);
 	}
 	void EditIVec3Widget::RenderIVec3()
 	{
@@ -191,37 +191,37 @@ namespace Kargono::EditorUI
 		// Draw backgrounds
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y + EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosTwo + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y + EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosThree - 5.0f, screenPosition.y),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosThree + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y + EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y + EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImColor(EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo - 5.0f, screenPosition.y),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y + EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImColor(EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosThree - 5.0f, screenPosition.y),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosThree + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y + EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImColor(EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display Item
 		if (m_Flags & EditIVec3_Indented)
 		{
-			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
+			ImGui::SetCursorPosX(EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
-			m_Flags & EditIVec3_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
-		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+			m_Flags & EditIVec3_Indented ? EditorUIContext::m_ActiveWindowData.m_PrimaryTextIndentedWidth : EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+		EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 
 		ImGui::PopStyleColor();
-		ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne);
+		ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
 
 		if (m_Editing)
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor1);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
-			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentIVec3.x), (float)m_ScrollSpeed,
+			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentIVec3.x), (float)m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%d", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -234,15 +234,15 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor1, "X-Value");
+				ImGui::TextColored(EditorUIContext::m_ConfigColors.m_HighlightColor1, "X-Value");
 				ImGui::EndTooltip();
 			}
 
 			// y value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor2);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosTwo, yPosition });
-			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
-			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentIVec3.y), (float)m_ScrollSpeed,
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor2);
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo, yPosition });
+			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentIVec3.y), (float)m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%d", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -255,15 +255,15 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor2, "Y-Value");
+				ImGui::TextColored(EditorUIContext::m_ConfigColors.m_HighlightColor2, "Y-Value");
 				ImGui::EndTooltip();
 			}
 
 			// z value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor3);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosThree, yPosition });
-			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
-			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentIVec3.z), (float)m_ScrollSpeed,
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor3);
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosThree, yPosition });
+			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentIVec3.z), (float)m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%d", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -276,7 +276,7 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor2, "Z-Value");
+				ImGui::TextColored(EditorUIContext::m_ConfigColors.m_HighlightColor2, "Z-Value");
 				ImGui::EndTooltip();
 			}
 			ImGui::PopStyleVar();
@@ -285,32 +285,32 @@ namespace Kargono::EditorUI
 		else
 		{
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosOne, yPosition });
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne, yPosition });
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
 			int32_t integerPosition = ImGui::FindPositionAfterLength(
-				std::to_string(m_CurrentIVec3.x).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
-			EditorUIService::TruncateText(std::to_string(m_CurrentIVec3.x),
+				std::to_string(m_CurrentIVec3.x).c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			EditorUIContext::RenderTruncatedText(std::to_string(m_CurrentIVec3.x),
 				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosTwo, yPosition });
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo, yPosition });
 			integerPosition = ImGui::FindPositionAfterLength(
-				std::to_string(m_CurrentIVec3.y).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
-			EditorUIService::TruncateText(std::to_string(m_CurrentIVec3.y),
+				std::to_string(m_CurrentIVec3.y).c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			EditorUIContext::RenderTruncatedText(std::to_string(m_CurrentIVec3.y),
 				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosThree, yPosition });
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosThree, yPosition });
 			integerPosition = ImGui::FindPositionAfterLength(
-				std::to_string(m_CurrentIVec3.z).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
-			EditorUIService::TruncateText(std::to_string(m_CurrentIVec3.z),
+				std::to_string(m_CurrentIVec3.z).c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			EditorUIContext::RenderTruncatedText(std::to_string(m_CurrentIVec3.z),
 				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
 			ImGui::PopStyleColor();
 		}
 
 		ImGui::SameLine();
-		EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
-			EditorUIService::s_SmallEditButton,
-			m_Editing, m_Editing ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor);
+			EditorUIContext::m_UIPresets.m_SmallEditButton,
+			m_Editing, m_Editing ? EditorUIContext::m_ConfigColors.m_PrimaryTextColor : EditorUIContext::m_ConfigColors.m_DisabledColor);
 	}
 	void EditIVec4Widget::RenderIVec4()
 	{
@@ -322,40 +322,40 @@ namespace Kargono::EditorUI
 		// Draw backgrounds
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 screenPosition = ImGui::GetCursorScreenPos();
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne - 5.0f, screenPosition.y),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosOne + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y + EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosTwo - 5.0f, screenPosition.y),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosTwo + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y + EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosThree - 5.0f, screenPosition.y),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosThree + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y + EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
-		draw_list->AddRectFilled(ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosFour - 5.0f, screenPosition.y),
-			ImVec2(EditorUIService::s_WindowPosition.x + EditorUIService::s_SecondaryTextPosFour + EditorUIService::s_SecondaryTextSmallWidth, screenPosition.y + EditorUIService::s_TextBackgroundHeight),
-			ImColor(EditorUIService::s_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne - 5.0f, screenPosition.y),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y + EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImColor(EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo - 5.0f, screenPosition.y),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y + EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImColor(EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosThree - 5.0f, screenPosition.y),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosThree + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y + EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImColor(EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
+		draw_list->AddRectFilled(ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosFour - 5.0f, screenPosition.y),
+			ImVec2(EditorUIContext::m_ActiveWindowData.m_WindowPosition.x + EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosFour + EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth, screenPosition.y + EditorUIContext::m_ConfigSpacing.m_TextBackgroundHeight),
+			ImColor(EditorUIContext::m_ActiveWindowData.m_ActiveBackgroundColor), 4.0f, ImDrawFlags_RoundCornersAll);
 
 		// Display Item
 		if (m_Flags & EditIVec4_Indented)
 		{
-			ImGui::SetCursorPosX(EditorUIService::s_TextLeftIndentOffset);
+			ImGui::SetCursorPosX(EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 		}
-		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_PrimaryTextColor);
+		ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
 		int32_t labelPosition = ImGui::FindPositionAfterLength(m_Label.CString(),
-			m_Flags & EditIVec4_Indented ? EditorUIService::s_PrimaryTextIndentedWidth : EditorUIService::s_PrimaryTextWidth);
-		EditorUIService::TruncateText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
+			m_Flags & EditIVec4_Indented ? EditorUIContext::m_ActiveWindowData.m_PrimaryTextIndentedWidth : EditorUIContext::m_ActiveWindowData.m_PrimaryTextWidth);
+		EditorUIContext::RenderTruncatedText(m_Label.CString(), labelPosition == -1 ? std::numeric_limits<int32_t>::max() : labelPosition);
 
 		ImGui::PopStyleColor();
-		ImGui::SameLine(EditorUIService::s_SecondaryTextPosOne);
+		ImGui::SameLine(EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne);
 
 		if (m_Editing)
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
 			// x value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor1);
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor1);
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
-			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentIVec4.x), (float)m_ScrollSpeed,
+			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentIVec4.x), (float)m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%d", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -368,15 +368,15 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor1, "X-Value");
+				ImGui::TextColored(EditorUIContext::m_ConfigColors.m_HighlightColor1, "X-Value");
 				ImGui::EndTooltip();
 			}
 
 			// y value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor2);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosTwo, yPosition });
-			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
-			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentIVec4.y), (float)m_ScrollSpeed,
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor2);
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo, yPosition });
+			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentIVec4.y), (float)m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%d", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -389,15 +389,15 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor2, "Y-Value");
+				ImGui::TextColored(EditorUIContext::m_ConfigColors.m_HighlightColor2, "Y-Value");
 				ImGui::EndTooltip();
 			}
 
 			// z value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor3);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosThree, yPosition });
-			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
-			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentIVec4.z), (float)m_ScrollSpeed,
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor3);
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosThree, yPosition });
+			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentIVec4.z), (float)m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%d", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -410,15 +410,15 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor2, "Z-Value");
+				ImGui::TextColored(EditorUIContext::m_ConfigColors.m_HighlightColor2, "Z-Value");
 				ImGui::EndTooltip();
 			}
 
 			// w value
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_HighlightColor4);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosFour, yPosition });
-			ImGui::SetNextItemWidth(EditorUIService::s_SecondaryTextSmallWidth);
-			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIService::WidgetIterator(widgetCount))).c_str(), &(m_CurrentIVec4.w), (float)m_ScrollSpeed,
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_HighlightColor4);
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosFour, yPosition });
+			ImGui::SetNextItemWidth(EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			if (ImGui::DragInt(("##" + std::to_string(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount))).c_str(), &(m_CurrentIVec4.w), (float)m_ScrollSpeed,
 				m_Bounds[0], m_Bounds[1],
 				"%d", ImGuiSliderFlags_AlwaysClamp))
 			{
@@ -431,7 +431,7 @@ namespace Kargono::EditorUI
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUIService::m_ConfigColors.s_HighlightColor2, "W-Value");
+				ImGui::TextColored(EditorUIContext::m_ConfigColors.m_HighlightColor2, "W-Value");
 				ImGui::EndTooltip();
 			}
 			ImGui::PopStyleVar();
@@ -439,36 +439,36 @@ namespace Kargono::EditorUI
 		else
 		{
 			float yPosition = ImGui::GetCursorPosY();
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosOne, yPosition });
-			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIService::m_ConfigColors.s_SecondaryTextColor);
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosOne, yPosition });
+			ImGui::PushStyleColor(ImGuiCol_Text, EditorUIContext::m_ConfigColors.m_SecondaryTextColor);
 			int32_t integerPosition = ImGui::FindPositionAfterLength(
-				std::to_string(m_CurrentIVec4.x).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
-			EditorUIService::TruncateText(std::to_string(m_CurrentIVec4.x),
+				std::to_string(m_CurrentIVec4.x).c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			EditorUIContext::RenderTruncatedText(std::to_string(m_CurrentIVec4.x),
 				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosTwo, yPosition });
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosTwo, yPosition });
 			integerPosition = ImGui::FindPositionAfterLength(
-				std::to_string(m_CurrentIVec4.y).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
-			EditorUIService::TruncateText(std::to_string(m_CurrentIVec4.y),
+				std::to_string(m_CurrentIVec4.y).c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			EditorUIContext::RenderTruncatedText(std::to_string(m_CurrentIVec4.y),
 				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosThree, yPosition });
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosThree, yPosition });
 			integerPosition = ImGui::FindPositionAfterLength(
-				std::to_string(m_CurrentIVec4.z).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
-			EditorUIService::TruncateText(std::to_string(m_CurrentIVec4.z),
+				std::to_string(m_CurrentIVec4.z).c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			EditorUIContext::RenderTruncatedText(std::to_string(m_CurrentIVec4.z),
 				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
-			ImGui::SetCursorPos({ EditorUIService::s_SecondaryTextPosFour, yPosition });
+			ImGui::SetCursorPos({ EditorUIContext::m_ActiveWindowData.m_SecondaryTextPosFour, yPosition });
 			integerPosition = ImGui::FindPositionAfterLength(
-				std::to_string(m_CurrentIVec4.w).c_str(), EditorUIService::s_SecondaryTextSmallWidth);
-			EditorUIService::TruncateText(std::to_string(m_CurrentIVec4.w),
+				std::to_string(m_CurrentIVec4.w).c_str(), EditorUIContext::m_ActiveWindowData.m_SecondaryTextSmallWidth);
+			EditorUIContext::RenderTruncatedText(std::to_string(m_CurrentIVec4.w),
 				integerPosition == -1 ? std::numeric_limits<int32_t>::max() : integerPosition);
 			ImGui::PopStyleColor();
 		}
 
 		ImGui::SameLine();
-		EditorUIService::CreateButton(m_WidgetID + EditorUIService::WidgetIterator(widgetCount), [&]()
+		EditorUIContext::RenderInlineButton(m_WidgetID + EditorUIContext::GetNextChildID(widgetCount), [&]()
 			{
 				Utility::Operations::ToggleBoolean(m_Editing);
 			},
-			EditorUIService::s_SmallEditButton,
-			m_Editing, m_Editing ? EditorUIService::m_ConfigColors.s_PrimaryTextColor : EditorUIService::m_ConfigColors.s_DisabledColor);
+			EditorUIContext::m_UIPresets.m_SmallEditButton,
+			m_Editing, m_Editing ? EditorUIContext::m_ConfigColors.m_PrimaryTextColor : EditorUIContext::m_ConfigColors.m_DisabledColor);
 	}
 }

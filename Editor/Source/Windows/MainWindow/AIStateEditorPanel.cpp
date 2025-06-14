@@ -62,18 +62,18 @@ namespace Kargono::Panels
 	void AIStateEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION()
-			EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowAIStateEditor);
+			EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowAIStateEditor);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (!m_EditorAIState)
 		{
 			// Opening/Null State Screen
-			EditorUI::EditorUIService::NewItemScreen("Open Existing AI State", KG_BIND_CLASS_FN(OnOpenAIStateDialog), "Create New AI State", KG_BIND_CLASS_FN(OnCreateAIStateDialog));
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing AI State", KG_BIND_CLASS_FN(OnOpenAIStateDialog), "Create New AI State", KG_BIND_CLASS_FN(OnCreateAIStateDialog));
 			m_CreateAIStatePopupSpec.RenderPopup();
 			m_OpenAIStatePopupSpec.RenderOptions();
 		}
@@ -92,7 +92,7 @@ namespace Kargono::Panels
 
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool AIStateEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -172,8 +172,8 @@ namespace Kargono::Panels
 	{
 		// Open AI State Window
 		s_MainWindow->m_ShowAIStateEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorAIState)
 		{
@@ -212,8 +212,8 @@ namespace Kargono::Panels
 
 		// Open the editor panel to be visible
 		s_MainWindow->m_ShowAIStateEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorAIStateHandle == assetHandle)
@@ -321,7 +321,7 @@ namespace Kargono::Panels
 		};
 		m_DeleteAIStateWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this AI state object?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to delete this AI state object?");
 		};
 
 		m_CloseAIStateWarning.m_Label = "Close AI State";
@@ -332,7 +332,7 @@ namespace Kargono::Panels
 		};
 		m_CloseAIStateWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to close this ai state object without saving?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to close this ai state object without saving?");
 		};
 
 		m_MainHeader.AddToSelectionList("Save", [&]()

@@ -17,11 +17,11 @@ namespace Kargono::Panels
 	void PropertiesPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow("Properties", &s_MainWindow->m_ShowProperties, ImGuiWindowFlags_NoFocusOnAppearing);
+		EditorUI::EditorUIContext::StartRenderWindow("Properties", &s_MainWindow->m_ShowProperties, ImGuiWindowFlags_NoFocusOnAppearing);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
@@ -48,6 +48,6 @@ namespace Kargono::Panels
 			
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 }
