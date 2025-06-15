@@ -2,7 +2,6 @@
 #include "EditorApp.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "Modules/Scripting/ScriptModuleBuilder.h"
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Modules/Network/Client.h"
@@ -1167,11 +1166,11 @@ namespace Kargono::Windows
 
 				if (ImGui::MenuItem("Reload Script Module"))
 				{
-					Scripting::ScriptService::LoadActiveScriptModule();
+					Scripting::ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
 				}
 				if (ImGui::MenuItem("Rebuild Script Module"))
 				{
-					Scripting::ScriptModuleBuilder::CreateScriptModule();
+					Scripting::ScriptBinderService::GetActiveContext().m_ScriptBuilder.CreateScriptModule();
 				}
 
 				ImGui::Separator();
@@ -1189,9 +1188,9 @@ namespace Kargono::Windows
 				if (ImGui::MenuItem("User Interface Editor"))
 				{
 					EngineService::GetActiveEngine().GetThread().SubmitFunction([]()
-						{
-							s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
-						});
+					{
+						s_EditorApp->SetActiveEditorWindow(ActiveEditorUIWindow::UIEditorWindow);
+					});
 				}
 				if (ImGui::MenuItem("Particle Emitter Editor"))
 				{

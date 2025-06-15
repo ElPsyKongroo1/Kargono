@@ -19,7 +19,7 @@ namespace Kargono
 
 	bool RuntimeApp::Init()
 	{
-		Scripting::ScriptService::Init();
+		Scripting::AppScriptBinder::Init();
 		Audio::AudioService::CreateAudioContext();
 		Audio::AudioService::GetActiveContext().Init();
 		Scenes::SceneService::Init();
@@ -42,7 +42,7 @@ namespace Kargono
 		if (pathToProject.empty())
 		{
 			KG_CRITICAL("Could not locate a .kproj file in local directory!");
-			Scripting::ScriptService::Terminate();
+			Scripting::AppScriptBinder::Terminate();
 			Audio::AudioService::GetActiveContext().Terminate();
 			Audio::AudioService::RemoveAudioContext();
 			Scenes::SceneService::Terminate();
@@ -52,7 +52,7 @@ namespace Kargono
 		if (!Projects::ProjectService::IsActive())
 		{
 			KG_CRITICAL("Failed to open project!");
-			Scripting::ScriptService::Terminate();
+			Scripting::AppScriptBinder::Terminate();
 			Audio::AudioService::GetActiveContext().Terminate();
 			Audio::AudioService::RemoveAudioContext();
 			Scenes::SceneService::Terminate();
@@ -63,7 +63,7 @@ namespace Kargono
 		{
 			if (!OpenProject())
 			{
-				Scripting::ScriptService::Terminate();
+				Scripting::AppScriptBinder::Terminate();
 				Audio::AudioService::GetActiveContext().Terminate();
 				Audio::AudioService::RemoveAudioContext();
 				Scenes::SceneService::Terminate();
@@ -120,7 +120,7 @@ namespace Kargono
 		Particles::ParticleService::RemoveParticleContext();
 		Audio::AudioService::GetActiveContext().Terminate();
 		Audio::AudioService::RemoveAudioContext();
-		Scripting::ScriptService::Terminate();
+		Scripting::AppScriptBinder::Terminate();
 		AI::AIService::GetActiveContext().Terminate();
 		AI::AIService::RemoveAIContext();
 		Assets::AssetService::ClearAll();
@@ -693,7 +693,7 @@ namespace Kargono
 			}
 
 			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveContext().GetStartSceneHandle();
-			Scripting::ScriptService::LoadActiveScriptModule();
+			Scripting::AppScriptBinder::LoadActiveScriptModule();
 
 			if (Scenes::SceneService::GetActiveScene())
 			{

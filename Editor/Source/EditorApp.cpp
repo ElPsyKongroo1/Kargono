@@ -37,7 +37,7 @@ namespace Kargono
 	bool EditorApp::Init()
 	{
 		// Initialize engine services
-		Scripting::ScriptService::Init();
+		Scripting::ScriptBinderService::GetActiveContext().Init();
 		Audio::AudioService::CreateAudioContext();
 		Audio::AudioService::GetActiveContext().Init();
 		Scenes::SceneService::Init();
@@ -99,7 +99,7 @@ namespace Kargono
 		Particles::ParticleService::RemoveParticleContext();
 		Audio::AudioService::GetActiveContext().Terminate();
 		Audio::AudioService::RemoveAudioContext();
-		Scripting::ScriptService::Terminate();
+		Scripting::ScriptBinderService::GetActiveContext().Terminate();
 		AI::AIService::GetActiveContext().Terminate();
 		AI::AIService::RemoveAIContext();
 		Scripting::ScriptCompilerService::Terminate();
@@ -418,7 +418,7 @@ namespace Kargono
 			Assets::AssetService::DeserializeAll();
 
 			// Load in the script shared library
-			Scripting::ScriptService::LoadActiveScriptModule();
+			Scripting::ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
 
 			// Ensure all script assets are properly loaded in
 			Assets::AssetService::LoadAllScriptIntoCache();

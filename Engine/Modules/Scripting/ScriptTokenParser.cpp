@@ -1223,7 +1223,7 @@ namespace Kargono::Scripting
 				std::string errorMessage =
 					fmt::format("Argument type is not acceptable for function parameter\n Argument Type: {}\n Parameter Type(s):",
 						GetPrimitiveTypeFromToken((newFunctionCallNode.Arguments.at(parameterIteration)->GetReturnType())).Value);
-				for (auto& type : parameter.AllTypes)
+				for (ScriptToken& type : parameter.AllTypes)
 				{
 					errorMessage = errorMessage + "\n " + type.Value;
 				}

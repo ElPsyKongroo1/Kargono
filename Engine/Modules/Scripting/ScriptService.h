@@ -8,6 +8,8 @@
 #include "Modules/Scripting/ScriptingCommon.h"
 #include "Kargono/Utility/Random.h"
 
+#include "Modules/Scripting/Platform/ScriptPlatformTypes.h"
+
 #include <filesystem>
 #include <functional>
 #include <string>
@@ -17,48 +19,111 @@
 namespace Kargono::Scripting
 {
 	class Script;
-	//==============================
-	// Script Service Class 
-	//==============================
-	class ScriptService
+	class AppScriptBinder;
+
+	class ScriptModuleBuilder
+	{
+	private:
+		//==============================
+		// Constructor/Destructor
+		//==============================
+		ScriptModuleBuilder() = default;
+		~ScriptModuleBuilder() = default;
+	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		void Init(SharedLib* libReference);
+	public:
+		//==============================
+		// Create Script Module
+		//==============================
+		void CreateScriptModule();
+	private:
+		//==============================
+		// Generate Module Code
+		//==============================
+		void CreateModuleHeaderFile();
+		bool CreateModuleCPPFile();
+	private:
+		//==============================
+		// Compile Module
+		//==============================
+		bool CompileModuleCodeMSVC(bool createDebug);
+		bool CompileModuleCodeGCC(bool createDebug);
+	private:
+		//==============================
+		// Connect Engine To Module
+		//==============================
+		void AttachEngineFunctionsToModule();
+	private:
+		//==============================
+		// Injected Dependencies
+		//==============================
+		SharedLib* i_LibReference;
+	private:
+		//==============================
+		// Owning Class
+		//==============================
+		friend class AppScriptBinder;
+	};
+
+	class AppScriptBinder
 	{
 	public:
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		static void Init();
-		static void Terminate();
-
+		void Init();
+		void Terminate();
 	private:
 		// Helper functions
-		static void GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts);
+		void GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts);
 	public:
 		//==============================
 		// Manage Active Script Module
 		//==============================
-		static void LoadActiveScriptModule();
-		static void CloseActiveScriptModule();
-
+		void LoadActiveScriptModule();
+		void CloseActiveScriptModule();
 		//==============================
 		// Manage Individual Scripts
 		//==============================
-		static void LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType);
-
+		void LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType);
 		//==============================
 		// Getters/Setters
 		//==============================
-		static std::vector<Ref<Script>>& GetAllEngineScripts()
+		std::vector<Ref<Script>>& GetAllEngineScripts()
 		{
-			return s_AllEngineScripts;
+			return m_AllEngineScripts;
 		}
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		ScriptModuleBuilder m_ScriptBuilder;
 	private:
-		static inline std::vector<Ref<Script>> s_AllEngineScripts;
-		static inline Utility::PseudoGenerator s_IDGenerator{ 0xc3bc4ead8efa4c3a };
+		//==============================
+		// Internal Fields
+		//==============================
+		std::vector<Ref<Script>> m_AllEngineScripts;
+		Utility::PseudoGenerator m_IDGenerator{ 0xc3bc4ead8efa4c3a };
+		SharedLib m_ScriptLibrary{};
 	};
 
-	//==============================
-	// Script Class
-	//==============================
+	class ScriptBinderService // TODO: EWWWWW
+	{
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		static AppScriptBinder& GetActiveContext() { return s_AppScriptBinder;}
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		static inline AppScriptBinder s_AppScriptBinder{};
+	};
+
 	class Script
 	{
 	public:

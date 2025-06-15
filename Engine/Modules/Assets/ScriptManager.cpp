@@ -242,7 +242,7 @@ namespace Kargono::Assets
 		newScript->m_ScriptType = metadata.m_ScriptType;
 		newScript->m_SectionLabel = metadata.m_SectionLabel;
 		newScript->m_ExplicitFuncType = metadata.m_ExplicitFuncType;
-		Scripting::ScriptService::LoadScriptFunction(newScript, metadata.m_FunctionType);
+		Scripting::ScriptBinderService::GetActiveContext().LoadScriptFunction(newScript, metadata.m_FunctionType);
 
 		return newScript;
 	}
@@ -301,7 +301,7 @@ namespace Kargono::Assets
 	void ScriptManager::DeserializeRegistrySpecificData(YAML::Node& registryNode)
 	{
 		// Load in Engine Scripts
-		for (Ref<Scripting::Script> script : Scripting::ScriptService::GetAllEngineScripts())
+		for (Ref<Scripting::Script> script : Scripting::ScriptBinderService::GetActiveContext().GetAllEngineScripts())
 		{
 			Assets::AssetInfo newAsset{};
 			newAsset.m_Handle = script->m_ID;
