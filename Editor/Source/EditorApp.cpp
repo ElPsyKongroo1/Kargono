@@ -1,6 +1,6 @@
 #include "EditorApp.h"
 
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Modules/Audio/Audio.h"
 #include "Kargono/Scenes/Scene.h"
@@ -102,7 +102,7 @@ namespace Kargono
 		Scripting::ScriptBinderService::GetActiveContext().Terminate();
 		AI::AIService::GetActiveContext().Terminate();
 		AI::AIService::RemoveAIContext();
-		Scripting::ScriptCompilerService::Terminate();
+		Scripting::ScriptCompilerService::GetActiveContext().Terminate();
 		Assets::AssetService::ClearAll();
 		RuntimeUI::FontService::GetActiveContext().Terminate();
 		Scenes::SceneService::Terminate();

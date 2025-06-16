@@ -15,7 +15,7 @@
 #include "Kargono/Scenes/GameState.h"
 #include "Kargono/Utility/Operations.h"
 #include "Modules/AI/AIService.h"
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Modules/Events/EditorEvent.h"
 #include "Modules/Physics2D/Physics2DCommon.h"
 #include "Modules/Particles/ParticleService.h"
@@ -94,7 +94,7 @@ namespace Kargono::Scripting
 		RuntimeUI_MoveUp->m_SectionLabel = "UserInterface";
 		RuntimeUI_MoveUp->m_Function = CreateRef<WrappedVoidNone>([]() 
 		{
-			RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->MoveDown();
+			RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->MoveUp();
 		});
 		engineScripts.push_back(RuntimeUI_MoveUp);
 
@@ -1088,7 +1088,7 @@ namespace Kargono::Scripting
 			{
 				continue;
 			}
-			std::string compiledScript = ScriptCompilerService::CompileScriptFile(projectPaths.GetAssetDirectory() / asset.Data.FileLocation);
+			std::string compiledScript = ScriptCompilerService::GetActiveContext().CompileScriptFile(projectPaths.GetAssetDirectory() / asset.Data.FileLocation);
 			if (compiledScript.empty())
 			{
 				KG_WARN("Failed to compile the script at: {}", asset.Data.FileLocation.string());

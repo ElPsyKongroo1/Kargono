@@ -2,7 +2,7 @@
 
 #include "EditorApp.h"
 
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Modules/Input/InputService.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Kargono/Utility/Operations.h"
@@ -170,7 +170,7 @@ namespace Kargono::Panels
 
 	void TextEditorPanel::RefreshKGScriptEditor()
 	{
-		Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+		Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
 		CheckForErrors();
 	}
 
@@ -285,7 +285,7 @@ namespace Kargono::Panels
 			{
 				return;
 			}
-			std::vector<Scripting::ParserError> errors = Scripting::ScriptCompilerService::CheckForErrors(activeDocument.TextBuffer);
+			std::vector<Scripting::ParserError> errors = Scripting::ScriptCompilerService::GetActiveContext().CheckForErrors(activeDocument.TextBuffer);
 
 			if (errors.size() == 0)
 			{

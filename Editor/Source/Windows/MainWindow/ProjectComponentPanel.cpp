@@ -2,7 +2,7 @@
 
 #include "EditorApp.h"
 
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Kargono/Utility/Operations.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
@@ -129,7 +129,7 @@ namespace Kargono::Panels
 			m_MainHeader.m_Label = Assets::AssetService::GetProjectComponentRegistry().at(
 				m_EditorProjectComponentHandle).Data.FileLocation.filename().string();
 			RefreshData();
-			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+			Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
 		};
 		m_CreateComponentPopup.m_PopupContents = [&]()
 		{
@@ -144,7 +144,7 @@ namespace Kargono::Panels
 		m_DeleteComponentWarning.m_ConfirmAction = [&]()
 		{
 			Assets::AssetService::DeleteProjectComponent(m_EditorProjectComponentHandle);
-			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+			Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
 			m_EditorProjectComponentHandle = 0;
 			m_EditorProjectComponent = nullptr;
 		};
@@ -167,7 +167,7 @@ namespace Kargono::Panels
 		m_MainHeader.AddToSelectionList("Save", [&]()
 		{
 			Assets::AssetService::SaveProjectComponent(m_EditorProjectComponentHandle, m_EditorProjectComponent);
-			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+			Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
 			m_MainHeader.m_EditColorActive = false;
 		});
 		m_MainHeader.AddToSelectionList("Close", [&]()

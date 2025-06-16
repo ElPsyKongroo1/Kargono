@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Kargono/Core/Base.h"
+#include "Kargono/Core/BitField.h"
+#include "Kargono/Core/WrappedData.h"
+
 #include <string>
 #include <vector>
 #include <filesystem>
@@ -10,10 +14,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <sstream>
-
-#include "Kargono/Core/Base.h"
-#include "Kargono/Core/BitField.h"
-#include "Kargono/Core/WrappedData.h"
 
 namespace Kargono::Rendering
 {
@@ -34,7 +34,7 @@ namespace Kargono::Scripting
 		// Language specific literals
 		CustomLiteral,
 
-		// Keywords
+		// m_Keywords
 		Keyword,
 
 		// Primitive Types
@@ -110,7 +110,6 @@ namespace Kargono::Scripting
 
 namespace Kargono::Utility
 {
-
 	inline const char* ScriptTokenTypeToString(Scripting::ScriptTokenType type)
 	{
 		switch (type)
@@ -430,6 +429,33 @@ namespace Kargono::Utility
 		}
 		}
 	}
+
+	inline Scripting::ScriptToken WrappedVarTypeToPrimitiveType(WrappedVarType type)
+	{
+		switch (type)
+		{
+		case WrappedVarType::Integer16: return { Scripting::ScriptTokenType::PrimitiveType, "int16" };
+		case WrappedVarType::Integer32: return { Scripting::ScriptTokenType::PrimitiveType, "int32" };
+		case WrappedVarType::Integer64: return { Scripting::ScriptTokenType::PrimitiveType, "int64" };
+		case WrappedVarType::UInteger16: return { Scripting::ScriptTokenType::PrimitiveType, "uint16" };
+		case WrappedVarType::UInteger32: return { Scripting::ScriptTokenType::PrimitiveType, "uint32" };
+		case WrappedVarType::UInteger64: return { Scripting::ScriptTokenType::PrimitiveType, "uint64" };
+		case WrappedVarType::Vector2: return { Scripting::ScriptTokenType::PrimitiveType, "vector2" };
+		case WrappedVarType::Vector3: return { Scripting::ScriptTokenType::PrimitiveType, "vector3" };
+		case WrappedVarType::Vector4: return { Scripting::ScriptTokenType::PrimitiveType, "vector4" };
+		case WrappedVarType::IVector2: return { Scripting::ScriptTokenType::PrimitiveType, "ivector2" };
+		case WrappedVarType::IVector3: return { Scripting::ScriptTokenType::PrimitiveType, "ivector3" };
+		case WrappedVarType::IVector4: return { Scripting::ScriptTokenType::PrimitiveType, "ivector4" };
+		case WrappedVarType::String: return { Scripting::ScriptTokenType::PrimitiveType, "string" };
+		case WrappedVarType::Bool: return { Scripting::ScriptTokenType::PrimitiveType, "bool" };
+		case WrappedVarType::Float: return { Scripting::ScriptTokenType::PrimitiveType, "float" };
+		case WrappedVarType::Entity: return { Scripting::ScriptTokenType::PrimitiveType, "entity" };
+		case WrappedVarType::Void: return { Scripting::ScriptTokenType::None, "" };
+		case WrappedVarType::None: return { Scripting::ScriptTokenType::None, "" };
+		}
+		KG_ERROR("Unknown Type of WrappedVariableType.");
+		return { Scripting::ScriptTokenType::None, "" };
+	}
 }
 
 namespace Kargono::Scripting
@@ -585,42 +611,101 @@ namespace Kargono::Scripting
 		Ref<Rendering::Texture2D> m_LiteralIcon;
 	};
 
-	struct LanguageDefinition
+	class TokenUtil
 	{
 	public:
-		std::vector<std::string> Keywords{};
-		std::unordered_map<std::string, PrimitiveType> PrimitiveTypes {};
-		std::unordered_map<std::string, std::string> NamespaceDescriptions {};
-		std::unordered_map<std::string, FunctionNode> FunctionDefinitions {};
-		std::vector<InitializationListType> InitListTypes {};
-
-		// All Assets
-		std::unordered_map<std::string, CustomLiteralInfo> AllLiteralTypes{};
-	public:
-		PrimitiveType GetPrimitiveTypeFromName(const std::string& name)
+		static bool IsLiteralOrIdentifier(ScriptToken token)
 		{
-			if (PrimitiveTypes.contains(name))
+			if (IsLiteral(token) || token.Type == ScriptTokenType::Identifier)
 			{
-				return PrimitiveTypes.at(name);
+				return true;
 			}
-
-			return {};
+			return false;
 		}
-	public:
-
-		void Clear()
+		static bool IsUnaryOperator(ScriptToken token)
 		{
-			Keywords.clear();
-			PrimitiveTypes.clear();
-			NamespaceDescriptions.clear();
-			FunctionDefinitions.clear();
-			InitListTypes.clear();
-			AllLiteralTypes.clear();
+			if (token.Type == ScriptTokenType::SubtractionOperator ||
+				token.Type == ScriptTokenType::NegationOperator)
+			{
+				return true;
+			}
+			return false;
+		}
+		static bool IsBinaryOperator(ScriptToken token)
+		{
+			switch (token.Type)
+			{
+			case ScriptTokenType::AdditionOperator:
+			case ScriptTokenType::SubtractionOperator:
+			case ScriptTokenType::MultiplicationOperator:
+			case ScriptTokenType::DivisionOperator:
+			case ScriptTokenType::EqualToOperator:
+			case ScriptTokenType::NotEqualToOperator:
+			case ScriptTokenType::GreaterThan:
+			case ScriptTokenType::GreaterThanOrEqual:
+			case ScriptTokenType::LessThan:
+			case ScriptTokenType::LessThanOrEqual:
+				return true;
+			default:
+				return false;
+			}
 		}
 
-		operator bool() const
+		static bool IsAdditionOrSubtractionOperator(ScriptToken token)
 		{
-			return Keywords.size() > 0 || PrimitiveTypes.size() > 0 || FunctionDefinitions.size() > 0;
+			if (token.Type == ScriptTokenType::AdditionOperator ||
+				token.Type == ScriptTokenType::SubtractionOperator)
+			{
+				return true;
+			}
+			return false;
+		}
+		static bool IsMultiplicationOrDivisionOperator(ScriptToken token)
+		{
+			if (token.Type == ScriptTokenType::MultiplicationOperator ||
+				token.Type == ScriptTokenType::DivisionOperator)
+			{
+				return true;
+			}
+			return false;
+		}
+		static bool IsLiteral(ScriptToken token)
+		{
+			if (token.Type == ScriptTokenType::IntegerLiteral ||
+				token.Type == ScriptTokenType::StringLiteral ||
+				token.Type == ScriptTokenType::BooleanLiteral ||
+				token.Type == ScriptTokenType::FloatLiteral ||
+				token.Type == ScriptTokenType::CustomLiteral)
+			{
+				return true;
+			}
+			return false;
+		}
+		static bool IsComparisonOperator(ScriptToken token)
+		{
+			switch (token.Type)
+			{
+			case ScriptTokenType::EqualToOperator:
+			case ScriptTokenType::NotEqualToOperator:
+			case ScriptTokenType::GreaterThan:
+			case ScriptTokenType::GreaterThanOrEqual:
+			case ScriptTokenType::LessThan:
+			case ScriptTokenType::LessThanOrEqual:
+				return true;
+			default:
+				return false;
+			}
+		}
+		static bool IsBooleanOperator(ScriptToken token)
+		{
+			switch (token.Type)
+			{
+			case ScriptTokenType::AndOperator:
+			case ScriptTokenType::OrOperator:
+				return true;
+			default:
+				return false;
+			}
 		}
 	};
 }

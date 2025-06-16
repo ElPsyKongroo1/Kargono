@@ -6,17 +6,34 @@ namespace Kargono::Scripting
 	class ScriptTokenizer
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		ScriptTokenizer() = default;
+		~ScriptTokenizer() = default;
+	public:
+		//==============================
+		// Tokenize
+		//==============================
 		std::vector<ScriptToken> TokenizeString(std::string m_ScriptText);
 	private:
+		//==============================
+		// Internal Functions // TODO: Please fix this organization. Please? please? p l e a s e
+		//==============================
+		// Advancement Context
 		char GetCurrentChar(int32_t offset = 0);
 		bool CurrentLocationValid(int32_t offset = 0);
 		void AddCurrentCharToBuffer();
 		void Advance(uint32_t count = 1);
+		void ClearBuffer();
+		// Token/Buffer Management
 		void AddTokenAndClearBuffer(ScriptTokenType type, const std::string& value);
 		ScriptToken CreateTokenExplicit(ScriptTokenType type, const std::string& value);
 		void AddTokenExplicit(const ScriptToken& token);
-		void ClearBuffer();
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
 		std::string m_ScriptText{};
 		std::string m_TextBuffer{};
 		std::vector<ScriptToken> m_Tokens {};

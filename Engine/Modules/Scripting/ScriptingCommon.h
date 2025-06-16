@@ -6,9 +6,6 @@
 
 namespace Kargono::Scripting
 {
-	//==============================
-	// Script Type Definition
-	//==============================
 	enum class ScriptType
 	{
 		None = 0,
@@ -23,7 +20,6 @@ namespace Kargono::Scripting
 		std::vector<FixedString32> m_ParameterNames{};
 	};
 }
-
 
 namespace Kargono::Utility
 {

@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/Scripting/ScriptTokenizer.h"
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/Resolution.h"
 
@@ -10,6 +10,8 @@ namespace Kargono::Scripting
 
 	std::vector<ScriptToken> ScriptTokenizer::TokenizeString(std::string text)
 	{
+		LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
+
 		// Initialize Variables
 		m_ScriptText = std::move(text);
 
@@ -30,7 +32,7 @@ namespace Kargono::Scripting
 
 				// Check for keywords
 				bool foundKeyword = false;
-				for (std::string& keyword : ScriptCompilerService::s_ActiveLanguageDefinition.Keywords)
+				for (std::string& keyword : scriptLang.m_Keywords)
 				{
 					if (m_TextBuffer == keyword)
 					{
@@ -52,7 +54,7 @@ namespace Kargono::Scripting
 				}
 
 				// Check for all asset literal types
-				if (ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.contains(m_TextBuffer))
+				if (scriptLang.m_AllLiteralTypes.contains(m_TextBuffer))
 				{
 					if (GetCurrentChar() == ':' && GetCurrentChar(1) == ':')
 					{
@@ -79,9 +81,9 @@ namespace Kargono::Scripting
 				}
 
 				// Check for primitive types
-				if (ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(m_TextBuffer))
+				if (scriptLang.m_PrimitiveTypes.contains(m_TextBuffer))
 				{
-					PrimitiveType primitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(m_TextBuffer);
+					PrimitiveType primitiveType = scriptLang.m_PrimitiveTypes.at(m_TextBuffer);
 					AddTokenAndClearBuffer(ScriptTokenType::PrimitiveType, { primitiveType.Name });
 					continue;
 				}

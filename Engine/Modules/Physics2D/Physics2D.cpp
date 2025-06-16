@@ -51,8 +51,8 @@ namespace Kargono::Physics
 		for (auto enttID : rigidBodyView)
 		{
 			ECS::Entity entity = scene->GetEntityByEnttID(enttID);
-			auto& transform = entity.GetComponent<ECS::TransformComponent>();
-			auto& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
+			ECS::TransformComponent& transform = entity.GetComponent<ECS::TransformComponent>();
+			ECS::Rigidbody2DComponent& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
 
 			b2BodyDef bodyDef;
 			bodyDef.type = Utility::Rigidbody2DTypeToBox2DBody(rb2d.Type);

@@ -11,7 +11,7 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h" // for imGui::GetCurrentWindow()
 #include "Modules/EditorUI/EditorUIInclude.h"
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Modules/Scripting/ScriptTokenizer.h"
 #include "Kargono/Utility/Regex.h"
 #include "Kargono/Core/Base.h"
@@ -758,7 +758,7 @@ namespace API::EditorUI
 		}
 
 		// Get suggestions from script compiler
-		std::vector<Kargono::Scripting::SuggestionSpec> allSuggestions = Kargono::Scripting::ScriptCompilerService::GetSuggestions(text, m_SuggestionTextBuffer);
+		std::vector<Kargono::Scripting::SuggestionSpec> allSuggestions = Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_SuggestGen.GetSuggestions(text, m_SuggestionTextBuffer);
 
 		// Exit gracefully if no suggestions were generated
 		if (allSuggestions.size() == 0)
@@ -3961,24 +3961,24 @@ namespace API::EditorUI
 		if (!inited)
 		{
 			// Lazy loading KGScript language def
-			if (!Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition)
+			if (!Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition)
 			{
-				Kargono::Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+				Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
 			}
 
-			for (std::string& keyword : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.Keywords)
+			for (std::string& keyword : Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_Keywords)
 			{
 				langDef.m_Keywords.insert(keyword);
 			}
 
-			for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+			for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_PrimitiveTypes)
 			{
 				Identifier id;
 				id.m_Declaration = primitiveType.Description;
 				langDef.m_Identifiers.insert(std::make_pair(primitiveType.Name, id));
 			}
 
-			for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
+			for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_FunctionDefinitions)
 			{
 				Identifier id;
 				
@@ -4061,9 +4061,9 @@ namespace API::EditorUI
 
 				if (funcNode.Namespace)
 				{
-					if (Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(funcNode.Namespace.Value))
+					if (Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_NamespaceDescriptions.contains(funcNode.Namespace.Value))
 					{
-						id.m_Declaration = Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.at(funcNode.Namespace.Value);
+						id.m_Declaration = Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_NamespaceDescriptions.at(funcNode.Namespace.Value);
 					}
 					else
 					{
@@ -4073,7 +4073,7 @@ namespace API::EditorUI
 				}
 			}
 
-			for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+			for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_PrimitiveTypes)
 			{
 				for (auto& [memberName, member] : primitiveType.Members)
 				{

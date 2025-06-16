@@ -4,7 +4,7 @@
 #include "EditorApp.h"
 #include "Kargono/Utility/DebugGlobals.h"
 #include "Kargono/Utility/Timers.h"
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Kargono/Utility/Random.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Kargono/Memory/StackAlloc.h"
@@ -439,7 +439,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Compile File"))
 		{
-			KG_TRACE_CRITICAL(Scripting::ScriptCompilerService::CompileScriptFile("./../Projects/Pong/Assets/" + s_CompilePath.m_CurrentOption));
+			KG_TRACE_CRITICAL(Scripting::ScriptCompilerService::GetActiveContext().CompileScriptFile("./../Projects/Pong/Assets/" + s_CompilePath.m_CurrentOption));
 		}
 
 		static size_t s_Count{ 4 };
