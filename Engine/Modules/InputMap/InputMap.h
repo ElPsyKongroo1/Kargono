@@ -3,7 +3,7 @@
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/Base.h"
 #include "Modules/Assets/Asset.h"
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Kargono/Core/Timestep.h"
 

@@ -3,7 +3,7 @@
 #include "Modules/RuntimeUI/RuntimeUICommon.h"
 #include "Modules/RuntimeUI/Font.h"
 
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Kargono/Core/Base.h"
 #include "Modules/Assets/Asset.h"
 #include "Kargono/Core/Window.h"

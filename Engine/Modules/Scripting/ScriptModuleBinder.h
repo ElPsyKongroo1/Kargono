@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "Modules/Assets/Asset.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/UUID.h"
@@ -8,7 +7,7 @@
 #include "Modules/Scripting/ScriptingCommon.h"
 #include "Kargono/Utility/Random.h"
 
-#include "Modules/Scripting/Platform/ScriptPlatformTypes.h"
+#include "Modules/Scripting/Platform/SharedLibrary.h"
 
 #include <filesystem>
 #include <functional>
@@ -19,7 +18,7 @@
 namespace Kargono::Scripting
 {
 	class Script;
-	class AppScriptBinder;
+	class ScriptModuleBinder;
 
 	class ScriptModuleBuilder
 	{
@@ -65,11 +64,17 @@ namespace Kargono::Scripting
 		//==============================
 		// Owning Class
 		//==============================
-		friend class AppScriptBinder;
+		friend class ScriptModuleBinder;
 	};
 
-	class AppScriptBinder
+	class ScriptModuleBinder
 	{
+	public:
+		//==============================
+		// Constructor/Destructor
+		//==============================
+		ScriptModuleBinder() = default;
+		~ScriptModuleBinder() = default;
 	public:
 		//==============================
 		// Lifecycle Functions
@@ -116,12 +121,12 @@ namespace Kargono::Scripting
 		//==============================
 		// Getters/Setters
 		//==============================
-		static AppScriptBinder& GetActiveContext() { return s_AppScriptBinder;}
+		static ScriptModuleBinder& GetActiveContext() { return s_AppScriptBinder;}
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		static inline AppScriptBinder s_AppScriptBinder{};
+		static inline ScriptModuleBinder s_AppScriptBinder{};
 	};
 
 	class Script

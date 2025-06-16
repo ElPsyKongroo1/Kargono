@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 
 #include "Modules/Core/Engine.h"
 #include "Modules/Assets/AssetService.h"
@@ -19,14 +19,6 @@
 #include "Modules/Events/EditorEvent.h"
 #include "Modules/Physics2D/Physics2DCommon.h"
 #include "Modules/Particles/ParticleService.h"
-
-#if defined(KG_PLATFORM_WINDOWS)
-#include "API/Platform/WindowsBackendAPI.h"
-#elif defined(KG_PLATFORM_LINUX)
-#include "API/Platform/LinuxBackendAPI.h"
-#else
-#error "Platform not supported"
-#endif
 
 namespace Kargono::Scripting
 {
@@ -72,14 +64,14 @@ namespace Kargono::Scripting
 		});
 	}
 
-	void AppScriptBinder::Init()
+	void ScriptModuleBinder::Init()
 	{
 		m_ScriptBuilder.Init(&m_ScriptLibrary);
 		GenerateEngineScripts(m_AllEngineScripts);
 		//TODO: Verify Init
 	}
 
-	void AppScriptBinder::Terminate()
+	void ScriptModuleBinder::Terminate()
 	{
 		if (m_ScriptLibrary.m_Handle)
 		{
@@ -89,7 +81,7 @@ namespace Kargono::Scripting
 		KG_VERIFY(!m_ScriptLibrary.m_Handle, "Close Scripting System")
 	}
 
-	void AppScriptBinder::GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts)
+	void ScriptModuleBinder::GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts)
 	{
 		m_IDGenerator.ResetState();
 		engineScripts.clear();
@@ -207,7 +199,7 @@ namespace Kargono::Scripting
 		engineScripts.push_back(Client_RequestJoinSession);
 	}
 
-	void AppScriptBinder::LoadActiveScriptModule()
+	void ScriptModuleBinder::LoadActiveScriptModule()
 	{
 		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
@@ -244,80 +236,42 @@ namespace Kargono::Scripting
 		}
 		attemptedToRebuild = false;
 
-		if (m_ScriptLibrary.m_Handle)
+		if (m_ScriptLibrary.IsActive())
 		{
 			KG_INFO("Closing existing script module");
 			CloseActiveScriptModule();
 		}
-#if defined(KG_PLATFORM_WINDOWS)
-		m_ScriptLibrary.m_Handle = new HINSTANCE();
-		*(m_ScriptLibrary.m_Handle) = LoadLibrary(dllLocation.c_str());
-		if (*m_ScriptLibrary.m_Handle == NULL)
+
+		if (!m_ScriptLibrary.LoadSharedLib(dllLocation.string().c_str()))
 		{
-			KG_CRITICAL("Failed to open dll with path {} with an error code of {}", dllLocation.string(), GetLastError());
-			CloseActiveScriptModule();
-			return;
-	}
-#elif defined(KG_PLATFORM_LINUX)
-		m_ScriptLibrary.m_Handle = dlopen(dllLocation.c_str(), RTLD_LAZY);
-		if (m_ScriptLibrary.m_Handle == NULL)
-		{
-			KG_CRITICAL("Failed to open dll with path {}", dllLocation.string());
+			KG_WARN("Failed to load shared library from {}", dllLocation.string().c_str());
 			CloseActiveScriptModule();
 			return;
 		}
-#endif
+
 		m_ScriptBuilder.AttachEngineFunctionsToModule();
 
 		KG_VERIFY(m_ScriptLibrary.m_Handle, "Scripting Module Opened");
 
 	}
-	void AppScriptBinder::CloseActiveScriptModule()
+	void ScriptModuleBinder::CloseActiveScriptModule()
 	{
-		if (!m_ScriptLibrary.m_Handle)
+		if (!m_ScriptLibrary.CloseSharedLib())
 		{
-			KG_WARN("Attempt to close scripting dll, however, m_SharedLibInst is a nullptr");
+			KG_WARN("Failed to close script module shared lib");
 			return;
 		}
-		
-#if defined(KG_PLATFORM_WINDOWS)
-		if (*m_ScriptLibrary.m_Handle == NULL)
-		{
-			KG_WARN("Attempt to close scripting dll, however, m_SharedLibInst value is 0 (NULL)");
-			m_ScriptLibrary.m_Handle = nullptr;
-			return;
-		}
-		FreeLibrary(*m_ScriptLibrary.m_Handle);
-		delete m_ScriptLibrary.m_Handle;
-#elif defined(KG_PLATFORM_LINUX)
-		if (m_ScriptLibrary.m_Handle == NULL)
-		{
-			KG_WARN("Attempt to close scripting dll, however, m_SharedLibInst value is 0 (NULL)");
-			m_ScriptLibrary.m_Handle = nullptr;
-			return;
-		}
-		dlclose(m_ScriptLibrary.m_Handle);
-#endif
 
-		m_ScriptLibrary.m_Handle = nullptr;
-
-		KG_VERIFY(!m_ScriptLibrary.m_Handle, "Close Scripting DLL");
+		KG_VERIFY(!m_ScriptLibrary.IsActive(), "Close Scripting DLL");
 	}
 
-	void AppScriptBinder::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
+	void ScriptModuleBinder::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
 	{
 		KG_ASSERT(script);
-		if (!m_ScriptLibrary.m_Handle)
+		if (!m_ScriptLibrary.IsActive())
 		{
 			return;
 		}
-
-#if defined(KG_PLATFORM_WINDOWS)
-		if (*m_ScriptLibrary.m_Handle == NULL)
-		{
-			return;
-		}
-#endif
 
 		if (script->m_ScriptType == ScriptType::Engine)
 		{
@@ -335,140 +289,87 @@ namespace Kargono::Scripting
 		case WrappedFuncType::Void_None:
 		{
 			script->m_Function = CreateRef<WrappedVoidNone>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
-#if defined(KG_PLATFORM_LINUX)
-			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidNone*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_none>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_String:
 		{
 			script->m_Function = CreateRef<WrappedVoidString>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidString*)script->m_Function.get())->m_Value = reinterpret_cast<void_string>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidString*)script->m_Function.get())->m_Value = reinterpret_cast<void_string>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidString*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_string>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_Float:
 		{
 			script->m_Function = CreateRef<WrappedVoidFloat>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_float>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_float>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_float>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_UInt16:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt16>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint16>(script->m_ScriptName.c_str());
 			break;
 		}
 		case WrappedFuncType::Void_UInt32:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32>(script->m_ScriptName.c_str());
 			break;
 		}
 		case WrappedFuncType::Void_UInt32UInt32:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32UInt32>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint32>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint32>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32uint32>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_Entity:
 		{
 			script->m_Function = CreateRef<WrappedVoidEntity>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidEntity*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidEntity*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint64>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_Bool:
 		{
 			script->m_Function = CreateRef<WrappedVoidBool>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidBool*)script->m_Function.get())->m_Value = reinterpret_cast<void_bool>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidBool*)script->m_Function.get())->m_Value = reinterpret_cast<void_bool>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidBool*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_bool>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_EntityFloat:
 		{
 			script->m_Function = CreateRef<WrappedVoidEntityFloat>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint64float>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_UInt32EntityEntityFloat:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32EntityEntityFloat>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint64uint64float>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint64uint64float>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32uint64uint64float>(script->m_ScriptName.c_str());
 			break;
 		}
 		case WrappedFuncType::Bool_None:
 		{
 			script->m_Function = CreateRef<WrappedBoolNone>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedBoolNone*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_none>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Bool_Entity:
 		{
 			script->m_Function = CreateRef<WrappedBoolEntity>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedBoolEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedBoolEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedBoolEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_uint64>(script->m_ScriptName.c_str());
 			break;
 		}
 		case WrappedFuncType::Bool_EntityEntity:
 		{
 			script->m_Function = CreateRef<WrappedBoolEntityEntity>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(GetProcAddress(*m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(dlsym(m_ScriptLibrary.m_Handle, script->m_ScriptName.c_str()));
-#endif
+			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_uint64uint64>(script->m_ScriptName.c_str());
 			break;
 		}
 		default:
@@ -487,24 +388,15 @@ namespace Kargono::Utility
 	std::function<void(std::string_view, std::function<returnType(__VA_ARGS__)>)> s_Add##name {};
 
 
-#if defined(KG_PLATFORM_WINDOWS)
 #define ImportInsertFunction(name) \
-	s_Add##name = reinterpret_cast<Void_String_Func##name>(GetProcAddress(*i_LibReference->m_Handle, "Add"#name ));\
+	s_Add##name = reinterpret_cast<Void_String_Func##name>(i_LibReference->GetFuncPtrRaw("Add"#name ));\
 	if (!s_Add##name)\
 	{\
 		KG_CRITICAL("Could not load {} function from scripting dll", "" #name);\
 		return;\
 	}
 
-#elif defined(KG_PLATFORM_LINUX)
-#define ImportInsertFunction(name) \
-	s_Add##name = reinterpret_cast<Void_String_Func##name>(dlsym(m_ScriptLibraryHandle, "Add"#name ));\
-	if (!s_Add##name)\
-	{\
-		KG_CRITICAL("Could not load {} function from scripting dll", "" #name);\
-		return;\
-	}
-#endif
+
 #define AddImportFunctionToHeaderFile(name, returnType, ...) \
 	outputStream << "KARGONO_API void Add" << #name << "(std::string_view funcName, std::function<" << #returnType <<"(" << (#__VA_ARGS__ ")> funcPtr);\n");
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "Kargono/Core/Timestep.h"
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Kargono/Core/UUID.h"
 
 #include <cstdint>

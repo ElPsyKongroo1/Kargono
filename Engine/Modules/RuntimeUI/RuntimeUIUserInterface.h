@@ -17,7 +17,7 @@
 #include "Modules/RuntimeUI/Widgets/RuntimeUIInputTextWidget.h"
 #include "Modules/RuntimeUI/RuntimeUIWindow.h"
 
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Modules/Assets/AssetsTypes.h"
 #include "Kargono/Core/Directions.h"
 #include "Modules/Core/Engine.h"

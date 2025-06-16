@@ -3,7 +3,7 @@
 #include "Modules/Assets/AssetService.h"
 #include "Modules/Assets/ScriptManager.h"
 #include "Kargono/Utility/Regex.h"
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Modules/AI/AIService.h"
 #include "Modules/InputMap/InputMap.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"

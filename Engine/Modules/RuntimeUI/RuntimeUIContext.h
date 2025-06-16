@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Modules/Rendering/EditorPerspectiveCamera.h"
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Kargono/Core/Base.h"
 #include "Modules/RuntimeUI/Font.h"
 #include "Modules/Assets/Asset.h"
