@@ -97,7 +97,7 @@ namespace Kargono::EditorUI
 	struct TreeEntry
 	{
 		std::string m_Label{};
-		UUID m_Handle{};
+		UUID m_Handle{Assets::k_EmptyHandle};
 		Ref<Rendering::Texture2D> m_IconHandle{ nullptr };
 		std::function<void(TreeEntry& entry)> m_OnLeftClick{ nullptr };
 		std::function<void(TreeEntry& entry)> m_OnDoubleLeftClick{ nullptr };

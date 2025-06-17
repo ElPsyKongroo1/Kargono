@@ -150,7 +150,7 @@ namespace Kargono::Assets
 		if (currentCheckSum.empty())
 		{
 			KG_WARN("Generated empty checksum from the string {}", shaderSource);
-			return Assets::EmptyHandle;
+			return Assets::k_EmptyHandle;
 		}
 
 		// Ensure duplicate asset is not found in registry.

@@ -119,7 +119,7 @@ namespace Kargono::Assets
 
 	struct AssetInfo
 	{
-		AssetHandle m_Handle { Assets::EmptyHandle };
+		AssetHandle m_Handle { Assets::k_EmptyHandle };
 		Metadata Data;
 	};
 }

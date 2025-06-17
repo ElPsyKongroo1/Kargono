@@ -49,7 +49,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Active UI
 		Ref<UserInterface> m_ActiveUI{ nullptr };
-		Assets::AssetHandle m_ActiveUIHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_ActiveUIHandle{ Assets::k_EmptyHandle };
 		// Default values
 		Ref<Font> m_DefaultFont{ nullptr };
 		// Rendering data

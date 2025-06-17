@@ -18,7 +18,7 @@ namespace Kargono::Assets
 		if (currentCheckSum.empty())
 		{
 			KG_WARN("Generated empty checksum from data buffer");
-			return Assets::EmptyHandle;
+			return Assets::k_EmptyHandle;
 		}
 
 		// Ensure duplicate asset is not found in registry.

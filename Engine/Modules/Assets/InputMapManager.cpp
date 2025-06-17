@@ -172,9 +172,9 @@ namespace Kargono::Assets
 					}
 					}
 					Assets::AssetHandle handle = binding["ScriptHandle"].as<uint64_t>();
-					if (handle == Assets::EmptyHandle)
+					if (handle == Assets::k_EmptyHandle)
 					{
-						newActionBinding->SetScript(nullptr, Assets::EmptyHandle);
+						newActionBinding->SetScript(nullptr, Assets::k_EmptyHandle);
 					}
 					else
 					{
@@ -227,7 +227,7 @@ namespace Kargono::Assets
 		{
 			if (binding->GetScriptHandle() == scriptHandle)
 			{
-				binding->SetScript(nullptr, Assets::EmptyHandle);
+				binding->SetScript(nullptr, Assets::k_EmptyHandle);
 				inputModified = true;
 			}
 		}
@@ -236,7 +236,7 @@ namespace Kargono::Assets
 		{
 			if (binding->GetScriptHandle() == scriptHandle)
 			{
-				binding->SetScript(nullptr, Assets::EmptyHandle);
+				binding->SetScript(nullptr, Assets::k_EmptyHandle);
 				inputModified = true;
 			}
 		}

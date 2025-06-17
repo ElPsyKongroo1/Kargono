@@ -148,7 +148,7 @@ namespace Kargono::Panels
 				m_CreateWidgets.m_SelectReturnType.m_CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::Void), (uint64_t)WrappedVarType::Void };
 				m_CreateWidgets.m_ParameterList.ClearList();
 			}
-			m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::EmptyHandle };
+			m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			m_CreateWidgets.m_ParameterList.m_Expanded = true;
 		};
 		m_CreateWidgets.m_MainPopup.m_PopupContents = [&]()
@@ -232,7 +232,7 @@ namespace Kargono::Panels
 		m_CreateWidgets.m_EditName.m_CurrentOption = "Empty";
 
 		m_CreateWidgets.m_SelectReturnType.m_Label = "Return Type";
-		m_CreateWidgets.m_SelectReturnType.m_CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::None), Assets::EmptyHandle };
+		m_CreateWidgets.m_SelectReturnType.m_CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::None), Assets::k_EmptyHandle };
 		m_CreateWidgets.m_SelectReturnType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
@@ -377,14 +377,14 @@ namespace Kargono::Panels
 		};
 
 		m_CreateWidgets.m_SelectSectionLabel.m_Label = "Group";
-		m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_CreateWidgets.m_SelectSectionLabel.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& label : Assets::AssetService::GetScriptSectionLabels())
 			{
-				spec.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
+				spec.AddToOptions("All Project Groups", label, Assets::k_EmptyHandle);
 			}
 		};
 	}
@@ -445,14 +445,14 @@ namespace Kargono::Panels
 		m_EditWidgets.m_EditName.m_CurrentOption = "Empty";
 
 		m_EditWidgets.m_SelectSectionLabel.m_Label = "Group";
-		m_EditWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_EditWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_EditWidgets.m_SelectSectionLabel.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (std::string_view label : Assets::AssetService::GetScriptSectionLabels())
 			{
-				spec.AddToOptions("All Project Groups", std::string(label), Assets::EmptyHandle);
+				spec.AddToOptions("All Project Groups", std::string(label), Assets::k_EmptyHandle);
 			}
 
 		};

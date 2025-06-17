@@ -96,7 +96,7 @@ namespace Kargono::Assets
 			}
 			// Return empty asset if the asset is not found in the registry
 			KG_WARN("Invalid filepath provided to GetAsset(filepath) {}. Returning empty {} asset.", fileLocation.string(), m_AssetName);
-			return {Assets::EmptyHandle, nullptr};
+			return {Assets::k_EmptyHandle, nullptr};
 		}
 		std::filesystem::path GetAssetFileLocation(AssetHandle handle)
 		{
@@ -296,14 +296,14 @@ namespace Kargono::Assets
 				if (!Utility::FileSystem::DoesPathContainSubPath(paths.GetAssetDirectory(), creationPath))
 				{
 					KG_WARN("Provided path for new asset creation is not within asset directory");
-					return Assets::EmptyHandle;
+					return Assets::k_EmptyHandle;
 				}
 
 				// Ensure provided path is not indicating a file
 				if (Utility::FileSystem::HasFileExtension(creationPath))
 				{
 					KG_WARN("File provided as path to asset. Creation paths should only indicate a directory");
-					return Assets::EmptyHandle;
+					return Assets::k_EmptyHandle;
 				}
 
 				// Create path if it does not already exist
@@ -311,7 +311,7 @@ namespace Kargono::Assets
 			}
 
 			// Create New Asset/Handle
-			AssetHandle newHandle{};
+			AssetHandle newHandle{ RandomUUIDService::GetRandomUUID()};
 			Assets::AssetInfo newAsset{};
 			newAsset.m_Handle = newHandle;
 			newAsset.Data.Type = m_AssetType;
@@ -337,7 +337,7 @@ namespace Kargono::Assets
 			if (currentCheckSum.empty())
 			{
 				KG_WARN("Generated empty checksum from the string {}", assetName);
-				return Assets::EmptyHandle;
+				return Assets::k_EmptyHandle;
 			}
 			newAsset.Data.CheckSum = currentCheckSum;
 
@@ -372,7 +372,7 @@ namespace Kargono::Assets
 			if (!Utility::FileSystem::HasFileExtension(sourcePath))
 			{
 				KG_WARN("Cannot import provided file path. Path does not contain a file extension. (i.e. it is not a file)");
-				return Assets::EmptyHandle;
+				return Assets::k_EmptyHandle;
 			}
 
 			return ImportAssetFromFile(sourcePath, sourcePath.stem().string().c_str(), sourcePath.parent_path());
@@ -388,14 +388,14 @@ namespace Kargono::Assets
 			if (!newFileName || newFileName[0] == '\0')
 			{
 				KG_WARN("Empty/invalid name provided to import asset from file function");
-				return Assets::EmptyHandle;
+				return Assets::k_EmptyHandle;
 			}
 
 			// Ensure source path is valid
 			if (!Utility::FileSystem::HasFileExtension(sourcePath))
 			{
 				KG_WARN("Cannot import provided file path. Path does not contain a file extension. (i.e. it is not a file)");
-				return Assets::EmptyHandle;
+				return Assets::k_EmptyHandle;
 			}
 
 			// Check if source path file extension is appropriate for this file type
@@ -417,7 +417,7 @@ namespace Kargono::Assets
 				{
 					KG_WARN("  {}", extension);
 				}
-				return Assets::EmptyHandle;
+				return Assets::k_EmptyHandle;
 			}
 
 			// Validate provided paths
@@ -433,14 +433,14 @@ namespace Kargono::Assets
 				if (!Utility::FileSystem::DoesPathContainSubPath(paths.GetAssetDirectory(), destinationPath))
 				{
 					KG_WARN("Provided path for new asset importation is not within asset directory");
-					return Assets::EmptyHandle;
+					return Assets::k_EmptyHandle;
 				}
 
 				// Ensure provided path is not indicating a file
 				if (Utility::FileSystem::HasFileExtension(destinationPath))
 				{
 					KG_WARN("File provided as path to asset. Destination paths should only indicate a directory");
-					return Assets::EmptyHandle;
+					return Assets::k_EmptyHandle;
 				}
 
 				// Create path if it does not already exist
@@ -455,7 +455,7 @@ namespace Kargono::Assets
 			if (currentCheckSum.empty())
 			{
 				KG_WARN("Generated empty checksum from file at {}", sourcePath.string());
-				return Assets::EmptyHandle;
+				return Assets::k_EmptyHandle;
 			}
 
 			// Ensure duplicate asset is not found in registry.
@@ -465,7 +465,7 @@ namespace Kargono::Assets
 				if (asset.Data.FileLocation.stem().string() == newFileName)
 				{
 					KG_WARN("Attempt to instantiate and {} asset whose name ({}) is already taken in the registry", m_AssetName, newFileName);
-					return Assets::EmptyHandle;
+					return Assets::k_EmptyHandle;
 				}
 			}
 
@@ -759,7 +759,7 @@ namespace Kargono::Assets
 			}
 
 			// If could not find asset, return null
-			return Assets::EmptyHandle;
+			return Assets::k_EmptyHandle;
 		}
 
 		

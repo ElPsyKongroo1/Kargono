@@ -52,7 +52,7 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		Ref<Input::InputMap> m_EditorInputMap{ nullptr };
-		Assets::AssetHandle m_EditorInputMapHandle { Assets::EmptyHandle };
+		Assets::AssetHandle m_EditorInputMapHandle { Assets::k_EmptyHandle };
 	private:
 		FixedString32 m_PanelName{ "Input Map Editor" };
 		uint32_t m_KeyboardOnUpdateActiveSlot {};

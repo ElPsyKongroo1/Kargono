@@ -31,7 +31,7 @@ namespace Kargono
 
 		Window& currentWindow = EngineService::GetActiveEngine().GetWindow();
 
-		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
+		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::k_EmptyHandle);
 
 
 		
@@ -336,7 +336,7 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.OnCollisionStartScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
@@ -347,7 +347,7 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.OnCollisionStartScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
@@ -372,7 +372,7 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.OnCollisionEndScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
@@ -383,7 +383,7 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.OnCollisionEndScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
@@ -498,7 +498,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts()};
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnUpdateUserCount;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidUInt32>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserCount());
 		}
@@ -510,7 +510,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle{ clientScripts.m_OnApproveJoinSession };
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
@@ -522,7 +522,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnUpdateSessionUserSlot;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
@@ -534,7 +534,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnUserLeftSession;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
@@ -570,7 +570,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnStartSession;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidNone>(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
@@ -582,7 +582,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnSessionReadyCheckConfirm;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidNone>(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
@@ -594,7 +594,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnReceiveSignal;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetSignal());
 		}

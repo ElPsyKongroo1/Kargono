@@ -544,7 +544,7 @@ namespace Kargono::Projects
 		// Check active project for scripts
 		if (GetOnRuntimeStartHandle() == scriptHandle)
 		{
-			SetOnRuntimeStartHandle(Assets::EmptyHandle);
+			SetOnRuntimeStartHandle(Assets::k_EmptyHandle);
 			projectModified = true;
 		}
 
@@ -552,47 +552,47 @@ namespace Kargono::Projects
 		Network::ClientScripts& clientScripts{ GetClientScripts() };
 		if (clientScripts.m_OnUpdateUserCount == scriptHandle)
 		{
-			clientScripts.m_OnUpdateUserCount = Assets::EmptyHandle;
+			clientScripts.m_OnUpdateUserCount = Assets::k_EmptyHandle;
 			projectModified = true;
 		}
 		if (clientScripts.m_OnApproveJoinSession == scriptHandle)
 		{
-			clientScripts.m_OnApproveJoinSession = Assets::EmptyHandle;
+			clientScripts.m_OnApproveJoinSession = Assets::k_EmptyHandle;
 			projectModified = true;
 		}
 		if (clientScripts.m_OnUserLeftSession == scriptHandle)
 		{
-			clientScripts.m_OnUserLeftSession = Assets::EmptyHandle;
+			clientScripts.m_OnUserLeftSession = Assets::k_EmptyHandle;
 			projectModified = true;
 		}
 		if (clientScripts.m_OnCurrentSessionInit == scriptHandle)
 		{
-			clientScripts.m_OnCurrentSessionInit = Assets::EmptyHandle;
+			clientScripts.m_OnCurrentSessionInit = Assets::k_EmptyHandle;
 			projectModified = true;
 		}
 		if (clientScripts.m_OnConnectionTerminated == scriptHandle)
 		{
-			clientScripts.m_OnConnectionTerminated = Assets::EmptyHandle;
+			clientScripts.m_OnConnectionTerminated = Assets::k_EmptyHandle;
 			projectModified = true;
 		}
 		if (clientScripts.m_OnUpdateSessionUserSlot == scriptHandle)
 		{
-			clientScripts.m_OnUpdateSessionUserSlot = Assets::EmptyHandle;
+			clientScripts.m_OnUpdateSessionUserSlot = Assets::k_EmptyHandle;
 			projectModified = true;
 		}
 		if (clientScripts.m_OnStartSession == scriptHandle)
 		{
-			clientScripts.m_OnStartSession = Assets::EmptyHandle;
+			clientScripts.m_OnStartSession = Assets::k_EmptyHandle;
 			projectModified = true;
 		}
 		if (clientScripts.m_OnSessionReadyCheckConfirm == scriptHandle)
 		{
-			clientScripts.m_OnSessionReadyCheckConfirm = Assets::EmptyHandle;
+			clientScripts.m_OnSessionReadyCheckConfirm = Assets::k_EmptyHandle;
 			projectModified = true;
 		}
 		if (clientScripts.m_OnReceiveSignal == scriptHandle)
 		{
-			clientScripts.m_OnReceiveSignal = Assets::EmptyHandle;
+			clientScripts.m_OnReceiveSignal = Assets::k_EmptyHandle;
 			projectModified = true;
 		}
 

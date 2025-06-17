@@ -171,8 +171,8 @@ namespace Kargono::Projects
 		ScreenResolution m_TargetResolution{ ScreenResolution::MatchDevice };
 		// Default assets
 		Assets::AssetHandle m_StartSceneHandle {0};
-		Assets::AssetHandle m_OnRuntimeStart {Assets::EmptyHandle};
-		Assets::AssetHandle m_StartGameState {Assets::EmptyHandle};
+		Assets::AssetHandle m_OnRuntimeStart {Assets::k_EmptyHandle};
+		Assets::AssetHandle m_StartGameState {Assets::k_EmptyHandle};
 		// Networking Variables
 		Network::ServerConfig m_ServerConfig;
 		Network::ClientScripts m_ClientScripts;

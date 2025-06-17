@@ -78,7 +78,7 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		FixedString32 m_PanelName{ "Scripts" };
-		Assets::AssetHandle m_ActiveScriptHandle {Assets::EmptyHandle};
+		Assets::AssetHandle m_ActiveScriptHandle {Assets::k_EmptyHandle};
 		std::string m_ActiveLabel {};
 		std::size_t m_ActiveParameterLocation{ EditorUI::k_ListIndex };
 		std::function<void(Assets::AssetHandle)> m_OnCreateScriptConfirm{ nullptr };

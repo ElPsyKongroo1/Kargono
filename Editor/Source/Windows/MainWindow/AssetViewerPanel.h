@@ -28,7 +28,7 @@ namespace Kargono::Panels
 		EditorUI::ListWidget m_AllAssetsTable {};
 		EditorUI::GenericPopupWidget m_ViewAssetPopup {};
 
-		Assets::AssetHandle m_ActiveAsset {Assets::EmptyHandle};
+		Assets::AssetHandle m_ActiveAsset {Assets::k_EmptyHandle};
 		Assets::AssetType m_ActiveAssetType {Assets::AssetType::None};
 	};
 }

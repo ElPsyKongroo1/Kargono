@@ -271,7 +271,7 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.OnCollisionStartScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
@@ -282,7 +282,7 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.OnCollisionStartScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
@@ -307,7 +307,7 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.OnCollisionEndScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
@@ -318,7 +318,7 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle =  component.OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.OnCollisionEndScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
@@ -423,7 +423,7 @@ namespace Kargono
 			// Ensure all script assets are properly loaded in
 			Assets::AssetService::LoadAllScriptIntoCache();
 
-			if (startSceneHandle == Assets::EmptyHandle)
+			if (startSceneHandle == Assets::k_EmptyHandle)
 			{
 				m_MainWindow->NewScene("NewScene");
 				Projects::ProjectService::GetActiveContext().SetStartingSceneHandle(m_MainWindow->m_EditorSceneHandle);

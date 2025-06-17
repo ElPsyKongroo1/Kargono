@@ -20,7 +20,7 @@ namespace Kargono::RuntimeUI
 	{
 		// Initialize Runtime UI Context
 		m_ActiveUI = nullptr;
-		m_ActiveUIHandle = Assets::EmptyHandle;
+		m_ActiveUIHandle = Assets::k_EmptyHandle;
 		m_DefaultFont = FontService::GetActiveContext().InstantiateEditorFont("Resources/Fonts/arial.ttf");
 
 		// Initialize Window/Widget background Rendering Data
@@ -88,7 +88,7 @@ namespace Kargono::RuntimeUI
 
 	void RuntimeUIContext::SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle)
 	{
-		if (!userInterface || uiHandle == Assets::EmptyHandle)
+		if (!userInterface || uiHandle == Assets::k_EmptyHandle)
 		{
 			KG_WARN("Attempt to make a user interface active that is null or has an empty handle");
 			return;
@@ -123,7 +123,7 @@ namespace Kargono::RuntimeUI
 	bool RuntimeUIContext::IsUIActiveFromHandle(Assets::AssetHandle uiHandle)
 	{
 		// Ensure an invalid state is not presented
-		if (uiHandle == Assets::EmptyHandle || !m_ActiveUI)
+		if (uiHandle == Assets::k_EmptyHandle || !m_ActiveUI)
 		{
 			return false;
 		}
@@ -139,7 +139,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		m_ActiveUI = nullptr;
-		m_ActiveUIHandle = Assets::EmptyHandle;
+		m_ActiveUIHandle = Assets::k_EmptyHandle;
 	}
 
 	Ref<UserInterface> RuntimeUIContext::GetActiveUI()

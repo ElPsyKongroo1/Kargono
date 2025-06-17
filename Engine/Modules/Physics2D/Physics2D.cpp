@@ -144,7 +144,7 @@ namespace Kargono::Physics
 		if (std::isnan(startPoint.x) || std::isnan(startPoint.y) || std::isnan(endPoint.y) || std::isnan(endPoint.y))
 		{
 			KG_WARN("A not a number float was found as input to a 2D raycast call!");
-			return RaycastResult(false, Assets::EmptyHandle);
+			return RaycastResult(false, Assets::k_EmptyHandle);
 		}
 
 		m_PhysicsWorld->RayCast(&newCallback, b2Vec2(startPoint.x, startPoint.y), b2Vec2(endPoint.x, endPoint.y));
@@ -157,7 +157,7 @@ namespace Kargono::Physics
 		}
 		else
 		{
-			return RaycastResult(false, Assets::EmptyHandle);
+			return RaycastResult(false, Assets::k_EmptyHandle);
 		}
 	}
 

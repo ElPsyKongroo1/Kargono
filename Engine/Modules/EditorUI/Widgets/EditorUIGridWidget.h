@@ -29,7 +29,7 @@ namespace Kargono::EditorUI
 	{
 		FixedString64 m_Label;
 		ArchetypeID m_ArchetypeID{ k_InvalidArchetypeID };
-		UUID m_EntryID;
+		UUID m_EntryID{ k_EmptyUUID };
 	};
 
 	struct GridEntryArchetype

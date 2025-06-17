@@ -163,7 +163,7 @@ namespace Kargono::Assets
 
 		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
 		(
-			Assets::EmptyHandle, 
+			Assets::k_EmptyHandle, 
 			AssetType::Script, 
 			Events::ManageAssetAction::UpdateAsset
 		);
@@ -202,7 +202,7 @@ namespace Kargono::Assets
 
 		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
 		(
-			Assets::EmptyHandle, 
+			Assets::k_EmptyHandle, 
 			AssetType::Script, 
 			Events::ManageAssetAction::UpdateAsset
 		);

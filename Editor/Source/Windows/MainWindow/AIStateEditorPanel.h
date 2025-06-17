@@ -50,7 +50,7 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		Ref<AI::AIState> m_EditorAIState{ nullptr };
-		Assets::AssetHandle m_EditorAIStateHandle { Assets::EmptyHandle };
+		Assets::AssetHandle m_EditorAIStateHandle { Assets::k_EmptyHandle };
 		FixedString32 m_PanelName{ "AI State Editor" };
 	private:
 		//=========================

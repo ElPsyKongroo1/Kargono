@@ -440,7 +440,7 @@ namespace Kargono::Assets
 		selectionData.m_Selectable = node["Selectable"].as<bool>();
 		// Function pointer fields
 		selectionData.m_FunctionPointers.m_OnPressHandle = node["FunctionPointerOnPress"].as<uint64_t>();
-		if (selectionData.m_FunctionPointers.m_OnPressHandle == Assets::EmptyHandle)
+		if (selectionData.m_FunctionPointers.m_OnPressHandle == Assets::k_EmptyHandle)
 		{
 			selectionData.m_FunctionPointers.m_OnPress = nullptr;
 		}
@@ -459,7 +459,7 @@ namespace Kargono::Assets
 	void DeserializeImageData(RuntimeUI::ImageData& imageData, YAML::Node& node, const std::string& title)
 	{
 		imageData.m_ImageHandle = node[(title + "Image")].as<uint64_t>();
-		if (imageData.m_ImageHandle == Assets::EmptyHandle)
+		if (imageData.m_ImageHandle == Assets::k_EmptyHandle)
 		{
 			imageData.m_ImageRef = nullptr;
 		}
@@ -592,7 +592,7 @@ namespace Kargono::Assets
 		DeserializeSelectionData(inputTextWidget->m_SelectionData, specificWidget);
 		// Get input map specific function pointers
 		inputTextWidget->m_OnMoveCursorHandle = specificWidget["OnMoveCursor"].as<uint64_t>();
-		if (inputTextWidget->m_OnMoveCursorHandle == Assets::EmptyHandle)
+		if (inputTextWidget->m_OnMoveCursorHandle == Assets::k_EmptyHandle)
 		{
 			inputTextWidget->m_OnMoveCursor = nullptr;
 		}
@@ -625,7 +625,7 @@ namespace Kargono::Assets
 
 		// Get slider widget specific function pointers
 		sliderWidget->m_OnMoveSliderHandle = specificWidget["OnMoveSlider"].as<uint64_t>();
-		if (sliderWidget->m_OnMoveSliderHandle == Assets::EmptyHandle)
+		if (sliderWidget->m_OnMoveSliderHandle == Assets::k_EmptyHandle)
 		{
 			sliderWidget->m_OnMoveSlider = nullptr;
 		}
@@ -664,7 +664,7 @@ namespace Kargono::Assets
 
 		// Get slider widget specific function pointers
 		dropDownWidget->m_OnSelectOptionHandle = specificWidget["OnSelectOption"].as<uint64_t>();
-		if (dropDownWidget->m_OnSelectOptionHandle == Assets::EmptyHandle)
+		if (dropDownWidget->m_OnSelectOptionHandle == Assets::k_EmptyHandle)
 		{
 			dropDownWidget->m_OnSelectOption = nullptr;
 		}
@@ -790,7 +790,7 @@ namespace Kargono::Assets
 		newUserInterface->m_Config.m_EditingColor = data["EditingColor"].as<Math::vec4>();
 		// Function Pointers
 		newUserInterface->m_Config.m_FunctionPointers.m_OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
-		if (newUserInterface->m_Config.m_FunctionPointers.m_OnMoveHandle == Assets::EmptyHandle)
+		if (newUserInterface->m_Config.m_FunctionPointers.m_OnMoveHandle == Assets::k_EmptyHandle)
 		{
 			newUserInterface->m_Config.m_FunctionPointers.m_OnMove = nullptr;
 		}
@@ -805,7 +805,7 @@ namespace Kargono::Assets
 			newUserInterface->m_Config.m_FunctionPointers.m_OnMove = onMoveScript;
 		}
 		newUserInterface->m_Config.m_FunctionPointers.m_OnHoverHandle = data["FunctionPointerOnHover"].as<uint64_t>();
-		if (newUserInterface->m_Config.m_FunctionPointers.m_OnHoverHandle == Assets::EmptyHandle)
+		if (newUserInterface->m_Config.m_FunctionPointers.m_OnHoverHandle == Assets::k_EmptyHandle)
 		{
 			newUserInterface->m_Config.m_FunctionPointers.m_OnHover = nullptr;
 		}
@@ -867,7 +867,7 @@ namespace Kargono::Assets
 			RuntimeUI::InputTextWidget& inputTextWidget = *(RuntimeUI::InputTextWidget*)widgetRef.get();
 			if (inputTextWidget.m_OnMoveCursorHandle == scriptHandle)
 			{
-				inputTextWidget.m_OnMoveCursorHandle = Assets::EmptyHandle;
+				inputTextWidget.m_OnMoveCursorHandle = Assets::k_EmptyHandle;
 				inputTextWidget.m_OnMoveCursor = nullptr;
 				uiModified = true;
 			}
@@ -878,7 +878,7 @@ namespace Kargono::Assets
 			RuntimeUI::SliderWidget& sliderWidget = *(RuntimeUI::SliderWidget*)widgetRef.get();
 			if (sliderWidget.m_OnMoveSliderHandle == scriptHandle)
 			{
-				sliderWidget.m_OnMoveSliderHandle = Assets::EmptyHandle;
+				sliderWidget.m_OnMoveSliderHandle = Assets::k_EmptyHandle;
 				sliderWidget.m_OnMoveSlider = nullptr;
 				uiModified = true;
 			}
@@ -889,7 +889,7 @@ namespace Kargono::Assets
 			RuntimeUI::DropDownWidget& dropDownWidget = *(RuntimeUI::DropDownWidget*)widgetRef.get();
 			if (dropDownWidget.m_OnSelectOptionHandle == scriptHandle)
 			{
-				dropDownWidget.m_OnSelectOptionHandle = Assets::EmptyHandle;
+				dropDownWidget.m_OnSelectOptionHandle = Assets::k_EmptyHandle;
 				dropDownWidget.m_OnSelectOption = nullptr;
 				uiModified = true;
 			}
@@ -918,7 +918,7 @@ namespace Kargono::Assets
 		// Remove script references from widget if necessary
 		if (selectionData->m_FunctionPointers.m_OnPressHandle == scriptHandle)
 		{
-			selectionData->m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
+			selectionData->m_FunctionPointers.m_OnPressHandle = Assets::k_EmptyHandle;
 			selectionData->m_FunctionPointers.m_OnPress = nullptr;
 			uiModified = true;
 		}
@@ -932,13 +932,13 @@ namespace Kargono::Assets
 		bool uiModified{ false };
 		if (userInterfaceRef->m_Config.m_FunctionPointers.m_OnMoveHandle == scriptHandle)
 		{
-			userInterfaceRef->m_Config.m_FunctionPointers.m_OnMoveHandle = Assets::EmptyHandle;
+			userInterfaceRef->m_Config.m_FunctionPointers.m_OnMoveHandle = Assets::k_EmptyHandle;
 			userInterfaceRef->m_Config.m_FunctionPointers.m_OnMove = nullptr;
 			uiModified = true;
 		}
 		if (userInterfaceRef->m_Config.m_FunctionPointers.m_OnHoverHandle == scriptHandle)
 		{
-			userInterfaceRef->m_Config.m_FunctionPointers.m_OnHoverHandle = Assets::EmptyHandle;
+			userInterfaceRef->m_Config.m_FunctionPointers.m_OnHoverHandle = Assets::k_EmptyHandle;
 			userInterfaceRef->m_Config.m_FunctionPointers.m_OnHover = nullptr;
 			uiModified = true;
 		}
@@ -973,7 +973,7 @@ namespace Kargono::Assets
 			if (imageWidget.m_ImageData.m_ImageHandle == textureHandle)
 			{
 				RuntimeUI::ImageWidget& buttonWidget = *(RuntimeUI::ImageWidget*)widgetRef.get();
-				buttonWidget.m_ImageData.m_ImageHandle = Assets::EmptyHandle;
+				buttonWidget.m_ImageData.m_ImageHandle = Assets::k_EmptyHandle;
 				buttonWidget.m_ImageData.m_ImageRef = nullptr;
 				uiModified = true;
 			}
@@ -985,7 +985,7 @@ namespace Kargono::Assets
 			if (imageWidget.m_ImageData.m_ImageHandle == textureHandle)
 			{
 				RuntimeUI::ImageButtonWidget& imageButtonWidget = *(RuntimeUI::ImageButtonWidget*)widgetRef.get();
-				imageButtonWidget.m_ImageData.m_ImageHandle = Assets::EmptyHandle;
+				imageButtonWidget.m_ImageData.m_ImageHandle = Assets::k_EmptyHandle;
 				imageButtonWidget.m_ImageData.m_ImageRef = nullptr;
 				uiModified = true;
 			}
@@ -996,13 +996,13 @@ namespace Kargono::Assets
 			RuntimeUI::CheckboxWidget& checkboxWidget = *(RuntimeUI::CheckboxWidget*)widgetRef.get();
 			if (checkboxWidget.m_ImageUnChecked.m_ImageHandle == textureHandle)
 			{
-				checkboxWidget.m_ImageUnChecked.m_ImageHandle = Assets::EmptyHandle;
+				checkboxWidget.m_ImageUnChecked.m_ImageHandle = Assets::k_EmptyHandle;
 				checkboxWidget.m_ImageUnChecked.m_ImageRef = nullptr;
 				uiModified = true;
 			}
 			if (checkboxWidget.m_ImageChecked.m_ImageHandle == textureHandle)
 			{
-				checkboxWidget.m_ImageChecked.m_ImageHandle = Assets::EmptyHandle;
+				checkboxWidget.m_ImageChecked.m_ImageHandle = Assets::k_EmptyHandle;
 				checkboxWidget.m_ImageChecked.m_ImageRef = nullptr;
 				uiModified = true;
 			}

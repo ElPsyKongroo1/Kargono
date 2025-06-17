@@ -108,14 +108,14 @@ namespace Kargono::Windows
 		// Initialize open existing Emitter Config popup data
 		m_OpenEmitterConfigPopupSpec.m_Label = "Open Emitter Config";
 		m_OpenEmitterConfigPopupSpec.m_LineCount = 2;
-		m_OpenEmitterConfigPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenEmitterConfigPopupSpec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_OpenEmitterConfigPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_OpenEmitterConfigPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
-			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetEmitterConfigRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
@@ -123,7 +123,7 @@ namespace Kargono::Windows
 		};
 		m_OpenEmitterConfigPopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::EmptyHandle)
+			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("No Emitter Config Selected");
 				return;
@@ -147,7 +147,7 @@ namespace Kargono::Windows
 			}
 
 			m_EditorEmitterConfigHandle = Assets::AssetService::CreateEmitterConfig(m_SelectEmitterConfigNameSpec.m_CurrentOption.c_str(), m_SelectEmitterConfigLocationSpec.m_CurrentOption);
-			if (m_EditorEmitterConfigHandle == Assets::EmptyHandle)
+			if (m_EditorEmitterConfigHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("Emitter Config was not created");
 				return;

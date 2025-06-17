@@ -24,7 +24,7 @@ namespace Kargono::EditorUI
 	{
 		std::string m_Label;
 		std::string m_Value;
-		UUID m_Handle;
+		UUID m_Handle{ k_EmptyUUID };
 		std::function<void(ListEntry& entry, std::size_t iteration)> m_OnEdit{ nullptr };
 	};
 

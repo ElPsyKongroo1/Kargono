@@ -124,22 +124,22 @@ namespace Kargono::Panels
 		{
 			if (m_KeyboardOnUpdateAddFunction.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_KeyboardOnUpdateAddFunction.m_CurrentOption = { "None", Assets::EmptyHandle };
+				m_KeyboardOnUpdateAddFunction.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			}
 
 			if (m_KeyboardOnUpdateEditFunction.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_KeyboardOnUpdateEditFunction.m_CurrentOption = { "None", Assets::EmptyHandle };
+				m_KeyboardOnUpdateEditFunction.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			}
 
 			if (m_KeyboardOnKeyPressedAddFunction.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_KeyboardOnKeyPressedAddFunction.m_CurrentOption = { "None", Assets::EmptyHandle };
+				m_KeyboardOnKeyPressedAddFunction.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			}
 
 			if (m_KeyboardOnKeyPressedEditFunction.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_KeyboardOnKeyPressedEditFunction.m_CurrentOption = { "None", Assets::EmptyHandle };
+				m_KeyboardOnKeyPressedEditFunction.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			}
 
 			// Check input maps assets
@@ -183,7 +183,7 @@ namespace Kargono::Panels
 	void InputMapPanel::ResetPanelResources()
 	{
 		m_EditorInputMap = nullptr;
-		m_EditorInputMapHandle = Assets::EmptyHandle;
+		m_EditorInputMapHandle = Assets::k_EmptyHandle;
 	}
 
 	void InputMapPanel::OpenCreateDialog(std::filesystem::path& createLocation)
@@ -254,14 +254,14 @@ namespace Kargono::Panels
 	{
 		m_OpenInputMapPopupSpec.m_Label = "Open Input Map";
 		m_OpenInputMapPopupSpec.m_LineCount = 2;
-		m_OpenInputMapPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenInputMapPopupSpec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_OpenInputMapPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_OpenInputMapPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
-			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetInputMapRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
@@ -270,7 +270,7 @@ namespace Kargono::Panels
 
 		m_OpenInputMapPopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::EmptyHandle)
+			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("No Input Map Selected");
 				return;
@@ -307,7 +307,7 @@ namespace Kargono::Panels
 			}
 
 			m_EditorInputMapHandle = Assets::AssetService::CreateInputMap(m_SelectInputMapNameSpec.m_CurrentOption.c_str(), m_SelectInputMapLocationSpec.m_CurrentOption);
-			if (m_EditorInputMapHandle == Assets::EmptyHandle)
+			if (m_EditorInputMapHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("Input Map was not created");
 				return;
@@ -401,7 +401,7 @@ namespace Kargono::Panels
 
 				EditorUI::ListEntry newEntry;
 				Assets::AssetHandle scriptHandle = keyboardBinding->GetScriptHandle();
-				if (scriptHandle == Assets::EmptyHandle)
+				if (scriptHandle == Assets::k_EmptyHandle)
 				{
 					newEntry = {
 						std::string("Key::") + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
@@ -436,7 +436,7 @@ namespace Kargono::Panels
 		m_KeyboardOnUpdateAddPopup.m_PopupAction = [&]()
 		{
 			m_KeyboardOnUpdateAddKeyCode.m_CurrentOption = {Utility::KeyCodeToString(Key::A), Key::A};
-			m_KeyboardOnUpdateAddFunction.m_CurrentOption = {"None", Assets::EmptyHandle};
+			m_KeyboardOnUpdateAddFunction.m_CurrentOption = {"None", Assets::k_EmptyHandle};
 		};
 		m_KeyboardOnUpdateAddPopup.m_PopupContents = [&]()
 		{
@@ -452,7 +452,7 @@ namespace Kargono::Panels
 			Ref<Input::KeyboardActionBinding> newBinding = CreateRef<Input::KeyboardActionBinding>();
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnUpdateAddKeyCode.m_CurrentOption.m_Handle);
 			Ref<Scripting::Script> script;
-			if (m_KeyboardOnUpdateAddFunction.m_CurrentOption.m_Handle == Assets::EmptyHandle)
+			if (m_KeyboardOnUpdateAddFunction.m_CurrentOption.m_Handle == Assets::k_EmptyHandle)
 			{
 				script = nullptr;
 			}
@@ -483,7 +483,7 @@ namespace Kargono::Panels
 		m_KeyboardOnUpdateAddFunction.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
@@ -544,9 +544,9 @@ namespace Kargono::Panels
 			KG_ASSERT(activeBinding);
 
 			m_KeyboardOnUpdateEditKeyCode.m_CurrentOption = { Utility::KeyCodeToString(activeBinding->GetKeyBinding()), activeBinding->GetKeyBinding() };
-			if (activeBinding->GetScriptHandle() == Assets::EmptyHandle)
+			if (activeBinding->GetScriptHandle() == Assets::k_EmptyHandle)
 			{
-				m_KeyboardOnUpdateEditFunction.m_CurrentOption = { "None", Assets::EmptyHandle };
+				m_KeyboardOnUpdateEditFunction.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			}
 			else
 			{
@@ -575,7 +575,7 @@ namespace Kargono::Panels
 			KG_ASSERT(newBinding);
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnUpdateEditKeyCode.m_CurrentOption.m_Handle);
 			Ref<Scripting::Script> script;
-			if (m_KeyboardOnUpdateEditFunction.m_CurrentOption.m_Handle == Assets::EmptyHandle)
+			if (m_KeyboardOnUpdateEditFunction.m_CurrentOption.m_Handle == Assets::k_EmptyHandle)
 			{
 				script = nullptr;
 			}
@@ -605,7 +605,7 @@ namespace Kargono::Panels
 		m_KeyboardOnUpdateEditFunction.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
@@ -686,7 +686,7 @@ namespace Kargono::Panels
 
 				EditorUI::ListEntry newEntry;
 				Assets::AssetHandle scriptHandle = keyboardBinding->GetScriptHandle();
-				if (scriptHandle == Assets::EmptyHandle)
+				if (scriptHandle == Assets::k_EmptyHandle)
 				{
 					newEntry = {
 						std::string("Key::") + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
@@ -721,7 +721,7 @@ namespace Kargono::Panels
 		m_KeyboardOnKeyPressedAddPopup.m_PopupAction = [&]()
 		{
 			m_KeyboardOnKeyPressedAddKeyCode.m_CurrentOption = { Utility::KeyCodeToString(Key::A), Key::A };
-			m_KeyboardOnKeyPressedAddFunction.m_CurrentOption = { "None", Assets::EmptyHandle };
+			m_KeyboardOnKeyPressedAddFunction.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		};
 		m_KeyboardOnKeyPressedAddPopup.m_PopupContents = [&]()
 		{
@@ -737,7 +737,7 @@ namespace Kargono::Panels
 			Ref<Input::KeyboardActionBinding> newBinding = CreateRef<Input::KeyboardActionBinding>();
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnKeyPressedAddKeyCode.m_CurrentOption.m_Handle);
 			Ref<Scripting::Script> script;
-			if (m_KeyboardOnKeyPressedAddFunction.m_CurrentOption.m_Handle == Assets::EmptyHandle)
+			if (m_KeyboardOnKeyPressedAddFunction.m_CurrentOption.m_Handle == Assets::k_EmptyHandle)
 			{
 				script = nullptr;
 			}
@@ -768,7 +768,7 @@ namespace Kargono::Panels
 		m_KeyboardOnKeyPressedAddFunction.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
@@ -829,9 +829,9 @@ namespace Kargono::Panels
 			KG_ASSERT(activeBinding);
 
 			m_KeyboardOnKeyPressedEditKeyCode.m_CurrentOption = { Utility::KeyCodeToString(activeBinding->GetKeyBinding()), activeBinding->GetKeyBinding() };
-			if (activeBinding->GetScriptHandle() == Assets::EmptyHandle)
+			if (activeBinding->GetScriptHandle() == Assets::k_EmptyHandle)
 			{
-				m_KeyboardOnKeyPressedEditFunction.m_CurrentOption = { "None", Assets::EmptyHandle };
+				m_KeyboardOnKeyPressedEditFunction.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			}
 			else
 			{
@@ -860,7 +860,7 @@ namespace Kargono::Panels
 			KG_ASSERT(newBinding);
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnKeyPressedEditKeyCode.m_CurrentOption.m_Handle);
 			Ref<Scripting::Script> script;
-			if (m_KeyboardOnKeyPressedEditFunction.m_CurrentOption.m_Handle == Assets::EmptyHandle)
+			if (m_KeyboardOnKeyPressedEditFunction.m_CurrentOption.m_Handle == Assets::k_EmptyHandle)
 			{
 				script = nullptr;
 			}
@@ -890,7 +890,7 @@ namespace Kargono::Panels
 		m_KeyboardOnKeyPressedEditFunction.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
 			{
 				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);

@@ -203,6 +203,6 @@ namespace Kargono::Scenes
 		// Internal Fields
 		//====================
 		static inline Ref<Scene> s_ActiveScene { nullptr };
-		static inline Assets::AssetHandle s_ActiveSceneHandle { Assets::EmptyHandle };
+		static inline Assets::AssetHandle s_ActiveSceneHandle { Assets::k_EmptyHandle };
 	};
 }

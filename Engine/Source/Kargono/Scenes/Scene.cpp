@@ -222,7 +222,7 @@ namespace Kargono::Scenes
 			ECS::Entity entity = { enttEntityID, &m_EntityRegistry };
 			ECS::OnCreateComponent& component = entity.GetComponent<ECS::OnCreateComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCreateScriptHandle;
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				Utility::CallWrapped<WrappedVoidEntity>(component.OnCreateScript->m_Function, entity.GetUUID());
 			}
@@ -364,7 +364,7 @@ namespace Kargono::Scenes
 			ECS::Entity entity = { enttEntityID, &m_EntityRegistry };
 			ECS::OnUpdateComponent& component = entity.GetComponent<ECS::OnUpdateComponent>();
 			Assets::AssetHandle scriptHandle = component.OnUpdateScriptHandle;
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				Utility::CallWrapped<WrappedVoidEntityFloat>(component.OnUpdateScript->m_Function, entity.GetUUID(), ts);
 			}
@@ -385,7 +385,7 @@ namespace Kargono::Scenes
 		s_InputSpec.m_CurrentDrawBuffer = nullptr;
 
 		s_ActiveScene.reset();
-		s_ActiveSceneHandle = Assets::EmptyHandle;
+		s_ActiveSceneHandle = Assets::k_EmptyHandle;
 	}
 	Math::vec3 SceneService::TransformComponentGetTranslation(UUID entityID)
 	{
@@ -495,7 +495,7 @@ namespace Kargono::Scenes
 			}
 		}
 		KG_WARN("Could not locate entity by name!");
-		return Assets::EmptyHandle;
+		return Assets::k_EmptyHandle;
 	}
 
 	bool SceneService::CheckActiveHasComponent(UUID entityID, std::string_view componentName)
@@ -514,7 +514,7 @@ namespace Kargono::Scenes
 	bool SceneService::IsSceneActive(UUID sceneID)
 	{
 		KG_ASSERT(s_ActiveScene);
-		KG_ASSERT(s_ActiveSceneHandle != Assets::EmptyHandle);
+		KG_ASSERT(s_ActiveSceneHandle != Assets::k_EmptyHandle);
 		return sceneID == s_ActiveSceneHandle;
 	}
 	void SceneService::TransitionScene(Assets::AssetHandle newSceneHandle)

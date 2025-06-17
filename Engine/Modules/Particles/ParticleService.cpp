@@ -313,7 +313,7 @@ namespace Kargono::Particles
 
 	void ParticleContext::AddEmitterByHandle(Assets::AssetHandle emitterHandle, const Math::vec3& position)
 	{
-		KG_ASSERT(emitterHandle != Assets::EmptyHandle);
+		KG_ASSERT(emitterHandle != Assets::k_EmptyHandle);
 
 		// Get emitter from asset service
 		Ref<Particles::EmitterConfig> emitter = Assets::AssetService::GetEmitterConfig(emitterHandle);
@@ -333,7 +333,7 @@ namespace Kargono::Particles
 		float currentTime{ EngineService::GetActiveEngine().GetThread().GetInApplicationTime() };
 
 		// Create emitter instance
-		UUID returnID{};
+		UUID returnID{ RandomUUIDService::GetRandomUUID() };
 		EmitterInstance newEmitterInstance;
 		newEmitterInstance.m_Config = config;
 		newEmitterInstance.m_Particles.resize(config->m_BufferSize);
@@ -397,7 +397,7 @@ namespace Kargono::Particles
 			ECS::Entity entity{ scene->GetEntityByEnttID(enttID) };
 			ECS::ParticleEmitterComponent particleComp = entity.GetComponent<ECS::ParticleEmitterComponent>();
 			ECS::TransformComponent transform = entity.GetComponent<ECS::TransformComponent>();
-			if (particleComp.m_EmitterConfigHandle == Assets::EmptyHandle)
+			if (particleComp.m_EmitterConfigHandle == Assets::k_EmptyHandle)
 			{
 				continue;
 			}

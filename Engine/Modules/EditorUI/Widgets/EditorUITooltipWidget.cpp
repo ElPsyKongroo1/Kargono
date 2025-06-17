@@ -126,7 +126,7 @@ namespace Kargono::EditorUI
 		// Ensure UUID is unique inside entry
 		while (!ValidateEntryID(newSeperatorEntry.m_EntryID))
 		{
-			newSeperatorEntry.m_EntryID = {};
+			newSeperatorEntry.m_EntryID = RandomUUIDService::GetRandomUUID();
 		}
 
 		// Add new entry if valid
@@ -144,7 +144,7 @@ namespace Kargono::EditorUI
 		// Ensure UUID is unique inside entry
 		while (!ValidateEntryID(newEntry.m_EntryID))
 		{
-			newEntry.m_EntryID = {};
+			newEntry.m_EntryID = RandomUUIDService::GetRandomUUID();
 		}
 
 		// Add new entry if valid

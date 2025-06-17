@@ -170,7 +170,7 @@ namespace Kargono::AI
 		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
 		
 		// Ensure previous state is valid
-		if (aiComponent.PreviousStateHandle == Assets::EmptyHandle)
+		if (aiComponent.PreviousStateHandle == Assets::k_EmptyHandle)
 		{
 			KG_WARN("Could not revert to previous state. None currently exists.");
 			return;
@@ -193,7 +193,7 @@ namespace Kargono::AI
 		}
 
 		// Clear previous state
-		aiComponent.PreviousStateHandle = Assets::EmptyHandle;
+		aiComponent.PreviousStateHandle = Assets::k_EmptyHandle;
 		aiComponent.PreviousStateReference = nullptr;
 	}
 
@@ -209,7 +209,7 @@ namespace Kargono::AI
 		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
 
 		// Clear global state
-		aiComponent.GlobalStateHandle = Assets::EmptyHandle;
+		aiComponent.GlobalStateHandle = Assets::k_EmptyHandle;
 		aiComponent.GlobalStateReference = nullptr;
 	}
 	void AIContext::ClearCurrentState(UUID entityID)
@@ -224,7 +224,7 @@ namespace Kargono::AI
 		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
 
 		// Clear current state
-		aiComponent.CurrentStateHandle = Assets::EmptyHandle;
+		aiComponent.CurrentStateHandle = Assets::k_EmptyHandle;
 		aiComponent.CurrentStateReference = nullptr;
 	}
 	void AIContext::ClearPreviousState(UUID entityID)
@@ -239,7 +239,7 @@ namespace Kargono::AI
 		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
 
 		// Clear previous state
-		aiComponent.PreviousStateHandle = Assets::EmptyHandle;
+		aiComponent.PreviousStateHandle = Assets::k_EmptyHandle;
 		aiComponent.PreviousStateReference = nullptr;
 	}
 	void AIContext::ClearAllStates(UUID entityID)
@@ -254,15 +254,15 @@ namespace Kargono::AI
 		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
 
 		// Clear global state
-		aiComponent.GlobalStateHandle = Assets::EmptyHandle;
+		aiComponent.GlobalStateHandle = Assets::k_EmptyHandle;
 		aiComponent.GlobalStateReference = nullptr;
 
 		// Clear current state
-		aiComponent.CurrentStateHandle = Assets::EmptyHandle;
+		aiComponent.CurrentStateHandle = Assets::k_EmptyHandle;
 		aiComponent.CurrentStateReference = nullptr;
 
 		// Clear previous state
-		aiComponent.PreviousStateHandle = Assets::EmptyHandle;
+		aiComponent.PreviousStateHandle = Assets::k_EmptyHandle;
 		aiComponent.PreviousStateReference = nullptr;
 	}
 

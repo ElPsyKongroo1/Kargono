@@ -32,9 +32,9 @@ namespace Kargono::EditorUI
 		// Public Fields
 		//==============================
 		FixedString32 m_Label;
-		UUID m_EntryID;
+		UUID m_EntryID{ k_EmptyUUID };
 		bool m_IsVisible{ true };
-		UUID m_UserHandle;
+		UUID m_UserHandle{ k_EmptyUUID };
 		void* m_ProvidedData{ nullptr };
 	private:
 		//==============================

@@ -1944,7 +1944,7 @@ namespace Kargono::RuntimeUI
 		if (!m_Font)
 		{
 			m_Font = defaultFont;
-			m_FontHandle = Assets::EmptyHandle;
+			m_FontHandle = Assets::k_EmptyHandle;
 		}
 
 		m_Active = true;

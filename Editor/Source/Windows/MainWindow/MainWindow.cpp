@@ -451,7 +451,7 @@ namespace Kargono::Windows
 		m_EditorSceneHandle = Assets::AssetService::CreateScene(filepath.stem().string().c_str());
 
 		// Validate scene creation
-		if (m_EditorSceneHandle == Assets::EmptyHandle)
+		if (m_EditorSceneHandle == Assets::k_EmptyHandle)
 		{
 			return false;
 		}
@@ -721,7 +721,7 @@ namespace Kargono::Windows
 		}
 		else
 		{
-			Input::InputMapService::GetActiveContext().SetActiveInputMap(nullptr, Assets::EmptyHandle);
+			Input::InputMapService::GetActiveContext().SetActiveInputMap(nullptr, Assets::k_EmptyHandle);
 		}
 
 		Scenes::GameStateService::ClearActiveGameState();
@@ -810,7 +810,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnUpdateUserCount(Events::ReceiveOnlineUsers event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnUpdateUserCount;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidUInt32>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserCount());
 		}
@@ -821,7 +821,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnApproveJoinSession(Events::ApproveJoinSession event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnApproveJoinSession;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
@@ -832,7 +832,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnUpdateSessionUserSlot;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
@@ -843,7 +843,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnUserLeftSession(Events::UserLeftSession event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnUserLeftSession;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
@@ -853,7 +853,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnCurrentSessionInit(Events::CurrentSessionInit event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnCurrentSessionInit;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidNone>(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
@@ -863,7 +863,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnConnectionTerminated(Events::ConnectionTerminated event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnConnectionTerminated;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidNone>(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
@@ -873,7 +873,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnStartSession(Events::StartSession event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnStartSession;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidNone>(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
@@ -883,7 +883,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnSessionReadyCheckConfirm;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidNone>(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
@@ -893,7 +893,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnReceiveSignal(Events::ReceiveSignal event)
 	{
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetClientScripts().m_OnReceiveSignal;
-		if (scriptHandle != Assets::EmptyHandle)
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetSignal());
 		}

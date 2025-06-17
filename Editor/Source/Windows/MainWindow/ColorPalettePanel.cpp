@@ -12,14 +12,14 @@ namespace Kargono::Panels
 	void ColorPalettePanel::InitializeOpeningScreen()
 	{
 		m_OpenColorPalettePopup.m_Label = "Open Color Palette";
-		m_OpenColorPalettePopup.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenColorPalettePopup.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_OpenColorPalettePopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_OpenColorPalettePopup.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
-			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetColorPaletteRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
@@ -28,7 +28,7 @@ namespace Kargono::Panels
 
 		m_OpenColorPalettePopup.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::EmptyHandle)
+			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("No Color Palette Selected");
 				return;
@@ -222,7 +222,7 @@ namespace Kargono::Panels
 		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			m_EditorColorPalette = nullptr;
-			m_EditorColorPaletteHandle = Assets::EmptyHandle;
+			m_EditorColorPaletteHandle = Assets::k_EmptyHandle;
 		});
 	}
 	void ColorPalettePanel::OpenCreateDialog(std::filesystem::path& createLocation)

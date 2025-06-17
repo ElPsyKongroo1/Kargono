@@ -63,7 +63,7 @@ namespace Kargono::Input
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 				KG_ASSERT(keyboardBinding->GetScript());
 				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding()) ||
-					keyboardBinding->GetScriptHandle() == Assets::EmptyHandle)
+					keyboardBinding->GetScriptHandle() == Assets::k_EmptyHandle)
 				{ 
 					continue; 
 				}
@@ -89,7 +89,7 @@ namespace Kargono::Input
 				
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding()) || 
-					keyboardBinding->GetScriptHandle() == Assets::EmptyHandle) 
+					keyboardBinding->GetScriptHandle() == Assets::k_EmptyHandle) 
 				{ 
 					continue; 
 				}
@@ -127,7 +127,7 @@ namespace Kargono::Input
 	}
 	void InputActionBinding::SetScript(Assets::AssetHandle handle)
 	{
-		if (handle == Assets::EmptyHandle)
+		if (handle == Assets::k_EmptyHandle)
 		{
 			ClearScript();
 			return;

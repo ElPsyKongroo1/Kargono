@@ -38,9 +38,9 @@ namespace Kargono::RuntimeUI
 
 	struct UserInterfaceCallbacks
 	{
-		Assets::AssetHandle m_OnMoveHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_OnMoveHandle{ Assets::k_EmptyHandle };
 		Ref<Scripting::Script> m_OnMove{ nullptr };
-		Assets::AssetHandle m_OnHoverHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_OnHoverHandle{ Assets::k_EmptyHandle };
 		Ref<Scripting::Script> m_OnHover{ nullptr };
 	};
 
@@ -133,7 +133,7 @@ namespace Kargono::RuntimeUI
 		// Public Fields
 		//============================
 		Ref<Font> m_Font{ nullptr };
-		Assets::AssetHandle m_FontHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_FontHandle{ Assets::k_EmptyHandle };
 		Math::vec4 m_SelectColor{ 1.0f };
 		Math::vec4 m_HoveredColor{ 0.5f };
 		Math::vec4 m_EditingColor{ 0.15f, 0.15f, 0.15f, 1.0f };

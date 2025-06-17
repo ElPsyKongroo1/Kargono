@@ -177,13 +177,13 @@ namespace Kargono::Windows
 
 		// Editor Scenes
 		Ref<Scenes::Scene> m_EditorScene;
-		Assets::AssetHandle m_EditorSceneHandle;
+		Assets::AssetHandle m_EditorSceneHandle{ Assets::k_EmptyHandle };
 		SceneState m_SceneState = SceneState::Edit;
 
 		// TODO: Move into input map editor
 		// Cached Scene Data
 		Ref<Input::InputMap> m_EditorInputMap{ nullptr };
-		Assets::AssetHandle m_EditorInputMapHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_EditorInputMapHandle{ Assets::k_EmptyHandle };
 
 		// Stepping Fields
 		bool m_IsPaused = false;

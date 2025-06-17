@@ -138,7 +138,7 @@ namespace Kargono::Scenes
 		static void ClearActiveGameState()
 		{
 			s_ActiveGameState = nullptr;
-			s_ActiveGameStateHandle = Assets::EmptyHandle;
+			s_ActiveGameStateHandle = Assets::k_EmptyHandle;
 		}
 		static void SetActiveGameState(Ref<GameState> newGameState, Assets::AssetHandle newHandle)
 		{
@@ -159,6 +159,6 @@ namespace Kargono::Scenes
 		// Internal Fields
 		//=========================
 		static inline Ref<GameState> s_ActiveGameState{ nullptr };
-		static inline Assets::AssetHandle s_ActiveGameStateHandle{ Assets::EmptyHandle };
+		static inline Assets::AssetHandle s_ActiveGameStateHandle{ Assets::k_EmptyHandle };
 	};
 }

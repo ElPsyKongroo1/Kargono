@@ -173,14 +173,14 @@ namespace Kargono::Panels
 		// Initialize open existing user interface popup data
 		m_OpenUIPopupSpec.m_Label = "Open User Interface";
 		m_OpenUIPopupSpec.m_LineCount = 2;
-		m_OpenUIPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenUIPopupSpec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_OpenUIPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_OpenUIPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
-			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
-			m_OpenUIPopupSpec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			m_OpenUIPopupSpec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetUserInterfaceRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
@@ -188,7 +188,7 @@ namespace Kargono::Panels
 		};
 		m_OpenUIPopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (selection.m_Handle == Assets::EmptyHandle)
+				if (selection.m_Handle == Assets::k_EmptyHandle)
 				{
 					KG_WARN("No User Interface Selected");
 					return;
@@ -212,7 +212,7 @@ namespace Kargono::Panels
 				}
 
 				s_UIWindow->m_EditorUIHandle = Assets::AssetService::CreateUserInterface(m_SelectUINameSpec.m_CurrentOption.c_str(), m_SelectUILocationSpec.m_CurrentOption);
-				if (s_UIWindow->m_EditorUIHandle == Assets::EmptyHandle)
+				if (s_UIWindow->m_EditorUIHandle == Assets::k_EmptyHandle)
 				{
 					KG_WARN("User Interface was not created");
 					return;

@@ -67,7 +67,7 @@ namespace Kargono::RuntimeUI
 
 	struct WidgetCallbacks
 	{
-		Assets::AssetHandle m_OnPressHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_OnPressHandle{ Assets::k_EmptyHandle };
 		Ref<Scripting::Script> m_OnPress{ nullptr };
 	};
 
@@ -113,7 +113,7 @@ namespace Kargono::RuntimeUI
 		// Public Fields
 		//============================
 		Ref<Rendering::Texture2D> m_ImageRef{ nullptr };
-		Assets::AssetHandle m_ImageHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_ImageHandle{ Assets::k_EmptyHandle };
 		bool m_FixedAspectRatio{ false };
 	};
 

@@ -62,13 +62,13 @@ namespace Kargono::Panels
 	{
 		m_OpenComponentPopup.m_Label = "Open Component";
 		m_OpenComponentPopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenComponentPopup.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenComponentPopup.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_OpenComponentPopup.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
-			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
@@ -77,7 +77,7 @@ namespace Kargono::Panels
 
 		m_OpenComponentPopup.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::EmptyHandle)
+			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("No  Selected");
 				return;
@@ -219,14 +219,14 @@ namespace Kargono::Panels
 		m_AddFieldName.m_CurrentOption = "Empty";
 
 		m_AddFieldType.m_Label = "Field Type";
-		m_AddFieldType.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_AddFieldType.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_AddFieldType.m_LineCount = 2;
 		m_AddFieldType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 			for (WrappedVarType type : Kargono::s_AllWrappedVarTypes)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::k_EmptyHandle);
 			}
 		};
 		m_AddFieldType.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -266,14 +266,14 @@ namespace Kargono::Panels
 		m_EditFieldName.m_CurrentOption = "Empty";
 
 		m_EditFieldType.m_Label = "Field Type";
-		m_EditFieldType.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_EditFieldType.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_EditFieldType.m_LineCount = 2;
 		m_EditFieldType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 			for (WrappedVarType type : Kargono::s_AllWrappedVarTypes)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::k_EmptyHandle);
 			}
 		};
 		m_EditFieldType.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -358,7 +358,7 @@ namespace Kargono::Panels
 	void ProjectComponentPanel::ResetPanelResources()
 	{
 		m_EditorProjectComponent = nullptr;
-		m_EditorProjectComponentHandle = Assets::EmptyHandle;
+		m_EditorProjectComponentHandle = Assets::k_EmptyHandle;
 	}
 	void ProjectComponentPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{

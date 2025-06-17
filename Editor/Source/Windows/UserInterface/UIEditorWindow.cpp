@@ -192,7 +192,7 @@ namespace Kargono::Windows
 		{
 			if (m_PropertiesPanel->m_ButtonWidgetOnPress.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_PropertiesPanel->m_ButtonWidgetOnPress.m_CurrentOption = { "None", Assets::EmptyHandle };
+				m_PropertiesPanel->m_ButtonWidgetOnPress.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			}
 
 			if (m_EditorUI)

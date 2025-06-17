@@ -80,7 +80,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle fontHandle = s_UIWindow->m_EditorUI->m_Config.m_FontHandle;
 			m_UISelectFont.m_CurrentOption =
 			{
-				fontHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetFontInfo(fontHandle).Data.FileLocation.stem().string().c_str(),
+				fontHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetFontInfo(fontHandle).Data.FileLocation.stem().string().c_str(),
 				fontHandle
 			};
 			m_UISelectFont.RenderOptions();
@@ -89,7 +89,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onMoveHandle = s_UIWindow->m_EditorUI->m_Config.m_FunctionPointers.m_OnMoveHandle;
 			m_UIOnMove.m_CurrentOption =
 			{
-				onMoveHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScriptInfo(onMoveHandle).Data.FileLocation.stem().string().c_str(),
+				onMoveHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetScriptInfo(onMoveHandle).Data.FileLocation.stem().string().c_str(),
 				onMoveHandle
 			};
 			m_UIOnMove.RenderOptions();
@@ -98,7 +98,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onHoverHandle = s_UIWindow->m_EditorUI->m_Config.m_FunctionPointers.m_OnHoverHandle;
 			m_UIOnHover.m_CurrentOption =
 			{
-				onHoverHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScriptInfo(onHoverHandle).Data.FileLocation.stem().string().c_str(),
+				onHoverHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetScriptInfo(onHoverHandle).Data.FileLocation.stem().string().c_str(),
 				onHoverHandle
 			};
 			m_UIOnHover.RenderOptions();
@@ -304,7 +304,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeButtonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_ButtonWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_ButtonWidgetOnPress.RenderOptions();
@@ -324,7 +324,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle imageHandle = activeImageWidget.m_ImageData.m_ImageHandle;
 			m_ImageWidgetImage.m_CurrentOption =
 			{
-				imageHandle == Assets::EmptyHandle ? "None" : 
+				imageHandle == Assets::k_EmptyHandle ? "None" : 
 				Assets::AssetService::GetTexture2DInfo(imageHandle).Data.FileLocation.stem().string().c_str(),
 				imageHandle
 			};
@@ -349,7 +349,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle imageHandle = activeImageButtonWidget.m_ImageData.m_ImageHandle;
 			m_ImageButtonWidgetImage.m_CurrentOption =
 			{
-				imageHandle == Assets::EmptyHandle ? "None" :
+				imageHandle == Assets::k_EmptyHandle ? "None" :
 				Assets::AssetService::GetTexture2DInfo(imageHandle).Data.FileLocation.stem().string().c_str(),
 				imageHandle
 			};
@@ -371,7 +371,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeImageButtonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_ImageButtonWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_ImageButtonWidgetOnPress.RenderOptions();
@@ -395,7 +395,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle checkedImage = activeCheckboxWidget.m_ImageChecked.m_ImageHandle;
 			m_CheckboxWidgetCheckedImage.m_CurrentOption =
 			{
-				checkedImage == Assets::EmptyHandle ? "None" :
+				checkedImage == Assets::k_EmptyHandle ? "None" :
 				Assets::AssetService::GetTexture2DInfo(checkedImage).Data.FileLocation.stem().string().c_str(),
 				checkedImage
 			};
@@ -405,7 +405,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle unCheckedImage = activeCheckboxWidget.m_ImageUnChecked.m_ImageHandle;
 			m_CheckboxWidgetUnCheckedImage.m_CurrentOption =
 			{
-				unCheckedImage == Assets::EmptyHandle ? "None" :
+				unCheckedImage == Assets::k_EmptyHandle ? "None" :
 				Assets::AssetService::GetTexture2DInfo(unCheckedImage).Data.FileLocation.stem().string().c_str(),
 				unCheckedImage
 			};
@@ -427,7 +427,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeCheckboxWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_CheckboxWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_CheckboxWidgetOnPress.RenderOptions();
@@ -532,7 +532,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeInputTextWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_InputTextWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_InputTextWidgetOnPress.RenderOptions();
@@ -541,7 +541,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onMoveCursorHandle = activeInputTextWidget.m_OnMoveCursorHandle;
 			m_InputTextWidgetOnMoveCursor.m_CurrentOption =
 			{
-				onMoveCursorHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onMoveCursorHandle)->m_ScriptName.c_str(),
+				onMoveCursorHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetScript(onMoveCursorHandle)->m_ScriptName.c_str(),
 				onMoveCursorHandle
 			};
 			m_InputTextWidgetOnMoveCursor.RenderOptions();
@@ -581,7 +581,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeSliderWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_SliderWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_SliderWidgetOnPress.RenderOptions();
@@ -590,7 +590,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onMoveSliderHandle = activeSliderWidget.m_OnMoveSliderHandle;
 			m_SliderWidgetOnMoveSlider.m_CurrentOption =
 			{
-				onMoveSliderHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onMoveSliderHandle)->m_ScriptName.c_str(),
+				onMoveSliderHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetScript(onMoveSliderHandle)->m_ScriptName.c_str(),
 				onMoveSliderHandle
 			};
 			m_SliderWidgetOnMoveSlider.RenderOptions();
@@ -657,7 +657,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeDropDownWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_DropDownWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetScript(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_DropDownWidgetOnPress.RenderOptions();
@@ -666,7 +666,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle OnSelectOptionHandle = activeDropDownWidget.m_OnSelectOptionHandle;
 			m_DropDownWidgetOnSelectOption.m_CurrentOption =
 			{
-				OnSelectOptionHandle == Assets::EmptyHandle ? "None" : Assets::AssetService::GetScript(OnSelectOptionHandle)->m_ScriptName.c_str(),
+				OnSelectOptionHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::GetScript(OnSelectOptionHandle)->m_ScriptName.c_str(),
 				OnSelectOptionHandle
 			};
 			m_DropDownWidgetOnSelectOption.RenderOptions();
@@ -752,9 +752,9 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::OnModifyUIFont(const EditorUI::OptionEntry& entry)
 	{
 		// Check for empty case
-		if (entry.m_Handle == Assets::EmptyHandle)
+		if (entry.m_Handle == Assets::k_EmptyHandle)
 		{
-			s_UIWindow->m_EditorUI->m_Config.m_FontHandle = Assets::EmptyHandle;
+			s_UIWindow->m_EditorUI->m_Config.m_FontHandle = Assets::k_EmptyHandle;
 			s_UIWindow->m_EditorUI->m_Config.m_Font = nullptr;
 
 			// Set the active editor UI as edited
@@ -778,7 +778,7 @@ namespace Kargono::Panels
 	{
 		// Clear existing options
 		spec.ClearOptions();
-		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all font options
 		for (auto& [fontHandle, fontInfo] : Assets::AssetService::GetFontRegistry())
@@ -790,9 +790,9 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::OnModifyUIOnMove(const EditorUI::OptionEntry& entry)
 	{
 		// Clear the on move script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
+		if (entry.m_Handle == Assets::k_EmptyHandle)
 		{
-			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_Config.SetOnMove(Assets::EmptyHandle, nullptr);
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_Config.SetOnMove(Assets::k_EmptyHandle, nullptr);
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -814,7 +814,7 @@ namespace Kargono::Panels
 	{
 		// Clear existing options
 		spec.ClearOptions();
-		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
@@ -887,9 +887,9 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::OnModifyUIOnHover(const EditorUI::OptionEntry& entry)
 	{
 		// Clear the on Hover script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
+		if (entry.m_Handle == Assets::k_EmptyHandle)
 		{
-			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_Config.SetOnHover(Assets::EmptyHandle, nullptr);
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_Config.SetOnHover(Assets::k_EmptyHandle, nullptr);
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -911,7 +911,7 @@ namespace Kargono::Panels
 	{
 		// Clear existing options
 		spec.ClearOptions();
-		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
@@ -2156,10 +2156,10 @@ namespace Kargono::Panels
 		RuntimeUI::CheckboxWidget& activeCheckboxWidget = *(RuntimeUI::CheckboxWidget*)m_ActiveWidget;
 
 		// Clear the image reference if an empty entry is provided
-		if (entry.m_Handle == Assets::EmptyHandle)
+		if (entry.m_Handle == Assets::k_EmptyHandle)
 		{
 			activeCheckboxWidget.m_ImageChecked.m_ImageRef = nullptr;
-			activeCheckboxWidget.m_ImageChecked.m_ImageHandle = Assets::EmptyHandle;
+			activeCheckboxWidget.m_ImageChecked.m_ImageHandle = Assets::k_EmptyHandle;
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -2184,7 +2184,7 @@ namespace Kargono::Panels
 	{
 		// Clear existing options
 		spec.ClearOptions();
-		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible textures to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetTexture2DRegistry())
@@ -2209,10 +2209,10 @@ namespace Kargono::Panels
 		RuntimeUI::CheckboxWidget& activeCheckboxWidget = *(RuntimeUI::CheckboxWidget*)m_ActiveWidget;
 
 		// Clear the on press script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
+		if (entry.m_Handle == Assets::k_EmptyHandle)
 		{
 			activeCheckboxWidget.m_ImageUnChecked.m_ImageRef = nullptr;
-			activeCheckboxWidget.m_ImageUnChecked.m_ImageHandle = Assets::EmptyHandle;
+			activeCheckboxWidget.m_ImageUnChecked.m_ImageHandle = Assets::k_EmptyHandle;
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -2237,7 +2237,7 @@ namespace Kargono::Panels
 	{
 		// Clear existing options
 		spec.ClearOptions();
-		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible textures to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetTexture2DRegistry())
@@ -2301,10 +2301,10 @@ namespace Kargono::Panels
 		RuntimeUI::InputTextWidget* activeInputTextWidget = (RuntimeUI::InputTextWidget*)m_ActiveWidget;
 
 		// Clear the widget's script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
+		if (entry.m_Handle == Assets::k_EmptyHandle)
 		{
 			activeInputTextWidget->m_OnMoveCursor = nullptr;
-			activeInputTextWidget->m_OnMoveCursorHandle = Assets::EmptyHandle;
+			activeInputTextWidget->m_OnMoveCursorHandle = Assets::k_EmptyHandle;
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -2323,7 +2323,7 @@ namespace Kargono::Panels
 	{
 		// Clear existing options
 		spec.ClearOptions();
-		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
@@ -2479,10 +2479,10 @@ namespace Kargono::Panels
 		RuntimeUI::SliderWidget* activeSliderWidget = (RuntimeUI::SliderWidget*)m_ActiveWidget;
 
 		// Clear the widget's script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
+		if (entry.m_Handle == Assets::k_EmptyHandle)
 		{
 			activeSliderWidget->m_OnMoveSlider = nullptr;
-			activeSliderWidget->m_OnMoveSliderHandle = Assets::EmptyHandle;
+			activeSliderWidget->m_OnMoveSliderHandle = Assets::k_EmptyHandle;
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -2501,7 +2501,7 @@ namespace Kargono::Panels
 	{
 		// Clear existing options
 		spec.ClearOptions();
-		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
@@ -2694,10 +2694,10 @@ namespace Kargono::Panels
 		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
 
 		// Clear the widget's script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
+		if (entry.m_Handle == Assets::k_EmptyHandle)
 		{
 			activeDropDownWidget->m_OnSelectOption = nullptr;
-			activeDropDownWidget->m_OnSelectOptionHandle = Assets::EmptyHandle;
+			activeDropDownWidget->m_OnSelectOptionHandle = Assets::k_EmptyHandle;
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -2716,7 +2716,7 @@ namespace Kargono::Panels
 	{
 		// Clear existing options
 		spec.ClearOptions();
-		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
@@ -3436,10 +3436,10 @@ namespace Kargono::Panels
 		}
 
 		// Clear the on press script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
+		if (entry.m_Handle == Assets::k_EmptyHandle)
 		{
 			selectionData->m_FunctionPointers.m_OnPress = nullptr;
-			selectionData->m_FunctionPointers.m_OnPressHandle = Assets::EmptyHandle;
+			selectionData->m_FunctionPointers.m_OnPressHandle = Assets::k_EmptyHandle;
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -3459,7 +3459,7 @@ namespace Kargono::Panels
 		WrappedFuncType currentFuncType{ *(WrappedFuncType*)spec.m_ProvidedData.get() };
 		// Clear existing options
 		spec.ClearOptions();
-		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
@@ -3594,10 +3594,10 @@ namespace Kargono::Panels
 		}
 
 		// Clear the on press script if the provided handle is empty
-		if (entry.m_Handle == Assets::EmptyHandle)
+		if (entry.m_Handle == Assets::k_EmptyHandle)
 		{
 			imageData->m_ImageRef = nullptr;
-			imageData->m_ImageHandle = Assets::EmptyHandle;
+			imageData->m_ImageHandle = Assets::k_EmptyHandle;
 
 			// Set the active editor UI as edited
 			s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -3621,7 +3621,7 @@ namespace Kargono::Panels
 	{
 		// Clear existing options
 		spec.ClearOptions();
-		spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible textures to the select options
 		for (auto& [handle, assetInfo] : Assets::AssetService::GetTexture2DRegistry())

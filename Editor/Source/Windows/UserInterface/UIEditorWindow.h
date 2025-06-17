@@ -56,7 +56,7 @@ namespace Kargono::Windows
 		// Core Panel Data
 		//=========================
 		Ref<RuntimeUI::UserInterface> m_EditorUI{ nullptr };
-		Assets::AssetHandle m_EditorUIHandle { Assets::EmptyHandle };
+		Assets::AssetHandle m_EditorUIHandle { Assets::k_EmptyHandle };
 
 		//=========================
 		// Panels

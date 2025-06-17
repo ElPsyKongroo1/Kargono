@@ -336,7 +336,7 @@ namespace Kargono::Assets
 					// Deserialize current state
 					component.CurrentStateHandle = aiStateNode["CurrentState"].as<uint64_t>();
 					component.CurrentStateReference = Assets::AssetService::GetAIState(component.CurrentStateHandle);
-					if (component.CurrentStateHandle != Assets::EmptyHandle && !component.CurrentStateReference)
+					if (component.CurrentStateHandle != Assets::k_EmptyHandle && !component.CurrentStateReference)
 					{
 						KG_WARN("Valid handle was found, however, could not retrieve a valid reference to current AI state");
 					}
@@ -344,7 +344,7 @@ namespace Kargono::Assets
 					// Deserialize previous state
 					component.PreviousStateHandle = aiStateNode["PreviousState"].as<uint64_t>();
 					component.PreviousStateReference = Assets::AssetService::GetAIState(component.PreviousStateHandle);
-					if (component.PreviousStateHandle != Assets::EmptyHandle && !component.PreviousStateReference)
+					if (component.PreviousStateHandle != Assets::k_EmptyHandle && !component.PreviousStateReference)
 					{
 						KG_WARN("Valid handle was found, however, could not retrieve a valid reference for previous AI state");
 					}
@@ -352,7 +352,7 @@ namespace Kargono::Assets
 					// Deserialize global state
 					component.GlobalStateHandle = aiStateNode["GlobalState"].as<uint64_t>();
 					component.GlobalStateReference = Assets::AssetService::GetAIState(component.GlobalStateHandle);
-					if (component.GlobalStateHandle != Assets::EmptyHandle && !component.GlobalStateReference)
+					if (component.GlobalStateHandle != Assets::k_EmptyHandle && !component.GlobalStateReference)
 					{
 						KG_WARN("Valid handle was found, however, could not retrieve a valid reference to global AI State");
 					}
@@ -546,7 +546,7 @@ namespace Kargono::Assets
 			ECS::OnUpdateComponent& component = currentEntity.GetComponent<ECS::OnUpdateComponent>();
 			if (component.OnUpdateScriptHandle == scriptHandle)
 			{
-				component.OnUpdateScriptHandle = Assets::EmptyHandle;
+				component.OnUpdateScriptHandle = Assets::k_EmptyHandle;
 				component.OnUpdateScript = nullptr;
 				sceneModified = true;
 			}
@@ -560,7 +560,7 @@ namespace Kargono::Assets
 			ECS::OnCreateComponent& component = currentEntity.GetComponent<ECS::OnCreateComponent>();
 			if (component.OnCreateScriptHandle == scriptHandle)
 			{
-				component.OnCreateScriptHandle = Assets::EmptyHandle;
+				component.OnCreateScriptHandle = Assets::k_EmptyHandle;
 				component.OnCreateScript = nullptr;
 				sceneModified = true;
 			}
@@ -575,14 +575,14 @@ namespace Kargono::Assets
 
 			if (component.OnCollisionStartScriptHandle == scriptHandle)
 			{
-				component.OnCollisionStartScriptHandle = Assets::EmptyHandle;
+				component.OnCollisionStartScriptHandle = Assets::k_EmptyHandle;
 				component.OnCollisionStartScript = nullptr;
 				sceneModified = true;
 			}
 
 			if (component.OnCollisionEndScriptHandle == scriptHandle)
 			{
-				component.OnCollisionEndScriptHandle = Assets::EmptyHandle;
+				component.OnCollisionEndScriptHandle = Assets::k_EmptyHandle;
 				component.OnCollisionEndScript = nullptr;
 				sceneModified = true;
 			}
@@ -602,19 +602,19 @@ namespace Kargono::Assets
 			
 			if (component.CurrentStateHandle == aiStateHandle)
 			{
-				component.CurrentStateHandle = Assets::EmptyHandle;
+				component.CurrentStateHandle = Assets::k_EmptyHandle;
 				component.CurrentStateReference = nullptr;
 				aiStateModified = true;
 			}
 			if (component.GlobalStateHandle == aiStateHandle)
 			{
-				component.GlobalStateHandle = Assets::EmptyHandle;
+				component.GlobalStateHandle = Assets::k_EmptyHandle;
 				component.GlobalStateReference = nullptr;
 				aiStateModified = true;
 			}
 			if (component.PreviousStateHandle == aiStateHandle)
 			{
-				component.PreviousStateHandle = Assets::EmptyHandle;
+				component.PreviousStateHandle = Assets::k_EmptyHandle;
 				component.PreviousStateReference = nullptr;
 				aiStateModified = true;
 			}
@@ -646,7 +646,7 @@ namespace Kargono::Assets
 
 			if (component.m_EmitterConfigHandle == emitterConfigHandle)
 			{
-				component.m_EmitterConfigHandle = Assets::EmptyHandle;
+				component.m_EmitterConfigHandle = Assets::k_EmptyHandle;
 				component.m_EmitterConfigRef = nullptr;
 				emitterConfigModified = true;
 			}

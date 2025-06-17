@@ -56,7 +56,7 @@ namespace Kargono::Panels
 		//=========================
 		FixedString32 m_PanelName{ "Project Component" };
 		Ref<ECS::ProjectComponent> m_EditorProjectComponent { nullptr };
-		Assets::AssetHandle m_EditorProjectComponentHandle { Assets::EmptyHandle };
+		Assets::AssetHandle m_EditorProjectComponentHandle { Assets::k_EmptyHandle };
 		size_t m_ActiveField{ 0 };
 
 	private:

@@ -49,7 +49,7 @@ namespace Kargono::RuntimeUI
 		SelectionData m_SelectionData{};
 		std::vector<SingleLineTextData> m_DropDownOptions{};
 		Math::vec4 m_DropDownBackground{ 1.0f };
-		Assets::AssetHandle m_OnSelectOptionHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_OnSelectOptionHandle{ Assets::k_EmptyHandle };
 		Ref<Scripting::Script> m_OnSelectOption{ nullptr };
 
 		// Runtime Values

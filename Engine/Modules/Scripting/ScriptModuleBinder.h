@@ -136,7 +136,7 @@ namespace Kargono::Scripting
 		ScriptType m_ScriptType{ ScriptType::None };
 		std::string m_SectionLabel {"None"};
 		WrappedFuncType m_FuncType{ WrappedFuncType::None };
-		UUID m_ID{};
+		UUID m_ID{ k_EmptyUUID };
 		Ref<WrappedFunction> m_Function {nullptr};
 		ExplicitFuncType m_ExplicitFuncType{};
 	};

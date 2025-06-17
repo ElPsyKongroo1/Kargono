@@ -24,7 +24,7 @@ namespace Kargono::Panels
 	struct SceneEditorTreeEntryData
 	{
 		ECS::ComponentType m_ComponentType{ ECS::ComponentType::None };
-		Assets::AssetHandle m_ProjectComponentHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_ProjectComponentHandle{ Assets::k_EmptyHandle };
 	};
 
 	enum class ScenePropertiesDisplay : uint16_t
@@ -130,7 +130,7 @@ namespace Kargono::Panels
 		//=========================
 		FixedString32 m_PanelName{"Scene Editor"};
 		ECS::ComponentType m_DisplayedComponent{ECS::ComponentType::None };
-		Assets::AssetHandle m_DisplayedProjectComponentHandle {Assets::EmptyHandle};
+		Assets::AssetHandle m_DisplayedProjectComponentHandle {Assets::k_EmptyHandle};
 		std::unordered_map<Assets::AssetHandle, ProjectComponentWidgetData> m_AllProjectComponents{};
 		ScenePropertiesDisplay m_CurrentDisplayed{ ScenePropertiesDisplay::None };
 

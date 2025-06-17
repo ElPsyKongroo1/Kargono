@@ -10,14 +10,14 @@ namespace Kargono::Panels
 	void GameStatePanel::InitializeOpeningScreen()
 	{
 		m_OpenGameStatePopupSpec.m_Label = "Open Game State";
-		m_OpenGameStatePopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenGameStatePopupSpec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_OpenGameStatePopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
 		m_OpenGameStatePopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
-			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetGameStateRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
@@ -26,7 +26,7 @@ namespace Kargono::Panels
 
 		m_OpenGameStatePopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::EmptyHandle)
+			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("No Game State Selected");
 				return;
@@ -178,13 +178,13 @@ namespace Kargono::Panels
 
 		m_AddFieldPopup.m_Label = "Add New Field";
 		m_AddFieldPopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_AddFieldPopup.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_AddFieldPopup.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_AddFieldPopup.m_LineCount = 2;
 		m_AddFieldPopup.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
-			spec.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
+			spec.AddToOptions("All Options", "UInteger16", Assets::k_EmptyHandle);
 		};
 		m_AddFieldPopup.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -210,12 +210,12 @@ namespace Kargono::Panels
 
 		m_EditFieldType.m_Label = "Field Type";
 		m_EditFieldType.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_EditFieldType.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_EditFieldType.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_EditFieldType.m_LineCount = 2;
 		m_EditFieldType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
-			spec.AddToOptions("All Options", "UInteger16", Assets::EmptyHandle);
+			spec.AddToOptions("All Options", "UInteger16", Assets::k_EmptyHandle);
 		};
 		m_EditFieldType.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
@@ -387,7 +387,7 @@ namespace Kargono::Panels
 	void GameStatePanel::ResetPanelResources()
 	{
 		m_EditorGameState = nullptr;
-		m_EditorGameStateHandle = Assets::EmptyHandle;
+		m_EditorGameStateHandle = Assets::k_EmptyHandle;
 	}
 	void GameStatePanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{

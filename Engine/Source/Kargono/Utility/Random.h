@@ -22,6 +22,11 @@ namespace Kargono::Utility
 			return std::uniform_int_distribution<int32_t>{lowerBound, upperBound}(m_RandomGenerator);
 		}
 
+		uint64_t GenerateRandomUInt64(uint64_t lowerBound, uint64_t upperBound)
+		{
+			return std::uniform_int_distribution<uint64_t>{lowerBound, upperBound}(m_RandomGenerator);
+		}
+
 		float GenerateRandomFloat(float lowerBound, float upperBound)
 		{
 			return std::uniform_real_distribution<float>{lowerBound, upperBound}(m_RandomGenerator);
