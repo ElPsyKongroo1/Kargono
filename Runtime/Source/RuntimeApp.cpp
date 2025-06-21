@@ -22,7 +22,7 @@ namespace Kargono
 		Scripting::ScriptBinderService::GetActiveContext().Init();
 		Audio::AudioService::CreateAudioContext();
 		Audio::AudioService::GetActiveContext().Init();
-		Scenes::SceneService::Init();
+		Scenes::SceneService::GetActiveContext().Init();
 
 		if (m_Headless)
 		{
@@ -31,7 +31,7 @@ namespace Kargono
 
 		Window& currentWindow = EngineService::GetActiveEngine().GetWindow();
 
-		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::k_EmptyHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(CreateRef<Scenes::Scene>(), Assets::k_EmptyHandle);
 
 
 		
@@ -66,7 +66,7 @@ namespace Kargono
 				Scripting::ScriptBinderService().GetActiveContext().Terminate();
 				Audio::AudioService::GetActiveContext().Terminate();
 				Audio::AudioService::RemoveAudioContext();
-				Scenes::SceneService::Terminate();
+				Scenes::SceneService::GetActiveContext().Terminate();
 				return false;
 			}
 		}
@@ -125,7 +125,7 @@ namespace Kargono
 		AI::AIService::RemoveAIContext();
 		Assets::AssetService::ClearAll();
 		RuntimeUI::FontService::GetActiveContext().Terminate();
-		Scenes::SceneService::Terminate();
+		Scenes::SceneService::GetActiveContext().Terminate();
 		Rendering::RenderingService::Shutdown();
 
 		return true;
@@ -149,7 +149,7 @@ namespace Kargono
 	void RuntimeApp::OnUpdate(Timestep ts)
 	{
 		// Render
-		Ref<Scenes::Scene> activeScene{ Scenes::SceneService::GetActiveScene() };
+		Ref<Scenes::Scene> activeScene{ Scenes::SceneService::GetActiveContext().GetActiveScene() };
 		Rendering::RenderingService::ResetStats();
 		Rendering::RendererAPI::SetClearColor(activeScene->m_BackgroundColor);
 		Rendering::RendererAPI::Clear();
@@ -158,7 +158,7 @@ namespace Kargono
  		OnUpdateRuntime(ts);
 
 		// Get primary scene camera for render UI and particles over
-		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
 			return;
@@ -315,13 +315,13 @@ namespace Kargono
 		ViewportData& viewportData = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		viewportData.m_Width = event.GetWidth();
 		viewportData.m_Height = event.GetHeight();
-		Scenes::SceneService::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
 		return false;
 	}
 
 	bool RuntimeApp::OnPhysicsCollisionStart(Events::PhysicsCollisionStart event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -357,7 +357,7 @@ namespace Kargono
 
 	bool RuntimeApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -474,11 +474,11 @@ namespace Kargono
 
 		// Update
 		Input::InputMapService::GetActiveContext().OnUpdate(ts);
-		Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnUpdateEntities(ts);
 		Physics::Physics2DService::GetActiveContext().OnUpdate(ts);
 
 		// Render 2D
-		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
 			return;
@@ -489,7 +489,7 @@ namespace Kargono
 		if (mainCamera)
 		{
 			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
-			Scenes::SceneService::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
 		}
 	}
 
@@ -695,9 +695,9 @@ namespace Kargono
 			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveContext().GetStartSceneHandle();
 			Scripting::ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
 
-			if (Scenes::SceneService::GetActiveScene())
+			if (Scenes::SceneService::GetActiveContext().GetActiveScene())
 			{
-				Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
+				Scenes::SceneService::GetActiveContext().GetActiveScene()->DestroyAllEntities();
 			}
 			Assets::AssetService::ClearAll();
 			Assets::AssetService::DeserializeAll();
@@ -711,7 +711,7 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> newScene = Assets::AssetService::GetScene(sceneHandle);
 		if (!newScene) { newScene = CreateRef<Scenes::Scene>(); }
-		Scenes::SceneService::SetActiveScene(newScene, sceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(newScene, sceneHandle);
 	}
 
 
@@ -722,8 +722,8 @@ namespace Kargono
 		// Handle initializing core services
 		Particles::ParticleService::GetActiveContext().ClearEmitters();
 		Physics::Physics2DService::CreatePhysics2DWorld();
-		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
-		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveContext().GetActiveScene().get(), Scenes::SceneService::GetActiveContext().GetActiveScene()->m_PhysicsSpecification);
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetOnRuntimeStartHandle();
 		if (scriptHandle != 0)
 		{
@@ -733,11 +733,11 @@ namespace Kargono
 		// Load Default Game State
 		if (activeProject.GetStartGameStateHandle() == 0)
 		{
-			Scenes::GameStateService::ClearActiveGameState();
+			Scenes::GameStateService::GetActiveContext().ClearActiveGameState();
 		}
 		else
 		{
-			Scenes::GameStateService::SetActiveGameState(Assets::AssetService::GetGameState(
+			Scenes::GameStateService::GetActiveContext().SetActiveGameState(Assets::AssetService::GetGameState(
 				activeProject.GetStartGameStateHandle()),
 				activeProject.GetStartGameStateHandle());
 		}
@@ -748,15 +748,15 @@ namespace Kargono
 		}
 
 		// Load particle emitters
-		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
+		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveContext().GetActiveScene());
 	}
 
 	void RuntimeApp::OnStop()
 	{
 		Physics::Physics2DService::GetActiveContext().Terminate();
 		Physics::Physics2DService::RemovePhysics2DWorld();
-		Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
-		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRuntimeStop();
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->DestroyAllEntities();
 		if (Projects::ProjectService::GetActiveContext().GetAppIsNetworked())
 		{
 			Network::ClientService::GetActiveContext().Terminate(false);

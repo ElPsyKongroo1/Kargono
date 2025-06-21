@@ -1415,6 +1415,10 @@ namespace Kargono::Scripting
 		// Game State
 		AddEngineFunctionPointerToDll(SetGameStateField, [](std::string_view identifier, void* data) 
 		{
+			if (!Scenes::GameStateService::GetActiveContext().GetActiveGameState())
+			{
+				return;
+			}
 			Scenes::GameStateService::GetActiveContext().GetActiveGameState()->SetField(identifier, data);
 		}, VoidStringVoidPtr)
 		AddEngineFunctionPointerToDll(GetGameStateField, [](std::string_view identifier) 

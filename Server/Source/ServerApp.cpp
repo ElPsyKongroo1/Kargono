@@ -17,7 +17,7 @@ namespace Kargono
 
 	bool ServerApp::Init()
 	{
-		Scenes::SceneService::Init();
+		Scenes::SceneService::GetActiveContext().Init();
 #if defined(KG_EXPORT_RUNTIME) || defined (KG_EXPORT_SERVER)
 		std::filesystem::path pathToProject = Utility::FileSystem::FindFileWithExtension(
 			std::filesystem::current_path(),
@@ -41,7 +41,7 @@ namespace Kargono
 		{
 			if (!OpenProject())
 			{
-				Scenes::SceneService::Terminate();
+				Scenes::SceneService::GetActiveContext().Terminate();
 				return false;
 			}
 		}
@@ -52,7 +52,7 @@ namespace Kargono
 #endif
 		if (!Network::ServerService::GetActiveContext().Init(Projects::ProjectService::GetActiveContext().GetServerConfig()))
 		{
-			Scenes::SceneService::Terminate();
+			Scenes::SceneService::GetActiveContext().Terminate();
 			return false;
 		}
 
