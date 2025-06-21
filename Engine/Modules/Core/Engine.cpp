@@ -87,8 +87,8 @@ namespace Kargono
 			if (m_RunTimer.CheckForSingleUpdate())
 			{
 				KG_PROFILE_FRAME_DESC("Main Thread");
-
-				AppTickService::OnUpdate(k_ConstantFrameTimeFloat);
+				
+				AppTickService::GetActiveContext().OnUpdate(k_ConstantFrameTimeFloat);
 				Utility::PassiveTimerService::GetActiveBusyTimerContext().OnUpdate(k_ConstantFrameTimeFloat);
 
 				m_WorkQueue.ProcessQueue();
@@ -248,7 +248,7 @@ namespace Kargono
 
 	bool EngineThread::OnUpdateEntityLocation(Events::UpdateEntityLocation& e)
 	{
-		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveScene();
+		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		if (!scene) { return false; }
 		ECS::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
@@ -266,7 +266,7 @@ namespace Kargono
 
 	bool EngineThread::OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e)
 	{
-		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveScene();
+		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		if (!scene) { return false; }
 		ECS::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
@@ -306,13 +306,13 @@ namespace Kargono
 
 	bool EngineThread::OnAddTickGeneratorUsage(Events::AddTickGeneratorUsage& e)
 	{
-		AppTickService::AddNewGenerator(e.GetDelayMilliseconds());
+		AppTickService::GetActiveContext().AddNewGenerator(e.GetDelayMilliseconds());
 		return false;
 	}
 
 	bool EngineThread::OnRemoveTickGeneratorUsage(Events::RemoveTickGeneratorUsage& e)
 	{
-		AppTickService::RemoveGenerator(e.GetDelayMilliseconds());
+		AppTickService::GetActiveContext().RemoveGenerator(e.GetDelayMilliseconds());
 		return false;
 	}
 
@@ -406,7 +406,7 @@ namespace Kargono
 	void Engine::RegisterAppTickOnEventCallback()
 	{
 		EngineThread* threadPtr{ &m_Thread };
-		AppTickService::SetAppTickEventCallback(KG_BIND_CLASS_FN_EXPLICIT(threadPtr, OnEvent));
+		AppTickService::GetActiveContext().SetAppTickEventCallback(KG_BIND_CLASS_FN_EXPLICIT(threadPtr, OnEvent));
 	}
 	void Engine::RegisterCollisionEventListener(Physics::ContactListener& contactListener)
 	{

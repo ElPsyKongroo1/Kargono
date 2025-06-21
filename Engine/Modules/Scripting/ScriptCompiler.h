@@ -82,7 +82,7 @@ namespace Kargono::Scripting
 		SuggestionGenerator m_SuggestGen{ m_ActiveLanguageDefinition };
 	};
 
-	class ScriptCompilerService // TODO: EWWWWW
+	class ScriptCompilerService // TODO: EWWWWW UGHHHHHHH
 	{
 	public:
 		//==============================

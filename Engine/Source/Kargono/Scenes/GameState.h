@@ -12,15 +12,15 @@ namespace Kargono::Scenes
 	class GameState
 	{
 	public:
-		template<typename T>
-		T& GetField(const std::string& fieldName)
+		template<typename t_FieldType>
+		t_FieldType& GetField(const std::string& fieldName)
 		{
 			if (!m_Fields.contains(fieldName))
 			{
 				KG_CRITICAL("Could not get field from game state {}", fieldName);
 				return nullptr;
 			}
-			return m_Fields.at(fieldName)->GetWrappedValue<T>();
+			return m_Fields.at(fieldName)->GetWrappedValue<t_FieldType>();
 		}
 
 		Ref<WrappedVariable> GetField(std::string_view fieldName)
@@ -89,13 +89,10 @@ namespace Kargono::Scenes
 		{
 			return m_Fields;
 		}
-
-
 		std::string GetName()
 		{
 			return m_Name;
 		}
-
 		void SetName(std::string_view name)
 		{
 			m_Name = name;
@@ -105,60 +102,39 @@ namespace Kargono::Scenes
 		std::unordered_map<std::string, Ref<WrappedVariable>> m_Fields {};
 	};
 
-	class GameStateService
+	class GameStateContext
 	{
 	public:
 		//=========================
-		// Active Game State API
+		// Modify Active Game State
 		//=========================
-		static void SetActiveGameStateField(std::string_view fieldName, void* value)
-		{
-			if (!s_ActiveGameState)
-			{
-				KG_WARN("Attempt to set a field on active game state that is inactive");
-				return;
-			}
-
-			s_ActiveGameState->SetField(fieldName, value);
-		}
-		static void* GetActiveGameStateField(std::string_view fieldName)
-		{
-			if (!s_ActiveGameState)
-			{
-				KG_WARN("Attempt to get a field on the active game state that is inactive");
-				return nullptr;
-			}
-
-			return s_ActiveGameState->GetField(fieldName)->GetValue();
-		}
+		void SetActiveGameState(Ref<GameState> newGameState, Assets::AssetHandle newHandle);
+		void ClearActiveGameState();
 	public:
 		//=========================
-		// Getter/Setter
+		// Get Active Game State
 		//=========================
-		static void ClearActiveGameState()
-		{
-			s_ActiveGameState = nullptr;
-			s_ActiveGameStateHandle = Assets::k_EmptyHandle;
-		}
-		static void SetActiveGameState(Ref<GameState> newGameState, Assets::AssetHandle newHandle)
-		{
-			s_ActiveGameState = newGameState;
-			s_ActiveGameStateHandle = newHandle;
-		}
-		static Ref<GameState> GetActiveGameState()
-		{
-			return s_ActiveGameState;
-		}
-		static Assets::AssetHandle GetActiveGameStateHandle()
-		{
-			return s_ActiveGameStateHandle;
-		}
-
+		Assets::AssetHandle GetActiveGameStateHandle();
+		Ref<GameState> GetActiveGameState();
 	private:
 		//=========================
 		// Internal Fields
 		//=========================
-		static inline Ref<GameState> s_ActiveGameState{ nullptr };
-		static inline Assets::AssetHandle s_ActiveGameStateHandle{ Assets::k_EmptyHandle };
+		Ref<GameState> m_ActiveGameState{ nullptr };
+		Assets::AssetHandle m_ActiveGameStateHandle{ Assets::k_EmptyHandle };
+	};
+
+	class GameStateService // TODO: EWWWWW UGHHHHHHH
+	{
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		static GameStateContext& GetActiveContext() { return s_GameStateContext; }
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		static inline GameStateContext s_GameStateContext{};
 	};
 }

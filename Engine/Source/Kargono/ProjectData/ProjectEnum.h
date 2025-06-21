@@ -8,16 +8,23 @@ namespace Kargono::ProjectData
 {
 	struct ProjectEnum
 	{
+	public:
+		//=========================
+		// Query State
+		//=========================
+		bool DoesContainIdentifier(const char* queryName);
+	public:
+		//=========================
+		// Modify State
+		//=========================
+		bool RemoveIdentifier(const char* queryName);
+		bool RemoveIdentifier(size_t indexToDelete);
+		bool RenameIdentifier(size_t indexToModify, const char* newName);
+	public:
+		//=========================
+		// Public Fields
+		//=========================
 		FixedString32 m_EnumName;
 		std::vector<FixedString32> m_EnumIdentifiers;
-	};
-
-	class ProjectEnumService
-	{
-	public:
-		static bool DoesProjectEnumContainIdentifier(ProjectEnum* enumToCheck, const char* queryName);
-		static bool RemoveIdentifier(ProjectEnum* enumToModify, const char* queryName);
-		static bool RemoveIdentifier(ProjectEnum* enumToModify, size_t indexToDelete);
-		static bool RenameIdentifier(ProjectEnum* enumToModify, size_t indexToModify, const char* newName);
 	};
 }

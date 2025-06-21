@@ -194,7 +194,7 @@ namespace Kargono::Panels
 		m_AddIdentifierSpec.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec) 
 		{
 			// Ensure an identical enumeration name does not exist
-			if (ProjectData::ProjectEnumService::DoesProjectEnumContainIdentifier(m_EditorProjectEnum.get(), spec.m_CurrentOption.c_str()))
+			if (m_EditorProjectEnum->DoesContainIdentifier(spec.m_CurrentOption.c_str()))
 			{
 				KG_WARN("Duplicate enum identifier found");
 				return;
@@ -216,7 +216,7 @@ namespace Kargono::Panels
 		m_EditIdentifierSpec.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			// Ensure an identical enumeration name does not exist
-			if (!ProjectData::ProjectEnumService::RenameIdentifier(m_EditorProjectEnum.get(), m_CurrentEnumeration ,spec.m_CurrentOption.c_str()))
+			if (!m_EditorProjectEnum->RenameIdentifier(m_CurrentEnumeration, spec.m_CurrentOption.c_str()))
 			{
 				KG_WARN("Failed to rename identifier in ProjectEnumPanel");
 				return;
@@ -233,7 +233,7 @@ namespace Kargono::Panels
 		m_DeleteIdentifierWarning.m_ConfirmAction = [&]()
 		{
 			// Ensure an identical enumeration name does not exist
-			if (!ProjectData::ProjectEnumService::RemoveIdentifier(m_EditorProjectEnum.get(), m_CurrentEnumeration))
+			if (!m_EditorProjectEnum->RemoveIdentifier(m_CurrentEnumeration))
 			{
 				KG_WARN("Failed to delete identifier in ProjectEnumPanel");
 				return;

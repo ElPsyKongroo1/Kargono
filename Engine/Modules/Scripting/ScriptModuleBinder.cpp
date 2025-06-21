@@ -1413,34 +1413,40 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AddDebugPoint, Scripting::AddDebugPoint, VoidVec3)
 		AddEngineFunctionPointerToDll(AddDebugLine, Scripting::AddDebugLine, VoidVec3Vec3)
 		// Game State
-		AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameStateService::SetActiveGameStateField, VoidStringVoidPtr)
-		AddEngineFunctionPointerToDll(GetGameStateField, Scenes::GameStateService::GetActiveGameStateField, VoidPtrString)
+		AddEngineFunctionPointerToDll(SetGameStateField, [](std::string_view identifier, void* data) 
+		{
+			Scenes::GameStateService::GetActiveContext().GetActiveGameState()->SetField(identifier, data);
+		}, VoidStringVoidPtr)
+		AddEngineFunctionPointerToDll(GetGameStateField, [](std::string_view identifier) 
+		{
+			return Scenes::GameStateService::GetActiveContext().GetActiveGameState()->GetField(identifier)->GetValue();
+		}, VoidPtrString)
 		// Input
 		AddEngineFunctionPointerToDll(Input_IsKeyPressed, Input::InputService::IsKeyPressed, BoolUInt16)
 		AddEngineFunctionPointerToDll(InputMap_LoadInputMapFromHandle, [](Assets::AssetHandle handle)
-			{
-				Input::InputMapService::GetActiveContext().SetActiveInputMapFromHandle(handle);
-			}, VoidUInt64)
+		{
+			Input::InputMapService::GetActiveContext().SetActiveInputMapFromHandle(handle);
+		}, VoidUInt64)
 		AddEngineFunctionPointerToDll(InputMap_IsPollingSlotPressed, [](uint16_t slot)
-			{
-				return Input::InputMapService::GetActiveContext().IsPollingSlotPressed(slot);
-			}, BoolUInt16)
+		{
+			return Input::InputMapService::GetActiveContext().IsPollingSlotPressed(slot);
+		}, BoolUInt16)
 		// Networking
 		AddEngineFunctionPointerToDll(SignalAll, [](uint16_t signal)
-			{
-				Ref<Events::SignalAll> event{ CreateRef<Events::SignalAll>(signal) };
-				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-			}, VoidUInt16)
+		{
+			Ref<Events::SignalAll> event{ CreateRef<Events::SignalAll>(signal) };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		}, VoidUInt16)
 		AddEngineFunctionPointerToDll(LeaveCurrentSession, []()
-			{
-				Ref<Events::LeaveCurrentSession> event{ CreateRef<Events::LeaveCurrentSession>() };
-				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-			}, VoidNone)
+		{
+			Ref<Events::LeaveCurrentSession> event{ CreateRef<Events::LeaveCurrentSession>() };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		}, VoidNone)
 		AddEngineFunctionPointerToDll(EnableReadyCheck, []()
-			{
-				Ref<Events::EnableReadyCheck> event{ CreateRef<Events::EnableReadyCheck>() };
-				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-			}, VoidNone)
+		{
+			Ref<Events::EnableReadyCheck> event{ CreateRef<Events::EnableReadyCheck>() };
+			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+		}, VoidNone)
 		AddEngineFunctionPointerToDll(RequestJoinSession, []()
 			{
 				Ref<Events::RequestJoinSession> event{ CreateRef<Events::RequestJoinSession>() };
@@ -1540,17 +1546,50 @@ namespace Kargono::Scripting
 			return RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetWidgetTextByHandle(widgetID);
 		}, StringUIWidget)
 		// Scenes
-		AddEngineFunctionPointerToDll(TransitionSceneFromHandle, Scenes::SceneService::TransitionSceneFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)
-		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::SceneService::FindEntityHandleByName, UInt64String)
-		AddEngineFunctionPointerToDll(Scenes_IsSceneActive, Scenes::SceneService::IsSceneActive, BoolUInt64)
-		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)
-		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_SetLinearVelocity, VoidUInt64Vec2)
-		AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_GetLinearVelocity, Vec2UInt64)
-		AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, Scenes::SceneService::GetProjectComponentField, VoidPtrUInt64UInt64UInt64)
-		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, Scenes::SceneService::SetProjectComponentField, VoidUInt64UInt64UInt64VoidPtr)
-		AddEngineFunctionPointerToDll(TagComponent_GetTag, Scenes::SceneService::TagComponentGetTag, StringUInt64)
+		AddEngineFunctionPointerToDll(TransitionSceneFromHandle, [](UUID sceneHandle) 
+		{
+			Scenes::SceneService::GetActiveContext().TransitionSceneFromHandle(sceneHandle);
+		}, VoidUInt64)
+		AddEngineFunctionPointerToDll(CheckHasComponent, [](UUID handle, std::string_view identifier)
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->CheckActiveHasComponent(handle, identifier);
+		}, BoolUInt64String)
+		AddEngineFunctionPointerToDll(FindEntityHandleByName, [](std::string_view identifier) 
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->FindEntityHandleByName(identifier);
+		}, UInt64String)
+		AddEngineFunctionPointerToDll(Scenes_IsSceneActive, [](UUID sceneHandle)
+		{
+			return Scenes::SceneService::GetActiveContext().IsSceneActive(sceneHandle);
+		}, BoolUInt64)
+		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, [](UUID entityHandle) 
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->TransformComponentGetTranslation(entityHandle);
+		}, Vec3UInt64)
+		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, [](UUID entityHandle, Math::vec3 translation) 
+		{
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->TransformComponentSetTranslation(entityHandle, translation);
+		}, VoidUInt64Vec3)
+		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, [](UUID entityHandle, Math::vec2 linearVel) 
+		{
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->Rigidbody2DComponent_SetLinearVelocity(entityHandle, linearVel);
+		}, VoidUInt64Vec2)
+		AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, [](UUID entityHandle)
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->Rigidbody2DComponent_GetLinearVelocity(entityHandle);
+		}, Vec2UInt64)
+		AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, [](UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation)
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->GetProjectComponentField(entityID, projectComponentID, fieldLocation);
+		}, VoidPtrUInt64UInt64UInt64)
+		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, [](UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value)
+		{
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->SetProjectComponentField(entityID, projectComponentID, fieldLocation, value);
+		}, VoidUInt64UInt64UInt64VoidPtr)
+		AddEngineFunctionPointerToDll(TagComponent_GetTag, [](UUID entityHandle) 
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->TagComponentGetTag(entityHandle);
+		}, StringUInt64)
 		
 	}
 }

@@ -11,121 +11,74 @@ namespace Kargono::ProjectData
 {
 	struct GlobalState
 	{
-		FixedString32 m_Name;
-		std::vector<WrappedVarType> m_DataTypes;
-		std::vector<size_t> m_DataLocations;
-		std::vector<FixedString32> m_DataNames;
-		Buffer m_DataBuffer;
-
-	public:
-		~GlobalState()
-		{
-			m_DataBuffer.Release();
-		}
-	};
-
-	class GlobalStateService
-	{
 	public:
 		//=========================
-		// Query Global State
+		// Constructors/Destructors
 		//=========================
-		static bool DoesGlobalStateContainName(GlobalState* globalState, const char* queryName);
-		static size_t CalculateBufferSize(GlobalState* globalState);
-		
-		template <typename FieldType>
-		static FieldType* GetGlobalStateField(GlobalState* globalState, const char* queryName)
+		GlobalState() = default;
+		~GlobalState();
+	public:
+		//=========================
+		// Query State
+		//=========================
+		template <typename t_FieldType>
+		t_FieldType* GetField(const char* queryName)
 		{
-			KG_ASSERT(globalState);
-			KG_ASSERT(queryName);
-
-			// Find the index for the field whose name matches the queryName
-			size_t iteration{ 0 };
-			for (const FixedString32& dataName : globalState->m_DataNames)
-			{
-				// Compare each c-string
-				if (strcmp(dataName.CString(), queryName) == 0)
-				{
-					break;
-				}
-				iteration++;
-			}
-
-			// Ensure the index is within the bounds of the fields vector
-			KG_ASSERT(iteration < globalState->m_DataLocations.size());
-
-			// Get the data pointer for the field
-			uint8_t* fieldPtr = globalState->m_DataBuffer.Data + globalState->m_DataLocations.at(iteration);
-			KG_ASSERT(fieldPtr);
-			
-			return (FieldType*)fieldPtr;
+			return (t_FieldType*)GetFieldRaw(queryName);
 		}
+		uint8_t* GetFieldRaw(const char* queryName);
 
-		template <typename FieldType>
-		static FieldType* GetGlobalStateField(GlobalState* globalState, size_t fieldIndex)
+		template <typename t_FieldType>
+		t_FieldType* GetField(size_t fieldIndex)
 		{
-			KG_ASSERT(globalState);
-			KG_ASSERT(fieldIndex < globalState->m_DataLocations.size());
-
-			// Get the data pointer for the field
-			uint8_t* fieldPtr = globalState->m_DataBuffer.Data + globalState->m_DataLocations.at(fieldIndex);
-			KG_ASSERT(fieldPtr);
-
-			return (FieldType*)fieldPtr;
+			return (t_FieldType*)GetFieldRaw(fieldIndex);
 		}
+		uint8_t* GetFieldRaw(size_t fieldIndex);
+		bool DoesContainName(const char* queryName);
+	public:
 		//=========================
-		// Modify Global State
+		// Modify State
 		//=========================
-		static bool AddFieldToGlobalState(GlobalState* globalState, const char* newName, WrappedVarType newType);
+		bool AddField(const char* newName, WrappedVarType newType);
 
-		template <typename FieldType>
-		static bool SetGlobalStateField(GlobalState* globalState, const char* queryName, WrappedVarType newType, FieldType* newValue)
+		template <typename t_FieldType>
+		bool SetField(const char* queryName, WrappedVarType newType, t_FieldType* newValue)
 		{
-			KG_ASSERT(globalState);
-			KG_ASSERT(queryName);
 			KG_ASSERT(newType != WrappedVarType::None && newType != WrappedVarType::Void);
 			KG_ASSERT(newValue);
 
-			// Find the index for the field whose name matches the queryName
-			size_t iteration{ 0 };
-			for (const FixedString32& dataName : globalState->m_DataNames)
-			{
-				// Compare each c-string
-				if (strcmp(dataName.CString(), queryName) == 0)
-				{
-					break;
-				}
-				iteration++;
-			}
-
-			// Ensure the index is within the bounds of the fields vector
-			KG_ASSERT(iteration < globalState->m_DataLocations.size());
-
-			// Get the data pointer for the field
-			uint8_t* fieldPtr = globalState->m_DataBuffer.Data + globalState->m_DataLocations.at(iteration);
+			uint8_t* fieldPtr = GetFieldRaw(queryName);
 			KG_ASSERT(fieldPtr);
 
+			// Get the data pointer for the field
 			Utility::TransferDataForWrappedVarBuffer(newType, newValue, fieldPtr);
 			return true;
 		}
 
-		template <typename FieldType>
-		static bool SetGlobalStateField(GlobalState* globalState, size_t fieldIndex, WrappedVarType newType, FieldType* newValue)
+		template <typename t_FieldType>
+		bool SetField(size_t fieldIndex, WrappedVarType newType, t_FieldType* newValue)
 		{
-			KG_ASSERT(globalState);
 			KG_ASSERT(newType != WrappedVarType::None && newType != WrappedVarType::Void);
 			KG_ASSERT(newValue);
 
-			// Ensure the index is within the bounds of the fields vector
-			KG_ASSERT(fieldIndex < globalState->m_DataLocations.size());
-
-			// Get the data pointer for the field
-			uint8_t* fieldPtr = globalState->m_DataBuffer.Data + globalState->m_DataLocations.at(fieldIndex);
+			uint8_t* fieldPtr = GetFieldRaw(fieldIndex);
 			KG_ASSERT(fieldPtr);
 
 			// Transfer the data
 			Utility::TransferDataForWrappedVarBuffer(newType, newValue, fieldPtr);
 			return true;
 		}
+	private:
+		// Helper(s)
+		size_t CalculateBufferSize();
+	public:
+		//=========================
+		// Public Fields
+		//=========================
+		FixedString32 m_Name;
+		std::vector<WrappedVarType> m_DataTypes;
+		std::vector<size_t> m_DataLocations;
+		std::vector<FixedString32> m_DataNames;
+		Buffer m_DataBuffer;
 	};
 }

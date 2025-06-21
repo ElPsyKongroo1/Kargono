@@ -247,7 +247,7 @@ namespace Kargono::Particles
 			Events::ManageEntity* manageEntity = (Events::ManageEntity*)event;
 			if (manageEntity->GetAction() == Events::ManageEntityAction::Delete)
 			{
-				if (Scenes::SceneService::GetActiveScene().get() != manageEntity->GetSceneReference())
+				if (Scenes::SceneService::GetActiveContext().GetActiveScene().get() != manageEntity->GetSceneReference())
 				{
 					KG_WARN("Attempt to remove particle emitters from a scene that is not active");
 					return false;

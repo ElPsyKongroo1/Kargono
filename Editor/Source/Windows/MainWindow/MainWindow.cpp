@@ -127,7 +127,7 @@ namespace Kargono::Windows
 
 		// Initialize the editor scene
 		m_EditorScene = CreateRef<Scenes::Scene>();
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		m_SceneState = SceneState::Edit;
 		
 	}
@@ -457,9 +457,9 @@ namespace Kargono::Windows
 		}
 
 		// Reset editor data
-		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
 		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		return true;
 	}
 
@@ -484,9 +484,9 @@ namespace Kargono::Windows
 		m_EditorSceneHandle = Assets::AssetService::CreateScene(fileName.c_str(), sceneDirectory);
 
 		// Open new scene in editor
-		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
 		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		LoadSceneParticleEmitters();
 
 	}
@@ -517,11 +517,11 @@ namespace Kargono::Windows
 		m_EditorSceneHandle = Assets::AssetService::CreateScene(fileName.c_str(), sceneDirectory);
 
 		// Duplicate existing scene
-		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
 		Assets::AssetService::SaveScene(m_EditorSceneHandle, m_EditorScene);
 
 		// Open new scene in engine
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 	}
 
 	void MainWindow::OpenSceneDialog()
@@ -551,7 +551,7 @@ namespace Kargono::Windows
 
 		m_EditorScene = newScene;
 		m_EditorSceneHandle = sceneHandle;
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			LoadSceneParticleEmitters();
@@ -571,7 +571,7 @@ namespace Kargono::Windows
 
 		m_EditorScene = newScene;
 		m_EditorSceneHandle = sceneHandle;
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 
 		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
@@ -597,7 +597,7 @@ namespace Kargono::Windows
 			return;
 		}
 
-		ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+		ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 		if (selectedEntity)
 		{
 			ECS::Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
@@ -629,25 +629,25 @@ namespace Kargono::Windows
 		// Load Default Game State
 		if (Projects::ProjectService::GetActiveContext().GetStartGameStateHandle() == 0)
 		{
-			Scenes::GameStateService::ClearActiveGameState();
+			Scenes::GameStateService::GetActiveContext().ClearActiveGameState();
 		}
 		else
 		{
-			Scenes::GameStateService::SetActiveGameState(
+			Scenes::GameStateService::GetActiveContext().SetActiveGameState(
 				Assets::AssetService::GetGameState(Projects::ProjectService::GetActiveContext().GetStartGameStateHandle()),
 				Projects::ProjectService::GetActiveContext().GetStartGameStateHandle());
 		}
 
-		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
 		if (m_SceneState == SceneState::Simulate) { OnStop(); }
 
 		Particles::ParticleService::GetActiveContext().ClearEmitters();
 
 		m_SceneState = SceneState::Play;
-		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(Scenes::SceneService::GetActiveContext().CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
 		Physics::Physics2DService::CreatePhysics2DWorld();
-		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
-		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveContext().GetActiveScene().get(), Scenes::SceneService::GetActiveContext().GetActiveScene()->m_PhysicsSpecification);
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRuntimeStart();
 
 		// Start up client networking
 		if (Projects::ProjectService::GetActiveContext().GetAppIsNetworked())
@@ -663,7 +663,7 @@ namespace Kargono::Windows
 		}
 
 		// Load particle emitters
-		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
+		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveContext().GetActiveScene());
 
 		EngineService::GetActiveEngine().GetThread().UpdateAppStartTime();
 		EditorUI::EditorUIContext::SetFocusedWindow(m_ViewportPanel->m_PanelName);
@@ -671,27 +671,27 @@ namespace Kargono::Windows
 
 	void MainWindow::OnSimulate()
 	{
-		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
 		if (m_SceneState == SceneState::Play) { OnStop(); }
 
 		m_SceneState = SceneState::Simulate;
-		Scenes::SceneService::SetActiveScene(Scenes::SceneService::CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(Scenes::SceneService::GetActiveContext().CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
 		Physics::Physics2DService::CreatePhysics2DWorld();
-		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveContext().GetActiveScene().get(), Scenes::SceneService::GetActiveContext().GetActiveScene()->m_PhysicsSpecification);
 	}
 	void MainWindow::OnStop()
 	{
 		// Resize the window to the project's viewport settings
 		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution()));
 
-		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
 		KG_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
 
 		if (m_SceneState == SceneState::Play)
 		{
 			Physics::Physics2DService::GetActiveContext().Terminate();
 			Physics::Physics2DService::RemovePhysics2DWorld();
-			Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRuntimeStop();
 		}
 		else if (m_SceneState == SceneState::Simulate)
 		{
@@ -699,8 +699,8 @@ namespace Kargono::Windows
 			Physics::Physics2DService::RemovePhysics2DWorld();
 		}
 
-		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
-		Scenes::SceneService::SetActiveScene(m_EditorScene, m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->DestroyAllEntities();
+		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		Audio::AudioService::GetActiveContext().StopAllAudio();
 
 		// TODO: DEAL WITH THIS
@@ -724,7 +724,7 @@ namespace Kargono::Windows
 			Input::InputMapService::GetActiveContext().SetActiveInputMap(nullptr, Assets::k_EmptyHandle);
 		}
 
-		Scenes::GameStateService::ClearActiveGameState();
+		Scenes::GameStateService::GetActiveContext().ClearActiveGameState();
 
 		if (Projects::ProjectService::GetActiveContext().GetAppIsNetworked() && m_SceneState == SceneState::Play)
 		{
@@ -742,8 +742,7 @@ namespace Kargono::Windows
 				s_EditorApp->m_UIEditorWindow->m_EditorUIHandle);
 		}
 		
-
-		AppTickService::ClearGenerators();
+		AppTickService::GetActiveContext().ClearGenerators();
 
 		m_SceneState = SceneState::Edit;
 	}
@@ -987,7 +986,7 @@ namespace Kargono::Windows
 		{
 			if (EditorUI::EditorUIContext::IsActiveWidgetNull())
 			{
-				ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
+				ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				if (selectedEntity)
 				{
 					m_EditorScene->DestroyEntity(selectedEntity);

@@ -8,44 +8,59 @@
 
 namespace Kargono
 {
-	//==============================
-	// App Tick Generator Struct
-	//==============================
 	struct AppTickGenerator
 	{
-		double Accumulator{ 0.0 };
-		uint64_t DelayMilliSeconds{ 0 };
-		double DelaySeconds{ 0.0 };
-		uint16_t UsageCount { 0 };
+		double m_Accumulator{ 0.0 };
+		uint64_t m_DelayMilliSeconds{ 0 };
+		double m_DelaySeconds{ 0.0 };
+		uint16_t m_UsageCount { 0 };
 	};
-	//==============================
-	// App Tick API Class
-	//==============================
-	class AppTickService
+
+	class AppTickContext
 	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		AppTickContext() = default;
+		~AppTickContext() = default;
 	public:
 		//==============================
 		// Manage Events
 		//==============================
-		static void SetAppTickEventCallback(const Events::EventCallbackFn& callback);
-
+		void SetAppTickEventCallback(const Events::EventCallbackFn& callback);
+	public:
 		//==============================
 		// OnEvent Functions
 		//==============================
-		static void OnUpdate(Timestep ts);
-
+		void OnUpdate(Timestep ts);
+	public:
 		//==============================
 		// Manage Generators
 		//==============================
-		static void ClearGenerators();
-		static void ResetAllAccumulators();
-		static void AddNewGenerator(uint64_t delayMilliseconds);
-		static void RemoveGenerator(uint64_t delayMilliseconds);
+		void ClearGenerators();
+		void ResetAllAccumulators();
+		void AddNewGenerator(uint64_t delayMilliseconds);
+		void RemoveGenerator(uint64_t delayMilliseconds);
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		static std::vector<AppTickGenerator> s_AppTickGenerators;
-		static Events::EventCallbackFn s_AppTickCallback;
+		std::vector<AppTickGenerator> s_AppTickGenerators;
+		Events::EventCallbackFn s_AppTickCallback;
+	};
+
+	class AppTickService // TODO: EWWWWW UGHHHHHHH
+	{
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		static AppTickContext& GetActiveContext() { return s_AppTickContext; }
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		static inline AppTickContext s_AppTickContext{};
 	};
 }

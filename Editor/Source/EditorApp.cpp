@@ -40,7 +40,7 @@ namespace Kargono
 		Scripting::ScriptBinderService::GetActiveContext().Init();
 		Audio::AudioService::CreateAudioContext();
 		Audio::AudioService::GetActiveContext().Init();
-		Scenes::SceneService::Init();
+		Scenes::SceneService::GetActiveContext().Init();
 
 		// Create editor app windows
 		m_MainWindow = CreateScope<Windows::MainWindow>();
@@ -105,7 +105,7 @@ namespace Kargono
 		Scripting::ScriptCompilerService::GetActiveContext().Terminate();
 		Assets::AssetService::ClearAll();
 		RuntimeUI::FontService::GetActiveContext().Terminate();
-		Scenes::SceneService::Terminate();
+		Scenes::SceneService::GetActiveContext().Terminate();
 		Rendering::RenderingService::Shutdown();
 
 		m_MainWindow.reset();
@@ -256,7 +256,7 @@ namespace Kargono
 
 	bool EditorApp::OnPhysicsCollisionStart(Events::PhysicsCollisionStart event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -292,7 +292,7 @@ namespace Kargono
 
 	bool EditorApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -371,7 +371,7 @@ namespace Kargono
 
 	bool EditorApp::OpenProject()
 	{
-		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
 		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
 		if (!Utility::FileSystem::PathExists(initialDirectory))
 		{
@@ -392,7 +392,7 @@ namespace Kargono
 		m_MainWindow->m_GameStatePanel->ResetPanelResources();
 		m_MainWindow->m_ScriptEditorPanel->ResetPanelResources();
 		m_MainWindow->m_ProjectPanel->ResetPanelResources();
-		Scenes::GameStateService::ClearActiveGameState();
+		Scenes::GameStateService::GetActiveContext().ClearActiveGameState();
 		Input::InputMapService::GetActiveContext().ClearActiveInputMap();
 
 		return true;

@@ -32,9 +32,9 @@ namespace Kargono::Panels
 		ImGui::Text("Scene");
 		ImGui::Separator();
 		std::string name = "None";
-		if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
+		if (*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity())
 		{
-			name = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TagComponent>().Tag;
+			name = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TagComponent>().Tag;
 		}
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 		ImGui::NewLine();
@@ -49,7 +49,7 @@ namespace Kargono::Panels
 		ImGui::Separator();
 		ImGui::Text("Editor Runtime: %s", Utility::TimeConversions::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime())).c_str());
 		ImGui::Text("Total Frame Count: %d", static_cast<int32_t>(EngineService::GetActiveEngine().GetThread().GetUpdateCount()));
-		if (Scenes::SceneService::GetActiveScene()->IsRunning())
+		if (Scenes::SceneService::GetActiveContext().GetActiveScene()->IsRunning())
 		{
 			ImGui::Text("Application Runtime: %s", Utility::TimeConversions::GetStringFromSeconds(static_cast<uint64_t>(Utility::Time::GetTime() - EngineService::GetActiveEngine().GetThread().GetAppStartTime())).c_str());
 		}
