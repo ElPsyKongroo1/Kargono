@@ -37,7 +37,7 @@ namespace Kargono::Assets
 		const std::string currentCheckSum {};
 
 		// Create New Asset/Handle
-		AssetHandle newHandle{};
+		AssetHandle newHandle{ RandomUUIDService::GetRandomUUID() };
 		Assets::AssetInfo newAsset{};
 		newAsset.Data.Type = AssetType::Script;
 		newAsset.Data.FileLocation = spec.Name + m_FileExtension.CString();

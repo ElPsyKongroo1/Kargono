@@ -32,7 +32,7 @@ namespace Kargono::Assets
 		}
 
 		// Create New Asset/Handle
-		AssetHandle newHandle{};
+		AssetHandle newHandle{ RandomUUIDService::GetRandomUUID() };
 		Assets::AssetInfo newAsset{};
 		newAsset.m_Handle = newHandle;
 		newAsset.Data.Type = m_AssetType;
