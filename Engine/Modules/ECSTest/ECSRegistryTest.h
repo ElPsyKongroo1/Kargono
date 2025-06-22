@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ECSComponentRegistryTest.h"
-#include "ECSEntityRegistryTest.h"
+#include "Modules/ECSTest/ECSComponentRegistryTest.h"
+#include "Modules/ECSTest/ECSEntityRegistryTest.h"
 
 #include "Kargono/Memory/IAllocator.h"
 

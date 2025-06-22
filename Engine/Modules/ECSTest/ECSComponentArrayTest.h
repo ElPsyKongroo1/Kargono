@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ECSCommonTest.h"
+#include "Modules/ECSTest/ECSCommonTest.h"
 #include "Kargono/Memory/IAllocator.h"
 
 #include <array>
