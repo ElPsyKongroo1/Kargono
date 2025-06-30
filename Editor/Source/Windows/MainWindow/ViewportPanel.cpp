@@ -475,6 +475,11 @@ namespace Kargono::Panels
 			m_HoveredWindowWidgetID = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
 		}
 
+		if (!RuntimeUI::RuntimeUIService::GetActiveUI())
+		{
+			return;
+		}
+
 		RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWindowWidgetID);
 
 		// Exit early if no valid widget/window is available
