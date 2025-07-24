@@ -30,7 +30,7 @@ namespace Kargono::ECS
 				return false;
 			}
 
-			if (!m_ComponentRegistry.Init(i_Allocator))
+			if (!m_ComponentRegistry.Init(i_Allocator, &m_EntityRegistry))
 			{
 				return false;
 			}
@@ -60,7 +60,7 @@ namespace Kargono::ECS
 				return false;
 			}
 
-			m_ComponentRegistry.EntityDestroyed(entityID);
+			m_ComponentRegistry.DestroyEntity(entityID);
 		}
 
 		//==============================

@@ -88,14 +88,9 @@ namespace Kargono::ECS
 		//==============================
 		// Query Entity(s)
 		//==============================
-		Expected<Signature> GetSignature(EntityID entityID)
+		Signature GetSignature(EntityID entityID)
 		{
-			// Check out of bounds index
-			if (entityID >= k_MaxEntities)
-			{
-				return {};
-			}
-
+			KG_ASSERT(entityID < k_MaxEntities);
 			return m_Signatures[entityID];
 		}
 

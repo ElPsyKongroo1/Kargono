@@ -5,6 +5,8 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Memory/IAllocator.h"
 
+#include "Modules/ECSTest/ECSEntityRegistryTest.h"
+
 #include <unordered_map>
 
 namespace Kargono::ECS
@@ -22,10 +24,12 @@ namespace Kargono::ECS
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(Memory::IAllocator* parentAlloc)
+		[[nodiscard]] bool Init(Memory::IAllocator* parentAlloc, EntityRegistry* registry)
 		{
 			KG_ASSERT(parentAlloc);
+			KG_ASSERT(registry);
 			i_RegistryAlloc = parentAlloc;
+			i_EntityRegistry = registry;
 
 			return true;
 		}
@@ -47,12 +51,13 @@ namespace Kargono::ECS
 			// Add the component type and its array
 			m_ComponentTypes.insert({typeName, m_NextComponentType});
 
-			t_Component* newArray = i_RegistryAlloc->Alloc<ComponentArray<t_Component>>();
+			PackedArray<t_Component>* newArray = i_RegistryAlloc->Alloc<PackedArray<t_Component>>();
 			if (!newArray)
 			{
 				return false;
 			}
 
+			newArray->Init(i_EntityRegistry);
 			m_ComponentArrays.insert({typeName, newArray});
 
 			// Increment the value so that the next component registered will be different
@@ -63,7 +68,7 @@ namespace Kargono::ECS
 		template<typename t_Component>
 		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component component)
 		{
-			return GetComponentArray<t_Component>()->InsertComponent(entityID, component);
+			return GetComponentArray<t_Component>()->InsertComponent(entityID, &component);
 		}
 
 		template<typename t_Component>
@@ -73,7 +78,7 @@ namespace Kargono::ECS
 		}
 
 		template<typename t_Component>
-		ExpectedRef<t_Component> GetComponent(EntityID entityID)
+		void* GetComponent(EntityID entityID)
 		{
 			return GetComponentArray<t_Component>()->GetComponent(entityID);
 		}
@@ -96,7 +101,7 @@ namespace Kargono::ECS
 		}
 
 		template<typename t_Component>
-		ComponentArray<t_Component>* GetComponentArray()
+		IComponentArray* GetComponentArray()
 		{
 			const char* typeName = typeid(t_Component).name();
 
@@ -111,13 +116,21 @@ namespace Kargono::ECS
 		//==============================
 		// Pseudo Events
 		//==============================
-		void EntityDestroyed(EntityID entityID)
+		void DestroyEntity(EntityID entityID)
 		{
-			// Notify each component array that an entity has been destroyed
-			// If it has a component for that entity, it will remove it
+			Signature signature = i_EntityRegistry->GetSignature(entityID);
+
+			// Handle all component arrays
 			for (const auto& [componentName, array] : m_ComponentArrays)
 			{
-				array->EntityDestroyed(entityID);
+				KG_ASSERT(m_ComponentTypes.contains(componentName));
+
+				ComponentType currentType = m_ComponentTypes[componentName];
+
+				if (signature.test(currentType))
+				{
+					array->RemoveComponent(entityID);
+				}
 			}
 		}
 	private:
@@ -134,6 +147,7 @@ namespace Kargono::ECS
 		// Injected Fields
 		//==============================
 		Memory::IAllocator* i_RegistryAlloc{ nullptr };
+		EntityRegistry* i_EntityRegistry{ nullptr };
 	private:
 		//==============================
 		// Owning Class(s)
