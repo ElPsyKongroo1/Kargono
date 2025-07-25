@@ -9,7 +9,11 @@
 #include "Modules/FileSystem/FileSystem.h"
 #include "Kargono/Memory/StackAlloc.h"
 #include "Kargono/Memory/SystemAlloc.h"
+#include "Kargono/Memory/HeapAlloc.h"
 #include "Kargono/Core/DataStructures.h"
+
+#include "Modules/ECSTest/DataStructures/SparseSetTest.h"
+#include "Modules/ECSTest/RegistryTest.h"
 
 #include <sstream>
 #include <cstdio>
@@ -18,6 +22,10 @@
 namespace Kargono::Panels
 {
 	static SparseArray<uint64_t> s_SparseArray{64};
+	//static ECS::SparseSet s_SparseSet{ 10, 10 };
+
+	//static ECS::Registry s_DataRegistry{};
+	static Memory::HeapAllocator s_TestHeapAlloc{};
 
 	static EditorApp* s_EditorApp{ nullptr };
 	static Windows::MainWindow* s_MainWindow{ nullptr };
@@ -308,6 +316,9 @@ namespace Kargono::Panels
 		entry2->m_Handle = 2;
 		entry2->m_Label = "Entry Two";
 
+		//s_DataRegistry.Init(&s_TestHeapAlloc);
+
+
 		// TODO Testing Splines
 #if 0
 		// TODO: Please Remove
@@ -510,6 +521,44 @@ namespace Kargono::Panels
 			}
 			
 		}
+
+		static int testIndex{ 1 };
+
+		ImGui::DragInt("Sparse Set Index", &testIndex, 1, 0, 100);
+
+		/*
+		if (ImGui::Button("Add Sparse Set Index"))
+		{
+			if (s_SparseSet.InsertElement(testIndex) == ECS::k_InvalidDenseIndex)
+			{
+				KG_TRACE_INFO("Add operation failed!");
+			}
+			else
+			{
+				KG_TRACE_INFO("Add operation success!!");
+			}
+		}
+
+		if (ImGui::Button("Delete Sparse Set Index"))
+		{
+			if (s_SparseSet.DeleteElement(testIndex) == ECS::k_InvalidDenseIndex)
+			{
+				KG_TRACE_INFO("Delete operation failed!");
+			}
+			else
+			{
+				KG_TRACE_INFO("Delete operation success!!");
+			}
+		}
+
+		if (ImGui::Button("Print Sparse Set"))
+		{
+			KG_TRACE_INFO(s_SparseSet.Print());
+		}
+		*/
+
+
+
 
 		// TODO: Testing Splines
 #if 0 

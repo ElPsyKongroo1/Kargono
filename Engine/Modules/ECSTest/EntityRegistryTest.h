@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Modules/ECSTest/ECSCommonTest.h"
+#include "Modules/ECSTest/CommonTest.h"
 #include "Kargono/Core/Base.h"
 
 #include <array>
@@ -8,14 +8,14 @@
 
 namespace Kargono::ECS
 {
-	class EntityRegistry
+	class EntityRegistryTest
 	{	
 	private:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		EntityRegistry() = default;
-		~EntityRegistry() = default;
+		EntityRegistryTest() = default;
+		~EntityRegistryTest() = default;
 	public:
 		//==============================
 		// Lifecycle Functions

@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Modules/ECSTest/ECSComponentArrayTest.h"
+#include "Modules/ECSTest/ComponentArrays/IComponentStoreTest.h"
+#include "Modules/ECSTest/ComponentArrays/PackedArray.h"
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Memory/IAllocator.h"
 
-#include "Modules/ECSTest/ECSEntityRegistryTest.h"
+#include "Modules/ECSTest/EntityRegistryTest.h"
 
 #include <unordered_map>
 
@@ -24,7 +25,7 @@ namespace Kargono::ECS
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(Memory::IAllocator* parentAlloc, EntityRegistry* registry)
+		[[nodiscard]] bool Init(Memory::IAllocator* parentAlloc, EntityRegistryTest* registry)
 		{
 			KG_ASSERT(parentAlloc);
 			KG_ASSERT(registry);
@@ -51,7 +52,7 @@ namespace Kargono::ECS
 			// Add the component type and its array
 			m_ComponentTypes.insert({typeName, m_NextComponentType});
 
-			PackedArray<t_Component>* newArray = i_RegistryAlloc->Alloc<PackedArray<t_Component>>();
+			PackedArray<t_Component>* newArray{ i_RegistryAlloc->Alloc<PackedArray<t_Component>>() };
 			if (!newArray)
 			{
 				return false;
@@ -87,7 +88,7 @@ namespace Kargono::ECS
 		// Query Components
 		//==============================
 		template<typename t_Component>
-		Expected<ComponentType> GetComponentType()
+		Expected<ComponentMask> GetComponentType()
 		{
 			const char* typeName = typeid(t_Component).name();
 
@@ -101,7 +102,7 @@ namespace Kargono::ECS
 		}
 
 		template<typename t_Component>
-		IComponentArray* GetComponentArray()
+		IComponentStore* GetComponentArray()
 		{
 			const char* typeName = typeid(t_Component).name();
 
@@ -125,9 +126,9 @@ namespace Kargono::ECS
 			{
 				KG_ASSERT(m_ComponentTypes.contains(componentName));
 
-				ComponentType currentType = m_ComponentTypes[componentName];
+				ComponentMask currentType = m_ComponentTypes[componentName];
 
-				if (signature.test(currentType))
+				if (signature.test((size_t)currentType))
 				{
 					array->RemoveComponent(entityID);
 				}
@@ -138,16 +139,16 @@ namespace Kargono::ECS
 		// Internal Fields
 		//==============================
 		// Component data/info
-		std::unordered_map<const char*, ComponentType> m_ComponentTypes{};
-		std::unordered_map<const char*, IComponentArray*> m_ComponentArrays{};
+		std::unordered_map<const char*, ComponentMask> m_ComponentTypes{};
+		std::unordered_map<const char*, IComponentStore*> m_ComponentArrays{};
 		// Iterator for adding new components
-		ComponentType m_NextComponentType{0};
+		ComponentMask m_NextComponentType{0};
 
 		//==============================
 		// Injected Fields
 		//==============================
 		Memory::IAllocator* i_RegistryAlloc{ nullptr };
-		EntityRegistry* i_EntityRegistry{ nullptr };
+		EntityRegistryTest* i_EntityRegistry{ nullptr };
 	private:
 		//==============================
 		// Owning Class(s)

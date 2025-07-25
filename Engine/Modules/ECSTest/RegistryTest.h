@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Modules/ECSTest/ECSComponentRegistryTest.h"
-#include "Modules/ECSTest/ECSEntityRegistryTest.h"
+#include "Modules/ECSTest/ComponentRegistryTest.h"
+#include "Modules/ECSTest/EntityRegistryTest.h"
 
 #include "Kargono/Memory/IAllocator.h"
 
@@ -82,7 +82,7 @@ namespace Kargono::ECS
 			}
 
 			// Update the signature of the entity
-			Expected<Signature> entitySignature = m_EntityRegistry.GetSignature(entity);
+			Expected<Signature> entitySignature = m_EntityRegistry.GetSignature(entityID);
 			if (!entitySignature)
 			{
 				return false;
@@ -115,7 +115,7 @@ namespace Kargono::ECS
 		}
 
 		template<typename t_Component>
-		Expected<ComponentType> GetComponentType()
+		Expected<ComponentMask> GetComponentType()
 		{
 			return m_ComponentRegistry.GetComponentType<t_Component>();
 		}
@@ -124,7 +124,7 @@ namespace Kargono::ECS
 		//==============================
 		// Internal Fields
 		//==============================
-		EntityRegistry m_EntityRegistry;
+		EntityRegistryTest m_EntityRegistry;
 		ComponentRegistry m_ComponentRegistry;
 
 		//==============================
