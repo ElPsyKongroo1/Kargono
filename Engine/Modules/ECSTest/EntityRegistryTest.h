@@ -3,6 +3,8 @@
 #include "Modules/ECSTest/CommonTest.h"
 #include "Kargono/Core/Base.h"
 
+#include "Modules/ECSTest/DataStructures/SparseSetTest.h"
+
 #include <array>
 #include <queue>
 
@@ -22,11 +24,16 @@ namespace Kargono::ECS
 		//==============================
 		[[nodiscard]] bool Init()
 		{
-			// Fill available entities buffer
-			for (EntityID entityID{ 0 }; entityID < k_MaxEntities; entityID++)
+			// Fill the signatures w/ a free list
+			for (EntityID i = 0; i < m_Signatures.size(); i++)
 			{
-				m_AvailableEntites.push(entityID);
+				// Assign each slot w/ a reference to the next slot
+				m_Signatures[i] = i + 1;
 			}
+
+			// Set up free list head and tail
+			m_FreeListHead = 0;
+			m_Signatures[m_Signatures.size() - 1] = k_InvalidEntityID;
 
 			m_Active = true;
 			return m_Active;
@@ -37,50 +44,65 @@ namespace Kargono::ECS
 		//==============================
 		[[nodiscard]] Expected<EntityID> CreateEntity()
 		{
-			// Check for too many entities
-			if (m_ActiveEntityCount >= k_MaxEntities)
+			EntityID newEntityID{ m_FreeListHead };
+
+			// Ensure entity is available in freelist
+			if (newEntityID == k_InvalidEntityID)
 			{
 				return {};
 			}
 
-			// Pop the closest ID
-			EntityID id = m_AvailableEntites.front();
-			m_AvailableEntites.pop();
-			m_ActiveEntityCount++;
+			// Insert the entity
+			EntityID denseIndex{ m_EntitySet.InsertElement(newEntityID) };
+			if (!m_EntitySet.IsValidDenseIndex(denseIndex))
+			{
+				return {};
+			}
 
-			return id;
+			KG_ASSERT(denseIndex < m_Signatures.size());
+
+			// Update the free list and appropriate signature
+			Signature& entitySignature{ m_Signatures[(EntityID)newEntityID] };
+			m_FreeListHead = (EntityID)entitySignature;
+			entitySignature.ClearAllFlags();
+
+			return newEntityID;
 		}
 
 		[[nodiscard]] bool DestroyEntity(EntityID entityID)
 		{
-			KG_ASSERT(m_ActiveEntityCount > 0);
+			// Destroy the entity in the sparse set
+			EntityID removedDenseIndex{ m_EntitySet.DeleteElement(entityID) };
 
-			// Check out of bounds index
-			if (entityID >= k_MaxEntities)
+			// Check if removal failed
+			if (!m_EntitySet.IsValidDenseIndex(removedDenseIndex))
 			{
 				return false;
 			}
 
-			// Clear entity signature
-			m_Signatures[entityID].reset();
+			KG_ASSERT(removedDenseIndex < m_Signatures.size());
 
-			// Move the destroyed ID to the back of the queue
-			m_AvailableEntites.push(entityID);
-			m_ActiveEntityCount--;
+			// Update the freelist
+			Signature& removedSignature{ m_Signatures[entityID] };
+			removedSignature = (Signature)m_FreeListHead;
+			m_FreeListHead = entityID;
 
 			return true;
 		}
 
 		[[nodiscard]] bool SetEntitySignature(EntityID entityID, Signature newSignature)
 		{
-			// Check out of bounds index
-			if (entityID >= k_MaxEntities)
+			EntityID denseIndex{ m_EntitySet.GetDenseIndex(entityID) };
+
+			// Ensure the entity is found in the sparse set
+			if (!m_EntitySet.IsValidDenseIndex(denseIndex))
 			{
 				return false;
 			}
+			KG_ASSERT(denseIndex < m_Signatures.size());
 
-			// Update signature
-			m_Signatures[entityID] = newSignature;
+			// Return the appropriate signature
+			m_Signatures[denseIndex] = newSignature;
 
 			return true;
 		}
@@ -88,10 +110,29 @@ namespace Kargono::ECS
 		//==============================
 		// Query Entity(s)
 		//==============================
-		Signature GetSignature(EntityID entityID)
+		Expected<Signature> GetSignature(EntityID entityID)
 		{
-			KG_ASSERT(entityID < k_MaxEntities);
-			return m_Signatures[entityID];
+			EntityID denseIndex{ m_EntitySet.GetDenseIndex(entityID) };
+
+			// Ensure the entity is found in the sparse set
+			if (!m_EntitySet.IsValidDenseIndex(denseIndex))
+			{
+				return {};
+			}
+			KG_ASSERT(denseIndex < m_Signatures.size());
+
+			// Return the appropriate signature
+			return m_Signatures[denseIndex];
+		}
+
+		bool HasEntity(EntityID entityID) const
+		{
+			return m_EntitySet.HasSparseIndex(entityID);
+		}
+
+		std::span<EntityID> GetAllEntities()
+		{
+			return m_EntitySet.GetDenseList();
 		}
 
 	private:
@@ -101,10 +142,9 @@ namespace Kargono::ECS
 		// Registry state
 		bool m_Active{ false };
 		// Contained entity(s) state/info
-		std::queue<EntityID> m_AvailableEntites{}; // TODO: Maybe another data structure?
+		EntityID m_FreeListHead{ k_InvalidEntityID };
 		std::array<Signature, k_MaxEntities> m_Signatures{};
-		EntityCount m_ActiveEntityCount{ 0 };
-
+		SparseSet<EntityID, EntityID> m_EntitySet{k_MaxEntities, k_MaxEntities};
 	private:
 		//==============================
 		// Owning Class(s)

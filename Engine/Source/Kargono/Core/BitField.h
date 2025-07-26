@@ -3,44 +3,37 @@
 #include "Kargono/Core/Base.h"
 
 #include <cstdint>
-#include <type_traits>
+#include <concepts>
 #include <limits>
 
 namespace Kargono
 {
-	//=========================
-	// Bitfield Class
-	//=========================
-	template <typename DataType>
+	template <std::unsigned_integral t_DataType = size_t>
 	class BitField
 	{
-		static_assert(std::is_integral<DataType>::value, "BitField only supports integral types.");
-		static_assert(sizeof(DataType) == 1 || sizeof(DataType) == 2 || sizeof(DataType) == 4 || sizeof(DataType) == 8,
-			"BitField supports 1, 2, 4, and 8 byte integral types.");
-
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
 		BitField() = default;
-		BitField(DataType defaultValue) : m_Bitfield(defaultValue) {}
+		BitField(t_DataType defaultValue) : m_Bitfield(defaultValue) {}
 
 		//=========================
 		// Modify Specific Flags
 		//=========================
 		void SetFlag(uint8_t flag)
 		{
-			KG_ASSERT(flag < sizeof(DataType) * 8);
+			KG_ASSERT(flag < sizeof(t_DataType) * 8);
 			m_Bitfield |= (1 << flag);
 		}
 		void ClearFlag(uint8_t flag)
 		{
-			KG_ASSERT(flag < sizeof(DataType) * 8);
+			KG_ASSERT(flag < sizeof(t_DataType) * 8);
 			m_Bitfield &= ~(1 << flag);
 		}
 		void ToggleFlag(uint8_t flag)
 		{
-			KG_ASSERT(flag < sizeof(DataType) * 8);
+			KG_ASSERT(flag < sizeof(t_DataType) * 8);
 			m_Bitfield ^= (1 << flag);
 		}
 
@@ -55,7 +48,7 @@ namespace Kargono
 
 		void EnableAllFlags()
 		{
-			m_Bitfield = std::numeric_limits<DataType>::max();
+			m_Bitfield = std::numeric_limits<t_DataType>::max();
 		}
 
 		//=========================
@@ -63,7 +56,7 @@ namespace Kargono
 		//=========================
 		bool IsFlagSet(uint8_t flag) const
 		{
-			KG_ASSERT(flag < sizeof(DataType) * 8);
+			KG_ASSERT(flag < sizeof(t_DataType) * 8);
 
 			return m_Bitfield & (1 << flag);
 		}
@@ -71,13 +64,13 @@ namespace Kargono
 		//=========================
 		// Getters/Setters Core Data
 		//=========================
-		DataType GetRawBitfield() const
+		t_DataType GetRawBitfield() const
 		{
 			return m_Bitfield;
 		}
 
 		// Basically the assignment operator
-		void SetRawBitfield(DataType rawValue)
+		void SetRawBitfield(t_DataType rawValue)
 		{
 			m_Bitfield = rawValue;
 		}
@@ -85,15 +78,20 @@ namespace Kargono
 		//=========================
 		// Operator Overloads
 		//=========================
+		operator t_DataType() const
+		{
+			return m_Bitfield;
+		}
+		
 		operator bool() const
 		{
 			return (bool)m_Bitfield;
 		}
 
-	private:
+	public:
 		//=========================
 		// Core Data
 		//=========================
-		DataType m_Bitfield{ 0 };
+		t_DataType m_Bitfield{ 0 };
 	};
 }

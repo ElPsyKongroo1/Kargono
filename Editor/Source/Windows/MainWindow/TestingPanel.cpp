@@ -18,14 +18,13 @@
 #include <sstream>
 #include <cstdio>
 
-
 namespace Kargono::Panels
 {
 	static SparseArray<uint64_t> s_SparseArray{64};
 	//static ECS::SparseSet s_SparseSet{ 10, 10 };
 
-	//static ECS::Registry s_DataRegistry{};
 	static Memory::HeapAllocator s_TestHeapAlloc{};
+	static ECS::Registry s_DataRegistry{};
 
 	static EditorApp* s_EditorApp{ nullptr };
 	static Windows::MainWindow* s_MainWindow{ nullptr };
@@ -316,8 +315,7 @@ namespace Kargono::Panels
 		entry2->m_Handle = 2;
 		entry2->m_Label = "Entry Two";
 
-		//s_DataRegistry.Init(&s_TestHeapAlloc);
-
+		s_DataRegistry.Init(&s_TestHeapAlloc);
 
 		// TODO Testing Splines
 #if 0
@@ -525,7 +523,6 @@ namespace Kargono::Panels
 		static int testIndex{ 1 };
 
 		ImGui::DragInt("Sparse Set Index", &testIndex, 1, 0, 100);
-
 		/*
 		if (ImGui::Button("Add Sparse Set Index"))
 		{
@@ -557,7 +554,46 @@ namespace Kargono::Panels
 		}
 		*/
 
+		static int entityIndex{ 1 };
 
+		ImGui::DragInt("Entity Index", &entityIndex, 1, 0, 100);
+
+		if (ImGui::Button("Add Entity"))
+		{
+			Expected<ECS::EntityID> newID{ s_DataRegistry.CreateEntity() };
+			if (newID)
+			{
+				KG_TRACE_INFO("Add operation success!");
+			}
+			else
+			{
+				KG_TRACE_INFO("Add operation failed!");
+			}
+		}
+
+		if (ImGui::Button("Delete Entity"))
+		{
+			if (s_DataRegistry.DestroyEntity(entityIndex))
+			{
+				KG_TRACE_INFO("Delete operation success!");
+			}
+			else
+			{
+				KG_TRACE_INFO("Delete operation failed!");
+			}
+		}
+
+		if (ImGui::Button("Print All Entities"))
+		{
+			std::stringstream ss;
+			ss << "All Entities: ";
+			for (ECS::EntityID id : s_DataRegistry.GetAllEntities())
+			{
+				ss << id << ' ';
+			}
+			ss << '\n';
+			KG_TRACE_INFO(ss.str());
+		}
 
 
 		// TODO: Testing Splines

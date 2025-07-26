@@ -119,7 +119,8 @@ namespace Kargono::ECS
 		//==============================
 		void DestroyEntity(EntityID entityID)
 		{
-			Signature signature = i_EntityRegistry->GetSignature(entityID);
+			Expected<Signature> signature = i_EntityRegistry->GetSignature(entityID);
+			KG_ASSERT(signature);
 
 			// Handle all component arrays
 			for (const auto& [componentName, array] : m_ComponentArrays)
@@ -128,9 +129,10 @@ namespace Kargono::ECS
 
 				ComponentMask currentType = m_ComponentTypes[componentName];
 
-				if (signature.test((size_t)currentType))
+				if (signature->IsFlagSet((size_t)currentType))
 				{
-					array->RemoveComponent(entityID);
+					bool success{ array->RemoveComponent(entityID) };
+					KG_ASSERT(success);
 				}
 			}
 		}

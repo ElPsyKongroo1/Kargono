@@ -55,12 +55,16 @@ namespace Kargono::ECS
 
 		[[nodiscard]] bool DestroyEntity(EntityID entityID)
 		{
-			if (!m_EntityRegistry.DestroyEntity(entityID))
+			if (!m_EntityRegistry.HasEntity(entityID))
 			{
 				return false;
 			}
 
 			m_ComponentRegistry.DestroyEntity(entityID);
+
+			KG_ASSERT(m_EntityRegistry.DestroyEntity(entityID));
+			
+			return true;
 		}
 
 		//==============================
@@ -87,7 +91,9 @@ namespace Kargono::ECS
 			{
 				return false;
 			}
-			entitySignature->set(m_ComponentRegistry.GetComponentType<t_Component>(), true);
+			entitySignature->SetFlag(m_ComponentRegistry.GetComponentType<t_Component>(), true);
+
+			return true;
 		}
 
 		template<typename t_Component>
@@ -105,9 +111,14 @@ namespace Kargono::ECS
 			{
 				return false;
 			}
-			entitySignature->set(m_ComponentRegistry.GetComponentType<t_Component>(), false);
+			entitySignature->SetFlag(m_ComponentRegistry.GetComponentType<t_Component>(), false);
+
+			return true;
 		}
 
+		//==============================
+		// Query Registry
+		//==============================
 		template<typename t_Component>
 		ExpectedRef<t_Component> GetComponent(EntityID entityID)
 		{
@@ -118,6 +129,11 @@ namespace Kargono::ECS
 		Expected<ComponentMask> GetComponentType()
 		{
 			return m_ComponentRegistry.GetComponentType<t_Component>();
+		}
+
+		std::span<EntityID> GetAllEntities()
+		{
+			return m_EntityRegistry.GetAllEntities();
 		}
 
 	private:

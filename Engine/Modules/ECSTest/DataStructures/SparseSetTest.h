@@ -6,10 +6,11 @@
 #include <string>
 #include <sstream>
 #include <limits>
+#include <span>
 
 namespace Kargono::ECS
 {
-    template< std::unsigned_integral t_SparseIndex = size_t, std::unsigned_integral t_DenseIndex = size_t>
+    template<std::unsigned_integral t_SparseIndex = size_t, std::unsigned_integral t_DenseIndex = size_t>
     class SparseSet
     {
     public:
@@ -87,7 +88,7 @@ namespace Kargono::ECS
         //==============================
         // Query List
         //==============================
-        t_DenseIndex GetDenseIndex(t_SparseIndex sparseIndex)
+        t_DenseIndex GetDenseIndex(t_SparseIndex sparseIndex) const
         {
             // Ensure sparseIndex maps somewhere in sparse list
             if (sparseIndex > m_SparseMaxIndex)
@@ -116,6 +117,16 @@ namespace Kargono::ECS
             return GetDenseIndex(index) != k_InvalidDenseIndex;
         }
 
+        bool IsValidDenseIndex(t_DenseIndex index) const
+        {
+            return index != k_InvalidDenseIndex;
+        }
+
+        bool IsValidSparseIndex(t_SparseIndex index) const
+        {
+            return index != k_InvalidSparseIndex;
+        }
+
     public:
         //==============================
         // Getters/Setters
@@ -133,6 +144,11 @@ namespace Kargono::ECS
         t_SparseIndex GetSparseMax() const
         {
             return m_SparseMaxIndex;
+        }
+
+        std::span<t_SparseIndex> GetDenseList()
+        {
+            return std::span(m_DenseList.begin(), m_DenseCount);
         }
 
     public:
