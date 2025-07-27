@@ -4,6 +4,8 @@
 
 #include "Modules/ECSTest/DataStructures/SparseSetTest.h"
 
+#include "Kargono/Utility/Operations.h"
+
 namespace Kargono::ECS
 {
 	template<typename t_Component>
@@ -98,6 +100,31 @@ namespace Kargono::ECS
 		{
 			return m_EntityComponentSet.HasSparseIndex(entityID);
 		}
+
+	private:
+		//==============================
+		// Debugging Functions
+		//==============================
+		void PrintSparseSet()
+		{
+			KG_TRACE_INFO(m_EntityComponentSet.Print());
+		}
+		void PrintComponentArray()
+		{
+			EntityID denseCount = (EntityID)m_EntityComponentSet.GetDenseCount();
+			
+			KG_ASSERT(denseCount < m_ComponentArray.size());
+			std::stringstream ss;
+			ss << "Component Array (Does Value Exist?): ";
+			for (size_t i = 0; i < denseCount; i++)
+			{
+				uint8_t* compPtr = (uint8_t*)&m_ComponentArray[i];
+				bool isZero = Utility::Operations::IsBufferZero(compPtr, sizeof(t_Component));
+				ss << isZero << ' ';
+			}
+
+			KG_TRACE_INFO(ss.str());
+		}
 	private:
 		//==============================
 		// Internal Fields
@@ -116,6 +143,7 @@ namespace Kargono::ECS
 		// Owning Class(s)
 		//==============================
 		friend class Registry;
+		friend class ComponentRegistry;
 	};
 }
 

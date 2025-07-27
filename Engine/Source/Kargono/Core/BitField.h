@@ -11,12 +11,14 @@ namespace Kargono
 	template <std::unsigned_integral t_DataType = size_t>
 	class BitField
 	{
+		static_assert(sizeof(t_DataType) == 1 || sizeof(t_DataType) == 2 || sizeof(t_DataType) == 4 || sizeof(t_DataType) == 8,
+			"BitField supports 1, 2, 4, and 8 byte integral types.");
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
-		BitField() = default;
-		BitField(t_DataType defaultValue) : m_Bitfield(defaultValue) {}
+		constexpr BitField() = default;
+		constexpr BitField(t_DataType defaultValue) : m_Bitfield(defaultValue) {}
 
 		//=========================
 		// Modify Specific Flags
@@ -40,7 +42,6 @@ namespace Kargono
 		//=========================
 		// Modify All Flags
 		//=========================
-
 		void ClearAllFlags()
 		{
 			m_Bitfield = 0;
@@ -59,6 +60,11 @@ namespace Kargono
 			KG_ASSERT(flag < sizeof(t_DataType) * 8);
 
 			return m_Bitfield & (1 << flag);
+		}
+
+		bool IsSingleBitSet() 
+		{
+			return m_Bitfield != 0 && (m_Bitfield & (m_Bitfield - 1)) == 0;
 		}
 
 		//=========================

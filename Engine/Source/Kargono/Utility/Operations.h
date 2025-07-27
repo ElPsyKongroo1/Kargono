@@ -56,6 +56,23 @@ namespace Kargono::Utility
 		}
 
 		//==============================
+		// Buffer Operations
+		//==============================
+		static bool IsBufferZero(uint8_t* buffer, size_t size) 
+		{
+			KG_ASSERT(buffer != nullptr);
+
+			for (size_t i = 0; i < size; ++i) 
+			{
+				if (buffer[i] != 0)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		//==============================
 		// Integer Operations
 		//==============================
 		template <typename T>

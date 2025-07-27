@@ -31,6 +31,29 @@ namespace Kargono::Panels
 
 	static EditorUI::EditTextSpec s_CompilePath {};
 
+	struct TransformTest
+	{
+		Math::vec2 location{};
+		Math::vec2 size{};
+	};
+
+	struct HealthTest
+	{
+		float headHealth{};
+		float torsoHealth{};
+		Math::vec2 armsHealth{};
+		Math::vec2 legsHealth{};
+	};
+
+	struct BloodTest
+	{
+		float indexFinger{};
+		float ringFinger{};
+		float pinkyFinger{};
+		float thumbFinger{};
+		float middleFinger{};
+	};
+
 	struct DataStruct
 	{
 		float ahaha{ 1.0f };
@@ -556,6 +579,7 @@ namespace Kargono::Panels
 
 		static int entityIndex{ 1 };
 
+		EditorUI::EditorUIService::Text("Current Entity ID");
 		ImGui::DragInt("Entity Index", &entityIndex, 1, 0, 100);
 
 		if (ImGui::Button("Add Entity"))
@@ -595,6 +619,70 @@ namespace Kargono::Panels
 			KG_TRACE_INFO(ss.str());
 		}
 
+		if (ImGui::Button("Print All Entity Signatures"))
+		{
+			KG_TRACE_INFO(s_DataRegistry.PrintSignatures());
+		}
+
+		EditorUI::EditorUIService::Text("Add / Remove Components");
+		if (ImGui::Button("Add Transform Component"))
+		{
+			TransformTest testTransform{};
+			bool success = s_DataRegistry.AddComponent<TransformTest>(entityIndex, testTransform);
+
+			if (success)
+			{
+				KG_TRACE_INFO("Add transform succeeded");
+			}
+			else
+			{
+				KG_TRACE_INFO("Add transform failed");
+			}
+		}
+		
+		if (ImGui::Button("Delete Transform Component"))
+		{
+			bool success = s_DataRegistry.RemoveComponent<TransformTest>(entityIndex);
+
+			if (success)
+			{
+				KG_TRACE_INFO("Delete transform succeeded");
+			}
+			else
+			{
+				KG_TRACE_INFO("Delete transform failed");
+			}
+		}
+
+		if (ImGui::Button("Add Health Component"))
+		{
+			HealthTest testTransform{};
+			bool success = s_DataRegistry.AddComponent<HealthTest>(entityIndex, testTransform);
+
+			if (success)
+			{
+				KG_TRACE_INFO("Add health succeeded");
+			}
+			else
+			{
+				KG_TRACE_INFO("Add health failed");
+		}
+		}
+
+		if (ImGui::Button("Delete Health Component"))
+		{
+			bool success = s_DataRegistry.RemoveComponent<HealthTest>(entityIndex);
+
+			if (success)
+			{
+				KG_TRACE_INFO("Delete health succeeded");
+			}
+			else
+			{
+				KG_TRACE_INFO("Delete health failed");
+			}
+		}
+		
 
 		// TODO: Testing Splines
 #if 0 

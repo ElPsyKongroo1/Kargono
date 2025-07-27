@@ -2,6 +2,7 @@
 
 #include "Modules/ECSTest/ComponentArrays/IComponentStoreTest.h"
 #include "Modules/ECSTest/ComponentArrays/PackedArray.h"
+#include "Modules/ECSTest/ComponentArrays/FlatArray.h"
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Memory/IAllocator.h"
@@ -52,22 +53,37 @@ namespace Kargono::ECS
 			// Add the component type and its array
 			m_ComponentTypes.insert({typeName, m_NextComponentType});
 
-			PackedArray<t_Component>* newArray{ i_RegistryAlloc->Alloc<PackedArray<t_Component>>() };
-			if (!newArray)
-			{
-				return false;
-			}
+			/* TODO: Default Packed Array
+			// Create packed array using the provided allocator
+			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(PackedArray<t_Component>), alignof(PackedArray<t_Component>));
+			KG_ASSERT(componentBuffer);
+
+			// Call placement-new to construct array
+			PackedArray<t_Component>* newArray = new ((void*)componentBuffer) PackedArray<t_Component>();
+			*/
+
+			// Create flat array using the provided allocator
+			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(FlatArray<t_Component>), alignof(FlatArray<t_Component>));
+			KG_ASSERT(componentBuffer);
+
+			// Call placement-new to construct array
+			FlatArray<t_Component>* newArray = new ((void*)componentBuffer) FlatArray<t_Component>();
+			
+			KG_ASSERT(newArray);
 
 			newArray->Init(i_EntityRegistry);
 			m_ComponentArrays.insert({typeName, newArray});
 
 			// Increment the value so that the next component registered will be different
-			++m_NextComponentType;
+			m_NextComponentType++;
+			KG_ASSERT(m_NextComponentType < sizeof(m_NextComponentType) * 8);
+
 			return true;
+
 		}
 
 		template<typename t_Component>
-		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component component)
+		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component& component)
 		{
 			return GetComponentArray<t_Component>()->InsertComponent(entityID, &component);
 		}
@@ -108,7 +124,8 @@ namespace Kargono::ECS
 
 			if (!m_ComponentTypes.contains(typeName))
 			{
-				return nullptr;
+				bool success = RegisterComponent<t_Component>();
+				KG_ASSERT(success);
 			}
 
 			return m_ComponentArrays[typeName];
@@ -129,7 +146,7 @@ namespace Kargono::ECS
 
 				ComponentMask currentType = m_ComponentTypes[componentName];
 
-				if (signature->IsFlagSet((size_t)currentType))
+				if (signature->IsFlagSet(currentType))
 				{
 					bool success{ array->RemoveComponent(entityID) };
 					KG_ASSERT(success);

@@ -135,6 +135,22 @@ namespace Kargono::ECS
 			return m_EntitySet.GetDenseList();
 		}
 
+		//==============================
+		// Debugging Section // TODO: PLEASE REMOVE
+		//==============================
+		std::string PrintSignatures()
+		{
+			std::stringstream ss;
+
+			ss << "All Signatures: ";
+			for (size_t i = 0; i < 10; i++)
+			{
+				ss << (uint32_t)m_Signatures[i] << ' ';
+			}
+			return ss.str();
+		}
+
+
 	private:
 		//==============================
 		// Internal Fields

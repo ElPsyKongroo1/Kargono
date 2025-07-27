@@ -31,17 +31,38 @@ namespace Kargono::ECS
 		{
 			m_ComponentArray[entityID] = *(t_Component*)component;
 			m_ComponentCount++;
+
+			return true;
 		}
 		bool RemoveComponent(EntityID entityID) override
 		{
 			// Clear component data
 			memset(&m_ComponentArray[entityID], 0, sizeof(t_Component));
 			m_ComponentCount--;
+
 			return true;
 		}
 		void* GetComponent(EntityID entityID) override
 		{
-			return m_ComponentArray[entityID];
+			return (void*)&m_ComponentArray[entityID];
+		}
+
+		//==============================
+		// Debugging Functions
+		//==============================
+		void PrintComponentArray()
+		{
+			std::stringstream ss;
+			ss << "Component Count: " << m_ComponentCount << '\n';
+			ss << "Component Array (Does Value Exist?): ";
+			for (size_t i = 0; i < m_ComponentCount; i++)
+			{
+				uint8_t* compPtr = (uint8_t*)&m_ComponentArray[i];
+				bool isZero = Utility::Operations::IsBufferZero(compPtr, sizeof(t_Component));
+				ss << isZero << ' ';
+			}
+
+			KG_TRACE_INFO(ss.str());
 		}
 	private:
 		//==============================
@@ -60,6 +81,7 @@ namespace Kargono::ECS
 		// Owning Class(s)
 		//==============================
 		friend class Registry;
+		friend class ComponentRegistry;
 	};
 }
 

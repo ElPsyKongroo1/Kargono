@@ -15,7 +15,7 @@ namespace Kargono::ECS
 	constexpr EntityID k_InvalidEntityID{ std::numeric_limits<EntityID>::max() };
 
 	// Component types
-	using ComponentMask = uint8_t;
+	using ComponentMask = uint32_t;
 	constexpr ComponentMask k_MaxComponents{ 32 }; // Arbitrary
 	using ComponentIndex = size_t;
 	using ComponentCount = ComponentIndex;

@@ -62,7 +62,7 @@ namespace Kargono::ECS
 
 			m_ComponentRegistry.DestroyEntity(entityID);
 
-			KG_ASSERT(m_EntityRegistry.DestroyEntity(entityID));
+			m_EntityRegistry.DestroyEntity(entityID);
 			
 			return true;
 		}
@@ -77,21 +77,31 @@ namespace Kargono::ECS
 		}
 
 		template<typename t_Component>
-		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component component)
+		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component& component)
 		{
+			// Ensure the entity exists in the registry
+			if (!m_EntityRegistry.HasEntity(entityID))
+			{
+				return false;
+			}
+
 			// Add the component to the entity in the component registry
 			if (!m_ComponentRegistry.AddComponent<t_Component>(entityID, component))
 			{
 				return false;
 			}
 
-			// Update the signature of the entity
+			// Get the entity's signature
 			Expected<Signature> entitySignature = m_EntityRegistry.GetSignature(entityID);
-			if (!entitySignature)
-			{
-				return false;
-			}
-			entitySignature->SetFlag(m_ComponentRegistry.GetComponentType<t_Component>(), true);
+			KG_ASSERT(entitySignature);
+
+			// Get the relevant component mask/identifier
+			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentType<t_Component>() };
+			KG_ASSERT(compMask);
+
+			// Update the signature w/ mask
+			entitySignature->SetFlag(compMask.value());
+			m_EntityRegistry.SetEntitySignature(entityID, entitySignature.value());
 
 			return true;
 		}
@@ -107,11 +117,15 @@ namespace Kargono::ECS
 
 			// Update the signature of the entity
 			Expected<Signature> entitySignature = m_EntityRegistry.GetSignature(entityID);
-			if (!entitySignature)
-			{
-				return false;
-			}
-			entitySignature->SetFlag(m_ComponentRegistry.GetComponentType<t_Component>(), false);
+			KG_ASSERT(entitySignature);
+
+			// Get the relevant component mask/identifier
+			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentType<t_Component>() };
+			KG_ASSERT(compMask);
+
+			// Update the signature w/ mask
+			entitySignature->ClearFlag(compMask.value());
+			m_EntityRegistry.SetEntitySignature(entityID, entitySignature.value());
 
 			return true;
 		}
@@ -134,6 +148,14 @@ namespace Kargono::ECS
 		std::span<EntityID> GetAllEntities()
 		{
 			return m_EntityRegistry.GetAllEntities();
+		}
+
+		//==============================
+		// Debugging Section // TODO: PLEASE REMOVE
+		//==============================
+		std::string PrintSignatures()
+		{
+			return m_EntityRegistry.PrintSignatures();
 		}
 
 	private:

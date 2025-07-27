@@ -172,12 +172,14 @@ namespace Kargono::ECS
             }
             ss << '\n';
 
+            /*
             ss << "\tSparse List (Dense List Indices):";
             for (t_SparseIndex i = 0; i < m_SparseMaxIndex; i++)
             {
                 ss << m_SparseList[i] << ' ';
             }
             ss << '\n';
+            */
 
             return ss.str();
         }
