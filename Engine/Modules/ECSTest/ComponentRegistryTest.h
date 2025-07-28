@@ -4,8 +4,8 @@
 #include "Modules/ECSTest/ComponentArrays/PackedArray.h"
 #include "Modules/ECSTest/ComponentArrays/FlatArray.h"
 
-#include "Modules/ECSTest/Views/IViewTest.h"
-#include "Modules/ECSTest/Views/PackedArraysView.h"
+#include "Modules/ECSTest/Views/PackedView.h"
+#include "Modules/ECSTest/Views/FlatView.h"
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Memory/IAllocator.h"
@@ -56,7 +56,7 @@ namespace Kargono::ECS
 			// Add the component type and its array
 			m_ComponentMasks.insert({typeName, m_NextComponentType});
 
-#if 1 // Default to packed arrays
+#if 0 // Default to packed arrays
 			// Create packed array using the provided allocator
 			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(PackedArray<t_Component>), alignof(PackedArray<t_Component>));
 			KG_ASSERT(componentBuffer);
@@ -65,7 +65,7 @@ namespace Kargono::ECS
 			PackedArray<t_Component>* newArray = new ((void*)componentBuffer) PackedArray<t_Component>();
 #endif
 
-#if 0 // Default to flat arrays
+#if 1 // Default to flat arrays
 			// Create flat array using the provided allocator
 			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(FlatArray<t_Component>), alignof(FlatArray<t_Component>));
 			KG_ASSERT(componentBuffer);
@@ -137,7 +137,7 @@ namespace Kargono::ECS
 		}
 
 		template<typename t_DataType>
-		PackedArraysView<t_DataType> GetView()
+		PackedView GetPackedView()
 		{
 			// Check if the component array exists
 			Expected<ComponentMask> compMask{ GetComponentMask<t_DataType>() };
@@ -151,12 +151,33 @@ namespace Kargono::ECS
 			IComponentStore* compStore{ GetComponentArray<t_DataType>() };
 			KG_ASSERT(compStore);
 
-#if 1 //TODO: Fix this please!!! This needs to use the IView interface instead
+			//TODO: Fix this please!!! This needs to use the IView interface instead
+			
 			// Convert to packed array 
 			PackedArray<t_DataType>* packedStore{ (PackedArray<t_DataType>*)compStore };
-#endif
-			return packedStore->GetView<t_DataType>();
+			return packedStore->GetPackedView();
+		}
 
+		template<typename t_DataType>
+		FlatView GetFlatView()
+		{
+			// Check if the component array exists
+			Expected<ComponentMask> compMask{ GetComponentMask<t_DataType>() };
+
+			if (!compMask)
+			{
+				return {};
+			}
+
+			// Construct & return the view
+			IComponentStore* compStore{ GetComponentArray<t_DataType>() };
+			KG_ASSERT(compStore);
+
+			//TODO: Fix this please!!! This needs to use the IView interface instead
+
+			// Convert to packed array 
+			FlatArray<t_DataType>* flatStore{ (FlatArray<t_DataType>*)compStore };
+			return flatStore->GetFlatView();
 		}
 
 		//==============================

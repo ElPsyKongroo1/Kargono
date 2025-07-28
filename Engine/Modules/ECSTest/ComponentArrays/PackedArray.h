@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Modules/ECSTest/ComponentArrays/IComponentStoreTest.h"
-#include "Modules/ECSTest/Views/PackedArraysView.h"
+#include "Modules/ECSTest/Views/PackedView.h"
 
 #include "Modules/ECSTest/DataStructures/SparseSetTest.h"
 
@@ -91,12 +91,10 @@ namespace Kargono::ECS
 			return &m_ComponentArray[m_EntityComponentSet.GetDenseIndex(entityID)];
 		}
 
-		template<typename t_DataType>
-		PackedArraysView<t_DataType> GetView()
+		PackedView GetPackedView()
 		{
 			// Get reference to entity dense-list
-			std::span<EntityID> entityListSpan(m_EntityComponentSet.GetDenseList());
-			return PackedArraysView<t_DataType>{ entityListSpan };
+			return PackedView{ m_EntityComponentSet.GetDenseList() };
 		}
 
 	public:

@@ -2,7 +2,8 @@
 
 #include "Modules/ECSTest/ComponentRegistryTest.h"
 #include "Modules/ECSTest/EntityRegistryTest.h"
-#include "Modules/ECSTest/Views/IViewTest.h"
+#include "Modules/ECSTest/Views/PackedView.h"
+#include "Modules/ECSTest/Views/FlatView.h"
 
 #include "Kargono/Memory/IAllocator.h"
 
@@ -146,9 +147,15 @@ namespace Kargono::ECS
 		}
 		
 		template<typename t_DataType>
-		PackedArraysView<t_DataType> GetView()
+		PackedView GetPackedView()
 		{
-			return m_ComponentRegistry.GetView<t_DataType>();
+			return m_ComponentRegistry.GetPackedView<t_DataType>();
+		}
+
+		template<typename t_DataType>
+		FlatView GetFlatView()
+		{
+			return m_ComponentRegistry.GetFlatView<t_DataType>();
 		}
 
 		template<typename t_Component>

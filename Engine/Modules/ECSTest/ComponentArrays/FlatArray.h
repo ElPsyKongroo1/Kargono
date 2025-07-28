@@ -1,6 +1,10 @@
 #pragma once
 
 #include "Modules/ECSTest/ComponentArrays/IComponentStoreTest.h"
+#include "Modules/ECSTest/Views/FlatView.h"
+
+#include <array>
+#include <vector>
 
 namespace Kargono::ECS
 {
@@ -29,25 +33,51 @@ namespace Kargono::ECS
 		//==============================
 		bool InsertComponent(EntityID entityID, void* component) override
 		{
-			KG_ASSERT(!m_ComponentArray.contains(entityID));
+			// Ensure no component exists already
+			bool isValid{ m_ValidEntityArray[entityID] };
+			if (isValid)
+			{
+				return false;
+			}
+
+			// Update component & valid arrays
 			m_ComponentArray[entityID] = *(t_Component*)component;
+			m_ValidEntityArray[entityID] = true;
 			m_ComponentCount++;
 
 			return true;
 		}
 		bool RemoveComponent(EntityID entityID) override
 		{
-			KG_ASSERT(m_ComponentArray.contains(entityID));
-			// Clear component data
-			memset(&m_ComponentArray[entityID], 0, sizeof(t_Component));
+			// Ensure a valid component exists
+			bool isValid{ m_ValidEntityArray[entityID] };
+			if (!isValid)
+			{
+				return false;
+			}
+
+			// Update valid array
+			m_ValidEntityArray[entityID] = false;
 			m_ComponentCount--;
 
 			return true;
 		}
 		void* GetComponent(EntityID entityID) override
 		{
-			KG_ASSERT(m_ComponentArray.contains(entityID));
+			// Ensure a valid component exists
+			bool isValid{ m_ValidEntityArray[entityID] };
+			if (!isValid)
+			{
+				return nullptr;
+			}
+
+			// Update valid array
 			return (void*)&m_ComponentArray[entityID];
+		}
+
+		FlatView GetFlatView()
+		{
+			return FlatView{ m_ValidEntityArray };
 		}
 
 		//==============================
@@ -73,6 +103,7 @@ namespace Kargono::ECS
 		//==============================
 		// Packed array and info
 		std::array<t_Component, k_MaxEntities> m_ComponentArray{};
+		std::array<bool, k_MaxEntities> m_ValidEntityArray{};
 		ComponentCount m_ComponentCount{ 0 };
 
 		//==============================
