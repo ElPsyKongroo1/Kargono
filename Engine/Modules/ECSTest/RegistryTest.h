@@ -2,6 +2,7 @@
 
 #include "Modules/ECSTest/ComponentRegistryTest.h"
 #include "Modules/ECSTest/EntityRegistryTest.h"
+#include "Modules/ECSTest/Views/IViewTest.h"
 
 #include "Kargono/Memory/IAllocator.h"
 
@@ -96,7 +97,7 @@ namespace Kargono::ECS
 			KG_ASSERT(entitySignature);
 
 			// Get the relevant component mask/identifier
-			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentType<t_Component>() };
+			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentMask<t_Component>() };
 			KG_ASSERT(compMask);
 
 			// Update the signature w/ mask
@@ -120,7 +121,7 @@ namespace Kargono::ECS
 			KG_ASSERT(entitySignature);
 
 			// Get the relevant component mask/identifier
-			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentType<t_Component>() };
+			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentMask<t_Component>() };
 			KG_ASSERT(compMask);
 
 			// Update the signature w/ mask
@@ -136,13 +137,24 @@ namespace Kargono::ECS
 		template<typename t_Component>
 		ExpectedRef<t_Component> GetComponent(EntityID entityID)
 		{
-			return m_ComponentRegistry.GetComponent<t_Component>(entityID);
+			t_Component* compPtr{(t_Component*)m_ComponentRegistry.GetComponent<t_Component>(entityID)};
+			if (!compPtr)
+			{
+				return {};
+			}
+			return {*compPtr};
+		}
+		
+		template<typename t_DataType>
+		PackedArraysView<t_DataType> GetView()
+		{
+			return m_ComponentRegistry.GetView<t_DataType>();
 		}
 
 		template<typename t_Component>
-		Expected<ComponentMask> GetComponentType()
+		Expected<ComponentMask> GetComponentMask()
 		{
-			return m_ComponentRegistry.GetComponentType<t_Component>();
+			return m_ComponentRegistry.GetComponentMask<t_Component>();
 		}
 
 		std::span<EntityID> GetAllEntities()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Modules/ECSTest/ComponentArrays/IComponentStoreTest.h"
+#include "Modules/ECSTest/Views/PackedArraysView.h"
 
 #include "Modules/ECSTest/DataStructures/SparseSetTest.h"
 
@@ -67,12 +68,10 @@ namespace Kargono::ECS
 			ComponentIndex indexOfRemovedEntity{ m_EntityComponentSet.DeleteElement(entityID) };
 
 			// Check for failure to remove entity from sparse set
-			if (indexOfRemovedEntity == m_EntityComponentSet.k_InvalidDenseIndex)
-			{
-				return false;
-			}
-
+			KG_ASSERT(m_EntityComponentSet.IsValidDenseIndex(indexOfRemovedEntity));
 			KG_ASSERT(indexOfRemovedEntity < m_ComponentArray.size());
+
+			// Update the component list
 			m_ComponentArray[indexOfRemovedEntity] = m_ComponentArray[indexOfLastEntity];
 
 			return true;
@@ -90,6 +89,14 @@ namespace Kargono::ECS
 			}
 
 			return &m_ComponentArray[m_EntityComponentSet.GetDenseIndex(entityID)];
+		}
+
+		template<typename t_DataType>
+		PackedArraysView<t_DataType> GetView()
+		{
+			// Get reference to entity dense-list
+			std::span<EntityID> entityListSpan(m_EntityComponentSet.GetDenseList());
+			return PackedArraysView<t_DataType>{ entityListSpan };
 		}
 
 	public:

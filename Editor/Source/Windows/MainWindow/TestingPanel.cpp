@@ -25,6 +25,7 @@ namespace Kargono::Panels
 
 	static Memory::HeapAllocator s_TestHeapAlloc{};
 	static ECS::Registry s_DataRegistry{};
+	static EditorUI::EditIntegerSpec s_EntityIDSpec;
 
 	static EditorApp* s_EditorApp{ nullptr };
 	static Windows::MainWindow* s_MainWindow{ nullptr };
@@ -340,6 +341,9 @@ namespace Kargono::Panels
 
 		s_DataRegistry.Init(&s_TestHeapAlloc);
 
+		s_EntityIDSpec.m_Label = "Active Entity ID";
+		s_EntityIDSpec.m_Bounds = {0, 1'000};
+
 		// TODO Testing Splines
 #if 0
 		// TODO: Please Remove
@@ -577,10 +581,8 @@ namespace Kargono::Panels
 		}
 		*/
 
-		static int entityIndex{ 1 };
-
 		EditorUI::EditorUIService::Text("Current Entity ID");
-		ImGui::DragInt("Entity Index", &entityIndex, 1, 0, 100);
+		EditorUI::EditorUIService::EditInteger(s_EntityIDSpec);
 
 		if (ImGui::Button("Add Entity"))
 		{
@@ -597,7 +599,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Delete Entity"))
 		{
-			if (s_DataRegistry.DestroyEntity(entityIndex))
+			if (s_DataRegistry.DestroyEntity(s_EntityIDSpec.m_CurrentInteger))
 			{
 				KG_TRACE_INFO("Delete operation success!");
 			}
@@ -628,7 +630,7 @@ namespace Kargono::Panels
 		if (ImGui::Button("Add Transform Component"))
 		{
 			TransformTest testTransform{};
-			bool success = s_DataRegistry.AddComponent<TransformTest>(entityIndex, testTransform);
+			bool success = s_DataRegistry.AddComponent<TransformTest>(s_EntityIDSpec.m_CurrentInteger, testTransform);
 
 			if (success)
 			{
@@ -642,7 +644,7 @@ namespace Kargono::Panels
 		
 		if (ImGui::Button("Delete Transform Component"))
 		{
-			bool success = s_DataRegistry.RemoveComponent<TransformTest>(entityIndex);
+			bool success = s_DataRegistry.RemoveComponent<TransformTest>(s_EntityIDSpec.m_CurrentInteger);
 
 			if (success)
 			{
@@ -654,10 +656,25 @@ namespace Kargono::Panels
 			}
 		}
 
+		if (ImGui::Button("Move Entity Up"))
+		{
+			ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(s_EntityIDSpec.m_CurrentInteger);
+			if (!transformRef)
+			{
+				KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+			}
+			else
+			{
+				TransformTest& transform{ transformRef.value().get() };
+
+				transform.location.y += 1.0f;
+			}
+		}
+
 		if (ImGui::Button("Add Health Component"))
 		{
 			HealthTest testTransform{};
-			bool success = s_DataRegistry.AddComponent<HealthTest>(entityIndex, testTransform);
+			bool success = s_DataRegistry.AddComponent<HealthTest>(s_EntityIDSpec.m_CurrentInteger, testTransform);
 
 			if (success)
 			{
@@ -666,12 +683,12 @@ namespace Kargono::Panels
 			else
 			{
 				KG_TRACE_INFO("Add health failed");
-		}
+			}
 		}
 
 		if (ImGui::Button("Delete Health Component"))
 		{
-			bool success = s_DataRegistry.RemoveComponent<HealthTest>(entityIndex);
+			bool success = s_DataRegistry.RemoveComponent<HealthTest>(s_EntityIDSpec.m_CurrentInteger);
 
 			if (success)
 			{
@@ -682,6 +699,94 @@ namespace Kargono::Panels
 				KG_TRACE_INFO("Delete health failed");
 			}
 		}
+
+		if (ImGui::Button("Add Transform To All Entities"))
+		{
+			std::span<ECS::EntityID> allEntities = s_DataRegistry.GetAllEntities();
+			for (ECS::EntityID id : allEntities)
+			{
+				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
+				if (!transformRef)
+				{
+					TransformTest test{};
+					s_DataRegistry.AddComponent<TransformTest>(id, test);
+				}
+			}
+		}
+
+		if (ImGui::Button("Delete Transform To All Entities"))
+		{
+			auto transformView = s_DataRegistry.GetView<TransformTest>();
+			for (ECS::EntityID id : transformView)
+			{
+				KG_ASSERT(s_DataRegistry.RemoveComponent<TransformTest>(id));
+			} 
+		}
+
+		if (ImGui::Button("Add Health To All Entities"))
+		{
+			std::span<ECS::EntityID> allEntities = s_DataRegistry.GetAllEntities();
+			for (ECS::EntityID id : allEntities)
+			{
+				ExpectedRef<HealthTest> transformRef = s_DataRegistry.GetComponent<HealthTest>(id);
+				if (!transformRef)
+				{
+					HealthTest test{};
+					s_DataRegistry.AddComponent<HealthTest>(id, test);
+				}
+			}
+		}
+
+		if (ImGui::Button("Delete Health To All Entities"))
+		{
+			auto transformView = s_DataRegistry.GetView<HealthTest>();
+			for (ECS::EntityID id : transformView)
+			{
+				KG_ASSERT(s_DataRegistry.RemoveComponent<HealthTest>(id));
+			}
+		}
+
+		EditorUI::EditorUIService::Text("Get Views");
+		if (ImGui::Button("Print Out All Transform Components"))
+		{
+			auto transformView = s_DataRegistry.GetView<TransformTest>();
+			for (ECS::EntityID id : transformView)
+			{
+				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
+				if (!transformRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+				
+				TransformTest& transform{ transformRef.value().get() };
+
+				KG_TRACE_INFO("Entity {} | Position x: {} y: {} | Size x: {}, y: {}", 
+					id, 
+					transform.location.x, transform.location.y,
+					transform.size.x, transform.size.y
+				);
+			}
+		}
+
+		if (ImGui::Button("Move All Entities Up By One"))
+		{
+			auto transformView = s_DataRegistry.GetView<TransformTest>();
+			for (ECS::EntityID id : transformView)
+			{
+				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
+				if (!transformRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+
+				TransformTest& transform{ transformRef.value().get() };
+
+				transform.location.y += 1.0f;
+			}
+		}
+
 		
 
 		// TODO: Testing Splines

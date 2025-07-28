@@ -4,6 +4,9 @@
 #include "Modules/ECSTest/ComponentArrays/PackedArray.h"
 #include "Modules/ECSTest/ComponentArrays/FlatArray.h"
 
+#include "Modules/ECSTest/Views/IViewTest.h"
+#include "Modules/ECSTest/Views/PackedArraysView.h"
+
 #include "Kargono/Core/Base.h"
 #include "Kargono/Memory/IAllocator.h"
 
@@ -45,30 +48,32 @@ namespace Kargono::ECS
 			const char* typeName = typeid(t_Component).name();
 
 			// Check if component already exists
-			if (m_ComponentTypes.contains(typeName))
+			if (m_ComponentMasks.contains(typeName))
 			{
 				return false;
 			}
 
 			// Add the component type and its array
-			m_ComponentTypes.insert({typeName, m_NextComponentType});
+			m_ComponentMasks.insert({typeName, m_NextComponentType});
 
-			/* TODO: Default Packed Array
+#if 1 // Default to packed arrays
 			// Create packed array using the provided allocator
 			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(PackedArray<t_Component>), alignof(PackedArray<t_Component>));
 			KG_ASSERT(componentBuffer);
 
 			// Call placement-new to construct array
 			PackedArray<t_Component>* newArray = new ((void*)componentBuffer) PackedArray<t_Component>();
-			*/
+#endif
 
+#if 0 // Default to flat arrays
 			// Create flat array using the provided allocator
 			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(FlatArray<t_Component>), alignof(FlatArray<t_Component>));
 			KG_ASSERT(componentBuffer);
 
 			// Call placement-new to construct array
 			FlatArray<t_Component>* newArray = new ((void*)componentBuffer) FlatArray<t_Component>();
-			
+#endif
+
 			KG_ASSERT(newArray);
 
 			newArray->Init(i_EntityRegistry);
@@ -104,17 +109,17 @@ namespace Kargono::ECS
 		// Query Components
 		//==============================
 		template<typename t_Component>
-		Expected<ComponentMask> GetComponentType()
+		Expected<ComponentMask> GetComponentMask()
 		{
 			const char* typeName = typeid(t_Component).name();
 
 			// Check if component type is registered
-			if (!m_ComponentTypes.contains(typeName))
+			if (!m_ComponentMasks.contains(typeName))
 			{
 				return {};
 			}
 
-			return m_ComponentTypes[typeName];
+			return m_ComponentMasks[typeName];
 		}
 
 		template<typename t_Component>
@@ -122,13 +127,36 @@ namespace Kargono::ECS
 		{
 			const char* typeName = typeid(t_Component).name();
 
-			if (!m_ComponentTypes.contains(typeName))
+			if (!m_ComponentMasks.contains(typeName))
 			{
 				bool success = RegisterComponent<t_Component>();
 				KG_ASSERT(success);
 			}
 
 			return m_ComponentArrays[typeName];
+		}
+
+		template<typename t_DataType>
+		PackedArraysView<t_DataType> GetView()
+		{
+			// Check if the component array exists
+			Expected<ComponentMask> compMask{ GetComponentMask<t_DataType>() };
+
+			if (!compMask)
+			{
+				return {};
+			}
+
+			// Construct & return the view
+			IComponentStore* compStore{ GetComponentArray<t_DataType>() };
+			KG_ASSERT(compStore);
+
+#if 1 //TODO: Fix this please!!! This needs to use the IView interface instead
+			// Convert to packed array 
+			PackedArray<t_DataType>* packedStore{ (PackedArray<t_DataType>*)compStore };
+#endif
+			return packedStore->GetView<t_DataType>();
+
 		}
 
 		//==============================
@@ -142,9 +170,9 @@ namespace Kargono::ECS
 			// Handle all component arrays
 			for (const auto& [componentName, array] : m_ComponentArrays)
 			{
-				KG_ASSERT(m_ComponentTypes.contains(componentName));
+				KG_ASSERT(m_ComponentMasks.contains(componentName));
 
-				ComponentMask currentType = m_ComponentTypes[componentName];
+				ComponentMask currentType = m_ComponentMasks[componentName];
 
 				if (signature->IsFlagSet(currentType))
 				{
@@ -158,7 +186,7 @@ namespace Kargono::ECS
 		// Internal Fields
 		//==============================
 		// Component data/info
-		std::unordered_map<const char*, ComponentMask> m_ComponentTypes{};
+		std::unordered_map<const char*, ComponentMask> m_ComponentMasks{};
 		std::unordered_map<const char*, IComponentStore*> m_ComponentArrays{};
 		// Iterator for adding new components
 		ComponentMask m_NextComponentType{0};

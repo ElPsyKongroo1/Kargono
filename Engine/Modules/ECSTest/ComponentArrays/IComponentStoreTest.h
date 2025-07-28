@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Modules/ECSTest/CommonTest.h"
-#include "Kargono/Memory/IAllocator.h"
-
 #include "Modules/ECSTest/EntityRegistryTest.h"
+
+#include "Kargono/Memory/IAllocator.h"
 
 #include <array>
 #include <unordered_map>
@@ -13,6 +13,12 @@ namespace Kargono::ECS
 {
 	class IComponentStore
 	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		IComponentStore() = default;
+		virtual ~IComponentStore() = default;
 	public:
 		//==============================
 		// Lifecycle Functions

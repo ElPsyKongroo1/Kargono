@@ -29,6 +29,7 @@ namespace Kargono::ECS
 		//==============================
 		bool InsertComponent(EntityID entityID, void* component) override
 		{
+			KG_ASSERT(!m_ComponentArray.contains(entityID));
 			m_ComponentArray[entityID] = *(t_Component*)component;
 			m_ComponentCount++;
 
@@ -36,6 +37,7 @@ namespace Kargono::ECS
 		}
 		bool RemoveComponent(EntityID entityID) override
 		{
+			KG_ASSERT(m_ComponentArray.contains(entityID));
 			// Clear component data
 			memset(&m_ComponentArray[entityID], 0, sizeof(t_Component));
 			m_ComponentCount--;
@@ -44,6 +46,7 @@ namespace Kargono::ECS
 		}
 		void* GetComponent(EntityID entityID) override
 		{
+			KG_ASSERT(m_ComponentArray.contains(entityID));
 			return (void*)&m_ComponentArray[entityID];
 		}
 
