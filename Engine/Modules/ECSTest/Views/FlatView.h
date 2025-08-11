@@ -2,10 +2,26 @@
 
 #include "Modules/ECSTest/Views/IViewTest.h"
 
+#include <type_traits>
+#include <span>
+#include <array>
+
 namespace Kargono::ECS
 {
+    template<size_t t_NumComponents>
+    using FlatStorage_t = std::conditional_t<
+        t_NumComponents == 1,
+        std::span<bool>,
+        std::array<std::span<bool>, t_NumComponents>>;
+
+    template<size_t t_NumComponents>
     class FlatIterator
     {
+    public:
+        //==============================
+        // Metaprogramming Types & Asserts
+        //==============================
+        static_assert(t_NumComponents != 0);
     public:
         //==============================
         // Iterator Type Defs (enable C++ optimization)
@@ -17,8 +33,8 @@ namespace Kargono::ECS
         // Constructors/Destructors
         //==============================
         explicit FlatIterator() = default;
-        explicit FlatIterator(std::span<bool> validEntitySpan, size_t index)
-            : m_IsEntityValidSpan{ validEntitySpan }, m_CurrentIndex(index) 
+        explicit FlatIterator(FlatStorage_t<t_NumComponents> validEntitySpan, size_t index)
+            : m_SpanStorage{ validEntitySpan }, m_CurrentEntity(index) 
         {
             SkipToNextValid();
         }
@@ -28,8 +44,16 @@ namespace Kargono::ECS
         //==============================
         EntityID operator*() const
         {
-            KG_ASSERT(m_CurrentIndex < m_IsEntityValidSpan.size());
-            return m_CurrentIndex;
+            if constexpr (t_NumComponents == 1)
+            {
+                KG_ASSERT(m_CurrentEntity < m_SpanStorage.size());
+                return m_CurrentEntity;
+            }
+            else
+            {
+                KG_ASSERT(m_CurrentEntity < m_SpanStorage[0].size());
+                return m_CurrentEntity;
+            }
         }
 
     public:
@@ -38,7 +62,7 @@ namespace Kargono::ECS
         //==============================
         FlatIterator& operator++()
         {
-            ++m_CurrentIndex;
+            ++m_CurrentEntity;
             SkipToNextValid();
             return *this;
         }
@@ -53,12 +77,37 @@ namespace Kargono::ECS
         // Helper(s)
         void SkipToNextValid()
         {
-            while (m_CurrentIndex < m_IsEntityValidSpan.size() &&
-                !m_IsEntityValidSpan[m_CurrentIndex])
+            if constexpr (t_NumComponents == 1)
             {
-                ++m_CurrentIndex;
+                while (m_CurrentEntity < m_SpanStorage.size() &&
+                    !m_SpanStorage[m_CurrentEntity])
+                {
+                    ++m_CurrentEntity;
+                }
+            }
+            else
+            {
+                while (m_CurrentEntity < m_SpanStorage[0].size() &&
+                    !AreAllComponentsValid())
+                {
+                    ++m_CurrentEntity;
+                }
             }
         }
+
+        // Comparison helper(s)
+        template<std::size_t... t_IndexSeq>
+        bool AreAllComponentsValidImpl(std::index_sequence<t_IndexSeq...>) const
+        {
+            // Fold over && to ensure all spans contain the current EntityIndex
+            return (m_SpanStorage[t_IndexSeq][m_CurrentEntity] && ...);
+        }
+
+        bool AreAllComponentsValid() const
+        {
+            return AreAllComponentsValidImpl(std::make_index_sequence<t_NumComponents>{});
+        }
+
 
     public:
         //==============================
@@ -66,43 +115,81 @@ namespace Kargono::ECS
         //==============================
         bool operator==(const FlatIterator& other) const
         {
-            return m_IsEntityValidSpan.data() == other.m_IsEntityValidSpan.data() &&
-                m_CurrentIndex == other.m_CurrentIndex;
+            if constexpr (t_NumComponents == 1)
+            {
+                return m_SpanStorage.data() == other.m_SpanStorage.data() &&
+                 m_CurrentEntity == other.m_CurrentEntity;
+                
+            }
+            else
+            {
+                return SpanDataEqual(other) &&
+                    m_CurrentEntity == other.m_CurrentEntity;
+            }
+        }
+
+    private:
+        // Comparison helper(s)
+        template<std::size_t... t_IndexPack>
+        bool SpanDataEqualImpl(const FlatIterator& other, std::index_sequence<t_IndexPack...>) const
+        {
+            // Fold over && to ensure all spans have equal .data()
+            return ((m_SpanStorage[t_IndexPack].data() == other.m_SpanStorage[t_IndexPack].data()) && ...);
+        }
+
+        bool SpanDataEqual(const FlatIterator& other) const
+        {
+            // Create index sequence to iterate through all spans (0 to t_NumComponents - 1)
+            return SpanDataEqualImpl(other, std::make_index_sequence<t_NumComponents>{});
         }
     private:
         //==============================
         // Internal Fields
         //==============================
-        std::span<bool> m_IsEntityValidSpan{};
-        EntityID m_CurrentIndex{ 0 };
+        FlatStorage_t<t_NumComponents> m_SpanStorage{};
+        EntityID m_CurrentEntity{ 0 };
     };
 
+    template<typename... t_ComponentTypes>
 	class FlatView
 	{
+    public:
+        //==============================
+        // Metaprogramming Types & Asserts
+        //==============================
+        static constexpr size_t k_NumComponents{ sizeof...(t_ComponentTypes) };
+        static_assert(k_NumComponents != 0);
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
 		FlatView() = default;
-		FlatView(std::span<bool> isEntityValidList) :
-			m_IsEntityValidSpan(isEntityValidList) {};
+		FlatView(FlatStorage_t<k_NumComponents> isEntityValidList) :
+			m_SpanStorage(isEntityValidList) {};
 		~FlatView() = default;
 	public:
 		//==============================
 		// Enable For-Loop / Iterator Usage
 		//==============================
-		FlatIterator begin() const
+		FlatIterator<k_NumComponents> begin() const
 		{
-			return FlatIterator(m_IsEntityValidSpan, 0);
+			return FlatIterator<k_NumComponents>(m_SpanStorage, 0);
 		};
-		FlatIterator end() const
+		FlatIterator<k_NumComponents> end() const
 		{
-			return FlatIterator(m_IsEntityValidSpan, m_IsEntityValidSpan.size());
+            if constexpr (k_NumComponents == 1)
+            {
+                return FlatIterator<k_NumComponents>(m_SpanStorage, m_SpanStorage.size());
+            }
+            else
+            {
+                return FlatIterator<k_NumComponents>(m_SpanStorage, m_SpanStorage[0].size());
+            }
 		};
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		std::span<bool> m_IsEntityValidSpan;
+        FlatStorage_t<k_NumComponents> m_SpanStorage;
 	};
 }

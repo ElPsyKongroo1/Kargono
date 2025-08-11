@@ -173,7 +173,7 @@ namespace Kargono::ECS
 		//==============================
 		PackedView() = default;
 		PackedView(PackedStorage_t<k_NumComponents> entityList) :
-			m_EntityListSpan(entityList) {};
+			m_EntityStorage(entityList) {};
 		~PackedView() = default;
 	public:
 		//==============================
@@ -181,25 +181,25 @@ namespace Kargono::ECS
 		//==============================
 		PackedIterator<k_NumComponents> begin() const
 		{
-		    return PackedIterator<k_NumComponents>(m_EntityListSpan, 0 );
+		    return PackedIterator<k_NumComponents>(m_EntityStorage, 0 );
 		};
 		PackedIterator<k_NumComponents> end() const
 		{
             if constexpr (k_NumComponents == 1)
             {
-			    return PackedIterator<k_NumComponents>( m_EntityListSpan, m_EntityListSpan.size() );
+			    return PackedIterator<k_NumComponents>( m_EntityStorage, m_EntityStorage.size() );
             }
             else
             {
                 // TODO: Note this iterator uses the first component list as the basis for iteration
                 // Might want to use the shortest list (determined at runtime) for faster results
-                return PackedIterator<k_NumComponents>(m_EntityListSpan, m_EntityListSpan[0]->GetDenseCount());
+                return PackedIterator<k_NumComponents>(m_EntityStorage, m_EntityStorage[0]->GetDenseCount());
             }
 		};
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-        PackedStorage_t<k_NumComponents> m_EntityListSpan;
+        PackedStorage_t<k_NumComponents> m_EntityStorage;
 	};
 }

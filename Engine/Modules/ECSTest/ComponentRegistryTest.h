@@ -56,7 +56,7 @@ namespace Kargono::ECS
 			// Add the component type and its array
 			m_ComponentMasks.insert({typeName, m_NextComponentType});
 
-#if 1 // Default to packed arrays
+#if 0 // Default to packed arrays
 			// Create packed array using the provided allocator
 			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(PackedArray<t_Component>), alignof(PackedArray<t_Component>));
 			KG_ASSERT(componentBuffer);
@@ -65,7 +65,7 @@ namespace Kargono::ECS
 			PackedArray<t_Component>* newArray = new ((void*)componentBuffer) PackedArray<t_Component>();
 #endif
 
-#if 0 // Default to flat arrays
+#if 1 // Default to flat arrays
 			// Create flat array using the provided allocator
 			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(FlatArray<t_Component>), alignof(FlatArray<t_Component>));
 			KG_ASSERT(componentBuffer);
@@ -220,11 +220,11 @@ namespace Kargono::ECS
 		}
 
 	public:
-		template<typename t_DataType>
-		FlatView GetFlatView()
+		template<typename t_ComponentType>
+		FlatView<t_ComponentType> GetSingleFlatView()
 		{
 			// Check if the component array exists
-			Expected<ComponentMask> compMask{ GetComponentMask<t_DataType>() };
+			Expected<ComponentMask> compMask{ GetComponentMask<t_ComponentType>() };
 
 			if (!compMask)
 			{
@@ -232,14 +232,92 @@ namespace Kargono::ECS
 			}
 
 			// Construct & return the view
-			IComponentStore* compStore{ GetComponentArray<t_DataType>() };
+			IComponentStore* compStore{ GetComponentArray<t_ComponentType>() };
 			KG_ASSERT(compStore);
 
-			//TODO: Fix this please!!! This needs to use the IView interface instead
+			// TODO: Fix this please!!! This needs to use the IView interface instead
 
-			// Convert to packed array 
-			FlatArray<t_DataType>* flatStore{ (FlatArray<t_DataType>*)compStore };
-			return flatStore->GetFlatView();
+			// Convert to Flat array 
+			FlatArray<t_ComponentType>* FlatStore{ (FlatArray<t_ComponentType>*)compStore };
+			return FlatView<t_ComponentType>{ FlatStore->GetValidEntityArray() };
+		}
+
+		template<typename... t_ComponentTypes>
+		FlatView<t_ComponentTypes...> GetMultiFlatView()
+		{
+			constexpr size_t k_NumComponents{ sizeof...(t_ComponentTypes) };
+
+			// Create return array
+			std::array<std::span<bool>, k_NumComponents> returnArray{};
+
+			// Fill array via parameter pack expansion
+			FillFlatViewData<t_ComponentTypes...>(returnArray);
+
+			// Create Flat view from array
+			return FlatView<t_ComponentTypes...>(returnArray);
+		}
+
+	private:
+		/*
+		// Comparison helper(s)
+		template<typename... t_ComponentTypes>
+		bool FillFlatViewData(std::array<std::span<bool>, sizeof...(t_ComponentTypes)>& dataArray)
+		{
+			bool allValid = true;
+
+			// Generate index sequence for the number of components
+			[&] <std::size_t... t_IndexSeq> (std::index_sequence<t_IndexSeq...>)
+			{
+				// Fold expression to fill each index of the array
+				(([&]
+					{
+						Expected<ComponentMask> compMask = GetComponentMask<t_ComponentTypes>();
+						if (!compMask)
+						{
+							allValid = false;
+						}
+
+						IComponentStore* compStore = GetComponentArray<t_ComponentTypes>();
+						KG_ASSERT(compStore);
+
+						// Convert to Flat array 
+						FlatArray<t_ComponentTypes>* flatStore{ (FlatArray<t_ComponentTypes>*)compStore };
+
+						// Fill the element of the array
+						dataArray[t_IndexSeq] = flatStore->GetValidEntityArray();
+
+					}()), ...);
+			}(std::index_sequence_for<t_ComponentTypes...>{});
+
+			return allValid;
+		}
+		*/
+		template<typename... t_ComponentTypes>
+		bool FillFlatViewData(std::array<std::span<bool>, sizeof...(t_ComponentTypes)>& dataArray)
+		{
+			bool allValid = true;
+
+			std::size_t index{ 0 };
+			([&] 
+			{
+				Expected<ComponentMask> compMask = GetComponentMask<t_ComponentTypes>();
+				if (!compMask)
+				{
+					allValid = false;
+				}
+
+				IComponentStore* compStore = GetComponentArray<t_ComponentTypes>();
+				KG_ASSERT(compStore);
+
+				// Convert to Flat array 
+				FlatArray<t_ComponentTypes>* flatStore{ (FlatArray<t_ComponentTypes>*)compStore };
+
+				// Store the 
+				dataArray[index] = flatStore->GetValidEntityArray();
+				index++;
+			}(), ...);
+
+			return allValid;
 		}
 
 		//==============================

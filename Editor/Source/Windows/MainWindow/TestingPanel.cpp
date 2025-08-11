@@ -716,7 +716,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Delete Transform To All Entities"))
 		{
-			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
+			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				KG_ASSERT(s_DataRegistry.RemoveComponent<TransformTest>(id));
@@ -739,7 +739,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Delete Health To All Entities"))
 		{
-			auto transformView = s_DataRegistry.GetPackedView<HealthTest>();
+			auto transformView = s_DataRegistry.GetFlatView<HealthTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				KG_ASSERT(s_DataRegistry.RemoveComponent<HealthTest>(id));
@@ -749,7 +749,7 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::Text("Get Views");
 		if (ImGui::Button("Print Out All Transform Components"))
 		{
-			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
+			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
@@ -771,7 +771,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Print Out All Health Components"))
 		{
-			auto healthView = s_DataRegistry.GetPackedView<HealthTest>();
+			auto healthView = s_DataRegistry.GetFlatView<HealthTest>();
 			for (ECS::EntityID id : healthView)
 			{
 				ExpectedRef<HealthTest> healthRef = s_DataRegistry.GetComponent<HealthTest>(id);
@@ -794,7 +794,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Print Out All Transform & Health Components"))
 		{
-			auto combinedView = s_DataRegistry.GetPackedView<TransformTest, HealthTest>();
+			auto combinedView = s_DataRegistry.GetFlatView<TransformTest, HealthTest>();
 			for (ECS::EntityID id : combinedView)
 			{
 				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
@@ -832,7 +832,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Move All Entities Up By One"))
 		{
-			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
+			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);

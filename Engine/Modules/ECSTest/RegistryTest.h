@@ -160,10 +160,18 @@ namespace Kargono::ECS
 			}
 		}
 
-		template<typename t_DataType>
-		FlatView GetFlatView()
+		template<typename... t_ComponentTypes>
+		FlatView<t_ComponentTypes...> GetFlatView()
 		{
-			return m_ComponentRegistry.GetFlatView<t_DataType>();
+			constexpr size_t k_NumComponents{ sizeof...(t_ComponentTypes) };
+			if constexpr (k_NumComponents == 1)
+			{
+				return m_ComponentRegistry.GetSingleFlatView<t_ComponentTypes...>();
+			}
+			else
+			{
+				return m_ComponentRegistry.GetMultiFlatView<t_ComponentTypes...>();
+			}
 		}
 
 		template<typename t_Component>

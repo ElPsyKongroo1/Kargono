@@ -75,9 +75,9 @@ namespace Kargono::ECS
 			return (void*)&m_ComponentArray[entityID];
 		}
 
-		FlatView GetFlatView()
+		std::span<bool> GetValidEntityArray()
 		{
-			return FlatView{ m_ValidEntityArray };
+			return m_ValidEntityArray;
 		}
 
 		//==============================
