@@ -91,10 +91,14 @@ namespace Kargono::ECS
 			return &m_ComponentArray[m_EntityComponentSet.GetDenseIndex(entityID)];
 		}
 
-		PackedView GetPackedView()
+		std::span<EntityID> GetEntityList()
 		{
-			// Get reference to entity dense-list
-			return PackedView{ m_EntityComponentSet.GetDenseList() };
+			return m_EntityComponentSet.GetDenseList();
+		}
+
+		PackedSparseSet* GetSparseSet()
+		{
+			return &m_EntityComponentSet;
 		}
 
 	public:
@@ -137,7 +141,7 @@ namespace Kargono::ECS
 		// Packed array and info
 		std::array<t_Component, k_MaxEntities> m_ComponentArray{};
 		// EntityID <-> ComponentIndex data structure
-		SparseSet<EntityID, ComponentIndex> m_EntityComponentSet{ k_MaxEntities, k_MaxEntities };
+		PackedSparseSet m_EntityComponentSet{ k_MaxEntities, k_MaxEntities };
 	private:
 		//==============================
 		// Injected Section

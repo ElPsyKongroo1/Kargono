@@ -716,11 +716,11 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Delete Transform To All Entities"))
 		{
-			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
+			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				KG_ASSERT(s_DataRegistry.RemoveComponent<TransformTest>(id));
-			} 
+			}
 		}
 
 		if (ImGui::Button("Add Health To All Entities"))
@@ -739,7 +739,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Delete Health To All Entities"))
 		{
-			auto transformView = s_DataRegistry.GetFlatView<HealthTest>();
+			auto transformView = s_DataRegistry.GetPackedView<HealthTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				KG_ASSERT(s_DataRegistry.RemoveComponent<HealthTest>(id));
@@ -749,7 +749,7 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::Text("Get Views");
 		if (ImGui::Button("Print Out All Transform Components"))
 		{
-			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
+			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
@@ -769,9 +769,70 @@ namespace Kargono::Panels
 			}
 		}
 
+		if (ImGui::Button("Print Out All Health Components"))
+		{
+			auto healthView = s_DataRegistry.GetPackedView<HealthTest>();
+			for (ECS::EntityID id : healthView)
+			{
+				ExpectedRef<HealthTest> healthRef = s_DataRegistry.GetComponent<HealthTest>(id);
+				if (!healthRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+
+				HealthTest& health{ healthRef.value().get() };
+
+				KG_TRACE_INFO("Entity {} | Head: {} Torso: {} | Arms Left: {}, Right: {} | Legs Left: {}, Right: {}",
+					id,
+					health.headHealth, health.torsoHealth,
+					health.armsHealth.x, health.armsHealth.y,
+					health.legsHealth.x, health.legsHealth.y
+				);
+			}
+		}
+
+		if (ImGui::Button("Print Out All Transform & Health Components"))
+		{
+			auto combinedView = s_DataRegistry.GetPackedView<TransformTest, HealthTest>();
+			for (ECS::EntityID id : combinedView)
+			{
+				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
+				if (!transformRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+
+				TransformTest& transform{ transformRef.value().get() };
+
+				KG_TRACE_INFO("Entity {} | Position x: {} y: {} | Size x: {}, y: {}",
+					id,
+					transform.location.x, transform.location.y,
+					transform.size.x, transform.size.y
+				);
+
+				ExpectedRef<HealthTest> healthRef = s_DataRegistry.GetComponent<HealthTest>(id);
+				if (!healthRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+
+				HealthTest& health{ healthRef.value().get() };
+
+				KG_TRACE_INFO("Entity {} | Head: {} Torso: {} | Arms Left: {}, Right: {} | Legs Left: {}, Right: {}",
+					id,
+					health.headHealth, health.torsoHealth,
+					health.armsHealth.x, health.armsHealth.y,
+					health.legsHealth.x, health.legsHealth.y
+				);
+			}
+		}
+
 		if (ImGui::Button("Move All Entities Up By One"))
 		{
-			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
+			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);

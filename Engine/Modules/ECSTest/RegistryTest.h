@@ -146,10 +146,18 @@ namespace Kargono::ECS
 			return {*compPtr};
 		}
 		
-		template<typename t_DataType>
-		PackedView GetPackedView()
+		template<typename... t_ComponentTypes>
+		PackedView<t_ComponentTypes...> GetPackedView()
 		{
-			return m_ComponentRegistry.GetPackedView<t_DataType>();
+			constexpr size_t k_NumComponents{ sizeof...(t_ComponentTypes) };
+			if constexpr (k_NumComponents == 1)
+			{
+				return m_ComponentRegistry.GetSinglePackedView<t_ComponentTypes...>();
+			}
+			else
+			{
+				return m_ComponentRegistry.GetMultiPackedView<t_ComponentTypes...>();
+			}
 		}
 
 		template<typename t_DataType>
