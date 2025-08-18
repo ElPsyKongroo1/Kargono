@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/BitField.h"
+#include "Modules/FileSystem/FileSystem.h"
 
 #include <cstdint>
 #include <bitset>
@@ -19,11 +20,15 @@ namespace Kargono::ECS
 	constexpr ComponentMask k_MaxComponents{ 32 }; // Arbitrary
 	using ComponentIndex = size_t;
 	using ComponentCount = ComponentIndex;
+	using ComponentIdentifier = uint32_t;
 
 	using Signature = BitField<uint32_t>;
 
 	// This is to ensure that a signature can be succuessfully union'd w/
 	// an entity ID in EntityRegistry.h
 	static_assert(sizeof(Signature) == sizeof(EntityID));
+
+	// Unique (compile-time) identifier generation
+//#define GET_COMPONENT_IDENTIFIER(type) Utility::FileSystem::CRCFromString("Component::" #type) 
 }
 

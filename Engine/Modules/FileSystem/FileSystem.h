@@ -2,6 +2,7 @@
 
 #include "Kargono/Core/Buffer.h"
 #include "Kargono/Core/FixedString.h"
+#include "Kargono/Utility/Operations.h"
 
 #include "API/Cryptography/hashlibraryAPI.h"
 
@@ -71,7 +72,12 @@ namespace Kargono::Utility
 		static uint32_t CRCFromBuffer(void* bufferPointer, uint64_t bufferSize);
 		constexpr static uint32_t CRCFromString(const char* inputString)
 		{
-			return Hashing::CalculateHash(inputString, std::strlen(inputString));
+			return Hashing::CalculateHash(inputString, Utility::Operations::GetStringLength(inputString));
+		}
+
+		constexpr static uint32_t CRCFromString(std::string_view inputString)
+		{
+			return Hashing::CalculateHash(inputString.data(), inputString.size());
 		}
 
 	};

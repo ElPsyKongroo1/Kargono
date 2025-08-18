@@ -11,12 +11,18 @@
 #include "Kargono/Memory/SystemAlloc.h"
 #include "Kargono/Memory/HeapAlloc.h"
 #include "Kargono/Core/DataStructures.h"
+#include "Kargono/Utility/CompilerInfo.h"
 
 #include "Modules/ECSTest/DataStructures/SparseSetTest.h"
 #include "Modules/ECSTest/RegistryTest.h"
 
 #include <sstream>
 #include <cstdio>
+
+struct NonQualifiedStruct
+{
+	float a = 2.0f;
+};
 
 namespace Kargono::Panels
 {
@@ -847,6 +853,55 @@ namespace Kargono::Panels
 				transform.location.y += 1.0f;
 			}
 		}
+
+
+		if (ImGui::Button("Print Transform Name"))
+		{
+			Utility::ReturnTemplateNames<TransformTest> values = Utility::CompilerInfo::GetTemplateArgumentNames<TransformTest>();
+			KG_TRACE_INFO("Transform Component. Stringified: {}",
+				values[0]);
+		}
+
+		if (ImGui::Button("Print Health Name"))
+		{
+			Utility::ReturnTemplateNames<HealthTest> values = Utility::CompilerInfo::GetTemplateArgumentNames<HealthTest>();
+			KG_TRACE_INFO("Health Component. Stringified: {}",
+				values[0]);
+		}
+
+		if (ImGui::Button("Print TestingPanel Name"))
+		{
+			Utility::ReturnTemplateNames<TestingPanel> values = Utility::CompilerInfo::GetTemplateArgumentNames<TestingPanel>();
+			KG_TRACE_INFO("Testing Panel. Stringified: {}",
+				values[0]);
+		}
+
+		if (ImGui::Button("Print Non Qualified Struct Name"))
+		{
+			Utility::ReturnTemplateNames<NonQualifiedStruct> values = Utility::CompilerInfo::GetTemplateArgumentNames<NonQualifiedStruct>();
+			KG_TRACE_INFO("Non Qualified. Stringified: {}",
+				values[0]);
+		}
+
+		if (ImGui::Button("Print All Struct Names"))
+		{
+
+			auto values = Utility::CompilerInfo::GetTemplateArgumentNames<TransformTest, HealthTest, TestingPanel, NonQualifiedStruct>();
+			
+			KG_TRACE_INFO("Print All Struct Names:");
+			for (std::string_view str : values)
+			{
+				KG_TRACE_INFO(str);
+			}
+			
+		}
+
+		if (ImGui::Button("Test out Compile time Hashing"))
+		{
+			uint32_t value{ Utility::FileSystem::CRCFromString("This is some text") };
+			KG_TRACE_INFO(value);
+		}
+
 
 		
 

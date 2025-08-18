@@ -3,14 +3,14 @@
 #include "Modules/ECSTest/ComponentArrays/IComponentStoreTest.h"
 #include "Modules/ECSTest/ComponentArrays/PackedArray.h"
 #include "Modules/ECSTest/ComponentArrays/FlatArray.h"
-
 #include "Modules/ECSTest/Views/PackedView.h"
 #include "Modules/ECSTest/Views/FlatView.h"
+#include "Modules/ECSTest/EntityRegistryTest.h"
 
 #include "Kargono/Core/Base.h"
+#include "Kargono/Utility/CompilerInfo.h"
+#include "Modules/FileSystem/FileSystem.h"
 #include "Kargono/Memory/IAllocator.h"
-
-#include "Modules/ECSTest/EntityRegistryTest.h"
 
 #include <unordered_map>
 
@@ -45,16 +45,17 @@ namespace Kargono::ECS
 		template<typename t_Component>
 		[[nodiscard]] bool RegisterComponent()
 		{
-			const char* typeName = typeid(t_Component).name();
+			constexpr auto uniqueName{ Utility::CompilerInfo::GetTemplateArgumentNames<t_Component>() };
+			constexpr ComponentIdentifier uniqueIdentifier{ Utility::FileSystem::CRCFromString(uniqueName[0]) };
 
 			// Check if component already exists
-			if (m_ComponentMasks.contains(typeName))
+			if (m_ComponentMasks.contains(uniqueIdentifier))
 			{
 				return false;
 			}
 
 			// Add the component type and its array
-			m_ComponentMasks.insert({typeName, m_NextComponentType});
+			m_ComponentMasks.insert({ uniqueIdentifier, m_NextComponentType});
 
 #if 0 // Default to packed arrays
 			// Create packed array using the provided allocator
@@ -77,7 +78,7 @@ namespace Kargono::ECS
 			KG_ASSERT(newArray);
 
 			newArray->Init(i_EntityRegistry);
-			m_ComponentArrays.insert({typeName, newArray});
+			m_ComponentArrays.insert({ uniqueIdentifier, newArray});
 
 			// Increment the value so that the next component registered will be different
 			m_NextComponentType++;
@@ -111,29 +112,31 @@ namespace Kargono::ECS
 		template<typename t_Component>
 		Expected<ComponentMask> GetComponentMask()
 		{
-			const char* typeName = typeid(t_Component).name();
+			constexpr std::string_view uniqueName{ Utility::CompilerInfo::GetTemplateArgumentNames<t_Component>()[0]};
+			constexpr ComponentIdentifier uniqueIdentifier{ Utility::FileSystem::CRCFromString(uniqueName) };
 
 			// Check if component type is registered
-			if (!m_ComponentMasks.contains(typeName))
+			if (!m_ComponentMasks.contains(uniqueIdentifier))
 			{
 				return {};
 			}
 
-			return m_ComponentMasks[typeName];
+			return m_ComponentMasks[uniqueIdentifier];
 		}
 
 		template<typename t_Component>
 		IComponentStore* GetComponentArray()
 		{
-			const char* typeName = typeid(t_Component).name();
+			constexpr auto uniqueName{ Utility::CompilerInfo::GetTemplateArgumentNames<t_Component>() };
+			constexpr ComponentIdentifier uniqueIdentifier{Utility::FileSystem::CRCFromString(uniqueName[0])};
 
-			if (!m_ComponentMasks.contains(typeName))
+			if (!m_ComponentMasks.contains(uniqueIdentifier))
 			{
 				bool success = RegisterComponent<t_Component>();
 				KG_ASSERT(success);
 			}
 
-			return m_ComponentArrays[typeName];
+			return m_ComponentArrays[uniqueIdentifier];
 		}
 
 		template<typename t_ComponentType>
@@ -347,8 +350,8 @@ namespace Kargono::ECS
 		// Internal Fields
 		//==============================
 		// Component data/info
-		std::unordered_map<const char*, ComponentMask> m_ComponentMasks{};
-		std::unordered_map<const char*, IComponentStore*> m_ComponentArrays{};
+		std::unordered_map<ComponentIdentifier, ComponentMask> m_ComponentMasks{};
+		std::unordered_map<ComponentIdentifier, IComponentStore*> m_ComponentArrays{};
 		// Iterator for adding new components
 		ComponentMask m_NextComponentType{0};
 

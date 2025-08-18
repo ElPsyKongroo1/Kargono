@@ -44,10 +44,6 @@ namespace Kargono::AI
 		Ref<Scripting::Script> OnMessage { nullptr };
 	};
 
-	//=========================
-	// AI Context Class
-	//=========================
-
 	// Comparison functor for sorting AIMessages inside AIContext's MessageQueue
 	inline auto k_MessageQueueComparisonFunctor = [](const AIMessage& aiMessageOne, const AIMessage& aiMessageTwo) 
 	{
@@ -55,9 +51,6 @@ namespace Kargono::AI
 	};
 
 
-	//=========================
-	// AI Service Class
-	//=========================
 	class AIContext
 	{
 	public:

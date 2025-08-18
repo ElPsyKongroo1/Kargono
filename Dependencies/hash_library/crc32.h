@@ -21,6 +21,20 @@ typedef unsigned __int32 uint32_t;
 
 namespace Hashing
 {
+	inline uint32_t swap(uint32_t x)
+	{
+#if defined(__GNUC__) || defined(__clang__)
+		return __builtin_bswap32(x);
+#endif
+#ifdef MSC_VER
+		return _byteswap_ulong(x);
+#endif
+
+		return (x >> 24) |
+			((x >> 8) & 0x0000FF00) |
+			((x << 8) & 0x00FF0000) |
+			(x << 24);
+	}
 
 	// look-up table
 	constexpr uint32_t s_CRC32Lookup[8][256] =
@@ -312,9 +326,84 @@ namespace Hashing
 		  0x2C8E0FFF,0xE0240F61,0x6EAB0882,0xA201081C,0xA8C40105,0x646E019B,0xEAE10678,0x264B06E6 }
 	};
 
+	constexpr uint32_t CalculateHash(const char* data, size_t numBytes) 
+	{
+		uint32_t crc = 0xFFFFFFFFu;
+
+		size_t i{ 0 };
+		while (numBytes >= 8) 
+		{
+			uint32_t one, two;
+
+			if constexpr (std::endian::native == std::endian::big) 
+			{
+				// Big-endian version (matches your #if branch)
+				one =
+					(static_cast<uint32_t>(data[i + 0]) << 24) |
+					(static_cast<uint32_t>(data[i + 1]) << 16) |
+					(static_cast<uint32_t>(data[i + 2]) << 8) |
+					(static_cast<uint32_t>(data[i + 3]));
+				one ^= swap(crc);
+
+				two =
+					(static_cast<uint32_t>(data[i + 4]) << 24) |
+					(static_cast<uint32_t>(data[i + 5]) << 16) |
+					(static_cast<uint32_t>(data[i + 6]) << 8) |
+					(static_cast<uint32_t>(data[i + 7]));
+
+				crc = s_CRC32Lookup[7][one >> 24] ^
+					s_CRC32Lookup[6][(one >> 16) & 0xFF] ^
+					s_CRC32Lookup[5][(one >> 8) & 0xFF] ^
+					s_CRC32Lookup[4][one & 0xFF] ^
+					s_CRC32Lookup[3][two >> 24] ^
+					s_CRC32Lookup[2][(two >> 16) & 0xFF] ^
+					s_CRC32Lookup[1][(two >> 8) & 0xFF] ^
+					s_CRC32Lookup[0][two & 0xFF];
+			}
+			else 
+			{
+				// Little-endian version (matches your #else branch)
+				one =
+					(static_cast<uint32_t>(data[i + 0])) |
+					(static_cast<uint32_t>(data[i + 1]) << 8) |
+					(static_cast<uint32_t>(data[i + 2]) << 16) |
+					(static_cast<uint32_t>(data[i + 3]) << 24);
+				one ^= crc;
+
+				two =
+					(static_cast<uint32_t>(data[i + 4])) |
+					(static_cast<uint32_t>(data[i + 5]) << 8) |
+					(static_cast<uint32_t>(data[i + 6]) << 16) |
+					(static_cast<uint32_t>(data[i + 7]) << 24);
+
+				crc = s_CRC32Lookup[7][one & 0xFF] ^
+					s_CRC32Lookup[6][(one >> 8) & 0xFF] ^
+					s_CRC32Lookup[5][(one >> 16) & 0xFF] ^
+					s_CRC32Lookup[4][(one >> 24)] ^
+					s_CRC32Lookup[3][two & 0xFF] ^
+					s_CRC32Lookup[2][(two >> 8) & 0xFF] ^
+					s_CRC32Lookup[1][(two >> 16) & 0xFF] ^
+					s_CRC32Lookup[0][(two >> 24)];
+			}
+
+			i += 8;
+			numBytes -= 8;
+		}
+
+		// Process remaining bytes
+		while (numBytes--) 
+		{
+			crc = (crc >> 8) ^ s_CRC32Lookup[0][(crc ^ data[i]) & 0xFF];
+			++i;
+		}
+
+		return ~crc;
+	}
+
+#if 0
 	constexpr uint32_t CalculateHash(const void* data, size_t numBytes)
 	{
-		uint32_t* current = (uint32_t*)data;
+		const uint32_t* current = (const uint32_t*)data;
 		uint32_t crc = ~(uint32_t)0;
 
 		// process eight bytes at once
@@ -349,10 +438,13 @@ namespace Hashing
 		unsigned char* currentChar = (unsigned char*)current;
 		// remaining 1 to 7 bytes (standard CRC table-based algorithm)
 		while (numBytes--)
+		{
 			crc = (crc >> 8) ^ s_CRC32Lookup[0][(crc & 0xFF) ^ *currentChar++];
+		}
 
 		return ~crc;
 	}
+#endif
 }
 
 
