@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include <algorithm>
 #include <tuple>
@@ -49,6 +50,31 @@ namespace Kargono::Utility
 		//==============================
 		// String Operations
 		//==============================
+		/*
+		template <size_t N1, size_t N2>
+		static constexpr auto Concatonate(std::string_view lhs, std::string_view rhs) 
+		{
+			// +1 for null terminator
+			std::array<char, N1 + N2 + 1> result{};
+
+			// Copy lhs
+			for (size_t i = 0; i < N1; ++i) 
+			{
+				result[i] = lhs[i];
+			}
+			// Copy rhs
+			for (size_t j = 0; j < N2; ++j) 
+			{
+				result[N1 + j] = rhs[j];
+			}
+
+			// Null terminator
+			result[N1 + N2] = '\0';
+
+			return result;
+		}
+		*/
+
 		constexpr static size_t GetStringLength(const char* string)
 		{
 			// TODO: Note this function is dangerous for non-null terminated strings

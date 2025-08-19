@@ -7,21 +7,21 @@
 
 namespace Kargono
 {
-	template<std::size_t BufferSize>
+	template<std::size_t t_BufferSize>
 	class FixedString
 	{
-		static_assert(BufferSize > 0, "Cannot instantiate fixed string with empty buffer");
+		static_assert(t_BufferSize > 0, "Cannot instantiate fixed string with empty buffer");
 
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		FixedString()
+		constexpr FixedString()
 		{
 			m_DataBuffer[0] = '\0';
 		}
 
-		FixedString(const char* newString)
+		constexpr FixedString(const char* newString)
 		{
 			if (!newString)
 			{
@@ -32,7 +32,7 @@ namespace Kargono
 			ReplaceBuffer(newString);
 		}
 
-		FixedString(char newChar)
+		constexpr FixedString(char newChar)
 		{
 			// TODO: I realize that a buffer of size one would cause an issue, but like really thooooooo
 
@@ -48,13 +48,13 @@ namespace Kargono
 		// Modify String
 		//==============================
 
-		void ClearString()
+		constexpr void ClearString()
 		{
 			m_DataBuffer[0] = '\0';
 			m_StringLength = 0;
 		}
 
-		void SetString(const char* newString)
+		constexpr void SetString(const char* newString)
 		{
 			ReplaceBuffer(newString);
 		}
@@ -68,7 +68,7 @@ namespace Kargono
 
 			// Replace data inside buffer with formatted string and get resultant size of buffer
 			
-			int32_t newStringSize = std::snprintf(m_DataBuffer.data(), BufferSize, formatString, std::forward<Args>(args)...);
+			int32_t newStringSize = std::snprintf(m_DataBuffer.data(), t_BufferSize, formatString, std::forward<Args>(args)...);
 
 			// If snprintf fails, return false
 			if (newStringSize < 0) 
@@ -89,7 +89,7 @@ namespace Kargono
 
 			// Replace data inside buffer with formatted string and get resultant size of buffer
 
-			int32_t newStringSize = std::snprintf(m_DataBuffer.data() + m_StringLength, BufferSize - m_StringLength, formatString, std::forward<Args>(args)...);
+			int32_t newStringSize = std::snprintf(m_DataBuffer.data() + m_StringLength, t_BufferSize - m_StringLength, formatString, std::forward<Args>(args)...);
 
 			// If snprintf fails, return false
 			if (newStringSize < 0)
@@ -103,19 +103,26 @@ namespace Kargono
 		}
 
 
-		bool Append(const char* appendString)
+		constexpr bool Append(const char* appendString)
 		{
 			// Get size of newly appending c-string
-			std::size_t appendStringLength = std::strlen(appendString);
+			size_t appendStringLength{0};
+			while (appendString[appendStringLength] != '\0') 
+			{
+				appendStringLength++;
+			}
 
 			// Early out if new size of string exceeds buffer length
-			if (m_StringLength + appendStringLength + 1 > BufferSize)
+			if (m_StringLength + appendStringLength + 1 > t_BufferSize)
 			{
 				return false;
 			}
 
 			// Fill data (Overwrite current null terminator)
-			std::strncpy(m_DataBuffer.data() + m_StringLength, appendString, appendStringLength);
+			for (size_t i = 0; i < appendStringLength; i++)
+			{
+				m_DataBuffer[m_StringLength + i] = appendString[i];
+			}
 			m_StringLength += appendStringLength;
 
 			// Add new null terminator
@@ -130,7 +137,7 @@ namespace Kargono
 			static_assert(std::is_integral<IntegerType>::value, "Can only append simple integer types");
 
 			// Attempt to append the const char* version of the integer to the end of the current string
-			std::to_chars_result result = std::to_chars(m_DataBuffer.data() + m_StringLength, m_DataBuffer.data() + (BufferSize - 1), appendInteger);
+			std::to_chars_result result = std::to_chars(m_DataBuffer.data() + m_StringLength, m_DataBuffer.data() + (t_BufferSize - 1), appendInteger);
 			
 			// Exit if appending fails
 			if (result.ec != std::errc())
@@ -172,8 +179,8 @@ namespace Kargono
 			return m_DataBuffer.data(); 
 		}
 
-		template <std::size_t OtherBufferSize>
-		bool operator==(const FixedString<OtherBufferSize>& other) const 
+		template <std::size_t t_OtherBufferSize>
+		bool operator==(const FixedString<t_OtherBufferSize>& other) const 
 		{
 			// Check if lengths are different
 			if (m_StringLength != other.m_StringLength)
@@ -212,17 +219,27 @@ namespace Kargono
 		//==============================
 		// Getters/Setters
 		//==============================
-		const char* CString() const
+		constexpr const char* CString() const
 		{
 			return m_DataBuffer.data();
 		}
 
-		std::size_t StringLength() const
+		constexpr void* Data()
+		{
+			return m_DataBuffer.data();
+		}
+
+		constexpr size_t BufferSize() const
+		{
+			return t_BufferSize;
+		}
+
+		constexpr std::size_t StringLength() const
 		{
 			return m_StringLength;
 		}
 
-		bool IsEmpty() const
+		constexpr bool IsEmpty() const
 		{
 			return m_StringLength == 0;
 		}
@@ -231,21 +248,29 @@ namespace Kargono
 		//==============================
 		// Internal Functionality
 		//==============================
-		bool ReplaceBuffer(const char* newString)
+		constexpr bool ReplaceBuffer(const char* newString)
 		{
 			// Get size of new string
-			std::size_t newStringLength = std::strlen(newString);
+			std::size_t newStringLength{ 0 };
+			while (newString[newStringLength] != '\0')
+			{
+				newStringLength++;
+			}
 
 			// Truncate provided string based on buffer size
-			if (newStringLength + 1 > BufferSize)
+			if (newStringLength + 1 > t_BufferSize)
 			{
 				// Set a new string length to fill buffer as much as possible
 				// * Note, leaving space for null terminator
-				newStringLength = BufferSize - 1;
+				newStringLength = t_BufferSize - 1;
 			}
 
+
 			// Fill data (Overwrite current null terminator)
-			std::strncpy(m_DataBuffer.data(), newString, newStringLength);
+			for (size_t i = 0; i < newStringLength; i++)
+			{
+				m_DataBuffer[i] = newString[i];
+			}
 			m_StringLength = newStringLength;
 
 			// Add new null terminator
@@ -253,21 +278,24 @@ namespace Kargono
 			return true;
 		}
 
-		bool ReplaceBuffer(std::string_view newString)
+		constexpr bool ReplaceBuffer(std::string_view newString)
 		{
 			// Get size of new string
 			std::size_t newStringLength = newString.size();
 
 			// Truncate provided string based on buffer size
-			if (newStringLength + 1 > BufferSize)
+			if (newStringLength + 1 > t_BufferSize)
 			{
 				// Set a new string length to fill buffer as much as possible
 				// * Note, leaving space for null terminator
-				newStringLength = BufferSize - 1;
+				newStringLength = t_BufferSize - 1;
 			}
 
 			// Fill data (Overwrite current null terminator)
-			std::memcpy(m_DataBuffer.data(), newString.data(), newStringLength); // Note, this assumes a char size of 1 byte
+			for (size_t i = 0; i < newStringLength; i++)
+			{
+				m_DataBuffer[i] = newString[i];
+			}
 			m_StringLength = newStringLength;
 
 			// Add new null terminator
@@ -276,7 +304,7 @@ namespace Kargono
 		}
 
 	private:
-		std::array<char, BufferSize> m_DataBuffer;
+		std::array<char, t_BufferSize> m_DataBuffer{};
 		std::size_t m_StringLength{0};
 	};
 
@@ -307,10 +335,10 @@ namespace Kargono
 
 namespace std
 {
-	template<size_t BufferSize>
-	struct hash<Kargono::FixedString<BufferSize>>
+	template<size_t t_BufferSize>
+	struct hash<Kargono::FixedString<t_BufferSize>>
 	{
-		std::size_t operator()(const Kargono::FixedString<BufferSize>& fixedString) const
+		std::size_t operator()(const Kargono::FixedString<t_BufferSize>& fixedString) const
 		{
 			unsigned int hash = 5381;
 

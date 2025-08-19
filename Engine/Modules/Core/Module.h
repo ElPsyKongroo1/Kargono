@@ -10,20 +10,21 @@
 
 namespace Kargono
 {
-
-#define Register_Module(moduleName)                                    \
+#define Register_Module(moduleName)                                     \
     struct moduleName##Tag;                                             \
     template <typename T>                                               \
-    struct TypeTags                                                     \
+    struct TypeInfo                                                     \
     {                                                                   \
-        using Tags { std::tuple<> };                                    \
+        constexpr static std::string_view TypeName{ "Default Name" };               \
+        using Tags = std::tuple<>;                                      \
     };                                                                  \
     template <typename T>                                               \
     struct ModuleTypeTraits                                             \
     {                                                                   \
         constexpr static std::string_view ModuleName { #moduleName };   \
-        using ModuleTag { moduleName##Tag };                            \
-        using Tags { typename TypeTags<T>::Tags };                      \
+        constexpr static std::string_view TypeName{ TypeInfo<T>::TypeName }; \
+        using ModuleTag = moduleName##Tag ;                             \
+        using Tags = typename TypeInfo<T>::Tags;                        \
     };                                                                  \
     template <typename T>                                               \
     auto GetModuleTraits(const T& dummy) -> decltype(auto)              \
@@ -32,10 +33,11 @@ namespace Kargono
     };
 
 
-#define Register_Tags(type, ...)                                        \
+#define Register_Module_Type(type, ...)                                        \
     template <>                                                         \
-    struct TypeTags<type>                                               \
+    struct TypeInfo<type>                                               \
     {                                                                   \
+        constexpr static std::string_view TypeName{ #type };            \
         using Tags = std::tuple<__VA_ARGS__>;                           \
     };
 
@@ -60,14 +62,27 @@ namespace Kargono
     }
 
     template<typename t_Type>
-    constexpr std::string GetUniqueIdentifier()
+    std::string_view GetTypeName()
     {
-        constexpr std::string_view identifier
-        { 
-            Utility::CompilerInfo::GetTemplateArgumentNames<t_Type>()[0] 
-        };
+        return ModuleTypeTraits(t_Type)::TypeName;
+    }
 
-        return { ModuleTypeTraits(t_Type)::ModuleName + "::" + identifier};
+    template<typename t_Type>
+    constexpr auto GetUniqueIdentifier()
+    {
+        constexpr std::string_view moduleName{ ModuleTypeTraits(t_Type)::ModuleName };
+        constexpr std::string_view delimiter{ "::" };
+        constexpr std::string_view identifier{ ModuleTypeTraits(t_Type)::TypeName };
+
+        constexpr size_t bufferSize{ moduleName.size() + delimiter.size() + identifier.size() + 1 };
+
+        FixedString<bufferSize> returnValue{};
+
+        returnValue.Append(moduleName.data());
+        returnValue.Append(delimiter.data());
+        returnValue.Append(identifier.data());
+
+        return returnValue;
     }
 
 #undef ModuleTypeTraits

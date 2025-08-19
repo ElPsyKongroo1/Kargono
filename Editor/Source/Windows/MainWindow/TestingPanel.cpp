@@ -15,6 +15,7 @@
 
 #include "Modules/ECSTest/DataStructures/SparseSetTest.h"
 #include "Modules/ECSTest/RegistryTest.h"
+#include "Modules/Core/CoreModule.h"
 
 #include <sstream>
 #include <cstdio>
@@ -885,7 +886,6 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Print All Struct Names"))
 		{
-
 			auto values = Utility::CompilerInfo::GetTemplateArgumentNames<TransformTest, HealthTest, TestingPanel, NonQualifiedStruct>();
 			
 			KG_TRACE_INFO("Print All Struct Names:");
@@ -893,7 +893,6 @@ namespace Kargono::Panels
 			{
 				KG_TRACE_INFO(str);
 			}
-			
 		}
 
 		if (ImGui::Button("Test out Compile time Hashing"))
@@ -902,7 +901,19 @@ namespace Kargono::Panels
 			KG_TRACE_INFO(value);
 		}
 
+		if (ImGui::Button("Print Out Metaprogramming Unique Identifier"))
+		{
+			constexpr auto value{ GetUniqueIdentifier<TestComponent>() };
+			KG_TRACE_INFO(value.CString());
+		}
 
+		if (ImGui::Button("Print Identifier"))
+		{
+			auto value{ GetTypeName<TestComponent>() };
+			KG_TRACE_INFO(value);
+
+			//uint32_t value{ Utility::FileSystem::CRCFromString("This is some text") };
+		}
 		
 
 		// TODO: Testing Splines

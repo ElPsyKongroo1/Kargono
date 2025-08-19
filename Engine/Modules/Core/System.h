@@ -2,6 +2,7 @@
 #include "Kargono/Core/Types.h"
 #include "Kargono/Core/DataStructures.h"
 #include "Modules/FileSystem/FileSystem.h"
+#include "Modules/Core/CoreModule.h"
 
 #include <functional>
 #include <unordered_set>

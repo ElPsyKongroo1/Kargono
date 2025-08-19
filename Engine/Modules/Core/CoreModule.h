@@ -2,4 +2,14 @@
 
 #include "Modules/Core/Module.h"
 
-Register_Module(Core)
+namespace Kargono
+{
+	struct AssetTagg {};
+
+	Register_Module(Core)
+
+	struct TestComponent {};
+
+	Register_Module_Type(TestComponent, AssetTagg)
+}
+

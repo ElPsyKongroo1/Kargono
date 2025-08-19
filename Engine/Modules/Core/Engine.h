@@ -14,6 +14,7 @@
 #include "Kargono/Utility/Timers.h"
 #include "Kargono/Core/FixedString.h"
 #include "Kargono/Utility/Timers.h"
+#include "Modules/Core/CoreModule.h"
 
 #include <functional>
 #include <mutex>

@@ -2,6 +2,7 @@
 #include <Kargono/Core/Base.h>
 #include <Modules/FileSystem/FileSystem.h>
 #include "Kargono/Memory/IAllocator.h"
+#include "Modules/Core/CoreModule.h"
 
 #include <cstdint>
 #include <unordered_map>
