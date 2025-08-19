@@ -389,7 +389,7 @@ namespace Kargono::EditorUI
 							ImGuiWindowFlags_AlwaysVerticalScrollbar);
 						uint32_t widgetCount{ 0 };
 						static WidgetID persistantID{ IncrementWidgetCounter() };
-						FixedString<16> id{ "##" };
+						FixedBufferString<16> id{ "##" };
 						id.AppendInteger(persistantID);
 
 						float iconSize = 60.0f;
@@ -1434,7 +1434,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::GenericPopup(GenericPopupSpec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -1525,7 +1525,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::WarningPopup(WarningPopupSpec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -1622,7 +1622,7 @@ namespace Kargono::EditorUI
 	bool EditorUIService::Button(ButtonSpec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 		bool returnValue{ false };
@@ -1691,7 +1691,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::ButtonBar(ButtonBarSpec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -1776,7 +1776,7 @@ namespace Kargono::EditorUI
 		KG_ASSERT(spec.m_BufferSize > 0);
 
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 
 		static float s_PlotHeight{ 140.0f };
@@ -1823,7 +1823,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::SelectOption(SelectOptionSpec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -2014,7 +2014,7 @@ namespace Kargono::EditorUI
 	{
 		// Local Variables
 		uint32_t widgetCount{ 0 };
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		static ImGuiInputTextFlags inputFlags {};
 
@@ -2112,7 +2112,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::Checkbox(CheckboxSpec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -2194,7 +2194,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::DropDown(DropDownSpec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -2328,7 +2328,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditInteger(EditIntegerSpec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -2403,7 +2403,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditIVec2(EditIVec2Spec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -2506,7 +2506,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditIVec3(EditIVec3Spec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -2638,7 +2638,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditIVec4(EditIVec4Spec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -2798,7 +2798,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditFloat(EditFloatSpec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -2873,7 +2873,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditVec2(EditVec2Spec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -2977,7 +2977,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditVec3(EditVec3Spec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -3109,7 +3109,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::EditVec4(EditVec4Spec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -3394,7 +3394,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::RadioSelector(RadioSelectorSpec& spec)
 	{
 		// Local Variables
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 
@@ -3496,7 +3496,7 @@ namespace Kargono::EditorUI
 
 	void EditorUIService::List(ListSpec& spec)
 	{
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		uint32_t widgetCount{ 0 };
 		uint32_t smallButtonCount{ 0 };
@@ -3759,7 +3759,7 @@ namespace Kargono::EditorUI
 
 	void EditorUIService::PanelHeader(PanelHeaderSpec& spec)
 	{
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		ImGui::PushFont(EditorUIService::s_FontAntaLarge);
 		ImGui::PushStyleColor(ImGuiCol_Text, spec.m_EditColorActive ? EditorUIService::s_HighlightColor2 : EditorUIService::s_PrimaryTextColor);
@@ -3883,7 +3883,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::Grid(GridSpec& spec)
 	{
 		uint32_t widgetCount{ 0 };
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 
 		// Calculate grid cell count using provided spec sizes
@@ -3901,7 +3901,7 @@ namespace Kargono::EditorUI
 			bool entryIsSelected = currentEntry.m_EntryID == spec.m_SelectedEntry;
 
 			// Get entry archetype and grid element ID
-			FixedString<16> entryID{ id };
+			FixedBufferString<16> entryID{ id };
 			GridEntryArchetype* entryArchetype = &(spec.m_EntryArchetypes.at(currentEntry.m_ArchetypeID));
 			entryID.AppendInteger(WidgetIterator(widgetCount));
 			KG_ASSERT(entryArchetype);
@@ -3981,7 +3981,7 @@ namespace Kargono::EditorUI
 	void EditorUIService::CollapsingHeader(CollapsingHeaderSpec& spec)
 	{
 		uint32_t widgetCount{ 0 };
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		ImGui::PushFont(EditorUIService::s_FontAntaLarge);
 		ImGui::PushStyleColor(ImGuiCol_Text, s_PrimaryTextColor);
@@ -4052,7 +4052,7 @@ namespace Kargono::EditorUI
 		// Local Variables
 		static char stringBuffer[256];
 		uint32_t widgetCount{ 0 };
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		std::string popUpLabel = spec.m_Label;
 
@@ -4132,7 +4132,7 @@ namespace Kargono::EditorUI
 		// Local Variables
 		static char stringBuffer[2 * 1024];
 		uint32_t widgetCount{ 0 };
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 		std::string popUpLabel = spec.m_Label;
 
@@ -4311,7 +4311,7 @@ namespace Kargono::EditorUI
 
 	void EditorUIService::Tooltip(TooltipSpec& spec)
 	{
-		FixedString<16> id{ "##" };
+		FixedBufferString<16> id{ "##" };
 		id.AppendInteger(spec.m_WidgetID);
 
 		// Handle turning on the tooltip

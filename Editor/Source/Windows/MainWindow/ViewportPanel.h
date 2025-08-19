@@ -3,7 +3,7 @@
 #include "Modules/Events/Event.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Kargono/Core/Timestep.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Modules/ECS/Entity.h"
 #include "Modules/Rendering/EditorPerspectiveCamera.h"
 #include "Modules/Rendering/Framebuffer.h"
@@ -102,7 +102,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{ "Viewport" };
+		FixedBufStr32 m_PanelName{ "Viewport" };
 		Rendering::EditorPerspectiveCamera m_EditorCamera;
 		int m_GizmoType{ -1 };
 		ViewportData m_ViewportData;

@@ -51,7 +51,7 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 
 		// Handle editor camera movement
-		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
+		FixedBufStr32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
 		if (focusedWindow == m_PanelName)
 		{
 			m_EditorCamera.OnUpdate(ts);

@@ -83,7 +83,7 @@ namespace Kargono::EditorUI
 
 	struct DragDropPayload
 	{
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		void* m_DataPointer;
 		std::size_t m_DataSize;
 	};
@@ -466,7 +466,7 @@ namespace Kargono::EditorUI
 
 	struct Button
 	{
-		FixedString16 m_Label{ "Click Me" };
+		FixedBufStr16 m_Label{ "Click Me" };
 		std::function<void(Button&)> m_OnPress{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };
 	};
@@ -485,7 +485,7 @@ namespace Kargono::EditorUI
 			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		FixedString16 m_Label;
+		FixedBufStr16 m_Label;
 		WidgetFlags m_Flags{ ButtonFlags::Button_None };
 		Button m_Button;
 	private:
@@ -516,7 +516,7 @@ namespace Kargono::EditorUI
 
 		Button* GetButton(size_t index);
 	public:
-		FixedString16 m_Label;
+		FixedBufStr16 m_Label;
 		WidgetFlags m_Flags{ ButtonBarFlags::ButtonBar_None };
 	private:
 		std::array<Button, k_MaxButtonBarSize> m_Buttons;
@@ -596,13 +596,13 @@ namespace Kargono::EditorUI
 		}
 
 	public:
-		FixedString16 m_Label;
+		FixedBufStr16 m_Label;
 		WidgetFlags m_Flags{ PlotFlags::Plot_None };
 		float m_MaxYVal{ 50.0f };
 		Ref<void> m_ProvidedData{ nullptr };
 	private:
 		WidgetID m_WidgetID;
-		FixedString16 m_YAxisLabel{ "##" };
+		FixedBufStr16 m_YAxisLabel{ "##" };
 		std::vector<float> m_XValues;
 		std::vector<float> m_YValues;
 		size_t m_BufferSize{0};
@@ -989,7 +989,7 @@ namespace Kargono::EditorUI
 			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		WidgetFlags m_Flags{ CollapsingHeader_None };
 		bool m_Expanded{ false };
 		std::function<void()> m_OnExpand{ nullptr };
@@ -1070,12 +1070,12 @@ namespace Kargono::EditorUI
 			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		FixedString64 m_Label;
+		FixedBufStr64 m_Label;
 		std::function<void()> m_OnNavigateBack{};
 		std::function<void()> m_OnNavigateForward{};
 		std::function<void(const char*, void*, std::size_t)> m_OnReceivePayloadBack{};
 		std::function<void(const char*, void*, std::size_t)> m_OnReceivePayloadForward{};
-		std::vector<FixedString32> m_AcceptableOnReceivePayloads;
+		std::vector<FixedBufStr32> m_AcceptableOnReceivePayloads;
 		WidgetFlags m_Flags{ 0 };
 		bool m_IsBackActive{ false };
 		bool m_IsForwardActive{ false };
@@ -1095,7 +1095,7 @@ namespace Kargono::EditorUI
 
 	struct GridEntry
 	{
-		FixedString64 m_Label;
+		FixedBufStr64 m_Label;
 		uint32_t m_ArchetypeID { k_InvalidArchetypeID };
 		UUID m_EntryID;
 	};
@@ -1114,7 +1114,7 @@ namespace Kargono::EditorUI
 		// Handle create/receive payload
 		std::function<void(GridEntry& currentEntry, DragDropPayload& newPayload)> m_OnCreatePayload;
 		std::function<void(GridEntry& currentEntry, const char*, void*, std::size_t)> m_OnReceivePayload;
-		std::vector<FixedString32> m_AcceptableOnReceivePayloads;
+		std::vector<FixedBufStr32> m_AcceptableOnReceivePayloads;
 	};
 
 
@@ -1126,7 +1126,7 @@ namespace Kargono::EditorUI
 			m_WidgetID = IncrementWidgetCounter();
 		}
 	public:
-		FixedString16 m_Label;
+		FixedBufStr16 m_Label;
 		float m_CellPadding{ 25.0f };
 		float m_CellIconSize { 140.0f };
 		WidgetFlags m_Flags{ 0 };
@@ -1437,7 +1437,7 @@ namespace Kargono::EditorUI
 		TooltipEntry() {};
 
 	public:
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		UUID m_EntryID;
 		bool m_IsVisible{ true };
 		UUID m_UserHandle;
@@ -1663,7 +1663,7 @@ namespace Kargono::EditorUI
 	struct OptionEntry
 	{
 	public:
-		FixedString32 m_Label{};
+		FixedBufStr32 m_Label{};
 		UUID m_Handle { k_EmptyUUID };
 	public:
 		bool operator==(const OptionEntry& other) const
@@ -1761,7 +1761,7 @@ namespace Kargono::EditorUI
 			return false;
 		}
 	public:
-		FixedString16 m_Label{};
+		FixedBufStr16 m_Label{};
 		WidgetFlags m_Flags{ DropDown_None };
 		std::function<void(const OptionEntry&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };

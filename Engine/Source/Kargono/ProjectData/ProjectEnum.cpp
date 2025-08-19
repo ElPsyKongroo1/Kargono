@@ -8,7 +8,7 @@ namespace Kargono::ProjectData
 		KG_ASSERT(enumToCheck);
 		KG_ASSERT(queryName);
 
-		for (const FixedString32& currentIdentifier : enumToCheck->m_EnumIdentifiers)
+		for (const FixedBufStr32& currentIdentifier : enumToCheck->m_EnumIdentifiers)
 		{
 			if (strcmp(currentIdentifier.CString(), queryName) == 0)
 			{
@@ -27,7 +27,7 @@ namespace Kargono::ProjectData
 		size_t iteration{ 0 };
 
 		// Search through identifiers for matching name
-		for (const FixedString32& currentIdentifier : enumToModify->m_EnumIdentifiers)
+		for (const FixedBufStr32& currentIdentifier : enumToModify->m_EnumIdentifiers)
 		{
 			if (strcmp(currentIdentifier.CString(), queryName) == 0)
 			{
@@ -80,7 +80,7 @@ namespace Kargono::ProjectData
 		size_t iteration{ 0 };
 
 		// Search through identifiers and ensure no duplicate name is found
-		for (const FixedString32& currentIdentifier : enumToModify->m_EnumIdentifiers)
+		for (const FixedBufStr32& currentIdentifier : enumToModify->m_EnumIdentifiers)
 		{
 			if (strcmp(currentIdentifier.CString(), newName) == 0)
 			{
@@ -91,7 +91,7 @@ namespace Kargono::ProjectData
 		}
 
 		// Get the indicated identifier and modify its name
-		FixedString32& indicatedIdentifier = enumToModify->m_EnumIdentifiers.at(indexToModify);
+		FixedBufStr32& indicatedIdentifier = enumToModify->m_EnumIdentifiers.at(indexToModify);
 		indicatedIdentifier = newName;
 
 		return true;

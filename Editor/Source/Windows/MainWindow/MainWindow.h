@@ -3,7 +3,7 @@
 #include "Modules/Assets/Asset.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/EditorUI/EditorUI.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include "Windows/MainWindow/AssetViewerPanel.h"
 #include "Windows/MainWindow/AIStateEditorPanel.h"
@@ -190,14 +190,14 @@ namespace Kargono::Windows
 		int m_StepFrames = 0;
 
 	private:
-		FixedString32 m_WindowName{ "Main Window" };
+		FixedBufStr32 m_WindowName{ "Main Window" };
 
 		//=========================
 		// Widgets
 		//=========================
 		// Warning widget
 		EditorUI::WarningPopupSpec m_GeneralWarningSpec{};
-		FixedString256 m_GeneralWarningMessage{};
+		FixedBufStr256 m_GeneralWarningMessage{};
 
 		// Project export popup widgets
 		EditorUI::CollapsingHeaderSpec m_ExportProjectHeader{};

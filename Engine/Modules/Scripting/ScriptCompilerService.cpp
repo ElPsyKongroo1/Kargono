@@ -1607,7 +1607,7 @@ namespace Kargono::Scripting
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 
 			size_t iteration{ 0 };
-			for (const FixedString32& identifier : currentEnum->m_EnumIdentifiers)
+			for (const FixedBufStr32& identifier : currentEnum->m_EnumIdentifiers)
 			{
 				// Create new literal member for each entity
 				Ref<CustomLiteralMember> newEntityLiteral = CreateRef<CustomLiteralMember>();
@@ -2743,7 +2743,7 @@ namespace Kargono::Scripting
 				{
 					ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(paramType);
 					newParameter.AllTypes.push_back(currentToken);
-					FixedString32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : ("parameter" + std::to_string(iteration)).c_str();
+					FixedBufStr32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : ("parameter" + std::to_string(iteration)).c_str();
 					newParameter.Identifier = { ScriptTokenType::Identifier, identifier.CString()};
 					newFunctionNode.Parameters.push_back(newParameter);
 					newParameter = {};
@@ -2766,7 +2766,7 @@ namespace Kargono::Scripting
 				{
 					ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(paramType);
 					newParameter.AllTypes.push_back(currentToken);
-					FixedString32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : ("parameter" + std::to_string(iteration)).c_str();
+					FixedBufStr32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : ("parameter" + std::to_string(iteration)).c_str();
 					newParameter.Identifier = { ScriptTokenType::Identifier, identifier.CString() };
 					newFunctionNode.Parameters.push_back(newParameter);
 					newParameter = {};

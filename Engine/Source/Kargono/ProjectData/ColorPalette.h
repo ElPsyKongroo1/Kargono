@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Math/MathAliases.h"
 
 #include <vector>
@@ -12,7 +12,7 @@ namespace Kargono::ProjectData
 
 	struct Color
 	{
-		FixedString32 m_Name;
+		FixedBufStr32 m_Name;
 		HexCode m_HexCode;
 	};
 

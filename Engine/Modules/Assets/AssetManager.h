@@ -809,8 +809,8 @@ namespace Kargono::Assets
 		
 	protected:
 		std::string m_AssetName{ "Uninitialized Asset Name" };
-		FixedString16 m_FileExtension { ".kgfile" };
-		FixedString16 m_IntermediateExtension{ ".kgbinary" };
+		FixedBufStr16 m_FileExtension { ".kgfile" };
+		FixedBufStr16 m_IntermediateExtension{ ".kgbinary" };
 		AssetType m_AssetType{ AssetType::None };
 		std::filesystem::path m_RegistryLocation{""};
 		std::vector<std::string> m_ValidImportFileExtensions{};

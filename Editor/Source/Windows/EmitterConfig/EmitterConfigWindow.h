@@ -72,7 +72,7 @@ namespace Kargono::Windows
 		//=========================
 		Ref<Particles::EmitterConfig> m_EditorEmitterConfig{ nullptr };
 		Assets::AssetHandle m_EditorEmitterConfigHandle{ Assets::EmptyHandle };
-		FixedString32 m_PanelName{ "Main Particle Emitter Panel" };
+		FixedBufStr32 m_PanelName{ "Main Particle Emitter Panel" };
 
 		//=========================
 		// Panels

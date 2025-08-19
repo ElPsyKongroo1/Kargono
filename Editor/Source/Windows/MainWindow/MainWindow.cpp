@@ -206,7 +206,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnInputEvent(Events::Event* event)
 	{
 		bool handled{ false };
-		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedBufStr32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
 		if (focusedWindow == m_ViewportPanel->m_PanelName)
 		{
 			m_ViewportPanel->OnInputEvent(event);
@@ -324,7 +324,7 @@ namespace Kargono::Windows
 				bool success{ false };
 				while (!success)
 				{
-					FixedString16 sceneName{ "NewScene" };
+					FixedBufStr16 sceneName{ "NewScene" };
 					sceneName.AppendInteger(iteration);
 					success = NewScene(sceneName.CString());
 					iteration++;
@@ -924,7 +924,7 @@ namespace Kargono::Windows
 		if (event.IsRepeat()) { return false; }
 
 		// Handle panel specific key pressed events
-		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedBufStr32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
 		if (m_PanelToKeyboardInput.contains(focusedWindow.CString()))
 		{
 			if (m_PanelToKeyboardInput.at(focusedWindow.CString())(event))
@@ -1008,7 +1008,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnMouseButtonPressed(Events::MouseButtonPressedEvent event)
 	{
 		// Refocus window if right click is used
-		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedBufStr32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
 		if (event.GetMouseButton() == Mouse::ButtonRight)
 		{
 			if (const char* hoveredName = EditorUI::EditorUIService::GetHoveredWindowName())

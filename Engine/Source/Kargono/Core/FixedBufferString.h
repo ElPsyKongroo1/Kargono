@@ -8,7 +8,7 @@
 namespace Kargono
 {
 	template<std::size_t t_BufferSize>
-	class FixedString
+	class FixedBufferString
 	{
 		static_assert(t_BufferSize > 0, "Cannot instantiate fixed string with empty buffer");
 
@@ -16,12 +16,12 @@ namespace Kargono
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		constexpr FixedString()
+		constexpr FixedBufferString()
 		{
 			m_DataBuffer[0] = '\0';
 		}
 
-		constexpr FixedString(const char* newString)
+		constexpr FixedBufferString(const char* newString)
 		{
 			if (!newString)
 			{
@@ -32,7 +32,7 @@ namespace Kargono
 			ReplaceBuffer(newString);
 		}
 
-		constexpr FixedString(char newChar)
+		constexpr FixedBufferString(char newChar)
 		{
 			// TODO: I realize that a buffer of size one would cause an issue, but like really thooooooo
 
@@ -160,14 +160,14 @@ namespace Kargono
 		//==============================
 		// Operator Overloads
 		//==============================
-		FixedString& operator=(const char* newString)
+		FixedBufferString& operator=(const char* newString)
 		{
 			// TODO: Maybe alert when fails????
 			ReplaceBuffer(newString);
 			return *this;
 		}
 
-		FixedString& operator=(std::string_view newStringView)
+		FixedBufferString& operator=(std::string_view newStringView)
 		{
 			// TODO: Maybe alert when fails????
 			ReplaceBuffer(newStringView);
@@ -180,7 +180,7 @@ namespace Kargono
 		}
 
 		template <std::size_t t_OtherBufferSize>
-		bool operator==(const FixedString<t_OtherBufferSize>& other) const 
+		bool operator==(const FixedBufferString<t_OtherBufferSize>& other) const 
 		{
 			// Check if lengths are different
 			if (m_StringLength != other.m_StringLength)
@@ -309,7 +309,7 @@ namespace Kargono
 	};
 
 	template <size_t N>
-	std::string operator+(const char* leftCString, const FixedString<N>& rightFixedString)
+	std::string operator+(const char* leftCString, const FixedBufferString<N>& rightFixedString)
 	{
 		std::string returnString;
 		returnString.reserve(std::strlen(leftCString) + rightFixedString.StringLength());
@@ -323,22 +323,25 @@ namespace Kargono
 		return returnString;
 	}
 
-	using FixedString8 = FixedString<8>; // Really small. For limited text sizes.
-	using FixedString16 = FixedString<16>; // Generally for small status codes, short labels, etc...
-	using FixedString32 = FixedString<32>; // Generally for status codes, small integers, etc...
-	using FixedString64 = FixedString<64>; // Generally for usernames, uuid's, small formatted strings... 
-	using FixedString256 = FixedString<256>; // Generally for usernames, short log messages, etc... 
-	using FixedString1024 = FixedString<1024>; // Generally for long file paths, full log messages, etc...
-	using FixedString8192 = FixedString<8192>; // Generally for http headers, small socket payloads, etc...
-	using FixedString64KB = FixedString<64'000>; // Generally for large large data streams or file io...
+	template<size_t t_BufferSize>
+	using FixedBufStr = FixedBufferString<t_BufferSize>;
+
+	using FixedBufStr8 = FixedBufferString<8>; // Really small. For limited text sizes.
+	using FixedBufStr16 = FixedBufferString<16>; // Generally for small status codes, short labels, etc...
+	using FixedBufStr32 = FixedBufferString<32>; // Generally for status codes, small integers, etc...
+	using FixedBufStr64 = FixedBufferString<64>; // Generally for usernames, uuid's, small formatted strings... 
+	using FixedBufStr256 = FixedBufferString<256>; // Generally for usernames, short log messages, etc... 
+	using FixedBufStr1024 = FixedBufferString<1024>; // Generally for long file paths, full log messages, etc...
+	using FixedBufStr8192 = FixedBufferString<8192>; // Generally for http headers, small socket payloads, etc...
+	using FixedBufStr64KB = FixedBufferString<64'000>; // Generally for large large data streams or file io...
 }
 
 namespace std
 {
 	template<size_t t_BufferSize>
-	struct hash<Kargono::FixedString<t_BufferSize>>
+	struct hash<Kargono::FixedBufferString<t_BufferSize>>
 	{
-		std::size_t operator()(const Kargono::FixedString<t_BufferSize>& fixedString) const
+		std::size_t operator()(const Kargono::FixedBufferString<t_BufferSize>& fixedString) const
 		{
 			unsigned int hash = 5381;
 

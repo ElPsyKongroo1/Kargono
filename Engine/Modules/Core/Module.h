@@ -76,7 +76,7 @@ namespace Kargono
 
         constexpr size_t bufferSize{ moduleName.size() + delimiter.size() + identifier.size() + 1 };
 
-        FixedString<bufferSize> returnValue{};
+        FixedBufferString<bufferSize> returnValue{};
 
         returnValue.Append(moduleName.data());
         returnValue.Append(delimiter.data());

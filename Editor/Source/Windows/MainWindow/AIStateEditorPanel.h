@@ -51,7 +51,7 @@ namespace Kargono::Panels
 		//=========================
 		Ref<AI::AIState> m_EditorAIState{ nullptr };
 		Assets::AssetHandle m_EditorAIStateHandle { Assets::EmptyHandle };
-		FixedString32 m_PanelName{ "AI State Editor" };
+		FixedBufStr32 m_PanelName{ "AI State Editor" };
 	private:
 		//=========================
 		// Widgets

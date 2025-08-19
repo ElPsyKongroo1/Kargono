@@ -65,7 +65,7 @@ namespace Kargono::Panels
 	struct DataStruct
 	{
 		float ahaha{ 1.0f };
-		FixedString32 m_Text{ "aba" };
+		FixedBufStr32 m_Text{ "aba" };
 	};
 	static DataStruct* s_DataStructs[5];
 	static Memory::StackAlloc s_DataAllocator{};

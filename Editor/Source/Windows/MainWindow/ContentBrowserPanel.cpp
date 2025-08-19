@@ -933,7 +933,7 @@ namespace Kargono::Panels
 		m_NavigateAssetsHeader.m_Flags = EditorUI::NavigationHeaderFlags::NavigationHeader_AllowDragDrop;
 
 		// Copy over s_ContentBrowserPayloads into m_NavigateAssetHeader!!!!!
-		std::vector<FixedString32>& navPayloadList = m_NavigateAssetsHeader.m_AcceptableOnReceivePayloads;
+		std::vector<FixedBufStr32>& navPayloadList = m_NavigateAssetsHeader.m_AcceptableOnReceivePayloads;
 		navPayloadList = s_ContentBrowserPayloads;
 
 		m_NavigateAssetsHeader.m_OnNavigateBack = KG_BIND_CLASS_FN(NavigateDirectoryBack);
@@ -956,7 +956,7 @@ namespace Kargono::Panels
 		directoryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		directoryArch.m_OnReceivePayload = KG_BIND_CLASS_FN(OnGridReceivePayload);
 		// Copy over s_ContentBrowserPayloads into directoryArch
-		std::vector<FixedString32>& navPayloadList = directoryArch.m_AcceptableOnReceivePayloads;
+		std::vector<FixedBufStr32>& navPayloadList = directoryArch.m_AcceptableOnReceivePayloads;
 		navPayloadList = s_ContentBrowserPayloads;
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Directory, directoryArch);
 
@@ -1344,7 +1344,7 @@ namespace Kargono::Panels
 		}
 		tokenizedDirectoryPath.push_back("Assets");
 
-		FixedString64 newTitle;
+		FixedBufStr64 newTitle;
 		for (int32_t i = (int32_t)(tokenizedDirectoryPath.size()) - 1; i >= 0; --i)
 		{
 			newTitle.Append(tokenizedDirectoryPath.at(i).c_str());

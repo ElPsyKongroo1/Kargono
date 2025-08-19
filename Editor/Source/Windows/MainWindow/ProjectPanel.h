@@ -221,7 +221,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{ "Project Settings" };
+		FixedBufStr32 m_PanelName{ "Project Settings" };
 
 	private:
 		//=========================

@@ -48,7 +48,7 @@ namespace Kargono::Panels
 	};
 
 
-	static inline std::vector<FixedString32> s_ContentBrowserPayloads
+	static inline std::vector<FixedBufStr32> s_ContentBrowserPayloads
 	{
 		"CONTENT_BROWSER_RAWIMAGE", 
 		"CONTENT_BROWSER_RAWAUDIO", 
@@ -123,7 +123,7 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		// Panel Name
-		FixedString32 m_PanelName{ "Content Browser" };
+		FixedBufStr32 m_PanelName{ "Content Browser" };
 
 		// Manage content browser directory
 		std::filesystem::path m_BaseDirectory{};

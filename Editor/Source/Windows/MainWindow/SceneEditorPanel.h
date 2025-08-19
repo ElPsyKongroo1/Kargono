@@ -5,7 +5,7 @@
 #include "Modules/Events/Event.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Assets/Asset.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Modules/EditorUI/EditorUI.h"
 
 #include <unordered_map>
@@ -128,7 +128,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{"Scene Editor"};
+		FixedBufStr32 m_PanelName{"Scene Editor"};
 		ECS::ComponentType m_DisplayedComponent{ECS::ComponentType::None };
 		Assets::AssetHandle m_DisplayedProjectComponentHandle {Assets::EmptyHandle};
 		std::unordered_map<Assets::AssetHandle, ProjectComponentWidgetData> m_AllProjectComponents{};

@@ -6,7 +6,7 @@ bool Kargono::ProjectData::GlobalStateService::DoesGlobalStateContainName(Global
 	KG_ASSERT(globalState);
 
 	// Check every field name. Ensure each name does not match the query name
-	for (const FixedString32& dataName : globalState->m_DataNames)
+	for (const FixedBufStr32& dataName : globalState->m_DataNames)
 	{
 		// Compare each c-string
 		if (strcmp(dataName.CString(), queryName) == 0)

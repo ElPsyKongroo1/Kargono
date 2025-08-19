@@ -1,7 +1,7 @@
 #pragma once
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/EditorUI/EditorUI.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Modules/Particles/ParticleService.h"
 
 #include <string>
@@ -73,7 +73,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{ "Particle Emitter Properties" };
+		FixedBufStr32 m_PanelName{ "Particle Emitter Properties" };
 
 	public:
 		//=========================

@@ -85,7 +85,7 @@ namespace Kargono
 		//==============================
 		const char* GetName() const { return m_DebugName; }
 	protected:
-		FixedString32 m_DebugName;
+		FixedBufStr32 m_DebugName;
 
 	};
 }

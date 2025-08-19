@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/Buffer.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Utility/Operations.h"
 
 #include "API/Cryptography/hashlibraryAPI.h"

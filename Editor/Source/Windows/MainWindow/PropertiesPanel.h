@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <string>
 
@@ -23,8 +23,8 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_ActiveParent;
-		FixedString32 m_PanelName{ "Properties" };
+		FixedBufStr32 m_ActiveParent;
+		FixedBufStr32 m_PanelName{ "Properties" };
 	private:
 		friend class SceneEditorPanel;
 		friend class UIEditorWindow;

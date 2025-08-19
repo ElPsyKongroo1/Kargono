@@ -411,7 +411,7 @@ namespace Kargono::Panels
 	}
 	void TextEditorPanel::OnTextChanged()
 	{
-		FixedString32 comparedWindow = m_EditorWindowName;
+		FixedBufStr32 comparedWindow = m_EditorWindowName;
 		Document& activeDocument = m_AllDocuments.at(m_ActiveDocument);
 		activeDocument.TextBuffer = m_TextEditor.GetText();
 		activeDocument.Edited = true;

@@ -369,7 +369,7 @@ namespace Kargono::Windows
 	bool EmitterConfigWindow::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		bool handled{ false };
-		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedBufStr32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
 		if (focusedWindow == m_ViewportPanel->m_PanelName)
 		{
 			handled = m_ViewportPanel->OnKeyPressedEditor(event);

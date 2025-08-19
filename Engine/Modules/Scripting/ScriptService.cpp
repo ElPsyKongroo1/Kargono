@@ -848,7 +848,7 @@ namespace Kargono::Scripting
 			Ref<Script> script = Assets::AssetService::GetScript(handle);
 			WrappedVarType returnValue;
 			std::vector<WrappedVarType> parameterTypes;
-			std::vector<FixedString32> parameterNames;
+			std::vector<FixedBufStr32> parameterNames;
 
 			// Load return value and parameterTypes differently if using an arbitrary function
 			if (script->m_FuncType == WrappedFuncType::ArbitraryFunction)

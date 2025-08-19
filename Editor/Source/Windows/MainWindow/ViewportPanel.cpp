@@ -70,7 +70,7 @@ namespace Kargono::Panels
 
 		// Clear mouse picking buffer
 		m_ViewportFramebuffer->SetAttachment(1, -1);
-		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
+		FixedBufStr32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
 
 		// Update Scene
 		switch (s_MainWindow->m_SceneState)

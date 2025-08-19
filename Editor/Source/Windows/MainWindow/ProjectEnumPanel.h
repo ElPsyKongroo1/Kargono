@@ -53,7 +53,7 @@ namespace Kargono::Panels
 		Ref<ProjectData::ProjectEnum> m_EditorProjectEnum{ nullptr };
 		Assets::AssetHandle m_EditorProjectEnumHandle{ 0 };
 	private:
-		FixedString32 m_PanelName{ "Enum Editor" };
+		FixedBufStr32 m_PanelName{ "Enum Editor" };
 		size_t m_CurrentEnumeration{ k_InvalidProjectEnumIndex };
 
 		//=========================

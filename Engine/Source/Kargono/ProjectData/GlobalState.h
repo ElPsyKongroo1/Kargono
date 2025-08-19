@@ -1,5 +1,5 @@
 #pragma once
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Kargono/Core/Buffer.h"
 
@@ -11,10 +11,10 @@ namespace Kargono::ProjectData
 {
 	struct GlobalState
 	{
-		FixedString32 m_Name;
+		FixedBufStr32 m_Name;
 		std::vector<WrappedVarType> m_DataTypes;
 		std::vector<size_t> m_DataLocations;
-		std::vector<FixedString32> m_DataNames;
+		std::vector<FixedBufStr32> m_DataNames;
 		Buffer m_DataBuffer;
 
 	public:
@@ -41,7 +41,7 @@ namespace Kargono::ProjectData
 
 			// Find the index for the field whose name matches the queryName
 			size_t iteration{ 0 };
-			for (const FixedString32& dataName : globalState->m_DataNames)
+			for (const FixedBufStr32& dataName : globalState->m_DataNames)
 			{
 				// Compare each c-string
 				if (strcmp(dataName.CString(), queryName) == 0)
@@ -88,7 +88,7 @@ namespace Kargono::ProjectData
 
 			// Find the index for the field whose name matches the queryName
 			size_t iteration{ 0 };
-			for (const FixedString32& dataName : globalState->m_DataNames)
+			for (const FixedBufStr32& dataName : globalState->m_DataNames)
 			{
 				// Compare each c-string
 				if (strcmp(dataName.CString(), queryName) == 0)
