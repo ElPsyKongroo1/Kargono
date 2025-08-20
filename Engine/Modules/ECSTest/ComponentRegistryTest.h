@@ -6,6 +6,7 @@
 #include "Modules/ECSTest/Views/PackedView.h"
 #include "Modules/ECSTest/Views/FlatView.h"
 #include "Modules/ECSTest/EntityRegistryTest.h"
+#include "Modules/Core/Module.h"
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Utility/CompilerInfo.h"
@@ -38,6 +39,30 @@ namespace Kargono::ECS
 
 			return true;
 		}
+
+		[[nodiscard]] bool Terminate()
+		{
+			// Terminate each component store
+			for (auto [identifier, componentStore] : m_ComponentArrays)
+			{
+				componentStore->Terminate();
+			}
+
+			// Release all component store memory
+			for (auto [identifier, componentStore] : m_ComponentArrays)
+			{
+#if 1 // Packed Array
+				i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(PackedArray));
+#endif
+#if 0 // Flat Array
+				i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(FlatArray));
+#endif
+			}
+
+			m_ComponentArrays.clear();
+
+			return true;
+		}
 	public:
 		//==============================
 		// Manage Component(s)
@@ -45,8 +70,18 @@ namespace Kargono::ECS
 		template<typename t_Component>
 		[[nodiscard]] bool RegisterComponent()
 		{
-			constexpr auto uniqueName{ Utility::CompilerInfo::GetTemplateArgumentNames<t_Component>() };
-			constexpr ComponentIdentifier uniqueIdentifier{ Utility::FileSystem::CRCFromString(uniqueName[0]) };
+			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
+			constexpr ComponentIdentifier uniqueIdentifier =
+				Utility::FileSystem::CRCFromString(uniqueName.CString());
+
+			return RegisterComponent(uniqueIdentifier, sizeof(t_Component), alignof(t_Component));
+
+		}
+
+		[[nodiscard]] bool RegisterComponent(ComponentIdentifier uniqueIdentifier, size_t componentSize, size_t componentAlignment)
+		{
+			KG_ASSERT(componentSize > 0);
+			KG_ASSERT(componentAlignment > 0);
 
 			// Check if component already exists
 			if (m_ComponentMasks.contains(uniqueIdentifier))
@@ -55,30 +90,30 @@ namespace Kargono::ECS
 			}
 
 			// Add the component type and its array
-			m_ComponentMasks.insert({ uniqueIdentifier, m_NextComponentType});
+			m_ComponentMasks.insert({ uniqueIdentifier, m_NextComponentType });
 
-#if 0 // Default to packed arrays
+#if 1 // Default to packed arrays
 			// Create packed array using the provided allocator
-			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(PackedArray<t_Component>), alignof(PackedArray<t_Component>));
+			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(PackedArray), alignof(PackedArray));
 			KG_ASSERT(componentBuffer);
 
 			// Call placement-new to construct array
-			PackedArray<t_Component>* newArray = new ((void*)componentBuffer) PackedArray<t_Component>();
+			PackedArray* newArray = new ((void*)componentBuffer) PackedArray();
 #endif
 
-#if 1 // Default to flat arrays
+#if 0 // Default to flat arrays
 			// Create flat array using the provided allocator
-			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(FlatArray<t_Component>), alignof(FlatArray<t_Component>));
+			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(FlatArray), alignof(FlatArray));
 			KG_ASSERT(componentBuffer);
 
 			// Call placement-new to construct array
-			FlatArray<t_Component>* newArray = new ((void*)componentBuffer) FlatArray<t_Component>();
+			FlatArray* newArray = new ((void*)componentBuffer) FlatArray();
 #endif
 
 			KG_ASSERT(newArray);
 
-			newArray->Init(i_EntityRegistry);
-			m_ComponentArrays.insert({ uniqueIdentifier, newArray});
+			newArray->Init(i_EntityRegistry, i_RegistryAlloc, componentSize, componentAlignment);
+			m_ComponentArrays.insert({ uniqueIdentifier, newArray });
 
 			// Increment the value so that the next component registered will be different
 			m_NextComponentType++;
@@ -88,55 +123,108 @@ namespace Kargono::ECS
 
 		}
 
+
 		template<typename t_Component>
 		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component& component)
 		{
-			return GetComponentArray<t_Component>()->InsertComponent(entityID, &component);
+			IComponentStore* componentStore{ GetComponentArray<t_Component>() };
+			KG_ASSERT(componentStore);
+
+			return componentStore->InsertComponent(entityID, &component);
+		}
+
+		[[nodiscard]] bool AddComponent(EntityID entityID, ComponentIdentifier identifier,
+			void* component)
+		{
+			IComponentStore* componentStore{ GetComponentArray(identifier) };
+			KG_ASSERT(componentStore);
+
+			return componentStore->InsertComponent(entityID, component);
 		}
 
 		template<typename t_Component>
 		[[nodiscard]] bool RemoveComponent(EntityID entityID)
 		{
-			return GetComponentArray<t_Component>()->RemoveComponent(entityID);
+			IComponentStore* componentStore{ GetComponentArray<t_Component>() };
+			KG_ASSERT(componentStore);
+
+			return componentStore->RemoveComponent(entityID);
+		}
+
+		[[nodiscard]] bool RemoveComponent(EntityID entityID, ComponentIdentifier identifier)
+		{
+			IComponentStore* componentStore{ GetComponentArray(identifier) };
+			KG_ASSERT(componentStore);
+
+			return componentStore->RemoveComponent(entityID);
 		}
 
 		template<typename t_Component>
 		void* GetComponent(EntityID entityID)
 		{
-			return GetComponentArray<t_Component>()->GetComponent(entityID);
+			IComponentStore* componentStore{ GetComponentArray<t_Component>() };
+			KG_ASSERT(componentStore);
+
+			return componentStore->GetComponent(entityID);
 		}
 
+		void* GetComponent(EntityID entityID, ComponentIdentifier identifier)
+		{
+			IComponentStore* componentStore{ GetComponentArray(identifier) };
+			KG_ASSERT(componentStore);
+
+			return componentStore->GetComponent(entityID);
+		}
+
+	public:
 		//==============================
 		// Query Components
 		//==============================
 		template<typename t_Component>
 		Expected<ComponentMask> GetComponentMask()
 		{
-			constexpr std::string_view uniqueName{ Utility::CompilerInfo::GetTemplateArgumentNames<t_Component>()[0]};
-			constexpr ComponentIdentifier uniqueIdentifier{ Utility::FileSystem::CRCFromString(uniqueName) };
+			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
+			constexpr ComponentIdentifier uniqueIdentifier =
+				Utility::FileSystem::CRCFromString(uniqueName.CString());
 
+			return GetComponentMask(uniqueIdentifier);
+		}
+
+		Expected<ComponentMask> GetComponentMask(ComponentIdentifier identifier)
+		{
 			// Check if component type is registered
-			if (!m_ComponentMasks.contains(uniqueIdentifier))
+			if (!m_ComponentMasks.contains(identifier))
 			{
 				return {};
 			}
 
-			return m_ComponentMasks[uniqueIdentifier];
+			return m_ComponentMasks[identifier];
 		}
 
 		template<typename t_Component>
 		IComponentStore* GetComponentArray()
 		{
-			constexpr auto uniqueName{ Utility::CompilerInfo::GetTemplateArgumentNames<t_Component>() };
-			constexpr ComponentIdentifier uniqueIdentifier{Utility::FileSystem::CRCFromString(uniqueName[0])};
+			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
+			constexpr ComponentIdentifier identifier =
+				Utility::FileSystem::CRCFromString(uniqueName.CString());
 
-			if (!m_ComponentMasks.contains(uniqueIdentifier))
+			if (!m_ComponentMasks.contains(identifier))
 			{
 				bool success = RegisterComponent<t_Component>();
 				KG_ASSERT(success);
 			}
 
-			return m_ComponentArrays[uniqueIdentifier];
+
+			KG_ASSERT(m_ComponentArrays[identifier]);
+			return m_ComponentArrays[identifier];
+		}
+
+		IComponentStore* GetComponentArray(ComponentIdentifier identifier)
+		{
+			KG_ASSERT(m_ComponentMasks.contains(identifier));
+			KG_ASSERT(m_ComponentArrays[identifier]);
+
+			return m_ComponentArrays[identifier];
 		}
 
 		template<typename t_ComponentType>
@@ -157,7 +245,7 @@ namespace Kargono::ECS
 			// TODO: Fix this please!!! This needs to use the IView interface instead
 
 			// Convert to packed array 
-			PackedArray<t_ComponentType>* packedStore{ (PackedArray<t_ComponentType>*)compStore };
+			PackedArray* packedStore{ (PackedArray*)compStore };
 			return PackedView<t_ComponentType>{ packedStore->GetEntityList() };
 		}
 
@@ -190,7 +278,7 @@ namespace Kargono::ECS
 			KG_ASSERT(compStore);
 
 			// Convert to packed array 
-			PackedArray<t_ComponentType>* packedStore{ (PackedArray<t_ComponentType>*)compStore };
+			PackedArray* packedStore{ (PackedArray*)compStore };
 			return packedStore->GetSparseSet();
 		}
 
@@ -241,7 +329,7 @@ namespace Kargono::ECS
 			// TODO: Fix this please!!! This needs to use the IView interface instead
 
 			// Convert to Flat array 
-			FlatArray<t_ComponentType>* FlatStore{ (FlatArray<t_ComponentType>*)compStore };
+			FlatArray* FlatStore{ (FlatArray*)compStore };
 			return FlatView<t_ComponentType>{ FlatStore->GetValidEntityArray() };
 		}
 
@@ -261,40 +349,6 @@ namespace Kargono::ECS
 		}
 
 	private:
-		/*
-		// Comparison helper(s)
-		template<typename... t_ComponentTypes>
-		bool FillFlatViewData(std::array<std::span<bool>, sizeof...(t_ComponentTypes)>& dataArray)
-		{
-			bool allValid = true;
-
-			// Generate index sequence for the number of components
-			[&] <std::size_t... t_IndexSeq> (std::index_sequence<t_IndexSeq...>)
-			{
-				// Fold expression to fill each index of the array
-				(([&]
-					{
-						Expected<ComponentMask> compMask = GetComponentMask<t_ComponentTypes>();
-						if (!compMask)
-						{
-							allValid = false;
-						}
-
-						IComponentStore* compStore = GetComponentArray<t_ComponentTypes>();
-						KG_ASSERT(compStore);
-
-						// Convert to Flat array 
-						FlatArray<t_ComponentTypes>* flatStore{ (FlatArray<t_ComponentTypes>*)compStore };
-
-						// Fill the element of the array
-						dataArray[t_IndexSeq] = flatStore->GetValidEntityArray();
-
-					}()), ...);
-			}(std::index_sequence_for<t_ComponentTypes...>{});
-
-			return allValid;
-		}
-		*/
 		template<typename... t_ComponentTypes>
 		bool FillFlatViewData(std::array<std::span<bool>, sizeof...(t_ComponentTypes)>& dataArray)
 		{
@@ -313,7 +367,7 @@ namespace Kargono::ECS
 				KG_ASSERT(compStore);
 
 				// Convert to Flat array 
-				FlatArray<t_ComponentTypes>* flatStore{ (FlatArray<t_ComponentTypes>*)compStore };
+				FlatArray* flatStore{ (FlatArray*)compStore };
 
 				// Store the 
 				dataArray[index] = flatStore->GetValidEntityArray();

@@ -23,7 +23,9 @@ namespace Kargono::ECS
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		virtual void Init(EntityRegistryTest* entityRegistry) = 0;
+		virtual void Init(EntityRegistryTest* entityRegistry, Memory::IAllocator* allocator,
+			size_t componentSize, size_t componentAlignment) = 0;
+		virtual void Terminate() = 0;
 	public:
 		//==============================
 		// Manage Components

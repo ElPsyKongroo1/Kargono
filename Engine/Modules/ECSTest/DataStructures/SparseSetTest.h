@@ -150,41 +150,6 @@ namespace Kargono::ECS
         {
             return std::span(m_DenseList.begin(), m_DenseCount);
         }
-
-
-
-    public:
-        //==============================
-        // Debugging Function(s)
-        //==============================
-        std::string Print()
-        {
-            std::stringstream ss;
-
-            ss << "Metadata:\n";
-            ss << "\tDense Count: " << m_DenseCount << '\n';
-            ss << "\tDense Capacity: " << m_DenseCapacity << '\n';
-            ss << "\tSparse Max Index: " << m_SparseMaxIndex << '\n';
-
-            ss << "Data:\n";
-            ss << "\tDense List (Sparse List Indices):";
-            for (t_DenseIndex i = 0; i < m_DenseCount; i++)
-            {
-                ss << m_DenseList[i] << ' ';
-            }
-            ss << '\n';
-
-            /*
-            ss << "\tSparse List (Dense List Indices):";
-            for (t_SparseIndex i = 0; i < m_SparseMaxIndex; i++)
-            {
-                ss << m_SparseList[i] << ' ';
-            }
-            ss << '\n';
-            */
-
-            return ss.str();
-        }
     private:
         //==============================
         // Internal Fields

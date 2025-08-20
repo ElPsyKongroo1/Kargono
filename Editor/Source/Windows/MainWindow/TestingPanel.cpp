@@ -20,13 +20,10 @@
 #include <sstream>
 #include <cstdio>
 
-struct NonQualifiedStruct
-{
-	float a = 2.0f;
-};
-
 namespace Kargono::Panels
 {
+	Register_Module(Editor)
+
 	static SparseArray<uint64_t> s_SparseArray{64};
 	//static ECS::SparseSet s_SparseSet{ 10, 10 };
 
@@ -45,6 +42,8 @@ namespace Kargono::Panels
 		Math::vec2 size{};
 	};
 
+	Register_Module_Type(TransformTest)
+
 	struct HealthTest
 	{
 		float headHealth{};
@@ -52,6 +51,8 @@ namespace Kargono::Panels
 		Math::vec2 armsHealth{};
 		Math::vec2 legsHealth{};
 	};
+
+	Register_Module_Type(HealthTest)
 
 	struct BloodTest
 	{
@@ -61,6 +62,8 @@ namespace Kargono::Panels
 		float thumbFinger{};
 		float middleFinger{};
 	};
+
+	Register_Module_Type(BloodTest)
 
 	struct DataStruct
 	{
@@ -628,11 +631,6 @@ namespace Kargono::Panels
 			KG_TRACE_INFO(ss.str());
 		}
 
-		if (ImGui::Button("Print All Entity Signatures"))
-		{
-			KG_TRACE_INFO(s_DataRegistry.PrintSignatures());
-		}
-
 		EditorUI::EditorUIService::Text("Add / Remove Components");
 		if (ImGui::Button("Add Transform Component"))
 		{
@@ -723,7 +721,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Delete Transform To All Entities"))
 		{
-			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
+			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				KG_ASSERT(s_DataRegistry.RemoveComponent<TransformTest>(id));
@@ -746,7 +744,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Delete Health To All Entities"))
 		{
-			auto transformView = s_DataRegistry.GetFlatView<HealthTest>();
+			auto transformView = s_DataRegistry.GetPackedView<HealthTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				KG_ASSERT(s_DataRegistry.RemoveComponent<HealthTest>(id));
@@ -756,7 +754,7 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::Text("Get Views");
 		if (ImGui::Button("Print Out All Transform Components"))
 		{
-			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
+			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
@@ -778,7 +776,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Print Out All Health Components"))
 		{
-			auto healthView = s_DataRegistry.GetFlatView<HealthTest>();
+			auto healthView = s_DataRegistry.GetPackedView<HealthTest>();
 			for (ECS::EntityID id : healthView)
 			{
 				ExpectedRef<HealthTest> healthRef = s_DataRegistry.GetComponent<HealthTest>(id);
@@ -801,7 +799,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Print Out All Transform & Health Components"))
 		{
-			auto combinedView = s_DataRegistry.GetFlatView<TransformTest, HealthTest>();
+			auto combinedView = s_DataRegistry.GetPackedView<TransformTest, HealthTest>();
 			for (ECS::EntityID id : combinedView)
 			{
 				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
@@ -839,7 +837,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Move All Entities Up By One"))
 		{
-			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
+			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
@@ -877,16 +875,10 @@ namespace Kargono::Panels
 				values[0]);
 		}
 
-		if (ImGui::Button("Print Non Qualified Struct Name"))
-		{
-			Utility::ReturnTemplateNames<NonQualifiedStruct> values = Utility::CompilerInfo::GetTemplateArgumentNames<NonQualifiedStruct>();
-			KG_TRACE_INFO("Non Qualified. Stringified: {}",
-				values[0]);
-		}
 
 		if (ImGui::Button("Print All Struct Names"))
 		{
-			auto values = Utility::CompilerInfo::GetTemplateArgumentNames<TransformTest, HealthTest, TestingPanel, NonQualifiedStruct>();
+			auto values = Utility::CompilerInfo::GetTemplateArgumentNames<TransformTest, HealthTest, TestingPanel>();
 			
 			KG_TRACE_INFO("Print All Struct Names:");
 			for (std::string_view str : values)

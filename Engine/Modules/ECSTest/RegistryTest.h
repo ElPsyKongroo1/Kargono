@@ -42,7 +42,7 @@ namespace Kargono::ECS
 
 		[[nodiscard]] bool Terminate()
 		{
-			i_Allocator->Reset();
+			m_ComponentRegistry.Terminate();
 
 			return true;
 		}
@@ -78,6 +78,13 @@ namespace Kargono::ECS
 			return m_ComponentRegistry.RegisterComponent<t_Component>();
 		}
 
+		[[nodiscard]] bool RegisterComponent(ComponentIdentifier componentIdentifier,
+			size_t componentSize, size_t componentAlignment)
+		{
+			return m_ComponentRegistry.RegisterComponent(componentIdentifier, 
+				componentSize, componentAlignment);
+		}
+
 		template<typename t_Component>
 		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component& component)
 		{
@@ -99,6 +106,36 @@ namespace Kargono::ECS
 
 			// Get the relevant component mask/identifier
 			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentMask<t_Component>() };
+			KG_ASSERT(compMask);
+
+			// Update the signature w/ mask
+			entitySignature->SetFlag(compMask.value());
+			m_EntityRegistry.SetEntitySignature(entityID, entitySignature.value());
+
+			return true;
+		}
+
+		[[nodiscard]] bool AddComponent(EntityID entityID, ComponentIdentifier identifier ,
+			void* component)
+		{
+			// Ensure the entity exists in the registry
+			if (!m_EntityRegistry.HasEntity(entityID))
+			{
+				return false;
+			}
+
+			// Add the component to the entity in the component registry
+			if (!m_ComponentRegistry.AddComponent(entityID, identifier, component))
+			{
+				return false;
+			}
+
+			// Get the entity's signature
+			Expected<Signature> entitySignature = m_EntityRegistry.GetSignature(entityID);
+			KG_ASSERT(entitySignature);
+
+			// Get the relevant component mask/identifier
+			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentMask(identifier) };
 			KG_ASSERT(compMask);
 
 			// Update the signature w/ mask
@@ -132,6 +169,29 @@ namespace Kargono::ECS
 			return true;
 		}
 
+		[[nodiscard]] bool RemoveComponent(EntityID entityID, ComponentIdentifier identifier)
+		{
+			// Remove the component from the registry
+			if (!m_ComponentRegistry.RemoveComponent(entityID, identifier))
+			{
+				return false;
+			}
+
+			// Update the signature of the entity
+			Expected<Signature> entitySignature = m_EntityRegistry.GetSignature(entityID);
+			KG_ASSERT(entitySignature);
+
+			// Get the relevant component mask/identifier
+			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentMask(identifier) };
+			KG_ASSERT(compMask);
+
+			// Update the signature w/ mask
+			entitySignature->ClearFlag(compMask.value());
+			m_EntityRegistry.SetEntitySignature(entityID, entitySignature.value());
+
+			return true;
+		}
+
 		//==============================
 		// Query Registry
 		//==============================
@@ -144,6 +204,16 @@ namespace Kargono::ECS
 				return {};
 			}
 			return {*compPtr};
+		}
+
+		void* GetComponent(EntityID entityID, ComponentIdentifier identifier)
+		{
+			void* compPtr{ m_ComponentRegistry.GetComponent(entityID, identifier) };
+			if (!compPtr)
+			{
+				return nullptr;
+			}
+			return compPtr;
 		}
 		
 		template<typename... t_ComponentTypes>
@@ -180,17 +250,14 @@ namespace Kargono::ECS
 			return m_ComponentRegistry.GetComponentMask<t_Component>();
 		}
 
+		Expected<ComponentMask> GetComponentMask(ComponentIdentifier identifier)
+		{
+			return m_ComponentRegistry.GetComponentMask(identifier);
+		}
+
 		std::span<EntityID> GetAllEntities()
 		{
 			return m_EntityRegistry.GetAllEntities();
-		}
-
-		//==============================
-		// Debugging Section // TODO: PLEASE REMOVE
-		//==============================
-		std::string PrintSignatures()
-		{
-			return m_EntityRegistry.PrintSignatures();
 		}
 
 	private:
