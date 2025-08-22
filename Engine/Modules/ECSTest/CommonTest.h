@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <bitset>
 #include <limits>
+#include <array>
 
 namespace Kargono::ECS
 {
@@ -22,13 +23,13 @@ namespace Kargono::ECS
 	using ComponentCount = ComponentIndex;
 	using ComponentIdentifier = uint32_t;
 
+	template<size_t t_NumComponents>
+	using ComponentIDList = std::array<ComponentIdentifier, t_NumComponents>;
+
 	using Signature = BitField<uint32_t>;
 
 	// This is to ensure that a signature can be succuessfully union'd w/
 	// an entity ID in EntityRegistry.h
 	static_assert(sizeof(Signature) == sizeof(EntityID));
-
-	// Unique (compile-time) identifier generation
-//#define GET_COMPONENT_IDENTIFIER(type) Utility::FileSystem::CRCFromString("Component::" #type) 
 }
 

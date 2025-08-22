@@ -217,30 +217,82 @@ namespace Kargono::ECS
 		}
 		
 		template<typename... t_ComponentTypes>
-		PackedView<t_ComponentTypes...> GetPackedView()
+		PackedView<sizeof...(t_ComponentTypes)> GetPackedView()
 		{
 			constexpr size_t k_NumComponents{ sizeof...(t_ComponentTypes) };
 			if constexpr (k_NumComponents == 1)
 			{
-				return m_ComponentRegistry.GetSinglePackedView<t_ComponentTypes...>();
+				// Get component identifier
+				constexpr auto identifierStr{ GetUniqueIdentifier<t_ComponentTypes...>() };
+				constexpr ComponentIdentifier identifier =
+					Utility::FileSystem::CRCFromString(identifierStr.CString());
+
+				return m_ComponentRegistry.GetSinglePackedView(identifier);
 			}
 			else
 			{
-				return m_ComponentRegistry.GetMultiPackedView<t_ComponentTypes...>();
+				// Fill array w/ templated type identifiers
+				constexpr ComponentIDList<k_NumComponents> identifiers
+				{
+					Utility::FileSystem::CRCFromString(GetUniqueIdentifier<t_ComponentTypes>().CString())...
+				};
+
+				// Get the multi packed view
+				return m_ComponentRegistry.GetMultiPackedView(identifiers);
+			}
+		}
+
+		template<size_t t_NumComponents>
+		PackedView<t_NumComponents> GetPackedView(
+			const ComponentIDList<t_NumComponents>& identifiers)
+		{
+			if constexpr (t_NumComponents == 1)
+			{
+				return m_ComponentRegistry.GetSinglePackedView(identifiers[0]);
+			}
+			else
+			{
+				return m_ComponentRegistry.GetMultiPackedView<t_NumComponents>(identifiers);
 			}
 		}
 
 		template<typename... t_ComponentTypes>
-		FlatView<t_ComponentTypes...> GetFlatView()
+		FlatView<sizeof...(t_ComponentTypes)> GetFlatView()
 		{
 			constexpr size_t k_NumComponents{ sizeof...(t_ComponentTypes) };
 			if constexpr (k_NumComponents == 1)
 			{
-				return m_ComponentRegistry.GetSingleFlatView<t_ComponentTypes...>();
+				// Get component identifier
+				constexpr auto identifierStr{ GetUniqueIdentifier<t_ComponentTypes...>() };
+				constexpr ComponentIdentifier identifier =
+					Utility::FileSystem::CRCFromString(identifierStr.CString());
+
+				return m_ComponentRegistry.GetSingleFlatView(identifier);
 			}
 			else
 			{
-				return m_ComponentRegistry.GetMultiFlatView<t_ComponentTypes...>();
+				// Fill array w/ templated type identifiers
+				constexpr ComponentIDList<k_NumComponents> identifiers
+				{
+					Utility::FileSystem::CRCFromString(GetUniqueIdentifier<t_ComponentTypes>().CString())...
+				};
+
+				// Get the multi flat view
+				return m_ComponentRegistry.GetMultiFlatView(identifiers);
+			}
+		}
+
+		template<size_t t_NumComponents>
+		FlatView<t_NumComponents> GetFlatView(
+			const ComponentIDList<t_NumComponents>& identifiers)
+		{
+			if constexpr (t_NumComponents == 1)
+			{
+				return m_ComponentRegistry.GetSingleFlatView(identifiers[0]);
+			}
+			else
+			{
+				return m_ComponentRegistry.GetMultiFlatView<t_NumComponents>(identifiers);
 			}
 		}
 
@@ -258,6 +310,23 @@ namespace Kargono::ECS
 		std::span<EntityID> GetAllEntities()
 		{
 			return m_EntityRegistry.GetAllEntities();
+		}
+
+		template<typename t_ComponentType>
+		bool IsComponentRegistered()
+		{
+			// Get component identifier
+			constexpr auto identifierStr{ GetUniqueIdentifier<t_ComponentType>() };
+			constexpr ComponentIdentifier identifier =
+				Utility::FileSystem::CRCFromString(identifierStr.CString());
+
+			// Check if the component is registered
+			return m_ComponentRegistry.IsComponentRegistered(identifier);
+		}
+
+		bool IsComponentRegistered(ComponentIdentifier identifier)
+		{
+			return m_ComponentRegistry.IsComponentRegistered(identifier);
 		}
 
 	private:

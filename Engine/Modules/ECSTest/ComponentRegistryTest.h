@@ -51,10 +51,10 @@ namespace Kargono::ECS
 			// Release all component store memory
 			for (auto [identifier, componentStore] : m_ComponentArrays)
 			{
-#if 1 // Packed Array
+#if 0 // Packed Array
 				i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(PackedArray));
 #endif
-#if 0 // Flat Array
+#if 1 // Flat Array
 				i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(FlatArray));
 #endif
 			}
@@ -92,7 +92,7 @@ namespace Kargono::ECS
 			// Add the component type and its array
 			m_ComponentMasks.insert({ uniqueIdentifier, m_NextComponentType });
 
-#if 1 // Default to packed arrays
+#if 0 // Default to packed arrays
 			// Create packed array using the provided allocator
 			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(PackedArray), alignof(PackedArray));
 			KG_ASSERT(componentBuffer);
@@ -101,7 +101,7 @@ namespace Kargono::ECS
 			PackedArray* newArray = new ((void*)componentBuffer) PackedArray();
 #endif
 
-#if 0 // Default to flat arrays
+#if 1 // Default to flat arrays
 			// Create flat array using the provided allocator
 			uint8_t* componentBuffer = i_RegistryAlloc->AllocRaw(sizeof(FlatArray), alignof(FlatArray));
 			KG_ASSERT(componentBuffer);
@@ -122,7 +122,6 @@ namespace Kargono::ECS
 			return true;
 
 		}
-
 
 		template<typename t_Component>
 		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component& component)
@@ -201,24 +200,6 @@ namespace Kargono::ECS
 			return m_ComponentMasks[identifier];
 		}
 
-		template<typename t_Component>
-		IComponentStore* GetComponentArray()
-		{
-			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
-			constexpr ComponentIdentifier identifier =
-				Utility::FileSystem::CRCFromString(uniqueName.CString());
-
-			if (!m_ComponentMasks.contains(identifier))
-			{
-				bool success = RegisterComponent<t_Component>();
-				KG_ASSERT(success);
-			}
-
-
-			KG_ASSERT(m_ComponentArrays[identifier]);
-			return m_ComponentArrays[identifier];
-		}
-
 		IComponentStore* GetComponentArray(ComponentIdentifier identifier)
 		{
 			KG_ASSERT(m_ComponentMasks.contains(identifier));
@@ -227,11 +208,10 @@ namespace Kargono::ECS
 			return m_ComponentArrays[identifier];
 		}
 
-		template<typename t_ComponentType>
-		PackedView<t_ComponentType> GetSinglePackedView()
+		PackedView<1> GetSinglePackedView(ComponentIdentifier identifier)
 		{
 			// Check if the component array exists
-			Expected<ComponentMask> compMask{ GetComponentMask<t_ComponentType>() };
+			Expected<ComponentMask> compMask{ GetComponentMask(identifier) };
 
 			if (!compMask)
 			{
@@ -239,42 +219,38 @@ namespace Kargono::ECS
 			}
 
 			// Construct & return the view
-			IComponentStore* compStore{ GetComponentArray<t_ComponentType>() };
+			IComponentStore* compStore{ GetComponentArray(identifier) };
 			KG_ASSERT(compStore);
-
-			// TODO: Fix this please!!! This needs to use the IView interface instead
 
 			// Convert to packed array 
 			PackedArray* packedStore{ (PackedArray*)compStore };
-			return PackedView<t_ComponentType>{ packedStore->GetEntityList() };
+			return PackedView<1>{ packedStore->GetEntityList() };
 		}
 
-		template<typename... t_ComponentTypes>
-		PackedView<t_ComponentTypes...> GetMultiPackedView()
+		template<size_t t_NumComponents>
+		PackedView<t_NumComponents> GetMultiPackedView(
+			const ComponentIDList<t_NumComponents>& identifiers)
 		{
-			constexpr size_t k_NumComponents{ sizeof...(t_ComponentTypes)};
-
 			// Create return array
-			std::array<PackedSparseSet*, k_NumComponents> returnArray{};
+			std::array<PackedSparseSet*, t_NumComponents> returnArray{};
 
 			// Fill array via parameter pack expansion
-			FillPackedViewData<t_ComponentTypes...>(returnArray);
+			FillPackedViewData<t_NumComponents>(identifiers, returnArray);
 
 			// Create packed view from array
-			return PackedView<t_ComponentTypes...>(returnArray);
+			return PackedView<t_NumComponents>(returnArray);
 		}
 
 	private:
-		template<typename t_ComponentType>
-		PackedSparseSet* RetrieveSparseSet()
+		PackedSparseSet* RetrieveSparseSet(ComponentIdentifier identifier)
 		{
-			Expected<ComponentMask> compMask = GetComponentMask<t_ComponentType>();
+			Expected<ComponentMask> compMask = GetComponentMask(identifier);
 			if (!compMask)
 			{
 				return nullptr;
 			}
 
-			IComponentStore* compStore = GetComponentArray<t_ComponentType>();
+			IComponentStore* compStore = GetComponentArray(identifier);
 			KG_ASSERT(compStore);
 
 			// Convert to packed array 
@@ -283,8 +259,12 @@ namespace Kargono::ECS
 		}
 
 		// Comparison helper(s)
-		template<typename... t_ComponentTypes>
-		bool FillPackedViewData(std::array<PackedSparseSet*, sizeof...(t_ComponentTypes)>& dataArray)
+		template<size_t t_NumComponents>
+		bool FillPackedViewData
+		(
+			const ComponentIDList<t_NumComponents>& identifiers,
+			std::array<PackedSparseSet*, t_NumComponents>& dataArray
+		)
 		{
 			bool allValid = true;
 
@@ -294,7 +274,7 @@ namespace Kargono::ECS
 				// Fold expression to fill each index of the array
 				(([&]
 					{
-						PackedSparseSet* set{ RetrieveSparseSet<t_ComponentTypes>() };
+						PackedSparseSet* set{ RetrieveSparseSet(identifiers[t_IndexSeq])};
 						if (set)
 						{
 							// copy into the array
@@ -305,17 +285,16 @@ namespace Kargono::ECS
 							allValid = false;
 						}
 					}()), ...);
-			}(std::index_sequence_for<t_ComponentTypes...>{});
+			}(std::make_index_sequence<t_NumComponents>{});
 
 			return allValid;
 		}
 
 	public:
-		template<typename t_ComponentType>
-		FlatView<t_ComponentType> GetSingleFlatView()
+		FlatView<1> GetSingleFlatView(ComponentIdentifier identifier)
 		{
 			// Check if the component array exists
-			Expected<ComponentMask> compMask{ GetComponentMask<t_ComponentType>() };
+			Expected<ComponentMask> compMask{ GetComponentMask(identifier) };
 
 			if (!compMask)
 			{
@@ -323,56 +302,60 @@ namespace Kargono::ECS
 			}
 
 			// Construct & return the view
-			IComponentStore* compStore{ GetComponentArray<t_ComponentType>() };
+			IComponentStore* compStore{ GetComponentArray(identifier) };
 			KG_ASSERT(compStore);
-
-			// TODO: Fix this please!!! This needs to use the IView interface instead
 
 			// Convert to Flat array 
 			FlatArray* FlatStore{ (FlatArray*)compStore };
-			return FlatView<t_ComponentType>{ FlatStore->GetValidEntityArray() };
+			return FlatView<1>{ FlatStore->GetValidEntityArray() };
 		}
 
-		template<typename... t_ComponentTypes>
-		FlatView<t_ComponentTypes...> GetMultiFlatView()
+		template<size_t t_NumComponents>
+		FlatView<t_NumComponents> GetMultiFlatView(
+			const ComponentIDList<t_NumComponents>& identifiers)
 		{
-			constexpr size_t k_NumComponents{ sizeof...(t_ComponentTypes) };
-
 			// Create return array
-			std::array<std::span<bool>, k_NumComponents> returnArray{};
+			std::array<std::span<bool>, t_NumComponents> returnArray{};
 
 			// Fill array via parameter pack expansion
-			FillFlatViewData<t_ComponentTypes...>(returnArray);
+			FillFlatViewData<t_NumComponents>(identifiers, returnArray);
 
 			// Create Flat view from array
-			return FlatView<t_ComponentTypes...>(returnArray);
+			return FlatView<t_NumComponents>(returnArray);
 		}
 
 	private:
-		template<typename... t_ComponentTypes>
-		bool FillFlatViewData(std::array<std::span<bool>, sizeof...(t_ComponentTypes)>& dataArray)
+		template<size_t t_NumComponents>
+		bool FillFlatViewData(
+			const ComponentIDList<t_NumComponents>& identifiers,
+			std::array<std::span<bool>, t_NumComponents>& dataArray)
 		{
 			bool allValid = true;
 
-			std::size_t index{ 0 };
-			([&] 
+			// Generate index sequence for the number of components
+			[&] <std::size_t... t_IndexSeq> (std::index_sequence<t_IndexSeq...>)
 			{
-				Expected<ComponentMask> compMask = GetComponentMask<t_ComponentTypes>();
+				// Fold expression to fill each index of the array
+				(([&]
+				{
+				const ComponentIdentifier& identifier{ identifiers[t_IndexSeq] };
+
+				Expected<ComponentMask> compMask{ GetComponentMask(identifier) };
 				if (!compMask)
 				{
 					allValid = false;
 				}
 
-				IComponentStore* compStore = GetComponentArray<t_ComponentTypes>();
+				IComponentStore* compStore{ GetComponentArray(identifier) };
 				KG_ASSERT(compStore);
 
 				// Convert to Flat array 
 				FlatArray* flatStore{ (FlatArray*)compStore };
 
-				// Store the 
-				dataArray[index] = flatStore->GetValidEntityArray();
-				index++;
-			}(), ...);
+				// Store the array
+				dataArray[t_IndexSeq] = flatStore->GetValidEntityArray();
+				}()), ...);
+			}(std::make_index_sequence<t_NumComponents>{});
 
 			return allValid;
 		}
@@ -399,6 +382,18 @@ namespace Kargono::ECS
 				}
 			}
 		}
+	public:
+		//==============================
+		// Query State
+		//==============================
+		bool IsComponentRegistered(ComponentIdentifier identifier)
+		{
+			bool isRegistered{ m_ComponentMasks.contains(identifier) };
+
+			KG_ASSERT(isRegistered ? m_ComponentArrays.contains(identifier) : true);
+			return isRegistered;
+		}
+
 	private:
 		//==============================
 		// Internal Fields

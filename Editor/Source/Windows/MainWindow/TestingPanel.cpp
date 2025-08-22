@@ -63,6 +63,12 @@ namespace Kargono::Panels
 		float middleFinger{};
 	};
 
+	struct MovementConfigTest
+	{
+		float m_Acceleration{ 1.0f };
+		float m_Deacceleration{ 2.0f };
+	};
+
 	Register_Module_Type(BloodTest)
 
 	struct DataStruct
@@ -721,7 +727,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Delete Transform To All Entities"))
 		{
-			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
+			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				KG_ASSERT(s_DataRegistry.RemoveComponent<TransformTest>(id));
@@ -742,9 +748,34 @@ namespace Kargono::Panels
 			}
 		}
 
+		if (ImGui::Button("Add Speed Comp To All Entities"))
+		{
+			// Get component identifier
+			constexpr auto identifierStr{ GetUniqueIdentifier<MovementConfigTest>() };
+			constexpr ECS::ComponentIdentifier identifier =
+				Utility::FileSystem::CRCFromString(identifierStr.CString());
+
+			if (!s_DataRegistry.IsComponentRegistered(identifier))
+			{
+				s_DataRegistry.RegisterComponent(identifier, 
+					sizeof(MovementConfigTest), alignof(MovementConfigTest));
+			}
+
+			std::span<ECS::EntityID> allEntities = s_DataRegistry.GetAllEntities();
+			for (ECS::EntityID id : allEntities)
+			{
+				void* movementConfig = s_DataRegistry.GetComponent(id, identifier);
+				if (!movementConfig)
+				{
+					MovementConfigTest test{};
+					s_DataRegistry.AddComponent(id, identifier ,&test);
+				}
+			}
+		}
+
 		if (ImGui::Button("Delete Health To All Entities"))
 		{
-			auto transformView = s_DataRegistry.GetPackedView<HealthTest>();
+			auto transformView = s_DataRegistry.GetFlatView<HealthTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				KG_ASSERT(s_DataRegistry.RemoveComponent<HealthTest>(id));
@@ -754,7 +785,7 @@ namespace Kargono::Panels
 		EditorUI::EditorUIService::Text("Get Views");
 		if (ImGui::Button("Print Out All Transform Components"))
 		{
-			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
+			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
@@ -776,7 +807,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Print Out All Health Components"))
 		{
-			auto healthView = s_DataRegistry.GetPackedView<HealthTest>();
+			auto healthView = s_DataRegistry.GetFlatView<HealthTest>();
 			for (ECS::EntityID id : healthView)
 			{
 				ExpectedRef<HealthTest> healthRef = s_DataRegistry.GetComponent<HealthTest>(id);
@@ -797,9 +828,41 @@ namespace Kargono::Panels
 			}
 		}
 
+		if (ImGui::Button("Print Out All Movement Components"))
+		{
+			// Get component identifier
+			constexpr auto identifierStr{ GetUniqueIdentifier<MovementConfigTest>() };
+			constexpr ECS::ComponentIdentifier identifier =
+				Utility::FileSystem::CRCFromString(identifierStr.CString());
+
+			if (!s_DataRegistry.IsComponentRegistered(identifier))
+			{
+				s_DataRegistry.RegisterComponent(identifier,
+					sizeof(MovementConfigTest), alignof(MovementConfigTest));
+			}
+
+			auto movementView = s_DataRegistry.GetFlatView<1>({ identifier });
+			for (ECS::EntityID id : movementView)
+			{
+				ExpectedRef<MovementConfigTest> movementConfigRef = s_DataRegistry.GetComponent<MovementConfigTest>(id);
+				if (!movementConfigRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+
+				MovementConfigTest& movementConfig{ movementConfigRef.value().get() };
+
+				KG_TRACE_INFO("Entity {} | Accel/Deaccel {} {}",
+					id,
+					movementConfig.m_Acceleration, movementConfig.m_Deacceleration
+				);
+			}
+		}
+
 		if (ImGui::Button("Print Out All Transform & Health Components"))
 		{
-			auto combinedView = s_DataRegistry.GetPackedView<TransformTest, HealthTest>();
+			auto combinedView = s_DataRegistry.GetFlatView<TransformTest, HealthTest>();
 			for (ECS::EntityID id : combinedView)
 			{
 				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
@@ -837,7 +900,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Move All Entities Up By One"))
 		{
-			auto transformView = s_DataRegistry.GetPackedView<TransformTest>();
+			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
 			for (ECS::EntityID id : transformView)
 			{
 				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);

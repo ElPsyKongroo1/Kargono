@@ -150,46 +150,45 @@ namespace Kargono::ECS
         EntityID m_CurrentEntity{ 0 };
     };
 
-    template<typename... t_ComponentTypes>
+    template<size_t t_NumComponents>
 	class FlatView
 	{
     public:
         //==============================
         // Metaprogramming Types & Asserts
         //==============================
-        static constexpr size_t k_NumComponents{ sizeof...(t_ComponentTypes) };
-        static_assert(k_NumComponents != 0);
+        static_assert(t_NumComponents != 0);
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
 		FlatView() = default;
-		FlatView(FlatStorage_t<k_NumComponents> isEntityValidList) :
+		FlatView(FlatStorage_t<t_NumComponents> isEntityValidList) :
 			m_SpanStorage(isEntityValidList) {};
 		~FlatView() = default;
 	public:
 		//==============================
 		// Enable For-Loop / Iterator Usage
 		//==============================
-		FlatIterator<k_NumComponents> begin() const
+		FlatIterator<t_NumComponents> begin() const
 		{
-			return FlatIterator<k_NumComponents>(m_SpanStorage, 0);
+			return FlatIterator<t_NumComponents>(m_SpanStorage, 0);
 		};
-		FlatIterator<k_NumComponents> end() const
+		FlatIterator<t_NumComponents> end() const
 		{
-            if constexpr (k_NumComponents == 1)
+            if constexpr (t_NumComponents == 1)
             {
-                return FlatIterator<k_NumComponents>(m_SpanStorage, m_SpanStorage.size());
+                return FlatIterator<t_NumComponents>(m_SpanStorage, m_SpanStorage.size());
             }
             else
             {
-                return FlatIterator<k_NumComponents>(m_SpanStorage, m_SpanStorage[0].size());
+                return FlatIterator<t_NumComponents>(m_SpanStorage, m_SpanStorage[0].size());
             }
 		};
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-        FlatStorage_t<k_NumComponents> m_SpanStorage;
+        FlatStorage_t<t_NumComponents> m_SpanStorage;
 	};
 }

@@ -158,48 +158,47 @@ namespace Kargono::ECS
         size_t m_CurrentIndex{ 0 };
     };
 
-    template<typename... t_ComponentTypes>
+    template<size_t t_NumComponents>
 	class PackedView : public IView
 	{
     public:
         //==============================
         // Metaprogramming Types & Asserts
         //==============================
-        static constexpr size_t k_NumComponents{ sizeof...(t_ComponentTypes) };
-        static_assert(k_NumComponents != 0);
+        static_assert(t_NumComponents != 0);
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
 		PackedView() = default;
-		PackedView(PackedStorage_t<k_NumComponents> entityList) :
+		PackedView(PackedStorage_t<t_NumComponents> entityList) :
 			m_EntityStorage(entityList) {};
 		~PackedView() = default;
 	public:
 		//==============================
 		// Enable For-Loop / Iterator Usage
 		//==============================
-		PackedIterator<k_NumComponents> begin() const
+		PackedIterator<t_NumComponents> begin() const
 		{
-		    return PackedIterator<k_NumComponents>(m_EntityStorage, 0 );
+		    return PackedIterator<t_NumComponents>(m_EntityStorage, 0 );
 		};
-		PackedIterator<k_NumComponents> end() const
+		PackedIterator<t_NumComponents> end() const
 		{
-            if constexpr (k_NumComponents == 1)
+            if constexpr (t_NumComponents == 1)
             {
-			    return PackedIterator<k_NumComponents>( m_EntityStorage, m_EntityStorage.size() );
+			    return PackedIterator<t_NumComponents>( m_EntityStorage, m_EntityStorage.size() );
             }
             else
             {
                 // TODO: Note this iterator uses the first component list as the basis for iteration
                 // Might want to use the shortest list (determined at runtime) for faster results
-                return PackedIterator<k_NumComponents>(m_EntityStorage, m_EntityStorage[0]->GetDenseCount());
+                return PackedIterator<t_NumComponents>(m_EntityStorage, m_EntityStorage[0]->GetDenseCount());
             }
 		};
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-        PackedStorage_t<k_NumComponents> m_EntityStorage;
+        PackedStorage_t<t_NumComponents> m_EntityStorage;
 	};
 }
