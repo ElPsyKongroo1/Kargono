@@ -14,6 +14,7 @@
 #include "Kargono/Memory/IAllocator.h"
 
 #include <unordered_map>
+#include <memory>
 
 namespace Kargono::ECS
 {
@@ -43,13 +44,37 @@ namespace Kargono::ECS
 		[[nodiscard]] bool Terminate()
 		{
 			// Terminate each component store
-			for (auto [identifier, componentStore] : m_ComponentArrays)
+			for (auto [mask, componentStore] : m_ComponentArrays)
 			{
 				componentStore->Terminate();
 			}
 
 			// Release all component store memory
-			for (auto [identifier, componentStore] : m_ComponentArrays)
+			for (auto [mask, componentStore] : m_ComponentArrays)
+			{
+#if 0 // Packed Array
+				i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(PackedArray));
+#endif
+#if 1 // Flat Array
+				i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(FlatArray));
+#endif
+			}
+
+			m_ComponentArrays.clear();
+
+			return true;
+		}
+
+		[[nodiscard]] bool Clear()
+		{
+			// Terminate each component store
+			for (auto [mask, componentStore] : m_ComponentArrays)
+			{
+				componentStore->Terminate();
+			}
+
+			// Release all component store memory
+			for (auto [mask, componentStore] : m_ComponentArrays)
 			{
 #if 0 // Packed Array
 				i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(PackedArray));
@@ -71,17 +96,22 @@ namespace Kargono::ECS
 		[[nodiscard]] bool RegisterComponent()
 		{
 			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
-			constexpr ComponentIdentifier uniqueIdentifier =
+			constexpr ComponentIdentifier identifier =
 				Utility::FileSystem::CRCFromString(uniqueName.CString());
 
-			return RegisterComponent(uniqueIdentifier, sizeof(t_Component), alignof(t_Component));
-
+			return RegisterComponent(identifier, 
+				sizeof(t_Component), alignof(t_Component),
+				CreateComponentFunctors<t_Component>());
 		}
 
-		[[nodiscard]] bool RegisterComponent(ComponentIdentifier uniqueIdentifier, size_t componentSize, size_t componentAlignment)
+		[[nodiscard]] bool RegisterComponent(ComponentIdentifier uniqueIdentifier, 
+			size_t componentSize, size_t componentAlignment, 
+			ComponentFunctors componentFunctors)
 		{
 			KG_ASSERT(componentSize > 0);
 			KG_ASSERT(componentAlignment > 0);
+
+			KG_ASSERT(CheckComponentFunctors(componentFunctors));
 
 			// Check if component already exists
 			if (m_ComponentMasks.contains(uniqueIdentifier))
@@ -113,7 +143,8 @@ namespace Kargono::ECS
 			KG_ASSERT(newArray);
 
 			newArray->Init(i_EntityRegistry, i_RegistryAlloc, componentSize, componentAlignment);
-			m_ComponentArrays.insert({ uniqueIdentifier, newArray });
+			newArray->SetComponentFunctors(componentFunctors);
+			m_ComponentArrays.insert({ m_NextComponentType, newArray });
 
 			// Increment the value so that the next component registered will be different
 			m_NextComponentType++;
@@ -126,19 +157,114 @@ namespace Kargono::ECS
 		template<typename t_Component>
 		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component& component)
 		{
-			IComponentStore* componentStore{ GetComponentArray<t_Component>() };
-			KG_ASSERT(componentStore);
+			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
+			constexpr ComponentIdentifier identifier
+			{ Utility::FileSystem::CRCFromString(uniqueName.CString()) };
 
-			return componentStore->InsertComponent(entityID, &component);
+			ComponentMask mask { GetComponentMask(identifier).value() };
+
+			return AddComponent(entityID, mask, component);
 		}
 
 		[[nodiscard]] bool AddComponent(EntityID entityID, ComponentIdentifier identifier,
 			void* component)
 		{
-			IComponentStore* componentStore{ GetComponentArray(identifier) };
+			ComponentMask mask{ GetComponentMask(identifier).value() };
+
+			return AddComponent(entityID, mask, component);
+		}
+
+		[[nodiscard]] bool AddComponent(EntityID entityID, ComponentMask mask,
+			void* component)
+		{
+			IComponentStore* componentStore{ GetComponentArray(mask) };
 			KG_ASSERT(componentStore);
 
-			return componentStore->InsertComponent(entityID, component);
+			// Check if a component already exists
+			if (componentStore->HasComponent(entityID))
+			{
+				return false;
+			}
+
+			const ComponentFunctors& compFunctors{ componentStore->GetComponentFunctors() };
+			void* newComponent{ componentStore->CreateComponent(entityID) };
+			KG_ASSERT(newComponent);
+
+			// Copy data over to the new component 
+			// TODO: (THIS COULD BE DANGEROUS IF component is incorrect AHHHHH!!!)
+			compFunctors.m_Copy(component, newComponent);
+
+			return true;
+		}
+
+		[[nodiscard]] bool AddOrReplaceComponent(EntityID entityID, ComponentMask mask,
+			void* component)
+		{
+			IComponentStore* componentStore{ GetComponentArray(mask) };
+			KG_ASSERT(componentStore);
+
+			const ComponentFunctors& compFunctors{ componentStore->GetComponentFunctors() };
+			void* newComponent{ componentStore->CreateComponent(entityID) };
+			KG_ASSERT(newComponent);
+
+			// Copy data over to the new component 
+			// TODO: (THIS COULD BE DANGEROUS IF component is incorrect AHHHHH!!!)
+			compFunctors.m_Copy(component, newComponent);
+
+			return true;
+		}
+
+		template<typename t_Component, typename... t_Args>
+		[[nodiscard]] void* EmplaceComponent(EntityID entityID, t_Args... args)
+		{	
+			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
+			constexpr ComponentIdentifier identifier
+			{ Utility::FileSystem::CRCFromString(uniqueName.CString()) };
+
+			KG_ASSERT(IsComponentRegistered(identifier));
+
+			// Check if the component array exists
+			Expected<ComponentMask> compMask{ GetComponentMask(identifier) };
+			KG_ASSERT(compMask);
+
+			// Construct & return the view
+			IComponentStore* compStore{ GetComponentArray(identifier) };
+			KG_ASSERT(compStore);
+
+			// Simply return existing component if it already exists
+			if (compStore->HasComponent(entityID))
+			{
+				return compStore->GetComponent(entityID)
+			}
+
+			// Emplace object on raw data using placement new 
+			void* rawComponent{ compStore->CreateComponent(entityID)};
+			KG_ASSERT(rawComponent);
+			return std::construct_at(rawComponent, std::forward<t_Args>(args)...);
+		}
+
+		template<typename t_Component, typename... t_Args>
+		[[nodiscard]] void* EmplaceOrReplaceComponent(EntityID entityID, t_Args... args)
+		{
+			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
+			constexpr ComponentIdentifier identifier
+			{ Utility::FileSystem::CRCFromString(uniqueName.CString()) };
+
+			KG_ASSERT(IsComponentRegistered(identifier));
+
+			// Check if the component array exists
+			Expected<ComponentMask> compMask{ GetComponentMask(identifier) };
+			KG_ASSERT(compMask);
+
+			// Construct & return the view
+			IComponentStore* compStore{ GetComponentArray(identifier) };
+			KG_ASSERT(compStore);
+
+			// Emplace object on raw data using placement new 
+			void* rawComponent{ compStore->CreateComponent(entityID) };
+			KG_ASSERT(rawComponent);
+
+			return std::construct_at(rawComponent, std::forward<t_Args>(args)...);
 		}
 
 		template<typename t_Component>
@@ -153,6 +279,14 @@ namespace Kargono::ECS
 		[[nodiscard]] bool RemoveComponent(EntityID entityID, ComponentIdentifier identifier)
 		{
 			IComponentStore* componentStore{ GetComponentArray(identifier) };
+			KG_ASSERT(componentStore);
+
+			return componentStore->RemoveComponent(entityID);
+		}
+
+		[[nodiscard]] bool RemoveComponent(EntityID entityID, ComponentMask mask)
+		{
+			IComponentStore* componentStore{ GetComponentArray(mask) };
 			KG_ASSERT(componentStore);
 
 			return componentStore->RemoveComponent(entityID);
@@ -173,6 +307,28 @@ namespace Kargono::ECS
 			KG_ASSERT(componentStore);
 
 			return componentStore->GetComponent(entityID);
+		}
+
+		void* GetComponent(EntityID entityID, ComponentMask mask)
+		{
+			IComponentStore* componentStore{ GetComponentArray(mask) };
+			KG_ASSERT(componentStore);
+
+			return componentStore->GetComponent(entityID);
+		}
+		
+	private:
+		// Helper function(s)
+		template<ComponentConcept t_ComponentType>
+		constexpr ComponentFunctors CreateComponentFunctors()
+		{
+			return { t_ComponentType::CopyTo };
+		}
+
+		// Helper function(s)
+		bool CheckComponentFunctors(ComponentFunctors functors)
+		{
+			return static_cast<bool>(functors.m_Copy);
 		}
 
 	public:
@@ -203,9 +359,16 @@ namespace Kargono::ECS
 		IComponentStore* GetComponentArray(ComponentIdentifier identifier)
 		{
 			KG_ASSERT(m_ComponentMasks.contains(identifier));
-			KG_ASSERT(m_ComponentArrays[identifier]);
+			ComponentMask mask{ m_ComponentMasks.at(identifier)};
 
-			return m_ComponentArrays[identifier];
+			KG_ASSERT(m_ComponentArrays.contains(mask));
+			return m_ComponentArrays[mask];
+		}
+
+		IComponentStore* GetComponentArray(ComponentMask mask)
+		{
+			KG_ASSERT(m_ComponentArrays.contains(mask));
+			return m_ComponentArrays[mask];
 		}
 
 		PackedView<1> GetSinglePackedView(ComponentIdentifier identifier)
@@ -244,7 +407,7 @@ namespace Kargono::ECS
 	private:
 		PackedSparseSet* RetrieveSparseSet(ComponentIdentifier identifier)
 		{
-			Expected<ComponentMask> compMask = GetComponentMask(identifier);
+			Expected<ComponentMask> compMask{ GetComponentMask(identifier) };
 			if (!compMask)
 			{
 				return nullptr;
@@ -369,13 +532,10 @@ namespace Kargono::ECS
 			KG_ASSERT(signature);
 
 			// Handle all component arrays
-			for (const auto& [componentName, array] : m_ComponentArrays)
+			for (const auto& [mask, array] : m_ComponentArrays)
 			{
-				KG_ASSERT(m_ComponentMasks.contains(componentName));
 
-				ComponentMask currentType = m_ComponentMasks[componentName];
-
-				if (signature->IsFlagSet(currentType))
+				if (signature->IsFlagSet(mask))
 				{
 					bool success{ array->RemoveComponent(entityID) };
 					KG_ASSERT(success);
@@ -394,13 +554,24 @@ namespace Kargono::ECS
 			return isRegistered;
 		}
 
+		bool HasComponent(EntityID entityID, ComponentIdentifier identifier)
+		{
+			Expected<ComponentMask> compMask{ GetComponentMask(identifier) };
+			KG_ASSERT(compMask.has_value());
+
+			IComponentStore* compStore{ GetComponentArray(compMask.value()) };
+			KG_ASSERT(compStore);
+
+			return compStore->HasComponent(entityID);
+		}
+
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
 		// Component data/info
 		std::unordered_map<ComponentIdentifier, ComponentMask> m_ComponentMasks{};
-		std::unordered_map<ComponentIdentifier, IComponentStore*> m_ComponentArrays{};
+		std::unordered_map<ComponentMask, IComponentStore*> m_ComponentArrays{};
 		// Iterator for adding new components
 		ComponentMask m_NextComponentType{0};
 

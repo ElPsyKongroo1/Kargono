@@ -4,6 +4,7 @@
 #include "Modules/ECS/EngineComponents.h"
 #include "Modules/ECS/EntityRegistry.h"
 #include "Modules/ECS/ExternalAPI/enttAPI.h"
+#include "Modules/ECSTest/RegistryTest.h"
 
 namespace Kargono::ECS
 {
@@ -11,64 +12,86 @@ namespace Kargono::ECS
 	{
 	public:
 		Entity() = default;
-		Entity(entt::entity handle, EntityRegistry* registry);
+		Entity(ECS::EntityID handle, EntityRegistry* registry);
 		Entity(const Entity& other) = default;
 
-		template<typename T, typename... Args>
-		T& AddComponent(Args&&... args)
+	public:
+		template<typename t_ComponentType, typename... t_Args>
+		t_ComponentType& AddComponent(t_Args&&... args)
 		{
-			KG_ASSERT(!HasComponent<T>(), "Entity already has component!");
-			T& component = m_Registry->m_EnTTRegistry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			KG_ASSERT(!HasComponent<t_ComponentType>(), "Entity already has component!");
+			t_ComponentType& component = 
+				m_Registry->m_Registry->EmplaceComponent<t_ComponentType>
+				(m_RegistryEntityID, std::forward<t_Args>(args)...);
 			return component;
 		}
 
 		void AddProjectComponentData(Assets::AssetHandle projectComponentHandle);
 
-		template<typename T, typename... Args>
-		T& AddOrReplaceComponent(Args&&... args)
+		template<typename t_ComponentType, typename... t_Args>
+		t_ComponentType& AddOrReplaceComponent(t_Args&&... args)
 		{
-			T& component = m_Registry->m_EnTTRegistry.emplace_or_replace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			t_ComponentType& component
+			{ 
+				m_Registry->m_Registry->EmplaceOrReplaceComponent<t_ComponentType>(
+					m_RegistryEntityID, std::forward<t_Args>(args)...) 
+			};
 			return component;
 		}
 
-		template<typename T>
-		T& GetComponent()
+		template<typename t_ComponentType>
+		t_ComponentType& GetComponent()
 		{
-			KG_ASSERT(HasComponent<T>(), "Entity does not have the component!")
+			KG_ASSERT(HasComponent<t_ComponentType>(), "Entity does not have the component!");
 
-			return m_Registry->m_EnTTRegistry.get<T>(m_EntityHandle);
+			ExpectedRef<t_ComponentType> componentRef = 
+				m_Registry->m_Registry->GetComponent<t_ComponentType>(m_RegistryEntityID);
+			KG_ASSERT(componentRef.has_value());
+
+			return componentRef.value().get();
 		}
 
 		void* GetProjectComponentData(Assets::AssetHandle projectComponentHandle);
 
-		template<typename T>
+		template<typename t_ComponentType>
 		bool HasComponent()
 		{
-			return m_Registry->m_EnTTRegistry.all_of<T>(m_EntityHandle);
+			m_Registry->m_Registry->HasComponent<t_ComponentType>(m_RegistryEntityID);
+		}
+
+		bool HasComponent(EntityID entityID, ComponentIdentifier compIdentifier)
+		{
+			m_Registry->m_Registry->HasComponent(entityID, compIdentifier);
 		}
 
 		bool HasProjectComponentData(Assets::AssetHandle projectComponentHandle);
 
-		template<typename T>
+		template<typename t_ComponentType>
 		void RemoveComponent()
 		{
-			KG_ASSERT(HasComponent<T>(), "Entity does not have the component!");
-			m_Registry->m_EnTTRegistry.remove<T>(m_EntityHandle);
+			KG_ASSERT(HasComponent<t_ComponentType>(), "Entity does not have the component!");
+			m_Registry->m_Registry.RemoveComponent<t_ComponentType>(m_RegistryEntityID);
 		}
+
+		void RemoveComponent(ComponentIdentifier identifier)
+		{
+			m_Registry->m_Registry->RemoveComponent(m_RegistryEntityID, identifier);
+		}
+
 
 		void RemoveProjectComponentData(Assets::AssetHandle projectComponentHandle);
 
-		operator bool() const { return m_EntityHandle != entt::null; }
-		operator entt::entity() const { return m_EntityHandle; }
-		operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
-		operator uint64_t() const { return static_cast<uint64_t>(m_EntityHandle); }
+		operator bool() const { return m_RegistryEntityID != k_InvalidEntityID; }
+		operator ECS::EntityID() const { return m_RegistryEntityID; }
+		operator uint32_t() const { return static_cast<uint32_t>(m_RegistryEntityID); }
+		operator uint64_t() const { return static_cast<uint64_t>(m_RegistryEntityID); }
 
 		UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 		const std::string& GetName() { return GetComponent<TagComponent>().Tag; }
 
 		bool operator==(const Entity& other) const
 		{
-			return m_EntityHandle == other.m_EntityHandle && m_Registry == other.m_Registry;
+			return m_RegistryEntityID == other.m_RegistryEntityID && m_Registry == other.m_Registry;
 		}
 
 		bool operator!=(const Entity& other) const
@@ -76,17 +99,15 @@ namespace Kargono::ECS
 			return  !(*this == other);
 		}
 	private:
-		entt::entity m_EntityHandle {entt::null};
+		ECS::EntityID m_RegistryEntityID { ECS::k_InvalidEntityID };
 		EntityRegistry* m_Registry { nullptr };
 	};
 }
 
 namespace Kargono::Utility
 {
-	inline static std::unordered_map<std::string, std::function<bool(ECS::Entity)>> s_EntityHasComponentFunc {};
-
 	template<typename... Component>
-	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+	static void CopyAllComponents(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
 	{
 		([&]()
 			{
@@ -121,24 +142,6 @@ namespace Kargono::Utility
 	static void CopyComponentIfExists(ECS::ComponentGroup<Component...>, ECS::Entity dst, ECS::Entity src)
 	{
 		CopyComponentIfExists<Component...>(dst, src);
-	}
-
-	template<typename ... Component>
-	static void RegisterHasComponent()
-	{
-		([]()
-			{
-				std::string fullName = typeid(Component).name();
-				size_t pos = fullName.find_last_of(':');
-				std::string componentName = fullName.substr(pos + 1);
-				s_EntityHasComponentFunc[componentName] = [](ECS::Entity entity) { return entity.HasComponent<Component>(); };
-			}(), ...);
-	}
-
-	template<typename ... Component>
-	static void RegisterHasComponent(ECS::ComponentGroup<Component ...>)
-	{
-		RegisterHasComponent<Component ...>();
 	}
 }
 

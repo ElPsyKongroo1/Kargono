@@ -47,6 +47,16 @@ namespace Kargono::ECS
 			return true;
 		}
 
+		[[nodiscard]] bool Clear()
+		{
+			m_EntityRegistry.Clear();
+			m_ComponentRegistry.Clear();
+
+			return true;
+		}
+
+
+
 		//==============================
 		// Manage Entities
 		//==============================
@@ -79,10 +89,11 @@ namespace Kargono::ECS
 		}
 
 		[[nodiscard]] bool RegisterComponent(ComponentIdentifier componentIdentifier,
-			size_t componentSize, size_t componentAlignment)
+			size_t componentSize, size_t componentAlignment, 
+			ComponentFunctors componentFunctors)
 		{
 			return m_ComponentRegistry.RegisterComponent(componentIdentifier, 
-				componentSize, componentAlignment);
+				componentSize, componentAlignment, componentFunctors);
 		}
 
 		template<typename t_Component>
@@ -143,6 +154,94 @@ namespace Kargono::ECS
 			m_EntityRegistry.SetEntitySignature(entityID, entitySignature.value());
 
 			return true;
+		}
+
+		[[nodiscard]] bool CopyComponents(EntityID srcID, EntityID destID)
+		{
+			// Ensure the entities exists in the registry
+			if (!m_EntityRegistry.HasEntity(srcID) || !m_EntityRegistry.HasEntity(destID))
+			{
+				return false;
+			}
+
+			// Get the entity's signature
+			const Signature srcSignature{ m_EntityRegistry.GetSignature(srcID).value() };
+
+			// Loop through each component
+			for (ComponentMask mask = 0; mask < sizeof(Signature) * 8; mask++)
+			{
+				// Check if the component exists
+				if (srcSignature.IsFlagSet(mask))
+				{
+					// Add component to destination
+					void* srcComponent = m_ComponentRegistry.GetComponent(srcID, mask);
+					KG_ASSERT(srcComponent);
+					m_ComponentRegistry.AddOrReplaceComponent(destID, mask, srcComponent);
+				}
+				else
+				{
+					// Remove component from destination
+					m_ComponentRegistry.RemoveComponent(destID, mask);
+				}
+			}
+
+			// Update the destination signature
+			m_EntityRegistry.SetEntitySignature(destID, srcSignature);
+
+			return true;
+		}
+
+		template<typename t_Component, typename... t_Args>
+		[[nodiscard]] t_Component& EmplaceComponent(EntityID entityID, t_Args... args)
+		{
+			KG_ASSERT(m_EntityRegistry.HasEntity(entityID));
+
+			void* component 
+			{ 
+				m_ComponentRegistry.EmplaceComponent(entityID, std::forward<t_Args>(args)...) 
+			};
+			KG_ASSERT(component);
+
+			// Get the entity's signature
+			Expected<Signature> entitySignature{ m_EntityRegistry.GetSignature(entityID) };
+			KG_ASSERT(entitySignature);
+
+			// Get the relevant component mask/identifier
+			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentMask<t_Component>() };
+			KG_ASSERT(compMask);
+
+			// Update the signature w/ mask
+			entitySignature->SetFlag(compMask.value());
+			m_EntityRegistry.SetEntitySignature(entityID, entitySignature.value());
+
+			return *(t_Component)component;
+		}
+
+		template<typename t_Component, typename... t_Args>
+		[[nodiscard]] t_Component& EmplaceOrReplaceComponent(EntityID entityID, t_Args... args)
+		{
+			KG_ASSERT(m_EntityRegistry.HasEntity(entityID));
+
+			void* component
+			{
+				m_ComponentRegistry.EmplaceOrReplaceComponent(entityID, 
+					std::forward<t_Args>(args)...)
+			};
+			KG_ASSERT(component);
+
+			// Get the entity's signature
+			Expected<Signature> entitySignature{ m_EntityRegistry.GetSignature(entityID) };
+			KG_ASSERT(entitySignature);
+
+			// Get the relevant component mask/identifier
+			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentMask<t_Component>() };
+			KG_ASSERT(compMask);
+
+			// Update the signature w/ mask
+			entitySignature->SetFlag(compMask.value());
+			m_EntityRegistry.SetEntitySignature(entityID, entitySignature.value());
+
+			return *(t_Component)component;
 		}
 
 		template<typename t_Component>
@@ -313,6 +412,27 @@ namespace Kargono::ECS
 		}
 
 		template<typename t_ComponentType>
+		bool HasComponent(EntityID entityID)
+		{
+			// Get component identifier
+			constexpr auto identifierStr{ GetUniqueIdentifier<t_ComponentType>() };
+			constexpr ComponentIdentifier identifier =
+				Utility::FileSystem::CRCFromString(identifierStr.CString());
+
+			return HasComponent(entityID, identifier);
+		}
+
+		bool HasComponent(EntityID entityID, ComponentIdentifier identifier)
+		{
+			if (!IsComponentRegistered(identifier))
+			{
+				return false;
+			}
+
+			return m_ComponentRegistry.HasComponent(entityID, identifier);
+		}
+
+		template<typename t_ComponentType>
 		bool IsComponentRegistered()
 		{
 			// Get component identifier
@@ -327,6 +447,19 @@ namespace Kargono::ECS
 		bool IsComponentRegistered(ComponentIdentifier identifier)
 		{
 			return m_ComponentRegistry.IsComponentRegistered(identifier);
+		}
+
+		//==============================
+		// Interact w/ Other Registries
+		//==============================
+		void DuplicateRegistry(Registry& otherRegistry)
+		{
+			// Clear the other registry
+
+			// Copy over all entities
+
+			// Copy over all components
+
 		}
 
 	private:

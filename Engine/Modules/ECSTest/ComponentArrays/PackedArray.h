@@ -85,33 +85,30 @@ namespace Kargono::ECS
 		//==============================
 		// Manage Components
 		//==============================
-		[[nodiscard]] bool InsertComponent(EntityID entityID, void* component) override
+		virtual void* CreateComponent(EntityID entityID) override
 		{
 			// Check if component already exists
-			if (HasEntity(entityID))
+			if (HasComponent(entityID))
 			{
-				return false;
+				return nullptr;
 			}
 
 			// Insert entity into sparse set
 			ComponentIndex compIndex{ m_EntityComponentSet.InsertElement(entityID) };
 			if (compIndex == m_EntityComponentSet.k_InvalidDenseIndex)
 			{
-				return false;
+				return nullptr;
 			}
 
-			uint8_t* destination{ &m_ComponentBuffer[compIndex * m_ComponentSize]};
+			uint8_t* rawComponent{ &m_ComponentBuffer[compIndex * m_ComponentSize] };
 
-			// Insert component into component array
-			memcpy(destination, component, m_ComponentSize);
-
-			return true;
+			return (void*)rawComponent;
 		}
 
 		[[nodiscard]] bool RemoveComponent(EntityID entityID) override
 		{
 			// Check if component does not exist
-			if (!HasEntity(entityID))
+			if (!HasComponent(entityID))
 			{
 				return false;
 			}
@@ -137,7 +134,7 @@ namespace Kargono::ECS
 		//==============================
 		void* GetComponent(EntityID entityID)
 		{
-			if (!HasEntity(entityID))
+			if (!HasComponent(entityID))
 			{
 				return nullptr;
 			}
@@ -160,11 +157,23 @@ namespace Kargono::ECS
 
 	public:
 		//==============================
-		// Query Entity
+		// Query State
 		//==============================
-		bool HasEntity(EntityID entityID)
+		virtual bool HasComponent(EntityID entityID) override
 		{
 			return m_EntityComponentSet.HasSparseIndex(entityID);
+		}
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		virtual void SetComponentFunctors(const ComponentFunctors& functors) override
+		{
+			m_ComponentFunctors = functors;
+		}
+		virtual const ComponentFunctors& GetComponentFunctors() const
+		{
+			return m_ComponentFunctors;
 		}
 	private:
 		//==============================
@@ -175,6 +184,7 @@ namespace Kargono::ECS
 		uint8_t* m_ComponentBuffer{ nullptr };
 		size_t m_ComponentSize{ 0 };
 		size_t m_ComponentAlignment{ 0 };
+		ComponentFunctors m_ComponentFunctors{};
 
 		// EntityID <-> ComponentIndex data structure
 		PackedSparseSet m_EntityComponentSet{ k_MaxEntities, k_MaxEntities };

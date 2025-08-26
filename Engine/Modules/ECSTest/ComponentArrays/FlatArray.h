@@ -40,6 +40,28 @@ namespace Kargono::ECS
 			}
 		}
 
+		void Clear() override
+		{
+
+
+			//// Data array(s)
+			//uint8_t* m_ComponentBuffer{ nullptr };
+			//std::array<bool, k_MaxEntities> m_ValidEntityArray{};
+
+			//// Component info
+			//size_t m_ComponentSize{ 0 };
+			//size_t m_ComponentAlignment{ 0 };
+			//ComponentCount m_ComponentCount{ 0 };
+			//ComponentFunctors m_ComponentFunctors{};
+
+			////==============================
+			//// Injected Section
+			////==============================
+			//EntityRegistryTest* i_EntityRegistry{ nullptr };
+			//Memory::IAllocator* i_RegistryAlloc{ nullptr };
+		}
+
+
 	private:
 		bool AllocateBuffer(size_t componentSize, size_t componentAlignment)
 		{
@@ -84,28 +106,29 @@ namespace Kargono::ECS
 		//==============================
 		// Manage Components
 		//==============================
-		bool InsertComponent(EntityID entityID, void* component) override
+		virtual void* CreateComponent(EntityID entityID) override
 		{
 			KG_ASSERT(i_RegistryAlloc);
 			KG_ASSERT(m_ComponentSize > 0);
 			KG_ASSERT(k_MaxEntities > 0);
 
-			// Ensure no component exists already
-			bool isValid{ m_ValidEntityArray[entityID] };
-			if (isValid)
+			// Get the data pointer
+			uint8_t* rawComponent{ &m_ComponentBuffer[entityID * m_ComponentSize] };
+
+			// Return existing component if it already exists
+			bool hasComponent{ m_ValidEntityArray[entityID] };
+			if (hasComponent)
 			{
-				return false;
+				return (void*)rawComponent;
 			}
 
-			uint8_t* destination{ &m_ComponentBuffer[entityID * m_ComponentSize] };
-
-			// Update component & valid arrays
-			memcpy(destination, component, m_ComponentSize);
+			// Update array metadata
 			m_ValidEntityArray[entityID] = true;
 			m_ComponentCount++;
 
-			return true;
+			return (void*)rawComponent;
 		}
+
 		bool RemoveComponent(EntityID entityID) override
 		{
 			// Ensure a valid component exists
@@ -138,6 +161,28 @@ namespace Kargono::ECS
 		{
 			return m_ValidEntityArray;
 		}
+
+		//==============================
+		// Query State
+		//==============================
+		virtual bool HasComponent(EntityID entityID) override
+		{
+			KG_ASSERT(entityID < (EntityID)m_ValidEntityArray.size());
+
+			return m_ValidEntityArray[entityID];
+		}
+
+		//==============================
+		// Getters/Setters
+		//==============================
+		virtual void SetComponentFunctors(const ComponentFunctors& functors) override
+		{
+			m_ComponentFunctors = functors;
+		}
+		virtual const ComponentFunctors& GetComponentFunctors() const
+		{
+			return m_ComponentFunctors;
+		}
 	private:
 		//==============================
 		// Internal Fields
@@ -150,6 +195,7 @@ namespace Kargono::ECS
 		size_t m_ComponentSize{ 0 };
 		size_t m_ComponentAlignment{ 0 };
 		ComponentCount m_ComponentCount{ 0 };
+		ComponentFunctors m_ComponentFunctors{};
 
 		//==============================
 		// Injected Section

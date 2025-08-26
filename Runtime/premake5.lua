@@ -23,7 +23,6 @@ project "Runtime"
         "%{wks.location}/Engine",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.entt}",
         "%{IncludeDir.filewatch}",
         "%{IncludeDir.imGui}",
         "%{IncludeDir.ImGuizmo}",

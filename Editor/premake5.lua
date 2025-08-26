@@ -22,7 +22,6 @@ project "Editor"
     {
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.entt}",
         "%{IncludeDir.filewatch}",
         "%{IncludeDir.imGui}",
         "%{IncludeDir.ImGuizmo}",
