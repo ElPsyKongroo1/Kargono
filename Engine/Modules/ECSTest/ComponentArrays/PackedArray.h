@@ -22,22 +22,24 @@ namespace Kargono::ECS
 		// Lifecycle Functions
 		//==============================
 		void Init(EntityRegistryTest* entityRegistry, Memory::IAllocator* regAlloc, 
-			size_t componentSize, size_t componentAlignment) override
+			ComponentMetadata metadata) override
 		{
 			// Ensure dependencies are valid
 			KG_ASSERT(entityRegistry);
 			KG_ASSERT(regAlloc);
 			i_EntityRegistry = entityRegistry;
 			i_RegistryAlloc = regAlloc;
+			m_CompMetadata = metadata;
 
-			AllocateBuffer(componentSize, componentAlignment);
+			AllocateBuffer(m_CompMetadata.m_ComponentSize, m_CompMetadata.m_ComponentAlignment);
 		}
 
 		void Terminate() override
 		{
 			if (m_ComponentBuffer)
 			{
-				DeallocateBuffer(m_ComponentSize, m_ComponentAlignment);
+				DeallocateBuffer(
+					m_CompMetadata.m_ComponentSize, m_CompMetadata.m_ComponentAlignment);
 			}
 		}
 
@@ -55,6 +57,7 @@ namespace Kargono::ECS
 			{
 				return false;
 			}
+
 
 			m_ComponentSize = componentSize;
 			m_ComponentAlignment = componentAlignment;
@@ -180,14 +183,12 @@ namespace Kargono::ECS
 		// Internal Fields
 		//==============================
 		
-		// Packed array and info
+		// Packed array data
 		uint8_t* m_ComponentBuffer{ nullptr };
-		size_t m_ComponentSize{ 0 };
-		size_t m_ComponentAlignment{ 0 };
-		ComponentFunctors m_ComponentFunctors{};
-
-		// EntityID <-> ComponentIndex data structure
 		PackedSparseSet m_EntityComponentSet{ k_MaxEntities, k_MaxEntities };
+
+		// Component metadata
+		ComponentMetadata m_CompMetadata{};
 	private:
 		//==============================
 		// Injected Section

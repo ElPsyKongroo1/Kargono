@@ -2,6 +2,7 @@
 
 #include "Kargono/Core/BitField.h"
 #include "Modules/FileSystem/FileSystem.h"
+#include "Modules/ECSTest/Module/ECSModule.h"
 
 #include <cstdint>
 #include <bitset>
@@ -31,5 +32,17 @@ namespace Kargono::ECS
 	// This is to ensure that a signature can be succuessfully union'd w/
 	// an entity ID in EntityRegistry.h
 	static_assert(sizeof(Signature) == sizeof(EntityID));
+
+	struct ComponentFunctors
+	{
+		CopyFunc m_Copy{ nullptr };
+	};
+
+	struct ComponentMetadata
+	{
+		size_t m_ComponentSize{0};
+		size_t m_ComponentAlignment{ 0 };
+		ComponentFunctors m_CompFunctors{};
+	};
 }
 

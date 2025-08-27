@@ -18,12 +18,6 @@ namespace Kargono::ECS
     concept ComponentConcept = Copyable<t_Type>;
 
     Register_Module_Tag(Component, ComponentConcept<t_Type>)
-
-    
-    struct ComponentFunctors
-    {
-        CopyFunc m_Copy{ nullptr };
-    };
 }
 
 

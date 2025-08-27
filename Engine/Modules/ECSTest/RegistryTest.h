@@ -42,20 +42,34 @@ namespace Kargono::ECS
 
 		[[nodiscard]] bool Terminate()
 		{
-			m_ComponentRegistry.Terminate();
+			if (!m_EntityRegistry.Terminate())
+			{
+				return false;
+			}
+
+			if (!m_ComponentRegistry.Terminate())
+			{
+				return false;
+			}
+
+			i_Allocator = nullptr;
 
 			return true;
 		}
 
 		[[nodiscard]] bool Clear()
 		{
-			m_EntityRegistry.Clear();
-			m_ComponentRegistry.Clear();
+			if (!m_EntityRegistry.Clear())
+			{
+				return false;
+			}
+			if (!m_ComponentRegistry.Clear())
+			{
+				return false;
+			}
 
 			return true;
 		}
-
-
 
 		//==============================
 		// Manage Entities
@@ -89,11 +103,10 @@ namespace Kargono::ECS
 		}
 
 		[[nodiscard]] bool RegisterComponent(ComponentIdentifier componentIdentifier,
-			size_t componentSize, size_t componentAlignment, 
-			ComponentFunctors componentFunctors)
+			ComponentMetadata metadata)
 		{
 			return m_ComponentRegistry.RegisterComponent(componentIdentifier, 
-				componentSize, componentAlignment, componentFunctors);
+				metadata);
 		}
 
 		template<typename t_Component>
@@ -449,16 +462,21 @@ namespace Kargono::ECS
 			return m_ComponentRegistry.IsComponentRegistered(identifier);
 		}
 
+	public:
 		//==============================
 		// Interact w/ Other Registries
 		//==============================
-		void DuplicateRegistry(Registry& otherRegistry)
+		void CopyRegistry(Registry& otherRegistry)
 		{
 			// Clear the other registry
+			bool success{ otherRegistry.Clear() };
+			KG_ASSERT(success);
 
 			// Copy over all entities
+			m_EntityRegistry.CopyRegistry(otherRegistry.m_EntityRegistry);
 
 			// Copy over all components
+			m_ComponentRegistry.CopyRegistry(otherRegistry.m_ComponentRegistry);
 
 		}
 
@@ -466,6 +484,7 @@ namespace Kargono::ECS
 		//==============================
 		// Internal Fields
 		//==============================
+		// Registries
 		EntityRegistryTest m_EntityRegistry;
 		ComponentRegistry m_ComponentRegistry;
 

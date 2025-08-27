@@ -21,22 +21,25 @@ namespace Kargono::ECS
 		// Lifecycle Functions
 		//==============================
 		void Init(EntityRegistryTest* entityRegistry, Memory::IAllocator* regAlloc,
-				size_t componentSize, size_t componentAlignment) override
+				ComponentMetadata metadata) override
 		{
 			// Ensure dependencies are valid
 			KG_ASSERT(entityRegistry);
 			KG_ASSERT(regAlloc);
 			i_EntityRegistry = entityRegistry;
 			i_RegistryAlloc = regAlloc;
+			
 
-			AllocateBuffer(componentSize, componentAlignment);
+			AllocateBuffer(m_CompMetadata.m_ComponentSize,
+				m_CompMetadata.m_ComponentAlignment);
 		}
 
 		void Terminate() override
 		{
 			if (m_ComponentBuffer)
 			{
-				DeallocateBuffer(m_ComponentSize, m_ComponentAlignment);
+				DeallocateBuffer(m_CompMetadata.m_ComponentSize,
+					m_CompMetadata.m_ComponentAlignment);
 			}
 		}
 
@@ -77,8 +80,8 @@ namespace Kargono::ECS
 				return false;
 			}
 
-			m_ComponentSize = componentSize;
-			m_ComponentAlignment = componentAlignment;
+			m_CompMetadata.m_ComponentSize = componentSize;
+			m_CompMetadata.m_ComponentAlignment = componentAlignment;
 			m_ComponentBuffer = buffer;
 			return true;
 		}
@@ -97,8 +100,8 @@ namespace Kargono::ECS
 				return false;
 			}
 
-			m_ComponentSize = 0;
-			m_ComponentAlignment = 0;
+			m_CompMetadata.m_ComponentSize = 0;
+			m_CompMetadata.m_ComponentAlignment = 0;
 			m_ComponentBuffer = nullptr;
 			return true;
 		}
@@ -109,11 +112,14 @@ namespace Kargono::ECS
 		virtual void* CreateComponent(EntityID entityID) override
 		{
 			KG_ASSERT(i_RegistryAlloc);
-			KG_ASSERT(m_ComponentSize > 0);
+			KG_ASSERT(m_CompMetadata.m_ComponentSize > 0);
 			KG_ASSERT(k_MaxEntities > 0);
 
 			// Get the data pointer
-			uint8_t* rawComponent{ &m_ComponentBuffer[entityID * m_ComponentSize] };
+			uint8_t* rawComponent
+			{ 
+				&m_ComponentBuffer[entityID * m_CompMetadata.m_ComponentSize] 
+			};
 
 			// Return existing component if it already exists
 			bool hasComponent{ m_ValidEntityArray[entityID] };
@@ -154,7 +160,7 @@ namespace Kargono::ECS
 			}
 
 			// Update valid array
-			return (void*)&m_ComponentBuffer[entityID * m_ComponentSize];
+			return (void*)&m_ComponentBuffer[entityID * m_CompMetadata.m_ComponentSize];
 		}
 
 		std::span<bool> GetValidEntityArray()
@@ -177,11 +183,11 @@ namespace Kargono::ECS
 		//==============================
 		virtual void SetComponentFunctors(const ComponentFunctors& functors) override
 		{
-			m_ComponentFunctors = functors;
+			m_CompMetadata.m_CompFunctors = functors;
 		}
 		virtual const ComponentFunctors& GetComponentFunctors() const
 		{
-			return m_ComponentFunctors;
+			return m_CompMetadata.m_CompFunctors;
 		}
 	private:
 		//==============================
@@ -190,12 +196,10 @@ namespace Kargono::ECS
 		// Data array(s)
 		uint8_t* m_ComponentBuffer{ nullptr };
 		std::array<bool, k_MaxEntities> m_ValidEntityArray{};
+		ComponentCount m_ComponentCount{ 0 };
 
 		// Component info
-		size_t m_ComponentSize{ 0 };
-		size_t m_ComponentAlignment{ 0 };
-		ComponentCount m_ComponentCount{ 0 };
-		ComponentFunctors m_ComponentFunctors{};
+		ComponentMetadata m_CompMetadata{};
 
 		//==============================
 		// Injected Section

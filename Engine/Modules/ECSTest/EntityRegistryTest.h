@@ -24,6 +24,28 @@ namespace Kargono::ECS
 		//==============================
 		[[nodiscard]] bool Init()
 		{
+			ResetEntities();
+
+			m_Active = true;
+			return m_Active;
+		}
+
+		[[nodiscard]] bool Terminate()
+		{
+			ResetEntities();
+
+			m_Active = false;
+			return m_Active;
+		}
+
+		[[nodiscard]] bool Clear()
+		{
+			ResetEntities();
+		}
+	private:
+		// Helpers
+		void ResetEntities()
+		{
 			// Fill the signatures w/ a free list
 			for (EntityID i = 0; i < m_Signatures.size(); i++)
 			{
@@ -35,10 +57,11 @@ namespace Kargono::ECS
 			m_FreeListHead = 0;
 			m_Signatures[m_Signatures.size() - 1] = k_InvalidEntityID;
 
-			m_Active = true;
-			return m_Active;
+			// Reset entity sparse set
+			m_EntitySet.Clear();
 		}
 
+	public:
 		//==============================
 		// Manage Entity(s)
 		//==============================
@@ -107,6 +130,21 @@ namespace Kargono::ECS
 			return true;
 		}
 
+	public:
+		//==============================
+		// Interact w/ Other Registries
+		//==============================
+		void CopyRegistry(EntityRegistryTest& otherRegistry)
+		{
+			KG_ASSERT(m_Active);
+			KG_ASSERT(otherRegistry.m_Active);
+
+			otherRegistry.m_FreeListHead = m_FreeListHead;
+			otherRegistry.m_EntitySet = m_EntitySet;
+			otherRegistry.m_Signatures = m_Signatures;
+		}
+
+	public:
 		//==============================
 		// Query Entity(s)
 		//==============================

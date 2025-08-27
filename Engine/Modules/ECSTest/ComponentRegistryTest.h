@@ -38,34 +38,33 @@ namespace Kargono::ECS
 			i_RegistryAlloc = parentAlloc;
 			i_EntityRegistry = registry;
 
-			return true;
+			ClearComponentData();
+
+			m_Active = true;
+			return m_Active;
 		}
 
 		[[nodiscard]] bool Terminate()
 		{
-			// Terminate each component store
-			for (auto [mask, componentStore] : m_ComponentArrays)
-			{
-				componentStore->Terminate();
-			}
+			ClearComponentData();
 
-			// Release all component store memory
-			for (auto [mask, componentStore] : m_ComponentArrays)
-			{
-#if 0 // Packed Array
-				i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(PackedArray));
-#endif
-#if 1 // Flat Array
-				i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(FlatArray));
-#endif
-			}
+			i_EntityRegistry = nullptr;
+			i_RegistryAlloc = nullptr;
 
-			m_ComponentArrays.clear();
+			m_Active = false;
+			return m_Active;
+		}
+
+		[[nodiscard]] bool Clear()
+		{
+			ClearComponentData();
 
 			return true;
 		}
 
-		[[nodiscard]] bool Clear()
+	private:
+		// Helper(s)
+		void ClearComponentData()
 		{
 			// Terminate each component store
 			for (auto [mask, componentStore] : m_ComponentArrays)
@@ -84,9 +83,10 @@ namespace Kargono::ECS
 #endif
 			}
 
+			// Reset data structures
 			m_ComponentArrays.clear();
-
-			return true;
+			m_ComponentMasks.clear();
+			m_NextComponentType = 0;
 		}
 	public:
 		//==============================
@@ -104,23 +104,22 @@ namespace Kargono::ECS
 				CreateComponentFunctors<t_Component>());
 		}
 
-		[[nodiscard]] bool RegisterComponent(ComponentIdentifier uniqueIdentifier, 
-			size_t componentSize, size_t componentAlignment, 
-			ComponentFunctors componentFunctors)
+		[[nodiscard]] bool RegisterComponent(ComponentIdentifier identifier, 
+			ComponentMetadata metadata)
 		{
-			KG_ASSERT(componentSize > 0);
-			KG_ASSERT(componentAlignment > 0);
+			KG_ASSERT(metadata.m_ComponentSize > 0);
+			KG_ASSERT(metadata.m_ComponentAlignment > 0);
 
-			KG_ASSERT(CheckComponentFunctors(componentFunctors));
+			KG_ASSERT(CheckComponentFunctors(metadata.m_CompFunctors));
 
 			// Check if component already exists
-			if (m_ComponentMasks.contains(uniqueIdentifier))
+			if (m_ComponentMasks.contains(identifier))
 			{
 				return false;
 			}
 
 			// Add the component type and its array
-			m_ComponentMasks.insert({ uniqueIdentifier, m_NextComponentType });
+			m_ComponentMasks.insert({ identifier, m_NextComponentType });
 
 #if 0 // Default to packed arrays
 			// Create packed array using the provided allocator
@@ -333,16 +332,36 @@ namespace Kargono::ECS
 
 	public:
 		//==============================
+		// Interact w/ Other Registries
+		//==============================
+		void CopyRegistry(ComponentRegistry& otherRegistry)
+		{
+			KG_ASSERT(m_Active);
+			KG_ASSERT(otherRegistry.m_Active);
+
+			// Reset the other registry's data
+			otherRegistry.Clear();
+
+			// Register all components in other registry
+			for (auto [componentIdentifier, componentMask] : m_ComponentMasks)
+			{
+				
+				otherRegistry.RegisterComponent(componentIdentifier, );
+			}
+		}
+
+	public:
+		//==============================
 		// Query Components
 		//==============================
 		template<typename t_Component>
 		Expected<ComponentMask> GetComponentMask()
 		{
-			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
-			constexpr ComponentIdentifier uniqueIdentifier =
-				Utility::FileSystem::CRCFromString(uniqueName.CString());
+			constexpr auto name{ GetUniqueIdentifier<t_Component>() };
+			constexpr ComponentIdentifier identifier =
+				Utility::FileSystem::CRCFromString(name.CString());
 
-			return GetComponentMask(uniqueIdentifier);
+			return GetComponentMask(identifier);
 		}
 
 		Expected<ComponentMask> GetComponentMask(ComponentIdentifier identifier)
@@ -574,6 +593,8 @@ namespace Kargono::ECS
 		std::unordered_map<ComponentMask, IComponentStore*> m_ComponentArrays{};
 		// Iterator for adding new components
 		ComponentMask m_NextComponentType{0};
+		// Local state
+		bool m_Active{ false };
 
 		//==============================
 		// Injected Fields
