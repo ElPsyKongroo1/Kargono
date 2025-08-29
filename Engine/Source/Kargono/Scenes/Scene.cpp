@@ -24,51 +24,30 @@ namespace Kargono::Scenes
 		Ref<Scene> newScene = CreateRef<Scene>();
 		newScene->m_PhysicsSpecification = other->m_PhysicsSpecification;
 
-		auto& srcSceneRegistry = other->m_EntityRegistry.m_EnTTRegistry;
-		auto& dstSceneRegistry = newScene->m_EntityRegistry.m_EnTTRegistry;
-		std::unordered_map<UUID, entt::entity> enttMap;
+		ECSInternal::RegistryInternal& srcSceneRegistry = other->m_EntityRegistry.m_Registry;
+		ECSInternal::RegistryInternal& dstSceneRegistry = newScene->m_EntityRegistry.m_Registry;
 
-		// Create entities in new scene
-		auto idView = srcSceneRegistry.view<ECS::IDComponent>();
-		for (auto e : idView)
+		// Copy over registry
+		srcSceneRegistry.CopyRegistry(dstSceneRegistry);
+		newScene->m_EntityRegistry.m_EntityMap = other->m_EntityRegistry.m_EntityMap;
+
+		// Get all new created entities
+		std::span<ECSInternal::EntityID> allEntities
 		{
-			UUID uuid = srcSceneRegistry.get<ECS::IDComponent>(e).ID;
-			const auto& name = srcSceneRegistry.get<ECS::TagComponent>(e).Tag;
-			ECS::Entity newEntity = newScene->CreateEntityWithUUID(uuid, name);
-			enttMap[uuid] = (entt::entity)newEntity;
-		}
+			newScene->m_EntityRegistry.m_Registry.GetAllEntities()
+		};
 
-		// Copy components (except IDComponent and TagComponent)
-		Utility::CopyComponent(ECS::AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
-
-		// TODO: There is probably a faster way to get all the entities inside the scene without iterating through all entities
-		// TODO: I am just not aware of a view function using raw storage references in entt
-		// Transfer custom components into new scene
-		// Handle all project components
-		for (auto& [entityHandle, enttID] : other->m_EntityRegistry.m_EntityMap)
+		// Send create entity event for all new entities
+		for (ECSInternal::EntityID entityID : allEntities)
 		{
-			// Copy over data
-			ECS::Entity existingEntity{ other->GetEntityByUUID(entityHandle) };
-			ECS::Entity newEntity{ newScene->GetEntityByUUID(entityHandle) };
-			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
-			{
-				Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(handle);
-				KG_ASSERT(projectComponent);
-
-				if (existingEntity.HasProjectComponentData(handle))
-				{
-					if (!newEntity.HasProjectComponentData(handle))
-					{
-						// Add project component into registry
-						newEntity.AddProjectComponentData(handle);
-					}
-
-					// Get source and destination data buffers
-					uint8_t* sourceDataPtr = (uint8_t*)existingEntity.GetProjectComponentData(handle);
-					uint8_t* destinationDataPtr = (uint8_t*)newEntity.GetProjectComponentData(handle);
-					std::memcpy(destinationDataPtr, sourceDataPtr, projectComponent->m_BufferSize);
-				}
-			}
+			ECS::Entity entity{ entityID, &newScene->m_EntityRegistry };
+			Events::ManageEntity event = 
+			{ 
+				entity.GetUUID(), 
+				newScene.get(), 
+				Events::ManageEntityAction::Create
+			};
+			EngineService::GetActiveEngine().GetThread().OnEvent(&event);
 		}
 
 		return newScene;
@@ -97,22 +76,7 @@ namespace Kargono::Scenes
 
 	void Scene::RegisterAllProjectComponents()
 	{
-		m_EntityRegistry.m_ProjectComponentStorage.resize(Assets::AssetService::GetProjectComponentRegistry().size());
-
-		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
-		{
-			Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(handle);
-			KG_ASSERT(component);
-
-			if (component->m_BufferSize == 0)
-			{
-				continue;
-			}
-			ECS::ProjectComponentStorage& newStorage = m_EntityRegistry.m_ProjectComponentStorage.at(component->m_BufferSlot);
-
-			// Create new storage value
-			ECS::EntityRegistryService::RegisterProjectComponentWithEnTTRegistry(newStorage, m_EntityRegistry, component->m_BufferSize, component->m_Name);
-		}
+		// TODO: Register All Components
 	}
 
 	void Scene::AddProjectComponentRegistry(Assets::AssetHandle projectComponentHandle)
@@ -120,21 +84,22 @@ namespace Kargono::Scenes
 		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(component);
 
-		if (component->m_BufferSize == 0)
+		if (component->m_ComponentSize == 0)
 		{
 			return;
 		}
 
-		if (component->m_BufferSlot >= m_EntityRegistry.m_ProjectComponentStorage.size())
-		{
-			m_EntityRegistry.m_ProjectComponentStorage.resize(component->m_BufferSlot + 1);
-		}
+		// Get identifier
+		std::string identifierStr{ "ProjectComponent" "::" + component->m_Name };
+		ECSInternal::ComponentIdentifier identifier =
+			Utility::FileSystem::CRCFromString(identifierStr.c_str());
 
-		ECS::ProjectComponentStorage& newStorage = m_EntityRegistry.m_ProjectComponentStorage.at(component->m_BufferSlot);
+		ECSInternal::ComponentMetadata metadata{};
+		metadata.m_ComponentSize = component->m_ComponentSize;
+		metadata.m_ComponentAlignment = component->m_ComponentAlignment;
 
-		// Create new storage value
-		ECS::EntityRegistryService::RegisterProjectComponentWithEnTTRegistry(newStorage, m_EntityRegistry, component->m_BufferSize, component->m_Name);
-		
+		// Register component
+		m_EntityRegistry.m_Registry.RegisterComponent(identifier, metadata);
 	}
 
 	void Scene::ClearProjectComponentRegistry(Assets::AssetHandle projectComponentHandle)
@@ -142,43 +107,47 @@ namespace Kargono::Scenes
 		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(component);
 
-		if (component->m_BufferSize == 0)
+		if (component->m_ComponentSize == 0)
 		{
 			return;
 		}
 
-		KG_ASSERT(component->m_BufferSlot < m_EntityRegistry.m_ProjectComponentStorage.size());
+		// Get identifier
+		std::string identifierStr{ "ProjectComponent" "::" + component->m_Name };
+		ECSInternal::ComponentIdentifier identifier =
+			Utility::FileSystem::CRCFromString(identifierStr.c_str());
 
-		// Get storage and clear registry
-		ECS::ProjectComponentStorage& currentStorage = m_EntityRegistry.m_ProjectComponentStorage.at(component->m_BufferSlot);
-		currentStorage.m_ClearProjectComponentRegistry(currentStorage.m_EnTTStorageReference, m_EntityRegistry.m_EnTTRegistry, component->m_Name);
+		// Clear the component store
+		m_EntityRegistry.m_Registry.ClearComponentStore(identifier);
 	}
 
 	std::size_t Scene::GetProjectComponentCount(Assets::AssetHandle projectComponentHandle)
 	{
 		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(component);
-		KG_ASSERT(component->m_BufferSlot < m_EntityRegistry.m_ProjectComponentStorage.size());
 
-		if (component->m_BufferSize == 0)
+		if (component->m_ComponentSize == 0)
 		{
 			return 0;
 		}
 
-		// Get storage and clear registry
-		ECS::ProjectComponentStorage& currentStorage = m_EntityRegistry.m_ProjectComponentStorage.at(component->m_BufferSlot);
-		return currentStorage.m_GetProjectComponentCount(currentStorage.m_EnTTStorageReference);
+		// Get identifier
+		std::string identifierStr{ "ProjectComponent" "::" + component->m_Name };
+		ECSInternal::ComponentIdentifier identifier =
+			Utility::FileSystem::CRCFromString(identifierStr.c_str());
+
+		return m_EntityRegistry.m_Registry.GetComponentCount(identifier);
 	}
 
 	ECS::Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
-		ECS::Entity entity = { m_EntityRegistry.m_EnTTRegistry.create(), &m_EntityRegistry };
+		ECS::Entity entity = { m_EntityRegistry.m_Registry.CreateEntity().value() , &m_EntityRegistry};
 		entity.AddComponent<ECS::IDComponent>(uuid);
 		entity.AddComponent<ECS::TransformComponent>();
 		ECS::TagComponent& tag = entity.AddComponent<ECS::TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 
-		m_EntityRegistry.m_EntityMap[uuid] = entity;
+		m_EntityRegistry.m_EntityMap[uuid] = entity.GetInternalID();
 
 		Events::ManageEntity event = { entity.GetUUID(), this, Events::ManageEntityAction::Create };
 		EngineService::GetActiveEngine().GetThread().OnEvent(&event);
@@ -192,9 +161,9 @@ namespace Kargono::Scenes
 		EngineService::GetActiveEngine().GetThread().OnEvent(&event);
 
 		m_EntityRegistry.m_EntityMap.erase(entity.GetUUID());
-		if (m_EntityRegistry.m_EnTTRegistry.valid(entity))
+		if (m_EntityRegistry.m_Registry.HasEntity(entity.GetInternalID()))
 		{
-			m_EntityRegistry.m_EnTTRegistry.destroy(entity);
+			m_EntityRegistry.m_Registry.DestroyEntity(entity.GetInternalID());
 		}
 	}
 
@@ -203,9 +172,9 @@ namespace Kargono::Scenes
 		if (m_EntityRegistry.m_EntityMap.empty()) { return; }
 		for (auto& [uuid, entity] : m_EntityRegistry.m_EntityMap)
 		{
-			if (m_EntityRegistry.m_EnTTRegistry.valid(entity))
+			if (m_EntityRegistry.m_Registry.HasEntity(entity))
 			{
-				m_EntityRegistry.m_EnTTRegistry.destroy(entity);
+				m_EntityRegistry.m_Registry.DestroyEntity(entity);
 			}
 		}
 		m_EntityRegistry.m_EntityMap.clear();
@@ -256,17 +225,24 @@ namespace Kargono::Scenes
 		// Copy name because we're going to modify component data structure
 		std::string name = entity.GetName();
 		ECS::Entity newEntity = CreateEntity(name);
+
 		Utility::CopyComponentIfExists(ECS::AllComponents{}, newEntity, entity);
 		return newEntity;
 	}
 
 	ECS::Entity Scene::FindEntityByName(const std::string& name)
 	{
-		auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::TagComponent>();
-		for (auto entity : view)
+		auto view = m_EntityRegistry.m_Registry.GetFlatView<ECS::TagComponent>();
+		for (ECSInternal::EntityID entity : view)
 		{
-			const ECS::TagComponent& tc = view.get<ECS::TagComponent>(entity);
-			if (tc.Tag == name) { return ECS::Entity{ entity, & m_EntityRegistry }; }
+			const ECS::TagComponent& tc = m_EntityRegistry.m_Registry.GetComponent<ECS::TagComponent>(entity).value();
+			if (tc.Tag == name) 
+			{ 
+				return ECS::Entity 
+				{ 
+					entity, & m_EntityRegistry 
+				}; 
+			}
 		}
 		return {};
 	}
@@ -283,10 +259,10 @@ namespace Kargono::Scenes
 		return { m_EntityRegistry.m_EntityMap.at(uuid), &m_EntityRegistry };
 	}
 
-	ECS::Entity Scene::GetEntityByEnttID(entt::entity enttID)
+	ECS::Entity Scene::GetEntityByEnttID(ECSInternal::EntityID enttID)
 	{
 		// Ensure enttID is valid for this scene's registry
-		if (m_EntityRegistry.m_EnTTRegistry.valid(enttID))
+		if (m_EntityRegistry.m_Registry.HasEntity(enttID))
 		{
 			return { enttID, &m_EntityRegistry };
 		}
@@ -295,9 +271,9 @@ namespace Kargono::Scenes
 		return {};
 	}
 
-	bool Scene::CheckEntityExists(entt::entity entity)
+	bool Scene::CheckEntityExists(ECSInternal::EntityID entity)
 	{
-		return m_EntityRegistry.m_EnTTRegistry.valid(entity);
+		return m_EntityRegistry.m_Registry.HasEntity(entity);
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
@@ -305,10 +281,10 @@ namespace Kargono::Scenes
 		UNREFERENCED_PARAMETER(width);
 		UNREFERENCED_PARAMETER(height);
 		// Resize non-fixed
-		auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::CameraComponent>();
-		for (entt::entity entity : view)
+		auto view = m_EntityRegistry.m_Registry.GetFlatView<ECS::CameraComponent>();
+		for (ECSInternal::EntityID entity : view)
 		{
-			ECS::CameraComponent& cameraComponent = view.get<ECS::CameraComponent>(entity);
+			ECS::CameraComponent& cameraComponent = m_EntityRegistry.m_Registry.GetComponent<ECS::CameraComponent>(entity).value();
 			
 			cameraComponent.Camera.OnViewportResize();
 		}
@@ -318,10 +294,10 @@ namespace Kargono::Scenes
 	ECS::Entity Scene::GetPrimaryCameraEntity()
 	{
 		// TODO: This is ridiculous
-		auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::CameraComponent>();
+		auto view = m_EntityRegistry.m_Registry.GetFlatView<ECS::CameraComponent>();
 		for (auto entity: view)
 		{
-			const auto& camera = view.get<ECS::CameraComponent>(entity);
+			ECS::CameraComponent& camera = m_EntityRegistry.m_Registry.GetComponent<ECS::CameraComponent>(entity).value();
 			if (camera.Primary)
 			{
 				return ECS::Entity{ entity, & m_EntityRegistry };
@@ -334,14 +310,16 @@ namespace Kargono::Scenes
 		Rendering::RenderingService::BeginScene(camera, transformMatrix);
 		// Draw Shapes
 		{
-			auto view = m_EntityRegistry.m_EnTTRegistry.view<ECS::TransformComponent, ECS::ShapeComponent>();
-			for (entt::entity entity : view)
+			auto view = m_EntityRegistry.m_Registry.GetFlatView<ECS::TransformComponent, ECS::ShapeComponent>();
+			for (ECSInternal::EntityID entity : view)
 			{
-				const auto& [transform, shape] = view.get<ECS::TransformComponent, ECS::ShapeComponent>(entity);
+
+				ECS::TransformComponent& transform = m_EntityRegistry.m_Registry.GetComponent<ECS::TransformComponent>(entity).value();
+				ECS::ShapeComponent& shape = m_EntityRegistry.m_Registry.GetComponent<ECS::ShapeComponent>(entity).value();
 				s_InputSpec.m_Shader = shape.Shader;
 				s_InputSpec.m_Buffer = shape.ShaderData;
 				s_InputSpec.m_Entity = static_cast<uint32_t>(entity);
-				s_InputSpec.m_EntityRegistry = &m_EntityRegistry.m_EnTTRegistry;
+				s_InputSpec.m_EntityRegistry = &m_EntityRegistry.m_Registry;
 				s_InputSpec.m_ShapeComponent = &shape;
 				s_InputSpec.m_TransformMatrix = transform.GetTransform();
 
@@ -358,8 +336,8 @@ namespace Kargono::Scenes
 	void Scene::OnUpdateEntities(Timestep ts)
 	{
 		// Invoke OnUpdate
-		auto classInstanceView = GetAllEntitiesWith<ECS::OnUpdateComponent>();
-		for (entt::entity enttEntityID : classInstanceView)
+		auto view = m_EntityRegistry.m_Registry.GetFlatView<ECS::OnUpdateComponent>();
+		for (ECSInternal::EntityID enttEntityID : view)
 		{
 			ECS::Entity entity = { enttEntityID, &m_EntityRegistry };
 			ECS::OnUpdateComponent& component = entity.GetComponent<ECS::OnUpdateComponent>();
@@ -373,7 +351,7 @@ namespace Kargono::Scenes
 
 	void SceneService::Init()
 	{
-		Utility::RegisterHasComponent(ECS::AllComponents{});
+		// TODO: Previously had register has component func
 	}
 
 	void SceneService::Terminate()

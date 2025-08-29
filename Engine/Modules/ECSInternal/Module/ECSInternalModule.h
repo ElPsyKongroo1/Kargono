@@ -2,9 +2,9 @@
 
 #include "Modules/Core/Module.h"
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
-	Register_Module(ECS)
+	Register_Module(ECSInternal)
 
     template <typename t_Type>
     concept Copyable = requires (void* src, void* dest)

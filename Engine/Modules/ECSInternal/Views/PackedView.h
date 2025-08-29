@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Modules/ECSTest/Views/IViewTest.h"
-#include "Modules/ECSTest/DataStructures/SparseSetTest.h"
+#include "Modules/ECSInternal/ECSInternalCommon.h"
+#include "Modules/Core/DataStructures/SparseSet.h"
 
 #include "Kargono/Core/Base.h"
 
@@ -11,7 +11,7 @@
 #include <utility>
 #include <cstdint>
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
     using PackedSparseSet = SparseSet<EntityID, ComponentIndex>;
 

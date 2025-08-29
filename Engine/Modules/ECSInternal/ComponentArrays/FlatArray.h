@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Modules/ECSTest/ComponentArrays/IComponentStoreTest.h"
-#include "Modules/ECSTest/Views/FlatView.h"
+#include "Modules/ECSInternal/ComponentArrays/IComponentStore.h"
+#include "Modules/ECSInternal/Views/FlatView.h"
 
 #include <array>
 #include <vector>
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
 	class FlatArray : public IComponentStore
 	{
@@ -20,7 +20,7 @@ namespace Kargono::ECS
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		void Init(EntityRegistryTest* entityRegistry, Memory::IAllocator* regAlloc,
+		void Init(EntityRegistry* entityRegistry, Memory::IAllocator* regAlloc,
 				ComponentMetadata metadata) override
 		{
 			// Ensure dependencies are valid
@@ -28,44 +28,45 @@ namespace Kargono::ECS
 			KG_ASSERT(regAlloc);
 			i_EntityRegistry = entityRegistry;
 			i_RegistryAlloc = regAlloc;
+			m_CompMetadata = metadata;
 			
-
 			AllocateBuffer(m_CompMetadata.m_ComponentSize,
 				m_CompMetadata.m_ComponentAlignment);
+
+			Clear();
 		}
 
 		void Terminate() override
 		{
+			Clear();
+
 			if (m_ComponentBuffer)
 			{
 				DeallocateBuffer(m_CompMetadata.m_ComponentSize,
 					m_CompMetadata.m_ComponentAlignment);
 			}
+
+			i_EntityRegistry = nullptr;
+			i_RegistryAlloc = nullptr;
+			m_CompMetadata = {};
 		}
 
 		void Clear() override
 		{
-
-
-			//// Data array(s)
-			//uint8_t* m_ComponentBuffer{ nullptr };
-			//std::array<bool, k_MaxEntities> m_ValidEntityArray{};
-
-			//// Component info
-			//size_t m_ComponentSize{ 0 };
-			//size_t m_ComponentAlignment{ 0 };
-			//ComponentCount m_ComponentCount{ 0 };
-			//ComponentFunctors m_ComponentFunctors{};
-
-			////==============================
-			//// Injected Section
-			////==============================
-			//EntityRegistryTest* i_EntityRegistry{ nullptr };
-			//Memory::IAllocator* i_RegistryAlloc{ nullptr };
+			ResetValidEntityArray();
+			m_ComponentCount = 0;
 		}
 
-
 	private:
+		// Helper functions
+		void ResetValidEntityArray()
+		{
+			for (bool& valid : m_ValidEntityArray)
+			{
+				valid = false;
+			}
+		}
+
 		bool AllocateBuffer(size_t componentSize, size_t componentAlignment)
 		{
 			KG_ASSERT(i_RegistryAlloc);
@@ -178,16 +179,21 @@ namespace Kargono::ECS
 			return m_ValidEntityArray[entityID];
 		}
 
+		virtual ComponentCount GetComponentCount() override
+		{
+			return m_ComponentCount;
+		}
+
 		//==============================
 		// Getters/Setters
 		//==============================
-		virtual void SetComponentFunctors(const ComponentFunctors& functors) override
+		virtual void SetComponentMetadata(const ComponentMetadata& metadata)
 		{
-			m_CompMetadata.m_CompFunctors = functors;
+			m_CompMetadata = metadata;
 		}
-		virtual const ComponentFunctors& GetComponentFunctors() const
+		virtual const ComponentMetadata& GetComponentMetadata() const
 		{
-			return m_CompMetadata.m_CompFunctors;
+			return m_CompMetadata;
 		}
 	private:
 		//==============================
@@ -204,13 +210,13 @@ namespace Kargono::ECS
 		//==============================
 		// Injected Section
 		//==============================
-		EntityRegistryTest* i_EntityRegistry{ nullptr };
+		EntityRegistry* i_EntityRegistry{ nullptr };
 		Memory::IAllocator* i_RegistryAlloc{ nullptr };
 	private:
 		//==============================
 		// Owning Class(s)
 		//==============================
-		friend class Registry;
+		friend class RegistryInternal;
 		friend class ComponentRegistry;
 	};
 }

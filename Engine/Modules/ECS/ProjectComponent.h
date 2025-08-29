@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/WrappedData.h"
-#include "Modules/ECS/ECSCommon.h"
+#include "Modules/ECSInternal/ECSInternalCommon.h"
 
 #include <array>
 #include <cstdint>
@@ -14,22 +14,34 @@
 
 namespace Kargono::ECS
 {
+	using BufferSlot = uint16_t;
+	constexpr uint16_t k_InvalidBufferSlot{ std::numeric_limits<BufferSlot>::max() };
+
 	struct ProjectComponent
 	{
-		std::string m_Name;
-		uint64_t m_ComponentSize{ 0 };
-		uint64_t m_BufferSize{ 0 };
-		uint16_t m_BufferSlot { InvalidBufferSlot };
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		ProjectComponent() = default;
+		~ProjectComponent() = default;
+	public:
+		//==============================
+		// Interact w/ Fields
+		//==============================
+		bool AddField(WrappedVarType fieldType, const char* fieldName);
+		void DeleteField(size_t fieldIndex);
+		bool EditField(size_t fieldIndex, const char* fieldName, WrappedVarType fieldType);
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		FixedBufStr32 m_Name;
+		size_t m_ComponentSize{ 0 };
+		size_t m_ComponentAlignment{ 0 };
+		ECSInternal::ComponentIdentifier m_Identifier{ ECSInternal::k_InvalidComponentIdentifier };
 		std::vector<WrappedVarType> m_DataTypes;
 		std::vector<uint64_t> m_DataLocations;
-		std::vector<std::string> m_DataNames;
-	};
-
-	class ProjectComponentService
-	{
-	public:
-		static bool AddFieldToProjectComponent(Ref<ProjectComponent> component, WrappedVarType fieldType, const std::string& fieldName);
-		static void DeleteFieldFromProjectComponent(Ref<ProjectComponent> component, size_t fieldIndex);
-		static bool EditFieldInProjectComponent(Ref<ProjectComponent> component, size_t fieldIndex, const std::string& fieldName, WrappedVarType fieldType);
+		std::vector<FixedBufStr32> m_DataNames;
 	};
 }

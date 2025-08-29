@@ -6,31 +6,42 @@
 
 namespace Kargono::ECS
 {
-	Entity::Entity(entt::entity handle, EntityRegistry* registry)
+	Entity::Entity(ECSInternal::EntityID handle, Registry* registry)
 	{
-		if (!registry->m_EnTTRegistry.valid(handle))
+		KG_ASSERT(registry);
+
+		if (!registry->m_Registry.HasEntity(handle))
 		{
 			KG_WARN("Invalid entity trying to be created with handle {0} and registry pointer {1}", (int32_t)handle, (void*)registry);
 			return;
 		}
 
-		m_EntityHandle = handle;
+		m_RegistryEntityID = handle;
 		m_Registry = registry;
 	}
 	void Entity::AddProjectComponentData(Assets::AssetHandle projectComponentHandle)
 	{
+		// Get the project component
 		Ref<ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(projectComponent);
-		if (projectComponent->m_BufferSize == 0)
+		if (projectComponent->m_ComponentSize == 0)
 		{
 			return;
 		}
-		// Create new project component
-		ProjectComponentStorage& storage = m_Registry->m_ProjectComponentStorage.at(projectComponent->m_BufferSlot);
-		storage.m_AddProjectComponent(storage.m_EnTTStorageReference, m_EntityHandle);
+
+		// Get component identifier
+		std::string identifierStr{ "ProjectComponent" "::" + projectComponent->m_Name};
+		ECSInternal::ComponentIdentifier identifier =
+			Utility::FileSystem::CRCFromString(identifierStr.c_str());
+
+
+		uint8_t* componentReference
+		{
+			(uint8_t*)m_Registry->m_Registry.CreateComponent(m_RegistryEntityID, identifier)
+		};
+		KG_ASSERT(componentReference);
 
 		// Set initial values of data
-		uint8_t* componentReference = (uint8_t*)storage.m_GetProjectComponent(storage.m_EnTTStorageReference, m_EntityHandle);
 		for (size_t iteration{0}; iteration < projectComponent->m_DataLocations.size(); iteration++)
 		{
 			Utility::InitializeDataForWrappedVarBuffer(
@@ -43,33 +54,42 @@ namespace Kargono::ECS
 	{
 		Ref<ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(projectComponent);
-		if (projectComponent->m_BufferSize == 0)
+		if (projectComponent->m_ComponentSize == 0)
 		{
 			return nullptr;
-		}
-		ProjectComponentStorage& storage = m_Registry->m_ProjectComponentStorage.at(projectComponent->m_BufferSlot);
-		return storage.m_GetProjectComponent(storage.m_EnTTStorageReference, m_EntityHandle);
+		} 
+
+		// Get component identifier
+		std::string identifierStr{ "ProjectComponent" "::" + projectComponent->m_Name };
+		ECSInternal::ComponentIdentifier identifier =
+			Utility::FileSystem::CRCFromString(identifierStr.c_str());
+
+		return m_Registry->m_Registry.GetComponent(m_RegistryEntityID, identifier);
 	}
 	bool Entity::HasProjectComponentData(Assets::AssetHandle projectComponentHandle)
 	{
 		Ref<ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(projectComponent);
-		if (projectComponent->m_BufferSize == 0)
+		if (projectComponent->m_ComponentSize == 0)
 		{
 			return false;
 		}
-		ProjectComponentStorage& storage = m_Registry->m_ProjectComponentStorage.at(projectComponent->m_BufferSlot);
-		return storage.m_CheckEntityExists(storage.m_EnTTStorageReference, m_EntityHandle);
+		return m_Registry->m_Registry.HasEntity(m_RegistryEntityID);
 	}
 	void Entity::RemoveProjectComponentData(Assets::AssetHandle projectComponentHandle)
 	{
 		Ref<ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(projectComponent);
-		if (projectComponent->m_BufferSize == 0)
+		if (projectComponent->m_ComponentSize == 0)
 		{
 			return;
 		}
-		ProjectComponentStorage& storage = m_Registry->m_ProjectComponentStorage.at(projectComponent->m_BufferSlot);
-		storage.m_RemoveProjectComponent(storage.m_EnTTStorageReference, m_EntityHandle);
+
+		// Get component identifier
+		std::string identifierStr{ "ProjectComponent" "::" + projectComponent->m_Name };
+		ECSInternal::ComponentIdentifier identifier =
+			Utility::FileSystem::CRCFromString(identifierStr.c_str());
+
+		m_Registry->m_Registry.RemoveComponent(m_RegistryEntityID, identifier);
 	}
 }

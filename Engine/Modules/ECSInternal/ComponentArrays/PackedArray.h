@@ -1,13 +1,14 @@
 #pragma once
 
-#include "Modules/ECSTest/ComponentArrays/IComponentStoreTest.h"
-#include "Modules/ECSTest/Views/PackedView.h"
+#include "Modules/ECSInternal/ComponentArrays/IComponentStore.h"
+#include "Modules/ECSInternal/Views/PackedView.h"
+#include "Modules/ECSInternal/EntityRegistry.h"
 
-#include "Modules/ECSTest/DataStructures/SparseSetTest.h"
+#include "Modules/Core/DataStructures/SparseSet.h"
 
 #include "Kargono/Utility/Operations.h"
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
 	class PackedArray : public IComponentStore
 	{
@@ -21,7 +22,7 @@ namespace Kargono::ECS
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		void Init(EntityRegistryTest* entityRegistry, Memory::IAllocator* regAlloc, 
+		void Init(EntityRegistry* entityRegistry, Memory::IAllocator* regAlloc,
 			ComponentMetadata metadata) override
 		{
 			// Ensure dependencies are valid
@@ -32,15 +33,28 @@ namespace Kargono::ECS
 			m_CompMetadata = metadata;
 
 			AllocateBuffer(m_CompMetadata.m_ComponentSize, m_CompMetadata.m_ComponentAlignment);
+
+			Clear();
 		}
 
 		void Terminate() override
 		{
+			Clear();
+
 			if (m_ComponentBuffer)
 			{
 				DeallocateBuffer(
 					m_CompMetadata.m_ComponentSize, m_CompMetadata.m_ComponentAlignment);
 			}
+
+			i_EntityRegistry = nullptr;
+			i_RegistryAlloc = nullptr;
+			m_CompMetadata = {};
+		}
+
+		void Clear() override
+		{
+			m_EntityComponentSet.Clear();
 		}
 
 	private:
@@ -58,9 +72,8 @@ namespace Kargono::ECS
 				return false;
 			}
 
-
-			m_ComponentSize = componentSize;
-			m_ComponentAlignment = componentAlignment;
+			m_CompMetadata.m_ComponentSize = componentSize;
+			m_CompMetadata.m_ComponentAlignment = componentAlignment;
 			m_ComponentBuffer = buffer;
 			return true;
 		}
@@ -79,8 +92,7 @@ namespace Kargono::ECS
 				return false;
 			}
 
-			m_ComponentSize = 0;
-			m_ComponentAlignment = 0;
+			m_CompMetadata = {};
 			m_ComponentBuffer = nullptr;
 			return true;
 		}
@@ -103,7 +115,10 @@ namespace Kargono::ECS
 				return nullptr;
 			}
 
-			uint8_t* rawComponent{ &m_ComponentBuffer[compIndex * m_ComponentSize] };
+			uint8_t* rawComponent
+			{
+				&m_ComponentBuffer[compIndex * m_CompMetadata.m_ComponentSize] 
+			};
 
 			return (void*)rawComponent;
 		}
@@ -124,9 +139,12 @@ namespace Kargono::ECS
 			KG_ASSERT(m_EntityComponentSet.IsValidDenseIndex(indexOfRemovedEntity));
 
 			// Update the component list
-			uint8_t* destination{ &m_ComponentBuffer[(size_t)indexOfRemovedEntity * m_ComponentSize] };
-			uint8_t* source{ &m_ComponentBuffer[(size_t)indexOfLastEntity * m_ComponentSize] };
-			memcpy(destination, source, m_ComponentSize);
+			uint8_t* destination
+			{
+				&m_ComponentBuffer[(size_t)indexOfRemovedEntity * m_CompMetadata.m_ComponentSize]
+			};
+			uint8_t* source{ &m_ComponentBuffer[(size_t)indexOfLastEntity * m_CompMetadata.m_ComponentSize] };
+			memcpy(destination, source, m_CompMetadata.m_ComponentSize);
 
 			return true;
 		}
@@ -144,7 +162,7 @@ namespace Kargono::ECS
 
 			return &m_ComponentBuffer
 			[
-				(size_t)m_EntityComponentSet.GetDenseIndex(entityID) * m_ComponentSize
+				(size_t)m_EntityComponentSet.GetDenseIndex(entityID) * m_CompMetadata.m_ComponentSize
 			];
 		}
 
@@ -167,16 +185,21 @@ namespace Kargono::ECS
 			return m_EntityComponentSet.HasSparseIndex(entityID);
 		}
 
+		virtual ComponentCount GetComponentCount() override
+		{
+			return m_EntityComponentSet.GetDenseCount();
+		}
+
 		//==============================
 		// Getters/Setters
 		//==============================
-		virtual void SetComponentFunctors(const ComponentFunctors& functors) override
+		virtual void SetComponentMetadata(const ComponentMetadata& metadata)
 		{
-			m_ComponentFunctors = functors;
+			m_CompMetadata = metadata;
 		}
-		virtual const ComponentFunctors& GetComponentFunctors() const
+		virtual const ComponentMetadata& GetComponentMetadata() const
 		{
-			return m_ComponentFunctors;
+			return m_CompMetadata;
 		}
 	private:
 		//==============================
@@ -193,13 +216,13 @@ namespace Kargono::ECS
 		//==============================
 		// Injected Section
 		//==============================
-		EntityRegistryTest* i_EntityRegistry{ nullptr };
+		EntityRegistry* i_EntityRegistry{ nullptr };
 		Memory::IAllocator* i_RegistryAlloc{ nullptr };
 	private:
 		//==============================
 		// Owning Class(s)
 		//==============================
-		friend class Registry;
+		friend class RegistryInternal;
 		friend class ComponentRegistry;
 	};
 }

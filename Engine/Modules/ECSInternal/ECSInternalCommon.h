@@ -2,14 +2,14 @@
 
 #include "Kargono/Core/BitField.h"
 #include "Modules/FileSystem/FileSystem.h"
-#include "Modules/ECSTest/Module/ECSModule.h"
+#include "Modules/ECSInternal/Module/ECSInternalModule.h"
 
 #include <cstdint>
 #include <bitset>
 #include <limits>
 #include <array>
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
 	// Entity types
 	using EntityID = uint32_t;
@@ -23,6 +23,10 @@ namespace Kargono::ECS
 	using ComponentIndex = size_t;
 	using ComponentCount = ComponentIndex;
 	using ComponentIdentifier = uint32_t;
+	constexpr ComponentIdentifier k_InvalidComponentIdentifier
+	{ 
+		std::numeric_limits<ComponentIdentifier>::max() 
+	};
 
 	template<size_t t_NumComponents>
 	using ComponentIDList = std::array<ComponentIdentifier, t_NumComponents>;

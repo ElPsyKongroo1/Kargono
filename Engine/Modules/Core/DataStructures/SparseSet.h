@@ -8,7 +8,7 @@
 #include <limits>
 #include <span>
 
-namespace Kargono::ECS
+namespace Kargono
 {
     template<std::unsigned_integral t_SparseIndex = size_t, std::unsigned_integral t_DenseIndex = size_t>
     class SparseSet

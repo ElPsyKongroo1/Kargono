@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Modules/ECSTest/CommonTest.h"
-#include "Modules/ECSTest/EntityRegistryTest.h"
-#include "Modules/ECSTest/Module/ECSModule.h"
+#include "Modules/ECSInternal/ECSInternalCommon.h"
+#include "Modules/ECSInternal/RegistryInternal.h"
+#include "Modules/ECSInternal/Module/ECSInternalModule.h"
 
 #include "Kargono/Memory/IAllocator.h"
 
@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <cstdint>
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
 	class IComponentStore
 	{
@@ -24,7 +24,7 @@ namespace Kargono::ECS
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		virtual void Init(EntityRegistryTest* entityRegistry, Memory::IAllocator* allocator,
+		virtual void Init(EntityRegistry* entityRegistry, Memory::IAllocator* allocator,
 			ComponentMetadata metadata) = 0;
 		virtual void Terminate() = 0;
 		virtual void Clear() = 0;
@@ -40,11 +40,12 @@ namespace Kargono::ECS
 		// Query State
 		//==============================
 		virtual bool HasComponent(EntityID entityID) = 0;
+		virtual ComponentCount GetComponentCount() = 0;
 
 		//==============================
 		// Getters/Setters
 		//==============================
-		virtual void SetComponentFunctors(const ComponentFunctors& functors) = 0;
-		virtual const ComponentFunctors& GetComponentFunctors() const = 0;
+		virtual void SetComponentMetadata(const ComponentMetadata& metadata) = 0;
+		virtual const ComponentMetadata& GetComponentMetadata() const = 0;
 	};
 }

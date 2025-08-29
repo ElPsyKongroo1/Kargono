@@ -1,22 +1,20 @@
 #pragma once
 
-#include "Modules/ECSTest/ComponentArrays/IComponentStoreTest.h"
-#include "Modules/ECSTest/ComponentArrays/PackedArray.h"
-#include "Modules/ECSTest/ComponentArrays/FlatArray.h"
-#include "Modules/ECSTest/Views/PackedView.h"
-#include "Modules/ECSTest/Views/FlatView.h"
-#include "Modules/ECSTest/EntityRegistryTest.h"
-#include "Modules/Core/Module.h"
+#include "Modules/ECSInternal/ComponentArrays/IComponentStore.h"
+#include "Modules/ECSInternal/ComponentArrays/PackedArray.h"
+#include "Modules/ECSInternal/ComponentArrays/FlatArray.h"
+#include "Modules/ECSInternal/Views/PackedView.h"
+#include "Modules/ECSInternal/Views/FlatView.h"
+#include "Modules/ECSInternal/EntityRegistry.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Utility/CompilerInfo.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Kargono/Memory/IAllocator.h"
 
 #include <unordered_map>
 #include <memory>
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
 	class ComponentRegistry
 	{
@@ -31,14 +29,14 @@ namespace Kargono::ECS
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(Memory::IAllocator* parentAlloc, EntityRegistryTest* registry)
+		[[nodiscard]] bool Init(Memory::IAllocator* parentAlloc, EntityRegistry* registry)
 		{
 			KG_ASSERT(parentAlloc);
 			KG_ASSERT(registry);
 			i_RegistryAlloc = parentAlloc;
 			i_EntityRegistry = registry;
 
-			ClearComponentData();
+			ClearComponentStores();
 
 			m_Active = true;
 			return m_Active;
@@ -46,7 +44,7 @@ namespace Kargono::ECS
 
 		[[nodiscard]] bool Terminate()
 		{
-			ClearComponentData();
+			TerminateComponentStores();
 
 			i_EntityRegistry = nullptr;
 			i_RegistryAlloc = nullptr;
@@ -57,14 +55,38 @@ namespace Kargono::ECS
 
 		[[nodiscard]] bool Clear()
 		{
-			ClearComponentData();
+			ClearComponentStores();
 
 			return true;
 		}
 
 	private:
 		// Helper(s)
-		void ClearComponentData()
+		void ClearComponentStores()
+		{
+			// Clear components from stores
+			for (auto [mask, componentStore] : m_ComponentArrays)
+			{
+				componentStore->Clear();
+			}
+		}
+
+		void ClearComponentStore(ComponentIdentifier identifier)
+		{
+			KG_ASSERT(IsComponentRegistered(identifier));
+
+			// Check if the component array exists
+			Expected<ComponentMask> compMask{ GetComponentMask(identifier) };
+			KG_ASSERT(compMask);
+
+			// Construct & return the view
+			IComponentStore* compStore{ GetComponentArray(identifier) };
+			KG_ASSERT(compStore);
+
+			compStore->Clear();
+		}
+
+		void TerminateComponentStores()
 		{
 			// Terminate each component store
 			for (auto [mask, componentStore] : m_ComponentArrays)
@@ -141,8 +163,7 @@ namespace Kargono::ECS
 
 			KG_ASSERT(newArray);
 
-			newArray->Init(i_EntityRegistry, i_RegistryAlloc, componentSize, componentAlignment);
-			newArray->SetComponentFunctors(componentFunctors);
+			newArray->Init(i_EntityRegistry, i_RegistryAlloc, metadata);
 			m_ComponentArrays.insert({ m_NextComponentType, newArray });
 
 			// Increment the value so that the next component registered will be different
@@ -185,15 +206,33 @@ namespace Kargono::ECS
 				return false;
 			}
 
-			const ComponentFunctors& compFunctors{ componentStore->GetComponentFunctors() };
+			const ComponentMetadata& metadata{ componentStore->GetComponentMetadata() };
 			void* newComponent{ componentStore->CreateComponent(entityID) };
 			KG_ASSERT(newComponent);
 
 			// Copy data over to the new component 
 			// TODO: (THIS COULD BE DANGEROUS IF component is incorrect AHHHHH!!!)
-			compFunctors.m_Copy(component, newComponent);
+			metadata.m_CompFunctors.m_Copy(component, newComponent);
 
 			return true;
+		}
+
+		[[nodiscard]] void* CreateComponent(EntityID entityID, ComponentMask mask)
+		{
+			IComponentStore* componentStore{ GetComponentArray(mask) };
+			KG_ASSERT(componentStore);
+
+			// Check if a component already exists
+			if (componentStore->HasComponent(entityID))
+			{
+				return nullptr;
+			}
+
+			const ComponentMetadata& metadata{ componentStore->GetComponentMetadata() };
+			void* newComponent{ componentStore->CreateComponent(entityID) };
+			KG_ASSERT(newComponent);
+
+			return newComponent;
 		}
 
 		[[nodiscard]] bool AddOrReplaceComponent(EntityID entityID, ComponentMask mask,
@@ -202,13 +241,13 @@ namespace Kargono::ECS
 			IComponentStore* componentStore{ GetComponentArray(mask) };
 			KG_ASSERT(componentStore);
 
-			const ComponentFunctors& compFunctors{ componentStore->GetComponentFunctors() };
+			const ComponentMetadata& metadata{ componentStore->GetComponentMetadata() };
 			void* newComponent{ componentStore->CreateComponent(entityID) };
 			KG_ASSERT(newComponent);
 
 			// Copy data over to the new component 
 			// TODO: (THIS COULD BE DANGEROUS IF component is incorrect AHHHHH!!!)
-			compFunctors.m_Copy(component, newComponent);
+			metadata.m_CompFunctors.m_Copy(component, newComponent);
 
 			return true;
 		}
@@ -316,6 +355,20 @@ namespace Kargono::ECS
 			return componentStore->GetComponent(entityID);
 		}
 		
+		ComponentCount GetComponentCount(ComponentIdentifier identifier)
+		{
+			KG_ASSERT(IsComponentRegistered(identifier));
+
+			// Get the component store
+			Expected<ComponentMask> compMask{ GetComponentMask(identifier) };
+			KG_ASSERT(compMask);
+			IComponentStore* compStore{ GetComponentArray(identifier) };
+			KG_ASSERT(compStore);
+
+			// Get the component count
+			return compStore->GetComponentCount();
+		}
+
 	private:
 		// Helper function(s)
 		template<ComponentConcept t_ComponentType>
@@ -340,13 +393,61 @@ namespace Kargono::ECS
 			KG_ASSERT(otherRegistry.m_Active);
 
 			// Reset the other registry's data
-			otherRegistry.Clear();
+			otherRegistry.TerminateComponentStores();
 
-			// Register all components in other registry
+			// Prepare temporary vector to be sorted by component mask
+			std::vector<std::tuple<ComponentMask, ComponentIdentifier, IComponentStore*>> 
+				m_SortedCompTypes{};
+			m_SortedCompTypes.resize(m_NextComponentType);
+
+			// Fill sorted component types array
 			for (auto [componentIdentifier, componentMask] : m_ComponentMasks)
 			{
+				KG_ASSERT(componentMask < m_NextComponentType);
+
+				// Get the corresponding component store ptr
+				IComponentStore* compStore{ m_ComponentArrays[componentMask]};
+				KG_ASSERT(compStore);
+
+				m_SortedCompTypes[componentMask] = 
+				{ componentMask, componentIdentifier, compStore };
+			}
+			
+			// Loop through sorted array
+			for (auto [componentIdentifier, componentMask, compStore] : m_SortedCompTypes)
+			{
+				// Register all components in other registry
+				KG_ASSERT(compStore);
+				ComponentMetadata metadata = compStore->GetComponentMetadata();
+
+				otherRegistry.RegisterComponent(componentIdentifier, metadata);
+
+				// Get a view of all entities in each component store
+#if 1 // Flat View
+				FlatView<1> view = GetSingleFlatView(componentIdentifier);
+#endif
+#if 0 // Packed View
+				PackedView<1> view = GetSinglePackedView(componentIdentifier);
+#endif
 				
-				otherRegistry.RegisterComponent(componentIdentifier, );
+				IComponentStore* destCompStore
+				{
+					otherRegistry.GetComponentArray(componentIdentifier)
+				};
+				KG_ASSERT(destCompStore);
+
+				for (EntityID id : view)
+				{
+					// Get current component from source
+					void* srcComponent{ compStore->GetComponent(id)};
+					KG_ASSERT(srcComponent);
+
+					// Create new component at destination
+					void* destComponent{ destCompStore->CreateComponent(id) };
+
+					// Do copy operation from component
+					metadata.m_CompFunctors.m_Copy(srcComponent, destComponent);
+				}
 			}
 		}
 
@@ -600,11 +701,11 @@ namespace Kargono::ECS
 		// Injected Fields
 		//==============================
 		Memory::IAllocator* i_RegistryAlloc{ nullptr };
-		EntityRegistryTest* i_EntityRegistry{ nullptr };
+		EntityRegistry* i_EntityRegistry{ nullptr };
 	private:
 		//==============================
 		// Owning Class(s)
 		//==============================
-		friend class Registry;
+		friend class RegistryInternal;
 	};
 }

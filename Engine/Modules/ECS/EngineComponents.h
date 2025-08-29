@@ -269,13 +269,4 @@ namespace Kargono::ECS
 		ProjectComponent,
 		ParticleEmitter
 	};
-
-	template<typename... Components>
-	struct ComponentGroup
-	{
-	};
-
-	using AllComponents = ComponentGroup<TransformComponent, CameraComponent, AIStateComponent,
-	Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, ShapeComponent,
-	TagComponent, OnUpdateComponent, OnCreateComponent, ParticleEmitterComponent, NetworkComponent>;
 }

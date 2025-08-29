@@ -6,8 +6,7 @@
 #include "Modules/Physics2D/Physics2D.h"
 #include "Kargono/Math/Math.h"
 #include "Modules/Assets/Asset.h"
-#include "Modules/ECS/EntityRegistry.h"
-#include "Modules/ECS/ExternalAPI/enttAPI.h"
+#include "Modules/ECS/Registry.h"
 
 #include <vector>
 #include <unordered_map>
@@ -92,10 +91,13 @@ namespace Kargono::Scenes
 		// These functions query the current map of entities
 		ECS::Entity FindEntityByName(const std::string& name);
 		ECS::Entity GetEntityByUUID(UUID uuid);
-		ECS::Entity GetEntityByEnttID(entt::entity enttID);
+		ECS::Entity GetEntityByEnttID(ECSInternal::EntityID enttID);
 		ECS::Entity GetPrimaryCameraEntity();
-		bool CheckEntityExists(entt::entity entity);
-		bool IsEntityValid(entt::entity entity) { return m_EntityRegistry.m_EnTTRegistry.valid(entity); }
+		bool CheckEntityExists(ECSInternal::EntityID entity);
+		bool IsEntityValid(ECSInternal::EntityID entity) 
+		{ 
+			return m_EntityRegistry.m_Registry.HasEntity(entity);
+		}
 
 		// Update Scene Viewport Size (Not too important) and resize all camera in scene
 		//		if they require a fixed ratio (more important).
@@ -107,7 +109,7 @@ namespace Kargono::Scenes
 		template<typename... Components>
 		auto GetAllEntitiesWith()
 		{
-			return m_EntityRegistry.m_EnTTRegistry.view<Components...>();
+			return m_EntityRegistry.m_Registry.GetFlatView<Components...>();
 		}
 
 		//====================
@@ -124,7 +126,7 @@ namespace Kargono::Scenes
 			return m_SelectedEntity;
 		}
 	public:
-		ECS::EntityRegistry m_EntityRegistry;
+		ECS::Registry m_EntityRegistry;
 		// This map holds lists of entitys (UUID) using the key of a group.
 		//		This map is only filled at runtime while the scripting engine
 		//		is working. It is used to easily find all of the entities of a

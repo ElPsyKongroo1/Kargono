@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Modules/ECSTest/Views/IViewTest.h"
+#include "Modules/ECSInternal/Module/ECSInternalModule.h"
 
 #include <type_traits>
 #include <span>
 #include <array>
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
     template<size_t t_NumComponents>
     using FlatStorage_t = std::conditional_t<

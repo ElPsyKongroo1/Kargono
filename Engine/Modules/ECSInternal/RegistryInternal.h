@@ -1,22 +1,23 @@
 #pragma once
 
-#include "Modules/ECSTest/ComponentRegistryTest.h"
-#include "Modules/ECSTest/EntityRegistryTest.h"
-#include "Modules/ECSTest/Views/PackedView.h"
-#include "Modules/ECSTest/Views/FlatView.h"
+#include "Modules/ECSInternal/ECSInternalCommon.h"
+#include "Modules/ECSInternal/ComponentRegistry.h"
+#include "Modules/ECSInternal/EntityRegistry.h"
+#include "Modules/ECSInternal/Views/PackedView.h"
+#include "Modules/ECSInternal/Views/FlatView.h"
 
 #include "Kargono/Memory/IAllocator.h"
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
-	class Registry
+	class RegistryInternal
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		Registry() = default;
-		~Registry() = default;
+		RegistryInternal() = default;
+		~RegistryInternal() = default;
 	public:
 		//==============================
 		// Lifecycle Functions
@@ -109,6 +110,44 @@ namespace Kargono::ECS
 				metadata);
 		}
 
+		[[nodiscard]] bool ClearComponentStore(ComponentIdentifier identifier)
+		{
+#if 0
+			PackedView<1> view{ GetPackedView<1>({identifier}) };
+#endif
+#if 1
+			FlatView<1> view{ GetFlatView<1>({identifier}) };
+#endif
+			ComponentCount compCount{ m_ComponentRegistry.GetComponentCount(identifier)};
+
+			// Cache relevant entityID's before clearing components
+			std::vector<EntityID> cachedIDs;
+			cachedIDs.reserve(compCount);
+			for (EntityID id : view)
+			{
+				cachedIDs.emplace_back(id);
+			}
+
+			// Clear the components
+			m_ComponentRegistry.ClearComponentStore(identifier);
+
+			// Get the relevant component mask
+			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentMask(identifier) };
+			KG_ASSERT(compMask);
+
+			// Update relevant entity ID signatures
+			for (EntityID id : cachedIDs)
+			{
+				// Update the signature of the entity
+				Expected<Signature> entitySignature = m_EntityRegistry.GetSignature(id);
+				KG_ASSERT(entitySignature);
+
+				// Update the signature w/ mask
+				entitySignature->ClearFlag(compMask.value());
+				m_EntityRegistry.SetEntitySignature(id, entitySignature.value());
+			}
+		}
+
 		template<typename t_Component>
 		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component& component)
 		{
@@ -139,7 +178,7 @@ namespace Kargono::ECS
 			return true;
 		}
 
-		[[nodiscard]] bool AddComponent(EntityID entityID, ComponentIdentifier identifier ,
+		[[nodiscard]] bool AddComponent(EntityID entityID, ComponentIdentifier identifier,
 			void* component)
 		{
 			// Ensure the entity exists in the registry
@@ -167,6 +206,33 @@ namespace Kargono::ECS
 			m_EntityRegistry.SetEntitySignature(entityID, entitySignature.value());
 
 			return true;
+		}
+
+		[[nodiscard]] void* CreateComponent(EntityID entityID, ComponentIdentifier identifier)
+		{
+			// Ensure the entity exists in the registry
+			if (!m_EntityRegistry.HasEntity(entityID))
+			{
+				return nullptr;
+			}
+
+			// Add the component to the entity in the component registry
+			void* newComponent{ m_ComponentRegistry.CreateComponent(entityID, identifier) };
+			KG_ASSERT(newComponent);
+
+			// Get the entity's signature
+			Expected<Signature> entitySignature = m_EntityRegistry.GetSignature(entityID);
+			KG_ASSERT(entitySignature);
+
+			// Get the relevant component mask/identifier
+			Expected<ComponentMask> compMask{ m_ComponentRegistry.GetComponentMask(identifier) };
+			KG_ASSERT(compMask);
+
+			// Update the signature w/ mask
+			entitySignature->SetFlag(compMask.value());
+			m_EntityRegistry.SetEntitySignature(entityID, entitySignature.value());
+
+			return newComponent;
 		}
 
 		[[nodiscard]] bool CopyComponents(EntityID srcID, EntityID destID)
@@ -321,10 +387,6 @@ namespace Kargono::ECS
 		void* GetComponent(EntityID entityID, ComponentIdentifier identifier)
 		{
 			void* compPtr{ m_ComponentRegistry.GetComponent(entityID, identifier) };
-			if (!compPtr)
-			{
-				return nullptr;
-			}
 			return compPtr;
 		}
 		
@@ -408,6 +470,11 @@ namespace Kargono::ECS
 			}
 		}
 
+		ComponentCount GetComponentCount(ComponentIdentifier identifier)
+		{
+			return m_ComponentRegistry.GetComponentCount(identifier);
+		}
+
 		template<typename t_Component>
 		Expected<ComponentMask> GetComponentMask()
 		{
@@ -422,6 +489,11 @@ namespace Kargono::ECS
 		std::span<EntityID> GetAllEntities()
 		{
 			return m_EntityRegistry.GetAllEntities();
+		}
+
+		bool HasEntity(EntityID entityID)
+		{
+			return m_EntityRegistry.HasEntity(entityID);
 		}
 
 		template<typename t_ComponentType>
@@ -466,7 +538,7 @@ namespace Kargono::ECS
 		//==============================
 		// Interact w/ Other Registries
 		//==============================
-		void CopyRegistry(Registry& otherRegistry)
+		void CopyRegistry(RegistryInternal& otherRegistry)
 		{
 			// Clear the other registry
 			bool success{ otherRegistry.Clear() };
@@ -477,7 +549,6 @@ namespace Kargono::ECS
 
 			// Copy over all components
 			m_ComponentRegistry.CopyRegistry(otherRegistry.m_ComponentRegistry);
-
 		}
 
 	private:
@@ -485,9 +556,10 @@ namespace Kargono::ECS
 		// Internal Fields
 		//==============================
 		// Registries
-		EntityRegistryTest m_EntityRegistry;
+		EntityRegistry m_EntityRegistry;
 		ComponentRegistry m_ComponentRegistry;
 
+	private:
 		//==============================
 		// Injected Dependencies
 		//==============================

@@ -1,23 +1,24 @@
 #pragma once
 
-#include "Modules/ECSTest/CommonTest.h"
+#include "Modules/ECSInternal/ECSInternalCommon.h"
+#include "Modules/ECSInternal/Module/ECSInternalModule.h"
 #include "Kargono/Core/Base.h"
 
-#include "Modules/ECSTest/DataStructures/SparseSetTest.h"
+#include "Modules/Core/DataStructures/SparseSet.h"
 
 #include <array>
 #include <queue>
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
-	class EntityRegistryTest
+	class EntityRegistry
 	{	
 	private:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		EntityRegistryTest() = default;
-		~EntityRegistryTest() = default;
+		EntityRegistry() = default;
+		~EntityRegistry() = default;
 	public:
 		//==============================
 		// Lifecycle Functions
@@ -134,7 +135,7 @@ namespace Kargono::ECS
 		//==============================
 		// Interact w/ Other Registries
 		//==============================
-		void CopyRegistry(EntityRegistryTest& otherRegistry)
+		void CopyRegistry(EntityRegistry& otherRegistry)
 		{
 			KG_ASSERT(m_Active);
 			KG_ASSERT(otherRegistry.m_Active);
@@ -187,6 +188,6 @@ namespace Kargono::ECS
 		//==============================
 		// Owning Class(s)
 		//==============================
-		friend class Registry;
+		friend class RegistryInternal;
 	};
 }
