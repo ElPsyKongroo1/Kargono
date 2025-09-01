@@ -29,7 +29,7 @@ namespace Kargono::Assets
 		newReallocationInstructions->m_NewDataTypes = newAssetRef->m_DataTypes;
 		newReallocationInstructions->m_NewDataLocations = newAssetRef->m_DataLocations;
 
-		newReallocationInstructions->m_NewDataSize = newAssetRef->m_BufferSize;
+		newReallocationInstructions->m_NewDataSize = newAssetRef->m_ComponentSize;
 		for (auto& [sceneHandle, asset] : Assets::AssetService::GetSceneRegistry())
 		{
 			newReallocationInstructions->m_OldScenes.push_back(Assets::AssetService::GetScene(sceneHandle));
@@ -68,26 +68,12 @@ namespace Kargono::Assets
 		Ref<ECS::ProjectComponent> newProjectComponent = CreateRef<ECS::ProjectComponent>();
 		newProjectComponent->m_Name = name;
 
-		// Get the buffer slots for all other project components
-		std::set<uint16_t> allBufferSlots{};
-		for (auto& [handle, asset] : GetAssetRegistry())
-		{
-			Ref<ECS::ProjectComponent> component = GetAsset(handle);
-			KG_ASSERT(component);
-			allBufferSlots.insert(component->m_BufferSlot);
-		}
+		// Get identifier
+		std::string identifierStr{ "ProjectComponent" "::" + newProjectComponent->m_Name };
+		ECSInternal::ComponentIdentifier identifier =
+			Utility::FileSystem::CRCFromString(identifierStr.c_str());
 
-		// Create and save new buffer slot
-		uint16_t newBufferSlot{ 0 };
-		while (true)
-		{
-			if (!allBufferSlots.contains(newBufferSlot))
-			{
-				newProjectComponent->m_BufferSlot = newBufferSlot;
-				break;
-			}
-			newBufferSlot++;
-		}
+		newProjectComponent->m_Identifier = identifier;
 
 		// Save into File
 		SerializeAsset(newProjectComponent, assetPath);
@@ -106,8 +92,7 @@ namespace Kargono::Assets
 
 		// Save size information
 		out << YAML::Key << "ComponentSize" << YAML::Value << assetReference->m_ComponentSize;
-		out << YAML::Key << "BufferSize" << YAML::Value << assetReference->m_BufferSize;
-		out << YAML::Key << "BufferSlot" << YAML::Value << assetReference->m_BufferSlot;
+		out << YAML::Key << "Identifier" << YAML::Value << assetReference->m_Identifier;
 
 		// Save data types
 		out << YAML::Key << "DataTypes" << YAML::Value;
@@ -130,9 +115,9 @@ namespace Kargono::Assets
 		// Save data names
 		out << YAML::Key << "DataNames" << YAML::Value;
 		out << YAML::BeginSeq; // Start of Data Names Sequence
-		for (std::string& name : assetReference->m_DataNames)
+		for (FixedBufStr32& name : assetReference->m_DataNames)
 		{
-			out << YAML::Value << name;
+			out << YAML::Value << name.CString();
 		}
 		out << YAML::EndSeq; // End of Data Names Sequence
 
@@ -162,8 +147,7 @@ namespace Kargono::Assets
 
 		// Get component size information
 		newProjectComponent->m_ComponentSize = data["ComponentSize"].as<uint64_t>();
-		newProjectComponent->m_BufferSize = data["BufferSize"].as<uint64_t>();
-		newProjectComponent->m_BufferSlot = (uint16_t)data["BufferSlot"].as<uint32_t>();
+		newProjectComponent->m_Identifier = data["Identifier"].as<ECSInternal::ComponentIdentifier>();
 
 		// Get Data Types
 		YAML::Node dataTypesNode = data["DataTypes"];
@@ -191,10 +175,10 @@ namespace Kargono::Assets
 		YAML::Node dataNamesNode = data["DataNames"];
 		if (dataNamesNode)
 		{
-			std::vector<std::string>& newNamesList = newProjectComponent->m_DataNames;
+			std::vector<FixedBufStr32>& newNamesList{ newProjectComponent->m_DataNames };
 			for (const YAML::Node& dataNameNode : dataNamesNode)
 			{
-				newNamesList.push_back(dataNameNode.as<std::string>());
+				newNamesList.push_back(dataNameNode.as<std::string>().c_str());
 			}
 		}
 		
@@ -217,22 +201,6 @@ namespace Kargono::Assets
 		Ref<ECS::ProjectComponent> deleteComponentRef = GetAsset(assetHandle);
 		KG_ASSERT(deleteComponentRef);
 
-		// Decriment the buffer slot for all other project components that have a higher index
-		for (auto& [componentHandle, assetInfo] : GetAssetRegistry())
-		{
-			if (componentHandle == assetHandle)
-			{
-				continue;
-			}
-			Ref<ECS::ProjectComponent> componentRef = GetAsset(componentHandle);
-			KG_ASSERT(componentRef);
-			if (componentRef->m_BufferSlot > deleteComponentRef->m_BufferSlot)
-			{
-				componentRef->m_BufferSlot--;
-			}
-			SaveAsset(componentHandle, componentRef);
-		}
-
 		
 		// Handle deleting the project component by removing entity data from all scenes
 		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())
@@ -249,8 +217,5 @@ namespace Kargono::Assets
 			}
 
 		}
-		
-		
-
 	}
 }

@@ -5,6 +5,10 @@
 #include "Modules/Core/Engine.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/ECS/Entity.h"
+#include "Modules/Core/Components/TransformComponent.h"
+#include "Modules/Physics2D/Components/BoxCollider2DComponent.h"
+#include "Modules/Physics2D/Components/CircleCollider2DComponent.h"
+#include "Modules/Physics2D/Components/RigidBody2DComponent.h"
 
 #include "Modules/Physics2D/ExternalAPI/Box2DBackend.h"
 
@@ -47,30 +51,30 @@ namespace Kargono::Physics
 		m_PhysicsWorld->SetContactListener(m_ContactListener.get());
 
 		// Register each entity into the Physics2DWorld
-		auto rigidBodyView = scene->GetAllEntitiesWith<ECS::Rigidbody2DComponent>();
+		auto rigidBodyView = scene->GetAllEntitiesWith<Physics2D::Rigidbody2DComponent>();
 		for (auto enttID : rigidBodyView)
 		{
 			ECS::Entity entity = scene->GetEntityByEnttID(enttID);
-			auto& transform = entity.GetComponent<ECS::TransformComponent>();
-			auto& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
+			TransformComponent& transform = entity.GetComponent<TransformComponent>();
+			auto& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
 
 			b2BodyDef bodyDef;
-			bodyDef.type = Utility::Rigidbody2DTypeToBox2DBody(rb2d.Type);
-			bodyDef.position.Set(transform.Translation.x, transform.Translation.y);
-			bodyDef.angle = transform.Rotation.z;
+			bodyDef.type = Utility::Rigidbody2DTypeToBox2DBody(rb2d.m_Type);
+			bodyDef.position.Set(transform.m_Translation.x, transform.m_Translation.y);
+			bodyDef.angle = transform.m_Rotation.z;
 
 			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
-			body->SetFixedRotation(rb2d.FixedRotation);
+			body->SetFixedRotation(rb2d.m_FixedRotation);
 			b2BodyUserData& bodyUser = body->GetUserData();
 			bodyUser.UUID = entity.GetUUID();
-			rb2d.RuntimeBody = body;
+			rb2d.m_RuntimeBody = body;
 
-			if (entity.HasComponent<ECS::BoxCollider2DComponent>())
+			if (entity.HasComponent<Physics2D::BoxCollider2DComponent>())
 			{
-				ECS::BoxCollider2DComponent& boxColliderComp = entity.GetComponent<ECS::BoxCollider2DComponent>();
-				b2Vec2 offsets{ boxColliderComp.Offset.y, -boxColliderComp.Offset.x };
+				Physics2D::BoxCollider2DComponent& boxColliderComp = entity.GetComponent<Physics2D::BoxCollider2DComponent>();
+				b2Vec2 offsets{ boxColliderComp.m_Offset.y, -boxColliderComp.m_Offset.x };
 				b2PolygonShape boxShape;
-				boxShape.SetAsBox(boxColliderComp.Size.x * transform.Scale.x, boxColliderComp.Size.y * transform.Scale.y,
+				boxShape.SetAsBox(boxColliderComp.m_Size.x * transform.m_Scale.x, boxColliderComp.m_Size.y * transform.m_Scale.y,
 					offsets, 0);
 
 				b2FixtureDef fixtureDef;

@@ -1,7 +1,6 @@
 #include "kgpch.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "Modules/ECS/EngineComponents.h"
 #include "Modules/ECS/ProjectComponent.h"
 #include "Modules/ECS/Entity.h"
 #include "Modules/Physics2D/Physics2D.h"
@@ -14,6 +13,14 @@
 #include "Kargono/Projects/Project.h"
 #include "Modules/Assets/AssetService.h"
 #include "Modules/Particles/ParticleService.h"
+
+#include "Modules/Core/Components/IDComponent.h"
+#include "Modules/Core/Components/TagComponent.h"
+#include "Modules/Core/Components/TransformComponent.h"
+#include "Modules/Scripting/Components/OnCreateComponent.h"
+#include "Modules/Scripting/Components/OnUpdateComponent.h"
+#include "Modules/Rendering/Components/CameraComponent.h"
+#include "Modules/Rendering/Components/ShapeComponent.h"
 
 namespace Kargono::Scenes
 {
@@ -142,10 +149,10 @@ namespace Kargono::Scenes
 	ECS::Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
 		ECS::Entity entity = { m_EntityRegistry.m_Registry.CreateEntity().value() , &m_EntityRegistry};
-		entity.AddComponent<ECS::IDComponent>(uuid);
-		entity.AddComponent<ECS::TransformComponent>();
-		ECS::TagComponent& tag = entity.AddComponent<ECS::TagComponent>();
-		tag.Tag = name.empty() ? "Entity" : name;
+		entity.AddComponent<IDComponent>(uuid);
+		entity.AddComponent<TransformComponent>();
+		TagComponent& tag = entity.AddComponent<TagComponent>();
+		tag.m_Tag = name.empty() ? "Entity" : name;
 
 		m_EntityRegistry.m_EntityMap[uuid] = entity.GetInternalID();
 
@@ -185,30 +192,30 @@ namespace Kargono::Scenes
 		m_IsRunning = true;
 
 		// Invoke OnCreate
-		auto classInstanceView = GetAllEntitiesWith<ECS::OnCreateComponent>();
+		auto classInstanceView = GetAllEntitiesWith<Scripting::OnCreateComponent>();
 		for (auto enttEntityID : classInstanceView)
 		{
 			ECS::Entity entity = { enttEntityID, &m_EntityRegistry };
-			ECS::OnCreateComponent& component = entity.GetComponent<ECS::OnCreateComponent>();
-			Assets::AssetHandle scriptHandle = component.OnCreateScriptHandle;
+			Scripting::OnCreateComponent& component = entity.GetComponent<Scripting::OnCreateComponent>();
+			Assets::AssetHandle scriptHandle = component.m_OnCreateScriptHandle;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				Utility::CallWrappedVoidEntity(component.OnCreateScript->m_Function, entity.GetUUID());
+				Utility::CallWrappedVoidEntity(component.m_OnCreateScript->m_Function, entity.GetUUID());
 			}
 		}
 
 		// Insert entities with ClassInstanceComponents into m_ScriptClassToEntityList map
-		auto view = GetAllEntitiesWith<ECS::TagComponent>();
-		for (auto enttID : view)
+		auto view = GetAllEntitiesWith<TagComponent>();
+		for (ECSInternal::EntityID id : view)
 		{
-			ECS::Entity entity = { enttID, &m_EntityRegistry };
-			ECS::TagComponent& component = entity.GetComponent<ECS::TagComponent>();
-			if (!m_GroupToEntityList.contains(component.Group))
+			ECS::Entity entity = { id, &m_EntityRegistry };
+			TagComponent& component = entity.GetComponent<TagComponent>();
+			if (!m_GroupToEntityList.contains(component.m_Group))
 			{
-				m_GroupToEntityList.insert({ component.Group, {}});
+				m_GroupToEntityList.insert({ component.m_Group, {}});
 			}
 
-			m_GroupToEntityList.at(component.Group).push_back(entity.GetUUID());
+			m_GroupToEntityList.at(component.m_Group).push_back(entity.GetUUID());
 		}
 	}
 
@@ -226,17 +233,19 @@ namespace Kargono::Scenes
 		std::string name = entity.GetName();
 		ECS::Entity newEntity = CreateEntity(name);
 
-		Utility::CopyComponentIfExists(ECS::AllComponents{}, newEntity, entity);
+		// Copy over components
+		m_EntityRegistry.m_Registry.CopyComponents(entity.GetInternalID(), newEntity.GetInternalID());
+
 		return newEntity;
 	}
 
 	ECS::Entity Scene::FindEntityByName(const std::string& name)
 	{
-		auto view = m_EntityRegistry.m_Registry.GetFlatView<ECS::TagComponent>();
+		auto view = m_EntityRegistry.m_Registry.GetFlatView<TagComponent>();
 		for (ECSInternal::EntityID entity : view)
 		{
-			const ECS::TagComponent& tc = m_EntityRegistry.m_Registry.GetComponent<ECS::TagComponent>(entity).value();
-			if (tc.Tag == name) 
+			const TagComponent& tc = m_EntityRegistry.m_Registry.GetComponent<TagComponent>(entity).value();
+			if (tc.m_Tag == name.c_str()) 
 			{ 
 				return ECS::Entity 
 				{ 
@@ -281,12 +290,12 @@ namespace Kargono::Scenes
 		UNREFERENCED_PARAMETER(width);
 		UNREFERENCED_PARAMETER(height);
 		// Resize non-fixed
-		auto view = m_EntityRegistry.m_Registry.GetFlatView<ECS::CameraComponent>();
+		auto view = m_EntityRegistry.m_Registry.GetFlatView<Rendering::CameraComponent>();
 		for (ECSInternal::EntityID entity : view)
 		{
-			ECS::CameraComponent& cameraComponent = m_EntityRegistry.m_Registry.GetComponent<ECS::CameraComponent>(entity).value();
+			Rendering::CameraComponent& cameraComponent = m_EntityRegistry.m_Registry.GetComponent<Rendering::CameraComponent>(entity).value();
 			
-			cameraComponent.Camera.OnViewportResize();
+			cameraComponent.m_Camera.OnViewportResize();
 		}
 
 	}
@@ -294,11 +303,11 @@ namespace Kargono::Scenes
 	ECS::Entity Scene::GetPrimaryCameraEntity()
 	{
 		// TODO: This is ridiculous
-		auto view = m_EntityRegistry.m_Registry.GetFlatView<ECS::CameraComponent>();
+		auto view = m_EntityRegistry.m_Registry.GetFlatView<Rendering::CameraComponent>();
 		for (auto entity: view)
 		{
-			ECS::CameraComponent& camera = m_EntityRegistry.m_Registry.GetComponent<ECS::CameraComponent>(entity).value();
-			if (camera.Primary)
+			Rendering::CameraComponent& camera = m_EntityRegistry.m_Registry.GetComponent<Rendering::CameraComponent>(entity).value();
+			if (camera.m_Primary)
 			{
 				return ECS::Entity{ entity, & m_EntityRegistry };
 			}
@@ -310,20 +319,20 @@ namespace Kargono::Scenes
 		Rendering::RenderingService::BeginScene(camera, transformMatrix);
 		// Draw Shapes
 		{
-			auto view = m_EntityRegistry.m_Registry.GetFlatView<ECS::TransformComponent, ECS::ShapeComponent>();
+			auto view = m_EntityRegistry.m_Registry.GetFlatView<ECS::TransformComponent, Rendering::ShapeComponent>();
 			for (ECSInternal::EntityID entity : view)
 			{
 
-				ECS::TransformComponent& transform = m_EntityRegistry.m_Registry.GetComponent<ECS::TransformComponent>(entity).value();
-				ECS::ShapeComponent& shape = m_EntityRegistry.m_Registry.GetComponent<ECS::ShapeComponent>(entity).value();
-				s_InputSpec.m_Shader = shape.Shader;
-				s_InputSpec.m_Buffer = shape.ShaderData;
+				TransformComponent& transform = m_EntityRegistry.m_Registry.GetComponent<TransformComponent>(entity).value();
+				Rendering::ShapeComponent& shape = m_EntityRegistry.m_Registry.GetComponent<Rendering::ShapeComponent>(entity).value();
+				s_InputSpec.m_Shader = shape.m_Shader;
+				s_InputSpec.m_Buffer = shape.m_ShaderData;
 				s_InputSpec.m_Entity = static_cast<uint32_t>(entity);
 				s_InputSpec.m_EntityRegistry = &m_EntityRegistry.m_Registry;
 				s_InputSpec.m_ShapeComponent = &shape;
 				s_InputSpec.m_TransformMatrix = transform.GetTransform();
 
-				for (const auto& PerObjectSceneFunction : shape.Shader->GetFillDataObjectScene())
+				for (const auto& PerObjectSceneFunction : shape.m_Shader->GetFillDataObjectScene())
 				{
 					PerObjectSceneFunction(s_InputSpec);
 				}
@@ -336,15 +345,15 @@ namespace Kargono::Scenes
 	void Scene::OnUpdateEntities(Timestep ts)
 	{
 		// Invoke OnUpdate
-		auto view = m_EntityRegistry.m_Registry.GetFlatView<ECS::OnUpdateComponent>();
+		auto view = m_EntityRegistry.m_Registry.GetFlatView<Scripting::OnUpdateComponent>();
 		for (ECSInternal::EntityID enttEntityID : view)
 		{
 			ECS::Entity entity = { enttEntityID, &m_EntityRegistry };
-			ECS::OnUpdateComponent& component = entity.GetComponent<ECS::OnUpdateComponent>();
-			Assets::AssetHandle scriptHandle = component.OnUpdateScriptHandle;
+			Scripting::OnUpdateComponent& component = entity.GetComponent<Scripting::OnUpdateComponent>();
+			Assets::AssetHandle scriptHandle = component.m_OnUpdateScriptHandle;
 			if (scriptHandle != Assets::EmptyHandle)
 			{
-				Utility::CallWrappedVoidEntityFloat(component.OnUpdateScript->m_Function, entity.GetUUID(), ts);
+				Utility::CallWrappedVoidEntityFloat(component.m_OnUpdateScript->m_Function, entity.GetUUID(), ts);
 			}
 		}
 	}
@@ -370,40 +379,40 @@ namespace Kargono::Scenes
 		KG_ASSERT(s_ActiveScene);
 		ECS::Entity entity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
-		KG_ASSERT(entity.HasComponent<ECS::TransformComponent>());
-		return entity.GetComponent<ECS::TransformComponent>().Translation;
+		KG_ASSERT(entity.HasComponent<TransformComponent>());
+		return entity.GetComponent<TransformComponent>().m_Translation;
 	}
 	void SceneService::TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation)
 	{
 		KG_ASSERT(s_ActiveScene);
 		ECS::Entity entity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
-		KG_ASSERT(entity.HasComponent<ECS::TransformComponent>());
-		entity.GetComponent<ECS::TransformComponent>().Translation = newTranslation;
-		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
+		KG_ASSERT(entity.HasComponent<TransformComponent>());
+		entity.GetComponent<TransformComponent>().m_Translation = newTranslation;
+		if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
-			auto& rigidBody2DComp = entity.GetComponent<ECS::Rigidbody2DComponent>();
-			b2Body* body = (b2Body*)rigidBody2DComp.RuntimeBody;
+			auto& rigidBody2DComp = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			b2Body* body = (b2Body*)rigidBody2DComp.m_RuntimeBody;
 			body->SetTransform({ newTranslation.x, newTranslation.y }, body->GetAngle());
 		}
 	}
-	const std::string& SceneService::TagComponentGetTag(UUID entityID)
+	std::string_view SceneService::TagComponentGetTag(UUID entityID)
 	{
 		KG_ASSERT(s_ActiveScene);
 		ECS::Entity entity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
-		KG_ASSERT(entity.HasComponent<ECS::TagComponent>());
-		ECS::TagComponent& tagComponent = entity.GetComponent<ECS::TagComponent>();
-		return tagComponent.Tag;
+		KG_ASSERT(entity.HasComponent<TagComponent>());
+		TagComponent& tagComponent = entity.GetComponent<TagComponent>();
+		return tagComponent.m_Tag.StringView();
 	}
 	void SceneService::Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity)
 	{
 		KG_ASSERT(s_ActiveScene);
 		ECS::Entity entity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
-		KG_ASSERT(entity.HasComponent<ECS::Rigidbody2DComponent>());
-		auto& rigidBody2DComp = entity.GetComponent<ECS::Rigidbody2DComponent>();
-		b2Body* body = (b2Body*)rigidBody2DComp.RuntimeBody;
+		KG_ASSERT(entity.HasComponent<Physics2D::Rigidbody2DComponent>());
+		auto& rigidBody2DComp = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rigidBody2DComp.m_RuntimeBody;
 		body->SetLinearVelocity(b2Vec2(linearVelocity.x, linearVelocity.y));
 	}
 	Math::vec2 SceneService::Rigidbody2DComponent_GetLinearVelocity(UUID entityID)
@@ -411,9 +420,9 @@ namespace Kargono::Scenes
 		KG_ASSERT(s_ActiveScene);
 		ECS::Entity entity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
-		KG_ASSERT(entity.HasComponent<ECS::Rigidbody2DComponent>());
-		auto& rigidBody2DComp = entity.GetComponent<ECS::Rigidbody2DComponent>();
-		b2Body* body = (b2Body*)rigidBody2DComp.RuntimeBody;
+		KG_ASSERT(entity.HasComponent<Physics2D::Rigidbody2DComponent>());
+		auto& rigidBody2DComp = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rigidBody2DComp.m_RuntimeBody;
 		const b2Vec2& linearVelocity = body->GetLinearVelocity();
 		return Math::vec2(linearVelocity.x, linearVelocity.y);
 	}
@@ -463,10 +472,10 @@ namespace Kargono::Scenes
 		for (auto& [handle, enttID] : s_ActiveScene->m_EntityRegistry.m_EntityMap)
 		{
 			ECS::Entity entity{ enttID, &s_ActiveScene->m_EntityRegistry };
-			if (entity.HasComponent<ECS::TagComponent>())
+			if (entity.HasComponent<TagComponent>())
 			{
-				ECS::TagComponent& tagComponent = entity.GetComponent<ECS::TagComponent>();
-				if (tagComponent.Tag == name)
+				TagComponent& tagComponent = entity.GetComponent<TagComponent>();
+				if (tagComponent.m_Tag == name.c_str())
 				{
 					return handle;
 				}
@@ -478,6 +487,10 @@ namespace Kargono::Scenes
 
 	bool SceneService::CheckActiveHasComponent(UUID entityID, const std::string& componentName)
 	{
+		// TODO: Re-implement this function with compile to known component identifiers '
+		// (not strings)
+		return true;
+		/*
 		if (!Utility::s_EntityHasComponentFunc.contains(componentName))
 		{
 			KG_ERROR("Invalid Component name provided.")
@@ -487,6 +500,7 @@ namespace Kargono::Scenes
 		ECS::Entity activeEntity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(activeEntity);
 		return Utility::s_EntityHasComponentFunc.at(componentName)(activeEntity);
+		*/
 	}
 	bool SceneService::IsSceneActive(UUID sceneID)
 	{

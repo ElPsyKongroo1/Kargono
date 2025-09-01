@@ -4,8 +4,7 @@
 #include "Modules/Network/NetworkCommon.h"
 #include "Modules/Network/Connection.h"
 #include "Kargono/Utility/Timers.h"
-#include "Kargono/Core/DataStructures.h"
-#include "Modules/Network/Connection.h"
+#include "Modules/Core/DataStructures/SparseArray.h"
 
 #include <unordered_set>
 

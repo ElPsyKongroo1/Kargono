@@ -7,6 +7,7 @@
 #include "Modules/Rendering/UniformBuffer.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/Scenes/Scene.h"
+#include "Modules/Rendering/Components/ShapeComponent.h"
 
 namespace Kargono::Rendering
 {
@@ -98,14 +99,14 @@ namespace Kargono::Rendering
 	void RenderingService::FillTextureIndex(RendererInputSpec& inputSpec)
 	{
 		//if (s_Data.QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
-		KG_ASSERT(inputSpec.m_ShapeComponent->Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
+		KG_ASSERT(inputSpec.m_ShapeComponent->m_Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
 		auto& m_Textures = inputSpec.m_CurrentDrawBuffer->m_Textures;
 		float textureIndex = -1.0f;
 
 		uint32_t iteration = 0;
 		for (auto& texture : m_Textures)
 		{
-			if (texture == inputSpec.m_ShapeComponent->Texture)
+			if (texture == inputSpec.m_ShapeComponent->m_Texture)
 			{
 				textureIndex = (float)iteration;
 				break;
@@ -119,7 +120,7 @@ namespace Kargono::Rendering
 				textureIndex = 0.0f;
 				// TODO: NextBatch, Create a new DrawCallBuffer for the current shader and update Textures Ref
 			}
-			m_Textures.push_back(inputSpec.m_ShapeComponent->Texture);
+			m_Textures.push_back(inputSpec.m_ShapeComponent->m_Texture);
 			textureIndex = static_cast<float>(m_Textures.size() - 1);
 		}
 
@@ -131,15 +132,15 @@ namespace Kargono::Rendering
 	void RenderingService::FillTextureAtlas(RendererInputSpec& inputSpec)
 	{
 		//if (s_Data.QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
-		KG_ASSERT(inputSpec.m_ShapeComponent->Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
+		KG_ASSERT(inputSpec.m_ShapeComponent->m_Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
 		std::vector<Ref<Texture2D>>& m_Textures = inputSpec.m_CurrentDrawBuffer->m_Textures;
 		m_Textures.clear();
-		m_Textures.emplace_back(inputSpec.m_ShapeComponent->Texture);
+		m_Textures.emplace_back(inputSpec.m_ShapeComponent->m_Texture);
 	}
 
 	void RenderingService::FillTextureCoordinate(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
-		const Math::vec2& coordinates = inputSpec.m_ShapeComponent->TextureCoordinates->at(iteration);
+		const Math::vec2& coordinates = inputSpec.m_ShapeComponent->m_TextureCoordinates->at(iteration);
 		Shader::SetDataAtInputLocation<Math::vec2>(coordinates, 
 			Utility::FileSystem::CRCFromString("a_TexCoord"),
 			inputSpec.m_Buffer, 
@@ -148,7 +149,7 @@ namespace Kargono::Rendering
 
 	void RenderingService::FillLocalPosition(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
-		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->Vertices->at(iteration) * 2.0f;
+		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->m_Vertices->at(iteration) * 2.0f;
 		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, 
 			Utility::FileSystem::CRCFromString("a_LocalPosition"),
 			inputSpec.m_Buffer, inputSpec.m_Shader);
@@ -156,7 +157,7 @@ namespace Kargono::Rendering
 
 	void RenderingService::FillWorldPosition(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
-		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->Vertices->at(iteration);
+		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->m_Vertices->at(iteration);
 		Math::vec3 worldPosition = inputSpec.m_TransformMatrix * Math::vec4(localPosition, 1.0f);
 		Shader::SetDataAtInputLocation<Math::vec3>(worldPosition, 
 			Utility::FileSystem::CRCFromString("a_Position"),
@@ -166,7 +167,7 @@ namespace Kargono::Rendering
 
 	void RenderingService::FillWorldPositionNoTransform(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
-		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->Vertices->at(iteration);
+		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->m_Vertices->at(iteration);
 
 		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, 
 			Utility::FileSystem::CRCFromString("a_Position"),
@@ -175,7 +176,7 @@ namespace Kargono::Rendering
 
 	void RenderingService::FillVertexColor(RendererInputSpec& inputSpec, uint32_t iteration)
 	{
-		auto& colorVector = inputSpec.m_ShapeComponent->VertexColors;
+		auto& colorVector = inputSpec.m_ShapeComponent->m_VertexColors;
 		KG_ASSERT(iteration < static_cast<uint32_t>(colorVector->size()), "Invalid iteration inside FillVertexColor function");
 		Shader::SetDataAtInputLocation<Math::vec4>(colorVector->at(iteration), 
 			Utility::FileSystem::CRCFromString("a_Color"),
@@ -187,7 +188,7 @@ namespace Kargono::Rendering
 		// Upload Indices
 		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.m_Shader->GetCurrentDrawCallBuffer();
 		std::size_t currentBufferSize = (drawCallBuffer->m_VertexBufferIterator - drawCallBuffer->m_VertexBuffer.Data) / inputSpec.m_Shader->GetInputLayout().GetStride();
-		for (auto& index : *(inputSpec.m_ShapeComponent->Indices))
+		for (auto& index : *(inputSpec.m_ShapeComponent->m_Indices))
 		{
 			drawCallBuffer->m_IndexBuffer.push_back(static_cast<uint32_t>(currentBufferSize) + index);
 		}
@@ -202,7 +203,7 @@ namespace Kargono::Rendering
 
 	void RenderingService::SubmitDataToRenderer(RendererInputSpec& inputSpec)
 	{
-		if (!inputSpec.m_ShapeComponent->Vertices || inputSpec.m_Shader->GetSpecification().RenderType == RenderingType::None) { return; }
+		if (!inputSpec.m_ShapeComponent->m_Vertices || inputSpec.m_Shader->GetSpecification().RenderType == RenderingType::None) { return; }
 
 		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.m_Shader->GetCurrentDrawCallBuffer();
 
@@ -223,7 +224,7 @@ namespace Kargono::Rendering
 		}
 
 		std::size_t currentBufferSize = drawCallBuffer->m_VertexBufferIterator - drawCallBuffer->m_VertexBuffer.Data;
-		std::size_t sizeOfNewDrawCallBuffer = inputSpec.m_Buffer.Size * inputSpec.m_ShapeComponent->Vertices->size() + currentBufferSize;
+		std::size_t sizeOfNewDrawCallBuffer = inputSpec.m_Buffer.Size * inputSpec.m_ShapeComponent->m_Vertices->size() + currentBufferSize;
 		// Create new DrawCallBuffer if current buffer overflows
 		if (sizeOfNewDrawCallBuffer >= s_MaxVertexBufferSize)
 		{
@@ -247,7 +248,7 @@ namespace Kargono::Rendering
 			PerObjectFunction(inputSpec);
 		}
 
-		for (uint32_t iteration {0}; iteration < inputSpec.m_ShapeComponent->Vertices->size(); iteration++)
+		for (uint32_t iteration {0}; iteration < inputSpec.m_ShapeComponent->m_Vertices->size(); iteration++)
 		{
 			for (const auto& PerVertexFunction : inputSpec.m_Shader->GetFillDataVertex())
 			{

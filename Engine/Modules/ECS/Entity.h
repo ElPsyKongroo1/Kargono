@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Kargono/Core/UUID.h"
-#include "Modules/ECS/EngineComponents.h"
+#include "Modules/Core/Components/IDComponent.h"
+#include "Modules/Core/Components/TagComponent.h"
 #include "Modules/ECS/Registry.h"
 #include "Modules/ECSInternal/RegistryInternal.h"
+#include "Modules/Assets/Asset.h"
 
 namespace Kargono::ECS
 {
@@ -25,7 +27,7 @@ namespace Kargono::ECS
 		{
 			KG_ASSERT(!HasComponent<t_ComponentType>(), "Entity already has component!");
 			t_ComponentType& component = 
-				m_Registry->m_Registry.EmplaceComponent<t_ComponentType>
+				m_Registry->m_Registry.EmplaceComponent<t_ComponentType, args...>
 				(m_RegistryEntityID, std::forward<t_Args>(args)...);
 			return component;
 		}
@@ -90,11 +92,11 @@ namespace Kargono::ECS
 
 		UUID GetUUID() 
 		{
-			return GetComponent<IDComponent>().ID; 
+			return GetComponent<IDComponent>().m_ID; 
 		}
-		const std::string& GetName() 
+		const char* GetName() 
 		{ 
-			return GetComponent<TagComponent>().Tag; 
+			return GetComponent<TagComponent>().m_Tag; 
 		}
 		ECSInternal::EntityID GetInternalID() const
 		{
@@ -107,10 +109,6 @@ namespace Kargono::ECS
 		operator bool() const 
 		{ 
 			return m_RegistryEntityID != ECSInternal::k_InvalidEntityID;
-		}
-		operator ECSInternal::EntityID() const
-		{ 
-			return m_RegistryEntityID; 
 		}
 		operator uint32_t() const 
 		{ 

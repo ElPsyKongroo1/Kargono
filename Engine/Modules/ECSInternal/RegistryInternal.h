@@ -5,7 +5,6 @@
 #include "Modules/ECSInternal/EntityRegistry.h"
 #include "Modules/ECSInternal/Views/PackedView.h"
 #include "Modules/ECSInternal/Views/FlatView.h"
-
 #include "Kargono/Memory/IAllocator.h"
 
 namespace Kargono::ECSInternal
@@ -253,14 +252,14 @@ namespace Kargono::ECSInternal
 				if (srcSignature.IsFlagSet(mask))
 				{
 					// Add component to destination
-					void* srcComponent = m_ComponentRegistry.GetComponent(srcID, mask);
+					void* srcComponent = m_ComponentRegistry.GetComponentByMask(srcID, mask);
 					KG_ASSERT(srcComponent);
 					m_ComponentRegistry.AddOrReplaceComponent(destID, mask, srcComponent);
 				}
 				else
 				{
 					// Remove component from destination
-					m_ComponentRegistry.RemoveComponent(destID, mask);
+					m_ComponentRegistry.RemoveComponentByMask(destID, mask);
 				}
 			}
 

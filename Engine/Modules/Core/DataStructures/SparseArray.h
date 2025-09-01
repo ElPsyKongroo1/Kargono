@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kargono/Core/Iterator.h"
+
 #include <vector>
 #include <concepts>
 #include <cstdint>

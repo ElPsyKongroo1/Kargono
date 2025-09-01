@@ -2,9 +2,8 @@
 
 #include "Modules/ECSInternal/ECSInternalCommon.h"
 #include "Modules/ECSInternal/Module/ECSInternalModule.h"
-#include "Kargono/Core/Base.h"
-
 #include "Modules/Core/DataStructures/SparseSet.h"
+#include "Kargono/Core/Base.h"
 
 #include <array>
 #include <queue>

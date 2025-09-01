@@ -43,6 +43,11 @@ namespace Kargono
 			m_DataBuffer[1] = '\0';
 		}
 
+		constexpr FixedBufferString(std::string_view newStringView)
+		{
+			ReplaceBuffer(newStringView);
+		}
+
 	public:
 		//==============================
 		// Modify String
@@ -179,7 +184,7 @@ namespace Kargono
 			return m_DataBuffer.data(); 
 		}
 
-		template <std::size_t t_OtherBufferSize>
+		template <size_t t_OtherBufferSize>
 		bool operator==(const FixedBufferString<t_OtherBufferSize>& other) const 
 		{
 			// Check if lengths are different
@@ -242,6 +247,11 @@ namespace Kargono
 		constexpr bool IsEmpty() const
 		{
 			return m_StringLength == 0;
+		}
+
+		constexpr std::string_view StringView() const
+		{
+			return std::string_view(m_DataBuffer.data(), m_StringLength);
 		}
 
 	private:

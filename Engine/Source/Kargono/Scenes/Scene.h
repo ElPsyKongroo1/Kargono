@@ -131,7 +131,7 @@ namespace Kargono::Scenes
 		//		This map is only filled at runtime while the scripting engine
 		//		is working. It is used to easily find all of the entities of a
 		//		particular script class.
-		std::unordered_map<std::string, std::vector<UUID>> m_GroupToEntityList {};
+		std::unordered_map<FixedBufStr32, std::vector<UUID>> m_GroupToEntityList {};
 
 		// Physics Spec
 		Physics::PhysicsSpecification m_PhysicsSpecification{};
@@ -166,7 +166,7 @@ namespace Kargono::Scenes
 
 		static Math::vec3 TransformComponentGetTranslation(UUID entityID);
 		static void TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation);
-		static const std::string& TagComponentGetTag(UUID entityID);
+		static std::string_view TagComponentGetTag(UUID entityID);
 		static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
 		static Math::vec2 Rigidbody2DComponent_GetLinearVelocity(UUID entityID);
 		static void SetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value);

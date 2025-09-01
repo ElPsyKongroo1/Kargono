@@ -11,7 +11,6 @@
 #include <limits>
 #include <algorithm>
 
-
 namespace Kargono::ECS
 {
 	using BufferSlot = uint16_t;

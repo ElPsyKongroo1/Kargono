@@ -122,8 +122,7 @@ namespace Kargono::ECSInternal
 				Utility::FileSystem::CRCFromString(uniqueName.CString());
 
 			return RegisterComponent(identifier, 
-				sizeof(t_Component), alignof(t_Component),
-				CreateComponentFunctors<t_Component>());
+				{ sizeof(t_Component), alignof(t_Component), CreateComponentFunctors<t_Component>() });
 		}
 
 		[[nodiscard]] bool RegisterComponent(ComponentIdentifier identifier, 
@@ -183,7 +182,7 @@ namespace Kargono::ECSInternal
 
 			ComponentMask mask { GetComponentMask(identifier).value() };
 
-			return AddComponent(entityID, mask, component);
+			return AddComponentByMask(entityID, mask, component);
 		}
 
 		[[nodiscard]] bool AddComponent(EntityID entityID, ComponentIdentifier identifier,
@@ -191,13 +190,13 @@ namespace Kargono::ECSInternal
 		{
 			ComponentMask mask{ GetComponentMask(identifier).value() };
 
-			return AddComponent(entityID, mask, component);
+			return AddComponentByMask(entityID, mask, component);
 		}
 
-		[[nodiscard]] bool AddComponent(EntityID entityID, ComponentMask mask,
+		[[nodiscard]] bool AddComponentByMask(EntityID entityID, ComponentMask mask,
 			void* component)
 		{
-			IComponentStore* componentStore{ GetComponentArray(mask) };
+			IComponentStore* componentStore{ GetComponentArrayByMask(mask) };
 			KG_ASSERT(componentStore);
 
 			// Check if a component already exists
@@ -219,7 +218,7 @@ namespace Kargono::ECSInternal
 
 		[[nodiscard]] void* CreateComponent(EntityID entityID, ComponentMask mask)
 		{
-			IComponentStore* componentStore{ GetComponentArray(mask) };
+			IComponentStore* componentStore{ GetComponentArrayByMask(mask) };
 			KG_ASSERT(componentStore);
 
 			// Check if a component already exists
@@ -238,7 +237,7 @@ namespace Kargono::ECSInternal
 		[[nodiscard]] bool AddOrReplaceComponent(EntityID entityID, ComponentMask mask,
 			void* component)
 		{
-			IComponentStore* componentStore{ GetComponentArray(mask) };
+			IComponentStore* componentStore{ GetComponentArrayByMask(mask) };
 			KG_ASSERT(componentStore);
 
 			const ComponentMetadata& metadata{ componentStore->GetComponentMetadata() };
@@ -272,7 +271,7 @@ namespace Kargono::ECSInternal
 			// Simply return existing component if it already exists
 			if (compStore->HasComponent(entityID))
 			{
-				return compStore->GetComponent(entityID)
+				return compStore->GetComponent(entityID);
 			}
 
 			// Emplace object on raw data using placement new 
@@ -322,9 +321,9 @@ namespace Kargono::ECSInternal
 			return componentStore->RemoveComponent(entityID);
 		}
 
-		[[nodiscard]] bool RemoveComponent(EntityID entityID, ComponentMask mask)
+		[[nodiscard]] bool RemoveComponentByMask(EntityID entityID, ComponentMask mask)
 		{
-			IComponentStore* componentStore{ GetComponentArray(mask) };
+			IComponentStore* componentStore{ GetComponentArrayByMask(mask) };
 			KG_ASSERT(componentStore);
 
 			return componentStore->RemoveComponent(entityID);
@@ -347,9 +346,9 @@ namespace Kargono::ECSInternal
 			return componentStore->GetComponent(entityID);
 		}
 
-		void* GetComponent(EntityID entityID, ComponentMask mask)
+		void* GetComponentByMask(EntityID entityID, ComponentMask mask)
 		{
-			IComponentStore* componentStore{ GetComponentArray(mask) };
+			IComponentStore* componentStore{ GetComponentArrayByMask(mask) };
 			KG_ASSERT(componentStore);
 
 			return componentStore->GetComponent(entityID);
@@ -374,7 +373,7 @@ namespace Kargono::ECSInternal
 		template<ComponentConcept t_ComponentType>
 		constexpr ComponentFunctors CreateComponentFunctors()
 		{
-			return { t_ComponentType::CopyTo };
+			return { TypeErasedCopy<t_ComponentType> };
 		}
 
 		// Helper function(s)
@@ -476,6 +475,16 @@ namespace Kargono::ECSInternal
 			return m_ComponentMasks[identifier];
 		}
 
+		template<typename t_Component>
+		IComponentStore* GetComponentArray()
+		{
+			constexpr auto name{ GetUniqueIdentifier<t_Component>() };
+			constexpr ComponentIdentifier identifier =
+				Utility::FileSystem::CRCFromString(name.CString());
+
+			return GetComponentArray(identifier);
+		}
+
 		IComponentStore* GetComponentArray(ComponentIdentifier identifier)
 		{
 			KG_ASSERT(m_ComponentMasks.contains(identifier));
@@ -485,7 +494,7 @@ namespace Kargono::ECSInternal
 			return m_ComponentArrays[mask];
 		}
 
-		IComponentStore* GetComponentArray(ComponentMask mask)
+		IComponentStore* GetComponentArrayByMask(ComponentMask mask)
 		{
 			KG_ASSERT(m_ComponentArrays.contains(mask));
 			return m_ComponentArrays[mask];
@@ -679,7 +688,7 @@ namespace Kargono::ECSInternal
 			Expected<ComponentMask> compMask{ GetComponentMask(identifier) };
 			KG_ASSERT(compMask.has_value());
 
-			IComponentStore* compStore{ GetComponentArray(compMask.value()) };
+			IComponentStore* compStore{ GetComponentArrayByMask(compMask.value()) };
 			KG_ASSERT(compStore);
 
 			return compStore->HasComponent(entityID);

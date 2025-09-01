@@ -159,7 +159,7 @@ namespace Kargono::ECSInternal
     };
 
     template<size_t t_NumComponents>
-	class PackedView : public IView
+	class PackedView
 	{
     public:
         //==============================
