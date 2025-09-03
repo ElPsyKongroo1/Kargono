@@ -222,7 +222,13 @@ namespace Kargono::ECSInternal
 			}
 
 			// Add the component to the entity in the component registry
-			void* newComponent{ m_ComponentRegistry.CreateComponent(entityID, identifier) };
+			void* newComponent
+			{ 
+				m_ComponentRegistry.CreateComponent
+				(
+					entityID, m_ComponentRegistry.GetComponentMask(identifier).value()
+				)
+			};
 			KG_ASSERT(newComponent);
 
 			// Get the entity's signature

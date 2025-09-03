@@ -15,7 +15,7 @@
 
 namespace Kargono::Panels
 {
-	struct ProjectComponentWidgetData
+	struct CustomComponentWidgetData
 	{
 		EditorUI::CollapsingHeaderSpec m_Header;
 		std::vector<std::variant<EditorUI::EditFloatSpec, EditorUI::EditVec4Spec,
@@ -26,7 +26,7 @@ namespace Kargono::Panels
 	struct SceneEditorTreeEntryData
 	{
 		ECSInternal::ComponentIdentifier m_ComponentType{ ECSInternal::k_InvalidComponentIdentifier };
-		Assets::AssetHandle m_ProjectComponentHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_CustomComponentHandle{ Assets::EmptyHandle };
 	};
 
 	enum class ScenePropertiesDisplay : uint16_t
@@ -60,8 +60,8 @@ namespace Kargono::Panels
 		void InitializeOnCreateComponent();
 		void InitializeAIComponent();
 		void InitializeShapeComponent();
-		void InitializeProjectComponents();
-		void InitializeProjectComponent(Assets::AssetHandle projectComponentHandle);
+		void InitializeCustomComponents();
+		void InitializeCustomComponent(Assets::AssetHandle projectComponentHandle);
 	public:
 		//=========================
 		// On Event Functions
@@ -80,17 +80,17 @@ namespace Kargono::Panels
 		{
 			m_DisplayedComponent = type;
 		}
-		void SetDisplayedProjectComponent(Assets::AssetHandle handle)
+		void SetDisplayedCustomComponent(Assets::AssetHandle handle)
 		{
-			m_DisplayedProjectComponentHandle = handle;
+			m_DisplayedCustomComponentHandle = handle;
 		}
 		ECSInternal::ComponentIdentifier GetDisplayedComponent()
 		{
 			return m_DisplayedComponent;
 		}
-		Assets::AssetHandle GetDisplayedProjectComponent()
+		Assets::AssetHandle GetDisplayedCustomComponent()
 		{
-			return m_DisplayedProjectComponentHandle;
+			return m_DisplayedCustomComponentHandle;
 		}
 	private:
 		//=========================
@@ -109,7 +109,7 @@ namespace Kargono::Panels
 		void DrawAIStateComponent(ECS::Entity entity);
 		void DrawOnCreateComponent(ECS::Entity entity);
 		void DrawShapeComponent(ECS::Entity entity);
-		void DrawProjectComponent(ECS::Entity entity, Assets::AssetHandle handle);
+		void DrawCustomComponent(ECS::Entity entity, Assets::AssetHandle handle);
 		void DrawSceneOptions();
 
 		//=========================
@@ -132,8 +132,8 @@ namespace Kargono::Panels
 		//=========================
 		FixedBufStr32 m_PanelName{"Scene Editor"};
 		ECSInternal::ComponentIdentifier m_DisplayedComponent{ECSInternal::k_InvalidComponentIdentifier };
-		Assets::AssetHandle m_DisplayedProjectComponentHandle {Assets::EmptyHandle};
-		std::unordered_map<Assets::AssetHandle, ProjectComponentWidgetData> m_AllProjectComponents{};
+		Assets::AssetHandle m_DisplayedCustomComponentHandle {Assets::EmptyHandle};
+		std::unordered_map<Assets::AssetHandle, CustomComponentWidgetData> m_AllCustomComponents{};
 		ScenePropertiesDisplay m_CurrentDisplayed{ ScenePropertiesDisplay::None };
 
 	private:

@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Kargono/Scenes/Scene.h"
-#include "Modules/ECS/Components/ProjectComponent.h"
+#include "Modules/ECSInternal/CustomComponent.h"
 #include "Modules/ECS/Entity.h"
 #include "Modules/Physics2D/Physics2D.h"
 #include "Modules/Rendering/RenderingService.h"
@@ -137,10 +137,10 @@ namespace Kargono::Scenes
 			registry.RegisterComponent<Particles::ParticleEmitterComponent>();
 		}
 
-		// Project Components
-		for (auto& [handle, info] : Assets::AssetService::GetProjectComponentRegistry())
+		// Custom Components
+		for (auto& [handle, info] : Assets::AssetService::GetCustomComponentRegistry())
 		{
-			Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(handle);
+			Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(handle);
 			KG_ASSERT(component);
 
 			if (component->m_ComponentSize == 0 || registry.IsComponentRegistered(component->m_Identifier))
@@ -149,18 +149,15 @@ namespace Kargono::Scenes
 			}
 			
 			// Register component
-			ECSInternal::ComponentMetadata metadata{};
-			metadata.m_ComponentSize = component->m_ComponentSize;
-			metadata.m_ComponentAlignment = component->m_ComponentAlignment;
-			metadata.m_CompFunctors.m_Copy = TypeErasedCopy<ECS::ProjectComponent>;
+			ECSInternal::ComponentMetadata metadata = component->GenerateMetadata();
 			registry.RegisterComponent(component->m_Identifier, metadata);
 		}
 
 	}
 
-	void Scene::AddProjectComponentRegistry(Assets::AssetHandle projectComponentHandle)
+	void Scene::AddCustomComponentRegistry(Assets::AssetHandle projectComponentHandle)
 	{
-		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
+		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(projectComponentHandle);
 		KG_ASSERT(component);
 		KG_ASSERT(component->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
 
@@ -175,9 +172,9 @@ namespace Kargono::Scenes
 		m_EntityRegistry.m_Registry.RegisterComponent(component->m_Identifier, metadata);
 	}
 
-	void Scene::ClearProjectComponentRegistry(Assets::AssetHandle projectComponentHandle)
+	void Scene::ClearCustomComponentRegistry(Assets::AssetHandle projectComponentHandle)
 	{
-		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
+		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(projectComponentHandle);
 		KG_ASSERT(component);
 
 		if (component->m_ComponentSize == 0)
@@ -189,9 +186,9 @@ namespace Kargono::Scenes
 		m_EntityRegistry.m_Registry.ClearComponentStore(component->m_Identifier);
 	}
 
-	std::size_t Scene::GetProjectComponentCount(Assets::AssetHandle projectComponentHandle)
+	std::size_t Scene::GetCustomComponentCount(Assets::AssetHandle projectComponentHandle)
 	{
-		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
+		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(projectComponentHandle);
 		KG_ASSERT(component);
 
 		if (component->m_ComponentSize == 0)
@@ -488,19 +485,19 @@ namespace Kargono::Scenes
 		const b2Vec2& linearVelocity = body->GetLinearVelocity();
 		return Math::vec2(linearVelocity.x, linearVelocity.y);
 	}
-	void SceneService::SetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value)
+	void SceneService::SetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value)
 	{
 		// Get the indicated entity
 		ECS::Entity currentEntity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(currentEntity);
 
-		// Get the indicated project component
-		Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentID);
+		// Get the indicated custom component
+		Ref<ECSInternal::CustomComponent> projectComponent = Assets::AssetService::GetCustomComponent(projectComponentID);
 		KG_ASSERT(projectComponent);
 		KG_ASSERT(fieldLocation < projectComponent->m_DataOffsets.size());
 
 		// Set indicated field value
-		uint8_t* componentDataRef = (uint8_t*)currentEntity.GetProjectComponentData(projectComponentID);
+		uint8_t* componentDataRef = (uint8_t*)currentEntity.GetCustomComponentData(projectComponentID);
 
 		// Get field data pointer
 		uint8_t* fieldDataRef = componentDataRef + projectComponent->m_DataOffsets.at(fieldLocation);
@@ -508,19 +505,19 @@ namespace Kargono::Scenes
 		// Set the data
 		Utility::TransferDataForWrappedVarBuffer(projectComponent->m_DataTypes.at(fieldLocation), value, fieldDataRef);
 	}
-	void* SceneService::GetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation)
+	void* SceneService::GetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation)
 	{
 		// Get the indicated entity
 		ECS::Entity currentEntity = s_ActiveScene->GetEntityByUUID(entityID);
 		KG_ASSERT(currentEntity);
 
-		// Get the indicated project component
-		Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentID);
+		// Get the indicated custom component
+		Ref<ECSInternal::CustomComponent> projectComponent = Assets::AssetService::GetCustomComponent(projectComponentID);
 		KG_ASSERT(projectComponent);
 		KG_ASSERT(fieldLocation < projectComponent->m_DataOffsets.size());
 
 		// Set indicated field value
-		uint8_t* componentDataRef = (uint8_t*)currentEntity.GetProjectComponentData(projectComponentID);
+		uint8_t* componentDataRef = (uint8_t*)currentEntity.GetCustomComponentData(projectComponentID);
 
 		// Get field data pointer
 		uint8_t* fieldDataRef = componentDataRef + projectComponent->m_DataOffsets.at(fieldLocation);

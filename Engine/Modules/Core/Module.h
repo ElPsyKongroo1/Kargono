@@ -2,6 +2,7 @@
 
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Utility/CompilerInfo.h"
+#include "Modules/FileSystem/FileSystem.h"
 
 #include <sstream>
 #include <type_traits>
@@ -127,6 +128,22 @@ namespace Kargono
         returnValue.Append(identifier.data());
 
         return returnValue;
+    }
+
+    // Type Identifiers
+    using ModuleTypeIdentifier = uint32_t;
+    constexpr ModuleTypeIdentifier k_InvalidModuleTypeID
+    {
+        std::numeric_limits<ModuleTypeIdentifier>::max()
+    };
+
+    template<typename t_Type>
+    consteval ModuleTypeIdentifier GetModuleTypeIdentifier()
+    {
+        constexpr auto name{ GetUniqueIdentifier<t_Type>() };
+        constexpr ModuleTypeIdentifier identifier
+        { Utility::FileSystem::CRCFromString(name.CString()) };
+        return identifier;
     }
 
 #undef Module_Type_Traits

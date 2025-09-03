@@ -6,6 +6,7 @@
 #include "Modules/ECSInternal/Views/PackedView.h"
 #include "Modules/ECSInternal/Views/FlatView.h"
 #include "Modules/ECSInternal/EntityRegistry.h"
+#include "Modules/Assets/AssetService.h"
 
 #include "Kargono/Core/Base.h"
 #include "Modules/FileSystem/FileSystem.h"
@@ -205,9 +206,19 @@ namespace Kargono::ECSInternal
 			void* newComponent{ componentStore->CreateComponent(entityID) };
 			KG_ASSERT(newComponent);
 
+			CustomComponent* customComp{ nullptr };
+
+			// If this is a custom component, get the custom component data
+			if (metadata.m_CustomComponentHandle != Assets::EmptyHandle)
+			{
+				customComp = Assets::AssetService::GetCustomComponent(metadata.m_CustomComponentHandle).get();
+				KG_ASSERT(customComp);
+			}
+
 			// Copy data over to the new component 
 			// TODO: (THIS COULD BE DANGEROUS IF component is incorrect AHHHHH!!!)
-			metadata.m_CompFunctors.m_Copy(component, newComponent);
+			metadata.m_CompFunctors.m_Copy(component,
+				newComponent, static_cast<void*>(customComp));
 
 			return true;
 		}
@@ -240,9 +251,19 @@ namespace Kargono::ECSInternal
 			void* newComponent{ componentStore->CreateComponent(entityID) };
 			KG_ASSERT(newComponent);
 
+			CustomComponent* customComp{ nullptr };
+
+			// If this is a custom component, get the custom component data
+			if (metadata.m_CustomComponentHandle != Assets::EmptyHandle)
+			{
+				customComp = Assets::AssetService::GetCustomComponent(metadata.m_CustomComponentHandle).get();
+				KG_ASSERT(customComp);
+			}
+
 			// Copy data over to the new component 
 			// TODO: (THIS COULD BE DANGEROUS IF component is incorrect AHHHHH!!!)
-			metadata.m_CompFunctors.m_Copy(component, newComponent);
+			metadata.m_CompFunctors.m_Copy(component, 
+				newComponent, static_cast<void*>(customComp));
 
 			return true;
 		}
@@ -412,6 +433,15 @@ namespace Kargono::ECSInternal
 				KG_ASSERT(compStore);
 				ComponentMetadata metadata = compStore->GetComponentMetadata();
 
+				CustomComponent* customComp{ nullptr };
+
+				// If this is a custom component, get the custom component data
+				if (metadata.m_CustomComponentHandle != Assets::EmptyHandle)
+				{
+					customComp = Assets::AssetService::GetCustomComponent(metadata.m_CustomComponentHandle).get();
+					KG_ASSERT(customComp);
+				}
+
 				otherRegistry.RegisterComponent(componentIdentifier, metadata);
 
 				// Get a view of all entities in each component store
@@ -437,8 +467,10 @@ namespace Kargono::ECSInternal
 					// Create new component at destination
 					void* destComponent{ destCompStore->CreateComponent(id) };
 
-					// Do copy operation from component
-					metadata.m_CompFunctors.m_Copy(srcComponent, destComponent);
+					// Copy data over to the new component 
+					// TODO: (THIS COULD BE DANGEROUS IF component is incorrect AHHHHH!!!)
+					metadata.m_CompFunctors.m_Copy(srcComponent, destComponent,
+						static_cast<void*>(customComp));
 				}
 			}
 		}

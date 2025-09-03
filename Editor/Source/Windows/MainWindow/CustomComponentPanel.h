@@ -3,19 +3,19 @@
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Assets/Asset.h"
 #include "Modules/EditorUI/EditorUI.h"
-#include "Modules/ECS/Components/ProjectComponent.h"
+#include "Modules/ECSInternal/CustomComponent.h"
 
 #include <filesystem>
 
 namespace Kargono::Panels
 {
-	class ProjectComponentPanel
+	class CustomComponentPanel
 	{
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
-		ProjectComponentPanel();
+		CustomComponentPanel();
 	private:
 		//=========================
 		// Internal Initialization Functions
@@ -53,9 +53,9 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedBufStr32 m_PanelName{ "Project Component" };
-		Ref<ECS::ProjectComponent> m_EditorProjectComponent { nullptr };
-		Assets::AssetHandle m_EditorProjectComponentHandle { Assets::EmptyHandle };
+		FixedBufStr32 m_PanelName{ "Custom Component" };
+		Ref<ECSInternal::CustomComponent> m_EditorCustomComponent { nullptr };
+		Assets::AssetHandle m_EditorCustomComponentHandle { Assets::EmptyHandle };
 		size_t m_ActiveField{ 0 };
 
 	private:
@@ -66,7 +66,7 @@ namespace Kargono::Panels
 		EditorUI::GenericPopupSpec m_CreateComponentPopup {};
 		EditorUI::SelectOptionSpec m_OpenComponentPopup {};
 		EditorUI::EditTextSpec m_SelectComponentName {};
-		EditorUI::ChooseDirectorySpec m_SelectProjectComponentLocationSpec{};
+		EditorUI::ChooseDirectorySpec m_SelectCustomComponentLocationSpec{};
 		// Header
 		EditorUI::PanelHeaderSpec m_MainHeader {};
 		EditorUI::GenericPopupSpec m_DeleteComponentWarning {};

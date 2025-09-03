@@ -9,7 +9,7 @@ namespace Kargono::Assets
 {
 	void ProjectEnumManager::CreateAssetFileFromName(std::string_view name, AssetInfo& assetInfo, const std::filesystem::path& assetPath)
 	{
-		// Create new project component
+		// Create new custom component
 		Ref<ProjectData::ProjectEnum> newProjectEnum = CreateRef<ProjectData::ProjectEnum>();
 		newProjectEnum->m_EnumName = name;
 

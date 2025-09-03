@@ -4,6 +4,7 @@
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/ECSInternal/Module/ECSInternalModule.h"
 #include "Modules/Core/Concepts/Copyable.h"
+#include "Modules/Assets/Asset.h"
 
 #include <cstdint>
 #include <bitset>
@@ -40,6 +41,7 @@ namespace Kargono::ECSInternal
 		size_t m_ComponentSize{0};
 		size_t m_ComponentAlignment{ 0 };
 		ComponentFunctors m_CompFunctors{};
+		Assets::AssetHandle m_CustomComponentHandle{ Assets::EmptyHandle };
 	};
 }
 

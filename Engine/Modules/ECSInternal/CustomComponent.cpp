@@ -1,10 +1,10 @@
 #include "kgpch.h"
 
-#include "Modules/ECS/Components/ProjectComponent.h"
+#include "Modules/ECSInternal/CustomComponent.h"
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
-	bool ProjectComponent::AddField(WrappedVarType fieldType, const char* fieldName)
+	bool CustomComponent::AddField(WrappedVarType fieldType, const char* fieldName)
 	{
 		KG_ASSERT(m_DataNames.size() == m_DataOffsets.size() &&
 			m_DataOffsets.size() == m_DataTypes.size(), "Project component is malformed");
@@ -12,7 +12,7 @@ namespace Kargono::ECS
 		// Ensure fieldType is valid
 		if (fieldType == WrappedVarType::None || fieldType == WrappedVarType::Void)
 		{
-			KG_WARN("Could not add field to project component. Cannot instantiate a project component field with \"None\" type");
+			KG_WARN("Could not add field to custom component. Cannot instantiate a custom component field with \"None\" type");
 			return false;
 		}
 
@@ -28,7 +28,7 @@ namespace Kargono::ECS
 		}
 		if (foundDuplicateName)
 		{
-			KG_WARN("Could not add field to project component. Duplicate field name provided");
+			KG_WARN("Could not add field to custom component. Duplicate field name provided");
 			return false;
 		}
 
@@ -44,7 +44,7 @@ namespace Kargono::ECS
 
 		return true;
 	}
-	void ProjectComponent::DeleteField(size_t fieldIndex)
+	void CustomComponent::DeleteField(size_t fieldIndex)
 	{
 		KG_ERROR("Make sure to take into account alignment");
 
@@ -62,7 +62,7 @@ namespace Kargono::ECS
 		RevalidateAlignment();
 		RecalculateDataLocations();
 	}
-	bool ProjectComponent::EditField(size_t fieldIndex, const char* fieldName, WrappedVarType fieldType)
+	bool CustomComponent::EditField(size_t fieldIndex, const char* fieldName, WrappedVarType fieldType)
 	{
 		KG_ERROR("Make sure to take into account alignment");
 		KG_ASSERT(m_DataNames.size() == m_DataOffsets.size() &&
@@ -71,7 +71,7 @@ namespace Kargono::ECS
 		// Ensure fieldType is valid
 		if (fieldType == WrappedVarType::None || fieldType == WrappedVarType::Void)
 		{
-			KG_WARN("Could not edit project component. Cannot instantiate a project component field with \"None\" type");
+			KG_WARN("Could not edit custom component. Cannot instantiate a custom component field with \"None\" type");
 			return false;
 		}
 
@@ -85,7 +85,7 @@ namespace Kargono::ECS
 
 		return true;
 	}
-	void ProjectComponent::RecalculateDataLocations()
+	void CustomComponent::RecalculateDataLocations()
 	{
 		m_DataOffsets.clear();
 		m_DataOffsets.reserve(m_DataTypes.size());
@@ -103,10 +103,10 @@ namespace Kargono::ECS
 
 		m_ComponentSize = currentMaximumLocation;
 	}
-	ECSInternal::ComponentIdentifier ProjectComponent::RevalidateIdentifier()
+	ECSInternal::ComponentIdentifier CustomComponent::RevalidateIdentifier()
 	{
 		KG_ASSERT(m_Name.StringLength() > 0);
-		std::string identifierStr{ "ProjectComponent" "::" + m_Name };
+		std::string identifierStr{ "CustomComponent" "::" + m_Name };
 		ECSInternal::ComponentIdentifier identifier =
 			Utility::FileSystem::CRCFromString(identifierStr.c_str());
 
@@ -114,15 +114,15 @@ namespace Kargono::ECS
 
 		return identifier;
 	}
-	ECSInternal::ComponentMetadata ProjectComponent::GenerateMetadata() const
+	ECSInternal::ComponentMetadata CustomComponent::GenerateMetadata() const
 	{
 		ECSInternal::ComponentMetadata metadata{};
 		metadata.m_ComponentSize = m_ComponentSize;
 		metadata.m_ComponentAlignment = m_ComponentAlignment;
-		metadata.m_CompFunctors.m_Copy = TypeErasedCopy<ProjectComponent>;
+		metadata.m_CompFunctors.m_Copy = CustomComponentCopyTo;
 		return metadata;
 	}
-	size_t ProjectComponent::RevalidateAlignment()
+	size_t CustomComponent::RevalidateAlignment()
 	{
 		size_t maxAlignment{ 1 };
 		for (WrappedVarType type : m_DataTypes)

@@ -15,7 +15,7 @@
 #include "Modules/Physics2D/Components/CircleCollider2DComponent.h"	
 #include "Modules/Physics2D/Components/RigidBody2DComponent.h"	
 
-#include "Modules/ECS/Components/ProjectComponent.h"
+#include "Modules/ECSInternal/CustomComponent.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/ECS/Entity.h"
 
@@ -201,15 +201,15 @@ namespace Kargono::Utility
 			out << YAML::EndMap; // Component Map
 		}
 
-		// Handle all project components
-		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+		// Handle all custom components
+		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
 		{
-			if (!entity.HasProjectComponentData(handle))
+			if (!entity.HasCustomComponentData(handle))
 			{
 				continue;
 			}
-			Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(handle);
-			uint8_t* componentRef = (uint8_t*)entity.GetProjectComponentData(handle);
+			Ref<ECSInternal::CustomComponent> projectComponent = Assets::AssetService::GetCustomComponent(handle);
+			uint8_t* componentRef = (uint8_t*)entity.GetCustomComponentData(handle);
 
 			out << YAML::Key << projectComponent->m_Name + "Component";
 			out << YAML::BeginMap; // Component Map
@@ -515,10 +515,10 @@ namespace Kargono::Assets
 					cc2d.m_IsSensor = circleCollider2DComponent["IsSensor"].as<bool>();
 				}
 
-				// Handle all project components
-				for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+				// Handle all custom components
+				for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
 				{
-					Ref<ECS::ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(handle);
+					Ref<ECSInternal::CustomComponent> projectComponent = Assets::AssetService::GetCustomComponent(handle);
 					KG_ASSERT(projectComponent);
 
 					YAML::Node projectComponentNode = entity[projectComponent->m_Name + "Component"];
@@ -526,12 +526,12 @@ namespace Kargono::Assets
 					{
 						continue;
 					}
-					// Create and get project component
-					if (!deserializedEntity.HasProjectComponentData(handle))
+					// Create and get custom component
+					if (!deserializedEntity.HasCustomComponentData(handle))
 					{
-						deserializedEntity.AddProjectComponentData(handle);
+						deserializedEntity.AddCustomComponentData(handle);
 					}
-					uint8_t* componentRef = (uint8_t*)deserializedEntity.GetProjectComponentData(handle);
+					uint8_t* componentRef = (uint8_t*)deserializedEntity.GetCustomComponentData(handle);
 
 					// Load in component data from disk
 					for (size_t iteration{ 0 }; iteration < projectComponent->m_DataOffsets.size(); iteration++)
@@ -634,15 +634,15 @@ namespace Kargono::Assets
 		}
 		return aiStateModified;
 	}
-	bool SceneManager::RemoveProjectComponent(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle projectCompHandle)
+	bool SceneManager::RemoveCustomComponent(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle projectCompHandle)
 	{
 		KG_ASSERT(sceneRef);
 
 		// Check if any components are being removed
-		std::size_t componentCount = sceneRef->GetProjectComponentCount(projectCompHandle);
+		std::size_t componentCount = sceneRef->GetCustomComponentCount(projectCompHandle);
 
 		// Clear component registry
-		sceneRef->ClearProjectComponentRegistry(projectCompHandle);
+		sceneRef->ClearCustomComponentRegistry(projectCompHandle);
 
 		return componentCount > 0;
 	}

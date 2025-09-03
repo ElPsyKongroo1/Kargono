@@ -319,7 +319,7 @@ namespace Kargono::Panels
 	}
 	void TextEditorPanel::OpenCreateDialog(const std::filesystem::path& path)
 	{
-		// Open project component Window
+		// Open custom component Window
 		s_MainWindow->m_ShowTextEditor = true;
 		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);

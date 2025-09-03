@@ -4,7 +4,7 @@
 #include <vector>
 #include <limits>
 
-namespace Kargono::ECS { struct ProjectComponent; }
+namespace Kargono::ECSInternal { struct CustomComponent; }
 namespace Kargono::Scenes { class Scene; }
 
 namespace Kargono::Assets
@@ -23,15 +23,15 @@ namespace Kargono::Assets
 		std::vector<Assets::AssetHandle> m_OldSceneHandles;
 	};
 
-	class ProjectComponentManager : public AssetManager<ECS::ProjectComponent>
+	class CustomComponentManager : public AssetManager<ECSInternal::CustomComponent>
 	{
 	public:
-		ProjectComponentManager() : AssetManager<ECS::ProjectComponent>()
+		CustomComponentManager() : AssetManager<ECSInternal::CustomComponent>()
 		{
-			m_AssetName = "Project Component";
-			m_AssetType = AssetType::ProjectComponent;
+			m_AssetName = "Custom Component";
+			m_AssetType = AssetType::CustomComponent;
 			m_FileExtension = ".kgcomponent";
-			m_RegistryLocation = "ProjectComponent/ProjectComponentRegistry.kgreg";
+			m_RegistryLocation = "CustomComponent/CustomComponentRegistry.kgreg";
 			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
 			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
 			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
@@ -39,13 +39,13 @@ namespace Kargono::Assets
 			m_Flags.set(AssetManagerOptions::HasAssetCreationFromName, true);
 			m_Flags.set(AssetManagerOptions::HasAssetCache, true);
 		}
-		virtual ~ProjectComponentManager() = default;
+		virtual ~CustomComponentManager() = default;
 	public:
 		// Class specific functions
-		virtual Ref<void> SaveAssetValidation(Ref<ECS::ProjectComponent> newAsset, AssetHandle assetHandle) override;
+		virtual Ref<void> SaveAssetValidation(Ref<ECSInternal::CustomComponent> newAsset, AssetHandle assetHandle) override;
 		virtual void CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath) override;
-		virtual void SerializeAsset(Ref<ECS::ProjectComponent> assetReference, const std::filesystem::path& assetPath) override;
-		virtual Ref<ECS::ProjectComponent> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
+		virtual void SerializeAsset(Ref<ECSInternal::CustomComponent> assetReference, const std::filesystem::path& assetPath) override;
+		virtual Ref<ECSInternal::CustomComponent> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset) override;
 		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset) override;
 		virtual void DeleteAssetValidation(AssetHandle assetHandle) override;

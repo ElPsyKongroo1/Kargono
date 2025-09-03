@@ -15,7 +15,7 @@
 #include "Windows/MainWindow/LogPanel.h"
 #include "Windows/MainWindow/PropertiesPanel.h"
 #include "Windows/MainWindow/ProjectPanel.h"
-#include "Windows/MainWindow/ProjectComponentPanel.h"
+#include "Windows/MainWindow/CustomComponentPanel.h"
 #include "Windows/MainWindow/ProjectEnumPanel.h"
 #include "Windows/MainWindow/ScriptEditorPanel.h"
 #include "Windows/MainWindow/SceneEditorPanel.h"
@@ -80,7 +80,7 @@ namespace Kargono::Windows
 		bool OnKeyTypedRuntime(Events::KeyTypedEvent event);
 		bool OnMouseButtonPressed(Events::MouseButtonPressedEvent event);
 		bool OnMouseButtonReleasedRuntime(const Events::MouseButtonReleasedEvent& event);
-		bool OnUpdateProjectComponent(Events::ManageAsset& event);
+		bool OnUpdateCustomComponent(Events::ManageAsset& event);
 
 	private:
 		//=========================
@@ -158,7 +158,7 @@ namespace Kargono::Windows
 		Scope<Panels::LogPanel>  m_LogPanel;
 		Scope<Panels::PropertiesPanel> m_PropertiesPanel;
 		Scope<Panels::ProjectPanel>  m_ProjectPanel;
-		Scope<Panels::ProjectComponentPanel>  m_ProjectComponentPanel;
+		Scope<Panels::CustomComponentPanel>  m_CustomComponentPanel;
 		Scope<Panels::ProjectEnumPanel>  m_ProjectEnumPanel;
 		Scope<Panels::ScriptEditorPanel>  m_ScriptEditorPanel;
 		Scope<Panels::TextEditorPanel>  m_TextEditorPanel;
@@ -224,7 +224,7 @@ namespace Kargono::Windows
 		bool m_ShowStats = false;
 		bool m_ShowViewport = true;
 		bool m_ShowProject = false;
-		bool m_ShowProjectComponent = false;
+		bool m_ShowCustomComponent = false;
 		bool m_ShowProjectEnum = false;
 		bool m_ShowDemoWindow = false;
 		bool m_ShowImPlotWindow = false;
@@ -255,7 +255,7 @@ namespace Kargono::Windows
 		friend Panels::ContentBrowserPanel;
 		friend Panels::InputMapPanel;
 		friend Panels::LogPanel;
-		friend Panels::ProjectComponentPanel;
+		friend Panels::CustomComponentPanel;
 		friend Panels::ProjectEnumPanel;
 		friend Panels::ProjectPanel;
 		friend Panels::PropertiesPanel;

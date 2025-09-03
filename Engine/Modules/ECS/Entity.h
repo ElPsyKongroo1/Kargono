@@ -32,7 +32,7 @@ namespace Kargono::ECS
 			return component;
 		}
 
-		void AddProjectComponentData(Assets::AssetHandle projectComponentHandle);
+		void AddCustomComponentData(Assets::AssetHandle projectComponentHandle);
 
 		template<typename t_ComponentType, typename... t_Args>
 		t_ComponentType& AddOrReplaceComponent(t_Args&&... args)
@@ -57,7 +57,7 @@ namespace Kargono::ECS
 			m_Registry->m_Registry.RemoveComponent(m_RegistryEntityID, identifier);
 		}
 
-		void RemoveProjectComponentData(Assets::AssetHandle projectComponentHandle);
+		void RemoveCustomComponentData(Assets::AssetHandle projectComponentHandle);
 
 		template<typename t_ComponentType>
 		t_ComponentType& GetComponent()
@@ -71,7 +71,7 @@ namespace Kargono::ECS
 			return componentRef.value().get();
 		}
 
-		void* GetProjectComponentData(Assets::AssetHandle projectComponentHandle);
+		void* GetCustomComponentData(Assets::AssetHandle projectComponentHandle);
 
 		//==============================
 		// Query State
@@ -82,13 +82,12 @@ namespace Kargono::ECS
 			return m_Registry->m_Registry.HasComponent<t_ComponentType>(m_RegistryEntityID);
 		}
 
-		bool HasComponent(ECSInternal::EntityID entityID, 
-			ECSInternal::ComponentIdentifier compIdentifier)
+		bool HasComponent(ECSInternal::ComponentIdentifier compIdentifier)
 		{
-			m_Registry->m_Registry.HasComponent(entityID, compIdentifier);
+			m_Registry->m_Registry.HasComponent(m_RegistryEntityID, compIdentifier);
 		}
 
-		bool HasProjectComponentData(Assets::AssetHandle projectComponentHandle);
+		bool HasCustomComponentData(Assets::AssetHandle projectComponentHandle);
 
 		UUID GetUUID() 
 		{

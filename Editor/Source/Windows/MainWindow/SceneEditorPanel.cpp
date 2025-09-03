@@ -157,13 +157,13 @@ namespace Kargono::Panels
 				spec.AddToOptions("Engine Component", "AI State", Assets::EmptyHandle);
 			}
 
-			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
 			{
-				Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(handle);
+				Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(handle);
 				KG_ASSERT(projectComponentRef);
-				if (!entity.HasProjectComponentData(handle) && projectComponentRef->m_ComponentSize != 0)
+				if (!entity.HasCustomComponentData(handle) && projectComponentRef->m_ComponentSize != 0)
 				{
-					spec.AddToOptions("Project Component", asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name, handle);
+					spec.AddToOptions("Custom Component", asset.Data.GetSpecificMetaData<Assets::CustomComponentMetaData>()->Name, handle);
 				}
 			}
 
@@ -190,23 +190,25 @@ namespace Kargono::Panels
 			EditorUI::TreeEntry componentEntry {};
 			componentEntry.m_Handle = (uint64_t)entity;
 			
-			// Check for a project component
+			// Check for a custom component
 			if (option.m_Handle != Assets::EmptyHandle)
 			{
 				// Add component to entity & update tree
-				Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(option.m_Handle);
+				Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(option.m_Handle);
 				KG_ASSERT(component);
-				entity.AddProjectComponentData(option.m_Handle);
+				entity.AddCustomComponentData(option.m_Handle);
 				componentEntry.m_Label = component->m_Name;
-				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<ECS::ProjectComponent>(), option.m_Handle);
+				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(
+					GetModuleTypeIdentifier<ECSInternal::CustomComponent>(), option.m_Handle);
 				componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconEntity;
 				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(ECSInternal::EntityID((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
-					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(ECSInternal::GetComponentIdentifier<ECS::ProjectComponent>());
+					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
+						GetModuleTypeIdentifier<ECSInternal::CustomComponent>());
 					SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)entry.m_ProvidedData.get();
-					s_MainWindow->m_SceneEditorPanel->SetDisplayedProjectComponent(entryData.m_ProjectComponentHandle);
+					s_MainWindow->m_SceneEditorPanel->SetDisplayedCustomComponent(entryData.m_CustomComponentHandle);
 				};
 				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
@@ -2107,28 +2109,28 @@ namespace Kargono::Panels
 		};
 	}
 
-	struct ProjectComponentFieldInfo
+	struct CustomComponentFieldInfo
 	{
-		Assets::AssetHandle m_ProjectComponentHandle {Assets::EmptyHandle};
+		Assets::AssetHandle m_CustomComponentHandle {Assets::EmptyHandle};
 		size_t m_FieldSlot{ std::numeric_limits<size_t>().max() };
 	};
 
-	void SceneEditorPanel::InitializeProjectComponents()
+	void SceneEditorPanel::InitializeCustomComponents()
 	{
-		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
 		{
-			InitializeProjectComponent(handle);
+			InitializeCustomComponent(handle);
 		}
 		
 	}
 
-	void SceneEditorPanel::InitializeProjectComponent(Assets::AssetHandle projectComponentHandle)
+	void SceneEditorPanel::InitializeCustomComponent(Assets::AssetHandle projectComponentHandle)
 	{
-		Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(projectComponentHandle);
+		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(projectComponentHandle);
 		KG_ASSERT(component, "Invalid component provided when initializing SceneEditorPanel");
 
 		// Initialize Collapsing Header
-		ProjectComponentWidgetData newWidgetData;
+		CustomComponentWidgetData newWidgetData;
 		newWidgetData.m_Header.m_Label = component->m_Name;
 		newWidgetData.m_Header.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 		newWidgetData.m_Header.m_Expanded = true;
@@ -2139,19 +2141,20 @@ namespace Kargono::Panels
 			{
 				ECS::Entity entity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
 				Assets::AssetHandle projectComponentHandle = *(Assets::AssetHandle*)spec.m_ProvidedData.get();
-				if (entity.HasProjectComponentData(projectComponentHandle))
+				if (entity.HasCustomComponentData(projectComponentHandle))
 				{
 					// Search for indicated entity
 					EditorUI::TreeEntry* entityEntry{ m_SceneHierarchyTree.SearchDepth((uint64_t)entity, 1) };
 					KG_ASSERT(entityEntry);
 
-					// Search for project component in tree
+					// Search for custom component in tree
 					EditorUI::TreePath newPath {};
 					for (EditorUI::TreeEntry& subEntry : entityEntry->m_SubEntries)
 					{
 						SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
-						if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<ECS::ProjectComponent>() &&
-							entryData.m_ProjectComponentHandle == projectComponentHandle)
+						if (entryData.m_ComponentType == 
+							GetModuleTypeIdentifier<ECSInternal::CustomComponent>() &&
+							entryData.m_CustomComponentHandle == projectComponentHandle)
 						{
 							newPath = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
 							break;
@@ -2159,14 +2162,14 @@ namespace Kargono::Panels
 					}
 					KG_ASSERT(newPath);
 					
-					// Remove project component from tree and ECS
+					// Remove custom component from tree and ECS
 					m_SceneHierarchyTree.RemoveEntry(newPath);
-					entity.RemoveProjectComponentData(projectComponentHandle);
+					entity.RemoveCustomComponentData(projectComponentHandle);
 				}
 			});
 		});
 
-		// Initialize project component fields into scene editor UI
+		// Initialize custom component fields into scene editor UI
 		for (size_t iteration{ 0 }; iteration < component->m_DataNames.size(); iteration++)
 		{
 			static EditorUI::EditFloatSpec newFloatSpec;
@@ -2184,14 +2187,14 @@ namespace Kargono::Panels
 				newFloatSpec = {};
 				newFloatSpec.m_Label = currentName;
 				newFloatSpec.m_Flags |= EditorUI::EditFloat_Indented;
-				newFloatSpec.m_ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newFloatSpec.m_ProvidedData = CreateRef<CustomComponentFieldInfo>(projectComponentHandle, iteration);
 				newFloatSpec.m_ConfirmAction = [](EditorUI::EditFloatSpec& spec)
 				{
 					// Get component data pointer
-					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+					Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -2205,14 +2208,14 @@ namespace Kargono::Panels
 				newStringSpec = {};
 				newStringSpec.m_Label = currentName;
 				newStringSpec.m_Flags |= EditorUI::EditText_Indented;
-				newStringSpec.m_ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newStringSpec.m_ProvidedData = CreateRef<CustomComponentFieldInfo>(projectComponentHandle, iteration);
 				newStringSpec.m_ConfirmAction = [](EditorUI::EditTextSpec& spec)
 				{
 					// Get component data pointer
-					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+					Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -2226,14 +2229,14 @@ namespace Kargono::Panels
 				newBoolSpec = {};
 				newBoolSpec.m_Label = currentName;
 				newBoolSpec.m_Flags |= EditorUI::Checkbox_Indented;
-				newBoolSpec.m_ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newBoolSpec.m_ProvidedData = CreateRef<CustomComponentFieldInfo>(projectComponentHandle, iteration);
 				newBoolSpec.m_ConfirmAction = [](EditorUI::CheckboxSpec& spec)
 				{
 					// Get component data pointer
-					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+					Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -2247,14 +2250,14 @@ namespace Kargono::Panels
 				newVector3Spec = {};
 				newVector3Spec.m_Label = currentName;
 				newVector3Spec.m_Flags |= EditorUI::EditVec3_Indented;
-				newVector3Spec.m_ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newVector3Spec.m_ProvidedData = CreateRef<CustomComponentFieldInfo>(projectComponentHandle, iteration);
 				newVector3Spec.m_ConfirmAction = [](EditorUI::EditVec3Spec& spec)
 				{
 					// Get component data pointer
-					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+					Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -2268,14 +2271,14 @@ namespace Kargono::Panels
 				newIntegerSpec = {};
 				newIntegerSpec.m_Label = currentName;
 				newIntegerSpec.m_Flags |= EditorUI::EditInteger_Indented;
-				newIntegerSpec.m_ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newIntegerSpec.m_ProvidedData = CreateRef<CustomComponentFieldInfo>(projectComponentHandle, iteration);
 				newIntegerSpec.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
 				{
 					// Get component data pointer
-					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+					Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -2289,14 +2292,14 @@ namespace Kargono::Panels
 				newIntegerSpec = {};
 				newIntegerSpec.m_Label = currentName;
 				newIntegerSpec.m_Flags |= EditorUI::EditInteger_Indented;
-				newIntegerSpec.m_ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newIntegerSpec.m_ProvidedData = CreateRef<CustomComponentFieldInfo>(projectComponentHandle, iteration);
 				newIntegerSpec.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
 				{
 					// Get component data pointer
-					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+					Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -2310,14 +2313,14 @@ namespace Kargono::Panels
 				newIntegerSpec = {};
 				newIntegerSpec.m_Label = currentName;
 				newIntegerSpec.m_Flags |= EditorUI::EditInteger_Indented;
-				newIntegerSpec.m_ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newIntegerSpec.m_ProvidedData = CreateRef<CustomComponentFieldInfo>(projectComponentHandle, iteration);
 				newIntegerSpec.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
 				{
 					// Get component data pointer
-					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+					Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -2331,14 +2334,14 @@ namespace Kargono::Panels
 				newIntegerSpec = {};
 				newIntegerSpec.m_Label = currentName;
 				newIntegerSpec.m_Flags |= EditorUI::EditInteger_Indented;
-				newIntegerSpec.m_ProvidedData = CreateRef<ProjectComponentFieldInfo>(projectComponentHandle, iteration);
+				newIntegerSpec.m_ProvidedData = CreateRef<CustomComponentFieldInfo>(projectComponentHandle, iteration);
 				newIntegerSpec.m_ConfirmAction = [](EditorUI::EditIntegerSpec& spec)
 				{
 					// Get component data pointer
-					ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+					Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
 					uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -2350,12 +2353,12 @@ namespace Kargono::Panels
 				break;
 			case WrappedVarType::Void:
 			case WrappedVarType::None:
-				KG_ERROR("Invalid wrapped variable type provided when initializing project component editor ui");
+				KG_ERROR("Invalid wrapped variable type provided when initializing custom component editor ui");
 				break;
 			}
 		}
 
-		m_AllProjectComponents.insert_or_assign(projectComponentHandle, newWidgetData);
+		m_AllCustomComponents.insert_or_assign(projectComponentHandle, newWidgetData);
 	}
 
 	SceneEditorPanel::SceneEditorPanel()
@@ -2377,7 +2380,7 @@ namespace Kargono::Panels
 		InitializeAIComponent();
 		InitializeCameraComponent();
 		InitializeShapeComponent();
-		InitializeProjectComponents();
+		InitializeCustomComponents();
 	}
 	void SceneEditorPanel::OnEditorUIRender()
 	{
@@ -2480,10 +2483,10 @@ namespace Kargono::Panels
 	{
 		
 		Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
-		if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent && 
+		if (manageAsset->GetAssetType() == Assets::AssetType::CustomComponent && 
 			manageAsset->GetAction() == Events::ManageAssetAction::Create)
 		{
-			InitializeProjectComponent(manageAsset->GetAssetID());
+			InitializeCustomComponent(manageAsset->GetAssetID());
 			SetSelectedEntity({});
 		}
 
@@ -2541,26 +2544,27 @@ namespace Kargono::Panels
 
 		}
 
-		if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
+		if (manageAsset->GetAssetType() == Assets::AssetType::CustomComponent &&
 			manageAsset->GetAction() == Events::ManageAssetAction::UpdateAsset)
 		{
-			Ref<ECS::ProjectComponent> currentComponent = Assets::AssetService::GetProjectComponent(manageAsset->GetAssetID());
+			Ref<ECSInternal::CustomComponent> currentComponent = Assets::AssetService::GetCustomComponent(manageAsset->GetAssetID());
 
 			if (currentComponent->m_DataOffsets.size() > 0)
 			{
-				m_AllProjectComponents.erase(manageAsset->GetAssetID());
-				InitializeProjectComponent(manageAsset->GetAssetID());
+				m_AllCustomComponents.erase(manageAsset->GetAssetID());
+				InitializeCustomComponent(manageAsset->GetAssetID());
 			}
 			else
 			{
-				m_AllProjectComponents.erase(manageAsset->GetAssetID());
+				m_AllCustomComponents.erase(manageAsset->GetAssetID());
 
-				// Get all tree nodes that contain the provided project component
+				// Get all tree nodes that contain the provided custom component
 				std::vector<EditorUI::TreePath> entriesToRemove = m_SceneHierarchyTree.SearchDepth([&](EditorUI::TreeEntry& entry)
 				{
 					SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)entry.m_ProvidedData.get();
-					if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<ECS::ProjectComponent>() &&
-						entryData.m_ProjectComponentHandle == manageAsset->GetAssetID())
+					if (entryData.m_ComponentType == 
+						GetModuleTypeIdentifier<ECSInternal::CustomComponent>() &&
+						entryData.m_CustomComponentHandle == manageAsset->GetAssetID())
 					{
 						return true;
 					}
@@ -2578,17 +2582,18 @@ namespace Kargono::Panels
 			SetSelectedEntity({});
 		}
 
-		if (manageAsset->GetAssetType() == Assets::AssetType::ProjectComponent &&
+		if (manageAsset->GetAssetType() == Assets::AssetType::CustomComponent &&
 			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
-			m_AllProjectComponents.erase(manageAsset->GetAssetID());
+			m_AllCustomComponents.erase(manageAsset->GetAssetID());
 
-			// Get all tree nodes that contain the provided project component
+			// Get all tree nodes that contain the provided custom component
 			std::vector<EditorUI::TreePath> entriesToRemove = m_SceneHierarchyTree.SearchDepth([&](EditorUI::TreeEntry& entry) 
 			{
 				SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)entry.m_ProvidedData.get();
-				if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<ECS::ProjectComponent>() &&
-					entryData.m_ProjectComponentHandle == manageAsset->GetAssetID())
+				if (entryData.m_ComponentType == 
+					GetModuleTypeIdentifier<ECSInternal::CustomComponent>() &&
+					entryData.m_CustomComponentHandle == manageAsset->GetAssetID())
 				{
 					return true;
 				}
@@ -2684,9 +2689,9 @@ namespace Kargono::Panels
 		DrawCameraComponent(entity);
 		DrawParticleEmitterComponent(entity);
 		DrawShapeComponent(entity);
-		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
 		{
-			DrawProjectComponent(entity, handle);
+			DrawCustomComponent(entity, handle);
 		}
 	}
 	void SceneEditorPanel::DrawSingleComponent(ECS::Entity entity)
@@ -2726,8 +2731,8 @@ namespace Kargono::Panels
 		case ECSInternal::GetComponentIdentifier<Rendering::ShapeComponent>():
 			DrawShapeComponent(entity);
 			return;
-		case ECSInternal::GetComponentIdentifier<ECS::ProjectComponent>():
-			DrawProjectComponent(entity, m_DisplayedProjectComponentHandle);
+		case GetModuleTypeIdentifier<ECSInternal::CustomComponent>():
+			DrawCustomComponent(entity, m_DisplayedCustomComponentHandle);
 			return;
 		
 
@@ -3036,15 +3041,15 @@ namespace Kargono::Panels
 		}
 	}
 
-	struct DrawProjectComponentFieldsVisitor
+	struct DrawCustomComponentFieldsVisitor
 	{
 		void operator()(EditorUI::CheckboxSpec& spec)
 		{
 			// Get component data pointer
-			ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-			Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+			Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 			// Get field data pointer
 			uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -3058,10 +3063,10 @@ namespace Kargono::Panels
 		void operator()(EditorUI::EditTextSpec& spec)
 		{
 			// Get component data pointer
-			ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-			Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+			Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 			// Get field data pointer
 			uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -3075,10 +3080,11 @@ namespace Kargono::Panels
 		void operator()(EditorUI::EditIntegerSpec& spec)
 		{
 			// Get component data pointer
-			ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-			Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+			Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
+			KG_ASSERT(componentDataRef);
 
 			// Get field data pointer
 			uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -3111,10 +3117,10 @@ namespace Kargono::Panels
 		void operator()(EditorUI::EditFloatSpec& spec)
 		{
 			// Get component data pointer
-			ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-			Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+			Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 			// Get field data pointer
 			uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -3133,10 +3139,10 @@ namespace Kargono::Panels
 		void operator()(EditorUI::EditVec3Spec& spec)
 		{
 			// Get component data pointer
-			ProjectComponentFieldInfo& projectCompFieldInfo = *(ProjectComponentFieldInfo*)spec.m_ProvidedData.get();
-			Ref<ECS::ProjectComponent> projectComponentRef = Assets::AssetService::GetProjectComponent(projectCompFieldInfo.m_ProjectComponentHandle);
+			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
+			Ref<ECSInternal::CustomComponent> projectComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity();
-			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetProjectComponentData(projectCompFieldInfo.m_ProjectComponentHandle);
+			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 			// Get field data pointer
 			uint8_t* fieldDataRef = componentDataRef + projectComponentRef->m_DataOffsets.at(projectCompFieldInfo.m_FieldSlot);
@@ -3154,14 +3160,14 @@ namespace Kargono::Panels
 		}
 	};
 
-	void SceneEditorPanel::DrawProjectComponent(ECS::Entity entity, Assets::AssetHandle componentHandle)
+	void SceneEditorPanel::DrawCustomComponent(ECS::Entity entity, Assets::AssetHandle componentHandle)
 	{
-		if (!entity.HasProjectComponentData(componentHandle))
+		if (!entity.HasCustomComponentData(componentHandle))
 		{
 			return;
 		}
 
-		ProjectComponentWidgetData& activeWidgetData = m_AllProjectComponents.at(componentHandle);
+		CustomComponentWidgetData& activeWidgetData = m_AllCustomComponents.at(componentHandle);
 		EditorUI::EditorUIService::CollapsingHeader(activeWidgetData.m_Header);
 
 		// Display all component fields
@@ -3169,7 +3175,7 @@ namespace Kargono::Panels
 		{
 			for (size_t iteration{ 0 }; iteration < activeWidgetData.m_Fields.size(); iteration++)
 			{
-				std::visit(DrawProjectComponentFieldsVisitor{}, activeWidgetData.m_Fields.at(iteration));
+				std::visit(DrawCustomComponentFieldsVisitor{}, activeWidgetData.m_Fields.at(iteration));
 			}
 		}
 	}
@@ -3562,28 +3568,28 @@ namespace Kargono::Panels
 			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
-		// Handle adding project components
-		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+		// Handle adding custom components
+		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
 		{
-			if (!entity.HasProjectComponentData(handle))
+			if (!entity.HasCustomComponentData(handle))
 			{
 				continue;
 			}
 			// Add component to entity & update tree
-			Ref<ECS::ProjectComponent> component = Assets::AssetService::GetProjectComponent(handle);
+			Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(handle);
 			KG_ASSERT(component);
 			componentEntry.m_Label = component->m_Name;
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(
-				ECSInternal::GetComponentIdentifier<ECS::ProjectComponent>(), handle);
+				GetModuleTypeIdentifier<ECSInternal::CustomComponent>(), handle);
 			componentEntry.m_IconHandle = EditorUI::EditorUIService::s_IconEntity;
 			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID(ECSInternal::EntityID((int)entry.m_Handle));
 				s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 				s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
-					ECSInternal::GetComponentIdentifier<ECS::ProjectComponent>());
+					GetModuleTypeIdentifier<ECSInternal::CustomComponent>());
 				SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)entry.m_ProvidedData.get();
-				s_MainWindow->m_SceneEditorPanel->SetDisplayedProjectComponent(entryData.m_ProjectComponentHandle);
+				s_MainWindow->m_SceneEditorPanel->SetDisplayedCustomComponent(entryData.m_CustomComponentHandle);
 			};
 			newEntry.m_SubEntries.push_back(componentEntry);
 		}

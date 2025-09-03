@@ -879,7 +879,7 @@ namespace Kargono::EditorUI
 		s_IconAudio_KG = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Audio_KG.png");
 		s_IconFont_KG = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Font_KG.png");
 		s_IconGlobalState = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/GameState.png");
-		s_IconProjectComponent = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/ProjectComponent.png");
+		s_IconCustomComponent = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/CustomComponent.png");
 		s_IconScript = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Script.png");
 		s_IconTexture_KG = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/Texture_KG.png");
 		s_IconEmitterConfig = Rendering::Texture2D::CreateEditorTexture(workingDir / "Resources/Icons/ContentBrowser/EmitterConfig.png");
@@ -970,7 +970,7 @@ namespace Kargono::EditorUI
 		s_IconAudio_KG.reset();
 		s_IconFont_KG.reset();
 		s_IconGlobalState.reset();
-		s_IconProjectComponent.reset();
+		s_IconCustomComponent.reset();
 		s_IconScript.reset();
 		s_IconTexture_KG.reset();
 		s_IconParticles.reset();

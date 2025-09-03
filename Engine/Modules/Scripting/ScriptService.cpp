@@ -675,11 +675,11 @@ namespace Kargono::Scripting
 			Assets::AssetService::DeserializeScriptRegistry();
 		}
 
-		// Load in project components if not already loaded
-		if (Assets::AssetService::GetProjectComponentRegistry().size() == 0)
+		// Load in custom components if not already loaded
+		if (Assets::AssetService::GetCustomComponentRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
-			Assets::AssetService::DeserializeProjectComponentRegistry();
+			Assets::AssetService::DeserializeCustomComponentRegistry();
 		}
 
 		// Load in ai states if not already loaded
@@ -964,8 +964,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
-		AddEngineFunctionToCPPFileThreeParameters(Scenes_GetProjectComponentField, void*, uint64_t, uint64_t, uint64_t)
-		AddEngineFunctionToCPPFileFourParameters(Scenes_SetProjectComponentField, void, uint64_t, uint64_t, uint64_t, void*)
+		AddEngineFunctionToCPPFileThreeParameters(Scenes_GetCustomComponentField, void*, uint64_t, uint64_t, uint64_t)
+		AddEngineFunctionToCPPFileFourParameters(Scenes_SetCustomComponentField, void, uint64_t, uint64_t, uint64_t, void*)
 		// User Interface
 		AddEngineFunctionToCPPFileNoParameters(RuntimeUI_ClearSelectedWidget, void)
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_IsUserInterfaceActiveFromHandle, bool, uint64_t)
@@ -1177,11 +1177,11 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(Scenes_GetProjectComponentField)
+		AddEngineFunctionToCPPFileEnd(Scenes_GetCustomComponentField)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(Scenes_SetProjectComponentField)
+		AddEngineFunctionToCPPFileEnd(Scenes_SetCustomComponentField)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
 		outputStream << "{\n";
@@ -1629,8 +1629,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
 		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_SetLinearVelocity, VoidUInt64Vec2)
 		AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_GetLinearVelocity, Vec2UInt64)
-		AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, Scenes::SceneService::GetProjectComponentField, VoidPtrUInt64UInt64UInt64)
-		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, Scenes::SceneService::SetProjectComponentField, VoidUInt64UInt64UInt64VoidPtr)
+		AddEngineFunctionPointerToDll(Scenes_GetCustomComponentField, Scenes::SceneService::GetCustomComponentField, VoidPtrUInt64UInt64UInt64)
+		AddEngineFunctionPointerToDll(Scenes_SetCustomComponentField, Scenes::SceneService::SetCustomComponentField, VoidUInt64UInt64UInt64VoidPtr)
 		AddEngineFunctionPointerToDll(TagComponent_GetTag, Scenes::SceneService::TagComponentGetTag, StringUInt64)
 		
 	}

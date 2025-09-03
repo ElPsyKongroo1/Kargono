@@ -3,7 +3,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Modules/ECSInternal/ECSInternalCommon.h"
-#include "Modules/ECS/Module/ECSModule.h"
+#include "Modules/ECSInternal/Module/ECSInternalModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
 
 #include <array>
@@ -13,16 +13,16 @@
 #include <limits>
 #include <algorithm>
 
-namespace Kargono::ECS
+namespace Kargono::ECSInternal
 {
-	struct ProjectComponent
+	struct CustomComponent
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		ProjectComponent() = default;
-		~ProjectComponent() = default;
+		CustomComponent() = default;
+		~CustomComponent() = default;
 	public:
 		//==============================
 		// Interact w/ Fields
@@ -36,10 +36,31 @@ namespace Kargono::ECS
 
 	public:
 		//==============================
+		// Copy Function(s)
+		//==============================
+		void CopyTo(void* src, void* dst)
+		{
+			KG_ASSERT(src);
+			KG_ASSERT(dst);
+			KG_ASSERT(m_DataNames.size() == m_DataTypes.size());
+			KG_ASSERT(m_DataTypes.size() == m_DataOffsets.size());
+
+			for (size_t i{ 0 }; i < m_DataTypes.size(); i++)
+			{
+				Utility::TransferDataForWrappedVarBuffer
+				(
+					m_DataTypes[i],
+					(uint8_t*)src + m_DataOffsets[i],
+					(uint8_t*)dst + m_DataOffsets[i]
+				);
+			}
+		}
+	public:
+		//==============================
 		// Getters/Setters
 		//==============================
-		ECSInternal::ComponentIdentifier RevalidateIdentifier();
-		ECSInternal::ComponentMetadata GenerateMetadata() const;
+		ComponentIdentifier RevalidateIdentifier();
+		ComponentMetadata GenerateMetadata() const;
 		size_t RevalidateAlignment();
 	public:
 		//==============================
@@ -48,15 +69,23 @@ namespace Kargono::ECS
 		FixedBufStr32 m_Name{};
 		size_t m_ComponentSize{ 0 };
 		size_t m_ComponentAlignment{ 1 };
-		ECSInternal::ComponentIdentifier m_Identifier{ ECSInternal::k_InvalidComponentIdentifier };
+		ComponentIdentifier m_Identifier{ k_InvalidComponentIdentifier };
 		std::vector<WrappedVarType> m_DataTypes;
 		std::vector<size_t> m_DataOffsets;
 		std::vector<FixedBufStr32> m_DataNames;
 	};
 
+	Register_Module_Type(CustomComponent)
 
+	inline void CustomComponentCopyTo(void* src, void* dst, void* customComp)
+	{
+		KG_ASSERT(src);
+		KG_ASSERT(dst);
+		KG_ASSERT(customComp);
 
-	Register_Module_Type(ProjectComponent)
+		CustomComponent* customComponent{(CustomComponent*)customComp};
 
+		customComponent->CopyTo(src, dst);
+	}
 
 }

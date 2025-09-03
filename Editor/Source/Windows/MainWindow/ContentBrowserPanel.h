@@ -29,7 +29,7 @@ namespace Kargono::Panels
 		Font,
 		GameState,
 		GlobalState,
-		ProjectComponent,
+		CustomComponent,
 		ProjectEnum,
 		InputMap,
 		Registry,
@@ -191,7 +191,7 @@ namespace Kargono::Utility
 		if (currentFileExtension == ".kgaudio") { return Panels::BrowserFileType::Audio; }
 		if (currentFileExtension == ".kgfont") { return Panels::BrowserFileType::Font; }
 		if (currentFileExtension == ".kgpalette") { return Panels::BrowserFileType::ColorPalette; }
-		if (currentFileExtension == ".kgcomponent") { return Panels::BrowserFileType::ProjectComponent; }
+		if (currentFileExtension == ".kgcomponent") { return Panels::BrowserFileType::CustomComponent; }
 		if (currentFileExtension == ".kgenum") { return Panels::BrowserFileType::ProjectEnum; }
 		if (currentFileExtension == ".kgreg") { return Panels::BrowserFileType::Registry; }
 		if (currentFileExtension == ".kgui") { return Panels::BrowserFileType::UserInterface; }
@@ -230,7 +230,7 @@ namespace Kargono::Utility
 		case Panels::BrowserFileType::Font: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::GameState: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::GlobalState: { return "CONTENT_BROWSER_ITEM"; }
-		case Panels::BrowserFileType::ProjectComponent: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::CustomComponent: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::ProjectEnum: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::InputMap: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Registry: { return "CONTENT_BROWSER_ITEM"; }

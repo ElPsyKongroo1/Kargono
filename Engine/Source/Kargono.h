@@ -28,8 +28,7 @@
 
 //-----------------ECS-----------------//
 #include "Modules/ECS/Entity.h"
-#include "Modules/ECS/EngineComponents.h"
-#include "Modules/ECS/ProjectComponent.h"
+#include "Modules/ECSInternal/CustomComponent.h"
 
 //-----------------Events-----------------//
 #include "Modules/Events/KeyEvent.h"

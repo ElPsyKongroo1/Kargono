@@ -31,7 +31,7 @@ namespace Kargono::Assets
 
 		bool RemoveScript(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle scriptHandle);
 		bool RemoveAIState(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle aiStateHandle);
-		bool RemoveProjectComponent(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle projectCompHandle);
+		bool RemoveCustomComponent(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle projectCompHandle);
 		bool RemoveEmitterConfig(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle emitterConfigHandle);
 	};
 }

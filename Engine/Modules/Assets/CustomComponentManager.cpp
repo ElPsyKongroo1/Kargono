@@ -1,14 +1,14 @@
 #include "kgpch.h"
 
 #include "Modules/Assets/AssetService.h"
-#include "Modules/Assets/ProjectComponentManager.h"
+#include "Modules/Assets/CustomComponentManager.h"
 #include "Kargono/Scenes/Scene.h"
 
-#include "Modules/ECS/Components/ProjectComponent.h"
+#include "Modules/ECSInternal/CustomComponent.h"
 
 namespace Kargono::Assets
 {
-	Ref<void> ProjectComponentManager::SaveAssetValidation(Ref<ECS::ProjectComponent> newAssetRef, AssetHandle assetHandle)
+	Ref<void> CustomComponentManager::SaveAssetValidation(Ref<ECSInternal::CustomComponent> newAssetRef, AssetHandle assetHandle)
 	{
 
 		// Get old assetInfo reference
@@ -17,7 +17,7 @@ namespace Kargono::Assets
 			(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
 				Projects::ProjectService::GetActiveIntermediateDirectory() / assetInfo.Data.IntermediateLocation :
 				Projects::ProjectService::GetActiveAssetDirectory() / assetInfo.Data.FileLocation);
-		Ref<ECS::ProjectComponent> oldAssetRef = DeserializeAsset(assetInfo, assetPath);
+		Ref<ECSInternal::CustomComponent> oldAssetRef = DeserializeAsset(assetInfo, assetPath);
 
 		// Create reallocation instructions which stores information for transferring data from old entity components to new entity components
 		Ref<FieldReallocationInstructions> newReallocationInstructions = CreateRef<FieldReallocationInstructions>();
@@ -62,25 +62,25 @@ namespace Kargono::Assets
 
 		return newReallocationInstructions;
 	}
-	void ProjectComponentManager::CreateAssetFileFromName(std::string_view name, AssetInfo& assetInfo, const std::filesystem::path& assetPath)
+	void CustomComponentManager::CreateAssetFileFromName(std::string_view name, AssetInfo& assetInfo, const std::filesystem::path& assetPath)
 	{
-		// Create new project component
-		Ref<ECS::ProjectComponent> newProjectComponent = CreateRef<ECS::ProjectComponent>();
-		newProjectComponent->m_Name = name;
+		// Create new custom component
+		Ref<ECSInternal::CustomComponent> newCustomComponent = CreateRef<ECSInternal::CustomComponent>();
+		newCustomComponent->m_Name = name;
 
 		// Get identifier
-		ECSInternal::ComponentIdentifier identifier = newProjectComponent->RevalidateIdentifier();
-		newProjectComponent->m_Identifier = identifier;
+		ECSInternal::ComponentIdentifier identifier = newCustomComponent->RevalidateIdentifier();
+		newCustomComponent->m_Identifier = identifier;
 
 		// Save into File
-		SerializeAsset(newProjectComponent, assetPath);
+		SerializeAsset(newCustomComponent, assetPath);
 
 		// Load data into In-Memory Metadata object
-		Ref<Assets::ProjectComponentMetaData> metadata = CreateRef<Assets::ProjectComponentMetaData>();
+		Ref<Assets::CustomComponentMetaData> metadata = CreateRef<Assets::CustomComponentMetaData>();
 		metadata->Name = name;
 		assetInfo.Data.SpecificFileData = metadata;
 	}
-	void ProjectComponentManager::SerializeAsset(Ref<ECS::ProjectComponent> assetReference, const std::filesystem::path& assetPath)
+	void CustomComponentManager::SerializeAsset(Ref<ECSInternal::CustomComponent> assetReference, const std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -124,11 +124,11 @@ namespace Kargono::Assets
 		std::ofstream fout(assetPath);
 		fout << out.c_str();
 	}
-	Ref<ECS::ProjectComponent> ProjectComponentManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
+	Ref<ECSInternal::CustomComponent> CustomComponentManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
 	{
 		UNREFERENCED_PARAMETER(asset);
 
-		Ref<ECS::ProjectComponent> newProjectComponent = CreateRef<ECS::ProjectComponent>();
+		Ref<ECSInternal::CustomComponent> newCustomComponent = CreateRef<ECSInternal::CustomComponent>();
 		YAML::Node data;
 		try
 		{
@@ -141,18 +141,18 @@ namespace Kargono::Assets
 		}
 
 		// Get name / identifier
-		newProjectComponent->m_Name = data["Name"].as<std::string>();
-		newProjectComponent->m_Identifier = data["Identifier"].as<ECSInternal::ComponentIdentifier>();
+		newCustomComponent->m_Name = data["Name"].as<std::string>();
+		newCustomComponent->m_Identifier = data["Identifier"].as<ECSInternal::ComponentIdentifier>();
 
 		// Get component size information
-		newProjectComponent->m_ComponentSize = data["ComponentSize"].as<uint64_t>();
-		newProjectComponent->m_ComponentAlignment = data["ComponentAlignment"].as<uint64_t>();
+		newCustomComponent->m_ComponentSize = data["ComponentSize"].as<uint64_t>();
+		newCustomComponent->m_ComponentAlignment = data["ComponentAlignment"].as<uint64_t>();
 
 		// Get Data Types
 		YAML::Node dataTypesNode = data["DataTypes"];
 		if (dataTypesNode)
 		{
-			std::vector<WrappedVarType>& newTypesList = newProjectComponent->m_DataTypes;
+			std::vector<WrappedVarType>& newTypesList = newCustomComponent->m_DataTypes;
 			for (auto dataTypeNode : dataTypesNode)
 			{
 				newTypesList.push_back(Utility::StringToWrappedVarType(dataTypeNode.as<std::string>()));
@@ -163,7 +163,7 @@ namespace Kargono::Assets
 		YAML::Node dataLocationsNode = data["DataLocations"];
 		if (dataLocationsNode)
 		{
-			std::vector<uint64_t>& newLocationsList = newProjectComponent->m_DataOffsets;
+			std::vector<uint64_t>& newLocationsList = newCustomComponent->m_DataOffsets;
 			for (auto dataLocationNode : dataLocationsNode)
 			{
 				newLocationsList.push_back(dataLocationNode.as<uint64_t>());
@@ -174,40 +174,40 @@ namespace Kargono::Assets
 		YAML::Node dataNamesNode = data["DataNames"];
 		if (dataNamesNode)
 		{
-			std::vector<FixedBufStr32>& newNamesList{ newProjectComponent->m_DataNames };
+			std::vector<FixedBufStr32>& newNamesList{ newCustomComponent->m_DataNames };
 			for (const YAML::Node& dataNameNode : dataNamesNode)
 			{
 				newNamesList.push_back(dataNameNode.as<std::string>().c_str());
 			}
 		}
 		
-		return newProjectComponent;
+		return newCustomComponent;
 	}
 
-	void ProjectComponentManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset)
+	void CustomComponentManager::SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset)
 	{
-		Assets::ProjectComponentMetaData* metadata = currentAsset.Data.GetSpecificMetaData<ProjectComponentMetaData>();
+		Assets::CustomComponentMetaData* metadata = currentAsset.Data.GetSpecificMetaData<CustomComponentMetaData>();
 		serializer << YAML::Key << "Name" << YAML::Value << metadata->Name;
 	}
-	void ProjectComponentManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset)
+	void CustomComponentManager::DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset)
 	{
-		Ref<Assets::ProjectComponentMetaData> metadata = CreateRef<Assets::ProjectComponentMetaData>();
+		Ref<Assets::CustomComponentMetaData> metadata = CreateRef<Assets::CustomComponentMetaData>();
 		metadata->Name = metadataNode["Name"].as<std::string>();
 		currentAsset.Data.SpecificFileData = metadata;
 	}
-	void ProjectComponentManager::DeleteAssetValidation(AssetHandle assetHandle)
+	void CustomComponentManager::DeleteAssetValidation(AssetHandle assetHandle)
 	{
-		Ref<ECS::ProjectComponent> deleteComponentRef = GetAsset(assetHandle);
+		Ref<ECSInternal::CustomComponent> deleteComponentRef = GetAsset(assetHandle);
 		KG_ASSERT(deleteComponentRef);
 
 		
-		// Handle deleting the project component by removing entity data from all scenes
+		// Handle deleting the custom component by removing entity data from all scenes
 		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())
 		{
 			// Get scene
 			Ref<Scenes::Scene> currentScene = Assets::AssetService::GetScene(sceneHandle);
 
-			bool sceneModified = Assets::AssetService::RemoveProjectComponentFromScene(currentScene, assetHandle);
+			bool sceneModified = Assets::AssetService::RemoveCustomComponentFromScene(currentScene, assetHandle);
 
 			if (sceneModified)
 			{

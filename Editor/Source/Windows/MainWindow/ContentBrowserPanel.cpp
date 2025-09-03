@@ -217,14 +217,14 @@ namespace Kargono::Panels
 			} };
 			m_RightClickTooltip.AddTooltipEntry(openInputMapTooltipEntry);
 		}
-		else if (fileType == BrowserFileType::ProjectComponent)
+		else if (fileType == BrowserFileType::CustomComponent)
 		{
-			EditorUI::TooltipEntry openProjectComponentTooltipEntry{ "Open Project Component", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry openCustomComponentTooltipEntry{ "Open Custom Component", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				UNREFERENCED_PARAMETER(currentEntry);
-				s_MainWindow->m_ProjectComponentPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+				s_MainWindow->m_CustomComponentPanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
 			} };
-			m_RightClickTooltip.AddTooltipEntry(openProjectComponentTooltipEntry);
+			m_RightClickTooltip.AddTooltipEntry(openCustomComponentTooltipEntry);
 		}
 		else if (fileType == BrowserFileType::ProjectEnum)
 		{
@@ -560,24 +560,24 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgcomponent")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
-			// If project component in registry is not found, simply delete the file
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetCustomComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If custom component in registry is not found, simply delete the file
 			if (resultHandle == Assets::EmptyHandle)
 			{
-				KG_WARN("File extension recognized as a project component, however, no project component could be found in registry. Moving the indicated file without updating registry.");
+				KG_WARN("File extension recognized as a custom component, however, no custom component could be found in registry. Moving the indicated file without updating registry.");
 
 			}
 			else
 			{
 				// Handle revalidating internal registry
-				bool success = Assets::AssetService::SetProjectComponentFileLocation(resultHandle, newRelativePath);
+				bool success = Assets::AssetService::SetCustomComponentFileLocation(resultHandle, newRelativePath);
 				if (success)
 				{
-					KG_INFO("Updated location of project component asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
+					KG_INFO("Updated location of custom component asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
 				}
 				else
 				{
-					KG_WARN("Could not update project component location in registry");
+					KG_WARN("Could not update custom component location in registry");
 				}
 			}
 		}
@@ -839,15 +839,15 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kgcomponent")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
-			// If project component in registry is not found, simply delete the file
+			Assets::AssetHandle resultHandle = Assets::AssetService::GetCustomComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
+			// If custom component in registry is not found, simply delete the file
 			if (resultHandle == Assets::EmptyHandle)
 			{
-				KG_WARN("File extension recognized as a project component asset, however, no project component asset could be found in registry. Deleting the file provided.");
+				KG_WARN("File extension recognized as a custom component asset, however, no custom component asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
 				return;
 			}
-			Assets::AssetService::DeleteProjectComponent(resultHandle);
+			Assets::AssetService::DeleteCustomComponent(resultHandle);
 		}
 		else if (currentExtension == ".kgscene")
 		{
@@ -1042,11 +1042,11 @@ namespace Kargono::Panels
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::InputMap, inputMapArch);
 
 		EditorUI::GridEntryArchetype projectComponentArch;
-		projectComponentArch.m_Icon = EditorUI::EditorUIService::s_IconProjectComponent;
+		projectComponentArch.m_Icon = EditorUI::EditorUIService::s_IconCustomComponent;
 		projectComponentArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
 		projectComponentArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		projectComponentArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::ProjectComponent, projectComponentArch);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::CustomComponent, projectComponentArch);
 		
 		EditorUI::GridEntryArchetype registryArch;
 		registryArch.m_Icon = EditorUI::EditorUIService::s_IconRegistry;
@@ -1227,14 +1227,14 @@ namespace Kargono::Panels
 			}};
 			createFileOptions.push_back(createInputMapTooltipEntry);
 
-			// Add create Project Component
-			EditorUI::TooltipEntry createProjectComponentTooltipEntry{ "Project Component", [&](EditorUI::TooltipEntry& currentEntry)
+			// Add create Custom Component
+			EditorUI::TooltipEntry createCustomComponentTooltipEntry{ "Custom Component", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				UNREFERENCED_PARAMETER(currentEntry);
-				// TODO: Add code to add Project Component
-				s_MainWindow->m_ProjectComponentPanel->OpenCreateDialog(m_CurrentDirectory);
+				// TODO: Add code to add Custom Component
+				s_MainWindow->m_CustomComponentPanel->OpenCreateDialog(m_CurrentDirectory);
 			} };
-			createFileOptions.push_back(createProjectComponentTooltipEntry);
+			createFileOptions.push_back(createCustomComponentTooltipEntry);
 
 			// Add create Project Enum
 			EditorUI::TooltipEntry createProjectEnumTooltipEntry{ "Project Enum", [&](EditorUI::TooltipEntry& currentEntry)

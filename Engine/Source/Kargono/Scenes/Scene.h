@@ -67,9 +67,9 @@ namespace Kargono::Scenes
 		bool IsRunning() const { return m_IsRunning; }
 	public:
 		void RegisterAllComponents();
-		void AddProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
-		void ClearProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
-		std::size_t GetProjectComponentCount(Assets::AssetHandle projectComponentHandle);
+		void AddCustomComponentRegistry(Assets::AssetHandle projectComponentHandle);
+		void ClearCustomComponentRegistry(Assets::AssetHandle projectComponentHandle);
+		std::size_t GetCustomComponentCount(Assets::AssetHandle projectComponentHandle);
 		//====================
 		// Create/Destroy Scene Entities
 		//====================
@@ -171,8 +171,8 @@ namespace Kargono::Scenes
 		static const std::string& TagComponentGetTag(UUID entityID);
 		static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
 		static Math::vec2 Rigidbody2DComponent_GetLinearVelocity(UUID entityID);
-		static void SetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value);
-		static void* GetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation);
+		static void SetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value);
+		static void* GetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation);
 		
 
 		//====================

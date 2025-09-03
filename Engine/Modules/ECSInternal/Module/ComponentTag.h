@@ -16,7 +16,7 @@ namespace Kargono::ECSInternal
     Register_Module_Tag(Component, ComponentConcept<t_Type>)
 
 	// Component Identifier
-	using ComponentIdentifier = uint32_t;
+	using ComponentIdentifier = ModuleTypeIdentifier;
 	constexpr ComponentIdentifier k_InvalidComponentIdentifier
 	{
 		std::numeric_limits<ComponentIdentifier>::max()
@@ -28,9 +28,6 @@ namespace Kargono::ECSInternal
 	template<ComponentConcept t_ComponentType>
 	consteval ComponentIdentifier GetComponentIdentifier()
 	{
-		constexpr auto name{ GetUniqueIdentifier<t_ComponentType>() };
-		constexpr ComponentIdentifier identifier
-		{ Utility::FileSystem::CRCFromString(name.CString()) };
-		return identifier;
+		return GetModuleTypeIdentifier<t_ComponentType>();
 	}
 }
