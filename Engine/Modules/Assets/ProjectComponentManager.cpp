@@ -4,7 +4,7 @@
 #include "Modules/Assets/ProjectComponentManager.h"
 #include "Kargono/Scenes/Scene.h"
 
-#include "Modules/ECS/ProjectComponent.h"
+#include "Modules/ECS/Components/ProjectComponent.h"
 
 namespace Kargono::Assets
 {
@@ -24,10 +24,10 @@ namespace Kargono::Assets
 
 		// Store old types/locations and new types/locations
 		newReallocationInstructions->m_OldDataTypes = oldAssetRef->m_DataTypes;
-		newReallocationInstructions->m_OldDataLocations = oldAssetRef->m_DataLocations;
+		newReallocationInstructions->m_OldDataLocations = oldAssetRef->m_DataOffsets;
 
 		newReallocationInstructions->m_NewDataTypes = newAssetRef->m_DataTypes;
-		newReallocationInstructions->m_NewDataLocations = newAssetRef->m_DataLocations;
+		newReallocationInstructions->m_NewDataLocations = newAssetRef->m_DataOffsets;
 
 		newReallocationInstructions->m_NewDataSize = newAssetRef->m_ComponentSize;
 		for (auto& [sceneHandle, asset] : Assets::AssetService::GetSceneRegistry())
@@ -69,10 +69,7 @@ namespace Kargono::Assets
 		newProjectComponent->m_Name = name;
 
 		// Get identifier
-		std::string identifierStr{ "ProjectComponent" "::" + newProjectComponent->m_Name };
-		ECSInternal::ComponentIdentifier identifier =
-			Utility::FileSystem::CRCFromString(identifierStr.c_str());
-
+		ECSInternal::ComponentIdentifier identifier = newProjectComponent->RevalidateIdentifier();
 		newProjectComponent->m_Identifier = identifier;
 
 		// Save into File
@@ -87,12 +84,13 @@ namespace Kargono::Assets
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
-		// Save name
+		// Save name/identifier
 		out << YAML::Key << "Name" << YAML::Value << assetReference->m_Name;
+		out << YAML::Key << "Identifier" << YAML::Value << assetReference->m_Identifier;
 
 		// Save size information
 		out << YAML::Key << "ComponentSize" << YAML::Value << assetReference->m_ComponentSize;
-		out << YAML::Key << "Identifier" << YAML::Value << assetReference->m_Identifier;
+		out << YAML::Key << "ComponentAlignment" << YAML::Value << assetReference->m_ComponentAlignment;
 
 		// Save data types
 		out << YAML::Key << "DataTypes" << YAML::Value;
@@ -106,7 +104,7 @@ namespace Kargono::Assets
 		// Save data locations
 		out << YAML::Key << "DataLocations" << YAML::Value;
 		out << YAML::BeginSeq; // Start of Data Locations Sequence
-		for (uint64_t location : assetReference->m_DataLocations)
+		for (uint64_t location : assetReference->m_DataOffsets)
 		{
 			out << YAML::Value << location;
 		}
@@ -142,12 +140,13 @@ namespace Kargono::Assets
 			return nullptr;
 		}
 
-		// Get name
+		// Get name / identifier
 		newProjectComponent->m_Name = data["Name"].as<std::string>();
+		newProjectComponent->m_Identifier = data["Identifier"].as<ECSInternal::ComponentIdentifier>();
 
 		// Get component size information
 		newProjectComponent->m_ComponentSize = data["ComponentSize"].as<uint64_t>();
-		newProjectComponent->m_Identifier = data["Identifier"].as<ECSInternal::ComponentIdentifier>();
+		newProjectComponent->m_ComponentAlignment = data["ComponentAlignment"].as<uint64_t>();
 
 		// Get Data Types
 		YAML::Node dataTypesNode = data["DataTypes"];
@@ -164,7 +163,7 @@ namespace Kargono::Assets
 		YAML::Node dataLocationsNode = data["DataLocations"];
 		if (dataLocationsNode)
 		{
-			std::vector<uint64_t>& newLocationsList = newProjectComponent->m_DataLocations;
+			std::vector<uint64_t>& newLocationsList = newProjectComponent->m_DataOffsets;
 			for (auto dataLocationNode : dataLocationsNode)
 			{
 				newLocationsList.push_back(dataLocationNode.as<uint64_t>());

@@ -79,29 +79,29 @@ namespace Kargono::Physics
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
-				fixtureDef.density = boxColliderComp.Density;
-				fixtureDef.friction = boxColliderComp.Friction;
-				fixtureDef.restitution = boxColliderComp.Restitution;
-				fixtureDef.restitutionThreshold = boxColliderComp.RestitutionThreshold;
-				fixtureDef.isSensor = boxColliderComp.IsSensor;
+				fixtureDef.density = boxColliderComp.m_Density;
+				fixtureDef.friction = boxColliderComp.m_Friction;
+				fixtureDef.restitution = boxColliderComp.m_Restitution;
+				fixtureDef.restitutionThreshold = boxColliderComp.m_RestitutionThreshold;
+				fixtureDef.isSensor = boxColliderComp.m_IsSensor;
 				body->CreateFixture(&fixtureDef);
 			}
 
-			if (entity.HasComponent<ECS::CircleCollider2DComponent>())
+			if (entity.HasComponent<Physics2D::CircleCollider2DComponent>())
 			{
-				ECS::CircleCollider2DComponent& circleColliderComponent = entity.GetComponent<ECS::CircleCollider2DComponent>();
+				Physics2D::CircleCollider2DComponent& circleColliderComponent = entity.GetComponent<Physics2D::CircleCollider2DComponent>();
 
 				b2CircleShape circleShape;
-				circleShape.m_p.Set(circleColliderComponent.Offset.x, circleColliderComponent.Offset.y);
-				circleShape.m_radius = transform.Scale.x * circleColliderComponent.Radius;
+				circleShape.m_p.Set(circleColliderComponent.m_Offset.x, circleColliderComponent.m_Offset.y);
+				circleShape.m_radius = transform.m_Scale.x * circleColliderComponent.m_Radius;
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &circleShape;
-				fixtureDef.density = circleColliderComponent.Density;
-				fixtureDef.friction = circleColliderComponent.Friction;
-				fixtureDef.restitution = circleColliderComponent.Restitution;
-				fixtureDef.restitutionThreshold = circleColliderComponent.RestitutionThreshold;
-				fixtureDef.isSensor = circleColliderComponent.IsSensor;
+				fixtureDef.density = circleColliderComponent.m_Density;
+				fixtureDef.friction = circleColliderComponent.m_Friction;
+				fixtureDef.restitution = circleColliderComponent.m_Restitution;
+				fixtureDef.restitutionThreshold = circleColliderComponent.m_RestitutionThreshold;
+				fixtureDef.isSensor = circleColliderComponent.m_IsSensor;
 				body->CreateFixture(&fixtureDef);
 			}
 		}
@@ -124,18 +124,18 @@ namespace Kargono::Physics
 		m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
 		// Retrieve transform from Box2D
-		auto view = i_Scene->GetAllEntitiesWith<ECS::Rigidbody2DComponent>();
+		auto view = i_Scene->GetAllEntitiesWith<Physics2D::Rigidbody2DComponent>();
 		for (auto enttID : view)
 		{
 			ECS::Entity entity = i_Scene->GetEntityByEnttID(enttID);
-			auto& transform = entity.GetComponent<ECS::TransformComponent>();
-			auto& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
+			TransformComponent& transform = entity.GetComponent<TransformComponent>();
+			Physics2D::Rigidbody2DComponent& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
 
-			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
 			const auto& position = body->GetPosition();
-			transform.Translation.x = position.x;
-			transform.Translation.y = position.y;
-			transform.Rotation.z = body->GetAngle();
+			transform.m_Translation.x = position.x;
+			transform.m_Translation.y = position.y;
+			transform.m_Rotation.z = body->GetAngle();
 			// TODO FOR DEBUGGING
 			KG_ASSERT(!std::isnan(position.x) && !std::isnan(position.y) && !std::isnan(body->GetAngle()));
 		}

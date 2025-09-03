@@ -23,14 +23,6 @@ namespace Kargono::ECSInternal
 	constexpr ComponentMask k_MaxComponents{ 32 }; // Arbitrary
 	using ComponentIndex = size_t;
 	using ComponentCount = ComponentIndex;
-	using ComponentIdentifier = uint32_t;
-	constexpr ComponentIdentifier k_InvalidComponentIdentifier
-	{ 
-		std::numeric_limits<ComponentIdentifier>::max() 
-	};
-
-	template<size_t t_NumComponents>
-	using ComponentIDList = std::array<ComponentIdentifier, t_NumComponents>;
 
 	using Signature = BitField<uint32_t>;
 

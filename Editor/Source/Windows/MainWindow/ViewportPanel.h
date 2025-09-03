@@ -9,6 +9,7 @@
 #include "Modules/Rendering/Framebuffer.h"
 #include "Kargono/Math/Spline.h"
 #include "Modules/RuntimeUI/RuntimeUICommon.h"
+#include "Kargono/Core/Window.h"
 
 #include <vector>
 

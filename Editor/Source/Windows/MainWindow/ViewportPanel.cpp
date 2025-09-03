@@ -11,6 +11,13 @@
 #include "Kargono/Utility/Operations.h"
 #include "Modules/Particles/ParticleService.h"
 
+#include "Modules/Rendering/Components/CameraComponent.h"
+#include "Modules/Rendering/Components/ShapeComponent.h"
+#include "Modules/Core/Components/TransformComponent.h"
+#include "Modules/Physics2D/Components/BoxCollider2DComponent.h"
+#include "Modules/Physics2D/Components/CircleCollider2DComponent.h"
+#include "Modules/Physics2D/Components/RigidBody2DComponent.h"
+
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
 
@@ -125,12 +132,12 @@ namespace Kargono::Panels
 			ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
 			if (cameraEntity)
 			{
-				Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
+				Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
 
 				if (mainCamera)
 				{
 					// Get camera transform
-					Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
+					Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
 					Math::mat4 cameraViewProjection = mainCamera->GetProjection() * glm::inverse(cameraTransform);
 
 					// Render particles
@@ -225,7 +232,7 @@ namespace Kargono::Panels
 					if (*Scenes::SceneService::GetActiveScene()->GetHoveredEntity())
 					{
 						s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveScene()->GetHoveredEntity());
-						s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
+						s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(ECSInternal::k_InvalidComponentIdentifier);
 
 						// Algorithm to enable double clicking for an entity!
 						static float previousTime{ 0.0f };
@@ -233,9 +240,9 @@ namespace Kargono::Panels
 						float currentTime = Utility::Time::GetTime();
 						if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::SceneService::GetActiveScene()->GetHoveredEntity() == previousEntity)
 						{
-							ECS::TransformComponent& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TransformComponent>();
-							m_EditorCamera.SetFocalPoint(transformComponent.Translation);
-							m_EditorCamera.SetDistance(std::max({ transformComponent.Scale.x, transformComponent.Scale.y, transformComponent.Scale.z }) * 2.5f);
+							TransformComponent& transformComponent = Scenes::SceneService::GetActiveScene()->GetHoveredEntity()->GetComponent<TransformComponent>();
+							m_EditorCamera.SetFocalPoint(transformComponent.m_Translation);
+							m_EditorCamera.SetDistance(std::max({ transformComponent.m_Scale.x, transformComponent.m_Scale.y, transformComponent.m_Scale.z }) * 2.5f);
 							m_EditorCamera.SetMovementType(Rendering::EditorPerspectiveCamera::MovementType::ModelView);
 						}
 						previousTime = currentTime;
@@ -290,7 +297,7 @@ namespace Kargono::Panels
 				Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 				// Entity Transform
-				ECS::TransformComponent& transformComponent = selectedEntity.GetComponent<ECS::TransformComponent>();
+				TransformComponent& transformComponent = selectedEntity.GetComponent<TransformComponent>();
 				Math::mat4 transform = transformComponent.GetTransform();
 
 				// Snapping
@@ -308,10 +315,10 @@ namespace Kargono::Panels
 					Math::vec3 translation, rotation, scale;
 					Math::DecomposeTransform(transform, translation, rotation, scale);
 
-					Math::vec3 deltaRotation = rotation - transformComponent.Rotation;
-					transformComponent.Translation = translation;
-					transformComponent.Rotation += deltaRotation;
-					transformComponent.Scale = scale;
+					Math::vec3 deltaRotation = rotation - transformComponent.m_Rotation;
+					transformComponent.m_Translation = translation;
+					transformComponent.m_Rotation += deltaRotation;
+					transformComponent.m_Scale = scale;
 				}
 			}
 		}
@@ -369,7 +376,7 @@ namespace Kargono::Panels
 			case Key::Escape:
 			{
 				s_MainWindow->m_SceneEditorPanel->SetSelectedEntity({});
-				s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
+				s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(ECSInternal::k_InvalidComponentIdentifier);
 				return true;
 			}
 			case Key::Tab:
@@ -458,7 +465,7 @@ namespace Kargono::Panels
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_ViewportFramebuffer->ReadPixel(1, mouseX, mouseY);
-			*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID((entt::entity)pixelData);
+			*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = Scenes::SceneService::GetActiveScene()->GetEntityByEnttID((ECSInternal::EntityID)pixelData);
 		}
 	}
 
@@ -505,8 +512,8 @@ namespace Kargono::Panels
 		{
 			return;
 		}
-		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{
@@ -613,9 +620,9 @@ namespace Kargono::Panels
 				Utility::FileSystem::CRCFromString("a_Color"),
 				localBuffer, localShader);
 
-			ECS::ShapeComponent* lineShapeComponent = new ECS::ShapeComponent();
-			lineShapeComponent->CurrentShape = Rendering::ShapeTypes::None;
-			lineShapeComponent->Vertices = nullptr;
+			Rendering::ShapeComponent* lineShapeComponent = new Rendering::ShapeComponent();
+			lineShapeComponent->m_CurrentShape = Rendering::ShapeTypes::None;
+			lineShapeComponent->m_Vertices = nullptr;
 
 			s_LineInputSpec.m_Shader = localShader;
 			s_LineInputSpec.m_Buffer = localBuffer;
@@ -637,10 +644,10 @@ namespace Kargono::Panels
 				Utility::FileSystem::CRCFromString("a_Fade"),
 				localBuffer, localShader);
 
-			ECS::ShapeComponent* shapeComp = new ECS::ShapeComponent();
-			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
-			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
-			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
+			Rendering::ShapeComponent* shapeComp = new Rendering::ShapeComponent();
+			shapeComp->m_CurrentShape = Rendering::ShapeTypes::Quad;
+			shapeComp->m_Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
+			shapeComp->m_Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
 
 			s_CircleInputSpec.m_Shader = localShader;
 			s_CircleInputSpec.m_Buffer = localBuffer;
@@ -657,9 +664,9 @@ namespace Kargono::Panels
 				Utility::FileSystem::CRCFromString("a_Color"),
 				localBuffer, localShader);
 
-			ECS::ShapeComponent* pointShapeComponent = new ECS::ShapeComponent();
-			pointShapeComponent->CurrentShape = Rendering::ShapeTypes::None;
-			pointShapeComponent->Vertices = nullptr;
+			Rendering::ShapeComponent* pointShapeComponent = new Rendering::ShapeComponent();
+			pointShapeComponent->m_CurrentShape = Rendering::ShapeTypes::None;
+			pointShapeComponent->m_Vertices = nullptr;
 
 			s_PointInputSpec.m_Shader = localShader;
 			s_PointInputSpec.m_Buffer = localBuffer;
@@ -705,7 +712,7 @@ namespace Kargono::Panels
 			{
 				return;
 			}
-			Rendering::RenderingService::BeginScene(cameraEntity.GetComponent<ECS::CameraComponent>().Camera, glm::inverse(cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform()));
+			Rendering::RenderingService::BeginScene(cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera, glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform()));
 		}
 		else
 		{
@@ -714,16 +721,18 @@ namespace Kargono::Panels
 
 		if (s_MainWindow->m_ShowPhysicsColliders)
 		{
+			Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
 			// Circle Colliders
 			{
-				auto view = Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<ECS::TransformComponent, ECS::CircleCollider2DComponent>();
-				for (auto entity : view)
+				auto view = activeScene->GetAllEntitiesWith<TransformComponent, Physics2D::CircleCollider2DComponent>();
+				for (ECSInternal::EntityID entity : view)
 				{
-					auto [tc, cc2d] = view.get<ECS::TransformComponent, ECS::CircleCollider2DComponent>(entity);
+					TransformComponent& tc = activeScene->m_EntityRegistry.m_Registry.GetComponent<TransformComponent>(entity).value();
+					Physics2D::CircleCollider2DComponent& cc2d = activeScene->m_EntityRegistry.m_Registry.GetComponent<Physics2D::CircleCollider2DComponent>(entity).value();
 
-					Math::vec3 translation = tc.Translation + Math::vec3(cc2d.Offset.x, cc2d.Offset.y, 0.001f);
+					Math::vec3 translation = tc.m_Translation + Math::vec3(cc2d.m_Offset.x, cc2d.m_Offset.y, 0.001f);
 
-					Math::vec3 scale = tc.Scale * Math::vec3(cc2d.Radius * 2.0f);
+					Math::vec3 scale = tc.m_Scale * Math::vec3(cc2d.m_Radius * 2.0f);
 
 					Math::mat4 transform = glm::translate(Math::mat4(1.0f), translation)
 						* glm::scale(Math::mat4(1.0f), scale);
@@ -734,16 +743,17 @@ namespace Kargono::Panels
 			}
 			// Box Colliders
 			{
-				auto view = Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<ECS::TransformComponent, ECS::BoxCollider2DComponent>();
-				for (entt::entity entity : view)
+				auto view = activeScene->GetAllEntitiesWith<TransformComponent, Physics2D::BoxCollider2DComponent>();
+				for (ECSInternal::EntityID entity : view)
 				{
-					auto [tc, bc2d] = view.get<ECS::TransformComponent, ECS::BoxCollider2DComponent>(entity);
+					TransformComponent& tc = activeScene->m_EntityRegistry.m_Registry.GetComponent<TransformComponent>(entity).value();
+					Physics2D::BoxCollider2DComponent& bc2d = activeScene->m_EntityRegistry.m_Registry.GetComponent<Physics2D::BoxCollider2DComponent>(entity).value();
 
-					Math::vec3 translation = tc.Translation + Math::vec3(bc2d.Offset.x, bc2d.Offset.y, 0.001f);
-					Math::vec3 scale = tc.Scale * Math::vec3(bc2d.Size * 2.0f, 1.0f);
+					Math::vec3 translation = tc.m_Translation + Math::vec3(bc2d.m_Offset.x, bc2d.m_Offset.y, 0.001f);
+					Math::vec3 scale = tc.m_Scale * Math::vec3(bc2d.m_Size * 2.0f, 1.0f);
 
 					Math::mat4 transform = glm::translate(Math::mat4(1.0f), translation)
-						* glm::rotate(Math::mat4(1.0f), tc.Rotation.z, Math::vec3(0.0f, 0.0f, 1.0f))
+						* glm::rotate(Math::mat4(1.0f), tc.m_Rotation.z, Math::vec3(0.0f, 0.0f, 1.0f))
 						* glm::scale(Math::mat4(1.0f), scale);
 
 					static Math::vec4 boxColliderColor {0.0f, 1.0f, 0.0f, 1.0f};
@@ -759,22 +769,22 @@ namespace Kargono::Panels
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[0]);
 					s_OutputVector->push_back(lineVertices[1]);
-					s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+					s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[1]);
 					s_OutputVector->push_back(lineVertices[2]);
-					s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+					s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[2]);
 					s_OutputVector->push_back(lineVertices[3]);
-					s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+					s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[3]);
 					s_OutputVector->push_back(lineVertices[0]);
-					s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+					s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				}
 			}
@@ -787,7 +797,7 @@ namespace Kargono::Panels
 			// Draw selected entity outline 
 			if (ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveScene()->GetSelectedEntity()) 
 			{
-				ECS::TransformComponent transform = selectedEntity.GetComponent<ECS::TransformComponent>();
+				TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
 				static Math::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};
 				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, 
 					Utility::FileSystem::CRCFromString("a_Color"),
@@ -806,11 +816,11 @@ namespace Kargono::Panels
 					s_OutputVector->clear();
 					s_OutputVector->push_back(lineVertices[indices.x]);
 					s_OutputVector->push_back(lineVertices[indices.y]);
-					s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+					s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 					Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				}
 
-				if (selectedEntity.HasComponent<ECS::CameraComponent>() && s_MainWindow->m_ShowCameraFrustums)
+				if (selectedEntity.HasComponent<Rendering::CameraComponent>() && s_MainWindow->m_ShowCameraFrustums)
 				{
 					DrawFrustrum(selectedEntity);
 				}
@@ -832,8 +842,8 @@ namespace Kargono::Panels
 		Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };
 
 		// Get entity transform and entity camera
-		auto& transform = entity.GetComponent<ECS::TransformComponent>();
-		auto& camera = entity.GetComponent<ECS::CameraComponent>();
+		auto& transform = entity.GetComponent<TransformComponent>();
+		auto& camera = entity.GetComponent<Rendering::CameraComponent>();
 		// Submit frustrum cube color to renderer input
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, 
 			Utility::FileSystem::CRCFromString("a_Color"),
@@ -843,7 +853,7 @@ namespace Kargono::Panels
 		// Set lineVertices 0 - 7 with vertices from camera frustum
 		for (size_t i = 0; i < 8; i++)
 		{
-			Math::vec4 localSpaceCoordinates = glm::inverse(camera.Camera.GetProjection()) * s_DefaultFrustumVertexPositions[i];
+			Math::vec4 localSpaceCoordinates = glm::inverse(camera.m_Camera.GetProjection()) * s_DefaultFrustumVertexPositions[i];
 			localSpaceCoordinates = localSpaceCoordinates / localSpaceCoordinates.w; // Perspective Division
 			lineVertices[i] = transform.GetTranslation() * transform.GetRotation() * localSpaceCoordinates;
 		}
@@ -864,7 +874,7 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			s_OutputVector->push_back(lineVertices[index.x]);
 			s_OutputVector->push_back(lineVertices[index.y]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			iteration++;
 		}
@@ -940,7 +950,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ currentLine, minimumValues.y, 0.0f });
 				s_OutputVector->push_back({ currentLine, maximumValues.y, 0.0f });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
 			}
@@ -957,7 +967,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ minimumValues.x, currentLine, 0.0f });
 				s_OutputVector->push_back({ maximumValues.x, currentLine, 0.0f });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
 			}
@@ -978,7 +988,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ 0.0f, currentLine, minimumValues.z });
 				s_OutputVector->push_back({ 0.0f, currentLine, maximumValues.z });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
 			}
@@ -995,7 +1005,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ 0.0f, minimumValues.y, currentLine});
 				s_OutputVector->push_back({ 0.0f, maximumValues.y, currentLine });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
 			}
@@ -1016,7 +1026,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ currentLine, 0.0f, minimumValues.z });
 				s_OutputVector->push_back({ currentLine, 0.0f, maximumValues.z });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
 			}
@@ -1033,7 +1043,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ minimumValues.x, 0.0f, currentLine });
 				s_OutputVector->push_back({ maximumValues.x, 0.0f, currentLine });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_LargeGridSpacing;
 			}
@@ -1058,7 +1068,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ currentLine,   fineGridStart.y - m_LargeGridSpacing, 0.0f });
 				s_OutputVector->push_back({ currentLine,fineGridStart.y + 2 * m_LargeGridSpacing , 0.0f });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
 			}
@@ -1075,7 +1085,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ fineGridStart.x - m_LargeGridSpacing, currentLine, 0.0f });
 				s_OutputVector->push_back({ fineGridStart.x + 2 * m_LargeGridSpacing , currentLine, 0.0f });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
 			}
@@ -1095,7 +1105,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z - m_LargeGridSpacing });
 				s_OutputVector->push_back({ currentLine, 0.0f, fineGridStart.z + 2 * m_LargeGridSpacing });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
 			}
@@ -1112,7 +1122,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ fineGridStart.x - m_LargeGridSpacing, 0.0f, currentLine });
 				s_OutputVector->push_back({ fineGridStart.x + 2 * m_LargeGridSpacing, 0.0f, currentLine });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
 			}
@@ -1132,7 +1142,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ 0.0f, currentLine,  fineGridStart.z - m_LargeGridSpacing });
 				s_OutputVector->push_back({ 0.0f , currentLine,  fineGridStart.z + (2 * m_LargeGridSpacing) });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
 			}
@@ -1149,7 +1159,7 @@ namespace Kargono::Panels
 				s_OutputVector->clear();
 				s_OutputVector->push_back({ 0.0f, fineGridStart.y - m_LargeGridSpacing, currentLine });
 				s_OutputVector->push_back({ 0.0f , fineGridStart.y + 2 * m_LargeGridSpacing, currentLine });
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 				currentLine += (int32_t)m_FineGridSpacing;
 			}
@@ -1164,7 +1174,7 @@ namespace Kargono::Panels
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->push_back({ minimumValues.x, 0.0f, 0.0f });
 			s_OutputVector->push_back({ maximumValues.x, 0.0f, 0.0f });
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 
 
@@ -1175,7 +1185,7 @@ namespace Kargono::Panels
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->push_back({ 0.0f, minimumValues.y, 0.0f });
 			s_OutputVector->push_back({ 0.0f, maximumValues.y, 0.0f });
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 
 
@@ -1186,7 +1196,7 @@ namespace Kargono::Panels
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->push_back({ 0.0f, 0.0f, minimumValues.z });
 			s_OutputVector->push_back({ 0.0f, 0.0f, maximumValues.z });
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
 	}
@@ -1202,7 +1212,7 @@ namespace Kargono::Panels
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->push_back(line.m_StartPoint);
 			s_OutputVector->push_back(line.m_EndPoint);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
 
@@ -1214,7 +1224,7 @@ namespace Kargono::Panels
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				s_PointInputSpec.m_Buffer, s_PointInputSpec.m_Shader);
 			s_OutputVector->push_back(point.m_Point);
-			s_PointInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_PointInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_PointInputSpec);
 		}
 		
@@ -1240,7 +1250,7 @@ namespace Kargono::Panels
 				
 				s_OutputVector->push_back(point);
 				s_OutputVector->push_back(point2);
-				s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			}
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red),
@@ -1251,7 +1261,7 @@ namespace Kargono::Panels
 				// Draw the point
 				s_OutputVector->clear();
 				s_OutputVector->push_back(point);
-				s_PointInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+				s_PointInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 				Rendering::RenderingService::SubmitDataToRenderer(s_PointInputSpec);
 			}
 		}

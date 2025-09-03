@@ -3,7 +3,7 @@
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Assets/Asset.h"
 #include "Modules/EditorUI/EditorUI.h"
-#include "Modules/ECS/ProjectComponent.h"
+#include "Modules/ECS/Components/ProjectComponent.h"
 
 #include <filesystem>
 
@@ -16,7 +16,6 @@ namespace Kargono::Panels
 		// Constructor/Destructor
 		//=========================
 		ProjectComponentPanel();
-
 	private:
 		//=========================
 		// Internal Initialization Functions

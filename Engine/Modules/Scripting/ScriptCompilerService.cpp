@@ -9,7 +9,7 @@
 #include "Modules/Scripting/ScriptTokenParser.h"
 #include "Modules/Scripting/ScriptOutputGenerator.h"
 #include "Modules/Assets/AssetService.h"
-#include "Modules/ECS/ProjectComponent.h"
+#include "Modules/ECS/Components/ProjectComponent.h"
 #include "Modules/ECS/Entity.h"
 #include "Kargono/ProjectData/ProjectEnum.h"
 #include "Kargono/Utility/Operations.h"
@@ -895,7 +895,7 @@ namespace Kargono::Scripting
 					TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 					KG_ASSERT(fieldNameExpression);
 					size_t iteration{ 0 };
-					for (const std::string& fieldName : component->m_DataNames)
+					for (const char* fieldName : component->m_DataNames)
 					{
 						if (fieldName == fieldNameExpression->Value.Value)
 						{
@@ -939,7 +939,7 @@ namespace Kargono::Scripting
 					TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 					KG_ASSERT(fieldNameExpression);
 					size_t iteration{ 0 };
-					for (const std::string& fieldName : component->m_DataNames)
+					for (const char* fieldName : component->m_DataNames)
 					{
 						if (fieldName == fieldNameExpression->Value.Value)
 						{
@@ -1640,11 +1640,11 @@ namespace Kargono::Scripting
 				ECS::Entity entityRef = currentScene->GetEntityByEnttID(enttID);
 
 				// Get the entity's tag component
-				ECS::TagComponent& currentTagComp = entityRef.GetComponent<ECS::TagComponent>();
+				TagComponent& currentTagComp = entityRef.GetComponent<TagComponent>();
 
 				// Create new literal member for each entity
 				Ref<CustomLiteralMember> newEntityLiteral = CreateRef<CustomLiteralMember>();
-				std::string currentTag{ currentTagComp.Tag };
+				std::string currentTag{ currentTagComp.m_Tag };
 				Utility::Operations::RemoveWhitespaceFromString(currentTag);
 				newEntityLiteral->m_OutputText = std::to_string(entityHandle);
 				newEntityLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "entity" };

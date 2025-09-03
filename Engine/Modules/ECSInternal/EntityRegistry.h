@@ -27,7 +27,7 @@ namespace Kargono::ECSInternal
 			ResetEntities();
 
 			m_Active = true;
-			return m_Active;
+			return true;
 		}
 
 		[[nodiscard]] bool Terminate()
@@ -35,12 +35,13 @@ namespace Kargono::ECSInternal
 			ResetEntities();
 
 			m_Active = false;
-			return m_Active;
+			return true;
 		}
 
 		[[nodiscard]] bool Clear()
 		{
 			ResetEntities();
+			return true;
 		}
 	private:
 		// Helpers

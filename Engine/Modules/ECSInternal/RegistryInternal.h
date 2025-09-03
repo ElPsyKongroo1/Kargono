@@ -24,36 +24,40 @@ namespace Kargono::ECSInternal
 		[[nodiscard]] bool Init(Memory::IAllocator* backingAlloc)
 		{
 			KG_ASSERT(backingAlloc);
+			KG_ASSERT(!m_Active);
 
 			i_Allocator = backingAlloc;
 
 			if (!m_EntityRegistry.Init())
 			{
-				return false;
+				return m_Active;
 			}
 
 			if (!m_ComponentRegistry.Init(i_Allocator, &m_EntityRegistry))
 			{
-				return false;
+				return m_Active;
 			}
 
-			return true;
+			m_Active = true;
+			return m_Active;
 		}
 
 		[[nodiscard]] bool Terminate()
 		{
-			if (!m_EntityRegistry.Terminate())
+			KG_ASSERT(m_Active);
+			if (m_EntityRegistry.Terminate())
 			{
 				return false;
 			}
 
-			if (!m_ComponentRegistry.Terminate())
+			if (m_ComponentRegistry.Terminate())
 			{
 				return false;
 			}
 
 			i_Allocator = nullptr;
 
+			m_Active = false;
 			return true;
 		}
 
@@ -145,6 +149,8 @@ namespace Kargono::ECSInternal
 				entitySignature->ClearFlag(compMask.value());
 				m_EntityRegistry.SetEntitySignature(id, entitySignature.value());
 			}
+
+			return true;
 		}
 
 		template<typename t_Component>
@@ -276,7 +282,8 @@ namespace Kargono::ECSInternal
 
 			void* component 
 			{ 
-				m_ComponentRegistry.EmplaceComponent(entityID, std::forward<t_Args>(args)...) 
+				m_ComponentRegistry.EmplaceComponent<t_Component, t_Args...>
+				(entityID, std::forward<t_Args>(args)...) 
 			};
 			KG_ASSERT(component);
 
@@ -292,7 +299,7 @@ namespace Kargono::ECSInternal
 			entitySignature->SetFlag(compMask.value());
 			m_EntityRegistry.SetEntitySignature(entityID, entitySignature.value());
 
-			return *(t_Component)component;
+			return *(t_Component*)component;
 		}
 
 		template<typename t_Component, typename... t_Args>
@@ -395,10 +402,7 @@ namespace Kargono::ECSInternal
 			constexpr size_t k_NumComponents{ sizeof...(t_ComponentTypes) };
 			if constexpr (k_NumComponents == 1)
 			{
-				// Get component identifier
-				constexpr auto identifierStr{ GetUniqueIdentifier<t_ComponentTypes...>() };
-				constexpr ComponentIdentifier identifier =
-					Utility::FileSystem::CRCFromString(identifierStr.CString());
+				constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_ComponentTypes>();
 
 				return m_ComponentRegistry.GetSinglePackedView(identifier);
 			}
@@ -407,7 +411,7 @@ namespace Kargono::ECSInternal
 				// Fill array w/ templated type identifiers
 				constexpr ComponentIDList<k_NumComponents> identifiers
 				{
-					Utility::FileSystem::CRCFromString(GetUniqueIdentifier<t_ComponentTypes>().CString())...
+					GetComponentIdentifier<t_ComponentTypes>()...
 				};
 
 				// Get the multi packed view
@@ -436,9 +440,7 @@ namespace Kargono::ECSInternal
 			if constexpr (k_NumComponents == 1)
 			{
 				// Get component identifier
-				constexpr auto identifierStr{ GetUniqueIdentifier<t_ComponentTypes...>() };
-				constexpr ComponentIdentifier identifier =
-					Utility::FileSystem::CRCFromString(identifierStr.CString());
+				constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_ComponentTypes...>();
 
 				return m_ComponentRegistry.GetSingleFlatView(identifier);
 			}
@@ -498,10 +500,7 @@ namespace Kargono::ECSInternal
 		template<typename t_ComponentType>
 		bool HasComponent(EntityID entityID)
 		{
-			// Get component identifier
-			constexpr auto identifierStr{ GetUniqueIdentifier<t_ComponentType>() };
-			constexpr ComponentIdentifier identifier =
-				Utility::FileSystem::CRCFromString(identifierStr.CString());
+			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_ComponentType>();
 
 			return HasComponent(entityID, identifier);
 		}
@@ -519,10 +518,7 @@ namespace Kargono::ECSInternal
 		template<typename t_ComponentType>
 		bool IsComponentRegistered()
 		{
-			// Get component identifier
-			constexpr auto identifierStr{ GetUniqueIdentifier<t_ComponentType>() };
-			constexpr ComponentIdentifier identifier =
-				Utility::FileSystem::CRCFromString(identifierStr.CString());
+			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_ComponentType>();
 
 			// Check if the component is registered
 			return m_ComponentRegistry.IsComponentRegistered(identifier);
@@ -531,6 +527,11 @@ namespace Kargono::ECSInternal
 		bool IsComponentRegistered(ComponentIdentifier identifier)
 		{
 			return m_ComponentRegistry.IsComponentRegistered(identifier);
+		}
+
+		bool IsActive() const
+		{
+			return m_Active;
 		}
 
 	public:
@@ -557,6 +558,8 @@ namespace Kargono::ECSInternal
 		// Registries
 		EntityRegistry m_EntityRegistry;
 		ComponentRegistry m_ComponentRegistry;
+		// Registry state
+		bool m_Active{ false };
 
 	private:
 		//==============================

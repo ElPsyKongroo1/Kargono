@@ -602,7 +602,7 @@ namespace Kargono::Windows
 		{
 			ECS::Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
 			m_SceneEditorPanel->SetSelectedEntity(newEntity);
-			m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
+			m_SceneEditorPanel->SetDisplayedComponent(ECSInternal::k_InvalidComponentIdentifier);
 		}
 	}
 

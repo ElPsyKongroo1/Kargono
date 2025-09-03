@@ -7,6 +7,7 @@
 #include "Kargono/Math/Math.h"
 #include "Modules/Assets/Asset.h"
 #include "Modules/ECS/Registry.h"
+#include "Kargono/Memory/HeapAlloc.h"
 
 #include <vector>
 #include <unordered_map>
@@ -65,7 +66,7 @@ namespace Kargono::Scenes
 		//		values. Step allows one iteration to occur
 		bool IsRunning() const { return m_IsRunning; }
 	public:
-		void RegisterAllProjectComponents();
+		void RegisterAllComponents();
 		void AddProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
 		void ClearProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
 		std::size_t GetProjectComponentCount(Assets::AssetHandle projectComponentHandle);
@@ -131,6 +132,7 @@ namespace Kargono::Scenes
 		//		This map is only filled at runtime while the scripting engine
 		//		is working. It is used to easily find all of the entities of a
 		//		particular script class.
+		Memory::HeapAllocator m_SceneAlloc{};
 		std::unordered_map<FixedBufStr32, std::vector<UUID>> m_GroupToEntityList {};
 
 		// Physics Spec
@@ -166,7 +168,7 @@ namespace Kargono::Scenes
 
 		static Math::vec3 TransformComponentGetTranslation(UUID entityID);
 		static void TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation);
-		static std::string_view TagComponentGetTag(UUID entityID);
+		static const std::string& TagComponentGetTag(UUID entityID);
 		static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
 		static Math::vec2 Rigidbody2DComponent_GetLinearVelocity(UUID entityID);
 		static void SetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value);

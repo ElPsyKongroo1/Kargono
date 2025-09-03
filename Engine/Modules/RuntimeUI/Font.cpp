@@ -4,11 +4,11 @@
 #include "Modules/Assets/AssetService.h"
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Core/Engine.h"
-#include "Modules/ECS/EngineComponents.h"
 #include "Modules/Rendering/Shader.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Rendering/Texture.h"
 #include "Kargono/Projects/Project.h"
+#include "Modules/Rendering/Components/ShapeComponent.h"
 
 #include "Modules/RuntimeUI/ExternalAPI/msdfgenAPI.h"
 
@@ -65,11 +65,11 @@ namespace Kargono::RuntimeUI
 				Utility::FileSystem::CRCFromString("a_Color"),
 				localBuffer, localShader);
 
-			s_TextInputSpec.m_ShapeComponent = new ECS::ShapeComponent();
-			s_TextInputSpec.m_ShapeComponent->CurrentShape = Rendering::ShapeTypes::Quad;
+			s_TextInputSpec.m_ShapeComponent = new Rendering::ShapeComponent();
+			s_TextInputSpec.m_ShapeComponent->m_CurrentShape = Rendering::ShapeTypes::Quad;
 
 			s_TextInputSpec.m_Shader = localShader;
-			s_TextInputSpec.m_ShapeComponent->Shader = localShader;
+			s_TextInputSpec.m_ShapeComponent->m_Shader = localShader;
 			s_TextInputSpec.m_Buffer = localBuffer;
 			s_TexCoordinates = CreateRef<std::vector<Math::vec2>>();
 			s_TexCoordinates->push_back({ 0.0f, 0.0f });
@@ -78,7 +78,7 @@ namespace Kargono::RuntimeUI
 			s_TexCoordinates->push_back({ 0.0f, 0.0f });
 			s_TexCoordinates->push_back({ 1.0f, 1.0f });
 			s_TexCoordinates->push_back({ 1.0f, 0.0f });
-			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
+			s_TextInputSpec.m_ShapeComponent->m_TextureCoordinates = s_TexCoordinates;
 
 			s_Vertices = CreateRef<std::vector<Math::vec3>>();
 		}
@@ -224,7 +224,7 @@ namespace Kargono::RuntimeUI
 	{
 		UNREFERENCED_PARAMETER(maxLineWidth);
 		// Submit text color to the renderer buffer. The text will now be rendered with this color.
-		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
+		s_TextInputSpec.m_ShapeComponent->m_Texture = m_AtlasTexture;
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, 
 			Utility::FileSystem::CRCFromString("a_Color"),
 			s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
@@ -298,7 +298,7 @@ namespace Kargono::RuntimeUI
 			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
 			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
 			s_Vertices->push_back({ quadMax, translation.z });											// 1, 1
-			s_TextInputSpec.m_ShapeComponent->Vertices = s_Vertices;
+			s_TextInputSpec.m_ShapeComponent->m_Vertices = s_Vertices;
 
 			// Submit the texture coordinates data to the renderer
 			s_TexCoordinates->clear();
@@ -308,7 +308,7 @@ namespace Kargono::RuntimeUI
 			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
 			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
 			s_TexCoordinates->push_back(texCoordMax);				
-			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
+			s_TextInputSpec.m_ShapeComponent->m_TextureCoordinates = s_TexCoordinates;
 
 			// TODO: Submit multiple glyphs at once for CPU optimization
 			// Submit the glyph data to the renderer
@@ -322,7 +322,7 @@ namespace Kargono::RuntimeUI
 	void Font::OnRenderSingleLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale)
 	{
 		// Submit text color to the renderer buffer. The text will now be rendered with this color.
-		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
+		s_TextInputSpec.m_ShapeComponent->m_Texture = m_AtlasTexture;
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, 
 			Utility::FileSystem::CRCFromString("a_Color"),
 			s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
@@ -394,7 +394,7 @@ namespace Kargono::RuntimeUI
 			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
 			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
 			s_Vertices->push_back({ quadMax, translation.z });											// 1, 1
-			s_TextInputSpec.m_ShapeComponent->Vertices = s_Vertices;
+			s_TextInputSpec.m_ShapeComponent->m_Vertices = s_Vertices;
 
 			// Submit the texture coordinates data to the renderer
 			s_TexCoordinates->clear();
@@ -404,7 +404,7 @@ namespace Kargono::RuntimeUI
 			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
 			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
 			s_TexCoordinates->push_back(texCoordMax);
-			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
+			s_TextInputSpec.m_ShapeComponent->m_TextureCoordinates = s_TexCoordinates;
 
 			// TODO: Submit multiple glyphs at once for CPU optimization
 			// Submit the glyph data to the renderer

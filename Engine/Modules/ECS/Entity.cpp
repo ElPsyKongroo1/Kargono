@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/ECS/Entity.h"
-#include "Modules/ECS/ProjectComponent.h"
+#include "Modules/ECS/Components/ProjectComponent.h"
 #include "Modules/Assets/AssetService.h"
 
 namespace Kargono::ECS
@@ -24,29 +24,25 @@ namespace Kargono::ECS
 		// Get the project component
 		Ref<ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(projectComponent);
+		KG_ASSERT(projectComponent->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
 		if (projectComponent->m_ComponentSize == 0)
 		{
 			return;
 		}
 
-		// Get component identifier
-		std::string identifierStr{ "ProjectComponent" "::" + projectComponent->m_Name};
-		ECSInternal::ComponentIdentifier identifier =
-			Utility::FileSystem::CRCFromString(identifierStr.c_str());
-
 
 		uint8_t* componentReference
 		{
-			(uint8_t*)m_Registry->m_Registry.CreateComponent(m_RegistryEntityID, identifier)
+			(uint8_t*)m_Registry->m_Registry.CreateComponent(m_RegistryEntityID, projectComponent->m_Identifier)
 		};
 		KG_ASSERT(componentReference);
 
 		// Set initial values of data
-		for (size_t iteration{0}; iteration < projectComponent->m_DataLocations.size(); iteration++)
+		for (size_t iteration{0}; iteration < projectComponent->m_DataOffsets.size(); iteration++)
 		{
 			Utility::InitializeDataForWrappedVarBuffer(
 				projectComponent->m_DataTypes.at(iteration),
-				componentReference + projectComponent->m_DataLocations.at(iteration));
+				componentReference + projectComponent->m_DataOffsets.at(iteration));
 		}
 
 	}
@@ -54,17 +50,13 @@ namespace Kargono::ECS
 	{
 		Ref<ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(projectComponent);
+		KG_ASSERT(projectComponent->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
 		if (projectComponent->m_ComponentSize == 0)
 		{
 			return nullptr;
 		} 
 
-		// Get component identifier
-		std::string identifierStr{ "ProjectComponent" "::" + projectComponent->m_Name };
-		ECSInternal::ComponentIdentifier identifier =
-			Utility::FileSystem::CRCFromString(identifierStr.c_str());
-
-		return m_Registry->m_Registry.GetComponent(m_RegistryEntityID, identifier);
+		return m_Registry->m_Registry.GetComponent(m_RegistryEntityID, projectComponent->m_Identifier);
 	}
 	bool Entity::HasProjectComponentData(Assets::AssetHandle projectComponentHandle)
 	{
@@ -80,16 +72,12 @@ namespace Kargono::ECS
 	{
 		Ref<ProjectComponent> projectComponent = Assets::AssetService::GetProjectComponent(projectComponentHandle);
 		KG_ASSERT(projectComponent);
+		KG_ASSERT(projectComponent->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
 		if (projectComponent->m_ComponentSize == 0)
 		{
 			return;
 		}
 
-		// Get component identifier
-		std::string identifierStr{ "ProjectComponent" "::" + projectComponent->m_Name };
-		ECSInternal::ComponentIdentifier identifier =
-			Utility::FileSystem::CRCFromString(identifierStr.c_str());
-
-		m_Registry->m_Registry.RemoveComponent(m_RegistryEntityID, identifier);
+		m_Registry->m_Registry.RemoveComponent(m_RegistryEntityID, projectComponent->m_Identifier);
 	}
 }

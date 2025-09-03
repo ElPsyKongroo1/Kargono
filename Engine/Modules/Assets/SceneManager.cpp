@@ -15,7 +15,7 @@
 #include "Modules/Physics2D/Components/CircleCollider2DComponent.h"	
 #include "Modules/Physics2D/Components/RigidBody2DComponent.h"	
 
-#include "Modules/ECS/ProjectComponent.h"
+#include "Modules/ECS/Components/ProjectComponent.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/ECS/Entity.h"
 
@@ -213,12 +213,12 @@ namespace Kargono::Utility
 
 			out << YAML::Key << projectComponent->m_Name + "Component";
 			out << YAML::BeginMap; // Component Map
-			for (size_t iteration{ 0 }; iteration < projectComponent->m_DataLocations.size(); iteration++)
+			for (size_t iteration{ 0 }; iteration < projectComponent->m_DataOffsets.size(); iteration++)
 			{
 				SerializeWrappedVarType(out, 
 					projectComponent->m_DataTypes.at(iteration), 
 					projectComponent->m_DataNames.at(iteration).CString(),
-					componentRef + projectComponent->m_DataLocations.at(iteration));
+					componentRef + projectComponent->m_DataOffsets.at(iteration));
 			}
 			out << YAML::EndMap; // Component Map
 		}
@@ -534,12 +534,12 @@ namespace Kargono::Assets
 					uint8_t* componentRef = (uint8_t*)deserializedEntity.GetProjectComponentData(handle);
 
 					// Load in component data from disk
-					for (size_t iteration{ 0 }; iteration < projectComponent->m_DataLocations.size(); iteration++)
+					for (size_t iteration{ 0 }; iteration < projectComponent->m_DataOffsets.size(); iteration++)
 					{
 						Utility::DeserializeWrappedVarType(projectComponentNode,
 							projectComponent->m_DataTypes.at(iteration),
 							projectComponent->m_DataNames.at(iteration).CString(),
-							componentRef + projectComponent->m_DataLocations.at(iteration));
+							componentRef + projectComponent->m_DataOffsets.at(iteration));
 					}
 				}
 			}

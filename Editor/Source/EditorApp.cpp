@@ -264,22 +264,22 @@ namespace Kargono
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<ECS::Rigidbody2DComponent>())
+		if (entityOne.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
-			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
-			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
-			Scripting::Script* script = component.OnCollisionStartScript.get();
+			Physics2D::Rigidbody2DComponent& component = entityOne.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.m_OnCollisionStartScriptHandle;
+			Scripting::Script* script = component.m_OnCollisionStartScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
-		if (!collisionHandled && entityTwo.HasComponent<ECS::Rigidbody2DComponent>())
+		if (!collisionHandled && entityTwo.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
-			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
-			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
-			Scripting::Script* script = component.OnCollisionStartScript.get();
+			Physics2D::Rigidbody2DComponent& component = entityTwo.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component. m_OnCollisionStartScriptHandle;
+			Scripting::Script* script = component.m_OnCollisionStartScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
@@ -300,22 +300,22 @@ namespace Kargono
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<ECS::Rigidbody2DComponent>())
+		if (entityOne.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
-			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
-			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
-			Scripting::Script* script = component.OnCollisionEndScript.get();
+			Physics2D::Rigidbody2DComponent& component = entityOne.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.m_OnCollisionEndScriptHandle;
+			Scripting::Script* script = component.m_OnCollisionEndScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
 				Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
-		if (!collisionHandled && entityOne.HasComponent<ECS::Rigidbody2DComponent>())
+		if (!collisionHandled && entityOne.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
-			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
-			Assets::AssetHandle scriptHandle =  component.OnCollisionEndScriptHandle;
-			Scripting::Script* script = component.OnCollisionEndScript.get();
+			Physics2D::Rigidbody2DComponent& component = entityTwo.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle =  component.m_OnCollisionEndScriptHandle;
+			Scripting::Script* script = component.m_OnCollisionEndScript.get();
 			if (scriptHandle != Assets::EmptyHandle)
 			{
 			 	collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);

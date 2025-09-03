@@ -20,6 +20,7 @@ namespace Kargono
 		Math::mat4 GetTransform() const;
 		Math::mat4 GetTranslation() const;
 		Math::mat4 GetRotation() const;
+
 		//==============================
 		// Copy Function(s)
 		//==============================

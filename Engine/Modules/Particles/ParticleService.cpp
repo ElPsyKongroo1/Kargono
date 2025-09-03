@@ -7,9 +7,11 @@
 #include "Modules/Core/Engine.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/ECS/Entity.h"
-#include "Modules/ECS/EngineComponents.h"
 #include "Kargono/Math/Interpolation.h"
 #include "Modules/Events/SceneEvent.h"
+#include "Modules/Rendering/Components/ShapeComponent.h"
+#include "Modules/Core/Components/TransformComponent.h"
+#include "Modules/Particles/Components/ParticleEmitterComponent.h"
 
 namespace Kargono::Particles
 {
@@ -30,10 +32,10 @@ namespace Kargono::Particles
 				localShader);
 
 			// Create basic shape component for UI quad rendering
-			ECS::ShapeComponent* shapeComp = new ECS::ShapeComponent();
-			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
-			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
-			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
+			Rendering::ShapeComponent* shapeComp = new Rendering::ShapeComponent();
+			shapeComp->m_CurrentShape = Rendering::ShapeTypes::Quad;
+			shapeComp->m_Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
+			shapeComp->m_Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
 
 
 			m_ParticleRenderSpec.m_Shader = localShader;
@@ -65,8 +67,8 @@ namespace Kargono::Particles
 			if (emitter.m_ParentScene)
 			{
 				ECS::Entity entity = emitter.m_ParentScene->GetEntityByUUID(emitter.m_ParentEntityID);
-				ECS::TransformComponent entityTransform = entity.GetComponent<ECS::TransformComponent>();
-				emitter.m_Position = entityTransform.Translation;
+				TransformComponent entityTransform = entity.GetComponent<TransformComponent>();
+				emitter.m_Position = entityTransform.m_Translation;
 			}
 
 
@@ -392,11 +394,11 @@ namespace Kargono::Particles
 	}
 	void ParticleContext::LoadSceneEmitters(Ref<Scenes::Scene> scene)
 	{
-		for (entt::entity enttID : scene->GetAllEntitiesWith<ECS::ParticleEmitterComponent>())
+		for (ECSInternal::EntityID id : scene->GetAllEntitiesWith<Particles::ParticleEmitterComponent>())
 		{
-			ECS::Entity entity{ scene->GetEntityByEnttID(enttID) };
-			ECS::ParticleEmitterComponent particleComp = entity.GetComponent<ECS::ParticleEmitterComponent>();
-			ECS::TransformComponent transform = entity.GetComponent<ECS::TransformComponent>();
+			ECS::Entity entity{ scene->GetEntityByEnttID(id) };
+			Particles::ParticleEmitterComponent particleComp = entity.GetComponent<Particles::ParticleEmitterComponent>();
+			TransformComponent transform = entity.GetComponent<TransformComponent>();
 			if (particleComp.m_EmitterConfigHandle == Assets::EmptyHandle)
 			{
 				continue;

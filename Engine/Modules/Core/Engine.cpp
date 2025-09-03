@@ -11,7 +11,7 @@
 #include "Modules/Events/NetworkingEvent.h"
 #include "Modules/ECS/Entity.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Modules/Physics2D/Physics2D.h"
+#include "Modules/Core/Components/TransformComponent.h"
 #include "Modules/Network/Client.h"
 #include "Modules/Scripting/ScriptService.h"
 
@@ -253,12 +253,12 @@ namespace Kargono
 		ECS::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
-		entity.GetComponent<ECS::TransformComponent>().Translation = translation;
+		entity.GetComponent<TransformComponent>().m_Translation = translation;
 
-		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
+		if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
-			ECS::Rigidbody2DComponent& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
-			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			Physics2D::Rigidbody2DComponent& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 		}
 		return false;
@@ -272,12 +272,12 @@ namespace Kargono
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
 		Math::vec2 linearVelocity = e.GetLinearVelocity();
-		entity.GetComponent<ECS::TransformComponent>().Translation = translation;
+		entity.GetComponent<TransformComponent>().m_Translation = translation;
 
-		if (entity.HasComponent<ECS::Rigidbody2DComponent>())
+		if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
-			ECS::Rigidbody2DComponent& rb2d = entity.GetComponent<ECS::Rigidbody2DComponent>();
-			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			Physics2D::Rigidbody2DComponent& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
 			KG_ASSERT(body);
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 			body->SetLinearVelocity(b2Vec2(linearVelocity.x, linearVelocity.y));

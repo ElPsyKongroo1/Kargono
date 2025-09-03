@@ -11,6 +11,7 @@
 #include "Kargono/Memory/SystemAlloc.h"
 #include "Kargono/Memory/HeapAlloc.h"
 #include "Kargono/Utility/CompilerInfo.h"
+#include "Modules/ECSInternal/Module/ComponentTag.h"
 
 #include "Modules/Core/DataStructures/SparseSet.h"
 #include "Modules/ECSInternal/RegistryInternal.h"
@@ -38,6 +39,12 @@ namespace Kargono::Panels
 	{
 		Math::vec2 location{};
 		Math::vec2 size{};
+
+		void CopyTo(TransformTest* dst)
+		{
+			dst->location = location;
+			dst->size = size;
+		}
 	};
 
 	Register_Module_Type(TransformTest)
@@ -48,6 +55,14 @@ namespace Kargono::Panels
 		float torsoHealth{};
 		Math::vec2 armsHealth{};
 		Math::vec2 legsHealth{};
+
+		void CopyTo(HealthTest* dst)
+		{
+			dst->headHealth = headHealth;
+			dst->torsoHealth = torsoHealth;
+			dst->armsHealth = armsHealth;
+			dst->legsHealth = legsHealth;
+		}
 	};
 
 	Register_Module_Type(HealthTest)
@@ -59,12 +74,28 @@ namespace Kargono::Panels
 		float pinkyFinger{};
 		float thumbFinger{};
 		float middleFinger{};
+
+		void CopyTo(BloodTest* dst)
+		{
+			dst->indexFinger = indexFinger;
+			dst->ringFinger = ringFinger;
+			dst->pinkyFinger = pinkyFinger;
+			dst->thumbFinger = thumbFinger;
+			dst->middleFinger = middleFinger;
+		}
 	};
 
 	struct MovementConfigTest
 	{
 		float m_Acceleration{ 1.0f };
 		float m_Deacceleration{ 2.0f };
+
+		void CopyTo(MovementConfigTest* dst)
+		{
+			MovementConfigTest* destination = (MovementConfigTest*)dst;
+			destination->m_Acceleration = m_Acceleration;
+			destination->m_Deacceleration = m_Deacceleration;
+		}
 	};
 
 	Register_Module_Type(BloodTest)
@@ -748,10 +779,7 @@ namespace Kargono::Panels
 
 		if (ImGui::Button("Add Speed Comp To All Entities"))
 		{
-			// Get component identifier
-			constexpr auto identifierStr{ GetUniqueIdentifier<MovementConfigTest>() };
-			constexpr ECSInternal::ComponentIdentifier identifier =
-				Utility::FileSystem::CRCFromString(identifierStr.CString());
+			constexpr ECSInternal::ComponentIdentifier identifier = ECSInternal::GetComponentIdentifier<MovementConfigTest>();
 
 			if (!s_DataRegistry.IsComponentRegistered(identifier))
 			{

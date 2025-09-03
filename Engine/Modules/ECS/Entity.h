@@ -27,7 +27,7 @@ namespace Kargono::ECS
 		{
 			KG_ASSERT(!HasComponent<t_ComponentType>(), "Entity already has component!");
 			t_ComponentType& component = 
-				m_Registry->m_Registry.EmplaceComponent<t_ComponentType, args...>
+				m_Registry->m_Registry.EmplaceComponent<t_ComponentType, t_Args...>
 				(m_RegistryEntityID, std::forward<t_Args>(args)...);
 			return component;
 		}
@@ -79,7 +79,7 @@ namespace Kargono::ECS
 		template<typename t_ComponentType>
 		bool HasComponent()
 		{
-			m_Registry->m_Registry.HasComponent<t_ComponentType>(m_RegistryEntityID);
+			return m_Registry->m_Registry.HasComponent<t_ComponentType>(m_RegistryEntityID);
 		}
 
 		bool HasComponent(ECSInternal::EntityID entityID, 

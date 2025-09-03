@@ -197,7 +197,7 @@ namespace Kargono::Panels
 			{
 				for (size_t iteration{0}; iteration < m_EditorProjectComponent->m_DataNames.size(); iteration++)
 				{
-					m_FieldsTable.InsertListEntry(m_EditorProjectComponent->m_DataNames.at(iteration),
+					m_FieldsTable.InsertListEntry(m_EditorProjectComponent->m_DataNames.at(iteration).CString(),
 						Utility::WrappedVarTypeToString(m_EditorProjectComponent->m_DataTypes.at(iteration)),
 						[&](EditorUI::ListEntry& entry, std::size_t iteration)
 						{
@@ -245,9 +245,9 @@ namespace Kargono::Panels
 		{
 			// Ensure input string does not use whitespace
 			Utility::Operations::RemoveWhitespaceFromString(m_AddFieldName.m_CurrentOption);
-			bool success = ECS::ProjectComponentService::AddFieldToProjectComponent(m_EditorProjectComponent, 
+			bool success = m_EditorProjectComponent->AddField(
 				Utility::StringToWrappedVarType(m_AddFieldType.m_CurrentOption.m_Label.CString()),
-				m_AddFieldName.m_CurrentOption);
+				m_AddFieldName.m_CurrentOption.c_str());
 			if (!success)
 			{
 				KG_WARN("Add field failed. Returning to previous window.");
@@ -285,7 +285,7 @@ namespace Kargono::Panels
 		m_EditFieldPopup.m_Label = "Edit Field";
 		m_EditFieldPopup.m_DeleteAction = [&]()
 		{
-			ECS::ProjectComponentService::DeleteFieldFromProjectComponent(m_EditorProjectComponent, m_ActiveField);
+			m_EditorProjectComponent->DeleteField(m_ActiveField);
 			m_MainHeader.m_EditColorActive = true;
 			RefreshData();
 		};
@@ -300,8 +300,9 @@ namespace Kargono::Panels
 		{
 			// Ensure input string does not use whitespace
 			Utility::Operations::RemoveWhitespaceFromString(m_EditFieldName.m_CurrentOption);
-			bool success = ECS::ProjectComponentService::EditFieldInProjectComponent(m_EditorProjectComponent, m_ActiveField,
-				m_EditFieldName.m_CurrentOption, Utility::StringToWrappedVarType(m_EditFieldType.m_CurrentOption.m_Label.CString()));
+			bool success = m_EditorProjectComponent->EditField(m_ActiveField,
+				m_EditFieldName.m_CurrentOption.c_str(), 
+				Utility::StringToWrappedVarType(m_EditFieldType.m_CurrentOption.m_Label.CString()));
 			if (!success)
 			{
 				KG_WARN("Edit field failed. Returning to previous window.");

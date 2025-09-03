@@ -39,7 +39,7 @@ namespace Kargono::ECSInternal
 			ClearComponentStores();
 
 			m_Active = true;
-			return m_Active;
+			return true;
 		}
 
 		[[nodiscard]] bool Terminate()
@@ -50,7 +50,7 @@ namespace Kargono::ECSInternal
 			i_RegistryAlloc = nullptr;
 
 			m_Active = false;
-			return m_Active;
+			return true;
 		}
 
 		[[nodiscard]] bool Clear()
@@ -117,9 +117,7 @@ namespace Kargono::ECSInternal
 		template<typename t_Component>
 		[[nodiscard]] bool RegisterComponent()
 		{
-			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
-			constexpr ComponentIdentifier identifier =
-				Utility::FileSystem::CRCFromString(uniqueName.CString());
+			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_Component>();
 
 			return RegisterComponent(identifier, 
 				{ sizeof(t_Component), alignof(t_Component), CreateComponentFunctors<t_Component>() });
@@ -176,13 +174,11 @@ namespace Kargono::ECSInternal
 		template<typename t_Component>
 		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component& component)
 		{
-			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
-			constexpr ComponentIdentifier identifier
-			{ Utility::FileSystem::CRCFromString(uniqueName.CString()) };
+			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_Component>();
 
 			ComponentMask mask { GetComponentMask(identifier).value() };
 
-			return AddComponentByMask(entityID, mask, component);
+			return AddComponentByMask(entityID, mask, (void*)&component);
 		}
 
 		[[nodiscard]] bool AddComponent(EntityID entityID, ComponentIdentifier identifier,
@@ -254,9 +250,7 @@ namespace Kargono::ECSInternal
 		template<typename t_Component, typename... t_Args>
 		[[nodiscard]] void* EmplaceComponent(EntityID entityID, t_Args... args)
 		{	
-			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
-			constexpr ComponentIdentifier identifier
-			{ Utility::FileSystem::CRCFromString(uniqueName.CString()) };
+			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_Component>();
 
 			KG_ASSERT(IsComponentRegistered(identifier));
 
@@ -277,15 +271,14 @@ namespace Kargono::ECSInternal
 			// Emplace object on raw data using placement new 
 			void* rawComponent{ compStore->CreateComponent(entityID)};
 			KG_ASSERT(rawComponent);
-			return std::construct_at(rawComponent, std::forward<t_Args>(args)...);
+			return std::construct_at<t_Component, t_Args...>
+				(static_cast<t_Component*>(rawComponent), std::forward<t_Args>(args)...);
 		}
 
 		template<typename t_Component, typename... t_Args>
 		[[nodiscard]] void* EmplaceOrReplaceComponent(EntityID entityID, t_Args... args)
 		{
-			constexpr auto uniqueName{ GetUniqueIdentifier<t_Component>() };
-			constexpr ComponentIdentifier identifier
-			{ Utility::FileSystem::CRCFromString(uniqueName.CString()) };
+			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_Component>();
 
 			KG_ASSERT(IsComponentRegistered(identifier));
 
@@ -457,9 +450,7 @@ namespace Kargono::ECSInternal
 		template<typename t_Component>
 		Expected<ComponentMask> GetComponentMask()
 		{
-			constexpr auto name{ GetUniqueIdentifier<t_Component>() };
-			constexpr ComponentIdentifier identifier =
-				Utility::FileSystem::CRCFromString(name.CString());
+			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_Component>();
 
 			return GetComponentMask(identifier);
 		}
@@ -478,9 +469,7 @@ namespace Kargono::ECSInternal
 		template<typename t_Component>
 		IComponentStore* GetComponentArray()
 		{
-			constexpr auto name{ GetUniqueIdentifier<t_Component>() };
-			constexpr ComponentIdentifier identifier =
-				Utility::FileSystem::CRCFromString(name.CString());
+			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_Component>();
 
 			return GetComponentArray(identifier);
 		}
@@ -679,7 +668,7 @@ namespace Kargono::ECSInternal
 		{
 			bool isRegistered{ m_ComponentMasks.contains(identifier) };
 
-			KG_ASSERT(isRegistered ? m_ComponentArrays.contains(identifier) : true);
+			KG_ASSERT(isRegistered ? m_ComponentArrays.contains(m_ComponentMasks[identifier]) : true);
 			return isRegistered;
 		}
 

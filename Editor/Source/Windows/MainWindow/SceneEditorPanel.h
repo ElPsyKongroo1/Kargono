@@ -1,12 +1,14 @@
 #pragma once
 
-#include "Modules/ECS/EngineComponents.h"
+
 #include "Modules/ECS/Entity.h"
 #include "Modules/Events/Event.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Assets/Asset.h"
 #include "Kargono/Core/FixedBufferString.h"
 #include "Modules/EditorUI/EditorUI.h"
+
+#include "Modules/ECSInternal/ECSInternalCommon.h"
 
 #include <unordered_map>
 #include <variant>
@@ -23,7 +25,7 @@ namespace Kargono::Panels
 
 	struct SceneEditorTreeEntryData
 	{
-		ECS::ComponentType m_ComponentType{ ECS::ComponentType::None };
+		ECSInternal::ComponentIdentifier m_ComponentType{ ECSInternal::k_InvalidComponentIdentifier };
 		Assets::AssetHandle m_ProjectComponentHandle{ Assets::EmptyHandle };
 	};
 
@@ -74,7 +76,7 @@ namespace Kargono::Panels
 		//=========================
 		void SetSelectedEntity(ECS::Entity entity);
 		void RefreshTransformComponent();
-		void SetDisplayedComponent(ECS::ComponentType type)
+		void SetDisplayedComponent(ECSInternal::ComponentIdentifier type)
 		{
 			m_DisplayedComponent = type;
 		}
@@ -82,7 +84,7 @@ namespace Kargono::Panels
 		{
 			m_DisplayedProjectComponentHandle = handle;
 		}
-		ECS::ComponentType GetDisplayedComponent()
+		ECSInternal::ComponentIdentifier GetDisplayedComponent()
 		{
 			return m_DisplayedComponent;
 		}
@@ -129,7 +131,7 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		FixedBufStr32 m_PanelName{"Scene Editor"};
-		ECS::ComponentType m_DisplayedComponent{ECS::ComponentType::None };
+		ECSInternal::ComponentIdentifier m_DisplayedComponent{ECSInternal::k_InvalidComponentIdentifier };
 		Assets::AssetHandle m_DisplayedProjectComponentHandle {Assets::EmptyHandle};
 		std::unordered_map<Assets::AssetHandle, ProjectComponentWidgetData> m_AllProjectComponents{};
 		ScenePropertiesDisplay m_CurrentDisplayed{ ScenePropertiesDisplay::None };
