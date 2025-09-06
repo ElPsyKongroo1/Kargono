@@ -2,7 +2,7 @@
 #include "Modules/Assets/Asset.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Kargono/ProjectData/ProjectEnum.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>
 
@@ -60,20 +60,20 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 		// Opening menu
-		EditorUI::GenericPopupSpec m_CreateProjectEnumPopupSpec{};
-		EditorUI::SelectOptionSpec m_OpenProjectEnumPopupSpec{};
-		EditorUI::ChooseDirectorySpec m_SelectProjectEnumLocationSpec{};
+		EditorUI::GenericPopupWidget m_CreateProjectEnumPopupSpec{};
+		EditorUI::SelectOptionWidget m_OpenProjectEnumPopupSpec{};
+		EditorUI::ChooseDirectoryWidget m_SelectProjectEnumLocationSpec{};
 		// Header
 		EditorUI::EditTextSpec m_SelectProjectEnumNameSpec{};
-		EditorUI::PanelHeaderSpec m_MainHeader{};
-		EditorUI::GenericPopupSpec m_DeleteProjectEnumWarning{};
-		EditorUI::GenericPopupSpec m_CloseProjectEnumWarning{};
+		EditorUI::PanelHeaderWidget m_MainHeader{};
+		EditorUI::GenericPopupWidget m_DeleteProjectEnumWarning{};
+		EditorUI::GenericPopupWidget m_CloseProjectEnumWarning{};
 		// Identifiers Panel
-		EditorUI::ListSpec m_EnumDataTable{};
+		EditorUI::ListWidget m_EnumDataTable{};
 		EditorUI::EditTextSpec m_AddIdentifierSpec{};
 		EditorUI::EditTextSpec m_EditIdentifierSpec{};
-		EditorUI::GenericPopupSpec m_DeleteIdentifierWarning{};
-		EditorUI::TooltipSpec m_EnumTooltip{};
+		EditorUI::GenericPopupWidget m_DeleteIdentifierWarning{};
+		EditorUI::TooltipWidget m_EnumTooltip{};
 
 	};
 }

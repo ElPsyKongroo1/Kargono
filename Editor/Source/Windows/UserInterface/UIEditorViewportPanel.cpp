@@ -27,8 +27,7 @@ namespace Kargono::Panels
 		m_EditorCamera.SetKeyboardMinSpeed(50.0f);
 		m_EditorCamera.SetKeyboardMaxSpeed(500.0f);
 
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_ViewportAspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveTargetResolution());
+		m_ViewportAspectRatio = Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 
 	}
 
@@ -51,7 +50,7 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 
 		// Handle editor camera movement
-		FixedString32 focusedWindow{ EditorUI::EditorUIService::GetFocusedWindowName() };
+		FixedString32 focusedWindow{ EditorUI::EditorUIContext::GetFocusedWindowName() };
 		if (focusedWindow == m_PanelName)
 		{
 			m_EditorCamera.OnUpdate(ts);
@@ -76,8 +75,6 @@ namespace Kargono::Panels
 		Rendering::RendererAPI::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Rendering::RendererAPI::Clear();
 
-		
-
 		// TODO: Add background image to viewport
 		DrawUnderlay();
 
@@ -85,8 +82,8 @@ namespace Kargono::Panels
 		m_ViewportFramebuffer->SetAttachment(1, -1);
 
 		// Handle specific widget on click's
-		RuntimeUI::RuntimeUIService::OnUpdate(ts);
-		RuntimeUI::RuntimeUIService::OnRender(m_EditorCamera.GetViewProjection(), m_ViewportData.m_Width, m_ViewportData.m_Height);
+		RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->OnUpdate(ts);
+		RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->OnRenderCamera(m_EditorCamera.GetViewProjection(), m_ViewportData);
 
 		HandleMouseHovering();
 
@@ -101,18 +98,20 @@ namespace Kargono::Panels
 	{
 		KG_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_UIWindow->m_ShowViewport);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_UIWindow->m_ShowViewport);
 		ImGui::PopStyleVar();
 
 		// Early out if the window is not visible
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
-		EditorUI::EditorUIService::AutoCalcViewportSize(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered,
+		EditorUI::EditorUIContext::CalculateViewportDimensions(m_ScreenViewportBounds, m_ViewportData, m_ViewportFocused, m_ViewportHovered,
 			m_ViewportAspectRatio);
+
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext() };
 
 		uint64_t textureID = m_ViewportFramebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((ImTextureID)textureID, ImVec2{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height }, ImVec2{ 0, 1 },
@@ -121,7 +120,7 @@ namespace Kargono::Panels
 		{
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 			{
-				RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWindowWidgetID);
+				RuntimeUI::IDType idType = uiContext.m_ActiveUI->m_WindowsState.CheckIDType(m_HoveredWindowWidgetID);
 
 				if (idType != RuntimeUI::IDType::None)
 				{
@@ -130,19 +129,16 @@ namespace Kargono::Panels
 					if (idType == RuntimeUI::IDType::Widget)
 					{
 						// Set widget as selected manually
-						Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidgetFromID(m_HoveredWindowWidgetID);
+						Ref<RuntimeUI::Widget> hoveredWidget = uiContext.m_ActiveUI->m_WindowsState.GetWidgetFromID(m_HoveredWindowWidgetID);
 						if (hoveredWidget && hoveredWidget->Selectable())
 						{
-							Ref<RuntimeUI::UserInterface> userInterface = RuntimeUI::RuntimeUIService::GetActiveUI();
+							Ref<RuntimeUI::UserInterface> userInterface{ uiContext.GetActiveUI() };
 							KG_ASSERT(userInterface);
-							userInterface->m_SelectedWidget = hoveredWidget.get();
+							userInterface->m_InteractState.m_SelectedWidget = hoveredWidget.get();
 						}
 
 					}
 				}
-
-
-				
 			}
 		}
 
@@ -151,7 +147,7 @@ namespace Kargono::Panels
 		DrawToolbarOverlay();
 
 		// End the window
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 
 	void UIEditorViewportPanel::OnInputEvent(Events::Event* event)
@@ -224,7 +220,7 @@ namespace Kargono::Panels
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			// Add red color to shader
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red), 
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::k_Red), 
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				localBuffer, localShader);
 
@@ -291,7 +287,7 @@ namespace Kargono::Panels
 		{ (float)m_ViewportData.m_Width, (float)m_ViewportData.m_Height, -1.0f },
 		{ 0.0f, (float)m_ViewportData.m_Height, -1.0f }
 		};
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), 
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1), 
 			Utility::FileSystem::CRCFromString("a_Color"), 
 			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 		s_OutputVector->clear();
@@ -326,31 +322,32 @@ namespace Kargono::Panels
 			m_HoveredWindowWidgetID = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
 		}
 
-		RuntimeUI::IDType type = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWindowWidgetID);
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext() };
+		RuntimeUI::IDType type = uiContext.m_ActiveUI->m_WindowsState.CheckIDType(m_HoveredWindowWidgetID);
 
 		// Exit early if no valid widget/window is available
 		if (type == RuntimeUI::IDType::None || type == RuntimeUI::IDType::Window)
 		{
-			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_InteractState.ClearHoveredWidget();
 			return;
 		}
 		
 		// Set widget as hovered manually
-		Ref<RuntimeUI::Widget> hoveredWidget = RuntimeUI::RuntimeUIService::GetWidgetFromID(m_HoveredWindowWidgetID);
+		Ref<RuntimeUI::Widget> hoveredWidget = uiContext.m_ActiveUI->m_WindowsState.GetWidgetFromID(m_HoveredWindowWidgetID);
 		
 		if (!hoveredWidget || !hoveredWidget->Selectable())
 		{
-			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_InteractState.ClearHoveredWidget();
 			return;
 		}
-		Ref<RuntimeUI::UserInterface> userInterface = RuntimeUI::RuntimeUIService::GetActiveUI();
+		Ref<RuntimeUI::UserInterface> userInterface = uiContext.GetActiveUI();
 		KG_ASSERT(userInterface);
-		userInterface->m_HoveredWidget = hoveredWidget.get();
+		userInterface->m_InteractState.m_HoveredWidget = hoveredWidget.get();
 	}
 	void UIEditorViewportPanel::DrawToolbarOverlay()
 	{
 		//constexpr float k_IconSize{ 36.0f };
-		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
+		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::k_PureEmpty);
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();
 		ImVec2 initialCursorPos = ImGui::GetCursorStartPos();
@@ -362,32 +359,32 @@ namespace Kargono::Panels
 			// Draw Display Options Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 80.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 48.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+				ImColor(EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Grid Options Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 257.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 187.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+				ImColor(EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Camera Options Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 170.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x) - 100.0f, initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
+				ImColor(EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottom);
 
 			// Draw Toggle Top Bar Background
 			draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 30.0f, initialScreenCursorPos.y),
 				ImVec2(initialScreenCursorPos.x + (windowSize.x), initialScreenCursorPos.y + 30.0f),
-				ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
+				ImColor(EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
 
 
 			// Camera Options Button
-			icon = EditorUI::EditorUIService::s_IconCamera;
+			icon = EditorUI::EditorUIContext::m_GenIcons.m_Camera;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 163, initialCursorPos.y + 5));
 			if (ImGui::ImageButton("Camera Options",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_HighlightColor1))
+				EditorUI::k_PureEmpty,
+				EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1))
 			{
 				ImGui::OpenPopup("UI Camera Options");
 			}
@@ -395,7 +392,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Options");
+				ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Camera Options");
 				ImGui::EndTooltip();
 			}
 
@@ -418,18 +415,18 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Camera Speed");
+				ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Camera Speed");
 				ImGui::EndTooltip();
 			}
 
 			// Viewport Display Options Button
-			icon = EditorUI::EditorUIService::s_IconDisplay;
+			icon = EditorUI::EditorUIContext::m_ViewportIcons.m_Display;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 75, initialCursorPos.y + 4));
 			if (ImGui::ImageButton("Display Toggle",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_HighlightColor1))
+				EditorUI::k_PureEmpty,
+				EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1))
 			{
 				ImGui::OpenPopup("Toggle Display Options");
 			}
@@ -437,7 +434,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Display Options");
+				ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Display Options");
 				ImGui::EndTooltip();
 			}
 
@@ -480,7 +477,7 @@ namespace Kargono::Panels
 					if (ImGui::MenuItem("Set to Project Resolution"))
 					{
 						m_ViewportAspectRatio = Utility::ScreenResolutionToAspectRatio(
-							Projects::ProjectService::GetActiveTargetResolution());
+							Projects::ProjectService::GetActiveContext().GetTargetResolution());
 					}
 
 					ImGui::EndMenu();
@@ -490,13 +487,13 @@ namespace Kargono::Panels
 			}
 
 			// Grid Options Button
-			icon = EditorUI::EditorUIService::s_IconGrid;
+			icon = EditorUI::EditorUIContext::m_ViewportIcons.m_Grid;
 			ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 252, initialCursorPos.y + 4));
 			if (ImGui::ImageButton("Grid Toggle",
 				(ImTextureID)(uint64_t)icon->GetRendererID(),
 				ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-				EditorUI::EditorUIService::s_PureEmpty,
-				EditorUI::EditorUIService::s_HighlightColor1))
+				EditorUI::k_PureEmpty,
+				EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1))
 			{
 				ImGui::OpenPopup("Grid Options");
 			}
@@ -504,7 +501,7 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Grid Options");
+				ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Grid Options");
 				ImGui::EndTooltip();
 			}
 
@@ -527,20 +524,20 @@ namespace Kargono::Panels
 			{
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::BeginTooltip();
-				ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Section Count");
+				ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Section Count");
 				ImGui::EndTooltip();
 			}
 		}
 
 		// Toggle Top Bar Button
-		icon = m_ToolbarEnabled ? EditorUI::EditorUIService::s_IconCheckbox_Enabled :
-			EditorUI::EditorUIService::s_IconCheckbox_Disabled;
+		icon = m_ToolbarEnabled ? EditorUI::EditorUIContext::m_GenIcons.m_Checkbox_Enabled :
+			EditorUI::EditorUIContext::m_GenIcons.m_Checkbox_Disabled;
 		ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 25, initialCursorPos.y + 4));
 		if (ImGui::ImageButton("Toggle Top Bar",
 			(ImTextureID)(uint64_t)icon->GetRendererID(),
 			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-			EditorUI::EditorUIService::s_PureEmpty,
-			m_ToolbarEnabled ? EditorUI::EditorUIService::s_HighlightColor1 : EditorUI::EditorUIService::s_DisabledColor))
+			EditorUI::k_PureEmpty,
+			m_ToolbarEnabled ? EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1 : EditorUI::EditorUIContext::m_ConfigColors.m_DisabledColor))
 		{
 			Utility::Operations::ToggleBoolean(m_ToolbarEnabled);
 		}
@@ -548,7 +545,7 @@ namespace Kargono::Panels
 		{
 			ImGui::SetNextFrameWantCaptureMouse(false);
 			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, m_ToolbarEnabled ? "Close Toolbar" : "Open Toolbar");
+			ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, m_ToolbarEnabled ? "Close Toolbar" : "Open Toolbar");
 			ImGui::EndTooltip();
 		}
 
@@ -583,7 +580,7 @@ namespace Kargono::Panels
 			gridVertices.push_back({ x, (float)m_ViewportData.m_Height, -1.0f });
 		}
 
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_GridMinor), 
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_GridMinor),
 			Utility::FileSystem::CRCFromString("a_Color"), 
 			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 
@@ -623,8 +620,8 @@ namespace Kargono::Panels
 			Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 			// Get window transform
-			Math::vec3 windowPosition = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
-			Math::mat4 transform{ glm::translate(Math::mat4(1.0), windowPosition)};
+			Math::vec3 windowCornerPos = window->GetLowerCornerPosition(m_ViewportData);
+			Math::mat4 transform{ glm::translate(Math::mat4(1.0), windowCornerPos)};
 
 			// Snapping
 			bool snap = Input::InputService::IsKeyPressed(Key::LeftControl);
@@ -644,10 +641,11 @@ namespace Kargono::Panels
 				Math::DecomposeTransform(transform, translation, rotation, scale);
 
 				// Update the window's position
-				window->m_ScreenPosition = window->CalculateScreenPosition(
+				window->m_ScreenPosition = window->GetRelativeViewportPosition
+				(
 					Math::vec2(translation.x, translation.y), 
-					m_ViewportData.m_Width, 
-					m_ViewportData.m_Height);
+					m_ViewportData
+				);
 
 				// Set the active editor UI as edited
 				s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -657,16 +655,19 @@ namespace Kargono::Panels
 		{
 			ImGuizmo::SetOrthographic(true);
 			ImGuizmo::SetDrawlist();
-			ImGuizmo::SetRect(m_ScreenViewportBounds[0].x, m_ScreenViewportBounds[0].y,
+			ImGuizmo::SetRect
+			(
+				m_ScreenViewportBounds[0].x, m_ScreenViewportBounds[0].y,
 				m_ScreenViewportBounds[1].x - m_ScreenViewportBounds[0].x,
-				m_ScreenViewportBounds[1].y - m_ScreenViewportBounds[0].y);
+				m_ScreenViewportBounds[1].y - m_ScreenViewportBounds[0].y
+			);
 
 			// Editor Camera
 			const Math::mat4& cameraProjection = m_EditorCamera.GetProjection();
 			Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 			// Get position/size data for the parent widget/window
-			RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+			RuntimeUI::Bounds parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetParentBoundsFromID(widget->m_ID, m_ViewportData);
 
 			// Calculate widget transform
 			Math::vec3 widgetPosition = widget->CalculateWorldPosition(parentDimensions.m_Translation, parentDimensions.m_Size);
@@ -748,7 +749,7 @@ namespace Kargono::Panels
 		if (widget)
 		{
 			// Get position/size data for the parent widget/window
-			RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+			RuntimeUI::Bounds parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetParentBoundsFromID(widget->m_ID, m_ViewportData);
 
 			Math::vec3 finalParentTranslation = Math::vec3(parentDimensions.m_Translation.x + (parentDimensions.m_Size.x / 2), parentDimensions.m_Translation.y + (parentDimensions.m_Size.y / 2), parentDimensions.m_Translation.z);
 
@@ -769,7 +770,7 @@ namespace Kargono::Panels
 			{
 				selectionBoxVertices[i] = widgetTransform * s_RectangleVertexPositions[i];
 			}
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor4), 
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor4), 
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
@@ -810,20 +811,20 @@ namespace Kargono::Panels
 		if (window)
 		{
 			// Get position data for rendering window
-			Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
-			Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
-			Math::vec3 finalWindowTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x / 2), initialWindowTranslation.y + (windowScale.y / 2), initialWindowTranslation.z);
+			Math::vec3 windowSize = window->GetSize(m_ViewportData);
+			Math::vec3 windowCornerPos = window->GetLowerCornerPosition(m_ViewportData);
+			Math::vec3 windowCenterPos = window->GetCenterPosition(windowCornerPos, windowSize);
 
 			// Create background rendering data
-			Math::mat4 windowTransform = glm::translate(Math::mat4(1.0f), finalWindowTranslation)
-				* glm::scale(Math::mat4(1.0f), windowScale);
+			Math::mat4 windowTransform = glm::translate(Math::mat4(1.0f), windowCenterPos)
+				* glm::scale(Math::mat4(1.0f), windowSize);
 
 			Math::vec3 selectionBoxVertices[4];
 			for (size_t i = 0; i < 4; i++)
 			{
 				selectionBoxVertices[i] = windowTransform * s_RectangleVertexPositions[i];
 			}
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_Red), 
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::k_Red), 
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
@@ -861,7 +862,7 @@ namespace Kargono::Panels
 		constexpr float k_VanityPaddingSize{ 15.0f };
 
 		// Get position/size data for the parent widget/window
-		RuntimeUI::BoundingBoxTransform parentDimensions = RuntimeUI::RuntimeUIService::GetParentDimensionsFromID(widget->m_ID, m_ViewportData.m_Width, m_ViewportData.m_Height);
+		RuntimeUI::Bounds parentDimensions = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetParentBoundsFromID(widget->m_ID, m_ViewportData);
 		Math::vec3 widgetSize = widget->CalculateWidgetSize(parentDimensions.m_Size);
 
 
@@ -899,7 +900,7 @@ namespace Kargono::Panels
 			constraintDistanceVerts[5] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, widgetTranslation.z };
 
 			// Draw the x-axis constraint distance lines
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), 
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1), 
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
@@ -953,7 +954,7 @@ namespace Kargono::Panels
 			constraintDistanceVerts[5] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, widgetTranslation.z };
 
 			// Draw the x-axis constraint distance lines
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), 
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1), 
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
@@ -1007,7 +1008,7 @@ namespace Kargono::Panels
 			constraintDistanceVerts[5] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[1].y, widgetTranslation.z };
 
 			// Draw the x-axis constraint distance lines
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2), 
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2), 
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
@@ -1059,7 +1060,7 @@ namespace Kargono::Panels
 			constraintDistanceVerts[5] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[1].y, widgetTranslation.z };
 
 			// Draw the x-axis constraint distance lines
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2), 
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2), 
 				Utility::FileSystem::CRCFromString("a_Color"), 
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
@@ -1135,7 +1136,7 @@ namespace Kargono::Panels
 			constraintDistanceVerts[7] = topRight;
 
 			// Draw the box
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor3),
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3),
 				Utility::FileSystem::CRCFromString("a_Color"),
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
@@ -1216,7 +1217,7 @@ namespace Kargono::Panels
 			constraintDistanceVerts[7] = topRight;
 
 			// Draw the box
-			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor3),
+			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3),
 				Utility::FileSystem::CRCFromString("a_Color"),
 				s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 			s_OutputVector->clear();
@@ -1248,15 +1249,15 @@ namespace Kargono::Panels
 		constexpr float k_ConstraintPadding{ 5.0f };
 		constexpr float k_VanityPaddingSize{ 15.0f };
 
-		Math::vec3 windowScale = window->CalculateSize(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 initialWindowTranslation = window->CalculateWorldPosition(m_ViewportData.m_Width, m_ViewportData.m_Height);
-		Math::vec3 finalWindowTranslation = Math::vec3(initialWindowTranslation.x + (windowScale.x / 2), initialWindowTranslation.y + (windowScale.y / 2), initialWindowTranslation.z);
+		Math::vec3 windowSize = window->GetSize(m_ViewportData);
+		Math::vec3 windowCornerPos = window->GetLowerCornerPosition(m_ViewportData);
+		Math::vec3 windowCenterPos = window->GetCenterPosition(windowCornerPos, windowSize);
 
 		// Create window's constraint distance lines
-		constraintDistanceVerts[0] = { 0.0f, finalWindowTranslation.y, finalWindowTranslation.z };
-		constraintDistanceVerts[1] = { finalWindowTranslation.x - windowScale.x / 2.0f, finalWindowTranslation.y, finalWindowTranslation.z }; 
+		constraintDistanceVerts[0] = { 0.0f, windowCenterPos.y, windowCenterPos.z };
+		constraintDistanceVerts[1] = { windowCenterPos.x - windowSize.x / 2.0f, windowCenterPos.y, windowCenterPos.z }; 
 
-		float windowLeftEdge = finalWindowTranslation.x - (windowScale.x / 2.0f);
+		float windowLeftEdge = windowCenterPos.x - (windowSize.x / 2.0f);
 		float viewportLeftEdge = 0.0f;
 
 		// Check if the window's edge is outside the viewport
@@ -1275,13 +1276,13 @@ namespace Kargono::Panels
 		// Note, otherwise just leave the lines as is
 
 		// Add vanity lines
-		constraintDistanceVerts[2] = { constraintDistanceVerts[0].x, constraintDistanceVerts[0].y - k_VanityPaddingSize, finalWindowTranslation.z };
-		constraintDistanceVerts[3] = { constraintDistanceVerts[0].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, finalWindowTranslation.z };
-		constraintDistanceVerts[4] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y - k_VanityPaddingSize, finalWindowTranslation.z };
-		constraintDistanceVerts[5] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, finalWindowTranslation.z };
+		constraintDistanceVerts[2] = { constraintDistanceVerts[0].x, constraintDistanceVerts[0].y - k_VanityPaddingSize, windowCenterPos.z };
+		constraintDistanceVerts[3] = { constraintDistanceVerts[0].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, windowCenterPos.z };
+		constraintDistanceVerts[4] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y - k_VanityPaddingSize, windowCenterPos.z };
+		constraintDistanceVerts[5] = { constraintDistanceVerts[1].x, constraintDistanceVerts[0].y + k_VanityPaddingSize, windowCenterPos.z };
 
 		// Draw the x-axis constraint distance lines
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor1), 
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1), 
 			Utility::FileSystem::CRCFromString("a_Color"), 
 			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 		s_OutputVector->clear();
@@ -1301,9 +1302,9 @@ namespace Kargono::Panels
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		
 		// Create window's constraint distance lines
-		constraintDistanceVerts[0] = { finalWindowTranslation.x, 0.0f, finalWindowTranslation.z };
-		constraintDistanceVerts[1] = { finalWindowTranslation.x, finalWindowTranslation.y - windowScale.y / 2.0f , finalWindowTranslation.z };
-		float windowBottomEdge = finalWindowTranslation.y - (windowScale.y / 2.0f);
+		constraintDistanceVerts[0] = { windowCenterPos.x, 0.0f, windowCenterPos.z };
+		constraintDistanceVerts[1] = { windowCenterPos.x, windowCenterPos.y - windowSize.y / 2.0f , windowCenterPos.z };
+		float windowBottomEdge = windowCenterPos.y - (windowSize.y / 2.0f);
 		float viewportBottomEdge = 0.0f;
 
 		// Check if the window's edge is outside the viewport
@@ -1322,13 +1323,13 @@ namespace Kargono::Panels
 		// Note, otherwise just leave the lines as is
 
 		// Add vanity lines
-		constraintDistanceVerts[2] = { constraintDistanceVerts[0].x - k_VanityPaddingSize, constraintDistanceVerts[0].y, finalWindowTranslation.z };
-		constraintDistanceVerts[3] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[0].y, finalWindowTranslation.z };
-		constraintDistanceVerts[4] = { constraintDistanceVerts[0].x - k_VanityPaddingSize, constraintDistanceVerts[1].y, finalWindowTranslation.z };
-		constraintDistanceVerts[5] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[1].y, finalWindowTranslation.z };
+		constraintDistanceVerts[2] = { constraintDistanceVerts[0].x - k_VanityPaddingSize, constraintDistanceVerts[0].y, windowCenterPos.z };
+		constraintDistanceVerts[3] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[0].y, windowCenterPos.z };
+		constraintDistanceVerts[4] = { constraintDistanceVerts[0].x - k_VanityPaddingSize, constraintDistanceVerts[1].y, windowCenterPos.z };
+		constraintDistanceVerts[5] = { constraintDistanceVerts[0].x + k_VanityPaddingSize, constraintDistanceVerts[1].y, windowCenterPos.z };
 
 		// Draw the x-axis constraint distance lines
-		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIService::s_HighlightColor2), 
+		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Utility::ImVec4ToMathVec4(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2), 
 			Utility::FileSystem::CRCFromString("a_Color"), 
 			s_LineInputSpec.m_Buffer, s_LineInputSpec.m_Shader);
 		s_OutputVector->clear();

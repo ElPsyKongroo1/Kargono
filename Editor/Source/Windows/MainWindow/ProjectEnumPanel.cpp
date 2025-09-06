@@ -10,14 +10,14 @@ namespace Kargono::Panels
 	void ProjectEnumPanel::InitializeOpeningScreen()
 	{
 		m_OpenProjectEnumPopupSpec.m_Label = "Open Enum";
-		m_OpenProjectEnumPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenProjectEnumPopupSpec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_OpenProjectEnumPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenProjectEnumPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenProjectEnumPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
-			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetProjectEnumRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
@@ -26,7 +26,7 @@ namespace Kargono::Panels
 
 		m_OpenProjectEnumPopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::EmptyHandle)
+			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("No Project Enum Selected");
 				return;
@@ -44,13 +44,13 @@ namespace Kargono::Panels
 		m_SelectProjectEnumNameSpec.m_CurrentOption = "Empty";
 
 		m_SelectProjectEnumLocationSpec.m_Label = "Location";
-		m_SelectProjectEnumLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectProjectEnumLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		m_SelectProjectEnumLocationSpec.m_ConfirmAction = [&](std::string_view path)
 			{
-				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory(), path))
 				{
 					KG_WARN("Cannot create an asset outside of the project's asset directory.");
-					m_SelectProjectEnumLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+					m_SelectProjectEnumLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 				}
 			};
 
@@ -78,8 +78,8 @@ namespace Kargono::Panels
 			};
 		m_CreateProjectEnumPopupSpec.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::EditText(m_SelectProjectEnumNameSpec);
-				EditorUI::EditorUIService::ChooseDirectory(m_SelectProjectEnumLocationSpec);
+				m_SelectProjectEnumNameSpec.RenderText();
+				m_SelectProjectEnumLocationSpec.RenderChooseDir();
 			};
 	}
 
@@ -96,7 +96,7 @@ namespace Kargono::Panels
 			};
 		m_DeleteProjectEnumWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to delete this Project Enum object?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to delete this Project Enum object?");
 			};
 
 		m_CloseProjectEnumWarning.m_Label = "Close Enum";
@@ -107,7 +107,7 @@ namespace Kargono::Panels
 			};
 		m_CloseProjectEnumWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to close this enum object without saving?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to close this enum object without saving?");
 			};
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
@@ -194,7 +194,7 @@ namespace Kargono::Panels
 		m_AddIdentifierSpec.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec) 
 		{
 			// Ensure an identical enumeration name does not exist
-			if (ProjectData::ProjectEnumService::DoesProjectEnumContainIdentifier(m_EditorProjectEnum.get(), spec.m_CurrentOption.c_str()))
+			if (m_EditorProjectEnum->DoesContainIdentifier(spec.m_CurrentOption.c_str()))
 			{
 				KG_WARN("Duplicate enum identifier found");
 				return;
@@ -216,7 +216,7 @@ namespace Kargono::Panels
 		m_EditIdentifierSpec.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			// Ensure an identical enumeration name does not exist
-			if (!ProjectData::ProjectEnumService::RenameIdentifier(m_EditorProjectEnum.get(), m_CurrentEnumeration ,spec.m_CurrentOption.c_str()))
+			if (!m_EditorProjectEnum->RenameIdentifier(m_CurrentEnumeration, spec.m_CurrentOption.c_str()))
 			{
 				KG_WARN("Failed to rename identifier in ProjectEnumPanel");
 				return;
@@ -233,7 +233,7 @@ namespace Kargono::Panels
 		m_DeleteIdentifierWarning.m_ConfirmAction = [&]()
 		{
 			// Ensure an identical enumeration name does not exist
-			if (!ProjectData::ProjectEnumService::RemoveIdentifier(m_EditorProjectEnum.get(), m_CurrentEnumeration))
+			if (!m_EditorProjectEnum->RemoveIdentifier(m_CurrentEnumeration))
 			{
 				KG_WARN("Failed to delete identifier in ProjectEnumPanel");
 				return;
@@ -247,7 +247,7 @@ namespace Kargono::Panels
 		};
 		m_DeleteIdentifierWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this identifier?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to delete this identifier?");
 		};
 	}
 
@@ -264,34 +264,34 @@ namespace Kargono::Panels
 	void ProjectEnumPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowProjectEnum);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowProjectEnum);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (!m_EditorProjectEnum)
 		{
 
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Enum", KG_BIND_CLASS_FN(OnOpenProjectEnumDialog), "Create New Enum", KG_BIND_CLASS_FN(OnCreateProjectEnumDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateProjectEnumPopupSpec);
-			EditorUI::EditorUIService::SelectOption(m_OpenProjectEnumPopupSpec);
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing Enum", KG_BIND_CLASS_FN(OnOpenProjectEnumDialog), "Create New Enum", KG_BIND_CLASS_FN(OnCreateProjectEnumDialog));
+			m_CreateProjectEnumPopupSpec.RenderPopup();
+			m_OpenProjectEnumPopupSpec.RenderOptions();
 		}
 		else
 		{
-			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteProjectEnumWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseProjectEnumWarning);
-			EditorUI::EditorUIService::List(m_EnumDataTable);
-			EditorUI::EditorUIService::EditText(m_AddIdentifierSpec);
-			EditorUI::EditorUIService::EditText(m_EditIdentifierSpec);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteIdentifierWarning);
-			EditorUI::EditorUIService::Tooltip(m_EnumTooltip);
+			m_MainHeader.RenderHeader();
+			m_DeleteProjectEnumWarning.RenderPopup();
+			m_CloseProjectEnumWarning.RenderPopup();
+			m_EnumDataTable.RenderList();
+			m_AddIdentifierSpec.RenderText();
+			m_EditIdentifierSpec.RenderText();
+			m_DeleteIdentifierWarning.RenderPopup();
+			m_EnumTooltip.RenderTooltip();
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool ProjectEnumPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -335,15 +335,15 @@ namespace Kargono::Panels
 	void ProjectEnumPanel::ResetPanelResources()
 	{
 		m_EditorProjectEnum = nullptr;
-		m_EditorProjectEnumHandle = Assets::EmptyHandle;
+		m_EditorProjectEnumHandle = Assets::k_EmptyHandle;
 	}
 	void ProjectEnumPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 
 		// Open Project Enum Window
 		s_MainWindow->m_ShowProjectEnum = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorProjectEnum)
 		{
@@ -361,7 +361,7 @@ namespace Kargono::Panels
 	void ProjectEnumPanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
 		// Ensure provided path is within the active asset directory
-		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
 		{
 			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
@@ -381,8 +381,8 @@ namespace Kargono::Panels
 
 		// Open the editor panel to be visible
 		s_MainWindow->m_ShowProjectEnum = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorProjectEnumHandle == assetHandle)
@@ -408,8 +408,8 @@ namespace Kargono::Panels
 	}
 	void ProjectEnumPanel::OnCreateProjectEnumDialog()
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectProjectEnumLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+		m_SelectProjectEnumLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_CreateProjectEnumPopupSpec.m_OpenPopup = true;
 	}
 	void ProjectEnumPanel::OnRefreshData()

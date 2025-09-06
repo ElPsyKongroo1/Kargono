@@ -19,13 +19,13 @@ namespace Kargono::ECS
 	struct AIStateComponent
 	{
 		// Main state that undergoes state transitions
-		Assets::AssetHandle CurrentStateHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle CurrentStateHandle{ Assets::k_EmptyHandle };
 		Ref<AI::AIState> CurrentStateReference{ nullptr };
 		// This state allows transitioning into a temporary state for the CurrentState and easily reverting back
-		Assets::AssetHandle PreviousStateHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle PreviousStateHandle{ Assets::k_EmptyHandle };
 		Ref<AI::AIState> PreviousStateReference{ nullptr };
 		// Globally held state that is ubiquitously available and ran in the OnUpdate() function
-		Assets::AssetHandle GlobalStateHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle GlobalStateHandle{ Assets::k_EmptyHandle };
 		Ref<AI::AIState> GlobalStateReference{ nullptr };
 
 		AIStateComponent() = default;
@@ -111,19 +111,19 @@ namespace Kargono::ECS
 
 	struct OnCreateComponent
 	{
-		Assets::AssetHandle OnCreateScriptHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle OnCreateScriptHandle{ Assets::k_EmptyHandle };
 		Ref<Scripting::Script> OnCreateScript{ nullptr };
 	};
 
 	struct OnUpdateComponent
 	{
-		Assets::AssetHandle OnUpdateScriptHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle OnUpdateScriptHandle{ Assets::k_EmptyHandle };
 		Ref<Scripting::Script> OnUpdateScript{ nullptr };
 	};
 
 	struct ParticleEmitterComponent
 	{
-		Assets::AssetHandle m_EmitterConfigHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_EmitterConfigHandle{ Assets::k_EmptyHandle };
 		Ref<Particles::EmitterConfig> m_EmitterConfigRef{ nullptr };
 	};
 
@@ -144,10 +144,10 @@ namespace Kargono::ECS
 		void* RuntimeBody = nullptr;
 
 		// Collision callback function pointers
-		Assets::AssetHandle OnCollisionStartScriptHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle OnCollisionStartScriptHandle{ Assets::k_EmptyHandle };
 		Ref<Scripting::Script> OnCollisionStartScript{ nullptr };
 
-		Assets::AssetHandle OnCollisionEndScriptHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle OnCollisionEndScriptHandle{ Assets::k_EmptyHandle };
 		Ref<Scripting::Script> OnCollisionEndScript{ nullptr };
 
 		Rigidbody2DComponent() = default;
@@ -202,9 +202,9 @@ namespace Kargono::ECS
 		Ref<std::vector<Math::vec4>> VertexColors {};
 		Ref<Rendering::Shader> Shader;
 		Rendering::ShaderSpecification ShaderSpecification {Rendering::ColorInputType::None, Rendering::TextureInputType::None, false, true, true, Rendering::RenderingType::DrawIndex, false};
-		Assets::AssetHandle ShaderHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle ShaderHandle{ Assets::k_EmptyHandle };
 		Ref<Rendering::Texture2D> Texture;
-		Assets::AssetHandle TextureHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle TextureHandle{ Assets::k_EmptyHandle };
 		Buffer ShaderData;
 
 		ShapeComponent();

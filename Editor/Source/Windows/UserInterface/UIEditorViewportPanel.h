@@ -4,7 +4,7 @@
 #include "Modules/Rendering/EditorOrthographicCamera.h"
 #include "Modules/Rendering/Framebuffer.h"
 #include "Kargono/Core/Window.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 
 #include <string>
 #include <limits>

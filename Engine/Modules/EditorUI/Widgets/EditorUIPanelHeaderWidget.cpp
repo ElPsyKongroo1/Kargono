@@ -1,0 +1,55 @@
+#include "kgpch.h"
+
+#include "Modules/EditorUI/Widgets/EditorUIPanelHeaderWidget.h"
+#include "Modules/EditorUI/EditorUIContext.h"
+
+#include "Kargono/Utility/Operations.h"
+
+namespace Kargono::EditorUI
+{
+	void PanelHeaderWidget::RenderHeader()
+	{
+		ResetChildID();
+
+		ImGui::PushFont(EditorUIContext::m_ConfigFonts.m_HeaderLarge);
+		ImGui::PushStyleColor(ImGuiCol_Text, m_EditColorActive ? EditorUIContext::m_ConfigColors.m_HighlightColor2 : EditorUIContext::m_ConfigColors.m_PrimaryTextColor);
+		ImGui::TextUnformatted(m_Label.CString());
+		ImGui::PopStyleColor();
+		ImGui::PopFont();
+
+		if (m_SelectionsList.size() > 0)
+		{
+			ImGui::SameLine();
+			EditorUIContext::RenderInlineButton(m_WidgetID, [&]()
+				{
+					ImGui::OpenPopup(m_WidgetIDString);
+				}, EditorUIContext::m_UIPresets.m_MediumOptionsButton, false, EditorUIContext::m_ConfigColors.m_DisabledColor);
+
+			if (ImGui::BeginPopup(m_WidgetIDString))
+			{
+				for (auto& [label, func] : GetSelectionList())
+				{
+					if (ImGui::Selectable((label.c_str() + m_WidgetIDString).c_str()))
+					{
+						func();
+					}
+				}
+				ImGui::EndPopup();
+			}
+		}
+		ImGui::Separator(1.0f, EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin);
+		EditorUIContext::Spacing(0.2f);
+	}
+	void PanelHeaderWidget::ClearSelectionList()
+	{
+		m_SelectionsList.clear();
+	}
+	void PanelHeaderWidget::AddToSelectionList(const std::string& label, std::function<void()> function)
+	{
+		if (!m_SelectionsList.contains(label))
+		{
+			m_SelectionsList.insert_or_assign(label, function);
+			return;
+		}
+	}
+}

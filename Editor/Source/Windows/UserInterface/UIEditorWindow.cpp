@@ -13,8 +13,8 @@ namespace Kargono::Windows
 	void UIEditorWindow::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// TODO: Open UIEditorWindow
-		EditorUI::EditorUIService::BringWindowToFront(m_TreePanel->m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_TreePanel->m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_TreePanel->m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_TreePanel->m_PanelName);
 
 		// Check if panel is already occupied by an asset
 		if (!m_EditorUI)
@@ -90,8 +90,8 @@ namespace Kargono::Windows
 	{
 		KG_PROFILE_FUNCTION();
 
-		EditorUI::EditorUIService::StartRendering();
-		EditorUI::EditorUIService::StartDockspaceWindow();
+		EditorUI::EditorUIContext::StartRendering();
+		EditorUI::EditorUIContext::StartDockspaceWindow();
 
 		// Render the UI Editor's menu bar
 		if (ImGui::BeginMenuBar())
@@ -145,18 +145,18 @@ namespace Kargono::Windows
 		}
 
 		// Clean up dockspace window
-		EditorUI::EditorUIService::EndDockspaceWindow();
+		EditorUI::EditorUIContext::EndDockspaceWindow();
 
 		// Add highlighting around the focused window
-		EditorUI::EditorUIService::HighlightFocusedWindow();
+		EditorUI::EditorUIContext::HighlightFocusedWindow();
 
 		// End Editor UI Rendering
-		EditorUI::EditorUIService::EndRendering();
+		EditorUI::EditorUIContext::EndRendering();
 	}
 	bool UIEditorWindow::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		bool handled{ false };
-		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedString32 focusedWindow = EditorUI::EditorUIContext::GetFocusedWindowName();
 		if (focusedWindow == m_ViewportPanel->m_PanelName)
 		{
 			handled = m_ViewportPanel->OnKeyPressedEditor(event);
@@ -192,7 +192,7 @@ namespace Kargono::Windows
 		{
 			if (m_PropertiesPanel->m_ButtonWidgetOnPress.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
 			{
-				m_PropertiesPanel->m_ButtonWidgetOnPress.m_CurrentOption = { "None", Assets::EmptyHandle };
+				m_PropertiesPanel->m_ButtonWidgetOnPress.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			}
 
 			if (m_EditorUI)
@@ -236,8 +236,10 @@ namespace Kargono::Windows
 
 	void UIEditorWindow::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Ensure provided path is within the active asset directory
-		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path activeAssetDirectory = projectPaths.GetAssetDirectory();
 		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
 		{
 			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");

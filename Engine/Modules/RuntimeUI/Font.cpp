@@ -47,14 +47,10 @@ namespace Kargono::Utility
 
 namespace Kargono::RuntimeUI
 {
-	static Rendering::RendererInputSpec s_TextInputSpec{};
-	static Ref<std::vector<Math::vec3>> s_Vertices;
-	static Ref<std::vector<Math::vec2>> s_TexCoordinates;
-
-	void FontService::Init()
+	void FontContext::Init()
 	{
 		// TODO: Change to Proper Boolean Check
-		if (!s_TextInputSpec.m_Shader)
+		if (!m_TextInputSpec.m_Shader)
 		{
 			// TODO: Unreleased Heap Data with Buffer
 			Rendering::ShaderSpecification textShaderSpec{ Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::TextTexture, false, true, true, Rendering::RenderingType::DrawTriangle, false };
@@ -65,33 +61,33 @@ namespace Kargono::RuntimeUI
 				Utility::FileSystem::CRCFromString("a_Color"),
 				localBuffer, localShader);
 
-			s_TextInputSpec.m_ShapeComponent = new ECS::ShapeComponent();
-			s_TextInputSpec.m_ShapeComponent->CurrentShape = Rendering::ShapeTypes::Quad;
+			m_TextInputSpec.m_ShapeComponent = new ECS::ShapeComponent();
+			m_TextInputSpec.m_ShapeComponent->CurrentShape = Rendering::ShapeTypes::Quad;
 
-			s_TextInputSpec.m_Shader = localShader;
-			s_TextInputSpec.m_ShapeComponent->Shader = localShader;
-			s_TextInputSpec.m_Buffer = localBuffer;
-			s_TexCoordinates = CreateRef<std::vector<Math::vec2>>();
-			s_TexCoordinates->push_back({ 0.0f, 0.0f });
-			s_TexCoordinates->push_back({ 0.0f, 1.0f });
-			s_TexCoordinates->push_back({ 1.0f, 1.0f });
-			s_TexCoordinates->push_back({ 0.0f, 0.0f });
-			s_TexCoordinates->push_back({ 1.0f, 1.0f });
-			s_TexCoordinates->push_back({ 1.0f, 0.0f });
-			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
+			m_TextInputSpec.m_Shader = localShader;
+			m_TextInputSpec.m_ShapeComponent->Shader = localShader;
+			m_TextInputSpec.m_Buffer = localBuffer;
+			m_TexCoordinates = CreateRef<std::vector<Math::vec2>>();
+			m_TexCoordinates->push_back({ 0.0f, 0.0f });
+			m_TexCoordinates->push_back({ 0.0f, 1.0f });
+			m_TexCoordinates->push_back({ 1.0f, 1.0f });
+			m_TexCoordinates->push_back({ 0.0f, 0.0f });
+			m_TexCoordinates->push_back({ 1.0f, 1.0f });
+			m_TexCoordinates->push_back({ 1.0f, 0.0f });
+			m_TextInputSpec.m_ShapeComponent->TextureCoordinates = m_TexCoordinates;
 
-			s_Vertices = CreateRef<std::vector<Math::vec3>>();
+			m_Vertices = CreateRef<std::vector<Math::vec3>>();
 		}
 		KG_VERIFY(true, "Runtime Text Engine Init")
 	}
 
-	void FontService::Terminate()
+	void FontContext::Terminate()
 	{
-		s_TextInputSpec.ClearData();
+		m_TextInputSpec.ClearData();
 	}
 
 
-	Ref<Font> FontService::InstantiateEditorFont(const std::filesystem::path& filepath)
+	Ref<Font> FontContext::InstantiateEditorFont(const std::filesystem::path& filepath)
 	{
 		std::vector<msdf_atlas::GlyphGeometry> glyphs;
 		msdf_atlas::FontGeometry fontGeometry;
@@ -213,21 +209,22 @@ namespace Kargono::RuntimeUI
 		return newFont;
 	}
 
-	void FontService::SetID(uint32_t id)
+	void FontContext::SetID(uint32_t id)
 	{
 		Rendering::Shader::SetDataAtInputLocation<uint32_t>(id, 
 			Utility::FileSystem::CRCFromString("a_EntityID"),
-			s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
+			m_TextInputSpec.m_Buffer, m_TextInputSpec.m_Shader);
 	}
 
 	void Font::OnRenderMultiLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale, int maxLineWidth)
 	{
+		FontContext& fontContext{ FontService::GetActiveContext() };
 		UNREFERENCED_PARAMETER(maxLineWidth);
 		// Submit text color to the renderer buffer. The text will now be rendered with this color.
-		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
+		fontContext.m_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, 
 			Utility::FileSystem::CRCFromString("a_Color"),
-			s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
+			fontContext.m_TextInputSpec.m_Buffer, fontContext.m_TextInputSpec.m_Shader);
 
 		// Initialize the active location where text is being rendered
 		double xLocation{ translation.x };
@@ -291,28 +288,28 @@ namespace Kargono::RuntimeUI
 			texCoordMax *= glm::vec2(texelWidth, texelHeight);
 
 			// Submit the quad location data to the renderer
-			s_Vertices->clear();
-			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
-			s_Vertices->push_back({ quadMin, translation.z });											// 0, 0
-			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
-			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
-			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
-			s_Vertices->push_back({ quadMax, translation.z });											// 1, 1
-			s_TextInputSpec.m_ShapeComponent->Vertices = s_Vertices;
+			fontContext.m_Vertices->clear();
+			fontContext.m_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
+			fontContext.m_Vertices->push_back({ quadMin, translation.z });											// 0, 0
+			fontContext.m_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
+			fontContext.m_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
+			fontContext.m_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
+			fontContext.m_Vertices->push_back({ quadMax, translation.z });											// 1, 1
+			fontContext.m_TextInputSpec.m_ShapeComponent->Vertices = fontContext.m_Vertices;
 
 			// Submit the texture coordinates data to the renderer
-			s_TexCoordinates->clear();
-			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
-			s_TexCoordinates->push_back(texCoordMin);								// 0, 0
-			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
-			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
-			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
-			s_TexCoordinates->push_back(texCoordMax);				
-			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
+			fontContext.m_TexCoordinates->clear();
+			fontContext.m_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
+			fontContext.m_TexCoordinates->push_back(texCoordMin);								// 0, 0
+			fontContext.m_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
+			fontContext.m_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
+			fontContext.m_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
+			fontContext.m_TexCoordinates->push_back(texCoordMax);				
+			fontContext.m_TextInputSpec.m_ShapeComponent->TextureCoordinates = fontContext.m_TexCoordinates;
 
 			// TODO: Submit multiple glyphs at once for CPU optimization
 			// Submit the glyph data to the renderer
-			Rendering::RenderingService::SubmitDataToRenderer(s_TextInputSpec);
+			Rendering::RenderingService::SubmitDataToRenderer(fontContext.m_TextInputSpec);
 
 			// Shift the location to the next character
 			xLocation += scale * glyph.Advance;
@@ -321,11 +318,13 @@ namespace Kargono::RuntimeUI
 
 	void Font::OnRenderSingleLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale)
 	{
+		FontContext& fontContext{ FontService::GetActiveContext() };
+
 		// Submit text color to the renderer buffer. The text will now be rendered with this color.
-		s_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
+		fontContext.m_TextInputSpec.m_ShapeComponent->Texture = m_AtlasTexture;
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, 
 			Utility::FileSystem::CRCFromString("a_Color"),
-			s_TextInputSpec.m_Buffer, s_TextInputSpec.m_Shader);
+			fontContext.m_TextInputSpec.m_Buffer, fontContext.m_TextInputSpec.m_Shader);
 
 		// Initialize the active location where text is being rendered
 		double xLocation{ translation.x };
@@ -387,35 +386,35 @@ namespace Kargono::RuntimeUI
 			texCoordMax *= glm::vec2(texelWidth, texelHeight);
 
 			// Submit the quad location data to the renderer
-			s_Vertices->clear();
-			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
-			s_Vertices->push_back({ quadMin, translation.z });											// 0, 0
-			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
-			s_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
-			s_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
-			s_Vertices->push_back({ quadMax, translation.z });											// 1, 1
-			s_TextInputSpec.m_ShapeComponent->Vertices = s_Vertices;
+			fontContext.m_Vertices->clear();
+			fontContext.m_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
+			fontContext.m_Vertices->push_back({ quadMin, translation.z });											// 0, 0
+			fontContext.m_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
+			fontContext.m_Vertices->push_back({ quadMin.x, quadMax.y, translation.z });								// 0, 1
+			fontContext.m_Vertices->push_back({ quadMax.x, quadMin.y, translation.z });								// 1, 0
+			fontContext.m_Vertices->push_back({ quadMax, translation.z });											// 1, 1
+			fontContext.m_TextInputSpec.m_ShapeComponent->Vertices = fontContext.m_Vertices;
 
 			// Submit the texture coordinates data to the renderer
-			s_TexCoordinates->clear();
-			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
-			s_TexCoordinates->push_back(texCoordMin);								// 0, 0
-			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
-			s_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
-			s_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
-			s_TexCoordinates->push_back(texCoordMax);
-			s_TextInputSpec.m_ShapeComponent->TextureCoordinates = s_TexCoordinates;
+			fontContext.m_TexCoordinates->clear();
+			fontContext.m_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
+			fontContext.m_TexCoordinates->push_back(texCoordMin);								// 0, 0
+			fontContext.m_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
+			fontContext.m_TexCoordinates->push_back({ texCoordMin.x, texCoordMax.y });			// 0, 1
+			fontContext.m_TexCoordinates->push_back({ texCoordMax.x, texCoordMin.y });			// 1, 0
+			fontContext.m_TexCoordinates->push_back(texCoordMax);
+			fontContext.m_TextInputSpec.m_ShapeComponent->TextureCoordinates = fontContext.m_TexCoordinates;
 
 			// TODO: Submit multiple glyphs at once for CPU optimization
 			// Submit the glyph data to the renderer
-			Rendering::RenderingService::SubmitDataToRenderer(s_TextInputSpec);
+			Rendering::RenderingService::SubmitDataToRenderer(fontContext.m_TextInputSpec);
 
 			// Shift the location to the next character
 			xLocation += scale * glyph.Advance;
 		}
 	}
 
-	Math::vec2 Font::CalculateSingleLineTextSize(std::string_view text)
+	Math::vec2 Font::GetSingleLineTextSize(std::string_view text)
 	{
 		// Loop through all glyphs of provided text and generate the text's x and y extents
 		Math::vec2 outputSize{ 0.0f };
@@ -444,7 +443,7 @@ namespace Kargono::RuntimeUI
 		//outputSize.y /= 45.5f; // TODO: FIX THIS MAGIC NUMBER PLEASE
 		return outputSize;
 	}
-	size_t Font::CalculateIndexFromMousePosition(std::string_view text, float textStartPoint, float mouseXPosition, float textScalingFactor)
+	size_t Font::GetIndexFromMousePosition(std::string_view text, float textStartPoint, float mouseXPosition, float textScalingFactor)
 	{
 		// Loop through all glyphs of provided text and generate the text's x and y extents
 		float accumulatedXPosition{ textStartPoint };
@@ -471,7 +470,7 @@ namespace Kargono::RuntimeUI
 		// Return the text's size if no position is identified
 		return text.size();
 	}
-	void Font::CalculateMultiLineTextMetadata(const std::string& text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth)
+	void Font::GetMultiLineTextMetadata(std::string_view text, MultiLineTextDimensions& metadata, float scale, int maxLineWidth)
 	{
 		// Initialize the active location where text is being rendered
 		float initialXLocation{ 0.0f };

@@ -3,10 +3,10 @@
 #include "Modules/Assets/AssetService.h"
 #include "Modules/Assets/ScriptManager.h"
 #include "Kargono/Utility/Regex.h"
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Modules/AI/AIService.h"
 #include "Modules/InputMap/InputMap.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/ECS/Entity.h"
 #include "Kargono/Projects/Project.h"
@@ -37,7 +37,7 @@ namespace Kargono::Assets
 		const std::string currentCheckSum {};
 
 		// Create New Asset/Handle
-		AssetHandle newHandle{};
+		AssetHandle newHandle{ RandomUUIDService::GetRandomUUID() };
 		Assets::AssetInfo newAsset{};
 		newAsset.Data.Type = AssetType::Script;
 		newAsset.Data.FileLocation = spec.Name + m_FileExtension.CString();
@@ -52,7 +52,9 @@ namespace Kargono::Assets
 		m_AssetRegistry.insert({ newHandle, newAsset }); // Update Registry Map in-memory
 		SerializeAssetRegistry(); // Update Registry File on Disk
 
-		m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation) });
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, projectPaths.GetAssetDirectory() / newAsset.Data.FileLocation) });
 
 		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
 		(
@@ -161,7 +163,7 @@ namespace Kargono::Assets
 
 		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
 		(
-			Assets::EmptyHandle, 
+			Assets::k_EmptyHandle, 
 			AssetType::Script, 
 			Events::ManageAssetAction::UpdateAsset
 		);
@@ -200,7 +202,7 @@ namespace Kargono::Assets
 
 		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
 		(
-			Assets::EmptyHandle, 
+			Assets::k_EmptyHandle, 
 			AssetType::Script, 
 			Events::ManageAssetAction::UpdateAsset
 		);
@@ -210,8 +212,10 @@ namespace Kargono::Assets
 
 	void ScriptManager::FillScriptMetadata(ScriptSpec& spec, Assets::AssetInfo& newAsset)
 	{
+
 		// Create script file
-		std::filesystem::path fullPath = Projects::ProjectService::GetActiveAssetDirectory() / newAsset.Data.FileLocation;
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+		std::filesystem::path fullPath = projectPaths.GetAssetDirectory() / newAsset.Data.FileLocation;
 
 		Utility::FileSystem::WriteFileString(fullPath, Utility::GenerateFunctionStub(spec.m_FunctionType, spec.Name, spec.m_ExplicitFuncType));
 
@@ -238,7 +242,7 @@ namespace Kargono::Assets
 		newScript->m_ScriptType = metadata.m_ScriptType;
 		newScript->m_SectionLabel = metadata.m_SectionLabel;
 		newScript->m_ExplicitFuncType = metadata.m_ExplicitFuncType;
-		Scripting::ScriptService::LoadScriptFunction(newScript, metadata.m_FunctionType);
+		Scripting::ScriptBinderService::GetActiveContext().LoadScriptFunction(newScript, metadata.m_FunctionType);
 
 		return newScript;
 	}
@@ -297,7 +301,7 @@ namespace Kargono::Assets
 	void ScriptManager::DeserializeRegistrySpecificData(YAML::Node& registryNode)
 	{
 		// Load in Engine Scripts
-		for (Ref<Scripting::Script> script : Scripting::ScriptService::GetAllEngineScripts())
+		for (Ref<Scripting::Script> script : Scripting::ScriptBinderService::GetActiveContext().GetAllEngineScripts())
 		{
 			Assets::AssetInfo newAsset{};
 			newAsset.m_Handle = script->m_ID;
@@ -435,11 +439,13 @@ namespace Kargono::Assets
 			}
 		}
 
+		Projects::Project& activeProject{ Projects::ProjectService::GetActiveContext()};
+
 		// Check active project for scripts
-		bool projectModified = Projects::ProjectService::RemoveScriptFromActiveProject(scriptHandle);
+		bool projectModified = activeProject.RemoveScriptFromActiveProject(scriptHandle);
 		if (projectModified)
 		{
-			Projects::ProjectService::SaveActiveProject();
+			activeProject.SaveProject();
 		}
 	}
 }

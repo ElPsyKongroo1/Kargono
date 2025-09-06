@@ -1,6 +1,6 @@
 #pragma once
 #include "Kargono/Core/Timestep.h"
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Kargono/Core/UUID.h"
 
 #include <cstdint>
@@ -17,8 +17,8 @@ namespace Kargono::AI
 	struct AIMessage
 	{
 		uint32_t MessageType{};
-		UUID SenderEntity{ Assets::EmptyHandle };
-		UUID ReceiverEntity{ Assets::EmptyHandle };
+		UUID SenderEntity{ Assets::k_EmptyHandle };
+		UUID ReceiverEntity{ Assets::k_EmptyHandle };
 		float DispatchTime{ 0.0f };
 	};
 
@@ -28,19 +28,19 @@ namespace Kargono::AI
 	struct AIState
 	{
 		// Called each frame if entity has AIComponent
-		Assets::AssetHandle OnUpdateHandle { Assets::EmptyHandle };
+		Assets::AssetHandle OnUpdateHandle { Assets::k_EmptyHandle };
 		Ref<Scripting::Script> OnUpdate { nullptr };
 
 		// Called when this state is entered
-		Assets::AssetHandle OnEnterStateHandle { Assets::EmptyHandle };
+		Assets::AssetHandle OnEnterStateHandle { Assets::k_EmptyHandle };
 		Ref<Scripting::Script> OnEnterState { nullptr };
 
 		// Called when this state is exited
-		Assets::AssetHandle OnExitStateHandle { Assets::EmptyHandle };
+		Assets::AssetHandle OnExitStateHandle { Assets::k_EmptyHandle };
 		Ref<Scripting::Script> OnExitState { nullptr };
 
 		// Called when a message is received
-		Assets::AssetHandle OnMessageHandle { Assets::EmptyHandle };
+		Assets::AssetHandle OnMessageHandle { Assets::k_EmptyHandle };
 		Ref<Scripting::Script> OnMessage { nullptr };
 	};
 

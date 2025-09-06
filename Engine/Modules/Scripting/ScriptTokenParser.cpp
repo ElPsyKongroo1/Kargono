@@ -1,15 +1,15 @@
 #include "kgpch.h"
 #include "Modules/Scripting/ScriptTokenParser.h"
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/Resolution.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
-namespace Kargono::Utility
+namespace Kargono::Scripting
 {
-	static std::string GetIndentation(uint32_t count)
+	std::string ScriptTokenParser::GetIndentation(uint32_t count)
 	{
-		std::string outputIndentation {};
+		std::string outputIndentation{};
 		for (uint32_t iteration{ 0 }; iteration < count; iteration++)
 		{
 			outputIndentation += "  ";
@@ -17,13 +17,13 @@ namespace Kargono::Utility
 		return outputIndentation;
 	}
 
-	static void PrintToken(const Scripting::ScriptToken& token, uint32_t indentation = 0)
+	void ScriptTokenParser::PrintToken(const Scripting::ScriptToken& token, uint32_t indentation)
 	{
 		KG_INFO("{}Type: {}", GetIndentation(indentation), Utility::ScriptTokenTypeToString(token.Type));
 		KG_INFO("{}Value: {}", GetIndentation(indentation), token.Value);
 	}
 
-	static void PrintExpression(Ref<Scripting::Expression> expression, uint32_t indentation = 0)
+	void ScriptTokenParser::PrintExpression(Ref<Scripting::Expression> expression, uint32_t indentation)
 	{
 		if (!expression)
 		{
@@ -46,7 +46,7 @@ namespace Kargono::Utility
 			PrintToken(functionCallExpression->Identifier, indentation + 2);
 			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
 			PrintToken(functionCallExpression->ReturnType, indentation + 2);
-			for (auto& argument : functionCallExpression->Arguments)
+			for (Ref<Expression> argument : functionCallExpression->Arguments)
 			{
 				KG_INFO("{}Argument", GetIndentation(indentation + 1));
 				PrintExpression(argument, indentation + 2);
@@ -72,7 +72,7 @@ namespace Kargono::Utility
 			KG_INFO("{}Expression Initialization List", GetIndentation(indentation));
 			KG_INFO("{}Return Type", GetIndentation(indentation + 1));
 			PrintToken(initListExpression->ReturnType, indentation + 2);
-			for (auto& argument : initListExpression->Arguments)
+			for (Ref<Expression> argument : initListExpression->Arguments)
 			{
 				KG_INFO("{}Argument", GetIndentation(indentation + 1));
 				PrintExpression(argument, indentation + 2);
@@ -131,8 +131,7 @@ namespace Kargono::Utility
 			PrintToken(ternaryOperationNode->ReturnType, indentation + 2);
 		}
 	}
-
-	static void PrintStatement(const Ref<Scripting::Statement> statement, uint32_t indentation = 0)
+	void ScriptTokenParser::PrintStatement(const Ref<Scripting::Statement> statement, uint32_t indentation)
 	{
 		if (!statement)
 		{
@@ -189,12 +188,12 @@ namespace Kargono::Utility
 			KG_INFO("{}Condition Expression", GetIndentation(indentation + 1));
 			PrintExpression(conditionalStatement->ConditionExpression, indentation + 2);
 			KG_INFO("{}Body Statements", GetIndentation(indentation + 1));
-			for (auto bodyStatement : conditionalStatement->BodyStatements)
+			for (Ref<Statement> bodyStatement : conditionalStatement->BodyStatements)
 			{
 				PrintStatement(bodyStatement, indentation + 2);
 			}
 			KG_INFO("{}Chained Conditional Statements", GetIndentation(indentation + 1));
-			for (auto chainedStatement : conditionalStatement->ChainedConditionals)
+			for (Ref<Statement> chainedStatement : conditionalStatement->ChainedConditionals)
 			{
 				PrintStatement(chainedStatement, indentation + 2);
 			}
@@ -205,7 +204,7 @@ namespace Kargono::Utility
 			KG_INFO("{}Condition Expression", GetIndentation(indentation + 1));
 			PrintExpression(whileLoopStatement->ConditionExpression, indentation + 2);
 			KG_INFO("{}Body Statements", GetIndentation(indentation + 1));
-			for (auto bodyStatement : whileLoopStatement->BodyStatements)
+			for (Ref<Scripting::Statement> bodyStatement : whileLoopStatement->BodyStatements)
 			{
 				PrintStatement(bodyStatement, indentation + 2);
 			}
@@ -220,34 +219,31 @@ namespace Kargono::Utility
 		}
 	}
 
-	static void PrintFunction(const Scripting::FunctionNode& funcNode, uint32_t indentation = 0)
+	void ScriptTokenParser::PrintFunction(const Scripting::FunctionNode& funcNode, uint32_t indentation)
 	{
 		KG_INFO("Function Node");
 		KG_INFO("{}Name:", GetIndentation(indentation + 1));
 		PrintToken(funcNode.Name, indentation + 2);
 		KG_INFO("{}Return Type:", GetIndentation(indentation + 1));
 		PrintToken(funcNode.ReturnType, indentation + 2);
-		for (auto& parameter : funcNode.Parameters)
+		for (const FunctionParameter& parameter : funcNode.Parameters)
 		{
 			KG_INFO("{}Parameter:", GetIndentation(indentation + 1));
 			KG_INFO("{}ParameterType:", GetIndentation(indentation + 2));
-			for (auto& token : parameter.AllTypes)
+			for (const ScriptToken& token : parameter.AllTypes)
 			{
 				PrintToken(token, indentation + 3);
 			}
 			KG_INFO("{}ParameterName:", GetIndentation(indentation + 2));
 			PrintToken(parameter.Identifier, indentation + 3);
 		}
-		for (auto& statement : funcNode.Statements)
+		for (Ref<Statement> statement : funcNode.Statements)
 		{
 			KG_INFO("{}Statement:", GetIndentation(indentation + 1));
 			PrintStatement(statement, indentation + 2);
 		}
 	}
-}
 
-namespace Kargono::Scripting
-{
 	std::tuple<bool, ScriptAST> ScriptTokenParser::ParseTokens(std::vector<ScriptToken>&& tokens)
 	{
 		m_Tokens = std::move(tokens);
@@ -278,13 +274,13 @@ namespace Kargono::Scripting
 			FunctionNode& funcNode = m_AST.m_ProgramNode.FuncNode;
 			if (funcNode)
 			{
-				Utility::PrintFunction(funcNode);
+				PrintFunction(funcNode);
 			}
 		}
 	}
 	void ScriptTokenParser::PrintTokens()
 	{
-		for (auto& token : m_Tokens)
+		for (ScriptToken& token : m_Tokens)
 		{
 			KG_WARN("Token: Type ({}) Value ({}) at {}:{}",
 				Utility::ScriptTokenTypeToString(token.Type), token.Value, token.Line, token.Column);
@@ -292,7 +288,7 @@ namespace Kargono::Scripting
 	}
 	void ScriptTokenParser::PrintErrors()
 	{
-		for (auto& error : m_Errors)
+		for (ParserError& error : m_Errors)
 		{
 			KG_WARN(error.ToString());
 		}
@@ -508,7 +504,7 @@ namespace Kargono::Scripting
 		}
 
 		// Parameter List
-		AddStackFrame();
+		m_StackContext.AddStackFrame();
 		Advance();
 		tokenBuffer = GetCurrentToken();
 
@@ -538,7 +534,7 @@ namespace Kargono::Scripting
 			}
 			newParameter.Identifier = tokenBuffer;
 			newFunctionNode.Parameters.push_back(newParameter);
-			StoreStackVariable(newParameter.AllTypes.at(0), newParameter.Identifier);
+			m_StackContext.StoreStackVariable(newParameter.AllTypes.at(0), newParameter.Identifier);
 
 			// Check for comma
 			Advance();
@@ -624,12 +620,13 @@ namespace Kargono::Scripting
 		}
 
 		// Remove current stack variables
-		PopStackFrame();
+		m_StackContext.PopStackFrame();
 
 		return { true, newFunctionNode };
 	}
 	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionNode(uint32_t& parentExpressionSize)
 	{
+		LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
 		Ref<Expression> newExpression { nullptr };
 
 		// Parse initial expression term / initial operand if within binary expression
@@ -662,8 +659,8 @@ namespace Kargono::Scripting
 		}
 
 		// Check for addition / subtraction / boolean binary operations
-		while (ScriptCompilerService::IsAdditionOrSubtractionOperator(GetCurrentToken(parentExpressionSize)) ||
-			ScriptCompilerService::IsBooleanOperator(GetCurrentToken(parentExpressionSize)))
+		while (TokenUtil::IsAdditionOrSubtractionOperator(GetCurrentToken(parentExpressionSize)) ||
+			TokenUtil::IsBooleanOperator(GetCurrentToken(parentExpressionSize)))
 		{
 			Ref<Expression> newBinaryExpression{ CreateRef<Expression>() };
 			BinaryOperationNode newBinaryOperation{};
@@ -696,7 +693,7 @@ namespace Kargono::Scripting
 				{
 					newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
 				}
-				newContext.StackVariables = m_StackVariables;
+				newContext.StackVariables = m_StackContext.m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of addition/subtraction operation", newBinaryOperation.Operator);
 				return { false, {} };
@@ -710,17 +707,17 @@ namespace Kargono::Scripting
 				{
 					newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
 				}
-				newContext.StackVariables = m_StackVariables;
+				newContext.StackVariables = m_StackContext.m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of addition/subtraction operation", newBinaryOperation.Operator);
 				return { false, {} };
 			}
 
-			PrimitiveType leftOperandType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value);
-			PrimitiveType rightOperandType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value);
+			PrimitiveType leftOperandType = scriptLang.m_PrimitiveTypes.at(GetPrimitiveTypeFromToken(newBinaryOperation.LeftOperand->GetReturnType()).Value);
+			PrimitiveType rightOperandType = scriptLang.m_PrimitiveTypes.at(GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType()).Value);
 
 			// Ensure the return type of both operands is identical
-			if (ScriptCompilerService::IsBooleanOperator(newBinaryOperation.Operator))
+			if (TokenUtil::IsBooleanOperator(newBinaryOperation.Operator))
 			{
 				// Check boolean operator operands
 				if (leftOperandType.Name != "bool" || rightOperandType.Name != "bool")
@@ -737,7 +734,7 @@ namespace Kargono::Scripting
 				boolToken.Value = "bool";
 				newBinaryOperation.ReturnType = boolToken;
 			}
-			else if (ScriptCompilerService::IsAdditionOrSubtractionOperator(newBinaryOperation.Operator))
+			else if (TokenUtil::IsAdditionOrSubtractionOperator(newBinaryOperation.Operator))
 			{
 				if (PrimitiveTypeAcceptableToken(leftOperandType.Name, GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType())))
 				{
@@ -901,8 +898,8 @@ namespace Kargono::Scripting
 		if (checkBinaryOperations)
 		{
 			// Check for multiplication / division / comparison binary operations
-			while (ScriptCompilerService::IsMultiplicationOrDivisionOperator(GetCurrentToken(parentExpressionSize)) ||
-				ScriptCompilerService::IsComparisonOperator(GetCurrentToken(parentExpressionSize)))
+			while (TokenUtil::IsMultiplicationOrDivisionOperator(GetCurrentToken(parentExpressionSize)) ||
+				TokenUtil::IsComparisonOperator(GetCurrentToken(parentExpressionSize)))
 			{
 				Ref<Expression> newBinaryExpression{ CreateRef<Expression>() };
 				BinaryOperationNode newBinaryOperation{};
@@ -931,7 +928,7 @@ namespace Kargono::Scripting
 					{
 						newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
 					}
-					newContext.StackVariables = m_StackVariables;
+					newContext.StackVariables = m_StackContext.m_StackVariables;
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in left operand of multiplication/division/comparison operation", newBinaryOperation.Operator);
 					return { false, {} };
@@ -945,7 +942,7 @@ namespace Kargono::Scripting
 					{
 						newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
 					}
-					newContext.StackVariables = m_StackVariables;
+					newContext.StackVariables = m_StackContext.m_StackVariables;
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in right operand of multiplication/division/comparison operation", newBinaryOperation.Operator);
 					return { false, {} };
@@ -961,15 +958,15 @@ namespace Kargono::Scripting
 					StoreParseError(ParseErrorType::ContextProbe, "None type found while parsing binary expression", newBinaryOperation.Operator);
 					return { false, {} };
 				}
-
-				PrimitiveType leftOperandType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(leftOperandReturnToken.Value);
-				PrimitiveType rightOperandType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(rightOperandReturnToken.Value);
+				LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
+				PrimitiveType leftOperandType = scriptLang.m_PrimitiveTypes.at(leftOperandReturnToken.Value);
+				PrimitiveType rightOperandType = scriptLang.m_PrimitiveTypes.at(rightOperandReturnToken.Value);
 
 				// Ensure the return type of both operands is identical
 				if (PrimitiveTypeAcceptableToken(leftOperandType.Name, GetPrimitiveTypeFromToken(newBinaryOperation.RightOperand->GetReturnType())))
 				{
 					// Store Return Type
-					if (ScriptCompilerService::IsComparisonOperator(newBinaryOperation.Operator))
+					if (TokenUtil::IsComparisonOperator(newBinaryOperation.Operator))
 					{
 						ScriptToken boolToken;
 						boolToken.Type = ScriptTokenType::PrimitiveType;
@@ -985,7 +982,7 @@ namespace Kargono::Scripting
 				else if (leftOperandType.AcceptableArithmetic.contains(rightOperandType.Name) || rightOperandType.AcceptableArithmetic.contains(leftOperandType.Name))
 				{
 					// Store Return Type
-					if (!ScriptCompilerService::IsComparisonOperator(newBinaryOperation.Operator))
+					if (!TokenUtil::IsComparisonOperator(newBinaryOperation.Operator))
 					{
 						bool leftFocused = leftOperandType.AcceptableArithmetic.contains(rightOperandType.Name);
 						bool rightFocused = rightOperandType.AcceptableArithmetic.contains(leftOperandType.Name);
@@ -1028,7 +1025,7 @@ namespace Kargono::Scripting
 		// Check for a single literal
 		TokenExpressionNode tokenNode;
 		tokenNode.Value = GetCurrentToken(parentExpressionSize);
-		if (!ScriptCompilerService::IsLiteral(GetCurrentToken(parentExpressionSize)))
+		if (!TokenUtil::IsLiteral(GetCurrentToken(parentExpressionSize)))
 		{
 			return { false, {} };
 		}
@@ -1053,14 +1050,14 @@ namespace Kargono::Scripting
 		tokenNode.Value = GetCurrentToken(parentExpressionSize);
 
 		// Ensure identifier is a proper value
-		if (!IsContextProbe(tokenNode.Value) && tokenNode.Value.Type == ScriptTokenType::Identifier && !CheckStackForIdentifier(tokenNode.Value))
+		if (!IsContextProbe(tokenNode.Value) && tokenNode.Value.Type == ScriptTokenType::Identifier && !m_StackContext.CheckStackForIdentifier(tokenNode.Value))
 		{
 			StoreParseError(ParseErrorType::Expression, "Unknown variable", tokenNode.Value);
 			return { false, {} };
 		}
 
 		// Get return type from variable
-		StackVariable currentVariable = GetStackVariable(tokenNode.Value);
+		StackVariable currentVariable = m_StackContext.GetStackVariable(tokenNode.Value);
 		tokenNode.ReturnType = currentVariable.Type;
 
 		// Store new expression and return
@@ -1073,6 +1070,7 @@ namespace Kargono::Scripting
 	{
 		Ref<Expression> newFunctionExpression{ CreateRef<Expression>() };
 		FunctionCallNode newFunctionCallNode{};
+		LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
 
 		// Check for function namespace, namespace resolver symbol, function identifier, and open parentheses
 		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
@@ -1097,7 +1095,7 @@ namespace Kargono::Scripting
 			IsContextProbe(GetCurrentToken(parentExpressionSize + 2)))
 		{
 			// Ensure namespace identifier exists
-			if (!ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(tokenBuffer.Value))
+			if (!scriptLang.m_NamespaceDescriptions.contains(tokenBuffer.Value))
 			{
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, namespace node is invalid", tokenBuffer);
 				return { false, {} };
@@ -1131,13 +1129,13 @@ namespace Kargono::Scripting
 					if (IsContextProbe(expression))
 					{
 						// Ensure function identifier exists and get function node
-						if (!ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions.contains(newFunctionCallNode.Identifier.Value))
+						if (!scriptLang.m_FunctionDefinitions.contains(newFunctionCallNode.Identifier.Value))
 						{
 							StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, function node is invalid", newFunctionCallNode.Identifier);
 							return { false, {} };
 						}
 						// Ensure the current argument is not overflowing the parameter list
-						FunctionNode& functionNode = ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions.at(newFunctionCallNode.Identifier.Value);
+						FunctionNode& functionNode = scriptLang.m_FunctionDefinitions.at(newFunctionCallNode.Identifier.Value);
 						if (newFunctionCallNode.Arguments.size() > functionNode.Parameters.size())
 						{
 							StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, there are too many arguments for function node", newFunctionCallNode.Identifier);
@@ -1150,7 +1148,7 @@ namespace Kargono::Scripting
 						{
 							newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
 						}
-						newContext.StackVariables = m_StackVariables;
+						newContext.StackVariables = m_StackContext.m_StackVariables;
 						m_CursorContext = newContext;
 						StoreParseError(ParseErrorType::ContextProbe, "Found context probe inside function argument", newFunctionCallNode.Identifier);
 						return { false, {} };
@@ -1181,12 +1179,12 @@ namespace Kargono::Scripting
 		currentArgumentLocation++;
 
 		// Ensure function identifier exists and get function node
-		if (!ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions.contains(newFunctionCallNode.Identifier.Value))
+		if (!scriptLang.m_FunctionDefinitions.contains(newFunctionCallNode.Identifier.Value))
 		{
 			StoreParseError(ParseErrorType::Expression, "Unknown function identifier", newFunctionCallNode.Identifier);
 			return { false, {} };
 		}
-		FunctionNode& functionNode = ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions.at(newFunctionCallNode.Identifier.Value);
+		FunctionNode& functionNode = scriptLang.m_FunctionDefinitions.at(newFunctionCallNode.Identifier.Value);
 
 		// Ensure namespace of function matches
 		if (functionNode.Namespace.Value != newFunctionCallNode.Namespace.Value)
@@ -1223,7 +1221,7 @@ namespace Kargono::Scripting
 				std::string errorMessage =
 					fmt::format("Argument type is not acceptable for function parameter\n Argument Type: {}\n Parameter Type(s):",
 						GetPrimitiveTypeFromToken((newFunctionCallNode.Arguments.at(parameterIteration)->GetReturnType())).Value);
-				for (auto& type : parameter.AllTypes)
+				for (ScriptToken& type : parameter.AllTypes)
 				{
 					errorMessage = errorMessage + "\n " + type.Value;
 				}
@@ -1245,6 +1243,7 @@ namespace Kargono::Scripting
 	{
 		Ref<Expression> newCustomLiteralExpression{ CreateRef<Expression>() };
 		CustomLiteralNode newCustomLiteralNode{};
+		LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
 
 		// Check for asset namespace, namespace resolver symbol, and custom literal identifier
 		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
@@ -1266,7 +1265,7 @@ namespace Kargono::Scripting
 		if (IsContextProbe(GetCurrentToken(parentExpressionSize + 2)))
 		{
 			// Ensure namespace identifier exists
-			if (!ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(tokenBuffer.Value))
+			if (!scriptLang.m_NamespaceDescriptions.contains(tokenBuffer.Value))
 			{
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe, however, namespace node is invalid", tokenBuffer);
 				return { false, {} };
@@ -1282,14 +1281,14 @@ namespace Kargono::Scripting
 		}
 
 		// Ensure asset namespace exists
-		if (!ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.contains(newCustomLiteralNode.Namespace.Value))
+		if (!scriptLang.m_AllLiteralTypes.contains(newCustomLiteralNode.Namespace.Value))
 		{
 			StoreParseError(ParseErrorType::Expression, "Unknown custom literal type provided", newCustomLiteralNode.Namespace);
 			return { false, {} };
 		}
 
 		// Get the asset information
-		CustomLiteralInfo& assetInfo{ ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes.at(newCustomLiteralNode.Namespace.Value) };
+		CustomLiteralInfo& assetInfo{ scriptLang.m_AllLiteralTypes.at(newCustomLiteralNode.Namespace.Value) };
 
 		// Get the asset map appropriate for this asset type
 		CustomLiteralNameToIDMap& assetMap = assetInfo.m_CustomLiteralNameToID;
@@ -1326,15 +1325,15 @@ namespace Kargono::Scripting
 					KG_ASSERT(member);
 
 					Ref<Rendering::Texture2D> primitiveTypeIcon{ nullptr };
-					if (ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(member->m_PrimitiveType.Value))
+					if (scriptLang.m_PrimitiveTypes.contains(member->m_PrimitiveType.Value))
 					{
 						// Get primitive type's icon
-						primitiveTypeIcon = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(member->m_PrimitiveType.Value).Icon;
+						primitiveTypeIcon = scriptLang.m_PrimitiveTypes.at(member->m_PrimitiveType.Value).Icon;
 					}
 					else
 					{
 						// Default icon
-						primitiveTypeIcon = EditorUI::EditorUIService::s_IconEntity;
+						primitiveTypeIcon = EditorUI::EditorUIContext::m_SceneIcons.m_Entity;
 					}
 					// Get the icon texture from the primitive type
 					
@@ -1387,7 +1386,7 @@ namespace Kargono::Scripting
 		uint32_t currentLocation = parentExpressionSize;
 
 		// Check for operator
-		if (!ScriptCompilerService::IsUnaryOperator(GetCurrentToken(parentExpressionSize)))
+		if (!TokenUtil::IsUnaryOperator(GetCurrentToken(parentExpressionSize)))
 		{
 			return { false, {} };
 		}
@@ -1396,7 +1395,7 @@ namespace Kargono::Scripting
 		currentLocation++;
 
 		// Check for operand
-		if (!ScriptCompilerService::IsLiteralOrIdentifier(GetCurrentToken(parentExpressionSize + 1)))
+		if (!TokenUtil::IsLiteralOrIdentifier(GetCurrentToken(parentExpressionSize + 1)))
 		{
 			return { false, {} };
 		}
@@ -1410,7 +1409,7 @@ namespace Kargono::Scripting
 			{
 				// Store context probe for argument
 				CursorContext newContext;
-				newContext.StackVariables = m_StackVariables;
+				newContext.StackVariables = m_StackContext.m_StackVariables;
 				newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe when parsing a unary operator expression", GetCurrentToken(newUnaryOperation.Operator));
@@ -1448,6 +1447,7 @@ namespace Kargono::Scripting
 	{
 		Ref<Expression> newInitListExpression{ CreateRef<Expression>() };
 		InitializationListNode initListNode{};
+		LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
 
 		// Check for first open curly brace
 		ScriptToken tokenBuffer = GetCurrentToken(parentExpressionSize);
@@ -1472,7 +1472,7 @@ namespace Kargono::Scripting
 					{
 						// Store context probe for argument
 						CursorContext newContext;
-						newContext.StackVariables = m_StackVariables;
+						newContext.StackVariables = m_StackContext.m_StackVariables;
 						newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
 						m_CursorContext = newContext;
 						StoreParseError(ParseErrorType::ContextProbe, "Found context probe inside initialization list argument", GetCurrentToken(currentArgumentLocation));
@@ -1505,7 +1505,7 @@ namespace Kargono::Scripting
 
 		// Search for initialization list type with identical parameters
 		InitializationListType* foundListType{ nullptr };
-		for (InitializationListType& listType : ScriptCompilerService::s_ActiveLanguageDefinition.InitListTypes)
+		for (InitializationListType& listType : scriptLang.m_InitListTypes)
 		{
 			if (listType.ParameterTypes.size() == initListNode.Arguments.size())
 			{
@@ -1623,6 +1623,7 @@ namespace Kargono::Scripting
 	}
 	std::tuple<bool, Ref<Expression>> ScriptTokenParser::ParseExpressionMember(uint32_t& parentExpressionSize, bool dataMemberOnly)
 	{
+		LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
 		Ref<Expression> newMemberExpression{ CreateRef<Expression>() };
 		uint32_t currentLocation = parentExpressionSize;
 		Ref<MemberNode> returnMemberNode = CreateRef<MemberNode>();
@@ -1651,7 +1652,7 @@ namespace Kargono::Scripting
 		}
 
 		// Get stack variable from identifier and ensure it is valid
-		StackVariable currentStackVariable = GetStackVariable(initialVariable);
+		StackVariable currentStackVariable = m_StackContext.GetStackVariable(initialVariable);
 		if (!currentStackVariable)
 		{
 			StoreParseError(ParseErrorType::Expression, "Could not locate stack variable from member declaration", initialVariable);
@@ -1660,12 +1661,12 @@ namespace Kargono::Scripting
 
 		// Get primitive type and ensure it is valid
 		PrimitiveType currentPrimitiveType;
-		if (!ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(currentStackVariable.Type.Value))
+		if (!scriptLang.m_PrimitiveTypes.contains(currentStackVariable.Type.Value))
 		{
 			StoreParseError(ParseErrorType::Expression, "Invalid primitive type of stack variable found when parsing data member", initialVariable);
 			return { false, nullptr };
 		}
-		currentPrimitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(currentStackVariable.Type.Value);
+		currentPrimitiveType = scriptLang.m_PrimitiveTypes.at(currentStackVariable.Type.Value);
 
 		// Store initial variable identifier
 		returnMemberNode->CurrentNodeExpression = CreateRef<Expression>(TokenExpressionNode(initialVariable, {ScriptTokenType::PrimitiveType, currentPrimitiveType.Name}));
@@ -1829,7 +1830,7 @@ namespace Kargono::Scripting
 					// Store context probe for argument
 					CursorContext newContext;
 					newContext.m_Flags.SetFlag((uint8_t)Kargono::Scripting::CursorFlags::AllowAllVariableTypes);
-					newContext.StackVariables = m_StackVariables;
+					newContext.StackVariables = m_StackContext.m_StackVariables;
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe inside member function argument", newFunctionCall.Identifier);
 					return { false, {} };
@@ -1942,7 +1943,7 @@ namespace Kargono::Scripting
 		{
 			CursorContext newContext;
 			newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
-			newContext.StackVariables = m_StackVariables;
+			newContext.StackVariables = m_StackContext.m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement expression", tokenBuffer);
 			return { false, nullptr };
@@ -1977,7 +1978,7 @@ namespace Kargono::Scripting
 			return { false, nullptr };
 		}
 
-		if (CheckCurrentStackFrameForIdentifier(GetCurrentToken(1)))
+		if (m_StackContext.CheckCurrentStackFrameForIdentifier(GetCurrentToken(1)))
 		{
 			StoreParseError(ParseErrorType::Statement, "Duplicate identifier found during declaration", GetCurrentToken(1));
 			return { false, nullptr };
@@ -1985,7 +1986,7 @@ namespace Kargono::Scripting
 		Ref<Statement> newStatement = CreateRef<Statement>();
 		StatementDeclaration newStatementDeclaration{ tokenBuffer, GetCurrentToken(1) };
 		newStatement->Value = newStatementDeclaration;
-		StoreStackVariable(tokenBuffer, GetCurrentToken(1));
+		m_StackContext.StoreStackVariable(tokenBuffer, GetCurrentToken(1));
 		Advance(3);
 		return { true, newStatement };
 	}
@@ -2053,7 +2054,7 @@ namespace Kargono::Scripting
 				{
 					newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
 				}
-				newContext.StackVariables = m_StackVariables;
+				newContext.StackVariables = m_StackContext.m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement assignment", GetCurrentToken(currentLocation));
 				return { false, {} };
@@ -2079,12 +2080,12 @@ namespace Kargono::Scripting
 		else if (TokenExpressionNode* tokenExpression = std::get_if<TokenExpressionNode>(&newStatementAssignment.Name->Value))
 		{
 			// Ensure identifer is a valid StackVariable
-			if (!CheckStackForIdentifier(tokenExpression->Value))
+			if (!m_StackContext.CheckStackForIdentifier(tokenExpression->Value))
 			{
 				StoreParseError(ParseErrorType::Statement, "Unknown variable found in assignment statement", tokenExpression->Value);
 				return { false, {} };
 			}
-			StackVariable statementNameVariable = GetStackVariable(tokenExpression->Value);
+			StackVariable statementNameVariable = m_StackContext.GetStackVariable(tokenExpression->Value);
 			statementNameType = statementNameVariable.Type;
 		}
 		else
@@ -2144,7 +2145,7 @@ namespace Kargono::Scripting
 			{
 				newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
 			}
-			newContext.StackVariables = m_StackVariables;
+			newContext.StackVariables = m_StackContext.m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement declaration/assignment", tokenBuffer);
 			return { false, {} };
@@ -2174,7 +2175,7 @@ namespace Kargono::Scripting
 		}
 
 		// Ensure identifer is not being declared twice in the current stack frame
-		if (CheckCurrentStackFrameForIdentifier(GetCurrentToken(1)))
+		if (m_StackContext.CheckCurrentStackFrameForIdentifier(GetCurrentToken(1)))
 		{
 			StoreParseError(ParseErrorType::Statement, "Duplicate identifier found during declaration", GetCurrentToken(1));
 			return { false, nullptr };
@@ -2183,7 +2184,7 @@ namespace Kargono::Scripting
 		Ref<Statement> newStatement = CreateRef<Statement>();
 		StatementDeclarationAssignment newStatementAssignment{ tokenBuffer, GetCurrentToken(1), newExpression };
 		newStatement->Value = newStatementAssignment;
-		StoreStackVariable(tokenBuffer, GetCurrentToken(1));
+		m_StackContext.StoreStackVariable(tokenBuffer, GetCurrentToken(1));
 		Advance(4 + expressionSize);
 		return { true, newStatement };
 	}
@@ -2267,7 +2268,7 @@ namespace Kargono::Scripting
 					newReturnType.Type = ScriptTokenType::PrimitiveType;
 					newReturnType.Value = "bool";
 					newContext.AllReturnTypes.push_back(newReturnType);
-					newContext.StackVariables = m_StackVariables;
+					newContext.StackVariables = m_StackContext.m_StackVariables;
 					m_CursorContext = newContext;
 					StoreParseError(ParseErrorType::ContextProbe, "Found context probe in if/else-if condition", tokenBuffer);
 					return { false, nullptr };
@@ -2304,7 +2305,7 @@ namespace Kargono::Scripting
 
 		// Parse conditional statement's body statements
 		{
-			AddStackFrame();
+			m_StackContext.AddStackFrame();
 			bool success = false;
 			tokenBuffer = GetCurrentToken();
 			Ref<Statement> statement {nullptr};
@@ -2339,7 +2340,7 @@ namespace Kargono::Scripting
 			}
 
 			// Remove current stack variables
-			PopStackFrame();
+			m_StackContext.PopStackFrame();
 			Advance();
 		}
 
@@ -2422,7 +2423,7 @@ namespace Kargono::Scripting
 				newReturnType.Type = ScriptTokenType::PrimitiveType;
 				newReturnType.Value = "bool";
 				newContext.AllReturnTypes.push_back(newReturnType);
-				newContext.StackVariables = m_StackVariables;
+				newContext.StackVariables = m_StackContext.m_StackVariables;
 				m_CursorContext = newContext;
 				StoreParseError(ParseErrorType::ContextProbe, "Found context probe in while condition", tokenBuffer);
 				return { false, nullptr };
@@ -2460,7 +2461,7 @@ namespace Kargono::Scripting
 
 		// Parse conditional statement's body statements
 		{
-			AddStackFrame();
+			m_StackContext.AddStackFrame();
 			IncrementLoopDepth();
 			bool success = false;
 			tokenBuffer = GetCurrentToken();
@@ -2498,7 +2499,7 @@ namespace Kargono::Scripting
 			}
 
 			// Remove current stack variables
-			PopStackFrame();
+			m_StackContext.PopStackFrame();
 			DecrimentLoopDepth();
 			Advance();
 		}
@@ -2624,7 +2625,7 @@ namespace Kargono::Scripting
 			{
 				newContext.m_Flags.SetFlag((uint8_t)CursorFlags::AllowAllVariableTypes);
 			}
-			newContext.StackVariables = m_StackVariables;
+			newContext.StackVariables = m_StackContext.m_StackVariables;
 			m_CursorContext = newContext;
 			StoreParseError(ParseErrorType::ContextProbe, "Found context probe in statement return", GetCurrentToken());
 			return { false, nullptr };
@@ -2680,17 +2681,17 @@ namespace Kargono::Scripting
 		if ((token.Type == ScriptTokenType::Identifier))
 		{
 			// Ensure identifier is a proper value
-			if (!IsContextProbe(tokenNode.Value) && tokenNode.Value.Type == ScriptTokenType::Identifier && !CheckStackForIdentifier(tokenNode.Value))
+			if (!IsContextProbe(tokenNode.Value) && tokenNode.Value.Type == ScriptTokenType::Identifier && !m_StackContext.CheckStackForIdentifier(tokenNode.Value))
 			{
 				StoreParseError(ParseErrorType::Expression, "Unknown variable", tokenNode.Value);
 				return nullptr;
 			}
 
 			// Get return type from variable
-			StackVariable currentVariable = GetStackVariable(tokenNode.Value);
+			StackVariable currentVariable = m_StackContext.GetStackVariable(tokenNode.Value);
 			tokenNode.ReturnType = currentVariable.Type;
 		}
-		else if (ScriptCompilerService::IsLiteral(token))
+		else if (TokenUtil::IsLiteral(token))
 		{
 			// Get return type for literal
 			tokenNode.ReturnType = GetPrimitiveTypeFromToken(tokenNode.Value);
@@ -2712,7 +2713,7 @@ namespace Kargono::Scripting
 		m_TokenLocation += count;
 	}
 
-	void ScriptTokenParser::StoreStackVariable(ScriptToken type, ScriptToken identifier)
+	void StackContext::StoreStackVariable(ScriptToken type, ScriptToken identifier)
 	{
 		KG_ASSERT(m_StackVariables.size() > 0);
 
@@ -2721,12 +2722,12 @@ namespace Kargono::Scripting
 		currentStackFrame.push_back(newStack);
 	}
 
-	void ScriptTokenParser::AddStackFrame()
+	void StackContext::AddStackFrame()
 	{
 		m_StackVariables.push_back({});
 	}
 
-	void ScriptTokenParser::PopStackFrame()
+	void StackContext::PopStackFrame()
 	{
 		m_StackVariables.pop_back();
 	}
@@ -2742,7 +2743,7 @@ namespace Kargono::Scripting
 		m_LoopDepth--;
 	}
 
-	bool ScriptTokenParser::CheckStackForIdentifier(ScriptToken identifier)
+	bool StackContext::CheckStackForIdentifier(ScriptToken identifier)
 	{
 		// Search each stack frame in reverse to check most recent identifiers first
 		for (auto stackIterator = m_StackVariables.rbegin(); stackIterator != m_StackVariables.rend(); ++stackIterator)
@@ -2760,13 +2761,13 @@ namespace Kargono::Scripting
 		return false;
 	}
 
-	bool ScriptTokenParser::CheckCurrentStackFrameForIdentifier(ScriptToken identifier)
+	bool StackContext::CheckCurrentStackFrameForIdentifier(ScriptToken identifier)
 	{
 		// Get the current stack frame
 		std::vector<StackVariable>& currentFrame = m_StackVariables.back();
 
 		// Search through stack frame for identifier
-		for (auto& stackVariable : currentFrame)
+		for (StackVariable& stackVariable : currentFrame)
 		{
 			if (stackVariable.Identifier.Value == identifier.Value)
 			{
@@ -2777,7 +2778,7 @@ namespace Kargono::Scripting
 		return false;
 	}
 
-	StackVariable ScriptTokenParser::GetStackVariable(ScriptToken identifier)
+	StackVariable StackContext::GetStackVariable(ScriptToken identifier)
 	{
 		// Search each stack frame in reverse to check most recent identifiers first
 		for (auto stackIterator = m_StackVariables.rbegin(); stackIterator != m_StackVariables.rend(); ++stackIterator)
@@ -2827,10 +2828,12 @@ namespace Kargono::Scripting
 
 	bool ScriptTokenParser::PrimitiveTypeAcceptableToken(const std::string& queryType, Scripting::ScriptToken queryToken)
 	{
+		LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
+
 		// Get primitive type associated with the parameter string type
-		if (ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(queryType))
+		if (scriptLang.m_PrimitiveTypes.contains(queryType))
 		{
-			PrimitiveType queryPrimitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(queryType);
+			PrimitiveType queryPrimitiveType = scriptLang.m_PrimitiveTypes.at(queryType);
 			// Check whether the provided token is literal (string literal, integer literal, etc...) that matches the primitiveType's requirements
 			if (queryToken.Type == queryPrimitiveType.AcceptableLiteral)
 			{
@@ -2841,7 +2844,7 @@ namespace Kargono::Scripting
 			if (queryToken.Type == ScriptTokenType::Identifier)
 			{
 				// Get associated stack variable
-				StackVariable queryTokenVariable = GetStackVariable(queryToken);
+				StackVariable queryTokenVariable = m_StackContext.GetStackVariable(queryToken);
 				if (!queryTokenVariable)
 				{
 					return false;
@@ -2852,13 +2855,13 @@ namespace Kargono::Scripting
 					return false;
 				}
 				// Ensure token primitive type is valid
-				if (!ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(queryTokenVariable.Type.Value))
+				if (!scriptLang.m_PrimitiveTypes.contains(queryTokenVariable.Type.Value))
 				{
 					return false;
 				}
 
 				// Make sure that the literal types match
-				PrimitiveType variablePrimitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(queryTokenVariable.Type.Value);
+				PrimitiveType variablePrimitiveType = scriptLang.m_PrimitiveTypes.at(queryTokenVariable.Type.Value);
 				if (queryPrimitiveType.AcceptableLiteral == variablePrimitiveType.AcceptableLiteral)
 				{
 					return true;
@@ -2869,13 +2872,13 @@ namespace Kargono::Scripting
 			if (queryToken.Type == ScriptTokenType::PrimitiveType)
 			{
 				// Ensure token primitive type is valid
-				if (!ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.contains(queryToken.Value))
+				if (!scriptLang.m_PrimitiveTypes.contains(queryToken.Value))
 				{
 					return false;
 				}
 
 				// Make sure that the literal types match
-				PrimitiveType tokenPrimitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes.at(queryToken.Value);
+				PrimitiveType tokenPrimitiveType = scriptLang.m_PrimitiveTypes.at(queryToken.Value);
 				if (queryPrimitiveType.AcceptableLiteral == tokenPrimitiveType.AcceptableLiteral)
 				{
 					// Check to ensure that asset value are distinct
@@ -2911,9 +2914,11 @@ namespace Kargono::Scripting
 
 	ScriptToken ScriptTokenParser::GetPrimitiveTypeFromToken(Scripting::ScriptToken token)
 	{
-		if (ScriptCompilerService::IsLiteral(token))
+		LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
+
+		if (TokenUtil::IsLiteral(token))
 		{
-			for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+			for (auto& [name, primitiveType] : scriptLang.m_PrimitiveTypes)
 			{
 				if (token.Type == primitiveType.AcceptableLiteral)
 				{
@@ -2924,7 +2929,7 @@ namespace Kargono::Scripting
 
 		if (token.Type == ScriptTokenType::Identifier)
 		{
-			StackVariable variable = GetStackVariable(token);
+			StackVariable variable = m_StackContext.GetStackVariable(token);
 			if (!variable)
 			{
 				return {};

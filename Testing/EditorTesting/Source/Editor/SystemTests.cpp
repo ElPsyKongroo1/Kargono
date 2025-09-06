@@ -8,13 +8,14 @@
 
 bool InitializeEngine(Kargono::Engine& engine)
 {
-	std::filesystem::path projectPath{};
-	
-	projectPath = Kargono::Projects::ProjectService::CreateNewProject("TestProject", "./../Projects");
-	if (projectPath.empty())
+	Kargono::Projects::Project& activeProject{ Kargono::Projects::ProjectService::GetActiveContext()};
+
+	if (!activeProject.CreateNewProject("TestProject", "./../Projects"))
 	{
 		return false;
 	}
+
+	std::filesystem::path projectPath{};
 	projectPath = "../Projects/TestProject/TestProject.kproj";
 
 	Kargono::EngineConfig editorSpec;
@@ -33,6 +34,6 @@ TEST_CASE("Initialization and Termination")
 	Kargono::Engine engine;
 	Kargono::EngineService::SetActiveEngine(&engine);
 	CHECK(InitializeEngine(engine));
-	CHECK(Kargono::Utility::AsyncBusyTimer::CloseAllTimers());
+	CHECK(Kargono::Utility::AsyncBusyTimerService::GetActiveBusyTimerContext().CloseAllTimers());
 	CHECK(engine.Terminate());
 }

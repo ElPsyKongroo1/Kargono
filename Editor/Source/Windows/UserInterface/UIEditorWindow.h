@@ -1,8 +1,8 @@
 #pragma once
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Assets/Asset.h"
-#include "Modules/EditorUI/EditorUI.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Kargono/Core/Base.h"
 
 #include "Windows/UserInterface/UIEditorViewportPanel.h"
@@ -56,7 +56,7 @@ namespace Kargono::Windows
 		// Core Panel Data
 		//=========================
 		Ref<RuntimeUI::UserInterface> m_EditorUI{ nullptr };
-		Assets::AssetHandle m_EditorUIHandle { Assets::EmptyHandle };
+		Assets::AssetHandle m_EditorUIHandle { Assets::k_EmptyHandle };
 
 		//=========================
 		// Panels

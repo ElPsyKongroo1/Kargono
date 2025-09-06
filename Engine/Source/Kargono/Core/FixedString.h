@@ -7,10 +7,10 @@
 
 namespace Kargono
 {
-	template<std::size_t BufferSize>
+	template<std::size_t t_BufferSize>
 	class FixedString
 	{
-		static_assert(BufferSize > 0, "Cannot instantiate fixed string with empty buffer");
+		static_assert(t_BufferSize > 0, "Cannot instantiate fixed string with empty buffer");
 
 	public:
 		//==============================
@@ -68,7 +68,7 @@ namespace Kargono
 
 			// Replace data inside buffer with formatted string and get resultant size of buffer
 			
-			int32_t newStringSize = std::snprintf(m_DataBuffer.data(), BufferSize, formatString, std::forward<Args>(args)...);
+			int32_t newStringSize = std::snprintf(m_DataBuffer.data(), t_BufferSize, formatString, std::forward<Args>(args)...);
 
 			// If snprintf fails, return false
 			if (newStringSize < 0) 
@@ -89,7 +89,7 @@ namespace Kargono
 
 			// Replace data inside buffer with formatted string and get resultant size of buffer
 
-			int32_t newStringSize = std::snprintf(m_DataBuffer.data() + m_StringLength, BufferSize - m_StringLength, formatString, std::forward<Args>(args)...);
+			int32_t newStringSize = std::snprintf(m_DataBuffer.data() + m_StringLength, t_BufferSize - m_StringLength, formatString, std::forward<Args>(args)...);
 
 			// If snprintf fails, return false
 			if (newStringSize < 0)
@@ -109,7 +109,7 @@ namespace Kargono
 			std::size_t appendStringLength = std::strlen(appendString);
 
 			// Early out if new size of string exceeds buffer length
-			if (m_StringLength + appendStringLength + 1 > BufferSize)
+			if (m_StringLength + appendStringLength + 1 > t_BufferSize)
 			{
 				return false;
 			}
@@ -130,7 +130,7 @@ namespace Kargono
 			static_assert(std::is_integral<IntegerType>::value, "Can only append simple integer types");
 
 			// Attempt to append the const char* version of the integer to the end of the current string
-			std::to_chars_result result = std::to_chars(m_DataBuffer.data() + m_StringLength, m_DataBuffer.data() + (BufferSize - 1), appendInteger);
+			std::to_chars_result result = std::to_chars(m_DataBuffer.data() + m_StringLength, m_DataBuffer.data() + (t_BufferSize - 1), appendInteger);
 			
 			// Exit if appending fails
 			if (result.ec != std::errc())
@@ -217,6 +217,16 @@ namespace Kargono
 			return m_DataBuffer.data();
 		}
 
+		void* Data()
+		{
+			return m_DataBuffer.data();
+		}
+
+		size_t BufferSize() const
+		{
+			return t_BufferSize;
+		}
+
 		std::size_t StringLength() const
 		{
 			return m_StringLength;
@@ -237,11 +247,11 @@ namespace Kargono
 			std::size_t newStringLength = std::strlen(newString);
 
 			// Truncate provided string based on buffer size
-			if (newStringLength + 1 > BufferSize)
+			if (newStringLength + 1 > t_BufferSize)
 			{
 				// Set a new string length to fill buffer as much as possible
 				// * Note, leaving space for null terminator
-				newStringLength = BufferSize - 1;
+				newStringLength = t_BufferSize - 1;
 			}
 
 			// Fill data (Overwrite current null terminator)
@@ -259,11 +269,11 @@ namespace Kargono
 			std::size_t newStringLength = newString.size();
 
 			// Truncate provided string based on buffer size
-			if (newStringLength + 1 > BufferSize)
+			if (newStringLength + 1 > t_BufferSize)
 			{
 				// Set a new string length to fill buffer as much as possible
 				// * Note, leaving space for null terminator
-				newStringLength = BufferSize - 1;
+				newStringLength = t_BufferSize - 1;
 			}
 
 			// Fill data (Overwrite current null terminator)
@@ -276,7 +286,7 @@ namespace Kargono
 		}
 
 	private:
-		std::array<char, BufferSize> m_DataBuffer;
+		std::array<char, t_BufferSize> m_DataBuffer;
 		std::size_t m_StringLength{0};
 	};
 
@@ -307,10 +317,10 @@ namespace Kargono
 
 namespace std
 {
-	template<size_t BufferSize>
-	struct hash<Kargono::FixedString<BufferSize>>
+	template<size_t t_BufferSize>
+	struct hash<Kargono::FixedString<t_BufferSize>>
 	{
-		std::size_t operator()(const Kargono::FixedString<BufferSize>& fixedString) const
+		std::size_t operator()(const Kargono::FixedString<t_BufferSize>& fixedString) const
 		{
 			unsigned int hash = 5381;
 

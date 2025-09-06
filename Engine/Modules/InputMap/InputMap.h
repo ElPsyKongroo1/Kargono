@@ -3,7 +3,7 @@
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/Base.h"
 #include "Modules/Assets/Asset.h"
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Kargono/Core/Timestep.h"
 
@@ -46,13 +46,13 @@ namespace Kargono::Input
 
 		void ClearScript()
 		{
-			m_ScriptHandle = Assets::EmptyHandle;
+			m_ScriptHandle = Assets::k_EmptyHandle;
 			m_Script = nullptr;
 		}
 
 		void SetScript(Ref<Scripting::Script> script, Assets::AssetHandle handle)
 		{
-			if (handle == Assets::EmptyHandle)
+			if (handle == Assets::k_EmptyHandle)
 			{
 				ClearScript();
 				return;
@@ -64,7 +64,7 @@ namespace Kargono::Input
 		void SetScript(Assets::AssetHandle handle);
 	protected:
 		InputActionTypes m_BindingType{ InputActionTypes::None };
-		Assets::AssetHandle m_ScriptHandle { Assets::EmptyHandle };
+		Assets::AssetHandle m_ScriptHandle { Assets::k_EmptyHandle };
 		Ref<Scripting::Script> m_Script { nullptr };
 	};
 
@@ -160,7 +160,7 @@ namespace Kargono::Input
 		// Current Input Mode
 		//=========================
 		Ref<InputMap> m_ActiveInputMap{ nullptr };
-		Assets::AssetHandle m_ActiveInputMapHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_ActiveInputMapHandle{ Assets::k_EmptyHandle };
 	};
 
 	class InputMapService // TODO: REMOVE EWWWWWWW

@@ -1,52 +1,29 @@
 #include "kgpch.h"
 
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 
 #include "Modules/Core/Engine.h"
-#include "Modules/Scripting/ScriptModuleBuilder.h"
 #include "Modules/Assets/AssetService.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Kargono/Projects/Project.h"
 #include "Modules/Audio/Audio.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Modules/InputMap/InputMap.h"
 #include "Modules/Input/InputService.h"
 #include "Modules/Network/Client.h"
 #include "Kargono/Scenes/GameState.h"
 #include "Kargono/Utility/Operations.h"
 #include "Modules/AI/AIService.h"
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Modules/Events/EditorEvent.h"
 #include "Modules/Physics2D/Physics2DCommon.h"
 #include "Modules/Particles/ParticleService.h"
 
-#if defined(KG_PLATFORM_WINDOWS)
-#include "API/Platform/WindowsBackendAPI.h"
-#elif defined(KG_PLATFORM_LINUX)
-#include "API/Platform/LinuxBackendAPI.h"
-#else
-#error "Platform not supported"
-#endif
-
-namespace Kargono::Scripting
-{
-	struct ScriptingData
-	{
-#if defined(KG_PLATFORM_WINDOWS)
-		HINSTANCE* m_SharedLibInst = nullptr;
-#elif defined(KG_PLATFORM_LINUX)
-		void* m_SharedLibInst = nullptr;
-#endif
-	};
-
-	static ScriptingData* s_ScriptingData = nullptr;
-}
-
 namespace Kargono::Scripting
 {
 	// Engine Functions that need to be defined only in this file
-	static void Log(const std::string& scriptName, const std::string& scriptLine, const std::string& info)
+	static void Log(std::string_view scriptName, std::string_view scriptLine, std::string_view info)
 	{
 		KG_WARN("[{}:{}]: {}", scriptName, scriptLine, info);
 	}
@@ -87,81 +64,91 @@ namespace Kargono::Scripting
 		});
 	}
 
-	void ScriptService::Init()
+	void ScriptModuleBinder::Init()
 	{
-		s_ScriptingData = new ScriptingData();
-		GenerateEngineScripts(s_AllEngineScripts);
-		KG_VERIFY(s_ScriptingData, "Scripting System Init");
+		m_ScriptBuilder.Init(&m_ScriptLibrary);
+		GenerateEngineScripts(m_AllEngineScripts);
+		//TODO: Verify Init
 	}
 
-	void ScriptService::Terminate()
+	void ScriptModuleBinder::Terminate()
 	{
-		if (!s_ScriptingData) { return; }
-
-		if (s_ScriptingData->m_SharedLibInst)
+		if (m_ScriptLibrary.m_Handle)
 		{
 			CloseActiveScriptModule();
 		}
 
-		delete s_ScriptingData;
-		s_ScriptingData = nullptr;
-
-		KG_VERIFY(!s_ScriptingData, "Close Scripting System")
+		KG_VERIFY(!m_ScriptLibrary.m_Handle, "Close Scripting System")
 	}
 
-	void ScriptService::GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts)
+	void ScriptModuleBinder::GenerateEngineScripts(std::vector<Ref<Script>>& engineScripts)
 	{
-		s_IDGenerator.ResetState();
+		m_IDGenerator.ResetState();
 		engineScripts.clear();
 		// RuntimeUI
 		Ref<Script> RuntimeUI_MoveUp = CreateRef<Script>();
 		RuntimeUI_MoveUp->m_ScriptName = "MoveUp";
-		RuntimeUI_MoveUp->m_ID = s_IDGenerator.GenerateNumber();
+		RuntimeUI_MoveUp->m_ID = m_IDGenerator.GenerateNumber();
 		RuntimeUI_MoveUp->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveUp->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveUp->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveUp->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveUp);
+		RuntimeUI_MoveUp->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->MoveUp();
+		});
 		engineScripts.push_back(RuntimeUI_MoveUp);
 
 		Ref<Script> RuntimeUI_MoveDown = CreateRef<Script>();
 		RuntimeUI_MoveDown->m_ScriptName = "MoveDown";
-		RuntimeUI_MoveDown->m_ID = s_IDGenerator.GenerateNumber();
+		RuntimeUI_MoveDown->m_ID = m_IDGenerator.GenerateNumber();
 		RuntimeUI_MoveDown->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveDown->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveDown->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveDown->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveDown);
+		RuntimeUI_MoveDown->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->MoveDown();
+		});
 		engineScripts.push_back(RuntimeUI_MoveDown);
 
 		Ref<Script> RuntimeUI_MoveLeft = CreateRef<Script>();
 		RuntimeUI_MoveLeft->m_ScriptName = "MoveLeft";
-		RuntimeUI_MoveLeft->m_ID = s_IDGenerator.GenerateNumber();
+		RuntimeUI_MoveLeft->m_ID = m_IDGenerator.GenerateNumber();
 		RuntimeUI_MoveLeft->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveLeft->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveLeft->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveLeft->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveLeft);
+		RuntimeUI_MoveLeft->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->MoveLeft();
+		});
 		engineScripts.push_back(RuntimeUI_MoveLeft);
 
 		Ref<Script> RuntimeUI_MoveRight = CreateRef<Script>();
 		RuntimeUI_MoveRight->m_ScriptName = "MoveRight";
-		RuntimeUI_MoveRight->m_ID = s_IDGenerator.GenerateNumber();
+		RuntimeUI_MoveRight->m_ID = m_IDGenerator.GenerateNumber();
 		RuntimeUI_MoveRight->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_MoveRight->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_MoveRight->m_SectionLabel = "UserInterface";
-		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::MoveRight);
+		RuntimeUI_MoveRight->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->MoveRight();
+		});
 		engineScripts.push_back(RuntimeUI_MoveRight);
 
 		Ref<Script> RuntimeUI_OnPress = CreateRef<Script>();
 		RuntimeUI_OnPress->m_ScriptName = "OnPress";
-		RuntimeUI_OnPress->m_ID = s_IDGenerator.GenerateNumber();
+		RuntimeUI_OnPress->m_ID = m_IDGenerator.GenerateNumber();
 		RuntimeUI_OnPress->m_ScriptType = ScriptType::Engine;
 		RuntimeUI_OnPress->m_FuncType = WrappedFuncType::Void_None;
 		RuntimeUI_OnPress->m_SectionLabel = "UserInterface";
-		RuntimeUI_OnPress->m_Function = CreateRef<WrappedVoidNone>(RuntimeUI::RuntimeUIService::OnPress);
+		RuntimeUI_OnPress->m_Function = CreateRef<WrappedVoidNone>([]() 
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().GetActiveUI()->OnPress();
+		});
 		engineScripts.push_back(RuntimeUI_OnPress);
 
 		Ref<Script> EngineCore_CloseApplication = CreateRef<Script>();
 		EngineCore_CloseApplication->m_ScriptName = "CloseApplication";
-		EngineCore_CloseApplication->m_ID = s_IDGenerator.GenerateNumber();
+		EngineCore_CloseApplication->m_ID = m_IDGenerator.GenerateNumber();
 		EngineCore_CloseApplication->m_ScriptType = ScriptType::Engine;
 		EngineCore_CloseApplication->m_FuncType = WrappedFuncType::Void_None;
 		EngineCore_CloseApplication->m_SectionLabel = "Engine";
@@ -174,7 +161,7 @@ namespace Kargono::Scripting
 
 		Ref<Script> Client_SessionReadyCheck = CreateRef<Script>();
 		Client_SessionReadyCheck->m_ScriptName = "SessionReadyCheck";
-		Client_SessionReadyCheck->m_ID = s_IDGenerator.GenerateNumber();
+		Client_SessionReadyCheck->m_ID = m_IDGenerator.GenerateNumber();
 		Client_SessionReadyCheck->m_ScriptType = ScriptType::Engine;
 		Client_SessionReadyCheck->m_FuncType = WrappedFuncType::Void_None;
 		Client_SessionReadyCheck->m_SectionLabel = "Network";
@@ -187,7 +174,7 @@ namespace Kargono::Scripting
 
 		Ref<Script> Client_RequestUserCount = CreateRef<Script>();
 		Client_RequestUserCount->m_ScriptName = "RequestUserCount";
-		Client_RequestUserCount->m_ID = s_IDGenerator.GenerateNumber();
+		Client_RequestUserCount->m_ID = m_IDGenerator.GenerateNumber();
 		Client_RequestUserCount->m_ScriptType = ScriptType::Engine;
 		Client_RequestUserCount->m_FuncType = WrappedFuncType::Void_None;
 		Client_RequestUserCount->m_SectionLabel = "Network";
@@ -200,7 +187,7 @@ namespace Kargono::Scripting
 
 		Ref<Script> Client_RequestJoinSession = CreateRef<Script>();
 		Client_RequestJoinSession->m_ScriptName = "RequestJoinSession";
-		Client_RequestJoinSession->m_ID = s_IDGenerator.GenerateNumber();
+		Client_RequestJoinSession->m_ID = m_IDGenerator.GenerateNumber();
 		Client_RequestJoinSession->m_ScriptType = ScriptType::Engine;
 		Client_RequestJoinSession->m_FuncType = WrappedFuncType::Void_None;
 		Client_RequestJoinSession->m_SectionLabel = "Network";
@@ -212,22 +199,24 @@ namespace Kargono::Scripting
 		engineScripts.push_back(Client_RequestJoinSession);
 	}
 
-	void ScriptService::LoadActiveScriptModule()
+	void ScriptModuleBinder::LoadActiveScriptModule()
 	{
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Get the path to the script dll
 #if defined(KG_PLATFORM_WINDOWS)
 	#if defined(KG_DEBUG) 
-			std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script\\ExportBodyDebug.dll" };
+			std::filesystem::path dllLocation { projectPaths.GetIntermediateDirectory() / "Script\\ExportBodyDebug.dll" };
 	#else
-			std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script\\ExportBody.dll" };
+			std::filesystem::path dllLocation { projectPaths.GetIntermediateDirectory() / "Script\\ExportBody.dll" };
 	#endif
-#endif
+#endif 
 
 #if defined(KG_PLATFORM_LINUX)
 	#if defined(KG_DEBUG) 
-			std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportBodyDebug.so" };
+			std::filesystem::path dllLocation { projectPaths.GetIntermediateDirectory() / "Script/ExportBodyDebug.so" };
 	#else
-			std::filesystem::path dllLocation { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportBody.so" };
+			std::filesystem::path dllLocation { projectPaths.GetIntermediateDirectory() / "Script/ExportBody.so" };
 	#endif
 #endif
 
@@ -242,104 +231,47 @@ namespace Kargono::Scripting
 			}
 			KG_WARN("Attempt to open scripting dll, however, none exists. Attempting to create new Shared Lib.");
 			attemptedToRebuild = true;
-			ScriptModuleBuilder::CreateScriptModule();
+			m_ScriptBuilder.CreateScriptModule();
 			return;
 		}
 		attemptedToRebuild = false;
 
-		if (!s_ScriptingData)
-		{
-			KG_CRITICAL("Attempt to open a new scripting dll, however, ScriptEngine is not initialized");
-			return;
-		}
-
-		if (s_ScriptingData->m_SharedLibInst)
+		if (m_ScriptLibrary.IsActive())
 		{
 			KG_INFO("Closing existing script module");
 			CloseActiveScriptModule();
 		}
-#if defined(KG_PLATFORM_WINDOWS)
-		s_ScriptingData->m_SharedLibInst = new HINSTANCE();
-		*(s_ScriptingData->m_SharedLibInst) = LoadLibrary(dllLocation.c_str());
-		if (*s_ScriptingData->m_SharedLibInst == NULL)
+
+		if (!m_ScriptLibrary.LoadSharedLib(dllLocation.string().c_str()))
 		{
-			KG_CRITICAL("Failed to open dll with path {} with an error code of {}", dllLocation.string(), GetLastError());
-			CloseActiveScriptModule();
-			return;
-	}
-#elif defined(KG_PLATFORM_LINUX)
-		s_ScriptingData->m_SharedLibInst = dlopen(dllLocation.c_str(), RTLD_LAZY);
-		if (s_ScriptingData->m_SharedLibInst == NULL)
-		{
-			KG_CRITICAL("Failed to open dll with path {}", dllLocation.string());
+			KG_WARN("Failed to load shared library from {}", dllLocation.string().c_str());
 			CloseActiveScriptModule();
 			return;
 		}
-#endif
 
-		ScriptModuleBuilder::AttachEngineFunctionsToModule();
+		m_ScriptBuilder.AttachEngineFunctionsToModule();
 
-		KG_VERIFY(s_ScriptingData->m_SharedLibInst, "Scripting Module Opened");
+		KG_VERIFY(m_ScriptLibrary.m_Handle, "Scripting Module Opened");
 
 	}
-	void ScriptService::CloseActiveScriptModule()
+	void ScriptModuleBinder::CloseActiveScriptModule()
 	{
-		if (!s_ScriptingData)
+		if (!m_ScriptLibrary.CloseSharedLib())
 		{
-			KG_CRITICAL("Attempt to close scripting dll, however, ScriptEngine is not initialized");
+			KG_WARN("Failed to close script module shared lib");
 			return;
 		}
 
-		if (!s_ScriptingData->m_SharedLibInst)
-		{
-			KG_WARN("Attempt to close scripting dll, however, m_SharedLibInst is a nullptr");
-			return;
-		}
-
-		
-#if defined(KG_PLATFORM_WINDOWS)
-		if (*s_ScriptingData->m_SharedLibInst == NULL)
-		{
-			KG_WARN("Attempt to close scripting dll, however, m_SharedLibInst value is 0 (NULL)");
-			s_ScriptingData->m_SharedLibInst = nullptr;
-			return;
-		}
-		FreeLibrary(*s_ScriptingData->m_SharedLibInst);
-		delete s_ScriptingData->m_SharedLibInst;
-#elif defined(KG_PLATFORM_LINUX)
-		if (s_ScriptingData->m_SharedLibInst == NULL)
-		{
-			KG_WARN("Attempt to close scripting dll, however, m_SharedLibInst value is 0 (NULL)");
-			s_ScriptingData->m_SharedLibInst = nullptr;
-			return;
-		}
-		dlclose(s_ScriptingData->m_SharedLibInst);
-#endif
-
-		s_ScriptingData->m_SharedLibInst = nullptr;
-
-		KG_VERIFY(!s_ScriptingData->m_SharedLibInst, "Close Scripting DLL");
+		KG_VERIFY(!m_ScriptLibrary.IsActive(), "Close Scripting DLL");
 	}
 
-	void ScriptService::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
+	void ScriptModuleBinder::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
 	{
 		KG_ASSERT(script);
-		if (!s_ScriptingData)
-		{
-			KG_CRITICAL("Attempt to load a scripting function, however, ScriptEngine is not valid");
-			return;
-		}
-		if (!s_ScriptingData->m_SharedLibInst)
+		if (!m_ScriptLibrary.IsActive())
 		{
 			return;
 		}
-
-#if defined(KG_PLATFORM_WINDOWS)
-		if (*s_ScriptingData->m_SharedLibInst == NULL)
-		{
-			return;
-		}
-#endif
 
 		if (script->m_ScriptType == ScriptType::Engine)
 		{
@@ -357,140 +289,87 @@ namespace Kargono::Scripting
 		case WrappedFuncType::Void_None:
 		{
 			script->m_Function = CreateRef<WrappedVoidNone>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
-#if defined(KG_PLATFORM_LINUX)
-			((WrappedVoidNone*)script->m_Function.get())->m_Value = reinterpret_cast<void_none>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidNone*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_none>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_String:
 		{
 			script->m_Function = CreateRef<WrappedVoidString>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidString*)script->m_Function.get())->m_Value = reinterpret_cast<void_string>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidString*)script->m_Function.get())->m_Value = reinterpret_cast<void_string>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidString*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_string>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_Float:
 		{
 			script->m_Function = CreateRef<WrappedVoidFloat>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_float>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_float>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_float>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_UInt16:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt16>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint16>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint16>(script->m_ScriptName.c_str());
 			break;
 		}
 		case WrappedFuncType::Void_UInt32:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32>(script->m_ScriptName.c_str());
 			break;
 		}
 		case WrappedFuncType::Void_UInt32UInt32:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32UInt32>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint32>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint32>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32uint32>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_Entity:
 		{
 			script->m_Function = CreateRef<WrappedVoidEntity>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidEntity*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidEntity*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint64>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_Bool:
 		{
 			script->m_Function = CreateRef<WrappedVoidBool>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidBool*)script->m_Function.get())->m_Value = reinterpret_cast<void_bool>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidBool*)script->m_Function.get())->m_Value = reinterpret_cast<void_bool>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidBool*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_bool>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_EntityFloat:
 		{
 			script->m_Function = CreateRef<WrappedVoidEntityFloat>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint64float>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint64float>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Void_UInt32EntityEntityFloat:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32EntityEntityFloat>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint64uint64float>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = reinterpret_cast<void_uint32uint64uint64float>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32uint64uint64float>(script->m_ScriptName.c_str());
 			break;
 		}
 		case WrappedFuncType::Bool_None:
 		{
 			script->m_Function = CreateRef<WrappedBoolNone>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedBoolNone*)script->m_Function.get())->m_Value = reinterpret_cast<bool_none>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedBoolNone*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_none>(script->m_ScriptName.c_str());
 			break;
 		}
 
 		case WrappedFuncType::Bool_Entity:
 		{
 			script->m_Function = CreateRef<WrappedBoolEntity>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedBoolEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedBoolEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedBoolEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_uint64>(script->m_ScriptName.c_str());
 			break;
 		}
 		case WrappedFuncType::Bool_EntityEntity:
 		{
 			script->m_Function = CreateRef<WrappedBoolEntityEntity>();
-#if defined(KG_PLATFORM_WINDOWS)
-			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#elif defined(KG_PLATFORM_LINUX)
-			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = reinterpret_cast<bool_uint64uint64>(dlsym(s_ScriptingData->m_SharedLibInst, script->m_ScriptName.c_str()));
-#endif
+			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_uint64uint64>(script->m_ScriptName.c_str());
 			break;
 		}
 		default:
@@ -505,33 +384,24 @@ namespace Kargono::Scripting
 namespace Kargono::Utility
 {
 #define DefineInsertFunction(name, returnType,...) \
-	typedef void (*Void_String_Func##name)(const std::string&, std::function<returnType(__VA_ARGS__)>); \
-	std::function<void(const std::string&, std::function<returnType(__VA_ARGS__)>)> s_Add##name {};
+	typedef void (*Void_String_Func##name)(std::string_view, std::function<returnType(__VA_ARGS__)>); \
+	std::function<void(std::string_view, std::function<returnType(__VA_ARGS__)>)> s_Add##name {};
 
 
-#if defined(KG_PLATFORM_WINDOWS)
 #define ImportInsertFunction(name) \
-	s_Add##name = reinterpret_cast<Void_String_Func##name>(GetProcAddress(*s_ScriptingData->m_SharedLibInst, "Add"#name ));\
+	s_Add##name = reinterpret_cast<Void_String_Func##name>(i_LibReference->GetFuncPtrRaw("Add"#name ));\
 	if (!s_Add##name)\
 	{\
 		KG_CRITICAL("Could not load {} function from scripting dll", "" #name);\
 		return;\
 	}
 
-#elif defined(KG_PLATFORM_LINUX)
-#define ImportInsertFunction(name) \
-	s_Add##name = reinterpret_cast<Void_String_Func##name>(dlsym(s_ScriptingData->m_SharedLibInst, "Add"#name ));\
-	if (!s_Add##name)\
-	{\
-		KG_CRITICAL("Could not load {} function from scripting dll", "" #name);\
-		return;\
-	}
-#endif
+
 #define AddImportFunctionToHeaderFile(name, returnType, ...) \
-	outputStream << "KARGONO_API void Add" << #name << "(const std::string& funcName, std::function<" << #returnType <<"(" << (#__VA_ARGS__ ")> funcPtr);\n");
+	outputStream << "KARGONO_API void Add" << #name << "(std::string_view funcName, std::function<" << #returnType <<"(" << (#__VA_ARGS__ ")> funcPtr);\n");
 
 #define AddImportFunctionToCPPFile(name, returnType, ...) \
-	outputStream << "void Add" << #name << "(const std::string& funcName, std::function<" << #returnType <<"(" << (#__VA_ARGS__ ")> funcPtr)\n");
+	outputStream << "void Add" << #name << "(std::string_view funcName, std::function<" << #returnType <<"(" << (#__VA_ARGS__ ")> funcPtr)\n");
 
 #define AddEngineFunctionToCPPFileNoParameters(name, returnType) \
 	outputStream << "static std::function<" #returnType "()> " #name "Ptr {};\n"; \
@@ -604,7 +474,7 @@ namespace Kargono::Scripting
 
 	// Void return type
 	DefineInsertFunction(VoidNone, void)
-	DefineInsertFunction(VoidString, void, const std::string&)
+	DefineInsertFunction(VoidString, void, std::string_view)
 	DefineInsertFunction(VoidUInt16, void, uint16_t)
 	DefineInsertFunction(VoidUInt64, void, uint64_t)
 	DefineInsertFunction(VoidUInt64UInt64, void, uint64_t, uint64_t)
@@ -612,53 +482,53 @@ namespace Kargono::Scripting
 	DefineInsertFunction(VoidUInt32UInt32, void, uint32_t, uint32_t)
 	DefineInsertFunction(VoidVec3Float, void, Math::vec3, float)
 	DefineInsertFunction(VoidVec3Vec3, void, Math::vec3, Math::vec3)
-	DefineInsertFunction(VoidStringBool, void, const std::string&, bool)
+	DefineInsertFunction(VoidStringBool, void, std::string_view, bool)
 	DefineInsertFunction(VoidUInt16Bool, void, uint16_t, bool)
 	DefineInsertFunction(VoidUInt16UInt16, void, uint16_t, uint16_t)
-	DefineInsertFunction(VoidUIWidgetString, void, RuntimeUI::WidgetID, const std::string&)
-	DefineInsertFunction(VoidUIWindowBool, void, RuntimeUI::WindowID, bool)
-	DefineInsertFunction(VoidUIWidgetBool, void, RuntimeUI::WidgetID, bool)
-	DefineInsertFunction(VoidUIWidget, void, RuntimeUI::WidgetID)
-	DefineInsertFunction(VoidUIWidgetVec4, void, RuntimeUI::WidgetID, Math::vec4)
-	DefineInsertFunction(VoidUIWidgetUInt64, void, RuntimeUI::WidgetID, uint64_t)
-	DefineInsertFunction(VoidUInt16UInt16String, void, uint16_t, uint16_t, const std::string&)
+	DefineInsertFunction(VoidUIWidgetString, void, RuntimeUI::WidgetHandle, std::string_view)
+	DefineInsertFunction(VoidUIWindowBool, void, RuntimeUI::WindowHandle, bool)
+	DefineInsertFunction(VoidUIWidgetBool, void, RuntimeUI::WidgetHandle, bool)
+	DefineInsertFunction(VoidUIWidget, void, RuntimeUI::WidgetHandle)
+	DefineInsertFunction(VoidUIWidgetVec4, void, RuntimeUI::WidgetHandle, Math::vec4)
+	DefineInsertFunction(VoidUIWidgetUInt64, void, RuntimeUI::WidgetHandle, uint64_t)
+	DefineInsertFunction(VoidUInt16UInt16String, void, uint16_t, uint16_t, std::string_view)
 	DefineInsertFunction(VoidUInt16UInt16Bool, void, uint16_t, uint16_t, bool)
-	DefineInsertFunction(VoidStringVoidPtr, void, const std::string&, void*)
-	DefineInsertFunction(VoidStringString, void, const std::string&, const std::string&)
-	DefineInsertFunction(VoidStringStringBool, void, const std::string&, const std::string&, bool)
-	DefineInsertFunction(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
+	DefineInsertFunction(VoidStringVoidPtr, void, std::string_view, void*)
+	DefineInsertFunction(VoidStringString, void, std::string_view, std::string_view)
+	DefineInsertFunction(VoidStringStringBool, void, std::string_view, std::string_view, bool)
+	DefineInsertFunction(VoidStringStringString, void, std::string_view, std::string_view, std::string_view)
 	DefineInsertFunction(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
 	DefineInsertFunction(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
 	DefineInsertFunction(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
-	DefineInsertFunction(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
+	DefineInsertFunction(VoidStringStringVec4, void, std::string_view, std::string_view, Math::vec4)
 	DefineInsertFunction(VoidUInt16UInt16Vec4, void, uint16_t, uint16_t, Math::vec4)
-	DefineInsertFunction(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
-	DefineInsertFunction(VoidPtrString, void*, const std::string&)
-	DefineInsertFunction(VoidPtrUInt64String, void*, uint64_t, const std::string&)
+	DefineInsertFunction(VoidUInt64StringVoidPtr, void, uint64_t, std::string_view, void*)
+	DefineInsertFunction(VoidPtrString, void*, std::string_view)
+	DefineInsertFunction(VoidPtrUInt64String, void*, uint64_t, std::string_view)
 	DefineInsertFunction(VoidUInt64Vec2, void, uint64_t, Math::vec2)
 	DefineInsertFunction(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 	DefineInsertFunction(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
 	// Bool return type
-	DefineInsertFunction(BoolUIWidget, bool, RuntimeUI::WidgetID)
-	DefineInsertFunction(BoolStringString, bool, const std::string&, const std::string&)
-	DefineInsertFunction(BoolUInt64String, bool, uint64_t, const std::string&)
+	DefineInsertFunction(BoolUIWidget, bool, RuntimeUI::WidgetHandle)
+	DefineInsertFunction(BoolStringString, bool, std::string_view, std::string_view)
+	DefineInsertFunction(BoolUInt64String, bool, uint64_t, std::string_view)
 	DefineInsertFunction(BoolUInt64UInt64, bool, uint64_t, uint64_t)
 	DefineInsertFunction(BoolUInt16UInt16, bool, uint16_t, uint16_t)
 	DefineInsertFunction(BoolUInt16, bool, uint16_t)
 	DefineInsertFunction(BoolUInt64, bool, uint64_t)
-	DefineInsertFunction(BoolString, bool, const std::string&)
+	DefineInsertFunction(BoolString, bool, std::string_view)
 	// Integer return types
 	DefineInsertFunction(UInt16None, uint16_t)
 	DefineInsertFunction(Int32Int32Int32, int32_t, int32_t, int32_t)
-	DefineInsertFunction(UInt64String, uint64_t, const std::string&)
+	DefineInsertFunction(UInt64String, uint64_t, std::string_view)
 	// Float return type
 	DefineInsertFunction(FloatFloatFloat, float, float, float)
 	// Vector return types
 	DefineInsertFunction(Vec2UInt64, Math::vec2, uint64_t)
 	DefineInsertFunction(Vec3UInt64, Math::vec3, uint64_t)
 	// String return type
-	DefineInsertFunction(StringUInt64, const std::string&, uint64_t)
-	DefineInsertFunction(StringUIWidget, const std::string&, RuntimeUI::WidgetID)
+	DefineInsertFunction(StringUInt64, std::string_view, uint64_t)
+	DefineInsertFunction(StringUIWidget, std::string_view, RuntimeUI::WidgetHandle)
 	// Other return types
 	DefineInsertFunction(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 
@@ -666,7 +536,7 @@ namespace Kargono::Scripting
 	{
 		// Release active script module so it is available to be written to...
 		KG_INFO("Closing active script module...");
-		ScriptService::CloseActiveScriptModule();
+		ScriptBinderService::GetActiveContext().CloseActiveScriptModule();
 
 		// Load in ScriptRegistry if not already loaded
 		if (Assets::AssetService::GetScriptRegistry().size() == 0)
@@ -695,7 +565,7 @@ namespace Kargono::Scripting
 		if (!generateCPPSuccess)
 		{
 			KG_WARN("Failure to generate C++ scripts from kgscripts");
-			ScriptService::LoadActiveScriptModule();
+			ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
 			Assets::AssetService::DeserializeScriptRegistry();
 			return;
 		}
@@ -711,7 +581,7 @@ namespace Kargono::Scripting
 		if (!buildSuccessful)
 		{
 			KG_WARN("Failure to compile script module");
-			ScriptService::LoadActiveScriptModule();
+			ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
 			Assets::AssetService::DeserializeScriptRegistry();
 			return;
 		}
@@ -726,21 +596,26 @@ namespace Kargono::Scripting
 		if (!buildSuccessful)
 		{
 			KG_WARN("Failed to compile release script module");
-			ScriptService::LoadActiveScriptModule();
+			ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
 			Assets::AssetService::DeserializeScriptRegistry();
 			return;
 		}
 
 		KG_INFO("Opening New Scripting Module...");
-		ScriptService::LoadActiveScriptModule();
+		ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
 
 		// Revalidate in-memory script cache
 		Assets::AssetService::DeserializeScriptRegistry();
 		for (auto& [handle, scriptRef] : Assets::AssetService::GetScriptCache())
 		{
-			ScriptService::LoadScriptFunction(scriptRef, scriptRef->m_FuncType);
+			ScriptBinderService::GetActiveContext().LoadScriptFunction(scriptRef, scriptRef->m_FuncType);
 		}
 		KG_INFO("Successfully build and loaded new script module");
+	}
+	void ScriptModuleBuilder::Init(SharedLib* libReference)
+	{
+		KG_ASSERT(libReference);
+		i_LibReference = libReference;
 	}
 	void ScriptModuleBuilder::CreateModuleHeaderFile()
 	{
@@ -765,9 +640,10 @@ namespace Kargono::Scripting
 		outputStream << "#include <string>\n";
 		outputStream << "#include <sstream>\n";
 		outputStream << "#include <limits>\n";
-		outputStream << "#include \"" << "Kargono/Math/MathAliases.h" << "\"\n"; // Include Math Library
-		outputStream << "#include \"" << "Modules/Physics2D/Physics2DCommon.h" << "\"\n"; // Include 
-		outputStream << "#include \"" << "Modules/RuntimeUI/RuntimeUICommon.h" << "\"\n"; // Include Runtime UI Common
+		outputStream << "#include \"" << "Kargono/Math/MathAliases.h" << "\"\n";
+		outputStream << "#include \"" << "Modules/Physics2D/Physics2DCommon.h" << "\"\n";
+		outputStream << "#include \"" << "Modules/RuntimeUI/RuntimeUICommon.h" << "\"\n";
+		outputStream << "#include \"" << "Kargono/Core/UUID.h" << "\"\n";
 
 		// Conversion Function from RValueToLValue
 		outputStream << "template<typename T>\n";
@@ -783,7 +659,7 @@ namespace Kargono::Scripting
 
 		// Void return type
 		AddImportFunctionToHeaderFile(VoidNone, void)
-		AddImportFunctionToHeaderFile(VoidString, void, const std::string&)
+		AddImportFunctionToHeaderFile(VoidString, void, std::string_view)
 		AddImportFunctionToHeaderFile(VoidUInt16, void, uint16_t)
 		AddImportFunctionToHeaderFile(VoidUInt64, void, uint64_t)
 		AddImportFunctionToHeaderFile(VoidUInt64UInt64, void, uint64_t, uint64_t)
@@ -791,45 +667,45 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(VoidUInt32UInt32, void, uint32_t, uint32_t)
 		AddImportFunctionToHeaderFile(VoidVec3Float, void, Math::vec3, float)
 		AddImportFunctionToHeaderFile(VoidVec3Vec3, void, Math::vec3, Math::vec3)
-		AddImportFunctionToHeaderFile(VoidStringBool, void, const std::string&, bool)
+		AddImportFunctionToHeaderFile(VoidStringBool, void, std::string_view, bool)
 		AddImportFunctionToHeaderFile(VoidUInt16Bool, void, uint16_t, bool)
-		AddImportFunctionToHeaderFile(VoidStringVoidPtr, void, const std::string&, void*)
-		AddImportFunctionToHeaderFile(VoidStringString, void, const std::string&, const std::string&)
-		AddImportFunctionToHeaderFile(VoidStringStringBool, void, const std::string&, const std::string&, bool)
-		AddImportFunctionToHeaderFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
-		AddImportFunctionToHeaderFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
+		AddImportFunctionToHeaderFile(VoidStringVoidPtr, void, std::string_view, void*)
+		AddImportFunctionToHeaderFile(VoidStringString, void, std::string_view, std::string_view)
+		AddImportFunctionToHeaderFile(VoidStringStringBool, void, std::string_view, std::string_view, bool)
+		AddImportFunctionToHeaderFile(VoidStringStringString, void, std::string_view, std::string_view, std::string_view)
+		AddImportFunctionToHeaderFile(VoidStringStringVec4, void, std::string_view, std::string_view, Math::vec4)
 		AddImportFunctionToHeaderFile(VoidUInt16UInt16Vec4, void, uint16_t, uint16_t, Math::vec4)
 		AddImportFunctionToHeaderFile(VoidUInt16UInt16Bool, void, uint16_t, uint16_t, bool)
-		AddImportFunctionToHeaderFile(VoidUIWidgetString, void, RuntimeUI::WidgetID, const std::string&)
-		AddImportFunctionToHeaderFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
+		AddImportFunctionToHeaderFile(VoidUIWidgetString, void, RuntimeUI::WidgetHandle, std::string_view)
+		AddImportFunctionToHeaderFile(VoidUInt64StringVoidPtr, void, uint64_t, std::string_view, void*)
 		AddImportFunctionToHeaderFile(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
 		AddImportFunctionToHeaderFile(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
 		AddImportFunctionToHeaderFile(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
 		AddImportFunctionToHeaderFile(VoidUInt16UInt16, void, uint16_t, uint16_t)
-		AddImportFunctionToHeaderFile(VoidUInt16UInt16String, void, uint16_t, uint16_t, const std::string&)
-		AddImportFunctionToHeaderFile(VoidPtrString, void*, const std::string&)
-		AddImportFunctionToHeaderFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
+		AddImportFunctionToHeaderFile(VoidUInt16UInt16String, void, uint16_t, uint16_t, std::string_view)
+		AddImportFunctionToHeaderFile(VoidPtrString, void*, std::string_view)
+		AddImportFunctionToHeaderFile(VoidPtrUInt64String, void*, uint64_t, std::string_view)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec2, void, uint64_t, Math::vec2)
 		AddImportFunctionToHeaderFile(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
-		AddImportFunctionToHeaderFile(VoidUIWidgetString, void, RuntimeUI::WidgetID, const std::string&)
-		AddImportFunctionToHeaderFile(VoidUIWindowBool, void, RuntimeUI::WindowID, bool)
-		AddImportFunctionToHeaderFile(VoidUIWidgetBool, void, RuntimeUI::WidgetID, bool)
-		AddImportFunctionToHeaderFile(VoidUIWidget, void, RuntimeUI::WidgetID)
-		AddImportFunctionToHeaderFile(VoidUIWidgetVec4, void, RuntimeUI::WidgetID, Math::vec4)
-		AddImportFunctionToHeaderFile(VoidUIWidgetUInt64, void, RuntimeUI::WidgetID, uint64_t)
+		AddImportFunctionToHeaderFile(VoidUIWidgetString, void, RuntimeUI::WidgetHandle, std::string_view)
+		AddImportFunctionToHeaderFile(VoidUIWindowBool, void, RuntimeUI::WindowHandle, bool)
+		AddImportFunctionToHeaderFile(VoidUIWidgetBool, void, RuntimeUI::WidgetHandle, bool)
+		AddImportFunctionToHeaderFile(VoidUIWidget, void, RuntimeUI::WidgetHandle)
+		AddImportFunctionToHeaderFile(VoidUIWidgetVec4, void, RuntimeUI::WidgetHandle, Math::vec4)
+		AddImportFunctionToHeaderFile(VoidUIWidgetUInt64, void, RuntimeUI::WidgetHandle, uint64_t)
 		// Bool return type
-		AddImportFunctionToHeaderFile(BoolUIWidget, bool, RuntimeUI::WidgetID)
-		AddImportFunctionToHeaderFile(BoolStringString, bool, const std::string&, const std::string&)
-		AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, const std::string&)
+		AddImportFunctionToHeaderFile(BoolUIWidget, bool, RuntimeUI::WidgetHandle)
+		AddImportFunctionToHeaderFile(BoolStringString, bool, std::string_view, std::string_view)
+		AddImportFunctionToHeaderFile(BoolUInt64String, bool, uint64_t, std::string_view)
 		AddImportFunctionToHeaderFile(BoolUInt64UInt64, bool, uint64_t, uint64_t)
 		AddImportFunctionToHeaderFile(BoolUInt16, bool, uint16_t)
 		AddImportFunctionToHeaderFile(BoolUInt16UInt16, bool, uint16_t, uint16_t)
 		AddImportFunctionToHeaderFile(BoolUInt64, bool, uint64_t)
-		AddImportFunctionToHeaderFile(BoolString, bool, const std::string&)
+		AddImportFunctionToHeaderFile(BoolString, bool, std::string_view)
 		// Integer return types
 		AddImportFunctionToHeaderFile(UInt16None, uint16_t)
-		AddImportFunctionToHeaderFile(UInt64String, uint64_t, const std::string&)
+		AddImportFunctionToHeaderFile(UInt64String, uint64_t, std::string_view)
 		AddImportFunctionToHeaderFile(Int32Int32Int32, int32_t, int32_t, int32_t)
 		// Float return type
 		AddImportFunctionToHeaderFile(FloatFloatFloat, float, float, float)
@@ -837,8 +713,8 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(Vec2UInt64, Math::vec2, uint64_t)
 		AddImportFunctionToHeaderFile(Vec3UInt64, Math::vec3, uint64_t)
 		// String return type
-		AddImportFunctionToHeaderFile(StringUInt64, const std::string&, uint64_t)
-		AddImportFunctionToHeaderFile(StringUIWidget, const std::string&, RuntimeUI::WidgetID)
+		AddImportFunctionToHeaderFile(StringUInt64, std::string_view, uint64_t)
+		AddImportFunctionToHeaderFile(StringUIWidget, std::string_view, RuntimeUI::WidgetHandle)
 		// Other return types
 		AddImportFunctionToHeaderFile(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 
@@ -890,7 +766,9 @@ namespace Kargono::Scripting
 		outputStream << "\t}" << "\n";
 		outputStream << "}" << "\n";
 
-		std::filesystem::path headerFile = { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportHeader.h" };
+
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+		std::filesystem::path headerFile = { projectPaths.GetIntermediateDirectory() / "Script/ExportHeader.h" };
 
 		std::string outputString = outputStream.str();
 		Utility::Operations::RemoveCharacterFromString(outputString, '\r');
@@ -930,10 +808,10 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileNoParameters(ClearDebugPoints, void)
 		AddEngineFunctionToCPPFileOneParameters(AddDebugPoint, void, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(AddDebugLine, void, Math::vec3, Math::vec3)
-		AddEngineFunctionToCPPFileThreeParameters(Log, void, const std::string&, const std::string&, const std::string&)
+		AddEngineFunctionToCPPFileThreeParameters(Log, void, std::string_view, std::string_view, std::string_view)
 		// Game State
-		AddEngineFunctionToCPPFileOneParameters(GetGameStateField, void*, const std::string&)
-		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, const std::string&, void*)
+		AddEngineFunctionToCPPFileOneParameters(GetGameStateField, void*, std::string_view)
+		AddEngineFunctionToCPPFileTwoParameters(SetGameStateField, void, std::string_view, void*)
 		// Input
 		AddEngineFunctionToCPPFileOneParameters(Input_IsKeyPressed, bool, uint16_t)
 		AddEngineFunctionToCPPFileOneParameters(InputMap_LoadInputMapFromHandle, void, uint64_t)
@@ -956,11 +834,11 @@ namespace Kargono::Scripting
 		// Scenes
 		AddEngineFunctionToCPPFileOneParameters(Scenes_IsSceneActive, bool, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromHandle, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, const std::string&, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, std::string_view, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(TransformComponent_GetTranslation, Math::vec3, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(Rigidbody2DComponent_GetLinearVelocity, Math::vec2, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(FindEntityHandleByName, uint64_t, const std::string&)
-		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, const std::string&)
+		AddEngineFunctionToCPPFileOneParameters(FindEntityHandleByName, uint64_t, std::string_view)
+		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, std::string_view)
 		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
@@ -970,16 +848,16 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileNoParameters(RuntimeUI_ClearSelectedWidget, void)
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_IsUserInterfaceActiveFromHandle, bool, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_LoadUserInterfaceFromHandle, void, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_GetWidgetText, const std::string&, RuntimeUI::WidgetID
+		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_GetWidgetText, std::string_view, RuntimeUI::WidgetHandle
 		)
-		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_SetSelectedWidget, void, RuntimeUI::WidgetID)
-		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_IsWidgetSelected, bool, RuntimeUI::WidgetID)
-		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetDisplayWindow, void, RuntimeUI::WindowID, bool)
-		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetSelectable, void, RuntimeUI::WidgetID, bool)
-		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetText, void, RuntimeUI::WidgetID, const std::string&)
-		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetBackgroundColor, void, RuntimeUI::WidgetID, Math::vec4)
-		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetTextColor, void, RuntimeUI::WidgetID, Math::vec4)
-		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetImage, void, RuntimeUI::WidgetID, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_SetSelectedWidget, void, RuntimeUI::WidgetHandle)
+		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_IsWidgetSelected, bool, RuntimeUI::WidgetHandle)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetDisplayWindow, void, RuntimeUI::WindowHandle, bool)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetSelectable, void, RuntimeUI::WidgetHandle, bool)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetText, void, RuntimeUI::WidgetHandle, std::string_view)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetBackgroundColor, void, RuntimeUI::WidgetHandle, Math::vec4)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetTextColor, void, RuntimeUI::WidgetHandle, Math::vec4)
+		AddEngineFunctionToCPPFileTwoParameters(RuntimeUI_SetWidgetImage, void, RuntimeUI::WidgetHandle, uint64_t)
 
 
 		// Insert FuncPointer Importing for DLL processing
@@ -1010,7 +888,7 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(AddDebugLine)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidString, void, const std::string&)
+		AddImportFunctionToCPPFile(VoidString, void, std::string_view)
 		outputStream << "{\n";
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64, void, uint64_t)
@@ -1031,56 +909,56 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileEnd(AI_ChangeGlobalState)
 		AddEngineFunctionToCPPFileEnd(AI_ChangeCurrentState)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidStringBool, void, const std::string&, bool)
+		AddImportFunctionToCPPFile(VoidStringBool, void, std::string_view, bool)
 		outputStream << "{\n";
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt16Bool, void, uint16_t, bool)
 		outputStream << "{\n";
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidUIWindowBool, void, RuntimeUI::WindowID, bool)
+		AddImportFunctionToCPPFile(VoidUIWindowBool, void, RuntimeUI::WindowHandle, bool)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetDisplayWindow)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt16UInt16, void, uint16_t, uint16_t)
 		outputStream << "{\n";
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidUIWidget, void, RuntimeUI::WidgetID)
+		AddImportFunctionToCPPFile(VoidUIWidget, void, RuntimeUI::WidgetHandle)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetSelectedWidget)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt16UInt16Bool, void, uint16_t, uint16_t, bool)
 		outputStream << "{\n";
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidUIWidgetBool, void, RuntimeUI::WidgetID, bool)
+		AddImportFunctionToCPPFile(VoidUIWidgetBool, void, RuntimeUI::WidgetHandle, bool)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetWidgetSelectable)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidStringVoidPtr, void, const std::string&, void*)
+		AddImportFunctionToCPPFile(VoidStringVoidPtr, void, std::string_view, void*)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(SetGameStateField)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidStringString, void, const std::string&, const std::string&)
+		AddImportFunctionToCPPFile(VoidStringString, void, std::string_view, std::string_view)
 		outputStream << "{\n";
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidStringStringBool, void, const std::string&, const std::string&, bool)
+		AddImportFunctionToCPPFile(VoidStringStringBool, void, std::string_view, std::string_view, bool)
 		outputStream << "{\n";
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidStringStringString, void, const std::string&, const std::string&, const std::string&)
+		AddImportFunctionToCPPFile(VoidStringStringString, void, std::string_view, std::string_view, std::string_view)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Log)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidUInt16UInt16String, void, uint16_t, uint16_t, const std::string&)
+		AddImportFunctionToCPPFile(VoidUInt16UInt16String, void, uint16_t, uint16_t, std::string_view)
 		outputStream << "{\n";
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidUIWidgetString, void, RuntimeUI::WidgetID, const std::string&)
+		AddImportFunctionToCPPFile(VoidUIWidgetString, void, RuntimeUI::WidgetHandle, std::string_view)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetWidgetText)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidUIWidgetUInt64, void, RuntimeUI::WidgetID, uint64_t)
+		AddImportFunctionToCPPFile(VoidUIWidgetUInt64, void, RuntimeUI::WidgetHandle, uint64_t)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetWidgetImage)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidStringStringVec4, void, const std::string&, const std::string&, Math::vec4)
+		AddImportFunctionToCPPFile(VoidStringStringVec4, void, std::string_view, std::string_view, Math::vec4)
 		outputStream << "{\n";
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64Vec3, void, uint64_t, Math::vec3)
@@ -1093,11 +971,11 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Rigidbody2DComponent_SetLinearVelocity)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(BoolUInt64String, bool, uint64_t, const std::string&)
+		AddImportFunctionToCPPFile(BoolUInt64String, bool, uint64_t, std::string_view)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(CheckHasComponent)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(BoolStringString, bool, const std::string&, const std::string&)
+		AddImportFunctionToCPPFile(BoolStringString, bool, std::string_view, std::string_view)
 		outputStream << "{\n";
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(UInt16None, uint16_t)
@@ -1112,11 +990,11 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Rigidbody2DComponent_GetLinearVelocity)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(UInt64String, uint64_t, const std::string&)
+		AddImportFunctionToCPPFile(UInt64String, uint64_t, std::string_view)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(FindEntityHandleByName)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidUInt64StringVoidPtr, void, uint64_t, const std::string&, void*)
+		AddImportFunctionToCPPFile(VoidUInt64StringVoidPtr, void, uint64_t, std::string_view, void*)
 		outputStream << "{\n";
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64Vec3Vec2, void, uint64_t, Math::vec3, Math::vec2)
@@ -1126,18 +1004,18 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(VoidUInt16UInt16Vec4, void, uint16_t, uint16_t, Math::vec4)
 		outputStream << "{\n";
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidUIWidgetVec4, void, RuntimeUI::WidgetID, Math::vec4)
+		AddImportFunctionToCPPFile(VoidUIWidgetVec4, void, RuntimeUI::WidgetHandle, Math::vec4)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetWidgetTextColor);
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_SetWidgetBackgroundColor);
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidPtrUInt64String, void*, uint64_t, const std::string&)
+		AddImportFunctionToCPPFile(VoidPtrUInt64String, void*, uint64_t, std::string_view)
 		outputStream << "{\n";
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt32UInt32, void, uint32_t, uint32_t)
 		outputStream << "{\n";
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(VoidPtrString, void*, const std::string&)
+		AddImportFunctionToCPPFile(VoidPtrString, void*, std::string_view)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(GetGameStateField)
 		outputStream << "}\n";
@@ -1160,7 +1038,7 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileEnd(Input_IsKeyPressed)
 		AddEngineFunctionToCPPFileEnd(InputMap_IsPollingSlotPressed)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(BoolString, bool, const std::string&)
+		AddImportFunctionToCPPFile(BoolString, bool, std::string_view)
 		outputStream << "{\n";
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolUInt64, bool, uint64_t)
@@ -1171,7 +1049,7 @@ namespace Kargono::Scripting
 		AddImportFunctionToCPPFile(BoolUInt16UInt16, bool, uint16_t, uint16_t)
 		outputStream << "{\n";
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(BoolUIWidget, bool, RuntimeUI::WidgetID)
+		AddImportFunctionToCPPFile(BoolUIWidget, bool, RuntimeUI::WidgetHandle)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_IsWidgetSelected)
 		outputStream << "}\n";
@@ -1191,14 +1069,16 @@ namespace Kargono::Scripting
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(Physics_Raycast)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(StringUInt64, const std::string&, uint64_t)
+		AddImportFunctionToCPPFile(StringUInt64, std::string_view, uint64_t)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(TagComponent_GetTag)
 		outputStream << "}\n";
-		AddImportFunctionToCPPFile(StringUIWidget, const std::string&, RuntimeUI::WidgetID)
+		AddImportFunctionToCPPFile(StringUIWidget, std::string_view, RuntimeUI::WidgetHandle)
 		outputStream << "{\n";
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_GetWidgetText)
 		outputStream << "}\n";
+
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
 		// Write scripts into a single cpp file
 		bool compilationSuccess{ true };
@@ -1208,7 +1088,7 @@ namespace Kargono::Scripting
 			{
 				continue;
 			}
-			std::string compiledScript = ScriptCompilerService::CompileScriptFile(Projects::ProjectService::GetActiveAssetDirectory() / asset.Data.FileLocation);
+			std::string compiledScript = ScriptCompilerService::GetActiveContext().CompileScriptFile(projectPaths.GetAssetDirectory() / asset.Data.FileLocation);
 			if (compiledScript.empty())
 			{
 				KG_WARN("Failed to compile the script at: {}", asset.Data.FileLocation.string());
@@ -1224,7 +1104,7 @@ namespace Kargono::Scripting
 			return false;
 		}
 
-		std::filesystem::path file = { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportBody.cpp" };
+		std::filesystem::path file = { projectPaths.GetIntermediateDirectory() / "Script/ExportBody.cpp" };
 
 		std::string outputString = outputStream.str();
 		Utility::Operations::RemoveCharacterFromString(outputString, '\r');
@@ -1235,8 +1115,10 @@ namespace Kargono::Scripting
 
 	bool ScriptModuleBuilder::CompileModuleCodeMSVC(bool createDebug)
 	{
-		Utility::FileSystem::CreateNewDirectory(Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/");
-		std::filesystem::path binaryPath { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/" };
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		Utility::FileSystem::CreateNewDirectory(projectPaths.GetIntermediateDirectory() / "Script/");
+		std::filesystem::path binaryPath { projectPaths.GetIntermediateDirectory() / "Script/" };
 		std::filesystem::path binaryFile;
 		std::filesystem::path objectPath;
 		if (createDebug)
@@ -1253,7 +1135,7 @@ namespace Kargono::Scripting
 		UUID pdbID = UUID();
 		std::string pdbFileName = std::string(pdbID) + ".pdb";
 		std::filesystem::path debugSymbolsPath { binaryPath / pdbFileName };
-		std::filesystem::path sourcePath { Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportBody.cpp" };
+		std::filesystem::path sourcePath { projectPaths.GetIntermediateDirectory() / "Script/ExportBody.cpp" };
 
 		std::stringstream outputStream {};
 		outputStream << "("; // Parentheses to group all function calls together
@@ -1323,9 +1205,11 @@ namespace Kargono::Scripting
 
 	bool ScriptModuleBuilder::CompileModuleCodeGCC(bool createDebug)
 	{
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Set up paths and files
-		Utility::FileSystem::CreateNewDirectory(Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/");
-		std::filesystem::path binaryPath = Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/";
+		Utility::FileSystem::CreateNewDirectory(projectPaths.GetIntermediateDirectory() / "Script/");
+		std::filesystem::path binaryPath = projectPaths.GetIntermediateDirectory() / "Script/";
 		std::filesystem::path binaryFile;
 		std::filesystem::path objectPath;
 		
@@ -1340,7 +1224,7 @@ namespace Kargono::Scripting
 			objectPath = binaryPath / "ExportBody.o";
 		}
 
-		std::filesystem::path sourcePath = Projects::ProjectService::GetActiveIntermediateDirectory() / "Script/ExportBody.cpp";
+		std::filesystem::path sourcePath = projectPaths.GetIntermediateDirectory() / "Script/ExportBody.cpp";
 
 		// Set up the output stream for the commands
 		std::stringstream outputStream;
@@ -1398,7 +1282,6 @@ namespace Kargono::Scripting
 
 	void ScriptModuleBuilder::AttachEngineFunctionsToModule()
 	{
-		// Void return type
 		ImportInsertFunction(VoidNone)
 		ImportInsertFunction(VoidUInt16)
 		ImportInsertFunction(VoidUInt64)
@@ -1530,108 +1413,187 @@ namespace Kargono::Scripting
 		AddEngineFunctionPointerToDll(AddDebugPoint, Scripting::AddDebugPoint, VoidVec3)
 		AddEngineFunctionPointerToDll(AddDebugLine, Scripting::AddDebugLine, VoidVec3Vec3)
 		// Game State
-		AddEngineFunctionPointerToDll(SetGameStateField, Scenes::GameStateService::SetActiveGameStateField, VoidStringVoidPtr)
-		AddEngineFunctionPointerToDll(GetGameStateField, Scenes::GameStateService::GetActiveGameStateField, VoidPtrString)
+		AddEngineFunctionPointerToDll(SetGameStateField, [](std::string_view identifier, void* data) 
+		{
+			if (!Scenes::GameStateService::GetActiveContext().GetActiveGameState())
+			{
+				return;
+			}
+			Scenes::GameStateService::GetActiveContext().GetActiveGameState()->SetField(identifier, data);
+		}, VoidStringVoidPtr)
+		AddEngineFunctionPointerToDll(GetGameStateField, [](std::string_view identifier) 
+		{
+			return Scenes::GameStateService::GetActiveContext().GetActiveGameState()->GetField(identifier)->GetValue();
+		}, VoidPtrString)
 		// Input
 		AddEngineFunctionPointerToDll(Input_IsKeyPressed, Input::InputService::IsKeyPressed, BoolUInt16)
 		AddEngineFunctionPointerToDll(InputMap_LoadInputMapFromHandle, [](Assets::AssetHandle handle)
 		{
 			Input::InputMapService::GetActiveContext().SetActiveInputMapFromHandle(handle);
 		}, VoidUInt64)
-		AddEngineFunctionPointerToDll(InputMap_IsPollingSlotPressed, [](uint16_t slot) 
+		AddEngineFunctionPointerToDll(InputMap_IsPollingSlotPressed, [](uint16_t slot)
 		{
 			return Input::InputMapService::GetActiveContext().IsPollingSlotPressed(slot);
 		}, BoolUInt16)
 		// Networking
-		AddEngineFunctionPointerToDll(SignalAll, [](uint16_t signal) 
+		AddEngineFunctionPointerToDll(SignalAll, [](uint16_t signal)
 		{
 			Ref<Events::SignalAll> event{ CreateRef<Events::SignalAll>(signal) };
 			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
 		}, VoidUInt16)
-		AddEngineFunctionPointerToDll(LeaveCurrentSession, []() 
+		AddEngineFunctionPointerToDll(LeaveCurrentSession, []()
 		{
 			Ref<Events::LeaveCurrentSession> event{ CreateRef<Events::LeaveCurrentSession>() };
 			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
 		}, VoidNone)
-		AddEngineFunctionPointerToDll(EnableReadyCheck, []() 
+		AddEngineFunctionPointerToDll(EnableReadyCheck, []()
 		{
 			Ref<Events::EnableReadyCheck> event{ CreateRef<Events::EnableReadyCheck>() };
 			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
 		}, VoidNone)
-		AddEngineFunctionPointerToDll(RequestJoinSession, []() 
-		{
-			Ref<Events::RequestJoinSession> event{ CreateRef<Events::RequestJoinSession>() };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		}, VoidNone)
+		AddEngineFunctionPointerToDll(RequestJoinSession, []()
+			{
+				Ref<Events::RequestJoinSession> event{ CreateRef<Events::RequestJoinSession>() };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			}, VoidNone)
 		AddEngineFunctionPointerToDll(SendAllEntityPhysics, [](UUID entityID, Math::vec3 translation, Math::vec2 linearVelocity)
-		{
-			Ref<Events::SendAllEntityPhysics> event{ CreateRef<Events::SendAllEntityPhysics>
-			(
-				entityID, translation, linearVelocity	
-			) };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		}, VoidUInt64Vec3Vec2)
-		AddEngineFunctionPointerToDll(RequestUserCount, []() 
-		{
-			Ref<Events::RequestUserCount> event{ CreateRef<Events::RequestUserCount>() };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		}, VoidNone)
-		AddEngineFunctionPointerToDll(GetActiveSessionSlot, []() 
-		{
-			return Network::ClientService::GetActiveContext().GetNetworkThread().GetSessionIndex();
-		}, UInt16None)
+			{
+				Ref<Events::SendAllEntityPhysics> event{ CreateRef<Events::SendAllEntityPhysics>
+				(
+					entityID, translation, linearVelocity
+				) };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			}, VoidUInt64Vec3Vec2)
+		AddEngineFunctionPointerToDll(RequestUserCount, []()
+			{
+				Ref<Events::RequestUserCount> event{ CreateRef<Events::RequestUserCount>() };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			}, VoidNone)
+		AddEngineFunctionPointerToDll(GetActiveSessionSlot, []()
+			{
+				return Network::ClientService::GetActiveContext().GetNetworkThread().GetSessionIndex();
+			}, UInt16None)
 		AddEngineFunctionPointerToDll(SendAllEntityLocation, [](UUID entityID, Math::vec3 translation)
-		{
-			Ref<Events::SendAllEntityLocation> event{ CreateRef<Events::SendAllEntityLocation>
-			(
-				entityID, translation
-			) };
-			Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
-		}, VoidUInt64Vec3)
+			{
+				Ref<Events::SendAllEntityLocation> event{ CreateRef<Events::SendAllEntityLocation>
+				(
+					entityID, translation
+				) };
+				Network::ClientService::GetActiveContext().GetNetworkThread().SubmitEvent(event);
+			}, VoidUInt64Vec3)
 		// Particles
 		AddEngineFunctionPointerToDll(Particles_AddEmitterByHandle, [](Assets::AssetHandle emitterHandle, const Math::vec3& position)
-		{
-			Particles::ParticleService::GetActiveContext().AddEmitterByHandle(emitterHandle, position);
-		}, VoidUInt64Vec3)
+			{
+				Particles::ParticleService::GetActiveContext().AddEmitterByHandle(emitterHandle, position);
+			}, VoidUInt64Vec3)
 		// Physics 2D
 		AddEngineFunctionPointerToDll(Physics_Raycast, [](Math::vec2 startPoint, Math::vec2 endPoint)
-		{
-			return Physics::Physics2DService().GetActiveContext().Raycast(startPoint, endPoint);
-		}, RaycastResultVec2Vec2)
+			{
+				return Physics::Physics2DService().GetActiveContext().Raycast(startPoint, endPoint);
+			}, RaycastResultVec2Vec2)
 		// Random
-		AddEngineFunctionPointerToDll(GenerateRandomInteger, [](int32_t lower, int32_t upper) 
-		{
-			return Utility::STLRandomService::GetActiveRandom().GenerateRandomInteger(lower, upper);
-		}, Int32Int32Int32)
-		AddEngineFunctionPointerToDll(GenerateRandomFloat, [](float lower, float upper) 
-		{
-			return Utility::STLRandomService::GetActiveRandom().GenerateRandomFloat(lower, upper);
-		}, FloatFloatFloat)
+		AddEngineFunctionPointerToDll(GenerateRandomInteger, [](int32_t lower, int32_t upper)
+			{
+				return Utility::STLRandomService::GetActiveRandom().GenerateRandomInteger(lower, upper);
+			}, Int32Int32Int32)
+		AddEngineFunctionPointerToDll(GenerateRandomFloat, [](float lower, float upper)
+			{
+				return Utility::STLRandomService::GetActiveRandom().GenerateRandomFloat(lower, upper);
+			}, FloatFloatFloat)
 		// Runtime User Interface
-		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetText, RuntimeUI::RuntimeUIService::SetActiveWidgetTextByIndex, VoidUIWidgetString)
-		AddEngineFunctionPointerToDll(RuntimeUI_IsUserInterfaceActiveFromHandle, RuntimeUI::RuntimeUIService::IsUIActiveFromHandle, BoolUInt64)
-		AddEngineFunctionPointerToDll(RuntimeUI_LoadUserInterfaceFromHandle, RuntimeUI::RuntimeUIService::SetActiveUIFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetDisplayWindow, RuntimeUI::RuntimeUIService::SetDisplayWindowByIndex, VoidUIWindowBool)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetSelectedWidget, RuntimeUI::RuntimeUIService::SetSelectedWidgetByIndex, VoidUIWidget)
-		AddEngineFunctionPointerToDll(RuntimeUI_ClearSelectedWidget, RuntimeUI::RuntimeUIService::ClearSelectedWidget, VoidNone)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetTextColor, RuntimeUI::RuntimeUIService::SetWidgetTextColorByIndex, VoidUIWidgetVec4)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetBackgroundColor, RuntimeUI::RuntimeUIService::SetWidgetBackgroundColorByIndex, VoidUIWidgetVec4)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetSelectable, RuntimeUI::RuntimeUIService::SetWidgetSelectableByIndex, VoidUIWidgetBool)
-		AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, RuntimeUI::RuntimeUIService::IsWidgetSelectedByIndex, BoolUIWidget)
-		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetImage, RuntimeUI::RuntimeUIService::SetWidgetImageByIndex, VoidUIWidgetUInt64)
-		AddEngineFunctionPointerToDll(RuntimeUI_GetWidgetText, RuntimeUI::RuntimeUIService::GetWidgetTextByIndex, StringUIWidget)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetText, [](RuntimeUI::WidgetHandle widgetID, std::string_view newText)
+			{
+				RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.SetActiveWidgetTextByHandle(widgetID, newText);
+			}, VoidUIWidgetString)
+		AddEngineFunctionPointerToDll(RuntimeUI_IsUserInterfaceActiveFromHandle, [](Assets::AssetHandle uiHandle)
+		{
+				return RuntimeUI::RuntimeUIService::GetActiveContext().IsUIActiveFromHandle(uiHandle);
+		}, BoolUInt64)
+		AddEngineFunctionPointerToDll(RuntimeUI_LoadUserInterfaceFromHandle, [](Assets::AssetHandle uiHandle)
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().SetActiveUIFromHandle(uiHandle);
+		}, VoidUInt64)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetDisplayWindow, [](RuntimeUI::WindowHandle windowID, bool display)
+			{
+				RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.SetDisplayWindowByHandle(windowID, display);
+			}, VoidUIWindowBool)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetSelectedWidget, [](RuntimeUI::WidgetHandle widgetID)
+			{
+				RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_InteractState.SetSelectedWidgetByHandle(widgetID);
+			}, VoidUIWidget)
+		AddEngineFunctionPointerToDll(RuntimeUI_ClearSelectedWidget, []()
+			{
+				RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_InteractState.ClearSelectedWidget();
+			}, VoidNone)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetTextColor, [](RuntimeUI::WidgetHandle widgetID, const Math::vec4& color)
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.SetWidgetTextColorByHandle(widgetID, color);
+		}, VoidUIWidgetVec4)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetBackgroundColor, [](RuntimeUI::WidgetHandle widgetID, const Math::vec4& color)
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.SetWidgetBackgroundColorByHandle(widgetID, color);
+		}, VoidUIWidgetVec4)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetSelectable, [](RuntimeUI::WidgetHandle widgetID, bool selectable)
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.SetWidgetSelectableByHandle(widgetID, selectable);
+		}, VoidUIWidgetBool)
+		AddEngineFunctionPointerToDll(RuntimeUI_IsWidgetSelected, [](RuntimeUI::WidgetHandle widgetID)
+		{
+			return RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_InteractState.IsWidgetSelectedByHandle(widgetID);
+		}, BoolUIWidget)
+		AddEngineFunctionPointerToDll(RuntimeUI_SetWidgetImage, [](RuntimeUI::WidgetHandle widgetID, Assets::AssetHandle textureHandle)
+		{
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.SetWidgetImageByHandle(widgetID, textureHandle);
+		}, VoidUIWidgetUInt64)
+		AddEngineFunctionPointerToDll(RuntimeUI_GetWidgetText, [](RuntimeUI::WidgetHandle widgetID)
+		{
+			return RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_WindowsState.GetWidgetTextByHandle(widgetID);
+		}, StringUIWidget)
 		// Scenes
-		AddEngineFunctionPointerToDll(TransitionSceneFromHandle, Scenes::SceneService::TransitionSceneFromHandle, VoidUInt64)
-		AddEngineFunctionPointerToDll(CheckHasComponent, Scenes::SceneService::CheckActiveHasComponent, BoolUInt64String)
-		AddEngineFunctionPointerToDll(FindEntityHandleByName, Scenes::SceneService::FindEntityHandleByName, UInt64String)
-		AddEngineFunctionPointerToDll(Scenes_IsSceneActive, Scenes::SceneService::IsSceneActive, BoolUInt64)
-		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, Scenes::SceneService::TransformComponentGetTranslation, Vec3UInt64)
-		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, Scenes::SceneService::TransformComponentSetTranslation, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_SetLinearVelocity, VoidUInt64Vec2)
-		AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, Scenes::SceneService::Rigidbody2DComponent_GetLinearVelocity, Vec2UInt64)
-		AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, Scenes::SceneService::GetProjectComponentField, VoidPtrUInt64UInt64UInt64)
-		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, Scenes::SceneService::SetProjectComponentField, VoidUInt64UInt64UInt64VoidPtr)
-		AddEngineFunctionPointerToDll(TagComponent_GetTag, Scenes::SceneService::TagComponentGetTag, StringUInt64)
+		AddEngineFunctionPointerToDll(TransitionSceneFromHandle, [](UUID sceneHandle) 
+		{
+			Scenes::SceneService::GetActiveContext().TransitionSceneFromHandle(sceneHandle);
+		}, VoidUInt64)
+		AddEngineFunctionPointerToDll(CheckHasComponent, [](UUID handle, std::string_view identifier)
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->CheckActiveHasComponent(handle, identifier);
+		}, BoolUInt64String)
+		AddEngineFunctionPointerToDll(FindEntityHandleByName, [](std::string_view identifier) 
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->FindEntityHandleByName(identifier);
+		}, UInt64String)
+		AddEngineFunctionPointerToDll(Scenes_IsSceneActive, [](UUID sceneHandle)
+		{
+			return Scenes::SceneService::GetActiveContext().IsSceneActive(sceneHandle);
+		}, BoolUInt64)
+		AddEngineFunctionPointerToDll(TransformComponent_GetTranslation, [](UUID entityHandle) 
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->TransformComponentGetTranslation(entityHandle);
+		}, Vec3UInt64)
+		AddEngineFunctionPointerToDll(TransformComponent_SetTranslation, [](UUID entityHandle, Math::vec3 translation) 
+		{
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->TransformComponentSetTranslation(entityHandle, translation);
+		}, VoidUInt64Vec3)
+		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, [](UUID entityHandle, Math::vec2 linearVel) 
+		{
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->Rigidbody2DComponent_SetLinearVelocity(entityHandle, linearVel);
+		}, VoidUInt64Vec2)
+		AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, [](UUID entityHandle)
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->Rigidbody2DComponent_GetLinearVelocity(entityHandle);
+		}, Vec2UInt64)
+		AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, [](UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation)
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->GetProjectComponentField(entityID, projectComponentID, fieldLocation);
+		}, VoidPtrUInt64UInt64UInt64)
+		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, [](UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value)
+		{
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->SetProjectComponentField(entityID, projectComponentID, fieldLocation, value);
+		}, VoidUInt64UInt64UInt64VoidPtr)
+		AddEngineFunctionPointerToDll(TagComponent_GetTag, [](UUID entityHandle) 
+		{
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->TagComponentGetTag(entityHandle);
+		}, StringUInt64)
 		
 	}
 }

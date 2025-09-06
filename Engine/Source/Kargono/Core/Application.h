@@ -6,10 +6,6 @@
 
 namespace Kargono 
 {
-
-	//==============================
-	// Application Class
-	//==============================
 	class Application
 	{
 	public:
@@ -86,6 +82,5 @@ namespace Kargono
 		const char* GetName() const { return m_DebugName; }
 	protected:
 		FixedString32 m_DebugName;
-
 	};
 }

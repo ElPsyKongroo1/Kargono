@@ -1,21 +1,20 @@
 #pragma once
 
+#include "Kargono/Utility/Random.h"
+
 #include <string>
 #include <cstdint>
 
 namespace Kargono
 {
-	//==============================
-	// Universal Identifier Class
-	//==============================
 	class UUID
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		UUID();
-		UUID(uint64_t uuid);
+		UUID() : m_UUID(0) {}
+		UUID(uint64_t uuid) : m_UUID(uuid) {}
 		UUID(const UUID&) = default;
 		//==============================
 		// Getters/Setters
@@ -35,8 +34,19 @@ namespace Kargono
 		uint64_t m_UUID;
 	};
 
+	class RandomUUIDService
+	{
+	public:
+		static UUID GetRandomUUID()
+		{
+			return UUID(s_Random.GenerateRandomUInt64(1, std::numeric_limits<uint64_t>::max()));
+		}
+	private:
+		static inline Utility::STLRandom s_Random{};
+	};
+
 	// Provide empty handle definition
-	static inline uint64_t k_EmptyUUID{ 0 };
+	constexpr uint64_t k_EmptyUUID{ 0 };
 }
 
 namespace std

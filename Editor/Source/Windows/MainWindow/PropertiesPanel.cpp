@@ -17,11 +17,11 @@ namespace Kargono::Panels
 	void PropertiesPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow("Properties", &s_MainWindow->m_ShowProperties, ImGuiWindowFlags_NoFocusOnAppearing);
+		EditorUI::EditorUIContext::StartRenderWindow("Properties", &s_MainWindow->m_ShowProperties, ImGuiWindowFlags_NoFocusOnAppearing);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
@@ -29,15 +29,15 @@ namespace Kargono::Panels
 		{
 			if (s_MainWindow->m_SceneEditorPanel->m_CurrentDisplayed == ScenePropertiesDisplay::Entity)
 			{
-				if (*Scenes::SceneService::GetActiveScene()->GetSelectedEntity())
+				if (*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity())
 				{
 					if (s_MainWindow->m_SceneEditorPanel->m_DisplayedComponent == ECS::ComponentType::None)
 					{
-						s_MainWindow->m_SceneEditorPanel->DrawAllComponents(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
+						s_MainWindow->m_SceneEditorPanel->DrawAllComponents(*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity());
 					}
 					else
 					{
-						s_MainWindow->m_SceneEditorPanel->DrawSingleComponent(*Scenes::SceneService::GetActiveScene()->GetSelectedEntity());
+						s_MainWindow->m_SceneEditorPanel->DrawSingleComponent(*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity());
 					}
 				}
 			}
@@ -48,6 +48,6 @@ namespace Kargono::Panels
 			
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 }

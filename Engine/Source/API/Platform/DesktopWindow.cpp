@@ -323,7 +323,7 @@ namespace API::Platform
 		m_Data.Height = static_cast<uint32_t>(newWindowSize.y);
 
 		// Ensure window is centered around new size
-		if (!Kargono::Projects::ProjectService::GetActiveIsFullscreen())
+		if (!Kargono::Projects::ProjectService::GetActiveContext().GetIsFullscreen())
 		{
 			CenterWindow();
 		}

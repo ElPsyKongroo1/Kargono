@@ -63,17 +63,17 @@ namespace Kargono::Input
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 				KG_ASSERT(keyboardBinding->GetScript());
 				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding()) ||
-					keyboardBinding->GetScriptHandle() == Assets::EmptyHandle)
+					keyboardBinding->GetScriptHandle() == Assets::k_EmptyHandle)
 				{ 
 					continue; 
 				}
 				if (keyboardBinding->GetScript()->m_FuncType == WrappedFuncType::Void_None)
 				{
-					Utility::CallWrappedVoidNone(keyboardBinding->GetScript()->m_Function);
+					Utility::CallWrapped<WrappedVoidNone>(keyboardBinding->GetScript()->m_Function);
 				}
 				else
 				{
-					Utility::CallWrappedVoidFloat(keyboardBinding->GetScript()->m_Function, ts);
+					Utility::CallWrapped<WrappedVoidFloat>(keyboardBinding->GetScript()->m_Function, ts);
 				}
 				
 			}
@@ -89,11 +89,11 @@ namespace Kargono::Input
 				
 				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
 				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding()) || 
-					keyboardBinding->GetScriptHandle() == Assets::EmptyHandle) 
+					keyboardBinding->GetScriptHandle() == Assets::k_EmptyHandle) 
 				{ 
 					continue; 
 				}
-				Utility::CallWrappedVoidNone(keyboardBinding->GetScript()->m_Function);
+				Utility::CallWrapped<WrappedVoidNone>(keyboardBinding->GetScript()->m_Function);
 			}
 		}
 
@@ -127,7 +127,7 @@ namespace Kargono::Input
 	}
 	void InputActionBinding::SetScript(Assets::AssetHandle handle)
 	{
-		if (handle == Assets::EmptyHandle)
+		if (handle == Assets::k_EmptyHandle)
 		{
 			ClearScript();
 			return;

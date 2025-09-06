@@ -2,7 +2,7 @@
 #include "Modules/Assets/Asset.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/AI/AIService.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>
 
@@ -50,29 +50,29 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		Ref<AI::AIState> m_EditorAIState{ nullptr };
-		Assets::AssetHandle m_EditorAIStateHandle { Assets::EmptyHandle };
+		Assets::AssetHandle m_EditorAIStateHandle { Assets::k_EmptyHandle };
 		FixedString32 m_PanelName{ "AI State Editor" };
 	private:
 		//=========================
 		// Widgets
 		//=========================
 		// Opening Panel w/ Popups
-		EditorUI::SelectOptionSpec m_OpenAIStatePopupSpec {};
-		EditorUI::GenericPopupSpec m_CreateAIStatePopupSpec {};
+		EditorUI::SelectOptionWidget m_OpenAIStatePopupSpec {};
+		EditorUI::GenericPopupWidget m_CreateAIStatePopupSpec {};
 		EditorUI::EditTextSpec m_SelectAIStateNameSpec {};
-		EditorUI::ChooseDirectorySpec m_SelectAIStateLocationSpec {};
+		EditorUI::ChooseDirectoryWidget m_SelectAIStateLocationSpec {};
 
 		// Input Mode Header
-		EditorUI::PanelHeaderSpec m_MainHeader {};
-		EditorUI::GenericPopupSpec m_DeleteAIStateWarning {};
-		EditorUI::GenericPopupSpec m_CloseAIStateWarning {};
+		EditorUI::PanelHeaderWidget m_MainHeader {};
+		EditorUI::GenericPopupWidget m_DeleteAIStateWarning {};
+		EditorUI::GenericPopupWidget m_CloseAIStateWarning {};
 
 		// Edit Scripts Options
-		EditorUI::SelectOptionSpec m_SelectOnUpdateScript {};
-		EditorUI::SelectOptionSpec m_SelectOnEnterStateScript {};
-		EditorUI::SelectOptionSpec m_SelectOnExitStateScript {};
-		EditorUI::SelectOptionSpec m_SelectOnAIMessageScript{};
-		EditorUI::TooltipSpec m_SelectScriptTooltip{};
+		EditorUI::SelectOptionWidget m_SelectOnUpdateScript {};
+		EditorUI::SelectOptionWidget m_SelectOnEnterStateScript {};
+		EditorUI::SelectOptionWidget m_SelectOnExitStateScript {};
+		EditorUI::SelectOptionWidget m_SelectOnAIMessageScript{};
+		EditorUI::TooltipWidget m_SelectScriptTooltip{};
 
 	};
 }

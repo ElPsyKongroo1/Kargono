@@ -10,8 +10,8 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h" // for imGui::GetCurrentWindow()
-#include "Modules/EditorUI/EditorUI.h"
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Modules/Scripting/ScriptTokenizer.h"
 #include "Kargono/Utility/Regex.h"
 #include "Kargono/Core/Base.h"
@@ -758,7 +758,7 @@ namespace API::EditorUI
 		}
 
 		// Get suggestions from script compiler
-		std::vector<Kargono::Scripting::SuggestionSpec> allSuggestions = Kargono::Scripting::ScriptCompilerService::GetSuggestions(text, m_SuggestionTextBuffer);
+		std::vector<Kargono::Scripting::SuggestionSpec> allSuggestions = Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_SuggestGen.GetSuggestions(text, m_SuggestionTextBuffer);
 
 		// Exit gracefully if no suggestions were generated
 		if (allSuggestions.size() == 0)
@@ -815,7 +815,7 @@ namespace API::EditorUI
 	
 		// Select the first available option
 		Kargono::EditorUI::TreePath selectPath {};
-		selectPath.AddNode(0);
+		selectPath.PushBackNode(0);
 		m_SuggestionTree.m_SelectedEntry = selectPath;
 	}
 
@@ -1386,10 +1386,10 @@ namespace API::EditorUI
 
 				if (ImGui::BeginPopup("TextEditorSuggestions", ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing))
 				{
-					Kargono::EditorUI::EditorUIService::BringCurrentWindowToFront();
+					Kargono::EditorUI::EditorUIContext::BringCurrentWindowToFront();
 
 					ImGui::PopStyleVar();
-					Kargono::EditorUI::EditorUIService::Tree(m_SuggestionTree);
+					m_SuggestionTree.RenderTree();
 					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
 					if (m_CloseTextSuggestions)
 					{
@@ -1410,7 +1410,7 @@ namespace API::EditorUI
 					if (it != m_LanguageDefinition.m_Identifiers.end() && !it->second.m_Declaration.empty())
 					{
 						ImGui::SetNextWindowSize({ 400.0f, 0.0f });
-						ImGui::PushStyleColor(ImGuiCol_Text, Kargono::EditorUI::EditorUIService::s_HighlightColor1);
+						ImGui::PushStyleColor(ImGuiCol_Text, Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1);
 						ImGui::BeginTooltip();
 						ImGui::TextWrapped(it->second.m_Declaration.c_str());
 						ImGui::PopStyleColor();
@@ -2722,28 +2722,28 @@ namespace API::EditorUI
 		s_CurrentPalette = 
 		{
 			{
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_SecondaryTextColor),	// Default
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3),	// Keyword	
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2),	// Number
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2),	// String
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor2), // Char literal
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_SecondaryTextColor), // Punctuation
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor),	// Preprocessor
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PrimaryTextColor), // Identifier
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1), // Known identifier
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_SecondaryTextColor),	// Default
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3),	// Keyword	
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2),	// Number
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2),	// String
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2), // Char literal
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_SecondaryTextColor), // Punctuation
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_DisabledColor),	// Preprocessor
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_PrimaryTextColor), // Identifier
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1), // Known identifier
 					0xffc040a0, // Preproc identifier
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Comment (single line)
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Comment (multi line)
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_BackgroundColor), // Background
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PrimaryTextColor), // Cursor
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_DisabledColor), // Comment (single line)
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_DisabledColor), // Comment (multi line)
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_BackgroundColor), // Background
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_PrimaryTextColor), // Cursor
 					0x80a06020, // Selection
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3_UltraThin), // Error Background
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor1), // Breakpoint
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DisabledColor), // Line number
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_DarkBackgroundColor), // Current line fill
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PureEmpty), // Current line fill (inactive)
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_PureEmpty), // Current line edge
-					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIService::s_HighlightColor3), // Error Text
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3_UltraThin), // Error Background
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1), // Breakpoint
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_DisabledColor), // Line number
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), // Current line fill
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::k_PureEmpty), // Current line fill (inactive)
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::k_PureEmpty), // Current line edge
+					ImGui::ColorConvertFloat4ToU32(Kargono::EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3), // Error Text
 			}
 		};
 
@@ -3961,24 +3961,24 @@ namespace API::EditorUI
 		if (!inited)
 		{
 			// Lazy loading KGScript language def
-			if (!Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition)
+			if (!Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition)
 			{
-				Kargono::Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+				Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
 			}
 
-			for (std::string& keyword : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.Keywords)
+			for (std::string& keyword : Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_Keywords)
 			{
 				langDef.m_Keywords.insert(keyword);
 			}
 
-			for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+			for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_PrimitiveTypes)
 			{
 				Identifier id;
 				id.m_Declaration = primitiveType.Description;
 				langDef.m_Identifiers.insert(std::make_pair(primitiveType.Name, id));
 			}
 
-			for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
+			for (auto& [funcName, funcNode] : Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_FunctionDefinitions)
 			{
 				Identifier id;
 				
@@ -4061,9 +4061,9 @@ namespace API::EditorUI
 
 				if (funcNode.Namespace)
 				{
-					if (Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.contains(funcNode.Namespace.Value))
+					if (Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_NamespaceDescriptions.contains(funcNode.Namespace.Value))
 					{
-						id.m_Declaration = Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions.at(funcNode.Namespace.Value);
+						id.m_Declaration = Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_NamespaceDescriptions.at(funcNode.Namespace.Value);
 					}
 					else
 					{
@@ -4073,7 +4073,7 @@ namespace API::EditorUI
 				}
 			}
 
-			for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
+			for (auto& [name, primitiveType] : Kargono::Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.m_PrimitiveTypes)
 			{
 				for (auto& [memberName, member] : primitiveType.Members)
 				{

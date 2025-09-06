@@ -1,56 +1,22 @@
 #include "kgpch.h"
 
-#include "Modules/Scripting/ScriptCompilerService.h"
-
-#include "Modules/FileSystem/FileSystem.h"
-#include "Kargono/Utility/Regex.h"
-#include "Modules/EditorUI/EditorUI.h"
-#include "Modules/Scripting/ScriptTokenizer.h"
-#include "Modules/Scripting/ScriptTokenParser.h"
+#include "Modules/Scripting/ScriptLanguageDefinition.h"
 #include "Modules/Scripting/ScriptOutputGenerator.h"
-#include "Modules/Assets/AssetService.h"
-#include "Modules/ECS/ProjectComponent.h"
-#include "Modules/ECS/Entity.h"
-#include "Kargono/ProjectData/ProjectEnum.h"
-#include "Kargono/Utility/Operations.h"
-#include "Kargono/Core/KeyCodes.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
-#include "Kargono/Scenes/Scene.h"
 
-namespace Kargono::Utility
-{
-	inline Scripting::ScriptToken WrappedVarTypeToPrimitiveType(WrappedVarType type)
-	{
-		switch (type)
-		{
-		case WrappedVarType::Integer16: return { Scripting::ScriptTokenType::PrimitiveType, "int16" };
-		case WrappedVarType::Integer32: return { Scripting::ScriptTokenType::PrimitiveType, "int32" };
-		case WrappedVarType::Integer64: return { Scripting::ScriptTokenType::PrimitiveType, "int64" };
-		case WrappedVarType::UInteger16: return { Scripting::ScriptTokenType::PrimitiveType, "uint16" };
-		case WrappedVarType::UInteger32: return { Scripting::ScriptTokenType::PrimitiveType, "uint32" };
-		case WrappedVarType::UInteger64: return { Scripting::ScriptTokenType::PrimitiveType, "uint64" };
-		case WrappedVarType::Vector2: return { Scripting::ScriptTokenType::PrimitiveType, "vector2" };
-		case WrappedVarType::Vector3: return { Scripting::ScriptTokenType::PrimitiveType, "vector3" };
-		case WrappedVarType::Vector4: return { Scripting::ScriptTokenType::PrimitiveType, "vector4" };
-		case WrappedVarType::IVector2: return { Scripting::ScriptTokenType::PrimitiveType, "ivector2" };
-		case WrappedVarType::IVector3: return { Scripting::ScriptTokenType::PrimitiveType, "ivector3" };
-		case WrappedVarType::IVector4: return { Scripting::ScriptTokenType::PrimitiveType, "ivector4" };
-		case WrappedVarType::String: return { Scripting::ScriptTokenType::PrimitiveType, "string" };
-		case WrappedVarType::Bool: return { Scripting::ScriptTokenType::PrimitiveType, "bool" };
-		case WrappedVarType::Float: return { Scripting::ScriptTokenType::PrimitiveType, "float" };
-		case WrappedVarType::Entity: return { Scripting::ScriptTokenType::PrimitiveType, "entity" };
-		case WrappedVarType::Void: return { Scripting::ScriptTokenType::None, "" };
-		case WrappedVarType::None: return { Scripting::ScriptTokenType::None, "" };
-		}
-		KG_ERROR("Unknown Type of WrappedVariableType.");
-		return { Scripting::ScriptTokenType::None, "" };
-	}
-}
+#include "Modules/EditorUI/EditorUIInclude.h"
+#include "Modules/Assets/AssetService.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
+#include "Modules/ECS/EngineComponents.h"
+#include "Modules/ECS/ProjectComponent.h"
+#include "Kargono/Utility/Operations.h"
+#include "Kargono/ProjectData/ProjectEnum.h"
+#include "Kargono/Scenes/Scene.h"
+#include "Modules/ECS/Entity.h"
+
+#include <array>
 
 namespace Kargono::Scripting
 {
-	LanguageDefinition ScriptCompilerService::s_ActiveLanguageDefinition {};
-
 	static std::vector<ScriptToken> s_AllLiterals
 	{
 		{ ScriptTokenType::PrimitiveType, "bool" },
@@ -79,375 +45,33 @@ namespace Kargono::Scripting
 		{ ScriptTokenType::PrimitiveType, "float" }
 	};
 
-	static std::vector<ScriptToken> s_AllEnums;
-
-	void ScriptCompilerService::Terminate()
+	PrimitiveType LanguageDefinition::GetPrimitiveTypeFromName(const std::string& name)
 	{
-		s_ActiveLanguageDefinition.Clear();
-	}
-
-	std::string ScriptCompilerService::CompileScriptFile(const std::filesystem::path& scriptLocation)
-	{
-		// Lazy loading KGScript language def
-		if (!s_ActiveLanguageDefinition)
+		if (m_PrimitiveTypes.contains(name))
 		{
-			CreateKGScriptLanguageDefinition();
-		}
-
-		// Check for invalid input
-		if (!Utility::FileSystem::PathExists(scriptLocation))
-		{
-			KG_WARN("Failed to compile .kgscript. File does not exist at specified location!");
-			return {};
-		}
-		if (scriptLocation.extension() != ".kgscript")
-		{
-			KG_WARN("Failed to compile .kgscript. File uses incorrect extension!");
-			return {};
-		}
-
-		// Load in script file from disk
-		std::string scriptFile = Utility::FileSystem::ReadFileString(scriptLocation);
-
-		// Get tokens from text
-		ScriptTokenizer scriptTokenizer{};
-		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(std::move(scriptFile));
-
-		ScriptTokenParser tokenParser{};
-		auto [parseSuccess, newAST] = tokenParser.ParseTokens(std::move(tokens));
-		//tokenParser.PrintTokens();
-
-		if (!parseSuccess)
-		{
-			KG_WARN("Token parsing failed");
-			// Print out error messages
-			tokenParser.PrintErrors();
-			//tokenParser.PrintTokens();
-			//tokenParser.PrintAST();
-			return {};
-		}
-
-		//tokenParser.PrintAST();
-
-		// Generate output text
-		ScriptOutputGenerator outputGenerator{};
-		auto [outputSuccess, outputText] = outputGenerator.GenerateOutput(std::move(newAST));
-
-		if (!outputSuccess)
-		{
-			KG_WARN("Output text generation failed");
-			return {};
-		}
-		
-		//KG_WARN(outputText);
-		return outputText;
-	}
-
-	std::vector<ParserError> ScriptCompilerService::CheckForErrors(const std::string& text)
-	{
-		// Lazy loading KGScript language def
-		if (!s_ActiveLanguageDefinition)
-		{
-			CreateKGScriptLanguageDefinition();
-		}
-
-		// Get tokens from text
-		ScriptTokenizer scriptTokenizer{};
-		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(text);
-
-		ScriptTokenParser tokenParser{};
-		auto [parseSuccess, newAST] = tokenParser.ParseTokens(std::move(tokens));
-		if (!parseSuccess)
-		{
-			return tokenParser.GetErrors();
-		}
-		
-		return {};
-	}
-
-	CursorContext ScriptCompilerService::FindCursorContext(const std::string& text)
-	{
-		// Lazy loading KGScript language def
-		if (!s_ActiveLanguageDefinition)
-		{
-			CreateKGScriptLanguageDefinition();
-		}
-
-		// Get tokens from text
-		ScriptTokenizer scriptTokenizer{}; 
-		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(text);
-
-		// Parse tokens and check for generated cursor context
-		ScriptTokenParser tokenParser{};
-		tokenParser.ParseTokens(std::move(tokens));
-		auto [success, context] = tokenParser.GetCursorContext();
-		if (success)
-		{
-			return context;
+			return m_PrimitiveTypes.at(name);
 		}
 
 		return {};
 	}
-
-	std::vector<SuggestionSpec> Scripting::ScriptCompilerService::GetSuggestions(const std::string& scriptText, const std::string& queryText)
+	void LanguageDefinition::ResetLanguageDef()
 	{
-		// Lazy loading KGScript language def
-		if (!s_ActiveLanguageDefinition)
-		{
-			CreateKGScriptLanguageDefinition();
-		}
-
-		// Get tokens from text
-		ScriptTokenizer scriptTokenizer{};
-		std::vector<ScriptToken> tokens = scriptTokenizer.TokenizeString(scriptText);
-
-		// Parse tokens and check for generated cursor context
-		ScriptTokenParser tokenParser{};
-		tokenParser.ParseTokens(std::move(tokens));
-		auto [success, context] = tokenParser.GetCursorContext();
-
-		// Exit gracefully if no context was found
-		if (!success)
-		{
-			return {};
-		}
-
-		// Generate suggestions using based on context flags
-		std::vector<SuggestionSpec> allSuggestions;
-		if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AfterNamespaceResolution))
-		{
-			GetSuggestionsForAfterNamespace(allSuggestions, context, queryText);
-		}
-		else if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::IsDataMember))
-		{
-			GetSuggestionsForIsDataMember(allSuggestions, context, queryText);
-		}
-		else if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::IsFunctionParameter))
-		{
-			GetSuggestionsForIsParameter(allSuggestions, context, queryText);
-		}
-		else if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::IsLiteralMember))
-		{
-			GetSuggestionsForLiteralMember(allSuggestions, context, queryText);
-		}
-		else
-		{
-			GetSuggestionsDefault(allSuggestions, context, queryText);
-		}
-		
-
-		return allSuggestions;
+		m_Keywords.clear();
+		m_PrimitiveTypes.clear();
+		m_NamespaceDescriptions.clear();
+		m_FunctionDefinitions.clear();
+		m_InitListTypes.clear();
+		m_AllLiteralTypes.clear();
 	}
-
-	void Scripting::ScriptCompilerService::GetSuggestionsForAfterNamespace(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
+	LanguageDefinition::operator bool() const
 	{
-		// Generate suggestions for function identifiers
-		for (auto& [funcName, funcNode] : ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
-		{
-			// Ensure namespaces match
-			if (context.CurrentNamespace.Value != funcNode.Namespace.Value)
-			{
-				continue;
-			}
-
-			// Decide whether to insert function
-			std::string label = funcNode.Namespace ? funcNode.Namespace.Value + "::" + funcNode.Name.Value : funcNode.Name.Value;
-			if (Utility::Regex::GetMatchSuccess(label, queryText, false))
-			{
-				SuggestionSpec newSuggestion;
-				newSuggestion.m_Label = label;
-				newSuggestion.m_ReplacementText = funcNode.Name.Value + "()";
-				newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
-				newSuggestion.m_ShiftValue = -1;
-				allSuggestions.push_back(newSuggestion);
-			}
-		}
-
-
-		// Generate suggestions for all assets
-		for (auto& [assetType, assetTypeInfo] : ScriptCompilerService::s_ActiveLanguageDefinition.AllLiteralTypes)
-		{
-			// Ensure asset type matches namespace
-			if (context.CurrentNamespace.Value != assetType)
-			{
-				continue;
-			}
-
-			// Generate suggestions for emitter configs
-			for (auto& [assetName, handle] : assetTypeInfo.m_CustomLiteralNameToID)
-			{
-				if (Utility::Regex::GetMatchSuccess(assetName, queryText, false))
-				{
-					SuggestionSpec newSuggestion;
-					newSuggestion.m_Label = assetName;
-					newSuggestion.m_ReplacementText = assetName;
-					newSuggestion.m_Icon = assetTypeInfo.m_LiteralIcon;
-					allSuggestions.push_back(newSuggestion);
-				}
-			}
-		}
-	}
-
-	void Scripting::ScriptCompilerService::GetSuggestionsForIsParameter(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
-	{
-		UNREFERENCED_PARAMETER(context);
-
-		// Generate suggestions for primitive types
-		for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
-		{
-			if (Utility::Regex::GetMatchSuccess(primitiveType.Name, queryText, false))
-			{
-				SuggestionSpec newSuggestion;
-				newSuggestion.m_Label = primitiveType.Name;
-				newSuggestion.m_ReplacementText = primitiveType.Name;
-				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
-				allSuggestions.push_back(newSuggestion);
-			}
-		}
-	}
-
-	void Scripting::ScriptCompilerService::GetSuggestionsForIsDataMember(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
-	{
-		// Generate suggestions for all member fields
-		for (auto& [name, member] : context.DataMembers)
-		{
-			if (DataMember* dataMember = std::get_if<DataMember>(&member->Value))
-			{
-				if (Utility::Regex::GetMatchSuccess(dataMember->Name, queryText, false))
-				{
-					SuggestionSpec newSuggestion;
-					newSuggestion.m_Label = dataMember->Name;
-					newSuggestion.m_ReplacementText = dataMember->Name;
-					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
-					allSuggestions.push_back(newSuggestion);
-				}	
-			}
-			else if (FunctionNode* funcNode = std::get_if<FunctionNode>(&member->Value))
-			{
-				if (Utility::Regex::GetMatchSuccess(funcNode->Name.Value, queryText, false))
-				{
-					SuggestionSpec newSuggestion;
-					newSuggestion.m_Label = funcNode->Name.Value;
-					newSuggestion.m_ReplacementText = funcNode->Name.Value + "()";
-					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconFunction;
-					newSuggestion.m_ShiftValue = -1;
-					allSuggestions.push_back(newSuggestion);
-				}
-			}
-		}
-	}
-
-	void Scripting::ScriptCompilerService::GetSuggestionsDefault(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
-	{
-		// Store the return types in a set for easy checking
-		std::unordered_set<std::string> returnTypes;
-
-		// Fill return types set
-		for (const ScriptToken& type : context.AllReturnTypes)
-		{
-			returnTypes.insert(type.Value);
-		}
-
-		// Generate suggestions for stack variables
-		for (auto& stackFrame : context.StackVariables)
-		{
-			for (auto& variable : stackFrame)
-			{
-				bool returnTypesMatch = returnTypes.contains(variable.Type.Value);
-
-				if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
-				{
-					if (Utility::Regex::GetMatchSuccess(variable.Identifier.Value, queryText, false))
-					{
-						SuggestionSpec newSuggestion;
-						newSuggestion.m_Label = variable.Identifier.Value;
-						newSuggestion.m_ReplacementText = variable.Identifier.Value;
-						newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
-						allSuggestions.push_back(newSuggestion);
-					}
-				}
-			}
-		}
-
-		// Generate suggestions for all namespaces
-		for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.NamespaceDescriptions)
-		{
-			if (Utility::Regex::GetMatchSuccess(name, queryText, false))
-			{
-				SuggestionSpec newSuggestion;
-				newSuggestion.m_Label = name;
-				newSuggestion.m_ReplacementText = name + "::";
-				newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconDirectory;
-				allSuggestions.push_back(newSuggestion);
-			}
-		}
-
-		// Handle Functions Identifiers
-		for (auto& [funcName, funcNode] : ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions)
-		{
-			// Determine if the return types indeed match
-			bool returnTypesMatch = returnTypes.contains(funcNode.ReturnType.Value);
-
-			if (funcNode.Namespace)
-			{
-				continue;
-			}
-
-			if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes) || returnTypesMatch)
-			{
-				// Decide whether to insert function
-				std::string label = funcNode.Name.Value;
-				if (Utility::Regex::GetMatchSuccess(label, queryText, false))
-				{
-					SuggestionSpec newSuggestion;
-					newSuggestion.m_Label = label;
-					newSuggestion.m_ReplacementText = funcNode.Name.Value + "()";
-					newSuggestion.m_Icon = EditorUI::EditorUIService::s_IconFunction;
-					newSuggestion.m_ShiftValue = -1;
-					allSuggestions.push_back(newSuggestion);
-				}
-			}
-		}
-
-		// Generate suggestions for primitive types
-		if (context.m_Flags.IsFlagSet((uint8_t)CursorFlags::AllowAllVariableTypes))
-		{
-			for (auto& [name, primitiveType] : ScriptCompilerService::s_ActiveLanguageDefinition.PrimitiveTypes)
-			{
-				if (Utility::Regex::GetMatchSuccess(primitiveType.Name, queryText, false))
-				{
-					SuggestionSpec newSuggestion;
-					newSuggestion.m_Label = primitiveType.Name;
-					newSuggestion.m_ReplacementText = primitiveType.Name;
-					newSuggestion.m_Icon = Kargono::EditorUI::EditorUIService::s_IconEntity;
-					allSuggestions.push_back(newSuggestion);
-				}
-			}
-		}
-
-	}
-
-	void ScriptCompilerService::GetSuggestionsForLiteralMember(std::vector<SuggestionSpec>& allSuggestions, const CursorContext& context, const std::string& queryText)
-	{
-		// Generate suggestions for all member fields
-		for (auto& [name, icon] : context.LiteralMembers)
-		{
-			if (Utility::Regex::GetMatchSuccess(name, queryText, false))
-			{
-				SuggestionSpec newSuggestion;
-				newSuggestion.m_Label = name;
-				newSuggestion.m_ReplacementText = name;
-				newSuggestion.m_Icon = icon;
-				allSuggestions.push_back(newSuggestion);
-			}
-		}
+		return m_Keywords.size() > 0 || m_PrimitiveTypes.size() > 0 || m_FunctionDefinitions.size() > 0;
 	}
 
 
-
-	void ScriptCompilerService::CreateKGScriptLanguageDefinition()
+	void LanguageDefinition::CreateLanguageDef()
 	{
-		s_ActiveLanguageDefinition = {};
+		ResetLanguageDef();
 
 		CreateKGScriptKeywords();
 
@@ -463,9 +87,9 @@ namespace Kargono::Scripting
 
 	}
 
-	void ScriptCompilerService::CreateKGScriptKeywords()
+	void LanguageDefinition::CreateKGScriptKeywords()
 	{
-		s_ActiveLanguageDefinition.Keywords =
+		m_Keywords =
 		{
 			"return",
 			"void",
@@ -477,7 +101,7 @@ namespace Kargono::Scripting
 		};
 	}
 
-	void ScriptCompilerService::CreateKGScriptInitializationPrototypes()
+	void LanguageDefinition::CreateKGScriptInitializationPrototypes()
 	{
 		// Add initialization list constructor prototypes
 		InitializationListType newInitListType{};
@@ -490,7 +114,7 @@ namespace Kargono::Scripting
 		newInitListValue.Value = "float";
 		newInitListType.ParameterTypes.push_back(newInitListValue);
 		newInitListType.ParameterTypes.push_back(newInitListValue);
-		s_ActiveLanguageDefinition.InitListTypes.push_back(newInitListType);
+		m_InitListTypes.push_back(newInitListType);
 
 		newInitListType = {};
 		newInitListValue = {};
@@ -503,7 +127,7 @@ namespace Kargono::Scripting
 		newInitListType.ParameterTypes.push_back(newInitListValue);
 		newInitListType.ParameterTypes.push_back(newInitListValue);
 		newInitListType.ParameterTypes.push_back(newInitListValue);
-		s_ActiveLanguageDefinition.InitListTypes.push_back(newInitListType);
+		m_InitListTypes.push_back(newInitListType);
 
 		newInitListType = {};
 		newInitListValue = {};
@@ -517,13 +141,13 @@ namespace Kargono::Scripting
 		newInitListType.ParameterTypes.push_back(newInitListValue);
 		newInitListType.ParameterTypes.push_back(newInitListValue);
 		newInitListType.ParameterTypes.push_back(newInitListValue);
-		s_ActiveLanguageDefinition.InitListTypes.push_back(newInitListType);
+		m_InitListTypes.push_back(newInitListType);
 
 		newInitListType = {};
 		newInitListValue = {};
 	}
 
-	void ScriptCompilerService::CreateKGScriptPrimitiveTypes()
+	void LanguageDefinition::CreateKGScriptPrimitiveTypes()
 	{
 		// Add basic/primitive data types
 		PrimitiveType newPrimitiveType{};
@@ -537,33 +161,33 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::BooleanLiteral;
 		newPrimitiveType.EmittedDeclaration = "bool";
 		newPrimitiveType.EmittedParameter = "bool";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconBoolean;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ScriptingIcons.m_Boolean;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType.Name = "keycode";
 		newPrimitiveType.Description = "A predefined type that contains all available input keys. Ex: Key::RightShift or Key::A";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint16_t";
 		newPrimitiveType.EmittedParameter = "uint16_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType.Name = "screen_resolution";
 		newPrimitiveType.Description = "A predefined type taht contains all available screen resolutions. Ex: ScreenResolution::1920x1080 or ScreenResolution::512x512";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint16_t";
 		newPrimitiveType.EmittedParameter = "uint16_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGrid;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ViewportIcons.m_Grid;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "string";
 		newPrimitiveType.Description = "Basic type representing a list of ASCII characters. Ex: \"Hello World\", \"This is a sample sentence\"";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::StringLiteral;
 		newPrimitiveType.EmittedDeclaration = "std::string";
-		newPrimitiveType.EmittedParameter = "const std::string&";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTextWidget;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.EmittedParameter = "std::string_view";
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_RuntimeUIIcons.m_TextWidget;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "int32";
@@ -571,8 +195,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
 		newPrimitiveType.EmittedDeclaration = "int32_t";
 		newPrimitiveType.EmittedParameter = "int32_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ScriptingIcons.m_Number;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "uint16";
@@ -580,8 +204,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint16_t";
 		newPrimitiveType.EmittedParameter = "uint16_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ScriptingIcons.m_Number;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "uint32";
@@ -589,8 +213,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint32_t";
 		newPrimitiveType.EmittedParameter = "uint32_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ScriptingIcons.m_Number;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "uint64";
@@ -598,8 +222,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::IntegerLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconNumber;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ScriptingIcons.m_Number;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "ai_state";
@@ -607,8 +231,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconAI;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_GenIcons.m_AI;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "audio_buffer";
@@ -616,8 +240,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconAudio;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Audio;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "emitter_config";
@@ -625,8 +249,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEmitterConfig;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_EmitterConfig;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "font";
@@ -634,8 +258,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconFont;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Font;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "game_state";
@@ -643,8 +267,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconGlobalState;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_GlobalState;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "input_map";
@@ -652,8 +276,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconInput;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "project_component";
@@ -661,8 +285,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEntity;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_SceneIcons.m_Entity;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "project_enum";
@@ -670,8 +294,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEnum;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Enum;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "scene";
@@ -679,8 +303,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconScene;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Scene;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "texture_2d";
@@ -688,8 +312,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconTexture;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "user_interface";
@@ -697,110 +321,110 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconUserInterface2;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_RuntimeUIIcons.m_UserInterface2;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		// User interface widgets
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "user_interface_window";
 		newPrimitiveType.Description = "Reference to a user interface window. This object is a reference to a window that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WindowID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WindowID";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconWindow;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WindowHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WindowHandle";
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_RuntimeUIIcons.m_Window;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "text_widget";
 		newPrimitiveType.Description = "Reference to a user interface text widget. This object is a reference to a text widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::TextWidget);
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "button_widget";
 		newPrimitiveType.Description = "Reference to a user interface button widget. This object is a reference to a button widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ButtonWidget);
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "image_widget";
 		newPrimitiveType.Description = "Reference to a user interface image widget. This object is a reference to a image widget that exists inside the context of a user_interface asset. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ImageWidget);
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "image_button_widget";
 		newPrimitiveType.Description = "Reference to a user interface image button widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ImageButtonWidget);
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "checkbox_widget";
 		newPrimitiveType.Description = "Reference to a user interface checkbox widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::CheckboxWidget);
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "input_text_widget";
 		newPrimitiveType.Description = "Reference to a user interface input text widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::InputTextWidget);
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "slider_widget";
 		newPrimitiveType.Description = "Reference to a user interface slider widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::SliderWidget);
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "drop_down_widget";
 		newPrimitiveType.Description = "Reference to a user interface drop-down widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::DropDownWidget);
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "container_widget";
 		newPrimitiveType.Description = "Reference to a user interface container widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::ContainerWidget);
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "horizontal_container_widget";
 		newPrimitiveType.Description = "Reference to a user interface horizontal container widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::HorizontalContainerWidget);
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "vertical_container_widget";
 		newPrimitiveType.Description = "Reference to a user interface vertical container widget. You can typically obtain one of these with this syntax: UserInterfaces::userInterfaceName.window1.widget1.";
-		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetID";
-		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetID";
+		newPrimitiveType.EmittedDeclaration = "RuntimeUI::WidgetHandle";
+		newPrimitiveType.EmittedParameter = "RuntimeUI::WidgetHandle";
 		newPrimitiveType.Icon = Utility::WidgetTypeToIcon(RuntimeUI::WidgetTypes::VerticalContainerWidget);
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
-		if (s_ActiveLanguageDefinition.AllLiteralTypes.contains("Enums"))
+		if (m_AllLiteralTypes.contains("Enums"))
 		{
 			// Load custom enum types
-			CustomLiteralNameToIDMap& projectEnumMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Enums").m_CustomLiteralNameToID;
+			CustomLiteralNameToIDMap& projectEnumMap = m_AllLiteralTypes.at("Enums").m_CustomLiteralNameToID;
 			for (auto& [name, type] : projectEnumMap)
 			{
 				newPrimitiveType = {};
@@ -809,8 +433,8 @@ namespace Kargono::Scripting
 				newPrimitiveType.Description = "Reference to a custom enum.";
 				newPrimitiveType.EmittedDeclaration = "uint16_t";
 				newPrimitiveType.EmittedParameter = "uint16_t";
-				newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEnum;
-				s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+				newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Enum;
+				m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 			}
 		}
 
@@ -820,7 +444,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconEntity;
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_SceneIcons.m_Entity;
 
 		newFunctionMember.Name = { ScriptTokenType::Identifier, "HasComponent" };
 		newFunctionMember.Namespace = {};
@@ -830,15 +454,15 @@ namespace Kargono::Scripting
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "componentName" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
+			{
+				FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
 
-			generator.m_OutputText << "CheckHasComponent(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ", ";
-			generator.GenerateExpression(funcCall->Arguments.at(0));
-			generator.m_OutputText << ")";
-		};
+				generator.m_OutputText << "CheckHasComponent(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ", ";
+				generator.GenerateExpression(funcCall->Arguments.at(0));
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -857,124 +481,124 @@ namespace Kargono::Scripting
 			projectComponentMember.PrimitiveType.Value = "None";
 
 			// Load each field from project component into projectComponentMember's member list
-			for (size_t iteration{0}; iteration < projectComp->m_DataNames.size(); iteration++)
+			for (size_t iteration{ 0 }; iteration < projectComp->m_DataNames.size(); iteration++)
 			{
 				DataMember projectComponentFieldMember{};
 				projectComponentFieldMember.Name = projectComp->m_DataNames.at(iteration);
 				projectComponentFieldMember.Description = "This is a custom project component. This component provides fields specific to this component.";
 				projectComponentFieldMember.PrimitiveType = Utility::WrappedVarTypeToPrimitiveType(projectComp->m_DataTypes.at(iteration));
 				projectComponentFieldMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-				{
-					
-					generator.m_OutputText << "*(";
-					generator.m_OutputText << Utility::WrappedVarTypeToCPPString(Utility::KGScriptToWrappedVarType(member.ReturnType.Value));
-					generator.m_OutputText << "*)";
-					generator.m_OutputText << "Scenes_GetProjectComponentField(";
-
-					// Output entity ID
-					generator.GenerateExpression(member.CurrentNodeExpression);
-					generator.m_OutputText << ", ";
-
-					// Output project component ID
-					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
-					KG_ASSERT(projectComponentExpression);
-					Ref<ECS::ProjectComponent> component = nullptr;
-					for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 					{
-						if (asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name == projectComponentExpression->Value.Value)
-						{
-							component = Assets::AssetService::GetProjectComponent(handle);
-							generator.m_OutputText << std::to_string(handle);
-							break;
-						}
-					}
-					KG_ASSERT(component);
-					generator.m_OutputText << ", ";
 
-					// Output component field ID
-					TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
-					KG_ASSERT(fieldNameExpression);
-					size_t iteration{ 0 };
-					for (const std::string& fieldName : component->m_DataNames)
-					{
-						if (fieldName == fieldNameExpression->Value.Value)
-						{
-							generator.m_OutputText << std::to_string(iteration);
-							break;
-						}
-						iteration++;
-					}
+						generator.m_OutputText << "*(";
+						generator.m_OutputText << Utility::WrappedVarTypeToCPPString(Utility::KGScriptToWrappedVarType(member.ReturnType.Value));
+						generator.m_OutputText << "*)";
+						generator.m_OutputText << "Scenes_GetProjectComponentField(";
 
-					generator.m_OutputText << ")";
-				};
+						// Output entity ID
+						generator.GenerateExpression(member.CurrentNodeExpression);
+						generator.m_OutputText << ", ";
+
+						// Output project component ID
+						TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
+						KG_ASSERT(projectComponentExpression);
+						Ref<ECS::ProjectComponent> component = nullptr;
+						for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+						{
+							if (asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name == projectComponentExpression->Value.Value)
+							{
+								component = Assets::AssetService::GetProjectComponent(handle);
+								generator.m_OutputText << std::to_string(handle);
+								break;
+							}
+						}
+						KG_ASSERT(component);
+						generator.m_OutputText << ", ";
+
+						// Output component field ID
+						TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+						KG_ASSERT(fieldNameExpression);
+						size_t iteration{ 0 };
+						for (const std::string& fieldName : component->m_DataNames)
+						{
+							if (fieldName == fieldNameExpression->Value.Value)
+							{
+								generator.m_OutputText << std::to_string(iteration);
+								break;
+							}
+							iteration++;
+						}
+
+						generator.m_OutputText << ")";
+					};
 
 				projectComponentFieldMember.OnGenerateSetter = [](ScriptOutputGenerator& generator, StatementAssignment& assignmentStatement)
-				{
-					MemberNode* memberNode = std::get_if<MemberNode>(&assignmentStatement.Name->Value);
-					KG_ASSERT(memberNode);
-
-					generator.m_OutputText << "Scenes_SetProjectComponentField(";
-
-					// Generate entityID
-					generator.GenerateExpression(memberNode->CurrentNodeExpression);
-					generator.m_OutputText << ", ";
-
-					// Output project component ID
-					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->CurrentNodeExpression->Value);
-					KG_ASSERT(projectComponentExpression);
-					Ref<ECS::ProjectComponent> component = nullptr;
-					for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 					{
-						if (asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name == projectComponentExpression->Value.Value)
-						{
-							component = Assets::AssetService::GetProjectComponent(handle);
-							generator.m_OutputText << std::to_string(handle);
-							break;
-						}
-					}
-					KG_ASSERT(component);
-					generator.m_OutputText << ", ";
+						MemberNode* memberNode = std::get_if<MemberNode>(&assignmentStatement.Name->Value);
+						KG_ASSERT(memberNode);
 
-					// Output component field ID
-					TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
-					KG_ASSERT(fieldNameExpression);
-					size_t iteration{ 0 };
-					for (const std::string& fieldName : component->m_DataNames)
-					{
-						if (fieldName == fieldNameExpression->Value.Value)
-						{
-							generator.m_OutputText << std::to_string(iteration);
-							break;
-						}
-						iteration++;
-					}
-					generator.m_OutputText << ", ";
+						generator.m_OutputText << "Scenes_SetProjectComponentField(";
 
-					// Output expression
-					if (TokenExpressionNode* tokenExpression = std::get_if<TokenExpressionNode>(&assignmentStatement.Value->Value))
-					{
-						if (tokenExpression->Value.Type == ScriptTokenType::Identifier)
+						// Generate entityID
+						generator.GenerateExpression(memberNode->CurrentNodeExpression);
+						generator.m_OutputText << ", ";
+
+						// Output project component ID
+						TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->CurrentNodeExpression->Value);
+						KG_ASSERT(projectComponentExpression);
+						Ref<ECS::ProjectComponent> component = nullptr;
+						for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 						{
-							generator.m_OutputText << "&" << tokenExpression->Value.Value;
+							if (asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name == projectComponentExpression->Value.Value)
+							{
+								component = Assets::AssetService::GetProjectComponent(handle);
+								generator.m_OutputText << std::to_string(handle);
+								break;
+							}
 						}
-						else if (IsLiteral(tokenExpression->Value))
+						KG_ASSERT(component);
+						generator.m_OutputText << ", ";
+
+						// Output component field ID
+						TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+						KG_ASSERT(fieldNameExpression);
+						size_t iteration{ 0 };
+						for (const std::string& fieldName : component->m_DataNames)
 						{
-							generator.m_OutputText << "(void*)&RValueToLValue(" << tokenExpression->Value.Value << ")";
+							if (fieldName == fieldNameExpression->Value.Value)
+							{
+								generator.m_OutputText << std::to_string(iteration);
+								break;
+							}
+							iteration++;
+						}
+						generator.m_OutputText << ", ";
+
+						// Output expression
+						if (TokenExpressionNode* tokenExpression = std::get_if<TokenExpressionNode>(&assignmentStatement.Value->Value))
+						{
+							if (tokenExpression->Value.Type == ScriptTokenType::Identifier)
+							{
+								generator.m_OutputText << "&" << tokenExpression->Value.Value;
+							}
+							else if (TokenUtil::IsLiteral(tokenExpression->Value))
+							{
+								generator.m_OutputText << "(void*)&RValueToLValue(" << tokenExpression->Value.Value << ")";
+							}
+							else
+							{
+								KG_WARN("Invalid argument type provided to GameState::SetField");
+								return;
+							}
 						}
 						else
 						{
-							KG_WARN("Invalid argument type provided to GameState::SetField");
-							return;
+							assignmentStatement.Value->GenerationAffixes = CreateRef<ExpressionGenerationAffixes>("(void*)&RValueToLValue(", ")");
+							generator.GenerateExpression(assignmentStatement.Value);
 						}
-					}
-					else
-					{
-						assignmentStatement.Value->GenerationAffixes = CreateRef<ExpressionGenerationAffixes>("(void*)&RValueToLValue(", ")");
-						generator.GenerateExpression(assignmentStatement.Value);
-					}
 
-					generator.m_OutputText << ")";
-				};
+						generator.m_OutputText << ")";
+					};
 				projectComponentMember.Members.insert_or_assign(projectComponentFieldMember.Name, CreateRef<MemberType>(projectComponentFieldMember));
 			}
 
@@ -995,15 +619,15 @@ namespace Kargono::Scripting
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newPosition" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
-			
-			generator.m_OutputText << "TransformComponent_SetTranslation(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ", ";
-			generator.GenerateExpression(funcCall->Arguments.at(0));
-			generator.m_OutputText << ")";
-		};
+			{
+				FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+
+				generator.m_OutputText << "TransformComponent_SetTranslation(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ", ";
+				generator.GenerateExpression(funcCall->Arguments.at(0));
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -1013,11 +637,11 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "vector3" };
 		newFunctionMember.Description = "This function gets the position for the selected entity. This function takes no parameters and returns a vector3.";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			generator.m_OutputText << "TransformComponent_GetTranslation(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ")";
-		};
+			{
+				generator.m_OutputText << "TransformComponent_GetTranslation(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ")";
+			};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
 
@@ -1037,15 +661,15 @@ namespace Kargono::Scripting
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newAIState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+			{
+				FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 
-			generator.m_OutputText << "AI_ChangeGlobalState(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ", ";
-			generator.GenerateExpression(funcCall->Arguments.at(0));
-			generator.m_OutputText << ")";
-		};
+				generator.m_OutputText << "AI_ChangeGlobalState(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ", ";
+				generator.GenerateExpression(funcCall->Arguments.at(0));
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -1058,15 +682,15 @@ namespace Kargono::Scripting
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newAIState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+			{
+				FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 
-			generator.m_OutputText << "AI_ChangeCurrentState(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ", ";
-			generator.GenerateExpression(funcCall->Arguments.at(0));
-			generator.m_OutputText << ")";
-		};
+				generator.m_OutputText << "AI_ChangeCurrentState(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ", ";
+				generator.GenerateExpression(funcCall->Arguments.at(0));
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -1100,15 +724,15 @@ namespace Kargono::Scripting
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newAIState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+			{
+				FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 
-			generator.m_OutputText << "AI_IsCurrentState(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ", ";
-			generator.GenerateExpression(funcCall->Arguments.at(0));
-			generator.m_OutputText << ")";
-		};
+				generator.m_OutputText << "AI_IsCurrentState(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ", ";
+				generator.GenerateExpression(funcCall->Arguments.at(0));
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -1139,11 +763,11 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionMember.Description = "This function changes this entities's current state its previous state if it exists. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			generator.m_OutputText << "AI_RevertPreviousState(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ")";
-		};
+			{
+				generator.m_OutputText << "AI_RevertPreviousState(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -1153,11 +777,11 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionMember.Description = "This function clears the current global state of the entity's AIStateComponent. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			generator.m_OutputText << "AI_ClearGlobalState(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ")";
-		};
+			{
+				generator.m_OutputText << "AI_ClearGlobalState(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -1167,11 +791,11 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionMember.Description = "This function clears the current current state of the entity's AIStateComponent. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			generator.m_OutputText << "AI_ClearCurrentState(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ")";
-		};
+			{
+				generator.m_OutputText << "AI_ClearCurrentState(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -1181,11 +805,11 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionMember.Description = "This function clears the current previous state of the entity's AIStateComponent. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			generator.m_OutputText << "AI_ClearPreviousState(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ")";
-		};
+			{
+				generator.m_OutputText << "AI_ClearPreviousState(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -1195,12 +819,12 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionMember.Description = "This function clears all AI State references inside an entity's AIStateComponent. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
+			{
 
-			generator.m_OutputText << "AI_ClearAllStates(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ")";
-		};
+				generator.m_OutputText << "AI_ClearAllStates(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -1221,15 +845,15 @@ namespace Kargono::Scripting
 		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newVelocity" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+			{
+				FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 
-			generator.m_OutputText << "Rigidbody2DComponent_SetLinearVelocity(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ", ";
-			generator.GenerateExpression(funcCall->Arguments.at(0));
-			generator.m_OutputText << ")";
-		};
+				generator.m_OutputText << "Rigidbody2DComponent_SetLinearVelocity(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ", ";
+				generator.GenerateExpression(funcCall->Arguments.at(0));
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
@@ -1239,11 +863,11 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "vector2" };
 		newFunctionMember.Description = "This function gets the current linear velocity of the 2D physics object associated with this entity.";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			generator.m_OutputText << "Rigidbody2DComponent_GetLinearVelocity(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ")";
-		};
+			{
+				generator.m_OutputText << "Rigidbody2DComponent_GetLinearVelocity(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ")";
+			};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
 
@@ -1259,18 +883,19 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "string" };
 		newFunctionMember.Description = "This functions gets the current tag of the entity as a string.";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			generator.m_OutputText << "TagComponent_GetTag(";
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ")";
-		};
+			{
+				generator.m_OutputText << "(std::string)";
+				generator.m_OutputText << "TagComponent_GetTag(";
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ")";
+			};
 		newMemberParameter = {};
 		newDataMember.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "float";
@@ -1278,8 +903,8 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::FloatLiteral;
 		newPrimitiveType.EmittedDeclaration = "float";
 		newPrimitiveType.EmittedParameter = "float";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ScriptingIcons.m_Decimal;
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "vector2";
@@ -1287,7 +912,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "Math::vec2";
 		newPrimitiveType.EmittedParameter = "Math::vec2";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ScriptingIcons.m_Decimal;
 		newDataMember.Name = "x";
 		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
 		dataMemberPrimitiveType.Value = "float";
@@ -1303,7 +928,7 @@ namespace Kargono::Scripting
 		newDataMember = {};
 		dataMemberPrimitiveType = {};
 		newPrimitiveType.AcceptableArithmetic.insert("float");
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newDataMember = {};
@@ -1313,7 +938,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "Math::vec3";
 		newPrimitiveType.EmittedParameter = "Math::vec3";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ScriptingIcons.m_Decimal;
 		newDataMember.Name = "x";
 		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
 		dataMemberPrimitiveType.Value = "float";
@@ -1336,7 +961,7 @@ namespace Kargono::Scripting
 		newDataMember = {};
 		dataMemberPrimitiveType = {};
 		newPrimitiveType.AcceptableArithmetic.insert("float");
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 		newPrimitiveType = {};
 		newDataMember = {};
@@ -1346,9 +971,9 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "Math::vec4";
 		newPrimitiveType.EmittedParameter = "Math::vec4";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconDecimal;
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_ScriptingIcons.m_Decimal;
 		newPrimitiveType.AcceptableArithmetic.insert("float");
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 
 
 		newPrimitiveType = {};
@@ -1357,17 +982,17 @@ namespace Kargono::Scripting
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::None;
 		newPrimitiveType.EmittedDeclaration = "Physics::RaycastResult";
 		newPrimitiveType.EmittedParameter = "Physics::RaycastResult";
-		newPrimitiveType.Icon = EditorUI::EditorUIService::s_IconRigidBody;
+		newPrimitiveType.Icon = EditorUI::EditorUIContext::m_SceneIcons.m_RigidBody;
 		newDataMember.Name = "collisionSuccess";
 		dataMemberPrimitiveType.Type = ScriptTokenType::PrimitiveType;
 		dataMemberPrimitiveType.Value = "bool";
 		newDataMember.PrimitiveType = dataMemberPrimitiveType;
 		newDataMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			// Output identifier for raycast_result and underlying type
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ".m_Success";
-		};
+			{
+				// Output identifier for raycast_result and underlying type
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ".m_Success";
+			};
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 		dataMemberPrimitiveType = {};
@@ -1376,11 +1001,11 @@ namespace Kargono::Scripting
 		dataMemberPrimitiveType.Value = "entity";
 		newDataMember.PrimitiveType = dataMemberPrimitiveType;
 		newDataMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			// Output identifier for raycast_result and underlying type
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ".m_Entity";
-		};
+			{
+				// Output identifier for raycast_result and underlying type
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ".m_Entity";
+			};
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 		dataMemberPrimitiveType = {};
@@ -1389,11 +1014,11 @@ namespace Kargono::Scripting
 		dataMemberPrimitiveType.Value = "vector2";
 		newDataMember.PrimitiveType = dataMemberPrimitiveType;
 		newDataMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			// Output identifier for raycast_result and underlying type
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ".m_Location";
-		};
+			{
+				// Output identifier for raycast_result and underlying type
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ".m_Location";
+			};
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 		dataMemberPrimitiveType = {};
@@ -1402,111 +1027,111 @@ namespace Kargono::Scripting
 		dataMemberPrimitiveType.Value = "vector2";
 		newDataMember.PrimitiveType = dataMemberPrimitiveType;
 		newDataMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-		{
-			// Output identifier for raycast_result and underlying type
-			generator.GenerateExpression(member.CurrentNodeExpression);
-			generator.m_OutputText << ".m_Normal";
-		};
+			{
+				// Output identifier for raycast_result and underlying type
+				generator.GenerateExpression(member.CurrentNodeExpression);
+				generator.m_OutputText << ".m_Normal";
+			};
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 		dataMemberPrimitiveType = {};
-		s_ActiveLanguageDefinition.PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
+		m_PrimitiveTypes.insert_or_assign(newPrimitiveType.Name, newPrimitiveType);
 	}
 
-	static void CreateWidgetLiteralMember (Assets::AssetHandle configHandle,
+	static void CreateWidgetLiteralMember(Assets::AssetHandle configHandle,
 		Ref<RuntimeUI::Widget> currentWidget, Ref<CustomLiteralMember> parentLiteralMember)
+	{
+		// Create the basic widget literal
+		Ref<CustomLiteralMember> newWidgetLiteral = CreateRef<CustomLiteralMember>();
+		std::string currentWidgetLabel{ currentWidget->m_Tag };
+		Utility::Operations::RemoveWhitespaceFromString(currentWidgetLabel);
+
+		// Add text replacement values for this widget
+		newWidgetLiteral->m_OutputText = std::format("RuntimeUI::WidgetHandle({}, {})",
+			std::to_string(configHandle),
+			std::to_string(currentWidget->m_ID));
+
+		// Set the widget's primitive type
+		switch (currentWidget->m_WidgetType)
 		{
-			// Create the basic widget literal
-			Ref<CustomLiteralMember> newWidgetLiteral = CreateRef<CustomLiteralMember>();
-			std::string currentWidgetLabel{ currentWidget->m_Tag };
-			Utility::Operations::RemoveWhitespaceFromString(currentWidgetLabel);
+		case RuntimeUI::WidgetTypes::TextWidget:
+			newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "text_widget" };
+			break;
+		case RuntimeUI::WidgetTypes::ButtonWidget:
+			newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "button_widget" };
+			break;
+		case RuntimeUI::WidgetTypes::ImageWidget:
+			newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "image_widget" };
+			break;
+		case RuntimeUI::WidgetTypes::ImageButtonWidget:
+			newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "image_button_widget" };
+			break;
+		case RuntimeUI::WidgetTypes::CheckboxWidget:
+			newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "checkbox_widget" };
+			break;
+		case RuntimeUI::WidgetTypes::InputTextWidget:
+			newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "input_text_widget" };
+			break;
+		case RuntimeUI::WidgetTypes::SliderWidget:
+			newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "slider_widget" };
+			break;
+		case RuntimeUI::WidgetTypes::DropDownWidget:
+			newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "drop_down_widget" };
+			break;
+		case RuntimeUI::WidgetTypes::ContainerWidget:
+			newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "container_widget" };
+			break;
+		case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
+			newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "horizontal_container_widget" };
+			break;
+		case RuntimeUI::WidgetTypes::VerticalContainerWidget:
+			newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "vertical_container_widget" };
+			break;
+		default:
+			KG_ERROR("Invalid widget type provided when loading widget information into kgscript language");
+			break;
+		}
 
-			// Add text replacement values for this widget
-			newWidgetLiteral->m_OutputText = std::format("RuntimeUI::WidgetID({}, {})",
-				std::to_string(configHandle),
-				std::to_string(currentWidget->m_ID));
-
-			// Set the widget's primitive type
-			switch (currentWidget->m_WidgetType)
+		RuntimeUI::ContainerData* containerData = currentWidget->GetContainerData();
+		if (containerData)
+		{
+			for (Ref<RuntimeUI::Widget> containedWidget : containerData->m_ContainedWidgets)
 			{
-			case RuntimeUI::WidgetTypes::TextWidget:
-				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "text_widget" };
-				break;
-			case RuntimeUI::WidgetTypes::ButtonWidget:
-				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "button_widget" };
-				break;
-			case RuntimeUI::WidgetTypes::ImageWidget:
-				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "image_widget" };
-				break;
-			case RuntimeUI::WidgetTypes::ImageButtonWidget:
-				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "image_button_widget" };
-				break;
-			case RuntimeUI::WidgetTypes::CheckboxWidget:
-				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "checkbox_widget" };
-				break;
-			case RuntimeUI::WidgetTypes::InputTextWidget:
-				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "input_text_widget" };
-				break;
-			case RuntimeUI::WidgetTypes::SliderWidget:
-				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "slider_widget" };
-				break;
-			case RuntimeUI::WidgetTypes::DropDownWidget:
-				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "drop_down_widget" };
-				break;
-			case RuntimeUI::WidgetTypes::ContainerWidget:
-				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "container_widget" };
-				break;
-			case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
-				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "horizontal_container_widget" };
-				break;
-			case RuntimeUI::WidgetTypes::VerticalContainerWidget:
-				newWidgetLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "vertical_container_widget" };
-				break;
-			default:
-				KG_ERROR("Invalid widget type provided when loading widget information into kgscript language");
-				break;
+				CreateWidgetLiteralMember(configHandle, containedWidget, newWidgetLiteral);
 			}
+		}
 
-			RuntimeUI::ContainerData* containerData = RuntimeUI::RuntimeUIService::GetContainerDataFromWidget(currentWidget.get());
-			if (containerData)
-			{
-				for (Ref<RuntimeUI::Widget> containedWidget : containerData->m_ContainedWidgets)
-				{
-					CreateWidgetLiteralMember(configHandle, containedWidget, newWidgetLiteral);
-				}
-			}
+		// Add the widget literal into the window literal
+		parentLiteralMember->m_Members.insert_or_assign(currentWidgetLabel, newWidgetLiteral);
+	};
 
-			// Add the widget literal into the window literal
-			parentLiteralMember->m_Members.insert_or_assign(currentWidgetLabel, newWidgetLiteral);
-		};
-
-	void ScriptCompilerService::CreateKGScriptCustomLiterals()
+	void LanguageDefinition::CreateKGScriptCustomLiterals()
 	{
 		// Load all asset type declarations
-		s_ActiveLanguageDefinition.AllLiteralTypes.clear();
-		s_ActiveLanguageDefinition.AllLiteralTypes =
+		m_AllLiteralTypes.clear();
+		m_AllLiteralTypes =
 		{
-			{"AIStates", {{}, EditorUI::EditorUIService::s_IconAI}},
-			{"AudioBuffers", {{}, EditorUI::EditorUIService::s_IconAudio}},
-			{"EmitterConfigs", {{}, EditorUI::EditorUIService::s_IconParticles}},
-			{"Fonts", {{}, EditorUI::EditorUIService::s_IconFont}},
-			{"GameStates", {{}, EditorUI::EditorUIService::s_IconGlobalState}},
-			{"InputMaps", {{}, EditorUI::EditorUIService::s_IconInput}},
-			{"ProjectComponents", {{}, EditorUI::EditorUIService::s_IconProjectComponent}},
-			{"Enums", {{}, EditorUI::EditorUIService::s_IconEnum}},
-			{"Scenes", {{}, EditorUI::EditorUIService::s_IconScene}},
-			{"Textures", {{}, EditorUI::EditorUIService::s_IconTexture}},
-			{"UserInterfaces", {{}, EditorUI::EditorUIService::s_IconUserInterface2}},
-			{"ScreenResolution", {{}, EditorUI::EditorUIService::s_IconGrid}},
-			{"Key", {{}, EditorUI::EditorUIService::s_IconInput}}
+			{"AIStates", {{}, EditorUI::EditorUIContext::m_GenIcons.m_AI}},
+			{"AudioBuffers", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Audio}},
+			{"EmitterConfigs", {{}, EditorUI::EditorUIContext::m_SceneIcons.m_Particles}},
+			{"Fonts", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Font}},
+			{"GameStates", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_GlobalState}},
+			{"InputMaps", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input}},
+			{"ProjectComponents", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_ProjectComponent}},
+			{"Enums", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Enum}},
+			{"Scenes", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Scene}},
+			{"Textures", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture}},
+			{"UserInterfaces", {{}, EditorUI::EditorUIContext::m_RuntimeUIIcons.m_UserInterface2}},
+			{"ScreenResolution", {{}, EditorUI::EditorUIContext::m_ViewportIcons.m_Grid}},
+			{"Key", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input}}
 		};
 
 		// Load in names of all AI States
-		CustomLiteralNameToIDMap& aiMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("AIStates").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& aiMap = m_AllLiteralTypes.at("AIStates").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAIStateRegistry())
 		{
 			CustomLiteralMember newMember;
-			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "ai_state"};
+			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "ai_state" };
 			newMember.m_OutputText = std::string(configHandle);
 
 			std::string fileName = configInfo.Data.FileLocation.stem().string();
@@ -1515,7 +1140,7 @@ namespace Kargono::Scripting
 		}
 
 		// Load in names of all audio buffers
-		CustomLiteralNameToIDMap& audioMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("AudioBuffers").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& audioMap = m_AllLiteralTypes.at("AudioBuffers").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAudioBufferRegistry())
 		{
 			CustomLiteralMember newMember;
@@ -1528,7 +1153,7 @@ namespace Kargono::Scripting
 		}
 
 		// Load in names of all emitter configs
-		CustomLiteralNameToIDMap& emitterConfigMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("EmitterConfigs").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& emitterConfigMap = m_AllLiteralTypes.at("EmitterConfigs").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetEmitterConfigRegistry())
 		{
 			CustomLiteralMember newMember;
@@ -1541,7 +1166,7 @@ namespace Kargono::Scripting
 		}
 
 		// Load in names of all fonts
-		CustomLiteralNameToIDMap& fontMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Fonts").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& fontMap = m_AllLiteralTypes.at("Fonts").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetFontRegistry())
 		{
 			CustomLiteralMember newMember;
@@ -1554,7 +1179,7 @@ namespace Kargono::Scripting
 		}
 
 		// Load in names of all game states
-		CustomLiteralNameToIDMap& gameStateMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("GameStates").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& gameStateMap = m_AllLiteralTypes.at("GameStates").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetGameStateRegistry())
 		{
 			CustomLiteralMember newMember;
@@ -1567,7 +1192,7 @@ namespace Kargono::Scripting
 		}
 
 		// Load in names of all input map
-		CustomLiteralNameToIDMap& inputMapMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("InputMaps").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& inputMapMap = m_AllLiteralTypes.at("InputMaps").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetInputMapRegistry())
 		{
 			CustomLiteralMember newMember;
@@ -1580,7 +1205,7 @@ namespace Kargono::Scripting
 		}
 
 		// Load in names of all project component
-		CustomLiteralNameToIDMap& projectComponentMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("ProjectComponents").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& projectComponentMap = m_AllLiteralTypes.at("ProjectComponents").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetProjectComponentRegistry())
 		{
 			CustomLiteralMember newMember;
@@ -1593,10 +1218,10 @@ namespace Kargono::Scripting
 		}
 
 		// Load in names of all project enums
-		CustomLiteralNameToIDMap& projectEnumMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Enums").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& projectEnumMap = m_AllLiteralTypes.at("Enums").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetProjectEnumRegistry())
 		{
-			s_AllEnums.clear();
+			m_EnumTypes.clear();
 			Ref<ProjectData::ProjectEnum> currentEnum{ Assets::AssetService::GetProjectEnum(configHandle) };
 
 			CustomLiteralMember newMember;
@@ -1619,11 +1244,11 @@ namespace Kargono::Scripting
 				iteration++;
 			}
 			projectEnumMap.insert_or_assign(fileName, newMember);
-			s_AllEnums.emplace_back(ScriptTokenType::PrimitiveType, fileName);
+			m_EnumTypes.emplace_back(ScriptTokenType::PrimitiveType, fileName);
 		}
 
 		// Load in names of all scene
-		CustomLiteralNameToIDMap& sceneMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Scenes").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& sceneMap = m_AllLiteralTypes.at("Scenes").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetSceneRegistry())
 		{
 			// Get the active scene
@@ -1657,7 +1282,7 @@ namespace Kargono::Scripting
 		}
 
 		// Load in names of all texture 2D's
-		CustomLiteralNameToIDMap& texture2DMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Textures").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& texture2DMap = m_AllLiteralTypes.at("Textures").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetTexture2DRegistry())
 		{
 			CustomLiteralMember newMember;
@@ -1670,7 +1295,7 @@ namespace Kargono::Scripting
 		}
 
 		// Load in names of all UserInterface
-		CustomLiteralNameToIDMap& userInterfaceMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("UserInterfaces").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& userInterfaceMap = m_AllLiteralTypes.at("UserInterfaces").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetUserInterfaceRegistry())
 		{
 			// Get the active user interface
@@ -1681,7 +1306,7 @@ namespace Kargono::Scripting
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			for (RuntimeUI::Window& currentWindow : currentUI->m_Windows)
+			for (RuntimeUI::Window& currentWindow : currentUI->m_WindowsState.m_Windows)
 			{
 				// Create the basic window literal
 				Ref<CustomLiteralMember> newWindowLiteral = CreateRef<CustomLiteralMember>();
@@ -1689,11 +1314,11 @@ namespace Kargono::Scripting
 				Utility::Operations::RemoveWhitespaceFromString(currentWindowLabel);
 
 				// Add text replacement values for this window
-				newWindowLiteral->m_OutputText = std::format("RuntimeUI::WindowID({}, {})",
+				newWindowLiteral->m_OutputText = std::format("RuntimeUI::WindowHandle({}, {})",
 					std::to_string(configHandle),
 					std::to_string(currentWindow.m_ID));
 				newWindowLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "user_interface_window" };
-				
+
 				for (Ref<RuntimeUI::Widget> currentWidget : currentWindow.m_Widgets)
 				{
 					CreateWidgetLiteralMember(configHandle, currentWidget, newWindowLiteral);
@@ -1709,7 +1334,7 @@ namespace Kargono::Scripting
 		}
 
 		// Load in names of all input keys
-		CustomLiteralNameToIDMap& inputKeyMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Key").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& inputKeyMap = m_AllLiteralTypes.at("Key").m_CustomLiteralNameToID;
 
 		for (KeyCode code : Key::s_AllKeyCodes)
 		{
@@ -1725,7 +1350,7 @@ namespace Kargono::Scripting
 		}
 
 		// Load in names of all resolutions
-		CustomLiteralNameToIDMap& resolutionMap = s_ActiveLanguageDefinition.AllLiteralTypes.at("Key").m_CustomLiteralNameToID;
+		CustomLiteralNameToIDMap& resolutionMap = m_AllLiteralTypes.at("Key").m_CustomLiteralNameToID;
 		for (ScreenResolution resolution : s_AllScreenResolutions)
 		{
 			CustomLiteralMember newMember;
@@ -1741,33 +1366,33 @@ namespace Kargono::Scripting
 
 	}
 
-	void ScriptCompilerService::CreateKGScriptNamespaces()
+	void LanguageDefinition::CreateKGScriptNamespaces()
 	{
 		// Add namespace descriptions
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("UIService", "This namespace provides functions that can manage and interact with the active user interface.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("GameStateService", "This namespace provides functions that can manage and interact with the active game state");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("SceneService", "This namespace provides functions that can manage the active scene.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("InputService", "This namespace provides functions allow access to the current input state and manage the current input map/mapping");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AudioService", "This namespace provides functions that can manage audio files and play audio");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Math", "This namespace provides various math functions to be used.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("NetworkService", "This namespace provides functions that interact with the active network connection between the current client and the server.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Scripts", "This namespace provides access to all available scripts in the current project.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AIService", "This namespace provides functions that interact with the AI system in the engine.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("PhysicsService", "This namespace provides functions that interact with the physics system in the engine.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("ParticleService", "This namespace provides functions that interact with the particle system in the engine.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("AppService", "This namespace provides functions that interact with the application's state.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("Key", "This namespace resolves to different keyboard key literals to be used with the InputService namespace.");
-		s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign("ScreenResolution", "This namespace resolves to different screen resolution literals to be used with the AppService namespace.");
+		m_NamespaceDescriptions.insert_or_assign("UIService", "This namespace provides functions that can manage and interact with the active user interface.");
+		m_NamespaceDescriptions.insert_or_assign("GameStateService", "This namespace provides functions that can manage and interact with the active game state");
+		m_NamespaceDescriptions.insert_or_assign("SceneService", "This namespace provides functions that can manage the active scene.");
+		m_NamespaceDescriptions.insert_or_assign("InputService", "This namespace provides functions allow access to the current input state and manage the current input map/mapping");
+		m_NamespaceDescriptions.insert_or_assign("AudioService", "This namespace provides functions that can manage audio files and play audio");
+		m_NamespaceDescriptions.insert_or_assign("Math", "This namespace provides various math functions to be used.");
+		m_NamespaceDescriptions.insert_or_assign("NetworkService", "This namespace provides functions that interact with the active network connection between the current client and the server.");
+		m_NamespaceDescriptions.insert_or_assign("Scripts", "This namespace provides access to all available scripts in the current project.");
+		m_NamespaceDescriptions.insert_or_assign("AIService", "This namespace provides functions that interact with the AI system in the engine.");
+		m_NamespaceDescriptions.insert_or_assign("PhysicsService", "This namespace provides functions that interact with the physics system in the engine.");
+		m_NamespaceDescriptions.insert_or_assign("ParticleService", "This namespace provides functions that interact with the particle system in the engine.");
+		m_NamespaceDescriptions.insert_or_assign("AppService", "This namespace provides functions that interact with the application's state.");
+		m_NamespaceDescriptions.insert_or_assign("Key", "This namespace resolves to different keyboard key literals to be used with the InputService namespace.");
+		m_NamespaceDescriptions.insert_or_assign("ScreenResolution", "This namespace resolves to different screen resolution literals to be used with the AppService namespace.");
 
 		// Add all asset types as namespaces
-		for (auto& [assetType, assetNameToIDMap] : s_ActiveLanguageDefinition.AllLiteralTypes)
+		for (auto& [assetType, assetNameToIDMap] : m_AllLiteralTypes)
 		{
-			s_ActiveLanguageDefinition.NamespaceDescriptions.insert_or_assign(assetType, "This namespace provides access to all of the engine's " + assetType);
+			m_NamespaceDescriptions.insert_or_assign(assetType, "This namespace provides access to all of the engine's " + assetType);
 		}
 
 	}
 
-	void ScriptCompilerService::CreateKGScriptFunctionDefinitions()
+	void LanguageDefinition::CreateKGScriptFunctionDefinitions()
 	{
 		// Add function declarations
 		FunctionNode newFunctionNode{};
@@ -1781,12 +1406,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Convert basic variable types into a string. Ex: 23 -> \"23\", false -> \"false\"";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Identifier.Value = "std::to_string";
-		};
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Identifier.Value = "std::to_string";
+			};
 
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
 		newFunctionNode = {};
 		newParameter = {};
@@ -1799,29 +1424,29 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Debug logger function. This function prints the provided text to the engine's console output.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			// Ensure only a single parameter is provided to log function
-			if (node.Arguments.size() != 1)
 			{
-				KG_WARN("Invalid parameter size inside log function");
-				return;
-			}
+				// Ensure only a single parameter is provided to log function
+				if (node.Arguments.size() != 1)
+				{
+					KG_WARN("Invalid parameter size inside log function");
+					return;
+				}
 
-			// Prepend current script name and current line
-			node.Identifier.Value = "Log";
-			Ref<Expression> messageExpression = node.Arguments.at(0);
-			messageExpression->GenerationAffixes = CreateRef<ExpressionGenerationAffixes>();
-			messageExpression->GenerationAffixes->Prefix = "\"";
-			messageExpression->GenerationAffixes->Prefix.append(generator.m_AST.m_ProgramNode.FuncNode.Name.Value);
-			messageExpression->GenerationAffixes->Prefix.append(".kgscript");
-			messageExpression->GenerationAffixes->Prefix.append("\"");
-			messageExpression->GenerationAffixes->Prefix.append(", \"");
-			messageExpression->GenerationAffixes->Prefix.append(std::to_string(node.Identifier.Line));
-			messageExpression->GenerationAffixes->Prefix.append("\"");
-			messageExpression->GenerationAffixes->Prefix.append(", ");
-		};
+				// Prepend current script name and current line
+				node.Identifier.Value = "Log";
+				Ref<Expression> messageExpression = node.Arguments.at(0);
+				messageExpression->GenerationAffixes = CreateRef<ExpressionGenerationAffixes>();
+				messageExpression->GenerationAffixes->Prefix = "\"";
+				messageExpression->GenerationAffixes->Prefix.append(generator.m_AST.m_ProgramNode.FuncNode.Name.Value);
+				messageExpression->GenerationAffixes->Prefix.append(".kgscript");
+				messageExpression->GenerationAffixes->Prefix.append("\"");
+				messageExpression->GenerationAffixes->Prefix.append(", \"");
+				messageExpression->GenerationAffixes->Prefix.append(std::to_string(node.Identifier.Line));
+				messageExpression->GenerationAffixes->Prefix.append("\"");
+				messageExpression->GenerationAffixes->Prefix.append(", ");
+			};
 
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -1837,7 +1462,7 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Debug function that draws a line in the editor. This function takes the start point 3D coordinates and end the point point 3D coordinates of the line as parameters.";
 
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -1849,21 +1474,21 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Debug function that draws a point in the editor. This function takes a vector3 that represents the 3D coordinate of the point.";
 
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "ClearDebugLines" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionNode.Description = "Debug function clears all debug lines from the editor. This function takes no arguments.";
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "ClearDebugPoints" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionNode.Description = "Debug function clears all debug points from the editor. This function takes no arguments.";
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -1876,12 +1501,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Resize the current application viewport and window to the indicated resolution. This function a screen_resolution as a paramter such as: ScreenResolution::1920x1080";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "Application_Resize";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "Application_Resize";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -1890,13 +1515,13 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionNode.Description = "Send a message to the engine to close the currently running application. This function terminates your application!";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
+			{
+				UNREFERENCED_PARAMETER(generator);
 
-			node.Namespace = {};
-			node.Identifier.Value = "Application_Close";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+				node.Namespace = {};
+				node.Identifier.Value = "Application_Close";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -1904,7 +1529,7 @@ namespace Kargono::Scripting
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "AIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SendMessage" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
-		newParameter.AllTypes = s_AllEnums;
+		newParameter.AllTypes = m_EnumTypes;
 		newParameter.Identifier = { ScriptTokenType::Identifier, "messageType" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
@@ -1922,14 +1547,14 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Send a message from the indicated sender entity to the indicated receiver entity. The first parameter is the message type, second parameter is the sender entity, third parameter is the receiver entity, and the final parameter is the delay as a float.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
+			{
+				UNREFERENCED_PARAMETER(generator);
 
-			node.Namespace = {};
-			node.Identifier.Value = "AI_SendMessage";
-		};
+				node.Namespace = {};
+				node.Identifier.Value = "AI_SendMessage";
+			};
 
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -1948,12 +1573,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Change the displayed text of a TextWidget in the active user interface.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_SetWidgetText";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_SetWidgetText";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -1968,12 +1593,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Get the displayed text from the indicated widget. This function works with any widget that contains text.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_GetWidgetText";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "(std::string)RuntimeUI_GetWidgetText";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -1986,13 +1611,13 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Change the currently open user interface. This function takes the name of the new user inteface as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_LoadUserInterfaceFromHandle";
-		};
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_LoadUserInterfaceFromHandle";
+			};
 
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2005,13 +1630,13 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "This function indicates whether the provided UI is currently active. This function takes a reference to the UI and returns a bool.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_IsUserInterfaceActiveFromHandle";
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_IsUserInterfaceActiveFromHandle";
 
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2028,13 +1653,13 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Set whether a specified window is displayed in the active user interface. This function takes the name of the window to modify as a string and a boolean representing the display option as arguments.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_SetDisplayWindow";
-		};
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_SetDisplayWindow";
+			};
 
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
 		newFunctionNode = {};
 		newParameter = {};
@@ -2057,12 +1682,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Set whether a specified widget is selectable using the keyboard/mouse/etc navigation.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_SetWidgetSelectable";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_SetWidgetSelectable";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2080,12 +1705,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Check if the indicated widget is currently selected in the active UI.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_IsWidgetSelected";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_IsWidgetSelected";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2104,13 +1729,13 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Set the color of the text in a TextWidget.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_SetWidgetTextColor";
-		};
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_SetWidgetTextColor";
+			};
 
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
 		newFunctionNode = {};
 		newParameter = {};
@@ -2133,12 +1758,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Set the background color of the provided widget.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_SetWidgetBackgroundColor";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_SetWidgetBackgroundColor";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2147,12 +1772,12 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionNode.Description = "Clear the active UI's selected widget";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_ClearSelectedWidget";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_ClearSelectedWidget";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2170,15 +1795,15 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Set the provided widget as selected in the current in-game user interface.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_SetSelectedWidget";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_SetSelectedWidget";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
-		
+
 		newFunctionNode.Namespace = { ScriptTokenType::Identifier, "UIService" };
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SetWidgetImage" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "None" };
@@ -2193,12 +1818,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Change the displayed texture of the indicated image widget.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RuntimeUI_SetWidgetImage";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RuntimeUI_SetWidgetImage";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2215,12 +1840,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Create an instance of an emitter at the specified location. This location takes in an emitter configuration and a vector3 to denote its spawning location.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "Particles_AddEmitterByHandle";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "Particles_AddEmitterByHandle";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2237,33 +1862,33 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Set the specified field in the active Game State. This function requires the name of the field and the value it will be set to.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "SetGameStateField";
-
-			if (TokenExpressionNode* tokenExpression = std::get_if<TokenExpressionNode>(&node.Arguments.at(1)->Value))
 			{
-				if (tokenExpression->Value.Type == ScriptTokenType::Identifier)
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "SetGameStateField";
+
+				if (TokenExpressionNode* tokenExpression = std::get_if<TokenExpressionNode>(&node.Arguments.at(1)->Value))
 				{
-					tokenExpression->Value.Value = "&" + tokenExpression->Value.Value;
-				}
-				else if (IsLiteral(tokenExpression->Value))
-				{
-					tokenExpression->Value.Value = "(void*)&RValueToLValue(" + tokenExpression->Value.Value + ")";
+					if (tokenExpression->Value.Type == ScriptTokenType::Identifier)
+					{
+						tokenExpression->Value.Value = "&" + tokenExpression->Value.Value;
+					}
+					else if (TokenUtil::IsLiteral(tokenExpression->Value))
+					{
+						tokenExpression->Value.Value = "(void*)&RValueToLValue(" + tokenExpression->Value.Value + ")";
+					}
+					else
+					{
+						KG_WARN("Invalid argument type provided to GameState::SetField");
+						return;
+					}
 				}
 				else
 				{
-					KG_WARN("Invalid argument type provided to GameState::SetField");
-					return;
+					node.Arguments.at(1)->GenerationAffixes = CreateRef<ExpressionGenerationAffixes>("(void*)&RValueToLValue(", ")");
 				}
-			}
-			else
-			{
-				node.Arguments.at(1)->GenerationAffixes = CreateRef<ExpressionGenerationAffixes>("(void*)&RValueToLValue(", ")");
-			}
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2276,12 +1901,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Get the specified field in the active Game State and returns it as a uint16. This function requires the name of the field as a parameter.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "*(uint16_t*)GetGameStateField";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "*(uint16_t*)GetGameStateField";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2294,13 +1919,13 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Change the active scene to the scene specified. This function takes the name of the scene that should be transitioned towards as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "TransitionSceneFromHandle";
-		};
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "TransitionSceneFromHandle";
+			};
 
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
 		newFunctionNode = {};
 		newParameter = {};
@@ -2314,13 +1939,13 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Get a reference to the entity with provided tag within the current scene. Note that if multiple entities exist inside the current scene with the same tag, there is no guarentee which entity will be returned. This function takes the name inside the entity's tag component as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "FindEntityHandleByName";
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "FindEntityHandleByName";
 
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2333,13 +1958,13 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "This function indicates whether the provided scene is currently active. This function takes a string which is the local filepath to the scene and returns a bool.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "Scenes_IsSceneActive";
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "Scenes_IsSceneActive";
 
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2352,13 +1977,13 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Change the active input mapping/map. The input map maps user input to functionality/scripts. This function takes the name of the new input map as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "InputMap_LoadInputMapFromHandle";
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "InputMap_LoadInputMapFromHandle";
 
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2371,12 +1996,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Check if the provided key is current pressed on the keyboard. This function takes a keycode as a parameter.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "Input_IsKeyPressed";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "Input_IsKeyPressed";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2389,12 +2014,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Check if the provided slot from the input map is current pressed on the keyboard. This function takes an integer as a parameter.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "InputMap_IsPollingSlotPressed";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "InputMap_IsPollingSlotPressed";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2407,13 +2032,13 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Play a sound file. This function call is intended for short sound segments that play as mono. This function takes the name of the sound file as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "PlaySoundFromHandle";
-		};
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "PlaySoundFromHandle";
+			};
 
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
 		newFunctionNode = {};
 		newParameter = {};
@@ -2427,13 +2052,13 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Play a music file. This function call is intended to play a single song file, preferebly in stereo. This function takes the name of the sound file as an argument.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "PlayStereoSoundFromHandle";
-		};
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "PlayStereoSoundFromHandle";
+			};
 
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
 		newFunctionNode = {};
 		newParameter = {};
@@ -2451,12 +2076,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Generate a random integer between the provided lower and upper bounds. Note that this function uses a fairly expensive algorithm for generating numbers compared to pseudorandom number generators. This function takes two integers to denote the lower and upper bounds respectively.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "GenerateRandomInteger";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "GenerateRandomInteger";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
 		newFunctionNode = {};
 		newParameter = {};
@@ -2474,12 +2099,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Generate a random float between the provided lower and upper bounds. Note that this function uses a fairly expensive algorithm for generating numbers compared to pseudorandom number generators. This function takes two integers to denote the lower and upper bounds respectively.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "GenerateRandomFloat";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "GenerateRandomFloat";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 
 		newFunctionNode = {};
 		newParameter = {};
@@ -2493,12 +2118,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Normalize a provided vector. This function ensures that the magnitude (length) of the vector is 1. The ratios between component vectors (x,y,z) remain unchanged. This function takes in a single vector2.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "glm::normalize";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "glm::normalize";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2515,12 +2140,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Find the distance between two vectors. This function takes in two vector2 parameters to find the distance between.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "glm::distance";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "glm::distance";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2537,12 +2162,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "Find the distance between two vectors. This function takes in two vector3 parameters to find the distance between.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "glm::distance";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "glm::distance";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2551,12 +2176,12 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "uint16" };
 		newFunctionNode.Description = "This function returns the maximum value for a uint16.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "std::numeric_limits<uint16_t>().max";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "std::numeric_limits<uint16_t>().max";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2565,12 +2190,12 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::PrimitiveType, "uint16" };
 		newFunctionNode.Description = "This function retreives the slot of the current client inside the active application session. This function takes no parameters.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "GetActiveSessionSlot";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "GetActiveSessionSlot";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2587,12 +2212,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "This function sends the provided location to the server and all other clients in the current session for the provided entity. This function takes an entity and a vector3 as parameters.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "SendAllEntityLocation";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "SendAllEntityLocation";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2601,12 +2226,12 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newFunctionNode.Description = "This function sends a request message to the server to join a session. This function takes no parameters.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RequestJoinSession";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RequestJoinSession";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2615,12 +2240,12 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newFunctionNode.Description = "This function sends a message to the server to leave the active session. This function takes no parameters.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "LeaveCurrentSession";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "LeaveCurrentSession";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2641,12 +2266,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "This functions sends all other clients on the network new translation and linear velocity for the provided entity. This function takes an entity to update, a new translation as a vector3, and a new linear velocity as a vector2.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "SendAllEntityPhysics";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "SendAllEntityPhysics";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2654,18 +2279,18 @@ namespace Kargono::Scripting
 		newFunctionNode.Name = { ScriptTokenType::Identifier, "SignalAll" };
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newParameter.AllTypes = s_AllIntegerTypes;
-		newParameter.AllTypes.insert(newParameter.AllTypes.end(), s_AllEnums.begin(), s_AllEnums.end());
+		newParameter.AllTypes.insert(newParameter.AllTypes.end(), m_EnumTypes.begin(), m_EnumTypes.end());
 		newParameter.Identifier = { ScriptTokenType::Identifier, "signal" };
 		newFunctionNode.Parameters.push_back(newParameter);
 		newParameter = {};
 		newFunctionNode.Description = "This function sends a signal to the server, which is then sent to all other clients. This signal can be interpretted in different ways depending on your application's needs.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "SignalAll";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "SignalAll";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2674,12 +2299,12 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newFunctionNode.Description = "This function sends a request to the server to find out the number of users currently online. Note that a function needs to be set up to receive the user count request.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "RequestUserCount";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "RequestUserCount";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2688,12 +2313,12 @@ namespace Kargono::Scripting
 		newFunctionNode.ReturnType = { ScriptTokenType::None, "" };
 		newFunctionNode.Description = "This function sends a signal to the server indicating this client is ready. This can be intepretted differently depending on your application.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "EnableReadyCheck";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "EnableReadyCheck";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2710,12 +2335,12 @@ namespace Kargono::Scripting
 		newParameter = {};
 		newFunctionNode.Description = "This function conducts a raycast starting from the first indicated 2D point and ends at the second indicated point. This function returns the first entity that a collision occurs with. This function takes a starting vector2 and an ending vector2 as arguments.";
 		newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-		{
-			UNREFERENCED_PARAMETER(generator);
-			node.Namespace = {};
-			node.Identifier.Value = "Physics_Raycast";
-		};
-		s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+			{
+				UNREFERENCED_PARAMETER(generator);
+				node.Namespace = {};
+				node.Identifier.Value = "Physics_Raycast";
+			};
+		m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 		newFunctionNode = {};
 		newParameter = {};
 
@@ -2732,7 +2357,7 @@ namespace Kargono::Scripting
 			if (script->m_FuncType == WrappedFuncType::ArbitraryFunction)
 			{
 				ExplicitFuncType& explicitFuncType = script->m_ExplicitFuncType;
-				
+
 				// Load in return type
 				newFunctionNode.ReturnType = Utility::WrappedVarTypeToPrimitiveType(explicitFuncType.m_ReturnType);
 
@@ -2744,7 +2369,7 @@ namespace Kargono::Scripting
 					ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(paramType);
 					newParameter.AllTypes.push_back(currentToken);
 					FixedString32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : ("parameter" + std::to_string(iteration)).c_str();
-					newParameter.Identifier = { ScriptTokenType::Identifier, identifier.CString()};
+					newParameter.Identifier = { ScriptTokenType::Identifier, identifier.CString() };
 					newFunctionNode.Parameters.push_back(newParameter);
 					newParameter = {};
 					iteration++;
@@ -2773,115 +2398,17 @@ namespace Kargono::Scripting
 					iteration++;
 				}
 			}
-			
+
 			newFunctionNode.Description = "";
 			newFunctionNode.OnGenerateFunction = [](ScriptOutputGenerator& generator, FunctionCallNode& node)
-			{
-				UNREFERENCED_PARAMETER(generator);
-				node.Namespace = {};
-			};
-			s_ActiveLanguageDefinition.FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
+				{
+					UNREFERENCED_PARAMETER(generator);
+					node.Namespace = {};
+				};
+			m_FunctionDefinitions.insert_or_assign(newFunctionNode.Name.Value, newFunctionNode);
 			newFunctionNode = {};
 			newParameter = {};
 		}
 	}
 
-	bool ScriptCompilerService::IsLiteralOrIdentifier(ScriptToken token)
-	{
-		if (IsLiteral(token) || token.Type == ScriptTokenType::Identifier)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	bool ScriptCompilerService::IsLiteral(ScriptToken token)
-	{
-		if (token.Type == ScriptTokenType::IntegerLiteral ||
-			token.Type == ScriptTokenType::StringLiteral ||
-			token.Type == ScriptTokenType::BooleanLiteral ||
-			token.Type == ScriptTokenType::FloatLiteral ||
-			token.Type == ScriptTokenType::CustomLiteral)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	bool ScriptCompilerService::IsUnaryOperator(ScriptToken token)
-	{
-		if (token.Type == ScriptTokenType::SubtractionOperator ||
-			token.Type == ScriptTokenType::NegationOperator)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	bool ScriptCompilerService::IsBinaryOperator(ScriptToken token)
-	{
-		switch (token.Type)
-		{
-		case ScriptTokenType::AdditionOperator:
-		case ScriptTokenType::SubtractionOperator:
-		case ScriptTokenType::MultiplicationOperator:
-		case ScriptTokenType::DivisionOperator:
-		case ScriptTokenType::EqualToOperator:
-		case ScriptTokenType::NotEqualToOperator:
-		case ScriptTokenType::GreaterThan:
-		case ScriptTokenType::GreaterThanOrEqual:
-		case ScriptTokenType::LessThan:
-		case ScriptTokenType::LessThanOrEqual:
-			return true;
-		default:
-			return false;
-		}
-	}
-
-	bool ScriptCompilerService::IsAdditionOrSubtractionOperator(ScriptToken token)
-	{
-		if (token.Type == ScriptTokenType::AdditionOperator ||
-			token.Type == ScriptTokenType::SubtractionOperator)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	bool ScriptCompilerService::IsMultiplicationOrDivisionOperator(ScriptToken token)
-	{
-		if (token.Type == ScriptTokenType::MultiplicationOperator ||
-			token.Type == ScriptTokenType::DivisionOperator)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	bool ScriptCompilerService::IsComparisonOperator(ScriptToken token)
-	{
-		switch (token.Type)
-		{
-		case ScriptTokenType::EqualToOperator:
-		case ScriptTokenType::NotEqualToOperator:
-		case ScriptTokenType::GreaterThan:
-		case ScriptTokenType::GreaterThanOrEqual:
-		case ScriptTokenType::LessThan:
-		case ScriptTokenType::LessThanOrEqual:
-			return true;
-		default:
-			return false;
-		}
-	}
-	bool ScriptCompilerService::IsBooleanOperator(ScriptToken token)
-	{
-		switch (token.Type)
-		{
-		case ScriptTokenType::AndOperator:
-		case ScriptTokenType::OrOperator:
-			return true;
-		default:
-			return false;
-		}
-	}
 }

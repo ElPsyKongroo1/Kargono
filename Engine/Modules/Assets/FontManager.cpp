@@ -72,7 +72,7 @@ namespace Kargono::Assets
 		Ref<RuntimeUI::Font> newFont = CreateRef<RuntimeUI::Font>();
 		Assets::FontMetaData metadata = *asset.Data.GetSpecificMetaData<FontMetaData>();
 		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
-		auto& fontCharacters = newFont->GetCharacters();
+		auto& fontCharacters = newFont->m_Characters;
 
 		// Create Texture
 		Rendering::TextureSpecification spec;

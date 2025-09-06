@@ -28,7 +28,7 @@ namespace Kargono
 
 		// Close launcher
 		projectPath = launcherApp->GetSelectedProject();
-		Kargono::Utility::AsyncBusyTimer::CloseAllTimers();
+		Kargono::Utility::AsyncBusyTimerService::GetActiveBusyTimerContext().CloseAllTimers();
 		engine.Terminate();
 
 		// Change project path
@@ -51,7 +51,7 @@ namespace Kargono
 		engine.GetThread().RunThread();
 
 		// Close editor
-		Kargono::Utility::AsyncBusyTimer::CloseAllTimers();
+		Kargono::Utility::AsyncBusyTimerService::GetActiveBusyTimerContext().CloseAllTimers();
 		engine.Terminate();
 	}
 }

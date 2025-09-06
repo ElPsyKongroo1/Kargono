@@ -2,7 +2,7 @@
 
 #include "EditorApp.h"
 
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Kargono/Utility/Operations.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
@@ -22,53 +22,53 @@ namespace Kargono::Panels
 	void ProjectComponentPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowProjectComponent);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowProjectComponent);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (!m_EditorProjectComponent)
 		{
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Component", KG_BIND_CLASS_FN(OpenComponentDialog), "Create New Component", KG_BIND_CLASS_FN(CreateComponentDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateComponentPopup);
-			EditorUI::EditorUIService::SelectOption(m_OpenComponentPopup);
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing Component", KG_BIND_CLASS_FN(OpenComponentDialog), "Create New Component", KG_BIND_CLASS_FN(CreateComponentDialog));
+			m_CreateComponentPopup.RenderPopup();
+			m_OpenComponentPopup.RenderOptions();
 		}
 		else
 		{
 			// Header
-			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
-			EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+			m_MainHeader.RenderHeader();
+			EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 			// Header Popups
-			EditorUI::EditorUIService::GenericPopup(m_DeleteComponentWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseComponentWarning);
+			m_DeleteComponentWarning.RenderPopup();
+			m_CloseComponentWarning.RenderPopup();
 
 			// List
-			EditorUI::EditorUIService::List(m_FieldsTable);
+			m_FieldsTable.RenderList();
 
 			// List Popups
-			EditorUI::EditorUIService::GenericPopup(m_AddFieldPopup);
-			EditorUI::EditorUIService::GenericPopup(m_EditFieldPopup);
+			m_AddFieldPopup.RenderPopup();
+			m_EditFieldPopup.RenderPopup();
 
 		}
 
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	void ProjectComponentPanel::InitializeOpeningPanel()
 	{
 		m_OpenComponentPopup.m_Label = "Open Component";
 		m_OpenComponentPopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenComponentPopup.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_OpenComponentPopup.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenComponentPopup.m_CurrentOption = { "None", Assets::k_EmptyHandle };
+		m_OpenComponentPopup.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
-			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
@@ -77,7 +77,7 @@ namespace Kargono::Panels
 
 		m_OpenComponentPopup.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::EmptyHandle)
+			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("No  Selected");
 				return;
@@ -95,13 +95,13 @@ namespace Kargono::Panels
 		m_SelectComponentName.m_CurrentOption = "Empty";
 
 		m_SelectProjectComponentLocationSpec.m_Label = "Location";
-		m_SelectProjectComponentLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectProjectComponentLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		m_SelectProjectComponentLocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
-			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_SelectProjectComponentLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+				m_SelectProjectComponentLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 			}
 		};
 
@@ -129,12 +129,12 @@ namespace Kargono::Panels
 			m_MainHeader.m_Label = Assets::AssetService::GetProjectComponentRegistry().at(
 				m_EditorProjectComponentHandle).Data.FileLocation.filename().string();
 			RefreshData();
-			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+			Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
 		};
 		m_CreateComponentPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_SelectComponentName);
-			EditorUI::EditorUIService::ChooseDirectory(m_SelectProjectComponentLocationSpec);
+			m_SelectComponentName.RenderText();
+			m_SelectProjectComponentLocationSpec.RenderChooseDir();
 		};
 	}
 	void ProjectComponentPanel::InitializeComponentFieldsSection()
@@ -144,13 +144,13 @@ namespace Kargono::Panels
 		m_DeleteComponentWarning.m_ConfirmAction = [&]()
 		{
 			Assets::AssetService::DeleteProjectComponent(m_EditorProjectComponentHandle);
-			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+			Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
 			m_EditorProjectComponentHandle = 0;
 			m_EditorProjectComponent = nullptr;
 		};
 		m_DeleteComponentWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this component object?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to delete this component object?");
 		};
 
 		m_CloseComponentWarning.m_Label = "Close Component";
@@ -161,13 +161,13 @@ namespace Kargono::Panels
 		};
 		m_CloseComponentWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to close this component object without saving?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to close this component object without saving?");
 		};
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
 		{
 			Assets::AssetService::SaveProjectComponent(m_EditorProjectComponentHandle, m_EditorProjectComponent);
-			Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+			Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
 			m_MainHeader.m_EditColorActive = false;
 		});
 		m_MainHeader.AddToSelectionList("Close", [&]()
@@ -219,14 +219,14 @@ namespace Kargono::Panels
 		m_AddFieldName.m_CurrentOption = "Empty";
 
 		m_AddFieldType.m_Label = "Field Type";
-		m_AddFieldType.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_AddFieldType.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_AddFieldType.m_LineCount = 2;
-		m_AddFieldType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_AddFieldType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 			for (WrappedVarType type : Kargono::s_AllWrappedVarTypes)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::k_EmptyHandle);
 			}
 		};
 		m_AddFieldType.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -258,22 +258,22 @@ namespace Kargono::Panels
 		};
 		m_AddFieldPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_AddFieldName);
-			EditorUI::EditorUIService::SelectOption(m_AddFieldType);
+			m_AddFieldName.RenderText();
+			m_AddFieldType.RenderOptions();
 		};
 
 		m_EditFieldName.m_Label = "Field Name";
 		m_EditFieldName.m_CurrentOption = "Empty";
 
 		m_EditFieldType.m_Label = "Field Type";
-		m_EditFieldType.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_EditFieldType.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_EditFieldType.m_LineCount = 2;
-		m_EditFieldType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_EditFieldType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 			for (WrappedVarType type : Kargono::s_AllWrappedVarTypes)
 			{
-				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::EmptyHandle);
+				spec.AddToOptions("All Options", Utility::WrappedVarTypeToString(type), Assets::k_EmptyHandle);
 			}
 		};
 		m_EditFieldType.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
@@ -312,8 +312,8 @@ namespace Kargono::Panels
 		};
 		m_EditFieldPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_EditFieldName);
-			EditorUI::EditorUIService::SelectOption(m_EditFieldType);
+			m_EditFieldName.RenderText();
+			m_EditFieldType.RenderOptions();
 		};
 	}
 	bool ProjectComponentPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
@@ -358,14 +358,14 @@ namespace Kargono::Panels
 	void ProjectComponentPanel::ResetPanelResources()
 	{
 		m_EditorProjectComponent = nullptr;
-		m_EditorProjectComponentHandle = Assets::EmptyHandle;
+		m_EditorProjectComponentHandle = Assets::k_EmptyHandle;
 	}
 	void ProjectComponentPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// Open project component Window
 		s_MainWindow->m_ShowProjectComponent = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorProjectComponent)
 		{
@@ -382,7 +382,7 @@ namespace Kargono::Panels
 	void ProjectComponentPanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
 		// Ensure provided path is within the active asset directory
-		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
 		{
 			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
@@ -402,8 +402,8 @@ namespace Kargono::Panels
 
 		// Open the editor panel to be visible
 		s_MainWindow->m_ShowProjectComponent = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorProjectComponentHandle == assetHandle)
@@ -428,8 +428,9 @@ namespace Kargono::Panels
 	}
 	void ProjectComponentPanel::CreateComponentDialog()
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectProjectComponentLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		m_SelectProjectComponentLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_CreateComponentPopup.m_OpenPopup = true;
 	}
 	void ProjectComponentPanel::RefreshData()

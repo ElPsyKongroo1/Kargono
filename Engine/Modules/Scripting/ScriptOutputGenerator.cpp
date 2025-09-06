@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/Scripting/ScriptOutputGenerator.h"
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 
 #include "Kargono/Core/Resolution.h"
 #include "Kargono/Core/KeyCodes.h"
@@ -11,6 +11,8 @@ namespace Kargono::Scripting
 {
 	std::tuple<bool, std::string> ScriptOutputGenerator::GenerateOutput(ScriptAST&& ast)
 	{
+		LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
+
 		m_AST = std::move(ast);
 		m_OutputText = {};
 
@@ -23,10 +25,10 @@ namespace Kargono::Scripting
 		FunctionNode& funcNode = m_AST.m_ProgramNode.FuncNode;
 		// Emit Function Signature
 		m_OutputText << funcNode.ReturnType.Value << " " << funcNode.Name.Value << '(';
-		uint32_t iteration{ 0 };
+		size_t iteration{ 0 };
 		for (auto& [allTypes, identifier] : funcNode.Parameters)
 		{
-			PrimitiveType primitiveType = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(allTypes.at(0).Value);
+			PrimitiveType primitiveType = scriptLang.GetPrimitiveTypeFromName(allTypes.at(0).Value);
 			if (primitiveType.Name == "")
 			{
 				return { false, {} };
@@ -40,7 +42,7 @@ namespace Kargono::Scripting
 		}
 		m_OutputText << ")\n";
 		m_OutputText << "{\n";
-		for (auto statement : funcNode.Statements)
+		for (Ref<Statement> statement : funcNode.Statements)
 		{
 			GenerateStatement(statement);
 		}
@@ -80,8 +82,9 @@ namespace Kargono::Scripting
 		}
 		else if (StatementDeclaration* declarationStatement = std::get_if<StatementDeclaration>(&statement->Value))
 		{
+			LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
 			AddIndentation();
-			PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(declarationStatement->Type.Value);
+			PrimitiveType typeValue = scriptLang.GetPrimitiveTypeFromName(declarationStatement->Type.Value);
 			if (typeValue.Name == "")
 			{
 				return;
@@ -127,7 +130,8 @@ namespace Kargono::Scripting
 		else if (StatementDeclarationAssignment* declarationAssignmentStatement = std::get_if<StatementDeclarationAssignment>(&statement->Value))
 		{
 			AddIndentation();
-			PrimitiveType typeValue = ScriptCompilerService::s_ActiveLanguageDefinition.GetPrimitiveTypeFromName(declarationAssignmentStatement->Type.Value);
+			LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
+			PrimitiveType typeValue = scriptLang.GetPrimitiveTypeFromName(declarationAssignmentStatement->Type.Value);
 			if (typeValue.Name == "")
 			{
 				return;
@@ -231,13 +235,14 @@ namespace Kargono::Scripting
 		}
 		else if (FunctionCallNode* funcNode = std::get_if<FunctionCallNode>(&expression->Value))
 		{
-			if (!ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions.contains(funcNode->Identifier.Value))
+			LanguageDefinition& scriptLang{ ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition };
+			if (!scriptLang.m_FunctionDefinitions.contains(funcNode->Identifier.Value))
 			{
 				KG_WARN("Invalid function definition name provided when generating function call C++ code");
 				return;
 			}
 			std::function<void(ScriptOutputGenerator& generator, FunctionCallNode&)> onGenerateFunc =
-				ScriptCompilerService::s_ActiveLanguageDefinition.FunctionDefinitions.at(funcNode->Identifier.Value).OnGenerateFunction;
+				scriptLang.m_FunctionDefinitions.at(funcNode->Identifier.Value).OnGenerateFunction;
 
 			if (onGenerateFunc)
 			{
@@ -271,7 +276,7 @@ namespace Kargono::Scripting
 		else if (InitializationListNode* initListNode = std::get_if<InitializationListNode>(&expression->Value))
 		{
 			m_OutputText << '{';
-			uint32_t iteration{ 0 };
+			size_t iteration{ 0 };
 			for (Ref<Expression> argument : initListNode->Arguments)
 			{
 				GenerateExpression(argument);

@@ -1,12 +1,12 @@
 #include "EditorApp.h"
 
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Modules/Audio/Audio.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/RuntimeUI/Font.h"
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Modules/Core/Engine.h"
 #include "Modules/AI/AIService.h"
 #include "Modules/Rendering/RenderingService.h"
@@ -37,10 +37,10 @@ namespace Kargono
 	bool EditorApp::Init()
 	{
 		// Initialize engine services
-		Scripting::ScriptService::Init();
+		Scripting::ScriptBinderService::GetActiveContext().Init();
 		Audio::AudioService::CreateAudioContext();
 		Audio::AudioService::GetActiveContext().Init();
-		Scenes::SceneService::Init();
+		Scenes::SceneService::GetActiveContext().Init();
 
 		// Create editor app windows
 		m_MainWindow = CreateScope<Windows::MainWindow>();
@@ -52,13 +52,14 @@ namespace Kargono
 		// Initialize other various engine services
 		Particles::ParticleService::CreateParticleContext();
 		Particles::ParticleService::GetActiveContext().Init();
-		EditorUI::EditorUIService::Init();
+		EditorUI::EditorUIContext::Init();
 		AI::AIService::CreateAIContext();
 		AI::AIService::GetActiveContext().Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(1.0f);
-		RuntimeUI::FontService::Init();
-		RuntimeUI::RuntimeUIService::Init();
+		RuntimeUI::FontService::GetActiveContext().Init();
+		RuntimeUI::RuntimeUIService::CreateRuntimeUIContext();
+		RuntimeUI::RuntimeUIService::GetActiveContext().Init();
 		Input::InputMapService::CreateInputMapContext();
 		Input::InputMapService::GetActiveContext().Init();
 
@@ -89,21 +90,22 @@ namespace Kargono
 		}
 
 		// Terminate engine services
-		EditorUI::EditorUIService::Terminate();
+		EditorUI::EditorUIContext::Terminate();
 		Input::InputMapService::GetActiveContext().Terminate();
 		Input::InputMapService::RemoveInputMapContext();
-		RuntimeUI::RuntimeUIService::Terminate();
+		RuntimeUI::RuntimeUIService::GetActiveContext().Terminate();
+		RuntimeUI::RuntimeUIService::RemoveRuntimeUIContext();
 		Particles::ParticleService::GetActiveContext().Terminate();
 		Particles::ParticleService::RemoveParticleContext();
 		Audio::AudioService::GetActiveContext().Terminate();
 		Audio::AudioService::RemoveAudioContext();
-		Scripting::ScriptService::Terminate();
+		Scripting::ScriptBinderService::GetActiveContext().Terminate();
 		AI::AIService::GetActiveContext().Terminate();
 		AI::AIService::RemoveAIContext();
-		Scripting::ScriptCompilerService::Terminate();
+		Scripting::ScriptCompilerService::GetActiveContext().Terminate();
 		Assets::AssetService::ClearAll();
-		RuntimeUI::FontService::Terminate();
-		Scenes::SceneService::Terminate();
+		RuntimeUI::FontService::GetActiveContext().Terminate();
+		Scenes::SceneService::GetActiveContext().Terminate();
 		Rendering::RenderingService::Shutdown();
 
 		m_MainWindow.reset();
@@ -157,7 +159,7 @@ namespace Kargono
 		bool handled = false;
 
 		// Handle editor UI mouse capture
-		handled = EditorUI::EditorUIService::OnInputEvent(event);
+		handled = EditorUI::EditorUIContext::OnInputEvent(event);
 		if (handled)
 		{
 			return true;
@@ -234,13 +236,13 @@ namespace Kargono
 		switch (logEvent->GetEventLevel())
 		{
 		case Events::LogEventLevel::Info:
-			EditorUI::EditorUIService::CreateInfoNotification(logEvent->GetEventText().c_str(), 7000);
+			EditorUI::EditorUIContext::RenderInfoNotification(logEvent->GetEventText().c_str(), 7000);
 			break;
 		case Events::LogEventLevel::Warning:
-			EditorUI::EditorUIService::CreateWarningNotification(logEvent->GetEventText().c_str(), 7000);
+			EditorUI::EditorUIContext::RenderWarningNotification(logEvent->GetEventText().c_str(), 7000);
 			break;
 		case Events::LogEventLevel::Critical:
-			EditorUI::EditorUIService::CreateCriticalNotification(logEvent->GetEventText().c_str(), 7000);
+			EditorUI::EditorUIContext::RenderCriticalNotification(logEvent->GetEventText().c_str(), 7000);
 			break;
 		case Events::LogEventLevel::None:
 		default:
@@ -254,7 +256,7 @@ namespace Kargono
 
 	bool EditorApp::OnPhysicsCollisionStart(Events::PhysicsCollisionStart event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -269,9 +271,9 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.OnCollisionStartScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
-				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
+				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
@@ -280,9 +282,9 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.OnCollisionStartScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
-				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
+				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -290,7 +292,7 @@ namespace Kargono
 
 	bool EditorApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -305,9 +307,9 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.OnCollisionEndScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
-				Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
+				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
@@ -316,9 +318,9 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle =  component.OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.OnCollisionEndScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
-			 	collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
+				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -331,7 +333,7 @@ namespace Kargono
 
 		if (event.GetKeyCode() == Key::Z && control)
 		{
-			EditorUI::EditorUIService::Undo();
+			EditorUI::EditorUIContext::s_UndoStack.Undo();
 			return true;
 		}
 
@@ -369,7 +371,7 @@ namespace Kargono
 
 	bool EditorApp::OpenProject()
 	{
-		*Scenes::SceneService::GetActiveScene()->GetHoveredEntity() = {};
+		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
 		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
 		if (!Utility::FileSystem::PathExists(initialDirectory))
 		{
@@ -390,7 +392,7 @@ namespace Kargono
 		m_MainWindow->m_GameStatePanel->ResetPanelResources();
 		m_MainWindow->m_ScriptEditorPanel->ResetPanelResources();
 		m_MainWindow->m_ProjectPanel->ResetPanelResources();
-		Scenes::GameStateService::ClearActiveGameState();
+		Scenes::GameStateService::GetActiveContext().ClearActiveGameState();
 		Input::InputMapService::GetActiveContext().ClearActiveInputMap();
 
 		return true;
@@ -398,17 +400,15 @@ namespace Kargono
 
 	void EditorApp::OpenProject(const std::filesystem::path& path)
 	{
-		if (Projects::ProjectService::OpenProject(path))
+		Projects::Project& activeProject{ Projects::ProjectService::GetActiveContext()};
+		if (activeProject.OpenProject(path))
 		{
 			if (!EngineService::GetActiveEngine().GetWindow().GetNativeWindow())
 			{
 				EngineService::GetActiveEngine().GetWindow().Init();
 				Rendering::RendererAPI::Init();
 			}
-			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveStartSceneHandle();
-
-			// Load in the script shared library
-			Scripting::ScriptService::LoadActiveScriptModule();
+			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveContext().GetStartSceneHandle();
 
 			if (m_MainWindow->m_EditorScene)
 			{
@@ -417,13 +417,16 @@ namespace Kargono
 			Assets::AssetService::ClearAll();
 			Assets::AssetService::DeserializeAll();
 
+			// Load in the script shared library
+			Scripting::ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
+
 			// Ensure all script assets are properly loaded in
 			Assets::AssetService::LoadAllScriptIntoCache();
 
-			if (startSceneHandle == Assets::EmptyHandle)
+			if (startSceneHandle == Assets::k_EmptyHandle)
 			{
 				m_MainWindow->NewScene("NewScene");
-				Projects::ProjectService::SetActiveStartingSceneHandle(m_MainWindow->m_EditorSceneHandle);
+				Projects::ProjectService::GetActiveContext().SetStartingSceneHandle(m_MainWindow->m_EditorSceneHandle);
 				SaveProject();
 			}
 			else
@@ -435,7 +438,8 @@ namespace Kargono
 
 	void EditorApp::SaveProject()
 	{
-		Projects::ProjectService::SaveActiveProject();
+		Projects::Project& activeProject{ Projects::ProjectService::GetActiveContext() };
+		activeProject.SaveProject();
 	}
 
 }

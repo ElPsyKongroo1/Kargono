@@ -148,18 +148,18 @@ namespace Kargono::Panels
 				m_CreateWidgets.m_SelectReturnType.m_CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::Void), (uint64_t)WrappedVarType::Void };
 				m_CreateWidgets.m_ParameterList.ClearList();
 			}
-			m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::EmptyHandle };
+			m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			m_CreateWidgets.m_ParameterList.m_Expanded = true;
 		};
 		m_CreateWidgets.m_MainPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_CreateWidgets.m_EditName);
-			EditorUI::EditorUIService::SelectOption(m_CreateWidgets.m_SelectSectionLabel);
-			EditorUI::EditorUIService::SelectOption(m_CreateWidgets.m_SelectReturnType);
-			EditorUI::EditorUIService::List(m_CreateWidgets.m_ParameterList);
-			EditorUI::EditorUIService::GenericPopup(m_CreateWidgets.m_CreateParameterPopup);
-			EditorUI::EditorUIService::GenericPopup(m_CreateWidgets.m_EditParameterPopup);
-			EditorUI::EditorUIService::Tooltip(m_ScriptTooltip);
+			m_CreateWidgets.m_EditName.RenderText();
+			m_CreateWidgets.m_SelectSectionLabel.RenderOptions();
+			m_CreateWidgets.m_SelectReturnType.RenderOptions();
+			m_CreateWidgets.m_ParameterList.RenderList();
+			m_CreateWidgets.m_CreateParameterPopup.RenderPopup();
+			m_CreateWidgets.m_EditParameterPopup.RenderPopup();
+			m_ScriptTooltip.RenderTooltip();
 		};
 
 		m_CreateWidgets.m_MainPopup.m_ConfirmAction = [&]()
@@ -232,8 +232,8 @@ namespace Kargono::Panels
 		m_CreateWidgets.m_EditName.m_CurrentOption = "Empty";
 
 		m_CreateWidgets.m_SelectReturnType.m_Label = "Return Type";
-		m_CreateWidgets.m_SelectReturnType.m_CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::None), Assets::EmptyHandle };
-		m_CreateWidgets.m_SelectReturnType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_CreateWidgets.m_SelectReturnType.m_CurrentOption = { Utility::WrappedVarTypeToString(WrappedVarType::None), Assets::k_EmptyHandle };
+		m_CreateWidgets.m_SelectReturnType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 
@@ -263,8 +263,8 @@ namespace Kargono::Panels
 
 		m_CreateWidgets.m_CreateParameterPopup.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::EditText(m_CreateWidgets.m_CreateParameterName);
-				EditorUI::EditorUIService::SelectOption(m_CreateWidgets.m_CreateParameterType);
+				m_CreateWidgets.m_CreateParameterName.RenderText();
+				m_CreateWidgets.m_CreateParameterType.RenderOptions();
 			};
 		m_CreateWidgets.m_CreateParameterPopup.m_ConfirmAction = [&]()
 		{
@@ -282,7 +282,7 @@ namespace Kargono::Panels
 		m_CreateWidgets.m_CreateParameterName.m_Label = "Name";
 
 		m_CreateWidgets.m_CreateParameterType.m_Label = "Type";
-		m_CreateWidgets.m_CreateParameterType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_CreateWidgets.m_CreateParameterType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 
@@ -313,8 +313,8 @@ namespace Kargono::Panels
 
 		m_CreateWidgets.m_EditParameterPopup.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::EditText(m_CreateWidgets.m_EditParameterName);
-				EditorUI::EditorUIService::SelectOption(m_CreateWidgets.m_EditParameterType);
+				m_CreateWidgets.m_EditParameterName.RenderText();
+				m_CreateWidgets.m_EditParameterType.RenderOptions();
 			};
 		m_CreateWidgets.m_EditParameterPopup.m_ConfirmAction = [&]()
 			{
@@ -357,7 +357,7 @@ namespace Kargono::Panels
 
 		m_CreateWidgets.m_EditParameterName.m_Label = "Name";
 		m_CreateWidgets.m_EditParameterType.m_Label = "Type";
-		m_CreateWidgets.m_EditParameterType.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_CreateWidgets.m_EditParameterType.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
 
@@ -377,14 +377,14 @@ namespace Kargono::Panels
 		};
 
 		m_CreateWidgets.m_SelectSectionLabel.m_Label = "Group";
-		m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_CreateWidgets.m_SelectSectionLabel.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_CreateWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::k_EmptyHandle };
+		m_CreateWidgets.m_SelectSectionLabel.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& label : Assets::AssetService::GetScriptSectionLabels())
 			{
-				spec.AddToOptions("All Project Groups", label, Assets::EmptyHandle);
+				spec.AddToOptions("All Project Groups", label, Assets::k_EmptyHandle);
 			}
 		};
 	}
@@ -399,8 +399,8 @@ namespace Kargono::Panels
 		};
 		m_EditWidgets.m_MainPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_EditWidgets.m_EditName);
-			EditorUI::EditorUIService::SelectOption(m_EditWidgets.m_SelectSectionLabel);
+			m_EditWidgets.m_EditName.RenderText();
+			m_EditWidgets.m_SelectSectionLabel.RenderOptions();
 		};
 		m_EditWidgets.m_MainPopup.m_DeleteAction = [&]()
 		{
@@ -414,7 +414,7 @@ namespace Kargono::Panels
 		m_EditWidgets.m_DeleteWarning.m_Label = "Delete Script";
 		m_EditWidgets.m_DeleteWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this script?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to delete this script?");
 		};
 		m_EditWidgets.m_DeleteWarning.m_ConfirmAction = [&]()
 		{
@@ -434,7 +434,7 @@ namespace Kargono::Panels
 		m_EditWidgets.m_EditWarning.m_Label = "Edit Script";
 		m_EditWidgets.m_EditWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Modifying the function's information can cause compilation issues in your project. Are you sure you want to modify the function?");
+			EditorUI::EditorUIContext::Text("Modifying the function's information can cause compilation issues in your project. Are you sure you want to modify the function?");
 		};
 		m_EditWidgets.m_EditWarning.m_ConfirmAction = [&]()
 		{
@@ -445,14 +445,14 @@ namespace Kargono::Panels
 		m_EditWidgets.m_EditName.m_CurrentOption = "Empty";
 
 		m_EditWidgets.m_SelectSectionLabel.m_Label = "Group";
-		m_EditWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::EmptyHandle };
-		m_EditWidgets.m_SelectSectionLabel.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_EditWidgets.m_SelectSectionLabel.m_CurrentOption = { "None", Assets::k_EmptyHandle };
+		m_EditWidgets.m_SelectSectionLabel.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (std::string_view label : Assets::AssetService::GetScriptSectionLabels())
 			{
-				spec.AddToOptions("All Project Groups", std::string(label), Assets::EmptyHandle);
+				spec.AddToOptions("All Project Groups", std::string(label), Assets::k_EmptyHandle);
 			}
 
 		};
@@ -532,7 +532,7 @@ namespace Kargono::Panels
 			};
 		m_EditGroupLabelPopup.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::EditText(m_EditGroupLabelText);
+				m_EditGroupLabelText.RenderText();
 			};
 
 		m_EditGroupLabelText.m_Label = "Group Label";
@@ -555,29 +555,29 @@ namespace Kargono::Panels
 	void ScriptEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowScriptEditor);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowScriptEditor);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
-		EditorUI::EditorUIService::List(m_AllScriptsList);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		m_AllScriptsList.RenderList();
+		EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
-		EditorUI::EditorUIService::List(m_GroupLabelsTable);
-		EditorUI::EditorUIService::Spacing(EditorUI::SpacingAmount::Small);
+		m_GroupLabelsTable.RenderList();
+		EditorUI::EditorUIContext::Spacing(EditorUI::SpacingAmount::Small);
 
 		// Popups
-		EditorUI::EditorUIService::GenericPopup(m_CreateWidgets.m_MainPopup);
-		EditorUI::EditorUIService::GenericPopup(m_EditWidgets.m_MainPopup);
-		EditorUI::EditorUIService::EditText(m_CreateGroupLabelPopup);
-		EditorUI::EditorUIService::GenericPopup(m_EditGroupLabelPopup);
-		EditorUI::EditorUIService::GenericPopup(m_EditWidgets.m_DeleteWarning);
-		EditorUI::EditorUIService::GenericPopup(m_EditWidgets.m_EditWarning);
+		m_CreateWidgets.m_MainPopup.RenderPopup();
+		m_EditWidgets.m_MainPopup.RenderPopup();
+		m_CreateGroupLabelPopup.RenderText();
+		m_EditGroupLabelPopup.RenderPopup();
+		m_EditWidgets.m_DeleteWarning.RenderPopup();
+		m_EditWidgets.m_EditWarning.RenderPopup();
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool ScriptEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -643,8 +643,8 @@ namespace Kargono::Panels
 		{
 			// Open the editor panel to be visible
 			s_MainWindow->m_ShowScriptEditor = true;
-			EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-			EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+			EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+			EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 		}
 		
 		// Open the create dialog
@@ -656,6 +656,6 @@ namespace Kargono::Panels
 	}
 	void ScriptEditorPanel::DrawOnCreatePopup()
 	{
-		EditorUI::EditorUIService::GenericPopup(m_CreateWidgets.m_MainPopup);
+		m_CreateWidgets.m_MainPopup.RenderPopup();
 	}
 }

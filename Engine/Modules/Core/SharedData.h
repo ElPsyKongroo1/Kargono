@@ -79,7 +79,7 @@ namespace Kargono
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(IAllocator* backingAllocator)
+		[[nodiscard]] bool Init(Memory::IAllocator* backingAllocator)
 		{
 			KG_ASSERT(!m_Active);
 
@@ -95,15 +95,9 @@ namespace Kargono
 		[[nodiscard]] bool Terminate()
 		{
 			KG_ASSERT(m_Active);
-
+			
 			// Clean up allocated memory
-			for (auto [dataID, sharedData] : m_DataRegistry)
-			{
-				KG_ASSERT(sharedData);
-
-				i_Allocator->DeallocRaw(sharedData.m_Data, sharedData.m_Alignment);
-			}
-
+			i_Allocator->Reset();
 			m_DataRegistry.clear();
 
 			// Clear injected resources
@@ -220,7 +214,7 @@ namespace Kargono
 		//==============================
 		// Injected Dependencies
 		//==============================
-		IAllocator* i_Allocator{ nullptr };
+		Memory::IAllocator* i_Allocator{ nullptr };
 	};
 }
 

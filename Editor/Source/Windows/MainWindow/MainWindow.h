@@ -2,7 +2,7 @@
 
 #include "Modules/Assets/Asset.h"
 #include "Modules/Events/KeyEvent.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Kargono/Core/FixedString.h"
 
 #include "Windows/MainWindow/AssetViewerPanel.h"
@@ -177,13 +177,13 @@ namespace Kargono::Windows
 
 		// Editor Scenes
 		Ref<Scenes::Scene> m_EditorScene;
-		Assets::AssetHandle m_EditorSceneHandle;
+		Assets::AssetHandle m_EditorSceneHandle{ Assets::k_EmptyHandle };
 		SceneState m_SceneState = SceneState::Edit;
 
 		// TODO: Move into input map editor
 		// Cached Scene Data
 		Ref<Input::InputMap> m_EditorInputMap{ nullptr };
-		Assets::AssetHandle m_EditorInputMapHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_EditorInputMapHandle{ Assets::k_EmptyHandle };
 
 		// Stepping Fields
 		bool m_IsPaused = false;
@@ -196,21 +196,21 @@ namespace Kargono::Windows
 		// Widgets
 		//=========================
 		// Warning widget
-		EditorUI::WarningPopupSpec m_GeneralWarningSpec{};
+		EditorUI::WarningPopupWidget m_GeneralWarningSpec{};
 		FixedString256 m_GeneralWarningMessage{};
 
 		// Project export popup widgets
-		EditorUI::CollapsingHeaderSpec m_ExportProjectHeader{};
-		EditorUI::GenericPopupSpec m_ExportProjectSpec{};
-		EditorUI::ChooseDirectorySpec m_ExportProjectLocation{};
-		EditorUI::CheckboxSpec m_ExportProjectServer{};
+		EditorUI::CollapsingHeaderWidget m_ExportProjectHeader{};
+		EditorUI::GenericPopupWidget m_ExportProjectSpec{};
+		EditorUI::ChooseDirectoryWidget m_ExportProjectLocation{};
+		EditorUI::CheckboxWidget m_ExportProjectServer{};
 
 		// Import asset widgets
-		EditorUI::GenericPopupSpec m_ImportAssetPopup{};
+		EditorUI::GenericPopupWidget m_ImportAssetPopup{};
 		EditorUI::EditTextSpec m_ImportNewAssetName{};
 		std::filesystem::path m_ImportSourceFilePath{};
 		Assets::AssetType m_ImportAssetType{ Assets::AssetType::None };
-		EditorUI::ChooseDirectorySpec m_ImportNewFileLocation{};
+		EditorUI::ChooseDirectoryWidget m_ImportNewFileLocation{};
 		
 		//=========================
 		// Booleans for Displaying UI Windows

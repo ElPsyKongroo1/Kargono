@@ -305,7 +305,7 @@ namespace Kargono::Panels
 				Ref<RuntimeUI::Font> font = Assets::AssetService::GetFont(currentHandle);
 				if (font)
 				{
-					RuntimeUI::RuntimeUIService::SetActiveFont(font, currentHandle);
+					RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_Config.SetFont(font, currentHandle);
 				}
 				else 
 				{ 
@@ -365,16 +365,18 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::OnHandleMoveAssetLocation(const std::filesystem::path& originalFilePath, const std::filesystem::path& newDirectory)
 	{
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Get file extension and relative path for payload file
 		std::filesystem::path fileExtension = originalFilePath.extension();
-		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), originalFilePath) };
-		std::filesystem::path newRelativePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), newDirectory / originalFilePath.filename()) };
+		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(projectPaths.GetAssetDirectory(), originalFilePath) };
+		std::filesystem::path newRelativePath{ Utility::FileSystem::GetRelativePath(projectPaths.GetAssetDirectory(), newDirectory / originalFilePath.filename()) };
 		if (fileExtension == ".kgstate")
 		{
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetGameStateHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If game state in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a game state, however, no game state could be found in registry. Moving the indicated file without updating registry.");
 			}
@@ -397,7 +399,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetGlobalStateHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If global state in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a global state, however, no global state could be found in registry. Moving the indicated file without updating registry.");
 			}
@@ -420,7 +422,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If AI state in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a AI state, however, no AI state could be found in registry. Moving the indicated file without updating registry.");
 
@@ -444,7 +446,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetAudioBufferHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If audio buffer in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a audio buffer, however, no audio buffer could be found in registry. Moving the indicated file without updating registry.");
 
@@ -468,7 +470,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetEmitterConfigHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If EmitterConfig in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a EmitterConfig, however, no EmitterConfig could be found in registry. Moving the indicated file without updating registry.");
 			}
@@ -491,7 +493,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetColorPaletteHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If ColorPalette in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a ColorPalette, however, no ColorPalette could be found in registry. Moving the indicated file without updating registry.");
 			}
@@ -514,7 +516,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetFontHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If font in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a font, however, no font could be found in registry. Moving the indicated file without updating registry.");
 
@@ -538,7 +540,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetInputMapHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If input map in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a input map, however, no input map could be found in registry. Moving the indicated file without updating registry.");
 
@@ -562,7 +564,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If project component in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a project component, however, no project component could be found in registry. Moving the indicated file without updating registry.");
 
@@ -586,7 +588,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetSceneHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If scene in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a scene, however, no scene could be found in registry. Moving the indicated file without updating registry.");
 
@@ -610,7 +612,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetScriptHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If script in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a script, however, no script could be found in registry. Moving the indicated file without updating registry.");
 
@@ -634,7 +636,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectEnumHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If ProjectEnum in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a ProjectEnum, however, no ProjectEnum could be found in registry. Moving the indicated file without updating registry.");
 
@@ -658,7 +660,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetTexture2DHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If texture in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a texture, however, no texture could be found in registry. Moving the indicated file without updating registry.");
 
@@ -683,7 +685,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetUserInterfaceHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If user interface in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a user interface, however, no user interface could be found in registry. Moving the indicated file without updating registry.");
 
@@ -706,15 +708,17 @@ namespace Kargono::Panels
 
 	void ContentBrowserPanel::OnHandleDeleteFile()
 	{
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// TODO: Fix this implementation. Probably should use a switch
 		std::filesystem::path currentExtension = m_CurrentFileToModifyCache.extension();
-		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveAssetDirectory(), m_CurrentFileToModifyCache) };
+		std::filesystem::path relativeToAssetsDirFilePath{ Utility::FileSystem::GetRelativePath(projectPaths.GetAssetDirectory(), m_CurrentFileToModifyCache) };
 		if (currentExtension == ".kgstate")
 		{
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetGameStateHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If game state in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a game state, however, no game state could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -728,7 +732,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetGlobalStateHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If global state in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a global state, however, no global state could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -742,7 +746,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If game state in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as an ai state, however, no ai state could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -756,7 +760,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetAudioBufferHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If audio in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as an audio asset, however, no audio asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -770,7 +774,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetEmitterConfigHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If EmitterConfig in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a EmitterConfig asset, however, no EmitterConfig asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -785,7 +789,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetColorPaletteHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If ColorPalette in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a ColorPalette asset, however, no ColorPalette asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -800,7 +804,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetFontHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If font in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a font asset, however, no font asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -814,7 +818,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectEnumHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If ProjectEnum in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a ProjectEnum asset, however, no ProjectEnum asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -828,7 +832,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetInputMapHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If input map in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a input map asset, however, no input map asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -841,7 +845,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If project component in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a project component asset, however, no project component asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -854,7 +858,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetSceneHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If scene in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a scene asset, however, no scene asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -868,7 +872,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetScriptHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If script in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a script asset, however, no script asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -881,7 +885,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetTexture2DHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If texture in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a texture asset, however, no texture asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -894,7 +898,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetUserInterfaceHandleFromFileLocation(relativeToAssetsDirFilePath);
 			// If user interface in registry is not found, simply delete the file
-			if (resultHandle == Assets::EmptyHandle)
+			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a user interface asset, however, no user interface asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -909,7 +913,7 @@ namespace Kargono::Panels
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel()
-		: m_BaseDirectory(Projects::ProjectService::GetActiveAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
+		: m_BaseDirectory(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
 
 		s_EditorApp = EditorApp::GetCurrentApp();
@@ -950,7 +954,7 @@ namespace Kargono::Panels
 
 		// Initialize grid archetypes
 		EditorUI::GridEntryArchetype directoryArch;
-		directoryArch.m_Icon = EditorUI::EditorUIService::s_IconDirectory;
+		directoryArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Directory;
 		directoryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		directoryArch.m_OnDoubleLeftClick = KG_BIND_CLASS_FN(OnGridDirectoryDoubleClick);
 		directoryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
@@ -961,137 +965,137 @@ namespace Kargono::Panels
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Directory, directoryArch);
 
 		EditorUI::GridEntryArchetype rawTextureArch;
-		rawTextureArch.m_Icon = EditorUI::EditorUIService::s_IconTexture;
+		rawTextureArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture;
 		rawTextureArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		rawTextureArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawTexture, rawTextureArch);
 
 		EditorUI::GridEntryArchetype rawAudioArch;
-		rawAudioArch.m_Icon = EditorUI::EditorUIService::s_IconAudio;
+		rawAudioArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Audio;
 		rawAudioArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		rawAudioArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawAudio, rawAudioArch);
 
 		EditorUI::GridEntryArchetype rawFontArch;
-		rawFontArch.m_Icon = EditorUI::EditorUIService::s_IconFont;
+		rawFontArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Font;
 		rawFontArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		rawFontArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::RawFont, rawFontArch);
 
 		EditorUI::GridEntryArchetype aiStateArch;
-		aiStateArch.m_Icon = EditorUI::EditorUIService::s_IconAI_KG;
-		aiStateArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		aiStateArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_AI_KG;
+		aiStateArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		aiStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		aiStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::AIState, aiStateArch);
 
 		EditorUI::GridEntryArchetype audioArch;
-		audioArch.m_Icon = EditorUI::EditorUIService::s_IconAudio_KG;
-		audioArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		audioArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Audio_KG;
+		audioArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		audioArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		audioArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Audio, audioArch);
 
 		EditorUI::GridEntryArchetype binaryArch;
-		binaryArch.m_Icon = EditorUI::EditorUIService::s_IconBinary;
-		binaryArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor4_Thin;
+		binaryArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Binary;
+		binaryArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor4_Thin;
 		binaryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		binaryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Binary, binaryArch);
 
 		EditorUI::GridEntryArchetype fontArch;
-		fontArch.m_Icon = EditorUI::EditorUIService::s_IconFont_KG;
-		fontArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		fontArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Font_KG;
+		fontArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		fontArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		fontArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Font, fontArch);
 
 		EditorUI::GridEntryArchetype gameStateArch;
-		gameStateArch.m_Icon = EditorUI::EditorUIService::s_IconGlobalState;
-		gameStateArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		gameStateArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_GlobalState;
+		gameStateArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		gameStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		gameStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GameState, gameStateArch);
 
 		EditorUI::GridEntryArchetype globalStateArch;
-		globalStateArch.m_Icon = EditorUI::EditorUIService::s_IconGlobalState;
-		globalStateArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		globalStateArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_GlobalState;
+		globalStateArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		globalStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		globalStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GlobalState, globalStateArch);
 
 		EditorUI::GridEntryArchetype emitterConfigArch;
-		emitterConfigArch.m_Icon = EditorUI::EditorUIService::s_IconEmitterConfig;
-		emitterConfigArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		emitterConfigArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_EmitterConfig;
+		emitterConfigArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		emitterConfigArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		emitterConfigArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::EmitterConfig, emitterConfigArch);
 
 		EditorUI::GridEntryArchetype colorPaletteArch;
-		colorPaletteArch.m_Icon = EditorUI::EditorUIService::s_IconColorPalette;
-		colorPaletteArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		colorPaletteArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_ColorPalette;
+		colorPaletteArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		colorPaletteArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		colorPaletteArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::ColorPalette, colorPaletteArch);
 
 		EditorUI::GridEntryArchetype inputMapArch;
-		inputMapArch.m_Icon = EditorUI::EditorUIService::s_IconInput;
-		inputMapArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		inputMapArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input;
+		inputMapArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		inputMapArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		inputMapArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::InputMap, inputMapArch);
 
 		EditorUI::GridEntryArchetype projectComponentArch;
-		projectComponentArch.m_Icon = EditorUI::EditorUIService::s_IconProjectComponent;
-		projectComponentArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		projectComponentArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_ProjectComponent;
+		projectComponentArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		projectComponentArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		projectComponentArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::ProjectComponent, projectComponentArch);
 		
 		EditorUI::GridEntryArchetype registryArch;
-		registryArch.m_Icon = EditorUI::EditorUIService::s_IconRegistry;
-		registryArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor4_Thin;
+		registryArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Registry;
+		registryArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor4_Thin;
 		registryArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		registryArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Registry, registryArch);
 
 		EditorUI::GridEntryArchetype sceneArch;
-		sceneArch.m_Icon = EditorUI::EditorUIService::s_IconScene_KG;
-		sceneArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor3_Thin;
+		sceneArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Scene_KG;
+		sceneArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor3_Thin;
 		sceneArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		sceneArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Scene, sceneArch);
 
 		EditorUI::GridEntryArchetype scriptArch;
-		scriptArch.m_Icon = EditorUI::EditorUIService::s_IconScript;
-		scriptArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor2_Thin;
+		scriptArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Script;
+		scriptArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2_Thin;
 		scriptArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		scriptArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Script, scriptArch);
 
 		EditorUI::GridEntryArchetype projectEnumArch;
-		projectEnumArch.m_Icon = EditorUI::EditorUIService::s_IconEnum;
-		projectEnumArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor2_Thin;
+		projectEnumArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Enum;
+		projectEnumArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2_Thin;
 		projectEnumArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		projectEnumArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::ProjectEnum, projectEnumArch);
 
 		EditorUI::GridEntryArchetype textureArch;
-		textureArch.m_Icon = EditorUI::EditorUIService::s_IconTexture_KG;
-		textureArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		textureArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture_KG;
+		textureArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		textureArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		textureArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::Texture, textureArch);
 
 		EditorUI::GridEntryArchetype userInterfaceArch;
-		userInterfaceArch.m_Icon = EditorUI::EditorUIService::s_IconUserInterface;
-		userInterfaceArch.m_IconColor = EditorUI::EditorUIService::s_HighlightColor1_Thin;
+		userInterfaceArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_UserInterface;
+		userInterfaceArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		userInterfaceArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		userInterfaceArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::UserInterface, userInterfaceArch);
 
 		EditorUI::GridEntryArchetype genericFileArch;
-		genericFileArch.m_Icon = EditorUI::EditorUIService::s_IconGenericFile;
+		genericFileArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_GenericFile;
 		genericFileArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		genericFileArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::GenericFile, genericFileArch);
@@ -1110,7 +1114,7 @@ namespace Kargono::Panels
 		m_DeleteDirectoryPopup.m_Label = "Delete Directory";
 		m_DeleteDirectoryPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::LabeledText("Directory Name:", m_CurrentFileToModifyCache.string().c_str());
+			EditorUI::EditorUIContext::LabeledText("Directory Name:", m_CurrentFileToModifyCache.string().c_str());
 		};
 		m_DeleteDirectoryPopup.m_ConfirmAction = [&]()
 		{
@@ -1121,7 +1125,7 @@ namespace Kargono::Panels
 		m_DeleteFilePopup.m_Label = "Delete File";
 		m_DeleteFilePopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::LabeledText("File Name:", m_CurrentFileToModifyCache.string().c_str());
+			EditorUI::EditorUIContext::LabeledText("File Name:", m_CurrentFileToModifyCache.string().c_str());
 		};
 		m_DeleteFilePopup.m_ConfirmAction = KG_BIND_CLASS_FN(OnHandleDeleteFile);
 
@@ -1133,7 +1137,7 @@ namespace Kargono::Panels
 		};
 		m_CreateDirectoryPopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_CreateDirectoryEditName);
+			m_CreateDirectoryEditName.RenderText();
 		};
 		m_CreateDirectoryPopup.m_ConfirmAction = [&]()
 		{
@@ -1148,30 +1152,30 @@ namespace Kargono::Panels
 	void ContentBrowserPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowContentBrowser);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowContentBrowser);
 
 		// Early out of window if not visible
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		// Draw navigation header draw header
-		EditorUI::EditorUIService::NavigationHeader(m_NavigateAssetsHeader);
+		m_NavigateAssetsHeader.RenderHeader();
 
 		// Draw content browser file grid
-		EditorUI::EditorUIService::Grid(m_FileFolderViewer);
+		m_FileFolderViewer.RenderGrid();
 
 		// Handle tooltip
-		EditorUI::EditorUIService::Tooltip(m_RightClickTooltip);
+		m_RightClickTooltip.RenderTooltip();
 
 		// Handle popups
-		EditorUI::EditorUIService::GenericPopup(m_DeleteDirectoryPopup);
-		EditorUI::EditorUIService::GenericPopup(m_DeleteFilePopup);
-		EditorUI::EditorUIService::GenericPopup(m_CreateDirectoryPopup);
+		m_DeleteDirectoryPopup.RenderPopup();
+		m_DeleteFilePopup.RenderPopup();
+		m_CreateDirectoryPopup.RenderPopup();
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 
 	}
 	bool ContentBrowserPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
@@ -1186,7 +1190,7 @@ namespace Kargono::Panels
 	bool ContentBrowserPanel::OnMouseButton(Events::MouseButtonPressedEvent event)
 	{
 		// Ensure right click is applicable
-		if (!EditorUI::EditorUIService::IsAnyItemHovered() && event.GetMouseButton() == Mouse::ButtonRight)
+		if (!EditorUI::EditorUIContext::IsAnyItemHovered() && event.GetMouseButton() == Mouse::ButtonRight)
 		{
 			m_RightClickTooltip.ClearEntries();
 
@@ -1285,7 +1289,7 @@ namespace Kargono::Panels
 			m_RightClickTooltip.AddTooltipEntry(createDirectoryTooltipEntry);
 
 			// Add seperator
-			m_RightClickTooltip.AddSeperator(EditorUI::EditorUIService::s_HighlightColor1_Thin);
+			m_RightClickTooltip.AddSeperator(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin);
 
 			// Add open current directory in file explorer
 			EditorUI::TooltipEntry openCurrentDirectoryTooltipEntry{ "Open File Explorer", [&](EditorUI::TooltipEntry& currentEntry)
@@ -1331,11 +1335,14 @@ namespace Kargono::Panels
 			BrowserFileType fileType = Utility::DetermineFileType(directoryEntry);
 			newEntry.m_Label = directoryEntry.path().filename().string().c_str();
 			newEntry.m_ArchetypeID = (uint32_t)fileType;
+			newEntry.m_EntryID = RandomUUIDService::GetRandomUUID();
 			m_FileFolderViewer.AddEntry(newEntry);
 		}
 
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Generate current title for navigation header
-		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(Projects::ProjectService::GetActiveProjectDirectory(), m_CurrentDirectory);
+		std::filesystem::path activeDirectory = Utility::FileSystem::GetRelativePath(projectPaths.m_ProjectDirectory, m_CurrentDirectory);
 		std::vector<std::string> tokenizedDirectoryPath{};
 		while (activeDirectory.filename() != "Assets")
 		{
@@ -1362,8 +1369,11 @@ namespace Kargono::Panels
 	void ContentBrowserPanel::ResetPanelResources()
 	{
 		API::FileWatch::EndWatch(m_CurrentDirectory);
-		m_BaseDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+		m_BaseDirectory = projectPaths.GetAssetDirectory();
 		m_CurrentDirectory = m_BaseDirectory;
+
 		m_LongestRecentPath.clear();
 		m_NavigateAssetsHeader.m_Label = "Assets";
 		m_FileFolderViewer.ClearEntries();

@@ -11,7 +11,7 @@
 #include <functional>
 #include "imgui.h"
 
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 namespace API::EditorUI
 {
 	class TextEditorSpec;
@@ -505,7 +505,7 @@ namespace API::EditorUI
 		bool m_OpenTextSuggestions{false};
 		bool m_SuggestionsWindowEnabled{ false };
 		std::string m_SuggestionTextBuffer {};
-		Kargono::EditorUI::TreeSpec m_SuggestionTree{};
+		Kargono::EditorUI::TreeWidget m_SuggestionTree{};
 		std::function<void()> m_SaveCallback;
 
 		LanguageDefinition m_LanguageDefinition;

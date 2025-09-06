@@ -19,10 +19,10 @@ namespace Kargono
 
 	bool RuntimeApp::Init()
 	{
-		Scripting::ScriptService::Init();
+		Scripting::ScriptBinderService::GetActiveContext().Init();
 		Audio::AudioService::CreateAudioContext();
 		Audio::AudioService::GetActiveContext().Init();
-		Scenes::SceneService::Init();
+		Scenes::SceneService::GetActiveContext().Init();
 
 		if (m_Headless)
 		{
@@ -31,7 +31,7 @@ namespace Kargono
 
 		Window& currentWindow = EngineService::GetActiveEngine().GetWindow();
 
-		Scenes::SceneService::SetActiveScene(CreateRef<Scenes::Scene>(), Assets::EmptyHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(CreateRef<Scenes::Scene>(), Assets::k_EmptyHandle);
 
 
 		
@@ -42,17 +42,17 @@ namespace Kargono
 		if (pathToProject.empty())
 		{
 			KG_CRITICAL("Could not locate a .kproj file in local directory!");
-			Scripting::ScriptService::Terminate();
+			Scripting::ScriptModuleBinder::Terminate();
 			Audio::AudioService::GetActiveContext().Terminate();
 			Audio::AudioService::RemoveAudioContext();
 			Scenes::SceneService::Terminate();
 			return false;
 		}
 		OpenProject(pathToProject);
-		if (!Projects::ProjectService::GetActive())
+		if (!Projects::ProjectService::IsActive())
 		{
 			KG_CRITICAL("Failed to open project!");
-			Scripting::ScriptService::Terminate();
+			Scripting::ScriptModuleBinder::Terminate();
 			Audio::AudioService::GetActiveContext().Terminate();
 			Audio::AudioService::RemoveAudioContext();
 			Scenes::SceneService::Terminate();
@@ -63,10 +63,10 @@ namespace Kargono
 		{
 			if (!OpenProject())
 			{
-				Scripting::ScriptService::Terminate();
+				Scripting::ScriptBinderService().GetActiveContext().Terminate();
 				Audio::AudioService::GetActiveContext().Terminate();
 				Audio::AudioService::RemoveAudioContext();
-				Scenes::SceneService::Terminate();
+				Scenes::SceneService::GetActiveContext().Terminate();
 				return false;
 			}
 		}
@@ -79,8 +79,8 @@ namespace Kargono
 		
 		if (!m_Headless)
 		{
-			Projects::ProjectService::GetActiveIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
-			currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveTargetResolution()));
+			Projects::ProjectService::GetActiveContext().GetIsFullscreen() ? currentWindow.SetFullscreen(true) : currentWindow.SetFullscreen(false);
+			currentWindow.ResizeWindow(Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveContext().GetTargetResolution()));
 			currentWindow.SetResizable(false);
 		}
 
@@ -88,8 +88,9 @@ namespace Kargono
 		AI::AIService::GetActiveContext().Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(4.0f);
-		RuntimeUI::FontService::Init();
-		RuntimeUI::RuntimeUIService::Init();
+		RuntimeUI::FontService::GetActiveContext().Init();
+		RuntimeUI::RuntimeUIService::CreateRuntimeUIContext();
+		RuntimeUI::RuntimeUIService::GetActiveContext().Init();
 		Particles::ParticleService::CreateParticleContext();
 		Particles::ParticleService::GetActiveContext().Init();
 		Input::InputMapService::CreateInputMapContext();
@@ -111,19 +112,20 @@ namespace Kargono
 		OnStop();
 
 		// Terminate engine services
-		RuntimeUI::RuntimeUIService::Terminate();
+		RuntimeUI::RuntimeUIService::GetActiveContext().Terminate();
+		RuntimeUI::RuntimeUIService::RemoveRuntimeUIContext();
 		Input::InputMapService::GetActiveContext().Terminate();
 		Input::InputMapService::RemoveInputMapContext();
 		Particles::ParticleService::GetActiveContext().Terminate();
 		Particles::ParticleService::RemoveParticleContext();
 		Audio::AudioService::GetActiveContext().Terminate();
 		Audio::AudioService::RemoveAudioContext();
-		Scripting::ScriptService::Terminate();
+		Scripting::ScriptBinderService::GetActiveContext().Terminate();
 		AI::AIService::GetActiveContext().Terminate();
 		AI::AIService::RemoveAIContext();
 		Assets::AssetService::ClearAll();
-		RuntimeUI::FontService::Terminate();
-		Scenes::SceneService::Terminate();
+		RuntimeUI::FontService::GetActiveContext().Terminate();
+		Scenes::SceneService::GetActiveContext().Terminate();
 		Rendering::RenderingService::Shutdown();
 
 		return true;
@@ -147,7 +149,7 @@ namespace Kargono
 	void RuntimeApp::OnUpdate(Timestep ts)
 	{
 		// Render
-		Ref<Scenes::Scene> activeScene{ Scenes::SceneService::GetActiveScene() };
+		Ref<Scenes::Scene> activeScene{ Scenes::SceneService::GetActiveContext().GetActiveScene() };
 		Rendering::RenderingService::ResetStats();
 		Rendering::RendererAPI::SetClearColor(activeScene->m_BackgroundColor);
 		Rendering::RendererAPI::Clear();
@@ -156,7 +158,7 @@ namespace Kargono
  		OnUpdateRuntime(ts);
 
 		// Get primary scene camera for render UI and particles over
-		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
 			return;
@@ -182,11 +184,10 @@ namespace Kargono
 			Math::vec2 mousePos = Input::InputService::GetAbsoluteMousePosition();
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
-			RuntimeUI::RuntimeUIService::OnUpdate(ts);
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->OnUpdate(ts);
 
 			// Draw runtimeUI
-			RuntimeUI::RuntimeUIService::OnRender(engineWindow.GetWidth(), 
-				engineWindow.GetHeight());
+			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->OnRenderViewport(engineWindow.GetActiveViewport()); // TODO: Maybe get width and height
 
 			// Handle mouse picking for the UI
 			HandleUIMouseHovering();
@@ -314,13 +315,13 @@ namespace Kargono
 		ViewportData& viewportData = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		viewportData.m_Width = event.GetWidth();
 		viewportData.m_Height = event.GetHeight();
-		Scenes::SceneService::GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnViewportResize((uint32_t)event.GetWidth(), (uint32_t)event.GetHeight());
 		return false;
 	}
 
 	bool RuntimeApp::OnPhysicsCollisionStart(Events::PhysicsCollisionStart event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -335,9 +336,9 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.OnCollisionStartScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
-				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
+				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
@@ -346,9 +347,9 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.OnCollisionStartScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
-				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
+				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -356,7 +357,7 @@ namespace Kargono
 
 	bool RuntimeApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveScene();
+		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -371,9 +372,9 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.OnCollisionEndScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
-				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityOneID, entityTwoID);
+				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
@@ -382,9 +383,9 @@ namespace Kargono
 			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
 			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.OnCollisionEndScript.get();
-			if (scriptHandle != Assets::EmptyHandle)
+			if (scriptHandle != Assets::k_EmptyHandle)
 			{
-				collisionHandled = Utility::CallWrappedBoolEntityEntity(script->m_Function, entityTwoID, entityOneID);
+				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
 		}
 		return false;
@@ -392,14 +393,14 @@ namespace Kargono
 
 	bool RuntimeApp::OnKeyTyped(Events::KeyTypedEvent event)
 	{
-		RuntimeUI::RuntimeUIService::OnKeyTypedEvent(event);
+		RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->OnKeyTypedEvent(event);
 		return false;
 	}
 
 	bool RuntimeApp::OnKeyPressed(Events::KeyPressedEvent event)
 	{
 		KG_PROFILE_FUNCTION();
-		bool handled = RuntimeUI::RuntimeUIService::OnKeyPressedEvent(event);
+		bool handled = RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->OnKeyPressedEvent(event);
 
 		if (!handled)
 		{
@@ -416,25 +417,25 @@ namespace Kargono
 		{
 			return false;
 		}
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext()};
+		Assets::AssetHandle currentUI = uiContext.GetActiveUIHandle();
 
-		Assets::AssetHandle currentUI = RuntimeUI::RuntimeUIService::GetActiveUIHandle();
-
-		RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWidgetID);
+		RuntimeUI::IDType idType = uiContext.m_ActiveUI->m_WindowsState.CheckIDType(m_HoveredWidgetID);
 
 		// Handle on press for the active user interface if applicable
 		if (idType == RuntimeUI::IDType::Widget)
 		{
-			RuntimeUI::RuntimeUIService::OnPressByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+			uiContext.m_ActiveUI->OnPressByIndex({ uiContext.GetActiveUIHandle(),
 				m_HoveredWidgetID });
 
 			// Handle case where active UI is changed
-			if (currentUI != RuntimeUI::RuntimeUIService::GetActiveUIHandle())
+			if (currentUI != uiContext.GetActiveUIHandle())
 			{
 				return false;
 			}
 
 			// Handle start editing
-			RuntimeUI::RuntimeUIService::SetEditingWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+			uiContext.m_ActiveUI->GetInteractState().SetEditingWidgetByHandle({ uiContext.GetActiveUIHandle(),
 				m_HoveredWidgetID });
 
 			// Handle specific widget on click's
@@ -443,10 +444,10 @@ namespace Kargono
 			// Make sure the y-position is oriented correctly
 			mousePos.y = (float)activeViewport.m_Height - mousePos.y;
 			Events::MouseButtonPressedEvent mouseEvent{ Mouse::ButtonLeft };
-			RuntimeUI::RuntimeUIService::OnMouseButtonPressedEvent(mouseEvent);
+			uiContext.m_ActiveUI->OnMouseButtonPressedEvent(mouseEvent);
 
 			// Handle case where active UI is changed
-			if (currentUI != RuntimeUI::RuntimeUIService::GetActiveUIHandle())
+			if (currentUI != uiContext.GetActiveUIHandle())
 			{
 				return false;
 			}
@@ -456,9 +457,11 @@ namespace Kargono
 
 	bool RuntimeApp::OnMouseButtonReleased(const Events::MouseButtonReleasedEvent& event)
 	{
-		if (RuntimeUI::RuntimeUIService::GetActiveUI())
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext() };
+
+		if (uiContext.GetActiveUI())
 		{
-			RuntimeUI::RuntimeUIService::OnMouseButtonReleasedEvent(event);
+			uiContext.m_ActiveUI->OnMouseButtonReleasedEvent(event);
 		}
 		return false;
 	}
@@ -471,11 +474,11 @@ namespace Kargono
 
 		// Update
 		Input::InputMapService::GetActiveContext().OnUpdate(ts);
-		Scenes::SceneService::GetActiveScene()->OnUpdateEntities(ts);
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnUpdateEntities(ts);
 		Physics::Physics2DService::GetActiveContext().OnUpdate(ts);
 
 		// Render 2D
-		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveScene()->GetPrimaryCameraEntity();
+		ECS::Entity cameraEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetPrimaryCameraEntity();
 		if (!cameraEntity)
 		{
 			return;
@@ -486,96 +489,114 @@ namespace Kargono
 		if (mainCamera)
 		{
 			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
-			Scenes::SceneService::GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
 		}
 	}
 
 	bool RuntimeApp::OnUpdateUserCount(Events::ReceiveOnlineUsers event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateUserCountHandle();
-		if (scriptHandle != Assets::EmptyHandle)
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts()};
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnUpdateUserCount;
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
-			Utility::CallWrappedVoidUInt32(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserCount());
+			Utility::CallWrapped<WrappedVoidUInt32>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserCount());
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnApproveJoinSession(Events::ApproveJoinSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnApproveJoinSessionHandle();
-		if (scriptHandle != Assets::EmptyHandle)
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle{ clientScripts.m_OnApproveJoinSession };
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
-			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
+			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnUpdateSessionUserSlot(Events::UpdateSessionUserSlot event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUpdateSessionUserSlotHandle();
-		if (scriptHandle != Assets::EmptyHandle)
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnUpdateSessionUserSlot;
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
-			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
+			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnUserLeftSession(Events::UserLeftSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnUserLeftSessionHandle();
-		if (scriptHandle != Assets::EmptyHandle)
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnUserLeftSession;
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
-			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
+			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetUserSlot());
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnCurrentSessionInit(Events::CurrentSessionInit event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnCurrentSessionInitHandle();
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnCurrentSessionInit;
 		if (scriptHandle != 0)
 		{
-			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
+			Utility::CallWrapped<WrappedVoidNone>(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnConnectionTerminated(Events::ConnectionTerminated event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnConnectionTerminatedHandle();
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnConnectionTerminated;
 		if (scriptHandle != 0)
 		{
-			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
+			Utility::CallWrapped<WrappedVoidNone>(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnStartSession(Events::StartSession event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnStartSessionHandle();
-		if (scriptHandle != Assets::EmptyHandle)
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnStartSession;
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
-			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
+			Utility::CallWrapped<WrappedVoidNone>(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnSessionReadyCheckConfirm(Events::SessionReadyCheckConfirm event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnSessionReadyCheckConfirmHandle();
-		if (scriptHandle != Assets::EmptyHandle)
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnSessionReadyCheckConfirm;
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
-			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
+			Utility::CallWrapped<WrappedVoidNone>(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 		return false;
 	}
 
 	bool RuntimeApp::OnReceiveSignal(Events::ReceiveSignal event)
 	{
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnReceiveSignalHandle();
-		if (scriptHandle != Assets::EmptyHandle)
+		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
+
+		Assets::AssetHandle scriptHandle = clientScripts.m_OnReceiveSignal;
+		if (scriptHandle != Assets::k_EmptyHandle)
 		{
-			Utility::CallWrappedVoidUInt16(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetSignal());
+			Utility::CallWrapped<WrappedVoidUInt16>(Assets::AssetService::GetScript(scriptHandle)->m_Function, event.GetSignal());
 		}
 		return false;
 	}
@@ -595,23 +616,25 @@ namespace Kargono
 			return;
 		}
 
+		RuntimeUI::RuntimeUIContext& uiContext{ RuntimeUI::RuntimeUIService::GetActiveContext() };
+
 		// Make sure the y-position is oriented correctly
 		mousePos.y = (float)activeViewport.m_Height - mousePos.y;
 
 		// Extract mouse picking information from the active framebuffer
 		m_HoveredWidgetID = m_ViewportFramebuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
 
-		RuntimeUI::IDType idType = RuntimeUI::RuntimeUIService::CheckIDType(m_HoveredWidgetID);
+		RuntimeUI::IDType idType = uiContext.m_ActiveUI->m_WindowsState.CheckIDType(m_HoveredWidgetID);
 
 		// Exit early if no valid widget is available
 		if (idType == RuntimeUI::IDType::None || idType == RuntimeUI::IDType::Window)
 		{
-			RuntimeUI::RuntimeUIService::ClearHoveredWidget();
+			uiContext.m_ActiveUI->GetInteractState().ClearHoveredWidget();
 			return;
 		}
 
 		// Select the widget if applicable
-		RuntimeUI::RuntimeUIService::SetHoveredWidgetByIndex({ RuntimeUI::RuntimeUIService::GetActiveUIHandle(),
+		uiContext.m_ActiveUI->GetInteractState().SetHoveredWidgetByHandle({ uiContext.GetActiveUIHandle(),
 			m_HoveredWidgetID });
 
 	}
@@ -647,14 +670,14 @@ namespace Kargono
 
 	void RuntimeApp::OpenProject(const std::filesystem::path& path)
 	{
-		if (Projects::ProjectService::OpenProject(path))
+		if (Projects::ProjectService::GetActiveContext().OpenProject(path))
 		{
 			if (!EngineService::GetActiveEngine().GetWindow().GetNativeWindow())
 			{
-				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveTargetResolution());
+				Math::vec2 screenSize = Utility::ScreenResolutionToVec2(Projects::ProjectService::GetActiveContext().GetTargetResolution());
 				WindowProps projectProps =
 				{
-					Projects::ProjectService::GetActiveProjectName().c_str(),
+					Projects::ProjectService::GetActiveContext().GetProjectName().c_str(),
 					static_cast<uint32_t>(screenSize.x),
 					static_cast<uint32_t>(screenSize.y)
 				};
@@ -669,12 +692,12 @@ namespace Kargono
 				Rendering::RendererAPI::Init();
 			}
 
-			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveStartSceneHandle();
-			Scripting::ScriptService::LoadActiveScriptModule();
+			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveContext().GetStartSceneHandle();
+			Scripting::ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
 
-			if (Scenes::SceneService::GetActiveScene())
+			if (Scenes::SceneService::GetActiveContext().GetActiveScene())
 			{
-				Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
+				Scenes::SceneService::GetActiveContext().GetActiveScene()->DestroyAllEntities();
 			}
 			Assets::AssetService::ClearAll();
 			Assets::AssetService::DeserializeAll();
@@ -688,51 +711,53 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> newScene = Assets::AssetService::GetScene(sceneHandle);
 		if (!newScene) { newScene = CreateRef<Scenes::Scene>(); }
-		Scenes::SceneService::SetActiveScene(newScene, sceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(newScene, sceneHandle);
 	}
 
 
 	void RuntimeApp::OnPlay()
 	{
+		Projects::Project& activeProject{ Projects::ProjectService::GetActiveContext()};
+
 		// Handle initializing core services
 		Particles::ParticleService::GetActiveContext().ClearEmitters();
 		Physics::Physics2DService::CreatePhysics2DWorld();
-		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveScene().get(), Scenes::SceneService::GetActiveScene()->m_PhysicsSpecification);
-		Scenes::SceneService::GetActiveScene()->OnRuntimeStart();
-		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveOnRuntimeStartHandle();
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveContext().GetActiveScene().get(), Scenes::SceneService::GetActiveContext().GetActiveScene()->m_PhysicsSpecification);
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRuntimeStart();
+		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetOnRuntimeStartHandle();
 		if (scriptHandle != 0)
 		{
-			Utility::CallWrappedVoidNone(Assets::AssetService::GetScript(scriptHandle)->m_Function);
+			Utility::CallWrapped<WrappedVoidNone>(Assets::AssetService::GetScript(scriptHandle)->m_Function);
 		}
 
 		// Load Default Game State
-		if (Projects::ProjectService::GetActiveStartGameStateHandle() == 0)
+		if (activeProject.GetStartGameStateHandle() == 0)
 		{
-			Scenes::GameStateService::ClearActiveGameState();
+			Scenes::GameStateService::GetActiveContext().ClearActiveGameState();
 		}
 		else
 		{
-			Scenes::GameStateService::SetActiveGameState(Assets::AssetService::GetGameState(
-				Projects::ProjectService::GetActiveStartGameStateHandle()), 
-				Projects::ProjectService::GetActiveStartGameStateHandle());
+			Scenes::GameStateService::GetActiveContext().SetActiveGameState(Assets::AssetService::GetGameState(
+				activeProject.GetStartGameStateHandle()),
+				activeProject.GetStartGameStateHandle());
 		}
 
-		if (Projects::ProjectService::GetActiveAppIsNetworked())
+		if (activeProject.GetAppIsNetworked())
 		{
-			Network::ClientService::GetActiveContext().Init(Projects::ProjectService::GetServerConfig());
+			Network::ClientService::GetActiveContext().Init(activeProject.GetServerConfig());
 		}
 
 		// Load particle emitters
-		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveScene());
+		Particles::ParticleService::GetActiveContext().LoadSceneEmitters(Scenes::SceneService::GetActiveContext().GetActiveScene());
 	}
 
 	void RuntimeApp::OnStop()
 	{
 		Physics::Physics2DService::GetActiveContext().Terminate();
 		Physics::Physics2DService::RemovePhysics2DWorld();
-		Scenes::SceneService::GetActiveScene()->OnRuntimeStop();
-		Scenes::SceneService::GetActiveScene()->DestroyAllEntities();
-		if (Projects::ProjectService::GetActive() && Projects::ProjectService::GetActiveAppIsNetworked())
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRuntimeStop();
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->DestroyAllEntities();
+		if (Projects::ProjectService::GetActiveContext().GetAppIsNetworked())
 		{
 			Network::ClientService::GetActiveContext().Terminate(false);
 		}

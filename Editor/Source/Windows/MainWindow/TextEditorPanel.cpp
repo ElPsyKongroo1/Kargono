@@ -2,7 +2,7 @@
 
 #include "EditorApp.h"
 
-#include "Modules/Scripting/ScriptCompilerService.h"
+#include "Modules/Scripting/ScriptCompiler.h"
 #include "Modules/Input/InputService.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Kargono/Utility/Operations.h"
@@ -51,17 +51,17 @@ namespace Kargono::Panels
 		{
 			flags |= ImGuiWindowFlags_MenuBar;
 		}
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowTextEditor, flags);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowTextEditor, flags);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (m_AllDocuments.size() == 0)
 		{
-			EditorUI::EditorUIService::NewItemScreen("Open Existing File", KG_BIND_CLASS_FN(OnOpenFileDialog), "Create New File", KG_BIND_CLASS_FN(OnCreateFileDialog));
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing File", KG_BIND_CLASS_FN(OnOpenFileDialog), "Create New File", KG_BIND_CLASS_FN(OnCreateFileDialog));
 		}
 		else
 		{
@@ -92,8 +92,8 @@ namespace Kargono::Panels
 				}
 				ImGui::EndMenuBar();
 			}
-			EditorUI::EditorUIService::GenericPopup(m_DeleteWarningSpec);
-			EditorUI::EditorUIService::GenericPopup(m_DiscardChangesWarningSpec);
+			m_DeleteWarningSpec.RenderPopup();
+			m_DiscardChangesWarningSpec.RenderPopup();
 
 			ImGui::BeginTabBar("##TextTabBar", ImGuiTabBarFlags_AutoSelectNewTabs);
 			uint32_t iteration{ 0 };
@@ -108,7 +108,7 @@ namespace Kargono::Panels
 				bool setColorHighlight = false;
 				if (currentDocument.Edited)
 				{
-					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::EditorUIService::s_HighlightColor2);
+					ImGui::PushStyleColor(ImGuiCol_Text, EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor2);
 					setColorHighlight = true;
 				}
 				// Handle case 
@@ -165,12 +165,12 @@ namespace Kargono::Panels
 			
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 
 	void TextEditorPanel::RefreshKGScriptEditor()
 	{
-		Scripting::ScriptCompilerService::CreateKGScriptLanguageDefinition();
+		Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
 		CheckForErrors();
 	}
 
@@ -224,9 +224,9 @@ namespace Kargono::Panels
 				s_MainWindow->m_ShowTextEditor = true;
 			}
 
-			if (EditorUI::EditorUIService::GetFocusedWindowName() != m_PanelName)
+			if (EditorUI::EditorUIContext::GetFocusedWindowName() != m_PanelName)
 			{
-				EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+				EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 			}
 
 			for (Document& document : m_AllDocuments)
@@ -268,14 +268,14 @@ namespace Kargono::Panels
 		static int32_t countOfTimers{0};
 		countOfTimers++;
 		m_TextEditor.ClearErrorMarkers();
-		Utility::PassiveTimer::CreateTimer(1.2f, [&]()
+		Utility::PassiveTimerService::GetActiveBusyTimerContext().CreateTimer(1.2f, [&]()
 		{
 			countOfTimers--;
 			if (countOfTimers > 0)
 			{
 				return;
 			}
-			
+
 			if (m_AllDocuments.size() <= 0)
 			{
 				return;
@@ -285,7 +285,7 @@ namespace Kargono::Panels
 			{
 				return;
 			}
-			std::vector<Scripting::ParserError> errors = Scripting::ScriptCompilerService::CheckForErrors(activeDocument.TextBuffer);
+			std::vector<Scripting::ParserError> errors = Scripting::ScriptCompilerService::GetActiveContext().CheckForErrors(activeDocument.TextBuffer);
 
 			if (errors.size() == 0)
 			{
@@ -321,19 +321,23 @@ namespace Kargono::Panels
 	{
 		// Open project component Window
 		s_MainWindow->m_ShowTextEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 		OnCreateFileDialog(path);
 	}
 	void TextEditorPanel::OnOpenFileDialog()
 	{
-		const std::filesystem::path initialDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		const std::filesystem::path initialDirectory = projectPaths.GetAssetDirectory();
 		const std::filesystem::path filepath = Utility::FileDialogs::OpenFile("All Files\0*.*\0", initialDirectory.string().c_str());
 		OpenFile(filepath);
 	}
 	void TextEditorPanel::OnCreateFileDialog()
 	{
-		OnCreateFileDialog(Projects::ProjectService::GetActiveAssetDirectory());
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		OnCreateFileDialog(projectPaths.GetAssetDirectory());
 	}
 	void TextEditorPanel::OnCreateFileDialog(const std::filesystem::path& initialDirectory)
 	{

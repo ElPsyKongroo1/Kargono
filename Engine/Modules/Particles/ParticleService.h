@@ -93,6 +93,12 @@ namespace Kargono::Particles
 	{
 	public:
 		//==============================
+		// Constructors/Destructors
+		//==============================
+		ParticleContext() = default;
+		~ParticleContext() = default;
+	public:
+		//==============================
 		// Lifecycle Functions
 		//==============================
 		[[nodiscard]] bool Init();
@@ -170,10 +176,6 @@ namespace Kargono::Particles
 		static inline Ref<ParticleContext> s_ParticleContext{ nullptr };
 	};
 }
-
-
-
-
 
 namespace Kargono::Utility
 {

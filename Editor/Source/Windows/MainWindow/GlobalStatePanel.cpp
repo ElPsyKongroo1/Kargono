@@ -10,14 +10,14 @@ namespace Kargono::Panels
 	void GlobalStatePanel::InitializeOpeningScreen()
 	{
 		m_OpenGlobalStatePopup.m_Label = "Open Global State";
-		m_OpenGlobalStatePopup.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenGlobalStatePopup.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_OpenGlobalStatePopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenGlobalStatePopup.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenGlobalStatePopup.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.GetAllOptions().clear();
-				spec.m_CurrentOption = { "None", Assets::EmptyHandle };
+				spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
-				spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 				for (auto& [handle, asset] : Assets::AssetService::GetGlobalStateRegistry())
 				{
 					spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
@@ -26,7 +26,7 @@ namespace Kargono::Panels
 
 		m_OpenGlobalStatePopup.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (selection.m_Handle == Assets::EmptyHandle)
+				if (selection.m_Handle == Assets::k_EmptyHandle)
 				{
 					KG_WARN("No global state Selected");
 					return;
@@ -44,13 +44,13 @@ namespace Kargono::Panels
 		m_SelectGlobalStateNameSpec.m_CurrentOption = "Empty";
 
 		m_SelectGlobalStateLocationSpec.m_Label = "Location";
-		m_SelectGlobalStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectGlobalStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		m_SelectGlobalStateLocationSpec.m_ConfirmAction = [&](std::string_view path)
 			{
-				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+				if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory(), path))
 				{
 					KG_WARN("Cannot create an asset outside of the project's asset directory.");
-					m_SelectGlobalStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+					m_SelectGlobalStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 				}
 			};
 
@@ -77,8 +77,8 @@ namespace Kargono::Panels
 			};
 		m_CreateGlobalStatePopup.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::EditText(m_SelectGlobalStateNameSpec);
-				EditorUI::EditorUIService::ChooseDirectory(m_SelectGlobalStateLocationSpec);
+				m_SelectGlobalStateNameSpec.RenderText();
+				m_SelectGlobalStateLocationSpec.RenderChooseDir();
 			};
 	}
 
@@ -95,7 +95,7 @@ namespace Kargono::Panels
 		};
 		m_DeleteGlobalStateWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to delete this global state object?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to delete this global state object?");
 			};
 
 		m_CloseGlobalStateWarning.m_Label = "Close Global State";
@@ -105,7 +105,7 @@ namespace Kargono::Panels
 		};
 		m_CloseGlobalStateWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to close this Global State object without saving?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to close this Global State object without saving?");
 		};
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
@@ -139,8 +139,8 @@ namespace Kargono::Panels
 		m_CreateFieldPopup.m_Label = "Create Field";
 		m_CreateFieldPopup.m_PopupContents = [&]() 
 		{
-			EditorUI::EditorUIService::EditText(m_CreateFieldName);
-			EditorUI::EditorUIService::SelectOption(m_CreateFieldType);
+			m_CreateFieldName.RenderText();
+			m_CreateFieldType.RenderOptions();
 		};
 		m_CreateFieldPopup.m_ConfirmAction = KG_BIND_CLASS_FN(OnConfirmCreateField);
 
@@ -166,31 +166,31 @@ namespace Kargono::Panels
 	void GlobalStatePanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowGlobalStateEditor);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowGlobalStateEditor);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (!m_EditorGlobalState)
 		{
 
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Global State", KG_BIND_CLASS_FN(OnOpenGlobalStateDialog), "Create New Global State", KG_BIND_CLASS_FN(OnCreateGlobalStateDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateGlobalStatePopup);
-			EditorUI::EditorUIService::SelectOption(m_OpenGlobalStatePopup);
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing Global State", KG_BIND_CLASS_FN(OnOpenGlobalStateDialog), "Create New Global State", KG_BIND_CLASS_FN(OnCreateGlobalStateDialog));
+			m_CreateGlobalStatePopup.RenderPopup();
+			m_OpenGlobalStatePopup.RenderOptions();
 		}
 		else
 		{
-			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
+			m_MainHeader.RenderHeader();
 			DrawGlobalStateFields();
-			EditorUI::EditorUIService::GenericPopup(m_CreateFieldPopup);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteGlobalStateWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseGlobalStateWarning);
+			m_CreateFieldPopup.RenderPopup();
+			m_DeleteGlobalStateWarning.RenderPopup();
+			m_CloseGlobalStateWarning.RenderPopup();
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool GlobalStatePanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -236,15 +236,15 @@ namespace Kargono::Panels
 		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			m_EditorGlobalState = nullptr;
-			m_EditorGlobalStateHandle = Assets::EmptyHandle;
+			m_EditorGlobalStateHandle = Assets::k_EmptyHandle;
 		});
 	}
 	void GlobalStatePanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// Open global state Window
 		s_MainWindow->m_ShowGlobalStateEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorGlobalState)
 		{
@@ -262,7 +262,7 @@ namespace Kargono::Panels
 	void GlobalStatePanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
 		// Ensure provided path is within the active asset directory
-		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
 		{
 			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
@@ -282,8 +282,8 @@ namespace Kargono::Panels
 
 		// Open the editor panel to be visible
 		s_MainWindow->m_ShowGlobalStateEditor = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorGlobalStateHandle == assetHandle)
@@ -305,21 +305,19 @@ namespace Kargono::Panels
 
 	struct DrawGlobalStateFieldsVisitor
 	{
-		void operator()(EditorUI::CheckboxSpec& spec)
+		void operator()(EditorUI::CheckboxWidget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 			Ref<ProjectData::GlobalState> editorState = s_EditorApp->m_MainWindow->m_GlobalStatePanel->m_EditorGlobalState;
 
+			editorState->GetField<bool>(iteration);
+
 			// Set the field data
-			spec.m_CurrentBoolean = *ProjectData::GlobalStateService::GetGlobalStateField<bool>
-				(
-					editorState.get(),
-					iteration
-				);
+			spec.m_CurrentBoolean = editorState->GetField<bool>(iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::Checkbox(spec);
+			spec.RenderCheckbox();
 		}
 		void operator()(EditorUI::EditTextSpec& spec)
 		{
@@ -328,16 +326,12 @@ namespace Kargono::Panels
 			Ref<ProjectData::GlobalState> editorState = s_EditorApp->m_MainWindow->m_GlobalStatePanel->m_EditorGlobalState;
 
 			// Set the field data
-			spec.m_CurrentOption = *ProjectData::GlobalStateService::GetGlobalStateField<std::string>
-			(
-				editorState.get(),
-				iteration
-			);
+			spec.m_CurrentOption = *editorState->GetField<std::string>(iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditText(spec);
+			spec.RenderText();
 		}
-		void operator()(EditorUI::EditIntegerSpec& spec)
+		void operator()(EditorUI::EditIntegerWidget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -347,22 +341,22 @@ namespace Kargono::Panels
 			switch (type)
 			{
 			case WrappedVarType::Integer16:
-				spec.m_CurrentInteger = (int32_t)*ProjectData::GlobalStateService::GetGlobalStateField<int16_t>(editorState.get(), iteration);
+				spec.m_CurrentInteger = (int32_t)*editorState->GetField<int16_t>(iteration);
 				break;
 			case WrappedVarType::Integer32:
-				spec.m_CurrentInteger = (int32_t)*ProjectData::GlobalStateService::GetGlobalStateField<int32_t>(editorState.get(), iteration);
+				spec.m_CurrentInteger = (int32_t)*editorState->GetField<int32_t>(iteration);
 				break;
 			case WrappedVarType::Integer64:
-				spec.m_CurrentInteger = (int32_t)*ProjectData::GlobalStateService::GetGlobalStateField<int64_t>(editorState.get(), iteration);
+				spec.m_CurrentInteger = (int64_t)*editorState->GetField<int64_t>(iteration);
 				break;
 			case WrappedVarType::UInteger16:
-				spec.m_CurrentInteger = (int32_t)*ProjectData::GlobalStateService::GetGlobalStateField<uint16_t>(editorState.get(), iteration);
+				spec.m_CurrentInteger = (int32_t)*editorState->GetField<uint16_t>(iteration);
 				break;
 			case WrappedVarType::UInteger32:
-				spec.m_CurrentInteger = (int32_t)*ProjectData::GlobalStateService::GetGlobalStateField<uint32_t>(editorState.get(), iteration);
+				spec.m_CurrentInteger = (int32_t)*editorState->GetField<uint32_t>(iteration);
 				break;
 			case WrappedVarType::UInteger64:
-				spec.m_CurrentInteger = (int32_t)*ProjectData::GlobalStateService::GetGlobalStateField<uint64_t>(editorState.get(), iteration);
+				spec.m_CurrentInteger = (int32_t)*editorState->GetField<uint64_t>(iteration);
 				break;
 			default:
 				KG_ERROR("Unhandled wrapped var type provided when drawing global state widgets");
@@ -370,98 +364,98 @@ namespace Kargono::Panels
 			}
 
 			// Draw the field
-			EditorUI::EditorUIService::EditInteger(spec);
+			spec.RenderInteger();
 		}
-		void operator()(EditorUI::EditFloatSpec& spec)
+		void operator()(EditorUI::EditFloatWidget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 			Ref<ProjectData::GlobalState> editorState = s_EditorApp->m_MainWindow->m_GlobalStatePanel->m_EditorGlobalState;
 
 			// Set the field data
-			spec.m_CurrentFloat = *ProjectData::GlobalStateService::GetGlobalStateField<float>(editorState.get(), iteration);
+			spec.m_CurrentFloat = *editorState->GetField<float>(iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditFloat(spec);
+			spec.RenderFloat();
 		}
-		void operator()(EditorUI::EditVec2Spec& spec)
+		void operator()(EditorUI::EditVec2Widget& spec)
+		{
+			// Get iteration/type information from widget
+			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
+			Ref<ProjectData::GlobalState> editorState = s_EditorApp->m_MainWindow->m_GlobalStatePanel->m_EditorGlobalState;
+
+			// Set the field data			
+			spec.m_CurrentVec2 = *editorState->GetField<Math::vec2>(iteration);
+
+			// Draw the field
+			spec.RenderVec2();
+		}
+		void operator()(EditorUI::EditVec3Widget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 			Ref<ProjectData::GlobalState> editorState = s_EditorApp->m_MainWindow->m_GlobalStatePanel->m_EditorGlobalState;
 
 			// Set the field data
-			spec.m_CurrentVec2 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::vec2>(editorState.get(), iteration);
+			spec.m_CurrentVec3 = *editorState->GetField<Math::vec3>(iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditVec2(spec);
+			spec.RenderVec3();
 		}
-		void operator()(EditorUI::EditVec3Spec& spec)
+		void operator()(EditorUI::EditVec4Widget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 			Ref<ProjectData::GlobalState> editorState = s_EditorApp->m_MainWindow->m_GlobalStatePanel->m_EditorGlobalState;
 
 			// Set the field data
-			spec.m_CurrentVec3 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::vec3>(editorState.get(), iteration);
+			spec.m_CurrentVec4 = *editorState->GetField<Math::vec4>(iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditVec3(spec);
+			spec.RenderVec4();
 		}
-		void operator()(EditorUI::EditVec4Spec& spec)
+		void operator()(EditorUI::EditIVec2Widget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 			Ref<ProjectData::GlobalState> editorState = s_EditorApp->m_MainWindow->m_GlobalStatePanel->m_EditorGlobalState;
 
 			// Set the field data
-			spec.m_CurrentVec4 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::vec4>(editorState.get(), iteration);
+			spec.m_CurrentIVec2 = *editorState->GetField<Math::ivec2>(iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditVec4(spec);
+			spec.RenderIVec2();
 		}
-		void operator()(EditorUI::EditIVec2Spec& spec)
+		void operator()(EditorUI::EditIVec3Widget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 			Ref<ProjectData::GlobalState> editorState = s_EditorApp->m_MainWindow->m_GlobalStatePanel->m_EditorGlobalState;
 
 			// Set the field data
-			spec.m_CurrentIVec2 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::ivec2>(editorState.get(), iteration);
+			spec.m_CurrentIVec3 = *editorState->GetField<Math::ivec3>(iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditIVec2(spec);
+			spec.RenderIVec3();
 		}
-		void operator()(EditorUI::EditIVec3Spec& spec)
+		void operator()(EditorUI::EditIVec4Widget& spec)
 		{
 			// Get iteration/type information from widget
 			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 			Ref<ProjectData::GlobalState> editorState = s_EditorApp->m_MainWindow->m_GlobalStatePanel->m_EditorGlobalState;
 
 			// Set the field data
-			spec.m_CurrentIVec3 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::ivec3>(editorState.get(), iteration);
+			spec.m_CurrentIVec4 = *editorState->GetField<Math::ivec4>(iteration);
 
 			// Draw the field
-			EditorUI::EditorUIService::EditIVec3(spec);
-		}
-		void operator()(EditorUI::EditIVec4Spec& spec)
-		{
-			// Get iteration/type information from widget
-			auto [iteration, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
-			Ref<ProjectData::GlobalState> editorState = s_EditorApp->m_MainWindow->m_GlobalStatePanel->m_EditorGlobalState;
-
-			// Set the field data
-			spec.m_CurrentIVec4 = *ProjectData::GlobalStateService::GetGlobalStateField<Math::ivec4>(editorState.get(), iteration);
-
-			// Draw the field
-			EditorUI::EditorUIService::EditIVec4(spec);
+			spec.RenderIVec4();
 		}
 	};
 
 	void GlobalStatePanel::DrawGlobalStateFields()
 	{
 		// Draw header for fields
-		EditorUI::EditorUIService::CollapsingHeader(m_FieldsHeader);
+		m_FieldsHeader.RenderHeader();
 
 		if (m_FieldsHeader.m_Expanded)
 		{
@@ -480,8 +474,9 @@ namespace Kargono::Panels
 	}
 	void GlobalStatePanel::OnCreateGlobalStateDialog()
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectGlobalStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		m_SelectGlobalStateLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_CreateGlobalStatePopup.m_OpenPopup = true;
 	}
 	void GlobalStatePanel::OnRefreshData()
@@ -495,8 +490,8 @@ namespace Kargono::Panels
 			{
 			case WrappedVarType::Bool:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::CheckboxSpec());
-				EditorUI::CheckboxSpec& checkboxWidget = *std::get_if<EditorUI::CheckboxSpec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::CheckboxWidget());
+				EditorUI::CheckboxWidget& checkboxWidget = *std::get_if<EditorUI::CheckboxWidget>(&widget);
 				checkboxWidget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				checkboxWidget.m_Flags |= EditorUI::Checkbox_Indented;
 				checkboxWidget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -505,8 +500,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::Float:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditFloatSpec());
-				EditorUI::EditFloatSpec& editFloatSpec = *std::get_if<EditorUI::EditFloatSpec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditFloatWidget());
+				EditorUI::EditFloatWidget& editFloatSpec = *std::get_if<EditorUI::EditFloatWidget>(&widget);
 				editFloatSpec.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editFloatSpec.m_Flags |= EditorUI::EditFloat_Indented;
 				editFloatSpec.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -517,8 +512,8 @@ namespace Kargono::Panels
 			case WrappedVarType::Integer32:
 			case WrappedVarType::Integer64:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIntegerSpec());
-				EditorUI::EditIntegerSpec& editIntSpec = *std::get_if<EditorUI::EditIntegerSpec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIntegerWidget());
+				EditorUI::EditIntegerWidget& editIntSpec = *std::get_if<EditorUI::EditIntegerWidget>(&widget);
 				editIntSpec.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editIntSpec.m_Flags |= EditorUI::EditInteger_Indented;
 				editIntSpec.m_Bounds = { -10'000, 10'000 };
@@ -530,8 +525,8 @@ namespace Kargono::Panels
 			case WrappedVarType::UInteger32:
 			case WrappedVarType::UInteger64:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIntegerSpec());
-				EditorUI::EditIntegerSpec& editIntSpec = *std::get_if<EditorUI::EditIntegerSpec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIntegerWidget());
+				EditorUI::EditIntegerWidget& editIntSpec = *std::get_if<EditorUI::EditIntegerWidget>(&widget);
 				editIntSpec.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editIntSpec.m_Flags |= EditorUI::EditInteger_Indented;
 				editIntSpec.m_Bounds = { 0, 10'000 };
@@ -542,8 +537,8 @@ namespace Kargono::Panels
 
 			case WrappedVarType::Vector2:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec2Spec());
-				EditorUI::EditVec2Spec& editVec2Widget = *std::get_if<EditorUI::EditVec2Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec2Widget());
+				EditorUI::EditVec2Widget& editVec2Widget = *std::get_if<EditorUI::EditVec2Widget>(&widget);
 				editVec2Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec2Widget.m_Flags |= EditorUI::EditVec2_Indented;
 				editVec2Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -552,8 +547,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::Vector3:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec3Spec());
-				EditorUI::EditVec3Spec& editVec3Widget = *std::get_if<EditorUI::EditVec3Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec3Widget());
+				EditorUI::EditVec3Widget& editVec3Widget = *std::get_if<EditorUI::EditVec3Widget>(&widget);
 				editVec3Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec3Widget.m_Flags |= EditorUI::EditVec3_Indented;
 				editVec3Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -562,8 +557,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::Vector4:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec4Spec());
-				EditorUI::EditVec4Spec& editVec4Widget = *std::get_if<EditorUI::EditVec4Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditVec4Widget());
+				EditorUI::EditVec4Widget& editVec4Widget = *std::get_if<EditorUI::EditVec4Widget>(&widget);
 				editVec4Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec4Widget.m_Flags |= EditorUI::EditVec4_Indented;
 				editVec4Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -572,8 +567,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::IVector2:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec2Spec());
-				EditorUI::EditIVec2Spec& editVec2Widget = *std::get_if<EditorUI::EditIVec2Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec2Widget());
+				EditorUI::EditIVec2Widget& editVec2Widget = *std::get_if<EditorUI::EditIVec2Widget>(&widget);
 				editVec2Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec2Widget.m_Flags |= EditorUI::EditIVec2_Indented;
 				editVec2Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -582,8 +577,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::IVector3:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec3Spec());
-				EditorUI::EditIVec3Spec& editVec3Widget = *std::get_if<EditorUI::EditIVec3Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec3Widget());
+				EditorUI::EditIVec3Widget& editVec3Widget = *std::get_if<EditorUI::EditIVec3Widget>(&widget);
 				editVec3Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec3Widget.m_Flags |= EditorUI::EditIVec3_Indented;
 				editVec3Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -592,8 +587,8 @@ namespace Kargono::Panels
 			}
 			case WrappedVarType::IVector4:
 			{
-				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec4Spec());
-				EditorUI::EditIVec4Spec& editVec4Widget = *std::get_if<EditorUI::EditIVec4Spec>(&widget);
+				EditorWidget& widget = m_Fields.m_Fields.emplace_back(EditorUI::EditIVec4Widget());
+				EditorUI::EditIVec4Widget& editVec4Widget = *std::get_if<EditorUI::EditIVec4Widget>(&widget);
 				editVec4Widget.m_Label = m_EditorGlobalState->m_DataNames.at(iteration);
 				editVec4Widget.m_Flags |= EditorUI::EditIVec4_Indented;
 				editVec4Widget.m_ProvidedData = CreateRef<std::pair<size_t, WrappedVarType>>(iteration, type);
@@ -613,7 +608,7 @@ namespace Kargono::Panels
 			m_EditorGlobalStateHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}
-	void GlobalStatePanel::OnOpenCreateFieldDialog(EditorUI::CollapsingHeaderSpec& spec)
+	void GlobalStatePanel::OnOpenCreateFieldDialog(EditorUI::CollapsingHeaderWidget& spec)
 	{
 		m_CreateFieldPopup.m_OpenPopup = true;
 		m_CreateFieldName.m_CurrentOption = "NewField";
@@ -631,15 +626,14 @@ namespace Kargono::Panels
 			return;
 		}
 
-		if (ProjectData::GlobalStateService::DoesGlobalStateContainName(m_EditorGlobalState.get(), m_CreateFieldName.m_CurrentOption.c_str()))
+		if (m_EditorGlobalState->DoesContainName(m_CreateFieldName.m_CurrentOption.c_str()))
 		{
 			KG_WARN("Failed to create new global state field. Duplicate field name found");
 			return;
 		}
 
 		// Add a new field
-		if (!ProjectData::GlobalStateService::AddFieldToGlobalState(m_EditorGlobalState.get(),
-			m_CreateFieldName.m_CurrentOption.c_str(), (WrappedVarType)(uint64_t)m_CreateFieldType.m_CurrentOption.m_Handle))
+		if (!m_EditorGlobalState->AddField(m_CreateFieldName.m_CurrentOption.c_str(), (WrappedVarType)(uint64_t)m_CreateFieldType.m_CurrentOption.m_Handle))
 		{
 			KG_WARN("Failed to create new global state field. Error occured while adding the global state field");
 			return;
@@ -651,7 +645,7 @@ namespace Kargono::Panels
 
 
 	}
-	void GlobalStatePanel::OnOpenCreateFieldType(EditorUI::SelectOptionSpec& spec)
+	void GlobalStatePanel::OnOpenCreateFieldType(EditorUI::SelectOptionWidget& spec)
 	{
 		// Clear options widget
 		m_CreateFieldType.ClearOptions();
@@ -667,14 +661,13 @@ namespace Kargono::Panels
 				Utility::WrappedVarTypeToString(type), (uint64_t)type);
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldCheckbox(EditorUI::CheckboxSpec& spec)
+	void GlobalStatePanel::OnModifyFieldCheckbox(EditorUI::CheckboxWidget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 
 		// Modify the field
-		bool success = ProjectData::GlobalStateService::SetGlobalStateField<bool>(m_EditorGlobalState.get(), index,
-			type, &spec.m_CurrentBoolean);
+		bool success = m_EditorGlobalState->SetField(index, type, &spec.m_CurrentBoolean);
 
 		if (!success)
 		{
@@ -682,14 +675,13 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditFloat(EditorUI::EditFloatSpec& spec)
+	void GlobalStatePanel::OnModifyFieldEditFloat(EditorUI::EditFloatWidget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 
 		// Modify the field
-		bool success = ProjectData::GlobalStateService::SetGlobalStateField<float>(m_EditorGlobalState.get(), index,
-			type, &spec.m_CurrentFloat);
+		bool success = m_EditorGlobalState->SetField<float>(index, type, &spec.m_CurrentFloat);
 
 		if (!success)
 		{
@@ -697,7 +689,7 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditInteger(EditorUI::EditIntegerSpec& spec)
+	void GlobalStatePanel::OnModifyFieldEditInteger(EditorUI::EditIntegerWidget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
@@ -710,43 +702,37 @@ namespace Kargono::Panels
 		case WrappedVarType::Integer16:
 		{
 			int16_t widgetValue = (int16_t)spec.m_CurrentInteger;
-			success = ProjectData::GlobalStateService::SetGlobalStateField<int16_t>(m_EditorGlobalState.get(), index,
-				type, &widgetValue);
+			success = m_EditorGlobalState->SetField<int16_t>(index, type, &widgetValue);
 			break;
 		}
 		case WrappedVarType::Integer32:
 		{
 			int32_t widgetValue = (int32_t)spec.m_CurrentInteger;
-			success = ProjectData::GlobalStateService::SetGlobalStateField<int32_t>(m_EditorGlobalState.get(), index,
-				type, &widgetValue);
+			success = m_EditorGlobalState->SetField<int32_t>(index, type, &widgetValue);
 			break;
 		}
 		case WrappedVarType::Integer64:
 		{
 			int64_t widgetValue = (int64_t)spec.m_CurrentInteger;
-			success = ProjectData::GlobalStateService::SetGlobalStateField<int64_t>(m_EditorGlobalState.get(), index,
-				type, &widgetValue);
+			success = m_EditorGlobalState->SetField<int64_t>(index, type, &widgetValue);
 			break;
 		}
 		case WrappedVarType::UInteger16:
 		{
 			uint16_t widgetValue = (uint16_t)spec.m_CurrentInteger;
-			success = ProjectData::GlobalStateService::SetGlobalStateField<uint16_t>(m_EditorGlobalState.get(), index,
-				type, &widgetValue);
+			success = m_EditorGlobalState->SetField<uint16_t>(index, type, &widgetValue);
 			break;
 		}
 		case WrappedVarType::UInteger32:
 		{
 			uint32_t widgetValue = (uint32_t)spec.m_CurrentInteger;
-			success = ProjectData::GlobalStateService::SetGlobalStateField<uint32_t>(m_EditorGlobalState.get(), index,
-				type, &widgetValue);
+			success = m_EditorGlobalState->SetField<uint32_t>(index, type, &widgetValue);
 			break;
 		}
 		case WrappedVarType::UInteger64:
 		{
 			uint64_t widgetValue = (uint64_t)spec.m_CurrentInteger;
-			success = ProjectData::GlobalStateService::SetGlobalStateField<uint64_t>(m_EditorGlobalState.get(), index,
-				type, &widgetValue);
+			success = m_EditorGlobalState->SetField<uint64_t>(index, type, &widgetValue);
 			break;
 		}
 		default:
@@ -760,14 +746,13 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditVec2(EditorUI::EditVec2Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditVec2(EditorUI::EditVec2Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 
 		// Modify the field
-		bool success = ProjectData::GlobalStateService::SetGlobalStateField<Math::vec2>(m_EditorGlobalState.get(), index,
-			type, &spec.m_CurrentVec2);
+		bool success = m_EditorGlobalState->SetField<Math::vec2>(index, type, &spec.m_CurrentVec2);
 
 		if (!success)
 		{
@@ -775,14 +760,13 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditVec3(EditorUI::EditVec3Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditVec3(EditorUI::EditVec3Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 
 		// Modify the field
-		bool success = ProjectData::GlobalStateService::SetGlobalStateField<Math::vec3>(m_EditorGlobalState.get(), index,
-			type, &spec.m_CurrentVec3);
+		bool success = m_EditorGlobalState->SetField<Math::vec3>(index, type, &spec.m_CurrentVec3);
 
 		if (!success)
 		{
@@ -790,14 +774,13 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditVec4(EditorUI::EditVec4Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditVec4(EditorUI::EditVec4Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 
 		// Modify the field
-		bool success = ProjectData::GlobalStateService::SetGlobalStateField<Math::vec4>(m_EditorGlobalState.get(), index,
-			type, &spec.m_CurrentVec4);
+		bool success = m_EditorGlobalState->SetField<Math::vec4>(index, type, &spec.m_CurrentVec4);
 
 		if (!success)
 		{
@@ -805,14 +788,13 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditIVec2(EditorUI::EditIVec2Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditIVec2(EditorUI::EditIVec2Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 
 		// Modify the field
-		bool success = ProjectData::GlobalStateService::SetGlobalStateField<Math::ivec2>(m_EditorGlobalState.get(), index,
-			type, &spec.m_CurrentIVec2);
+		bool success = m_EditorGlobalState->SetField<Math::ivec2>(index, type, &spec.m_CurrentIVec2);
 
 		if (!success)
 		{
@@ -820,14 +802,13 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditIVec3(EditorUI::EditIVec3Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditIVec3(EditorUI::EditIVec3Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 
 		// Modify the field
-		bool success = ProjectData::GlobalStateService::SetGlobalStateField<Math::ivec3>(m_EditorGlobalState.get(), index,
-			type, &spec.m_CurrentIVec3);
+		bool success = m_EditorGlobalState->SetField<Math::ivec3>(index, type, &spec.m_CurrentIVec3);
 
 		if (!success)
 		{
@@ -835,14 +816,13 @@ namespace Kargono::Panels
 			return;
 		}
 	}
-	void GlobalStatePanel::OnModifyFieldEditIVec4(EditorUI::EditIVec4Spec& spec)
+	void GlobalStatePanel::OnModifyFieldEditIVec4(EditorUI::EditIVec4Widget& spec)
 	{
 		// Get index/type information from widget
 		auto [index, type] = *(std::pair<size_t, WrappedVarType>*)spec.m_ProvidedData.get();
 
 		// Modify the field
-		bool success = ProjectData::GlobalStateService::SetGlobalStateField<Math::ivec4>(m_EditorGlobalState.get(), index,
-			type, &spec.m_CurrentIVec4);
+		bool success = m_EditorGlobalState->SetField<Math::ivec4>(index, type, &spec.m_CurrentIVec4);
 
 		if (!success)
 		{

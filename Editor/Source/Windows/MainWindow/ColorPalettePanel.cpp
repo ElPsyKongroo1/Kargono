@@ -12,14 +12,14 @@ namespace Kargono::Panels
 	void ColorPalettePanel::InitializeOpeningScreen()
 	{
 		m_OpenColorPalettePopup.m_Label = "Open Color Palette";
-		m_OpenColorPalettePopup.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenColorPalettePopup.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_OpenColorPalettePopup.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenColorPalettePopup.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenColorPalettePopup.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
-			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetColorPaletteRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
@@ -28,7 +28,7 @@ namespace Kargono::Panels
 
 		m_OpenColorPalettePopup.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::EmptyHandle)
+			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("No Color Palette Selected");
 				return;
@@ -42,17 +42,19 @@ namespace Kargono::Panels
 			OnOpenColorPalette(selection.m_Handle);
 		};
 
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		m_SelectColorPaletteNameSpec.m_Label = "New Name";
 		m_SelectColorPaletteNameSpec.m_CurrentOption = "Empty";
 
 		m_SelectColorPaletteLocationSpec.m_Label = "Location";
-		m_SelectColorPaletteLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectColorPaletteLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_SelectColorPaletteLocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
-			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			if (!Utility::FileSystem::DoesPathContainSubPath(projectPaths.GetAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_SelectColorPaletteLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+				m_SelectColorPaletteLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 			}
 		};
 
@@ -79,8 +81,8 @@ namespace Kargono::Panels
 		};
 		m_CreateColorPalettePopup.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_SelectColorPaletteNameSpec);
-			EditorUI::EditorUIService::ChooseDirectory(m_SelectColorPaletteLocationSpec);
+			m_SelectColorPaletteNameSpec.RenderText();
+			m_SelectColorPaletteLocationSpec.RenderChooseDir();
 		};
 	}
 
@@ -96,7 +98,7 @@ namespace Kargono::Panels
 			};
 		m_DeleteColorPaletteWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to delete this Color Palette object?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to delete this Color Palette object?");
 			};
 
 		m_CloseColorPaletteWarning.m_Label = "Close Color Palette";
@@ -106,7 +108,7 @@ namespace Kargono::Panels
 			};
 		m_CloseColorPaletteWarning.m_PopupContents = [&]()
 			{
-				EditorUI::EditorUIService::Text("Are you sure you want to close this Color Palette object without saving?");
+				EditorUI::EditorUIContext::Text("Are you sure you want to close this Color Palette object without saving?");
 			};
 
 		m_MainHeader.AddToSelectionList("Add White", KG_BIND_CLASS_FN(OnAddWhite));
@@ -149,32 +151,32 @@ namespace Kargono::Panels
 	void ColorPalettePanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION();
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowColorPalette);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowColorPalette);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
 		if (!m_EditorColorPalette)
 		{
 
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Color Palette", KG_BIND_CLASS_FN(OnOpenColorPaletteDialog), "Create New Color Palette", KG_BIND_CLASS_FN(OnCreateColorPaletteDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateColorPalettePopup);
-			EditorUI::EditorUIService::SelectOption(m_OpenColorPalettePopup);
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing Color Palette", KG_BIND_CLASS_FN(OnOpenColorPaletteDialog), "Create New Color Palette", KG_BIND_CLASS_FN(OnCreateColorPaletteDialog));
+			m_CreateColorPalettePopup.RenderPopup();
+			m_OpenColorPalettePopup.RenderOptions();
 		}
 		else
 		{
-			EditorUI::EditorUIService::PanelHeader(m_MainHeader);
+			m_MainHeader.RenderHeader();
 			DrawColorPaletteColors();
-			EditorUI::EditorUIService::EditText(m_EditColorName);
-			EditorUI::EditorUIService::GenericPopup(m_DeleteColorPaletteWarning);
-			EditorUI::EditorUIService::GenericPopup(m_CloseColorPaletteWarning);
-			EditorUI::EditorUIService::Tooltip(m_LocalTooltip);
+			m_EditColorName.RenderText();
+			m_DeleteColorPaletteWarning.RenderPopup();
+			m_CloseColorPaletteWarning.RenderPopup();
+			m_LocalTooltip.RenderTooltip();
 		}
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 	bool ColorPalettePanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
@@ -220,15 +222,15 @@ namespace Kargono::Panels
 		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
 			m_EditorColorPalette = nullptr;
-			m_EditorColorPaletteHandle = Assets::EmptyHandle;
+			m_EditorColorPaletteHandle = Assets::k_EmptyHandle;
 		});
 	}
 	void ColorPalettePanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// Open Color Palette Window
 		s_MainWindow->m_ShowColorPalette = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorColorPalette)
 		{
@@ -245,8 +247,10 @@ namespace Kargono::Panels
 
 	void ColorPalettePanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
 		// Ensure provided path is within the active asset directory
-		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path activeAssetDirectory = projectPaths.GetAssetDirectory();
 		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
 		{
 			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");
@@ -266,8 +270,8 @@ namespace Kargono::Panels
 
 		// Open the editor panel to be visible
 		s_MainWindow->m_ShowColorPalette = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
 		if (m_EditorColorPaletteHandle == assetHandle)
@@ -289,9 +293,9 @@ namespace Kargono::Panels
 
 	void ColorPalettePanel::DrawColorPaletteColors()
 	{
-		for (EditorUI::EditVec4Spec& colorEditor : m_ColorEditorWidgets)
+		for (EditorUI::EditVec4Widget& colorEditor : m_ColorEditorWidgets)
 		{
-			EditorUI::EditorUIService::EditVec4(colorEditor);
+			colorEditor.RenderVec4();
 		}
 	}
 
@@ -301,11 +305,12 @@ namespace Kargono::Panels
 	}
 	void ColorPalettePanel::OnCreateColorPaletteDialog()
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectColorPaletteLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		m_SelectColorPaletteLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_CreateColorPalettePopup.m_OpenPopup = true;
 	}
-	void ColorPalettePanel::OnModifyColor(EditorUI::EditVec4Spec& spec)
+	void ColorPalettePanel::OnModifyColor(EditorUI::EditVec4Widget& spec)
 	{
 		// Ensure the correct requirements are provided
 		KG_ASSERT(m_EditorColorPalette);
@@ -347,7 +352,7 @@ namespace Kargono::Panels
 		OnRefreshData();
 		m_MainHeader.m_EditColorActive = true;
 	}
-	void ColorPalettePanel::OnOpenEditTooltip(EditorUI::EditVec4Spec& spec)
+	void ColorPalettePanel::OnOpenEditTooltip(EditorUI::EditVec4Widget& spec)
 	{
 		m_LocalTooltip.ClearEntries();
 
@@ -377,7 +382,7 @@ namespace Kargono::Panels
 		{
 			// Get the indicated color editing widget
 			KG_ASSERT(entry.m_UserHandle < m_ColorEditorWidgets.size());
-			EditorUI::EditVec4Spec& colorEditWidget = m_ColorEditorWidgets[entry.m_UserHandle];
+			EditorUI::EditVec4Widget& colorEditWidget = m_ColorEditorWidgets[entry.m_UserHandle];
 			// Toggle the widget to allow/disallow editing of the vec4
 			Utility::Operations::ToggleBoolean(colorEditWidget.m_Editing);
 		} };
@@ -433,7 +438,7 @@ namespace Kargono::Panels
 		for (const ProjectData::Color& color : m_EditorColorPalette->m_Colors)
 		{
 			// Create the new color editor
-			EditorUI::EditVec4Spec& newColorEditor = m_ColorEditorWidgets.emplace_back();
+			EditorUI::EditVec4Widget& newColorEditor = m_ColorEditorWidgets.emplace_back();
 
 			// Set up the color editor's values
 			newColorEditor.m_Label = color.m_Name;

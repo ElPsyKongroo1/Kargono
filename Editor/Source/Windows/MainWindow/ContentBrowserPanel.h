@@ -2,7 +2,7 @@
 
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Events/MouseEvent.h"
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/Assets/AssetService.h"
 
 #include "API/FileWatch/FileWatchAPI.h"
@@ -136,18 +136,18 @@ namespace Kargono::Panels
 		// Widgets
 		//=========================
 
-		EditorUI::NavigationHeaderSpec m_NavigateAssetsHeader{};
+		EditorUI::NavigationHeaderWidget m_NavigateAssetsHeader{};
 
 		// Grid widgets
-		EditorUI::GridSpec m_FileFolderViewer{};
+		EditorUI::GridWidget m_FileFolderViewer{};
 
 		// Tooltip widgets
-		EditorUI::TooltipSpec m_RightClickTooltip{};
+		EditorUI::TooltipWidget m_RightClickTooltip{};
 
 		// Popup widgets
-		EditorUI::GenericPopupSpec m_DeleteFilePopup{};
-		EditorUI::GenericPopupSpec m_DeleteDirectoryPopup{};
-		EditorUI::GenericPopupSpec m_CreateDirectoryPopup{};
+		EditorUI::GenericPopupWidget m_DeleteFilePopup{};
+		EditorUI::GenericPopupWidget m_DeleteDirectoryPopup{};
+		EditorUI::GenericPopupWidget m_CreateDirectoryPopup{};
 		EditorUI::EditTextSpec m_CreateDirectoryEditName{};
 
 	};

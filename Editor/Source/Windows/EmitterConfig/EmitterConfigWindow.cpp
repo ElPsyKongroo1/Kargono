@@ -44,8 +44,7 @@ namespace Kargono::Windows
 	void EmitterConfigWindow::OnCreateEmitterConfigDialog()
 	{
 		// Set default values for new emitter config creation location
-		KG_ASSERT(Projects::ProjectService::GetActive());
-		m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 
 		// Set dialog popup to open on next frame
 		m_CreateEmitterConfigPopupSpec.m_OpenPopup = true;
@@ -109,14 +108,14 @@ namespace Kargono::Windows
 		// Initialize open existing Emitter Config popup data
 		m_OpenEmitterConfigPopupSpec.m_Label = "Open Emitter Config";
 		m_OpenEmitterConfigPopupSpec.m_LineCount = 2;
-		m_OpenEmitterConfigPopupSpec.m_CurrentOption = { "None", Assets::EmptyHandle };
+		m_OpenEmitterConfigPopupSpec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 		m_OpenEmitterConfigPopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenEmitterConfigPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionSpec& spec)
+		m_OpenEmitterConfigPopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
-			spec.m_CurrentOption = { "None", Assets::EmptyHandle };
+			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
-			spec.AddToOptions("Clear", "None", Assets::EmptyHandle);
+			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetEmitterConfigRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
@@ -124,7 +123,7 @@ namespace Kargono::Windows
 		};
 		m_OpenEmitterConfigPopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::EmptyHandle)
+			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("No Emitter Config Selected");
 				return;
@@ -148,7 +147,7 @@ namespace Kargono::Windows
 			}
 
 			m_EditorEmitterConfigHandle = Assets::AssetService::CreateEmitterConfig(m_SelectEmitterConfigNameSpec.m_CurrentOption.c_str(), m_SelectEmitterConfigLocationSpec.m_CurrentOption);
-			if (m_EditorEmitterConfigHandle == Assets::EmptyHandle)
+			if (m_EditorEmitterConfigHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("Emitter Config was not created");
 				return;
@@ -172,8 +171,8 @@ namespace Kargono::Windows
 		};
 		m_CreateEmitterConfigPopupSpec.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(m_SelectEmitterConfigNameSpec);
-			EditorUI::EditorUIService::ChooseDirectory(m_SelectEmitterConfigLocationSpec);
+			m_SelectEmitterConfigNameSpec.RenderText();
+			m_SelectEmitterConfigLocationSpec.RenderChooseDir();
 		};
 
 		// Initialize widget for selecting Emitter Config name
@@ -182,13 +181,13 @@ namespace Kargono::Windows
 
 		// Initialize widget for selecting Emitter Config location
 		m_SelectEmitterConfigLocationSpec.m_Label = "Location";
-		m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+		m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		m_SelectEmitterConfigLocationSpec.m_ConfirmAction = [&](std::string_view path)
 		{
-			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveAssetDirectory(), path))
+			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveAssetDirectory();
+				m_SelectEmitterConfigLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 			}
 		};
 	}
@@ -205,7 +204,7 @@ namespace Kargono::Windows
 		};
 		m_DeleteEmitterConfigWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to delete this Emitter Config object?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to delete this Emitter Config object?");
 		};
 
 		// Intialize widget data for closing the Emitter Config warning popup
@@ -216,7 +215,7 @@ namespace Kargono::Windows
 		};
 		m_CloseEmitterConfigWarning.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::Text("Are you sure you want to close this Emitter Config object without saving?");
+			EditorUI::EditorUIContext::Text("Are you sure you want to close this Emitter Config object without saving?");
 		};
 
 		// Set up main header for Emitter Config editor panel
@@ -291,8 +290,8 @@ namespace Kargono::Windows
 	{
 		KG_PROFILE_FUNCTION();
 
-		EditorUI::EditorUIService::StartRendering();
-		EditorUI::EditorUIService::StartDockspaceWindow();
+		EditorUI::EditorUIContext::StartRendering();
+		EditorUI::EditorUIContext::StartDockspaceWindow();
 
 		// Render the UI Editor's menu bar
 		if (ImGui::BeginMenuBar())
@@ -329,15 +328,15 @@ namespace Kargono::Windows
 		// Begin rendering the Emitter Config editor panel
 		if (!m_EditorEmitterConfig)
 		{
-			EditorUI::EditorUIService::StartWindow(m_PanelName);
+			EditorUI::EditorUIContext::StartRenderWindow(m_PanelName);
 
 			// Display opening screen for Emitter Config editor
-			EditorUI::EditorUIService::NewItemScreen("Open Existing Emitter Config", KG_BIND_CLASS_FN(OnOpenEmitterConfigDialog), "Create New Emitter Config", KG_BIND_CLASS_FN(OnCreateEmitterConfigDialog));
-			EditorUI::EditorUIService::GenericPopup(m_CreateEmitterConfigPopupSpec);
-			EditorUI::EditorUIService::SelectOption(m_OpenEmitterConfigPopupSpec);
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing Emitter Config", KG_BIND_CLASS_FN(OnOpenEmitterConfigDialog), "Create New Emitter Config", KG_BIND_CLASS_FN(OnCreateEmitterConfigDialog));
+			m_CreateEmitterConfigPopupSpec.RenderPopup();
+			m_OpenEmitterConfigPopupSpec.RenderOptions();
 
 			// End main window
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 		}
 		else
 		{
@@ -353,23 +352,23 @@ namespace Kargono::Windows
 		}
 
 		// Display Emitter Config editor panel main content
-		EditorUI::EditorUIService::GenericPopup(m_DeleteEmitterConfigWarning);
-		EditorUI::EditorUIService::GenericPopup(m_CloseEmitterConfigWarning);
-		EditorUI::EditorUIService::Tooltip(m_SelectScriptTooltip);
+		m_DeleteEmitterConfigWarning.RenderPopup();
+		m_CloseEmitterConfigWarning.RenderPopup();
+		m_SelectScriptTooltip.RenderTooltip();
 
 		// Clean up dockspace window
-		EditorUI::EditorUIService::EndDockspaceWindow();
+		EditorUI::EditorUIContext::EndDockspaceWindow();
 
 		// Add highlighting around the focused window
-		EditorUI::EditorUIService::HighlightFocusedWindow();
+		EditorUI::EditorUIContext::HighlightFocusedWindow();
 
 		// End Editor UI Rendering
-		EditorUI::EditorUIService::EndRendering();
+		EditorUI::EditorUIContext::EndRendering();
 	}
 	bool EmitterConfigWindow::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		bool handled{ false };
-		FixedString32 focusedWindow = EditorUI::EditorUIService::GetFocusedWindowName();
+		FixedString32 focusedWindow = EditorUI::EditorUIContext::GetFocusedWindowName();
 		if (focusedWindow == m_ViewportPanel->m_PanelName)
 		{
 			handled = m_ViewportPanel->OnKeyPressedEditor(event);
@@ -434,7 +433,7 @@ namespace Kargono::Windows
 	void EmitterConfigWindow::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
 		// Ensure provided path is within the active asset directory
-		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveAssetDirectory();
+		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 		if (!Utility::FileSystem::DoesPathContainSubPath(activeAssetDirectory, assetLocation))
 		{
 			KG_WARN("Could not open asset in editor. Provided path does not exist within active asset directory");

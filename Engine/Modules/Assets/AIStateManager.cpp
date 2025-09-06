@@ -56,7 +56,7 @@ namespace Kargono::Assets
 
 		// Deserialize OnUpdateScript
 		newAIState->OnUpdateHandle = data["OnUpdateScript"].as<uint64_t>();
-		if (newAIState->OnUpdateHandle == Assets::EmptyHandle)
+		if (newAIState->OnUpdateHandle == Assets::k_EmptyHandle)
 		{
 			newAIState->OnUpdate = nullptr;
 		}
@@ -71,7 +71,7 @@ namespace Kargono::Assets
 
 		// Deserialize OnEnterStateScript
 		newAIState->OnEnterStateHandle = data["OnEnterStateScript"].as<uint64_t>();
-		if (newAIState->OnEnterStateHandle == Assets::EmptyHandle)
+		if (newAIState->OnEnterStateHandle == Assets::k_EmptyHandle)
 		{
 			newAIState->OnEnterState = nullptr;
 		}
@@ -86,7 +86,7 @@ namespace Kargono::Assets
 
 		// Deserialize OnExitStateScript
 		newAIState->OnExitStateHandle = data["OnExitStateScript"].as<uint64_t>();
-		if (newAIState->OnExitStateHandle == Assets::EmptyHandle)
+		if (newAIState->OnExitStateHandle == Assets::k_EmptyHandle)
 		{
 			newAIState->OnExitState = nullptr;
 		}
@@ -101,7 +101,7 @@ namespace Kargono::Assets
 
 		// Deserialize OnAIMessageScript
 		newAIState->OnMessageHandle = data["OnAIMessageScript"].as<uint64_t>();
-		if (newAIState->OnMessageHandle == Assets::EmptyHandle)
+		if (newAIState->OnMessageHandle == Assets::k_EmptyHandle)
 		{
 			newAIState->OnMessage = nullptr;
 		}
@@ -140,28 +140,28 @@ namespace Kargono::Assets
 		// Check AI State assets
 		if (aiStateRef->OnEnterStateHandle == scriptHandle)
 		{
-			aiStateRef->OnEnterStateHandle = Assets::EmptyHandle;
+			aiStateRef->OnEnterStateHandle = Assets::k_EmptyHandle;
 			aiStateRef->OnEnterState = nullptr;
 			aiStateModified = true;
 		}
 
 		if (aiStateRef->OnExitStateHandle == scriptHandle)
 		{
-			aiStateRef->OnExitStateHandle = Assets::EmptyHandle;
+			aiStateRef->OnExitStateHandle = Assets::k_EmptyHandle;
 			aiStateRef->OnExitState = nullptr;
 			aiStateModified = true;
 		}
 
 		if (aiStateRef->OnUpdateHandle == scriptHandle)
 		{
-			aiStateRef->OnUpdateHandle = Assets::EmptyHandle;
+			aiStateRef->OnUpdateHandle = Assets::k_EmptyHandle;
 			aiStateRef->OnUpdate = nullptr;
 			aiStateModified = true;
 		}
 
 		if (aiStateRef->OnMessageHandle == scriptHandle)
 		{
-			aiStateRef->OnMessageHandle = Assets::EmptyHandle;
+			aiStateRef->OnMessageHandle = Assets::k_EmptyHandle;
 			aiStateRef->OnMessage = nullptr;
 			aiStateModified = true;
 		}

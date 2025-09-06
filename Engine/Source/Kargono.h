@@ -71,15 +71,14 @@
 #include "Kargono/Scenes/GameState.h"
 
 //-----------------Scripting-----------------//
-#include "Modules/Scripting/ScriptService.h"
-#include "Modules/Scripting/ScriptModuleBuilder.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 
 //-----------------Runtime-UserInterface-----------------//
-#include "Modules/RuntimeUI/RuntimeUI.h"
+#include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Modules/RuntimeUI/Font.h"
 
 //-----------------Editor-UserInterface-----------------//
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 
 //-----------------Utilities-----------------//
 #include "Kargono/Utility/Time.h"

@@ -1,7 +1,7 @@
 
 #include "Launcher/LauncherApp.h"
 
-#include "Modules/EditorUI/EditorUI.h"
+#include "Modules/EditorUI/EditorUIInclude.h"
 #include "Kargono/Projects/Project.h"
 #include "Modules/Core/Engine.h"
 #include "Kargono/Utility/OSCommands.h"
@@ -15,9 +15,9 @@ namespace Kargono
 	static LauncherApp* s_LauncherApp { nullptr };
 
 	// Create Project Panel
-	static EditorUI::GenericPopupSpec s_CreateProjectSpec {};
+	static EditorUI::GenericPopupWidget s_CreateProjectSpec {};
 	static EditorUI::EditTextSpec s_CreateProjectName {};
-	static EditorUI::ChooseDirectorySpec s_CreateProjectLocation {};
+	static EditorUI::ChooseDirectoryWidget s_CreateProjectLocation {};
 
 	static void InitializeStaticResources()
 	{
@@ -25,12 +25,15 @@ namespace Kargono
 		s_CreateProjectSpec.m_PopupWidth = 420.0f;
 		s_CreateProjectSpec.m_PopupContents = [&]()
 		{
-			EditorUI::EditorUIService::EditText(s_CreateProjectName);
-			EditorUI::EditorUIService::ChooseDirectory(s_CreateProjectLocation);
+			s_CreateProjectName.RenderText();
+			s_CreateProjectLocation.RenderChooseDir();
 		};
 		s_CreateProjectSpec.m_ConfirmAction = [&]()
 		{
-			s_LauncherApp->SetSelectedProject(Projects::ProjectService::CreateNewProject(s_CreateProjectName.m_CurrentOption, s_CreateProjectLocation.m_CurrentOption));
+			Projects::Project& activeProject{Projects::ProjectService::GetActiveContext()};
+			activeProject.CreateNewProject(s_CreateProjectName.m_CurrentOption, s_CreateProjectLocation.m_CurrentOption);
+
+			s_LauncherApp->SetSelectedProject(activeProject.GetProjectPaths().m_ProjectDirectory);
 			if (!s_LauncherApp->GetSelectedProject().empty())
 			{
 				EngineService::GetActiveEngine().GetThread().EndThread();
@@ -53,7 +56,7 @@ namespace Kargono
 
 		engine.GetWindow().Init();
 
-		EditorUI::EditorUIService::Init();
+		EditorUI::EditorUIContext::Init();
 
 		engine.GetWindow().SetResizable(false);
 		engine.GetWindow().CenterWindow();
@@ -63,7 +66,7 @@ namespace Kargono
 	}
 	bool LauncherApp::Terminate()
 	{
-		EditorUI::EditorUIService::Terminate();
+		EditorUI::EditorUIContext::Terminate();
 
 		return true;
 	}
@@ -77,13 +80,13 @@ namespace Kargono
 		//switch (logEvent->GetEventLevel())
 		//{
 		//case Events::LogEventLevel::Info:
-		//	EditorUI::EditorUIService::CreateInfoNotification(logEvent->GetEventText().c_str(), 5000);
+		//	EditorUI::EditorUIContext::RenderInfoNotification(logEvent->GetEventText().c_str(), 5000);
 		//	break;
 		//case Events::LogEventLevel::Warning:
-		//	EditorUI::EditorUIService::CreateWarningNotification(logEvent->GetEventText().c_str(), 5000);
+		//	EditorUI::EditorUIContext::RenderWarningNotification(logEvent->GetEventText().c_str(), 5000);
 		//	break;
 		//case Events::LogEventLevel::Critical:
-		//	EditorUI::EditorUIService::CreateCriticalNotification(logEvent->GetEventText().c_str(), 8000);
+		//	EditorUI::EditorUIContext::RenderCriticalNotification(logEvent->GetEventText().c_str(), 8000);
 		//	break;
 		//case Events::LogEventLevel::None:
 		//default:
@@ -110,7 +113,7 @@ namespace Kargono
 	void LauncherApp::OnUpdate(Timestep /*ts*/)
 	{
 
-		EditorUI::EditorUIService::StartRendering();
+		EditorUI::EditorUIContext::StartRendering();
 
 		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
 		// because it would be confusing to have two docking targets within each others.
@@ -132,10 +135,10 @@ namespace Kargono
 		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		EditorUI::EditorUIService::StartWindow("Launcher Screen", nullptr, window_flags);
+		EditorUI::EditorUIContext::StartRenderWindow("Launcher Screen", nullptr, window_flags);
 		ImGui::PopStyleVar(3);
 
-		EditorUI::EditorUIService::NewItemScreen(
+		EditorUI::EditorUIContext::NewItemScreen(
 			"Open Existing Project", [&]()
 		{
 			SelectProject();
@@ -149,11 +152,11 @@ namespace Kargono
 			s_CreateProjectSpec.m_OpenPopup = true;
 		});
 
-		EditorUI::EditorUIService::GenericPopup(s_CreateProjectSpec);
+		s_CreateProjectSpec.RenderPopup();
 
 
 
-		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::EditorUIService::s_PureEmpty);
+		ImGui::PushStyleColor(ImGuiCol_Button, EditorUI::k_PureEmpty);
 		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 		ImVec2 initialScreenCursorPos = ImGui::GetWindowPos() + ImGui::GetCursorStartPos();
 		ImVec2 initialCursorPos = ImGui::GetCursorStartPos();
@@ -164,23 +167,23 @@ namespace Kargono
 		Ref<Rendering::Texture2D> icon {nullptr};
 		draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 30.0f, initialScreenCursorPos.y),
 			ImVec2(initialScreenCursorPos.x + (windowSize.x), initialScreenCursorPos.y + 30.0f),
-			ImColor(EditorUI::EditorUIService::s_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
+			ImColor(EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);
 
 		// Generate Download Image
-		icon = EditorUI::EditorUIService::s_IconDown;
+		icon = EditorUI::EditorUIContext::m_GenIcons.m_Down;
 		ImGui::SetCursorPos(ImVec2(initialCursorPos.x + windowSize.x - 25, initialCursorPos.y + 4));
 		if (ImGui::ImageButton("Download Samples Button",
 			(ImTextureID)(uint64_t)icon->GetRendererID(),
 			ImVec2(14, 14), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
-			EditorUI::EditorUIService::s_PureEmpty,
-			EditorUI::EditorUIService::s_HighlightColor1))
+			EditorUI::k_PureEmpty,
+			EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1))
 		{
 			ImGui::OpenPopup("Download Samples Popup");
 		}
 		if (ImGui::IsItemHovered())
 		{
 			ImGui::BeginTooltip();
-			ImGui::TextColored(EditorUI::EditorUIService::s_HighlightColor1, "Get Sample Projects");
+			ImGui::TextColored(EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1, "Get Sample Projects");
 			ImGui::EndTooltip();
 		}
 
@@ -197,9 +200,9 @@ namespace Kargono
 
 		ImGui::PopStyleColor();
 
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 
-		EditorUI::EditorUIService::EndRendering();
+		EditorUI::EditorUIContext::EndRendering();
 	}
 	void LauncherApp::SelectProject()
 	{

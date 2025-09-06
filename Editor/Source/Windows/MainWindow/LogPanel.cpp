@@ -40,7 +40,7 @@ namespace Kargono::Panels
 	{
 		if (!ImGui::Begin(title, p_open))
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
@@ -100,7 +100,7 @@ namespace Kargono::Panels
 				ImGui::SetScrollHereY(1.0f);
 		}
 		ImGui::EndChild();
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 	}
 
 	LogPanel::LogPanel()
@@ -120,11 +120,11 @@ namespace Kargono::Panels
 		// For the demo: add a debug button _BEFORE_ the normal log window contents
 		// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
 		// Most of the contents of the window will be added by the log.Draw() call.
-		EditorUI::EditorUIService::StartWindow(m_PanelName, &s_MainWindow->m_ShowLog);
+		EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowLog);
 
-		if (!EditorUI::EditorUIService::IsCurrentWindowVisible())
+		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
-			EditorUI::EditorUIService::EndWindow();
+			EditorUI::EditorUIContext::EndRenderWindow();
 			return;
 		}
 
@@ -148,7 +148,7 @@ namespace Kargono::Panels
 				}
 			}
 		}
-		EditorUI::EditorUIService::EndWindow();
+		EditorUI::EditorUIContext::EndRenderWindow();
 
 		// Actually call in the regular Log helper (which will Begin() into the same window as we just did)
 		m_Log.Draw("Log");
