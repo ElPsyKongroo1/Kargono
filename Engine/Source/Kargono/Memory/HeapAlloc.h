@@ -43,8 +43,6 @@ namespace std
 
 namespace Kargono::Memory
 {
-
-
     // TODO: Could have a lot of improvements. Meant to be a simple proof of concept for interface
     class HeapAllocator : public IAllocator
     {

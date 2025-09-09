@@ -289,7 +289,7 @@ namespace Kargono::Assets
 			// Serialize parameter names
 			serializer << YAML::Key << "ParameterNames" << YAML::Value;
 			serializer << YAML::BeginSeq; // Start parameter types list
-			for (FixedString32& name : explicitFuncType.m_ParameterNames)
+			for (FixedBufStr32& name : explicitFuncType.m_ParameterNames)
 			{
 				serializer << YAML::Value << name.CString();
 			}

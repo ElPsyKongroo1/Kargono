@@ -34,7 +34,7 @@ namespace Kargono::Panels
 		std::string name = "None";
 		if (*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity())
 		{
-			name = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity()->GetComponent<ECS::TagComponent>().Tag;
+			name = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity()->GetComponent<TagComponent>().m_Tag;
 		}
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 		ImGui::NewLine();

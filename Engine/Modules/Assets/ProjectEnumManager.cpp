@@ -9,7 +9,7 @@ namespace Kargono::Assets
 {
 	void ProjectEnumManager::CreateAssetFileFromName(std::string_view name, AssetInfo& assetInfo, const std::filesystem::path& assetPath)
 	{
-		// Create new project component
+		// Create new custom component
 		Ref<ProjectData::ProjectEnum> newProjectEnum = CreateRef<ProjectData::ProjectEnum>();
 		newProjectEnum->m_EnumName = name;
 
@@ -31,7 +31,7 @@ namespace Kargono::Assets
 		// Save data types
 		out << YAML::Key << "Identifiers" << YAML::Value;
 		out << YAML::BeginSeq; // Start of enum data sequence
-		for (FixedString32 enumerationName : assetReference->m_EnumIdentifiers)
+		for (FixedBufStr32 enumerationName : assetReference->m_EnumIdentifiers)
 		{
 			out << YAML::Value << enumerationName;
 		}
@@ -65,7 +65,7 @@ namespace Kargono::Assets
 		YAML::Node enumDataNode = data["Identifiers"];
 		if (enumDataNode)
 		{
-			std::vector<FixedString32>& newTypesList = newProjectEnum->m_EnumIdentifiers;
+			std::vector<FixedBufStr32>& newTypesList = newProjectEnum->m_EnumIdentifiers;
 			for (const YAML::Node& enumerationNameNode : enumDataNode)
 			{
 				newTypesList.push_back(enumerationNameNode.as<std::string>().c_str());

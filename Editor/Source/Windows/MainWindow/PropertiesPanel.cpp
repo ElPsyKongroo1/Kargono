@@ -31,7 +31,7 @@ namespace Kargono::Panels
 			{
 				if (*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity())
 				{
-					if (s_MainWindow->m_SceneEditorPanel->m_DisplayedComponent == ECS::ComponentType::None)
+					if (s_MainWindow->m_SceneEditorPanel->m_DisplayedComponent == ECSInternal::k_InvalidComponentIdentifier)
 					{
 						s_MainWindow->m_SceneEditorPanel->DrawAllComponents(*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity());
 					}

@@ -7,6 +7,7 @@
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Assets/AssetService.h"
 #include "Kargono/Utility/Time.h"
+#include "Modules/AI/Components/AIStateComponent.h"
 
 
 namespace Kargono::AI
@@ -26,22 +27,22 @@ namespace Kargono::AI
 		KG_ASSERT(activeScene, "Invalid scene reference when calling AIService's OnUpdate()");
 
 		// Run on update for all active AI with AIComponents including the global, then the current state
-		for (entt::entity enttID : Scenes::SceneService::GetActiveContext().GetActiveScene()->GetAllEntitiesWith<ECS::AIStateComponent>())
+		for (entt::entity enttID : Scenes::SceneService::GetActiveScene()->GetAllEntitiesWith<ECS::AIStateComponent>())
 		{
 			ECS::Entity entity = activeScene->GetEntityByEnttID(enttID);
 			KG_ASSERT(entity, "Invalid entity obtained. Could not run OnUpdate on provided entity.");
-			ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+			AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 
 			// Call Global State OnUpdate
-			if (aiComponent.GlobalStateReference && aiComponent.GlobalStateReference->OnUpdate)
+			if (aiComponent.m_GlobalStateReference && aiComponent.m_GlobalStateReference->OnUpdate)
 			{
-				Utility::CallWrapped<WrappedVoidEntityFloat>(aiComponent.GlobalStateReference->OnUpdate->m_Function, entity.GetUUID(), timeStep);
+				Utility::CallWrappedVoidEntityFloat(aiComponent.GlobalStateReference->OnUpdate->m_Function, entity.GetUUID(), timeStep);
 			}
 
 			// Call Current State OnUpdate
-			if (aiComponent.CurrentStateReference && aiComponent.CurrentStateReference->OnUpdate)
+			if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->OnUpdate)
 			{
-				Utility::CallWrapped<WrappedVoidEntityFloat>(aiComponent.CurrentStateReference->OnUpdate->m_Function, entity.GetUUID(), timeStep);
+				Utility::CallWrappedVoidEntityFloat(aiComponent.CurrentStateReference->OnUpdate->m_Function, entity.GetUUID(), timeStep);
 			}
 		}
 
@@ -57,10 +58,10 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be queried
-		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 
 		// Return whether the component aiState is the same as query aiState
-		return aiComponent.GlobalStateHandle == queryAIStateHandle;
+		return aiComponent.m_GlobalStateHandle == queryAIStateHandle;
 	}
 	bool AIContext::IsCurrentState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
 	{
@@ -71,10 +72,10 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be queried
-		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 
 		// Return whether the component aiState is the same as query aiState
-		return aiComponent.CurrentStateHandle == queryAIStateHandle;
+		return aiComponent.m_CurrentStateHandle == queryAIStateHandle;
 	}
 	bool AIContext::IsPreviousState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
 	{
@@ -85,10 +86,10 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be queried
-		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 
 		// Return whether the component aiState is the same as query aiState
-		return aiComponent.PreviousStateHandle == queryAIStateHandle;
+		return aiComponent.m_PreviousStateHandle == queryAIStateHandle;
 	}
 	void AIContext::ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle)
 	{
@@ -103,22 +104,22 @@ namespace Kargono::AI
 		KG_ASSERT(newAIStateRef, "Invalid new AI state provided inside AIService");
 
 		// Get ai component to be modified
-		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 
 		// Call OnExitState() for active global AIState
-		if (aiComponent.GlobalStateReference && aiComponent.GlobalStateReference->OnExitState)
+		if (aiComponent.m_GlobalStateReference && aiComponent.m_GlobalStateReference->OnExitState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.GlobalStateReference->OnExitState->m_Function, entityID);
+			Utility::CallWrappedVoidEntity(aiComponent.GlobalStateReference->OnExitState->m_Function, entityID);
 		}
 
 		// Switch to new global AIState
-		aiComponent.GlobalStateHandle = newAIStateHandle;
-		aiComponent.GlobalStateReference = newAIStateRef;
+		aiComponent.m_GlobalStateHandle = newAIStateHandle;
+		aiComponent.m_GlobalStateReference = newAIStateRef;
 
 		// Call OnEnter for new global state
-		if (aiComponent.GlobalStateReference && aiComponent.GlobalStateReference->OnEnterState)
+		if (aiComponent.m_GlobalStateReference && aiComponent.m_GlobalStateReference->OnEnterState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.GlobalStateReference->OnEnterState->m_Function, entityID);
+			Utility::CallWrappedVoidEntity(aiComponent.GlobalStateReference->OnEnterState->m_Function, entityID);
 		}
 
 	}
@@ -135,26 +136,26 @@ namespace Kargono::AI
 		KG_ASSERT(newAIStateRef, "Invalid new AI state provided inside AIService");
 
 		// Get ai component to be modified
-		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 
 		// Store current state as the new previous state
-		aiComponent.PreviousStateHandle = aiComponent.CurrentStateHandle;
-		aiComponent.PreviousStateReference = aiComponent.CurrentStateReference;
+		aiComponent.m_PreviousStateHandle = aiComponent.m_CurrentStateHandle;
+		aiComponent.m_PreviousStateReference = aiComponent.m_CurrentStateReference;
 
 		// Call OnExitState() for current AIState
-		if (aiComponent.CurrentStateReference && aiComponent.CurrentStateReference->OnExitState)
+		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->OnExitState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.CurrentStateReference->OnExitState->m_Function, entityID);
+			Utility::CallWrappedVoidEntity(aiComponent.CurrentStateReference->OnExitState->m_Function, entityID);
 		}
 
 		// Switch to new AIState
-		aiComponent.CurrentStateHandle = newAIStateHandle;
-		aiComponent.CurrentStateReference = newAIStateRef;
+		aiComponent.m_CurrentStateHandle = newAIStateHandle;
+		aiComponent.m_CurrentStateReference = newAIStateRef;
 
 		// Call OnEnter for new state
-		if (aiComponent.CurrentStateReference && aiComponent.CurrentStateReference->OnEnterState)
+		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->OnEnterState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.CurrentStateReference->OnEnterState->m_Function, entityID);
+			Utility::CallWrappedVoidEntity(aiComponent.CurrentStateReference->OnEnterState->m_Function, entityID);
 		}
 	}
 	void AIContext::RevertPreviousState(UUID entityID)
@@ -167,33 +168,33 @@ namespace Kargono::AI
 
 
 		// Get ai component to be modified
-		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 		
 		// Ensure previous state is valid
-		if (aiComponent.PreviousStateHandle == Assets::k_EmptyHandle)
+		if (aiComponent.PreviousStateHandle == Assets::EmptyHandle)
 		{
 			KG_WARN("Could not revert to previous state. None currently exists.");
 			return;
 		}
 
 		// Call OnExitState() for current AIState
-		if (aiComponent.CurrentStateReference && aiComponent.CurrentStateReference->OnExitState)
+		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->OnExitState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.CurrentStateReference->OnExitState->m_Function, entityID);
+			Utility::CallWrappedVoidEntity(aiComponent.CurrentStateReference->OnExitState->m_Function, entityID);
 		}
 
 		// Call ChangeState() into entityID's previous state if it exists
-		aiComponent.CurrentStateHandle = aiComponent.PreviousStateHandle;
-		aiComponent.CurrentStateReference = aiComponent.PreviousStateReference;
+		aiComponent.m_CurrentStateHandle = aiComponent.m_PreviousStateHandle;
+		aiComponent.m_CurrentStateReference = aiComponent.m_PreviousStateReference;
 
 		// Call OnEnter for new current state
-		if (aiComponent.CurrentStateReference && aiComponent.CurrentStateReference->OnEnterState)
+		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->OnEnterState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.CurrentStateReference->OnEnterState->m_Function, entityID);
+			Utility::CallWrappedVoidEntity(aiComponent.CurrentStateReference->OnEnterState->m_Function, entityID);
 		}
 
 		// Clear previous state
-		aiComponent.PreviousStateHandle = Assets::k_EmptyHandle;
+		aiComponent.PreviousStateHandle = Assets::EmptyHandle;
 		aiComponent.PreviousStateReference = nullptr;
 	}
 
@@ -206,10 +207,10 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
-		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 
 		// Clear global state
-		aiComponent.GlobalStateHandle = Assets::k_EmptyHandle;
+		aiComponent.GlobalStateHandle = Assets::EmptyHandle;
 		aiComponent.GlobalStateReference = nullptr;
 	}
 	void AIContext::ClearCurrentState(UUID entityID)
@@ -221,10 +222,10 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
-		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 
 		// Clear current state
-		aiComponent.CurrentStateHandle = Assets::k_EmptyHandle;
+		aiComponent.CurrentStateHandle = Assets::EmptyHandle;
 		aiComponent.CurrentStateReference = nullptr;
 	}
 	void AIContext::ClearPreviousState(UUID entityID)
@@ -236,10 +237,10 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
-		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 
 		// Clear previous state
-		aiComponent.PreviousStateHandle = Assets::k_EmptyHandle;
+		aiComponent.PreviousStateHandle = Assets::EmptyHandle;
 		aiComponent.PreviousStateReference = nullptr;
 	}
 	void AIContext::ClearAllStates(UUID entityID)
@@ -251,18 +252,18 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
-		ECS::AIStateComponent& aiComponent = entity.GetComponent<ECS::AIStateComponent>();
+		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 
 		// Clear global state
-		aiComponent.GlobalStateHandle = Assets::k_EmptyHandle;
+		aiComponent.GlobalStateHandle = Assets::EmptyHandle;
 		aiComponent.GlobalStateReference = nullptr;
 
 		// Clear current state
-		aiComponent.CurrentStateHandle = Assets::k_EmptyHandle;
+		aiComponent.CurrentStateHandle = Assets::EmptyHandle;
 		aiComponent.CurrentStateReference = nullptr;
 
 		// Clear previous state
-		aiComponent.PreviousStateHandle = Assets::k_EmptyHandle;
+		aiComponent.PreviousStateHandle = Assets::EmptyHandle;
 		aiComponent.PreviousStateReference = nullptr;
 	}
 
@@ -293,18 +294,18 @@ namespace Kargono::AI
 
 
 		// Get ai component whose OnMessage() function needs to be called
-		ECS::AIStateComponent& receiverAIComponent = receiverEntity.GetComponent<ECS::AIStateComponent>();
+		AI::AIStateComponent& receiverAIComponent = receiverEntity.GetComponent<AI::AIStateComponent>();
 
 		// Call OnMessage for recipient's global state
-		if (receiverAIComponent.GlobalStateReference && receiverAIComponent.GlobalStateReference->OnMessage)
+		if (receiverAIComponent.m_GlobalStateReference && receiverAIComponent.m_GlobalStateReference->OnMessage)
 		{
-			Utility::CallWrapped<WrappedVoidUInt32EntityEntityFloat>(receiverAIComponent.GlobalStateReference->OnMessage->m_Function, messageToHandle.MessageType, messageToHandle.SenderEntity, messageToHandle.ReceiverEntity, messageToHandle.DispatchTime);
+			Utility::CallWrappedVoidUInt32EntityEntityFloat(receiverAIComponent.GlobalStateReference->OnMessage->m_Function, messageToHandle.MessageType, messageToHandle.SenderEntity, messageToHandle.ReceiverEntity, messageToHandle.DispatchTime);
 		}
 
 		// Call OnMessage for recipient's current state
-		if (receiverAIComponent.CurrentStateReference && receiverAIComponent.CurrentStateReference->OnMessage)
+		if (receiverAIComponent.m_CurrentStateReference && receiverAIComponent.m_CurrentStateReference->OnMessage)
 		{
-			Utility::CallWrapped<WrappedVoidUInt32EntityEntityFloat>(receiverAIComponent.CurrentStateReference->OnMessage->m_Function, messageToHandle.MessageType, messageToHandle.SenderEntity, messageToHandle.ReceiverEntity, messageToHandle.DispatchTime);
+			Utility::CallWrappedVoidUInt32EntityEntityFloat(receiverAIComponent.CurrentStateReference->OnMessage->m_Function, messageToHandle.MessageType, messageToHandle.SenderEntity, messageToHandle.ReceiverEntity, messageToHandle.DispatchTime);
 		}
 	}
 	void AIContext::HandleDelayedMessages()

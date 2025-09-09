@@ -59,7 +59,7 @@ namespace Kargono::Panels
 		// External API
 		//=========================
 		void ResetPanelResources();
-		void OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm, const std::vector<FixedString32>& parameterNames, bool openScriptEditor = true);
+		void OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm, const std::vector<FixedBufStr32>& parameterNames, bool openScriptEditor = true);
 		void DrawOnCreatePopup();
 		
 
@@ -77,13 +77,13 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{ "Scripts" };
+		FixedBufStr32 m_PanelName{ "Scripts" };
 		Assets::AssetHandle m_ActiveScriptHandle {Assets::k_EmptyHandle};
 		std::string m_ActiveLabel {};
 		std::size_t m_ActiveParameterLocation{ EditorUI::k_ListIndex };
 		std::function<void(Assets::AssetHandle)> m_OnCreateScriptConfirm{ nullptr };
 		WrappedFuncType m_OnCreateFunctionType{ WrappedFuncType::None };
-		std::vector<FixedString32> m_OnCreateParameterNames;
+		std::vector<FixedBufStr32> m_OnCreateParameterNames;
 
 		//=========================
 		// Widgets

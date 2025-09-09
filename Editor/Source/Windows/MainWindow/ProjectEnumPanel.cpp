@@ -142,7 +142,7 @@ namespace Kargono::Panels
 			if (m_EditorProjectEnum)
 			{
 				size_t iteration{ 0 };
-				for (FixedString32& enumeration : m_EditorProjectEnum->m_EnumIdentifiers)
+				for (FixedBufStr32& enumeration : m_EditorProjectEnum->m_EnumIdentifiers)
 				{
 					m_EnumDataTable.InsertListEntry(enumeration.CString(),
 						std::to_string(iteration),

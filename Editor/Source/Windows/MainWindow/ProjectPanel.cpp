@@ -1666,7 +1666,7 @@ namespace Kargono::Panels
 			EditorUI::LabeledText_Indented);
 
 		// Display client index
-		FixedString16 indexText( m_ClientIndex == Network::k_InvalidClientIndex ?
+		FixedBufStr16 indexText( m_ClientIndex == Network::k_InvalidClientIndex ?
 			"Invalid" : std::to_string(m_ClientIndex).c_str());
 		EditorUI::EditorUIContext::LabeledText
 		(

@@ -4,6 +4,7 @@
 #include "Modules/Input/InputService.h"
 #include "Modules/Rendering/Texture.h"
 #include "Kargono/Utility/Operations.h"
+#include "Modules/Rendering/Components/ShapeComponent.h"
 
 #include "EditorApp.h"
 
@@ -50,7 +51,7 @@ namespace Kargono::Panels
 		KG_PROFILE_FUNCTION();
 
 		// Handle editor camera movement
-		FixedString32 focusedWindow{ EditorUI::EditorUIContext::GetFocusedWindowName() };
+		FixedBufStr32 focusedWindow{ EditorUI::EditorUIContext::GetFocusedWindowName() };
 		if (focusedWindow == m_PanelName)
 		{
 			m_EditorCamera.OnUpdate(ts);
@@ -225,8 +226,8 @@ namespace Kargono::Panels
 				localBuffer, localShader);
 
 			// Create the shape component
-			ECS::ShapeComponent* lineShapeComponent = new ECS::ShapeComponent();
-			lineShapeComponent->CurrentShape = Rendering::ShapeTypes::Quad;
+			Rendering::ShapeComponent* lineShapeComponent = new Rendering::ShapeComponent();
+			lineShapeComponent->m_CurrentShape = Rendering::ShapeTypes::Quad;
 
 			s_LineInputSpec.m_Shader = localShader;
 			s_LineInputSpec.m_Buffer = localBuffer;
@@ -293,22 +294,22 @@ namespace Kargono::Panels
 		s_OutputVector->clear();
 		s_OutputVector->push_back(selectionBoxVertices[0]);
 		s_OutputVector->push_back(selectionBoxVertices[1]);
-		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		s_OutputVector->clear();
 		s_OutputVector->push_back(selectionBoxVertices[1]);
 		s_OutputVector->push_back(selectionBoxVertices[2]);
-		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		s_OutputVector->clear();
 		s_OutputVector->push_back(selectionBoxVertices[2]);
 		s_OutputVector->push_back(selectionBoxVertices[3]);
-		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		s_OutputVector->clear();
 		s_OutputVector->push_back(selectionBoxVertices[3]);
 		s_OutputVector->push_back(selectionBoxVertices[0]);
-		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		
 	}
@@ -589,7 +590,7 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			s_OutputVector->push_back(gridVertices[i]);
 			s_OutputVector->push_back(gridVertices[i + 1]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
 	}
@@ -776,22 +777,22 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			s_OutputVector->push_back(selectionBoxVertices[0]);
 			s_OutputVector->push_back(selectionBoxVertices[1]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(selectionBoxVertices[1]);
 			s_OutputVector->push_back(selectionBoxVertices[2]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(selectionBoxVertices[2]);
 			s_OutputVector->push_back(selectionBoxVertices[3]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(selectionBoxVertices[3]);
 			s_OutputVector->push_back(selectionBoxVertices[0]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 
 			// Handle distance lines
@@ -830,22 +831,22 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			s_OutputVector->push_back(selectionBoxVertices[0]);
 			s_OutputVector->push_back(selectionBoxVertices[1]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(selectionBoxVertices[1]);
 			s_OutputVector->push_back(selectionBoxVertices[2]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(selectionBoxVertices[2]);
 			s_OutputVector->push_back(selectionBoxVertices[3]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(selectionBoxVertices[3]);
 			s_OutputVector->push_back(selectionBoxVertices[0]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 
 			if (!widget)
@@ -906,17 +907,17 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[0]);
 			s_OutputVector->push_back(constraintDistanceVerts[1]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[2]);
 			s_OutputVector->push_back(constraintDistanceVerts[3]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[4]);
 			s_OutputVector->push_back(constraintDistanceVerts[5]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
 		if (widget->m_XRelativeOrAbsolute != RuntimeUI::RelativeOrAbsolute::Absolute && (widget->m_XConstraint == RuntimeUI::Constraint::Right || widget->m_XConstraint == RuntimeUI::Constraint::Center))
@@ -960,17 +961,17 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[0]);
 			s_OutputVector->push_back(constraintDistanceVerts[1]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[2]);
 			s_OutputVector->push_back(constraintDistanceVerts[3]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[4]);
 			s_OutputVector->push_back(constraintDistanceVerts[5]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
 
@@ -1014,17 +1015,17 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[0]);
 			s_OutputVector->push_back(constraintDistanceVerts[1]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[2]);
 			s_OutputVector->push_back(constraintDistanceVerts[3]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[4]);
 			s_OutputVector->push_back(constraintDistanceVerts[5]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
 
@@ -1066,17 +1067,17 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[0]);
 			s_OutputVector->push_back(constraintDistanceVerts[1]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[2]);
 			s_OutputVector->push_back(constraintDistanceVerts[3]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[4]);
 			s_OutputVector->push_back(constraintDistanceVerts[5]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
 	}
@@ -1142,22 +1143,22 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[0]);
 			s_OutputVector->push_back(constraintDistanceVerts[1]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[2]);
 			s_OutputVector->push_back(constraintDistanceVerts[3]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[4]);
 			s_OutputVector->push_back(constraintDistanceVerts[5]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[6]);
 			s_OutputVector->push_back(constraintDistanceVerts[7]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
 	}
@@ -1223,22 +1224,22 @@ namespace Kargono::Panels
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[0]);
 			s_OutputVector->push_back(constraintDistanceVerts[1]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[2]);
 			s_OutputVector->push_back(constraintDistanceVerts[3]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[4]);
 			s_OutputVector->push_back(constraintDistanceVerts[5]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 			s_OutputVector->clear();
 			s_OutputVector->push_back(constraintDistanceVerts[6]);
 			s_OutputVector->push_back(constraintDistanceVerts[7]);
-			s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+			s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 			Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		}
 	}
@@ -1288,17 +1289,17 @@ namespace Kargono::Panels
 		s_OutputVector->clear();
 		s_OutputVector->push_back(constraintDistanceVerts[0]);
 		s_OutputVector->push_back(constraintDistanceVerts[1]);
-		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		s_OutputVector->clear();
 		s_OutputVector->push_back(constraintDistanceVerts[2]);
 		s_OutputVector->push_back(constraintDistanceVerts[3]);
-		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		s_OutputVector->clear();
 		s_OutputVector->push_back(constraintDistanceVerts[4]);
 		s_OutputVector->push_back(constraintDistanceVerts[5]);
-		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		
 		// Create window's constraint distance lines
@@ -1335,17 +1336,17 @@ namespace Kargono::Panels
 		s_OutputVector->clear();
 		s_OutputVector->push_back(constraintDistanceVerts[0]);
 		s_OutputVector->push_back(constraintDistanceVerts[1]);
-		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		s_OutputVector->clear();
 		s_OutputVector->push_back(constraintDistanceVerts[2]);
 		s_OutputVector->push_back(constraintDistanceVerts[3]);
-		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 		s_OutputVector->clear();
 		s_OutputVector->push_back(constraintDistanceVerts[4]);
 		s_OutputVector->push_back(constraintDistanceVerts[5]);
-		s_LineInputSpec.m_ShapeComponent->Vertices = s_OutputVector;
+		s_LineInputSpec.m_ShapeComponent->m_Vertices = s_OutputVector;
 		Rendering::RenderingService::SubmitDataToRenderer(s_LineInputSpec);
 	}
 

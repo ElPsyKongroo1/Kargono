@@ -1,6 +1,6 @@
 #pragma once
 #include "Kargono/Core/WrappedData.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <vector>
 
@@ -17,7 +17,7 @@ namespace Kargono::Scripting
 	{
 		WrappedVarType m_ReturnType{ WrappedVarType::None };
 		std::vector<WrappedVarType> m_ParameterTypes{};
-		std::vector<FixedString32> m_ParameterNames{};
+		std::vector<FixedBufStr32> m_ParameterNames{};
 	};
 }
 

@@ -171,7 +171,7 @@ namespace Kargono::Utility
 		// Initialize return type and parameter list depending on provided types
 		WrappedVarType returnType;
 		std::vector<WrappedVarType> parameterTypes;
-		std::vector<FixedString32> parameterNames;
+		std::vector<FixedBufStr32> parameterNames;
 		if (funcType == WrappedFuncType::ArbitraryFunction)
 		{
 			returnType = explicitType.m_ReturnType;

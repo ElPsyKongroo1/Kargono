@@ -545,11 +545,11 @@ namespace Kargono::Scripting
 			Assets::AssetService::DeserializeScriptRegistry();
 		}
 
-		// Load in project components if not already loaded
-		if (Assets::AssetService::GetProjectComponentRegistry().size() == 0)
+		// Load in custom components if not already loaded
+		if (Assets::AssetService::GetCustomComponentRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
-			Assets::AssetService::DeserializeProjectComponentRegistry();
+			Assets::AssetService::DeserializeCustomComponentRegistry();
 		}
 
 		// Load in ai states if not already loaded
@@ -724,7 +724,7 @@ namespace Kargono::Scripting
 			Ref<Script> script = Assets::AssetService::GetScript(handle);
 			WrappedVarType returnValue;
 			std::vector<WrappedVarType> parameterTypes;
-			std::vector<FixedString32> parameterNames;
+			std::vector<FixedBufStr32> parameterNames;
 
 			// Load return value and parameterTypes differently if using an arbitrary function
 			if (script->m_FuncType == WrappedFuncType::ArbitraryFunction)
@@ -842,8 +842,8 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
-		AddEngineFunctionToCPPFileThreeParameters(Scenes_GetProjectComponentField, void*, uint64_t, uint64_t, uint64_t)
-		AddEngineFunctionToCPPFileFourParameters(Scenes_SetProjectComponentField, void, uint64_t, uint64_t, uint64_t, void*)
+		AddEngineFunctionToCPPFileThreeParameters(Scenes_GetCustomComponentField, void*, uint64_t, uint64_t, uint64_t)
+		AddEngineFunctionToCPPFileFourParameters(Scenes_SetCustomComponentField, void, uint64_t, uint64_t, uint64_t, void*)
 		// User Interface
 		AddEngineFunctionToCPPFileNoParameters(RuntimeUI_ClearSelectedWidget, void)
 		AddEngineFunctionToCPPFileOneParameters(RuntimeUI_IsUserInterfaceActiveFromHandle, bool, uint64_t)
@@ -1055,11 +1055,11 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidPtrUInt64UInt64UInt64, void*, uint64_t, uint64_t, uint64_t)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(Scenes_GetProjectComponentField)
+		AddEngineFunctionToCPPFileEnd(Scenes_GetCustomComponentField)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64UInt64UInt64VoidPtr, void, uint64_t, uint64_t, uint64_t, void*)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(Scenes_SetProjectComponentField)
+		AddEngineFunctionToCPPFileEnd(Scenes_SetCustomComponentField)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt32UInt64UInt64Float, void, uint32_t, uint64_t, uint64_t, float)
 		outputStream << "{\n";
@@ -1582,13 +1582,13 @@ namespace Kargono::Scripting
 		{
 			return Scenes::SceneService::GetActiveContext().GetActiveScene()->Rigidbody2DComponent_GetLinearVelocity(entityHandle);
 		}, Vec2UInt64)
-		AddEngineFunctionPointerToDll(Scenes_GetProjectComponentField, [](UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation)
+		AddEngineFunctionPointerToDll(Scenes_GetCustomComponentField, [](UUID entityID, Assets::AssetHandle CustomComponentID, uint64_t fieldLocation)
 		{
-			return Scenes::SceneService::GetActiveContext().GetActiveScene()->GetProjectComponentField(entityID, projectComponentID, fieldLocation);
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->GetCustomComponentField(entityID, CustomComponentID, fieldLocation);
 		}, VoidPtrUInt64UInt64UInt64)
-		AddEngineFunctionPointerToDll(Scenes_SetProjectComponentField, [](UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value)
+		AddEngineFunctionPointerToDll(Scenes_SetCustomComponentField, [](UUID entityID, Assets::AssetHandle CustomComponentID, uint64_t fieldLocation, void* value)
 		{
-			Scenes::SceneService::GetActiveContext().GetActiveScene()->SetProjectComponentField(entityID, projectComponentID, fieldLocation, value);
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->SetCustomComponentField(entityID, CustomComponentID, fieldLocation, value);
 		}, VoidUInt64UInt64UInt64VoidPtr)
 		AddEngineFunctionPointerToDll(TagComponent_GetTag, [](UUID entityHandle) 
 		{

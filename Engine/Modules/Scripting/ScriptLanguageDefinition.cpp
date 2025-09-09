@@ -5,9 +5,10 @@
 
 #include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/Assets/AssetService.h"
+#include "Modules/ECSInternal/CustomComponent.h"
+#include "Modules/ECS/Entity.h"
+#include "Kargono/ProjectData/ProjectEnum.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
-#include "Modules/ECS/EngineComponents.h"
-#include "Modules/ECS/ProjectComponent.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/ProjectData/ProjectEnum.h"
 #include "Kargono/Scenes/Scene.h"
@@ -281,7 +282,7 @@ namespace Kargono::Scripting
 
 		newPrimitiveType = {};
 		newPrimitiveType.Name = "project_component";
-		newPrimitiveType.Description = "Reference to a project component asset. A project component is a chunk of data that can be associated with any entity and is specific to a particular game project.";
+		newPrimitiveType.Description = "Reference to a custom component asset. A custom component is a chunk of data that can be associated with any entity and is specific to a particular game project.";
 		newPrimitiveType.AcceptableLiteral = ScriptTokenType::CustomLiteral;
 		newPrimitiveType.EmittedDeclaration = "uint64_t";
 		newPrimitiveType.EmittedParameter = "uint64_t";
@@ -467,67 +468,67 @@ namespace Kargono::Scripting
 		newPrimitiveType.Members.insert_or_assign(newFunctionMember.Name.Value, CreateRef<MemberType>(newFunctionMember));
 		newFunctionMember = {};
 
-		// Provide all project components as member data for the entity type
-		for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+		// Provide all custom components as member data for the entity type
+		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
 		{
-			Ref<ECS::ProjectComponent> projectComp = Assets::AssetService::GetProjectComponent(handle);
+			Ref<ECSInternal::CustomComponent> projectComp = Assets::AssetService::GetCustomComponent(handle);
 			KG_ASSERT(projectComp);
 
-			// Initialize project component data
+			// Initialize custom component data
 			DataMember projectComponentMember{};
 			projectComponentMember.Name = projectComp->m_Name;
-			projectComponentMember.Description = "This is a custom project component. This component provides fields specific to this component.";
+			projectComponentMember.Description = "This is a custom custom component. This component provides fields specific to this component.";
 			projectComponentMember.PrimitiveType.Type = ScriptTokenType::None;
 			projectComponentMember.PrimitiveType.Value = "None";
 
-			// Load each field from project component into projectComponentMember's member list
-			for (size_t iteration{ 0 }; iteration < projectComp->m_DataNames.size(); iteration++)
+			// Load each field from custom component into projectComponentMember's member list
+			for (size_t iteration{0}; iteration < projectComp->m_DataNames.size(); iteration++)
 			{
 				DataMember projectComponentFieldMember{};
 				projectComponentFieldMember.Name = projectComp->m_DataNames.at(iteration);
-				projectComponentFieldMember.Description = "This is a custom project component. This component provides fields specific to this component.";
+				projectComponentFieldMember.Description = "This is a custom custom component. This component provides fields specific to this component.";
 				projectComponentFieldMember.PrimitiveType = Utility::WrappedVarTypeToPrimitiveType(projectComp->m_DataTypes.at(iteration));
 				projectComponentFieldMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
-					{
-
-						generator.m_OutputText << "*(";
-						generator.m_OutputText << Utility::WrappedVarTypeToCPPString(Utility::KGScriptToWrappedVarType(member.ReturnType.Value));
-						generator.m_OutputText << "*)";
-						generator.m_OutputText << "Scenes_GetProjectComponentField(";
+				{
+					
+					generator.m_OutputText << "*(";
+					generator.m_OutputText << Utility::WrappedVarTypeToCPPString(Utility::KGScriptToWrappedVarType(member.ReturnType.Value));
+					generator.m_OutputText << "*)";
+					generator.m_OutputText << "Scenes_GetCustomComponentField(";
 
 						// Output entity ID
 						generator.GenerateExpression(member.CurrentNodeExpression);
 						generator.m_OutputText << ", ";
 
-						// Output project component ID
-						TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
-						KG_ASSERT(projectComponentExpression);
-						Ref<ECS::ProjectComponent> component = nullptr;
-						for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+					// Output custom component ID
+					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
+					KG_ASSERT(projectComponentExpression);
+					Ref<ECSInternal::CustomComponent> component = nullptr;
+					for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+					{
+						if (asset.Data.GetSpecificMetaData<Assets::CustomComponentMetaData>()->Name == projectComponentExpression->Value.Value)
 						{
-							if (asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name == projectComponentExpression->Value.Value)
-							{
-								component = Assets::AssetService::GetProjectComponent(handle);
-								generator.m_OutputText << std::to_string(handle);
-								break;
-							}
+							component = Assets::AssetService::GetCustomComponent(handle);
+							generator.m_OutputText << std::to_string(handle);
+							break;
 						}
-						KG_ASSERT(component);
-						generator.m_OutputText << ", ";
+					}
+					KG_ASSERT(component);
+					generator.m_OutputText << ", ";
 
-						// Output component field ID
-						TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
-						KG_ASSERT(fieldNameExpression);
-						size_t iteration{ 0 };
-						for (const std::string& fieldName : component->m_DataNames)
+					// Output component field ID
+					TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+					KG_ASSERT(fieldNameExpression);
+					size_t iteration{ 0 };
+					for (const char* fieldName : component->m_DataNames)
+					{
+						if (fieldName == fieldNameExpression->Value.Value)
 						{
-							if (fieldName == fieldNameExpression->Value.Value)
-							{
-								generator.m_OutputText << std::to_string(iteration);
-								break;
-							}
-							iteration++;
+							generator.m_OutputText << std::to_string(iteration);
+							break;
 						}
+						iteration++;
+					}
 
 						generator.m_OutputText << ")";
 					};
@@ -537,42 +538,42 @@ namespace Kargono::Scripting
 						MemberNode* memberNode = std::get_if<MemberNode>(&assignmentStatement.Name->Value);
 						KG_ASSERT(memberNode);
 
-						generator.m_OutputText << "Scenes_SetProjectComponentField(";
+					generator.m_OutputText << "Scenes_SetCustomComponentField(";
 
 						// Generate entityID
 						generator.GenerateExpression(memberNode->CurrentNodeExpression);
 						generator.m_OutputText << ", ";
 
-						// Output project component ID
-						TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->CurrentNodeExpression->Value);
-						KG_ASSERT(projectComponentExpression);
-						Ref<ECS::ProjectComponent> component = nullptr;
-						for (auto& [handle, asset] : Assets::AssetService::GetProjectComponentRegistry())
+					// Output custom component ID
+					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->CurrentNodeExpression->Value);
+					KG_ASSERT(projectComponentExpression);
+					Ref<ECSInternal::CustomComponent> component = nullptr;
+					for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+					{
+						if (asset.Data.GetSpecificMetaData<Assets::CustomComponentMetaData>()->Name == projectComponentExpression->Value.Value)
 						{
-							if (asset.Data.GetSpecificMetaData<Assets::ProjectComponentMetaData>()->Name == projectComponentExpression->Value.Value)
-							{
-								component = Assets::AssetService::GetProjectComponent(handle);
-								generator.m_OutputText << std::to_string(handle);
-								break;
-							}
+							component = Assets::AssetService::GetCustomComponent(handle);
+							generator.m_OutputText << std::to_string(handle);
+							break;
 						}
-						KG_ASSERT(component);
-						generator.m_OutputText << ", ";
+					}
+					KG_ASSERT(component);
+					generator.m_OutputText << ", ";
 
-						// Output component field ID
-						TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
-						KG_ASSERT(fieldNameExpression);
-						size_t iteration{ 0 };
-						for (const std::string& fieldName : component->m_DataNames)
+					// Output component field ID
+					TokenExpressionNode* fieldNameExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
+					KG_ASSERT(fieldNameExpression);
+					size_t iteration{ 0 };
+					for (const char* fieldName : component->m_DataNames)
+					{
+						if (fieldName == fieldNameExpression->Value.Value)
 						{
-							if (fieldName == fieldNameExpression->Value.Value)
-							{
-								generator.m_OutputText << std::to_string(iteration);
-								break;
-							}
-							iteration++;
+							generator.m_OutputText << std::to_string(iteration);
+							break;
 						}
-						generator.m_OutputText << ", ";
+						iteration++;
+					}
+					generator.m_OutputText << ", ";
 
 						// Output expression
 						if (TokenExpressionNode* tokenExpression = std::get_if<TokenExpressionNode>(&assignmentStatement.Value->Value))
@@ -602,7 +603,7 @@ namespace Kargono::Scripting
 				projectComponentMember.Members.insert_or_assign(projectComponentFieldMember.Name, CreateRef<MemberType>(projectComponentFieldMember));
 			}
 
-			// Insert project component into the entity type's member list
+			// Insert custom component into the entity type's member list
 			newPrimitiveType.Members.insert_or_assign(projectComponentMember.Name, CreateRef<MemberType>(projectComponentMember));
 		}
 
@@ -1117,7 +1118,7 @@ namespace Kargono::Scripting
 			{"Fonts", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Font}},
 			{"GameStates", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_GlobalState}},
 			{"InputMaps", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input}},
-			{"ProjectComponents", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_ProjectComponent}},
+			{"CustomComponents", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_CustomComponent}},
 			{"Enums", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Enum}},
 			{"Scenes", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Scene}},
 			{"Textures", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture}},
@@ -1204,9 +1205,9 @@ namespace Kargono::Scripting
 			inputMapMap.insert_or_assign(fileName, newMember);
 		}
 
-		// Load in names of all project component
-		CustomLiteralNameToIDMap& projectComponentMap = m_AllLiteralTypes.at("ProjectComponents").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetProjectComponentRegistry())
+		// Load in names of all custom component
+		CustomLiteralNameToIDMap& projectComponentMap = m_AllLiteralTypes.at("CustomComponents").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::GetCustomComponentRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "project_component" };
@@ -1232,7 +1233,7 @@ namespace Kargono::Scripting
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 
 			size_t iteration{ 0 };
-			for (const FixedString32& identifier : currentEnum->m_EnumIdentifiers)
+			for (const FixedBufStr32& identifier : currentEnum->m_EnumIdentifiers)
 			{
 				// Create new literal member for each entity
 				Ref<CustomLiteralMember> newEntityLiteral = CreateRef<CustomLiteralMember>();
@@ -1265,11 +1266,11 @@ namespace Kargono::Scripting
 				ECS::Entity entityRef = currentScene->GetEntityByEnttID(enttID);
 
 				// Get the entity's tag component
-				ECS::TagComponent& currentTagComp = entityRef.GetComponent<ECS::TagComponent>();
+				TagComponent& currentTagComp = entityRef.GetComponent<TagComponent>();
 
 				// Create new literal member for each entity
 				Ref<CustomLiteralMember> newEntityLiteral = CreateRef<CustomLiteralMember>();
-				std::string currentTag{ currentTagComp.Tag };
+				std::string currentTag{ currentTagComp.m_Tag };
 				Utility::Operations::RemoveWhitespaceFromString(currentTag);
 				newEntityLiteral->m_OutputText = std::to_string(entityHandle);
 				newEntityLiteral->m_PrimitiveType = { ScriptTokenType::PrimitiveType, "entity" };
@@ -2368,8 +2369,8 @@ namespace Kargono::Scripting
 				{
 					ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(paramType);
 					newParameter.AllTypes.push_back(currentToken);
-					FixedString32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : ("parameter" + std::to_string(iteration)).c_str();
-					newParameter.Identifier = { ScriptTokenType::Identifier, identifier.CString() };
+					FixedBufStr32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : ("parameter" + std::to_string(iteration)).c_str();
+					newParameter.Identifier = { ScriptTokenType::Identifier, identifier.CString()};
 					newFunctionNode.Parameters.push_back(newParameter);
 					newParameter = {};
 					iteration++;
@@ -2391,7 +2392,7 @@ namespace Kargono::Scripting
 				{
 					ScriptToken currentToken = Utility::WrappedVarTypeToPrimitiveType(paramType);
 					newParameter.AllTypes.push_back(currentToken);
-					FixedString32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : ("parameter" + std::to_string(iteration)).c_str();
+					FixedBufStr32 identifier = useCustomParamNames ? explicitFuncType.m_ParameterNames.at(iteration).CString() : ("parameter" + std::to_string(iteration)).c_str();
 					newParameter.Identifier = { ScriptTokenType::Identifier, identifier.CString() };
 					newFunctionNode.Parameters.push_back(newParameter);
 					newParameter = {};

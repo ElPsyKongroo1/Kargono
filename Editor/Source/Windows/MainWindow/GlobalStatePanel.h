@@ -89,7 +89,7 @@ namespace Kargono::Panels
 		Ref<ProjectData::GlobalState> m_EditorGlobalState{ nullptr };
 		Assets::AssetHandle m_EditorGlobalStateHandle{ 0 };
 	private:
-		FixedString32 m_PanelName{ "Global State Editor" };
+		FixedBufStr32 m_PanelName{ "Global State Editor" };
 
 		//=========================
 		// Widgets

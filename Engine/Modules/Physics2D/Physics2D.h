@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Modules/ECS/EngineComponents.h"
 #include "Modules/Events/PhysicsEvent.h"
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/Base.h"

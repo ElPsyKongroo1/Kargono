@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <vector>
 
@@ -24,7 +24,7 @@ namespace Kargono::ProjectData
 		//=========================
 		// Public Fields
 		//=========================
-		FixedString32 m_EnumName;
-		std::vector<FixedString32> m_EnumIdentifiers;
+		FixedBufStr32 m_EnumName;
+		std::vector<FixedBufStr32> m_EnumIdentifiers;
 	};
 }

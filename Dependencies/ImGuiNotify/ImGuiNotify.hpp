@@ -547,7 +547,7 @@ namespace ImGui
 
 			// Generate Unique name for window
 			currentID++;
-			Kargono::FixedString<16> id{ "##" };
+			Kargono::FixedBufferString<16> id{ "##" };
 			id.AppendInteger(currentID);
 
 			// Draw window
@@ -608,7 +608,7 @@ namespace ImGui
 
 					// Generate Unique ID for button
 					currentID++;
-					Kargono::FixedString<16> buttonID{ "##" };
+					Kargono::FixedBufferString<16> buttonID{ "##" };
 					buttonID.AppendInteger(currentID);
 
 					// Render the dismiss button on the top right corner

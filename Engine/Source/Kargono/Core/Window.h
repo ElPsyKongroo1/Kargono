@@ -14,7 +14,7 @@ namespace Kargono
 	//==============================
 	struct WindowProps 
 	{
-		FixedString32 Title {"No Title"};
+		FixedBufStr32 Title {"No Title"};
 		uint32_t Width{ 0 };
 		uint32_t Height{ 0 };
 

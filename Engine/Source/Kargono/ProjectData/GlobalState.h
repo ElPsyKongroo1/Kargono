@@ -1,5 +1,5 @@
 #pragma once
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Kargono/Core/Buffer.h"
 

@@ -22,6 +22,6 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{ "Statistics" };
+		FixedBufStr32 m_PanelName{ "Statistics" };
 	};
 }

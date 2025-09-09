@@ -6,8 +6,8 @@
 #include "Modules/Physics2D/Physics2D.h"
 #include "Kargono/Math/Math.h"
 #include "Modules/Assets/Asset.h"
-#include "Modules/ECS/EntityRegistry.h"
-#include "Modules/ECS/ExternalAPI/enttAPI.h"
+#include "Modules/ECS/Registry.h"
+#include "Kargono/Memory/HeapAlloc.h"
 #include "Modules/Rendering/RenderingService.h"
 
 #include <vector>
@@ -42,10 +42,10 @@ namespace Kargono::Scenes
 		void OnUpdateEntities(Timestep ts);
 		bool IsRunning() const { return m_IsRunning; }
 	public:
-		void RegisterAllProjectComponents();
-		void AddProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
-		void ClearProjectComponentRegistry(Assets::AssetHandle projectComponentHandle);
-		size_t GetProjectComponentCount(Assets::AssetHandle projectComponentHandle);
+		void RegisterAllComponents();
+		void AddCustomComponentRegistry(Assets::AssetHandle projectComponentHandle);
+		void ClearCustomComponentRegistry(Assets::AssetHandle projectComponentHandle);
+		size_t GetCustomComponentCount(Assets::AssetHandle projectComponentHandle);
 		//====================
 		// Create/Destroy Scene Entities
 		//====================
@@ -60,16 +60,19 @@ namespace Kargono::Scenes
 		//====================
 		ECS::Entity FindEntityByName(const std::string& name);
 		ECS::Entity GetEntityByUUID(UUID uuid);
-		ECS::Entity GetEntityByEnttID(entt::entity enttID);
+		ECS::Entity GetEntityByEnttID(ECSInternal::EntityID enttID);
 		ECS::Entity GetPrimaryCameraEntity();
-		bool CheckEntityExists(entt::entity entity);
-		bool IsEntityValid(entt::entity entity) { return m_EntityRegistry.m_EnTTRegistry.valid(entity); }
+		bool CheckEntityExists(ECSInternal::EntityID entity);
+		bool IsEntityValid(ECSInternal::EntityID entity) 
+		{ 
+			return m_EntityRegistry.m_Registry.HasEntity(entity);
+		}
 
 		void OnViewportResize(uint32_t width, uint32_t height);
 		template<typename... Components>
 		auto GetAllEntitiesWith()
 		{
-			return m_EntityRegistry.m_EnTTRegistry.view<Components...>();
+			return m_EntityRegistry.m_Registry.GetFlatView<Components...>();
 		}
 	public:
 		//====================
@@ -101,7 +104,9 @@ namespace Kargono::Scenes
 			return m_SelectedEntity;
 		}
 	public:
-		ECS::EntityRegistry m_EntityRegistry;
+		ECS::Registry m_EntityRegistry;
+		Memory::HeapAllocator m_SceneAlloc{};
+
 		// Physics Spec
 		Physics::PhysicsSpecification m_PhysicsSpecification{};
 		// Scene description data
@@ -134,11 +139,17 @@ namespace Kargono::Scenes
 		//====================
 		// Manage Active Scene
 		//====================
-		void TransitionScene(Assets::AssetHandle newSceneHandle);
-		void TransitionScene(Ref<Scene> newScene);
-		void TransitionSceneFromHandle(Assets::AssetHandle sceneID);
-		Ref<Scene> CreateSceneCopy(Ref<Scene> other);
-	public:
+		static bool CheckActiveHasComponent(UUID entityID, const std::string& componentName);
+
+		static Math::vec3 TransformComponentGetTranslation(UUID entityID);
+		static void TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation);
+		static const std::string& TagComponentGetTag(UUID entityID);
+		static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
+		static Math::vec2 Rigidbody2DComponent_GetLinearVelocity(UUID entityID);
+		static void SetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value);
+		static void* GetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation);
+		
+
 		//====================
 		// Query Active Scene
 		//====================

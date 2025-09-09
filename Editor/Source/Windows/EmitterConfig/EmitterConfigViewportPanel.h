@@ -63,7 +63,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{ "Particle Emitter Viewport" };
+		FixedBufStr32 m_PanelName{ "Particle Emitter Viewport" };
 		Rendering::EditorPerspectiveCamera m_EditorCamera;
 		int m_GizmoType{ -1 };
 		ViewportData m_ViewportData;

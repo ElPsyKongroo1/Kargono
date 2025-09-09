@@ -1,12 +1,41 @@
 #pragma once
+
 #include <string>
 #include <algorithm>
+#include <tuple>
+#include <type_traits>
 
 namespace Kargono::Utility
 {
-	//==============================
-	// General Operations Class
-	//==============================
+	// Helper to check if T is in a type list
+	template<typename T, typename... Ts>
+	struct is_one_of : std::disjunction<std::is_same<T, Ts>...> {};
+
+	template<typename T, typename Tuple>
+	struct tuple_contains;
+
+	template<typename T, typename... Ts>
+	struct tuple_contains<T, std::tuple<Ts...>> : is_one_of<T, Ts...> {};
+
+	template<typename T, typename Tuple>
+	inline constexpr bool tuple_contains_v = tuple_contains<T, Tuple>::value;
+
+	// =============================
+	// Check if any QueryType exists in Tuple
+	// =============================
+	template<typename Tuple, typename... QueryTypes>
+	struct tuple_has_any;
+
+	template<typename... TupleTypes, typename... QueryTypes>
+	struct tuple_has_any<std::tuple<TupleTypes...>, QueryTypes...>
+	{
+		static constexpr bool value =
+			(tuple_contains_v<QueryTypes, std::tuple<TupleTypes...>> || ...);
+	};
+
+	template<typename Tuple, typename... QueryTypes>
+	inline constexpr bool tuple_has_any_v = tuple_has_any<Tuple, QueryTypes...>::value;
+
 	class Operations
 	{
 	public:
@@ -21,6 +50,42 @@ namespace Kargono::Utility
 		//==============================
 		// String Operations
 		//==============================
+		/*
+		template <size_t N1, size_t N2>
+		static constexpr auto Concatonate(std::string_view lhs, std::string_view rhs) 
+		{
+			// +1 for null terminator
+			std::array<char, N1 + N2 + 1> result{};
+
+			// Copy lhs
+			for (size_t i = 0; i < N1; ++i) 
+			{
+				result[i] = lhs[i];
+			}
+			// Copy rhs
+			for (size_t j = 0; j < N2; ++j) 
+			{
+				result[N1 + j] = rhs[j];
+			}
+
+			// Null terminator
+			result[N1 + N2] = '\0';
+
+			return result;
+		}
+		*/
+
+		constexpr static size_t GetStringLength(const char* string)
+		{
+			// TODO: Note this function is dangerous for non-null terminated strings
+			size_t length{ 0 };
+			while (string[length] != '\0') 
+			{
+				length++;
+			}
+			return length;
+		}
+
 		static void RemoveCharacterFromString(std::string& string, char character)
 		{
 			std::erase(string, character);
@@ -53,6 +118,23 @@ namespace Kargono::Utility
 
 			// Otherwise, return a substring view up to the found position
 			return std::string_view(inputString.data(), position);
+		}
+
+		//==============================
+		// Buffer Operations
+		//==============================
+		static bool IsBufferZero(uint8_t* buffer, size_t size) 
+		{
+			KG_ASSERT(buffer != nullptr);
+
+			for (size_t i = 0; i < size; ++i) 
+			{
+				if (buffer[i] != 0)
+				{
+					return false;
+				}
+			}
+			return true;
 		}
 
 		//==============================

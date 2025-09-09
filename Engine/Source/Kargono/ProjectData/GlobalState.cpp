@@ -7,7 +7,7 @@ namespace Kargono::ProjectData
 	bool GlobalState::DoesContainName(const char* queryName)
 	{
 		// Check every field name. Ensure each name does not match the query name
-		for (const FixedString32& dataName : m_DataNames)
+		for (const FixedBufStr32& dataName : m_DataNames)
 		{
 			// Compare each c-string
 			if (strcmp(dataName.CString(), queryName) == 0) // TODO: Careful of the strcmp

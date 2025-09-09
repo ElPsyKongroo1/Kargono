@@ -9,7 +9,7 @@
 #include "Modules/Assets/GameStateManager.h"
 #include "Modules/Assets/GlobalStateManager.h"
 #include "Modules/Assets/InputMapManager.h"
-#include "Modules/Assets/ProjectComponentManager.h"
+#include "Modules/Assets/CustomComponentManager.h"
 #include "Modules/Assets/ProjectEnumManager.h"
 #include "Modules/Assets/SceneManager.h"
 #include "Modules/Assets/ScriptManager.h"
@@ -124,7 +124,7 @@ namespace Kargono::Assets
 		GameStateManager m_GameStateManager;
 		GlobalStateManager m_GlobalStateManager;
 		InputMapManager m_InputMapManager;
-		ProjectComponentManager m_ProjectComponentManager;
+		CustomComponentManager m_CustomComponentManager;
 		ProjectEnumManager m_ProjectEnumManager;
 		SceneManager m_SceneManager;
 		ScriptManager m_ScriptManager;
@@ -145,7 +145,7 @@ namespace Kargono::Assets
 		DEFINE_MANAGER(Scenes, GameState)
 		DEFINE_MANAGER(ProjectData, GlobalState)
 		DEFINE_MANAGER(Input, InputMap)
-		DEFINE_MANAGER(ECS, ProjectComponent)
+		DEFINE_MANAGER(ECSInternal, CustomComponent)
 		DEFINE_MANAGER(ProjectData, ProjectEnum)
 		DEFINE_MANAGER(Scenes, Scene)
 		DEFINE_MANAGER(Scripting, Script)
@@ -222,9 +222,9 @@ namespace Kargono::Assets
 			return s_AssetsContext.m_SceneManager.RemoveScript(sceneRef, scriptHandle);
 		}
 
-		static AssetHandle RemoveProjectComponentFromScene(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle projectComponentHandle)
+		static AssetHandle RemoveCustomComponentFromScene(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle projectComponentHandle)
 		{
-			return s_AssetsContext.m_SceneManager.RemoveProjectComponent(sceneRef, projectComponentHandle);
+			return s_AssetsContext.m_SceneManager.RemoveCustomComponent(sceneRef, projectComponentHandle);
 		}
 		static AssetHandle RemoveAIStateFromScene(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle aiStateHandle)
 		{
@@ -246,7 +246,7 @@ namespace Kargono::Assets
 			DeserializeAudioBufferRegistry();
 			DeserializeFontRegistry();
 			DeserializeScriptRegistry();
-			DeserializeProjectComponentRegistry();
+			DeserializeCustomComponentRegistry();
 			DeserializeProjectEnumRegistry();
 			DeserializeColorPaletteRegistry();
 			DeserializeInputMapRegistry();
@@ -266,7 +266,7 @@ namespace Kargono::Assets
 			SerializeAudioBufferRegistry();
 			SerializeFontRegistry();
 			SerializeScriptRegistry();
-			SerializeProjectComponentRegistry();
+			SerializeCustomComponentRegistry();
 			SerializeProjectEnumRegistry();
 			SerializeColorPaletteRegistry();
 			SerializeInputMapRegistry();
@@ -286,7 +286,7 @@ namespace Kargono::Assets
 			ClearAudioBufferRegistry();
 			ClearFontRegistry();
 			ClearScriptRegistry();
-			ClearProjectComponentRegistry();
+			ClearCustomComponentRegistry();
 			ClearProjectEnumRegistry();
 			ClearColorPaletteRegistry();
 			ClearInputMapRegistry();
@@ -314,7 +314,7 @@ namespace Kargono::Assets
 			case AssetType::Shader: return GetShaderRegistry().at(handle);
 			case AssetType::Texture: return GetTexture2DRegistry().at(handle);
 			case AssetType::UserInterface: return GetUserInterfaceRegistry().at(handle);
-			case AssetType::ProjectComponent: return GetProjectComponentRegistry().at(handle);
+			case AssetType::CustomComponent: return GetCustomComponentRegistry().at(handle);
 			case AssetType::ProjectEnum: return GetProjectEnumRegistry().at(handle);
 			case AssetType::EmitterConfig: return GetEmitterConfigRegistry().at(handle);
 			case AssetType::None: 
@@ -340,7 +340,7 @@ namespace Kargono::Assets
 			case AssetType::Shader: return &GetShaderRegistry();
 			case AssetType::Texture: return &GetTexture2DRegistry();
 			case AssetType::UserInterface: return &GetUserInterfaceRegistry();
-			case AssetType::ProjectComponent: return &GetProjectComponentRegistry();
+			case AssetType::CustomComponent: return &GetCustomComponentRegistry();
 			case AssetType::ProjectEnum: return &GetProjectEnumRegistry();
 			case AssetType::EmitterConfig: return &GetEmitterConfigRegistry();
 			case AssetType::None:

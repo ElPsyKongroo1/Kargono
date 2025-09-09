@@ -1,7 +1,7 @@
 #pragma once
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
 
 #include <string>
@@ -265,7 +265,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{ "User Interface Properties" };
+		FixedBufStr32 m_PanelName{ "User Interface Properties" };
 		UIPropertiesDisplay m_CurrentDisplay{ UIPropertiesDisplay::None };
 		RuntimeUI::Widget* m_ActiveWidget{ nullptr };
 		RuntimeUI::Window* m_ActiveWindow{ nullptr };

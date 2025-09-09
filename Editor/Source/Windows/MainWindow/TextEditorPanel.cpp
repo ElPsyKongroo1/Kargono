@@ -319,7 +319,7 @@ namespace Kargono::Panels
 	}
 	void TextEditorPanel::OpenCreateDialog(const std::filesystem::path& path)
 	{
-		// Open project component Window
+		// Open custom component Window
 		s_MainWindow->m_ShowTextEditor = true;
 		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
@@ -415,7 +415,7 @@ namespace Kargono::Panels
 	}
 	void TextEditorPanel::OnTextChanged()
 	{
-		FixedString32 comparedWindow = m_EditorWindowName;
+		FixedBufStr32 comparedWindow = m_EditorWindowName;
 		Document& activeDocument = m_AllDocuments.at(m_ActiveDocument);
 		activeDocument.TextBuffer = m_TextEditor.GetText();
 		activeDocument.Edited = true;

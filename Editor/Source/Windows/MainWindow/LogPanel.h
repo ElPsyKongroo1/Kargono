@@ -2,7 +2,7 @@
 
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Events/KeyEvent.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Core/Buffer.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiAPI.h"
@@ -44,6 +44,6 @@ namespace Kargono::Panels
 		ImGuiLog m_Log;
 		std::filesystem::path m_LogPathRelative = "Log/Kargono.log";
 		Buffer m_Buffer;
-		FixedString32 m_PanelName{ "Log" };
+		FixedBufStr32 m_PanelName{ "Log" };
 	};
 }

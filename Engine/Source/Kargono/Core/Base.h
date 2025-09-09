@@ -71,11 +71,18 @@ namespace Kargono
 	return objPtr->fn(std::forward<decltype(args)>(args)...); \
 }
 
+// Supported compilers
+#if defined(_MSC_VER)
+#define KG_COMPILER_MSVC
+#else
+#error "Provided compiler is not currently supported"
+#endif
+
 #include "Kargono/Core/Types.h"
 #include "Kargono/Core/Log.h"
 #include "Kargono/Core/Assert.h"
 #include "Kargono/Core/Profiler.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <filesystem>
 

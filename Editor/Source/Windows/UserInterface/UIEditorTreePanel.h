@@ -102,7 +102,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		FixedString32 m_PanelName{ "User Interface Tree" };
+		FixedBufStr32 m_PanelName{ "User Interface Tree" };
 
 		//=========================
 		// Widgets

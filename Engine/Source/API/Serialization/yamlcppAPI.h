@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Modules/ECS/EngineComponents.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/WrappedData.h"
 
 #include "Modules/Physics2D/ExternalAPI/Box2DAPI.h"
 
 #include <yaml-cpp/yaml.h>
+#include <string>
 
 namespace YAML
 {
@@ -386,26 +386,26 @@ namespace Kargono::Utility
 	}
 
 	// These are simply here to help with serialization for the rigid body components in an entity
-	inline const char* RigidBody2DBodyTypeToString(ECS::Rigidbody2DComponent::BodyType bodyType)
+	inline const char* RigidBody2DBodyTypeToString(Physics2D::BodyType bodyType)
 	{
 		switch (bodyType)
 		{
-		case ECS::Rigidbody2DComponent::BodyType::Static:	return "Static";
-		case ECS::Rigidbody2DComponent::BodyType::Dynamic:	return "Dynamic";
-		case ECS::Rigidbody2DComponent::BodyType::Kinematic:	return "Kinematic";
+		case Physics2D::BodyType::Static:	return "Static";
+		case Physics2D::BodyType::Dynamic:	return "Dynamic";
+		case Physics2D::BodyType::Kinematic:	return "Kinematic";
 		}
 
 		KG_ERROR("Unknown body type")
 			return {};
 	}
 
-	inline ECS::Rigidbody2DComponent::BodyType StringToRigidBody2DBodyType(std::string_view bodyTypeString)
+	inline Physics2D::BodyType StringToRigidBody2DBodyType(std::string_view bodyTypeString)
 	{
-		if (bodyTypeString == "Static") return ECS::Rigidbody2DComponent::BodyType::Static;
-		if (bodyTypeString == "Dynamic") return ECS::Rigidbody2DComponent::BodyType::Dynamic;
-		if (bodyTypeString == "Kinematic") return ECS::Rigidbody2DComponent::BodyType::Kinematic;
+		if (bodyTypeString == "Static") return Physics2D::BodyType::Static;
+		if (bodyTypeString == "Dynamic") return Physics2D::BodyType::Dynamic;
+		if (bodyTypeString == "Kinematic") return Physics2D::BodyType::Kinematic;
 
 		KG_ERROR("Unknown body type")
-			return ECS::Rigidbody2DComponent::BodyType::Static;
+			return Physics2D::BodyType::Static;
 	}
 }

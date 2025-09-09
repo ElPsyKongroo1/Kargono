@@ -12,7 +12,7 @@
 #include "Modules/Events/EventQueue.h"
 #include "Kargono/Core/FunctionQueue.h"
 #include "Kargono/Utility/Timers.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Utility/Timers.h"
 
 #include <functional>
@@ -43,7 +43,7 @@ namespace Kargono
 
 	struct EngineConfig
 	{
-		FixedString32 m_ExecutableName{};
+		FixedBufStr32 m_ExecutableName{};
 		std::filesystem::path m_WorkingDirectory{};
 		CommandLineArguments m_CmlArgs{};
 		Math::uvec2 m_DefaultWindowDimensions{0, 0};

@@ -3482,7 +3482,7 @@ namespace Kargono::Panels
 		// Store the current select option spec, function type, and parameter names
 		static EditorUI::SelectOptionWidget* s_CurrentSpec{ nullptr };
 		static WrappedFuncType s_CurrentFuncType{ WrappedFuncType::None };
-		static std::vector<FixedString32> s_ParameterNames;
+		static std::vector<FixedBufStr32> s_ParameterNames;
 		s_CurrentSpec = &spec;
 		s_CurrentFuncType = *(WrappedFuncType*)s_CurrentSpec->m_ProvidedData.get();
 

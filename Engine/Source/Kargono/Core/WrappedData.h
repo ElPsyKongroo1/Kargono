@@ -760,6 +760,34 @@ namespace Kargono
 			return WrappedVarType::None;
 		}
 
+		inline size_t WrappedVarTypeAlignment(WrappedVarType type)
+		{
+			switch (type)
+			{
+			case WrappedVarType::Integer16: return alignof(int16_t);
+			case WrappedVarType::Integer32: return alignof(int32_t);
+			case WrappedVarType::Integer64: return alignof(int64_t);
+			case WrappedVarType::UInteger16: return alignof(uint16_t);
+			case WrappedVarType::UInteger32: return alignof(uint32_t);
+			case WrappedVarType::UInteger64: return alignof(uint64_t);
+			case WrappedVarType::Vector2: return alignof(Math::vec2);
+			case WrappedVarType::Vector3: return alignof(Math::vec3);
+			case WrappedVarType::Vector4: return alignof(Math::vec4);
+			case WrappedVarType::IVector2: return alignof(Math::ivec2);
+			case WrappedVarType::IVector3: return alignof(Math::ivec3);
+			case WrappedVarType::IVector4: return alignof(Math::ivec4);
+			case WrappedVarType::String: return alignof(std::string);
+			case WrappedVarType::Bool: return alignof(bool);
+			case WrappedVarType::Float: return alignof(float);
+			case WrappedVarType::Entity: return alignof(uint64_t);
+			case WrappedVarType::Void:
+			case WrappedVarType::None:
+			default:
+				KG_ERROR("Invalid wrapped variable type presented when trying to get it's data size in bytes");
+				return std::numeric_limits<size_t>::max();
+			}
+		}
+
 		inline void InitializeDataForWrappedVarBuffer(WrappedVarType type, void* buffer)
 		{
 			switch (type)

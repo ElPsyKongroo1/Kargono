@@ -120,23 +120,38 @@ namespace Kargono::Utility
 	{
 
 		// Converting float to uint32_t to allow use of switch statement
+		constexpr uint32_t superUltraWide32_9{ static_cast<uint32_t>((32.0f / 9.0f) * 100) };
 		constexpr uint32_t widescreen16_9{ static_cast<uint32_t>((16.0f / 9.0f) * 100) };
 		constexpr uint32_t fullscreen4_3{ static_cast<uint32_t>((4.0f / 3.0f) * 100) };
-		constexpr uint32_t phone9_16{ static_cast<uint32_t>((9.0f / 16.0f) * 100) };
-		constexpr uint32_t superUltraWide32_9{ static_cast<uint32_t>((32.0f / 9.0f) * 100) };
 		constexpr uint32_t olderMonitor5_4{ static_cast<uint32_t>((5.0f / 4.0f) * 100) };
 		constexpr uint32_t square1_1{ 1 * 100 };
+		constexpr uint32_t phone9_16{ static_cast<uint32_t>((9.0f / 16.0f) * 100) };
 
 		uint32_t monitorAspectRatio = static_cast<uint32_t>((monitorResolution.x / monitorResolution.y) * 100);
 
-		switch (monitorAspectRatio)
+		if (monitorAspectRatio >= superUltraWide32_9)
 		{
-		case widescreen16_9: return Math::uvec2(16, 9);
-		case fullscreen4_3: return Math::uvec2(4, 3);
-		case square1_1: return Math::uvec2(1, 1);
-		case olderMonitor5_4: return Math::uvec2(5, 4);
-		case superUltraWide32_9: return Math::uvec2(32, 9);
-		case phone9_16: return Math::uvec2(9, 16);
+			return Math::uvec2(32, 9);
+		}
+		else if (monitorAspectRatio >= widescreen16_9)
+		{
+			return Math::uvec2(16, 9);
+		}
+		else if (monitorAspectRatio >= fullscreen4_3)
+		{
+			return Math::uvec2(4, 3);
+		}
+		else if (monitorAspectRatio >= olderMonitor5_4)
+		{
+			return Math::uvec2(5, 4);
+		}
+		else if (monitorAspectRatio >= square1_1)
+		{
+			return Math::uvec2(1, 1);
+		}
+		else if (monitorAspectRatio >= phone9_16)
+		{
+			return Math::uvec2(9, 16);
 		}
 
 		KG_ERROR("Unknown Screen Resolution Used");

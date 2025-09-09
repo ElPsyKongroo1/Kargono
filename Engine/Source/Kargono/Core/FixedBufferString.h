@@ -1,0 +1,374 @@
+#pragma once
+#include <array>
+#include <cstring>
+#include <cstdio>
+#include <charconv>
+#include <string>
+
+namespace Kargono
+{
+	template<std::size_t t_BufferSize>
+	class FixedBufferString
+	{
+		static_assert(t_BufferSize > 0, "Cannot instantiate fixed string with empty buffer");
+
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		constexpr FixedBufferString()
+		{
+			m_DataBuffer[0] = '\0';
+		}
+
+		constexpr FixedBufferString(const char* newString)
+		{
+			if (!newString)
+			{
+				ClearString();
+				return;
+			}
+
+			ReplaceBuffer(newString);
+		}
+
+		constexpr FixedBufferString(char newChar)
+		{
+			// TODO: I realize that a buffer of size one would cause an issue, but like really thooooooo
+
+			// Add char
+			m_DataBuffer[0] = newChar;
+
+			// Add null terminator
+			m_DataBuffer[1] = '\0';
+		}
+
+		constexpr FixedBufferString(std::string_view newStringView)
+		{
+			ReplaceBuffer(newStringView);
+		}
+
+	public:
+		//==============================
+		// Modify String
+		//==============================
+
+		constexpr void ClearString()
+		{
+			m_DataBuffer[0] = '\0';
+			m_StringLength = 0;
+		}
+
+		constexpr void SetString(const char* newString)
+		{
+			ReplaceBuffer(newString);
+		}
+
+		
+		template<typename... Args>
+		bool SetFormat(const char* formatString, Args&&... args)
+		{
+			// Note that this function may truncate resulting formatted string if the buffer is too small
+			// Note that snprintf deals with null termination automatically
+
+			// Replace data inside buffer with formatted string and get resultant size of buffer
+			
+			int32_t newStringSize = std::snprintf(m_DataBuffer.data(), t_BufferSize, formatString, std::forward<Args>(args)...);
+
+			// If snprintf fails, return false
+			if (newStringSize < 0) 
+			{
+				return false; 
+			}
+
+			// If success, update string length
+			m_StringLength = newStringSize;
+			return true;
+		}
+
+		template<typename... Args>
+		bool AppendFormat(const char* formatString, Args&&... args)
+		{
+			// Note that this function may truncate resulting formatted string if the buffer is too small
+			// Note that snprintf deals with null termination automatically
+
+			// Replace data inside buffer with formatted string and get resultant size of buffer
+
+			int32_t newStringSize = std::snprintf(m_DataBuffer.data() + m_StringLength, t_BufferSize - m_StringLength, formatString, std::forward<Args>(args)...);
+
+			// If snprintf fails, return false
+			if (newStringSize < 0)
+			{
+				return false;
+			}
+
+			// If success, update string length
+			m_StringLength = m_StringLength + newStringSize;
+			return true;
+		}
+
+
+		constexpr bool Append(const char* appendString)
+		{
+			// Get size of newly appending c-string
+			size_t appendStringLength{0};
+			while (appendString[appendStringLength] != '\0') 
+			{
+				appendStringLength++;
+			}
+
+			// Early out if new size of string exceeds buffer length
+			if (m_StringLength + appendStringLength + 1 > t_BufferSize)
+			{
+				return false;
+			}
+
+			// Fill data (Overwrite current null terminator)
+			for (size_t i = 0; i < appendStringLength; i++)
+			{
+				m_DataBuffer[m_StringLength + i] = appendString[i];
+			}
+			m_StringLength += appendStringLength;
+
+			// Add new null terminator
+			m_DataBuffer[m_StringLength] = '\0';
+			return true;
+		}
+
+		template<typename IntegerType>
+		bool AppendInteger(IntegerType appendInteger)
+		{
+			// Ensure only integer types are used with this function
+			static_assert(std::is_integral<IntegerType>::value, "Can only append simple integer types");
+
+			// Attempt to append the const char* version of the integer to the end of the current string
+			std::to_chars_result result = std::to_chars(m_DataBuffer.data() + m_StringLength, m_DataBuffer.data() + (t_BufferSize - 1), appendInteger);
+			
+			// Exit if appending fails
+			if (result.ec != std::errc())
+			{
+				return false;
+			}
+
+			// Set new length for string
+			m_StringLength = result.ptr - m_DataBuffer.data();
+
+			// Set the new null terminator for the string
+			*(result.ptr) = '\0';
+			return true;
+
+		}
+
+		// TODO: Maybe add append substring and pop back functions
+
+	public:
+		//==============================
+		// Operator Overloads
+		//==============================
+		FixedBufferString& operator=(const char* newString)
+		{
+			// TODO: Maybe alert when fails????
+			ReplaceBuffer(newString);
+			return *this;
+		}
+
+		FixedBufferString& operator=(std::string_view newStringView)
+		{
+			// TODO: Maybe alert when fails????
+			ReplaceBuffer(newStringView);
+			return *this;
+		}
+
+		operator const char* () const 
+		{
+			return m_DataBuffer.data(); 
+		}
+
+		template <size_t t_OtherBufferSize>
+		bool operator==(const FixedBufferString<t_OtherBufferSize>& other) const 
+		{
+			// Check if lengths are different
+			if (m_StringLength != other.m_StringLength)
+			{
+				return false;
+			}
+			// Compare content up to m_Length
+			return std::memcmp(m_DataBuffer.data(), other.m_DataBuffer.data(), m_StringLength) == 0;
+		}
+
+		bool operator==(const char* other) const
+		{
+			size_t otherLength = strlen(other);
+			if (m_StringLength != otherLength)
+			{
+				return false;
+			}
+
+			return std::memcmp(m_DataBuffer.data(), other, m_StringLength) == 0;
+		}
+
+		std::string operator+(const char* otherCString)
+		{
+			std::string returnString{};
+			returnString.reserve(m_StringLength + std::strlen(otherCString));
+			// Add contents of m_DataBuffer up to m_StringLength
+			returnString.append(m_DataBuffer.data(), m_StringLength);
+
+			// Append the const char* string
+			returnString.append(otherCString);
+
+			return returnString;
+		}
+
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		constexpr const char* CString() const
+		{
+			return m_DataBuffer.data();
+		}
+
+		void* Data()
+		{
+			return m_DataBuffer.data();
+		}
+
+		std::size_t StringLength() const
+		{
+			return m_DataBuffer.data();
+		}
+
+		constexpr size_t BufferSize() const
+		{
+			return t_BufferSize;
+		}
+
+		constexpr std::size_t StringLength() const
+		{
+			return m_StringLength;
+		}
+
+		constexpr bool IsEmpty() const
+		{
+			return m_StringLength == 0;
+		}
+
+		constexpr std::string_view StringView() const
+		{
+			return std::string_view(m_DataBuffer.data(), m_StringLength);
+		}
+
+	private:
+		//==============================
+		// Internal Functionality
+		//==============================
+		constexpr bool ReplaceBuffer(const char* newString)
+		{
+			// Get size of new string
+			std::size_t newStringLength{ 0 };
+			while (newString[newStringLength] != '\0')
+			{
+				newStringLength++;
+			}
+
+			// Truncate provided string based on buffer size
+			if (newStringLength + 1 > t_BufferSize)
+			{
+				// Set a new string length to fill buffer as much as possible
+				// * Note, leaving space for null terminator
+				newStringLength = t_BufferSize - 1;
+			}
+
+
+			// Fill data (Overwrite current null terminator)
+			for (size_t i = 0; i < newStringLength; i++)
+			{
+				m_DataBuffer[i] = newString[i];
+			}
+			m_StringLength = newStringLength;
+
+			// Add new null terminator
+			m_DataBuffer[m_StringLength] = '\0';
+			return true;
+		}
+
+		constexpr bool ReplaceBuffer(std::string_view newString)
+		{
+			// Get size of new string
+			std::size_t newStringLength = newString.size();
+
+			// Truncate provided string based on buffer size
+			if (newStringLength + 1 > t_BufferSize)
+			{
+				// Set a new string length to fill buffer as much as possible
+				// * Note, leaving space for null terminator
+				newStringLength = t_BufferSize - 1;
+			}
+
+			// Fill data (Overwrite current null terminator)
+			for (size_t i = 0; i < newStringLength; i++)
+			{
+				m_DataBuffer[i] = newString[i];
+			}
+			m_StringLength = newStringLength;
+
+			// Add new null terminator
+			m_DataBuffer[m_StringLength] = '\0';
+			return true;
+		}
+
+	private:
+		std::array<char, t_BufferSize> m_DataBuffer{};
+		std::size_t m_StringLength{0};
+	};
+
+	template <size_t N>
+	std::string operator+(const char* leftCString, const FixedBufferString<N>& rightFixedString)
+	{
+		std::string returnString;
+		returnString.reserve(std::strlen(leftCString) + rightFixedString.StringLength());
+
+		// Append the const char* string
+		returnString.append(leftCString);
+
+		// Append the contents of rightFixedString up to its length
+		returnString.append(rightFixedString.CString(), rightFixedString.StringLength());
+
+		return returnString;
+	}
+
+	template<size_t t_BufferSize>
+	using FixedBufStr = FixedBufferString<t_BufferSize>;
+
+	using FixedBufStr8 = FixedBufferString<8>; // Really small. For limited text sizes.
+	using FixedBufStr16 = FixedBufferString<16>; // Generally for small status codes, short labels, etc...
+	using FixedBufStr32 = FixedBufferString<32>; // Generally for status codes, small integers, etc...
+	using FixedBufStr64 = FixedBufferString<64>; // Generally for usernames, uuid's, small formatted strings... 
+	using FixedBufStr256 = FixedBufferString<256>; // Generally for usernames, short log messages, etc... 
+	using FixedBufStr1024 = FixedBufferString<1024>; // Generally for long file paths, full log messages, etc...
+	using FixedBufStr8192 = FixedBufferString<8192>; // Generally for http headers, small socket payloads, etc...
+	using FixedBufStr64KB = FixedBufferString<64'000>; // Generally for large large data streams or file io...
+}
+
+namespace std
+{
+	template<size_t t_BufferSize>
+	struct hash<Kargono::FixedBufferString<t_BufferSize>>
+	{
+		std::size_t operator()(const Kargono::FixedBufferString<t_BufferSize>& fixedString) const
+		{
+			unsigned int hash = 5381;
+
+			const char* characterIterator = fixedString;
+
+			for (unsigned int i {0}; i < fixedString.StringLength(); ++characterIterator, ++i)
+			{
+				hash = ((hash << 5) + hash) + (*characterIterator);
+			}
+
+			return hash;
+		}
+	};
+}
+

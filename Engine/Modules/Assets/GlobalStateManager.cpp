@@ -51,7 +51,7 @@ namespace Kargono::Assets
 		// Save data names
 		out << YAML::Key << "DataNames" << YAML::Value;
 		out << YAML::BeginSeq; // Start of Data Names Sequence
-		for (FixedString32& name : assetReference->m_DataNames)
+		for (FixedBufStr32& name : assetReference->m_DataNames)
 		{
 			out << YAML::Value << name.CString();
 		}
@@ -128,7 +128,7 @@ namespace Kargono::Assets
 		YAML::Node dataNamesNode = data["DataNames"];
 		if (dataNamesNode)
 		{
-			std::vector<FixedString32>& newNamesList = newGlobalState->m_DataNames;
+			std::vector<FixedBufStr32>& newNamesList = newGlobalState->m_DataNames;
 			for (const YAML::Node& dataNameNode : dataNamesNode)
 			{
 				newNamesList.push_back(dataNameNode.as<std::string>().c_str());
@@ -146,7 +146,7 @@ namespace Kargono::Assets
 		if (dataNamesNode)
 		{
 			size_t iteration{ 0 };
-			for (FixedString32& name : newGlobalState->m_DataNames)
+			for (FixedBufStr32& name : newGlobalState->m_DataNames)
 			{
 				Utility::DeserializeWrappedVarType
 				(

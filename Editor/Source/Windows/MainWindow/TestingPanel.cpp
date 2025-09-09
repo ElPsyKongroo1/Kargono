@@ -9,25 +9,101 @@
 #include "Modules/FileSystem/FileSystem.h"
 #include "Kargono/Memory/StackAlloc.h"
 #include "Kargono/Memory/SystemAlloc.h"
-#include "Kargono/Core/DataStructures.h"
+#include "Kargono/Memory/HeapAlloc.h"
+#include "Kargono/Utility/CompilerInfo.h"
+#include "Modules/ECSInternal/Module/ComponentTag.h"
+
+#include "Modules/Core/DataStructures/SparseSet.h"
+#include "Modules/ECSInternal/RegistryInternal.h"
 
 #include <sstream>
 #include <cstdio>
 
-
 namespace Kargono::Panels
 {
+	Register_Module(Editor)
+
 	static SparseArray<uint64_t> s_SparseArray{64};
+	//static ECS::SparseSet s_SparseSet{ 10, 10 };
+
+	static Memory::HeapAllocator s_TestHeapAlloc{};
+	static ECSInternal::RegistryInternal s_DataRegistry{};
+	static EditorUI::EditIntegerSpec s_EntityIDSpec;
 
 	static EditorApp* s_EditorApp{ nullptr };
 	static Windows::MainWindow* s_MainWindow{ nullptr };
 
 	static EditorUI::EditTextSpec s_CompilePath {};
 
+	struct TransformTest
+	{
+		Math::vec2 location{};
+		Math::vec2 size{};
+
+		void CopyTo(TransformTest* dst)
+		{
+			dst->location = location;
+			dst->size = size;
+		}
+	};
+
+	Register_Module_Type(TransformTest)
+
+	struct HealthTest
+	{
+		float headHealth{};
+		float torsoHealth{};
+		Math::vec2 armsHealth{};
+		Math::vec2 legsHealth{};
+
+		void CopyTo(HealthTest* dst)
+		{
+			dst->headHealth = headHealth;
+			dst->torsoHealth = torsoHealth;
+			dst->armsHealth = armsHealth;
+			dst->legsHealth = legsHealth;
+		}
+	};
+
+	Register_Module_Type(HealthTest)
+
+	struct BloodTest
+	{
+		float indexFinger{};
+		float ringFinger{};
+		float pinkyFinger{};
+		float thumbFinger{};
+		float middleFinger{};
+
+		void CopyTo(BloodTest* dst)
+		{
+			dst->indexFinger = indexFinger;
+			dst->ringFinger = ringFinger;
+			dst->pinkyFinger = pinkyFinger;
+			dst->thumbFinger = thumbFinger;
+			dst->middleFinger = middleFinger;
+		}
+	};
+
+	struct MovementConfigTest
+	{
+		float m_Acceleration{ 1.0f };
+		float m_Deacceleration{ 2.0f };
+
+		void CopyTo(MovementConfigTest* dst)
+		{
+			MovementConfigTest* destination = (MovementConfigTest*)dst;
+			destination->m_Acceleration = m_Acceleration;
+			destination->m_Deacceleration = m_Deacceleration;
+		}
+	};
+
+	Register_Module_Type(BloodTest)
+
 	struct DataStruct
 	{
 		float ahaha{ 1.0f };
-		FixedString32 m_Text{ "aba" };
+		FixedBufStr32 m_Text{ "aba" };
 	};
 	static DataStruct* s_DataStructs[5];
 	static Memory::StackAlloc s_DataAllocator{};
@@ -308,6 +384,11 @@ namespace Kargono::Panels
 		entry2->m_Handle = 2;
 		entry2->m_Label = "Entry Two";
 
+		s_DataRegistry.Init(&s_TestHeapAlloc);
+
+		s_EntityIDSpec.m_Label = "Active Entity ID";
+		s_EntityIDSpec.m_Bounds = {0, 1'000};
+
 		// TODO Testing Splines
 #if 0
 		// TODO: Please Remove
@@ -510,6 +591,396 @@ namespace Kargono::Panels
 			}
 			
 		}
+
+		static int testIndex{ 1 };
+
+		ImGui::DragInt("Sparse Set Index", &testIndex, 1, 0, 100);
+		/*
+		if (ImGui::Button("Add Sparse Set Index"))
+		{
+			if (s_SparseSet.InsertElement(testIndex) == ECS::k_InvalidDenseIndex)
+			{
+				KG_TRACE_INFO("Add operation failed!");
+			}
+			else
+			{
+				KG_TRACE_INFO("Add operation success!!");
+			}
+		}
+
+		if (ImGui::Button("Delete Sparse Set Index"))
+		{
+			if (s_SparseSet.DeleteElement(testIndex) == ECS::k_InvalidDenseIndex)
+			{
+				KG_TRACE_INFO("Delete operation failed!");
+			}
+			else
+			{
+				KG_TRACE_INFO("Delete operation success!!");
+			}
+		}
+
+		if (ImGui::Button("Print Sparse Set"))
+		{
+			KG_TRACE_INFO(s_SparseSet.Print());
+		}
+		*/
+
+		EditorUI::EditorUIService::Text("Current Entity ID");
+		EditorUI::EditorUIService::EditInteger(s_EntityIDSpec);
+
+		if (ImGui::Button("Add Entity"))
+		{
+			Expected<ECSInternal::EntityID> newID{ s_DataRegistry.CreateEntity() };
+			if (newID)
+			{
+				KG_TRACE_INFO("Add operation success!");
+			}
+			else
+			{
+				KG_TRACE_INFO("Add operation failed!");
+			}
+		}
+
+		if (ImGui::Button("Delete Entity"))
+		{
+			if (s_DataRegistry.DestroyEntity(s_EntityIDSpec.m_CurrentInteger))
+			{
+				KG_TRACE_INFO("Delete operation success!");
+			}
+			else
+			{
+				KG_TRACE_INFO("Delete operation failed!");
+			}
+		}
+
+		if (ImGui::Button("Print All Entities"))
+		{
+			std::stringstream ss;
+			ss << "All Entities: ";
+			for (ECSInternal::EntityID id : s_DataRegistry.GetAllEntities())
+			{
+				ss << id << ' ';
+			}
+			ss << '\n';
+			KG_TRACE_INFO(ss.str());
+		}
+
+		EditorUI::EditorUIService::Text("Add / Remove Components");
+		if (ImGui::Button("Add Transform Component"))
+		{
+			TransformTest testTransform{};
+			bool success = s_DataRegistry.AddComponent<TransformTest>(s_EntityIDSpec.m_CurrentInteger, testTransform);
+
+			if (success)
+			{
+				KG_TRACE_INFO("Add transform succeeded");
+			}
+			else
+			{
+				KG_TRACE_INFO("Add transform failed");
+			}
+		}
+		
+		if (ImGui::Button("Delete Transform Component"))
+		{
+			bool success = s_DataRegistry.RemoveComponent<TransformTest>(s_EntityIDSpec.m_CurrentInteger);
+
+			if (success)
+			{
+				KG_TRACE_INFO("Delete transform succeeded");
+			}
+			else
+			{
+				KG_TRACE_INFO("Delete transform failed");
+			}
+		}
+
+		if (ImGui::Button("Move Entity Up"))
+		{
+			ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(s_EntityIDSpec.m_CurrentInteger);
+			if (!transformRef)
+			{
+				KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+			}
+			else
+			{
+				TransformTest& transform{ transformRef.value().get() };
+
+				transform.location.y += 1.0f;
+			}
+		}
+
+		if (ImGui::Button("Add Health Component"))
+		{
+			HealthTest testTransform{};
+			bool success = s_DataRegistry.AddComponent<HealthTest>(s_EntityIDSpec.m_CurrentInteger, testTransform);
+
+			if (success)
+			{
+				KG_TRACE_INFO("Add health succeeded");
+			}
+			else
+			{
+				KG_TRACE_INFO("Add health failed");
+			}
+		}
+
+		if (ImGui::Button("Delete Health Component"))
+		{
+			bool success = s_DataRegistry.RemoveComponent<HealthTest>(s_EntityIDSpec.m_CurrentInteger);
+
+			if (success)
+			{
+				KG_TRACE_INFO("Delete health succeeded");
+			}
+			else
+			{
+				KG_TRACE_INFO("Delete health failed");
+			}
+		}
+
+		if (ImGui::Button("Add Transform To All Entities"))
+		{
+			std::span<ECSInternal::EntityID> allEntities = s_DataRegistry.GetAllEntities();
+			for (ECSInternal::EntityID id : allEntities)
+			{
+				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
+				if (!transformRef)
+				{
+					TransformTest test{};
+					s_DataRegistry.AddComponent<TransformTest>(id, test);
+				}
+			}
+		}
+
+		if (ImGui::Button("Delete Transform To All Entities"))
+		{
+			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
+			for (ECSInternal::EntityID id : transformView)
+			{
+				KG_ASSERT(s_DataRegistry.RemoveComponent<TransformTest>(id));
+			}
+		}
+
+		if (ImGui::Button("Add Health To All Entities"))
+		{
+			std::span<ECSInternal::EntityID> allEntities = s_DataRegistry.GetAllEntities();
+			for (ECSInternal::EntityID id : allEntities)
+			{
+				ExpectedRef<HealthTest> transformRef = s_DataRegistry.GetComponent<HealthTest>(id);
+				if (!transformRef)
+				{
+					HealthTest test{};
+					s_DataRegistry.AddComponent<HealthTest>(id, test);
+				}
+			}
+		}
+
+		if (ImGui::Button("Add Speed Comp To All Entities"))
+		{
+			constexpr ECSInternal::ComponentIdentifier identifier = ECSInternal::GetComponentIdentifier<MovementConfigTest>();
+
+			if (!s_DataRegistry.IsComponentRegistered(identifier))
+			{
+				ECSInternal::ComponentMetadata metadata{};
+				metadata.m_ComponentSize = sizeof(MovementConfigTest);
+				metadata.m_ComponentAlignment = alignof(MovementConfigTest);
+				s_DataRegistry.RegisterComponent(identifier, metadata);
+			}
+
+			std::span<ECSInternal::EntityID> allEntities = s_DataRegistry.GetAllEntities();
+			for (ECSInternal::EntityID id : allEntities)
+			{
+				void* movementConfig = s_DataRegistry.GetComponent(id, identifier);
+				if (!movementConfig)
+				{
+					MovementConfigTest test{};
+					s_DataRegistry.AddComponent(id, identifier ,&test);
+				}
+			}
+		}
+
+		if (ImGui::Button("Delete Health To All Entities"))
+		{
+			auto transformView = s_DataRegistry.GetFlatView<HealthTest>();
+			for (ECSInternal::EntityID id : transformView)
+			{
+				KG_ASSERT(s_DataRegistry.RemoveComponent<HealthTest>(id));
+			}
+		}
+
+		EditorUI::EditorUIService::Text("Get Views");
+		if (ImGui::Button("Print Out All Transform Components"))
+		{
+			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
+			for (ECSInternal::EntityID id : transformView)
+			{
+				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
+				if (!transformRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+				
+				TransformTest& transform{ transformRef.value().get() };
+
+				KG_TRACE_INFO("Entity {} | Position x: {} y: {} | Size x: {}, y: {}", 
+					id, 
+					transform.location.x, transform.location.y,
+					transform.size.x, transform.size.y
+				);
+			}
+		}
+
+		if (ImGui::Button("Print Out All Health Components"))
+		{
+			auto healthView = s_DataRegistry.GetFlatView<HealthTest>();
+			for (ECSInternal::EntityID id : healthView)
+			{
+				ExpectedRef<HealthTest> healthRef = s_DataRegistry.GetComponent<HealthTest>(id);
+				if (!healthRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+
+				HealthTest& health{ healthRef.value().get() };
+
+				KG_TRACE_INFO("Entity {} | Head: {} Torso: {} | Arms Left: {}, Right: {} | Legs Left: {}, Right: {}",
+					id,
+					health.headHealth, health.torsoHealth,
+					health.armsHealth.x, health.armsHealth.y,
+					health.legsHealth.x, health.legsHealth.y
+				);
+			}
+		}
+
+		if (ImGui::Button("Print Out All Movement Components"))
+		{
+			// Get component identifier
+			constexpr auto identifierStr{ GetUniqueIdentifier<MovementConfigTest>() };
+			constexpr ECSInternal::ComponentIdentifier identifier =
+				Utility::FileSystem::CRCFromString(identifierStr.CString());
+
+			if (!s_DataRegistry.IsComponentRegistered(identifier))
+			{
+				// Register component if not already registered
+				ECSInternal::ComponentMetadata metadata{};
+				metadata.m_ComponentSize = sizeof(MovementConfigTest);
+				metadata.m_ComponentAlignment = alignof(MovementConfigTest);
+				s_DataRegistry.RegisterComponent(identifier, metadata);
+			}
+
+			auto movementView = s_DataRegistry.GetFlatView<1>({ identifier });
+			for (ECSInternal::EntityID id : movementView)
+			{
+				ExpectedRef<MovementConfigTest> movementConfigRef = s_DataRegistry.GetComponent<MovementConfigTest>(id);
+				if (!movementConfigRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+
+				MovementConfigTest& movementConfig{ movementConfigRef.value().get() };
+
+				KG_TRACE_INFO("Entity {} | Accel/Deaccel {} {}",
+					id,
+					movementConfig.m_Acceleration, movementConfig.m_Deacceleration
+				);
+			}
+		}
+
+		if (ImGui::Button("Print Out All Transform & Health Components"))
+		{
+			auto combinedView = s_DataRegistry.GetFlatView<TransformTest, HealthTest>();
+			for (ECSInternal::EntityID id : combinedView)
+			{
+				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
+				if (!transformRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+
+				TransformTest& transform{ transformRef.value().get() };
+
+				KG_TRACE_INFO("Entity {} | Position x: {} y: {} | Size x: {}, y: {}",
+					id,
+					transform.location.x, transform.location.y,
+					transform.size.x, transform.size.y
+				);
+
+				ExpectedRef<HealthTest> healthRef = s_DataRegistry.GetComponent<HealthTest>(id);
+				if (!healthRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+
+				HealthTest& health{ healthRef.value().get() };
+
+				KG_TRACE_INFO("Entity {} | Head: {} Torso: {} | Arms Left: {}, Right: {} | Legs Left: {}, Right: {}",
+					id,
+					health.headHealth, health.torsoHealth,
+					health.armsHealth.x, health.armsHealth.y,
+					health.legsHealth.x, health.legsHealth.y
+				);
+			}
+		}
+
+		if (ImGui::Button("Move All Entities Up By One"))
+		{
+			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();
+			for (ECSInternal::EntityID id : transformView)
+			{
+				ExpectedRef<TransformTest> transformRef = s_DataRegistry.GetComponent<TransformTest>(id);
+				if (!transformRef)
+				{
+					KG_TRACE_INFO("[[ERROR]]: Could not locate component!!!!!");
+					continue;
+				}
+
+				TransformTest& transform{ transformRef.value().get() };
+
+				transform.location.y += 1.0f;
+			}
+		}
+
+
+		if (ImGui::Button("Print Transform Name"))
+		{
+			Utility::ReturnTemplateNames<TransformTest> values = Utility::CompilerInfo::GetTemplateArgumentNames<TransformTest>();
+			KG_TRACE_INFO("Transform Component. Stringified: {}",
+				values[0]);
+		}
+
+		if (ImGui::Button("Print Health Name"))
+		{
+			Utility::ReturnTemplateNames<HealthTest> values = Utility::CompilerInfo::GetTemplateArgumentNames<HealthTest>();
+			KG_TRACE_INFO("Health Component. Stringified: {}",
+				values[0]);
+		}
+
+		if (ImGui::Button("Print TestingPanel Name"))
+		{
+			Utility::ReturnTemplateNames<TestingPanel> values = Utility::CompilerInfo::GetTemplateArgumentNames<TestingPanel>();
+			KG_TRACE_INFO("Testing Panel. Stringified: {}",
+				values[0]);
+		}
+
+
+		if (ImGui::Button("Print All Struct Names"))
+		{
+			auto values = Utility::CompilerInfo::GetTemplateArgumentNames<TransformTest, HealthTest, TestingPanel>();
+			
+			KG_TRACE_INFO("Print All Struct Names:");
+			for (std::string_view str : values)
+			{
+				KG_TRACE_INFO(str);
+			}
+		}
+		
 
 		// TODO: Testing Splines
 #if 0 

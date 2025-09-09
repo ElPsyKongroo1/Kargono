@@ -1,6 +1,9 @@
 #include "kgpch.h"
 #include "RuntimeApp.h"
 
+#include "Modules/Rendering/Components/CameraComponent.h"
+#include "Modules/Core/Components/TransformComponent.h"
+
 #include <filesystem>
 
 namespace Kargono
@@ -163,7 +166,7 @@ namespace Kargono
 		{
 			return;
 		}
-		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
 		
 		// Only handle UI and particles if a main camera exists
 		if (mainCamera)
@@ -171,7 +174,7 @@ namespace Kargono
 			Window& engineWindow{ EngineService::GetActiveEngine().GetWindow()};
 
 			// Get camera transform
-			Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
+			Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
 
 			// Draw particles
 			Particles::ParticleService::GetActiveContext().OnRender(mainCamera->GetProjection() * glm::inverse(cameraTransform));
@@ -331,22 +334,22 @@ namespace Kargono
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<ECS::Rigidbody2DComponent>())
+		if (entityOne.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
-			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
-			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
-			Scripting::Script* script = component.OnCollisionStartScript.get();
+			Physics2D::Rigidbody2DComponent& component = entityOne.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.m_OnCollisionStartScriptHandle;
+			Scripting::Script* script = component.m_OnCollisionStartScript.get();
 			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
-		if (!collisionHandled && entityTwo.HasComponent<ECS::Rigidbody2DComponent>())
+		if (!collisionHandled && entityTwo.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
-			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
-			Assets::AssetHandle scriptHandle = component.OnCollisionStartScriptHandle;
-			Scripting::Script* script = component.OnCollisionStartScript.get();
+			Physics2D::Rigidbody2DComponent& component = entityTwo.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.m_OnCollisionStartScriptHandle;
+			Scripting::Script* script = component.m_OnCollisionStartScript.get();
 			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
@@ -367,22 +370,22 @@ namespace Kargono
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<ECS::Rigidbody2DComponent>())
+		if (entityOne.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
-			ECS::Rigidbody2DComponent& component = entityOne.GetComponent<ECS::Rigidbody2DComponent>();
-			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
-			Scripting::Script* script = component.OnCollisionEndScript.get();
+			Physics2D::Rigidbody2DComponent& component = entityOne.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.m_OnCollisionEndScriptHandle;
+			Scripting::Script* script = component.m_OnCollisionEndScript.get();
 			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
 		}
 
-		if (!collisionHandled && entityOne.HasComponent<ECS::Rigidbody2DComponent>())
+		if (!collisionHandled && entityOne.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
-			ECS::Rigidbody2DComponent& component = entityTwo.GetComponent<ECS::Rigidbody2DComponent>();
-			Assets::AssetHandle scriptHandle = component.OnCollisionEndScriptHandle;
-			Scripting::Script* script = component.OnCollisionEndScript.get();
+			Physics2D::Rigidbody2DComponent& component = entityTwo.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Assets::AssetHandle scriptHandle = component.m_OnCollisionEndScriptHandle;
+			Scripting::Script* script = component.m_OnCollisionEndScript.get();
 			if (scriptHandle != Assets::k_EmptyHandle)
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
@@ -483,8 +486,8 @@ namespace Kargono
 		{
 			return;
 		}
-		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<ECS::CameraComponent>().Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<ECS::TransformComponent>().GetTransform();
+		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
 
 		if (mainCamera)
 		{

@@ -4,7 +4,7 @@
 #include "Modules/Rendering/RenderingService.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/FileSystem/FileSystem.h"
-
+#include "Modules/Rendering/Components/ShapeComponent.h"
 #include "Modules/Rendering/ExternalAPI/OpenGLShader.h"
 
 namespace Kargono::Rendering
@@ -15,8 +15,8 @@ namespace Kargono::Rendering
 		m_Texture = nullptr;
 		if (m_ShapeComponent)
 		{
-			m_ShapeComponent->Texture = nullptr;
-			m_ShapeComponent->Shader = nullptr;
+			m_ShapeComponent->m_Texture = nullptr;
+			m_ShapeComponent->m_Shader = nullptr;
 		}
 		m_CurrentDrawBuffer = nullptr;
 	}

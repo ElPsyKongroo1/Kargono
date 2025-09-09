@@ -140,7 +140,7 @@ namespace Kargono::Windows
 		m_LogPanel = CreateScope<Panels::LogPanel>();
 		m_StatisticsPanel = CreateScope<Panels::StatisticsPanel>();
 		m_ProjectPanel = CreateScope<Panels::ProjectPanel>();
-		m_ProjectComponentPanel = CreateScope<Panels::ProjectComponentPanel>();
+		m_CustomComponentPanel = CreateScope<Panels::CustomComponentPanel>();
 		m_ProjectEnumPanel = CreateScope<Panels::ProjectEnumPanel>();
 		m_TextEditorPanel = CreateScope<Panels::TextEditorPanel>();
 		m_ScriptEditorPanel = CreateScope<Panels::ScriptEditorPanel>();
@@ -206,7 +206,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnInputEvent(Events::Event* event)
 	{
 		bool handled{ false };
-		FixedString32 focusedWindow = EditorUI::EditorUIContext::GetFocusedWindowName();
+		FixedBufStr32 focusedWindow = EditorUI::EditorUIContext::GetFocusedWindowName();
 		if (focusedWindow == m_ViewportPanel->m_PanelName)
 		{
 			m_ViewportPanel->OnInputEvent(event);
@@ -263,27 +263,27 @@ namespace Kargono::Windows
 		// Refresh text editor
 		m_TextEditorPanel->OnAssetEvent(event);
 
-		// Handle adding a project component to the active editor scene
-		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
+		// Handle adding a custom component to the active editor scene
+		if (manageAsset.GetAssetType() == Assets::AssetType::CustomComponent &&
 			manageAsset.GetAction() == Events::ManageAssetAction::Create &&
 			m_EditorScene)
 		{
-			// Create project component inside scene registry
-			m_EditorScene->AddProjectComponentRegistry(manageAsset.GetAssetID());
+			// Create custom component inside scene registry
+			m_EditorScene->AddCustomComponentRegistry(manageAsset.GetAssetID());
 		}
-		// Handle editing a project component by modifying entity component data inside the Assets::AssetService::SceneRegistry and the active editor scene
-		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
+		// Handle editing a custom component by modifying entity component data inside the Assets::AssetService::SceneRegistry and the active editor scene
+		if (manageAsset.GetAssetType() == Assets::AssetType::CustomComponent &&
 			manageAsset.GetAction() == Events::ManageAssetAction::UpdateAsset)
 		{
-			OnUpdateProjectComponent(manageAsset);
+			OnUpdateCustomComponent(manageAsset);
 		}
-		// Handle deleting a project component by removing entity data from all scenes
-		if (manageAsset.GetAssetType() == Assets::AssetType::ProjectComponent &&
+		// Handle deleting a custom component by removing entity data from all scenes
+		if (manageAsset.GetAssetType() == Assets::AssetType::CustomComponent &&
 			manageAsset.GetAction() == Events::ManageAssetAction::PreDelete &&
 			m_EditorScene)
 		{
-			// Remove project component from editor scene
-			Assets::AssetService::RemoveProjectComponentFromScene(m_EditorScene, manageAsset.GetAssetID());
+			// Remove custom component from editor scene
+			Assets::AssetService::RemoveCustomComponentFromScene(m_EditorScene, manageAsset.GetAssetID());
 		}
 
 		// Handle deleting a emitter config by removing entity data from all scenes
@@ -324,7 +324,7 @@ namespace Kargono::Windows
 				bool success{ false };
 				while (!success)
 				{
-					FixedString16 sceneName{ "NewScene" };
+					FixedBufStr16 sceneName{ "NewScene" };
 					sceneName.AppendInteger(iteration);
 					success = NewScene(sceneName.CString());
 					iteration++;
@@ -346,8 +346,8 @@ namespace Kargono::Windows
 		case Assets::AssetType::GameState:
 			m_GameStatePanel->OnAssetEvent(event);
 			break;
-		case Assets::AssetType::ProjectComponent:
-			m_ProjectComponentPanel->OnAssetEvent(event);
+		case Assets::AssetType::CustomComponent:
+			m_CustomComponentPanel->OnAssetEvent(event);
 			break;
 		case Assets::AssetType::Script:
 			m_ScriptEditorPanel->OnAssetEvent(event);
@@ -602,7 +602,7 @@ namespace Kargono::Windows
 		{
 			ECS::Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
 			m_SceneEditorPanel->SetSelectedEntity(newEntity);
-			m_SceneEditorPanel->SetDisplayedComponent(ECS::ComponentType::None);
+			m_SceneEditorPanel->SetDisplayedComponent(ECSInternal::k_InvalidComponentIdentifier);
 		}
 	}
 
@@ -923,7 +923,7 @@ namespace Kargono::Windows
 		if (event.IsRepeat()) { return false; }
 
 		// Handle panel specific key pressed events
-		FixedString32 focusedWindow = EditorUI::EditorUIContext::GetFocusedWindowName();
+		FixedBufStr32 focusedWindow = EditorUI::EditorUIContext::GetFocusedWindowName();
 		if (m_PanelToKeyboardInput.contains(focusedWindow.CString()))
 		{
 			if (m_PanelToKeyboardInput.at(focusedWindow.CString())(event))
@@ -1007,7 +1007,7 @@ namespace Kargono::Windows
 	bool MainWindow::OnMouseButtonPressed(Events::MouseButtonPressedEvent event)
 	{
 		// Refocus window if right click is used
-		FixedString32 focusedWindow = EditorUI::EditorUIContext::GetFocusedWindowName();
+		FixedBufStr32 focusedWindow = EditorUI::EditorUIContext::GetFocusedWindowName();
 		if (event.GetMouseButton() == Mouse::ButtonRight)
 		{
 			if (const char* hoveredName = EditorUI::EditorUIContext::GetHoveredWindowName())
@@ -1047,7 +1047,7 @@ namespace Kargono::Windows
 		if (reallocationInstructions.m_OldDataLocations.size() == 0)
 		{
 			// Create/Overwrite scene registry using the new archetype of field data
-			currentScene->AddProjectComponentRegistry(event.GetAssetID());
+			currentScene->AddCustomComponentRegistry(event.GetAssetID());
 			return;
 		}
 
@@ -1055,7 +1055,7 @@ namespace Kargono::Windows
 		if (reallocationInstructions.m_NewDataLocations.size() == 0)
 		{
 			// Create/Overwrite scene registry using the new archetype of field data
-			currentScene->ClearProjectComponentRegistry(event.GetAssetID());
+			currentScene->ClearCustomComponentRegistry(event.GetAssetID());
 			return;
 		}
 
@@ -1064,10 +1064,10 @@ namespace Kargono::Windows
 		for (auto& [entityID, enttID] : currentScene->m_EntityRegistry.m_EntityMap)
 		{
 			ECS::Entity entity = currentScene->GetEntityByEnttID(enttID);
-			if (entity.HasProjectComponentData(event.GetAssetID()))
+			if (entity.HasCustomComponentData(event.GetAssetID()))
 			{
 				// Get old data buffer reference and generate new data buffer
-				uint8_t* oldComponentData = (uint8_t*)entity.GetProjectComponentData(event.GetAssetID());
+				uint8_t* oldComponentData = (uint8_t*)entity.GetCustomComponentData(event.GetAssetID());
 				std::vector<uint8_t> newComponentData;
 				newComponentData.resize(reallocationInstructions.m_NewDataSize);
 
@@ -1093,26 +1093,26 @@ namespace Kargono::Windows
 			}
 		}
 
-		// Clear old scene registry data for this project component type
-		currentScene->ClearProjectComponentRegistry(event.GetAssetID());
+		// Clear old scene registry data for this custom component type
+		currentScene->ClearCustomComponentRegistry(event.GetAssetID());
 
 		// Create/Overwrite scene registry using the new archetype of field data
-		currentScene->AddProjectComponentRegistry(event.GetAssetID());
+		currentScene->AddCustomComponentRegistry(event.GetAssetID());
 
 		// Write stored entity component data into new registry
 		for (auto& [entityID, dataBuffer] : entityToNewDataMap)
 		{
 			ECS::Entity currentEntity = currentScene->GetEntityByUUID(entityID);
-			if (!currentEntity.HasProjectComponentData(event.GetAssetID()))
+			if (!currentEntity.HasCustomComponentData(event.GetAssetID()))
 			{
-				currentEntity.AddProjectComponentData(event.GetAssetID());
+				currentEntity.AddCustomComponentData(event.GetAssetID());
 			}
-			uint8_t* currentData = (uint8_t*)currentEntity.GetProjectComponentData(event.GetAssetID());
+			uint8_t* currentData = (uint8_t*)currentEntity.GetCustomComponentData(event.GetAssetID());
 			memcpy(currentData, dataBuffer.data(), dataBuffer.size()); // Note that the data buffer is a vector of bytes, which means size == byte size
 		}
 	}
 
-	bool MainWindow::OnUpdateProjectComponent(Events::ManageAsset& event)
+	bool MainWindow::OnUpdateCustomComponent(Events::ManageAsset& event)
 	{
 		// Modify entity component data for all scenes in the scene asset registry and save changes to disk
 		Assets::FieldReallocationInstructions& reallocationInstructions = *(Assets::FieldReallocationInstructions*)event.GetProvidedData().get();
@@ -1216,7 +1216,7 @@ namespace Kargono::Windows
 				ImGui::MenuItem("Script Editor", NULL, &m_ShowScriptEditor);
 				if (ImGui::BeginMenu("Project Data"))
 				{
-					ImGui::MenuItem("Component Editor", NULL, &m_ShowProjectComponent);
+					ImGui::MenuItem("Component Editor", NULL, &m_ShowCustomComponent);
 					ImGui::MenuItem("Color Palette Editor", NULL, &m_ShowColorPalette);
 					ImGui::MenuItem("Game State Editor", NULL, &m_ShowGameStateEditor);
 					ImGui::MenuItem("Global State Editor", NULL, &m_ShowGlobalStateEditor);
@@ -1297,7 +1297,7 @@ namespace Kargono::Windows
 		if (m_ShowStats) { m_StatisticsPanel->OnEditorUIRender(); }
 		if (m_ShowViewport) { m_ViewportPanel->OnEditorUIRender(); }
 		if (m_ShowProject) { m_ProjectPanel->OnEditorUIRender(); }
-		if (m_ShowProjectComponent) { m_ProjectComponentPanel->OnEditorUIRender(); }
+		if (m_ShowCustomComponent) { m_CustomComponentPanel->OnEditorUIRender(); }
 		if (m_ShowProjectEnum) { m_ProjectEnumPanel->OnEditorUIRender(); }
 		if (m_ShowScriptEditor) { m_ScriptEditorPanel->OnEditorUIRender(); }
 		if (m_ShowTextEditor) { m_TextEditorPanel->OnEditorUIRender(); }

@@ -70,7 +70,7 @@ namespace Kargono::Panels
 		Ref<ProjectData::ColorPalette> m_EditorColorPalette{ nullptr };
 		Assets::AssetHandle m_EditorColorPaletteHandle{ 0 };
 	private:
-		FixedString32 m_PanelName{ "Color Palette Editor" };
+		FixedBufStr32 m_PanelName{ "Color Palette Editor" };
 
 		//=========================
 		// Widgets

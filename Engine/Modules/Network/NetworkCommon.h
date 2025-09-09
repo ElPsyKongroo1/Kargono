@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/DataStructures.h"
 #include "Kargono/Math/MathAliases.h"
 
 #include <limits>

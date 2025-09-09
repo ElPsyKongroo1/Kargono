@@ -174,7 +174,7 @@ namespace Kargono::Panels
 
 			// Get vector of parameters from list widget
 			std::vector<WrappedVarType> parameterTypeList;
-			std::vector<FixedString32> parameterNameList;
+			std::vector<FixedBufStr32> parameterNameList;
 			m_CreateWidgets.m_ParameterList.EditEntries([&](const EditorUI::ListEntry& currentEntry) 
 			{
 				parameterTypeList.emplace_back((WrappedVarType)(uint64_t)currentEntry.m_Handle);
@@ -183,7 +183,7 @@ namespace Kargono::Panels
 
 			// Validate that there are no duplicate names
 			std::unordered_set<uint32_t> nameValidationSet;
-			for (FixedString32& name : parameterNameList)
+			for (FixedBufStr32& name : parameterNameList)
 			{
 				auto [iter, success] = nameValidationSet.insert(Utility::FileSystem::CRCFromString(name));
 				if (!success)
@@ -632,7 +632,7 @@ namespace Kargono::Panels
 		m_AllScriptsList.m_OnRefresh();
 		m_GroupLabelsTable.m_OnRefresh();
 	}
-	void ScriptEditorPanel::OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm, const std::vector<FixedString32>& parameterNames, bool openScriptEditor)
+	void ScriptEditorPanel::OpenCreateScriptDialogFromUsagePoint(WrappedFuncType scriptType, std::function<void(Assets::AssetHandle)> onConfirm, const std::vector<FixedBufStr32>& parameterNames, bool openScriptEditor)
 	{
 		KG_ASSERT(parameterNames.size() == Utility::WrappedFuncTypeToParameterTypes(scriptType).size(), "Invalid parameter name list provided for function usage point");
 
