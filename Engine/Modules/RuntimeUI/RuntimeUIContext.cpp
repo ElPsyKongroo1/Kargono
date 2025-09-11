@@ -6,9 +6,9 @@
 #include "Modules/Core/Engine.h"
 #include "Kargono/Core/Window.h"
 #include "Kargono/Projects/Project.h"
+#include "Modules/Rendering/Components/ShapeComponent.h"
 
 #include "Modules/Rendering/Shader.h"
-#include "Modules/ECS/EngineComponents.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Math/Interpolation.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
@@ -34,10 +34,10 @@ namespace Kargono::RuntimeUI
 				localBuffer, localShader);
 
 			// Create basic shape component for UI quad rendering
-			ECS::ShapeComponent* shapeComp = new ECS::ShapeComponent();
-			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
-			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
-			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
+			Rendering::ShapeComponent* shapeComp = new Rendering::ShapeComponent();
+			shapeComp->m_CurrentShape = Rendering::ShapeTypes::Quad;
+			shapeComp->m_Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
+			shapeComp->m_Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
 
 			m_BackgroundInputSpec.m_Shader = localShader;
 			m_BackgroundInputSpec.m_Buffer = localBuffer;
@@ -52,13 +52,13 @@ namespace Kargono::RuntimeUI
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			// Create basic shape component for UI quad rendering
-			ECS::ShapeComponent* shapeComp = new ECS::ShapeComponent();
-			shapeComp->CurrentShape = Rendering::ShapeTypes::Quad;
-			shapeComp->Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
-			shapeComp->Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
-			shapeComp->TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Rendering::Shape::s_Quad.GetIndexTextureCoordinates());
-			shapeComp->Shader = localShader;
-			shapeComp->Texture = nullptr;
+			Rendering::ShapeComponent* shapeComp = new Rendering::ShapeComponent();
+			shapeComp->m_CurrentShape = Rendering::ShapeTypes::Quad;
+			shapeComp->m_Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
+			shapeComp->m_Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
+			shapeComp->m_TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Rendering::Shape::s_Quad.GetIndexTextureCoordinates());
+			shapeComp->m_Shader = localShader;
+			shapeComp->m_Texture = nullptr;
 			
 			float* tilingFactor = Rendering::Shader::GetInputLocation<float>(
 				Utility::FileSystem::CRCFromString("a_TilingFactor"), 

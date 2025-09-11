@@ -28,7 +28,7 @@ namespace Kargono::Assets
 		InputMap,
 		Script,
 		GameState,
-		ProjectComponent,
+		CustomComponent,
 		AIState,
 		EmitterConfig,
 		ProjectEnum,
@@ -46,7 +46,7 @@ namespace Kargono::Assets
 		AssetType::GameState,
 		AssetType::GlobalState,
 		AssetType::InputMap,
-		AssetType::ProjectComponent,
+		AssetType::CustomComponent,
 		AssetType::ProjectEnum,
 		AssetType::Scene,
 		AssetType::Script,
@@ -74,7 +74,7 @@ namespace Kargono::Utility
 		case Assets::AssetType::InputMap: return "InputMap";
 		case Assets::AssetType::Script: return "Script";
 		case Assets::AssetType::GameState: return "GameState";
-		case Assets::AssetType::ProjectComponent: return "ProjectComponent";
+		case Assets::AssetType::CustomComponent: return "CustomComponent";
 		case Assets::AssetType::AIState: return "AIState";
 		case Assets::AssetType::EmitterConfig: return "EmitterConfig";
 		case Assets::AssetType::ProjectEnum: return "ProjectEnum";
@@ -96,7 +96,7 @@ namespace Kargono::Utility
 		if (type == "InputMap") { return Assets::AssetType::InputMap; }
 		if (type == "Script") { return Assets::AssetType::Script; }
 		if (type == "GameState") { return Assets::AssetType::GameState; }
-		if (type == "ProjectComponent") { return Assets::AssetType::ProjectComponent; }
+		if (type == "CustomComponent") { return Assets::AssetType::CustomComponent; }
 		if (type == "AIState") { return Assets::AssetType::AIState; }
 		if (type == "EmitterConfig") { return Assets::AssetType::EmitterConfig; }
 		if (type == "ProjectEnum") { return Assets::AssetType::ProjectEnum; }

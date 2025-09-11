@@ -41,7 +41,7 @@ namespace Kargono::ECSInternal
 		size_t m_ComponentSize{0};
 		size_t m_ComponentAlignment{ 0 };
 		ComponentFunctors m_CompFunctors{};
-		Assets::AssetHandle m_CustomComponentHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_CustomComponentHandle{ Assets::k_EmptyHandle };
 	};
 }
 

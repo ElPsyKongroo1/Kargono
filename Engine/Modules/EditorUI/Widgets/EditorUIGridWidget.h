@@ -3,7 +3,7 @@
 #include "Modules/EditorUI/EditorUIContext.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Core/UUID.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiAPI.h"
@@ -27,7 +27,7 @@ namespace Kargono::EditorUI
 
 	struct GridEntry
 	{
-		FixedString64 m_Label;
+		FixedBufStr64 m_Label;
 		ArchetypeID m_ArchetypeID{ k_InvalidArchetypeID };
 		UUID m_EntryID{ k_EmptyUUID };
 	};
@@ -46,7 +46,7 @@ namespace Kargono::EditorUI
 		// Handle create/receive payload
 		std::function<void(GridEntry& currentEntry, DragDropPayload& newPayload)> m_OnCreatePayload;
 		std::function<void(GridEntry& currentEntry, const char*, void*, std::size_t)> m_OnReceivePayload;
-		std::vector<FixedString32> m_AcceptableOnReceivePayloads;
+		std::vector<FixedBufStr32> m_AcceptableOnReceivePayloads;
 	};
 
 	struct GridWidget : public Widget
@@ -85,7 +85,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		float m_CellPadding{ 25.0f };
 		float m_CellIconSize{ 140.0f };
 		WidgetFlags m_Flags{ Grid_None };

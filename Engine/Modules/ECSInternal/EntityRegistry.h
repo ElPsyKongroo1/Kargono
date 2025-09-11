@@ -83,7 +83,7 @@ namespace Kargono::ECSInternal
 				return {};
 			}
 
-			KG_ASSERT(denseIndex < m_Signatures.size());
+			KG_ASSERT(newEntityID < m_Signatures.size());
 
 			// Update the free list and appropriate signature
 			Signature& entitySignature{ m_Signatures[(EntityID)newEntityID] };
@@ -116,17 +116,10 @@ namespace Kargono::ECSInternal
 
 		[[nodiscard]] bool SetEntitySignature(EntityID entityID, Signature newSignature)
 		{
-			EntityID denseIndex{ m_EntitySet.GetDenseIndex(entityID) };
-
-			// Ensure the entity is found in the sparse set
-			if (!m_EntitySet.IsValidDenseIndex(denseIndex))
-			{
-				return false;
-			}
-			KG_ASSERT(denseIndex < m_Signatures.size());
+			KG_ASSERT(entityID < m_Signatures.size());
 
 			// Return the appropriate signature
-			m_Signatures[denseIndex] = newSignature;
+			m_Signatures[entityID] = newSignature;
 
 			return true;
 		}
@@ -151,17 +144,10 @@ namespace Kargono::ECSInternal
 		//==============================
 		Expected<Signature> GetSignature(EntityID entityID)
 		{
-			EntityID denseIndex{ m_EntitySet.GetDenseIndex(entityID) };
-
-			// Ensure the entity is found in the sparse set
-			if (!m_EntitySet.IsValidDenseIndex(denseIndex))
-			{
-				return {};
-			}
-			KG_ASSERT(denseIndex < m_Signatures.size());
+			KG_ASSERT(entityID < m_Signatures.size());
 
 			// Return the appropriate signature
-			return m_Signatures[denseIndex];
+			return m_Signatures[entityID];
 		}
 
 		bool HasEntity(EntityID entityID) const

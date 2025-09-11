@@ -278,7 +278,7 @@ namespace Kargono::EditorUI
 		Ref<Rendering::Texture2D> m_Audio_KG;
 		Ref<Rendering::Texture2D> m_Font_KG;
 		Ref<Rendering::Texture2D> m_GlobalState;
-		Ref<Rendering::Texture2D> m_ProjectComponent;
+		Ref<Rendering::Texture2D> m_CustomComponent;
 		Ref<Rendering::Texture2D> m_Script;
 		Ref<Rendering::Texture2D> m_Texture_KG;
 		Ref<Rendering::Texture2D> m_EmitterConfig;

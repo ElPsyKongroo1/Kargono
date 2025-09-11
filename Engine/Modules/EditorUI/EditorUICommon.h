@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <cstdint>
 #include <unordered_map>
@@ -13,7 +13,7 @@ namespace Kargono::EditorUI
 {
 	struct DragDropPayload
 	{
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		void* m_DataPointer;
 		size_t m_DataSize;
 	};

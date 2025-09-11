@@ -114,12 +114,15 @@ namespace Kargono::ECSInternal
 
 		return identifier;
 	}
-	ECSInternal::ComponentMetadata CustomComponent::GenerateMetadata() const
+	ECSInternal::ComponentMetadata CustomComponent::GenerateMetadata(Assets::AssetHandle compHandle) const
 	{
+		KG_ASSERT(compHandle != Assets::k_EmptyHandle);
+
 		ECSInternal::ComponentMetadata metadata{};
 		metadata.m_ComponentSize = m_ComponentSize;
 		metadata.m_ComponentAlignment = m_ComponentAlignment;
 		metadata.m_CompFunctors.m_Copy = CustomComponentCopyTo;
+		metadata.m_CustomComponentHandle = compHandle;
 		return metadata;
 	}
 	size_t CustomComponent::RevalidateAlignment()

@@ -22,9 +22,11 @@ namespace Kargono
 		//==============================
 		void CopyTo(TagComponent* dst)
 		{
-			TagComponent* destination = (TagComponent*)dst;
-			destination->m_Tag = m_Tag;
-			destination->m_Group = m_Group;
+			// Create the component in place
+			std::construct_at<TagComponent>(dst);
+
+			dst->m_Tag = m_Tag;
+			dst->m_Group = m_Group;
 		}
 
 		//==============================

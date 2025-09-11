@@ -2,7 +2,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <functional>
 
@@ -31,12 +31,12 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString64 m_Label;
+		FixedBufStr64 m_Label;
 		std::function<void()> m_OnNavigateBack{};
 		std::function<void()> m_OnNavigateForward{};
 		std::function<void(const char*, void*, std::size_t)> m_OnReceivePayloadBack{};
 		std::function<void(const char*, void*, std::size_t)> m_OnReceivePayloadForward{};
-		std::vector<FixedString32> m_AcceptableOnReceivePayloads;
+		std::vector<FixedBufStr32> m_AcceptableOnReceivePayloads;
 		WidgetFlags m_Flags{ 0 };
 		bool m_IsBackActive{ false };
 		bool m_IsForwardActive{ false };

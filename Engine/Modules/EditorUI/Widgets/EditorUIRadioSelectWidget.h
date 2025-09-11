@@ -2,7 +2,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <functional>
 
@@ -31,7 +31,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		WidgetFlags m_Flags{ RadioSelect_None };
 		uint16_t m_SelectedOption{ 0 };
 		std::string m_FirstOptionLabel{ "None" };

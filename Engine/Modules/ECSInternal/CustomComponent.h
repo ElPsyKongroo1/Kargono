@@ -60,7 +60,7 @@ namespace Kargono::ECSInternal
 		// Getters/Setters
 		//==============================
 		ComponentIdentifier RevalidateIdentifier();
-		ComponentMetadata GenerateMetadata() const;
+		ComponentMetadata GenerateMetadata(Assets::AssetHandle compHandle) const;
 		size_t RevalidateAlignment();
 	public:
 		//==============================

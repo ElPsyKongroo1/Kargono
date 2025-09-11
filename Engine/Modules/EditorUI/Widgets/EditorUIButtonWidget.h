@@ -2,7 +2,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <functional>
 
@@ -10,7 +10,7 @@ namespace Kargono::EditorUI
 {
 	struct Button
 	{
-		FixedString32 m_Label{ "Click Me" };
+		FixedBufStr32 m_Label{ "Click Me" };
 		std::function<void(Button&)> m_OnPress{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };
 	};
@@ -38,7 +38,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		WidgetFlags m_Flags{ ButtonFlags::Button_None };
 		Button m_Button;
 	};

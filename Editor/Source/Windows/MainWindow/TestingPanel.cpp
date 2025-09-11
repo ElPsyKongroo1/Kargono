@@ -28,7 +28,7 @@ namespace Kargono::Panels
 
 	static Memory::HeapAllocator s_TestHeapAlloc{};
 	static ECSInternal::RegistryInternal s_DataRegistry{};
-	static EditorUI::EditIntegerSpec s_EntityIDSpec;
+	static EditorUI::EditIntegerWidget s_EntityIDSpec;
 
 	static EditorApp* s_EditorApp{ nullptr };
 	static Windows::MainWindow* s_MainWindow{ nullptr };
@@ -626,8 +626,8 @@ namespace Kargono::Panels
 		}
 		*/
 
-		EditorUI::EditorUIService::Text("Current Entity ID");
-		EditorUI::EditorUIService::EditInteger(s_EntityIDSpec);
+		EditorUI::EditorUIContext::Text("Current Entity ID");
+		s_EntityIDSpec.RenderInteger();
 
 		if (ImGui::Button("Add Entity"))
 		{
@@ -666,7 +666,7 @@ namespace Kargono::Panels
 			KG_TRACE_INFO(ss.str());
 		}
 
-		EditorUI::EditorUIService::Text("Add / Remove Components");
+		EditorUI::EditorUIContext::Text("Add / Remove Components");
 		if (ImGui::Button("Add Transform Component"))
 		{
 			TransformTest testTransform{};
@@ -810,7 +810,7 @@ namespace Kargono::Panels
 			}
 		}
 
-		EditorUI::EditorUIService::Text("Get Views");
+		EditorUI::EditorUIContext::Text("Get Views");
 		if (ImGui::Button("Print Out All Transform Components"))
 		{
 			auto transformView = s_DataRegistry.GetFlatView<TransformTest>();

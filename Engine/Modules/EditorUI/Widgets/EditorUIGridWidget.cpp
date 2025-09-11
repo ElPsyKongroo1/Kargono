@@ -26,7 +26,7 @@ namespace Kargono::EditorUI
 			bool entryIsSelected = currentEntry.m_EntryID == m_SelectedEntry;
 
 			// Get entry archetype and grid element ID
-			FixedString<16> entryID{ m_WidgetIDString };
+			FixedBufferString<16> entryID{ m_WidgetIDString };
 			size_t widgetCount{ 0 };
 			GridEntryArchetype* entryArchetype = &(m_EntryArchetypes.at(currentEntry.m_ArchetypeID));
 			entryID.AppendInteger(++widgetCount);

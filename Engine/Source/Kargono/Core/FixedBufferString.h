@@ -234,11 +234,6 @@ namespace Kargono
 			return m_DataBuffer.data();
 		}
 
-		std::size_t StringLength() const
-		{
-			return m_DataBuffer.data();
-		}
-
 		constexpr size_t BufferSize() const
 		{
 			return t_BufferSize;

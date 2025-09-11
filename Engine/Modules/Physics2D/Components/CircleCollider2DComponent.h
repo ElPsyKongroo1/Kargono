@@ -20,15 +20,17 @@ namespace Kargono::Physics2D
 		//==============================
 		void CopyTo(CircleCollider2DComponent* dst)
 		{
-			CircleCollider2DComponent* destination = (CircleCollider2DComponent*)dst;
-			destination->m_Offset = m_Offset;
-			destination->m_Radius = m_Radius;
-			destination->m_Density = m_Density;
-			destination->m_Friction = m_Friction;
-			destination->m_Restitution = m_Restitution;
-			destination->m_RestitutionThreshold = m_RestitutionThreshold;
-			destination->m_IsSensor = m_IsSensor;
-			destination->m_RuntimeFixture = m_RuntimeFixture;
+			// Create the component in place
+			std::construct_at<CircleCollider2DComponent>(dst);
+
+			dst->m_Offset = m_Offset;
+			dst->m_Radius = m_Radius;
+			dst->m_Density = m_Density;
+			dst->m_Friction = m_Friction;
+			dst->m_Restitution = m_Restitution;
+			dst->m_RestitutionThreshold = m_RestitutionThreshold;
+			dst->m_IsSensor = m_IsSensor;
+			dst->m_RuntimeFixture = m_RuntimeFixture;
 		}
 		//==============================
 		// Public Fields

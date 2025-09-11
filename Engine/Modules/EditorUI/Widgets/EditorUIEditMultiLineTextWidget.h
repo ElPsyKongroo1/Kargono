@@ -2,7 +2,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <functional>
 
@@ -32,7 +32,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		WidgetFlags m_Flags{ EditMultiLineText_None };
 		std::string m_CurrentOption{};
 		std::function<void(EditMultiLineTextWidget&)> m_ConfirmAction;
@@ -42,7 +42,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Internal Fields
 		//==============================
-		FixedString1024 m_Buffer{};
+		FixedBufStr1024 m_Buffer{};
 	};
 }
 

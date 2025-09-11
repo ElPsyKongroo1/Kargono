@@ -3,7 +3,7 @@
 #include "Modules/EditorUI/EditorUICommon.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Modules/Assets/AssetsTypes.h"
 
 #include <functional>
@@ -84,7 +84,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		WidgetFlags m_Flags{ List_None };
 		std::string m_Column1Title{};
 		std::string m_Column2Title{};

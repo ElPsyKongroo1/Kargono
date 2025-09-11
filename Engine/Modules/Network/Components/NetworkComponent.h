@@ -21,9 +21,11 @@ namespace Kargono::Network
 		//==============================
 		void CopyTo(NetworkComponent* dst)
 		{
-			NetworkComponent* destination = (NetworkComponent*)dst;
-			destination->m_NetworkPhysics = m_NetworkPhysics;
-			destination->m_PhysicsType = m_PhysicsType;
+			// Create the component in place
+			std::construct_at<NetworkComponent>(dst);
+
+			dst->m_NetworkPhysics = m_NetworkPhysics;
+			dst->m_PhysicsType = m_PhysicsType;
 		}
 	public:
 		//==============================

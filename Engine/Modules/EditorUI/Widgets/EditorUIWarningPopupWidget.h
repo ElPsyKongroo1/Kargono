@@ -2,7 +2,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <functional>
 
@@ -26,7 +26,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		float m_PopupWidth{ 700.0f };
 		std::function<void()> m_PopupContents{ nullptr };
 		bool m_OpenPopup{ false };

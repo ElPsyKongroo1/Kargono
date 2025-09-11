@@ -24,7 +24,7 @@ namespace Kargono::ProjectData
 
 		// Find the index for the field whose name matches the queryName
 		size_t iteration{ 0 };
-		for (const FixedString32& dataName : m_DataNames)
+		for (const FixedBufStr32& dataName : m_DataNames)
 		{
 			// Compare each c-string
 			if (strcmp(dataName.CString(), queryName) == 0)

@@ -24,20 +24,21 @@
 #include "Modules/Physics2D/Components/RigidBody2DComponent.h"
 #include "Modules/Physics2D/Components/CircleCollider2DComponent.h"
 #include "Modules/Particles/Components/ParticleEmitterComponent.h"
+#include "Modules/AI/Components/AIStateComponent.h"
 
 namespace Kargono::Scenes
 {
-	Ref<Scene> SceneContext::CreateSceneCopy(Ref<Scene> other)
+	Ref<Scene> Scene::CreateSceneCopy()
 	{
 		Ref<Scene> newScene = CreateRef<Scene>();
-		newScene->m_PhysicsSpecification = other->m_PhysicsSpecification;
+		newScene->m_PhysicsSpecification = m_PhysicsSpecification;
 
-		ECSInternal::RegistryInternal& srcSceneRegistry = other->m_EntityRegistry.m_Registry;
+		ECSInternal::RegistryInternal& srcSceneRegistry = m_EntityRegistry.m_Registry;
 		ECSInternal::RegistryInternal& dstSceneRegistry = newScene->m_EntityRegistry.m_Registry;
 
 		// Copy over registry
 		srcSceneRegistry.CopyRegistry(dstSceneRegistry);
-		newScene->m_EntityRegistry.m_EntityMap = other->m_EntityRegistry.m_EntityMap;
+		newScene->m_EntityRegistry.m_EntityMap = m_EntityRegistry.m_EntityMap;
 
 		// Get all new created entities
 		std::span<ECSInternal::EntityID> allEntities
@@ -134,6 +135,11 @@ namespace Kargono::Scenes
 			registry.RegisterComponent<Particles::ParticleEmitterComponent>();
 		}
 
+		if (!registry.IsComponentRegistered<AI::AIStateComponent>())
+		{
+			registry.RegisterComponent<AI::AIStateComponent>();
+		}
+
 		// Custom Components
 		for (auto& [handle, info] : Assets::AssetService::GetCustomComponentRegistry())
 		{
@@ -146,7 +152,7 @@ namespace Kargono::Scenes
 			}
 			
 			// Register component
-			ECSInternal::ComponentMetadata metadata = component->GenerateMetadata();
+			ECSInternal::ComponentMetadata metadata = component->GenerateMetadata(handle);
 			registry.RegisterComponent(component->m_Identifier, metadata);
 		}
 
@@ -163,7 +169,7 @@ namespace Kargono::Scenes
 			return;
 		}
 
-		ECSInternal::ComponentMetadata metadata = component->GenerateMetadata();
+		ECSInternal::ComponentMetadata metadata = component->GenerateMetadata(projectComponentHandle);
 
 		// Register component
 		m_EntityRegistry.m_Registry.RegisterComponent(component->m_Identifier, metadata);
@@ -443,7 +449,8 @@ namespace Kargono::Scenes
 
 		// TODO: REMOVE THE HELL OUT OF THIS, TEMPORARY FIX TO MAKE IT COMPILE, I HATE THIS, I HATE IT SO MUCH
 		// JUST USE A STRING VIEW YEAH??
-		static std::string tagBuffer{tagComponent.m_Tag.CString()};
+		static std::string tagBuffer;
+		tagBuffer = tagComponent.m_Tag.CString();
 		return tagBuffer;
 	}
 	void Scene::Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity)
@@ -510,11 +517,11 @@ namespace Kargono::Scenes
 	{
 		for (auto& [handle, enttID] : m_EntityRegistry.m_EntityMap)
 		{
-			ECS::Entity entity{ enttID, &s_ActiveScene->m_EntityRegistry };
+			ECS::Entity entity{ enttID, &m_EntityRegistry };
 			if (entity.HasComponent<TagComponent>())
 			{
 				TagComponent& tagComponent = entity.GetComponent<TagComponent>();
-				if (tagComponent.m_Tag == name.c_str())
+				if (tagComponent.m_Tag.StringView() == name)
 				{
 					return handle;
 				}
@@ -528,6 +535,7 @@ namespace Kargono::Scenes
 	{
 		// TODO: Re-implement this function with comple time known component identifiers (not strings)
 		return true;
+#if 0
 		std::string componentNameString{ componentName }; // TODO: UGHHHH, extra string copy
 		if (!Utility::s_EntityHasComponentFunc.contains(componentNameString))
 		{
@@ -537,6 +545,7 @@ namespace Kargono::Scenes
 		ECS::Entity activeEntity = GetEntityByUUID(entityID);
 		KG_ASSERT(activeEntity);
 		return Utility::s_EntityHasComponentFunc.at(componentNameString)(activeEntity);
+#endif
 	}
 	bool SceneContext::IsSceneActive(UUID sceneID)
 	{

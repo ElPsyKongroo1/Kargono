@@ -96,7 +96,7 @@ namespace Kargono::EditorUI
 		m_Audio_KG = Rendering::Texture2D::CreateEditorTexture(path / "Resources/Icons/ContentBrowser/Audio_KG.png");
 		m_Font_KG = Rendering::Texture2D::CreateEditorTexture(path / "Resources/Icons/ContentBrowser/Font_KG.png");
 		m_GlobalState = Rendering::Texture2D::CreateEditorTexture(path / "Resources/Icons/ContentBrowser/GameState.png");
-		m_ProjectComponent = Rendering::Texture2D::CreateEditorTexture(path / "Resources/Icons/ContentBrowser/ProjectComponent.png");
+		m_CustomComponent = Rendering::Texture2D::CreateEditorTexture(path / "Resources/Icons/ContentBrowser/CustomComponent.png");
 		m_Script = Rendering::Texture2D::CreateEditorTexture(path / "Resources/Icons/ContentBrowser/Script.png");
 		m_Texture_KG = Rendering::Texture2D::CreateEditorTexture(path / "Resources/Icons/ContentBrowser/Texture_KG.png");
 		m_EmitterConfig = Rendering::Texture2D::CreateEditorTexture(path / "Resources/Icons/ContentBrowser/EmitterConfig.png");

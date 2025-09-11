@@ -209,7 +209,7 @@ namespace Kargono::ECSInternal
 			CustomComponent* customComp{ nullptr };
 
 			// If this is a custom component, get the custom component data
-			if (metadata.m_CustomComponentHandle != Assets::EmptyHandle)
+			if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
 			{
 				customComp = Assets::AssetService::GetCustomComponent(metadata.m_CustomComponentHandle).get();
 				KG_ASSERT(customComp);
@@ -254,7 +254,7 @@ namespace Kargono::ECSInternal
 			CustomComponent* customComp{ nullptr };
 
 			// If this is a custom component, get the custom component data
-			if (metadata.m_CustomComponentHandle != Assets::EmptyHandle)
+			if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
 			{
 				customComp = Assets::AssetService::GetCustomComponent(metadata.m_CustomComponentHandle).get();
 				KG_ASSERT(customComp);
@@ -427,7 +427,7 @@ namespace Kargono::ECSInternal
 			}
 			
 			// Loop through sorted array
-			for (auto [componentIdentifier, componentMask, compStore] : m_SortedCompTypes)
+			for (auto [componentMask, componentIdentifier, compStore] : m_SortedCompTypes)
 			{
 				// Register all components in other registry
 				KG_ASSERT(compStore);
@@ -436,7 +436,7 @@ namespace Kargono::ECSInternal
 				CustomComponent* customComp{ nullptr };
 
 				// If this is a custom component, get the custom component data
-				if (metadata.m_CustomComponentHandle != Assets::EmptyHandle)
+				if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
 				{
 					customComp = Assets::AssetService::GetCustomComponent(metadata.m_CustomComponentHandle).get();
 					KG_ASSERT(customComp);
@@ -678,13 +678,13 @@ namespace Kargono::ECSInternal
 		//==============================
 		void DestroyEntity(EntityID entityID)
 		{
+
 			Expected<Signature> signature = i_EntityRegistry->GetSignature(entityID);
 			KG_ASSERT(signature);
 
 			// Handle all component arrays
 			for (const auto& [mask, array] : m_ComponentArrays)
 			{
-
 				if (signature->IsFlagSet(mask))
 				{
 					bool success{ array->RemoveComponent(entityID) };

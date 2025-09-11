@@ -2,7 +2,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Core/UUID.h"
 #include "Modules/Rendering/Texture.h"
 
@@ -179,7 +179,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		TreePath m_SelectedEntry{};
 		std::function<void()> m_OnRefresh{ nullptr };
 	private:

@@ -615,14 +615,14 @@ namespace Kargono::Assets
 			
 			if (component.m_CurrentStateHandle == aiStateHandle)
 			{
-				component.m_CurrentStateHandle = Assets::EmptyHandle;
+				component.m_CurrentStateHandle = Assets::k_EmptyHandle;
 				component.m_CurrentStateReference = nullptr;
 				aiStateModified = true;
 			}
 			if (component.m_GlobalStateHandle == aiStateHandle)
 			{
-				component.GlobalStateHandle = Assets::k_EmptyHandle;
-				component.GlobalStateReference = nullptr;
+				component.m_GlobalStateHandle = Assets::k_EmptyHandle;
+				component.m_GlobalStateReference = nullptr;
 				aiStateModified = true;
 			}
 			if (component.m_PreviousStateHandle == aiStateHandle)

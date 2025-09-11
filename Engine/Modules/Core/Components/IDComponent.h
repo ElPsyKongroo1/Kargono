@@ -14,8 +14,10 @@ namespace Kargono
 		//==============================
 		void CopyTo(IDComponent* dst) 
 		{
-			IDComponent* destination = (IDComponent*)dst;
-			destination->m_ID = m_ID;
+			// Create the component in place
+			std::construct_at<IDComponent>(dst);
+
+			dst->m_ID = m_ID;
 		}
 	public:
 		//==============================

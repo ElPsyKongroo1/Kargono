@@ -1046,8 +1046,8 @@ namespace Kargono::Panels
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::InputMap, inputMapArch);
 
 		EditorUI::GridEntryArchetype projectComponentArch;
-		projectComponentArch.m_Icon = EditorUI::EditorUIContext::s_IconCustomComponent;
-		projectComponentArch.m_IconColor = EditorUI::EditorUIContext::s_HighlightColor1_Thin;
+		projectComponentArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_CustomComponent;
+		projectComponentArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		projectComponentArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		projectComponentArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
 		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::CustomComponent, projectComponentArch);

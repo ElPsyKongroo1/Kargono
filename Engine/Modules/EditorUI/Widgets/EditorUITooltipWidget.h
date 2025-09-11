@@ -2,7 +2,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiAPI.h"
 #include "Modules/EditorUI/EditorUIContext.h"
@@ -31,7 +31,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		UUID m_EntryID{ k_EmptyUUID };
 		bool m_IsVisible{ true };
 		UUID m_UserHandle{ k_EmptyUUID };
@@ -97,7 +97,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		bool m_TooltipActive{ false };
 	private:
 		//==============================

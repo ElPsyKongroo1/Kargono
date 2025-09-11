@@ -75,10 +75,10 @@ namespace Kargono::ProjectData
 		//=========================
 		// Public Fields
 		//=========================
-		FixedString32 m_Name;
+		FixedBufStr32 m_Name;
 		std::vector<WrappedVarType> m_DataTypes;
 		std::vector<size_t> m_DataLocations;
-		std::vector<FixedString32> m_DataNames;
+		std::vector<FixedBufStr32> m_DataNames;
 		Buffer m_DataBuffer;
 	};
 }

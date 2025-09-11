@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include "cstdint"
 #include "limits"
@@ -84,6 +84,6 @@ namespace Kargono::EditorUI
 		//==============================
 		WidgetID m_WidgetID{};
 		WidgetID m_ChildID{};
-		FixedString16 m_WidgetIDString{};
+		FixedBufStr16 m_WidgetIDString{};
 	};
 }

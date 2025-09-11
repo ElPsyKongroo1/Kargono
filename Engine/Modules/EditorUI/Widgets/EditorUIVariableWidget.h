@@ -2,7 +2,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Core/Buffer.h"
 #include "Kargono/Core/WrappedData.h"
 
@@ -21,7 +21,7 @@ namespace Kargono::EditorUI
 	public:
 		void RenderVariable();
 	public:
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		Buffer FieldBuffer{};
 		WrappedVarType VariableType{ WrappedVarType::Integer32 };
 	public:

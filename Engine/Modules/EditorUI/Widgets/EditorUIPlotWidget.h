@@ -2,7 +2,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <functional>
 
@@ -44,7 +44,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		WidgetFlags m_Flags{ PlotFlags::Plot_None };
 		float m_MaxYVal{ 50.0f };
 		Ref<void> m_ProvidedData{ nullptr };
@@ -52,7 +52,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Internal Fields
 		//==============================
-		FixedString16 m_YAxisLabel{ "##" };
+		FixedBufStr16 m_YAxisLabel{ "##" };
 		std::vector<float> m_XValues;
 		std::vector<float> m_YValues;
 		size_t m_BufferSize{ 0 };

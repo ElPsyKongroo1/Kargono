@@ -2,7 +2,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Core/UUID.h"
 
 #include <functional>
@@ -27,7 +27,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label{};
+		FixedBufStr32 m_Label{};
 		UUID m_Handle{ k_EmptyUUID };
 	};
 
@@ -122,7 +122,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label{};
+		FixedBufStr32 m_Label{};
 		OptionEntry m_CurrentOption{};
 		uint32_t m_LineCount{ 3 };
 		std::function<void(SelectOptionWidget&)> m_PopupAction{ nullptr };

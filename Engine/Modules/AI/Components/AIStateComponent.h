@@ -16,18 +16,21 @@ namespace Kargono::AI
 		AIStateComponent() = default;
 		~AIStateComponent() = default;
 
+	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
 		void CopyTo(AIStateComponent* dst)
 		{
-			AIStateComponent* destination = (AIStateComponent*)dst;
-			destination->m_CurrentStateHandle = m_CurrentStateHandle;
-			destination->m_CurrentStateReference = m_CurrentStateReference;
-			destination->m_PreviousStateHandle = m_PreviousStateHandle;
-			destination->m_PreviousStateReference = m_PreviousStateReference;
-			destination->m_GlobalStateHandle = m_GlobalStateHandle;
-			destination->m_GlobalStateReference = m_GlobalStateReference;
+			// Create the component in place
+			std::construct_at<AIStateComponent>(dst);
+
+			dst->m_CurrentStateHandle = m_CurrentStateHandle;
+			dst->m_CurrentStateReference = m_CurrentStateReference;
+			dst->m_PreviousStateHandle = m_PreviousStateHandle;
+			dst->m_PreviousStateReference = m_PreviousStateReference;
+			dst->m_GlobalStateHandle = m_GlobalStateHandle;
+			dst->m_GlobalStateReference = m_GlobalStateReference;
 		}
 
 	public:
@@ -35,13 +38,13 @@ namespace Kargono::AI
 		// Public Fields
 		//==============================
 		// Main state that undergoes state transitions
-		Assets::AssetHandle m_CurrentStateHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_CurrentStateHandle{ Assets::k_EmptyHandle };
 		Ref<AI::AIState> m_CurrentStateReference{ nullptr };
 		// This state allows transitioning into a temporary state for the CurrentState and easily reverting back
-		Assets::AssetHandle m_PreviousStateHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_PreviousStateHandle{ Assets::k_EmptyHandle };
 		Ref<AI::AIState> m_PreviousStateReference{ nullptr };
 		// Globally held state that is ubiquitously available and ran in the OnUpdate() function
-		Assets::AssetHandle m_GlobalStateHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_GlobalStateHandle{ Assets::k_EmptyHandle };
 		Ref<AI::AIState> m_GlobalStateReference{ nullptr };
 	};
 

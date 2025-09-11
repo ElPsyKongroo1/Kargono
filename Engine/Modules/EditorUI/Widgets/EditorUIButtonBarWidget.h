@@ -3,7 +3,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIButtonWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <functional>
 
@@ -49,7 +49,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label;
+		FixedBufStr32 m_Label;
 		WidgetFlags m_Flags{ ButtonBarFlags::ButtonBar_None };
 	private:
 		//==============================

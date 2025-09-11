@@ -198,7 +198,7 @@ namespace Kargono::EditorUI
 							ImGuiWindowFlags_AlwaysVerticalScrollbar);
 						uint32_t widgetCount{ 0 };
 						static WidgetID persistantID{ WidgetCounterService::GetActiveContext().GetID()};
-						FixedString<16> id{ "##" };
+						FixedBufferString<16> id{ "##" };
 						id.AppendInteger(persistantID);
 
 						float iconSize = 60.0f;

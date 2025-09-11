@@ -5,6 +5,7 @@
 
 #include <array>
 #include <vector>
+#include <sstream>
 
 namespace Kargono::ECSInternal
 {

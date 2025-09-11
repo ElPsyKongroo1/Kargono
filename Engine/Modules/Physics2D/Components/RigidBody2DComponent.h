@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Modules/Assets/Asset.h"
-#include "Modules/Scripting/ScriptService.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 
 #include "Modules/Physics2D/Module/Physics2DModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
@@ -30,13 +30,16 @@ namespace Kargono::Physics2D
 		//==============================
 		void CopyTo(Rigidbody2DComponent* dst)
 		{
-			Rigidbody2DComponent* destination = (Rigidbody2DComponent*)dst;
-			destination->m_Type = m_Type;
-			destination->m_FixedRotation = m_FixedRotation;
-			destination->m_OnCollisionStartScriptHandle = m_OnCollisionStartScriptHandle;
-			destination->m_OnCollisionStartScript = m_OnCollisionStartScript;
-			destination->m_OnCollisionEndScriptHandle = m_OnCollisionEndScriptHandle;
-			destination->m_OnCollisionEndScript = m_OnCollisionEndScript;
+			// Create the component in place
+			std::construct_at<Rigidbody2DComponent>(dst);
+
+			// Copy fields
+			dst->m_Type = m_Type;
+			dst->m_FixedRotation = m_FixedRotation;
+			dst->m_OnCollisionStartScriptHandle = m_OnCollisionStartScriptHandle;
+			dst->m_OnCollisionStartScript = m_OnCollisionStartScript;
+			dst->m_OnCollisionEndScriptHandle = m_OnCollisionEndScriptHandle;
+			dst->m_OnCollisionEndScript = m_OnCollisionEndScript;
 		}
 
 	public:
@@ -49,9 +52,9 @@ namespace Kargono::Physics2D
 		// Storage for runtime
 		void* m_RuntimeBody{ nullptr };
 		// Collision callback function pointers
-		Assets::AssetHandle m_OnCollisionStartScriptHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_OnCollisionStartScriptHandle{ Assets::k_EmptyHandle };
 		Ref<Scripting::Script> m_OnCollisionStartScript{ nullptr };
-		Assets::AssetHandle m_OnCollisionEndScriptHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_OnCollisionEndScriptHandle{ Assets::k_EmptyHandle };
 		Ref<Scripting::Script> m_OnCollisionEndScript{ nullptr };
 	};
 

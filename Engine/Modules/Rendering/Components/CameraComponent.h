@@ -22,9 +22,11 @@ namespace Kargono::Rendering
 		//==============================
 		void CopyTo(CameraComponent* dst)
 		{
-			CameraComponent* destination = (CameraComponent*)dst;
-			destination->m_Camera = m_Camera;
-			destination->m_Primary = m_Primary;
+			// Create the component in place
+			std::construct_at<CameraComponent>(dst);
+
+			dst->m_Camera = m_Camera;
+			dst->m_Primary = m_Primary;
 		}
 
 	public:

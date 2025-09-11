@@ -22,6 +22,12 @@ namespace Kargono::AI
 		float DispatchTime{ 0.0f };
 	};
 
+	// Comparison functor for sorting AIMessages inside AIContext's MessageQueue
+	inline auto k_MessageQueueComparisonFunctor = [](const AIMessage& aiMessageOne, const AIMessage& aiMessageTwo) 
+	{
+		return aiMessageOne.DispatchTime < aiMessageTwo.DispatchTime;
+	};
+
 	//=========================
 	// AI State Class
 	//=========================
@@ -42,12 +48,6 @@ namespace Kargono::AI
 		// Called when a message is received
 		Assets::AssetHandle OnMessageHandle { Assets::k_EmptyHandle };
 		Ref<Scripting::Script> OnMessage { nullptr };
-	};
-
-	// Comparison functor for sorting AIMessages inside AIContext's MessageQueue
-	inline auto k_MessageQueueComparisonFunctor = [](const AIMessage& aiMessageOne, const AIMessage& aiMessageTwo) 
-	{
-		return aiMessageOne.DispatchTime < aiMessageTwo.DispatchTime;
 	};
 
 

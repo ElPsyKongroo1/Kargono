@@ -74,6 +74,8 @@ namespace Kargono::Scenes
 		{
 			return m_EntityRegistry.m_Registry.GetFlatView<Components...>();
 		}
+
+		Ref<Scene> CreateSceneCopy();
 	public:
 		//====================
 		// Get Entity Components
@@ -84,8 +86,8 @@ namespace Kargono::Scenes
 		std::string_view TagComponentGetTag(UUID entityID);
 		void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
 		Math::vec2 Rigidbody2DComponent_GetLinearVelocity(UUID entityID);
-		void SetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value);
-		void* GetProjectComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation);
+		void SetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value);
+		void* GetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation);
 	public:
 		//====================
 		// Manage Active Scene Entities
@@ -137,23 +139,13 @@ namespace Kargono::Scenes
 		void Terminate();
 	public:
 		//====================
-		// Manage Active Scene
-		//====================
-		static bool CheckActiveHasComponent(UUID entityID, const std::string& componentName);
-
-		static Math::vec3 TransformComponentGetTranslation(UUID entityID);
-		static void TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation);
-		static const std::string& TagComponentGetTag(UUID entityID);
-		static void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
-		static Math::vec2 Rigidbody2DComponent_GetLinearVelocity(UUID entityID);
-		static void SetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value);
-		static void* GetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation);
-		
-
-		//====================
 		// Query Active Scene
 		//====================
 		bool IsSceneActive(UUID sceneID);
+
+		void TransitionScene(Assets::AssetHandle newSceneHandle);
+		void TransitionScene(Ref<Scene> newScene);
+		void TransitionSceneFromHandle(Assets::AssetHandle sceneID);
 	public:
 		//====================
 		// Getters/Setters

@@ -4,7 +4,7 @@
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/FileSystem/FileSystem.h"
-#include "Modules/ECS/EngineComponents.h"
+#include "Modules/Rendering/Components/ShapeComponent.h"
 #include "Modules/Assets/AssetService.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
 
@@ -346,7 +346,7 @@ namespace Kargono::RuntimeUI
 
 
 			renderSpec.m_Texture = m_ImageRef;
-			renderSpec.m_ShapeComponent->Texture = m_ImageRef;
+			renderSpec.m_ShapeComponent->m_Texture = m_ImageRef;
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);

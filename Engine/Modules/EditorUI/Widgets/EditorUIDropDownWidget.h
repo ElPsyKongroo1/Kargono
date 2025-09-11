@@ -3,7 +3,7 @@
 #include "Modules/EditorUI/Widgets/EditorUISelectOptionWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Core/UUID.h"
 
 #include <functional>
@@ -40,7 +40,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label{};
+		FixedBufStr32 m_Label{};
 		WidgetFlags m_Flags{ DropDown_None };
 		std::function<void(const OptionEntry&)> m_ConfirmAction{ nullptr };
 		Ref<void> m_ProvidedData{ nullptr };

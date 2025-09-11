@@ -644,7 +644,7 @@ namespace Kargono::Windows
 		Particles::ParticleService::GetActiveContext().ClearEmitters();
 
 		m_SceneState = SceneState::Play;
-		Scenes::SceneService::GetActiveContext().SetActiveScene(Scenes::SceneService::GetActiveContext().CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene->CreateSceneCopy(), m_EditorSceneHandle);
 		Physics::Physics2DService::CreatePhysics2DWorld();
 		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveContext().GetActiveScene().get(), Scenes::SceneService::GetActiveContext().GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRuntimeStart();
@@ -675,7 +675,7 @@ namespace Kargono::Windows
 		if (m_SceneState == SceneState::Play) { OnStop(); }
 
 		m_SceneState = SceneState::Simulate;
-		Scenes::SceneService::GetActiveContext().SetActiveScene(Scenes::SceneService::GetActiveContext().CreateSceneCopy(m_EditorScene), m_EditorSceneHandle);
+		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene->CreateSceneCopy(), m_EditorSceneHandle);
 		Physics::Physics2DService::CreatePhysics2DWorld();
 		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveContext().GetActiveScene().get(), Scenes::SceneService::GetActiveContext().GetActiveScene()->m_PhysicsSpecification);
 	}

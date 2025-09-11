@@ -26,10 +26,12 @@ namespace Kargono
 		//==============================
 		void CopyTo(TransformComponent* dst)
 		{
-			TransformComponent* destination = (TransformComponent*)dst;
-			destination->m_Translation = m_Translation;
-			destination->m_Rotation = m_Rotation;
-			destination->m_Scale = m_Scale;
+			// Create the component in place
+			std::construct_at<TransformComponent>(dst);
+
+			dst->m_Translation = m_Translation;
+			dst->m_Rotation = m_Rotation;
+			dst->m_Scale = m_Scale;
 		}
 		//==============================
 		// Public Fields

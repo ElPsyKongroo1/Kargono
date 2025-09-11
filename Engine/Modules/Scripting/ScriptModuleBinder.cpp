@@ -1132,7 +1132,7 @@ namespace Kargono::Scripting
 			objectPath = { binaryPath / "ExportBody.obj" };
 		}
 
-		UUID pdbID = UUID();
+		UUID pdbID{ RandomUUIDService::GetRandomUUID() };
 		std::string pdbFileName = std::string(pdbID) + ".pdb";
 		std::filesystem::path debugSymbolsPath { binaryPath / pdbFileName };
 		std::filesystem::path sourcePath { projectPaths.GetIntermediateDirectory() / "Script/ExportBody.cpp" };

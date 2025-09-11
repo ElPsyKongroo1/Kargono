@@ -20,15 +20,18 @@ namespace Kargono::Particles
 		//==============================
 		void CopyTo(ParticleEmitterComponent* dst)
 		{
-			ParticleEmitterComponent* destination = (ParticleEmitterComponent*)dst;
-			destination->m_EmitterConfigHandle = m_EmitterConfigHandle;
-			destination->m_EmitterConfigRef = m_EmitterConfigRef;
+			// Create the component in place
+			std::construct_at<ParticleEmitterComponent>(dst);
+
+			// Copy over relevant data
+			dst->m_EmitterConfigHandle = m_EmitterConfigHandle;
+			dst->m_EmitterConfigRef = m_EmitterConfigRef;
 		}
 	public:
 		//==============================
 		// Public Fields
 		//==============================
-		Assets::AssetHandle m_EmitterConfigHandle{ Assets::EmptyHandle };
+		Assets::AssetHandle m_EmitterConfigHandle{ Assets::k_EmptyHandle };
 		Ref<Particles::EmitterConfig> m_EmitterConfigRef{ nullptr };
 	};
 

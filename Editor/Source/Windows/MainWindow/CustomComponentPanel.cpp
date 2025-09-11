@@ -365,12 +365,8 @@ namespace Kargono::Panels
 	{
 		// Open project component Window
 		s_MainWindow->m_ShowCustomComponent = true;
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
-
-		if (!m_EditorProjectComponent)
-		EditorUI::EditorUIService::BringWindowToFront(m_PanelName);
-		EditorUI::EditorUIService::SetFocusedWindow(m_PanelName);
+		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
+		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorCustomComponent)
 		{
@@ -433,7 +429,7 @@ namespace Kargono::Panels
 	}
 	void CustomComponentPanel::CreateComponentDialog()
 	{
-		KG_ASSERT(Projects::ProjectService::GetActive());
+		KG_ASSERT(Projects::ProjectService::IsActive());
 		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 		m_SelectCustomComponentLocationSpec.m_CurrentOption = projectPaths.GetAssetDirectory();
 		m_CreateComponentPopup.m_OpenPopup = true;

@@ -4,7 +4,6 @@
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
 
 #include "Modules/Rendering/RenderingService.h"
-#include "Modules/ECS/EngineComponents.h"
 
 namespace Kargono::RuntimeUI
 {

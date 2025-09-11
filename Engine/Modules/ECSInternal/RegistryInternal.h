@@ -546,6 +546,7 @@ namespace Kargono::ECSInternal
 		//==============================
 		void CopyRegistry(RegistryInternal& otherRegistry)
 		{
+
 			// Clear the other registry
 			bool success{ otherRegistry.Clear() };
 			KG_ASSERT(success);

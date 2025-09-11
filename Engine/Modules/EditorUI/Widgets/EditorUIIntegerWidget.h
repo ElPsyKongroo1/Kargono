@@ -2,7 +2,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIWidget.h"
 
 #include "Kargono/Core/Base.h"
-#include "Kargono/Core/FixedString.h"
+#include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Math/MathAliases.h"
 
 #include <functional>
@@ -32,7 +32,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label{};
+		FixedBufStr32 m_Label{};
 		WidgetFlags m_Flags{ EditInteger_None };
 		int32_t m_CurrentInteger{};
 		std::array<int32_t, 2> m_Bounds{ 0, 0 };
@@ -65,7 +65,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label{};
+		FixedBufStr32 m_Label{};
 		WidgetFlags m_Flags{ EditIVec2_None };
 		Math::ivec2 m_CurrentIVec2{};
 		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
@@ -98,7 +98,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label{};
+		FixedBufStr32 m_Label{};
 		WidgetFlags m_Flags{ EditIVec3_None };
 		Math::ivec3 m_CurrentIVec3{};
 		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
@@ -131,7 +131,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		FixedString32 m_Label{};
+		FixedBufStr32 m_Label{};
 		WidgetFlags m_Flags{ EditIVec4_None };
 		Math::ivec4 m_CurrentIVec4{};
 		std::array<int32_t, 2> m_Bounds{ 0, 10'000 };
