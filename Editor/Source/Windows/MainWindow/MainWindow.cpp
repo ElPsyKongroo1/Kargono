@@ -269,7 +269,7 @@ namespace Kargono::Windows
 			m_EditorScene)
 		{
 			// Create custom component inside scene registry
-			m_EditorScene->AddCustomComponentRegistry(manageAsset.GetAssetID());
+			m_EditorScene->RegisterCustomComponent(manageAsset.GetAssetID());
 		}
 		// Handle editing a custom component by modifying entity component data inside the Assets::AssetService::SceneRegistry and the active editor scene
 		if (manageAsset.GetAssetType() == Assets::AssetType::CustomComponent &&
@@ -457,7 +457,7 @@ namespace Kargono::Windows
 		}
 
 		// Reset editor data
-		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->ClearHoveredEntity();
 		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
 		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		return true;
@@ -484,7 +484,7 @@ namespace Kargono::Windows
 		m_EditorSceneHandle = Assets::AssetService::CreateScene(fileName.c_str(), sceneDirectory);
 
 		// Open new scene in editor
-		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->ClearHoveredEntity();
 		m_EditorScene = Assets::AssetService::GetScene(m_EditorSceneHandle);
 		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		LoadSceneParticleEmitters();
@@ -517,7 +517,7 @@ namespace Kargono::Windows
 		m_EditorSceneHandle = Assets::AssetService::CreateScene(fileName.c_str(), sceneDirectory);
 
 		// Duplicate existing scene
-		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->ClearHoveredEntity();
 		Assets::AssetService::SaveScene(m_EditorSceneHandle, m_EditorScene);
 
 		// Open new scene in engine
@@ -597,8 +597,8 @@ namespace Kargono::Windows
 			return;
 		}
 
-		ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-		if (selectedEntity)
+		ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+		if (selectedEntity.IsValid())
 		{
 			ECS::Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
 			m_SceneEditorPanel->SetSelectedEntity(newEntity);
@@ -638,7 +638,7 @@ namespace Kargono::Windows
 				Projects::ProjectService::GetActiveContext().GetStartGameStateHandle());
 		}
 
-		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->ClearHoveredEntity();
 		if (m_SceneState == SceneState::Simulate) { OnStop(); }
 
 		Particles::ParticleService::GetActiveContext().ClearEmitters();
@@ -671,7 +671,7 @@ namespace Kargono::Windows
 
 	void MainWindow::OnSimulate()
 	{
-		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->ClearHoveredEntity();
 		if (m_SceneState == SceneState::Play) { OnStop(); }
 
 		m_SceneState = SceneState::Simulate;
@@ -684,7 +684,7 @@ namespace Kargono::Windows
 		// Resize the window to the project's viewport settings
 		m_ViewportPanel->SetViewportAspectRatio(Utility::ScreenResolutionToAspectRatio(Projects::ProjectService::GetActiveContext().GetTargetResolution()));
 
-		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->ClearHoveredEntity();
 		KG_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Unknown Scene State Given to OnSceneStop")
 
 		if (m_SceneState == SceneState::Play)
@@ -986,8 +986,8 @@ namespace Kargono::Windows
 		{
 			if (EditorUI::EditorUIContext::IsActiveWidgetNull())
 			{
-				ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-				if (selectedEntity)
+				ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				if (selectedEntity.IsValid())
 				{
 					m_EditorScene->DestroyEntity(selectedEntity);
 					m_SceneEditorPanel->SetSelectedEntity({});
@@ -1047,7 +1047,7 @@ namespace Kargono::Windows
 		if (reallocationInstructions.m_OldDataLocations.size() == 0)
 		{
 			// Create/Overwrite scene registry using the new archetype of field data
-			currentScene->AddCustomComponentRegistry(event.GetAssetID());
+			currentScene->RegisterCustomComponent(event.GetAssetID());
 			return;
 		}
 
@@ -1055,7 +1055,7 @@ namespace Kargono::Windows
 		if (reallocationInstructions.m_NewDataLocations.size() == 0)
 		{
 			// Create/Overwrite scene registry using the new archetype of field data
-			currentScene->ClearCustomComponentRegistry(event.GetAssetID());
+			currentScene->UnRegisterCustomComponent(event.GetAssetID());
 			return;
 		}
 
@@ -1094,10 +1094,10 @@ namespace Kargono::Windows
 		}
 
 		// Clear old scene registry data for this custom component type
-		currentScene->ClearCustomComponentRegistry(event.GetAssetID());
+		currentScene->UnRegisterCustomComponent(event.GetAssetID());
 
 		// Create/Overwrite scene registry using the new archetype of field data
-		currentScene->AddCustomComponentRegistry(event.GetAssetID());
+		currentScene->RegisterCustomComponent(event.GetAssetID());
 
 		// Write stored entity component data into new registry
 		for (auto& [entityID, dataBuffer] : entityToNewDataMap)

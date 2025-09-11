@@ -422,7 +422,7 @@ namespace Kargono::Panels
 		m_TagEdit.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (entity && entity.HasComponent<TagComponent>())
 			{
 				TagComponent& component = entity.GetComponent<TagComponent>();
@@ -432,7 +432,7 @@ namespace Kargono::Panels
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetEntityByEnttID((ECSInternal::EntityID)(int32_t)entry.m_Handle);
 					KG_ASSERT(entity);
-					if (entity.GetUUID() == Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity()->GetUUID())
+					if (entity.GetUUID() == Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity().GetUUID())
 					{
 						entry.m_Label = entity.GetComponent<TagComponent>().m_Tag;
 					}
@@ -445,10 +445,10 @@ namespace Kargono::Panels
 		m_TagGroupEdit.m_ConfirmAction = [&](EditorUI::EditTextSpec& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (entity && entity.HasComponent<TagComponent>())
+			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			if (selectedEntity && selectedEntity.HasComponent<TagComponent>())
 			{
-				TagComponent& component = entity.GetComponent<TagComponent>();
+				TagComponent& component = selectedEntity.GetComponent<TagComponent>();
 				component.m_Group = m_TagGroupEdit.m_CurrentOption;
 			}
 		};
@@ -465,7 +465,7 @@ namespace Kargono::Panels
 		m_TransformEditTranslation.m_ConfirmAction = [&](EditorUI::EditVec3Widget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<TransformComponent>())
 			{
 				KG_ERROR("Attempt to edit entity transform component when none exists!");
@@ -480,7 +480,7 @@ namespace Kargono::Panels
 		m_TransformEditScale.m_ConfirmAction = [&](EditorUI::EditVec3Widget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<TransformComponent>())
 			{
 				KG_ERROR("Attempt to edit entity transform component when none exists!");
@@ -494,7 +494,7 @@ namespace Kargono::Panels
 		m_TransformEditRotation.m_ConfirmAction = [&](EditorUI::EditVec3Widget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<TransformComponent>())
 			{
 				KG_ERROR("Attempt to edit entity transform component when none exists!");
@@ -516,7 +516,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(spec);
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
-				ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 				{
 					// Search for indicated entity
@@ -549,7 +549,7 @@ namespace Kargono::Panels
 		m_Rigidbody2DType.m_Flags |= EditorUI::RadioSelect_Indented;
 		m_Rigidbody2DType.m_SelectAction = [&]()
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity rigid body 2D component when none exists!");
@@ -577,7 +577,7 @@ namespace Kargono::Panels
 		m_RigidBody2DFixedRotation.m_Flags |= EditorUI::Checkbox_Indented;
 		m_RigidBody2DFixedRotation.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity rigid body 2D component when none exists!");
@@ -609,7 +609,7 @@ namespace Kargono::Panels
 
 		m_SelectRigidBody2DCollisionStartScript.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity CollisionStart component when none exists!");
@@ -661,7 +661,7 @@ namespace Kargono::Panels
 							return;
 						}
 
-						ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+						ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 						if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 						{
 							KG_ERROR("Attempt to edit entity CollisionStart component when none exists!");
@@ -705,7 +705,7 @@ namespace Kargono::Panels
 
 		m_SelectRigidBody2DCollisionEndScript.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity CollisionEnd component when none exists!");
@@ -757,7 +757,7 @@ namespace Kargono::Panels
 							return;
 						}
 
-						ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+						ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 						if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 						{
 							KG_ERROR("Attempt to edit entity CollisionEnd component when none exists!");
@@ -791,7 +791,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(spec);
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
-				ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<Physics2D::BoxCollider2DComponent>())
 				{
 					// Search for indicated entity
@@ -823,7 +823,7 @@ namespace Kargono::Panels
 		m_BoxColliderOffset.m_ConfirmAction = [&](EditorUI::EditVec2Widget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
@@ -838,7 +838,7 @@ namespace Kargono::Panels
 		m_BoxColliderSize.m_ConfirmAction = [&](EditorUI::EditVec2Widget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
@@ -853,7 +853,7 @@ namespace Kargono::Panels
 		m_BoxColliderDensity.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
@@ -868,7 +868,7 @@ namespace Kargono::Panels
 		m_BoxColliderFriction.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
@@ -883,7 +883,7 @@ namespace Kargono::Panels
 		m_BoxColliderRestitution.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
@@ -898,7 +898,7 @@ namespace Kargono::Panels
 		m_BoxColliderRestitutionThreshold.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
@@ -913,7 +913,7 @@ namespace Kargono::Panels
 		m_BoxColliderIsSensor.m_Flags |= EditorUI::Checkbox_Indented;
 		m_BoxColliderIsSensor.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
@@ -933,7 +933,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(spec);
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
-				ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<Physics2D::CircleCollider2DComponent>())
 				{
 					// Search for indicated entity
@@ -965,7 +965,7 @@ namespace Kargono::Panels
 		m_CircleColliderOffset.m_ConfirmAction = [&](EditorUI::EditVec2Widget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
@@ -980,7 +980,7 @@ namespace Kargono::Panels
 		m_CircleColliderRadius.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
@@ -995,7 +995,7 @@ namespace Kargono::Panels
 		m_CircleColliderDensity.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
@@ -1010,7 +1010,7 @@ namespace Kargono::Panels
 		m_CircleColliderFriction.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
@@ -1025,7 +1025,7 @@ namespace Kargono::Panels
 		m_CircleColliderRestitution.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
@@ -1040,7 +1040,7 @@ namespace Kargono::Panels
 		m_CircleColliderRestitutionThreshold.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
@@ -1055,7 +1055,7 @@ namespace Kargono::Panels
 		m_CircleColliderIsSensor.m_Flags |= EditorUI::Checkbox_Indented;
 		m_CircleColliderIsSensor.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
@@ -1076,7 +1076,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(spec);
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
-				ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<Rendering::CameraComponent>())
 				{
 					// Search for indicated entity
@@ -1108,14 +1108,22 @@ namespace Kargono::Panels
 		m_CameraPrimary.m_Flags |= EditorUI::Checkbox_Indented;
 		m_CameraPrimary.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity primaryCameraEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetPrimaryCameraEntity();
 			if (!entity.HasComponent<Rendering::CameraComponent>())
 			{
 				KG_ERROR("Attempt to edit entity camera component when none exists!");
 				return;
 			}
-			Rendering::CameraComponent& component = entity.GetComponent<Rendering::CameraComponent>();
-			component.m_Primary = spec.m_CurrentBoolean;
+
+			if (spec.m_CurrentBoolean)
+			{
+				Scenes::SceneService::GetActiveContext().GetActiveScene()->SetPrimaryCameraEntity(entity);
+			}
+			else
+			{
+				Scenes::SceneService::GetActiveContext().GetActiveScene()->ClearPrimaryCameraEntity();
+			}
 		};
 
 		m_CameraProjection.m_Label = "Projection Type";
@@ -1124,7 +1132,7 @@ namespace Kargono::Panels
 		m_CameraProjection.m_SecondOptionLabel = "Orthographic";
 		m_CameraProjection.m_SelectAction = [&]()
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Rendering::CameraComponent>())
 			{
 				KG_ERROR("Attempt to edit entity camera component when none exists!");
@@ -1150,7 +1158,7 @@ namespace Kargono::Panels
 		m_CameraOrthographicSize.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Rendering::CameraComponent>())
 			{
 				KG_ERROR("Attempt to edit entity camera component when none exists!");
@@ -1165,7 +1173,7 @@ namespace Kargono::Panels
 		m_CameraOrthographicNearPlane.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Rendering::CameraComponent>())
 			{
 				KG_ERROR("Attempt to edit entity camera component when none exists!");
@@ -1180,7 +1188,7 @@ namespace Kargono::Panels
 		m_CameraOrthographicFarPlane.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Rendering::CameraComponent>())
 			{
 				KG_ERROR("Attempt to edit entity camera component when none exists!");
@@ -1195,7 +1203,7 @@ namespace Kargono::Panels
 		m_CameraPerspectiveFOV.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Rendering::CameraComponent>())
 			{
 				KG_ERROR("Attempt to edit entity camera component when none exists!");
@@ -1210,7 +1218,7 @@ namespace Kargono::Panels
 		m_CameraPerspectiveNearPlane.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Rendering::CameraComponent>())
 			{
 				KG_ERROR("Attempt to edit entity camera component when none exists!");
@@ -1225,7 +1233,7 @@ namespace Kargono::Panels
 		m_CameraPerspectiveFarPlane.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Rendering::CameraComponent>())
 			{
 				KG_ERROR("Attempt to edit entity camera component when none exists!");
@@ -1247,7 +1255,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(spec);
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
-				ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
 				if (entity.HasComponent<Particles::ParticleEmitterComponent>())
 				{
@@ -1300,7 +1308,7 @@ namespace Kargono::Panels
 
 		m_SelectParticleEmitter.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Particles::ParticleEmitterComponent>())
 			{
 				KG_ERROR("Attempt to edit entity particle emitter component when none exists!");
@@ -1334,7 +1342,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(spec);
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
-				ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
 				if (entity.HasComponent<Scripting::OnUpdateComponent>())
 				{
@@ -1389,7 +1397,7 @@ namespace Kargono::Panels
 
 		m_SelectOnUpdateScript.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Scripting::OnUpdateComponent>())
 			{
 				KG_ERROR("Attempt to edit entity OnUpdate component when none exists!");
@@ -1441,7 +1449,7 @@ namespace Kargono::Panels
 						return;
 					}
 
-					ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+					ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					if (!entity.HasComponent<Scripting::OnUpdateComponent>())
 					{
 						KG_ERROR("Attempt to edit entity OnUpdate component when none exists!");
@@ -1474,7 +1482,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(spec);
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
-				ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
 				if (entity.HasComponent<Scripting::OnCreateComponent>())
 				{
@@ -1529,7 +1537,7 @@ namespace Kargono::Panels
 
 		m_SelectOnCreateScript.m_ConfirmAction = [](const EditorUI::OptionEntry& entry) 
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Scripting::OnCreateComponent>())
 			{
 				KG_ERROR("Attempt to edit entity OnCreate component when none exists!");
@@ -1581,7 +1589,7 @@ namespace Kargono::Panels
 						return;
 					}
 
-					ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+					ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					if (!entity.HasComponent<Scripting::OnCreateComponent>())
 					{
 						KG_ERROR("Attempt to edit entity OnCreate component when none exists!");
@@ -1615,7 +1623,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(spec);
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
-				ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
 				if (entity.HasComponent<AI::AIStateComponent>())
 				{
@@ -1667,7 +1675,7 @@ namespace Kargono::Panels
 
 		m_SelectGlobalState.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<AI::AIStateComponent>())
 			{
 				KG_ERROR("Attempt to edit entity AIState component when none exists!");
@@ -1705,7 +1713,7 @@ namespace Kargono::Panels
 
 		m_SelectCurrentState.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<AI::AIStateComponent>())
 			{
 				KG_ERROR("Attempt to edit entity AIState component when none exists!");
@@ -1743,7 +1751,7 @@ namespace Kargono::Panels
 
 		m_SelectPreviousState.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<AI::AIStateComponent>())
 			{
 				KG_ERROR("Attempt to edit entity AIState component when none exists!");
@@ -1774,7 +1782,7 @@ namespace Kargono::Panels
 			UNREFERENCED_PARAMETER(spec);
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
-				ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				if (entity.HasComponent<Rendering::ShapeComponent>())
 				{
 					// Search for indicated entity
@@ -1817,7 +1825,7 @@ namespace Kargono::Panels
 		};
 		m_ShapeSelect.m_ConfirmAction = [&](const EditorUI::OptionEntry& entry)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 			Rendering::Shape* shape {nullptr};
 
@@ -1879,7 +1887,7 @@ namespace Kargono::Panels
 		};
 		m_ShapeColorType.m_ConfirmAction = [&](const EditorUI::OptionEntry& entry)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 			if (entry.m_Label == "None")
 			{
@@ -1919,7 +1927,7 @@ namespace Kargono::Panels
 		m_ShapeColor.m_ConfirmAction = [&](EditorUI::EditVec4Widget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Rendering::ShapeComponent>())
 			{
 				KG_ERROR("Attempt to edit entity shape 2D component when none exists!");
@@ -1937,7 +1945,7 @@ namespace Kargono::Panels
 		m_ShapeAddTexture.m_Flags |= EditorUI::Checkbox_Indented;
 		m_ShapeAddTexture.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 			spec.m_CurrentBoolean ? component.m_ShaderSpecification.TextureInput = Rendering::TextureInputType::ColorTexture :
 				component.m_ShaderSpecification.TextureInput = Rendering::TextureInputType::None;
@@ -1984,7 +1992,7 @@ namespace Kargono::Panels
 		};
 		m_ShapeSetTexture.m_ConfirmAction = [&](const EditorUI::OptionEntry& entry)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 			if (entry.m_Handle == Assets::k_EmptyHandle)
 			{
@@ -2010,7 +2018,7 @@ namespace Kargono::Panels
 		m_ShapeTilingFactor.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Rendering::ShapeComponent>())
 			{
 				KG_ERROR("Attempt to edit entity shape 2D component when none exists!");
@@ -2028,7 +2036,7 @@ namespace Kargono::Panels
 		m_ShapeAddCircle.m_Flags |= EditorUI::Checkbox_Indented;
 		m_ShapeAddCircle.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 			component.m_ShaderSpecification.AddCircleShape = spec.m_CurrentBoolean;
 			UpdateShapeComponent();
@@ -2048,7 +2056,7 @@ namespace Kargono::Panels
 		m_ShapeCircleThickness.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Rendering::ShapeComponent>())
 			{
 				KG_ERROR("Attempt to edit entity shape 2D component when none exists!");
@@ -2066,7 +2074,7 @@ namespace Kargono::Panels
 		m_ShapeCircleFade.m_ConfirmAction = [&](EditorUI::EditFloatWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (!entity.HasComponent<Rendering::ShapeComponent>())
 			{
 				KG_ERROR("Attempt to edit entity shape 2D component when none exists!");
@@ -2084,7 +2092,7 @@ namespace Kargono::Panels
 		m_ShapeAddProjection.m_Flags |= EditorUI::Checkbox_Indented;
 		m_ShapeAddProjection.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 			component.m_ShaderSpecification.AddProjectionMatrix = spec.m_CurrentBoolean;
 			UpdateShapeComponent();
@@ -2095,7 +2103,7 @@ namespace Kargono::Panels
 		m_ShapeAddEntityID.m_Flags |= EditorUI::Checkbox_Indented;
 		m_ShapeAddEntityID.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
-			ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 			component.m_ShaderSpecification.AddEntityID = spec.m_CurrentBoolean;
 			UpdateShapeComponent();
@@ -2132,7 +2140,7 @@ namespace Kargono::Panels
 		{
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
-				ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				Assets::AssetHandle customComponentHandle = *(Assets::AssetHandle*)spec.m_ProvidedData.get();
 				if (entity.HasCustomComponentData(customComponentHandle))
 				{
@@ -2186,7 +2194,7 @@ namespace Kargono::Panels
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
@@ -2207,7 +2215,7 @@ namespace Kargono::Panels
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
@@ -2228,7 +2236,7 @@ namespace Kargono::Panels
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
@@ -2249,7 +2257,7 @@ namespace Kargono::Panels
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
@@ -2270,7 +2278,7 @@ namespace Kargono::Panels
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
@@ -2291,7 +2299,7 @@ namespace Kargono::Panels
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
@@ -2312,7 +2320,7 @@ namespace Kargono::Panels
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
@@ -2333,7 +2341,7 @@ namespace Kargono::Panels
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-					ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 					// Get field data pointer
@@ -2430,9 +2438,9 @@ namespace Kargono::Panels
 					return false;
 				}
 
-				if (*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity() == entityToDelete)
+				if (Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity() == entityToDelete)
 				{
-					*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity() = {};
+					Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity() = {};
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity({});
 				}
 
@@ -2622,7 +2630,7 @@ namespace Kargono::Panels
 	}
 	void SceneEditorPanel::SetSelectedEntity(ECS::Entity entity)
 	{
-		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity() = entity;
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity() = entity;
 		if (!entity)
 		{
 			m_SceneHierarchyTree.m_SelectedEntry = {};
@@ -2655,7 +2663,7 @@ namespace Kargono::Panels
 	}
 	void SceneEditorPanel::RefreshTransformComponent()
 	{
-		ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+		ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 		if (!entity)
 		{
 			return;
@@ -2860,11 +2868,14 @@ namespace Kargono::Panels
 		{
 			return;
 		}
+
+		ECS::Entity primaryCameraEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetPrimaryCameraEntity();
+
 		Rendering::CameraComponent& component = entity.GetComponent<Rendering::CameraComponent>();
 		m_CameraHeader.RenderHeader();
 		if (m_CameraHeader.m_Expanded)
 		{
-			m_CameraPrimary.m_CurrentBoolean = component.m_Primary;
+			m_CameraPrimary.m_CurrentBoolean = entity == primaryCameraEntity;
 			m_CameraPrimary.RenderCheckbox();
 			m_CameraProjection.m_SelectedOption = component.m_Camera.GetProjectionType() ==
 				Scenes::SceneCamera::ProjectionType::Perspective ? 0 : 1;
@@ -3040,7 +3051,7 @@ namespace Kargono::Panels
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 			Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 			// Get field data pointer
@@ -3057,7 +3068,7 @@ namespace Kargono::Panels
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 			Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 			// Get field data pointer
@@ -3074,7 +3085,7 @@ namespace Kargono::Panels
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 			Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 			// Get field data pointer
@@ -3110,7 +3121,7 @@ namespace Kargono::Panels
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 			Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 			// Get field data pointer
@@ -3132,7 +3143,7 @@ namespace Kargono::Panels
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
 			Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
-			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
 			// Get field data pointer
@@ -3183,7 +3194,7 @@ namespace Kargono::Panels
 	}
 	void SceneEditorPanel::UpdateShapeComponent()
 	{
-		ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+		ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 		Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 		// Get Previous Buffer and Previous Shader
 		Buffer oldBuffer = component.m_ShaderData;
@@ -3233,7 +3244,7 @@ namespace Kargono::Panels
 	}
 	void SceneEditorPanel::DrawShapeComponentColor()
 	{
-		ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+		ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 		Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 		m_ShapeColorType.m_CurrentOption = { Utility::ColorInputTypeToString(component.m_ShaderSpecification.ColorInput), Assets::k_EmptyHandle };
 		m_ShapeColorType.RenderOptions();
@@ -3260,7 +3271,7 @@ namespace Kargono::Panels
 	}
 	void SceneEditorPanel::DrawShapeComponentTexture()
 	{
-		ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+		ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 		Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 		m_ShapeAddTexture.m_CurrentBoolean = component.m_ShaderSpecification.TextureInput == Rendering::TextureInputType::ColorTexture ? true : false;
 		m_ShapeAddTexture.RenderCheckbox();
@@ -3288,7 +3299,7 @@ namespace Kargono::Panels
 	}
 	void SceneEditorPanel::DrawShapeComponentCircle()
 	{
-		ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+		ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 		Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 		m_ShapeAddCircle.m_CurrentBoolean = component.m_ShaderSpecification.AddCircleShape;
 		m_ShapeAddCircle.RenderCheckbox();
@@ -3307,14 +3318,14 @@ namespace Kargono::Panels
 	}
 	void SceneEditorPanel::DrawShapeComponentProjection()
 	{
-		ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+		ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 		Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 		m_ShapeAddProjection.m_CurrentBoolean = component.m_ShaderSpecification.AddProjectionMatrix;
 		m_ShapeAddProjection.RenderCheckbox();
 	}
 	void SceneEditorPanel::DrawShapeComponentEntityID()
 	{
-		ECS::Entity entity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+		ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 		Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 		m_ShapeAddEntityID.m_CurrentBoolean = component.m_ShaderSpecification.AddEntityID;
 		m_ShapeAddEntityID.RenderCheckbox();

@@ -65,9 +65,6 @@ namespace Kargono::Scenes
 
 	Scene::Scene()
 	{
-		m_HoveredEntity = new ECS::Entity();
-		m_SelectedEntity = new ECS::Entity();
-
 		bool success = m_EntityRegistry.m_Registry.Init(&m_SceneAlloc);
 		KG_ASSERT(success);
 
@@ -76,8 +73,6 @@ namespace Kargono::Scenes
 	}
 	Scene::~Scene()
 	{
-		delete m_HoveredEntity;
-		delete m_SelectedEntity;
 	}
 
 
@@ -143,41 +138,31 @@ namespace Kargono::Scenes
 		// Custom Components
 		for (auto& [handle, info] : Assets::AssetService::GetCustomComponentRegistry())
 		{
-			Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(handle);
-			KG_ASSERT(component);
-
-			if (component->m_ComponentSize == 0 || registry.IsComponentRegistered(component->m_Identifier))
-			{
-				continue;
-			}
-			
-			// Register component
-			ECSInternal::ComponentMetadata metadata = component->GenerateMetadata(handle);
-			registry.RegisterComponent(component->m_Identifier, metadata);
+			RegisterCustomComponent(handle);
 		}
 
 	}
 
-	void Scene::AddCustomComponentRegistry(Assets::AssetHandle projectComponentHandle)
+	void Scene::RegisterCustomComponent(Assets::AssetHandle customComponentHandle)
 	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(projectComponentHandle);
-		KG_ASSERT(component);
-		KG_ASSERT(component->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
+		ECSInternal::RegistryInternal& registry = m_EntityRegistry.m_Registry;
 
-		if (component->m_ComponentSize == 0)
+		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(customComponentHandle);
+		KG_ASSERT(component);
+
+		if (component->m_ComponentSize == 0 || registry.IsComponentRegistered(component->m_Identifier))
 		{
 			return;
 		}
 
-		ECSInternal::ComponentMetadata metadata = component->GenerateMetadata(projectComponentHandle);
-
 		// Register component
-		m_EntityRegistry.m_Registry.RegisterComponent(component->m_Identifier, metadata);
+		ECSInternal::ComponentMetadata metadata = component->GenerateMetadata(customComponentHandle);
+		registry.RegisterComponent(component->m_Identifier, metadata);
 	}
 
-	void Scene::ClearCustomComponentRegistry(Assets::AssetHandle projectComponentHandle)
+	void Scene::UnRegisterCustomComponent(Assets::AssetHandle customComponentHandle)
 	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(projectComponentHandle);
+		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(customComponentHandle);
 		KG_ASSERT(component);
 
 		if (component->m_ComponentSize == 0)
@@ -189,9 +174,9 @@ namespace Kargono::Scenes
 		m_EntityRegistry.m_Registry.ClearComponentStore(component->m_Identifier);
 	}
 
-	std::size_t Scene::GetCustomComponentCount(Assets::AssetHandle projectComponentHandle)
+	std::size_t Scene::GetCustomComponentCount(Assets::AssetHandle customComponentHandle)
 	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(projectComponentHandle);
+		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(customComponentHandle);
 		KG_ASSERT(component);
 
 		if (component->m_ComponentSize == 0)
@@ -261,15 +246,11 @@ namespace Kargono::Scenes
 				Utility::CallWrapped<WrappedVoidEntity>(component.m_OnCreateScript->m_Function, entity.GetUUID());
 			}
 		}
-
-		
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		m_IsRunning = false;
-
-		// Script
 	}
 
 	ECS::Entity Scene::DuplicateEntity(ECS::Entity entity)
@@ -284,17 +265,17 @@ namespace Kargono::Scenes
 		return newEntity;
 	}
 
-	ECS::Entity Scene::FindEntityByName(const std::string& name)
+	ECS::Entity Scene::FindEntityByName(std::string_view name)
 	{
 		auto view = m_EntityRegistry.m_Registry.GetFlatView<TagComponent>();
 		for (ECSInternal::EntityID entity : view)
 		{
 			const TagComponent& tc = m_EntityRegistry.m_Registry.GetComponent<TagComponent>(entity).value();
-			if (tc.m_Tag == name.c_str()) 
+			if (tc.m_Tag.StringView() == name)
 			{ 
 				return ECS::Entity 
 				{ 
-					entity, & m_EntityRegistry 
+					entity, &m_EntityRegistry 
 				}; 
 			}
 		}
@@ -344,22 +325,7 @@ namespace Kargono::Scenes
 		}
 
 	}
-
-	ECS::Entity Scene::GetPrimaryCameraEntity()
-	{
-		// TODO: This is ridiculous
-		auto view = m_EntityRegistry.m_Registry.GetFlatView<Rendering::CameraComponent>();
-		for (auto entity: view)
-		{
-			Rendering::CameraComponent& camera = m_EntityRegistry.m_Registry.GetComponent<Rendering::CameraComponent>(entity).value();
-			if (camera.m_Primary)
-			{
-				return ECS::Entity{ entity, & m_EntityRegistry };
-			}
-		}
-		return {};
-	}
-	void Scene::RenderScene(Rendering::Camera& camera, const Math::mat4& transformMatrix)
+	void Scene::OnRender(Rendering::Camera& camera, const Math::mat4& transformMatrix)
 	{
 		Rendering::RenderingService::BeginScene(camera, transformMatrix);
 		// Draw Shapes
@@ -388,7 +354,7 @@ namespace Kargono::Scenes
 		}
 		Rendering::RenderingService::EndScene();
 	}
-	void Scene::OnUpdateEntities(Timestep ts)
+	void Scene::OnUpdate(Timestep ts)
 	{
 		// Invoke OnUpdate
 		auto view = m_EntityRegistry.m_Registry.GetFlatView<Scripting::OnUpdateComponent>();
@@ -530,23 +496,6 @@ namespace Kargono::Scenes
 		KG_WARN("Could not locate entity by name!");
 		return Assets::k_EmptyHandle;
 	}
-
-	bool Scene::CheckActiveHasComponent(UUID entityID, std::string_view componentName)
-	{
-		// TODO: Re-implement this function with comple time known component identifiers (not strings)
-		return true;
-#if 0
-		std::string componentNameString{ componentName }; // TODO: UGHHHH, extra string copy
-		if (!Utility::s_EntityHasComponentFunc.contains(componentNameString))
-		{
-			KG_ERROR("Invalid Component name provided.")
-				return false;
-		}
-		ECS::Entity activeEntity = GetEntityByUUID(entityID);
-		KG_ASSERT(activeEntity);
-		return Utility::s_EntityHasComponentFunc.at(componentNameString)(activeEntity);
-#endif
-	}
 	bool SceneContext::IsSceneActive(UUID sceneID)
 	{
 		KG_ASSERT(m_ActiveScene);
@@ -580,8 +529,8 @@ namespace Kargono::Scenes
 
 		m_ActiveScene = newScene;
 
-		*m_ActiveScene->m_HoveredEntity = {};
-		*m_ActiveScene->m_SelectedEntity = {};
+		m_ActiveScene->ClearHoveredEntity();
+		m_ActiveScene->ClearSelectedEntity();
 
 		Physics::Physics2DService::CreatePhysics2DWorld();
 		Physics::Physics2DService::GetActiveContext().Init

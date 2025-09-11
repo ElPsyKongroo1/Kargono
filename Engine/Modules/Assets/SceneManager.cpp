@@ -107,9 +107,6 @@ namespace Kargono::Utility
 			out << YAML::Key << "OrthographicFar" << YAML::Value << camera.GetOrthographicFarClip();
 			out << YAML::EndMap;
 
-			out << YAML::Key << "Primary" << YAML::Value << cameraComponent.m_Primary;
-
-
 			out << YAML::EndMap; // Component Map
 		}
 
@@ -254,6 +251,14 @@ namespace Kargono::Assets
 			out << YAML::Key << "Gravity" << YAML::Value << assetReference->m_PhysicsSpecification.Gravity;
 			out << YAML::EndMap; // Physics Maps
 		}
+		UUID primaryCameraUUID = k_EmptyUUID;
+
+		if (assetReference->GetPrimaryCameraEntity().IsValid())
+		{
+			primaryCameraUUID = assetReference->GetPrimaryCameraEntity().GetUUID();
+		}
+
+		out << YAML::Key << "PrimaryCamera" << YAML::Value << (uint64_t)primaryCameraUUID;
 
 		// Add background color
 		out << YAML::Key << "BackgroundColor" << YAML::Value << assetReference->m_BackgroundColor;
@@ -404,8 +409,6 @@ namespace Kargono::Assets
 					cc.m_Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
 					cc.m_Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
 					cc.m_Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
-
-					cc.m_Primary = cameraComponent["Primary"].as<bool>();
 				}
 
 				YAML::Node shapeComponent = entity["ShapeComponent"];
@@ -545,6 +548,16 @@ namespace Kargono::Assets
 			}
 		}
 
+		// Load in primary camera
+		UUID primaryCameraID = data["PrimaryCamera"].as<UUID>();
+		if (primaryCameraID != k_EmptyUUID)
+		{
+			ECS::Entity primaryCameraEntity = newScene->GetEntityByUUID(primaryCameraID);
+			KG_ASSERT(primaryCameraEntity.IsValid() && 
+				primaryCameraEntity.HasComponent<Rendering::CameraComponent>());
+			newScene->SetPrimaryCameraEntity(primaryCameraEntity);
+		}
+
 		return newScene;
 	}
 	bool SceneManager::RemoveScript(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle scriptHandle)
@@ -642,7 +655,7 @@ namespace Kargono::Assets
 		std::size_t componentCount = sceneRef->GetCustomComponentCount(projectCompHandle);
 
 		// Clear component registry
-		sceneRef->ClearCustomComponentRegistry(projectCompHandle);
+		sceneRef->UnRegisterCustomComponent(projectCompHandle);
 
 		return componentCount > 0;
 	}

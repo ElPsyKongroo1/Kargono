@@ -1554,10 +1554,6 @@ namespace Kargono::Scripting
 		{
 			Scenes::SceneService::GetActiveContext().TransitionSceneFromHandle(sceneHandle);
 		}, VoidUInt64)
-		AddEngineFunctionPointerToDll(CheckHasComponent, [](UUID handle, std::string_view identifier)
-		{
-			return Scenes::SceneService::GetActiveContext().GetActiveScene()->CheckActiveHasComponent(handle, identifier);
-		}, BoolUInt64String)
 		AddEngineFunctionPointerToDll(FindEntityHandleByName, [](std::string_view identifier) 
 		{
 			return Scenes::SceneService::GetActiveContext().GetActiveScene()->FindEntityHandleByName(identifier);

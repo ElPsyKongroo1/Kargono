@@ -29,15 +29,16 @@ namespace Kargono::Panels
 		{
 			if (s_MainWindow->m_SceneEditorPanel->m_CurrentDisplayed == ScenePropertiesDisplay::Entity)
 			{
-				if (*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity())
+				ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+				if (selectedEntity.IsValid())
 				{
 					if (s_MainWindow->m_SceneEditorPanel->m_DisplayedComponent == ECSInternal::k_InvalidComponentIdentifier)
 					{
-						s_MainWindow->m_SceneEditorPanel->DrawAllComponents(*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity());
+						s_MainWindow->m_SceneEditorPanel->DrawAllComponents(selectedEntity);
 					}
 					else
 					{
-						s_MainWindow->m_SceneEditorPanel->DrawSingleComponent(*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity());
+						s_MainWindow->m_SceneEditorPanel->DrawSingleComponent(selectedEntity);
 					}
 				}
 			}

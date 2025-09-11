@@ -73,6 +73,7 @@ namespace Kargono::ECS
 
 		void* GetCustomComponentData(Assets::AssetHandle projectComponentHandle);
 
+	public:
 		//==============================
 		// Query State
 		//==============================
@@ -102,12 +103,18 @@ namespace Kargono::ECS
 			return m_RegistryEntityID;
 		}
 
+		bool IsValid() const
+		{
+			return m_RegistryEntityID != ECSInternal::k_InvalidEntityID && m_Registry != nullptr;
+		}
+
+	public:
 		//==============================
 		// Operator Overloads
 		//==============================
 		operator bool() const 
 		{ 
-			return m_RegistryEntityID != ECSInternal::k_InvalidEntityID;
+			return IsValid();
 		}
 		operator uint32_t() const 
 		{ 

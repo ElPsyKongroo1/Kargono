@@ -107,7 +107,7 @@ namespace Kargono::Panels
 				// Process Input Mode
 				Input::InputMapService::GetActiveContext().OnUpdate(ts);
 				// Process entity OnUpdate
-				Scenes::SceneService::GetActiveContext().GetActiveScene()->OnUpdateEntities(ts);
+				Scenes::SceneService::GetActiveContext().GetActiveScene()->OnUpdate(ts);
 				// Process physics
 				Physics::Physics2DService::GetActiveContext().OnUpdate(ts);
 			}
@@ -227,24 +227,25 @@ namespace Kargono::Panels
 				// Handle selecting entities inside of the viewport panel
 				if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::InputService::IsKeyPressed(Key::LeftAlt))
 				{
-					if (*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity())
+					ECS::Entity hoveredEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity();
+					if (hoveredEntity.IsValid())
 					{
-						s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity());
+						s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(hoveredEntity);
 						s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(ECSInternal::k_InvalidComponentIdentifier);
 
 						// Algorithm to enable double clicking for an entity!
 						static float previousTime{ 0.0f };
 						static ECS::Entity previousEntity{};
 						float currentTime = Utility::Time::GetTime();
-						if (std::fabs(currentTime - previousTime) < 0.2f && *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() == previousEntity)
+						if (std::fabs(currentTime - previousTime) < 0.2f && hoveredEntity == previousEntity)
 						{
-							TransformComponent& transformComponent = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity()->GetComponent<TransformComponent>();
+							TransformComponent& transformComponent = hoveredEntity.GetComponent<TransformComponent>();
 							m_EditorCamera.SetFocalPoint(transformComponent.m_Translation);
 							m_EditorCamera.SetDistance(std::max({ transformComponent.m_Scale.x, transformComponent.m_Scale.y, transformComponent.m_Scale.z }) * 2.5f);
 							m_EditorCamera.SetMovementType(Rendering::EditorPerspectiveCamera::MovementType::ModelView);
 						}
 						previousTime = currentTime;
-						previousEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity();
+						previousEntity = hoveredEntity;
 					}
 				}
 				
@@ -281,7 +282,7 @@ namespace Kargono::Panels
 		if (s_MainWindow->m_SceneState == SceneState::Edit || s_MainWindow->m_SceneState == SceneState::Simulate)
 		{
 			// Gizmos
-			ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
+			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			if (selectedEntity && m_GizmoType != -1)
 			{
 				ImGuizmo::SetOrthographic(false);
@@ -464,7 +465,7 @@ namespace Kargono::Panels
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_ViewportFramebuffer->ReadPixel(1, mouseX, mouseY);
-			*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetEntityByEnttID((ECSInternal::EntityID)pixelData);
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetEntityByEnttID((ECSInternal::EntityID)pixelData);
 		}
 	}
 
@@ -500,7 +501,7 @@ namespace Kargono::Panels
 	void ViewportPanel::OnUpdateEditor(Timestep ts, Rendering::EditorPerspectiveCamera& camera)
 	{
 		UNREFERENCED_PARAMETER(ts);
-		Scenes::SceneService::GetActiveContext().GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRender(camera, camera.GetViewMatrix());
 	}
 
 	void ViewportPanel::OnUpdateRuntime(Timestep ts)
@@ -518,7 +519,7 @@ namespace Kargono::Panels
 		if (mainCamera)
 		{
 			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
-			Scenes::SceneService::GetActiveContext().GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRender(*mainCamera, glm::inverse(cameraTransform));
 		}
 
 	}
@@ -532,7 +533,7 @@ namespace Kargono::Panels
 		}
 
 		// Render
-		Scenes::SceneService::GetActiveContext().GetActiveScene()->RenderScene(camera, camera.GetViewMatrix());
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRender(camera, camera.GetViewMatrix());
 	}
 
 	static Rendering::RendererInputSpec s_CircleInputSpec{};
@@ -795,7 +796,7 @@ namespace Kargono::Panels
 			(s_MainWindow->m_SceneState == SceneState::Play && s_MainWindow->m_IsPaused))
 		{
 			// Draw selected entity outline 
-			if (ECS::Entity selectedEntity = *Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity()) 
+			if (ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity()) 
 			{
 				TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
 				static Math::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};

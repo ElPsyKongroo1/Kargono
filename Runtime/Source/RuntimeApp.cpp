@@ -477,7 +477,7 @@ namespace Kargono
 
 		// Update
 		Input::InputMapService::GetActiveContext().OnUpdate(ts);
-		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnUpdateEntities(ts);
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnUpdate(ts);
 		Physics::Physics2DService::GetActiveContext().OnUpdate(ts);
 
 		// Render 2D
@@ -492,7 +492,7 @@ namespace Kargono
 		if (mainCamera)
 		{
 			// Transform Matrix needs to be inversed so that final view is from the perspective of the camera
-			Scenes::SceneService::GetActiveContext().GetActiveScene()->RenderScene(*mainCamera, glm::inverse(cameraTransform));
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRender(*mainCamera, glm::inverse(cameraTransform));
 		}
 	}
 

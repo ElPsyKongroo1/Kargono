@@ -26,7 +26,6 @@ namespace Kargono::Rendering
 			std::construct_at<CameraComponent>(dst);
 
 			dst->m_Camera = m_Camera;
-			dst->m_Primary = m_Primary;
 		}
 
 	public:
@@ -34,7 +33,6 @@ namespace Kargono::Rendering
 		// Public Fields
 		//==============================
 		Scenes::SceneCamera m_Camera{};
-		bool m_Primary{ true };
 	};
 
 	Register_Module_Type(CameraComponent, ECSInternal::ComponentTag)

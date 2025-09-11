@@ -371,7 +371,7 @@ namespace Kargono
 
 	bool EditorApp::OpenProject()
 	{
-		*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = {};
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->ClearHoveredEntity();
 		std::filesystem::path initialDirectory = std::filesystem::current_path().parent_path() / "Projects";
 		if (!Utility::FileSystem::PathExists(initialDirectory))
 		{

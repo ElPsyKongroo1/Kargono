@@ -32,9 +32,10 @@ namespace Kargono::Panels
 		ImGui::Text("Scene");
 		ImGui::Separator();
 		std::string name = "None";
-		if (*Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity())
+		ECS::Entity hoveredEntity{ Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() };
+		if (hoveredEntity.IsValid())
 		{
-			name = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity()->GetComponent<TagComponent>().m_Tag;
+			name = hoveredEntity.GetComponent<TagComponent>().m_Tag;
 		}
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 		ImGui::NewLine();
