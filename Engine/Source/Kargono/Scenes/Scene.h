@@ -40,13 +40,6 @@ namespace Kargono::Scenes
 		void OnRuntimeStop();
 		void OnRender(Rendering::Camera& camera, const Math::mat4& transform);
 		void OnUpdate(Timestep ts);
-	public:
-		//====================
-		// Component Registration
-		//====================
-		void RegisterCustomComponent(Assets::AssetHandle customComponentHandle);
-		void UnRegisterCustomComponent(Assets::AssetHandle customComponentHandle);
-		size_t GetCustomComponentCount(Assets::AssetHandle customComponentHandle);
 	private:
 		// Helpers
 		void RegisterAllComponents();

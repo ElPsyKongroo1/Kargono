@@ -84,7 +84,6 @@ namespace Kargono::Scenes
 	void Scene::RegisterAllComponents()
 	{
 		// TODO: Replace this mechanism w/ the module reflection system
-		ECSInternal::RegistryInternal& registry = m_EntityRegistry.m_Registry;
 		if (!registry.IsComponentRegistered<TagComponent>())
 		{
 			registry.RegisterComponent<TagComponent>();
@@ -138,55 +137,9 @@ namespace Kargono::Scenes
 		// Custom Components
 		for (auto& [handle, info] : Assets::AssetService::GetCustomComponentRegistry())
 		{
-			RegisterCustomComponent(handle);
+			m_EntityRegistry.RegisterCustomComponent(handle);
 		}
 
-	}
-
-	void Scene::RegisterCustomComponent(Assets::AssetHandle customComponentHandle)
-	{
-		ECSInternal::RegistryInternal& registry = m_EntityRegistry.m_Registry;
-
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(customComponentHandle);
-		KG_ASSERT(component);
-
-		if (component->m_ComponentSize == 0 || registry.IsComponentRegistered(component->m_Identifier))
-		{
-			return;
-		}
-
-		// Register component
-		ECSInternal::ComponentMetadata metadata = component->GenerateMetadata(customComponentHandle);
-		registry.RegisterComponent(component->m_Identifier, metadata);
-	}
-
-	void Scene::UnRegisterCustomComponent(Assets::AssetHandle customComponentHandle)
-	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(customComponentHandle);
-		KG_ASSERT(component);
-
-		if (component->m_ComponentSize == 0)
-		{
-			return;
-		}
-
-		// Clear the component store
-		m_EntityRegistry.m_Registry.ClearComponentStore(component->m_Identifier);
-	}
-
-	std::size_t Scene::GetCustomComponentCount(Assets::AssetHandle customComponentHandle)
-	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(customComponentHandle);
-		KG_ASSERT(component);
-
-		if (component->m_ComponentSize == 0)
-		{
-			return 0;
-		}
-
-		KG_ASSERT(component->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
-
-		return m_EntityRegistry.m_Registry.GetComponentCount(component->m_Identifier);
 	}
 
 	ECS::Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)

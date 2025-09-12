@@ -21,6 +21,28 @@ namespace Kargono::ECS
 		~Registry() = default;
 	public:
 		//==============================
+		// Lifecycle Functions
+		//==============================
+		[[nodiscard]] bool Init(Memory::IAllocator* backingAlloc);
+		[[nodiscard]] bool Terminate();
+
+		//==============================
+		// Component Registration
+		//==============================
+		// Handle custom component(s)
+		[[nodiscard]] bool RegisterCustomComponent(Assets::AssetHandle customComponentHandle);
+		[[nodiscard]] bool UnRegisterCustomComponent(Assets::AssetHandle customComponentHandle);
+		// Handle templated components
+		
+		// Handle identifier components
+
+
+		//==============================
+		// Query State
+		//==============================
+		size_t GetCustomComponentCount(Assets::AssetHandle customComponentHandle);
+	public:
+		//==============================
 		// Public Fields
 		//==============================
 		ECSInternal::RegistryInternal m_Registry{};
