@@ -27,9 +27,9 @@ namespace Kargono::AI
 		KG_ASSERT(activeScene, "Invalid scene reference when calling AIService's OnUpdate()");
 
 		// Run on update for all active AI with AIComponents including the global, then the current state
-		for (ECSInternal::EntityID id : Scenes::SceneService::GetActiveContext().GetActiveScene()->GetAllEntitiesWith<AI::AIStateComponent>())
+		for (ECSInternal::EntityID id : activeScene->m_EntityRegistry.GetView<AI::AIStateComponent>())
 		{
-			ECS::Entity entity = activeScene->GetEntityByEnttID(id);
+			ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByECSID(id);
 			KG_ASSERT(entity, "Invalid entity obtained. Could not run OnUpdate on provided entity.");
 			AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
 
@@ -54,7 +54,7 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be queried
@@ -68,7 +68,7 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be queried
@@ -82,7 +82,7 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be queried
@@ -96,7 +96,7 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Ensure new AIState is valid
@@ -128,7 +128,7 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Ensure new AIState is valid
@@ -163,7 +163,7 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 
@@ -203,7 +203,7 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
@@ -218,7 +218,7 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
@@ -233,7 +233,7 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
@@ -248,7 +248,7 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity entity = activeScene->GetEntityByUUID(entityID);
+		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
@@ -289,7 +289,7 @@ namespace Kargono::AI
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity receiverEntity = activeScene->GetEntityByUUID(messageToHandle.ReceiverEntity);
+		ECS::Entity receiverEntity = activeScene->m_EntityRegistry.GetEntityByUUID(messageToHandle.ReceiverEntity);
 		KG_ASSERT(receiverEntity, "Invalid entity obtained inside AIService");
 
 

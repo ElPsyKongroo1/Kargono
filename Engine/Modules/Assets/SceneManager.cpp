@@ -324,7 +324,8 @@ namespace Kargono::Assets
 					name = tagNode["Tag"].as<std::string>(); 
 				}
 
-				ECS::Entity deserializedEntity = newScene->CreateEntityWithUUID(uuid, name);
+				ECS::Entity deserializedEntity = 
+					newScene->m_EntityRegistry.CreateEntityWithUUID(uuid, name);
 
 				TagComponent& tagComp = deserializedEntity.GetComponent<TagComponent>();
 				tagComp.m_Group = tagNode["Group"].as<std::string>();
@@ -552,7 +553,7 @@ namespace Kargono::Assets
 		UUID primaryCameraID = data["PrimaryCamera"].as<UUID>();
 		if (primaryCameraID != k_EmptyUUID)
 		{
-			ECS::Entity primaryCameraEntity = newScene->GetEntityByUUID(primaryCameraID);
+			ECS::Entity primaryCameraEntity = newScene->m_EntityRegistry.GetEntityByUUID(primaryCameraID);
 			KG_ASSERT(primaryCameraEntity.IsValid() && 
 				primaryCameraEntity.HasComponent<Rendering::CameraComponent>());
 			newScene->SetPrimaryCameraEntity(primaryCameraEntity);
@@ -565,10 +566,10 @@ namespace Kargono::Assets
 		bool sceneModified{ false };
 		// Handle UI level function pointers
 		// OnUpdate
-		auto onUpdateView = sceneRef->GetAllEntitiesWith<Scripting::OnUpdateComponent>();
+		auto onUpdateView = sceneRef->m_EntityRegistry.GetView<Scripting::OnUpdateComponent>();
 		for (ECSInternal::EntityID enttEntity : onUpdateView)
 		{
-			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::Entity currentEntity{ sceneRef->m_EntityRegistry.GetEntityByECSID(enttEntity) };
 			Scripting::OnUpdateComponent& component = currentEntity.GetComponent<Scripting::OnUpdateComponent>();
 			if (component.m_OnUpdateScriptHandle == scriptHandle)
 			{
@@ -579,10 +580,10 @@ namespace Kargono::Assets
 		}
 
 		// OnCreate
-		auto onCreateView = sceneRef->GetAllEntitiesWith<Scripting::OnCreateComponent>();
+		auto onCreateView = sceneRef->m_EntityRegistry.GetView<Scripting::OnCreateComponent>();
 		for (ECSInternal::EntityID enttEntity : onCreateView)
 		{
-			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::Entity currentEntity{ sceneRef->m_EntityRegistry.GetEntityByECSID(enttEntity) };
 			Scripting::OnCreateComponent& component = currentEntity.GetComponent<Scripting::OnCreateComponent>();
 			if (component.m_OnCreateScriptHandle == scriptHandle)
 			{
@@ -593,10 +594,10 @@ namespace Kargono::Assets
 		}
 
 		// Rigidbody
-		auto rigidBodyView = sceneRef->GetAllEntitiesWith<Physics2D::Rigidbody2DComponent>();
+		auto rigidBodyView = sceneRef->m_EntityRegistry.GetView<Physics2D::Rigidbody2DComponent>();
 		for (ECSInternal::EntityID enttEntity : rigidBodyView)
 		{
-			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::Entity currentEntity{ sceneRef->m_EntityRegistry.GetEntityByECSID(enttEntity) };
 			Physics2D::Rigidbody2DComponent& component = currentEntity.GetComponent<Physics2D::Rigidbody2DComponent>();
 
 			if (component.m_OnCollisionStartScriptHandle == scriptHandle)
@@ -620,10 +621,10 @@ namespace Kargono::Assets
 		bool aiStateModified{ false };
 
 		// Check for AIState
-		auto aiStateView = sceneRef->GetAllEntitiesWith<AI::AIStateComponent>();
+		auto aiStateView = sceneRef->m_EntityRegistry.GetView<AI::AIStateComponent>();
 		for (ECSInternal::EntityID enttEntity : aiStateView)
 		{
-			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::Entity currentEntity{ sceneRef->m_EntityRegistry.GetEntityByECSID(enttEntity) };
 			AI::AIStateComponent& component = currentEntity.GetComponent<AI::AIStateComponent>();
 			
 			if (component.m_CurrentStateHandle == aiStateHandle)
@@ -651,11 +652,13 @@ namespace Kargono::Assets
 	{
 		KG_ASSERT(sceneRef);
 
+		ECS::Registry& registry = sceneRef->m_EntityRegistry;
+
 		// Check if any components are being removed
-		std::size_t componentCount = sceneRef->GetCustomComponentCount(projectCompHandle);
+		size_t componentCount = registry.GetCustomComponentCount(projectCompHandle);
 
 		// Clear component registry
-		sceneRef->UnRegisterCustomComponent(projectCompHandle);
+		registry.UnRegisterCustomComponent(projectCompHandle);
 
 		return componentCount > 0;
 	}
@@ -664,10 +667,10 @@ namespace Kargono::Assets
 		bool emitterConfigModified{ false };
 
 		// Check for emitterConfig
-		auto emitterConfigView = sceneRef->GetAllEntitiesWith<Particles::ParticleEmitterComponent>();
+		auto emitterConfigView = sceneRef->m_EntityRegistry.GetView<Particles::ParticleEmitterComponent>();
 		for (ECSInternal::EntityID enttEntity : emitterConfigView)
 		{
-			ECS::Entity currentEntity{ sceneRef->GetEntityByEnttID(enttEntity) };
+			ECS::Entity currentEntity{ sceneRef->m_EntityRegistry.GetEntityByECSID(enttEntity) };
 			Particles::ParticleEmitterComponent& component = currentEntity.GetComponent<Particles::ParticleEmitterComponent>();
 
 			if (component.m_EmitterConfigHandle == emitterConfigHandle)

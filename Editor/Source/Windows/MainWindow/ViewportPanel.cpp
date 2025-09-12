@@ -465,7 +465,8 @@ namespace Kargono::Panels
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_ViewportFramebuffer->ReadPixel(1, mouseX, mouseY);
-			Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetEntityByEnttID((ECSInternal::EntityID)pixelData);
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() = 
+				Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry.GetEntityByECSID((ECSInternal::EntityID)pixelData);
 		}
 	}
 
@@ -725,7 +726,7 @@ namespace Kargono::Panels
 			Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 			// Circle Colliders
 			{
-				auto view = activeScene->GetAllEntitiesWith<TransformComponent, Physics2D::CircleCollider2DComponent>();
+				auto view = activeScene->m_EntityRegistry.GetView<TransformComponent, Physics2D::CircleCollider2DComponent>();
 				for (ECSInternal::EntityID entity : view)
 				{
 					TransformComponent& tc = activeScene->m_EntityRegistry.m_Registry.GetComponent<TransformComponent>(entity).value();
@@ -744,7 +745,7 @@ namespace Kargono::Panels
 			}
 			// Box Colliders
 			{
-				auto view = activeScene->GetAllEntitiesWith<TransformComponent, Physics2D::BoxCollider2DComponent>();
+				auto view = activeScene->m_EntityRegistry.GetView<TransformComponent, Physics2D::BoxCollider2DComponent>();
 				for (ECSInternal::EntityID entity : view)
 				{
 					TransformComponent& tc = activeScene->m_EntityRegistry.m_Registry.GetComponent<TransformComponent>(entity).value();

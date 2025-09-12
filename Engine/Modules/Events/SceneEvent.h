@@ -6,6 +6,7 @@
 #include <sstream>
 
 namespace Kargono::Scenes { class Scene; }
+namespace Kargono::ECS { class Registry; }
 
 namespace Kargono::Events
 {
@@ -25,22 +26,22 @@ namespace Kargono::Events
 		//==============================
 		// Constructors and Destructors
 		//==============================
-		ManageEntity(UUID entityID, Scenes::Scene* sceneReference, ManageEntityAction action)
-			: m_EntityID(entityID), m_SceneReference(sceneReference), m_Action(action) {}
+		ManageEntity(UUID entityID, ECS::Registry* registry, ManageEntityAction action)
+			: m_EntityID(entityID), m_Registry(registry), m_Action(action) {}
 
 		//==============================
 		// Getters/Setters
 		//==============================
 
 		UUID GetEntityID() const { return m_EntityID; }
-		Scenes::Scene* GetSceneReference() const { return m_SceneReference; }
+		ECS::Registry* GetRegistryReference() const { return m_Registry; }
 		ManageEntityAction GetAction() const { return m_Action; }
 
 		virtual EventType GetEventType() const override { return EventType::ManageEntity; }
 		virtual int GetCategoryFlags() const override { return EventCategory::Scene; }
 	private:
 		UUID m_EntityID;
-		Scenes::Scene* m_SceneReference;
+		ECS::Registry* m_Registry;
 		ManageEntityAction m_Action;
 	};
 

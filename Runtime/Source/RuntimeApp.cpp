@@ -326,9 +326,9 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->m_EntityRegistry.GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->m_EntityRegistry.GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
@@ -362,9 +362,9 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->m_EntityRegistry.GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->m_EntityRegistry.GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
@@ -700,7 +700,7 @@ namespace Kargono
 
 			if (Scenes::SceneService::GetActiveContext().GetActiveScene())
 			{
-				Scenes::SceneService::GetActiveContext().GetActiveScene()->DestroyAllEntities();
+				Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry.ClearEntities();
 			}
 			Assets::AssetService::ClearAll();
 			Assets::AssetService::DeserializeAll();
@@ -759,7 +759,7 @@ namespace Kargono
 		Physics::Physics2DService::GetActiveContext().Terminate();
 		Physics::Physics2DService::RemovePhysics2DWorld();
 		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRuntimeStop();
-		Scenes::SceneService::GetActiveContext().GetActiveScene()->DestroyAllEntities();
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry.ClearEntities();
 		if (Projects::ProjectService::GetActiveContext().GetAppIsNetworked())
 		{
 			Network::ClientService::GetActiveContext().Terminate(false);

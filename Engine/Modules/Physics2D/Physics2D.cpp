@@ -51,10 +51,10 @@ namespace Kargono::Physics
 		m_PhysicsWorld->SetContactListener(m_ContactListener.get());
 
 		// Register each entity into the Physics2DWorld
-		auto rigidBodyView = scene->GetAllEntitiesWith<Physics2D::Rigidbody2DComponent>();
+		auto rigidBodyView = scene->m_EntityRegistry.GetView<Physics2D::Rigidbody2DComponent>();
 		for (auto enttID : rigidBodyView)
 		{
-			ECS::Entity entity = scene->GetEntityByEnttID(enttID);
+			ECS::Entity entity = scene->m_EntityRegistry.GetEntityByECSID(enttID);
 			TransformComponent& transform = entity.GetComponent<TransformComponent>();
 			Physics2D::Rigidbody2DComponent& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
 
@@ -124,10 +124,10 @@ namespace Kargono::Physics
 		m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
 		// Retrieve transform from Box2D
-		auto view = i_Scene->GetAllEntitiesWith<Physics2D::Rigidbody2DComponent>();
+		auto view = i_Scene->m_EntityRegistry.GetView<Physics2D::Rigidbody2DComponent>();
 		for (auto enttID : view)
 		{
-			ECS::Entity entity = i_Scene->GetEntityByEnttID(enttID);
+			ECS::Entity entity = i_Scene->m_EntityRegistry.GetEntityByECSID(enttID);
 			TransformComponent& transform = entity.GetComponent<TransformComponent>();
 			Physics2D::Rigidbody2DComponent& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
 

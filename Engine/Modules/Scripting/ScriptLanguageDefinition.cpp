@@ -1263,7 +1263,7 @@ namespace Kargono::Scripting
 			for (auto& [entityHandle, enttID] : currentScene->m_EntityRegistry.m_EntityMap)
 			{
 				// Get the actual entity reference
-				ECS::Entity entityRef = currentScene->GetEntityByEnttID(enttID);
+				ECS::Entity entityRef = currentScene->m_EntityRegistry.GetEntityByECSID(enttID);
 
 				// Get the entity's tag component
 				TagComponent& currentTagComp = entityRef.GetComponent<TagComponent>();

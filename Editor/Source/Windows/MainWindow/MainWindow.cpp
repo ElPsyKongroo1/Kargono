@@ -269,7 +269,8 @@ namespace Kargono::Windows
 			m_EditorScene)
 		{
 			// Create custom component inside scene registry
-			m_EditorScene->RegisterCustomComponent(manageAsset.GetAssetID());
+			ECS::Registry& registry = m_EditorScene->m_EntityRegistry;
+			registry.RegisterCustomComponent(manageAsset.GetAssetID());
 		}
 		// Handle editing a custom component by modifying entity component data inside the Assets::AssetService::SceneRegistry and the active editor scene
 		if (manageAsset.GetAssetType() == Assets::AssetType::CustomComponent &&
@@ -600,7 +601,7 @@ namespace Kargono::Windows
 		ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 		if (selectedEntity.IsValid())
 		{
-			ECS::Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
+			ECS::Entity newEntity = m_EditorScene->m_EntityRegistry.DuplicateEntity(selectedEntity);
 			m_SceneEditorPanel->SetSelectedEntity(newEntity);
 			m_SceneEditorPanel->SetDisplayedComponent(ECSInternal::k_InvalidComponentIdentifier);
 		}
@@ -699,7 +700,7 @@ namespace Kargono::Windows
 			Physics::Physics2DService::RemovePhysics2DWorld();
 		}
 
-		Scenes::SceneService::GetActiveContext().GetActiveScene()->DestroyAllEntities();
+		Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry.ClearEntities();
 		Scenes::SceneService::GetActiveContext().SetActiveScene(m_EditorScene, m_EditorSceneHandle);
 		Audio::AudioService::GetActiveContext().StopAllAudio();
 
@@ -989,7 +990,7 @@ namespace Kargono::Windows
 				ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				if (selectedEntity.IsValid())
 				{
-					m_EditorScene->DestroyEntity(selectedEntity);
+					m_EditorScene->m_EntityRegistry.DestroyEntity(selectedEntity);
 					m_SceneEditorPanel->SetSelectedEntity({});
 				}
 			}
@@ -1047,7 +1048,8 @@ namespace Kargono::Windows
 		if (reallocationInstructions.m_OldDataLocations.size() == 0)
 		{
 			// Create/Overwrite scene registry using the new archetype of field data
-			currentScene->RegisterCustomComponent(event.GetAssetID());
+			ECS::Registry& registry = currentScene->m_EntityRegistry;
+			registry.RegisterCustomComponent(event.GetAssetID());
 			return;
 		}
 
@@ -1055,7 +1057,8 @@ namespace Kargono::Windows
 		if (reallocationInstructions.m_NewDataLocations.size() == 0)
 		{
 			// Create/Overwrite scene registry using the new archetype of field data
-			currentScene->UnRegisterCustomComponent(event.GetAssetID());
+			ECS::Registry& registry = currentScene->m_EntityRegistry;
+			registry.UnRegisterCustomComponent(event.GetAssetID());
 			return;
 		}
 
@@ -1063,7 +1066,7 @@ namespace Kargono::Windows
 		std::unordered_map<UUID, std::vector<uint8_t>> entityToNewDataMap{};
 		for (auto& [entityID, enttID] : currentScene->m_EntityRegistry.m_EntityMap)
 		{
-			ECS::Entity entity = currentScene->GetEntityByEnttID(enttID);
+			ECS::Entity entity = currentScene->m_EntityRegistry.GetEntityByECSID(enttID);
 			if (entity.HasCustomComponentData(event.GetAssetID()))
 			{
 				// Get old data buffer reference and generate new data buffer
@@ -1093,16 +1096,18 @@ namespace Kargono::Windows
 			}
 		}
 
+		ECS::Registry& registry = currentScene->m_EntityRegistry;
+
 		// Clear old scene registry data for this custom component type
-		currentScene->UnRegisterCustomComponent(event.GetAssetID());
+		registry.UnRegisterCustomComponent(event.GetAssetID());
 
 		// Create/Overwrite scene registry using the new archetype of field data
-		currentScene->RegisterCustomComponent(event.GetAssetID());
+		registry.RegisterCustomComponent(event.GetAssetID());
 
 		// Write stored entity component data into new registry
 		for (auto& [entityID, dataBuffer] : entityToNewDataMap)
 		{
-			ECS::Entity currentEntity = currentScene->GetEntityByUUID(entityID);
+			ECS::Entity currentEntity = currentScene->m_EntityRegistry.GetEntityByUUID(entityID);
 			if (!currentEntity.HasCustomComponentData(event.GetAssetID()))
 			{
 				currentEntity.AddCustomComponentData(event.GetAssetID());

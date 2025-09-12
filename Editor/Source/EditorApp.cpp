@@ -258,9 +258,9 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->m_EntityRegistry.GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->m_EntityRegistry.GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
@@ -294,9 +294,9 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
-		ECS::Entity entityOne = activeScene->GetEntityByUUID(entityOneID);
+		ECS::Entity entityOne = activeScene->m_EntityRegistry.GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
-		ECS::Entity entityTwo = activeScene->GetEntityByUUID(entityTwoID);
+		ECS::Entity entityTwo = activeScene->m_EntityRegistry.GetEntityByUUID(entityTwoID);
 
 		KG_ASSERT(entityOne);
 		KG_ASSERT(entityTwo);
@@ -412,7 +412,7 @@ namespace Kargono
 
 			if (m_MainWindow->m_EditorScene)
 			{
-				m_MainWindow->m_EditorScene->DestroyAllEntities();
+				m_MainWindow->m_EditorScene->m_EntityRegistry.ClearEntities();
 			}
 			Assets::AssetService::ClearAll();
 			Assets::AssetService::DeserializeAll();
