@@ -33,7 +33,14 @@ namespace Kargono
 			Projects::Project& activeProject{Projects::ProjectService::GetActiveContext()};
 			activeProject.CreateNewProject(s_CreateProjectName.m_CurrentOption, s_CreateProjectLocation.m_CurrentOption);
 
-			s_LauncherApp->SetSelectedProject(activeProject.GetProjectPaths().m_ProjectDirectory);
+
+
+			std::filesystem::path projectFilePath
+			{
+				activeProject.GetProjectPaths().m_ProjectDirectory / 
+				(activeProject.GetProjectName() + ".kproj")
+			};
+			s_LauncherApp->SetSelectedProject(projectFilePath);
 			if (!s_LauncherApp->GetSelectedProject().empty())
 			{
 				EngineService::GetActiveEngine().GetThread().EndThread();
