@@ -28,8 +28,8 @@ namespace Kargono::Events
 		//==============================
 		// Constructors and Destructors
 		//==============================
-		ManageAsset(UUID AssetID, Assets::AssetType type, ManageAssetAction action, Ref<void> providedData = nullptr)
-			: m_AssetID(AssetID), m_AssetType(type), m_Action(action), m_ProvidedData(providedData)
+		ManageAsset(UUID AssetID, Assets::AssetIdentifier identifier, ManageAssetAction action, Ref<void> providedData = nullptr)
+			: m_AssetID(AssetID), m_AssetIdentifier(identifier), m_Action(action), m_ProvidedData(providedData)
 		{
 		
 		}
@@ -39,7 +39,7 @@ namespace Kargono::Events
 		//==============================
 
 		UUID GetAssetID() const { return m_AssetID; }
-		Assets::AssetType GetAssetType() const { return m_AssetType; }
+		Assets::AssetIdentifier GetAssetIdentifier() const { return m_AssetIdentifier; }
 		ManageAssetAction GetAction() const { return m_Action; }
 		Ref<void> GetProvidedData() const { return m_ProvidedData; }
 
@@ -47,7 +47,7 @@ namespace Kargono::Events
 		virtual int GetCategoryFlags() const override { return EventCategory::Asset; }
 	private:
 		UUID m_AssetID;
-		Assets::AssetType m_AssetType {Assets::AssetType::None};
+		Assets::AssetIdentifier m_AssetIdentifier {Assets::k_InvalidAssetIdentifier};
 		ManageAssetAction m_Action{ ManageAssetAction::None };
 		Ref<void> m_ProvidedData{ nullptr };
 	};

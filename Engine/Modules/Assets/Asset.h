@@ -4,126 +4,114 @@
 #include "Modules/RuntimeUI/Font.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Modules/Scripting/ScriptingCommon.h"
-
-#include "Modules/Assets/AssetsTypes.h"
+#include "Kargono/Core/UUID.h"
+#include "Modules/Core/Module.h"
+#include "Kargono/Core/FixedBufferString.h"
+#include "Modules/Assets/AssetsCommon.h"
+#include "Modules/Assets/Module/AssetTag.h"
+#include "Kargono/Core/Notifier.h"
 
 #include <filesystem>
 #include <vector>
 #include <utility>
+#include <cstdint>
+#include <array>
 
 
 namespace Kargono::Assets
 {
-	//==============================
-	// Metadata Struct
-	//==============================
 	struct Metadata
 	{
 	public:
-		std::filesystem::path FileLocation;
-		std::filesystem::path IntermediateLocation;
-		std::string CheckSum;
-		Assets::AssetType Type = Assets::AssetType::None;
-		Ref<void> SpecificFileData { nullptr };
+		Metadata() = default;
+		~Metadata() = default;
 	public:
-		template <typename T>
-		T* GetSpecificMetaData()
+		template <typename t_MetadataType>
+		t_MetadataType* GetSpecificMetaData()
 		{
-			return static_cast<T*>(SpecificFileData.get());
+			KG_ASSERT(m_SpecificMetaData);
+			return static_cast<t_MetadataType*>(m_SpecificMetaData);
 		}
+
+		template <typename t_MetadataType>
+		void SetSpecificMetaData(t_MetadataType* newMetaData)
+		{
+			m_SpecificMetaData = static_cast<void*>(newMetaData);
+		}
+	public:
+		AssetHandle m_Handle{ Assets::k_EmptyHandle };
+		AssetIdentifier m_TypeIdentifier{ k_InvalidAssetIdentifier };
+		FixedBufStr64 m_CheckSum;
+		std::filesystem::path m_FileLocation;
+		std::filesystem::path m_IntermediateLocation;
+	private:
+		void* m_SpecificMetaData{ nullptr };
 	};
 
 	struct TextureMetaData
 	{
-		int32_t Width, Height, Channels;
+		int32_t m_Width{0};
+		int32_t m_Height{0};
+		int32_t m_Channels{0};
 	};
 
 	struct AudioMetaData
 	{
-		uint32_t Channels, SampleRate;
-		uint64_t TotalPcmFrameCount, TotalSize;
+		uint32_t m_Channels{0};
+		uint32_t m_SampleRate{0};
+		uint64_t m_TotalPcmFrameCount{0};
+		uint64_t m_TotalSize{0};
 	};
 
 	struct ShaderMetaData
 	{
-		Rendering::ShaderSpecification ShaderSpec{};
-		Rendering::UniformBufferList UniformList{};
-		Rendering::InputBufferLayout InputLayout{};
+		Rendering::ShaderSpecification m_ShaderSpec{};
+		Rendering::UniformBufferList m_UniformList{};
+		Rendering::InputBufferLayout m_InputLayout{};
 	};
 
 	struct FontMetaData
 	{
-		float AtlasWidth{ 0.0f };
-		float AtlasHeight{ 0.0f };
-		float LineHeight{ 0.0f };
-		float Ascender{ 0.0f };
-		float Descender{ 0.0f };
-		std::vector<std::pair<unsigned char, RuntimeUI::Character>> Characters{};
-	};
-
-	struct SceneMetaData
-	{
-
-	};
-
-	struct UserInterfaceMetaData
-	{
-
-	};
-
-	struct InputMapMetaData
-	{
-
-	};
-
-	struct ParticleEmitterConfigMetaData
-	{
-
-	};
-
-	struct AIStateMetaData
-	{
-
+		float m_AtlasWidth{ 0.0f };
+		float m_AtlasHeight{ 0.0f };
+		float m_LineHeight{ 0.0f };
+		float m_Ascender{ 0.0f };
+		float m_Descender{ 0.0f };
+		std::vector<std::pair<unsigned char, RuntimeUI::Character>> m_Characters{};
 	};
 
 	struct GameStateMetaData
 	{
-		std::string Name{};
+		FixedBufStr16 m_Name{};
 	};
 
 	struct GlobalStateMetaData
 	{
-		std::string Name{};
+		FixedBufStr16 m_Name{};
 	};
 
 	struct ColorPaletteMetaData
 	{
-		std::string Name{};
+		FixedBufStr16 m_Name{};
 	};
 
 	struct ScriptMetaData
 	{
-		std::string m_Name{};
+		FixedBufStr16 m_Name{};
 		Scripting::ScriptType m_ScriptType {Scripting::ScriptType::None };
-		std::string m_SectionLabel{};
+		FixedBufStr16 m_SectionLabel{};
 		WrappedFuncType m_FunctionType{};
 		Scripting::ExplicitFuncType m_ExplicitFuncType{};
 	};
 
 	struct CustomComponentMetaData
 	{
-		std::string Name{};
+		FixedBufStr16 m_Name{};
 	};
 
 	struct ProjectEnumMetaData
 	{
-		std::string Name{};
+		FixedBufStr16 m_Name{};
 	};
 
-	struct AssetInfo
-	{
-		AssetHandle m_Handle { Assets::k_EmptyHandle };
-		Metadata Data;
-	};
-	
 }

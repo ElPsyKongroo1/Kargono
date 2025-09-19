@@ -55,7 +55,7 @@ namespace Kargono
 		//=========================
 		// Query Flags
 		//=========================
-		bool IsFlagSet(uint8_t flag) const
+		constexpr bool IsFlagSet(uint8_t flag) const
 		{
 			KG_ASSERT(flag < sizeof(t_DataType) * 8);
 
