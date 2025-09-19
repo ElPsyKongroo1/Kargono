@@ -66,7 +66,7 @@ namespace Kargono::Particles
 			// Set emitter location if a parent entity exists
 			if (emitter.m_ParentScene)
 			{
-				ECS::Entity entity = emitter.m_ParentScene->GetEntityByUUID(emitter.m_ParentEntityID);
+				ECS::Entity entity = emitter.m_ParentScene->m_EntityRegistry.GetEntityByUUID(emitter.m_ParentEntityID);
 				TransformComponent entityTransform = entity.GetComponent<TransformComponent>();
 				emitter.m_Position = entityTransform.m_Translation;
 			}
@@ -249,7 +249,7 @@ namespace Kargono::Particles
 			Events::ManageEntity* manageEntity = (Events::ManageEntity*)event;
 			if (manageEntity->GetAction() == Events::ManageEntityAction::Delete)
 			{
-				if (Scenes::SceneService::GetActiveContext().GetActiveScene().get() != manageEntity->GetSceneReference())
+				if (Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry != *manageEntity->GetRegistryReference())
 				{
 					KG_WARN("Attempt to remove particle emitters from a scene that is not active");
 					return false;
@@ -394,9 +394,9 @@ namespace Kargono::Particles
 	}
 	void ParticleContext::LoadSceneEmitters(Ref<Scenes::Scene> scene)
 	{
-		for (ECSInternal::EntityID id : scene->GetAllEntitiesWith<Particles::ParticleEmitterComponent>())
+		for (ECSInternal::EntityID id : scene->m_EntityRegistry.GetView<Particles::ParticleEmitterComponent>())
 		{
-			ECS::Entity entity{ scene->GetEntityByEnttID(id) };
+			ECS::Entity entity{ scene->m_EntityRegistry.GetEntityByECSID(id) };
 			Particles::ParticleEmitterComponent particleComp = entity.GetComponent<Particles::ParticleEmitterComponent>();
 			TransformComponent transform = entity.GetComponent<TransformComponent>();
 			if (particleComp.m_EmitterConfigHandle == Assets::k_EmptyHandle)

@@ -31,7 +31,7 @@ namespace Kargono::Scenes
 		// Constructor/Destructor
 		//====================
 		Scene();
-		~Scene();
+		~Scene() = default;
 	public:
 		//====================
 		// Lifecycle Functions
@@ -40,37 +40,18 @@ namespace Kargono::Scenes
 		void OnRuntimeStop();
 		void OnRender(Rendering::Camera& camera, const Math::mat4& transform);
 		void OnUpdate(Timestep ts);
+	public:
+		//====================
+		// Events
+		//====================
+		void OnViewportResize(uint32_t width, uint32_t height);
 	private:
 		// Helpers
 		void RegisterAllComponents();
 	public:
 		//====================
-		// Create/Destroy Scene Entities
+		// Create Scenes
 		//====================
-		ECS::Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
-		ECS::Entity CreateEntity(const std::string& name = std::string());
-		ECS::Entity DuplicateEntity(ECS::Entity entity);
-		void DestroyEntity(ECS::Entity entity);
-		void DestroyAllEntities();
-		//====================
-		// Query Entity Functions
-		//====================
-		ECS::Entity FindEntityByName(std::string_view name);
-		ECS::Entity GetEntityByUUID(UUID uuid);
-		ECS::Entity GetEntityByEnttID(ECSInternal::EntityID enttID);
-		bool CheckEntityExists(ECSInternal::EntityID entity);
-		bool IsEntityValid(ECSInternal::EntityID entity) 
-		{ 
-			return m_EntityRegistry.m_Registry.HasEntity(entity);
-		}
-
-		void OnViewportResize(uint32_t width, uint32_t height);
-		template<typename... Components>
-		auto GetAllEntitiesWith()
-		{
-			return m_EntityRegistry.m_Registry.GetFlatView<Components...>();
-		}
-
 		Ref<Scene> CreateSceneCopy();
 	public:
 		//====================
@@ -113,11 +94,6 @@ namespace Kargono::Scenes
 		{
 			m_PrimaryCameraEntity = {};
 		}
-	public:
-		//====================
-		// Manage Active Scene Entities
-		//====================
-		Assets::AssetHandle FindEntityHandleByName(std::string_view name);
 	public:
 		//====================
 		// Getters/Setters
@@ -180,7 +156,6 @@ namespace Kargono::Scenes
 		// Query Active Scene
 		//====================
 		bool IsSceneActive(UUID sceneID);
-
 	public:
 		//====================
 		// Set New Scene

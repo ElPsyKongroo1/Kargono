@@ -4,6 +4,8 @@
 #include "Modules/Core/Module/CoreModule.h"
 #include "Kargono/Math/MathAliases.h"
 
+#include <memory>
+
 namespace Kargono
 {
 	struct TransformComponent

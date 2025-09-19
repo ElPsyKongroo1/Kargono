@@ -250,7 +250,7 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		if (!scene) { return false; }
-		ECS::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
+		ECS::Entity entity = scene->m_EntityRegistry.GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
 		entity.GetComponent<TransformComponent>().m_Translation = translation;
@@ -268,7 +268,7 @@ namespace Kargono
 	{
 		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		if (!scene) { return false; }
-		ECS::Entity entity = scene->GetEntityByUUID(e.GetEntityID());
+		ECS::Entity entity = scene->m_EntityRegistry.GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
 		Math::vec2 linearVelocity = e.GetLinearVelocity();
