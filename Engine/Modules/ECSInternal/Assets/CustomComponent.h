@@ -5,6 +5,7 @@
 #include "Modules/ECSInternal/ECSInternalCommon.h"
 #include "Modules/ECSInternal/Module/ECSInternalModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
+#include "Modules/Assets/Module/AssetTag.h"
 
 #include <array>
 #include <cstdint>
@@ -13,10 +14,46 @@
 #include <limits>
 #include <algorithm>
 
+namespace Kargono::Scenes { class Scene; }
+
 namespace Kargono::ECSInternal
 {
+	constexpr size_t k_NewAllocationIndex{ std::numeric_limits<size_t>().max() };
+
+	struct FieldReallocationInstructions
+	{
+		std::vector<size_t> m_FieldTransferDirections;
+		std::vector<WrappedVarType> m_OldDataTypes;
+		std::vector<WrappedVarType> m_NewDataTypes;
+		std::vector<uint64_t> m_OldDataLocations;
+		std::vector<uint64_t> m_NewDataLocations;
+		size_t m_NewDataSize;
+		std::vector<Ref<Scenes::Scene>> m_OldScenes;
+		std::vector<Assets::AssetHandle> m_OldSceneHandles;
+	};
+
 	struct CustomComponent
 	{
+		//==============================
+		// Metaprogramming Info
+		//==============================
+		constexpr static Assets::AssetConfig GetAssetConfig()
+		{
+			Assets::AssetConfig config{};
+			config.m_Identifier = Assets::GetAssetIdentifier<CustomComponent>();
+			config.m_Name = "Custom Component";
+			config.m_FileExtension = ".kgcomponent";
+			config.m_ImportExtensions = {};
+			config.m_RegistryPath = "CustomComponent/CustomComponentRegistry.kgreg";
+			config.m_IntermediateExtension = "";
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
+			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
+			config.m_Flags.ClearFlag(Assets::AssetFlags::HasFileImporting);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetSaving);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
+			return config;
+		}
 	public:
 		//==============================
 		// Constructors/Destructors
@@ -33,7 +70,6 @@ namespace Kargono::ECSInternal
 	private:
 		// Helpers
 		void RecalculateDataLocations();
-
 	public:
 		//==============================
 		// Copy Function(s)
@@ -57,6 +93,19 @@ namespace Kargono::ECSInternal
 		}
 	public:
 		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+
+	public:
+		//==============================
+		// Validation
+		//==============================
+		Ref<void> SaveValidation(Assets::AssetHandle assetHandle);
+		void DeleteValidation(Assets::AssetHandle assetHandle);
+	public:
+		//==============================
 		// Getters/Setters
 		//==============================
 		ComponentIdentifier RevalidateIdentifier();
@@ -75,7 +124,7 @@ namespace Kargono::ECSInternal
 		std::vector<FixedBufStr32> m_DataNames;
 	};
 
-	Register_Module_Type(CustomComponent)
+	Register_Module_Type(CustomComponent, Assets::AssetTag)
 
 	inline void CustomComponentCopyTo(void* src, void* dst, void* customComp)
 	{

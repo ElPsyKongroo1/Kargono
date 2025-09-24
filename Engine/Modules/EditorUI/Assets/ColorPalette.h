@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Modules/Assets/Module/AssetTag.h"
 #include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Math/MathAliases.h"
 #include "Modules/EditorUI/Module/EditorUIModule.h"
+#include "Modules/Assets/Module/AssetTag.h"
 
 #include <vector>
 #include <cstdint>
@@ -19,8 +19,28 @@ namespace Kargono::EditorUI
 		HexCode m_HexCode;
 	};
 
+	struct ColorPaletteMetaData
+	{
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		FixedBufStr16 m_Name{};
+	};
+
 	struct ColorPalette
 	{
+	public:
+		//==============================
+		// Metaprogramming Info
+		//==============================
+		using Metadata = ColorPaletteMetaData;
 	public:
 		//==============================
 		// Static Asset Functions
@@ -40,6 +60,8 @@ namespace Kargono::EditorUI
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
 			return config;
 		}
+
+		static void CreateAssetFileFromName(void* context);
 	public:
 		//==============================
 		// Constructors/Destructors
@@ -59,6 +81,8 @@ namespace Kargono::EditorUI
 		//==============================
 		std::vector<Color> m_Colors;
 	};
+
+	Register_Module_Type(ColorPalette, Assets::AssetTag)
 }
 
 namespace Kargono::Utility

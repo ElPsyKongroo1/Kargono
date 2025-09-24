@@ -82,11 +82,6 @@ namespace Kargono::Assets
 		FixedBufStr16 m_Name{};
 	};
 
-	struct ColorPaletteMetaData
-	{
-		FixedBufStr16 m_Name{};
-	};
-
 	struct ScriptMetaData
 	{
 		FixedBufStr16 m_Name{};

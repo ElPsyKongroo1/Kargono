@@ -44,9 +44,9 @@ namespace Kargono::Assets
 	};
 
 	template <typename t_Type>
-	concept HasSaveValidation = requires (t_Type & type)
+	concept HasSaveValidation = requires (t_Type & type, AssetHandle handle)
 	{
-		{ type.SaveValidation() } -> std::same_as<Ref<void>>;
+		{ type.SaveValidation(handle) } -> std::same_as<Ref<void>>;
 	};
 
 	template <typename t_Type>
