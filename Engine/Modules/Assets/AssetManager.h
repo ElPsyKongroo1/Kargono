@@ -20,39 +20,6 @@ namespace Kargono::Assets
 	template <AssetConcept t_AssetType>
 	using AssetCache = std::unordered_map<AssetHandle, AssetReference<t_AssetType>>;
 
-	struct DeserializeAssetContext
-	{
-		Metadata* m_AssetMetadata{ nullptr };
-		std::filesystem::path m_AssetPath;
-	};
-
-	struct SerializeAssetContext
-	{
-		std::filesystem::path m_AssetPath;
-	};
-
-	struct DeserializeRegistryContext
-	{
-		YAML::Node* m_RegistryNode{ nullptr };
-	};
-
-	struct SerializeRegistryContext
-	{
-		YAML::Emitter* m_Serializer{ nullptr };
-	};
-
-	struct SerializeMetaDataContext
-	{
-		YAML::Emitter* m_Serializer{ nullptr };
-		Metadata* m_Metadata{ nullptr };
-	};
-
-	struct DeserializeMetaDataContext
-	{
-		YAML::Node* m_Node{ nullptr };
-		Metadata* m_Metadata{ nullptr };
-	};
-
 	template <AssetConcept t_AssetType>
 	class AssetManager
 	{
@@ -864,15 +831,25 @@ namespace Kargono::Assets
 		{
 			// Ensure asset type supports serialization
 			static_assert(HasSerialization<t_AssetType>);
-
+			
+			// Check if asset already exists
+			t_AssetType* newAsset{ nullptr };
+			bool assetExists{ false };
 			if constexpr (k_HasAssetCache)
 			{
-				// Ensure asset is not already in cache
-				KG_ASSERT(!m_AssetCache.contains(metadata.m_Handle));
+				if (m_AssetCache.contains(metadata.m_Handle))
+				{
+					AssetReference<t_AssetType> assetReference{m_AssetCache.at(metadata.m_Handle)};
+					newAsset = &assetReference.GetAsset();
+					assetExists = true;
+				}
 			}
 
-			// Allocate new asset
-			t_AssetType* newAsset = i_BackingAllocator->Alloc<t_AssetType>();
+			// Allocate new asset if it does not already exist
+			if (!assetExists)
+			{
+				newAsset = i_BackingAllocator->Alloc<t_AssetType>();
+			}
 
 			// Deserialize asset
 			DeserializeAssetContext deserializeContext{ &metadata, assetPath };
@@ -896,65 +873,115 @@ namespace Kargono::Assets
 		void DeserializeRegistrySpecificData(YAML::Node& registryNode)
 		{
 			// Ensure asset type supports registry specific data
-			static_assert(HasRegistrySerialization<t_AssetType>);
+			static_assert(HasRegistryData<t_AssetType>);
 
+			// Check if the registry data already exists
+			if (!m_RegistrySpecificData)
+			{
+				m_RegistrySpecificData = i_BackingAllocator->Alloc<typename t_AssetType::RegistryData>();
+			}
+
+			// Get registry specific data
+			typename t_AssetType::RegistryData* registryData = (typename t_AssetType::RegistryData*)m_RegistrySpecificData;
+
+			// Deserialize registry
 			DeserializeRegistryContext context{ &registryNode };
-			t_AssetType::DeserializeRegistryData(context);
+			registryData->Deserialize((void*)&context);
 		}
 
 		void SerializeRegistrySpecificData(YAML::Emitter& serializer)
 		{
 			// Ensure asset type supports registry specific data
-			static_assert(HasRegistrySerialization<t_AssetType>);
+			static_assert(HasRegistryData<t_AssetType>);
 
+			// Get registry specific data reference
+			typename t_AssetType::RegistryData* registryData = (typename t_AssetType::RegistryData*)m_RegistrySpecificData;
+
+			// Serialize registry
 			SerializeRegistryContext context{ &serializer };
-			t_AssetType::SerializeRegistryData(context);
+			registryData->Serialize((void*)&context);
 		}
 
 		void DeserializeAssetSpecificMetadata(YAML::Node& node, Metadata& metadata)
 		{
 			// Ensure asset type supports metadata deserialization
-			static_assert(HasAssetMetadata<t_AssetType>);
+			static_assert(HasMetadata<t_AssetType>);
 
-			KG_ASSERT(assetRef.IsValid() && !assetRef.IsEmpty(), "Attempt to serialize metadata for an invalid asset reference");
+			// Get specific metadata
+			typename t_AssetType::Metadata* specificMetadata = metadata.GetSpecificMetaData<typename t_AssetType::Metadata>();
+			if (!specificMetadata)
+			{
+				specificMetadata = i_BackingAllocator->Alloc<typename t_AssetType::Metadata>();
+				metadata.SetSpecificMetaData(specificMetadata);
+			}
 
+			// Deserialize specific metadata
 			DeserializeMetaDataContext context{ &node, &metadata };
-			metadata.GetSpecificMetaData<decltype(t_AssetType.GetAssetMetadata())>()->Deserialize(context);
+			specificMetadata->Deserialize((void*)&context);
 		}
 
 		void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Metadata& metadata)
 		{
 			// Ensure asset type supports metadata serialization
-			static_assert(HasAssetMetadata<t_AssetType>);
+			static_assert(HasMetadata<t_AssetType>);
 
-			KG_ASSERT(assetRef.IsValid() && !assetRef.IsEmpty(), "Attempt to serialize metadata for an invalid asset reference");
+			// Get specific metadata
+			typename t_AssetType::Metadata* specificMetadata = metadata.GetSpecificMetaData<typename t_AssetType::Metadata>();
+			KG_ASSERT(specificMetadata);
 
+			// Serialize specific metadata
 			SerializeMetaDataContext context{ &serializer, &metadata };
-			metadata.GetSpecificMetaData<decltype(t_AssetType.GetAssetMetadata())>()->Serialize(context);
+			specificMetadata->Serialize((void*)&context);
 		}
 
-		virtual void CreateAssetFileFromName(std::string_view name, Metadata metadata, const std::filesystem::path& assetPath)
+		Ref<void> SaveAssetValidation(AssetReference<t_AssetType> assetReference) 
 		{
-			UNREFERENCED_PARAMETER(name);
-			UNREFERENCED_PARAMETER(metadata);
-			UNREFERENCED_PARAMETER(assetPath);
-			KG_ERROR("Attempt to create an asset from a name that does not override the base class's implmentation of CreateAssetFileFromName()");
-		}
+			// Ensure asset type supports save validation
+			static_assert(HasSaveValidation<t_AssetType>);
 
-		virtual Ref<void> SaveAssetValidation(AssetReference<t_AssetType> assetReference) 
-		{
-			UNREFERENCED_PARAMETER(assetReference);
-			return nullptr; 
+			// Ensure asset reference is valid
+			KG_ASSERT(assetReference.IsValid() && !assetReference.IsEmpty(), "Attempt to validate an invalid asset reference");
+
+			// Get asset
+			t_AssetType* asset = &assetReference.GetAsset();
+
+			// Validate asset
+			return asset->SaveValidation();
 		};
-		virtual void DeleteAssetValidation(AssetHandle assetHandle) 
+		void DeleteAssetValidation(AssetHandle assetHandle) 
 		{
-			UNREFERENCED_PARAMETER(assetHandle);
+			// Ensure asset type supports delete validation
+			static_assert(HasDeletionValidation<t_AssetType>);
+
+			// Get asset
+			AssetReference<t_AssetType> assetReference = GetAsset(assetHandle);
+
+			// Validate asset
+			KG_ASSERT(assetReference.IsValid() && !assetReference.IsEmpty(), "Attempt to validate an invalid asset reference");
+
+			t_AssetType* asset = &assetReference.GetAsset();
+
+			asset->DeleteValidation(assetHandle);
 		};
-		virtual void CreateAssetIntermediateFromFile(Metadata& newMetadata, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) 
+
+		void CreateAssetFileFromName(std::string_view name, Metadata metadata, const std::filesystem::path& assetPath)
 		{
-			UNREFERENCED_PARAMETER(newMetadata);
-			UNREFERENCED_PARAMETER(fullFileLocation);
-			UNREFERENCED_PARAMETER(fullIntermediateLocation);
+			// Ensure asset type supports creation from name
+			static_assert(HasCreationFromName<t_AssetType>);
+
+			// Create asset file
+			CreateAssetFileFromNameContext context{ name, &metadata, assetPath };
+			t_AssetType::CreateAssetFileFromName(context);
+		};
+
+		void CreateAssetIntermediateFromFile(Metadata& metadata, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) 
+		{
+			// Ensure asset type supports creation from name
+			static_assert(HasCreationFromFile<t_AssetType>);
+
+			// Create asset file
+			CreateAssetIntermediateFromFileContext context{ &metadata, fullFileLocation, fullIntermediateLocation };
+			t_AssetType::CreateAssetIntermediateFromFile(context);
 		};
 		
 	private:
@@ -963,6 +990,7 @@ namespace Kargono::Assets
 		//==============================
 		AssetRegistry m_AssetRegistry{};
 		AssetCache<t_AssetType> m_AssetCache{};
+		void* m_RegistrySpecificData{ nullptr };
 
 	private:
 		//==============================

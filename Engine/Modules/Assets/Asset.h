@@ -55,14 +55,6 @@ namespace Kargono::Assets
 		int32_t m_Channels{0};
 	};
 
-	struct AudioMetaData
-	{
-		uint32_t m_Channels{0};
-		uint32_t m_SampleRate{0};
-		uint64_t m_TotalPcmFrameCount{0};
-		uint64_t m_TotalSize{0};
-	};
-
 	struct ShaderMetaData
 	{
 		Rendering::ShaderSpecification m_ShaderSpec{};

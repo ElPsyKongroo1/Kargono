@@ -8,19 +8,7 @@ namespace Kargono::Assets
 	class ColorPaletteManager : public AssetManager<ProjectData::ColorPalette>
 	{
 	public:
-		ColorPaletteManager() : AssetManager<ProjectData::ColorPalette>()
-		{
-			m_AssetName = "Color Palette";
-			m_AssetType = AssetType::ColorPalette;
-			m_FileExtension = ".kgpalette";
-			m_RegistryLocation = "ColorPalette/ColorPaletteRegistry.kgreg";
-			m_Flags.set(AssetManagerOptions::HasAssetCache, false);
-			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
-			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
-			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
-			m_Flags.set(AssetManagerOptions::HasAssetSaving, true);
-			m_Flags.set(AssetManagerOptions::HasAssetCreationFromName, true);
-		}
+		
 		virtual ~ColorPaletteManager() = default;
 	public:
 

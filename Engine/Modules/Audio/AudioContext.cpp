@@ -1,45 +1,16 @@
 #include "kgpch.h"
 
-#include "Modules/Audio/Audio.h"
+#include "Modules/Audio/AudioContext.h"
 #include "Kargono/Core/Buffer.h"
 #include "Modules/Assets/AssetService.h"
+#include "Modules/Audio/Assets/AudioBuffer.h"
+#include "Modules/Audio/AudioSource.h"
+#include "Modules/Audio/AudioListener.h"
 
 #include "Modules/Audio/ExternalAPI/OpenALAPI.h"
 
 namespace Kargono::Audio
 {
-	static AudioSourceSpecification s_DefaultSourceSpec =
-	{
-		{},
-		{},
-		1.0f,
-		1.0f,
-		false,
-		nullptr
-	};
-
-	AudioSource::AudioSource()
-	{
-		CallAndCheckALError(alGenSources(1, &m_SourceID));
-	}
-
-	AudioSource::~AudioSource()
-	{
-		CallAndCheckALError(alSourceStop(m_SourceID));
-		CallAndCheckALError(alDeleteSources(1, &(m_SourceID)));
-	}
-
-
-	AudioBuffer::AudioBuffer()
-	{
-		CallAndCheckALError(alGenBuffers(1, &m_BufferID));
-	}
-
-	AudioBuffer::~AudioBuffer()
-	{
-		CallAndCheckALError(alDeleteBuffers(1, &(m_BufferID)));
-	}
-
 	void AudioContext::PlayStereoSound(Ref<AudioBuffer> audioBuffer)
 	{
 		if (m_Mute)
@@ -52,11 +23,14 @@ namespace Kargono::Audio
 			0, 1, 0   // Up Vectors
 		};
 
-		auto audioSource = m_StereoMusicSource.get();
-		uint32_t sourceID = audioSource->GetSourceID();
+		AudioSource* audioSource = m_StereoMusicSource.get();
+		SourceID sourceID = audioSource->GetSourceID();
 
 		CallAndCheckALError(alSourceStop(sourceID));
-		if (!audioBuffer) { return; }
+		if (!audioBuffer) 
+		{
+			return;
+		}
 		CallAndCheckALError(alSourcei(sourceID, AL_BUFFER, audioBuffer->m_BufferID));
 		CallAndCheckALError(alListener3f(AL_POSITION, 0, 0, 0));
 		CallAndCheckALError(alListener3f(AL_VELOCITY, 0, 0, 0));
@@ -65,7 +39,7 @@ namespace Kargono::Audio
 	}
 	void AudioContext::PlayStereoSoundFromHandle(Assets::AssetHandle audioHandle)
 	{
-		Ref<Audio::AudioBuffer> audioBuffer = Assets::AssetService::GetAudioBuffer(audioHandle);
+		Ref<AudioBuffer> audioBuffer = Assets::AssetService::GetAudioBuffer(audioHandle);
 		if (audioBuffer)
 		{
 			PlayStereoSound(audioBuffer);
@@ -81,25 +55,25 @@ namespace Kargono::Audio
 		{
 			return;
 		}
-		auto audioSource = m_AudioSourceQueue.front();
-		uint32_t sourceID = audioSource->GetSourceID();
+		Ref<AudioSource> audioSource = m_AudioSourceQueue.front();
+		SourceID sourceID = audioSource->GetSourceID();
 
 		CallAndCheckALError(alSourceStop(sourceID));
 		m_AudioSourceQueue.pop();
-		CallAndCheckALError(alSource3f(sourceID, AL_POSITION, sourceSpec.Position.x, sourceSpec.Position.y, sourceSpec.Position.z));
-		CallAndCheckALError(alSource3f(sourceID, AL_VELOCITY, sourceSpec.Velocity.x, sourceSpec.Velocity.y, sourceSpec.Velocity.z));
-		CallAndCheckALError(alSourcef(sourceID, AL_PITCH, sourceSpec.Pitch));
-		CallAndCheckALError(alSourcef(sourceID, AL_GAIN, sourceSpec.Gain));
-		CallAndCheckALError(alSourcei(sourceID, AL_LOOPING, static_cast<ALint>(sourceSpec.IsLooping)));
-		if (!sourceSpec.CurrentBuffer) { return; }
-		CallAndCheckALError(alSourcei(sourceID, AL_BUFFER, sourceSpec.CurrentBuffer->m_BufferID));
+		CallAndCheckALError(alSource3f(sourceID, AL_POSITION, sourceSpec.m_Position.x, sourceSpec.m_Position.y, sourceSpec.m_Position.z));
+		CallAndCheckALError(alSource3f(sourceID, AL_VELOCITY, sourceSpec.m_Velocity.x, sourceSpec.m_Velocity.y, sourceSpec.m_Velocity.z));
+		CallAndCheckALError(alSourcef(sourceID, AL_PITCH, sourceSpec.m_Pitch));
+		CallAndCheckALError(alSourcef(sourceID, AL_GAIN, sourceSpec.m_Gain));
+		CallAndCheckALError(alSourcei(sourceID, AL_LOOPING, static_cast<ALint>(sourceSpec.m_IsLooping)));
+		if (!sourceSpec.m_CurrentBuffer) { return; }
+		CallAndCheckALError(alSourcei(sourceID, AL_BUFFER, sourceSpec.m_CurrentBuffer->m_BufferID));
 
-		CallAndCheckALError(alListener3f(AL_POSITION, listenerSpec.Position.x, listenerSpec.Position.y, listenerSpec.Position.z));
-		CallAndCheckALError(alListener3f(AL_VELOCITY, listenerSpec.Velocity.x, listenerSpec.Velocity.y, listenerSpec.Velocity.z));
+		CallAndCheckALError(alListener3f(AL_POSITION, listenerSpec.m_Position.x, listenerSpec.m_Position.y, listenerSpec.m_Position.z));
+		CallAndCheckALError(alListener3f(AL_VELOCITY, listenerSpec.m_Velocity.x, listenerSpec.m_Velocity.y, listenerSpec.m_Velocity.z));
 		ALfloat forwardAndUpVectors[] =
 		{
-			listenerSpec.Forward.x, listenerSpec.Forward.y, listenerSpec.Forward.z,  // Forward Vectors
-			listenerSpec.Up.x, listenerSpec.Up.y, listenerSpec.Up.z   // Up Vectors
+			listenerSpec.m_Forward.x, listenerSpec.m_Forward.y, listenerSpec.m_Forward.z,  // Forward Vectors
+			listenerSpec.m_Up.x, listenerSpec.m_Up.y, listenerSpec.m_Up.z   // Up Vectors
 		};
 		CallAndCheckALError(alListenerfv(AL_ORIENTATION, forwardAndUpVectors));
 
@@ -111,8 +85,8 @@ namespace Kargono::Audio
 
 	void AudioContext::PlaySound(Ref<AudioBuffer> audioBuffer)
 	{
-		s_DefaultSourceSpec.CurrentBuffer = audioBuffer;
-		PlaySound(s_DefaultSourceSpec);
+		m_DefaultSourceSpec.m_CurrentBuffer = audioBuffer;
+		PlaySound(m_DefaultSourceSpec);
 	}
 
 	void AudioContext::PlaySoundFromHandle(Assets::AssetHandle audioHandle)
@@ -141,7 +115,7 @@ namespace Kargono::Audio
 	}
 	void AudioContext::StopAllAudio()
 	{
-		for (uint32_t iterator{0}; iterator < m_AudioSourceQueue.size(); iterator++)
+		for (size_t iterator{ 0 }; iterator < m_AudioSourceQueue.size(); iterator++)
 		{
 			Ref<AudioSource> audioSource = m_AudioSourceQueue.front();
 			CallAndCheckALError(alSourceStop(audioSource->GetSourceID()));
@@ -185,7 +159,7 @@ namespace Kargono::Audio
 		CallAndCheckALError(alSourcef(m_StereoMusicSource->GetSourceID(), AL_GAIN, 1.0f));
 		CallAndCheckALError(alSourcei(m_StereoMusicSource->GetSourceID(), AL_LOOPING, true));
 
-		for (uint32_t iterator{0}; iterator < 15; iterator++)
+		for (size_t iterator{ 0 }; iterator < 15; iterator++)
 		{
 			m_AudioSourceQueue.push(CreateRef<AudioSource>());
 		}
@@ -194,7 +168,7 @@ namespace Kargono::Audio
 
 	bool AudioContext::Terminate()
 	{
-		s_DefaultSourceSpec.CurrentBuffer.reset();
+		m_DefaultSourceSpec.m_CurrentBuffer.reset();
 		m_StereoMusicSource.reset();
 		while (!m_AudioSourceQueue.empty())
 		{

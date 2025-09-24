@@ -11,45 +11,19 @@
 
 namespace Kargono::AI
 {
-	//=========================
-	// AI Message Class
-	//=========================
 	struct AIMessage
 	{
-		uint32_t MessageType{};
-		UUID SenderEntity{ Assets::k_EmptyHandle };
-		UUID ReceiverEntity{ Assets::k_EmptyHandle };
-		float DispatchTime{ 0.0f };
+		uint32_t m_MessageType{};
+		UUID m_SenderEntity{ Assets::k_EmptyHandle };
+		UUID m_ReceiverEntity{ Assets::k_EmptyHandle };
+		float m_DispatchTime{ 0.0f };
 	};
 
 	// Comparison functor for sorting AIMessages inside AIContext's MessageQueue
 	inline auto k_MessageQueueComparisonFunctor = [](const AIMessage& aiMessageOne, const AIMessage& aiMessageTwo) 
 	{
-		return aiMessageOne.DispatchTime < aiMessageTwo.DispatchTime;
+		return aiMessageOne.m_DispatchTime < aiMessageTwo.m_DispatchTime;
 	};
-
-	//=========================
-	// AI State Class
-	//=========================
-	struct AIState
-	{
-		// Called each frame if entity has AIComponent
-		Assets::AssetHandle OnUpdateHandle { Assets::k_EmptyHandle };
-		Ref<Scripting::Script> OnUpdate { nullptr };
-
-		// Called when this state is entered
-		Assets::AssetHandle OnEnterStateHandle { Assets::k_EmptyHandle };
-		Ref<Scripting::Script> OnEnterState { nullptr };
-
-		// Called when this state is exited
-		Assets::AssetHandle OnExitStateHandle { Assets::k_EmptyHandle };
-		Ref<Scripting::Script> OnExitState { nullptr };
-
-		// Called when a message is received
-		Assets::AssetHandle OnMessageHandle { Assets::k_EmptyHandle };
-		Ref<Scripting::Script> OnMessage { nullptr };
-	};
-
 
 	class AIContext
 	{

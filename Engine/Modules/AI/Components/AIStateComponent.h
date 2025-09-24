@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Modules/AI/AIService.h"
 #include "Modules/Assets/Asset.h"
+#include "Modules/AI/Assets/AIStateAsset.h"
 #include "Modules/AI/Module/AIModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
 
@@ -39,13 +39,13 @@ namespace Kargono::AI
 		//==============================
 		// Main state that undergoes state transitions
 		Assets::AssetHandle m_CurrentStateHandle{ Assets::k_EmptyHandle };
-		Ref<AI::AIState> m_CurrentStateReference{ nullptr };
+		Ref<AIState> m_CurrentStateReference{ nullptr };
 		// This state allows transitioning into a temporary state for the CurrentState and easily reverting back
 		Assets::AssetHandle m_PreviousStateHandle{ Assets::k_EmptyHandle };
-		Ref<AI::AIState> m_PreviousStateReference{ nullptr };
+		Ref<AIState> m_PreviousStateReference{ nullptr };
 		// Globally held state that is ubiquitously available and ran in the OnUpdate() function
 		Assets::AssetHandle m_GlobalStateHandle{ Assets::k_EmptyHandle };
-		Ref<AI::AIState> m_GlobalStateReference{ nullptr };
+		Ref<AIState> m_GlobalStateReference{ nullptr };
 	};
 
 	Register_Module_Type(AIStateComponent, ECSInternal::ComponentTag)

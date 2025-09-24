@@ -3,6 +3,7 @@
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Utility/CompilerInfo.h"
 #include "Modules/FileSystem/FileSystem.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <sstream>
 #include <type_traits>

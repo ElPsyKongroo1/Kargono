@@ -43,7 +43,6 @@ namespace Kargono::ECS
 		Entity GetEntityByUUID(UUID uuid);
 		Entity GetEntityByECSID(ECSInternal::EntityID enttID);
 		bool IsEntityValid(ECSInternal::EntityID entity);
-
 		UUID GetUUIDByName(std::string_view name);
 
 		//==============================
