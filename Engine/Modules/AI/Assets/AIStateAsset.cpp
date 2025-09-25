@@ -91,24 +91,18 @@ namespace Kargono::AI
 		}
 	}
 
-	void AIState::CreateAssetFileFromName(void* context)
+	void AIState::CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path)
 	{
-		// Get asset context
-		Assets::CreateAssetFileFromNameContext& assetContext = *(Assets::CreateAssetFileFromNameContext*)context;
-
-		// Get context fields
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
-
 		// Create Temporary AIState
 		AIState temporaryAIState{};
 
 		// Save Binary into File
 		Assets::SerializeAssetContext serializeContext{};
-		serializeContext.m_AssetPath = assetPath;
+		serializeContext.m_AssetPath = path;
 		temporaryAIState.Serialize((void*)&serializeContext);
 	}
 
-	void AIState::DeleteValidation(Assets::AssetHandle assetHandle)
+	void AIState::DeleteValidation(Assets::Metadata& metadata)
 	{
 		// Handle deleting the AI state by removing entity data from all scenes
 		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())
@@ -116,7 +110,7 @@ namespace Kargono::AI
 			// Get scene
 			Ref<Scenes::Scene> currentScene = Assets::AssetService::GetScene(sceneHandle);
 
-			bool sceneModified = Assets::AssetService::RemoveAIStateFromScene(currentScene, assetHandle);
+			bool sceneModified = Assets::AssetService::RemoveAIStateFromScene(currentScene, metadata.m_Handle);
 
 			if (sceneModified)
 			{

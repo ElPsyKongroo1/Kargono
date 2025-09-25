@@ -63,8 +63,8 @@ namespace Kargono::Audio
 			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetCreationFromName);
 			return config;
 		}
-		static void CreateAssetFileFromName(void* context);
-		static void CreateAssetIntermediateFromFile(void* context);
+		static void CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path);
+		static void CreateAssetIntermediateFromFile(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path);
 	public:
 		//==============================
 		// Constructors and Destructors

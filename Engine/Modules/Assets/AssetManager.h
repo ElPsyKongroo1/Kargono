@@ -942,11 +942,12 @@ namespace Kargono::Assets
 			// Ensure asset reference is valid
 			KG_ASSERT(assetReference.IsValid() && !assetReference.IsEmpty(), "Attempt to validate an invalid asset reference");
 
-			// Get asset
+			// Get relevant data
 			t_AssetType* asset = &assetReference.GetAsset();
+			Metadata& metadata{ GetAssetInfo(assetReference.GetHandle()); };
 
 			// Validate asset
-			return asset->SaveValidation();
+			return asset->SaveValidation(metadata);
 		};
 		void DeleteAssetValidation(AssetHandle assetHandle) 
 		{
@@ -960,8 +961,9 @@ namespace Kargono::Assets
 			KG_ASSERT(assetReference.IsValid() && !assetReference.IsEmpty(), "Attempt to validate an invalid asset reference");
 
 			t_AssetType* asset = &assetReference.GetAsset();
+			Metadata& metadata{ GetAssetInfo(assetReference.GetHandle()); };
 
-			asset->DeleteValidation(assetHandle);
+			asset->DeleteValidation(metadata);
 		};
 
 		void CreateAssetFileFromName(std::string_view name, Metadata metadata, const std::filesystem::path& assetPath)
@@ -970,8 +972,7 @@ namespace Kargono::Assets
 			static_assert(HasCreationFromName<t_AssetType>);
 
 			// Create asset file
-			CreateAssetFileFromNameContext context{ name, &metadata, assetPath };
-			t_AssetType::CreateAssetFileFromName(context);
+			t_AssetType::CreateAssetFileFromName(name, metadata, assetPath);
 		};
 
 		void CreateAssetIntermediateFromFile(Metadata& metadata, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) 
@@ -980,8 +981,7 @@ namespace Kargono::Assets
 			static_assert(HasCreationFromFile<t_AssetType>);
 
 			// Create asset file
-			CreateAssetIntermediateFromFileContext context{ &metadata, fullFileLocation, fullIntermediateLocation };
-			t_AssetType::CreateAssetIntermediateFromFile(context);
+			t_AssetType::CreateAssetIntermediateFromFile(metadata, fullFileLocation, fullIntermediateLocation);
 		};
 		
 	private:

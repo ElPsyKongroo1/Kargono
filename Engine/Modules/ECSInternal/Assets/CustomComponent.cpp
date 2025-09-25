@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/ECSInternal/Assets/CustomComponent.h"
-#include "Kargono/Project"
+#include "Kargono/Projects/Project.h"
 
 namespace Kargono::ECSInternal
 {
@@ -259,6 +259,8 @@ namespace Kargono::ECSInternal
 	Ref<void> CustomComponent::SaveValidation(Assets::AssetHandle assetHandle)
 	{
 		Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		// 
 
 		// Get old assetInfo reference
 		AssetInfo assetInfo = GetAssetRegistry().at(assetHandle);

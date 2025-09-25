@@ -44,27 +44,27 @@ namespace Kargono::Assets
 	};
 
 	template <typename t_Type>
-	concept HasSaveValidation = requires (t_Type & type, AssetHandle handle)
+	concept HasSaveValidation = requires (t_Type & type, Metadata& metadata)
 	{
-		{ type.SaveValidation(handle) } -> std::same_as<Ref<void>>;
+		{ type.SaveValidation(metadata) } -> std::same_as<Ref<void>>;
 	};
 
 	template <typename t_Type>
-	concept HasDeletionValidation = requires (t_Type & type, AssetHandle handle)
+	concept HasDeletionValidation = requires (t_Type & type, Metadata& metadata)
 	{
-		{ type.DeleteValidation(handle) } -> std::same_as<void>;
+		{ type.DeleteValidation(metadata) } -> std::same_as<void>;
 	};
 
 	template <typename t_Type>
-	concept HasCreationFromName = requires (void* context)
+	concept HasCreationFromName = requires (std::string_view assetName, Metadata& metadata, std::filesystem::path& path)
 	{
-		{ t_Type::CreateAssetFileFromName(context) } -> std::same_as<void>;
+		{ t_Type::CreateAssetFileFromName(assetName, metadata, path) } -> std::same_as<void>;
 	};
 
 	template<typename t_Type>
-	concept HasCreationFromFile = requires (void* context)
+	concept HasCreationFromFile = requires (Metadata& metadata, std::filesystem::path& filePath, std::filesystem::path& intermediatePath)
 	{
-		{ t_Type::CreateAssetIntermediateFromFile(context) } -> std::same_as<void>;
+		{ t_Type::CreateAssetIntermediateFromFile(metadata, filePath, intermediatePath) } -> std::same_as<void>;
 	};
 
 	// Asset concept(s)
@@ -110,19 +110,5 @@ namespace Kargono::Assets
 	{
 		YAML::Node* m_Node{ nullptr };
 		Metadata* m_Metadata{ nullptr };
-	};
-
-	struct CreateAssetFileFromNameContext
-	{
-		std::string_view m_AssetName;
-		Metadata* m_AssetMetadata{ nullptr };
-		std::filesystem::path m_AssetPath;
-	};
-
-	struct CreateAssetIntermediateFromFileContext
-	{
-		Metadata* m_AssetMetadata{ nullptr };
-		std::filesystem::path m_FilePath;
-		std::filesystem::path m_IntermediatePath;
 	};
 }

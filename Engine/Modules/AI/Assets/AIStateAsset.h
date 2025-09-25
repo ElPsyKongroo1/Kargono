@@ -28,7 +28,7 @@ namespace Kargono::AI
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
 			return config;
 		}
-		static void CreateAssetFileFromName(void* context);
+		static void CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path);
 
 	public:
 		//==============================
@@ -40,7 +40,7 @@ namespace Kargono::AI
 		//==============================
 		// Validation
 		//==============================
-		void DeleteValidation(Assets::AssetHandle assetHandle);
+		void DeleteValidation(Assets::Metadata& metadata);
 		bool RemoveScript(Assets::AssetHandle scriptHandle);
 	public:
 		//==============================
