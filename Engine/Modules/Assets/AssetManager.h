@@ -1,13 +1,13 @@
 #pragma once
 #include "Kargono/Core/Base.h"
 #include "Modules/Core/Engine.h"
-#include "Modules/Assets/Asset.h"
 #include "Kargono/Projects/Project.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Events/AssetEvent.h"
 #include "Modules/Assets/Module/AssetTag.h"
 #include "Modules/Assets/AssetReference.h"
 #include "Kargono/Memory/IAllocator.h"
+#include "Modules/Assets/Concepts/OptionalAssetConcepts.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 
@@ -181,7 +181,11 @@ namespace Kargono::Assets
 			}
 
 			// Provide asset specific validation
-			Ref<void> providedData = SaveAssetValidation(assetReference);
+			Ref<void> providedData{ nullptr } 
+			if constexpr (HasSaveValidation<t_AssetType>)
+			{
+				providedData = SaveAssetValidation(assetReference);
+			}
 
 			// Find location of asset's data
 			Metadata& metadata = m_AssetRegistry[assetReference.GetHandle()];
@@ -934,20 +938,22 @@ namespace Kargono::Assets
 			specificMetadata->Serialize((void*)&context);
 		}
 
-		Ref<void> SaveAssetValidation(AssetReference<t_AssetType> assetReference) 
+		Ref<void> SaveAssetValidation(AssetReference<t_AssetType> newAsset) 
 		{
 			// Ensure asset type supports save validation
 			static_assert(HasSaveValidation<t_AssetType>);
 
 			// Ensure asset reference is valid
-			KG_ASSERT(assetReference.IsValid() && !assetReference.IsEmpty(), "Attempt to validate an invalid asset reference");
+			KG_ASSERT(newAsset.IsValid() && !newAsset.IsEmpty(), "New asset reference is invalid when validating changes");
 
 			// Get relevant data
-			t_AssetType* asset = &assetReference.GetAsset();
-			Metadata& metadata{ GetAssetInfo(assetReference.GetHandle()); };
+			AssetReference<t_AssetType> oldAssetRef = GetAsset(newAsset.GetHandle());
+			KG_ASSERT(newAsset.IsValid() && !newAsset.IsEmpty(), "Old asset reference is invalid when validating changes");
+			t_AssetType* oldAsset = &oldAssetRef.GetAsset();
+			Metadata& metadata{ GetAssetInfo(newAsset.GetHandle()); };
 
 			// Validate asset
-			return asset->SaveValidation(metadata);
+			return oldAsset->SaveValidation(newAsset, metadata);
 		};
 		void DeleteAssetValidation(AssetHandle assetHandle) 
 		{
@@ -955,7 +961,7 @@ namespace Kargono::Assets
 			static_assert(HasDeletionValidation<t_AssetType>);
 
 			// Get asset
-			AssetReference<t_AssetType> assetReference = GetAsset(assetHandle);
+			AssetReference<t_AssetType> assetReference{ GetAsset(assetHandle) };
 
 			// Validate asset
 			KG_ASSERT(assetReference.IsValid() && !assetReference.IsEmpty(), "Attempt to validate an invalid asset reference");

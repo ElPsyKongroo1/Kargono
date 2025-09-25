@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Modules/Particles/ParticleService.h"
+#include "Modules/Particles/ParticleContext.h"
 
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Assets/AssetService.h"
@@ -388,7 +388,7 @@ namespace Kargono::Particles
 			m_AllEmitters.erase(emitterID);
 		}
 	}
-	std::unordered_map<UUID, EmitterInstance>& ParticleContext::GetAllEmitters()
+	EmitterMap& ParticleContext::GetAllEmitters()
 	{
 		return m_AllEmitters;
 	}

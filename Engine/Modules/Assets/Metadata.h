@@ -8,8 +8,7 @@
 #include "Modules/Core/Module.h"
 #include "Kargono/Core/FixedBufferString.h"
 #include "Modules/Assets/AssetsCommon.h"
-#include "Modules/Assets/Module/AssetTag.h"
-#include "Kargono/Core/Notifier.h"
+#include "Modules/Assets/Concepts/MetadataConcept.h"
 
 #include <filesystem>
 #include <vector>
@@ -23,28 +22,40 @@ namespace Kargono::Assets
 	struct Metadata
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		Metadata() = default;
 		~Metadata() = default;
 	public:
-		template <typename t_MetadataType>
+		//==============================
+		// Getters/Setters
+		//==============================
+		template <MetadataConcept t_MetadataType>
 		t_MetadataType* GetSpecificMetaData()
 		{
 			KG_ASSERT(m_SpecificMetaData);
 			return static_cast<t_MetadataType*>(m_SpecificMetaData);
 		}
 
-		template <typename t_MetadataType>
+		template <MetadataConcept t_MetadataType>
 		void SetSpecificMetaData(t_MetadataType* newMetaData)
 		{
 			m_SpecificMetaData = static_cast<void*>(newMetaData);
 		}
 	public:
+		//==============================
+		// Public Fields
+		//==============================
 		AssetHandle m_Handle{ Assets::k_EmptyHandle };
 		AssetIdentifier m_TypeIdentifier{ k_InvalidAssetIdentifier };
 		FixedBufStr64 m_CheckSum;
 		std::filesystem::path m_FileLocation;
 		std::filesystem::path m_IntermediateLocation;
 	private:
+		//==============================
+		// Internal Field(s)
+		//==============================
 		void* m_SpecificMetaData{ nullptr };
 	};
 
@@ -89,11 +100,6 @@ namespace Kargono::Assets
 		FixedBufStr16 m_SectionLabel{};
 		WrappedFuncType m_FunctionType{};
 		Scripting::ExplicitFuncType m_ExplicitFuncType{};
-	};
-
-	struct CustomComponentMetaData
-	{
-		FixedBufStr16 m_Name{};
 	};
 
 	struct ProjectEnumMetaData

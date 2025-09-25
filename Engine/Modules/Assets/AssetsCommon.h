@@ -7,19 +7,20 @@
 #include "Kargono/Core/BitField.h"
 
 #include <cstdint>
+#include <limits>
 
 namespace Kargono::Assets
 {
-	// An AssetHandle is a unique identifier for an Asset.
-	using AssetHandle = Kargono::UUID;
-	constexpr uint64_t k_EmptyHandle{ 0 };
-
-	// Asset Identifier
+	// Unique identifier for each type of asset
 	using AssetIdentifier = ModuleTypeIdentifier;
 	constexpr AssetIdentifier k_InvalidAssetIdentifier
 	{
 		std::numeric_limits<AssetIdentifier>::max()
 	};
+
+	// An AssetHandle is a unique identifier for a particular asset instance
+	using AssetHandle = Kargono::UUID;
+	constexpr uint64_t k_EmptyHandle{ 0 };
 
 	enum AssetFlags : uint8_t
 	{
@@ -36,6 +37,7 @@ namespace Kargono::Assets
 
 	struct AssetConfig
 	{
+	public:
 		AssetIdentifier m_Identifier{ k_InvalidAssetIdentifier };
 		FixedBufStr16 m_Name{ "Default Asset" };
 		FixedBufStr16 m_FileExtension{ ".kgfile" };

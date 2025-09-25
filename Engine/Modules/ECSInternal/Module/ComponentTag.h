@@ -1,8 +1,8 @@
 #pragma once
 #include "Modules/ECSInternal/Module/ECSInternalModule.h"
-#include "Modules/Core/Concepts/Copyable.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Core/Module.h"
+#include "Modules/ECSInternal/Concepts/ComponentConcept.h"
 
 #include <cstdint>
 #include <limits>
@@ -10,9 +10,6 @@
 namespace Kargono::ECSInternal
 {
 	// Component Tag
-    template <typename t_Type>
-    concept ComponentConcept = Copyable<t_Type>;
-
     Register_Module_Tag(Component, ComponentConcept<t_Type>)
 
 	// Component Identifier

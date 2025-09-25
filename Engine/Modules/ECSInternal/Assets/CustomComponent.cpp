@@ -5,6 +5,26 @@
 
 namespace Kargono::ECSInternal
 {
+	void CustomComponentMetaData::Serialize(void* context)
+	{
+		// Get asset context
+		KG_ASSERT(context, "Context cannot be null");
+		Assets::SerializeMetaDataContext& metadataContext = *(Assets::SerializeMetaDataContext*)context;
+		// Get context fields
+		YAML::Emitter& emitter = *metadataContext.m_Serializer;
+		emitter << YAML::Key << "Name" << YAML::Value << m_Name;
+	}
+
+	void CustomComponentMetaData::Deserialize(void* context)
+	{
+		// Get asset context
+		KG_ASSERT(context, "Context cannot be null");
+		Assets::DeserializeMetaDataContext& assetContext = *(Assets::DeserializeMetaDataContext*)context;
+		// Get context fields
+		YAML::Node& metadataNode = *assetContext.m_Node;
+		m_Name = metadataNode["Name"].as<std::string>();
+	}
+
 	bool CustomComponent::AddField(WrappedVarType fieldType, const char* fieldName)
 	{
 		KG_ASSERT(m_DataNames.size() == m_DataOffsets.size() &&
@@ -256,31 +276,31 @@ namespace Kargono::ECSInternal
 		}
 	}
 
-	Ref<void> CustomComponent::SaveValidation(Assets::AssetHandle assetHandle)
+	Ref<void> CustomComponent::SaveValidation(Assets::AssetReference<CustomComponent> newAssetRef, Assets::Metadata& metadata)
 	{
+		// Get new asset reference	
+		KG_ASSERT(newAssetRef.IsValid() && !newAssetRef.IsEmpty(), "Attempt to save an invalid asset reference");
+		CustomComponent* newAsset{ &newAssetRef.GetAsset() };
+
+		// Get path to asset file
 		Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+		std::filesystem::path assetPath{ paths.GetIntermediateDirectory() / metadata.m_IntermediateLocation };
 
-		// 
-
-		// Get old assetInfo reference
-		AssetInfo assetInfo = GetAssetRegistry().at(assetHandle);
-		std::filesystem::path assetPath =
-			(m_Flags.test(AssetManagerOptions::HasIntermediateLocation) ?
-				paths.GetIntermediateDirectory() / assetInfo.Data.IntermediateLocation :
-				paths.GetAssetDirectory() / assetInfo.Data.FileLocation);
-		Ref<ECSInternal::CustomComponent> oldAssetRef = DeserializeAsset(assetInfo, assetPath);
+		// Deserialize context into current asset to ensure up-to-date information
+		Assets::DeserializeAssetContext assetContext{&metadata, assetPath};
+		Deserialize((void*)&assetContext);
 
 		// Create reallocation instructions which stores information for transferring data from old entity components to new entity components
 		Ref<FieldReallocationInstructions> newReallocationInstructions = CreateRef<FieldReallocationInstructions>();
 
 		// Store old types/locations and new types/locations
-		newReallocationInstructions->m_OldDataTypes = oldAssetRef->m_DataTypes;
-		newReallocationInstructions->m_OldDataLocations = oldAssetRef->m_DataOffsets;
+		newReallocationInstructions->m_OldDataTypes = m_DataTypes;
+		newReallocationInstructions->m_OldDataLocations = m_DataOffsets;
 
-		newReallocationInstructions->m_NewDataTypes = newAssetRef->m_DataTypes;
-		newReallocationInstructions->m_NewDataLocations = newAssetRef->m_DataOffsets;
+		newReallocationInstructions->m_NewDataTypes = newAsset->m_DataTypes;
+		newReallocationInstructions->m_NewDataLocations = newAsset->m_DataOffsets;
 
-		newReallocationInstructions->m_NewDataSize = newAssetRef->m_ComponentSize;
+		newReallocationInstructions->m_NewDataSize = newAsset->m_ComponentSize;
 		for (auto& [sceneHandle, asset] : Assets::AssetService::GetSceneRegistry())
 		{
 			newReallocationInstructions->m_OldScenes.push_back(Assets::AssetService::GetScene(sceneHandle));
@@ -288,14 +308,14 @@ namespace Kargono::ECSInternal
 		}
 
 		// Fill field transfer directions, which maps field data from the old component layout to the new component layout
-		for (size_t OuterIteration{ 0 }; OuterIteration < newAssetRef->m_DataNames.size(); OuterIteration++)
+		for (size_t OuterIteration{ 0 }; OuterIteration < newAsset->m_DataNames.size(); OuterIteration++)
 		{
 			// Check if identical field name exists inside old buffer and ensure similar type. If true, store the location of data in the old buffer
 			bool oldBufferContainsField = false;
-			for (size_t InnerIteration{ 0 }; InnerIteration < oldAssetRef->m_DataNames.size(); InnerIteration++)
+			for (size_t InnerIteration{ 0 }; InnerIteration < m_DataNames.size(); InnerIteration++)
 			{
-				if (newAssetRef->m_DataNames.at(OuterIteration) == oldAssetRef->m_DataNames.at(InnerIteration) &&
-					newAssetRef->m_DataTypes.at(OuterIteration) == oldAssetRef->m_DataTypes.at(InnerIteration))
+				if (newAsset->m_DataNames.at(OuterIteration) == m_DataNames.at(InnerIteration) &&
+					newAsset->m_DataTypes.at(OuterIteration) == m_DataTypes.at(InnerIteration))
 				{
 					oldBufferContainsField = true;
 					newReallocationInstructions->m_FieldTransferDirections.push_back(InnerIteration);
@@ -314,18 +334,35 @@ namespace Kargono::ECSInternal
 		return newReallocationInstructions;
 	}
 
-	void CustomComponent::DeleteValidation(Assets::AssetHandle assetHandle)
+	void CustomComponent::CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& assetPath)
 	{
-		Ref<ECSInternal::CustomComponent> deleteComponentRef = GetAsset(assetHandle);
-		KG_ASSERT(deleteComponentRef);
+		// Create new custom component
+		CustomComponent tempComponent{};
+		tempComponent.m_Name = name;
 
+		// Get identifier
+		ECSInternal::ComponentIdentifier identifier = tempComponent.RevalidateIdentifier();
+		tempComponent.m_Identifier = identifier;
+
+		// Save into file
+		Assets::SerializeAssetContext serializeContext{ assetPath };
+		tempComponent.Serialize((void*)&serializeContext);
+
+		// Load data into in-memory metadata object
+		CustomComponentMetaData* specificMetadata = metadata.GetSpecificMetaData<CustomComponentMetaData>();
+		KG_ASSERT(specificMetadata);
+		specificMetadata->m_Name = name;
+	}
+
+	void CustomComponent::DeleteValidation(Assets::Metadata& metadata)
+	{
 		// Handle deleting the custom component by removing entity data from all scenes
 		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())
 		{
 			// Get scene
 			Ref<Scenes::Scene> currentScene = Assets::AssetService::GetScene(sceneHandle);
 
-			bool sceneModified = Assets::AssetService::RemoveCustomComponentFromScene(currentScene, assetHandle);
+			bool sceneModified = Assets::AssetService::RemoveCustomComponentFromScene(currentScene, metadata.m_Handle);
 
 			if (sceneModified)
 			{

@@ -2,7 +2,6 @@
 
 #include "Modules/Audio/Assets/AudioBuffer.h"
 #include "Kargono/Core/Buffer.h"
-#include "Modules/Assets/Asset.h"
 
 #include "Modules/Audio/ExternalAPI/OpenALAPI.h"
 #include "Modules/Audio/ExternalAPI/drwavAPI.h"
@@ -41,18 +40,9 @@ namespace Kargono::Audio
 		m_TotalSize = metadataNode["TotalSize"].as<uint64_t>();
 	}
 
-	void AudioBuffer::CreateAssetFileFromName(void* context)
+	void AudioBuffer::CreateAssetFileFromName(std::string_view name,
+		Assets::Metadata& metadata, std::filesystem::path& assetPath)
 	{
-		// Get asset context
-		KG_ASSERT(context, "Context cannot be null");
-		Assets::CreateAssetFileFromNameContext& assetContext = *(Assets::CreateAssetFileFromNameContext*)context;
-
-		// Get context fields
-		KG_ASSERT(assetContext.m_AssetMetadata);
-		std::string_view name{ assetContext.m_AssetName };
-		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
-
 		// Write metadata
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -65,19 +55,9 @@ namespace Kargono::Audio
 		KG_INFO("Successfully created audio inside asset directory at {}", assetPath);
 	}
 
-	void AudioBuffer::CreateAssetIntermediateFromFile(void* context)
+	void AudioBuffer::CreateAssetIntermediateFromFile(Assets::Metadata& metadata,
+		std::filesystem::path& fileLocation, std::filesystem::path& intermediateLocation)
 	{
-		// Get asset context
-		KG_ASSERT(context, "Context cannot be null");
-		Assets::CreateAssetIntermediateFromFileContext& assetContext = 
-			*(Assets::CreateAssetIntermediateFromFileContext*)context;
-
-		// Get context fields
-		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
-		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
-		std::filesystem::path& fileLocation{ assetContext.m_FilePath };
-		std::filesystem::path& intermediateLocation{ assetContext.m_IntermediatePath };
-
 		// Create buffers
 		uint32_t channels = 0;
 		uint32_t sampleRate = 0;

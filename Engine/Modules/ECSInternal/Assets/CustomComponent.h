@@ -5,6 +5,7 @@
 #include "Modules/ECSInternal/ECSInternalCommon.h"
 #include "Modules/ECSInternal/Module/ECSInternalModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
+#include "Modules/Assets/Concepts/OptionalAssetConcepts.h"
 #include "Modules/Assets/Module/AssetTag.h"
 
 #include <array>
@@ -32,10 +33,31 @@ namespace Kargono::ECSInternal
 		std::vector<Assets::AssetHandle> m_OldSceneHandles;
 	};
 
+	struct CustomComponentMetaData
+	{
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		FixedBufStr16 m_Name{};
+	};
+
 	struct CustomComponent
 	{
+	public:
 		//==============================
 		// Metaprogramming Info
+		//==============================
+		using Metadata = CustomComponentMetaData;
+	public:
+		//==============================
+		// Static Asset Functions
 		//==============================
 		constexpr static Assets::AssetConfig GetAssetConfig()
 		{
@@ -54,6 +76,8 @@ namespace Kargono::ECSInternal
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
 			return config;
 		}
+		static void CreateAssetFileFromName(std::string_view name,
+			Assets::Metadata& metadata, std::filesystem::path& assetPath);
 	public:
 		//==============================
 		// Constructors/Destructors
@@ -102,8 +126,8 @@ namespace Kargono::ECSInternal
 		//==============================
 		// Validation
 		//==============================
-		Ref<void> SaveValidation(Assets::AssetHandle assetHandle);
-		void DeleteValidation(Assets::AssetHandle assetHandle);
+		Ref<void> SaveValidation(Assets::AssetReference<CustomComponent> newAssetRef, Assets::Metadata& metadata);
+		void DeleteValidation(Assets::Metadata& metadata);
 	public:
 		//==============================
 		// Getters/Setters

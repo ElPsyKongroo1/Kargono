@@ -1,0 +1,131 @@
+#pragma once
+
+#include "Kargono/Math/Interpolation.h"
+#include "Kargono/Math/MathAliases.h"
+#include "Kargono/Core/Base.h"
+
+#include "Modules/Particles/Module/ParticlesModule.h"
+#include "Modules/Assets/Module/AssetTag.h"
+
+#include <array>
+#include <cstdint>
+
+namespace Kargono::Particles
+{
+	enum class EmitterMotionType
+	{
+		None = 0,
+		NoMotion,
+		FollowEntity
+	};
+
+	enum class EmitterLifecycle
+	{
+		None = 0,
+		Immortal,
+		FixedTime
+	};
+
+	struct EmitterConfig
+	{
+	public:
+		//==============================
+		// Static Asset Functions
+		//==============================
+		constexpr static Assets::AssetConfig GetAssetConfig()
+		{
+			Assets::AssetConfig config{};
+			config.m_Identifier = Assets::GetAssetIdentifier<EmitterConfig>();
+			config.m_Name = "Particle Emitter Config";
+			config.m_FileExtension = ".kgparticle";
+			config.m_RegistryPath = "EmitterConfig/EmitterConfigRegistry.kgreg";
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
+			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
+			config.m_Flags.ClearFlag(Assets::AssetFlags::HasFileImporting);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetSaving);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
+			return config;
+		}
+		static void CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path);
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+	public:
+		//==============================
+		// Validation
+		//==============================
+		void DeleteValidation(Assets::Metadata& metadata);
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		// Emitter data
+		EmitterLifecycle m_EmitterLifecycle{ EmitterLifecycle::Immortal };
+		float m_EmitterLifetime{ 1.0f };
+		size_t m_BufferSize{ 1000 };
+		std::array<Math::vec3, 2> m_SpawningBounds{ Math::vec3(0.0f), Math::vec3(0.0f) };
+		// Particle data
+		bool m_UseGravity{ false };
+		Math::vec3 m_GravityAcceleration{ Math::vec3(0.0f) };
+		float m_ParticleLifetime{ 1.0f };
+		size_t m_SpawnRatePerSec{ 5 };
+		Math::InterpolationType m_ColorInterpolationType{ Math::InterpolationType::Linear };
+		Math::vec4 m_ColorBegin{ 1.0f };
+		Math::vec4 m_ColorEnd{ 1.0f };
+		Math::InterpolationType m_SizeInterpolationType{ Math::InterpolationType::Linear };
+		Math::vec3 m_SizeBegin{ 1.0f };
+		Math::vec3 m_SizeEnd{ 1.0f };
+	};
+}
+
+namespace Kargono::Utility
+{
+	inline const char* EmitterMotionTypeToString(Particles::EmitterMotionType motionType)
+	{
+		switch (motionType)
+		{
+		case Particles::EmitterMotionType::None: return "None";
+		case Particles::EmitterMotionType::NoMotion: return "NoMotion";
+		case Particles::EmitterMotionType::FollowEntity: return "FollowEntity";
+		default:
+			KG_WARN("Invalid emitter motion type provided when attempting convert to a string");
+			return "None";
+		}
+	}
+
+	inline Particles::EmitterMotionType StringToEmitterMotionType(std::string_view str)
+	{
+		if (str == "None") return Particles::EmitterMotionType::None;
+		if (str == "NoMotion") return Particles::EmitterMotionType::NoMotion;
+		if (str == "FollowEntity") return Particles::EmitterMotionType::FollowEntity;
+		KG_WARN("Invalid string provided when attempting to get emitter motion type");
+		return Particles::EmitterMotionType::None;
+	}
+
+	inline const char* EmitterLifecycleToString(Particles::EmitterLifecycle lifecycle)
+	{
+		switch (lifecycle)
+		{
+		case Particles::EmitterLifecycle::None: return "None";
+		case Particles::EmitterLifecycle::Immortal: return "Immortal";
+		case Particles::EmitterLifecycle::FixedTime: return "FixedTime";
+		default:
+			KG_WARN("Invalid emitter lifecycle provided when attempting convert to a string");
+			return "None";
+		}
+	}
+
+	inline Particles::EmitterLifecycle StringToEmitterLifecycle(std::string_view str)
+	{
+		if (str == "None") return Particles::EmitterLifecycle::None;
+		if (str == "Immortal") return Particles::EmitterLifecycle::Immortal;
+		if (str == "FixedTime") return Particles::EmitterLifecycle::FixedTime;
+
+		KG_WARN("Invalid string provided when attempting to get emitter lifecycle");
+		return Particles::EmitterLifecycle::None;
+	}
+}
