@@ -11,9 +11,262 @@
 #include "Modules/Rendering/Components/ShapeComponent.h"
 #include "Modules/RuntimeUI/FontContext.h"
 
+#include "Modules/RuntimeUI/ExternalAPI/msdfgenAPI.h"
+#include "API/ImageProcessing/stbAPI.h"
+
 
 namespace Kargono::RuntimeUI
 {
+	void FontMetaData::Serialize(void* context)
+	{
+		// Get asset context
+		KG_ASSERT(context, "Context cannot be null");
+		Assets::SerializeMetaDataContext& metadataContext = *(Assets::SerializeMetaDataContext*)context;
+
+		// Get context fields
+		YAML::Emitter& emitter = *metadataContext.m_Serializer;
+
+		emitter << YAML::Key << "AtlasWidth" << YAML::Value << m_AtlasWidth;
+		emitter << YAML::Key << "AtlasHeight" << YAML::Value << m_AtlasHeight;
+		emitter << YAML::Key << "LineHeight" << YAML::Value << m_LineHeight;
+		emitter << YAML::Key << "Ascender" << YAML::Value << m_Ascender;
+		emitter << YAML::Key << "Descender" << YAML::Value << m_Descender;
+
+		emitter << YAML::Key << "Characters" << YAML::Value << YAML::BeginSeq;
+		for (auto& [character, characterStruct] : m_Characters)
+		{
+			emitter << YAML::BeginMap;
+			emitter << YAML::Key << "Character" << YAML::Value << static_cast<uint32_t>(character);
+			emitter << YAML::Key << "Size" << YAML::Value << characterStruct.m_Size;
+			emitter << YAML::Key << "TexCoordinateMin" << YAML::Value << characterStruct.m_TexCoordinateMin;
+			emitter << YAML::Key << "TexCoordinateMax" << YAML::Value << characterStruct.m_TexCoordinateMax;
+			emitter << YAML::Key << "QuadMin" << YAML::Value << characterStruct.m_QuadMin;
+			emitter << YAML::Key << "QuadMax" << YAML::Value << characterStruct.m_QuadMax;
+			emitter << YAML::Key << "Advance" << YAML::Value << characterStruct.m_Advance;
+			emitter << YAML::EndMap;
+		}
+		emitter << YAML::EndSeq;
+	}
+
+	void FontMetaData::Deserialize(void* context)
+	{
+		// Get asset context
+		KG_ASSERT(context, "Context cannot be null");
+		Assets::DeserializeMetaDataContext& assetContext = *(Assets::DeserializeMetaDataContext*)context;
+
+		// Get context fields
+		YAML::Node& metadataNode = *assetContext.m_Node;
+
+		m_AtlasWidth = metadataNode["AtlasWidth"].as<float>();
+		m_AtlasHeight = metadataNode["AtlasHeight"].as<float>();
+		m_LineHeight = metadataNode["LineHeight"].as<float>();
+		m_Ascender = metadataNode["Ascender"].as<float>();
+		m_Descender = metadataNode["Descender"].as<float>();
+
+		YAML::Node characters = metadataNode["Characters"];
+		for (YAML::Node character : characters)
+		{
+			// Add new character to the character list
+			std::pair<unsigned char, RuntimeUI::Character>& newCharacter = m_Characters.emplace_back();
+
+			// Fill the character fields
+			newCharacter.first = static_cast<uint8_t>(character["Character"].as<uint32_t>());
+			newCharacter.second.m_Size = character["Size"].as<Math::vec2>();
+			newCharacter.second.m_Advance = character["Advance"].as<float>();
+			newCharacter.second.m_TexCoordinateMin = character["TexCoordinateMin"].as<Math::vec2>();
+			newCharacter.second.m_TexCoordinateMax = character["TexCoordinateMax"].as<Math::vec2>();
+			newCharacter.second.m_QuadMin = character["QuadMin"].as<Math::vec2>();
+			newCharacter.second.m_QuadMax = character["QuadMax"].as<Math::vec2>();
+		}
+	}
+
+	void Font::Serialize(void* context)
+	{
+		KG_ERROR("Serialization not implemented for font");
+	}
+
+	void Font::Deserialize(void* context)
+	{
+		KG_ASSERT(context, "Context cannot be null");
+
+		// Get asset context
+		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
+
+		// Get context fields
+		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
+		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
+		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+
+		FontMetaData fontMetadata = *metadata.GetSpecificMetaData<FontMetaData>();
+		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
+
+		// Create Texture
+		Rendering::TextureSpecification spec;
+		spec.Width = static_cast<uint32_t>(fontMetadata.m_AtlasWidth);
+		spec.Height = static_cast<uint32_t>(fontMetadata.m_AtlasHeight);
+		spec.Format = Rendering::ImageFormat::RGB8;
+		spec.GenerateMipMaps = false;
+		Ref<Rendering::Texture2D> texture = Rendering::Texture2D::Create(spec);
+		texture->SetData((void*)currentResource.Data, spec.Width * spec.Height * Utility::ImageFormatToBytes(spec.Format));
+		m_AtlasTexture = texture;
+
+		m_LineHeight = fontMetadata.m_LineHeight;
+		m_Ascender = fontMetadata.m_Ascender;
+		m_Descender = fontMetadata.m_Descender;
+
+		for (auto& [character, characterStruct] : fontMetadata.m_Characters)
+		{
+			m_Characters.insert(std::pair<unsigned char, RuntimeUI::Character>(character, characterStruct));
+		}
+
+		currentResource.Release();
+	}
+
+	void Font::CreateAssetFileFromName(std::string_view name,
+		Assets::Metadata& metadata, std::filesystem::path& assetPath)
+	{
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+		out << YAML::Key << "Name" << YAML::Value << std::string(name); // Output font name
+		out << YAML::EndMap; // End of File Map
+
+		std::ofstream fout(assetPath);
+		fout << out.c_str();
+		KG_INFO("Successfully created font inside asset directory at {}", assetPath);
+	}
+	void Font::CreateAssetIntermediateFromFile(Assets::Metadata& metadata,
+		std::filesystem::path& filePath, std::filesystem::path& intermediatePath)
+	{
+		// Create Buffers
+		std::vector<msdf_atlas::GlyphGeometry> glyphs;
+		msdf_atlas::FontGeometry fontGeometry;
+		float lineHeight{ 0 };
+		std::vector<std::pair<unsigned char, RuntimeUI::Character>> characters{};
+
+		msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
+		KG_ASSERT(ft, "MSDFGEN failed to initialize!");
+
+		msdfgen::FontHandle* font = msdfgen::loadFont(ft, filePath.string().c_str());
+		if (!font)
+		{
+			KG_ERROR("Font not loaded correctly from filepath: " + filePath.string());
+			return;
+		}
+
+		struct CharsetRange
+		{
+			uint32_t Begin, End;
+		};
+
+		// From imgui_draw.cpp
+		static const CharsetRange charsetRanges[] =
+		{
+			{0x0020, 0x00FF}
+		};
+
+		msdf_atlas::Charset charset;
+		for (CharsetRange range : charsetRanges)
+		{
+			for (uint32_t character = range.Begin; character <= range.End; character++)
+			{
+				charset.add(character);
+			}
+		}
+
+		double fontScale = 1.0;
+		fontGeometry = msdf_atlas::FontGeometry(&glyphs);
+		int glyphsLoaded = fontGeometry.loadCharset(font, fontScale, charset);
+		KG_INFO("Loaded {} glyphs from font (out of {})", glyphsLoaded, charset.size());
+
+		double emSize = 40.0;
+
+		msdf_atlas::TightAtlasPacker atlasPacker;
+		// atlasPacker.setDimensionsConstraint();
+		atlasPacker.setPixelRange(2.0);
+		atlasPacker.setMiterLimit(1.0);
+		atlasPacker.setPadding(0);
+		atlasPacker.setScale(emSize);
+		int32_t remaining = atlasPacker.pack(glyphs.data(), (int32_t)glyphs.size());
+		KG_ASSERT(remaining == 0);
+
+		int32_t width, height;
+		atlasPacker.getDimensions(width, height);
+		emSize = atlasPacker.getScale();
+		uint32_t numAvailableThread = std::thread::hardware_concurrency() / 2;
+#define DEFAULT_ANGLE_THRESHOLD 3.0
+#define LCG_MULTIPLIER 6364136223846793005ull
+#define LCG_INCREMENT 1442695040888963407ull
+
+		// if MSDF || MTSDF
+		uint64_t coloringSeed = 0;
+		bool expensiveColoring = false;
+		if (expensiveColoring)
+		{
+			msdf_atlas::Workload([&glyphs = glyphs, &coloringSeed](int i, int threadNo) -> bool
+				{
+					UNREFERENCED_PARAMETER(threadNo);
+					unsigned long long glyphSeed = (LCG_MULTIPLIER * (coloringSeed ^ i) + LCG_INCREMENT) * !!coloringSeed;
+					glyphs[i].edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
+					return true;
+				}, static_cast<int32_t>(glyphs.size())).finish(numAvailableThread);
+		}
+		else {
+			unsigned long long glyphSeed = coloringSeed;
+			for (msdf_atlas::GlyphGeometry& glyph : glyphs)
+			{
+				glyphSeed *= LCG_MULTIPLIER;
+				glyph.edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
+			}
+		}
+		Buffer buffer{};
+		Rendering::TextureSpecification textureSpec{};
+		Utility::CreateAtlas<uint8_t, float, 3, msdf_atlas::msdfGenerator>("Test", (float)emSize, glyphs, fontGeometry, width, height, textureSpec, buffer);
+
+		msdfgen::destroyFont(font);
+		msdfgen::deinitializeFreetype(ft);
+
+		const auto& metrics = fontGeometry.getMetrics();
+		lineHeight = static_cast<float>(metrics.lineHeight);
+
+		const auto& glyphMetrics = fontGeometry.getGlyphs();
+		for (auto& glyphGeometry : glyphMetrics)
+		{
+			std::pair<unsigned char, RuntimeUI::Character>& character = characters.emplace_back();
+
+			character.first = static_cast<uint8_t>(glyphGeometry.getCodepoint());
+
+			// Fill the texture location inside Atlas
+			double al, ab, ar, at;
+			glyphGeometry.getQuadAtlasBounds(al, ab, ar, at);
+			character.second.m_TexCoordinateMin = { (float)al, (float)ab };
+			character.second.m_TexCoordinateMax = { (float)ar, (float)at };
+			// Fill the Bounding Box Size when Rendering
+			double pl, pb, pr, pt;
+			glyphGeometry.getQuadPlaneBounds(pl, pb, pr, pt);
+			character.second.m_QuadMin = { (float)pl, (float)pb };
+			character.second.m_QuadMax = { (float)pr, (float)pt };
+			// Fill the Advance
+			character.second.m_Advance = (float)glyphGeometry.getAdvance();
+			// Fill Glyph Size
+			int32_t glyphWidth, glyphHeight;
+			glyphGeometry.getBoxSize(glyphWidth, glyphHeight);
+			character.second.m_Size = { glyphWidth, glyphHeight };
+		}
+
+		// Save Binary Intermediate into File
+		Utility::FileSystem::WriteFileBinary(intermediatePath, buffer);
+
+		// Load data into In-Memory Metadata object
+		FontMetaData& fontMetadata = *metadata.GetSpecificMetaData<FontMetaData>();
+		fontMetadata.m_AtlasWidth = static_cast<float>(textureSpec.Width);
+		fontMetadata.m_AtlasHeight = static_cast<float>(textureSpec.Height);
+		fontMetadata.m_LineHeight = lineHeight;
+		fontMetadata.m_Characters = characters;
+		fontMetadata.m_Ascender = (float)metrics.ascenderY;
+		fontMetadata.m_Descender = (float)metrics.descenderY;
+		buffer.Release();
+	}
+
 	void Font::OnRenderMultiLineText(std::string_view string, Math::vec3 translation, const glm::vec4& color, float scale, int maxLineWidth)
 	{
 		FontContext& fontContext{ FontService::GetActiveContext() };

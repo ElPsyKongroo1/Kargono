@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Buffer.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/Metadata.h"
 
 #include <string>
 #include <filesystem>
@@ -26,7 +26,6 @@ namespace Kargono::Rendering
 		uint32_t Height = 1;
 		ImageFormat Format = ImageFormat::RGBA8;
 		bool GenerateMipMaps = true;
-
 	};
 
 	class Texture

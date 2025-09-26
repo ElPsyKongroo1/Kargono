@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Modules/AI/Module/AIModule.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 
 namespace Kargono::AI

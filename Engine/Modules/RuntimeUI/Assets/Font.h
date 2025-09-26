@@ -50,6 +50,22 @@ namespace Kargono::RuntimeUI
 
 	struct FontMetaData
 	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		FontMetaData() = default;
+		~FontMetaData() = default;
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Deserialize(void* context);
+		void Serialize(void* context);
+	public:
+		//==============================
+		// Public Fields
+		//==============================
 		float m_AtlasWidth{ 0.0f };
 		float m_AtlasHeight{ 0.0f };
 		float m_LineHeight{ 0.0f };
@@ -72,28 +88,35 @@ namespace Kargono::RuntimeUI
 		constexpr static Assets::AssetConfig GetAssetConfig()
 		{
 			Assets::AssetConfig config{};
-			config.m_Identifier = Assets::GetAssetIdentifier<AudioBuffer>();
-			config.m_Name = "Audio";
-			config.m_FileExtension = ".kgaudio";
-			config.m_ImportExtensions = { ".wav" };
-			config.m_RegistryPath = "AudioBuffer/AudioRegistry.kgreg";
-			config.m_IntermediateExtension = "";
+			config.m_Identifier = Assets::GetAssetIdentifier<Font>();
+			config.m_Name = "Font";
+			config.m_FileExtension = ".kgfont";
+			config.m_ImportExtensions = { ".ttf" };
+			config.m_RegistryPath = "Font/FontRegistry.kgreg";
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasIntermediateLocation);
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileImporting);
 			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetSaving);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetCreationFromName);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
 			return config;
-
-
 		}
+		static void CreateAssetFileFromName(std::string_view name,
+			Assets::Metadata& metadata, std::filesystem::path& assetPath);
+		static void CreateAssetIntermediateFromFile(Assets::Metadata& metadata,
+			std::filesystem::path& filePath, std::filesystem::path& intermediatePath);
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
 		Font() = default;
 		~Font() = default;
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
 	public:
 		//==============================
 		// Rendering

@@ -1,0 +1,115 @@
+#pragma once
+
+#include "Kargono/Core/KeyCodes.h"
+#include "Kargono/Core/Base.h"
+#include "Modules/Assets/AssetsCommon.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
+#include "Modules/Events/KeyEvent.h"
+#include "Kargono/Core/Timestep.h"
+
+#include "Modules/InputMap/InputActionBinders/InputActionBinder.h"
+#include "Modules/InputMap/InputActionBinders/KeyboardActionBinder.h"
+#include "Modules/InputMap/Module/InputMapModule.h"
+
+#include <vector>
+#include <unordered_map>
+#include <tuple>
+#include <functional>
+#include <string>
+
+namespace Kargono::InputMap
+{
+	class InputMap
+	{
+	public:
+		//==============================
+		// Static Asset Functions
+		//==============================
+		constexpr static Assets::AssetConfig GetAssetConfig()
+		{
+			Assets::AssetConfig config{};
+			config.m_Identifier = Assets::GetAssetIdentifier<InputMap>();
+			config.m_Name = "Input Map";
+			config.m_FileExtension = ".kginput";
+			config.m_ImportExtensions = {};
+			config.m_RegistryPath = "InputMap/InputMapRegistry.kgreg";
+			config.m_IntermediateExtension = "";
+			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetCache);
+			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
+			config.m_Flags.ClearFlag(Assets::AssetFlags::HasFileImporting);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetSaving);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
+			return config;
+		}
+
+		static void CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path);
+
+	public:
+		//=========================
+		// Constructors/Destructors
+		//=========================
+		InputMap() = default;
+		~InputMap() = default;
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+
+	public:
+		//==============================
+		// Validation
+		//==============================
+		bool RemoveScript(Assets::AssetHandle scriptHandle);
+	public:
+		//=========================
+		// Getters/Setters
+		//=========================
+		std::vector<Ref<InputActionBinding>>& GetOnUpdateBindings()
+		{
+			return m_OnUpdateBindings;
+		}
+		std::vector<Ref<InputActionBinding>>& GetOnKeyPressedBindings()
+		{
+			return m_OnKeyPressedBindings;
+		}
+		std::vector<KeyCode>& GetKeyboardPolling()
+		{
+			return m_KeyboardPolling;
+		}
+	public:
+		//=========================
+		// Public Fields
+		//=========================
+		// Maps Vector Locations to Engine KeyCodes
+		std::vector<KeyCode> m_KeyboardPolling {};
+		// OnEvent -> Action Bindings
+		std::vector<Ref<InputActionBinding>> m_OnUpdateBindings{};
+		std::vector<Ref<InputActionBinding>> m_OnKeyPressedBindings{};
+	};
+}
+
+namespace Kargono::Utility
+{
+	inline const char* InputActionTypeToString(InputMap::InputActionTypes type)
+	{
+		switch (type)
+		{
+		case InputMap::InputActionTypes::KeyboardAction: return "KeyboardAction";
+		case InputMap::InputActionTypes::None: return "None";
+		}
+		KG_ERROR("Unknown Type of InputMap::InputActionTypes.");
+		return "";
+	}
+
+	inline InputMap::InputActionTypes StringToInputActionType(std::string_view type)
+	{
+		if (type == "KeyboardAction") { return InputMap::InputActionTypes::KeyboardAction; }
+		if (type == "None") { return InputMap::InputActionTypes::None; }
+
+		KG_ERROR("Unknown Type of InputMap::InputActionTypes String.");
+		return InputMap::InputActionTypes::None;
+	}
+}

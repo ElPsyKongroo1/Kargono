@@ -1,18 +1,15 @@
-#include "kgpch.h"
+#pragma once
 
-#include "Modules/InputMap/InputMap.h"
-#include "Kargono/Scenes/Scene.h"
-
+#include "Modules/InputMap/InputMapContext.h"
 #include "Modules/Input/InputService.h"
 #include "Modules/Core/Engine.h"
-#include "Modules/Assets/AssetService.h"
 
-namespace Kargono::Input
+namespace Kargono::InputMap
 {
 	void InputMapContext::ClearActiveInputMap()
 	{
 		m_ActiveInputMap = { nullptr };
-		m_ActiveInputMapHandle = {0};
+		m_ActiveInputMapHandle = { 0 };
 	}
 
 	void InputMapContext::SetActiveInputMap(Ref<InputMap> newInput, Assets::AssetHandle newHandle)
@@ -23,10 +20,10 @@ namespace Kargono::Input
 
 	void InputMapContext::SetActiveInputMapFromHandle(Assets::AssetHandle inputMapHandle)
 	{
-		static Ref<InputMap> s_InputRef {nullptr};
-		static Assets::AssetHandle s_InputHandle {0};
+		static Ref<InputMap> s_InputRef{ nullptr };
+		static Assets::AssetHandle s_InputHandle{ 0 };
 
-		Ref<Input::InputMap> inputReference = Assets::AssetService::GetInputMap(inputMapHandle);
+		Ref<InputMap> inputReference = Assets::AssetService::GetInputMap(inputMapHandle);
 		s_InputRef = inputReference;
 		s_InputHandle = inputMapHandle;
 
@@ -40,7 +37,7 @@ namespace Kargono::Input
 		{
 			SetActiveInputMap(s_InputRef, s_InputHandle);
 		});
-		
+
 	}
 
 	bool InputMapContext::Init()
@@ -55,17 +52,17 @@ namespace Kargono::Input
 
 	void InputMapContext::OnUpdate(Timestep ts)
 	{
-		if (Input::InputMapContext::GetActiveInputMap())
+		if (InputMapContext::GetActiveInputMap())
 		{
-			for (Ref<InputActionBinding> inputBinding : Input::InputMapContext::GetActiveOnUpdate())
+			for (Ref<InputActionBinding> inputBinding : InputMapContext::GetActiveOnUpdate())
 			{
-				
-				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
+
+				KeyboardActionBinding* keyboardBinding = (KeyboardActionBinding*)inputBinding.get();
 				KG_ASSERT(keyboardBinding->GetScript());
 				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding()) ||
 					keyboardBinding->GetScriptHandle() == Assets::k_EmptyHandle)
-				{ 
-					continue; 
+				{
+					continue;
 				}
 				if (keyboardBinding->GetScript()->m_FuncType == WrappedFuncType::Void_None)
 				{
@@ -75,23 +72,23 @@ namespace Kargono::Input
 				{
 					Utility::CallWrapped<WrappedVoidFloat>(keyboardBinding->GetScript()->m_Function, ts);
 				}
-				
+
 			}
 		}
 	}
 	bool InputMapContext::OnKeyPressed(Events::KeyPressedEvent event)
 	{
 		if (event.IsRepeat()) { return false; }
-		if (Input::InputMapContext::GetActiveInputMap())
+		if (InputMapContext::GetActiveInputMap())
 		{
-			for (Ref<InputActionBinding> inputBinding : Input::InputMapContext::GetActiveOnKeyPressed())
+			for (Ref<InputActionBinding> inputBinding : InputMapContext::GetActiveOnKeyPressed())
 			{
-				
-				Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
-				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding()) || 
-					keyboardBinding->GetScriptHandle() == Assets::k_EmptyHandle) 
-				{ 
-					continue; 
+
+				KeyboardActionBinding* keyboardBinding = (KeyboardActionBinding*)inputBinding.get();
+				if (!Input::InputService::IsKeyPressed(keyboardBinding->GetKeyBinding()) ||
+					keyboardBinding->GetScriptHandle() == Assets::k_EmptyHandle)
+				{
+					continue;
 				}
 				Utility::CallWrapped<WrappedVoidNone>(keyboardBinding->GetScript()->m_Function);
 			}
@@ -113,7 +110,7 @@ namespace Kargono::Input
 			return false;
 		}
 
-		return InputService::IsKeyPressed(keyboardPolling.at(slot));
+		return Input::InputService::IsKeyPressed(keyboardPolling.at(slot));
 	}
 	std::vector<Ref<InputActionBinding>>& InputMapContext::GetActiveOnUpdate()
 	{
@@ -124,18 +121,5 @@ namespace Kargono::Input
 	{
 		KG_ASSERT(m_ActiveInputMap);
 		return m_ActiveInputMap->GetOnKeyPressedBindings();
-	}
-	void InputActionBinding::SetScript(Assets::AssetHandle handle)
-	{
-		if (handle == Assets::k_EmptyHandle)
-		{
-			ClearScript();
-			return;
-		}
-
-		Ref<Scripting::Script> newScript = Assets::AssetService::GetScript(handle);
-		KG_ASSERT(newScript);
-		m_Script = newScript;
-		m_ScriptHandle = handle;
 	}
 }

@@ -1,28 +1,23 @@
 #include "kgpch.h"
 
+#include "Modules/InputMap/Assets/InputMap.h"
+#include "Kargono/Scenes/Scene.h"
+
+#include "Modules/Input/InputService.h"
+#include "Modules/Core/Engine.h"
 #include "Modules/Assets/AssetService.h"
-#include "Modules/Assets/InputMapManager.h"
 
-#include "Modules/InputMap/InputMap.h"
-
-namespace Kargono::Assets
+namespace Kargono::InputMap
 {
-	void InputMapManager::CreateAssetFileFromName(std::string_view name, AssetInfo& asset, const std::filesystem::path& assetPath)
+	void InputMap::Serialize(void* context)
 	{
-		UNREFERENCED_PARAMETER(name);
+		// Get asset context
+		Assets::SerializeAssetContext& assetContext = *(Assets::SerializeAssetContext*)context;
 
-		// Create Temporary InputMap
-		Ref<Input::InputMap> temporaryInputMap = CreateRef<Input::InputMap>();
+		// Get context fields
+		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
 
-		// Save Binary into File
-		SerializeAsset(temporaryInputMap, assetPath);
-
-		// Load data into In-Memory Metadata object
-		Ref<Assets::InputMapMetaData> metadata = CreateRef<Assets::InputMapMetaData>();
-		asset.Data.SpecificFileData = metadata;
-	}
-	void InputMapManager::SerializeAsset(Ref<Input::InputMap> assetReference, const std::filesystem::path& assetPath)
-	{
+		// Serialize
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
 
@@ -31,7 +26,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "KeyboardPolling" << YAML::Value;
 			out << YAML::BeginSeq; // Start of KeyboardPolling Seq
 			uint32_t iteration{ 0 };
-			for (KeyCode keyCode : assetReference->m_KeyboardPolling)
+			for (KeyCode keyCode : m_KeyboardPolling)
 			{
 				out << YAML::BeginMap; // Start Polling Combo
 
@@ -49,7 +44,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "OnUpdate" << YAML::Value;
 			out << YAML::BeginSeq; // Start of OnUpdate Seq
 
-			for (Ref<Input::InputActionBinding>& inputBinding : assetReference->m_OnUpdateBindings)
+			for (Ref<InputActionBinding>& inputBinding : m_OnUpdateBindings)
 			{
 				out << YAML::BeginMap; // InputActionBinding Start
 
@@ -58,13 +53,13 @@ namespace Kargono::Assets
 
 				switch (inputBinding->GetActionType())
 				{
-				case Input::InputActionTypes::KeyboardAction:
+				case InputActionTypes::KeyboardAction:
 				{
-					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
+					KeyboardActionBinding* keyboardBinding = (KeyboardActionBinding*)inputBinding.get();
 					out << YAML::Key << "KeyBinding" << YAML::Value << keyboardBinding->GetKeyBinding();
 					break;
 				}
-				case Input::InputActionTypes::None:
+				case InputActionTypes::None:
 				default:
 				{
 					KG_ERROR("Invalid InputMap provided to InputMap serialization");
@@ -82,7 +77,7 @@ namespace Kargono::Assets
 			out << YAML::Key << "OnKeyPressed" << YAML::Value;
 			out << YAML::BeginSeq; // Start of OnKeyPressed Seq
 
-			for (Ref<Input::InputActionBinding>& inputBinding : assetReference->m_OnKeyPressedBindings)
+			for (Ref<InputActionBinding>& inputBinding : m_OnKeyPressedBindings)
 			{
 				out << YAML::BeginMap; // InputActionBinding Start
 
@@ -91,13 +86,13 @@ namespace Kargono::Assets
 
 				switch (inputBinding->GetActionType())
 				{
-				case Input::InputActionTypes::KeyboardAction:
+				case InputActionTypes::KeyboardAction:
 				{
-					Input::KeyboardActionBinding* keyboardBinding = (Input::KeyboardActionBinding*)inputBinding.get();
+					KeyboardActionBinding* keyboardBinding = (KeyboardActionBinding*)inputBinding.get();
 					out << YAML::Key << "KeyBinding" << YAML::Value << keyboardBinding->GetKeyBinding();
 					break;
 				}
-				case Input::InputActionTypes::None:
+				case InputActionTypes::None:
 				default:
 				{
 					KG_ASSERT("Invalid InputMap provided to InputMap serialization");
@@ -116,11 +111,19 @@ namespace Kargono::Assets
 		fout << out.c_str();
 		KG_INFO("Successfully Serialized InputMap at {}", assetPath.string());
 	}
-	Ref<Input::InputMap> InputMapManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
-	{
-		UNREFERENCED_PARAMETER(asset);
 
-		Ref<Input::InputMap> newInputMap = CreateRef<Input::InputMap>();
+	void InputMap::Deserialize(void* context)
+	{
+		KG_ASSERT(context, "Context cannot be null");
+
+		// Get asset context
+		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
+
+		// Get context fields
+		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
+		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
+		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+
 		YAML::Node data;
 		try
 		{
@@ -129,7 +132,7 @@ namespace Kargono::Assets
 		catch (YAML::ParserException e)
 		{
 			KG_WARN("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
-			return nullptr;
+			return;
 		}
 
 		// Get Keyboard Polling!
@@ -137,7 +140,7 @@ namespace Kargono::Assets
 			YAML::Node keyboardPolling = data["KeyboardPolling"];
 			if (keyboardPolling)
 			{
-				std::vector<KeyCode>& keyboardPollingNew = newInputMap->m_KeyboardPolling;
+				std::vector<KeyCode>& keyboardPollingNew = m_KeyboardPolling;
 				for (const YAML::Node& binding : keyboardPolling)
 				{
 					uint16_t keyCode = (uint16_t)binding["KeyCode"].as<uint32_t>();
@@ -151,20 +154,20 @@ namespace Kargono::Assets
 			YAML::Node onUpdate = data["OnUpdate"];
 			if (onUpdate)
 			{
-				std::vector<Ref<Input::InputActionBinding>>& onUpdateNew = newInputMap->m_OnUpdateBindings;
+				std::vector<Ref<InputActionBinding>>& onUpdateNew = m_OnUpdateBindings;
 				for (const YAML::Node& binding : onUpdate)
 				{
-					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
-					Ref<Input::InputActionBinding> newActionBinding = nullptr;
+					InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
+					Ref<InputActionBinding> newActionBinding = nullptr;
 					switch (bindingType)
 					{
-					case Input::InputActionTypes::KeyboardAction:
+					case InputActionTypes::KeyboardAction:
 					{
-						newActionBinding = CreateRef<Input::KeyboardActionBinding>();
-						((Input::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding((KeyCode)binding["KeyBinding"].as<uint32_t>());
+						newActionBinding = CreateRef<KeyboardActionBinding>();
+						((KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding((KeyCode)binding["KeyBinding"].as<uint32_t>());
 						break;
 					}
-					case Input::InputActionTypes::None:
+					case InputActionTypes::None:
 					default:
 					{
 						KG_ERROR("Invalid bindingType while deserializing InputMap");
@@ -185,26 +188,25 @@ namespace Kargono::Assets
 			}
 		}
 
-
 		// OnKeyPressed
 		{
 			YAML::Node onKeyPressed = data["OnKeyPressed"];
 			if (onKeyPressed)
 			{
-				std::vector<Ref<Input::InputActionBinding>>& onKeyPressedNew = newInputMap->m_OnKeyPressedBindings;
+				std::vector<Ref<InputActionBinding>>& onKeyPressedNew = m_OnKeyPressedBindings;
 				for (const YAML::Node& binding : onKeyPressed)
 				{
-					Input::InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
-					Ref<Input::InputActionBinding> newActionBinding = nullptr;
+					InputActionTypes bindingType = Utility::StringToInputActionType(binding["BindingType"].as<std::string>());
+					Ref<InputActionBinding> newActionBinding = nullptr;
 					switch (bindingType)
 					{
-					case Input::InputActionTypes::KeyboardAction:
+					case InputActionTypes::KeyboardAction:
 					{
-						newActionBinding = CreateRef<Input::KeyboardActionBinding>();
-						((Input::KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding((KeyCode)binding["KeyBinding"].as<uint32_t>());
+						newActionBinding = CreateRef<KeyboardActionBinding>();
+						((KeyboardActionBinding*)newActionBinding.get())->SetKeyBinding((KeyCode)binding["KeyBinding"].as<uint32_t>());
 						break;
 					}
-					case Input::InputActionTypes::None:
+					case InputActionTypes::None:
 					default:
 					{
 						KG_ERROR("Invalid bindingType while deserializing InputMap");
@@ -217,13 +219,24 @@ namespace Kargono::Assets
 				}
 			}
 		}
-
-		return newInputMap;
 	}
-	bool InputMapManager::RemoveScript(Ref<Input::InputMap> inputMapRef, Assets::AssetHandle scriptHandle)
+
+	void InputMap::CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path)
+	{
+		UNREFERENCED_PARAMETER(name);
+
+		// Create Temporary InputMap
+		InputMap temporaryInputMap{};
+
+		// Save Binary into File
+		Assets::SerializeAssetContext context{ path };
+		temporaryInputMap.Serialize((void*)&context);
+	}
+
+	bool InputMap::RemoveScript(Assets::AssetHandle scriptHandle)
 	{
 		bool inputModified{ false };
-		for (Ref<Input::InputActionBinding> binding : inputMapRef->GetOnUpdateBindings())
+		for (Ref<InputActionBinding> binding : GetOnUpdateBindings())
 		{
 			if (binding->GetScriptHandle() == scriptHandle)
 			{
@@ -232,7 +245,7 @@ namespace Kargono::Assets
 			}
 		}
 
-		for (Ref<Input::InputActionBinding> binding : inputMapRef->GetOnKeyPressedBindings())
+		for (Ref<InputActionBinding> binding : GetOnKeyPressedBindings())
 		{
 			if (binding->GetScriptHandle() == scriptHandle)
 			{
@@ -240,7 +253,7 @@ namespace Kargono::Assets
 				inputModified = true;
 			}
 		}
-		
+
 		return inputModified;
 	}
 }

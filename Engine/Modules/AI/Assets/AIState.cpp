@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Modules/AI/Assets/AIStateAsset.h"
+#include "Modules/AI/Assets/AIState.h"
 #include "Kargono/Scenes/Scene.h"
 
 #include "API/Serialization/yamlcppAPI.h"
