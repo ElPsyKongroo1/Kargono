@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Modules/Rendering/Shader.h"
-#include "Modules/RuntimeUI/Font.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Modules/Scripting/ScriptingCommon.h"
 #include "Kargono/Core/UUID.h"
@@ -71,16 +70,6 @@ namespace Kargono::Assets
 		Rendering::ShaderSpecification m_ShaderSpec{};
 		Rendering::UniformBufferList m_UniformList{};
 		Rendering::InputBufferLayout m_InputLayout{};
-	};
-
-	struct FontMetaData
-	{
-		float m_AtlasWidth{ 0.0f };
-		float m_AtlasHeight{ 0.0f };
-		float m_LineHeight{ 0.0f };
-		float m_Ascender{ 0.0f };
-		float m_Descender{ 0.0f };
-		std::vector<std::pair<unsigned char, RuntimeUI::Character>> m_Characters{};
 	};
 
 	struct GameStateMetaData
