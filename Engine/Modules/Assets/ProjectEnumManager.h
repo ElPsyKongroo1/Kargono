@@ -13,16 +13,7 @@ namespace Kargono::Assets
 	public:
 		ProjectEnumManager() : AssetManager<ProjectData::ProjectEnum>()
 		{
-			m_AssetName = "Project Enum";
-			m_AssetType = AssetType::ProjectEnum;
-			m_FileExtension = ".kgenum";
-			m_RegistryLocation = "ProjectEnum/ProjectEnumRegistry.kgreg";
-			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
-			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
-			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
-			m_Flags.set(AssetManagerOptions::HasAssetSaving, true);
-			m_Flags.set(AssetManagerOptions::HasAssetCreationFromName, true);
-			m_Flags.set(AssetManagerOptions::HasAssetCache, true);
+			
 		}
 		virtual ~ProjectEnumManager() = default;
 	public:

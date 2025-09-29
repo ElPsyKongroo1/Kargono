@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Core/WrappedData.h"
