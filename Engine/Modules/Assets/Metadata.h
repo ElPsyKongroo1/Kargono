@@ -90,10 +90,4 @@ namespace Kargono::Assets
 		WrappedFuncType m_FunctionType{};
 		Scripting::ExplicitFuncType m_ExplicitFuncType{};
 	};
-
-	struct ProjectEnumMetaData
-	{
-		FixedBufStr16 m_Name{};
-	};
-
 }

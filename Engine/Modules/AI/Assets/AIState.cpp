@@ -91,6 +91,29 @@ namespace Kargono::AI
 		}
 	}
 
+	void AIState::Serialize(void* context)
+	{
+		// Get asset context
+		Assets::SerializeAssetContext& assetContext = *(Assets::SerializeAssetContext*)context;
+
+		// Get context fields
+		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+
+		// Serialize
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+		out << YAML::Key << "OnUpdateScript" << YAML::Value << static_cast<uint64_t>(m_OnUpdateHandle);
+		out << YAML::Key << "OnEnterStateScript" << YAML::Value << static_cast<uint64_t>(m_OnEnterStateHandle);
+		out << YAML::Key << "OnExitStateScript" << YAML::Value << static_cast<uint64_t>(m_OnExitStateHandle);
+		out << YAML::Key << "OnAIMessageScript" << YAML::Value << static_cast<uint64_t>(m_OnMessageHandle);
+		out << YAML::EndMap; // End of File Map
+
+		// Save into file
+		std::ofstream fout(assetPath);
+		fout << out.c_str();
+		KG_INFO("Successfully Serialized AIState at {}", assetPath.string());
+	}
+
 	void AIState::CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path)
 	{
 		// Create Temporary AIState
@@ -118,29 +141,6 @@ namespace Kargono::AI
 				Assets::AssetService::SaveScene(sceneHandle, currentScene);
 			}
 		}
-	}
-
-	void AIState::Serialize(void* context)
-	{
-		// Get asset context
-		Assets::SerializeAssetContext& assetContext = *(Assets::SerializeAssetContext*)context;
-
-		// Get context fields
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
-
-		// Serialize
-		YAML::Emitter out;
-		out << YAML::BeginMap; // Start of File Map
-		out << YAML::Key << "OnUpdateScript" << YAML::Value << static_cast<uint64_t>(m_OnUpdateHandle);
-		out << YAML::Key << "OnEnterStateScript" << YAML::Value << static_cast<uint64_t>(m_OnEnterStateHandle);
-		out << YAML::Key << "OnExitStateScript" << YAML::Value << static_cast<uint64_t>(m_OnExitStateHandle);
-		out << YAML::Key << "OnAIMessageScript" << YAML::Value << static_cast<uint64_t>(m_OnMessageHandle);
-		out << YAML::EndMap; // End of File Map
-
-		// Save into file
-		std::ofstream fout(assetPath);
-		fout << out.c_str();
-		KG_INFO("Successfully Serialized AIState at {}", assetPath.string());
 	}
 
 	bool AIState::RemoveScript(Assets::AssetHandle scriptHandle)

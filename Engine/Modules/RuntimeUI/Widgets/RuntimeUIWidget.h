@@ -1,12 +1,14 @@
 #pragma once
 #include "Modules/Rendering/Texture.h"
 #include "Modules/RuntimeUI/RuntimeUICommon.h"
-#include "Modules/RuntimeUI/Font.h"
+#include "Modules/RuntimeUI/Assets/Font.h"
 
 #include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Kargono/Core/Base.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Kargono/Core/Window.h"
+
+#include "API/Serialization/yamlcppAPI.h"
 
 #include <cstdint>
 #include <vector>
@@ -121,6 +123,18 @@ namespace Kargono::RuntimeUI
 	{
 	public:
 		//============================
+		// Constructors/Destructors
+		//============================
+		SingleLineTextData() = default;
+		~SingleLineTextData() = default;
+	public:
+		//============================
+		// Serialization
+		//============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+	public:
+		//============================
 		// Rendering
 		//============================
 		void OnRender(RuntimeUIContext* uiContext, const Math::vec3& textStartingPoint, float textScalingFactor);
@@ -146,11 +160,11 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Public Fields
 		//============================
+		// Config data
 		std::string m_Text{ "..." };
 		float m_TextSize{ 0.3f };
 		Math::vec4 m_TextColor{ 1.0f };
 		Constraint m_TextAlignment{ Constraint::Center };
-
 		// Runtime calculated data
 		Math::vec2 m_CachedTextDimensions{};
 		size_t m_CaretIndex{ 0 };
@@ -177,6 +191,48 @@ namespace Kargono::RuntimeUI
 		MultiLineTextDimensions m_CachedTextDimensions{};
 	};
 
+	struct SerializeWidgetContext
+	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		SerializeWidgetContext() = default;
+		~SerializeWidgetContext() = default;
+	public:
+		//============================
+		// Getters/Setters
+		//============================
+		bool IsValid() { return m_Emitter && m_ParentUI; }
+	public:
+		//============================
+		// Public Fields
+		//============================
+		YAML::Emitter* m_Emitter{ nullptr };
+		UserInterface* m_ParentUI{ nullptr };
+	};
+
+	struct DeserializeWidgetContext
+	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		DeserializeWidgetContext() = default;
+		~DeserializeWidgetContext() = default;
+	public:
+		//============================
+		// Getters/Setters
+		//============================
+		bool IsValid() { return m_Node && m_ParentUI; }
+	public:
+		//============================
+		// Public Fields
+		//============================
+		YAML::Node* m_Node{ nullptr };
+		UserInterface* m_ParentUI{ nullptr };
+	};
+
 	class Widget
 	{
 	public:
@@ -197,6 +253,13 @@ namespace Kargono::RuntimeUI
 		//============================
 		virtual void OnRender(RuntimeUIContext* uiContext, Math::vec3 translation, 
 			const Math::vec3& scale, float viewportWidth) = 0;
+
+	public:
+		//============================
+		// Serialization
+		//============================
+		virtual void Serialize(void* context);
+		virtual void Deserialize(void* context);
 	protected:
 		// Rendering helper function(s)
 		void RenderBackground(RuntimeUIContext* uiContext, const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size);

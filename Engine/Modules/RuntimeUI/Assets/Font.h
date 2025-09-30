@@ -2,6 +2,7 @@
 
 #include "Kargono/Math/Math.h"
 #include "Modules/Rendering/RenderingService.h"
+#include "Modules/RuntimeUI/Module/RuntimeUIModule.h"
 
 #include <string>
 #include <string_view>
@@ -140,4 +141,6 @@ namespace Kargono::RuntimeUI
 		float m_Ascender{ 0.0f };
 		float m_Descender{ 0.0f };
 	};
+
+	Register_Module_Type(Font, Assets::AssetTag)
 }

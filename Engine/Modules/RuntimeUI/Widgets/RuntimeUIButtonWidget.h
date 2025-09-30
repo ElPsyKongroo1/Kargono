@@ -23,7 +23,12 @@ namespace Kargono::RuntimeUI
 		//============================
 		virtual void OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize,
 			float viewportWidth) override;
-
+	public:
+		//============================
+		// Serialization
+		//============================
+		virtual void Serialize(void* context) override;
+		virtual void Deserialize(void* context) override;
 	public:
 		//============================
 		// Modify State

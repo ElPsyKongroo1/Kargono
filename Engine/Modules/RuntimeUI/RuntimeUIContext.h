@@ -3,15 +3,15 @@
 #include "Modules/Rendering/EditorPerspectiveCamera.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Kargono/Core/Base.h"
-#include "Modules/RuntimeUI/Font.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/RuntimeUI/Assets/Font.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Kargono/Math/Math.h"
 #include "Modules/RuntimeUI/RuntimeUICommon.h"
 #include "Kargono/Core/Window.h"
 #include "Kargono/Utility/Random.h"
 #include "Modules/Rendering/Shader.h"
 
-#include "Modules/RuntimeUI/RuntimeUIUserInterface.h"
+#include "Modules/RuntimeUI/Assets/RuntimeUIUserInterface.h"
 
 #include <vector>
 #include <string>

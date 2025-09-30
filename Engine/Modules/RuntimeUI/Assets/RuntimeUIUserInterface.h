@@ -3,7 +3,6 @@
 #include "Modules/RuntimeUI/RuntimeUICommon.h"
 
 #include "Modules/RuntimeUI/Widgets/RuntimeUIWidget.h"
-#include "Modules/RuntimeUI/Widgets/RuntimeUIWidget.h"
 #include "Modules/RuntimeUI/Widgets/RuntimeUIButtonWidget.h"
 #include "Modules/RuntimeUI/Widgets/RuntimeUICheckboxWidget.h"
 #include "Modules/RuntimeUI/Widgets/RuntimeUIContainerWidget.h"
@@ -16,9 +15,10 @@
 #include "Modules/RuntimeUI/Widgets/RuntimeUITextWidget.h"
 #include "Modules/RuntimeUI/Widgets/RuntimeUIInputTextWidget.h"
 #include "Modules/RuntimeUI/RuntimeUIWindow.h"
+#include "Modules/RuntimeUI/Assets/Font.h"
+#include "Modules/RuntimeUI/Module/RuntimeUIModule.h"
 
 #include "Modules/Scripting/ScriptModuleBinder.h"
-#include "Modules/Assets/AssetsTypes.h"
 #include "Kargono/Core/Directions.h"
 #include "Modules/Core/Engine.h"
 #include "Modules/Events/KeyEvent.h"
@@ -380,6 +380,26 @@ namespace Kargono::RuntimeUI
 	class UserInterface
 	{
 	public:
+		//==============================
+		// Static Asset Functions
+		//==============================
+		constexpr static Assets::AssetConfig GetAssetConfig()
+		{
+			Assets::AssetConfig config{};
+			config.m_Identifier = Assets::GetAssetIdentifier<UserInterface>();
+			config.m_Name = "User Interface";
+			config.m_FileExtension = ".kgui";
+			config.m_ImportExtensions = { ".ttf" };
+			config.m_RegistryPath = "UserInterface/UserInterfaceRegistry.kgreg";
+			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetCache);
+			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
+			config.m_Flags.ClearFlag(Assets::AssetFlags::HasFileImporting);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetSaving);
+			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
+			return config;
+		}
+	public:
 		//============================
 		// Constructors/Destructors
 		//============================
@@ -406,6 +426,12 @@ namespace Kargono::RuntimeUI
 		//==============================
 		void OnRenderCamera(const Math::mat4& cameraViewMatrix, ViewportData viewportData);
 		void OnRenderViewport(ViewportData viewportData);
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
 	public:
 		//==============================
 		// Interact With UI

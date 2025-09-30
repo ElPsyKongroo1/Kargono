@@ -10,16 +10,7 @@ namespace Kargono::Assets
 	public:
 		UserInterfaceManager() : AssetManager<RuntimeUI::UserInterface>()
 		{
-			m_AssetName = "User Interface";
-			m_AssetType = AssetType::UserInterface;
-			m_FileExtension = ".kgui";
-			m_RegistryLocation = "UserInterface/UserInterfaceRegistry.kgreg";
-			m_Flags.set(AssetManagerOptions::HasAssetCache, false);
-			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, false);
-			m_Flags.set(AssetManagerOptions::HasFileLocation, true);
-			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
-			m_Flags.set(AssetManagerOptions::HasAssetSaving, true);
-			m_Flags.set(AssetManagerOptions::HasAssetCreationFromName, true);
+
 		}
 		virtual ~UserInterfaceManager() = default;
 	public:

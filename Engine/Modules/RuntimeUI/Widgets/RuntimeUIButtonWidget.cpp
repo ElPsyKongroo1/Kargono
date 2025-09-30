@@ -8,6 +8,32 @@
 
 namespace Kargono::RuntimeUI
 {
+
+	void ButtonWidget::Serialize(void* context)
+	{
+		KG_ASSERT(context, "Context cannot be null");
+
+		// Get asset context
+		SerializeWidgetContext& widgetContext = *(SerializeWidgetContext*)context;
+
+		// Get context fields
+		KG_ASSERT(widgetContext.IsValid());
+		YAML::Emitter& emitter{ *widgetContext.m_Emitter };
+		UserInterface& parentUI{ *widgetContext.m_ParentUI };
+
+		// Call base serialization
+		Widget::Serialize(context);
+
+		// Serialize button data
+		emitter << YAML::Key << "ButtonWidget" << YAML::Value;
+		emitter << YAML::BeginMap; // Begin buttonWidget Map
+		// Save text data
+		SerializeSingleLineTextData(emitter, buttonWidget->m_TextData);
+		// Save selection fields
+		SerializeSelectionData(emitter, buttonWidget->m_SelectionData);
+		emitter << YAML::EndMap; // End buttonWidget Map
+	}
+
 	void ButtonWidget::SetText(const std::string& newText)
 	{
 		// Set the text of the widget

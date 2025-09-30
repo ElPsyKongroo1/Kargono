@@ -45,6 +45,63 @@ namespace Kargono::Utility
 
 namespace Kargono::RuntimeUI
 {
+	void Widget::Serialize(void* context)
+	{
+		KG_ASSERT(context, "Context cannot be null");
+
+		// Get asset context
+		SerializeWidgetContext& widgetContext = *(SerializeWidgetContext*)context;
+
+		// Get context fields
+		KG_ASSERT(widgetContext.IsValid());
+		YAML::Emitter& emitter{ *widgetContext.m_Emitter };
+		UserInterface& parentUI{ *widgetContext.m_ParentUI };
+
+		//emitter << YAML::BeginMap; // Begin Widget Map
+
+		emitter << YAML::Key << "Tag" << YAML::Value << m_Tag;
+		emitter << YAML::Key << "ID" << YAML::Value << m_ID;
+		emitter << YAML::Key << "XRelativeOrAbsolute" << YAML::Value << Utility::RelativeOrAbsoluteToString(m_XRelativeOrAbsolute);
+		emitter << YAML::Key << "YRelativeOrAbsolute" << YAML::Value << Utility::RelativeOrAbsoluteToString(m_YRelativeOrAbsolute);
+		emitter << YAML::Key << "XConstraint" << YAML::Value << Utility::ConstraintToString(m_XConstraint);
+		emitter << YAML::Key << "YConstraint" << YAML::Value << Utility::ConstraintToString(m_YConstraint);
+		emitter << YAML::Key << "PercentPosition" << YAML::Value << m_PercentPosition;
+		emitter << YAML::Key << "PixelPosition" << YAML::Value << m_PixelPosition;
+		emitter << YAML::Key << "SizeType" << YAML::Value << Utility::PixelOrPercentToString(m_SizeType);
+		emitter << YAML::Key << "XPositionType" << YAML::Value << Utility::PixelOrPercentToString(m_XPositionType);
+		emitter << YAML::Key << "YPositionType" << YAML::Value << Utility::PixelOrPercentToString(m_YPositionType);
+		emitter << YAML::Key << "PercentSize" << YAML::Value << m_PercentSize;
+		emitter << YAML::Key << "PixelSize" << YAML::Value << m_PixelSize;
+		emitter << YAML::Key << "WidgetType" << YAML::Value << Utility::WidgetTypeToString(m_WidgetType);
+
+	}
+	void Widget::Deserialize(void* context)
+	{
+		KG_ASSERT(context, "Context cannot be null");
+
+		// Get asset context
+		DeserializeWidgetContext& widgetContext = *(DeserializeWidgetContext*)context;
+
+		// Get context fields
+		KG_ASSERT(widgetContext.IsValid());
+		YAML::Node& node{ *widgetContext.m_Node};
+		UserInterface& parentUI{ *widgetContext.m_ParentUI };
+
+		m_Tag = node["Tag"].as<std::string>();
+		m_ID = node["ID"].as<int32_t>();
+		m_PercentPosition = node["PercentPosition"].as<Math::vec2>();
+		m_PixelPosition = node["PixelPosition"].as<Math::ivec2>();
+		m_XPositionType = Utility::StringToPixelOrPercent(node["XPositionType"].as<std::string>());
+		m_YPositionType = Utility::StringToPixelOrPercent(node["YPositionType"].as<std::string>());
+		m_XRelativeOrAbsolute = Utility::StringToRelativeOrAbsolute(node["XRelativeOrAbsolute"].as<std::string>());
+		m_YRelativeOrAbsolute = Utility::StringToRelativeOrAbsolute(node["YRelativeOrAbsolute"].as<std::string>());
+		m_XConstraint = Utility::StringToConstraint(node["XConstraint"].as<std::string>());
+		m_YConstraint = Utility::StringToConstraint(node["YConstraint"].as<std::string>());
+		m_SizeType = Utility::StringToPixelOrPercent(node["SizeType"].as<std::string>());
+		m_PercentSize = node["PercentSize"].as<Math::vec2>();
+		m_PixelSize = node["PixelSize"].as<Math::ivec2>();
+	}
+
 	void Widget::RenderBackground(RuntimeUIContext* uiContext, const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size)
 	{
 		Rendering::RendererInputSpec& renderSpec = uiContext->m_BackgroundInputSpec;

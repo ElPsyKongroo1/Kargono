@@ -80,6 +80,8 @@ namespace Kargono::Particles
 		Math::vec3 m_SizeBegin{ 1.0f };
 		Math::vec3 m_SizeEnd{ 1.0f };
 	};
+
+	Register_Module_Type(EmitterConfig, Assets::AssetTag)
 }
 
 namespace Kargono::Utility

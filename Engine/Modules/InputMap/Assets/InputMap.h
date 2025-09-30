@@ -89,6 +89,8 @@ namespace Kargono::InputMap
 		std::vector<Ref<InputActionBinding>> m_OnUpdateBindings{};
 		std::vector<Ref<InputActionBinding>> m_OnKeyPressedBindings{};
 	};
+
+	Register_Module_Type(InputMap, Assets::AssetTag)
 }
 
 namespace Kargono::Utility

@@ -250,22 +250,7 @@ namespace Kargono::Assets
 
 	static void SerializeWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget)
 	{
-		out << YAML::BeginMap; // Begin Widget Map
-
-		out << YAML::Key << "Tag" << YAML::Value << widget->m_Tag;
-		out << YAML::Key << "ID" << YAML::Value << widget->m_ID;
-		out << YAML::Key << "XRelativeOrAbsolute" << YAML::Value << Utility::RelativeOrAbsoluteToString(widget->m_XRelativeOrAbsolute);
-		out << YAML::Key << "YRelativeOrAbsolute" << YAML::Value << Utility::RelativeOrAbsoluteToString(widget->m_YRelativeOrAbsolute);
-		out << YAML::Key << "XConstraint" << YAML::Value << Utility::ConstraintToString(widget->m_XConstraint);
-		out << YAML::Key << "YConstraint" << YAML::Value << Utility::ConstraintToString(widget->m_YConstraint);
-		out << YAML::Key << "PercentPosition" << YAML::Value << widget->m_PercentPosition;
-		out << YAML::Key << "PixelPosition" << YAML::Value << widget->m_PixelPosition;
-		out << YAML::Key << "SizeType" << YAML::Value << Utility::PixelOrPercentToString(widget->m_SizeType);
-		out << YAML::Key << "XPositionType" << YAML::Value << Utility::PixelOrPercentToString(widget->m_XPositionType);
-		out << YAML::Key << "YPositionType" << YAML::Value << Utility::PixelOrPercentToString(widget->m_YPositionType);
-		out << YAML::Key << "PercentSize" << YAML::Value << widget->m_PercentSize;
-		out << YAML::Key << "PixelSize" << YAML::Value << widget->m_PixelSize;
-		out << YAML::Key << "WidgetType" << YAML::Value << Utility::WidgetTypeToString(widget->m_WidgetType);
+		
 		switch (widget->m_WidgetType)
 		{
 		case RuntimeUI::WidgetTypes::TextWidget:
@@ -334,56 +319,6 @@ namespace Kargono::Assets
 		out << YAML::EndMap; // End Widget Map
 	}
 
-
-	void UserInterfaceManager::SerializeAsset(Ref<RuntimeUI::UserInterface> assetReference, const std::filesystem::path& assetPath)
-	{
-		YAML::Emitter out;
-		out << YAML::BeginMap; // Start of File Map
-		// Select Color
-		out << YAML::Key << "SelectColor" << YAML::Value << assetReference->m_Config.m_SelectColor;
-		out << YAML::Key << "HoveredColor" << YAML::Value << assetReference->m_Config.m_HoveredColor;
-		out << YAML::Key << "EditingColor" << YAML::Value << assetReference->m_Config.m_EditingColor;
-
-		// Function Pointers
-		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << (uint64_t)assetReference->m_Config.m_FunctionPointers.m_OnMoveHandle;
-		out << YAML::Key << "FunctionPointerOnHover" << YAML::Value << (uint64_t)assetReference->m_Config.m_FunctionPointers.m_OnHoverHandle;
-		// Font
-		out << YAML::Key << "Font" << YAML::Value << static_cast<uint64_t>(assetReference->m_Config.m_FontHandle);
-		// Windows
-		out << YAML::Key << "Windows" << YAML::Value;
-		out << YAML::BeginSeq; // Start of Windows Seq
-
-		for (RuntimeUI::Window& window : assetReference->m_WindowsState.m_Windows)
-		{
-			out << YAML::BeginMap; // Start Window Map
-
-			out << YAML::Key << "Tag" << YAML::Value << window.m_Tag;
-			out << YAML::Key << "ID" << YAML::Value << window.m_ID;
-			out << YAML::Key << "ScreenPosition" << YAML::Value << window.m_ScreenPosition;
-			out << YAML::Key << "Size" << YAML::Value << window.m_Size;
-			out << YAML::Key << "BackgroundColor" << YAML::Value << window.m_BackgroundColor;
-			out << YAML::Key << "DefaultActiveWidget" << YAML::Value << window.m_DefaultActiveWidget;
-
-			out << YAML::Key << "Widgets" << YAML::Value;
-			out << YAML::BeginSeq; // Begin Widget Sequence
-
-			for (Ref<RuntimeUI::Widget> widget : window.m_Widgets)
-			{
-				SerializeWidget(out, widget);
-			}
-
-			out << YAML::EndSeq; // End Widget Sequence
-
-			out << YAML::EndMap; // End Window Map
-			std::vector<Ref<RuntimeUI::Widget>> Widgets {};
-		}
-
-		out << YAML::EndSeq; // End of Windows Seq
-		out << YAML::EndMap; // Start of File Map
-
-		std::ofstream fout(assetPath);
-		fout << out.c_str();
-	}
 
 	static void DeserializeMultiLineTextData(RuntimeUI::MultiLineTextData& textData, YAML::Node& node);
 	static void DeserializeSingleLineTextData(RuntimeUI::SingleLineTextData& textData, const YAML::Node& node);
@@ -751,111 +686,11 @@ namespace Kargono::Assets
 		}
 		}
 
-		widget->m_Tag = node["Tag"].as<std::string>();
-		widget->m_ID = node["ID"].as<int32_t>();
-		widget->m_PercentPosition = node["PercentPosition"].as<Math::vec2>();
-		widget->m_PixelPosition = node["PixelPosition"].as<Math::ivec2>();
-		widget->m_XPositionType = Utility::StringToPixelOrPercent(node["XPositionType"].as<std::string>());
-		widget->m_YPositionType = Utility::StringToPixelOrPercent(node["YPositionType"].as<std::string>());
-		widget->m_XRelativeOrAbsolute = Utility::StringToRelativeOrAbsolute(node["XRelativeOrAbsolute"].as<std::string>());
-		widget->m_YRelativeOrAbsolute = Utility::StringToRelativeOrAbsolute(node["YRelativeOrAbsolute"].as<std::string>());
-		widget->m_XConstraint = Utility::StringToConstraint(node["XConstraint"].as<std::string>());
-		widget->m_YConstraint = Utility::StringToConstraint(node["YConstraint"].as<std::string>());
-		widget->m_SizeType = Utility::StringToPixelOrPercent(node["SizeType"].as<std::string>());
-		widget->m_PercentSize = node["PercentSize"].as<Math::vec2>();
-		widget->m_PixelSize = node["PixelSize"].as<Math::ivec2>();
+
 
 		return widget;
 	}
 
-	Ref<RuntimeUI::UserInterface> UserInterfaceManager::DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath)
-	{
-		UNREFERENCED_PARAMETER(asset);
-
-		Ref<RuntimeUI::UserInterface> newUserInterface = CreateRef<RuntimeUI::UserInterface>();
-		YAML::Node data;
-		try
-		{
-			data = YAML::LoadFile(assetPath.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			KG_WARN("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
-			return nullptr;
-		}
-
-		// Get SelectColor
-		newUserInterface->m_Config.m_SelectColor = data["SelectColor"].as<Math::vec4>();
-		newUserInterface->m_Config.m_HoveredColor = data["HoveredColor"].as<Math::vec4>();
-		newUserInterface->m_Config.m_EditingColor = data["EditingColor"].as<Math::vec4>();
-		// Function Pointers
-		newUserInterface->m_Config.m_FunctionPointers.m_OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
-		if (newUserInterface->m_Config.m_FunctionPointers.m_OnMoveHandle == Assets::k_EmptyHandle)
-		{
-			newUserInterface->m_Config.m_FunctionPointers.m_OnMove = nullptr;
-		}
-		else
-		{
-			Ref<Scripting::Script> onMoveScript = AssetService::GetScript(newUserInterface->m_Config.m_FunctionPointers.m_OnMoveHandle);
-			if (!onMoveScript)
-			{
-				KG_WARN("Unable to locate OnMove Script!");
-				return nullptr;
-			}
-			newUserInterface->m_Config.m_FunctionPointers.m_OnMove = onMoveScript;
-		}
-		newUserInterface->m_Config.m_FunctionPointers.m_OnHoverHandle = data["FunctionPointerOnHover"].as<uint64_t>();
-		if (newUserInterface->m_Config.m_FunctionPointers.m_OnHoverHandle == Assets::k_EmptyHandle)
-		{
-			newUserInterface->m_Config.m_FunctionPointers.m_OnHover = nullptr;
-		}
-		else
-		{
-			Ref<Scripting::Script> onHoverScript = AssetService::GetScript(newUserInterface->m_Config.m_FunctionPointers.m_OnHoverHandle);
-			if (!onHoverScript)
-			{
-				KG_WARN("Unable to locate OnHover Script!");
-				return nullptr;
-			}
-			newUserInterface->m_Config.m_FunctionPointers.m_OnHover = onHoverScript;
-		}
-
-		// Get Font
-		newUserInterface->m_Config.m_FontHandle = data["Font"].as<uint64_t>();
-		newUserInterface->m_Config.m_Font = AssetService::GetFont(newUserInterface->m_Config.m_FontHandle);
-		// Get Windows
-		YAML::Node windows = data["Windows"];
-		if (windows)
-		{
-			std::vector<RuntimeUI::Window>& newWindowsList = newUserInterface->m_WindowsState.m_Windows;
-			for (YAML::detail::iterator_value window : windows)
-			{
-				RuntimeUI::Window newWindow{newUserInterface.get()};
-				newWindow.m_Tag = window["Tag"].as<std::string>();
-				newWindow.m_ID = window["ID"].as<int32_t>();
-				newWindow.m_ScreenPosition = window["ScreenPosition"].as<Math::vec3>();
-				newWindow.m_Size = window["Size"].as<Math::vec2>();
-				newWindow.m_BackgroundColor = window["BackgroundColor"].as<Math::vec4>();
-				newWindow.m_DefaultActiveWidget = window["DefaultActiveWidget"].as<int32_t>();
-
-				YAML::Node widgetNodes = window["Widgets"];
-
-				if (widgetNodes)
-				{
-					std::vector<Ref<RuntimeUI::Widget>>& newWidgetsList = newWindow.m_Widgets;
-					for (const YAML::Node& widgetNode : widgetNodes)
-					{
-						Ref<RuntimeUI::Widget> newWidget = DeserializeWidget(widgetNode, newUserInterface.get());
-						newWidgetsList.push_back(newWidget);
-					}
-				}
-
-				newWindowsList.push_back(newWindow);
-
-			}
-		}
-		return newUserInterface;
-	}
 	static bool RemoveScriptFromWidget(Ref<RuntimeUI::Widget> widgetRef, Assets::AssetHandle scriptHandle);
 
 	bool RemoveScriptFromWidget(Ref<RuntimeUI::Widget> widgetRef, Assets::AssetHandle scriptHandle)

@@ -1,8 +1,123 @@
 #include "kgpch.h"
+
 #include "Modules/Scripting/Assets/CustomEnum.h"
 
 namespace Kargono::Scripting
 {
+
+	void CustomEnumMetaData::Serialize(void* context)
+	{
+		// Get asset context
+		KG_ASSERT(context, "Context cannot be null");
+		Assets::SerializeMetaDataContext& metadataContext = *(Assets::SerializeMetaDataContext*)context;
+
+		// Get context fields
+		YAML::Emitter& emitter = *metadataContext.m_Serializer;
+
+		// Serialize
+		emitter << YAML::Key << "Name" << YAML::Value << m_Name;
+	}
+
+	void CustomEnumMetaData::Deserialize(void* context)
+	{
+		// Get asset context
+		KG_ASSERT(context, "Context cannot be null");
+		Assets::DeserializeMetaDataContext& assetContext = *(Assets::DeserializeMetaDataContext*)context;
+
+		// Get context fields
+		YAML::Node& metadataNode = *assetContext.m_Node;
+
+		// Deserialize
+		m_Name = metadataNode["Name"].as<std::string>();
+	}
+
+	void CustomEnum::Serialize(void* context)
+	{
+		// Get asset context
+		Assets::SerializeAssetContext& assetContext = *(Assets::SerializeAssetContext*)context;
+
+		// Get context fields
+		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of file map
+		// Save name
+		out << YAML::Key << "Name" << YAML::Value << m_EnumName;
+
+		// Save data types
+		out << YAML::Key << "Identifiers" << YAML::Value;
+		out << YAML::BeginSeq; // Start of enum data sequence
+		for (FixedBufStr32 enumerationName : m_EnumIdentifiers)
+		{
+			out << YAML::Value << enumerationName;
+		}
+		out << YAML::EndSeq; // End of enum data sequence
+
+		out << YAML::EndMap; // End of file map
+
+		std::ofstream fout(assetPath);
+		fout << out.c_str();
+	}
+
+	void CustomEnum::Deserialize(void* context)
+	{
+		KG_ASSERT(context, "Context cannot be null");
+
+		// Get asset context
+		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
+
+		// Get context fields
+		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
+		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
+		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(assetPath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_WARN("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
+			return;
+		}
+
+		// Get name
+		m_EnumName = data["Name"].as<std::string>();
+
+		// Get Data Types
+		YAML::Node enumDataNode = data["Identifiers"];
+		if (enumDataNode)
+		{
+			std::vector<FixedBufStr32>& newTypesList = m_EnumIdentifiers;
+			for (const YAML::Node& enumerationNameNode : enumDataNode)
+			{
+				newTypesList.push_back(enumerationNameNode.as<std::string>().c_str());
+			}
+		}
+	}
+
+	void CustomEnum::CreateAssetFileFromName(std::string_view name,
+		Assets::Metadata& metadata, std::filesystem::path& assetPath)
+	{
+		// Create new custom component
+		CustomEnum tempEnum{};
+		tempEnum.m_EnumName = name;
+
+		// Save into File
+		Assets::SerializeAssetContext context{ assetPath };
+		tempEnum.Serialize((void*)&context);
+
+		KG_ASSERT(metadata.GetSpecificMetaData<CustomEnumMetaData>());
+		CustomEnumMetaData& customEnumMetaData
+		{
+			*metadata.GetSpecificMetaData<CustomEnumMetaData>()
+		};
+
+		// Load data into in-memory metadata object
+		customEnumMetaData.m_Name = name;
+	}
+
 	bool CustomEnum::DoesContainIdentifier(const char* queryName)
 	{
 		KG_ASSERT(queryName);
