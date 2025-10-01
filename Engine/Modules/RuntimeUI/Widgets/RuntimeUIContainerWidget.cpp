@@ -38,4 +38,26 @@ namespace Kargono::RuntimeUI
 			containedWidget->OnRender(uiContext, widgetTranslation, widgetSize, viewportWidth);
 		}
 	}
+	void ContainerWidget::Serialize(YAML::Emitter& emitter, UserInterface* parentUI)
+	{
+		// Call base serialization
+		Widget::Serialize(emitter, parentUI);
+
+		emitter << YAML::Key << "ContainerWidget" << YAML::Value;
+		// Container fields
+		emitter << YAML::BeginMap; // Begin Container Map
+		// Save container data
+		m_ContainerData.Serialize(emitter);
+		emitter << YAML::EndMap; // End Container Map
+	}
+	void ContainerWidget::Deserialize(YAML::Node& node, UserInterface* parentUI)
+	{
+		// Call base deserialization
+		Widget::Deserialize(node, parentUI);
+
+		YAML::Node specificWidget = node["ContainerWidget"];
+		m_WidgetType = RuntimeUI::WidgetTypes::ContainerWidget;
+		// Get container data
+		m_ContainerData.Deserialize(node, parentUI);
+	}
 }

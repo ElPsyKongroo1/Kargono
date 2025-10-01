@@ -75,16 +75,44 @@ namespace Kargono::RuntimeUI
 
 	struct SelectionData
 	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		SelectionData() = default;
+		~SelectionData() = default;
+	public:
+		//============================
+		// Serialization
+		//============================
+		void Serialize(YAML::Emitter& emitter);
+		void Deserialize(YAML::Node& node);
+	public:
+		//============================
+		// Public Fields
+		//============================
+		// Config data
 		Math::vec4 m_DefaultBackgroundColor{ 0.5f };
 		WidgetCallbacks m_FunctionPointers{};
 		bool m_Selectable{ true };
-
 		// Runtime calculated data
 		NavigationLinks m_NavigationLinks;
 	};
 
 	struct ContainerData
 	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		ContainerData() = default;
+		~ContainerData() = default;
+	public:
+		//============================
+		// Serialization
+		//============================
+		void Serialize(YAML::Emitter& emitter);
+		void Deserialize(YAML::Node& node, UserInterface* parentUI);
 	public:
 		//============================
 		// Modify Container
@@ -105,6 +133,18 @@ namespace Kargono::RuntimeUI
 
 	struct ImageData
 	{
+	public:
+		//============================
+		// Constructors/Destructors
+		//============================
+		ImageData() = default;
+		~ImageData() = default;
+	public:
+		//============================
+		// Serialization
+		//============================
+		void Serialize(YAML::Emitter& emitter, std::string_view label);
+		void Deserialize(YAML::Node& node, std::string_view label);
 	public:
 		//============================
 		// Rendering
@@ -131,8 +171,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Serialization
 		//============================
-		void Serialize(void* context);
-		void Deserialize(void* context);
+		void Serialize(YAML::Emitter& emitter);
+		void Deserialize(YAML::Node& node);
 	public:
 		//============================
 		// Rendering
@@ -191,48 +231,6 @@ namespace Kargono::RuntimeUI
 		MultiLineTextDimensions m_CachedTextDimensions{};
 	};
 
-	struct SerializeWidgetContext
-	{
-	public:
-		//============================
-		// Constructors/Destructors
-		//============================
-		SerializeWidgetContext() = default;
-		~SerializeWidgetContext() = default;
-	public:
-		//============================
-		// Getters/Setters
-		//============================
-		bool IsValid() { return m_Emitter && m_ParentUI; }
-	public:
-		//============================
-		// Public Fields
-		//============================
-		YAML::Emitter* m_Emitter{ nullptr };
-		UserInterface* m_ParentUI{ nullptr };
-	};
-
-	struct DeserializeWidgetContext
-	{
-	public:
-		//============================
-		// Constructors/Destructors
-		//============================
-		DeserializeWidgetContext() = default;
-		~DeserializeWidgetContext() = default;
-	public:
-		//============================
-		// Getters/Setters
-		//============================
-		bool IsValid() { return m_Node && m_ParentUI; }
-	public:
-		//============================
-		// Public Fields
-		//============================
-		YAML::Node* m_Node{ nullptr };
-		UserInterface* m_ParentUI{ nullptr };
-	};
-
 	class Widget
 	{
 	public:
@@ -258,8 +256,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Serialization
 		//============================
-		virtual void Serialize(void* context);
-		virtual void Deserialize(void* context);
+		virtual void Serialize(YAML::Emitter& emitter, UserInterface* parentUI);
+		virtual void Deserialize(YAML::Node& node, UserInterface* parentUI);
 	protected:
 		// Rendering helper function(s)
 		void RenderBackground(RuntimeUIContext* uiContext, const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size);

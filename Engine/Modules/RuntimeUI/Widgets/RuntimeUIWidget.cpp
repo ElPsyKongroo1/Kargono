@@ -45,19 +45,9 @@ namespace Kargono::Utility
 
 namespace Kargono::RuntimeUI
 {
-	void Widget::Serialize(void* context)
+	void Widget::Serialize(YAML::Emitter& emitter, UserInterface* parentUI)
 	{
-		KG_ASSERT(context, "Context cannot be null");
-
-		// Get asset context
-		SerializeWidgetContext& widgetContext = *(SerializeWidgetContext*)context;
-
-		// Get context fields
-		KG_ASSERT(widgetContext.IsValid());
-		YAML::Emitter& emitter{ *widgetContext.m_Emitter };
-		UserInterface& parentUI{ *widgetContext.m_ParentUI };
-
-		//emitter << YAML::BeginMap; // Begin Widget Map
+		emitter << YAML::BeginMap; // Begin Widget Map
 
 		emitter << YAML::Key << "Tag" << YAML::Value << m_Tag;
 		emitter << YAML::Key << "ID" << YAML::Value << m_ID;
@@ -74,19 +64,10 @@ namespace Kargono::RuntimeUI
 		emitter << YAML::Key << "PixelSize" << YAML::Value << m_PixelSize;
 		emitter << YAML::Key << "WidgetType" << YAML::Value << Utility::WidgetTypeToString(m_WidgetType);
 
+		emitter << YAML::EndMap; // End Widget Map
 	}
-	void Widget::Deserialize(void* context)
+	void Widget::Deserialize(YAML::Node& node, UserInterface* parentUI)
 	{
-		KG_ASSERT(context, "Context cannot be null");
-
-		// Get asset context
-		DeserializeWidgetContext& widgetContext = *(DeserializeWidgetContext*)context;
-
-		// Get context fields
-		KG_ASSERT(widgetContext.IsValid());
-		YAML::Node& node{ *widgetContext.m_Node};
-		UserInterface& parentUI{ *widgetContext.m_ParentUI };
-
 		m_Tag = node["Tag"].as<std::string>();
 		m_ID = node["ID"].as<int32_t>();
 		m_PercentPosition = node["PercentPosition"].as<Math::vec2>();
@@ -247,10 +228,10 @@ namespace Kargono::RuntimeUI
 		// Get the aspect ratio from the image value as a vec2
 		Assets::AssetInfo textureInfo = Assets::AssetService::GetTexture2DInfo(currentImageData->m_ImageHandle);
 		Assets::TextureMetaData* textureMetadata = textureInfo.Data.GetSpecificMetaData<Assets::TextureMetaData>();
-		Math::vec2 textureAspectRatio = Math::vec2((float)textureMetadata->Width, (float)textureMetadata->Height);
+		Math::vec2 textureAspectRatio = Math::vec2((float)textureMetadata->m_Width, (float)textureMetadata->Height);
 
 		// Ensure we avoid division by 0
-		if (textureMetadata->Width == 0 || textureMetadata->Height == 0)
+		if (textureMetadata->m_Width == 0 || textureMetadata->m_Height == 0)
 		{
 			KG_WARN("Unable to enforce fixed aspect ratio because the indicated texture's dimensions are invalid");
 			return;
@@ -298,6 +279,58 @@ namespace Kargono::RuntimeUI
 			parentUI->m_Config.m_Font->GetMultiLineTextMetadata(m_Text, m_CachedTextDimensions, textSize);
 		}
 	}
+
+	void SelectionData::Serialize(YAML::Emitter& emitter)
+	{
+		// Color fields
+		emitter << YAML::Key << "DefaultBackgroundColor" << YAML::Value << m_DefaultBackgroundColor;
+		// Selectable fields
+		emitter << YAML::Key << "Selectable" << YAML::Value << m_Selectable;
+		// Function pointer fields
+		emitter << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)m_FunctionPointers.m_OnPressHandle;
+	}
+
+	void SelectionData::Deserialize(YAML::Node& node)
+	{
+		// Color fields
+		m_DefaultBackgroundColor = node["DefaultBackgroundColor"].as<Math::vec4>();
+		// Selectable field
+		m_Selectable = node["Selectable"].as<bool>();
+		// Function pointer fields
+		m_FunctionPointers.m_OnPressHandle = node["FunctionPointerOnPress"].as<uint64_t>();
+		if (m_FunctionPointers.m_OnPressHandle == Assets::k_EmptyHandle)
+		{
+			m_FunctionPointers.m_OnPress = nullptr;
+		}
+		else
+		{
+			Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(m_FunctionPointers.m_OnPressHandle);
+			if (!onPressScript)
+			{
+				KG_WARN("Unable to locate OnPress Script!");
+				return;
+			}
+			m_FunctionPointers.m_OnPress = onPressScript;
+		}
+
+	}
+
+	void SingleLineTextData::Serialize(YAML::Emitter& emitter)
+	{
+		emitter << YAML::Key << "Text" << YAML::Value << m_Text;
+		emitter << YAML::Key << "TextSize" << YAML::Value << m_TextSize;
+		emitter << YAML::Key << "TextColor" << YAML::Value << m_TextColor;
+		emitter << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(m_TextAlignment);
+	}
+
+	void SingleLineTextData::Deserialize(YAML::Node& node)
+	{
+		m_Text = node["Text"].as<std::string>();
+		m_TextSize = node["TextSize"].as<float>();
+		m_TextColor = node["TextColor"].as<glm::vec4>();
+		m_TextAlignment = Utility::StringToConstraint(node["TextAlignment"].as<std::string>());
+	}
+
 	void SingleLineTextData::OnRender(RuntimeUIContext* uiContext, const Math::vec3& textStartingPoint, float textScalingFactor)
 	{
 		Ref<UserInterface> activeUI = uiContext->m_ActiveUI;
@@ -391,6 +424,30 @@ namespace Kargono::RuntimeUI
 		// Return starting point
 		return translationOutput;
 	}
+	void ImageData::Serialize(YAML::Emitter& emitter, std::string_view label)
+	{
+		emitter << YAML::Key << ((std::string)label + "Image") << YAML::Value << (uint64_t)m_ImageHandle;
+		emitter << YAML::Key << ((std::string)label + "FixedAspectRatio") << YAML::Value << m_FixedAspectRatio;
+	}
+	void ImageData::Deserialize(YAML::Node& node, std::string_view title)
+	{
+		m_ImageHandle = node[((std::string)title + "Image")].as<uint64_t>();
+		if (m_ImageHandle == Assets::k_EmptyHandle)
+		{
+			m_ImageRef = nullptr;
+		}
+		else
+		{
+			Ref<Rendering::Texture2D> imageRef = Assets::AssetService::GetTexture2D(m_ImageHandle);
+			if (!imageRef)
+			{
+				KG_WARN("Unable to locate provided image reference");
+				return;
+			}
+			m_ImageRef = imageRef;
+		}
+		m_FixedAspectRatio = node[((std::string)title + "FixedAspectRatio")].as<bool>();
+	}
 	void ImageData::RenderImage(RuntimeUIContext* uiContext, const Math::vec3& translation, const Math::vec3 size)
 	{
 		Rendering::RendererInputSpec& renderSpec = uiContext->m_ImageInputSpec;
@@ -407,6 +464,32 @@ namespace Kargono::RuntimeUI
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
+		}
+	}
+
+	void ContainerData::Serialize(YAML::Emitter& emitter)
+	{
+		emitter << YAML::Key << "BackgroundColor" << YAML::Value << m_BackgroundColor;
+		emitter << YAML::Key << "ContainerWidgets" << YAML::Value << YAML::BeginSeq; // Start container widgets sequence
+		for (Ref<RuntimeUI::Widget> widget : m_ContainedWidgets)
+		{
+			widget->Serialize(emitter, widget->i_ParentUI);
+		}
+		emitter << YAML::EndSeq; // End container widgets sequence
+	}
+
+	void ContainerData::Deserialize(YAML::Node& node, UserInterface* parentUI)
+	{
+		// Deserialize background color
+		m_BackgroundColor = node["BackgroundColor"].as<Math::vec4>();
+
+		// Deserialize all child widgets
+		YAML::Node containerWidgetNodes = node["ContainerWidgets"];
+		for (YAML::Node containerWidgetNode : containerWidgetNodes)
+		{
+			Ref<Widget> newWidget = CreateRef<Widget>(parentUI);
+			newWidget->Deserialize(node, parentUI);
+			m_ContainedWidgets.push_back(newWidget);
 		}
 	}
 	void ContainerData::AddWidget(Ref<Widget> newWidget)

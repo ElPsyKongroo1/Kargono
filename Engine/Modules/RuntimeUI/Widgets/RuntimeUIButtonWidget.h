@@ -27,8 +27,8 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Serialization
 		//============================
-		virtual void Serialize(void* context) override;
-		virtual void Deserialize(void* context) override;
+		virtual void Serialize(YAML::Emitter& emitter, UserInterface* parentUI) override;
+		virtual void Deserialize(YAML::Node& node, UserInterface* parentUI) override;
 	public:
 		//============================
 		// Modify State

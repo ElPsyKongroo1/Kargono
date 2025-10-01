@@ -41,27 +41,7 @@ namespace Kargono::Assets
 	static void SerializeDropDownWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget);
 	static void SerializeWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget);
 
-	void SerializeSelectionData(YAML::Emitter& out, RuntimeUI::SelectionData& selectionData)
-	{
-		// Color fields
-		out << YAML::Key << "DefaultBackgroundColor" << YAML::Value << selectionData.m_DefaultBackgroundColor;
-		// Selectable fields
-		out << YAML::Key << "Selectable" << YAML::Value << selectionData.m_Selectable;
-		// Function pointer fields
-		out << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)selectionData.m_FunctionPointers.m_OnPressHandle;
-	}
-	void SerializeImageData(YAML::Emitter& out, RuntimeUI::ImageData& imageData, const std::string& title)
-	{
-		out << YAML::Key << (title + "Image") << YAML::Value << (uint64_t)imageData.m_ImageHandle;
-		out << YAML::Key << (title + "FixedAspectRatio") << YAML::Value << imageData.m_FixedAspectRatio;
-	}
-	void SerializeSingleLineTextData(YAML::Emitter& out, RuntimeUI::SingleLineTextData& textData)
-	{
-		out << YAML::Key << "Text" << YAML::Value << textData.m_Text;
-		out << YAML::Key << "TextSize" << YAML::Value << textData.m_TextSize;
-		out << YAML::Key << "TextColor" << YAML::Value << textData.m_TextColor;
-		out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(textData.m_TextAlignment);
-	}
+
 	void SerializeMultiLineTextData(YAML::Emitter& out, RuntimeUI::MultiLineTextData& textData)
 	{
 		out << YAML::Key << "Text" << YAML::Value << textData.m_Text;
@@ -69,17 +49,6 @@ namespace Kargono::Assets
 		out << YAML::Key << "TextColor" << YAML::Value << textData.m_TextColor;
 		out << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(textData.m_TextAlignment);
 		out << YAML::Key << "TextWrapped" << YAML::Value << textData.m_TextWrapped;
-	}
-
-	void SerializeContainerData(YAML::Emitter& out, RuntimeUI::ContainerData& containerData)
-	{
-		out << YAML::Key << "BackgroundColor" << YAML::Value << containerData.m_BackgroundColor;
-		out << YAML::Key << "ContainerWidgets" << YAML::Value << YAML::BeginSeq; // Start container widgets sequence
-		for (Ref<RuntimeUI::Widget> widget : containerData.m_ContainedWidgets)
-		{
-			SerializeWidget(out, widget);
-		}
-		out << YAML::EndSeq; // End container widgets sequence
 	}
 
 	void SerializeTextWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget)
@@ -127,35 +96,6 @@ namespace Kargono::Assets
 		out << YAML::EndMap; // End ImageWidget Map
 	}
 
-
-	void SerializeCheckboxWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget)
-	{
-		RuntimeUI::CheckboxWidget* checkboxWidget = static_cast<RuntimeUI::CheckboxWidget*>(widget.get());
-		out << YAML::Key << "CheckboxWidget" << YAML::Value;
-		// Image fields
-		out << YAML::BeginMap; // Begin Checkbox Map
-		// Save checked
-		out << YAML::Key << "Checked" << YAML::Value << checkboxWidget->m_Checked;
-		// Save image data
-		SerializeImageData(out, checkboxWidget->m_ImageChecked, "Checked");
-		// Save image data
-		SerializeImageData(out, checkboxWidget->m_ImageUnChecked, "UnChecked");
-		// Save selection fields
-		SerializeSelectionData(out, checkboxWidget->m_SelectionData);
-		out << YAML::EndMap; // End Checkbox Map
-	}
-
-
-	void SerializeContainerWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget)
-	{
-		RuntimeUI::ContainerWidget* containerWidget = static_cast<RuntimeUI::ContainerWidget*>(widget.get());
-		out << YAML::Key << "ContainerWidget" << YAML::Value;
-		// Container fields
-		out << YAML::BeginMap; // Begin Container Map
-		// Save container data
-		SerializeContainerData(out, containerWidget->m_ContainerData);
-		out << YAML::EndMap; // End Container Map
-	}
 
 	void SerializeHorizontalContainerWidget(YAML::Emitter& out, Ref<RuntimeUI::Widget> widget)
 	{
@@ -345,71 +285,8 @@ namespace Kargono::Assets
 		textData.m_TextAlignment = Utility::StringToConstraint(node["TextAlignment"].as<std::string>());
 		textData.m_TextWrapped = node["TextWrapped"].as<bool>();
 	}
-	void DeserializeSingleLineTextData(RuntimeUI::SingleLineTextData& textData, const YAML::Node& node)
-	{
-		// Text fields
-		textData.m_Text = node["Text"].as<std::string>();
-		textData.m_TextSize = node["TextSize"].as<float>();
-		textData.m_TextColor = node["TextColor"].as<glm::vec4>();
-		textData.m_TextAlignment = Utility::StringToConstraint(node["TextAlignment"].as<std::string>());
-	}
 
-	void DeserializeContainerData(RuntimeUI::ContainerData& containerData, const YAML::Node& node, RuntimeUI::UserInterface* ui)
-	{
-		// Deserialize background color
-		containerData.m_BackgroundColor = node["BackgroundColor"].as<Math::vec4>();
 
-		// Deserialize all child widgets
-		YAML::Node containerWidgetNodes = node["ContainerWidgets"];
-		for (YAML::Node containerWidgetNode : containerWidgetNodes)
-		{
-			Ref<RuntimeUI::Widget> newWidget = DeserializeWidget(containerWidgetNode, ui);
-			containerData.m_ContainedWidgets.push_back(newWidget);
-		}
-	}
-	void DeserializeSelectionData(RuntimeUI::SelectionData& selectionData, YAML::Node& node)
-	{
-		// Color fields
-		selectionData.m_DefaultBackgroundColor = node["DefaultBackgroundColor"].as<Math::vec4>();
-		// Selectable field
-		selectionData.m_Selectable = node["Selectable"].as<bool>();
-		// Function pointer fields
-		selectionData.m_FunctionPointers.m_OnPressHandle = node["FunctionPointerOnPress"].as<uint64_t>();
-		if (selectionData.m_FunctionPointers.m_OnPressHandle == Assets::k_EmptyHandle)
-		{
-			selectionData.m_FunctionPointers.m_OnPress = nullptr;
-		}
-		else
-		{
-			Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(selectionData.m_FunctionPointers.m_OnPressHandle);
-			if (!onPressScript)
-			{
-				KG_WARN("Unable to locate OnPress Script!");
-				return;
-			}
-			selectionData.m_FunctionPointers.m_OnPress = onPressScript;
-		}
-	}
-
-	void DeserializeImageData(RuntimeUI::ImageData& imageData, YAML::Node& node, const std::string& title)
-	{
-		imageData.m_ImageHandle = node[(title + "Image")].as<uint64_t>();
-		if (imageData.m_ImageHandle == Assets::k_EmptyHandle)
-		{
-			imageData.m_ImageRef = nullptr;
-		}
-		else
-		{
-			Ref<Rendering::Texture2D> imageRef = Assets::AssetService::GetTexture2D(imageData.m_ImageHandle);
-			if (!imageRef)
-			{
-				KG_WARN("Unable to locate provided image reference");
-				return;
-			}
-			imageData.m_ImageRef = imageRef;
-		}
-		imageData.m_FixedAspectRatio = node[(title + "FixedAspectRatio")].as<bool>();
-	}
 
 	Ref<RuntimeUI::Widget> DeserializeTextWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{	
@@ -422,18 +299,6 @@ namespace Kargono::Assets
 		return widget;
 	}
 
-	Ref<RuntimeUI::Widget> DeserializeButtonWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
-	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::ButtonWidget>(ui);
-		YAML::Node specificWidget = node["ButtonWidget"];
-		widget->m_WidgetType = RuntimeUI::WidgetTypes::ButtonWidget;
-		RuntimeUI::ButtonWidget* buttonWidget = static_cast<RuntimeUI::ButtonWidget*>(widget.get());
-		// Get single line data
-		DeserializeSingleLineTextData(buttonWidget->m_TextData, specificWidget);
-		// Get selection data
-		DeserializeSelectionData(buttonWidget->m_SelectionData, specificWidget);
-		return widget;
-	}
 
 	Ref<RuntimeUI::Widget> DeserializeImageWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
 	{
@@ -473,17 +338,6 @@ namespace Kargono::Assets
 		DeserializeImageData(checkboxWidget->m_ImageChecked, specificWidget, "Checked");
 		// Get unchecked image data
 		DeserializeImageData(checkboxWidget->m_ImageUnChecked, specificWidget, "UnChecked");
-		return widget;
-	}
-
-	Ref<RuntimeUI::Widget> DeserializeContainerWidget(const YAML::Node& node, RuntimeUI::UserInterface* ui)
-	{
-		Ref<RuntimeUI::Widget> widget = CreateRef<RuntimeUI::ContainerWidget>(ui);
-		YAML::Node specificWidget = node["ContainerWidget"];
-		widget->m_WidgetType = RuntimeUI::WidgetTypes::ContainerWidget;
-		RuntimeUI::ContainerWidget* containerWidget = static_cast<RuntimeUI::ContainerWidget*>(widget.get());
-		// Get selection data
-		DeserializeContainerData(containerWidget->m_ContainerData, specificWidget, ui);
 		return widget;
 	}
 

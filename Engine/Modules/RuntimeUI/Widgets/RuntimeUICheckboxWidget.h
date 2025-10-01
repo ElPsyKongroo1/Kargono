@@ -25,7 +25,12 @@ namespace Kargono::RuntimeUI
 		// Rendering Methods
 		//============================
 		virtual void OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth) override;
-
+	public:
+		//============================
+		// Serialization
+		//============================
+		virtual void Serialize(YAML::Emitter& emitter, UserInterface* parentUI) override;
+		virtual void Deserialize(YAML::Node& node, UserInterface* parentUI) override;
 	public:
 		//============================
 		// Query State
