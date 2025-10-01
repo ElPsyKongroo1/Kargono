@@ -10,22 +10,24 @@ namespace Kargono::RuntimeUI
 {
 	void ButtonWidget::Serialize(YAML::Emitter& emitter, UserInterface* parentUI)
 	{
+		emitter << YAML::BeginMap; // Begin Widget Map
+
 		// Call base serialization
 		Widget::Serialize(emitter, parentUI);
 
 		// Serialize button data
 		emitter << YAML::Key << "ButtonWidget" << YAML::Value;
 		emitter << YAML::BeginMap; // Begin buttonWidget Map
-
 		// Save text data
-		m_TextData.Serialize((void*)&emitter);
+		m_TextData.Serialize(emitter);
 		// Save selection fields
-		m_SelectionData.Serialize((void*)&emitter);
-
+		m_SelectionData.Serialize(emitter);
 		emitter << YAML::EndMap; // End buttonWidget Map
+
+		emitter << YAML::EndMap; // End Widget Map
 	}
 
-	void ButtonWidget::Deserialize(YAML::Node& node, UserInterface* parentUI)
+	void ButtonWidget::Deserialize(const YAML::Node& node, UserInterface* parentUI)
 	{
 		// Call base deserialization
 		Widget::Deserialize(node, parentUI);
@@ -33,9 +35,9 @@ namespace Kargono::RuntimeUI
 		YAML::Node specificWidget = node["ButtonWidget"];
 		m_WidgetType = RuntimeUI::WidgetTypes::ButtonWidget;
 		// Get single line data
-		m_TextData.Deserialize((void*)&specificWidget);
+		m_TextData.Deserialize(specificWidget);
 		// Get selection data
-		m_SelectionData.Deserialize((void*)&specificWidget);
+		m_SelectionData.Deserialize(specificWidget);
 	}
 
 	void ButtonWidget::SetText(const std::string& newText)

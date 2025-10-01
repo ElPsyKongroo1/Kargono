@@ -47,8 +47,6 @@ namespace Kargono::RuntimeUI
 {
 	void Widget::Serialize(YAML::Emitter& emitter, UserInterface* parentUI)
 	{
-		emitter << YAML::BeginMap; // Begin Widget Map
-
 		emitter << YAML::Key << "Tag" << YAML::Value << m_Tag;
 		emitter << YAML::Key << "ID" << YAML::Value << m_ID;
 		emitter << YAML::Key << "XRelativeOrAbsolute" << YAML::Value << Utility::RelativeOrAbsoluteToString(m_XRelativeOrAbsolute);
@@ -63,10 +61,8 @@ namespace Kargono::RuntimeUI
 		emitter << YAML::Key << "PercentSize" << YAML::Value << m_PercentSize;
 		emitter << YAML::Key << "PixelSize" << YAML::Value << m_PixelSize;
 		emitter << YAML::Key << "WidgetType" << YAML::Value << Utility::WidgetTypeToString(m_WidgetType);
-
-		emitter << YAML::EndMap; // End Widget Map
 	}
-	void Widget::Deserialize(YAML::Node& node, UserInterface* parentUI)
+	void Widget::Deserialize(const YAML::Node& node, UserInterface* parentUI)
 	{
 		m_Tag = node["Tag"].as<std::string>();
 		m_ID = node["ID"].as<int32_t>();
@@ -226,9 +222,9 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Get the aspect ratio from the image value as a vec2
-		Assets::AssetInfo textureInfo = Assets::AssetService::GetTexture2DInfo(currentImageData->m_ImageHandle);
-		Assets::TextureMetaData* textureMetadata = textureInfo.Data.GetSpecificMetaData<Assets::TextureMetaData>();
-		Math::vec2 textureAspectRatio = Math::vec2((float)textureMetadata->m_Width, (float)textureMetadata->Height);
+		Assets::Metadata metadata = Assets::AssetService::GetTexture2DInfo(currentImageData->m_ImageHandle);
+		Assets::TextureMetaData* textureMetadata = metadata.GetSpecificMetaData<Assets::TextureMetaData>();
+		Math::vec2 textureAspectRatio = Math::vec2((float)textureMetadata->m_Width, (float)textureMetadata->m_Height);
 
 		// Ensure we avoid division by 0
 		if (textureMetadata->m_Width == 0 || textureMetadata->m_Height == 0)
@@ -280,6 +276,24 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
+	void MultiLineTextData::Serialize(YAML::Emitter& emitter)
+	{
+		emitter << YAML::Key << "Text" << YAML::Value << m_Text;
+		emitter << YAML::Key << "TextSize" << YAML::Value << m_TextSize;
+		emitter << YAML::Key << "TextColor" << YAML::Value << m_TextColor;
+		emitter << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(m_TextAlignment);
+		emitter << YAML::Key << "TextWrapped" << YAML::Value << m_TextWrapped;
+	}
+
+	void MultiLineTextData::Deserialize(YAML::Node& node)
+	{
+		m_Text = node["Text"].as<std::string>();
+		m_TextSize = node["TextSize"].as<float>();
+		m_TextColor = node["TextColor"].as<glm::vec4>();
+		m_TextAlignment = Utility::StringToConstraint(node["TextAlignment"].as<std::string>());
+		m_TextWrapped = node["TextWrapped"].as<bool>();
+	}
+
 	void SelectionData::Serialize(YAML::Emitter& emitter)
 	{
 		// Color fields
@@ -323,7 +337,7 @@ namespace Kargono::RuntimeUI
 		emitter << YAML::Key << "TextAlignment" << YAML::Value << Utility::ConstraintToString(m_TextAlignment);
 	}
 
-	void SingleLineTextData::Deserialize(YAML::Node& node)
+	void SingleLineTextData::Deserialize(const YAML::Node& node)
 	{
 		m_Text = node["Text"].as<std::string>();
 		m_TextSize = node["TextSize"].as<float>();

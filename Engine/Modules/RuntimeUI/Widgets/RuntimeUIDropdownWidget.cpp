@@ -119,8 +119,78 @@ namespace Kargono::RuntimeUI
 				visibleDropDownOffset++;
 			}
 		}
+	}
 
+	void DropDownWidget::Serialize(YAML::Emitter& emitter, UserInterface* parentUI)
+	{
+		emitter << YAML::BeginMap; // Begin Widget Map
 
+		// Call base serialization
+		Widget::Serialize(emitter, parentUI);
+
+		emitter << YAML::Key << "DropDownWidget" << YAML::Value;
+		emitter << YAML::BeginMap; // Begin DropDownWidget Map
+		// Save selection fields
+		m_SelectionData.Serialize(emitter);
+
+		// Serialize list of options
+		emitter << YAML::Key << "DropDownOptions" << YAML::Value;
+		emitter << YAML::BeginSeq; // Begin Option Sequence
+		for (RuntimeUI::SingleLineTextData& currentOption : m_DropDownOptions)
+		{
+			emitter << YAML::BeginMap; // Begin DropDown Option Map
+			currentOption.Serialize(emitter);
+			emitter << YAML::EndMap; // End DropDown Option Map
+		}
+		emitter << YAML::EndSeq; // End Option Sequence
+
+		// Save drop down color
+		emitter << YAML::Key << "DropDownBackground" << YAML::Value << m_DropDownBackground;
+
+		// Save function pointer
+		emitter << YAML::Key << "OnSelectOption" << YAML::Value << (uint64_t)m_OnSelectOptionHandle;
+
+		emitter << YAML::EndMap; // End DropDownWidget Map
+
+		emitter << YAML::EndMap; // End Widget Map
+	}
+	void DropDownWidget::Deserialize(const YAML::Node& node, UserInterface* parentUI)
+	{
+		// Call base deserialization
+		Widget::Deserialize(node, parentUI);
+
+		YAML::Node specificWidget = node["DropDownWidget"];
+		m_WidgetType = RuntimeUI::WidgetTypes::DropDownWidget;
+		// Get selection data
+		m_SelectionData.Deserialize(specificWidget);
+
+		// Get drop-down specific fields
+		m_DropDownBackground = specificWidget["DropDownBackground"].as<Math::vec4>();
+
+		// Get all drop down options
+		YAML::Node dropDownOptionsNode = specificWidget["DropDownOptions"];
+		for (const YAML::Node& optionNode : dropDownOptionsNode)
+		{
+			RuntimeUI::SingleLineTextData& newTextData = m_DropDownOptions.emplace_back(RuntimeUI::SingleLineTextData());
+			newTextData.Deserialize(optionNode);
+		}
+
+		// Get slider widget specific function pointers
+		m_OnSelectOptionHandle = specificWidget["OnSelectOption"].as<uint64_t>();
+		if (m_OnSelectOptionHandle == Assets::k_EmptyHandle)
+		{
+			m_OnSelectOption = nullptr;
+		}
+		else
+		{
+			Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(m_OnSelectOptionHandle);
+			if (!onPressScript)
+			{
+				KG_WARN("Unable to locate on select option Script!");
+				return;
+			}
+			m_OnSelectOption = onPressScript;
+		}
 	}
 
 	void DropDownWidget::RevalidateTextDimensions()

@@ -7,6 +7,8 @@ namespace Kargono::RuntimeUI
 {
 	void CheckboxWidget::Serialize(YAML::Emitter& emitter, UserInterface* parentUI)
 	{
+		emitter << YAML::BeginMap; // Begin Widget Map
+
 		// Call base serialization
 		Widget::Serialize(emitter, parentUI);
 
@@ -22,14 +24,25 @@ namespace Kargono::RuntimeUI
 		// Save selection fields
 		m_SelectionData.Serialize(emitter);
 		emitter << YAML::EndMap; // End Checkbox Map
+
+		emitter << YAML::EndMap; // End Widget Map
 	}
 
-	void CheckboxWidget::Deserialize(YAML::Node& node, UserInterface* parentUI)
+	void CheckboxWidget::Deserialize(const YAML::Node& node, UserInterface* parentUI)
 	{
 		// Call base deserialization
 		Widget::Deserialize(node, parentUI);
 
-		
+		m_WidgetType = RuntimeUI::WidgetTypes::CheckboxWidget;
+		YAML::Node specificWidget = node["CheckboxWidget"];
+		// Get checked status
+		m_Checked = specificWidget["Checked"].as<bool>();
+		// Get selection data
+		m_SelectionData.Deserialize(specificWidget);
+		// Get checked image data
+		m_ImageChecked.Deserialize(specificWidget, "Checked");
+		// Get unchecked image data
+		m_ImageUnChecked.Deserialize(specificWidget, "UnChecked");
 	}
 
 	void CheckboxWidget::OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)

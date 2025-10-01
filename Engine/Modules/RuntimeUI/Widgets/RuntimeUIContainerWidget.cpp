@@ -40,6 +40,8 @@ namespace Kargono::RuntimeUI
 	}
 	void ContainerWidget::Serialize(YAML::Emitter& emitter, UserInterface* parentUI)
 	{
+		emitter << YAML::BeginMap; // Begin Widget Map
+
 		// Call base serialization
 		Widget::Serialize(emitter, parentUI);
 
@@ -49,8 +51,10 @@ namespace Kargono::RuntimeUI
 		// Save container data
 		m_ContainerData.Serialize(emitter);
 		emitter << YAML::EndMap; // End Container Map
+
+		emitter << YAML::EndMap; // End Widget Map
 	}
-	void ContainerWidget::Deserialize(YAML::Node& node, UserInterface* parentUI)
+	void ContainerWidget::Deserialize(const YAML::Node& node, UserInterface* parentUI)
 	{
 		// Call base deserialization
 		Widget::Deserialize(node, parentUI);

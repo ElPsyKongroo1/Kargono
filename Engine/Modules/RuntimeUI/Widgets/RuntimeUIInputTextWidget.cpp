@@ -69,4 +69,52 @@ namespace Kargono::RuntimeUI
 			m_TextData.RenderTextCursor(uiContext, textStartingPoint, textScalingFactor);
 		}
 	}
+
+	void InputTextWidget::Serialize(YAML::Emitter& emitter, UserInterface* parentUI)
+	{
+		emitter << YAML::BeginMap; // Begin Widget Map
+
+		// Call base serialization
+		Widget::Serialize(emitter, parentUI);
+
+		emitter << YAML::Key << "InputTextWidget" << YAML::Value;
+		emitter << YAML::BeginMap; // Begin InputTextWidget Map
+		// Save text data
+		m_TextData.Serialize(emitter);
+		// Save selection fields
+		m_SelectionData.Serialize(emitter);
+		// Save input text unique function pointers
+		emitter << YAML::Key << "OnMoveCursor" << YAML::Value << (uint64_t)m_OnMoveCursorHandle;
+		emitter << YAML::EndMap; // End InputTextWidget Map
+
+		emitter << YAML::EndMap; // End Widget Map
+	}
+	void InputTextWidget::Deserialize(const YAML::Node& node, UserInterface* parentUI)
+	{
+		// Call base deserialization
+		Widget::Deserialize(node, parentUI);
+
+		YAML::Node specificWidget = node["InputTextWidget"];
+		m_WidgetType = RuntimeUI::WidgetTypes::InputTextWidget;
+		// Get single line data
+		m_TextData.Deserialize(specificWidget);
+		// Get selection data
+		m_SelectionData.Deserialize(specificWidget);
+		// Get input map specific function pointers
+		m_OnMoveCursorHandle = specificWidget["OnMoveCursor"].as<uint64_t>();
+		if (m_OnMoveCursorHandle == Assets::k_EmptyHandle)
+		{
+			m_OnMoveCursor = nullptr;
+		}
+		else
+		{
+			Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(m_OnMoveCursorHandle);
+			if (!onPressScript)
+			{
+				KG_WARN("Unable to locate On Move Cursor Script!");
+				return;
+			}
+			m_OnMoveCursor = onPressScript;
+		}
+	}
 }

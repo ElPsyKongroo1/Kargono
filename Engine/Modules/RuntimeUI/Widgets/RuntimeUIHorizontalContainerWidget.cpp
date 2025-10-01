@@ -48,4 +48,39 @@ namespace Kargono::RuntimeUI
 			iteration++;
 		}
 	}
+
+	void HorizontalContainerWidget::Serialize(YAML::Emitter& emitter, UserInterface* parentUI)
+	{
+		emitter << YAML::BeginMap; // Begin Widget Map
+
+		// Call base serialization
+		Widget::Serialize(emitter, parentUI);
+
+		emitter << YAML::Key << "HorizontalContainerWidget" << YAML::Value;
+		// Container fields
+		emitter << YAML::BeginMap; // Begin Container Map
+
+		// Save unique fields
+		emitter << YAML::Key << "ColumnWidth" << YAML::Value << m_ColumnWidth;
+		emitter << YAML::Key << "ColumnSpacing" << YAML::Value << m_ColumnSpacing;
+
+		// Save container data
+		m_ContainerData.Serialize(emitter);
+		emitter << YAML::EndMap; // End Container Map
+
+		emitter << YAML::EndMap; // End Widget Map
+	}
+	void HorizontalContainerWidget::Deserialize(const YAML::Node& node, UserInterface* parentUI)
+	{
+		// Call base deserialization
+		Widget::Deserialize(node, parentUI);
+
+		YAML::Node specificWidget = node["HorizontalContainerWidget"];
+		m_WidgetType = RuntimeUI::WidgetTypes::HorizontalContainerWidget;
+		// Get unique data
+		m_ColumnWidth = specificWidget["ColumnWidth"].as<float>();
+		m_ColumnSpacing = specificWidget["ColumnSpacing"].as<float>();
+		// Get container data
+		m_ContainerData.Deserialize(specificWidget, parentUI);
+	}
 }

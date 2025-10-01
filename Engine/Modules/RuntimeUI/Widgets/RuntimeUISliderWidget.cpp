@@ -82,4 +82,59 @@ namespace Kargono::RuntimeUI
 			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
 		}
 	}
+
+	void SliderWidget::Serialize(YAML::Emitter& emitter, UserInterface* parentUI)
+	{
+		emitter << YAML::BeginMap; // Begin Widget Map
+
+		// Call base serialization
+		Widget::Serialize(emitter, parentUI);
+
+		emitter << YAML::Key << "SliderWidget" << YAML::Value;
+		emitter << YAML::BeginMap; // Begin SliderWidget Map
+		// Save selection fields
+		m_SelectionData.Serialize(emitter);
+		// Save slider unique function pointers
+		emitter << YAML::Key << "OnMoveSlider" << YAML::Value << (uint64_t)m_OnMoveSliderHandle;
+		// Save other slider options
+		emitter << YAML::Key << "Bounds" << YAML::Value << m_Bounds;
+		emitter << YAML::Key << "SliderColor" << YAML::Value << m_SliderColor;
+		emitter << YAML::Key << "LineColor" << YAML::Value << m_LineColor;
+
+		emitter << YAML::EndMap; // End SliderWidget Map
+
+		emitter << YAML::EndMap; // End Widget Map
+	}
+	void SliderWidget::Deserialize(const YAML::Node& node, UserInterface* parentUI)
+	{
+		// Call base deserialization
+		Widget::Deserialize(node, parentUI);
+
+		YAML::Node specificWidget = node["SliderWidget"];
+		m_WidgetType = RuntimeUI::WidgetTypes::SliderWidget;
+		// Get selection data
+		m_SelectionData.Deserialize(specificWidget);
+
+		// Get slider specific fields
+		m_Bounds = specificWidget["Bounds"].as<Math::vec2>();
+		m_SliderColor = specificWidget["SliderColor"].as<Math::vec4>();
+		m_LineColor = specificWidget["LineColor"].as<Math::vec4>();
+
+		// Get slider widget specific function pointers
+		m_OnMoveSliderHandle = specificWidget["OnMoveSlider"].as<uint64_t>();
+		if (m_OnMoveSliderHandle == Assets::k_EmptyHandle)
+		{
+			m_OnMoveSlider = nullptr;
+		}
+		else
+		{
+			Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(m_OnMoveSliderHandle);
+			if (!onPressScript)
+			{
+				KG_WARN("Unable to locate on move slider Script!");
+				return;
+			}
+			m_OnMoveSlider = onPressScript;
+		}
+	}
 }

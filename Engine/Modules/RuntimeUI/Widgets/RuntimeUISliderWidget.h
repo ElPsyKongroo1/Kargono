@@ -26,6 +26,12 @@ namespace Kargono::RuntimeUI
 		// Rendering helper functions
 		void RenderSliderLine(RuntimeUIContext* uiContext, const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size);
 		void RenderSlider(RuntimeUIContext* uiContext, const Math::vec4& color, const Math::vec3& translation, const Math::vec3& size);
+	public:
+		//============================
+		// Serialization
+		//============================
+		virtual void Serialize(YAML::Emitter& emitter, UserInterface* parentUI) override;
+		virtual void Deserialize(const YAML::Node& node, UserInterface* parentUI) override;
 
 	public:
 		//============================

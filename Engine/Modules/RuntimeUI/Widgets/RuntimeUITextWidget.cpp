@@ -106,4 +106,29 @@ namespace Kargono::RuntimeUI
 		// Calculate the new text size
 		RevalidateTextDimensions();
 	}
+
+	void TextWidget::Serialize(YAML::Emitter& emitter, UserInterface* parentUI)
+	{
+		emitter << YAML::BeginMap; // Begin Widget Map
+
+		// Call base serialization
+		Widget::Serialize(emitter, parentUI);
+
+		emitter << YAML::Key << "TextWidget" << YAML::Value;
+		emitter << YAML::BeginMap; // Begin TextWidget Map
+		m_TextData.Serialize(emitter);
+		emitter << YAML::EndMap; // End TextWidget Map
+
+		emitter << YAML::EndMap; // End Widget Map
+	}
+	void TextWidget::Deserialize(const YAML::Node& node, UserInterface* parentUI)
+	{
+		// Call base deserialization
+		Widget::Deserialize(node, parentUI);
+
+		YAML::Node specificWidget = node["TextWidget"];
+		m_WidgetType = RuntimeUI::WidgetTypes::TextWidget;
+		// Get multiline data
+		m_TextData.Deserialize(specificWidget);
+	}
 }

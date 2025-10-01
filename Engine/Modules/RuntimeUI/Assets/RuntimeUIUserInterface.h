@@ -432,6 +432,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		void Serialize(void* context);
 		void Deserialize(void* context);
+		Ref<Widget> DeserializeWidget(const YAML::Node& node);
 	public:
 		//==============================
 		// Interact With UI

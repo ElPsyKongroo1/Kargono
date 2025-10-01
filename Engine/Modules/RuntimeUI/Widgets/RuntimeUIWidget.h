@@ -172,7 +172,7 @@ namespace Kargono::RuntimeUI
 		// Serialization
 		//============================
 		void Serialize(YAML::Emitter& emitter);
-		void Deserialize(YAML::Node& node);
+		void Deserialize(const YAML::Node& node);
 	public:
 		//============================
 		// Rendering
@@ -214,6 +214,18 @@ namespace Kargono::RuntimeUI
 	{
 	public:
 		//============================
+		// Constructors/Destructors
+		//============================
+		MultiLineTextData() = default;
+		~MultiLineTextData() = default;
+	public:
+		//============================
+		// Serialization
+		//============================
+		void Serialize(YAML::Emitter& emitter);
+		void Deserialize(YAML::Node& node);
+	public:
+		//============================
 		// Revalidate Text
 		//============================
 		void RevalidateTextDimensions(UserInterface* parentUI, const Math::vec3& widgetSize, float textSize);
@@ -221,12 +233,12 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Public Fields
 		//============================
+		// Config
 		std::string m_Text{ "New Text Widget" };
 		float m_TextSize{ 0.3f };
 		Math::vec4 m_TextColor{ 1.0f };
 		Constraint m_TextAlignment{ Constraint::Center };
 		bool m_TextWrapped{ false };
-
 		// Runtime calculated data
 		MultiLineTextDimensions m_CachedTextDimensions{};
 	};
@@ -257,7 +269,7 @@ namespace Kargono::RuntimeUI
 		// Serialization
 		//============================
 		virtual void Serialize(YAML::Emitter& emitter, UserInterface* parentUI);
-		virtual void Deserialize(YAML::Node& node, UserInterface* parentUI);
+		virtual void Deserialize(const YAML::Node& node, UserInterface* parentUI);
 	protected:
 		// Rendering helper function(s)
 		void RenderBackground(RuntimeUIContext* uiContext, const Math::vec4& color, const Math::vec3& translation, const Math::vec3 size);

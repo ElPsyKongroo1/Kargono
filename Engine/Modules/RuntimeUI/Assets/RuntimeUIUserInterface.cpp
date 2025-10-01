@@ -676,7 +676,7 @@ namespace Kargono::RuntimeUI
 					std::vector<Ref<RuntimeUI::Widget>>& newWidgetsList = newWindow.m_Widgets;
 					for (const YAML::Node& widgetNode : widgetNodes)
 					{
-						Ref<RuntimeUI::Widget> newWidget = DeserializeWidget(widgetNode, this);
+						Ref<RuntimeUI::Widget> newWidget = DeserializeWidget(widgetNode);
 						newWidgetsList.push_back(newWidget);
 					}
 				}
@@ -685,6 +685,80 @@ namespace Kargono::RuntimeUI
 
 			}
 		}
+	}
+
+	Ref<Widget> UserInterface::DeserializeWidget(const YAML::Node& node)
+	{
+		Ref<RuntimeUI::Widget> widget;
+		RuntimeUI::WidgetTypes widgetType = Utility::StringToWidgetType(node["WidgetType"].as<std::string>());
+		switch (widgetType)
+		{
+			case RuntimeUI::WidgetTypes::TextWidget:
+			{
+				widget = CreateRef<TextWidget>();
+				break;
+			}
+			case RuntimeUI::WidgetTypes::ButtonWidget:
+			{
+				widget = CreateRef<ButtonWidget>();
+				break;
+			}
+			case RuntimeUI::WidgetTypes::ImageWidget:
+			{
+				widget = CreateRef<ImageWidget>();
+				break;
+			}
+			case RuntimeUI::WidgetTypes::ImageButtonWidget:
+			{
+				widget = CreateRef<ImageButtonWidget>();
+				break;
+			}
+			case RuntimeUI::WidgetTypes::CheckboxWidget:
+			{
+				widget = CreateRef<CheckboxWidget>();
+				break;
+			}
+			case RuntimeUI::WidgetTypes::ContainerWidget:
+			{
+				widget = CreateRef<ContainerWidget>();
+				break;
+			}
+			case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
+			{
+				widget = CreateRef<HorizontalContainerWidget>();
+				break;
+			}
+			case RuntimeUI::WidgetTypes::VerticalContainerWidget:
+			{
+				widget = CreateRef<VerticalContainerWidget>();
+				break;
+			}
+			case RuntimeUI::WidgetTypes::InputTextWidget:
+			{
+				widget = CreateRef<InputTextWidget>();
+				break;
+			}
+
+			case RuntimeUI::WidgetTypes::SliderWidget:
+			{
+				widget = CreateRef<SliderWidget>();
+				break;
+			}
+
+			case RuntimeUI::WidgetTypes::DropDownWidget:
+			{
+				widget = CreateRef<DropDownWidget>();
+				break;
+			}
+			default:
+			{
+				KG_WARN("Invalid Widget Type in UserInterface Deserialization");
+				return nullptr;
+			}
+		}
+
+		widget->Deserialize(node, this);
+		return widget;
 	}
 
 	void UserInterface::Serialize(void* context)
@@ -728,7 +802,7 @@ namespace Kargono::RuntimeUI
 
 			for (Ref<RuntimeUI::Widget> widget : window.m_Widgets)
 			{
-				SerializeWidget(out, widget);
+				widget->Serialize(out, this);
 			}
 
 			out << YAML::EndSeq; // End Widget Sequence
