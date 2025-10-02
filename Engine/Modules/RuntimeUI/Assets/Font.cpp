@@ -6,7 +6,7 @@
 #include "Modules/Core/Engine.h"
 #include "Modules/Rendering/Shader.h"
 #include "Modules/FileSystem/FileSystem.h"
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture.h"
 #include "Kargono/Projects/Project.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
 #include "Modules/RuntimeUI/FontContext.h"
@@ -102,12 +102,12 @@ namespace Kargono::RuntimeUI
 
 		// Create Texture
 		Rendering::TextureSpecification spec;
-		spec.Width = static_cast<uint32_t>(fontMetadata.m_AtlasWidth);
-		spec.Height = static_cast<uint32_t>(fontMetadata.m_AtlasHeight);
-		spec.Format = Rendering::ImageFormat::RGB8;
-		spec.GenerateMipMaps = false;
+		spec.m_Width = static_cast<uint32_t>(fontMetadata.m_AtlasWidth);
+		spec.m_Height = static_cast<uint32_t>(fontMetadata.m_AtlasHeight);
+		spec.m_Format = Rendering::ImageFormat::RGB8;
+		spec.m_GenerateMipMaps = false;
 		Ref<Rendering::Texture2D> texture = Rendering::Texture2D::Create(spec);
-		texture->SetData((void*)currentResource.Data, spec.Width * spec.Height * Utility::ImageFormatToBytes(spec.Format));
+		texture->SetData((void*)currentResource.m_Data, spec.m_Width * spec.m_Height * Utility::ImageFormatToBytes(spec.m_Format));
 		m_AtlasTexture = texture;
 
 		m_LineHeight = fontMetadata.m_LineHeight;
@@ -258,8 +258,8 @@ namespace Kargono::RuntimeUI
 
 		// Load data into In-Memory Metadata object
 		FontMetaData& fontMetadata = *metadata.GetSpecificMetaData<FontMetaData>();
-		fontMetadata.m_AtlasWidth = static_cast<float>(textureSpec.Width);
-		fontMetadata.m_AtlasHeight = static_cast<float>(textureSpec.Height);
+		fontMetadata.m_AtlasWidth = static_cast<float>(textureSpec.m_Width);
+		fontMetadata.m_AtlasHeight = static_cast<float>(textureSpec.m_Height);
 		fontMetadata.m_LineHeight = lineHeight;
 		fontMetadata.m_Characters = characters;
 		fontMetadata.m_Ascender = (float)metrics.ascenderY;

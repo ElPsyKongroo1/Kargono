@@ -43,10 +43,10 @@ namespace API::Utility
 namespace API::RenderingAPI
 {
 	OpenGLTexture2D::OpenGLTexture2D(const Kargono::Rendering::TextureSpecification& spec)
-		: m_Width(spec.Width), m_Height(spec.Height)
+		: m_Width(spec.m_Width), m_Height(spec.m_Height)
 	{
-		m_InternalFormat = Utility::KargonoFormatToGLInternalFormat(spec.Format);
-		m_DataFormat = Utility::KargonoFormatToGLDataFormat(spec.Format);
+		m_InternalFormat = Utility::KargonoFormatToGLInternalFormat(spec.m_Format);
+		m_DataFormat = Utility::KargonoFormatToGLDataFormat(spec.m_Format);
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
@@ -111,20 +111,29 @@ namespace API::RenderingAPI
 			stbi_image_free(data);
 		}
 	}
-	OpenGLTexture2D::OpenGLTexture2D(Kargono::Buffer buffer, const Kargono::Assets::TextureMetaData& metadata)
+	OpenGLTexture2D::OpenGLTexture2D(Kargono::Buffer buffer, const Kargono::Rendering::TextureMetaData& metadata)
+	{
+		LoadBuffer(buffer, metadata);
+	}
+
+	OpenGLTexture2D::~OpenGLTexture2D()
+	{
+		glDeleteTextures(1, &m_RendererID);
+	}
+	void OpenGLTexture2D::LoadBuffer(Kargono::Buffer buffer, const Kargono::Rendering::TextureMetaData& metadata)
 	{
 		KG_ASSERT(buffer.Data, "Buffer does not have any valid data to input into Texture2D!");
 
-		m_Width = metadata.Width;
-		m_Height = metadata.Height;
+		m_Width = metadata.m_Width;
+		m_Height = metadata.m_Height;
 
 		GLenum internalFormat = 0, dataFormat = 0;
-		if (metadata.Channels == 4)
+		if (metadata.m_Channels == 4)
 		{
 			internalFormat = GL_RGBA8;
 			dataFormat = GL_RGBA;
 		}
-		else if (metadata.Channels == 3)
+		else if (metadata.m_Channels == 3)
 		{
 			internalFormat = GL_RGB8;
 			dataFormat = GL_RGB;
@@ -146,11 +155,6 @@ namespace API::RenderingAPI
 
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE,
 			buffer.As<unsigned char>());
-	}
-
-	OpenGLTexture2D::~OpenGLTexture2D()
-	{
-		glDeleteTextures(1, &m_RendererID);
 	}
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	{

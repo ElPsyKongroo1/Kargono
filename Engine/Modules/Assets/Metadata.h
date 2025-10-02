@@ -58,13 +58,6 @@ namespace Kargono::Assets
 		void* m_SpecificMetaData{ nullptr };
 	};
 
-	struct TextureMetaData
-	{
-		int32_t m_Width{0};
-		int32_t m_Height{0};
-		int32_t m_Channels{0};
-	};
-
 	struct ShaderMetaData
 	{
 		Rendering::ShaderSpecification m_ShaderSpec{};

@@ -1,30 +1,23 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <cstring>
 
 namespace Kargono
 {
-	//==============================
-	// Buffer Class
-	//==============================
-	// Non-owning raw buffer struct
 	struct Buffer
 	{
-		uint8_t* Data = nullptr;
-		uint64_t Size = 0;
+	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		// Does not allocate any heap data
 		Buffer() = default;
 		Buffer(const Buffer&) = default;
-
-		// Need to call release when instantiated this way
-		Buffer(uint64_t size)
+		Buffer(size_t size)
 		{
 			Allocate(size);
 		}
+	public:
 		//==============================
 		// Duplicate Buffer
 		//==============================
@@ -32,61 +25,61 @@ namespace Kargono
 		{
 			if (other)
 			{
-				Buffer result(other.Size);
-				memcpy(result.Data, other.Data, other.Size);
+				Buffer result(other.m_Size);
+				memcpy(result.m_Data, other.m_Data, other.m_Size);
 				return result;
 			}
 			return {};
-			
 		}
 		//==============================
 		// Manage Heap
 		//==============================
-		void Allocate(uint64_t size)
+		void Allocate(size_t size)
 		{
 			Release();
-			Data = new uint8_t[size];
-			Size = size;
+			m_Data = new uint8_t[size];
+			m_Size = size;
 		}
-
 		void Release()
 		{
-			delete[] Data;
-			Data = nullptr;
-			Size = 0;
+			delete[] m_Data;
+			m_Data = nullptr;
+			m_Size = 0;
 		}
+	public:
 		//==============================
 		// Set Data in Buffer
 		//==============================
 		void SetDataToByte(uint8_t byte)
 		{
-			if (Size == 0) { return; }
-			memset(Data, byte, Size);
+			if (m_Size == 0) { return; }
+			memset(m_Data, byte, m_Size);
 		}
 
 		void SetString(const std::string& string)
 		{
-			if (Size < string.size())
+			if (m_Size < string.size())
 			{
 				Allocate(string.size());
 			}
 			SetDataToByte(0);
-			memcpy(Data, string.data(), string.size());
+			memcpy(m_Data, string.data(), string.size());
 		}
 
+	public:
 		//==============================
 		// Retrieve Data from Buffer
 		//==============================
 		template<typename T>
 		T* As()
 		{
-			return (T*)Data;
+			return (T*)m_Data;
 		}
 
 		template<typename T>
-		T* As(std::size_t offsetInBytes)
+		T* As(size_t offsetInBytes)
 		{
-			return (T*)(Data + offsetInBytes);
+			return (T*)(m_Data + offsetInBytes);
 		}
 
 		std::string GetString()
@@ -96,7 +89,14 @@ namespace Kargono
 
 		operator bool() const
 		{
-			return (bool)Data;
+			return (bool)m_Data;
 		}
+
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		uint8_t* m_Data{ nullptr };
+		size_t m_Size{ 0 };
 	};
 }

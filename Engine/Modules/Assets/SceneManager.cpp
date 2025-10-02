@@ -15,7 +15,7 @@
 #include "Modules/Physics2D/Components/CircleCollider2DComponent.h"	
 #include "Modules/Physics2D/Components/RigidBody2DComponent.h"	
 
-#include "Modules/ECSInternal/CustomComponent.h"
+#include "Modules/ECSInternal/Assets/CustomComponent.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/ECS/Entity.h"
 

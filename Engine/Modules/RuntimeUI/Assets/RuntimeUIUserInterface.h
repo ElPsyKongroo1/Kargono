@@ -399,6 +399,8 @@ namespace Kargono::RuntimeUI
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
 			return config;
 		}
+		static void CreateAssetFileFromName(std::string_view name,
+			Assets::Metadata& metadata, std::filesystem::path& assetPath);
 	public:
 		//============================
 		// Constructors/Destructors
@@ -426,6 +428,16 @@ namespace Kargono::RuntimeUI
 		//==============================
 		void OnRenderCamera(const Math::mat4& cameraViewMatrix, ViewportData viewportData);
 		void OnRenderViewport(ViewportData viewportData);
+	public:
+		//==============================
+		// Validation
+		//==============================
+		bool RemoveScript(Assets::AssetHandle scriptHandle);
+		bool RemoveTexture(Assets::AssetHandle textureHandle);
+	private:
+		// Helpers
+		bool RemoveTextureFromWidget(Ref<RuntimeUI::Widget> widgetRef, Assets::AssetHandle textureHandle);
+		bool RemoveScriptFromWidget(Ref<RuntimeUI::Widget> widgetRef, Assets::AssetHandle scriptHandle);
 	public:
 		//==============================
 		// Serialization
