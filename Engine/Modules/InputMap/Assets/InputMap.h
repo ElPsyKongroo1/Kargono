@@ -31,9 +31,7 @@ namespace Kargono::InputMap
 			config.m_Identifier = Assets::GetAssetIdentifier<InputMap>();
 			config.m_Name = "Input Map";
 			config.m_FileExtension = ".kginput";
-			config.m_ImportExtensions = {};
 			config.m_RegistryPath = "InputMap/InputMapRegistry.kgreg";
-			config.m_IntermediateExtension = "";
 			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetCache);
 			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
@@ -43,8 +41,7 @@ namespace Kargono::InputMap
 			return config;
 		}
 
-		static void CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path);
-
+		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, std::filesystem::path& path);
 	public:
 		//=========================
 		// Constructors/Destructors

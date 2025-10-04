@@ -221,10 +221,8 @@ namespace Kargono::InputMap
 		}
 	}
 
-	void InputMap::CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path)
+	void InputMap::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, std::filesystem::path& path)
 	{
-		UNREFERENCED_PARAMETER(name);
-
 		// Create Temporary InputMap
 		InputMap temporaryInputMap{};
 

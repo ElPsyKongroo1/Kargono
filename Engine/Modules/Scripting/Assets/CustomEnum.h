@@ -47,7 +47,6 @@ namespace Kargono::Scripting
 			config.m_Name = "Custom Enum";
 			config.m_FileExtension = ".kgenum";
 			config.m_RegistryPath = "CustomEnum/CustomEnumRegistry.kgreg";
-			config.m_IntermediateExtension = "";
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
 			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
@@ -57,8 +56,8 @@ namespace Kargono::Scripting
 			return config;
 		}
 
-		static void CreateAssetFileFromName(std::string_view name,
-			Assets::Metadata& metadata, std::filesystem::path& assetPath);
+		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
+			 std::filesystem::path& assetPath);
 
 	public:
 		//=========================

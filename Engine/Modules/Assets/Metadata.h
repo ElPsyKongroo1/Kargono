@@ -48,6 +48,7 @@ namespace Kargono::Assets
 		//==============================
 		AssetHandle m_Handle{ Assets::k_EmptyHandle };
 		AssetIdentifier m_TypeIdentifier{ k_InvalidAssetIdentifier };
+		FixedBufStr64 m_Name;
 		FixedBufStr64 m_CheckSum;
 		std::filesystem::path m_FileLocation;
 		std::filesystem::path m_IntermediateLocation;

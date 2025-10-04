@@ -42,12 +42,12 @@ namespace Kargono
 		//=========================
 		// Modify All Flags
 		//=========================
-		void ClearAllFlags()
+		constexpr void ClearAllFlags()
 		{
 			m_Bitfield = 0;
 		}
 
-		void EnableAllFlags()
+		constexpr void EnableAllFlags()
 		{
 			m_Bitfield = std::numeric_limits<t_DataType>::max();
 		}

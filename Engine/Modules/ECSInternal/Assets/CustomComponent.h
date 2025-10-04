@@ -67,7 +67,6 @@ namespace Kargono::ECSInternal
 			config.m_FileExtension = ".kgcomponent";
 			config.m_ImportExtensions = {};
 			config.m_RegistryPath = "CustomComponent/CustomComponentRegistry.kgreg";
-			config.m_IntermediateExtension = "";
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
 			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
@@ -76,8 +75,8 @@ namespace Kargono::ECSInternal
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
 			return config;
 		}
-		static void CreateAssetFileFromName(std::string_view name,
-			Assets::Metadata& metadata, std::filesystem::path& assetPath);
+		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
+			 std::filesystem::path& assetPath);
 	public:
 		//==============================
 		// Constructors/Destructors

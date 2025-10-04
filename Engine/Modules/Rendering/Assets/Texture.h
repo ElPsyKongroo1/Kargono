@@ -23,8 +23,19 @@ namespace Kargono::Rendering
 
 	struct TextureSpecification
 	{
-		uint32_t m_Width{ 1 };
-		uint32_t m_Height{ 1 };
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		TextureSpecification() = default;
+		~TextureSpecification() = default;
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		Buffer m_Buffer{};
+		size_t m_Width{ 1 };
+		size_t m_Height{ 1 };
 		ImageFormat m_Format{ ImageFormat::RGBA8 };
 		bool m_GenerateMipMaps{ true };
 	};
@@ -87,6 +98,7 @@ namespace Kargono::Rendering
 		// Metaprogramming Info
 		//==============================
 		using Metadata = TextureMetaData;
+		using Spec = TextureSpecification;
 	public:
 		//==============================
 		// Static Asset Functions
@@ -107,14 +119,13 @@ namespace Kargono::Rendering
 			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetCreationFromName);
 			return config;
 		}
-		static void CreateAssetFileFromName(std::string_view name,
-			Assets::Metadata& metadata, std::filesystem::path& assetPath);
-		static void CreateAssetIntermediateFromFile(Assets::Metadata& metadata,
-			std::filesystem::path& filePath, std::filesystem::path& intermediatePath);
-		static void CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, 
-			int32_t height, int32_t channels, Assets::Metadata& newAsset);
-		static Assets::AssetHandle ImportNewTextureFromData(Buffer buffer, int32_t width, 
-			int32_t height, int32_t channels);
+		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
+			std::filesystem::path& assetPath);
+		static void CreateAssetFromFile(Assets::Metadata& metadata,
+			std::filesystem::path& sourcePath, std::filesystem::path& destPath);
+		static void CreateAssetFromSpec(Assets::Metadata& metadata, TextureSpecification& spec, 
+			std::filesystem::path& assetPath);
+		static bool CreateSpecValidation(TextureSpecification& spec);
 	public:
 		//==============================
 		// Constructors/Destructors
@@ -150,7 +161,7 @@ namespace Kargono::Rendering
 
 namespace Kargono::Utility
 {
-	inline uint32_t ImageFormatToBytes(Rendering::ImageFormat format)
+	inline size_t ImageFormatToBytes(Rendering::ImageFormat format)
 	{
 		switch (format)
 		{

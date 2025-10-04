@@ -40,8 +40,8 @@ namespace Kargono::Audio
 		m_TotalSize = metadataNode["TotalSize"].as<uint64_t>();
 	}
 
-	void AudioBuffer::CreateAssetFileFromName(std::string_view name,
-		Assets::Metadata& metadata, std::filesystem::path& assetPath)
+	void AudioBuffer::CreateAssetFromName(Assets::Metadata& metadata, 
+		std::string_view name, std::filesystem::path& assetPath)
 	{
 		// Write metadata
 		YAML::Emitter out;
@@ -55,7 +55,7 @@ namespace Kargono::Audio
 		KG_INFO("Successfully created audio inside asset directory at {}", assetPath);
 	}
 
-	void AudioBuffer::CreateAssetIntermediateFromFile(Assets::Metadata& metadata,
+	void AudioBuffer::CreateAssetFromFile(Assets::Metadata& metadata,
 		std::filesystem::path& fileLocation, std::filesystem::path& intermediateLocation)
 	{
 		// Create buffers

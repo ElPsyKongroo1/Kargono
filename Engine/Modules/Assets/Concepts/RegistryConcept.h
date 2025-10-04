@@ -11,5 +11,5 @@ namespace Kargono::Assets
 	concept HasRegistryData = requires
 	{
 		typename t_Type::RegistryData;
-	}&& RegistryDataConcept<typename t_Type::RegistryData>;
+	} && RegistryDataConcept<typename t_Type::RegistryData>;
 }

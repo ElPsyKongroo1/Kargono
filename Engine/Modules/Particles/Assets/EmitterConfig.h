@@ -47,7 +47,7 @@ namespace Kargono::Particles
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
 			return config;
 		}
-		static void CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path);
+		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, std::filesystem::path& path);
 	public:
 		//==============================
 		// Serialization

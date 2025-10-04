@@ -122,10 +122,8 @@ namespace Kargono::Particles
 		}
 	}
 
-	void EmitterConfig::CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& assetPath)
+	void EmitterConfig::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, std::filesystem::path& assetPath)
 	{
-		UNREFERENCED_PARAMETER(name);
-
 		// Create Temporary EmitterConfig
 		EmitterConfig temporaryConfig{};
 		// Save Binary into File

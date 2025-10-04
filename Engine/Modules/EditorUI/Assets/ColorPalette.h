@@ -61,7 +61,8 @@ namespace Kargono::EditorUI
 			return config;
 		}
 
-		static void CreateAssetFileFromName(void* context);
+		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
+			std::filesystem::path& assetPath);
 	public:
 		//==============================
 		// Constructors/Destructors

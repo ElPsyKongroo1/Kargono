@@ -3,32 +3,47 @@
 #include "Kargono/Core/Base.h"
 #include "Modules/Assets/Metadata.h"
 #include "Modules/Assets/AssetReference.h"
+#include "Modules/Assets/Concepts/SpecificationConcept.h"
 
 #include <filesystem>
 
 namespace Kargono::Assets
 {
 	template <typename t_Type>
-	concept HasSaveValidation = requires (t_Type& type, AssetReference<t_Type> newAssetRef, Metadata & metadata)
+	concept HasSaveValidation = requires (t_Type& type, AssetReference<t_Type> newAssetRef, Metadata& metadata)
 	{
 		{ type.SaveValidation(newAssetRef, metadata) } -> std::same_as<Ref<void>>;
 	};
 
 	template <typename t_Type>
-	concept HasDeletionValidation = requires (t_Type & type, Metadata & metadata)
+	concept HasDeleteValidation = requires (t_Type& type, Metadata & metadata)
 	{
 		{ type.DeleteValidation(metadata) } -> std::same_as<void>;
 	};
 
 	template <typename t_Type>
-	concept HasCreationFromName = requires (std::string_view assetName, Metadata & metadata, std::filesystem::path & path)
+	concept HasCreationFromName = requires (Metadata& metadata, std::string_view assetName, std::filesystem::path& assetPath)
 	{
-		{ t_Type::CreateAssetFileFromName(assetName, metadata, path) } -> std::same_as<void>;
+		{ t_Type::CreateAssetFromName(metadata, assetName, assetPath) } -> std::same_as<void>;
 	};
 
 	template<typename t_Type>
-	concept HasCreationFromFile = requires (Metadata & metadata, std::filesystem::path & filePath, std::filesystem::path & intermediatePath)
+	concept HasCreationFromFile = requires (Metadata& metadata, std::filesystem::path& sourcePath, 
+		std::filesystem::path& assetPath)
 	{
-		{ t_Type::CreateAssetIntermediateFromFile(metadata, filePath, intermediatePath) } -> std::same_as<void>;
+		{ t_Type::CreateAssetFromFile(metadata, sourcePath, assetPath) } -> std::same_as<void>;
+	};
+
+	template<typename t_Type>
+	concept HasCreationFromSpec = HasSpecification<t_Type> && requires (Metadata& metadata, 
+		typename t_Type::Spec& spec, std::filesystem::path& assetPath)
+	{
+		{ t_Type::CreateAssetFromSpec(metadata, spec, assetPath) } -> std::same_as<void>;
+	};
+
+	template<typename t_Type>
+	concept HasSpecValidation = HasCreationFromSpec<t_Type> && requires (typename t_Type::Spec& spec)
+	{
+		{ t_Type::CreateSpecValidation(spec) } -> std::same_as<bool>;
 	};
 }

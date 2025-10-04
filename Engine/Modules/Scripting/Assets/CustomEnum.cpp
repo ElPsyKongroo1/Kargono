@@ -97,8 +97,8 @@ namespace Kargono::Scripting
 		}
 	}
 
-	void CustomEnum::CreateAssetFileFromName(std::string_view name,
-		Assets::Metadata& metadata, std::filesystem::path& assetPath)
+	void CustomEnum::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
+		std::filesystem::path& assetPath)
 	{
 		// Create new custom component
 		CustomEnum tempEnum{};

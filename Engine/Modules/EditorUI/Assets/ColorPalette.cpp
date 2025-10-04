@@ -86,18 +86,9 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void ColorPalette::CreateAssetFileFromName(void* context)
+	void ColorPalette::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
+		std::filesystem::path& assetPath)
 	{
-		// Get asset context
-		KG_ASSERT(context, "Context cannot be null");
-		Assets::CreateAssetFileFromNameContext& assetContext = *(Assets::CreateAssetFileFromNameContext*)context;
-
-		// Get context fields
-		KG_ASSERT(assetContext.m_AssetMetadata);
-		std::string_view name{ assetContext.m_AssetName };
-		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
-
 		// Serialize temporary color palette to file
 		ColorPalette temporaryColorPalette;
 		Assets::SerializeAssetContext serializeContext{ assetPath };

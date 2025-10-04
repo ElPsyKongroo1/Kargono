@@ -334,7 +334,7 @@ namespace Kargono::ECSInternal
 		return newReallocationInstructions;
 	}
 
-	void CustomComponent::CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& assetPath)
+	void CustomComponent::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, std::filesystem::path& assetPath)
 	{
 		// Create new custom component
 		CustomComponent tempComponent{};

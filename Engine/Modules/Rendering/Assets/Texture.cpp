@@ -63,8 +63,8 @@ namespace Kargono::Rendering
 		currentResource.Release();
 	}
 
-	void Texture2D::CreateAssetFileFromName(std::string_view name,
-		Assets::Metadata& metadata, std::filesystem::path& assetPath)
+	void Texture2D::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
+		std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -75,8 +75,8 @@ namespace Kargono::Rendering
 		fout << out.c_str();
 		KG_INFO("Successfully created texture inside asset directory at {}", assetPath);
 	}
-	void Texture2D::CreateAssetIntermediateFromFile(Assets::Metadata& metadata,
-		std::filesystem::path& filePath, std::filesystem::path& intermediatePath)
+	void Texture2D::CreateAssetFromFile(Assets::Metadata& metadata,
+		std::filesystem::path& sourcePath, std::filesystem::path& destPath)
 	{
 		// Create Texture Binary Intermediate
 		int32_t width, height, channels;
@@ -84,14 +84,14 @@ namespace Kargono::Rendering
 		Buffer buffer{};
 		stbi_uc* data = nullptr;
 		{
-			data = stbi_load(filePath.string().c_str(), &width, &height, &channels, 0);
+			data = stbi_load(sourcePath.string().c_str(), &width, &height, &channels, 0);
 		}
 
 		buffer.Allocate(static_cast<unsigned long long>(width) * height * channels * sizeof(uint8_t));
 		buffer.m_Data = data;
 
 		// Save Binary Intermediate into File
-		Utility::FileSystem::WriteFileBinary(intermediatePath, buffer);
+		Utility::FileSystem::WriteFileBinary(destPath, buffer);
 
 		// Check that save was successful
 		if (!data)
@@ -109,6 +109,26 @@ namespace Kargono::Rendering
 		buffer.Release();
 	}
 
+	void Texture2D::CreateAssetFromSpec(Assets::Metadata& metadata, 
+		TextureSpecification& spec, std::filesystem::path& assetPath)
+	{
+		// Save Binary Intermediate into File
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+		std::filesystem::path intermediateFullPath = projectPaths.GetIntermediateDirectory() / metadata.m_IntermediateLocation;
+		Utility::FileSystem::WriteFileBinary(intermediateFullPath, spec.m_Buffer);
+
+		// Load data into In-Memory Metadata object
+		TextureMetaData& textureMetadata{ *metadata.GetSpecificMetaData<TextureMetaData>() };
+		textureMetadata.m_Width = spec.m_Width;
+		textureMetadata.m_Height = spec.m_Height;
+		textureMetadata.m_Channels = Utility::ImageFormatToBytes(spec.m_Format);
+	}
+
+	bool Texture2D::CreateSpecValidation(TextureSpecification& spec)
+	{
+		return false;
+	}
+
 	void Texture2D::DeleteValidation(Assets::AssetHandle assetHandle)
 	{
 		// Check user interface assets
@@ -122,80 +142,6 @@ namespace Kargono::Rendering
 				Assets::AssetService::SaveUserInterface(uiHandle, userInterfaceRef);
 			}
 		}
-	}
-
-	Assets::AssetHandle Texture2D::ImportNewTextureFromData(Buffer buffer, int32_t width, int32_t height, int32_t channels)
-	{
-		// Create Checksum
-		std::string currentCheckSum = Utility::FileSystem::ChecksumFromBuffer(buffer);
-
-		// Ensure checksum is valid
-		if (currentCheckSum.empty())
-		{
-			KG_WARN("Generated empty checksum from data buffer");
-			return Assets::k_EmptyHandle;
-		}
-
-		// Ensure duplicate asset is not found in registry.
-		for (const auto& [handle, asset] : m_AssetRegistry)
-		{
-			if (asset.Data.CheckSum == currentCheckSum)
-			{
-				//KG_WARN("Attempt to instantiate duplicate {} asset. Returning existing asset.", m_AssetName);
-				return handle;
-			}
-		}
-
-		// Create New Asset/Handle
-		Assets::AssetHandle newHandle{ RandomUUIDService::GetRandomUUID() };
-		Assets::Metadata newMetadata{};
-		newMetadata.m_Handle = newHandle;
-		newMetadata.m_TypeIdentifier = Assets::GetAssetIdentifier<Texture2D>();
-		newMetadata.m_CheckSum = currentCheckSum;
-		newMetadata.m_FileLocation = "";
-		newMetadata.m_IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.m_Handle + m_FileExtension.CString());
-
-		// Create Intermediate
-		CreateTextureIntermediateFromBuffer(buffer, width, height, channels, newAsset);
-		newAsset.Data.CheckSum = currentCheckSum;
-
-		// Register New Asset and Create Texture
-		m_AssetRegistry.insert({ newHandle, newAsset });
-		SerializeAssetRegistry(); // Update Registry File on Disk
-
-		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
-
-		// Fill in-memory cache if appropriate
-		if (m_Flags.test(AssetManagerOptions::HasAssetCache))
-		{
-			std::filesystem::path assetPath = projectPaths.GetIntermediateDirectory() / newAsset.Data.IntermediateLocation;
-			m_AssetCache.insert({ newHandle, DeserializeAsset(newAsset, assetPath) });
-		}
-
-		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
-			(
-				newHandle,
-				AssetType::Texture,
-				Events::ManageAssetAction::Create
-			);
-		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
-		return newHandle;
-
-	}
-
-	void Texture2D::CreateTextureIntermediateFromBuffer(Buffer buffer, int32_t width, 
-		int32_t height, int32_t channels, Assets::Metadata& newMetadata)
-	{
-		// Save Binary Intermediate into File
-		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
-		std::filesystem::path intermediateFullPath = projectPaths.GetIntermediateDirectory() / newMetadata.m_IntermediateLocation;
-		Utility::FileSystem::WriteFileBinary(intermediateFullPath, buffer);
-
-		// Load data into In-Memory Metadata object
-		TextureMetaData& textureMetadata{ newMetadata.GetSpecificMetaData<TextureMetaData>()};
-		textureMetadata.m_Width = width;
-		textureMetadata.m_Height = height;
-		textureMetadata.m_Channels = channels;
 	}
 
 	Ref<Texture2D> Texture2D::Create(const TextureSpecification& spec)

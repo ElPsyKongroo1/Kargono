@@ -354,7 +354,7 @@ namespace Kargono::Assets
 			KG_ASSERT(!k_HasIntermediateLoc, "Code path for intermediates is not yet supported");
 
 			// Create File
-			CreateAssetFileFromName(assetName, newMetadata, paths.GetAssetDirectory() / newMetadata.m_FileLocation);
+			CreateAssetFromName(newMetadata, assetName,  paths.GetAssetDirectory() / newMetadata.m_FileLocation);
 
 			// Create Checksum
 			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(paths.GetAssetDirectory() / newMetadata.m_FileLocation);
@@ -383,6 +383,59 @@ namespace Kargono::Assets
 				k_Config.m_Identifier, 
 				Events::ManageAssetAction::Create
 			);
+			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
+			return newHandle;
+		}
+
+		AssetHandle CreateAsset(typename t_AssetType::Spec& spec)
+		{
+			static_assert(HasCreationFromSpec<t_AssetType>,
+				"Attempt to save an asset who's type does not spec creation");
+
+			// Handle validation
+			if constexpr (HasSpecValidation<t_AssetType>)
+			{
+				bool validateSuccess = t_AssetType::CreateSpecValidation(spec);
+				if (!validateSuccess)
+				{
+					KG_WARN("Validation of asset specification failed");
+					return Assets::k_EmptyHandle;
+				}
+			}
+
+			// Create New Asset/Handle
+			Assets::AssetHandle newHandle{ RandomUUIDService::GetRandomUUID() };
+			Assets::Metadata newMetadata{};
+			newMetadata.m_Handle = newHandle;
+			newMetadata.m_TypeIdentifier = Assets::GetAssetIdentifier<t_AssetType>();
+			newMetadata.m_CheckSum = currentCheckSum;
+
+			// TODO: Ensure this section works (might need some constexpr stuff here)
+			newMetadata.m_FileLocation = "";
+			newMetadata.m_IntermediateLocation = m_RegistryLocation.parent_path() / ((std::string)newAsset.m_Handle + m_FileExtension.CString());
+
+			// Create Intermediate
+			t_AssetType::CreateAssetFromSpec(newMetadata, spec)
+
+			// Register New Asset and Create Texture
+			m_AssetRegistry.insert({ newHandle, newAsset });
+			SerializeAssetRegistry(); // Update Registry File on Disk
+
+			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+			// Fill in-memory cache if appropriate
+			if constexpr (k_HasAssetCache)
+			{
+				std::filesystem::path assetPath = projectPaths.GetIntermediateDirectory() / newAsset.Data.IntermediateLocation;
+				m_AssetCache.insert({ newHandle, DeserializeAsset(newMetadata, assetPath) });
+			}
+
+			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
+				(
+					newHandle,
+					Assets::GetAssetIdentifier<t_AssetType>(),
+					Events::ManageAssetAction::Create
+				);
 			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 			return newHandle;
 		}
@@ -518,7 +571,7 @@ namespace Kargono::Assets
 			if constexpr (k_HasFileLocation)
 			{
 				newMetadata.m_FileLocation = Utility::FileSystem::ConvertToUnixStylePath(Utility::FileSystem::GetRelativePath(paths.GetAssetDirectory(), destinationPath / (newFileName + k_Config.m_FileExtension)));
-				CreateAssetFileFromName(newFileName, newMetadata, paths.GetAssetDirectory() / newMetadata.m_FileLocation);
+				CreateAssetFromName(newMetadata, newFileName, paths.GetAssetDirectory() / newMetadata.m_FileLocation);
 			}
 
 			// Check if intermediates are used. If so, generate the intermediate.
@@ -526,7 +579,7 @@ namespace Kargono::Assets
 			{
 				std::filesystem::path registryPath{ k_Config.m_RegistryPath };
 				newMetadata.m_IntermediateLocation = Utility::FileSystem::ConvertToUnixStylePath(registryPath.parent_path() / ((std::string)newMetadata.m_Handle + k_Config.m_IntermediateExtension.CString()));
-				CreateAssetIntermediateFromFile(newMetadata, sourcePath, paths.GetIntermediateDirectory() / newMetadata.m_IntermediateLocation);
+				CreateAssetFromFile(newMetadata, sourcePath, paths.GetIntermediateDirectory() / newMetadata.m_IntermediateLocation);
 				newMetadata.m_CheckSum = currentCheckSum;
 			}
 			else
@@ -574,7 +627,7 @@ namespace Kargono::Assets
 			// Get registry path
 			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
-			const std::filesystem::path registryPath = paths.GetIntermediateDirectory() / k_Config.m_RegistryPath.CString();
+			std::filesystem::path registryPath = paths.GetIntermediateDirectory() / k_Config.m_RegistryPath.CString();
 			
 			// Set up serializer
 			YAML::Emitter serializer;
@@ -625,7 +678,7 @@ namespace Kargono::Assets
 
 			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
-			const std::filesystem::path registryPath = paths.GetIntermediateDirectory() / k_Config.m_RegistryPath.CString();
+			std::filesystem::path registryPath = paths.GetIntermediateDirectory() / k_Config.m_RegistryPath.CString();
 
 			if (!Utility::FileSystem::PathExists(registryPath))
 			{
@@ -958,7 +1011,7 @@ namespace Kargono::Assets
 		void DeleteAssetValidation(AssetHandle assetHandle) 
 		{
 			// Ensure asset type supports delete validation
-			static_assert(HasDeletionValidation<t_AssetType>);
+			static_assert(HasDeleteValidation<t_AssetType>);
 
 			// Get asset
 			AssetReference<t_AssetType> assetReference{ GetAsset(assetHandle) };
@@ -972,22 +1025,22 @@ namespace Kargono::Assets
 			asset->DeleteValidation(metadata);
 		};
 
-		void CreateAssetFileFromName(std::string_view name, Metadata metadata, const std::filesystem::path& assetPath)
+		void CreateAssetFromName(std::string_view name, Metadata metadata, std::filesystem::path& assetPath)
 		{
 			// Ensure asset type supports creation from name
 			static_assert(HasCreationFromName<t_AssetType>);
 
 			// Create asset file
-			t_AssetType::CreateAssetFileFromName(name, metadata, assetPath);
+			t_AssetType::CreateAssetFromName(metadata, name, assetPath);
 		};
 
-		void CreateAssetIntermediateFromFile(Metadata& metadata, const std::filesystem::path& fullFileLocation, const std::filesystem::path& fullIntermediateLocation) 
+		void CreateAssetFromFile(Metadata& metadata, std::filesystem::path& sourcePath, std::filesystem::path& assetPath) 
 		{
 			// Ensure asset type supports creation from name
 			static_assert(HasCreationFromFile<t_AssetType>);
 
 			// Create asset file
-			t_AssetType::CreateAssetIntermediateFromFile(metadata, fullFileLocation, fullIntermediateLocation);
+			t_AssetType::CreateAssetFromFile(metadata, sourcePath, assetPath);
 		};
 		
 	private:

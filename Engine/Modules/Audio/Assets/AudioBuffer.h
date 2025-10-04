@@ -54,7 +54,8 @@ namespace Kargono::Audio
 			config.m_FileExtension = ".kgaudio";
 			config.m_ImportExtensions = { ".wav" };
 			config.m_RegistryPath = "AudioBuffer/AudioRegistry.kgreg";
-			config.m_IntermediateExtension = "";
+			config.m_IntermediateExtension = ".kgbinary";
+			config.m_Flags.ClearAllFlags();
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasIntermediateLocation);
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
@@ -63,9 +64,9 @@ namespace Kargono::Audio
 			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetCreationFromName);
 			return config;
 		}
-		static void CreateAssetFileFromName(std::string_view name, 
-			Assets::Metadata& metadata, std::filesystem::path& assetPath);
-		static void CreateAssetIntermediateFromFile(Assets::Metadata& metadata, 
+		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
+			 std::filesystem::path& assetPath);
+		static void CreateAssetFromFile(Assets::Metadata& metadata, 
 			std::filesystem::path& filePath, std::filesystem::path& intermediatePath);
 	public:
 		//==============================

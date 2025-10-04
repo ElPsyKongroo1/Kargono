@@ -102,9 +102,9 @@ namespace Kargono::RuntimeUI
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
 			return config;
 		}
-		static void CreateAssetFileFromName(std::string_view name,
-			Assets::Metadata& metadata, std::filesystem::path& assetPath);
-		static void CreateAssetIntermediateFromFile(Assets::Metadata& metadata,
+		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, 
+			std::filesystem::path& assetPath);
+		static void CreateAssetFromFile(Assets::Metadata& metadata,
 			std::filesystem::path& filePath, std::filesystem::path& intermediatePath);
 	public:
 		//==============================

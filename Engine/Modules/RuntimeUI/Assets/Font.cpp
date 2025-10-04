@@ -122,8 +122,8 @@ namespace Kargono::RuntimeUI
 		currentResource.Release();
 	}
 
-	void Font::CreateAssetFileFromName(std::string_view name,
-		Assets::Metadata& metadata, std::filesystem::path& assetPath)
+	void Font::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
+		std::filesystem::path& assetPath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -134,7 +134,7 @@ namespace Kargono::RuntimeUI
 		fout << out.c_str();
 		KG_INFO("Successfully created font inside asset directory at {}", assetPath);
 	}
-	void Font::CreateAssetIntermediateFromFile(Assets::Metadata& metadata,
+	void Font::CreateAssetFromFile(Assets::Metadata& metadata,
 		std::filesystem::path& filePath, std::filesystem::path& intermediatePath)
 	{
 		// Create Buffers
