@@ -334,6 +334,24 @@ namespace Kargono::ECSInternal
 		return newReallocationInstructions;
 	}
 
+	void CustomComponent::CopyTo(void* src, void* dst)
+	{
+		KG_ASSERT(src);
+		KG_ASSERT(dst);
+		KG_ASSERT(m_DataNames.size() == m_DataTypes.size());
+		KG_ASSERT(m_DataTypes.size() == m_DataOffsets.size());
+
+		for (size_t i{ 0 }; i < m_DataTypes.size(); i++)
+		{
+			Utility::TransferDataForWrappedVarBuffer
+			(
+				m_DataTypes[i],
+				(uint8_t*)src + m_DataOffsets[i],
+				(uint8_t*)dst + m_DataOffsets[i]
+			);
+		}
+	}
+
 	void CustomComponent::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, std::filesystem::path& assetPath)
 	{
 		// Create new custom component

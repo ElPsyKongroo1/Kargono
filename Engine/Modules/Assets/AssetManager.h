@@ -43,7 +43,6 @@ namespace Kargono::Assets
 		constexpr bool k_HasIntermediateLoc{ k_Config.m_Flags.IsFlagSet(AssetFlags::HasIntermediateLocation) };
 		constexpr bool k_HasFileLocation{ k_Config.m_Flags.IsFlagSet(AssetFlags::HasFileLocation) };
 		constexpr bool k_HasAssetCreationFromName{ k_Config.m_Flags.IsFlagSet(AssetFlags::HasAssetCreationFromName) };
-		constexpr bool k_HasFileImporting{ k_Config.m_Flags.IsFlagSet(AssetFlags::HasFileImporting) };
 	public:
 		Metadata GetAssetInfo(AssetHandle handle)
 		{
@@ -399,15 +398,15 @@ namespace Kargono::Assets
 				if (!validateSuccess)
 				{
 					KG_WARN("Validation of asset specification failed");
-					return Assets::k_EmptyHandle;
+					return k_EmptyHandle;
 				}
 			}
 
 			// Create New Asset/Handle
-			Assets::AssetHandle newHandle{ RandomUUIDService::GetRandomUUID() };
-			Assets::Metadata newMetadata{};
+			AssetHandle newHandle{ RandomUUIDService::GetRandomUUID() };
+			Metadata newMetadata{};
 			newMetadata.m_Handle = newHandle;
-			newMetadata.m_TypeIdentifier = Assets::GetAssetIdentifier<t_AssetType>();
+			newMetadata.m_TypeIdentifier = GetAssetIdentifier<t_AssetType>();
 			newMetadata.m_CheckSum = currentCheckSum;
 
 			// TODO: Ensure this section works (might need some constexpr stuff here)
@@ -431,11 +430,11 @@ namespace Kargono::Assets
 			}
 
 			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
-				(
-					newHandle,
-					Assets::GetAssetIdentifier<t_AssetType>(),
-					Events::ManageAssetAction::Create
-				);
+			(
+				newHandle,
+				Assets::GetAssetIdentifier<t_AssetType>(),
+				Events::ManageAssetAction::Create
+			);
 			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 			return newHandle;
 		}
@@ -459,7 +458,7 @@ namespace Kargono::Assets
 
 		AssetHandle ImportAssetFromFile(const std::filesystem::path& sourcePath, const char* newFileName, const std::filesystem::path& destinationPath)
 		{
-			static_assert(k_HasFileImporting, 
+			static_assert(HasCreationFromFile<t_AssetType>,
 				"Attempt to import an asset for a file type that does not support importing");
 
 			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
@@ -480,7 +479,7 @@ namespace Kargono::Assets
 
 			// Check if source path file extension is appropriate for this file type
 			bool foundValidExtension{ false };
-			for (FixedBufStr16& extension : k_Config.m_ImportExtensions)
+			for (const FixedBufStr16& extension : t_AssetType::GetImportExtensions())
 			{
 				// Continue if empty extension is found
 				if (extension.IsEmpty())
@@ -538,7 +537,6 @@ namespace Kargono::Assets
 				// Create path if it does not already exist
 				Utility::FileSystem::CreateNewDirectory(destinationPath);
 			}
-
 
 			// Create Checksum
 			const std::string currentCheckSum = Utility::FileSystem::ChecksumFromFile(sourcePath);
@@ -646,6 +644,7 @@ namespace Kargono::Assets
 
 				serializer << YAML::Key << "MetaData" << YAML::Value;
 				serializer << YAML::BeginMap; // MetaData Map
+				serializer << YAML::Key << "Name" << YAML::Value << metadata.m_Name;
 				serializer << YAML::Key << "CheckSum" << YAML::Value << metadata.m_CheckSum;
 				if constexpr (k_HasFileLocation)
 				{
@@ -719,6 +718,7 @@ namespace Kargono::Assets
 
 					// Retrieving metadata for asset 
 					YAML::Node metadataNode = asset["MetaData"];
+					newMetadata.m_Name = metadataNode["Name"].as<std::string>();
 					newMetadata.m_CheckSum = metadataNode["CheckSum"].as<std::string>();
 					newMetadata.m_TypeIdentifier = metadataNode["AssetType"].as<std::string>();
 					if (k_HasFileLocation)
@@ -751,7 +751,7 @@ namespace Kargono::Assets
 			DeserializeAssetRegistry();
 
 			// Load every asset into memory
-			for (auto [handle, metadata] : m_AssetRegistry)
+			for (auto& [handle, metadata] : m_AssetRegistry)
 			{
 				// TODO: Skip already loaded assets. Maybe add an option for clearing the asset cache first
 
@@ -782,7 +782,6 @@ namespace Kargono::Assets
 				
 			}
 		}
-
 
 		bool SetAssetFileLocation(AssetHandle handle, const std::filesystem::path& newFileLocation)
 		{

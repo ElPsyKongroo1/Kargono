@@ -4,8 +4,10 @@
 #include "Modules/Assets/Metadata.h"
 #include "Modules/Assets/AssetReference.h"
 #include "Modules/Assets/Concepts/SpecificationConcept.h"
+#include "Kargono/Core/FixedBufferString.h"
 
 #include <filesystem>
+#include <span>
 
 namespace Kargono::Assets
 {
@@ -32,6 +34,7 @@ namespace Kargono::Assets
 		std::filesystem::path& assetPath)
 	{
 		{ t_Type::CreateAssetFromFile(metadata, sourcePath, assetPath) } -> std::same_as<void>;
+		{ t_Type::GetImportExtensions() } -> std::same_as<std::span<FixedBufStr16>>;
 	};
 
 	template<typename t_Type>

@@ -143,7 +143,6 @@ namespace Kargono::Rendering
 		// Load Function(s)
 		//==============================
 		virtual void LoadBuffer(Buffer buffer, const TextureMetaData& metadata) = 0;
-
 		void DeleteValidation(Assets::AssetHandle assetHandle);
 	public:
 		//==============================

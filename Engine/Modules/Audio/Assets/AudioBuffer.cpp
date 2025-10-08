@@ -79,7 +79,7 @@ namespace Kargono::Audio
 			return;
 		}
 		pcmData.Allocate(size_t(totalSize));
-		std::memcpy(pcmData.Data, pSampleData, pcmData.Size /*two bytes in s16*/);
+		std::memcpy(pcmData.m_Data, pSampleData, pcmData.m_Size /*two bytes in s16*/);
 		drwav_free(pSampleData, nullptr);
 
 		// Save binary intermediate into file
@@ -136,8 +136,8 @@ namespace Kargono::Audio
 
 		// Upload audio data to OpenAL
 		CallAndCheckALError(alBufferData(m_BufferID, audioBufferMetadata.m_Channels > 1 ?
-			AL_FORMAT_STEREO16 : AL_FORMAT_MONO16, currentResource.Data, 
-			static_cast<ALsizei>(currentResource.Size), audioBufferMetadata.m_SampleRate));
+			AL_FORMAT_STEREO16 : AL_FORMAT_MONO16, currentResource.m_Data, 
+			static_cast<ALsizei>(currentResource.m_Size), audioBufferMetadata.m_SampleRate));
 		currentResource.Release();
 	}
 }
