@@ -43,6 +43,15 @@ namespace Kargono::Assets
 		}
 	public:
 		//==============================
+		// Metadata State
+		//==============================
+		bool IsValid()
+		{
+			return m_Handle == Assets::k_EmptyHandle ||
+				m_TypeIdentifier == k_InvalidAssetIdentifier;
+		}
+	public:
+		//==============================
 		// Public Fields
 		//==============================
 		FixedBufStr64 m_Name;

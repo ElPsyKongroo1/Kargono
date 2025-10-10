@@ -302,6 +302,20 @@ namespace Kargono::Assets
 			m_AssetRegistry.clear();
 		}
 
+		bool GetIsAssetHidden(AssetHandle handle)
+		{
+			Metadata metadata = GetAssetInfo(handle);
+			if (metadata)
+
+
+		}
+
+		bool SetIsAssetHidden(AssetHandle handle, bool isHidden)
+		{
+			Metadata& metadata = GetAssetInfo(handle);
+
+		}
+
 		AssetHandle CreateAsset(const char* assetName, const std::filesystem::path& creationPath)
 		{
 			static_assert(k_HasAssetCreationFromName, 
