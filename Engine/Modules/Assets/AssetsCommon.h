@@ -7,6 +7,7 @@
 #include "Kargono/Core/BitField.h"
 
 #include <cstdint>
+#include <type_traits>
 #include <limits>
 
 namespace Kargono::Assets
@@ -22,31 +23,18 @@ namespace Kargono::Assets
 	using AssetHandle = Kargono::UUID;
 	constexpr uint64_t k_EmptyHandle{ 0 };
 
-	enum AssetFlags : uint8_t
+	enum AssetFlag : uint8_t
 	{
 		None = 0, // Default value
 		HasAssetCache = 1, // Store cache of the filetype in runtime memory for easy reuse
-		HasIntermediateLocation = 2, // Specify that this asset manager generates an intermediate file to be stored in the project's Intermediates directory
-		HasFileLocation = 3, // Specify that this asset manager stores a file somewhere in the project's Assets directory
-		HasAssetSaving = 5, // Specify that this asset manager is capable of saving to the underlying file data for it's type of asset
-		HasAssetCreationFromName = 6 // Specify that this asset manager is capable of creating the underlying file data for it's type of asset
 	};
 
-	struct AssetConfig
-	{
-	public:
-		AssetIdentifier m_Identifier{ k_InvalidAssetIdentifier };
-		FixedBufStr16 m_Name{ "Default Asset" };
-		FixedBufStr16 m_FileExtension{ ".kgfile" };
-		FixedBufStr16 m_IntermediateExtension{ ".kgbinary" };
-		FixedBufStr256 m_RegistryPath{ "" };
-		BitField<uint8_t> m_Flags{ 0b00000000 };
-	};
+	using AssetFlags = BitField<std::underlying_type_t<AssetFlag>>;
 
 	enum class LoadState : uint8_t
 	{
 		Unloaded = 0,
-		Loading,
-		Loaded
+		Loading = 1,
+		Loaded = 2
 	};
 }

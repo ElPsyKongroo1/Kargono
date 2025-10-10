@@ -5,10 +5,11 @@
 
 namespace Kargono::Assets
 {
-	template <typename t_Type>
+	template <typename t_AssetType>
 	concept HasAssetConfig = requires
 	{
-		{ t_Type::GetAssetConfig() } -> std::same_as<AssetConfig>;
+		{ t_AssetType::GetAssetName() } -> std::same_as<FixedBufStr32>;
+		{ t_AssetType::GetAssetFlags() } -> std::same_as<AssetFlags>;
 	};
 
 	template <typename t_Type>

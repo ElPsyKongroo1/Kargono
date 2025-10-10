@@ -390,7 +390,6 @@ namespace Kargono::ECSInternal
 			return { TypeErasedCopy<t_ComponentType> };
 		}
 
-		// Helper function(s)
 		bool CheckComponentFunctors(ComponentFunctors functors)
 		{
 			return static_cast<bool>(functors.m_Copy);

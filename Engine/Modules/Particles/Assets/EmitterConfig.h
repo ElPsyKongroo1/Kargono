@@ -39,7 +39,7 @@ namespace Kargono::Particles
 			config.m_Name = "Particle Emitter Config";
 			config.m_FileExtension = ".kgparticle";
 			config.m_RegistryPath = "EmitterConfig/EmitterConfigRegistry.kgreg";
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
+			config.m_Flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
 			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
 			config.m_Flags.ClearFlag(Assets::AssetFlags::HasFileImporting);

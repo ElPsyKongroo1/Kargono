@@ -47,19 +47,18 @@ namespace Kargono::Assets
 		//==============================
 		bool IsValid()
 		{
-			return m_Handle == Assets::k_EmptyHandle ||
-				m_TypeIdentifier == k_InvalidAssetIdentifier;
+			return m_Handle != Assets::k_EmptyHandle &&
+				m_TypeIdentifier != k_InvalidAssetIdentifier;
 		}
 	public:
 		//==============================
 		// Public Fields
 		//==============================
-		FixedBufStr64 m_Name;
+		FixedBufStr16 m_Name{};
 		AssetHandle m_Handle{ Assets::k_EmptyHandle };
 		AssetIdentifier m_TypeIdentifier{ k_InvalidAssetIdentifier };
 		FixedBufStr64 m_CheckSum;
 		std::filesystem::path m_FileLocation;
-		std::filesystem::path m_IntermediateLocation;
 		bool m_IsHidden{ false };
 	private:
 		//==============================
@@ -75,19 +74,8 @@ namespace Kargono::Assets
 		Rendering::InputBufferLayout m_InputLayout{};
 	};
 
-	struct GameStateMetaData
-	{
-		FixedBufStr16 m_Name{};
-	};
-
-	struct GlobalStateMetaData
-	{
-		FixedBufStr16 m_Name{};
-	};
-
 	struct ScriptMetaData
 	{
-		FixedBufStr16 m_Name{};
 		Scripting::ScriptType m_ScriptType {Scripting::ScriptType::None };
 		FixedBufStr16 m_SectionLabel{};
 		WrappedFuncType m_FunctionType{};

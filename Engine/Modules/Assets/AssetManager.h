@@ -31,20 +31,18 @@ namespace Kargono::Assets
 		AssetManager(Memory::IAllocator* backingAllocator)
 		{
 			KG_ASSERT(backingAllocator);
-
 		}
 		~AssetManager() = default;
 	private:
 		//==============================
 		// Metaprogramming Data
 		//==============================
-		constexpr static AssetConfig k_Config{ t_AssetType::GetAssetConfig() };
-		constexpr bool k_HasAssetCache{ k_Config.m_Flags.IsFlagSet(AssetFlags::HasAssetCache) };
-		constexpr bool k_HasIntermediateLoc{ k_Config.m_Flags.IsFlagSet(AssetFlags::HasIntermediateLocation) };
-		constexpr bool k_HasFileLocation{ k_Config.m_Flags.IsFlagSet(AssetFlags::HasFileLocation) };
-		constexpr bool k_HasAssetCreationFromName{ k_Config.m_Flags.IsFlagSet(AssetFlags::HasAssetCreationFromName) };
+		constexpr bool k_HasAssetCache{ t_AssetType::GetAssetFlags().IsFlagSet(AssetFlag::HasAssetCache) };
+		constexpr bool k_HasIntermediateLoc{ HasIntermediates<t_AssetType> };
+		constexpr bool k_HasFileLocation{ HasFileLocation<t_AssetType> };
+		constexpr bool k_HasAssetCreationFromName{ HasCreationFromName<t_AssetType> };
 	public:
-		Metadata GetAssetInfo(AssetHandle handle)
+		Metadata GetMetadata(AssetHandle handle)
 		{
 			if (!m_AssetRegistry.contains(handle))
 			{
@@ -56,7 +54,7 @@ namespace Kargono::Assets
 
 		AssetReference<t_AssetType> GetAsset(AssetHandle handle)
 		{
-			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths()};
+			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 			
 			// Check cache first
 			if constexpr (k_HasAssetCache)
@@ -124,19 +122,6 @@ namespace Kargono::Assets
 				return {};
 			}
 			return m_AssetRegistry[handle].m_FileLocation;
-		}
-
-		std::filesystem::path GetAssetIntermediateLocation(AssetHandle handle)
-		{
-			static_assert(k_HasIntermediateLoc,
-				"Attempt to retrieve asset intermediate when none is generated for defined type");
-
-			if (!m_AssetRegistry.contains(handle))
-			{
-				KG_WARN("Could not locate {} asset when attempting to retrieve it's intermediate location with {} handle", m_AssetName, handle);
-				return {};
-			}
-			return m_AssetRegistry[handle].m_IntermediateLocation;
 		}
 
 		bool HasAsset(AssetHandle handle)
@@ -304,16 +289,18 @@ namespace Kargono::Assets
 
 		bool GetIsAssetHidden(AssetHandle handle)
 		{
-			Metadata metadata = GetAssetInfo(handle);
-			if (metadata)
+			Metadata metadata = GetMetadata(handle);
+			KG_ASSERT(metadata.IsValid());
 
-
+			return metadata.m_IsHidden;
 		}
 
-		bool SetIsAssetHidden(AssetHandle handle, bool isHidden)
+		void SetIsAssetHidden(AssetHandle handle, bool isHidden)
 		{
-			Metadata& metadata = GetAssetInfo(handle);
+			KG_ASSERT(m_AssetRegistry.contains(handle));
+			Metadata& metadata = m_AssetRegistry.at(handle);
 
+			metadata.m_IsHidden = isHidden;
 		}
 
 		AssetHandle CreateAsset(const char* assetName, const std::filesystem::path& creationPath)
@@ -1016,7 +1003,7 @@ namespace Kargono::Assets
 			AssetReference<t_AssetType> oldAssetRef = GetAsset(newAsset.GetHandle());
 			KG_ASSERT(newAsset.IsValid() && !newAsset.IsEmpty(), "Old asset reference is invalid when validating changes");
 			t_AssetType* oldAsset = &oldAssetRef.GetAsset();
-			Metadata& metadata{ GetAssetInfo(newAsset.GetHandle()); };
+			Metadata& metadata{ GetMetadata(newAsset.GetHandle()); };
 
 			// Validate asset
 			return oldAsset->SaveValidation(newAsset, metadata);
@@ -1033,7 +1020,7 @@ namespace Kargono::Assets
 			KG_ASSERT(assetReference.IsValid() && !assetReference.IsEmpty(), "Attempt to validate an invalid asset reference");
 
 			t_AssetType* asset = &assetReference.GetAsset();
-			Metadata& metadata{ GetAssetInfo(assetReference.GetHandle()); };
+			Metadata& metadata{ GetMetadata(assetReference.GetHandle()); };
 
 			asset->DeleteValidation(metadata);
 		};
@@ -1055,6 +1042,60 @@ namespace Kargono::Assets
 			// Create asset file
 			t_AssetType::CreateAssetFromFile(metadata, sourcePath, assetPath);
 		};
+
+		std::filesystem::path GetAssetFilePath(Metadata& metadata)
+		{
+			if constexpr (!HasFileLocation<t_AssetType>)
+			{
+				return {};
+			}
+
+			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+			KG_ASSERT(!metadata.m_FileLocation.empty());
+			return projectPaths.GetAssetDirectory() / metadata.m_FileLocation;
+		}
+
+		void GetAssetIntermediatePaths(Metadata& metadata, std::vector<std::filesystem::path>& outPaths)
+		{
+			if constexpr (!HasIntermediates<t_AssetType>)
+			{
+				return;
+			}
+
+			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+			KG_ASSERT(!metadata.m_Name.IsEmpty());
+
+			std::stringstream pathWithoutExtension;
+			pathWithoutExtension << projectPaths.GetIntermediateDirectory().string() << 
+				GetModuleName<t_AssetType>() << "/" << GetTypeName<t_AssetType>()
+				<< "/" << metadata.m_Name;
+
+			for (const FixedBufStr16& extension : t_AssetType::GetIntermediateExtensions())
+			{
+				std::string path{ pathWithoutExtension.str() + extension.CString()};
+				outPaths.push_back(path);
+			}
+		}
+
+		std::filesystem::path GetAssetRegistryPath(Metadata& metadata)
+		{
+			if constexpr (!HasIntermediates<t_AssetType>)
+			{
+				return;
+			}
+
+			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+			KG_ASSERT(!metadata.m_Name.IsEmpty());
+
+			std::stringstream path;
+			path << projectPaths.GetIntermediateDirectory().string() <<
+				GetModuleName<t_AssetType>() << "/" << GetTypeName<t_AssetType>()
+				<< "/" << metadata.m_Name << "Registry" << ".kgreg";
+			return path.str();
+		}
 		
 	private:
 		//==============================

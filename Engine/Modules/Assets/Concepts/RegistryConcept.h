@@ -4,12 +4,12 @@
 
 namespace Kargono::Assets
 {
-	template <typename t_Type>
-	concept RegistryDataConcept = HasSerialization<t_Type>;
+	template <typename t_RegistryDataType>
+	concept RegistryDataConcept = HasSerialization<t_RegistryDataType>;
 
-	template <typename t_Type>
+	template <typename t_AssetType>
 	concept HasRegistryData = requires
 	{
-		typename t_Type::RegistryData;
-	} && RegistryDataConcept<typename t_Type::RegistryData>;
+		typename t_AssetType::RegistryData;
+	} && RegistryDataConcept<typename t_AssetType::RegistryData>;
 }

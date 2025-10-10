@@ -3,12 +3,12 @@
 
 namespace Kargono::Assets
 {
-	template <typename t_Type>
-	concept MetadataConcept = HasSerialization<t_Type>;
+	template <typename t_MetadataType>
+	concept MetadataConcept = HasSerialization<t_MetadataType>;
 
-	template <typename t_Type>
+	template <typename t_AssetType>
 	concept HasMetadata = requires
 	{
-		typename t_Type::Metadata;
-	}&& MetadataConcept<typename t_Type::Metadata>;
+		typename t_AssetType::Metadata;
+	} && MetadataConcept<typename t_AssetType::Metadata>;
 }

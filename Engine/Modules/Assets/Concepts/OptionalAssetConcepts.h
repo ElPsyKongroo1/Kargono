@@ -11,42 +11,54 @@
 
 namespace Kargono::Assets
 {
-	template <typename t_Type>
-	concept HasSaveValidation = requires (t_Type& type, AssetReference<t_Type> newAssetRef, Metadata& metadata)
+	template <typename t_AssetType>
+	concept HasSaveValidation = requires (t_AssetType& type, AssetReference<t_AssetType> newAssetRef, Metadata& metadata)
 	{
 		{ type.SaveValidation(newAssetRef, metadata) } -> std::same_as<Ref<void>>;
 	};
 
-	template <typename t_Type>
-	concept HasDeleteValidation = requires (t_Type& type, Metadata & metadata)
+	template <typename t_AssetType>
+	concept HasDeleteValidation = requires (t_AssetType& type, Metadata& metadata)
 	{
 		{ type.DeleteValidation(metadata) } -> std::same_as<void>;
 	};
 
-	template <typename t_Type>
+	template <typename t_AssetType>
 	concept HasCreationFromName = requires (Metadata& metadata, std::string_view assetName, std::filesystem::path& assetPath)
 	{
-		{ t_Type::CreateAssetFromName(metadata, assetName, assetPath) } -> std::same_as<void>;
+		{ t_AssetType::CreateAssetFromName(metadata, assetName, assetPath) } -> std::same_as<void>;
 	};
 
-	template<typename t_Type>
+	template<typename t_AssetType>
 	concept HasCreationFromFile = requires (Metadata& metadata, std::filesystem::path& sourcePath, 
 		std::filesystem::path& assetPath)
 	{
-		{ t_Type::CreateAssetFromFile(metadata, sourcePath, assetPath) } -> std::same_as<void>;
-		{ t_Type::GetImportExtensions() } -> std::same_as<std::span<FixedBufStr16>>;
+		{ t_AssetType::CreateAssetFromFile(metadata, sourcePath, assetPath) } -> std::same_as<void>;
+		{ t_AssetType::GetImportExtensions() } -> std::same_as<std::span<FixedBufStr16>>;
 	};
 
-	template<typename t_Type>
-	concept HasCreationFromSpec = HasSpecification<t_Type> && requires (Metadata& metadata, 
-		typename t_Type::Spec& spec, std::filesystem::path& assetPath)
+	template<typename t_AssetType>
+	concept HasCreationFromSpec = HasSpecification<t_AssetType> && requires (Metadata& metadata, 
+		typename t_AssetType::Spec& spec, std::filesystem::path& assetPath)
 	{
-		{ t_Type::CreateAssetFromSpec(metadata, spec, assetPath) } -> std::same_as<void>;
+		{ t_AssetType::CreateAssetFromSpec(metadata, spec, assetPath) } -> std::same_as<void>;
 	};
 
-	template<typename t_Type>
-	concept HasSpecValidation = HasCreationFromSpec<t_Type> && requires (typename t_Type::Spec& spec)
+	template<typename t_AssetType>
+	concept HasSpecValidation = HasCreationFromSpec<t_AssetType> && requires (typename t_AssetType::Spec& spec)
 	{
-		{ t_Type::CreateSpecValidation(spec) } -> std::same_as<bool>;
+		{ t_AssetType::CreateSpecValidation(spec) } -> std::same_as<bool>;
+	};
+
+	template<typename t_AssetType>
+	concept HasFileLocation = requires ()
+	{
+		{ t_AssetType::GetFileExtension() } -> std::same_as<FixedBufStr16>;
+	};
+
+	template<typename t_AssetType>
+	concept HasIntermediates = requires ()
+	{
+		{ t_AssetType::GetIntermediateExtensions() } -> std::same_as<std::span<FixedBufStr16>>;
 	};
 }
