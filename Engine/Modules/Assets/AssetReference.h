@@ -7,7 +7,15 @@ namespace Kargono::Assets
 {
 	using UserCallback = std::function<void(LoadState, void*)>;
 
-	template<AssetConcept t_AssetType>
+	struct AssetGenericData
+	{
+	public:
+		AssetHandle m_Handle{ k_EmptyHandle };
+		LoadState m_LoadState{ LoadState::Unloaded };
+		void* m_DataPtr{ nullptr };
+	};
+
+	template<typename t_AssetType>
 	struct AssetReference
 	{
 	public:
@@ -20,6 +28,12 @@ namespace Kargono::Assets
 		{
 			KG_ASSERT((state == LoadState::Loaded && asset) ||
 				(state != LoadState::Loaded && !asset));
+		}
+		AssetReference(AssetGenericData& data)
+			: m_Handle(data.m_Handle), m_LoadState(data.m_LoadState), m_Asset((t_AssetType*)data.m_DataPtr)
+		{
+			KG_ASSERT((data.m_LoadState == LoadState::Loaded && data.m_DataPtr) ||
+				(data.m_LoadState != LoadState::Loaded && !data.m_DataPtr));
 		}
 		~AssetReference() {}
 	public:
@@ -90,7 +104,7 @@ namespace Kargono::Assets
 		{
 			return m_Handle != k_EmptyHandle && (
 				(m_LoadState == LoadState::Loaded && m_Asset) ||
-				(m_LoadState != LoadState::Loaded && !m_Asset))
+				(m_LoadState != LoadState::Loaded && !m_Asset));
 		}
 
 		bool IsEmpty() const

@@ -677,7 +677,6 @@ namespace Kargono::ECSInternal
 		//==============================
 		void DestroyEntity(EntityID entityID)
 		{
-
 			Expected<Signature> signature = i_EntityRegistry->GetSignature(entityID);
 			KG_ASSERT(signature);
 
@@ -710,7 +709,7 @@ namespace Kargono::ECSInternal
 
 			IComponentStore* compStore{ GetComponentArrayByMask(compMask.value()) };
 			KG_ASSERT(compStore);
-
+			
 			return compStore->HasComponent(entityID);
 		}
 

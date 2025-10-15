@@ -28,11 +28,13 @@ namespace Kargono::Assets
 	{
 		Metadata* m_AssetMetadata{ nullptr };
 		std::filesystem::path m_AssetPath;
+		std::filesystem::path m_IntermediateFolder;
 	};
 
 	struct SerializeAssetContext
 	{
 		std::filesystem::path m_AssetPath;
+		std::filesystem::path m_IntermeidateFolder;
 	};
 
 	struct DeserializeRegistryContext

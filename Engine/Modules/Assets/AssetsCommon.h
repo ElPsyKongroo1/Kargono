@@ -20,7 +20,7 @@ namespace Kargono::Assets
 	};
 
 	// An AssetHandle is a unique identifier for a particular asset instance
-	using AssetHandle = Kargono::UUID;
+	using AssetHandle = UUID;
 	constexpr uint64_t k_EmptyHandle{ 0 };
 
 	enum AssetFlag : uint8_t
