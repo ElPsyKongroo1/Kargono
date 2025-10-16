@@ -297,6 +297,7 @@ namespace Kargono::Assets
 			metadata.m_IsHidden = isHidden;
 		}
 
+
 		template<AssetConcept t_AssetType> requires HasCreationFromName<t_AssetType>
 		AssetHandle CreateAsset(const char* assetName, const std::filesystem::path& creationDirectory)
 		{
@@ -305,7 +306,7 @@ namespace Kargono::Assets
 			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 			
 			// Validate creation directory
-			bool validDirectoryPath = ValidateCreationDirectory(creationDirectory);
+			bool validDirectoryPath{ ValidateCreationDirectory(creationDirectory) };
 			if (!validDirectoryPath)
 			{
 				KG_WARN("Creation directory validation failed for path: {}", creationDirectory.c_str());
@@ -316,26 +317,25 @@ namespace Kargono::Assets
 			bool directoryExists = Utility::FileSystem::CreateNewDirectory(creationDirectory);
 			if (!directoryExists)
 			{
-				KG_WARN("Failed to create directory for new asset: {}", creationDirectory);
+				KG_WARN("Failed to ensure directory for new asset exists/was-created: {}", creationDirectory);
 				return k_EmptyHandle
 			}
 
 			// Create new asset path
 			std::filesystem::path newAssetPath
-			{ 
+			{
 				CreateNewAssetPath
 				(
-					creationDirectory, 
-					assetName, 
+					creationDirectory,
+					assetName,
 					t_AssetType::GetFileExtension().CString()
-				) 
+				)
 			};
 
-
-			Metadata newMetadata { CreateAssetMetadata(identifier, newAssetPath) };
+			Metadata newMetadata { CreateAssetMetadata(GetAssetIdentifier<t_AssetType>, newAssetPath) };
 
 			// Create File
-			CreateAssetFromName(newMetadata, assetName,  paths.GetAssetDirectory() / newMetadata.m_FileLocation);
+			CreateAssetFromName<t_AssetType>(assetName, newMetadata,  paths.GetAssetDirectory() / newMetadata.m_FileLocation);
 
 			// TODO: DEAL WITH THIS CHECKSUM BULLSHEEEEEEE...
 			// Create Checksum
@@ -356,12 +356,15 @@ namespace Kargono::Assets
 			{
 				AssetReference<t_AssetType> newAssetRef{ DeserializeAsset<t_AssetType>(newMetadata) };
 				KG_ASSERT(newAssetRef.IsValid() && !newAssetRef.IsEmpty());
-				m_AssetCache.insert({ newMetadata.m_Handle, 
-					{ 
-						newAssetRef.GetHandle(), 
-						newAssetRef.GetLoadState(), 
+				m_AssetCache.insert(
+				{ 
+					newMetadata.m_Handle,
+					{
+						newAssetRef.GetHandle(),
+						newAssetRef.GetLoadState(),
 						(void*)&newAssetRef.GetAsset()
-					});
+					}
+				});
 			}
 
 			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
@@ -374,11 +377,9 @@ namespace Kargono::Assets
 			return newMetadata.m_Handle;
 		}
 
+		template<AssetConcept t_AssetType> requires HasCreationFromSpec<t_AssetType>
 		AssetHandle CreateAsset(typename t_AssetType::Spec& spec)
 		{
-			static_assert(HasCreationFromSpec<t_AssetType>,
-				"Attempt to save an asset who's type does not spec creation");
-
 			// Handle validation
 			if constexpr (HasSpecValidation<t_AssetType>)
 			{
@@ -390,6 +391,7 @@ namespace Kargono::Assets
 				}
 			}
 
+			CreateAssetMetadata()
 			// Create New Asset/Handle
 			AssetHandle newHandle{ RandomUUIDService::GetRandomUUID() };
 			Metadata newMetadata{};
