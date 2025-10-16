@@ -55,10 +55,10 @@ namespace Kargono::Assets
 		// Public Fields
 		//==============================
 		FixedBufStr16 m_Name{};
+		std::filesystem::path m_FileDirectory{};
 		AssetHandle m_Handle{ Assets::k_EmptyHandle };
 		AssetIdentifier m_TypeIdentifier{ k_InvalidAssetIdentifier };
-		FixedBufStr64 m_CheckSum;
-		std::filesystem::path m_FileLocation;
+		FixedBufStr64 m_CheckSum{};
 		bool m_IsHidden{ false };
 	private:
 		//==============================

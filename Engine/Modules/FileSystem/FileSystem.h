@@ -43,9 +43,11 @@ namespace Kargono::Utility
 		//==============================
 		static bool PathsEquivalent(const std::filesystem::path& filePath, const std::filesystem::path& otherPath) noexcept;
 		static bool HasFileExtension(const std::filesystem::path& path) noexcept;
+		static bool HasFileName(const std::filesystem::path& path) noexcept;
 		static bool PathExists(const std::filesystem::path& path) noexcept;
 		static bool IsRegularFile(const std::filesystem::path& path) noexcept;
 		static bool IsDirectory(const std::filesystem::path& path) noexcept; 
+		static std::filesystem::path GetPathDirectory(const std::filesystem::path& path) noexcept;
 		static std::filesystem::path GetAbsolutePath(const std::filesystem::path& path) noexcept;
 		static bool DoesPathContainSubPath(const std::filesystem::path& base, const std::filesystem::path& full) noexcept;
 

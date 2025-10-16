@@ -21,6 +21,14 @@ namespace Kargono::Assets
 	using AssetRegistry = std::unordered_map<AssetHandle, Metadata>;
 	using AssetCache = std::unordered_map<AssetHandle, AssetGenericData>;
 
+	struct AssetCreationData
+	{
+	public:
+		std::string_view m_AssetName{};
+		std::filesystem::path m_CreationDirectory{};
+		bool m_IsHidden{ false };
+	};
+
 	class AssetManager
 	{
 	public:
@@ -134,7 +142,7 @@ namespace Kargono::Assets
 			// Check for a matching name
 			for (const auto& [handle, metadata] : m_AssetRegistry)
 			{
-				if (metadata.m_FileLocation.stem() == assetName)
+				if (metadata.m_Name.StringView() == assetName)
 				{
 					return true;
 				}
@@ -299,43 +307,56 @@ namespace Kargono::Assets
 
 
 		template<AssetConcept t_AssetType> requires HasCreationFromName<t_AssetType>
-		AssetHandle CreateAsset(const char* assetName, const std::filesystem::path& creationDirectory)
+		AssetHandle CreateAssetFromName(AssetCreationData& creationData)
 		{
 			constexpr bool k_HasAssetCache{ t_AssetType::GetAssetFlags().IsFlagSet(AssetFlag::HasAssetCache) };
 
 			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
-			
-			// Validate creation directory
-			bool validDirectoryPath{ ValidateCreationDirectory(creationDirectory) };
-			if (!validDirectoryPath)
+
+			// Validate asset name
+			if (creationData.m_AssetName.empty())
 			{
-				KG_WARN("Creation directory validation failed for path: {}", creationDirectory.c_str());
+				KG_WARN("Cannot create asset from name with an empty name");
 				return k_EmptyHandle;
 			}
-
-			// Create directory if it does not already exist
-			bool directoryExists = Utility::FileSystem::CreateNewDirectory(creationDirectory);
-			if (!directoryExists)
+			
+			if constexpr (HasFileLocation<t_AssetType>)
 			{
-				KG_WARN("Failed to ensure directory for new asset exists/was-created: {}", creationDirectory);
-				return k_EmptyHandle
+				// Validate creation directory
+				bool validDirectoryPath{ ValidateCreationDirectory(creationData.m_CreationDirectory) };
+				if (!validDirectoryPath)
+				{
+					KG_WARN("Creation directory validation failed for path: {}", creationData.m_CreationDirectory.c_str());
+					return k_EmptyHandle;
+				}
+
+				// Create directory if it does not already exist
+				bool directoryExists = Utility::FileSystem::CreateNewDirectory(creationData.m_CreationDirectory);
+				if (!directoryExists)
+				{
+					KG_WARN("Failed to ensure directory for new asset exists/was-created: {}", creationData.m_CreationDirectory);
+					return k_EmptyHandle
+				}
+
+				creationData.m_CreationDirectory = NormalizeAssetDirectory(creationData.m_CreationDirectory);
+			}
+			else
+			{
+				KG_ASSERT(creationData.m_CreationDirectory.empty(), 
+					"Attempt to provide a creation directory for an asset type that does not support it");
 			}
 
-			// Create new asset path
-			std::filesystem::path newAssetPath
+			if (creationData.m_IsHidden)
 			{
-				CreateNewAssetPath
-				(
-					creationDirectory,
-					assetName,
-					t_AssetType::GetFileExtension().CString()
-				)
-			};
+				KG_ASSERT(creationData.m_CreationDirectory.empty(), 
+					"Attempt to provide a creation directory for an asset that is being created as hidden");
+			}
 
-			Metadata newMetadata { CreateAssetMetadata(GetAssetIdentifier<t_AssetType>, newAssetPath) };
+			Metadata newMetadata { CreateAssetMetadata(GetAssetIdentifier<t_AssetType>, 
+				creationData.m_CreationDirectory, creationData.m_IsHidden) };
 
 			// Create File
-			CreateAssetFromName<t_AssetType>(assetName, newMetadata,  paths.GetAssetDirectory() / newMetadata.m_FileLocation);
+			CreateAssetFromName<t_AssetType>(assetName, newMetadata, paths.GetAssetDirectory() / newMetadata.m_FileLocation);
 
 			// TODO: DEAL WITH THIS CHECKSUM BULLSHEEEEEEE...
 			// Create Checksum
@@ -370,7 +391,7 @@ namespace Kargono::Assets
 			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
 			(
 				newMetadata.m_Handle, 
-				k_Config.m_Identifier, 
+				GetAssetIdentifier<t_AssetType>(),
 				Events::ManageAssetAction::Create
 			);
 			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
@@ -378,7 +399,7 @@ namespace Kargono::Assets
 		}
 
 		template<AssetConcept t_AssetType> requires HasCreationFromSpec<t_AssetType>
-		AssetHandle CreateAsset(typename t_AssetType::Spec& spec)
+		AssetHandle CreateAssetFromSpec(typename t_AssetType::Spec& spec, const std::filesystem::path& assetPath)
 		{
 			// Handle validation
 			if constexpr (HasSpecValidation<t_AssetType>)
@@ -391,7 +412,7 @@ namespace Kargono::Assets
 				}
 			}
 
-			CreateAssetMetadata()
+			CreateAssetMetadata(GetAssetIdentifier<t_AssetType>(), )
 			// Create New Asset/Handle
 			AssetHandle newHandle{ RandomUUIDService::GetRandomUUID() };
 			Metadata newMetadata{};
@@ -429,13 +450,7 @@ namespace Kargono::Assets
 			return newHandle;
 		}
 
-		AssetHandle CreateAsset(const char* assetName)
-		{
-			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
-			return CreateAsset(assetName, paths.GetAssetDirectory());
-		}
-
-		AssetHandle ImportAssetFromFile(const std::filesystem::path& sourcePath)
+		AssetHandle CreateAssetFromFile(const std::filesystem::path& sourcePath)
 		{
 			if (!Utility::FileSystem::HasFileExtension(sourcePath))
 			{
@@ -443,10 +458,10 @@ namespace Kargono::Assets
 				return Assets::k_EmptyHandle;
 			}
 
-			return ImportAssetFromFile(sourcePath, sourcePath.stem().string().c_str(), sourcePath.parent_path());
+			return CreateAssetFromFile(sourcePath, sourcePath.stem().string().c_str(), sourcePath.parent_path());
 		}
 
-		AssetHandle ImportAssetFromFile(const std::filesystem::path& sourcePath, const char* newFileName, const std::filesystem::path& creationPath)
+		AssetHandle CreateAssetFromFile(const std::filesystem::path& sourcePath, const char* newFileName, const std::filesystem::path& creationPath)
 		{
 			static_assert(HasCreationFromFile<t_AssetType>,
 				"Attempt to import an asset for a file type that does not support importing");
@@ -1035,7 +1050,7 @@ namespace Kargono::Assets
 		void CreateAssetFromName(std::string_view name, Metadata metadata, std::filesystem::path& assetPath)
 		{
 			// Create asset file
-			t_AssetType::CreateAssetFromName(metadata, name, assetPath);
+			t_AssetType::CreateAssetFromName(name, metadata, assetPath);
 		};
 
 		void CreateAssetFromFile(Metadata& metadata, std::filesystem::path& sourcePath, std::filesystem::path& assetPath) 
@@ -1047,8 +1062,7 @@ namespace Kargono::Assets
 			t_AssetType::CreateAssetFromFile(metadata, sourcePath, assetPath);
 		};
 
-		std::filesystem::path CreateNewAssetPath(const std::filesystem::path& creationDirectory,
-			const char* assetName, const char* assetExtension)
+		std::filesystem::path NormalizeAssetDirectory(const std::filesystem::path& creationDirectory)
 		{
 			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
@@ -1057,8 +1071,7 @@ namespace Kargono::Assets
 				Utility::FileSystem::GetRelativePath(paths.GetAssetDirectory(), creationDirectory) 
 			};
 
-			return Utility::FileSystem::ConvertToUnixStylePath(
-				pathRelativeToAssetDir / (assetName + std::string(assetExtension)));
+			return Utility::FileSystem::ConvertToUnixStylePath(pathRelativeToAssetDir);
 		}
 
 		template<AssetConcept t_AssetType>
@@ -1144,19 +1157,24 @@ namespace Kargono::Assets
 			// Delete the asset's data on-disk
 			if constexpr (HasFileLocation<t_AssetType>)
 			{
-				std::filesystem::path fileLocation{ GetAssetFullFilePath<t_AssetType>(metadata) };
-				Utility::FileSystem::DeleteSelectedFile(fileLocation);
+				std::filesystem::path fileLocation { GetAssetFullFilePath<t_AssetType>(metadata) };
+				bool deleteSuccess{ Utility::FileSystem::DeleteSelectedFile(fileLocation) };
+				KG_ASSERT(deleteSuccess);
 			}
 
+			// Delete the asset's intermediate(s) on-disk
 			if constexpr (HasIntermediates<t_AssetType>)
 			{
 				std::filesystem::path intermediateFolder{ GetAssetIntermediateFolder<t_AssetType>(metadata) };
+				intermediateFolder.replace_filename(metadata.m_Name);
 
 				std::span<FixedBufStr16> allIntermediateExtensions{ t_AssetType::GetIntermediateExtensions };
 				for (const FixedBufStr16& extension : allIntermediateExtensions)
 				{
 					intermediateFolder.replace_extension(extension.CString());
-					Utility::FileSystem::DeleteSelectedFile(intermediateLocation);
+					KG_ASSERT(Utility::FileSystem::PathExists(intermediateFolder));
+					bool deleteSuccess { Utility::FileSystem::DeleteSelectedFile(intermediateLocation) };
+					KG_ASSERT(deleteSuccess);
 				}
 			}
 		}
@@ -1212,7 +1230,7 @@ namespace Kargono::Assets
 			}
 		}
 
-		Metadata CreateAssetMetadata(AssetIdentifier identifier, const std::filesystem::path& assetPath)
+		Metadata CreateAssetMetadata(AssetIdentifier identifier, const std::filesystem::path& assetDirectory, bool isHidden)
 		{
 			// Generate new ID
 			AssetHandle newHandle{ RandomUUIDService::GetRandomUUID() };
@@ -1221,7 +1239,8 @@ namespace Kargono::Assets
 			Metadata newMetadata{};
 			newMetadata.m_Handle = newHandle;
 			newMetadata.m_TypeIdentifier = identifier;
-			newMetadata.m_FileLocation = assetPath;
+			newMetadata.m_FileDirectory = assetDirectory;
+			newMetadata.m_IsHidden = isHidden;
 			return newMetadata;
 		}
 		

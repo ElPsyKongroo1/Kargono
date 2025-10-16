@@ -23,6 +23,18 @@ namespace Kargono::Assets
 		{ type.DeleteValidation(metadata) } -> std::same_as<void>;
 	};
 
+	template<typename t_AssetType>
+	concept HasFileLocation = requires ()
+	{
+		{ t_AssetType::GetFileExtension() } -> std::same_as<FixedBufStr16>;
+	};
+
+	template<typename t_AssetType>
+	concept HasIntermediates = requires ()
+	{
+		{ t_AssetType::GetIntermediateExtensions() } -> std::same_as<std::span<FixedBufStr16>>;
+	};
+
 	template <typename t_AssetType>
 	concept HasCreationFromName = requires (Metadata& metadata, std::string_view assetName, std::filesystem::path& assetPath)
 	{
@@ -48,17 +60,5 @@ namespace Kargono::Assets
 	concept HasSpecValidation = HasCreationFromSpec<t_AssetType> && requires (typename t_AssetType::Spec& spec)
 	{
 		{ t_AssetType::CreateSpecValidation(spec) } -> std::same_as<bool>;
-	};
-
-	template<typename t_AssetType>
-	concept HasFileLocation = requires ()
-	{
-		{ t_AssetType::GetFileExtension() } -> std::same_as<FixedBufStr16>;
-	};
-
-	template<typename t_AssetType>
-	concept HasIntermediates = requires ()
-	{
-		{ t_AssetType::GetIntermediateExtensions() } -> std::same_as<std::span<FixedBufStr16>>;
 	};
 }

@@ -54,6 +54,28 @@ namespace Kargono::Utility
 		return isDirectory;
 	}
 
+	std::filesystem::path FileSystem::GetPathDirectory(const std::filesystem::path& path) noexcept
+	{
+		// Note that this function will only get the current directory of a path, not the parent path necessarily.
+
+		// Handle empty path gracefully
+		if (path.empty())
+		{
+			return {};
+		}
+
+		std::filesystem::path result = path;
+
+		// If the path is not a directory, move up one level to get the parent directory
+		if (!std::filesystem::is_directory(path))
+		{
+			result = result.parent_path();
+		}
+
+		// Return the parent directory
+		return result;
+	}
+
 	std::filesystem::path FileSystem::GetAbsolutePath(const std::filesystem::path& path) noexcept
 	{
 		std::error_code ec;
@@ -87,6 +109,12 @@ namespace Kargono::Utility
 	bool FileSystem::HasFileExtension(const std::filesystem::path& path) noexcept
 	{
 		return !path.extension().empty();
+	}
+
+	bool FileSystem::HasFileName(const std::filesystem::path& path) noexcept
+	{
+		std::filesystem::path filename{ path.filename() };
+		return !filename.empty() && filename != "." && filename != "..";
 	}
 	bool FileSystem::RenameFile(const std::filesystem::path& oldPath, std::string newName) noexcept
 	{
@@ -228,7 +256,7 @@ namespace Kargono::Utility
 			return false;
 		}
 
-		output_file.write(buffer.As<const char>(), buffer.Size);
+		output_file.write(buffer.As<const char>(), buffer.m_Size);
 		return true;
 	}
 
@@ -243,7 +271,7 @@ namespace Kargono::Utility
 		}
 		for (Buffer& buffer : buffers)
 		{
-			output_file.write(buffer.As<const char>(), buffer.Size);
+			output_file.write(buffer.As<const char>(), buffer.m_Size);
 		}
 		return true;
 	}
@@ -417,7 +445,7 @@ namespace Kargono::Utility
 		SHA256 sha256stream;
 
 		// Add the input string to the SHA256 context
-		sha256stream.add(buffer.As<char>(), buffer.Size);
+		sha256stream.add(buffer.As<char>(), buffer.m_Size);
 
 		return sha256stream.getHash();
 	}
