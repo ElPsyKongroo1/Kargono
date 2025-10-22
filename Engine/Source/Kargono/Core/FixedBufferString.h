@@ -254,6 +254,11 @@ namespace Kargono
 			return std::string_view(m_DataBuffer.data(), m_StringLength);
 		}
 
+		constexpr std::string String() const
+		{
+			return std::string(m_DataBuffer.data(), m_StringLength);
+		}
+
 	private:
 		//==============================
 		// Internal Functionality
