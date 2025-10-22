@@ -312,14 +312,44 @@ namespace Kargono
 			m_DataBuffer[m_StringLength] = '\0';
 			return true;
 		}
+		
+		constexpr FixedBufferString<t_BufferSize> XOR(const FixedBufferString<t_BufferSize>& other)
+		{
+			FixedBufferString<t_BufferSize> result;
+
+			for (std::size_t i = 0; i < t_BufferSize - 1; i++)
+			{
+				// Get bytes to xor
+				uint8_t byteA = static_cast<uint8_t>(m_DataBuffer[i]);
+				uint8_t byteB = static_cast<uint8_t>(other.m_DataBuffer[i]);
+				uint8_t xorByte = byteA ^ byteB;
+
+				// Check for null terminator in either string
+				if (byteA == '\0' || byteB == '\0')
+				{
+					result.m_DataBuffer[i] = '\0';
+					result.m_StringLength = i;
+					return result;
+				}
+
+				// Set the xor'd byte in result buffer
+				result.m_DataBuffer[i] = static_cast<char>(xorByte);
+			}
+
+			// Set default null terminator and length if full buffer used
+			result.m_DataBuffer[t_BufferSize - 1] = '\0';
+			result.m_StringLength = t_BufferSize - 1;
+
+			return result;
+		}
 
 	private:
 		std::array<char, t_BufferSize> m_DataBuffer{};
 		std::size_t m_StringLength{0};
 	};
 
-	template <size_t N>
-	std::string operator+(const char* leftCString, const FixedBufferString<N>& rightFixedString)
+	template <size_t t_BufferSize>
+	std::string operator+(const char* leftCString, const FixedBufferString<t_BufferSize>& rightFixedString)
 	{
 		std::string returnString;
 		returnString.reserve(std::strlen(leftCString) + rightFixedString.StringLength());
@@ -333,6 +363,12 @@ namespace Kargono
 		return returnString;
 	}
 
+	template <size_t t_BufferSize>
+	FixedBufferString<t_BufferSize> operator^(const FixedBufferString<t_BufferSize>& leftStr, const FixedBufferString<t_BufferSize>& rightStr)
+	{
+		return leftStr.XOR(rightStr);
+	}
+	
 	template<size_t t_BufferSize>
 	using FixedBufStr = FixedBufferString<t_BufferSize>;
 

@@ -8,6 +8,10 @@
 #include "Kargono/Core/FixedBufferString.h"
 #include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Assets/Concepts/MetadataConcept.h"
+#include "Modules/Assets/Concepts/AssetConcept.h"
+#include "Modules/Assets/Concepts/OptionalAssetConcepts.h"
+#include "Modules/FileSystem/FileSystem.h"
+#include "Kargono/Projects/Project.h"
 
 #include <filesystem>
 #include <vector>
@@ -27,6 +31,82 @@ namespace Kargono::Assets
 		~Metadata() = default;
 	public:
 		//==============================
+		// Metadata State
+		//==============================
+		bool IsValid()
+		{
+			return m_Handle != Assets::k_EmptyHandle &&
+				m_TypeIdentifier != k_InvalidAssetIdentifier;
+		}
+	public:
+		//=============================
+		// Generate File Paths
+		//=============================
+		template<AssetConcept t_AssetType> requires HasFileLocation<t_AssetType>
+		std::filesystem::path GetAssetFullFilePath()
+		{
+			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+			return projectPaths.GetAssetDirectory() / GetAssetRelativeFilePath<t_AssetType>();
+		}
+		template<AssetConcept t_AssetType> requires HasFileLocation<t_AssetType>
+		std::filesystem::path GetAssetRelativeFilePath()
+		{
+			KG_ASSERT(!m_Name.IsEmpty());
+			KG_ASSERT(!m_FileDirectory.empty());
+			return m_FileDirectory / m_Name + t_AssetType::GetFileExtension();
+		}
+		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
+		std::filesystem::path GetAssetFullIntermediatePath(std::string_view extension)
+		{
+			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+			return projectPaths.GetIntermediateDirectory().string() /
+				GetAssetRelativeIntermediatePath<t_AssetType>(extension);
+		}
+		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
+		std::filesystem::path GetAssetRelativeIntermediatePath(std::string_view extension)
+		{
+			KG_ASSERT(!m_Name.IsEmpty());
+			KG_ASSERT(ValidateExtension(extension));
+
+			std::stringstream pathWithoutExtension;
+			pathWithoutExtension << GetModuleName<t_AssetType>() << "/" <<
+				GetTypeName<t_AssetType>() << "/" << m_Name;
+			return { std::filesystem::path(pathWithoutExtension.str()).replace_extension(extension)};
+		}
+		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
+		std::filesystem::path GetAssetFullHiddenFolder()
+		{
+			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+			return projectPaths.GetIntermediateDirectory().string() /
+				GetAssetRelativeHiddenFolder<t_AssetType>();
+		}
+		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
+		std::filesystem::path GetAssetRelativeHiddenFolder()
+		{
+			std::stringstream folderPath;
+			folderPath << GetModuleName<t_AssetType>() << "/" <<
+				GetTypeName<t_AssetType>();
+			return { folderPath.str() };
+		}
+	private:
+		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
+		bool ValidateExtension(std::string_view queryExtension)
+		{
+			std::span<FixedBufStr16> validExtensions{ t_AssetType::GetIntermediateExtensions() };
+			for (const FixedBufStr16& extension : validExtensions)
+			{
+				if (extension.StringView() == queryExtension)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+	public:
+		//==============================
 		// Getters/Setters
 		//==============================
 		template <MetadataConcept t_MetadataType>
@@ -39,16 +119,8 @@ namespace Kargono::Assets
 		template <MetadataConcept t_MetadataType>
 		void SetSpecificMetaData(t_MetadataType* newMetaData)
 		{
+			KG_ASSERT(newMetaData);
 			m_SpecificMetaData = static_cast<void*>(newMetaData);
-		}
-	public:
-		//==============================
-		// Metadata State
-		//==============================
-		bool IsValid()
-		{
-			return m_Handle != Assets::k_EmptyHandle &&
-				m_TypeIdentifier != k_InvalidAssetIdentifier;
 		}
 	public:
 		//==============================
@@ -58,7 +130,7 @@ namespace Kargono::Assets
 		std::filesystem::path m_FileDirectory{};
 		AssetHandle m_Handle{ Assets::k_EmptyHandle };
 		AssetIdentifier m_TypeIdentifier{ k_InvalidAssetIdentifier };
-		FixedBufStr64 m_CheckSum{};
+		Utility::SHA256Hash m_Hash{};
 		bool m_IsHidden{ false };
 	private:
 		//==============================

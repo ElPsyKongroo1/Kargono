@@ -7,7 +7,7 @@ namespace Kargono::Assets
 {
 	using UserCallback = std::function<void(LoadState, void*)>;
 
-	struct AssetGenericData
+	struct GenericAssetReference
 	{
 	public:
 		AssetHandle m_Handle{ k_EmptyHandle };
@@ -29,7 +29,7 @@ namespace Kargono::Assets
 			KG_ASSERT((state == LoadState::Loaded && asset) ||
 				(state != LoadState::Loaded && !asset));
 		}
-		AssetReference(AssetGenericData& data)
+		AssetReference(GenericAssetReference& data)
 			: m_Handle(data.m_Handle), m_LoadState(data.m_LoadState), m_Asset((t_AssetType*)data.m_DataPtr)
 		{
 			KG_ASSERT((data.m_LoadState == LoadState::Loaded && data.m_DataPtr) ||

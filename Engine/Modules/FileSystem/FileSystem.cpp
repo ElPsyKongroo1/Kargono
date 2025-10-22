@@ -402,7 +402,7 @@ namespace Kargono::Utility
 		return subPath;
 	}
 
-	std::string FileSystem::ChecksumFromFile(const std::filesystem::path& filepath)
+	SHA256Hash FileSystem::SHA256HashFromFile(const std::filesystem::path& filepath)
 	{
 		// Open the file to be read inputStream binary mode
 		std::ifstream file(filepath, std::ios::binary);
@@ -427,27 +427,27 @@ namespace Kargono::Utility
 			sha256stream.add(buffer.data(), bytesRead);
 		}
 
-		return sha256stream.getHash();
+		return SHA256Hash(sha256stream.getHash());
 	}
 
-	std::string FileSystem::ChecksumFromString(const char* inputString)
+	SHA256Hash FileSystem::SHA256HashFromString(const char* inputString)
 	{
 		SHA256 sha256stream;
 
 		// Add the input string to the SHA256 context
 		sha256stream.add(inputString, std::strlen(inputString));
 
-		return sha256stream.getHash();
+		return SHA256Hash(sha256stream.getHash());
 	}
 
-	std::string FileSystem::ChecksumFromBuffer(Buffer buffer)
+	SHA256Hash FileSystem::SHA256HashFromBuffer(Buffer buffer)
 	{
 		SHA256 sha256stream;
 
 		// Add the input string to the SHA256 context
 		sha256stream.add(buffer.As<char>(), buffer.m_Size);
 
-		return sha256stream.getHash();
+		return SHA256Hash(sha256stream.getHash());
 	}
 
 	uint32_t FileSystem::CRCFromBuffer(void* bufferPointer, uint64_t bufferSize)

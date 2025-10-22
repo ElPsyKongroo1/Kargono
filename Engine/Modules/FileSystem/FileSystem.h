@@ -13,17 +13,13 @@
 
 namespace Kargono::Utility
 {
-	//==============================
-	// FileSystem Type Definitions
-	//==============================
 	enum class FileTypes
 	{
 		None = 0, png, bmp
 	};
 
-	//==============================
-	// Interact with FileSystem Class
-	//==============================
+	using SHA256Hash = FixedBufferString<65>; // 64 chars + null terminator
+
 	class FileSystem
 	{
 	public:
@@ -68,9 +64,9 @@ namespace Kargono::Utility
 		//==============================
 		// Hashing API
 		//==============================
-		static std::string ChecksumFromFile(const std::filesystem::path& filepath);
-		static std::string ChecksumFromString(const char* inputString);
-		static std::string ChecksumFromBuffer(Buffer buffer);
+		static SHA256Hash SHA256HashFromFile(const std::filesystem::path& filepath);
+		static SHA256Hash SHA256HashFromString(const char* inputString);
+		static SHA256Hash SHA256HashFromBuffer(Buffer buffer);
 		static uint32_t CRCFromBuffer(void* bufferPointer, uint64_t bufferSize);
 		constexpr static uint32_t CRCFromString(const char* inputString)
 		{
