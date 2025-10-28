@@ -9,7 +9,7 @@
 #include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Assets/Concepts/MetadataConcept.h"
 #include "Modules/Assets/Concepts/AssetConcept.h"
-#include "Modules/Assets/Concepts/OptionalAssetConcepts.h"
+#include "Modules/Assets/Concepts/AssetFileConcepts.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Kargono/Projects/Project.h"
 
@@ -92,10 +92,11 @@ namespace Kargono::Assets
 			return { folderPath.str() };
 		}
 	private:
+		// Helper(s)
 		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
 		bool ValidateExtension(std::string_view queryExtension)
 		{
-			std::span<FixedBufStr16> validExtensions{ t_AssetType::GetIntermediateExtensions() };
+			std::span<const FixedBufStr16> validExtensions{ t_AssetType::GetIntermediateExtensions() };
 			for (const FixedBufStr16& extension : validExtensions)
 			{
 				if (extension.StringView() == queryExtension)

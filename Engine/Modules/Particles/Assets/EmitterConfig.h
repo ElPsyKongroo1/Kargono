@@ -30,24 +30,26 @@ namespace Kargono::Particles
 	{
 	public:
 		//==============================
-		// Static Asset Functions
+		// Asset Config Info
 		//==============================
-		constexpr static Assets::AssetConfig GetAssetConfig()
+		constexpr static FixedBufStr32 GetAssetName()
 		{
-			Assets::AssetConfig config{};
-			config.m_Identifier = Assets::GetAssetIdentifier<EmitterConfig>();
-			config.m_Name = "Particle Emitter Config";
-			config.m_FileExtension = ".kgparticle";
-			config.m_RegistryPath = "EmitterConfig/EmitterConfigRegistry.kgreg";
-			config.m_Flags.SetFlag(Assets::AssetFlag::HasAssetCache);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasFileImporting);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetSaving);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
-			return config;
+			return "Particle Emitter Config";
 		}
-		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, std::filesystem::path& path);
+
+		constexpr static Assets::AssetFlags GetAssetFlags()
+		{
+			Assets::AssetFlags flags{};
+			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
+			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			return flags;
+		}
+
+		constexpr static FixedBufStr16 GetFileExtension()
+		{
+			return ".kgparticle";
+		}
+		static void CreateAssetFromName(Assets::Metadata& metadata);
 	public:
 		//==============================
 		// Serialization

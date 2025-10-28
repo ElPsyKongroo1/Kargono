@@ -40,31 +40,26 @@ namespace Kargono::Audio
 		m_TotalSize = metadataNode["TotalSize"].as<uint64_t>();
 	}
 
-	void AudioBuffer::CreateAssetFromName(Assets::Metadata& metadata, 
-		std::string_view name, std::filesystem::path& assetPath)
+	void AudioBuffer::CreateAssetFilesFromFile(Assets::Metadata& metadata,
+		std::filesystem::path& sourceFile)
 	{
-		// Write metadata
-		YAML::Emitter out;
-		out << YAML::BeginMap; // Start of File Map
-		out << YAML::Key << "Name" << YAML::Value << std::string(name); // Output audio name
-		out << YAML::EndMap; // End of File Map
+		// Get intermediate location
+		const FixedBufStr16& intermediateExtension
+		{
+			AudioBuffer::GetIntermediateExtensions().front()
+		};
+		std::filesystem::path intermediateLocation
+		{
+			metadata.GetAssetFullIntermediatePath<AudioBuffer>(intermediateExtension.StringView())
+		};
 
-		// Save into file
-		std::ofstream fout(assetPath);
-		fout << out.c_str();
-		KG_INFO("Successfully created audio inside asset directory at {}", assetPath);
-	}
-
-	void AudioBuffer::CreateAssetFromFile(Assets::Metadata& metadata,
-		std::filesystem::path& fileLocation, std::filesystem::path& intermediateLocation)
-	{
 		// Create buffers
 		uint32_t channels = 0;
 		uint32_t sampleRate = 0;
 		drwav_uint64 totalPcmFrameCount = 0;
 		drwav_uint64 totalSize = 0;
 		Buffer pcmData{};
-		drwav_int16* pSampleData = drwav_open_file_and_read_pcm_frames_s16(fileLocation.string().c_str(), &channels, &sampleRate, &totalPcmFrameCount, nullptr);
+		drwav_int16* pSampleData = drwav_open_file_and_read_pcm_frames_s16(sourceFile.string().c_str(), &channels, &sampleRate, &totalPcmFrameCount, nullptr);
 		if (!pSampleData)
 		{
 			KG_WARN("Failed to load audio file");

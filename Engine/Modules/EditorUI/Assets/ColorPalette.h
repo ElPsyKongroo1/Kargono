@@ -19,50 +19,31 @@ namespace Kargono::EditorUI
 		HexCode m_HexCode;
 	};
 
-	struct ColorPaletteMetaData
-	{
-	public:
-		//==============================
-		// Serialization
-		//==============================
-		void Serialize(void* context);
-		void Deserialize(void* context);
-	public:
-		//==============================
-		// Public Fields
-		//==============================
-		FixedBufStr16 m_Name{};
-	};
-
 	struct ColorPalette
 	{
 	public:
 		//==============================
-		// Metaprogramming Info
+		// Asset Info
 		//==============================
-		using Metadata = ColorPaletteMetaData;
-	public:
-		//==============================
-		// Static Asset Functions
-		//==============================
-		constexpr static Assets::AssetConfig GetAssetConfig()
+		constexpr static FixedBufStr32 GetAssetName()
 		{
-			Assets::AssetConfig config{};
-			config.m_Identifier = Assets::GetAssetIdentifier<ColorPalette>();
-			config.m_Name = "Color Palette";
-			config.m_FileExtension = ".kgpalette";
-			config.m_RegistryPath = "ColorPalette/ColorPaletteRegistry.kgreg";
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetCache);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasFileImporting);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetSaving);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
-			return config;
+			return "Color Palette";
 		}
 
-		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
-			std::filesystem::path& assetPath);
+		constexpr static Assets::AssetFlags GetAssetFlags()
+		{
+			Assets::AssetFlags flags{};
+			flags.ClearFlag(Assets::AssetFlag::HasAssetCache);
+			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			return flags;
+		}
+
+		constexpr static FixedBufStr16 GetFileExtension()
+		{
+			return ".kgpalette";
+		}
+
+		static void CreateAssetFromName(Assets::Metadata& metadata);
 	public:
 		//==============================
 		// Constructors/Destructors

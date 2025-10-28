@@ -12,10 +12,13 @@ namespace Kargono::InputMap
 	void InputMap::Serialize(void* context)
 	{
 		// Get asset context
-		Assets::SerializeAssetContext& assetContext = *(Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext* assetContext = (Assets::SerializeAssetContext*)context;
+		KG_ASSERT(assetContext, "Context cannot be null");
+		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<InputMap>() };
 
 		// Serialize
 		YAML::Emitter out;
@@ -117,12 +120,13 @@ namespace Kargono::InputMap
 		KG_ASSERT(context, "Context cannot be null");
 
 		// Get asset context
-		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext* assetContext = (Assets::DeserializeAssetContext*)context;
+		KG_ASSERT(assetContext, "Context cannot be null");
+		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
-		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<InputMap>() };
 
 		YAML::Node data;
 		try
@@ -221,14 +225,14 @@ namespace Kargono::InputMap
 		}
 	}
 
-	void InputMap::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, std::filesystem::path& path)
+	void InputMap::CreateAssetFromName(Assets::Metadata& metadata)
 	{
-		// Create Temporary InputMap
-		InputMap temporaryInputMap{};
+		// Create default input map
+		InputMap defaultInputMap{};
 
-		// Save Binary into File
-		Assets::SerializeAssetContext context{ path };
-		temporaryInputMap.Serialize((void*)&context);
+		// Save binary into file
+		Assets::SerializeAssetContext context{ &metadata };
+		defaultInputMap.Serialize((void*)&context);
 	}
 
 	bool InputMap::RemoveScript(Assets::AssetHandle scriptHandle)

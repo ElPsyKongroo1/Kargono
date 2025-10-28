@@ -8,56 +8,30 @@
 
 namespace Kargono::Scripting
 {
-	struct CustomEnumMetaData
-	{
-	public:
-		//==============================
-		// Constructors/Destructors
-		//==============================
-		CustomEnumMetaData() = default;
-		~CustomEnumMetaData() = default;
-	public:
-		//==============================
-		// Serialization
-		//==============================
-		void Serialize(void* context);
-		void Deserialize(void* context);
-	public:
-		//==============================
-		// Public Fields
-		//==============================
-		FixedBufStr16 m_Name{};
-	};
-
 	struct CustomEnum
 	{
 	public:
 		//==============================
-		// Metaprogramming Info
+		// Asset Config Info
 		//==============================
-		using Metadata = CustomEnumMetaData;
-	public:
-		//==============================
-		// Static Asset Functions
-		//==============================
-		constexpr static Assets::AssetConfig GetAssetConfig()
+		constexpr static FixedBufStr32 GetAssetName()
 		{
-			Assets::AssetConfig config{};
-			config.m_Identifier = Assets::GetAssetIdentifier<CustomEnum>();
-			config.m_Name = "Custom Enum";
-			config.m_FileExtension = ".kgenum";
-			config.m_RegistryPath = "CustomEnum/CustomEnumRegistry.kgreg";
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasFileImporting);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetSaving);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
-			return config;
+			return "Custom Enum";
 		}
 
-		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
-			 std::filesystem::path& assetPath);
+		constexpr static Assets::AssetFlags GetAssetFlags()
+		{
+			Assets::AssetFlags flags{};
+			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
+			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			return flags;
+		}
+
+		constexpr static FixedBufStr16 GetFileExtension()
+		{
+			return ".kgenum";
+		}
+		static void CreateAssetFromName(Assets::Metadata& metadata);
 
 	public:
 		//=========================

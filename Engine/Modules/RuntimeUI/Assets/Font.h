@@ -82,30 +82,43 @@ namespace Kargono::RuntimeUI
 		// Metaprogramming Info
 		//==============================
 		using Metadata = FontMetaData;
+		constexpr static std::array<FixedBufStr16, 1> k_ImportExtensions{ ".ttf" };
+		constexpr static std::array<FixedBufStr16, 1> k_IntermediateExtensions{ ".kgbinary" };
 	public:
 		//==============================
-		// Static Asset Functions
+		// Asset Config Info
 		//==============================
-		constexpr static Assets::AssetConfig GetAssetConfig()
+		constexpr static FixedBufStr32 GetAssetName()
 		{
-			Assets::AssetConfig config{};
-			config.m_Identifier = Assets::GetAssetIdentifier<Font>();
-			config.m_Name = "Font";
-			config.m_FileExtension = ".kgfont";
-			config.m_ImportExtensions = { ".ttf" };
-			config.m_RegistryPath = "Font/FontRegistry.kgreg";
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasIntermediateLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileImporting);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetSaving);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
-			return config;
+			return "Font";
 		}
-		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, 
-			std::filesystem::path& assetPath);
+
+		constexpr static Assets::AssetFlags GetAssetFlags()
+		{
+			Assets::AssetFlags flags{};
+			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
+			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			return flags;
+		}
+
+		constexpr static FixedBufStr16 GetFileExtension()
+		{
+			return ".kgfont";
+		}
+
+		constexpr static std::span<const FixedBufStr16> GetImportExtensions()
+		{
+			return std::span(k_ImportExtensions.data(), k_ImportExtensions.size());
+		}
+
+		constexpr static std::span<const FixedBufStr16> GetIntermediateExtensions()
+		{
+			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
+		}
+
+		static void CreateAssetFromName(Assets::Metadata& metadata);
 		static void CreateAssetFromFile(Assets::Metadata& metadata,
-			std::filesystem::path& filePath, std::filesystem::path& intermediatePath);
+			const std::filesystem::path& sourcePath);
 	public:
 		//==============================
 		// Constructors/Destructors

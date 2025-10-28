@@ -14,11 +14,11 @@ namespace Kargono::Rendering
 	void TextureMetaData::Serialize(void* context)
 	{
 		// Get asset context
-		KG_ASSERT(context, "Context cannot be null");
-		Assets::SerializeMetaDataContext& metadataContext = *(Assets::SerializeMetaDataContext*)context;
+		Assets::SerializeMetaDataContext* metadataContext = (Assets::SerializeMetaDataContext*)context;
+		KG_ASSERT(metadataContext, "Context cannot be null");
 
 		// Get context fields
-		YAML::Emitter& emitter = *metadataContext.m_Serializer;
+		YAML::Emitter& emitter = *metadataContext->m_Serializer;
 
 		// Serialize
 		emitter << YAML::Key << "TextureHeight" << YAML::Value << m_Height;
@@ -29,11 +29,11 @@ namespace Kargono::Rendering
 	void TextureMetaData::Deserialize(void* context)
 	{
 		// Get asset context
-		KG_ASSERT(context, "Context cannot be null");
-		Assets::DeserializeMetaDataContext& assetContext = *(Assets::DeserializeMetaDataContext*)context;
+		Assets::DeserializeMetaDataContext* assetContext = (Assets::DeserializeMetaDataContext*)context;
+		KG_ASSERT(assetContext, "Context cannot be null");
 
 		// Get context fields
-		YAML::Node& metadataNode = *assetContext.m_Node;
+		YAML::Node& metadataNode = *assetContext->m_Node;
 
 		// Deserialize
 		m_Height = metadataNode["TextureHeight"].as<int32_t>();
@@ -51,24 +51,31 @@ namespace Kargono::Rendering
 		// Get context
 		Assets::DeserializeAssetContext* deserializeContext = (Assets::DeserializeAssetContext*)context;
 		KG_ASSERT(deserializeContext, "Context cannot be null");
+		Assets::Metadata* metadata = deserializeContext->m_AssetMetadata;
+		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path
-		const std::filesystem::path& assetPath = deserializeContext->m_AssetPath;
-		Assets::Metadata& metadata{ *deserializeContext->m_AssetMetadata };
+		std::string_view intermediateExtension
+		{
+			Texture2D::GetIntermediateExtensions().front().StringView()
+		};
+		const std::filesystem::path& assetPath = 
+			metadata->GetAssetFullIntermediatePath<Texture2D>(intermediateExtension);
 
 		// Load the texture
-		TextureMetaData& specificMetadata = *metadata.GetSpecificMetaData<TextureMetaData>();
+		TextureMetaData& specificMetadata = *metadata->GetSpecificMetaData<TextureMetaData>();
 		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
 		LoadBuffer(currentResource, specificMetadata);
 		currentResource.Release();
 	}
 
-	void Texture2D::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
-		std::filesystem::path& assetPath)
+	void Texture2D::CreateAssetFromName(Assets::Metadata& metadata)
 	{
+		const std::filesystem::path& assetPath = metadata.GetAssetFullFilePath<Texture2D>();
+
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
-		out << YAML::Key << "Name" << YAML::Value << std::string(name); // Output texture name
+		out << YAML::Key << "Name" << YAML::Value << metadata.m_Name.CString(); // Output texture name
 		out << YAML::EndMap; // End of File Map
 
 		std::ofstream fout(assetPath);
@@ -76,8 +83,15 @@ namespace Kargono::Rendering
 		KG_INFO("Successfully created texture inside asset directory at {}", assetPath);
 	}
 	void Texture2D::CreateAssetFromFile(Assets::Metadata& metadata,
-		std::filesystem::path& sourcePath, std::filesystem::path& destPath)
+		const std::filesystem::path& sourcePath)
 	{
+		std::string_view intermediateExtension
+		{
+			Texture2D::GetIntermediateExtensions().front().StringView()
+		};
+		const std::filesystem::path intermediatePath = 
+			metadata.GetAssetFullIntermediatePath<Texture2D>(intermediateExtension);
+
 		// Create Texture Binary Intermediate
 		int32_t width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
@@ -91,7 +105,7 @@ namespace Kargono::Rendering
 		buffer.m_Data = data;
 
 		// Save Binary Intermediate into File
-		Utility::FileSystem::WriteFileBinary(destPath, buffer);
+		Utility::FileSystem::WriteFileBinary(intermediatePath, buffer);
 
 		// Check that save was successful
 		if (!data)
@@ -109,15 +123,18 @@ namespace Kargono::Rendering
 		buffer.Release();
 	}
 
-	void Texture2D::CreateAssetFromSpec(Assets::Metadata& metadata, 
-		TextureSpecification& spec, std::filesystem::path& assetPath)
+	void Texture2D::CreateAssetFromSpec(Assets::Metadata& metadata, TextureSpecification& spec)
 	{
 		// Save Binary Intermediate into File
-		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
-		std::filesystem::path intermediateFullPath = projectPaths.GetIntermediateDirectory() / metadata.m_IntermediateLocation;
-		Utility::FileSystem::WriteFileBinary(intermediateFullPath, spec.m_Buffer);
+		std::string_view intermediateExtension
+		{
+			Texture2D::GetIntermediateExtensions().front().StringView()
+		};
+		const std::filesystem::path intermediatePath =
+			metadata.GetAssetFullIntermediatePath<Texture2D>(intermediateExtension);
+		Utility::FileSystem::WriteFileBinary(intermediatePath, spec.m_Buffer);
 
-		// Load data into In-Memory Metadata object
+		// Load data into texture metadata
 		TextureMetaData& textureMetadata{ *metadata.GetSpecificMetaData<TextureMetaData>() };
 		textureMetadata.m_Width = spec.m_Width;
 		textureMetadata.m_Height = spec.m_Height;
@@ -126,13 +143,14 @@ namespace Kargono::Rendering
 
 	bool Texture2D::CreateSpecValidation(TextureSpecification& spec)
 	{
+		KG_ERROR("The spec validation is not implemented, what are you doing????");
 		return false;
 	}
 
 	void Texture2D::DeleteValidation(Assets::AssetHandle assetHandle)
 	{
 		// Check user interface assets
-		for (auto& [uiHandle, assetInfo] : Assets::AssetService::GetUserInterfaceRegistry())
+		for (auto& [uiHandle, metadata] : Assets::AssetService::GetUserInterfaceRegistry())
 		{
 			// Handle UI level function pointers
 			Ref<RuntimeUI::UserInterface> userInterfaceRef = Assets::AssetService::GetUserInterface(uiHandle);

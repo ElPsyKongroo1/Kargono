@@ -5,7 +5,7 @@
 #include "Modules/ECSInternal/ECSInternalCommon.h"
 #include "Modules/ECSInternal/Module/ECSInternalModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
-#include "Modules/Assets/Concepts/OptionalAssetConcepts.h"
+#include "Modules/Assets/Concepts/ManageAssetConcepts.h"
 #include "Modules/Assets/Module/AssetTag.h"
 
 #include <array>
@@ -57,26 +57,27 @@ namespace Kargono::ECSInternal
 		using Metadata = CustomComponentMetaData;
 	public:
 		//==============================
-		// Static Asset Functions
+		// Asset Info
 		//==============================
-		constexpr static Assets::AssetConfig GetAssetConfig()
+		constexpr static FixedBufStr32 GetAssetName()
 		{
-			Assets::AssetConfig config{};
-			config.m_Identifier = Assets::GetAssetIdentifier<CustomComponent>();
-			config.m_Name = "Custom Component";
-			config.m_FileExtension = ".kgcomponent";
-			config.m_ImportExtensions = {};
-			config.m_RegistryPath = "CustomComponent/CustomComponentRegistry.kgreg";
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasFileImporting);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetSaving);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
-			return config;
+			return "Custom Component";
 		}
-		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
-			 std::filesystem::path& assetPath);
+
+		constexpr static Assets::AssetFlags GetAssetFlags()
+		{
+			Assets::AssetFlags flags{};
+			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
+			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			return flags;
+		}
+
+		constexpr static FixedBufStr16 GetFileExtension()
+		{
+			return ".kgcomponent";
+		}
+
+		static void CreateAssetFromName(Assets::Metadata& metadata);
 	public:
 		//==============================
 		// Constructors/Destructors

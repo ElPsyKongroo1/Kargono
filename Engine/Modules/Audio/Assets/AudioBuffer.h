@@ -42,32 +42,41 @@ namespace Kargono::Audio
 		// Metaprogramming Info
 		//==============================
 		using Metadata = AudioMetaData;
+		constexpr static std::array<FixedBufStr16, 1> k_ImportExtensions{ ".wav" };
+		constexpr static std::array<FixedBufStr16, 1> k_IntermediateExtensions{ ".kgbinary" };
 	public:
 		//==============================
-		// Static Asset Functions
+		// Asset Config Info
 		//==============================
-		constexpr static Assets::AssetConfig GetAssetConfig()
+		constexpr static FixedBufStr32 GetAssetName()
 		{
-			Assets::AssetConfig config{};
-			config.m_Identifier = Assets::GetAssetIdentifier<AudioBuffer>();
-			config.m_Name = "Audio";
-			config.m_FileExtension = ".kgaudio";
-			config.m_ImportExtensions = { ".wav" };
-			config.m_RegistryPath = "AudioBuffer/AudioRegistry.kgreg";
-			config.m_IntermediateExtension = ".kgbinary";
-			config.m_Flags.ClearAllFlags();
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasIntermediateLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileImporting);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetSaving);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetCreationFromName);
-			return config;
+			return "Audio Buffer";
 		}
-		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
-			 std::filesystem::path& assetPath);
-		static void CreateAssetFromFile(Assets::Metadata& metadata, 
-			std::filesystem::path& filePath, std::filesystem::path& intermediatePath);
+
+		constexpr static Assets::AssetFlags GetAssetFlags()
+		{
+			Assets::AssetFlags flags{};
+			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
+			flags.ClearFlag(Assets::AssetFlag::RequireUniqueName);
+			return flags;
+		}
+
+		constexpr static FixedBufStr16 GetFileExtension()
+		{
+			return ".kgaudio";
+		}
+
+		constexpr static std::span<const FixedBufStr16> GetImportExtensions()
+		{
+			return std::span(k_ImportExtensions.data(), k_ImportExtensions.size());
+		}
+
+		constexpr static std::span<const FixedBufStr16> GetIntermediateExtensions()
+		{
+			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
+		}
+
+		static void CreateAssetFilesFromFile(Assets::Metadata& metadata, std::filesystem::path& sourcePath);
 	public:
 		//==============================
 		// Constructors and Destructors

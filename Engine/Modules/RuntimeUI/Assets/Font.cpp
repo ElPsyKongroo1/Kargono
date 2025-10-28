@@ -90,14 +90,15 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(context, "Context cannot be null");
 
 		// Get asset context
-		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext* assetContext = (Assets::DeserializeAssetContext*)context;
+		KG_ASSERT(assetContext, "Context cannot be null");
+		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
-		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<Font>() };
 
-		FontMetaData fontMetadata = *metadata.GetSpecificMetaData<FontMetaData>();
+		FontMetaData fontMetadata = *metadata->GetSpecificMetaData<FontMetaData>();
 		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
 
 		// Create Texture
@@ -122,12 +123,15 @@ namespace Kargono::RuntimeUI
 		currentResource.Release();
 	}
 
-	void Font::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
-		std::filesystem::path& assetPath)
+	void Font::CreateAssetFromName(Assets::Metadata& metadata)
 	{
+		KG_TRACE_CRITICAL("We are calling the create font w/ name, " 
+			"but I'm skeptical of this function bruhh");
+		const std::filesystem::path assetPath{ metadata.GetAssetFullFilePath<Font>() };
+
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
-		out << YAML::Key << "Name" << YAML::Value << std::string(name); // Output font name
+		out << YAML::Key << "Name" << YAML::Value << metadata.m_Name; // Output font name
 		out << YAML::EndMap; // End of File Map
 
 		std::ofstream fout(assetPath);
@@ -135,8 +139,17 @@ namespace Kargono::RuntimeUI
 		KG_INFO("Successfully created font inside asset directory at {}", assetPath);
 	}
 	void Font::CreateAssetFromFile(Assets::Metadata& metadata,
-		std::filesystem::path& filePath, std::filesystem::path& intermediatePath)
+		const std::filesystem::path& sourcePath)
 	{
+		std::string_view intermediateExtension
+		{
+			GetIntermediateExtensions().front().StringView()
+		};
+		const std::filesystem::path intermediatePath
+		{
+			metadata.GetAssetFullIntermediatePath<Font>(intermediateExtension)
+		};
+
 		// Create Buffers
 		std::vector<msdf_atlas::GlyphGeometry> glyphs;
 		msdf_atlas::FontGeometry fontGeometry;
@@ -146,10 +159,10 @@ namespace Kargono::RuntimeUI
 		msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
 		KG_ASSERT(ft, "MSDFGEN failed to initialize!");
 
-		msdfgen::FontHandle* font = msdfgen::loadFont(ft, filePath.string().c_str());
+		msdfgen::FontHandle* font = msdfgen::loadFont(ft, sourcePath.string().c_str());
 		if (!font)
 		{
-			KG_ERROR("Font not loaded correctly from filepath: " + filePath.string());
+			KG_ERROR("Font not loaded correctly from filepath: " + sourcePath.string());
 			return;
 		}
 

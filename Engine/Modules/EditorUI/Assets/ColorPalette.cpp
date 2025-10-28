@@ -4,34 +4,16 @@
 
 namespace Kargono::EditorUI
 {
-	void ColorPaletteMetaData::Serialize(void* context)
-	{
-		// Get context
-		Assets::SerializeMetaDataContext* serializeContext = 
-			(Assets::SerializeMetaDataContext*)context;
-		// Get asset path
-		YAML::Emitter& serializer = *serializeContext->m_Serializer;
-		// Serialize
-		serializer << YAML::Key << "Name" << YAML::Value << m_Name;
-	}
-
-	void ColorPaletteMetaData::Deserialize(void* context)
-	{
-		// Get context
-		Assets::DeserializeMetaDataContext* deserializeContext = (Assets::DeserializeMetaDataContext*)context;
-		// Get asset path
-		KG_ASSERT(deserializeContext->m_Node);
-		YAML::Node& metadataNode{ *deserializeContext->m_Node };
-		// Deserialize
-		m_Name = metadataNode["Name"].as<std::string>();
-	}
-
 	void ColorPalette::Serialize(void* context)
 	{
 		// Get context
 		Assets::SerializeAssetContext* serializeContext = (Assets::SerializeAssetContext*)context;
+		KG_ASSERT(serializeContext);
+		Assets::Metadata* metadata{ serializeContext->m_AssetMetadata };
+		KG_ASSERT(metadata);
 		// Get asset path
-		const std::filesystem::path& assetPath = serializeContext->m_AssetPath;
+		
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<ColorPalette>() };
 		// Serialize asset
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -55,9 +37,12 @@ namespace Kargono::EditorUI
 	{
 		// Get context
 		Assets::DeserializeAssetContext* deserializeContext = (Assets::DeserializeAssetContext*)context;
+		KG_ASSERT(deserializeContext);
+		Assets::Metadata* metadata{ deserializeContext->m_AssetMetadata };
+		KG_ASSERT(metadata);
 
 		// Get asset path
-		const std::filesystem::path& assetPath = deserializeContext->m_AssetPath;
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<ColorPalette>() };
 
 		// Deserialize asset
 		YAML::Node data;
@@ -86,17 +71,11 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void ColorPalette::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
-		std::filesystem::path& assetPath)
+	void ColorPalette::CreateAssetFromName(Assets::Metadata& metadata)
 	{
-		// Serialize temporary color palette to file
-		ColorPalette temporaryColorPalette;
-		Assets::SerializeAssetContext serializeContext{ assetPath };
-		temporaryColorPalette.Serialize((void*)&serializeContext);
-
-		// Set metadata fields
-		ColorPaletteMetaData* colorPaletteMetadata{ metadata.GetSpecificMetaData<ColorPaletteMetaData>() };
-		KG_ASSERT(colorPaletteMetadata);
-		colorPaletteMetadata->m_Name = name;
+		// Serialize default color palette to file
+		ColorPalette defaultColorPalette;
+		Assets::SerializeAssetContext serializeContext{ &metadata };
+		defaultColorPalette.Serialize((void*)&serializeContext);
 	}
 }

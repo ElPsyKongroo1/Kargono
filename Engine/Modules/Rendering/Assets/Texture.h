@@ -99,32 +99,43 @@ namespace Kargono::Rendering
 		//==============================
 		using Metadata = TextureMetaData;
 		using Spec = TextureSpecification;
+		constexpr static std::array<FixedBufStr16, 1> k_ImportExtensions{ ".png" };
+		constexpr static std::array<FixedBufStr16, 1> k_IntermediateExtensions{ ".kgbinary" };
 	public:
 		//==============================
-		// Static Asset Functions
+		// Asset Config Info
 		//==============================
-		constexpr static Assets::AssetConfig GetAssetConfig()
+		constexpr static FixedBufStr32 GetAssetName()
 		{
-			Assets::AssetConfig config{};
-			config.m_Identifier = Assets::GetAssetIdentifier<Texture2D>();
-			config.m_Name = "Texture";
-			config.m_FileExtension = ".kgtexture";
-			config.m_ImportExtensions = { ".png" };
-			config.m_RegistryPath = "Texture2D/TextureRegistry.kgreg";
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasIntermediateLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileImporting);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetSaving);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetCreationFromName);
-			return config;
+			return "Texture";
 		}
-		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
-			std::filesystem::path& assetPath);
-		static void CreateAssetFromFile(Assets::Metadata& metadata,
-			std::filesystem::path& sourcePath, std::filesystem::path& destPath);
-		static void CreateAssetFromSpec(Assets::Metadata& metadata, TextureSpecification& spec, 
-			std::filesystem::path& assetPath);
+
+		constexpr static Assets::AssetFlags GetAssetFlags()
+		{
+			Assets::AssetFlags flags{};
+			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
+			flags.ClearFlag(Assets::AssetFlag::RequireUniqueName);
+			return flags;
+		}
+
+		constexpr static FixedBufStr16 GetFileExtension()
+		{
+			return ".kgtexture";
+		}
+
+		constexpr static std::span<const FixedBufStr16> GetImportExtensions()
+		{
+			return std::span(k_ImportExtensions.data(), k_ImportExtensions.size());
+		}
+
+		constexpr static std::span<const FixedBufStr16> GetIntermediateExtensions()
+		{
+			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
+		}
+
+		static void CreateAssetFromName(Assets::Metadata& metadata);
+		static void CreateAssetFromFile(Assets::Metadata& metadata, const std::filesystem::path& sourcePath);
+		static void CreateAssetFromSpec(Assets::Metadata& metadata, TextureSpecification& spec);
 		static bool CreateSpecValidation(TextureSpecification& spec);
 	public:
 		//==============================

@@ -23,25 +23,27 @@ namespace Kargono::InputMap
 	{
 	public:
 		//==============================
-		// Static Asset Functions
+		// Asset Config Info
 		//==============================
-		constexpr static Assets::AssetConfig GetAssetConfig()
+		constexpr static FixedBufStr32 GetAssetName()
 		{
-			Assets::AssetConfig config{};
-			config.m_Identifier = Assets::GetAssetIdentifier<InputMap>();
-			config.m_Name = "Input Map";
-			config.m_FileExtension = ".kginput";
-			config.m_RegistryPath = "InputMap/InputMapRegistry.kgreg";
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasAssetCache);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasFileImporting);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetSaving);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
-			return config;
+			return "Input Map";
 		}
 
-		static void CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, std::filesystem::path& path);
+		constexpr static Assets::AssetFlags GetAssetFlags()
+		{
+			Assets::AssetFlags flags{};
+			flags.ClearFlag(Assets::AssetFlag::HasAssetCache);
+			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			return flags;
+		}
+
+		constexpr static FixedBufStr16 GetFileExtension()
+		{
+			return ".kginput";
+		}
+
+		static void CreateAssetFromName(Assets::Metadata& metadata);
 	public:
 		//=========================
 		// Constructors/Destructors

@@ -7,7 +7,7 @@
 #include "Modules/Assets/Module/AssetTag.h"
 #include "Modules/Assets/AssetReference.h"
 #include "Kargono/Memory/IAllocator.h"
-#include "Modules/Assets/Concepts/OptionalAssetConcepts.h"
+#include "Modules/Assets/Concepts/ManageAssetConcepts.h"
 #include "Modules/Assets/Concepts/RegistryConcept.h"
 
 #include "API/Serialization/yamlcppAPI.h"
@@ -155,8 +155,7 @@ namespace Kargono::Assets
 			return false;
 		}
 
-		template<AssetConcept t_AssetType> 
-			requires HasFileLocation<t_AssetType> || HasIntermediates<t_AssetType>
+		template<AssetConcept t_AssetType> requires HasAssetSaving<t_AssetType>
 		void SaveAsset(AssetReference<t_AssetType> assetReference)
 		{
 			KG_ASSERT(assetReference.IsValid() && !assetReference.IsEmpty(), 

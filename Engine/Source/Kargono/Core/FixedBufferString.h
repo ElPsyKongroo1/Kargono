@@ -52,6 +52,45 @@ namespace Kargono
 		//==============================
 		// Modify String
 		//==============================
+		constexpr FixedBufferString<t_BufferSize> RemoveWhitespace()
+		{
+			FixedBufferString<t_BufferSize> returnString{};
+
+			// Use two index approach to remove whitespace
+			size_t writeIndex{ 0 };
+			for (size_t readIndex{ 0 }; readIndex < m_StringLength; readIndex++)
+			{
+				// If not whitespace, copy character to write index
+				if (!std::isspace(static_cast<unsigned char>(m_DataBuffer[readIndex])))
+				{
+					returnString.m_DataBuffer[writeIndex] = m_DataBuffer[readIndex];
+					writeIndex++;
+				}
+			}
+
+			// Update string length and null terminate
+			returnString.m_StringLength = writeIndex;
+			returnString.m_DataBuffer[writeIndex] = '\0';
+		}
+
+		constexpr FixedBufferString<t_BufferSize> RemoveWhitespaceInPlace()
+		{
+			// Use two index approach to remove whitespace in place
+			size_t writeIndex{ 0 };
+			for (size_t readIndex{ 0 }; readIndex < m_StringLength; readIndex++)
+			{
+				// If not whitespace, copy character to write index
+				if (!std::isspace(static_cast<unsigned char>(m_DataBuffer[readIndex])))
+				{
+					m_DataBuffer[writeIndex] = m_DataBuffer[readIndex];
+					writeIndex++;
+				}
+			}
+
+			// Update string length and null terminate
+			m_StringLength = writeIndex;
+			m_DataBuffer[writeIndex] = '\0';
+		}
 
 		constexpr void ClearString()
 		{
@@ -229,7 +268,7 @@ namespace Kargono
 			return m_DataBuffer.data();
 		}
 
-		void* Data()
+		void* Data() const
 		{
 			return m_DataBuffer.data();
 		}
@@ -317,6 +356,8 @@ namespace Kargono
 			m_DataBuffer[m_StringLength] = '\0';
 			return true;
 		}
+
+		
 		
 		constexpr FixedBufferString<t_BufferSize> XOR(const FixedBufferString<t_BufferSize>& other)
 		{

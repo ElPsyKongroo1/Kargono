@@ -8,10 +8,13 @@ namespace Kargono::Particles
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::SerializeAssetContext& assetContext = *(Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext* assetContext = (Assets::SerializeAssetContext*)context;
+		KG_ASSERT(assetContext, "Context cannot be null");
+		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<EmitterConfig>() };
 
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -55,9 +58,11 @@ namespace Kargono::Particles
 		// Get context
 		Assets::DeserializeAssetContext* deserializeContext = (Assets::DeserializeAssetContext*)context;
 		KG_ASSERT(deserializeContext, "Context cannot be null");
+		Assets::Metadata* metadata{ deserializeContext->m_AssetMetadata };
+		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path
-		const std::filesystem::path& assetPath = deserializeContext->m_AssetPath;
+		const std::filesystem::path& assetPath = metadata->GetAssetFullFilePath<EmitterConfig>();
 
 		YAML::Node data;
 		try
@@ -122,12 +127,13 @@ namespace Kargono::Particles
 		}
 	}
 
-	void EmitterConfig::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name, std::filesystem::path& assetPath)
+	void EmitterConfig::CreateAssetFromName(Assets::Metadata& metadata)
 	{
-		// Create Temporary EmitterConfig
-		EmitterConfig temporaryConfig{};
-		// Save Binary into File
-		Assets::SerializeAssetContext context {assetPath};
-		temporaryConfig.Serialize((void*)&context);
+		// Create default emitter config
+		EmitterConfig defaultConfig{};
+
+		// Save binary into file
+		Assets::SerializeAssetContext context {&metadata};
+		defaultConfig.Serialize((void*)&context);
 	}
 }

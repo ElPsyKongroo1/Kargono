@@ -5,39 +5,16 @@
 namespace Kargono::Scripting
 {
 
-	void CustomEnumMetaData::Serialize(void* context)
-	{
-		// Get asset context
-		KG_ASSERT(context, "Context cannot be null");
-		Assets::SerializeMetaDataContext& metadataContext = *(Assets::SerializeMetaDataContext*)context;
-
-		// Get context fields
-		YAML::Emitter& emitter = *metadataContext.m_Serializer;
-
-		// Serialize
-		emitter << YAML::Key << "Name" << YAML::Value << m_Name;
-	}
-
-	void CustomEnumMetaData::Deserialize(void* context)
-	{
-		// Get asset context
-		KG_ASSERT(context, "Context cannot be null");
-		Assets::DeserializeMetaDataContext& assetContext = *(Assets::DeserializeMetaDataContext*)context;
-
-		// Get context fields
-		YAML::Node& metadataNode = *assetContext.m_Node;
-
-		// Deserialize
-		m_Name = metadataNode["Name"].as<std::string>();
-	}
-
 	void CustomEnum::Serialize(void* context)
 	{
 		// Get asset context
-		Assets::SerializeAssetContext& assetContext = *(Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext* assetContext = (Assets::SerializeAssetContext*)context;
+		KG_ASSERT(assetContext, "Context cannot be null");
+		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		KG_ASSERT(metadata, "Metadata cannot be null");
 
-		// Get context fields
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+		// Get asset path
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<CustomEnum>() };
 
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of file map
@@ -65,11 +42,12 @@ namespace Kargono::Scripting
 
 		// Get asset context
 		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
-
-		// Get context fields
 		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
-		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+		Assets::Metadata* metadata{ assetContext.m_AssetMetadata };
+		KG_ASSERT(metadata, "Metadata cannot be null");
+
+		// Get asset path
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<CustomEnum>() };
 
 		YAML::Node data;
 		try
@@ -97,25 +75,15 @@ namespace Kargono::Scripting
 		}
 	}
 
-	void CustomEnum::CreateAssetFromName(Assets::Metadata& metadata, std::string_view name,
-		std::filesystem::path& assetPath)
+	void CustomEnum::CreateAssetFromName(Assets::Metadata& metadata)
 	{
 		// Create new custom component
 		CustomEnum tempEnum{};
-		tempEnum.m_EnumName = name;
+		tempEnum.m_EnumName = metadata.m_Name;
 
 		// Save into File
-		Assets::SerializeAssetContext context{ assetPath };
+		Assets::SerializeAssetContext context{ &metadata };
 		tempEnum.Serialize((void*)&context);
-
-		KG_ASSERT(metadata.GetSpecificMetaData<CustomEnumMetaData>());
-		CustomEnumMetaData& customEnumMetaData
-		{
-			*metadata.GetSpecificMetaData<CustomEnumMetaData>()
-		};
-
-		// Load data into in-memory metadata object
-		customEnumMetaData.m_Name = name;
 	}
 
 	bool CustomEnum::DoesContainIdentifier(const char* queryName)
