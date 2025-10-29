@@ -2,7 +2,7 @@
 
 #include "Modules/ECS/Entity.h"
 #include "Modules/ECS/Registry.h"
-#include "Modules/ECSInternal/CustomComponent.h"
+#include "Modules/ECSInternal/Assets/CustomComponent.h"
 
 #include "Modules/Core/Components/TransformComponent.h"
 #include "Modules/Core/Components/TagComponent.h"
@@ -27,7 +27,7 @@ namespace Kargono::ECS
 	{
 		return CreateEntityWithUUID(RandomUUIDService::GetRandomUUID(), name);
 	}
-	Entity Registry::CreateEntityWithUUID(UUID uuid, std::string_view name)
+	Entity Registry::CreateEntityWithUUID(UUID uuid, std::string_view name = {})
 	{
 		ECS::Entity entity = { m_Registry.CreateEntity().value() , this };
 		entity.AddComponent<IDComponent>(uuid);

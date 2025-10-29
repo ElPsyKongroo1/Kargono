@@ -6,12 +6,8 @@
 
 #include <filesystem>
 
-
 namespace Kargono 
 {
-	//==============================
-	// Window Properties Struct
-	//==============================
 	struct WindowProps 
 	{
 		FixedBufStr32 Title {"No Title"};
@@ -24,9 +20,6 @@ namespace Kargono
 			: Title(title), Width(width), Height(height) {}
 	};
 
-	//==============================
-	// Viewport Data Struct
-	//==============================
 	struct ViewportData
 	{
 		uint32_t m_Width{ 0 };
@@ -41,9 +34,6 @@ namespace Kargono
 		Hand
 	};
 
-	//==============================
-	// Window Class
-	//==============================
 	class Window
 	{
 	public:

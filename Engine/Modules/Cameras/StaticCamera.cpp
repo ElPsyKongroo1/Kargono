@@ -1,16 +1,15 @@
 #include "kgpch.h"
 
-#include "Kargono/Scenes/SceneCamera.h"
-
+#include "Modules/Cameras/StaticCamera.h"
 #include "Modules/Core/Engine.h"
 
-namespace Kargono::Scenes
+namespace Kargono::Cameras
 {
-	SceneCamera::SceneCamera()
+	StaticCamera::StaticCamera()
 	{
 		RecalculateProjection();
 	}
-	void SceneCamera::SetOrthographic(float size, float nearClip, float farClip)
+	void StaticCamera::SetOrthographic(float size, float nearClip, float farClip)
 	{
 		m_ProjectionType = ProjectionType::Orthographic;
 		m_OrthographicSize = size;
@@ -20,7 +19,7 @@ namespace Kargono::Scenes
 		RecalculateProjection();
 
 	}
-	void SceneCamera::SetPerspective(float verticalFOV, float nearClip, float farClip)
+	void StaticCamera::SetPerspective(float verticalFOV, float nearClip, float farClip)
 	{
 		m_ProjectionType = ProjectionType::Perspective;
 		m_PerspectiveFOV = verticalFOV;
@@ -29,18 +28,19 @@ namespace Kargono::Scenes
 
 		RecalculateProjection();
 	}
-	void SceneCamera::OnViewportResize()
+	void StaticCamera::OnViewportResize()
 	{
 		RecalculateProjection();
 	}
-	void SceneCamera::RecalculateProjection()
+	void StaticCamera::RecalculateProjection()
 	{
 		ViewportData& activeViewport = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		float aspectRatio = (float)activeViewport.m_Width / (float)activeViewport.m_Height;
 
 		if (m_ProjectionType == ProjectionType::Perspective)
 		{
-			m_Projection = glm::perspective(m_PerspectiveFOV, aspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+			m_CameraProjection.SetProjection(glm::perspective(m_PerspectiveFOV, 
+				aspectRatio, m_PerspectiveNear, m_PerspectiveFar));
 		}
 		else
 		{
@@ -50,9 +50,8 @@ namespace Kargono::Scenes
 			float orthoBottom = -m_OrthographicSize * 0.5f;
 			float orthoTop = m_OrthographicSize * 0.5f;
 
-
-			m_Projection = glm::ortho(orthoLeft, orthoRight,
-				orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar);
+			m_CameraProjection.SetProjection(glm::ortho(orthoLeft, orthoRight,
+				orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar));
 		}
 	}
 }

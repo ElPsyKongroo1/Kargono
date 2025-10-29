@@ -10,12 +10,14 @@ namespace Kargono
 {
 	struct TransformComponent
 	{
+	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
 		TransformComponent() = default;
 		TransformComponent(const Math::vec3& translation) : m_Translation(translation) {}
 
+	public:
 		//==============================
 		// Get as Matrices
 		//==============================
@@ -23,6 +25,7 @@ namespace Kargono
 		Math::mat4 GetTranslation() const;
 		Math::mat4 GetRotation() const;
 
+	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
@@ -35,6 +38,14 @@ namespace Kargono
 			dst->m_Rotation = m_Rotation;
 			dst->m_Scale = m_Scale;
 		}
+
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+	public:
 		//==============================
 		// Public Fields
 		//==============================

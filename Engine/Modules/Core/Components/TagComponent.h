@@ -10,6 +10,7 @@ namespace Kargono
 {
 	struct TagComponent
 	{
+	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
@@ -17,6 +18,7 @@ namespace Kargono
 		TagComponent(std::string_view tag) : m_Tag(tag) {}
 		TagComponent(std::string_view tag, std::string_view group) : m_Tag(tag), m_Group(group) {}
 
+	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
@@ -28,7 +30,13 @@ namespace Kargono
 			dst->m_Tag = m_Tag;
 			dst->m_Group = m_Group;
 		}
-
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+	public:
 		//==============================
 		// Public Fields
 		//==============================

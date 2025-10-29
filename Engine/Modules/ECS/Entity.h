@@ -5,10 +5,20 @@
 #include "Modules/Core/Components/TagComponent.h"
 #include "Modules/ECS/Registry.h"
 #include "Modules/ECSInternal/RegistryInternal.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 
 namespace Kargono::ECS
 {
+	struct EntitySerializationContext
+	{
+
+	};
+
+	struct EntityDeserializationContext
+	{
+
+	};
+
 	class Entity
 	{
 	public:
@@ -18,6 +28,12 @@ namespace Kargono::ECS
 		Entity() = default;
 		Entity(const Entity& other) = default;
 		Entity(ECSInternal::EntityID handle, Registry* registry);
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
 	public:
 		//==============================
 		// Manage Components
@@ -90,18 +106,9 @@ namespace Kargono::ECS
 
 		bool HasCustomComponentData(Assets::AssetHandle projectComponentHandle);
 
-		UUID GetUUID() 
-		{
-			return GetComponent<IDComponent>().m_ID; 
-		}
-		const char* GetName() 
-		{ 
-			return GetComponent<TagComponent>().m_Tag; 
-		}
-		ECSInternal::EntityID GetInternalID() const
-		{
-			return m_RegistryEntityID;
-		}
+		UUID GetUUID() { return GetComponent<IDComponent>().m_ID; }
+		const char* GetName() { return GetComponent<TagComponent>().m_Tag; }
+		ECSInternal::EntityID GetInternalID() const { return m_RegistryEntityID;}
 
 		bool IsValid() const
 		{
@@ -112,27 +119,15 @@ namespace Kargono::ECS
 		//==============================
 		// Operator Overloads
 		//==============================
-		operator bool() const 
-		{ 
-			return IsValid();
-		}
-		operator uint32_t() const 
-		{ 
-			return static_cast<uint32_t>(m_RegistryEntityID); 
-		}
-		operator uint64_t() const 
-		{ 
-			return static_cast<uint64_t>(m_RegistryEntityID); 
-		}
+		operator bool() const { return IsValid(); }
+		operator uint32_t() const { return static_cast<uint32_t>(m_RegistryEntityID); }
+		operator uint64_t() const { return static_cast<uint64_t>(m_RegistryEntityID); }
 		bool operator==(const Entity& other) const
 		{
 			return m_RegistryEntityID == other.m_RegistryEntityID && m_Registry == other.m_Registry;
 		}
+		bool operator!=(const Entity& other) const { return !(*this == other); }
 
-		bool operator!=(const Entity& other) const
-		{
-			return !(*this == other);
-		}
 	private:
 		//==============================
 		// Internal Fields

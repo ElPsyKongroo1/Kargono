@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Modules/Assets/Asset.h"
-#include "Modules/AI/Assets/AIStateAsset.h"
+#include "Modules/Assets/AssetsCommon.h"
+#include "Modules/AI/Assets/AIState.h"
 #include "Modules/AI/Module/AIModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
 
@@ -32,7 +32,12 @@ namespace Kargono::AI
 			dst->m_GlobalStateHandle = m_GlobalStateHandle;
 			dst->m_GlobalStateReference = m_GlobalStateReference;
 		}
-
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
 	public:
 		//==============================
 		// Public Fields

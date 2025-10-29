@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Modules/ECSInternal/Module/ComponentTag.h"
-#include "Modules/Rendering/Module/RenderingModule.h"
+#include "Modules/Cameras/Module/CamerasModule.h"
 
-#include "Kargono/Scenes/SceneCamera.h"
+#include "Modules/Cameras/StaticCamera.h"
 
-namespace Kargono::Rendering
+namespace Kargono::Cameras
 {
 	struct CameraComponent
 	{
@@ -15,7 +15,6 @@ namespace Kargono::Rendering
 		//==============================
 		CameraComponent() = default;
 		~CameraComponent() = default;
-
 	public:
 		//==============================
 		// Copy Function(s)
@@ -27,12 +26,17 @@ namespace Kargono::Rendering
 
 			dst->m_Camera = m_Camera;
 		}
-
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
 	public:
 		//==============================
 		// Public Fields
 		//==============================
-		Scenes::SceneCamera m_Camera{};
+		StaticCamera m_Camera{};
 	};
 
 	Register_Module_Type(CameraComponent, ECSInternal::ComponentTag)

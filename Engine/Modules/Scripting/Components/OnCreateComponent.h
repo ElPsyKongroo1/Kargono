@@ -3,7 +3,7 @@
 #include "Modules/ECSInternal/Module/ComponentTag.h"
 #include "Modules/Scripting/Module/ScriptingModule.h"
 
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 
 namespace Kargono::Scripting
@@ -28,6 +28,12 @@ namespace Kargono::Scripting
 			dst->m_OnCreateScriptHandle = m_OnCreateScriptHandle;
 			dst->m_OnCreateScript = m_OnCreateScript;
 		}
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
 	public:
 		//==============================
 		// Public Fields

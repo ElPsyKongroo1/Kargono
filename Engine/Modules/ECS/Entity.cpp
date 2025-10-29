@@ -1,11 +1,21 @@
 #include "kgpch.h"
 
 #include "Modules/ECS/Entity.h"
-#include "Modules/ECSInternal/CustomComponent.h"
+#include "Modules/ECSInternal/Assets/CustomComponent.h"
 #include "Modules/Assets/AssetService.h"
 
 namespace Kargono::ECS
 {
+	void Entity::Serialize(void* context)
+	{
+
+	}
+
+	void Entity::Deserialize(void* context)
+	{
+
+	}
+
 	Entity::Entity(ECSInternal::EntityID handle, Registry* registry)
 	{
 		KG_ASSERT(registry);

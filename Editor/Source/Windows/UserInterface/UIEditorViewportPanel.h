@@ -71,7 +71,7 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		FixedBufStr32 m_PanelName{ "User Interface Viewport" };
-		Rendering::EditorOrthographicCamera m_EditorCamera;
+		Rendering::OrthographicCamera m_EditorCamera;
 		ViewportData m_ViewportData;
 		Math::uvec2 m_ViewportAspectRatio{ 1, 1 };
 		int m_GizmoType{ -1 };

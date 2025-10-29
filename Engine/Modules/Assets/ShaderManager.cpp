@@ -265,9 +265,9 @@ namespace Kargono::Assets
 		// Load In-Memory Metadata Object
 		newAsset.Data.FileLocation = shaderTextFile;
 		Ref<Assets::ShaderMetaData> metadata = CreateRef<Assets::ShaderMetaData>();
-		metadata->ShaderSpec = shaderSpec;
-		metadata->InputLayout = inputLayout;
-		metadata->UniformList = uniformLayout;
+		metadata->m_ShaderSpec = shaderSpec;
+		metadata->m_InputLayout = inputLayout;
+		metadata->m_UniformList = uniformLayout;
 		newAsset.Data.SpecificFileData = metadata;
 	}
 

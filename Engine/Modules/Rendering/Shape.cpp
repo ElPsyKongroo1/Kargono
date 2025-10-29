@@ -4,6 +4,15 @@
 
 namespace Kargono::Rendering
 {
+	Shape::Shape(std::string_view name, const std::vector<Vertex>& indexVertices, const std::vector<Math::vec2>& indexTexCoordinates,
+		const std::vector<uint32_t>& indices,
+		const std::vector<Vertex>& triangleVertices, const std::vector<Math::vec2>& triangleTexCoordinates,
+		RenderingType renderingType, ShapeTypes shapeType,
+		const std::vector<std::string>& restrictedSpecs)
+	: m_Name{ name }, m_IndexVertices{ indexVertices }, m_IndexTextureCoordinates{ indexTexCoordinates }, m_Indices{ indices },
+		m_TriangleVertices{ triangleVertices }, m_TriangleTextureCoordinates{ triangleTexCoordinates },
+		m_RenderingType{ renderingType }, m_ShapeType{ shapeType }, m_RestrictedSpecs(restrictedSpecs) {}
+
 	Shape Shape::s_None {};
 	Shape Shape::s_Quad
 	{

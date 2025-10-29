@@ -1,20 +1,20 @@
 #pragma once
-#include "Modules/Particles/ParticleService.h"
-#include "Modules/Assets/Asset.h"
-
+#include "Modules/Particles/ParticleContext.h"
 #include "Modules/Particles/Module/ParticlesModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
+#include "Modules/Assets/AssetsCommon.h"
 
 namespace Kargono::Particles
 {
 	struct ParticleEmitterComponent
 	{
+	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
 		ParticleEmitterComponent() = default;
 		~ParticleEmitterComponent() = default;
-
+	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
@@ -27,6 +27,13 @@ namespace Kargono::Particles
 			dst->m_EmitterConfigHandle = m_EmitterConfigHandle;
 			dst->m_EmitterConfigRef = m_EmitterConfigRef;
 		}
+
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
 	public:
 		//==============================
 		// Public Fields

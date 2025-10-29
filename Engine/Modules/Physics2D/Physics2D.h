@@ -47,7 +47,7 @@ namespace Kargono::Physics
 
 	struct PhysicsSpecification
 	{
-		Math::vec2 Gravity { 0.0f, 0.0f };
+		Math::vec2 m_Gravity { 0.0f, 0.0f };
 	};
 
 	class Physics2DWorld

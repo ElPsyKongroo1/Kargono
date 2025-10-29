@@ -34,96 +34,101 @@ namespace Kargono::Rendering
 	struct DrawCallBuffer
 	{
 		Buffer m_VertexBuffer{};
-		uint8_t* m_VertexBufferIterator{ m_VertexBuffer.Data };
+		uint8_t* m_VertexBufferIterator{ m_VertexBuffer.m_Data };
 		std::vector<uint32_t> m_IndexBuffer {};
 		std::vector<Ref<Texture2D>> m_Textures {};
-		Shader* m_Shader = nullptr;
+		Shader* m_Shader{ nullptr };
 	};
 
-	// This struct allows input to be sent to the renderer
-	// TODO: The shape component is a memory leak...
 	struct RendererInputSpec
 	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		RendererInputSpec() = default;
+		~RendererInputSpec() = default;
+	public:
+		//==============================
+		// Clean Up
+		//==============================
+		void ClearData();
+	public:
+		//==============================
+		// Public Fields
+		//==============================
 		Ref<Shader> m_Shader;
 		Ref<Texture2D> m_Texture;
-		Rendering::ShapeComponent* m_ShapeComponent{ nullptr };
+		Rendering::ShapeComponent* m_ShapeComponent{ nullptr }; // TODO: The shape component is a memory leak...
 		Ref<DrawCallBuffer> m_CurrentDrawBuffer;
 		Buffer m_Buffer;
 		uint32_t m_Entity{ (uint32_t)-1};
 		void* m_EntityRegistry;
 		Math::mat4 m_TransformMatrix;
 		Math::mat4 m_ObjectOutlineMatrix;
-	public:
-		void ClearData();
 	};
 
-	// This struct specifies the type of color input used by a shader
-	// For example, flat color only sends one color for each object while vertex color
-	// sends a color for each vertex.
 	enum class ColorInputType
 	{
-		None = 0, FlatColor, VertexColor
+		None = 0, 
+		FlatColor, 
+		VertexColor
 	};
 
 	enum class TextureInputType
 	{
-		None = 0, ColorTexture, TextTexture
+		None = 0, 
+		ColorTexture, 
+		TextTexture
 	};
-
 
 	using ShaderSource = std::string;
 
+	// TODO: Note, ensure you update the serialization method after any changes!
 	struct ShaderSpecification
 	{
-		// TODO: Note, ensure you update the serialization method after any changes!
-
-		// Pixel Color Options
-		ColorInputType ColorInput = ColorInputType::None;
-		TextureInputType TextureInput = TextureInputType::None;
-
-		// Structure Change Options
-		bool AddCircleShape = false;
-
-		// Other Options
-		bool AddProjectionMatrix = false;
-		bool AddEntityID = false;
-
-		// Rendering Options
-		RenderingType RenderType = RenderingType::None;
-		bool DrawOutline = false;
-
-		// Generates default relational operations for comparing the same class! https://en.cppreference.com/w/cpp/language/default_comparisons
-		auto operator<=>(const ShaderSpecification&) const = default;
-		// Default Copy Constructor
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		ShaderSpecification(const ShaderSpecification&) = default;
 		ShaderSpecification() = default;
-		ShaderSpecification(ColorInputType colorInput, TextureInputType textureInput, bool addCircle, bool addProjection, bool addEntityID, RenderingType renderType, bool drawOutline)
-			: ColorInput(colorInput), TextureInput(textureInput), AddCircleShape(addCircle), AddProjectionMatrix(addProjection), AddEntityID(addEntityID), RenderType(renderType), DrawOutline(drawOutline)
-		{}
+		ShaderSpecification(ColorInputType colorInput, TextureInputType textureInput, 
+			bool addCircle, bool addProjection, bool addEntityID, 
+			RenderingType renderType, bool drawOutline);
+	public:
+		//==============================
+		// Operator Overload(s)
+		//==============================
+		auto operator<=>(const ShaderSpecification&) const = default;
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		// Pixel Color Options
+		ColorInputType m_ColorInput{ ColorInputType::None };
+		TextureInputType m_TextureInput{ TextureInputType::None };
+		// Structure Change Options
+		bool m_AddCircleShape{ false };
+		// Other Options
+		bool m_AddProjectionMatrix{ false };
+		bool m_AddEntityID{ false };
+		// Rendering Options
+		RenderingType m_RenderType{ RenderingType::None };
+		bool m_DrawOutline{ false };
 	};
 
 	class Shader
 	{
 	public:
-		Shader() = default;
-		Shader(const ShaderSpecification& shader) : m_ShaderSpecification(shader) {}
-	
-	public:
-		virtual ~Shader() = default;
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
-
-		virtual void SetMat3Uniform(const char* name, const Math::mat3& value) = 0;
-		virtual void SetMat4Uniform(const char* name, const Math::mat4& value) = 0;
-		virtual void SetFloatUniform(const char* name, float value) = 0;
-		virtual void SetFloat2Uniform(const char* name, const Math::vec2& value) = 0;
-		virtual void SetFloat3Uniform(const char* name, const Math::vec3& value) = 0;
-		virtual void SetFloat4Uniform(const char* name, const Math::vec4& value) = 0;
-		virtual void SetIntUniform(const char* name, int value) = 0;
-		virtual void SetIntArrayUniform(const char* name, int* values, uint32_t count) = 0;
-	public:
+		//==============================
+		// Create Shader
+		//==============================
 		static Ref<Shader> Create(const std::string& name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries);
 	public:
+		//==============================
+		// Interact with Input Locations
+		//==============================
 		template<typename T>
 		static T* GetInputLocation(uint32_t inputNameHash, Buffer inputBuffer, Ref<Shader> shader)
 		{
@@ -138,7 +143,7 @@ namespace Kargono::Rendering
 			return inputBuffer.As<T>(inputLocation);
 		}
 		template<typename T>
-		static void SetDataAtInputLocation(const T& value , uint32_t inputNameHash, Buffer inputBuffer, Ref<Shader> shader)
+		static void SetDataAtInputLocation(const T& value, uint32_t inputNameHash, Buffer inputBuffer, Ref<Shader> shader)
 		{
 			InputBufferElement* currentInputBufferElement = shader->GetInputLayout().FindElementByName(inputNameHash);
 
@@ -152,7 +157,33 @@ namespace Kargono::Rendering
 			T* inputPointer = inputBuffer.As<T>(inputLocation);
 			*inputPointer = value;
 		}
-
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		Shader() = default;
+		Shader(const ShaderSpecification& shader);
+		virtual ~Shader() = default;
+	public:
+		//==============================
+		// Interact w/ Renderer
+		//==============================
+		// Binding API
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+		// Modify underlying uniform
+		virtual void SetMat3Uniform(const char* name, const Math::mat3& value) = 0;
+		virtual void SetMat4Uniform(const char* name, const Math::mat4& value) = 0;
+		virtual void SetFloatUniform(const char* name, float value) = 0;
+		virtual void SetFloat2Uniform(const char* name, const Math::vec2& value) = 0;
+		virtual void SetFloat3Uniform(const char* name, const Math::vec3& value) = 0;
+		virtual void SetFloat4Uniform(const char* name, const Math::vec4& value) = 0;
+		virtual void SetIntUniform(const char* name, int value) = 0;
+		virtual void SetIntArrayUniform(const char* name, int* values, uint32_t count) = 0;
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
 		const ShaderSpecification& GetSpecification() const { return m_ShaderSpecification; }
 		InputBufferLayout& GetInputLayout() { return m_InputBufferLayout; }
 		const UniformBufferList& GetUniformList() const { return m_UniformBufferList; }
@@ -182,19 +213,21 @@ namespace Kargono::Rendering
 		UniformBufferList m_UniformBufferList{};
 	private:
 		void FillRenderFunctionList();
-
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
 		// Renderer Specific Functionality
 		std::vector<std::function<void(RendererInputSpec& spec)>> m_FillDataPerObject {};
 		std::vector<std::function<void(RendererInputSpec& spec, uint32_t iteration)>> m_FillDataPerVertex {};
 		std::vector<std::function<void(RendererInputSpec& spec)>> m_FillDataInScene {};
 		std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>> m_SubmitUniforms {};
 		std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>> m_DrawFunctions {};
-
+		// Pre and post draw call functionality
 		std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>> m_PreDrawBuffer {};
 		std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>> m_PostDrawBuffer {};
-		Ref<DrawCallBuffer> m_CurrentDrawCall = nullptr;
-		Ref<VertexArray> m_VertexArray = nullptr;
-
+		Ref<DrawCallBuffer> m_CurrentDrawCall{ nullptr };
+		Ref<VertexArray> m_VertexArray{ nullptr };
 	};
 }
 

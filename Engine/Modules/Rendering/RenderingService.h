@@ -2,108 +2,92 @@
 
 #include "Kargono/Core/Base.h"
 #include "Modules/Rendering/RendererAPI.h"
-#include "Modules/Rendering/EditorPerspectiveCamera.h"
-#include "Modules/Rendering/Camera.h"
+#include "Modules/Rendering/PerspectiveCamera.h"
+#include "Modules/Rendering/CameraProjection.h"
 #include "Modules/Rendering/Shader.h"
 #include "Kargono/Math/Math.h"
 
 namespace Kargono::Rendering
 {
+	struct Statistics
+	{
+		uint32_t m_DrawCalls{ 0 };
+		uint32_t m_VertexCount{ 0 };
+	};
+
+	constexpr inline uint32_t k_MaxVertexBufferSize{ 10000 };
+
 	class RenderingService
 	{
 	public:
-		//============================================================
-		// Renderer LifeTime Functions
-		//============================================================
+		//==============================
+		// Lifecycle Functions
+		//==============================
 		static void Init();
 		static void Shutdown();
-		//============================================================
-		// RendererAPI Connection Functions
-		//============================================================
+	public:
+		//==============================
+		// Manage Window
+		//==============================
 		static void OnWindowResize(uint32_t width, uint32_t height);
-
-		//============================================================
-		// Scene Rendering Submission LifeTime Functions
-		//============================================================
-		static void BeginScene(const Camera& camera, const Math::mat4& viewMatrix);
-		static void BeginScene(const EditorPerspectiveCamera& camera);
+	public:
+		//==============================
+		// Scene Rendering
+		//==============================
+		static void BeginScene(const CameraProjection& camera, const Math::mat4& viewMatrix);
+		static void BeginScene(const PerspectiveCamera& camera);
 		static void BeginScene(const Math::mat4 viewProjection);
 		static void SubmitDataToRenderer(RendererInputSpec& inputSpec);
 		static void EndScene();
 	private:
+		// Helper(s)
 		static void FlushBuffers();
 	public:
-
-		//============================================================
-		// Set Line Width!
-		//============================================================
+		//==============================
+		// Renderer Configuration
+		//==============================
 		static float GetLineWidth();
 		static void SetLineWidth(float width);
-
-
 	private:
-
-		// Note: The following functions are intended to be added to the
-		// vectors inside the shader class when shaders are initialized
-
-		// Set Shader as friend to allow function pointers below to be used
-		friend Shader;
-
-		//============================================================
+		//==============================
 		// Per Object Function Pointers for Filling Input Data
-		//============================================================
+		//==============================
 		static void FillTextureIndex(RendererInputSpec& inputSpec);
 		static void FillTextureAtlas(RendererInputSpec& inputSpec);
 		static void FillIndicesData(RendererInputSpec& inputSpec);
 		static void FillEntityID(Rendering::RendererInputSpec& inputSpec);
-
-		//============================================================
+	private:
+		//==============================
 		// Per Vertex Function Pointers for Filling Input Data
-		//============================================================
+		//==============================
 		static void FillTextureCoordinate(RendererInputSpec& inputSpec, uint32_t iteration);
 		static void FillLocalPosition(RendererInputSpec& inputSpec, uint32_t iteration);
 		static void FillWorldPosition(RendererInputSpec& inputSpec, uint32_t iteration);
 		static void FillWorldPositionNoTransform(RendererInputSpec& inputSpec, uint32_t iteration);
 		static void FillVertexColor(RendererInputSpec& inputSpec, uint32_t iteration);
-		
-		//============================================================
+	private:
+		//==============================
 		// Per DrawCallBuffer Function Pointers to fill Uniform Data
-		//============================================================
+		//==============================
 		static void FillTextureUniform(Ref<DrawCallBuffer> buffer);
-
-		//============================================================
-		// Pre Batch Render Functions
-		//============================================================
-		
-
-		//============================================================
-		// Post Batch Render Functions
-		//============================================================
-		
-
-		//============================================================
+	private:
+		//==============================
 		// Draw Call Functions
-		//============================================================
+		//==============================
 		static void DrawBufferPoints(Ref<DrawCallBuffer> buffer);
 		static void DrawBufferLine(Ref<DrawCallBuffer> buffer);
 		static void DrawBufferIndices(Ref<DrawCallBuffer> buffer);
 		static void DrawBufferTriangles(Ref<DrawCallBuffer> buffer);
-
-		
-
-		// Specifies maximum size in bytes of DrawCallBuffers
-		static const uint32_t s_MaxVertexBufferSize = 10000;
 	public:
-
-		//============================================================
-		// Statistics Struct and Functions for Debugging
-		//============================================================
-		struct Statistics
-		{
-			uint32_t DrawCalls = 0;
-			uint32_t VertexCount = 0;
-		};
+		//==============================
+		// Debug Statistics
+		//==============================
 		static void ResetStats();
 		static Statistics GetStats();
+	private:
+		//==============================
+		// Friend Declarations
+		//==============================
+		friend Shader;
 	};
 }

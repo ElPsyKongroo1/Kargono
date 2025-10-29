@@ -11,9 +11,10 @@ namespace Kargono::EditorUI
 		KG_ASSERT(serializeContext);
 		Assets::Metadata* metadata{ serializeContext->m_AssetMetadata };
 		KG_ASSERT(metadata);
+
 		// Get asset path
-		
 		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<ColorPalette>() };
+
 		// Serialize asset
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map

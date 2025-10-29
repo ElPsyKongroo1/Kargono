@@ -30,6 +30,12 @@ namespace Kargono::Scripting
 		}
 	public:
 		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+	public:
+		//==============================
 		// Public Fields
 		//==============================
 		Assets::AssetHandle m_OnUpdateScriptHandle{ Assets::k_EmptyHandle };

@@ -13,6 +13,132 @@ namespace Kargono::Rendering
 	{
 		None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool
 	};
+
+	struct InputBufferElement
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		InputBufferElement() = default;
+		InputBufferElement(InputDataType type, std::string_view name, bool normalized = false);
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		uint32_t GetComponentCount() const;
+	public:
+		//==============================
+		// Operator Overloads
+		//==============================
+		operator bool() const;
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		std::string m_Name{};
+		InputDataType m_Type{};
+		uint32_t m_Size{};
+		size_t m_Offset{};
+		bool m_Normalized{ false };
+	};
+
+	class InputBufferLayout
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		InputBufferLayout() = default;
+		InputBufferLayout(std::initializer_list<InputBufferElement> elements);
+	public:
+		//==============================
+		// Interact With Layout
+		//==============================
+		InputBufferElement* FindElementByHash(uint32_t nameHash);
+		void AddBufferElement(const InputBufferElement& bufferElement);
+		void Clear() { m_Elements.clear(); CalculateOffsetsAndStride(); }
+	private:
+		// Helper(s)
+		void CalculateOffsetsAndStride();
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		const std::vector<InputBufferElement>& GetElements() const { return m_Elements; }
+		uint32_t GetStride() const { return m_Stride; }
+	public:
+		//==============================
+		// Iterators
+		//==============================
+		std::vector<InputBufferElement>::iterator begin() { return m_Elements.begin(); }
+		std::vector<InputBufferElement>::iterator end() { return m_Elements.end(); }
+		std::vector<InputBufferElement>::const_iterator begin() const { return m_Elements.begin(); }
+		std::vector<InputBufferElement>::const_iterator end() const { return m_Elements.end(); }
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		std::vector<InputBufferElement> m_Elements {};
+		std::unordered_map<uint32_t, uint32_t> m_ElementLocations {};
+		uint32_t m_Stride = 0;
+	};
+
+	class VertexBuffer
+	{
+	public:
+		//==============================
+		// Get New Vertex Buffer
+		//==============================
+		static Ref<VertexBuffer> Create(uint32_t size);
+		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		VertexBuffer() = default;
+		virtual ~VertexBuffer() = default;
+	public:
+		//==============================
+		// Interact With Renderer
+		//==============================
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+		virtual void SetData(const void* data, uint32_t size) = 0;
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		virtual const InputBufferLayout& GetLayout() const = 0;
+		virtual void SetLayout(const InputBufferLayout& layout) = 0;
+	};
+
+	class IndexBuffer
+	{
+	public:
+		//==============================
+		// Get New Index Buffer
+		//==============================
+		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		IndexBuffer() = default;
+		virtual ~IndexBuffer() = default;
+	public:
+		//==============================
+		// Interact With Renderer
+		//==============================
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		virtual uint32_t GetCount() const = 0;
+
+	};
 }
 
 namespace Kargono::Utility
@@ -70,146 +196,4 @@ namespace Kargono::Utility
 		return "";
 
 	}
-}
-
-
-namespace Kargono::Rendering
-{
-
-	struct InputBufferElement
-	{
-	public:
-		std::string Name;
-		InputDataType Type;
-		uint32_t Size;
-		size_t Offset;
-		bool Normalized = false;
-	public:
-		InputBufferElement() = default;
-
-		InputBufferElement(InputDataType type, std::string_view name, bool normalized = false)
-			: Name(name), Type(type), Size(Utility::ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
-		{
-		}
-
-		uint32_t GetComponentCount() const
-		{
-			switch (Type)
-			{
-			case InputDataType::Float:		return 1;
-			case InputDataType::Float2:		return 2;
-			case InputDataType::Float3:		return 3;
-			case InputDataType::Float4:		return 4;
-			case InputDataType::Int:		return 1;
-			case InputDataType::Int2:		return 2;
-			case InputDataType::Int3:		return 3;
-			case InputDataType::Int4:		return 4;
-			case InputDataType::Mat3:		return 3; // 3* float3
-			case InputDataType::Mat4:		return 4; // 4* float4
-			case InputDataType::Bool:		return 1;
-			}
-			KG_ERROR("Unknown ShaderDataType!");
-			return 0;
-		}
-
-		operator bool() const
-		{
-			if (Name.empty()) { return false; }
-			return true;
-		}
-	};
-
-	class InputBufferLayout
-	{
-	public:
-		InputBufferLayout() {}
-
-		InputBufferLayout(std::initializer_list<InputBufferElement> elements)
-			: m_Elements(elements)
-		{
-			CalculateOffsetsAndStride();
-		}
-
-		const std::vector<InputBufferElement>& GetElements() const { return m_Elements; }
-		uint32_t GetStride() const { return m_Stride; }
-
-		void AddBufferElement(const InputBufferElement& bufferElement)
-		{
-			m_Elements.push_back(bufferElement);
-			CalculateOffsetsAndStride();
-		}
-
-		InputBufferElement* FindElementByName(uint32_t nameHash)
-		{
-			if (!m_ElementLocations.contains(nameHash))
-			{
-				KG_WARN("Could not locate element inside InputBufferLayout");
-				return nullptr;
-			}
-
-			return &m_Elements.at(m_ElementLocations.at(nameHash));
-		}
-
-
-
-		void Clear() { m_Elements.clear(); CalculateOffsetsAndStride(); }
-
-		std::vector<InputBufferElement>::iterator begin() { return m_Elements.begin(); }
-		std::vector<InputBufferElement>::iterator end() { return m_Elements.end(); }
-		std::vector<InputBufferElement>::const_iterator begin() const { return m_Elements.begin(); }
-		std::vector<InputBufferElement>::const_iterator end() const { return m_Elements.end(); }
-	private:
-		void CalculateOffsetsAndStride ()
-		{
-			m_Stride = 0;
-			m_ElementLocations.clear();
-			if (m_Elements.empty()) { return; }
-
-			size_t offset = 0;
-			uint32_t iteration = 0;
-			for (InputBufferElement& element : m_Elements)
-			{
-				m_ElementLocations.insert({ Utility::FileSystem::CRCFromString(element.Name.c_str()), static_cast<std::uint32_t>(iteration) });
-				element.Offset = offset;
-				offset += element.Size;
-				m_Stride += element.Size;
-				iteration++;
-			}
-		}
-	private:
-		std::vector<InputBufferElement> m_Elements {};
-		std::unordered_map<uint32_t, uint32_t> m_ElementLocations {};
-		uint32_t m_Stride = 0;
-	};
-
-	class VertexBuffer
-	{
-	public:
-		virtual ~VertexBuffer() = default;
-	public:
-
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
-		virtual void SetData(const void* data, uint32_t size) = 0;
-
-		virtual const InputBufferLayout& GetLayout() const = 0;
-		virtual void SetLayout(const InputBufferLayout& layout) = 0;
-
-
-		static Ref<VertexBuffer> Create(uint32_t size);
-		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
-	};
-	// Currently Kargono only supports 32-bit index buffers
-	class IndexBuffer
-	{
-	public:
-		virtual ~IndexBuffer() = default;
-	public:
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
-
-		virtual uint32_t GetCount() const = 0;
-
-		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
-	};
 }

@@ -63,7 +63,7 @@ namespace Kargono::InputMap
 			// Initialize InputMapContext
 			if (!s_InputMapContext)
 			{
-				s_InputMapContext = CreateRef<Input::InputMapContext>();
+				s_InputMapContext = CreateRef<InputMapContext>();
 			}
 
 			// Verify init is successful

@@ -7,17 +7,9 @@
 
 namespace Kargono
 {
-	//=========================
-	// Screen Resolution Options Enum
-	//=========================
-	// This enum provides the different screen resolution options available
-	//		at a project level. This enum is used to set the default and stored
-	//		screen resolution for the project.
-
-	//// 21:9 resolutions TODO: Add 21:9 for ultra wide. Does not divide into same value!
+	//// TODO: 21:9 resolutions. Add 21:9 for ultra wide. Does not divide into same value!
 	//R2560×1080, R3440×1440, R3840×1600,
 	//R5120×2160, R5760×2400, R7680×3200, R10240×4320,
-
 	enum class ScreenResolution : uint16_t
 	{
 		None = 0,
@@ -170,17 +162,8 @@ namespace Kargono
 
 namespace Kargono::Utility
 {
-
-	//=========================
-	// Conversion Functions
-	//=========================
-
-	// These functions help convert the screen resolution and aspect ratio enum into a string
-	//		to serialization purposes.
-
 	inline const char* ScreenResolutionToString(ScreenResolution option)
 	{
-
 		switch (option)
 		{
 			// 1x1 resolutions
@@ -289,7 +272,6 @@ namespace Kargono::Utility
 
 	inline ScreenResolution StringToScreenResolution(std::string_view optionStr)
 	{
-
 		// 1x1 resolutions
 		if (optionStr == "256x256") return ScreenResolution::R256x256;
 		if (optionStr == "512x512") return ScreenResolution::R512x512;

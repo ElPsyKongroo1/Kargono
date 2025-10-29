@@ -14,7 +14,7 @@ namespace Kargono::Physics2D
 		//==============================
 		CircleCollider2DComponent() = default;
 		~CircleCollider2DComponent() = default;
-
+	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
@@ -32,6 +32,13 @@ namespace Kargono::Physics2D
 			dst->m_IsSensor = m_IsSensor;
 			dst->m_RuntimeFixture = m_RuntimeFixture;
 		}
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+	public:
 		//==============================
 		// Public Fields
 		//==============================

@@ -166,7 +166,7 @@ namespace Kargono
 		{
 			return;
 		}
-		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
+		Rendering::CameraProjection* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
 		
 		// Only handle UI and particles if a main camera exists
 		if (mainCamera)
@@ -486,7 +486,7 @@ namespace Kargono
 		{
 			return;
 		}
-		Rendering::Camera* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
+		Rendering::CameraProjection* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
 		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
 
 		if (mainCamera)

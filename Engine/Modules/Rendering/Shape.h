@@ -22,48 +22,45 @@ namespace Kargono::Rendering
 	class Shape
 	{
 	public:
-		//============================================================
-		// Constructors
-		//============================================================
-		Shape() = default;
-		Shape(std::string_view name, const std::vector<Vertex>& indexVertices, const std::vector<Math::vec2>& indexTexCoordinates,
-			const std::vector<uint32_t>& indices,
-			const std::vector<Vertex>& triangleVertices, const std::vector<Math::vec2>& triangleTexCoordinates,
-			RenderingType renderingType, ShapeTypes shapeType,
-			const std::vector<std::string>& restrictedSpecs)
-			: m_Name{ name }, m_IndexVertices{ indexVertices }, m_IndexTextureCoordinates{ indexTexCoordinates },m_Indices{ indices },
-			m_TriangleVertices{triangleVertices}, m_TriangleTextureCoordinates{triangleTexCoordinates},
-		m_RenderingType{ renderingType }, m_ShapeType{shapeType}, m_RestrictedSpecs(restrictedSpecs) {}
-		std::string_view GetName() const { return m_Name; }
-		//============================================================
-		// Getters/Setters
-		//============================================================
-		// Index Getter/Setters
-		const std::vector<Vertex>& GetIndexVertices() const { return m_IndexVertices; }
-		const std::vector<uint32_t>& GetIndices() const { return m_Indices; }
-		const std::vector<Math::vec2>& GetIndexTextureCoordinates() const { return m_IndexTextureCoordinates; }
-
-		const std::vector<Vertex>& GetTriangleVertices() const { return m_TriangleVertices; }
-		const std::vector<Math::vec2>& GetTriangleTextureCoordinates() const { return m_TriangleTextureCoordinates; }
-
-		// Triangle Getters/Setters
-
-		// Type Information Getters
-		RenderingType GetRenderingType() const { return m_RenderingType; }
-		ShapeTypes GetShapeType() const { return m_ShapeType; }
-		const std::vector<std::string>& GetRestrictedSpecs() const { return m_RestrictedSpecs; }
-
-	public:
-		//============================================================
-		// Static Object Declarations
-		//============================================================
+		//==============================
+		// Static Garbage TODO PLEAZEEE REMOVEEEE AHHHHHHHHHHHHH
+		//==============================
 		static Shape s_Pyramid;
 		static Shape s_Quad;
 		static Shape s_Cube;
 		static Shape s_None;
 
-		inline static std::vector<Shape*> s_AllShapes {&s_Quad, &s_Cube, &s_None, &s_Pyramid};
+		inline static std::vector<Shape*> s_AllShapes{ &s_Quad, &s_Cube, &s_None, &s_Pyramid };
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		Shape() = default;
+		Shape(std::string_view name, const std::vector<Vertex>& indexVertices, const std::vector<Math::vec2>& indexTexCoordinates,
+			const std::vector<uint32_t>& indices,
+			const std::vector<Vertex>& triangleVertices, const std::vector<Math::vec2>& triangleTexCoordinates,
+			RenderingType renderingType, ShapeTypes shapeType,
+			const std::vector<std::string>& restrictedSpecs);
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		std::string_view GetName() const { return m_Name; }
+		// Index data
+		const std::vector<Vertex>& GetIndexVertices() const { return m_IndexVertices; }
+		const std::vector<uint32_t>& GetIndices() const { return m_Indices; }
+		const std::vector<Math::vec2>& GetIndexTextureCoordinates() const { return m_IndexTextureCoordinates; }
+		// Triangle data
+		const std::vector<Vertex>& GetTriangleVertices() const { return m_TriangleVertices; }
+		const std::vector<Math::vec2>& GetTriangleTextureCoordinates() const { return m_TriangleTextureCoordinates; }
+		// Enums
+		RenderingType GetRenderingType() const { return m_RenderingType; }
+		ShapeTypes GetShapeType() const { return m_ShapeType; }
+		const std::vector<std::string>& GetRestrictedSpecs() const { return m_RestrictedSpecs; }
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
 		std::string m_Name {};
 		// Indices Data
 		std::vector<Vertex> m_IndexVertices {};
@@ -75,10 +72,7 @@ namespace Kargono::Rendering
 		// Type Information
 		RenderingType m_RenderingType { RenderingType::None};
 		ShapeTypes m_ShapeType{ ShapeTypes::None };
-
-		// Editor Information
-		// This field labels shader specifications that should not be visible in the SceneHierarchy Panel
-		// for this particular object.
+		// Editor Information TODO: Move out of here
 		std::vector<std::string> m_RestrictedSpecs {};
 	};
 

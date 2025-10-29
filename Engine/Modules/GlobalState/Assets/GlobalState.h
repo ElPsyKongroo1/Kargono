@@ -3,20 +3,52 @@
 #include "Kargono/Core/WrappedData.h"
 #include "Kargono/Core/Buffer.h"
 
+#include "Modules/Assets/AssetsCommon.h"
+#include "Modules/Assets/Metadata.h"
+#include "Modules/Assets/Module/AssetTag.h"
+#include "Modules/GlobalState/Module/GlobalStateModule.h"
+
 #include <cstdint>
 #include <vector>
 #include <string>
 
-namespace Kargono::ProjectData
+namespace Kargono::GlobalState
 {
 	struct GlobalState
 	{
+	public:
+		//==============================
+		// Asset Config Info
+		//==============================
+		constexpr static FixedBufStr32 GetAssetName()
+		{
+			return "Global State";
+		}
+		constexpr static Assets::AssetFlags GetAssetFlags()
+		{
+			Assets::AssetFlags flags{};
+			flags.ClearFlag(Assets::AssetFlag::HasAssetCache);
+			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			return flags;
+		}
+		constexpr static FixedBufStr16 GetFileExtension()
+		{
+			return ".kggstate";
+		}
+		static void CreateAssetFromName(Assets::Metadata& metadata);
 	public:
 		//=========================
 		// Constructors/Destructors
 		//=========================
 		GlobalState() = default;
 		~GlobalState();
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+
 	public:
 		//=========================
 		// Query State
@@ -81,4 +113,6 @@ namespace Kargono::ProjectData
 		std::vector<FixedBufStr32> m_DataNames;
 		Buffer m_DataBuffer;
 	};
+
+	Register_Module_Type(GlobalState, Assets::AssetTag)
 }

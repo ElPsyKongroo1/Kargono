@@ -21,7 +21,7 @@ namespace Kargono::Panels
 		InitializeFrameBuffer();
 		InitializeOverlayData();
 
-		m_EditorCamera = Rendering::EditorOrthographicCamera(Math::vec2(100.0f, 100.0f), -3.0f, 3.0f);
+		m_EditorCamera = Rendering::OrthographicCamera(Math::vec2(100.0f, 100.0f), -3.0f, 3.0f);
 		m_EditorCamera.SetPosition(Math::vec3(0.0f, 0.0f, 0.0f));
 		m_EditorCamera.SetRotation(Math::vec3(0.0f, 0.0f, 0.0f));
 		m_EditorCamera.SetKeyboardSpeed(200.0f);

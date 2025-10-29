@@ -214,6 +214,14 @@ namespace YAML
 		return out;
 	}
 
+	inline YAML::Emitter& operator<<(YAML::Emitter& out, std::string_view stringView)
+	{
+		// TODO: Need to write my own out.Write() overload for string_views, this is horribly inefficient
+		std::string value{ stringView };
+		out.Write(value);
+		return out;
+	}
+
 }
 
 namespace Kargono::Utility

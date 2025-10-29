@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 
 #include "Modules/Physics2D/Module/Physics2DModule.h"
@@ -23,7 +23,6 @@ namespace Kargono::Physics2D
 		//==============================
 		Rigidbody2DComponent() = default;
 		~Rigidbody2DComponent() = default;
-
 	public:
 		//==============================
 		// Copy Function(s)
@@ -42,6 +41,12 @@ namespace Kargono::Physics2D
 			dst->m_OnCollisionEndScript = m_OnCollisionEndScript;
 		}
 
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
 	public:
 		//==============================
 		// Public Fields

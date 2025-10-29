@@ -6,7 +6,6 @@
 
 namespace Kargono::Rendering
 {
-
 	enum class UniformDataType
 	{
 		None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool, Sampler2D
@@ -15,72 +14,76 @@ namespace Kargono::Rendering
 	struct UniformElement
 	{
 	public:
-		std::string Name;
-		UniformDataType Type;
-	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		UniformElement() = default;
-
-		UniformElement(UniformDataType type, std::string_view name)
-			: Name(name), Type(type)
-		{
-		}
-
-		uint32_t GetComponentCount() const
-		{
-			switch (Type)
-			{
-			case UniformDataType::Float:	return 1;
-			case UniformDataType::Float2:	return 2;
-			case UniformDataType::Float3:	return 3;
-			case UniformDataType::Float4:	return 4;
-			case UniformDataType::Sampler2D:return 4;
-			case UniformDataType::Int:		return 1;
-			case UniformDataType::Int2:		return 2;
-			case UniformDataType::Int3:		return 3;
-			case UniformDataType::Int4:		return 4;
-			case UniformDataType::Mat3:		return 3; // 3* float3
-			case UniformDataType::Mat4:		return 4; // 4* float4
-			case UniformDataType::Bool:		return 1;
-			}
-			KG_ERROR("Unknown UniformDataType!");
-			return 0;
-		}
+		UniformElement(UniformDataType type, std::string_view name);
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		uint32_t GetComponentCount() const;
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		std::string m_Name;
+		UniformDataType m_Type;
 	};
 
 	class UniformBufferList
 	{
 	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
 		UniformBufferList() {}
-
-		UniformBufferList(std::initializer_list<UniformElement> elements)
-			: m_Elements(elements)
-		{
-		}
-
-		const std::vector<UniformElement>& GetElements() const { return m_Elements; }
-
-		void AddBufferElement(const UniformElement& uniformElement)
-		{
-			m_Elements.push_back(uniformElement);
-		}
-
+		UniformBufferList(std::initializer_list<UniformElement> elements);
+	public:
+		//==============================
+		// Iterators
+		//==============================
+		void AddBufferElement(const UniformElement& uniformElement) { m_Elements.push_back(uniformElement); }
 		void Clear() { m_Elements.clear(); }
-
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		const std::vector<UniformElement>& GetElements() const { return m_Elements; }
+	public:
+		//==============================
+		// Iterators
+		//==============================
 		std::vector<UniformElement>::iterator begin() { return m_Elements.begin(); }
 		std::vector<UniformElement>::iterator end() { return m_Elements.end(); }
 		std::vector<UniformElement>::const_iterator begin() const { return m_Elements.begin(); }
 		std::vector<UniformElement>::const_iterator end() const { return m_Elements.end(); }
 	private:
+		//==============================
+		// Internal Fields
+		//==============================
 		std::vector<UniformElement> m_Elements {};
 	};
 
 	class UniformBuffer
 	{
 	public:
-		virtual ~UniformBuffer() {}
-		virtual void SetData(const void* data, uint32_t size, uint32_t offset = 0) = 0;
-
+		//==============================
+		// Create Uniform Buffer
+		//==============================
 		static Ref<UniformBuffer> Create(uint32_t size, uint32_t binding);
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		UniformBuffer() {}
+		virtual ~UniformBuffer() {}
+	public:
+		//==============================
+		// Interact With Renderer
+		//==============================
+		virtual void SetData(const void* data, uint32_t size, uint32_t offset = 0) = 0;
 	};
 
 }

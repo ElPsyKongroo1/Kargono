@@ -19,7 +19,16 @@ namespace Kargono::Rendering
 	class RendererAPI
 	{
 	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
 		static void Init();
+	public:
+		//==============================
+		// Configuration Functions
+		//==============================
+		static void SetLineWidth(float width);
+		static void SetPointWidth(float size);
 		static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 		static void ClearDepthBuffer();
 		static void SetClearColor(const Math::vec4& color);
@@ -28,13 +37,15 @@ namespace Kargono::Rendering
 		static void StencilTestFunc(StencilComparisonType comparisonType, int32_t reference, uint32_t mask);
 		static void StencilTestOptions(StencilOptions sfail, StencilOptions dfail, StencilOptions sdpass);
 		static void Clear();
-
+	public:
+		//==============================
+		// Rendering Functions
+		//==============================
 		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0);
 		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t* indexPointer, uint32_t indexCount);
 		static void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
 		static void DrawPoints(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
 		static void DrawTriangles(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
-		static void SetLineWidth(float width);
-		static void SetPointWidth(float size);
+
 	};
 }

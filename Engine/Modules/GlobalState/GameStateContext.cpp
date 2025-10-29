@@ -1,8 +1,8 @@
 #include "kgpch.h"
 
-#include "Kargono/Scenes/GameState.h"
+#include "Modules/GlobalState/GameStateContext.h"
 
-namespace Kargono::Scenes
+namespace Kargono::GlobalState
 {
 	void GameStateContext::ClearActiveGameState()
 	{

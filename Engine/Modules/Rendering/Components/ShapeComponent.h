@@ -3,7 +3,7 @@
 #include "Modules/Rendering/Module/RenderingModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
 
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Kargono/Core/Buffer.h"
 
 #include <vector>
@@ -19,6 +19,7 @@ namespace Kargono::Rendering
 		ShapeComponent();
 		~ShapeComponent();
 
+	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
@@ -40,7 +41,12 @@ namespace Kargono::Rendering
 			dst->m_ShaderData = Buffer::Copy(m_ShaderData);
 			dst->m_VertexColors = m_VertexColors;
 		}
-
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
 	public:
 		//==============================
 		// Public Fields

@@ -6,7 +6,7 @@
 #include "Modules/Events/AssetEvent.h"
 #include "Modules/Assets/Module/AssetTag.h"
 #include "Modules/Assets/AssetReference.h"
-#include "Kargono/Memory/IAllocator.h"
+#include "Modules/Memory/IAllocator.h"
 #include "Modules/Assets/Concepts/ManageAssetConcepts.h"
 #include "Modules/Assets/Concepts/RegistryConcept.h"
 

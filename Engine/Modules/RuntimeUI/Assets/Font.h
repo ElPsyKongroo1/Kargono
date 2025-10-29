@@ -92,7 +92,6 @@ namespace Kargono::RuntimeUI
 		{
 			return "Font";
 		}
-
 		constexpr static Assets::AssetFlags GetAssetFlags()
 		{
 			Assets::AssetFlags flags{};
@@ -100,22 +99,18 @@ namespace Kargono::RuntimeUI
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
 			return flags;
 		}
-
 		constexpr static FixedBufStr16 GetFileExtension()
 		{
 			return ".kgfont";
 		}
-
 		constexpr static std::span<const FixedBufStr16> GetImportExtensions()
 		{
 			return std::span(k_ImportExtensions.data(), k_ImportExtensions.size());
 		}
-
 		constexpr static std::span<const FixedBufStr16> GetIntermediateExtensions()
 		{
 			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
 		}
-
 		static void CreateAssetFromName(Assets::Metadata& metadata);
 		static void CreateAssetFromFile(Assets::Metadata& metadata,
 			const std::filesystem::path& sourcePath);

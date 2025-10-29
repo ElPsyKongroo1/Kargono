@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Modules/Rendering/EditorPerspectiveCamera.h"
+#include "Modules/Cameras/PerspectiveCamera.h"
 #include "Modules/Input/InputService.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
@@ -10,22 +10,22 @@
 #include "API/Platform/GlfwAPI.h"
 
 
-namespace Kargono::Rendering
+namespace Kargono::Cameras
 {
-
-	EditorPerspectiveCamera::EditorPerspectiveCamera(float fov, float aspectRatio, float nearClip, float farClip)
-		: m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip), Camera(glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip))
+	PerspectiveCamera::PerspectiveCamera(float fov, float aspectRatio, float nearClip, float farClip)
+		: m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip), 
+		m_CameraProjection(glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip))
 	{
 		UpdateView();
 	}
 
-	void EditorPerspectiveCamera::UpdateProjection()
+	void PerspectiveCamera::UpdateProjection()
 	{
 		m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
-		m_Projection = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip);
+		m_CameraProjection.SetProjection(glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip));
 	}
 
-	void EditorPerspectiveCamera::UpdateView()
+	void PerspectiveCamera::UpdateView()
 	{
 		// m_Yaw = m_Pitch = 0.0f; // Lock the camera's rotation
 		m_Position = CalculatePosition();
@@ -35,7 +35,7 @@ namespace Kargono::Rendering
 		m_ViewMatrix = glm::inverse(m_ViewMatrix);
 	}
 
-	std::pair<float, float> EditorPerspectiveCamera::PanSpeed() const
+	std::pair<float, float> PerspectiveCamera::PanSpeed() const
 	{
 		float x = std::min(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
 		float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
@@ -46,12 +46,12 @@ namespace Kargono::Rendering
 		return { xFactor, yFactor };
 	}
 
-	float EditorPerspectiveCamera::RotationSpeed() const
+	float PerspectiveCamera::RotationSpeed() const
 	{
 		return 0.8f;
 	}
 
-	float EditorPerspectiveCamera::ZoomSpeed() const
+	float PerspectiveCamera::ZoomSpeed() const
 	{
 		float distance = m_Distance * 0.2f;
 		distance = std::max(distance, 0.0f);
@@ -60,7 +60,7 @@ namespace Kargono::Rendering
 		return speed;
 	}
 
-	void EditorPerspectiveCamera::OnUpdate(Timestep ts)
+	void PerspectiveCamera::OnUpdate(Timestep ts)
 	{
 		if (Input::InputService::IsKeyPressed(Key::LeftAlt) || Input::InputService::IsKeyPressed(Key::RightAlt))
 		{
@@ -69,20 +69,20 @@ namespace Kargono::Rendering
 
 		switch (m_MovementType)
 		{
-		case EditorPerspectiveCamera::MovementType::ModelView:
+		case MovementType::ModelView:
 			OnUpdateModelView(ts);
 			return;
-		case EditorPerspectiveCamera::MovementType::FreeFly:
+		case MovementType::FreeFly:
 			OnUpdateFreeFly(ts);
 			return;
-		case EditorPerspectiveCamera::MovementType::None:
+		case MovementType::None:
 			return;
 		}
 
 		KG_ERROR("Invalid Enum Type for m_MovementType");
 	}
 
-	void EditorPerspectiveCamera::OnUpdateModelView(Timestep ts)
+	void PerspectiveCamera::OnUpdateModelView(Timestep ts)
 	{
 		UNREFERENCED_PARAMETER(ts);
 
@@ -104,7 +104,7 @@ namespace Kargono::Rendering
 		
 	}
 
-	void EditorPerspectiveCamera::OnUpdateFreeFly(Timestep ts)
+	void PerspectiveCamera::OnUpdateFreeFly(Timestep ts)
 	{
 		if (Input::InputService::IsKeyPressed(Key::LeftAlt))
 		{
@@ -115,7 +115,7 @@ namespace Kargono::Rendering
 		}
 	}
 
-	void EditorPerspectiveCamera::MouseMovement()
+	void PerspectiveCamera::MouseMovement()
 	{
 		const Math::vec2& mouse{ Input::InputService::GetAbsoluteMouseX(), Input::InputService::GetAbsoluteMouseY() };
 		Math::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
@@ -131,7 +131,7 @@ namespace Kargono::Rendering
 		m_FocalPoint = m_Position + GetForwardDirection() * m_Distance;
 	}
 
-	bool EditorPerspectiveCamera::OnInputEvent(Events::Event* e)
+	bool PerspectiveCamera::OnInputEvent(Events::Event* e)
 	{
 		bool handled = false;
 		switch (e->GetEventType())
@@ -155,7 +155,7 @@ namespace Kargono::Rendering
 		return false;
 	}
 
-	bool EditorPerspectiveCamera::OnKeyReleased(Events::KeyReleasedEvent& e)
+	bool PerspectiveCamera::OnKeyReleased(Events::KeyReleasedEvent& e)
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
@@ -165,7 +165,7 @@ namespace Kargono::Rendering
 		return false;
 	}
 
-	bool EditorPerspectiveCamera::OnKeyPressed(Events::KeyPressedEvent& e)
+	bool PerspectiveCamera::OnKeyPressed(Events::KeyPressedEvent& e)
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
@@ -175,15 +175,15 @@ namespace Kargono::Rendering
 		return false;
 	}
 
-	bool EditorPerspectiveCamera::OnMouseScroll(Events::MouseScrolledEvent& e)
+	bool PerspectiveCamera::OnMouseScroll(Events::MouseScrolledEvent& e)
 	{
 		switch (m_MovementType)
 		{
-		case EditorPerspectiveCamera::MovementType::ModelView:
+		case MovementType::ModelView:
 			return OnMouseScrollModelView(e);
-		case EditorPerspectiveCamera::MovementType::FreeFly:
+		case MovementType::FreeFly:
 			return OnMouseScrollFreeFly(e);
-		case EditorPerspectiveCamera::MovementType::None:
+		case MovementType::None:
 			return false;
 		}
 
@@ -191,7 +191,7 @@ namespace Kargono::Rendering
 		return false;
 	}
 
-	bool EditorPerspectiveCamera::OnMouseScrollModelView(Events::MouseScrolledEvent& e)
+	bool PerspectiveCamera::OnMouseScrollModelView(Events::MouseScrolledEvent& e)
 	{
 		if (Input::InputService::IsKeyPressed(Key::LeftAlt))
 		{
@@ -202,7 +202,7 @@ namespace Kargono::Rendering
 		return false;
 	}
 
-	bool EditorPerspectiveCamera::OnMouseScrollFreeFly(Events::MouseScrolledEvent& e)
+	bool PerspectiveCamera::OnMouseScrollFreeFly(Events::MouseScrolledEvent& e)
 	{
 		if (Input::InputService::IsKeyPressed(Key::LeftAlt))
 		{
@@ -212,7 +212,7 @@ namespace Kargono::Rendering
 		return false;
 	}
 
-	void EditorPerspectiveCamera::KeyboardMovement(Timestep ts)
+	void PerspectiveCamera::KeyboardMovement(Timestep ts)
 	{
 		if (Input::InputService::IsKeyPressed(Key::W))
 		{
@@ -240,21 +240,33 @@ namespace Kargono::Rendering
 		}
 	}
 
-	void EditorPerspectiveCamera::MousePan(const Math::vec2& delta)
+	void PerspectiveCamera::ToggleMovementType()
+	{
+		if (m_MovementType == MovementType::ModelView)
+		{
+			m_MovementType = MovementType::FreeFly;
+		}
+		else
+		{
+			m_MovementType = MovementType::ModelView;
+		}
+	}
+
+	void PerspectiveCamera::MousePan(const Math::vec2& delta)
 	{
 		auto [xSpeed, ySpeed] = PanSpeed();
 		m_FocalPoint += -GetRightDirection() * delta.x * xSpeed * m_Distance;
 		m_FocalPoint += GetUpDirection() * delta.y * ySpeed * m_Distance;
 	}
 
-	void EditorPerspectiveCamera::MouseRotate(const Math::vec2& delta)
+	void PerspectiveCamera::MouseRotate(const Math::vec2& delta)
 	{
 		float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
 		m_Yaw += yawSign * delta.x * RotationSpeed();
 		m_Pitch += delta.y * RotationSpeed();
 	}
 
-	void EditorPerspectiveCamera::MouseZoom(float delta)
+	void PerspectiveCamera::MouseZoom(float delta)
 	{
 		m_Distance -= delta * ZoomSpeed();
 		if (m_Distance < 1.0f)
@@ -264,34 +276,34 @@ namespace Kargono::Rendering
 		}
 	}
 
-	void EditorPerspectiveCamera::MouseKeyboardSpeed(float delta)
+	void PerspectiveCamera::MouseKeyboardSpeed(float delta)
 	{
 		if (delta + m_KeyboardSpeed > m_KeyboardMaxSpeed) { m_KeyboardSpeed = m_KeyboardMaxSpeed; return; }
 		if (delta + m_KeyboardSpeed < m_KeyboardMinSpeed) { m_KeyboardSpeed = m_KeyboardMinSpeed; return; }
 		m_KeyboardSpeed += delta;
 	}
 
-	Math::vec3 EditorPerspectiveCamera::GetUpDirection() const
+	Math::vec3 PerspectiveCamera::GetUpDirection() const
 	{
 		return glm::rotate(GetOrientation(), Math::vec3(0.0f, 1.0f, 0.0f));
 	}
 
-	Math::vec3 EditorPerspectiveCamera::GetRightDirection() const
+	Math::vec3 PerspectiveCamera::GetRightDirection() const
 	{
 		return glm::rotate(GetOrientation(), Math::vec3(1.0f, 0.0f, 0.0f));
 	}
 
-	Math::vec3 EditorPerspectiveCamera::GetForwardDirection() const
+	Math::vec3 PerspectiveCamera::GetForwardDirection() const
 	{
 		return glm::rotate(GetOrientation(), Math::vec3(0.0f, 0.0f, -1.0f));
 	}
 
-	Math::vec3 EditorPerspectiveCamera::CalculatePosition() const
+	Math::vec3 PerspectiveCamera::CalculatePosition() const
 	{
 		return m_FocalPoint - GetForwardDirection() * m_Distance;
 	}
 
-	Math::quat EditorPerspectiveCamera::GetOrientation() const
+	Math::quat PerspectiveCamera::GetOrientation() const
 	{
 		return Math::quat(glm::vec3(-m_Pitch, -m_Yaw, 0.0f));
 	}

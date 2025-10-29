@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Modules/Rendering/EditorOrthographicCamera.h"
+#include "Modules/Cameras/OrthographicCamera.h"
 #include "Modules/Input/InputService.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Kargono/Core/MouseCodes.h"
@@ -10,31 +10,30 @@
 #include "API/Platform/GlfwAPI.h"
 
 
-namespace Kargono::Rendering
+namespace Kargono::Cameras
 {
-
-	EditorOrthographicCamera::EditorOrthographicCamera(float size, float nearClip, float farClip) : m_CameraSize(size), m_NearPlane(nearClip), m_FarPlane(farClip), m_CameraSizeType(CameraSizeType::AspectRatio)
+	OrthographicCamera::OrthographicCamera(float size, float nearClip, float farClip) : m_CameraSize(size), m_NearPlane(nearClip), m_FarPlane(farClip), m_CameraSizeType(CameraSizeType::AspectRatio)
 	{
 		RecalculateProjection();
 		RecalculateView();
 	}
-	EditorOrthographicCamera::EditorOrthographicCamera(Math::vec2 cameraSizeFixed, float nearClip, float farClip) : m_CameraSizeFixed(cameraSizeFixed), m_NearPlane(nearClip), m_FarPlane(farClip), m_CameraSizeType(CameraSizeType::Fixed), m_CameraSize(1.0f)
+	OrthographicCamera::OrthographicCamera(Math::vec2 cameraSizeFixed, float nearClip, float farClip) : m_CameraSizeFixed(cameraSizeFixed), m_NearPlane(nearClip), m_FarPlane(farClip), m_CameraSizeType(CameraSizeType::Fixed), m_CameraSize(1.0f)
 	{
 		RecalculateProjection();
 		RecalculateView();
 	}
 
-	EditorOrthographicCamera::EditorOrthographicCamera() : m_CameraSizeType(CameraSizeType::None)
+	OrthographicCamera::OrthographicCamera() : m_CameraSizeType(CameraSizeType::None)
 	{
 		RecalculateProjection();
 		RecalculateView();
 	}
-	void EditorOrthographicCamera::OnViewportResize()
+	void OrthographicCamera::OnViewportResize()
 	{
 		RecalculateProjection();
 	}
 
-	void EditorOrthographicCamera::OnUpdate(Timestep ts)
+	void OrthographicCamera::OnUpdate(Timestep ts)
 	{
 		// Move camera with based on keyboard input
 		if (!Input::InputService::IsKeyPressed(Key::LeftAlt) && !Input::InputService::IsKeyPressed(Key::RightAlt))
@@ -70,7 +69,7 @@ namespace Kargono::Rendering
 		}
 	}
 
-	bool EditorOrthographicCamera::OnKeyReleased(Events::KeyReleasedEvent& e)
+	bool OrthographicCamera::OnKeyReleased(Events::KeyReleasedEvent& e)
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
@@ -79,7 +78,7 @@ namespace Kargono::Rendering
 		return false;
 	}
 
-	bool EditorOrthographicCamera::OnKeyPressed(Events::KeyPressedEvent& e)
+	bool OrthographicCamera::OnKeyPressed(Events::KeyPressedEvent& e)
 	{
 		if (e.GetKeyCode() == Key::LeftAlt)
 		{
@@ -88,7 +87,7 @@ namespace Kargono::Rendering
 		return false;
 	}
 
-	bool EditorOrthographicCamera::OnInputEvent(Events::Event* e)
+	bool OrthographicCamera::OnInputEvent(Events::Event* e)
 	{
 		bool handled = false;
 		switch (e->GetEventType())
@@ -112,7 +111,7 @@ namespace Kargono::Rendering
 		return false;
 	}
 
-	bool EditorOrthographicCamera::OnMouseScroll(Events::MouseScrolledEvent& e)
+	bool OrthographicCamera::OnMouseScroll(Events::MouseScrolledEvent& e)
 	{
 		if (Input::InputService::IsKeyPressed(Key::LeftAlt) || Input::InputService::IsKeyPressed(Key::RightAlt))
 		{
@@ -160,20 +159,20 @@ namespace Kargono::Rendering
 			}
 			else
 			{
-				KG_ERROR("Camera size type not set for EditorOrthographicCamera");
+				KG_ERROR("Camera size type not set for OrthographicCamera");
 			}
 			
 		}
 
 		return false;
 	}
-	void EditorOrthographicCamera::RecalculateView()
+	void OrthographicCamera::RecalculateView()
 	{
 		Math::quat orientation = Math::quat(m_Rotation);
 		m_ViewMatrix = glm::translate(Math::mat4(1.0f), m_Position) * glm::toMat4(orientation);
 		m_ViewMatrix = glm::inverse(m_ViewMatrix);
 	}
-	void EditorOrthographicCamera::RecalculateProjection()
+	void OrthographicCamera::RecalculateProjection()
 	{
 		ViewportData& activeViewport = EngineService::GetActiveEngine().GetWindow().GetActiveViewport();
 		if (m_CameraSizeType == CameraSizeType::AspectRatio)
@@ -183,8 +182,8 @@ namespace Kargono::Rendering
 			float orthoRight = m_CameraSize * aspectRatio * 0.5f;
 			float orthoBottom = -m_CameraSize * 0.5f;
 			float orthoTop = m_CameraSize * 0.5f;
-			m_Projection = glm::ortho(orthoLeft, orthoRight,
-				orthoBottom, orthoTop, m_NearPlane, m_FarPlane);
+			m_CameraProjection.SetProjection(glm::ortho(orthoLeft, orthoRight,
+				orthoBottom, orthoTop, m_NearPlane, m_FarPlane));
 		}
 		else if (m_CameraSizeType == CameraSizeType::Fixed)
 		{
@@ -197,8 +196,8 @@ namespace Kargono::Rendering
 			float orthoRight = m_CameraSizeFixed.x * m_CameraSize * 0.5f;
 			float orthoBottom = -m_CameraSizeFixed.y * m_CameraSize * 0.5f;
 			float orthoTop = m_CameraSizeFixed.y * m_CameraSize * 0.5f;*/
-			m_Projection = glm::ortho(orthoLeft, orthoRight,
-				orthoBottom, orthoTop, m_NearPlane, m_FarPlane);
+			m_CameraProjection.SetProjection(glm::ortho(orthoLeft, orthoRight,
+				orthoBottom, orthoTop, m_NearPlane, m_FarPlane));
 		}
 	}
 

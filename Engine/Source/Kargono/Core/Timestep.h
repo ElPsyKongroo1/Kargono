@@ -14,23 +14,14 @@ namespace Kargono
 		//==============================
 		// Getters/Setters
 		//==============================
-		operator float() const 
-		{ 
-			return m_Time; 
-		}
+		float GetSeconds() const { return m_Time;}
+		float GetMilliseconds() const { return m_Time * 1000.0f;}
+		int32_t GetMillisecondsInt() const{return (int32_t)(m_Time * 1000.0f);}
 
-		float GetSeconds() const 
-		{ 
-			return m_Time;
-		}
-		float GetMilliseconds() const 
-		{ 
-			return m_Time * 1000.0f;
-		}
-		int32_t GetMillisecondsInt() const
-		{
-			return (int32_t)(m_Time * 1000.0f);
-		}
+		//==============================
+		// Operator Overloads
+		//==============================
+		operator float() const { return m_Time; }
 	private:
 		//==============================
 		// Internal Fields

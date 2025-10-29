@@ -2,7 +2,7 @@
 
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Rendering/Shader.h"
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture.h"
 #include "Modules/Rendering/VertexArray.h"
 #include "Modules/Rendering/UniformBuffer.h"
 #include "Kargono/Projects/Project.h"
@@ -55,12 +55,12 @@ namespace Kargono::Rendering
 		s_Data.CameraUniformBuffer.reset();
 		s_Data.DrawCalls.clear();
 	}
-	void RenderingService::BeginScene(const Camera& camera, const Math::mat4& transform)
+	void RenderingService::BeginScene(const CameraProjection& camera, const Math::mat4& transform)
 	{
 		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * transform;
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 	}
-	void RenderingService::BeginScene(const EditorPerspectiveCamera& camera)
+	void RenderingService::BeginScene(const PerspectiveCamera& camera)
 	{
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
@@ -186,7 +186,7 @@ namespace Kargono::Rendering
 	{
 		// Upload Indices
 		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.m_Shader->GetCurrentDrawCallBuffer();
-		std::size_t currentBufferSize = (drawCallBuffer->m_VertexBufferIterator - drawCallBuffer->m_VertexBuffer.Data) / inputSpec.m_Shader->GetInputLayout().GetStride();
+		std::size_t currentBufferSize = (drawCallBuffer->m_VertexBufferIterator - drawCallBuffer->m_VertexBuffer.m_Data) / inputSpec.m_Shader->GetInputLayout().GetStride();
 		for (auto& index : *(inputSpec.m_ShapeComponent->m_Indices))
 		{
 			drawCallBuffer->m_IndexBuffer.push_back(static_cast<uint32_t>(currentBufferSize) + index);
@@ -211,7 +211,7 @@ namespace Kargono::Rendering
 		{
 			drawCallBuffer = CreateRef<DrawCallBuffer>();
 			drawCallBuffer->m_VertexBuffer.Allocate(s_MaxVertexBufferSize);
-			drawCallBuffer->m_VertexBufferIterator = drawCallBuffer->m_VertexBuffer.Data;
+			drawCallBuffer->m_VertexBufferIterator = drawCallBuffer->m_VertexBuffer.m_Data;
 			if (inputSpec.m_Shader->GetSpecification().RenderType == RenderingType::DrawIndex)
 			{
 				drawCallBuffer->m_IndexBuffer.reserve(s_Data.MaxIndicesBuffer);
@@ -222,14 +222,14 @@ namespace Kargono::Rendering
 			inputSpec.m_Shader->SetCurrentDrawCallBuffer(drawCallBuffer);
 		}
 
-		std::size_t currentBufferSize = drawCallBuffer->m_VertexBufferIterator - drawCallBuffer->m_VertexBuffer.Data;
-		std::size_t sizeOfNewDrawCallBuffer = inputSpec.m_Buffer.Size * inputSpec.m_ShapeComponent->m_Vertices->size() + currentBufferSize;
+		std::size_t currentBufferSize = drawCallBuffer->m_VertexBufferIterator - drawCallBuffer->m_VertexBuffer.m_Data;
+		std::size_t sizeOfNewDrawCallBuffer = inputSpec.m_Buffer.m_Size * inputSpec.m_ShapeComponent->m_Vertices->size() + currentBufferSize;
 		// Create new DrawCallBuffer if current buffer overflows
 		if (sizeOfNewDrawCallBuffer >= s_MaxVertexBufferSize)
 		{
 			drawCallBuffer = CreateRef<DrawCallBuffer>();
 			drawCallBuffer->m_VertexBuffer.Allocate(s_MaxVertexBufferSize);
-			drawCallBuffer->m_VertexBufferIterator = drawCallBuffer->m_VertexBuffer.Data;
+			drawCallBuffer->m_VertexBufferIterator = drawCallBuffer->m_VertexBuffer.m_Data;
 			if (inputSpec.m_Shader->GetSpecification().RenderType == RenderingType::DrawIndex)
 			{
 				drawCallBuffer->m_IndexBuffer.reserve(s_Data.MaxIndicesBuffer);
@@ -253,8 +253,8 @@ namespace Kargono::Rendering
 			{
 				PerVertexFunction(inputSpec, iteration);
 			}
-			memcpy(inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator, inputSpec.m_Buffer.Data, inputSpec.m_Buffer.Size);
-			inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator += inputSpec.m_Buffer.Size;
+			memcpy(inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator, inputSpec.m_Buffer.m_Data, inputSpec.m_Buffer.m_Size);
+			inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator += inputSpec.m_Buffer.m_Size;
 			s_Data.Stats.VertexCount++;
 		}
 
@@ -278,20 +278,20 @@ namespace Kargono::Rendering
 	void RenderingService::DrawBufferPoints(Ref<DrawCallBuffer> buffer)
 	{
 		RendererAPI::SetPointWidth(s_Data.PointWidth);
-		RendererAPI::DrawPoints(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.Data) / buffer->m_Shader->GetInputLayout().GetStride());
+		RendererAPI::DrawPoints(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.m_Data) / buffer->m_Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 
 	void RenderingService::DrawBufferLine(Ref<DrawCallBuffer> buffer)
 	{
 		RendererAPI::SetLineWidth(s_Data.LineWidth);
-		RendererAPI::DrawLines(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.Data) / buffer->m_Shader->GetInputLayout().GetStride());
+		RendererAPI::DrawLines(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.m_Data) / buffer->m_Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 
 	void RenderingService::DrawBufferTriangles(Ref<DrawCallBuffer> buffer)
 	{
-		RendererAPI::DrawTriangles(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.Data) / buffer->m_Shader->GetInputLayout().GetStride());
+		RendererAPI::DrawTriangles(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.m_Data) / buffer->m_Shader->GetInputLayout().GetStride());
 		s_Data.Stats.DrawCalls++;
 	}
 
@@ -308,8 +308,8 @@ namespace Kargono::Rendering
 			}
 
 			buffer->m_Shader->Bind();
-			uint32_t dataSize = static_cast<uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.Data);
-			buffer->m_Shader->GetVertexArray()->GetVertexBuffers().at(0)->SetData(buffer->m_VertexBuffer.Data, dataSize);
+			uint32_t dataSize = static_cast<uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.m_Data);
+			buffer->m_Shader->GetVertexArray()->GetVertexBuffers().at(0)->SetData(buffer->m_VertexBuffer.m_Data, dataSize);
 
 			// Submit Per Buffer Uniforms
 			for (const auto& uniformFunction : buffer->m_Shader->GetSubmitUniforms())

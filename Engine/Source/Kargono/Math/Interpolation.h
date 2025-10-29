@@ -2,6 +2,7 @@
 #include "Kargono/Math/MathAliases.h"
 
 #include <string>
+#include <array>
 
 namespace Kargono::Math
 {

@@ -16,8 +16,9 @@ namespace Kargono
 		UUID() : m_UUID(0) {}
 		UUID(uint64_t uuid) : m_UUID(uuid) {}
 		UUID(const UUID&) = default;
+	public:
 		//==============================
-		// Getters/Setters
+		// Operator Overloads
 		//==============================
 		operator uint64_t() const 
 		{ 

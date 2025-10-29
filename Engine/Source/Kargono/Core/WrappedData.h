@@ -14,9 +14,6 @@
 
 namespace Kargono
 {
-	//==============================
-	// Wrapped Variables
-	//==============================
 	enum class WrappedVarType
 	{
 		None = 0,
@@ -908,7 +905,7 @@ namespace Kargono
 		{
 			buffer.SetDataToByte(0);
 			const std::string variableAsString { variable->GetValueAsString() };
-			memcpy(buffer.Data, variableAsString.data(), variableAsString.size());
+			memcpy(buffer.m_Data, variableAsString.data(), variableAsString.size());
 			return true;
 		}
 

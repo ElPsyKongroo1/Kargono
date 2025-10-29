@@ -556,14 +556,13 @@ namespace Kargono::RuntimeUI
 		SetWidgetBackgroundColorInternal(currentWidget, color);
 	}
 
-	void UserInterface::CreateAssetFileFromName(std::string_view name,
-		Assets::Metadata& metadata, std::filesystem::path& assetPath)
+	void UserInterface::CreateAssetFromName(Assets::Metadata& metadata)
 	{
-		// Create Temporary UserInterface
+		// Create default user interface
 		UserInterface tempUI {};
 
-		// Save into File
-		Assets::SerializeAssetContext serializeContext{ assetPath };
+		// Save into file
+		Assets::SerializeAssetContext serializeContext{ &metadata };
 		tempUI.Serialize((void*)&serializeContext);
 	}
 
@@ -791,12 +790,13 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(context, "Context cannot be null");
 
 		// Get asset context
-		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext* assetContext = (Assets::DeserializeAssetContext*)context;
+		KG_ASSERT(assetContext, "Asset context cannot be null");
+		Assets::Metadata* metadata = assetContext->m_AssetMetadata;
+		KG_ASSERT(metadata, "Metadata cannot be null");
 
-		// Get context fields
-		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
-		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+		// Get asset path
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<UserInterface>() };
 
 		// Deserialize
 		YAML::Node data;
@@ -959,10 +959,13 @@ namespace Kargono::RuntimeUI
 	void UserInterface::Serialize(void* context)
 	{
 		// Get asset context
-		Assets::SerializeAssetContext& assetContext = *(Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext* assetContext = (Assets::SerializeAssetContext*)context;
+		KG_ASSERT(assetContext, "Asset context cannot be null");
+		Assets::Metadata* metadata = assetContext->m_AssetMetadata;
+		KG_ASSERT(metadata, "Metadata cannot be null");
 
-		// Get context fields
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+		// Get asset path
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<UserInterface>() };
 
 		// Serialize
 		YAML::Emitter out;
