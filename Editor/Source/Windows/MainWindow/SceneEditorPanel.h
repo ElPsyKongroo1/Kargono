@@ -56,8 +56,8 @@ namespace Kargono::Panels
 		void InitializeCircleCollider2DComponent();
 		void InitializeCameraComponent();
 		void InitializeParticleEmitterComponent();
-		void InitializeOnUpdateComponent();
-		void InitializeOnCreateComponent();
+		void InitializeOnUpdate();
+		void InitializeOnCreate();
 		void InitializeAIComponent();
 		void InitializeShapeComponent();
 		void InitializeCustomComponents();
@@ -105,9 +105,9 @@ namespace Kargono::Panels
 		void DrawCircleCollider2DComponent(ECS::Entity entity);
 		void DrawCameraComponent(ECS::Entity entity);
 		void DrawParticleEmitterComponent(ECS::Entity entity);
-		void DrawOnUpdateComponent(ECS::Entity entity);
+		void DrawOnUpdate(ECS::Entity entity);
 		void DrawAIStateComponent(ECS::Entity entity);
-		void DrawOnCreateComponent(ECS::Entity entity);
+		void DrawOnCreate(ECS::Entity entity);
 		void DrawShapeComponent(ECS::Entity entity);
 		void DrawCustomComponent(ECS::Entity entity, Assets::AssetHandle handle);
 		void DrawSceneOptions();

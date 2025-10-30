@@ -1,22 +1,22 @@
 #pragma once
 
 #include "Kargono/Core/UUID.h"
-#include "Modules/Core/Components/IDComponent.h"
-#include "Modules/Core/Components/TagComponent.h"
+#include "Modules/Core/Components/Tag.h"
 #include "Modules/ECS/Registry.h"
 #include "Modules/ECSInternal/RegistryInternal.h"
 #include "Modules/Assets/AssetsCommon.h"
+#include "Modules/ECS/Module/ECSModule.h"
 
 namespace Kargono::ECS
 {
-	struct EntitySerializationContext
+	struct SerializeEntityContext
 	{
-
+		YAML::Emitter* m_Serializer{ nullptr };
 	};
 
-	struct EntityDeserializationContext
+	struct DeserializeEntityContext
 	{
-
+		YAML::Node* m_Node{ nullptr };
 	};
 
 	class Entity
@@ -106,8 +106,8 @@ namespace Kargono::ECS
 
 		bool HasCustomComponentData(Assets::AssetHandle projectComponentHandle);
 
-		UUID GetUUID() { return GetComponent<IDComponent>().m_ID; }
-		const char* GetName() { return GetComponent<TagComponent>().m_Tag; }
+		UUID GetUUID() const { return m_UniqueID; }
+		void SetUUID(UUID newID) { m_UniqueID = newID; }
 		ECSInternal::EntityID GetInternalID() const { return m_RegistryEntityID;}
 
 		bool IsValid() const
@@ -132,6 +132,7 @@ namespace Kargono::ECS
 		//==============================
 		// Internal Fields
 		//==============================
+		UUID m_UniqueID{ k_EmptyUUID };
 		ECSInternal::EntityID m_RegistryEntityID { ECSInternal::k_InvalidEntityID };
 		Registry* m_Registry { nullptr };
 	};

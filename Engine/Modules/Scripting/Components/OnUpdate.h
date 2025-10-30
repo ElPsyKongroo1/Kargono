@@ -8,22 +8,22 @@
 
 namespace Kargono::Scripting
 {
-	struct OnUpdateComponent
+	struct OnUpdate
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		OnUpdateComponent() = default;
-		~OnUpdateComponent() = default;
+		OnUpdate() = default;
+		~OnUpdate() = default;
 	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
-		void CopyTo(OnUpdateComponent* dst)
+		void CopyTo(OnUpdate* dst)
 		{
 			// Create the component in place
-			std::construct_at<OnUpdateComponent>(dst);
+			std::construct_at<OnUpdate>(dst);
 
 			dst->m_OnUpdateScriptHandle = m_OnUpdateScriptHandle;
 			dst->m_OnUpdateScript = m_OnUpdateScript;
@@ -42,5 +42,5 @@ namespace Kargono::Scripting
 		Ref<Scripting::Script> m_OnUpdateScript{ nullptr };
 	};
 
-	Register_Module_Type(OnUpdateComponent, ECSInternal::ComponentTag)
+	Register_Module_Type(OnUpdate, ECSInternal::ComponentTag)
 }

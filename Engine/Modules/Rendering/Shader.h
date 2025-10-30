@@ -21,7 +21,7 @@ namespace Kargono::Rendering
 }
 namespace Kargono 
 {
-	struct TransformComponent;
+	struct Transform;
 }
 
 namespace Kargono::Rendering

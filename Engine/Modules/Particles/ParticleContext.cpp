@@ -10,7 +10,7 @@
 #include "Kargono/Math/Interpolation.h"
 #include "Modules/Events/SceneEvent.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
-#include "Modules/Core/Components/TransformComponent.h"
+#include "Modules/Core/Components/Transform.h"
 #include "Modules/Particles/Components/ParticleEmitterComponent.h"
 
 namespace Kargono::Particles
@@ -67,7 +67,7 @@ namespace Kargono::Particles
 			if (emitter.m_ParentScene)
 			{
 				ECS::Entity entity = emitter.m_ParentScene->m_EntityRegistry.GetEntityByUUID(emitter.m_ParentEntityID);
-				TransformComponent entityTransform = entity.GetComponent<TransformComponent>();
+				Transform entityTransform = entity.GetComponent<Transform>();
 				emitter.m_Position = entityTransform.m_Translation;
 			}
 
@@ -398,7 +398,7 @@ namespace Kargono::Particles
 		{
 			ECS::Entity entity{ scene->m_EntityRegistry.GetEntityByECSID(id) };
 			Particles::ParticleEmitterComponent particleComp = entity.GetComponent<Particles::ParticleEmitterComponent>();
-			TransformComponent transform = entity.GetComponent<TransformComponent>();
+			Transform transform = entity.GetComponent<Transform>();
 			if (particleComp.m_EmitterConfigHandle == Assets::k_EmptyHandle)
 			{
 				continue;

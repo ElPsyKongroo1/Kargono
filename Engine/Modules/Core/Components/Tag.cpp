@@ -1,25 +1,28 @@
 #include "kgpch.h"
 
-#include "Modules/Scripting/Components/OnCreateComponent.h"
+#include "Modules/Core/Components/Tag.h"
 
-namespace Kargono::Scripting
+namespace Kargono
 {
-	void OnCreateComponent::Serialize(void* context)
+	void Tag::Serialize(void* context)
 	{
 		// Get context
 		ECSInternal::SerializeComponentContext* serializeContext =
 			(ECSInternal::SerializeComponentContext*)context;
 		KG_ASSERT(serializeContext, "Context cannot be null");
-		KG_ASSERT(serializeContext->m_Serializer, "Serializer cannot be null");
+
 		// Get serializer
 		YAML::Emitter& out = *serializeContext->m_Serializer;
-		// Serialize component
-		out << YAML::Key << "OnCreateComponent";
+
+		// Serialize tag component
+		out << YAML::Key << "Tag";
+
 		out << YAML::BeginMap; // Component Map
-		out << YAML::Key << "OnCreateHandle" << YAML::Value << static_cast<uint64_t>(m_OnCreateScriptHandle);
+		out << YAML::Key << "Tag" << YAML::Value << m_Tag;
+		out << YAML::Key << "Group" << YAML::Value << m_Group;
 		out << YAML::EndMap; // Component Map
 	}
-	void OnCreateComponent::Deserialize(void* context)
+	void Tag::Deserialize(void* context)
 	{
 		// Get context
 		ECSInternal::DeserializeComponentContext* deserializeContext =
@@ -29,7 +32,8 @@ namespace Kargono::Scripting
 		// Get node
 		YAML::Node& node = *deserializeContext->m_Node;
 
-		m_OnCreateScriptHandle = node["OnCreateHandle"].as<uint64_t>();
-		m_OnCreateScript = Assets::AssetService::GetScript(m_OnCreateScriptHandle);
-	} 
+		// Deserialize
+		m_Tag = node["Tag"].as<std::string>();
+		m_Group = node["Group"].as<std::string>();
+	}
 }

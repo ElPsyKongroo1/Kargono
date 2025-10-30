@@ -35,7 +35,7 @@ namespace Kargono::Panels
 		ECS::Entity hoveredEntity{ Scenes::SceneService::GetActiveContext().GetActiveScene()->GetHoveredEntity() };
 		if (hoveredEntity.IsValid())
 		{
-			name = hoveredEntity.GetComponent<TagComponent>().m_Tag;
+			name = hoveredEntity.GetComponent<Tag>().m_Tag;
 		}
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 		ImGui::NewLine();

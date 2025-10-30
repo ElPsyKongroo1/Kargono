@@ -11,7 +11,7 @@
 #include "Modules/Events/NetworkingEvent.h"
 #include "Modules/ECS/Entity.h"
 #include "Kargono/Scenes/Scene.h"
-#include "Modules/Core/Components/TransformComponent.h"
+#include "Modules/Core/Components/Transform.h"
 #include "Modules/Network/Client.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 
@@ -253,7 +253,7 @@ namespace Kargono
 		ECS::Entity entity = scene->m_EntityRegistry.GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
-		entity.GetComponent<TransformComponent>().m_Translation = translation;
+		entity.GetComponent<Transform>().m_Translation = translation;
 
 		if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
@@ -272,7 +272,7 @@ namespace Kargono
 		if (!entity) { return false; }
 		Math::vec3 translation = e.GetTranslation();
 		Math::vec2 linearVelocity = e.GetLinearVelocity();
-		entity.GetComponent<TransformComponent>().m_Translation = translation;
+		entity.GetComponent<Transform>().m_Translation = translation;
 
 		if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{

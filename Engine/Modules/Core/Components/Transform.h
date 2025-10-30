@@ -8,14 +8,14 @@
 
 namespace Kargono
 {
-	struct TransformComponent
+	struct Transform
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		TransformComponent() = default;
-		TransformComponent(const Math::vec3& translation) : m_Translation(translation) {}
+		Transform() = default;
+		Transform(const Math::vec3& translation) : m_Translation(translation) {}
 
 	public:
 		//==============================
@@ -29,10 +29,10 @@ namespace Kargono
 		//==============================
 		// Copy Function(s)
 		//==============================
-		void CopyTo(TransformComponent* dst)
+		void CopyTo(Transform* dst)
 		{
 			// Create the component in place
-			std::construct_at<TransformComponent>(dst);
+			std::construct_at<Transform>(dst);
 
 			dst->m_Translation = m_Translation;
 			dst->m_Rotation = m_Rotation;
@@ -54,5 +54,5 @@ namespace Kargono
 		Math::vec3 m_Scale{ 1.0f, 1.0f, 1.0f };
 	};
 
-	Register_Module_Type(TransformComponent, ECSInternal::ComponentTag)
+	Register_Module_Type(Transform, ECSInternal::ComponentTag)
 }

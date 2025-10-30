@@ -1,34 +1,32 @@
 #pragma once
 
-#include "Kargono/Core/FixedBufferString.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
-#include "Modules/Core/Module/CoreModule.h"
+#include "Modules/Scripting/Module/ScriptingModule.h"
 
-#include <string>
+#include "Modules/Assets/AssetsCommon.h"
+#include "Modules/Scripting/ScriptModuleBinder.h"
 
-namespace Kargono
+namespace Kargono::Scripting
 {
-	struct TagComponent
+	struct OnCreate
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		TagComponent() = default;
-		TagComponent(std::string_view tag) : m_Tag(tag) {}
-		TagComponent(std::string_view tag, std::string_view group) : m_Tag(tag), m_Group(group) {}
-
+		OnCreate() = default;
+		~OnCreate() = default;
 	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
-		void CopyTo(TagComponent* dst)
+		void CopyTo(OnCreate* dst)
 		{
 			// Create the component in place
-			std::construct_at<TagComponent>(dst);
+			std::construct_at<OnCreate>(dst);
 
-			dst->m_Tag = m_Tag;
-			dst->m_Group = m_Group;
+			dst->m_OnCreateScriptHandle = m_OnCreateScriptHandle;
+			dst->m_OnCreateScript = m_OnCreateScript;
 		}
 	public:
 		//==============================
@@ -40,9 +38,9 @@ namespace Kargono
 		//==============================
 		// Public Fields
 		//==============================
-		FixedBufStr32 m_Tag{};
-		FixedBufStr32 m_Group{};
+		Assets::AssetHandle m_OnCreateScriptHandle{ Assets::k_EmptyHandle };
+		Ref<Scripting::Script> m_OnCreateScript{ nullptr };
 	};
 
-	Register_Module_Type(TagComponent, ECSInternal::ComponentTag)
+	Register_Module_Type(OnCreate, ECSInternal::ComponentTag)
 }

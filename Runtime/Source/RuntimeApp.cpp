@@ -2,7 +2,7 @@
 #include "RuntimeApp.h"
 
 #include "Modules/Rendering/Components/CameraComponent.h"
-#include "Modules/Core/Components/TransformComponent.h"
+#include "Modules/Core/Components/Transform.h"
 
 #include <filesystem>
 
@@ -174,7 +174,7 @@ namespace Kargono
 			Window& engineWindow{ EngineService::GetActiveEngine().GetWindow()};
 
 			// Get camera transform
-			Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+			Math::mat4 cameraTransform = cameraEntity.GetComponent<Transform>().GetTransform();
 
 			// Draw particles
 			Particles::ParticleService::GetActiveContext().OnRender(mainCamera->GetProjection() * glm::inverse(cameraTransform));
@@ -487,7 +487,7 @@ namespace Kargono
 			return;
 		}
 		Rendering::CameraProjection* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<Transform>().GetTransform();
 
 		if (mainCamera)
 		{

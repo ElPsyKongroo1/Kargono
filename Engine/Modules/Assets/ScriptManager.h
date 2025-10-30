@@ -10,7 +10,7 @@ namespace Kargono::Assets
 	struct ScriptSpec
 	{
 		std::string Name {};
-		Scripting::ScriptType Type {Scripting::ScriptType::None };
+		Scripting::ScriptType Type { Scripting::ScriptType::None };
 		std::string m_SectionLabel {};
 		WrappedFuncType m_FunctionType{ WrappedFuncType::None };
 		Scripting::ExplicitFuncType m_ExplicitFuncType{};

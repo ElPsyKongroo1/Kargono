@@ -4,9 +4,8 @@
 #include "Modules/ECS/Registry.h"
 #include "Modules/ECSInternal/Assets/CustomComponent.h"
 
-#include "Modules/Core/Components/TransformComponent.h"
-#include "Modules/Core/Components/TagComponent.h"
-#include "Modules/Core/Components/IDComponent.h"
+#include "Modules/Core/Components/Transform.h"
+#include "Modules/Core/Components/Tag.h"
 
 #include "Modules/Events/SceneEvent.h"
 
@@ -30,9 +29,9 @@ namespace Kargono::ECS
 	Entity Registry::CreateEntityWithUUID(UUID uuid, std::string_view name = {})
 	{
 		ECS::Entity entity = { m_Registry.CreateEntity().value() , this };
-		entity.AddComponent<IDComponent>(uuid);
-		entity.AddComponent<TransformComponent>();
-		TagComponent& tag = entity.AddComponent<TagComponent>();
+		entity.SetUUID(uuid);
+		entity.AddComponent<Transform>();
+		Tag& tag = entity.AddComponent<Tag>();
 		tag.m_Tag = name.empty() ? "Entity" : name;
 
 		m_EntityMap[uuid] = entity.GetInternalID();
@@ -46,7 +45,8 @@ namespace Kargono::ECS
 	Entity Registry::DuplicateEntity(Entity entity)
 	{
 		// Copy name because we're going to modify component data structure
-		std::string name = entity.GetName();
+		KG_ASSERT(entity.HasComponent<Tag>())
+		std::string_view name = entity.GetComponent<Tag>().m_Tag.StringView();
 		ECS::Entity newEntity = CreateEntity(name);
 
 		// Copy over components
@@ -75,10 +75,10 @@ namespace Kargono::ECS
 
 	Entity Registry::GetEntityByName(std::string_view name)
 	{
-		auto view = m_Registry.GetFlatView<TagComponent>();
+		auto view = m_Registry.GetFlatView<Tag>();
 		for (ECSInternal::EntityID entity : view)
 		{
-			const TagComponent& tc = m_Registry.GetComponent<TagComponent>(entity).value();
+			const Tag& tc = m_Registry.GetComponent<Tag>(entity).value();
 			if (tc.m_Tag.StringView() == name)
 			{
 				return Entity { entity, this };
@@ -118,15 +118,15 @@ namespace Kargono::ECS
 
 	UUID Registry::GetUUIDByName(std::string_view name)
 	{
-		auto view = m_Registry.GetFlatView<TagComponent>();
+		auto view = m_Registry.GetFlatView<Tag>();
 		for (ECSInternal::EntityID id : view)
 		{
 			Entity entity{ id, this };
 
-			TagComponent& tagComponent{ entity.GetComponent<TagComponent>() };
+			Tag& tagComponent{ entity.GetComponent<Tag>() };
 			if (tagComponent.m_Tag.StringView() == name)
 			{
-				return entity.GetComponent<IDComponent>().m_ID;
+				return entity.GetUUID();
 			}
 			
 		}

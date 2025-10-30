@@ -5,7 +5,7 @@
 #include "Modules/Core/Engine.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/ECS/Entity.h"
-#include "Modules/Core/Components/TransformComponent.h"
+#include "Modules/Core/Components/Transform.h"
 #include "Modules/Physics2D/Components/BoxCollider2DComponent.h"
 #include "Modules/Physics2D/Components/CircleCollider2DComponent.h"
 #include "Modules/Physics2D/Components/RigidBody2DComponent.h"
@@ -55,7 +55,7 @@ namespace Kargono::Physics
 		for (auto enttID : rigidBodyView)
 		{
 			ECS::Entity entity = scene->m_EntityRegistry.GetEntityByECSID(enttID);
-			TransformComponent& transform = entity.GetComponent<TransformComponent>();
+			Transform& transform = entity.GetComponent<Transform>();
 			Physics2D::Rigidbody2DComponent& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
 
 			b2BodyDef bodyDef;
@@ -128,7 +128,7 @@ namespace Kargono::Physics
 		for (auto enttID : view)
 		{
 			ECS::Entity entity = i_Scene->m_EntityRegistry.GetEntityByECSID(enttID);
-			TransformComponent& transform = entity.GetComponent<TransformComponent>();
+			Transform& transform = entity.GetComponent<Transform>();
 			Physics2D::Rigidbody2DComponent& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
 
 			b2Body* body = (b2Body*)rb2d.m_RuntimeBody;

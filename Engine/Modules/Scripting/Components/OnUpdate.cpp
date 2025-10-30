@@ -1,10 +1,10 @@
 #include "kgpch.h"
 
-#include "Modules/Scripting/Components/OnUpdateComponent.h"
+#include "Modules/Scripting/Components/OnUpdate.h"
 
 namespace Kargono::Scripting
 {
-	void OnUpdateComponent::Serialize(void* context)
+	void OnUpdate::Serialize(void* context)
 	{
 		// Get context
 		ECSInternal::SerializeComponentContext* serializeContext =
@@ -14,12 +14,12 @@ namespace Kargono::Scripting
 		YAML::Emitter& out = *serializeContext->m_Serializer;
 
 		// Serialize component
-		out << YAML::Key << "OnUpdateComponent";
+		out << YAML::Key << "OnUpdate";
 		out << YAML::BeginMap; // Component Map
 		out << YAML::Key << "OnUpdateHandle" << YAML::Value << static_cast<uint64_t>(m_OnUpdateScriptHandle);
 		out << YAML::EndMap; // Component Map
 	}
-	void OnUpdateComponent::Deserialize(void* context)
+	void OnUpdate::Deserialize(void* context)
 	{
 		// Get context
 		ECSInternal::DeserializeComponentContext* deserializeContext =

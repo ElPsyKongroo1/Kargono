@@ -13,7 +13,7 @@
 
 #include "Modules/Rendering/Components/CameraComponent.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
-#include "Modules/Core/Components/TransformComponent.h"
+#include "Modules/Core/Components/Transform.h"
 #include "Modules/Physics2D/Components/BoxCollider2DComponent.h"
 #include "Modules/Physics2D/Components/CircleCollider2DComponent.h"
 #include "Modules/Physics2D/Components/RigidBody2DComponent.h"
@@ -135,7 +135,7 @@ namespace Kargono::Panels
 				if (mainCamera)
 				{
 					// Get camera transform
-					Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+					Math::mat4 cameraTransform = cameraEntity.GetComponent<Transform>().GetTransform();
 					Math::mat4 cameraViewProjection = mainCamera->GetProjection() * glm::inverse(cameraTransform);
 
 					// Render particles
@@ -239,7 +239,7 @@ namespace Kargono::Panels
 						float currentTime = Utility::Time::GetTime();
 						if (std::fabs(currentTime - previousTime) < 0.2f && hoveredEntity == previousEntity)
 						{
-							TransformComponent& transformComponent = hoveredEntity.GetComponent<TransformComponent>();
+							Transform& transformComponent = hoveredEntity.GetComponent<Transform>();
 							m_EditorCamera.SetFocalPoint(transformComponent.m_Translation);
 							m_EditorCamera.SetDistance(std::max({ transformComponent.m_Scale.x, transformComponent.m_Scale.y, transformComponent.m_Scale.z }) * 2.5f);
 							m_EditorCamera.SetMovementType(Rendering::PerspectiveCamera::MovementType::ModelView);
@@ -296,7 +296,7 @@ namespace Kargono::Panels
 				Math::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 				// Entity Transform
-				TransformComponent& transformComponent = selectedEntity.GetComponent<TransformComponent>();
+				Transform& transformComponent = selectedEntity.GetComponent<Transform>();
 				Math::mat4 transform = transformComponent.GetTransform();
 
 				// Snapping
@@ -515,7 +515,7 @@ namespace Kargono::Panels
 			return;
 		}
 		Rendering::CameraProjection* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
-		Math::mat4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+		Math::mat4 cameraTransform = cameraEntity.GetComponent<Transform>().GetTransform();
 
 		if (mainCamera)
 		{
@@ -714,7 +714,7 @@ namespace Kargono::Panels
 			{
 				return;
 			}
-			Rendering::RenderingService::BeginScene(cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera, glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform()));
+			Rendering::RenderingService::BeginScene(cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera, glm::inverse(cameraEntity.GetComponent<Transform>().GetTransform()));
 		}
 		else
 		{
@@ -726,10 +726,10 @@ namespace Kargono::Panels
 			Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 			// Circle Colliders
 			{
-				auto view = activeScene->m_EntityRegistry.GetView<TransformComponent, Physics2D::CircleCollider2DComponent>();
+				auto view = activeScene->m_EntityRegistry.GetView<Transform, Physics2D::CircleCollider2DComponent>();
 				for (ECSInternal::EntityID entity : view)
 				{
-					TransformComponent& tc = activeScene->m_EntityRegistry.m_Registry.GetComponent<TransformComponent>(entity).value();
+					Transform& tc = activeScene->m_EntityRegistry.m_Registry.GetComponent<Transform>(entity).value();
 					Physics2D::CircleCollider2DComponent& cc2d = activeScene->m_EntityRegistry.m_Registry.GetComponent<Physics2D::CircleCollider2DComponent>(entity).value();
 
 					Math::vec3 translation = tc.m_Translation + Math::vec3(cc2d.m_Offset.x, cc2d.m_Offset.y, 0.001f);
@@ -745,10 +745,10 @@ namespace Kargono::Panels
 			}
 			// Box Colliders
 			{
-				auto view = activeScene->m_EntityRegistry.GetView<TransformComponent, Physics2D::BoxCollider2DComponent>();
+				auto view = activeScene->m_EntityRegistry.GetView<Transform, Physics2D::BoxCollider2DComponent>();
 				for (ECSInternal::EntityID entity : view)
 				{
-					TransformComponent& tc = activeScene->m_EntityRegistry.m_Registry.GetComponent<TransformComponent>(entity).value();
+					Transform& tc = activeScene->m_EntityRegistry.m_Registry.GetComponent<Transform>(entity).value();
 					Physics2D::BoxCollider2DComponent& bc2d = activeScene->m_EntityRegistry.m_Registry.GetComponent<Physics2D::BoxCollider2DComponent>(entity).value();
 
 					Math::vec3 translation = tc.m_Translation + Math::vec3(bc2d.m_Offset.x, bc2d.m_Offset.y, 0.001f);
@@ -799,7 +799,7 @@ namespace Kargono::Panels
 			// Draw selected entity outline 
 			if (ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity()) 
 			{
-				TransformComponent transform = selectedEntity.GetComponent<TransformComponent>();
+				Transform transform = selectedEntity.GetComponent<Transform>();
 				static Math::vec4 selectionColor {1.0f, 0.5f, 0.0f, 1.0f};
 				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, 
 					Utility::FileSystem::CRCFromString("a_Color"),
@@ -844,7 +844,7 @@ namespace Kargono::Panels
 		Math::vec4 selectionColor { 0.5f, 0.3f, 0.85f, 1.0f };
 
 		// Get entity transform and entity camera
-		auto& transform = entity.GetComponent<TransformComponent>();
+		auto& transform = entity.GetComponent<Transform>();
 		auto& camera = entity.GetComponent<Rendering::CameraComponent>();
 		// Submit frustrum cube color to renderer input
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(selectionColor, 

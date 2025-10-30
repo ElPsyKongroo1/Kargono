@@ -1,10 +1,10 @@
 #include "kgpch.h"
 
-#include "Modules/Core/Components/TransformComponent.h"
+#include "Modules/Core/Components/Transform.h"
 
 namespace Kargono
 {
-	void TransformComponent::Serialize(void* context)
+	void Transform::Serialize(void* context)
 	{
 		// Get context
 		ECSInternal::SerializeComponentContext* serializeContext =
@@ -20,7 +20,7 @@ namespace Kargono
 		out << YAML::Key << "Scale" << YAML::Value << m_Scale;
 		out << YAML::EndMap; // Component Map
 	}
-	void TransformComponent::Deserialize(void* context)
+	void Transform::Deserialize(void* context)
 	{
 		// Get context
 		ECSInternal::DeserializeComponentContext* deserializeContext =
@@ -36,7 +36,7 @@ namespace Kargono
 		m_Scale = node["Scale"].as<Math::vec3>();
 	}
 
-	Math::mat4 TransformComponent::GetTransform() const
+	Math::mat4 Transform::GetTransform() const
 	{
 		const Math::mat4 rotation{ glm::toMat4(Math::quat(m_Rotation)) };
 
@@ -45,12 +45,12 @@ namespace Kargono
 			* glm::scale(Math::mat4(1.0f), m_Scale);
 	}
 
-	Math::mat4 TransformComponent::GetTranslation() const
+	Math::mat4 Transform::GetTranslation() const
 	{
 		return glm::translate(Math::mat4(1.0f), m_Translation);
 	}
 
-	Math::mat4 TransformComponent::GetRotation() const
+	Math::mat4 Transform::GetRotation() const
 	{
 		return glm::toMat4(Math::quat(m_Rotation));
 	}

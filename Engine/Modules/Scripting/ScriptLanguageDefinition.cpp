@@ -1266,7 +1266,7 @@ namespace Kargono::Scripting
 				ECS::Entity entityRef = currentScene->m_EntityRegistry.GetEntityByECSID(enttID);
 
 				// Get the entity's tag component
-				TagComponent& currentTagComp = entityRef.GetComponent<TagComponent>();
+				Tag& currentTagComp = entityRef.GetComponent<Tag>();
 
 				// Create new literal member for each entity
 				Ref<CustomLiteralMember> newEntityLiteral = CreateRef<CustomLiteralMember>();

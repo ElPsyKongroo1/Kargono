@@ -13,11 +13,10 @@
 #include "Modules/Assets/AssetService.h"
 #include "Modules/Particles/ParticleContext.h"
 
-#include "Modules/Core/Components/IDComponent.h"
-#include "Modules/Core/Components/TagComponent.h"
-#include "Modules/Core/Components/TransformComponent.h"
-#include "Modules/Scripting/Components/OnCreateComponent.h"
-#include "Modules/Scripting/Components/OnUpdateComponent.h"
+#include "Modules/Core/Components/Tag.h"
+#include "Modules/Core/Components/Transform.h"
+#include "Modules/Scripting/Components/OnCreate.h"
+#include "Modules/Scripting/Components/OnUpdate.h"
 #include "Modules/Cameras/Components/CameraComponent.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
 #include "Modules/Physics2D/Components/BoxCollider2DComponent.h"
@@ -25,133 +24,12 @@
 #include "Modules/Physics2D/Components/CircleCollider2DComponent.h"
 #include "Modules/Particles/Components/ParticleEmitterComponent.h"
 #include "Modules/AI/Components/AIStateComponent.h"
-
+#include "Modules/Scenes/SceneContext.h"
 #include "Modules/Assets/AssetService.h"
 
 #include "Modules/ECSInternal/Assets/CustomComponent.h"
 #include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/ECS/Entity.h"
-
-namespace Kargono::Utility
-{
-	static bool SerializeEntity(YAML::Emitter& out, ECS::Entity entity)
-	{
-		KG_ASSERT(entity.HasComponent<IDComponent>(), "Entity does not have a component");
-		out << YAML::BeginMap; // Entity Map
-		out << YAML::Key << "Entity" << YAML::Value << static_cast<uint64_t>(entity.GetUUID());
-
-		// Create serialization context
-		ECSInternal::SerializeComponentContext context;
-		context.m_Serializer = &out;
-
-		if (entity.HasComponent<TagComponent>())
-		{
-			TagComponent& tag = entity.GetComponent<TagComponent>();
-			out << YAML::Key << GetTypeName<TagComponent>();
-			tag.Serialize((void*)&context);
-		}
-		if (entity.HasComponent<Scripting::OnUpdateComponent>())
-		{
-			Scripting::OnUpdateComponent& comp = entity.GetComponent<Scripting::OnUpdateComponent>();
-			comp.Serialize((void*)&context);
-		}
-		if (entity.HasComponent<Scripting::OnCreateComponent>())
-		{
-			Scripting::OnCreateComponent& comp = 
-				entity.GetComponent<Scripting::OnCreateComponent>();
-			out << YAML::Key << GetTypeName<Scripting::OnCreateComponent>();
-			comp.Serialize((void*)&context);
-		}
-		if (entity.HasComponent<TransformComponent>())
-		{
-			TransformComponent& transform = 
-				entity.GetComponent<TransformComponent>();
-			out << YAML::Key << GetTypeName<TransformComponent>();
-			transform.Serialize((void*)&context);
-		}
-
-		if (entity.HasComponent<AI::AIStateComponent>())
-		{
-			AI::AIStateComponent& aiStateComp = 
-				entity.GetComponent<AI::AIStateComponent>();
-			out << YAML::Key << GetTypeName<AI::AIStateComponent>();
-			aiStateComp.Serialize((void*)&context);
-		}
-
-		if (entity.HasComponent<Particles::ParticleEmitterComponent>())
-		{
-			Particles::ParticleEmitterComponent& particleEmitterComp =
-				entity.GetComponent<Particles::ParticleEmitterComponent>();
-			out << YAML::Key << GetTypeName<Particles::ParticleEmitterComponent>();
-			particleEmitterComp.Serialize((void*)&context);
-		}
-
-		if (entity.HasComponent<Cameras::CameraComponent>())
-		{
-			Cameras::CameraComponent& cameraComponent = 
-				entity.GetComponent<Cameras::CameraComponent>();
-			out << YAML::Key << GetTypeName<Cameras::CameraComponent>();
-			cameraComponent.Serialize((void*)&context);
-		}
-
-		if (entity.HasComponent<Rendering::ShapeComponent>())
-		{
-			Rendering::ShapeComponent& shapeComponent = 
-				entity.GetComponent<Rendering::ShapeComponent>();
-			out << YAML::Key << GetTypeName<Rendering::ShapeComponent>();
-			shapeComponent.Serialize((void*)&context);
-		}
-
-		if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
-		{
-			Physics2D::Rigidbody2DComponent& rb2dComponent = 
-				entity.GetComponent<Physics2D::Rigidbody2DComponent>();
-			out << YAML::Key << GetTypeName<Physics2D::Rigidbody2DComponent>();
-			rb2dComponent.Serialize((void*)&context);
-		}
-
-		if (entity.HasComponent<Physics2D::BoxCollider2DComponent>())
-		{
-			Physics2D::BoxCollider2DComponent& bc2dComponent = 
-				entity.GetComponent<Physics2D::BoxCollider2DComponent>();
-			out << YAML::Key << GetTypeName<Physics2D::BoxCollider2DComponent>();
-			bc2dComponent.Serialize((void*)&context);
-		}
-
-		if (entity.HasComponent<Physics2D::CircleCollider2DComponent>())
-		{
-			Physics2D::CircleCollider2DComponent& cc2dComponent = 
-				entity.GetComponent<Physics2D::CircleCollider2DComponent>();
-			out << YAML::Key << GetTypeName<Physics2D::CircleCollider2DComponent>();
-			cc2dComponent.Serialize((void*)&context);
-		}
-
-		// Handle all custom components
-		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
-		{
-			if (!entity.HasCustomComponentData(handle))
-			{
-				continue;
-			}
-			Ref<ECSInternal::CustomComponent> projectComponent = Assets::AssetService::GetCustomComponent(handle);
-			uint8_t* componentRef = (uint8_t*)entity.GetCustomComponentData(handle);
-
-			out << YAML::Key << projectComponent->m_Name + "Component";
-			out << YAML::BeginMap; // Component Map
-			for (size_t iteration{ 0 }; iteration < projectComponent->m_DataOffsets.size(); iteration++)
-			{
-				SerializeWrappedVarType(out,
-					projectComponent->m_DataTypes.at(iteration),
-					projectComponent->m_DataNames.at(iteration).CString(),
-					componentRef + projectComponent->m_DataOffsets.at(iteration));
-			}
-			out << YAML::EndMap; // Component Map
-		}
-
-		out << YAML::EndMap; // Entity
-		return true;
-	}
-}
 
 namespace Kargono::Scenes
 {
@@ -205,11 +83,10 @@ namespace Kargono::Scenes
 			ECS::Entity entity = { entityID, &m_EntityRegistry };
 			if (!entity) { return; }
 
-			bool success = Utility::SerializeEntity(out, entity);
-			if (!success)
-			{
-				submitScene = false;
-			}
+			// Create serialization context
+			ECS::SerializeEntityContext entityContext{ &out };
+			entity.Serialize((void*)&entityContext);
+
 		}
 		out << YAML::EndSeq;
 		out << YAML::EndMap; // Start of File Map
@@ -254,121 +131,16 @@ namespace Kargono::Scenes
 		YAML::Node entities = data["Entities"];
 		if (entities)
 		{
+			// Deserialize each entity
 			for (YAML::Node entity : entities)
 			{
-				uint64_t uuid = entity["Entity"].as<uint64_t>();
+				// Create entity for registry
+				uint64_t uuid = entity["UUID"].as<uint64_t>();
+				ECS::Entity newEntity = m_EntityRegistry.CreateEntityWithUUID(uuid);
 
-				// Create deserialization context
-				ECSInternal::DeserializeComponentContext context;
-				context.m_Node = &entity;
-
-				// Get the entity name
-				ECS::Entity deserializedEntity = m_EntityRegistry.CreateEntityWithUUID(uuid);
-
-				YAML::Node tagNode = entity[GetTypeName<TagComponent>()];
-				if (tagNode)
-				{
-					TagComponent& tagComp = deserializedEntity.GetComponent<TagComponent>();
-					tagComp.Deserialize((void*)&tagNode);
-				}
-
-				YAML::Node transformComponent = entity[GetTypeName<TransformComponent>()];
-				if (transformComponent)
-				{
-					TransformComponent& tc = deserializedEntity.GetComponent<TransformComponent>();
-					tc.Deserialize((void*)&context);
-				}
-
-				YAML::Node onUpdateNode = entity[GetTypeName<Scripting::OnUpdateComponent>()];
-				if (onUpdateNode)
-				{
-					Scripting::OnUpdateComponent& component = deserializedEntity.AddComponent<Scripting::OnUpdateComponent>();
-					component.Deserialize((void*)&context);
-				}
-
-				YAML::Node aiStateNode = entity[GetTypeName<AI::AIStateComponent>()];
-				if (aiStateNode)
-				{
-					AI::AIStateComponent& component = deserializedEntity.AddComponent<AI::AIStateComponent>();
-					component.Deserialize((void*)&context);
-				}
-
-				YAML::Node onCreateNode = entity[GetTypeName<Scripting::OnCreateComponent>()];
-				if (onCreateNode)
-				{
-					Scripting::OnCreateComponent& component = deserializedEntity.AddComponent<Scripting::OnCreateComponent>();
-					component.Deserialize((void*)&context);
-				}
-
-				YAML::Node particleEmitterNode = entity[GetTypeName<Particles::ParticleEmitterComponent>()];
-				if (particleEmitterNode)
-				{
-					Particles::ParticleEmitterComponent& component = deserializedEntity.AddComponent<Particles::ParticleEmitterComponent>();
-					component.Deserialize((void*)&context);
-				}
-
-				YAML::Node cameraComponent = entity[GetTypeName<Cameras::CameraComponent>()];
-				if (cameraComponent)
-				{
-					Cameras::CameraComponent& cc = deserializedEntity.AddComponent<Cameras::CameraComponent>();
-					cc.Deserialize((void*)&context);
-				}
-
-				YAML::Node shapeComponent = entity[GetTypeName<Rendering::ShapeComponent>()];
-				if (shapeComponent)
-				{
-					Rendering::ShapeComponent& sc = deserializedEntity.AddComponent<Rendering::ShapeComponent>();
-					sc.Deserialize((void*)&context);
-				}
-
-				YAML::Node rigidbody2DComponent = entity[GetTypeName<Physics2D::Rigidbody2DComponent>()];
-				if (rigidbody2DComponent)
-				{
-					Physics2D::Rigidbody2DComponent& rb2d = deserializedEntity.AddComponent<Physics2D::Rigidbody2DComponent>();
-					rb2d.Deserialize((void*)&context);
-				}
-
-				YAML::Node boxCollider2DComponent = entity[GetTypeName<Physics2D::BoxCollider2DComponent>()];
-				if (boxCollider2DComponent)
-				{
-					Physics2D::BoxCollider2DComponent& bc2d = deserializedEntity.AddComponent<Physics2D::BoxCollider2DComponent>();
-					bc2d.Deserialize((void*)&context);
-				}
-
-				YAML::Node circleCollider2DComponent = entity[GetTypeName<Physics2D::CircleCollider2DComponent>()];
-				if (circleCollider2DComponent)
-				{
-					Physics2D::CircleCollider2DComponent& cc2d = deserializedEntity.AddComponent<Physics2D::CircleCollider2DComponent>();
-					cc2d.Deserialize((void*)&context);
-				}
-
-				// Handle all custom components
-				for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
-				{
-					Ref<ECSInternal::CustomComponent> projectComponent = Assets::AssetService::GetCustomComponent(handle);
-					KG_ASSERT(projectComponent);
-
-					YAML::Node projectComponentNode = entity[projectComponent->m_Name + "Component"];
-					if (!projectComponentNode)
-					{
-						continue;
-					}
-					// Create and get custom component
-					if (!deserializedEntity.HasCustomComponentData(handle))
-					{
-						deserializedEntity.AddCustomComponentData(handle);
-					}
-					uint8_t* componentRef = (uint8_t*)deserializedEntity.GetCustomComponentData(handle);
-
-					// Load in component data from disk
-					for (size_t iteration{ 0 }; iteration < projectComponent->m_DataOffsets.size(); iteration++)
-					{
-						Utility::DeserializeWrappedVarType(projectComponentNode,
-							projectComponent->m_DataTypes.at(iteration),
-							projectComponent->m_DataNames.at(iteration).CString(),
-							componentRef + projectComponent->m_DataOffsets.at(iteration));
-					}
-				}
+				// Deserialize the entity
+				ECS::DeserializeEntityContext context{ &entity };
+				newEntity.Deserialize((void*)&context);
 			}
 		}
 
@@ -387,11 +159,11 @@ namespace Kargono::Scenes
 		bool sceneModified{ false };
 		// Handle UI level function pointers
 		// OnUpdate
-		auto onUpdateView = sceneRef->m_EntityRegistry.GetView<Scripting::OnUpdateComponent>();
+		auto onUpdateView = sceneRef->m_EntityRegistry.GetView<Scripting::OnUpdate>();
 		for (ECSInternal::EntityID enttEntity : onUpdateView)
 		{
 			ECS::Entity currentEntity{ sceneRef->m_EntityRegistry.GetEntityByECSID(enttEntity) };
-			Scripting::OnUpdateComponent& component = currentEntity.GetComponent<Scripting::OnUpdateComponent>();
+			Scripting::OnUpdate& component = currentEntity.GetComponent<Scripting::OnUpdate>();
 			if (component.m_OnUpdateScriptHandle == scriptHandle)
 			{
 				component.m_OnUpdateScriptHandle = Assets::k_EmptyHandle;
@@ -401,11 +173,11 @@ namespace Kargono::Scenes
 		}
 
 		// OnCreate
-		auto onCreateView = sceneRef->m_EntityRegistry.GetView<Scripting::OnCreateComponent>();
+		auto onCreateView = sceneRef->m_EntityRegistry.GetView<Scripting::OnCreate>();
 		for (ECSInternal::EntityID enttEntity : onCreateView)
 		{
 			ECS::Entity currentEntity{ sceneRef->m_EntityRegistry.GetEntityByECSID(enttEntity) };
-			Scripting::OnCreateComponent& component = currentEntity.GetComponent<Scripting::OnCreateComponent>();
+			Scripting::OnCreate& component = currentEntity.GetComponent<Scripting::OnCreate>();
 			if (component.m_OnCreateScriptHandle == scriptHandle)
 			{
 				component.m_OnCreateScriptHandle = Assets::k_EmptyHandle;
@@ -551,11 +323,10 @@ namespace Kargono::Scenes
 	{
 		// TODO: Replace this mechanism w/ the module reflection system
 		// Load in core components
-		m_EntityRegistry.RegisterComponent<TagComponent>();
-		m_EntityRegistry.RegisterComponent<TransformComponent>();
-		m_EntityRegistry.RegisterComponent<IDComponent>();
-		m_EntityRegistry.RegisterComponent<Scripting::OnCreateComponent>();
-		m_EntityRegistry.RegisterComponent<Scripting::OnUpdateComponent>();
+		m_EntityRegistry.RegisterComponent<Tag>();
+		m_EntityRegistry.RegisterComponent<Transform>();
+		m_EntityRegistry.RegisterComponent<Scripting::OnCreate>();
+		m_EntityRegistry.RegisterComponent<Scripting::OnUpdate>();
 		m_EntityRegistry.RegisterComponent<Cameras::CameraComponent>();
 		m_EntityRegistry.RegisterComponent<Rendering::ShapeComponent>();
 		m_EntityRegistry.RegisterComponent<Physics2D::Rigidbody2DComponent>();
@@ -577,11 +348,11 @@ namespace Kargono::Scenes
 		m_IsRunning = true;
 
 		// Invoke OnCreate
-		auto classInstanceView = m_EntityRegistry.GetView<Scripting::OnCreateComponent>();
+		auto classInstanceView = m_EntityRegistry.GetView<Scripting::OnCreate>();
 		for (ECSInternal::EntityID id : classInstanceView)
 		{
 			ECS::Entity entity = { id, &m_EntityRegistry };
-			Scripting::OnCreateComponent& component = entity.GetComponent<Scripting::OnCreateComponent>();
+			Scripting::OnCreate& component = entity.GetComponent<Scripting::OnCreate>();
 			Assets::AssetHandle scriptHandle = component.m_OnCreateScriptHandle;
 			if (scriptHandle != Assets::k_EmptyHandle)
 			{
@@ -614,10 +385,10 @@ namespace Kargono::Scenes
 		// Draw Shapes
 		{
 			Rendering::RendererInputSpec& inputSpec{ SceneService::GetActiveContext().m_RenderSceneSpec };
-			auto view = m_EntityRegistry.m_Registry.GetFlatView<TransformComponent, Rendering::ShapeComponent>();
+			auto view = m_EntityRegistry.m_Registry.GetFlatView<Transform, Rendering::ShapeComponent>();
 			for (ECSInternal::EntityID entity : view)
 			{
-				TransformComponent& transform = m_EntityRegistry.m_Registry.GetComponent<TransformComponent>(entity).value();
+				Transform& transform = m_EntityRegistry.m_Registry.GetComponent<Transform>(entity).value();
 				Rendering::ShapeComponent& shape = m_EntityRegistry.m_Registry.GetComponent<Rendering::ShapeComponent>(entity).value();
 				inputSpec.m_Shader = shape.m_Shader;
 				inputSpec.m_Buffer = shape.m_ShaderData;
@@ -639,11 +410,11 @@ namespace Kargono::Scenes
 	void Scene::OnUpdate(Timestep ts)
 	{
 		// Invoke OnUpdate
-		auto view = m_EntityRegistry.m_Registry.GetFlatView<Scripting::OnUpdateComponent>();
+		auto view = m_EntityRegistry.m_Registry.GetFlatView<Scripting::OnUpdate>();
 		for (ECSInternal::EntityID enttEntityID : view)
 		{
 			ECS::Entity entity = { enttEntityID, &m_EntityRegistry };
-			Scripting::OnUpdateComponent& component = entity.GetComponent<Scripting::OnUpdateComponent>();
+			Scripting::OnUpdate& component = entity.GetComponent<Scripting::OnUpdate>();
 			Assets::AssetHandle scriptHandle = component.m_OnUpdateScriptHandle;
 			if (scriptHandle != Assets::k_EmptyHandle)
 			{
@@ -656,15 +427,15 @@ namespace Kargono::Scenes
 	{
 		ECS::Entity entity = m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
-		KG_ASSERT(entity.HasComponent<TransformComponent>());
-		return entity.GetComponent<TransformComponent>().m_Translation;
+		KG_ASSERT(entity.HasComponent<Transform>());
+		return entity.GetComponent<Transform>().m_Translation;
 	}
 	void Scene::TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation)
 	{
 		ECS::Entity entity = m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
-		KG_ASSERT(entity.HasComponent<TransformComponent>());
-		entity.GetComponent<TransformComponent>().m_Translation = newTranslation;
+		KG_ASSERT(entity.HasComponent<Transform>());
+		entity.GetComponent<Transform>().m_Translation = newTranslation;
 		if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
 		{
 			auto& rigidBody2DComp = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
@@ -676,8 +447,8 @@ namespace Kargono::Scenes
 	{
 		ECS::Entity entity = m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
-		KG_ASSERT(entity.HasComponent<TagComponent>());
-		TagComponent& tagComponent = entity.GetComponent<TagComponent>();
+		KG_ASSERT(entity.HasComponent<Tag>());
+		Tag& tagComponent = entity.GetComponent<Tag>();
 
 		// TODO: REMOVE THE HELL OUT OF THIS, TEMPORARY FIX TO MAKE IT COMPILE, I HATE THIS, I HATE IT SO MUCH
 		// JUST USE A STRING VIEW YEAH??

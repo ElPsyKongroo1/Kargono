@@ -4,16 +4,261 @@
 #include "Modules/ECSInternal/Assets/CustomComponent.h"
 #include "Modules/Assets/AssetService.h"
 
+#include "Modules/Core/Components/Transform.h"
+#include "Modules/Core/Components/Tag.h"
+#include "Modules/Scripting/Components/OnCreate.h"
+#include "Modules/Scripting/Components/OnUpdate.h"
+#include "Modules/AI/Components/AIState.h"
+#include "Modules/Particles/Components/ParticleEmitter.h"
+#include "Modules/Cameras/Components/Camera.h"
+#include "Modules/Physics2D/Components/BoxCollider2D.h"
+#include "Modules/Physics2D/Components/CircleCollider2D.h"
+#include "Modules/Physics2D/Components/RigidBody2D.h"
+#include "Modules/Rendering/Components/Shape.h"
+
 namespace Kargono::ECS
 {
 	void Entity::Serialize(void* context)
 	{
+		// Get serialization context and serializer
+		ECS::SerializeEntityContext* entityContext{ (ECS::SerializeEntityContext*)context };
+		KG_ASSERT(entityContext);
+		KG_ASSERT(entityContext->m_Serializer);
+		YAML::Emitter& out{ *entityContext->m_Serializer };
 
+		out << YAML::BeginMap; // Entity Map
+		out << YAML::Key << "UUID" << YAML::Value << static_cast<uint64_t>(m_UniqueID);
+
+		// Create serialization componentContext
+		ECSInternal::SerializeComponentContext componentContext;
+		componentContext.m_Serializer = &out;
+
+		if (HasComponent<Tag>())
+		{
+			Tag& tag = GetComponent<Tag>();
+			out << YAML::Key << GetTypeName<Tag>();
+			tag.Serialize((void*)&componentContext);
+		}
+		if (HasComponent<Scripting::OnUpdate>())
+		{
+			Scripting::OnUpdate& comp = GetComponent<Scripting::OnUpdate>();
+			comp.Serialize((void*)&componentContext);
+		}
+		if (HasComponent<Scripting::OnCreate>())
+		{
+			Scripting::OnCreate& comp =
+				GetComponent<Scripting::OnCreate>();
+			out << YAML::Key << GetTypeName<Scripting::OnCreate>();
+			comp.Serialize((void*)&componentContext);
+		}
+		if (HasComponent<Transform>())
+		{
+			Kargono::Transform& transform =
+				GetComponent<Kargono::Transform>();
+			out << YAML::Key << GetTypeName<Kargono::Transform>();
+			transform.Serialize((void*)&componentContext);
+		}
+
+		if (HasComponent<AI::AIState>())
+		{
+			AI::AIStateComponent& aiStateComp =
+				GetComponent<AI::AIState>();
+			out << YAML::Key << GetTypeName<AI::AIState>();
+			aiStateComp.Serialize((void*)&componentContext);
+		}
+
+		if (HasComponent<Particles::ParticleEmitter>())
+		{
+			Particles::ParticleEmitterComponent& particleEmitterComp =
+				GetComponent<Particles::ParticleEmitter>();
+			out << YAML::Key << GetTypeName<Particles::ParticleEmitter>();
+			particleEmitterComp.Serialize((void*)&componentContext);
+		}
+
+		if (HasComponent<Cameras::Camera>())
+		{
+			Cameras::CameraComponent& cameraComponent =
+				GetComponent<Cameras::Camera>();
+			out << YAML::Key << GetTypeName<Cameras::Camera>();
+			cameraComponent.Serialize((void*)&componentContext);
+		}
+
+		if (HasComponent<Rendering::Shape>())
+		{
+			Rendering::ShapeComponent& shapeComponent =
+				GetComponent<Rendering::Shape>();
+			out << YAML::Key << GetTypeName<Rendering::Shape>();
+			shapeComponent.Serialize((void*)&componentContext);
+		}
+
+		if (HasComponent<Physics2D::Rigidbody2D>())
+		{
+			Physics2D::Rigidbody2DComponent& rb2dComponent =
+				GetComponent<Physics2D::Rigidbody2D>();
+			out << YAML::Key << GetTypeName<Physics2D::Rigidbody2D>();
+			rb2dComponent.Serialize((void*)&componentContext);
+		}
+
+		if (HasComponent<Physics2D::BoxCollider2D>())
+		{
+			Physics2D::BoxCollider2DComponent& bc2dComponent =
+				GetComponent<Physics2D::BoxCollider2D>();
+			out << YAML::Key << GetTypeName<Physics2D::BoxCollider2D>();
+			bc2dComponent.Serialize((void*)&componentContext);
+		}
+
+		if (HasComponent<Physics2D::CircleCollider2D>())
+		{
+			Physics2D::CircleCollider2DComponent& cc2dComponent =
+				GetComponent<Physics2D::CircleCollider2D>();
+			out << YAML::Key << GetTypeName<Physics2D::CircleCollider2D>();
+			cc2dComponent.Serialize((void*)&componentContext);
+		}
+
+		// Handle all custom components
+		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+		{
+			if (!HasCustomComponentData(handle))
+			{
+				continue;
+			}
+			Ref<ECSInternal::Custom> projectComponent = Assets::AssetService::GetCustomComponent(handle);
+			uint8_t* componentRef = (uint8_t*)GetCustomComponentData(handle);
+
+			out << YAML::Key << projectComponent->m_Name + "Component";
+			out << YAML::BeginMap; // Component Map
+			for (size_t iteration{ 0 }; iteration < projectComponent->m_DataOffsets.size(); iteration++)
+			{
+				Utility::SerializeWrappedVarType(out,
+					projectComponent->m_DataTypes.at(iteration),
+					projectComponent->m_DataNames.at(iteration).CString(),
+					componentRef + projectComponent->m_DataOffsets.at(iteration));
+			}
+			out << YAML::EndMap; // Component Map
+		}
+
+		out << YAML::EndMap; // Entity
 	}
 
 	void Entity::Deserialize(void* context)
 	{
+		// Get the context
+		ECS::DeserializeEntityContext* entityContext{ (ECS::DeserializeEntityContext*)context};
+		KG_ASSERT(entityContext);
+		YAML::Node& entityNode{ *entityContext->m_Node };
 
+		// Deserialize the entity
+		ECSInternal::DeserializeComponentContext componentContext;
+		componentContext.m_Node = entityContext->m_Node;
+
+		// Get unique ID
+		m_UniqueID = entityNode["UUID"].as<uint64_t>();
+
+		// Create deserialization componentContext
+		YAML::Node tagNode = entityNode[GetTypeName<Tag>()];
+		if (tagNode)
+		{
+			Tag& tagComp = GetComponent<Tag>();
+			tagComp.Deserialize((void*)&tagNode);
+		}
+
+		YAML::Node transformComponent = entityNode[GetTypeName<Kargono::Transform>()];
+		if (transformComponent)
+		{
+			Kargono::Transform& tc = GetComponent<Kargono::Transform>();
+			tc.Deserialize((void*)&componentContext);
+		}
+
+		YAML::Node onUpdateNode = entityNode[GetTypeName<Scripting::OnUpdate>()];
+		if (onUpdateNode)
+		{
+			Scripting::OnUpdate& component = AddComponent<Scripting::OnUpdate>();
+			component.Deserialize((void*)&componentContext);
+		}
+
+		YAML::Node aiStateNode = entityNode[GetTypeName<AI::AIState>()];
+		if (aiStateNode)
+		{
+			AI::AIStateComponent& component = AddComponent<AI::AIState>();
+			component.Deserialize((void*)&componentContext);
+		}
+
+		YAML::Node onCreateNode = entityNode[GetTypeName<Scripting::OnCreate>()];
+		if (onCreateNode)
+		{
+			Scripting::OnCreate& component = AddComponent<Scripting::OnCreate>();
+			component.Deserialize((void*)&componentContext);
+		}
+
+		YAML::Node particleEmitterNode = entityNode[GetTypeName<Particles::ParticleEmitter>()];
+		if (particleEmitterNode)
+		{
+			Particles::ParticleEmitterComponent& component = AddComponent<Particles::ParticleEmitter>();
+			component.Deserialize((void*)&componentContext);
+		}
+
+		YAML::Node cameraComponent = entityNode[GetTypeName<Cameras::Camera>()];
+		if (cameraComponent)
+		{
+			Cameras::CameraComponent& cc = AddComponent<Cameras::Camera>();
+			cc.Deserialize((void*)&componentContext);
+		}
+
+		YAML::Node shapeComponent = entityNode[GetTypeName<Rendering::Shape>()];
+		if (shapeComponent)
+		{
+			Rendering::ShapeComponent& sc = AddComponent<Rendering::Shape>();
+			sc.Deserialize((void*)&componentContext);
+		}
+
+		YAML::Node rigidbody2DComponent = entityNode[GetTypeName<Physics2D::Rigidbody2D>()];
+		if (rigidbody2DComponent)
+		{
+			Physics2D::Rigidbody2DComponent& rb2d = AddComponent<Physics2D::Rigidbody2D>();
+			rb2d.Deserialize((void*)&componentContext);
+		}
+
+		YAML::Node boxCollider2DComponent = entityNode[GetTypeName<Physics2D::BoxCollider2D>()];
+		if (boxCollider2DComponent)
+		{
+			Physics2D::BoxCollider2DComponent& bc2d = AddComponent<Physics2D::BoxCollider2D>();
+			bc2d.Deserialize((void*)&componentContext);
+		}
+
+		YAML::Node circleCollider2DComponent = entityNode[GetTypeName<Physics2D::CircleCollider2D>()];
+		if (circleCollider2DComponent)
+		{
+			Physics2D::CircleCollider2DComponent& cc2d = AddComponent<Physics2D::CircleCollider2D>();
+			cc2d.Deserialize((void*)&componentContext);
+		}
+
+		// Handle all custom components
+		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+		{
+			Ref<ECSInternal::CustomComponent> projectComponent = Assets::AssetService::GetCustomComponent(handle);
+			KG_ASSERT(projectComponent);
+
+			YAML::Node projectComponentNode = entityNode[projectComponent->m_Name + "Component"];
+			if (!projectComponentNode)
+			{
+				continue;
+			}
+			// Create and get custom component
+			if (!HasCustomComponentData(handle))
+			{
+				AddCustomComponentData(handle);
+			}
+			uint8_t* componentRef = (uint8_t*)GetCustomComponentData(handle);
+
+			// Load in component data from disk
+			for (size_t iteration{ 0 }; iteration < projectComponent->m_DataOffsets.size(); iteration++)
+			{
+				Utility::DeserializeWrappedVarType(projectComponentNode,
+					projectComponent->m_DataTypes.at(iteration),
+					projectComponent->m_DataNames.at(iteration).CString(),
+					componentRef + projectComponent->m_DataOffsets.at(iteration));
+			}
+		}
 	}
 
 	Entity::Entity(ECSInternal::EntityID handle, Registry* registry)

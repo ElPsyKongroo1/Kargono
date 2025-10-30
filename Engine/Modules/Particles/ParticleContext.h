@@ -12,7 +12,7 @@
 #include <array>
 #include <unordered_map>
 
-namespace Kargono::ECS { struct TransformComponent; }
+namespace Kargono { struct Transform; }
 namespace Kargono::ECS { class Entity; }
 namespace Kargono::Scenes { class Scene; }
 
