@@ -4,7 +4,6 @@
 
 namespace Kargono::Scripting
 {
-
 	void CustomEnum::Serialize(void* context)
 	{
 		// Get asset context

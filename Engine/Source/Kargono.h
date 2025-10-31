@@ -5,7 +5,7 @@
 //		the core engine functionality.
 
 //-----------------AI-----------------//
-#include "Modules/AI/AIService.h"
+#include "Modules/AI/AIContext.h"
 
 //-----------------Assets-----------------//
 #include "Modules/Assets/Asset.h"
@@ -40,7 +40,7 @@
 
 //-----------------Input-----------------//
 #include "Modules/Input/InputService.h"
-#include "Modules/InputMap/InputMap.h"
+#include "Modules/InputMap/Assets/InputMap.h"
 
 //-----------------Math-----------------//
 #include "Kargono/Math/Math.h"
@@ -50,7 +50,7 @@
 #include "Modules/Network/Server.h"
 
 //-----------------Particles-----------------//
-#include "Modules/Particles/ParticleService.h"
+#include "Modules/Particles/ParticleContext.h"
 
 //-----------------Project-----------------//
 #include "Kargono/Projects/Project.h"
@@ -67,7 +67,7 @@
 
 //-----------------Scene-----------------//
 #include "Kargono/Scenes/Scene.h"
-#include "Kargono/Scenes/GameState.h"
+#include "Modules/GlobalState/Assets/GameState.h"
 
 //-----------------Scripting-----------------//
 #include "Modules/Scripting/ScriptModuleBinder.h"

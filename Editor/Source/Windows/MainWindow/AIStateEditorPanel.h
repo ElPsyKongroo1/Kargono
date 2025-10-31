@@ -1,7 +1,7 @@
 #pragma once
 #include "Modules/Assets/Asset.h"
 #include "Modules/Events/KeyEvent.h"
-#include "Modules/AI/AIService.h"
+#include "Modules/AI/AIContext.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>

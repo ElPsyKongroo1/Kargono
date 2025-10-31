@@ -1,7 +1,7 @@
 #pragma once
 #include "Modules/Assets/Asset.h"
 #include "Modules/Events/KeyEvent.h"
-#include "Kargono/Scenes/GameState.h"
+#include "Modules/GlobalState/Assets/GameState.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>

@@ -5,7 +5,6 @@
 #include "Modules/Assets/Concepts/AssetFileConcepts.h"
 #include "Modules/Assets/Concepts/AssetConcept.h"
 #include "Modules/Assets/AssetReference.h"
-#include "Modules/Core/Concepts/ConceptMacros.h"
 
 #include <concepts>
 #include <filesystem>
@@ -23,7 +22,7 @@ namespace Kargono::Assets
 	};
 
 	template <typename t_AssetType>
-	concept HasDeleteValidation = requires (t_AssetType & type, Metadata & metadata)
+	concept HasDeleteValidation = requires (t_AssetType & type, Metadata& metadata)
 	{
 		{ type.DeleteValidation(metadata) } -> std::same_as<void>;
 	};

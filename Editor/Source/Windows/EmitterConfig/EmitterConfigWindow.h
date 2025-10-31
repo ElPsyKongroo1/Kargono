@@ -4,7 +4,7 @@
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Assets/Asset.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
-#include "Modules/Particles/ParticleService.h"
+#include "Modules/Particles/ParticleContext.h"
 #include "Kargono/Core/Base.h"
 
 #include "Windows/EmitterConfig/EmitterConfigViewportPanel.h"

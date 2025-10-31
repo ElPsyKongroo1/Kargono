@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Modules/AI/AIService.h"
+#include "Modules/AI/AIContext.h"
 #include "Kargono/Scenes/Scene.h"
 #include "Modules/ECS/Entity.h"
 #include "Kargono/Projects/Project.h"

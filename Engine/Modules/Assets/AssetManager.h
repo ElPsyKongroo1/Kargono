@@ -209,6 +209,55 @@ namespace Kargono::Assets
 				metadata, providedData);
 		}
 
+		template<AssetConcept t_AssetType> requires HasAssetSaving<t_AssetType> && HasSpecification<t_AssetType>
+		void SaveAsset(AssetHandle handle, const t_AssetType::Spec& spec)
+		{
+			// Ensure handle exists inside registry
+			if (!m_AssetRegistry.contains(handle))
+			{
+				KG_WARN("Attempt to save asset of type {} that does not exist in the asset registry",
+					t_AssetType::GetAssetName());
+				return;
+			}
+
+			// Provide asset specific validation
+			Ref<void> providedData{ nullptr };
+			if constexpr (HasSaveValidation<t_AssetType>)
+			{
+				providedData = SaveAssetValidation<t_AssetType>(assetReference);
+			}
+
+			// Find location of asset's data
+			Metadata& metadata = m_AssetRegistry[assetReference.GetHandle()];
+
+			// Update in memory asset if applicable
+			if constexpr (k_HasAssetCache)
+			{
+				m_AssetCache.at(assetReference.GetHandle()) =
+				{
+					assetReference.GetHandle(),
+					assetReference.GetLoadState(),
+					(void*)&assetReference.GetAsset()
+				};
+			}
+
+			// Save asset data on-disk
+			SerializeAsset<t_AssetType>(metadata, assetReference);
+
+			// Re-generate asset hash
+			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(metadata) };
+			if (resultHash.IsEmpty())
+			{
+				KG_WARN("Generated empty hash from asset {}", metadata.m_Name.CString());
+				return k_EmptyHandle;
+			}
+			metadata.m_Hash = resultHash;
+
+			// Send update event
+			SendManageAssetEvent<t_AssetType>(Events::ManageAssetAction::UpdateAsset,
+				metadata, providedData);
+		}
+
 		template<AssetConcept t_AssetType>
 		bool DeleteAsset(AssetHandle assetHandle)
 		{
@@ -217,8 +266,6 @@ namespace Kargono::Assets
 				KG_WARN("Failed to delete {} asset. Asset was not found in registry.");
 				return false;
 			}
-
-			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
 			// Find location of asset's data
 			Metadata& metadata = m_AssetRegistry[assetHandle];

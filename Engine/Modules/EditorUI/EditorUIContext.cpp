@@ -5,7 +5,7 @@
 #include "Kargono/Utility/Regex.h"
 #include "Kargono/Utility/Operations.h"
 #include "Modules/Input/InputService.h"
-#include "Modules/InputMap/InputMap.h"
+#include "Modules/InputMap/Assets/InputMap.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Modules/Rendering/Texture.h"
 #include "Kargono/Projects/Project.h"

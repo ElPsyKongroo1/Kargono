@@ -146,12 +146,4 @@ namespace Kargono::Assets
 		Rendering::UniformBufferList m_UniformList{};
 		Rendering::InputBufferLayout m_InputLayout{};
 	};
-
-	struct ScriptMetaData
-	{
-		Scripting::ScriptType m_ScriptType {Scripting::ScriptType::None };
-		FixedBufStr16 m_SectionLabel{};
-		WrappedFuncType m_FunctionType{};
-		Scripting::ExplicitFuncType m_ExplicitFuncType{};
-	};
 }

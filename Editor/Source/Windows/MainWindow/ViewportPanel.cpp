@@ -9,7 +9,7 @@
 #include "Kargono/Utility/Time.h"
 #include "Modules/Events/EditorEvent.h"
 #include "Kargono/Utility/Operations.h"
-#include "Modules/Particles/ParticleService.h"
+#include "Modules/Particles/ParticleContext.h"
 
 #include "Modules/Rendering/Components/CameraComponent.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"

@@ -2,7 +2,7 @@
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
 #include "Kargono/Core/FixedBufferString.h"
-#include "Modules/Particles/ParticleService.h"
+#include "Modules/Particles/ParticleContext.h"
 
 #include <string>
 

@@ -4,21 +4,27 @@
 
 #include "Modules/Core/Engine.h"
 #include "Modules/Assets/AssetService.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
+#include "Modules/Scenes/SceneContext.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Kargono/Projects/Project.h"
-#include "Modules/Audio/Audio.h"
+#include "Modules/Audio/Assets/AudioBuffer.h"
+#include "Modules/Audio/AudioContext.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
-#include "Modules/InputMap/InputMap.h"
+#include "Modules/InputMap/Assets/InputMap.h"
+#include "Modules/InputMap/InputMapContext.h"
 #include "Modules/Input/InputService.h"
 #include "Modules/Network/Client.h"
-#include "Kargono/Scenes/GameState.h"
+#include "Modules/GlobalState/Assets/GameState.h"
+#include "Modules/GlobalState/GameStateContext.h"
 #include "Kargono/Utility/Operations.h"
-#include "Modules/AI/AIService.h"
+#include "Modules/AI/AIContext.h"
 #include "Modules/Scripting/ScriptCompiler.h"
 #include "Modules/Events/EditorEvent.h"
 #include "Modules/Physics2D/Physics2DCommon.h"
-#include "Modules/Particles/ParticleService.h"
+#include "Modules/Particles/ParticleContext.h"
+#include "Modules/Scripting/Assets/Script.h"
+#include "Modules/Assets/AssetManager.h"
 
 namespace Kargono::Scripting
 {
@@ -265,7 +271,7 @@ namespace Kargono::Scripting
 		KG_VERIFY(!m_ScriptLibrary.IsActive(), "Close Scripting DLL");
 	}
 
-	void ScriptModuleBinder::LoadScriptFunction(Ref<Script> script, WrappedFuncType funcType)
+	void ScriptModuleBinder::LoadScriptFunction(Script* script, WrappedFuncType funcType)
 	{
 		KG_ASSERT(script);
 		if (!m_ScriptLibrary.IsActive())
@@ -1091,7 +1097,7 @@ namespace Kargono::Scripting
 			std::string compiledScript = ScriptCompilerService::GetActiveContext().CompileScriptFile(projectPaths.GetAssetDirectory() / asset.Data.FileLocation);
 			if (compiledScript.empty())
 			{
-				KG_WARN("Failed to compile the script at: {}", asset.Data.FileLocation.string());
+				KG_WARN("Failed to compile the script at: {}", asset.Data.m_FileLocation.string());
 				compilationSuccess = false;
 			}
 			outputStream << compiledScript;
@@ -1415,25 +1421,25 @@ namespace Kargono::Scripting
 		// Game State
 		AddEngineFunctionPointerToDll(SetGameStateField, [](std::string_view identifier, void* data) 
 		{
-			if (!Scenes::GameStateService::GetActiveContext().GetActiveGameState())
+			if (!GlobalState::GameStateService::GetActiveContext().GetActiveGameState())
 			{
 				return;
 			}
-			Scenes::GameStateService::GetActiveContext().GetActiveGameState()->SetField(identifier, data);
+			GlobalState::GameStateService::GetActiveContext().GetActiveGameState()->SetField(identifier, data);
 		}, VoidStringVoidPtr)
 		AddEngineFunctionPointerToDll(GetGameStateField, [](std::string_view identifier) 
 		{
-			return Scenes::GameStateService::GetActiveContext().GetActiveGameState()->GetField(identifier)->GetValue();
+			return GlobalState::GameStateService::GetActiveContext().GetActiveGameState()->GetField(identifier)->GetValue();
 		}, VoidPtrString)
 		// Input
 		AddEngineFunctionPointerToDll(Input_IsKeyPressed, Input::InputService::IsKeyPressed, BoolUInt16)
 		AddEngineFunctionPointerToDll(InputMap_LoadInputMapFromHandle, [](Assets::AssetHandle handle)
 		{
-			Input::InputMapService::GetActiveContext().SetActiveInputMapFromHandle(handle);
+			InputMap::InputMapService::GetActiveContext().SetActiveInputMapFromHandle(handle);
 		}, VoidUInt64)
 		AddEngineFunctionPointerToDll(InputMap_IsPollingSlotPressed, [](uint16_t slot)
 		{
-			return Input::InputMapService::GetActiveContext().IsPollingSlotPressed(slot);
+			return InputMap::InputMapService::GetActiveContext().IsPollingSlotPressed(slot);
 		}, BoolUInt16)
 		// Networking
 		AddEngineFunctionPointerToDll(SignalAll, [](uint16_t signal)
