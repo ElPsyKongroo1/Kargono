@@ -312,6 +312,49 @@ namespace Kargono::Scripting
 		Scripting::ScriptBinderService::GetActiveContext().LoadScriptFunction(this, scriptMetadata.m_FunctionType);
 	}
 
+	void Script::CreateAssetFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec)
+	{
+		const std::filesystem::path fullPath = metadata.GetAssetFullFilePath<Script>();
+
+		// Create the script file on-disk
+		Utility::FileSystem::WriteFileString(fullPath, Utility::GenerateFunctionStub(spec.m_FunctionType, 
+			metadata.m_Name.StringView(), spec.m_ExplicitFuncType));
+
+		// Load data into in-memory metadata object
+		ScriptMetaData* scriptMetadata = metadata.GetSpecificMetaData<ScriptMetaData>();
+		KG_ASSERT(scriptMetadata);
+		scriptMetadata->m_ScriptType = spec.m_Type;
+		scriptMetadata->m_SectionLabel = spec.m_SectionLabel;
+		scriptMetadata->m_FunctionType = spec.m_FunctionType;
+		scriptMetadata->m_ExplicitFuncType = spec.m_ExplicitFuncType;
+	}
+
+	bool Script::CreateSpecValidation(const ScriptSpec& spec, const Assets::AssetCreationData& creationData)
+	{
+		// Ensure all scripts have unique names
+		for (auto& [handle, asset] : Assets::AssetService().GetAllScripts())
+		{
+			// TODO: Get the actual metadata pleaze??
+			ScriptMetaData metadata = *static_cast<ScriptMetaData*>(asset.Data.SpecificFileData.get());
+			if (metadata.m_Name == creationData.m_AssetName)
+			{
+				KG_WARN("Unable to create new script. Script Name already exists in asset manager");
+				return false;
+			}
+		}
+
+		// Check if function type is valid
+		if (spec.m_FunctionType == WrappedFuncType::None)
+		{
+			KG_WARN("Unable to create new script. Invalid Function Type Provided!");
+			return false;
+		}
+
+		return true;
+	}
+
+	
+
 	void Script::DeleteValidation(Assets::Metadata& metadata)
 	{
 		// Ensure all other assets do not contain this script

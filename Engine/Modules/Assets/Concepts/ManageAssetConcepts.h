@@ -16,9 +16,9 @@ namespace Kargono::Assets
 	concept HasAssetSaving = HasFileLocation<t_AssetType> || HasIntermediates<t_AssetType>;
 
 	template <typename t_AssetType>
-	concept HasSaveValidation = requires (t_AssetType & type, AssetReference<t_AssetType> newAssetRef, Metadata & metadata)
+	concept HasUpdateAssetValidation = requires (t_AssetType & type, AssetReference<t_AssetType> newAssetRef, Metadata & metadata)
 	{
-		{ type.SaveValidation(newAssetRef, metadata) } -> std::same_as<Ref<void>>;
+		{ type.UpdateValidation(newAssetRef, metadata) } -> std::same_as<Ref<void>>;
 	};
 
 	template <typename t_AssetType>
@@ -42,14 +42,22 @@ namespace Kargono::Assets
 
 	template<typename t_AssetType>
 	concept HasCreationFromSpec = HasSpecification<t_AssetType> && requires (Metadata& metadata,
-		typename t_AssetType::Spec & spec)
+		const typename t_AssetType::Spec& spec)
 	{
 		{ t_AssetType::CreateAssetFromSpec(metadata, spec) } -> std::same_as<void>;
 	};
 
-	template<typename t_AssetType>
-	concept HasSpecValidation = HasCreationFromSpec<t_AssetType> && requires (typename t_AssetType::Spec & spec)
+	template <typename t_AssetType>
+	concept HasUpdateSpecValidation = HasCreationFromSpec<t_AssetType> && 
+		requires (t_AssetType & type, const typename t_AssetType::Spec & spec, Metadata & metadata)
 	{
-		{ t_AssetType::CreateSpecValidation(spec) } -> std::same_as<bool>;
+		{ type.UpdateSpecValidation(spec, metadata) } -> std::same_as<Ref<void>>;
+	};
+
+	template<typename t_AssetType>
+	concept HasCreateSpecValidation = HasCreationFromSpec<t_AssetType> && requires (
+		const typename t_AssetType::Spec & spec, const AssetCreationData& creationData)
+	{
+		{ t_AssetType::CreateSpecValidation(spec, creationData) } -> std::same_as<bool>;
 	};
 }

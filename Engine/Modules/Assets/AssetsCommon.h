@@ -9,6 +9,8 @@
 #include <cstdint>
 #include <type_traits>
 #include <limits>
+#include <string_view>
+#include <filesystem>
 
 namespace Kargono::Assets
 {
@@ -37,5 +39,13 @@ namespace Kargono::Assets
 		Unloaded = 0,
 		Loading = 1,
 		Loaded = 2
+	};
+
+	struct AssetCreationData
+	{
+	public:
+		std::string_view m_AssetName{};
+		std::filesystem::path m_CreationDirectory{};
+		bool m_IsHidden{ false };
 	};
 }

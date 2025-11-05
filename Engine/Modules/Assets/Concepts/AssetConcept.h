@@ -2,7 +2,6 @@
 
 #include "Modules/Core/Concepts/Serializable.h"
 #include "Modules/Assets/AssetsCommon.h"
-#include "Modules/Core/Concepts/ConceptMacros.h"
 
 #include <concepts>
 #include <type_traits>

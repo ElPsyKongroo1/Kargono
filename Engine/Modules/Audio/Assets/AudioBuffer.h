@@ -96,5 +96,5 @@ namespace Kargono::Audio
 		BufferID m_BufferID{ k_InvalidBufferID };
 	};
 
-	Register_Module_Tag(AudioBuffer, Assets::AssetTag)
+	Register_Module_Type(AudioBuffer, Assets::AssetTag)
 }

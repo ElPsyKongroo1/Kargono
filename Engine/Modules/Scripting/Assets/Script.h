@@ -15,7 +15,6 @@ namespace Kargono::Scripting
 	struct ScriptSpec
 	{
 	public:
-		FixedBufStr32 m_Name{};
 		Scripting::ScriptType m_Type{ Scripting::ScriptType::None };
 		FixedBufStr32 m_SectionLabel{};
 		WrappedFuncType m_FunctionType{ WrappedFuncType::None };
@@ -105,6 +104,8 @@ namespace Kargono::Scripting
 			return ".kgscript";
 		}
 
+		void CreateAssetFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec);
+		bool CreateSpecValidation(const ScriptSpec& spec, const Assets::AssetCreationData& creationData);
 		void DeleteValidation(Assets::Metadata& metadata);
 	public:
 		//==============================

@@ -21,14 +21,6 @@ namespace Kargono::Assets
 	using AssetRegistry = std::unordered_map<AssetHandle, Metadata>;
 	using AssetCache = std::unordered_map<AssetHandle, GenericAssetReference>;
 
-	struct AssetCreationData
-	{
-	public:
-		std::string_view m_AssetName{};
-		std::filesystem::path m_CreationDirectory{};
-		bool m_IsHidden{ false };
-	};
-
 	class AssetManager
 	{
 	public:
@@ -155,13 +147,11 @@ namespace Kargono::Assets
 			return false;
 		}
 
-		template<AssetConcept t_AssetType> requires HasAssetSaving<t_AssetType>
-		void SaveAsset(AssetReference<t_AssetType> assetReference)
+		template<AssetConcept t_AssetType>
+		void UpdateAsset(AssetReference<t_AssetType> assetReference)
 		{
 			KG_ASSERT(assetReference.IsValid() && !assetReference.IsEmpty(), 
 				"Attempt to save an invalid asset reference");
-
-			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
 			// Ensure handle exists inside registry
 			if (!m_AssetRegistry.contains(assetReference.GetHandle()))
@@ -173,9 +163,9 @@ namespace Kargono::Assets
 
 			// Provide asset specific validation
 			Ref<void> providedData{ nullptr };
-			if constexpr (HasSaveValidation<t_AssetType>)
+			if constexpr (HasSaveValidationForRef<t_AssetType>)
 			{
-				providedData = SaveAssetValidation<t_AssetType>(assetReference);
+				providedData = SaveValidationForRef<t_AssetType>(assetReference);
 			}
 
 			// Find location of asset's data
@@ -192,8 +182,12 @@ namespace Kargono::Assets
 				};
 			}
 
-			// Save asset data on-disk
-			SerializeAsset<t_AssetType>(metadata, assetReference);
+			// Save to disk if relevant
+			if constexpr (HasAssetSaving<t_AssetType>)
+			{
+				// Save asset data on-disk
+				SerializeAsset<t_AssetType>(metadata, assetReference);
+			}
 
 			// Re-generate asset hash
 			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(metadata) };
@@ -209,8 +203,8 @@ namespace Kargono::Assets
 				metadata, providedData);
 		}
 
-		template<AssetConcept t_AssetType> requires HasAssetSaving<t_AssetType> && HasSpecification<t_AssetType>
-		void SaveAsset(AssetHandle handle, const t_AssetType::Spec& spec)
+		template<AssetConcept t_AssetType> requires HasSpecification<t_AssetType>
+		void UpdateAsset(AssetHandle handle, const t_AssetType::Spec& spec)
 		{
 			// Ensure handle exists inside registry
 			if (!m_AssetRegistry.contains(handle))
@@ -222,9 +216,9 @@ namespace Kargono::Assets
 
 			// Provide asset specific validation
 			Ref<void> providedData{ nullptr };
-			if constexpr (HasSaveValidation<t_AssetType>)
+			if constexpr (HasSaveValidationForSpec<t_AssetType>)
 			{
-				providedData = SaveAssetValidation<t_AssetType>(assetReference);
+				providedData = SaveValidationForSpec<t_AssetType>(spec);
 			}
 
 			// Find location of asset's data
@@ -241,8 +235,11 @@ namespace Kargono::Assets
 				};
 			}
 
-			// Save asset data on-disk
-			SerializeAsset<t_AssetType>(metadata, assetReference);
+			if constexpr (HasAssetSaving<t_AssetType>)
+			{
+				// Save asset data on-disk
+				SerializeAsset<t_AssetType>(metadata, assetReference);
+			}
 
 			// Re-generate asset hash
 			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(metadata) };
@@ -503,7 +500,7 @@ namespace Kargono::Assets
 			// Handle validation
 			if constexpr (HasSpecValidation<t_AssetType>)
 			{
-				bool validateSuccess = t_AssetType::CreateSpecValidation(spec);
+				bool validateSuccess = t_AssetType::CreateSpecValidation(spec, creationData);
 				if (!validateSuccess)
 				{
 					KG_WARN("Validation of asset specification failed");
@@ -553,6 +550,15 @@ namespace Kargono::Assets
 
 			// Create Intermediate
 			t_AssetType::CreateAssetFilesFromSpec(newMetadata, spec);
+
+			// Generate asset hash
+			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(newMetadata) };
+			if (resultHash.IsEmpty())
+			{
+				KG_WARN("Generated empty hash from asset {}", newMetadata.m_Name.CString());
+				return k_EmptyHandle;
+			}
+			newMetadata.m_Hash = resultHash;
 
 			// Register new asset
 			m_AssetRegistry.insert({ newHandle, newMetadata });
