@@ -270,7 +270,7 @@ namespace Kargono
 
 		void* Data() const
 		{
-			return m_DataBuffer.data();
+			return (void*)m_DataBuffer.data();
 		}
 
 		constexpr size_t BufferSize() const

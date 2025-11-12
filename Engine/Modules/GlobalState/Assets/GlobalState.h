@@ -29,13 +29,14 @@ namespace Kargono::GlobalState
 			Assets::AssetFlags flags{};
 			flags.ClearFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 		constexpr static FixedBufStr16 GetFileExtension()
 		{
 			return ".kggstate";
 		}
-		static void CreateAssetFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata& metadata);
 	public:
 		//=========================
 		// Constructors/Destructors

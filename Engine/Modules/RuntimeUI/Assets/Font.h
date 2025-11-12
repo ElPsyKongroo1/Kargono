@@ -97,6 +97,7 @@ namespace Kargono::RuntimeUI
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.ClearFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 		constexpr static FixedBufStr16 GetFileExtension()
@@ -111,9 +112,8 @@ namespace Kargono::RuntimeUI
 		{
 			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
 		}
-		static void CreateAssetFromName(Assets::Metadata& metadata);
-		static void CreateAssetFromFile(Assets::Metadata& metadata,
-			const std::filesystem::path& sourcePath);
+		static void CreateFromName(Assets::Metadata& metadata);
+		static void CreateFromFile(Assets::Metadata& metadata, const std::filesystem::path& sourcePath);
 	public:
 		//==============================
 		// Constructors/Destructors

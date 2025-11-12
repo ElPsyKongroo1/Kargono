@@ -137,7 +137,7 @@ namespace Kargono::Scripting
 		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
 			(
 				Assets::k_EmptyHandle,
-				AssetType::Script,
+				Assets::GetAssetIdentifier<Script>(),
 				Events::ManageAssetAction::UpdateAsset
 			);
 		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
@@ -312,7 +312,7 @@ namespace Kargono::Scripting
 		Scripting::ScriptBinderService::GetActiveContext().LoadScriptFunction(this, scriptMetadata.m_FunctionType);
 	}
 
-	void Script::CreateAssetFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec)
+	void Script::CreateFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec)
 	{
 		const std::filesystem::path fullPath = metadata.GetAssetFullFilePath<Script>();
 
@@ -329,33 +329,18 @@ namespace Kargono::Scripting
 		scriptMetadata->m_ExplicitFuncType = spec.m_ExplicitFuncType;
 	}
 
-	bool Script::CreateSpecValidation(const ScriptSpec& spec, const Assets::AssetCreationData& creationData)
+	bool Script::ValidateCreateFromSpec(const Assets::AssetCreationData& creationData, const ScriptSpec& spec)
 	{
-		// Ensure all scripts have unique names
-		for (auto& [handle, asset] : Assets::AssetService().GetAllScripts())
-		{
-			// TODO: Get the actual metadata pleaze??
-			ScriptMetaData metadata = *static_cast<ScriptMetaData*>(asset.Data.SpecificFileData.get());
-			if (metadata.m_Name == creationData.m_AssetName)
-			{
-				KG_WARN("Unable to create new script. Script Name already exists in asset manager");
-				return false;
-			}
-		}
-
 		// Check if function type is valid
 		if (spec.m_FunctionType == WrappedFuncType::None)
 		{
 			KG_WARN("Unable to create new script. Invalid Function Type Provided!");
 			return false;
 		}
-
 		return true;
 	}
 
-	
-
-	void Script::DeleteValidation(Assets::Metadata& metadata)
+	void Script::ValidateDelete(Assets::Metadata& metadata)
 	{
 		// Ensure all other assets do not contain this script
 		// If they do, remove the reference
@@ -418,6 +403,21 @@ namespace Kargono::Scripting
 		{
 			activeProject.SaveProject();
 		}
+	}
+
+	void Script::UpdateFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec)
+	{
+		ScriptMetaData* scriptMetadata = metadata.GetSpecificMetaData<ScriptMetaData>();
+		KG_ASSERT(scriptMetadata);
+
+		// Update script metadata
+		scriptMetadata->m_ScriptType = spec.m_Type;
+		scriptMetadata->m_SectionLabel = spec.m_SectionLabel;
+
+		// Update fields
+		m_ScriptType = spec.m_Type;
+		m_SectionLabel = spec.m_SectionLabel;
+		m_Function = nullptr;
 	}
 
 }

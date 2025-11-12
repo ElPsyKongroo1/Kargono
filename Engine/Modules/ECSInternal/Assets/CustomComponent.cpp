@@ -5,26 +5,6 @@
 
 namespace Kargono::ECSInternal
 {
-	void CustomComponentMetaData::Serialize(void* context)
-	{
-		// Get asset context
-		KG_ASSERT(context, "Context cannot be null");
-		Assets::SerializeMetaDataContext& metadataContext = *(Assets::SerializeMetaDataContext*)context;
-		// Get context fields
-		YAML::Emitter& emitter = *metadataContext.m_Serializer;
-		emitter << YAML::Key << "Name" << YAML::Value << m_Name;
-	}
-
-	void CustomComponentMetaData::Deserialize(void* context)
-	{
-		// Get asset context
-		KG_ASSERT(context, "Context cannot be null");
-		Assets::DeserializeMetaDataContext& assetContext = *(Assets::DeserializeMetaDataContext*)context;
-		// Get context fields
-		YAML::Node& metadataNode = *assetContext.m_Node;
-		m_Name = metadataNode["Name"].as<std::string>();
-	}
-
 	bool CustomComponent::AddField(WrappedVarType fieldType, const char* fieldName)
 	{
 		KG_ASSERT(m_DataNames.size() == m_DataOffsets.size() &&
@@ -280,7 +260,7 @@ namespace Kargono::ECSInternal
 		}
 	}
 
-	Ref<void> CustomComponent::SaveValidation(Assets::AssetReference<CustomComponent> newAssetRef, Assets::Metadata& metadata)
+	Ref<void> CustomComponent::ValidateUpdateFromAsset(Assets::Metadata& metadata, Assets::AssetReference<CustomComponent> newAssetRef )
 	{
 		// Get new asset reference	
 		KG_ASSERT(newAssetRef.IsValid() && !newAssetRef.IsEmpty(), "Attempt to save an invalid asset reference");
@@ -355,7 +335,7 @@ namespace Kargono::ECSInternal
 		}
 	}
 
-	void CustomComponent::CreateAssetFromName(Assets::Metadata& metadata)
+	void CustomComponent::CreateFromName(Assets::Metadata& metadata)
 	{
 		// Create new custom component
 		CustomComponent tempComponent{};
@@ -368,14 +348,9 @@ namespace Kargono::ECSInternal
 		// Save into file
 		Assets::SerializeAssetContext serializeContext{ &metadata };
 		tempComponent.Serialize((void*)&serializeContext);
-
-		// Load data into in-memory metadata object
-		CustomComponentMetaData* specificMetadata = metadata.GetSpecificMetaData<CustomComponentMetaData>();
-		KG_ASSERT(specificMetadata);
-		specificMetadata->m_Name = metadata.m_Name;
 	}
 
-	void CustomComponent::DeleteValidation(Assets::Metadata& metadata)
+	void CustomComponent::ValidateDelete(Assets::Metadata& metadata)
 	{
 		// Handle deleting the custom component by removing entity data from all scenes
 		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())

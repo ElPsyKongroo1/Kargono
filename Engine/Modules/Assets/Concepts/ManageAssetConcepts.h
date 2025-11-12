@@ -4,6 +4,7 @@
 #include "Modules/Assets/Concepts/SpecificationConcept.h"
 #include "Modules/Assets/Concepts/AssetFileConcepts.h"
 #include "Modules/Assets/Concepts/AssetConcept.h"
+#include "Modules/Assets/Concepts/AssetFlagConcepts.h"
 #include "Modules/Assets/AssetReference.h"
 
 #include <concepts>
@@ -12,52 +13,76 @@
 
 namespace Kargono::Assets
 {
-	template<typename t_AssetType>
-	concept HasAssetSaving = HasFileLocation<t_AssetType> || HasIntermediates<t_AssetType>;
+	// Asset update
+	template <typename t_AssetType>
+	concept HasDefaultUpdateFromAsset = HasAssetCacheFlag<t_AssetType> && 
+		HasAllowDefaultUpdateAssetFlag<t_AssetType>;
 
 	template <typename t_AssetType>
-	concept HasUpdateAssetValidation = requires (t_AssetType & type, AssetReference<t_AssetType> newAssetRef, Metadata & metadata)
+	concept HasCustomUpdateFromAsset = HasAssetCacheFlag<t_AssetType> && 
+		requires (Metadata & metadata, t_AssetType & current, AssetReference<t_AssetType> otherRef)
 	{
-		{ type.UpdateValidation(newAssetRef, metadata) } -> std::same_as<Ref<void>>;
-	};
-
-	template <typename t_AssetType>
-	concept HasDeleteValidation = requires (t_AssetType & type, Metadata& metadata)
-	{
-		{ type.DeleteValidation(metadata) } -> std::same_as<void>;
+		{ current.UpdateFromAsset(metadata, otherRef) } -> std::same_as<void>;
 	};
 
 	template <typename t_AssetType>
-	concept HasCreationFromName = requires (Metadata & metadata)
+	concept HasUpdateFromAsset = HasDefaultUpdateFromAsset<t_AssetType> || HasCustomUpdateFromAsset<t_AssetType>;
+
+	template <typename t_AssetType>
+	concept HasValidateUpdateFromAsset = HasUpdateFromAsset<t_AssetType> && 
+		requires (Metadata& metadata, AssetReference<t_AssetType> newAssetRef)
 	{
-		{ t_AssetType::CreateAssetFromName(metadata) } -> std::same_as<void>;
+		{ t_AssetType::ValidateUpdateFromAsset(metadata, newAssetRef) } -> std::same_as<Ref<void>>;
+	};
+
+	template <typename t_AssetType>
+	concept HasUpdateFromSpec = HasAssetCacheFlag<t_AssetType> &&
+		HasSpecification<t_AssetType> && 
+		requires (Metadata& metadata, t_AssetType& current, const typename t_AssetType::Spec& spec)
+	{
+		{ current.UpdateFromSpec(metadata, spec) } -> std::same_as<void>;
+	};
+
+	template <typename t_AssetType>
+	concept HasValidateUpdateFromSpec = HasUpdateFromSpec<t_AssetType> &&
+		requires (Metadata & metadata, const typename t_AssetType::Spec & spec)
+	{
+		{ t_AssetType::ValidateUpdateFromSpec(metadata, spec) } -> std::same_as<Ref<void>>;
+	};
+
+	// Asset delete
+	template <typename t_AssetType>
+	concept HasValidateDelete = requires (Metadata& metadata)
+	{
+		{ t_AssetType::ValidateDelete(metadata) } -> std::same_as<void>;
+	};
+
+	// Asset create
+	template <typename t_AssetType>
+	concept HasCreateFromName = requires (Metadata& metadata)
+	{
+		{ t_AssetType::CreateFromName(metadata) } -> std::same_as<void>;
 	};
 
 	template<typename t_AssetType>
-	concept HasCreationFromFile = requires (Metadata & metadata, std::filesystem::path & sourcePath)
+	concept HasCreateFromFile = HasImportExtensions<t_AssetType> && requires (
+		Metadata & metadata, std::filesystem::path& sourcePath)
 	{
-		{ t_AssetType::CreateAssetFromFile(metadata, sourcePath) } -> std::same_as<void>;
-		{ t_AssetType::GetImportExtensions() } -> std::same_as<std::span<const FixedBufStr16>>;
+		{ t_AssetType::CreateFromFile(metadata, sourcePath) } -> std::same_as<void>;
 	};
 
 	template<typename t_AssetType>
-	concept HasCreationFromSpec = HasSpecification<t_AssetType> && requires (Metadata& metadata,
+	concept HasCreateFromSpec = HasSpecification<t_AssetType> && requires (Metadata& metadata,
 		const typename t_AssetType::Spec& spec)
 	{
-		{ t_AssetType::CreateAssetFromSpec(metadata, spec) } -> std::same_as<void>;
-	};
-
-	template <typename t_AssetType>
-	concept HasUpdateSpecValidation = HasCreationFromSpec<t_AssetType> && 
-		requires (t_AssetType & type, const typename t_AssetType::Spec & spec, Metadata & metadata)
-	{
-		{ type.UpdateSpecValidation(spec, metadata) } -> std::same_as<Ref<void>>;
+		{ t_AssetType::CreateFromSpec(metadata, spec) } -> std::same_as<void>;
 	};
 
 	template<typename t_AssetType>
-	concept HasCreateSpecValidation = HasCreationFromSpec<t_AssetType> && requires (
-		const typename t_AssetType::Spec & spec, const AssetCreationData& creationData)
+	concept HasValidateCreateFromSpec = HasCreateFromSpec<t_AssetType> && requires (
+		const AssetCreationData& creationData, const typename t_AssetType::Spec& spec)
 	{
-		{ t_AssetType::CreateSpecValidation(spec, creationData) } -> std::same_as<bool>;
+		{ t_AssetType::ValidateCreateFromSpec(creationData, spec) } -> std::same_as<bool>;
 	};
+
 }

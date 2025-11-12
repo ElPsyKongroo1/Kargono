@@ -295,87 +295,87 @@ namespace Kargono::Scripting
 		case WrappedFuncType::Void_None:
 		{
 			script->m_Function = CreateRef<WrappedVoidNone>();
-			((WrappedVoidNone*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_none>(script->m_ScriptName.c_str());
+			((WrappedVoidNone*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_none>(script->m_ScriptName.CString());
 			break;
 		}
 
 		case WrappedFuncType::Void_String:
 		{
 			script->m_Function = CreateRef<WrappedVoidString>();
-			((WrappedVoidString*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_string>(script->m_ScriptName.c_str());
+			((WrappedVoidString*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_string>(script->m_ScriptName.CString());
 			break;
 		}
 
 		case WrappedFuncType::Void_Float:
 		{
 			script->m_Function = CreateRef<WrappedVoidFloat>();
-			((WrappedVoidFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_float>(script->m_ScriptName.c_str());
+			((WrappedVoidFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_float>(script->m_ScriptName.CString());
 			break;
 		}
 
 		case WrappedFuncType::Void_UInt16:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt16>();
-			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint16>(script->m_ScriptName.c_str());
+			((WrappedVoidUInt16*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint16>(script->m_ScriptName.CString());
 			break;
 		}
 		case WrappedFuncType::Void_UInt32:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32>();
-			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32>(script->m_ScriptName.c_str());
+			((WrappedVoidUInt32*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32>(script->m_ScriptName.CString());
 			break;
 		}
 		case WrappedFuncType::Void_UInt32UInt32:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32UInt32>();
-			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32uint32>(script->m_ScriptName.c_str());
+			((WrappedVoidUInt32UInt32*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32uint32>(script->m_ScriptName.CString());
 			break;
 		}
 
 		case WrappedFuncType::Void_Entity:
 		{
 			script->m_Function = CreateRef<WrappedVoidEntity>();
-			((WrappedVoidEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint64>(script->m_ScriptName.c_str());
+			((WrappedVoidEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint64>(script->m_ScriptName.CString());
 			break;
 		}
 
 		case WrappedFuncType::Void_Bool:
 		{
 			script->m_Function = CreateRef<WrappedVoidBool>();
-			((WrappedVoidBool*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_bool>(script->m_ScriptName.c_str());
+			((WrappedVoidBool*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_bool>(script->m_ScriptName.CString());
 			break;
 		}
 
 		case WrappedFuncType::Void_EntityFloat:
 		{
 			script->m_Function = CreateRef<WrappedVoidEntityFloat>();
-			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint64float>(script->m_ScriptName.c_str());
+			((WrappedVoidEntityFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint64float>(script->m_ScriptName.CString());
 			break;
 		}
 
 		case WrappedFuncType::Void_UInt32EntityEntityFloat:
 		{
 			script->m_Function = CreateRef<WrappedVoidUInt32EntityEntityFloat>();
-			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32uint64uint64float>(script->m_ScriptName.c_str());
+			((WrappedVoidUInt32EntityEntityFloat*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<void_uint32uint64uint64float>(script->m_ScriptName.CString());
 			break;
 		}
 		case WrappedFuncType::Bool_None:
 		{
 			script->m_Function = CreateRef<WrappedBoolNone>();
-			((WrappedBoolNone*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_none>(script->m_ScriptName.c_str());
+			((WrappedBoolNone*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_none>(script->m_ScriptName.CString());
 			break;
 		}
 
 		case WrappedFuncType::Bool_Entity:
 		{
 			script->m_Function = CreateRef<WrappedBoolEntity>();
-			((WrappedBoolEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_uint64>(script->m_ScriptName.c_str());
+			((WrappedBoolEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_uint64>(script->m_ScriptName.CString());
 			break;
 		}
 		case WrappedFuncType::Bool_EntityEntity:
 		{
 			script->m_Function = CreateRef<WrappedBoolEntityEntity>();
-			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_uint64uint64>(script->m_ScriptName.c_str());
+			((WrappedBoolEntityEntity*)script->m_Function.get())->m_Value = m_ScriptLibrary.GetFuncPointer<bool_uint64uint64>(script->m_ScriptName.CString());
 			break;
 		}
 		default:

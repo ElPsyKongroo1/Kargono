@@ -5,7 +5,7 @@
 namespace Kargono::GlobalState
 {
 
-	void GlobalState::CreateAssetFromName(Assets::Metadata& metadata)
+	void GlobalState::CreateFromName(Assets::Metadata& metadata)
 	{
 		// Create default global state
 		GlobalState defaultGlobalState{};

@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/AI/Assets/AIState.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 
@@ -16,8 +16,9 @@ namespace Kargono::AI
 
 		// Get context fields
 		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
-		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+		Assets::Metadata* metadata{ assetContext.m_AssetMetadata };
+		KG_ASSERT(metadata);
+		const std::filesystem::path& assetPath = metadata->GetAssetFullFilePath<AIState>();
 
 		YAML::Node data;
 		try
@@ -94,10 +95,14 @@ namespace Kargono::AI
 	void AIState::Serialize(void* context)
 	{
 		// Get asset context
+		KG_ASSERT(context);
 		Assets::SerializeAssetContext& assetContext = *(Assets::SerializeAssetContext*)context;
 
 		// Get context fields
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+		Assets::Metadata* metadata = assetContext.m_AssetMetadata;
+		KG_ASSERT(metadata);
+
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<AIState>() };
 
 		// Serialize
 		YAML::Emitter out;
@@ -114,18 +119,18 @@ namespace Kargono::AI
 		KG_INFO("Successfully Serialized AIState at {}", assetPath.string());
 	}
 
-	void AIState::CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path)
+	void AIState::CreateFromName(Assets::Metadata& metadata)
 	{
-		// Create Temporary AIState
+		// Create default AI State
 		AIState temporaryAIState{};
 
-		// Save Binary into File
+		// Serialize a default copy
 		Assets::SerializeAssetContext serializeContext{};
-		serializeContext.m_AssetPath = path;
+		serializeContext.m_AssetMetadata = &metadata;
 		temporaryAIState.Serialize((void*)&serializeContext);
 	}
 
-	void AIState::DeleteValidation(Assets::Metadata& metadata)
+	void AIState::ValidateDelete(Assets::Metadata& metadata)
 	{
 		// Handle deleting the AI state by removing entity data from all scenes
 		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())

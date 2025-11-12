@@ -35,6 +35,7 @@ namespace Kargono::InputMap
 			Assets::AssetFlags flags{};
 			flags.ClearFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 
@@ -43,7 +44,7 @@ namespace Kargono::InputMap
 			return ".kginput";
 		}
 
-		static void CreateAssetFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata& metadata);
 	public:
 		//=========================
 		// Constructors/Destructors

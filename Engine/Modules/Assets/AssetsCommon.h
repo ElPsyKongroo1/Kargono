@@ -29,7 +29,8 @@ namespace Kargono::Assets
 	{
 		None = 0, // Default value
 		HasAssetCache = 1, // Store cache of the filetype in runtime memory for easy reuse
-		RequireUniqueName = 2 // Individual asset names must be unique
+		RequireUniqueName = 2, // Individual asset names must be unique
+		AllowDefaultUpdateAsset = 3 // Allow updating an asset using an asset reference by default
 	};
 
 	using AssetFlags = BitField<std::underlying_type_t<AssetFlag>>;
@@ -43,7 +44,6 @@ namespace Kargono::Assets
 
 	struct AssetCreationData
 	{
-	public:
 		std::string_view m_AssetName{};
 		std::filesystem::path m_CreationDirectory{};
 		bool m_IsHidden{ false };

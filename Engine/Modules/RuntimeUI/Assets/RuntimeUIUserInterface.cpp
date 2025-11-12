@@ -14,6 +14,7 @@
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Assets/AssetService.h"
 #include "Modules/RuntimeUI/FontContext.h"
+#include "Modules/Scripting/Assets/Script.h"
 
 #include "Modules/Core/Engine.h"
 
@@ -556,7 +557,7 @@ namespace Kargono::RuntimeUI
 		SetWidgetBackgroundColorInternal(currentWidget, color);
 	}
 
-	void UserInterface::CreateAssetFromName(Assets::Metadata& metadata)
+	void UserInterface::CreateFromName(Assets::Metadata& metadata)
 	{
 		// Create default user interface
 		UserInterface tempUI {};

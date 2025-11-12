@@ -9,7 +9,7 @@
 
 namespace Kargono::Audio
 {
-	void AudioMetaData::Serialize(void* context)
+	void AudioBufferMetaData::Serialize(void* context)
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
@@ -24,7 +24,7 @@ namespace Kargono::Audio
 		emitter << YAML::Key << "TotalSize" << YAML::Value << m_TotalSize;
 	}
 
-	void AudioMetaData::Deserialize(void* context)
+	void AudioBufferMetaData::Deserialize(void* context)
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
@@ -40,7 +40,7 @@ namespace Kargono::Audio
 		m_TotalSize = metadataNode["TotalSize"].as<uint64_t>();
 	}
 
-	void AudioBuffer::CreateAssetFilesFromFile(Assets::Metadata& metadata,
+	void AudioBuffer::CreateFromFile(Assets::Metadata& metadata,
 		std::filesystem::path& sourceFile)
 	{
 		// Get intermediate location
@@ -88,7 +88,7 @@ namespace Kargono::Audio
 		}
 
 		// Load data into in-memory metadata object
-		AudioMetaData* audioMetadata{ metadata.GetSpecificMetaData<AudioMetaData>() };
+		AudioBufferMetaData* audioMetadata{ metadata.GetSpecificMetaData<AudioBufferMetaData>() };
 		KG_ASSERT(audioMetadata);
 		audioMetadata->m_Channels = channels;
 		audioMetadata->m_SampleRate = sampleRate;
@@ -112,22 +112,29 @@ namespace Kargono::Audio
 	}
 	void AudioBuffer::Deserialize(void* context)
 	{
-		KG_ASSERT(context, "Context cannot be null");
-
 		// Get asset context
+		KG_ASSERT(context, "Context cannot be null");
 		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
 
 		// Get context fields
 		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
 		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
-		std::filesystem::path& assetPath{ assetContext.m_AssetPath };
+		// Get intermediate location
+		const FixedBufStr16& intermediateExtension
+		{
+			AudioBuffer::GetIntermediateExtensions().front()
+		};
+		std::filesystem::path intermediateLocation
+		{
+			metadata.GetAssetFullIntermediatePath<AudioBuffer>(intermediateExtension.StringView())
+		};
 
 		// Get specific metadata
-		AudioMetaData audioBufferMetadata = *metadata.GetSpecificMetaData<AudioMetaData>();
+		AudioBufferMetaData audioBufferMetadata = *metadata.GetSpecificMetaData<AudioBufferMetaData>();
 
 		// Load audio data from file
 		Buffer currentResource{};
-		currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
+		currentResource = Utility::FileSystem::ReadFileBinary(intermediateLocation);
 
 		// Upload audio data to OpenAL
 		CallAndCheckALError(alBufferData(m_BufferID, audioBufferMetadata.m_Channels > 1 ?

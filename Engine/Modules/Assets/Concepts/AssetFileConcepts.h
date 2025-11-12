@@ -18,4 +18,14 @@ namespace Kargono::Assets
 	{
 		{ t_AssetType::GetIntermediateExtensions() } -> std::same_as<std::span<const FixedBufStr16>>;
 	};
+
+	template<typename t_AssetType>
+	concept HasAssetSaving = HasFileLocation<t_AssetType> || HasIntermediates<t_AssetType>;
+
+	template<typename t_AssetType>
+	concept HasImportExtensions = requires ()
+	{
+		{ t_AssetType::GetImportExtensions() } -> std::same_as<std::span<const FixedBufStr16>>;
+	};
+
 }

@@ -4,7 +4,7 @@
 
 namespace Kargono::GlobalState
 {
-	void GameState::CreateAssetFromName(Assets::Metadata& metadata)
+	void GameState::CreateFromName(Assets::Metadata& metadata)
 	{
 		// Create default game state
 		GameState defaultGameState{};

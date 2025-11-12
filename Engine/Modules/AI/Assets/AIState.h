@@ -2,7 +2,9 @@
 
 #include "Modules/AI/Module/AIModule.h"
 #include "Modules/Assets/AssetsCommon.h"
+#include "Modules/Assets/Metadata.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
+#include "Modules/Assets/Module/AssetTag.h"
 
 namespace Kargono::AI
 {
@@ -10,25 +12,26 @@ namespace Kargono::AI
 	{
 	public:
 		//==============================
-		// Static Asset Functions
+		// Asset Config Info
 		//==============================
-		constexpr static Assets::AssetConfig GetAssetConfig()
+		constexpr static FixedBufStr32 GetAssetName()
 		{
-			Assets::AssetConfig config{};
-			config.m_Identifier = Assets::GetAssetIdentifier<AIState>();
-			config.m_Name = "AI State";
-			config.m_FileExtension = ".kgaistate";
-			config.m_RegistryPath = "AIState/AIStateRegistry.kgreg";
-			config.m_IntermediateExtension = "";
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCache);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasIntermediateLocation);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasFileLocation);
-			config.m_Flags.ClearFlag(Assets::AssetFlags::HasFileImporting);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetSaving);
-			config.m_Flags.SetFlag(Assets::AssetFlags::HasAssetCreationFromName);
-			return config;
+			return "AI State";
 		}
-		static void CreateAssetFileFromName(std::string_view name, Assets::Metadata& metadata, std::filesystem::path& path);
+
+		constexpr static Assets::AssetFlags GetAssetFlags()
+		{
+			Assets::AssetFlags flags{};
+			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
+			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
+			return flags;
+		}
+		constexpr static FixedBufStr16 GetFileExtension()
+		{
+			return ".kgaistate";
+		}
+		static void CreateFromName(Assets::Metadata& metadata);
 
 	public:
 		//==============================
@@ -36,11 +39,12 @@ namespace Kargono::AI
 		//==============================
 		AIState() = default;
 		~AIState() = default;
+
 	public:
 		//==============================
 		// Validation
 		//==============================
-		void DeleteValidation(Assets::Metadata& metadata);
+		void ValidateDelete(Assets::Metadata& metadata);
 		bool RemoveScript(Assets::AssetHandle scriptHandle);
 	public:
 		//==============================

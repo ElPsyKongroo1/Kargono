@@ -74,7 +74,7 @@ namespace Kargono::Scripting
 		}
 	}
 
-	void CustomEnum::CreateAssetFromName(Assets::Metadata& metadata)
+	void CustomEnum::CreateFromName(Assets::Metadata& metadata)
 	{
 		// Create new custom component
 		CustomEnum tempEnum{};

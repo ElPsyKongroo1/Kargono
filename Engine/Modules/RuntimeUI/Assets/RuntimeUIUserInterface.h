@@ -392,6 +392,7 @@ namespace Kargono::RuntimeUI
 			Assets::AssetFlags flags{};
 			flags.ClearFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 
@@ -400,7 +401,7 @@ namespace Kargono::RuntimeUI
 			return ".kgui";
 		}
 
-		static void CreateAssetFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata& metadata);
 	public:
 		//============================
 		// Constructors/Destructors

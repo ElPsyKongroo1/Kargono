@@ -33,28 +33,8 @@ namespace Kargono::ECSInternal
 		std::vector<Assets::AssetHandle> m_OldSceneHandles;
 	};
 
-	struct CustomComponentMetaData
-	{
-	public:
-		//==============================
-		// Serialization
-		//==============================
-		void Serialize(void* context);
-		void Deserialize(void* context);
-	public:
-		//==============================
-		// Public Fields
-		//==============================
-		FixedBufStr16 m_Name{};
-	};
-
 	struct CustomComponent
 	{
-	public:
-		//==============================
-		// Metaprogramming Info
-		//==============================
-		using Metadata = CustomComponentMetaData;
 	public:
 		//==============================
 		// Asset Info
@@ -69,6 +49,7 @@ namespace Kargono::ECSInternal
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 
@@ -77,7 +58,7 @@ namespace Kargono::ECSInternal
 			return ".kgcomponent";
 		}
 
-		static void CreateAssetFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata& metadata);
 	public:
 		//==============================
 		// Constructors/Destructors
@@ -105,13 +86,12 @@ namespace Kargono::ECSInternal
 		//==============================
 		void Serialize(void* context);
 		void Deserialize(void* context);
-
 	public:
 		//==============================
 		// Validation
 		//==============================
-		Ref<void> SaveValidation(Assets::AssetReference<CustomComponent> newAssetRef, Assets::Metadata& metadata);
-		void DeleteValidation(Assets::Metadata& metadata);
+		Ref<void> ValidateUpdateFromAsset(Assets::Metadata& metadata, Assets::AssetReference<CustomComponent> newAssetRef);
+		void ValidateDelete(Assets::Metadata& metadata);
 	public:
 		//==============================
 		// Getters/Setters

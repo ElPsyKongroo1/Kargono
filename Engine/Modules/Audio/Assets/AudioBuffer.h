@@ -8,14 +8,14 @@
 
 namespace Kargono::Audio
 {
-	struct AudioMetaData
+	struct AudioBufferMetaData
 	{
 	public:
 		//==============================
 		// Constructors and Destructors
 		//==============================
-		AudioMetaData() = default;
-		~AudioMetaData() = default;
+		AudioBufferMetaData() = default;
+		~AudioBufferMetaData() = default;
 	public:
 		//==============================
 		// Serialization
@@ -41,7 +41,7 @@ namespace Kargono::Audio
 		//==============================
 		// Metaprogramming Info
 		//==============================
-		using Metadata = AudioMetaData;
+		using Metadata = AudioBufferMetaData;
 		constexpr static std::array<FixedBufStr16, 1> k_ImportExtensions{ ".wav" };
 		constexpr static std::array<FixedBufStr16, 1> k_IntermediateExtensions{ ".kgbinary" };
 	public:
@@ -58,6 +58,7 @@ namespace Kargono::Audio
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.ClearFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.ClearFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 
@@ -76,7 +77,7 @@ namespace Kargono::Audio
 			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
 		}
 
-		static void CreateAssetFilesFromFile(Assets::Metadata& metadata, std::filesystem::path& sourcePath);
+		static void CreateFromFile(Assets::Metadata& metadata, std::filesystem::path& sourcePath);
 	public:
 		//==============================
 		// Constructors and Destructors

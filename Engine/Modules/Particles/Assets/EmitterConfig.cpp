@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/Particles/Assets/EmitterConfig.h"
+#include "Modules/Scenes/Assets/Scene.h"
 
 namespace Kargono::Particles
 {
@@ -107,7 +108,7 @@ namespace Kargono::Particles
 		m_SizeEnd = data["SizeEnd"].as<Math::vec3>();
 	}
 
-	void EmitterConfig::DeleteValidation(Assets::Metadata& metadata)
+	void EmitterConfig::ValidateDelete(Assets::Metadata& metadata)
 	{
 		// Ensure all other assets do not contain this emitter config
 		// If they do, remove the reference
@@ -127,7 +128,7 @@ namespace Kargono::Particles
 		}
 	}
 
-	void EmitterConfig::CreateAssetFromName(Assets::Metadata& metadata)
+	void EmitterConfig::CreateFromName(Assets::Metadata& metadata)
 	{
 		// Create default emitter config
 		EmitterConfig defaultConfig{};

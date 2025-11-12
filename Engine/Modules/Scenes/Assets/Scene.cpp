@@ -26,6 +26,7 @@
 #include "Modules/AI/Components/AIStateComponent.h"
 #include "Modules/Scenes/SceneContext.h"
 #include "Modules/Assets/AssetService.h"
+#include "Modules/Scripting/Assets/Script.h"
 
 #include "Modules/ECSInternal/Assets/CustomComponent.h"
 #include "Modules/Scenes/Assets/Scene.h"
@@ -33,7 +34,7 @@
 
 namespace Kargono::Scenes
 {
-	void Scene::CreateAssetFromName(Assets::Metadata& metadata)
+	void Scene::CreateFromName(Assets::Metadata& metadata)
 	{
 		// Create default scene
 		Scene defaultScene{};

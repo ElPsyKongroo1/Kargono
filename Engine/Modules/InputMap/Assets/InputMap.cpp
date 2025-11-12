@@ -225,7 +225,7 @@ namespace Kargono::InputMap
 		}
 	}
 
-	void InputMap::CreateAssetFromName(Assets::Metadata& metadata)
+	void InputMap::CreateFromName(Assets::Metadata& metadata)
 	{
 		// Create default input map
 		InputMap defaultInputMap{};

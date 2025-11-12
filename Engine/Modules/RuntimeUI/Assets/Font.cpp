@@ -123,7 +123,7 @@ namespace Kargono::RuntimeUI
 		currentResource.Release();
 	}
 
-	void Font::CreateAssetFromName(Assets::Metadata& metadata)
+	void Font::CreateFromName(Assets::Metadata& metadata)
 	{
 		KG_TRACE_CRITICAL("We are calling the create font w/ name, " 
 			"but I'm skeptical of this function bruhh");
@@ -138,7 +138,7 @@ namespace Kargono::RuntimeUI
 		fout << out.c_str();
 		KG_INFO("Successfully created font inside asset directory at {}", assetPath);
 	}
-	void Font::CreateAssetFromFile(Assets::Metadata& metadata,
+	void Font::CreateFromFile(Assets::Metadata& metadata,
 		const std::filesystem::path& sourcePath)
 	{
 		std::string_view intermediateExtension

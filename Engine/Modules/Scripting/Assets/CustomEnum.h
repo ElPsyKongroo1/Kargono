@@ -24,6 +24,7 @@ namespace Kargono::Scripting
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 
@@ -31,7 +32,7 @@ namespace Kargono::Scripting
 		{
 			return ".kgenum";
 		}
-		static void CreateAssetFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata& metadata);
 
 	public:
 		//=========================

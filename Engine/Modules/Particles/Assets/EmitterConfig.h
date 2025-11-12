@@ -42,6 +42,7 @@ namespace Kargono::Particles
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 
@@ -49,7 +50,7 @@ namespace Kargono::Particles
 		{
 			return ".kgparticle";
 		}
-		static void CreateAssetFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata& metadata);
 	public:
 		//==============================
 		// Serialization
@@ -60,7 +61,7 @@ namespace Kargono::Particles
 		//==============================
 		// Validation
 		//==============================
-		void DeleteValidation(Assets::Metadata& metadata);
+		void ValidateDelete(Assets::Metadata& metadata);
 	public:
 		//==============================
 		// Public Fields

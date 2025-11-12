@@ -69,7 +69,7 @@ namespace Kargono::Rendering
 		currentResource.Release();
 	}
 
-	void Texture2D::CreateAssetFromName(Assets::Metadata& metadata)
+	void Texture2D::CreateFromName(Assets::Metadata& metadata)
 	{
 		const std::filesystem::path& assetPath = metadata.GetAssetFullFilePath<Texture2D>();
 
@@ -82,7 +82,7 @@ namespace Kargono::Rendering
 		fout << out.c_str();
 		KG_INFO("Successfully created texture inside asset directory at {}", assetPath);
 	}
-	void Texture2D::CreateAssetFromFile(Assets::Metadata& metadata,
+	void Texture2D::CreateFromFile(Assets::Metadata& metadata,
 		const std::filesystem::path& sourcePath)
 	{
 		std::string_view intermediateExtension
@@ -123,7 +123,7 @@ namespace Kargono::Rendering
 		buffer.Release();
 	}
 
-	void Texture2D::CreateAssetFromSpec(Assets::Metadata& metadata, TextureSpecification& spec)
+	void Texture2D::CreateFromSpec(Assets::Metadata& metadata, const TextureSpecification& spec)
 	{
 		// Save Binary Intermediate into File
 		std::string_view intermediateExtension
@@ -141,20 +141,14 @@ namespace Kargono::Rendering
 		textureMetadata.m_Channels = Utility::ImageFormatToBytes(spec.m_Format);
 	}
 
-	bool Texture2D::CreateSpecValidation(TextureSpecification& spec)
-	{
-		KG_ERROR("The spec validation is not implemented, what are you doing????");
-		return false;
-	}
-
-	void Texture2D::DeleteValidation(Assets::AssetHandle assetHandle)
+	void Texture2D::ValidateDelete(Assets::Metadata& metadata)
 	{
 		// Check user interface assets
 		for (auto& [uiHandle, metadata] : Assets::AssetService::GetUserInterfaceRegistry())
 		{
 			// Handle UI level function pointers
 			Ref<RuntimeUI::UserInterface> userInterfaceRef = Assets::AssetService::GetUserInterface(uiHandle);
-			bool uiModified = Assets::AssetService::RemoveTextureFromUserInterface(userInterfaceRef, assetHandle);
+			bool uiModified = Assets::AssetService::RemoveTextureFromUserInterface(userInterfaceRef, metadata.m_Handle);
 			if (uiModified)
 			{
 				Assets::AssetService::SaveUserInterface(uiHandle, userInterfaceRef);

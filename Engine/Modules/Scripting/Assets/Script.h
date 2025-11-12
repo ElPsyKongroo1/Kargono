@@ -96,6 +96,7 @@ namespace Kargono::Scripting
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.ClearFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 
@@ -104,9 +105,11 @@ namespace Kargono::Scripting
 			return ".kgscript";
 		}
 
-		void CreateAssetFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec);
-		bool CreateSpecValidation(const ScriptSpec& spec, const Assets::AssetCreationData& creationData);
-		void DeleteValidation(Assets::Metadata& metadata);
+		void CreateFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec);
+		static bool ValidateCreateFromSpec(const Assets::AssetCreationData& creationData, const ScriptSpec& spec);
+		void ValidateDelete(Assets::Metadata& metadata);
+		void UpdateFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec);
+		
 	public:
 		//==============================
 		// Constructors/Destructors

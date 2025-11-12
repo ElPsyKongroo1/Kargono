@@ -115,6 +115,7 @@ namespace Kargono::Rendering
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.ClearFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 
@@ -133,10 +134,9 @@ namespace Kargono::Rendering
 			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
 		}
 
-		static void CreateAssetFromName(Assets::Metadata& metadata);
-		static void CreateAssetFromFile(Assets::Metadata& metadata, const std::filesystem::path& sourcePath);
-		static void CreateAssetFromSpec(Assets::Metadata& metadata, TextureSpecification& spec);
-		static bool CreateSpecValidation(TextureSpecification& spec);
+		static void CreateFromName(Assets::Metadata& metadata);
+		static void CreateFromFile(Assets::Metadata& metadata, const std::filesystem::path& sourcePath);
+		static void CreateFromSpec(Assets::Metadata& metadata, const TextureSpecification& spec);
 	public:
 		//==============================
 		// Constructors/Destructors
@@ -154,7 +154,7 @@ namespace Kargono::Rendering
 		// Load Function(s)
 		//==============================
 		virtual void LoadBuffer(Buffer buffer, const TextureMetaData& metadata) = 0;
-		void DeleteValidation(Assets::AssetHandle assetHandle);
+		void ValidateDelete(Assets::Metadata& metadata);
 	public:
 		//==============================
 		// Static Helpers (UGHHHH REMOVE THIS)

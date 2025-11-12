@@ -72,7 +72,7 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void ColorPalette::CreateAssetFromName(Assets::Metadata& metadata)
+	void ColorPalette::CreateFromName(Assets::Metadata& metadata)
 	{
 		// Serialize default color palette to file
 		ColorPalette defaultColorPalette;

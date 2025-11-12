@@ -112,6 +112,11 @@ namespace Kargono::Assets
 			return m_Handle == k_EmptyHandle && m_LoadState == LoadState::Unloaded && m_Asset == nullptr;
 		}
 
+		bool IsUsable() const
+		{
+			return IsValid() && !IsEmpty()
+		}
+
 	public:
 		//==============================
 		// Operators
