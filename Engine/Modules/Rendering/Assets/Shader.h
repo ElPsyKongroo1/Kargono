@@ -7,6 +7,8 @@
 #include "Modules/Rendering/Shape.h"
 #include "Kargono/Core/Buffer.h"
 #include "Kargono/Math/Math.h"
+#include "Modules/Rendering/Module/RenderingModule.h"
+#include "Modules/Assets/Module/AssetTag.h"
 
 #include <string>
 #include <filesystem>
@@ -84,7 +86,6 @@ namespace Kargono::Rendering
 
 	using ShaderSource = std::string;
 
-	// TODO: Note, ensure you update the serialization method after any changes!
 	struct ShaderSpecification
 	{
 	public:
@@ -116,6 +117,29 @@ namespace Kargono::Rendering
 		// Rendering Options
 		RenderingType m_RenderType{ RenderingType::None };
 		bool m_DrawOutline{ false };
+	};
+
+	struct ShaderMetaData
+	{
+	public:
+		//==============================
+		// Constructor(s)/Destructor(s)
+		//==============================
+		ShaderMetaData() = default;
+		~ShaderMetaData() = default;
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		ShaderSpecification m_ShaderSpec{};
+		UniformBufferList m_UniformList{};
+		InputBufferLayout m_InputLayout{};
 	};
 
 	class Shader
@@ -159,6 +183,42 @@ namespace Kargono::Rendering
 		}
 	public:
 		//==============================
+		// Metaprogramming Info
+		//==============================
+		using Metadata = ShaderMetaData;
+		using Spec = ShaderSpecification;
+
+		constexpr static std::array<FixedBufStr16, 3> k_IntermediateExtensions
+		{ 
+			".shadersource", 
+			".kgshaderfrag", 
+			".kgshadervert"
+		};
+	public:
+		//==============================
+		// Asset Config Info
+		//==============================
+		constexpr static FixedBufStr32 GetAssetName()
+		{
+			return "Shader";
+		}
+
+		constexpr static Assets::AssetFlags GetAssetFlags()
+		{
+			Assets::AssetFlags flags{};
+			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
+			flags.ClearFlag(Assets::AssetFlag::RequireUniqueName);
+			flags.ClearFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
+			return flags;
+		}
+
+		constexpr static std::span<const FixedBufStr16> GetIntermediateExtensions()
+		{
+			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
+		}
+
+	public:
+		//==============================
 		// Constructors/Destructors
 		//==============================
 		Shader() = default;
@@ -180,6 +240,13 @@ namespace Kargono::Rendering
 		virtual void SetFloat4Uniform(const char* name, const Math::vec4& value) = 0;
 		virtual void SetIntUniform(const char* name, int value) = 0;
 		virtual void SetIntArrayUniform(const char* name, int* values, uint32_t count) = 0;
+
+	public:
+		//==============================
+		// Serialization
+		//==============================
+		void Serialize(void* context);
+		void Deserialize(void* context);
 	public:
 		//==============================
 		// Getters/Setters
@@ -229,6 +296,8 @@ namespace Kargono::Rendering
 		Ref<DrawCallBuffer> m_CurrentDrawCall{ nullptr };
 		Ref<VertexArray> m_VertexArray{ nullptr };
 	};
+
+	Register_Module_Type(Shader, Assets::AssetTag)
 }
 
 namespace Kargono::Utility

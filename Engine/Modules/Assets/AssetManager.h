@@ -107,6 +107,13 @@ namespace Kargono::Assets
 			return GetAssetByHandle<t_AssetType>(handle);
 		}
 
+		template<AssetConcept t_AssetType> requires HasSpecification<t_AssetType>
+		AssetReference<t_AssetType> GetAssetBySpec(const typename t_AssetType::Spec& spec)
+		{
+			return {};
+		}
+		
+
 		bool HasAssetByHandle(AssetHandle handle)
 		{
 			return m_AssetRegistry.contains(handle);

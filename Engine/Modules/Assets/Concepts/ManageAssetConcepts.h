@@ -85,4 +85,11 @@ namespace Kargono::Assets
 		{ t_AssetType::ValidateCreateFromSpec(creationData, spec) } -> std::same_as<bool>;
 	};
 
+	// Get asset
+	template<typename t_AssetType>
+	concept HasGetFromSpec = HasSpecification<t_AssetType> && requires (const typename t_AssetType::Spec& spec)
+	{
+		{ t_AssetType::GetFromSpec(spec) } -> std::same_as<bool>;
+	};
+
 }

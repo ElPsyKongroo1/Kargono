@@ -10,17 +10,7 @@ namespace Kargono::Assets
 	{
 	public:
 		ShaderManager() : AssetManager<Rendering::Shader>()
-		{
-			m_AssetName = "Shader";
-			m_AssetType = AssetType::Shader;
-			m_RegistryLocation = "Shader/ShaderRegistry.kgreg";
-			m_Flags.set(AssetManagerOptions::HasAssetCache, true);
-			m_Flags.set(AssetManagerOptions::HasIntermediateLocation, true);
-			m_Flags.set(AssetManagerOptions::HasFileLocation, false);
-			m_Flags.set(AssetManagerOptions::HasFileImporting, false);
-			m_Flags.set(AssetManagerOptions::HasAssetSaving, false);
-			m_Flags.set(AssetManagerOptions::HasAssetCreationFromName, false);
-		}
+		
 		virtual ~ShaderManager() = default;
 	public:
 		// Class specific functions

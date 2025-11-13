@@ -139,11 +139,4 @@ namespace Kargono::Assets
 		//==============================
 		void* m_SpecificMetaData{ nullptr };
 	};
-
-	struct ShaderMetaData
-	{
-		Rendering::ShaderSpecification m_ShaderSpec{};
-		Rendering::UniformBufferList m_UniformList{};
-		Rendering::InputBufferLayout m_InputLayout{};
-	};
 }
