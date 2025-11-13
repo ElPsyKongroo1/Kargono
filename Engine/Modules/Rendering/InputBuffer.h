@@ -88,55 +88,74 @@ namespace Kargono::Rendering
 	{
 	public:
 		//==============================
-		// Get New Vertex Buffer
-		//==============================
-		static Ref<VertexBuffer> Create(uint32_t size);
-		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
-	public:
-		//==============================
 		// Constructors/Destructors
 		//==============================
 		VertexBuffer() = default;
-		virtual ~VertexBuffer() = default;
+		~VertexBuffer()
+		{
+			if (m_Registered)
+			{
+				DeregisterBuffer();
+			}
+		}
 	public:
 		//==============================
 		// Interact With Renderer
 		//==============================
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
-		virtual void SetData(const void* data, uint32_t size) = 0;
+		// Register w/ renderer
+		void RegisterBuffer(uint32_t size);
+		void RegisterBuffer(float* vertices, uint32_t size);
+		void DeregisterBuffer();
+		// Binding with OpenGL state machine
+		void Bind() const;
+		void Unbind() const;
+		// Set data in renderer
+		void SetData(const void* data, uint32_t size);
 	public:
 		//==============================
 		// Getters/Setters
 		//==============================
-		virtual const InputBufferLayout& GetLayout() const = 0;
-		virtual void SetLayout(const InputBufferLayout& layout) = 0;
+		const InputBufferLayout& GetLayout() const;
+		void SetLayout(const InputBufferLayout& layout);
+	private:
+		bool m_Registered{ false };
+		uint32_t m_RendererID;
+		InputBufferLayout m_Layout;
 	};
 
 	class IndexBuffer
 	{
 	public:
 		//==============================
-		// Get New Index Buffer
-		//==============================
-		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
-	public:
-		//==============================
 		// Constructors/Destructors
 		//==============================
 		IndexBuffer() = default;
-		virtual ~IndexBuffer() = default;
+		~IndexBuffer()
+		{
+			if (m_Registered)
+			{
+				DeregisterBuffer();
+			}
+		}
 	public:
 		//==============================
 		// Interact With Renderer
 		//==============================
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
+		// Register w/ OpenGL
+		void RegisterBuffer(uint32_t* indices, uint32_t count);
+		void DeregisterBuffer();
+		// Bind to OpenGL state machine
+		void Bind() const;
+		void Unbind() const;
 	public:
 		//==============================
 		// Getters/Setters
 		//==============================
-		virtual uint32_t GetCount() const = 0;
+		uint32_t GetCount() const { return m_Count; };
+	private:
+		bool m_Registered{ false };
+		uint32_t m_RendererID;
+		uint32_t m_Count;
 
 	};
 }

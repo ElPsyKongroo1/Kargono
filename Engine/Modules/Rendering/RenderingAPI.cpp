@@ -1,13 +1,9 @@
 #include "kgpch.h"
 
 #include "Modules/Rendering/RendererAPI.h"
-#include "Modules/Rendering/ExternalAPI/OpenGLFramebuffer.h"
+#include "Modules/Rendering/Framebuffer.h"
 
 #include "API/Platform/gladAPI.h"
-
-#include <string>
-
-#ifdef KG_RENDERER_OPENGL
 
 namespace Kargono::Utility
 {
@@ -113,19 +109,18 @@ namespace Kargono::Utility
 
 namespace Kargono::Rendering
 {
-
 	void RendererAPI::Init()
 	{
-	// Only Enable OpenGL logging if debug is enabled
-	#ifdef KG_DEBUG
-		// Enable Debug Output
+		// Only Enable OpenGL logging if debug is enabled
+#ifdef KG_DEBUG
+	// Enable Debug Output
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		// Connect callback function to debug error events
 		glDebugMessageCallback(Utility::OpenGLMessageCallback, nullptr);
 		// Filter Source, Type, or Severity. Currently all notifications are displayed!
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
-	#endif
+#endif
 
 		// Set up Initial OpenGL State Functionality
 		glEnable(GL_BLEND);
@@ -135,7 +130,7 @@ namespace Kargono::Rendering
 		glEnable(GL_LINE_SMOOTH);
 
 		// Initialize static framebuffer resources
-		API::RenderingAPI::OpenGLFrameBufferService::Init();
+		FrameBufferService::Init();
 	}
 
 	void RendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -180,7 +175,7 @@ namespace Kargono::Rendering
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 
-	void RendererAPI::DrawIndexed(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray,uint32_t* indexPointer, uint32_t indexCount)
+	void RendererAPI::DrawIndexed(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t* indexPointer, uint32_t indexCount)
 	{
 		vertexArray->Bind();
 		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, indexPointer);
@@ -213,5 +208,3 @@ namespace Kargono::Rendering
 		glPointSize(size);
 	}
 }
-
-#endif

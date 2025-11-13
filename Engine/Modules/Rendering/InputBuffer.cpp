@@ -4,7 +4,7 @@
 #include "Modules/Rendering/InputBuffer.h"
 #include "Modules/Rendering/RenderingService.h"
 
-#include "Modules/Rendering/ExternalAPI/OpenGLBuffer.h"
+#include "API/Platform/gladAPI.h"
 
 
 namespace Kargono::Rendering
@@ -84,24 +84,66 @@ namespace Kargono::Rendering
 		}
 	}
 
-	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+	void VertexBuffer::RegisterBuffer(uint32_t size)
 	{
-#ifdef KG_RENDERER_OPENGL
-		return CreateRef<API::RenderingAPI::OpenGLVertexBuffer>(size);
-#endif
+		glCreateBuffers(1, &m_RendererID);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+		m_Registered = true;
 	}
-	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
+	void VertexBuffer::RegisterBuffer(float* vertices, uint32_t size)
 	{
-#ifdef KG_RENDERER_OPENGL
-		return CreateRef<API::RenderingAPI::OpenGLVertexBuffer>(vertices, size);
-#endif
+		glCreateBuffers(1, &m_RendererID);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+		m_Registered = true;
+	}
+	void VertexBuffer::DeregisterBuffer()
+	{
+		glDeleteBuffers(1, &m_RendererID);
+		m_Registered = false;
+	}
+	void VertexBuffer::Bind() const
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+	}
+	void VertexBuffer::Unbind() const
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	void VertexBuffer::SetData(const void* data, uint32_t size)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 	}
 
-	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
+	void IndexBuffer::RegisterBuffer(uint32_t* indices, uint32_t count)
 	{
-#ifdef KG_RENDERER_OPENGL
-		return CreateRef<API::RenderingAPI::OpenGLIndexBuffer>(indices, count);
-#endif
+		m_Count = count;
+
+		glCreateBuffers(1, &m_RendererID);
+
+		// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
+		// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state. 
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+		m_Registered = true;
+	}
+
+	void IndexBuffer::DeregisterBuffer()
+	{
+		glDeleteBuffers(1, &m_RendererID);
+		m_Registered = false;
+	}
+
+	void IndexBuffer::Bind() const
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+	}
+
+	void IndexBuffer::Unbind() const
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
 }

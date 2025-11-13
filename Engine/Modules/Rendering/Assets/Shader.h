@@ -146,11 +146,6 @@ namespace Kargono::Rendering
 	{
 	public:
 		//==============================
-		// Create Shader
-		//==============================
-		static Ref<Shader> Create(const std::string& name, const std::unordered_map<GLenum, std::vector<uint32_t>>& shaderBinaries);
-	public:
-		//==============================
 		// Interact with Input Locations
 		//==============================
 		template<typename T>
@@ -222,25 +217,33 @@ namespace Kargono::Rendering
 		// Constructors/Destructors
 		//==============================
 		Shader() = default;
-		Shader(const ShaderSpecification& shader);
-		virtual ~Shader() = default;
+		~Shader()
+		{
+			if (m_Registered)
+			{
+				DeregisterShader();
+			}
+		}
+		Shader(const ShaderSpecification& shader) : m_ShaderSpecification(shader) {}
 	public:
 		//==============================
-		// Interact w/ Renderer
+		// Interact with Renderer
 		//==============================
-		// Binding API
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
+		// Register shader w/ renderer
+		void RegisterShader(const std::unordered_map<GLenum, std::vector<uint32_t>>& openGLSPIRV);
+		void DeregisterShader();
+		// Binding with OpenGL state machine
+		void Bind() const;
+		void Unbind() const;
 		// Modify underlying uniform
-		virtual void SetMat3Uniform(const char* name, const Math::mat3& value) = 0;
-		virtual void SetMat4Uniform(const char* name, const Math::mat4& value) = 0;
-		virtual void SetFloatUniform(const char* name, float value) = 0;
-		virtual void SetFloat2Uniform(const char* name, const Math::vec2& value) = 0;
-		virtual void SetFloat3Uniform(const char* name, const Math::vec3& value) = 0;
-		virtual void SetFloat4Uniform(const char* name, const Math::vec4& value) = 0;
-		virtual void SetIntUniform(const char* name, int value) = 0;
-		virtual void SetIntArrayUniform(const char* name, int* values, uint32_t count) = 0;
-
+		void SetMat3Uniform(const char* name, const Math::mat3& value);
+		void SetMat4Uniform(const char* name, const Math::mat4& value);
+		void SetFloatUniform(const char* name, float value);
+		void SetFloat2Uniform(const char* name, const Math::vec2& value);
+		void SetFloat3Uniform(const char* name, const Math::vec3& value);
+		void SetFloat4Uniform(const char* name, const Math::vec4& value);
+		void SetIntUniform(const char* name, int value);
+		void SetIntArrayUniform(const char* name, int* values, uint32_t count);
 	public:
 		//==============================
 		// Serialization
@@ -284,6 +287,8 @@ namespace Kargono::Rendering
 		//==============================
 		// Internal Fields
 		//==============================
+		std::string m_Name;
+		bool m_Registered{ false };
 		// Renderer Specific Functionality
 		std::vector<std::function<void(RendererInputSpec& spec)>> m_FillDataPerObject {};
 		std::vector<std::function<void(RendererInputSpec& spec, uint32_t iteration)>> m_FillDataPerVertex {};
@@ -295,6 +300,8 @@ namespace Kargono::Rendering
 		std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>> m_PostDrawBuffer {};
 		Ref<DrawCallBuffer> m_CurrentDrawCall{ nullptr };
 		Ref<VertexArray> m_VertexArray{ nullptr };
+		// Underlying OpenGL hook
+		uint32_t m_RendererID;
 	};
 
 	Register_Module_Type(Shader, Assets::AssetTag)

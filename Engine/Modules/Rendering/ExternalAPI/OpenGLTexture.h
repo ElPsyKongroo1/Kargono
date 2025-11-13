@@ -16,7 +16,6 @@ namespace API::RenderingAPI
 		//==============================
 		// Constructors and Destructors
 		//==============================
-		// TODO: This should be a temporary api for creating a texture!
 		OpenGLTexture2D(const Kargono::Rendering::TextureSpecification& spec);
 		OpenGLTexture2D(uint32_t rendererID, uint32_t width, uint32_t height);
 		OpenGLTexture2D(const char* path);
@@ -52,9 +51,11 @@ namespace API::RenderingAPI
 		//==============================
 		// Internal Fields
 		//==============================
-		uint32_t m_Width, m_Height;
+		uint32_t m_Width;
+		uint32_t m_Height;
 		uint32_t m_RendererID;
-		GLenum m_InternalFormat, m_DataFormat;
+		GLenum m_InternalFormat;
+		GLenum m_DataFormat;
 	};
 }
 

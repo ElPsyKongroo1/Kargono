@@ -62,35 +62,67 @@ namespace Kargono::Rendering
 	{
 	public:
 		//==============================
-		// Create Framebuffer
-		//==============================
-		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
-	public:
-		//==============================
 		// Constructors/Destructors
 		//==============================
-		FrameBuffer() = default;
-		virtual ~Framebuffer() = default;
+		Framebuffer() = default;
+		~Framebuffer()
+		{
+			if (m_Registered)
+			{
+				DeregisterBuffer();
+			}
+		}
 	public:
 		//==============================
 		// Interact With Renderer
 		//==============================
-		// Bind w/ context
-		virtual void Bind() = 0;
-		virtual void Unbind() = 0;
+		// Register framebuffer w/ renderer
+		void RegisterBuffer(const FramebufferSpecification& spec);
+		void DeregisterBuffer();
+		// Bind w/ OpenGL state machine
+		void Bind();
+		void Unbind();
 		// Display
-		virtual void DisplayToDefaultFrameBuffer() = 0;
+		void DisplayToDefaultFrameBuffer();
 		// Configure buffer
-		virtual void Resize(uint32_t width, uint32_t height) = 0;
-		virtual void SetAttachment(uint32_t attachmentIndex, int value) = 0;
+		void Resize(uint32_t width, uint32_t height);
+		void SetAttachment(uint32_t attachmentIndex, int value);
 		// Get pixel data
-		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
+		int ReadPixel(uint32_t attachmentIndex, int x, int y);
+	private:
+		//==============================
+		// Internal Functionality
+		//==============================
+		void Invalidate();
 	public:
 		//==============================
 		// Getters/Setters
 		//==============================
-		virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
-		virtual const FramebufferSpecification& GetSpecification() const = 0;
+		uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const;
+		const FramebufferSpecification& GetSpecification() const { return m_Specification; }
+	private:
+		uint32_t m_RendererID{ 0 };
+		bool m_Registered{ false };
+		FramebufferSpecification m_Specification;
+		std::vector<FramebufferDataSpecification> m_ColorAttachmentSpecifications;
+		FramebufferDataSpecification m_DepthAttachmentSpecification{ FramebufferDataFormat::None };
+		std::vector<uint32_t> m_ColorAttachmentIDs;
+		uint32_t m_DepthAttachmentID{ 0 };
+	};
 
+	class FrameBufferService
+	{
+	public:
+		static void Init();
+
+	public:
+		static unsigned int GetScreenSpaceQuadVAO();
+		static unsigned int GetScreenSpaceQuadVBO();
+		static unsigned int GetScreenSpaceShaderProgram();
+
+	private:
+		static inline unsigned int s_ScreenSpaceQuadVAO;
+		static inline unsigned int s_ScreenSpaceQuadVBO;
+		static inline unsigned int s_ScreenSpaceShaderProgram;
 	};
 }
