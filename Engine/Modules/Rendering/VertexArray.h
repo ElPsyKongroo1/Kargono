@@ -8,28 +8,37 @@ namespace Kargono::Rendering
 	{
 	public:
 		//==============================
-		// Create Vertex Array
-		//==============================
-		static Ref<VertexArray> Create();
-	public:
-		//==============================
 		// Constructors/Destructors
 		//==============================
 		VertexArray() = default;
-		virtual ~VertexArray() = default;
+		~VertexArray();
 	public:
 		//==============================
 		// Interact With Renderer
 		//==============================
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
-		virtual void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) = 0;
-		virtual void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) = 0;
+		// Register vertex array w/ renderer
+		void RegisterArray();
+		void DeregisterArray();
+		// Binding w/ OpenGl state machine
+		void Bind() const;
+		void Unbind() const;
+		// Add buffer(s) to renderer
+		void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer);
+		void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer);
 	public:
 		//==============================
 		// Getters/Setters
 		//==============================
-		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const = 0;
-		virtual const Ref<IndexBuffer>& GetIndexBuffer() const = 0;
+		const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const { return m_VertexBuffers; }
+		const Ref<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		bool m_Registered{ false };
+		std::vector<Ref<VertexBuffer>> m_VertexBuffers{};
+		Ref<IndexBuffer> m_IndexBuffer{ nullptr };
+		uint32_t m_VertexBufferIndex{ 0 };
+		uint32_t m_RendererID{ 0 };
 	};
 }

@@ -2,9 +2,9 @@
 
 #include "Kargono/Core/Base.h"
 #include "Modules/Rendering/RendererAPI.h"
-#include "Modules/Rendering/PerspectiveCamera.h"
-#include "Modules/Rendering/CameraProjection.h"
-#include "Modules/Rendering/Shader.h"
+#include "Modules/Cameras/PerspectiveCamera.h"
+#include "Modules/Cameras/CameraProjection.h"
+#include "Modules/Rendering/Assets/Shader.h"
 #include "Kargono/Math/Math.h"
 
 namespace Kargono::Rendering
@@ -34,8 +34,8 @@ namespace Kargono::Rendering
 		//==============================
 		// Scene Rendering
 		//==============================
-		static void BeginScene(const CameraProjection& camera, const Math::mat4& viewMatrix);
-		static void BeginScene(const PerspectiveCamera& camera);
+		static void BeginScene(const Cameras::CameraProjection& camera, const Math::mat4& viewMatrix);
+		static void BeginScene(const Cameras::PerspectiveCamera& camera);
 		static void BeginScene(const Math::mat4 viewProjection);
 		static void SubmitDataToRenderer(RendererInputSpec& inputSpec);
 		static void EndScene();

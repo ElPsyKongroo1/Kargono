@@ -70,20 +70,25 @@ namespace Kargono::Rendering
 	{
 	public:
 		//==============================
-		// Create Uniform Buffer
-		//==============================
-		static Ref<UniformBuffer> Create(uint32_t size, uint32_t binding);
-	public:
-		//==============================
 		// Constructors/Destructors
 		//==============================
-		UniformBuffer() {}
-		virtual ~UniformBuffer() {}
+		UniformBuffer() = default;
+		~UniformBuffer();
 	public:
 		//==============================
 		// Interact With Renderer
 		//==============================
-		virtual void SetData(const void* data, uint32_t size, uint32_t offset = 0) = 0;
+		// Register buffer w/ renderer
+		void RegisterBuffer(uint32_t size, uint32_t binding);
+		void DeregisterBuffer();
+		// Set data for OpenGl buffer
+		void SetData(const void* data, uint32_t size, uint32_t offset = 0);
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		bool m_Registered{ false };
+		uint32_t m_RendererID{ 0 };
 	};
 
 }

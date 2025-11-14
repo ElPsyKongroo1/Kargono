@@ -3,7 +3,7 @@
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Rendering/UniformBuffer.h"
 
-#include "Modules/Rendering/ExternalAPI/OpenGLUniformBuffer.h"
+#include "API/Platform/gladAPI.h"
 
 namespace Kargono::Rendering
 {
@@ -34,10 +34,37 @@ namespace Kargono::Rendering
 	UniformBufferList::UniformBufferList(std::initializer_list<UniformElement> elements)
 	: m_Elements(elements) {}
 
-	Ref<UniformBuffer> UniformBuffer::Create(uint32_t size, uint32_t binding)
+
+	UniformBuffer::~UniformBuffer()
 	{
-#ifdef KG_RENDERER_OPENGL
-		return CreateRef<API::RenderingAPI::OpenGLUniformBuffer>(size, binding);
-#endif
+		if (m_Registered)
+		{
+			DeregisterBuffer();
+		}
+	}
+
+
+	void UniformBuffer::RegisterBuffer(uint32_t size, uint32_t binding)
+	{
+		KG_ASSERT(!m_Registered);
+		// Instantiate Buffer
+		glCreateBuffers(1, &m_RendererID);
+		// Create OpenGL buffer storage
+		glNamedBufferData(m_RendererID, size, nullptr, GL_DYNAMIC_DRAW); // TODO: investigate usage hint
+		// Bind buffer to binding location
+		glBindBufferBase(GL_UNIFORM_BUFFER, binding, m_RendererID);
+		m_Registered = true;
+	}
+
+	void UniformBuffer::DeregisterBuffer()
+	{
+		KG_ASSERT(m_Registered);
+		glDeleteBuffers(1, &m_RendererID);
+		m_Registered = false;
+	}
+
+	void UniformBuffer::SetData(const void* data, uint32_t size, uint32_t offset)
+	{
+		glNamedBufferSubData(m_RendererID, offset, size, data);
 	}
 }

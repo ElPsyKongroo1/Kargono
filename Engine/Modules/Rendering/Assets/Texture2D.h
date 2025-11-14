@@ -63,48 +63,19 @@ namespace Kargono::Rendering
 		int32_t m_Channels{ 0 };
 	};
 
-	class Texture
+	class Texture2D
 	{
 	public:
 		//==============================
-		// Constructors/Destructors
+		// Asset Config
 		//==============================
-		Texture() = default;
-		virtual ~Texture() = default;
-	public:
-		//==============================
-		// Getters/Setters
-		//==============================
-		virtual uint32_t GetWidth() const = 0;
-		virtual uint32_t GetHeight() const = 0;
-		virtual uint32_t GetRendererID() const = 0;
-		virtual void SetData(void* data, uint32_t size) = 0;
-
-		//==============================
-		// Interact w/ Graphics API
-		//==============================
-		virtual void Bind(uint32_t slot = 0) const = 0;
-	public:
-		//==============================
-		// Operator Overloads
-		//==============================
-		virtual bool operator==(const Texture& other) const = 0;
-	};
-
-	class Texture2D : public Texture
-	{
-	public:
-		//==============================
-		// Metaprogramming Info
-		//==============================
+		// Metaprogramming info
 		using Metadata = TextureMetaData;
 		using Spec = TextureSpecification;
 		constexpr static std::array<FixedBufStr16, 1> k_ImportExtensions{ ".png" };
 		constexpr static std::array<FixedBufStr16, 1> k_IntermediateExtensions{ ".kgbinary" };
-	public:
-		//==============================
-		// Asset Config Info
-		//==============================
+
+		// Base asset info
 		constexpr static FixedBufStr32 GetAssetName()
 		{
 			return "Texture";
@@ -119,6 +90,7 @@ namespace Kargono::Rendering
 			return flags;
 		}
 
+		// Optional asset functions
 		constexpr static FixedBufStr16 GetFileExtension()
 		{
 			return ".kgtexture";
@@ -142,7 +114,7 @@ namespace Kargono::Rendering
 		// Constructors/Destructors
 		//==============================
 		Texture2D() = default;
-		virtual ~Texture2D() = default;
+		~Texture2D() = default;
 	public:
 		//==============================
 		// Serialization
@@ -151,21 +123,45 @@ namespace Kargono::Rendering
 		void Deserialize(void* context);
 	public:
 		//==============================
-		// Load Function(s)
+		// Validate Functions
 		//==============================
-		virtual void LoadBuffer(Buffer buffer, const TextureMetaData& metadata) = 0;
 		void ValidateDelete(Assets::Metadata& metadata);
 	public:
 		//==============================
-		// Static Helpers (UGHHHH REMOVE THIS)
+		// Interact w/ Renderer
 		//==============================
-		static Ref<Texture2D> Create(const TextureSpecification& spec);
-		static Ref<Texture2D> Create(uint32_t rendererID, uint32_t width, uint32_t height);
-		// Create Texture using intermediate format
-		static Ref<Texture2D> Create(Buffer buffer, const TextureMetaData& metadata);
-		// Create unmanaged texture outside of AssetManager. Used for Editor Textures only.
-		// Runtime related textures should use AssetManager.
-		static Ref<Texture2D> CreateEditorTexture(const std::filesystem::path& path);
+		// Register texture w/ renderer
+		void RegisterTexture(const TextureSpecification& spec);
+		void RegisterTexture(uint32_t rendererID, uint32_t width, uint32_t height);
+		void RegisterTexture(Buffer buffer, const TextureMetaData& metadata);
+		void RegisterTexture(const std::filesystem::path& path);
+		void DeregisterTexture();
+		// Bind w/ OpenGL state machine
+		void Bind(uint32_t slot) const;
+		// Load data into OpenGL buffer
+		void SetData(void* data, uint32_t size);
+		void LoadBuffer(Buffer buffer, const TextureMetaData& metadata);
+	public:
+		//==============================
+		// Getters/Setters
+		//==============================
+		uint32_t GetWidth() const { return m_Width; }
+		uint32_t GetHeight() const { return m_Height; }
+		uint32_t GetRendererID() const { return m_RendererID; }
+	public:
+		//==============================
+		// Operator Overloads
+		//==============================
+		bool operator==(const Texture2D& other) const { return m_RendererID == other.GetRendererID(); }
+	private:
+		//==============================
+		// Internal Fields
+		//==============================
+		uint32_t m_Width{ 0 };
+		uint32_t m_Height{ 0 };
+		uint32_t m_RendererID{ 0 };
+		GLenum m_InternalFormat {};
+		GLenum m_DataFormat{};
 	};
 }
 
