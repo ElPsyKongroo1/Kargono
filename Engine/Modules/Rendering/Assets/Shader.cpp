@@ -5,6 +5,7 @@
 #include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
+#include "Modules/Rendering/ShaderBuilder.h"
 
 #include "Modules/Rendering/ExternalAPI/VulkanAPI.h"
 #include "API/Platform/gladAPI.h"
@@ -13,13 +14,13 @@ namespace Kargono::Utility
 {
 	static GLenum ShaderTypeFromExtension(std::string_view type)
 	{
-		if (type == ".kgshadervert")
-		{
-			return GL_VERTEX_SHADER;
-		}
-		if (type == ".kgshaderfrag")
+		if (type == Rendering::Shader::k_IntermediateExtensions[1].StringView())
 		{
 			return GL_FRAGMENT_SHADER;
+		}
+		if (type == Rendering::Shader::k_IntermediateExtensions[2].StringView())
+		{
+			return GL_VERTEX_SHADER;
 		}
 
 		KG_ERROR("Unknown shader extension!");
@@ -56,8 +57,8 @@ namespace Kargono::Utility
 	{
 		switch (stage)
 		{
-		case GL_VERTEX_SHADER:    return ".kgshadervert";
-		case GL_FRAGMENT_SHADER:  return ".kgshaderfrag";
+		case GL_FRAGMENT_SHADER:  return Rendering::Shader::k_IntermediateExtensions[1].CString();
+		case GL_VERTEX_SHADER:    return Rendering::Shader::k_IntermediateExtensions[2].CString();
 		}
 		KG_ERROR("Invalid Shader Extension Type");
 		return "";
@@ -299,6 +300,81 @@ namespace Kargono::Rendering
 		SetInputLayout(shaderMetadata->m_InputLayout);
 		SetUniformList(shaderMetadata->m_UniformList);
 		openGLSPIRV.clear();
+	}
+
+	Utility::SHA256Hash Rendering::Shader::GetHashFromSpec(const ShaderSpecification& spec)
+	{
+		auto [shaderSource, bufferLayout, uniformList] = ShaderBuilder::BuildShader(spec);
+		return Utility::FileSystem::SHA256HashFromString(shaderSource.c_str());
+	}
+
+	bool Rendering::Shader::GetAssetFromSpec(Assets::Metadata& metadata, const ShaderSpecification& querySpec)
+	{
+		Assets::AssetReference<Shader> currentRef = m_AssetCache.GetAsset(metadata.m_Handle);
+		Shader& currentShader = currentRef.GetAsset();
+
+		if (currentShader.GetSpecification() == querySpec)
+		{
+			return true;
+		}
+
+		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+		ShaderMetaData* shaderMetadata = metadata.GetSpecificMetaData<ShaderMetaData>();
+		if (shaderMetadata->m_ShaderSpec == querySpec)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	void Rendering::Shader::CreateFromSpec(Assets::Metadata& metadata, const ShaderSpecification& spec)
+	{
+		// Build the shader source from the specification
+		auto [shaderSource, bufferLayout, uniformList] = ShaderBuilder::BuildShader(spec);
+
+		// Get the intermediate paths
+		const std::filesystem::path shaderSourcePath = 
+			metadata.GetAssetFullIntermediatePath<Shader>(k_IntermediateExtensions[0].StringView());
+
+		// Compile shader(s) to SPIR-V
+#if defined(KG_EXPORT_SERVER) || defined(KG_EXPORT_RUNTIME)
+		KG_ERROR("Attempt to create/compile new shader during runtime!");
+#endif
+		auto shaderSources = Utility::PreProcess(shaderSource);
+
+		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
+#if !defined(KG_EXPORT_SERVER) && !defined(KG_EXPORT_RUNTIME)
+		Utility::CompileBinaries(metadata.m_Handle, shaderSources, openGLSPIRV);
+#endif
+		Projects::ProjectPaths& projectPaths { Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+		Utility::FileSystem::CreateNewDirectory(shaderSourcePath.parent_path());
+
+		// Write out shader binary intermediates for all shader stages
+		for (const auto& [stage, source] : openGLSPIRV)
+		{
+			const std::filesystem::path intermediateFullPath =
+				metadata.GetAssetFullIntermediatePath<Shader>(Utility::ShaderBinaryFileExtension(stage));
+			std::ofstream out(intermediateFullPath, std::ios::out | std::ios::binary);
+			if (out.is_open())
+			{
+				auto& data = source;
+				out.write((char*)data.data(), data.size() * sizeof(uint32_t));
+				out.flush();
+				out.close();
+			}
+		}
+
+		// Write out shader source file for debugging
+		std::string debugString = shaderSource;
+		Utility::FileSystem::WriteFileString(shaderSourcePath, debugString);
+
+		// Load in-memory metadata object
+		ShaderMetaData* shaderMetadata = metadata.GetSpecificMetaData<ShaderMetaData>();
+		shaderMetadata->m_ShaderSpec = spec;
+		shaderMetadata->m_InputLayout = bufferLayout;
+		shaderMetadata->m_UniformList = uniformList;
 	}
 
 	void Shader::RegisterShader(const std::unordered_map<GLenum, std::vector<uint32_t>>& openGLSPIRV)

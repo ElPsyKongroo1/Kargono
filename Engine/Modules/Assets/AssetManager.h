@@ -107,9 +107,19 @@ namespace Kargono::Assets
 			return GetAssetByHandle<t_AssetType>(handle);
 		}
 
-		template<AssetConcept t_AssetType> requires HasSpecification<t_AssetType>
+		template<AssetConcept t_AssetType> requires HasGetAssetFromSpec<t_AssetType>
 		AssetReference<t_AssetType> GetAssetBySpec(const typename t_AssetType::Spec& spec)
 		{
+			// Check each asset for matching spec
+			for (const auto& [handle, metadata] : m_AssetRegistry)
+			{
+				if (GetAssetFromSpecImpl(metadata, spec))
+				{
+					return GetAssetByHandle<t_AssetType>(handle);
+				}
+			}
+
+			// If no matching asset found, return empty reference
 			return {};
 		}
 		
@@ -399,7 +409,6 @@ namespace Kargono::Assets
 
 			// Generate asset hash
 			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(newMetadata) };
-			KG_ASSERT(!resultHash.IsEmpty());
 			newMetadata.m_Hash = resultHash;
 
 			// Register new asset
@@ -410,6 +419,18 @@ namespace Kargono::Assets
 			if constexpr (HasAssetCacheFlag<t_AssetType>)
 			{
 				LoadAssetIntoCache<t_AssetType>(newMetadata);
+			}
+
+			// Validate asset hash
+			if (!ValidateAssetHash<t_AssetType>(resultHash))
+			{
+				KG_WARN("Invalid asset hash generated from new asset");
+
+				// Rollback asset creation
+				bool deleteSuccess = DeleteAsset<t_AssetType>(newMetadata.m_Handle);
+				KG_ASSERT(deleteSuccess);
+
+				return k_EmptyHandle;
 			}
 
 			// Send creation event
@@ -475,7 +496,6 @@ namespace Kargono::Assets
 
 			// Generate asset hash
 			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(newMetadata) };
-			KG_ASSERT(!resultHash.IsEmpty());
 			newMetadata.m_Hash = resultHash;
 
 			// Add new asset into asset registry
@@ -486,6 +506,19 @@ namespace Kargono::Assets
 			if constexpr (HasAssetCacheFlag<t_AssetType>)
 			{
 				LoadAssetIntoCache<t_AssetType>(newMetadata);
+			}
+
+			// Validate asset hash
+			if (!ValidateAssetHash<t_AssetType>(resultHash))
+			{
+				KG_WARN("Invalid asset hash generated from new asset");
+
+				// Rollback asset creation
+				bool deleteSuccess = DeleteAsset<t_AssetType>(newMetadata.m_Handle);
+				KG_ASSERT(deleteSuccess);
+
+				// Return empty handle
+				return k_EmptyHandle;
 			}
 
 			// Send creation event
@@ -555,7 +588,14 @@ namespace Kargono::Assets
 
 			// Generate asset hash
 			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(newMetadata) };
-			KG_ASSERT(!resultHash.IsEmpty());
+
+			// Incorporate spec hash if applicable
+			if constexpr (HasHashFromSpec<t_AssetType>)
+			{
+				// Generate spec hash
+				Utility::SHA256Hash specHash{ GetHashFromSpecImpl<t_AssetType>(spec) };
+				resultHash = resultHash ^ specHash;
+			}
 			newMetadata.m_Hash = resultHash;
 
 			// Register new asset
@@ -566,6 +606,19 @@ namespace Kargono::Assets
 			if constexpr (HasAssetCacheFlag<t_AssetType>)
 			{
 				LoadAssetIntoCache<t_AssetType>(newMetadata);
+			}
+
+			// Validate asset hash
+			if (!ValidateAssetHash<t_AssetType>(resultHash))
+			{
+				KG_WARN("Invalid asset hash generated from new asset");
+
+				// Rollback asset creation
+				bool deleteSuccess = DeleteAsset<t_AssetType>(newMetadata.m_Handle);
+				KG_ASSERT(deleteSuccess);
+
+				// Return empty handle
+				return k_EmptyHandle;
 			}
 
 			// Send creation event
@@ -1178,6 +1231,20 @@ namespace Kargono::Assets
 			t_AssetType::ValidateCreateFromSpec(creationData, spec);
 		};
 
+		template <AssetConcept t_AssetType> requires HasGetAssetFromSpec<t_AssetType>
+		bool GetAssetFromSpecImpl(Metadata& metadata, const typename t_AssetType::Spec& spec)
+		{
+			// Call user-defined function to check if an asset meets the provided specification requirements
+			return t_AssetType::GetAssetFromSpec(metadata, spec);
+		};
+
+		template <AssetConcept t_AssetType> requires HasHashFromSpec<t_AssetType>
+		bool GetHashFromSpecImpl(const typename t_AssetType::Spec& spec)
+		{
+			// Call user-defined function to get hash from spec
+			return t_AssetType::GetHashFromSpec(spec);
+		};
+
 		template<AssetConcept t_AssetType>
 		bool ValidateAssetName(std::string_view name)
 		{
@@ -1200,6 +1267,33 @@ namespace Kargono::Assets
 				}
 			}
 
+			// If all checks pass, return true
+			return true;
+		}
+
+		template<AssetConcept t_AssetType>
+		bool ValidateAssetHash(Utility::SHA256Hash hash)
+		{
+			// Ensure hash is not empty
+			if (hash.IsEmpty())
+			{
+				return false;
+			}
+
+			// Ensure hash is unique if required
+			if constexpr (HasRequireUniqueHashFlag<t_AssetType>)
+			{
+				for (const auto& [handle, metadata] : m_AssetRegistry)
+				{
+					if (metadata.m_Hash == hash)
+					{
+						KG_WARN("Attempt to create asset with non-unique hash: {}", hash.CString());
+						return false;
+					}
+				}
+			}
+
+			// If all checks pass, return true
 			return true;
 		}
 

@@ -6,6 +6,7 @@
 #include "Modules/Assets/Concepts/AssetConcept.h"
 #include "Modules/Assets/Concepts/AssetFlagConcepts.h"
 #include "Modules/Assets/AssetReference.h"
+#include "Modules/FileSystem/FileSystem.h"
 
 #include <concepts>
 #include <filesystem>
@@ -87,9 +88,17 @@ namespace Kargono::Assets
 
 	// Get asset
 	template<typename t_AssetType>
-	concept HasGetFromSpec = HasSpecification<t_AssetType> && requires (const typename t_AssetType::Spec& spec)
+	concept HasGetAssetFromSpec = HasSpecification<t_AssetType> && requires (Metadata & metadata,
+		const typename t_AssetType::Spec& spec)
 	{
-		{ t_AssetType::GetFromSpec(spec) } -> std::same_as<bool>;
+		{ t_AssetType::GetAssetFromSpec(metadata, spec) } -> std::same_as<bool>;
+	};
+
+	// Generate asset hash from spec
+	template<typename t_AssetType>
+	concept HasHashFromSpec = HasSpecification<t_AssetType> && requires (const typename t_AssetType::Spec& spec)
+	{
+		{ t_AssetType::GetHashFromSpec(spec) } -> std::same_as<Utility::SHA256Hash>;
 	};
 
 }

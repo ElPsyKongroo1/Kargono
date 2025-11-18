@@ -211,6 +211,10 @@ namespace Kargono::Rendering
 		{
 			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
 		}
+		
+		static Utility::SHA256Hash GetHashFromSpec(const ShaderSpecification& spec);
+		static bool GetAssetFromSpec(Assets::Metadata& metadata, const ShaderSpecification& querySpec);
+		static void CreateFromSpec(Assets::Metadata& metadata, const ShaderSpecification& spec);
 
 	public:
 		//==============================

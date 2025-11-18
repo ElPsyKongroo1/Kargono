@@ -1,5 +1,5 @@
 #pragma once
-#include "Modules/Rendering/Shader.h"
+#include "Modules/Rendering/Assets/Shader.h"
 
 namespace Kargono::Rendering
 {

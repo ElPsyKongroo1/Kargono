@@ -17,5 +17,9 @@ namespace Kargono::Assets
 	concept HasRequireUniqueNameFlag = HasAssetFlag<t_AssetType, AssetFlag::RequireUniqueName>;
 
 	template<typename t_AssetType>
+	concept HasRequireUniqueHashFlag = HasAssetFlag<t_AssetType, AssetFlag::RequireUniqueHash>;
+
+	template<typename t_AssetType>
 	concept HasAllowDefaultUpdateAssetFlag = HasAssetFlag<t_AssetType, AssetFlag::AllowDefaultUpdateAsset>;
+
 }
