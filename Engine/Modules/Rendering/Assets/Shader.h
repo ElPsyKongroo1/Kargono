@@ -185,7 +185,7 @@ namespace Kargono::Rendering
 
 		constexpr static std::array<FixedBufStr16, 3> k_IntermediateExtensions
 		{ 
-			".shadersource", 
+			".kgshadersrc", 
 			".kgshaderfrag", 
 			".kgshadervert"
 		};

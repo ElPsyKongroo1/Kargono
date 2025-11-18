@@ -14,7 +14,6 @@ namespace Kargono::Assets
 		virtual ~ShaderManager() = default;
 	public:
 		// Class specific functions
-		virtual Ref<Rendering::Shader> DeserializeAsset(Assets::AssetInfo& asset, const std::filesystem::path& assetPath) override;
 		virtual void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Assets::AssetInfo& currentAsset) override;
 		virtual void DeserializeAssetSpecificMetadata(YAML::Node& metadataNode, Assets::AssetInfo& currentAsset) override;
 

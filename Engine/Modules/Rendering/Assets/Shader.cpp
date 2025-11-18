@@ -167,9 +167,99 @@ namespace Kargono::Rendering
 	{
 	}
 
+	void ShaderMetaData::Deserialize(void* context)
+	{
+		// Get asset context
+		KG_ASSERT(context, "Context cannot be null");
+		Assets::SerializeMetaDataContext& metadataContext = *(Assets::SerializeMetaDataContext*)context;
+
+		// Get context fields
+		YAML::Emitter& emitter = *metadataContext.m_Serializer;
+
+		// Shader specification section
+		emitter << YAML::Key << "ColorInputType" << YAML::Value << Utility::ColorInputTypeToString(m_ShaderSpec.m_ColorInput);
+		emitter << YAML::Key << "AddProjectionMatrix" << YAML::Value << m_ShaderSpec.m_AddProjectionMatrix;
+		emitter << YAML::Key << "AddEntityID" << YAML::Value << m_ShaderSpec.m_AddEntityID;
+		emitter << YAML::Key << "AddCircleShape" << YAML::Value << m_ShaderSpec.m_AddCircleShape;
+		emitter << YAML::Key << "TextureInput" << YAML::Value << Utility::TextureInputTypeToString(m_ShaderSpec.m_TextureInput);
+		emitter << YAML::Key << "DrawOutline" << YAML::Value << m_ShaderSpec.m_DrawOutline;
+		emitter << YAML::Key << "RenderType" << YAML::Value << Utility::RenderingTypeToString(m_ShaderSpec.m_RenderType);
+
+		// Input buffer layout section
+		emitter << YAML::Key << "InputBufferLayout" << YAML::Value << YAML::BeginMap; // Input Buffer Layout Map
+		emitter << YAML::Key << "Elements" << YAML::Value << YAML::BeginSeq;
+		for (const auto& element : m_InputLayout.GetElements())
+		{
+			emitter << YAML::BeginMap; // Input Element Map
+			emitter << YAML::Key << "Name" << YAML::Value << element.m_Name;
+			emitter << YAML::Key << "Type" << YAML::Value << Utility::InputDataTypeToString(element.m_Type);
+			emitter << YAML::EndMap; // Input Element Map
+		}
+		emitter << YAML::EndSeq;
+		emitter << YAML::EndMap; // Input Buffer Layout Map
+
+		// Uniform buffer list section
+		emitter << YAML::Key << "UniformBufferList" << YAML::Value << YAML::BeginMap; // Uniform Buffer Layout Map
+		emitter << YAML::Key << "Elements" << YAML::Value << YAML::BeginSeq;
+		for (const auto& element : m_UniformList.GetElements())
+		{
+			emitter << YAML::BeginMap; // Uniform Element Map
+			emitter << YAML::Key << "Name" << YAML::Value << element.m_Name;
+			emitter << YAML::Key << "Type" << YAML::Value << Utility::UniformDataTypeToString(element.m_Type);
+			emitter << YAML::EndMap; // Uniform Element Map
+		}
+		emitter << YAML::EndSeq;
+		emitter << YAML::EndMap; // Uniform Buffer Layout Map
+	}
+	void ShaderMetaData::Deserialize(void* context)
+	{
+		// Get asset context
+		KG_ASSERT(context, "Context cannot be null");
+		Assets::DeserializeMetaDataContext& assetContext = *(Assets::DeserializeMetaDataContext*)context;
+
+		// Get context fields
+		YAML::Node& metadataNode = *assetContext.m_Node;
+
+		// Shader specification section
+		m_ShaderSpec.m_ColorInput = Utility::StringToColorInputType(metadataNode["ColorInputType"].as<std::string>());
+		m_ShaderSpec.m_AddProjectionMatrix = metadataNode["AddProjectionMatrix"].as<bool>();
+		m_ShaderSpec.m_AddEntityID = metadataNode["AddEntityID"].as<bool>();
+		m_ShaderSpec.m_AddCircleShape = metadataNode["AddCircleShape"].as<bool>();
+		m_ShaderSpec.m_TextureInput = Utility::StringToTextureInputType(metadataNode["TextureInput"].as<std::string>());
+		m_ShaderSpec.m_DrawOutline = metadataNode["DrawOutline"].as<bool>();
+		m_ShaderSpec.m_RenderType = Utility::StringToRenderingType(metadataNode["RenderType"].as<std::string>());
+
+		static_assert(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification));
+
+		// Input buffer layout section
+		{
+			YAML::Node inputBufferLayout = metadataNode["InputBufferLayout"];
+			YAML::Node elementList = inputBufferLayout["Elements"];
+			for (const auto& element : elementList)
+			{
+				m_InputLayout.AddBufferElement(Rendering::InputBufferElement(
+					Utility::StringToInputDataType(element["Type"].as<std::string>()),
+					element["Name"].as<std::string>()
+				));
+			}
+		}
+		// Uniform buffer layout section
+		{
+			YAML::Node uniformBufferList = metadataNode["UniformBufferList"];
+			YAML::Node elementList = uniformBufferList["Elements"];
+			for (const YAML::Node& element : elementList)
+			{
+				m_UniformList.AddBufferElement(Rendering::UniformElement(
+					Utility::StringToUniformDataType(element["Type"].as<std::string>()),
+					element["Name"].as<std::string>()
+				));
+			}
+		}
+	}
+
 	void Shader::Serialize(void* context)
 	{
-
+		KG_ERROR("Serialize not implemented!");
 	}
 	void Shader::Deserialize(void* context)
 	{
@@ -327,9 +417,9 @@ namespace Kargono::Rendering
 	void Shader::SetInputLayout(const InputBufferLayout& shaderInputLayout)
 	{
 		m_InputBufferLayout = shaderInputLayout;
-		m_VertexArray = VertexArray::Create();
+		m_VertexArray->RegisterArray();
 
-		auto quadVertexBuffer = VertexBuffer::Create(k_MaxVertexBufferSize);
+		Ref<VertexBuffer> quadVertexBuffer;
 		quadVertexBuffer->SetLayout(m_InputBufferLayout);
 		m_VertexArray->AddVertexBuffer(quadVertexBuffer);
 	}
